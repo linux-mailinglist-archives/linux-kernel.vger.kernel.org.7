@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-850370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB6BBD2A3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12552BD2A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 545654F0405
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:50:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A18384F0696
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9EA3043C4;
-	Mon, 13 Oct 2025 10:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3967F304BB3;
+	Mon, 13 Oct 2025 10:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dIbJQqA3"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edJ2DNSy"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0403304BA6
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD74B303A19
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760352573; cv=none; b=nrKoxIiBID8cPRB9QR5GitN6IGv9weU9a8Plb10N1VLYSrGAFOka/0EinKBLFo/b5EqYd+ob80gwuIN8MXf2pdh+KsxOe/C+x0zwmGFFFgMXBT+98h1ZrLugyREAbL45eTjfbkVvrigX8cYzoqanSJeUqogOXyw1C5NrAdN1F5U=
+	t=1760352657; cv=none; b=sGSFH7CIZ8Vi86k9YGRBm6+w13tPvKsKoJzLvxyRPvb+BCuHYLry/u1LP1JTb4PDsFQAomHPI9lpccT0bNd9nkzLNHR/N7t+3FbVMyQ2lHBkKpEsuOt2MN/SbprOv1pPpvVN38DCiGzxlE3TNBMIgv0t9tgEHzZpkiWMCcVjJME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760352573; c=relaxed/simple;
-	bh=OBRTBgdQa0ezTgOG0fekcSASOaIs/eav1o10bLNrjYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMiR/ZdsQuA5eXVOhn3STB+d+CbcTVTO8PU2y3hejuQ1kSDu4wSG5kCKPTQqcUP6RVJxYtle93cG2y4Qx3YrCbasV6tSxY383mx1vwSqEv8kzynKdOsVsrOUdpaC9PK7bHURnCXqGVMnjhYSDsYTSgn3Fs3Dc+HCDb4JjSp2DVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dIbJQqA3; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-371e4858f74so48084831fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:49:25 -0700 (PDT)
+	s=arc-20240116; t=1760352657; c=relaxed/simple;
+	bh=wNP5THpXLBBCsooeBbFGaCM7Hjs85FFamh1ekejynLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MLsVTx6rlWHXBWxF5tO/4hFKi4GsVJAVgm2aXh8nx3SWqrhmxF9LfNk/vTIAkBzrN4PZfI4VBxX+d0bdOQOWgpxQZ0Ruz8So1xZVhduHu+gNyuMzgEm+mtuSPqn2uRp08rykqUPd3fL150NS1EraHHR8KYhXOU/+G2oRlj0dSAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edJ2DNSy; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-636de696e18so8485534a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760352559; x=1760957359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760352648; x=1760957448; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OBRTBgdQa0ezTgOG0fekcSASOaIs/eav1o10bLNrjYg=;
-        b=dIbJQqA3hv0qH5S8ffwtW5xd5mp3nBvNThC5DatwFba/UINk/1v+qPAEDYGVm9zCy/
-         xk9aAmgF30hBHLUwOGGiqQ4t5ysmrvL/VVRJ4msftFxWNNZoYlHfqXRYePlhJkWgQ+Iz
-         XeCa+cGGrlndMAxORngQjOLKggc1Pgz2W9uN2GsleeNeXFfCuQQOqwCriEBIqAfoVF8M
-         /KGLseoR13gLcvq8NCJdutHcIVIyTNWLgnGtrljn+TR9sjb3oKNgq/BFXl2RsR2zgKhi
-         F28rGpqYQygsoV4x1oFDUSDUa1kZDDdYZfnJ55GUQOL0LielO0oqaaxCHwgeOS+0jCkt
-         9epA==
+        bh=ywHY3N/RI9LLiDCgfHoL3E6H1b5BrPsw9rGztJzIzfc=;
+        b=edJ2DNSya4n3LkBzMaSlhQLuNmQdeuRa6EsBik6tCyiqMkpkIO9+QC0uSwxcS6TT5l
+         NhTmBm1t+TmFdBtG9jlk4ojBAPzpMewBQHXFOY4AJnJBMajkku1lsbiARphZIMiRBghv
+         Kdi6NRC2mYNCG/VKsyavb0a9rNpc5VsKj0BS9KcDA5Ug9//zv8r6GHR4wnIT8GjSGjPL
+         aGeAXx3gP74r3Zw/uV23sb9YYPQAT5LqbMbtPmvdZJhIefaWS9m4MG8lpvJL1BNOPoqa
+         aZE7CY7ztdEc8FSBIFkePH1xuNO5tJ+aPt9LvsXpZ9YPwJRSuTOh+7c0XfSxY5cKcj29
+         dGgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760352559; x=1760957359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760352648; x=1760957448;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OBRTBgdQa0ezTgOG0fekcSASOaIs/eav1o10bLNrjYg=;
-        b=pqCosPj8hIdEXtZnMWg5C6/v0wW0qU5tVcCbHCGntYLpq4ctoR8zB5Xl7BAiyAPGgw
-         xuv3zZDqq3Sqip4Kgi6n2ASjzl1tEIZEzyJ7FpepTKN9U+62i2ZI5xYFrWmroinrQdBj
-         iE1P4wzqPCkwbC2LOnWe68U2AKY75WaiaKzI62PMWlToBH8e6/2RxyAKFXa7G1OQtX8y
-         nJIXkMZ4ErRQAUXnzMUJtP44pJfR0LpufeTvGZDexM53wil9e6H0leEMQIfM9Qaj0Ok2
-         geE47FP+IumDGdrIfl8U0Vqft5jg4bNcJuCxOI3rjrP7xMmLssvFU3/K8NccIzTAU5NC
-         QdsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWImNVgEYAlB37qy7yvCS59H4ibs71iE2hMN1J78M2WpY643js30hvejPZSbnOK5FEwI5zhxQNh+K4xty8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+bdJsWXUoHolr9KIq2Lm+lDx6u9sY3aiNkPiwiZBpRpRDhVC3
-	pdSUIUcp9oQCk9Hj0S5O9agn3TMusQNAJ6BErcmPS63uw6TYxkNyfTHgmuh7ENWGhbpNXBKdPH2
-	kyx71cqMibCZMMs06+3oK6njknGPDrPz0xveh72OSlg==
-X-Gm-Gg: ASbGncsn9aKVzLG4sOCoAdiGEwoZgVtvntNZGEpz3/VUbyUHZwIvUchyL7Byk+AxbOw
-	NP73eKFJ4bJidf6rMIy44Uo88H/2QCC6TBCu/6wPOsG+32Ou3BgP88ARyD1c5YVbIMnMlMKlXcp
-	hCoa0J/26iwBYP95O/+j89P8s1bFfZWEeeR+yHMz7wnsO9dpmFC1eitIfL8dkfcjV4geKgLNPqL
-	jwfiJlmjgYReFuTBegN+vtyh5KJGg==
-X-Google-Smtp-Source: AGHT+IFOq8r2+x8j+n2o4YPgt0yqTqrdILP4XzCLFJtq6Qxm8iqZG0/oseSlJ2uW/NV8gJqb/q55XZ6vH5Q9BXkHEkY=
-X-Received: by 2002:a2e:a54a:0:b0:373:c272:d986 with SMTP id
- 38308e7fff4ca-375f526e5b0mr67942651fa.17.1760352558762; Mon, 13 Oct 2025
- 03:49:18 -0700 (PDT)
+        bh=ywHY3N/RI9LLiDCgfHoL3E6H1b5BrPsw9rGztJzIzfc=;
+        b=P5iuG4Nt7vdWEjKZp30WdN2xcKN4Zjabd6+AvU+P2QcEQ/XhLFIKKd5N05DHiZIP9w
+         TPe8dp92nqVZXJa1825lE8YF4Kvmn+JswBMLysr+qgPPyQfwgmtH6+KRTh1HYhj5XW5U
+         aXFlqC2Im386ekwVDTrDyxoZPLBUaUsMNA5AJH/Xa0KsRlT+PP4nx2kz5b4h/5DTccky
+         nRoSUZAeXh0yEGJya0r1OctJv16XSlHd0KeNe2QXUI0TTvdBr2IbsWne2ZJdsm1nlK0D
+         MzAW6MUGORjmeHVY+CWMsIXcbR5kSc1WaQZJm70cDVzqH14ripU4c+6Xcz4+K1lDNz4B
+         IYqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf5ezkxBpw9+D7V49c1qTeFMI9SSytPPU5M7zTT8ZvXMq0F1nU/bhEeMNXd5afC3WP4iu+1xRVvMmt/vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKGe8naLeHDgNpu/d/v9POe5slrHytU6UXWpOaU5by1XCr2aNK
+	mmSSSxVUXdhM9dNLO9QvU96UOIMqgN6n4T5wkGb/W/sO2W3vjKvHkCEx
+X-Gm-Gg: ASbGncvkOLBQfl67MDhFG9gKyiiqdgHSqTx4ZfPaEdu0m+21bG/ns69rPXUsVc8GoSj
+	6/0ZPXEjbuKtfunabvqFm17l3pD2TshysRqwqOhvtg0x/+svyZIDCT74RhX1hPby52I3p4dUd0F
+	wUSwyJsDIvKr0SnHJq1rm3XLQJ/EVJzN5Rh2o8Q/NRgmKlOeJeqkDIsDlDZ1HKsusqRvvis69Ap
+	apIzlHdOxgmE5MNTS4kwcRPIYlU0l6kz91P1DSqYXAQHr8K2kTPg3mlMiT9eQtQ/v/RFO751Puy
+	OKvCAkG0momncZL46v+vLcwd9MlD7dNh6Wys9MgaXUTyyMXwWVy4llJysgO63y2JoD7ACBt5OBj
+	bRXgxGKM9+fw96z8NRsoNdlOVHUI+yJz0xeJcI863PDZnvKrclRlBHmyk4URpmItz
+X-Google-Smtp-Source: AGHT+IEr2IkhLy3Hq74fdNOtudRrfh+iuu7rWrRfFvpPJo3KF6R4emQcUvwa9LHRg8/IJ9TOsz5Fig==
+X-Received: by 2002:a05:6402:144b:b0:63a:38e:1dd5 with SMTP id 4fb4d7f45d1cf-63a038e4b6fmr12861262a12.7.1760352647388;
+        Mon, 13 Oct 2025 03:50:47 -0700 (PDT)
+Received: from foxbook (bff184.neoplus.adsl.tpnet.pl. [83.28.43.184])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63b616d12fesm8024557a12.24.2025.10.13.03.50.46
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 13 Oct 2025 03:50:47 -0700 (PDT)
+Date: Mon, 13 Oct 2025 12:50:43 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Petko Manolov <petkan@nucleusys.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: usb: rtl8150: Fix frame padding
+Message-ID: <20251013125043.0ae574e7.michal.pecio@gmail.com>
+In-Reply-To: <aOzNH0OQZYJYS1IT@horms.kernel.org>
+References: <20251012220042.4ca776b1.michal.pecio@gmail.com>
+	<aOzNH0OQZYJYS1IT@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922152640.154092-1-herve.codina@bootlin.com>
- <20250922152640.154092-8-herve.codina@bootlin.com> <CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
- <20251001174205.71a08017@bootlin.com>
-In-Reply-To: <20251001174205.71a08017@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 12:49:06 +0200
-X-Gm-Features: AS18NWCu7OuRtExFxAHo2mGL4pkxRIov06rPInvhQDpr6xWeLGLTOcCLnJNvizg
-Message-ID: <CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
-Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 1, 2025 at 5:42=E2=80=AFPM Herve Codina <herve.codina@bootlin.c=
-om> wrote:
-> On Wed, 1 Oct 2025 13:08:57 +0200
-> Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> I don't see how IRQ_DOMAIN_HIERARCHY would help.
+On Mon, 13 Oct 2025 10:57:51 +0100, Simon Horman wrote:
+> Hi Michal,
+> 
+> I think this should also increment a dropped counter.
+> As this driver already uses dev->netdev->stats [*]
+> I think that would be:
+> 
+> 		dev->netdev->stats.tx_dropped++;
 >
-> The irq-mux only muxes irq signal without performing any operations usual=
-ly
-> done by an interrupt controller.
->
-> That's why I used interrupt-map in the irq-mux.
->
-> The only information needed by the irq-mux is the interrupt line muxing t=
-hat
-> needs to be applied. This information is available in the interrupt-map.
->
-> If we introduce IRQ_DOMAIN_HIERARCHY, either it is done at gpio controlle=
-r
-> level to route gpio interrupts to GIC interrupts and, in that case, the
-> irq-mux is skipped and cannot apply the muxing.
+> [*] I specifically mention this, for the record because,
+>     new users are discouraged. But this driver is an existing user
+>     so I think we are ok.
 
-I meant to introduce the muxing code directly into the
-GPIO driver instead of using a separate muxing driver,
-using the struct gpio_irq_chip supplanted by IRQ_DOMAIN_HIERARCHY.
+Thanks, makes sense, will do.
 
-Are these IRQ lines ever muxed for anything else than
-GPIO? In that case go ahead with this solution, I guess.
-But the title of your patch seems to suggest it is
-only used by GPIO.
-
-If it is only used for GPIO, why make it a separate
-driver instead of just putting the muxing into the
-GPIO driver?
-
-> Or it is introduced at irq-mux level and irq-mux need to be an interrupt
-> controller but is component is not an interrupt controller.
-
-It is a hierarchy, as all interrupts are routed through
-it. Just becaus you don't have to ACK every IRQ in the
-hierarchy doesn't mean it's not a hierarchy.
-
-> Maybe I missed some points or I misunderstood the purpose of
-> IRQ_DOMAIN_HIERARCHY.
->
-> Can you give me some details on how IRQ_DOMAIN_HIERARCHY should be
-> used in my case?
-
-The gpio_irq_chip ->child_to_parent_hwirq() is called
-as part of the translation of each IRQ and in this callback
-you can set up your mux. You can return
-negative if you run out of muxable GPIO lines.
-This means the irqdomain hierarchy fits as abstraction
-for this usecase.
-
-Yours,
-Linus Walleij
+I will only drop "dev->" because it's superfluous - we already have
+'netdev' here, which was used to obtain 'dev' in the first place.
 
