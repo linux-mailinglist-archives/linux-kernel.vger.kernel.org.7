@@ -1,322 +1,237 @@
-Return-Path: <linux-kernel+bounces-850430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52FD5BD2C34
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78D3BD2C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 411A34E512B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D22D3B1DA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78CF24A078;
-	Mon, 13 Oct 2025 11:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LPljjMdx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9FA248F4F;
-	Mon, 13 Oct 2025 11:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760354470; cv=fail; b=NSZih2nveqQq+nShlXF//sNO3GhegWkBHdqebmDCMIMACNNsDRlJSKq5V+vFfE/8axLSiWZZ25/CYlf+2uvIpoSjGSweD0OP3jq/Esq7CVa37o6S4FEcUgFmtf9bwiyqe/9XAVLVnpU5CqeDpdFh1FtiN5xriSWuAh0DUuD0F6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760354470; c=relaxed/simple;
-	bh=62WV1O7plScUMMIUdq6zi6ncL3OSzt4lecOhRWwCw9c=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jvS/woL/RM2RJNe3XKrx+6f1avd1QyCnHiz0g8z4pwyCVXynPbygOQ4WQzfa3S3GtinukmRrJD2ToRjwMdOyzQM79xHd04OHPhKTLg7nJaf0osKNso7vUu4era56xQZ1PFYMJRIJc8sx1AsvdxjalyHpa/XGE3v5AJJdWy4UJ7o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LPljjMdx; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760354467; x=1791890467;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=62WV1O7plScUMMIUdq6zi6ncL3OSzt4lecOhRWwCw9c=;
-  b=LPljjMdxt23NylXVPu70EFwPvs4f4Mf7LTQEdAYqXJ+MAR0R4lfF3n3t
-   JyxiK3bL5vnLuWbNly1JiUYFPk9Yc1cbNIfT/VxYSTmecY5E4kEAjX8lV
-   s5afka5PNVAjrIB0WAUdQfNsP6AkSpGcY81y22GESVBy+AcP4jN8llXy1
-   HQzRDaG555/GuzQnKmPuTR1Q61ZcElg9jWDFgWz9Kte7mCtZYF8/6+Qb4
-   1G4Ds7A1V5VGDDswQtRiwVtHBKf8r8uZIJjHsDIk1bAVx2m8Ap2BcxYuI
-   ZrCvIPKCifL3zSTbTstWqXyE7hKreTFLudxg0DvY+Mf21/YCA9gRwRS7b
-   A==;
-X-CSE-ConnectionGUID: ZRPT66BPSBiSiT5DXEsNwA==
-X-CSE-MsgGUID: 9gSv77mZTPO8ukYbKr93CQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="73594648"
-X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
-   d="scan'208";a="73594648"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 04:21:06 -0700
-X-CSE-ConnectionGUID: G1s38RwaSWiP1gwp5m804w==
-X-CSE-MsgGUID: /Zx/ZiZlQwa/e0nXDAODlw==
-X-ExtLoop1: 1
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 04:21:04 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 13 Oct 2025 04:21:03 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 13 Oct 2025 04:21:03 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.18) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 13 Oct 2025 04:21:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SJ9A2/to14SJVFtqpDXLFqKTRfjM+divFiF7RUmlTevvCeye3Je4sg17rvZ5P0HOZkdbwy4Y+N2d3U4HI9lesj1Yfveyg9pkyfWBlJfwGF5ciSN7y0TM64rXRe7L64FAms7nDUfsaNb1TOHSXnFKCSUNNmHwLaAYtvlyH5H1oYDW6EE6HIFB2aAv8i00bqxRoaxM4nrUOclyrZ5Jw09UgwxA7/x8aKslWOHFzOtgzgZ6YeKCspTLlTmxoYhO2AWrsRnEFRMvWLdY3BpV4Js9GUzczXVIxIg3YHu5eEQRlQIYkUHTCA3qa5Aeh8wE6u0bI3zckbSblpt8r3rfUmRBaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yv/MKSxIq6gKtiP/yJ8Os4E/v4gFKf6ylg8RqGfQijc=;
- b=dWUP/KohYKJnHCBALgMvHEsesabNNU3z3VgPOPLwo2hAm2m+0myW9kn5WQ3yCZW9XsYmb+IW1Ek/BG1euX6BzB20oXDM9vQmP3Z2AtuBa7FhNJ7UrT0Ad2NCxRDSp/AznRbw0UcRKCLTaUFN67EMgN9BrIDjjPQVfOc0SgYNEniAJeIqTwd5Dqn8CK2SlD9c0U2VL3LvZLYFpDSdQ7jh4d3WfO+Dly4h3BUxmolIgX6OKv9QNbCPsD7vjzKtsNdTKPTqqfLsCWSEN/jNXbTN8vU156LisM2oMcwHvLZQRvUj1NjoaoABXrY4rqkF9eq+ZbPou/w5LsTlkTM/BscAwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
- by IA3PR11MB9448.namprd11.prod.outlook.com (2603:10b6:208:572::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Mon, 13 Oct
- 2025 11:21:00 +0000
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 11:21:00 +0000
-Message-ID: <e3f602b1-e983-4670-9d44-bec2d8b058d3@intel.com>
-Date: Mon, 13 Oct 2025 13:20:53 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/26] drm/xe: Add sa/guc_buf_cache sync interface
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
- Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
-	<kevin.tian@intel.com>, Shameer Kolothum
-	<shameerali.kolothum.thodi@huawei.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, Matthew Brost
-	<matthew.brost@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, "Joonas
- Lahtinen" <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin
-	<tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Lukasz Laguna <lukasz.laguna@intel.com>
-References: <20251011193847.1836454-1-michal.winiarski@intel.com>
- <20251011193847.1836454-11-michal.winiarski@intel.com>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <20251011193847.1836454-11-michal.winiarski@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR04CA0126.eurprd04.prod.outlook.com
- (2603:10a6:803:f0::24) To MN0PR11MB6011.namprd11.prod.outlook.com
- (2603:10b6:208:372::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828392566F5;
+	Mon, 13 Oct 2025 11:21:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C850222587;
+	Mon, 13 Oct 2025 11:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760354466; cv=none; b=liC2R/ERi4PdyCxgC2yKnei1f2idFVhgNZGLlTn/L15qVmHrSAVbzRNXoJJda6f9t20bvC2rGSR5Mnk7JlhQdzLp42w9HLGM23CpHEfZGbIgMovpniLKsxmpsjfm7b9Hiz+bD7gqWf5aQYJAjh5426EfPsQLMA7929vKcoPKwZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760354466; c=relaxed/simple;
+	bh=tQje5bDbSj9y1kcqNgldXUREwqU4Y0MJp/r7D9wd3RA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I4Dzs4yoMXmYYiRMnypCyEs634TgJj242LWsJzU7lHKz0Yp+t70SmX3henegqm3lqonukkefj4uQbRC4/wIEUshdDAMTXzSyPNum8BORaAAV5hbrQZ/BOYfZeM5ISWGdpE/wJpTp4EWoAPSALwyI92xmiJLLKX7OiGFEwbaXVTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 531BF113E;
+	Mon, 13 Oct 2025 04:20:55 -0700 (PDT)
+Received: from [10.57.5.235] (unknown [10.57.5.235])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 90BB03F6A8;
+	Mon, 13 Oct 2025 04:20:57 -0700 (PDT)
+Message-ID: <8d88cd9d-16e8-43f9-8eb3-89862da1d0c1@arm.com>
+Date: Mon, 13 Oct 2025 12:20:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|IA3PR11MB9448:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef6711ca-a7e8-419b-7973-08de0a4a96ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bzFiZ1N5M2M1V1Q4RHROSVVjQVNDMGdvdlFBRms2WnNnaEozZU1EU25jUEVL?=
- =?utf-8?B?SWVwTnpYcWRZZTlHWTFrUmkxU3lIZXhXMU5nOTBrd2tTalVnR0t5WFBpcEFM?=
- =?utf-8?B?aWE5cVA2V0hEd3hYYXRGcTRvaTVvbVNjdmdzbHFoQkVRZlRaaXdxOFBLS1Nn?=
- =?utf-8?B?RVdObkVDV0Y3b1hXSGVpL1NOaHRPZkhZYW5memZtWlUrVEp2QW53d3FRT0hG?=
- =?utf-8?B?aTJQU1VQZVdtaVNnMjJSTWFVYXNQZkpjazhGV296Y3ZYK29rdm02VmtTMWd3?=
- =?utf-8?B?QjhUa3FDbnBlQnJGcnJ3dkw3K09PcmxjMmZ3OEFmRXFSNFcrK2xqR1Z1TmEr?=
- =?utf-8?B?ek5ZK2JiQ0tsdVI5QlhhMW9xcEhqOEE1dVZOSHlsSlFUUk5tQy82UHN0dWx0?=
- =?utf-8?B?MUNrbGlQcXhtZGFzdVY1TjYxaTg2U0dEK1VSRmFFVVNuQ1I1MXlDOEd3WW5Z?=
- =?utf-8?B?ZUtyY3ZBcDVmVWk0N2VwTXNxcFA3SWJTSkljWDVHSytOWEhVVkVqTXYwU29P?=
- =?utf-8?B?WGxlWWVVRmt5V1cveWE3bGk5YWYyMzRnblZ0b1Z2ZWpXdTFDdXl5b0xGVmJH?=
- =?utf-8?B?a1BTZklIdGFPVE95V0FSNElhUmVNTFVYMnMvcTkydWl0REs0MFJoR3Rhb2cw?=
- =?utf-8?B?SHhzaERRdzlHRTJTWVRCUHErN0k3Z0JTdGJtcTRQVUhuaE5sKzcyZGUvbU8y?=
- =?utf-8?B?ZnRXWUpCQUxaM2E5VktKRlpDNzdOYlcvbnFUZHlLZkFTYUd3aTB5eEpwZE44?=
- =?utf-8?B?TTcyQ01kMVZQSm91QUpPdDNZQ1o2MS9RODBKbUlHZjBaUHhQMWk3ZWRzZ0dr?=
- =?utf-8?B?MG4za1V1ZVlCNDJGZm1OdW9vQ0VNb1pjaTFPNllqU3RsaklmT2J6SWZOektp?=
- =?utf-8?B?SW5vb0lWUU9STndiV1U3U3Z0blBSOW55RWxTLy9YazlSK0lycHN3WUZ1bUtz?=
- =?utf-8?B?WWtWMHY1Z3FOT1BVc3ZqYWRZaFhmeHRsK3JsUmtkS0hBUFhEaUN4M0pLT0cy?=
- =?utf-8?B?TS9wS1NLWlc4TnQ3eEltaXNmaEZpT1cvTE9XalAwWHgrWmJhbXZrdjJVYTJK?=
- =?utf-8?B?NFJLVU5OK2t5bFVMT2VUOXE5K1VSUzlQVnVxdXRGTnJ0cS9PUjRtQU9XWi9h?=
- =?utf-8?B?dTd4Z3JhZnJQRjdNbit6SEx5UUo2cEtNUFZUVmtmUTNnRW8wQzNodUdiemlD?=
- =?utf-8?B?eitLMVhaTURwVTYxbnR2c2FwbGlGVWh5RHAyNElmTnBWSk93bVpXam4rejdX?=
- =?utf-8?B?NE5LZnVWR0hNMlJCOEhJSzYxYytOVmxVU014M1hZZjZwQW52d1RSck1oZG4z?=
- =?utf-8?B?WHFwUDJwKzJOeHFYeldhR0dkOWZHVU85akxqSTJBdWxLTFVkMVVicFV1SFpw?=
- =?utf-8?B?czZPSEU0bXh3QUNpZStzSjhwY3lvMU1DM2hoRlpuZzNvazZldkZWU1lCYk5r?=
- =?utf-8?B?bk84UE10TkVhYi80SWdLaEg5ZWtSZFJDaXFIR01kZDRQQkZLT0M0SDZKUXN6?=
- =?utf-8?B?NnJXd1ZLTEI0eTFQdzBiMzBlWlVQaGFUdTRjRCszZ0NrRGZkMTNHZlVXaWE1?=
- =?utf-8?B?U3ZTRWtMTER3RHVhQlo1OExveXFWbXhDMHJTUTNIYXZ0dUtubjhNWkdMdEpt?=
- =?utf-8?B?TS9yWnpZUGRTZDZaL1JEZ1VrT2dRcXRxcGlXaFdPblI0Y003RW90RTdXVVlp?=
- =?utf-8?B?Z2psMnJGNGRyWVE2R3lPMXIzeWlZSW5kTGJ0Q21OU3NodDZCZTQ3UzNSdkxU?=
- =?utf-8?B?bUI1WDI4K0c2QmcrK1BuczVCOWpYOW1QR1owNU5HbEk3TS91eGwvZDFPT0Q5?=
- =?utf-8?B?d2o1Mmg0OS9IVi8rZlJaMXRVazZnQlJNZjVXcXV4SzlZenNwZ2dBT2t0c05M?=
- =?utf-8?B?ZXdaNFM2Q2E2bnZxZXhZMUFQUjBwbFRIcDl5YVdZSTk4KzZLOG1nMnRhSnhX?=
- =?utf-8?Q?yjlJbYUXYQB9iwguyNSGY3gqGvrT+1Mt?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VzBGUkZDVVZZVXVsWXA3QTNBL1hEbld2YlVMMU41c0t6b0FqclNGMEQxa2Vk?=
- =?utf-8?B?SzlQeWEzOTg2bFVoWWFIVTMyMUp4SEdGcVZwYnE5WmI2eVVua1JCemF2NW5j?=
- =?utf-8?B?b25QU2RRNHBnNEVUeXBQMGZNVHFQYTlxR1ZXOTNDbEpKL2k3c1NKS3V3cnBY?=
- =?utf-8?B?a0FndTdnQzJvWjI3SG1nck5HVXc1UkVzaUhyMFF4Z0VZaGphZHIrc1c3Rk92?=
- =?utf-8?B?dVdGRzAzQnN3SDZqUHAzQTgyMkM3cVo4bHRIZXNseXpGWmpKbVFvckNwTk4x?=
- =?utf-8?B?cFpwbS9PTVI1L0NxVVNuMk9aOGVZQUhoVUhMaHdodmhnQzkwQlZyTk5xQ1Nt?=
- =?utf-8?B?NmUyZWNDZk1MYUE4TTlBb1ZEU2lTcFJlTjNVRVNaZ0VxeFBlY210Mk01YXhy?=
- =?utf-8?B?bDZGUjFhNFdWUUxWWC9kM0xKSHhhUE9jV2RMS2VRa3JFWEd2QnFqSnhlcG1L?=
- =?utf-8?B?bDRUc1RjeDhzL3A3YVNWUExlM1BQQ2xod1VJSjJJVENPY2R4V1RGTVRzRWVQ?=
- =?utf-8?B?VjZObCsyTi8vTjFCd0VXNkR3Yk0wZHJBSjFTT3lPNTdnam9uN0hrZmgyOS95?=
- =?utf-8?B?TzhtUkV0MGRlNnp4d1BlMUVzVjlVeEJGaXBWZVNGMjN3WjY5MVJuVllyMHJi?=
- =?utf-8?B?Z2x3WkUwSW90amh5Q0lNQXdwOHByTi95dXhsNENwNSsrV25oMkhvVjV6Y1ha?=
- =?utf-8?B?Z2VDVUZuNEQ0NGVIWHNYdGxJV3hjTDdQNCtXRmtQTnBkcmxMcDhIUEx5bEdt?=
- =?utf-8?B?MVF1THc3U3NmSC92TThXYlhpWG1ZWnFFS3d3cmNNS2c4bHB3WGZ6WXJiOEY1?=
- =?utf-8?B?ai9MSS9vVGNsZDNxblgyb1hWRFRLTGxKNmN1OG05OTQzcjNOeE81bG95Zlh4?=
- =?utf-8?B?S0swbExzMnlad1lwQW0zYitVSHVweXZNZnZJSWduMXJRRmcrSXU2NVovTnlY?=
- =?utf-8?B?RmlyWTVyTUNicXYwNkI2VzR3YnlBNWNHTnl2K1VLNlZlT0t6YWUxTVFtM2p0?=
- =?utf-8?B?NXgySVNYTGlNVGZqNlg0SHBiUDVDY2kwbFFRcVZyVzRHVm04N2pVcXNZWHNI?=
- =?utf-8?B?bUpuL3hJWk5UaUN3WG1NbG16aENlSmVQbGs0Q1pMM2U1ZmZrNXVkWHJsSjVG?=
- =?utf-8?B?Ny95MlJxeTI3MmQvNnJWOHk2M0FXN2xjbWdUbDZDdnNhL0k0UkZWTGtBTGIy?=
- =?utf-8?B?Z2NCWFYzOW9uckxqd29YUmkya0hVby9DRkgxRWpXQ0dOdWp4ZzNOZzQ2ZmZS?=
- =?utf-8?B?WGpLYVc4djMrQkcrZDdtOXh3S0hWNUNNdGZMSlJGMHFJMkNNc1VjZUR2S3Rq?=
- =?utf-8?B?eXF2b25mdGU3ajVJRVUyb3Y5d01XS2ZpNks1Um5nNUx5WUFGRDdqMFhxMUVH?=
- =?utf-8?B?dU8yQmVYQWRVcFN5NWtZcFplM3gweHdQMkdXWFB3eFo3RE1ERE1NQjh0ZDB3?=
- =?utf-8?B?RXFQUllwbWxZR3ZRRUwwM21MWUtEdVNUVGtzZzFCSEk2ZHJxKy8rOTZWV0xY?=
- =?utf-8?B?Vkh3ZGNqMGpUczBWVDN0dnVVWUdOWEJmNzBETGRoWDlkU1B6TG9pdkpRSWJY?=
- =?utf-8?B?cEJSTVZHTFlTMDBCRGtYZWRPTXJsL2dHa3hSSFJaSzZYRWZqVmMrNHpXZElk?=
- =?utf-8?B?cmpaNnpibXVuMitaVEFmcXJzZzVraXM5UjlvbGJQcVk5aUpPS2d0aFd1MW1Y?=
- =?utf-8?B?SWxuZ3RMd0VRSld3M3R6M0ErWDB2Yk94ekREajl3ckZxWEtUYjkzZklFR2hu?=
- =?utf-8?B?RHk0U1UwbTBoN1kwOUhLOER0UVRaTTNFbUltT3FZSlpmRnE2VXNwUnltTGl5?=
- =?utf-8?B?NVk1a2RlR1dDRGpLckx5T2Z5SmRhd0hFUFgvV0FTRWMwdXZubTM4b29mQ1g0?=
- =?utf-8?B?RytKNE1HWEhaMVN0bjJqM2dCV2FQYXpOWVZ2eUl2ejRCOTdsVU02Y0p3a1Zw?=
- =?utf-8?B?cllQVFhIWVBMUTRHalE3QU4rR01nWmFSeVY1WWdtUVk5ZWVCSUVrejROVXlT?=
- =?utf-8?B?eXIwbGRXSFR0VER6Nk44M0ZXZWM4K1RoQzZPSlFkcGNvQldGMWorbmlBcy9K?=
- =?utf-8?B?VytaeHNRTUxuV0VjNHRlaU5rRDl4c2Q2cGhLZ1BRUjgvZExIam02dkhhZG01?=
- =?utf-8?B?TDY0RXBOYmFneFlzUjRIMEZBdWlQMVh0M0dMc25TYXJJbzA2WTY2SFMwSWxy?=
- =?utf-8?B?R1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef6711ca-a7e8-419b-7973-08de0a4a96ad
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 11:21:00.6091
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rxr5USrmokajFM63M8R3irh64wc3p6L0FRuU2ToxNGX81MQw+a+ReHXEF6qsr6XoX+S37WeIDz5pf1Gv83jS6FK5dsQzGSQirtmoKrBX8vI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9448
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org,
+ will@kernel.org, saravanak@google.com, conor+dt@kernel.org, robh@kernel.org,
+ mchehab@kernel.org, bod@kernel.org, krzk+dt@kernel.org,
+ abhinav.kumar@linux.dev, vikash.garodia@oss.qualcomm.com,
+ dikshita.agarwal@oss.qualcomm.com,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ bjorn.andersson@oss.qualcomm.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
+ <aec0f40a-8346-4194-8b18-1022fe3366bb@arm.com>
+ <0d0560cc-9757-4c7b-8de4-170148d99481@oss.qualcomm.com>
+ <ead7cf8b-fbc4-4242-a9da-b313dded1abc@arm.com>
+ <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
+ <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com>
+ <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 10/11/2025 9:38 PM, Michał Winiarski wrote:
-> In upcoming changes the cached buffers are going to be used to read data
-> produced by the GuC. Add a counterpart to flush, which synchronizes the
-> CPU-side of suballocation with the GPU data and propagate the interface
-> to GuC Buffer Cache.
+On 2025-10-09 7:25 pm, Dmitry Baryshkov wrote:
+> On Thu, Oct 09, 2025 at 06:03:29PM +0100, Robin Murphy wrote:
+>> On 2025-10-09 2:19 pm, Dmitry Baryshkov wrote:
+>>> On Thu, Oct 09, 2025 at 11:46:55AM +0100, Robin Murphy wrote:
+>>>> On 2025-10-08 8:10 pm, Charan Teja Kalla wrote:
+>>>>>
+>>>>> On 9/29/2025 3:50 PM, Robin Murphy wrote:
+>>>>>>> USECASE [1]:
+>>>>>>> -----------
+>>>>>>> Video IP, 32bit, have 2 hardware sub blocks(or can be called as
+>>>>>>> functions) called as pixel and nonpixel blocks, that does decode and
+>>>>>>> encode of the video stream. These sub blocks are __configured__ to
+>>>>>>> generate different stream IDs.
+>>>>>>
+>>>>>> So please clarify why you can't:
+>>>>>>
+>>>>>> a) Describe the sub-blocks as individual child nodes each with their own
+>>>>>> distinct "iommus" property
+>>>>>>
+>>>>>
+>>>>> Thanks Robin for your time. Sorry for late reply as I really didn't have
+>>>>> concrete answer for this question.
+>>>>>
+>>>>> First let me clarify the word "sub blocks" -- This is just the logical
+>>>>> separation with no separate address space to really able to define them
+>>>>> as sub devices. Think of it like a single video IP with 2 dma
+>>>>> engines(used for pixel and non-pixel purpose).
+>>>>>
+>>>>> I should agree that the child-nodes in the device tree is the easy one
+>>>>> and infact, it is how being used in downstream.
+>>>>>
+>>>>> For upstream -- Since there is no real address space to interact with
+>>>>> these sub-blocks(or logical blocks), does it really qualify to define as
+>>>>> child nodes in the device tree? I see there is some push back[1].
+>>>>
+>>>> Who says you need an address space? Child nodes without "reg" properties,
+>>>> referenced by name, compatible or phandle, exist all over the place for all
+>>>> manner of reasons. If there are distinct logical functions with their own
+>>>> distinct hardware properties, then I would say having child nodes to
+>>>> describe and associate those properties with their respective functions is
+>>>> entirely natural and appropriate. The first example that comes to mind of
+>>>> where this is a well-established practice is PMICs - to pick one at random:
+>>>> Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+>>>
+>>> Logical function, that's correct. And also note, for PMICs that practice
+>>> has bitten us back. For PM8008 we switched back to a non-subdevice
+>>> representation.
+>>>
+>>>> For bonus irony, you can't take the other approaches without inherently
+>>>> *introducing* a notional address space in the form of your logical function
+>>>> IDs anyway.
+>>>>
+>>>>>      > or:
+>>>>>>
+>>>>>> b) Use standard "iommu-map" which already supports mapping a masked
+>>>>>> input ID to an arbitrary IOMMU specifier
+>>>>>>
+>>>>>
+>>>>> I think clients is also required to program non-zero smr mask, where as
+>>>>> iommu-map just maps the id to an IOMMU specifier(sid). Please LMK if I
+>>>>> am unable to catch your thought here.
+>>>> An IOMMU specifier is whatever the target IOMMU node's #iommu-cells says it
+>>>> is. The fact that Linux's parsing code only works properly for #iommu-cells
+>>>> = 1 is not really a DT binding problem (other than it stemming from a loose
+>>>> assumption stated in the PCI binding's use of the property).
+>>>
+>>> I really don't like the idea of extending the #iommu-cells. The ARM SMMU
+>>> has only one cell, which is correct even for our platforms. The fact
+>>> that we need to identify different IOMMU SIDs (and handle them in a
+>>> differnt ways) is internal to the video device (and several other
+>>> devices). There is nothing to be handled on the ARM SMMU side.
+>>
+>> Huh? So if you prefer not to change anything, are you suggesting this series
+>> doesn't need to exist at all? Now I'm thoroughly confused...
 > 
-> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
-> ---
->  drivers/gpu/drm/xe/xe_guc_buf.c |  9 +++++++++
->  drivers/gpu/drm/xe/xe_guc_buf.h |  1 +
->  drivers/gpu/drm/xe/xe_sa.c      | 21 +++++++++++++++++++++
->  drivers/gpu/drm/xe/xe_sa.h      |  1 +
->  4 files changed, 32 insertions(+)
+> Hmm. We need changes, but I don't feel like adding the FUNCTION_ID to
+> #iommu-cells is the best idea.
+
+What? No, any function ID would be an *input* to a map, not part of the 
+output specifier; indeed it should never go anywhere near the IOMMU, I 
+don't think anyone suggested that.
+
+>> If you want to use SMR masks, then you absolutely need #iommu-cells = 2,
+>> because that is the SMMU binding for using SMR masks. It would definitely
 > 
-> diff --git a/drivers/gpu/drm/xe/xe_guc_buf.c b/drivers/gpu/drm/xe/xe_guc_buf.c
-> index 502ca3a4ee606..1be26145f0b98 100644
-> --- a/drivers/gpu/drm/xe/xe_guc_buf.c
-> +++ b/drivers/gpu/drm/xe/xe_guc_buf.c
-> @@ -127,6 +127,15 @@ u64 xe_guc_buf_flush(const struct xe_guc_buf buf)
->  	return xe_sa_bo_gpu_addr(buf.sa);
->  }
->  
-> +/**
-> + * xe_guc_buf_sync() - Copy the data from the GPU memory to the sub-allocation.
-> + * @buf: the &xe_guc_buf to sync
+> I'm sorry. Yes, we have #iommu-cells = <2>.
+> 
+>> not be OK to have some magic property trying to smuggle
+>> IOMMU-driver-specific data contrary to what the IOMMU node itself says. As
+>> for iommu-map, I don't see what would be objectionable about improving the
+>> parsing to respect a real #iommu-cells value rather than hard-coding an
+>> assumption. Yes, we'd probably need to forbid entries with length > 1
+>> targeting IOMMUs with #iommu-cells > 1, since the notion of a linear
+> 
+> This will break e.g. PCIe on Qualcomm platforms:
+> 
+>                          iommu-map = <0x0   &apps_smmu 0x1400 0x1>,
+>                                      <0x100 &apps_smmu 0x1401 0x1>;
+> 
+> 
+> But this seems unlogical anyway wrt. apps_smmu having #iommu-cells =
+> <2>. It depends on ARM SMMU ignoring the second cell when it's not
+> present.
 
-for convenience, can we return the buf CPU pointer here?
+Urgh, yes, that's just broken already :(
 
-something that I already had in my initial impl [1]
+At least they all seem to be a sufficiently consistent pattern that a 
+targeted workaround to detect old DTBs looks feasible (I'm thinking, if 
+iommu-map size % 4 == 0 and cells n*4 + 3 are all 1 and cells n*4 + 1 
+are all the same phandle to an IOMMU with #iommu-cells == 2, then parse 
+as if #iommu-cells == 1)
 
-[1] https://patchwork.freedesktop.org/patch/619024/?series=139801&rev=1
+>> relationship between the input ID and the output specifier falls apart when
+>> the specifier is complex, but that seems simple enough to implement and
+>> document (even if it's too fiddly to describe in the schema itself), and
+>> still certainly no worse than having another property that *is* just
+>> iommu-map with implicit length = 1.
+>>
+>> And if you want individual StreamIDs for logical functions to be attachable
+>> to distinct contexts then those functions absolutely must be visible to the
+>> IOMMU layer and the SMMU driver as independent devices with their own unique
+>> properties, which means either they come that way from the DT as of_platform
+>> devices in the first place, or you implement a full bus_type abstraction
+> 
+> Not necessarily. Tegra display driver creates a device for each context
+> on its own.
+No, the *display* driver does not; the host1x bus driver does, which is 
+the point I was making - that has a proper bus abstraction tied into the 
+IOMMU layer, such that the devices are correctly configured long before 
+the actual DRM driver(s) get anywhere near them.
 
+> In fact, using OF to create context devices is _less_
+> robust, because now the driver needs to sync, checking that there is a
+> subdevice, that it has probed, etc. Using manually created devices seems
+> better from my POV.
 
-> + */
-> +void xe_guc_buf_sync(const struct xe_guc_buf buf)
-> +{
-> +	xe_sa_bo_sync(buf.sa);
-> +}
-> +
->  /**
->   * xe_guc_buf_cpu_ptr() - Obtain a CPU pointer to the sub-allocation.
->   * @buf: the &xe_guc_buf to query
-> diff --git a/drivers/gpu/drm/xe/xe_guc_buf.h b/drivers/gpu/drm/xe/xe_guc_buf.h
-> index 0d67604d96bdd..fe6b5ffe0d6eb 100644
-> --- a/drivers/gpu/drm/xe/xe_guc_buf.h
-> +++ b/drivers/gpu/drm/xe/xe_guc_buf.h
-> @@ -31,6 +31,7 @@ static inline bool xe_guc_buf_is_valid(const struct xe_guc_buf buf)
->  
->  void *xe_guc_buf_cpu_ptr(const struct xe_guc_buf buf);
->  u64 xe_guc_buf_flush(const struct xe_guc_buf buf);
-> +void xe_guc_buf_sync(const struct xe_guc_buf buf);
->  u64 xe_guc_buf_gpu_addr(const struct xe_guc_buf buf);
->  u64 xe_guc_cache_gpu_addr_from_ptr(struct xe_guc_buf_cache *cache, const void *ptr, u32 size);
->  
-> diff --git a/drivers/gpu/drm/xe/xe_sa.c b/drivers/gpu/drm/xe/xe_sa.c
-> index fedd017d6dd36..2115789c2bfb7 100644
-> --- a/drivers/gpu/drm/xe/xe_sa.c
-> +++ b/drivers/gpu/drm/xe/xe_sa.c
-> @@ -110,6 +110,10 @@ struct drm_suballoc *__xe_sa_bo_new(struct xe_sa_manager *sa_manager, u32 size,
->  	return drm_suballoc_new(&sa_manager->base, size, gfp, true, 0);
->  }
->  
-> +/**
-> + * xe_sa_bo_flush_write() - Copy the data from the sub-allocation to the GPU memory.
-> + * @sa_bo: the &drm_suballoc to flush
-> + */
->  void xe_sa_bo_flush_write(struct drm_suballoc *sa_bo)
->  {
->  	struct xe_sa_manager *sa_manager = to_xe_sa_manager(sa_bo->manager);
-> @@ -123,6 +127,23 @@ void xe_sa_bo_flush_write(struct drm_suballoc *sa_bo)
->  			 drm_suballoc_size(sa_bo));
->  }
->  
-> +/**
-> + * xe_sa_bo_sync() - Copy the data from GPU memory to the sub-allocation.
-> + * @sa_bo: the &drm_suballoc to sync
-> + */
-> +void xe_sa_bo_sync(struct drm_suballoc *sa_bo)
-> +{
-> +	struct xe_sa_manager *sa_manager = to_xe_sa_manager(sa_bo->manager);
-> +	struct xe_device *xe = tile_to_xe(sa_manager->bo->tile);
-> +
-> +	if (!sa_manager->bo->vmap.is_iomem)
-> +		return;
-> +
-> +	xe_map_memcpy_from(xe, xe_sa_bo_cpu_addr(sa_bo), &sa_manager->bo->vmap,
-> +			   drm_suballoc_soffset(sa_bo),
-> +			   drm_suballoc_size(sa_bo));
-> +}
-> +
->  void xe_sa_bo_free(struct drm_suballoc *sa_bo,
->  		   struct dma_fence *fence)
->  {
-> diff --git a/drivers/gpu/drm/xe/xe_sa.h b/drivers/gpu/drm/xe/xe_sa.h
-> index 99dbf0eea5402..28fd8bb6450c2 100644
-> --- a/drivers/gpu/drm/xe/xe_sa.h
-> +++ b/drivers/gpu/drm/xe/xe_sa.h
-> @@ -37,6 +37,7 @@ static inline struct drm_suballoc *xe_sa_bo_new(struct xe_sa_manager *sa_manager
->  }
->  
->  void xe_sa_bo_flush_write(struct drm_suballoc *sa_bo);
-> +void xe_sa_bo_sync(struct drm_suballoc *sa_bo);
->  void xe_sa_bo_free(struct drm_suballoc *sa_bo, struct dma_fence *fence);
->  
->  static inline struct xe_sa_manager *
+Huh? A simple call to of_platform_populate() is somehow less robust than 
+open-coding much of the same logic that of_platform_populate() does plus 
+a bunch of hackery to try to fake up an of_node to make the new device 
+appear to own the appropriate properties?
 
+Having entire sub-*drivers* for child devices or not is an orthogonal 
+issue regardless of whichever way they are created.
+>> which will have to be hooked up to the IOMMU layer. You cannot make IOMMU
+>> configuration "internal" to the actual client driver which is only allowed
+>> to bind *after* said IOMMU configuration has already been made.
+> 
+> I'm not sure I follow this, I'm sorry.
+I mean IOMMU configuration is designed to happen at device_add() time, 
+and client drivers must not assume otherwise (the mechanisms for 
+handling IOMMU drivers registering "late" from modules are internal 
+details that can and will change). If you're under the impression that a 
+straightforward platform driver for the video codec itself would be able 
+to invoke IOMMU configuration for the video codec platform device 
+(without unacceptable levels of hackery) then you are mistaken, sorry.
+
+Again, to be able to assign StreamIDs to different contexts, those 
+StreamIDs must uniquely belong to different struct devices. Thus in 
+terms of how you get to those struct devices from a DT representation, 
+either they come from distinct DT nodes with standard "iommus" 
+properties that the generic of_platform code can create and configure 
+accordingly, or you're doing a non-trivial amount of work to implement 
+your own bus layer like host1x_context_bus to manage your own type of 
+sub-device. There is no valid middle ground of trying to stuff 
+driver-specific knowledge of arbitrarily made-up function IDs into the 
+generic platform bus code.
+
+Thanks,
+Robin.
 
