@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-851216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA74BD5CBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFEFBD5CC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A33404F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C61018A7772
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6582D8767;
-	Mon, 13 Oct 2025 18:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AEB2D9491;
+	Mon, 13 Oct 2025 18:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RrEL3j+L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+VWFlby"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC872D780A;
-	Mon, 13 Oct 2025 18:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F058E2D8764;
+	Mon, 13 Oct 2025 18:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381626; cv=none; b=Md3VhlD3/HPBF+UYexYlQwGZK0yllyuWKleCuvcfpZrmRDgY6jRZnpJhVHlG3LkIj56rVNsEFaocreXrUpNlEtrfSE2whrA46D1RTUek6cDHJZry6DVTwH8v4PsQKLmRD53D84oeaEmqjTKlOT83FNUO6iw5YEoNG5MfY1u8oeQ=
+	t=1760381630; cv=none; b=XF0Mz2WpyNPCpYjOQzzdxWLtmjQAmKj0s3GWA1DmsPiJxEY7Ot/ss/4WGW7WE8RjAhjQ/vMSYvneCkjJC5EGXLR76jJA/tyw+s0ae7VKFQD3s1Y/uDM6RRBC5ZIMsdZctaonVPCEr+MjkywkdXAhYueAT74jgmyOIru88UI/FiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381626; c=relaxed/simple;
-	bh=wgHs/bx7/W6rrOaxhoN0JIIBZi5fMF82kbFYl5rNQLw=;
+	s=arc-20240116; t=1760381630; c=relaxed/simple;
+	bh=QbCkkqHDRODaloYhX6Hv/SUHAubYrcVQyDlxupIG2jY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lorApCripjfDHiO/flCHxsNfZrDU48X5AxfDzagqVz3XG0oOJ1U3cxV2sUNAiFsYdOqqGm9BNXj3x12qWg7o6oFquB/uWKPM9WVLsKPh3Tx1gRq4EmPxVL9VRZ2rP5Zup4gsFFMEuNuU5wE8Z/p1SIVX1CVtZRFcIhWH+gugJRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RrEL3j+L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03EEBC4CEE7;
-	Mon, 13 Oct 2025 18:53:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoGtznaJVvrX3V3qiTmv+tk0NaKQrJnAcPvZ9M85ShhbOna0QT2M1vprLvupkcXj5Xk9rkPWnuN+nlLPG1fdKRaQRrmeITm14vcLVQEEMhQ8+wLVXx1k1j1+WdzeTe3xKMlsEzjxAxrCHnNWtFauXwvYzpL5P/xC+SdlHXstixM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+VWFlby; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F89AC4CEE7;
+	Mon, 13 Oct 2025 18:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760381626;
-	bh=wgHs/bx7/W6rrOaxhoN0JIIBZi5fMF82kbFYl5rNQLw=;
+	s=k20201202; t=1760381629;
+	bh=QbCkkqHDRODaloYhX6Hv/SUHAubYrcVQyDlxupIG2jY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RrEL3j+LTabJgHWwbbCsg9y+ApEKWkuafAESdg+C+F237MM8J/LAIOU3LARXHpfah
-	 HW4eD+aFiz6n1aP5lK4rBEn/xZmugS9eMRyYLT6QDE3bMsXUez5G3Z0tNW/LaYUWgl
-	 EgnEC/WpVF9e1gi7cSYwhFxRadyBg+xr6booSzre5KQIJfJIW2YXd36JySQ8EuU1Ao
-	 dgb8XPrxtIAx4tlvnB4O4rjWCQrzy09FWOow2z41Zzp5mzU56a0LjJ4F28kcVbaKYd
-	 mKAN+FXI5J6QHdZMRGKyKpWVAWE4pEuwPTTRPBb0BLKJtl0AMbmCAvZ1pe4Y9jdqrC
-	 EyoCLMduOYttg==
-Date: Mon, 13 Oct 2025 08:53:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCHSET sched_ext/for-6.19] sched_ext: Misc changes with some
- prep patches for sub-sched support
-Message-ID: <aO1KucWcGLQQORBt@slm.duckdns.org>
-References: <20251007015147.2496026-1-tj@kernel.org>
+	b=h+VWFlbym/MbpFKzMA0bfI4FgsEQzA2Uv+xaqz8XNUt+vQrC3luUw15Zdmmn70O++
+	 OQItyqjhCU1wvRt9DE1zHfO+SQ1GeKLtWMmBwufETANYEO2pTFTFR2PpcZ4yt3+9XN
+	 VE+D6Ed7rPRbKv2m6DpvUdaK/bvHcz5wm65Mg6uta4IUx5EX3aDC7fpD2QCePcR3eM
+	 hKWooNw4wnbGr96FeIEC2dT5IOCnvE/9VsD5WFYu2H5GIgnAHkP2UStgL3g2seV/as
+	 PLOPYpFBFR9RKBFSfsYnINP2TgnWBNzvuGk9uphOiJDbypaZQ5V/0HRDi4XpxsyrlS
+	 +s6vUK8mMnydg==
+Date: Mon, 13 Oct 2025 12:53:47 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	Sagi Grimberg <sagi@grimberg.me>
+Subject: Re: [PATCH 2/4] blk-mq-dma: unify DMA unmap routine
+Message-ID: <aO1Ku5DCIMVRirdu@kbusch-mbp>
+References: <cover.1760369219.git.leon@kernel.org>
+ <04baf1fdff8a04197d5f64c2653c29e7482a2840.1760369219.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,23 +60,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251007015147.2496026-1-tj@kernel.org>
+In-Reply-To: <04baf1fdff8a04197d5f64c2653c29e7482a2840.1760369219.git.leon@kernel.org>
 
-On Mon, Oct 06, 2025 at 03:51:43PM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> This patchset contains misc changes and some prep patches for future
-> sub-scheduler support.
-> 
-> 0001-tools-sched_ext-Strip-compatibility-macros-for-cgrou.patch
-> 0002-sched_ext-Add-scx_bpf_task_set_slice-and-scx_bpf_tas.patch
-> 0003-sched_ext-Wrap-kfunc-args-in-struct-to-prepare-for-a.patch
-> 0004-sched_ext-Make-scx_bpf_dsq_insert-return-bool.patch
+On Mon, Oct 13, 2025 at 06:34:10PM +0300, Leon Romanovsky wrote:
+> +bool blk_rq_dma_unmap(struct request *req, struct device *dma_dev,
+> +		struct dma_iova_state *state, size_t mapped_len)
+> +{
+> +	struct bio_integrity_payload *bip = bio_integrity(req->bio);
+> +
+> +	if ((!bip && req->cmd_flags & REQ_P2PDMA) ||
+> +	    bio_integrity_flagged(req->bio, BIP_P2P_DMA))
+> +		return true;
 
-Applied to sched_ext/for-6.19.
-
-Thanks.
-
--- 
-tejun
+I don't think you can unify it at this part here because the data
+payload might not be P2P but the integrity payload could be. The data
+payload needs to proceed to the next unmapping step in that case, but
+this change would have it return true early.
 
