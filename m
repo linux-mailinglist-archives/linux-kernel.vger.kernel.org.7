@@ -1,89 +1,110 @@
-Return-Path: <linux-kernel+bounces-849995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA9EBD1925
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:02:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E974BD1928
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 597754ECC2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192751890DBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D102E0412;
-	Mon, 13 Oct 2025 06:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D82DE703;
+	Mon, 13 Oct 2025 06:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaSHwMsH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TAFlBh2a"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6261E3DED;
-	Mon, 13 Oct 2025 06:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862161D5CF2;
+	Mon, 13 Oct 2025 06:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760335273; cv=none; b=QG6He9u/YkQjWW97TmwYjuQPZjm5mDYjcajcMvL31Y2i1peTDUTHTRk4boHkRK0u8+Rrg67jnaTTu8vrJypj8SX5ffH17nhzxIW8XsBwnhc5wr7J2BrSUHG3605+xu8G2Re8OuZgLdb67KPQz02B3k5KXexpEkiGTgAyp2FGaMw=
+	t=1760335370; cv=none; b=MtGHw+NDE4hTZVPufGA2GiSEvdHD6TA2WpwqowhgIBzoHk8tPjpHfjm23w4T8NBty8jGdQTWTUpxkKjc6if+VKAdIDFBjcL82bs9/zM1gNPj5AwYJLTbfpykq8XuUrvP3SJET+jPBkym8RbNVJkj93ZkRjG3RE8GONDK05bjTtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760335273; c=relaxed/simple;
-	bh=1ap+MJcPfkNA5oVgftpQ/EYbo9aqD7bOjQWjQ77cIbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FrhfR9FeeH1F6pYw/2+/f/0d1pNRrdhQ/E/VWssSN4brxhhKNd29BJGO7z9dG4Qma8XK3/igzP/nfCygB/BpgUomYSTWMM8ApVhWITa5yXwRqZhrMxLgsgt5KWe9W9z4IKSW9B/1UaaHZQ0u/2KT+ttLoegdyhKlEFEJJByQTbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaSHwMsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2E5C4CEE7;
-	Mon, 13 Oct 2025 06:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760335273;
-	bh=1ap+MJcPfkNA5oVgftpQ/EYbo9aqD7bOjQWjQ77cIbk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SaSHwMsHgqQemegBnH4z3oFtqkOsLT1IhDEMS/coRuLAZoSlTb4Zs0o/UGOmLsK9n
-	 RT5cyg951w3iTn84isKeDXTtaa6B2TN0/HlFVvI6oAxHRaxsEDNhZRrFU76CqYMbpK
-	 zI85mwMbLeA+MwKebVlrEecroqp/YvpC5OqTRonT1XgJ7vlBFdhcP/aHkksVJcraQ8
-	 XUPdW/zj6k3Af6rh17Du673XxKtIWcyjpb9i+ZFB3keNfkcPihDLignvGdGIS76ji+
-	 kNJDXnYukWH7KdM8eeIEfV7PX/bx6+m2ZJ850+OrTKrX8VlYVzb66w2vaO933HFCov
-	 DesJsblSJ2Nyw==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	=?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <bence98@sch.bme.hu>,
-	Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1760335370; c=relaxed/simple;
+	bh=gCTdPchWuc1xiR4tpvlqqw30LOOS9lTJyDFe5on17HM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MvcWAGKLgzopfe/fVNgT8W5/n7vIUSoC543I8k/q3LT3pGuQ6iVcS8HUF1phzPkZyuFNBxAytaUN9grrS2ifN3AZ9a9wFz8b5jhq7nh/7rw8pP5IQ7AyTQV30s0C9VhwuzmdxM6Xk5+rvZNJD+B1dy1tPQGgquxt7mjDoQtAvFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TAFlBh2a; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760335360;
+	bh=gCTdPchWuc1xiR4tpvlqqw30LOOS9lTJyDFe5on17HM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TAFlBh2aNv23DXPQ8OmreZbzQmFTLIEjl9J0KbxvbjC5MtwEDNbXW5ujofaTRW+XL
+	 KO2ISTQK6VLqg6gIt8eK01iUC61DOl72IhIbVAd8Uh2RUP0MV+1sbBup1PxcUL3Udr
+	 rNFUwfDC3qq0kgUl0qUdx5t3dkfn+cHIOCN7SIWrLYmNfGvL7Dar5Jx6QYWjcHmEpA
+	 ZmH/LzM1ZfJ5fjq8ANRpuElYt405PKG/Rru0AscGlyxSihbzvzzmy/vF0/u9uZL1Io
+	 7KVmdMeZ3vp1bYNvsFVYPV/gZX1Wn7B/AL6tw4uOItj3wuAmFt97FfOZiW9LFpAlDN
+	 ltp9kK/V6HuoA==
+Received: from debian (unknown [171.76.80.157])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BC90217E0CA3;
+	Mon, 13 Oct 2025 08:02:36 +0200 (CEST)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.fornazier@gmail.com,
+	airlied@gmail.com,
+	simona.vetter@ffwll.ch,
+	robdclark@gmail.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	valentine.burley@collabora.com,
+	lumag@kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] counter: microchip-tcb-capture: Allow shared IRQ for multi-channel TCBs
-Date: Mon, 13 Oct 2025 15:01:01 +0900
-Message-ID: <176033523436.106204.9869251013103555876.b4-ty@kernel.org>
+Subject: [PATCH v1] drm/ci: disable broken MR check in sanity job
+Date: Mon, 13 Oct 2025 11:32:10 +0530
+Message-ID: <20251013060212.14583-1-vignesh.raman@collabora.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251006-microchip-tcb-v1-1-09c19181bb4a@microchip.com>
-References: <20251006-microchip-tcb-v1-1-09c19181bb4a@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=730; i=wbg@kernel.org; h=from:subject:message-id; bh=FfihZzLUnWdr8UZTAyufw7Pkrq9SwIy86X5nsYJ3Io8=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBlvpnZOLD3YYij3rHVJaMIfn71LJ/Mms2v6vd137m3fI 7/pchLiHaUsDGJcDLJiiiy95mfvPrikqvHjxfxtMHNYmUCGMHBxCsBE1tQwMvR8TJi44XOK/feI O21d/yTUDj3dPD0rZ4uNX9zDjo7zZqmMDF2qd1huvl31ZjpHTaS+yBmNX0ayFuKeB8+qSbxm8Sy 6zQoA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+GitLab recently changed the required permissions for the
+are-developers-allowed-to-push-to-my-MR check:
+https://gitlab.freedesktop.org/freedesktop/ci-templates/-/issues/81
 
-On Mon, 06 Oct 2025 16:21:50 +0530, Dharma Balasubiramani wrote:
-> Mark the interrupt as IRQF_SHARED to permit multiple counter channels to
-> share the same TCB IRQ line.
-> 
-> Each Timer/Counter Block (TCB) instance shares a single IRQ line among its
-> three internal channels. When multiple counter channels (e.g., counter@0
-> and counter@1) within the same TCB are enabled, the second call to
-> devm_request_irq() fails because the IRQ line is already requested by the
-> first channel.
-> 
-> [...]
+Until that’s resolved, disable the check - it’s mostly obsolete anyway.
 
-Applied, thanks!
+Based on https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/37782
 
-[1/1] counter: microchip-tcb-capture: Allow shared IRQ for multi-channel TCBs
-      commit: 109ff654934a4752f8875ded672efd1fbfe4d31d
+Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+---
+ drivers/gpu/drm/ci/gitlab-ci.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+index d502d146b177..56638814bb28 100644
+--- a/drivers/gpu/drm/ci/gitlab-ci.yml
++++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+@@ -280,7 +280,7 @@ sanity:
+     GIT_STRATEGY: none
+   script:
+     # ci-fairy check-commits --junit-xml=check-commits.xml
+-    - ci-fairy check-merge-request --require-allow-collaboration --junit-xml=check-merge-request.xml
++    # - ci-fairy check-merge-request --require-allow-collaboration --junit-xml=check-merge-request.xml
+     - |
+       set -eu
+       image_tags=(
 -- 
-William Breathitt Gray <wbg@kernel.org>
+2.51.0
+
 
