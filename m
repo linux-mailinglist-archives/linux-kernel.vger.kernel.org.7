@@ -1,58 +1,79 @@
-Return-Path: <linux-kernel+bounces-851541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AE5BD6B6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:14:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41507BD6B93
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6EA719A09A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EC0406FB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6062FE045;
-	Mon, 13 Oct 2025 23:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A092C158F;
+	Mon, 13 Oct 2025 23:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mmAI5Pvp"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rMyiyRR4"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0517C220F38
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D8C29B22F;
+	Mon, 13 Oct 2025 23:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760397239; cv=none; b=LoVwvj0tZRrYt5PL3OT233iM+xVHIIs9HdGFt25TcennAFQwWk4AuEdDrxnrTfM7FoB7jWrNpluLKNWxCXzYIB9Sq5DTlpwcBciwpHilkVh5RJyTes2fwfKjPOzUxBYvJH+EN779KKyXkUxYwRNkURjqjtwuQjFl37YjM5CAY9c=
+	t=1760397720; cv=none; b=UiOsA03yPa210WECRC4YSns4M5Cxc+Dw41PHWMN6QJX6PyKGpZtO8NB3e1hs7edXEK5o/ICEHsTPk5hiLpoM6cjS51WKJQbFdIbiOpq2cjbsAVAdAyTr65Kq3VbhWS2XdFeoTW9Dw41Et++OsN0WZ/PTCLBnyN9K0PtFZ/gHuGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760397239; c=relaxed/simple;
-	bh=Crd/6+faO0VmSeJYjBD0B8iA8nAphwudTku8gDmY7ZA=;
+	s=arc-20240116; t=1760397720; c=relaxed/simple;
+	bh=Q+y+hOZaxeraI2K323ODZg58MVzPDfgjCFg6q5BEDZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ev8OG9YDWSkI3GsnaLnJJc1GyRCR1WGSeFJnav3pBV1pao2FLCNK4WbEEHfHeiuZp/o3pfAaVtxL9DKxhVbUYFCLic0C8OTIMEDvH4hnqZZ15z/EwwtI2ijhPVZmuW3owFyNorm2Wnwj8JMC5eiXA8J7lz57sYD1vkuXICAZUHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mmAI5Pvp; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 13 Oct 2025 23:13:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760397225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8CewOr8v6ktZEwt5LSAXhGz0m2E8hzX+Ljv2EDTU2BU=;
-	b=mmAI5PvpN6r2aWgD4Hk5SInNnkQIeof9jwC2+vOiltoPVyMeLrb/wGVaN/uUQn3nkN0Mej
-	mVafDHH79UN7A3cRQ3ft36hlAsWJzCFfVfTik8OCRPB9LaOynlbOuqBHHNpBM2PNqDXZA7
-	UyIQBFIK8RmUudRnUxrkIN2ujWphyqA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
- describe EPT entries
-Message-ID: <zfhwufkxrv4uqibspjstsqruuz5mgd4t765c3cobh374bmfqwy@welriubpwp6t>
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev>
- <20251001145816.1414855-9-yosry.ahmed@linux.dev>
- <aO1yJHcKC85mo0PQ@google.com>
- <ivkoh7hdl7fcp5fmehmf3kv6ebqitozunbricyed5tkt7z3ngr@qvmaytpzrskw>
- <aO2EFiOHSuvmHvq_@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=muk3vTisVP6+kfiKRWGiEQIgnskWDcj3iK4fU8EX+svF1MHjA0TFf0IA3PV59k/bqvry09yp86bNfU6gaF5AMotB/9AyJcAH4glyOXIWQWbHFChZuH4GGPJ1ulT0PynuzzEO7fYuF+GW1S2630AeILbjJ7kZEre8y1Y5YeMgw8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rMyiyRR4; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=TxZs5j0GQr6gjRGpkRpFUDbUO8uzcXTBWTBz3HVACss=; b=rMyiyRR45hLIG7YWBawu1BNpgf
+	BEAvDSgxch1+Kd4OEMXWdxTkJr6K2P+9Ya49OraVyX3KA5mTcW2j5VolDdYh6lRiuVvR1zdvXxtSr
+	TWQbafvpqDtGgB6LTroad8vXJRvxzihaxNlGVjU92Iubm10AHWDTrP64ugZuaQewWOHs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v8RrN-00AqZ5-I0; Tue, 14 Oct 2025 01:21:45 +0200
+Date: Tue, 14 Oct 2025 01:21:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Paul Rosswurm <paulros@microsoft.com>,
+	Dexuan Cui <decui@microsoft.com>, KY Srinivasan <kys@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"ernis@linux.microsoft.com" <ernis@linux.microsoft.com>,
+	"dipayanroy@linux.microsoft.com" <dipayanroy@linux.microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
+	"leon@kernel.org" <leon@kernel.org>,
+	"mlevitsk@redhat.com" <mlevitsk@redhat.com>,
+	"yury.norov@gmail.com" <yury.norov@gmail.com>,
+	Shiraz Saleem <shirazsaleem@microsoft.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH net-next] net: mana: Support HW link state
+ events
+Message-ID: <4ea9acfd-be02-4299-b8c4-95bb69ad04cd@lunn.ch>
+References: <1760384001-30805-1-git-send-email-haiyangz@linux.microsoft.com>
+ <74490632-68da-401d-89a7-3d937d63cbe3@lunn.ch>
+ <CY5PR21MB3447B6D69542EA4532547A5FCAEAA@CY5PR21MB3447.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,124 +82,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aO2EFiOHSuvmHvq_@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CY5PR21MB3447B6D69542EA4532547A5FCAEAA@CY5PR21MB3447.namprd21.prod.outlook.com>
 
-On Mon, Oct 13, 2025 at 03:58:30PM -0700, Sean Christopherson wrote:
-> On Mon, Oct 13, 2025, Yosry Ahmed wrote:
-> > On Mon, Oct 13, 2025 at 02:41:56PM -0700, Sean Christopherson wrote:
-> > > On Wed, Oct 01, 2025, Yosry Ahmed wrote:
-> > > > From: Yosry Ahmed <yosryahmed@google.com>
-> > > > 
-> > > > The assertions use 'hugepage' to describe a terminal EPT entry, but
-> > > > 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
-> > > > hugepage.
-> > > 
-> > > Yes, it's more accurate, but also less precise.  I'm guessing the assert message
-> > > and comment talked about hugepages because that's the type of mappings that
-> > > caused problems at the time.
+> > > +		if (link_up) {
+> > > +			netif_carrier_on(ndev);
+> > > +
+> > > +			if (apc->port_is_up)
+> > > +				netif_tx_wake_all_queues(ndev);
+> > > +
+> > > +			__netdev_notify_peers(ndev);
+> > > +		} else {
+> > > +			if (netif_carrier_ok(ndev)) {
+> > > +				netif_tx_disable(ndev);
+> > > +				netif_carrier_off(ndev);
+> > > +			}
+> > > +		}
 > > 
-> > Given that it refers to PG_LEVEL_4K entries too, I wouldn't call it less
-> > precise. All callers actually create 4K mappings so it is never actually
-> > a hugepage in the current context :D
+> > It is odd this is asymmetric. Up and down should really be opposites.
+> For the up event, we need to delay the wake up queues if the 
+> mana_close() is called, or mana_open() isn't called yet.
 > 
-> nested_identity_map_1g()?
+> Also, we notify peers only when link up.
 
-Yeah I missed this one.
+But why is this not symmetric?
 
-> 
-> > > Ah, actually, I bet the code was copy+pasted from virt_create_upper_pte(), in
-> > > which case the assumptions about wanting to create a hupage are both accurate
-> > > and precise.
-> > > 
-> > > > The distincion will be useful in coming changes that will pass
-> > > > the value around and 'leaf' is clearer than hugepage or page_size.
-> > > 
-> > > What value?
-> > 
-> > 'leaf'. The following changes will pass 'leaf' in as a boolean instead
-> > of checking 'current_level == target_level' here. So passing in
-> > 'hugepage' would be inaccurate, and 'page_size' is not as clear (but
-> > still works).
-> > 
-> > > 
-> > > > Leave the EPT bit named page_size to keep it conforming to the manual.
-> > > > 
-> > > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > > > ---
-> > > >  tools/testing/selftests/kvm/lib/x86/vmx.c | 10 +++++-----
-> > > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > > index 04c4b97bcd1e7..673756b27e903 100644
-> > > > --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > > +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
-> > > > @@ -380,15 +380,15 @@ static void nested_create_pte(struct kvm_vm *vm,
-> > > >  			pte->address = vm_alloc_page_table(vm) >> vm->page_shift;
-> > > >  	} else {
-> > > >  		/*
-> > > > -		 * Entry already present.  Assert that the caller doesn't want
-> > > > -		 * a hugepage at this level, and that there isn't a hugepage at
-> > > > -		 * this level.
-> > > > +		 * Entry already present.  Assert that the caller doesn't want a
-> > > > +		 * leaf entry at this level, and that there isn't a leaf entry
-> > > > +		 * at this level.
-> > > >  		 */
-> > > >  		TEST_ASSERT(current_level != target_level,
-> > > > -			    "Cannot create hugepage at level: %u, nested_paddr: 0x%lx",
-> > > > +			    "Cannot create leaf entry at level: %u, nested_paddr: 0x%lx",
-> > > >  			    current_level, nested_paddr);
-> > > >  		TEST_ASSERT(!pte->page_size,
-> > > > -			    "Cannot create page table at level: %u, nested_paddr: 0x%lx",
-> > > > +			    "Leaf entry already exists at level: %u, nested_paddr: 0x%lx",
-> > > 
-> > > This change is flat out wrong.  The existing PRESENT PTE _might_ be a 4KiB leaf
-> > > entry, but it might also be an existing non-leaf page table.
-> > 
-> > Hmm if pte->page_size is true then it has to be a leaf page table,
-> > right?
-> 
-> No, because bit 7 is ignored by hardware for 4KiB entries.  I.e. it can be 0 or
-> 1 depending on the whims of software.  Ugh, this code uses bit 7 to flag leaf
-> entries.  That's lovely.
+On down, if port_is_up is not true, there is no need to disable tx and
+set the carrier off. There are also counters associated with
+netif_carrier_off() and netif_carrier_on(), and if you don't call them
+in symmetric pairs, the counters are going to look odd.
 
-That's not my fault :P
+> cancel_work_sync()'s doc says "This function can be used
+> even if the work re-queues itself".
+> cancel_delayed_work_sync() calls the same underlying function but 
+> with WORK_CANCEL_DELAYED flag. So it should be OK.
 
-> 
-> > If it's an existing non-leaf page table we shouldn't fail,
-> 
-> Ah, right, current_level can never be less than target_level because the first
-> assert will fail on iteration-1.
-> 
-> > the assertion here is when we try to override a leaf page table IIUC.
-> >
-> > > Instead of hacking on the nested code, can we instead tweak __virt_pg_map() to
-> > > work with nested TDP?  At a glance, it's already quite close, e.g. "just" needs
-> > > to be taught about EPT RWX bits and allow the call to pass in the root pointer.
-> > 
-> > That would be ideal, I'll take a look. In case I don't have time for
-> > that unification, can this be a follow-up change?
-> 
-> Part of me wants to be nice and say "yes", but most of me wants to say "no".
+O.K, thanks
 
-So.. which part won?
-
-> 
-> Struct overlays for PTEs suck.  At best, they generate poor code and obfuscate
-> simple logic (e.g. vm->page_size vs pte->page_size is a confusion that simply
-> should not be possible).  At worst, they lead to hard-to-debug issues like the
-> one that led to commit f18b4aebe107 ("kvm: selftests: do not use bitfields larger
-> than 32-bits for PTEs").
-> 
-> eptPageTableEntry obviously isn't your fault, but nptPageTableEntry is. :-D
-> And I suspect the hardest part of unificiation will be adding the globals to
-> deal with variable bit positions that are currently being handled by the struct
-> overlays.
-
-I have no problem getting rid of eptPageTableEntry and using bitmasks
-and whatnot on a uint64_t PTE (assuming that's what you are asking for
-here).
-
-But I think tweaking __virt_pg_map() will involve more than that, or
-maybe I just didn't look close enough yet.
+	Andrew
 
