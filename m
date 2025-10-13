@@ -1,121 +1,147 @@
-Return-Path: <linux-kernel+bounces-850317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A53CBD27DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:14:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F434BD27FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A473A6C69
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:14:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BC644F0574
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31642FE596;
-	Mon, 13 Oct 2025 10:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC1E2FF169;
+	Mon, 13 Oct 2025 10:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZKZfhagI"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="l9Wzod7x"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC5D2FE061
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760350440; cv=none; b=IaWLDDHIgUn1lX59/SRuUdCvnI7vffPGGGj1a6TFLSRYPuCp+gc44nHCrWHgVXFsbg5+9+g5BNEOdel6LVGrjshe+WZjUP0B9InBWiRD4enPeSI3w+tVA8fU/tZxsV80MVV6v+GqxWfSwrpy3ioTZSzT2+6giIjuQFsqlxMuxAg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760350440; c=relaxed/simple;
-	bh=IGEdbdnaRYWKvG+bGlTd3zUjiAzrtQYQYYulGQBXPVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y1JnYZlfa/E7c+gUwvzBjtIEz4FZQnVcWMaMWGvYYFoq/k9khHoFP181ZERc6pbfp8hIlIqYWcpHI8G9O46sei/uWtIKPBYpD0flUoOM4RIr8832p7FMUTh8qZvvrbGj7V0Gk8zv6X1ndv2f9FQR0yi0yzi/KXrJXHbJOAJSN6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZKZfhagI; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3696f1d5102so38547031fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760350436; x=1760955236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IGEdbdnaRYWKvG+bGlTd3zUjiAzrtQYQYYulGQBXPVQ=;
-        b=ZKZfhagIj4u6LFe1ocgaUTzSTxvFJFATTfnN1c9c/AdjypBb1UGUbP09Fx3EnBE+V+
-         ARQcg4e8vFVK7pMSIDZnYie6DolRBozXlWhK/IRYGJiAPlBofRDR6aylXeYBnpoEuhGv
-         iseiSIp6IXmb5/RLAHGKdNmtne2KJEtCyfTYZ0GQx29OIoLNNzHbgbSiteZThI+1fWuy
-         6iQ2tqxonukRqZd0+JyuVUslzM7a580S0vPXua/SUOhzrz1GTRaZIO//KZYPFxh0sZ0B
-         acM7pGN9n0B7kTv0eVLtIP4kLr/o/6MnJ/hKYZViZoR0nzeRLFC72GSOAZE8q7uqRi95
-         bVLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760350436; x=1760955236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IGEdbdnaRYWKvG+bGlTd3zUjiAzrtQYQYYulGQBXPVQ=;
-        b=vTTFjFErRT+tbwYW8ucvJdF3HnxZ607ue9VYFAIsJi4ykAmwWvVLt4R2J/FvUCE3X5
-         kSDmKpmmdvezKod/4vlytGEie38zXNTItJVzegNLIDGyQPoaul5aWzijow8e6jkExz7k
-         PqYe0bF89nnjS/obuQNeNSbNUjsqET6i8BjE8bV/le9yhnvcLFswFS73IfsN91qjzdq+
-         5h0sreQz3Xkmyy2RBbNYt2DFN5D6QOLf+TknzjbumWLiuYtgXSZyQKFRfgbL4itI67pR
-         7DHvCyQiZ/vWwyA/50XIYemz5ek9bcJ40yWGqTeeZ5iCsFET3MF9cKdGOejAJMxyhf2Q
-         PyyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXosFomcI0YLULBmbzladTR+1o12Rujqq9iGgmZhu05NH5PbdRWMTFHbqX9fYbWjh9s6V1744pcvjZYJv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWWyBu4jfX5jdGJ+CgUgz6xzc21CCGPEu9Z+NkSOB6aSGoXVOb
-	lzQBThkzCppirEu0a2PrLIDzleKEAYSAwEdkn5PrfzsNQjJWfWzm5wX5RBV3glkzrR+HPI9FTUL
-	pa0+cTvRdGzL2dVLhKnbsGBJ/HF0IWkfcu2/IqaSdvg==
-X-Gm-Gg: ASbGncskD5tFtNryeoROYRRSq1P0JUC5uADWK077s28GGUriRbukIPRklzBof3k5mwC
-	vuDunTovxttabCETaT8RCNxRV+FCJLBhv/8Y7V7o81ocjoenTVbnPcsT8L/vo3EkGlIsrY95WHc
-	a7KnBVCiKTXPePUERClHxjmxxutlgl8w0+qMHkQ4dCw5ntbpGxyTQ4FfSIcHEI3pBimeP/0MD1p
-	NZ19lqonLkuRqyuouhe43YX2MQ2qA==
-X-Google-Smtp-Source: AGHT+IEyXfMASnDudG0S7N/mc330ju/Ch5pEVZ3V2N1dVue3s7gHw8dguHiupRcJCaA2bDWHDzkge7BrzB3mH+HUM10=
-X-Received: by 2002:a2e:bcc7:0:b0:368:6a3f:35e9 with SMTP id
- 38308e7fff4ca-37609e4d4c3mr49784771fa.36.1760350435755; Mon, 13 Oct 2025
- 03:13:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E242FBE0D;
+	Mon, 13 Oct 2025 10:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760350572; cv=pass; b=NVr3uUAGG9SAYX9/OAS9H1Zq/bagQXUSzJCJzgcHk09NScjacYEDWnnyZWudrcVVd2CYIzQo6UzqnH1vDRs5IvZ47OX/Jcpd/9PuSzC2cs4Vk9bgCl/36v1qN+LVczfnPsu0Hkbte91KkqcBm6Cg/wLRICLOyclqCDHk90G7JCc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760350572; c=relaxed/simple;
+	bh=KbGgbE2LAMKXZsdb4PTIRcj+uHmgvrLQq5UjeCSuZCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HKZMlzokvj/5AHBRndnhyKoWQC3VXZ7/QdqkaWZDdNIKzcIFlEWKvhpEQLtfcO53MHdikcvVcA/VJUzxULwfutqQEXR1HEIoOZtNofx/nwB7HuzUBNdBVn2o7xuON9X+/pANIQwfbmlxHo3BPe8ydQp8Oo9Pr+2awYisZHoxIlQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=l9Wzod7x; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from osx.local (ecs-119-8-240-30.compute.hwclouds-dns.com [119.8.240.30])
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59DAEqqO3147496
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 13 Oct 2025 18:14:59 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760350500; cv=none;
+	b=m7u9SBlcxPv1jcQv8hFLob6a818/dI8br67FRkn+exKzz6dvM8v5IaSmBqcxTjsOZzsHeXSfdIaMPLnunqRhbB+9Ef7D2mEg6xWpKyBVdmVvaCeWcDao8IM8coVBjmC5/h384XIuyY8e3bJCUVT1D+noXvtMXuqI57DljvKAQds=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1760350500; c=relaxed/relaxed;
+	bh=TA3dA+SpwDuqkRbHnSmlGjQUhZ1LSdHyaNvgSwhoDHM=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=ba6/1Tyu973Tfm0GP64RGrfveAKjxL0D6LeMLK18dgza7L2BsYGcRkNRlAfSjPEjzVri+f+Orqib8jKFfgd5A7WrS7krgP7Dn4Ux7sL/dcDILMO6ciot7fJPfy0pqnWxwjcOUTFvaBP/bm7IDH7/2muMOw++DbEp535l7sya4YM=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1760350500;
+	bh=TA3dA+SpwDuqkRbHnSmlGjQUhZ1LSdHyaNvgSwhoDHM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=l9Wzod7xxEoH156EOIiOJR3wvSrsmxZ8sT4VglJFr6nfnhSQQqiWSZAPZsSBToPFt
+	 vydNamFwF7Azbm14yDnl7YeJhMKX+EKnC+DKYHQA/NfmTwWosXi38HqVARhsQQy097
+	 zS9vxQwuO6i4E0sXUCAPI/lEvkrm97X/HxgSIaqI=
+Date: Mon, 13 Oct 2025 18:14:47 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Steve French <sfrench@samba.org>, Steve French <smfrench@gmail.com>
+Cc: Paulo Alcantara <pc@manguebit.org>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+        Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] smb: Fix refcount leak for cifs_sb_tlink
+Message-ID: <aOzRF9JB9VkBKapw@osx.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
- <20250915-msm8960-reorder-v1-5-84cadcd7c6e3@smankusors.com> <o23idwppfthjoivpyzjojmoakdorr43gpmo5opmeet6oeud742@qhk2j5bjg5aa>
-In-Reply-To: <o23idwppfthjoivpyzjojmoakdorr43gpmo5opmeet6oeud742@qhk2j5bjg5aa>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 12:13:43 +0200
-X-Gm-Features: AS18NWBAyKKP7WpPbwzZSRGYCjWy0-gOfocVoYTqFPcgneZRB7ljrZVj7GcZyxg
-Message-ID: <CACRpkdZ8kQ4AKLtXpUXPu31DKAGZ45dtzPA=-moBQDtXsY4Wdg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] dt-bindings: pinctrl: qcom: msm8960: rename msmgpio
- node to tlmm
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Antony Kurniawan Soemardi <linux@smankusors.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-gpio@vger.kernel.org, 
-	David Heidelberg <david@ixit.cz>, Max Shevchenko <wctrl@proton.me>, Rudraksha Gupta <guptarud@gmail.com>, 
-	Shinjo Park <peremen@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Env-From: sfual
 
-On Tue, Sep 16, 2025 at 5:11=E2=80=AFPM Bjorn Andersson <andersson@kernel.o=
-rg> wrote:
-> On Sun, Sep 14, 2025 at 06:34:59PM +0000, Antony Kurniawan Soemardi wrote=
-:
-> > Rename the GPIO controller node from "msmgpio" to "tlmm" to match the
-> > convention used by other Qualcomm SoCs.
-> >
-> > Suggested-by: Shinjo Park <peremen@gmail.com>
-> > Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
->
-> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
->
-> Note that this patch is in a different subsystem and is picked up by a
-> different maintainer and there are no dependencies with the other
-> patches. It would therefor have been preferable if you sent this patch
-> alone.
->
-> No need to do anything this time though, I expect Linus to fish out this
-> patch from the series.
+This patch fixes three refcount inconsistency issues related to
+`cifs_sb_tlink`. Comments for `cifs_sb_tlink` state that
+`cifs_put_tlink()` needs to be called after successful calls to
+`cifs_sb_tlink`. Three callsites fail to update refcount accordingly,
+leading to possible resource leaks.
 
-I fished out this patch and applied it to the pin control tree :D
+Fixes: 8ceb98437946 ("CIFS: Move rename to ops struct")
+Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
+Fixes: 366ed846df60 ("cifs: Use smb 2 - 3 and cifsacl mount options setacl function")
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+---
+ fs/smb/client/inode.c   | 6 ++++--
+ fs/smb/client/smb2ops.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index 239dd84a3..098a79b7a 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -2431,8 +2431,10 @@ cifs_do_rename(const unsigned int xid, struct dentry *from_dentry,
+ 	tcon = tlink_tcon(tlink);
+ 	server = tcon->ses->server;
+ 
+-	if (!server->ops->rename)
+-		return -ENOSYS;
++	if (!server->ops->rename) {
++		rc = -ENOSYS;
++		goto do_rename_exit;
++	}
+ 
+ 	/* try path-based rename first */
+ 	rc = server->ops->rename(xid, tcon, from_dentry,
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 7c392cf59..00b3f769e 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -3212,8 +3212,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+ 	utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
+ 	if (!utf16_path) {
+ 		rc = -ENOMEM;
+-		free_xid(xid);
+-		return ERR_PTR(rc);
++		goto out;
+ 	}
+ 
+ 	oparms = (struct cifs_open_parms) {
+@@ -3245,6 +3244,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+ 		SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
+ 	}
+ 
++out:
+ 	cifs_put_tlink(tlink);
+ 	free_xid(xid);
+ 
+@@ -3285,8 +3285,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
+ 	utf16_path = cifs_convert_path_to_utf16(path, cifs_sb);
+ 	if (!utf16_path) {
+ 		rc = -ENOMEM;
+-		free_xid(xid);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	oparms = (struct cifs_open_parms) {
+@@ -3307,6 +3306,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
+ 		SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
+ 	}
+ 
++out:
+ 	cifs_put_tlink(tlink);
+ 	free_xid(xid);
+ 	return rc;
+-- 
+2.39.5 (Apple Git-154)
+
 
