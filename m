@@ -1,166 +1,226 @@
-Return-Path: <linux-kernel+bounces-850058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A85BD1BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:08:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836C0BD1BE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4169718938E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:09:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0CBBC4E7A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F242E7BD3;
-	Mon, 13 Oct 2025 07:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CE82E7BCE;
+	Mon, 13 Oct 2025 07:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPd8AJ1+"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="LsfCrh4q"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980EF2E6CAA
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D191C5F27
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760339326; cv=none; b=D1DgcsCOWot+jBQsp5ynmvaE7eVYFf+uw3nV0YMIz4GnBwisbe15mA1xGShA2/oICG66cpwq/zUxegqyKqDlLBVxKP3xo6IvuMp+oL5tF5/0Sq7cU5zzcYIvZlT3bs3Os2xx4CdxmE/qW2CSPDV71hVCB1tJIVhRr+J+Wheqetc=
+	t=1760339461; cv=none; b=HvlgK9lH+3dMzDodb3aXzYtM7piZb4krGfZBb+BsrOUKI8MNQP8JRqH8FUvJUPpHrWV8XXY7D/hp5PCD7yyY+ajeWJSQlU8RCxav54+czHy6st8/XxzTjSvgfJAdaPfsCxIrIxYLyI4j9lOEWevR+88r97U2szysZqlsXFApdSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760339326; c=relaxed/simple;
-	bh=EXSGqGhcx0qA0mCe99DWII7ndXEYJ5l3+tgWWwgSXgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXb6MzqUa3tYdcYV1stjl0/3JboUDmJNcAIyqjsWJilxZDfticwj4V9eK8Swm3r5A9JiuYkaBJiOqTf8TXavDjROpSPsSKy0AjepLZtwrV79yjxrVuhoGglS+U1k5L//c9NMt8hCf/NYz7uekLwG3BTLcM0vmIY30aaKYCUaHUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MPd8AJ1+; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e29d65728so22244485e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:08:44 -0700 (PDT)
+	s=arc-20240116; t=1760339461; c=relaxed/simple;
+	bh=i4krzQYydSCoBoNjUWqqYPeGUwtT0S2rlsHqymoV22Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FXkkYxW5nzE7eI8jBPBsL+u14DjQL8Q1AvdDrlSCrnDoZrs5mQMNolA2PNVVmdieukRpIJLmVubzRcZwSFMdsrT0ppXvIxdQ7XprLF/L+3MFYM4evdi/rpjOYhFa1gDxz/UHUYOxmeWYzl7FzPP0+XpShbE6XeF1p29l9Ggjwiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=LsfCrh4q; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-81efcad9c90so55604746d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 00:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760339323; x=1760944123; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q73G+890UFAW8zpG9IZiGO239bC+EqQ7jfRlndkYTr8=;
-        b=MPd8AJ1+ApYGdScPRFaPmp9mNHTRe6jwabjGgmkzWZpnrrZBVgWJp4kn5zL9+FhCkJ
-         avMDAd9JNSx+0/PdIWPqHpr49KykzuwW4D59Fpi/nMjvIMUI4OzCiK0HBuWdEtTjZIzc
-         1JoknmYvvDVd38jQZyh6O+wuO/6wk2w9lRwCYM9a83HUj1JYVu6AE93swWq0IBhSGahV
-         x71qLNS34bLQqei2cm2ZtRiLd6mQF8SakhO3gUE0+gehUNapm/5RosZgWXJMuffQIi3J
-         1oYjHeJmWb1GGc86fsHI+SETMz9sv/BX0E0EtnO4g6A3ii6N3bsZ2I/OyxR0dNYHlsYn
-         SCEQ==
+        d=ventanamicro.com; s=google; t=1760339458; x=1760944258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wJf7xLipisHImEFHEU39LT6SyCTlQl1jbbC0qWu2PoE=;
+        b=LsfCrh4qFuXWX6pbEstlplUJtgYApBh5frjn8gvUfwNluizPPha2vAov0Dc8MImgwz
+         SEEcyWrcUvwghRjax+QG8Yq5G4BjhlTv/AObpnalXw9vfOf4rTQjHab0TpnEWPXl6JEG
+         Q99HS0l7FajvwAGpNrExdiwuyBdmEdluS2mm02wmJbB5jvirSWgFToSmX3nfrbHOeP4e
+         X15PHPsRmb6Rw5akmS/PloMM8owTj2KK/cudXcIsp1YXjF6sqMjV073V3JrSWsFZ8Wke
+         bo38rgvGkFDhXvi5UGyQCVRA+hq4lfQM2a9XDIOg0SYHYWH2D3RvbAVMCvjfJ0vjHCTt
+         AbIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760339323; x=1760944123;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760339458; x=1760944258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q73G+890UFAW8zpG9IZiGO239bC+EqQ7jfRlndkYTr8=;
-        b=Fg2yYqH+LR+mYf6aHQa3nzECWURFHqLA8rlMyqHRyKNa17C0qDNAmou+98SKBpUjOJ
-         9g1r/EDyLZMLcVyiPdDAsyKB9mmUJao1aaebiR4GhSapCo2RKe5W4LFELBV87V4zBKRt
-         dosiy65mR5AIh/qgr0GDQSnZ6ORfcr4ElHpuh9YvfFvMnd9YvUHi0nJgOjvdw3+N//K2
-         2TRmrYxFyTmZYszDVU/eEQjhFZI/BHOi1xgsojo58yF3ailjk1Kx4NPLOH/MDbq2AsVG
-         gdW0WId3FYoWFXJjKHQKNX0mmCfNZtZ5UUkqu/fNG1nThpdUNfjpgdr7I3TTbXU3Pefc
-         QygQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpoSLWqZIVi8AxoAZX6mnFAhdINhl5eOsM6H7lOmLu9NsW2rY/NaQ3mBNNdU72D48s8nIgSeSFoouyBBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbxepzapawMAbKlldsNg/yIss38pvGrU1m5G54rRD9yHL+QiVM
-	s+nq5bfYf7WVQEyWvODhGq/+Ezxc62RLtdDpvc0sCqAhkkRJP4iMEPHO
-X-Gm-Gg: ASbGnctJe+FBYqHsEyVMUWVA0ljTBVbMH5FgYcTIggIfovBINTeeTNJXHgC2kSfpGD3
-	Ykno+2J6N95aNabuaQPDtUXiQyQwxfjOYyXlNP0SJZhKatys3t1vq5jG6+rc064TgPeXzZpm72p
-	Tr9tkY9j+hnOGyWzWZhmH10ENbqLR3o8YLRv6ESw/oJIvxFnUNccSByX8Gjg01AxFA4CuABfCCA
-	gMKqzuJLda1FqgOqbeBqIk1tjvChaRuVsvUgYkZnegOsJQIcehaKyASmQRDU4iN1mCWxF5+q+4f
-	mdtgGEkuYopauASiPw2LmJPVb3B5cY07lzroIF5/HYMCxUHUOECrv3AfHDAzO83I/Bw2qxzoDbI
-	/n4/XDtz3FO2NtPQqeSGJF3NYIAun1NmjP3gKL1HbG9MioYUgjfMWjaMs7bGjINEw6j96K49EJD
-	o=
-X-Google-Smtp-Source: AGHT+IGBQf5WfAQnt4odn+Dih9KpdOHpl0uzgnYj7ezJng23Hlwl5FAPDXpl3Fy1D1TvSkPSSqAKIw==
-X-Received: by 2002:a05:600c:a148:b0:46f:c55a:5a8c with SMTP id 5b1f17b1804b1-46fc55a5bbamr20650895e9.4.1760339322745;
-        Mon, 13 Oct 2025 00:08:42 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d447sm17161836f8f.9.2025.10.13.00.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 00:08:41 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id E0A3BBE2DE0; Mon, 13 Oct 2025 09:08:40 +0200 (CEST)
-Date: Mon, 13 Oct 2025 09:08:40 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Weikang Guo <guoweikang.kernel@gmail.com>,
-	Bastien Nocera <hadess@hadess.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	Raphael La Greca <raphael.la.greca@gmail.com>
-Subject: Re: [QUESTION] Plans for GDIX1003 Support in Goodix Touchscreen
- Driver
-Message-ID: <aOyleKvZe336pSSx@eldamar.lan>
-References: <CAOm6qnnhR9++REgtjhZpqNXkBbBAZsGAY8Oy89cXUF9S=Vy-9Q@mail.gmail.com>
- <8c7b5560-27d0-42bc-8f25-0797500fb889@redhat.com>
- <CAOm6qnmYSQz_YVaWw1c-fMm3NCVV9MoQhLQ0XGzK9o2RybLHmw@mail.gmail.com>
- <72619870-bf83-47f9-9b66-6678e245364c@redhat.com>
+        bh=wJf7xLipisHImEFHEU39LT6SyCTlQl1jbbC0qWu2PoE=;
+        b=pG8ZmRQBxsaeAjByMBXILErI3XNsLqxKo4kg7+wBRj10fGezM6hgiFJw7vgDeHBCTQ
+         /Hjmv6XR1CHloKGDslpAQkY8e5u5s8t96bz7FdDI8yd/59orAZMuXeQqXu8H15uUUusk
+         7n2gklLOYKuO8V9NCs1ZvxmCSxveUgr//rB87opkKFX7o5JSFne0EIfZyR4MldDWHcU3
+         oHA3ObCaUa27yFfh0fhmunmdngCVILF4WVYJyuUIu3YCQWCNlq62DoY4udZ+rnxJ3+5H
+         dDTdSLvieBndrgp3Abbkfwt78r1qitojkOOnevDi6wpkqalrgxNOUCDJEIH2feQ0M2qu
+         vrtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNmugFfuYNcerAE1GDExxMvD5/uIj3gja9CTlOWpAIqAf2iu07+7p2Q2RNMTZtivgpqPLf3jZLVtRIiHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK2sZ74vOcxb5stSuI9v3G7PtdDONtUG4lRucL5FlDVz00Nblc
+	9bDlJDuLCYnznU052wH7IUwzTdMOQInByQINgDPllW9tzquIiifpd1PrVVOflMOgr4qr/TUcJWJ
+	GYEY5Ifdfq7v8GGhaLwPRNc9peLRXl4/TXo4UqsDIYQ==
+X-Gm-Gg: ASbGncsWCek5CAWGBqM0/hRS2kbvwHwwnW/o81STfNsqsfRb8XXpnl3VeBak2DXaykD
+	X5PSoMnyTUaY4E5VCYH0Lr5CfWPzZ09FZdnG9Ervxm8+0J34zUmP9kRwlkhD4sZ+fCw2CF4nubY
+	8t7pZXn4IohB8NMytWWgqfGpLeLE6DvcHe1lxaPt4i+UzVOd+uzwgwJ5ud9BjSFr0wRB77U7fNp
+	TtP4hZptcT4+htlvnwhnfpDyolfwgIYFO3BJmGVtOP8F7mMtFywd2hNOSZdM/A2xLiFEg==
+X-Google-Smtp-Source: AGHT+IHlYmvSPHRRe5m0EkFR5aoK4WfWi+0MJgO2GyIhsHuhKt7Wi0a0UcJqCLk0ZaLHRfD+MX/KxQLvwg+1sKXpILI=
+X-Received: by 2002:a05:6214:410:b0:7f2:5aa8:6655 with SMTP id
+ 6a1803df08f44-87b2ef33b40mr312076176d6.31.1760339457993; Mon, 13 Oct 2025
+ 00:10:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72619870-bf83-47f9-9b66-6678e245364c@redhat.com>
+References: <20250908181717.1997461-1-cleger@rivosinc.com> <86817f9a-c601-81e8-b95b-0f2396275f95@kernel.org>
+ <628d357c-f462-4dc8-92f2-99006b73e0c7@rivosinc.com>
+In-Reply-To: <628d357c-f462-4dc8-92f2-99006b73e0c7@rivosinc.com>
+From: Himanshu Chauhan <hchauhan@ventanamicro.com>
+Date: Mon, 13 Oct 2025 12:40:46 +0530
+X-Gm-Features: AS18NWCt2iy9V0_v7KjFmtjkYMcjvPsZs4IHA_HWv-2SfKnKV8vVHkmqZQbY-so
+Message-ID: <CAPd4Wez7eLunDbCmKs19S=q-DM3-kUs0=wwjxRi+pq1waq1RqA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] riscv: add support for SBI Supervisor Software Events
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <pjw@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>, 
+	Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Oct 13, 2025 at 12:23=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@ri=
+vosinc.com> wrote:
+>
+> Hi Paul,
+>
+> Thanks for caring about this series ;)
+>
+> On 10/10/2025 03:32, Paul Walmsley wrote:
+> > Hi Cl=C3=A9ment,
+> >
+> > On Mon, 8 Sep 2025, Cl=C3=A9ment L=C3=A9ger wrote:
+> >
+> >> The SBI Supervisor Software Events (SSE) extensions provides a mechani=
+sm
+> >> to inject software events from an SBI implementation to supervisor
+> >> software such that it preempts all other supervisor level traps and
+> >> interrupts. This extension is introduced by the SBI v3.0 specification=
+[1].
+> >>
+> >> Various events are defined and can be send asynchronously to superviso=
+r
+> >> software (RAS, PMU, DEBUG, Asynchronous page fault) from SBI as well
+> >> as platform specific events. Events can be either local (per-hart) or
+> >> global. Events can be nested on top of each other based on priority an=
+d
+> >> can interrupt the kernel at any time.
+> >>
+> >> First patch adds the SSE definitions. Second one adds support for SSE
+> >> at arch level (entry code and stack allocations) and third one at driv=
+er
+> >> level. Finally, the last patch add support for SSE events in the SBI P=
+MU
+> >> driver. Additional testing for that part is highly welcomed since ther=
+e
+> >> are a lot of possible path that needs to be exercised.
+> >>
+> >> Amongst the specific points that needs to be handle is the interruptio=
+n
+> >> at any point of the kernel execution and more specifically at the
+> >> beginning of exception handling. Due to the fact that the exception en=
+try
+> >> implementation uses the SCRATCH CSR as both the current task struct an=
+d
+> >> as the temporary register to switch the stack and save register, it is
+> >> difficult to reliably get the current task struct if we get interrupte=
+d
+> >> at this specific moment (ie, it might contain 0, the task pointer or t=
+p).
+> >> A fixup-like mechanism is not possible due to the nested nature of SSE
+> >> which makes it really hard to obtain the original interruption site. I=
+n
+> >> order to retrieve the task in a reliable manner, add an additional
+> >> __sse_entry_task per_cpu array which stores the current task. Ideally,
+> >> we would need to modify the way we retrieve/store the current task in
+> >> exception handling so that it does not depend on the place where it's
+> >> interrupted.
+> >>
+> >> Contrary to pseudo NMI [2], SSE does not modifies the way interrupts a=
+re
+> >> handled and does not adds any overhead to existing code. Moreover, it
+> >> provides "true" NMI-like interrupts which can interrupt the kernel at
+> >> any time (even in exception handling). This is particularly crucial fo=
+r
+> >> RAS errors which needs to be handled as fast as possible to avoid any
+> >> fault propagation.
+> >>
+> >> A test suite is available as a separate kselftest module. In order to
+> >> build it, you can use the following command:
+> >>
+> >> $ KDIR=3D<build_dir> make O=3Dbuild TARGETS=3D"riscv/sse"-j $(($(nproc=
+)-1)) -C tools/testing/selftests
+> >>
+> >> Then load the module using:
+> >>
+> >> $ sh run_sse_test.sh
+> >>
+> >> A KVM SBI SSE extension implementation is available at [2].
+> >>
+> >> Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download=
+/v3.0-rc7/riscv-sbi.pdf [1]
+> >> Link: https://github.com/rivosinc/linux/tree/dev/cleger/sse_kvm [2]
+> >
+> > I updated these to apply on Linus' current master, commit 5472d60c129f,
+> > cleaned up the checkpatch.pl --strict issues, applied Anup's pr_info()
+> > suggestion, and pushed them up here to make it convenient for folks to
+> > integrate and test:
+> >
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/pjw/riscv.git/?h=3Dri=
+scv-experimental-for-v6.18
+> >
+> > Am assuming you didn't have other changes that you wanted to make; let =
+me
+> > know if that's not the case.
+>
+> Indeed, I do not have pending modification for this series. The KVM SBI
+> SSE support will be submitted later that year.
 
-On Sat, Mar 01, 2025 at 12:36:40PM +0100, Hans de Goede wrote:
-> Hi WeiKang,
-> 
-> On 27-Feb-25 12:36 PM, Weikang Guo wrote:
-> > Hi, Hans
-> > 
-> > On Tue, 25 Feb 2025 at 20:09, Hans de Goede <hdegoede@redhat.com> wrote:
-> >>
-> >> Hi WeiKang,
-> >>
-> >> On 25-Feb-25 3:04 AM, Weikang Guo wrote:
-> >>> Hi Bastien, Hans, Dmitry,
-> >>>
-> >>> I am currently working on the Ayaneo Flip DS device, which I installed Kali
-> >>> Linux with kernel version 6.8.11-amd. This device has two touchscreens,
-> >>> but only one is functional. After investigating, I found that the second
-> >>> touchscreen has the device ID GDIX1003(confirmed by exporting the results
-> >>> through acpidump), and upon comparing with the current driver, I noticed
-> >>> that only GDIX1001, GDIX1002, and GDX9110 are supported.
-> >>>
-> >>> I have also reviewed the ACPI description and can provide the details if
-> >>> needed. Any guidance or updates on this would be greatly appreciated.
-> >>
-> >> I think this might just work with the existing goodix driver, just
-> >> add the new GDIX1003 HID to the goodix_acpi_match table:
-> >>
-> >> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-> >> index a3e8a51c9144..4b497540ed2d 100644
-> >> --- a/drivers/input/touchscreen/goodix.c
-> >> +++ b/drivers/input/touchscreen/goodix.c
-> >> @@ -1519,6 +1519,7 @@ MODULE_DEVICE_TABLE(i2c, goodix_ts_id);
-> >>  static const struct acpi_device_id goodix_acpi_match[] = {
-> >>         { "GDIX1001", 0 },
-> >>         { "GDIX1002", 0 },
-> >> +       { "GDIX1003", 0 },
-> >>         { "GDX9110", 0 },
-> >>         { }
-> >>  };
-> >>
-> >> Note I'm not sure this will work, but is worth a try.
-> >>
-> > 
-> > It works, thank you very much.
-> 
-> Thank you for testing.
-> 
-> I've submitted a patch upstream to add this new hardware-ID
-> to the kernel:
-> 
-> https://lore.kernel.org/linux-input/20250301113525.6997-1-hdegoede@redhat.com/
+I am testing this series with my RAS patch set. Will update on this.
 
-Raphael La Greca has reported this issue as well in Debian at
-https://lists.debian.org/debian-kernel/2025/10/msg00013.html an
-confirmed the change to work.
+Thanks
+Regards
+Himanshu
 
-Any chance this can be applied as proposed? Did the patch submission
-felt trought the cracks?
-
-Regards,
-Salvatore
+>
+> >
+> > I noticed that you asked for folks to do additional testing, particular=
+ly
+> > of the SBI PMU driver integration, but didn't notice any additional
+> > Tested-by:s.  It would be great if other folks on the list could do som=
+e
+> > focused testing now, particularly since we're on v7 of this series, and
+> > I'm sure others care about this.
+>
+>  I would have prefer a bit more reviews and testing before going through
+> since SSE can be quite intrusive at execution time (even though the
+> classic IRQ path should not be impacted, I expect mostly feedback/bugs
+> from the SSE handling path itself). We'll see in a few days if people
+> find such problems.
+>
+> Thanks,
+>
+> Cl=C3=A9ment
+>
+>
+> >
+> >
+> > thanks,
+> >
+> > - Paul
+> >
+>
 
