@@ -1,140 +1,155 @@
-Return-Path: <linux-kernel+bounces-850839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B38DBD47BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:46:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE55BD461E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED50D501C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FAC34056E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB9F30B520;
-	Mon, 13 Oct 2025 15:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5757C30F7E8;
+	Mon, 13 Oct 2025 15:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km/+C7xs"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OH9EGB77"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117A230B51A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC6630B515;
+	Mon, 13 Oct 2025 15:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367749; cv=none; b=lQuYGWBuLsvIDqq0fr+EcoQPFHo+6LRKnCkvHzzSpx1kwPcSdTIkYTqaJyaWTweoJlp4t/Zn+uKvv5PfCcfapyHBI5GqPsY2Pu+J1pZsFdgnUuC45TGpHiya4gev0IURgdEvFWFlGbGoJDowTSwi2vL6cvEcc9kc1wza1/aL5hE=
+	t=1760367850; cv=none; b=oVhf2hbB5dcMFYYzl7pDcBlmAsfSnIHD8GBL+XtbE2LQ2reXjERCwyCwbzbDh5WsftHF2nH3JZWxO5dbSoy0bqbQAx1NdaXuztmYf6RUzSYdIQwWmtqvpDp37JTOLWDnQY4AGjsmVPrMJoHqVLklBMTO33YgRofE0BqkhV6f5jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367749; c=relaxed/simple;
-	bh=XZ4lzHryEJQS9jgidvbUbN7osxHnfwhUvb5lDvX5gJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sE9V3RmWDbBjbLohiJDaB1vOyW28huyciMgdiQjpw8Ui/8pwuZLk8itbFznAVvhhbH4KzLCTROFHH7qmNT2VBGNakFl8ijAtwo3pUMfrVTnvAf8V1j92XM0yYuLVgHpF2SbMuYiWWyNlV0q7ovhPi9R/2vkcipjqwInUxDttmxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km/+C7xs; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3181223f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760367746; x=1760972546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yh3tjmmjbgFKGhBWocvc5VFMFhZLywRMRFtzLSkbw0s=;
-        b=Km/+C7xsfZItqUK1cRI41oQudCJQXawtSlxm2Y90QzKe9b1CH9Lue/2I7UhiV9ElL/
-         QbsSPdkyMDOFYhdArM/WwUk4HrRd78V3RT1IKtSrA3tojPLDyJJgw1uFNjhsOatstdjf
-         awHA8HXlg+4SOEZ9oEI0WYufnhqiDxH7H1pDa2kElbVfVK/isv9w6THHMeFYOFdsTzrT
-         4XPM6rT28Dtw7BCO5UlxgNQd6gurCk9yoS6p4GVG3DiwKS/kZXmT1g4FH0o84SKujCvj
-         NNq3v1ken4Lh0yVIZ4HeRdWXMC3yki6pD6VwCI9gK9RKdT3vhvmYDl93+WFdT69sWhcP
-         DVaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760367746; x=1760972546;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yh3tjmmjbgFKGhBWocvc5VFMFhZLywRMRFtzLSkbw0s=;
-        b=l1Q8nutbOSUk4p1XasookQG9wQwTY3xoZytqeXfqnApmT/ZSSQ/V5h1DFVfiVvwUlg
-         UyW1lDnpIEtCm1vGhSNknOPfewgab9Q+xBC8Rs+5eXenuKK0QiuJ+dz3nbtzgfZKqPsO
-         g55fpxysdWpZg0CmXHizEGqXoS21rOJIwHElyaZpL63paLpm0Ru1qQTqkaAjbHhNJ5NM
-         0EI5QzNNvcHpFtESeXkBBMDeh5lZYssAU+EeUWVxy0cw/QdTyNLrZHuUB90uOknfI/qH
-         4DzkQ5iW3jFz2EnQHx1p9uOFBX/r/vTovj0/pmCarNs9ivqPinJmb5QybwvHIedTzHpg
-         uH0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVE6vrcBrPUgpHP1gwcxls3laraywFQ9xaJvcDTi4AT72wWJu9GQnrianEcf/BlZoEfOTTLXx5nOG5hHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhPMywkEaCOONU8HySf4cuioxjvdZ5b0Osj2/H3UYBEYgiau1w
-	FukuexCqN4A1yFPg7DvPI+ltD/1jKJfmCwvGq8m0WXL7OLtRa7SMW3oZ
-X-Gm-Gg: ASbGncublWlM5nawPvQjnwpTRQnFvaxb1ApG8efqrYcFumMSlzk4WjC6tkilclWdjoD
-	6319vrOkZ8oK10go0yYQEd92j8CCGB694hKC/Ay7Ha3d+s13Lmzphmi1Rn8jp70F3MpNmux4l0d
-	hmeWMJz+yvf2p0NLmvrn+a09qDgzftncuQPw+crAgR3snVmPH06+8lnKwWnlQt+jw6Tse61yt/g
-	IHSfXBkFFAE9J53DYkTLkAqBV2v25lKAJ1fwS3mTeCSVsRfp3hSkw25xax8FvSoNTxXDj1Vzkal
-	EB5kQl5k/YpanWfjMa/r58R4FrHDgE5GFX1lCSxENriJNHF8fi/5Ro1q1DiZJfRx0Ju2ViiEhLb
-	B1deAbyFt6qaPw3AvUr/NkzRW06imP5ArfRokbM2Z90QLW1UfEDfFGLBGvk0d50g68odZULhxVJ
-	tv2U0aQHvU
-X-Google-Smtp-Source: AGHT+IGNkJ4QbgL7tRzgvPN+I8L7UO5FdEYBSf53xVmGqianIIUKzVvqoD7JkSPO2wQpbIF5bLMK1Q==
-X-Received: by 2002:a05:6000:491e:b0:426:d549:5861 with SMTP id ffacd0b85a97d-426d5495947mr6222761f8f.42.1760367745998;
-        Mon, 13 Oct 2025 08:02:25 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eb09])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm18651180f8f.22.2025.10.13.08.02.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 08:02:24 -0700 (PDT)
-Message-ID: <f0e40a00-ab13-42dc-b9ca-010fd4b115b8@gmail.com>
-Date: Mon, 13 Oct 2025 16:03:40 +0100
+	s=arc-20240116; t=1760367850; c=relaxed/simple;
+	bh=WwSOjcPmv4A2YQFyBHaWXsd2+3pnG4YO7nsZv/3LT8I=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nia9HcjSALzu071NuPUDbGf7fyosBZlMs1Lm09vVk7PlTVtB7PcZ1pBVH5eq4dJWxqKVMUZxbwLQvVQQjpd6Lx75VTI3QL0LVFJIrNKKGn6roHROnhwIUWIL1tPmb8eIEUwZHCvjvFKS33eB59Gf2qhLVHSayyI1gh2FbDU134A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OH9EGB77; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760367849; x=1791903849;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WwSOjcPmv4A2YQFyBHaWXsd2+3pnG4YO7nsZv/3LT8I=;
+  b=OH9EGB770bYhK+Xybrt1kwMS5MRFIUKSn88hFwW+HZkV0pbLNd1QjVBO
+   Kz38gFbZIllV+Q9wFSUygHUBLvP4LMPPNXs4awfXabWEuWylFVhQF0ape
+   b//w+j4Ev2VHoDYhHrmhkiWHGAL6cuDmqqLJI4fHyuU90Qjz5CyVlZa/o
+   2F492YX4TFvlCOf28/4jW2G4iF3Uvj5GBNHjBbzisy+h7l21MzpulNfEC
+   Wmw261YPAaYgW4To2BEOfnpgoxP86yIY1/7k3unysRx1CyBo8YGyYI0Gn
+   52F1+rBUKLPLXtl4AUmRzp96bvHKN8psHus3A5Yt8gTvSiZ/15kkJtabV
+   w==;
+X-CSE-ConnectionGUID: oT4YeI+6SMSYD+t97VB96w==
+X-CSE-MsgGUID: McaUuqCASGq4qSD4XQY0Tg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62210573"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="62210573"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:04:06 -0700
+X-CSE-ConnectionGUID: 8/TtlDaQTbe3P3ZVtk1d8A==
+X-CSE-MsgGUID: tgM/c+olQxO7kR0SKEF22w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="182380409"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.77])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:04:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 13 Oct 2025 18:03:59 +0300 (EEST)
+To: David Thompson <davthompson@nvidia.com>
+cc: Hans de Goede <hansg@kernel.org>, vadimp@nvidia.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Shravan Kumar Ramani <shravankr@nvidia.com>
+Subject: Re: [PATCH] platform/mellanox: mlxbf-pmc: add sysfs_attr_init() to
+ count_clock init
+In-Reply-To: <20251013134335.26191-1-davthompson@nvidia.com>
+Message-ID: <78ff1cd0-0000-c514-3a73-8f31f2b86454@linux.intel.com>
+References: <20251013134335.26191-1-davthompson@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
- buffer providers
-To: netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Donald Hunter <donald.hunter@gmail.com>,
- Michael Chan <michael.chan@broadcom.com>,
- Pavan Chebbi <pavan.chebbi@broadcom.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Joshua Washington
- <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
- Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
- Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
- <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
- Bharat Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Alexander Duyck <alexanderduyck@fb.com>,
- kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Joe Damato <joe@dama.to>, David Wei <dw@davidwei.uk>,
- Willem de Bruijn <willemb@google.com>, Mina Almasry
- <almasrymina@google.com>, Breno Leitao <leitao@debian.org>,
- Dragos Tatulea <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, io-uring <io-uring@vger.kernel.org>
-References: <cover.1760364551.git.asml.silence@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 10/13/25 15:54, Pavel Begunkov wrote:
+On Mon, 13 Oct 2025, David Thompson wrote:
 
-Forgot to CC io_uring
+> The lock-related debug logic (CONFIG_LOCK_STAT) in the kernel is noting
+> the following warning when the BlueField-3 SOC is booted:
+> 
+> [   10.231318] BUG: key ffff00008a3402a8 has not been registered!
+> [   10.237249] ------------[ cut here ]------------
+> [   10.241914] DEBUG_LOCKS_WARN_ON(1)
+> [   10.241927] WARNING: CPU: 4 PID: 592 at kernel/locking/lockdep.c:4801 lockdep_init_map_type+0x1d4/0x2a0
+> [   10.254700] Modules linked in: mlxbf_pmc(+) mlxbf_pka mlxbf_bootctl cppc_cpufreq(+) sch_fq_codel dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua drm ip_tables x_tables virtio_net crct10dif_ce ghash_ce sha2_ce net_failover sha256_arm64 failover sha1_ce nvme nvme_core vitesse gpio_mlxbf3 sdhci_of_dwcmshc sdhci_pltfm sdhci mlxbf_gige i2c_mlxbf pinctrl_mlxbf3 mlxbf_tmfifo pwr_mlxbf autofs4 aes_ce_blk crypto_simd cryptd aes_ce_cipher
+> [   10.282360] mlxbf_gige MLNXBF17:00 oob_net0: renamed from eth0
+> [   10.292917] CPU: 4 PID: 592 Comm: systemd-udevd Not tainted 5.15.189+ #2
+> [   10.292922] Hardware name: https://www.mellandx.com BlueField-3 DPU/BlueField-3 DPU, BIOS 4.13.0.13780 Sep 30 2025
+> [   10.292922] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   10.292925] pc : lockdep_init_map_type+0x1d4/0x2a0
+> [   10.292931] lr : lockdep_init_map_type+0x1d4/0x2a0
+> [   10.292932] sp : ffff8000096a3350
+> [   10.292933] x29: ffff8000096a3350 x28: 00000000000001a4 x27: 00000000ffffee4b
+> [   10.292937] x26: ffff00008a3402e0 x25: 0000000000000000 x24: 0000000000000000
+> [   10.292939] x23: ffff00008a3402a8 x22: 0000000000000000 x21: ffffd1acf2833000
+> [   10.292941] x20: ffff00008a3402a8 x19: ffff00008c10d378 x18: ffffd1acf1d3d000
+> [   10.292944] x17: 000000007bba6d3c x16: ffffd1acef416114 x15: ffff0003dd914d88
+> [   10.292946] x14: 0000000000000000 x13: 284e4f5f4e524157 x12: 5f534b434f4c5f47
+> [   10.292949] x11: 656820747563205b x10: 0000000000000029 x9 : ffffd1acef49deb4
+> [   10.292951] x8 : ffffd1acf0e93008 x7 : 0000000000000001 x6 : 0000000000000001
+> [   10.385410] x5 : ffff8000096a31a0 x4 : ffff2e56eca7f000 x3 : ffff0003d20a5e80
+> [   10.385412] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0003d20a5e80
+> [   10.385415] Call trace:
+> [   10.385417]  lockdep_init_map_type+0x1d4/0x2a0
+> [   10.385423]  __kernfs_create_file+0x84/0x140
+> [   10.385428]  sysfs_add_file_mode_ns+0xcc/0x1cc
+> [   10.385431]  internal_create_group+0x110/0x3d4
+> [   10.385434]  internal_create_groups.part.0+0x54/0xcc
+> [   10.385436]  sysfs_create_groups+0x24/0x40
+> [   10.385438]  device_add+0x6e8/0x93c
+> [   10.444559]  device_register+0x28/0x40
+> [   10.448299]  __hwmon_device_register+0x4b0/0x8a0
+> [   10.452907]  devm_hwmon_device_register_with_groups+0x7c/0xe0
+> [   10.458641]  mlxbf_pmc_probe+0x1e8/0x3e0 [mlxbf_pmc]
+> [   10.463598]  platform_probe+0x70/0x110
 
-> Add support for per-queue rx buffer length configuration based on [2]
-> and basic infrastructure for using it in memory providers like
-> io_uring/zcrx. Note, it only includes net/ patches and leaves out
-> zcrx to be merged separately. Large rx buffers can be beneficial with
-> hw-gro enabled cards that can coalesce traffic, which reduces the
-> number of frags traversing the network stack and resuling in larger
-> contiguous chunks of data given to the userspace.
+Please trim this splat to only contain the relevant part of the 
+information.
 
-Same note as the last time, not great that it's over the 15 patches,
-but I don't see a good way to shrink it considering that the original
-series [2] is 22 patches long, and I'll somehow need to pull it it
-into the io_uring tree after. Please let me know if there is a strong
-feeling about that, and/or what would the preferred way be.
+> The mlxbf_pmc driver must call sysfs_attr_init() during the
+> initialization of the "count_clock" data structure to avoid
+> this warning.
+> 
+> Signed-off-by: David Thompson <davthompson@nvidia.com>
+> Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+> 
+> Fixes: 5efc800975d9 ("platform/mellanox: mlxbf-pmc: Add support for monitoring cycle count")
 
--- 
-Pavel Begunkov
+Please place this before your S-o-b line and don't leave empty lines in 
+between the tags.
 
+--
+ i.
+
+> ---
+>  drivers/platform/mellanox/mlxbf-pmc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
+> index 4776013e0764..16a2fd9fdd9b 100644
+> --- a/drivers/platform/mellanox/mlxbf-pmc.c
+> +++ b/drivers/platform/mellanox/mlxbf-pmc.c
+> @@ -2015,6 +2015,7 @@ static int mlxbf_pmc_init_perftype_counter(struct device *dev, unsigned int blk_
+>  	if (pmc->block[blk_num].type == MLXBF_PMC_TYPE_CRSPACE) {
+>  		/* Program crspace counters to count clock cycles using "count_clock" sysfs */
+>  		attr = &pmc->block[blk_num].attr_count_clock;
+> +		sysfs_attr_init(&attr->dev_attr.attr);
+>  		attr->dev_attr.attr.mode = 0644;
+>  		attr->dev_attr.show = mlxbf_pmc_count_clock_show;
+>  		attr->dev_attr.store = mlxbf_pmc_count_clock_store;
+> 
 
