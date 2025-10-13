@@ -1,114 +1,132 @@
-Return-Path: <linux-kernel+bounces-850339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA09BD28D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B89BD2917
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD1E84EF51B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:24:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFE654EA8B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99272FF16B;
-	Mon, 13 Oct 2025 10:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09FC2FF16A;
+	Mon, 13 Oct 2025 10:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PnycrD9Q"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792E42BD03
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="xI/WgtXI"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AF15E5BB;
+	Mon, 13 Oct 2025 10:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760351091; cv=none; b=rHkFYcBp/Z7eYt9v8YaL63PiDieMJEly+2GKL2j8hZ4EuSj82S9NpOiPp/s3h9QelppjJAEop3NQmcGPufcX0zNBrTNlpMq7sjv1qLzTrK/8360YFFOCMt18DhnLBQ+4pk/+TRvHRIAsuF0AGNJl4sNs4HDxt1QdXRcJBeJz6RM=
+	t=1760351219; cv=none; b=uALxhB0yBdlV3dUcWR+4hHa1B/hvaAP4q8rPaDdYLIE5zptMv+j0XTwR4+f9NfTpVCVMjEZYU4zifH5JAr2Tt5QvOJCQ5Z7vXAEgOmox2FPFxtNcf3tmrw6ygy28XS3rwDnH3CObFEOjRYSKb3k4GwQkW7yt17XgRT04f3nt780=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760351091; c=relaxed/simple;
-	bh=+unRYycP97fv008huF8n6bo0ikkvJYI2Zc7wQSeA3nU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iWN+FSHhUxG7vP+eBh8VNnmNbOgpoa4NqiS6iGNXpgyqyioFO1LDRt9/jkp7jjkR5Wj7YOtwQ8NsSjQRgQV8LFoszpn5AIirWgW3NKdh+vvdQqYGnOwGBT+MEgAxsjYSfk2NjDYXiV92S/QZHMaDQIWVLiZ0WvxbEtvG8JH8nIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PnycrD9Q; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37612b15a53so42366251fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760351088; x=1760955888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+unRYycP97fv008huF8n6bo0ikkvJYI2Zc7wQSeA3nU=;
-        b=PnycrD9Qad1YKFd8X1Fdi+B+dQb2/88AAJMxqSdOEyAn89o5Vkb6zBKx4rZK8+SYA7
-         l2s5oHfjefOqLMnW41TWJdDaS8KtoTVXqwZUFsi0Ih+x6jXCizfsM3njjDTzrf8Hn4xm
-         +zFcy+h2NDXA/DNnvMNVpkZqB3gp0511kfa3K/+iDC6UTCF35SoIscW5voCfrJXOsaW5
-         UHhH3ttD2YsQPKHIkOJIRRvJ5V+QnZbK3GEE0VJhm9HtdGTqJ0uX5CMQ3rKMT/QCDT/f
-         DhtdIIRbTgImcyvRWPvPL+StstNq3dbIOaFbxqe5/Bh7LsjGEklpQSG5n+ZuTJNTDMND
-         vZKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760351088; x=1760955888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+unRYycP97fv008huF8n6bo0ikkvJYI2Zc7wQSeA3nU=;
-        b=oNKKJOrOdivegmYcI/iamKKhOpklHue3lNS34Q8/8H8eBvjG1XXII1JLwndIc19cgv
-         BuQVhxicXogI9QHCZURnPoM0RlgooghgLfPMgl3bmowZ5j6+eYnfrunqzxMK16V+kO9+
-         FvzmvBwqI0mxnx7fCgKxD2zzyJkfa5k5TxQycJbOiHCYgc2MMnEQyK1KZE/EoD8pac+v
-         s3qRcIgl6iMCuW0c3KgiRnARyOc6RAYYEKSrl94VqD6hR4L5rXHv0Zg8sMrOtqrsdwzv
-         UCiB301hgn5G8PtyD8Txxg1LPfofotTejEg4F0AcNsFmm/ustlowCVT5MAPzJEiRN/cX
-         xelA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBq2O3uBL+0pBhfUlY+9Or/VqSi3X2h/4bJz7uE+1X0xtjrOsqKmx61eajSHANUkFLH+0E6J2HDxXw4dU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3dIhdop5UDHAH2/sL2gEAxrbQG7Yx/Wqx/+4HYCMjQ1WWGlNx
-	Nu7cMBLJrPDecjWggUXDQRQxe+MKTR6VZ/4rq51elsOMqSbesYt5/ipmRR34LJ2LYwOkcOMqAK1
-	tfM7yuvYIKWxiHB9V+gA2NLxjIHTqK6dyIOR59ydQrA==
-X-Gm-Gg: ASbGncuVzG4EfL1Hv4dVlnkRiQyOcvNE0bpWsIGa9sWjAVTjqr7ZK+/BHPGsKEVOFCi
-	9229PBJUwD+SEd2mRojppR2BUxj7Z0tYNbBtJqmq9iPo/mLBJnK9DfGQ//mc7Ic/ul7p/4WMR04
-	UMD5WTCEYLgbPH52KWKySRqB7Z0P7fogEW2JPUrqCvCwBFiZ4PvR26a4rFhxd3YN51YKJXl3oPf
-	G44j/KETKCoy+dAn4mfB9/ukpGZTA==
-X-Google-Smtp-Source: AGHT+IGvGHloV1limtQ0fx79bfGJXQow2XXzmDst8EglcpB9EbNJ8pFYHIXf92/sCJscA5Ld0pw8fuj+myOX2Y7yQHE=
-X-Received: by 2002:a05:651c:1ca:b0:36b:8361:15c7 with SMTP id
- 38308e7fff4ca-37609ee797dmr50886881fa.42.1760351087667; Mon, 13 Oct 2025
- 03:24:47 -0700 (PDT)
+	s=arc-20240116; t=1760351219; c=relaxed/simple;
+	bh=ABmn+fLVsctJIcVsQ8EXkfemm3Yt7M2ThU/pU1MhG9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+vEpPyBc6X6bzYFfUdsxV56axzXB7CdObPtwLr1+NTv55rT/YFp/n8xJztvyDMc2Frx+0qeypuSYU+9FJP9MqvzG3CNYMG7BZZgjiTDm5zFWnnZelWsvw+6q5YZUoLa62BJn5UzZLp4co5H+Ja4RbbpH3YdZwuyvf0IEFkkfbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=xI/WgtXI; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C50BA14C2D3;
+	Mon, 13 Oct 2025 12:26:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1760351214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=liVWWnazWktLk7qYgIAJtTqEdttWgrGsPA7uT5rJXvE=;
+	b=xI/WgtXIs8rnlF78rRIuhG85Om82BhXX1ipNuWomu80ZemdzezlD3qOo1vHKI0MmwCyjQ4
+	TVJ+EwQfiTrv6kzqAinIkJ91eRXixNKlrUE8LQhvszZRyeUB6m8G683VMv6jAm8Pl6iepX
+	wAviR/0MKstVpFbNayZXsaPaJIEUIU2s9Jr1kVFJuzxhHSYgwmd9a6OPue1tNePOzTfl+4
+	3INJRJvvVOynG+Z/KL+Uzuf5ulq0U6HCNQo5iXp1n2OJH9uODYAVazzZouzjDOaQJsWSG5
+	Xe9K6a9ye88FRrt4/R8egH/VZXB1z5ilb7AaxJTCVj8Q7uuBTAw3+oszHhlYog==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e164d6cc;
+	Mon, 13 Oct 2025 10:26:50 +0000 (UTC)
+Date: Mon, 13 Oct 2025 19:26:35 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+	linux_oss@crudebyte.com, eadavis@qq.com
+Subject: Re: [PATCH V3 4/4] 9p: convert to the new mount API
+Message-ID: <aOzT2-e8_p92WfP-@codewreck.org>
+References: <20251010214222.1347785-1-sandeen@redhat.com>
+ <20251010214222.1347785-5-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925221927.2610760-1-robh@kernel.org>
-In-Reply-To: <20250925221927.2610760-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 12:24:36 +0200
-X-Gm-Features: AS18NWDB8GoBtqV-UtGzBfY0pqqIxdxK6aWLKDGgXTJxVPFOQb277q1e2UR2gHY
-Message-ID: <CACRpkdZH_Q18CHnT9rjhOGUx53L3pKrP6BrPkB0hSV7JB1N44g@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: Convert marvell,armada-3710-(sb|nb)-pinctrl
- to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251010214222.1347785-5-sandeen@redhat.com>
 
-On Fri, Sep 26, 2025 at 12:19=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
+Hi Eric,
 
-> Convert the marvell,armada3710-(sb|nb)-pinctrl binding to DT schema
-> format. The binding includes the "marvell,armada-3700-xtal-clock"
-> subnode which is simple enough to include here.
->
-> Mark interrupt-controller/#interrupt-cells as required as the users have
-> them and the h/w is either capable of interrupts or not.
->
-> As this syscon has 2 register ranges, syscon-common.yaml needs to be
-> updated to drop the restriction of 1 register entry.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks for this V3!
 
-Patch applied!
+I find it much cleaner, hopefully will be easier to debug :)
+... Which turned out to be needed right away, trying with qemu's 9p
+export "mount -t 9p -o trans=virtio tmp /mnt" apparently calls
+p9_virtio_create() with fc->source == NULL, instead of the expected
+"tmp" string
+(FWIW I tried '-o trans=tcp 127.0.0.1' and I got the same problem in
+p9_fd_create_tcp(), might be easier to test with diod if that's what you
+used)
 
-Yours,
-Linus Walleij
+Looking at other filesystems (e.g. fs/nfs/fs_context.c but others are
+the same) it looks like they all define a fsparam_string "source" option
+explicitly?...
+
+Something like this looks like it works to do (+ probably make the error
+more verbose? nothing in dmesg hints at why mount returns EINVAL...)
+-----
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 6c07635f5776..999d54a0c7d9 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -34,6 +34,8 @@ struct kmem_cache *v9fs_inode_cache;
+  */
+ 
+ enum {
++	/* Mount-point source */
++	Opt_source,
+ 	/* Options that take integer arguments */
+ 	Opt_debug, Opt_dfltuid, Opt_dfltgid, Opt_afid,
+ 	/* String options */
+@@ -82,6 +84,7 @@ static const struct constant_table p9_cache_mode[] = {
+  * the client, and all the transports.
+  */
+ const struct fs_parameter_spec v9fs_param_spec[] = {
++	fsparam_string  ("source",      Opt_source),
+ 	fsparam_u32hex	("debug",	Opt_debug),
+ 	fsparam_uid	("dfltuid",	Opt_dfltuid),
+ 	fsparam_gid	("dfltgid",	Opt_dfltgid),
+@@ -210,6 +213,14 @@ int v9fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	}
+ 
+ 	switch (opt) {
++	case Opt_source:
++                if (fc->source) {
++			pr_info("p9: multiple sources not supported\n");
++			return -EINVAL;
++		}
++		fc->source = param->string;
++		param->string = NULL;
++		break;
+ 	case Opt_debug:
+ 		session_opts->debug = result.uint_32;
+ #ifdef CONFIG_NET_9P_DEBUG
+-----
+
+I'll try to find some time to test a mix of actual mount options later
+this week
+
+Cheers,
+-- 
+Dominique Martinet | Asmadeus
 
