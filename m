@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-851211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABA3BD5C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736A8BD5C9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 87FAC351765
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A942188A282
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E042D836D;
-	Mon, 13 Oct 2025 18:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE52D7DDC;
+	Mon, 13 Oct 2025 18:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bHjf/+eq"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NApMBl1T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5632BE7AC
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED412C11ED
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381491; cv=none; b=fvjktPCo3QZlLHPURjzt8vly105t2Qji8btV81QrEPp6ph1ijv/AOeDrIZZxxJhtFqjJFkNs88azzKJuDcWXfJ/KPdklUA+2oErvyCxkHpY8ob5qq+FIXdHSDsSo6gNwOuLpvnxylGmFZw2u0LyOg1d+L+4koCGKPGLLgglEfsQ=
+	t=1760381500; cv=none; b=YSAlwnWG1ovuLmlTrx9h8ckYSFNpK9ZnAoXnBSBU1eHucEbwGXXVcwyuST6b0LifZCfC7NBd7hUJZAvhclQZnMbZntnlcud0j/6FiDiO5qtj2vKUo4aRqAZa2SaNnqNA2PAqvaB2aGcBDybyl5755HqaZpK3oRb147T1twB9maw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381491; c=relaxed/simple;
-	bh=Ny01Z+tUMuPTp2sCkuYOHV58NBNOxAXF1UzukOG01P0=;
+	s=arc-20240116; t=1760381500; c=relaxed/simple;
+	bh=7Y2bMNKr8rQXdsNf91lUVGNDOpD7AY0UyDjYoYeerxk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ow3kR4bzZscPq1aS/YN3oXxu8rZXMC8eEVvctv6UfUpldVTivVNlrigENKkOP8ESAHIZQmdpGcDxnyq1hhHcYj0v8TyF5yyj416ZfpVfF1K8mOjPCx2eLaOAVz8CHsGIUS9hJ2iIVl96PqmayfxzQqJviIhr4qiwFZ2fBaj3Q2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bHjf/+eq; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3304a57d842so3678318a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1760381490; x=1760986290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ny01Z+tUMuPTp2sCkuYOHV58NBNOxAXF1UzukOG01P0=;
-        b=bHjf/+eqj5vY/bF2BPG+IBWrL862vg9upeGqiY7tF1XTFjeL/A6Zh1nWIKT7+IR0vv
-         V5ZoA3eicWyBe3LnMF7gHpr4O3nDZNgEZ2XJsctatsYUWCrfJ8M44bHY6oG5jxE8UNH1
-         xeAQulsuR+SWtgw+rCkUTtZ/D+S0x5A/1c+UyuGvE+cR4Cfh7QMGwpMk1qw0xn7ArO9E
-         9Y1lyUFJ0RBmMriiDsDExRMURgH87JXmvdCWqn3GXuqbBxMSVzjrPLmxzw4hP2xZiMAM
-         yIz6KgAj4urgu1fjk+zI6JseZEo2ocKhHNGRC7qmNzvjWYKuXbTYP1EOhzwSCQas4MGJ
-         skWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760381490; x=1760986290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ny01Z+tUMuPTp2sCkuYOHV58NBNOxAXF1UzukOG01P0=;
-        b=roSDmyVtJmXKtP+qU+RSlNoLTvHWkL25M90DRjgrDoJgcTAjk2/cYEbm7EnSXrw4Eq
-         Vil0/8DN5Y+zqYRTk4lsAMxQf9ocMIK5Lb/DFfc2NY6Ly9COHj+M/MXIQTKi1tUw5DZL
-         e2DmHGCwh9lFjIVLnNnDDkiCGeASl8DxltZsxdlKgtjKOsqttLpw2dy+B5xLwKVIk6vX
-         sH/GDBZZo1b9nbrI0Kh61KnDe9cME9VUy3sjvloInFMHpjpXS5j/LbHTq33mM+TfNTZU
-         7DmJL1j9m6xq9R0bkisFCCRD3NOGu5f5lIGXX0rNtwa1tTTT/UzADopU5PAvB6Aw5GFF
-         PwVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrzO9FhQEvCdoOLmyF8e8EAH9Asn2GhO1JO+ljLvVyxlyt3Ir0LH8fzaSlnh8fNlSLjlw011VljoSV2xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS8ZVTCv5T4nixzWmgvha+anHZPgElTnpet0lx3/3ecVc2ms4L
-	FhDQMNupgENYxAnxeW2+vRYKfHJpAtuZKekmJUvPMPcy84LBkEjhD7NdUZbTrqYYOtEGBR0d552
-	oY9SoZ0Qj+cbClaWiiCqhl6JjjFMpWdwMhq4O/5PGZYpdd1Fe/qiALQ==
-X-Gm-Gg: ASbGncvBY0XIqf+IyuGBYrqGBxRG1NDmJqHIB7lLL4zDQpS9Hzn12+MQurIYCjsajsu
-	MvlWGgoVxuOmX/yeXhOUjQFP6w1scnAEsD6pbZ/gEwKceBjqHD738D9DfeaLnR+C/CpoZJ5c65W
-	ubZxGlp4HS/lQgypOoxpobfmSVmvl+vbn93Baf1oYu5SHN69nuVa4U3NHc7HgIa/udfDLjH+HZz
-	+5koQPFYBYT1VfbBICXoLsHmf4sE+Tjj2z/
-X-Google-Smtp-Source: AGHT+IFMC9e/vwhBwj0ALme8Cp8fCsUdX3he4mM8zid+ESaytCdihd+ScwemDPrM3iGDaixXxrSTv0P6mAS0ElBGhM0=
-X-Received: by 2002:a17:90b:4b06:b0:32e:9f1e:4ee4 with SMTP id
- 98e67ed59e1d1-33b513b2d70mr33835189a91.17.1760381489825; Mon, 13 Oct 2025
- 11:51:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=cIKZ8EcfhuTJtdouH/v1+hFHCYXX+twdb4DpEzuxUcgDgGobty3XEYhLtkGYvLCrilJQkC4g7WR+HdVj2ozz80iIPZgSNI/F4Smpfj6yxXztVYKW+NZIOvskiMlLKbs4m9jW6lDAGpDIgYqRncAuq4wgYhwHjJze/TvzkHsW0+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NApMBl1T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09385C4AF0C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760381500;
+	bh=7Y2bMNKr8rQXdsNf91lUVGNDOpD7AY0UyDjYoYeerxk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NApMBl1THr79qcbHokhWSl1EAdEQFQjh+7lo6ecPMGbZwHrTKNvDpL2kX6Topzubn
+	 Jd8wT8kNohb0vIrJGCLo3q44ioc9riTYTqeS7jn1C5F+IvFfuYdWg7H3pxIu1gmsAE
+	 Dxx8CTG/tS3cVGCKdJRs3/xH7GpkBuyZoIg4x8PH/D3i1kRSc6dCvthw4PENVsRUD6
+	 9c5EFaqXcWF2l99mFvifbuFyd7TU7mRnm8k51ou/Gj3ZQqMtZ7oq6dB3qQ+e7G+koi
+	 k2U8/uaNC1lQmK8pBLHRTjQUlAtlIRIYtRYqQElxF3sex1/MN9NkD8VsSWpBi25kKV
+	 nJBEUL60uAIjg==
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-43f715fb494so828276b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:51:39 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxNGgT/vwGzvkaN14V8PrtUZPlx7KEfFPbZGMCcCqRRr8Kapdmo
+	Po+nE/z9fiCALEcCrlDOsNx0bDF6gDLwyMqbLFEUkWS8tG40+QuH2ea0i+WGuQ7CENxgr6sfkEO
+	RGXSJ1dnd55keERH+FL4zv/3OccRs6Dg=
+X-Google-Smtp-Source: AGHT+IHp04j0X8V+YZn78AWh+GE1NkZUNURdFGmB0yxPRQjsTStFnwWmD2B8Ldqps7NzxrcIRd71Se/yGCxtIOI52NA=
+X-Received: by 2002:a05:6808:2227:b0:43f:2c73:347f with SMTP id
+ 5614622812f47-4417b2c44f7mr8886330b6e.1.1760381499288; Mon, 13 Oct 2025
+ 11:51:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926193035.2158860-1-rrobaina@redhat.com> <aNfAKjRGXNUoSxQV@strlen.de>
- <CAABTaaDc_1N90BQP5mEHCoBEX5KkS=cyHV0FnY9H3deEbc7_Xw@mail.gmail.com> <CAHC9VhR+U3c_tH11wgQceov5aP_PwjPEX6bjCaowZ5Kcwv71rA@mail.gmail.com>
-In-Reply-To: <CAHC9VhR+U3c_tH11wgQceov5aP_PwjPEX6bjCaowZ5Kcwv71rA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 13 Oct 2025 14:51:18 -0400
-X-Gm-Features: AS18NWCCxvCqhwe_ZDUQ1QESEd77z51GhuMdOVqnR8miGtQcczLoD65PJ8boWMA
-Message-ID: <CAHC9VhR-EXz-w6QeX7NfyyO7B3KUXTnz-Jjhd=xbD9UpXnqr+w@mail.gmail.com>
-Subject: Re: [PATCH v3] audit: include source and destination ports to NETFILTER_PKT
-To: Ricardo Robaina <rrobaina@redhat.com>
-Cc: Florian Westphal <fw@strlen.de>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, eparis@redhat.com, 
-	pablo@netfilter.org, kadlec@netfilter.org, ej@inai.de
+References: <20250919153008.324338-1-marco.crivellari@suse.com> <20250919153008.324338-2-marco.crivellari@suse.com>
+In-Reply-To: <20250919153008.324338-2-marco.crivellari@suse.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 13 Oct 2025 20:51:28 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
+X-Gm-Features: AS18NWDP7weQw8xJd8EY6ufmdL1fH7PzayLqxb-HH7im4vrRHXdzpJCFJzFuGd4
+Message-ID: <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] PM: WQ_UNBOUND added to pm_wq workqueue
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Len Brown <len.brown@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 2:48=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Fri, Oct 3, 2025 at 11:43=E2=80=AFAM Ricardo Robaina <rrobaina@redhat.=
-com> wrote:
-> > On Sat, Sep 27, 2025 at 7:45=E2=80=AFAM Florian Westphal <fw@strlen.de>=
- wrote:
-> > > Ricardo Robaina <rrobaina@redhat.com> wrote:
+On Fri, Sep 19, 2025 at 5:30=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
 >
-> ...
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> This lack of consistentcy cannot be addressed without refactoring the API=
+.
 >
-> > > Maybe Paul would be open to adding something like audit_log_packet() =
-to
-> > > kernel/audit.c and then have xt_AUDIT.c and nft_log.c just call the
-> > > common helper.
-> >
-> > It sounds like a good idea to me. What do you think, Paul?
+> alloc_workqueue() treats all queues as per-CPU by default, while unbound
+> workqueues must opt-in via WQ_UNBOUND.
 >
-> Seems like a good idea to me too.
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they=E2=80=99re need=
+ed and
+> reducing noise when CPUs are isolated.
+>
+> This change add the WQ_UNBOUND flag to pm_wq, to make explicit this
+> workqueue can be unbound and that it does not benefit from per-cpu work.
+>
+> Once migration is complete, WQ_UNBOUND can be removed and unbound will
+> become the implicit default.
+>
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  kernel/power/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/power/main.c b/kernel/power/main.c
+> index 3cf2d7e72567..33a47ed15994 100644
+> --- a/kernel/power/main.c
+> +++ b/kernel/power/main.c
+> @@ -1056,7 +1056,7 @@ EXPORT_SYMBOL_GPL(pm_wq);
+>
+>  static int __init pm_start_workqueue(void)
+>  {
+> -       pm_wq =3D alloc_workqueue("pm", WQ_FREEZABLE, 0);
+> +       pm_wq =3D alloc_workqueue("pm", WQ_FREEZABLE | WQ_UNBOUND, 0);
+>
+>         return pm_wq ? 0 : -ENOMEM;
+>  }
+> --
 
-A quick follow-up to this ... when you are doing the work Ricardo,
-please do this as a two patch patchset; the first patch should
-introduce a new common function called by both audit_tg() and
-nft_log_eval_audit(), and the second patch should add new port
-information to the audit record.
-
---=20
-paul-moore.com
+Applied as 6.19 material, thanks!
 
