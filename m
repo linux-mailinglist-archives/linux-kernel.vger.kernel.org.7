@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-850822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67519BD3F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:15:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA7ABD4198
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5F4B5010C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9AEB4204A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1BD312817;
-	Mon, 13 Oct 2025 14:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2511331327F;
+	Mon, 13 Oct 2025 14:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8zixbqV"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYZdR/1B"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CA13126D5
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBAF31282A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367234; cv=none; b=WywE33HZ1696P6o0b78HRW+9SA1tWlR2WgFP9PuFCw6I8YtFTL/4SPi8/SIR3z/Hl89+Rz9Ei9obuUPcQ/c/kg1Tbbb9KqdV6jNYDjySzHqrd0Xq4sbsZSX5/R4fWdkBiLK2PgxSpyWfCil9WOTA0eoKvAyivSkzV5YYqTdPTcI=
+	t=1760367236; cv=none; b=FS1njru1nNumddajPtCZQfMyDbBrin1ov19cVaShHtVH/JNaEQxsvAar2tY+B5ZVAdniRvqlQS9vMBPkPt7813TuROorDLTZQnczEp1JkKMfArw9geURcONoiUzbCB5JGyyChmESi7OkXJH/Rngskgf+2SKQkMt4yMh8MwG2Au8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367234; c=relaxed/simple;
-	bh=GjwSFSwqU8rkn5De5P7jUBJg+PMBSZmYg+Q+t755HF4=;
+	s=arc-20240116; t=1760367236; c=relaxed/simple;
+	bh=5njEvVGvRvg5n+or8A0T0TeMIvuwdSGOGUYTMwZoZrw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=phWir7gp0px35VsaFWUsxbuBYq865/tbjeqm8U3HsL65LBcyIoREy2cPrf9jt6QY/BMXhoLhL2rS0mHjGuts69gHWSROr7C4BeMgOJid9Am3qsZAUAUkWKeQis/dhqNr37uAxq+5eyqh50uT4JIhp6Om2HyXA1+RAf+ik0cXVgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8zixbqV; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version; b=H6MXeUh0N8HJCYlQK2Ba3v0OLdTkwxTzhVulRVmZ6LWQ1tHE1njlek7UjXPjDZNUUym/Z+oi8ci0BD59T/gA1UoUFkl+ObP51RUVH9OshYy4hnSpcLU8Rl6H8VmnNEEa8hI0IEamsKF1eAlSNM85shByMsPmN+SCoodxztwX+JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYZdR/1B; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so3038984f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:53:51 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e3cdc1a6aso31765425e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:53:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760367230; x=1760972030; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760367232; x=1760972032; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GmgyMrfNSf1QbkW2cWjL4/Xd2W/yNMiKsE6jAo6f6fY=;
-        b=b8zixbqV5pRk9k5FD4jROeZ+DDkFbbMYer7qFxsyRrZl29LYC2d2knJnJt9oNxGVKQ
-         j5k51/sLopVHp45KcchsKvbT0eOfOW9uEoRPgNo2wVFQUFVlUCW3HgJ1ytNipQp1QfdX
-         kxj0htVsOwTfSvMcxXNVXlny6k1t+xpE+v5vXpUKU+pVXtzDCDGLP2arAi5yeT93Y8Dj
-         NRcd7LSkwbUxC0XD9E5kXkmNCw2CXQ4qtvmUqdIGiHQxt24fRQ06YTSIKhTReaecuvTM
-         o1PRGXCNJ53XMb4Cwh1KtA3NavFLYlzxm4OOZre9AEC9J24nf9lUzjCUAXlF+9TKc09F
-         dgfA==
+        bh=mx3rKwv8UpZmKoPpNp8c4OWFyXZ2MQ9zKc0xRf7JTbY=;
+        b=bYZdR/1B6EnR21UtQM02QdZ/SlZlUnJJ4HgKFePQdxI8Eh4Vz5mxonv4tvx8GlyEfe
+         QNFqDE0Hof7aL+0Jg3oW3H6WPiUMPKaN8cIc8NGDQBpMgAvthmHzN1euRS2nEHuxbeFz
+         ueQfYEXZB+DIC4i7aXyx3HfYzKhQAyj8QCqpqhoHSVAeEet06Gm6WL/yARIQ7D2syVcm
+         eYIzEEyZrR4F76VxwW1m3QECHx4dITHvTH/Ipc4uu4tzrxtm/vbGe+Z5rwD8hpVkaSKP
+         XZYn9xO45FjKRQMDpCUtRS7PZjJVtGsSXz1bVqCy/mxVcAhFrxuhShn6pd50eloLt5bv
+         eM/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760367230; x=1760972030;
+        d=1e100.net; s=20230601; t=1760367232; x=1760972032;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GmgyMrfNSf1QbkW2cWjL4/Xd2W/yNMiKsE6jAo6f6fY=;
-        b=sGWMOSADCqB74PztStmARvhhTNh4rGPXvXfN/UZOMgXy6VfcJ0N/GxkeGGfUpGYOOE
-         IbXYA3daOs0b8vug09LqXg6YJ5PvYRbHcrZkDCXQzIkodsfW28675ZPcYrdH4g5z3hpY
-         D+OxrHM1QqrTAigI6e8EPCGAoIUDNOmNp/LXRWsF8q6X8rvovBZp4CvcbrAz8ViJBbt+
-         nMVpKDceTZ+Y8shXpO0KpVf9bAI9xTaQdNlDCVc2Dip7OAbn0eRRPMrD1KHDUYHlc022
-         i/KmWIg22E6Gpj4BxoarLkI/EuinFvDypDJLZE8dLaDgggKAqjlD+bWBkMrAheqYzCoZ
-         am2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3LJKKRThlTwSUdOYpZVseUk4imx/FBbGsz5VLRTZgCueFdek5G0NES7F6MYN7Zpovx88x0YMgH418lAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5iz14ack08e1DgZwu+a4Hi7XLmwSjNU5TL9bz3/Pf+KkoNESt
-	tM3vzjQ9dMGdEKy04uvnCW9Aa8HM3G7YmARgqNHUcZquE7Q8D9pOM2AU
-X-Gm-Gg: ASbGncvVW2Jhatg5JehSqqKJ4bpzKKMcTbpe5errZT++zqmx57iZhjJTOXglEQikKkB
-	o8dAbcB4IzRUnqsY8FQLRbv3hg8l2nRmUnEqzhNtwQkDWxO4Kw5jFu1y3x/HDKWn/MuEhDXU3hq
-	u3UePXx2GOp1xQSSwPJi9PMRaWqJFQkWehsxM8zccjPTrwqRoT2GjkPsiLXejq8OgwQ8KUNw+L8
-	caac8pD+Of8172QFc+WDvHgaS5PIfOo00y5G1g87uHK/irnXVrndPX0YAAW7JkLZfmbevR2sFX7
-	fXiS9DfbJY2x1kkrcKFybRzY7aGLnkibX4WFAolPiNn52jXn7+GzZnjJVGwSMnhe3qoBMEUFLmE
-	M8HDEMJKSGfYtQnWJSBPlCxdQ6DTsyaRKYfQ=
-X-Google-Smtp-Source: AGHT+IF4BqUEqPY/lEHVdfhtdHZQUBn4lD2yFKhAE2G5bjuGJP3/uoHRJB95i7fwZ4AdUzgso19ltg==
-X-Received: by 2002:a05:6000:260a:b0:426:d53d:a405 with SMTP id ffacd0b85a97d-426d53da458mr5999140f8f.20.1760367229805;
-        Mon, 13 Oct 2025 07:53:49 -0700 (PDT)
+        bh=mx3rKwv8UpZmKoPpNp8c4OWFyXZ2MQ9zKc0xRf7JTbY=;
+        b=W84nWhqqzESWZM3NIqDuGzEodOQ/mAuYg/iDRJGPVh/POFKZtHYJgPnfeD9pscuzyk
+         jF+iRnINX/xNGj3l3CgeBUaLNkMCVz5Kdhew5WEAK0NRo21LzCuQ7CptshYP7i4OC+kQ
+         0goelojk/P1qLOUN08mwGKaWnI0XUWw0oXNmIZfRhngs9VfHRNxppXHDvWoxqPDG+Sm7
+         TTfGrwbyc5MjD3R5vGrQjo9NzR4VLvbFRj8COSZKjhe+NSBKOk2brEjMejne5lhP2EY9
+         vHEzKpzSH4Hts1QsNx3dpicEqDZb6pM6AQg315JyTpSYDV+fwpx21jgB++JqimnlpU29
+         e3Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Cfxt/eD397u9q6EnxoaylpzfMI9iNFnact4VB8En/vs850i1cN1KEYfJvIYZ5w6X1MbO/Rd1VrWBX1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKGGo1DUmhpNavffxinGL0K13NZAkETB2cPxahg3ByD+Y9wWiD
+	7aMM4QGD2uZg7ZRs45ZJePImzFIpbNil2nZy77Ttlvxi+GdcBr+WN7E+
+X-Gm-Gg: ASbGncveeps+3t3RAvh+U8pmZmNjC4m3fo9SQ2vRR2c27AZTLxnGnpl4UfC0U6d94Md
+	eOec1xzbPe2fcUhNMOB1xq8ZvLfYqWFozZa32qNTu1SrYQG69oxtY27yDb1KAqdYuw/fUQnrcup
+	0RUxBB/pRpRU+JoPR7RNu24sZ44vpaVgF3k96/7ZIMGXh1dLjT11rMUqauDZQZtNgRFOOMDnZNx
+	wAhGsEwA61wb6M2UCCw61Xhg4fmsQJ6XgYvpEWjkSzqmIjNFxQoYrXFUNcVWaPSAT6glFENOzg3
+	arzBUj2/76gx79OQSiXma/4c0IlPyUIx7nL0EA24wl0D7BujE17wdzGXo9y6UYLYXuqI3OPcgjd
+	Tv3PZjJiiX25a4VdoZ2B/K2KvHOwH39D3BL8=
+X-Google-Smtp-Source: AGHT+IE3H2i/VyBQ+RSV0mjlmorIJH69FGvZYgt2TChv0GqkPZvFJ5kiUJWgTBqn/GwNWnmRiH+YrQ==
+X-Received: by 2002:a05:600c:2287:b0:45d:d86b:b386 with SMTP id 5b1f17b1804b1-46fa29f13dfmr128925175e9.14.1760367231769;
+        Mon, 13 Oct 2025 07:53:51 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:eb09])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm18641085f8f.40.2025.10.13.07.53.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm18641085f8f.40.2025.10.13.07.53.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:53:49 -0700 (PDT)
+        Mon, 13 Oct 2025 07:53:50 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Andrew Lunn <andrew@lunn.ch>,
@@ -114,9 +114,9 @@ Cc: Andrew Lunn <andrew@lunn.ch>,
 	linux-doc@vger.kernel.org,
 	linux-rdma@vger.kernel.org,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH net-next v4 15/24] net: add queue config validation callback
-Date: Mon, 13 Oct 2025 15:54:17 +0100
-Message-ID: <4daa213af8779cbb8dfebb7ff559814f80611cfc.1760364551.git.asml.silence@gmail.com>
+Subject: [PATCH net-next v4 16/24] eth: bnxt: always set the queue mgmt ops
+Date: Mon, 13 Oct 2025 15:54:18 +0100
+Message-ID: <a91c4a947563f305f284d54a7bb127c10016275f.1760364551.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
 References: <cover.1760364551.git.asml.silence@gmail.com>
@@ -130,151 +130,47 @@ Content-Transfer-Encoding: 8bit
 
 From: Jakub Kicinski <kuba@kernel.org>
 
-I imagine (tm) that as the number of per-queue configuration
-options grows some of them may conflict for certain drivers.
-While the drivers can obviously do all the validation locally
-doing so is fairly inconvenient as the config is fed to drivers
-piecemeal via different ops (for different params and NIC-wide
-vs per-queue).
+Core provides a centralized callback for validating per-queue settings
+but the callback is part of the queue management ops. Having the ops
+conditionally set complicates the parts of the driver which could
+otherwise lean on the core to feed it the correct settings.
 
-Add a centralized callback for validating the queue config
-in queue ops. The callback gets invoked before each queue restart
-and when ring params are modified.
-
-For NIC-wide changes the callback gets invoked for each active
-(or active to-be) queue, and additionally with a negative queue
-index for NIC-wide defaults. The NIC-wide check is needed in
-case all queues have an override active when NIC-wide setting
-is changed to an unsupported one. Alternatively we could check
-the settings when new queues are enabled (in the channel API),
-but accepting invalid config is a bad idea. Users may expect
-that resetting a queue override will always work.
-
-The "trick" of passing a negative index is a bit ugly, we may
-want to revisit if it causes confusion and bugs. Existing drivers
-don't care about the index so it "just works".
+Always set the queue ops, but provide no restart-related callbacks if
+queue ops are not supported by the device. This should maintain current
+behavior, the check in netdev_rx_queue_restart() looks both at op struct
+and individual ops.
 
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+[pavel: reflow mgmt ops assignment]
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- include/net/netdev_queues.h | 12 ++++++++++++
- net/core/dev.h              |  2 ++
- net/core/netdev_config.c    | 20 ++++++++++++++++++++
- net/core/netdev_rx_queue.c  |  6 ++++++
- net/ethtool/rings.c         |  5 +++++
- 5 files changed, 45 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
-index a7b325307029..532f60ee1a66 100644
---- a/include/net/netdev_queues.h
-+++ b/include/net/netdev_queues.h
-@@ -147,6 +147,14 @@ void netdev_stat_queue_sum(struct net_device *netdev,
-  *			defaults. Queue config structs are passed to this
-  *			helper before the user-requested settings are applied.
-  *
-+ * @ndo_queue_cfg_validate: (Optional) Check if queue config is supported.
-+ *			Called when configuration affecting a queue may be
-+ *			changing, either due to NIC-wide config, or config
-+ *			scoped to the queue at a specified index.
-+ *			When NIC-wide config is changed the callback will
-+ *			be invoked for all queues, and in addition to that
-+ *			with a negative queue index for the base settings.
-+ *
-  * @ndo_queue_mem_alloc: Allocate memory for an RX queue at the specified index.
-  *			 The new memory is written at the specified address.
-  *
-@@ -170,6 +178,10 @@ struct netdev_queue_mgmt_ops {
- 	void	(*ndo_queue_cfg_defaults)(struct net_device *dev,
- 					  int idx,
- 					  struct netdev_queue_config *qcfg);
-+	int	(*ndo_queue_cfg_validate)(struct net_device *dev,
-+					  int idx,
-+					  struct netdev_queue_config *qcfg,
-+					  struct netlink_ext_ack *extack);
- 	int	(*ndo_queue_mem_alloc)(struct net_device *dev,
- 				       struct netdev_queue_config *qcfg,
- 				       void *per_queue_mem,
-diff --git a/net/core/dev.h b/net/core/dev.h
-index a2d6a181b9b0..a203b63198e7 100644
---- a/net/core/dev.h
-+++ b/net/core/dev.h
-@@ -99,6 +99,8 @@ void netdev_free_config(struct net_device *dev);
- int netdev_reconfig_start(struct net_device *dev);
- void __netdev_queue_config(struct net_device *dev, int rxq,
- 			   struct netdev_queue_config *qcfg, bool pending);
-+int netdev_queue_config_revalidate(struct net_device *dev,
-+				   struct netlink_ext_ack *extack);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 61e5c866d946..bd06171cc86c 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -16187,6 +16187,9 @@ static const struct netdev_queue_mgmt_ops bnxt_queue_mgmt_ops = {
+ 	.ndo_queue_stop		= bnxt_queue_stop,
+ };
  
- /* netdev management, shared between various uAPI entry points */
- struct netdev_name_node {
-diff --git a/net/core/netdev_config.c b/net/core/netdev_config.c
-index bad2d53522f0..fc700b77e4eb 100644
---- a/net/core/netdev_config.c
-+++ b/net/core/netdev_config.c
-@@ -99,3 +99,23 @@ void netdev_queue_config(struct net_device *dev, int rxq,
- 	__netdev_queue_config(dev, rxq, qcfg, true);
- }
- EXPORT_SYMBOL(netdev_queue_config);
++static const struct netdev_queue_mgmt_ops bnxt_queue_mgmt_ops_unsupp = {
++};
 +
-+int netdev_queue_config_revalidate(struct net_device *dev,
-+				   struct netlink_ext_ack *extack)
-+{
-+	const struct netdev_queue_mgmt_ops *qops = dev->queue_mgmt_ops;
-+	struct netdev_queue_config qcfg;
-+	int i, err;
-+
-+	if (!qops || !qops->ndo_queue_cfg_validate)
-+		return 0;
-+
-+	for (i = -1; i < (int)dev->real_num_rx_queues; i++) {
-+		netdev_queue_config(dev, i, &qcfg);
-+		err = qops->ndo_queue_cfg_validate(dev, i, &qcfg, extack);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-diff --git a/net/core/netdev_rx_queue.c b/net/core/netdev_rx_queue.c
-index 16db850aafd7..5ae375a072a1 100644
---- a/net/core/netdev_rx_queue.c
-+++ b/net/core/netdev_rx_queue.c
-@@ -46,6 +46,12 @@ int netdev_rx_queue_restart(struct net_device *dev, unsigned int rxq_idx,
+ static void bnxt_remove_one(struct pci_dev *pdev)
+ {
+ 	struct net_device *dev = pci_get_drvdata(pdev);
+@@ -16840,6 +16843,8 @@ static int bnxt_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
  
- 	netdev_queue_config(dev, rxq_idx, &qcfg);
- 
-+	if (qops->ndo_queue_cfg_validate) {
-+		err = qops->ndo_queue_cfg_validate(dev, rxq_idx, &qcfg, extack);
-+		if (err)
-+			goto err_free_old_mem;
-+	}
+ 	if (BNXT_SUPPORTS_NTUPLE_VNIC(bp))
+ 		bp->rss_cap |= BNXT_RSS_CAP_MULTI_RSS_CTX;
 +
- 	err = qops->ndo_queue_mem_alloc(dev, &qcfg, new_mem, rxq_idx);
- 	if (err)
- 		goto err_free_old_mem;
-diff --git a/net/ethtool/rings.c b/net/ethtool/rings.c
-index 6a74e7e4064e..7884d10c090f 100644
---- a/net/ethtool/rings.c
-+++ b/net/ethtool/rings.c
-@@ -4,6 +4,7 @@
- 
- #include "netlink.h"
- #include "common.h"
-+#include "../core/dev.h"
- 
- struct rings_req_info {
- 	struct ethnl_req_info		base;
-@@ -307,6 +308,10 @@ ethnl_set_rings(struct ethnl_req_info *req_info, struct genl_info *info)
- 	dev->cfg_pending->hds_config = kernel_ringparam.tcp_data_split;
- 	dev->cfg_pending->hds_thresh = kernel_ringparam.hds_thresh;
- 
-+	ret = netdev_queue_config_revalidate(dev, info->extack);
-+	if (ret)
-+		return ret;
-+
- 	ret = dev->ethtool_ops->set_ringparam(dev, &ringparam,
- 					      &kernel_ringparam, info->extack);
- 	return ret < 0 ? ret : 1;
++	dev->queue_mgmt_ops = &bnxt_queue_mgmt_ops_unsupp;
+ 	if (BNXT_SUPPORTS_QUEUE_API(bp))
+ 		dev->queue_mgmt_ops = &bnxt_queue_mgmt_ops;
+ 	dev->request_ops_lock = true;
 -- 
 2.49.0
 
