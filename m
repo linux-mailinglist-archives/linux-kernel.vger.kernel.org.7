@@ -1,283 +1,230 @@
-Return-Path: <linux-kernel+bounces-851458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA48BD68B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:06:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039F1BD690C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD6F4266F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:06:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A9494FC787
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927272FB08F;
-	Mon, 13 Oct 2025 21:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="B+a24GxR"
-Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13EB308F2C;
+	Mon, 13 Oct 2025 21:57:30 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B590312815
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1EC2FCC01
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760392656; cv=none; b=Q7jMXMkeO4xk5JdVHL5J8KFXDL7a75J6xpExP0tEajFAgduwTr6t4gjeD+PF+rm3s/Ul13+ideO9R5wG0rzU8DBQMwZ2Tph9kKMUSR/Z41QYt21Ay9GN6wY6CcaZ9LyHDFpn0gleZtgnCBzm5FjUoHn/Onf6QQfClOCAbupcASU=
+	t=1760392650; cv=none; b=tHtALQUBuqSDZIeXsyfYUihAXH/t9DHn87hIp4PfqSFgjYsjCAKoGjlMCy3RHamD9yA2NfVNrR3XltoX+bBKLGkUL7UPMtG6xh9iO+3raExaQkngm5Yw3INQ48ZI8BWnKsUZYeiW57qO8wdAPEIzqa9XG+6hS3ICeUYC27dQOSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760392656; c=relaxed/simple;
-	bh=4Cz/5Tg01mEm7HOWBRI+QY3KIF06zD3aR2vbmZtrLUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bftgKKGNm2iCEoJSXzWK5+AK84BJ+OUsNjX2qaGLPVAFFZfOnwZdolYv4Gb+K6vZeoW4UYGsjVjiGKL+t7wbVt7kTLOHEyuPFO89ynwQwNNBogcQaMwJo6KkuItDFveIlJFSpirW9X/LtEU81bdlHb9nmWTkv61J4aoaxR1wdLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=B+a24GxR; arc=none smtp.client-ip=37.27.248.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay10 (localhost.localdomain [127.0.0.1])
-	by relay10.grserver.gr (Proxmox) with ESMTP id E0D993ED07
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:57:32 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay10.grserver.gr (Proxmox) with ESMTPS id 0FD403ED00
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:57:32 +0300 (EEST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 5BB981FDE2D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:57:31 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760392651;
-	bh=El5iz56Qd+ib5idmhjwDcMQU0F22cZFo7/Zrr1+8mgw=;
-	h=Received:From:Subject:To;
-	b=B+a24GxR/vCSP4+ewgZ56QqQmJOKmEHCJm3OqstmeG0mEoWZOSpmyX98YjALbPc2H
-	 vBteUNWYG1OyQ4iZpAL6GP4T9t/PoUbf6gcU2lN4Dt40UqnMpiNpF4OP7AaIwAdZnc
-	 K6/tj34BaTYs/+Iee35/Rpht/qvZhzUzN2BuQ4ulKyarTwPDWM0b5sFSo8m5oMyIGR
-	 OGNgRGsAaMVnPzfVoy9HiJ7l7oXZkbaHIuW6F9HRkM1DH2EnUevNq7oXUmWcBmCVWo
-	 Y3r0M7xf0DoUeLLzSpOB1oAxciKFYlzCm4zPtQxG8Q8T5+BDNGcNY/Epdpkp+X3+xU
-	 mN4qa8hi1wGOw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.176) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f176.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f176.google.com with SMTP id
- 38308e7fff4ca-368348d30e0so40039571fa.1
-        for <linux-kernel@vger.kernel.org>;
- Mon, 13 Oct 2025 14:57:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCW/xxSbxJjwlP4KTzAFyiQ0PT+iT7j7mM7KbnL9Qh1Jl38FQMhXklL1UmKu5bsKbB3G9dqq60rZi3fq3Dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWUFwILjuPeW5aGS1xffRXtOZvbv+ybsAKggESLXdrmsINrgqf
-	5Ff4AOUT+eJuAPP6xL02hWiY3F2p+D7WrtOHB6F1Ni9U6EKhOh/8WihRIqFnxRfhhzprbFC7Zuf
-	YWLlvvbjUEdd2ZkMIEV3SdanPFdCDGZ4=
-X-Google-Smtp-Source: 
- AGHT+IFv9tAH/E/ajmrfCGsXqap0lzkbXiPlZM96aHjzYrArckY+BrPccTbGdYZHSc4ACjoVQWi+ugOoMrKAiVipz94=
-X-Received: by 2002:a05:651c:144a:b0:336:9427:3527 with SMTP id
- 38308e7fff4ca-37609e55b64mr53271531fa.21.1760392650751; Mon, 13 Oct 2025
- 14:57:30 -0700 (PDT)
+	s=arc-20240116; t=1760392650; c=relaxed/simple;
+	bh=IGP1KIgfWmJRY4FWjG/kg0+unpoGwWJ3NrLAJVuhLTc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bl75r6YRO3P4oQa06UHkrCtDMch1T20oKAPG+mtad6XuYnMq5D67OFmlCk7MD+oi7GX76+hbnQbPOKikqldEhkQ6FRscmfLHc0ubSprj+yvKgYWdXMWHqqqSuAb8DwqqZNkUUUiwC0+z6p7SoeWqLHCY9vs7JaJSyomAzdOK+ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-9374627bb7eso1413987939f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:57:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760392647; x=1760997447;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sLUVzXIkJevDexFppNeN5cM08yF5FbbmUuPnAILOBR8=;
+        b=dI31pwsbTvk4mfLB5+kPyZ4nxN9YsH9jzRGwU5AspJ5hh92T9MiDVxkYLBXUbiEeUO
+         PvrxmZmvFPVjtSUAC4TN5CQcdXcCb8ZLzXcDke03UI5ksVzxM9f1zKyx38YR8D36Njvl
+         t8WSZ/QdPLq62kULfkUl2svBxVqsbwHJZETri+GDc5ZXxNNVGl/jr6V+95uVTE9dp/VC
+         UEuOvK+GnMVR1oJRQXZK593lRoMR/xcygSG/aOBEunnSCycgMvwONxA9O8hwpnr8RPt5
+         vgnQgd5ciO6SutiDzxCHwDkqPMSww9kXLZGMrwH21WD5X5Zi/3pEwnqCrS36hhxxGShC
+         NZSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSVu3uBD4IPgwVX926MZvfFw3UEa6qJmGsZAAd2hyfdNSt+5Qb5xcJAYO4BMXKiJOePVlGVawd0Xy7ie4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy790LFeCq5avz6sZZU3M7ffNCxgxPFEYFutZCAX8Xe+QcPPIWk
+	Qa3RDWMeXF0HrBFWoMqXjw6aVjhOK+VwI6/jOOzvo3mVFUyGSfE75AJC+9E30+6XBWCMYj1nnX3
+	RqReBFua8OkWppLnh3LqynNV3FrY6XDuI5MQE4ovVqq22j1WaIIEfGmBo2ps=
+X-Google-Smtp-Source: AGHT+IF59TPnsB+nGQvT/Q44OYaOO+VhM1abV2evI0Gssks4gS1oW5dNMSaa3C5qXAAPULqN3PbIh5luIIU6tdbBFgEMJttnUsS0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <20251013201535.6737-5-lkml@antheas.dev>
- <e1e6ee09-ea29-4328-9eae-f2a4a23b3edc@gmail.com>
-In-Reply-To: <e1e6ee09-ea29-4328-9eae-f2a4a23b3edc@gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 13 Oct 2025 23:57:19 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwHP6ukxBRpOFU+XQL5gyNKu5f-HUJio-=F6rAGUmcm2tw@mail.gmail.com>
-X-Gm-Features: AS18NWAuJ3FJduwaF_6Bo-8GDPx0UFFCTA2170ZRQeDNWVr9iXBapON5KVo5mYo
-Message-ID: 
- <CAGwozwHP6ukxBRpOFU+XQL5gyNKu5f-HUJio-=F6rAGUmcm2tw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/7] HID: asus: listen to the asus-wmi brightness
- device instead of creating one
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+X-Received: by 2002:a05:6e02:1688:b0:424:7128:a06a with SMTP id
+ e9e14a558f8ab-42f87417ff1mr270934375ab.7.1760392647572; Mon, 13 Oct 2025
+ 14:57:27 -0700 (PDT)
+Date: Mon, 13 Oct 2025 14:57:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ed75c7.050a0220.91a22.01ee.GAE@google.com>
+Subject: [syzbot] [exfat?] KASAN: stack-out-of-bounds Read in exfat_nls_to_ucs2
+From: syzbot <syzbot+29934710e7fb9cb71f33@syzkaller.appspotmail.com>
+To: ethan.ferguson@zetier.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
 Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176039265155.3717381.8975482118122008434@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
 
-On Mon, 13 Oct 2025 at 23:44, Denis Benato <benato.denis96@gmail.com> wrote:
->
->
-> On 10/13/25 22:15, Antheas Kapenekakis wrote:
-> > Some ROG laptops expose multiple interfaces for controlling the
-> > keyboard/RGB brightness. This creates a name conflict under
-> > asus::kbd_brightness, where the second device ends up being
-> > named asus::kbd_brightness_1 and they are both broken.
-> Can you please reference a bug report and/or an analysis of why they ends
-> up being broken?
+Hello,
 
-You can reference the V1 description [1]
+syzbot found the following issue on:
 
-[1] https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
+HEAD commit:    67029a49db6c Merge tag 'trace-v6.18-3' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b6e542580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1921939e847e6e87
+dashboard link: https://syzkaller.appspot.com/bug?extid=29934710e7fb9cb71f33
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11aa067c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ba29e2580000
 
-> >
-> > Therefore, register a listener to the asus-wmi brightness device
-> > instead of creating a new one.
-> >
-> > Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/hid/hid-asus.c | 64 +++++++-----------------------------------
-> >  1 file changed, 10 insertions(+), 54 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index a62559e3e064..0af19c8ef035 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -102,7 +102,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> >  #define TRKID_SGN       ((TRKID_MAX + 1) >> 1)
-> >
-> >  struct asus_kbd_leds {
-> > -     struct led_classdev cdev;
-> > +     struct asus_hid_listener listener;
-> It is my understanding from "register a listener .... instead of creating a new one"
-> that you are attempting to use the same listener among many devices... so why isn't
-> this a pointer? And more importantly: why do we have bool available, bool registered
-> instead of either one or the other being replaced by this field being possibly NULL?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c68ec41538d2/disk-67029a49.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/948793593b2d/vmlinux-67029a49.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/db3f32bee746/bzImage-67029a49.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b8b089d93a49/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=130839e2580000)
 
-A listener is the handle that is passed to asus-wmi so that it can
-communicate with hid-asus. Since the flow of communication flows from
-asus-wmi -> hid-asus, the pointer is placed on asus-wmi.
+The issue was bisected to:
 
-The boolean kbd_led_avail is used to signify whether the BIOS supports
-RGB commands. If not, we still want the common handler to be there to
-link multiple hid-asus devices together. At the same time, we need to
-skip calling the bios commands for brightness, and hold a value for
-the previous brightness outside the bios.
+commit d01579d590f72d2d91405b708e96f6169f24775a
+Author: Ethan Ferguson <ethan.ferguson@zetier.com>
+Date:   Tue Sep 30 04:49:00 2025 +0000
 
-The kbd_led_registered fixes the race condition that happens between
-hid-asus and asus-wmi. Specifically, it ensures that the rgb listener
-is only setup once, either once asus-wmi loads (if it supports RGB) or
-when the first hid device loads.
+    exfat: Add support for FS_IOC_{GET,SET}FSLABEL
 
-Best,
-Antheas
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17a099e2580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=146099e2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=106099e2580000
 
-> >       struct hid_device *hdev;
-> >       struct work_struct work;
-> >       unsigned int brightness;
-> > @@ -495,11 +495,11 @@ static void asus_schedule_work(struct asus_kbd_leds *led)
-> >       spin_unlock_irqrestore(&led->lock, flags);
-> >  }
-> >
-> > -static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
-> > -                                enum led_brightness brightness)
-> > +static void asus_kbd_backlight_set(struct asus_hid_listener *listener,
-> > +                                int brightness)
-> >  {
-> > -     struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
-> > -                                              cdev);
-> > +     struct asus_kbd_leds *led = container_of(listener, struct asus_kbd_leds,
-> > +                                              listener);
-> >       unsigned long flags;
-> >
-> >       spin_lock_irqsave(&led->lock, flags);
-> > @@ -509,20 +509,6 @@ static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
-> >       asus_schedule_work(led);
-> >  }
-> >
-> > -static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
-> > -{
-> > -     struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
-> > -                                              cdev);
-> > -     enum led_brightness brightness;
-> > -     unsigned long flags;
-> > -
-> > -     spin_lock_irqsave(&led->lock, flags);
-> > -     brightness = led->brightness;
-> > -     spin_unlock_irqrestore(&led->lock, flags);
-> > -
-> > -     return brightness;
-> > -}
-> > -
-> >  static void asus_kbd_backlight_work(struct work_struct *work)
-> >  {
-> >       struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
-> > @@ -539,34 +525,6 @@ static void asus_kbd_backlight_work(struct work_struct *work)
-> >               hid_err(led->hdev, "Asus failed to set keyboard backlight: %d\n", ret);
-> >  }
-> >
-> > -/* WMI-based keyboard backlight LED control (via asus-wmi driver) takes
-> > - * precedence. We only activate HID-based backlight control when the
-> > - * WMI control is not available.
-> > - */
-> > -static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
-> > -{
-> > -     struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> > -     u32 value;
-> > -     int ret;
-> > -
-> > -     if (!IS_ENABLED(CONFIG_ASUS_WMI))
-> > -             return false;
-> > -
-> > -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
-> > -                     dmi_check_system(asus_use_hid_led_dmi_ids)) {
-> > -             hid_info(hdev, "using HID for asus::kbd_backlight\n");
-> > -             return false;
-> > -     }
-> > -
-> > -     ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
-> > -                                    ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
-> > -     hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
-> > -     if (ret)
-> > -             return false;
-> > -
-> > -     return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
-> > -}
-> > -
-> >  /*
-> >   * We don't care about any other part of the string except the version section.
-> >   * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
-> > @@ -701,14 +659,11 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
-> >       drvdata->kbd_backlight->removed = false;
-> >       drvdata->kbd_backlight->brightness = 0;
-> >       drvdata->kbd_backlight->hdev = hdev;
-> > -     drvdata->kbd_backlight->cdev.name = "asus::kbd_backlight";
-> > -     drvdata->kbd_backlight->cdev.max_brightness = 3;
-> > -     drvdata->kbd_backlight->cdev.brightness_set = asus_kbd_backlight_set;
-> > -     drvdata->kbd_backlight->cdev.brightness_get = asus_kbd_backlight_get;
-> > +     drvdata->kbd_backlight->listener.brightness_set = asus_kbd_backlight_set;
-> >       INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_backlight_work);
-> >       spin_lock_init(&drvdata->kbd_backlight->lock);
-> >
-> > -     ret = devm_led_classdev_register(&hdev->dev, &drvdata->kbd_backlight->cdev);
-> > +     ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
-> >       if (ret < 0) {
-> >               /* No need to have this still around */
-> >               devm_kfree(&hdev->dev, drvdata->kbd_backlight);
-> > @@ -1105,7 +1060,7 @@ static int __maybe_unused asus_resume(struct hid_device *hdev) {
-> >
-> >       if (drvdata->kbd_backlight) {
-> >               const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4,
-> > -                             drvdata->kbd_backlight->cdev.brightness };
-> > +                             drvdata->kbd_backlight->brightness };
-> >               ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
-> >               if (ret < 0) {
-> >                       hid_err(hdev, "Asus failed to set keyboard backlight: %d\n", ret);
-> > @@ -1241,7 +1196,6 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >       }
-> >
-> >       if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
-> > -         !asus_kbd_wmi_led_control_present(hdev) &&
-> >           asus_kbd_register_leds(hdev))
-> >               hid_warn(hdev, "Failed to initialize backlight.\n");
-> >
-> > @@ -1282,6 +1236,8 @@ static void asus_remove(struct hid_device *hdev)
-> >       unsigned long flags;
-> >
-> >       if (drvdata->kbd_backlight) {
-> > +             asus_hid_unregister_listener(&drvdata->kbd_backlight->listener);
-> > +
-> >               spin_lock_irqsave(&drvdata->kbd_backlight->lock, flags);
-> >               drvdata->kbd_backlight->removed = true;
-> >               spin_unlock_irqrestore(&drvdata->kbd_backlight->lock, flags);
->
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+29934710e7fb9cb71f33@syzkaller.appspotmail.com
+Fixes: d01579d590f7 ("exfat: Add support for FS_IOC_{GET,SET}FSLABEL")
 
+loop0: detected capacity change from 0 to 256
+exfat: Deprecated parameter 'namecase'
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x5441951d, utbl_chksum : 0xe619d30d)
+==================================================================
+BUG: KASAN: stack-out-of-bounds in exfat_nls_to_ucs2+0x706/0x730 fs/exfat/nls.c:619
+Read of size 1 at addr ffffc9000383fcc8 by task syz.0.17/5984
+
+CPU: 1 UID: 0 PID: 5984 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ exfat_nls_to_ucs2+0x706/0x730 fs/exfat/nls.c:619
+ exfat_nls_to_utf16+0xa6/0xf0 fs/exfat/nls.c:647
+ exfat_ioctl_set_volume_label+0x15d/0x230 fs/exfat/file.c:524
+ exfat_ioctl+0x929/0x1630 fs/exfat/file.c:554
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl fs/ioctl.c:583 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbf7418eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd30025cd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbf743e5fa0 RCX: 00007fbf7418eec9
+RDX: 00002000000001c0 RSI: 0000000041009432 RDI: 0000000000000004
+RBP: 00007fbf74211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fbf743e5fa0 R14: 00007fbf743e5fa0 R15: 0000000000000003
+ </TASK>
+
+The buggy address belongs to stack of task syz.0.17/5984
+ and is located at offset 960 in frame:
+ exfat_ioctl_set_volume_label+0x0/0x230 fs/exfat/file.c:507
+
+This frame has 3 objects:
+ [32, 36) 'lossy'
+ [48, 568) 'uniname'
+ [704, 960) 'label'
+
+The buggy address belongs to a vmalloc virtual mapping
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888078e7c000 pfn:0x78e7c
+memcg:ffff88803262e802
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: ffff888078e7c000 0000000000000000 00000001ffffffff ffff88803262e802
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_ZERO|__GFP_NOWARN), pid 5950, tgid 5950 (dhcpcd-run-hook), ts 127646754846, free_ts 127600338916
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1850
+ prep_new_page mm/page_alloc.c:1858 [inline]
+ get_page_from_freelist+0x10a3/0x3a30 mm/page_alloc.c:3884
+ __alloc_frozen_pages_noprof+0x25f/0x2470 mm/page_alloc.c:5183
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
+ alloc_pages_noprof+0x131/0x390 mm/mempolicy.c:2507
+ vm_area_alloc_pages mm/vmalloc.c:3647 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3724 [inline]
+ __vmalloc_node_range_noprof+0x6f8/0x1480 mm/vmalloc.c:3897
+ __vmalloc_node_noprof+0xad/0xf0 mm/vmalloc.c:3960
+ alloc_thread_stack_node kernel/fork.c:311 [inline]
+ dup_task_struct kernel/fork.c:881 [inline]
+ copy_process+0x2c77/0x76a0 kernel/fork.c:2012
+ kernel_clone+0xfc/0x930 kernel/fork.c:2609
+ __do_sys_clone+0xce/0x120 kernel/fork.c:2750
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 12 tgid 12 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1394 [inline]
+ __free_frozen_pages+0x7df/0x1160 mm/page_alloc.c:2906
+ rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+ rcu_core+0x79c/0x1530 kernel/rcu/tree.c:2861
+ handle_softirqs+0x219/0x8e0 kernel/softirq.c:622
+ __do_softirq kernel/softirq.c:656 [inline]
+ invoke_softirq kernel/softirq.c:496 [inline]
+ __irq_exit_rcu+0x109/0x170 kernel/softirq.c:723
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:739
+ instr_sysvec_call_function_single arch/x86/kernel/smp.c:266 [inline]
+ sysvec_call_function_single+0xa4/0xc0 arch/x86/kernel/smp.c:266
+ asm_sysvec_call_function_single+0x1a/0x20 arch/x86/include/asm/idtentry.h:704
+
+Memory state around the buggy address:
+ ffffc9000383fb80: f2 f2 f2 f2 f2 f2 f2 f2 f2 00 00 00 00 00 00 00
+ ffffc9000383fc00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc9000383fc80: 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3 f3 f3
+                                              ^
+ ffffc9000383fd00: f3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc9000383fd80: 00 00 00 00 f1 f1 f1 f1 f1 f1 00 00 00 f2 f2 f2
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
