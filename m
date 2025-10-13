@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-850564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5034FBD32F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED05CBD3318
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26453B56C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E744C3B8C60
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7F6274B39;
-	Mon, 13 Oct 2025 13:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE80306B2E;
+	Mon, 13 Oct 2025 13:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MlWNxiPs"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mteMyMk8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CFC2F7AB0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577A52FF642;
+	Mon, 13 Oct 2025 13:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760361754; cv=none; b=WlJNTlUc/ylpPh2rbX80Btyrvt2iqTFPSzMsrQUQmlmV0j2Jc5cH3I5A0hkmhaGSCNM6ycM5+3euVCPHqdl7yxfZ3rWYHNkzwX/qi+TR1DQLTIwIHaXQfFqI76OTkhLyhTIjBeJF4xJ7FKMfUoOJWm1fHCzlEbTR2zdcKrQ6YQM=
+	t=1760361946; cv=none; b=SiGmt4nBN83i76h1F/OBmqH3mKcIzDzc/cXW5iZs10wtz/L7cK4ES/Z2OIyW8aCX7DVWmyXz/cQa/rG9I1YemYAxFsUpLKUNxg2KJPfkcxPFFlHXIbfUD5ea9nez2AZCW08SEG64Opxfdst5HXtzuXwR+mcZn6kdA685ZEPnJTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760361754; c=relaxed/simple;
-	bh=sdzCugawJR5yomrCcleyfBYzimfdjcRqs5/JBcSkuHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kCjci82cCApb4+obGZa6Z17gVXYEdxBVx63aOaIKlTMai+B7y7IFP9FlBlBdaowqOC5tI8oHFUgoeaVXTFakrlItmgeL9K6V9VQaoDe9u7n/nWZ8GoVDUeMMasgsOivHWXdb9yhc6lht0KM/CS1K9HqTVUX0j/VEtxsNujs1uGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MlWNxiPs; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-36a448c8aa2so36377231fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760361751; x=1760966551; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sdzCugawJR5yomrCcleyfBYzimfdjcRqs5/JBcSkuHA=;
-        b=MlWNxiPsjoo0T5LCyUP28n37DcOLAOTwWD+DpAzc/pTf5m45ZZ3AZ+Buo+GB8bIglc
-         Lgp1k2WnYYKkQg0OUYXBeLtf0rlQnQa/c6kqICN0/Mg+62isn5k1eH0C5V42RNo8uU/2
-         O89YIu9wvAAKaDjCQQJNow//HTUopI7KCxkDecV+++eQlWZBjgH9mvfFON/bs/djnRjw
-         m5qJzRJDkcrlOw83nb1kBM7KZe8soPgcJAyJPooExhtnXEdJ4beRh3tnwrLrx2ffZ6Kd
-         04fvOXjhohsZtsSaXsVNpdE5zD3blxtpUIzgN1pkPK3g9JvciggUbR3G/n/FjrgHEjXl
-         0LMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760361751; x=1760966551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sdzCugawJR5yomrCcleyfBYzimfdjcRqs5/JBcSkuHA=;
-        b=vOr+kohzYjrJudIOrPrVo+5Tmn9+V+JVlB1ZBEfVk7/BgqPJhQiVWuepmh0nNTxvqb
-         uC3eqiHDuv8qmGo0MTFAcc/+I8d8oZnUzXAd+qjZllgagwqJ1FJQdLhZ7XWv5jJGy+Ht
-         RxT7INiNMWBrlrWdl8fFNn+ZXhnxRZPCNFzkytamGPGSOgu41gfllIYWj/K5NOZRDVbu
-         WF7VNU88jCuHdktOK3CMZCLemKfFeFIV7oWkzK777Xoti+RCWmo0zFq1mnm+EklAz1ah
-         m2G//MbvvU1qJ9//eR7ksN6fsux/ietLSveqEJ3NTnEpWfkxTdRIlS4aZfV8ZB5R7Rvc
-         FISw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlgyLQR+9aiuXEk4sq3U50crv2RWoIf70xcbmJ57zSthcOZ/Ec3cexzw119dRAcWaS3YCZeVoBKJ9/cEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLEFnVDMTdZE8HUL+x3dO+3bPsYSZkHTqVpzj9h3prSSKdLlse
-	kj9/8qzz+yn6J2458NqZi6Ter1fu6hYOBIHJ1u9N5nS9Q1ceJOycvlUoYHPg3ie6n571QskZUVq
-	ihtQd53oZLmutStbW08gXrnSkgd4SemM+EmrOZm8W6A==
-X-Gm-Gg: ASbGncv1oBbOfTVqOyTOYxEvMSeNiu68UXaGPJXqRDok3XE4rPb0Bw0fOQ8sriJVUx0
-	LsV2Fo7R15nTDbChFlfSyVJUrTwOTKeoCYDDB8DaoIYqDKG+f1MAsiQgwFODvj4nvpv/bWK1d1v
-	7LGsNgDeKd+aAoOGeQmePYWkbKgid1zzq7/KLI2qTpLYhmjS6h60s3rXxNluHantxXN9rDCWEwQ
-	qOo8nszlZ1+zb0I05EYpP05k0IrgPd8XTe59ZvD
-X-Google-Smtp-Source: AGHT+IFD3AIgRgN4jBUJbpK34gX4OpQi2/Ld3YOLcJ6oyzzxV171xkOqcylCUzBUtIlA/UWCtsK+8RrigJBOPn6Q18s=
-X-Received: by 2002:a05:651c:990:b0:371:fb14:39bb with SMTP id
- 38308e7fff4ca-37609d72cc1mr56226121fa.16.1760361750851; Mon, 13 Oct 2025
- 06:22:30 -0700 (PDT)
+	s=arc-20240116; t=1760361946; c=relaxed/simple;
+	bh=EQftlmgTvzftJHVOqEL+YlrIiJf4J+wLDyJnZMuRg8I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TT1TM4R/+bSDS1OC8SIdNdTHEap7J6GwgoR2lteO1/maDAyscizkQdgSz8MWwdeP5WYDaQJrfSZD7BpOm4ZOAsVSrQvQop0VCImR18iR8ilJvZbRiEAw1MdDPn3LAKm0+USPPEA2hxiSQ1oukZKTO1fL/4aPfACn+yvvKXnH8NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mteMyMk8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E7EE1C4CEE7;
+	Mon, 13 Oct 2025 13:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760361945;
+	bh=EQftlmgTvzftJHVOqEL+YlrIiJf4J+wLDyJnZMuRg8I=;
+	h=From:Subject:Date:To:Cc:From;
+	b=mteMyMk8qWT5OiterxVW2HPlzi45EIazwm0+YwQgglBxgsr7vkaBS33k0Y2brfRm0
+	 8bS8XPE+Q/VEeefmEf0l+o4q3C+FdJ5NbY71Y2FKwK9pQVd+6c0qccyLh8D2PPKEaJ
+	 Qof+6bXiSFIsx93Zi3pvURSeSIuTwmr2VTuZFpmZmIMzKnWm1/BA5ZPKCvfdSPT4Ih
+	 NMYMgDM5ppzaSsPzW6sQmjxJn/NUsHd2OpFLEVjjzb3DWV39bOZckydJOYupRXMmGX
+	 5RYEi3UyTgKnj7Ewsa8328dzeTdaIKv2vzmMqJ+nVSZ3V+yWtJyCR9RsVp3RGA940B
+	 UkdkPxRP5yGjw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D407BCCD18E;
+	Mon, 13 Oct 2025 13:25:45 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH 0/8] sysctl: Generalize proc handler converter creation
+Date: Mon, 13 Oct 2025 15:24:50 +0200
+Message-Id: <20251013-jag-sysctl_conv-v1-0-4dc35ceae733@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009132651.649099-2-bigunclemax@gmail.com>
-In-Reply-To: <20251009132651.649099-2-bigunclemax@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 15:22:19 +0200
-X-Gm-Features: AS18NWBjzabyAo7Iwc_ab_T7t7lGvRr7MIu3O5SMdfRGHuDa0E6rCvILh5I1Oh4
-Message-ID: <CACRpkdb4HDhN6G9JSe093jeBe4__jCFz_+r1grUbHwEr4Gt1hQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: mcp23s08: delete regmap reg_defaults to avoid
- cache sync issues
-To: bigunclemax@gmail.com, Dmitry Mastykin <mastichi@gmail.com>, 
-	Evgenii Shatokhin <e.shatokhin@yadro.com>, Arturas Moskvinas <arturas.moskvinas@gmail.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andreas Kaessens <akaessens@gmail.com>, 
-	Zou Wei <zou_wei@huawei.com>, Radim Pavlik <radim.pavlik@tbs-biometrics.com>
-Cc: Mike Looijmans <mike.looijmans@topic.nl>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKL97GgC/x3MQQqAIBBA0avErBNUkqKrRITYWBOh4UQU0t2Tl
+ m/xfwbGRMjQVxkSXsQUQ4GqK3CrDQsKmotBS22UVFpsdhH8sDv3ycVwCdPKrmm88bP1UKojoaf
+ 7Pw7j+36lopEFYQAAAA==
+X-Change-ID: 20251012-jag-sysctl_conv-570844f5fdaf
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Kees Cook <kees@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3177;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=EQftlmgTvzftJHVOqEL+YlrIiJf4J+wLDyJnZMuRg8I=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGjs/bfHX8L8LqWeSVVbJjkR/ozj7Zgcsrvnr
+ r/D2BQO5rfcsYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJo7P23AAoJELqXzVK3
+ lkFPM+AL/3wbIXJF4mMOzfCjRJdeSYvamDvfRCzOMIYRKj10o/QVWNQYxkhpZJqqjrFFSOsf8On
+ tDKgr5mkDsfJm5h1tXXa9Jsey+5NWBdOKVofjLX3huiYpKFdFPaJqO26MycOryEE9SVNE4dX2jq
+ S4iZZF76eJbX7Odhc/c/rOyLHuNryc/1YAtaQCYoa01D0vO/OB+roomOkWhzoJ0kShNXJ6p5/Ml
+ kKds3eIbPF5pd1+wySmlyjV6g+MTCKPGp7fBwAZW5Ulx1LMp8jBCHYAy8UhenQRWoDWj0IIhK4J
+ djFPf4mL42o2yW7MgsarrX4ZMmdiW4rOk2P3c8VolFgmCPfuGpd6SNtePVlVIL26ZQKd1GtrWkA
+ C2Nnn8ctQdte0LAhJfxieKjZSBcDIoGkSkzTjgY81OuM+mAJObo8XfeC7/aq6wmnCkl68nrAMo9
+ oOMjkrPdoyMdlfKKLpOPxMVAfHGFUN2gkqOInxYzyBCclqitff2llmS4hxzrnu6emCO/+EVKDa7
+ Wc=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-Hi Maksim,
+Implement new converter generation macros this removes repeated logic
+and preps the proc handler converter infrastructure for exposure to the
+greater kernel. Macros will be exposed in a later series in such a way
+that they can be used in the jiffie proc handlers (you can see an
+example of how this might look here [1]) and in the proc_dopipe_max_size.
 
-thanks for your patch!
+What is done?
+=============
 
-On Thu, Oct 9, 2025 at 3:29=E2=80=AFPM <bigunclemax@gmail.com> wrote:
->
-> From: Maksim Kiselev <bigunclemax@gmail.com>
->
-> The probe function does not guarantee that chip registers are in their
-> default state. Thus using reg_defaults for regmap is incorrect.
->
-> For example, the chip may have already been configured by the bootloader
-> before the Linux driver loads, or the mcp might not have a reset at all
-> and not reset a state between reboots.
->
-> In such cases, using reg_defaults leads to the cache values diverging
-> from the actual registers values in the chip.
->
-> Previous attempts to fix consequences of this issue were made in
-> 'commit 3ede3f8b4b4b ("pinctrl: mcp23s08: Reset all pins to input at
-> probe")', but this is insufficient. The OLAT register reset is also
-> required. And there's still potential for new issues arising due to cache
-> desynchronization of other registers.
->
-> Therefore, remove reg_defaults entirely to eliminate the root cause
-> of these problems.
->
-> Also remove the force reset all pins to input at probe as it is no longer
-> required.
->
-> Link: https://lore.kernel.org/all/20251006074934.27180-1-bigunclemax@gmai=
-l.com/
-> Suggested-by: Mike Looijmans <mike.looijmans@topic.nl>
-> Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
+Three macros (SYSCTL_{KERN_TO_USER,USER_TO_KERN,INT_CONV_CUSTOM}) are
+created. SYSCTL_INT_CONV_CUSTOM creates a bi-directional (meaning that
+it handles both user to kernel and kernel to user writes) converter that
+optionally implements a range checker for when kernel memory is written.
+SYSCTL_KERN_TO_USER is a uni-directional converter that writes to a user
+buffer avoiding tears with READ_ONCE and setting the negp variable
+appropriately; it generates functions that do not fail.
+SYSCTL_USER_TO_KERN is a uni-directional converter that writes to a
+kernel buffer, checks for integer overflow and avoids tears by using
+with WRITE_ONCE; it returns -EINVAL when an overflow is detected.
 
-I would surely like to see some Tested-by on this patch because
-this driver has *many* users.
+For now these macros produce static functions that are used from within
+kernel/sysctl.c but the idea is to move them to include/kernel/sysctl.h
+so they can be used to create custom converters.
 
-I added some people to the To: line who recently made changes to this
-driver, maybe they can test.
+Why it is done?
+===============
 
-Yours,
-Linus Walleij
+This is a prep series to get jiffies out of kernel/sysctl.c which had
+become a dumping ground for a considerable number ctl_tables.
+
+kernel/sysctl.c had become a dumping ground for a considerable amount of
+ctl_tables. Though this trend was corrected in the commits leading to
+73184c8e4ff4 ("sysctl: rename kern_table -> sysctl_subsys_table"), some
+non-sysctl logic still remained in the form of the jiffies converters.
+This series does not move the jiffie logic out, but it sets things up so
+it can eventually be evicted from kernel/sysctl.c.
+
+Testing
+=======
+
+* I ran this through the sysctl selftests and sysctl kunit tests on an
+  x86_64 arch
+* This also goes through the sysctl-testing 0-day CI infra.
+
+Any comments are greatly appreciated
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/log/?h=jag/sysctl_jiffies
+
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Joel Granados (8):
+      sysctl: Replace void pointer with const pointer to ctl_table
+      sysctl: Remove superfluous tbl_data param from "dovec" functions
+      sysctl: Remove superfluous __do_proc_* indirection
+      sysctl: Indicate the direction of operation with macro names
+      sysctl: Discriminate between kernel and user converter params
+      sysctl: Create converter functions with two new macros
+      sysctl: Create integer converters with one macro
+      sysctl: Add optional range checking to SYSCTL_INT_CONV_CUSTOM
+
+ fs/pipe.c              |   6 +-
+ include/linux/sysctl.h |   5 +-
+ kernel/sysctl.c        | 648 ++++++++++++++++++++-----------------------------
+ 3 files changed, 269 insertions(+), 390 deletions(-)
+---
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20251012-jag-sysctl_conv-570844f5fdaf
+
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
+
+
 
