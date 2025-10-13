@@ -1,208 +1,100 @@
-Return-Path: <linux-kernel+bounces-850234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7DCBD2503
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:35:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E245BD250F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 569793B8506
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0427A189A04A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A635B2FDC38;
-	Mon, 13 Oct 2025 09:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4962FE05B;
+	Mon, 13 Oct 2025 09:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="peY8jPhI"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011043.outbound.protection.outlook.com [40.107.130.43])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VGuG/2vt"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A622FBDE2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348109; cv=fail; b=rSFhe4CZ6tnDSeGzg13xsw6dkk/lIEqwaIg52HtooXUVvIkeEg1zdaxzBaKCiGBmrLi8AgKGAdr5IV6iFBT5T6pGeRJjlt2YEZnFgHrTm1/LwbPFyTZ99nJ1a5lYH1q1chBeN7ZjiT3cMcekSmnxYUl5TGbSKGxtuoNEr/FQl1E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348109; c=relaxed/simple;
-	bh=ux6QzB8ss5ZwYL8OXgpnZfOPdHeYYCr6bjl38iOQ6EE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D2709nPAFrCIxcPJwD1LIZZHrgHjtj1jEIVM5B7YzelOGx6lp53XT60k77dDGcy3/BaMheBdH144WLwH+l44yXWs24C15SqN7CWAZABqTHtCUe6g/YF+BWzWMj7E0g8Td6emWzWrakgJzGZul8K173NpwN8fGl75lAdTCSV5bEA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=peY8jPhI; arc=fail smtp.client-ip=40.107.130.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=az1Zbb0kIqzqMSUZKMDtHCHYPQgvkW0Xlyersz9HS69aVLIw3pFPQK0wyMZ8Jo0cFS0RBKGJfMnap5IEUhgz2F0CzpuqpSyOcNUdgY9SIMV3Ik+fZU9I0pzijhYvWYGbhWxKA+7Z+6kvOSpEOHSY8Lz6X1cklqW88aRIOxcunz9RaocUEw2lwEEiBn3EZdgtrPCw9Kzrde+nTf1mDJkKqzxMVavuYcfEHvhObIqc3l3W+gR8DE/v3yhe1PGQogS83P856KOO5FQqWo4vqdjnnD/JI1EdXf/THLlpmRAhSnKsLDAfFEHaHTdzGl72tM1+oOUCn0GgF/H2mJTvTudcQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b2U3lzCWm5Jh72vWAgBbKFObrHIKuZjqGvt53Vz6GKU=;
- b=hybkXIY/xf+lWWreqx5mkYYCQWLHlAbRdNMouTbhZn6/Dp44QWkqpqfhp4L7+aQq3AvfSpqIiAk/AvnWMwO2KncZbz4eep/Ms27AOu3N9rpCXsReMUt6NpZyEinZ/awgy3znhA8gp8kZG36SNVVW8yT23fGypWsAPY1lIVIOOPnAE5ttKQNg201Nl1FAqEBYpqaEbU6WJYcSCHBo/2saifvwkabI79sbvOReKkdDTBoGxCiQ+gVxh8Zvk7NWIliaB7JvNZEBuHaXs/9FTbAa0d7KpRGlwrvXfW+YKjSdWSN332qDigBd5Tc596Fc3XEe7mItQ873NoAzNr2J0KR/wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b2U3lzCWm5Jh72vWAgBbKFObrHIKuZjqGvt53Vz6GKU=;
- b=peY8jPhISNpeWluFjI2DWZBJzAcwYAlmI27n46BduSnYGTvV+SbiGy2Cjt5zaSSAU19jFR9BE+CkjUYHTN8ek2HtQQZLmmkoP1LYDGOfhAooq3JgV1qviZEZy4vWrFj+orzNPT57Ea9QwTr8zTp6q6BoDeZi3dsL6OadC64uuxCpXlFinc2kW4vMp5nhiZqcmxSI5mM0SnAv8+JZMD0iAMhrRBIfaQuajYFxstAI32XnS6edRfT7qZhGPedzakN63uUWfFHaz+xPP1/H+xL91UtaB1t3LGh/ydAM54fW6bmkIieeSPI7hmJM8nluyG5X3HtPio8yyNFNfxrcvCaZZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS4PR04MB9624.eurprd04.prod.outlook.com (2603:10a6:20b:4ce::9)
- by PAXPR04MB8444.eurprd04.prod.outlook.com (2603:10a6:102:1db::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 09:35:01 +0000
-Received: from AS4PR04MB9624.eurprd04.prod.outlook.com
- ([fe80::fa4e:dc6f:3f71:13b7]) by AS4PR04MB9624.eurprd04.prod.outlook.com
- ([fe80::fa4e:dc6f:3f71:13b7%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 09:35:01 +0000
-From: Rain Yang <jiyu.yang@oss.nxp.com>
-To: imx@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: boris.brezillon@collabora.com,
-	steven.price@arm.com,
-	liviu.dudau@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	xianzhong.li@nxp.com,
-	Rain Yang <jiyu.yang@nxp.com>,
-	Prabhu Sundararaj <prabhu.sundararaj@nxp.com>
-Subject: [PATCH v2] drm/panthor: attach the driver's multiple power domains
-Date: Mon, 13 Oct 2025 17:34:38 +0800
-Message-Id: <20251013093438.125243-1-jiyu.yang@oss.nxp.com>
-X-Mailer: git-send-email 2.39.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN4P287CA0025.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:26f::7) To AS4PR04MB9624.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ce::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0DB2FE04B;
+	Mon, 13 Oct 2025 09:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760348114; cv=none; b=Xpbos1LYs7CFxlLLkSLygPzCyvEpmInVa6vEPImSKjdQpS+WUZ2TOKJbN4OM7uMM2kxWpKoryjy68K6zVk+HXuIjNZNMmkzli1PnFabHh7h6xinoK08o1JKeKNkVO3Ngd8wEKlg7JaJcjLKlYgr6FQ/Q/oUg8Gdis4MLRj3xesE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760348114; c=relaxed/simple;
+	bh=/uX2/dDKPfRSFG3Yo/E2dlJAxS2biKzxOGx2S692NdE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=F93N1QgqO+88LYmzwL/mgRVs5Vxlh/6vbarVrkJXOdVRG1M99DoYXnTfISIah3WPXcjTWqh7cdqqYI26cXLvR0TFbCzemkZb5ND/7s7GfiQOlqIe0v5DrV0QrAAKfCEv7rH4Hw7u2UoUicF2Hk8MsxJod9HyIarN6/HSOLmOFVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VGuG/2vt; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760348110;
+	bh=/uX2/dDKPfRSFG3Yo/E2dlJAxS2biKzxOGx2S692NdE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=VGuG/2vtpqzkbIxgSnRfIJED9bpAg/YFGpui5UCzIH0INIQZtIu+GM4xSrKDrECPW
+	 1oxFBFtgmnCr7e8XOWlyfh7Bf/x5SvEaOlMnJmXeG0TxdnKMZ2PbNHRNXzUcsNqoPq
+	 cpEuFXG/49nzKz2IXnutJuR3t/ow80qlaEImSe6gP/HosmLQ0vd1qaEE063lCSrXJC
+	 DNb4/J0N+IFBvzuCa6sX8iBQTYtGR5Ep2zbQEJUZB9veNq7dsf1P8sD1ALZXaOhAJJ
+	 RfAZy2tbouWqD1NSwC6AjVEseqm6ewKhPptdi1iOH6mj13a4W5cV0o+e+VMtWoA8V2
+	 JZXDcCPVNa+mQ==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4669C17E048E;
+	Mon, 13 Oct 2025 11:35:10 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, 
+ Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
+ MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250918121751.229554-1-macpaul.lin@mediatek.com>
+References: <20250918121751.229554-1-macpaul.lin@mediatek.com>
+Subject: Re: (subset) [PATCH v4 1/4] dt-bindings: arm64: mediatek: add
+ mt8395-evk-ufs board
+Message-Id: <176034811022.21265.14554901190334591981.b4-ty@collabora.com>
+Date: Mon, 13 Oct 2025 11:35:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9624:EE_|PAXPR04MB8444:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d5e3ffe-b2f8-491f-44aa-08de0a3bc85c
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fSkARsYjwHRL8XEKdke7C18H4KN4UbjyISgEYuaRF7XVu3nXXzxh+kMqVKv6?=
- =?us-ascii?Q?LY1muuZZQQsXztG+QOcoBo6kGq55TJyYjYZCGdgtNmQ8breLHm0USy+Yiewd?=
- =?us-ascii?Q?Seobe3FboWekkmtFVKPjTChejmZYQWKF5rZYyeLQZkwv2g8L66Z7o89WHOuM?=
- =?us-ascii?Q?4LuYXvmTYAtSgS6puFiT6O7j/JGOJ5NtpcjuScA00kEUvs0TmSfou9GP4oqe?=
- =?us-ascii?Q?ufMyRWnAlGziFcyXbb5x3zzDPPuArQ3hWIBloru4CWTNjRRlQDKH+wvZDZE5?=
- =?us-ascii?Q?Ai7aHe9iKF5K4FLnuQjhCYJdPK5sy4bhfyglc+eiLRaKcShVa1gFr3X1iRy1?=
- =?us-ascii?Q?4yjoteuEtR8fURkmrxwI0u9C7OmOotIDqEeV5tMQrMVcaJg5RCeXNNNlZ97I?=
- =?us-ascii?Q?yXiD+UZr+BEyxYlxwwmPtB52jinEo/U1HN60v6JIulxpPHEoROqLWJSPigzr?=
- =?us-ascii?Q?3h+hsSzYocnOH4PDCWJkTxltPT/EwF//x3ZfZJJNEAnJwSRAIQTvkX9gkcYg?=
- =?us-ascii?Q?Op7KROoiQavljoefgxpRNgqb0WsRjuP5x6a2gGmDL5vzWi35sQ5BhyVlfa+a?=
- =?us-ascii?Q?PDwv1sF6dfM1zN1zkNkoWjknt7+vf+UM9q3xj2cXXWrYkCzYeEFwlujoQhqT?=
- =?us-ascii?Q?4UpXqIzew9ka93ZcE7m6Ty7TU3JM/71ecafGtOSP9TJqW7JVY1QOpxGOxSEr?=
- =?us-ascii?Q?PgYDqH9+IS79Y81tneBf/vghL4KrhdZgWAuoICSMa4Ew7s7yc2lkzM0vBwC+?=
- =?us-ascii?Q?CGJQ4LhYL0N0j2cEzYFbMYLiRoAw55ntnnU6PhlMW/s34vp6eglNwNU5i5yu?=
- =?us-ascii?Q?Gx1oYK1hZV0H9VUyKFXc+0KW+K4fwi41JwxY7fSyIAY+b8vlIoAoNS0vFZfS?=
- =?us-ascii?Q?i7YBQ+mqETpVuxBILWMyckKkqgCr5vHSb4ggL3JXJlXvvy2ox9Mm1QQAe+i6?=
- =?us-ascii?Q?zjxvjsYRS070XXZ/mcKg+/3JS9AUMp+Sg79CXpMHJNUXb+CiVdgjzv/bdpX7?=
- =?us-ascii?Q?JCj40rEWSy/x0GDKN6dbE/NyuUELh3HA2Yi6E1lCU/Jc9IvF2gytHneQ+jrE?=
- =?us-ascii?Q?MUs3QeREtowLhb/U0qY76WQzb7aKya3aHRUS2Xs7n6hSU2hmiUAxceq8xGpz?=
- =?us-ascii?Q?rqF23djSWrN8HdMnZ/oZ+MTcf4Bi+jGpY9ySx82B8f5mRZ1rsUzJJpHIlPnq?=
- =?us-ascii?Q?ahrrkEdJkt2ScrPQZu8XlWP20YFZ9MIsXXQSne1n9DIOMMHQ1W+XjnvIoxWN?=
- =?us-ascii?Q?VECknLJEXBN97ci5IB0ySMtT4HdDQbHpAA6eT58adXMlK7frcZG0+b7c7aK5?=
- =?us-ascii?Q?dSm/jKUJ/7iQ8Fb670KPK92kGDPaJ4qZjPcjZqJ7i7YNXTasqykeIvR6O5Xw?=
- =?us-ascii?Q?bWSm/lAzotDfhCOPQh+f+wxsHohXDpPakrrJie3paaNI6BAC+HYkGipSC5le?=
- =?us-ascii?Q?j6rwPVt3s5wb+rxPv78wdC9mwhkSxwyMtFoyysSJLjvo06a8GIpBTQsImClP?=
- =?us-ascii?Q?yvzK39XXRdW1RuudvrN9zWClmqdoj/KFVDQ4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9624.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NVxXBobNFL4Y9X3hgB5C0Sr+xwl5c93HFQNmQ5cfe21yM7ppfUIZ6uabujDh?=
- =?us-ascii?Q?FIyazy81S4qIwZPzkz/7KAqaSlOqek6q3LD7B9iOjJDdHqNxlNnh+Kla6nyf?=
- =?us-ascii?Q?eZe7qdca+DGsJJ7lUe8DOuPmjbaIReL6NPdGLmn/skUHhsul1sXaKvMvkcms?=
- =?us-ascii?Q?wSl/uxHy1iYiOiF5JHHENYvGZXAMT59+ZC4QJC8WQ/jRNFqqOTMEcxZwHalP?=
- =?us-ascii?Q?jaJpGkhXGA/azdiLLcgXCt+zmByrNiv28JI55IGQ7uMx8ZsZjcvh0xtP7d5U?=
- =?us-ascii?Q?8isW1aVnaR0VT0SiJjQVq7kF/nphR/omlYw0kwDVDsg5clpCMhhSOz/j9Tgl?=
- =?us-ascii?Q?QNb/EVpca5PZsI7enbv1ZpJdnxQ+woVAyPqpuAd95LDvK8pox2KoSSGxWihE?=
- =?us-ascii?Q?LVbmFGPRYTS/BAe+w0ulq4ngJhBn410qL342GSRgTC/fQ0A+5qCf++rU12zZ?=
- =?us-ascii?Q?sYlcezG4lH3AM1LD/4Sz2aylxyj2pzHxoQiCFpAPUTKyjYDQVh77mYx/fEIF?=
- =?us-ascii?Q?VpDaCTG2Vgttcts9k7KyKDSas8PMh9co5QPVuR3xhkcWIFGPOH/WhDoLztof?=
- =?us-ascii?Q?x0j3WuEHxbn6jH5Np9vLrfjXDfwsu/+AlijJF0qNHvwjNld9OoKvnRf78Daa?=
- =?us-ascii?Q?PIZXJiAFbGQbQUgBazrfvCYeBOZyoNGaACvf/zAlXT9ZmWZyQSS8XmpREJq6?=
- =?us-ascii?Q?XBLn9PDeh7hRpAsR0TPQtQBxNVsfRHB/WuTImPDlwSbqSG3j0PubIr5lwMLM?=
- =?us-ascii?Q?cfzRYA7cBEQcD2FqCz65DHVMDZTMtjc3VzvSH12TTM09NbvM5yI+Sa/ycBR9?=
- =?us-ascii?Q?k/CFdK55Iw1FlERpHNNUZiTJdGLlPmuDtKOGw6+BTqZCtuhOJc1QfkDLFCCh?=
- =?us-ascii?Q?HX7J0xtsPE9eMsN/i3uXs0Sx786FEc1XoFcZGVFpnJ1cEp2NqU6irLSnvv8U?=
- =?us-ascii?Q?wnYSVpisvB9tnNKr60GQx/OHQ7BWBLeHhZKGCpp0A2sp44LZGZdQDPC2GWdr?=
- =?us-ascii?Q?TIaAVcMEvhNZcmHulhAC5RCVSuEq4RCxKes03HqI27AJYx8oWRMHEvQ9zNlY?=
- =?us-ascii?Q?NDrnCPMBeiuNxKQ0UN1SZq6u/7bDec1NXYE8olXCHE0hMPvykupZYDsMGEBw?=
- =?us-ascii?Q?E6AdyfGkeFDH9L2tO7kdL48b2hM1s5vo+zFUhy9nuPN38CpzAACrgNytRf/u?=
- =?us-ascii?Q?uRUioaps2Sw3NGkyB95m0LpAQ9OhUvdxTEZW3PhDumAAD8dIvXabjx5knL8T?=
- =?us-ascii?Q?Lp4nhtd/QVVHqnJ7a3d0IHZl8iwCYjDt0PiRfqtwgWLDGMllJ1WAV5tYknis?=
- =?us-ascii?Q?EFKOvXr3V88Q8elE6FfedDfTd85oIgmC+RxIIrKOhMb3fKjSxRP5KkTs9JAn?=
- =?us-ascii?Q?BYV1fYk2dJDqpBDXEu1O93LCV/PjGXz6143iuMNRGyIMfu6+Rvo/SNF+VEI6?=
- =?us-ascii?Q?Qq8oy32S5ICJS2BaMmq4GAcBUeOeN9U+Sto8ejWUTsEGaUpZP6hJLM6GEoVY?=
- =?us-ascii?Q?6gUWgDIRZWSMWRvmRBe3m69mRTXGMqBjYmrr6Xov2LL/bPCNdT7lKQ9pCEPv?=
- =?us-ascii?Q?RYk7j3j7ItAtLjkiyaaKdGrKacavbGT3VslhZ+mt?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d5e3ffe-b2f8-491f-44aa-08de0a3bc85c
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9624.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 09:35:01.7882
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 099hbJ18mU9UEBjzv9EiRLP7g9TdJZ46aHRoy4osplSiu2Js5yw9VUJoN4105CPnNeE4fTx2gqI+eTFf7RYqnQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8444
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-From: Rain Yang <jiyu.yang@nxp.com>
+On Thu, 18 Sep 2025 20:17:47 +0800, Macpaul Lin wrote:
+> Add a compatible string for the MediaTek mt8395-evk-ufs board.
+> This board is the origin Genio 1200 EVK already mounted two main storages,
+> one is eMMC, and the other is UFS. The system automatically prioritizes
+> between eMMC and UFS via BROM detection, so user could not use both storage
+> types simultaneously. As a result, mt8395-evk-ufs must be treated as a
+> separate board.
+> 
+> [...]
 
-Some platforms, such as i.MX95, utilize multiple power domains that need
-to be attached explicitly. This patch ensures that the driver properly
-attaches all available power domains using devm_pm_domain_attach_list().
+Applied to v6.18-next/dts64, thanks!
 
-Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Prabhu Sundararaj <prabhu.sundararaj@nxp.com>
-Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
----
- drivers/gpu/drm/panthor/panthor_device.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+[1/4] dt-bindings: arm64: mediatek: add mt8395-evk-ufs board
+      commit: 3d37117ab43ff57577b922c53ef12260956a9330
+[2/4] arm64: dts: mediatek: mt8395-genio-1200-evk: Move common parts to dtsi
+      commit: 6af8936fd74f1e4f8fd0087443111bb0348ef931
+[3/4] arm64: dts: mediatek: add device-tree for Genio 1200 EVK UFS board
+      commit: e6bd92bb204757a7b1f4b4dc263a82b3985fadd3
 
-diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-index f0b2da5b2b96..fbbc84e9efbe 100644
---- a/drivers/gpu/drm/panthor/panthor_device.c
-+++ b/drivers/gpu/drm/panthor/panthor_device.c
-@@ -167,6 +167,7 @@ static void panthor_device_free_page(struct drm_device *ddev, void *data)
- int panthor_device_init(struct panthor_device *ptdev)
- {
- 	u32 *dummy_page_virt;
-+	struct dev_pm_domain_list  *pd_list = NULL;
- 	struct resource *res;
- 	struct page *p;
- 	int ret;
-@@ -218,6 +219,12 @@ int panthor_device_init(struct panthor_device *ptdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_pm_domain_attach_list(ptdev->base.dev, NULL, &pd_list);
-+	if (ret < 0) {
-+		drm_err(&ptdev->base, "attach power domains failed, ret=%d", ret);
-+		return ret;
-+	}
-+
- 	ret = panthor_devfreq_init(ptdev);
- 	if (ret)
- 		return ret;
--- 
-2.39.5
+Cheers,
+Angelo
+
 
 
