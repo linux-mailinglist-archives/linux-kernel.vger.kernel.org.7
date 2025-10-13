@@ -1,362 +1,164 @@
-Return-Path: <linux-kernel+bounces-850779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC4FBD3D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:03:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C326BD3B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CA13B84D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:50:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C2EA4F7AB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958E6309F02;
-	Mon, 13 Oct 2025 14:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18F3309DB4;
+	Mon, 13 Oct 2025 14:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="SQiWrv33"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KOdC+aq/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C08112DDA1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F803093C9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366797; cv=none; b=fbky5kEKX/GZnj3MUN/y5SPfIKt+Ul/WExHD9y6x/F8sSAGCV43T94Ooo372cDJEmBz5prid1+8cU1FJbln1rE7ZA8bf/MIylr1lqG6Tmlr9RYw89Oq1gC4wUAgr0m4q604TC+91g2vKHYnZ3YZN2V2wkjqF760x2YDdpo16P+o=
+	t=1760366795; cv=none; b=kX48sYdjE15EcUbPd3cdT2Kta0P2XSky6Foja2fWKVSGbGg6xJlBtNw55N3dO77kqoTc4ktkUkU2LWSKgPziYKYYtQamabP2AMG5kmx9LD3ZimRVk/uV50QpYlnROQCCEkicetTW+kfjT0zCRawJL616hH5MOl5gOl1tR+Un/f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366797; c=relaxed/simple;
-	bh=i0caL2/K0vfgpmRIPc4Twix71y134aBoZmXSlgChjMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jefMjdd+/1nyGH13vIOsVcAZO6Y30ESKGZoizxuIlz+nTxYytwx64BZZTq1gDC0KAabgP6RtQyHOCFSnltRbsfCDAaryyIYJMNGXJePQHn2fpdj6nCxulMfP/nhPE9yL8pjUhgiMPrhlwnurycnwBJmZLIMrKRxgoPPFiDWVB0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=SQiWrv33; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 43BA6103847D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:16:23 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 43BA6103847D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1760366783; bh=i0caL2/K0vfgpmRIPc4Twix71y134aBoZmXSlgChjMw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SQiWrv33vbQsEAyNyoD3Z6avy8+liHJmj2aUoMMehy3tsp56yK0wfggvkunZvvjcf
-	 O4gmngaJm3QjxU/LpiBwAjk00I8spg+hj6NufdVHl9ygjzTj4inBygeEiBUUhtN091
-	 OR7EkOq6D8vImZvgMCk1rmEdMR17SLtsyFHRhij0=
-Received: (qmail 21217 invoked by uid 510); 13 Oct 2025 20:16:23 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.373675 secs; 13 Oct 2025 20:16:23 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
-  by ldns1.iitb.ac.in with SMTP; 13 Oct 2025 20:16:20 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns1.iitb.ac.in (Postfix) with ESMTP id CE417360077;
-	Mon, 13 Oct 2025 20:16:19 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 8A51E1E81578;
-	Mon, 13 Oct 2025 20:16:19 +0530 (IST)
-Date: Mon, 13 Oct 2025 20:16:14 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
-Message-ID: <20251013-144614-1551316@bhairav-test.ee.iitb.ac.in>
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
- <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
+	s=arc-20240116; t=1760366795; c=relaxed/simple;
+	bh=Baafv0dkbATo2Vjt7gb2iGQKBDq/hh7OJ4ohJRpLxVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tVWVsye26u2BmJGWIgy8bJOKChVq/xuX/XusyA2FpEUDL9S2YMDvy9SWEIqCsWh1IuZW1J13q2zE1e5fQknXdyeEoVCcFwRROlUnXDaCxi32tgmrb+UAoYF/NJTjP6/jM5S84c4HXLv4rVTpu2mCKQVSZn8fgSDKFLMZKa/TtU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KOdC+aq/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DAkAI5001858
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:46:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Baafv0dkbATo2Vjt7gb2iGQKBDq/hh7OJ4ohJRpLxVE=; b=KOdC+aq/Nmh8Alt3
+	hMaeHSfF3b7DKH/A85WEszhDu7c6cVFkQdzL73AuC/zJbAj4lDXiAL5c9wvC6Qjy
+	rOIvMIpC2IDLaNhHAM/HiCWPn2KCbrz7iIu6oY/Y9LrqpCguvuM69/tV0Lu8jTtr
+	9Nfc6DMG2yN9Vj/OraxUAmVSDVnUZ63tKDhXzKsN7f8a/8KVFOUk99LKsSl3NH8L
+	V6WEHlKFnb4t53weTrwxIjhjxsmgPYIh88r2TN+Q9AtOgegmGok0Wb3iI4peboTo
+	AQvQx8Nsqe+8WSbrZ26cUNaXjk/z9fh03w7cOOHhCz+x4+/I7kcjXPo/NU6pOCC8
+	BCP6xw==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd8w1va-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:46:32 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b6097ca315bso13172812a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:46:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760366792; x=1760971592;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Baafv0dkbATo2Vjt7gb2iGQKBDq/hh7OJ4ohJRpLxVE=;
+        b=AISIUkv9LeqrRzAHWIOFCJwLFiapGUDU6a1Ar0synY+CCJBmgf7gDb1K/TWKbChQ5r
+         FMOFNnKzRb50N51EGgQkayuoPSDhfTNi89uV2Gw93I2IpL5IZGN3bTh0yqgtPVtaLg0E
+         M8OO0scTLDoqmw5l5wnyiBffhn0Cg9catkugx/PpI9fG7t5UsxEed8G3XgzbrbnkrzeP
+         v6EE7cBSJc1fmkqUWdykfRrbtFrzF5eKaRun7C9LhNmfRgbOc4q6fqB3YRwhZJxbfOsP
+         kFrfdK9fZ3BVllwOA2Fo0mkhFybdCnLpkoEaecXqDEGyn8laM6sRt9UpNt0JKtD0A7hP
+         Ddrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwi1bhSBfEMwTHWeCR5dkriCdSKrJ6ObiKP5mkxCeBgZ1ZhuHr+mXy0ix+pIwaD4Mmhtjfvbolh7qcL38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBBe74f9illL/4Vdi+Nv4LRnMwkCRQ2TtDR1Pcua1PMVY4C0o7
+	iBybvXCwMIygUr/+07MbJjq6oBeIhZot2A9sy94z8E4tSJHYByYB9YkO5VjpgQynBVhu6l6E8+E
+	GKdMLZm3VbXUXRDr4iTYp2sEy/y+gF87SLZ43PbTBdXk2kNjK7YFqluCsfF1FfyD25U4=
+X-Gm-Gg: ASbGnctx6uXs7LMALm6z2dJs2PuHTNgJJqgmTUoIcr9JwxWE/+ATovQyN1FITT14d/n
+	LpalhDNuzU1kXoN+kiysWsQwnh5hoRAZpTewADoOumY/taPSScWgR/vf1VNd/E2LODCTVadqblT
+	jNCWc77Rx/zC2YAdcRFgUe770yRPIFwgIXUUuBNJzt5Ja+25ExqwoPL7hwUDThefsm8e1MIE/ui
+	re5JE6o2G92ayF2V5N0nDgvqU8SAGyko27A3qlUoDdambAWeszoWMDABoMr+DDjgQJGSJyJRSva
+	h5Sl+h6Jpr47PlDjsG6QuSzT6pqGl6EyxtQ1yHAjSVWcwFoF1Oh5XoAzHI6kZj4SJYKDaT7n+w=
+	=
+X-Received: by 2002:a05:6a20:7490:b0:2e9:d6ce:e125 with SMTP id adf61e73a8af0-32da80ee0aemr28439805637.5.1760366791949;
+        Mon, 13 Oct 2025 07:46:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsp2b2NHE9jGWw3Rw9mQwSkk8mHNUW9ttGhh+qp/1gDWG2urxuMKeyyd0PiKH8o9pWOalrXQ==
+X-Received: by 2002:a05:6a20:7490:b0:2e9:d6ce:e125 with SMTP id adf61e73a8af0-32da80ee0aemr28439756637.5.1760366791441;
+        Mon, 13 Oct 2025 07:46:31 -0700 (PDT)
+Received: from [10.219.49.211] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0964c1sm11703138b3a.54.2025.10.13.07.46.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 07:46:30 -0700 (PDT)
+Message-ID: <1d2aba24-f73d-4b60-ab8f-1c9d9bc775ff@oss.qualcomm.com>
+Date: Mon, 13 Oct 2025 20:16:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro
+ codecs
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com, jingyi.wang@oss.qualcomm.com,
+        konrad.dybcio@oss.qualcomm.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20251009143644.3296208-1-prasad.kumpatla@oss.qualcomm.com>
+ <20251009143644.3296208-6-prasad.kumpatla@oss.qualcomm.com>
+ <28de0f76-24eb-4033-a1fb-20415cfb8d82@kernel.org>
+Content-Language: en-US
+From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+In-Reply-To: <28de0f76-24eb-4033-a1fb-20415cfb8d82@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
-
-On Sat, Oct 11, 2025 at 05:10:58PM +0300, Andy Shevchenko wrote:
-
-Hi Andy,
-Thank you for your time and valuable feedback.
-Addressed all of them with best of my understanding.
-Kindly check my comments on "regmap usage" and "__packed" usage
-decisions below.
-
-Sharing v2 of the series with these improvements and fixes.
-
-Regards,
-Akhilesh
-
-> On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
-> >
-> > Add driver for Aosong adp810 differential pressure and
-> > temperature sensor. This sensor provides I2C interface for
-> 
-> an I²C
-
-Fixed.
-
-> 
-> > reading data. Calculate CRC of the data received using standard
-> > crc8 library to verify data integrity.
-> >
-> > Tested on TI am62x sk board with sensor connected at i2c-2
-> 
-> Missing period at the end.
-
-Fixed.
-
-> 
-> ...
-> 
-> > +AOSONG ADP810 DIFFERENTIAL PRESSURE SENSOR DRIVER
-> > +M:     Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> > +L:     linux-iio@vger.kernel.org
-> > +S:     Maintained
-> > +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
-> > +F:     drivers/iio/pressure/adp810.c
-> 
-> Some tools will report an orphaned yaml file if you apply patch 1
-> without patch 2.
-
-ACK. checkpatch.pl did show me the warning.
-
-> 
-> ...
-> 
-> > +config ADP810
-> > +       tristate "Aosong adp810 differential pressure and temperature sensor"
-> > +       depends on I2C
-> > +       select CRC8
-> > +       help
-> > +         Say yes here to build adp810 differential pressure and temperature
-> > +         sensor driver. ADP810 can measure pressure range up to 500Pa.
-> > +         It supports I2C interface for data communication.
-> 
-> Same as in the commit message.
-
-Fixed grammer and missing article.
-
-> 
-> > +         To compile this driver as a module, choose M here: the module will
-> > +         be called adp810
-> 
-> ...
-> 
-> >  obj-$(CONFIG_IIO_ST_PRESS_I2C) += st_pressure_i2c.o
-> >  obj-$(CONFIG_IIO_ST_PRESS_SPI) += st_pressure_spi.o
-> > +obj-$(CONFIG_ADP810) += adp810.o
-> 
-> Is Makefile ordered in terms of files and/or configuration options?
-
-Sure. Added adp810 at alphabetically correct place.
-While at it, I also corrected order of few other enteries.
-
-> 
-> 
-> > +#include <linux/module.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/iio/sysfs.h>
-> > +#include <linux/crc8.h>
-> 
-> Please,
-> 1) keep it alphabetically ordered;
-> 2) follow the IWYU (Include What You Use) principle.
-
-Sure. Fixed it.
-
-> 
-> ...
-> 
-> > +/* Time taken in ms by sensor to do measurements after triggering.
-> 
-> /*
->  * Wrong multi-line comment format. You
->  * may use this as a reference.
->  */
-> 
-
-Fixed multiline comment format.
-
-> > + * As per datahseet, 10ms is sufficient but we define 30 for better margin
-> 
-> datasheet
-> 
-> Please, respect grammar and punctuation, i.e. again as in the commit
-> message you made a mistake.
-
-Fixed.
-
-> 
-> ...
-> 
-> > +#define ADP810_MEASURE_LATENCY         30
-> 
-> What's the unit of this value?
-
-It is milliseconds.
-Redefined this macro as ADP810_MEASURE_LATENCY_MS for better clarity.
-
-> 
-> ...
-> 
-> This needs a comment to explain the choice of this. E.g., reference to
-> the Datasheet section / chapter.
-> 
-> > +#define ADP810_CRC8_POLYNOMIAL         0x31
-
-Added reference to the section from datasheet with small explanation.
-
-> 
-> ...
-> 
-> > +struct adp810_read_buf {
-> > +       u8 dp_msb;
-> > +       u8 dp_lsb;
-> > +       u8 dp_crc;
-> > +       u8 tmp_msb;
-> > +       u8 tmp_lsb;
-> > +       u8 tmp_crc;
-> > +       u8 sf_msb;
-> > +       u8 sf_lsb;
-> > +       u8 sf_crc;
-> > +} __packed;
-> 
-> Why __packed?
-
-Yes. This is the structure used as a buffer to store sensor values read.
-Each entry in this structure should be contiguous in the memory because
-reference of this structure will be passed to i2c_master_recv() to
-receive and fill the data.
-__packed will avoid any compiler generated paddings in the structure to
-force alignments on certain architectures. We do not want these paddings
-and want our struct members to be sequentially ordered as shown, with
-no padding and size of the struct should also be 9 bytes as only 9 bytes of
-data should be read from the sensor as per the specification.
-
-I could have used array here. But I preferred strcture for better
-readability of the code as one can easily see what values are expected
-from sensor while reading and in which order.
-
-> 
-> ...
-> 
-> > +struct adp810_data {
-> > +       struct i2c_client *client;
-> > +       /* Use lock to synchronize access to device during read sequence */
-> > +       struct mutex lock;
-> > +};
-> 
-> Is there a deliberate choice to not use regmap I²C APIs?
-
-Yes. I explored that possibility. However this sensor follows simple I2C
-client protocol. It does not expose the concept of I2C registers. It
-does not follow smbus. Specifically, while reading the measurement from
-the sensor, we need to only send the device address with read bit on the bus,
-and start reading 9 bytes following that. That is, no register address
-should be sent. I am not sure if regmap API has some hack to achive
-similar because these APIs expect register addresses to read/write which
-this sensor does not follow. Hence using raw i2c functions. I also
-thought regmap abstraction is not needed here as this sensor has very
-limited commands to send and not many command/configurations.
-
-> 
-> ...
-> 
-> > +       /* Wait for sensor to aquire data */
-> 
-> Spell-check. Also the comment is semi-useless, add the reference to
-> the datasheet or even cite a part of it to explain this.
-
-Sure.
-
-> 
-> > +       msleep(ADP810_MEASURE_LATENCY);
-> 
-> ...
-> 
-> > +       mutex_lock(&data->lock);
-> > +       ret = adp810_measure(data, &buf);
-> > +       mutex_unlock(&data->lock);
-> > +
-> > +       if (ret) {
-> > +               dev_err(&indio_dev->dev, "Failed to read from device\n");
-> > +               return ret;
-> > +       }
-> 
-> Instead, include cleanup,h and use scoped_guard() (and possible
-> guard()() in some other places, but first answer why not regmap).
-
-ACK. Used scoped_guard() to cleanly handle resource locks here.
-
-> 
-> ...
-> 
-> > +       case IIO_CHAN_INFO_RAW:
-> > +               switch (chan->type) {
-> > +               case IIO_PRESSURE:
-> > +                       *val = buf.dp_msb << 8 | buf.dp_lsb;
-> 
-> Those have to be properly defined to begin with, i.e. __be16. With
-> that done, use existing conversion helpers from asm/byteorder.h.
-> 
-> > +                       return IIO_VAL_INT;
-> > +               case IIO_TEMP:
-> > +                       *val = buf.tmp_msb << 8 | buf.tmp_lsb;
-> 
-> Ditto and so on...
-> 
-> > +                       return IIO_VAL_INT;
-> > +               default:
-> > +                       return -EINVAL;
-> > +               }
-
-Agree. We should use standard helpers.
-Used be16 along with get_unalinged_be16() to improve this part.
-
-> 
-> ...
-> 
-> > +       default:
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       return -EINVAL;
-> 
-> Why is dead code required?
-
-Removed dead code.
-
-> 
-> ...
-> 
-> > +       mutex_init(&data->lock);
-> 
-> devm
-
-Nice catch.
-Fixed this resource leak which can happen upon module unload.
-As I do not have .remove callback with distroy mutex in it,
-yes this is needed.
-
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-
-Regards,
-Akhilesh
+X-Proofpoint-ORIG-GUID: 3PGLCrYti5SrvqELiFi8ijn2kA9rXwtA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXwUtHjVhM7Gx1
+ 3RuzLd/7X/KJjobdgzjKhaBiW4vyyDGk+Djz2ZJVckoHO3Z/mIy/SS/VhlA5vhM/j/Uc3NBMY6l
+ roiZNIUwT1EP3eJQZG28HSP9PxWNNLOXMOVt6vfNc8L3kXSjqxSzvEGjcgDXJJoNIlBCxksKg5M
+ dJtsvjOXsCuh+9AjeZXSkGH8uu1t816w/p/MZoc+/rqeLpAHoI55ATE++KohrpKcrgp0Y6TivcR
+ U+v9yc9ITCAlvTUE7Wskjz4joaEe3ufE8rt6yI+Fv9cQfvFiXxIiFJFrX8w7n8DUDzSLB8GiNd4
+ 0uGMlr5V/TVOIk2+M4GYbG8LZ7EDgnjZIcFiZWekLj8+wYVDDbKS7kn2n9aKLGFbguGSexxa+2O
+ Ksp9gbhIfphVQrarHoGXEnQw6fym+A==
+X-Proofpoint-GUID: 3PGLCrYti5SrvqELiFi8ijn2kA9rXwtA
+X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68ed10c8 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=-bz6CWZUwYRBO4YHzmIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
 
+On 10/10/2025 5:54 AM, Krzysztof Kozlowski wrote:
+> On 09/10/2025 23:36, Prasad Kumpatla wrote:
+>> Add bindings for Qualcomm Kaanapali (LPASS) RX, TX, VA and WSA
+>> macro codecs, which is likely compatible with earlier SM8550.
+>>
+>> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>
+> Now it is incorrect SoB chain.
+>
+> Please start using b4 - v1 was sent with b4, so I do not understand why
+> now changing this.
+Sure,  let me send new patch with b4.
+
+Thanks,
+Prasad
+>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Best regards,
+> Krzysztof
 
