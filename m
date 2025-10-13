@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-850983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E096BD532C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD584BD4F1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D1AB561D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FDF58619D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050E5310650;
-	Mon, 13 Oct 2025 15:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D86F2FBDF8;
+	Mon, 13 Oct 2025 15:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HLELEBKy"
-Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com [209.85.219.100])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fZOuvW/9"
+Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB0731065D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48546310764
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760371028; cv=none; b=gvgqJw/9ywwGlGXqnCFr/dEfoC0mHErFAzIBnKFiQ2hHs8c4FZFrWJ+NaPZrvshR8hNWCygx1qkKU7A5Ziqc/fzV3wifT+YYR4XcZvWgMwJUsf+xvCvYZB4mhkEItalwohlVA44rFlV7ea7Rg55CK0kfE9WdzmgF1TlIdABrUvE=
+	t=1760371042; cv=none; b=aFXbIu4yQJsO79+OUQNjhbxKQJd35rP8S6OF00x/ik7iAHleBh/27Jyy4q+u5LZSkwHdcVasdKUCch29T39C/qKDUYArY91itDUBLJxJhhtQV6T42IG09t8T0hYRpzQvpgSA5ivPjIPvTV01cUCUaJ4CYbBWy3+CozVZcYS93aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760371028; c=relaxed/simple;
-	bh=YqXalc0GiLn5NwUzE0OPVdriL8vVonsJAB2+jCa6i3U=;
+	s=arc-20240116; t=1760371042; c=relaxed/simple;
+	bh=qYzNG9tt47B8bglnMgi2mPXGE79/NgDUjb8dqK1LBso=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VeXjaQLOTl+ORsaMzFVCuIcrWLIInHC6D4qj4zDej8qdemgMHzurPSmN+K3FK0yxTtaymwjOWvFiRfExYDSSV8g5g+oQoqjwPU1MlF4PsDVeiDXEMAXo9hwCwHWQOB4rF0i1XP+m7QFQbHy80LI1uke7LxEjyzo7vXUDxCxp/+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HLELEBKy; arc=none smtp.client-ip=209.85.219.100
+	 In-Reply-To:Content-Type; b=YR3jp3uWLeKmyFojcmZSESLpqn982S+TOyj8wPuH2Mg2k81S5gQkACvHSb0OG4TTN1kHA0mdQ/z9JzmhEwvGMwdtjkG4hqt/rdmOTgcCILRWRY4OijFbOX4pbbBJMCyzpfrMOu/YzV1sa4U0Q1CCJVr6vcuWUb8d6VLddoWTgTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fZOuvW/9; arc=none smtp.client-ip=209.85.166.226
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f100.google.com with SMTP id 6a1803df08f44-80ff41475cdso89785396d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:57:05 -0700 (PDT)
+Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-42f90b88beaso16511365ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:57:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760371024; x=1760975824;
+        d=1e100.net; s=20230601; t=1760371040; x=1760975840;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8TFuvLKu4ynjIvMufArSQE1PDlrrioAZvFwM7LRBZGw=;
-        b=a6qJZ7Tx8GHdhYf4vaYpPrt8jHk4eVygmv2AJ/xLLxZ1VY8rtMpmZIhvnB7G6buAM+
-         AV498ebadGx39dA7/VQihko2AqrtDxOjmTxTU799OknIAJ9iyHC1D9fcYe1lVS6re4bo
-         NiQQN4gfgQf9wvBfVn8BbShZbXT1bH3p16iHU1Ed8PFfzh+tkazJICSVUIjDurkyvva+
-         Wg/gqj3A2KkrNflKzEGiBTzCd8mFJmkisPrqA4CAgpp/Nn/uE4oTHTwh+cH+wrh604hT
-         ZOZZiJRxGVv1kDiv4FV8GCEA5/dNlUwseAm6LiIIiljEAmIyFMVtgb8FkfdIT43Epcfo
-         PBlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUcya1UHn838onDai6PI6yEaFj6mzNABaMg7HjZ/KWBhHJnsm+jexXwqH4cA5cG0MexYOZJotJab5WwTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwsp6znUNF6qFnvcoz9D/6xHubfp7rfL7NWzvAHyYwUJ9YYqv7
-	e5l7ukxB4dVjE9Na3fsYtNPcMW4oINB7FGdbo2gsjXSgtAyUYDPJMiXVsf9hS+fU/OzPpp9v2Wn
-	N3g/PPSN5tlQCqHmE9EuYZ4AufP9jEdVlU8b9vcackw4Vmse9uMV14Z0MS/CpuRrQUZI9Tt3ym6
-	TuY2b3YPo0w47TcCzidJBxnXl/K76NPsWn0U62LTy1e7+x7YF8zXXKv8NWpnazRyvKc2v50NWbB
-	8TOkBAJ9rrWm1amIOGayFVn
-X-Gm-Gg: ASbGncuL0UTVmNyQj1LYLZUKD4MMvUlqZoEXw+oJQOQavEQmxCQSwE9iChD7/cqtHQA
-	fDy1j1GSa2UPJyGN1blGBAtl1NMZm2wBkAX+z7+MNdJMyAnpLAE3Ug0dT5dd6VD/4YtVePHberD
-	hV6uIkLbjG9jB1JyS5uPVpt/Ec4xj0THB++bE3xvtySaFO7zue/z+A0XaF+v1Sbr3h1kCbNg0Ri
-	1A0xbnphqCRu/8s4FrJDei1PO2ySmNN8rVpKSDh+vOPgWupw5Wg2zhiTqhL+3Ik/e3A6NOTMjz+
-	xHInd7qlogv+CZQxPY46vGiOHN9IytCHhYWxySGidVH5StUnYJtstlEqm+z8SuUTOP5d3A5cK3n
-	bT/Cqvko/JlLR8jk7tVvJpSHjfs22X578KxcAlQFau+IM3ZrHHYsuPaJCdnfsks2d2kqPjpRhkq
-	KPoSNU
-X-Google-Smtp-Source: AGHT+IFmgQMG+zOtbv5MjisjZCotLEQHaFrUaAiLwqwo5iRgV3ZRXAH6xXSBFgPmBTnEie1Qyc0pl56xLmWu
-X-Received: by 2002:a05:6214:2405:b0:796:268e:74eb with SMTP id 6a1803df08f44-87b21000fd3mr261500666d6.6.1760371024515;
-        Mon, 13 Oct 2025 08:57:04 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-15.dlp.protect.broadcom.com. [144.49.247.15])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-87bc3461604sm8744256d6.15.2025.10.13.08.57.04
+        bh=QnQ3/YncMSuAlD2Cx5XdWo0bo54hv2NEfG8uAwAPs6Y=;
+        b=OgHHzkBV1IegEpM0Tb/sNLn/uIsSHfQlPa7MrZ8iQ1fVQRdYCy2BnxY2bgO4Qy+W2z
+         TatqTsj8U/9sgyJW4iApALbvUTeRe221IVcwdb88V0j5DWtYMM9Ly/hwuLWuq7dgZmDp
+         HHCOlpB+EZw1HlmWnQHJ3vq9vdXZFA2x85TpR0Oo2M0CKVfyf3X3QZ39cDf7flUhdBYr
+         4itgWjScE+jhAT9W3CMgd33yDU2b8g2D+PYRHktUrARlCBAVy0i5cRSve1TKiDFDAl4z
+         bQO/gV8/oMCfCHXlqqqEq+rPVcTANomvz3hgj8v6FAfvu7oFxjNbrDemMGowRex2Zlqg
+         Uk2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVEUW+j/ToLzKfa5QZHUAYDYx1UepYTEz2ET0fPdRYA7d5CAXQgIosvukcbHH37cZ3ft0HneR4mS5LjZmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza6NZcRBQQwPKUGmJzdWPIxLCE7pg2OshIc8KH6LaIdxC9u7Hv
+	HkA6JqcjFOcVzDDNRRxUw+EcnQo+4OzUPLODWqhXsjq5t92WgBNPVe3mXNir21uenoA88Pjndj7
+	3CIf1uejPDYP3w2roIAarzkhHUMWFjMVgiLYxA4Eb5872KV5pTDdFNNdmXPAb+psHp6cIwsisbV
+	UdfuQVuJm2WMReXLAxugZ+toSdhmjJgOI1iibXwWknlg1DluEIiwjNNVNqLP2gvtxIfyj7tkXbW
+	ZZicwp6XZJVW/RhyEYdKhpL
+X-Gm-Gg: ASbGncszbWB1+sB12wIcO7NqW1mKNJ6w9EyILxrD63r/pcrfvD3oIgS14X4Mxzg6sHy
+	sDRlc+gF5fqJZ/dfrhuVmz6Bt97ppEtsI8RPkY6LLsZi1cvn2TZSY4INXsxRfcc+vxLV41Btx8A
+	cl+Z55nF8J31fGd1xoUO1IzPDxqUy3SJnuTJSZtUUDTBuyJJkcV5zmIqdv77GimyTbrL4UMmCgC
+	yJY0oBhPEcPuzLNhJY9v8XwKP7vjl8CMdgMVi5Zrtzbm2t3oy9XDkGcOK7mrE41QGaElI/EL8i1
+	XCDWDKlT4YKJn8Y5dSTrwAprntAjp+xXcjgMNNBFXqECRbbGgk8sjc99GdtLyIwa2nkZUTDyneY
+	CeYPmqIViLhSnZT7a77/qVXeG+fqsRwgwb0q63o1WwO073H0evKnEAM7ojm0Msigy5XnB+YMgTq
+	QAWWpzK7Q=
+X-Google-Smtp-Source: AGHT+IE6anoptnpLAMyYN4hc1QIFg27/PsC3haetNNR/mPqbLNDxFBNTVoIHJXZAtAQJ7hcgegNegzgdo2u+
+X-Received: by 2002:a05:6e02:3e02:b0:42f:94aa:ac06 with SMTP id e9e14a558f8ab-42f94aaaef4mr163551915ab.18.1760371040114;
+        Mon, 13 Oct 2025 08:57:20 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-58f6daf4393sm802210173.17.2025.10.13.08.57.19
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 Oct 2025 08:57:04 -0700 (PDT)
+        Mon, 13 Oct 2025 08:57:20 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3352a336ee1so17584230a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:57:04 -0700 (PDT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78038ed99d9so11324536b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1760371023; x=1760975823; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1760371039; x=1760975839; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TFuvLKu4ynjIvMufArSQE1PDlrrioAZvFwM7LRBZGw=;
-        b=HLELEBKy5joUGQVrMro8M2RGoDlsc6cK96XI+HwYHbU5mQNYVG20W0zc/IFz45QbYH
-         GZRjH0B5Q5Tgtvp99LP9uLxgvGR+XHAkGSvnNLtwTdzIVQkjhZ77x5iOMrfdUqbaNWS3
-         aoJoB8E/SIUxn5fxC6GGYmDZ2ck0SbNX9xgZk=
-X-Forwarded-Encrypted: i=1; AJvYcCVOfYSslPgqDKZqkXy13Sf4NOdvXkHGL3pvdzBbIIr8FB77spg1XNwdfMIlgScLk+0opberPHWoDpQY8h4=@vger.kernel.org
-X-Received: by 2002:a17:90b:33c2:b0:32d:90c7:c63b with SMTP id 98e67ed59e1d1-33b513862d9mr31366217a91.30.1760371023243;
-        Mon, 13 Oct 2025 08:57:03 -0700 (PDT)
-X-Received: by 2002:a17:90b:33c2:b0:32d:90c7:c63b with SMTP id 98e67ed59e1d1-33b513862d9mr31366182a91.30.1760371022815;
-        Mon, 13 Oct 2025 08:57:02 -0700 (PDT)
+        bh=QnQ3/YncMSuAlD2Cx5XdWo0bo54hv2NEfG8uAwAPs6Y=;
+        b=fZOuvW/9StqLF2k/0Sw5Q1IuMGxqAhqZsao8Eq6vYzSzRgCD4Qqptr4H+bOqdRmZF9
+         8MdoT/GgbgHYDrdG7jK/u6LPdt4HWdTmESlurtS1Q0wlX/g1j58L11Xr39J0keSCbjy/
+         NBRQLu7jR+JKa0Op5TO6XrwvKxSgbfp9JzA4g=
+X-Forwarded-Encrypted: i=1; AJvYcCWK9udhOoOHkztqbXI0phkrRo7lHXwC344xPC2p0ATusLQOn+V3yqH29h5lduBuu2l4rA5KUw1d7juo8IQ=@vger.kernel.org
+X-Received: by 2002:a05:6a00:1954:b0:784:7275:837f with SMTP id d2e1a72fcca58-79387435d78mr25333985b3a.26.1760371038819;
+        Mon, 13 Oct 2025 08:57:18 -0700 (PDT)
+X-Received: by 2002:a05:6a00:1954:b0:784:7275:837f with SMTP id d2e1a72fcca58-79387435d78mr25333960b3a.26.1760371038330;
+        Mon, 13 Oct 2025 08:57:18 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b626ec2f9sm12358432a91.25.2025.10.13.08.57.00
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992dd851c2sm11892087b3a.81.2025.10.13.08.57.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 08:57:01 -0700 (PDT)
-Message-ID: <7329db14-43c6-4ffd-bbdf-a5870ea895e4@broadcom.com>
-Date: Mon, 13 Oct 2025 08:57:00 -0700
+        Mon, 13 Oct 2025 08:57:16 -0700 (PDT)
+Message-ID: <e25bf5c2-c703-47d0-87bf-b5d9cc700cef@broadcom.com>
+Date: Mon, 13 Oct 2025 08:57:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,7 +97,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/11] irqchip/irq-bcm7120-l2: Fix section mismatch
+Subject: Re: [PATCH 05/11] irqchip/irq-brcmstb-l2: Fix section mismatch
 To: Johan Hovold <johan@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
 Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
  Fabio Estevam <festevam@gmail.com>, Claudiu Beznea
@@ -109,7 +109,7 @@ Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
  Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
  Florian Fainelli <f.fainelli@gmail.com>
 References: <20251013094611.11745-1-johan@kernel.org>
- <20251013094611.11745-5-johan@kernel.org>
+ <20251013094611.11745-6-johan@kernel.org>
 Content-Language: en-US, fr-FR
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -144,7 +144,7 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251013094611.11745-5-johan@kernel.org>
+In-Reply-To: <20251013094611.11745-6-johan@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -153,7 +153,7 @@ On 10/13/25 02:46, Johan Hovold wrote:
 > Platform drivers can be probed after their init sections have been
 > discarded so the irqchip init callbacks must not live in init.
 > 
-> Fixes: 3ac268d5ed22 ("irqchip/irq-bcm7120-l2: Switch to IRQCHIP_PLATFORM_DRIVER")
+> Fixes: 51d9db5c8fbb ("irqchip/irq-brcmstb-l2: Switch to IRQCHIP_PLATFORM_DRIVER")
 > Cc: Florian Fainelli <f.fainelli@gmail.com>
 > Signed-off-by: Johan Hovold <johan@kernel.org>
 
