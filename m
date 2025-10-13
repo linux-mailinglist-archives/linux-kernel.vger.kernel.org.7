@@ -1,141 +1,140 @@
-Return-Path: <linux-kernel+bounces-850842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E18BD416B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:23:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B38DBD47BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274C31895BC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:19:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED50D501C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8627B30EF95;
-	Mon, 13 Oct 2025 15:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB9F30B520;
+	Mon, 13 Oct 2025 15:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VjFW7j5w"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km/+C7xs"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B2727AC21;
-	Mon, 13 Oct 2025 15:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117A230B51A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367812; cv=none; b=svzRhjVNuvV0ZotTfDdveNP3zkAIL5+paNA3Y0b1GbPP+zgAkd4wc8EuAYgs1yWzg7lqDZgXZH2d3CEg2aHyjA5mZfBxryVihl3598Q/X+SV0e77c8kCiCKgooCgPSfEbBlTIJh+LPDQv1t2gAPZs1e2rOmHDu8gLMIQOXkDivQ=
+	t=1760367749; cv=none; b=lQuYGWBuLsvIDqq0fr+EcoQPFHo+6LRKnCkvHzzSpx1kwPcSdTIkYTqaJyaWTweoJlp4t/Zn+uKvv5PfCcfapyHBI5GqPsY2Pu+J1pZsFdgnUuC45TGpHiya4gev0IURgdEvFWFlGbGoJDowTSwi2vL6cvEcc9kc1wza1/aL5hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367812; c=relaxed/simple;
-	bh=G1U4VjihWrTjR/0pZxBUsKlb85UKypAyhjdzAAp6raw=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=gelQIj3DkXveBk4SusBTREyszoWb6MSuqPt8NkYbbeiXP8e9L/sucq2l+/lozhzbkScOKZZG828AWOQtkofVdifRPaV8PE5wt17EZdKyCSpC/SxoFQ0j5dU3OueF5flm8RS5stGO+XDh+R+vbd6elRGQ8yL1QdGcS4eKDIoOHgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VjFW7j5w reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4CACF557;
-	Mon, 13 Oct 2025 17:01:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760367708;
-	bh=G1U4VjihWrTjR/0pZxBUsKlb85UKypAyhjdzAAp6raw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=VjFW7j5w3uImm2q1iWEwqGyFzq7DNfkTVBaq5lpyK2yHJ7aZC29Xfhr1ySWtwXTaA
-	 WkHQ6VshkR+fiQpIVovTbGFpBwEMHuBVTocpv9nEkNKv8sOsKQAAdkX1fA4a8tva/n
-	 KEgIrlSrlFZ6cr2flWju1lvfyogNPxedvXUY+v3Y=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760367749; c=relaxed/simple;
+	bh=XZ4lzHryEJQS9jgidvbUbN7osxHnfwhUvb5lDvX5gJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sE9V3RmWDbBjbLohiJDaB1vOyW28huyciMgdiQjpw8Ui/8pwuZLk8itbFznAVvhhbH4KzLCTROFHH7qmNT2VBGNakFl8ijAtwo3pUMfrVTnvAf8V1j92XM0yYuLVgHpF2SbMuYiWWyNlV0q7ovhPi9R/2vkcipjqwInUxDttmxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Km/+C7xs; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3181223f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760367746; x=1760972546; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yh3tjmmjbgFKGhBWocvc5VFMFhZLywRMRFtzLSkbw0s=;
+        b=Km/+C7xsfZItqUK1cRI41oQudCJQXawtSlxm2Y90QzKe9b1CH9Lue/2I7UhiV9ElL/
+         QbsSPdkyMDOFYhdArM/WwUk4HrRd78V3RT1IKtSrA3tojPLDyJJgw1uFNjhsOatstdjf
+         awHA8HXlg+4SOEZ9oEI0WYufnhqiDxH7H1pDa2kElbVfVK/isv9w6THHMeFYOFdsTzrT
+         4XPM6rT28Dtw7BCO5UlxgNQd6gurCk9yoS6p4GVG3DiwKS/kZXmT1g4FH0o84SKujCvj
+         NNq3v1ken4Lh0yVIZ4HeRdWXMC3yki6pD6VwCI9gK9RKdT3vhvmYDl93+WFdT69sWhcP
+         DVaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760367746; x=1760972546;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yh3tjmmjbgFKGhBWocvc5VFMFhZLywRMRFtzLSkbw0s=;
+        b=l1Q8nutbOSUk4p1XasookQG9wQwTY3xoZytqeXfqnApmT/ZSSQ/V5h1DFVfiVvwUlg
+         UyW1lDnpIEtCm1vGhSNknOPfewgab9Q+xBC8Rs+5eXenuKK0QiuJ+dz3nbtzgfZKqPsO
+         g55fpxysdWpZg0CmXHizEGqXoS21rOJIwHElyaZpL63paLpm0Ru1qQTqkaAjbHhNJ5NM
+         0EI5QzNNvcHpFtESeXkBBMDeh5lZYssAU+EeUWVxy0cw/QdTyNLrZHuUB90uOknfI/qH
+         4DzkQ5iW3jFz2EnQHx1p9uOFBX/r/vTovj0/pmCarNs9ivqPinJmb5QybwvHIedTzHpg
+         uH0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVE6vrcBrPUgpHP1gwcxls3laraywFQ9xaJvcDTi4AT72wWJu9GQnrianEcf/BlZoEfOTTLXx5nOG5hHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhPMywkEaCOONU8HySf4cuioxjvdZ5b0Osj2/H3UYBEYgiau1w
+	FukuexCqN4A1yFPg7DvPI+ltD/1jKJfmCwvGq8m0WXL7OLtRa7SMW3oZ
+X-Gm-Gg: ASbGncublWlM5nawPvQjnwpTRQnFvaxb1ApG8efqrYcFumMSlzk4WjC6tkilclWdjoD
+	6319vrOkZ8oK10go0yYQEd92j8CCGB694hKC/Ay7Ha3d+s13Lmzphmi1Rn8jp70F3MpNmux4l0d
+	hmeWMJz+yvf2p0NLmvrn+a09qDgzftncuQPw+crAgR3snVmPH06+8lnKwWnlQt+jw6Tse61yt/g
+	IHSfXBkFFAE9J53DYkTLkAqBV2v25lKAJ1fwS3mTeCSVsRfp3hSkw25xax8FvSoNTxXDj1Vzkal
+	EB5kQl5k/YpanWfjMa/r58R4FrHDgE5GFX1lCSxENriJNHF8fi/5Ro1q1DiZJfRx0Ju2ViiEhLb
+	B1deAbyFt6qaPw3AvUr/NkzRW06imP5ArfRokbM2Z90QLW1UfEDfFGLBGvk0d50g68odZULhxVJ
+	tv2U0aQHvU
+X-Google-Smtp-Source: AGHT+IGNkJ4QbgL7tRzgvPN+I8L7UO5FdEYBSf53xVmGqianIIUKzVvqoD7JkSPO2wQpbIF5bLMK1Q==
+X-Received: by 2002:a05:6000:491e:b0:426:d549:5861 with SMTP id ffacd0b85a97d-426d5495947mr6222761f8f.42.1760367745998;
+        Mon, 13 Oct 2025 08:02:25 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:eb09])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm18651180f8f.22.2025.10.13.08.02.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 08:02:24 -0700 (PDT)
+Message-ID: <f0e40a00-ab13-42dc-b9ca-010fd4b115b8@gmail.com>
+Date: Mon, 13 Oct 2025 16:03:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251013-ptr_err-v1-10-2c5efbd82952@chromium.org>
-References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org> <20251013-ptr_err-v1-10-2c5efbd82952@chromium.org>
-Subject: Re: [PATCH 10/32] media: i2c: imx335: Use %pe format specifier
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Julien Massot <julien.massot@collabora.com>,
-	Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Leon Luo <leonl@leopardimaging.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Martin Kepplinger <"mar tink"@posteo.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Niklas =?utf-8?q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
-	Yong Zhi <yong.zhi@intel.com>, Yunfei Dong <yunfei.dong@mediatek.com>
-Date: Mon, 13 Oct 2025 16:03:23 +0100
-Message-ID: <176036780330.559803.287308146210017676@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
+ buffer providers
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>,
+ Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Joshua Washington
+ <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
+ <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Alexander Duyck <alexanderduyck@fb.com>,
+ kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Joe Damato <joe@dama.to>, David Wei <dw@davidwei.uk>,
+ Willem de Bruijn <willemb@google.com>, Mina Almasry
+ <almasrymina@google.com>, Breno Leitao <leitao@debian.org>,
+ Dragos Tatulea <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, io-uring <io-uring@vger.kernel.org>
+References: <cover.1760364551.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Ricardo Ribalda (2025-10-13 15:14:50)
-> The %pe format specifier is designed to print error pointers. It prints
-> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-> omitting PTR_ERR().
->=20
-> This patch fixes this cocci report:
-> ./i2c/imx335.c:1013:3-10: WARNING: Consider using %pe to print PTR_ERR()
+On 10/13/25 15:54, Pavel Begunkov wrote:
 
-Ohhh nice. Is this new ? First I've come across it.
+Forgot to CC io_uring
 
+> Add support for per-queue rx buffer length configuration based on [2]
+> and basic infrastructure for using it in memory providers like
+> io_uring/zcrx. Note, it only includes net/ patches and leaves out
+> zcrx to be merged separately. Large rx buffers can be beneficial with
+> hw-gro enabled cards that can coalesce traffic, which reduces the
+> number of frags traversing the network stack and resuling in larger
+> contiguous chunks of data given to the userspace.
 
+Same note as the last time, not great that it's over the 15 patches,
+but I don't see a good way to shrink it considering that the original
+series [2] is 22 patches long, and I'll somehow need to pull it it
+into the io_uring tree after. Please let me know if there is a strong
+feeling about that, and/or what would the preferred way be.
 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/i2c/imx335.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> index c043df2f15fb25b3a56422092f99a1fd9a508fa9..71ed9a0d84a252ee362621c4d=
-38001508fb86d28 100644
-> --- a/drivers/media/i2c/imx335.c
-> +++ b/drivers/media/i2c/imx335.c
-> @@ -1009,8 +1009,8 @@ static int imx335_parse_hw_config(struct imx335 *im=
-x335)
->         imx335->reset_gpio =3D devm_gpiod_get_optional(imx335->dev, "rese=
-t",
->                                                      GPIOD_OUT_HIGH);
->         if (IS_ERR(imx335->reset_gpio)) {
-> -               dev_err(imx335->dev, "failed to get reset gpio %ld\n",
-> -                       PTR_ERR(imx335->reset_gpio));
-> +               dev_err(imx335->dev, "failed to get reset gpio %pe\n",
-> +                       imx335->reset_gpio);
+-- 
+Pavel Begunkov
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
->                 return PTR_ERR(imx335->reset_gpio);
->         }
-> =20
->=20
-> --=20
-> 2.51.0.760.g7b8bcc2412-goog
->
 
