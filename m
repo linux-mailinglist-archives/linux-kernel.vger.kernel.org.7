@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-851014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B783BD5005
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:26:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F240BD5215
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2C718A28EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49EB0400391
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7AA25DAFF;
-	Mon, 13 Oct 2025 16:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1BE237A4F;
+	Mon, 13 Oct 2025 16:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ILM36MU2"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YqiI/xG6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAEA24A044;
-	Mon, 13 Oct 2025 16:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B6219E97F;
+	Mon, 13 Oct 2025 16:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760372728; cv=none; b=VF2QnL+G8vdT11bwwtc3CCn04UMc9RgTx/lYnmBazLfmUnCQkv7GEVuAYlGRvWHcM1ImNWdUI5jJJEenstiHSkd89BBJ/AytVps5UYy57ZdNV1lWKL2jeJ7HoqiUwwm08tOAB0vugEzjRHXeLluHMv7GMzrJoe9mPfq7wMusqpo=
+	t=1760372828; cv=none; b=Bg8dOvJc+Yx6BHViQJyDjT3KRN8uHhDrg9RkEzioBCbd6B9zla4znjUk4/THLrEkIoKbFbgDC68DQ9DZPXIp/u3EMeAAdnFmkbdnB2WcheM+53ovqC+X42dJeEiZFMAMM5WtLKbczjoeEvB7MFOJR1hDOn+Sb0Y29Tk2hN+iOKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760372728; c=relaxed/simple;
-	bh=4ODZp9Ac3U4UBksEC4T2F1JAzzCTr67ebtzW/nICJ7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpeG1oxoMAkEPy06iCbT+t4438Dkncy/FzkYzd+X3lOSVYKl3no2wpyc9c41Sern8AYhIY0HxvIJ2YbYH7ytO7Hcy+7MIjKUh0QRstYsee5yAbv8JTv7r+vIWOryAOLzFkHReHIqnUXk48wsfUaqaHCsqDoqI4KRVUZXWALsKV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ILM36MU2; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cljPd4RYWzm0yT2;
-	Mon, 13 Oct 2025 16:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1760372723; x=1762964724; bh=XIAnYj3DsbpzMjwoJ0ze2gZX
-	cXKKCVY1BDuyjjnWQmY=; b=ILM36MU2MgkgaHM9E0Gy42lzYVus9Lfc1vkB3nsk
-	tZU53eixYjoUtk6uZS+2mvycAAsU9Ath1C2XiLpV5FY4qGqLoFoeazbHEWq8zntM
-	J/Kk++KP/vHo5ZhvFEibVRplAHPJHGT5sp/c8lVeZQwIYYUtOD+SrkCoA0O+7/90
-	NL5YKk86wNlu/xvBZShQeVD9tqDGwdZ1Wtl0bxsuyW2CtYoTleGM3CuU6fvP9dPg
-	6ky4MCP/knppEnsNRBxmUEWRo4BK4VdUjzFUoYE1jX+D509OAfzKVybfEYVLSExf
-	3aY22m5BfNh3MNtQiywFlgJBqtbZTUYMxKYRmM0g9QmgHg==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id kU_6DtTk9V3t; Mon, 13 Oct 2025 16:25:23 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cljPQ1R8Szm0yV5;
-	Mon, 13 Oct 2025 16:25:13 +0000 (UTC)
-Message-ID: <6a2068cc-1d4b-4a80-8a71-e491643a6c57@acm.org>
-Date: Mon, 13 Oct 2025 09:25:12 -0700
+	s=arc-20240116; t=1760372828; c=relaxed/simple;
+	bh=suCC78EMKqPxfBXcTYCLFKc0L3dpAc7sp5mhcdIFfK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sPiWX59YSr1nlNGuzlm54iuica4kUTNO48MINe3S5H8WrTKz3o4CrtQjz28Kt+1h4h1gJJTltZefpn1qJmLXpnmX1gul9gapypBHTEvfyboYew1o8VaSMxXQPVKkQ1aBOlzKtTErdqhvQvOlcJ7M05e0SfFz5rTvzt43Pnv6618=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YqiI/xG6; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760372827; x=1791908827;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=suCC78EMKqPxfBXcTYCLFKc0L3dpAc7sp5mhcdIFfK4=;
+  b=YqiI/xG60KNAxAEBgATvajBgriIlUbWlK0rHMvPMZFVKHRrt+2xPmvFA
+   JoR7KMW3QHpIWjhJOwqzK5mI6lyuV9OUr2vSttnjs5syBqbhpKfOolC8h
+   BfIr6n91ukrR1LACCxVDqnBYevRZc59ngISxjcLeEZN2ncLMyUk5+1bzt
+   H1UuNmo3vRiiWdJsTy/G5bH1DzpN8n5v4BXXdDp7pAxDYm4U0GYQejX8y
+   6pHf2HsUCmJ+LkzCETI5uBO3/SaMHY0batLCi18Kc2Pd8XoHBBjrMCKo7
+   VjN8O5aZFkKOqseyU2vRhlo17kjvoJu65RRdQjEgifQht7c+sou3cvlpM
+   w==;
+X-CSE-ConnectionGUID: 0i7AXtmVQ8mIG2RMwyGEbg==
+X-CSE-MsgGUID: rJe9e6dTRyGSxWypRHd2iA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62409331"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="62409331"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 09:26:58 -0700
+X-CSE-ConnectionGUID: WzdLiMwXStqGBQroMZpjaQ==
+X-CSE-MsgGUID: KAMvVxadTfelWZEK4MU8eQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="205331718"
+Received: from lucas-s2600cw.jf.intel.com ([10.54.55.69])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 09:26:58 -0700
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH 0/2] module: Tweak return and warning
+Date: Mon, 13 Oct 2025 09:26:22 -0700
+Message-ID: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] *** Remove UFS_DEVICE_QUIRK_DELAY_AFTER_LPM quirk
- ***
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
- quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
- adrian.hunter@intel.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "open list:ARM/Mediatek SoC support:Keyword:mediatek"
- <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/Mediatek SoC support:Keyword:mediatek"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support:Keyword:mediatek"
- <linux-mediatek@lists.infradead.org>
-References: <cover.1760039554.git.quic_nguyenb@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <cover.1760039554.git.quic_nguyenb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251013-module-warn-ret-59f085298055
+X-Mailer: b4 0.15-dev-bd47d
+Content-Transfer-Encoding: 8bit
 
-On 10/9/25 1:10 PM, Bao D. Nguyen wrote:
-> Multiple ufs device manufacturers request support for the
-> UFS_DEVICE_QUIRK_DELAY_AFTER_LPM quirk in the Qualcomm's platform driver.
-> After checking further with the major UFS manufacturers engineering teams
-> such as Samsung, Kioxia, SK Hynix and Micron, all the manufacturers require
-> this quirk. Since the quirk is needed by all the ufs device manufacturers,
-> remove the quirk in the ufs core driver and implement a universal delay
-> for all the ufs devices.
-> 
-> In addition to verifying with the public device's datasheets, the ufs
-> device manufacturer's engineering teams confirmed the required vcc
-> power-off time for the devices is a minimum of 1ms before vcc can be
-> powered on again. The existing 5ms delay implemented in the ufs core
-> driver seems too conservative, so replace the hard coded 5ms delay with a
-> variable default to 5ms setting and allow the platform drivers
-> to override this setting as needed to improve the system resume latency.
+Do not let userspace tools and end users confused on the return code and
+log messages.
 
-For both patches:
+Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+---
+Lucas De Marchi (2):
+      module: Override -EEXISTS module return
+      module: Simplify warning on positive returns from module_init()
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+ kernel/module/main.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20251013-module-warn-ret-59f085298055
+
+Lucas De Marchi
 
 
