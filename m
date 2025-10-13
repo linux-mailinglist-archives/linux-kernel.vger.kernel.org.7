@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-851037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAE6BD55E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F63BD5371
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B631A4F7A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E018A5A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6A04C81;
-	Mon, 13 Oct 2025 16:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274D7296BD3;
+	Mon, 13 Oct 2025 16:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ybjtqq9s"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDYbt3AY"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FCC26F2AE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0B5291C07
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373966; cv=none; b=BGoueju+HhIk3uJaaoStcZ2s1B3XHgS4kzZSXrT5raKb1pXh8FIlLtXjMAEQVCtpfSbA7b0GKUTvPYokZOOHhgpOgnIQAriryBvR0sxEU4aiFmhsRbn9HGSK7QPf297f9HGu9vk36PRa5AQ58N3h6TOFbfdFYEF4623BxRYo0x0=
+	t=1760374192; cv=none; b=hHPAsIoWSi6VE11m+8tEeY37HOo5MEhIoUUeE6VxxkceCvn16K2YvZuFCMzc3s5ppXFoDOJX+W5OcNZ7dsv9dDndso80s5nTdOSw0uishNEeLlmr9ghp6aF/ilPd4yaUZLetM1nFTAUa8jZGkt2SJRN34wzPLug222lh0uTAcJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373966; c=relaxed/simple;
-	bh=ozTJoGPUDl2Q/XFcc/njJnNmrBfSc/yZ0ybMPXm40SQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RprBY/81y7nX7e/0Gc+X5CrYqxmyKuM1lY02X9Mrw2xu7Bb0yTQDKitiWpLiFIj2AVCksEadkrNIOpKyyGZNJNSRgwPY4b17L2bCQRG3m1+fmOEQke3THHjkd3VjCN1KhvZKIbNs4fZtb00olubqdAkpeaMcP5sgU+neGEIbhs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ybjtqq9s; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=mD3bAV2yaoTW4h21alY+aJsT1tByLvi9/visriR6TVU=; b=ybjtqq9sdg7jp2ncAr5INztqUd
-	o3y0tJ10QjdUZ9mwGA2iZhmUuARpfzERQuPYHmIK5HckcdXqZkP7tRp5IRx/XqdhN8nMnczW3qnzL
-	COOPztfcXlb1pN+Y6B+n0FwalFpvjge/aLvMQKnngAr/eLYA/fvgMNjf4yYnU3LaNKJh+SoWTdxGN
-	mfnZ8C14M6/PXJZ7LS+vjpspyFJ3oi/ez3LOMjGMJVfW8fhOUhiMaFLjeqZcOLAuGyUpiw/t8GFyl
-	SDmbcDP4Wd+zjvOL9fOmBQyteV72rLXhuUj79Vv/qp7aS6Rmi6CIn+AeB4rWnHGv4Git5Ywdx0/9Q
-	BUkyU8fw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8LgQ-0000000DujU-0VNH;
-	Mon, 13 Oct 2025 16:46:02 +0000
-Message-ID: <e308bc41-7b98-4f03-b25a-d859d8bfb737@infradead.org>
-Date: Mon, 13 Oct 2025 09:46:01 -0700
+	s=arc-20240116; t=1760374192; c=relaxed/simple;
+	bh=kx5RY7oeloUuI7eYO+d6SROp0dR5EAAxdn5zrmZ7DwI=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:Date:References; b=JYxH6rJ1FwFGet6fVzc2AVP8pCclQIVnY4PXFHglHka1nu/fTv5qweAPBzsCR45ulOujxuj0HMbuN0wNpG7r/AKtXjqxEa4RXxerQYbRnm3TlMGeD3GAf87j1carTbpor5MyI28ICM3t8DfD/7tsRGvZD5EmQ0hr+tZwWJxPOaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDYbt3AY; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso3798702a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760374190; x=1760978990; darn=vger.kernel.org;
+        h=references:date:in-reply-to:subject:cc:to:from:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kx5RY7oeloUuI7eYO+d6SROp0dR5EAAxdn5zrmZ7DwI=;
+        b=dDYbt3AYrsBt7gAEajsrCYu1CKtkOmgXVQqeA/WK6W2AQW/kjmZChSp1xHEOdBIBOP
+         tjfpqPRdj0i9nErlbhZQoLKlJ7xCE4oL590RfQGK0FFa8JMdw1+5Yfr9k2lrMj4+z1Pl
+         eVf5CA2UWp8qlUJv2TxjPFuUYhTsLftDjdMboCvrYUeDhguZdI4RdlnlvE6RQXBDtANg
+         yDPd7JWeS6u13cT/3XKOesDWWzIl+59YHXmbOek6kUoDRjDd3lxBVvgSbZ9dN+Cahr/d
+         0SBWZJDd6Hb/pUoOaswPq6DkEtnUtwbQF8PliZn4HUt1XEIm3Z1fzPqcIaZ6bFR7QhJd
+         R79Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760374190; x=1760978990;
+        h=references:date:in-reply-to:subject:cc:to:from:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kx5RY7oeloUuI7eYO+d6SROp0dR5EAAxdn5zrmZ7DwI=;
+        b=Ioi0g6E4aIUAbOQE5hOpe1F1hWv9nphqBhNVgk1K5ka7/O9380M0WBwLjKKsGmnHcZ
+         awFZ0vHvpgQcf2v0pRmxy/iML9y3kRTE/DaGmCNeLgsBN2ToTWkTeckTgbPa2Qo4ptYE
+         RmHzsLXa91eK4sXC5uvwfBu8RXvyidYkFHJDXpkOxB2UBUpOX1jl9dijj+TJV1AiHIUY
+         4XwZVRIHTZo8x9NEHO9e+I8wBwCy5HzTY8Lvu/4Sr7u8TcSws7hleEcngOHvplQhTAFH
+         T0Y5lQG9YBRWemrGPrzGtmai2TPhoLWPyhAiq7uxL0/mwpzI1Mvm5wNT/Ay2AjXL3y9x
+         1Y8g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0s4Od8c0WP7B4lEVJAvCZbLgpzJ6ZlYlaVg5D2wLPqxSlanuCi/Qy2vYIl2ZLGYfiu8GFZt1W9Sg3cXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+AwiysefX6ll6s0LRcI+yfoFle/RbKFRTra5m6C2OUnmDlBjk
+	tQ/6cKbZeYZ4ClNCH4iw2GbAWyi9v+d1ja9YR7lHJoLp1TQEKAW6BkWKv/Dr31PR
+X-Gm-Gg: ASbGncskh6L6Fxy9LC86E7RWctZU9zwsYfzLhz3mNHQsm7K5UDBHvxHi5Wra3CPXH+P
+	LVeeT9nnIwDu7H8ZPQ3/chVOLoqw5y4tRA9n262Mc3LA1v6UfLDD9Dbh0HCaHn6R8TUm4Lubl6m
+	1IaEgafYcht09FGH4scNRIIIqkG6OKllpkNuqOe0AStrilr1PU5wRti3hcWA7qDAjOzi5CX2hh3
+	mVqSP7xZTY/csxuCLwZ9PHWwAsWIsaHZUpnuyU7Ohgo6BgVoYRJ/+XkH21/zT7mZEdYcXooySiD
+	anesOoIUvmdym11fhcHRsb4k4ytGh/cH8CK1L8pQ3zeUiGI4PT8rEGE+EqtdexUeIkF1FLG0DRF
+	suHqhv2unF7I0sleqy5Gb9xVWOcCHE8WY
+X-Google-Smtp-Source: AGHT+IHevJcBjt8mHUt/pyY93x641rdKkka0MNqxiQeyFCWUh9FBFG0xSjkzcIivii+OZab9HkGH1Q==
+X-Received: by 2002:a17:90b:3909:b0:336:bfcf:c50b with SMTP id 98e67ed59e1d1-33b513865a2mr29845894a91.20.1760374189866;
+        Mon, 13 Oct 2025 09:49:49 -0700 (PDT)
+Received: from dw-tp ([171.76.87.41])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b7411fcf0sm6811568a91.4.2025.10.13.09.49.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 09:49:49 -0700 (PDT)
+Message-ID: <68ed2dad.170a0220.37a345.0a48@mx.google.com>
+X-Google-Original-Message-ID: <87wm4ylpge.fsf@ritesh.list@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Christophe Leroy <christophe.leroy@csgroup.eu>, Frederic Barrat <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc, ocxl: Fix extraction of struct xive_irq_data
+In-Reply-To: <20251008081359.1382699-1-namcao@linutronix.de>
+Date: Mon, 13 Oct 2025 22:16:25 +0530
+References: <20251008081359.1382699-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] tools: fix == bashism in kernel-chktaint
-To: Kevin Locke <kevin@kevinlocke.name>, Jonathan Corbet <corbet@lwn.net>,
- Thorsten Leemhuis <linux@leemhuis.info>
-Cc: linux-kernel@vger.kernel.org
-References: <47d80432-3838-4fc7-898c-9a9154080113@leemhuis.info>
- <cfa643395a4ae569838b7992c3fe7a3c3797831d.1760366509.git.kevin@kevinlocke.name>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <cfa643395a4ae569838b7992c3fe7a3c3797831d.1760366509.git.kevin@kevinlocke.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+
+Nam Cao <namcao@linutronix.de> writes:
+
+> Commit cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt
+> controller drivers") changed xive_irq_data to be stashed to chip_data
+> instead of handler_data. However, multiple places are still attempting to
+> read xive_irq_data from handler_data and get a NULL pointer deference bug.
+>
+> Update them to read xive_irq_data from chip_data.
+>
+> Non-XIVE files which touch xive_irq_data seem quite strange to me,
+> especially the ocxl driver. I think there ought to be an alternative
+> platform-independent solution, instead of touching XIVE's data directly.
+> Therefore, I think this whole thing should be cleaned up. But perhaps I
+> just misunderstand something. In any case, this cleanup would not be
+> trivial; for now, just get things working again.
+>
+> Fixes: cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt controller drivers")
+> Reported-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Closes: https://lore.kernel.org/linuxppc-dev/68e48df8.170a0220.4b4b0.217d@mx.google.com/
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
 
+Thanks Nam for the fix. I validated this with KVM on my POWER9 hardware and
+this patch fixes the previosly reported problem at my end.
 
-On 10/13/25 7:41 AM, Kevin Locke wrote:
-> When /bin/sh is a shell other than bash, invoking kernel-chktaint with
-> at least one argument may produce error messages such as the following
-> (produced by dash 0.5.12 with argument 1024):
-> 
->     ./kernel-chktaint: 22: [: 1024x: unexpected operator
->     ./kernel-chktaint: 22: [: 1024x: unexpected operator
-> 
-> This occurs because the == operator is not specified for test in POSIX
-> and is not supported by all shells, as noted by shellcheck SC3014.
-> 
-> To fix the issue and avoid the error message, replace == with =.
-> 
-> Signed-off-by: Kevin Locke <kevin@kevinlocke.name>
+Feel free to add:
+Tested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com> # KVM
 
-This should have retained the previous *-by: messages.
-
-> ---
-> 
-> Thanks for the reviews and feedback Thorsten and Randy!  I agree it
-> probably doesn't matter, but I appreciate the value of consistency and
-> of being aware of those conventions, and it's an easy fix.  Thanks for
-> letting me know about it!  Here's an updated version with an improved
-> commit message.
-> 
-> Thanks again,
-> Kevin
-> 
-> Changes since v1:
->  * Remove superfluous links in Markdown format from commit message.
->  * Add version of dash used to commit message.
-> 
->  tools/debugging/kernel-chktaint | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
-> index e7da0909d0970..051608a63d9f1 100755
-> --- a/tools/debugging/kernel-chktaint
-> +++ b/tools/debugging/kernel-chktaint
-> @@ -19,7 +19,7 @@ EOF
->  }
->  
->  if [ "$1"x != "x" ]; then
-> -	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
-> +	if  [ "$1"x = "--helpx" ] || [ "$1"x = "-hx" ] ; then
->  		usage
->  		exit 1
->  	elif  [ $1 -ge 0 ] 2>/dev/null ; then
-
--- 
-~Randy
-
+-ritesh
 
