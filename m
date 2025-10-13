@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-851210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6151BBD5C91
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:51:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC84BD5CAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B8B1F351741
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B28818A73C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633422D3EF1;
-	Mon, 13 Oct 2025 18:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052602D8DC3;
+	Mon, 13 Oct 2025 18:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqlCNQ7S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V1WO8Xxs"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15931CA84;
-	Mon, 13 Oct 2025 18:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7E42D8383
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760381491; cv=none; b=AwmQlLwTJnxZrMhnfiKXV8+rGVAS5S90QnE5IY+FzPqnCpbvsg8LuYO1zRoAZ6OKZocl8tn+0wu9q8L9CP1CqZO7cqi7caFJ3SL4NENUkiVfTvaVqYuQIsCosPjBjCSeOsLJAQFzM1DMhvP6Qtnq/RKFbtK7HqgDok964gKc/f8=
+	t=1760381573; cv=none; b=n2/zXAmypy3tK/0NtJh3ZcgYHnkCzITRLygKtRnGCz7/8+Vkry2ezhwUFx1/pHNk5tfQmC3JsoXKiQ3Cv+SzP8PNCh0vmHqcSxHKyG9ZHsZD3E3gpfZJZy+cdpJGeETIE19JNgsEaCMqifSECJ3AMIkOwL4zUcubKVnEiciheHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760381491; c=relaxed/simple;
-	bh=wKUpRryNaHwuge/VYu6cqa0dpbzt9KPcGiAg8S9Mfek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TaQ4nCqb5JDM5PJE3+OjxkwyoETfLdgRmB1AOVnGtdSzqtHLVmq0jre7vAT3DMJ/yYapWG3fVAg1d3vMgQxhraAkJ1N+277AymFU6j/k0ao6nWa6BAYRYdPEdG4wxxOki8TapwVGhnetAuhNxtdpxGIgSK26whBNqfUY9u32bhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqlCNQ7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2EA8C4CEE7;
-	Mon, 13 Oct 2025 18:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760381491;
-	bh=wKUpRryNaHwuge/VYu6cqa0dpbzt9KPcGiAg8S9Mfek=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JqlCNQ7SR1xNZt066m+ygMiN6zSGwhiaUfNrW/dpJECGLWEU1ap7jTIjEz27UqYzD
-	 +8XQSc1Y8Ch7lLberp3mV3bLpAAbWDdULjglqBdkOvQL0uRk6HW9sEf0RTDc/zXjod
-	 PXyYQn9JhH9lQ9ZtsTHHc9wCyAEFicbKK7PQM8If5EwzKMzH3rcY2gCUVUZDZDM4UH
-	 diJdk9erelVGu9IofA8Acwn4/a0PGdtbS7FczWpqwqFG9eljA3a+4qsAvAPHvBwVbL
-	 KH1ScAQ7uDRBFPeC6nLoNyQ3Blomg18n9agWjAdvztNoFSRueicQmg/x72vL1PqEL0
-	 2LtqdW5lYNXrw==
-Message-ID: <4a8302a0-209f-446a-9825-36cb267c1718@kernel.org>
-Date: Mon, 13 Oct 2025 13:51:29 -0500
+	s=arc-20240116; t=1760381573; c=relaxed/simple;
+	bh=iUk2UdMf7pERxk6w7Llo5j8YKBarUI/BPofhsYl7ZmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cn3okg/YJzhL6wRYu51pYV2lN0+pQ8tVVe95auZe8U2mc1YIK06xjb+Szgf0jQol8MuFu9G/TjxHcicbd2EJ5jZeOaHPT1UJUiVOa9TMCPaV9sTSmoYT86weSnrdZANp72Av7miXVlcPn1OZ8SVQ0b9hx5qrZjbI3beJoXIY3VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V1WO8Xxs; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so22536a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760381570; x=1760986370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Re5H/O2EjTXsidOVadl49AyAMlZCly7+yKfYOFvGPQ=;
+        b=V1WO8XxsZJPuxZ78p+SN+1Wed5ojmiHoH5AlMg6daAd6yHFkJdM1V30IN3jMjlRIM1
+         D/GHVy4A1ColStG3Wqx44to7zQELLiV9t1EZBoXxJiBOSPzNBy59rDB5PGbBOGCkIPGE
+         RWCZGEubj7uYuD+o9Itjeb0fda/jk24Wt2NUofBrobVbo4Ns8UFqT+Os+lPqeflgKCVU
+         0gieyu7vNvuAa2R+y4G2K2xmy0jbzI4rqJBF7OYQvaOGGTj2NwgQKtwi12kwK+MH7IFk
+         ealopVV1o4A72XkwFYnYCSPL4dT9sPajjy3hKN8/5ELBA9lIKYewZUUXPeLT0TCNXzmQ
+         fCug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760381570; x=1760986370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Re5H/O2EjTXsidOVadl49AyAMlZCly7+yKfYOFvGPQ=;
+        b=J/TGVZtZ3xy9sMcJKOX3y7GV3ArsiPheMHkOg2HDAV3LXddAejqRFTU7JJf7hb8yHB
+         uUbAScXh5jHb4tXo4JD2SZRfR6JXv1U7eqayg7FHE6XEM0J4MLIiYHUf8NFMCJHPeQox
+         bn8yxWlPoBtymqRZkHVSeT8b4aaUMSGiYNnPyOnsrm1FKqwO7H2mnu7bVdV5n9ftnfSl
+         6pgmh43nfuIw15UgFEVW9VYWS9sPznPkK4QB8G2qRKFDgLsoq0V+XHruIp1XHrmV2vib
+         S71Alc5DM8z8rR12iXvM2frBkfC8kXwvljbT8vNsu76uQSi9eMLoH2wH5wkmALKQT/OC
+         DYcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVOEgImEGXoAMaKSJC3EjGo9OJpZ0QXN6FtME/PRJdSXbTT968Np3N1kzDI6bWdO/pqfjWrKCdDAwtqMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA2NBnC8h/wKmWMJsmHFPEgorOjw00E21ADiijsn7ejiH/ETzG
+	YovTOPc8r1rJfn/o4s6+kfgST+ohDz9Bx5p4ZWgGWUfQju+do63jjrvBb+4UVMelogtpQretG6B
+	9Hy8+yKXXM3fHKmvGeBpGBYGiPV3E4j+FvOezPor5
+X-Gm-Gg: ASbGncvngFoE7x9Te+fX2l3NjrusBs8V5SjP8QCWF1HPq4iJ3ffIR6s8a+MccGa+w+N
+	bnL7cJu+jdj34g5YT2Ar6CD8GWWo5pr8Lvs4QrlP/yANRpcJGADPt1Ux/ARjuz82gdPqm07dPeG
+	Qdu2V/zEZdEq+mkwKq3GhBMBbO3+Qoz4Hd8tJczxe9l48qdR6Xa8QN49H67YboFWRSzfmq1JiCd
+	gFcAs39+oWcoEMKcWqMQj1hHoJtEBy4
+X-Google-Smtp-Source: AGHT+IGjMm2akrmfnLsDJ0iB6NildCG1lCop2Q8XTbJJNu9nQzttFSJPMYZduDDnWEIei4uujvTHcEVhI6nPtTT49gw=
+X-Received: by 2002:aa7:d889:0:b0:634:90ba:2361 with SMTP id
+ 4fb4d7f45d1cf-639d52e9f0emr630105a12.7.1760381569759; Mon, 13 Oct 2025
+ 11:52:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION 00/04] Crash during resume of pcie bridge
-To: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, regressions@lists.linux.dev,
- linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-References: <20251006120944.7880-1-spasswolf@web.de>
- <8edcc464-c467-4e83-a93b-19b92a2cf193@kernel.org>
- <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <4903e7c36adf377bcca289dbd3528055dc6cfb32.camel@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-11-yosry.ahmed@linux.dev>
+In-Reply-To: <20251001145816.1414855-11-yosry.ahmed@linux.dev>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 13 Oct 2025 11:52:36 -0700
+X-Gm-Features: AS18NWDzaWCEhjI7Qfv6rqXIYOx0uL1PdtbeaJ4kWvwOyK8bYylvN6PL8Eg-vc4
+Message-ID: <CALMp9eQ-KnS-nEGFOvTjNJNOiayumQSiScHixCpPa23pnVBq8w@mail.gmail.com>
+Subject: Re: [PATCH 10/12] KVM: selftests: Move EPT-specific init outside nested_create_pte()
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/13/25 11:29 AM, Bert Karwatzki wrote:
-> Am Dienstag, dem 07.10.2025 um 16:33 -0500 schrieb Mario Limonciello:
->>
->> Can you still reproduce with amd_iommu=off?
-> 
-> Reproducing this is at all is very difficult, so I'll try to find the exact spot
-> where things break 
-> (i.e. when the pci bus breaks and no more message are transmitted
-> via netconsole) first. The current state of this search is that the crash occurs in
-> pci_pm_runtime_resume(), before pci_fixup_device() is called:
-> 
+On Wed, Oct 1, 2025 at 8:06=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
+wrote:
+>
+> From: Yosry Ahmed <yosryahmed@google.com>
+>
+> Refactor the EPT specific initialization into nested_ept_create_pte(),
+> in preparation for making nested_create_pte() NPT-friendly.
+>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>  tools/testing/selftests/kvm/lib/x86/vmx.c | 71 ++++++++++++++---------
+>  1 file changed, 43 insertions(+), 28 deletions(-)
+>
+> ...
+> +
+> +       /*
+> +        * For now mark these as accessed and dirty because the only
+> +        * testcase we have needs that.  Can be reconsidered later.
+> +        */
+> +       epte->accessed =3D *leaf;
+> +       epte->dirty =3D *leaf;
 
-One other (unfortunate) possibility is that the timing of this crash 
-occurring is not deterministic.
+Not your change, but it seems strange to set the 'accessed' bit only
+at the leaf. The CPU will set the 'accessed' bits from the PGD down as
+it does the walk. So, to only have an accessed bit set on the leaf
+requires the existence of some software agent to clear the higher
+levels.
 
-As an idea for debugging this issue, do you think maybe using kdumpst 
-[1] might be helpful to get more information on the state during the crash?
-
-Since NVME is missing you might need to boot off of USB or SD though so 
-that kdumpst is able to save the vmcore out of RAM.
-
-Link: 
-https://blogs.igalia.com/gpiccoli/2024/07/presenting-kdumpst-or-how-to-collect-kernel-crash-logs-on-arch-linux/ 
-[1]
-> static int pci_pm_runtime_resume(struct device *dev)
-> {
-> 	struct pci_dev *pci_dev = to_pci_dev(dev);
-> 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
-> 	pci_power_t prev_state = pci_dev->current_state;
-> 	int error = 0;
-> 	// dev_info(dev, "%s = %px\n", __func__, (void *) pci_pm_runtime_resume); // remove this so we don't get too much delay
-> 										  // This was still printed in the case of a crash
-> 										  // so the crash must happen below
-> 
-> 	/*
-> 	 * Restoring config space is necessary even if the device is not bound
-> 	 * to a driver because although we left it in D0, it may have gone to
-> 	 * D3cold when the bridge above it runtime suspended.
-> 	 */
-> 	pci_pm_default_resume_early(pci_dev);
-> 	if (!strcmp(dev_name(dev), "0000:00:01.1")) // This is the current test.
-> 		dev_info(dev, "%s %d\n", __func__, __LINE__);
-> 	pci_resume_ptm(pci_dev);
-> 
-> 	if (!pci_dev->driver)
-> 		return 0;
-> 
-> 	//if (!strcmp(dev_name(dev), "0000:00:01.1"))         // This was not printed when 6.17.0-rc6-next-20250917-gpudebug-00036-g4f7b4067c9ce
-> 	//	dev_info(dev, "%s %d\n", __func__, __LINE__); // crashed, so the crash must happen above
-> 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
-> 	pci_pm_default_resume(pci_dev);
-> 
-> 	if (prev_state == PCI_D3cold)
-> 		pci_pm_bridge_power_up_actions(pci_dev);
-> 
-> 	if (pm && pm->runtime_resume)
-> 		error = pm->runtime_resume(dev);
-> 
-> 	return error;
-> }
-> 
-> 
-> Bert Karwatzki
-
+Reviewed-by: Jim Mattson <jmattson@google.com>
 
