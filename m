@@ -1,161 +1,134 @@
-Return-Path: <linux-kernel+bounces-850093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C04BBD1D2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:35:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3198BD1D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C138A18987B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:35:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B11404ECB4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231342E8E11;
-	Mon, 13 Oct 2025 07:35:03 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A052E266C;
-	Mon, 13 Oct 2025 07:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC3E2E9729;
+	Mon, 13 Oct 2025 07:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="ljRT3iyT"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5D27BF6C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760340902; cv=none; b=uHtgwqscWw/44tG5Uwmfc5kZM4wiajqgijxVP16ry7RNwwqF67ILddjBsDqmbyVoMvtgum8fdRsaFpW/hjXwIWmBvoXMpoavxEwi510hGJqAY6m+eID7DE2fWZJat/4KwJJAFki+a32ug4E66YvAMUj5PmWRtA6fUbgVHu9drqs=
+	t=1760340946; cv=none; b=FUym4GfsFoDTNCUTOIMoNXYIenAITgFpgWNKIhstJn6FFGbWnFNuS19lyI+xZy/TJMaEcoGYN0lvBu7cJWgdCTzfigq+iTHk4mGNatUs4cZwq5M+o9QkEBEzrCPj1sQaBlYXiCtwotL93CDTPCO1mNNaGJZ0GEWlG0RjAuZMfng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760340902; c=relaxed/simple;
-	bh=NCApywhaw9UwxiTx9sXxe8xLg9MuI+O2DIpkkCQS1tU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nSccp6PTKa8v2mLhigaah06XoPgnT0OiCcNB9UnmRPyYRjQrVA1P9L4IpuITSqvZ+FX2RearLNBFfkW4EScQvh/wpBjqpyQe0zBNcx4wt6ZFz5eJgsXzv8KIsyJShfLaITZCWURkFlJ99+3pXAEy3GS75J798PXI2UN++gBfF58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxO9Kgq+xo0H0VAA--.46000S3;
-	Mon, 13 Oct 2025 15:34:56 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxE+Sdq+xoJ1PdAA--.31982S3;
-	Mon, 13 Oct 2025 15:34:55 +0800 (CST)
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Ard Biesheuvel <ardb@kernel.org>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, loongarch@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn>
- <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
- <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
- <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
- <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn>
- <CAMj1kXFLyBbRL+pAAQ6be6dxqFPiyw_Ug8qNQWaicZQ235HE=A@mail.gmail.com>
- <8091e8fa-3483-af39-2f7a-e4eb62b0944f@loongson.cn>
- <CAAhV-H4+UGLSkbjHbq9MerWfxnq0a13x+uzNfTsCoe1UxjbWsg@mail.gmail.com>
- <CAMj1kXH-rK0bRyHXdJ-crAyMyvJHApH0WR7_8Qd8vrSPBLK+yg@mail.gmail.com>
- <0c9b8e6a-96a6-91d4-946f-2109f48a529b@loongson.cn>
- <CAAhV-H41m96fvEWG5NqAE=tykPjyzt=50CseJDeCqdG-c_WMrQ@mail.gmail.com>
- <CAMj1kXEs5=VRi_rJwgHUrQWos-27PBbr3c4fYnmkV8Ahi8HZgw@mail.gmail.com>
- <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
- <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <3695be6e-bc75-1ee4-1222-95aafa44abdb@loongson.cn>
-Date: Mon, 13 Oct 2025 15:34:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1760340946; c=relaxed/simple;
+	bh=ql7ahzRkbyk+z6Q00r6p0cgtcIfdjVFWFWC2Iqq5niE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VWZe6dqoPS1/LyAKfcePck72pWNcbzZL21MOWOlFbk3l3lS2fwcEgBomV4JXgcJX2zepu4e7cDyc8ygAU4WmNSk9p955nwYewdQ5tdrHXR5j5nHOke77uel08MWhj2ynlmslGNa7T2Mc7BnU+QypKH8wgQUR5SnBfQTD9K2P6v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=ljRT3iyT; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id 582F13F4E4
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:35:33 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id C6C673F6BD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:35:32 +0300 (EEST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id C22CA200C4C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:35:31 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760340932;
+	bh=9Hn+Kh+H9BYteHAfZAHvtY3fRWrAQB1UoP7oJwMqcNQ=;
+	h=Received:From:Subject:To;
+	b=ljRT3iyThnDXSLFSz12uTJbNbbYBwEjClJ0UbBJ7BlTsyDK9Ict/SjN5Aa1EHs2Os
+	 EP6Kdb82djXx/TcB/C9U4yLWeeY+nFUwY2v1jHYrE75a2YkS/wdhzm9QOCEtinhVzi
+	 PXddPGLUUWhGa8Y510hOCAfA+E/Pn/Iajv2xoJLsFeS73kqXjgmI0CcUJCrvl5qrMV
+	 +0iucLiJKVVwYcR/VpPzdyYWE3b7JxyRu4xNuMjK4a8wMNmFnwwRr2iFHoZ+PFSj7W
+	 TxtDN9UgLTwZnMMMrCwZNJtS8yC1UdJMvNju9r6rg3aTxnFP/OWLLQ6NRwTkXoh3cR
+	 jrWRenYsKsVIg==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.179) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f179.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-367444a3e2aso40903771fa.2
+        for <linux-kernel@vger.kernel.org>;
+ Mon, 13 Oct 2025 00:35:31 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxeibXdCA6Kv7X/K0/1b6tVeOjDYk/ZO0398TzyfIgyAeewg6dh
+	EJlq1EFDg4l7YN4YGDAOx04w/HZAHSUxge7IOB9hV/QLLQVr4aSBQ3QXgk1iRM93hzFg49n0RSp
+	M91WMCYdS/GLB24rrLy/SJpHqb3H6nTs=
+X-Google-Smtp-Source: 
+ AGHT+IGhL2/hPSVmQ9/g7fkwl+8HCJEvNwUHqNc+SjupFlRWyGcojcgyopcQdncqUTJ3+gEMsIQUOfnoMI7YIJ6vm1A=
+X-Received: by 2002:a05:651c:2126:b0:372:921b:4b7e with SMTP id
+ 38308e7fff4ca-37609e46310mr51045141fa.27.1760340930853; Mon, 13 Oct 2025
+ 00:35:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+Sdq+xoJ1PdAA--.31982S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxGrWfuw43urW8Ar4kCw45urX_yoW5XF4Upa
-	y7GrWUKrs5JFZ7J34xJr15u3yUAwsIya45KF9I9ryrZw1UuF90qryjvrWjvFWDXrW8uFy2
-	yF4ftrZIyFWqywcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4
-	CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkU
-	UUUU=
+References: <20250904175025.3249650-1-lkml@antheas.dev>
+In-Reply-To: <20250904175025.3249650-1-lkml@antheas.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 13 Oct 2025 09:35:19 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGn3iJLHhSZrokf_V+HELjUSMBnANxcrL3rHi7bjZ57sw@mail.gmail.com>
+X-Gm-Features: AS18NWAxC-PYeN9MBQ07gyyTFLN-0TuITGjqsU6t4YtDjnw8Ngcekh9sQdZXDbU
+Message-ID: 
+ <CAGwozwGn3iJLHhSZrokf_V+HELjUSMBnANxcrL3rHi7bjZ57sw@mail.gmail.com>
+Subject: Re: [PATCH v1 00/10] drm: panel-orientation-quirks: Add various
+ handheld quirks
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+	philm@manjaro.org
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <176034093205.240284.5882039980560948709@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On 2025/10/11 下午11:58, Ard Biesheuvel wrote:
-> On Sat, 11 Oct 2025 at 08:01, Huacai Chen <chenhuacai@kernel.org> wrote:...>> Hmmm, I want to know whether this problem is an objtool issue or an
->> efistub issue in essence. If it is an objtool issue, we should fix
->> objtool and don't touch efistub. If it is an efistub issue, then we
->> should modify efistub (but not specific to LoongArch, when RISC-V and
->> ARM64 add objtool they will meet the same issue).
->>
-> 
-> It is an objtool issue in essence.
-> 
-> The generated code looks like this
-> 
-> 9000000001743080: ff b7 fe 57   bl      -332 <__efistub_kernel_entry_address>
-> 9000000001743084: 26 03 c0 28   ld.d    $a2, $s2, 0
-> 9000000001743088: 87 00 15 00   move    $a3, $a0
-> 900000000174308c: 04 04 80 03   ori     $a0, $zero, 1
-> 9000000001743090: c5 02 15 00   move    $a1, $fp
-> 9000000001743094: e1 00 00 4c   jirl    $ra, $a3, 0
-> 
-> 9000000001743098 <__efistub_exit_boot_func>:
-> 9000000001743098: 63 c0 ff 02   addi.d  $sp, $sp, -16
-> 
-> There is nothing wrong with this code, given that the indirect call is
-> to a __noreturn function, and so the fact that it falls through into
-> __efistub_exit_boot_func() is not a problem.
-> 
-> Even though the compiler does nothing wrong here, it would be nice if
-> it would emit some kind of UD or BRK instruction after such a call, if
-> only to make the backtrace more reliable. But the code is fine, and
-> objtool simply does not have the information it needs to determine
-> that the indirect call is of a variety that never returns.
-> 
-> So I don't mind fixing it in the code, but only for LoongArch, given
-> that the problem does not exist on arm64 or RISC-V.
+On Thu, 4 Sept 2025 at 19:50, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> Adds a bunch of handheld orientation quirks that collected in the Bazzite
+> kernel. I made sure they are alphabetically sorted. In addition, to keep
+> the series short, I grouped variants of the same device together.
+>
+> Antheas Kapenekakis (10):
+>   drm: panel-orientation-quirks: Add AOKZOE A1 Pro
+>   drm: panel-orientation-quirks: add additional ID for Ayaneo 2021
+>   drm: panel-orientation-quirks: Add Ayaneo 3
+>   drm: panel-orientation-quirks: Add OneXPlayer X1 variants
+>   drm: panel-orientation-quirks: Add OneXPlayer X1 Mini variants
+>   drm: panel-orientation-quirks: Add OneXPlayer F1 variants
+>   drm: panel-orientation-quirks: Add OneXPlayer G1 variants
+>   drm: panel-orientation-quirks: Add GPD Win Max (2021)
+>   drm: panel-orientation-quirks: Add GPD Pocket 4
+>   drm: panel-orientation-quirks: Add Zeenix Lite and Pro
+>
+>  .../gpu/drm/drm_panel_orientation_quirks.c    | 108 ++++++++++++++++++
+>  1 file changed, 108 insertions(+)
 
-I assume this is the final conclusion, if there is no objection,
-I will send patch according to Ard's suggestion and update the
-commit message in the next week, the code looks like this:
+Can I get a bump on this? New ones just keep coming out we need to
+start merging them sometime
 
------8<-----
-diff --git a/drivers/firmware/efi/libstub/loongarch.c 
-b/drivers/firmware/efi/libstub/loongarch.c
-index 3782d0a187d1..e5991aa9f805 100644
---- a/drivers/firmware/efi/libstub/loongarch.c
-+++ b/drivers/firmware/efi/libstub/loongarch.c
-@@ -10,8 +10,8 @@
-  #include "efistub.h"
-  #include "loongarch-stub.h"
+Antheas
 
--typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
--                                         unsigned long systab);
-+typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-+                              unsigned long systab);
-
-  efi_status_t check_platform_features(void)
-  {
-@@ -81,4 +81,7 @@ efi_status_t efi_boot_kernel(void *handle, 
-efi_loaded_image_t *image,
-
-         real_kernel_entry(true, (unsigned long)cmdline_ptr,
-                           (unsigned long)efi_system_table);
-+
-+       /* We should never get here, only to fix the objtool warning */
-+       return EFI_LOAD_ERROR;
-  }
------8<-----
-
-Thanks,
-Tiezhu
+>
+> base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+> --
+> 2.51.0
+>
+>
 
 
