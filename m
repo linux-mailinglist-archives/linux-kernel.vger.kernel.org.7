@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-850647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC811BD3608
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D632BD3638
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DECF1189E86B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E2C3C6CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7D73064A2;
-	Mon, 13 Oct 2025 14:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0075B3081B0;
+	Mon, 13 Oct 2025 14:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rhr3+NVB"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NgAZ0gvM"
 Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC26825BEF2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7AF261B9C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364895; cv=none; b=QlXcOLbtFQZzNzhONwJHSjBHfSjOrHqancyXZEuZED7HyrswOPrrfibIcTJA7i0OFYFMh8BtVmHeH1za5oyEyjlBi+hT3q1bzs95gqp4mVPFqgDAGMJqUZb190KtiwS+5rp011BxlQha79IH4vBE6IWSgZtvDO8w1plIxNHzFfE=
+	t=1760364896; cv=none; b=mz8nt+M+JFOkfdfymauxx3BOJ6O8P/QgcOf1JPsdcpBjJthUpnTjBNmrWaiPAYR9yjg8FeKwRjUjkRhYguI5Nk2ZcGsS5VxywyuVPbx6bYjtBEnyErE6B440Da04ikvxVP3fi53xdxxe/BtNZnoEqX2M+RdI03voxrVUWRG23lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364895; c=relaxed/simple;
-	bh=zXe/wxZ6QqQI33wXbnF9l5/N0aHMRBU3Aplzl5QTEmE=;
+	s=arc-20240116; t=1760364896; c=relaxed/simple;
+	bh=L4Qw/JWLTT0dmHppUcAHgP693zq94oqrBxXz4v7GMl0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JYz76Z70BWOaN8lWw9I3KJU/fJu2zFbJiN6W2XraOs2sKyRsoEoAXpiUs3jBxxfv0HTgB3BVjCETbU8rtzg37zKsBDsFFNa79usyvjt0ynI1gMCR+O0UVv6ZlvGvAJa1aEQ90ClOsuGQcWGAUJSaZltllYWvDfm6snUe3otjPQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Rhr3+NVB; arc=none smtp.client-ip=209.85.167.45
+	 In-Reply-To:To:Cc; b=ARluemX5i+BLlrN9AJPS4Dh1mjwizvVP2dFqNw7v5ohjGkGiuFPSiOuMBqB/AAQ8EB5tXtfBmhMjMXmGXzXRIW1Zs7aPq63QweztUZvW/6hpejU/OSSGX54FeQfUx3Ye2qpoK5luDmVoDcmmVEIHVoIIu4iv/Px/eFsGCItTiIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NgAZ0gvM; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so4306476e87.2
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57992ba129eso5322080e87.3
         for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1760364891; x=1760969691; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=h+YhCU9BSkNGYIn59ygfcOhebsOBGxL8NqrMakgbz3w=;
-        b=Rhr3+NVBtrMqtmOV7k0EuZgzP7FBtL4IHDB8rNFTe1MTtc6ml9ImPosLhWFvFd85PI
-         xiwBZZBfiDQQSy18KFqn5ocaVQRKWax1tJDtnPSfZFk644HXmi2CE2VYBLncEibu8Das
-         f1P1HYqg5REIDaz2M8j9anQW65FZ16yU4vLfs=
+        bh=9K2/B5MPGejpyktnrayd2M4OnjFiC4FIJq+++ipUzUw=;
+        b=NgAZ0gvMQr7mfoyTPzzReUMoF0Hpjr5XCfsqa+JU8aYmztaJMLVui81N9rOUW23l9d
+         h6JpM/j3VkWEgHBHtLrDMbWDsu9g4FNTZIqymAwAKHsXWiDQidcZcK+6uJAuMdhL3Hxv
+         LUxkyp+FPtZLXrLeSP4s8EVkp6W2QBqC4rwLo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1760364891; x=1760969691;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h+YhCU9BSkNGYIn59ygfcOhebsOBGxL8NqrMakgbz3w=;
-        b=d/7HW0bfWldyqHx9k3aNndjcbORtcgBEWGiHqNRxWGVHf4Pi7pY4IRxre0E3PkqvVA
-         +nJ4tWlClE4DQ8VRZfURog1S8uYXrun4HNSXqZMYENbBMmUctkcUdvBvMDFlkwxF6bMd
-         XDqnS+BRqa1cQjsRXjWnPY9QMAO20/gc9Fgp5CbcupT6S7aCtG9Z/wN8aihkFRZbqZTd
-         kbsd0fe/duIeIa4V7FXF+0I4vzKijKrk5/RsXoWt/DHwwYuLf0+pmrZDAG/hMwPNkxJL
-         tAi+u5A1Xmgfy5pQWNM+OfYmLQnbLVjkUYDpHy7XHT+o+o6OJAxBuAeuc8j+hw+vs5NE
-         naHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMHjE7u+Ikgq5AbgsIjpF1x2DOBmCa9J/vK21bBwzruIICUmkihKRbi4HCZuOW00t/u8iO7urMPmKB+mU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0IyNawpWoO8DtNa+7NoXw9tF3ony3tpYh/oFG57SkG6rMl/zV
-	kUy8ASwsJZSJiN/wIJTIM07BfZBe4cKA26p2bir82H/xEVM4V1ugwkiDo1w0YodRUw==
-X-Gm-Gg: ASbGncsdc/EnNOeIzyfqfnq/ylZA25iRQXtXzWPoBYiVmeIFrKV4plXchNC9jU6YXl8
-	8xJFaqNCvkO8WZF63+WqMUAjnnfFpp7Lk5mxMGAEpuWH6eYd5AfFNhyjTbFsBssNfGNzNtjRo+h
-	lqNbN5R5kVViCMKn8uAYVh388cXxENkgJ2462wOWWtMx+WCc0Re96Qi9lba/Uv+AizfXrkxkm/K
-	xR8gcL6et/m+q2w89Oth9XbNjtGAJOsZUaNCh1np3SVp0NXuGrIHeYW6o5P8HodnQGs9GuL1E57
-	RxsZ8K0O7SUeKcRlkGnf+Y4icGl5Ul27LVxyN4KTlqRQykMgJ15OFqqkmhfXX+NpeiaLeqh1zTS
-	8Qk8uiHcHmbtwmF87aAmqru/D9FQZL9IKzf3HmbbzXsMGtbQPvtky+UTuforao7M4Mld9Cd54As
-	NIITAHpvTiqkPVYtPM/smqC11OSZD5
-X-Google-Smtp-Source: AGHT+IG2QYB2+56krLBk85ko6pGpX0D4THrfkt1zz892JTpjDOUAww9G2kctwSbBGnVpsEQJrH5Ywg==
-X-Received: by 2002:a05:6512:3f12:b0:58a:fa11:b7af with SMTP id 2adb3069b0e04-5906d782160mr6219748e87.14.1760364890722;
-        Mon, 13 Oct 2025 07:14:50 -0700 (PDT)
+        bh=9K2/B5MPGejpyktnrayd2M4OnjFiC4FIJq+++ipUzUw=;
+        b=TL1w10P7lGAE3k2Zhv7/sLEzcsZ5YyLZWqQ1xat5x5JMm9Ad38P/LHmbDdY/v3STU9
+         pEe1N4WmmDHkCZDwn+7NTpWu+o/yPBVlMPsJ28FQYrcFFfQHgAbh1CCIgOEY7FK5kBx+
+         ATIyatjSonMxjNRQAPKq979p8CARWrqgs7oDfmSNPgw0WC6WOfXZLB+jePtju59B1b/y
+         smOdSYVIbnF8jYB7dKZgEYdEWiprr2ywUvqLWvps2w8pllyj329Uc49CveXafdii5ot/
+         5AWJsQkqL0WWczQ5Zy0JDur67Xqi5ObLY1/X6SpPo9y68WPfvtonUPM5Rvs0JjQHW3R/
+         r7xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfKT8nZU+ZL68N7Feap76vsUbPcTicqLZeZ8mEu5Es9J1LavfyPfOQlGQZRtzeCWwnqkk3GDYGqSvML5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywyvdBirU2os5r4QfeZAWuNzohrSdf/3qhrZf0uBykXTqdpoen
+	0G52M/ciOmEN4kqEIwmxfcQWdSRKBcQKWZIDFu5F23CEpuJ4NPmkfQAPM+ObbN0Zpw==
+X-Gm-Gg: ASbGncsWjdJNkaNgQ/TNXTNxJ5p4DY5HraJIrlCgs20X7OoeE340qP9pGF1Rm+KiXMD
+	+IwROu6dq4CNe4rSAi21iyQvEsgp0VWvzFXkIZEsy5yXs52PurSmN/j79hKJhyrUecGbFLo5+/N
+	Wb71tdWh1oLJVWgrJ9XSeNoxe/zPeKDAZgETsQBKq8/LLDqbxTGKZKjJkkUd+DV9AntPpgNQREW
+	br8XpunquPljvWp1ICBP041hDSvhGto2sgQrgGlRJMsOGGKGjjroYRZISP02uz+nLihhOuAKcR4
+	bUjLP+n1yj33J2bsn2BNFVhZWuypFYvHHPbdIj1g/VJQiPEW4WRULQp6X+7kwKPZMRM5TejwdHB
+	rS7zTWLW1Y5osRG47BsojvHCygpPPiam68R0Bnv1moJ9+AJuJCVdwshyEWKFHDZiitE+PJyj8Vy
+	t+BDUrT63vh8lLi6kEKz8b5eSlriff
+X-Google-Smtp-Source: AGHT+IG5qmXDx4UbLHB42EHlB1t6C5RYlcWqyFNneQm/x2WKvXaXI+FP3no4d6C9H/LUJRdom0BMRw==
+X-Received: by 2002:a05:6512:12c9:b0:57b:c798:9edf with SMTP id 2adb3069b0e04-5906dfa81aemr5323251e87.56.1760364891242;
+        Mon, 13 Oct 2025 07:14:51 -0700 (PDT)
 Received: from ribalda.c.googlers.com (56.213.88.34.bc.googleusercontent.com. [34.88.213.56])
         by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-590881e4e58sm4165256e87.25.2025.10.13.07.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 13 Oct 2025 07:14:50 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 13 Oct 2025 14:14:41 +0000
-Subject: [PATCH 01/32] Input: cyttsp5 - Use %pe format specifier
+Date: Mon, 13 Oct 2025 14:14:42 +0000
+Subject: [PATCH 02/32] media: dvbdev: Use %pe format specifier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-ptr_err-v1-1-2c5efbd82952@chromium.org>
+Message-Id: <20251013-ptr_err-v1-2-2c5efbd82952@chromium.org>
 References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 In-Reply-To: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
@@ -134,28 +134,28 @@ a symbolic error name (eg. -EINVAL) and it makes the code simpler by
 omitting PTR_ERR()
 
 This patch fixes this cocci report:
-./cyttsp5.c:927:3-10: WARNING: Consider using %pe to print PTR_ERR()
+./dvb-core/dvbdev.c:575:48-55: WARNING: Consider using %pe to print PTR_ERR()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/input/touchscreen/cyttsp5.c | 4 ++--
+ drivers/media/dvb-core/dvbdev.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/cyttsp5.c b/drivers/input/touchscreen/cyttsp5.c
-index 071b7c9bf566eb0b58e302a941ec085be1eb5683..47f4271395a69b8350f9be7266b57fe11d442ee3 100644
---- a/drivers/input/touchscreen/cyttsp5.c
-+++ b/drivers/input/touchscreen/cyttsp5.c
-@@ -923,8 +923,8 @@ static int cyttsp5_i2c_probe(struct i2c_client *client)
- 
- 	regmap = devm_regmap_init_i2c(client, &config);
- 	if (IS_ERR(regmap)) {
--		dev_err(&client->dev, "regmap allocation failed: %ld\n",
--			PTR_ERR(regmap));
-+		dev_err(&client->dev, "regmap allocation failed: %pe\n",
-+			regmap);
- 		return PTR_ERR(regmap);
- 	}
- 
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index 9df7c213716aec54bab7fde2c94ac030696fe25f..8b980d371a45e4fec5368a7e90d4c42518b72e72 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -571,8 +571,8 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 			       MKDEV(DVB_MAJOR, minor),
+ 			       dvbdev, "dvb%d.%s%d", adap->num, dnames[type], id);
+ 	if (IS_ERR(clsdev)) {
+-		pr_err("%s: failed to create device dvb%d.%s%d (%ld)\n",
+-		       __func__, adap->num, dnames[type], id, PTR_ERR(clsdev));
++		pr_err("%s: failed to create device dvb%d.%s%d (%pe)\n",
++		       __func__, adap->num, dnames[type], id, clsdev);
+ 		if (new_node) {
+ 			list_del(&new_node->list_head);
+ 			kfree(dvbdevfops);
 
 -- 
 2.51.0.760.g7b8bcc2412-goog
