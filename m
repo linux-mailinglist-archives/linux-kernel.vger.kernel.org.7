@@ -1,94 +1,115 @@
-Return-Path: <linux-kernel+bounces-850333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C4FBD28A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 007EEBD28BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4F624E602D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:22:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAF704EC619
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4B12FF141;
-	Mon, 13 Oct 2025 10:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39402FF168;
+	Mon, 13 Oct 2025 10:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wpw16AsA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jGQYorAT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42771FE451;
-	Mon, 13 Oct 2025 10:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F3C1946AA;
+	Mon, 13 Oct 2025 10:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760350934; cv=none; b=rMf1Dm/W915bPHoINRvy3Rmk4bcGJg381fhYydHeBLWsACL6hg+m9P5e+rVrgSRTga4e20QjcvdKJcWunwn1zztcU6SS7vCyLyHLmnIHRML6TUnpS76IkY4lnslQoxJ2W8pF0e5JCqtJ/qXOLbVmuQ5uHt8+tXv/ntDkyxuQ6Bk=
+	t=1760351042; cv=none; b=qXkgGSETkmli8PrYdVc2VpzcKUMjS2EDosRI2sceWeOKW4bfT0yBYM4S3NCKpz+GKPPDhrl5xBRHJjfVZkaQQzX0auZ2tTtm+/4EgzC3trCzidNh3cQ49dv5UCbfKrhmfjBdvEta5ZSAmSMxKZTpodSEvXGeeD0Jlq93Qo3g4Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760350934; c=relaxed/simple;
-	bh=Ha+XjhxGqCNF/jxkQ9GgocMSomyC+fzyaGHj5iGSOEs=;
+	s=arc-20240116; t=1760351042; c=relaxed/simple;
+	bh=sScV2KPZkgkriilgKwRNLZq8s377U5ASqJ8TO4hXY1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TKN3L0hh4QUZC7dAf5Lrs8fDI2MEyyllf792zE9ECDAubofCoNXNHFHqulI5cqbcrQEKcRG1mOrtURhHn4NZFE0bxFRUHsv+j7IaTJaanmoyQxAQ6tRvEdQbCqU5m1RqAnzSmS/UzCC1KPEpiPFFOzqKhK7v1jnorkQ9FWQ1Sbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wpw16AsA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A45CC4CEE7;
-	Mon, 13 Oct 2025 10:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760350933;
-	bh=Ha+XjhxGqCNF/jxkQ9GgocMSomyC+fzyaGHj5iGSOEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wpw16AsAQC2BJBdk24GhDU22qs3mxS6gpYkq4cab7uEkFNLwT4lDTc1IIlUztYj3y
-	 5PxnAJWTWrW2csat0IUh2eOtt/ZJ428AnuOpBBFXwAWxfqeq/kHqqMmTtkd70TESS6
-	 j70nOlYxk0NQAED7IH33cd6QD6i0SxhV8AEN7Mhp5lZf79ZnklxdMJsp8uPHJiFMo6
-	 1FuHuhfBQ3qj943dPR/JrHlbjCtkgi0Nuy/T3ae6FUgXgdMDRwZSwZCRxBrLsr6Yxt
-	 ahzbOsGL+ppMEKYDcqI9zldOdGPHTAqyXal9h5VnEblzxEnQkr2LIHFPCsD/1gnXUY
-	 7Y62gn4zOdzdA==
-Date: Mon, 13 Oct 2025 11:22:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Mattijs Korpershoek <mkorpershoek@kernel.org>
-Cc: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
- EPROBE_DEFER
-Message-ID: <eb66bb86-328f-4d43-96db-e0a31eb73ee8@sirena.org.uk>
-References: <20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Shsvg1ICmv24annIJMQM+M/DaDv4VLyn51sz+faTiNVe8IIZiuDsT2nGmpEqQVdnqy7qcsllJ0QyGcJ3gazBwcg92VVjqvu6kHkNerryV9GEkuF5IYJ6iSyf415iAgZMDBOWVn+uSBIknYKyjXMg5yG2zA2uDGYWoGYAh93VYz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jGQYorAT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rronQgbUv5ut13en00I1NEaZfei/VBBBsa8mpaTADho=; b=jGQYorATM2sK1Kuyv68u/bznPv
+	l+ocBdoORC3jyb8z4QtmpQbiX+/G9WBwvk8WdOkUXqJtsYCQoAfSgf8PD5G2AQbJEjbkTAGP+RWWY
+	FMp0qjjG6dIXf+FF85bsN+Pyy/UtHwMAVoDkDFa/RhYtfzouEVgyIDpA2hoFlRTx1lCb7QKui6XtF
+	sRDSHdYBPO+XQlMRG5kkEyn6d0tzW8tcPgjhueOXpeeGTEb43RWUvt32Y3Rc4WOsKdNN7Mw5ToDeU
+	+0+MPttubZ8Wp/LiLH1RnEd97o3bVpTxR+X6HIveCvmp4ZkHybyorIG/RtCJcie5vB0Y8q4QiNJy6
+	qw0FZLUg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8FiW-00000004Fz5-47py;
+	Mon, 13 Oct 2025 10:23:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B2D64300169; Mon, 13 Oct 2025 12:23:47 +0200 (CEST)
+Date: Mon, 13 Oct 2025 12:23:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 03/12] sched: Fold
+ sched_class::switch{ing,ed}_{to,from}() into the change pattern
+Message-ID: <20251013102347.GY3419281@noisy.programming.kicks-ass.net>
+References: <20251006104402.946760805@infradead.org>
+ <20251006104526.861755244@infradead.org>
+ <02452879-8998-47e0-9679-d2ff00503901@arm.com>
+ <20251009135408.GD4067720@noisy.programming.kicks-ass.net>
+ <20251009140925.GD4068168@noisy.programming.kicks-ass.net>
+ <e611b632-0156-4204-a748-78d44b2d14c8@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XwMN6qierxuC42Dj"
-Content-Disposition: inline
-In-Reply-To: <20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org>
-X-Cookie: Custer committed Siouxicide.
-
-
---XwMN6qierxuC42Dj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <e611b632-0156-4204-a748-78d44b2d14c8@arm.com>
 
-On Thu, Oct 09, 2025 at 09:10:38AM +0200, Mattijs Korpershoek wrote:
-> In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
-> we handle the error by jumping to probe_setup_failed.
-> In that label, we call pm_runtime_disable(), even if we never called
-> pm_runtime_enable() before.
+On Thu, Oct 09, 2025 at 06:50:55PM +0200, Dietmar Eggemann wrote:
 
-This doesn't apply against current code, please check and resend.
+> Yes, but there seems to be more ... missing DEQUEUE_SAVE (a.k.a.
+> ENQUEUE_RESTORE) in
+> 
+>   enqueue_dl_entity()
+> 
+>     if (flags & (ENQUEUE_RESTORE|ENQUEUE_MIGRATING))
+>                  ^^^^^^^^^^^^^^^
+>       ...
+>       add_running_bw(dl_se, dl_rq)
+> 
+> and
+> 
+>   __sched_setscheduler()
+> 
+>     ...
+>     if (prev_class != next_class)
+>       queue_flags |= DEQUEUE_CLASS;
+>       queue_flags &= ~(DEQUEUE_SAVE | DEQUEUE_MOVE);
+>                        ^^^^^^^^^^^^
+> 
+> as well as
+> 
+>   sched_change_begin()
+> 
+>     ...
+>     if (flags & DEQUEUE_CLASS) {
+>       if (WARN_ON_ONCE(flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)))
+>         flags &= ~(DEQUEUE_SAVE | DEQUEUE_MOVE);
+>                    ^^^^^^^^^^^^
+> 
 
---XwMN6qierxuC42Dj
-Content-Type: application/pgp-signature; name="signature.asc"
+Urgh.. SAVE/RESTORE while changing CLASS is so weird.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjs0s8ACgkQJNaLcl1U
-h9DUMQgAgG7yhj+uapZIfl6vEXkTD8tC6Gg8YUFWLbeCz7qjGUG9rsgyDSq2Hypu
-sSQFQtIfgfFNst19B4amM8sZhyaOeDggXGE8LPnaXgNu7aqCnj9fgAAjTMhbafG/
-zdlhFZ1NPTRrBIgrd1phNyVrISI4kfWxO4CTUgX/nLKrNcVD8VCExINxwaKx5CTZ
-2c0ju84UYEXSA3MiwUIUI0hpb1Aae8Ab2bnUOoKZ+N3LoWObMM/Ssb7Kzegc1EuZ
-LJeH+pcna0D6KmRi9eoVoqIjS0Dz5p5VSBmJ3ECru8omYQtfnaERx4Szxmxf++Sd
-UaaiotenfGnV/d3DdELjn0cSwRymOg==
-=fpq0
------END PGP SIGNATURE-----
-
---XwMN6qierxuC42Dj--
+But yeah, let me take that bit out for now -- I'll make a note in a
+comment that we should look at perhaps cleaning that up instead.
 
