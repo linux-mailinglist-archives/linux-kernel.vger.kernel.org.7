@@ -1,97 +1,89 @@
-Return-Path: <linux-kernel+bounces-850627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B54BD354B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:04:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BB9BD34D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FAAA4F26B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3B53AF48B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5DF26FD84;
-	Mon, 13 Oct 2025 14:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D08322FAFD;
+	Mon, 13 Oct 2025 13:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="c1JrtJKd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ruIN39Fm"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8usQ78v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7C1255F5E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FFC233D85;
+	Mon, 13 Oct 2025 13:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760364201; cv=none; b=tBJkeE0HnBVEa8XjYJyeZNTqBXJm7mm6R+Y3qFZeYw27pt37P57xbsmZIZaqnnDqyig6TSW8cP2QClzmkps8Z2YqsT4CA4HY3gj79Wc3eqXuHEl6LEIK7kVdWNPcV6KUiOiN53Ot3LAqBdAXI4eFRmxQBlrZhi1DmNvXQPSOdHc=
+	t=1760363753; cv=none; b=XITDld7Rr5+WXPqCE2oF7QUyARQ3yp//kLd+sOLXv1xVb133teV+hffU7UlCa3a0DHTNBVsZYpvvoLZWAjahQfxmpMGjpKNsD+doj8mhHlJdWHVSXJVsTYmMUfg2ZyEWjNUpqt18PqhbyHwo4dmbIk+VZjpOTDsdZOkG9cjIeLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760364201; c=relaxed/simple;
-	bh=aTuDQJOc9QyDWw7NeVePyqs/4KWPG9WwxbPFBpmsEgI=;
+	s=arc-20240116; t=1760363753; c=relaxed/simple;
+	bh=8L3afJyJuzk/hQIsz/j+D37ecM6P27+uA0UQvQKXZpg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gsKu+JKjyvQyiVqF136HtZhC9cZpfXWQOwr9PXHZtTBYZsoQm75C9TE1GK3go95MRU+Jfxuj1XFyFVpNbOeIZG4fglpJL9Oqr2IqylGypOn/bWsyjRECKSVH8Z2HItA/WqhhJvvZEFsYBaXcb5p/rB50dW0laH/0ZrC0n0aemt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=c1JrtJKd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ruIN39Fm; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id B4E341D00188;
-	Mon, 13 Oct 2025 10:03:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 13 Oct 2025 10:03:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1760364198; x=
-	1760450598; bh=ju0TXwkvur7Pc8DU4WdaqDLH7X5oT5Eo8QJC4dqaWb4=; b=c
-	1JrtJKdnXQfxlqtEAInguBEN0kIlB+MFkFPvFIm6GNUqeXiVb6ZRt7uWy4029yx3
-	AVGhnkiovIaahOPaFt7ckFdIgwrcZvzYPMDknT1Es+TZkfT6ffKnztms/PJnIhBL
-	uI2Renv6an7qno1Y6EQtNbWDEe04YEL8P2ASuvdT3XHLeUsLK3a6hNCFnpB43E77
-	RDzPU9gZ52MPpznF1Eb6TxFy3kULDMg1GO466buC5TnlE84LIIWVbrBgYZqahHKO
-	Rek3KYhmgmAvQvkUOMSZ47ws6/bUeU2AmMVPaTbqZESFhBo86m37o0EIetgFhRpd
-	4iC7fep53HkaAexDEbinw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1760364198; x=1760450598; bh=j
-	u0TXwkvur7Pc8DU4WdaqDLH7X5oT5Eo8QJC4dqaWb4=; b=ruIN39FmjGCMhtRJV
-	ARr8ow+pwdnOlbw1WWTXQYyi1+1OBKlwlP8IB4kf8uCksYF1dB8QCMyIkSIOXS91
-	Xykefta5lDZ01ousXCBndsAFLE1kBaA3+vkDupdRarCkm8M5YxULh56EFoI9CpwB
-	ZZLf86z0mPwKozwSHnOnQe3Aymwjkh1vSycMDs2A0xbJ63UyZdoQ3ZVzJpJF0SnN
-	7Rcclx1qVvc7RxhKHTuyd9Hxb2JbuOj43q+fuCGE3TEUlRpZHsFH3b/nLCyvFvDY
-	7WSdnbZVEsuluX0wXy7m4ZYwzdZGVpW36Fszew/fBhYIWmYLXxdPJ4IhAjXE7R/F
-	/7kyQ==
-X-ME-Sender: <xms:pgbtaBB498kyOEGyGbYbmYLTnvytO1tNxuz-5mr-CnsRv2MdinNyzQ>
-    <xme:pgbtaNfH1gqDQLfcwUBvKNkGsSgZXGwQyoG4Msc55ZfqNM0_LgLvMlSlGufPY3fbe
-    6pR50KDEoRrAL4EuOc-xYhdreuM-bNQJaDU63dBgUeBf_HnuiIoQBY>
-X-ME-Received: <xmr:pgbtaEK--Cqq1S7z2Uw58E8etIXUiWoNZ1L_KvHV8Z9BAM68IKIniVdzfnG7tYZ4YCA6Y9gNqXWOXhE7z3YYTdl5PRspw7OwSdsxbqml0UzC5g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudejkeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpedvjefgjeeuvd
-    fguddukeelveetgfdtvefhtdfffeeigfevueetffeivdffkedvtdenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurh
-    gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:pgbtaIc5SAWxQsL6BkD7wXdeP0a5k8PwYAcQksLhRXH_OuC4eG-etg>
-    <xmx:pgbtaD17eBkGQ_xqWra-0qb9bphQODz0B7ZaJc0_zFmPJHP0zRSC1g>
-    <xmx:pgbtaJg-E0t2d7po3yoHhO3af8f6Q1cmbLnugk42yF3p8RLYPmhHpQ>
-    <xmx:pgbtaBQ_DPp2FknKOVTKk1PjfJ__xviqKNmutbninVxq0rbIGD7upQ>
-    <xmx:pgbtaC1dE5IcjWh7S0i621g3dKx204tCLPNgG7L0zwWbzYE8a91QduHP>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 Oct 2025 10:03:17 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] firewire: core: handle device quirk of MOTU Audio Express
-Date: Mon, 13 Oct 2025 23:03:11 +0900
-Message-ID: <20251013140311.97159-3-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251013140311.97159-1-o-takashi@sakamocchi.jp>
-References: <20251013140311.97159-1-o-takashi@sakamocchi.jp>
+	 MIME-Version; b=mR6ROQbnvRgQvXoL+ORKCPhyLx9GpWcQUu+ICS+C+7i6jZiy6aNMxyZF2ApkJYMPMZNRCct53Je6GIjTZgDG8rcm61pM9V7gPmnnx4mnsfSIlSqBfs18pJJDvqqlyGhACXf4KFhn4cySpgGgqRqGZ7hxKEPgmlAEsSQ3p8mLBp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8usQ78v; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760363751; x=1791899751;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=8L3afJyJuzk/hQIsz/j+D37ecM6P27+uA0UQvQKXZpg=;
+  b=i8usQ78v9weyD636iS8g+vRrzIUBwLGCq/JCjryCODqHNNwFMfy7b2e2
+   IuO+VxKHxjg21Dv0CQLWEyf4VJktbcL3Dk4bwZ8VH4BgRp8nXqAO1u682
+   fRdUC0Fy0TbxrYnwUOmqodudq40ujXXiEoAKWLsf1F1lgPauSwND4EhNS
+   a8YT6q0wxyWl/0+WDV5xD0ww7Uo9/hD3QhZOHaasxY+ONKDr39fLUg3Iw
+   Q/TGIzgtElWaCfSLRjZ8W2T02KYt9Rv5QVvc5fyi7rjT4+nXZW5dmtK75
+   WsJ88e2Xefnzp60hCyWUWhPnePsAmMZoZEeyR/4iyE9FwlVjW/+4vbQgY
+   Q==;
+X-CSE-ConnectionGUID: /vmfelUpRdKlYewmWSpYbA==
+X-CSE-MsgGUID: Q+mYqsbXSmeTXndbSVMceA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66156251"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="66156251"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 06:55:50 -0700
+X-CSE-ConnectionGUID: nIlltgnCSYO4S+TzvgHR2g==
+X-CSE-MsgGUID: rkVBFfiJRzGc3lMko1Lr0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="181613422"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by orviesa008.jf.intel.com with ESMTP; 13 Oct 2025 06:55:45 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	pan.deng@intel.com,
+	zhiguo.zhou@intel.com,
+	jiebin.sun@intel.com,
+	thomas.falcon@intel.com,
+	dapeng1.mi@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 1/2] perf tools c2c: Add annotation support to perf c2c report
+Date: Mon, 13 Oct 2025 22:48:10 +0800
+Message-ID: <20251013144811.2021337-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <660c8ba1-635b-4acc-8824-d195f1b133a0@amd.com>
+References: <660c8ba1-635b-4acc-8824-d195f1b133a0@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,162 +92,326 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A commit 3a93d082bacf ("ALSA: firewire-motu: add support for MOTU Audio
-Express") describes a quirk of MOTU Audio Express. The device returns
-acknowledge packet with 0x10 as the pending state of any types of
-asynchronous request transaction. It is completely out of specification.
+Perf c2c report currently specified the code address and source:line
+information in the cacheline browser, while it is lack of annotation
+support like perf report to directly show the disassembly code for
+the particular symbol shared that same cacheline. This patches add
+a key 'a' binding to the cacheline browser which reuse the annotation
+browser to show the disassembly view for easier analysis of cacheline
+contentions.
 
-This commit implements handling for that device-specific quirk. The quirk
-is detected after reading the root directory of configuration ROM. When
-processing the acknowledge code in 1394 OHCI AT context event handler,
-firewire-ohci module seeks the device instance of destination node by
-traversing device hierarchy. If the device has the quirk, the acknowledge
-code is replaced with the standard code.
-
-The 1394 OHCI AT context events occur for outgoing asynchronous request
-packets. The device traversal is safe since no new request initiators
-exist after the fw_card_instance has been invalidated.
-
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Reviewed-by: Thomas Falcon <thomas.falcon@intel.com>
+Reviewed-by: Jiebin Sun <jiebin.sun@intel.com>
+Reviewed-by: Pan Deng <pan.deng@intel.com>
+Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
 ---
- drivers/firewire/core-device.c | 53 ++++++++++++++++++++++++++++++++++
- drivers/firewire/ohci.c        | 29 +++++++++++++++++++
- include/linux/firewire.h       |  3 ++
- 3 files changed, 85 insertions(+)
+ tools/perf/Documentation/perf-c2c.txt |   7 ++
+ tools/perf/builtin-c2c.c              | 155 +++++++++++++++++++++++++-
+ 2 files changed, 157 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index 9bab2d594b89..33ce4cd357ed 100644
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -557,6 +557,54 @@ static int detect_quirks_by_bus_information_block(const u32 *bus_information_blo
- 	return quirks;
+diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
+index f4af2dd6ab31..40b0f71a2c44 100644
+--- a/tools/perf/Documentation/perf-c2c.txt
++++ b/tools/perf/Documentation/perf-c2c.txt
+@@ -143,6 +143,13 @@ REPORT OPTIONS
+ 	feature, which causes cacheline sharing to behave like the cacheline
+ 	size is doubled.
+ 
++-M::
++--disassembler-style=::
++	Set disassembler style for objdump.
++
++--objdump=<path>::
++        Path to objdump binary.
++
+ C2C RECORD
+ ----------
+ The perf c2c record command setup options related to HITM cacheline analysis
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 9e9ff471ddd1..a37e886ff3d7 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -45,6 +45,8 @@
+ #include "pmus.h"
+ #include "string2.h"
+ #include "util/util.h"
++#include "util/symbol.h"
++#include "util/annotate.h"
+ 
+ struct c2c_hists {
+ 	struct hists		hists;
+@@ -62,6 +64,7 @@ struct compute_stats {
+ 
+ struct c2c_hist_entry {
+ 	struct c2c_hists	*hists;
++	struct evsel		*evsel;
+ 	struct c2c_stats	 stats;
+ 	unsigned long		*cpuset;
+ 	unsigned long		*nodeset;
+@@ -225,6 +228,12 @@ he__get_c2c_hists(struct hist_entry *he,
+ 	return hists;
  }
  
-+struct entry_match {
-+	unsigned int index;
-+	u32 value;
-+};
-+
-+static const struct entry_match motu_audio_express_matches[] = {
-+	{ 1, 0x030001f2 },
-+	{ 3, 0xd1000002 },
-+	{ 4, 0x8d000005 },
-+	{ 6, 0x120001f2 },
-+	{ 7, 0x13000033 },
-+	{ 8, 0x17104800 },
-+};
-+
-+static int detect_quirks_by_root_directory(const u32 *root_directory, unsigned int length)
++static void c2c_he__set_evsel(struct c2c_hist_entry *c2c_he,
++				struct evsel *evsel)
 +{
-+	static const struct {
-+		enum fw_device_quirk quirk;
-+		const struct entry_match *matches;
-+		unsigned int match_count;
-+	} *entry, entries[] = {
-+		{
-+			.quirk = FW_DEVICE_QUIRK_ACK_PACKET_WITH_INVALID_PENDING_CODE,
-+			.matches = motu_audio_express_matches,
-+			.match_count = ARRAY_SIZE(motu_audio_express_matches),
-+		},
-+	};
-+	int quirks = 0;
-+	int i;
++	c2c_he->evsel = evsel;
++}
 +
-+	for (i = 0; i < ARRAY_SIZE(entries); ++i) {
-+		int j;
+ static void c2c_he__set_cpu(struct c2c_hist_entry *c2c_he,
+ 			    struct perf_sample *sample)
+ {
+@@ -275,6 +284,33 @@ static void compute_stats(struct c2c_hist_entry *c2c_he,
+ 		update_stats(&cstats->load, weight);
+ }
+ 
++/*
++ * Return true if annotation is possible. When list is NULL,
++ * it means that we are called at the c2c_browser level,
++ * in that case we allow annotation to be initialized. When list
++ * is non-NULL, it means that we are called at the cacheline_browser
++ * level, in that case we allow annotation only if use_browser
++ * is set and symbol information is available.
++ */
++static bool perf_c2c__has_annotation(struct perf_hpp_list *list)
++{
++	if (use_browser != 1)
++		return false;
++	return !list || list->sym;
++}
 +
-+		entry = entries + i;
-+		for (j = 0; j < entry->match_count; ++j) {
-+			unsigned int index = entry->matches[j].index;
-+			unsigned int value = entry->matches[j].value;
++static void perf_c2c__evsel_hists_inc_stats(struct evsel *evsel,
++					    struct hist_entry *he,
++					    struct perf_sample *sample)
++{
++	struct hists *evsel_hists = evsel__hists(evsel);
 +
-+			if ((length < index) || (root_directory[index] != value))
-+				break;
-+		}
-+		if (j == entry->match_count)
-+			quirks |= entry->quirk;
++	hists__inc_nr_samples(evsel_hists, he->filtered);
++	evsel_hists->stats.total_period += sample->period;
++	if (!he->filtered)
++		evsel_hists->stats.total_non_filtered_period += sample->period;
++}
++
+ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 				union perf_event *event,
+ 				struct perf_sample *sample,
+@@ -334,8 +370,15 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 	c2c_he__set_cpu(c2c_he, sample);
+ 	c2c_he__set_node(c2c_he, sample);
++	c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 	hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
++
++	if (perf_c2c__has_annotation(NULL)) {
++		perf_c2c__evsel_hists_inc_stats(evsel, he, sample);
++		addr_map_symbol__inc_samples(mem_info__iaddr(mi), sample, evsel);
 +	}
 +
-+	return quirks;
-+}
-+
- static int read_rom(struct fw_device *device,
- 		    int generation, int index, u32 *data)
- {
-@@ -737,6 +785,11 @@ static int read_config_rom(struct fw_device *device, int generation)
- 			length = i;
- 	}
+ 	ret = hist_entry__append_callchain(he, sample);
  
-+	quirks |= detect_quirks_by_root_directory(rom + ROOT_DIR_OFFSET, length - ROOT_DIR_OFFSET);
+ 	if (!ret) {
+@@ -371,6 +414,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+ 
+ 		c2c_he__set_cpu(c2c_he, sample);
+ 		c2c_he__set_node(c2c_he, sample);
++		c2c_he__set_evsel(c2c_he, evsel);
+ 
+ 		hists__inc_nr_samples(&c2c_hists->hists, he->filtered);
+ 		ret = hist_entry__append_callchain(he, sample);
+@@ -1997,6 +2041,9 @@ static int c2c_hists__init_sort(struct perf_hpp_list *hpp_list, char *name, stru
+ 	if (dim == &dim_dso)
+ 		hpp_list->dso = 1;
+ 
++	if (dim == &dim_symbol || dim == &dim_iaddr)
++		hpp_list->sym = 1;
 +
-+	// Just prevent from torn writing/reading.
-+	WRITE_ONCE(device->quirks, quirks);
-+
- 	old_rom = device->config_rom;
- 	new_rom = kmemdup(rom, length * 4, GFP_KERNEL);
- 	if (new_rom == NULL) {
-diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 030aed5453a1..757dd9c64b1c 100644
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -1319,6 +1319,14 @@ static void at_context_flush(struct at_context *ctx)
- 	enable_work(&ctx->work);
+ 	perf_hpp_list__register_sort_field(hpp_list, &c2c_fmt->fmt);
+ 	return 0;
+ }
+@@ -2550,6 +2597,40 @@ static void perf_c2c__hists_fprintf(FILE *out, struct perf_session *session)
  }
  
-+static int find_fw_device(struct device *dev, const void *data)
-+{
-+	struct fw_device *device = fw_device(dev);
-+	const u32 *params = data;
+ #ifdef HAVE_SLANG_SUPPORT
 +
-+	return (device->generation == params[0]) && (device->node_id == params[1]);
++static int perf_c2c__toggle_annotation(struct hist_browser *browser)
++{
++	struct hist_entry *he = browser->he_selection;
++	struct symbol *sym = NULL;
++	struct annotated_source *src = NULL;
++	struct c2c_hist_entry *c2c_he = NULL;
++
++	if (!perf_c2c__has_annotation(he->hists->hpp_list)) {
++		ui_browser__help_window(&browser->b, "No annotation support");
++		return 0;
++	}
++
++	if (he == NULL) {
++		ui_browser__help_window(&browser->b, "No entry selected for annotation");
++		return 0;
++	}
++
++	sym = he->ms.sym;
++	if (sym == NULL) {
++		ui_browser__help_window(&browser->b, "Can not annotate, no symbol found");
++		return 0;
++	}
++
++	src = symbol__hists(sym, 0);
++	if (src == NULL) {
++		ui_browser__help_window(&browser->b, "Failed to initialize annotation source");
++		return 0;
++	}
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++	return hist_entry__tui_annotate(he, c2c_he->evsel, NULL);
 +}
 +
- static int handle_at_packet(struct context *context,
- 			    struct descriptor *d,
- 			    struct descriptor *last)
-@@ -1390,6 +1398,27 @@ static int handle_at_packet(struct context *context,
- 		fallthrough;
+ static void c2c_browser__update_nr_entries(struct hist_browser *hb)
+ {
+ 	u64 nr_entries = 0;
+@@ -2617,6 +2698,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 	" ENTER         Toggle callchains (if present) \n"
+ 	" n             Toggle Node details info \n"
+ 	" s             Toggle full length of symbol and source line columns \n"
++	" a             Toggle annotation view \n"
+ 	" q             Return back to cacheline list \n";
  
- 	default:
-+		if (unlikely(evt == 0x10)) {
-+			u32 params[2] = {
-+				packet->generation,
-+				async_header_get_destination(packet->header),
-+			};
-+			struct device *dev;
+ 	if (!he)
+@@ -2651,6 +2733,9 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+ 			c2c.node_info = (c2c.node_info + 1) % 3;
+ 			setup_nodes_header();
+ 			break;
++		case 'a':
++			perf_c2c__toggle_annotation(browser);
++			break;
+ 		case 'q':
+ 			goto out;
+ 		case '?':
+@@ -3006,6 +3091,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *display = NULL;
+ 	const char *coalesce = NULL;
+ 	bool no_source = false;
++	const char *disassembler_style = NULL, *objdump_path = NULL;
+ 	const struct option options[] = {
+ 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
+ 		   "file", "vmlinux pathname"),
+@@ -3033,6 +3119,10 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "stitch-lbr", &c2c.stitch_lbr,
+ 		    "Enable LBR callgraph stitching approach"),
+ 	OPT_BOOLEAN(0, "double-cl", &chk_double_cl, "Detect adjacent cacheline false sharing"),
++	OPT_STRING('M', "disassembler-style", &disassembler_style, "disassembler style",
++		   "Specify disassembler style (e.g. -M intel for intel syntax)"),
++	OPT_STRING(0, "objdump", &objdump_path, "path",
++		   "objdump binary to use for disassembly and annotations"),
+ 	OPT_PARENT(c2c_options),
+ 	OPT_END()
+ 	};
+@@ -3040,6 +3130,12 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	const char *output_str, *sort_str = NULL;
+ 	struct perf_env *env;
+ 
++	annotation_options__init();
 +
-+			fw_card_get(&ohci->card);
-+			dev = device_find_child(ohci->card.device, (const void *)params, find_fw_device);
-+			fw_card_put(&ohci->card);
-+			if (dev) {
-+				struct fw_device *device = fw_device(dev);
-+				int quirks = READ_ONCE(device->quirks);
++	err = hists__init();
++	if (err < 0)
++		goto out;
 +
-+				put_device(dev);
-+				if (quirks & FW_DEVICE_QUIRK_ACK_PACKET_WITH_INVALID_PENDING_CODE) {
-+					packet->ack = ACK_PENDING;
-+					break;
-+				}
-+			}
+ 	argc = parse_options(argc, argv, options, report_c2c_usage,
+ 			     PARSE_OPT_STOP_AT_NON_OPTION);
+ 	if (argc)
+@@ -3052,6 +3148,27 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (c2c.stats_only)
+ 		c2c.use_stdio = true;
+ 
++	/**
++	 * Annotation related options disassembler_style, objdump_path are set
++	 * in the c2c_options, so we can use them here.
++	 */
++	if (disassembler_style) {
++		annotate_opts.disassembler_style = strdup(disassembler_style);
++		if (!annotate_opts.disassembler_style) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
 +		}
- 		packet->ack = RCODE_SEND_ERROR;
- 		break;
- 	}
-diff --git a/include/linux/firewire.h b/include/linux/firewire.h
-index 161829cfcc00..f1d8734c0ec6 100644
---- a/include/linux/firewire.h
-+++ b/include/linux/firewire.h
-@@ -176,6 +176,9 @@ enum fw_device_quirk {
- 
- 	// See a509e43ff338 ("firewire: core: fix unstable I/O with Canon camcorder").
- 	FW_DEVICE_QUIRK_IRM_IGNORES_BUS_MANAGER = BIT(1),
++	}
++	if (objdump_path) {
++		annotate_opts.objdump_path = strdup(objdump_path);
++		if (!annotate_opts.objdump_path) {
++			err = -ENOMEM;
++			pr_err("Failed to allocate memory for annotation options\n");
++			goto out;
++		}
++	}
 +
-+	// MOTU Audio Express transfers acknowledge packet with 0x10 for pending state.
-+	FW_DEVICE_QUIRK_ACK_PACKET_WITH_INVALID_PENDING_CODE = BIT(2),
- };
+ 	err = symbol__validate_sym_arguments();
+ 	if (err)
+ 		goto out;
+@@ -3126,6 +3243,38 @@ static int perf_c2c__report(int argc, const char **argv)
+ 	if (err)
+ 		goto out_mem2node;
  
- enum fw_device_state {
++	if (c2c.use_stdio)
++		use_browser = 0;
++	else
++		use_browser = 1;
++
++	/*
++	 * Only in the TUI browser we are doing integrated annotation,
++	 * so don't allocate extra space that won't be used in the stdio
++	 * implementation.
++	 */
++	if (perf_c2c__has_annotation(NULL)) {
++		int ret = symbol__annotation_init();
++
++		if (ret < 0)
++			goto out_mem2node;
++		/*
++		 * For searching by name on the "Browse map details".
++		 * providing it only in verbose mode not to bloat too
++		 * much struct symbol.
++		 */
++		if (verbose > 0) {
++			/*
++			 * XXX: Need to provide a less kludgy way to ask for
++			 * more space per symbol, the u32 is for the index on
++			 * the ui browser.
++			 * See symbol__browser_index.
++			 */
++			symbol_conf.priv_size += sizeof(u32);
++		}
++		annotation_config__init();
++	}
++
+ 	if (symbol__init(env) < 0)
+ 		goto out_mem2node;
+ 
+@@ -3135,11 +3284,6 @@ static int perf_c2c__report(int argc, const char **argv)
+ 		goto out_mem2node;
+ 	}
+ 
+-	if (c2c.use_stdio)
+-		use_browser = 0;
+-	else
+-		use_browser = 1;
+-
+ 	setup_browser(false);
+ 
+ 	err = perf_session__process_events(session);
+@@ -3210,6 +3354,7 @@ static int perf_c2c__report(int argc, const char **argv)
+ out_session:
+ 	perf_session__delete(session);
+ out:
++	annotation_options__exit();
+ 	return err;
+ }
+ 
 -- 
-2.51.0
+2.47.1
 
 
