@@ -1,175 +1,168 @@
-Return-Path: <linux-kernel+bounces-850116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7EBBD1EB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:05:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E49BD1EB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C8A3AC0DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:04:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01B6F4ED6FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6F12EB85B;
-	Mon, 13 Oct 2025 08:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFE92EBB86;
+	Mon, 13 Oct 2025 08:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RYVgt786"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eE8UCNOT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7542DF6F4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2B81B4156;
+	Mon, 13 Oct 2025 08:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760342695; cv=none; b=nO+q4cRvut1MiMh/7+6X+BCHLRXmtPAC6Qox8H9dXvFVE0VC7cldh+CzGUu6rVsGdR3uA1p3jFmQGlRg40RB/Wg7MahgKHQPbApwzYnxX7xM2Erz++rsIgbm+ZMfbE64jsbpxwNYHYwQjEyS7XJzX+/W0zt7exG/NVTFPbEqUQc=
+	t=1760342743; cv=none; b=G7ZWV3S6Q7LY3IeWyj/Fbn6U2UPEK/0OUZ8VbqO5YdexZ+XHTHA3EOUedttonakDi+uKLuW+WHkm6diT7ea8/2cPYXvzngwWF2kP4t9DxLh3GA4IvMwKVaweGwCayRSaDUhyK0kM2Sbg7MrEOv5UFGGgf3/cWQr3eMrF9UJ4vRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760342695; c=relaxed/simple;
-	bh=7NU7rWh0rGWbbhxmDoF2Uv6OOhgblytuC4n01b1nQhc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nUKqUM9fXIuh98HeZAJP3pq/MoQrxVO2d6gQ3wf45BG3kNLo5qqqcRyXg8+K0t8b9x9CchTFa7LpYxKMsIy4QLvJZJI7989SXGYUQnnsP+VRwC9m6fybDM0guQj5XedxnL4uH/reDZYWnngB3ecoIwQQIUX2zbc23RdgSGY8jsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RYVgt786; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760342693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KPU/lVFbgGeX7/1p5cP3aKk/YeGq7lbFJeEGyMzuGJE=;
-	b=RYVgt7862KwBXdDJPcaSvDf1Pnzh0HnoO6ihO2d2o/1qa0nzlfPd5wb52QgeqLu2UvHQzo
-	ul8zu03M85ujgv5Fv+j4JmGiz8m5tKeQrwZcBESWjV2FHsSXK74Pq2JCV2tzw4jbFzgcto
-	7yeSf+ddCDLG7q1kOv5HsfYa6Tjp04E=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-3-TL74sUO6GOyehCTxlo5g-1; Mon, 13 Oct 2025 04:04:51 -0400
-X-MC-Unique: 3-TL74sUO6GOyehCTxlo5g-1
-X-Mimecast-MFC-AGG-ID: 3-TL74sUO6GOyehCTxlo5g_1760342690
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-40cfb98eddbso2196581f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:04:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760342690; x=1760947490;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KPU/lVFbgGeX7/1p5cP3aKk/YeGq7lbFJeEGyMzuGJE=;
-        b=kyHA/6as/l6rWTVeJ3Jf3IJbdAgxm9g6yTghh4U5i3aST2g5u9VYKzLjCaJWUhshH3
-         H4ihWH13p0YrDf6q5+pSk+Hw0hOVU3LTzyWoktx8zNRTEnbr5lKiDMzDgQaPhMYaDzzn
-         S7ET386FdAlDJyExQ+NiPuAa4zpUyAtlccVk9rchxCSA1QvLmCyv6d8imOPqg0pdzzRa
-         Hk3I1ubMzlNdexrR8uK1TgiTyZEVJo47cMyZDwtyzTxFJsh7xVPHwkk3dF7nza8p8qOE
-         pP6YwuS/fc7Fg9gJs0p+WGyU9jPYuf7aJGmewMGRQjmWmyr1H1OhvJxmZp8W8cesRKj1
-         5lQA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4Hq4ViErLsvBQG5dCdef/kYXLTnhnf2BDJ7GiKG/Pl4JRPffda6sG79Ye34TKlGtQSRYs7XO4o9cuEk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX6OGHgnS+xfFrq3sfSkmxg1uzOZXoU6Rizevj58sftuXAVgYU
-	/Z7/21omRVpcc/cdEVtMPZv4OZSJEWWkgfG8qcL9rcmxbPKcemRfb/TCWAbyDEtBykqXkDRKNVs
-	l9fHSpP5wn2Z2EVOkrM+1w7VQxiCC8XS587AG+k3BPu3YaYoA6rQzcybcqHZO56n2uw==
-X-Gm-Gg: ASbGncvZ2W14B7oXc+b/s+0DwQc1QQaXtOZ44+A5Z47+0Ok6/0kOwfGhgVY0fOAs5Ku
-	AsS7stcMbLrSSRzUQ3LulSbTdXsv5V13csl5FKKcfPkKPg0dLCS4rotDA9uUXV+nGnVA/bBxPjm
-	82M47HXh6Z9QeZxcD1/19aQdVgVP489o93IRhlPIO4JdKYX8GqdF/YXkfdCEwUoe3WzCQRK+y+A
-	xgx2movWb1FrLhawItJMpBcbf5fRVjFm1hQqO8gaUcz7RnTbIUhpi2z6lto0IMhIJlJk7vnu/Ly
-	7dwdVocTJkU8rFW04vTtTIp7LgictDOjLaZG+ovD+dAsXImmKcjW3SSWbSjDABlAcz3EjetjnD7
-	7Tu0=
-X-Received: by 2002:a7b:cc06:0:b0:46e:7dbf:6cc2 with SMTP id 5b1f17b1804b1-46fa296e763mr117303435e9.8.1760342690276;
-        Mon, 13 Oct 2025 01:04:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoP8u8SLxmZzCaUWAaNGn2tFhBdnNdRnHKUPJIoKhC3JsfIivu/FjKUfKsW1+RWg4tjbYaxw==
-X-Received: by 2002:a7b:cc06:0:b0:46e:7dbf:6cc2 with SMTP id 5b1f17b1804b1-46fa296e763mr117303205e9.8.1760342689900;
-        Mon, 13 Oct 2025 01:04:49 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce50d70esm17163687f8f.0.2025.10.13.01.04.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 01:04:49 -0700 (PDT)
-Message-ID: <d1094948-a646-46a1-b11f-2cc4ec53d180@redhat.com>
-Date: Mon, 13 Oct 2025 10:04:47 +0200
+	s=arc-20240116; t=1760342743; c=relaxed/simple;
+	bh=EyY1vptLQ4Mh8m69V026ogvAbJnnK8hecewRxznrDdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6vAY33x2AIyL5CbeSSzxmM5Hm8bdi0rC7NMU4hwj6+R7KY4buoQ7wF4Rfr7Qsh7RSDbRbN8TDu9sDDXy7yNrPutjSEiw4uRXvCLjBy5aXlc1GbTZmMUgo1wwYb/vnSW+NkJ+FcACLhMkz3QpJxlXeZnxNW4nbX7X53QPOeRh7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eE8UCNOT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=PhVyTJzr0MtR40Aa2Lc7JNLBbowuEgYIbKmkpnrAFlY=; b=eE8UCNOT/DVa91HJ1a7s7WL1gm
+	SNoAD05RaLQX4b770TFFghp723QQRsx04hi3ATZYS0dR0LjGotK4aWPQccDHPg/75ujZ7ystx3cYh
+	HeV1YJ+eR95DjLsorXEE3nPAhSZaT6Q67qAD7eJTdzxH9kMBUdJoL8A4FgvqCKi9aT1SGCicd3NLg
+	kIPYpHpkujvSgk9hAHuGbhFLx6o2mL9jV5pO0lTF1W/vKlMXZdIUM+HIlVptxFiDHJKSorK789f1h
+	cgpcGT7AuC5LB3WfyKMT8pHazGHCv4dfnWZFy9CrT/CS4gdLsPd67D/YAVdQCVYzO2AKRTzwab8Ik
+	/IwF3gNg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8DYj-00000004Bwe-1Aii;
+	Mon, 13 Oct 2025 08:05:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C403C300212; Mon, 13 Oct 2025 10:05:31 +0200 (CEST)
+Date: Mon, 13 Oct 2025 10:05:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Octavia Togami <octavia.togami@gmail.com>, stable@vger.kernel.org,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [REGRESSION] bisected: perf: hang when using async-profiler
+ caused by perf: Fix the POLL_HUP delivery breakage
+Message-ID: <20251013080531.GJ3245006@noisy.programming.kicks-ass.net>
+References: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
+ <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm/hugetlb: create hstate_is_gigantic_no_runtime
- helper
-To: Usama Arif <usamaarif642@gmail.com>, muchun.song@linux.dev,
- osalvador@suse.de, Andrew Morton <akpm@linux-foundation.org>
-Cc: shakeel.butt@linux.dev, linux-mm@kvack.org, hannes@cmpxchg.org,
- riel@surriel.com, kas@kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-References: <20251009172433.4158118-1-usamaarif642@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251009172433.4158118-1-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
 
-On 09.10.25 19:24, Usama Arif wrote:
-> This is a common condition used to skip operations that cannot
-> be performed on gigantic pages when runtime support is disabled.
-> This helper is introduced as the condition will exist even more
-> when allowing "overcommit" of gigantic hugepages.
-> No functional change intended with this patch.
+On Mon, Oct 13, 2025 at 10:34:27AM +0800, Mi, Dapeng wrote:
+
+> It looks the issue described in the link
+> (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u)
+> happens again but in a different way. :(
 > 
+> As the commit message above link described,  cpu-clock (and task-clock) is
+> a specific SW event which rely on hrtimer. The hrtimer handler calls
+> __perf_event_overflow() and then event_stop (cpu_clock_event_stop()) and
+> eventually call hrtimer_cancel() which traps into a dead loop which waits
+> for the calling hrtimer handler finishes.
+> 
+> As the
+> change (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u),
+> it should be enough to just disable the event and don't need an extra event
+> stop.
+> 
+> @Octavia, could you please check if the change below can fix this issue?
+> Thanks.
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 7541f6f85fcb..883b0e1fa5d3 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -10343,7 +10343,20 @@ static int __perf_event_overflow(struct perf_event
+> *event,
+>                 ret = 1;
+>                 event->pending_kill = POLL_HUP;
+>                 perf_event_disable_inatomic(event);
+> -               event->pmu->stop(event, 0);
+> +
+> +               /*
+> +                * The cpu-clock and task-clock are two special SW events,
+> +                * which rely on the hrtimer. The __perf_event_overflow()
+> +                * is invoked from the hrtimer handler for these 2 events.
+> +                * Avoid to call event_stop()->hrtimer_cancel() for these
+> +                * 2 events since hrtimer_cancel() waits for the hrtimer
+> +                * handler to finish, which would trigger a deadlock.
+> +                * Only disabling the events is enough to stop the hrtimer.
+> +                * See perf_swevent_cancel_hrtimer().
+> +                */
+> +               if (event->attr.config != PERF_COUNT_SW_CPU_CLOCK &&
+> +                   event->attr.config != PERF_COUNT_SW_TASK_CLOCK)
+> +                       event->pmu->stop(event, 0);
 
-Wondering, would "static" describe that we don't have the dynamic 
-runtime behavior?
+This is broken though; you cannot test config without first knowing
+which PMU you're dealing with.
 
-hstate_is_static_gigantic()
+Also, that timer really should get stopped, we can't know for certain
+this overflow is of the timer itself or not, it could be a related
+event.
 
-hstate_is_gigantic_static()
+Something like the below might do -- but please carefully consider the
+cases where hrtimer_try_to_cancel() might fail; in those cases we'll
+have set HES_STOPPED and the hrtimer callback *SHOULD* observe this and
+NORESTART.
 
+But I didn't check all the details.
 
-Whatever you prefer
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers
-
-David / dhildenb
-
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 820127536e62..a91481d57841 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11756,7 +11756,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(struct hrtimer *hrtimer)
+ 
+ 	event = container_of(hrtimer, struct perf_event, hw.hrtimer);
+ 
+-	if (event->state != PERF_EVENT_STATE_ACTIVE)
++	if (event->state != PERF_EVENT_STATE_ACTIVE ||
++	    event->hw.state & PERF_HES_STOPPED)
+ 		return HRTIMER_NORESTART;
+ 
+ 	event->pmu->read(event);
+@@ -11810,7 +11811,7 @@ static void perf_swevent_cancel_hrtimer(struct perf_event *event)
+ 		ktime_t remaining = hrtimer_get_remaining(&hwc->hrtimer);
+ 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
+ 
+-		hrtimer_cancel(&hwc->hrtimer);
++		hrtimer_try_to_cancel(&hwc->hrtimer);
+ 	}
+ }
+ 
+@@ -11854,12 +11855,14 @@ static void cpu_clock_event_update(struct perf_event *event)
+ 
+ static void cpu_clock_event_start(struct perf_event *event, int flags)
+ {
++	event->hw.state = 0;
+ 	local64_set(&event->hw.prev_count, local_clock());
+ 	perf_swevent_start_hrtimer(event);
+ }
+ 
+ static void cpu_clock_event_stop(struct perf_event *event, int flags)
+ {
++	event->hw.state = PERF_HES_STOPPED;
+ 	perf_swevent_cancel_hrtimer(event);
+ 	if (flags & PERF_EF_UPDATE)
+ 		cpu_clock_event_update(event);
 
