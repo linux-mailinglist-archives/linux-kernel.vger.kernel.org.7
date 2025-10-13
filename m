@@ -1,166 +1,256 @@
-Return-Path: <linux-kernel+bounces-849957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCFEBD1734
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:27:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B24BD1759
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A693BA9B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:27:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B56AB4E958A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A96D2D2397;
-	Mon, 13 Oct 2025 05:27:34 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CF922068D;
-	Mon, 13 Oct 2025 05:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02282D5920;
+	Mon, 13 Oct 2025 05:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UMCD5NK8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BD22D47FF
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760333253; cv=none; b=KIX/J/l9v//m36oZ4pGjxxM2WzUcvMz1b7R12QiGpPrE2qfVBtNZPMEAQSEhvq7UUiJFZbNKCONd02lieuamOFvim2wjqyl8h/PIEqRKz3AjhC2WKHyVGNUHsRjoojrepStWloxM6u57lkuNXV6BxVzE1SjK+UqVLv08Dz9HnxA=
+	t=1760333383; cv=none; b=qlLQg4MVvFS/jAIF1gUxu0pDPYlh84/WJmCDDUN9pRVv7r3a3ugKt5DRNRz2XhvNf4tXl4kbIdSQDiHGsAPCJbxWh19mZQWU0CyjamaVg1i6oZ7Oty84veH2OEmsaS/Hl+nHVTB30cvA2Gx+bn9l3AivvpIDwBY5AElZRi8iRTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760333253; c=relaxed/simple;
-	bh=ndYgSHNbLnvyYLEcoIN3mUPNVlCWqqRkCrrregrceHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7zwftiuUtWeasZLeOXwX/tyLvKAmdYYordl6Kf9Hgdy5ThNYHeaaT0/Pn1CKFQHBmJYB3A7Ax+40+/oc8AXjbs1DIcVpFekQ9QbtP/pRdmpUwH789J1JpfjMQsber36DjfX5pKQqYJ6VNVf1rfABTeXn0JLxMqN4NJjdYAj/yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-4f-68ec8dc159b9
-Date: Mon, 13 Oct 2025 14:27:24 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 35/47] i2c: rename wait_for_completion callback to
- wait_for_completion_cb
-Message-ID: <20251013052724.GA9169@system.software.com>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-36-byungchul@sk.com>
- <aOFNz2mKXCXUImwO@shikoro>
+	s=arc-20240116; t=1760333383; c=relaxed/simple;
+	bh=/SrM4iWBiCeTl/ERjU6eviZ9JjOQ6nLsu8UTiq9ILR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tHjNdeebCImNXXYzg5MBover89+w2CUy/NR8WnmIjnejHqdQSjNS4V5IbcQSmLDjI1a9nWi0qQqrqXf+WqpKfFg0Jl+NIx+LbTH9OA0vmilUP5wlBrgiE5z0Zqp4yhvghXPnJykNHmNtMN1iz28YmDavhUG+lOlA4dZduHo8vYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UMCD5NK8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760333380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kqo2ykAZEDr50CemvTt+UXIbTlPmHW0pXfnI+jeELFQ=;
+	b=UMCD5NK8SaqaCa/hQuBE0s1WL5IPS2vJv1Ap72DD3adX5C+Ak+r3ejvLl5efQyBsBLTdMJ
+	AhwvtTmvpMX18QHsSsY12breY/UhfbfF1H/1xy91lnTWS4bue8/RV7xZyVx39bDDEbmj6S
+	rafsumI7V2HXWj9wfjrJh3i5uv4o1Ts=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-131-IOaWYK7-OjChv3NgpSgxqw-1; Mon, 13 Oct 2025 01:29:39 -0400
+X-MC-Unique: IOaWYK7-OjChv3NgpSgxqw-1
+X-Mimecast-MFC-AGG-ID: IOaWYK7-OjChv3NgpSgxqw_1760333378
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32ec67fcb88so7395675a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:29:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760333378; x=1760938178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kqo2ykAZEDr50CemvTt+UXIbTlPmHW0pXfnI+jeELFQ=;
+        b=fdyak1h8Cp/lOnDgxPyrCZE73g2KHdm6rksIm7VClc8iJM17rzYB6roxOEgL0kDIjC
+         XEf+DXxeO9GOsBzj22ygz7I9itp9HpmrVobRAWeUk+LUXK19+ajzkBLgkKW/YxQuCoo9
+         ZNpAqoeEfr9VBH2KI3lScMImzCfB5u42xQZvmZnAuSM80LjGvOM/Fpa2Adel6tcSutPI
+         xhVMakK6KRX6P4bWiXcqAczNTwHuWp8XOczyvhpyhmPRFGvCdXJIdrqdWxbmmTJ22Mba
+         EGCvMDQPYRbVqdPHGLnbZleZN13fi7kpjMqPgznjsPfD/vty0p27SBCiC1MPQupumfIn
+         zR+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUy+VKdXxFOU8gOVHyeGsOsolpPB0YSRRwTe066RQW3yYwZT/2yKscTM6h9dowH1mISYTx3Cb3CFks4Jc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU6JymwklttDi4F172NwpajtnprUZPx2PBReVnQyQmkqkEIg4U
+	sel5w3MyKdevSaRxso8UHUYwb24HzzkRDTqiocueqFO06LqTHmAAk30yiB/h0Ys8E9MySNVbw9g
+	Koj1P2q3ajfMAE6cqaIm0cZwQmS4GH0ViP+22Mk8X3oIwfA8V//ayGPQBBY+3Nv+8MH5GmB4MIV
+	rkITRXLbkakbT3V8pd+xB3NMsd/kGmzkSls7r+30bZ
+X-Gm-Gg: ASbGncusHFvkFq6QSraRP+I8atsYTljuZ43hejwbWsHc+eAvmCixY6vBWAr3UuPJaO8
+	nN3hIrHsELZIoz+WgpfPz4/oYUPMSYHDwFBxVmmhpOuf8eXHaXNfckLHjiZlejKCcL/68Rh4ocu
+	W2nghAJ55KFci0XpVdEA==
+X-Received: by 2002:a17:90b:4d8c:b0:32e:9da9:3e60 with SMTP id 98e67ed59e1d1-33b513b4be4mr23985260a91.36.1760333378135;
+        Sun, 12 Oct 2025 22:29:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHehWnrGn7DuvJ/xSojls8MCxOSJWhG/ZI0Kv22UDdxDhSF5mF0LLfkXAAkQBSq7nVOxKn9BGX7Xu+k2Kj6giY=
+X-Received: by 2002:a17:90b:4d8c:b0:32e:9da9:3e60 with SMTP id
+ 98e67ed59e1d1-33b513b4be4mr23985245a91.36.1760333377653; Sun, 12 Oct 2025
+ 22:29:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOFNz2mKXCXUImwO@shikoro>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH87v3dx80NrleNP6wW9w6mQnxMTYNJ07JYrLs/mOyZbqZGR8N
-	vbGdpZiiIEMy0VZZo13FGLT4QKpYASO5yMsHwc5MiUZ5VKiCqMDQrhRMeYVI6npZlvnPySfn
-	fM/3e/44PC0+ZhbyZutu2WY1WPSsBmsic8qX+Y8Omz47qcyHifEiDEXKKQam3pbS4Gh6h2F8
-	uoeDsZoYC+E/oghKQoUYuieHEQQmRlkYqWGhPTxDwfOKIQz33eVUXMFCaclrCvp9Hg5mXqZC
-	a18XA+GhYhaUgTj92dhPQef10ywcqaljoK/6HQMdVW0Yrr4KUvDo+hUGXr4IMjDp0kHbsaMM
-	XBkpZ6HwthfD0ONDFEQvTGI4NBZj4PDrGyz0uv7G0Fz0goKLvggDxzvKWKhVTtDQVXyOhX5X
-	hIPombjYcWSag8Kx5wjsvatgxD3OfJUqTTlcWKo+W40khzte7LW5UpPnGSfZm59yUpmyR7Lf
-	iTBSrS9F8t4MUZJS+RsrKdFiTnJGApQ08vAhJ907+RZLg4ES6tsPftKsMcoWc45sW5G+XWM6
-	cSl51zC790LvaW4/amKcKIEnwkrS2RxGTsTP8oGOJLWNhWRyuKUGqcwKS0gwOE2rPE/4glQf
-	LOWcSMPTQoOOtF8boNXdRCGDXLUvVlErpJF7nV+rclH4lYz6y2ZXtcJc0npqEKtMCykkGAtR
-	qpwWdORSjFfbCfGkmb9cs4fNFz4hLfV3KTWJCH0JpLt3gP334iRy2xfEbiR43rP1vGfr+d+2
-	DNGVSDRbczINZsvK5aY8q3nv8oysTAXFn62iYGZzI4q2fe9HAo/0c7SmG2GTyBhysvMy/Yjw
-	tH6eNi1/2CRqjYa8X2Rb1jbbHouc7Uc6HusXaD+fzDWKwg7DbnmnLO+Sbf9NKT5h4X5UqcXp
-	i3ryM57EIoGsdVt2apb1bDgjcl2bxMTuUKOv4Nnq+jSz8+MPHxWOjmp+/2hr+8/pa9/ccXxn
-	C+rqA5dzqqqWWti7i1oabj0Y/HRuaWt3sgKrJ9ZtPM89Tc31GluTCribjQ57ft2UVzzf5y3/
-	wWo9ENr+ZZ57/Y/H9qGw8Rs9zjYZUlNoW7bhH6va14BoAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH89znvtGs89JBeJTsS5FoNKAGDWdDDXGZ3G3ZwjeWfZmd3tgG
-	KNpKJy7bgFJguDmoaYktzgpaGK3Q8aIWU9ZhYAISBWQjG8iYRSWWNZmgqbytd8kyv5z8zjn/
-	X87z4eGxKsps4nX6E5JBrylQswpa8UGWOe2nb8Lanb7O7fBLWZCGpcVqGhravSxUd5xj4G6b
-	B8HMUjWC58tODBb/Og2r1gEOFqO/c7AeGEBgH7Vi8HaVUfDUt8bCk5t/I7DNhliony+jIeL+
-	GoHjoZOD+f4cWJi5wcD69CMKfn0WRuAOrVEQClYhWLXnw4XGThaWR+5gqLfdRXBxdhrDY19s
-	2TVwH0GgpZyFudpuDOOhV+HeUoSFQdtpFhZGGyj4y8eCqzzAwHmnFYG5qZ0F+/kOGvx/9HAw
-	+mSFgim7lQJPx/sw435Iw3BtIxV7Xyz1QxI4681UrDymwHblBgVRdysHt5umaHCXpoJzZJyB
-	P1scHKzM7oJ1VxEMeB5xMP2tjYa2hTtMth2Jzy1naLG18yolWsZWWdH7nReJyy+sSFy8bMai
-	pTbW3gxHsFjR+al4eTjMii+WJlgx8MxFi0ONRKwbSRP9jmlOrOj9jcvN+kix94hUoDNJhh37
-	Dym0tubUY2H25KWpBq4U+ZkaxPNE2E3KxzbWoDieFlJJVdCHZGaFLWRyMoplThAyiNfs5GqQ
-	gsfCtWQy2vUAy+5rwmHSXrFZRqWQSW6Nvy3HVcKXJNLn+ldVCvFk8FyIlhkL28jk2jwlx7GQ
-	TJrXeHkcF7u0MneGkTlRSCHBqz9TtUjpeMl2vGQ7/rddCLeiBJ3eVKjRFexJN+ZrS/S6k+mH
-	iwo7UOxDuj9fqbuOFsdz+pDAI/UrytyqsFbFaEzGksI+RHisTlBmfhYbKY9oSk5JhqKPDcUF
-	krEPJfO0Okn5bp50SCUc1ZyQ8iXpmGT4b0vxcZtKkSQMx4ey2lN+zNqcGRlqPb0n+72pW/2J
-	xWQuafmTia3piYO2poPJxyubo13dljfeDGrKh/QT+9LrXw9kzHyP83pRWPB9mLHwjidt0BPd
-	kNvWk6ItrlN9sXMj17/Bn5BUme09W7y1J4dqOdv9YP9YnektYpltO8D64xsOMr2myq/UtFGr
-	2bUNG4yafwCIKJ+/jAMAAA==
-X-CFilter-Loop: Reflected
+References: <68e96ebf.050a0220.91a22.0177.GAE@google.com> <CACGkMEtnrayDWKFdJ1P22QyCrZuDK0C2LihhOtvhUyTOKSp_HQ@mail.gmail.com>
+In-Reply-To: <CACGkMEtnrayDWKFdJ1P22QyCrZuDK0C2LihhOtvhUyTOKSp_HQ@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 13 Oct 2025 13:29:26 +0800
+X-Gm-Features: AS18NWDjkXzbfbcL9GnZvyYpjpGC9qt1RXSQFGkoxNNnNhgsMQJYKM2vjPwpQUQ
+Message-ID: <CACGkMEt0aJh1yAj+q1UNnXToLa_yGc9fT_HfeNptHsOQ7vXG+w@mail.gmail.com>
+Subject: Re: [syzbot] [virt?] upstream test error: KMSAN: use-after-free in vring_map_one_sg
+To: syzbot <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com>, 
+	Paolo Abeni <pabeni@redhat.com>
+Cc: eperezma@redhat.com, linux-kernel@vger.kernel.org, mst@redhat.com, 
+	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
+	xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 04, 2025 at 06:39:43PM +0200, Wolfram Sang wrote:
-> On Thu, Oct 02, 2025 at 05:12:35PM +0900, Byungchul Park wrote:
-> > Functionally no change.  This patch is a preparation for DEPT(DEPendency
-> > Tracker) to track dependencies related to a scheduler API,
-> > wait_for_completion().
+Adding Paolo.
+
+On Sat, Oct 11, 2025 at 3:40=E2=80=AFPM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> #syz test
+>
+> On Sat, Oct 11, 2025 at 4:38=E2=80=AFAM syzbot
+> <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com> wrote:
+
+Paolo, it looks like the GSO tunnel features will leave uninitialized
+vnet header field which trigger KMSAN warning.
+
+Please have a look at the patch (which has been tested by syzbot) or
+propose another one.
+
+Thanks
+
 > >
-> > Unfortunately, struct i2c_algo_pca_data has a callback member named
-> > wait_for_completion, that is the same as the scheduler API, which makes
-> > it hard to change the scheduler API to a macro form because of the
-> > ambiguity.
+> > Hello,
 > >
-> > Add a postfix _cb to the callback member to remove the ambiguity.
+> > syzbot found the following issue on:
 > >
-> > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> 
-> This patch seems reasonable in any case. I'll pick it, so you have one
-> dependency less. Good luck with the series!
+> > HEAD commit:    ba9dac987319 Merge tag 'libnvdimm-for-6.18' of git://gi=
+t.k..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D138581e2580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dad506767107=
+aacda
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dac856b8b866cc=
+a41352c
+> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7=
+976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/ce6a737acd38/d=
+isk-ba9dac98.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/d7053b626642/vmli=
+nux-ba9dac98.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/13f2d7e62179=
+/bzImage-ba9dac98.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com
+> >
+> > 8021q: adding VLAN 0 to HW filter on device bond0
+> > eql: remember to turn off Van-Jacobson compression on your slave device=
+s
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> > BUG: KMSAN: use-after-free in vring_map_one_sg+0x290/0x7b0 drivers/virt=
+io/virtio_ring.c:401
+> >  vring_map_one_sg+0x290/0x7b0 drivers/virtio/virtio_ring.c:401
+> >  virtqueue_add_split drivers/virtio/virtio_ring.c:608 [inline]
+> >  virtqueue_add+0x32aa/0x6320 drivers/virtio/virtio_ring.c:2281
+> >  virtqueue_add_outbuf+0x89/0xa0 drivers/virtio/virtio_ring.c:2342
+> >  virtnet_add_outbuf drivers/net/virtio_net.c:574 [inline]
+> >  xmit_skb drivers/net/virtio_net.c:3343 [inline]
+> >  start_xmit+0x274d/0x4860 drivers/net/virtio_net.c:3367
+> >  __netdev_start_xmit include/linux/netdevice.h:5248 [inline]
+> >  netdev_start_xmit include/linux/netdevice.h:5257 [inline]
+> >  xmit_one net/core/dev.c:3845 [inline]
+> >  dev_hard_start_xmit+0x22c/0xa30 net/core/dev.c:3861
+> >  sch_direct_xmit+0x3b2/0xcf0 net/sched/sch_generic.c:344
+> >  __dev_xmit_skb net/core/dev.c:4152 [inline]
+> >  __dev_queue_xmit+0x3588/0x5e60 net/core/dev.c:4729
+> >  dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+> >  lapbeth_data_transmit+0x352/0x480 drivers/net/wan/lapbether.c:260
+> >  lapb_data_transmit+0x90/0xf0 net/lapb/lapb_iface.c:447
+> >  lapb_transmit_buffer+0x260/0x330 net/lapb/lapb_out.c:149
+> >  lapb_send_control+0x458/0x5b0 net/lapb/lapb_subr.c:251
+> >  lapb_establish_data_link+0xa6/0xd0 net/lapb/lapb_out.c:-1
+> >  lapb_device_event+0xb2a/0xbc0 net/lapb/lapb_iface.c:-1
+> >  notifier_call_chain kernel/notifier.c:85 [inline]
+> >  raw_notifier_call_chain+0xe0/0x410 kernel/notifier.c:453
+> >  call_netdevice_notifiers_info+0x1ac/0x2b0 net/core/dev.c:2229
+> >  call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+> >  call_netdevice_notifiers net/core/dev.c:2281 [inline]
+> >  __dev_notify_flags+0x20d/0x3c0 net/core/dev.c:-1
+> >  netif_change_flags+0x162/0x1e0 net/core/dev.c:9705
+> >  dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
+> >  devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1199
+> >  inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1003
+> >  sock_do_ioctl+0x9c/0x480 net/socket.c:1254
+> >  sock_ioctl+0x70b/0xd60 net/socket.c:1375
+> >  vfs_ioctl fs/ioctl.c:51 [inline]
+> >  __do_sys_ioctl fs/ioctl.c:597 [inline]
+> >  __se_sys_ioctl+0x239/0x400 fs/ioctl.c:583
+> >  __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:583
+> >  x64_sys_call+0x1cbc/0x3e30 arch/x86/include/generated/asm/syscalls_64.=
+h:17
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Uninit was created at:
+> >  slab_free_hook mm/slub.c:2440 [inline]
+> >  slab_free mm/slub.c:6566 [inline]
+> >  kmem_cache_free+0x2b0/0x1490 mm/slub.c:6676
+> >  skb_kfree_head net/core/skbuff.c:1046 [inline]
+> >  skb_free_head+0x13c/0x3a0 net/core/skbuff.c:1060
+> >  skb_release_data+0x9f7/0xac0 net/core/skbuff.c:1087
+> >  skb_release_all net/core/skbuff.c:1152 [inline]
+> >  __kfree_skb+0x6b/0x260 net/core/skbuff.c:1166
+> >  consume_skb+0x83/0x230 net/core/skbuff.c:1398
+> >  skb_free_datagram+0x1e/0x30 net/core/datagram.c:324
+> >  netlink_recvmsg+0xad1/0xfe0 net/netlink/af_netlink.c:1974
+> >  sock_recvmsg_nosec net/socket.c:1078 [inline]
+> >  sock_recvmsg+0x2dc/0x390 net/socket.c:1100
+> >  ____sys_recvmsg+0x193/0x610 net/socket.c:2850
+> >  ___sys_recvmsg+0x20b/0x850 net/socket.c:2892
+> >  __sys_recvmsg net/socket.c:2925 [inline]
+> >  __do_sys_recvmsg net/socket.c:2931 [inline]
+> >  __se_sys_recvmsg net/socket.c:2928 [inline]
+> >  __x64_sys_recvmsg+0x20e/0x3d0 net/socket.c:2928
+> >  x64_sys_call+0x35f0/0x3e30 arch/x86/include/generated/asm/syscalls_64.=
+h:48
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Bytes 0-17 of 18 are uninitialized
+> > Memory access of size 18 starts at ffff88811a0f1000
+> >
+> > CPU: 1 UID: 0 PID: 5441 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(n=
+one)
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 08/18/2025
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> >
+> >
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> >
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> >
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> >
+> > If you want to undo deduplication, reply with:
+> > #syz undup
+> >
 
-Thanks, Wolfram Sang!
-
-	Byungchul
-
-> Applied to for-next, thanks!
 
