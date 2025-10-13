@@ -1,289 +1,185 @@
-Return-Path: <linux-kernel+bounces-851532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536E2BD6AC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:54:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBFFBD6AE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C2B5F34F179
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:54:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A77188E649
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85082FC88C;
-	Mon, 13 Oct 2025 22:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD602FF15B;
+	Mon, 13 Oct 2025 22:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlAmPDy/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yUq3hIxc"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F211FCF7C;
-	Mon, 13 Oct 2025 22:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56B2571A5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760396055; cv=none; b=CjzkRhTj/3ecM3wYieVAezOGguu/q2zPpfiYCvNTLlbOSxf8QYMRSOdd47jX+UuKItzyYBdUvPJRtLsacoB/n2t9VBz419IiILEm4p6DJp6VubGK3G7/WJCX4gR+suxPTFh5Zaj3TM60bKczpjkOzMMcW8wcuAy1DXjk6nyGIKI=
+	t=1760396314; cv=none; b=f/qFz5r9/NhMum2JHpe7WOLynEub7swEWHDABM9D0MCTqzlfcWSnekDtH4CaJNC9ZyedoUmfHSjHani0MAsmxIXxDE8cOLXiydUHo9bV+oL4dDa4rK6nQipFGaKsa4w/vdyqLPr15XigizhSqj2FyyxiDwrIlffP+DnKL8vQfh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760396055; c=relaxed/simple;
-	bh=JAsqAOWugkDCSeK4R312V+ZOCV7tNTROXYMNfW3N0tI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VkQsMs2teBmeHKb0HoOCT7cRyLQjAjY4h0yZlCnQqonH1wdPeKcYKWi6Rsl/mYzPbTdpuQdQH0On+ENqSVuQBxkR9ctBt9W6/97mjcI0Pq3manXpo+9lz1Hf/2QlAefDT91fJxGLjOkys8JWpgWjd/QAVkf/LMYEwnv3vErJm7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlAmPDy/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B98DC4CEE7;
-	Mon, 13 Oct 2025 22:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760396054;
-	bh=JAsqAOWugkDCSeK4R312V+ZOCV7tNTROXYMNfW3N0tI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BlAmPDy/JjsiiKyhyY7taFMkVPkn2W06zVaqvzr7BcoRHMSRMagYrkwVfsZW8UJ5X
-	 eS4oCFi5qj3TYrWIs8VdeqpJE6PA3GnMuXIWqzCSl2gj/w/FcfXMgthmbtaLpVA9x0
-	 j9YzGA3RoCzyqMA2aDAZCyPa5zPsXt6z84yBHs/TUOTnmP7xBNjS0X4OER/wuRzPUn
-	 7G8f+3+nnGZunqYG3T6aH7ewc2q3sjKcdVIUStAZh1jW6hjZMMO+col3S/QMfzLtcF
-	 yN/8JifzulW+yvO+o0Zc35EvNxoNk3UZ0ro0iS8RagvQ8Hbl1UOvXOxfgGS/+TpjGm
-	 pIvO1TTFoW6Pw==
-Message-ID: <8afff048-4fe1-440a-9739-e5a5ea43d6eb@kernel.org>
-Date: Mon, 13 Oct 2025 16:54:13 -0600
+	s=arc-20240116; t=1760396314; c=relaxed/simple;
+	bh=OBVPRVnolJIYZ4plwt7wa568FRg7nOQAvuHQFosWrn4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VGaqBA4WxvzgbG+fatDZaQ56m6rCgK2jR+WMoqpVwp3oCHpXFj9/5EP8lv57vY+/p5H+bv4UQPmWtiXGkboOK5j7Vgl/O/1iyXC2p5EJyt++7kVCYPErB5IzF0N798vX5gV0Q+uXrdWsfYiC65VR4W+nzn+RwHmRzqzJlKAf/Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yUq3hIxc; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-286a252bfbfso212133615ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760396312; x=1761001112; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jgg62F8lpJy3ysdGrDIadd5P5qmpoZpUB7Kr6b42Svo=;
+        b=yUq3hIxcW0rZIS2qbIfdjGT+PEHHGTqAML104zNunFWgDW6C/6QLq0cijycuLDYaKs
+         OKjkmNk3WpMCTuXKEm75/vd/FTjjnJ2a47OQnVNfQY/qTsMCLSmHQk/8L8Aj/iba4o9F
+         g2CJZHHSIvCOHRWEcDXjw1wUT078zu/BuhqfQnC9MJj4mdD3726LXE0p6FyOW+eDTNP3
+         ETCOHkUhCPkD99H2ej0vmrBi/twT0BlCevYJVd6b/8hHRhUFtP7DdaRu2GvnD9vd77KD
+         1cy+U3AfKNB75aSBDrDf2AzoXJbwnwXtkDQ9CihQ+76ZnwCAd0MIndDc+YU+SwgliGdb
+         j+fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760396312; x=1761001112;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jgg62F8lpJy3ysdGrDIadd5P5qmpoZpUB7Kr6b42Svo=;
+        b=ng7hMfwJxDxxVd62KTJtKvtLbQeamVoGKr6U3LoA34I8i/5PB52WP5s59o0JCvaYto
+         L3B1RaXK+mmhFlnfma3EvToS0cXiM7U02wPBJ5SmFtBLBxk5Kws4ipOCC9/vGbGB4/5Q
+         MaoTgp+EcteYWzsTA8xBT/Fe2qtO+QUOVVAkM99mmAn5eIYfzOm8vEAIlkK2/Cp4nZnZ
+         kIkIg2TlRA8RgeO17k9IlCVfh781gX6Txiq3dp0Wd5wFzuedyA04jFjY0kErbWyhf1wT
+         QG+KahGl/L70oL84Fp6KaE8eJrd6VSRzX6G8ali1QRYQ/1ZuMSGZ1E25ciF2722bWfF9
+         KHFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRXj1J2b5dm1tNQ1xo06g5Xum8xO6TkxXC/LukWs95qx4sqAyqsbEZkIAuSzzefNgPCfvKJ6wuMlIxZUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzisjwqLl+PgSgYvmzvLkOfggD9h5cNyO7zuejFr19nulOlBPds
+	0xhwtrwK3oDwasm3kIBc7tHr1zkenq6z/pTlMTnbo311lTJ0htqJn8gMJFRx9V6uU+IhIEfKqty
+	cbWeR+g==
+X-Google-Smtp-Source: AGHT+IFVRSBXCaOg47V3LlEe/hW3xpOG/xZ18xP0dbIvEMR36+z9CDUWRAyHNBZRkitDhAucFbqnHLvEJGU=
+X-Received: from pjxu8.prod.google.com ([2002:a17:90a:db48:b0:32e:b34b:92eb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d60f:b0:269:ba61:222e
+ with SMTP id d9443c01a7336-29027303330mr287660585ad.53.1760396311667; Mon, 13
+ Oct 2025 15:58:31 -0700 (PDT)
+Date: Mon, 13 Oct 2025 15:58:30 -0700
+In-Reply-To: <ivkoh7hdl7fcp5fmehmf3kv6ebqitozunbricyed5tkt7z3ngr@qvmaytpzrskw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
- pxamci_probe()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Rakuram Eswaran <rakuram.e96@gmail.com>
-Cc: chenhuacai@kernel.org, dan.carpenter@linaro.org,
- david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, lkp@intel.com,
- skhan@linuxfoundation.org, ulf.hansson@linaro.org, zhoubinbin@loongson.cn
-References: <xxtrhbv5qm2crtvc5ejpgu5caadsmms3rfulmosjwq7lumrko3@5mlcpk24hymm>
- <20251012183804.15171-1-rakuram.e96@gmail.com>
- <6j7ix5yof7qmrp6cgxhqver7yimvmgj7dujqu4l7cnzbpjksfd@5sp7am47gigw>
-Content-Language: en-US
-From: Khalid Aziz <khalid@kernel.org>
-In-Reply-To: <6j7ix5yof7qmrp6cgxhqver7yimvmgj7dujqu4l7cnzbpjksfd@5sp7am47gigw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev>
+ <20251001145816.1414855-9-yosry.ahmed@linux.dev> <aO1yJHcKC85mo0PQ@google.com>
+ <ivkoh7hdl7fcp5fmehmf3kv6ebqitozunbricyed5tkt7z3ngr@qvmaytpzrskw>
+Message-ID: <aO2EFiOHSuvmHvq_@google.com>
+Subject: Re: [PATCH 08/12] KVM: selftests: Use 'leaf' instead of hugepage to
+ describe EPT entries
+From: Sean Christopherson <seanjc@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 10/13/25 2:45 AM, Uwe Kleine-König wrote:
-> Hello Rakuram,
+On Mon, Oct 13, 2025, Yosry Ahmed wrote:
+> On Mon, Oct 13, 2025 at 02:41:56PM -0700, Sean Christopherson wrote:
+> > On Wed, Oct 01, 2025, Yosry Ahmed wrote:
+> > > From: Yosry Ahmed <yosryahmed@google.com>
+> > > 
+> > > The assertions use 'hugepage' to describe a terminal EPT entry, but
+> > > 'leaf' is more accruate as a PG_LEVEL_4K EPT entry is a leaf but not a
+> > > hugepage.
+> > 
+> > Yes, it's more accurate, but also less precise.  I'm guessing the assert message
+> > and comment talked about hugepages because that's the type of mappings that
+> > caused problems at the time.
 > 
-> On Mon, Oct 13, 2025 at 12:07:52AM +0530, Rakuram Eswaran wrote:
->>>>
->>>> I do not see the need for this code change. "if (host->dma_chan_tx)" will
->>>> skip "dma_release_channel(host->dma_chan_tx)" since dma_chan_tx is already
->>>> NULL. This code change does not add anything.
->>>
->>> Yes, stand alone this change doesn't make sense, but if we want to drop
->>>
->>>          host->dma_chan_tx = NULL
->>>
->>> in the error path above, this change is needed. Maybe then even
->>>
->>>          if (host->dma_chan_rx)
->>>
->>> and
->>>
->>>          if (host->dma_chan_rx)
->>>
->>> can be dropped.
->>
->> Hello Uwe,
->>
->> I had one quick follow-up before sending v2.
->>
->> Regarding the devm_clk_get() error path —
->> you mentioned that setting host->clk = NULL; is redundant since host is
->> devm-managed and the function returns immediately afterward.
->>
->>> I am not sure that sounds right. Looking at the code for
->>> __devm_clk_get(), if devres_alloc() fails, it returns -ENOMEM. If any of
->>> the other steps after a successful devres_alloc() fail, code goes
->>> through possibly clk_put() if needed and then devres_free(). So the
->>> resources are already freed at this point before the return to
->>> pxamci_probe(). The only thing left to do is to set host->clk to NULL
->>> since it would be set to an error pointer at this point.
->>
->> Khalid pointed out that when __devm_clk_get() fails after allocating a
->> devres entry, the internal cleanup (clk_put() + devres_free()) ensures
->> resources are released, but host->clk would still hold an ERR_PTR()
->> value at that point.
->>
->> His suggestion was that setting it to NULL might be a harmless defensive
->> step to avoid any accidental later dereference.
+> Given that it refers to PG_LEVEL_4K entries too, I wouldn't call it less
+> precise. All callers actually create 4K mappings so it is never actually
+> a hugepage in the current context :D
+
+nested_identity_map_1g()?
+
+> > Ah, actually, I bet the code was copy+pasted from virt_create_upper_pte(), in
+> > which case the assumptions about wanting to create a hupage are both accurate
+> > and precise.
+> > 
+> > > The distincion will be useful in coming changes that will pass
+> > > the value around and 'leaf' is clearer than hugepage or page_size.
+> > 
+> > What value?
 > 
-> Why is NULL better than an error pointer? (Spoiler: It isn't.)
+> 'leaf'. The following changes will pass 'leaf' in as a boolean instead
+> of checking 'current_level == target_level' here. So passing in
+> 'hugepage' would be inaccurate, and 'page_size' is not as clear (but
+> still works).
 > 
->> For now, I have dropped the redundant NULL assignment from
->> host->dma_chan_rx = NULL and directly returning the ERR_PTR instead of
->> storing in a return variable.
->>
->> Below I have appended proposed changes for v2.
->>
->> diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
->> index 26d03352af63..eb46a4861dbe 100644
->> --- a/drivers/mmc/host/pxamci.c
->> +++ b/drivers/mmc/host/pxamci.c
->> @@ -653,8 +653,9 @@ static int pxamci_probe(struct platform_device *pdev)
->>   
->>   	host->clk = devm_clk_get(dev, NULL);
->>   	if (IS_ERR(host->clk)) {
->> +		ret = PTR_ERR(host->clk);
->>   		host->clk = NULL;
->> -		return PTR_ERR(host->clk);
->> +		return ret;
->>   	}
->>   
->>   	host->clkrate = clk_get_rate(host->clk);
->> @@ -705,7 +706,6 @@ static int pxamci_probe(struct platform_device *pdev)
->>   
->>   	host->dma_chan_rx = dma_request_chan(dev, "rx");
->>   	if (IS_ERR(host->dma_chan_rx)) {
->> -		host->dma_chan_rx = NULL;
->>   		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
->>   				     "unable to request rx dma channel\n");
->>   	}
->>
->> Would you prefer that I:
->>
->> 1. Remove the host->clk = NULL; assignment for consistency (as you initially
->> suggested), or
->>
->> 2. Keep it in v2 for defensive clarity, as Khalid reasoned?
->>
->> I just wanted to confirm your preference before resending, to keep v2 aligned.
+> > 
+> > > Leave the EPT bit named page_size to keep it conforming to the manual.
+> > > 
+> > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > > ---
+> > >  tools/testing/selftests/kvm/lib/x86/vmx.c | 10 +++++-----
+> > >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/tools/testing/selftests/kvm/lib/x86/vmx.c b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > > index 04c4b97bcd1e7..673756b27e903 100644
+> > > --- a/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > > +++ b/tools/testing/selftests/kvm/lib/x86/vmx.c
+> > > @@ -380,15 +380,15 @@ static void nested_create_pte(struct kvm_vm *vm,
+> > >  			pte->address = vm_alloc_page_table(vm) >> vm->page_shift;
+> > >  	} else {
+> > >  		/*
+> > > -		 * Entry already present.  Assert that the caller doesn't want
+> > > -		 * a hugepage at this level, and that there isn't a hugepage at
+> > > -		 * this level.
+> > > +		 * Entry already present.  Assert that the caller doesn't want a
+> > > +		 * leaf entry at this level, and that there isn't a leaf entry
+> > > +		 * at this level.
+> > >  		 */
+> > >  		TEST_ASSERT(current_level != target_level,
+> > > -			    "Cannot create hugepage at level: %u, nested_paddr: 0x%lx",
+> > > +			    "Cannot create leaf entry at level: %u, nested_paddr: 0x%lx",
+> > >  			    current_level, nested_paddr);
+> > >  		TEST_ASSERT(!pte->page_size,
+> > > -			    "Cannot create page table at level: %u, nested_paddr: 0x%lx",
+> > > +			    "Leaf entry already exists at level: %u, nested_paddr: 0x%lx",
+> > 
+> > This change is flat out wrong.  The existing PRESENT PTE _might_ be a 4KiB leaf
+> > entry, but it might also be an existing non-leaf page table.
 > 
-> Note that in the end it's not me who decides, but Ulf (= mmc
-> maintainer).
+> Hmm if pte->page_size is true then it has to be a leaf page table,
+> right?
+
+No, because bit 7 is ignored by hardware for 4KiB entries.  I.e. it can be 0 or
+1 depending on the whims of software.  Ugh, this code uses bit 7 to flag leaf
+entries.  That's lovely.
+
+> If it's an existing non-leaf page table we shouldn't fail,
+
+Ah, right, current_level can never be less than target_level because the first
+assert will fail on iteration-1.
+
+> the assertion here is when we try to override a leaf page table IIUC.
+>
+> > Instead of hacking on the nested code, can we instead tweak __virt_pg_map() to
+> > work with nested TDP?  At a glance, it's already quite close, e.g. "just" needs
+> > to be taught about EPT RWX bits and allow the call to pass in the root pointer.
 > 
-> If you ask me however, I'd say the right thing to do there is like the
-> following:
-> 
-> diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-> index 26d03352af63..ce896b3f697b 100644
-> --- a/drivers/mmc/host/pxamci.c
-> +++ b/drivers/mmc/host/pxamci.c
-> @@ -652,11 +652,13 @@ static int pxamci_probe(struct platform_device *pdev)
->   	host->clkrt = CLKRT_OFF;
->   
->   	host->clk = devm_clk_get(dev, NULL);
-> -	if (IS_ERR(host->clk)) {
-> -		host->clk = NULL;
-> -		return PTR_ERR(host->clk);
-> -	}
-> +	if (IS_ERR(host->clk))
-> +		return dev_err_probe(dev, PTR_ERR(host->clk), "Failed to aquire clock\n");
+> That would be ideal, I'll take a look. In case I don't have time for
+> that unification, can this be a follow-up change?
 
-Hi Uwe,
+Part of me wants to be nice and say "yes", but most of me wants to say "no".
 
-I agree using dev_err_probe() is better since it leads to better logging 
-and troubleshooting.
+Struct overlays for PTEs suck.  At best, they generate poor code and obfuscate
+simple logic (e.g. vm->page_size vs pte->page_size is a confusion that simply
+should not be possible).  At worst, they lead to hard-to-debug issues like the
+one that led to commit f18b4aebe107 ("kvm: selftests: do not use bitfields larger
+than 32-bits for PTEs").
 
->   
-> +	/*
-> +	 * XXX: Note that the return value of clk_get_rate() is only valid if
-> +	 * the clock is enabled.
-> +	 */
->   	host->clkrate = clk_get_rate(host->clk);
->   
->   	/*
-> @@ -703,20 +705,15 @@ static int pxamci_probe(struct platform_device *pdev)
->   
->   	platform_set_drvdata(pdev, mmc);
->   
-> -	host->dma_chan_rx = dma_request_chan(dev, "rx");
-> -	if (IS_ERR(host->dma_chan_rx)) {
-> -		host->dma_chan_rx = NULL;
-> +	host->dma_chan_rx = devm_dma_request_chan(dev, "rx");
-> +	if (IS_ERR(host->dma_chan_rx))
->   		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
->   				     "unable to request rx dma channel\n");
-> -	}
->   
-> -	host->dma_chan_tx = dma_request_chan(dev, "tx");
-> -	if (IS_ERR(host->dma_chan_tx)) {
-> -		dev_err(dev, "unable to request tx dma channel\n");
-> -		ret = PTR_ERR(host->dma_chan_tx);
-> -		host->dma_chan_tx = NULL;
-> -		goto out;
-> -	}
-> +	host->dma_chan_tx = devm_dma_request_chan(dev, "tx");
-> +	if (IS_ERR(host->dma_chan_tx))
-> +		return dev_err_probe(dev, PTR_ERR(host->dma_chan_tx),
-> +				     "unable to request tx dma channel\n");
-
-We should still release DMA rx channel before returning here.
-
->   
->   	if (host->pdata) {
->   		host->detect_delay_ms = host->pdata->detect_delay_ms;
-> @@ -724,25 +721,21 @@ static int pxamci_probe(struct platform_device *pdev)
->   		host->power = devm_gpiod_get_optional(dev, "power", GPIOD_OUT_LOW);
->   		if (IS_ERR(host->power)) {
->   			ret = PTR_ERR(host->power);
-> -			dev_err(dev, "Failed requesting gpio_power\n");
-> -			goto out;
-> +			return dev_err_probe(dev, ret, "Failed requesting gpio_power\n");
-
-Don't we need to release DMA Rx and Tx channels before we return from here?
-
->   		}
->   
->   		/* FIXME: should we pass detection delay to debounce? */
->   		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
-> -		if (ret && ret != -ENOENT) {
-> -			dev_err(dev, "Failed requesting gpio_cd\n");
-> -			goto out;
-> -		}
-> +		if (ret && ret != -ENOENT)
-> +			return dev_err_probe(dev, ret, "Failed requesting gpio_cd\n");
-
-Same here
-
->   
->   		if (!host->pdata->gpio_card_ro_invert)
->   			mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
->   
->   		ret = mmc_gpiod_request_ro(mmc, "wp", 0, 0);
-> -		if (ret && ret != -ENOENT) {
-> -			dev_err(dev, "Failed requesting gpio_ro\n");
-> -			goto out;
-> -		}
-> +		if (ret && ret != -ENOENT)
-> +			return dev_err_probe(dev, ret, "Failed requesting gpio_ro\n");
-
-and here.
-
-Looking at Documentation/driver-api/driver-model/devres.rst, 
-dma_request_chan() is not devres managed interface and thus will not be 
-released automatically. Do you agree?
-
---
-Khalid
-
-> +
->   		if (!ret)
->   			host->use_ro_gpio = true;
->   
-> @@ -759,16 +752,8 @@ static int pxamci_probe(struct platform_device *pdev)
->   	if (ret) {
->   		if (host->pdata && host->pdata->exit)
->   			host->pdata->exit(dev, mmc);
-> -		goto out;
->   	}
->   
-> -	return 0;
-> -
-> -out:
-> -	if (host->dma_chan_rx)
-> -		dma_release_channel(host->dma_chan_rx);
-> -	if (host->dma_chan_tx)
-> -		dma_release_channel(host->dma_chan_tx);
->   	return ret;
->   }
->   
-> Best regards
-> Uwe
-
+eptPageTableEntry obviously isn't your fault, but nptPageTableEntry is. :-D
+And I suspect the hardest part of unificiation will be adding the globals to
+deal with variable bit positions that are currently being handled by the struct
+overlays.
 
