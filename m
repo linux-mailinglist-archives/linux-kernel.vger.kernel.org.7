@@ -1,215 +1,106 @@
-Return-Path: <linux-kernel+bounces-850593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7477BBD33FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:42:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62DABD343E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A27F4F2205
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:42:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4DC2834C392
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FEB3081D7;
-	Mon, 13 Oct 2025 13:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7525309DD2;
+	Mon, 13 Oct 2025 13:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpUec/18"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="hjT4mlMZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08053081B1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760362922; cv=none; b=Hww4pZfRWv/6RyzF5NOax3qD54+RLFBl+E2ExzNCPQ/N7oCqcoDGHpbPIbVOwe6Y6jDfqu2uSwdPkLgmDdi6yFcH/L42lLHtZsjk3tt0hH6TbZGQflM5RLbsmzGhw0mP0a9ebQXebEcMhdqGRZqdn8TuFEXmjxc5MjhCMwL9Jxo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760362922; c=relaxed/simple;
-	bh=E+oiUZgen68cnjAENtdOLkMPulLFXMt4mXOQGkGDE6I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xnisly31/JjUKITZjq0QUo5etT/nDJTJG15kGXFIU4hp2l6s8k4GbfRHnvZmmoQKJSq2Q7DUahsvB618CGeeN1hOC0XXT32icC83S+znoGpVvTt7rgTfP6nwVpLUj9elIlepul+d1fBMrgEsqki+0R/H1/8E5I1G2ZxWLrPJsog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpUec/18; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63babfdb52cso1527163a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 06:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760362919; x=1760967719; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4bdqoW+LR5yZxLdoidUpEK8sPbCwQ5DxDfyq2+aB58A=;
-        b=WpUec/18UuhKo2VRFbCUDr4lDzIFwAArkbjvUOa3ONab+Snb0GigVByjpYkFtpZheX
-         ML7CUKAlJvp8ri4RRzOMDK1jQEUHAsBIAl6KjqJb6pXa8JvP12796sbfPZPMNOa7Gx+N
-         58ckgJ7cAIYtzDIardYx71pAQ1tXfykIqmFy/jbcMhw1gC69D6AJFwMr92N8kYUGhZxM
-         wf7+q6VuYu5Uv3djKjQRoLnzXQ9Zu8uHrRir2n2JqY+mY71L+3FfH434Kz4c9X9CYMdl
-         vw6l8sSAPFRfuj9p0KIeiI4DdPCuPCJiUKr5j0O9QEvI3JwLsPpMxlUprz+2/tn0FzKU
-         wu1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760362919; x=1760967719;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4bdqoW+LR5yZxLdoidUpEK8sPbCwQ5DxDfyq2+aB58A=;
-        b=mHt15VFh4DUVOfD6LeZUu+3+GiddTJ8PaB8Tc2iJSU1D3nRqqYxJ4WjESIxWbFJWNe
-         HApLiqfnnedQbFTfIRmjnSfriijs5Slo36sdhSvhtyH5R/DWyf4sXGdxDT5V6gl4SV2U
-         WQGwrWj7Vh0j8NPZSsduGj1YRNZc2+pZrkkmNrC5PN/z9nJpqb6FZwYrv/ezybUevlit
-         gYjV5+bnUHUmwEr4xQdh7e1x6s/gzyUIkjtXaZeWlPEyxN6ZTtCVBPxl4I8yPEuxjXt/
-         X2oTHKG56QwuK28FiUQm8jGNrlQa1MGoCE6ySov6O+GYndbJZ6GxivCR59aAOr+INbda
-         6jnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyUQL64tXY+0BoV+TXHcBobELlM29ed+HlN5rQ3D2rkjEb9+/XvEVP7DrIiCy08EvHiR1t4CWcsYpu9xI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM2F/ge9vec9vv9Mi4c9oqHPBRq/0Mwslp6T5zZwfZvKQgidwe
-	vJOtYcaLiU6HdJF9kwjLLS+AV2WpxV81Y/pccbFV+Kr/h3NPwa1vGvGd
-X-Gm-Gg: ASbGncvcngvag0H3ulJIxdNjAnbNopMHvQzyj7XETGqrt/hEKSwOiNmoyeiHrh6ebHN
-	OhJaS42E23LS1ugVc7Vw/SWqC/znpkphX61YBwK0FvBnF3iQHQpOjVc0uDyDmli3XqSUW5ROEw0
-	Zj81X/9yyBIbGtuDeNatCQixz1jrx3g9JiGCN8ZRoiPREpSOrWXxh+7aHQbD9MtCMQ/Z/9DFUAb
-	dENqVP4JY27YJa5mte3a6LHpsAyWhglgdzIROr4Stz/+BG04cGbuU5cP8G05wXEtlkpGrdRqDO7
-	OikJhtYw0gxcleSTZOKL8Rp0alA8qhHp6Ty143P0Oayw4tIhukS5qZkIpaQDUC5B9GhUjucq1rR
-	VSib5i07h1bNsu11fLDIEOJ+qR9q8gANxvct/tzBq/M76GS5oXzZpPKf/PvrxZvbeXfSjavl+Ya
-	AhOE9+IuJ14+mt
-X-Google-Smtp-Source: AGHT+IHJtzeYQurhnlAW9tml/nOCL3ntwqVOYGzJy1iG+4nFDJLqIFVys/FUilJjcxgefmjojh9Slg==
-X-Received: by 2002:a05:6402:50c8:b0:61c:cf8d:e51d with SMTP id 4fb4d7f45d1cf-639d5c2f5a8mr20630779a12.22.1760362919103;
-        Mon, 13 Oct 2025 06:41:59 -0700 (PDT)
-Received: from tablet.my.domain (83.21.75.22.ipv4.supernova.orange.pl. [83.21.75.22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c32249esm8729019a12.41.2025.10.13.06.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 06:41:58 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEBF309DCB;
+	Mon, 13 Oct 2025 13:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760362949; cv=pass; b=cNgWb/uvDJtkvDR4IclFACBU6LfkDtv8XiGMORhv5Hmat+7QQa2EWnMCYROl6Y2M5dYn73S7zQlgmdW2Crxnaeo5BQGuGIY6gDqd0N5s7o1PXB01ja97W9I/nDRAseJfLDjKLq2B2XmkhzLZ42jyXuc1hbL+t8r0DwcZbhRincM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760362949; c=relaxed/simple;
+	bh=gDpPd5UzOQn8zDPGA7FYXf9y+izfyQBl4gvsqPled8k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jge2RyXNAYD3f+1ABsHpG9H6qmodobPJMI2wOPuP87378HgG5Zt/yotmGhJ0vRNDxgUkVWvvIrUldCgXl9S+s9dOZXdBZGVeyhrjGqg6s8g2I/0cLJ/QCZs3wU04q8WDlJ4uvP2pnueXeeFbPTnzsQ2TCv0EzxajpmqbYUlHOZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=hjT4mlMZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760362921; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XIXkd09YTcHrxyEMy3Q47jCyFRdZdGg7DG/PawiO9mFO9t3j+QNvOECuDBMMf8OY8ZecH6Aig5NBab5wViVuE0Xn4ifoDV6O7Ax6Nva+yk0jiGWzm3gj/Fm8UclkzUuOPXIUskYCj4TPy913l7BWPkcwu8Ubxc2+qm9woMBl+CU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760362921; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=gDpPd5UzOQn8zDPGA7FYXf9y+izfyQBl4gvsqPled8k=; 
+	b=KZLBIJiEBTseT5PnJagP7TnThgzIguQKMRE+d5O1+q+QCFVGTiwXQ7MKaj5tBtz/rPPAieZ32iPp0WxsefkdUqLbzruXbNT/nkWwufQh6jE8OZB7ca0gBgoHL1q2vCZ8f4kBi7PAAhNztBrYalYB0i3yGtgms1G8fqfan5tO1jQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
+	dmarc=pass header.from=<sjoerd@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760362921;
+	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=gDpPd5UzOQn8zDPGA7FYXf9y+izfyQBl4gvsqPled8k=;
+	b=hjT4mlMZjMIWKVYikSKVmQYnNeZ5wGoair2n5QNpespSgO7wN5w1rrNzg0r9x4xs
+	s9GP8XPPyEtfMZnBIE7gL6+eaSd5d1nOCTwK4OXYRh/mwjSu8vtFZXHtK/w2sqfmsAF
+	BBJD9gPU7RSQCmYYPl7sa9/uXQrEsTMpEfG/k36M=
+Received: by mx.zohomail.com with SMTPS id 1760362918105978.3996948303734;
+	Mon, 13 Oct 2025 06:41:58 -0700 (PDT)
+Message-ID: <a2eae87efe46ebf397bcec3580eb9bc152b80846.camel@collabora.com>
+Subject: Re: [PATCH v3 04/10] pmdomain: mediatek: Refactor bus protection
+ regmaps retrieval
+From: Sjoerd Simons <sjoerd@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org, conor+dt@kernel.org, mbrugger@suse.com, 
+	y.oudjana@protonmail.com, =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado"	
+ <nfraprado@collabora.com>, linux-pm@vger.kernel.org,
+ ulf.hansson@linaro.org, 	linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, 	mandyjh.liu@mediatek.com,
+ lihongbo22@huawei.com, wenst@chromium.org, 	matthias.bgg@gmail.com,
+ krzk+dt@kernel.org, kernel@collabora.com, 
+	linux-arm-kernel@lists.infradead.org
 Date: Mon, 13 Oct 2025 15:41:49 +0200
-Subject: [PATCH v7 2/7] dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT
- defines from DT headers
+In-Reply-To: <20250805074746.29457-5-angelogioacchino.delregno@collabora.com>
+References: <20250805074746.29457-1-angelogioacchino.delregno@collabora.com>
+	 <20250805074746.29457-5-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-5 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-kona-bus-clock-v7-2-8f473d99ae19@gmail.com>
-References: <20251013-kona-bus-clock-v7-0-8f473d99ae19@gmail.com>
-In-Reply-To: <20251013-kona-bus-clock-v7-0-8f473d99ae19@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@kernel.org>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
- phone-devel@vger.kernel.org, Artur Weber <aweber.kernel@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2725;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=E+oiUZgen68cnjAENtdOLkMPulLFXMt4mXOQGkGDE6I=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBo7QGf+ItKfJtMmRNf1EyGe+DAhXxvE0FB8Xc6T
- 83+l6P8PoOJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaO0BnwAKCRCzu/ihE6BR
- aPJED/99jvVa+gYxsmfku8hqbnFcbTpy+1rL64+7ChnpDDOCPdBm9QZy3EIrI8kdBmDM/Mvnkos
- 6Ch9+AXNcxcMJFWRvFLHQ4dBKCPBVdAwwm8qLE8KzrbOs3Cxt7CxnxlkRgQAYkzXr/va10iBxm3
- g4EbK9bjqwsioUSLpTofaQEMW/Q6kwO+tLtEHaDGy05NE3lZyW1eCD7Nk8wW5dky/oRoTHtSENu
- WV3gbXwPCUxqJXfqaGwhdkboXDbiQM9f3vCSaf4qMVzRPjvflptITwBBtJ/8hWAZKHvpe/HJ9Rt
- ACGdZVSxYSs8MZHavFpOET3Kma70j+FpO+BV9QYEcVKRj5JzKPxEQf6VMRIAh4tHHGVa3ie6YOe
- fjWqQbkCFYYuVepxgU4ErDN8USVu+i1lcnp7b8yNyrwgMX8jEK3Qh057xtnXt5amoGl1CC48vi+
- hzb5jpuXFEMLsoI7++jWQoMdbv2N2oRNZXJ0dzKLv7Kvp6Sy8ziP/wZIf181ElGMVweMg1LGljI
- +FIqPhVmTgKwXYsCuyV8/cnGif3jwdkiO0gzgatXLEzOUw4FPPiTij4gVzT6Do1YA6XT5m6YRAo
- bJSuMIOK8C2ooGlD2BrMHGHOoSuIFc1coN3h+k3Skc4FlubsZjCY5PeFAvDKRjpa7j+H5WXqobe
- uf9fYV4PlZKuuFA==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+X-ZohoMailClient: External
 
-The CLOCK_COUNT defines are not used by device trees, only by the clock
-driver. Keeping them in the DT binding header is frowned upon.
+Hey,
 
-Since they're being moved to the clock driver directly, drop these defines
-from the dt-bindings header and only keep clock IDs.
+On Tue, 2025-08-05 at 09:47 +0200, AngeloGioacchino Del Regno wrote:
+> In preparation to add support for new generation SoCs like MT8196,
+> MT6991 and other variants, which require to set bus protection on
+> different busses than the ones found on legacy chips, and to also
+> simplify and reduce memory footprint of this driver, refactor the
+> mechanism to retrieve and use the bus protection regmaps.
+>=20
+> This is done by removing the three pointers to struct regmap from
+> struct scpsys_domain (allocated for each power domain) and moving
+> them to the main struct scpsys (allocated per driver instance) as
+> an array of pointers to regmap named **bus_prot.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v3:
-- Add this commit
----
- include/dt-bindings/clock/bcm21664.h | 4 ----
- include/dt-bindings/clock/bcm281xx.h | 5 -----
- 2 files changed, 9 deletions(-)
+Trying to boot v6.18.0-rc1 on a Genio 700 EVK using the arm64 defconfig,
+ends up hanging at boot (seemingly when probing MTU3 and/or mmc, but that=
+=C2=A0
+might be a red herring).=C2=A0
 
-diff --git a/include/dt-bindings/clock/bcm21664.h b/include/dt-bindings/clock/bcm21664.h
-index 7c7492742f3d..7a380a51848c 100644
---- a/include/dt-bindings/clock/bcm21664.h
-+++ b/include/dt-bindings/clock/bcm21664.h
-@@ -21,12 +21,10 @@
- /* root CCU clock ids */
- 
- #define BCM21664_ROOT_CCU_FRAC_1M		0
--#define BCM21664_ROOT_CCU_CLOCK_COUNT		1
- 
- /* aon CCU clock ids */
- 
- #define BCM21664_AON_CCU_HUB_TIMER		0
--#define BCM21664_AON_CCU_CLOCK_COUNT		1
- 
- /* master CCU clock ids */
- 
-@@ -38,7 +36,6 @@
- #define BCM21664_MASTER_CCU_SDIO2_SLEEP		5
- #define BCM21664_MASTER_CCU_SDIO3_SLEEP		6
- #define BCM21664_MASTER_CCU_SDIO4_SLEEP		7
--#define BCM21664_MASTER_CCU_CLOCK_COUNT		8
- 
- /* slave CCU clock ids */
- 
-@@ -49,6 +46,5 @@
- #define BCM21664_SLAVE_CCU_BSC2			4
- #define BCM21664_SLAVE_CCU_BSC3			5
- #define BCM21664_SLAVE_CCU_BSC4			6
--#define BCM21664_SLAVE_CCU_CLOCK_COUNT		7
- 
- #endif /* _CLOCK_BCM21664_H */
-diff --git a/include/dt-bindings/clock/bcm281xx.h b/include/dt-bindings/clock/bcm281xx.h
-index d74ca42112e7..0c7a7e10cb42 100644
---- a/include/dt-bindings/clock/bcm281xx.h
-+++ b/include/dt-bindings/clock/bcm281xx.h
-@@ -27,19 +27,16 @@
- /* root CCU clock ids */
- 
- #define BCM281XX_ROOT_CCU_FRAC_1M		0
--#define BCM281XX_ROOT_CCU_CLOCK_COUNT		1
- 
- /* aon CCU clock ids */
- 
- #define BCM281XX_AON_CCU_HUB_TIMER		0
- #define BCM281XX_AON_CCU_PMU_BSC		1
- #define BCM281XX_AON_CCU_PMU_BSC_VAR		2
--#define BCM281XX_AON_CCU_CLOCK_COUNT		3
- 
- /* hub CCU clock ids */
- 
- #define BCM281XX_HUB_CCU_TMON_1M		0
--#define BCM281XX_HUB_CCU_CLOCK_COUNT		1
- 
- /* master CCU clock ids */
- 
-@@ -50,7 +47,6 @@
- #define BCM281XX_MASTER_CCU_USB_IC		4
- #define BCM281XX_MASTER_CCU_HSIC2_48M		5
- #define BCM281XX_MASTER_CCU_HSIC2_12M		6
--#define BCM281XX_MASTER_CCU_CLOCK_COUNT		7
- 
- /* slave CCU clock ids */
- 
-@@ -64,6 +60,5 @@
- #define BCM281XX_SLAVE_CCU_BSC2			7
- #define BCM281XX_SLAVE_CCU_BSC3			8
- #define BCM281XX_SLAVE_CCU_PWM			9
--#define BCM281XX_SLAVE_CCU_CLOCK_COUNT		10
- 
- #endif /* _CLOCK_BCM281XX_H */
+Either reverting this patch *or* having CONFIG_MTK_MMSYS builtin rather
+then a module seems to solve that.=20
 
--- 
-2.51.0
-
+--=20
+Sjoerd Simons <sjoerd@collabora.com>
 
