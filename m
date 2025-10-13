@@ -1,204 +1,246 @@
-Return-Path: <linux-kernel+bounces-850286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5F5BD2661
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:57:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1074CBD2673
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF38189AD48
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:57:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0C0D4EFE63
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047602E5430;
-	Mon, 13 Oct 2025 09:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A0926D4EE;
+	Mon, 13 Oct 2025 09:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boWZckxU"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LHagZOwr"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33EA26D4EE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D062FE041
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760349409; cv=none; b=SEF4unPFpuIBYDAYlzY22gNhNK9ZYeLY0Pf+IIQl1OvOC/NAO4odOwLQNro1Qcqs00QLpyw//Z1gaPtCA/DdXyJ6KA4qFtZd3Fh3E5Jv65etwJ/I7Drtjt6jKt173jKt0Wj1tBVp6bRVjFh9l5xXfBX8cSWz9ypmbJTIekNjyok=
+	t=1760349465; cv=none; b=ZTe2qyrpWiYeAHBxwPKqmC35y7Hv35NDEaSeRyUMddd2QFoXHc5pk1sSNFVbnC5pucadYxeMP2/ncLfvElhnzxVlnqljJolAkbUBUwo8zDIlfqRE1ff2U2fOuRBHXnasdv61SysrXg3RewCOrSMLkA/TTufwND+EMw/P2SqQsts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760349409; c=relaxed/simple;
-	bh=osO1ANWf/MtQ51cpeQHzFc47cYEE93PJRkuORtoQPk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rqvbteCMK25lw8MOIZPseMjhd7FdCMG58/jhTfksFPalRn6Ire+YuPfC6oTnZr+7edUM+fnQVMrL0H+/Og9JiBru6gbSujWmlaMHgaujKOo1GkZc6bdFjjnZfFoe6mC/kgmTWVDQggq9OjVtD3cFIEPvq0+iVpRDHyj1wK86Xug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boWZckxU; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-796f9a8a088so3789349b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:56:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760349407; x=1760954207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f+yrBFZp5vtdgalR3uw+8+Z4TKx4WciRTYMlOYaljes=;
-        b=boWZckxUH2gljY9tzOV+4GrH2LnfwzJdL3n89Jvv5NzspiZL6FD3Icr0ZaO2mw8Rf4
-         0rDbyTYmF02mmGSJapwzZxeTvnInSFeGEFyvk82cY7ECggvZ0pt+x8fHN+bJOAJ91sXx
-         Shr76lOmWvDEpOw5p96kAx+Nm8vSntVCse606O4EPjmV9f1yHD/794zlBbafdqBNHmcJ
-         KDagsUctOVcZXP6iN0BsXveOX4phgNQDsqU4gFXL0bIEjztz6tHBv9dATRadJV4dIS5V
-         nN3tnkehNWPRfygDL/ucg7ZWBTYcG15C8YESMRRBCt9+csfGIrex52d1y7B1wi0Q+esq
-         IBOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760349407; x=1760954207;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f+yrBFZp5vtdgalR3uw+8+Z4TKx4WciRTYMlOYaljes=;
-        b=kIZ13aGKU3jJs7VaSb9t/wJ7bvNewzXbYEJFaqE9SMaTgErh2dUtxrUXdHDiTGaQLx
-         +sxxgDyhyhkd3K79eODqPOpl0s4c3xDJvMn2B6lI+cGUeFjmImH9V0Rwym5NTfkjYZeX
-         R22HBQhlE/zjD0YilLU1rOgqRaqkADtaEoTzRRJirFx2CyEaFlzN0fAiAMGzDz8cl6kG
-         EHv+AQBObYuCtiiiDZpnW255lv8VIFEJz5t2FljBJhIluWoxdrEvdKsie92ONzAhuzMr
-         Er2zfVgR74Q9qI5l+aWTBhr3p/Sc7TAegxm2RRQ9+zB48biRgQ545V9AMERo+qNLt28T
-         v5Rw==
-X-Gm-Message-State: AOJu0Ywe7PB5BWLhC8sUaglq3MGxdVReaUH1z+RLY1ej3CTnQvLIJINZ
-	q53h8dXuxiCkZpMtMD7DNcolc8yFwQP9px6d1igmHxn74bIBNCM8G1sh
-X-Gm-Gg: ASbGncty8T5TflzdOSfcvo72bTXVcMRPPeWGXb06POBxNAX8MjcRH1K2dRKmO1HeP8m
-	obRNdbivcMNrNUT3d/4Tb5VcqfSnw2XqlhX1DBS5pD4cnyZQk94qcVSHyP7I5PD4GGBb3Jko7z4
-	H1eVDGDnUEXNnQgpVulFqFY9HW470vloRB7X2MXnyIdJye8z3rrQAAMDbM/Y2ABSSjNjMkxaPEN
-	pTHu/5KiG0M1o5op4yAEPclsTVt8ipNMIIW3Om7Y+5v5HVWb25TNvxgyraRRYW357yhZocoDmuD
-	D4AI7rdN9YfyCAoKugd/i/GEXZ7NoAJhzAvEqjhsZGDDJh1BxmWhWjYmAKsPwH9zP/peGlzPn1R
-	LTRJ5On/jNYONk3xtWscFTxyFECxl3xV4BGGv2RDE5z3ptdOHF3MNt8Y=
-X-Google-Smtp-Source: AGHT+IG4d0UlItFBg2gSZoAXDMDXxcApwjTaXpPj1vdprQgwuvA01VXZjBH1veLt+SCHWSZCYBY1UA==
-X-Received: by 2002:a05:6a20:a111:b0:2c9:ff13:bc86 with SMTP id adf61e73a8af0-32da8139429mr27108687637.21.1760349406967;
-        Mon, 13 Oct 2025 02:56:46 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b0607e3sm11349871b3a.11.2025.10.13.02.56.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 02:56:45 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 83F8F45289A7; Mon, 13 Oct 2025 16:56:43 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Markus Heiser <markus.heiser@darmarit.de>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Silvio Fricke <silvio.fricke@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2 2/2] Documentation: assoc_array: Format internal tree layout tables
-Date: Mon, 13 Oct 2025 16:56:31 +0700
-Message-ID: <20251013095630.34235-4-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251013095630.34235-2-bagasdotme@gmail.com>
-References: <20251013095630.34235-2-bagasdotme@gmail.com>
+	s=arc-20240116; t=1760349465; c=relaxed/simple;
+	bh=GxVge5YadJIXqdPim93qf3cwj0gb4zO796LaqkTqFEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpp8Xy+ZzmDR4d+DOI51XzFL0VVJAJFnoPCIbAjPkmBHizh1QDaMOvHYQGz6cPxIOCUu8yyCMr6/YtJCvxXj71vBJsDGSiTpikH5R9XUsYh7N4flXt7pwxwjiqS0dVtxgV+MqFqNoC+HRxdlx+6Mg4TirncdLMXMc+wuhkpSsZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LHagZOwr; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 13 Oct 2025 11:57:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760349461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rSmpMH1aE4nwqB2UyHhINNdT7+hQ04/94y1DLbpsqeM=;
+	b=LHagZOwrN9xYStngQPWRMvjoGApKVXBAxGSKdhDbLPIWDEROX3GErJP0nwoCiEP1slwiDO
+	fl9b02aHGlHrOU69sTzDVY0VMs1QlkYGTg0yl9lSabFbHIZA2rKgaXVbrAeyXKYVR81cft
+	c1dzKe57RcWpcBom9mWi+es3YixkODQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 04/10] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_{DURATION,HW_STROBE_SIGNAL}
+Message-ID: <bhlm2hxkq5xojqokbhpk3ho6z7k37tzf7tw6zzm3223vi2wqbx@x3d5gq3yvups>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-4-d58d5a694afc@linux.dev>
+ <20250907194953.GA19568@pendragon.ideasonboard.com>
+ <j337fpaqahmee3qutgtkavud6rbqyn4lpsj4yaha2xmvcvfhli@z67twdhybvqp>
+ <20250908155917.GK26062@pendragon.ideasonboard.com>
+ <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
+ <aMrXNXexGBXCxbKd@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3600; i=bagasdotme@gmail.com; h=from:subject; bh=osO1ANWf/MtQ51cpeQHzFc47cYEE93PJRkuORtoQPk8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlvzlSsWrrxLT/D/Dbmh9K59dPnqPrJVLHW++cet1wee L7UZYthRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACby2JbhD9/Kieun8z08xl3x LnTed0Wpa7PY8mavmHYyLLT57SIu5zJGhhmbprfrJyRxdB5Zztqaovi+slNcjLNhdvNavh9vM3/ 5cQIA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMrXNXexGBXCxbKd@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-Format tables in "Basic internal tree layout" as reST tables.
+Hi Sakari, Hi Laurent,
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/core-api/assoc_array.rst | 33 ++++++++++++++++----------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+On Wed, Sep 17, 2025 at 06:43:49PM +0300, Sakari Ailus wrote:
+> Hi Richard,
+> 
+> On Tue, Sep 09, 2025 at 12:29:55PM +0200, Richard Leitner wrote:
+> > Hi Laurent,
+> > 
+> > thanks for your great (and quick) feedback!
+> > 
+> > On Mon, Sep 08, 2025 at 05:59:17PM +0200, Laurent Pinchart wrote:
+> > > On Mon, Sep 08, 2025 at 02:37:15PM +0200, Richard Leitner wrote:
 
-diff --git a/Documentation/core-api/assoc_array.rst b/Documentation/core-api/assoc_array.rst
-index 61c7ba1e7b877f..19d89f92bf8da8 100644
---- a/Documentation/core-api/assoc_array.rst
-+++ b/Documentation/core-api/assoc_array.rst
-@@ -317,8 +317,7 @@ There are two functions for accessing an associative array:
-    modified, provided the RCU read lock is held.
- 
-    The function will return the object if found (and set ``*_type`` to the
--   object
--   type) or will return ``NULL`` if the object was not found.
-+   object type) or will return ``NULL`` if the object was not found.
- 
- 
- Index Key Form
-@@ -400,10 +399,11 @@ fixed levels.  For example::
- 
- In the above example, there are 7 nodes (A-G), each with 16 slots (0-f).
- Assuming no other meta data nodes in the tree, the key space is divided
--thusly::
-+thusly:
- 
-+    ===========     ====
-     KEY PREFIX      NODE
--    ==========      ====
-+    ===========     ====
-     137*            D
-     138*            E
-     13[0-69-f]*     C
-@@ -411,10 +411,12 @@ thusly::
-     e6*             G
-     e[0-57-f]*      F
-     [02-df]*        A
-+    ===========     ====
- 
- So, for instance, keys with the following example index keys will be found in
--the appropriate nodes::
-+the appropriate nodes:
- 
-+    =============== ======= ====
-     INDEX KEY       PREFIX  NODE
-     =============== ======= ====
-     13694892892489  13      C
-@@ -423,12 +425,13 @@ the appropriate nodes::
-     138bbb89003093  138     E
-     1394879524789   12      C
-     1458952489      1       B
--    9431809de993ba  -       A
--    b4542910809cd   -       A
-+    9431809de993ba  \-      A
-+    b4542910809cd   \-      A
-     e5284310def98   e       F
-     e68428974237    e6      G
-     e7fffcbd443     e       F
--    f3842239082     -       A
-+    f3842239082     \-      A
-+    =============== ======= ====
- 
- To save memory, if a node can hold all the leaves in its portion of keyspace,
- then the node will have all those leaves in it and will not have any metadata
-@@ -442,8 +445,9 @@ metadata pointer.  If the metadata pointer is there, any leaf whose key matches
- the metadata key prefix must be in the subtree that the metadata pointer points
- to.
- 
--In the above example list of index keys, node A will contain::
-+In the above example list of index keys, node A will contain:
- 
-+    ====    =============== ==================
-     SLOT    CONTENT         INDEX KEY (PREFIX)
-     ====    =============== ==================
-     1       PTR TO NODE B   1*
-@@ -451,11 +455,16 @@ In the above example list of index keys, node A will contain::
-     any     LEAF            b4542910809cd
-     e       PTR TO NODE F   e*
-     any     LEAF            f3842239082
-+    ====    =============== ==================
- 
--and node B::
-+and node B:
- 
--    3	PTR TO NODE C	13*
--    any	LEAF		1458952489
-+    ====    =============== ==================
-+    SLOT    CONTENT         INDEX KEY (PREFIX)
-+    ====    =============== ==================
-+    3       PTR TO NODE C   13*
-+    any     LEAF            1458952489
-+    ====    =============== ==================
- 
- 
- Shortcuts
--- 
-An old man doll... just what I always wanted! - Clara
+[snip]
 
+> > > 
+> > > Sakari, could you please check if you agree with the above ? Let's avoid
+> > > going back and forth with reviews (and I'll try my best to review the
+> > > next version quickly).
+> > 
+> > My current proposal:
+> > 
+> >     * - ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``
+> >       - The flash strobe is triggered by an external source. Typically
+> >         this is a sensor, which makes it possible to synchronise the
+> >         flash strobe start to exposure start.
+> >         This method of controlling flash LED strobe has two additional
+> >         prerequisites: the strobe source's :ref:`flash strobe output
+> >         <v4l2-cid-flash-strobe-oe>` must be enabled (if available)
+> >         and the flash controller's :ref:`flash LED mode
+> >         <v4l2-cid-flash-led-mode>` must be set to
+> >         ``V4L2_FLASH_LED_MODE_FLASH``. Additionally the :ref:`flash duration
+> > 	<v4l2-cid-flash-duration>` may be adjusted by the strobe source.
+> > 
+> > 
+> > ``V4L2_CID_FLASH_DURATION (integer)``
+> >     Duration of the flash strobe pulse generated by the strobe source, when
+> >     using external strobe. This control shall be implemented by the device
+> >     generating the hardware flash strobe signal, typically a camera sensor,
+> >     connected to a flash controller. It must not be implemented by the flash
+> >     controller. Typically the flash strobe pulse needs to be activated by
+> 
+> I'd drop the sentence on flash controller as this is UAPI documentation.
+
+That sentence was "requested" by Laurent. What's your opinion on this?
+It would be great to have a wording for v8 that's fine for both of you ;-)
+
+> 
+> >     enabling the strobe source's :ref:`flash strobe output
+> >     <v4l2-cid-flash-strobe-oe>`.
+> > 
+> >     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
+> >     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
+> >     mode of operation.
+> > 
+> >     The unit should be number of lines if possible.
+> > 
+> > 
+> > ``V4L2_CID_FLASH_STROBE_OE (boolean)``
+> >     Enables the output of a hardware strobe signal from the strobe source,
+> >     when using external strobe. This control shall be implemented by the device
+> 
+> I'd remove the comma.
+> 
+> >     generating the hardware flash strobe signal, typically a camera sensor,
+> >     connected to a flash controller.
+> > 
+> >     Provided the signal generating device driver supports it, the length of the
+> >     strobe signal can be configured by adjusting its
+> >     :ref:`flash duration <v4l2-cid-flash-duration>`. In case the device has a
+> >     fixed strobe length, the flash duration control must not be implemented.
+> 
+> I don't see why the duration control wouldn't be implemented in this case:
+> it's still relevant for the user space to know how long the duration is.
+> I'd simply drop this sentence.
+
+What's your opinion on this Laurent?
+
+I'm currently preparing v8 and just want to make sure this aligns with
+both of you?
+
+> 
+> > 
+> >     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
+> >     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
+> >     mode of operation.
+> > 
+> > > 
+> > > > > As for the unit, is microseconds really the best option ? I would expect
+> > > > > most sensors to express the strobe pulse width in unit of lines.
+> > > > 
+> > > > We had that discussion already somewhere during this series. Tbh for me
+> > > > microseconds seems fine. Most (professional) flashes are configured with
+> > > > s^-1, so that would also be an option, but as flash_timeout is
+> > > > configured in microseconds, i chose it for flash_duration too.
+> > > > 
+> > > > Nonetheless technically it shouldn't be a problem to express it as
+> > > > number of lines... Is there a reason to prefer this?
+> > > 
+> > > A few observations have confirmed my gut feeling that this is how
+> > > sensors typically express the pulse width. Expressing the value in its
+> > > hardware unit means we won't have rounding issues, and drivers will also
+> > > be simpler. We're missing data though, it would be nice to check a wider
+> > > variety of camera sensors.
+> > 
+> > I have done some more measurements and calculation on this for ov9281.
+> > It seems you are (somehow?) right. The strobe_frame_span (aka strobe
+> > duration) register value seems to represent the duration of the strobe in
+> > number of lines plus a constant and variable offset based on the hblank
+> > value. Other settings (e.g. vblank, exposure, ...) have no influence on
+> > the duration.
+> > 
+> > After about 50 measurements using different strobe_frame_span and hblank
+> > values and 1280x800 as resolution I came up with the following formulas:
+> > 
+> >    line_factor = active_width + hblank * 1,04 + 56
+> > 
+> >    t_strobe = strobe_frame_span * line_factor / pixel_rate
+> > 
+> > Which matches all tested cased nicely...
+> > 
+> > Nonetheless I'm still unsure on what unit to use for flash duration...
+> > 
+> > The exposure time for ov9282 is set as "number of row periods, where the
+> > low 4 bits are fraction bits" in the registers. The v4l2 control should
+> > on the other hand accept 100 µs units as value.
+> > 
+> > From a user perspective it would make sense to me to configure exposure
+> > time, flash duration and flash/strobe offset using the same base units.
+> > On the other hand we may have rounding issues and formulas based on
+> > assumptions or reverse-engineering when implementing this for a
+> > sensor...
+> > 
+> > What's your opinion on this, Sakari, Laurent, Dave?
+> 
+> I checked what CCS defines exposure time as a function of the external
+> clock frequency:
+> 
+> 	exposure time = tFlash_strobe_width_ctrl / ext_clk_freq *
+> 			flash_strobe_adjustment
+> 
+> The added accuracy is relevant for xenon (admittedly rare these days, but
+> depends on the device) flash but probably not so for LEDs.
+> 
+> So I'm fine with keeping this as-is and perhaps adding CCS specific private
+> controls separately.
+
+Thanks for the feedback. That's fine with me :-)
+
+[snip]
+
+> > > > > > +
+> > > > > > +.. _v4l2-cid-flash-hw-strobe-signal:
+> > > > > > +
+> > > > > > +``V4L2_CID_FLASH_HW_STROBE_SIGNAL (boolean)``
+> > > > > 
+> > > > > Nitpicking a bit on the name, I would have called this
+> > > > > V4L2_CID_FLASH_STROBE_OUTPUT_ENABLE (or _OE).
+> > > > 
+> > > > I'm always open to name-nitpicking ;-)
+> > > > 
+> > > > V4L2_CID_FLASH_STROBE_OE sounds great to me... It's clear and even
+> > > > shorter than V4L2_CID_FLASH_HW_STROBE_SIGNAL.
+> > > 
+> > > Sakari, what's your opinion ?
+> 
+> I slightly prefer the former, too.
+
+Fine. I'll go for V4L2_CID_FLASH_STROBE_OE.
+
+[snip]
+
+regards; rl
 
