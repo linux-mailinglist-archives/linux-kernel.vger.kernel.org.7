@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-851546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761DEBD6BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:28:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABF5BD6BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7019A40166A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:28:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 914774E3260
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E572DBF5E;
-	Mon, 13 Oct 2025 23:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BEB2EFD95;
+	Mon, 13 Oct 2025 23:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="JVtXogSH"
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="JcglVvGB"
 Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020134.outbound.protection.outlook.com [52.101.85.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531ED2C15B4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D032D879F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.134
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760398118; cv=fail; b=Bl055fU/M5wo/QZlO8NBdbi19Pag9JNctovBdv+aQioeG7eo9fXlGsjC9EUAOsOIZGvZLsoqFIkRhMSOp07pNe2AtXkhG3SJd/muQbcsFghNR8foTIeGGgImZXQPxlXN7eHiq5C1xqmRgHck07O4ZqxSKuJIZvAkrkYUpvjYb0k=
+	t=1760398120; cv=fail; b=UahOgvJlCsurPWpwLNot/5E/cCxbZzpnpgpvXwA00n8gfGtoIE+5CxfCx1iZbaQgPQ1qn2kaA90berXieNIieqX66MnLba2TkoxpofhlZk7dEVK15MxLmWX69gETSlEFiUgfrzy14QSvcKQ0c/lYTAKh34jHsDFFX/xClX4ByAY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760398118; c=relaxed/simple;
-	bh=ejZ2lT1qLgBiS9Tx5GacRR8HPp2woVijysmjBIA8bcE=;
+	s=arc-20240116; t=1760398120; c=relaxed/simple;
+	bh=2SaFLU9tv+sl3PHyfXeTpD7Q5ETHV3yztgfMgmyb/jI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XaIv4SFuXcHp8ZV0Mv9HULXa15/DQcqGqdvE5C4O5OyIDRDSI7KGHluKSaFie1q+YwJO4pUO/pFGLBthuhlLgbf7RXA0vVYFCxNjNfCATFI/DS8ogERfMtPVyvRy8vT4JauENV1iC+7g0d/PGVpmfyFQVGko7zOP954jbT8dBRs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=JVtXogSH; arc=fail smtp.client-ip=52.101.85.134
+	 Content-Type:MIME-Version; b=aJ6H2euEfcGizbVecO2Lr9C3XP+OTCw7p8/9+7Wq21mALEREkjPI33Mqp6AS+t8o/hqNFOXCUNRJN3BpbRg5Zuo5DHgexGUoRNi3cMeWgZepcEnJTJguSWkuXefeCckOacSO06lftlALepU9FxpGN3mc7GnS0Io/Eyd/Xroer1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=JcglVvGB; arc=fail smtp.client-ip=52.101.85.134
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HunPnS0TkANC9ibVF0KroyG1IbgRmxrkTxbIFk3q7B5v5L8T7lZ/TfUwC3ICTOSwTn9aHgVu+K0qQ3DQhoR5DR7/Cngz5xQ4hqWoS2EM/cd2hxXyVu7YnuNZZEwfeDMB8750Txa/9c8Bcq0hkHFXYSmO8TJO0nP3GWg2K9xV4w7e0eDe2hmGVUu4tBhqPSUV0fUHX4d0vBgg1BUsKhCpwXnX1Tde5eicncPenmcR+Oub6n5WC7uDjZ+yxD8I3isVZpbwSPLnUiphlbGkhUIhXkWav3PkY7OKCEgakJ26YhxvWhgnokPUSkVo972vPUcIZk0kP9SJS7XFXj5cVspEHg==
+ b=fcjbpRwjjc4A1aSPP1EvKtbH4oBEfa1bH9Yvx1b8dQMdh4lgisMEWCHOPSzlI/aCYySsY9QrjEyIMrrkiXNiHE+GfoW6mvf25gttrGqPZPVejbM93NmASnxApbqX5cnKDYyAH4tRiS/+CGu7xSl6xn0n1QRc0PcWFvEmgmji6kE5kL9hLluy2PsQern3lCzUYb23HqJnSWtJwx8hBCq8ZVaNHowoGJum3zTlwT3JCCrKnTPJT6nlyXA633B/eIa16DFkROWBMIePTD6Ixy1ducci+F+qMjmc4pOPFG9ijmx1mGKKSiZaFTAVuXb+irYALZuuVr3xBS/+QnIhApKnQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VRUCapM2t+sTdxCZRFF1NwLezRUvT4nTQ4wQbl5DqXA=;
- b=qtLRZqKyUD9xPcvE1roL7Q5zI+SqFL4vg5FBOP+UNdR7tdEG2wfncAhHrXOV9mPIAJzkFTsxf9rpAqN5/hQxM9fBm/QWeMVSJoCzQkkEUMoC/PakBsXggHORaew6L2UMSaAZ+Pv9ua0TvO1zXmyAOGFqfbM/YYCq10UTqvO4rQpxrIQptXkJAmiBZ1WvrxmB2gszuZ4mzPNL+tksDb7kWAbItuy9pcp8qafXrL4QbV/QcV1PuGXKa7aseWrmrKzjdmirn5UduTNbg4IfARLkobFL/SdsNwVas9fjatGdCLIb5UcAvMTHGkDncPubfXTStNlJ4m1jSI6FaCoFiasxYA==
+ bh=5qUOvrlax7JuZyR8Zrn0og9hxRzSsCMx0fAYhntoNrc=;
+ b=KvG9cRuRoSsFFzcEtRUcd2F/2bR3OdrVKWR/b8LC2EogwBH86zh5f3WWqgVyJ+Qm+G5BASKVjUNFE2Imh5apkSdJL+SSmCboeoKDU9mpU9PirQ1tuAAExbJvdjEV+i3ajOihqBkngS0XsQ5yQPdoj7rscmDQBpEgDH45XbD2C1uRR/BeGZtyB0Mv3m0nmUfxaaKZAVr8XpqCB5S8tHkgi/QOVkJDBgkgJ28FHYFu2dsTqNmdLCgMbr7rIerqFTiN8CyToTIbVYcbaJg7VvNpPkrqK4J3n6JsCt/4/InoF/F/gcZxrjjK2QJkasVP22Y/jGpk9XBRR8DvtPGGLx5urg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
  header.from=os.amperecomputing.com; dkim=pass
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VRUCapM2t+sTdxCZRFF1NwLezRUvT4nTQ4wQbl5DqXA=;
- b=JVtXogSHXPM41Mau4jnF6ba9hnqAh0iIdBTWpYNYHqGPXf2zPchid50NjNlEji4YAbJ/MhQNLb0GegmSRZP5NTo3Nqzw1vP1lITKvDxAgAdvCItv7eKx67aRei+SRhTueV3x28wZ5lTTaQFALkIl+6XN+r/P8oWVC7lL5ny5ZJ0=
+ bh=5qUOvrlax7JuZyR8Zrn0og9hxRzSsCMx0fAYhntoNrc=;
+ b=JcglVvGB19/j1EDZs8Z3EP9yQ+SVdqDrQQXeukpCdFruggGEZN9OCinW7cTjMu2y16wSOyHnaIP06jWinD6Itl0UW6Bmote9rmT88WRJN/qJLplkJw8gAhK3lD3GlBZE9bQYgVQHtSjOpkDSCJl66evkDyILJvAeDHDRUAZGfvo=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
 Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
  PH0PR01MB7368.prod.exchangelabs.com (2603:10b6:510:10c::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.12; Mon, 13 Oct 2025 23:28:33 +0000
+ 15.20.9203.12; Mon, 13 Oct 2025 23:28:34 +0000
 Received: from CH0PR01MB6873.prod.exchangelabs.com
  ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
  ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 23:28:33 +0000
+ 23:28:34 +0000
 From: Yang Shi <yang@os.amperecomputing.com>
 To: ryan.roberts@arm.com,
 	dev.jain@arm.com,
@@ -65,9 +65,9 @@ To: ryan.roberts@arm.com,
 Cc: yang@os.amperecomputing.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: mm: make linear mapping permission update more robust for patial range
-Date: Mon, 13 Oct 2025 16:27:30 -0700
-Message-ID: <20251013232803.3065100-2-yang@os.amperecomputing.com>
+Subject: [PATCH 2/2] arm64: mm: relax VM_ALLOW_HUGE_VMAP if BBML2_NOABORT is supported
+Date: Mon, 13 Oct 2025 16:27:31 -0700
+Message-ID: <20251013232803.3065100-3-yang@os.amperecomputing.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251013232803.3065100-1-yang@os.amperecomputing.com>
 References: <20251013232803.3065100-1-yang@os.amperecomputing.com>
@@ -84,122 +84,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|PH0PR01MB7368:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d460f17-d50d-4d53-a9eb-08de0ab039e1
+X-MS-Office365-Filtering-Correlation-Id: f454ebca-2179-457c-ffeb-08de0ab03a81
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uJFfb6qqNwjviyg3QnEEymP6zo/mowmdW26/syqNQdMDpy5nrmfuZU/vc+/Q?=
- =?us-ascii?Q?+hxwSa6Vr+a+abRtYUkFo8Zlx+jcB8+CqRw4ew4UC6UOjfsZDrQFJ+Cdy7wp?=
- =?us-ascii?Q?e1pZBd638FEvrAuJ3VEhCvMGawEVUsCCqgRnJGuSBP1Y1+8TXyBNWeUIgsX5?=
- =?us-ascii?Q?ko+thq6oJexfjR8YMzYSMlxY2D+SADUmGTOP2P/u+G2MvzW5VAAN9ggJfmeX?=
- =?us-ascii?Q?IQOU/++fxnEMOQ5bzagKhfP7fqqF/KK3eZww/SxuvE6weAQ4hddStgF8fdwV?=
- =?us-ascii?Q?jfF1Xh4MnTFEyz8Vj/iebJeEVtNhd7goYNQVCWlxeSNHfe9isK/BmyG1ZGx9?=
- =?us-ascii?Q?X+JqPHV8EvfqOrXJ/acOl8yYrmZf8H6q84nsyMWvsuGnEU25wK8jQdsE7KVF?=
- =?us-ascii?Q?OJy9wOD7A69uozhZSdJgr/Td2nr3w26jDYMN+I9emfxLmb3F93hGhZnTIaJN?=
- =?us-ascii?Q?TBMr5y1GOlsh28BXcE+A1oDj+UIpvlwIMETYVZQ+nZzBs5D9daIu/v+SfPW/?=
- =?us-ascii?Q?6PqgtBl0yiKpNRbM85BLX90GTn1r0O+Kx86Su4QWHTJQuruAzznkT/UgICcf?=
- =?us-ascii?Q?ovLJxSZ6mFJwKJSH4pXn/Dh3ZzEp/RrjnRW9s1HXnHZnznrR4cKRUqpRTWjH?=
- =?us-ascii?Q?yb2zi/zYdnvxZItoNCCt337j4OF8XC00lz/qQu4EF79uQ05HWfDceW4n3JqI?=
- =?us-ascii?Q?XOUZ6LFbBOAM0cSXwwT1t9FI2tI6jet8EShU/krgQQ4VXgAba7l9AGUKOTle?=
- =?us-ascii?Q?vcnv1s5pKBp3xlvn67MamZ8MavGQtY9pQIUhQch/Absm402byfHn5A6mRkDl?=
- =?us-ascii?Q?nSQSLWCjTwJ1bHLbJtjma3ywr50II8tePqeBfkfWwKxtJxAbDSCPNjcCFS/a?=
- =?us-ascii?Q?CYFss1FOJDLrdg1ePBRJwEr9+U/rRDLoeP3x2SEqO/SSOeAlxEsdtUIxjfSF?=
- =?us-ascii?Q?26MUjApbxS1EHXYwfHxP76sxY/nzCIOFumzZdF1VomjOlaJVhD4eDHZDdjAu?=
- =?us-ascii?Q?Ynq5eTlIAVD2D+SNf7UZ7WD3cyhvA/xXChnL7I1a4Y1MhIgKZ652A88nFXbK?=
- =?us-ascii?Q?hxeZMIOuRz9zQ27VPjygZqFENA8YSBaU0jbLY0fI21DfDqsqbZLXjZYQq1G/?=
- =?us-ascii?Q?3cvb5ysG4sBR8O0LDwiYrQ9vV190nvfVZvpusB8a75W3HvTyYGs7iQTFoUsw?=
- =?us-ascii?Q?p3OBPct1dQ/xm/KTsZnI9jMyzBRgFpiVDL6nbHKSjUG2g2caebKf+e/G/Y0h?=
- =?us-ascii?Q?xvkyyYvnpgcG7S4pZslmOnad9Cln3ohGpHDgkuUIPg3XMPDwVWQfTxeWCuFM?=
- =?us-ascii?Q?b59KECFjipc4iMMqE6iq1F2eVKEVp69dy9iswDXjk1Cv3aIY9UHyECqnVy7S?=
- =?us-ascii?Q?Lk9XlJ4l+w0roAv96820Z3cuPQm8LglhUPDqHRuwMQeuUSeDfuNhhBoN2evb?=
- =?us-ascii?Q?7l66YtSRZnLYu1dvphdVh5wiFchIdMjQGQcPlUPWUypPmUVEPEKf1JpuSoh0?=
- =?us-ascii?Q?cTnK78C1MHN/jJoQtNGmOCB4I5WEWVDPku0O?=
+	=?us-ascii?Q?GQG6NSX0YhBqQWAddZ41htnb5cfnIHBsXlEbiYzwQTFH+OWmBxkAmNYUUzyN?=
+ =?us-ascii?Q?cgh2wPMs8Q0tmLdUDcNFxfRONsRHqcrT7CMDQW+HDYm/c5H52zAaIkxRjul5?=
+ =?us-ascii?Q?ys6HdsUdg4tZPkIJ/QG2fxySdAZFjuLy2pIOcmMX65XRq8ZbdSTtkF05D6wc?=
+ =?us-ascii?Q?HqobH+0gJ4KmH78sXt9qYZuiAlc5+6gB1RE4hlCFd2gOp/LdtnMipG4eb5v+?=
+ =?us-ascii?Q?W+0djwxH7UK4KtRU7HXIJw05ig+MV0hB/I4HZaCHEJSHS7AYJLCwGW9Va54f?=
+ =?us-ascii?Q?Nh/+UeODlJMpC3sln4B+1N+WOpZziXtu8D/6Ey2zZesUkmLGJ+0d+tj4cGLG?=
+ =?us-ascii?Q?eur6qn6gcvp0RSZG7cN3EKAax31AyJwPtKHhbWOVLnoZ+HvHlvnwDg1ypvSm?=
+ =?us-ascii?Q?y6e1d/X0vxtE4zCP68V/YTNHYYhBzin0Fw9+QeO95sPFGKu3/3UzlMROE8BU?=
+ =?us-ascii?Q?iZA9n0Nu7FZ4pXF+Iq48t530O5oF8h+tV7brDcDyx5OY87+zKxiwTBNqbu1C?=
+ =?us-ascii?Q?GO5WO7Ubjnhw69gVygCEbYne4+iuxM2K8G4+s0TMOY038z8u3yZ0NYUF9Vow?=
+ =?us-ascii?Q?aKiae1W4fY7vA74waSAHbIj0uJlPI9TjX5apGuL59bRWo0n0sBt7QMgSkPC5?=
+ =?us-ascii?Q?iEkXEJlAI7alKA33AsCjJGaLbsc0JfsISZ7qV5v/t/owlvOvGJechI859a2N?=
+ =?us-ascii?Q?NMXShUiuVU/NKP+5lxV4vOM3RAS4XVCHoQFm5vL+EkvynV5L8ChE84mn3hS4?=
+ =?us-ascii?Q?xbgoxYxOdhZNd6dP5OCABXlUSaGTjj9mWjFOYIExxZbvqWg5kfJUSOcVe+Ay?=
+ =?us-ascii?Q?QsrXeoj8w9ejsNyfJxBcx64HbtDJsze4pmSfv6cmiLPZxmnjD6HwGm7ODNZu?=
+ =?us-ascii?Q?na8pzlMu4ny9SLa3JjQcwhDzcxQ4ONnXDSyeImoZgbdjK0gcRdjsW7+6YREG?=
+ =?us-ascii?Q?ZpN+oxu2fw/TFSx3LvFcOM2nzfOvjSi07ucl5aYY6IS/raKOvvr1Od6yGsYP?=
+ =?us-ascii?Q?hovDsIBiWthjsMCf3LcAEHQU3QZCsPd0Ybh4NYOCn3hWtmrTc+HD8c9xNEm9?=
+ =?us-ascii?Q?yi2iDBAHdVCDoBv73tdV22M2pX1hE2wjepaq5OmF9MKXlwDfpm9Yj5tizBEy?=
+ =?us-ascii?Q?i0FGD85g6BbKkGONkomJNGMlmjqhPdB2Ss+mTz1F0bowTQjIz7+KAJqIu8as?=
+ =?us-ascii?Q?FAYPhdOKmIXkyGstUVDtuNtcZtvruOu0C5wMKzRL4tI6+W6JpPMviTZmgZeu?=
+ =?us-ascii?Q?q9ob2MPaw1OltnQGiODnstCdSipmc9aYzCEmGX2azssTNeFNyyruFSHkz+SD?=
+ =?us-ascii?Q?Fqwp6jBCpBQxd0yjWEMsFQwnEV6+6n6tdF54Rp3730WYQ4u8EOe55iNGMkGw?=
+ =?us-ascii?Q?jmZFs38m2+cyzOgTGgNWuhUREhwLCMguJUAdhOaVUuupQyH0rdCXCMqou+n5?=
+ =?us-ascii?Q?+wptKDnGSj74krC9ZkCnnqMdK8IPzJktxFlEI8R3nr/YzEqaSlHMG0BYRGRg?=
+ =?us-ascii?Q?mRHmJPQZuQhf/OFIb7VpD+//yVkM1Gur+hCo?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TsBdh1l2Ft6hF46moFYTI2rIOz+3uc4eTMG2cmnI24I4hrogxnOAx36OPY8n?=
- =?us-ascii?Q?QK5+CQeO+xJiQTeUXWpxjU+DrGPDo1VjDughANC+uZjgWPS2fGrYHo7rlOCN?=
- =?us-ascii?Q?YYWxL889HEn9O5G+sGGO69wsB3DySiKq8myI9gBykfnWstwHzOK/nJxGu/26?=
- =?us-ascii?Q?7hZEAZnWPZJkr209SOLazxZc+fZjCMJnMw9USDN4ztYyBoaVQU1r3IPObq+j?=
- =?us-ascii?Q?dGxx//w9c78FtIkVDAbVbAILQKq7nw+e8xDhCj4Z4uWEkcLH2E2LT58iPoqM?=
- =?us-ascii?Q?GeK6KgUl+DlmOmDvljoN6WGwvQmdj5vh6AI99Hr58+LnM2CUVGFek4XegkM8?=
- =?us-ascii?Q?lv945ZXJxefFC6JGL7HDtXgI4ZSLoJRjmG4T6hGP6ib3dh7PNVs7XK4/19WR?=
- =?us-ascii?Q?KxIILxbXy8bdJyQHxm7fBjaCH1+iOQ6kA7cCMUwC0i6zweriILucD7QqONKI?=
- =?us-ascii?Q?U6c00T+VmzVS6OATbwbdehqCEYD8BQwjkbYkfBhlnDgM+o5wu5vVM+1tblpy?=
- =?us-ascii?Q?yi3KDb7rVHp+eT730HcPt7TBTuiGR9RjtJ7rpF4AMvk9xcz5A1g6ZI65RrjF?=
- =?us-ascii?Q?lZQsx1FN1KvSEWiwHxUtfncrgLzKm1rC+B9c5mqmg1ZzoyWnyDKY63Y0ebxv?=
- =?us-ascii?Q?9MQEvRzQaMPv00n8lxw41mPvyCS6ZCN+4tlxUYQWGqMqIqvo+1nbAcspr5zm?=
- =?us-ascii?Q?3UHOt5cde3jXmRpIdzS8a54EfGHRm6o3hqDNh5Y/Dm5irv4mv4aLVIWMIv+m?=
- =?us-ascii?Q?4RoXr9BKtId6kofnAGfmVyGsEIrBgj69AvYyU1QICGCx9LQJIXcZH8cBD88M?=
- =?us-ascii?Q?XTGq5fNgGHYogThTvEl+BhAM3G3XxKVQ/fJuNbaKdp+DpmjL278GWTeLvfbk?=
- =?us-ascii?Q?RTNTn+THDim60QeUNGGzh3OeW0YMkW/uLQs2fcnJhCJ1o+H7CEBB5kPRnsjC?=
- =?us-ascii?Q?+Fu9U0w15ScJMfOQPsEwBZpCTLdxDcMfDJdIL/2noitm9kHr/MfDshiBdmaU?=
- =?us-ascii?Q?gvRYZzR2EVVITye6864uETTYtVAGzGxeMsdZNE7cOawfSegJfCoGn/a+3iH5?=
- =?us-ascii?Q?AogNfO8SFE9V8wqnCmyL/nxkB6svaViHbeGZcK9fn978PcVi9TUzwl0Y3UOw?=
- =?us-ascii?Q?1k4GM2Clz26MggSA9V9zcZ6HWIyYcPH9JoToMpwpvP4hkGuINMGiXepFdUuV?=
- =?us-ascii?Q?VQDrEcBebH69nJ0RYblXGwh8o7FqbYDJJsCjq/ObDYZAdeJF4Z0GXsfVI0ts?=
- =?us-ascii?Q?YyGD/+PJ6y4zL5i6xEaFab1n0sZ1Imq7/VwpiLspuvel+s1eqTUnAU0MBPxf?=
- =?us-ascii?Q?ac/NUY4dWyUp3w1Qn2RP/7uGkjICRBvmUowl1A495DwuQHaaFCch4TUe+NKp?=
- =?us-ascii?Q?yJRb1r6Z+GB6p0VvF+FofAFyIHpVQG2xx7yVMuxOo89ePdXCuboLt2AxFApK?=
- =?us-ascii?Q?FV+M5c78L8L4TMbYGALACkEIu/IhuO/NZOH0iOiSoMLvvVZ85JVGZHIlDbch?=
- =?us-ascii?Q?1SQ9Z9Jft5DL7fG54Z3Uw4BX8VysypQ7iB7lbjxJqpXpBBY5nyg+3/T4o7cE?=
- =?us-ascii?Q?vaOwzaMDGM+Gz1z/hR4ve/M+O7hHi4+uXThthQDvM9C73DtXZbEyIM+dkOZn?=
- =?us-ascii?Q?H0JhDiOs3MzVqf5iMOyKEec=3D?=
+	=?us-ascii?Q?ba7Vet4n7+2+brP8KfSVpGXUSRQ3fY8yks41YRLx6snr5AMBO/kCLMmATU9H?=
+ =?us-ascii?Q?HAA71P1t5o9aKoKXxHaO3LjIG3oSrL1+x5NsOf+i3O3MlDQlb0oWNjBHHw6x?=
+ =?us-ascii?Q?RY9tqFRnl8YHIULmCo6gfxQlbXnjXsc0hXmssq09dnDAS/588s6qyqBDRUrm?=
+ =?us-ascii?Q?f/9IkKEpxfnDEqVzjWGQ+IeV+6eiduykiD/h89qOezI1k8MxMApTou4Km4gL?=
+ =?us-ascii?Q?3mPXKd2j/0chgtLJ7iyWwthDaOejXGHFl1Q/1r+WWKR4Gs+5pe1c00Vm9HKT?=
+ =?us-ascii?Q?nLTlYtl7/NJQ8bHPLdP5g/aQwjX+df+We8hD0a2XfZ6AXI8hU5UE2xo6Rfgy?=
+ =?us-ascii?Q?KbGOJMt3OVZii41pkjgtl1+OUTaaZ73xtWnQbM3F96gJu1s+Zgr+PZKSqm6C?=
+ =?us-ascii?Q?n/A3e2BipqBCiC8ZJZplyYcsZNnEtl8ndeEuZpTEtOL6OvI4zt5PSITI1+uf?=
+ =?us-ascii?Q?xsRm4VP3h+xST01lo/Ix1FuDQck6P/wTFxmYmJUlS/aI8jmPrTvkYc2q8uFh?=
+ =?us-ascii?Q?vokdZxFjpE1H6ivHZXQTYfyDfnhEGLnKdkYOUzxSLsM0rqNb5sbk0J598tEM?=
+ =?us-ascii?Q?r8whvDiYIHgffFDmXxDTlcdaVzxMZ7K8MGbOw0TprBWiof4hTsyuUjhvRGXo?=
+ =?us-ascii?Q?OcI6TM9KgbDylavvNbmqmnPhYA7BRbhM/DruiR8c7SqNy1QmeB6hXTTAevyp?=
+ =?us-ascii?Q?HjCauvWq4OUoOKmyE6W1PFNqMfHCb+AJJnkQ1wwNGmtKqw5yDqEnopE7Ez32?=
+ =?us-ascii?Q?HYigG1Ku6s7swJvDT22p3WG27u+YNuLbyzGwgfjso3/GUe3wOCTrl/3Ic9fv?=
+ =?us-ascii?Q?2Kb1EJ/FvnPtHu55InjAVatLFaGWU875g72FBW99a8S7XWLPbMvoc2FnCHN3?=
+ =?us-ascii?Q?pFcCARBD8L3wBsXR0SwOPtSwguUeTDhD2yN6aqhnDcECPLzH8FIfjPwshbN3?=
+ =?us-ascii?Q?SbJzAxJ2T9lYWJqQ7IIBjnx48Pp5b8E+5PTnXQZUaoRSKa00YS3zSUsci/Bu?=
+ =?us-ascii?Q?F9KQIP9gW+hmHn7gGfDRvAkwgW1OmGXc39/VHcs+0VrfKUpBOREiNmPYSat8?=
+ =?us-ascii?Q?gTwvGg4hTPrzNZfMg+jSW1F3U6P203hyCHMgDw2aokuvbcyBf8HD88K6kg5n?=
+ =?us-ascii?Q?5rilhhfJX7gA+NN/PSsTxCiFwzIresZnvaxhM8ajd4Gsy9oXrmxWNJMhPFpr?=
+ =?us-ascii?Q?NVSJqFoe6vzs2A/1nXDMXdZyoMzexeb76HNI3nxIqeHcJPjKsHWxJ6V1AbKD?=
+ =?us-ascii?Q?92epmx+PHjjBnzCK69H0XBJcKLNUtH5IIMALpxQ/YArGZJryUo0Iix154XqY?=
+ =?us-ascii?Q?JlFONih/E41o3sF5wkUdetXah/nTUSZh1A0QrDB1Vc+UEfMiWZTGjpFXREHw?=
+ =?us-ascii?Q?nhBkJzCXDpubClgZohWU7li8D2vmTnWCy9A8/Wr+YWZnLVk0ArAL/Ri/AA1+?=
+ =?us-ascii?Q?iBhwyAAz4c5vaJp+2IGqfBw+DLqSquEc4im8CCnD1VjqAkhR7oK3366oEUl1?=
+ =?us-ascii?Q?JVw6bHSjMdg82emqK/trHmtL09t4kW2CxN8IVRFH0sIjK61puEznLGypG3lv?=
+ =?us-ascii?Q?iVSFpfyhAXHLTF2aEiOrANy9fCKVqXEc1BzyZx+1NSuIl4Bm4jS1Wtdk0UjB?=
+ =?us-ascii?Q?bFkngLwSqPYO8rmtniWjwWY=3D?=
 X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d460f17-d50d-4d53-a9eb-08de0ab039e1
+X-MS-Exchange-CrossTenant-Network-Message-Id: f454ebca-2179-457c-ffeb-08de0ab03a81
 X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 23:28:33.6397
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 23:28:34.7002
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JTF7aZAK1w2EFYAD5c1zV5kfGV/zljoVvwVOIjwxYDa2uL5LNUAIebVasZbaLReF9i+EQgdoCTMdYSKb840v/0SiPQbJ06mWsFr6Vu/nF4U=
+X-MS-Exchange-CrossTenant-UserPrincipalName: q5lxPCPyL+dQccuo/5y2mgAjqbTmQMCnwGO6odKuyCCSSlkzAIZ6iwlm0mchhfIX/42AoeAOT9fcrcgSMutjVOpQVKmjkBrPrUnkVHQyPJk=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7368
 
-The commit fcf8dda8cc48 ("arm64: pageattr: Explicitly bail out when changing
-permissions for vmalloc_huge mappings") made permission update for
-partial range more robust. But the linear mapping permission update
-still assumes update the whole range by iterating from the first page
-all the way to the last page of the area.
+When changing permissions for vmalloc area, VM_ALLOW_HUGE_VMAP area is
+exclueded because kernel can't split the va mapping if it is called on
+partial range.
+It is no longer true if the machines support BBML2_NOABORT after commit
+a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full").
+So we can relax this restriction and update the comments accordingly.
 
-Make it more robust by updating the linear mapping permission from the
-page mapped by start address, and update the number of numpages.
-
-Fixes: fcf8dda8cc48 ("arm64: pageattr: Explicitly bail out when changing permissions for vmalloc_huge mappings")
+Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
 Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 ---
- arch/arm64/mm/pageattr.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/mm/pageattr.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-index 5135f2d66958..c21a2c319028 100644
+index c21a2c319028..b4dcae6273a8 100644
 --- a/arch/arm64/mm/pageattr.c
 +++ b/arch/arm64/mm/pageattr.c
-@@ -148,7 +148,6 @@ static int change_memory_common(unsigned long addr, int numpages,
- 	unsigned long size = PAGE_SIZE * numpages;
- 	unsigned long end = start + size;
- 	struct vm_struct *area;
--	int i;
+@@ -157,13 +157,13 @@ static int change_memory_common(unsigned long addr, int numpages,
  
- 	if (!PAGE_ALIGNED(addr)) {
- 		start &= PAGE_MASK;
-@@ -184,8 +183,9 @@ static int change_memory_common(unsigned long addr, int numpages,
- 	 */
- 	if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
- 			    pgprot_val(clear_mask) == PTE_RDONLY)) {
--		for (i = 0; i < area->nr_pages; i++) {
--			__change_memory_common((u64)page_address(area->pages[i]),
-+		unsigned long idx = (start - (unsigned long)area->addr) >> PAGE_SHIFT;
-+		for (int i = 0; i < numpages; i++) {
-+			__change_memory_common((u64)page_address(area->pages[idx++]),
- 					       PAGE_SIZE, set_mask, clear_mask);
- 		}
- 	}
+ 	/*
+ 	 * Kernel VA mappings are always live, and splitting live section
+-	 * mappings into page mappings may cause TLB conflicts. This means
+-	 * we have to ensure that changing the permission bits of the range
+-	 * we are operating on does not result in such splitting.
++	 * mappings into page mappings may cause TLB conflicts on the machines
++	 * which don't support BBML2_NOABORT.
+ 	 *
+ 	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
+-	 * Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
+-	 * mappings are updated and splitting is never needed.
++	 * Disallow VM_ALLOW_HUGE_VMAP mappings if the systems don't support
++	 * BBML2_NOABORT to guarantee that only page mappings are updated and
++	 * splitting is never needed on those machines.
+ 	 *
+ 	 * So check whether the [addr, addr + size) interval is entirely
+ 	 * covered by precisely one VM area that has the VM_ALLOC flag set.
+@@ -171,7 +171,8 @@ static int change_memory_common(unsigned long addr, int numpages,
+ 	area = find_vm_area((void *)addr);
+ 	if (!area ||
+ 	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
+-	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
++	    !(area->flags & VM_ALLOC) || ((area->flags & VM_ALLOW_HUGE_VMAP) &&
++	    !system_supports_bbml2_noabort()))
+ 		return -EINVAL;
+ 
+ 	if (!numpages)
 -- 
 2.47.0
 
