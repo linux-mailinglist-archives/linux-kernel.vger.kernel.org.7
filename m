@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-850758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A5CBD3B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:53:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EB5BD3ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F313E53F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:45:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58F6E4F3713
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E682A30F81F;
-	Mon, 13 Oct 2025 14:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664AB3101B6;
+	Mon, 13 Oct 2025 14:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="X2lQk69M"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011006.outbound.protection.outlook.com [40.93.194.6])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fVjDbP95"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011018.outbound.protection.outlook.com [52.101.62.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA1030F531
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D13F30FF26
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366188; cv=fail; b=XGfjgJJHYTlHl73HBpvArUxbw3yIg14038Ww17fKm7JwUHp/rbpcK3DkwmGDSMzCfWavV9TtzVLkJlVBjRCaRGBOmmr4XNgZbO1oJV4hSj4cxfnI9pEVLH/Bioc248sjldpNAwbqWV7novsLxwmO8zixtup8Kts6vXSlxCUUfm4=
+	t=1760366195; cv=fail; b=pdxHyBbSiFjgXZ74NZRJwVaFYl+AqF0QS3g0Ywgk1uU5SRFQNl8rn+UdO5cqU+mvqjKa6o9Z+a+GSrSbJ5oWl9OHWYjsKMhO62ALnHmyhZUgoS75PoW/Q+ZO7UkAsN2O+87+M6WVJ8jmsYqH3T23Qi56y3sT5sTu0onVXig1Swk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366188; c=relaxed/simple;
-	bh=LYjlcEx6gfR7xNSOmIH+fst5jmPLaombXwmmQrSytnQ=;
+	s=arc-20240116; t=1760366195; c=relaxed/simple;
+	bh=bp1jWWzqekeFOvLFqOMlW7VC4XuPQ5Xw/ZolnUe8voQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G0XyQ1FmNfu98R70eRITJc7tXHkLVIpOOYwiu076TaOYrAoRt73sy8B3S0dBiIlymcwkhTyN+SG+CkHJs0BwB6Qm4OTwgsZXJVSyZZPI8YXuoKNYFBA/XbEc+k4y/+cTSqiThW+ctVGWbU6XNDscWWCPWsPZE4ImKPAJKQX4ReQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=X2lQk69M; arc=fail smtp.client-ip=40.93.194.6
+	 MIME-Version:Content-Type; b=pRhCNfSzRMkpzbSqS/2Jb2T7jyxm03RiAt+AnkJzp26h5gtlpNcxsMuJzoHyCV4fmqpI0LYMJQ+VTO1Eqi+dwUyw/RkpV4RU1dVFI+obC04BkUUga5oKO05rLCTuPvaM4f/wbJqiIFoUZ0m/wvwQb/8KjSDaM6nc+bVyKG8jIAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fVjDbP95; arc=fail smtp.client-ip=52.101.62.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f0Q917du+AT/CxqxlFiivkJRzemqogKpbigjtvjrtvcCaJAF9Ptox6qp+2DHjXHqyG8IATRA3A219/IqB+SOGXaY7pWQxIE8nfY7xhZ/eCgRWKS9D/GKTW51bWecbQrQugMS9k4eEkmP5HSZESGDOddIjDJHicpZ0CY49Qmi6YzuiEP/Tym3dmK6EbM1li+IuaZ3urUCku2Yj8ieTfqaCod3PT2NdbcdVk2CJTp95jih1WO2wI8ZAI9gEtznBPQsePrs4bhntMBk8k7V+iKIebQrZwoN00Fi+3Uv8KgRnPnSpfV/wOzHfwJt986+cz74nxn84Lp5TTR8v20dqjPohA==
+ b=q8F88LXX3Ss1Wfe/sp9KmsevPO+fYgLffgnCxFoWSrrQZd4vLEffPJU2VrvvSKZ71Pr/c2/0QQaV9tsdwOCh63uQ9Gf1nAEjL590coBsV5K23Wo+MTRAdJnS8c7ozBJ1sQoWCGRe0IhJRc/X5AJo0hiC50pIFrnPJN4txfHNEO6T7b8uFUctTM0UkS1pOtva/FaguMzsP5wKOFuHNVudlff+S/qGZSD9GxPz2lVT/VI4JqsYo59mJJznC2F2MK4zIyZMneWFKpNFmXmrlZof4Lasl5QyTUSuDkG6Ehf3vNXRnS0uXYWl+FtOZPVzlIAznI5zQvPOGXz78yVpU8qcUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8WsfOUDfRx9OtswORNYwTOSqDYblb+B9kcCdPHH8seA=;
- b=jbByQfX/pozoP6ZADPsMPs9fDdz8myu5amE6ekuYo2QzeAAF2YqeoRwCA//IYuf1h+uMQopcws5cVsuMl9mEeLDKfcjMaXnnoqsvgvmXMpCwdlTDztiuCvQwXxnE+MjY0Xk/Mfkreh4P4rcdSsUxXTtLiBRdX5dhTxmiHhiMRo7IQNRRg0OeUhNmKkjHP6YhhAjCaTp6nEQshioX2XDueQFlZPy6fWMuyvJOoL33DHVL+3EviYnRZ9rS56TtUX5PCjCpx8pf3UjhSwNI9V7yEoxub4w6ubvxq+QDJRfxAgNUm+LQEL7vVZXvdCrat5yvfyU7jXdx4krWA3DXDoZKdg==
+ bh=y59zmtEElqgtRWgbhg08llZm41Yf4sLC+h5XKoxy+TU=;
+ b=hoxT7uch6qqnHFV+Op/1OTDV4rYi2bk5VqNscJEMe6K9zY2jK/OhdEr4ApTAbcb+uHYkxY/J6QS5g49FB/+qDgJWh0lnvJ+rdyzMuwRZCSvrStk7FfkCLzM7g7xiSETxLfdWOYPFVrkh127z3CEqH5JeFmNQvxT1bFhViZwaWpZsx8sbQrT8mdodja5M2apGcPdT32KObLHd13r2lZD+T/pqMNSRRgBVpVorY/dVK/GsXCNqGNignR/qIQM77TfMuSPAGyCu/qRa9dhOFerGxnX7VVQqgvJdKA5lWkn9tAMprhtmtoPACIuJbuPVR3YR9ugFeWXBwhx4kNVR5mKvdg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8WsfOUDfRx9OtswORNYwTOSqDYblb+B9kcCdPHH8seA=;
- b=X2lQk69MJ/AYAR7w+P11K8Sk8Bq1V9pRzfjXSfXgJoT6lPg1rh2YXiHFRfzukCM46OGK7/30mmP1CB3z3fVL8LT7j9kI2O7mG/dqV/kqsawdAWw97oEmRQwAdoMUJYgZZPQKpnwA+rpJh5FjepKpz6aZF/nzieU4nXV7AKc4IQk=
-Received: from MW4PR04CA0088.namprd04.prod.outlook.com (2603:10b6:303:6b::33)
- by DM4PR12MB5938.namprd12.prod.outlook.com (2603:10b6:8:69::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.13; Mon, 13 Oct 2025 14:36:23 +0000
-Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
- (2603:10b6:303:6b:cafe::66) by MW4PR04CA0088.outlook.office365.com
- (2603:10b6:303:6b::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.11 via Frontend Transport; Mon,
+ bh=y59zmtEElqgtRWgbhg08llZm41Yf4sLC+h5XKoxy+TU=;
+ b=fVjDbP95h7zOlXuS0PDubut/PuNp85kIH8UqtQs4Ktwzeuncf1JVN/SKhY1Bs3l71dewZqY45W/EWMJBIUCYOmCstzQ9QHwWWbCqNkU+yOfBwbP5kBbr0Ce6t8NWZelEdWQet5In9XJO49R5rQusP0SOl7r3RxUsa1XNGNlaxFE=
+Received: from BYAPR07CA0070.namprd07.prod.outlook.com (2603:10b6:a03:60::47)
+ by LV8PR12MB9156.namprd12.prod.outlook.com (2603:10b6:408:181::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 14:36:24 +0000
+Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
+ (2603:10b6:a03:60:cafe::20) by BYAPR07CA0070.outlook.office365.com
+ (2603:10b6:a03:60::47) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Mon,
  13 Oct 2025 14:36:22 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -61,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:36:22 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:56 -0700
+ 2025 07:35:57 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +77,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 51/56] cpu: Parse string of mitigation options
-Date: Mon, 13 Oct 2025 09:34:39 -0500
-Message-ID: <20251013143444.3999-52-david.kaplan@amd.com>
+Subject: [RFC PATCH 52/56] x86/bugs: Support parsing mitigation options
+Date: Mon, 13 Oct 2025 09:34:40 -0500
+Message-ID: <20251013143444.3999-53-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -94,120 +95,143 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|DM4PR12MB5938:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce563c38-8525-4150-f8e4-08de0a65e198
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|LV8PR12MB9156:EE_
+X-MS-Office365-Filtering-Correlation-Id: 248ec9a1-0f65-4ef7-eee4-08de0a65e1b6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cTmblws5IzwsfpQSkQCiNapEBz1oRH0qJ5l0XGfooLzoZ/7eVMpSQPAXXYwP?=
- =?us-ascii?Q?mdVnb/9yC+VBtO+OeoN7uQ/2eLPi+KUrsr1Ckm5jvON6A7ConV5aL0YV15Ly?=
- =?us-ascii?Q?yYj5z0nDhLf2AyHhOofWdLFAtk+gXaR7C/f4VA8QgrlO0zDxhqK8W9q1mKVO?=
- =?us-ascii?Q?B8CASjkSTvfkncdpae917I8BZPkBz8Wcz3tvJKOum+8dVXjMB8n9cEhBhohr?=
- =?us-ascii?Q?BoRdlUUsWm8N18UbYiEjqqNTMay/nMJv8Fpp3Hb4RcB0e3MU72OcG/za7Ikg?=
- =?us-ascii?Q?2qnUCQVI3kc+7pv3pwKK2kgCdJQfL7fJ65y7kzcInISSYXnlKoZ78JfbY0W6?=
- =?us-ascii?Q?7yb1Kl0x9JVEFtKLztoxwn3V6Zy/e6YFeZsIYewKFZ9H3eg0myhk//PkJfD/?=
- =?us-ascii?Q?jeLUGWSLrlZ8F9j8pK4pwgbnVI3UWiwFuYqXCGHMcMKZoB/pqA8Jer+DxtfG?=
- =?us-ascii?Q?xUl+aqt8KNx/6n92iXN+pXBMN7h38FkgNYGQREe/Ve3RlavHsTB4PC1ingFQ?=
- =?us-ascii?Q?BAovfzjcaySCzlddx8Zt1BofKgbZXMiljuAxrylKYdqRltkUxmZTBmsK4cFv?=
- =?us-ascii?Q?aLgiAskkI5xB8hD/RzRMNFAb8O7LuADJg4O8YjjanyF0BMSEDQTRJRwJgkiQ?=
- =?us-ascii?Q?6AyC6d9dyMC7Tleucvzs6Pv4VufeT8TfxNE/XGAKRO6z5Vm7zD2lRl0UmDcE?=
- =?us-ascii?Q?S9EwFCKGNpqrJ49mo+yV22+C1jOoiCySG37dQi2cf1Ev17g3qBtRskhp97lW?=
- =?us-ascii?Q?IhLlqEHn5RXlCuuMoa8kPDI36G/i/0KhRfx9qMpYt9s4CTSZeVo16jQCL0Yf?=
- =?us-ascii?Q?6I8g8HiTN4fxzd6ctr8Q/2A01ki/eeiJLu1qwGBmJGPpnFMwFk1oRCdYJERD?=
- =?us-ascii?Q?RR+XX71uYGqNQVE1Itld0GE/e+tSUz3ZyIaLOruNrpjwDa+aZ7L1pSPyWUhk?=
- =?us-ascii?Q?nGTLotcZS6P6q3SCE+rDBNdwnMSg53aPhlmwxAFH9P6PFPur/zjM6am1uihP?=
- =?us-ascii?Q?y7yozwu+H65WSvfPtxoLXksvEdtG/eY2ctoc/7w+UduQ0k0LlQAyKatkNPXe?=
- =?us-ascii?Q?X2f9WfmWgpH+q0CO3aEwMQ8s6bjNS4sZHjRAdBa8KDobe2y2l6tQWfZhfS0H?=
- =?us-ascii?Q?u/vMufq+1OxzZ+Q5tuE9uJk+ZxXdUrCxEv44Kbnp2Ubc7WtKzDGJ2Yx09n3C?=
- =?us-ascii?Q?3f7olSa6sskJQzraVUM7h8NQzraxZU9HYGZatLBz4x0Sj9guq8/A+toa1kla?=
- =?us-ascii?Q?6UYpeW8AfjJd9Rn2Fddaf2LPvdjHmIATinPf+U/UKINWbY2QfmsEmILkYxZ8?=
- =?us-ascii?Q?fF86u7pqgDHWTVGIFVs9HIFSuSfo9ArDUb6Zsp/1YcIFj2gpYkN18ST19ZrS?=
- =?us-ascii?Q?ZX6rHUmnfIQYqBBw8CD1ACQPCZEGPmKfam9XG9Zgv1OuxmgXK5ZtZTuxOpBK?=
- =?us-ascii?Q?3xsviPxVyJelTAGZ/PzB0BXzqL//TquVMIcSJkUNxQEUOepvjp2nqhUfInWD?=
- =?us-ascii?Q?lgIBFG8+Y2o8jG6G7yfsmj3PubcCQ2e/T/96bWKCIyGlqgMSRNrPy6/8PGCs?=
- =?us-ascii?Q?HlTp4F44FBv0oBR6RN8=3D?=
+	=?us-ascii?Q?i7MNJe50c0nOMY4fvakGCGXuyqc6JTF4RnYvHQS54dUECIod0i62M9FK6ewN?=
+ =?us-ascii?Q?aO3E/I9hGq4/rMrU+7YcLHwM7DueZVcwP/LwGk0Ezewf/GUREjRDB06eTE2J?=
+ =?us-ascii?Q?oOokxyMbaWiopWlQKFhHuiSG7/z+KrKKnwgZA/phV/KoWP7Q2rXgIX8YAs6P?=
+ =?us-ascii?Q?Sp0sgSlT/iOu8lR39nAntLX69WfhBB09kNqpdmhwmT4/s0fX2acdbN1F790V?=
+ =?us-ascii?Q?Qrz80DBYdHnNBQcOIn9Chhro055UK9iZX2TNGHIqR6ieGBXnIy8N8QX9+6MN?=
+ =?us-ascii?Q?QEA4w/ydlyXaVGhTZPbHMkUOqHl4cNZkcyfRxdvca1CN7dPBcIQvxizkZRgu?=
+ =?us-ascii?Q?tINWlyUAXo+pZfp6pm4DNEfUBevBKqpNoPIaMeWK+6b3MVcW16pBJzC7gpTa?=
+ =?us-ascii?Q?JWpOZin/C1dt9beTteUqwWayeArEPOW5V7myJ5IxT7qs1sVvsDhJ4iDibFKO?=
+ =?us-ascii?Q?BhuEgamPO7yVFw8IMV90MKtLFxXe4VVKxU7e9VT5mfyAgSKaTgtJcdw26itT?=
+ =?us-ascii?Q?uPYLpKdwVolhXZQnZ6XBpEyZzo1U07RfSIz2R8Xejk0h46ktQTIEiDTjW1ZQ?=
+ =?us-ascii?Q?bOtXiDzwCSfuGgTBRVwK018/og7GpGkWaZRl/b8bBMXf8FX/CvYMNBzsWccb?=
+ =?us-ascii?Q?szaYppXnEU3lBCRh5aposfidaxI2iky45dL3naMfmNzBVGgVBAKgiFNRo/iV?=
+ =?us-ascii?Q?HFoUqlt5zAeGtIZWCOQ4mVg1NkJEkUWrfA8MrA9sn+ATDMAZZ1CoCJ6WAVGQ?=
+ =?us-ascii?Q?NfJLD79wUFwAIW9vgU25jjQX4dSMOXYW0VPL68G1wEXQumN4/f7JkdKYsSSf?=
+ =?us-ascii?Q?q4h9n8RID87ZqEjhBcQHiYuGsgk9RyW1FaRj+G9l3R4HMnnWTo5S7PJyyBK2?=
+ =?us-ascii?Q?tYWUAigpe+6dhAUTLjSBSD7TfoArZQvmOwiO37BUYRfA39h38nCjbJ7fGlZG?=
+ =?us-ascii?Q?hc2KMN+kzQfkskyDO0H4GoYv3kGeoA6WBfkaoTr6OFXQdTAWmKk14ywKUKZv?=
+ =?us-ascii?Q?jDsk/YBsupwODMstxUARLaR7wOtvkwN9AQYGjIE1g7k3FIFcKaagCspphCMe?=
+ =?us-ascii?Q?gN4jJj8pvM7YLbpQDkhZFRjfuCFsWiIzfdjvTRGFcz6cHlOak1DRpPtKrYoR?=
+ =?us-ascii?Q?xNitmAZDCzQ4DPLNsaVW8iND7Ul1h+wTf52BqsHA1+BkaRpLHodi6rs1bsyk?=
+ =?us-ascii?Q?mNCyszuJiUZ9NcT1+UDH2tika6qUYvt8HBUgJVoOCbIuJ/dAdOrW0/VTlJgh?=
+ =?us-ascii?Q?ftpogHmSiHJxRyCRC+Z++iXrH+TSLk57mh3j3Z/l6TWNma26Rj9IJLrvSFSS?=
+ =?us-ascii?Q?r/J/oerTD/hUxKf6wv8borwrHyxmCbVk7uC4YPJ/OJK0PQxcv39DUGl30z9Y?=
+ =?us-ascii?Q?Q54B6lR8lwQLcIt4NP1zQUBFcD/ttsTwVPbvUnC87aiZOfdnvrumsAgRdtCA?=
+ =?us-ascii?Q?1UB1t/exoK9cQpfHRqBiUU+wpx9omUMrCZpjr8eb7HiI0T23K0BK+L2Z3Pxt?=
+ =?us-ascii?Q?gW0WQmBlOyJnLZ979LdYC4VgBJEdQOQEdmFPJ5neffuHXmMBrJYy7fLVeJXK?=
+ =?us-ascii?Q?e81N6x9lyNWtkdLxEnM=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:22.4660
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:22.6622
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce563c38-8525-4150-f8e4-08de0a65e198
+X-MS-Exchange-CrossTenant-Network-Message-Id: 248ec9a1-0f65-4ef7-eee4-08de0a65e1b6
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E5.namprd02.prod.outlook.com
+	MWH0EPF000989E9.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5938
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9156
 
-Support runtime parsing of a cmdline-like string of mitigation options.
-The global 'mitigations' parameter is processed in generic code and all
-other parsing is done via the arch-specific function.
+Add arch-specific function for determining if an option is related to a
+mitigation and parsing it.  These will be used for parsing a string of
+options for re-evaluating cpu mitigations.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- include/linux/cpu.h |  4 ++++
- kernel/cpu.c        | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ arch/x86/include/asm/bugs.h |  2 ++
+ arch/x86/kernel/cpu/bugs.c  | 56 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+)
 
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 3da629a76a49..6f69344465f1 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -210,6 +210,10 @@ enum smt_mitigations {
- 
- void cpu_reset_mitigations(void);
+diff --git a/arch/x86/include/asm/bugs.h b/arch/x86/include/asm/bugs.h
+index 2e1a7d282e51..1e142a676335 100644
+--- a/arch/x86/include/asm/bugs.h
++++ b/arch/x86/include/asm/bugs.h
+@@ -13,5 +13,7 @@ static inline int ppro_with_ram_bug(void) { return 0; }
+ extern void cpu_bugs_smt_update(void);
  void arch_cpu_reset_mitigations(void);
-+bool cpu_is_mitigation_opt(char *param);
+ void cpu_bugs_update_speculation_msrs(void);
 +bool arch_is_mitigation_opt(char *param);
-+int cpu_parse_mitigation_options(const char *str);
 +int arch_parse_mitigation_opt(char *param, char *val);
  
- #ifdef CONFIG_CPU_MITIGATIONS
- extern bool cpu_mitigations_off(void);
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 33289405af30..942a200398c9 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -3343,4 +3343,36 @@ void cpu_reset_mitigations(void)
- 	attack_vectors[CPU_MITIGATE_GUEST_GUEST] = IS_ENABLED(CONFIG_KVM);
- 	arch_cpu_reset_mitigations();
+ #endif /* _ASM_X86_BUGS_H */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 2f82261d033d..26ceb42e0cfb 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -3991,6 +3991,62 @@ void __warn_thunk(void)
  }
+ 
+ #ifdef CONFIG_DYNAMIC_MITIGATIONS
++struct mitigation_info {
++	char *param;
++	int (*parse)(char *str);
++};
 +
-+int __weak arch_parse_mitigation_opt(char *param, char *val) { return 0; }
-+bool __weak arch_is_mitigation_opt(char *param) { return false; }
++static struct mitigation_info mitigation_parsers[] = {
++	{"mds", mds_cmdline},
++	{"tsx_async_abort", tsx_async_abort_parse_cmdline},
++	{"mmio_stale_data", mmio_stale_data_parse_cmdline},
++	{"reg_file_data_sampling", rfds_parse_cmdline},
++	{"srbds", srbds_parse_cmdline},
++	{"gather_data_sampling", gds_parse_cmdline},
++	{"nospectre_v1", nospectre_v1_cmdline},
++	{"retbleed", retbleed_parse_cmdline},
++	{"indirect_target_selection", its_parse_cmdline},
++	{"spectre_v2_user", spectre_v2_user_parse_cmdline},
++	{"nospectre_v2", nospectre_v2_parse_cmdline},
++	{"spectre_v2", spectre_v2_parse_cmdline},
++	{"spectre_bhi", spectre_bhi_parse_cmdline},
++	{"nospec_store_bypass_disable", nossb_parse_cmdline},
++	{"spec_store_bypass_disable", ssb_parse_cmdline},
++	{"l1tf", l1tf_cmdline},
++	{"spec_rstack_overflow", srso_parse_cmdline},
++	{"tsa", tsa_parse_cmdline},
++	{"vmscape", vmscape_parse_cmdline}
++};
 +
-+bool cpu_is_mitigation_opt(char *param)
++static struct mitigation_info *get_mitigation_info(char *param)
 +{
-+	if (parameq(param, "mitigations"))
-+		return true;
-+	else
-+		return arch_is_mitigation_opt(param);
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(mitigation_parsers); i++) {
++		if (parameq(param, mitigation_parsers[i].param))
++			return &mitigation_parsers[i];
++	}
++
++	return NULL;
 +}
 +
-+static int __cpu_parse_mitigation_options(char *param, char *val,
-+		const char *unused, void *arg)
++bool arch_is_mitigation_opt(char *param)
 +{
-+	if (parameq(param, "mitigations"))
-+		return mitigations_parse_cmdline(val);
-+	else
-+		return arch_parse_mitigation_opt(param, val);
++	return get_mitigation_info(param);
 +}
 +
-+int cpu_parse_mitigation_options(const char *str)
++int arch_parse_mitigation_opt(char *param, char *val)
 +{
-+	char *tmpstr;
++	struct mitigation_info *info = get_mitigation_info(param);
 +
-+	/* Copy the provided string because parse_args will mangle it. */
-+	tmpstr = kstrdup(str, GFP_KERNEL);
-+	parse_args("dynamic mitigations", tmpstr, NULL, 0, 0, 0, NULL,
-+			__cpu_parse_mitigation_options);
-+	kfree(tmpstr);
-+	return 0;
++	if (!info) {
++		pr_warn("Ignoring non-mitigation option %s\n", param);
++		return 0;
++	}
++
++	return info->parse(val);
 +}
- #endif
++
+ void arch_cpu_reset_mitigations(void)
+ {
+ 	spectre_v1_reset_mitigation();
 -- 
 2.34.1
 
