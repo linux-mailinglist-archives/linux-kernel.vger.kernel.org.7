@@ -1,98 +1,91 @@
-Return-Path: <linux-kernel+bounces-851083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95707BD57F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A5CBD57FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E470A3E6EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C3E3A4749
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749AC2C08B0;
-	Mon, 13 Oct 2025 17:17:23 +0000 (UTC)
-Received: from bkemail.birger-koblitz.de (bkemail.birger-koblitz.de [23.88.97.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798F62EBDF9;
+	Mon, 13 Oct 2025 17:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlpwsaby"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D1A35965;
-	Mon, 13 Oct 2025 17:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.97.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47B5298991;
+	Mon, 13 Oct 2025 17:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760375843; cv=none; b=sPpNnLrKZECK+gzLtYbM8cDTxCObYmcwBgfnzxNQUTjFnY66X0d0i1GzDp2upXL/mNVrL9qHsT+EBpLiJ9BhnEafukU9Clcs7oP7pHiQrnNTAofATWZd94tTCE6nicLm3xanEvvFSIH2TrIgZTZac0D7we/YIflqu4Dm4lJvr+M=
+	t=1760376010; cv=none; b=teq8WUTWJvo9KxuDvIqzFFFJ8FvA9Bl6uvFzyAHoMzfjB76HeF5SHI2/Mfz/X/u4nqYbn/cxrWDr5/tFzMISYxFbk7dmy3FQJJuTsZ6BlG1KVBvR9IN3itTFRnORYsR7Nn2Auk5/8PQI3SzPZs7ZwYRinUmeYB+tnSDvC+/0LTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760375843; c=relaxed/simple;
-	bh=fcND229VHRDota8cK8z5FL5e4ujtwhOSk4MZxJErcQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFilvUn++b09+396sD97svDGzF8dseyDq31tCNaQifhzTpJmctkBbwQmjnTCqKTSQyP0JizDBzJg3bu9BAuttcWRaKiZGhvS6dh224UbYxCVCRTCxXQKSZm9XV0q1YkP9o8rTi3wDWKjTp6UsS1JnzkV2YFkQPDkcKvjoZYiAqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de; spf=pass smtp.mailfrom=birger-koblitz.de; arc=none smtp.client-ip=23.88.97.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birger-koblitz.de
-Received: by bkemail.birger-koblitz.de (Postfix, from userid 109)
-	id 85DA648532; Mon, 13 Oct 2025 17:17:19 +0000 (UTC)
-X-Spam-Level: 
-Received: from [IPV6:2a00:6020:47a3:e800:94d3:d213:724a:4e07] (unknown [IPv6:2a00:6020:47a3:e800:94d3:d213:724a:4e07])
-	by bkemail.birger-koblitz.de (Postfix) with ESMTPSA id 87BC3484CE;
-	Mon, 13 Oct 2025 17:17:18 +0000 (UTC)
-Message-ID: <70d926a1-e118-43d9-8715-70feebc214a5@birger-koblitz.de>
-Date: Mon, 13 Oct 2025 19:17:18 +0200
+	s=arc-20240116; t=1760376010; c=relaxed/simple;
+	bh=zavMlTcbgZfky2yOOnYd0KpinLJb3+M4w6IdqSl67Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tecaUAFm2AqIfqE8Sa6AZRJkXyOwDj+AyiRwQmcDZTbV6YKRS8TywVRIGbuueWCHS05rSlIOkxu+vJCF5e2nOhwAZr+drNKkUTse9t+hbcJB6+Pxj4BK+l2npfjL+pcL5LQGy0IIxETfJ2Ef9VkOIk+j/a6D/v+fjfA3pSCFeUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlpwsaby; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE9DC4CEE7;
+	Mon, 13 Oct 2025 17:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760376009;
+	bh=zavMlTcbgZfky2yOOnYd0KpinLJb3+M4w6IdqSl67Zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dlpwsaby5AyGWjzYnk4+43yGdMmkN7TdUiUdD3ZkHDDpsyo/ggdGjrrsVs80Nww5B
+	 LD6m8K42jLnN6ycPAMWB5SDLE+O80MWp+iadbhx8eR0/Baw8LLclu1N+NblmtQ6uVQ
+	 E8eoI1lv3kE/rO6582XG+9OjQc+/LGegQz7R177/XZeRscL3VBmdu1/h16qnNTzvp8
+	 74LcfdAbVvjxWFw+oQFDENXLGSn2+yU/6BnlBkRITHHE8xzlcQ42UPwiBBYEG4i5ln
+	 YIBC45FiSRRctIJ3K3/+vGe4VitEDkQ6BLrAE7xf99rFxwwxJWf6G0Tag9mGzgpOki
+	 apStSwOQg6XvQ==
+Date: Mon, 13 Oct 2025 07:20:08 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	mingo@kernel.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: Re: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
+Message-ID: <aO00yNQozDw6N6jS@slm.duckdns.org>
+References: <20251006104652.630431579@infradead.org>
+ <20251006105453.648473106@infradead.org>
+ <CAKfTPtCC3QF5DBn0u2zpYgaCWcoP2nXcvyKMf-aGomoH08NPbA@mail.gmail.com>
+ <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
+ <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
+ <aObK2MfxPyFcovwr@slm.duckdns.org>
+ <CAKfTPtApJuw=Ad8aX=p3VLvMojyoxVBVRbMG80ADXR-NVL0PTw@mail.gmail.com>
+ <20251013110449.GJ4067720@noisy.programming.kicks-ass.net>
+ <20251013110911.GF4068168@noisy.programming.kicks-ass.net>
+ <CAKfTPtDGsS-+DZEemg6vqbQVV5Xds9TNVnOAOvyeNsw0Kn3Mzw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] ixgbe: Add 10G-BX support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251013-10gbx-v1-1-ab9896af3d58@birger-koblitz.de>
- <b5dd3a3e-2420-4c7c-b690-3799fac14623@lunn.ch>
-From: Birger Koblitz <mail@birger-koblitz.de>
-Content-Language: en-US
-In-Reply-To: <b5dd3a3e-2420-4c7c-b690-3799fac14623@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDGsS-+DZEemg6vqbQVV5Xds9TNVnOAOvyeNsw0Kn3Mzw@mail.gmail.com>
 
-On 13/10/2025 6:31 pm, Andrew Lunn wrote:
->> @@ -1678,6 +1679,26 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
->>   			else
->>   				hw->phy.sfp_type =
->>   					ixgbe_sfp_type_1g_bx_core1;
->> +		/* Support Ethernet 10G-BX, checking the Bit Rate
->> +		 * Nominal Value as per SFF-8472 to be 12.5 Gb/s (67h) and
->> +		 * Single Mode fibre with at least 1km link length
->> +		 */
->> +		} else if ((!comp_codes_10g) && (bitrate_nominal == 0x67) &&
->> +			   (!(cable_tech & IXGBE_SFF_DA_PASSIVE_CABLE)) &&
->> +			   (!(cable_tech & IXGBE_SFF_DA_ACTIVE_CABLE))) {
->> +			status = hw->phy.ops.read_i2c_eeprom(hw,
->> +					    IXGBE_SFF_SM_LENGTH,
->> +					    &sm_length);
+On Mon, Oct 13, 2025 at 03:06:33PM +0200, Vincent Guittot wrote:
+...
+> > And then we have next_active_class() skip fair_sched_class entirely when
+> > scx_switch_all().
 > 
-> It seems like byte 15, Length (SMF), "Link length supported for single
-> mode fiber, units of 100 m" should be checked here. A 255 * 100m would
-> be more than 1Km, the condition you say in the comment.
-> 
-> 	Andrew
+> Ah yes you're right. fair is not called in case of scx_switched_all()
 
-Bytes 14 and 15 refer to the same information, just in different units. 
-Byte 14 is the SM link length in km, byte 15 the same in 100m units. BX 
-offers a link length of at least 1km, up to at least 40km, which would 
-overflow to 255 in byte 15. In theory one could make a consistency check 
-between bytes 14 and 15 by dividing byte 15 by 10 and comparing the 
-result with byte 14, but in terms of identifying link lengths of >=1km, 
-checking byte 14 is probably enough, in particular as rounding of byte 
-14 could be inconsistently done, making the consistency check difficult. 
-One could also check for byte 14 to be 0 and byte 15 to be < 10 to 
-identify SM links <1km, but I do not believe such BX modules exist and 
-again, there would be the issue of rounding for link lengths >=500m.
+Yeah, when siwtch_all this isn't an issue at all. In partial mode, the extra
+new idle may be noticeable but I don't think many people are using partial
+mode, so we can worry about it when it becomes a problem.
 
-Birger
+Thanks.
+
+-- 
+tejun
 
