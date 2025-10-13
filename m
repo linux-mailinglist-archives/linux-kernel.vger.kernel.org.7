@@ -1,171 +1,188 @@
-Return-Path: <linux-kernel+bounces-850978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F3BBD54E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:59:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF34BD4E43
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05415854CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F401318A214A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426053128C1;
-	Mon, 13 Oct 2025 15:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D309930BBA4;
+	Mon, 13 Oct 2025 16:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UGZq/Zcl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6azost/n"
+Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAD230FF20
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B5F1EDA2B
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370914; cv=none; b=YgM8nt7CL4iR/N5rRtq25D9SHl4yfx2IQjeCgVezqPYgs8+ADi6zbtqAOaxM2kx0F/OJYe3dbHSAJi5/Ki9ISt81w64hFXDmzoVXKH9D0iihkohxTp57g9QhewoK4vwwaZf8OpnWQpsamtbWorcN1oUDQ8nDGlG5bhk8NnPYgsU=
+	t=1760371498; cv=none; b=QXJNcJTmwTApiIfIQdUv+gVvwDdd1FomO1bua6r7ZP3uSisEcdOWx1PBfCytxoDDOzBY4g1gLext01XKnlsTzHW6cdDGWmu+Kq14EJYuG152Eb+IlxRgQRy/BjHX8X6uq1cxliJ5zxO5/p2Hac+zfe/Mig8MCt5BmuwAKO5ER20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370914; c=relaxed/simple;
-	bh=SR16SDEApWSuMuV78M5goXrZEkHtPoydA3cpBeRk3pk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O2bE7f6wE0PF4kJ5NjLQd6PGYfIYdBz/oYcwosRiZNktyK6wzQSA2ypGkNJ4hB6uePodV5/u5wUwEL02t0tkQu33emX/lo2vKfjpCZrRYwa9wAS3yx4k+UP28NDFX3HvolCvZz1dFTLsTuUuE50rO2rX6RNW4bkAh9EhLHolTVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UGZq/Zcl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760370912;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GcmkubQ76k3OEo3+5mJ3yaxqP/LkJrk4TvFyQj+rU4A=;
-	b=UGZq/Zcl/3tc2EjdThjzvSCU5wvvkeqZKn7QRkW2C1svlsKwoRS/1453gO7RyC6fzMtxcA
-	kNKjJ1Pk1McMjPh098HnZnm5lsxXtBpqdiZfcleW74wMHsSE2g07E9SlnWlwc7crBtt29W
-	bfwaHVKMli2i0xsz3EV0WDqkmp5vWy4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-U3XbwU-2O6uDqALszE9nSA-1; Mon,
- 13 Oct 2025 11:55:06 -0400
-X-MC-Unique: U3XbwU-2O6uDqALszE9nSA-1
-X-Mimecast-MFC-AGG-ID: U3XbwU-2O6uDqALszE9nSA_1760370901
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 440AF1954105;
-	Mon, 13 Oct 2025 15:55:00 +0000 (UTC)
-Received: from chopper.lan (unknown [10.22.81.1])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 716383000386;
-	Mon, 13 Oct 2025 15:54:57 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev (open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT)
-Subject: [PATCH v13 17/17] locking: Switch to _irq_{disable,enable}() variants in cleanup guards
-Date: Mon, 13 Oct 2025 11:48:19 -0400
-Message-ID: <20251013155205.2004838-18-lyude@redhat.com>
-In-Reply-To: <20251013155205.2004838-1-lyude@redhat.com>
-References: <20251013155205.2004838-1-lyude@redhat.com>
+	s=arc-20240116; t=1760371498; c=relaxed/simple;
+	bh=PALwSjb64mTWnRNMcWLvj6UyYsI8cIclikP+/g1w6VI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=peBvSma84tR5pBsIHz6kNG2yyc7QXaKqM0ezupyhF/j1NPZwvENv2uGgzDG/WDUK37tFan5jAcpNTKdkEzTQ297bLqDtsoVqtHDRRQPBO0JkSKlOyV1yQ1YnicrRWii9VCjDj41LDe6HA2HXYJYmo6PeIBCgwT6kvzG7ENCU1qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6azost/n; arc=none smtp.client-ip=119.8.177.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=BeAFLN0HOs+5tCV60lxEz2c6X5B0Jjgl2YbcdH5SmlI=;
+	b=6azost/neUBFyasolyvueOW3ezr/HVuKQSWVJC5dlpp1Rwki1y/gC+AGnVm+QICpAHEJnEjXN
+	n6PqowqVmk6k+wi4Ac6NNgtGcS1XowlUcKIrdABA2ZDec13IvrLXkC9GGhANU+kwDxxbpLQV0Et
+	LmplXVbhQHxqFDz1hsvgFek=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.36])
+	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4clhbF2084z1P7VC;
+	Mon, 13 Oct 2025 23:48:41 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4clhZC472cz6GBlT;
+	Mon, 13 Oct 2025 23:47:47 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41DB6140277;
+	Mon, 13 Oct 2025 23:48:43 +0800 (CST)
+Received: from dubpeml500004.china.huawei.com (7.214.147.1) by
+ dubpeml100005.china.huawei.com (7.214.146.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 13 Oct 2025 16:48:42 +0100
+Received: from dubpeml500004.china.huawei.com ([7.214.147.1]) by
+ dubpeml500004.china.huawei.com ([7.214.147.1]) with mapi id 15.02.1544.011;
+ Mon, 13 Oct 2025 16:48:42 +0100
+From: Salil Mehta <salil.mehta@huawei.com>
+To: Marc Zyngier <maz@kernel.org>, "salil.mehta@opnsrc.net"
+	<salil.mehta@opnsrc.net>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "will@kernel.org" <will@kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "peter.maydell@linaro.org"
+	<peter.maydell@linaro.org>, "richard.henderson@linaro.org"
+	<richard.henderson@linaro.org>, "andrew.jones@linux.dev"
+	<andrew.jones@linux.dev>, "mst@redhat.com" <mst@redhat.com>,
+	"david@redhat.com" <david@redhat.com>, "philmd@linaro.org"
+	<philmd@linaro.org>, "ardb@kernel.org" <ardb@kernel.org>,
+	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>,
+	"alex.bennee@linaro.org" <alex.bennee@linaro.org>,
+	"gustavo.romero@linaro.org" <gustavo.romero@linaro.org>, "npiggin@gmail.com"
+	<npiggin@gmail.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"karl.heubaum@oracle.com" <karl.heubaum@oracle.com>, "miguel.luis@oracle.com"
+	<miguel.luis@oracle.com>, "darren@os.amperecomputing.com"
+	<darren@os.amperecomputing.com>, "ilkka@os.amperecomputing.com"
+	<ilkka@os.amperecomputing.com>, "vishnu@os.amperecomputing.com"
+	<vishnu@os.amperecomputing.com>, "gankulkarni@os.amperecomputing.com"
+	<gankulkarni@os.amperecomputing.com>, "wangyanan (Y)"
+	<wangyanan55@huawei.com>, "Wangzhou (B)" <wangzhou1@hisilicon.com>, Linuxarm
+	<linuxarm@huawei.com>
+Subject: RE: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow
+ lockless read when ready
+Thread-Topic: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow
+ lockless read when ready
+Thread-Index: AQHcOJEPLIyaftchIkq5VYDgYw17SLS5xPAAgAZ0ydA=
+Date: Mon, 13 Oct 2025 15:48:42 +0000
+Message-ID: <2b7b73f47e3a4a9a8b21e581cc44ad4f@huawei.com>
+References: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
+ <86v7koxk1z.wl-maz@kernel.org>
+In-Reply-To: <86v7koxk1z.wl-maz@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Boqun Feng <boqun.feng@gmail.com>
+HI Marc,
 
-The semantics of various irq disabling guards match what
-*_irq_{disable,enable}() provide, i.e. the interrupt disabling is
-properly nested, therefore it's OK to switch to use
-*_irq_{disable,enable}() primitives.
+> From: Marc Zyngier <maz@kernel.org>
+> Sent: Thursday, October 9, 2025 2:49 PM
+> To: salil.mehta@opnsrc.net
+[...]
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+>=20
+> On Wed, 08 Oct 2025 21:19:55 +0100,
+> salil.mehta@opnsrc.net wrote:
+> >
+> > From: Salil Mehta <salil.mehta@huawei.com>
+> >
+> > [A rough illustration of the problem and the probable solution]
+> >
+> > Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently
+> > takes a slow path that may acquire all vCPU locks. Under workloads
+> > that exercise userspace PSCI CPU_ON flows or frequent vCPU resets,
+> > this can cause vCPU lock contention in KVM and, in the worst cases, -EB=
+USY
+> returns to userspace.
+> >
+> > When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these
+> > operations are executed under KVM vCPU locks in the host kernel (EL1)
+> > and appear atomic to other vCPU threads. In this context, system
+> > register accesses are serialized under KVM vCPU locks, ensuring
+> > atomicity with respect to other vCPUs. After SMCCC filtering was
+> > introduced, PSCI CPU_ON and CPU_OFF calls can now exit to userspace
+> > (QEMU). During the handling of PSCI CPU_ON call in userspace, a
+> > cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device
+> > attribute IOCTLs. To avoid transient inconsistency and -EBUSY errors,
+> > QEMU is forced to pause all vCPUs before issuing these IOCTLs.
+>=20
+> I'm going to repeat in public what I already said in private.
+>=20
+> Why does QEMU need to know this? I don't see how this is related to PSCI,
+> and outside of save/restore, there is no reason why QEMU should poke at
+> this. If QEMU needs fixing, please fix QEMU.
 
----
-V10:
-* Add PREEMPT_RT build fix from Guangbo Cui
 
- include/linux/spinlock.h | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+Sure, and I did not disagree with it earlier but because I was not fully su=
+re
+so I refrained from replying prematurely here.=20
 
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 80dfac144e10a..aff1b8c5f7cd7 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -567,10 +567,10 @@ DEFINE_LOCK_GUARD_1(raw_spinlock_nested, raw_spinlock_t,
- 		    raw_spin_unlock(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_irq, raw_spinlock_t,
--		    raw_spin_lock_irq(_T->lock),
--		    raw_spin_unlock_irq(_T->lock))
-+		    raw_spin_lock_irq_disable(_T->lock),
-+		    raw_spin_unlock_irq_enable(_T->lock))
- 
--DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irq, _try, raw_spin_trylock_irq(_T->lock))
-+DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irq, _try, raw_spin_trylock_irq_disable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_bh, raw_spinlock_t,
- 		    raw_spin_lock_bh(_T->lock),
-@@ -579,12 +579,11 @@ DEFINE_LOCK_GUARD_1(raw_spinlock_bh, raw_spinlock_t,
- DEFINE_LOCK_GUARD_1_COND(raw_spinlock_bh, _try, raw_spin_trylock_bh(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(raw_spinlock_irqsave, raw_spinlock_t,
--		    raw_spin_lock_irqsave(_T->lock, _T->flags),
--		    raw_spin_unlock_irqrestore(_T->lock, _T->flags),
--		    unsigned long flags)
-+		    raw_spin_lock_irq_disable(_T->lock),
-+		    raw_spin_unlock_irq_enable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irqsave, _try,
--			 raw_spin_trylock_irqsave(_T->lock, _T->flags))
-+			 raw_spin_trylock_irq_disable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(spinlock, spinlock_t,
- 		    spin_lock(_T->lock),
-@@ -593,11 +592,11 @@ DEFINE_LOCK_GUARD_1(spinlock, spinlock_t,
- DEFINE_LOCK_GUARD_1_COND(spinlock, _try, spin_trylock(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(spinlock_irq, spinlock_t,
--		    spin_lock_irq(_T->lock),
--		    spin_unlock_irq(_T->lock))
-+		    spin_lock_irq_disable(_T->lock),
-+		    spin_unlock_irq_enable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1_COND(spinlock_irq, _try,
--			 spin_trylock_irq(_T->lock))
-+			 spin_trylock_irq_disable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(spinlock_bh, spinlock_t,
- 		    spin_lock_bh(_T->lock),
-@@ -607,12 +606,11 @@ DEFINE_LOCK_GUARD_1_COND(spinlock_bh, _try,
- 			 spin_trylock_bh(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(spinlock_irqsave, spinlock_t,
--		    spin_lock_irqsave(_T->lock, _T->flags),
--		    spin_unlock_irqrestore(_T->lock, _T->flags),
--		    unsigned long flags)
-+		    spin_lock_irq_disable(_T->lock),
-+		    spin_unlock_irq_enable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1_COND(spinlock_irqsave, _try,
--			 spin_trylock_irqsave(_T->lock, _T->flags))
-+			 spin_trylock_irq_disable(_T->lock))
- 
- DEFINE_LOCK_GUARD_1(read_lock, rwlock_t,
- 		    read_lock(_T->lock),
--- 
-2.51.0
 
+>=20
+> Honestly, I don't see why the kernel should even care about this, and I h=
+ave
+> no intention of adopting anything of the sort for something that has all =
+the
+> hallmarks of a userspace bug.
+
+
+I understand your point. So the probable solutions for the problem mentione=
+d
+in the patch could be:
+
+1. Remove the KVM device access of ICC_CTLR_EL1 system register during CPU
+    reset and only sync with KVM during migration at source & destination?
+2. if 1 is not acceptable then cache in user space.=20
+3.  This KVM shadow register change=20
+
+IIUC, you've hinted at 1st as the solution. We've discussed 2 as well and a=
+s I
+understand you don't have much apprehensions about it? And last point 3,
+is of course totally rejected.
+
+Hope I got it right?
+
+Many thanks!
+
+Best regards
+Salil.
+
+>=20
+> 	M.
+>=20
+> --
+> Without deviation from the norm, progress is not possible.
 
