@@ -1,98 +1,155 @@
-Return-Path: <linux-kernel+bounces-850148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBA0BD2114
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:32:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6115ABD212C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406623BD74B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:32:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9AF34EC873
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 08:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0112F5A1B;
-	Mon, 13 Oct 2025 08:32:34 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34432F8BF4;
+	Mon, 13 Oct 2025 08:34:48 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D712F5A27
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F2A2EAB6F;
+	Mon, 13 Oct 2025 08:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760344354; cv=none; b=ldy8JW4SqMwbCQfpxBcwymrvHJe3gN/Jngitn5RdzLm+2UX0CxFXG7VqcDWOE6v370diJEwbxSQkELCejWGDLFpfucKo7q+Am9HxB8U9Zy24m/4t7+8sG6uvaJ2ijRvyhA/2/rG2J4j4h8DzomtINYUBGADKxalkOQXNRe/3YX8=
+	t=1760344488; cv=none; b=B4Q6UeMceluxEJFxyqpIyPovPvzr21sjTorOJbkWMhFLJEH8PMeSNRhXeAr7yjQbT3CjIiFAIz9+UDl58Jo+U/S+RMAfV3csUVptWdLTs/nDyI8hYmMof80hAfM7IPrFDbl6WrQ/VU5nXM72N0rxSm7Wlfn+7m76WW8oYw8R5R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760344354; c=relaxed/simple;
-	bh=+ONzhQiIFmJaziExfduaS0rzIr8zFTndFGeaq7jYSzk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qqDmCUZ+uyRwqz5T3apm+WT8XOtCL7LTEnQn9h/8JTSJLGzhDvFhh+vNPKjAQrovflGnEX2rFWjpO4AvDxSe2AtQyZhc4UOa79UkpPTJwYOZhA62a0FkuzPnxWbUlH2hnCF11ClgHi8CC8uvwy07qFqTX8MQfL0ZXgYSpaFhXVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e4a324b9bso28367539f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:32:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760344352; x=1760949152;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OXiS97ixT4Np5C/+rHttod7a2+RHkrH+mWX2BsOO7HA=;
-        b=mngXHY2Sk+LniVu3xCYvxlZgxRLoQdKPcaVQEczsfmjEC+FTrsIvAuUhzllfV9wie1
-         P6D9PT5RHw3Is6mPQGAGmJmV7I+IUSA+6f9pW53YHdCsA9mwCi10TTsARu7NI4jkJd5x
-         siWWshVWUY8h9oBNVCF4R8Lic5thTFzAXW7jFyHNwqP8wvAPZF+ob6CD+7SCe5ovvywx
-         J/Z7A2HV6TOVo+RHjF4pHeOKdnHpEpu40SA9af+aMHfLFT8sDkRRxqxb+l/G2NHzPNaU
-         510SJIhy9eL8skKygJktiQNNglh9ZyNgOYKWbyiglZhbmuojZcS8zk7nyXtTyapxVv2F
-         orZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvaKdX0LuZyCGd7Ni0/vdrFNycPRTnNFaNVZMB7tJ3CXtVxa6RAbqVHTGUXxbN41+UGMowJWDEVOew8t4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHkYP9fvfb3QpE8eVHLdY0CnBj34QhUaiptNhL5orb7d0M0f0M
-	pDMSpXrabG/zX8KibvL3GrxYOIRqhMMqeyNF6xjFhE6LsUVlU1I2rSBDa5709TuWdVlbF/157yH
-	oTG/p6EIqlBijGI4v4nev5KOz9hNRE1wIOem9o/W8SlJW5MJWg2fq2DwNG48=
-X-Google-Smtp-Source: AGHT+IGhBVJ6VubaQitg7eBtMXuxI/ua/n9vYODxJToULXQW5KsNiCz0bITuRBT+CG5xaTN/Q+5eBocTjiPA4g+UdFmeN0KG7clS
+	s=arc-20240116; t=1760344488; c=relaxed/simple;
+	bh=QmEFVS7Hv6pLb4fO82Ajm5OiHQ/RmlBkkNOcuK4WPQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dpZ7LB2luV6xBLGgvMLXFUUp+hoV4kDvmmraqKNYaCENPoIcIQgyk4FAbQmKRboJ+IJ86Gfwgs02E4+6RedsVMUlAUuIvs+tPMs/HtcPbIZRHRUmhzyPkX8geiKP6YrgQaXlPZFLYEsuWzbUv7TsMY5IOesVCSb0OeTvhrP4Fjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 70ce0c38a80f11f0a38c85956e01ac42-20251013
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:4e112ce7-8a8a-4d1e-a5da-9abdcda61172,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:8fcde9bbe8bbbe37887e6eb908f4d07b,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 70ce0c38a80f11f0a38c85956e01ac42-20251013
+X-User: zhangheng@kylinos.cn
+Received: from [172.25.120.76] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <zhangheng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1661699061; Mon, 13 Oct 2025 16:34:31 +0800
+Message-ID: <e605f642-c967-4d41-8145-a10e8f48fb1b@kylinos.cn>
+Date: Mon, 13 Oct 2025 16:32:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8d:b0:42d:878b:6e40 with SMTP id
- e9e14a558f8ab-42f8737f064mr225990605ab.13.1760344351997; Mon, 13 Oct 2025
- 01:32:31 -0700 (PDT)
-Date: Mon, 13 Oct 2025 01:32:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ecb91f.050a0220.ac43.0017.GAE@google.com>
-Subject: [syzbot] Monthly integrity report (Oct 2025)
-From: syzbot <syzbot+list4b745788333aaa1a5dfc@syzkaller.appspotmail.com>
-To: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] HID: quirks: Add device descriptor for 4c4a:4155
+To: Linux Hid <linuxhid@cosmicgizmosystems.com>, jikos@kernel.org,
+ bentiss@kernel.org, staffan.melin@oscillator.se
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ 1114557@bugs.debian.org
+References: <20250923022445.3276026-1-zhangheng@kylinos.cn>
+ <e0dde746-3761-414e-8df1-eb8557cadbf8@cosmicgizmosystems.com>
+From: zhangheng <zhangheng@kylinos.cn>
+In-Reply-To: <e0dde746-3761-414e-8df1-eb8557cadbf8@cosmicgizmosystems.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello integrity maintainers/developers,
+It happened to be the holiday, so communication was a bit troublesome.
 
-This is a 31-day syzbot report for the integrity subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/integrity
+However, after a brief discussion with the microphone manufacturer,
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 3 issues are still open and 9 have already been fixed.
+it was found that the serial number was still 20201111000001 on another
 
-Some of the still happening issues:
+microphone device. So, should we add it?
 
-Ref Crashes Repro Title
-<1> 49      No    possible deadlock in process_measurement (5)
-                  https://syzkaller.appspot.com/bug?extid=6529afa25091aee8536c
-<2> 44      Yes   INFO: task hung in process_measurement (3)
-                  https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
-<3> 14      Yes   INFO: task hung in ima_file_free (4)
-                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+在 2025/9/29 8:42, Linux Hid 写道:
+> Hi Zhang,
+>
+> The subject doesn't reflect what the patch is doing. You are not adding
+> a device descriptor, you are fixing a regression.
+>
+> On 9/22/2025 7:24 PM, Zhang Heng wrote:
+>> Multiple USB devices have the same ID;
+>> add device descriptors to distinguish them.
+>>
+>> Fixes: 1a8953f4f774 ("HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY")
+> Should have a Fixes: tag referencing the regression bug.
+> Also a CC: tag for 1114557@bugs.debian.org
+> Possibly a CC: tag for stable@vger.kernel.org as well?
+>
+>> Tested-by: staffan.melin@oscillator.se
+>> Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
+>> ---
+>>    drivers/hid/hid-quirks.c | 12 +++++++++++-
+>>    1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+>> index ffd034566e2e..d28b180abd72 100644
+>> --- a/drivers/hid/hid-quirks.c
+>> +++ b/drivers/hid/hid-quirks.c
+>> @@ -913,7 +913,6 @@ static const struct hid_device_id hid_ignore_list[] = {
+>>    #endif
+>>    	{ HID_USB_DEVICE(USB_VENDOR_ID_YEALINK, USB_DEVICE_ID_YEALINK_P1K_P4K_B2K) },
+>>    	{ HID_USB_DEVICE(USB_VENDOR_ID_QUANTA, USB_DEVICE_ID_QUANTA_HP_5MP_CAMERA_5473) },
+>> -	{ HID_USB_DEVICE(USB_VENDOR_ID_SMARTLINKTECHNOLOGY, USB_DEVICE_ID_SMARTLINKTECHNOLOGY_4155) },
+>>    	{ }
+>>    };
+> Smartlink Technology does not own the 0x4c4a VID or the 0x4155 PID. They
+> are an artifact of the Jieli SDK they used in development so the
+> #defines should not imply ownership by Smartlink. VID 0x4c4a is
+> currently unassigned by the USBIF and is therefore 'reserved'.
+>
+> Maybe change
+> USB_VENDOR_ID_SMARTLINKTECHNOLOGY to USB_VENDOR_ID_JIELI_SDK_DEFAULT
+> and
+> USB_DEVICE_ID_SMARTLINKTRCHNOLOGY_4155 to USB_DEVICE_ID_JIELI_SDK_4155?
+>
+>>    
+>> @@ -1062,6 +1061,17 @@ bool hid_ignore(struct hid_device *hdev)
+>>    					     strlen(elan_acpi_id[i].id)))
+>>    					return true;
+>>    		break;
+>> +	case USB_VENDOR_ID_SMARTLINKTECHNOLOGY:
+>> +		/* Multiple USB devices with identical IDs (mic & touchscreen).
+>> +		 * The touch screen requires hid core processing, but the
+>> +		 * microphone does not. They can be distinguished by manufacturer
+>> +		 * and serial number.
+>> +		 */
+>> +		if (hdev->product == USB_DEVICE_ID_SMARTLINKTECHNOLOGY_4155 &&
+>> +		    strncmp(hdev->name, "SmartlinkTechnology", 19) == 0 &&
+>> +		    strncmp(hdev->uniq, "20201111000001", 14) == 0)
+> Using the serial number as a device identifier is somewhat risky. The
+> serial number is optional for a USB device but if it is used then it's
+> supposed to be unique for each device. Given how horrible the
+> configuration and HID descriptors are for this device it's unlikely that
+> they went to the trouble to give each unit a unique serial number. But
+> you should check a few of the devices (if you have more than one) to
+> verify they all have the same 20201111000001 serial number.
+>
+> It's too bad the bcdHID version test for 0x0201 didn't work. The
+> hid->version field is filled by usbhid_probe with bcdDevice before both
+> hid_lookup_quirk and hid_ignore are called and then updated with bcdHID
+> by usbhid_parse after they have been called.
+>
+>> +			return true;
+>> +		break;
+>>    	}
+>>    
+>>    	if (hdev->type == HID_TYPE_USBMOUSE &&
+> Thanks
+> Terry
 
