@@ -1,388 +1,138 @@
-Return-Path: <linux-kernel+bounces-849964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF7BBD177A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:33:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0261BD17AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8776318965A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472423BD922
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AA72DC766;
-	Mon, 13 Oct 2025 05:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7412DC79E;
+	Mon, 13 Oct 2025 05:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="GgqCHrje"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntdRJZsn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D442DA753
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0043A2DC76A;
+	Mon, 13 Oct 2025 05:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760333567; cv=none; b=euikDJ0T+pThw/B+nph750eNM8j0xcIO/Gv7tpmqVCs5dtYR6J7EmEqkYJEnDQFD591Hxp9Aw/kwqNaWMRVwYeFxbO7uep05lUb5Ix8gEJEkCO2v1EwBEMfzYUCDfzGZraLRSUE29rtaOAdjcUpYxk3J10c50kEGJisuxkpgW9Q=
+	t=1760334073; cv=none; b=KMk6FgPyD+4bI47/5AhwVXdMmyg7X+v+XZdgfF78aTEdnO5Z2WO01YZWYY9ZxYhdYDe2b3lJO65rAgXyeZsfVy3ecsdRvC7K6lSFij3Xb7c1nbe5P4QVPe2cNf6s0quKQzdbuvQVn/ts70g63wHYXHr6LT/m9mllLkd+JeU2Qp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760333567; c=relaxed/simple;
-	bh=4hYhb+EPmlaOc3bN+TTQRMFugJwG6oxY36pVB85jVgQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=bR8xVOfDy19MDv4+tceBGim7x24Li0w5OcSzdkrGTf8b9mHPyUd130CutaEPOX0T6icH+ijM7rz1mOsTZABbhb6A1a8lkEEK3e+n0/j3bnMhyyzPpUUK779ss6tEATBSsZJeNt1oGgeLnzM/F6P5BA6gV/54raWHnh29kl/OWv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=GgqCHrje; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59CMgNrI1450873
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:32:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=5W/oWlGSgrgcpquGT5WzQZk6fkYCHamp032I6BK5EHA=; b=GgqCHrjeo6Dd
-	Cxuia4OULEpPoPjM39fFVIHZaA/PW8whz1mKEqQhh7awmMa0tGvsIhuKPruYJYia
-	i1EwkH3FFSUijxwIYgL6/txAJxcdeetzbO0BoI6cJQblQvGlRgOMHUD8YCXkKLS3
-	/4oYCtIpoI4cYLuVwt/pl8D4mf53WHTbBdxasTVIx//R9XL9af1+mcmO3rWddRVb
-	RkWePLcePeDHGduBLPDqtqN0nRD66MsOGq0E9HFxOOm6oB+yd3NOrp5vmzbS08uq
-	IX2TH4aFXP93mDDJPTm+6Lz1J0LiaXwNzfjRGMonOvG84A922+mJLdhQ8hVIcgMG
-	faFolgT3Mg==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49rnbm172b-6
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 22:32:44 -0700 (PDT)
-Received: from twshared28243.32.prn2.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Mon, 13 Oct 2025 05:32:44 +0000
-Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
-	id 9E654102FE49; Sun, 12 Oct 2025 22:32:30 -0700 (PDT)
-From: Alex Mastro <amastro@fb.com>
-Date: Sun, 12 Oct 2025 22:32:26 -0700
-Subject: [PATCH v4 3/3] vfio/type1: handle DMA map/unmap up to the
- addressable limit
+	s=arc-20240116; t=1760334073; c=relaxed/simple;
+	bh=uOaiZ5Bzd9t+1Kq2Uv5OMOE07bCtYvS+xzwAYc0p0js=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CgvKdtj9wyYu848xQX6MJpzwqHj+AA7yf9qGx10gdT161O4HlR8WfcZpzeUPx0jCyUMTVv2y+vnA1k/0Z0NOP46waprXq5tKhuCL9c6tIy6nxcQdwFNVpPITq5G1u7CBStDqzo0AaTxziWCsXCsY5yKCv1EIIFnFGObl527vhkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntdRJZsn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF5FC4CEE7;
+	Mon, 13 Oct 2025 05:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760334072;
+	bh=uOaiZ5Bzd9t+1Kq2Uv5OMOE07bCtYvS+xzwAYc0p0js=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ntdRJZsnM9hOTyJ9rpuWgx4j2PYkbbnxcqvGyH4pm/gbOQ/CNuoc1D/wisWwfv/7f
+	 g8dZeY4vGBJdLHZ1tQrTZcpt562BoDDw7ANnKitfzwpaRk7ermYJfCpWDsK7WZA9g2
+	 pR/ozbYaVbhSRP5mLV1/+MjXWGnwcpAKbrOPU95JbupP5n+hZjG/FUqaSRQmItAz8q
+	 13rpjhGk0ZVgvN2fFOCLlmkxHtptAD2fhS3iAMgWQhrMInT6RBCrVnbKhz17vkh/TR
+	 014JfM9Ve/9u0b8g1NrkugFdjXpSPAQBGdythqudmqQ2369fkdAuczITD0kGTMVUtB
+	 37h7+rQwmoi3A==
+Message-ID: <288eff27-ac0c-4e7f-a4cf-cc6169c88f3b@kernel.org>
+Date: Mon, 13 Oct 2025 07:41:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: mtd: cdns,hp-nfc: Add iommu property
+To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Vinod Koul
+ <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM"
+ <dmaengine@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
+ "open list:CADENCE NAND DRIVER" <linux-mtd@lists.infradead.org>,
+ Dinh Nguyen <dinguyen@kernel.org>,
+ Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+References: <cover.1760331941.git.khairul.anuar.romli@altera.com>
+ <60270e2fc2bfb67c0ff4c204e0e8f3395add2146.1760331941.git.khairul.anuar.romli@altera.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <60270e2fc2bfb67c0ff4c204e0e8f3395add2146.1760331941.git.khairul.anuar.romli@altera.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20251012-fix-unmap-v4-3-9eefc90ed14c@fb.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
-In-Reply-To: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alejandro Jimenez
-	<alejandro.j.jimenez@oracle.com>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Alex Mastro <amastro@fb.com>
-X-Mailer: b4 0.13.0
-X-FB-Internal: Safe
-X-Proofpoint-GUID: oIAy4rlBuigx-9in3aAUaUiiGqGth9ff
-X-Authority-Analysis: v=2.4 cv=NfjrFmD4 c=1 sm=1 tr=0 ts=68ec8efd cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=FOH2dFAWAAAA:8 a=P34euavMcYKjluB8mAYA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: oIAy4rlBuigx-9in3aAUaUiiGqGth9ff
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyNiBTYWx0ZWRfX5ggvlzXn+AtQ
- ZoE7Na2oCyB14AWIuDcWZ6lPPf6vqkvp3Rx7X+MC9p2JMq8SYT92+DMkjzKbDcFqJrWQGi2H+Lm
- swKiA5XlXuLYfWHWjnNy01ugiVsea8wjV76CCQLf1YE5Dj98T8dlK2D3xlfwmU2FGyhAKMJ3Ms2
- 2A/o7Ap6YB0DUTJ1zi8Rf0U/hxI+ar0BpJX7b24SPgJWMga1ncvtnxjF+IXygM6XOpUtTXNbNOg
- HCDWfU5TNDpC+VseBAQI5ZO33b6mURhlcoY7mtxVsS7cHMZLx+dJg0/oEqvXEeHrKmWKWdUE0YT
- rMl8Kx7Cy9QeAt6coP7PSQvV6wgzWikMxZx+q3gWyzQnX0R1nBxt39Z3gco2cvqwsFFI0lQi+II
- hXqKoT8TgvdxbuWmn+5ULPCpLVrIcQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_02,2025-10-06_01,2025-03-28_01
 
-Handle DMA map/unmap operations up to the addressable limit by comparing
-against inclusive end-of-range limits, and changing iteration to
-perform relative traversals across range sizes, rather than absolute
-traversals across addresses.
+On 13/10/2025 07:17, Khairul Anuar Romli wrote:
+> Agilex5 uses the cdns,hp-nfc binding for the nand-controller node.
 
-vfio_link_dma inserts a zero-sized vfio_dma into the rb-tree, and is
-only used for that purpose, so discard the size from consideration for
-the insertion point.
+That's redundant.
 
-Signed-off-by: Alex Mastro <amastro@fb.com>
----
- drivers/vfio/vfio_iommu_type1.c | 77 ++++++++++++++++++++++-------------------
- 1 file changed, 42 insertions(+), 35 deletions(-)
+> To support IOMMU functionality, an iommus property needs to be added to the cdns,hp-nfc.yaml binding file.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 48b84a7af2e1..a65625dcf708 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -166,12 +166,14 @@ static struct vfio_dma *vfio_find_dma(struct vfio_iommu *iommu,
- {
- 	struct rb_node *node = iommu->dma_list.rb_node;
- 
-+	WARN_ON(!size);
-+
- 	while (node) {
- 		struct vfio_dma *dma = rb_entry(node, struct vfio_dma, node);
- 
--		if (start + size <= dma->iova)
-+		if (start + size - 1 < dma->iova)
- 			node = node->rb_left;
--		else if (start >= dma->iova + dma->size)
-+		else if (start > dma->iova + dma->size - 1)
- 			node = node->rb_right;
- 		else
- 			return dma;
-@@ -181,16 +183,19 @@ static struct vfio_dma *vfio_find_dma(struct vfio_iommu *iommu,
- }
- 
- static struct rb_node *vfio_find_dma_first_node(struct vfio_iommu *iommu,
--						dma_addr_t start, size_t size)
-+						dma_addr_t start,
-+						dma_addr_t end)
- {
- 	struct rb_node *res = NULL;
- 	struct rb_node *node = iommu->dma_list.rb_node;
- 	struct vfio_dma *dma_res = NULL;
- 
-+	WARN_ON(end < start);
-+
- 	while (node) {
- 		struct vfio_dma *dma = rb_entry(node, struct vfio_dma, node);
- 
--		if (start < dma->iova + dma->size) {
-+		if (start <= dma->iova + dma->size - 1) {
- 			res = node;
- 			dma_res = dma;
- 			if (start >= dma->iova)
-@@ -200,7 +205,7 @@ static struct rb_node *vfio_find_dma_first_node(struct vfio_iommu *iommu,
- 			node = node->rb_right;
- 		}
- 	}
--	if (res && size && dma_res->iova >= start + size)
-+	if (res && dma_res->iova > end)
- 		res = NULL;
- 	return res;
- }
-@@ -210,11 +215,13 @@ static void vfio_link_dma(struct vfio_iommu *iommu, struct vfio_dma *new)
- 	struct rb_node **link = &iommu->dma_list.rb_node, *parent = NULL;
- 	struct vfio_dma *dma;
- 
-+	WARN_ON(new->size != 0);
-+
- 	while (*link) {
- 		parent = *link;
- 		dma = rb_entry(parent, struct vfio_dma, node);
- 
--		if (new->iova + new->size <= dma->iova)
-+		if (new->iova <= dma->iova)
- 			link = &(*link)->rb_left;
- 		else
- 			link = &(*link)->rb_right;
-@@ -1071,12 +1078,12 @@ static size_t unmap_unpin_slow(struct vfio_domain *domain,
- static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 			     bool do_accounting)
- {
--	dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
- 	struct vfio_domain *domain, *d;
- 	LIST_HEAD(unmapped_region_list);
- 	struct iommu_iotlb_gather iotlb_gather;
- 	int unmapped_region_cnt = 0;
- 	long unlocked = 0;
-+	size_t pos = 0;
- 
- 	if (!dma->size)
- 		return 0;
-@@ -1100,13 +1107,14 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 	}
- 
- 	iommu_iotlb_gather_init(&iotlb_gather);
--	while (iova < end) {
-+	while (pos < dma->size) {
- 		size_t unmapped, len;
- 		phys_addr_t phys, next;
-+		dma_addr_t iova = dma->iova + pos;
- 
- 		phys = iommu_iova_to_phys(domain->domain, iova);
- 		if (WARN_ON(!phys)) {
--			iova += PAGE_SIZE;
-+			pos += PAGE_SIZE;
- 			continue;
- 		}
- 
-@@ -1115,7 +1123,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 		 * may require hardware cache flushing, try to find the
- 		 * largest contiguous physical memory chunk to unmap.
- 		 */
--		for (len = PAGE_SIZE; iova + len < end; len += PAGE_SIZE) {
-+		for (len = PAGE_SIZE; pos + len < dma->size; len += PAGE_SIZE) {
- 			next = iommu_iova_to_phys(domain->domain, iova + len);
- 			if (next != phys + len)
- 				break;
-@@ -1136,7 +1144,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 				break;
- 		}
- 
--		iova += unmapped;
-+		pos += unmapped;
- 	}
- 
- 	dma->iommu_mapped = false;
-@@ -1228,7 +1236,7 @@ static int update_user_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
- }
- 
- static int vfio_iova_dirty_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
--				  dma_addr_t iova, size_t size, size_t pgsize)
-+				  dma_addr_t iova, dma_addr_t iova_end, size_t pgsize)
- {
- 	struct vfio_dma *dma;
- 	struct rb_node *n;
-@@ -1245,8 +1253,8 @@ static int vfio_iova_dirty_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
- 	if (dma && dma->iova != iova)
- 		return -EINVAL;
- 
--	dma = vfio_find_dma(iommu, iova + size - 1, 0);
--	if (dma && dma->iova + dma->size != iova + size)
-+	dma = vfio_find_dma(iommu, iova_end, 1);
-+	if (dma && dma->iova + dma->size - 1 != iova_end)
- 		return -EINVAL;
- 
- 	for (n = rb_first(&iommu->dma_list); n; n = rb_next(n)) {
-@@ -1255,7 +1263,7 @@ static int vfio_iova_dirty_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
- 		if (dma->iova < iova)
- 			continue;
- 
--		if (dma->iova > iova + size - 1)
-+		if (dma->iova > iova_end)
- 			break;
- 
- 		ret = update_user_bitmap(bitmap, iommu, dma, iova, pgsize);
-@@ -1348,7 +1356,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 	if (unmap_all) {
- 		if (iova || size)
- 			goto unlock;
--		size = SIZE_MAX;
-+		iova_end = ~(dma_addr_t)0;
- 	} else {
- 		if (!size || size & (pgsize - 1))
- 			goto unlock;
-@@ -1403,17 +1411,17 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 		if (dma && dma->iova != iova)
- 			goto unlock;
- 
--		dma = vfio_find_dma(iommu, iova_end, 0);
--		if (dma && dma->iova + dma->size != iova + size)
-+		dma = vfio_find_dma(iommu, iova_end, 1);
-+		if (dma && dma->iova + dma->size - 1 != iova_end)
- 			goto unlock;
- 	}
- 
- 	ret = 0;
--	n = first_n = vfio_find_dma_first_node(iommu, iova, size);
-+	n = first_n = vfio_find_dma_first_node(iommu, iova, iova_end);
- 
- 	while (n) {
- 		dma = rb_entry(n, struct vfio_dma, node);
--		if (dma->iova >= iova + size)
-+		if (dma->iova > iova_end)
- 			break;
- 
- 		if (!iommu->v2 && iova > dma->iova)
-@@ -1743,12 +1751,12 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 
- 	for (; n; n = rb_next(n)) {
- 		struct vfio_dma *dma;
--		dma_addr_t iova;
-+		size_t pos = 0;
- 
- 		dma = rb_entry(n, struct vfio_dma, node);
--		iova = dma->iova;
- 
--		while (iova < dma->iova + dma->size) {
-+		while (pos < dma->size) {
-+			dma_addr_t iova = dma->iova + pos;
- 			phys_addr_t phys;
- 			size_t size;
- 
-@@ -1764,14 +1772,14 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 				phys = iommu_iova_to_phys(d->domain, iova);
- 
- 				if (WARN_ON(!phys)) {
--					iova += PAGE_SIZE;
-+					pos += PAGE_SIZE;
- 					continue;
- 				}
- 
- 				size = PAGE_SIZE;
- 				p = phys + size;
- 				i = iova + size;
--				while (i < dma->iova + dma->size &&
-+				while (pos + size < dma->size &&
- 				       p == iommu_iova_to_phys(d->domain, i)) {
- 					size += PAGE_SIZE;
- 					p += PAGE_SIZE;
-@@ -1779,9 +1787,8 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 				}
- 			} else {
- 				unsigned long pfn;
--				unsigned long vaddr = dma->vaddr +
--						     (iova - dma->iova);
--				size_t n = dma->iova + dma->size - iova;
-+				unsigned long vaddr = dma->vaddr + pos;
-+				size_t n = dma->size - pos;
- 				long npage;
- 
- 				npage = vfio_pin_pages_remote(dma, vaddr,
-@@ -1812,7 +1819,7 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 				goto unwind;
- 			}
- 
--			iova += size;
-+			pos += size;
- 		}
- 	}
- 
-@@ -1829,29 +1836,29 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- unwind:
- 	for (; n; n = rb_prev(n)) {
- 		struct vfio_dma *dma = rb_entry(n, struct vfio_dma, node);
--		dma_addr_t iova;
-+		size_t pos = 0;
- 
- 		if (dma->iommu_mapped) {
- 			iommu_unmap(domain->domain, dma->iova, dma->size);
- 			continue;
- 		}
- 
--		iova = dma->iova;
--		while (iova < dma->iova + dma->size) {
-+		while (pos < dma->size) {
-+			dma_addr_t iova = dma->iova + pos;
- 			phys_addr_t phys, p;
- 			size_t size;
- 			dma_addr_t i;
- 
- 			phys = iommu_iova_to_phys(domain->domain, iova);
- 			if (!phys) {
--				iova += PAGE_SIZE;
-+				pos += PAGE_SIZE;
- 				continue;
- 			}
- 
- 			size = PAGE_SIZE;
- 			p = phys + size;
- 			i = iova + size;
--			while (i < dma->iova + dma->size &&
-+			while (pos + size < dma->size &&
- 			       p == iommu_iova_to_phys(domain->domain, i)) {
- 				size += PAGE_SIZE;
- 				p += PAGE_SIZE;
-@@ -2989,7 +2996,7 @@ static int vfio_iommu_type1_dirty_pages(struct vfio_iommu *iommu,
- 
- 		if (iommu->dirty_page_tracking)
- 			ret = vfio_iova_dirty_bitmap(range.bitmap.data,
--						     iommu, iova, size,
-+						     iommu, iova, iova_end,
- 						     range.bitmap.pgsize);
- 		else
- 			ret = -EINVAL;
+As well... so just say there is IOMMU used by this <here goes device name>.
 
--- 
-2.47.3
+> This ensures the device tree binding correctly describes the IOMMU association for the NAND controller.
 
+Redundant. Don't explain us how DT works. We all know. Explain what we
+do not know - your hardware. I already ASKED FOR THAT.
+
+Also, completely broken wrapping. Please read submitting patches before
+you post next version.
+
+Best regards,
+Krzysztof
 
