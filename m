@@ -1,188 +1,186 @@
-Return-Path: <linux-kernel+bounces-850994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF34BD4E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:18:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667A6BD4C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F401318A214A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:18:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DF7F635030D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D309930BBA4;
-	Mon, 13 Oct 2025 16:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C361628D8CC;
+	Mon, 13 Oct 2025 15:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6azost/n"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksgnG4GB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B5F1EDA2B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 16:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA78261B9C;
+	Mon, 13 Oct 2025 15:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760371498; cv=none; b=QXJNcJTmwTApiIfIQdUv+gVvwDdd1FomO1bua6r7ZP3uSisEcdOWx1PBfCytxoDDOzBY4g1gLext01XKnlsTzHW6cdDGWmu+Kq14EJYuG152Eb+IlxRgQRy/BjHX8X6uq1cxliJ5zxO5/p2Hac+zfe/Mig8MCt5BmuwAKO5ER20=
+	t=1760370565; cv=none; b=BkYHyP533LGp5lO0EcAnyayhLuoW63TQi1ze9Z9aFGRqcBx5nwv59kHVNeVYCLFjLWpFsKy1NO6qdrpZodj+m16YS1Rtu+1sqdHl5rpR32dM+Wt5cwgA0xatbKhL9bGhbXaBlGuTrJIf79RR4gABh7BgRYfauIxjhYkYpUP1AqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760371498; c=relaxed/simple;
-	bh=PALwSjb64mTWnRNMcWLvj6UyYsI8cIclikP+/g1w6VI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=peBvSma84tR5pBsIHz6kNG2yyc7QXaKqM0ezupyhF/j1NPZwvENv2uGgzDG/WDUK37tFan5jAcpNTKdkEzTQ297bLqDtsoVqtHDRRQPBO0JkSKlOyV1yQ1YnicrRWii9VCjDj41LDe6HA2HXYJYmo6PeIBCgwT6kvzG7ENCU1qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6azost/n; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=BeAFLN0HOs+5tCV60lxEz2c6X5B0Jjgl2YbcdH5SmlI=;
-	b=6azost/neUBFyasolyvueOW3ezr/HVuKQSWVJC5dlpp1Rwki1y/gC+AGnVm+QICpAHEJnEjXN
-	n6PqowqVmk6k+wi4Ac6NNgtGcS1XowlUcKIrdABA2ZDec13IvrLXkC9GGhANU+kwDxxbpLQV0Et
-	LmplXVbhQHxqFDz1hsvgFek=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.36])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4clhbF2084z1P7VC;
-	Mon, 13 Oct 2025 23:48:41 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4clhZC472cz6GBlT;
-	Mon, 13 Oct 2025 23:47:47 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41DB6140277;
-	Mon, 13 Oct 2025 23:48:43 +0800 (CST)
-Received: from dubpeml500004.china.huawei.com (7.214.147.1) by
- dubpeml100005.china.huawei.com (7.214.146.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 13 Oct 2025 16:48:42 +0100
-Received: from dubpeml500004.china.huawei.com ([7.214.147.1]) by
- dubpeml500004.china.huawei.com ([7.214.147.1]) with mapi id 15.02.1544.011;
- Mon, 13 Oct 2025 16:48:42 +0100
-From: Salil Mehta <salil.mehta@huawei.com>
-To: Marc Zyngier <maz@kernel.org>, "salil.mehta@opnsrc.net"
-	<salil.mehta@opnsrc.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, "will@kernel.org" <will@kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "jean-philippe@linaro.org"
-	<jean-philippe@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "peter.maydell@linaro.org"
-	<peter.maydell@linaro.org>, "richard.henderson@linaro.org"
-	<richard.henderson@linaro.org>, "andrew.jones@linux.dev"
-	<andrew.jones@linux.dev>, "mst@redhat.com" <mst@redhat.com>,
-	"david@redhat.com" <david@redhat.com>, "philmd@linaro.org"
-	<philmd@linaro.org>, "ardb@kernel.org" <ardb@kernel.org>,
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>,
-	"alex.bennee@linaro.org" <alex.bennee@linaro.org>,
-	"gustavo.romero@linaro.org" <gustavo.romero@linaro.org>, "npiggin@gmail.com"
-	<npiggin@gmail.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"karl.heubaum@oracle.com" <karl.heubaum@oracle.com>, "miguel.luis@oracle.com"
-	<miguel.luis@oracle.com>, "darren@os.amperecomputing.com"
-	<darren@os.amperecomputing.com>, "ilkka@os.amperecomputing.com"
-	<ilkka@os.amperecomputing.com>, "vishnu@os.amperecomputing.com"
-	<vishnu@os.amperecomputing.com>, "gankulkarni@os.amperecomputing.com"
-	<gankulkarni@os.amperecomputing.com>, "wangyanan (Y)"
-	<wangyanan55@huawei.com>, "Wangzhou (B)" <wangzhou1@hisilicon.com>, Linuxarm
-	<linuxarm@huawei.com>
-Subject: RE: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow
- lockless read when ready
-Thread-Topic: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow
- lockless read when ready
-Thread-Index: AQHcOJEPLIyaftchIkq5VYDgYw17SLS5xPAAgAZ0ydA=
-Date: Mon, 13 Oct 2025 15:48:42 +0000
-Message-ID: <2b7b73f47e3a4a9a8b21e581cc44ad4f@huawei.com>
-References: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
- <86v7koxk1z.wl-maz@kernel.org>
-In-Reply-To: <86v7koxk1z.wl-maz@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760370565; c=relaxed/simple;
+	bh=YIPVFumAT9DHDl+3NSoby0+v8/FmUF2QL269vIj3vhQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b52hEJxH7O48GMy3SVJGx+96Rk87EWYl519zpqWaOIyiT5hT9MBED7qH3ZXqV8d42WBnZ+ZokK3GOgro2QICGv40w3+39eA91CmVLtdnkau9yODt9qYdSbvBtfKjmOdUCaNi3+KWVprHDdwVk/3OckwLbd1aiLBw8BfVmWkFKrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksgnG4GB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4A1A7C4CEE7;
+	Mon, 13 Oct 2025 15:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760370565;
+	bh=YIPVFumAT9DHDl+3NSoby0+v8/FmUF2QL269vIj3vhQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ksgnG4GBbWOJxeQTzloKur8JW68127xr+1JOQt2hPE+McNJnuJ+vigSYO/NGqTW2w
+	 f01RstPL41vUb+C9ZjqdFjR0oa008euBoOvMXr8FIrAwb6TdgQG+T5MM/0pwRMQASJ
+	 bkw1A1cZpREPjEl9LVFdjs0WWSAiCfpqsil/Cfvl03tqsP2vjCQztNiga/1/phGsKj
+	 RDTIqI74YxENgYrZ/lUn6Vos1x51zE5dzV0sEofnoX7CVSV7EA7ISAQfDIFqrFqsdu
+	 dyztcLd3MXLEfhFQcyf91Lzgu0GzhLdw7b+pfhy/K4Kh940lQbiWqaEmcGDfTya++a
+	 KV2YoVZ7LSjjA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361EDCCD18E;
+	Mon, 13 Oct 2025 15:49:25 +0000 (UTC)
+From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
+Date: Mon, 13 Oct 2025 17:48:49 +0200
+Subject: [PATCH v5] dmaengine: xilinx: xdma: Fix regmap max_register
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251013-xdma-max-reg-v5-1-83efeedce19d@amarulasolutions.com>
+X-B4-Tracking: v=1; b=H4sIAGAf7WgC/33OSw6CMBCA4auYrq1h+uDhynsYFwOt0ASoaYFgC
+ Hd3cGVIZPlPZr7MwqINzkZ2PS0s2MlF53sKfT6xqsG+ttwZaiYSoZMiAT6bDnmHMw+25pCqokq
+ VLqTOGZ28gn26+cvdH9SNi4MP768+wTb9A03AgZcpJkqnYE0JN+wwjC1G344D/RQvle/YZk7iy
+ BHkPFFmQmIGeWUOHPnriJ0jydEbVOZGlKAPHPXryJ2jyMkLlQmATNPKH2dd1w9iAz6ziwEAAA=
+ =
+X-Change-ID: 20250901-xdma-max-reg-1649c6459358
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
+ Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
+ Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+ Sonal Santan <sonal.santan@amd.com>, Max Zhen <max.zhen@amd.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>, 
+ Anthony Brandon <anthony@amarulasolutions.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3329;
+ i=anthony@amarulasolutions.com; h=from:subject:message-id;
+ bh=zm9B3BfNwF6YoIlqBfCv8ID8sIfD6lc0Mod18hncI6s=;
+ b=owGbwMvMwCUWIi5b4HjluATjabUkhoy38i3rlObXltcKZGfnZTPlh9lcYd6vyn/49ZLII2Z7V
+ zfmbuLqKGVhEONikBVTZCnXkef1UK4rV5r5xBhmDisTyBAGLk4BmIjSK0aG74I+Eye1VMtoRaSf
+ vfenvyH4HtOzP/dPvvCf3pkzt2STEcP/ml6O2V2P+g8ziN2LO621z2pZv9of2R0yt3/ofpY4s72
+ eDwA=
+X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
+ fpr=772C1F0D48237E772299E43354171D7041D4C718
+X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
+ with auth_id=505
+X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
+Reply-To: anthony@amarulasolutions.com
 
-HI Marc,
+From: Anthony Brandon <anthony@amarulasolutions.com>
 
-> From: Marc Zyngier <maz@kernel.org>
-> Sent: Thursday, October 9, 2025 2:49 PM
-> To: salil.mehta@opnsrc.net
+The max_register field is assigned the size of the register memory
+region instead of the offset of the last register.
+The result is that reading from the regmap via debugfs can cause
+a segmentation fault:
+
+tail /sys/kernel/debug/regmap/xdma.1.auto/registers
+Unable to handle kernel paging request at virtual address ffff800082f70000
+Mem abort info:
+  ESR = 0x0000000096000007
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x07: level 3 translation fault
 [...]
+Call trace:
+ regmap_mmio_read32le+0x10/0x30
+ _regmap_bus_reg_read+0x74/0xc0
+ _regmap_read+0x68/0x198
+ regmap_read+0x54/0x88
+ regmap_read_debugfs+0x140/0x380
+ regmap_map_read_file+0x30/0x48
+ full_proxy_read+0x68/0xc8
+ vfs_read+0xcc/0x310
+ ksys_read+0x7c/0x120
+ __arm64_sys_read+0x24/0x40
+ invoke_syscall.constprop.0+0x64/0x108
+ do_el0_svc+0xb0/0xd8
+ el0_svc+0x38/0x130
+ el0t_64_sync_handler+0x120/0x138
+ el0t_64_sync+0x194/0x198
+Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
+---[ end trace 0000000000000000 ]---
+note: tail[1217] exited with irqs disabled
+note: tail[1217] exited with preempt_count 1
+Segmentation fault
 
->=20
-> On Wed, 08 Oct 2025 21:19:55 +0100,
-> salil.mehta@opnsrc.net wrote:
-> >
-> > From: Salil Mehta <salil.mehta@huawei.com>
-> >
-> > [A rough illustration of the problem and the probable solution]
-> >
-> > Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently
-> > takes a slow path that may acquire all vCPU locks. Under workloads
-> > that exercise userspace PSCI CPU_ON flows or frequent vCPU resets,
-> > this can cause vCPU lock contention in KVM and, in the worst cases, -EB=
-USY
-> returns to userspace.
-> >
-> > When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these
-> > operations are executed under KVM vCPU locks in the host kernel (EL1)
-> > and appear atomic to other vCPU threads. In this context, system
-> > register accesses are serialized under KVM vCPU locks, ensuring
-> > atomicity with respect to other vCPUs. After SMCCC filtering was
-> > introduced, PSCI CPU_ON and CPU_OFF calls can now exit to userspace
-> > (QEMU). During the handling of PSCI CPU_ON call in userspace, a
-> > cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device
-> > attribute IOCTLs. To avoid transient inconsistency and -EBUSY errors,
-> > QEMU is forced to pause all vCPUs before issuing these IOCTLs.
->=20
-> I'm going to repeat in public what I already said in private.
->=20
-> Why does QEMU need to know this? I don't see how this is related to PSCI,
-> and outside of save/restore, there is no reason why QEMU should poke at
-> this. If QEMU needs fixing, please fix QEMU.
+Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
+Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+---
+Changes in v5:
+- Update Reviewed-by
+- Link to v4: https://lore.kernel.org/r/20250903-xdma-max-reg-v4-1-894721175025@amarulasolutions.com
+
+Changes in v4:
+- Reorder Reviewed-by
+- Link to v3: https://lore.kernel.org/r/20250902-xdma-max-reg-v3-1-5fa37b8d2b15@amarulasolutions.com
+
+Changes in v3:
+- Add Fixes tag
+- Link to v2: https://lore.kernel.org/r/20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com
+
+Changes in v2:
+- Define new constant XDMA_MAX_REG_OFFSET and use that.
+- Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
+---
+ drivers/dma/xilinx/xdma-regs.h | 1 +
+ drivers/dma/xilinx/xdma.c      | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
+index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
+--- a/drivers/dma/xilinx/xdma-regs.h
++++ b/drivers/dma/xilinx/xdma-regs.h
+@@ -9,6 +9,7 @@
+ 
+ /* The length of register space exposed to host */
+ #define XDMA_REG_SPACE_LEN	65536
++#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
+ 
+ /*
+  * maximum number of DMA channels for each direction:
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-	.max_register = XDMA_REG_SPACE_LEN,
++	.max_register = XDMA_MAX_REG_OFFSET,
+ };
+ 
+ /**
+
+---
+base-commit: 52ba76324a9d7c39830c850999210a36ef023cde
+change-id: 20250901-xdma-max-reg-1649c6459358
+
+Best regards,
+-- 
+Anthony Brandon <anthony@amarulasolutions.com>
 
 
-Sure, and I did not disagree with it earlier but because I was not fully su=
-re
-so I refrained from replying prematurely here.=20
-
-
->=20
-> Honestly, I don't see why the kernel should even care about this, and I h=
-ave
-> no intention of adopting anything of the sort for something that has all =
-the
-> hallmarks of a userspace bug.
-
-
-I understand your point. So the probable solutions for the problem mentione=
-d
-in the patch could be:
-
-1. Remove the KVM device access of ICC_CTLR_EL1 system register during CPU
-    reset and only sync with KVM during migration at source & destination?
-2. if 1 is not acceptable then cache in user space.=20
-3.  This KVM shadow register change=20
-
-IIUC, you've hinted at 1st as the solution. We've discussed 2 as well and a=
-s I
-understand you don't have much apprehensions about it? And last point 3,
-is of course totally rejected.
-
-Hope I got it right?
-
-Many thanks!
-
-Best regards
-Salil.
-
->=20
-> 	M.
->=20
-> --
-> Without deviation from the norm, progress is not possible.
 
