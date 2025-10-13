@@ -1,186 +1,265 @@
-Return-Path: <linux-kernel+bounces-850912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAB8BD4E67
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:18:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA59BD4C3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CED948815B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8806421D37
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF9230F944;
-	Mon, 13 Oct 2025 15:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819C73128D0;
+	Mon, 13 Oct 2025 15:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OGRBiqEj"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010024.outbound.protection.outlook.com [52.101.56.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="AiNHPnyM"
+Received: from mail-io1-f68.google.com (mail-io1-f68.google.com [209.85.166.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D740530F930
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369693; cv=fail; b=rVKYBrBEKs4zol7K2uojrTxtgR6Mjid1RN0DTr/IUIFibkdR3QK1WWGozUXKbGsMCY3vQYFnkbWSA0G7CE97d3pZuoijIGo5Xal8v0Cn+H4KFtgJ9tyfaurXyfXLxp3ciGeUog7m0MccPgJVHXopDZbqXIblYlrVqCboQ/tggGM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369693; c=relaxed/simple;
-	bh=I9OuCdo1vWSHSGwIVNUnLZtxOSvqcXTgpF8JiJ40onM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Hg3IsHmNp6Ch+8SAXaib07T91Xx/WYwz4akV63S7lEM+slAvUe93PK5ya7XN/RxgSjvt2ePVM6RIjog+9+ArtHf4qaHR2m9Z6zFJAqnULBFJepT17couor7+BkBa3kuLyHORcVZ3eHS0hX4E0i8p1X/IR6Nype/7GFfze+q+i/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OGRBiqEj; arc=fail smtp.client-ip=52.101.56.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GIu68gIqYlEM/s9LLNwRmCFFaKW/wNlhaxin7kqRM56jlNcI/P8A5crZW54ggFR5tuCgmfMk9CkRPs2qGLv7yMAg0CrWeVsdXz/0UyWZYsZt6dnJ3DqFcvJZL5pQuWyUAXPRYFsmTs+ehA1k6WiIEDGhjLpXO+kDoGksur4l4mFvm+pcmbwnOSpFxU8d+rf2PG1NOR6b4dmONvQJ4O+ZMsPV/TKPQGX5rprOcoVxowoDNW0IcmGApOin/cfdUZxurq9gUCwiTH9+N/+TumdNj45ads3ZzfoXaHGZNwE1oEtN1q6QPHS0j6lDrrGsw+G4DE9aNsBtYhvJPSWZ+dAhqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YKqjdsjn1qU1G2WA3NlfrXwWrFk7nIjv8NFMdWKYI/Q=;
- b=Fd0PwjOarIOKe7SAyhZ3OEEy/CK+m9gF6reZyCntjOk2rZDaWJvaE0TyTwC6e7fOq3pm+SQ12Kea19U/JodzXIN7qK35deFH+ePkAXk18QOBHZihGw6bvRAlFDAovMK9+PEB00Dp78iOfmU7colPlVU1Og7ilxguUst0SLOhKdiE+MbriKu0L/lMKFHLhR/HRQWbicK9Dui7RpvS1/adKBkuMKf+2e9EkkVDUk5i08VUVeuNYmQARkNEUVI7f6ZLTdtp4ao6Hd7qCK9lcqYuG6Bx/N44OcVrs+bZ4VliVlDKpAbc8x0jMCYyw0bFUynwiDe+Ev0LT5qyxGhg5I3v2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YKqjdsjn1qU1G2WA3NlfrXwWrFk7nIjv8NFMdWKYI/Q=;
- b=OGRBiqEjC+VOnGrNFqxmxfzUUmpL6GO+MLTpk6oZ45bTMlwBI/mqtqSmVEkoLx9LMwAkz0wj2ZbOUDBsdSBzXMOgCZAMYPW5X5RU9D9rt+SfRMjA8BNbxiaU25DiKcSqa//aZsxqoWrNuKoCa3MHG8wqeOyR0GfDVSzbedEIl/c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- LV3PR12MB9329.namprd12.prod.outlook.com (2603:10b6:408:21c::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.12; Mon, 13 Oct 2025 15:34:49 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 15:34:49 +0000
-Date: Mon, 13 Oct 2025 11:34:40 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Rong Zhang <i@rong.moe>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9274130FC35
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.68
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760369735; cv=none; b=OhuiaAh2Fmyq99GLOYts19vei79tpwORcGykBjUvfS2ChFaxiPc/kt195ZYbGiloiUGWIVZhCIOsokn4Mg0w/wb83fjMQcqzejZ48ofqVJONLf5NdO2uUqY9BwOHjkOII3LQNrcM5SCU8aJUuKL5Tsmm9rFHbRH/0pBnqFZeCyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760369735; c=relaxed/simple;
+	bh=BpOZ7MH28/mxqVI8xL2FBxK2+2yB/1BVmp49i4x2sTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TOBxMAoGwWCgk/tp8AaGOfcArod0x/CcOoCQ7nIslGYO6HEdISZ3Ne9M1wITTotVgcUBuFUqA9Z0WEvh4SNUP9jAixxF4TQXrFu3XnwGYhJfHF0q5jBLuk/40yHaxhmjnLcxIaqqXvFJalB7zLW47sMDMRGnvNjuo+E0oig3em0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=AiNHPnyM; arc=none smtp.client-ip=209.85.166.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f68.google.com with SMTP id ca18e2360f4ac-912d4135379so174756039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1760369733; x=1760974533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RoI6kMthZduzT8ZYZ3qN3cAQpgGG6MRRgU4QbQyijoo=;
+        b=AiNHPnyMeR9AgSoj4A4nm0c/kJxdiAsH5EuejfXiTm596EnHvm9+tcdxMASb0VS07a
+         WXks2/yY+ks1NkQ9spaDerqfJTgm7J89GTNdikXVWd7w2ap0X9aE4YWIVOw11esluXyX
+         MH3GKhKDv1w9dWBRTN6KGN4MxLfzYA0mqRg0IlTIvZQjrKZKrlrtM9Lgn0sNQenNI+si
+         gkzgxT+/vKaVp7KI9lQ6UxaIXvWrxoJG4/lLHiq/GHiTRztV2SLQxLRP5WI7yrOJfbNq
+         Yz6ejToMa/PSwe38ToE06tbGXkdKO2vGFK35K8aYnoNiqWq0ayHvpChOpQ4GWI+2FLEP
+         H7CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760369733; x=1760974533;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RoI6kMthZduzT8ZYZ3qN3cAQpgGG6MRRgU4QbQyijoo=;
+        b=hFe5QtBPPTRXs48RzLsE3ywO36wSV/Uk4PR/KspXLcjEutZAbrdQ9HH1TeFUwzxM36
+         jj3b59XpxRDd7VK07jWwiiMkqCtzWk0acQjNAdIt2rjAXwCbCGc+q5nQAG7jLYUaeVHm
+         wPWB3/TaJRgOjQBMbD3/g7eBPZXR0IDBWLbYsZLiV13q0xHDnc6fkNXhNEcCyl7pPLp0
+         su4RguLtOG/mcH0OGjPJP3YXWuDYYa7LNzI1xwEVowxufdj8OraPyz9yIOsQ7reCbzsK
+         MpdKiME9KPkJfaczeLbSOqTucOCGoWn5PCLzMkLsfnqv34C+Ngdk9DASRr1W1soz3br3
+         UToQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaiWLJulhPwOPY32H9nJR6+a/I4P559sigiaB8tn8X1nuhldNJvSAUyVHIqyEsdknQacgt3uFBTrx3Orc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH8OKVK4JBjUkxy5Qti5OU5nj/9Bux/no8rC6Qt+NUQBgFFq7J
+	snyv+dmgiEOaA75KkR1h1KvuIx+AgBjD3PnvraUrcHOIBxd7OKvjDEX9tHEHndeEKdc=
+X-Gm-Gg: ASbGnctVM4cK2GmgcciBAZklZFxb58oRInS4vwEIT29mrsHY7wa4FjDs9BZM+OsYKJ/
+	fGOyzquuJQ4jJi+gZuRupasEKUkndvK+MD6NWaTOXMYfhojT+Byf3XT0pKdqdNuwhTvIpnjk7cl
+	Fn9MKCjyrUnjFoXNaocoMuAS3qTQ72G9UD9ze8jZDdjPfUPcVt5a+NmvmKqnxSFvO7L2dMWa0k0
+	no4UdWC8lxzYV5WR5BV4Im3Z4UoJa4Pr64rlFPS5WcGT+/yNuvR0QDwQuT/5nPmU12y/+Xi1uIH
+	Zc7uH2fg6MU67UbfuDRg9RUsQ6IaAaa6Fa0AYTt9/eYwwYyjDroj/5QGOfz/VS7xBHt+SagjYSv
+	gSoUCG4BOiuSxgmMSkrFNg2Ye0ZHW6eOjJ9tjrniJoTJHuLk93xDpSZImsJkw9NUXOi7cQ8sGHp
+	vK8rkzrxb4
+X-Google-Smtp-Source: AGHT+IHNZy44agm51sCB0W97tyTX1zzziU2yBhjgQ7PRISv17V55+lCQRt+SG1OTrzoY5/d0w7/HeA==
+X-Received: by 2002:a05:6602:492:b0:900:1fa2:5919 with SMTP id ca18e2360f4ac-93bd19882e8mr2625044139f.9.1760369732669;
+        Mon, 13 Oct 2025 08:35:32 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f6c49b522sm3910266173.1.2025.10.13.08.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 08:35:32 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org
+Cc: dlan@gentoo.org,
+	guodong@riscstar.com,
+	pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	christian.bruel@foss.st.com,
+	shradha.t@samsung.com,
+	krishna.chundru@oss.qualcomm.com,
+	qiang.yu@oss.qualcomm.com,
+	namcao@linutronix.de,
+	thippeswamy.havalige@amd.com,
+	inochiama@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/CPU/AMD: Prevent reset reasons from being
- retained among boots
-Message-ID: <20251013153440.GA78919@yaz-khff2.amd.com>
-References: <20251010165959.49737-1-i@rong.moe>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010165959.49737-1-i@rong.moe>
-X-ClientProxiedBy: BN9PR03CA0626.namprd03.prod.outlook.com
- (2603:10b6:408:106::31) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+Subject: [PATCH v2 1/7] dt-bindings: phy: spacemit: add SpacemiT PCIe/combo PHY
+Date: Mon, 13 Oct 2025 10:35:18 -0500
+Message-ID: <20251013153526.2276556-2-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251013153526.2276556-1-elder@riscstar.com>
+References: <20251013153526.2276556-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|LV3PR12MB9329:EE_
-X-MS-Office365-Filtering-Correlation-Id: faf79389-383b-402e-6e39-08de0a6e0b5c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qwhS06N4jjO7Mwn/Shk3YIN9RHwNbeBAWPwTQXk8LWv7QVlR6GxU8b/jitnW?=
- =?us-ascii?Q?GJwn0JELRBXt5+g5nqEqrKFeEaLvfBXhmcy7Fbui+kVwmEKe/pv2jCN/pH+M?=
- =?us-ascii?Q?RCxRmqkEsY7WaMr8/knNyzyk8l0WW/UddyV6sG7UQt0DsuSCJcbQZVHDnHN5?=
- =?us-ascii?Q?T5c2K2FmN/qR9jYUB4xzhdJGTSjUPEKlZxLi6rJOdolDmm0y5doH2OXrkgRg?=
- =?us-ascii?Q?dRCSZhh9kvFjRLh6lbPgS0qAyiP4VcUAnzltAFZ7xPXhlvGgW+bFqKMEyI2i?=
- =?us-ascii?Q?AukH/IkQ9GgSfGykY986T/stD0YoP4sIS7OM0Utq2NSjQVt4aRKuYKQJUlbL?=
- =?us-ascii?Q?NVKYgVIzNcPla659Hx2vap7y1TliGHJySCCrLo3UlYuTocpiRkEnnJrqo49N?=
- =?us-ascii?Q?8QwJCzvqQZKhPpuIuS6v5YW78RsF2LF6D3BduiuO1zcQeijrjLd10tihUbBE?=
- =?us-ascii?Q?chneFCmQ0KTpW/J6kc8f6k/Ds+ZyWpJUqNL7YJesVFBt1Ic/tz1V95Usv4NY?=
- =?us-ascii?Q?u8/Jt/6ZUSPYPD4QbEh943vyAjmefBQ72BFJHNRVP5P8FSvXYRJ9TCO6XntA?=
- =?us-ascii?Q?SNpHhWmELiqqRB040naTPpO81Br/Yn8LV010Uw7Mu/5ICh0TrdS/QjIliv54?=
- =?us-ascii?Q?hTE8cGn+L6BNqp0rd5VuHa+MnKxZjD5brw1V1vxKaH2+IeH1VlsKFUyE4e+l?=
- =?us-ascii?Q?AXvsLSWbvKxcI16Q4E374/5yv9rEXrjGNG2t/+vuoCgMg8U5FU92CMyR54Qq?=
- =?us-ascii?Q?SS6GmDr8qlC7hqIc/jFDsUmvrSIwCfwgDBsBTCRKfFhCG+FJTL0RLB+CSmvQ?=
- =?us-ascii?Q?MjHRT5ZscZmBI2gG0wtwg1Y0C+3lAc9Eyio42BLjL0knKYXxNgXAFGP1UJvO?=
- =?us-ascii?Q?jrBjyR1Scy8r/5hKfdVAp0xCqYzI8TsXVH69B80p6+il0o5avAhHDE3/af1a?=
- =?us-ascii?Q?bMs2/+G/4Dc8QInbcbCb82DfgLl6EYfEXgDWFlMxVLJhW8If7LUtealnVJOz?=
- =?us-ascii?Q?dhJyIi+k/AbQVVscl9OreEBOWMgFCaZ1PUg9O9eV+CQnIjU8agzpnOWtGVO4?=
- =?us-ascii?Q?0gmVyUXM2PvCHc42JIewrDs9kFuntKVVXQ4WJPY2MYYR1Bs4xTU67+Zs8jri?=
- =?us-ascii?Q?Bv7EeoXLuvIIy4ALRhfVNRxNh3LnXFKbYVUmuTxXOTz0+OfW5LRKKRMmOfiY?=
- =?us-ascii?Q?7piFKzkjLuib5ZTMdFsQ8d7Bsl0KzA6G9dTttDDaPrY+T82AXLKwc7/8iaYc?=
- =?us-ascii?Q?Xr8YdLvYZ2IZL2bZh1k9oQkSXAnNaoO2mRJ7waQ3kDRSxw/fC1GB7dIUGpak?=
- =?us-ascii?Q?BmPPtrVMuFmL24EC071aBjpolggkJcFejrhR9queRz3fNuQuWx4X6wczLamU?=
- =?us-ascii?Q?J0nqOV694VJex3gSozvjUfxaQKCw1KuBWfQjypaceeiIFVfEyYOpUMNPss5u?=
- =?us-ascii?Q?Fzoh72pzBRL45PAYZ708X3TYI0kE31ELOFwp2F3M25EpdF1Wu53gFw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QtzQ19JjD5xtECY+FbVDBu45csqxrROhDi53JUA0YeNfuuNgGR6IBZo0a/y+?=
- =?us-ascii?Q?AdjWSVr5loMEPxNluquAsuhiF0iGg2ArIzd4xwRo/L7JyTVd3AOUtA7Gonf0?=
- =?us-ascii?Q?CXUUcBGN8XF6l+WQ8nyI6lLhRVf1RSmmVylIjfCh3rHmcabuSOoJG1GDvPJn?=
- =?us-ascii?Q?tjnH7NaHk1cz+eo5yghhQ04Wr1TbXpGLaNfJmmbEEhLAwyxnWRF3fug+PfRp?=
- =?us-ascii?Q?aQa7oXilCxgmirpux0ArnpzJE0Kyc0vXsmAJc22ViTkcK8RWzVh5SAwFi7PX?=
- =?us-ascii?Q?f2imjiJFK9zVF/xgdWtDAEqsx9ExUgBFkjBZVihN9GmIay94YjxKb5ESylqv?=
- =?us-ascii?Q?3gIkdYqb3eI6ygBmEsFrt8xtYNuOtf2Vf35dv/Y+Ku6F7EUGc5HXzIQEgO2Y?=
- =?us-ascii?Q?1RmcabUh4Dq+pj0N9PyXDrCIOOYLRsnNvcSqIF+BT9yaPqoim1/nsYwghJDk?=
- =?us-ascii?Q?c2IpUT7TV8xInsCfoe6hVq+BIYh+xGz8cvmhSkavD0HMRS3oj1aRHaqJ9evx?=
- =?us-ascii?Q?ZfyIXOZDE2UvvK5uLhPDb7t1z5B3yBB6D6jPTAITtcmMe1lBY4YOK20Zp2mX?=
- =?us-ascii?Q?PLfKz8SYD2Gh5I55/6EBoZ07+yAePjUJuDvE2MgxD0bDXD5iy43D4wXhFb9r?=
- =?us-ascii?Q?d4rKOr20PyBSAX9caV5HkhuRBEcMyMevYu62CoH3f1KV4yHsAX2rT9GPHvKU?=
- =?us-ascii?Q?XICIk2pcDbOuyxco1GqWoudNUw9lIU8d96QO26QsPK4gvAlMjO16E8rkfl9F?=
- =?us-ascii?Q?Eo2HBWsj5mlTDjg8JM/Wk4K4VZRIL/WQQT0X1tHGJA/rfL6PaUlgb9tGP5ym?=
- =?us-ascii?Q?ET/Pffz6uawaXSx8WYhZvFK/2hpzQT4H2IOqGnqs0krKKpfw7Lgsd5mWn9Wy?=
- =?us-ascii?Q?/NL1a/TNGj90EeQNl9RA27e8H82u1HGl75Z8p2gUYhWJiPAySn+aRfRi+N0Z?=
- =?us-ascii?Q?lfmPfzLZ88HwQP190LNpoJaQ+rh03vadj/tWr3OuIu9UY9zFAwWSjqOnIJ5o?=
- =?us-ascii?Q?JGN8evMXDyxdLIBFul9LxwCVK5CjIBS7IzUqZ4yieXm04Qedb4i9wtLcwOrg?=
- =?us-ascii?Q?0ot+HyJJCLUCx4sL6+IBgcj39s1LO5acBZ9Ur0GQEvl24K3zjRfdOhKBn7SP?=
- =?us-ascii?Q?+S0jtbTqpOwwQlNwUGu7pWBeXXO0v3iqFE+dmXkGFp2ifbAbG1YzmHpMdbcx?=
- =?us-ascii?Q?nxDnYqti2vX00fFZbsCi9XxhnrKIg+FhXjx23RNrO4oz8RbJ80fOsILo16PB?=
- =?us-ascii?Q?SvsVHNHKjQ24Z4I0i2mhLtw9aKe6wiIwQ/RxEYnwCdnrnVHC3g+jacL4IWKX?=
- =?us-ascii?Q?7v8LmRl2FzPJhhYLCBXj6bRQbq0ZU2WakNx43gaYVGJwh1oWxyOxRiO9IRxg?=
- =?us-ascii?Q?5OKc3eyqeo7UmnLeUEgLqmBYODq/K81eZqf/ltDkR+Qm7qugggL1cdfd8t4J?=
- =?us-ascii?Q?tKTBzICHT44uEuccUS0nmSljrSE5EJUY0m0wkskRvk6H7d8GnUb79e2HzS01?=
- =?us-ascii?Q?RLXQUqvWy+MOkw5ZUWx7IFtqQLiA73Y78kreMN2Oar9Rvok46JlOhYwnpsOT?=
- =?us-ascii?Q?T1OZFwKlsIFas56WqQd/dYOIuSP84JGmKz56devw?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: faf79389-383b-402e-6e39-08de0a6e0b5c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 15:34:48.9286
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3YbbjANqGcTvTxPGO7ozwu0+q0a1MAt2w14LimCBOsU/9jzL/bospwTbUJQZdpxhhzi+X7hTUNsgTNRe5hc4Ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9329
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 11, 2025 at 12:59:58AM +0800, Rong Zhang wrote:
-> The S5_RESET_STATUS register is parsed on boot and printed to kmsg.
-> However, this could sometimes be misleading and lead to users wasting a
-> lot of time on meaningless debugging for two reasons:
-> 
-> * Some bits are never cleared by hardware. It's the software's
-> responsibility to clear them as per the Processor Programming Reference
-> (see Link:).
-> 
-> * Some rare hardware-initiated platform resets do not update the
-> register at all.
-> 
-> In both cases, a previous reboot could leave its trace in the register,
-> resulting in users seeing unrelated reboot reasons while debugging
-> random reboots afterward.
-> 
-> Clearing all reason bits solves the issue. Since all reason bits are
-> write-1-to-clear and we must preserve all other bits, this is done by
-> writing the read value back to the register.
-> 
-> Fixes: ab8131028710 ("x86/CPU/AMD: Print the reason for the last reset")
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537#attach_303991
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> ---
+Add the Device Tree binding for the PCIe/USB 3.0 combo PHY found in
+the SpacemiT K1 SoC.  This is one of three PCIe PHYs, and is unusual
+in that only the combo PHY can perform a calibration step needed to
+determine settings used by the other two PCIe PHYs.
 
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Calibration must be done with the combo PHY in PCIe mode, and to allow
+this to occur independent of the eventual use for the PHY (PCIe or USB)
+some PCIe-related properties must be supplied: clocks; resets; and a
+syscon phandle.
 
-Thanks,
-Yazen
+Signed-off-by: Alex Elder <elder@riscstar.com>
+---
+v2: - Added '>' to the description, and reworded it a bit
+    - Added an external oscillator clock, "refclk"
+    - Renamed the "global" reset to be "phy"
+    - Renamed a phandle property to be "spacemit,apmu"
+    - Dropped the label and status property from the example
+
+ .../bindings/phy/spacemit,k1-combo-phy.yaml   | 114 ++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+
+diff --git a/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+new file mode 100644
+index 0000000000000..6e2f401b0ac27
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+@@ -0,0 +1,114 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/spacemit,k1-combo-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SpacemiT K1 PCIe/USB3 Combo PHY
++
++maintainers:
++  - Alex Elder <elder@riscstar.com>
++
++description: >
++  Of the three PHYs on the SpacemiT K1 SoC capable of being used for
++  PCIe, one is a combo PHY that can also be configured for use by a
++  USB 3 controller.  Using PCIe or USB 3 is a board design decision.
++
++  The combo PHY is also the only PCIe PHY that is able to determine
++  PCIe calibration values to use, and this must be determined before
++  the other two PCIe PHYs can be used.  This calibration must be
++  performed with the combo PHY in PCIe mode, and is this is done
++  when the combo PHY is probed.
++
++  The combo PHY uses an external oscillator as a reference clock.
++  During normal operation, the PCIe or USB port driver is responsible
++  for ensuring all other clocks needed by a PHY are enabled, and all
++  resets affecting the PHY are deasserted.  However, for the combo
++  PHY to perform calibration independent of whether it's later used
++  for PCIe or USB, all PCIe mode clocks and resets must be defined.
++
++properties:
++  compatible:
++    const: spacemit,k1-combo-phy
++
++  reg:
++    items:
++      - description: PHY control registers
++
++  clocks:
++    items:
++      - description: External oscillator used by the PHY PLL
++      - description: DWC PCIe Data Bus Interface (DBI) clock
++      - description: DWC PCIe application AXI-bus Master interface clock
++      - description: DWC PCIe application AXI-bus slave interface clock
++
++  clock-names:
++    items:
++      - const: refclk
++      - const: dbi
++      - const: mstr
++      - const: slv
++
++  resets:
++    items:
++      - description: DWC PCIe Data Bus Interface (DBI) reset
++      - description: DWC PCIe application AXI-bus Master interface reset
++      - description: DWC PCIe application AXI-bus slave interface reset
++      - description: PHY reset; must be deasserted for PHY to function
++
++  reset-names:
++    items:
++      - const: dbi
++      - const: mstr
++      - const: slv
++      - const: phy
++
++  spacemit,apmu:
++    description:
++      A phandle that refers to the APMU system controller, whose
++      regmap is used in setting the mode
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  "#phy-cells":
++    const: 1
++    description:
++      The argument value (PHY_TYPE_PCIE or PHY_TYPE_USB3) determines
++      whether the PHY operates in PCIe or USB3 mode.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - spacemit,apmu
++  - "#phy-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/spacemit,k1-syscon.h>
++    phy@c0b10000 {
++        compatible = "spacemit,k1-combo-phy";
++        reg = <0xc0b10000 0x1000>;
++        clocks = <&vctcxo_24m>,
++                 <&syscon_apmu CLK_PCIE0_DBI>,
++                 <&syscon_apmu CLK_PCIE0_MASTER>,
++                 <&syscon_apmu CLK_PCIE0_SLAVE>;
++        clock-names = "refclk",
++                      "dbi",
++                      "mstr",
++                      "slv";
++        resets = <&syscon_apmu RESET_PCIE0_DBI>,
++                 <&syscon_apmu RESET_PCIE0_MASTER>,
++                 <&syscon_apmu RESET_PCIE0_SLAVE>,
++                 <&syscon_apmu RESET_PCIE0_GLOBAL>;
++        reset-names = "dbi",
++                      "mstr",
++                      "slv",
++                      "phy";
++        spacemit,apmu = <&syscon_apmu>;
++        #phy-cells = <1>;
++    };
+-- 
+2.48.1
+
 
