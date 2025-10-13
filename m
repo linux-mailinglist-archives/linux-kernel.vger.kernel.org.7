@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-851356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9001BD640C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:51:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE952BD641B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAF0218A1444
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359B53E81C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552B02EBDC7;
-	Mon, 13 Oct 2025 20:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DEF2F0C58;
+	Mon, 13 Oct 2025 20:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="phgODA6c"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="whd88L0g"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5437022AE5D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBFE2ED87F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760388704; cv=none; b=XYP8TUkARdwSnV0ygF28RstrP3mMfk5922kn3QbGa3lJW3mt2Q+WoK6Nv3W0Eae3isbdo2okT3lGE51qdAbJOIhSz6yfOJYZjGiqs1VOEK0hePBBatR4vzQZX1IUMId2v9hG7KprwGziZzkyINcZDgYydWxZj0i70AYuz4zClqQ=
+	t=1760388707; cv=none; b=WNLcMRWWT0XIQKrujUGT3/Vl97C8qsrDsGn3mron1Lo0x3MbIVMI+sqVG6C7OqE6zs9iCxrntjIOZBO+jnqO3bQ09PKMnIXsx2pPYtTxWGAg94QmrIjbOt4OOg+biwOMPy4qEVNRffbPp6x5mmlTjp46bNRf4oYx46W7JDviwhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760388704; c=relaxed/simple;
-	bh=wk0OHltmWW1u/FhLNOtkFQyvYtv6HXEbZIlrMYmGWwk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Qwiqrni8xzBjo/+PSGQW8p+nKhg4mg9WfpaFy2HvB360YQNzjqD8MDE0T+fzE6YQCuXE+Y2Vn8enhCkF/g0GgHEV7M7Cwfvyz1m1JY7bUrrlLwVZSDYWtLetYG8J2XgrqPHdLkfgF7LOHUxn7IcHqy08cF1ekHb7hm0vjZSuaW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=phgODA6c; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1760388707; c=relaxed/simple;
+	bh=+oCGKuWrWlzzBKoMEL3/FfWoYnYmDhmOoA3Dn2HMS1M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TT89sMliYEUW2AbTtPxUU5AS0l38uZMdi/0CUd6m9dF23CpT2xguc2ICWbT/XJyKOmaVJW3jidQ4th9xauHSMRxphgPqb+MBbC45BYNU2rd84lgo1kDcANPC0lrZWeBtDkH0MPCy4XelJqmG7BAGPVIP9VgIUNY31f91VCjx47U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=whd88L0g; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so37785655e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:51:42 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e52279279so33100555e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 13:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760388701; x=1760993501; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3phMkwYfm56eqaIllq9SuGY8VDAAtMNYHrtgGJ8TFRs=;
-        b=phgODA6cmv8kuWRhKAWFlGBo5xdBXvV75lysfs47guCwcwAdFNzMgMMciCjGKnEOEg
-         bJZjUfX9bMNHhmWzRO/aH60OlwwMOP5Gpcstw8j4EY3jnDH3Z3pTcyItZ+yNjCZ1J8C6
-         RWRj6hJJysYo8SS3jtiyHAL5lvtPYYSRcQh2kDUFhPOMMAEj8aEv26c8CJVCdiedBBWH
-         YyxYDQTUOFANHNSk5+17jubG4zfcZHc5zbp5omUdol5xbhzYlbPPhxfgbXJu+GFO6YLI
-         7iE+pBxW9Ex9NVbshk43htyaoyI8gbKuR9Jt+WOF/foJyX8Or8LxZ5sfYbUt6Mep4O+C
-         0GRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760388701; x=1760993501;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1760388704; x=1760993504; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3phMkwYfm56eqaIllq9SuGY8VDAAtMNYHrtgGJ8TFRs=;
-        b=Arf38u7yLylxq7+x/8+24YsAttaKZlJGJsQrEa9jcpeVNxkNKs2Vszrc2DUvTI0fHH
-         N1rSgh/vdcqqY/opL59yBd8M1UxYxsooyz1EmFqg+vhhlixBll+9tmwgaKoEkdcJZiwh
-         ck32wVqvBQdf5e6PWYGFPgG6eagaRYjA/nTYxf0r1HA7YPrQdVOHGqnwS+EE1YtWXeAl
-         ht800OkP3VrRn4MPO4d12WQt5p6/cX1gnSB/qDL6I1c8pNzieSYbXMjjmJLBeDcMRgjb
-         iCN3Yp1eaBps72IyxuFKcfk4yIpbNdlvFt4953ar1/MqUvjg3hspCuMxMshDiPXMZfOA
-         9n/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXuElQ/TOdupyKDOlCQdrkcIVv8n2/sltdmbN4+aDFbEGQNCITTGDhGBrd0a3ashJkDCLxtZJ+tJUJZInE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeaoxutteYNZ+vx6cakngRGHsfVPNYSCH5InXJcOVQVxXOAxcR
-	FmFp7LZtUinUlHGKOrDS8l1VgyjTZYkxtFzQcOrdIF7CmW/tsd0nZ6r0dUNp3ClMYBU=
-X-Gm-Gg: ASbGncsoqQAv2fKnRBko0P+K4zCdOgSRS5Vud4Wxz7U09t+mD/ki1ykmbvEeEEvHsyy
-	H1tNT7clJUYProz1YIrfXyr7fy3GxJsa2LSSBIztHM5siwCuvIVktMpYNULWtdgzx1X+vsNqIw3
-	mT/h0QMG85sfm0ZoZJSwuwByVe8M5mp0qNf/RRd5bpHnANafm+e2HnP0DYmRbmoy3ubbpTwCjxv
-	TJzyLIqLmcfwsuyOow43LWYJPO29JZ0D8QqBVpRFILwq+0xcCzgI6DQDnL3jX0pF4kAaB/Y8GRi
-	i0a7KWeY28naNfsWuyK6xGIy9JEnzlDQjSgbEnuvMEfQiJ2OYMPVaizYKidONT8w6jXKyXcnsY0
-	fL7ENhjkQGOL6Y38fLEZ3YyU4nIAyfT8aEuST/mR/ASBC8xlNvPll24HWcdy8BAiVB/e0tt2Tnt
-	4YIGfynxYI7g==
-X-Google-Smtp-Source: AGHT+IGjjsbDzQn+sXb2Qz7A3620Q6W+fxPbSimJibDpQdTq4Os72DJCSBPNVGKdtBeOAoH4qYHh8A==
-X-Received: by 2002:a05:600c:198f:b0:46e:3b1a:20d7 with SMTP id 5b1f17b1804b1-46fa9af8595mr180676445e9.19.1760388700609;
-        Mon, 13 Oct 2025 13:51:40 -0700 (PDT)
+        bh=DyAHXZfiSiZUnBesnTj/zEW972y8t9X4DG0As5mUToM=;
+        b=whd88L0gxlkCJEHNSMRw0rggeUWlkVWWFyk/RaqoqV8Z/DNANWLGEXXAqeJVl8Cw/a
+         CwRMEUR9k3ma9WJK7Ro04HuNuzWtaLW8Wa+Ac/qQKfTYbp6xpuNdMrLmSwp/6qMysT0G
+         a6fpVqDumpvratMKokWtmdoTI6pevaZ6XhkBHHV9JlX9vCfgOcD6PfpVVPXL4Ck3AXSy
+         TsKfHP7tcSlVAEW/e6qVloXRMBUhwKkM71Wl9VhoO9fkSlK5Gw8HZwcePwHUAe99Hp81
+         ARG9Ue5IGQm1MANE7ia/69uYiCfINgd+eJC6CpAmwU+lqWpGhnL4pEE7nCaoVDorpNrL
+         BV5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760388704; x=1760993504;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DyAHXZfiSiZUnBesnTj/zEW972y8t9X4DG0As5mUToM=;
+        b=KjNWWhptxrMgH4xX2irEErlpMiD1IPETXTJiskk2AJ8KR3m1Lv/15SK8G/uw0leLam
+         vAEwi46dwO5/J8xy50XR2zF4qYUGbX88uwAD/xlWjQSzzXr4JhWA01c84Z+qNVBysUd2
+         iw46jd7gbF2kwfdvZiYyPAST8fwTCyWlP2QPrlVYLL8077JYaeALkpIdyiA12uDe4qgy
+         el5nCLBXKgoQW8wZTA/inCgU7fv9emC5SmpSlz2uQpRN9VJCx8VwrtOD+EkW948g3my7
+         yRBBVNREPV0lJrnb/JZjJZ7/hHI4UJ8rU+hN58S1i1yRBTYvSozccYXXlVI/k/OIm/wT
+         RXtw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0WlCBS6Nsq9focC9kSkG2T6yzgbwL4+hBdgcdKS3m2IWmwlbDKM/3uFj8ykzydvjOp4nUTfeoirJN5P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxKMrj+mxlfJRjpP1DzxvGpyJRaKuswrycMvKizGlaKpfbomjo
+	vZXoRQhWSiwjThPQbFdAsSMI8pdnW0h51lbwtEqznIvBHOuZtaL6s1MSldP5IzNxHSY=
+X-Gm-Gg: ASbGncsPXuMrg3KFdwA90Q5Z2shBPC80eRdq7bwO7UD4vZjE391k6BfBXQvxUA/O1w3
+	CNf7MDSaxQoeqFDtN1/tXnNkR4GEemprtxB7sKaUkgcPiM8AL6YA/NefXDMnVkw+a0cvMCv0yPL
+	N2wBqdJorkFSNMrG1XRGVd9IghD3x80TgHHelNFIMnWCcti7YX1c9ewd0k7O5qOxggIQq6LSgm2
+	k+FHKIRZct5gMvL0s+V037yAKig/iphL8MeAlEH+OUcggfO9PcX6Kn8EJTsI2FAMEEhM+JFUz+g
+	jSgTglM4ttRUrHlXUyaDCj0bM3otJcI6sZfcDGP3dNmUGCEZ2urBrcXjEyJbviYiHeZWVawonZU
+	NMASOV3xjQTFpfsfgbqSiYGkOvIVBmkY2K6eubAkBUcgFSDuMcsAozhQXv6Cj5eXebPMn0M9ut1
+	+GBIAZw36L/g5GV3GpwhfK
+X-Google-Smtp-Source: AGHT+IGM/ohxNTkB5I5MkU/rwu4FNgrucoZDaWYhj1yomWR4i7pKzGV277cj7BDpJ/M4YUeEMDupkg==
+X-Received: by 2002:a05:600c:4752:b0:46e:49fb:4776 with SMTP id 5b1f17b1804b1-46fa9a9f05emr144983335e9.11.1760388703969;
+        Mon, 13 Oct 2025 13:51:43 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([145.224.67.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3206sm133512615e9.4.2025.10.13.13.51.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3206sm133512615e9.4.2025.10.13.13.51.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 13:51:40 -0700 (PDT)
+        Mon, 13 Oct 2025 13:51:42 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 0/9] Implement hardware automatic clock gating (HWACG) for
- gs101
-Date: Mon, 13 Oct 2025 21:51:29 +0100
-Message-Id: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+Date: Mon, 13 Oct 2025 21:51:30 +0100
+Subject: [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101
+ hsi0 and misc compatibles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,10 +85,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFFm7WgC/x3MQQ5AMBBA0avIrDWpBsFVxKLGYIJW2hKJ9O4ay
- 7f4/wVPjslDl73g6GbP1iQUeQa4arOQ4CkZlFRVIWUj9BXsoQOjwN3i5oUqWz3Wcq4VEqTsdDT
- z8y/7IcYP21AcqmIAAAA=
-X-Change-ID: 20251008-automatic-clocks-249ab60f62ce
+Message-Id: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
+References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+In-Reply-To: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
@@ -103,154 +103,58 @@ Cc: Will McVicker <willmcvicker@google.com>,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7152;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1464;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=wk0OHltmWW1u/FhLNOtkFQyvYtv6HXEbZIlrMYmGWwk=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBo7WZWXRe9IcAtzTtKaHSH00s2wgfJFS7akr0qz
- wXfB6tHhDWJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaO1mVgAKCRDO6LjWAjRy
- urCcD/9ImwTZ5kh61Bp5J4uFb8ht0NDGLanBjKZWvOK5b+cG+4bP38KKpx1mO7C/n+1dU/9cRoT
- Rwmde+IRRO3sqDXv/R4lOfKNC+uu9pgRSlfRYTUzAm/3eGwu6fkMaG+F3j/cjwaYIzrIpLkm5t8
- oDHvGpNCbvKD0ZWqZYsGBXtWlG7MpLRRAGU7xmeRA7U0JquUs3GFp35GgzaeqQnAOGASUSduHmv
- IGsW+vAJ/+jEYxxHMdsRZT/sSAzTKf3l55YGJfJt2sT+oQ0DzX0l51gVEDsH7xipCnu+0YCurBh
- ltvBxAZY978GkiSWwTurs/1XSOCTf3Bl6c6iggATCDasUFty+carKY/SIqrkOlufcbSBZvytMDe
- 1dk5Jh1rXJZdjeiqOqiKxoc+BtmY6OHrkSWJ0LZRufLhWkudpsvwONQf/sJNrWtq8pAegEsMutr
- dQu0X5xONOcVTGtSnbHpbVqxpwrEhCYS/Ur47DUIX5x/79mGzbOK2x2gN1L74lS+8oGkeE5uvs8
- lyaCQsmzTe6hMMi2V6Mb6tL8xriIUmEgMiHN6PdFIaXlyG+5Wa5D7OIueMyDCD/haIip/i9C/H2
- eZQ/TXc87BnRpGOYkc75RICvDD1aSh5Qcd2a+Aczlp4oeV+53eLaD1Lxt1o96wPhLxSFbDxhRVq
- M4E1RJTzdFiWHyA==
+ bh=+oCGKuWrWlzzBKoMEL3/FfWoYnYmDhmOoA3Dn2HMS1M=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBo7WZX52tjaL/uhAfhCWfI8+Pih5EXQZpOFieP4
+ jF2DKC4+SmJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaO1mVwAKCRDO6LjWAjRy
+ uksXD/9TEH4aYwfIIwWKepmKdYexuyHJ3CBlsgHDqQplGtpixAO+QJV8YjxA1Yz2onhlSyDIReF
+ LJ8S+5U97RrsWGDfLSRYIhgqfg+QM5ZJuC0GigZTPmh16qtd/jgr1tMsVCp71ymyVAXkKfJS6iT
+ FhpOs2hM1ji3uqQNRTrm0w7k8Alh3lzTnoLkCdfy5a8YE0famciNH6ejpx+oyp+sC0QEuTDJtlS
+ KsnfpNGv6obmQKx3DnR4Q4WIZhN4dlEraL4VwKfgmXUqRvujLeDPEvNVQumFNusyQD7pAw8leKX
+ OiNpSkvLKtnq0X97+BX8NOUo1LSxieGNLpspBQuqZ+Zxeh+xZXiieXLU/A5I5zuGK0R0ZEUR+/O
+ PSvAq6gPM2ZZf0mLZDxbj86nxtgspkfB7ViGWTzZzuMu0Wjbg3lD6YHDi0wJfO/ZQqD01UmARkG
+ tFp/+8W9gykbIzOkxBqp06LeHQ8YLfP0EoKGNy/DVUDFx5O12In7qt86z7He7iYx1ExOvOglm0g
+ u6XNjHSbxlttVpjOzgx7RgjmYdUhexg/KWG3CzZERx3mNqddVFJCF10z2se9vovsK7oeF+iE3ET
+ b7xtbfB2zSJCEFqoqbUgeGmr+0X4PoyQC5bZ1+WAQ1efzxidhCoyDxgvHaiCigKIwiPz8BOqHJQ
+ 2oG8XmMM35so5rQ==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Hi folks,
-
-This series addresses an issue with Samsung Exynos based upstream clock driver
-whereby the upstream clock driver sets all the clock gates into "manual mode"
-(which uses a bit that is documented as reserved in the gate registers).
-
-Another issue with the current "manual clock gating" approach upstream is
-there are many bus/interconnect clocks whose relationships to the IPs
-are not well documented or defined in the specs. When adding a new CMU until
-now we have tried to label these clocks appropriately with CLK_IS_CRITICAL and
-CLK_IGNORE_UNUSED but doing so is both error prone and time consuming. If
-your lucky disabling a critical bus clock causes an immediate hang. Other
-clocks however aren't so obvious and show up through random instability
-some period of time later.
-
-Fortunately each CMU (at least on newer Exynos) provides a "hardware
-automatic clock gating" HWACG feature that is used by the downstream
-Samsung clock drivers. Hardware automatic clock gating uses a hardware
-interface between the CMU and IP to control all clocks required by the
-IP. This interface is called Q-channel, and is part of the Arm AMBA low
-power interface specification [1].
-
-The advantage of using this Qchannel hardware interface for
-enabling/disabling the clocks is that it takes care of all clocks
-(including bus/interconnect) ones for the IP automatically thereby reducing
-the dynamic power.
-
-Whilst each clock component (GATE, MUX, DIV, QCH etc) has a HWACG enable
-bit there are also some "global enable override" bits for the entire CMU in
-the CMU_CONTROLLER_OPTION register.
-
-This series makes use of those "global enable" override bits to enable auto
-clock mode for the entire CMU and every component within it. Through
-experimentation we can see that setting the "manual mode" reserved gate bit
-on a particular gate register overides the global enable bits. So the code
-is updated accordingly not to do that.
-
-Auto clock mode has been implemented as a "opt in" by setting a new
-auto_clock_gate flag in the CMU static data. The intention is existing
-platforms in manual mode should not be effected by any of these changes.
-
-If auto_clock_mode flag is set and the option_offset field is specified
-then the global enable override bits will be written for the
-CMU (to avoid relying on any prior bootstage configuration). Again if auto
-mode is enabled the code no longer sets MANUAL and clears HWACG bits on
-each gate register.
-
-To have dynamic root clock gating (drcg) of bus components and memclk
-enabled, it is required to set the bus_component_drcg and memclk registers
-in the the correspondingly named sysreg controller. If auto clock mode is
-enabled the clock driver will now attempt to get the sysreg syscon via the
-samsung,sysreg property (as used by other Exynos drivers upstream) and set
-the registers accordingly. The suspend/resume code paths are also updated
-to handle saving/restoring registers using a regmap. Note cmu_top is an
-exception and does not have a corresondingly named sysreg_top.
-
-As all clock gates are currently exposed in the gs101 drivers and DT, we
-continue to register all of these gates in auto clock mode, but with some new
-samsung_auto_clk_gate_ops. As clk enable and clk disable are now handled by
-Q-channel interface the .enable and .disable implementations are
-no-ops. However by using some CMU qchannel debug registers we can report
-the current clock status (enabled or disabled) of every clock gate in the
-system. This has the nice effect of still being able to dump the entire
-clock tree from /sys/kernel/debug/clk/clk_summary and see a live view of
-every auto clock in the system.
-
-With the infrastructure in place, all the CMUs registerred in clk-gs101 are
-now updated to enable auto clock mode. From dumping
-/sys/kernel/debug/clk/clk_summary it is possible to see that after enabling
-auto clock mode approximately 305 clocks are enabled, and 299 are now
-disabled. This number goes up and down a bit by 3-5 clocks just on a idle
-system sat at a console. As the CLK_IGNORE_UNUSED and CLK_IS_CRITICAL flags
-lose any meaning in auto clock mode they are removed. It is now also
-possible to boot without the clk_ignore_unused kernel command line property
-for the first time! Prior to enabling auto clock mode 586 clocks were
-enabled, and 17 disabled (in part due to having to boot with
-clk_ignore_unused flag). To ensure compatability with older DTs the
-resource size is now checked and an error issued if the DT needs updating to be
-compatible with auto clock mode.
-
-For future CMUs in gs101 I propose we continue to expose all gates, but
-register the CMU in "auto mode". For new device drivers or updates to
-existing dt bindings related to clocks to support gs101 I suggest we only
-use the "obviously correct" clock(s). By "obviously correct" I mean a clock
-has the IP name in the clock register name, but not try to deduce other
-obsucurely named bus/interconnect clocks which will now all be handled
-automatically. Note it is still possible to test whether the "obviously
-correct" clock is indeed correct by putting the individual gate in manual
-mode and disabling the clock (e.g. by using devmem). 
-
-Note: As everything here will go via one of Krzysztof's trees I've sent it
-as one series.
-
-regards,
-
-Peter
-
-[1] https://documentation-service.arm.com/static/5f915e69f86e16515cdc3b3e?token=
+Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to the
+documentation.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Peter Griffin (9):
-      dt-bindings: soc: samsung: exynos-sysreg: add gs101 hsi0 and misc compatibles
-      dt-bindings: clock: google,gs101-clock: add samsung,sysreg property as required
-      arm64: dts: exynos: gs101: add sysreg_misc and sysreg_hsi0 nodes
-      arm64: dts: exynos: gs101: fix clock module unit reg sizes
-      arm64: dts: exynos: gs101: fix sysreg_apm reg property
-      arm64: dts: exynos: gs101: add samsung,sysreg property to CMU nodes
-      clk: samsung: Implement automatic clock gating mode for CMUs
-      clk: samsung: gs101: Enable auto_clock_gate mode for each gs101 CMU
-      clk: samsung: gs101: remove CLK_IGNORE_UNUSED and CLK_IS_CRITICAL flags
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../bindings/clock/google,gs101-clock.yaml         |  23 ++-
- .../soc/samsung/samsung,exynos-sysreg.yaml         |   4 +
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  36 +++--
- drivers/clk/samsung/clk-exynos-arm64.c             |  47 +++++-
- drivers/clk/samsung/clk-exynos4.c                  |   6 +-
- drivers/clk/samsung/clk-exynos4412-isp.c           |   4 +-
- drivers/clk/samsung/clk-exynos5250.c               |   2 +-
- drivers/clk/samsung/clk-exynos5420.c               |   4 +-
- drivers/clk/samsung/clk-gs101.c                    | 167 ++++++++++++++-------
- drivers/clk/samsung/clk.c                          | 161 ++++++++++++++++++--
- drivers/clk/samsung/clk.h                          |  49 +++++-
- 11 files changed, 412 insertions(+), 91 deletions(-)
----
-base-commit: 4a71531471926e3c391665ee9c42f4e0295a4585
-change-id: 20251008-automatic-clocks-249ab60f62ce
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index d8b302f975474a87e4886006cf0b21cf758e4479..289406fb586e1a8a9eccb8eb781f159fd5b9d6eb 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -15,7 +15,9 @@ properties:
+       - items:
+           - enum:
+               - google,gs101-apm-sysreg
++              - google,gs101-hsi0-sysreg
+               - google,gs101-hsi2-sysreg
++              - google,gs101-misc-sysreg
+               - google,gs101-peric0-sysreg
+               - google,gs101-peric1-sysreg
+               - samsung,exynos2200-cmgp-sysreg
+@@ -83,7 +85,9 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - google,gs101-hsi0-sysreg
+               - google,gs101-hsi2-sysreg
++              - google,gs101-misc-sysreg
+               - google,gs101-peric0-sysreg
+               - google,gs101-peric1-sysreg
+               - samsung,exynos850-cmgp-sysreg
 
-Best regards,
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+2.51.0.760.g7b8bcc2412-goog
 
 
