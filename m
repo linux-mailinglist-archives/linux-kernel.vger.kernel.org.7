@@ -1,127 +1,85 @@
-Return-Path: <linux-kernel+bounces-851001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9993BD5548
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:03:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33ABCBD527C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C999C483228
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24890405C8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADCA2FB978;
-	Mon, 13 Oct 2025 16:12:42 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B3A2E7F1C;
-	Mon, 13 Oct 2025 16:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B709309DAF;
+	Mon, 13 Oct 2025 16:14:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086DA3090FB;
+	Mon, 13 Oct 2025 16:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760371961; cv=none; b=EDrRvuXiARTMkNY+EX9WOZYQoYDaUSEGn/yRzSM8kif3wIgfKGOD7PGCzYqvgcL2kKvA1x0vT4O7JC3fjVdTXkM1k8lBD6U2+HHwK3y3ow7JAk+LOgf262dYBo9XEVhGAcROZA/FZwsqsLaYHQCypL+VGI+h87x019os26ZAsZ8=
+	t=1760372076; cv=none; b=uBR9kqsWDBWvgCYOCXh5t/eRjm5EIdkqiI8qYSQ9W8V3231QMy+mgJXOp9qNORJivHEMc1HaEoD/jnpv4aST7JbxD1fq8LTdEMSAeVlovd6KIf6GDHYZrT1PxRoSt3h1TfhT8Afzxr5pSFg7Fj1PdT5EFvvpl3bQ3FvdhEq/bLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760371961; c=relaxed/simple;
-	bh=PseHAGZYK1WKtHbtTtVXAxSraQA4gMJcLWscQyyUYJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MyuH6BoMEd5/a+bGVzkRk1p/KHwTkoFGhRT7/1xiEmxcezh8wpeVey+aIhqy352c3/IIvovzId77BQK/7iOZz/MMiaYdjn5htgR1JyWO3RECVZObtpJWKbTrgDeey9M2N7fLzIi5B22YaueNuoNkOyzrP451qws+++Ei4Ivan6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [172.27.27.12] (unknown [195.37.142.75])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7E49C60288272;
-	Mon, 13 Oct 2025 18:11:39 +0200 (CEST)
-Message-ID: <b9246396-c9d9-4452-a16c-f2c8166a32ee@molgen.mpg.de>
-Date: Mon, 13 Oct 2025 18:11:38 +0200
+	s=arc-20240116; t=1760372076; c=relaxed/simple;
+	bh=Hz5zfGbrdk7r3/RJWa9oOO2sk21NzduvsKXxM+b+1A8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLW4vsNYAwm5AtfxMBmmbX3vLVMij7WWNEv1mnIMBgsrJHI4JaOrrEilenyhJZ67WgZwdWaRTQRMHObcSHL4xJnsRHKIva9RcfR6tMKiVefhzV36FTykmoC1wATT2UVcJizAoTd3VuBVnjnpgFu6gni/jt2XvkoZ3tBcEAgEadA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AE7A113E;
+	Mon, 13 Oct 2025 09:14:24 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E857A3F738;
+	Mon, 13 Oct 2025 09:14:31 -0700 (PDT)
+Date: Mon, 13 Oct 2025 17:14:29 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Ian Rogers <irogers@google.com>
+Cc: hupu <hupu.gm@gmail.com>, namhyung@kernel.org, peterz@infradead.org,
+	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com, morbo@google.com,
+	justinstitt@google.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RFC] perf build: Allow passing extra Clang flags via
+ EXTRA_CLANG_FLAGS
+Message-ID: <20251013161429.GE77665@e132581.arm.com>
+References: <20251013080609.2070555-1-hupu.gm@gmail.com>
+ <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
+ <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] keys: Replace deprecated strncpy in
- ecryptfs_fill_auth_tok
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251013152627.98231-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251013152627.98231-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
 
-Dear Thorsten,
-
-
-Thank you for the patch.
-
-Am 13.10.25 um 17:26 schrieb Thorsten Blum:
-> strncpy() is deprecated for NUL-terminated destination buffers; use
-> strscpy_pad() instead to retain the NUL-padding behavior of strncpy().
+On Mon, Oct 13, 2025 at 08:46:01AM -0700, Ian Rogers wrote:
+> On Mon, Oct 13, 2025 at 1:08 AM hupu <hupu.gm@gmail.com> wrote:
+> >
+> > Hi Maintainer,
+> >
+> > I encountered some issues while cross-compiling perf (ARCH=arm64),
+> > particularly when enabling the BPF option. During the build, Clang
+> > fails to compile BPF programs due to missing header files. The
+> > relevant error messages are as follows:
 > 
-> The destination buffer is initialized using kzalloc() with a 'signature'
-> size of ECRYPTFS_PASSWORD_SIG_SIZE + 1. strncpy() then copies up to
-> ECRYPTFS_PASSWORD_SIG_SIZE bytes from 'key_desc', NUL-padding any
-> remaining bytes if needed, but expects the last byte to be zero.
-> 
-> strscpy_pad() also copies the source string to 'signature', and NUL-pads
-> the destination buffer if needed, but ensures it's always NUL-terminated
-> without relying on it being zero-initialized.
-> 
-> strscpy_pad() automatically determines the size of the fixed-length
-> destination buffer via sizeof() when the optional size argument is
-> omitted, making an explicit size unnecessary.
-> 
-> In encrypted_init(), the source string 'key_desc' is validated by
-> valid_ecryptfs_desc() before calling ecryptfs_fill_auth_tok(), and is
-> therefore NUL-terminated and satisfies the __must_be_cstr() requirement
-> of strscpy_pad().
-> 
-> Link: https://github.com/KSPP/linux/issues/90
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Changes in v3:
-> - Improve commit message
-> - Link to v2: https://lore.kernel.org/lkml/20251010161340.458707-2-thorsten.blum@linux.dev/
-> 
-> Changes in v2:
-> - Improve commit message as suggested by Jarkko and Kees
-> - Link to v1: https://lore.kernel.org/lkml/20251009180316.394708-3-thorsten.blum@linux.dev/
-> ---
->   security/keys/encrypted-keys/ecryptfs_format.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/encrypted-keys/ecryptfs_format.c b/security/keys/encrypted-keys/ecryptfs_format.c
-> index 8fdd76105ce3..2fc6f3a66135 100644
-> --- a/security/keys/encrypted-keys/ecryptfs_format.c
-> +++ b/security/keys/encrypted-keys/ecryptfs_format.c
-> @@ -54,8 +54,7 @@ int ecryptfs_fill_auth_tok(struct ecryptfs_auth_tok *auth_tok,
->   	auth_tok->version = (((uint16_t)(major << 8) & 0xFF00)
->   			     | ((uint16_t)minor & 0x00FF));
->   	auth_tok->token_type = ECRYPTFS_PASSWORD;
-> -	strncpy((char *)auth_tok->token.password.signature, key_desc,
-> -		ECRYPTFS_PASSWORD_SIG_SIZE);
-> +	strscpy_pad(auth_tok->token.password.signature, key_desc);
->   	auth_tok->token.password.session_key_encryption_key_bytes =
->   		ECRYPTFS_MAX_KEY_BYTES;
->   	/*
+> Thanks for reporting this issue! There has been some recent work in
+> this area by Leo:
+> https://lore.kernel.org/lkml/20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com/
+> The patches are in Linux v6.18-rc1. Perhaps you could try repeating
+> your build with this tree and reporting issues?
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+I am not 100% sure, could you execute install kernel headers and then
+build perf ?
 
+  make headers_install
 
-Kind regards,
-
-Paul
+Thanks,
+Leo
 
