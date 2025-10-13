@@ -1,144 +1,104 @@
-Return-Path: <linux-kernel+bounces-850847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C92BD4991
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0681DBD4B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564635084BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:23:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B29D508AE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A2D311C07;
-	Mon, 13 Oct 2025 15:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC453126C8;
+	Mon, 13 Oct 2025 15:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aeyfTa5F"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="htJcGqaF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F0F17F4F6;
-	Mon, 13 Oct 2025 15:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592DC30BF72;
+	Mon, 13 Oct 2025 15:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760368188; cv=none; b=ferGwE28ObzBZLgD38rx0GbmOZDbnenGWUr3VV4Csm81yWw6PTALEgdR3fuNpDeGv6G6dyPcqnv3l0JAE9GI+IgY+d84a1DMgqLwNzs9QnxZkGwNSNMiyJxVpCDLUIeBLNPezN164fyNdpYVU+IXKhyfy+zF8wlRwI2abSeWFSU=
+	t=1760368241; cv=none; b=VAA6ZPQs/HC4NE2LhnyIPRZKb2I0azeISU3z4F3pmPjdBKrJshMFpKxC5hcMlHtgrGbbW4FscdXMOZjjXlDeLQppaW9Ld+1Ttq94xCDOnmjeSYhfaYrlahMH+OQJKWmay3NtvJs4AY1FapS8VA8Rc7KWhjTWgDtiNcrKYqw9wQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760368188; c=relaxed/simple;
-	bh=Y379xZp+1KhRPabeW/pgpKjT5gLI/oVo+q8cDBOTzrQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=dUb//DjyQwy+acqbgcOrxUW0U3z/VRaHM/E9FYQShwRPzbI/d+mghkX4nx3euAuZBivmzKKprNhU1OODJUzKht6oV0BHI846BS0tcKY6gYNtvbGPSTFl7OLB2WBg9/i0FcBeI7aT/OFEVPeuBwIBRxYNH9LAuI8nnV4xxGCLrbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aeyfTa5F reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 397236F9;
-	Mon, 13 Oct 2025 17:08:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760368084;
-	bh=Y379xZp+1KhRPabeW/pgpKjT5gLI/oVo+q8cDBOTzrQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=aeyfTa5FlqB5q7OnulXYtvlqHR+jvv5AmUNkhNNqYMwOn6iFQbzYr/1pz4qzp1CYA
-	 ajr8+/orFnO/ICYAyCi4fUFHbsX/ZM9YaDtR6QYpGEiXl37KM6B6UoBj/GLsG1rPrG
-	 O9bbHWhStOWys5g4y/pGkwVs+0ED8TtA2+Wcpr0Q=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1760368241; c=relaxed/simple;
+	bh=T6rkmZPK9y6R+KhcrUPhsT9aMA6EbLewStHqcb00su4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iCjpJtMrgHPQl7qi6/dRY0uigiLOG8sOX+zcaX78inMw6mdJUNGNP/eY6ybxYVHZl1Lv4x2B0TnpVB+P4zG6LaJnGrC6Ogj/E0isJ/t8AYCcHrioniqFU5l7hdYepF2fnRSYNGhOk85VmFevpArpogf7XYa1com5RSvoCqEKa+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=htJcGqaF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760368239; x=1791904239;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=T6rkmZPK9y6R+KhcrUPhsT9aMA6EbLewStHqcb00su4=;
+  b=htJcGqaFMHiVnQ2jZmkoSS6Bf56c3j01bILEJ2ZAvbTOhIxuVJCaxcEA
+   b61TzDuC7HtSxIFsbFvBHeaL+uVCpAEMLlPR/Q98bitoKV/VcddZXwAcU
+   +1HXltSJOdkxqn+fr5y+WuKXuQYOWrhyFV4bhWZ3H3G7j4qinceM2bK+s
+   yygb53j2/UmY5a4+qArtWTSBfw9Mve2a/EZiYwyW/dVrYwM6PArvw/xc2
+   XBKgoWHTb0w4eqKjgStIZOgLQOFETK0K7XYKK7e4M3yyxe2tjLD//sFpS
+   oJxR9RZHPcAKj1m3cHlMVrKXsNK0YtbpFd3zqYiloRYMAdluG2LsTngsP
+   w==;
+X-CSE-ConnectionGUID: 8YOEVFqaRdiFcGXNCO4J8w==
+X-CSE-MsgGUID: MnFvRrpkRDyU/Sz7OKtt3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62546045"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="62546045"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:10:38 -0700
+X-CSE-ConnectionGUID: KsL7c0fbTSmlIFJzzkaLcQ==
+X-CSE-MsgGUID: ctslHxUvSiOYZyiW2PB8rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="186915218"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.77])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 08:10:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hansg@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
+ Kurt Borja <kuurtb@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Gal Hammer <galhammer@gmail.com>
+In-Reply-To: <20251013-sleep-fix-v2-1-1ad8bdb79585@gmail.com>
+References: <20251013-sleep-fix-v2-1-1ad8bdb79585@gmail.com>
+Subject: Re: [PATCH v2] platform/x86: alienware-wmi-wmax: Fix null pointer
+ derefence in sleep handlers
+Message-Id: <176036823039.2473.15648931584117338012.b4-ty@linux.intel.com>
+Date: Mon, 13 Oct 2025 18:10:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251013-ptr_err-v1-12-2c5efbd82952@chromium.org>
-References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org> <20251013-ptr_err-v1-12-2c5efbd82952@chromium.org>
-Subject: Re: [PATCH 12/32] media: i2c: max9286: Use %pe format specifier
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Julien Massot <julien.massot@collabora.com>,
-	Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Leon Luo <leonl@leopardimaging.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Martin Kepplinger <"mar tink"@posteo.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Niklas =?utf-8?q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
-	Yong Zhi <yong.zhi@intel.com>, Yunfei Dong <yunfei.dong@mediatek.com>
-Date: Mon, 13 Oct 2025 16:09:39 +0100
-Message-ID: <176036817953.559803.4575212780880501423@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Quoting Ricardo Ribalda (2025-10-13 15:14:52)
-> The %pe format specifier is designed to print error pointers. It prints
-> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-> omitting PTR_ERR().
->=20
-> This patch fixes this cocci report:
-> ./i2c/max9286.c:755:7-14: WARNING: Consider using %pe to print PTR_ERR()
->=20
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/i2c/max9286.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> index 7c0961688d6173843f3ae846253d4a8669ae762b..e6e214f8294b83105be02f299=
-66e1d3ed72f8dbe 100644
-> --- a/drivers/media/i2c/max9286.c
-> +++ b/drivers/media/i2c/max9286.c
-> @@ -751,8 +751,8 @@ static int max9286_v4l2_notifier_register(struct max9=
-286_priv *priv)
->                 mas =3D v4l2_async_nf_add_fwnode(&priv->notifier, source-=
->fwnode,
->                                                struct max9286_asd);
->                 if (IS_ERR(mas)) {
-> -                       dev_err(dev, "Failed to add subdev for source %u:=
- %ld",
-> -                               i, PTR_ERR(mas));
-> +                       dev_err(dev, "Failed to add subdev for source %u:=
- %pe",
-> +                               i, mas);
+On Mon, 13 Oct 2025 00:26:26 -0500, Kurt Borja wrote:
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Initialize `awcc` with empty quirks to avoid a null pointer dereference
+> in sleep handlers for devices without the AWCC interface.
+> 
+> This also allows some code simplification in alienware_wmax_wmi_init().
+> 
+> 
 
->                         v4l2_async_nf_cleanup(&priv->notifier);
->                         return PTR_ERR(mas);
->                 }
->=20
-> --=20
-> 2.51.0.760.g7b8bcc2412-goog
->=20
->=20
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86: alienware-wmi-wmax: Fix null pointer derefence in sleep handlers
+      commit: 5ae9382ac3c56d044ed065d0ba6d8c42139a8f98
+
+--
+ i.
+
 
