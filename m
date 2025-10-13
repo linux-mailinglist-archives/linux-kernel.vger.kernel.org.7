@@ -1,79 +1,90 @@
-Return-Path: <linux-kernel+bounces-850898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18603BD51DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:39:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C246BD5272
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EC8354358E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:46:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B441F561F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1100731770B;
-	Mon, 13 Oct 2025 15:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D067631A7F3;
+	Mon, 13 Oct 2025 15:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZygzAa6Y"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpbuzf6C"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351E3176E6
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4909B3128A9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369278; cv=none; b=MgRmBiqkE9rS1z1Zo7qMPBhZYR1pDlRtgYdQTJTXuoG+okHD+Rrgj7Hb6CGvaYE2Zfv2bPtytwWpcPdwfOlhQicfgRsOCiIy6m4Hftf3PX2D1xS6X7km/NNrZMdPP/TiNwYJqRhf/bEeZhlh55ZRyx/Ih4lRQKoT47U0zhl7rLo=
+	t=1760369328; cv=none; b=ewVCEUSM6Gr+VEMiMjTeJ9zZty2oLVTH040Bcc6eDkS2DGk7tahuXZb1g2MY4nLKBX40D1i/kLNM7Ioe1/hQmwZ5gUKMKy13B2Br6X3ZH36BC7nkx3WEhK+WsvsH2jqqZL7uzpTxng9o9kVBSWWXKJTcGojSi4SinQ558dF/boI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369278; c=relaxed/simple;
-	bh=vo2EsEgL5782s2PoyUx3Sbpe6Jv2LpXCh5yn2MGkOTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A2aYwCEfsr3v5rrqkY0LoaP1S4GZOjHmuVYAodqheSupd3pdpWX+ic04/T062KURgPvqfxnjmFSG3JbpA84+mRSju7reUMYzNO23sSVLoWHNafP5CmNauqdL3Nk34FhKA2T/rXFKBKki+TJOCLQULvkBH7gtuDRFjOS8rsKVOII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZygzAa6Y; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 37DE21A132A;
-	Mon, 13 Oct 2025 15:27:55 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0CFC06067B;
-	Mon, 13 Oct 2025 15:27:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D74CE102F2278;
-	Mon, 13 Oct 2025 17:27:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760369274; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=FMTlrYQnhBYB/I9vVH4uQ6alkyuaVWds87Lxblu5MFA=;
-	b=ZygzAa6YwmOcFmcZe/Fzf8CQzS1NfTYqfY9A90F6WSwQdPnY5OtYne/ZpD4RQCOOxNdfli
-	Q1oV6hjRSiCAp1o4d7KQmNWhktWtO645KVRMXJhzrzHVNN6B1j/xehdX41LZFD7T7rhzj1
-	hHwkTIHsExXAQUmluLaIjwBfYaWXPd2/QwIlh3l97n/MOH7do+s5q6d5eWCOSLX9d0Yqlh
-	c1aAQerpV7yCm1g504kONDv8bgNC8sfMga8nRmTWNyBSQoYkpcFEaSRLzk/bDcafgFKunk
-	fRtyH9VXm9l9ZZA/BINjTzEUpGPt2v5A0NCh/jdVqDWj+w0tT4LELw0aieN1gA==
-From: Richard Genoud <richard.genoud@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	Johan Hovold <johan@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH v2 11/15] mtd: rawnand: sunxi: introduce ecc_err_mask in sunxi_nfc_caps
-Date: Mon, 13 Oct 2025 17:26:41 +0200
-Message-ID: <20251013152645.1119308-12-richard.genoud@bootlin.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251013152645.1119308-1-richard.genoud@bootlin.com>
-References: <20251013152645.1119308-1-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1760369328; c=relaxed/simple;
+	bh=WlMp0vM5w20TCEI5Z+Msdakq5JZXQl9RpmysD9Cx0EU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=udTOnHjj0V2Cj9JY6ToPwLRc44OTPkLAyoeCchoTBPcPmkez5RHafxPwCXGAdL/atuJOjHDbeXc/G2c7TSIYysHIZ2w8HM3cvHwO8YfYy/ffmIvzFdM4wujdh1l4PGVtNnvLgCSd3XNI/udEpCLJ3/uWOG/Jp9BV/sdWMSjwJ5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpbuzf6C; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b40f11a1027so779557366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 08:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760369324; x=1760974124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bwMSoXVUaeG8vhH/f/stQ8wxLvQaR89cQ6n9U3aN0cs=;
+        b=lpbuzf6CuyoNRN7hwEpS1PfTAze9vbuY+EIU7/hxY0K+2Y2vRYcKJEx+0hhAGPtFDv
+         UTEP+vER94L2I61RWUcvq4/htmTWGbqN1xm0T+NQ3R2QEXajwIJ7uvn7GLf9/qTY56ip
+         C21qKUnGX0dX5iTGp9f4aYPeXNh/VGHcSAR3jKq2Oje9T2gFYJeYBGm/CcPBamWyMjD5
+         pSSAae4fry5p622EeH7yhrlgSjVhuwVRuV+6gq+x4V14RI7hW023uF/o4afZEN8ydake
+         t/H5glPYJYH8Aw/zl2RTcGuuwRzDteSLAal1LkRbh3R/xrjFfcbdejOAN9YftVWIuack
+         FoTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760369324; x=1760974124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bwMSoXVUaeG8vhH/f/stQ8wxLvQaR89cQ6n9U3aN0cs=;
+        b=nw8IEmMijGPGuqga/Yr/VjSPQNm6qNed/EzHoRo7aIU4ZyVfZp0gD4xYqQlay1lgn2
+         +391WgLq21Q+4dFMYqpbGXyEdzWKB+U4DpDhre/6KY/w0cPmKElUAmpJl9+kGbdu+aC2
+         +P2IYGVoV9Rf2F4uY9x0vimwqRY6+/cozt8Bhg+mvW2hcS6JCHQEUI88CvpksfMEI/CX
+         lVYrcJhD/mRumWh12+rByunrBIRCLA3cosSR8sE+SKdoIAAJMKgUxMdG4DLjxCDy5cX3
+         seiBk2dbmQgx5+mymvjWZrBH9yj2FhLw7C2RflHbrm1XdoX6/SwoxhXkS5JWG1Zqq0iz
+         YMcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCwHh4kcytCHXnxGWyf6yWSQNdWUnx3FW8svZtjWux1msBaCKuH1KXJXnZF75+/zrgXY/UWLMuJAKLPDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMSPoLM1IXball/Y+Tc6ooI3lFtB8OUhLTwd23Sl1JMz+kE2Fs
+	52h5BHEHOzCE08tGPFAFPu0Pv1qLdsvACCc3tPQbLIhfx3yQWTKtOLO0
+X-Gm-Gg: ASbGncvXE6xyKmtCcAHgPYt8zD7im0Yvf6/Sfra4tVP6r1qvYZDnFSP4FYxoXlwaJSf
+	uMxAG74UHbDrEaTBF13MSLIMrydLeAANyD7cRJt0OF/MCej4e6Kmv7elYv2M+uWEI2qYV3Jg7PK
+	UiYGtTALwE6+LOO08hoNkcJBx+nf9hXNTOT3h2Tuo1+P6id/3M7ns05toucaNjo43cHCMHI1P8Z
+	NpZqI3YCYXUVLN7iqP1CykyQzYJ3P+hXOi7tvYFxrjT7E2oIlM2Rj65K5fb6ES18DZZaKbcG1vh
+	oKUJ/hc1XFd7QmSvoirvOP4MS3wjQcW4cPSa++5jCqjr5pY2zjvGQIYSyk8Syk7PJjZdcloKl69
+	K8cVXpk1LjOCzmO8zIPs6BkoXtyATa0BAzJd+m///WTV3oOPKecM1kvkPtdf9/3i7Eg2BAS4geR
+	i+oQT/Zvue7+6y1aFKsqGewQREeuL2o/G5
+X-Google-Smtp-Source: AGHT+IH/kEGoSsNgpEJrmB2dhN7tK52GxxyaIXJai0G9MWbbAFq1kxi5vMJMyYElb4dKfPJMviVOZw==
+X-Received: by 2002:a17:907:68a2:b0:b54:858e:736f with SMTP id a640c23a62f3a-b54858e73a1mr1347210266b.36.1760369324234;
+        Mon, 13 Oct 2025 08:28:44 -0700 (PDT)
+Received: from localhost (dslb-002-205-018-108.002.205.pools.vodafone-ip.de. [2.205.18.108])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cad8dasm965607766b.4.2025.10.13.08.28.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 08:28:43 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: dsa: b53: implement port isolation support
+Date: Mon, 13 Oct 2025 17:28:34 +0200
+Message-ID: <20251013152834.100169-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,70 +92,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-The H6/H616 error mask register is bigger than the A10/A23 one, so move
-its mask into sunxi_nfc_caps.
+Implement port isolation support via the Protected Ports register.
 
-No functional change
+Protected ports can only communicate with unprotected ports, but not
+with each other, matching the expected behaviour of isolated ports.
 
-Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+Tested on BCM963268BU.
+
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 ---
- drivers/mtd/nand/raw/sunxi_nand.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/dsa/b53/b53_common.c | 25 ++++++++++++++++++++++++-
+ drivers/net/dsa/b53/b53_regs.h   |  4 ++++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
-index da7b8b81d39e..3de5642c05a8 100644
---- a/drivers/mtd/nand/raw/sunxi_nand.c
-+++ b/drivers/mtd/nand/raw/sunxi_nand.c
-@@ -155,7 +155,7 @@
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 2f846381d5a7..ad4990da9f7c 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -632,6 +632,25 @@ static void b53_port_set_learning(struct b53_device *dev, int port,
+ 	b53_write16(dev, B53_CTRL_PAGE, B53_DIS_LEARNING, reg);
+ }
  
- /* define bit use in NFC_ECC_ST */
- #define NFC_ECC_ERR(x)		BIT(x)
--#define NFC_ECC_ERR_MSK		GENMASK(15, 0)
-+#define NFC_ECC_ERR_MSK(nfc)	(nfc->caps->ecc_err_mask)
++static void b53_port_set_isolated(struct b53_device *dev, int port,
++				  bool isolated)
++{
++	u8 offset;
++	u16 reg;
++
++	if (is5325(dev))
++		offset = B53_PROTECTED_PORT_SEL_25;
++	else
++		offset = B53_PROTECTED_PORT_SEL;
++
++	b53_read16(dev, B53_CTRL_PAGE, offset, &reg);
++	if (isolated)
++		reg |= BIT(port);
++	else
++		reg &= ~BIT(port);
++	b53_write16(dev, B53_CTRL_PAGE, offset, reg);
++}
++
+ static void b53_eee_enable_set(struct dsa_switch *ds, int port, bool enable)
+ {
+ 	struct b53_device *dev = ds->priv;
+@@ -652,6 +671,7 @@ int b53_setup_port(struct dsa_switch *ds, int port)
+ 	b53_port_set_ucast_flood(dev, port, true);
+ 	b53_port_set_mcast_flood(dev, port, true);
+ 	b53_port_set_learning(dev, port, false);
++	b53_port_set_isolated(dev, port, false);
  
- /*
-  * define bit use in NFC_REG_PAT_FOUND
-@@ -235,6 +235,7 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
-  * @random_en_mask:	RANDOM_EN mask in NFC_ECC_CTL register
-  * @random_dir_mask:	RANDOM_DIRECTION mask in NFC_ECC_CTL register
-  * @ecc_mode_mask:	ECC_MODE mask in NFC_ECC_CTL register
-+ * @ecc_err_mask:	NFC_ECC_ERR mask in NFC_ECC_ST register
-  * @pat_found_mask:	ECC_PAT_FOUND mask in NFC_REG_PAT_FOUND register
-  * @dma_maxburst:	DMA maxburst
-  * @ecc_strengths:	Available ECC strengths array
-@@ -252,6 +253,7 @@ struct sunxi_nfc_caps {
- 	unsigned int random_en_mask;
- 	unsigned int random_dir_mask;
- 	unsigned int ecc_mode_mask;
-+	unsigned int ecc_err_mask;
- 	unsigned int pat_found_mask;
- 	unsigned int dma_maxburst;
- 	const u8 *ecc_strengths;
-@@ -1030,7 +1032,7 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct nand_chip *nand, uint8_t *buf
- 		sunxi_nfc_hw_ecc_update_stats(nand, &max_bitflips, ret);
- 	}
+ 	/* Force all traffic to go to the CPU port to prevent the ASIC from
+ 	 * trying to forward to bridged ports on matching FDB entries, then
+@@ -2318,7 +2338,7 @@ int b53_br_flags_pre(struct dsa_switch *ds, int port,
+ 		     struct netlink_ext_ack *extack)
+ {
+ 	struct b53_device *dev = ds->priv;
+-	unsigned long mask = (BR_FLOOD | BR_MCAST_FLOOD);
++	unsigned long mask = (BR_FLOOD | BR_MCAST_FLOOD | BR_ISOLATED);
  
--	if (status & NFC_ECC_ERR_MSK) {
-+	if (status & NFC_ECC_ERR_MSK(nfc)) {
- 		for (i = 0; i < nchunks; i++) {
- 			int data_off = i * ecc->size;
- 			int oob_off = i * (ecc->bytes + 4);
-@@ -2235,6 +2237,7 @@ static const struct sunxi_nfc_caps sunxi_nfc_a10_caps = {
- 	.random_en_mask = BIT(9),
- 	.random_dir_mask = BIT(10),
- 	.ecc_mode_mask = GENMASK(15, 12),
-+	.ecc_err_mask = GENMASK(15, 0),
- 	.pat_found_mask = GENMASK(31, 16),
- 	.dma_maxburst = 4,
- 	.ecc_strengths = sunxi_ecc_strengths_a10,
-@@ -2253,6 +2256,7 @@ static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
- 	.random_en_mask = BIT(9),
- 	.random_dir_mask = BIT(10),
- 	.ecc_mode_mask = GENMASK(15, 12),
-+	.ecc_err_mask = GENMASK(15, 0),
- 	.pat_found_mask = GENMASK(31, 16),
- 	.dma_maxburst = 8,
- 	.ecc_strengths = sunxi_ecc_strengths_a10,
+ 	if (!is5325(dev))
+ 		mask |= BR_LEARNING;
+@@ -2343,6 +2363,9 @@ int b53_br_flags(struct dsa_switch *ds, int port,
+ 	if (flags.mask & BR_LEARNING)
+ 		b53_port_set_learning(ds->priv, port,
+ 				      !!(flags.val & BR_LEARNING));
++	if (flags.mask & BR_ISOLATED)
++		b53_port_set_isolated(ds->priv, port,
++				      !!(flags.val & BR_ISOLATED));
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/dsa/b53/b53_regs.h b/drivers/net/dsa/b53/b53_regs.h
+index 309fe0e46dad..c16b3e3e8227 100644
+--- a/drivers/net/dsa/b53/b53_regs.h
++++ b/drivers/net/dsa/b53/b53_regs.h
+@@ -120,6 +120,10 @@
+ #define B53_SWITCH_CTRL			0x22
+ #define  B53_MII_DUMB_FWDG_EN		BIT(6)
+ 
++/* Protected Port Selection (16 bit) */
++#define B53_PROTECTED_PORT_SEL		0x24
++#define B53_PROTECTED_PORT_SEL_25	0x26
++
+ /* (16 bit) */
+ #define B53_UC_FLOOD_MASK		0x32
+ #define B53_MC_FLOOD_MASK		0x34
+
+base-commit: 18a7e218cfcdca6666e1f7356533e4c988780b57
+-- 
+2.43.0
+
 
