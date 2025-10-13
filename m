@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-850759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB70BD3A41
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:45:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14BBBD3ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9762189F1D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:45:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A4F34F8166
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A138E30F95A;
-	Mon, 13 Oct 2025 14:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D046230FC1E;
+	Mon, 13 Oct 2025 14:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RHHBw3rR"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010007.outbound.protection.outlook.com [52.101.56.7])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VV+uPGD+"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013071.outbound.protection.outlook.com [40.107.201.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72875309EFB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6E30F557
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366189; cv=fail; b=YbqWy/0IVVmlMBDpYarnIKBrq/S0qzWol0cSqsKhpu0nRmDqtlHeMwpyjOT2i1SFNfZ5GzwM1JgkoUn1aJ5I9pdXfQl2kwV2ttx13Fr6DG+1knH2Hf8aS35O/1FGtACYHfjrpgIOqvJxK7oWKvoYQ8hoFt43fJ5kl2NNesFIH4M=
+	t=1760366190; cv=fail; b=qfFSRG0OP421zKnVc6yf5DvLBCzNDg/Es8WtBLUp0l9gM4FSB2jK3jHpZkbdi4JHMLLEZtTLZ34xFW1VpWObTkTdqRw4piBanb8ChkKzEo3DG9fNYgkApS3SW6ok84pY/ARwgZwsklBKJod1vc0/HGDLbREs2JX5mTtW8V5urSk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760366189; c=relaxed/simple;
-	bh=TEH1i6cPVF03Zi0dHqEq7/oiGJ4iembBJTfRrHoKajk=;
+	s=arc-20240116; t=1760366190; c=relaxed/simple;
+	bh=y/X1C1gge8NrTtSP/SBWDtpXN7TKdqBc1xiu59d90gQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CVI08IOCKbLMwZuizzSUQ39fvbMw1w48eFjp+RXhFaaip/UARTgFbzlusSucIfbZAbKrie9tUXAMMt+hffthJKHJj3cPLAaMQ3AZ+u3+uAnWHwYdml00MxtARkUiPxXclusakfRM4Dalg1n5npLllVy4fGudFAzOyAk82l4E0C8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RHHBw3rR; arc=fail smtp.client-ip=52.101.56.7
+	 MIME-Version:Content-Type; b=CQJUsuKB45+4TUHFG9o21Qdz8Eeccn/OkQUc1PK/rR5M7VGnIv3ale5ivm9VyHT6ZLnZkSlc/R44YP3uPRaUmE5YaQAgVdo6jEijjO4UrkkLAIJh117Yb91TCmnkfzlWxrZlYBXhEJTSh9coxeAtBX8WSiRJW1bEtKjIWiLqmcU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VV+uPGD+; arc=fail smtp.client-ip=40.107.201.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SI5i3HMTfgDCGXXldFjNGDCwmrJMQRS2MmxQnj7wBL6WU6z+4iEHpoz1wtC8PHiBtFDYXNCmO12rYCtfQC+QyzdVPFAau7i6YMgp2Wr/cwdbIUknUDhuE0XUrSbi1sBLHDtntgJXCJhttPFXP32hay7LkVEXfPrVbsoGOLj/XsrLxQ5tWJXT5016dp513B5biAc/PktjtNiFHnNJya1o9YZoUQvVjO1ax30gbmvd597sWd9DkiMASvFLQVp1cylngFNBM0JORgJA7xAZPAaj0iIZETazXrUYFv/U7EKlRTg4yHu61DR9I01jXygGndX4k7tSi+Db14+6TuCqMo3t1Q==
+ b=DZ6mR8Rl2G6D9poJn9rvGru7nwilnXJjcDzQ/nNg1LnVrfAg2HjEfj7rEjShFZ/08AwvRYpxuo8hy28+fBuIJKwQAtMEekqhW+VSLMfNUqbcNhmvn9foAY1HIxTceoTE4Gr94UdRuUuP5r8U4pRE6pzz46WvGyjgeAbpY8nJGJ3yfW4AyFpKzT94RcKcofmRPHz4HvMhXCKQX7lyF+UMW/6FadIRA969uOvkTa77oGR79+57rA6nFQTq2gknVe32jmrhcBUTUETzAjjE12Vw4gE/JyHIv2ndpD27vXBvemCu/nPQEt2eWi0vkfI8BZfis8UtSqnRM7cdEC4BHCCZvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bJNepUgWWTzX60xRF+GIMxuLG7tMe5tqtfgRz0WLz6k=;
- b=TFptmnVpDyB2v3EY8WYGgywny+o+J/9gL1gQftlrMosNcypRzLTbTh8T6htn3vFL9uhTDGEGy+QTGU94Gk0NFv0RURA9Mb13fl9Pgs2Lg0adBysVC2C41oP6bHilJTzvMKfmQMEHGaBBFIOZ4npmzN1x0KDahA2yN9vTDbfUE/LDszIEu9ncTw1YD/HLKy/lOVrcb4Equm3YkO6MCJKuFH2sE0hNS5KYzga0F9CmznOK+Ys3xVSD8mOC6Y4lShpljlnrdJRIi+l7g/FyGK2zYFBBs0JIR23/ILcYZWd2pVaZ68qA57c8g9495lCS+w14XpnlnVF2rh6NXlwT2fsOVQ==
+ bh=ra9pd1e1FAa+c7ZerVRsByviT/+mN8yismsAEmZKdwQ=;
+ b=KHrWp2I4hvUOPUYyyAfLSafkUPEUo3jk9rfnWk9BLPDR5ItbBwylsHg2lM9grpaLbxllLEnkbY7Gvbj0Mcv6myxNfJwk8TKnYTH6MvaDoUNvbzpxH2EuKd3kofjYa6ypiKbHZlcXv9ZeHEIM91tE7uFPzvc1Ky5yVLWlV9/460QLtU2rTfJsTyOhR5wBmaXBbPIKZg/+MEYXDPpmXSd0gQzVTlFkd2I/0ZKL6yR6Gr2q/HddhTsB/H+Ba2vdaLHWuscZHmJ/BeIOuYBYkpQop09W+Yz+1Swz2qFY7Y5FtirVYOAgXjjWFWqABYYcKYXe5urxyH5bMs0zF0qJGgE58g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bJNepUgWWTzX60xRF+GIMxuLG7tMe5tqtfgRz0WLz6k=;
- b=RHHBw3rRISotzUTxcZNXkEvK44/h2kn2PakIQ6JPs7kQkVtnjrcwJHNmNlJW3Dfm6g+lK+ph3Z4Q73mZcDHveIFI22iZ6+faPrs7q3KQi11vZbp6dl2sabGEoPLSnZCRcZ12tLEB13nx66QYaAG/asgeeIni2shRTJpnEWomnZA=
-Received: from MW4PR04CA0063.namprd04.prod.outlook.com (2603:10b6:303:6b::8)
- by SA1PR12MB5616.namprd12.prod.outlook.com (2603:10b6:806:22a::11) with
+ bh=ra9pd1e1FAa+c7ZerVRsByviT/+mN8yismsAEmZKdwQ=;
+ b=VV+uPGD+Pa6DuRzxVIWttP8njJwkFgcytqhve64iFWIrR1jA9kaWyzN4+TJKakPwBMplwpCmlWH263pwFwm1BvOzOLijKHi0jwrENquBRoMZq8B9a9ztI9e2rwwdc6r4Q5qed7XFp7X2i4xUi3ucuQ4c/HIsFYeGZj99P5D4h9Q=
+Received: from BYAPR07CA0044.namprd07.prod.outlook.com (2603:10b6:a03:60::21)
+ by DS0PR12MB8270.namprd12.prod.outlook.com (2603:10b6:8:fe::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 14:36:21 +0000
-Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
- (2603:10b6:303:6b:cafe::e1) by MW4PR04CA0063.outlook.office365.com
- (2603:10b6:303:6b::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Mon,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 14:36:22 +0000
+Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
+ (2603:10b6:a03:60:cafe::c3) by BYAPR07CA0044.outlook.office365.com
+ (2603:10b6:a03:60::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
  13 Oct 2025 14:36:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000989E5.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 14:36:21 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:54 -0700
+ 2025 07:35:55 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -77,9 +77,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 49/56] x86/fpu: Qualify warning in os_xsave
-Date: Mon, 13 Oct 2025 09:34:37 -0500
-Message-ID: <20251013143444.3999-50-david.kaplan@amd.com>
+Subject: [RFC PATCH 50/56] x86/alternative: Add re-patch support
+Date: Mon, 13 Oct 2025 09:34:38 -0500
+Message-ID: <20251013143444.3999-51-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -95,77 +95,251 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|SA1PR12MB5616:EE_
-X-MS-Office365-Filtering-Correlation-Id: e6aa223a-065d-4391-930f-08de0a65e0e4
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|DS0PR12MB8270:EE_
+X-MS-Office365-Filtering-Correlation-Id: 445a28f7-e527-44af-be9c-08de0a65e118
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|36860700013|82310400026;
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?t5XZ06WAqKoJQrN91jmrjvE/Jg/QKmPm1JUjyynzCuMfVYbbeJpINe4Lp0Pv?=
- =?us-ascii?Q?K13WGkjEDxlit7WKgdceSGxr2z1dwoOVo75KRjG56Rjn+Py8B5lbaXDWOpHy?=
- =?us-ascii?Q?twUr9wdo616k9JNdhAFEkl/5Ox4LD7E2DhfGsc2Nwt9Uz6WkvWUgMrMqNyoZ?=
- =?us-ascii?Q?8CuMrFcR6+gahfLYYNngfjsDhx40b5pax2Afmb6/OBVfI7yaVqlC0BKn8X8Z?=
- =?us-ascii?Q?BNsPTZ39Ta8dG5jiQ1eVQ4oOQ9YEaO+PkVaoKSkfm0yyYPxmqnKp09CqZZd7?=
- =?us-ascii?Q?nQyh7kpxuA0PZ53uANYw0ndPYgkLqcC1tKm8P4bIzboNP5ZN9FcyRmngGs8g?=
- =?us-ascii?Q?3ZYK8wWMOh1EIVXtN5ykVYXz/O5RzhSMkyRaUUCgOzMPEE4SGtOX23/2mBJM?=
- =?us-ascii?Q?RGtnENF2Ylc7YPotZAEYpCeyz/2aozWo3wBJjSdEQD6mP6hlp5Qidd0PqUn2?=
- =?us-ascii?Q?rfUNk76AS9m8f8gQoly2f3fa6CCKRDzlNWh9xl1EWazAdpOuy6NEqLaFbPbg?=
- =?us-ascii?Q?L235CdBqepZPg4fzw0jLOokTCdmuQwPIsVYUU6xOzBhvoUQm6jeF9w77XmqX?=
- =?us-ascii?Q?Ky0ZgPexWLGV4+g0oi7uEyZj+CZ92FyBjNVqkaqXXSIor3cMgdqwyWOuoAeo?=
- =?us-ascii?Q?5PhsrdwC2xuSbQ0QrhOqdzHDwIF6dnD7ID2XeF3IYS1+5oiWbpKnMrUY5IwV?=
- =?us-ascii?Q?mM7kvSrkWwh/n8GTdTJnwP3/3/U6B3xPjYyzBsDvcRWTXNJdeBdkF+icjW8w?=
- =?us-ascii?Q?1C9wMYe+m/b+77TTHG6v1JYH4c4X97EM5GVxHRERtgjbYpEn+P6PTHEeRMBZ?=
- =?us-ascii?Q?UHAdtKaZNN2/MAYaVteZ9oBttpwMcXsdlWjml5Hgi1HatDcpdmEbbaJJ9F48?=
- =?us-ascii?Q?0/+8TP/x+J4AvQkNGFTj2ZYrZyXR8HG1ZojKE0dx8uvXG0gx9+HRxJgpw3hp?=
- =?us-ascii?Q?G7xg2IMOBfv0I5Kt5VOUVN2hU7fG7hGoWLLtk5v0+kM3W3UcrLUUofucK2xd?=
- =?us-ascii?Q?24llqb+QT5df55JYcWF0nzsgiKC0KVUP8pZ4zoubJCM3bEf2V4ww24ESxPd1?=
- =?us-ascii?Q?YxmSPW40UpG05HGR20mdst9/4kwXDrkzBIQ8IeIQBlqaHfHGbyvwL2t9kpbR?=
- =?us-ascii?Q?Dnk005dN0DtWlNAba8xBLq/mSGTQYCKgD7nUzwJY64oe4XLIuTtk2jNcPF6U?=
- =?us-ascii?Q?KVMf28dxrS2Lx5BUA6Jtmag3peNdbIqVINn0FKuoYMJd9GxqP3WWM/+QwMxt?=
- =?us-ascii?Q?4bAL1LYX7/gV2tQO7/raxxb8xFRYi7lUAa1U0o7Eq9o+Je/H453CC34hAzgU?=
- =?us-ascii?Q?FWsGI/QdrxiQAZ4exBFrV784XcbNnHV0mQCnu4MLHNo3I7CBM1fjh377G76a?=
- =?us-ascii?Q?fK24UG76j45luMVH703ZZogkvuTmSuSKCzaXLw6vL0AM4d/a0bGKMBTXykTc?=
- =?us-ascii?Q?+/P+4GyuJEPbzv7RF0UZK+ofUcjCPObJbtR2f8neejoq35+7lserLEi4Znpz?=
- =?us-ascii?Q?UtBoayFriqRTIX0V37gobHzy/pzGBxymAUWUBFXIaHJEhuGzutCAnTWOWTcr?=
- =?us-ascii?Q?JDlxM5u+Q+66l/hv3O4=3D?=
+	=?us-ascii?Q?n4bf5bUbz1w0C2Kq41PRRilUpoRHC4FqAofCCfB7rxSAmsorF3UzgRxUdxG+?=
+ =?us-ascii?Q?UDE1TT188b9f2eyu3o5mUY9eeWqVh2xy4GCnqkKlgKrWYY1VNGvVTEz125t1?=
+ =?us-ascii?Q?hOSSv14jvlnFU4AR1uvJYmFkSilj0g8KYwuwPBSI+P31AYP8OFzkofQBWe9+?=
+ =?us-ascii?Q?12FTS+PuMF60rlCPCHPYy4w1gWVuCnTPZwFWV/d2HmU+Nel2RaWc3XKfNu+f?=
+ =?us-ascii?Q?QraUj21yTyvZbmqhc0ys6LXyEPeR5puqrx8SrF5eSDDxReXx3W3KoqTtevws?=
+ =?us-ascii?Q?gvFRGy1JZUbiI2mGWKS13HBH2BKIkteOppKNBYw468azMXgmaIxNV2C/p4Py?=
+ =?us-ascii?Q?vvp0kAWUhU2gaXyNMLboQTbt/Ch+r0qVw2lUgTG/3XNuRE+BYXFjP9jcJkZD?=
+ =?us-ascii?Q?v2hDIeEa1RstbLze9hlbe0Km90zCK+U5ZnB2MOR+c5ucn0z6nm4Pi0izB3+u?=
+ =?us-ascii?Q?88gfT74QUQI5n9cgic12fzPPhmihisq+Qwz9nWEMj+mX0fZ8xPYyp7FGMAKy?=
+ =?us-ascii?Q?xwiN43IkguJykdGlw9+UWBOeiVt0g2shKiEu+/zj0SwnwbInaeKGPcvT89p7?=
+ =?us-ascii?Q?6BB9QcWdXHGNa0SarfB7fNCFr+WLDgzasT/7IjQNNw/pbS4XHfQqljVgTS6P?=
+ =?us-ascii?Q?DLUX/QbU0S2qwOp6Wfx1JzPmlFj/RUbZKyFYkhEfD2MT6vT0cHNW5zUmqvSN?=
+ =?us-ascii?Q?1IAonwfGKhuRe2XfVINsZ428rXh26lVREn+T/RWLh72fWhC9XMfvnv1U1+nl?=
+ =?us-ascii?Q?gSZlcrtYbDu97mRhFyAPDDRBpB4HBM3UD+G8HFyxtHzn3bF6PjAB+BqjlpcD?=
+ =?us-ascii?Q?90Gp3kdpQNXNsB9jUsNLHLXmMC2RILk3JLgkjeYPNPvv2JraJjvywuSxmtFm?=
+ =?us-ascii?Q?yyBMZavLKS/NerrYF59ReSHjmZLrcR1TsfmsJ00/wa8cb2AOA2I5qsz26uBV?=
+ =?us-ascii?Q?Wzg8sv8XWbN5HM/HBH8tZHX/pXixW+V6miM1BWLvCtZLQsT4lm77yVSSbdat?=
+ =?us-ascii?Q?xE3+CGbq1SJuy7jUta0SM1+iHHRhmreSrARA4fvtOGxqUhOFPXeVAuyEWDsW?=
+ =?us-ascii?Q?dU/7Q/fgHn1uVKdvw7d1RM4ptfPy280iXxX2/WkIw6ZNYbSqoh0LoMazv7hR?=
+ =?us-ascii?Q?ui0dsylbi9muTKm2lPgq9vilEJujg3L8gGrQhl1mvp0EnQdVXktnHx4B9F/X?=
+ =?us-ascii?Q?R5rCRHQ6yieWB90eeQxFnTuUdW4N2jdBqYkBvtYG+A0dlXld1pVjVkM6IaNT?=
+ =?us-ascii?Q?fvWJR9fjeU98frk1RqRL/gdrknsrRQvoF/l36iIRVXXpRun2Eb+PdGhCDUc8?=
+ =?us-ascii?Q?2+CSkN2lPOfcZwKKOABeMHDnvla9l09awPxqca/vfHGLwFJj+zPFn92O+7Bt?=
+ =?us-ascii?Q?Cb+JqYKH2y+jZJGpKU/oWyRVAAf95VU+uEyA36G2ygRI5doTOCCVRfZ4lzTn?=
+ =?us-ascii?Q?LEAZoiWAcsdLvXYM+uPuk5MIZLWIO9zAa8ZZXif8jtV03tvInPgN0TDwNegf?=
+ =?us-ascii?Q?orPFPl58hOSywRXAA4yE5Rf+DJO8HxK0sd6MM3XAl2JSe71JCRCo4eZ2xi3m?=
+ =?us-ascii?Q?2pXPQ35Gn7IuokGoeW0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:21.2835
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:21.6257
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6aa223a-065d-4391-930f-08de0a65e0e4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 445a28f7-e527-44af-be9c-08de0a65e118
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E5.namprd02.prod.outlook.com
+	MWH0EPF000989E9.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5616
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8270
 
-The warning about using FPU before alternatives are patched is only
-relevant during boot.  Ignore the warning unless the system is booting.
-This suppresses the erroneous warning that can occur during alternative
-re-patching at runtime.
+Updating alternatives is done under the biggest hammers possible.  The
+freezer is used to freeze all processes and kernel threads at safe
+points to ensure they are not in the middle of a sequence we're about to
+patch.  Then stop_machine_nmi() synchronizes all CPUs and puts them into
+a tight spin loop while re-patching occurs.  The actual patching is done
+using simple memcpy, just like during boot.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/kernel/fpu/xstate.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/alternative.h |   6 ++
+ arch/x86/kernel/alternative.c      | 131 +++++++++++++++++++++++++++++
+ 2 files changed, 137 insertions(+)
 
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index 52ce19289989..924552a20db1 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -220,7 +220,7 @@ static inline void os_xsave(struct fpstate *fpstate)
- 	u32 hmask = mask >> 32;
- 	int err;
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 61ce8a4b1aa6..f0b863292c3c 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -19,6 +19,7 @@
+ #ifndef __ASSEMBLER__
  
--	WARN_ON_FPU(!alternatives_patched);
-+	WARN_ON_FPU(!alternatives_patched && system_state == SYSTEM_BOOTING);
- 	xfd_validate_state(fpstate, mask, false);
+ #include <linux/stddef.h>
++#include <linux/static_call_types.h>
  
- 	XSTATE_XSAVE(&fpstate->regs.xsave, lmask, hmask, err);
+ /*
+  * Alternative inline assembly for SMP.
+@@ -89,6 +90,9 @@ extern s32 __cfi_sites[],	__cfi_sites_end[];
+ extern s32 __ibt_endbr_seal[],	__ibt_endbr_seal_end[];
+ extern s32 __smp_locks[],	__smp_locks_end[];
+ 
++extern struct static_call_site __start_static_call_sites[],
++			       __stop_static_call_sites[];
++
+ /*
+  * Debug flag that can be tested to see whether alternative
+  * instructions were patched in already:
+@@ -98,6 +102,8 @@ extern int alternatives_patched;
+ struct module;
+ 
+ #ifdef CONFIG_DYNAMIC_MITIGATIONS
++extern void cpu_update_alternatives(void);
++extern void cpu_prepare_repatch_alternatives(void);
+ extern void reset_retpolines(s32 *start, s32 *end, struct module *mod);
+ extern void reset_returns(s32 *start, s32 *end, struct module *mod);
+ extern void reset_alternatives(struct alt_instr *start, struct alt_instr *end,
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 23bb3386ec5e..613cb645bd9f 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -6,12 +6,15 @@
+ #include <linux/vmalloc.h>
+ #include <linux/memory.h>
+ #include <linux/execmem.h>
++#include <linux/stop_machine.h>
++#include <linux/freezer.h>
+ 
+ #include <asm/text-patching.h>
+ #include <asm/insn.h>
+ #include <asm/ibt.h>
+ #include <asm/set_memory.h>
+ #include <asm/nmi.h>
++#include <asm/bugs.h>
+ 
+ int __read_mostly alternatives_patched;
+ 
+@@ -3468,4 +3471,132 @@ void its_free_all(struct module *mod)
+ 	its_page = NULL;
+ }
+ #endif
++static atomic_t thread_ack;
++
++/*
++ * This function is called by ALL online CPUs but only CPU0 will do the
++ * re-patching.  It is important that all other cores spin in the tight loop
++ * below (and not in multi_cpu_stop) because they cannot safely do return
++ * instructions while returns are being patched.  Therefore, spin them here
++ * (with interrupts disabled) until CPU0 has finished its work.
++ */
++static int __cpu_update_alternatives(void *__unused)
++{
++	if (smp_processor_id()) {
++		atomic_dec(&thread_ack);
++		while (!READ_ONCE(alternatives_patched))
++			cpu_relax();
++
++		cpu_bugs_update_speculation_msrs();
++	} else {
++		repatch_in_progress = true;
++
++		/* Wait for all cores to enter this function. */
++		while (atomic_read(&thread_ack))
++			cpu_relax();
++
++		/* These must be un-done in the opposite order in which they were applied. */
++		reset_alternatives(__alt_instructions, __alt_instructions_end, NULL);
++		reset_builtin_callthunks();
++		reset_returns(__return_sites, __return_sites_end, NULL);
++		reset_retpolines(__retpoline_sites, __retpoline_sites_end, NULL);
++
++		apply_retpolines(__retpoline_sites, __retpoline_sites_end, NULL);
++		apply_returns(__return_sites, __return_sites_end, NULL);
++		callthunks_patch_builtin_calls();
++		apply_alternatives(__alt_instructions, __alt_instructions_end, NULL);
++
++		update_all_static_calls(__start_static_call_sites,
++				__stop_static_call_sites, NULL);
++		modules_update_alternatives();
++		cpu_bugs_update_speculation_msrs();
++		repatch_in_progress = false;
++
++		/* This will wake the other CPUs. */
++		WRITE_ONCE(alternatives_patched, 1);
++	}
++	return 0;
++}
++
++void cpu_prepare_repatch_alternatives(void)
++{
++	alternatives_patched = 0;
++	/* Reset the synchronization barrier. */
++	atomic_set(&thread_ack, num_online_cpus() - 1);
++}
++
++static void make_all_text_writeable(void)
++{
++	unsigned long start = PFN_ALIGN(_text);
++	unsigned long end = PFN_ALIGN(_etext);
++
++	set_memory_rw(start, (end - start) >> PAGE_SHIFT);
++	modules_prepare_repatch();
++}
++
++static void make_all_text_readonly(void)
++{
++	unsigned long start = PFN_ALIGN(_text);
++	unsigned long end = PFN_ALIGN(_etext);
++
++	set_memory_ro(start, (end - start) >> PAGE_SHIFT);
++	modules_post_repatch();
++}
++
++void cpu_update_alternatives(void)
++{
++	/*
++	 * Re-patching is not supported under Xen PV because it uses MOV-CR2
++	 * for synchronization (see sync_core_nmi_safe()).
++	 */
++	if (cpu_feature_enabled(X86_FEATURE_XENPV)) {
++		pr_err("Xen PV does not support dynamic mitigations!\n");
++		alternatives_patched = 1;
++		return;
++	}
++
++	pr_info("Re-patching alternatives\n");
++
++	/*
++	 * ITS mitigation requires dynamic memory allocation and changing memory
++	 * permissions.  These are not possible under NMI context.
++	 *
++	 * Therefore, pre-allocate ITS pages if needed.  If previous ITS pages
++	 * exist, those will be used instead.
++	 */
++	its_prealloc(__retpoline_sites, __retpoline_sites_end, NULL);
++	modules_pre_update_alternatives();
++
++	/*
++	 * Freeze everything because we cannot have a thread be in the middle of
++	 * something we're about to change when we issue stop_machine.
++	 *
++	 * Therefore, use the freezer to get all tasks to a safe place before we
++	 * re-patch.
++	 */
++	if (freeze_processes()) {
++		pr_err("Unable to freeze processes for re-patching!\n");
++		return;
++	}
++
++	if (freeze_kernel_threads()) {
++		pr_err("Unable to freeze tasks for re-patching!\n");
++		thaw_processes();
++		return;
++	}
++
++	make_all_text_writeable();
++	stop_machine_nmi(__cpu_update_alternatives, NULL, cpu_online_mask);
++	make_all_text_readonly();
++
++	cpu_bugs_smt_update();
++
++	/* Free un-needed ITS pages.  This cannot happen in NMI context. */
++	its_free_all(NULL);
++	modules_post_update_alternatives();
++
++	thaw_kernel_threads();
++	thaw_processes();
++	pr_info("Finished re-patching alternatives\n");
++}
+ #endif
 -- 
 2.34.1
 
