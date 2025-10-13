@@ -1,65 +1,88 @@
-Return-Path: <linux-kernel+bounces-851386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96E6BD6541
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:11:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA44BD6547
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93CB24E04EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:10:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74A0A3505CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1E3296BDE;
-	Mon, 13 Oct 2025 21:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF522D3A8A;
+	Mon, 13 Oct 2025 21:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="VNxXJi0O"
-Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3kIUE1L"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72EF219E8
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760389840; cv=pass; b=gum2BnxmsXLt+IUVaxx8QnlEabrVcBR6Ru+fyak/7AOV6+hEUF4HOaOQGYAZ4AxboAgz9j9BLeiMb85ZrWL3hJm6UJBm963KqJgxg+jGKdV0OohoI3wvopkp7h5ctMuiMxbsC/JgJJ+fFn0Vwhqok9uERxcv33267byIwOK9uC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760389840; c=relaxed/simple;
-	bh=daH9EcWjbyocgZoWqb9Sst8Rxa37ODWtQkb8BOpn0J4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA18296BDE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760389862; cv=none; b=rzPGV8FNyZJC/d5E0yhD7XWm2rxkUrplU4cGwCI1xeNA0IrVaByVTHOItcU7EeqykR2AyqEN9D8ENT41btHPNXZ5zlLTpBt/BwAp4TlNtaei7RY/W5gWtYpkIF6y/F27I0MtYaglvl72qpgx9U6fIqkwip3Z068q3/kabJdAaRc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760389862; c=relaxed/simple;
+	bh=XRyQ8TvgonzZxSKeTWrQ9Nooy9DyVz1PgDZQ2fk4fok=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPWBFf4heyDo+Go7KqdfIxvu294WgYpDj4Zk3Aesr14rxxFnmiHCO66layeDR1QL9XQMTgTYZI62xzKlGAAXJtEr9zOD/yFKZRzP35dAUEBulZiJU3PuQBiZxh2vznXu5nAA641GBEPqXZHQPjDawwO+zioVVsFGG66vBKzfVlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=VNxXJi0O; arc=pass smtp.client-ip=143.89.41.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
-Received: from DESKTOP-2SPVBES.localdomain ([58.82.196.128])
-	(authenticated bits=0)
-	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59DL9wVu3228979
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 05:10:04 +0800
-ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760389806; cv=none;
-	b=tiBsDJT3xpj7NWQcJ2Wx4aXDez0vw6zBerp1NqMjBPswZvy2hk+UAqo45nk/6Gu7e0mOpaobW5uF/38warrrMDrleB6YECaNVww7fRs4PZ2MUFCGxI2NFHEEUZSuDJhjeB7Lg9leOOZ8AWS+SQrLKqA4KbMm0RIoEhHdjuzN9cU=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
-	t=1760389806; c=relaxed/relaxed;
-	bh=e/fVirX4xMT9IBEC+zKmVYCyiBDldGxqIaba+5fYEZo=;
-	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=DC68Dvyn325nDN+Fjeamkvvqytq3l4oj2hn4YrR/Wdk6RBxPVp34sGZgElFPKJpcDGwMZVvD41SD2gqsIoRR6uRwsJghrLpjCw8CgZtRAvCa7YJIr6AweQHs4R36tgfD2zZMotmzVwzzThls1lZRx095L/8iG3UfvbKqO9rE1mU=
-ARC-Authentication-Results: i=1; cse.ust.hk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
-	s=cseusthk; t=1760389805;
-	bh=e/fVirX4xMT9IBEC+zKmVYCyiBDldGxqIaba+5fYEZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VNxXJi0Omgl029cLUyH3h4I8MKEAn4U8lbj6yvZPfwLxFtdrlnCu9/ZR+7wWCyJZz
-	 2YoZj71PhQiEiOXYnJCBUpnoF7dWFF0CSbqvxycAWrwuS4oQ8fu160vjrJo9Z8qksJ
-	 0nkx7ZrZ/4zk6r78/rYoDJsExyVl1G7piNgnsGF4=
-Date: Tue, 14 Oct 2025 05:09:53 +0800
-From: Shuhao Fu <sfual@cse.ust.hk>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: fix refcount inconsistency in i3c_master_register
-Message-ID: <20251013210953.GA2124@DESKTOP-2SPVBES.localdomain>
-References: <aOYSTX5EA_nRoIY_@osx.local>
- <aOfgB6UpBha+pvqa@lizhi-Precision-Tower-5810>
- <aOio4HtjjfXclSW1@osx.local>
- <aO1etATnPSklqdua@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRteVf2ePxKcsY5RY4smIx7f/PpLkaxESHUMIiMlnBsdJQTYYnM2d4LmDb//M2VKxB+JgWWpWYY7ajv8Rxg9H1NeekOF8HpoOA5dljiS9EwzqY02hsshGXcqxCqqyOX96mUr1jWpWrA1/AWfITT+z2yAD8/RAtAG7j9DPe4jY6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3kIUE1L; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2907948c1d2so2855835ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760389860; x=1760994660; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k8T7ajPfnJGCZaEQpmGY6bA7JB2Gwt9VaIoR3OH9oz4=;
+        b=I3kIUE1LBxVp7tQQ7mVMXqvgWJcA5YePrBBIIKqPeob8MN8mdfkj1I8uz1SYvvdWw/
+         FIBIJIzByURcLuGk4HrpIdZ/BxayxxPD/f0p1OG2xis22XHYV0uOSA92ToHxrg0iPTHH
+         fwCmIjs6xgnIvkt0IQVsmX6AKQBmQAssjBo0pqGRgtZRenR1VTR9gYy2wjJW5BsQ3Q7c
+         8pcsLHLWAX3lz2EdAeST7jLC0nznZ9LYJVVneE7mwiqqZqKgl+GpcMZRQtpT++A1hd92
+         a5mYD32YCm38gBoL5A8zMx0pda/fBWmS/zf1AKJc1tSxg6JuOuF3iEcRLbS1w7H6365+
+         e7iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760389860; x=1760994660;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k8T7ajPfnJGCZaEQpmGY6bA7JB2Gwt9VaIoR3OH9oz4=;
+        b=OpPFPg5yt/PWqlaoMKtQJUeFhcQpBhQ4Nsob0cFrlNaACFkKihMZFLJJ6SVCQS+dGj
+         W6SG09ppJrPc10FJgxoN1Rc7AnColoO08rfQ4Vqv24zHjnKWUFEYSzg8lN3hrPcS06ma
+         natpiVoO4WA0lvjEL1aytZyRgu86FPLoNrWtpHWzY2LBleiDotbV/Hkgh+ibyOdIvNJt
+         0L4xidkgCo77Yna0qV5QFbOif/JOPWQrMrjKAR2EGLjzPGyCm5jm7pYP62MHqcIQBDJg
+         c8Gz3er5qcfdPm0VDkB3OVxlgw1EwG3QQNOLlBajCjppjKl6a+HHpCe+9JJDufKWnol0
+         UTEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeqPUsUT30d5hnx14HdDnUeDlJskSCtdKYLqXr/zKiUgF8kr6/9PjpzyS4jONzr8+1DpO16daMbmlHlX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD+cpedWQTRddy+I3H6nnOQg/3JChYda9cTGWo9r2jn2g6YPXs
+	6fDWeyIc/EUqvqDgH8D809x9X26FPz4mRPSEF8Ayn0D/Zz6yvErLfodV
+X-Gm-Gg: ASbGnctme8Znc0CumsaC8Hmiu8r2NcaCLcesPCAxPcw6ckQf8m32LE33RfY8t4Ar9yA
+	9CLhhiWwC9u7wJTGW+bXOTXIO3pr5fY+xrKAf349KN4NoOJw7IDZ6Ug5n9afJjEbvuod0VAjnG7
+	3FwECmIP60vAgDTIBWiaPqHyuTkexqse6r0LAx4Yx8zRvtDuLvikSAa5SEdQPLQ31cncgR/ZBCj
+	szLGnZjym+8Re6UAdk4tWjTi7VeBu+YtCYHeFT17dfmVgEIyFEeHghR3/BIXW9uc2ATNpf+UuqO
+	H7OnsIPDg5/wfnKYU/FtHIa13sofO8l94xA4KuVQT0EJz5U8c3fXXmQD+mQHUb1bhYuNb+Elxu1
+	l/6BIRLHgibTJn4BTUUFZlUTiq5vyN0iGUlTLWRUFVbYAeaWFNSUT4uBVf2alEqJ510aPPvxwPr
+	daTxLxgHCSW/w7uprjYl1btqfs
+X-Google-Smtp-Source: AGHT+IGzrurCKDAHA2puwM3WJeIi/Do07flXwZ7TOycjcONtFRm0A/LHuoQuvrk5xFsQ3N0FJs9bEw==
+X-Received: by 2002:a17:903:3c68:b0:246:80b1:8c87 with SMTP id d9443c01a7336-290272dfb4fmr277119205ad.43.1760389860106;
+        Mon, 13 Oct 2025 14:11:00 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08912sm141650595ad.78.2025.10.13.14.10.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 14:10:59 -0700 (PDT)
+Date: Tue, 14 Oct 2025 05:10:57 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Jonathan Denose <jdenose@google.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Lucas GISSOT <lucas.gissot.pro@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: Kconfig: Fix build error from CONFIG_HID_HAPTIC
+Message-ID: <aO1q4coXPqU/K6KI@visitorckw-System-Product-Name>
+References: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,106 +91,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aO1etATnPSklqdua@lizhi-Precision-Tower-5810>
-X-Env-From: sfual
+In-Reply-To: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
 
-On Mon, Oct 13, 2025 at 04:19:00PM -0400, Frank Li wrote:
-> On Fri, Oct 10, 2025 at 02:34:08PM +0800, Shuhao Fu wrote:
-> > On Thu, Oct 09, 2025 at 12:17:11PM -0400, Frank Li wrote:
-> > > On Wed, Oct 08, 2025 at 03:27:09PM +0800, Shuhao Fu wrote:
-> > > > In `i3c_master_register`, a possible refcount inconsistency has been
-> > > > identified, causing possible resource leak.
-> > > >
-> > > > Function `of_node_get` increases the refcount of `parent->of_node`. If
-> > > > function `i3c_bus_init` fails, the function returns immediately without
-> > > > a corresponding decrease, resulting in an inconsistent refcounter.
-> > > >
-> > > > In this patch, an extra goto label is added to ensure the balance of
-> > > > refcount when `i3c_bus_init` fails.
-> > > >
-> > > > Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-> > > > Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
-> > > > ---
-> > > >  drivers/i3c/master.c | 5 ++++-
-> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> > > > index d946db75d..9f4fe98d2 100644
-> > > > --- a/drivers/i3c/master.c
-> > > > +++ b/drivers/i3c/master.c
-> > > > @@ -2885,7 +2885,7 @@ int i3c_master_register(struct i3c_master_controller *master,
-> > > >
-> > > >  	ret = i3c_bus_init(i3cbus, master->dev.of_node);
-> > > >  	if (ret)
-> > > > -		return ret;
-> > > > +		goto err_put_of_node;
-> > >
-> > > I think it'd better to set release function for master dev to release
-> > > of_node because of_node_put() also missed at i3c_master_unregister()
-> > >
-> > > you can refer drivers/base/platform.c
-> > >
-> > > Frank
-> >
-> > Do you mean that we should do `of_node_release` in
-> > `platform_device_release`, instead of respecting the refcounting via
-> > `of_node_put`?
+On Mon, Oct 13, 2025 at 08:54:57PM +0000, Jonathan Denose wrote:
+> Temporarily change CONFIG_HID_HAPTIC to be bool instead of tristate, until
+> we implement a permanent solution.
 > 
-> Sorry, I checked code again.
-> 
-> static void i3c_masterdev_release(struct device *dev)
-> {
->         ...
->         of_node_put(dev->of_node);
-> }
-> 
-> i3c_master_register()
-> {
-> 	...
-> 	master->dev.release = i3c_masterdev_release;
-> 	...
-> };
-> 
-> Suppose of_node_put() will be auto called when put_device(&master->dev);
-> 
-> Do you really meet the problem or just static anaysis?
-> 
-> Frank
+> ---
 
-Honestly, it's from static analysis.
+The "---" line here will cause many tools used for applying patches,
+like git am, to discard the content below it [1].
 
-My apologies for overlooking the release handle. I checked the code once
-again. It still looks suspicious as it would not call `put_device` if it
-fails. I also checked call sites related to `i3c_master_register` and
-they dont seem to do the clean-up if register fails.
+Please don't add this line unless you don't want the following content
+to appear in the commit message.
 
-Shuhao
-> >
-> > >
-> > > >
-> > > >  	device_initialize(&master->dev);
-> > > >  	dev_set_name(&master->dev, "i3c-%d", i3cbus->id);
-> > > > @@ -2973,6 +2973,9 @@ int i3c_master_register(struct i3c_master_controller *master,
-> > > >  err_put_dev:
-> > > >  	put_device(&master->dev);
-> > > >
-> > > > +err_put_of_node:
-> > > > +	of_node_put(master->dev.of_node);
-> > > > +
-> > > >  	return ret;
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(i3c_master_register);
-> > > > --
-> > > > 2.39.5 (Apple Git-154)
-> > > >
-> > > >
-> > > > --
-> > > > linux-i3c mailing list
-> > > > linux-i3c@lists.infradead.org
-> > > > https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-i3c&data=05%7C02%7Csfual%40connect.ust.hk%7C837a825f1f3443950e6a08de0a95cb5f%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638959835659671475%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=B0ZvY%2FDKW3VdG%2FVamjGUUg%2BVr%2BZbtHIf4otgBKhje1s%3D&reserved=0
-> >
-> > --
-> > linux-i3c mailing list
-> > linux-i3c@lists.infradead.org
-> > https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-i3c&data=05%7C02%7Csfual%40connect.ust.hk%7C837a825f1f3443950e6a08de0a95cb5f%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638959835659696068%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=KpMM%2FsTa6G1o3q%2Bcqx6iTb3VbCDq723lCXgcA9GGetI%3D&reserved=0
+[1]: https://www.kernel.org/doc/html/v6.17/process/submitting-patches.html#commentary
+
+Regards,
+Kuan-Wei
+
+> Recently the CONFIG_HID_HAPTIC Kconfig option was reported as causing
+> the following build errors:
+> 
+>   MODPOST Module.symvers
+> ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
+> ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
+> ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
+> ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
+> ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
+> ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
+> ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
+> make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
+> 
+> when the kernel is compiled with the following configuration:
+> 
+> CONFIG_HID=y
+> CONFIG_HID_MULTITOUCH=m
+> CONFIG_HID_HAPTIC=m
+> 
+> To resolve this, temporarily change the CONFIG_HID_HAPTIC option to be
+> bool, until we arrive at a permanent solution to enable CONFIG_HID_HAPTIC
+> to be tristate.
+> 
+> For a more detailed discussion, see [1].
+> 
+> [1]: https://lore.kernel.org/linux-input/auypydfkhx2eg7vp764way4batdilzc35inqda3exwzs3tk3ff@oagat6g46zto/
+> 
+> Signed-off-by: Jonathan Denose <jdenose@google.com>
+> ---
+>  drivers/hid/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> index 5341aa79f387bd0e5a76266b5928d2c978dd81cf..04420a713be085c8871b4d35255fde4cafd8de0f 100644
+> --- a/drivers/hid/Kconfig
+> +++ b/drivers/hid/Kconfig
+> @@ -93,7 +93,7 @@ config HID_GENERIC
+>  	If unsure, say Y.
+>  
+>  config HID_HAPTIC
+> -	tristate "Haptic touchpad support"
+> +	bool "Haptic touchpad support"
+>  	default n
+>  	help
+>  	Support for touchpads with force sensors and haptic actuators instead of a
+> 
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251013-hid-haptic-kconfig-fix-634df2bdac1d
+> 
+> Best regards,
+> -- 
+> Jonathan Denose <jdenose@google.com>
+> 
 
