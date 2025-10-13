@@ -1,85 +1,107 @@
-Return-Path: <linux-kernel+bounces-851002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33ABCBD527C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BEFBD4EC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24890405C8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6E418A6970
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B709309DAF;
-	Mon, 13 Oct 2025 16:14:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086DA3090FB;
-	Mon, 13 Oct 2025 16:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CE4306483;
+	Mon, 13 Oct 2025 16:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JQss/l/M"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4372B322A;
+	Mon, 13 Oct 2025 16:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760372076; cv=none; b=uBR9kqsWDBWvgCYOCXh5t/eRjm5EIdkqiI8qYSQ9W8V3231QMy+mgJXOp9qNORJivHEMc1HaEoD/jnpv4aST7JbxD1fq8LTdEMSAeVlovd6KIf6GDHYZrT1PxRoSt3h1TfhT8Afzxr5pSFg7Fj1PdT5EFvvpl3bQ3FvdhEq/bLQ=
+	t=1760372179; cv=none; b=AZDDHuLBbxqxVerBibP5BSk83EB+ALwiK7PoY5rt/r6Eszk4uv5VPNhXoJvGGqLpsLbjW9+0jDXcOM9Uu5Wh7DYX6QeEFuFmh6hIghv3+8NHL3Es2U6MXG3hG1F5WgfxWlVxsBVq8nnPieJkRsNiT78n3UgaXBSRhklyTBOP2c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760372076; c=relaxed/simple;
-	bh=Hz5zfGbrdk7r3/RJWa9oOO2sk21NzduvsKXxM+b+1A8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLW4vsNYAwm5AtfxMBmmbX3vLVMij7WWNEv1mnIMBgsrJHI4JaOrrEilenyhJZ67WgZwdWaRTQRMHObcSHL4xJnsRHKIva9RcfR6tMKiVefhzV36FTykmoC1wATT2UVcJizAoTd3VuBVnjnpgFu6gni/jt2XvkoZ3tBcEAgEadA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AE7A113E;
-	Mon, 13 Oct 2025 09:14:24 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E857A3F738;
-	Mon, 13 Oct 2025 09:14:31 -0700 (PDT)
-Date: Mon, 13 Oct 2025 17:14:29 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Ian Rogers <irogers@google.com>
-Cc: hupu <hupu.gm@gmail.com>, namhyung@kernel.org, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	justinstitt@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RFC] perf build: Allow passing extra Clang flags via
- EXTRA_CLANG_FLAGS
-Message-ID: <20251013161429.GE77665@e132581.arm.com>
-References: <20251013080609.2070555-1-hupu.gm@gmail.com>
- <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
- <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
+	s=arc-20240116; t=1760372179; c=relaxed/simple;
+	bh=q4TWi+EHOJV5TC7Iymk26iR2c2LUySOZ0b50x1RvGCo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=e0pMzxrfjZfgGjV++sYwlXKVSERVdFVu0XGp55xOzYFoL0V4prVDCMk8vaezj0D1bwkqIFei1gk8c1l4sY7qbdk8sEAcxq+25P93UUqVyJss5ydaFFOxoyXHn4sEHnzcssIsaWZLP09VFSTlTD6UEoYNxgtAFTiDJoLKJEFdm8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JQss/l/M; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59DGEplg1360107
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 13 Oct 2025 09:14:52 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59DGEplg1360107
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1760372093;
+	bh=MzpJMWVhNoOjgk4BJX8F1SShnKbckMn+Nc+zuR294Q0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=JQss/l/MXShiySKzZWsav9VeArEu5N+uHoA047KLEMyntuwcMeK9wlN7HIQ0Tqk38
+	 JWP3hXYKNvikpWfX6arlx9W0uwDMOxRmDNvKTDAE5F6UoQRuW2UYdQH8FS/dmu5d3E
+	 IWsydJI7iSqT/4JiUB/QpAvO0m3CLOT54r0BnuzOxjwp1hTkoYG5cC2cXMzIqbFFu/
+	 hVeOMUm7eShn55+XGXxv1i0cXqiWlUTDXcOMz142IMJrmHCUqBtj9hGS3pSQf+YHB+
+	 vjYWunPASD2OmpmvS1CGd8ToW6X150kS6ymSlNwqvCNTUzUlIQ4v/fyvlZZe23Moc7
+	 PV1r9bSGOj9qg==
+Date: Mon, 13 Oct 2025 09:14:51 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Dave Hansen <dave.hansen@intel.com>,
+        =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>
+CC: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2] vdso: Remove struct getcpu_cache
+User-Agent: K-9 Mail for Android
+In-Reply-To: <e95dc212-6fd3-43e3-aeb7-bf55917e0cd4@intel.com>
+References: <20251013-getcpu_cache-v2-1-880fbfa3b7cc@linutronix.de> <e95dc212-6fd3-43e3-aeb7-bf55917e0cd4@intel.com>
+Message-ID: <9F23DEFF-FCD7-488E-B31C-E891A7521D9E@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 08:46:01AM -0700, Ian Rogers wrote:
-> On Mon, Oct 13, 2025 at 1:08 AM hupu <hupu.gm@gmail.com> wrote:
-> >
-> > Hi Maintainer,
-> >
-> > I encountered some issues while cross-compiling perf (ARCH=arm64),
-> > particularly when enabling the BPF option. During the build, Clang
-> > fails to compile BPF programs due to missing header files. The
-> > relevant error messages are as follows:
-> 
-> Thanks for reporting this issue! There has been some recent work in
-> this area by Leo:
-> https://lore.kernel.org/lkml/20251006-perf_build_android_ndk-v3-0-4305590795b2@arm.com/
-> The patches are in Linux v6.18-rc1. Perhaps you could try repeating
-> your build with this tree and reporting issues?
+On October 13, 2025 7:06:55 AM PDT, Dave Hansen <dave=2Ehansen@intel=2Ecom>=
+ wrote:
+>On 10/13/25 02:20, Thomas Wei=C3=9Fschuh wrote:
+>> -int __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu=
+_cache *unused);
+>> -int __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu=
+_cache *unused)
+>> +int __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused)=
+;
+>> +int __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused)
+>>  {
+>>  	int cpu_id;
+>
+>It would ideally be nice to have a _bit_ more history on this about
+>how it became unused any why there is such high confidence that
+>userspace never tries to use it=2E
+>
+>Let's say someone comes along in a few years and wants to use this
+>'unused' parameter=2E Could they?
 
-I am not 100% sure, could you execute install kernel headers and then
-build perf ?
-
-  make headers_install
-
-Thanks,
-Leo
+I believe it was a private storage area for the kernel to use=2E=2E=2E whi=
+ch it doesn't=2E Not doing anything at all with the pointer is perfectly le=
+gitimate=2E
 
