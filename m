@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-850746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBB2BD3A7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:48:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7680DBD3B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 16:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE9554F6CA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3C33E45DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0AB30E828;
-	Mon, 13 Oct 2025 14:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE7E30E839;
+	Mon, 13 Oct 2025 14:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fPOdmqJG"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012044.outbound.protection.outlook.com [40.107.209.44])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Wsi5vG2S"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011039.outbound.protection.outlook.com [52.101.52.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5333309DCB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6163309DC5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760366179; cv=fail; b=s33Flpt3mwpOlBZeESQhigotISqdCLLO60VbU1TIP92eTxMAS6dx0zUcUuS9xJPNaGaQENOSAm9QFFKbwSSm9yxPsO1uGBxu9imKIUeECxcTSj5+GbkIP01HV6vnBWnV4W6Tk1teTBIKVgCGQ65yoOy16k9O+Epp08Jk/mB+XBM=
+	t=1760366179; cv=fail; b=QSuYc2oQuKhLuCVx1ho54tYtmopLtGSm2/8MKooE1Rpjz+/Z8QiDDdALCkB+uqqplS7DsHIHqKAk90o4y0IqyinC5kKNha7rjYo/Tq22st1qt4bIf0K2Xv60S1U1aByM802RKoUl2dAX+ft57A25aWGhO1ezNglmtxGHTgnYML0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760366179; c=relaxed/simple;
-	bh=7Wb+YmMJ6PMV+U+5czs7HxDcIv1LoRswp5mS6K5Q2Cc=;
+	bh=O8zw6uMn0XV15DZRXNG1nrZKJpl/fqpThNwOKjrXtz8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=inLz0ktjYPy/twmFHLCvEK85RDWX+/RfFDOQD/9QI4MF3xB8J6q8e25JE8ZD+apSw1A0Rwx0cBe6MELjMntjtV96edNuVKLZAx3BDijjkfLirJws6Q+z3Lt4I19vWVuL+h0FuRZ6zEpqVGgQ2rk0QpaHJZE5hTl7VGiD2O5+iN4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fPOdmqJG; arc=fail smtp.client-ip=40.107.209.44
+	 MIME-Version:Content-Type; b=VfngIG4ZaHCKOOT67Or8x4J9Fkrp/REGzuHBuAann9CqoVDsyv9AtMoCMHGdIHjmzK5H4osrWOi6C8xnKfm7/UXydYrdMSfHaJlf4lZZVKzlTGlLeU014Thgp2as7XcQSv8ffx893I+F8VoXqpxixIxbeUXSu/lu7opK5lJ1HrE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Wsi5vG2S; arc=fail smtp.client-ip=52.101.52.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Isu9gjPnuED5xctasEJvlxUEw0pTFdjyQykvOtx/aOPH9L5lvgo4zcI3ep+6D+QOTNmKVjrBhn9oRdUmnWmrpN14r+JV0Q/keJIkW2P4QcN48CAUUOrXmr7E2sLWho7O4fR0SIGiAElIvsT9cCJdJ5NYoRExQTuFZ02scTNdGUAcW6c4k4UQjLzoQOi13TV5peFU1NG+RkkaS92oliJ6Qchc8JucFYqcxC25lWLw4fXpL6ri6Axv9KjJ1ulngHt0HMbjovcVWvhP2tkYkhRwTrk08zmabhRyZie/fphqoKhru5ON9AJ1b8GDAFwOR2b/Ho67PU8UJ7cHNlZZhmR1Ig==
+ b=DY3G+1brsGnFgSNhphvrP5+OqZf7GPR9iFPmROisbn8ekMA+dkjRfucSdtG8JDzefljcsT+zTP+luydT3xDcOU/uqSqWmPjLl2WSYejB1YwJR8shn2BMb/59Y6AfmcwMQpH2mnCduBIIbOplkQLRa9QfO4p9tRmImQhJdRnxEKRZCXfCK7FpmGsLiv9N2ANFNSJdTMiLghEhL9SQdwrsrCI0s3BFnqb6KF0YZdThRd9VsRU4L1qRMW7IyLtRjWI+ibckjVqRoWr8QnazQRdEMH/9xmzrQEWYL04K7flv/NhIk7lDQpWgjWMPR8LU0sW1nB61r9HaxwhEiDJTdtv3Vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZmWXIwnSOED75MSOaGvJCM6pBIdBpfl+Llu9IB8nsAE=;
- b=ZZbuDIvK+6co7xl+ReD0IIjKJtNbTLUTpOATg3VXczPmshwuqpsPA0UWCAI8FlJ8I2Hax9ZQsGfINOaVD1mJZyhz/i1wrBWbX/3WpDexK43z0DLkA0T7iJe2+AXv1yLTGuLgnR154LVdx9NYZ2R4BCsjUnbNeMBydqM5dTLytZDvgYEaDgl3SNwjrh3GgGhvVxq0vFLRz6HppgWSbkzERye+uZzFrBCBad3yvaAaPRHtVqw2SfHPfKf8K8IWYgU/IuIjHEpOgZijhM+tXhWIrG/Kg1LbrozJbQrtcK4z7utLRCGR3driaSQ8oRI8oKfXQWEMEigdAZmKDXKNamHx5g==
+ bh=bh7CYcaZaDRKWBEGn1WhNTaTlTAnqYPZEHVCLexKGXc=;
+ b=JBUdQLuW7Ao2S3ZGcygSezHMTcro3Z3Sg6clU1a5FxG/5uLmSwQePaVG2L7/LrnPcMQF2754RF5Ie4aKtaGIx5SDzq5+8C9Gadvn4ugynXbktV8hTiRm7MG1FuJdS6T3utN7lJJoWsmBqa6gzbT2fii21IAzYe/LaYXcs4kGS+hWwcVYIicRatggMc7S148fQ6Mdmf/J1u4FaSrl57QS970igD2CNIKS/OvV3JGFyyXJa/gvKzjra35JXewvzIKnz1XL4rJrB3ZtLi8nYMj3UGBHgciAxglQzMKbIEmbaU2IJAqeI5BXrDGXrfONtb3jknT+U6p3iB5W/I4x8HKQwA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZmWXIwnSOED75MSOaGvJCM6pBIdBpfl+Llu9IB8nsAE=;
- b=fPOdmqJG+1tGRPn4PzMxlHhextWF+tduqX4AEo6TVHXcSVG5Gi4jyGILdkCO6tAInnxhfUGjCfl+8QnNV/ONIZg/R8EkztJA0AmCF1TN4NQFsPMSn7Q4FVQh70n4/NspJRaf9XXEjsTCL8f/c2sEqTs4AK2kfLUJeDV6q6LKVdg=
-Received: from MW4PR04CA0081.namprd04.prod.outlook.com (2603:10b6:303:6b::26)
- by MW5PR12MB5649.namprd12.prod.outlook.com (2603:10b6:303:19d::13) with
+ bh=bh7CYcaZaDRKWBEGn1WhNTaTlTAnqYPZEHVCLexKGXc=;
+ b=Wsi5vG2SezodwhNzk4hlVBIT+iAUB5yf+W31HxwfT0dDzijy0IMdXiHxpya45NUrsdZup6f9TuVRqNEAWJcm6BEXbmY9r8sdI19Aqbpt0A3o8oFcqVNEXxmsdh799CpiE4Cpkbv/FgOmWuAEfPnkWI+bXt+motexj7aIsRbZ5ow=
+Received: from MW4PR04CA0074.namprd04.prod.outlook.com (2603:10b6:303:6b::19)
+ by MN0PR12MB5906.namprd12.prod.outlook.com (2603:10b6:208:37a::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 14:36:13 +0000
+ 2025 14:36:14 +0000
 Received: from MWH0EPF000989E5.namprd02.prod.outlook.com
- (2603:10b6:303:6b:cafe::7c) by MW4PR04CA0081.outlook.office365.com
- (2603:10b6:303:6b::26) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:303:6b:cafe::66) by MW4PR04CA0074.outlook.office365.com
+ (2603:10b6:303:6b::19) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
- 13 Oct 2025 14:36:13 +0000
+ 13 Oct 2025 14:36:14 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -68,7 +68,7 @@ Received: from satlexmb07.amd.com (165.204.84.17) by
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 13 Oct
- 2025 07:35:45 -0700
+ 2025 07:35:46 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -77,9 +77,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: Alexander Graf <graf@amazon.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 37/56] x86/alternative: Reset alternatives
-Date: Mon, 13 Oct 2025 09:34:25 -0500
-Message-ID: <20251013143444.3999-38-david.kaplan@amd.com>
+Subject: [RFC PATCH 38/56] x86/callthunks: Reset callthunks
+Date: Mon, 13 Oct 2025 09:34:26 -0500
+Message-ID: <20251013143444.3999-39-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 References: <20251013143444.3999-1-david.kaplan@amd.com>
@@ -95,165 +95,189 @@ X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|MW5PR12MB5649:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31b43349-3062-4fa6-5a95-08de0a65dc10
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E5:EE_|MN0PR12MB5906:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a8d8596-5282-4575-0671-08de0a65dc7d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZPfd2mQ5ESZj04O+Tgs5uSpSXZ5/u244InztbtcU7SVQAOaR+Xw+U/n20+Rm?=
- =?us-ascii?Q?E78asyDvBMFlOb8GuQDgr/bEwAnF0J8Jvenspjfwri91upUYCZm9/QJOWnIR?=
- =?us-ascii?Q?WqAcNrU9EXppxAHqpuH4R8/xbUHItKphdNGNuBv33rvSyldSPYF79iziuZLe?=
- =?us-ascii?Q?hD3qZX89dDMWCaCM+wOzMusPw56S3n8yqRans1l+u2p6H3Y5sjp3m+FWK2k6?=
- =?us-ascii?Q?lbfeD/Rvu0xFZEXBjmbP/zXCwWNrZ2n96iFXLyym9PQowSscpFIDQpHrvUFe?=
- =?us-ascii?Q?YLFHw+xTwvY8kxbeQsSp11/bCzQeXmBB2uPqT1qlKCZ16sBqv9u97mtnAGgj?=
- =?us-ascii?Q?2g0vTOpLaEH4RTmr9Pds9kyLa5xiaHHwfYjDJYM3gD7sIz7m52GiF8N4ex7P?=
- =?us-ascii?Q?ArkhWXBD3RDK/fE5h79qqt5jgH6lTf05SM7GBYjqrWOKD6QwsfdXFo6jNwdF?=
- =?us-ascii?Q?OimWiNquGLbV/NpQqG4N6szX79aeCxnrMabYLg3M7fcnWZCihH7TcheUGdnA?=
- =?us-ascii?Q?gFqZFMI3KKJSaVdQ/jnbGsq7DZ910oORv50ArAhK7QkKkttRptQwUtHBsAFZ?=
- =?us-ascii?Q?Uyg5mBn1q5ofmXKGcmJmEIVVxHu/g8sjR7fw8sNpTWkQ/+oSspIeWNZ4SVbG?=
- =?us-ascii?Q?C54xf2iOYsZ9C6C0vSZm+3h2gyu0944zwwI1yo3meH/OR8vvuAMFBWDQyCjm?=
- =?us-ascii?Q?0FUIw/q+9UtbANASnV3lZu8Gn0axp4tYchv06yFB9Cb6xUrvcCaHaqp17/z4?=
- =?us-ascii?Q?99vGmPnqaOJux229AwQc7Yz1yTjIDDJdzYNwjGd5jCELrhCpnOcRBf2+n4Mf?=
- =?us-ascii?Q?TVkY/6IaXDGBwIIhsk0ytNTdV4Z0BUX4LCIUa/3tUh6KdYtTFEVAtJQ2tkRk?=
- =?us-ascii?Q?3P0HQkTBuPdjU3QsBv049NzXpmYu75BYfOibIBFJmiFi6Y8EYug6CNBAjMY3?=
- =?us-ascii?Q?VaOVo3OLoTyXPqV2Bn7Yg56YuAFJ916gD8rARnWB/i8QpiiQnGi2BOWbGOxm?=
- =?us-ascii?Q?741vyQValLkbOI2pjxziXCqjN7zrDZnnN4aismWFBi6rdpa0Jv5li1M1/lrZ?=
- =?us-ascii?Q?L37WOxBDPG/PsvWlS9uiPY6E92vwbTr8o37iVHAvLYEWhT988Hi4/9pTeLLQ?=
- =?us-ascii?Q?75qz5keZ7U32DAdW8Ee6RojZat/VhDzCA7nX6Q3dA4dkmdkx1tfNFAG37l0g?=
- =?us-ascii?Q?YT0pCf+RZMa9DCVGlgV4ZApl6DNBR0TiwpC1W4oKIf1temlhJMIXfHh01m5U?=
- =?us-ascii?Q?EOicnZ/mxGPByi9tLhjEqyUp5sbbAvkw4sDIzJVJpt4o95S5Bf6YzLq6qlgL?=
- =?us-ascii?Q?e8o72glAmfIifh4cMc+dtH+UsGnQl2hB89N3EArhfWYRsk1GPX/EPl286lP3?=
- =?us-ascii?Q?dre+ai6m3yWdNK0cUbqzkhUx/B1p+V/CA4nWA7HY2fhhrorsjEsLFko8bLt6?=
- =?us-ascii?Q?i1q7SiDD194X5b/QICvIFffWuym6h4dwYjvA8rHEpkXeFkvcznckVWAgHqWx?=
- =?us-ascii?Q?xHCsmjqtcvcV6lMIf2/+T/pqJyYa+3SpARpUOenJ55RiTPVc1+kpeWoRaM4u?=
- =?us-ascii?Q?QGRlwhF5CG/7o6ZRrBg=3D?=
+	=?us-ascii?Q?NyC6fTQzQJcHQfQrZzoZ7QO/mCOAEVvCA1tJ6ySlNkXqRDo9Sv5dwcYxjmpt?=
+ =?us-ascii?Q?A9wEgX36i1PrkMk3mEsub50Ss76EmQOaFOVFI6FVhTCmy3F6sZEqetWQUslD?=
+ =?us-ascii?Q?ykH/oxNK+6bOs1gDv8ST4CrkINHL1pYmoXuRzLHoQvQHKpnSBlEVAI2TjbN0?=
+ =?us-ascii?Q?mlLxgHdecRD3uCMbha9jUnhX99CzFtGZeh2azqDD5sv9uVv6WDEe4z9vrhhA?=
+ =?us-ascii?Q?oAogIcgRC0+u4S/H8dPboLzqgIUr45mWruIgHGbUKiC1GF1ydm3eYJU1mNsp?=
+ =?us-ascii?Q?vUlSZ6e7OzZGWmK/6RkcFyX6LOGUp/+cxnyhTTerhtL5pYQz1SN6eTAy7/AX?=
+ =?us-ascii?Q?aa5uirTtwBVvkoNekVud81uJgQnrQWgsSNAezp4v6Iarc6ueFIjKqyvyr0yr?=
+ =?us-ascii?Q?wyolRiIt8nKFDtzf30Km8pMVYKPlBxOMhWXiAluuflDpoi3zTIIl29mN4MLF?=
+ =?us-ascii?Q?L4PAN4ZfAoIIz00iad7JWi4TCWP5OBB6Ep3COkg1mIY1uE261dQQer2N2xBH?=
+ =?us-ascii?Q?krwH24x4QLGdI1TWQm3qg6Z4AzzAjW6UYtC7xtVPrFlqbLmb8Sg4d1Hb7IOQ?=
+ =?us-ascii?Q?dBcfuiaZbiFrSotJelq2VKgLDHm0zlL6Giwa+p4e8wLpO6Ys6l+ekLGNr6B+?=
+ =?us-ascii?Q?8/sb9UGh88Z7RYO0OS+dSxOhumxQhx/cHv+HqWn6pIwrIwZvBvIC9b6JhuN6?=
+ =?us-ascii?Q?bNu5961p9NDCMsYBbmKOmatkevFOnASokwRJElXInDGKugl4UtU5lcwFLdqG?=
+ =?us-ascii?Q?ooK0fywFH80gXFuvSCiHvKq/eISZwhqUn76d3bTofyvkCvALH7Me5LP7TjNd?=
+ =?us-ascii?Q?u+gbK5gK37BZ2CWZH+JTohe3gaxg7iIYsnW5BOieYbI2uDJGcceQX2ikG/F1?=
+ =?us-ascii?Q?Wel+9CdSm5eA3gYFjP/4o1wxcXRijUCqfCv35sJsNBDd1nlCD4zb0H+Py1OW?=
+ =?us-ascii?Q?ngoiHmBAdGKxt/KKZDGOw1z2PPIGdiSHwi4q7zksLet/c95pbkEQswCrEk2n?=
+ =?us-ascii?Q?Ur7SbxarASXNke5U37+8nrMXCov6hy6YHTLSfp7H2U2Zrg1swbxoBSzBvsVD?=
+ =?us-ascii?Q?GxCyzgWABcwDJwFWBejxX0ZcccfH/lGZoXgfUOH5cpeD7Cec5txkxHJfcvQg?=
+ =?us-ascii?Q?qyzflr7GLy5OWBaxuvBW52Vtm1JKdF2MF6HWvcpcBb46vTtBJn3ryIgVvtpY?=
+ =?us-ascii?Q?S4j8P6dayBJIZI6GJaLBSVKy/+stBIBmDXlkr/FK30FAT5u/K5FERMAfqGju?=
+ =?us-ascii?Q?gH3F7whjWRCscH9nfagdgHIeo3G2tJkpXtv0znzEavVMjjTzl21hDUXdjB0U?=
+ =?us-ascii?Q?+0tYCS2qVgUR56hPD8zFi2NWLfx01RuoIhM17QJnWyrzqVh9NROktA7sL7cl?=
+ =?us-ascii?Q?7D7DJoP7X7F4E+0yf/y5FQoTJrPayboOzFMkCk+LCDOo53CFbFyOXwt/Txvm?=
+ =?us-ascii?Q?XR/2KmPgIhWXUggrQ6lZWaBZIDqnn4c9fIQJeJh7dYY2+9cIGCna45OvqDJo?=
+ =?us-ascii?Q?3rH0XYFSdbz9N87Iz06qN9oyC04VVAukLBlq6WHz+R6Jx9KsS5og7dp1tU5B?=
+ =?us-ascii?Q?IUO+MG0bHfPAoJ9UiHY=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:13.1807
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 14:36:13.8939
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31b43349-3062-4fa6-5a95-08de0a65dc10
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a8d8596-5282-4575-0671-08de0a65dc7d
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MWH0EPF000989E5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5649
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5906
 
-These functions reset the kernel code back to the original form it was at
-boot time.  Retpoline and alternative bytes were stored when those were
-first patched on boot.  For returns, all returns are simply a jmp to
-__x86_return_thunk so patch that in instead.
+Define functions to restore call sites back to their original bytes.
+This is done by checking if each annotated call is pointing to the
+expected thunk and if so, adjusting the call target to point back at the
+original destination.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
  arch/x86/include/asm/alternative.h |  7 +++
- arch/x86/kernel/alternative.c      | 76 ++++++++++++++++++++++++++++++
- 2 files changed, 83 insertions(+)
+ arch/x86/include/asm/module.h      |  1 +
+ arch/x86/kernel/callthunks.c       | 73 ++++++++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
 
 diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 24a4afbf163b..936e555c13ce 100644
+index 936e555c13ce..00e60195d768 100644
 --- a/arch/x86/include/asm/alternative.h
 +++ b/arch/x86/include/asm/alternative.h
-@@ -97,6 +97,13 @@ extern int alternatives_patched;
- 
- struct module;
- 
+@@ -133,6 +133,10 @@ extern void callthunks_patch_module_calls(struct callthunk_sites *sites,
+ 					  struct module *mod);
+ extern void *callthunks_translate_call_dest(void *dest);
+ extern int x86_call_depth_emit_accounting(u8 **pprog, void *func, void *ip);
 +#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+extern void reset_retpolines(s32 *start, s32 *end, struct module *mod);
-+extern void reset_returns(s32 *start, s32 *end, struct module *mod);
-+extern void reset_alternatives(struct alt_instr *start, struct alt_instr *end,
-+		struct module *mod);
++extern void reset_builtin_callthunks(void);
++extern void reset_module_callthunks(struct callthunk_sites *cs, struct module *mod);
 +#endif
-+
- struct alt_site {
- 	u8 *pbytes;
- 	u8 len;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 17b93763d1be..b67116ae883c 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -3292,3 +3292,79 @@ void __ref smp_text_poke_single(void *addr, const void *opcode, size_t len, cons
- 	smp_text_poke_batch_add(addr, opcode, len, emulate);
- 	smp_text_poke_batch_finish();
+ #else
+ static __always_inline void callthunks_patch_builtin_calls(void) {}
+ static __always_inline void
+@@ -147,6 +151,9 @@ static __always_inline int x86_call_depth_emit_accounting(u8 **pprog,
+ {
+ 	return 0;
  }
++static __always_inline void reset_builtin_callthunks(void) {}
++static __always_inline void reset_module_callthunks(struct callthunk_sites *cs,
++						    struct module *mod) {}
+ #endif
+ 
+ #ifdef CONFIG_MITIGATION_ITS
+diff --git a/arch/x86/include/asm/module.h b/arch/x86/include/asm/module.h
+index d0c39b921408..58d7f1017a14 100644
+--- a/arch/x86/include/asm/module.h
++++ b/arch/x86/include/asm/module.h
+@@ -23,6 +23,7 @@ struct mod_arch_specific {
+ 	struct alt_site *alt_sites;
+ 	struct retpoline_site *retpoline_sites;
+ 	int num_retpoline_sites;
++	bool callthunks_initialized;
+ #endif
+ };
+ 
+diff --git a/arch/x86/kernel/callthunks.c b/arch/x86/kernel/callthunks.c
+index 758e655f36a8..3e6f00e19814 100644
+--- a/arch/x86/kernel/callthunks.c
++++ b/arch/x86/kernel/callthunks.c
+@@ -336,6 +336,10 @@ void noinline callthunks_patch_module_calls(struct callthunk_sites *cs,
+ 	mutex_lock(&text_mutex);
+ 	callthunks_setup(cs, &ct);
+ 	mutex_unlock(&text_mutex);
 +
 +#ifdef CONFIG_DYNAMIC_MITIGATIONS
-+void reset_retpolines(s32 *start, s32 *end, struct module *mod)
-+{
-+	s32 *s;
-+	u32 idx = 0;
-+	struct retpoline_site *sites;
++	mod->arch.callthunks_initialized = true;
++#endif
+ }
+ #endif /* CONFIG_MODULES */
+ 
+@@ -381,3 +385,72 @@ static int __init callthunks_debugfs_init(void)
+ }
+ __initcall(callthunks_debugfs_init);
+ #endif
 +
-+	if (!mod)
-+		sites = retpoline_sites;
-+	else
-+		sites = mod->arch.retpoline_sites;
-+
-+	if (WARN_ON(!sites))
-+		return;
-+
-+	for (s = start; s < end; s++, idx++) {
-+		void *addr = (void *)s + *s;
-+
-+		if (!should_patch(addr, mod))
-+			continue;
-+		/*
-+		 * This indirect might have been removed due to a static call
-+		 * transform.  If so, ignore it.
-+		 */
-+		if (*(u8 *)addr == INT3_INSN_OPCODE)
-+			continue;
-+
-+		if (sites[idx].len)
-+			text_poke_early(addr, sites[idx].bytes, sites[idx].len);
-+	}
-+}
-+
-+void reset_returns(s32 *start, s32 *end, struct module *mod)
++#ifdef CONFIG_DYNAMIC_MITIGATIONS
++static void reset_call_sites(s32 *start, s32 *end, const struct core_text *ct)
 +{
 +	s32 *s;
 +
 +	for (s = start; s < end; s++) {
++		void *dest;
++		u8 bytes[8];
++		u8 insn_buff[MAX_PATCH_LEN];
 +		void *addr = (void *)s + *s;
-+		u8 bytes[JMP32_INSN_SIZE];
 +
-+		if (!should_patch(addr, mod))
++		if (!within_coretext(ct, addr))
 +			continue;
 +
-+		/* Generate jmp __x86_return_thunk */
-+		__text_gen_insn(bytes, JMP32_INSN_OPCODE, addr,
-+				&__x86_return_thunk, JMP32_INSN_SIZE);
-+		text_poke_early(addr, bytes, JMP32_INSN_SIZE);
++		dest = call_get_dest(addr);
++		if (!dest || WARN_ON_ONCE(IS_ERR(dest)))
++			continue;
++
++		memcpy(insn_buff, skl_call_thunk_template, SKL_TMPL_SIZE);
++		text_poke_apply_relocation(insn_buff, dest, SKL_TMPL_SIZE,
++					skl_call_thunk_template, SKL_TMPL_SIZE);
++		/* Check for the thunk */
++		if (bcmp(dest, insn_buff, SKL_TMPL_SIZE))
++			continue;
++
++		/* Set new destination to be after the thunk */
++		dest += SKL_TMPL_SIZE;
++		__text_gen_insn(bytes, CALL_INSN_OPCODE, addr, dest, CALL_INSN_SIZE);
++		text_poke_early(addr, bytes, CALL_INSN_SIZE);
 +	}
 +}
 +
-+void reset_alternatives(struct alt_instr *start, struct alt_instr *end, struct module *mod)
++static void callthunks_reset(struct callthunk_sites *cs, const struct core_text *ct)
 +{
-+	struct alt_instr *s;
-+	u32 idx = 0;
-+	struct alt_site *sites;
++	prdbg("Resetting call sites %s\n", ct->name);
++	reset_call_sites(cs->call_start, cs->call_end, ct);
++	prdbg("Resetting call sites done %s\n", ct->name);
++}
 +
-+	if (!mod)
-+		sites = alt_sites;
-+	else
-+		sites = mod->arch.alt_sites;
++void reset_builtin_callthunks(void)
++{
++	struct callthunk_sites cs = {
++		.call_start	= __call_sites,
++		.call_end	= __call_sites_end,
++	};
 +
-+	if (WARN_ON(!sites))
++	if (!thunks_initialized)
 +		return;
 +
-+	for (s = start; s < end; s++, idx++) {
-+		u8 *addr = instr_va(s);
++	callthunks_reset(&cs, &builtin_coretext);
++	thunks_initialized = false;
++}
 +
-+		if (!should_patch(addr, mod))
-+			continue;
++void reset_module_callthunks(struct callthunk_sites *cs, struct module *mod)
++{
++	struct core_text ct = {
++		.base = (unsigned long)mod->mem[MOD_TEXT].base,
++		.end  = (unsigned long)mod->mem[MOD_TEXT].base + mod->mem[MOD_TEXT].size,
++		.name = mod->name,
++	};
 +
-+		if (sites[idx].len)
-+			text_poke_early(addr, sites[idx].pbytes, sites[idx].len);
-+	}
++	if (!mod->arch.callthunks_initialized)
++		return;
++
++	callthunks_reset(cs, &ct);
++	mod->arch.callthunks_initialized = false;
 +}
 +#endif
 -- 
