@@ -1,184 +1,106 @@
-Return-Path: <linux-kernel+bounces-850314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD06BD27B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:11:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A56CBD27C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E45A1889BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6246F3A7BAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 10:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DD62FF654;
-	Mon, 13 Oct 2025 10:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C9A2FE587;
+	Mon, 13 Oct 2025 10:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUpr6Wn3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CUGnC4X0"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0062FE57F;
-	Mon, 13 Oct 2025 10:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E844C2FE06F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 10:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760350247; cv=none; b=PAdTYshjPylpsNWuJlKYw5HraTAHVGedaxYPb9jqHLTz5+ifF6YWkEigHsB7UwFza2eLvTlIb4OK4NrmeEPqO7orBWdaH/QzvfVS77SR9WNAUcDGD+Lwzij2lUgrqdOFuBqQwh/G6Hc3xVuEhESY88mWDqzG07fjQMesp1+3msA=
+	t=1760350329; cv=none; b=gCJ4Lt2yQxYrI1C45AMXNtRAunJk0WiZSXvx4yxTemypFl+eCOM2xqYTp70G1T+NOikN29UeHz9jLyecvPxHPYv4HE3qPqNg+ml9Gce8g4+xelXJpuuguGg84VKPu+G8Be+fimVz/mtxbRzd3RIJ97PE6LFHBmdcHoR8DX9kWfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760350247; c=relaxed/simple;
-	bh=UXzW5+EctH3GaFeqw4m/HhrRryx1k8DJ0dDcoUah8xg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GzOxX/T1t0XZlAl6ghpLyHr16u67IE6s8rzdj6+8punxQrPl0cJt0aRPxP5qg2BJ6GFUtVzBfCvVs85S00YiquAu8kdLE7t+/9fTAsLXciFqrQcdoKaX3Y8FKcUvBLYMVA+mbcwT6vhbGnAY+HgRF8KwlIpXCAk8NnUUCVI5dHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUpr6Wn3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58297C4CEF8;
-	Mon, 13 Oct 2025 10:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760350246;
-	bh=UXzW5+EctH3GaFeqw4m/HhrRryx1k8DJ0dDcoUah8xg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mUpr6Wn3wEwNmfRWTcCDPR9qBkGsLByCHTnO8wEBFyQz002ZOEc+ATiPb9KrfIfaS
-	 U7JDXz0GGUfRmZSewTmt8nPDyKYvlugTmuXNkYZelSYSOVmQM5Z2dS08rAOf4YKKkG
-	 xDWRTGSgzAPoDH4SWDDGkijlF5OIzXupsjn1cC8wBG+EwxX6yiLQ1CQM7TBgrXGodl
-	 rvkWQDlC+FdISZ8Y/j2l+fBqtesYgzfzmDDRvT9fxucXqP9OBDVpYbH3BeTvUF10EA
-	 n3F+/fxyJIm0KgwRPWPvc/KdGe86Y9EKNsaCep0eSkhk9W/iJdcCwsyGTLWx7rjWcG
-	 RSk8fYjMLaQjQ==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Mon, 13 Oct 2025 19:10:23 +0900
-Subject: [PATCH v2 2/2] can: add Transmitter Delay Compensation (TDC)
- documentation
+	s=arc-20240116; t=1760350329; c=relaxed/simple;
+	bh=RdLBpMQJKF/WdkdrgqI4Lr7gfqMU0n7ItqvnZUJi0J8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kndVCOi0hYOAAcp0MW1AH05RMtaJkcV1tSRFWEQHa3q6myenDSc5YTyfGFcsXAVRngN7v697PzQ6j6DLu0jjegQhUCWLMrmWMAmDaFWS3J2AoOj5t6pmk7R6D8sXrJf7OUzlkKqdX626/LvniTEXWfARSl1q19wkG0GZ8HS0plo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CUGnC4X0; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-36a448c8aa2so34757041fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:12:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760350326; x=1760955126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RdLBpMQJKF/WdkdrgqI4Lr7gfqMU0n7ItqvnZUJi0J8=;
+        b=CUGnC4X0LsOZkm7rzFvtwdsjj6i83AeVSJNOz5RIM4DJRYN8LBvQ6SY88Ij8C/gf0p
+         wfUAFCFvYRNAqdY8D1FMDD2Da6OULjDiInNI1Hz7E/GOqVlmHXinYjYSnx7hKkLjcVRe
+         q0dRljoa41khBHal6ntClNRUsFENEfXDE+06lS6I67lPmR40tMtprJbP7wjiiX7/036X
+         nW/vuX40nSpbLby9fIhcbx6/frqTlWhnV+V4Lb3fXyShDH7jWw1sEDhUgFeEwhgKl7XG
+         QZWB5INAuqWYZLXmhwjZcYMwBQMnzXXKImYY3gXbIJLklDoP0rMsMO/z3YUONCxQRO1f
+         +dQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760350326; x=1760955126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RdLBpMQJKF/WdkdrgqI4Lr7gfqMU0n7ItqvnZUJi0J8=;
+        b=dQNksSUp6pGOdd5OtPIUb5KTyLCo1SMoMqgzSpWmW2X72FA8T5lxN1NLgG9zyOirrJ
+         vaP+ayDXjUK7YUKACkLM+9NMZpMRB2MSNJIS6MAGTqucpDsqjvgO9QsCc9OCWS6Wnc0G
+         OGHFB1ksz1m5N965BddbNZPQZEmnlT0PRuqhJCPz/ugctkmk5PiIlQgK/mPB+sLL+VbA
+         5CEpw1OgZcRTGhJ5/EDzT8241WTQIf+EEaGyA8/RNq/kK+mciPg6nzVI8jSAALlEXSzL
+         IOz8Tbgmm+0wdo0qn5LTk8lSIr34OgjBz5Jo8CGGg5jdImGDxd+ZohKkGs//ulZJJbXs
+         g8lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5SO3Tgnk2Hf1jTyRT0ED5fA8rMP5SskVqQwr8+9nGwP0+EveYe50b9/A4QIlFJDfKyFNkumcczzjdKvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx09tCotYv7PYOAoZt0qj/VK8F1S5X7+fl89dXaFH5fUT0VjLRV
+	v09dwlpHzjOnkuLn3Zevu+kNIKs63/OiRiZfN1A00c468SQc06d6f1yHv92sjUmMJZUNx8JLH1X
+	+l+KtV01VKcRrs5z/4jHXsj4+mE6LyVWFzaY8vkCVEw==
+X-Gm-Gg: ASbGncuUu8TskcOsKI2IMavcnfKigK/LZf/nMegMLdX33TekvzwcNpH/IIP/j3Q/Q4T
+	F9YwrGhkgGPexL7JOPVujOUHOl+L31s9IwWrrSQjn0xKVyIoxVHo/dfhig/RfjZc8OaW2V+dhwW
+	co4L9JaGHJX3QietZiLuW+7D/+VVqEOD4LR4MR6iPde5PEa4FgLwe1E+8BF0lc7R7iyw+HMrr04
+	Xb0fGnZYs+Yum50vP4jOM5e1bsug75IHtY14rEK
+X-Google-Smtp-Source: AGHT+IGgRJrGAZEzxavCYvBvMxkV4C3SuTl/tY5kwvQvzOJPw8FV39401eLsZgGg76AQQApcgWo2R0o9i9pCt7zAw68=
+X-Received: by 2002:a2e:bea5:0:b0:336:b941:4ab1 with SMTP id
+ 38308e7fff4ca-37609d788ccmr52889461fa.17.1760350325946; Mon, 13 Oct 2025
+ 03:12:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-can-fd-doc-v2-2-5d53bdc8f2ad@kernel.org>
-References: <20251013-can-fd-doc-v2-0-5d53bdc8f2ad@kernel.org>
-In-Reply-To: <20251013-can-fd-doc-v2-0-5d53bdc8f2ad@kernel.org>
-To: Oliver Hartkopp <socketcan@hartkopp.net>, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, linux-can@vger.kernel.org, 
- netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4385; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=UXzW5+EctH3GaFeqw4m/HhrRryx1k8DJ0dDcoUah8xg=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBlvLshEZ82oMnB4mHZp5fn1PQd2WyjZH+RsLJ06cVpT+
- KtTcvuLO0pZGMS4GGTFFFmWlXNyK3QUeocd+msJM4eVCWQIAxenAEzkKgMjwxGdN+u3PFBPYMjd
- mGS61XvX7/TgGW3Tr1gwTPp890jKrTxGhg8Hs3aFpmn+O7m378sHZa6XXcEHJYuURUyOtrvoO6/
- kZwEA
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+References: <20250912-am62lx-v6-0-29d5a6c60512@ti.com> <20250912-am62lx-v6-2-29d5a6c60512@ti.com>
+In-Reply-To: <20250912-am62lx-v6-2-29d5a6c60512@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Oct 2025 12:11:54 +0200
+X-Gm-Features: AS18NWCXTgDlcXu1qYOFDjPkHsaBIb9mh58rrY4q-gih-VvDw6C14D0uT1gunyA
+Message-ID: <CACRpkdaG02uXd8q5shNJ1LS2R0hV52OcQLY0MmXoihJYU90zWg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] dt-bindings: pinctrl: pinctrl-single: add
+ ti,am62l-padconf compatible
+To: Bryan Brattlof <bb@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Back in 2021, support for CAN TDC was added to the kernel in series [1]
-and in iproute2 in series [2]. However, the documentation was never
-updated.
+On Fri, Sep 12, 2025 at 5:40=E2=80=AFPM Bryan Brattlof <bb@ti.com> wrote:
 
-Add a new sub-section under CAN-FD driver support to document how to
-configure the TDC using the "ip tool".
+> Add the "ti,am62l-padconf" compatible to allow for some changes in the
+> driver in the future when needed.
+>
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
 
-[1] add the netlink interface for CAN-FD Transmitter Delay Compensation (TDC)
-Link: https://lore.kernel.org/all/20210918095637.20108-1-mailhol.vincent@wanadoo.fr/
+This patch 2/4 applied to the pinctrl tree.
 
-[2] iplink_can: cleaning, fixes and adding TDC support
-Link: https://lore.kernel.org/all/20211103164428.692722-1-mailhol.vincent@wanadoo.fr/
-
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
-Changes in v2:
-
-  - Fix below "make htmldocs" error:
-
-      can.rst:1484: ERROR: Unexpected indentation. [docutils]
-
-  - Change from "Bullet lists" to "Definition lists" format.
-
-Link to v1: https://lore.kernel.org/all/20251012-can-fd-doc-v1-2-86cc7d130026@kernel.org/
----
- Documentation/networking/can.rst | 64 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
-
-diff --git a/Documentation/networking/can.rst b/Documentation/networking/can.rst
-index 58c026d51d94..536ff411da1d 100644
---- a/Documentation/networking/can.rst
-+++ b/Documentation/networking/can.rst
-@@ -1464,6 +1464,70 @@ Example when 'fd-non-iso on' is added on this switchable CAN FD adapter::
-    can <FD,FD-NON-ISO> state ERROR-ACTIVE (berr-counter tx 0 rx 0) restart-ms 0
- 
- 
-+Transmitter Delay Compensation
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+At high bit rates, the propagation delay from the TX pin to the RX pin of
-+the transceiver might become greater than the actual bit time causing
-+measurement errors: the RX pin would still be measuring the previous bit.
-+
-+The Transmitter Delay Compensation (thereafter, TDC) resolves this problem
-+by introducing a Secondary Sample Point (SSP) equal to the distance, in
-+minimum time quantum, from the start of the bit time on the TX pin to the
-+actual measurement on the RX pin. The SSP is calculated as the sum of two
-+configurable values: the TDC Value (TDCV) and the TDC offset (TDCO).
-+
-+TDC, if supported by the device, can be configured together with CAN-FD
-+using the ip tool's "tdc-mode" argument as follow:
-+
-+**omitted**
-+	When no "tdc-mode" option is provided, the kernel will automatically
-+	decide whether TDC should be turned on, in which case it will
-+	calculate a default TDCO and use the TDCV as measured by the
-+	device. This is the recommended method to use TDC.
-+
-+**"tdc-mode off"**
-+	TDC is explicitly disabled.
-+
-+**"tdc-mode auto"**
-+	The user must provide the "tdco" argument. The TDCV will be
-+	automatically calculated by the device. This option is only
-+	available if the device supports the TDC-AUTO CAN controller mode.
-+
-+**"tdc-mode manual"**
-+	The user must provide both the "tdco" and "tdcv" arguments. This
-+	option is only available if the device supports the TDC-MANUAL CAN
-+	controller mode.
-+
-+Note that some devices may offer an additional parameter: "tdcf" (TDC Filter
-+window). If supported by your device, this can be added as an optional
-+argument to either "tdc-mode auto" or "tdc-mode manual".
-+
-+Example configuring a 500 kbit/s arbitration bitrate, a 5 Mbit/s data
-+bitrate, a TDCO of 15 minimum time quantum and a TDCV automatically measured
-+by the device::
-+
-+    $ ip link set can0 up type can bitrate 500000 \
-+                                   fd on dbitrate 4000000 \
-+				   tdc-mode auto tdco 15
-+    $ ip -details link show can0
-+    5: can0: <NOARP,UP,LOWER_UP,ECHO> mtu 72 qdisc pfifo_fast state UP \
-+             mode DEFAULT group default qlen 10
-+        link/can  promiscuity 0 allmulti 0 minmtu 72 maxmtu 72
-+        can <FD,TDC-AUTO> state ERROR-ACTIVE restart-ms 0
-+          bitrate 500000 sample-point 0.875
-+          tq 12 prop-seg 69 phase-seg1 70 phase-seg2 20 sjw 10 brp 1
-+          ES582.1/ES584.1: tseg1 2..256 tseg2 2..128 sjw 1..128 brp 1..512 \
-+          brp_inc 1
-+          dbitrate 4000000 dsample-point 0.750
-+          dtq 12 dprop-seg 7 dphase-seg1 7 dphase-seg2 5 dsjw 2 dbrp 1
-+          tdco 15 tdcf 0
-+          ES582.1/ES584.1: dtseg1 2..32 dtseg2 1..16 dsjw 1..8 dbrp 1..32 \
-+          dbrp_inc 1
-+          tdco 0..127 tdcf 0..127
-+          clock 80000000
-+
-+
- Supported CAN Hardware
- ----------------------
- 
-
--- 
-2.49.1
-
+Yours,
+Linus Walleij
 
