@@ -1,173 +1,246 @@
-Return-Path: <linux-kernel+bounces-850517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0DFBD30FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:49:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F594BD310A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4018E3C0934
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:49:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 774D04EE693
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA142877D5;
-	Mon, 13 Oct 2025 12:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664382D0C9A;
+	Mon, 13 Oct 2025 12:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IYz8hkJV"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GkFmS+Hl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9539A26E714;
-	Mon, 13 Oct 2025 12:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760359781; cv=none; b=os0h5Z4/S6XRvtclF0YRhODIGPVZTL+QIqezNLlWPNHrk4sRDOYUeEn5M8T02948g2qmsIM6FMj0uqAZq26auhOULx3tQowvJB0Sup2E/EvkBDwu899NnU32TWxUlfzM06whqP8WoPQ+MQBTkT2qxBer4j329lXxFStOjvbnZEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760359781; c=relaxed/simple;
-	bh=ya9U9PpYHujtyWIuac/BeIHM52FnNKhuZrvKnb18v6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBFaqvHBmJOLw1NYQXlx0pQ74a9drymflk8Wa2JBWYCfcfCmv2TYeyV5VvAKzjicFKCdBqd76Y0AB9QVbM3t4SnqATjU/sHxmthCfO5aeLYEQBK5AiM1PC7OVegiMVXta65ZqalBfbeaQJupgmqjDiuhNBlCN3gq6YxIWrj/nmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IYz8hkJV; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=k3MQLLai5Lv1jjJP3MPQy569OXhdTSwstmrfUBxF72w=; b=IYz8hkJVfaP2cX4h8ZURsZZ4uF
-	mKPN5lEiMWdLhGTGvlXkhhNTiX+V6ElB7rt+ErxHq2nWwSTGUKFpoF5Sg8Idcuf2MJi8Wa+grVvW4
-	Fed16y9coFyDw/QXXQYs5I7htwlZLIz/reIUDsDX5TKjYWKtZ2aMJAkBzBIOvKjoAbMjkMvr15Tcl
-	G590Viuqb+Xm6YMY7lweG+QjqEaz64p3KHCxQif1U5l8J3fgTigZ7luXotO5sKO/ECOtF2AeOXf7y
-	nap9IUSzUxu1McVNIdhRmwT8/b6UD27i34sKNFzmVJy7CewBcJhCyubeppnsLP12nSJ7f2tsJ7x8e
-	Mb1NJa8Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48894)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v8HzP-000000001zZ-0kKg;
-	Mon, 13 Oct 2025 13:49:23 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v8HzH-000000000Le-1ZYr;
-	Mon, 13 Oct 2025 13:49:15 +0100
-Date: Mon, 13 Oct 2025 13:49:15 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Liangbin Lian <jjm2473@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heiko@sntech.de, quentin.schulz@cherry.de,
-	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com,
-	inindev@gmail.com, ivan8215145640@gmail.com,
-	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
-	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org,
-	jbx6244@gmail.com, andrew@lunn.ch, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
-Message-ID: <aOz1SzpzGLDQjiYQ@shell.armlinux.org.uk>
-References: <20251009084416.45542-1-jjm2473@gmail.com>
- <20251009084416.45542-4-jjm2473@gmail.com>
- <aOe_0EufouURu7R2@shell.armlinux.org.uk>
- <CAP_9mL4MfzagxiMD1VdOu=jBuN_XsOrvPQT=XTVgu2+G=+nD9A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29FD26E714;
+	Mon, 13 Oct 2025 12:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760359794; cv=fail; b=hHSOZz296FOD64BQVTq2B4f4jyq4d22Vaqi29U6Jcq9S7rEG1/lnYt4xhTk7LZlLv2anTlaMiYmOhLc7sSmMqtaKkysNbBnfc/lg80FBit89gjAvVEMKtqXziIQJeJR3dGtkEeG80JIkOzPBhf/j9gtErYUxHzX3ZFRvBKPFF94=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760359794; c=relaxed/simple;
+	bh=+YswMjsy4Mw8T4DYb7Xn0YFy6O8VLC9/8eR31YAwVQQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jvfbY3zl6YhxU0wcG7pp26wAuNtxbdCe6B68dws0E/1YWvTMkM5VkZ+NWAVUueykPufpwCwPFq8DNwAL7yjh0gVn4klHEDxBsF8tevwbjyJ/DbY2L633hspA2TMfZI6nLY84E4AfvYsQeHM31njRe0+szkFN6SMs4Z2Ci8WQwR8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GkFmS+Hl; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760359793; x=1791895793;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=+YswMjsy4Mw8T4DYb7Xn0YFy6O8VLC9/8eR31YAwVQQ=;
+  b=GkFmS+HlxQrYWEr3g8pfT8hj7JEqX3IRX9Gkt65+XSEmN48NQiqj+jnP
+   va/yvPjvHnX8AylwKJsFTUcu6bDcVi6UeKvzby5rGElBrVDQ+sDVoSQKU
+   MjmIhAe173gqx5va3abDfJfZHsejvdzNpxCudx5h5dyR8uKu/mlSVmvm0
+   1rYQ0eZ6ToQDoIFd79jccSyisu3NF3FvtkANQiJfIZn71lQ1fNlbJsEq0
+   jVX2PNwXlpEpgjgFGleFEeVfe1WcQH4tjgApZkX0aFHWcGa8MKct+87l3
+   ARkHuA5F4vzJhX9ro1e2SSRKrD1QV+c7/XWxpnaJc1reprtyb0/eZ5+L4
+   A==;
+X-CSE-ConnectionGUID: Dcp4GBxnTeKNaVlLOF67uQ==
+X-CSE-MsgGUID: e3+AeGmNQpKUQramEw2GbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="72756794"
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="72756794"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 05:49:52 -0700
+X-CSE-ConnectionGUID: ULdlln+JTl+B39wYTGR1gw==
+X-CSE-MsgGUID: WLP4pa12RZ6xcrA+Uar0sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,225,1754982000"; 
+   d="scan'208";a="185601582"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 05:49:52 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 05:49:50 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 13 Oct 2025 05:49:50 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.35) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 13 Oct 2025 05:49:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VgvSQbTU92H+CgLcyK2rNd13SIPNYzt7yjX0atRFS1YEZk3QF8a0Ez2XdF5eVylC24XyEXW9d7NNlFORvROwwNgwF6l7tRuDSGoSOJKqlkaWDRQYgGM4mnDnhCRdGMkQykB1KvnM+GYqFe4OHDoMnzDY8Amm4I+ZoC1soelmRuK5FFkZQt0v/YPu7jBBCR04jnBwEFhpZqPvuL0pOQCRHBiKsTFnetztZe8UNtcBP+4BGawyGYW/avmEggn1nituFWrz/6OsSNMWfjLpeFkZkwqL2jZP01sd2ofPyUm0FI2cfldU513tJwqyShOM40XE7IZiNl7PIil+VeHOhm6Htw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ig2FLHf3F2OZyMVhIGGY0tosPsL8zFg2MP2pZlyTcWc=;
+ b=sA+nCznEFzgMr+hrAcOj6yFDoCAiFMzLo9Ernr8f2z+mZKDWVgW5q8IILQ/h9dMmEex09tvAE0wbDdy1RN91ZhEhr2uhXHMVo08ii94mOfSgbEGn2yqZb9LOeywJlCckzd/G/NEDGjvJjsumd6CzPX/fIZcaTSdpLktvqKHrMtfLLvVKIr+TgtyNlxXDbBeAVul2L0JMz82JnVdCtdXIcPDMbp0L5fPO/r0zXEcmfaDyAE5jurEwi5O6hfhmMWP0TRtsTeN8UJe34AYtM8vq/nVfVyPZ6kHfnIFqn8I6MuRHcorZajylbcatukKj32MF6AaU7r8eMOyuEy/WhsJ/MA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by DS0PR11MB7788.namprd11.prod.outlook.com (2603:10b6:8:f5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
+ 2025 12:49:47 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::fdc2:40ba:101d:40bf]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::fdc2:40ba:101d:40bf%7]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 12:49:47 +0000
+Date: Mon, 13 Oct 2025 20:49:35 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini
+	<pbonzini@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <kvm@vger.kernel.org>, Dan Williams
+	<dan.j.williams@intel.com>, Xin Li <xin@zytor.com>, Kai Huang
+	<kai.huang@intel.com>, Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [RFC PATCH 3/4] KVM: x86/tdx: Do VMXON and TDX-Module
+ initialization during tdx_init()
+Message-ID: <aOz1X4ywkG3nG2Up@intel.com>
+References: <20251010220403.987927-1-seanjc@google.com>
+ <20251010220403.987927-4-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251010220403.987927-4-seanjc@google.com>
+X-ClientProxiedBy: KU2P306CA0070.MYSP306.PROD.OUTLOOK.COM
+ (2603:1096:d10:39::10) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP_9mL4MfzagxiMD1VdOu=jBuN_XsOrvPQT=XTVgu2+G=+nD9A@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|DS0PR11MB7788:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6b31cdb-2535-417b-73a6-08de0a56fda3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5D9X4e9gYt7UqV+5sU6MCGVFRnI1YsbVWVkLcYYqhohi6vh16w2luh7ko8nC?=
+ =?us-ascii?Q?rvyiMa3XiKxPVI011SShtM5ml4VfUkQMkWFgs+v3swe0DXn1CN7GOnEMBPYg?=
+ =?us-ascii?Q?g+K+bKfYN9rHke5uSSp3gj6iIjj5arxYmk4hxW3mZQYsshVqC192dI7fC+jr?=
+ =?us-ascii?Q?/WggHhzlRrEe48VWK4y7M7H+1t4nHcmyP6I0mp+bSFIiHBZTSFMGVs+7b80S?=
+ =?us-ascii?Q?nHTHWQkJP8Zi0rgJFsZD/GPMwJSVuJxD9hFC25e6FWEIySgynhLWvSM36pdX?=
+ =?us-ascii?Q?hHu8Fh+ARun/DP270geDU5DVpUDvH5aa5SJ2f2yy9an7raOStt6a3H241v+K?=
+ =?us-ascii?Q?kDFAKG/rSrW3zuFi/lSau0Kqi9zk3e4FBYfm9f1uWMRUCHjr7WnoAsXO7zJr?=
+ =?us-ascii?Q?5Yfe+8LdiJuhPD1sNsJkPP8ZtBEg2C0iSjX6uXaXoLgIXTdvasiu/7U8gBf2?=
+ =?us-ascii?Q?clU9YwpQMhdH4CudtaeuXQuSSPJGQoqi5DpCnr1CKAGwm4xvuMc+/IZgfWu/?=
+ =?us-ascii?Q?jf2D7BTyk09cvamBYNEERF7+RPzbXot97DYFI1GnvC7Ei7wb+GtAsCGVqFbW?=
+ =?us-ascii?Q?JvWVFC+9MfaOB0BVQCTZfmqv8dk8ra2kqNdU6EVAqbxdnivYsIwRZt1oa9GX?=
+ =?us-ascii?Q?vrHKlpNLsvXVuHUtGLiupXWhv7pLbbu3kgEiuTmgZi5Zk+HxCg/v382O2Tra?=
+ =?us-ascii?Q?4lJFzb4mz5cVP25ArODuO6TxRtBVCcbB5a/nKz8XCYWhJhcMNjCEWc2kip2C?=
+ =?us-ascii?Q?K0jhtNTiIKik5OtR4Il1TMbzhHdikvkv/gl72lteAcI7Q76xza5YkrhcyLdJ?=
+ =?us-ascii?Q?rFlgGZtPiPWpX5926FhxHQOHzhsBYyImNzc3cH0KxglbulVBddxpH0s2QPAR?=
+ =?us-ascii?Q?ylIxzHAC0xhWmd1o05msWeJpRW9liP65GzUg+5aIVF5laiCUgVftULOZA9Su?=
+ =?us-ascii?Q?jsrDm/5TaM1oiHDZeCIQXbG2u0w++EbZe1xpih4ooGeS4E+B2hGzxHzKgFwW?=
+ =?us-ascii?Q?SHwy18vMbFQhvXTMjz9ZhwS37ZomC6RnkoMXDjpxbsGPO+NdwcyHSbpffJs7?=
+ =?us-ascii?Q?Bb74IbpdUacwuOQYfIGh0wXuorVq79oShEWWDmBX7A87+/Ju+hTGQh6pJK7Y?=
+ =?us-ascii?Q?mtobyiwm4h3wfML1pmIctnhwjsyXcbraEBDAY9uDUeS3JRnmQ28wOZNqXC1z?=
+ =?us-ascii?Q?bkLZkHbZVUAqkwpPqvXD/Nb6LvS0t9nFaNgrnhGXeEq57J15kPs+xpShOR3K?=
+ =?us-ascii?Q?su8ecrX9GrfxeAqZ+oIZbWsGXhRwYylAwgMAnkZ2QVtt1K0abL+bylfxLhyP?=
+ =?us-ascii?Q?5+AOrf/znKZrCkPBjw49bfX9jh09GR2U+F11H+Y+pIfu9wOkUPxLtBJAFJJP?=
+ =?us-ascii?Q?tmGREa6ymqDoDVRNU31llc0xy6HduR9DE7Fo5m20K6tfNKC3U1OK5ebueeJA?=
+ =?us-ascii?Q?J/vi74HPJ4Y3TYjPDmRVDqtt12WOFiUs?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SY6+R4PfLpAv1F4POv6Q4V7mhC4O5/+HwXHRf+CMmwLEH8e2uAS3r60Y4PqA?=
+ =?us-ascii?Q?DM/6wtJngVHBG64wkD8qaZG7mJGoSVL0VN6aWLSwlVi/XV/6lXNvGruj0Gw+?=
+ =?us-ascii?Q?jwnl06F35nGU/P+xu4hwaBrnG677sl14DDySF/0aLQX9rwOlU4z+a5oCeM8i?=
+ =?us-ascii?Q?WiFmbg9tsyPk4g2SXgQaJHh1Chiid2+9YG1wZau+L9dUhKwG8jhIyUAym3BN?=
+ =?us-ascii?Q?61DbjCVhXu98U89IkcTzIJpT2HBQpMwnc3osfmpdoup6xUpZdXeZKZ5BsHN1?=
+ =?us-ascii?Q?1gRouZ0nTnz2eUKmu0SXMlxAsyg1WTOl5mHXHeelLv5ZZW3pRkhBKoOdH5gd?=
+ =?us-ascii?Q?DSLNtoheLdxV27vluAkk0rQvqVgn/yqR9MIpVmQwQAbimP29Tjn5+rJwAT/a?=
+ =?us-ascii?Q?6RtDuuylHg4Ofkrznu38pCNTn0A0VTVGImHsMwXCOeAX4NwwVCH/d96mlUsc?=
+ =?us-ascii?Q?JWXOByKv5hkcllZELTzbEvX1fr+lmS8uVNzTpq36UxnERvfklDUufOsDC09p?=
+ =?us-ascii?Q?awOD1Pok/sup9yLp/cKho5nln+LcW9FMkyG6vmC0vjx76EzJM5phOeON9uwd?=
+ =?us-ascii?Q?GzTYcrJheCurh/kBCdGtQfdErszd2n2LkvelzBEdfCvOAS2PlWCVBbGcTYnN?=
+ =?us-ascii?Q?sDVCoH1ZudsdH8tjKAj9sQsVtcICFDLAvT6EttTaqv6qOKlrdtJgoZY4BrjI?=
+ =?us-ascii?Q?8FAFYlu220xe1yFTwRT5XPLaRnOeoTXHVmFkzMe32A/Zl0uUaaPmPUhrNEoU?=
+ =?us-ascii?Q?Qva7Z7HH+kWujco9QC94zqsUCI3pvXG2fKaO8d+T4mRPxdAJhOrbhy/GJ4IB?=
+ =?us-ascii?Q?bhwS8McsfmX0ZW5NQLDA47sMbn4zTUgivhHJivi2ZooGj36B0Z8yw3F2YWFQ?=
+ =?us-ascii?Q?MgLaeVfeAD6sUzfZ4LmJbMBW01qxVUtcupFb4PtX5DJhEcqBUAUfvtOXf7+A?=
+ =?us-ascii?Q?0+511o3edP9WrGH7eytT66VF850btPcJBPyZ0xMyJgDpGSD2eK2feYGxHlFz?=
+ =?us-ascii?Q?Bgdr8Q3enQxPonvZe/1QVvyeK1NWvAYk3GMvkjm1d6Mt+cfi4cmezCJlwP2G?=
+ =?us-ascii?Q?gkmK6p9G0m6SRT1Au2g9a4vsSu9GzFUH8CAqsUGrd7NZcNmLrOib0jERuhAN?=
+ =?us-ascii?Q?vt2a647ixQdAfzjweSXQRT3y51FZdJEkquFtfuRi2dFnGsWrrf6qG0euCVS1?=
+ =?us-ascii?Q?kXbiJHz2NcCU6NfDgv2zvFqEzrYyWb7sC3QSCLUrSwzOQK0nna7Q/CtEXJjF?=
+ =?us-ascii?Q?OiGu1M/0ayOLJnHmu9Bvf6KWiAA26SikFfit70gwfdgnpfiBs1v0lYvZ3Rd4?=
+ =?us-ascii?Q?aSN6FPVtCO6K/1xdmAe4F3wd/bsLUu0LagVBQUwaFZV1CufIP75FFiRAkkh8?=
+ =?us-ascii?Q?ZHHEWiByge2nCX5i0QvCj7KjDNMhJY54IsgeUm1a2MAFD3+10FJvh+506C7O?=
+ =?us-ascii?Q?6CLXTuCvXTFODXOxEXG5emK3P5dG5Lc5kHAtcQdkFWqWtmuOe8FZXUR3rRo0?=
+ =?us-ascii?Q?UX8JE6eKsgn5W1cUd0TeY6kafWdbMbdSI9EEyzW4pzfyyXKaHF9ZNm1EapDR?=
+ =?us-ascii?Q?YVQHhuaHTliLOgaBtAe958JDI9XgKAR0SPGIDdCW?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6b31cdb-2535-417b-73a6-08de0a56fda3
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 12:49:47.4431
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VIDk7C+T0WOq+Mu3R9+76z/nNofl3dpV/C4M3lstxNu+2/cGVfbWTY7Z6Xy02bldbdDlIH7c5IW4ozV/9F6WUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7788
+X-OriginatorOrg: intel.com
 
-On Fri, Oct 10, 2025 at 11:20:08AM +0800, Liangbin Lian wrote:
-> Russell King (Oracle) <linux@armlinux.org.uk> 于2025年10月9日周四 21:59写道：
-> >
-> > On Thu, Oct 09, 2025 at 04:44:16PM +0800, Liangbin Lian wrote:
-> > > +&gmac0 {
-> > > +     phy-mode = "rgmii-id";
-> > > +     clock_in_out = "input";
-> > ...
-> > > +&gmac1 {
-> > > +     phy-mode = "rgmii-id";
-> > > +     clock_in_out = "input";
-> >
-> > I am fine with what is being proposed here, but I think this
-> > clock_in_out property needs fixing. The description for it is thus:
-> >
-> >   clock_in_out:
-> >     description:
-> >       For RGMII, it must be "input", means main clock(125MHz)
-> >       is not sourced from SoC's PLL, but input from PHY.
-> >       For RMII, "input" means PHY provides the reference clock(50MHz),
-> >       "output" means GMAC provides the reference clock.
-> >     $ref: /schemas/types.yaml#/definitions/string
-> >     enum: [input, output]
-> >     default: input
-> >
-> > The problems that I have here are:
-> >
-> > 1) the description states that the only possible value for this when in
-> >    RGMII mode is "input" which is reasonable, because it's due to the
-> >    RGMII specification. The driver code is perfectly able to determine
-> >    whether RGMII has been specified, and set bsp_priv->clock_input
-> >    itself, relieving DT of this need.
-> >
-> > 2) bsp_priv->clock_input is only used in gmac_clk_enable() when calling
-> >    the SoC specific set_clock_selection() method. Only RK3528, RK3576,
-> >    and RK3588 populate this method. Every other SoC supported by this
-> >    driver still requires the property:
-...
-> >   clock_in_out:
-> >     description:
-> >       For RGMII, it must be "input"
+>-static int __tdx_enable(void)
+>+static __init int tdx_enable(void)
+> {
+>+	enum cpuhp_state state;
+> 	int ret;
 > 
-> This description does not match the actual situation,
-> there are many dts using 'output':
-> https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dts#L235
-> https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts#L241
-> https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r68s.dts#L33
-> https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dts#L78
+>+	if (!cpu_feature_enabled(X86_FEATURE_XSAVE)) {
+>+		pr_err("XSAVE is required for TDX\n");
+>+		return -EINVAL;
+>+	}
+>+
+>+	if (!cpu_feature_enabled(X86_FEATURE_MOVDIR64B)) {
+>+		pr_err("MOVDIR64B is required for TDX\n");
+>+		return -EINVAL;
+>+	}
+>+
+>+	if (!cpu_feature_enabled(X86_FEATURE_SELFSNOOP)) {
+>+		pr_err("Self-snoop is required for TDX\n");
+>+		return -ENODEV;
+>+	}
+>+
+>+	state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "virt/tdx:online",
+>+				  tdx_online_cpu, tdx_offline_cpu);
+>+	if (state < 0)
+>+		return state;
+>+
+> 	ret = init_tdx_module();
 
-For all of the above, whether it is "input" or "output" has no effect
-as these are all rk3568, and rk3568 does not implement the
-set_clock_selection() method.
+...
 
-static const struct rk_gmac_ops rk3568_ops = {
-        .set_phy_intf_sel = rk3568_set_phy_intf_sel,
-        .set_to_rgmii = rk3568_set_to_rgmii,
-        .set_to_rmii = rk3568_set_to_rmii,
-        .set_speed = rk_set_clk_mac_speed,
-        .regs_valid = true,
-        .regs = {
-                0xfe2a0000, /* gmac0 */
-                0xfe010000, /* gmac1 */
-                0x0, /* sentinel */
-        },
-};
+>@@ -1445,11 +1462,6 @@ void __init tdx_init(void)
+> 		return;
+> 	}
+> 
+>-#if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+>-	pr_info("Disable ACPI S3. Turn off TDX in the BIOS to use ACPI S3.\n");
+>-	acpi_suspend_lowlevel = NULL;
+>-#endif
+>-
+> 	/*
+> 	 * Just use the first TDX KeyID as the 'global KeyID' and
+> 	 * leave the rest for TDX guests.
+>@@ -1458,22 +1470,30 @@ void __init tdx_init(void)
+> 	tdx_guest_keyid_start = tdx_keyid_start + 1;
+> 	tdx_nr_guest_keyids = nr_tdx_keyids - 1;
+> 
+>+	err = tdx_enable();
+>+	if (err)
+>+		goto err_enable;
 
-I'm going to propose:
+IIRC, existing TDX modules require all CPUs to have completed per-CPU
+initialization before TDMR/PAMT initialization.
 
-1) that the driver should only print an error if "clock_in_out" is
-missing _and_ the SoC implements the required function.
-
-2) that the driver should print a non-fatal error if this property is
-specified in DT _and_ the SoC does not implement the function to
-discourage its use.
-
-3) [tr]x_delay should not print an error for non-RGMII phy interface
-modes.
-
-I consider it a bug that a driver prints errors for properties that
-have not been specified that it does not actually require. By doing
-so, it encourages people to add useless properties to their DT
-description that will never ever be used (e.g. because they are not
-relevant for hardware the operating mode that the board is setup
-for.)
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+But at this point, APs are not online, so tdx_enable() will fail here.
 
