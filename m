@@ -1,129 +1,305 @@
-Return-Path: <linux-kernel+bounces-849930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166C2BD15AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:06:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF23BD15AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 024384E39E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:06:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7DF8A346EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40AD280025;
-	Mon, 13 Oct 2025 04:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QShxkHjO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4511922DD;
-	Mon, 13 Oct 2025 04:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F36D281370;
+	Mon, 13 Oct 2025 04:10:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB571DE3B5;
+	Mon, 13 Oct 2025 04:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760328361; cv=none; b=gbF6SdNJVmoSwV1/JwYC4xmIul6C/wdrFxGUbokORYrop+QajjW52C2tEMkHjDYsgl7TRVtsknJ3fq6YN7haTWATotTkuD2OtsPjkEzLdhzEzzk3xXbLJS9Z/fJOzXU2ebZR9H2oPa4T+F0pLLyXc/norvT2e6AhxXF85HOvpI0=
+	t=1760328625; cv=none; b=E3Xr4Oc9P7KKNlJf7FtvdkHKm2oN/14zOkkd5QYMg2y505gCTFqqSUzB87a8eQzYNEWPq5hY4chrtpc5PoO1NamjRknHyonBc0IzY5BHSCus5CWCRUgv+xm08lB3Du5zkx6gvN5q3mGMVBo6WZDMrMXfqsyB52293/aTTelEV9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760328361; c=relaxed/simple;
-	bh=bTK7Ww1dIReGXn7ATZoqAlPsyx0s/+tSQejlTQbKeBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IaxGgx+cMkwSlMtOARIwHSsagFsE4/USpsHOLlBE2UTNWiI8HPIJ2D/7Tve92ZpPUPSaoAC2VdGQcRJkwJ4ghegmZObvzPFwmYvuf/rbJfhE2QcCTtEoWsOxE8C+KeK9sTrdrXQ3Ft4Esmf5xml+vWqK5Wi09xgHZVRETXJa08g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QShxkHjO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F25C4CEE7;
-	Mon, 13 Oct 2025 04:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760328359;
-	bh=bTK7Ww1dIReGXn7ATZoqAlPsyx0s/+tSQejlTQbKeBI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QShxkHjOUSIK3tXDhBMZfAfPFpHj2xlyMVjOMoSJnnw5YI9IgZeEvOqkJHLBqmiSl
-	 kavLCD+wBnOc0r9/ZT+MMWqygGE+DHE4h35eIjIZU8HLe0QgGIDpwK8+xSXfCZre39
-	 rvgKfJ0ke+L/YMkpWHqcOeAgd0g/AMisLp43Y29E9vvcoPNQlOzsMOIubaRjGiw6NL
-	 Va5LQHm1imRqSGIeIwDJIbT6ytOjTRN+sU6qIXLY16aI1sgUriadxEDCY6L+ls5X68
-	 vP16Mv5HR1ns6Zr85FCImM2cwdfv7kT7VzToFUlFqiBkXLq6tw9w5zUvFon3A6ja6W
-	 sFrqReC5PuvgA==
-Message-ID: <3dfeb2be-d7e7-4351-8464-c06084b0054a@kernel.org>
-Date: Mon, 13 Oct 2025 06:05:52 +0200
+	s=arc-20240116; t=1760328625; c=relaxed/simple;
+	bh=NkvTVXXL+fACXOsmFZvvzCVbkAPreCuUfACe/tKiu5k=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WFl/auZ+PGS5mv1Kjn3A28AFA+wRNtfFXJdQ1g318GpGJZq6ECbDxzCnyUsLRY7zcuECqdUOB6hDu+L6YNL3dn2JgJh3Cq9fZ1DW147n4yNYLZER4rGEqa4jz278jBeyaKSicKuI3ZU+QpU4QuAxGicsyC+cQUJ+SpQDHZ8jjOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxVNCqe+xotHAVAA--.45647S3;
+	Mon, 13 Oct 2025 12:10:19 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJAxfcGke+xoJxXdAA--.41163S3;
+	Mon, 13 Oct 2025 12:10:14 +0800 (CST)
+Subject: Re: [PATCH v2] LoongArch: KVM: Add AVEC support
+To: gaosong <gaosong@loongson.cn>, chenhuacai@kernel.org
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev, kernel@xen0n.name,
+ linux-kernel@vger.kernel.org
+References: <20251010064858.2392927-1-gaosong@loongson.cn>
+ <39779e6d-2f09-4ee9-e5e0-97fc09efbbf5@loongson.cn>
+ <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <5e83f343-7da1-3235-d681-0d5b8816d1b9@loongson.cn>
+Date: Mon, 13 Oct 2025 12:07:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: usb: qcom,snps-dwc3: Fix bindings for
- X1E80100
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20251013035920.806485-1-krishna.kurapati@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251013035920.806485-1-krishna.kurapati@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxfcGke+xoJxXdAA--.41163S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWfGw43tryrtr1kKrWfJr1fGrX_yoWDXw1Dpr
+	1kAFWDWrWrGrn7tr1UJFn0vryUXr18Kw17Jr1UtFy8Jr47Jr1Yqr40gryqgF1UJw48JF1I
+	yr15CrnrZFn8JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjwZcUUUUU=
 
-On 13/10/2025 05:59, Krishna Kurapati wrote:
-> Add the missing multiport controller binding to target list.
-> 
-> Fix minItems for interrupt-names to avoid the following error on High
-> Speed controller:
-> 
-> usb@a200000: interrupt-names: ['dwc_usb3', 'pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-> 
-> Fixes: 6e762f7b8edc ("dt-bindings: usb: Introduce qcom,snps-dwc3")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+On 2025/10/13 上午11:18, gaosong wrote:
+> 在 2025/10/11 上午9:29, Bibo Mao 写道:
+>>
+>>
+>> On 2025/10/10 下午2:48, Song Gao wrote:
+>>> Add cpu_has_msgint() to check whether the host cpu supported avec,
+>>> and restore/save CSR_MSGIS0-CSR_MSGIS3.
+>>>
+>>> Signed-off-by: Song Gao <gaosong@loongson.cn>
+>>> ---
+>>> Based-on: 
+>>> https://patchew.org/linux/20250930093741.2734974-1-maobibo@loongson.cn/
+>>> v2: fix build error.
+>> It is not necessary based on this patch, you can base it on master 
+>> branch. The later merged patch need based on previous version in general.
+>>
+> Got it.
+>>>
+>>>   arch/loongarch/include/asm/kvm_host.h |  4 ++++
+>>>   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
+>>>   arch/loongarch/include/uapi/asm/kvm.h |  1 +
+>>>   arch/loongarch/kvm/interrupt.c        |  3 +++
+>>>   arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
+>>>   arch/loongarch/kvm/vm.c               |  4 ++++
+>>>   6 files changed, 30 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
+>>> b/arch/loongarch/include/asm/kvm_host.h
+>>> index 392480c9b958..446f1104d59d 100644
+>>> --- a/arch/loongarch/include/asm/kvm_host.h
+>>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>>> @@ -285,6 +285,10 @@ static inline bool kvm_guest_has_lbt(struct 
+>>> kvm_vcpu_arch *arch)
+>>>       return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | 
+>>> CPUCFG2_MIPSBT);
+>>>   }
+>>>   +static inline bool cpu_has_msgint(void)
+>>> +{
+>>> +    return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
+>>> +}
+>>>   static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
+>>>   {
+>>>       return arch->cpucfg[6] & CPUCFG6_PMP;
+>>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h 
+>>> b/arch/loongarch/include/asm/kvm_vcpu.h
+>>> index f1efd7cfbc20..3784ab4ccdb5 100644
+>>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
+>>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
+>>> @@ -15,6 +15,7 @@
+>>>   #define CPU_PMU                (_ULCAST_(1) << 10)
+>>>   #define CPU_TIMER            (_ULCAST_(1) << 11)
+>>>   #define CPU_IPI                (_ULCAST_(1) << 12)
+>>> +#define CPU_AVEC                        (_ULCAST_(1) << 14)
+>>>     /* Controlled by 0x52 guest exception VIP aligned to estat bit 
+>>> 5~12 */
+>>>   #define CPU_IP0                (_ULCAST_(1))
+>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h 
+>>> b/arch/loongarch/include/uapi/asm/kvm.h
+>>> index 57ba1a563bb1..de6c3f18e40a 100644
+>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+>>> @@ -104,6 +104,7 @@ struct kvm_fpu {
+>>>   #define  KVM_LOONGARCH_VM_FEAT_PV_IPI        6
+>>>   #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME    7
+>>>   #define  KVM_LOONGARCH_VM_FEAT_PTW        8
+>>> +#define  KVM_LOONGARCH_VM_FEAT_MSGINT        9
+>>>     /* Device Control API on vcpu fd */
+>>>   #define KVM_LOONGARCH_VCPU_CPUCFG    0
+>>> diff --git a/arch/loongarch/kvm/interrupt.c 
+>>> b/arch/loongarch/kvm/interrupt.c
+>>> index 8462083f0301..adc278fb3cb9 100644
+>>> --- a/arch/loongarch/kvm/interrupt.c
+>>> +++ b/arch/loongarch/kvm/interrupt.c
+>>> @@ -21,6 +21,7 @@ static unsigned int 
+>>> priority_to_irq[EXCCODE_INT_NUM] = {
+>>>       [INT_HWI5]    = CPU_IP5,
+>>>       [INT_HWI6]    = CPU_IP6,
+>>>       [INT_HWI7]    = CPU_IP7,
+>>> +    [INT_AVEC]    = CPU_AVEC,
+>>>   };
+>>>     static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int 
+>>> priority)
+>>> @@ -36,6 +37,7 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
+>>> unsigned int priority)
+>>>       case INT_IPI:
+>>>       case INT_SWI0:
+>>>       case INT_SWI1:
+>>> +    case INT_AVEC:
+>>>           set_gcsr_estat(irq);
+>> Do we need cpu_has_msgint() here ? It is impossible that VMM inject 
+>> INT_AVEC interrrupt on non-msgint machine such as 3C5000.
+>>
+> yes we need , how about this?
+> 
+> @@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
+> unsigned int priority)
+>          if (priority < EXCCODE_INT_NUM)
+>                  irq = priority_to_irq[priority];
+> 
+> +        if (cpu_has_msgint() && (priority == INT_AVEC)) {
+> +                set_gcsr_estat(irq);
+> +                return 1;
+> +        }
+> +
+>          switch (priority) {
+>          case INT_TI:
+>          case INT_IPI:
+This is workable. Another way is to add checking in irq inject root 
+source function kvm_vcpu_ioctl_interrupt(). Both works for me.
+
+BTW, I think that there should be modification with function 
+kvm_deliver_intr() also. max irq bit is *INT_IPI + 1* where there will 
+be problem with INT_AVEC. Should it be modified as *EXCCODE_INT_NUM*?
+
+void kvm_deliver_intr(struct kvm_vcpu *vcpu)
+{
+         unsigned int priority;
+         unsigned long *pending = &vcpu->arch.irq_pending;
+         unsigned long *pending_clr = &vcpu->arch.irq_clear;
+
+         for_each_set_bit(priority, pending_clr, INT_IPI + 1)
+                 kvm_irq_clear(vcpu, priority);
+
+         for_each_set_bit(priority, pending, INT_IPI + 1)
+                 kvm_irq_deliver(vcpu, priority);
+}
+
+Regards
+Bibo Mao
+> 
+> Thanks.
+> Song Gao
+> 
+> 
+>>>           break;
+>>>   @@ -63,6 +65,7 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, 
+>>> unsigned int priority)
+>>>       case INT_IPI:
+>>>       case INT_SWI0:
+>>>       case INT_SWI1:
+>>> +    case INT_AVEC:
+>>>           clear_gcsr_estat(irq);
+>> Ditto.
+>>
+>> The others look good to me.
+>>
+>> Regards
+>> Bibo Mao
+>>>           break;
+>>>   diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>>> index 30e3b089a596..226c735155be 100644
+>>> --- a/arch/loongarch/kvm/vcpu.c
+>>> +++ b/arch/loongarch/kvm/vcpu.c
+>>> @@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
+>>>           *v = GENMASK(31, 0);
+>>>           return 0;
+>>>       case LOONGARCH_CPUCFG1:
+>>> -        /* CPUCFG1_MSGINT is not supported by KVM */
+>>> -        *v = GENMASK(25, 0);
+>>> +        *v = GENMASK(26, 0);
+>>>           return 0;
+>>>       case LOONGARCH_CPUCFG2:
+>>>           /* CPUCFG2 features unconditionally supported by KVM */
+>>> @@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
+>>>           return -EINVAL;
+>>>         switch (id) {
+>>> +    case LOONGARCH_CPUCFG1:
+>>> +        if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
+>>> +            return -EINVAL;
+>>> +        return 0;
+>>>       case LOONGARCH_CPUCFG2:
+>>>           if (!(val & CPUCFG2_LLFTP))
+>>>               /* Guests must have a constant timer */
+>>> @@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu 
+>>> *vcpu, int cpu)
+>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
+>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
+>>> +    if (cpu_has_msgint()) {
+>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
+>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
+>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
+>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
+>>> +    }
+>>>         /* Restore Root.GINTC from unused Guest.GINTC register */
+>>>       write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
+>>> @@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu 
+>>> *vcpu, int cpu)
+>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
+>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
+>>> +    if (cpu_has_msgint()) {
+>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
+>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
+>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
+>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
+>>> +    }
+>>>         vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
+>>>   diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+>>> index d8c813e2d72e..438885b6f2b1 100644
+>>> --- a/arch/loongarch/kvm/vm.c
+>>> +++ b/arch/loongarch/kvm/vm.c
+>>> @@ -37,6 +37,9 @@ static void kvm_vm_init_features(struct kvm *kvm)
+>>>           kvm->arch.support_features |= 
+>>> BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
+>>>       }
+>>>   +    if (cpu_has_msgint())
+>>> +        kvm->arch.support_features |= 
+>>> BIT(KVM_LOONGARCH_VM_FEAT_MSGINT);
+>>> +
+>>>       val = read_csr_gcfg();
+>>>       if (val & CSR_GCFG_GPMP)
+>>>           kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PMU);
+>>> @@ -153,6 +156,7 @@ static int kvm_vm_feature_has_attr(struct kvm 
+>>> *kvm, struct kvm_device_attr *attr
+>>>       case KVM_LOONGARCH_VM_FEAT_PMU:
+>>>       case KVM_LOONGARCH_VM_FEAT_PV_IPI:
+>>>       case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
+>>> +        case KVM_LOONGARCH_VM_FEAT_MSGINT:
+>>>           if (kvm_vm_support(&kvm->arch, attr->attr))
+>>>               return 0;
+>>>           return -ENXIO;
+>>>
+>>
+> 
+
 
