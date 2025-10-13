@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-851412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50B9BD6620
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:37:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B329BD6629
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 23:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA99403A5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:37:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC080350948
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564762EF65C;
-	Mon, 13 Oct 2025 21:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792EA2EDD76;
+	Mon, 13 Oct 2025 21:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/rJ89GC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ISUOs2Ip"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9AF2EA14D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5C02DE1F0
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760391433; cv=none; b=SxZNYrNTdx41gyuNmKAsGZ7a99Pg1vFIcxQLhcuVBb78H8fQy03lc51X1e4aQLhDpiQ1Ie+gGsYZ8ljudICzwzfBBa6DV03JiFiWsTfYef4N/76Y7NnErw2jaGqAgMyUOJ5wdTyf2GNB+ZYlXDB3uNVhcmHDQPOztBT34F09oqM=
+	t=1760391498; cv=none; b=RAj7qS4M/oqyNq36dnoKj/7Hw3h+bv/SWyCk8qMkJqAs3EuQ6rzZj8lGGCShWAr+Vt3MlksfHikoXW5uPEPvNafrqCgXt+JcGJjlFukmWNWY3Y71h4gQ4h89hBXI4LB3eC79ghWs7FtMQ6MWhcg1wUSFw7nGbIAgC4XVmQ47Br0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760391433; c=relaxed/simple;
-	bh=Hl2Anxuye8XRplAJpKbBSmfQh0rViqCT52nKsVmNPvc=;
+	s=arc-20240116; t=1760391498; c=relaxed/simple;
+	bh=pECFziXIhSdziHO8AnV7jP8nihk0dFHntK2WI54iu1U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fYhzw+UFebfTNpjWZwJTrQ6XCMPjxxTuGiduiRNdf72ZB94+pboNci8GpaACh64gWjYtcFLCDRGI4xdOYazgDKvBz/UQIG9LDaH6PVWGnGZaX++yAe2cGIORHv0wRuM4jgvMOgBamu19rPsBHhovdQ/RmqkfcNY4qBSdxRIJ/qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/rJ89GC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e384dfde0so47815415e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760391430; x=1760996230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NIibZ9AZHKQDiWSHleSWVU3Q4WsDJCCftwbYeVk68tk=;
-        b=P/rJ89GC+1m1oydzy4+4/TJyVKjjZ37quhREDtfJS4tF/8kGHB5TYtC/HdxCLJ9AXy
-         QhBRWHpqBQYU1FgCsZGn1QvI6YTF+jSFtq8+HvLmUrg4UV0pZXGnJN9pe/6RRyH+KUGb
-         JlUmLeOw/1/0gJQev3KFfGXg5dKSbNcsDQJnoLeUZ+n9XFPrglldnv73KZbNpTnnbEQS
-         AFTV2dD0faVjL/znIdfT1X3rlL9CURyVFI7ibCP/JcLO+EQJyCDWmxymjCsFgd09VcT4
-         RE4N59LKZFQei+veIEb0FEW97ngfDNTjhvzpxR5GGCU9hiRQTbcXtAEebx1CNMkwhUj/
-         HBjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760391430; x=1760996230;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIibZ9AZHKQDiWSHleSWVU3Q4WsDJCCftwbYeVk68tk=;
-        b=L8loSilen3bo3xWKy/1KmlGVUj33BMrfQwFBAR51QUiHBT+6No9gt1c8HlTOVanmm/
-         QXbS/CdhOthNjR+itw8/fPWVOZxKSZPNXLSrhKA/ZE5FqX1YjRH2E7dV/b3zoi2J08Ub
-         2UYSu7I8WFzQluFOIhLxt2zvZUGVn5atews5xRVulDLkDWD91VkaBaUKnUOdZC4tilRM
-         CpMR2Kx/SZdeg0Orio3IDoJ8EOkddkypniZqj8OqLTXdw+Rx75fjVgm7SJ5YVg+yFQm3
-         4W13JpotaRrWfbmGjpUuXO0etZs3KZCxRzFiS3Et+7QoDWaRIrJPqY9BBRN09ZJ8HKpb
-         uDUA==
-X-Gm-Message-State: AOJu0Yz4WERna1E/NkalXRTlExeUR7uv4yidDswpuwdptepZO0w1s3LR
-	eSycq4p5DpHNy3S6yeB+Sf04YFjkv7OKRRoY1L3E8xm7ahQw7fur3fTz
-X-Gm-Gg: ASbGncsiilLONRfQOn5J7HdweSOdy6RhJT7NjYDsUKO25z5f+uiFKD4OookVdDXqmJY
-	Ncnt/9qDVhmkk0/CzZxawMqBA4tJmwtzipMQr3px87R3VPCiOkNnQ+940mcd7Pyr18JvFp38mi1
-	Bos0DX5/GhuNAF54/Vgwa5a3W+1L2bXnGyv1g0Q6dkajV1zpc2mYjIqdYpic1nsSHHK17l8+xnk
-	7BEy5UIcLQCY0uPksA7NQqqEkOH8ypvJn2jRGdiwGk+ti87rcS4JzpoyhnG0MFVFFZawAgr61LZ
-	WB4Vo90lpPQzsE/65eBsKFOsUA4OG92dnReoY/6Sx3FCK1m69RcXbtwKSVMrZoWOipzNgkJmZ3J
-	hBxrgUBLhEB4IaRAOPp0frLnnS5Bfz83tkcB5hwN+X+G9lQ79NWZitffsoYrgvo+4og==
-X-Google-Smtp-Source: AGHT+IH1SREQLCa/Svd3IxN7xi9fuGo+yF1EqJ1MubqO02MGbIzYuC4TGh4/KXqezsvdEuSc4H2L1A==
-X-Received: by 2002:a05:600c:19d0:b0:46e:761b:e7ff with SMTP id 5b1f17b1804b1-46fa9b06c8cmr162443775e9.28.1760391430115;
-        Mon, 13 Oct 2025 14:37:10 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489accbsm234768025e9.14.2025.10.13.14.37.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 14:37:09 -0700 (PDT)
-Message-ID: <e6f4a811-6f70-407a-930b-f533fdefc2bf@gmail.com>
-Date: Mon, 13 Oct 2025 23:37:09 +0200
+	 In-Reply-To:Content-Type; b=Q/N4Vx0nZJluCtqi60Jmh39Eg2x6SFyIOPGSA1IUWV1H6lhOPawTgEYv29f1CRs8nk8Fo6R1M0JvRgF+Zg7bgsApJlrSXrqaRO0Cx2cX1T0kTtjA3oK958dtEtgVUdlOGNknQEeOFQfgKY+882Y1BWlfM8GaeP2AS6uWFgjNJmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ISUOs2Ip; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3cf98c31-4475-4e4a-8ce0-bc9c62922313@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760391484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gWGxPhiuc07ov79HbmH+SO4fH0CF737w7R6sHM69aMo=;
+	b=ISUOs2Ip2da67r7nxHfXeRWMbeyMY0blBbjnfFfmYRpJ3fE3gJmrPs54TqC3pholQwqqxn
+	hQ5HajFfDCb9GuwNEIv64PjCZeSbAFAEyu0+hCGONLuuqT6rfX0HST16t53c+wzcmcKubl
+	2HCZZ3AqHJRt1UyRQGROdXATYhGm4wY=
+Date: Mon, 13 Oct 2025 14:37:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/7] HID: asus: add support for the asus-wmi brightness
- handler
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <20251013201535.6737-8-lkml@antheas.dev>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <20251013201535.6737-8-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH bpf-next RFC 0/2] Pass external callchain entry to
+ get_perf_callchain
+Content-Language: en-GB
+To: Jiri Olsa <olsajiri@gmail.com>, Tao Chen <chen.dylane@linux.dev>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20251013174721.2681091-1-chen.dylane@linux.dev>
+ <aO1j747N7pkBTBAb@krava>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <aO1j747N7pkBTBAb@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-On 10/13/25 22:15, Antheas Kapenekakis wrote:
-> If the asus-wmi brightness handler is available, send the
-> keyboard brightness events to it instead of passing them
-> to userspace. If it is not, fall back to sending them to it.
+
+On 10/13/25 1:41 PM, Jiri Olsa wrote:
+> On Tue, Oct 14, 2025 at 01:47:19AM +0800, Tao Chen wrote:
+>> Background
+>> ==========
+>> Alexei noted we should use preempt_disable to protect get_perf_callchain
+>> in bpf stackmap.
+>> https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
+>>
+>> A previous patch was submitted to attempt fixing this issue. And Andrii
+>> suggested teach get_perf_callchain to let us pass that buffer directly to
+>> avoid that unnecessary copy.
+>> https://lore.kernel.org/bpf/20250926153952.1661146-1-chen.dylane@linux.dev
+>>
+>> Proposed Solution
+>> =================
+>> Add external perf_callchain_entry parameter for get_perf_callchain to
+>> allow us to use external buffer from BPF side. The biggest advantage is
+>> that it can reduce unnecessary copies.
+>>
+>> Todo
+>> ====
+>> If the above changes are reasonable, it seems that get_callchain_entry_for_task
+>> could also use an external perf_callchain_entry.
+>>
+>> But I'm not sure if this modification is appropriate. After all, the
+>> implementation of get_callchain_entry in the perf subsystem seems much more
+>> complex than directly using an external buffer.
+>>
+>> Comments and suggestions are always welcome.
+>>
+>> Tao Chen (2):
+>>    perf: Use extern perf_callchain_entry for get_perf_callchain
+>>    bpf: Pass external callchain entry to get_perf_callchain
+> hi,
+> I can't get this applied on bpf-next/master, what do I miss?
+
+This path is not based on top of latest bpf/bpf-next tree.
+The current diff:
+
+  struct perf_callchain_entry *
+-get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
+-		   u32 max_stack, bool crosstask, bool add_mark)
++get_perf_callchain(struct pt_regs *regs, struct perf_callchain_entry *external_entry,
++		   u32 init_nr, bool kernel, bool user, u32 max_stack, bool crosstask,
++		   bool add_mark)
+  {
+
+The actual signature in kernel/events/callchain.c
+
+struct perf_callchain_entry *
+get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+                    u32 max_stack, bool crosstask, bool add_mark)
+{
+
+
 >
-> Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> Tested-by: Luke D. Jones <luke@ljones.dev>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/hid/hid-asus.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> thanks,
+> jirka
 >
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 0af19c8ef035..1f904bb66396 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -324,6 +324,17 @@ static int asus_event(struct hid_device *hdev, struct hid_field *field,
->  			 usage->hid & HID_USAGE);
->  	}
->  
-> +	if (usage->type == EV_KEY && value) {
-> +		switch (usage->code) {
-> +		case KEY_KBDILLUMUP:
-> +			return !asus_hid_event(ASUS_EV_BRTUP);
-> +		case KEY_KBDILLUMDOWN:
-> +			return !asus_hid_event(ASUS_EV_BRTDOWN);
-> +		case KEY_KBDILLUMTOGGLE:
-> +			return !asus_hid_event(ASUS_EV_BRTTOGGLE);
-> +		}
-> +	}
-> +
->  	return 0;
->  }
->  
-Neat. I like this.
+>
+>>   include/linux/perf_event.h |  5 +++--
+>>   kernel/bpf/stackmap.c      | 19 +++++++++++--------
+>>   kernel/events/callchain.c  | 18 ++++++++++++------
+>>   kernel/events/core.c       |  2 +-
+>>   4 files changed, 27 insertions(+), 17 deletions(-)
+>>
+>> -- 
+>> 2.48.1
+>>
 
 
