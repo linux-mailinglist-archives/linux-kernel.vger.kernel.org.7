@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-850802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE522BD3E55
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62263BD3E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3F534FD1CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:01:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9DAC4F7C21
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD3B30B515;
-	Mon, 13 Oct 2025 14:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBD930BB85;
+	Mon, 13 Oct 2025 14:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UctH4wmB"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/KBSFmk"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4437130AD07
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5CF30AD1E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 14:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760367206; cv=none; b=biuEpEN+/+3Hc+lgCAMZpHeABXDeSL+9LaN8/FKJdO8MyJ7TOdWav/EY3uh27T7OomerJdZTJ1JBJpaMrV5qzWiO5xuQQB6nOdoYZshjFPu+TA8GHlXodWt+Dwt0vWVn0peB+WR8mAo/lf5oSkY6r8toYAz88g53nsdbCuSbEFY=
+	t=1760367208; cv=none; b=tqqhBbqhqW4ykjWANdX3N063LiwfNL5KlEBwT4jo/CvoD1SjIetqskG4NxLtuPkL/tL9jrH74AiJbxtR1TcHabSfVOlncuiYnaOX+os3p662EYYnYgmcR7HaHKihtx7a3jfYTmZ/KTnmyqs8DwZqUVwSDyFrbT31UszDTvpqQXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760367206; c=relaxed/simple;
-	bh=7sj1EbpAJnpeoVxMcwuWL5zaTTOuVyXNUSbxilQjCno=;
+	s=arc-20240116; t=1760367208; c=relaxed/simple;
+	bh=w+9GYnLfpJPuENZN1hq4bylmO2y99fnzpTWEsZZvlXU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HP8ujELh8jTAGxGpk5Kqfwj9tdU5MTNDmK3vMTevq2h0sKb2ZSOpqieSyxseqU6YqPR0fXQdKeySRcLKbpCacNoHNsuzTVuMbcv4J3jF0WcgCJS1P6ACEo4TPTGtvXNhlMlLJMl/V3ioY7XeVGCE/afR0SDIM8G5ZHV6/rJ6F+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UctH4wmB; arc=none smtp.client-ip=209.85.221.53
+	 MIME-Version; b=GZx1zjiUpHg5nsCNJNv+ukA24I4A0OXvUC54Vkg2DycyHPNvWaTyYAXjFzC0qb1rtEA6US4KGmHBvx0oxyt25lOvMhonHDOspsj/ZpUaZOJ4qkf3N14bVkVCIL5Tzq133SPhH/JrpJocLlCjhaPkuLZt9FHP0GkBIJPylHLIwFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/KBSFmk; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3f0134ccc0cso3288903f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:53:23 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so3633915f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760367202; x=1760972002; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760367204; x=1760972004; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HqDy67Vpwu3GYg1tc86jhK5pz5tDZBEzHj59MW+Ighs=;
-        b=UctH4wmBAKbnO0vP3yMu2v49mDyJRbxIaYIwLePGAWHxopZjFpXBsZIeBl+qR3GAl1
-         XpmCRJRlhsfcLHZmc3k9CgUSAa9gtvnyWcGJu6jZ2ZLUWj1R/bu6plny8LaRw0X6BI7I
-         BXdh0FzvmnLxzuB9BFw5QiYieUpnqK0jia1HZKqqcYRxGlBUZhqCqUBIBCiICNxJSMI7
-         cLU/ixvgI53rY8lGbXKwkquaf+9ZcVLUfXjoBbz8cEPSv+PBOyQJJemBtp9HKFetixpt
-         l7hC7IQFgNjXFv37bAp99VmdJtOJjh5FvHTyuZmfdlFQS5d9lAzhQNbTyQ0iEZcWplfn
-         syDA==
+        bh=Intn0C5yI8uAf2z3e0yNoFGVnV8Ruh2Zw9BITbwKtgg=;
+        b=I/KBSFmkr823VYLJ9wwtqrnu7+aTcICtjpZOfR/GQ5E1yCUygyix9jp0J76TMiY+C5
+         yZd+9yDEdAH3g2i48cCgrqHH07RL2OdfWlSTn1ph8SQc6pOXb0XlHAaPIl/iuSFzDkFI
+         cP1sJvjmu7Lx/8FAkkh4d4aQtIJck7g1rH7T6IAQxb7/fw+t/UgWDLULE8p80tOzf/QL
+         nqZgWYDkJSrFZS4Q08d96Br4TJmIg3xi6HeuazjSD5K7g/NYlK626UE1X8NyF326HTyb
+         qTSolPWPXrGexUR0pupc0I9yObjTg5bpRzqQ1/3YV9P7pAMQvu7uDAEdBSm6VALAyfZS
+         crkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760367202; x=1760972002;
+        d=1e100.net; s=20230601; t=1760367204; x=1760972004;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HqDy67Vpwu3GYg1tc86jhK5pz5tDZBEzHj59MW+Ighs=;
-        b=xCQKls5ohVmLvg2msmgqEhR0ZbWZo5+HftOHxW/7Umfi+rMeRhAX5Ej1MRzzHHWNOd
-         D5g/zsxszADQixJ6i5jNIIbIncWmnd+74VuJ8agjYxEFdJ9sS/jgC1a1i4o27O003W4V
-         r7Fkimwh0ck8g7F7NV53SsYzWHmoSlEt8oPcz4vW8QtAPZ3m8TEioT7VDwRlxcqcWiKo
-         /gMU58wXtV3tqT/OlEqCEjZzOWOLB54rgF5l9U1WvEH0IrZgL0Itt3VdWYd82OPU8bG2
-         QzV3qh0+9hcZ2utxUtxZkoG5z3MofpKTp/kmUlM3uvMYg0KXilqYGWB90K7L3gSEiNxE
-         84mA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwKzaN3cstE46cPRaGVbt7VsxCmUFoyozfxDfznjYfP2ML7FUHttUG6PPWCNHT5wl+BGWTEIotGmrzzW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDlpAoHXFhDHT2uS1FBUFPm+OlRhSCYnulrgIpigygMf/Ur3LI
-	SArLJL4q3fRy0N9aUbJ6c33aoGgiMJnZtPN/T4Z7uvFxsjx+WhTdLG5F
-X-Gm-Gg: ASbGnct3Xdph7vPcJfTm5rN+v1oL53++v38J6yaEvgP7FbELTYDecQMD1n3rAoZrrNH
-	jgNFxfItIw6op+HzWBqke3X4AHI7sR+2bMYv7+uyzvhAhKLc14IvqEIN7LQBDg0FR2JBZPAXzYF
-	axa5mmBjlbJVKGma7S599k2OLLUXF/QweN7ownq+FUwLaEVdG3ydTvFt0SLrsxYwcXloepjdIug
-	RDM7Br2DCnij4P4Xh0z9vK02s+MVZwMhMt0RkL1FFqOXdKXKGWLtD+VhH+kpSoWxCsbcKqbR8iE
-	H2sQTzx4T7TXygKuTTZgydb8BICZbg3+oo3p6eXcDu4uv1HOOYRtEu0z6o+irb9iQmEWowaCFue
-	uAw0qUM1AD5JPgITp4EBYMEE1
-X-Google-Smtp-Source: AGHT+IGuhS3kQZ1R1xe6ZB/ZEr0fg6Xs5SvekWOSlXtM50KBa0/ETxk5cO3wUCuWkLLaVPOmY7sV0A==
-X-Received: by 2002:a5d:5d03:0:b0:3ec:e0d0:60e5 with SMTP id ffacd0b85a97d-42667177bd4mr13708475f8f.15.1760367202162;
-        Mon, 13 Oct 2025 07:53:22 -0700 (PDT)
+        bh=Intn0C5yI8uAf2z3e0yNoFGVnV8Ruh2Zw9BITbwKtgg=;
+        b=Nzn/bKRCaLPgD5PODu9pOMXQfFQELZnIy96vwzHow5GYUgnp4b1aOgGJEntB6o/QNX
+         U3n8qfXf2SHej4EOhnUqS45QMyK7km5QdsKCitbBfsCBe0ToCkbPZSmwnFb5UL3QbbZM
+         f9KKam1IeN0FbAbKLW2YatvVAR7X2MuAjYEil/CX6hxLmwPes9O5Ow/N/gU3cCfMPbLA
+         k9OsCuiqR9CD+gwGgrOJ58xgknsp1pRsST5ZJF8QRka+Iu0z0fB17DTDZPDp5m1Sb0i7
+         A4x1YAMh2E98Uys5u6e0WZKTfJjqDWxVm9rMkqzb+PQu9Hf7F1vi26Pmhsp5IYn/FpR6
+         sHIg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9sX7LstVbGve25sSDMkWyeExH2N2GKdr3j9VOn3yU6HfggSBRFQUCfClAD39wptUpmMZKXgHpHGiixwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1SfKCBTcMERj5Q3CRf6Bdf5grxAFC5nVLxcAoQ8ozjfN4prUN
+	wRRqLMz1zmp8RKhSaPxzus9an58XlrrNyBIphCKZ8MpO52SuOyKXykfT
+X-Gm-Gg: ASbGncsYc9kZAn9xO5oF+rXG5byDMkDUi5Og6SI3Uwwe5I6fDSP7uGlVjk0w0ZHHZSk
+	WoLAGowW3iaUgP54RlKz8TIW3XYYp9o/MJBz4115A0XLiV4weyMjlaUwPpaReZbuwRmuUqBiLGZ
+	GTIgzb1czYuoVYaACU3aleTCYK7QZHxhbcCKIxv8IhpbkGUEw8Y0WxeDA0pKeu6WhkFS8t/mmMT
+	zu1jIDJO7nOcg4AbXG0ul7SGLzAOnB1g22uP2Mcy+NnIbSWxEMEerwOLBlup8wnuTbvpS9Zo5il
+	KUNsETFFqL3F0HAgzJ1147McZ9OUoLTb3ZDHYyJAuEMT12l29GMRNDukK37YdRbY7C00yEDrx9I
+	//s+3BRfiEt0z5zKyvt5kZnlwtwCK05pH3zMg9k2ZAIbTXA==
+X-Google-Smtp-Source: AGHT+IGM5o9+wFkfIja0oLP61fEHz91/0NGcuhmPQVULbrd0ZLVSDTzb9zJ9+EqpQiODyKQcWi27WA==
+X-Received: by 2002:a05:6000:1863:b0:3f6:9c5a:e1ff with SMTP id ffacd0b85a97d-4266e7dfda8mr14321226f8f.39.1760367204244;
+        Mon, 13 Oct 2025 07:53:24 -0700 (PDT)
 Received: from 127.com ([2620:10d:c092:600::1:eb09])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm18641085f8f.40.2025.10.13.07.53.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0e70sm18641085f8f.40.2025.10.13.07.53.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 07:53:21 -0700 (PDT)
+        Mon, 13 Oct 2025 07:53:23 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Andrew Lunn <andrew@lunn.ch>,
@@ -114,9 +114,9 @@ Cc: Andrew Lunn <andrew@lunn.ch>,
 	linux-doc@vger.kernel.org,
 	linux-rdma@vger.kernel.org,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH net-next v4 01/24] net: page_pool: sanitise allocation order
-Date: Mon, 13 Oct 2025 15:54:03 +0100
-Message-ID: <96099d1c7af73b1086ec1c7de1488b50147d07bf.1760364551.git.asml.silence@gmail.com>
+Subject: [PATCH net-next v4 02/24] docs: ethtool: document that rx_buf_len must control payload lengths
+Date: Mon, 13 Oct 2025 15:54:04 +0100
+Message-ID: <e685eeccc2a46d8ebfde77209e505a77d14f7e8a.1760364551.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1760364551.git.asml.silence@gmail.com>
 References: <cover.1760364551.git.asml.silence@gmail.com>
@@ -128,34 +128,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We're going to give more control over rx buffer sizes to user space, and
-since we can't always rely on driver validation, let's sanitise it in
-page_pool_init() as well. Note that we only need to reject over
-MAX_PAGE_ORDER allocations for normal page pools, as current memory
-providers don't need to use the buddy allocator and must check the order
-on init.i
+From: Jakub Kicinski <kuba@kernel.org>
 
-Suggested-by: Stanislav Fomichev <stfomichev@gmail.com>
+Document the semantics of the rx_buf_len ethtool ring param.
+Clarify its meaning in case of HDS, where driver may have
+two separate buffer pools.
+
+The various zero-copy TCP Rx schemes suffer from memory management
+overhead. Specifically applications aren't too impressed with the
+number of 4kB buffers they have to juggle. Zero-copy TCP makes most
+sense with larger memory transfers so using 16kB or 32kB buffers
+(with the help of HW-GRO) feels more natural.
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Reviewed-by: Mina Almasry <almasrymina@google.com>
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- net/core/page_pool.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/networking/ethtool-netlink.rst | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 1a5edec485f1..635c77e8050b 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -301,6 +301,9 @@ static int page_pool_init(struct page_pool *pool,
- 		}
+diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
+index b270886c5f5d..392a359a9cab 100644
+--- a/Documentation/networking/ethtool-netlink.rst
++++ b/Documentation/networking/ethtool-netlink.rst
+@@ -966,7 +966,6 @@ Kernel checks that requested ring sizes do not exceed limits reported by
+ driver. Driver may impose additional constraints and may not support all
+ attributes.
  
- 		static_branch_inc(&page_pool_mem_providers);
-+	} else if (pool->p.order > MAX_PAGE_ORDER) {
-+		err = -EINVAL;
-+		goto free_ptr_ring;
- 	}
+-
+ ``ETHTOOL_A_RINGS_CQE_SIZE`` specifies the completion queue event size.
+ Completion queue events (CQE) are the events posted by NIC to indicate the
+ completion status of a packet when the packet is sent (like send success or
+@@ -980,6 +979,11 @@ completion queue size can be adjusted in the driver if CQE size is modified.
+ header / data split feature. If a received packet size is larger than this
+ threshold value, header and data will be split.
  
- 	return 0;
++``ETHTOOL_A_RINGS_RX_BUF_LEN`` controls the size of the buffers driver
++uses to receive packets. If the device uses different buffer pools for
++headers and payload (due to HDS, HW-GRO etc.) this setting must
++control the size of the payload buffers.
++
+ CHANNELS_GET
+ ============
+ 
 -- 
 2.49.0
 
