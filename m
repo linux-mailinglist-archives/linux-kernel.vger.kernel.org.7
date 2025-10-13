@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-851188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD06BD5B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:31:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA8BBD5BAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4075F34FDFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:31:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCF434EAA04
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EEE2D5929;
-	Mon, 13 Oct 2025 18:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145812D661A;
+	Mon, 13 Oct 2025 18:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hc7dRP1E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2OxbWx5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6042C3242;
-	Mon, 13 Oct 2025 18:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6427E2727FE;
+	Mon, 13 Oct 2025 18:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760380267; cv=none; b=DB32UTDNz1ud51Zb8ARVzear121EqvpQUolHzuLVNhN9U2CxhXS/S/kszeq49yGK5+ZkMO9gDyhNHGT2EJk8Lw13OpLrEns5INqC15iRTU1HIhi40gYSkGPbshHizn8NU946Pw9aNQ3wMHZq2kN8YDnBR2/5UXNR8uxPkev7VeQ=
+	t=1760380317; cv=none; b=MU1EgRsLtbfK3wEeGAN1pVpRX5jcMGZ2JtaQEyq6IYqcKj0nEbVYhdTwmon6xgcDn5cTWvtZkEKJbwvLu7Y7Wl+3hF0KuToObqZAFGl9/8yAMOj6YpvJN5a+UfP3ONuMNOb1rRTFWELvnCmuzWU9IIVIRX9mPGzhe6vyZ4WXcyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760380267; c=relaxed/simple;
-	bh=j/kKOAp35xzzbw0pVVrPMAIWdzl0bSnm+VK2iAP7TR8=;
+	s=arc-20240116; t=1760380317; c=relaxed/simple;
+	bh=KvE45OEOXnKAPc2bpIs5Y2L3V8rbtBIYc4VQXDOlmjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNAgWe2nEj8u6YE2os6FSvJs4SZRhmEBqyhh/JSeGcUUxBjnQYyDXgvDhk/sPzIrxmKerFHnsveeCNpc+3RgAmJQXc4+NBnG2pLz1tyhqBI3ut4IIDq3yK34Llf63/pecu6C19uHRaze8GhRkMGHfOHoZUPXw2AH08WpJw/+K5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hc7dRP1E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46703C4CEE7;
-	Mon, 13 Oct 2025 18:31:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=U8totP+UAmQYv6dUfFWOqxAOvDVpevNVBpCvK0PEsrl25YIRDDo6DvUM/oFLI6BBJM4Ybx72R8ojNyvTMio1B4VGtdw1SlGU0uAJuqoYTMWujW08/WPVW63rnvW4/My2N6Y+WAbbyTJ5NjeBZSISMB9pUVQkvuhKYucKrjoVbFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2OxbWx5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57767C4CEFE;
+	Mon, 13 Oct 2025 18:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760380264;
-	bh=j/kKOAp35xzzbw0pVVrPMAIWdzl0bSnm+VK2iAP7TR8=;
+	s=k20201202; t=1760380317;
+	bh=KvE45OEOXnKAPc2bpIs5Y2L3V8rbtBIYc4VQXDOlmjM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hc7dRP1E31eJYSUPpgceC/zxrPCpJq+0Ng8inHl+wiKcYMx1YVLA5cAkiVOyx9MoG
-	 9dNzWZ2tiWcYBpvpnErzALdUJ7pKWGVpVV4Z6ztGqjly1Bcu4LdSCPQdDxc3nwFqx1
-	 LO/qLYNMfipt1bkPoh/XyXCI8UzzTXP4pCjUiudpOI5Idqdm5HWcgetNTdFI1XAJuB
-	 GcawhXYwxyHEkDVpbxec5KMlDQdqMtaua+7jgM/OCs9m3gyedDud8b2KYmMZQeWA51
-	 4DmRSGHufVHEHbQBu9Lkql19/iwRwC1/gT/BfI+FaklaZZDhMaSHDloMTVRPsROz6N
-	 7v1Co6+/FZXPw==
-Date: Mon, 13 Oct 2025 11:30:59 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [tip:x86/core 1/1] vmlinux.o: warning: objtool:
- rcar_pcie_probe+0x13e: no-cfi indirect call!
-Message-ID: <20251013183059.GA690226@ax162>
-References: <202510092124.O2IX0Jek-lkp@intel.com>
- <20251010032001.GA3741500@ax162>
- <20251010071032.GE4067720@noisy.programming.kicks-ass.net>
- <20251010074446.GE4068168@noisy.programming.kicks-ass.net>
- <20251010223012.GA3597090@ax162>
- <20251013082629.GH4067720@noisy.programming.kicks-ass.net>
+	b=L2OxbWx5eXeHgjfVpQe+LnGcGm9ymp/PbQtnnPXsdszl3qPztnmcJPhu24llZA8uE
+	 Vf3TmL5UBkOZwrXMmGNTFrWrWexFN1Fjmr4IZtCBwcee32+S4vhfUX+Qj7yP0xNndy
+	 92+kMvHk7qszp4r85C1TM1vU8/e6mdtKRj2Ku3pcwjfWaDh44hJtXqfieNRJZCmLjS
+	 mowo4cWVo5oNQ6jeMH7Bfx247b0IOVIJfNe+0MwMcBSUBy22zmf+8xGxg5RASB6AZs
+	 B3eSEJahmfmFDjYPBXpbWen/ZFtWDK1Xg9DhoscnbMnp7ZA0g8qlh+ta/dy36EDDTU
+	 rsGTR60DAr5XQ==
+Date: Mon, 13 Oct 2025 19:31:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>
+Subject: Re: [PATCH] dt-bindings: hwmon: pmbus/max17616: Add SMBALERT
+ interrupt property
+Message-ID: <20251013-dynamic-showcase-3fa511afbffb@spud>
+References: <20251013-upstream-max17616-v1-1-0e15002479c3@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7jvkY4Y2HxWwgT3/"
+Content-Disposition: inline
+In-Reply-To: <20251013-upstream-max17616-v1-1-0e15002479c3@analog.com>
+
+
+--7jvkY4Y2HxWwgT3/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013082629.GH4067720@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 10:26:29AM +0200, Peter Zijlstra wrote:
-> On Fri, Oct 10, 2025 at 03:30:12PM -0700, Nathan Chancellor wrote:
-> > which does somewhat make sense because what's the point of setting up
-> > the CFI call if you know nothing can actually make use of it since we
-> > will crash when trying to indirectly call a NULL pointer?
-> 
-> As Sami says, it would be really nice if clang would at least WARN about
-> emitting an unconditional NULL call like that. I mean, it *knows* its
-> going to crash and burn at that point, right?
+On Mon, Oct 13, 2025 at 01:00:47PM +0800, Kim Seer Paller wrote:
+> Add interrupt property to document the SMBALERT pin functionality for
+> fault condition signal.
+>=20
+> Suggested-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 
-Yeah, I agree. It would have to happen after optimizations and the
-infrastructure for reporting those instances back up to the frontend
-is... not great IIRC but I will see if I can file something upstream.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Is there any way for objtool to detect these instances and emit a
-slightly differently worded message? Figured it was worth asking ;)
+> ---
+>  Documentation/devicetree/bindings/hwmon/pmbus/adi,max17616.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/adi,max17616.y=
+aml b/Documentation/devicetree/bindings/hwmon/pmbus/adi,max17616.yaml
+> index 4680d354af0ef706bbd90d2546f5f25149654b6c..fa48af81e083cbc69d17c0186=
+2f8f771eacf3332 100644
+> --- a/Documentation/devicetree/bindings/hwmon/pmbus/adi,max17616.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/adi,max17616.yaml
+> @@ -26,6 +26,10 @@ properties:
+> =20
+>    vcc-supply: true
+> =20
+> +  interrupts:
+> +    description: Fault condition signal provided on SMBALERT pin.
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+>=20
+> ---
+> base-commit: 2a364c163c1fa9fe62c2f06e84fb7d2f995e461f
+> change-id: 20251013-upstream-max17616-37a4b8058eed
+>=20
+> Best regards,
+> --=20
+> Kim Seer Paller <kimseer.paller@analog.com>
+>=20
 
-> > Something like this would avoid this issue then.
-> 
-> Yes, this seems reasonable -- even if the driver should perhaps
-> mandate/depend on CONFIG_OF, making sure to behave when NULL does get
-> returned is definitely a good thing!.
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+--7jvkY4Y2HxWwgT3/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks, I have sent this for review with your tag and Kees's:
+-----BEGIN PGP SIGNATURE-----
 
-https://lore.kernel.org/20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org/
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO1FmAAKCRB4tDGHoIJi
+0qJzAQDlMqN5v7FK7BavC+mP+J/+ceqZvsH/+kwmATmZF3F3iAEAusRl3YawFgJn
+uWGIr/a7dEU3AWE6R8ebMqlklt0brg0=
+=cq7C
+-----END PGP SIGNATURE-----
 
-Cheers,
-Nathan
+--7jvkY4Y2HxWwgT3/--
 
