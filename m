@@ -1,183 +1,222 @@
-Return-Path: <linux-kernel+bounces-849861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B885DBD11CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799DCBD1269
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 784224E842D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADBBE3C1965
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DBE264A8D;
-	Mon, 13 Oct 2025 01:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L+UnEtxV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3512F5339;
+	Mon, 13 Oct 2025 01:52:51 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EB434BA2B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA062F1FD5;
+	Mon, 13 Oct 2025 01:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760320203; cv=none; b=aFDzVxN65vC3tq0UXz/FXCUppHeb978wAgj5JlUzu5M8zw9eCSJWTZED3Vj+UgjirAGHANduBvohQn2QwZHPIgGhrMj+gg9TX+5LEYnfhqFKXZmrMXmp41v3ZU6KcsiY6oTTIwaHfeJUYtiPrHKKA6y4FrnlvudAU70uda4mU8E=
+	t=1760320370; cv=none; b=CiCQ80zNcyIhsnz/RABMLbEX8gxAnrZTi5NkkKloGMMmHOAwCUAWmmVTPxQxbT3Z0s/Uz068b3H/fN/xiQ7xVKFsibfDHGhJGypoYpmI0OGsC/c5Bvyz1zUw7faNIbuomupzn35bhTMw/oCPKS11yIn35Lkv+UMEnDja/UXZgog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760320203; c=relaxed/simple;
-	bh=X4yqur+K0OFZ5UaCDYG6T7PEn8PzYW8RtOpRjG9eK78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rq3LwXA3hP1+dT3pEM5ZZs+gG0HcCv6PbAqiOlk4n7Q9XBWTj8zDsMZ2MRSrmxMVSFxrOkZNfuntmZtYT0UXvcF+sRmbajzijWb1MwyrC2UEw2O1jQrqcoG17Pusmq9WTKLHYAijJ63NOPOQl3MK6jm22m5yWj2WIH5V/tThkiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L+UnEtxV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CMsksG010262
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:50:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Nvhwqw+s5IRG5JJ9BC7K6h40VgHBm6MIFrG9gT1FsX4=; b=L+UnEtxVViFXXNyF
-	LcL/vPe7PnmF86Ut4u6u+JjNaoY7cnV9LsCLKM1EgW3t1H0rCKJjxeL3wPb2JbqW
-	WUNN+lV5gKCePVUmjZsl8nyc7EWq8vGyWCJXLTSwldxjQZwZg5VwW1Se72GQsWWu
-	84vMbT1J1dR3dnl3fSn+rzlNeoIyRkDWi4cJkXPBvlbDoI8p7Q94kLIzan9v/efX
-	sThxEzH4XDKvti/btHc3yYHToBBlXdmiC08yY/kXgz2WAZmbGJ4RtE4IR2NPKTw4
-	guSiBefoQfynC+qLiBFtHiFF7ybQIjGJFm38NrYzwsoRjAMCjWM23ALAPsuZNtxF
-	FofrxA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfby2wtg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:50:00 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b60992e3b27so7385378a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 18:50:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760320199; x=1760924999;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nvhwqw+s5IRG5JJ9BC7K6h40VgHBm6MIFrG9gT1FsX4=;
-        b=mb/mivyovQHhHZafiyCTvI4PszMSn6OI4M4cAXiUpUUXiilzJCcXOKJY+FtqUHbgRu
-         l1y/MoB8A9ueVd/ng35R2tN126beG2Q2miYvaHFutQh71ML5+s/XTWOajcmYcMqze8wt
-         4G01Uabth/kweV1UMYdAp3ViXXm49mKHbfBG2OmFcr74XZMSdZkcyExVKawNW45Wu3ud
-         mh3w//eym431jtNn9gVeBIvjibb7NmyfRwNY5ieTo26CZShP5R9/bv3lfI93R5q8hqRJ
-         T0iNvXU2e5UB4+TVu7yB233dnDeugJgiJ/DZSb889T8nDQywEgg5iKQnEWzLWeOHw5Zs
-         NUrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA0koWL74JnLDDhFyplr/JZk0xE/lJ+J8fzZhG7kJhQwqgU8pHuzbhC09iA040yVzyCH9KVhwVuBI+Yi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG5NG0+9HqwBSHnIxFqk5dqs/bGlI0LiEhQpJSePYG7amchv+X
-	nON3NE21pUn0ZslqXK8Z3kCQXhmalHgRBOwrGBet6rW1zvbgKFq3JhnZAV5wQf8GMtByrtchMgk
-	/UAsH+Aa7qHgW+JDxavjfjJ66xBmb4nd0BSrNd0K+P9zHnivXX6fM7cXzA4ad3jLi0aA=
-X-Gm-Gg: ASbGncskvsoeyz1lRaXVm2Vq9wswvfgGeRtqms75vc0sDGS/AQdJyOWfFDejoUA696y
-	CQyOxFSRQdzjSZKDXssmuv5ROcBPVm+9cT1PAHRiZ2PEEMynX7aZYLeJ6Lv1FB9W+3eBt5ZvTsz
-	N/FsMz9sURvpSnMISlfSrVLFuyr4cKvAndtKYbpNgoIpkAzhEB5FKI8keKMUpbriIk89Sf0sxY6
-	6X3h5HLC/BBNJu+7YOUggtRiPXfKxZa6nWE1iajzxTUTN7HaYKa3+uysu8gYTUlMUkupsFehf8R
-	dwp57uAy35C3OK/h1A6s65PSYxE+HyBwWo/zhE+mYbxiSX2u6zZpF18RQX789OKtV/S6Oa/4cJ7
-	e9hq7MyY9v4CNYbFxLLHH1bMmh6o5feYzq8CR
-X-Received: by 2002:a05:6a20:7495:b0:2ae:fefc:feaf with SMTP id adf61e73a8af0-32da80bc78bmr26585549637.12.1760320199128;
-        Sun, 12 Oct 2025 18:49:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNCl7StGWHFovArAL04kybTSuSFjARFdVOyCDRbeQYmRMBIohUKytVShRx9q0caXT0U2r/iw==
-X-Received: by 2002:a05:6a20:7495:b0:2ae:fefc:feaf with SMTP id adf61e73a8af0-32da80bc78bmr26585526637.12.1760320198662;
-        Sun, 12 Oct 2025 18:49:58 -0700 (PDT)
-Received: from [10.133.33.61] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992dc86a93sm9635684b3a.75.2025.10.12.18.49.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Oct 2025 18:49:58 -0700 (PDT)
-Message-ID: <aa30f484-7269-4fb9-bdd2-8b7ab75061a9@oss.qualcomm.com>
-Date: Mon, 13 Oct 2025 09:49:52 +0800
+	s=arc-20240116; t=1760320370; c=relaxed/simple;
+	bh=N3uVvVMN5IAh4yxwxEKCNtnywoGkrorWxTZ5T1ObEKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NHDeXDiJgzevtNesEAAKLucJvu+Lx+ej1KaL8HM/wBycramIkxdcnvluEelxje9oLyip6KLJmIRA00iAYJP1GivW0HM4bR6OVyiGTUw5Askm2utXuqiu8baac6cavNX0nU9mHTrKyyhdxe4lZXbSNumknzsLn1u/QxWlGF62iDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4clL1r5pQQzYQtLs;
+	Mon, 13 Oct 2025 09:52:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 6BF6C1A13E6;
+	Mon, 13 Oct 2025 09:52:39 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP2 (Coremail) with SMTP id Syh0CgCn_UVfW+xoNhu7AA--.53067S4;
+	Mon, 13 Oct 2025 09:52:38 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v4 00/12] ext4: optimize online defragment
+Date: Mon, 13 Oct 2025 09:51:16 +0800
+Message-ID: <20251013015128.499308-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff: firmware
- crashed!
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Jeff Johnson <jjohnson@kernel.org>
-Cc: ath10k@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        jamie@stimulussoft.com
-References: <5aa2dae4-94ba-45cb-b138-bb40c89a85eb@molgen.mpg.de>
- <486e9f27-3b03-4317-a1fc-1bd92235db1c@molgen.mpg.de>
- <90a764d0-c230-43bb-b7e5-189544839f8d@quicinc.com>
- <e2e58098-4589-4ae4-bc38-6b009823b071@molgen.mpg.de>
- <82b9e966-5e12-4a13-98d4-0ffa88505f97@molgen.mpg.de>
- <d8145c41-1e61-454f-a343-be0a7239e36e@molgen.mpg.de>
- <8354f613-692e-4f6b-933c-3434a5ae90b2@oss.qualcomm.com>
- <e02b3b8b-78a3-41c7-864e-caba6f1a8c0b@molgen.mpg.de>
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <e02b3b8b-78a3-41c7-864e-caba6f1a8c0b@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX5Y5P2Ei6Oq7n
- jlEGW/rogk2nLiSQv0O0DNYNDdUGgZT5l8/xqjgsu4EmrA/mUvibeS9ezMz4ec0k7Ifg23uJo9y
- +9Ub+ZjR/yO4gQlnVGYXB9nqCwG55vtEYPsJN3dyzPOAUM5+ZHWsemV1jxakM5lYS6LBKhJ3Vjg
- IPkJZdXBpLOH3o/PQAdTqYVShhcD2lGsWLYGIjSHSdQogiv+ORjK5pbEKqXpXPwCigTFosDUNqE
- wCnRf5vc9rjS2C3k2fIELrAyrpWzdXNZIklKOc5djUO2UruUy2WfGFuH4JbL3Mlh/CyU79kngSl
- aT3CmUKvFjpKLX5l77rye44f3ERyEk5Arrbkiu39xLC5h1AyTzjCQ7NjnjnVZ8kDd9kgF+0gWf6
- lxXlBehkStD+7MIfWliIYQVA2RC56g==
-X-Proofpoint-GUID: VdTRIktLp2pffg2Gdfyxc2e0-imDB3eh
-X-Proofpoint-ORIG-GUID: VdTRIktLp2pffg2Gdfyxc2e0-imDB3eh
-X-Authority-Analysis: v=2.4 cv=A+Bh/qWG c=1 sm=1 tr=0 ts=68ec5ac8 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=UCfQCeL7Kw1fo_lLQ5AA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 spamscore=0 clxscore=1015 bulkscore=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+X-CM-TRANSID:Syh0CgCn_UVfW+xoNhu7AA--.53067S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3JFyfAF1xGFyxCw1DuFWkCrg_yoW7ZFykpa
+	yakw48KrykJw1ku3yxAFs2qryYkw4rGr47CF15Jr15CF4YqFy8WFWFga98ZFy8ArWxX34Y
+	vF4Iyr1Du3WDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoWlkDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+
+From: Zhang Yi <yi.zhang@huawei.com>
+
+Changes since v3:
+ - Patch 09, preserve the error number when copying data in
+   mext_move_extent().
+ - Add review tag in patch 10 from Jan.
+Changes since v2:
+ - Rebase patches to the 6.18-5472d60c129f.
+ - Patch 02, add a TODO comment, we should optimize the increasement of
+   the extents sequence counter ext4_es_insert_extent() in the future as
+   Jan suggested.
+ - Patch 09, add a WARN_ON_ONCE if ext4_swap_extents() return
+   successfully but the swapped length is shorter than required. Also,
+   copy data if some extents have been swapped to prevent data loss.
+   Finally, fix the comment as Jan suggested.
+ - Patch 10, fix the increasement of moved_len in ext4_move_extents()
+   as Jan pointed out.
+ - Patch 11, fix potential overflow issues on the left shift as Jan
+   pointed out.
+ - Add review tag in patch 01-08,11-12 from Jan.
+Changes since v1:
+ - Fix the syzbot issues reported in v1 by adjusting the order of
+   parameter checks in mext_check_validity() in patches 07 and 08.
+
+v3: https://lore.kernel.org/linux-ext4/20251010103326.3353700-1-yi.zhang@huaweicloud.com/
+v2: https://lore.kernel.org/linux-ext4/20250925092610.1936929-1-yi.zhang@huaweicloud.com/
+v1: https://lore.kernel.org/linux-ext4/20250923012724.2378858-1-yi.zhang@huaweicloud.com/
 
 
+Original Description:
 
-On 10/10/2025 9:12 PM, Paul Menzel wrote:
-> Dear Baochen,
-> 
-> 
-> Am 21.07.25 um 05:21 schrieb Baochen Qiang:
-> 
->> On 7/20/2025 4:43 PM, Paul Menzel wrote:
-> 
->>> Am 14.05.25 um 10:08 schrieb Paul Menzel:
-> 
-> […]
-> 
->>>> Were you or the firmware team able to pinpoint the problem, and
->>>> come up with a fix? Is there any logging I can enable to help
->>>> with debugging?
->>>
->>> It also happens with a Telekom Speedport Smart 3 (Arcadyan
->>> Corporation) router. The firmware crashed five more times since
->>> June. A reliable Wi-Fi connection would be really appreciated.
->>> Could you send me a debug firmware, so the firmware developers
->>> have it easier to fix it?
->>
->> Paul, we are working on getting legal approval on collecting
->> necessary information, such as firmware dump etc, from community.
->> Once done we will share guides to collect them to debug further.
-> 
-> I just wanted to know, if there was a conclusion yet.
-> 
+Currently, the online defragmentation of the ext4 is primarily
+implemented through the move extent operation in the kernel. This
+extent-moving operates at the granularity of PAGE_SIZE, iteratively
+performing extent swapping and data movement operations, which is quite
+inefficient. Especially since ext4 now supports large folios, iterations
+at the PAGE_SIZE granularity are no longer practical and fail to
+leverage the advantages of large folios. Additionally, the current
+implementation is tightly coupled with buffer_head, making it unable to
+support after the conversion of buffered I/O processes to the iomap
+infrastructure.
 
-unfortunately, not yet
+This patch set (based on 6.17-rc7) optimizes the extent-moving process,
+deprecates the old move_extent_per_page() interface, and introduces a
+new mext_move_extent() interface. The new interface iterates over and
+copies data based on the extents of the original file instead of the
+PAGE_SIZE, and supporting large folios. The data processing logic in the
+iteration remains largely consistent with previous versions, with no
+additional optimizations or changes made. 
 
-> 
-> Kind regards,
-> 
-> Paul
-> 
-> 
-> PS: I set debug_mask to 0xffffffff a while back, and it logged so much, that my old boot
-> logs are gone from the systemd journal now. ;-)
-> 
->     echo 0xffffffff | sudo tee /sys/module/ath10k_core/parameters/debug_mask
-> 
-> Any hint on what to set, when the crashes happen?
+Additionally, the primary objective of this set of patches is to prepare
+for converting the buffered I/O process for regular files to the iomap
+infrastructure. These patches decouple the buffer_head from the main
+extent-moving process, restricting its use to only the helpers
+mext_folio_mkwrite() and mext_folio_mkuptodate(), which handle updating
+and marking pages in the swapped page cache as dirty. The overall coding
+style of the extent-moving process aligns with the iomap infrastructure,
+laying the foundation for supporting online defragmentation once the
+iomap infrastructure is adopted.
 
-to collect core dump, you need to load ath10k with coredump_mask = 0x7
+Patch overview:
 
-	modprobe ath10k coredump_mask = 0x7
-	modprobe ath10k_pci
+Patch 1:    Fix a minor issue related to validity checking.
+Patch 2-4:  Introduce a sequence counter for the mapping extent status
+            tree, this also prepares for the iomap infrastructure.
+Patch 5-7:  Refactor the mext_check_arguments() helper function and the
+            validity checking to improve code readability.
+Patch 8-12: Drop move_extent_per_page() and switch to using the new
+            mext_move_extent(). Additionally, add support for large
+            folios.
+
+With this patch set, the efficiency of online defragmentation for the
+ext4 file system can also be improved under general circumstances. Below
+is a set of typical test obtained using the fio e4defrag ioengine on the
+environment with Intel Xeon Gold 6240 CPU, 400G memory and a NVMe SSD
+device.
+
+  [defrag]
+  directory=/mnt
+  filesize=400G
+  buffered=1
+  fadvise_hint=0
+  ioengine=e4defrag
+  bs=4k         # 4k,32k,128k
+  donorname=test.def
+  filename=test
+  inplace=0
+  rw=write
+  overwrite=0   # 0 for unwritten extent and 1 for written extent
+  numjobs=1
+  iodepth=1
+  runtime=30s
+
+  [w/o]
+   U 4k:    IOPS=225k,  BW=877MiB/s      # U: unwritten extent-moving
+   U 32k:   IOPS=33.2k, BW=1037MiB/s
+   U 128k:  IOPS=8510,  BW=1064MiB/s
+   M 4k:    IOPS=19.8k, BW=77.2MiB/s     # M: written extent-moving
+   M 32k:   IOPS=2502,  BW=78.2MiB/s
+   M 128k:  IOPS=635,   BW=79.5MiB/s
+
+  [w]
+   U 4k:    IOPS=246k,  BW=963MiB/s
+   U 32k:   IOPS=209k,  BW=6529MiB/s
+   U 128k:  IOPS=146k,  BW=17.8GiB/s
+   M 4k:    IOPS=19.5k, BW=76.2MiB/s
+   M 32k:   IOPS=4091,  BW=128MiB/s
+   M 128k:  IOPS=2814,  BW=352MiB/s 
+
+Best Regards,
+Yi.
+
+
+Zhang Yi (12):
+  ext4: correct the checking of quota files before moving extents
+  ext4: introduce seq counter for the extent status entry
+  ext4: make ext4_es_lookup_extent() pass out the extent seq counter
+  ext4: pass out extent seq counter when mapping blocks
+  ext4: use EXT4_B_TO_LBLK() in mext_check_arguments()
+  ext4: add mext_check_validity() to do basic check
+  ext4: refactor mext_check_arguments()
+  ext4: rename mext_page_mkuptodate() to mext_folio_mkuptodate()
+  ext4: introduce mext_move_extent()
+  ext4: switch to using the new extent movement method
+  ext4: add large folios support for moving extents
+  ext4: add two trace points for moving extents
+
+ fs/ext4/ext4.h              |   3 +
+ fs/ext4/extents.c           |   2 +-
+ fs/ext4/extents_status.c    |  31 +-
+ fs/ext4/extents_status.h    |   2 +-
+ fs/ext4/inode.c             |  28 +-
+ fs/ext4/ioctl.c             |  10 -
+ fs/ext4/move_extent.c       | 786 +++++++++++++++++-------------------
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |  97 ++++-
+ 9 files changed, 505 insertions(+), 455 deletions(-)
+
+-- 
+2.46.1
+
 
