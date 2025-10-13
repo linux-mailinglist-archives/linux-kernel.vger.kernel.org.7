@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-851229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF98BD5D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:01:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159F4BD5D4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57EEC4F3C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:01:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9217A4F2E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6052C2375;
-	Mon, 13 Oct 2025 19:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29374322A;
+	Mon, 13 Oct 2025 19:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qhaz/Tnw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZWkdTCD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FCB194A73;
-	Mon, 13 Oct 2025 19:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DD11EDA02;
+	Mon, 13 Oct 2025 19:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760382080; cv=none; b=QqQA8Z+nd4Zp8GSDrI7oxbJJYWJQ6MOKpgONcIuV3fbR9sp4SK2uj829UiLo1J77SLmoV5zlnRqsEz5Wn/LiIBSga2V1pFOZlfeymsgWCTFT9SKEy5fdAgrzm+QnZfbxYFNIkVqbwx9l/EshWnFk7+PkN8xjrUvTStnX8iQupgU=
+	t=1760382104; cv=none; b=p8PHyHmXZbEAym0gIzfSjdpFj9ywNOlZCmo5W6AO+Xq59ArY0IGP/43DTWNdEQ2vX3KONmHzHy6jOJ5i0kIgywhGm87YManFReB+6ZdTlU2SWyIK75ZPcg/+AnYdEkr42Slh08TiPbNRPW24ICjOb3gyM63Xv1hRE8AIHawvF3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760382080; c=relaxed/simple;
-	bh=XQDkE/8tBk6nehhOH0iQzIUwEp3GEInWpkiI99TIOQg=;
+	s=arc-20240116; t=1760382104; c=relaxed/simple;
+	bh=+CxRU6U03dEdDulYL+z4R714ymbWoLNPP82BVX+Tfvo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkGsGU8QDygWZ3eyvgI6020B0jdybJ8rSekxJgfuygp9HQm76GXBTXbYIr8chx+9q99N+FyhqjGbIhpSGuHgVwyeV2B0xHG6uXgKVtx0Mei0RJj7O93+g/6tKNrc/nM63aGjn6dr4aIhGXLnbdG0dZ+uBhcCu9yzvOLF6F4D2P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qhaz/Tnw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C89C4CEE7;
-	Mon, 13 Oct 2025 19:01:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVljfhHVld9FjrT/zoAoRaAUbJy6MhwMHEI/AzMZOjac9ZCm6CbBg3almNBGlUkV1pG61vLmsrwuaxxqqR13oa59Kk9du+s19KFvtloS1YdKe2qON907oHhlEwz6Xq/Ld5b+4UOQ94AvFhPVte8QEK5Ntu/dwvkSqSlDcHHAhEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZWkdTCD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3060C4CEE7;
+	Mon, 13 Oct 2025 19:01:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760382080;
-	bh=XQDkE/8tBk6nehhOH0iQzIUwEp3GEInWpkiI99TIOQg=;
+	s=k20201202; t=1760382104;
+	bh=+CxRU6U03dEdDulYL+z4R714ymbWoLNPP82BVX+Tfvo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qhaz/TnwVyoz6uNWfuBZZDGSDBBQT6YiFDSTiw6kj9qLlFOT5yPCC3xtvMC1oXAK+
-	 CntVwTbpTyhaLvipsZtw0+6KlWL0FHX5K1/R3VcP38joXFPoXKLLlag80ONETCfTjY
-	 09I8r/dX4oNga1FjMvtD6c64E9nTjuF2naqiXX/IXQb0Xp68Q2n8M+nNr4mysTueJU
-	 vLgiUWhc/QVS9cuquDY4/nQ/Erv9bPgkja5lOUhvO37poGzsK0+J793cIGg85RqJ/X
-	 keI5PZM5HeXEtGD2dk9F1bOioWxlrxIQstXRzaGt9t1SfdcZntRWMXzcbnlMzvLtDE
-	 tCLNIpfS2yW0A==
-Date: Mon, 13 Oct 2025 13:01:18 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH 3/4] block-dma: properly take MMIO path
-Message-ID: <aO1MfsuWeteOsBve@kbusch-mbp>
-References: <cover.1760369219.git.leon@kernel.org>
- <cf4f6dfee380351e68932d4d114422364097dda5.1760369219.git.leon@kernel.org>
+	b=NZWkdTCDgyWKBgOE6e03He+XHuLVo1ncetCCzvD0rGiz6ZBTre9WlVoAz0sEERqR0
+	 mP4CGIzzFTIDAn0Dg4fZiSrloNqgbqV6NYuuh/3HjhQzDQ16Pt8Xg7j2lbLYCHj4WG
+	 UrTODAuJiLpMOXkMHg7d+bjbfhtKvvgYz0MJ4c6FRb6LqgPkSN7lgN1UwtYCjbSY64
+	 sOSv97a/NY8LnQ2y0fQO5XA4R/mWTgr6ufYEVOlBe3lwO3acyd2fOBFNjjmCYLDLMf
+	 QUGeW/qffpOGsVb9x8VkSDai/4dSXPi/SK4/xfHJAQy0FQbLAciL0Fo/zdxCMAWwFC
+	 RZCd0uj5oLnVg==
+Date: Mon, 13 Oct 2025 19:01:42 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bp@alien8.de, bagasdotme@gmail.com, corbet@lwn.net,
+	dave.hansen@linux.intel.com, decui@microsoft.com,
+	haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com,
+	mikelley@microsoft.com, mingo@redhat.com, tglx@linutronix.de,
+	Tianyu.Lan@microsoft.com, wei.liu@kernel.org, x86@kernel.org,
+	linux-hyperv@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	benhill@microsoft.com, bperkins@microsoft.com,
+	sunilmut@microsoft.com
+Subject: Re: [PATCH hyperv-next v7 00/17] Confidential VMBus
+Message-ID: <20251013190142.GB3862989@liuwe-devbox-debian-v2.local>
+References: <20251008233419.20372-1-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,18 +63,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cf4f6dfee380351e68932d4d114422364097dda5.1760369219.git.leon@kernel.org>
+In-Reply-To: <20251008233419.20372-1-romank@linux.microsoft.com>
 
-On Mon, Oct 13, 2025 at 06:34:11PM +0300, Leon Romanovsky wrote:
->  static bool blk_dma_map_direct(struct request *req, struct device *dma_dev,
->  		struct blk_dma_iter *iter, struct phys_vec *vec)
->  {
-> +	unsigned int attrs = 0;
-> +
-> +	if (req->cmd_flags & REQ_MMIO)
-> +		attrs |= DMA_ATTR_MMIO;
+On Wed, Oct 08, 2025 at 04:34:02PM -0700, Roman Kisel wrote:
+[...]
+> 
+> Roman Kisel (17):
+>   Documentation: hyperv: Confidential VMBus
+>   Drivers: hv: VMBus protocol version 6.0
+>   arch/x86: mshyperv: Discover Confidential VMBus availability
+>   arch: hyperv: Get/set SynIC synth.registers via paravisor
+>   arch/x86: mshyperv: Trap on access for some synthetic MSRs
+>   Drivers: hv: Rename fields for SynIC message and event pages
+>   Drivers: hv: Allocate the paravisor SynIC pages when required
+>   Drivers: hv: Post messages through the confidential VMBus if available
+>   Drivers: hv: remove stale comment
+>   Drivers: hv: Check message and event pages for non-NULL before
+>     iounmap()
+>   Drivers: hv: Rename the SynIC enable and disable routines
+>   Drivers: hv: Functions for setting up and tearing down the paravisor
+>     SynIC
+>   Drivers: hv: Allocate encrypted buffers when requested
+>   Drivers: hv: Free msginfo when the buffer fails to decrypt
+>   Drivers: hv: Support confidential VMBus channels
+>   Drivers: hv: Set the default VMBus version to 6.0
+>   Drivers: hv: Support establishing the confidential VMBus connection
 
-Since data and integrity paylods use these same functions and may point
-to different kinds of memory, I think you'd have to pass the 'attrs'
-from the caller since it knows which flags to check for MMIO dma.
+Applied to hyperv-next. Thanks.
+
+I needed to fix up a few minor things due to changes made by Tianyu's
+patches. Dexuan, please verify that everything is still OK.
+
+Wei
 
