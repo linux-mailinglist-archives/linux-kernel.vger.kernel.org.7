@@ -1,363 +1,155 @@
-Return-Path: <linux-kernel+bounces-850519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4FABD313D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:51:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A5EBD3140
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 14:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 799414E47FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:51:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74F0134BE7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 12:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D061B2E2657;
-	Mon, 13 Oct 2025 12:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36F12E2657;
+	Mon, 13 Oct 2025 12:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SYuh+Pex"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012033.outbound.protection.outlook.com [52.101.48.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GS7Jg828"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC72255F2C;
-	Mon, 13 Oct 2025 12:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760359889; cv=fail; b=fogHU20xIEdpVqdQXKriu500aoiuhZq2R1RGME4olyslB5Gq1COBfdX2e06mn+O1dgGNq4FBiVemDO7sAHOIhGiZiYQALHK/nhwaymTkVAHsneucMdenaDqOuobv0ayrQFXmM4tQcIMbEsfKXc3kSm/lTz1y8Ek0u4mHmZoPdjo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760359889; c=relaxed/simple;
-	bh=GKnvOnVjD8J1jLD1ZIGQu0ErbFsqIbbtSPJixQsCbSc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vc12ndumUc+k3KqdevZEYExMt6pj+8FXOyRPaqDmCfHTERtyCex4i+OaQ+z0RwOsbaVbPO77+ydZK5XTGuSyvZijtKWhlYa6E3ZvuQpFJNJ/Teqnz/DXSSUvxpnxf8qiR+3Dku77fX4Q2/V93qhoxt+sdjuDWCsWCnBRx85ZfBU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SYuh+Pex; arc=fail smtp.client-ip=52.101.48.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UXZpF99Ceh7kjTCODtKp8Q9b2M10IvIGEg+JuO+EZ6qst1T9RcJeVeHEouawtbBfks6JuvaED2PHPwxAAqrp/E+vIP0qaDyMJiMA3Xd2aJo7C6HNfgbZraBFjSUnv7L2Yb4ICu3AxqvSW5sHKNJwUXxt0Il0CD7mB2LmG550FebcMrhKtpE750gtDpLCzuTBrKFKf/NXDE6PABVf3J1S8LTQYILHLEO9Xh/1wPnVELji0jHRuXdCOG+lHXlDcdl2852Ec889/dN5W1QIHeaHZMKHSNWqknUWVpesopNbOBiXzZKqdKMTlmtY4gMWB5Qa3r49CHW741r1LApWtYYs2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3mGF8tLEr96MnShkP5lVeYyNxRDtVJuuF+axlN9VikY=;
- b=ODRjHK8kofypOJMq9V1ONPHknX/s4FgxMFGqCd6p+iBLn5ge9vQBqE68iqsA4J2ugetSb1lrlbFlSIRIPpk7dj2qjlTGmtM7lH5Ghe1yNvTbdttZBXHqS+2/qy5IKDlSbO0pML3ss+it708YpVu8knD2XtPvCzZYAjXNPPng+bCnTOBXTaAD4Dv9p7Zgo15l6Vd8qOzA9/okSn7ZOh9M6fY48p+SkBqM+1CVsqIENDWjMS0fIaP2y0cHQwQzc8pD/13yYE5jKxFpe7MRvr+kGvM/eRZ4B3SmrP7euzzpfw41Y4djaKt2Hee4eMCKmtgOZ0dz7Ynw3Gwz5Z5DsAMTHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3mGF8tLEr96MnShkP5lVeYyNxRDtVJuuF+axlN9VikY=;
- b=SYuh+PexLybJsKOLYmjku0nL6zY6EPsIXIwvGc2M1Ao4q1V/oYubrvq+3VhqunjluSUUjHyRCUkMeZrRnZiCB53dJdUNmhaoZIBAguQ5jb2QTyrKiFfQ4Z5bgO2NqYW8inNjmBZl4rRYjJvvu0v1OnohuRcUdy6QUEhntihbva08iN2geJ+KTF4wi9ihIQYrThy7ThDRrL67brMp37QZzm6h+gfE6p0/A7rQEffy2JVGiqFoKHY2ZjVic2aSIBkFerM22m6cYWdv2tCpghb++pqvw0hNs0DRvH63CVn05oypUU/1F7N7qcIfk+aIpsPDMlH+ueNdZfpWQWIh/LTTnw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by MW4PR12MB6705.namprd12.prod.outlook.com (2603:10b6:303:1e3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 12:51:22 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42%7]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 12:51:22 +0000
-Message-ID: <5c259029-23cc-4bdd-9012-a6ff8c3583c4@nvidia.com>
-Date: Mon, 13 Oct 2025 18:21:09 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] cpufreq: CPPC: Add generic helpers for sysfs
- show/store
-To: Jie Zhan <zhanjie9@hisilicon.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
- corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com,
- rdunlap@infradead.org, ray.huang@amd.com, gautham.shenoy@amd.com,
- mario.limonciello@amd.com, perry.yuan@amd.com, linux-pm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
- acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- bbasu@nvidia.com, sumitg@nvidia.com
-References: <20251001150104.1275188-1-sumitg@nvidia.com>
- <20251001150104.1275188-2-sumitg@nvidia.com>
- <bdd0aa7b-d239-420e-8741-b33d73959412@hisilicon.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <bdd0aa7b-d239-420e-8741-b33d73959412@hisilicon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA5P287CA0102.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:1d4::6) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BD02868AD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760359905; cv=none; b=oHX+FIkdhsO5yqWZ2iTZuTpeL/Mfmxw9a22GDClYd4WWcwMdpt9ZcC/Bc1qYn5Gr30droLJY0QrQf8lqsJx3ONK49rfe6tzy/bbbYwOIaTjY5+RKn/zNkOe80b+xA5GFTP9zYTVvr/WRX3Gn5N+FkY/JAWhcVEUpTudbZvu6yvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760359905; c=relaxed/simple;
+	bh=J/dzWtKuI6KBjBEpLOQM0goLapAMplM4s0j7SX3F+KQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TKKP35XAylKL6JwYFyNCPCsrecB9cexIzX/3o3JDfgOT0EjcPAtZ0PwlR1wfrmVnMrpdoxvBjJ+L7RP7wVp/EhfNfG1IleWTWuZk1gh7oHxZy4amQCo8l0vjVO7KRmj6EZD9gzxgkvg7Boa7RN7LS1jwZvk+ihMvlI0pyp1lGCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GS7Jg828; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so5096906a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 05:51:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760359904; x=1760964704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qp4XEa7ToS5FljKv+e4kbXkPaJ8IiCtEps0yhLGiUvo=;
+        b=GS7Jg828Dy3pvC7EdxvX78txIDyDUBH+bLWj+ewTYxpPQt6m26mMSXAaCOXe6Sn4iK
+         wD3x/nFsbfuJemey99taA+7QrUZEEIeHcLh2jwhQC75mZwR5zjI3VnAMdT7Mxg/Tfiz5
+         7IRx73c1Ok1JyxM1MEAKDWeOT3lE4j1BgewnpQLPBMhbjSTWMnSHpAwyUKiNZKhoRrxH
+         LVn5AQI1FMFglCBipRCYgC5Ru/l64A1N7l5v7aIRsnYgiZDtLzBxFbPx9S1BRinvADtK
+         aLsxc4/z2QpcK+Sj2QCLPX1nO9iIXH4Viz0D88ZQPni/Up+YXluoEBbysLkRL62iTsgs
+         8Tkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760359904; x=1760964704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qp4XEa7ToS5FljKv+e4kbXkPaJ8IiCtEps0yhLGiUvo=;
+        b=jVwHoeJALiub+iRGIdD+gH5Mc9YJRmJLhnxpKURixn89U/wPaz3ePV8KE1Xgmdngak
+         2XyGh5ueYmb+B49hQ7D/inqTuL9wk1nwfSBbxMIhRyy4iPjoMdsMxlTXn/8GkXnoSITG
+         9usvWOAXSLPBah6kmcWD9lC9sDOuf2pJ9eFERjguGX/PbXjSBEeQgfsyQc+NUoMYpROw
+         4xLUQHjc90LxupmaEGWhZs9me3Zy0fEEgbzEoQVi04PnSWwtqYggQoEF/SPVzcP7Bvrq
+         Bl4b5QtG3CuLx6PQixKnSkIkGI1f6/iILAjy7DW5AOr4rGztW8z7aLaTggfTCaLD3uTe
+         g8gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCyiiWUKpcFphyk1ILgmqPPK6rIH81n7clwFnzjl/UY586AnAJ8mNHa69F4sPOyR0elCCmdOoE3oUxiyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSQ2DZVpeDFjAEXx9v4IhisGEEpWvHZVAtKr0NeGkE3wEzI/1o
+	F5Pdr2th996TVcSaZzDuDQMrydvuF6ppxOCiuR9ICIHsK9at4I4S3CRa
+X-Gm-Gg: ASbGncuvkAw5+0C350GZt/2pIJpXmljhSgHgDDPnrVCfRBHnwsQ1vE7o+sRCnBUyWy9
+	XOLGjQBc4YXT0s8IgVqr6VnbtqpZrQhGscLAMOvtPx/v4s4GcwfzQP1p5xaFrKbaUIxhTqZK00c
+	qgYszVhgMGKFqk6EqIIMELJQHDtSxKXnSl37Wgm9xTVEidsQdXYePKBpPytMhwZma2t8d3yAalW
+	eD+KdYuJp7ka3azKRqXmOmFifut2LTOdYK7COpZlLYlze+GBg88s8AHGz1XmTyDQUjS5EbTGpHJ
+	lq8dYtc1Yyfq4UZYCGD7KCF955RSHD8Ths8XZIcp2R+Tpvy5F9f/rO0N2NhiBM8NsXMoaD4APy+
+	JYIBOnJSSVwB52JwcJ+crdEiKc3IXn7zK5LATUT0kglg8ySGFVuJcPnhtSMl6ag/yaA==
+X-Google-Smtp-Source: AGHT+IHCsN9tB1NFXjLxHlC1i+3jugsgr76PwZZhuE+ita/pwHESbjDT12QASzBbG7b8q5FB7Uoukw==
+X-Received: by 2002:a17:90b:17ca:b0:32b:a332:7a0a with SMTP id 98e67ed59e1d1-33b5114b648mr28154449a91.1.1760359903593;
+        Mon, 13 Oct 2025 05:51:43 -0700 (PDT)
+Received: from localhost.localdomain ([47.82.118.6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b5288043fsm9567422a91.0.2025.10.13.05.51.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 13 Oct 2025 05:51:42 -0700 (PDT)
+From: fuqiang wang <fuqiang.wng@gmail.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: fuqiang wang <fuqiang.wng@gmail.com>,
+	yu chen <chen.yu@easystack.com>,
+	dongxu zhang <dongxu.zhang@easystack.com>
+Subject: [PATCH RESEND] avoid hv timer fallback to sw timer if delay exceeds period
+Date: Mon, 13 Oct 2025 20:51:17 +0800
+Message-ID: <20251013125117.87739-1-fuqiang.wng@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|MW4PR12MB6705:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43c99329-4afb-49f1-0761-08de0a573642
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UVJ5VkdzNTRyUkFnS21EMUcwMWd3N2hoSS93ajVtVW9mQlVkbU5KaW5yNDZh?=
- =?utf-8?B?QWtOcXUxbmsvZG1WOWdTdnFmcnh5TElLZ050NmdldHpzQVV4a1BuRUFpak82?=
- =?utf-8?B?QzNRVm5Hbk5oZ3lOWkR1MGZCWE9BSGdRQmZTMFRrRUVPT3pMckJBdDhaREVC?=
- =?utf-8?B?K2VSTmxQTEtrKytJeThHZXRlbmRrWWFRUVJUS2puaWZ3N0Q3eCtobUQxZi9k?=
- =?utf-8?B?anNDYThqdmN3bWlEdTU5OTljVnh2Sy9NRnFrUVZISGpVV2tjTUtLMWExblBo?=
- =?utf-8?B?VVNxZkFJTU9zcTE3K2NzNmV2aGt3MXRHQnhRS0VPZXJuMENGSFlFR2ZXb2xE?=
- =?utf-8?B?c0dsay9kT0w1VHVGWTllOGlidUlFMFVZRVZNODBXdzhuSEVNOS9zS3VxWm51?=
- =?utf-8?B?YUtkZ3RsSWJvMmI0N254UHZLc0dSTWpCMzBJNG4yK0ZEMzBiNTdQdHBBU2FC?=
- =?utf-8?B?ZHFoTk9vQWk5Zk92eDB4VnBQZERWd1ZEeGVEZ3pDZ3FNL3FmQTg1QXpsdVFG?=
- =?utf-8?B?Und5a2M0ZFJ2T3NxUlBQdytIVVhRamN0dUNkMkQzbk9iM3JiOWxkQ3IzNU5Z?=
- =?utf-8?B?bDdRdjY4b09RMzB5QjhZbEpmMVNQVTdPS0tXbVVqUklmUHI5QmJiZ3hnWmpl?=
- =?utf-8?B?Z0U1MTJYa0VYeHpPOFhHZHg4dGlrWDdzQ2ZtZW43YktoNmVHMnY4VjgrbC9I?=
- =?utf-8?B?VmRiZW42YWdlNnFwN213V3RKL3diSVMxeURibFIwb2YvWXQvSCtYMVBsbkZP?=
- =?utf-8?B?ZW5ycERDOVJYemNhTysvcGtsU1dXSjJxWVVLOFMybzkxZUlJNVZGeWx0WVVw?=
- =?utf-8?B?OTVValpuU2xSeEQzM2VLOVpENFM0VUlvRFk5clZVeWpGYXBkdE1yZGFuOXdl?=
- =?utf-8?B?T01oeEJ4d3VkM09vUDdpV1lPVXBuM0ZpNUdpSFhESEZZU1dkVUxnU3FxWE54?=
- =?utf-8?B?cmtxdnZxOU1xNnJWaHBpUnFnbkhFQVRJVnp1RmVzRWxXUWVYNnp0MytOM0JP?=
- =?utf-8?B?d0s1RUNVbWwwY0x6SkFtc1U5T253SllPcWxSS0FjWFQ4N0Zza0JoZW9jY2Nz?=
- =?utf-8?B?UndubDNSa1NmaHNqTHZBNko5YytqQ2czMDlIZWlQaEp0M2lCM1BGNE9zeUtZ?=
- =?utf-8?B?bmVlV2VwbElXMXoxL0Y4SmJDb0tsYzNSVEhJUyt6ejZ6UVNyY2swL3NJWDdT?=
- =?utf-8?B?c0N2VDdydTdnRVdlRThudEFPK3BmUHJVbWdKV3prL3h2cmhPUWYwRk5zT3I2?=
- =?utf-8?B?bXZXVGRKMzR1YzFZYSs5T01FMGg1cm9mTkpJMHQ4ajVjNEw4cnZMQ0h6U3J1?=
- =?utf-8?B?UUcxeVpzdzltMmVBbEJtVTdleDhNUG5SOWt4R1R6NlF3cjNkakZtd0V6WEVr?=
- =?utf-8?B?bUdGTy9tSmp1VWdISnlkSkFNWXZsRjIyNStRekJMMEE2U1Zxd25CWEMrMkl1?=
- =?utf-8?B?M1BxVnZzZGUyUU1kVDhJelRWdjZaQ1dXb0xNTHdVYVpEdXpnTXJFd2cvTjZN?=
- =?utf-8?B?NUlSdHJnc3BHTWZ2Rm9HQUNkYllEZmk5ZXAwSWNpTko0RnhiZnN5czNudFNF?=
- =?utf-8?B?THovS2NMNEVLUXhWQmRrRGZ4RzVFbmF1ZEM2ZGt3SUw1cFArRDN0ci8xaENi?=
- =?utf-8?B?WGthR1NUOHY4RHh5MFpRRk8xUGU0YnFnMGtTYk9WYmV5NkpEUmZWYWEzcFVM?=
- =?utf-8?B?V0k4NnVNWHZCRjByRWRBYTIwWXd4OGpEUk4rL0JoWVJmZk1NTFJVM2FZamZx?=
- =?utf-8?B?K0Z6WHNHbkY3V0dFUXU5YXAwNFdobFRrR3dEZHREOVYzY1RPSnhBQm1LYldT?=
- =?utf-8?B?TmVUaTB1aVVuZVdjRzVxanU3eHl2YVpuUndGNnRyUXhoYXZranBKNnh4NjdT?=
- =?utf-8?B?OFdhSXp3NEl0UHJMQXZlSU1sWTZ5K3dsUUxzWlZNNm1ZdEhDOGhvTlV1WnJ5?=
- =?utf-8?B?WGQ1dTB4U1o4STZ6YU9JdTZwN0hFaU56OUs3S3J6MTVDdk93a3c1ekRrV1Ba?=
- =?utf-8?Q?VCMXYZ8K2e7DeTHG2egEsvTpi/itGk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UnlBUG1wMnJyVGpBNjRFWXBsS0Vuc0lZQytCZDNIVDBNU0wwYnZJQlVUUVFn?=
- =?utf-8?B?ZGpkRDRxN1BBWkNvZmJFS0pwakp3cVpNVHhTUFcybSs3dDlkQ252VDFTSjlE?=
- =?utf-8?B?NUJaUmVmMlhtYWEzRlBoMHA5b05FeGJ3Y1dVd2kyZCtlMWFuQkZzdFpkSEdh?=
- =?utf-8?B?cUxxKzNUblFpenZselhndHpZbEVvUnFQanJNeVFMWWxhbEVoV0tJa3ZmWndl?=
- =?utf-8?B?Z3FVNlZaWFRxZlpPUEZEcUY1YkNtRFY5K1Bob1hpblFheW15UjFjayt2QzQy?=
- =?utf-8?B?MzgySTZJYXpJWjI2alozMFdjV1dMQ1MrcjhTNlg1RXZWTWYxZkRUTU4wbEhu?=
- =?utf-8?B?U055d2ZXY085WDFIS3YydGFkM3JlWGRlTjg1dFVocy9nQ2kwb2dQTjVORStq?=
- =?utf-8?B?V0orcWlEOW9iL0kzUmd6TnBCTkVld2owRnNvMCtCUEJrRk5ZK3JGaUZqcE9I?=
- =?utf-8?B?Zlc2Q0lxejJERTBncXlrSE5XTFRyU21Nek9ER1dOMEtVUlVTRnNMYUU4bW9V?=
- =?utf-8?B?dFlON2s0VnVvRVRsakZUZTNnUnBXa0ZDdFpiaFR4QXFFYjMwRGNCT1U0T2lj?=
- =?utf-8?B?V21TMUk3VFQyQm5DbHFEMTVhZmZzUXJPQjllM2pVNmhhTlpvWHdqTm92WFR1?=
- =?utf-8?B?QS9jMVpXNWxLeEhUVVVkQkl1VmpMbURkZE8wY2xGcytzL1l5UEpjVnlvQmZQ?=
- =?utf-8?B?VVVzbzdFRDFwb3NEWVg4bW1KdmpsSVBVVEhrSmpNOFdyUGpLWE9QQUpmUGhX?=
- =?utf-8?B?U0NwNzVsTE51M1hOS0VjeTd0dzFCaWJaNkF4enlSVTBudUpzazIza01ZNm9u?=
- =?utf-8?B?MlhqSWl4RzRKM3EzSEJYZE9ScitZRjNXeEtIQjFwa2VLMytZQXBBclNLbTVq?=
- =?utf-8?B?OVlZYlNrc3hnWCt0VTl4RERGMEJLNDVmRERpMU5sdXRyM3B0M28zbUNlZ1Iv?=
- =?utf-8?B?ZGo3QzA0WmpIV2Q0bDFhcFZKZEkvNW1jNkRoR2VMNE5Ma2lMT2VtN3VCbnZE?=
- =?utf-8?B?YWJYUnlsS3dDM0syM0E0S0JNMENkSlFMTmNFUkRQY2hVcnhvcnpBa3BoY0Vt?=
- =?utf-8?B?REdldzdhckVMWnp2b2FaZmFkZ0R3S0Y4WGtNemtFQy9lblVTUWU4bW5wNENS?=
- =?utf-8?B?OEhvUHk3NUNudjNhcDA1a0oxUkxwRmRSdENibU5abkI0ODhmQlN3cVRaZExi?=
- =?utf-8?B?Z0xNb2U4VkNMOW9SMFkyeGRoOTVBR0pLbGxhTUZjcjFVdXdVMHlGSWpsc05l?=
- =?utf-8?B?dGtJbzBRY1BiQld0ZzBnL0ZTd0Fma0FDUWk0c25ETDNSV0lkRlFOaHFvWTdY?=
- =?utf-8?B?bWE1Qk8rVmlOcExwTE9tbGlPMzkvTDY4TnpZbmZDWnBOWFZOdGJQZ0I0MXp1?=
- =?utf-8?B?aTI0MnhDd0VxY0t5dDEvUzFsNWYrZUxEUExDYlpUWmNMUG5PaytRME5TcHVB?=
- =?utf-8?B?QksrSGVFeDkwWGd2WVRBeTlPOE5kQjR6Yk1DM3F5cFNMaHRYS1NYUURLRUxE?=
- =?utf-8?B?WmdKUHFKOEl6TUgwUkpjRVFqeklOa2R6OWo5MVJoV3JBcDY2RWFGNEJhZUpw?=
- =?utf-8?B?ZGlWVkJwdVlXZjVIcHg0MWhURlB4UElTTUdUTXNyUWo0TC9rUGNRcGo4bWlk?=
- =?utf-8?B?cThERlF0ZURNZmhXQWd0aFhXYVEydGpJa3UvRy96ZDZXd3QxSkRlMUMzeWlO?=
- =?utf-8?B?dTdRbG55MkdSZXRieWhJRy8rbitkWFhFQStWcXcyOFVtNU9FdzdYdTNGSkgv?=
- =?utf-8?B?YlBFYk1YRkNNSmIrVDhoQXl3cWZ4S3JlRDgzUEttbU8wQm1PTTF2V0U0R3Vo?=
- =?utf-8?B?UXVkb09pQVpaUkVoQ0VnUHFLMFB5TkEySG5GRGEyNnl6NHQrQURlU1dVd0RL?=
- =?utf-8?B?Nks5SmNTeGhOelgvSE1zeWZqUXZRdWRub2dWb0ZxNVk0VjFlaEdkQXVCT2FG?=
- =?utf-8?B?dVJSc3hqWkNmVFJiaEdVbU9teFZnYWlmQkV4ajFWMThJVGJLLzNSUU1hVFdo?=
- =?utf-8?B?WFhjUWRiODY0Z3ZYVUlKVXM2NUhnSkp2ckNHMHNKV0hiSEJXcFcrczNXemZB?=
- =?utf-8?B?c1lMay9DTTBhYTJCK0NVLzFMOStMYVhNL1NreFR2bjB3OEVpeUhMM2U2eXZX?=
- =?utf-8?Q?4WZaghujXp9udG5K6sy8dnZbR?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43c99329-4afb-49f1-0761-08de0a573642
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 12:51:22.6001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IeJoqdvU7iD9glaS5OGuzcBIg5dpqoLokrGKMprKg5MM0p+KaQvbXGwgM8WkwXbGVS6z07/6w67ZhVeHlK9Bfw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6705
+Content-Transfer-Encoding: 8bit
 
+When the guest uses the APIC periodic timer, if the delay exceeds the
+period, the delta will be negative. nsec_to_cycles() may then convert this
+delta into an absolute value larger than guest_l1_tsc, resulting in a
+negative tscdeadline. Since the hv timer supports a maximum bit width of
+cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
+switch to the sw timer.
 
-On 10/10/25 08:54, Jie Zhan wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sumit,
->
-> On 10/1/2025 11:00 PM, Sumit Gupta wrote:
->> Add generic show/store helper functions for u64 sysfs attributes:
->> - cppc_cpufreq_sysfs_show_u64()
->> - cppc_cpufreq_sysfs_store_u64()
->>
->> Refactor auto_act_window and energy_performance_preference_val
->> attributes to use these helpers, eliminating code duplication.
->>
->> No functional changes.
->>
->> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> Nice cleanup in general.  Some minor bits inline.
->> ---
->>   drivers/cpufreq/cppc_cpufreq.c | 87 ++++++++++++++--------------------
->>   1 file changed, 35 insertions(+), 52 deletions(-)
->>
->> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->> index 12de0ac7bbaf..732f35096991 100644
->> --- a/drivers/cpufreq/cppc_cpufreq.c
->> +++ b/drivers/cpufreq/cppc_cpufreq.c
->> @@ -781,6 +781,36 @@ static int cppc_cpufreq_set_boost(struct cpufreq_policy *policy, int state)
->>        return 0;
->>   }
->>
->> +static ssize_t cppc_cpufreq_sysfs_show_u64(unsigned int cpu, int (*get_func)(int, u64 *), char *buf)
-> Wrap a bit into 80 chars?
+Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
+<=> hrtimer dance to common x86"), if the guest is using the sw timer
+before blocking, it will continue to use the sw timer after being woken up,
+and will not switch back to the hv timer until the relevant APIC timer
+register is reprogrammed.  Since the periodic timer does not require
+frequent APIC timer register programming, the guest may continue to use the
+software timer for an extended period.
 
-Wrapped line length to 100 as per the max limit.
+The reproduction steps and patch verification results at link [1].
 
-  $ grep "max_line_length =" scripts/checkpatch.pl
-  my $max_line_length = 100;
+[1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
 
+Fixes: 98c25ead5eda ("KVM: VMX: Move preemption timer <=> hrtimer dance to common x86")
+Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
+---
+ arch/x86/kvm/lapic.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
->
-> BTW, trivial but I would prefer a symmetric param order, like:
-> show(buf, get_func, cpu)
-> store(buf, count, set_func, cpu)
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 5fc437341e03..afd349f4d933 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2036,6 +2036,9 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+ 	u64 tscl = rdtsc();
+ 	ktime_t delta;
+ 
++	u64 delta_cycles_u;
++	u64 delta_cycles_s;
++
+ 	/*
+ 	 * Synchronize both deadlines to the same time source or
+ 	 * differences in the periods (caused by differences in the
+@@ -2047,8 +2050,11 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
+ 		ktime_add_ns(apic->lapic_timer.target_expiration,
+ 				apic->lapic_timer.period);
+ 	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
++	delta_cycles_u = nsec_to_cycles(apic->vcpu, abs(delta));
++	delta_cycles_s = delta > 0 ? delta_cycles_u : -delta_cycles_u;
++
+ 	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
+-		nsec_to_cycles(apic->vcpu, delta);
++		delta_cycles_s;
+ }
+ 
+ static void start_sw_period(struct kvm_lapic *apic)
+-- 
+2.47.0
 
-Sure, will change the param order.
-
-
->> +{
->> +     u64 val;
->> +     int ret = get_func(cpu, &val);
->> +
->> +     if (ret == -EOPNOTSUPP)
->> +             return sysfs_emit(buf, "<unsupported>\n");
->> +     if (ret)
->> +             return ret;
->> +
->> +     return sysfs_emit(buf, "%llu\n", val);
->> +}
->> +
->> +static ssize_t cppc_cpufreq_sysfs_store_u64(const char *buf, size_t count,
->> +                                         int (*set_func)(int, u64), unsigned int cpu)
->> +{
->> +     u64 val;
->> +     int ret;
->> +
->> +     if (!buf || !set_func)
->> +             return -EINVAL;
-> No need.
-
-Ok.
-
-
->> +
->> +     ret = kstrtou64(buf, 0, &val);
->> +     if (ret)
->> +             return ret;
->> +
->> +     ret = set_func((int)cpu, val);
->> +     return ret ? ret : count;
-> I suppose it's preferred to avoid using ternary operators like this.
-
-These are commonly use. e.g. within cpufreq:
-
-  $ grep -inr "return ret ?" drivers/cpufreq/*
-  drivers/cpufreq/amd-pstate.c:1184:      return ret ? ret : count;
-  drivers/cpufreq/cpufreq.c:839:  return ret ? ret : count;
-  drivers/cpufreq/intel_pstate.c:897:     return ret ?: count;
-
->> +}
->> +
-> Would be nicer to move cppc_cpufreq_sysfs_show/store_u64() to just above
-> where they are used, i.e. just before show_auto_act_window().
-
-Sure.
-
-Thank you,
-Sumit
-
->>   static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
->>   {
->>        struct cppc_cpudata *cpu_data = policy->driver_data;
->> @@ -824,70 +854,23 @@ static ssize_t store_auto_select(struct cpufreq_policy *policy,
->>
->>   static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
->>   {
->> -     u64 val;
->> -     int ret;
->> -
->> -     ret = cppc_get_auto_act_window(policy->cpu, &val);
->> -
->> -     /* show "<unsupported>" when this register is not supported by cpc */
->> -     if (ret == -EOPNOTSUPP)
->> -             return sysfs_emit(buf, "<unsupported>\n");
->> -
->> -     if (ret)
->> -             return ret;
->> -
->> -     return sysfs_emit(buf, "%llu\n", val);
->> +     return cppc_cpufreq_sysfs_show_u64(policy->cpu, cppc_get_auto_act_window, buf);
->>   }
->>
->> -static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
->> -                                  const char *buf, size_t count)
->> +static ssize_t store_auto_act_window(struct cpufreq_policy *policy, const char *buf, size_t count)
->>   {
->> -     u64 usec;
->> -     int ret;
->> -
->> -     ret = kstrtou64(buf, 0, &usec);
->> -     if (ret)
->> -             return ret;
->> -
->> -     ret = cppc_set_auto_act_window(policy->cpu, usec);
->> -     if (ret)
->> -             return ret;
->> -
->> -     return count;
->> +     return cppc_cpufreq_sysfs_store_u64(buf, count, cppc_set_auto_act_window, policy->cpu);
->>   }
->>
->>   static ssize_t show_energy_performance_preference_val(struct cpufreq_policy *policy, char *buf)
->>   {
->> -     u64 val;
->> -     int ret;
->> -
->> -     ret = cppc_get_epp_perf(policy->cpu, &val);
->> -
->> -     /* show "<unsupported>" when this register is not supported by cpc */
->> -     if (ret == -EOPNOTSUPP)
->> -             return sysfs_emit(buf, "<unsupported>\n");
->> -
->> -     if (ret)
->> -             return ret;
->> -
->> -     return sysfs_emit(buf, "%llu\n", val);
->> +     return cppc_cpufreq_sysfs_show_u64(policy->cpu, cppc_get_epp_perf, buf);
->>   }
->>
->>   static ssize_t store_energy_performance_preference_val(struct cpufreq_policy *policy,
->>                                                       const char *buf, size_t count)
->>   {
->> -     u64 val;
->> -     int ret;
->> -
->> -     ret = kstrtou64(buf, 0, &val);
->> -     if (ret)
->> -             return ret;
->> -
->> -     ret = cppc_set_epp(policy->cpu, val);
->> -     if (ret)
->> -             return ret;
->> -
->> -     return count;
->> +     return cppc_cpufreq_sysfs_store_u64(buf, count, cppc_set_epp, policy->cpu);
->>   }
->>
->>   cpufreq_freq_attr_ro(freqdomain_cpus);
 
