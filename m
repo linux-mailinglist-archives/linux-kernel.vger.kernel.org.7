@@ -1,124 +1,176 @@
-Return-Path: <linux-kernel+bounces-849904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A01BD13B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:32:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D8EBD13BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1D31896813
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:33:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B428C34796E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 02:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E18627FD64;
-	Mon, 13 Oct 2025 02:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0097281370;
+	Mon, 13 Oct 2025 02:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXUl1n8I"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLrRIuWy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099F71F419B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 02:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793DA1F419B;
+	Mon, 13 Oct 2025 02:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760322770; cv=none; b=MkqtU/O8ugojEXe0vhbZVS9JFg/nevIlfywOZzg7yRFa/Wur+hhhdMJhA3fdnWuJ8+7ak/PvKJRvQYox/ZmUEEQHm2x1ey2DObNMAqoBck01n+e+LlNP28shf7zfiKIIkP781RzYSMgzW0fpIFPzn80zbFgr2VLEoxsx2oz/N6E=
+	t=1760322875; cv=none; b=LLnB4Ul1wue77IxtI2d5F5zJMJDUG0ROHkRMVN806+8fK/tz8IywBe4YlTljpfN/chAXwK69rp/HoenXch3sHwQZMMqruUlYR3gJD0EW5s7JGHEbS6h0cYDzcKugedzGOGoslIScUf9Hi0buXVaf/Qxyh1cT9i+zi+L8lXZ0thU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760322770; c=relaxed/simple;
-	bh=Mobd2nPQjln/iaGH+phCc81JbmWHC6V+ZX+OEP8c6WQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NZ9WRnt5wobppYpKKRzGcAkCKU/EmavFa/tA2rzSWnYmFE8pmWoXIyoLB/HC1kAi+nbCvjOXjiqBTl6G2dNZ6UIkEYJfCbEFSfBn+agFjN4h0DFXI1FH0pqJdRppesYQFMBXt3O12xBsDfI85NUF1hSK6SJvE7o2dZ86ZlQcT0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXUl1n8I; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-59070c9111eso4546321e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 Oct 2025 19:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760322766; x=1760927566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rSyKix+dExsW53zwh7yt2N4OdGXjl30i0H4cWLjWmaI=;
-        b=AXUl1n8IHV3cVpOOSU6jhy5H9gRtJCqQqlFmwpSNEXYIIAxjniKANxWCRPkgyI4F9b
-         FZCYvgFHjRlFhzyElVY9ULVvkhqDJUP3I5K/6ywQpgL82np+hl++/lu8EkH1Ycdxp/Kd
-         aq9ZDSEqmTi1mVpQQBhurmmsq7UX0Sj806RIM2uqwoLL8H0k8SC4gfrz3ZTbKsQdRayu
-         IhraNnBEIsv/XDqbqvjo2/Xwn2pBVg/Mqcp/kwj1PD3fM72o1zTf2+DRxr+W1PajRVRd
-         O2osOnO4xKgLCkIDgjNrNuGMYbWlbwiubp+/O9q7GJz8tzKH2wpj4yZGIEHjKxBrpjbf
-         UC2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760322766; x=1760927566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rSyKix+dExsW53zwh7yt2N4OdGXjl30i0H4cWLjWmaI=;
-        b=Ag7IMssqW7YYKru3XfB6A5dUYTcT8N4e3n+hD2t0ghGR13avcHp9ZbZlPINGIDE1s7
-         ImIEiBRgn2KkP5+xO9l5ZMkQ/yBiUHhgBzkKKqE5TVb8GtkA2ysyett9K0Yr6eAMYct/
-         NYkqSp9H1S0PzEMzj0Ff64VXQiXbJOP7sHEqWfndHApaPVQUU0j8p+Ru/C4+4snwn7iR
-         /mdQ8w/rjNX4TmI1tYf+uE5inY9QTpFaeYt+iudE+olV3V8JzoaEPDKIB2AhgeuGbBk1
-         DFXTLMBq2tmrYhBIg2kNBR0af08RJwGbbqninSv+J+zI91HVjYtTjZhrBY3pL0I/e5fe
-         QyLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWm9abTUcb89o0kHZdWhAqmqfycwxP8sofybqJ9UrOwpX/X/ztJBO3wTuO4RIng3KpgdVWlibT98MD/k/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycqxOERu8tYAV1fAxdN9huzO+tQyVOX2MclM5C5HJEGnvVvzAZ
-	ut/aXwaj5lfjWhmmuB7FA6vHn7/1h+XIOtd/puxeUzwy8s3QLZheuTJT8UI2XefPwqMlu65jbgJ
-	12Z+Z52tyfwBX9sLyNo9iKLmcHTusWH0=
-X-Gm-Gg: ASbGncvcIwpm7OrQbipT20EafXw9po33aimIEbu93U30xuVqw5EqKenTW/OV9qDUwA8
-	vTxGYDcHz6r6IEhY0WW7P8qc7ouOb69/DoTXrlL6E+itwYbJI8ZvUqOP+wljYkVxCsdER/KANv9
-	aAHqyvuqBwry9+GoDkaf6AfD9N51DBSZ94HoE9QlywL6ylkaghq5aagCsi9pqhb+FojnDpKUnWw
-	ulfrji2f41LebO4wGDI+hhKuw==
-X-Google-Smtp-Source: AGHT+IHWj20Z//Zd/Bj3pk8xg9qchfT20FaF7gZ8rC2cQFm5rgDMz1ihnaPh6KkjuMjFtQn3GvJXwEat84MrHNsMau0=
-X-Received: by 2002:a05:6512:31c2:b0:57b:7c74:67e6 with SMTP id
- 2adb3069b0e04-5906d75f85bmr5366512e87.2.1760322765941; Sun, 12 Oct 2025
- 19:32:45 -0700 (PDT)
+	s=arc-20240116; t=1760322875; c=relaxed/simple;
+	bh=TSLfs+q7YskGZGNmRTRTUKheW9HvSTtIhUW6NnDpNyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PAIEZH8JhG2s14Iul5DZj9dsMbMrjjkqrEZphnXfEwpTUr+wL9cPkAR3SDxbmeRUC02FyzyRdoUOXGeDQDj4TRzXP0UjYHRHAT6zFVUO+LxBPahty4sSHWuwpCBjtFbtqc6FjbrELi0t75UN91ChmqrvJraArmpbl2XFBiiNFEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLrRIuWy; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760322873; x=1791858873;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TSLfs+q7YskGZGNmRTRTUKheW9HvSTtIhUW6NnDpNyE=;
+  b=ZLrRIuWyVDUpze04AVNPSAgBYAwi9xJ4EzvmSt9zAQ4qKD/BUOMQPJ5s
+   1gsWbPJ2Gbh/E3rcRTdlkX6pSWoEl8lGOgqLV9MG28TbzX6y+wGcFNN3n
+   DRcw42QQCywev4pZgtP6uBw96QUvQmFGf/BZ8oOWtfa1YPWDxcBQpGuvr
+   lc5UiCDV2PT+Qt6GTDtRoBlrGxqghPJ0JPKxM0QoVYWssWvm5hYd3T+Fj
+   KFoDPvhbMD8fncXbFEuF2fMkyzuk1d3mITw2I+SQ/Gv1hA0LNcuI8nDhY
+   fEnm8fDaCPMbVhbHgJnNHK3UJojjaMpn2E5/T7w+n4J88pdlT8DJ7eFVa
+   w==;
+X-CSE-ConnectionGUID: 8kZJKKu1R8K0mmcr5oH9KA==
+X-CSE-MsgGUID: vV/ZvF6wTl6otMYqb4lNhg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="73556159"
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="73556159"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 19:34:32 -0700
+X-CSE-ConnectionGUID: 4fkOBcSDQlKiAeNwM5t4IQ==
+X-CSE-MsgGUID: PSSg5rfcSYuxWcMYViWVqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
+   d="scan'208";a="181297334"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 19:34:30 -0700
+Message-ID: <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
+Date: Mon, 13 Oct 2025 10:34:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
- <20250909-tegra186-icc-v2-1-09413724e781@gmail.com> <20250930103006.octwlx53p2shwq2v@vireshk-i7>
-In-Reply-To: <20250930103006.octwlx53p2shwq2v@vireshk-i7>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sun, 12 Oct 2025 21:32:34 -0500
-X-Gm-Features: AS18NWDaKTgv8GyE1hN1DRdGL5_G-8YoPjy4LzB-vGT0ghwtG2kFi7JSPl6_Rmg
-Message-ID: <CALHNRZ84s8rxQKWZeF-bfS31nK6ay4_MspmYa4+qapf9gtk+Fg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] cpufreq: tegra186: add OPP support and set bandwidth
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] bisected: perf: hang when using async-profiler
+ caused by perf: Fix the POLL_HUP delivery breakage
+To: Octavia Togami <octavia.togami@gmail.com>, stable@vger.kernel.org
+Cc: regressions@lists.linux.dev, peterz@infradead.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 5:30=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 09-09-25, 01:21, Aaron Kling via B4 Relay wrote:
-> > +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigne=
-d long freq_khz)
-> > +{
-> > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
-> > +     struct dev_pm_opp *opp __free(put_opp);
->
-> The usage here looks incorrect..
->
-> > +     struct device *dev;
-> > +     int ret;
-> > +
-> > +     dev =3D get_cpu_device(policy->cpu);
-> > +     if (!dev)
-> > +             return -ENODEV;
->
-> On failure, we would return from here with a garbage `opp` pointer, which=
- the
-> OPP core may try to free ?
->
-> Moving the variable definition here would fix that.
 
-If the var was NULL initialized, would the free handle that correctly?
-Keeping the declarations at the start of the function reads better
-imo.
+On 10/11/2025 4:31 PM, Octavia Togami wrote:
+> Using async-profiler
+> (https://github.com/async-profiler/async-profiler/) on Linux
+> 6.17.1-arch1-1 causes a complete hang of the CPU. This has been
+> reported by many people at https://github.com/lucko/spark/issues/530.
+> spark is a piece of software that uses async-profiler internally.
+>
+> As seen in https://github.com/lucko/spark/issues/530#issuecomment-3339974827,
+> this was bisected to 18dbcbfabfffc4a5d3ea10290c5ad27f22b0d240 perf:
+> Fix the POLL_HUP delivery breakage. Reverting this commit on 6.17.1
+> fixed the issue for me.
+>
+> Steps to reproduce:
+> 1. Get a copy of async-profiler. I tested both v3 (affects older spark
+> versions) and v4.1 (latest at time of writing). Unarchive it, this is
+> <async-profiler-dir>.
+> 2. Set kernel parameters kernel.perf_event_paranoid=1 and
+> kernel.kptr_restrict=0 as instructed by
+> https://github.com/async-profiler/async-profiler/blob/fb673227c7fb311f872ce9566769b006b357ecbe/docs/GettingStarted.md
+> 3. Install a version of Java that comes with jshell, i.e. Java 9 or
+> newer. Note: jshell is used for ease of reproduction. Any Java
+> application that is actively running will work.
+> 4. Run `printf 'int acc; while (true) { acc++; }' | jshell -`. This
+> will start an infinitely running Java process.
+> 5. Run `jps` and take the PID next to the text RemoteExecutionControl
+> -- this is the process that was just started.
+> 6. Attach async-profiler to this process by running
+> `<async-profiler-dir>/bin/asprof -d 1 <PID>`. This will run for one
+> second, then the system should freeze entirely shortly thereafter.
+>
+> I triggered a sysrq crash while the system was frozen, and the output
+> I found in journalctl afterwards is at
+> https://gist.github.com/octylFractal/76611ee76060051e5efc0c898dd0949e
+> I'm not sure if that text is actually from the triggered crash, but it
+> seems relevant. If needed, please tell me how to get the actual crash
+> report, I'm not sure where it is.
+>
+> I'm using an AMD Ryzen 9 5900X 12-Core Processor. Given that I've seen
+> no Intel reports, it may be AMD specific. I don't have an Intel CPU on
+> hand to test with.
+>
+> /proc/version: Linux version 6.17.1-arch1-1 (linux@archlinux) (gcc
+> (GCC) 15.2.1 20250813, GNU ld (GNU Binutils) 2.45.0) #1 SMP
+> PREEMPT_DYNAMIC Mon, 06 Oct 2025 18:48:29 +0000
+> Operating System: Arch Linux
+> uname -mi: x86_64 unknown
 
-Aaron
+It looks the issue described in the link
+(https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u)
+happens again but in a different way. :(
+
+As the commit message above link described,  cpu-clock (and task-clock) is
+a specific SW event which rely on hrtimer. The hrtimer handler calls
+__perf_event_overflow() and then event_stop (cpu_clock_event_stop()) and
+eventually call hrtimer_cancel() which traps into a dead loop which waits
+for the calling hrtimer handler finishes.
+
+As the
+change (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u),
+it should be enough to just disable the event and don't need an extra event
+stop.
+
+@Octavia, could you please check if the change below can fix this issue?
+Thanks.
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7541f6f85fcb..883b0e1fa5d3 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10343,7 +10343,20 @@ static int __perf_event_overflow(struct perf_event
+*event,
+                ret = 1;
+                event->pending_kill = POLL_HUP;
+                perf_event_disable_inatomic(event);
+-               event->pmu->stop(event, 0);
++
++               /*
++                * The cpu-clock and task-clock are two special SW events,
++                * which rely on the hrtimer. The __perf_event_overflow()
++                * is invoked from the hrtimer handler for these 2 events.
++                * Avoid to call event_stop()->hrtimer_cancel() for these
++                * 2 events since hrtimer_cancel() waits for the hrtimer
++                * handler to finish, which would trigger a deadlock.
++                * Only disabling the events is enough to stop the hrtimer.
++                * See perf_swevent_cancel_hrtimer().
++                */
++               if (event->attr.config != PERF_COUNT_SW_CPU_CLOCK &&
++                   event->attr.config != PERF_COUNT_SW_TASK_CLOCK)
++                       event->pmu->stop(event, 0);
+        }
+
+        if (event->attr.sigtrap) {
+
+
 
