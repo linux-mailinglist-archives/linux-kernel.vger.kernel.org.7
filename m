@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-849920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763D2BD1557
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 05:52:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 166C2BD15AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 06:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7A21891D65
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:52:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 024384E39E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 04:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4CC271459;
-	Mon, 13 Oct 2025 03:52:12 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40AD280025;
+	Mon, 13 Oct 2025 04:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QShxkHjO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB9913B797
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 03:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4511922DD;
+	Mon, 13 Oct 2025 04:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760327532; cv=none; b=ge8w+FQLe23eeTFKBTCEP77x/UBzTQbSt9/o7oUi6yggAcx6Nax8mmaCLBYhwt7g/dKBVI24ZGrhj70a+BpNcLkTQO0es+AYwY+S6C41Daonyz2X3jykQqcCsnWJfAuRG5H5TuKWeOF7EF61szUzpko3jcvfa69fJDNwcxgs9Yw=
+	t=1760328361; cv=none; b=gbF6SdNJVmoSwV1/JwYC4xmIul6C/wdrFxGUbokORYrop+QajjW52C2tEMkHjDYsgl7TRVtsknJ3fq6YN7haTWATotTkuD2OtsPjkEzLdhzEzzk3xXbLJS9Z/fJOzXU2ebZR9H2oPa4T+F0pLLyXc/norvT2e6AhxXF85HOvpI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760327532; c=relaxed/simple;
-	bh=zNgmoU1Rq63WaQtd7qyYMCluSw7M5F9xGQnR1HvkV1E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IIOIXe92XBidQwwFo8SbCPprXiNhqXN4dPQkZGbwsp65BAtBo4ulQVXAtmynuoExL7EdbkDhlabwvar9bGmTcWsmrnNN9XqOmTGY/o+Ca+tnwrcv9sjGhx+L0oFkprDkwTcpxOSDXvQ7PZujwxt+WG3pj8RhdcTrqzrUMrwM1D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4clNgk5BrXzKHLy9
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:51:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id EA4361A0DD3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:52:04 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP2 (Coremail) with SMTP id Syh0CgCn_UVdd+xob7_EAA--.56133S4;
-	Mon, 13 Oct 2025 11:52:04 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: mingo@redhat.com
-Cc: peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	huang.ying.caritas@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/topology: Fix memory leak in the error path of sched_init_numa
-Date: Mon, 13 Oct 2025 04:13:48 +0000
-Message-Id: <20251013041348.350886-1-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760328361; c=relaxed/simple;
+	bh=bTK7Ww1dIReGXn7ATZoqAlPsyx0s/+tSQejlTQbKeBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IaxGgx+cMkwSlMtOARIwHSsagFsE4/USpsHOLlBE2UTNWiI8HPIJ2D/7Tve92ZpPUPSaoAC2VdGQcRJkwJ4ghegmZObvzPFwmYvuf/rbJfhE2QcCTtEoWsOxE8C+KeK9sTrdrXQ3Ft4Esmf5xml+vWqK5Wi09xgHZVRETXJa08g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QShxkHjO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F25C4CEE7;
+	Mon, 13 Oct 2025 04:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760328359;
+	bh=bTK7Ww1dIReGXn7ATZoqAlPsyx0s/+tSQejlTQbKeBI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QShxkHjOUSIK3tXDhBMZfAfPFpHj2xlyMVjOMoSJnnw5YI9IgZeEvOqkJHLBqmiSl
+	 kavLCD+wBnOc0r9/ZT+MMWqygGE+DHE4h35eIjIZU8HLe0QgGIDpwK8+xSXfCZre39
+	 rvgKfJ0ke+L/YMkpWHqcOeAgd0g/AMisLp43Y29E9vvcoPNQlOzsMOIubaRjGiw6NL
+	 Va5LQHm1imRqSGIeIwDJIbT6ytOjTRN+sU6qIXLY16aI1sgUriadxEDCY6L+ls5X68
+	 vP16Mv5HR1ns6Zr85FCImM2cwdfv7kT7VzToFUlFqiBkXLq6tw9w5zUvFon3A6ja6W
+	 sFrqReC5PuvgA==
+Message-ID: <3dfeb2be-d7e7-4351-8464-c06084b0054a@kernel.org>
+Date: Mon, 13 Oct 2025 06:05:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCn_UVdd+xob7_EAA--.56133S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7CrWkWw1UZr4UuryxCr18AFb_yoW8uw48pw
-	sFgr90yr4vkrn3GFn5Zry7Cry5WFZ7twnF9a429w4kJry5Gr4jgr40va4agFyj9FW0yFWS
-	vr1Dtr13XF17KFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: usb: qcom,snps-dwc3: Fix bindings for
+ X1E80100
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20251013035920.806485-1-krishna.kurapati@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251013035920.806485-1-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In sched_init_numa, masks are used to store memory, but the error path
-returns directly without freeing the allocated memory.
-To fix this, the freeing logic in sched_reset_numa can be extraced into a
-new function, free_masks, which can be called on the error path.
+On 13/10/2025 05:59, Krishna Kurapati wrote:
+> Add the missing multiport controller binding to target list.
+> 
+> Fix minItems for interrupt-names to avoid the following error on High
+> Speed controller:
+> 
+> usb@a200000: interrupt-names: ['dwc_usb3', 'pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+> 
+> Fixes: 6e762f7b8edc ("dt-bindings: usb: Introduce qcom,snps-dwc3")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
 
-Fixes: 0fb3978b0aac ("sched/numa: Fix NUMA topology for systems with CPU-less nodes")
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
----
- kernel/sched/topology.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 444bdfdab731..fd03bb6669f5 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1924,6 +1924,20 @@ static void init_numa_topology_type(int offline_node)
- 
- #define NR_DISTANCE_VALUES (1 << DISTANCE_BITS)
- 
-+static void free_masks(struct cpumask ***masks, int nr_levels)
-+{
-+	int i, j;
-+
-+	for (i = 0; i < nr_levels && masks; i++) {
-+		if (!masks[i])
-+			continue;
-+		for_each_node(j)
-+			kfree(masks[i][j]);
-+		kfree(masks[i]);
-+	}
-+	kfree(masks);
-+}
-+
- void sched_init_numa(int offline_node)
- {
- 	struct sched_domain_topology_level *tl;
-@@ -2003,15 +2017,19 @@ void sched_init_numa(int offline_node)
- 	 */
- 	for (i = 0; i < nr_levels; i++) {
- 		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
--		if (!masks[i])
-+		if (!masks[i]) {
-+			free_masks(masks, nr_levels);
- 			return;
-+		}
- 
- 		for_each_cpu_node_but(j, offline_node) {
- 			struct cpumask *mask = kzalloc(cpumask_size(), GFP_KERNEL);
- 			int k;
- 
--			if (!mask)
-+			if (!mask) {
-+				free_masks(masks, nr_levels);
- 				return;
-+			}
- 
- 			masks[i][j] = mask;
- 
-@@ -2079,18 +2097,9 @@ static void sched_reset_numa(void)
- 	masks = sched_domains_numa_masks;
- 	rcu_assign_pointer(sched_domains_numa_masks, NULL);
- 	if (distances || masks) {
--		int i, j;
--
- 		synchronize_rcu();
- 		kfree(distances);
--		for (i = 0; i < nr_levels && masks; i++) {
--			if (!masks[i])
--				continue;
--			for_each_node(j)
--				kfree(masks[i][j]);
--			kfree(masks[i]);
--		}
--		kfree(masks);
-+		free_masks(masks, nr_levels);
- 	}
- 	if (sched_domain_topology_saved) {
- 		kfree(sched_domain_topology);
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
