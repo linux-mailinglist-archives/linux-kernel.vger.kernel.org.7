@@ -1,166 +1,278 @@
-Return-Path: <linux-kernel+bounces-849859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-849860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC7EBD11C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:48:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9791BD11C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 03:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35DE1895131
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662EA3BB1F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 01:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92480264A8D;
-	Mon, 13 Oct 2025 01:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D7A264638;
+	Mon, 13 Oct 2025 01:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NLPdOc41"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bXX03/8s"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444681E51E1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B655C1E51E1
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 01:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760320109; cv=none; b=Je+POHs0oE2NJR3eMToEreQO5UgsishcFKpsCq+UCDMIcV+D2VJ15tphaIQJpRWHY8t8D110l5V5/VH6AFqR4JCYKEhtlbBff3ElvsfmYj1yA7cvYRSps1Qu7FKggNYE4CQjq5Sh4IFGCtXYMeYoiFFeLiL/NTrCUH3p0YvsQ7A=
+	t=1760320130; cv=none; b=h27v9LHmFlBNYDkosoDOCT7kjzTkFLPXtxRKQOuUcEh+UE9kJgVhPiQOWYJDQjTf9HcDtIjohYl/F6FdIn0SG/Dhcmu20zJxbW86Wzh1W9Je5tf0KXpAJjdg9DovVsP4HnOcQ9bCaDAuI9OpXHfHRtqmbC5BM1X0BWtQbqQ02gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760320109; c=relaxed/simple;
-	bh=KzDClMffKAwNX6ll/e8ZyafS6pIGrlNSRTeOlSPQ6ME=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VKL+oQ8HGmQp3V7fD+OtPjV7KGtpQ/IymN0MxfglH7zokFRzq06dBnQ0YIkbQ4AqfqSXfZd6LtzcD5tCf4v/hA3nz3gMfeDPt7IJJQTCqKqQfx4wfDNGAbo4rKSy9UAlUHcv7Gdcp0Z0m3my3SXHQUxGC622iaDk3AYtl8Bo7j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NLPdOc41; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760320108; x=1791856108;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=KzDClMffKAwNX6ll/e8ZyafS6pIGrlNSRTeOlSPQ6ME=;
-  b=NLPdOc41jGw9SCMFJyMYrtp/VXwauJaj7Ra+qWjCI40I6PxpgmguHI+J
-   vTUPQTy3/JSW4yvakbrAsm6JiWgo0S3nsgl3gJQAWRZoIUy0Mky7FhQrd
-   uwBsImSQ+ohj1BdLLbqMoozeOjXbivdSb8eJ8WnH6KiqHfukElkXeS87v
-   NHwC/Y3Lby+AiwrXuF14kswtAuUxNT0IyKhxrQZYVjIWMVu9XT7J0SqIP
-   bxil6WaZaiSPobWR9HGYd32jg8FHATIB5sNB5F5uG0+3O7zUjdHOwWJLZ
-   CrhGt6LHSlL9MWnhjffmZz+/2N10FtWzWFtiQ9ObUrOWUucDnUV+1coPd
-   w==;
-X-CSE-ConnectionGUID: xlokoB1xSHmUJN1ziAhvVw==
-X-CSE-MsgGUID: VwpJ/u+hS0Gq37BH1At5ag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11580"; a="62553065"
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="62553065"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2025 18:48:28 -0700
-X-CSE-ConnectionGUID: WKRUnDTYSkS4Nycw6vbmIA==
-X-CSE-MsgGUID: pPe+giOKRyW1t7+x7h8/oQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,224,1754982000"; 
-   d="scan'208";a="181042110"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 12 Oct 2025 18:48:26 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v87fk-000061-0E;
-	Mon, 13 Oct 2025 01:48:24 +0000
-Date: Mon, 13 Oct 2025 09:48:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: include/linux/build_bug.h:78:41: error: static assertion failed:
- "XFS: sizeof(struct xfs_attr_sf_entry) is wrong, expected 3"
-Message-ID: <202510130901.BneH1ELf-lkp@intel.com>
+	s=arc-20240116; t=1760320130; c=relaxed/simple;
+	bh=wxFaCpiHskkeK0uEPxkIbPVT69cU8Yn679wCXAzxWHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A9o+2qhUAtpMDac+DWRO3//aLJwQWPZsnPQnl3HDHNO76p0usJVmIuRIQdOFXScGeuOLgHT/TnS7ptpNAS1hyAj6sr0HaZUPkPuauUCmV+2RkMLh5KwpxWHngWyGaKwFJY9PHi4TTBp3PC+LmUhUgKKL+TQWf/e9F1NBw/GjHYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bXX03/8s; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <83492e9c-3f17-42e5-8897-9c0ed5aa76e7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760320125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8gj2RUXsmZP7PFmKR9Hbs9L37/EeDx8LOSN13TezBQY=;
+	b=bXX03/8sypLzEqxjMgSLg6S6KJ4kx88F2oJNJoY6wtz8ODzWzwFRiwv3G4HvihQLWuiaDt
+	q+Ms2lDX8Ihlvl+anmvX0mKnUGSooXoDL0DkZ2LxLt38QiCGv6rOwsg2pSk49MIw/U8I2i
+	UYzxgrVRyXndoEgLT2uTa1/GMhKbM2I=
+Date: Mon, 13 Oct 2025 09:48:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Darrick,
-
-FYI, the error/warning still remains.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3a8660878839faadb4f1a6dd72c3179c1df56787
-commit: 13877bc79d81354c53e91f3c86ac0f7bafe3ba7b xfs: port ondisk structure checks from xfs/122 to the kernel
-date:   11 months ago
-config: arm-randconfig-003-20251013 (https://download.01.org/0day-ci/archive/20251013/202510130901.BneH1ELf-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251013/202510130901.BneH1ELf-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510130901.BneH1ELf-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/bitfield.h:10,
-                    from include/linux/fortify-string.h:5,
-                    from include/linux/string.h:390,
-                    from include/linux/uuid.h:11,
-                    from fs/xfs/xfs_linux.h:10,
-                    from fs/xfs/xfs.h:26,
-                    from fs/xfs/xfs_super.c:7:
-   fs/xfs/libxfs/xfs_ondisk.h: In function 'xfs_check_ondisk_structs':
->> include/linux/build_bug.h:78:41: error: static assertion failed: "XFS: sizeof(struct xfs_attr_sf_entry) is wrong, expected 3"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:10:9: note: in expansion of macro 'static_assert'
-      10 |         static_assert(sizeof(structname) == (size), \
-         |         ^~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:133:9: note: in expansion of macro 'XFS_CHECK_STRUCT_SIZE'
-     133 |         XFS_CHECK_STRUCT_SIZE(struct xfs_attr_sf_entry,         3);
-         |         ^~~~~~~~~~~~~~~~~~~~~
->> include/linux/build_bug.h:78:41: error: static assertion failed: "XFS: sizeof(struct xfs_dir2_data_unused) is wrong, expected 6"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:10:9: note: in expansion of macro 'static_assert'
-      10 |         static_assert(sizeof(structname) == (size), \
-         |         ^~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:136:9: note: in expansion of macro 'XFS_CHECK_STRUCT_SIZE'
-     136 |         XFS_CHECK_STRUCT_SIZE(struct xfs_dir2_data_unused,      6);
-         |         ^~~~~~~~~~~~~~~~~~~~~
+Subject: Re: [v7 03/16] mm/huge_memory: add device-private THP support to PMD
+ operations
+Content-Language: en-US
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mm@kvack.org, akpm@linux-foundation.org,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20251001065707.920170-1-balbirs@nvidia.com>
+ <20251001065707.920170-4-balbirs@nvidia.com>
+ <CABzRoyYg1o8Oyjx1AQ8or-Vxm94zQXeAx7mWco2qs7=w4mBcMw@mail.gmail.com>
+ <1b311458-957a-4f0d-b7f9-51e75bbabd55@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <1b311458-957a-4f0d-b7f9-51e75bbabd55@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-vim +78 include/linux/build_bug.h
 
-bc6245e5efd70c Ian Abbott       2017-07-10  60  
-6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
-6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
-6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
-6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
-6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
-6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
-6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
-6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
-6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
-6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
-6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
-6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
-6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-6bab69c65013be Rasmus Villemoes 2019-03-07  79  
-07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
+On 2025/10/13 08:01, Balbir Singh wrote:
+> On 10/13/25 02:46, Lance Yang wrote:
+>> On Wed, Oct 1, 2025 at 4:20 PM Balbir Singh <balbirs@nvidia.com> wrote:
+>>>
+>>> Extend core huge page management functions to handle device-private THP
+>>> entries.  This enables proper handling of large device-private folios in
+>>> fundamental MM operations.
+>>>
+>>> The following functions have been updated:
+>>>
+>>> - copy_huge_pmd(): Handle device-private entries during fork/clone
+>>> - zap_huge_pmd(): Properly free device-private THP during munmap
+>>> - change_huge_pmd(): Support protection changes on device-private THP
+>>> - __pte_offset_map(): Add device-private entry awareness
+>>>
+>>> Cc: David Hildenbrand <david@redhat.com>
+>>> Cc: Zi Yan <ziy@nvidia.com>
+>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>>> Cc: Rakie Kim <rakie.kim@sk.com>
+>>> Cc: Byungchul Park <byungchul@sk.com>
+>>> Cc: Gregory Price <gourry@gourry.net>
+>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>>> Cc: Alistair Popple <apopple@nvidia.com>
+>>> Cc: Oscar Salvador <osalvador@suse.de>
+>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>> Cc: Nico Pache <npache@redhat.com>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Cc: Dev Jain <dev.jain@arm.com>
+>>> Cc: Barry Song <baohua@kernel.org>
+>>> Cc: Lyude Paul <lyude@redhat.com>
+>>> Cc: Danilo Krummrich <dakr@kernel.org>
+>>> Cc: David Airlie <airlied@gmail.com>
+>>> Cc: Simona Vetter <simona@ffwll.ch>
+>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>>> Cc: Matthew Brost <matthew.brost@intel.com>
+>>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Acked-by: Zi Yan <ziy@nvidia.com>
+>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>>> ---
+>>>   include/linux/swapops.h | 32 +++++++++++++++++++++++
+>>>   mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
+>>>   mm/pgtable-generic.c    |  2 +-
+>>>   3 files changed, 80 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+>>> index 64ea151a7ae3..2687928a8146 100644
+>>> --- a/include/linux/swapops.h
+>>> +++ b/include/linux/swapops.h
+>>> @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>>>   }
+>>>   #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>>>
+>>> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+>>> +
+>>> +/**
+>>> + * is_pmd_device_private_entry() - Check if PMD contains a device private swap entry
+>>> + * @pmd: The PMD to check
+>>> + *
+>>> + * Returns true if the PMD contains a swap entry that represents a device private
+>>> + * page mapping. This is used for zone device private pages that have been
+>>> + * swapped out but still need special handling during various memory management
+>>> + * operations.
+>>> + *
+>>> + * Return: 1 if PMD contains device private entry, 0 otherwise
+>>> + */
+>>> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+>>> +{
+>>> +       return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
+>>> +}
+>>> +
+>>> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>>> +
+>>> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+>>> +{
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>>> +
+>>>   static inline int non_swap_entry(swp_entry_t entry)
+>>>   {
+>>>          return swp_type(entry) >= MAX_SWAPFILES;
+>>>   }
+>>>
+>>> +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
+>>> +{
+>>> +       return is_pmd_migration_entry(pmd) || is_pmd_device_private_entry(pmd);
+>>> +}
+>>> +
+>>>   #endif /* CONFIG_MMU */
+>>>   #endif /* _LINUX_SWAPOPS_H */
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 1b81680b4225..8e0a1747762d 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -1703,17 +1703,45 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>>>          if (unlikely(is_swap_pmd(pmd))) {
+>>>                  swp_entry_t entry = pmd_to_swp_entry(pmd);
+>>>
+>>> -               VM_BUG_ON(!is_pmd_migration_entry(pmd));
+>>> -               if (!is_readable_migration_entry(entry)) {
+>>> -                       entry = make_readable_migration_entry(
+>>> -                                                       swp_offset(entry));
+>>> +               VM_WARN_ON(!is_pmd_non_present_folio_entry(pmd));
+>>> +
+>>> +               if (is_writable_migration_entry(entry) ||
+>>> +                   is_readable_exclusive_migration_entry(entry)) {
+>>> +                       entry = make_readable_migration_entry(swp_offset(entry));
+>>>                          pmd = swp_entry_to_pmd(entry);
+>>>                          if (pmd_swp_soft_dirty(*src_pmd))
+>>>                                  pmd = pmd_swp_mksoft_dirty(pmd);
+>>>                          if (pmd_swp_uffd_wp(*src_pmd))
+>>>                                  pmd = pmd_swp_mkuffd_wp(pmd);
+>>>                          set_pmd_at(src_mm, addr, src_pmd, pmd);
+>>> +               } else if (is_device_private_entry(entry)) {
+>>> +                       /*
+>>> +                        * For device private entries, since there are no
+>>> +                        * read exclusive entries, writable = !readable
+>>> +                        */
+>>> +                       if (is_writable_device_private_entry(entry)) {
+>>> +                               entry = make_readable_device_private_entry(swp_offset(entry));
+>>> +                               pmd = swp_entry_to_pmd(entry);
+>>> +
+>>> +                               if (pmd_swp_soft_dirty(*src_pmd))
+>>> +                                       pmd = pmd_swp_mksoft_dirty(pmd);
+>>> +                               if (pmd_swp_uffd_wp(*src_pmd))
+>>> +                                       pmd = pmd_swp_mkuffd_wp(pmd);
+>>> +                               set_pmd_at(src_mm, addr, src_pmd, pmd);
+>>> +                       }
+>>> +
+>>> +                       src_folio = pfn_swap_entry_folio(entry);
+>>> +                       VM_WARN_ON(!folio_test_large(src_folio));
+>>> +
+>>> +                       folio_get(src_folio);
+>>> +                       /*
+>>> +                        * folio_try_dup_anon_rmap_pmd does not fail for
+>>> +                        * device private entries.
+>>> +                        */
+>>> +                       folio_try_dup_anon_rmap_pmd(src_folio, &src_folio->page,
+>>> +                                                       dst_vma, src_vma);
+>>>                  }
+>>> +
+>>>                  add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>>>                  mm_inc_nr_ptes(dst_mm);
+>>>                  pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
+>>> @@ -2211,15 +2239,16 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>>>                          folio_remove_rmap_pmd(folio, page, vma);
+>>>                          WARN_ON_ONCE(folio_mapcount(folio) < 0);
+>>>                          VM_BUG_ON_PAGE(!PageHead(page), page);
+>>> -               } else if (thp_migration_supported()) {
+>>> +               } else if (is_pmd_non_present_folio_entry(orig_pmd)) {
+>>>                          swp_entry_t entry;
+>>>
+>>> -                       VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
+>>>                          entry = pmd_to_swp_entry(orig_pmd);
+>>>                          folio = pfn_swap_entry_folio(entry);
+>>>                          flush_needed = 0;
+>>> -               } else
+>>> -                       WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
+>>> +
+>>> +                       if (!thp_migration_supported())
+>>> +                               WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
+>>> +               }
+>>>
+>>>                  if (folio_test_anon(folio)) {
+>>>                          zap_deposited_table(tlb->mm, pmd);
+>>> @@ -2239,6 +2268,12 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>>>                                  folio_mark_accessed(folio);
+>>>                  }
+>>>
+>>> +               if (folio_is_device_private(folio)) {
+>>> +                       folio_remove_rmap_pmd(folio, &folio->page, vma);
+>>> +                       WARN_ON_ONCE(folio_mapcount(folio) < 0);
+>>> +                       folio_put(folio);
+>>> +               }
+>>
+>> IIUC, a device-private THP is always anonymous, right? would it make sense
+>> to move this folio_is_device_private() block inside the folio_test_anon()
+>> check above?
+>>
+> Yes, they are, there is discussion on file-backed mapping at
+> https://lwn.net/Articles/1016124/. I don't see a benefit from moving it, do you?
 
-:::::: The code at line 78 was first introduced by commit
-:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
+Ah, I see. Never mind :)
 
-:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+Cheers,
+Lance
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
