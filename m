@@ -1,154 +1,248 @@
-Return-Path: <linux-kernel+bounces-851147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F007CBD5A79
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:08:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56FCBD5A81
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 20:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A374240816A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:08:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 754264E9604
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 18:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372B32D29CF;
-	Mon, 13 Oct 2025 18:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7BB2D0C79;
+	Mon, 13 Oct 2025 18:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrGtBEGN"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NxJI06hh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839F12D29C7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B21259CA5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760378857; cv=none; b=rZ1WGUBuqTIRqaxiBMMGzdXgAdB8z94IsW6YTAvQCTv8vmcjqCe84glcZ6j0LBRKNoC/2FW06e7SxYCM9yW6oy/dIuV+4v+rNSAWHfnwCzQZRAGWwMaXOGJ288f+cdfXK7ARnHqxRTynfF7j3zrWf0L5/Cawzj/eZYEZqO4essM=
+	t=1760378984; cv=none; b=Bv0ZN294SGAeYv5OPYTxKLEx4BmOcKofyYd7CVUyOQRzlPeF/uc9zJudg3L6HCMXWNfwfH2/NlqQ80umCYJYgjEbDuLUIaA/01HAyzahDSgrMtj/B9s32ry/gqJMrTxBu9sRWxym52eQj7Dq2SAAxbbk9TCKVjzlPRQF/CPSL7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760378857; c=relaxed/simple;
-	bh=SRcEE8YV5HY2pFR30/wTx++ndvKQEjZlTLtkK+heSDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adhhf2RdT/YsOTOhV+9cLFUACEqNnIemk4i6KplBaZ9mGTITl46l9xg+M+WMx+QwHG6nz++rmEHZSp1W1LwyANwjbU+1QVIsEaWIKZStum3vi3Pg3jU26IiZnRN9UuuKAWq2bohHY8DRK8sN/NOmIZvSVJsfqs8bfxVuOy2i14M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HrGtBEGN; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27c369f8986so41335725ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:07:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760378855; x=1760983655; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HZVtd+3iFQaa5U7x6mzDDU8bWv6e1dDHCquo2ZcGTC0=;
-        b=HrGtBEGN/4qvQZhx07+8LWsyYIRWFLMT9iRX4NrEiqcqlRwJ6/hGrJxa6x9cmvoYiI
-         q63tzguqTf8/LKoNSPMv8zKMbuLULNb4cnZZYoOhtO+Pv24l278nZiPLq1ZooXrUDcxB
-         W6kGd80V52PjNXM8YxRXTJx9Fv3/HgHHC39ki3S+kCBzH3R+lyO3BKG7MPk5wd6BSf4e
-         nLanb83BSHi7vOe/ioquc50Vl2KjrwPxCetODDBZLPI3fdqnUyGzTe4setZJISVesZdp
-         8gshEvawYukXr9nkGt5dWe6R4PJBr/wqpWZaGgkmBjg0NB7CJ0Ph2Tge73sd7C9Q2Emz
-         bFug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760378855; x=1760983655;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZVtd+3iFQaa5U7x6mzDDU8bWv6e1dDHCquo2ZcGTC0=;
-        b=MCWzueJv6WEYceE+7eQTL5i8pH9YIon4K/azLIEIHHkSy6ZtXYWEsbaLRwy2FwqZhY
-         TBCjEwbHuDWXfbiX425RqdMMbladioSbiDCF3ZvDT4wlE52QSbnXFtNDfCLMGRKYsWHh
-         JKcDBOPyTi3GLQhC4d8LsNwa+Mhxbct5ZNDkI+Lbyq+wEdTKuzuqptX64laUTRpU/gpl
-         XicKFMKwkdlkw0kgK3072MiPgtQDhhdNdVir0utRGTXyR1OKppFHwsSzpkc4M0i5Vlhx
-         97xdEOM4hYfxfYwSMm5FRj9xPeqYZDLWh3N8nqXcMCma4zWrEn/5vnLqWP8KhJHPOuEN
-         69Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+vI7Qr+3Wk6ucvTV/W6dCnRZaFcdgUel5VRPy9F7AWJByAy4hY3IDH/xAGSXVdWZ8xsuQSyUn+QGsVGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPyx2RM2NdiztZ4Ujocuo1YqpN1WncV7CXWph8UcAjZCmO3reH
-	LGFYbn6qTVC31XVWW2hplT7egpWlj3s4wMsMOyx1HWi+pjBZFEJgxyfV
-X-Gm-Gg: ASbGncvSexR4ZLJEfjKlULHHAK93cO3YEoUP284JR5v+haL/v1islRtdO/IDfMGQoA6
-	YKDkYAus1+bgwxmw9PFLK7kkVjY3W7jbplNdKK1rV1uzhwnrXvSfOxAE6ikkMoCdolq3c1TgVXR
-	kk1HEm11LvBMyVQ7Yg708+7KSNEP09gcf2KJ/8xLl9zxkVyUKL1JljI5YgjAIexTFC5ZACipEyZ
-	5quBlNPmZdq4x+EAsRIgUzBft4wBfdL+Sqn7mzoC6+OIArG7bOb6vyXY+hBvwzcr3reNWAQqifH
-	Yfz1PmmqGF0n0HfPwsDdoWDI98ym8gKFYN0nEu5QhVWqhlxp6TvWPny39PduErG1lnsGsZjswmU
-	mvrejA5wuDRz8sBVhZgBCpLlGUi+qGAu9bdpThb9jpor8PCloUMK97g==
-X-Google-Smtp-Source: AGHT+IF5A7W5iglqkFaWR2GaobapUU63kWWiX/eVkJjMFSGgRqOgtD7ZdUd9FH8FlDqrG6ZJvOpaCQ==
-X-Received: by 2002:a17:903:1447:b0:275:3ff9:ab88 with SMTP id d9443c01a7336-290273ffcc7mr316143845ad.49.1760378854738;
-        Mon, 13 Oct 2025 11:07:34 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e47341sm139032795ad.57.2025.10.13.11.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 11:07:34 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 13 Oct 2025 11:07:33 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
-Message-ID: <df266709-a9b3-4fd8-af3a-c22eb3c9523a@roeck-us.net>
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com>
- <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1760378984; c=relaxed/simple;
+	bh=4fXevMhK/wmq7g2S8wHUm3VORemgJE2/LVjCQ1Y8QJM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EP6TB45eZlWAE71378EJ3qI7xFukhp726nwUX38p34AXoUn+zM8tNXlXctDGhCEfcW95UlihVcOOVV4cBLaQUsbEiOxGAtqFTSoL8trtjvC1WgSCfYGoQKmPI2JIsmYHjGvR1nAJrjwjWJodfP27Mco5ieekn6KoWGdnu1CjI0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NxJI06hh; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760378983; x=1791914983;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=4fXevMhK/wmq7g2S8wHUm3VORemgJE2/LVjCQ1Y8QJM=;
+  b=NxJI06hh+7iDzkDGHrXCFFsZwJokURfwStqt7HnNMrqd2h9xt4JU3Nh9
+   gv1jlzHdZaFCjllUQ+ERIsl56NXe0rata1rA2Php6XcZoN/z4ft4Zi5VJ
+   VdMlUXfLsOnZa+PF/5cgt0Lxpxqt6AoTfUicOUUwRlG/jH63PdIKk6zYb
+   72uLWfPvJOVCp6oDK9S2/flW4Tqb9XsyDz/I/F3bBN7/jUWNNx1dcrRi8
+   XAPU98xGwEr/qjq29qSMaJQNmWkxmz+LaAfIDiO7BdXnxHAJbmv1Edeau
+   t+kNf9vfdUmDITUw5JjpmuVn+sr8JNTHDpxMunudfSg+moeeX9iiIssss
+   Q==;
+X-CSE-ConnectionGUID: ACUSLUaBTxi4e2AM4Byrcg==
+X-CSE-MsgGUID: 3Bo6o7NWRj2PWJYWnEMBpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73871759"
+X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; 
+   d="scan'208";a="73871759"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 11:09:42 -0700
+X-CSE-ConnectionGUID: E4JQEVwqS3uX8VCWbWX9HA==
+X-CSE-MsgGUID: Ey2K6aJLRQe5nqBtI6Z8jQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; 
+   d="scan'208";a="181469341"
+Received: from unknown (HELO [10.241.242.139]) ([10.241.242.139])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 11:09:42 -0700
+Message-ID: <eed85200babfcfd43669270912176d38b8cc8f69.camel@linux.intel.com>
+Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D=EF=BC=9A=5BInternet=5D=5BPATCH?=
+ 06/19] sched/fair: Assign preferred LLC ID to processes
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: =?UTF-8?Q?vernhao=28=E9=83=9D=E4=BF=A1=29?= <vernhao@tencent.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, K
+ Prateek Nayak <kprateek.nayak@amd.com>,  "Gautham R . Shenoy"
+ <gautham.shenoy@amd.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
+ <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
+ <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
+ <tingyin.duan@gmail.com>, Len Brown <len.brown@intel.com>, Aubrey Li	
+ <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>, Chen Yu	
+ <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>, Libo Chen	
+ <libo.chen@oracle.com>, Adam Li <adamli@os.amperecomputing.com>, Tim Chen	
+ <tim.c.chen@intel.com>, linux-kernel <linux-kernel@vger.kernel.org>
+Date: Mon, 13 Oct 2025 11:09:41 -0700
+In-Reply-To: <tencent_660411F01236A0D747E5BF2B@qq.com>
+References: <tencent_660411F01236A0D747E5BF2B@qq.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
 
-Hi,
-
-On Wed, Sep 24, 2025 at 04:42:27PM +0300, Ilpo Järvinen wrote:
-> Bridge windows are read twice from PCI Config Space, the first read is
-> made from pci_read_bridge_windows() which does not setup the device's
-> resources. It causes problems down the road as child resources of the
-> bridge cannot check whether they reside within the bridge window or
-> not.
-> 
-> Setup the bridge windows already in pci_read_bridge_windows().
-> 
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+On Mon, 2025-10-13 at 17:10 +0800, vernhao(=E9=83=9D=E4=BF=A1) wrote:
+>=20
+> Tim Chen<tim.c.chen@linux.intel.com>=C2=A0=E5=9C=A8 2025=E5=B9=B410=E6=9C=
+=8812=E6=97=A5 =E5=91=A8=E6=97=A5 2:18 =E5=86=99=E9=81=93=EF=BC=9A
+> With cache-aware scheduling enabled, each task is assigned a
+> preferred LLC ID. This allows quick identification of the LLC domain
+> where the task prefers to run, similar to numa_preferred_nid in
+> NUMA balancing.
+>=20
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 > ---
+> =C2=A0include/linux/sched.h | 1 +
+> =C2=A0init/init_task.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3 +++
+> =C2=A0kernel/sched/fair.c=C2=A0=C2=A0 | 7 +++++++
+> =C2=A03 files changed, 11 insertions(+)
+>=20
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index d7ddb7ce6c4b..8a5e4038cd5c 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1402,6 +1402,7 @@ struct task_struct {
+> =C2=A0
+> =C2=A0#ifdef CONFIG_SCHED_CACHE
+> =C2=A0 struct callback_head cache_work;
+> + int preferred_llc;
+> =C2=A0#endif
+> =C2=A0
+> =C2=A0#ifdef CONFIG_RSEQ
+> diff --git a/init/init_task.c b/init/init_task.c
+> index e557f622bd90..5fffbe766f57 100644
+> --- a/init/init_task.c
+> +++ b/init/init_task.c
+> @@ -188,6 +188,9 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES=
+) =3D {
+> =C2=A0 .numa_group =3D NULL,
+> =C2=A0 .numa_faults =3D NULL,
+> =C2=A0#endif
+> +#ifdef CONFIG_SCHED_CACHE
+> + .preferred_llc=C2=A0 =3D -1,
+> +#endif
+> =C2=A0#if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+> =C2=A0 .kasan_depth =3D 1,
+> =C2=A0#endif
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 61c129bde8b6..d6167a029c47 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -1312,6 +1312,7 @@ void account_mm_sched(struct rq *rq, struct task_st=
+ruct *p, s64 delta_exec)
+> =C2=A0 struct mm_struct *mm =3D p->mm;
+> =C2=A0 struct mm_sched *pcpu_sched;
+> =C2=A0 unsigned long epoch;
+> + int mm_sched_llc =3D -1;
+> =C2=A0
+> =C2=A0 if (!sched_cache_enabled())
+> =C2=A0 return;
+> @@ -1342,6 +1343,12 @@ void account_mm_sched(struct rq *rq, struct task_s=
+truct *p, s64 delta_exec)
+> =C2=A0 if (mm->mm_sched_cpu !=3D -1)
+> =C2=A0 mm->mm_sched_cpu =3D -1;
+> =C2=A0 }
+> +
+> + if (mm->mm_sched_cpu !=3D -1)
+> + mm_sched_llc =3D per_cpu(sd_llc_id, mm->mm_sched_cpu);
+>=20
+> In high-concurrency multi-threaded scenarios, not all threads handle same=
+ events, so their hot data in the LLC is not completely shared.=C2=A0
+> Therefore, if every thread's preferred LLC is migrated to the LLC pointed=
+ to by mm->mm_sched_cpu, this would lead to the incorrect=C2=A0
+> assumption that all threads prefer the same LLC, thereby intensifying com=
+petition between LLCs.
 
-This patch causes some boot test failures for me. Specifically, booting
-alpha images from PCI through a PCI bridge fails. Reverting it fixes
-the problem.
+Yes, that's the reason why we stop aggregating to the preferred LLC once th=
+e the utilization of the
+LLC becomes too high relative to the other LLCs.
 
-Bisect log attached for reference.
+If you know your threads characteristics before hand on which of them
+share data together, you probably can use cgroup/cpuset
+from user space to separate out the threads. =C2=A0
 
-Guenter
+There's not enough info from occupancy data for OS to group
+the threads by data sharing. Perhaps an alternative if NUMA balancing
+is on is to group tasks by their task numa group instead of by mm. =C2=A0
 
----
-# bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
-# good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
-git bisect start 'HEAD' 'v6.17'
-# good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
-git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
-# good: [bed0653fe2aacb0ca8196075cffc9e7062e74927] Merge tag 'iommu-updates-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux
-git bisect good bed0653fe2aacb0ca8196075cffc9e7062e74927
-# good: [6a74422b9710e987c7d6b85a1ade7330b1e61626] Merge tag 'mips_6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
-git bisect good 6a74422b9710e987c7d6b85a1ade7330b1e61626
-# bad: [522ba450b56fff29f868b1552bdc2965f55de7ed] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-git bisect bad 522ba450b56fff29f868b1552bdc2965f55de7ed
-# bad: [256e3417065b2721f77bcd37331796b59483ef3b] Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
-git bisect bad 256e3417065b2721f77bcd37331796b59483ef3b
-# bad: [2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92] Merge tag 'pci-v6.18-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci
-git bisect bad 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
-# bad: [531abff0fa53bc3a2f7f69b2693386eb6bda96e5] Merge branch 'pci/controller/qcom'
-git bisect bad 531abff0fa53bc3a2f7f69b2693386eb6bda96e5
-# bad: [fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3] Merge branch 'pci/resource'
-git bisect bad fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3
-# good: [0bb65e32495e6235a069b60e787140da99e9c122] Merge branch 'pci/p2pdma'
-git bisect good 0bb65e32495e6235a069b60e787140da99e9c122
-# good: [ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd] PCI: Use pbus_select_window_for_type() during IO window sizing
-git bisect good ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd
-# good: [15c5867b0ae6a47914b45daf3b64e2d2aceb4ee5] PCI: Don't print stale information about resource
-git bisect good 15c5867b0ae6a47914b45daf3b64e2d2aceb4ee5
-# good: [dc32e9346b26ba33e84ec3034a1e53a9733700f9] PCI/pwrctrl: Fix device leak at device stop
-git bisect good dc32e9346b26ba33e84ec3034a1e53a9733700f9
-# good: [4c5cd8d64172de3730056366dc61392a3f2f003a] Merge branch 'pci/pm'
-git bisect good 4c5cd8d64172de3730056366dc61392a3f2f003a
-# bad: [a43ac325c7cbbfe72bdf9178059b3ee9f5a2c7dd] PCI: Set up bridge resources earlier
-git bisect bad a43ac325c7cbbfe72bdf9178059b3ee9f5a2c7dd
-# first bad commit: [a43ac325c7cbbfe72bdf9178059b3ee9f5a2c7dd] PCI: Set up bridge resources earlier
+That would incur the page scanning overhead etc and make
+cache aware scheduling be dependent on NUMA balancing.
+=20
+
+>=20
+> So I'm wondering, why not move =E2=80=98mm->mm_sched_cpu=E2=80=99 to =E2=
+=80=98task_struct=E2=80=99, so that each thread can individually track its =
+preferred LLC? What are the losses in doing so?
+
+You would need a way to group related tasks together and put them
+on the same LLC.  Either group them by mm or some other means.
+
+Tim
+
+>=20
+> +
+> + if (p->preferred_llc !=3D mm_sched_llc)
+> + p->preferred_llc =3D mm_sched_llc;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static void task_tick_cache(struct rq *rq, struct task_struct *p)
 
