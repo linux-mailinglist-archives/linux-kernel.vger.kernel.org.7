@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-850066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1353ABD1C37
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:22:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC7CBD1C40
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 055B64E545C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2113A3B22AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 07:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EF62E8897;
-	Mon, 13 Oct 2025 07:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06902E888C;
+	Mon, 13 Oct 2025 07:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YODe4cti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gsJhcPFn"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE2F2566;
-	Mon, 13 Oct 2025 07:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681AF2E7F20
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 07:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760340138; cv=none; b=DlUADpvfL2Z0jdzTis47FM8xFy0EgmNiqEDEmskFIxACJwjPo7InLKHwy2cNEBaQKNFq7MeJKEUuwa3KRkQ3uZ9H2zA1wLTwY4lM1PHQGiEnDu6Xr+/Hm1wF0EFgu6Jw4aIeHR9pegpiyVBdlySrlQnuEgpaS8tYouTksjxFfgQ=
+	t=1760340156; cv=none; b=efWRo2TChJeddkjo/088sxbQS0Z+dRLdy2wD1k+/o7PZFdNqO5KfNEaFOeR8gFBHZB8YNVpPkxF6737JoI62WnODH1VGMJQMk32Sm4ng8FBoEfbo+Uhp7J46gQFVKrXTQoCGOk1DYn6saUrsu2kuY/NPeivxY6m3K4gcZoyYl2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760340138; c=relaxed/simple;
-	bh=G2x5sg9A9w1B3YbjixDZET8wQw7wwwOLYYyFNWZCQ6E=;
+	s=arc-20240116; t=1760340156; c=relaxed/simple;
+	bh=iS41tnuuZhOJfyWt3/L8/kZCrwR00aDmJKYBiDSjaGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OyOMJl6Adp85cEDG7w7tDL8syTmLwvoADRPE3whfCxvtl0rAgNZ+QlawujlVh/S5yx0eR8yFn4ZKlPfaq4mteGSNUiGnIF6CE6Kf94ZdVUw1GWJqmHdurFGNUb+dD/F/h8SZRdJS8QYewn6cMjN8pQI/M+R9cFjDLBCXCnC/MPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YODe4cti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7C2C4CEE7;
-	Mon, 13 Oct 2025 07:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760340137;
-	bh=G2x5sg9A9w1B3YbjixDZET8wQw7wwwOLYYyFNWZCQ6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YODe4ctiyAHqifa+d1bqWl6u2Wn0+80JlnSbABnz245cARDAUJcEsh5rQnkDd/1Wq
-	 do6MUm3uucJztudtqdqOcpZuquwhNeVR9O1C7SfjCeMM/qaLw/T6Vrw6Kp9m2owhrl
-	 c36QxzuW1zh3A0Zg5ySk1a1cGWg/BJmGKhJChyrqesr/vt6LEVG1GrTNO8cOK33EBt
-	 TP9RolxpPrmkV00rHFFsqSwHOwga2hPZ6J8MLGINjuOU8Tx2XbFri7V8bz74Nof60s
-	 yWLfndXmPzheRWFNjks3p6geBpHNyMmmNWav+gL4h4RRwnk/K0vwwVvI/8Bw27fRgC
-	 dyUdV3+Lulj8Q==
-Date: Mon, 13 Oct 2025 10:22:13 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-hardening@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] keys: Replace deprecated strncpy in
- ecryptfs_fill_auth_tok
-Message-ID: <aOyopfvzg9HNPB4k@kernel.org>
-References: <20251010161340.458707-2-thorsten.blum@linux.dev>
- <202510101543.80A1D4E3@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnclsUsigMDtL0uZDgRt7mke6aucvVjXv6XUeV4ybvi9VaEBNhsCAEFjFCFslXosiOBUh1hSrgsLQgKtLxBSEkENZKMyXju76SUIkZLmDgcPA11VeaxUja/lU8HrINjH0p3k8eHI5h/gbaX1x2xpJBwoIGDXbr+OMO2cMlCanJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gsJhcPFn; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=gh19
+	CUbt+mZqdDIoD3K8ujL0f4BPFWA/7f0FphTIE+Q=; b=gsJhcPFnDicgxwQZmng2
+	+DTE9wquyJ3NLsrU+ZTuwnElqhJ6Ebnr7o2SvttmR9pD+i9DbJlDTg6axlEIn6hg
+	uwaXuuFLxicmAJTywF3x/wh7FM9RkWNW+1rzimGES8K/p8pIY5RrXmF3oLgzRvqc
+	2EyBx2wxduH6Fg/f+3zlm8nm+HkwwBHK2cjjCEdW2wUbG9PvqayuZFIhs0B0+Tz8
+	29Rp59IHjypSEP9IW07lU91y2tcEcxekUAUOB8ouNEg1Zd496/aAtEfMORfAJJqY
+	8XRf1Y9ss9OGWw9z7VEFaxvtAyHsZKen0ZTVixw9pLSQNupJKZFJWUbb5c0nkaRo
+	tA==
+Received: (qmail 2414882 invoked from network); 13 Oct 2025 09:22:22 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Oct 2025 09:22:22 +0200
+X-UD-Smtp-Session: l3s3148p1@bMaZIAVBerogAwDPXwQHAL/S9V79e5yL
+Date: Mon, 13 Oct 2025 09:22:17 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [RFC] clocksource/drivers/sh_cmt: Always leave device running
+ after probe
+Message-ID: <aOyoqfOQKRh81daL@shikoro>
+References: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TYHTGF8awE9qZkeC"
+Content-Disposition: inline
+In-Reply-To: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
+
+
+--TYHTGF8awE9qZkeC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202510101543.80A1D4E3@keescook>
 
-On Fri, Oct 10, 2025 at 03:48:48PM -0700, Kees Cook wrote:
-> On Fri, Oct 10, 2025 at 06:13:41PM +0200, Thorsten Blum wrote:
-> > strncpy() is deprecated for NUL-terminated destination buffers; use
-> > strscpy_pad() instead to retain the zero-padding behavior of strncpy().
-> > 
-> > strscpy_pad() automatically determines the size of the fixed-length
-> > destination buffer via sizeof() when the optional size argument is
-> > omitted, making an explicit size unnecessary.
-> 
-> I would explicitly say that the old code was NUL terminating the buffer
-> due to it being "ECRYPTFS_PASSWORD_SIG_SIZE + 1" sized with strncpy
-> left to fill ECRYPTFS_PASSWORD_SIG_SIZE. And then you have to answer the
-> question, "how was this initialized?" and trace it back to:
-> 
->         epayload = kzalloc(sizeof(*epayload) + payload_datalen +
->                            datablob_len + HASH_SIZE + 1, GFP_KERNEL);
-> 
-> so the final byte was always being zeroed there, but now we're
-> explicitly zeroing it (good). So there _is_ a functional change (we're
-> writing 1 more byte here now), but it's more robust that way. There is
-> no expected _logical_ change, though, yes.
+Hi Niklas,
 
-Thanks for the remarks.
+thanks for your work on these timers!
 
-Thorsten, would you mind posting +1 with the commit message changes,
-and reviewed-by tags (from me and Kees).
+> For non-PREEMPT_RT builds this is not really an issue, but for
+> PREEMPT_RT builds where normal spinlocks can sleep this might be an
+> issue. Be cautious and always leave the power and clock running after
+> probe.
 
-> 
-> > 
-> > In encrypted_init(), the source string 'key_desc' is validated by
-> > valid_ecryptfs_desc() before calling ecryptfs_fill_auth_tok(), and is
-> > therefore NUL-terminated and satisfies the __must_be_cstr() requirement
-> > of strscpy_pad().
-> > 
-> > No functional changes.
+I am not a super-duper PM expert but this sounds pretty reasonable to
+me. Only minor comments:
 
-[just as reminder: removing this sentence was my earlier remark]
+>  		ret = -ETIMEDOUT;
+> -		goto err1;
+> +		return ret;
 
-> > 
-> > Link: https://github.com/KSPP/linux/issues/90
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> 
-> With "ECRYPTFS_PASSWORD_SIG_SIZE + 1" and tracing of the destination
-> buffer initialization added to the commit log:
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> 
-> -Kees
-> 
-> -- 
-> Kees Cook
+return -ETIMEDOUT;
 
-BR, Jarkko
+>  	if (!(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
+> -		pm_runtime_get_sync(&ch->cmt->pdev->dev);
+>  		ret = sh_cmt_enable(ch);
+>  	}
+
+Curly braces can go.
+
+>  	if (f && !(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
+>  		sh_cmt_disable(ch);
+> -		pm_runtime_put(&ch->cmt->pdev->dev);
+>  	}
+
+ditto.
+
+And I don't if this is a seperate patch or not, but we could simplify
+probe a little by using 'clk_prepare_enable()'...
+
+Happy hacking,
+
+   Wolfram
+
+
+--TYHTGF8awE9qZkeC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjsqKUACgkQFA3kzBSg
+KbYXjg//cNrHJwYHmq4N6DZOP4GBjiTen67p1+cbVDJgXIPS2xxy01at4dtrrWcH
+S4bzJsriSFYxbaE16k3RAkwxxzxaSQMsXI3EFfXcKRxS3Jc46n+de69Q8QRsjXZz
+/PHq3RnhXgcSp1Cbg1X1dw+gZPXlco38NfdxqGqvmfwwweIMIjc2ugxt/Bl2FsRT
+UkUgMzspYkAxMOPWbwYSSMd6Afh1waZLozjko7mhprVjhicnsG1f+EZsbEX2Snlg
+Ld23HLPLlhwv4InNRSaANMZvzLP/GdCTd1ABmTCcV0DparZEyvRWueEnlfJYQCjG
+iFI1fcWY+XblYQR9PecpAywvzerQ5NeYdxOpXMlzfpyW5F3Wv2U/AE8uhVoHrpMm
+5+es3P8sd3DEPPGPEUCb0IqXHG2F/FcIOJhVn0G0r7HE835keZiwn/ERyQ+Xr2ek
+wxOgvdgYzMMoIrpiWeqt1SA/t+ljX8KiFkF9pr/NtgqeYAk4cCFz5690FYJPM3v/
+4lNgwWIEiko/rnU1STZNvV8LYoRxxsyC4ollTeKjHY1Va8C9mRUcMqoc5b8tOsYu
+OLHbEY7qhkhdlYF9ROZvbGw6c6wvko7tHPuWESIezSx/fBH2wkBRlxHlKZA8bTLt
+KzWOjCMf2BC1PTP4wxuFIe3Xjxmtb+s3e0yKg9hPkVpRvM9lEuM=
+=fhm6
+-----END PGP SIGNATURE-----
+
+--TYHTGF8awE9qZkeC--
 
