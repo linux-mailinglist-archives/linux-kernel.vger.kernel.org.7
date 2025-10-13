@@ -1,46 +1,45 @@
-Return-Path: <linux-kernel+bounces-850859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600AEBD4949
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:54:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAE0BD447D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7713E6E15
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0BF1883BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 15:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC73B30AD1B;
-	Mon, 13 Oct 2025 15:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F338313280;
+	Mon, 13 Oct 2025 15:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XgzZweWk"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="YX4mAnnB"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CEE30AD03
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BD330AD09
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760368681; cv=none; b=TQErcx3AYYUCr+jqEuXZgBB4yqWpQKXB2RB/m0EtsRFgVTiyJTAzB8r52XXLBtJexDhQ1hYtu496NMR+daeAVr7izNF1PWZ8cBMJVumj3DQVQ7u1WiaMVIvOFBzfqsv0WAAsyYpyZANx1+/QtQq5+BXIDHNCj4vB/IHnCSA/hCg=
+	t=1760368684; cv=none; b=Of4RZweaF74XMPrMp+VV64c8kTeiS7efxfMGpDcjPpHUU69J6P4+9/YdP792aWhcAR4JSycgAl3FozGDLgqs3Jj4fk1MkkRy9LJA4+XU6QjBsil5nRBAy+m3xm7aQDFoLele3G60GFiSmMOR98JR3b44K3/6vEAfJblRMFB4FGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760368681; c=relaxed/simple;
-	bh=HC4YPP7F9f5/8XpQpN3pCxcZl4ZWvihPACOD9G2RUOs=;
+	s=arc-20240116; t=1760368684; c=relaxed/simple;
+	bh=hzol1noZC1ZW5OidI1eG4X/7ERixSktCfo7WToDn4Ic=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OFVmP/LtDhMqXAny1MZ8k99yfa+ZZXRI59lgN+jjoRPZ3jDZdTTMmr/73hbNz0C1PNLjyOQSZwhVkTdDgo7jvJX9iQkPZWys8qhEeL+KBGk4f3KGoj3f5dGVA/YrsULxJEnPx75pEWjed8QPEN3zmPYRaQ2tb1o49BeVJlPJ7nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XgzZweWk; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=he6jEV8+top5Lyl4yqATdMmhOmjulTzxiz+WZWByJ6HgYwU6AtGNkFwF6k3wI+vKHWiug/jFXHqeA/U1X8PqWb0+oJpb470T/qDcZCIojGfuKc0gYf8LB82w6efwWmzJTvLzwC0r3HIGi71JHMuUJVQos52mQeGPlndv1H9kgBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=YX4mAnnB; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1760368677;
-	bh=HC4YPP7F9f5/8XpQpN3pCxcZl4ZWvihPACOD9G2RUOs=;
+	bh=hzol1noZC1ZW5OidI1eG4X/7ERixSktCfo7WToDn4Ic=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XgzZweWkP7HgPeOFK9l4odAyT04nglkkumkMx27cnoVs2pkVXggCIwfpDV0xBk80S
-	 GsArnGU2HgnAzLBMeUiO1XQB5ZFlxDOQjnaBohoJHmn7OjNWA52L2eRVfxjB5U5yyz
-	 oWVYBOm7gDHzWCyZ2VRkr5uqBT0YKgfit+xG6n0I=
+	b=YX4mAnnBzUwomHzXUgIMl2M+CAK0tIw9IopNhPdO2q63jnDfhprMgs79xFo9+63ca
+	 OLCE66+d70A+kgN4y4OWkPJNe7aCpVd2kx/iNEXqYF/7gWiSe8OgMueDdn9LQVydYf
+	 +/h+J2ekBUhS5nr4TOLX2uVM2HVuQB8/8mMo2Hfw=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 13 Oct 2025 17:17:55 +0200
-Subject: [PATCH v4 2/7] sysfs: transparently handle const pointers in
- ATTRIBUTE_GROUPS()
+Date: Mon, 13 Oct 2025 17:17:56 +0200
+Subject: [PATCH v4 3/7] sysfs: introduce __SYSFS_FUNCTION_ALTERNATIVE()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +48,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251013-sysfs-const-attr-prep-v4-2-e0d36e828334@weissschuh.net>
+Message-Id: <20251013-sysfs-const-attr-prep-v4-3-e0d36e828334@weissschuh.net>
 References: <20251013-sysfs-const-attr-prep-v4-0-e0d36e828334@weissschuh.net>
 In-Reply-To: <20251013-sysfs-const-attr-prep-v4-0-e0d36e828334@weissschuh.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -57,42 +56,46 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760368676; l=1044;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760368676; l=1343;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=HC4YPP7F9f5/8XpQpN3pCxcZl4ZWvihPACOD9G2RUOs=;
- b=8Dm8CIpShyi3yU/5hFkgvK0gYk3znKEYFfCh/zw22A3BzEpvZXPacg/YduEZSssDfOh9tZOuc
- HK+Ttsp/xEEBuL039wdPDwolgm0cFqO8+ZREtu6ArtM0CZYpAMaUZ7D
+ bh=hzol1noZC1ZW5OidI1eG4X/7ERixSktCfo7WToDn4Ic=;
+ b=DxQQe91LKiMRQGS7dyyMuogPmI/jmlZ9J0F4SL+pwO8xdJv5/sGpd2pqAPkIyHEC4wBxqgTSJ
+ SPb4KYXzDTYBVqZHt0tUxjqtvhVfbprr8CHmgnh2MHuSbK2b3uCWz7W
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-To ease the constification process of 'struct attribute', transparently
-handle the const pointers in ATTRIBUTE_GROUPS(). A cast is used instead
-of assigning to .attrs_new as it keeps the macro smaller. As both
-members are aliased to each other the result is identical.
+For the constification phase of 'struct attribute' various callback
+struct members will need to exist in both const and non-const variants.
+Keeping both members in a union avoids memory and CPU overhead but will
+be detected and trapped by Control Flow Integrity (CFI). By deciding
+between a struct and a union depending whether CFI is enabled, most
+configurations can avoid this overhead. Code using these callbacks will
+still need to be updated to handle both members explicitly.
+In the union case the compiler will recognize that testing for one union
+member is enough and optimize away the code for the other one.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- include/linux/sysfs.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/linux/sysfs.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index e34d6af96abb..92f82cee5f11 100644
+index 92f82cee5f11..02e5a9f946ee 100644
 --- a/include/linux/sysfs.h
 +++ b/include/linux/sysfs.h
-@@ -287,7 +287,12 @@ static const struct attribute_group *_name##_groups[] = {	\
+@@ -58,6 +58,12 @@ do {							\
+ #define sysfs_attr_init(attr) do {} while (0)
+ #endif
  
- #define ATTRIBUTE_GROUPS(_name)					\
- static const struct attribute_group _name##_group = {		\
--	.attrs = _name##_attrs,					\
-+	.attrs = _Generic(_name##_attrs,			\
-+			  struct attribute **:			\
-+				_name##_attrs,			\
-+			  const struct attribute *const *:	\
-+				(void *)_name##_attrs		\
-+	),							\
- };								\
- __ATTRIBUTE_GROUPS(_name)
- 
++#ifdef CONFIG_CFI_CLANG
++#define __SYSFS_FUNCTION_ALTERNATIVE(MEMBERS...) struct { MEMBERS }
++#else
++#define __SYSFS_FUNCTION_ALTERNATIVE(MEMBERS...) union { MEMBERS }
++#endif
++
+ /**
+  * struct attribute_group - data structure used to declare an attribute group.
+  * @name:	Optional: Attribute group name
 
 -- 
 2.51.0
