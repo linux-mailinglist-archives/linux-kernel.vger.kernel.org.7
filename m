@@ -1,235 +1,203 @@
-Return-Path: <linux-kernel+bounces-851522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F69BD6A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:40:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA410BD6A75
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6804335012F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:40:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB48B4E1AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 22:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ADF309DC0;
-	Mon, 13 Oct 2025 22:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4362D94A2;
+	Mon, 13 Oct 2025 22:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnlunlRK"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sLuzqSym"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80323308F0A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBE72AD1F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760395055; cv=none; b=Nv8n/8s/qNft/L8pwiRNPyKRU6i6apy7fxLHDt820ARLpQQrf6z88wFLlNk/GFX6F3e+Q+cuYYr4t9t8cgnYgBdIZqdZU0NdtPm9YEUIqp4LmbX2FvqpcAGb8xuZkPMXLEdplPYWq4/F4IF8+scxXzNvWLmEkQm7uf5aGYpDPJ0=
+	t=1760395532; cv=none; b=HmkVq79VP8BSLkkR9f8tunngKR9kIwOIUu3x3yMXBpqXZw4ypYQ16QzqIoV3s3Scn2h3VQJkBCIMW+i6hSFMhhxhgy2gT06Vgyc32JPAGCnA3reU5s30orfuVhq/QYl0tmPQu1O0l6hPbYv2+GUpfSbIAsd8+PGf7CNAHX3yx9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760395055; c=relaxed/simple;
-	bh=4zPbmz/GYQ9Xc4qksgNbJt7SIAPFTibdbVLdYd1h/gE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cwgxej6jNRTziwSadjWU8CP/7DRlBAHyTk4HVc1xdflGLc0kme9/b5hio7S2V0pZWXN1xkQOdGKTV3lLtc7V05ygxecqNUGyQgjrTueFMovrpIuJF5YAG55lTytLmtFdA5RKuK9sTyo/E8tmR+L2yakj26l+KehFJAPQNMRznkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dnlunlRK; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e3cdc1a6aso34760555e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:37:33 -0700 (PDT)
+	s=arc-20240116; t=1760395532; c=relaxed/simple;
+	bh=RfuMQXyjPOT3ma5AnLtDpYmf16fg8dWi97XBTX6XRfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3HeBmhOUmMYfgt6Adw2zOA6UpvoizgYambIUFI534j85PTjGIXtpRXlgrfpfD9ynl+1yGZprH5ztqFGsMJSNv1hKlFGHkON2MFllPuMBIw89P8pnEbs1T9R4mvOE8RFrKgTj2RQSi9+cjlPGkMMtTMvN+OqjNBiqp7fZW2nVYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sLuzqSym; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-86420079b01so673923985a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 15:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760395052; x=1760999852; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=24Ftr7hy8LaAtQlSQs7NMC+zhhMlyRCsiGOHiR7triQ=;
-        b=dnlunlRK644J2QsmWvcBtfyWvA82YIqPFf+VOvLYpFv7Gztn22N6DqtI30tJqdkYF0
-         rU18qW5JSrU1ddKQon+W4nCG9bDiwRlaHDgoVgBw1MkurHlGlKMitcLHxXLmFbmsC89r
-         0ToxW6PG+8v5yWrykkurjBuG+0q9ffTmlxps9Q5DkMrlVx3SvnZJkebztuQgmwq2ZWJh
-         NaI2jb2N7y08lIjM8aZPQ8u6KCVJBbamEp1fmqrC386ZL3+c8bd8TxA7/ha6/Jy0h9P0
-         6E+CdaTisV9z6yK9CsZloeCSoKpo7x4TUfrQWgbbgvIerYj4bel6Uq1SsffgP8MGekKk
-         HFtA==
+        d=google.com; s=20230601; t=1760395529; x=1761000329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wRmnGZ/zy42nYZ59qh1y+RW5G0WN1Gjc0jyym9RgbUs=;
+        b=sLuzqSymwpGrNgcnyDTuZ2n37T1BSb6jCqW/RE1g0Id3nZ6RvU+B+ZgfqFfmQTmpCT
+         MCyzzkVy6qc0PKlIChAL6kq7IzdknBmqEIvSEOSknHdiYqm5Y5Dons9olsn3Qqht+/fb
+         TuduuX82KxfXqi5cD12S8lznGl1u0J6mYYyS6e71uOg7ZdVHexUQZMgHg+lxf3i9mYKB
+         EdTc95NTf1hBU5Fy+MwAPsCbD1mNZwSTEFifWMEGTROm9+N3EwHIpmcQ7/yKNoINnIPC
+         yi/fHbfdlbyCUwU7nbPQV61GRq/IZUp6PtfHxd4A2JcnmIRLV7JtCSMUSfOUAIz6Z+kb
+         3JVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760395052; x=1760999852;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=24Ftr7hy8LaAtQlSQs7NMC+zhhMlyRCsiGOHiR7triQ=;
-        b=nxkWV1MRArZpdifKcUYhtsHabjm5DIrWHOr6RK3GUihZ/QbRRS4vOECBcjHEcw6ms0
-         +Q1yeHpxCuExAJbnOCZm7i999jPeBtaMYIJcR9A2ZQ5l9sX0t6PyM/AxEJsgBWj2+ZhW
-         +7tQ9QEUdUT//fxL/URDOxVGQQG6ewE+TDVfoO0QNWpRUzYqToYywoktH2TTQHsEJ6K1
-         dvvlgV4WMh5Ho/rGN+Isk4UiZejWnc7v+D0tqyVMkHYR+VZ9QfkkxtrTj4spaP5rmTzD
-         b1hB60cE/JKfyQGeZPFQ//7jtvok0etREBo00UZNcKNc0g1kIPYnApTnUGE6ZDCKreQU
-         Y66w==
-X-Forwarded-Encrypted: i=1; AJvYcCW7PWSxSeBCawXh3wHAYKn6uzPrGOWZJPGf8BHd8Emf032lqlIpYDWqEy9rlDByWXen1zY9qEWmQcJSuVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcSSg+FR8b63fW99rEAMd8PNYadnCw/gCq/K0+j3foS4XQx3hJ
-	BFIGf00lOm3vvjFyut1+AwMUOWYprpGB2oJ28If4/gz7FRu4YVT4GiFP
-X-Gm-Gg: ASbGncvDcZ7WOhGSy1ZvEtbVfjY3y9gPQIeGcjoqSRCz11uiUO5LL4X8oCm8JbYFhTu
-	O+Qq72gqEAxEGdmeePmXaKpF5d6Uf8jwIUircfcBC7LuA6nFcW5wWXUfFRp5UFIlmMujDMTmyuT
-	CsRS06QGlQwagNs1cEHA1yDcYa3OSFXChM9VQIeynL9xF2ReBR+xgSh+9Pp6Dv+MHt7wtytt5zL
-	ev5frS6+Q98Z0RKKyKPRNSuf0KXy6Myde12R9lsnqBYgFnHDTRJLOiGUK7edi4uq/Q5qN+VuL55
-	FY4kdFYlX/4EEsVt21p4o7ZjWCMqoDV90tyDENUshyevoSQdT87eNBRlPWUGs8W3l9MsoZB0SpX
-	c2SRf+8k1i4WncwgnUgYs7U3wHaklmysBZ4HDoXLzhBiLsdqGRc2ZSoTM2Vrdp9re7nrFUwb374
-	LDnuVoDJ+8
-X-Google-Smtp-Source: AGHT+IEamLZvij5RfRNleTzFAVlezTx1ysHtzuQYGAsX+iOPJIp3KIAoTV4KFic1Q1UmEwJsLYhfCg==
-X-Received: by 2002:a7b:cc06:0:b0:46e:7dbf:6cc2 with SMTP id 5b1f17b1804b1-46fa296e763mr131783135e9.8.1760395051548;
-        Mon, 13 Oct 2025 15:37:31 -0700 (PDT)
-Received: from Ansuel-XPS24 (93-34-92-177.ip49.fastwebnet.it. [93.34.92.177])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46fb49d0307sm204948955e9.18.2025.10.13.15.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 15:37:31 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Krzysztof=20Ha=C5=82asa?= <khalasa@piap.pl>
-Subject: [PATCH] PCI/sysfs: enforce single creation of sysfs entry for pdev
-Date: Tue, 14 Oct 2025 00:37:16 +0200
-Message-ID: <20251013223720.8157-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1760395529; x=1761000329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wRmnGZ/zy42nYZ59qh1y+RW5G0WN1Gjc0jyym9RgbUs=;
+        b=DdtN1F8c2pA6XKgy/BLsxRraSrXVaOgwHtigldcSXeZsUhPVGwe/MaUjOXWbLTQkz9
+         XFLcaYeeFgprsDOqtjQ+16gjTaXPctt/NRbXXx6NJGT4XqwsK12YWuy8yP3LpDXWgATr
+         V7Glz1RKPH907KYYhLxbUjVNN4OZTYruG8WF7e6egVhtFsjiMSFr+kqjU6IJh8EiQL+n
+         RfEEUhcGw6UyTpyUFhi7iRYblztfeEiZlspM5zUQHK+fwQa5X1cADupooQGE9Cbd/ieV
+         smlwAmI9kCCqr2vZL1nvtJpgUWrb3/lGBMkfymgGX0Yu5BvrFdIlKCYUeFKOIAA/UBnQ
+         I95w==
+X-Forwarded-Encrypted: i=1; AJvYcCVAuHU5HBmW17ImRvdsMWnYdZOi3TnQlceTWgh80ZzprqmKcUcZlLYdP4iXmR1XzskvGM3jdbsD29BztqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/uRnX4ClQKmWs+cAUPKF9uFIe1i1B0ciKfySjkk1YqAXRgWcK
+	92ciZST/a8b9xXytedP+Bew5ijVBJCzYbvJEZDsvUixbFA7NuFisZUYN/dKlLonr2AFsZefuDmY
+	Ck9d5+1OOoyVIc2j1KQo86cR6Sv5hCahQC/4BaCKB
+X-Gm-Gg: ASbGncvMav07X8dWBjTjoM1yeannW4JBhGBH0a6wcGkeZViyi86b+SZwTFV59mMWKZG
+	jERFhj5LSHJxqNX0GNeZhPgQ1411TWek8p8YafosIqvozVjYHyy+cbgq1ownZthOv7GDS4KR5h+
+	4rew+cAocewZcB3qKcziilLdeq+zlT04IkjBxBTyLfrgU7W4c01dIo6ep23gQ6/LCD4vIntkvpr
+	FfkPaYWe3g9M+IizTFwpWHgbNEySEg0
+X-Google-Smtp-Source: AGHT+IEyBQJ9+NgnI6Vwc1iMLsIARDSgmDHZG2d0g69sBmPQuXWvD8cfj/l8HU8MSPv7cgoRhl3h7KQQsaUDkW61vS4=
+X-Received: by 2002:a05:622a:5a14:b0:4e5:8d07:ce80 with SMTP id
+ d75a77b69052e-4e6ead542d9mr346004041cf.41.1760395528701; Mon, 13 Oct 2025
+ 15:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <68ec1f21.050a0220.ac43.000f.GAE@google.com>
+In-Reply-To: <68ec1f21.050a0220.ac43.000f.GAE@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 13 Oct 2025 15:45:17 -0700
+X-Gm-Features: AS18NWCFTriU73j-H3EExYu3Yo_Vbc9WWcxv9a8UY6yK3Ksi9QNsg56Zjms1Scc
+Message-ID: <CANn89iKbof0PsFsPgdhMFeizu9uEkgmqWSQggDQ8EXA5jfxMRg@mail.gmail.com>
+Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
+To: syzbot <syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In some specific scenario it's possible that the
-pci_create_resource_files() gets called multiple times and the created
-entry actually gets wrongly deleted with extreme case of having a NULL
-pointer dereference when the PCI is removed.
+On Sun, Oct 12, 2025 at 2:35=E2=80=AFPM syzbot
+<syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    ffce84bccb4d Merge branch 'bpf-avoid-rcu-context-warning-=
+w..
+> git tree:       bpf
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D112559e258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1e0e0bf7e5156=
+5cd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D999eb23467f83f9=
+bf9bf
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1514d304580=
+000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cd489c5f530a/dis=
+k-ffce84bc.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e4a06e8e5022/vmlinu=
+x-ffce84bc.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c1111b7581ab/b=
+zImage-ffce84bc.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 36 at net/xfrm/xfrm_state.c:3306 xfrm_state_fini+0x2=
+6d/0x2f0 net/xfrm/xfrm_state.c:3306
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted syzkaller #0 PREEMPT=
+(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/02/2025
+> Workqueue: netns cleanup_net
+> RIP: 0010:xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3306
+> Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 4b f0 36 f8 48 8b 3b 5b 4=
+1 5c 41 5d 41 5e 41 5f 5d e9 99 e1 16 f8 e8 64 4d d1 f7 90 <0f> 0b 90 e9 fd=
+ fd ff ff e8 56 4d d1 f7 90 0f 0b 90 e9 60 fe ff ff
+> RSP: 0018:ffffc90000ac7878 EFLAGS: 00010293
+> RAX: ffffffff89edd6ec RBX: ffff888058e08000 RCX: ffff88801ce99e40
+> RDX: 0000000000000000 RSI: ffffffff8d9cc7ae RDI: ffff88801ce99e40
+> RBP: ffffc90000ac7990 R08: ffffffff8f9db437 R09: 1ffffffff1f3b686
+> R10: dffffc0000000000 R11: fffffbfff1f3b687 R12: ffffffff8f5d4bc0
+> R13: 1ffff92000158f3c R14: ffff888058e094c0 R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff888125e27000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007eff78efa6b0 CR3: 000000007788c000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4354
+>  ops_exit_list net/core/net_namespace.c:199 [inline]
+>  ops_undo_list+0x497/0x990 net/core/net_namespace.c:252
+>  cleanup_net+0x4d8/0x820 net/core/net_namespace.c:695
+>  process_one_work kernel/workqueue.c:3263 [inline]
+>  process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3346
+>  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+>  kthread+0x70e/0x8a0 kernel/kthread.c:463
+>  ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-This mainly happen due to bad timing where the PCI bus is adding PCI
-devices and at the same time the sysfs code is adding the entry causing
-double execution of the pci_create_resource_files function and kernel
-WARNING.
+#syz test
 
-To be more precise there is a race between the late_initcall of
-pci-sysfs with pci_sysfs_init and PCI bus.c pci_bus_add_device that also
-call pci_create_sysfs_dev_files.
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 95241093b7f0..17240503a366 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1744,6 +1744,8 @@ int __udp_enqueue_schedule_skb(struct sock *sk,
+struct sk_buff *skb)
 
-With correct amount of ""luck"" (or better say bad luck)
-pci_create_sysfs_dev_files in bus.c might be called with pci_sysfs_init
-is executing the loop.
+        atomic_add(size, &udp_prod_queue->rmem_alloc);
 
-This has been reported multiple times and on multiple system, like imx6
-system, ipq806x systems...
-
-To address this, imlement multiple improvement to the implementation:
-1. Add a bool to pci_dev to flag when sysfs entry are created
-   (sysfs_init)
-2. Implement a simple completion to wait pci_sysfs_init execution.
-3. Permit additional call of pci_create_sysfs_dev_files only after
-   pci_sysfs_init has finished.
-
-With such logic in place, we address al kind of timing problem with
-minimal change to any driver.
-
-A notice worth to mention is that the remove function are not affected
-by this as the pci_remove_resource_files have enough check in place to
-always work and it's always called by pci_stop_dev.
-
-Cc: stable@vger.kernel.org
-Reported-by: Krzysztof Hałasa <khalasa@piap.pl>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=215515
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/pci/pci-sysfs.c | 34 +++++++++++++++++++++++++++++-----
- include/linux/pci.h     |  1 +
- 2 files changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 71a36f57ef57..cab3aa27f947 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/completion.h>
- #include <linux/kernel.h>
- #include <linux/sched.h>
- #include <linux/pci.h>
-@@ -37,6 +38,7 @@
- #endif
- 
- static int sysfs_initialized;	/* = 0 */
-+static DECLARE_COMPLETION(sysfs_init_completion);
- 
- /* show configuration fields */
- #define pci_config_attr(field, format_string)				\
-@@ -1652,12 +1654,32 @@ static const struct attribute_group pci_dev_resource_resize_group = {
- 	.is_visible = resource_resize_is_visible,
- };
- 
-+static int __pci_create_sysfs_dev_files(struct pci_dev *pdev)
-+{
-+	int ret;
++       secpath_reset(skb);
 +
-+	ret = pci_create_resource_files(pdev);
-+	if (ret)
-+		return ret;
-+
-+	/* on success set sysfs correctly created */
-+	pdev->sysfs_init = true;
-+	return 0;
-+}
-+
- int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
- {
- 	if (!sysfs_initialized)
- 		return -EACCES;
- 
--	return pci_create_resource_files(pdev);
-+	/* sysfs entry already created */
-+	if (pdev->sysfs_init)
-+		return 0;
-+
-+	/* wait for pci_sysfs_init */
-+	wait_for_completion(&sysfs_init_completion);
-+
-+	return __pci_create_sysfs_dev_files(pdev);
- }
- 
- /**
-@@ -1678,21 +1700,23 @@ static int __init pci_sysfs_init(void)
- {
- 	struct pci_dev *pdev = NULL;
- 	struct pci_bus *pbus = NULL;
--	int retval;
-+	int retval = 0;
- 
- 	sysfs_initialized = 1;
- 	for_each_pci_dev(pdev) {
--		retval = pci_create_sysfs_dev_files(pdev);
-+		retval = __pci_create_sysfs_dev_files(pdev);
- 		if (retval) {
- 			pci_dev_put(pdev);
--			return retval;
-+			goto exit;
- 		}
- 	}
- 
- 	while ((pbus = pci_find_next_bus(pbus)))
- 		pci_create_legacy_files(pbus);
- 
--	return 0;
-+exit:
-+	complete_all(&sysfs_init_completion);
-+	return retval;
- }
- late_initcall(pci_sysfs_init);
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index f3f6d6dee3ae..f417a0528f01 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -480,6 +480,7 @@ struct pci_dev {
- 	unsigned int	non_mappable_bars:1;	/* BARs can't be mapped to user-space  */
- 	pci_dev_flags_t dev_flags;
- 	atomic_t	enable_cnt;	/* pci_enable_device has been called */
-+	bool		sysfs_init;	/* sysfs entry has been created */
- 
- 	spinlock_t	pcie_cap_lock;		/* Protects RMW ops in capability accessors */
- 	u32		saved_config_space[16]; /* Config space saved at suspend time */
--- 
-2.51.0
-
+        if (!llist_add(&skb->ll_node, &udp_prod_queue->ll_root))
+                return 0;
 
