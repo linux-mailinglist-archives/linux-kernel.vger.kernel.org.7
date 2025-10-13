@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-851124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CC2BD5993
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:50:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF93ABD59A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C88014E9246
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50EBC3E727B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 17:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E4734BA34;
-	Mon, 13 Oct 2025 17:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F292C237E;
+	Mon, 13 Oct 2025 17:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vLiNPVXC"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vNub39Rk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0E12C21D8
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9FC2C17A0;
+	Mon, 13 Oct 2025 17:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760377718; cv=none; b=RXx0K5VOEK7U3GhERPUBzXT56pSyEZOgrrCLxkmYt3un0Fp7N8/7C6HvCsZqyUFBmr5JPUIvQqB8uaFCbFZ0luG2oJivAk8mILrXOh+TsPmSiy6l3V/vvk4hPiA6TgQ+KNI16CiAA2Kkh1oOOjLpCYQSZL7d4Fcubo/5Yq7XAOs=
+	t=1760377736; cv=none; b=OeUz/lGzz28FHlQE//SHyn63+IjB7U2RaCFoJ8PIE+3ChBYQT3xkn1hbx8XtbQsoUWb2hUxYeKHpAHeIvXSXmE73amdOo7NNrCANtf7LE0M+9MZW0Y1Nyo3HwjLa//LTNtDNw3mZfXh72K+Ga8JZh/L+sJiIw9//oDUEH36p2DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760377718; c=relaxed/simple;
-	bh=JZ3RCEqrx9zVV7MZr9JKbsHGFEy/s3pgNDFLa15OMyk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KI8G87+MnM7aw1mzGMPw/DX8AjShhsfbNDEGR7zFhgzqJ2zRNnOhZJC4RuzmQf2CJOroX7zr8NYcVx52MKihUidwtEBUe6WhwHBCu2ENJj6d9wr5WEhim6Ni8OnXh3WUtNvgEUqHfvfznuhYkj9AEAGEboCsr8btsCBm5UMsMus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vLiNPVXC; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760377713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7WmnP6ICbEec27+qyu/CiHrrXy+wQUjaQxBTOOdzmdE=;
-	b=vLiNPVXCYKIdbovrJm/KfG9lusZ7EzIPIrmZDWtPqLWh1Mf3MhswaTlD6Yxu4nUtuu2AGZ
-	4+Xm0sq5jF8eDtmDopOviMJJgttQsxs2qzVEauY3O71Kg4Sp+w+BV8p4Oz1++JDINztbTk
-	FzaGCHEmIxGUjFlv9RP+nJb66DmOivM=
-From: Tao Chen <chen.dylane@linux.dev>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	song@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next RFC 2/2] bpf: Pass external callchain entry to get_perf_callchain
-Date: Tue, 14 Oct 2025 01:47:21 +0800
-Message-ID: <20251013174721.2681091-3-chen.dylane@linux.dev>
-In-Reply-To: <20251013174721.2681091-1-chen.dylane@linux.dev>
-References: <20251013174721.2681091-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1760377736; c=relaxed/simple;
+	bh=JtFCyElHrPbVi6NyIHhf0BhdPHbVecZAR7ohlUh/1mI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/XByALXqlUCd5DAs4OAOfRP+chIcHUcsCqX9QzTIWWB7WNux9pV2S3CAX7H/lXmcWpLJyzFzPYS2bimbyyyg0+whyf/0cYvTNQw0fMoHuoyChPNL0kJ5qcDkfsQuq1+C2n9KnkojuKusg//H14pPH5sJYERnx5BZ9uHSwQ3OJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vNub39Rk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/5x8dL0xsIo7cj6ap3szP9/ntLRtTJN8gwrwEdFC8g4=; b=vNub39RkJxbvP5HhMHbHcpVa7/
+	48s+qhW9+bJg34PX/vXoRxSW+/sN3buu0xl8qFsRDigj62aQHBf6PLe8/E27eRpdYGwP5ju6uXb/z
+	V4V9Vg4KHbPCh9zZeJQITKtz4AXCxLRWJFpDOZH+zHlw3y2iFgW0u6Z+2B+4MwfMdXao=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v8Mf2-00Ap28-PU; Mon, 13 Oct 2025 19:48:40 +0200
+Date: Mon, 13 Oct 2025 19:48:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Birger Koblitz <mail@birger-koblitz.de>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] ixgbe: Add 10G-BX support
+Message-ID: <3a936cc6-14e7-49f8-b312-d66330f955d7@lunn.ch>
+References: <20251013-10gbx-v1-1-ab9896af3d58@birger-koblitz.de>
+ <b5dd3a3e-2420-4c7c-b690-3799fac14623@lunn.ch>
+ <70d926a1-e118-43d9-8715-70feebc214a5@birger-koblitz.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70d926a1-e118-43d9-8715-70feebc214a5@birger-koblitz.de>
 
-As Alexei noted, get_perf_callchain() return values may be reused
-if a task is preempted after the BPF program enters migrate disable
-mode. Drawing on the per-cpu design of bpf_perf_callchain_entries,
-stack-allocated memory of bpf_perf_callchain_entry is used here.
+On Mon, Oct 13, 2025 at 07:17:18PM +0200, Birger Koblitz wrote:
+> On 13/10/2025 6:31 pm, Andrew Lunn wrote:
+> > > @@ -1678,6 +1679,26 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
+> > >   			else
+> > >   				hw->phy.sfp_type =
+> > >   					ixgbe_sfp_type_1g_bx_core1;
+> > > +		/* Support Ethernet 10G-BX, checking the Bit Rate
+> > > +		 * Nominal Value as per SFF-8472 to be 12.5 Gb/s (67h) and
+> > > +		 * Single Mode fibre with at least 1km link length
+> > > +		 */
+> > > +		} else if ((!comp_codes_10g) && (bitrate_nominal == 0x67) &&
+> > > +			   (!(cable_tech & IXGBE_SFF_DA_PASSIVE_CABLE)) &&
+> > > +			   (!(cable_tech & IXGBE_SFF_DA_ACTIVE_CABLE))) {
+> > > +			status = hw->phy.ops.read_i2c_eeprom(hw,
+> > > +					    IXGBE_SFF_SM_LENGTH,
+> > > +					    &sm_length);
+> > 
+> > It seems like byte 15, Length (SMF), "Link length supported for single
+> > mode fiber, units of 100 m" should be checked here. A 255 * 100m would
+> > be more than 1Km, the condition you say in the comment.
+> > 
+> > 	Andrew
+> 
+> Bytes 14 and 15 refer to the same information, just in different units. Byte
+> 14 is the SM link length in km, byte 15 the same in 100m units. BX offers a
+> link length of at least 1km, up to at least 40km, which would overflow to
+> 255 in byte 15. In theory one could make a consistency check between bytes
+> 14 and 15 by dividing byte 15 by 10 and comparing the result with byte 14,
+> but in terms of identifying link lengths of >=1km, checking byte 14 is
+> probably enough, in particular as rounding of byte 14 could be
+> inconsistently done, making the consistency check difficult. One could also
+> check for byte 14 to be 0 and byte 15 to be < 10 to identify SM links <1km,
+> but I do not believe such BX modules exist and again, there would be the
+> issue of rounding for link lengths >=500m.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/bpf/stackmap.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Hi Birger
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index e6e40f22826..1a51a2ea159 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -31,6 +31,11 @@ struct bpf_stack_map {
- 	struct stack_map_bucket *buckets[] __counted_by(n_buckets);
- };
- 
-+struct bpf_perf_callchain_entry {
-+	u64 nr;
-+	u64 ip[PERF_MAX_STACK_DEPTH];
-+};
-+
- static inline bool stack_map_use_build_id(struct bpf_map *map)
- {
- 	return (map->map_flags & BPF_F_STACK_BUILD_ID);
-@@ -305,6 +310,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	struct bpf_perf_callchain_entry entry = { 0 };
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
-@@ -314,12 +320,8 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	if (max_depth > sysctl_perf_event_max_stack)
- 		max_depth = sysctl_perf_event_max_stack;
- 
--	trace = get_perf_callchain(regs, NULL, 0, kernel, user, max_depth,
--				   false, false);
--
--	if (unlikely(!trace))
--		/* couldn't fetch the stack trace */
--		return -EFAULT;
-+	trace = get_perf_callchain(regs, (struct perf_callchain_entry *)&entry, 0,
-+				   kernel, user, max_depth, false, false);
- 
- 	return __bpf_get_stackid(map, trace, flags);
- }
-@@ -412,6 +414,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
-+	struct bpf_perf_callchain_entry entry = { 0 };
- 	bool kernel = !user;
- 	int err = -EINVAL;
- 	u64 *ips;
-@@ -451,8 +454,8 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	else if (kernel && task)
- 		trace = get_callchain_entry_for_task(task, max_depth);
- 	else
--		trace = get_perf_callchain(regs, NULL, 0, kernel, user, max_depth,
--					   crosstask, false);
-+		trace = get_perf_callchain(regs, (struct perf_callchain_entry *)&entry, 0,
-+					   kernel, user, max_depth, crosstask, false);
- 
- 	if (unlikely(!trace) || trace->nr < skip) {
- 		if (may_fault)
--- 
-2.48.1
+Byte 15 containing 10 would be a Single Mode Fibre which is 1Km long.
 
+You also say:
+
+> BX offers a
+> link length of at least 1km, up to at least 40km
+
+which is ambiguous, you use at least twice. Should it actually be:
+
+BX offers a link length of at least 1km, up to at a maximum of 40km.
+
+So a 10GBase-BX module with 1Km would be allowed by the standard? A
+10km 10GBase-BX using 100 in byte 15 would also be valid? A 20KM by
+using 200?
+
+Is there anything in the standard which says you must use byte 14 for 
+10GBase-BX?
+
+I think to fully comply with the standard, you probably want to look
+at both bytes, and if either indicate > 1Km, enable the feature. And
+if the two contradict each other, whats just OEMs making the usual
+mess of SFP EEPROM contents.
+
+	Andrew
 
