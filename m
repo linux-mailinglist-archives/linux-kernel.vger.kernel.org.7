@@ -1,289 +1,142 @@
-Return-Path: <linux-kernel+bounces-851239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4FEBD5E20
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:08:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B66BD5E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 21:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CDA364F18E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:08:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62739345F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 19:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809B12D97B8;
-	Mon, 13 Oct 2025 19:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901742D94AB;
+	Mon, 13 Oct 2025 19:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpfXRlEb"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="wyy1/gyJ"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C0C2D6E57
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0C525F78F;
+	Mon, 13 Oct 2025 19:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760382499; cv=none; b=dJfG+iB91eECxJjmqggcTrEiM0ynwcDYgCXn7P90JJhcQICHC4HgXPD8a5pvG3fxyGoL8yqG5r+K8fMyLq7BaWBhlgKPudYrHHBNXzyANrSebQqyTXijjy7S7ilhf2TP1o3fS8BX0QfJD/N9chzr4Qa5IZz2Sc1sS3L3VvKmKTA=
+	t=1760383114; cv=none; b=QzCe9OO4M9CVM2b/yavvb+vT7BoMWA0ITAmnIQR0B8RtC3Mgy3UsVoE2Tm8/GoG3/738n+Sqx1ACChHSl7UnoV+RpK1TQ8qHiHaNMIKNCZavg4CekVfAiGK9WrQtWTPU9jtRdbtgCYQa+pGRmj5gPGlxYoV0WIE7EluLZIxpH60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760382499; c=relaxed/simple;
-	bh=Nw814zuhZwKKeZYq10E0XQ1hRIfSoUE8sJgW8LwlcAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OHjSvPBgpvIr8m13CQA50gdfux5uCRqAE5OILYWD2yd/tKfARa6Fqi7SnTjgdihllYvWLZmnpfzzvZFQnsDmJIYNn6XCb8/5xAmoR/c85HHFJN8yg3TeYeK96OOtCMOJDNgECp3SxN334iVEjqzuV1Zc5FimSz+vcbcGfKH23PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpfXRlEb; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7814273415cso6017777b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 12:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760382497; x=1760987297; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SDzIWaOgwVfkqKsoR4FvITyGy2H0kRZNktinhlzDtIQ=;
-        b=mpfXRlEbSA6nxyqwDSCC3wbxvMmwE9n7A8oMU7BmmWECwJIO5SCGhsD9TWVK5fb63+
-         Gdidc7wRAZp4rxIsHz4Eq3J1+/VK1JRCkwPAfktn2VmGEXkKc6ACjdghLCgqSvtEAi8z
-         CkQVCpuh6fjCTYwmo3k2zxWBxiYcmyHN7zEQFnabJzNpM8vBgG6K9ApeRvyItLXdVcYr
-         bcxKZT5hOty+YCTtugt42ANjpJXA3a/Tq1v6garYEcxTuDb52+G1gcKs/3xMpcDe5+7W
-         usKPuCYMx5VJI0/m1gGf3B851op2h72ZKKooSW3lW03xuOipTUuXFpal2e5qZKGzwSSX
-         K+ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760382497; x=1760987297;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SDzIWaOgwVfkqKsoR4FvITyGy2H0kRZNktinhlzDtIQ=;
-        b=Vvggh+BuqY/RhPa0GFrZa/OsmHargevE3YmN2wkZiQ7gvnNVD2emqouvOP9XvdGIqK
-         2hkW5aVA0ISwZNjxZZtFq+qAW4apRyVGpScSTSAIjSLVGqgDDy7ZGazVTQjUB6Tcy48W
-         a+tItjbiTavfikGKcMuaRU+phFdPQvA67jBHv+CHV4BPsKPKn7wR6soh7RhT0Ie+TK9w
-         5ONe8lMr+yBdfU2d27feUAY2J34Dr1KRpoTvl6pBC4w1E7m+urAohcbqa3lvMhev5v17
-         Ylvbr6da8mpaZrFgqcdArIkmFMnxmoXonL5GTqu/HShtLFUSJVFrIr6tA6ubP/FbB85s
-         bnMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/HqkM+ei0JSj0Imo9uu4V38qNVgtdS+b7h1yLBPSR4UifFQt1yJIrIPkvgNLsozIFBZxvSxWRd2dWIQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkiRsmmdXmn6SYe/wn57QiFCTbuyQTQh+Rx2RPWHlsmxDXi/i5
-	hUH9KuelkAeU0hpsdM3DIy0GNcBAIXHT1ZEOcAUuvNkODC9wiEGqSUOR
-X-Gm-Gg: ASbGncs/FjOqeTpEdH7tvHOMWHJQGo8k4qy7AlvP99gKVc1KnA4da3hQKX1a8s9koD4
-	tKJfGm4F6Ruarw8eluVqTZSvi6n2yDLfqyHefIFBAYbNOjUd8Zbn4h7+ka9v/ZbRVJqZo+J8fu6
-	MzYV7WfiEExqC2z6fh5ZoowsmGGVfcHpQDD/qlx6GJMc6nAV1E8J3a2mp9iwqC1kxXYYdg0i0fP
-	5n1I5tVdoO5VCK87988dpow2OVoE6QfM70DR37FJbS9cOiBoeJ5g+gusYjg7RK7MeFWJf1QFQ2N
-	m93m33pq4roDGrDFofRY3p5VQ5iUOGywosU8ca6WB09DC6Xxz5djt98W94PyN2oOLi8cC2E4gCJ
-	DSwD40jwP6oTOL8DQdAdkhoelUUJrsjdELrF2GoNQr85/AR1av2JFRigGHrT4j72PEC7wyltq0w
-	P7nv6Kg2/K
-X-Google-Smtp-Source: AGHT+IE9xC3500baXqEHlI48re4/P275laxRB6z9xaFR7v78dK95X3SgDSsqDOD2QAARYLwFZ+0PNw==
-X-Received: by 2002:a05:690c:a641:b0:781:64f:2b68 with SMTP id 00721157ae682-781064f3762mr101116847b3.68.1760382496767;
-        Mon, 13 Oct 2025 12:08:16 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:4a::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78106dbbef8sm28680687b3.1.2025.10.13.12.08.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 12:08:16 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Chris Mason <clm@fb.com>,
-	Kiryl Shutsemau <kirill@shutemov.name>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: [PATCH v4 3/3] mm/page_alloc: Batch page freeing in free_frozen_page_commit
-Date: Mon, 13 Oct 2025 12:08:11 -0700
-Message-ID: <20251013190812.787205-4-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251013190812.787205-1-joshua.hahnjy@gmail.com>
-References: <20251013190812.787205-1-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1760383114; c=relaxed/simple;
+	bh=YAr0GnSopKj79+L6J6LlxDhhP7XeesQLCHrPk01uctQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TjhB8XAPKXRwU1h5SwCAlAjnCrv62FHZG5hK4pPy4BsiPIjU5L56OqshWc3oahR8xWMPCw6UFEd+oSWKc1v1Xckm7N8zCZaNtqLIQyOMBgtGSAKRBfx3v/ZiqrLOBEja4yhAU91Xw5NhiP9hdhSvU2xDO4z7um3l4VQjeJIBElI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=wyy1/gyJ; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 79A14635B045;
+	Mon, 13 Oct 2025 21:08:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1760382532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=hWDaP/sYXgodO6ibobWEGOJClFcvhDTYB+sevTJgK0c=;
+	b=wyy1/gyJnBoGR03czEQ5VwChqIRVliMbmOjJi9fwIPDbu61fQ6cX7tBAEyXazrDULGIEEz
+	vT0u7oTAlwmM20/eVI29XIrHiEVAxOzSbMbqxfLmClpzmjG0T2iA1DzU1ftfXRGsNHMTHn
+	4yeKHhUTC23NHHB/bJo7K7ONpD0mWzM=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org, Carlos Maiolino <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>, Pavel Reichl <preichl@redhat.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Thorsten Leemhuis <linux@leemhuis.info>
+Subject: XFS attr2 mount option removal may break system boot
+Date: Mon, 13 Oct 2025 21:08:38 +0200
+Message-ID: <3654080.iIbC2pHGDl@natalenko.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart9517416.CDJkKcVGEf";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-Before returning, free_frozen_page_commit calls free_pcppages_bulk using
-nr_pcp_free to determine how many pages can appropritately be freed,
-based on the tunable parameters stored in pcp. While this number is an
-accurate representation of how many pages should be freed in total, it
-is not an appropriate number of pages to free at once using
-free_pcppages_bulk, since we have seen the value consistently go above
-2000 in the Meta fleet on larger machines.
+--nextPart9517416.CDJkKcVGEf
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Subject: XFS attr2 mount option removal may break system boot
+Date: Mon, 13 Oct 2025 21:08:38 +0200
+Message-ID: <3654080.iIbC2pHGDl@natalenko.name>
+MIME-Version: 1.0
 
-As such, perform batched page freeing in free_pcppages_bulk by using
-pcp->batch member. In order to ensure that other processes are not
-starved of the zone lock, free both the zone lock and pcp lock to yield to
-other threads.
+Hello.
 
-Note that because free_frozen_page_commit now performs a spinlock inside the
-function (and can fail), the function may now return with a freed pcp.
-To handle this, return true if the pcp is locked on exit and false otherwise.
+In v6.18, the attr2 XFS mount option is removed. This may silently break system boot if the attr2 option is still present in /etc/fstab for rootfs.
 
-In addition, since free_frozen_page_commit must now be aware of what UP
-flags were stored at the time of the spin lock, and because we must be
-able to report new UP flags to the callers, add a new unsigned long*
-parameter UP_flags to keep track of this.
+Consider Arch Linux that is being set up from scratch with / being formatted as XFS. The genfstab command that is used to generate /etc/fstab produces something like this by default:
 
-The following are a few synthetic benchmarks, made on three machines. The
-first is a large machine with 754GiB memory and 316 processors.
-The second is a relatively smaller machine with 251GiB memory and 176
-processors. The third and final is the smallest of the three, which has 62GiB
-memory and 36 processors.
+/dev/sda2 on / type xfs (rw,relatime,attr2,discard,inode64,logbufs=8,logbsize=32k,noquota)
 
-On all machines, I kick off a kernel build with -j$(nproc).
-Negative delta is better (faster compilation)
+Once the system is set up and rebooted, there's no deprecation warning seen in the kernel log:
 
-Large machine (754GiB memory, 316 processors)
-make -j$(nproc)
-+------------+---------------+-----------+
-| Metric (s) | Variation (%) | Delta(%)  |
-+------------+---------------+-----------+
-| real       |        0.8070 |  - 1.4865 |
-| user       |        0.2823 |  + 0.4081 |
-| sys        |        5.0267 |  -11.8737 |
-+------------+---------------+-----------+
+# cat /proc/cmdline
+root=UUID=77b42de2-397e-47ee-a1ef-4dfd430e47e9 rootflags=discard rd.luks.options=discard quiet
 
-Medium machine (251GiB memory, 176 processors)
-make -j$(nproc)
-+------------+---------------+----------+
-| Metric (s) | Variation (%) | Delta(%) |
-+------------+---------------+----------+
-| real       |        0.2806 |  +0.0351 |
-| user       |        0.0994 |  +0.3170 |
-| sys        |        0.6229 |  -0.6277 |
-+------------+---------------+----------+
+# dmesg | grep -i xfs
+[    2.409818] SGI XFS with ACLs, security attributes, realtime, scrub, repair, quota, no debug enabled
+[    2.415341] XFS (sda2): Mounting V5 Filesystem 77b42de2-397e-47ee-a1ef-4dfd430e47e9
+[    2.442546] XFS (sda2): Ending clean mount
 
-Small machine (62GiB memory, 36 processors)
-make -j$(nproc)
-+------------+---------------+----------+
-| Metric (s) | Variation (%) | Delta(%) |
-+------------+---------------+----------+
-| real       |        0.1503 |  -2.6585 |
-| user       |        0.0431 |  -2.2984 |
-| sys        |        0.1870 |  -3.2013 |
-+------------+---------------+----------+
+Although as per the deprecation intention, it should be there.
 
-Here, variation is the coefficient of variation, i.e. standard deviation / mean.
+Vlastimil (in Cc) suggests this is because xfs_fs_warn_deprecated() doesn't produce any warning by design if the XFS FS is set to be rootfs and gets remounted read-write during boot. This imposes two problems:
 
-Suggested-by: Chris Mason <clm@fb.com>
-Co-developed-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
----
- mm/page_alloc.c | 66 ++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 57 insertions(+), 9 deletions(-)
+1) a user doesn't see the deprecation warning; and
+2) with v6.18 kernel, the read-write remount fails because of unknown attr2 option rendering system unusable:
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 8ecd48be8bdd..e85770dd54bd 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2818,12 +2818,22 @@ static int nr_pcp_high(struct per_cpu_pages *pcp, struct zone *zone,
- 	return high;
- }
- 
--static void free_frozen_page_commit(struct zone *zone,
-+/*
-+ * Tune pcp alloc factor and adjust count & free_count. Free pages to bring the
-+ * pcp's watermarks below high.
-+ *
-+ * May return a freed pcp, if during page freeing the pcp spinlock cannot be
-+ * reacquired. Return true if pcp is locked, false otherwise.
-+ */
-+static bool free_frozen_page_commit(struct zone *zone,
- 		struct per_cpu_pages *pcp, struct page *page, int migratetype,
--		unsigned int order, fpi_t fpi_flags)
-+		unsigned int order, fpi_t fpi_flags, unsigned long *UP_flags)
- {
- 	int high, batch;
-+	int to_free, to_free_batched;
- 	int pindex;
-+	int cpu = smp_processor_id();
-+	int ret = true;
- 	bool free_high = false;
- 
- 	/*
-@@ -2861,15 +2871,47 @@ static void free_frozen_page_commit(struct zone *zone,
- 		 * Do not attempt to take a zone lock. Let pcp->count get
- 		 * over high mark temporarily.
- 		 */
--		return;
-+		return true;
- 	}
- 
- 	high = nr_pcp_high(pcp, zone, batch, free_high);
- 	if (pcp->count < high)
--		return;
-+		return true;
-+
-+	to_free = nr_pcp_free(pcp, batch, high, free_high);
-+	if (to_free == 0)
-+		return true;
-+
-+	while (to_free > 0 && pcp->count >= high) {
-+		to_free_batched = min(to_free, batch);
-+		free_pcppages_bulk(zone, to_free_batched, pcp, pindex);
-+		to_free -= to_free_batched;
-+		if (pcp->count >= high) {
-+			pcp_spin_unlock(pcp);
-+			pcp_trylock_finish(*UP_flags);
-+
-+			pcp_trylock_prepare(*UP_flags);
-+			pcp = pcp_spin_trylock(zone->per_cpu_pageset);
-+			if (!pcp) {
-+				pcp_trylock_finish(*UP_flags);
-+				ret = false;
-+				break;
-+			}
-+
-+			/*
-+			 * Check if this thread has been migrated to a different
-+			 * CPU. If that is the case, give up and indicate that
-+			 * the pcp is returned in an unlocked state.
-+			 */
-+			if (smp_processor_id() != cpu) {
-+				pcp_spin_unlock(pcp);
-+				pcp_trylock_finish(*UP_flags);
-+				ret = false;
-+				break;
-+			}
-+		}
-+	}
- 
--	free_pcppages_bulk(zone, nr_pcp_free(pcp, batch, high, free_high),
--			   pcp, pindex);
- 	if (test_bit(ZONE_BELOW_HIGH, &zone->flags) &&
- 	    zone_watermark_ok(zone, 0, high_wmark_pages(zone),
- 			      ZONE_MOVABLE, 0)) {
-@@ -2887,6 +2929,7 @@ static void free_frozen_page_commit(struct zone *zone,
- 		    next_memory_node(pgdat->node_id) < MAX_NUMNODES)
- 			atomic_set(&pgdat->kswapd_failures, 0);
- 	}
-+	return ret;
- }
- 
- /*
-@@ -2934,7 +2977,9 @@ static void __free_frozen_pages(struct page *page, unsigned int order,
- 	pcp_trylock_prepare(UP_flags);
- 	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
- 	if (pcp) {
--		free_frozen_page_commit(zone, pcp, page, migratetype, order, fpi_flags);
-+		if (!free_frozen_page_commit(zone, pcp, page, migratetype,
-+						order, fpi_flags, &UP_flags))
-+			return;
- 		pcp_spin_unlock(pcp);
- 	} else {
- 		free_one_page(zone, page, pfn, order, fpi_flags);
-@@ -3034,8 +3079,11 @@ void free_unref_folios(struct folio_batch *folios)
- 			migratetype = MIGRATE_MOVABLE;
- 
- 		trace_mm_page_free_batched(&folio->page);
--		free_frozen_page_commit(zone, pcp, &folio->page, migratetype,
--					order, FPI_NONE);
-+		if (!free_frozen_page_commit(zone, pcp, &folio->page,
-+				migratetype, order, FPI_NONE, &UP_flags)) {
-+			pcp = NULL;
-+			locked_zone = NULL;
-+		}
- 	}
- 
- 	if (pcp) {
+systemd[1]: Switching root.
+systemd-remount-fs[225]: /usr/bin/mount for / exited with exit status 32.
+
+# mount -o rw /
+mount: /: fsconfig() failed: xfs: Unknown parameter 'attr2'.
+
+Thorsten (in Cc) suggested reporting this as a user-visible regression.
+
+From my PoV, although the deprecation is in place for 5 years already, it may not be visible enough as the warning is not emitted for rootfs. Considering the amount of systems set up with XFS on /, this may impose a mass problem for users.
+
+Vlastimil suggested making attr2 option a complete noop instead of removing it.
+
+Please check.
+
+Thank you.
+
 -- 
-2.47.3
+Oleksandr Natalenko, MSE
+--nextPart9517416.CDJkKcVGEf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmjtTjYACgkQil/iNcg8
+M0siaRAAupLobI5q2MbYzJmln7lj1j8jOWj9xAK+lmrlb85yroTW1q6nc4Tk8xjZ
+yzxF/0VCx2zcHR0aienmRjumAvwdXadgLT6sorIa1OLWg98Y/rO1pc0pKxQJQlrp
+9AvXEbbMX7mZkBmmZ/wfvvxfM0Q9McKLXnU5uIb2SxyM0gTpJele2TdJ2hR71EL+
+Wepo18b6YbLWNFVj2oRWUCb/AHSEbhD+UbwJlM1Y/ggvXo+ViK6tNk6j7QE7RfIe
+Gvb4j+ZfzKJ0lm8qXlqrcdD6uJxHv5EN2V8+bSw7CYJAa2WKKWJWPCYBd7PfMgQP
+P+PRfczXIUipKfWYQSM9GGqMot37TdF/6pimlQs7PvWfxay/WT+dYcg0SXG/TnoG
+LdG89x9QtJVI8igX/RAUxBuC2SDnyB7vD/hHOER6m11WC57oahINoNhj8sS8Bsh4
+6Xj2xPU/aKasclfA/+6lWY5Z6Y2v1s2vRJmEAWxAq274xF5soCYYG3Itaa/ihutZ
+T5q5RuAzWq3dZ7uPTWbfhKaVCfwUQYa1FXFVGWCb4KGfPorRwP7z6QJCjwrwWBTE
+yth2JSfM7WY3VEN+fytBXMZAzYj5ZzNzsARh0m4FIVekQKHw3dVKgCdQ0A2nmiPo
+N+2rEUbXSMUMqbtiAGUDftWisFT/ZUlxzMIplqOdie4Mw8hF6ZM=
+=AQnF
+-----END PGP SIGNATURE-----
+
+--nextPart9517416.CDJkKcVGEf--
+
+
+
 
