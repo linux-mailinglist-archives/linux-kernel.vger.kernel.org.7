@@ -1,656 +1,247 @@
-Return-Path: <linux-kernel+bounces-850269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D476BBD25F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:50:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F826BD25BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 57AB8349FE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6DE1899881
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 09:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC2F2FF679;
-	Mon, 13 Oct 2025 09:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878B2199BC;
+	Mon, 13 Oct 2025 09:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZJbeI3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mehSCITz"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011060.outbound.protection.outlook.com [52.101.52.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2B62FE06C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760348927; cv=none; b=XsUl9MjAqILNcmnuELCkDtSbpa6w6JUQFJUVjI6wo1mr8DtSBQDDTHF5yNrW19QTat1cMclzD3cRhEWb+XLwoJswxdbSvn+bSj6MljQon+29+B3h+YPxRx/FL1IBeg15vJa3W2O7+wsMKG49VmpyfsHZ/yIpy/zaQ+DlpZgQOhI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760348927; c=relaxed/simple;
-	bh=o1ZBRe04qCznx5vGi8J/gWWXoRKEi3IAlB8Qhb0gwzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=njyLhnGe4wxbKtuvomGVbNGcmCPV6BvrRBgf0e+hucm7wYA4z9zzdWE5d4Yl0KOkT5e6PVGvGUFe0xssaKxYGZIO0EC9PygS4Lu8ahuDLSiao+140tbRPCz+E4gbxzMqe/zpYlkCDwxlJL3TLHloOVnHpS5BGa7ifLEl4Z+Riwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZJbeI3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE631C4AF09;
-	Mon, 13 Oct 2025 09:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760348927;
-	bh=o1ZBRe04qCznx5vGi8J/gWWXoRKEi3IAlB8Qhb0gwzY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lZJbeI3kQvnUFiLYKuqJNScfLu0/hijdXQHQmw/3WxI+mHdi8+uJGGbwvMueSBORD
-	 DUjV0+F4FJ7uXIsS/DFq1K69ZFjdAsf7pnnP3PaodbTq7nOesTXZDcla+RwVltHAlH
-	 hCN6y7IXohtjJXgB3JW0e7QQh5eXIRxL7TLRpgqzVHh7p3xvszERln2suU1z3wURPc
-	 iWwKt45DVtarX8pgMB3oV/oBeG+n8hacdUpIygGVJf5metQqnui8vnnCOuwu/RQ5Pd
-	 g0j6EbOn8ePwgTT/j/vbPgggmSHA0m0BLrQeOQbyq5LBxp5ew6wAY8XHqlNOi/eNwa
-	 BUmBZcyJYqn+g==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v8FAa-0000000036l-22RX;
-	Mon, 13 Oct 2025 11:48:44 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 11/11] irqchip: Pass platform device to platform drivers
-Date: Mon, 13 Oct 2025 11:46:11 +0200
-Message-ID: <20251013094611.11745-12-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20251013094611.11745-1-johan@kernel.org>
-References: <20251013094611.11745-1-johan@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D800B1A23A9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 09:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760348786; cv=fail; b=A76guspaQ0mwvyY//hyF5JcjoBvHFzzC0ul1T82vON9tYy8HjRpMh55dveGGP4tGbyGC7XqR1k58Xp/sBtiiV2lR1I0j3W9RNCi+Uh6OYAgXHpqiDWuUYPzn8sWb6kWH6b4p70qMl5xSo07snQ9VKFK4w9bxqOFIShhJ5kWF5PY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760348786; c=relaxed/simple;
+	bh=94dwXMrWts+rvHfkTFjpr5keGJkDdGe8PzfgpDJDA1M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aQgpZVDGmdXVG8Hg8x54CjzvUfpHRPlifi+UEd4FTz6x1wv9j34hguYHw1UQNmeUa3yO9aHgBRTFnD3GciwzHxEWQYz3VN1Cf6VCC6Q+1gTKcGU2UvEiw4iRMyFRgKrr1Je4/x5x7j+t5HknYZNzTQf1S+6zkG5XYYPVy7eGBPs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mehSCITz; arc=fail smtp.client-ip=52.101.52.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KY0k2bGnEb36xor/taCAeKLf8OG1LEZ81IEPRWPaNZ0cTrZI8Abu+0r7BK9dBYtoJclOXAxcYxKxBQ0nE7T6XDxSw1ElbXgToAourEoeVK/yMmHF8cBL3ehB18qPdWuL3ddIIRdZ2bqcgVtcNPJsMxVJqBuQ46alpL2PL1fTs3iW0SZi6bWnflD8ILpcvQ2JIxJAMd1+upjfqwK8fO+qCbnQOn2Zvw0WCblZeTW3K9eViA+NpEiePAq2jC0Qdpim33r6z9hLs2IgFNP0x0KrET9byk9+btX5kcZgodhuOKjjzxk8fcs80bzyVvJe3iVly/AiN0TwnlqhrJgWb+0fOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=idipS1dltgxYf5Y70D2kbOPxGIFRkrcNUOJ6tXV5IaI=;
+ b=CJQAA6pDv6lPRGm0iodctSz+gkPusX0iamTmSgTskEwDCtNsmCBKDtDuZ0ZfpPrRA1MrmzAeujcQyT+7ql0X9awq91iCC2ta4lDiudrvF8OXzIeILBdh+OBM1L8ZJOfVBkX/KVDwXjimuqkbXKmpz0p9UGgy7Xz5wSEJo1EaMp3VF3xWE6Mkdggf8iUZAbisTvZz1++Z2loofTgLjn7XwVyI8ArJIuP/Yv0VZH7r8L9wVKIKAzBxx16Llzn5jTCsWL0DBTUy2OP6FmhlvcQhvqQngKBXb/YYRIDN5ANnudrAM08LUD0jn3JdfVq7Os/E1ecXwMPQtLijM1cWthJKIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=idipS1dltgxYf5Y70D2kbOPxGIFRkrcNUOJ6tXV5IaI=;
+ b=mehSCITzMXGI+2d4II5+InuMsYg5op4fvjsVzcKkZDzOFRImL0IrPJjP1bnmownAGJpkt/laSX2T/G6Zx0MbvGBpPK1IvDPPvqSd3ExMX1yiZ2AgEZ3teL8zZ2wBREiPb9hVWdjr/o4H0MBy2sV95cSJdMxgsIZwiHLz/TdjgFQBRPpnXF1804ylsZ9yJRvYYRL87UP8PUuJ71t/7AUxGU/zYv84BFpHfmIBeQFrM7N40Jv9kQCDUiTfrTKm2aEOUqxCLcFKmaRAD8vGsCuLN26TPNT+65MO64D2GtGzE9XXD4KBi95SSB19sV+vamD+Z15dOw9PdMggjV1jMHYPxQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by CY1PR12MB9650.namprd12.prod.outlook.com (2603:10b6:930:105::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Mon, 13 Oct
+ 2025 09:46:21 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 09:46:21 +0000
+Message-ID: <63169fb3-9736-435a-a550-350fe3b3c29d@nvidia.com>
+Date: Mon, 13 Oct 2025 20:46:13 +1100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/1] mm/ksm: Add recovery mechanism for memory
+ failures
+To: David Hildenbrand <david@redhat.com>, Lance Yang <lance.yang@linux.dev>
+Cc: Longlong Xia <xialonglong2025@163.com>, nao.horiguchi@gmail.com,
+ akpm@linux-foundation.org, wangkefeng.wang@huawei.com, xu.xin16@zte.com.cn,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Longlong Xia <xialonglong@kylinos.cn>, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, Miaohe Lin <linmiaohe@huawei.com>, qiuxu.zhuo@intel.com
+References: <20251009070045.2011920-1-xialonglong2025@163.com>
+ <20251009070045.2011920-2-xialonglong2025@163.com>
+ <CABzRoyYfx0QPgGG4WYEYmT8-J10ToRCUStd3tWC0CtT_D8ctiQ@mail.gmail.com>
+ <CABzRoyYK38imLh6zN2DZKPRyQrJkKyvpswqJAsWzEeECtOxaMA@mail.gmail.com>
+ <55370eb6-9798-0f46-2301-d5f66528411b@huawei.com>
+ <077882e3-f69f-44f3-aa74-b325721beb42@linux.dev>
+ <839b72b8-55dc-4f4e-b1da-6f24ecf9446f@huawei.com>
+ <f12dfacb-05dd-4b22-90eb-fcc1a8ed552b@linux.dev>
+ <bd374ac3-05a2-41ae-8043-cc3575fb13c0@linux.dev>
+ <3e6500dc-723f-4682-9e37-b28bc78a2bdb@redhat.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <3e6500dc-723f-4682-9e37-b28bc78a2bdb@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR08CA0058.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::35) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CY1PR12MB9650:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c249612-75b8-42b4-dfed-08de0a3d5d71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHYzMFdBdnhkNXFuVjh3YUk0WldSMStJL3hMenhlWTNuak9YZVdjb3pGcnlH?=
+ =?utf-8?B?UzYzUEp5ZDNzOHZTOUUxMlh6L200VVZ5Ry9RQkxLYUc0RGlvMlJUdTRJME1M?=
+ =?utf-8?B?T0FRM0dBcFFpMjR3SHlwTmJ3VTdvZnRaN0ZKaURieDZVb05jMXd6bjdQN1Zz?=
+ =?utf-8?B?anJRamU0Wm12K0czclN1MXNSVUkraExFWlB6ME1FdGZRVkpReWljcWpTd0VX?=
+ =?utf-8?B?dFdnL29iTXpSTlZiZU9PendJRWVtZi95c3NWZENFdDBkaW1qeHV6SlArZmtj?=
+ =?utf-8?B?ZzZYamVPbjFyUDBlc21aMWtIbm9pYWlKN3YxK2t5N1Rjc01mMHdXbGFLMW8x?=
+ =?utf-8?B?Z215MEg5S2hSd2YwVlQzSy9KV2pxQ2kwdEZXd0FFM0lYU2hBa3FZUHlzb2dJ?=
+ =?utf-8?B?RDZ6Y00venVBS2ROK2lQRmNRakRKemw1ajVzOWxKQjlxOUNDSVhJeUVCM1lz?=
+ =?utf-8?B?Q3B3Uy8rZ2FZMXZyL3B0ZFd1UWtWdzNPT29hOStkUkxuMW16cVV0aXFZQ0pP?=
+ =?utf-8?B?NStkaTlTazMwNlhxNHVqMlNsTW9Ga1g4d3g0V3A3S2diUDRjMWlla1g5VTRO?=
+ =?utf-8?B?ZjFTVEpWMmNhenhiTlZEY085bDBHLzZkSDRPM24rQTNPSHE5OVByRU0zQTFx?=
+ =?utf-8?B?L3BGN0hyVVJIemhpK2U5SUZqT2R1dEQ0ajNXUnd0WmN2RGQveThHQWhtc1ps?=
+ =?utf-8?B?QkhSZVQ3RXRMRVZZV2lPVUYvZVNWQXRDaDlXbzRGNWk0QmJTV2o3U1BUYnlT?=
+ =?utf-8?B?aXcvc2FDM1VydktabGdXc25rOFVpK3djOHVIeFpoQ1ZsWi9oSDlMYStUUmMy?=
+ =?utf-8?B?THA5RjJlMnZZN0ZOUXRWQm1KcTlILzRxYVlYWEJGM3FLcG9keUNMNjlQR01E?=
+ =?utf-8?B?a2R0WmIyWE9WK3pZRXVrWmpkQ21QZ1pneXRITEh1dERmM2pYT29MdEU3akly?=
+ =?utf-8?B?RnpnbXdpQ2dOL2tVVFc1aXZmZmxKbWh2ZWVkVC8yaDlMM2hOaWdGNEVaZWNL?=
+ =?utf-8?B?UGNPU09DbndvUUxFZ1RYN3p6RkxJdjRYbTlqb1JjUEhjQmZDU2ZlTGlSZmdr?=
+ =?utf-8?B?Q0xWYlBXOThrT0FZajl4VGdxK1ZtVHNTY281alVhQk1YWXNCVlYrcmdCbitt?=
+ =?utf-8?B?bXdjQWdNUHErVURBMFE1QlJ5Wlhha3RqcndsMUpIUS92dzFwYVU3NkZuR1Ex?=
+ =?utf-8?B?aCtERDhxd2p5RjBiQUtnaVNXZVErYk5SbERULzdEZVAzVU1zU3BqY2Z1YUFP?=
+ =?utf-8?B?bENmWDNwdlJwVjVwYyt0SDF4REU5MUxhaDd3L0F0V2ZTTnJaRlh2Zmp0THpP?=
+ =?utf-8?B?K0xmT2JDNVBEWXZENnhpMXJqcFJPSXc0bjBDMkJXTWI1SXpwbGtjVlRzcUg1?=
+ =?utf-8?B?enRIdm4yVHFyN1NtNHhMaEhraU1BS1JHVForL2pCOTliRDVxcUx1c2RpN0FQ?=
+ =?utf-8?B?SjZsUE5PS3VOOE5GU0FobkdNYjlDTzY4ZXo4TDBFWUNiY2NIU3NGeDZrcTlt?=
+ =?utf-8?B?OXZMQnJTemhZMFNkOVRUOVE3NHNFTzdsYmlhUlY4aWp6TG5GN0VpQjBXdE5p?=
+ =?utf-8?B?U1F0eEJzTmFzRDNGSS94ek9adlJ6ZE11S25hSU5oRnFteWMvYU9tck1CVXEx?=
+ =?utf-8?B?aDQ4NW1WMXVhN2pOYUFKZzRpdUkxUENNek5TTFlHY3o3WDR6aENhNjJRRWV1?=
+ =?utf-8?B?L25peHk2Y0pqSlJGTmpzWFIvOGd1cmRBOUZjRkNVdXhTbkU4MExCc0RwM2Fw?=
+ =?utf-8?B?eVFUVlNLWUxTY293eUprVERDWmV1UG94OGFWWWZLOTB0RTM3YkJtZmJzbk9i?=
+ =?utf-8?B?RDV1TlAzd1BWbFovTjFEVEIxZmFkWDhsRmlFdWZ6U3lzM1p6N3NnOHZNaXNP?=
+ =?utf-8?B?OGdvbS9oWHhPVkVZNGVGUDg4VVMzeHJaektWdUhCS0Q2S2ZJQ0p4Q3p3c3FB?=
+ =?utf-8?Q?O+17Uxtm+ZuvadZPQmZ393Cuwy6E4flb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZTVXNGZ4YjlRbFNyZWFaZTR1ZjVKSjF6TThOZVltcVo4dm1YZzIxcHBoemMy?=
+ =?utf-8?B?alhXZ0NUWi9CMS9mTEZ4djVnYitjNkQ0NEhhdmNUK3BKNHViZTJVbDhWM3Bx?=
+ =?utf-8?B?M2pwNzA1TXdWTUxjbFUza1VOQ3B2U2NCOURQMUt2dlRLZ3RzdmJMYW5QTVlw?=
+ =?utf-8?B?NjB1UUZFRWkydXYzUnRaMDNzek9IQ0VGQlhET043alpNQXJXQ09Ja0h0RWd2?=
+ =?utf-8?B?VytPWkFhOVBWM0lyQnNpMHUxdE91WTZCUFZYUHNVSG1SS3lvb3paZXRlY0Jw?=
+ =?utf-8?B?LzRPbmd2ZDE4ZlZ1UHVFaHh0aUZ0cTFTTnZTcmxWN1JyZzlXQzZwQWxlVnlQ?=
+ =?utf-8?B?dm0xczcrazEzbHhVOEZlUUxSNEF0MTdPK3dOa0JtTUZpRVNtc0VjSEthdktm?=
+ =?utf-8?B?aEVVTGZVRWxpQThQZUorRXVvbTNsMVBxUDBJUUZuc1M5L1Y5TTBtOVVITGJT?=
+ =?utf-8?B?Uks3eVUyeDZTM3VzbS9qUUluQStFMWhFL0QzL2czVXJhRlBZYVVVUzFJWlBx?=
+ =?utf-8?B?YTh1S3QyRG1sVExsc1QyNnFDWGZJdTlabmJkU0VWVVAwa2JuYWh3aDVCdFVt?=
+ =?utf-8?B?SWtUTFhsTldUSlQ4MGZDQnhVTkpmaDV0RmdCOVhmdjNIdEVmZ1dkSUZlbUVv?=
+ =?utf-8?B?R0RjS0VCU3JLVjJZZzVqaTJWSmpDL05TNzR4bllHR3Y3b0hkeVd0UWdYN2J5?=
+ =?utf-8?B?UFp2bExpUWFWbHdIQ01Vc2RSV1ljand5eGdNcDN2ZEFta1B1S1hBbkkrRmFZ?=
+ =?utf-8?B?SmlZSUM5RzBvdjJLSXhSUHp5MUZhcEh2TEU1cDJRUktmcG8rUkdWYVQ4Z0RS?=
+ =?utf-8?B?Nmc1RUFzUWo1K2FwdWNkTDJxdGU3enVmOHgwY2w4UndJczBnelYxdDN6cGxE?=
+ =?utf-8?B?V3NUZzZWSWRZZFJwVFlmWUIvVWxiNXpuNDlmQ05NRDIySlVDTWNpT2t0aW54?=
+ =?utf-8?B?bmtaRVNTUVF4YUJSNHQzWnhYWWRCT1M5NDVyL2xuMENQaytvaC9FTCt1NTFY?=
+ =?utf-8?B?U2VyN0pNcFhkSkU4TnlaUUlGMktIUklrN3FwU0JwbjNLbFp0eUJRdGRocVRX?=
+ =?utf-8?B?R3l3ZjV6L01TdnhBQmFDS0ViMk1pZGlNZ0lFMVZqWkExKzBValV5U1I3VDc3?=
+ =?utf-8?B?QWZ2NWQvakltT3krc2hyUFhoMitJT3pGMTN4Mkx0ZmF4WlBuN0NhYmI5VXZx?=
+ =?utf-8?B?QTZQaHVtRlRqWjF1TGVnaHdKMGJkZ3JBZ0ZLVnpibVFiSXpIU2tpOGlFMlox?=
+ =?utf-8?B?U0RYdVllWWRXelRnenNQZFJiWCtqSjdOWDN1em0reitlMWQwVWpQS1lvVFN0?=
+ =?utf-8?B?TjdIeFdvZEVlWC9qanZoeXJTaWkwUjI5Y1dIVERNa2Q1L2QzSGpNdG9EOHM4?=
+ =?utf-8?B?ZVR0NnM0UEFNL1lHQWFkL1prRG1Ka0ppUEJKWmUwdmQ3SUdSY3Z2dUJDY1VG?=
+ =?utf-8?B?akxIUzlJSnY0djllZ0lNSDBDdFQ1VEhjSitBR3JkeGRnM3krdys1c3ZsU0FW?=
+ =?utf-8?B?L1pWa1dZYlpoZm14ck5kclkyRWRWZ1pXSXAvSVJYQmNMdlFFZ3lJSXV0NUlI?=
+ =?utf-8?B?aXg3dzhmS3Z4NHA0aThZYStXTzZzSUQwRkRtT0grMnNlUlE4UDdMUWJOcFhD?=
+ =?utf-8?B?YjhSM25qUG42aVlUY3hoMmdQckhZOEtyM1M4c0FiM3FUK2l5dDVXSitadDU1?=
+ =?utf-8?B?RzhoOEFWNG9ncXZlZHViK3QrWEg1OFRIQU5YK0RmKzQ5SFlHeWxiMFFSRmlD?=
+ =?utf-8?B?TnJxWnVWVVhkV1JZQUR5dTFLTXdSUVNYaEhWWlFaditsblRsNHYydEdHdjV0?=
+ =?utf-8?B?UCtkaTdFVTBLMFBZdjI4M0JwNEtIVENxMmVtT2V3RUdHdXhaTllsK2NlcnZL?=
+ =?utf-8?B?Z1YxeGFPU25xRDg5TTVCNjJ3c0Nvc1dEOUF2ZlRUYkgwMGJGaE1KWFljcGdH?=
+ =?utf-8?B?M2REUWcxUkptMlZaUzRsL01sTjAzL21CMWVtSjBvMWpzNDFUOTVMMGx2TFpu?=
+ =?utf-8?B?eVFLd0w2M0pjS3gyc3ZJNWRxTVpKYzVZWENTL3hzdzJLcGp2VVVvU1BiZWNN?=
+ =?utf-8?B?RmxJNUVqbFRVN0gvYWRIRnd3Z3ZHTnhKdlFWSjJwK20wVTFtTUVsZnhyTWhh?=
+ =?utf-8?B?TGsyeEUzaEJ1bldhVXZTVDlCVHVqNUpXNXVhK2w1Wjc1dVhYMGcxejJOeGlG?=
+ =?utf-8?Q?sDi1VpCG1YNUAFW6tl8KtyZXjX68pMDCk9uuOke/5Q50?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c249612-75b8-42b4-dfed-08de0a3d5d71
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 09:46:21.2010
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n57/V1eJF1FlJTzD6iq3u83ovVvjt/wom5KW5yQmmcwRyc08Nnbn+cB37jIP7vv9n23edrbuFFD1+YK44DwsHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9650
 
-The IRQCHIP_PLATFORM_DRIVER macros can be used to convert OF irqchip
-drivers to platform drivers but currently reuse the OF init callback
-prototype that only takes OF nodes as arguments. This forces drivers to
-do reverse lookups of their struct devices during probe if they need
-them for things like dev_printk() and device managed resources.
+On 10/13/25 20:25, David Hildenbrand wrote:
+> On 13.10.25 11:15, Lance Yang wrote:
+>> @David
+>>
+>> Cc: MM CORE folks
+>>
+>> On 2025/10/13 12:42, Lance Yang wrote:
+>> [...]
+>>
+>> Cool. Hardware error injection with EINJ was the way to go!
+>>
+>> I just ran some tests on the shared zero page (both regular and huge), and
+>> found a tricky behavior:
+>>
+>> 1) When a hardware error is injected into the zeropage, the process that
+>> attempts to read from a mapping backed by it is correctly killed with a
+>> SIGBUS.
+>>
+>> 2) However, even after the error is detected, the kernel continues to
+>> install
+>> the known-poisoned zeropage for new anonymous mappings ...
+>>
+>>
+>> For the shared zeropage:
+>> ```
+>> [Mon Oct 13 16:29:02 2025] mce: Uncorrected hardware memory error in
+>> user-access at 29b8cf5000
+>> [Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: Sending SIGBUS to
+>> read_zeropage:13767 due to hardware memory corruption
+>> [Mon Oct 13 16:29:02 2025] Memory failure: 0x29b8cf5: recovery action
+>> for already poisoned page: Failed
+>> ```
+>> And for the shared huge zeropage:
+>> ```
+>> [Mon Oct 13 16:35:34 2025] mce: Uncorrected hardware memory error in
+>> user-access at 1e1e00000
+>> [Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: Sending SIGBUS to
+>> read_huge_zerop:13891 due to hardware memory corruption
+>> [Mon Oct 13 16:35:34 2025] Memory failure: 0x1e1e00: recovery action for
+>> already poisoned page: Failed
+>> ```
+>>
+>> Since we've identified an uncorrectable hardware error on such a critical,
+>> singleton page, should we be doing something more?
+> 
+> I mean, regarding the shared zeropage, we could try walking all page tables of all processes and replace it be a fresh shared zeropage.
+> 
+> But then, the page might also be used for other things (I/O etc), the shared zeropage is allocated by the architecture, we'd have to make is_zero_pfn() succeed on the old+new page etc ...
+> 
+> So a lot of work for little benefit I guess? The question is how often we would see that in practice. I'd assume we'd see it happen on random kernel memory more frequently where we can really just bring down the whole machine.
+> 
 
-Half of the drivers doing reverse lookups also currently fail to release
-the additional reference taken during the lookup, while other drivers
-have had the reference leak plugged in various ways (e.g. using
-non-intuitive cleanup constructs which still confuse static checkers).
+empty_zero_page belongs to the .bss and zero_pfn is quite deeply burried in it's usage.
+The same concerns apply to zero_folio as well. I agree, it's a lot of work to recover
+from errors on the zero_page
 
-Switch to using a probe callback that takes a platform device as its
-first argument to simplify drivers and plug the remaining (mostly
-benign) reference leaks.
-
-Fixes: 32c6c054661a ("irqchip: Add Broadcom BCM2712 MSI-X interrupt controller")
-Fixes: 70afdab904d2 ("irqchip: Add IMX MU MSI controller driver")
-Fixes: a6199bb514d8 ("irqchip: Add Qualcomm MPM controller driver")
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/irqchip/irq-bcm2712-mip.c          | 10 ++-----
- drivers/irqchip/irq-bcm7038-l1.c           |  5 ++--
- drivers/irqchip/irq-bcm7120-l2.c           | 20 ++++---------
- drivers/irqchip/irq-brcmstb-l2.c           | 21 ++++++-------
- drivers/irqchip/irq-imx-mu-msi.c           | 25 +++++++---------
- drivers/irqchip/irq-mchp-eic.c             |  5 ++--
- drivers/irqchip/irq-meson-gpio.c           |  5 ++--
- drivers/irqchip/irq-qcom-mpm.c             |  6 ++--
- drivers/irqchip/irq-renesas-rzg2l.c        | 35 +++++++---------------
- drivers/irqchip/irq-renesas-rzv2h.c        | 32 ++++++--------------
- drivers/irqchip/irq-starfive-jh8100-intc.c |  5 ++--
- drivers/irqchip/irqchip.c                  |  6 ++--
- drivers/irqchip/qcom-pdc.c                 |  5 ++--
- include/linux/irqchip.h                    |  8 ++++-
- 14 files changed, 78 insertions(+), 110 deletions(-)
-
-diff --git a/drivers/irqchip/irq-bcm2712-mip.c b/drivers/irqchip/irq-bcm2712-mip.c
-index 8466646e5a2d..4761974ad650 100644
---- a/drivers/irqchip/irq-bcm2712-mip.c
-+++ b/drivers/irqchip/irq-bcm2712-mip.c
-@@ -232,16 +232,12 @@ static int mip_parse_dt(struct mip_priv *mip, struct device_node *np)
- 	return ret;
- }
- 
--static int mip_of_msi_init(struct device_node *node, struct device_node *parent)
-+static int mip_msi_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	struct platform_device *pdev;
-+	struct device_node *node = pdev->dev.of_node;
- 	struct mip_priv *mip;
- 	int ret;
- 
--	pdev = of_find_device_by_node(node);
--	if (!pdev)
--		return -EPROBE_DEFER;
--
- 	mip = kzalloc(sizeof(*mip), GFP_KERNEL);
- 	if (!mip)
- 		return -ENOMEM;
-@@ -284,7 +280,7 @@ static int mip_of_msi_init(struct device_node *node, struct device_node *parent)
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(mip_msi)
--IRQCHIP_MATCH("brcm,bcm2712-mip", mip_of_msi_init)
-+IRQCHIP_MATCH("brcm,bcm2712-mip", mip_msi_probe)
- IRQCHIP_PLATFORM_DRIVER_END(mip_msi)
- MODULE_DESCRIPTION("Broadcom BCM2712 MSI-X interrupt controller");
- MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
-index e28be83872cb..f9f725499dc3 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -395,8 +395,9 @@ static const struct irq_domain_ops bcm7038_l1_domain_ops = {
- 	.map			= bcm7038_l1_map,
- };
- 
--static int bcm7038_l1_of_init(struct device_node *dn, struct device_node *parent)
-+static int bcm7038_l1_probe(struct platform_device *pdev, struct device_node *parent)
- {
-+	struct device_node *dn = pdev->dev.of_node;
- 	struct bcm7038_l1_chip *intc;
- 	int idx, ret;
- 
-@@ -454,7 +455,7 @@ static int bcm7038_l1_of_init(struct device_node *dn, struct device_node *parent
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(bcm7038_l1)
--IRQCHIP_MATCH("brcm,bcm7038-l1-intc", bcm7038_l1_of_init)
-+IRQCHIP_MATCH("brcm,bcm7038-l1-intc", bcm7038_l1_probe)
- IRQCHIP_PLATFORM_DRIVER_END(bcm7038_l1)
- MODULE_DESCRIPTION("Broadcom STB 7038-style L1/L2 interrupt controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/irqchip/irq-bcm7120-l2.c b/drivers/irqchip/irq-bcm7120-l2.c
-index 63ff68d33787..5e87999de811 100644
---- a/drivers/irqchip/irq-bcm7120-l2.c
-+++ b/drivers/irqchip/irq-bcm7120-l2.c
-@@ -206,15 +206,15 @@ static int bcm7120_l2_intc_iomap_3380(struct device_node *dn, struct bcm7120_l2_
- 	return 0;
- }
- 
--static int bcm7120_l2_intc_probe(struct device_node *dn,
-+static int bcm7120_l2_intc_probe(struct platform_device *pdev,
- 				 struct device_node *parent,
- 				 int (*iomap_regs_fn)(struct device_node *,
- 					struct bcm7120_l2_intc_data *),
- 				 const char *intc_name)
- {
- 	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
-+	struct device_node *dn = pdev->dev.of_node;
- 	struct bcm7120_l2_intc_data *data;
--	struct platform_device *pdev;
- 	struct irq_chip_generic *gc;
- 	struct irq_chip_type *ct;
- 	int ret = 0;
-@@ -225,14 +225,7 @@ static int bcm7120_l2_intc_probe(struct device_node *dn,
- 	if (!data)
- 		return -ENOMEM;
- 
--	pdev = of_find_device_by_node(dn);
--	if (!pdev) {
--		ret = -ENODEV;
--		goto out_free_data;
--	}
--
- 	data->num_parent_irqs = platform_irq_count(pdev);
--	put_device(&pdev->dev);
- 	if (data->num_parent_irqs <= 0) {
- 		pr_err("invalid number of parent interrupts\n");
- 		ret = -ENOMEM;
-@@ -332,20 +325,19 @@ static int bcm7120_l2_intc_probe(struct device_node *dn,
- 		if (data->map_base[idx])
- 			iounmap(data->map_base[idx]);
- 	}
--out_free_data:
- 	kfree(data);
- 	return ret;
- }
- 
--static int bcm7120_l2_intc_probe_7120(struct device_node *dn, struct device_node *parent)
-+static int bcm7120_l2_intc_probe_7120(struct platform_device *pdev, struct device_node *parent)
- {
--	return bcm7120_l2_intc_probe(dn, parent, bcm7120_l2_intc_iomap_7120,
-+	return bcm7120_l2_intc_probe(pdev, parent, bcm7120_l2_intc_iomap_7120,
- 				     "BCM7120 L2");
- }
- 
--static int bcm7120_l2_intc_probe_3380(struct device_node *dn, struct device_node *parent)
-+static int bcm7120_l2_intc_probe_3380(struct platform_device *pdev, struct device_node *parent)
- {
--	return bcm7120_l2_intc_probe(dn, parent, bcm7120_l2_intc_iomap_3380,
-+	return bcm7120_l2_intc_probe(pdev, parent, bcm7120_l2_intc_iomap_3380,
- 				     "BCM3380 L2");
- }
- 
-diff --git a/drivers/irqchip/irq-brcmstb-l2.c b/drivers/irqchip/irq-brcmstb-l2.c
-index 53e67c6c01f7..bb7078d6524f 100644
---- a/drivers/irqchip/irq-brcmstb-l2.c
-+++ b/drivers/irqchip/irq-brcmstb-l2.c
-@@ -138,11 +138,12 @@ static void brcmstb_l2_intc_resume(struct irq_data *d)
- 	irq_reg_writel(gc, ~b->saved_mask, ct->regs.enable);
- }
- 
--static int brcmstb_l2_intc_of_init(struct device_node *np, struct device_node *parent,
--				   const struct brcmstb_intc_init_params *init_params)
-+static int brcmstb_l2_intc_probe(struct platform_device *pdev, struct device_node *parent,
-+				 const struct brcmstb_intc_init_params *init_params)
- {
- 	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
- 	unsigned int set = 0;
-+	struct device_node *np = pdev->dev.of_node;
- 	struct brcmstb_l2_intc_data *data;
- 	struct irq_chip_type *ct;
- 	int ret;
-@@ -255,21 +256,21 @@ static int brcmstb_l2_intc_of_init(struct device_node *np, struct device_node *p
- 	return ret;
- }
- 
--static int brcmstb_l2_edge_intc_of_init(struct device_node *np, struct device_node *parent)
-+static int brcmstb_l2_edge_intc_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return brcmstb_l2_intc_of_init(np, parent, &l2_edge_intc_init);
-+	return brcmstb_l2_intc_probe(pdev, parent, &l2_edge_intc_init);
- }
- 
--static int brcmstb_l2_lvl_intc_of_init(struct device_node *np, struct device_node *parent)
-+static int brcmstb_l2_lvl_intc_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return brcmstb_l2_intc_of_init(np, parent, &l2_lvl_intc_init);
-+	return brcmstb_l2_intc_probe(pdev, parent, &l2_lvl_intc_init);
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(brcmstb_l2)
--IRQCHIP_MATCH("brcm,l2-intc", brcmstb_l2_edge_intc_of_init)
--IRQCHIP_MATCH("brcm,hif-spi-l2-intc", brcmstb_l2_edge_intc_of_init)
--IRQCHIP_MATCH("brcm,upg-aux-aon-l2-intc", brcmstb_l2_edge_intc_of_init)
--IRQCHIP_MATCH("brcm,bcm7271-l2-intc", brcmstb_l2_lvl_intc_of_init)
-+IRQCHIP_MATCH("brcm,l2-intc", brcmstb_l2_edge_intc_probe)
-+IRQCHIP_MATCH("brcm,hif-spi-l2-intc", brcmstb_l2_edge_intc_probe)
-+IRQCHIP_MATCH("brcm,upg-aux-aon-l2-intc", brcmstb_l2_edge_intc_probe)
-+IRQCHIP_MATCH("brcm,bcm7271-l2-intc", brcmstb_l2_lvl_intc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(brcmstb_l2)
- MODULE_DESCRIPTION("Broadcom STB generic L2 interrupt controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/irqchip/irq-imx-mu-msi.c b/drivers/irqchip/irq-imx-mu-msi.c
-index d247f77e5477..c598f2f52fc6 100644
---- a/drivers/irqchip/irq-imx-mu-msi.c
-+++ b/drivers/irqchip/irq-imx-mu-msi.c
-@@ -296,11 +296,9 @@ static const struct imx_mu_dcfg imx_mu_cfg_imx8ulp = {
- 		  },
- };
- 
--static int imx_mu_of_init(struct device_node *dn,
--			  struct device_node *parent,
--			  const struct imx_mu_dcfg *cfg)
-+static int imx_mu_probe(struct platform_device *pdev, struct device_node *parent,
-+			const struct imx_mu_dcfg *cfg)
- {
--	struct platform_device *pdev = of_find_device_by_node(dn);
- 	struct device_link *pd_link_a;
- 	struct device_link *pd_link_b;
- 	struct imx_mu_msi *msi_data;
-@@ -416,28 +414,27 @@ static const struct dev_pm_ops imx_mu_pm_ops = {
- 			   imx_mu_runtime_resume, NULL)
- };
- 
--static int imx_mu_imx7ulp_of_init(struct device_node *dn, struct device_node *parent)
-+static int imx_mu_imx7ulp_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return imx_mu_of_init(dn, parent, &imx_mu_cfg_imx7ulp);
-+	return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx7ulp);
- }
- 
--static int imx_mu_imx6sx_of_init(struct device_node *dn, struct device_node *parent)
-+static int imx_mu_imx6sx_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return imx_mu_of_init(dn, parent, &imx_mu_cfg_imx6sx);
-+	return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx6sx);
- }
- 
--static int imx_mu_imx8ulp_of_init(struct device_node *dn, struct device_node *parent)
-+static int imx_mu_imx8ulp_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return imx_mu_of_init(dn, parent, &imx_mu_cfg_imx8ulp);
-+	return imx_mu_probe(pdev, parent, &imx_mu_cfg_imx8ulp);
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(imx_mu_msi)
--IRQCHIP_MATCH("fsl,imx7ulp-mu-msi", imx_mu_imx7ulp_of_init)
--IRQCHIP_MATCH("fsl,imx6sx-mu-msi", imx_mu_imx6sx_of_init)
--IRQCHIP_MATCH("fsl,imx8ulp-mu-msi", imx_mu_imx8ulp_of_init)
-+IRQCHIP_MATCH("fsl,imx7ulp-mu-msi", imx_mu_imx7ulp_probe)
-+IRQCHIP_MATCH("fsl,imx6sx-mu-msi", imx_mu_imx6sx_probe)
-+IRQCHIP_MATCH("fsl,imx8ulp-mu-msi", imx_mu_imx8ulp_probe)
- IRQCHIP_PLATFORM_DRIVER_END(imx_mu_msi, .pm = &imx_mu_pm_ops)
- 
--
- MODULE_AUTHOR("Frank Li <Frank.Li@nxp.com>");
- MODULE_DESCRIPTION("Freescale MU MSI controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/irqchip/irq-mchp-eic.c b/drivers/irqchip/irq-mchp-eic.c
-index 516a3a0e359c..b513a899c085 100644
---- a/drivers/irqchip/irq-mchp-eic.c
-+++ b/drivers/irqchip/irq-mchp-eic.c
-@@ -199,8 +199,9 @@ static const struct irq_domain_ops mchp_eic_domain_ops = {
- 	.free		= irq_domain_free_irqs_common,
- };
- 
--static int mchp_eic_init(struct device_node *node, struct device_node *parent)
-+static int mchp_eic_probe(struct platform_device *pdev, struct device_node *parent)
- {
-+	struct device_node *node = pdev->dev.of_node;
- 	struct irq_domain *parent_domain = NULL;
- 	int ret, i;
- 
-@@ -273,7 +274,7 @@ static int mchp_eic_init(struct device_node *node, struct device_node *parent)
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(mchp_eic)
--IRQCHIP_MATCH("microchip,sama7g5-eic", mchp_eic_init)
-+IRQCHIP_MATCH("microchip,sama7g5-eic", mchp_eic_probe)
- IRQCHIP_PLATFORM_DRIVER_END(mchp_eic)
- 
- MODULE_DESCRIPTION("Microchip External Interrupt Controller");
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index 8e84724e8d28..6c5e2ff0d1cf 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -572,8 +572,9 @@ static int meson_gpio_irq_parse_dt(struct device_node *node, struct meson_gpio_i
- 	return 0;
- }
- 
--static int meson_gpio_irq_of_init(struct device_node *node, struct device_node *parent)
-+static int meson_gpio_irq_probe(struct platform_device *pdev, struct device_node *parent)
- {
-+	struct device_node *node = pdev->dev.of_node;
- 	struct irq_domain *domain, *parent_domain;
- 	struct meson_gpio_irq_controller *ctl;
- 	int ret;
-@@ -630,7 +631,7 @@ static int meson_gpio_irq_of_init(struct device_node *node, struct device_node *
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(meson_gpio_intc)
--IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_of_init)
-+IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_probe)
- IRQCHIP_PLATFORM_DRIVER_END(meson_gpio_intc)
- 
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm.c
-index 8d569f7c5a7a..83f31ea657b7 100644
---- a/drivers/irqchip/irq-qcom-mpm.c
-+++ b/drivers/irqchip/irq-qcom-mpm.c
-@@ -320,9 +320,9 @@ static bool gic_hwirq_is_mapped(struct mpm_gic_map *maps, int cnt, u32 hwirq)
- 	return false;
- }
- 
--static int qcom_mpm_init(struct device_node *np, struct device_node *parent)
-+static int qcom_mpm_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	struct platform_device *pdev = of_find_device_by_node(np);
-+	struct device_node *np = pdev->dev.of_node;
- 	struct device *dev = &pdev->dev;
- 	struct irq_domain *parent_domain;
- 	struct generic_pm_domain *genpd;
-@@ -478,7 +478,7 @@ static int qcom_mpm_init(struct device_node *np, struct device_node *parent)
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(qcom_mpm)
--IRQCHIP_MATCH("qcom,mpm", qcom_mpm_init)
-+IRQCHIP_MATCH("qcom,mpm", qcom_mpm_probe)
- IRQCHIP_PLATFORM_DRIVER_END(qcom_mpm)
- MODULE_DESCRIPTION("Qualcomm Technologies, Inc. MSM Power Manager");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 12b6eb150301..1bf19deb02c4 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -8,7 +8,6 @@
-  */
- 
- #include <linux/bitfield.h>
--#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
-@@ -528,18 +527,15 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2l_irqc_priv *priv,
- 	return 0;
- }
- 
--static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *parent,
--				  const struct irq_chip *irq_chip)
-+static int rzg2l_irqc_common_probe(struct platform_device *pdev, struct device_node *parent,
-+				   const struct irq_chip *irq_chip)
- {
--	struct platform_device *pdev = of_find_device_by_node(node);
--	struct device *dev __free(put_device) = pdev ? &pdev->dev : NULL;
- 	struct irq_domain *irq_domain, *parent_domain;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
- 	struct reset_control *resetn;
- 	int ret;
- 
--	if (!pdev)
--		return -ENODEV;
--
- 	parent_domain = irq_find_host(parent);
- 	if (!parent_domain)
- 		return dev_err_probe(dev, -ENODEV, "cannot find parent domain\n");
-@@ -583,33 +579,22 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
- 
- 	register_syscore_ops(&rzg2l_irqc_syscore_ops);
- 
--	/*
--	 * Prevent the cleanup function from invoking put_device by assigning
--	 * NULL to dev.
--	 *
--	 * make coccicheck will complain about missing put_device calls, but
--	 * those are false positives, as dev will be automatically "put" via
--	 * __free_put_device on the failing path.
--	 * On the successful path we don't actually want to "put" dev.
--	 */
--	dev = NULL;
--
- 	return 0;
- }
- 
--static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
-+static int rzg2l_irqc_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return rzg2l_irqc_common_init(node, parent, &rzg2l_irqc_chip);
-+	return rzg2l_irqc_common_probe(pdev, parent, &rzg2l_irqc_chip);
- }
- 
--static int rzfive_irqc_init(struct device_node *node, struct device_node *parent)
-+static int rzfive_irqc_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return rzg2l_irqc_common_init(node, parent, &rzfive_irqc_chip);
-+	return rzg2l_irqc_common_probe(pdev, parent, &rzfive_irqc_chip);
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzg2l_irqc)
--IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_init)
--IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_init)
-+IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_probe)
-+IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(rzg2l_irqc)
- MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
- MODULE_DESCRIPTION("Renesas RZ/G2L IRQC Driver");
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 9018d9c3911e..899a423b5da8 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -490,29 +490,15 @@ static int rzv2h_icu_parse_interrupts(struct rzv2h_icu_priv *priv, struct device
- 	return 0;
- }
- 
--static void rzv2h_icu_put_device(void *data)
--{
--	put_device(data);
--}
--
--static int rzv2h_icu_init_common(struct device_node *node, struct device_node *parent,
--				 const struct rzv2h_hw_info *hw_info)
-+static int rzv2h_icu_probe_common(struct platform_device *pdev, struct device_node *parent,
-+				  const struct rzv2h_hw_info *hw_info)
- {
- 	struct irq_domain *irq_domain, *parent_domain;
-+	struct device_node *node = pdev->dev.of_node;
- 	struct rzv2h_icu_priv *rzv2h_icu_data;
--	struct platform_device *pdev;
- 	struct reset_control *resetn;
- 	int ret;
- 
--	pdev = of_find_device_by_node(node);
--	if (!pdev)
--		return -ENODEV;
--
--	ret = devm_add_action_or_reset(&pdev->dev, rzv2h_icu_put_device,
--				       &pdev->dev);
--	if (ret < 0)
--		return ret;
--
- 	parent_domain = irq_find_host(parent);
- 	if (!parent_domain) {
- 		dev_err(&pdev->dev, "cannot find parent domain\n");
-@@ -618,19 +604,19 @@ static const struct rzv2h_hw_info rzv2h_hw_params = {
- 	.field_width	= 8,
- };
- 
--static int rzg3e_icu_init(struct device_node *node, struct device_node *parent)
-+static int rzg3e_icu_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return rzv2h_icu_init_common(node, parent, &rzg3e_hw_params);
-+	return rzv2h_icu_probe_common(pdev, parent, &rzg3e_hw_params);
- }
- 
--static int rzv2h_icu_init(struct device_node *node, struct device_node *parent)
-+static int rzv2h_icu_probe(struct platform_device *pdev, struct device_node *parent)
- {
--	return rzv2h_icu_init_common(node, parent, &rzv2h_hw_params);
-+	return rzv2h_icu_probe_common(pdev, parent, &rzv2h_hw_params);
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzv2h_icu)
--IRQCHIP_MATCH("renesas,r9a09g047-icu", rzg3e_icu_init)
--IRQCHIP_MATCH("renesas,r9a09g057-icu", rzv2h_icu_init)
-+IRQCHIP_MATCH("renesas,r9a09g047-icu", rzg3e_icu_probe)
-+IRQCHIP_MATCH("renesas,r9a09g057-icu", rzv2h_icu_probe)
- IRQCHIP_PLATFORM_DRIVER_END(rzv2h_icu)
- MODULE_AUTHOR("Fabrizio Castro <fabrizio.castro.jz@renesas.com>");
- MODULE_DESCRIPTION("Renesas RZ/V2H(P) ICU Driver");
-diff --git a/drivers/irqchip/irq-starfive-jh8100-intc.c b/drivers/irqchip/irq-starfive-jh8100-intc.c
-index 117f2c651ebd..705361b4ebe0 100644
---- a/drivers/irqchip/irq-starfive-jh8100-intc.c
-+++ b/drivers/irqchip/irq-starfive-jh8100-intc.c
-@@ -114,8 +114,9 @@ static void starfive_intc_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--static int starfive_intc_init(struct device_node *intc, struct device_node *parent)
-+static int starfive_intc_probe(struct platform_device *pdev, struct device_node *parent)
- {
-+	struct device_node *intc = pdev->dev.of_node;
- 	struct starfive_irq_chip *irqc;
- 	struct reset_control *rst;
- 	struct clk *clk;
-@@ -198,7 +199,7 @@ static int starfive_intc_init(struct device_node *intc, struct device_node *pare
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(starfive_intc)
--IRQCHIP_MATCH("starfive,jh8100-intc", starfive_intc_init)
-+IRQCHIP_MATCH("starfive,jh8100-intc", starfive_intc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(starfive_intc)
- 
- MODULE_DESCRIPTION("StarFive JH8100 External Interrupt Controller");
-diff --git a/drivers/irqchip/irqchip.c b/drivers/irqchip/irqchip.c
-index 652d20d2b07f..689c8e448901 100644
---- a/drivers/irqchip/irqchip.c
-+++ b/drivers/irqchip/irqchip.c
-@@ -36,9 +36,9 @@ int platform_irqchip_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device_node *par_np __free(device_node) = of_irq_find_parent(np);
--	of_irq_init_cb_t irq_init_cb = of_device_get_match_data(&pdev->dev);
-+	platform_irq_probe_t irq_probe = of_device_get_match_data(&pdev->dev);
- 
--	if (!irq_init_cb)
-+	if (!irq_probe)
- 		return -EINVAL;
- 
- 	if (par_np == np)
-@@ -55,6 +55,6 @@ int platform_irqchip_probe(struct platform_device *pdev)
- 	if (par_np && !irq_find_matching_host(par_np, DOMAIN_BUS_ANY))
- 		return -EPROBE_DEFER;
- 
--	return irq_init_cb(np, par_np);
-+	return irq_probe(pdev, par_np);
- }
- EXPORT_SYMBOL_GPL(platform_irqchip_probe);
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index b0cdcdb7c505..d94beb786a67 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -469,10 +469,11 @@ static const struct of_device_id pdc_aux_gpio_matches[] = {
- 	{ }
- };
- 
--static int qcom_pdc_init(struct device_node *node, struct device_node *parent)
-+static int qcom_pdc_probe(struct platform_device *pdev, struct device_node *parent)
- {
- 	unsigned int flags = IRQ_DOMAIN_FLAG_QCOM_PDC_WAKEUP;
- 	struct irq_domain *parent_domain, *pdc_domain;
-+	struct device_node *node = pdev->dev.of_node;
- 	resource_size_t res_size;
- 	struct resource res;
- 	int ret;
-@@ -558,7 +559,7 @@ static int qcom_pdc_init(struct device_node *node, struct device_node *parent)
- }
- 
- IRQCHIP_PLATFORM_DRIVER_BEGIN(qcom_pdc)
--IRQCHIP_MATCH("qcom,pdc", qcom_pdc_init)
-+IRQCHIP_MATCH("qcom,pdc", qcom_pdc_probe)
- IRQCHIP_PLATFORM_DRIVER_END(qcom_pdc)
- MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Power Domain Controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/irqchip.h b/include/linux/irqchip.h
-index d5e6024cb2a8..bc4ddacd6ddc 100644
---- a/include/linux/irqchip.h
-+++ b/include/linux/irqchip.h
-@@ -17,12 +17,18 @@
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
- 
-+typedef int (*platform_irq_probe_t)(struct platform_device *, struct device_node *);
-+
- /* Undefined on purpose */
- extern of_irq_init_cb_t typecheck_irq_init_cb;
-+extern platform_irq_probe_t typecheck_irq_probe;
- 
- #define typecheck_irq_init_cb(fn)					\
- 	(__typecheck(typecheck_irq_init_cb, &fn) ? fn : fn)
- 
-+#define typecheck_irq_probe(fn)						\
-+	(__typecheck(typecheck_irq_probe, &fn) ? fn : fn)
-+
- /*
-  * This macro must be used by the different irqchip drivers to declare
-  * the association between their DT compatible string and their
-@@ -42,7 +48,7 @@ extern int platform_irqchip_probe(struct platform_device *pdev);
- static const struct of_device_id drv_name##_irqchip_match_table[] = {
- 
- #define IRQCHIP_MATCH(compat, fn) { .compatible = compat,		\
--				    .data = typecheck_irq_init_cb(fn), },
-+				    .data = typecheck_irq_probe(fn), },
- 
- 
- #define IRQCHIP_PLATFORM_DRIVER_END(drv_name, ...)			\
--- 
-2.49.1
+Balbir
 
 
