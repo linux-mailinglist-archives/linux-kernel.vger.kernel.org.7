@@ -1,231 +1,128 @@
-Return-Path: <linux-kernel+bounces-850449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-850450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32420BD2D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:45:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C393BD2D8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 13:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9E0834B029
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:45:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C7364EF198
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 Oct 2025 11:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440E5264623;
-	Mon, 13 Oct 2025 11:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51ED2571DC;
+	Mon, 13 Oct 2025 11:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="i7ialYAl";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="NV+39r7V"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dfBawpga"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2849320126A;
-	Mon, 13 Oct 2025 11:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760355915; cv=fail; b=Baqiey2WXDN0RjYxcvdg6Lx2FqZvpKq75ITICI3BJdhbzFyEj3jM8YMKWbSVtEjhqY14aaNOhu1Zxaj19jJHhPtQrxJVBI6WoquVnNzylFl4x6UJfKgpqo0sGBKyk0avOItjuf3SZpsYq/JWVFVsl1F8fT+6rW49ena7RzgBinA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760355915; c=relaxed/simple;
-	bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oYwQGMqSibsJAqyoHkb2EuuPndFMPf/4Xe+nPJMP5vtyBoOK9ZWNyWLS+mPRFVFdw3mcprfHjXYci6k0B1STMj+qaSC3xbIZOnUdRVero1m0+0ey05e25gvIn7CsoTRl6fcqKWIjidliKEtg1Oxo8my3/GJ/4IOSbA5PLVzDl7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=i7ialYAl; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=NV+39r7V; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA719CCFC
+	for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 11:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760356223; cv=none; b=JtjwmZgj+ld73vZAcmTVH+Ao6j+oyKcBmmsOYJN1TyhwhLho3lamWWnCapOHrmzUGSpuMK3oa5Hu5tqV/PXhZdB1pIkr3ScSTwm4V3NFmFfH+V2qMdx1XXmTbGxmKpVIonNLWC2dOPclXRRYbMx2lQXP9QWN84KJc993rqBFUzc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760356223; c=relaxed/simple;
+	bh=1uvQYJmL9QKe76KL2BW9+4/bK8gl99vHijqXPMD9QyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obrRctV2EvHvdnZdROUhxltqsuY6wx7y0ZBYpq1862ssFohnLH2HiDVd1gdy/cCVz/vB7KCwmev6kBRA82SyXPIdkIMGoCVtpACqM4dqigtIAp2SGyDWqC/MJk/2NsbVO2W2jA0oEX/+R/FHvIylcuNzMcCsTCtzlOVAIi3LRY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dfBawpga; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760356220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qJXFC0o+1CaVi4fOfDbU8jsuMwjGsE39HDlFOYkUqXI=;
+	b=dfBawpgacDOgt3nl+GkwePx279jEw+c2HMYxaIUCi3x1qZhtA/kopI8qRrK2Leuhh/I3PF
+	ZEEPPNVin9qGjTe+XEWyXzUZ9321FFp1pH+/+UQNCSl2ziI7V9Ph9/V893mngGG8uqlCj5
+	I671nUkYyJf9gMf54YLCID/by8/BFWg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-50-_Ay75PvOOUKe6IQLG9kgKQ-1; Mon,
+ 13 Oct 2025 07:50:19 -0400
+X-MC-Unique: _Ay75PvOOUKe6IQLG9kgKQ-1
+X-Mimecast-MFC-AGG-ID: _Ay75PvOOUKe6IQLG9kgKQ_1760356217
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 8285C4809DD;
-	Mon, 13 Oct 2025 07:45:06 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1760355906;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
- b=i7ialYAlR4kNGPPahy5RkQVj/rvjLCDu3RfXQeOY8ST6Sw4tVsKiHUpO3Xgxt/YJ6ZN66
- vdGqCua94qUhNmbBQ==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1760355906;
-	cv=none; b=pWp5AtkOrpB5Ft2NFJinKhXtHaiVVoh+Ib6xpygjuX1mo4ccQdJmK9OXhqiKnEtKm4OL3TWEKsLimquLOR52ktNurbUGgTuDflEQdVNfrlC7K/9pIUCAafTS6pR1qjxnSuP82o0rxHJX0oQD/rnnzZJfIednY7OCua+Bzq7GSK2cHLjD1ZT4BqeATI3OAkucQJ8tBh4vFeC7T5dxXcWVOZ50owK8o69KONjYjdqwe5np9bEN2hYsA7RPChrFBnoAVbRqYPOu4hmXjqiInUV2c/lCVS6BneY+amFo5xJoS537DftEWthy6t0rJj3IhY5zTJrt+qPhP3nIu5T6rrFohA==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1760355906; c=relaxed/simple;
-	bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=ZkkPYQl++pamZ+uT1apN/h9TlCm1qC0R+Yx3QNlIlbzIvp0kA7PBPm0KQhA7w/FljSCpWW71kbuZJsYo3jRWfkP60vWNHoyaLU0JQkGpwaGhX6AtPcRamNiFU7aPLikQIYDgOTQu9iclWTFa7ioI6Bx5FTtN5p4KNZeOURGSQoUy4fVFHi2c9Q6KJhvYCUofNTmKYok39EZgGKrT5qCfK0AbIdD3H8WNd/ifPk5PdvWijwRdhSZdMefkKlRUzQJJFgB52/66m+bZA9IrYkkzenn6j5yQRWxs9/8ukpCTUcCAbhpyZJ3ecgLZ/1JSpYNxQM4Donq51AiBOTNfUrPM7Q==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1760355906;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=D6ewRJampzjtF9Y4k1uKVqxX0juZ56XOrC4QRhC2+JU=;
- b=NV+39r7VusSqwveMXlPPszRaeC9O1hasF99s6ANTTHFxQn1DNROW67wxOmJumLt61WUWe
- s2BBVVZi5aoEN3KnVnZq7ilQHbI+Qj9OW2nhfAZGO+gaOND8Xqcr483941oN9H8rH98d3L0
- fGx8OWbOzfgutDe5t/uA/uPs9GlQ4nxdsT5EgOW7DqGVXpQ0Su8qJORJAEnG/3vF9qzMYyw
- vrTqRrZGCuvRVxLmU1XJq+c4y83vSlV8z8B9+t12WieCvBepjudBXe9Wrzfyu+p3LJjIqu3
- daS/+iVrO9KylBKN4/WVgVLnvvJDZw/TMpXl7C6Lw5rArbY2QzqsuNKDwC+Q==
-Received: by srv8.prv.sapience.com (Postfix) id 4AB4128001B;
-	Mon, 13 Oct 2025 07:45:06 -0400 (EDT)
-Message-ID: <622d6d7401b5cfd4bd5f359c7d7dc5b3bf8785d5.camel@sapience.com>
-Subject: Re: mainline boot fail nvme/block? [BISECTED]
-From: Genes Lists <lists@sapience.com>
-To: Inochi Amaoto <inochiama@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nvme@lists.infradead.org
-Cc: linux-pci@vger.kernel.org
-Date: Mon, 13 Oct 2025 07:45:05 -0400
-In-Reply-To: <trdjd7zhpldyeurmpvx4zpgjoz7hmf3ugayybz4gagu2iue56c@zswmzvauqnxk>
-References: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
-	 <cf4e88c6-0319-4084-8311-a7ca28a78c81@kernel.dk>
-	 <3152ca947e89ee37264b90c422e77bb0e3d575b9.camel@sapience.com>
-	 <trdjd7zhpldyeurmpvx4zpgjoz7hmf3ugayybz4gagu2iue56c@zswmzvauqnxk>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-dHWcg0gEsgsjYdWNT31Y"
-User-Agent: Evolution 3.58.1 
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 367E81956087;
+	Mon, 13 Oct 2025 11:50:17 +0000 (UTC)
+Received: from fedora (unknown [10.45.226.135])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0012230002CE;
+	Mon, 13 Oct 2025 11:50:12 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 13 Oct 2025 13:50:16 +0200 (CEST)
+Date: Mon, 13 Oct 2025 13:50:11 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <aOznWZGV9qyGWoE5@redhat.com>
+References: <20251009143748.GA2704@redhat.com>
+ <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
+ <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
+ <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
+ <20251009221242.GX3419281@noisy.programming.kicks-ass.net>
+ <CAHk-=whmjm0BbirO8HhT_TZQ2JJMs_FpTcT9SXXaA3NifW2a4w@mail.gmail.com>
+ <20251010080327.GF4067720@noisy.programming.kicks-ass.net>
+ <20251010122347.GA8798@redhat.com>
+ <20251010131439.GB8798@redhat.com>
+ <20251013090313.GI4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013090313.GI4067720@noisy.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+On 10/13, Peter Zijlstra wrote:
+>
+> On Fri, Oct 10, 2025 at 03:14:39PM +0200, Oleg Nesterov wrote:
+> > 	static inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
+> > 	{
+> > 		if (sst->state & ss_lock)
+> > 			spin_unlock(&sst->lock.lock);
+> > 		if (sst->state & ss_lock_irqsave)
+> > 			spin_unlock_irqrestore(&sst->lock.lock, sst->data);
+> > 	}
+> > 
+> > 	static inline void
+> > 	__scoped_seqlock_next(struct ss_tmp *sst, enum ss_state target)
+> > 	{
+> > 		switch (sst->state) {
+> > 		case ss_lock:
+> > 		case ss_lock_irqsave:
+> > 			sst->state |= ss_done;
+> 
+> So GCC is clever enough to see through this scheme, but Clang gets
+> confused and generates worse code. Specifically it emits the whole
+> __scoped_seqlock_cleanup() sequence, testing both bits and both unlock
+> options.
 
---=-dHWcg0gEsgsjYdWNT31Y
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+OK, thanks and sorry for the noise then.
 
-On Mon, 2025-10-13 at 16:46 +0800, Inochi Amaoto wrote:
-> On Fri, Oct 10, 2025 at 07:49:34PM -0400, Genes Lists wrote:
-> > On Fri, 2025-10-10 at 08:54 -0600, Jens Axboe wrote:
-> > > On 10/10/25 8:29 AM, Genes Lists wrote:
-> > > > Mainline fails to boot - 6.17.1 works fine.
-> > > > Same kernel on an older laptop without any nvme works just
-> > > > fine.
-> > > >=20
-> > > > It seems to get stuck enumerating disks within the initramfs
-> > > > created by
-> > > > dracut.
-> > > >=20
-> > > > ,
-...
+> So while that additional pointer might seem wasteful, it actually makes
+> the state tracking easier and allows the compiler to more easily throw
+> away stuff.
 
-> > Bisect landed here. (cc linux-pci@vger.kernel.org)
-> > Hopefully it is helpful, even though I don't see MSI in lspci
-> > output
-> > (which is provided below).
-> >=20
-> > gene
-> >=20
-> >=20
-> > 54f45a30c0d0153d2be091ba2d683ab6db6d1d5b is the first bad commit
-> > commit 54f45a30c0d0153d2be091ba2d683ab6db6d1d5b (HEAD)
-> > Author: Inochi Amaoto <inochiama@gmail.com>
-> > Date:=C2=A0=C2=A0 Thu Aug 14 07:28:32 2025 +0800
-> >=20
-> > =C2=A0=C2=A0=C2=A0 PCI/MSI: Add startup/shutdown for per device domains
-> >=20
-> > =C2=A0=C2=A0=C2=A0 As the RISC-V PLIC cannot apply affinity settings wi=
-thout
-> > invoking
-> > =C2=A0=C2=A0=C2=A0 irq_enable(), it will make the interrupt unavailble =
-when used
-> > as an
-> > =C2=A0=C2=A0=C2=A0 underlying interrupt chip for the MSI controller.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 Implement the irq_startup() and irq_shutdown() callb=
-acks for
-> > the
-> > PCI MSI
-> > =C2=A0=C2=A0=C2=A0 and MSI-X templates.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARE=
-NT, the
-> > parent
-> > startup
-> > =C2=A0=C2=A0=C2=A0 and shutdown functions are invoked. That allows the =
-interrupt
-> > on
-> > the parent
-> > =C2=A0=C2=A0=C2=A0 chip to be enabled if the interrupt has not been ena=
-bled during
-> > =C2=A0=C2=A0=C2=A0 allocation. This is necessary for MSI controllers wh=
-ich use
-> > PLIC as
-> > =C2=A0=C2=A0=C2=A0 underlying parent interrupt chip.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> > =C2=A0=C2=A0=C2=A0 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > =C2=A0=C2=A0=C2=A0 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > =C2=A0=C2=A0=C2=A0 Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pi=
-oneerbox
-> > =C2=A0=C2=A0=C2=A0 Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
-> > =C2=A0=C2=A0=C2=A0 Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > =C2=A0=C2=A0=C2=A0 Link: https://lore.kernel.org/all/20250813232835.434=
-58-3-
-> > inochiama@gmail.com
-> >=20
-> > =C2=A0drivers/pci/msi/irqdomain.c | 52
-> > ++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > =C2=A0include/linux/msi.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 2 ++
-> > =C2=A02 files changed, 54 insertions(+)
-> >=20
-> >=20
-...
+Great ;)
 
->=20
->=20
-> I think this is caused by VMD device, which I have a temporary
-> solution
-> here [1]. Since I have no idea about how VMD works, I hope if anyone
-> can help to convert this as an formal fix.
->=20
-> [1]
-> https://lore.kernel.org/all/qs2vydzm6xngul77xuwjli7h757gzfhmb4siiklzo
-> gihz5oplw@gsvgn75lib6t/
->=20
-> Regards,
-> Inochi
+Oleg.
 
-Thank you Inochi
-
-I tried this patch over 6.18-rc1.
-
-=C2=A0It get's further than without the patch but around the time I get
-prompted for passphrase for the luks partition
-(root is not encrypted) it crashes.=C2=A0
-
-I have uploaded 2 images I took of the screen when this happens and
-uploaded them to here:
-
-=C2=A0 =C2=A0=C2=A0https://0x0.st/KSNz.jpg
-=C2=A0 =C2=A0=C2=A0https://0x0.st/KSNi.jpg
-
-
-
---=20
-Gene
-
---=-dHWcg0gEsgsjYdWNT31Y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCaOzmQQAKCRA5BdB0L6Ze
-2793AQC4dSbOull9rvkIgpQMy3u8s0MnMnesKSkr8cl1aCcjhgEA8JsyZE0W3nxn
-TlbuPaLE0GUc3sJJApkeNtTtuSG0Eww=
-=3Ua6
------END PGP SIGNATURE-----
-
---=-dHWcg0gEsgsjYdWNT31Y--
 
