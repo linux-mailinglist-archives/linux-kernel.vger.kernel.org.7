@@ -1,235 +1,189 @@
-Return-Path: <linux-kernel+bounces-852624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77522BD97B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:58:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B56BD97B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 569174FCA21
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9756F42833B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9BF313E0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB448313E07;
 	Tue, 14 Oct 2025 12:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fZfe/jKP"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F25wjcbo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665AA28C864
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97112313295
 	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446691; cv=none; b=alAx6utCQ3WY/Q/UFqiAFkIpd9rDYmT1HmBddScNosHedBpMw+CUqCnfVssgtsiAqRiugbk5fr9n/2i3BOusjYDQwo1OCkhpEcGJHZUkhtn7th7BJU+lCVuaj8a2M7ex/P77uVtxeOloGJXDFjLb1bKoe8EDBh6mzx8ZRf94gdQ=
+	t=1760446691; cv=none; b=VVqfUnkilXAMAOQZsBPf6qVoAIWsdpRYzAjb8+am7mXvAAM17S0ZLGMBlwPjXigO3lYWLgYb6WaVbI+NUu4KEihW/BQY88C/nPoM1dJMm2cUaMOtbKZUcqIUCbZUlfNa7OqTalolr4r5xOFbKBZq6NKPSy07F8oxZ92dbgNUAMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760446691; c=relaxed/simple;
-	bh=WG9xl8cvQx0aXoDBA5FaG/AoNHglRTxioB2O17zevds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E6XSZTRccKJ3BdWXfDQgRZsymKOUuA/qNtg+QkfwHjXu9T3rq7jWIOqVfqaZrerIejtayTsf6iMMPwBRooDD7vcziwAEgW6i9YfChkWjMSSED0gkMKbZEFqK7reo4oLJh8T5N3nix74FVuhZbKlsBsRDyrbzoTxY0Awm3pN4bsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fZfe/jKP; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ADE4740B1C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1760446688; bh=6gQSLko4va3cKVQsVdws5JdhCBcMCp2GQ5EcSQlcB/8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fZfe/jKPaRdcwQMpimo6ibXOMCMqgD9zInjzoPUqRWn0yykAo0P7ZC9vyzhm43NvL
-	 4nl7T4u0oyvlvPHiSjzzB83WnfucgEZ2GVY+dMbNPtjaZgx7mGGZ3D5hc4KUWKcKkt
-	 7F6nA1vBNphxuIz6M6wPZLztHZtid056Mb9z4eJKYwYhOoRyF0ejJBzzke8tju9tbm
-	 8m2GwSx22nDql7iWIFqffVeeucco/uiYC1M6lEHdKmLzOK3z3iH+B5EGZ+STKxYKDC
-	 rpaXxVRN84BSDtWXdlDlBD+fr9GQdFGceBAzHndgSZ95V9LMZNtb5t9VCCwy9b8iuQ
-	 3lYIM1fPNNPgQ==
-Received: from lwn.net (unknown [IPv6:2601:18c:4300:1ed0::3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id ADE4740B1C;
-	Tue, 14 Oct 2025 12:58:07 +0000 (UTC)
-From: Daroc Alden <daroc@lwn.net>
-To: corbet@lwn.net,
+	bh=K2g5fcbeoiLEypmxm4zdDfAPkL/Zn3ngXE1+qFzQ0Oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5uX6awmFMRb/06+9eifWaAFv6Ulc1t+G9Vq2aRdIRztpMgSWblcqlrvSKDRfvJvWtn8X2RDr6cb+CJorUu5LypVYnXKnG+ajAXogpFmJjkmqCO8+mrZanlLBOPeu7qwq9X3/HIB2XqGKNIWsDt7/kF72zSMmUKY+JuJxuS9Kwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F25wjcbo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760446688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o+P2Dsj3XLhA6fMrQYgh8OLSwYB2MUOQP3SbJkXqJVA=;
+	b=F25wjcbomtI84IuH63y3uCwMe59HV5IiwauKpiD0sHsUdXIpr1gs8FLbLTlt7g7NNTucDn
+	pxXrgcizjcEAVg5AzEb65bkVPcHPq0tEww1Mu2shf//a/rTUEZQSXBZS3zxgeS0OdkZFag
+	2sqexAC7GHWcCfQQUcgenQ5DS7xbtiM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-zwT0PllYPNySZ82w_TggHw-1; Tue, 14 Oct 2025 08:58:07 -0400
+X-MC-Unique: zwT0PllYPNySZ82w_TggHw-1
+X-Mimecast-MFC-AGG-ID: zwT0PllYPNySZ82w_TggHw_1760446686
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso4237155f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:58:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760446686; x=1761051486;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o+P2Dsj3XLhA6fMrQYgh8OLSwYB2MUOQP3SbJkXqJVA=;
+        b=N0YOGAKlkxNsqsbC62uXNfN2iNIHbu8JrNX2aGgSb1SXlDh3Be+4yOj5ZrwfwNRyzp
+         htXJxDN0keKVpT+Zwd+ab45BbeGyhfDwr8YwAzseRZS8ER9Ffb5f20TSwvBiBaxxoHr/
+         y51Y6M7dCVVBi5t48I6QZ0NE67W0OVlIEoeQdYNgY+otBVU8k+KV+vegqv36qox7o2tE
+         teLEwMW01P6k3OsJkDe0YySjvvjrmcq7TThJCaQdjkGd9YaQ+aV3qQcB56Y+pGRxBpqm
+         HE2QvDNeDglLkmNmc0FVpNn8MYMphK6/zAJC38XlHd8Xb/WiFRWBHu8a58cc2DpXuUJu
+         OkBA==
+X-Gm-Message-State: AOJu0YyYYFDbYK7eV4ILL0F8u4T7Nv9uT3Yw1voO1RpjNqhpbL1vFoZn
+	kcvh4JhrwRdCBkD2yvkT7M1dymWdhSJQG1XQBQzLEzmsaeM9Dl2c0zqD6RiSSNKnQhU85jpCRaX
+	vUVPFTp+db0pCCfpyIPiipBxAkZXZoFow9GoQDrc9KjxUf6P1qD4Nlx/dwsWSQOQL4Q==
+X-Gm-Gg: ASbGncvl99uQYbu2bGwWQ2lgYMYGGmJ2cABFZmmdjhfOmyHHEWF2u8UMZLrlzo+SoIf
+	Xl0JdfLCMfy9JmLk6BsO7FFiY6EaQjzqp5ykHYs6mOyhMrr2byd2p2ikgnD/vmENBrHuPMAUp3H
+	ZZHSQfgGl8tUULY3e5CX+y8ACf0GlY2QPzM99JYE3AGreFDNM6yeZmy5617SyXyy4egaYtKDTzQ
+	edA/r+EyjHJl8oftCM0aSTcedoQ8/aKd8qqJHYpkwWfKd/fMsspoBEB49UnHuILlpegNwpWc1KW
+	AH+WFTSi7eVehXV6h5oKhGAT56d+FPo7psf5VJOdogWEiYXXI8MVKBmvE7ATvB4xNI6vffl0
+X-Received: by 2002:a05:6000:1888:b0:401:c52f:62de with SMTP id ffacd0b85a97d-42666ac39fdmr14487420f8f.12.1760446686068;
+        Tue, 14 Oct 2025 05:58:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHAh3YZ5oKpPdr7WASiDkPJn2IILu8/Rh+37A13TS4n2FwBRRVC0ByNWYf0Uu33Aqxt+5Ldeg==
+X-Received: by 2002:a05:6000:1888:b0:401:c52f:62de with SMTP id ffacd0b85a97d-42666ac39fdmr14487377f8f.12.1760446685024;
+        Tue, 14 Oct 2025 05:58:05 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582abcsm23624651f8f.17.2025.10.14.05.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 05:58:04 -0700 (PDT)
+Date: Tue, 14 Oct 2025 14:58:01 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
 	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org (open list:LOCKING PRIMITIVES)
-Cc: Daroc Alden <daroc@lwn.net>
-Subject: [PATCH v2] lock: Add doc comments for spin_lock_*()
-Date: Tue, 14 Oct 2025 08:57:08 -0400
-Message-ID: <20251014125743.211615-1-daroc@lwn.net>
-X-Mailer: git-send-email 2.51.0
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
+	Jann Horn <jannh@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [PATCH v6 00/29] context_tracking,x86: Defer some IPIs until a
+ user->kernel transition
+Message-ID: <aO5I2WGtXqSPYFmH@jlelli-thinkpadt14gen4.remote.csb>
+References: <20251010153839.151763-1-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010153839.151763-1-vschneid@redhat.com>
 
-The commonly used spin_lock_*() functions do not currently have any
-documentation; this commit adds kerneldoc comments to these functions
-describing their behavior and when they are appropriate to use.
+Hello,
 
-Signed-off-by: Daroc Alden <daroc@lwn.net>
----
+On 10/10/25 17:38, Valentin Schneider wrote:
 
-v1 -> v2: Add documentation for spin_lock() and spin_lock_bh()
+...
 
----
- include/linux/spinlock.h | 99 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+> Performance
+> +++++++++++
+> 
+> Tested by measuring the duration of 10M `syscall(SYS_getpid)` calls on
+> NOHZ_FULL CPUs, with rteval (hackbench + kernel compilation) running on the
+> housekeeping CPUs:
+> 
+> o Xeon E5-2699:   base avg 770ns,  patched avg 1340ns (74% increase)
+> o Xeon E7-8890:   base avg 1040ns, patched avg 1320ns (27% increase)
+> o Xeon Gold 6248: base avg 270ns,  patched avg 273ns  (.1% increase)
+> 
+> I don't get that last one, I did spend a ridiculous amount of time making sure
+> the flush was being executed, and AFAICT yes, it was. What I take out of this is
+> that it can be a pretty massive increase in the entry overhead (for NOHZ_FULL
+> CPUs), and that's something I want to hear thoughts on
+> 
+> Noise
+> +++++
+> 
+> Xeon E5-2699 system with SMToff, NOHZ_FULL, isolated CPUs.
+> RHEL10 userspace.
+> 
+> Workload is using rteval (kernel compilation + hackbench) on housekeeping CPUs
+> and a dummy stay-in-userspace loop on the isolated CPUs. The main invocation is:
+> 
+> $ trace-cmd record -e "ipi_send_cpumask" -f "cpumask & CPUS{$ISOL_CPUS}" \
+> 	           -e "ipi_send_cpu"     -f "cpu & CPUS{$ISOL_CPUS}" \
+> 		   rteval --onlyload --loads-cpulist=$HK_CPUS \
+> 		   --hackbench-runlowmem=True --duration=$DURATION
+> 
+> This only records IPIs sent to isolated CPUs, so any event there is interference
+> (with a bit of fuzz at the start/end of the workload when spawning the
+> processes). All tests were done with a duration of 6 hours.
+> 
+> v6.17
+> o ~5400 IPIs received, so about ~200 interfering IPI per isolated CPU
+> o About one interfering IPI just shy of every 2 minutes
+> 
+> v6.17 + patches
+> o Zilch!
 
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index d3561c4a080e..fd484fb2d310 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -346,11 +346,42 @@ do {						\
- 
- #endif
- 
-+/**
-+ * spin_lock() - Lock the provided spinlock.
-+ * @lock: The spinlock to acquire.
-+ *
-+ * This function locks the provided spinlock. It should typically be paired with
-+ * a call to spin_unlock().
-+ *
-+ * If the lock is used by both code running in process context and code running
-+ * in interrupt context, spin_lock() should only be called with interrupts
-+ * disabled. If in doubt, use spin_lock_irqsave() instead.
-+ */
- static __always_inline void spin_lock(spinlock_t *lock)
- {
- 	raw_spin_lock(&lock->rlock);
- }
- 
-+/**
-+ * spin_lock_bh() - Disable softIRQs and take the provided spinlock.
-+ * @lock: The spinlock to acquire.
-+ *
-+ * When data is shared between code that can run in process context and code
-+ * that can run in a softIRQ, if the softIRQ tries to acquire a spinlock that is
-+ * already held, the system could deadlock. This function disables softIRQs
-+ * before taking the provided spinlock. It should typically be paired with a
-+ * call to spin_unlock_bh() in order to reenable softIRQs when the lock is
-+ * released.
-+ *
-+ * If the interrupt code can run as a hard interrupt instead of a soft
-+ * interrupt, this is the wrong function: use spin_lock_irqsave(). If in doubt,
-+ * using spin_lock_irqsave() instead of spin_lock_bh() is always permissible,
-+ * since the former is a superset of the latter.
-+ *
-+ * Since tasklets and timers run in softIRQ context already, synchronizing
-+ * between a softIRQ and a tasklet or timer can use the plain spin_lock()
-+ * function.
-+ */
- static __always_inline void spin_lock_bh(spinlock_t *lock)
- {
- 	raw_spin_lock_bh(&lock->rlock);
-@@ -371,11 +402,47 @@ do {									\
- 	raw_spin_lock_nest_lock(spinlock_check(lock), nest_lock);	\
- } while (0)
- 
-+/**
-+ * spin_lock_irq() - Lock a spinlock while disabling interrupts.
-+ * @lock: The spinlock that will be locked.
-+ *
-+ * When a spinlock is shared by code running in interrupt context and process
-+ * context, it is important to ensure that interrupts are disabled while the
-+ * lock is held. Otherwise, an interrupt handler might attempt to take the lock
-+ * while it is already held, leading to a deadlock.
-+ *
-+ * This function unconditionally disables interrupts on the local CPU, and then
-+ * locks the provided spinlock. It is suitable for use in contexts where
-+ * interrupts are known to be enabled — because the corresponding unlock
-+ * function, spin_unlock_irq(), unconditionally enables interrupts.
-+ *
-+ * When code can be called with interrupts either enabled or disabled, prefer
-+ * spin_lock_irqsave(), which preserves the current state so that it can be
-+ * restored when the spinlock is released.
-+ */
- static __always_inline void spin_lock_irq(spinlock_t *lock)
- {
- 	raw_spin_lock_irq(&lock->rlock);
- }
- 
-+/**
-+ * spin_lock_irqsave() - Lock a lock, disable interrupts, and save current state.
-+ * @lock: The spinlock that will be locked.
-+ * @flags: An unsigned long to store the current interrupt state.
-+ *
-+ * When a spinlock is shared by code running in interrupt context and process
-+ * context, it is important to ensure that interrupts are disabled while the
-+ * lock is held. Otherwise, an interrupt handler might attempt to take the lock
-+ * while it is already held, leading to a deadlock.
-+ *
-+ * This macro disables interrupts on the local CPU if they are enabled, and
-+ * then locks the provided spinlock. The previous state of interrupts (enabled
-+ * or disabled) is saved in the @flags argument so that it can be restored by
-+ * the corresponding call to spin_unlock_irqrestore().
-+ *
-+ * When code will only be run with interrupts enabled, using spin_lock_irq() can
-+ * avoid the need to create a local variable to save the state.
-+ */
- #define spin_lock_irqsave(lock, flags)				\
- do {								\
- 	raw_spin_lock_irqsave(spinlock_check(lock), flags);	\
-@@ -386,21 +453,53 @@ do {									\
- 	raw_spin_lock_irqsave_nested(spinlock_check(lock), flags, subclass); \
- } while (0)
- 
-+/**
-+ * spin_unlock() - Unlock a spinlock.
-+ * @lock: The spinlock that will be unlocked.
-+ *
-+ * This function unlocks the provided spinlock, and is typically paired with a
-+ * previous call to spin_lock().
-+ */
- static __always_inline void spin_unlock(spinlock_t *lock)
- {
- 	raw_spin_unlock(&lock->rlock);
- }
- 
-+/**
-+ * spin_unlock_bh() - Unlock a spinlock and enable softIRQs.
-+ * @lock: The spinlock that will be unlocked.
-+ *
-+ * This function unlocks the provided lock, and then enables softIRQ handling on
-+ * the current CPU. It should typically correspond to a previous call to
-+ * spin_lock_bh().
-+ */
- static __always_inline void spin_unlock_bh(spinlock_t *lock)
- {
- 	raw_spin_unlock_bh(&lock->rlock);
- }
- 
-+/**
-+ * spin_unlock_irq() - Unlock a spinlock and enable interrupts.
-+ * @lock: The spinlock that will be unlocked.
-+ *
-+ * This function unlocks the provided lock, and then unconditionally enables
-+ * interrupts on the current CPU. It should typically correspond to a previous
-+ * call to spin_lock_irq().
-+ */
- static __always_inline void spin_unlock_irq(spinlock_t *lock)
- {
- 	raw_spin_unlock_irq(&lock->rlock);
- }
- 
-+/**
-+ * spin_unlock_irqrestore() - Unlock a spinlock and restore interrupt state.
-+ * @lock: The spinlock that will be unlocked.
-+ * @flags: The previously saved interrupt state to restore.
-+ *
-+ * This function unlocks the provided lock, and then restores interrupts to
-+ * whichever state (enabled or disabled) is indicated by @flags. @flags should
-+ * come from a previous call to spin_lock_irqsave().
-+ */
- static __always_inline void spin_unlock_irqrestore(spinlock_t *lock, unsigned long flags)
- {
- 	raw_spin_unlock_irqrestore(&lock->rlock, flags);
--- 
-2.51.0
+Nice. :)
+
+About performance, can we assume housekeeping CPUs are not affected by
+the change (they don't seem to use the trick anyway) or do we want/need
+to collect some numbers on them as well just in case (maybe more
+throughput oriented)?
+
+Thanks,
+Juri
 
 
