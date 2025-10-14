@@ -1,121 +1,164 @@
-Return-Path: <linux-kernel+bounces-852455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB510BD9075
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:29:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFECBD908D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58274189C610
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:30:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 344C74FB8A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276AA30C36D;
-	Tue, 14 Oct 2025 11:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFC330DEA4;
+	Tue, 14 Oct 2025 11:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K7jAIQBA"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="pfN/SgFQ"
+Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5E02FD7DD;
-	Tue, 14 Oct 2025 11:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3760D30C625
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760441381; cv=none; b=qtyMHt3hXX9Ng3CSvrWZh0IB8YxxA6tDsGaJK0xbGn+tXM7uzJUt5w1+S69huCYMV0crW15FwyvbExk9PN9KK5fRW99Y+MjbHVd6J3pplXNydKQM17biv7kwYZYYXbZPt80s6fkZvqgdzm3MEwoe7gYSFhsJpllUMiz2sFnxz+c=
+	t=1760441416; cv=none; b=b4QQ2tiM/8fTNKMziq0rmNl8OlZDEaBBy8OvEzEdXpU9gW8dTN/pXP6tGZvpyreCBZLYYbfmd3bmxe6s8oihp54N3HZ3ba8rcdh+wzS03G59aoVWFR0/2hXohqfQHa3Pk067SjJMovmT4TTrk71vo/u1+Ck7z8bZwzzMvxJPEOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760441381; c=relaxed/simple;
-	bh=1GfZigKl8BK6ItvIvHiHwUmP9apgJNQtcjLeOH0Fo9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pASI8TM04qlVzFiUl7wZaSoV70mydYoe4bHMOb5HyFQqUKudmM8YEvKEKnhmRE/SucRFHk0BVzm3GrvMpoaQhIpGIOIj/oJolff9/URpCyby6FTa+/Hp9sivF1JbEsKUzntqUI611rLeQMU1K9dduDI7cEEX5EhZJ/i1Rv78MMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K7jAIQBA; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760441377;
-	bh=1GfZigKl8BK6ItvIvHiHwUmP9apgJNQtcjLeOH0Fo9w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K7jAIQBADMt3OIAdrE5ksGeiSSHn+ISFhMcWzPAkpAwTKDDKt1+rpCu0J1r1kxoIm
-	 zNE1qxXvfwjh7+J1vFhd+CXwaCDeTCBRPYI1e2Y7bRQ2yYeUial1kg5IXqPHmqGaol
-	 gNuazANough8dB0l1ZoB4bOQEMjfaMH4tTYj++IBGNQym4nZU8eDT5rUBZMuL3ahg5
-	 gE9qgUqEkQHVwdmMl74AovVLF8DX+jhSJVJorUEvN8fOWQOGImf9FMfeK7S3diHVfW
-	 w4w/90WAi+UBH348POXLwJPK18r2KfgdyNNcXSuy3mtUqBmQc1ZFuoIhho81lJrW6M
-	 OO3IAjcJ+77kA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CEE8617E0456;
-	Tue, 14 Oct 2025 13:29:35 +0200 (CEST)
-Message-ID: <15d26478-89e5-4815-8e20-7f34778d077a@collabora.com>
-Date: Tue, 14 Oct 2025 13:29:35 +0200
+	s=arc-20240116; t=1760441416; c=relaxed/simple;
+	bh=QPLQ8S5Z+CsJsGt24MgXa/YtJJ4/cZaedUMHMTuRgPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oam6CICVikZYHN6Ym0DuJy7NScHpRknO0VckufjWYYqxsqE8dnpTr9k2VuuCIAZLjmCbya7ngHdCqrLJQqsYiT8Qg86ohwM9GEoQ2gxHX/CVRGa1XSCtmruGY6pGr3W9rQhfNf+/nlvyxcQVwBoyk2P9uWtTlaPHMgntCgQMqMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=pfN/SgFQ; arc=none smtp.client-ip=202.108.3.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1760441411;
+	bh=XuiZZX2bdYokcEIW6becPyXT1zpVn2AQfemG2M9o3UI=;
+	h=From:Subject:Date:Message-ID;
+	b=pfN/SgFQSrEjCB6axw8obWTRAsCKMinfHGaIcVc7B7CSzOpmnm+VIb9yIXf7gHKam
+	 l8HSsLvG30ALPxzu+0VX5gR+rOkFwqlwftoH1iepj5yMqNzGWxnBh8FUTkBeYU4Nmi
+	 +HbNsZZ1QZ6IM7gtNeP5ZsUUHO3Sp4U1hY7Gxskk=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68EE343400007D1B; Tue, 14 Oct 2025 19:29:58 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8044336685184
+X-SMAIL-UIID: FAFC45108EE14A7F85C90DE2B7CC568D-20251014-192958-1
+From: Hillf Danton <hdanton@sina.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v4 0/3] mm/page_alloc: Batch callers of free_pcppages_bulk
+Date: Tue, 14 Oct 2025 19:29:45 +0800
+Message-ID: <20251014112946.8581-1-hdanton@sina.com>
+In-Reply-To: <20251013190812.787205-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/32] media: mediatek: vcodec: Use %pe format specifier
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Leon Luo <leonl@leopardimaging.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Jacopo Mondi <jacopo+renesas@jmondi.org>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Julien Massot <julien.massot@collabora.com>, Jacopo Mondi
- <jacopo@jmondi.org>, Daniel Scally <djrscally@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>, Yong Zhi
- <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
- Tianshu Qiu <tian.shu.qiu@intel.com>, Tiffany Lin
- <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Rui Miguel Silva <rmfrfs@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Dafna Hirschfeld <dafna@fastmail.com>,
- Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
-References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
- <20251013-ptr_err-v1-24-2c5efbd82952@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251013-ptr_err-v1-24-2c5efbd82952@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 13/10/25 16:15, Ricardo Ribalda ha scritto:
-> The %pe format specifier is designed to print error pointers. It prints
-> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-> omitting PTR_ERR().
+On Mon, 13 Oct 2025 12:08:08 -0700 Joshua Hahn wrote:
+> Motivation & Approach
+> =====================
 > 
-> This patch fixes this cocci report:
-> ./platform/mediatek/vcodec/common/mtk_vcodec_dbgfs.c:187:3-10: WARNING: Consider using %pe to print PTR_ERR()
+> While testing workloads with high sustained memory pressure on large machines
+> in the Meta fleet (1Tb memory, 316 CPUs), we saw an unexpectedly high number
+> of softlockups. Further investigation showed that the zone lock in
+> free_pcppages_bulk was being held for a long time, and was called to free
+> 2k+ pages over 100 times just during boot.
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> This causes starvation in other processes for the zone lock, which can lead
+> to the system stalling as multiple threads cannot make progress without the
+> locks. We can see these issues manifesting as warnings:
+> 
+> [ 4512.591979] rcu: INFO: rcu_sched self-detected stall on CPU
+> [ 4512.604370] rcu:     20-....: (9312 ticks this GP) idle=a654/1/0x4000000000000000 softirq=309340/309344 fqs=5426
+> [ 4512.626401] rcu:              hardirqs   softirqs   csw/system
+> [ 4512.638793] rcu:      number:        0        145            0
+> [ 4512.651177] rcu:     cputime:       30      10410          174   ==> 10558(ms)
+> [ 4512.666657] rcu:     (t=21077 jiffies g=783665 q=1242213 ncpus=316)
+> 
+> While these warnings are benign, they do point to the underlying issue of
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+No fix is needed if it is benign.
 
+> lock contention. To prevent starvation in both locks, batch the freeing of
+> pages using pcp->batch.
+> 
+> Because free_pcppages_bulk is called with the pcp lock and acquires the zone
+> lock, relinquishing and reacquiring the locks are only effective when both of
+> them are broken together (unless the system was built with queued spinlocks).
+> Thus, instead of modifying free_pcppages_bulk to break both locks, batch the
+> freeing from its callers instead.
+> 
+> A similar fix has been implemented in the Meta fleet, and we have seen
+> significantly less softlockups.
+> 
+Fine, softlockup is not cured.
 
+> Testing
+> =======
+> The following are a few synthetic benchmarks, made on three machines. The
+> first is a large machine with 754GiB memory and 316 processors.
+> The second is a relatively smaller machine with 251GiB memory and 176
+> processors. The third and final is the smallest of the three, which has 62GiB
+> memory and 36 processors.
+> 
+> On all machines, I kick off a kernel build with -j$(nproc).
+> Negative delta is better (faster compilation).
+> 
+> Large machine (754GiB memory, 316 processors)
+> make -j$(nproc)
+> +------------+---------------+-----------+
+> | Metric (s) | Variation (%) | Delta(%)  |
+> +------------+---------------+-----------+
+> | real       |        0.8070 |  - 1.4865 |
+> | user       |        0.2823 |  + 0.4081 |
+> | sys        |        5.0267 |  -11.8737 |
+> +------------+---------------+-----------+
+> 
+> Medium machine (251GiB memory, 176 processors)
+> make -j$(nproc)
+> +------------+---------------+----------+
+> | Metric (s) | Variation (%) | Delta(%) |
+> +------------+---------------+----------+
+> | real       |        0.2806 |  +0.0351 |
+> | user       |        0.0994 |  +0.3170 |
+> | sys        |        0.6229 |  -0.6277 |
+> +------------+---------------+----------+
+> 
+> Small machine (62GiB memory, 36 processors)
+> make -j$(nproc)
+> +------------+---------------+----------+
+> | Metric (s) | Variation (%) | Delta(%) |
+> +------------+---------------+----------+
+> | real       |        0.1503 |  -2.6585 |
+> | user       |        0.0431 |  -2.2984 |
+> | sys        |        0.1870 |  -3.2013 |
+> +------------+---------------+----------+
+> 
+> Here, variation is the coefficient of variation, i.e. standard deviation / mean.
+> 
+> Based on these results, it seems like there are varying degrees to how much
+> lock contention this reduces. For the largest and smallest machines that I ran
+> the tests on, it seems like there is quite some significant reduction. There
+> is also some performance increases visible from userspace.
+> 
+> Interestingly, the performance gains don't scale with the size of the machine,
+> but rather there seems to be a dip in the gain there is for the medium-sized
+> machine.
+>
+Explaining the dip helps land this work in the next tree.
 
