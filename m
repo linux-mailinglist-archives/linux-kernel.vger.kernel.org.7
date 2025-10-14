@@ -1,161 +1,199 @@
-Return-Path: <linux-kernel+bounces-851658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8CABD7013
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E153BD701F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 925AB4E6E6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36DFF19A139A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD2D7262D;
-	Tue, 14 Oct 2025 01:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE9472612;
+	Tue, 14 Oct 2025 01:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knXqxT95"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v4wBxSH8"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228DD1D6DA9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0432820E6F3
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760406415; cv=none; b=HAFa/NczUdgX37CTTfjsfZkr69fLoZsDUbWA7i/d536tVlfRBxyct+DwNCxq5DONlZhD95EvkboPlvdfMo5bqybz9PHr2VHTv43fJQWvTBafWoaTPRq9rG5rEoXh3gGIS/2xUMuE66v9fMq+5QIgNrfP5f/yiubI7C9yO2JUDZ4=
+	t=1760406439; cv=none; b=HVZvo4TR87/5I7Z8GpAPzeMZd4jVaAEMu7JiLW2n8/DFRsrc8vNRBTeVlDRGziWBDTrYItEkduMRHp7mxIjnF+sRXUd6tODBEH/j3aGihJ3EltsawcAEgMrWk/s+BjR+TTb9VQXkDju+bK6kcV1yCDKXI8bTzbJThelPmaXXolA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760406415; c=relaxed/simple;
-	bh=sZTjOjGO3Me7AtkyRa8dc1wyExiSmkHmQMISMnJE5zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9FSjqR23eaM5kh9HuqQpuK/KypOuxVODFRIwaijLGuOMInLTDTO391gx9+MaZgIHLILZpecNDMB3CAANR2/EU4pyB+UgWJ+kMOpOOr/MQivZYi9V8gfEWowyR6hl1TxlauKOdmCYn17ubHWhxbLN/nQk1SWslWAvRTr1cHrgX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knXqxT95; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27ee41e074dso55402555ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:46:54 -0700 (PDT)
+	s=arc-20240116; t=1760406439; c=relaxed/simple;
+	bh=2CsPuuc7sXtpg4PefmMtwBtWIx1LnKQTXPGwO21uvw8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kng+ipIkyzZLC4IP9JW+vCJAUARLFc3OeO7OsKDpJNkvfi1T8j95b1Ge/7vZwHi1vpQZN+g0+J/2PsDY+VRIeEU+VDDIT2JYEwt7cEuwYDIMbzOnvGxOz/KDRQ+xKE4cPo8e2uu2DGiIYhaVjYPjnDUUn1K9ZR804jTw9SXMCKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v4wBxSH8; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7841da939deso4153201b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760406413; x=1761011213; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Efs1OS4WhBY7qmnFUKM6SksfuFBm0C5Nz8+hgpJIUHQ=;
-        b=knXqxT95gddFJx58Zj5V5nTdRzrJ39+IE1b7T/hKK6tRpx6rAHmqEG360/GLY14kDS
-         nf2FvbpOIrvsd3ZCRn2+9FhQHecgTXUy/eNjS5EdIupuvfOoD0Ooqyug2MXC9ARJJje3
-         kal4b/BJNeJ+yoeZy2iI19u9wjn57GyddN0UD+8UjS6ScoDf+5Gsh4egAsDLlUXO2sGP
-         F9sFmDpF7gaEANoSljcTEINEqH1HDOaGHZfypeJmQxeSn+GmJONaHRgaps1tZhy6H5f2
-         CiNMBcpfkl7/4tR9uVp6JEl33PNG/5jKFS1+RWnOElUK5+3VP7F6a6cuInEeepH8ihhR
-         HUrw==
+        d=google.com; s=20230601; t=1760406437; x=1761011237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jGjEi7N29NLVZhXUSQ4DWylm+1B6zKlX/oEjJXnY15U=;
+        b=v4wBxSH84Dw03LmIFtkvaIgk4SZDxJ1Gx1nKsIuoIvhidmL6h0tT8DUYWuLZnuSJyK
+         1plIWRwu3Mqh/xfw8G4evCU4exh4xwR11w4gzAwKz/Eu8Lcv+3fY5KV4oO0wbe2vpYSa
+         887wCOn5qDkLoUKfTgojP8DntC38AYQqPtEg9/MNZe5ArwRGc6ugv2H2McuaZ6iTOzOT
+         nGzyEEFNZobtQaKvmkPE002nEp5kMJyXvCzD6dmZsSbkHedTKTkq915zPRCHlmEvtrKZ
+         kjBF7kwfjW7reyNYGwoNzLUq8R6L1oPdGFE6eRXyxugqal9CR9aKhBIB1MYFwcvLYLe2
+         umKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760406413; x=1761011213;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Efs1OS4WhBY7qmnFUKM6SksfuFBm0C5Nz8+hgpJIUHQ=;
-        b=Ytu87aeftdhlmsfe5/lf12rqE55APDDCXbIgm8l+TF1s7/qFpSJFhwCnPJyQSWoAj5
-         7YZyged1a9X5CwBR7oULjWDglO2pQi4c0nLeuheTmLY1MOoCvpKF7t6/yYrcguP6H7VW
-         dsk2LL2HvxcHM4CskhuKnu2e0SIUeS+kWNseq/JfDuuCbfRb/LFgZ/MnJ4kVkgWyShG9
-         wjza5P4rXwHD+AZQvQ/7nGh0deus/52+gLt/gu7/8mNIHNO2FoMmLkUMWOiNn2PetDXr
-         JvkOIDd8x/9F/NpKoXx6JWQ55Iq4y8ZRArf/EdJVeZ6e/DRKxbsTT7Ha4Ru66AgBRaZ2
-         nhDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2RRR92Io4KyIP/C9wdnZGGLujSCgJXwK/lfjAfS3pO87AKhwd9zTEhCvnZz2FioYYKKZsRXLy80hnp3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Y5Oz4ycNKmqamaI4ZWYAwAe7UaXyu17DmrMwjwRZBX6SMyg2
-	bhaYoEkCcGBrd7sGglktkoNCCKCyrc+TSdG7+hoF8ughgSrVQ3vl+49g
-X-Gm-Gg: ASbGncv8kWYRhAAmvIPAXFvER8SHLJyzNuV4wiTRIa2Xs+D5eC1oU4mlEq/q+eN+HTR
-	ybMtabuu2JcJyz5rVhc7A3NtYWuJz5AOSfjCH8piK/U1aL9GcrdH1yxMmlax7HiZd2WSPU3vg4z
-	mK6o3YqiSeSs+3fQXaaPIyMGl3/e6cxRhRNL2ibqtKE9VNW6SC1rwxWK+ecqIAd74H4HJ6J4UpQ
-	zvsGzMAp1LnXTGLHSEi0FyrJOwAhnwQM8g+mGsdkUj03t1CH8PKJJMV4WDf1/ooRb+NcEYjTqX8
-	neukOaI71Up7oQwSBrs9nGHC8DYw2Y5tpYl25jLdiril/CQEEflfC2SekRHt47yUNPOcMfb2yIL
-	aAs+jsDeVFB4woEItFv8rx8xmaAjhSFpQdsX9iK93/P64XVResf1CK5fc/jJBKA==
-X-Google-Smtp-Source: AGHT+IEe+imFyQTJYD/N9Ps5ZaxXk5Tjt90b0w5xM8g55o6EThQlHI5Vtkf72wtednQujA7jc8MIlA==
-X-Received: by 2002:a17:903:1a03:b0:269:8059:83ab with SMTP id d9443c01a7336-290272e1ccamr265307085ad.51.1760406413487;
-        Mon, 13 Oct 2025 18:46:53 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-29034e205a6sm146461725ad.35.2025.10.13.18.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 18:46:53 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Kenneth Crudup <kenny@panix.com>,
-	Genes Lists <lists@sapience.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH] PCI: vmd: override irq_startup()/irq_shutdown() in vmd_init_dev_msi_info()
-Date: Tue, 14 Oct 2025 09:46:07 +0800
-Message-ID: <20251014014607.612586-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1760406437; x=1761011237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jGjEi7N29NLVZhXUSQ4DWylm+1B6zKlX/oEjJXnY15U=;
+        b=iLdbuNbaQWKUd+xsEs8rmULeK3a7h12tBy6XoRpM3qiZOd3TruwTrBzLORS9Suq6vK
+         ais37dFWJmBuSQ+5Zfef+xqGBTMld0MTi5+Y0TCfdnULap18fgT/4A24QYTRbX/eiKaM
+         WOoAovOuKuPjmwzqlwxqZKFa6u4SKUXO+DGNNDIpsyxkwSH+sRjFxAaVL+Kw1m0ZvbWg
+         e3Vzxva6QevMQtB/UwL5nSqtXASuOa7e//yBjAJkMwxzaCRa3uGRaM7wc74VYGoY96qe
+         VuhajVROPmVzcPKShaCJcqDO5P1cYDr6zRsEKaPhVOQVvLdeEGfACL+q+ViUQfMs3pv2
+         v7qA==
+X-Forwarded-Encrypted: i=1; AJvYcCXK1EEeIBtJQAoW4nAsruV/cOdBHd4qGs+aU3fy0jE30P+Jip7fyS+N2GVPz3YtC7IaucA8SCE+mlsddeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOp/RTHd6F2AOSgEWXY731EeWE+0iZYcMV2vvoPpoe9yzoCtqZ
+	ChPcY9t8OgZ4dbCYxUB7IaN7TUSTtRZimKUUDVWlkOP28lv7MHbfYSb0poKaI1BJdsjyS73U9tr
+	Ur6ktTwtaRKCJeRukpwTp3vpo+7Z3F1Sibr9p02Qi
+X-Gm-Gg: ASbGncvubpp2ULXAVdGco0yzX72kiMmoK5VVE66Ixr7NsgTkBYKeSeV73kvmdvE5aYU
+	xTPvxADgvhGCj9L2Mo7hLAhgybow1HEAsHkIb4u+F0uZYp0k3+qae4bih2vzYri7ANVFkKWFsQc
+	ftGCIO9tjWdNBjyy+aUmqfI3C2gA67ktmuH3EuYLuTkEXc31qMFSD/v91ysqplfD8lphLo2p2qN
+	zBZcU05ni8am2oZIfMV8OqkUkSUewh/tpXnS5/b3n6dFS2+o7w3IoA8UpbnojReYPHXEGFwxxAT
+X-Google-Smtp-Source: AGHT+IFfPTj8w4BDR5D6JCsus2aD4rztuewWvMbCmVCgUqrOKGYsSJJX4teAZRKcnFjdoRF0OnNBqOS96lWMLzstGuY=
+X-Received: by 2002:a17:902:e952:b0:262:4878:9dff with SMTP id
+ d9443c01a7336-290273567a8mr277763005ad.12.1760406436203; Mon, 13 Oct 2025
+ 18:47:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251010201607.1190967-1-royluo@google.com> <20251010201607.1190967-4-royluo@google.com>
+ <75756635-b374-4441-8526-175210e01163@kernel.org>
+In-Reply-To: <75756635-b374-4441-8526-175210e01163@kernel.org>
+From: Roy Luo <royluo@google.com>
+Date: Mon, 13 Oct 2025 18:46:39 -0700
+X-Gm-Features: AS18NWCzy6Gx5qemaFGw2t6jXb-2epsDNHczVHslksbyWgF7Radr-Z781gw06UU
+Message-ID: <CA+zupgwHFpP5GEwGxOksmLJBU7+Kr_o0p50Pad1NmwNB0AxcGA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since commit 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per
-device domains") set callback irq_startup() and irq_shutdown() of
-the struct pci_msi[x]_template, __irq_startup() will always invokes
-irq_startup() callback instead of irq_enable() callback overridden
-in vmd_init_dev_msi_info(). This will not start the irq correctly.
+On Fri, Oct 10, 2025 at 5:11=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 10/10/2025 22:16, Roy Luo wrote:
+> > +  reg:
+> > +    items:
+> > +      - description: USB2 PHY configuration registers.
+> > +      - description: DisplayPort top-level registers.
+> > +      - description: USB top-level configuration registers.
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: u2phy_cfg
+> > +      - const: dp_top
+> > +      - const: usb_top_cfg
+> > +
+> > +  "#phy-cells":
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  orientation-switch:
+> > +    type: boolean
+> > +    description:
+> > +      Indicates the PHY as a handler of USB Type-C orientation changes
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - "#phy-cells"
+> > +  - clocks
+> > +  - resets
+> > +  - power-domains
+> > +  - orientation-switch
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    soc {
+> > +        #address-cells =3D <2>;
+> > +        #size-cells =3D <2>;
+> > +
+> > +        usb_phy: usb_phy@c410000 {
+> > +            compatible =3D "google,gs5-usb-phy";
+> > +            reg =3D <0 0x0c450014 0 0xc>,
+> > +                  <0 0x0c637000 0 0xa0>,
+>
+> You probably miss DP support and this does not belong here.
 
-Also override irq_startup()/irq_shutdown() in vmd_init_dev_msi_info(),
-so the irq_startup() can invoke the real logic.
+This register space isn't solely for DP operation, a significant portion
+manages the custom combo PHY. Consequently, this space is essential
+even for USB-only operation. We can expect more registers in the space
+to be utilized when DP support is added.
 
-Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
-Reported-by: Kenneth Crudup <kenny@panix.com>
-Closes: https://lore.kernel.org/all/8a923590-5b3a-406f-a324-7bd1cf894d8f@panix.com/
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Tested-by: Kenneth R. Crudup <kenny@panix.com>
----
- drivers/pci/controller/vmd.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+While I acknowledge the current name is confusing, it directly reflects
+the hardware documentation. We can either adhere to the hardware
+documentation's naming or propose a more descriptive alternative.
+What's your preference?
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 1bd5bf4a6097..b4b62b9ccc45 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -192,6 +192,12 @@ static void vmd_pci_msi_enable(struct irq_data *data)
- 	data->chip->irq_unmask(data);
- }
+>
+> > +                  <0 0x0c45002c 0 0x4>;
+>
+> That's not a separate address space. I really, really doubt that
+> hardware engineers came with address spaces of one word long.
 
-+static unsigned int vmd_pci_msi_startup(struct irq_data *data)
-+{
-+	vmd_pci_msi_enable(data);
-+	return 0;
-+}
-+
- static void vmd_irq_disable(struct irq_data *data)
- {
- 	struct vmd_irq *vmdirq = data->chip_data;
-@@ -210,6 +216,11 @@ static void vmd_pci_msi_disable(struct irq_data *data)
- 	vmd_irq_disable(data->parent_data);
- }
+I initially created this space to access the usb2only mode register,
+which must be programmed when the controller operates in high-speed
+only mode without the USB3 PHY initialized. Upon review, I now
+believe the controller driver is the better location for this configuration=
+,
+as the register logically belongs there and the controller can tell
+whether usb3 phy is going to be initialized.
 
-+static void vmd_pci_msi_shutdown(struct irq_data *data)
-+{
-+	vmd_pci_msi_disable(data);
-+}
-+
- static struct irq_chip vmd_msi_controller = {
- 	.name			= "VMD-MSI",
- 	.irq_compose_msi_msg	= vmd_compose_msi_msg,
-@@ -309,6 +320,8 @@ static bool vmd_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
- 	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
- 		return false;
+That is, I'm removing this register space in the next patch.
 
-+	info->chip->irq_startup		= vmd_pci_msi_startup;
-+	info->chip->irq_shutdown	= vmd_pci_msi_shutdown;
- 	info->chip->irq_enable		= vmd_pci_msi_enable;
- 	info->chip->irq_disable		= vmd_pci_msi_disable;
- 	return true;
---
-2.51.0
-
+Thanks,
+Roy Luo
+>
+> > +            reg-names =3D "u2phy_cfg", "dp_top", "usb_top_cfg";
+> > +            #phy-cells =3D <1>;
+> > +            clocks =3D <&hsion_usb2_phy_reset_clk>;
+> > +            resets =3D <&hsion_resets_usb2_phy>;
+> > +            power-domains =3D <&hsio_n_usb_pd>;
+> > +            orientation-switch;
+> > +        };
+> > +    };
+> > +...
+>
+>
+> Best regards,
+> Krzysztof
 
