@@ -1,103 +1,96 @@
-Return-Path: <linux-kernel+bounces-853457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0F2BDBB71
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:57:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED75DBDBB77
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF633E31AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:57:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9A7AA353F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4D3231827;
-	Tue, 14 Oct 2025 22:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D0623D7ED;
+	Tue, 14 Oct 2025 22:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yy/hQuzJ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFqxCiBk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A849134BD;
-	Tue, 14 Oct 2025 22:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E108C1DE3B5;
+	Tue, 14 Oct 2025 22:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760482640; cv=none; b=oMf66KOPUOZFZDWWp3dRhpS4lZkJkRWKWHMTXnUQMSMswcxCp+aBPmsV7vKs3TZuq18OGlpvHATKd6Iq/aKXs6jSSt1g+++6cEmjLWuhWMM4thkG6G7U1ROEEhZVjgy4ZJB1ZnEwTXpFQFAbmyI4PoTJVYaGZfTXc4p2G5cTb34=
+	t=1760482698; cv=none; b=RV+2+NGtxhM4RUKuBIQRg04WwYyp5RR/QFY5CsY7Fflu7zPW+CrjfDuoWOOcTbQn+78ns9qS7rA5e3FYBMucjemw48hUsEC8+dWDWQ0UFu5/abl5uUNDLZx/IbAcNCTGph1dUEQqGQJBKEK/tAQjdSKQa8HrJHNxbwgqYrxhS0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760482640; c=relaxed/simple;
-	bh=dI5SogE0uAAFm67QBt0/OqgiWz3UwWUKI0k+HCcv4pU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n7cWv5gfUAskaHjEqMBeJnhrmvmlIy1Bx/xVCp48/9+xPPQ/iW0eZ5m2TW9N9fHZ5HtgjtqaTXDkzKiNg0QuI6mTrcTgQ3dJVwA3k4J5KQzSeGko3/X5A2ic7wTWeKB4S535ggZfZcmQv2OB1z41nLGaC8Vp5eygK05uV6GGXXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yy/hQuzJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=2wDbJlxvYX7Q+igEzrmpKJX7HyVeyPvtDFgca/eF0N4=; b=yy/hQuzJzL36WNehKDOFWc1hAQ
-	Ebx6zwFMSUWAeh6kHLswwaMPFLCT5RpgxsBuIKe4UI/XVaFcQ8u8RKYBsBWL3nTGNYIPBPQ1sREXN
-	x8Md404Q/CFtnY9usTpG+TM/YSfP8LC18y9Ce+2dVyV1vveiPODN7+IYHv6+H0b5f50GaPvv3/Vp/
-	aHcOEXTLQKS0t9qhskSr6gzih15LTH+4yYr1v0/Uak5inLz42yGrSkyPk7qdVmJ6daNCXP6TiXXAW
-	p2hf+vHcO3kc5xm4Jolx6VPo6LtvIuEYGoxnK9I4oL141jltTCt4O3cpl65mQ8jP9MHIRm4L57g9+
-	CBh80Ihg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8nxE-0000000Hale-1X38;
-	Tue, 14 Oct 2025 22:57:16 +0000
-Message-ID: <3b7f31b9-443a-465c-90ac-5b539852d799@infradead.org>
-Date: Tue, 14 Oct 2025 15:57:15 -0700
+	s=arc-20240116; t=1760482698; c=relaxed/simple;
+	bh=33F0bDG7ISN7W9huX5zRom7Ga+5tslmdfNG35yo5h4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DL/KT8IuUVCQDZjAxWXwDvlT/MrrumSX9GA0beBC2Mj7pzP4G64w/BwNRdVga1DNJ+AfknFQqzXwMyEPKS/ZHuBa3w/u54rY2qEI90pkGoBba6GIMVF3Mjzb97Ew3B3gzx9Sska2GH0V098LP1EOcziusc85vdkAgirRLJh7DQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFqxCiBk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 593F6C4CEE7;
+	Tue, 14 Oct 2025 22:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760482697;
+	bh=33F0bDG7ISN7W9huX5zRom7Ga+5tslmdfNG35yo5h4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oFqxCiBk1kYnfEDiJ5+/ypN6Y2LBRHWltJyrPK1gBGKGGF/98r6oPx/3fAk20hZzQ
+	 786zriNz2sUzzO9NknANvkHze+JSFh7dHI8unTYGPSrZ5BwY+6+0T1mC4QOWEZ/DHV
+	 JdgiYRIBgLwZedAu3A8pVfqjIe65FYQCooHqrGxxd+ACfF+5uYJVliU0uAXTY7GgcN
+	 MuUTMzyoQsBS+qbWKQvy7ysfrOzQhhkUcXcl3uvIXOKOBJoyiGYFoIIt0HuOKR5rjJ
+	 mubQLT/GyJAi3ZEoTs6XNHzutiSkMkO5gxsSMdeWn9dUCTWslkliXRyf58hdgDxJRD
+	 QxJ0GiDCFiz3Q==
+Date: Tue, 14 Oct 2025 22:58:16 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, skinsburskii@linux.microsoft.com,
+	mhklinux@outlook.com
+Subject: Re: [PATCH] mshv: Fix VpRootDispatchThreadBlocked value
+Message-ID: <20251014225816.GA4136543@liuwe-devbox-debian-v2.local>
+References: <1760466017-29523-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: admin-guide: update tiny script for number of taint
- flags
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>,
- Shuah Khan <skhan@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org
-References: <20251014031538.764059-1-rdunlap@infradead.org>
- <20251014121403.GX3901471@nvidia.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251014121403.GX3901471@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1760466017-29523-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-
-
-On 10/14/25 5:14 AM, Jason Gunthorpe wrote:
-> On Mon, Oct 13, 2025 at 08:15:38PM -0700, Randy Dunlap wrote:
->> Account for 2 new taint flags being added by increasing the number of
->> bits handled by the tiny show-tainted-flags example script.
+On Tue, Oct 14, 2025 at 11:20:17AM -0700, Nuno Das Neves wrote:
+> This value in the VP stats page is used to track if the VP can be
+> dispatched for execution when there are no fast interrupts injected.
 > 
-> Maybe add a comment near the array about this :\
+> The original value of 201 was used in a version of the hypervisor
+> which did not ship. It was subsequently changed to 202 so that is the
+> correct value.
+> 
+> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
-Something like this?
+Applied to hyperv-fixes. Thanks.
 
-
---- linux-next-20251014.orig/kernel/panic.c
-+++ linux-next-20251014/kernel/panic.c
-@@ -638,6 +638,12 @@ EXPORT_SYMBOL(panic);
- /*
-  * TAINT_FORCED_RMMOD could be a per-module flag but the module
-  * is being removed anyway.
-+ *
-+ * NOTE: if you modify the taint_flags or TAINT_FLAGS_COUNT,
-+ * please also modify tools/debugging/kernel-chktaint and
-+ * Documentation/admin-guide/tainted-kernels.rst, including its
-+ * small shell script that prints the TAINT_FLAGS_COUNT bits of
-+ * /proc/sys/kernel/tainted.
-  */
- const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- 	TAINT_FLAG(PROPRIETARY_MODULE,		'P', 'G', true),
-
-
-
--- 
-~Randy
-
+> ---
+>  drivers/hv/mshv_root_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index e3b2bd417c46..8a42d9961466 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -41,7 +41,7 @@ MODULE_DESCRIPTION("Microsoft Hyper-V root partition VMM interface /dev/mshv");
+>  /* TODO move this to another file when debugfs code is added */
+>  enum hv_stats_vp_counters {			/* HV_THREAD_COUNTER */
+>  #if defined(CONFIG_X86)
+> -	VpRootDispatchThreadBlocked			= 201,
+> +	VpRootDispatchThreadBlocked			= 202,
+>  #elif defined(CONFIG_ARM64)
+>  	VpRootDispatchThreadBlocked			= 94,
+>  #endif
+> -- 
+> 2.34.1
+> 
 
