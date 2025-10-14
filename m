@@ -1,340 +1,179 @@
-Return-Path: <linux-kernel+bounces-853157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64410BDAC8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:33:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D04BDACA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB1E3AB83E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:33:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 77C904E41EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F1F280025;
-	Tue, 14 Oct 2025 17:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1C83009F7;
+	Tue, 14 Oct 2025 17:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxKRHTG5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="q9jTq4a6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844182AC17
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0147274B58;
+	Tue, 14 Oct 2025 17:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760463189; cv=none; b=exiCyfG3Ml4RrhUeNOptsANB8yZPGfl4NIuGRQnZihnt5C1/KkMgfKMchhLAhH/xuDwpHOoiWckIBGZ3eos8U2cDOB0aoUj91nl9lW1wkGsPRVQJpUKHHM9FHnDfLsTC/sdCIuht5G9KP6hq1NTvw1jLEuhnOw2/KH1VDgw81Io=
+	t=1760463451; cv=none; b=FUvGAcVoe2uf28ISW0m26ae/XKKVQQBjMeEeWTZDiEEddzbeJPb7mFPdttdquHtsfY5HhudP4+Ez1vlbPUJZzf6aG4gsNeWZKYkZa9Pa4VPHBoC2eNcybcNVRB449+iZ4G5B5UO3afbZhq1BeEcrRodtB7Hn2WX4sp1t2MqubNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760463189; c=relaxed/simple;
-	bh=yJ3DupAKeXPcuj2FkBEJ1gpETG5eMX0Imv5KnzPSWM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QjSA2to1SVbtFaXMeLeI66nUwjwmr0WSLyQ9NouuYIipjDzUBYXQZqNfihDUtt3DbfdPwKl1ZDeVfp0gjuX5RdOwx79z6AAyRQn2ZoMYHenun1TkXvCIuHT3/JAO+qlcrfsu8hEFG5YOBWJpnv9Ay2htAH9higqHpUgA45O14HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxKRHTG5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C02C16AAE
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760463189;
-	bh=yJ3DupAKeXPcuj2FkBEJ1gpETG5eMX0Imv5KnzPSWM8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kxKRHTG5ej32UJM4USpSrZgRYVGxC6ddT55Q+R6CzmVhbuFigPMAAmQpHDIPwPtgx
-	 MvAO+HiW3Q+RMt0FfV758Yl19RtAtz7VzcUVxCArNul+sRAcCZbGAI1aJ9svFOdGoJ
-	 cVU3MbGId5RriwMaF3DdwbFpYurKkmtLEBlZsDXcOCVn/p5QiEgeqyGRcIy5k3qkDH
-	 pDWQZbZh67cmnc6854J39D4Dn3Ckaib4qRsPjeOLcVYc9cG48OHkkh3Y9Mvqkp+QoM
-	 Ur6Y6dQeZH/KjFzQtsZE7s0U1abphcZJDKTAQKhyeE+Bkn/YWV4uY2YRPsSRRQu+/Q
-	 hJTOACcDUGYOQ==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-43f802f8515so2822168b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:33:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXci1yKpGBWo+dK4IDLvmcxeEo/DEqeAMxmWcNRFbnmJtmz53d0GmhjgaLwrBDYo6iNBLeQZu2WGhKKvWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLfKL36IutYGv1grnaGBdhkQOLTy8hDOzIc5b0tJigcveyB0Hu
-	53H+cUBBqsvL9VvCqm4RwGWwXehXLHGk4b+d63IHeaLQvbdvR8ehPQCjhR5vUtU9sEel/FXyrex
-	w3IfsG2xgAvcoHCsfDOJIR7Jxc5PegQU=
-X-Google-Smtp-Source: AGHT+IG3oBdcKjeJtPrnw94Xsg+JIhV4JwEkIp7JEg/9LBfppH9TA0j1KP/Tp1E/2Kz9Wt05VEai0poC1fcnREZlDVQ=
-X-Received: by 2002:a05:6808:3bc:b0:441:c604:f417 with SMTP id
- 5614622812f47-441c604f61dmr4573831b6e.65.1760463188281; Tue, 14 Oct 2025
- 10:33:08 -0700 (PDT)
+	s=arc-20240116; t=1760463451; c=relaxed/simple;
+	bh=HiHxgPNFAWSB/iS1Eg4H0inrzfOnWi/it/DJfDndziA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=c8wxIg0YmKVHE7b07BjHWkw0stSLFsKpFNU646qhWQyHniMjvYICec6N1Y6trZjtxd3UA6ZbSy/st/QWZIhxuiSg7YKStH7a/HVZhEwP6QcER+TMUNuRhir3UtZ7dfD3/bZEAQagTyKiIXYFVSHZwwT+bVU2FyKhweQhWTaceJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=q9jTq4a6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B5A1741;
+	Tue, 14 Oct 2025 19:35:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1760463348;
+	bh=HiHxgPNFAWSB/iS1Eg4H0inrzfOnWi/it/DJfDndziA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=q9jTq4a6Wd81pLyp1VGc5fLh85ad6D3pNvVulfbdw6nNHMFfwQHZ+9YodjLIwb/tf
+	 OFUJHqcDSVDA1RGICzlwOuLLW8Jd6hpeXuJzD5A1yLJzUAHXvb1WykyTG/aJt3UuBv
+	 yDqmkZJeiY5Z5R4V1MVbHtD4AkP2IQSy9vXuIVUs=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
- <08529809-5ca1-4495-8160-15d8e85ad640@arm.com> <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
- <8da42386-282e-4f97-af93-4715ae206361@arm.com> <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi>
- <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com> <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
- <e9eb077b-3253-49be-b997-a07dcde86cdc@arm.com>
-In-Reply-To: <e9eb077b-3253-49be-b997-a07dcde86cdc@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 14 Oct 2025 19:32:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hD-78Gbq1pJGsoOBwpTsK=NABdR91t4S8NbWk4FEmEJg@mail.gmail.com>
-X-Gm-Features: AS18NWCSwjPs1NML2gstSijE6v5_fcgrDQzRV2IewjSSHBkvsFGcBNOnFXRE25Y
-Message-ID: <CAJZ5v0hD-78Gbq1pJGsoOBwpTsK=NABdR91t4S8NbWk4FEmEJg@mail.gmail.com>
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Sasha Levin <sashal@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250916144710.1285650-1-kieran.bingham@ideasonboard.com>
+References: <20250916144710.1285650-1-kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH] arm64: dts: freescale: debix-som-a-bmb-08: Enable HDMI output
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Shawn Guo <shawnguo2@yeah.net>, Marco Felsch <m.felsch@pengutronix.de>
+To: Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 14 Oct 2025 18:37:23 +0100
+Message-ID: <176046344348.1246375.13335893574135284814@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Tue, Oct 14, 2025 at 7:20=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 10/14/25 16:54, Rafael J. Wysocki wrote:
-> > On Tue, Oct 14, 2025 at 5:11=E2=80=AFPM Christian Loehle
-> > <christian.loehle@arm.com> wrote:
-> >>
-> >> On 10/14/25 12:55, Sergey Senozhatsky wrote:
-> >>> On (25/10/14 11:25), Christian Loehle wrote:
-> >>>> On 10/14/25 11:23, Sergey Senozhatsky wrote:
-> >>>>> On (25/10/14 10:50), Christian Loehle wrote:
-> >>>>>>> Upstream fixup fa3fa55de0d ("cpuidle: governors: menu: Avoid usin=
-g
-> >>>>>>> invalid recent intervals data") doesn't address the problems we a=
-re
-> >>>>>>> observing.  Revert seems to be bringing performance metrics back =
-to
-> >>>>>>> pre-regression levels.
-> >>>>>>
-> >>>>>> Any details would be much appreciated.
-> >>>>>> How do the idle state usages differ with and without
-> >>>>>> "cpuidle: menu: Avoid discarding useful information"?
-> >>>>>> What do the idle states look like in your platform?
-> >>>>>
-> >>>>> Sure, I can run tests.  How do I get the numbers/stats
-> >>>>> that you are asking for?
-> >>>>
-> >>>> Ideally just dump
-> >>>> cat /sys/devices/system/cpu/cpu*/cpuidle/state*/*
-> >>>> before and after the test.
-> >>>
-> >>> OK, got some data for you.  The terminology being used here is as fol=
-lows:
-> >>>
-> >>> - 6.1-base
-> >>>   is 6.1 stable with a9edb700846 "cpuidle: menu: Avoid discarding use=
-ful information"
-> >>>
-> >>> - 6.1-base-fixup
-> >>>   is 6.1 stable with a9edb700846 and fa3fa55de0d6 "cpuidle: governors=
-:
-> >>>   menu: Avoid using invalid recent intervals data" cherry-pick
-> >>>
-> >>> - 6.1-revert
-> >>>   is 6.1 stable with a9edb700846 reverted (and no fixup commit, obvio=
-usly)
-> >>>
-> >>> Just to show the scale of regression, results of some of the benchmar=
-ks:
-> >>>
-> >>>   6.1-base:           84.5
-> >>>   6.1-base-fixup:     76.5
-> >>>   6.1-revert:         59.5
-> >>>
-> >>>   (lower is better, 6.1-revert has the same results as previous stabl=
-e
-> >>>   kernels).
-> >> This immediately threw me off.
-> >> The fixup was written for a specific system which had completely broke=
-n
-> >> cpuidle. It shouldn't affect any sane system significantly.
-> >> I double checked the numbers and your system looks fine, in fact none =
-of
-> >> the tests had any rejected cpuidle occurrences. So functionally base a=
-nd
-> >> base-fixup are identical for you. The cpuidle numbers are also reasona=
-bly
-> >> 'in the noise', so just for the future some stats would be helpful on =
-those
-> >> scores.
-> >>
-> >> I can see a huge difference between base and revert in terms of cpuidl=
-e,
-> >> so that's enough for me to take a look, I'll do that now.
-> >> (6.1-revert has more C3_ACPI in favor of C1_ACPI.)
-> >>
-> >> (Also I can't send this email without at least recommending teo instea=
-d of menu
-> >> for your platform / use-cases, if you deemed it unfit I'd love to know=
- what
-> >> didn't work for you!)
-> >
-> > Well, yeah.
-> >
-> > So I've already done some analysis.
-> >
-> > There are 4 C-states, POLL, C1, C6 and C10 (at least that's what the
-> > MWAIT hints tell me).
-> >
-> > This is how many times each of them was requested during the workload
-> > run on base 6.1.y:
-> >
-> > POLL: 21445
-> > C1: 2993722
-> > C6: 767029
-> > C10: 736854
-> >
-> > and in percentage of the total idle state requests:
-> >
-> > POLL: 0,47%
-> > C1: 66,25%
-> > C6: 16,97%
-> > C10: 16,31%
-> >
-> > With the problematic commit reverted, this became
-> >
-> > POLL: 16092
-> > C1: 2452591
-> > C6: 750933
-> > C10: 1150259
-> >
-> > and (again) in percentage of the total:
-> >
-> > POLL: 0,37%
-> > C1: 56,12%
-> > C6: 17,18%
-> > C10: 26,32%
-> >
-> > Overall, POLL is negligible and the revet had no effect on the number
-> > of times C6 was requested.  The difference is for C1 and C10 and it's
-> > 10% in both cases, but going in opposite directions so to speak: C1
-> > was requested 10% less and C10 was requested 10% more after the
-> > revert.
-> >
-> > Let's see how this corresponds to the residency numbers.
-> >
-> > For base 6.1.y there was
-> >
-> > POLL: 599883
-> > C1: 732303748
-> > C6: 576785253
-> > C10: 2020491489
-> >
-> > and in percentage of the total
-> >
-> > POLL: 0,02%
-> > C1: 21,99%
-> > C6: 17,32%
-> > C10: 60,67%
-> >
-> > After the revert it became
-> >
-> > POLL: 469451
-> > C1: 517623465
-> > C6: 508945687
-> > C10: 2567701673
-> >
-> > and in percentage of the total
-> >
-> > POLL: 0,01%
-> > C1: 14,40%
-> > C6: 14,16%
-> > C10: 71,43%
-> >
-> > so with the revert the CPUs spend around 7% more time in deep idle
-> > states (C6 and C10 combined).
-> >
-> > I have to say that this is consistent with the intent of the
-> > problematic commit, which is to reduce the number of times the deepest
-> > idle state is requested although it is likely to be too deep.
-> >
-> > However, on the system in question this somehow causes performance to
-> > drop significantly (even though shallow idle states are used more
-> > often which should result in lower average idle state exit latency and
-> > better performance).
-> >
-> > One possible explanation is that this somehow affects turbo
-> > frequencies.  That is, requesting shallower idle states on idle CPUs
-> > prevents the other CPUs from getting sufficiently high turbo.
-> >
-> > Sergey, can you please run the workload under turbostat on the base
-> > 6.1.y and on 6.1.y with the problematic commit reverted and send the
-> > turbostat output from both runs (note: turbostat needs to be run as
-> > root)?
->
-> That's the most plausible explanation and would also be my guess.
-> FWIW most of the C3_ACPI (=3D=3D C10) with revert are objectively wrong
-> with 78% idle misses (they were already pretty high with base around 72.5=
-%).
+Hi All,
 
-Yeah, so the commit in question works as intended and from a purely
-cpuidle standpoint it is an improvement.
+Quoting Kieran Bingham (2025-09-16 15:47:09)
+> Enable the HDMI output on the Debix SOM A board, using the HDMI encoder
+> present in the i.MX8MP SoC.
+>=20
+> Enable and configure all nodes required for the HDMI port usage.
+>=20
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-However, for the system/workload combination in question, cpuidle
-really is used as a means to crank up single-thread CPU performance.
+One review tag at https://lore.kernel.org/all/20250925171744.5eyhqjlqp7skes=
+qi@pengutronix.de/
 
-Honestly, I'm not really sure what to do about this.  It looks like
-this workload might benefit from selecting C6 more often, but I'm not
-quite sure how to make that happen in a generic way.  Also, it may
-regress other workloads.
+Could anyone be able to review / collect / apply this one please?
 
-> I'll leave this here for easier following:
+--
+Regards
 
-Thanks!
+Kieran
 
-> =3D=3D=3D=3D=3D 6.1-base: after minus before deltas (aggregated across CP=
-Us) =3D=3D=3D=3D=3D
-> +---------+-------------+------------+--------------+---------------+----=
---------+------------+---------+
-> |   state | time_diff_s | usage_diff | avg_resid_us | rejected_diff | abo=
-ve_diff | below_diff | share_% |
-> +---------+-------------+------------+--------------+---------------+----=
---------+------------+---------+
-> |    POLL |       0.600 |     21,445 |         28.0 |             0 |    =
-      0 |     19,846 |    0.02 |
-> | C1_ACPI |     732.304 |  2,993,722 |        244.6 |             0 |    =
-  3,816 |    280,613 |   21.99 |
-> | C2_ACPI |     576.785 |    767,029 |        752.0 |             0 |    =
-272,105 |        453 |   17.32 |
-> | C3_ACPI |   2,020.491 |    736,854 |      2,742.1 |             0 |    =
-534,424 |          0 |   60.67 |
-> |   TOTAL |   3,330.180 |  4,519,050 |              |             0 |    =
-810,345 |    300,912 |  100.00 |
-> +---------+-------------+------------+--------------+---------------+----=
---------+------------+---------+
->
-> =3D=3D=3D=3D=3D 6.1-revert: after minus before deltas (aggregated across =
-CPUs) =3D=3D=3D=3D=3D
-> +---------+-------------+------------+--------------+---------------+----=
---------+------------+---------+
-> |   state | time_diff_s | usage_diff | avg_resid_us | rejected_diff | abo=
-ve_diff | below_diff | share_% |
-> +---------+-------------+------------+--------------+---------------+----=
---------+------------+---------+
-> |    POLL |       0.469 |     16,092 |         29.2 |             0 |    =
-      0 |     14,855 |    0.01 |
-> | C1_ACPI |     517.623 |  2,452,591 |        211.1 |             0 |    =
-  4,109 |    150,500 |   14.40 |
-> | C2_ACPI |     508.946 |    750,933 |        677.8 |             0 |    =
-327,457 |        427 |   14.16 |
-> | C3_ACPI |   2,567.702 |  1,150,259 |      2,232.3 |             0 |    =
-895,311 |          0 |   71.43 |
-> |   TOTAL |   3,594.740 |  4,369,875 |              |             0 |  1,=
-226,877 |    165,782 |  100.00 |
-> +---------+-------------+------------+--------------+---------------+----=
---------+------------+---------+
->
-> =3D=3D=3D=3D=3D 6.1-revert minus 6.1-base (state-by-state deltas of the d=
-eltas) =3D=3D=3D=3D=3D
-> +---------+-----------+----------+----------+---------------+----------+-=
----------+
-> |   state | =CE=94share_pp |   =CE=94usage |  =CE=94time_s | =CE=94avg_re=
-sid_us |   =CE=94above |   =CE=94below |
-> +---------+-----------+----------+----------+---------------+----------+-=
----------+
-> |    POLL |     -0.00 |   -5,353 |   -0.130 |           1.2 |       +0 | =
-  -4,991 |
-> | C1_ACPI |     -7.59 | -541,131 | -214.680 |         -33.6 |     +293 | =
--130,113 |
-> | C2_ACPI |     -3.16 |  -16,096 |  -67.840 |         -74.2 |  +55,352 | =
-     -26 |
-> | C3_ACPI |    +10.76 | +413,405 |  547.210 |        -509.8 | +360,887 | =
-      +0 |
-> |   TOTAL |     +0.00 | -149,175 |  264.560 |               | +416,532 | =
--135,130 |
-> +---------+-----------+----------+----------+---------------+----------+-=
----------+
+
+> ---
+>=20
+> This replicates 4880ee1c9046 ("arm64: dts: imx8mp-debix-model-a: Enable
+> HDMI output") to support the Debix SOM as well.
+>=20
+>=20
+>  .../freescale/imx8mp-debix-som-a-bmb-08.dts   | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-debix-som-a-bmb-08.dts =
+b/arch/arm64/boot/dts/freescale/imx8mp-debix-som-a-bmb-08.dts
+> index d241db3743a9..04619a722906 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-debix-som-a-bmb-08.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-debix-som-a-bmb-08.dts
+> @@ -22,6 +22,18 @@ chosen {
+>                 stdout-path =3D &uart2;
+>         };
+> =20
+> +       hdmi-connector {
+> +               compatible =3D "hdmi-connector";
+> +               label =3D "hdmi";
+> +               type =3D "a";
+> +
+> +               port {
+> +                       hdmi_connector_in: endpoint {
+> +                               remote-endpoint =3D <&hdmi_tx_out>;
+> +                       };
+> +               };
+> +       };
+> +
+>         reg_baseboard_vdd3v3: regulator-baseboard-vdd3v3 {
+>                 compatible =3D "regulator-fixed";
+>                 regulator-min-microvolt =3D <3300000>;
+> @@ -222,6 +234,28 @@ flash: flash@0 {
+>         };
+>  };
+> =20
+> +&hdmi_pvi {
+> +       status =3D "okay";
+> +};
+> +
+> +&hdmi_tx {
+> +       pinctrl-names =3D "default";
+> +       pinctrl-0 =3D <&pinctrl_hdmi>;
+> +       status =3D "okay";
+> +
+> +       ports {
+> +               port@1 {
+> +                       hdmi_tx_out: endpoint {
+> +                               remote-endpoint =3D <&hdmi_connector_in>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&hdmi_tx_phy {
+> +       status =3D "okay";
+> +};
+> +
+>  &i2c4 {
+>         expander0: gpio@20 {
+>                 compatible =3D "nxp,pca9535";
+> @@ -276,6 +310,10 @@ ethmac2: mac-address@c {
+>         };
+>  };
+> =20
+> +&lcdif3 {
+> +       status =3D "okay";
+> +};
+> +
+>  &snvs_pwrkey {
+>         status =3D "okay";
+>  };
+> @@ -430,6 +468,15 @@ MX8MP_IOMUXC_NAND_DATA03__FLEXSPI_A_DATA03      0x82
+>                 >;
+>         };
+> =20
+> +       pinctrl_hdmi: hdmigrp {
+> +               fsl,pins =3D <
+> +                       MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL     0=
+x1c3
+> +                       MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA     0=
+x1c3
+> +                       MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD         0=
+x19
+> +                       MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC         0=
+x19
+> +               >;
+> +       };
+> +
+>         pinctrl_i2c1: i2c1grp {
+>                 fsl,pins =3D <
+>                         MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL                 0=
+x400001c2
+> --=20
+> 2.50.1
 >
 
