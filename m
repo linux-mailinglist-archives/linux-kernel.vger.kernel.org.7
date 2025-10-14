@@ -1,234 +1,132 @@
-Return-Path: <linux-kernel+bounces-851874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28C6BD7800
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2873EBD7803
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C34A401E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A6B40289E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFEE3054DF;
-	Tue, 14 Oct 2025 05:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1D83043D8;
+	Tue, 14 Oct 2025 05:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AoNNOTWj"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZgR5WYcd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55562305077
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95CB3054D0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760421294; cv=none; b=ZGJo0uoD1+N9bKDw93TyGkJf8q406cPL/Rf/KjWostRHd0Txb7h4teEAuCZBjsvyvohQnQNppU5+AK7jvG04it4qCCRqq2O5gKG8Y8jIOr6AMMhFXUBek+wrsnz+MND7Sh7dMFTl/tdVI34g+ODzyNpaODavM7mhJM3GkdVc3r8=
+	t=1760421304; cv=none; b=mBUIbD0qXY6/n9cDuySZX/tya+GyyBT2IFoz/gFPuox8PnVZEbIqVWo8hryZ13l7gWSt40oB7KyvRdCyHsHduGhrRm56Z/WE6kdysWNmkgwyGNDWTiStPnETBfeildaCQ9OaIp6Ti8weew6MBGCNdZpYEFFyUNUP5C35BGAP+l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760421294; c=relaxed/simple;
-	bh=uhpQJtFLv1rBxsAcfck67pJR/8AGuXyPU5pS3+P1YE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=WaQSqccRev6w0leiiVR2pUoMt+vOS+owsx5l0DS0wVn9c0xsUF1jhhOZi27TtuQcykGQ1wC3DLtwYz4o5chbPSiv6iGuIze653qKcTIP4wcphQ+cFsgzt27IsoT6SjJZVLuygauG7qQiNClypHAcu1y04V54PiEE5Vxp6NnPlQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AoNNOTWj; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251014055448euoutp015b45dc5826d54bff4d85e5529927ab9e~uRdWm4i_x2554225542euoutp01j
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:54:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251014055448euoutp015b45dc5826d54bff4d85e5529927ab9e~uRdWm4i_x2554225542euoutp01j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760421288;
-	bh=KgrxKYIuyb4cf8d6Kw/QEO1mOl+rpOs8+2xF6zyBwbI=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AoNNOTWje9UdiRcES1n/LO/FyiHUuq1ECbVfCOGTMRHeZXTpTmmp/T7vb67c16J3t
-	 16KE+6qpFaZmrohQBoB+huJWKp/mL8GyGTv4CTg41h0kifueBNE4xskov1w8se4bgv
-	 zokyMswSZwnNg1dJsquVCFisW/OKNdh+y/K1vNxs=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251014055447eucas1p2c67687acd32add33c7bb253f94c46e0d~uRdWPkuq42592925929eucas1p2r;
-	Tue, 14 Oct 2025 05:54:47 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251014055447eusmtip230ff3a2be12cab6c9753d94c32e4dd37~uRdVarDXi1545615456eusmtip2D;
-	Tue, 14 Oct 2025 05:54:46 +0000 (GMT)
-Message-ID: <f3fba346-6fdd-4b0e-9414-087a12772a6a@samsung.com>
-Date: Tue, 14 Oct 2025 07:54:46 +0200
+	s=arc-20240116; t=1760421304; c=relaxed/simple;
+	bh=yXwEx39SW/o4ktzJekxrqUuu5wbUKI25mXm4Y616TVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5tS7FI1q4g2bmRyOxoKFHFpDHG1JRESDuA+o1naNANbQHEyLlO9Mw8T/6XVg0kgbsLkTaxWRlYq43kfST04+8JASdGzK7gUKkC8UWD2WYx4ln0yvtQfuxuKxH+od8zKT6kCKiWsFWr8TRoRKxymBzLje/SFQsmFNVbJ3mo7dF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZgR5WYcd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 986C8C4CEF1;
+	Tue, 14 Oct 2025 05:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760421303;
+	bh=yXwEx39SW/o4ktzJekxrqUuu5wbUKI25mXm4Y616TVU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZgR5WYcdfSu4Du7E7jXQmhA1nOopUroh/P6YKhIJHde/wL7WEEs6yWrzsqiJWfXMj
+	 YywfVbx8RePX7FI1MFct3JLvpiM8jXrdNGVjeW7Bdf3Ya6NXk12l81Gd3GOPtqDUsI
+	 6N1uLQxpwOR7aT4i6hjaUEjwos/MJssCXirzUKpDy/RIGaUf4/yZW1dfgt6YzvOnc+
+	 xUXYS5BK9RYfvt8G7U8ojRK0MgjD78KEFHaypQgW+7t/3aJw5EnlpkxN+b+dng3yCP
+	 wHaLEyOEhETMfIsYAZ/BNJfYcRttZKyxMO8Z0sGy9sQ2MqDZct7p5bHsMKSOmCSWeH
+	 NEZmRwmmWZPQg==
+Date: Mon, 13 Oct 2025 22:54:58 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Feng Chen <feng.chen@amlogic.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Subject: Re: Linux 6.18-rc1
+Message-ID: <20251014055458.GA2373807@ax162>
+References: <CAHk-=whPJTtX5u1m47fPUD2g2Dc=Did_6OqCVj6OQPKFgfKn9g@mail.gmail.com>
+ <f594c621-f9e1-49f2-af31-23fbcb176058@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 0/3] dma_mapping: Add auto cleanup support
-To: Frank Li <Frank.Li@nxp.com>, Robin Murphy <robin.murphy@arm.com>, Dong
-	Aisheng <aisheng.dong@nxp.com>, Andi Shyti <andi.shyti@kernel.org>, Shawn
-	Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20251010-dmamap_cleanup-v1-0-ec5bc14e82c4@nxp.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251014055447eucas1p2c67687acd32add33c7bb253f94c46e0d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251010185046eucas1p26868b540b74a96e36943066216525bed
-X-EPHeader: CA
-X-CMS-RootMailID: 20251010185046eucas1p26868b540b74a96e36943066216525bed
-References: <CGME20251010185046eucas1p26868b540b74a96e36943066216525bed@eucas1p2.samsung.com>
-	<20251010-dmamap_cleanup-v1-0-ec5bc14e82c4@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f594c621-f9e1-49f2-af31-23fbcb176058@roeck-us.net>
 
-Hi
+On Mon, Oct 13, 2025 at 10:08:22AM -0700, Guenter Roeck wrote:
+> Building openrisc:allmodconfig ... failed
+> --------------
+> Error log:
+> In file included from include/linux/cpumask.h:11,
+>                  from include/linux/smp.h:13,
+>                  from include/linux/lockdep.h:14,
+>                  from include/linux/spinlock.h:63,
+>                  from include/linux/mmzone.h:8,
+>                  from include/linux/gfp.h:7,
+>                  from include/linux/slab.h:16,
+>                  from fs/nfsd/nfs4xdr.c:37:
+> fs/nfsd/nfs4xdr.c: In function 'nfsd4_encode_components_esc':
+> include/linux/kernel.h:334:46: error: called object 'strlen' is not a function or function pointer
+> 
+> bisect:
+> 
+> # bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
+> # good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+> git bisect start 'HEAD' 'v6.17'
+> # good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
+> git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
+> # bad: [bed0653fe2aacb0ca8196075cffc9e7062e74927] Merge tag 'iommu-updates-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux
+> git bisect bad bed0653fe2aacb0ca8196075cffc9e7062e74927
+> # good: [be812ace0378a9db86344ad637c5ed2a5d11f216] Bluetooth: Avoid a couple dozen -Wflex-array-member-not-at-end warnings
+> git bisect good be812ace0378a9db86344ad637c5ed2a5d11f216
+> # good: [8804d970fab45726b3c7cd7f240b31122aa94219] Merge tag 'mm-stable-2025-10-01-19-00' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> git bisect good 8804d970fab45726b3c7cd7f240b31122aa94219
+> # good: [b3fee71e6673393d04476fbe0f4f03f97765e32d] Merge tag 'v6.18rc1-part1-ksmbd-server-fixes' of git://git.samba.org/ksmbd
+> git bisect good b3fee71e6673393d04476fbe0f4f03f97765e32d
+> # good: [944df7a31452f75bbc15b1e7215e1aacee8cd1b4] docs: update the guidance for Link: tags
+> git bisect good 944df7a31452f75bbc15b1e7215e1aacee8cd1b4
+> # bad: [50647a1176b7abd1b4ae55b491eb2fbbeef89db9] Merge tag 'pull-f_path' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs
+> git bisect bad 50647a1176b7abd1b4ae55b491eb2fbbeef89db9
+> # bad: [c817248fc831f5494d076421672b70a6ec1a92dc] nfs/localio: add proper O_DIRECT support for READ and WRITE
+> git bisect bad c817248fc831f5494d076421672b70a6ec1a92dc
+> # bad: [4b7c3b4c673d40e4b98cdaf642495929f43787e6] NFS: Update the flexfilelayout driver to use xdr_set_scratch_folio()
+> git bisect bad 4b7c3b4c673d40e4b98cdaf642495929f43787e6
+> # bad: [bf75ad096820fee5da40e671ebb32de725a1c417] NFSv4.1: fix mount hang after CREATE_SESSION failure
+> git bisect bad bf75ad096820fee5da40e671ebb32de725a1c417
+> # good: [64dd8022245038109826c0e2a778f16618d88600] nfs: cleanup tracepoint declarations
+> git bisect good 64dd8022245038109826c0e2a778f16618d88600
+> # bad: [be390f95242785adbf37d7b8a5101dd2f2ba891b] NFSv4: handle ERR_GRACE on delegation recalls
+> git bisect bad be390f95242785adbf37d7b8a5101dd2f2ba891b
+> # bad: [ec7d8e68ef0ec5c635c8f9e93cd881673445a397] sunrpc: add a Kconfig option to redirect dfprintk() output to trace buffer
+> git bisect bad ec7d8e68ef0ec5c635c8f9e93cd881673445a397
+> # good: [9082aae154be2d9e208b56e249cb886612f7c6cf] sunrpc: remove dfprintk_cont() and dfprintk_rcu_cont()
+> git bisect good 9082aae154be2d9e208b56e249cb886612f7c6cf
+> # first bad commit: [ec7d8e68ef0ec5c635c8f9e93cd881673445a397] sunrpc: add a Kconfig option to redirect dfprintk() output to trace buffer
+> 
+> I did not try to understand why that patch triggers the build failure,
+> but reverting it fixes the problem (not that it is a good idea to have
+> a variable named 'strlen').
+> 
+> Author: Jeff Layton <jlayton@kernel.org>
 
-On 10.10.2025 20:50, Frank Li wrote:
-> There are many below pattern
->
-> 	fun()
-> 	{
-> 		...
-> 		dma_map_single();
-> 		if (dma_mapping_error)
-> 			goto err1;
->
-> 		dmaengine_prep_slave_single()
-> 		if (...)
-> 			goto err2
->
-> 		dmaengine_submit()
-> 		if (...)
-> 			goto err3
->
-> 		wait_for_completion_timeout()
-> 		if (...)
-> 			goto err4
->
-> 	err4:
-> 	err3:
-> 	err2:
-> 		dma_umap_single();
-> 	err1:
-> 	}
->
-> Use cleanup can simple error handle like guard(), such as guard(mutex).
-> or __free(kfree) = kmalloc.
->
-> But dma_umap_single() need more argurements. So situation below complex.
->
-> It need pack argurments list into structure.
->
-> 	#define __DEFINE_GUARD_CLASS(_name, _return_type, _list_class_fields)   \
-> 	typedef struct {                                                \
-> 	       	 _return_type ret;                                       \
-> 	        bool    okay;                                           \
-> 	        struct  {                                               \
-> 	                __REMOVE(_list_class_fields);                   \
-> 	        } args;                                                 \
-> 	} class_##_name##_t;
->
-> So save all arugments to it.
->
-> __DEFINE_GUARD_CLASS(dma_map_single, dma_addr_t, (struct device *dev; void *ptr; size_t size; enum dma_data_direction dir)
-> will expand to
->
-> 	struct {
-> 		dma_addr_t ret;
-> 		bool	okay;
-> 		struct {
-> 			struct device *dev;
-> 			void *ptr;
-> 			size_t size;
-> 			enum dma_data_direction dir;
-> 		}
-> 	}
->
-> So cleanup function can use saved argurement.
->
-> The above fun will be
->
-> 	fun()
-> 	{
-> 		CLASS(dma_map_single, dma)(dev, ...);
->
-> 		...
-> 		if (...)
-> 			return err;
-> 	}
->
-> if funtion return, which need keep map,
->
-> 	submit()
-> 	{
-> 		dma_map_single();
-> 		...
-> 		dmaengine_submit();
-> 		if (...)
-> 			goto err1
-> 		return;
->
-> 	goto err1:
-> 		dma_umap_single();
-> 	}
->
-> Macro retain_and_empty() will clean varible to avoid unmap.
->
->          ({                                  \
->                  __auto_type __ptr = &(t); typeof(t) empty= {};   \
->                  __auto_type __val = *__ptr; \
->                  __ptr->okay = 0;        \
->                  __val.ret;              \
->          })
->
-> So
->
-> 	submit()
-> 	{
->         		CLASS(dma_map_single, dma)(dev,...;
->
-> 	        ...
-> 	        dmaengine_submit();
-> 		if (...)
-> 			return err;
->
-> 		//before return;
->
-> 		retain_and_empty(dma)
-> 	}
->
-> This series just show how to hanndle many agurement at resource alloc/free
-> functions. Only show dma_map_single. If the over all method is acceptable.
-> I will more define for dma mapping functions.
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+I sent a patch for this:
 
-This looks fine from the DMA-mapping API perspective. I think we should 
-also get some feedback from Peter, who authored most of the __cleanup() 
-based infrastructure, so I've added him to the recipients list.
+https://lore.kernel.org/20250930-nfsd-fix-trace-printk-strlen-error-v3-1-536cc9822ee6@kernel.org/
 
+which Chuck appears to have tenatively applied:
 
-> ---
-> Frank Li (3):
->        cleanup: Add DEFINE_GUARD_ARGS_CLASS macro for resource alloc/free functions with multiple arguments
->        dma-mapping: Add auto cleanup support dma_map_single()
->        i2c: lpi2c: Use auto cleanup for dma_map_single()
->
->   drivers/i2c/busses/i2c-imx-lpi2c.c | 13 ++++---
->   include/linux/cleanup.h            | 73 ++++++++++++++++++++++++++++++++++++++
->   include/linux/dma-mapping.h        |  8 +++++
->   3 files changed, 87 insertions(+), 7 deletions(-)
-> ---
-> base-commit: 7c3ba4249a3604477ea9c077e10089ba7ddcaa03
-> change-id: 20251008-dmamap_cleanup-d0a7f0525a3d
->
-> Best regards,
-> --
-> Frank Li <Frank.Li@nxp.com>
->
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+https://git.kernel.org/cel/c/c710de671789388b3af1046c7091685594ec44d9
 
+Cheers,
+Nathan
 
