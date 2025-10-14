@@ -1,179 +1,159 @@
-Return-Path: <linux-kernel+bounces-851854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4022DBD7731
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:36:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B271BD7746
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E13A834EFBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:36:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4D03BD2BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FC029293D;
-	Tue, 14 Oct 2025 05:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2708D8634F;
+	Tue, 14 Oct 2025 05:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YP4UjDll"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P+cxWsPr"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CB7273D77;
-	Tue, 14 Oct 2025 05:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5B626E6F2
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760420190; cv=none; b=BYaJ21MRhfnTwDONQKosrbCqd3pXJ6pCDgUgztVaOvsBTpSA8sLoEp5sProOsUhU9Ce2wQcHqnUUUNowd2gDFwP/QJ9L9HpRyWPmUW2W9kUDP6dwTam9CTPp6914oBV5YhFG+nKbaamRKKQuGBmxFY3t94pYIp7TOGmZMi6jOkI=
+	t=1760420220; cv=none; b=ZbxT2zacrAhSW7l2LOyB55lK6E7zAEpq5H5xmkW9njF0svso6rVdhXBwvCyexIrkvCQ03McAhTHsslUs7d8/oRn9uYKqo25Y3lYQbCMjCCclCJT4lSSxqt56zOYZGRyV0yR8W28+fLmgXIJEjbx8k1gKH2G7oJOMH+ZrxB9xEgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760420190; c=relaxed/simple;
-	bh=dZyO5AYkdCnAgw3zHe29BHULyuRscIXqSL4WQ9OiMqE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=snzYK3UDtFOF9CUrOG+pahzPVLYxcSdogsgEC6LE11Z9FIMU0JDxLvP77FA1tF+Zb4S0Gn2ccAIV8AY0S9BPraBwjX/zLEv2KF9sA723SYo5xp1UXQAldAYj9jvwDJj2+Z9WShl4qbhqRp1+mmn7BNbRjBhR8kQcZmBS4mq1whs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YP4UjDll; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59E5aAnm1427772;
-	Tue, 14 Oct 2025 00:36:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760420170;
-	bh=+BnS+zjoHibuRNFFkUP4V+Q1q9TD2gqlW/L3pZgLjBc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=YP4UjDlltxFOMRTzX7smUSH82BtShjxkb+SnjZL6rvOjWoPV5NZKiwN0uyVaiXM81
-	 8eEpIfA5x3JbwBOvdWSOpVzMb0j4ROW1hCS5j+3Gw+8svx+nTGJymcg96QL0gfO6jb
-	 WcFhWLtPraMEq0bgDHAueE0FmGFg/GioJIXWnUZg=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59E5a9Sv3569395
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 14 Oct 2025 00:36:10 -0500
-Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 14
- Oct 2025 00:36:09 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 14 Oct 2025 00:36:09 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59E5a83T3047771;
-	Tue, 14 Oct 2025 00:36:09 -0500
-Date: Tue, 14 Oct 2025 11:06:08 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Malaya Kumar Rout <mrout@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <lyude@redhat.com>,
-        <malayarout91@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown
-	<lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] PM: console: Fix memory allocation error handling in
- pm_vt_switch_required()
-Message-ID: <20251014053608.pwlnexeh7mwjrvsc@lcpd911>
-References: <20251013193028.89570-1-mrout@redhat.com>
+	s=arc-20240116; t=1760420220; c=relaxed/simple;
+	bh=x6f619sWjWn8VzR+PJyJZc3YLAUI5y2rgeIbQboasNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kZu461CeBwo2NqE/HszfUPhYETmj6koXuVQoevpnal9EZubrAr5eXjQFQCpvCpsOUW3P7zV1cRQgmeDQ42gH+NWanFvqGL2jHzbg9J4mEbNVPrJYeqaSvRdStSvj39z74q6f+1Ef+/2Ekoyj/lDGGY2PSZ4g793Q+cmGtFhEwGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P+cxWsPr; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cb3b054b-3c21-4941-800c-4519cae9ce31@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760420215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B1m+mNsKlXTM+cfL7n8n0pJBlEVyu9KaA8E5Nvi8xzQ=;
+	b=P+cxWsPrR4uWAHtXtXn+Bi9cCf33CTn6ApZExfCCLB+HQpWVnEV7yH6SO2m5PpIoKrp6a2
+	+qMZ0VxHsgFVJNVuwkqdFXjjLVSmeLukXKSIkBpoNzjLGcox7HYE9TG3+j5/UO2s/0Ryo0
+	baWxsb3QfXHLseF5VDnx8l5os/2u4Q8=
+Date: Tue, 14 Oct 2025 13:36:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251013193028.89570-1-mrout@redhat.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Subject: Re: [PATCH bpf-next RFC 0/2] Pass external callchain entry to
+ get_perf_callchain
+To: Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <olsajiri@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, song@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20251013174721.2681091-1-chen.dylane@linux.dev>
+ <aO1j747N7pkBTBAb@krava> <3cf98c31-4475-4e4a-8ce0-bc9c62922313@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <3cf98c31-4475-4e4a-8ce0-bc9c62922313@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Oct 14, 2025 at 01:00:27 +0530, Malaya Kumar Rout wrote:
->   The pm_vt_switch_required() function fails silently when memory
->   allocation fails, offering no indication to callers that the operation
->   was unsuccessful. This behavior prevents drivers from handling allocation
->   errors correctly or implementing retry mechanisms. By ensuring that
->   failures are reported back to the caller, drivers can make informed
->   decisions, improve robustness, and avoid unexpected behavior during
->   critical power management operations.
+在 2025/10/14 05:37, Yonghong Song 写道:
 > 
->   Change the function signature to return an integer error code and modify
->   the implementation to return -ENOMEM when kmalloc() fails. Update both
->   the function declaration and the inline stub in include/linux/pm.h to
->   maintain consistency across CONFIG_VT_CONSOLE_SLEEP configurations.
 > 
->   The function now returns:
->   - 0 on success (including when updating existing entries)
->   - -ENOMEM when memory allocation fails
+> On 10/13/25 1:41 PM, Jiri Olsa wrote:
+>> On Tue, Oct 14, 2025 at 01:47:19AM +0800, Tao Chen wrote:
+>>> Background
+>>> ==========
+>>> Alexei noted we should use preempt_disable to protect get_perf_callchain
+>>> in bpf stackmap.
+>>> https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO- 
+>>> bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
+>>>
+>>> A previous patch was submitted to attempt fixing this issue. And Andrii
+>>> suggested teach get_perf_callchain to let us pass that buffer 
+>>> directly to
+>>> avoid that unnecessary copy.
+>>> https://lore.kernel.org/bpf/20250926153952.1661146-1- 
+>>> chen.dylane@linux.dev
+>>>
+>>> Proposed Solution
+>>> =================
+>>> Add external perf_callchain_entry parameter for get_perf_callchain to
+>>> allow us to use external buffer from BPF side. The biggest advantage is
+>>> that it can reduce unnecessary copies.
+>>>
+>>> Todo
+>>> ====
+>>> If the above changes are reasonable, it seems that 
+>>> get_callchain_entry_for_task
+>>> could also use an external perf_callchain_entry.
+>>>
+>>> But I'm not sure if this modification is appropriate. After all, the
+>>> implementation of get_callchain_entry in the perf subsystem seems 
+>>> much more
+>>> complex than directly using an external buffer.
+>>>
+>>> Comments and suggestions are always welcome.
+>>>
+>>> Tao Chen (2):
+>>>    perf: Use extern perf_callchain_entry for get_perf_callchain
+>>>    bpf: Pass external callchain entry to get_perf_callchain
+>> hi,
+>> I can't get this applied on bpf-next/master, what do I miss?
 > 
->   This change improves error reporting without breaking existing callers,
->   as the current callers in drivers/video/fbdev/core/fbmem.c already
->   ignore the return value, making this a backward-compatible improvement.
-
-Not sure why this commit message has been indented, but it's not
-a big deal.
-
+> This path is not based on top of latest bpf/bpf-next tree.
+> The current diff:
 > 
-> Reviewed-by: Lyude Paul <lyude@redhat.com>
-
-Btw you can't include a R-by tag in the very first revision of the
-patch. This needs to come from Lyude on a public mailing list and only
-then can it be picked up.
-
-> Signed-off-by: Malaya Kumar Rout <mrout@redhat.com>
-> ---
->  include/linux/pm.h     | 5 +++--
->  kernel/power/console.c | 8 ++++++--
->  2 files changed, 9 insertions(+), 4 deletions(-)
+>   struct perf_callchain_entry *
+> -get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool 
+> user,
+> -           u32 max_stack, bool crosstask, bool add_mark)
+> +get_perf_callchain(struct pt_regs *regs, struct perf_callchain_entry 
+> *external_entry,
+> +           u32 init_nr, bool kernel, bool user, u32 max_stack, bool 
+> crosstask,
+> +           bool add_mark)
+>   {
 > 
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index cc7b2dc28574..a72e42eec130 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -25,11 +25,12 @@ extern void (*pm_power_off)(void);
->  
->  struct device; /* we have a circular dep with device.h */
->  #ifdef CONFIG_VT_CONSOLE_SLEEP
-> -extern void pm_vt_switch_required(struct device *dev, bool required);
-> +extern int pm_vt_switch_required(struct device *dev, bool required);
->  extern void pm_vt_switch_unregister(struct device *dev);
->  #else
-> -static inline void pm_vt_switch_required(struct device *dev, bool required)
-> +static inline int pm_vt_switch_required(struct device *dev, bool required)
->  {
-> +	return 0;
->  }
->  static inline void pm_vt_switch_unregister(struct device *dev)
->  {
-> diff --git a/kernel/power/console.c b/kernel/power/console.c
-> index 19c48aa5355d..a906a0ac0f9b 100644
-> --- a/kernel/power/console.c
-> +++ b/kernel/power/console.c
-> @@ -44,9 +44,10 @@ static LIST_HEAD(pm_vt_switch_list);
->   * no_console_suspend argument has been passed on the command line, VT
->   * switches will occur.
->   */
-> -void pm_vt_switch_required(struct device *dev, bool required)
-> +int pm_vt_switch_required(struct device *dev, bool required)
->  {
->  	struct pm_vt_switch *entry, *tmp;
-> +	int ret = 0;
->  
->  	mutex_lock(&vt_switch_mutex);
->  	list_for_each_entry(tmp, &pm_vt_switch_list, head) {
-> @@ -58,8 +59,10 @@ void pm_vt_switch_required(struct device *dev, bool required)
->  	}
->  
->  	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
-> -	if (!entry)
-> +	if (!entry) {
-> +		ret = -ENOMEM;
->  		goto out;
-> +		}
->  
->  	entry->required = required;
->  	entry->dev = dev;
-> @@ -67,6 +70,7 @@ void pm_vt_switch_required(struct device *dev, bool required)
->  	list_add(&entry->head, &pm_vt_switch_list);
->  out:
->  	mutex_unlock(&vt_switch_mutex);
-> +	return ret;
+> The actual signature in kernel/events/callchain.c
+> 
+> struct perf_callchain_entry *
+> get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+>                     u32 max_stack, bool crosstask, bool add_mark)
+> {
+> 
+> 
+>>
+>> thanks,
+>> jirka
+>>
+>>
+>>>   include/linux/perf_event.h |  5 +++--
+>>>   kernel/bpf/stackmap.c      | 19 +++++++++++--------
+>>>   kernel/events/callchain.c  | 18 ++++++++++++------
+>>>   kernel/events/core.c       |  2 +-
+>>>   4 files changed, 27 insertions(+), 17 deletions(-)
+>>>
+>>> -- 
+>>> 2.48.1
+>>>
+> 
 
-I am fine with the overall improved error handling,
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+My mistake. I’ll update the code and resend it.
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+Best Regards
+Tao Chen
 
