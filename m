@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-852956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356FDBDA50A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:22:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5BDBDA534
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6C74E7510
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:16:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 383695080A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F48C301021;
-	Tue, 14 Oct 2025 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D1C2FD7D2;
+	Tue, 14 Oct 2025 15:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fAHzSTqz"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HvPyWdV1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A583009E6;
-	Tue, 14 Oct 2025 15:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A172C0F8E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760454908; cv=none; b=Tx6paOpDbOB+Gt7n2ZVqmaFOoNNXRm5xgw9mNvzv29+2+K6s0nCP3kINBB4EqGAfxkL0de741HJ9Bo1QMdrm2rFBvAnqxaJ4dzBPu+HwnvhGAiKzSZwzSSXxl4KvjMFELF9Mt0x6T3Xh9SJJ7k+q1fwS/9pkzIN29CqqiML/qQs=
+	t=1760454927; cv=none; b=cu/vF7+FbUfVOLkbx3KMDCSJPWI7geLANGkqTVsw8zWbtq88WlHJ3DmWHIcWuwn9ahNq/srCcpLMUXph7PyeTfRcM5oFv3uz5hXez+Z2VAuLH1GQLlrEQGP9pbqo2oiFM/A2nhRy1LvkmkL7KYjgSCi8rnLce3y2fW1PfjDxvlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760454908; c=relaxed/simple;
-	bh=m0i1QUBh4zJhtP8fKiyIIyRlwPYD2o/aXoX6SdDe2oI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n1ifeS2EfgZx9W+ugT95+SN4wldrRALmqhPiz21GKcW7t5tx1SuvMyAgwF4bB7SsjpyxJqTSGHZq52Nm9XzKJUPJB+nOxrGYjaeeUDvNZmO0grJbTuLULyq/l1drT0tKw9Ps0xQqGtubUf2Jsw0CqHcgrznAeRRcrJwa6oI+SzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fAHzSTqz; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CD5D840B1E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1760454903; bh=m0i1QUBh4zJhtP8fKiyIIyRlwPYD2o/aXoX6SdDe2oI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=fAHzSTqzngYXdnjB5R3lpag4tKXHXZME8EcB/Up/vM7PoU5MrU9jwB0qsiRpA9vve
-	 50F9/438qkvYdb3VFif0VQuBWYGYVxrNy14bmG09Z1usYZCZQBkVCzK3STWVTW1F/r
-	 ng2Lm+RzLAaRZjrsh3yXEN3OHvMizzT2ObbHwQWqNaAJ/A3elj+GMdaEydMFPGyFZ/
-	 jeMtMOeEr06wPMveKF3csaIPKGwxMVOhmEWYyypV3vSVZHIZDXc0GLEjrOp4VT6KD+
-	 tQMxcPAgm9uMGZRJ5U9xEKMbiPnyst1HjqfWkjKjdrDYEa9w8Hfsel8t2tuoAef3Lv
-	 cMAE2rk+8g+Qw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1760454927; c=relaxed/simple;
+	bh=Gc9gPNIGe4cVGaM7/VR1c6hckG2H84TGLOzGhxUKmtc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=a3kydMC1jzqFhKt6CFg2tr3bvHBMOVh6d5cRhx09b3E0ubTYHjbP74tRRbBVz3fzbX3URd1FJOW3rOy89217ycOMuu8nbJ1f7P367Gjez8RL2dkidbq+W9aSa5Uy/NSmH0Y8dRDPI1oEpn/ipDfW2jkDTHe9U5bjKXOcA2Fqsfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HvPyWdV1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760454922;
+	bh=Gc9gPNIGe4cVGaM7/VR1c6hckG2H84TGLOzGhxUKmtc=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=HvPyWdV1wxFBvZyKYK3CZn8nC/VkI2tIysn96BCFz5XzMqZhqLF+EJYt7bYehfEYF
+	 yoK6MX1lb1DKoZuGGqne34tIlvIzbxtWvWg7ZgmL/EjLEDMr4uH4ByWdnp1fG6D+kL
+	 SkqJl7/hrQVERBOne8VnHDTO/rJ60WLoqN4s4xRmW9GKRS6lDrlEPTt2R3VOFhi7RT
+	 /MjiGfjUPQcPqxuiAE2GaL1wMQdU/7Q12PEJO2+BKIQCrbyHKgcv18UOk8cYCNgWK1
+	 OC0djV0mm7rNaUwhdSSmq+Ucvrwkyl9b42aA0bjK8m1zowDBSVA/WzCVsmqbORV0Fo
+	 F+pDy1WCE3STg==
+Received: from [192.168.1.90] (unknown [82.79.138.145])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CD5D840B1E;
-	Tue, 14 Oct 2025 15:15:02 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Kernel Workflows
- <workflows@vger.kernel.org>
-Cc: Dante Strock <dantestrock@hotmail.com>, Randy Dunlap
- <rdunlap@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH v2] Documentation: process: Arbitrarily bump kernel
- major version number
-In-Reply-To: <20250922074219.26241-1-bagasdotme@gmail.com>
-References: <20250922074219.26241-1-bagasdotme@gmail.com>
-Date: Tue, 14 Oct 2025 09:15:01 -0600
-Message-ID: <87bjm9bjm2.fsf@trenco.lwn.net>
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C878F17E1292;
+	Tue, 14 Oct 2025 17:15:21 +0200 (CEST)
+Message-ID: <37c99206-4bd2-40e5-95f6-71c109bd031c@collabora.com>
+Date: Tue, 14 Oct 2025 18:15:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
+ SoCs
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+To: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
+ Derek Foreman <derek.foreman@collabora.com>,
+ Daniel Stone <daniels@collabora.com>
+References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
+ <e030bed8-58d5-4a19-b81c-45193cb900d8@collabora.com>
+Content-Language: en-US
+In-Reply-To: <e030bed8-58d5-4a19-b81c-45193cb900d8@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+Hi,
 
-> The big picture section of 2.Process.rst currently hardcodes major
-> version number to 5 since fb0e0ffe7fc8e0 ("Documentation: bring process
-> docs up to date"). As it can get outdated when it is actually
-> incremented (the recent is 6 and will be 7 in the near future),
-> arbitrarily bump it to 9, giving a headroom for a decade.
->
-> Note that the version number examples are kept to illustrate the
-> numbering scheme.
->
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+On 9/3/25 10:52 PM, Cristian Ciocaltea wrote:
+> Hello Heiko,
+> 
+> On 9/3/25 9:50 PM, Cristian Ciocaltea wrote:
+>> The first patch in the series implements the CEC capability of the
+>> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
+>> This is based on the downstream code, but rewritten on top of the CEC
+>> helpers added recently to the DRM HDMI connector framework.
+>>
+>> The second patch is needed for RK3576 in order to fixup the timer base
+>> setup according to the actual reference clock rate, which differs
+>> slightly from RK3588.
+>>
+>> The following three patches setup platform data with the new information
+>> expected by the HDMI QP transmitter library, while improving the error
+>> handling in the probe path.
+>>
+>> Please note the CEC helpers were affected by a resource deallocation
+>> issue which could crash the kernel and freeze the system under certain
+>> test conditions.  This has been already fixed in v6.17-rc1 via commit
+>> 19920ab98e17 ("drm/display: hdmi-cec-helper: Fix adapter
+>> unregistration").
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>> Changes in v4:
+>> - Fixed the bisect-related issues reported by Daniel by implementing
+>>   the following operations in dw_hdmi_qp_bind():
+>>   * Disable CEC support when the related IRQ is not available
+>>   * Set ref_clk_rate to vendor default in case it was not provided by
+>>     the platform driver
+>>   * In both scenarios, also print a warning message to highlight the
+>>     need for fixing the platform driver
+>> - Simplified dw_hdmi_qp_cec_init() a bit
+>>   * Removed the now obsolete cec->irq validation test
+>>   * Removed the superfluous error checking and logging around
+>>     devm_request_threaded_irq() call (it already handles all that)
+>> - Collected R-b tags from Daniel
+>> - Rebased series onto next-20250903
+> 
+> I forgot to mention that luckily there are no conflicts with the patches
+> introducing the hw-specific bitfield operations in next-20250903, which this
+> revision is based on.
+> 
+> I verified the series still applies cleanly onto drm-misc-next, while commit
+> ad24f6e10a5f ("drm/rockchip: dw_hdmi_qp: switch to FIELD_PREP_WM16 macro")
+> responsible for the macro conversion can be further cherry-picked without
+> issues on top of all that.  The resulting file content of
+> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c is identical to what's
+> expected after applying this patch set onto next-20250903.
 
-I made a minor tweak to make it clear that 9.x is an example; applied,
-thanks.
+Could we get this merged, please? This would unblock some other patchsets
+conflicting with it.
 
-jon
+I've just checked and it applies cleanly on top of v6.18-rc1. Also seems to work
+fine, at least I haven't noticed any regressions so far.
+
+Thanks,
+Cristian
+
 
