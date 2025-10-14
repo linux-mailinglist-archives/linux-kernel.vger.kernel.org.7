@@ -1,148 +1,218 @@
-Return-Path: <linux-kernel+bounces-852461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED43BD90B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E403DBD90C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E5DC4F1835
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E24519243B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F6D30F937;
-	Tue, 14 Oct 2025 11:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2081C30DEC6;
+	Tue, 14 Oct 2025 11:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BufL00nZ"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nnBFVhMU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106C930E849
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869922E3B03;
+	Tue, 14 Oct 2025 11:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760441513; cv=none; b=Y9SZzAOkUVq3KA1dLbckQIuOtuZxctGVAlPuErOYPbm0JAYri7E9JImyGaiGVDFzriyqPctEYMqoJGOI28lNwgUSA6clMEfp3BiY/sIH7d4TVLJkA1YCxR+0JzgFnYZSOceiR2c0ToI7lyBJR/JGwZCZ1BG60fVV7KBoQYkhAX0=
+	t=1760441545; cv=none; b=K1yyMwhAzVCG4I4bmsVKhhoAlpkZHCjEABYsdyh50kOqa/WsvmsdLA5PWsdLqK01vYLtl6Y87TPapNzAgqBICTMsK7DdmlMPTZDrbvfKylT2vniRfLPzkH1VjuPUSpqZU+EiVHPaEYEjG+uXOJDDpvb1guBbCQfVGJRtBLnjOxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760441513; c=relaxed/simple;
-	bh=3w4nQi9hgenkrHPxz75XSwpRlBt74vHGiJuFZQ2tndI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o67FiuIsOj01hIumw/o4ipHGC4+nJLinyhTu9jvbgQxMyYwk21tgKWaaugdxBapcdKUoDlgkxbM3ifJuaWZ7cSvmyB6THjOCcFHrVQFrjJ4yLXLyNCZ1ns2ap76o5ZRJ+/kqGiPxNdAEfQGrmqxx4G8zmzMY+IlsfDkGTSNPGuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BufL00nZ; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-4257aafab98so4417272f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760441509; x=1761046309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ofkJNulQu/wtU9ucbaTHhfLlEv5BRzrjhZDncPD/y2M=;
-        b=BufL00nZh9qhuBc5qgR5Gi7wrEyoyBJ2aCnu38k6xzJqx5c4e7Ofc2nWW7Ckquh4hU
-         TffDOrnCd0DEUCpmC/7BZMK89drnwfWoi8CAsatcHK3dkzbLvzHZ0dtRa3KICIqnxJPP
-         DE2+mYd4h2gqbI10/7LJwE6YYmeJEOoPq/6M5Gi7W+wqP1WOJjmnYhtgIw4EjEjR6aTP
-         f0pxTpmOMWezUCQ4DWxmuFqrEG5MD1Wlb8KTc41UJWNlVHaSY5JXpC0VU6YivRWfvlyM
-         PqSsf9u8hBO+wPzxbNtuiwBEReUeNO8ftTLCMFWK/xoA6rjrcAUoZyIGAVtJyLDSF+8x
-         n4zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760441509; x=1761046309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ofkJNulQu/wtU9ucbaTHhfLlEv5BRzrjhZDncPD/y2M=;
-        b=ZousbfRbXQPO0cA3PAbRS9nr2tdm2E8iOgbMQd0CQCgnFBNM/cM87ssbsCxr4hkDWA
-         IHpVn/ytQa0xzaBb2iUrotiTpge8C+D67MCYJURXrDm4qyQP6TzUyn80F7nLV7Vq2x1t
-         UwSZUKfvFnyIo5TBfvbZHyIxV1cFTSnMIDf8K3rHFFByLxj8/TxdxGCS4Pu+W8YQh9jA
-         ClYh/4huJAr5nK7f1ukX5REO5NVsOX3xesvruPSHAk/V/bahsPJWLMAu+HHxNSDU3V2R
-         G1R73d9+Wu7sJx9lEPI4JM7qE4KbuLVEnd42jm1YGik9yiJlTk1zQY5bikm/kOqP8A5H
-         +rTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlRTNqa+WmcBoHPOo1jLq1eAStVGI2xcOI7bJp8yDTWaMTySM0ufo0OY//xc/kFCYzlud0+cZgeZy1rxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4IfxVqhLAIMLZq3plTL8PrhdEY3WTHYHVHCpS7sc7+uN63ezz
-	OFg8tIN6Oxmv0Fuv68n75qG8KJwWxkBzYsJqTKLnvyHYgUbw0VwENce+FrByarsZYoGrVGwZ2NM
-	ADYMV
-X-Gm-Gg: ASbGncu5mZdBgTR6dl6lJRFGBMl6CpP8sYARvaj7YhESkgo0dlHTD933eVFsYZWGqnr
-	qflrW3Kpqw0IKuVTAQ15t+E8hOwJYOUBn9PdNARDa3NLCyLWqhtLqoRvub5gkTe94HBmMGGgruu
-	wmqCn3DAmAnnj7LTrRkVaZ+4DQaTbAVMcKL2NjQhk7lU/LnHs4y+i77X+kaMjmXgPcp8OPstGmp
-	LcTKF9zC4ssyj2Yn03/PK93RKASRa3h3JpezotmyZ+Wviy2Vn5LClyRbGsSWE3vw4Up1ivptSsY
-	ZlGmbQqeczWDVQGUvaFzZaNM4fnFXjURbOehFaVO29mAnQfeNBmcBGsa3i+rOc2snCHhsUmQ7hM
-	A7E2RElYFduWNHYR9yu5Uv/aTVf3Hz5eZFjzhlL+8FSLpZHEnTwQ=
-X-Google-Smtp-Source: AGHT+IE7JRJVgX/0XRZqqgOQ0IMTJn2bfv2E4RS1BB14d24blTgxq9Or2UqVDIrAHI/wbElOafShvQ==
-X-Received: by 2002:a05:6000:43c7:20b0:426:f355:7c9a with SMTP id ffacd0b85a97d-426f3557ce6mr628338f8f.25.1760441509084;
-        Tue, 14 Oct 2025 04:31:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb49c4027sm234419565e9.17.2025.10.14.04.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:31:48 -0700 (PDT)
-Date: Tue, 14 Oct 2025 14:31:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: oe-kbuild@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to
- simplify lock handling
-Message-ID: <aO40oQkj9sT78bMV@stanley.mountain>
-References: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
- <202510121908.7aduLIkw-lkp@intel.com>
- <20251014104511.GA14479@nxa18884-linux.ap.freescale.net>
+	s=arc-20240116; t=1760441545; c=relaxed/simple;
+	bh=8juqZChkhVdJOJOqCmRgkPRBnkr1y8NTqdNQbKSKwVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SktZFBKWt2BhmCdhZmQCKre7FMiN+FPJgyQfVJFej7MVKuhPZFoTT9gE27KRelVNjcwBGOn2ufAMnnuepYlgAQydH5m4VHAqbrSFQleYOg95YI2L/pSLgXP2PwcF43zmOW7GEox6bvOEZzty1Gk72q0ugT9yW/imda8YYBkTIm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nnBFVhMU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760441541;
+	bh=8juqZChkhVdJOJOqCmRgkPRBnkr1y8NTqdNQbKSKwVM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nnBFVhMUh/1GaQxtOa7WgGzBInvLUnfBP0ZJ5exU29pIvQPutfuF6d55LhieayC9S
+	 l7wVqv9cR+57AUhZyHQUAGTmHtMQ422yyfQGUxKKhVWVAzrBb7j9RcuzO3IVE5PLWR
+	 b1Jpg72ulzl2e4LCz6NHabdLV3QrZcRhBfLq437V5Ww5+Gx2kfh0y08rUNeNx2QEb3
+	 Ng/U4TIXz7za7kOR9lnK/kRAtD6MBcMIMp83Q75easNYWXalVYVvWj8KSeABQ0uyIk
+	 ezJ0BGUtTbRcp7i/KvzO8BXHOD+uBPk3Zryq9vVtNLnsREVPIjWlMbc6JeQIx0RyIa
+	 oHXqlalgkD+ag==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 05DF517E1292;
+	Tue, 14 Oct 2025 13:32:20 +0200 (CEST)
+Message-ID: <87489f92-7bc0-4494-8532-f8f2d220bd27@collabora.com>
+Date: Tue, 14 Oct 2025 13:32:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014104511.GA14479@nxa18884-linux.ap.freescale.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/20] soc: mediatek: mtk-cmdq: Add new APIs to replace
+ cmdq_pkt_write() and cmdq_pkt_write_mask()
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, =?UTF-8?B?Q0sgSHUgKOiDoeS/ig==?=
+ =?UTF-8?B?5YWJKQ==?= <ck.hu@mediatek.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
+ =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
+ =?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
+ <Xiandong.Wang@mediatek.com>, "nicolas@ndufresne.ca" <nicolas@ndufresne.ca>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ =?UTF-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?= <Paul-pl.Chen@mediatek.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "fshao@chromium.org" <fshao@chromium.org>,
+ =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
+ =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+ "wenst@chromium.org" <wenst@chromium.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+ <20250827114006.3310175-11-jason-jh.lin@mediatek.com>
+ <b2335fd9296bc6f3511f8139870f0c34db1be62a.camel@mediatek.com>
+ <fa46fec3f7ca25532c39e6e864ea692e19b7f5bb.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <fa46fec3f7ca25532c39e6e864ea692e19b7f5bb.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 06:45:11PM +0800, Peng Fan wrote:
-> Hi Dan,
+Il 13/10/25 11:50, Jason-JH Lin (林睿祥) ha scritto:
+> On Fri, 2025-09-05 at 09:41 +0000, CK Hu (胡俊光) wrote:
+>> On Wed, 2025-08-27 at 19:37 +0800, Jason-JH Lin wrote:
+>>> To support generating GCE write instructions using both pa_base and
+>>> subsys, the original cmdq_pkt_write() and cmdq_pkt_write_mask()
+>>> have
+>>> been expanded into four new APIs:
+>>> - Replaced cmdq_pkt_write() to cmdq_pkt_write_pa() and
+>>>    cmdq_pkt_write_subsys().
+>>> - Replaced cmdq_pkt_write_mask() to cmdq_pkt_write_mask_pa() and
+>>>    cmdq_pkt_write_mask_subsys().
+>>>
+>>> The original cmdq_pkt_write() and cmdq_pkt_write_mask() will be
+>>> removed
+>>> after all CMDQ users have migrated to the new APIs.
+>>>
+>>> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+>>> ---
+>>>   drivers/soc/mediatek/mtk-cmdq-helper.c | 41 +++++++++++++
+>>>   include/linux/soc/mediatek/mtk-cmdq.h  | 79
+>>> ++++++++++++++++++++++++++
+>>>   2 files changed, 120 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c
+>>> b/drivers/soc/mediatek/mtk-cmdq-helper.c
+>>> index 41e1997cdd53..7e86299213d8 100644
+>>> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
+>>> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+>>> @@ -213,6 +213,26 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u8
+>>> subsys, u16 offset, u32 value)
+>>>   }
+>>>   EXPORT_SYMBOL(cmdq_pkt_write);
+>>>   
+>>> +int cmdq_pkt_write_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/,
+>>> u32 pa_base,
+>>> +		      u16 offset, u32 value)
+>>
+>> subsys is useless. Drop it.
+>>
+>>> +{
+>>> +	int err;
+>>> +
+>>> +	err = cmdq_pkt_assign(pkt, CMDQ_THR_SPR_IDX0,
+>>> CMDQ_ADDR_HIGH(pa_base));
+>>> +	if (err < 0)
+>>> +		return err;
+>>> +
+>>> +	return cmdq_pkt_write_s_value(pkt, CMDQ_THR_SPR_IDX0,
+>>> CMDQ_ADDR_LOW(offset), value);
+>>> +}
+>>> +EXPORT_SYMBOL(cmdq_pkt_write_pa);
+>>> +
+>>> +int cmdq_pkt_write_subsys(struct cmdq_pkt *pkt, u8 subsys, u32
+>>> pa_base /*unused*/,
+>>> +			  u16 offset, u32 value)
+>>
+>> pa_base is useless. Drop it.
+>>
+>>> +{
+>>> +	return cmdq_pkt_write(pkt, subsys, offset, value);
+>>> +}
+>>> +EXPORT_SYMBOL(cmdq_pkt_write_subsys);
+>>> +
+>>>   int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
+>>>   			u16 offset, u32 value, u32 mask)
+>>>   {
+>>> @@ -230,6 +250,27 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt,
+>>> u8 subsys,
+>>>   }
+>>>   EXPORT_SYMBOL(cmdq_pkt_write_mask);
+>>>   
+>>> +int cmdq_pkt_write_mask_pa(struct cmdq_pkt *pkt, u8 subsys
+>>> /*unused*/, u32 pa_base,
+>>> +			   u16 offset, u32 value, u32 mask)
+>>
+>> subsys is useless. Drop it.
+>>
+>>> +{
+>>> +	int err;
+>>> +
+>>> +	err = cmdq_pkt_assign(pkt, CMDQ_THR_SPR_IDX0,
+>>> CMDQ_ADDR_HIGH(pa_base));
+>>> +	if (err < 0)
+>>> +		return err;
+>>> +
+>>> +	return cmdq_pkt_write_s_mask_value(pkt, CMDQ_THR_SPR_IDX0,
+>>> +					   CMDQ_ADDR_LOW(offset),
+>>> value, mask);
+>>> +}
+>>> +EXPORT_SYMBOL(cmdq_pkt_write_mask_pa);
+>>> +
+>>> +int cmdq_pkt_write_mask_subsys(struct cmdq_pkt *pkt, u8 subsys,
+>>> u32 pa_base /*unused*/,
+>>> +			       u16 offset, u32 value, u32 mask)
+>>
+>> pa_base is useless. Drop it.
+>>
+>>> +{
+>>> +	return cmdq_pkt_write_mask(pkt, subsys, offset, value,
+>>> mask);
+>>> +}
+>>> +EXPORT_SYMBOL(cmdq_pkt_write_mask_subsys);
+>>> +
 > 
-> I am not sure, Is this false alarm?
+> Hi CK,
 > 
-> On Tue, Oct 14, 2025 at 11:39:41AM +0300, Dan Carpenter wrote:
-> >Hi Peng,
-> >
-> >
-> >vim +/ret +1841 drivers/remoteproc/remoteproc_core.c
-> >
-> >70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1829  int rproc_trigger_recovery(struct rproc *rproc)
-> >70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1830  {
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1831  	struct device *dev = &rproc->dev;
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1832  	int ret;
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1833  
-> >c42baf6f84c7694 Peng Fan             2025-10-10  1834  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
-> >c42baf6f84c7694 Peng Fan             2025-10-10  1835  	ret = ACQUIRE_ERR(mutex_intr, &lock);
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1836  	if (ret)
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1837  		return ret;
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1838  
-> >0b145574b6cd2b3 Alex Elder           2020-02-28  1839  	/* State could have changed before we got the mutex */
-> >0b145574b6cd2b3 Alex Elder           2020-02-28  1840  	if (rproc->state != RPROC_CRASHED)
-> >c42baf6f84c7694 Peng Fan             2025-10-10 @1841  		return ret;
-> >
-> >Please change this to either "return 0;" or "return -ERRORCODE;"
-> 
-> ACQUIRE_ERR should already returns 0. This change does not change the
-> assignment to ret as my understanding. Please help to see if this is false
-> alarm or I miss something?
-> 
+> I'll drop the unused parameters.
+> Thanks for the reviews.
 
-I guess if this was already merged then it's fine.  But "return ret" looks
-like an error path where "return 0;" is obvious.  This code will always
-trigger a Smatch warning, and I always tell people that old code has been
-reviewed so all the warnings are false positives, still someone will
-eventually change this to "return -EINVAL;" because it looks so much like
-a mistake.
+It's unused, but if we want to use function pointers we do need those.
 
-regards,
-dan carpenter
+Unless you want to use one variable for both things, which then becomes
+kind of janky and unreadable.
+
+Cheers,
+Angelo
+
+> 
+> Regards,
+> Jason-JH Lin
 
 
