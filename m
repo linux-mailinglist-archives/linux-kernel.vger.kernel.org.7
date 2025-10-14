@@ -1,92 +1,103 @@
-Return-Path: <linux-kernel+bounces-851598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1964BD6DB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA74BD6DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA3C404C6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:18:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BE6405278
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA92D77F1;
-	Tue, 14 Oct 2025 00:18:13 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68AE2D77F1;
+	Tue, 14 Oct 2025 00:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnxiU2wh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6350D2BF3CF;
-	Tue, 14 Oct 2025 00:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171EF34BA5B;
+	Tue, 14 Oct 2025 00:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760401092; cv=none; b=qsGvPc2SgNehVRsFZ01QIFC7OMxc+LrfEdieYclgrZAbnvXxaEgrL3SweRILjNkZbaBIy6m+T5fnkBtn1tNltyDBtM3POTVx/kS9JRPSTgqRrZboy0pM4D2GDhLlxmpbKiT/dgXQw57q7+fJ7lm3OdNRh9GKFDEF3MS7+mCyMO8=
+	t=1760401132; cv=none; b=qLTzUl9EMm2IjLGdDhU3ldfj+3r/OWH2+g2OOz5VL5Zm/srOP2M2Q2M6zm+QZL4GMZdRUo7JdAuHkOF1ioZqs/hiupxWC0t9MogHJdICZXM9GWhAN1Kg4YIusuA0c5SYE4hbUukpIPLObOD8TKqbESZzBpEHe0sF+l9dSLBAJLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760401092; c=relaxed/simple;
-	bh=dMe29rV2C8DIvpYQosZ4uZQ/K559pFQf7acE7cY6i80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U7xFqwP8qqXoUrfOjJf9IfrDKnU1nZsA1BtdJQBYmNfham9se2D2DCfYnbgZ6vnw53DSedUHQ/U4E1kJzkauv2QcRRDBafZmnPWhVoboi08WGRAyMyAQDxmx0K3B9vpU3JbmF+0BgNC51cVgQYX4kBAFsBNhuvlCqYMBGNnkdE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from ofsar (unknown [116.232.147.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 1837A340E9A;
-	Tue, 14 Oct 2025 00:18:06 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-To: linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Aurelien Jarno <aurelien@aurel32.net>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
-Subject: Re: [PATCH v3 0/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
-Date: Tue, 14 Oct 2025 08:18:00 +0800
-Message-ID: <176040093505.976672.8840719266527899813.b4-ty@gentoo.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250926175833.3048516-1-aurelien@aurel32.net>
-References: <20250926175833.3048516-1-aurelien@aurel32.net>
+	s=arc-20240116; t=1760401132; c=relaxed/simple;
+	bh=Wj7cSLcyT0p0yvwLU7VLNGP20MDD+s64RMgH2Oq8gVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DoP66gMqGPjFl4TCUoWC9eG6Z9d+d0e+2uO3jJKuoGHpO2q0hGscYxRiRHD0vmk4azVhx55jULtMDlVd1pmIuYZlxfCm4b7aKCOS0B+whbENSeAClIuM0//OQ1OI0HWeKuJNKe8p4o/zuA23damxQPT+AVIv0QH9kCvdrNM9pj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnxiU2wh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76584C4CEE7;
+	Tue, 14 Oct 2025 00:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760401130;
+	bh=Wj7cSLcyT0p0yvwLU7VLNGP20MDD+s64RMgH2Oq8gVw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EnxiU2whCnZHUhG3hop0501oo0Znua44eztBcxHHpcDKvqctxqoBaaULm3oZuJ6Fq
+	 QcuWIJMf0g3JJAMsAZ9xXnMUfpDF/VhkkcxRRTYnveOqNgcEELdDWjXZIQ1yAtWS6X
+	 x8clovOVioShD79aGcl4Maj896DiLcjFhyoIMacQPCdENh/f1D8CdU7cj5LyhiNlqk
+	 FqK4eOZ4zXYS3fFpYaVDta7X4FIME/JnjpKYx12Ap+up5OwKQq4M+3wUMMXkKx3CSs
+	 nUHCtwjKNsZpvXt61K1whz0slG3bN7VEZCiBlPZBRyVgTjURPedUxR0HGTnEeS3yt8
+	 gUPSTBavfE3DA==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	"# 6 . 16 . x" <stable@vger.kernel.org>,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH] mm/damon/core: use damos_commit_quota_goal() for new goal commit
+Date: Mon, 13 Oct 2025 17:18:44 -0700
+Message-ID: <20251014001846.279282-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+When a damos_commit_quota_goals() is called for adding new DAMOS quota
+goals of DAMOS_QUOTA_USER_INPUT metric, current_value fields of the new
+goals should be also set as requested.
 
-On Fri, 26 Sep 2025 19:54:36 +0200, Aurelien Jarno wrote:
-> The BPI-F3 board has a 24c02 eeprom connected to the i2c bus #2. It
-> holds board data. This patchset adds support for it.
-> 
-> Changes between version 2 and version 3:
-> 
-> - Revert the name change for i2c2-0-cfg and i2c2-0-pins, the second cell
->   is not a function number, but an index.
-> 
-> [...]
+However, damos_commit_quota_goals() is not updating the field for the
+case, since it is setting only metrics and target values using
+damos_new_quota_goal(), and metric-optional union fields using
+damos_commit_quota_goal_union().  As a result, users could see the first
+current_value parameter that committed online with a new quota goal is
+ignored.  Users are assumed to commit the current_value for
+DAMOS_QUOTA_USER_INPUT quota goals, since it is being used as a
+feedback.  Hence the real impact would be subtle.  That said, this is
+obviously not intended behavior.
 
-Applied, thanks!
+Fix the issue by using damos_commit_quota_goal() which sets all quota
+goal parameters, instead of damos_commit_quota_goal_union(), which sets
+only the union fields.
 
-[1/3] riscv: dts: spacemit: enable the i2c2 adapter on BPI-F3
-      https://github.com/spacemit-com/linux/commit/dcca2287773b69201b756723e8d45b6b8ad81b34
-[2/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
-      https://github.com/spacemit-com/linux/commit/bfce75e2345fa1ecbf046e696994132f56d6db1c
-[3/3] riscv: dts: spacemit: add i2c aliases on BPI-F3
-      https://github.com/spacemit-com/linux/commit/859ce3828f0b462e991c24224390def4c8fea673
+Fixes: 1aef9df0ee90 ("mm/damon/core: commit damos_quota_goal->nid")
+Cc: <stable@vger.kernel.org> # 6.16.x
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/damon/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 93848b4c6944..e72dc49d501c 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -832,7 +832,7 @@ int damos_commit_quota_goals(struct damos_quota *dst, struct damos_quota *src)
+ 				src_goal->metric, src_goal->target_value);
+ 		if (!new_goal)
+ 			return -ENOMEM;
+-		damos_commit_quota_goal_union(new_goal, src_goal);
++		damos_commit_quota_goal(new_goal, src_goal);
+ 		damos_add_quota_goal(dst, new_goal);
+ 	}
+ 	return 0;
+
+base-commit: ccb48f0d949e274d388e66c8f80f7d1ff234ce46
 -- 
-Yixun Lan
-
+2.47.3
 
