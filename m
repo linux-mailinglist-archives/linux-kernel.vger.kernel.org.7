@@ -1,196 +1,238 @@
-Return-Path: <linux-kernel+bounces-852401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391ABBD8DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DCABD8DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC63F424B0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23289424C5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114E92FBE1C;
-	Tue, 14 Oct 2025 11:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ4xf6B8"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6C12F656B;
+	Tue, 14 Oct 2025 11:02:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB221AC44D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223132877F2
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760439697; cv=none; b=r6t08f46lcKgcx4BPzi2s70pQeDBuWvGmATUgLaYVOGtdLZhvuhyVmHzle5LEHdLgl9Sk9SImrvJYObPKKaUotU2pGmMf1KreDsiTHx/LVxqdKpT5eizBOMkqwZupncSd++RhSAoxNnVSry1jfit55+/RgVOI2sI+jxd4atbVos=
+	t=1760439749; cv=none; b=MGEa4lIUiMfWl38MfE9Z/HtNPD+6bAQ6p56YL4CZEuvmMb9ApbLgkJzgTRtK3LRv0fvJWX0o1QUkXxwMnkXyPx3ovahjWVNLENxjLNUIWu04Eurc7/9J9YiETcfb/vNommliHcL8O6w1qYgidgS+oYYJRURhjC/262TV+NC9dzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760439697; c=relaxed/simple;
-	bh=D9zsGMe+7ZZ+1ULYUF6/R2dS04iLGWRg5viQumh0DE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dCIOi8jK+bd/hjs0pDuubR315edxQHnVQA+qinnQZusl5MfB3mZGmH980mnek0OWi+QXfhoD2Ly9EyrR45pQ2O5pOY+q25dpfaMGt1eNr3yikTHkf3WNrWbR+HgVWDNFegulSBM1TPO8oAGCblNwUE/2W8d59nq7X+Xb2zOndfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJ4xf6B8; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781206cce18so5360328b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760439695; x=1761044495; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wd0YLKzrYxVlDdEwf/NekAk6cL0B5GHdsgKO2hGYOZc=;
-        b=KJ4xf6B8yxo0VvR3kg1sXf/u+yuOp31slv0Az0tR7ye5LYqvZWn2KKgr+rV9QSNVPM
-         HQ0uC5YvRc2YBW0+wMpGBbySXk4Vr9K6aZsYNFrZfznsRU3o48pJrBieBwYdOdo82WgP
-         x9ZZpI2MK359WNIp7vZP7jRAqWx7F4Nf6LsdE/9GivHBR4y4MhE4CmGzIQum9Crt2ILr
-         aBrE3s/DYiV0Qdl6WwJ2nwnB1A5bemrR3VqJYPnYDCHFDvtpweYaSwAiGx6Wwjm6XhHK
-         LCV8mnvNoY/ElewDFm+5Jw6Vhm7thw1o3oCPNouyTZk3pFiUKjSY0xebpD5XlnkV09Ve
-         y0Vw==
+	s=arc-20240116; t=1760439749; c=relaxed/simple;
+	bh=tZ2LOnCKIM5AGsDTXUmH4H14TGQWt9d4lBEBiIkRt4I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YOAoVs6NrbGip4Tbid7n/S1kMF4d8a3J1gmHDuffRvna+YgQRTlMUTFYi/VV/8mYiJ8hPggVToHEEs85YUqRYK4acmuVzaep7qT2LxpvAVEbtMULvofLR6F89N9meX24RTcdJ+K3Wf9J2gxSDUAKMbwfhbKWGRkybW2Eg6bM95I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43095c446dfso21308405ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:02:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760439695; x=1761044495;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wd0YLKzrYxVlDdEwf/NekAk6cL0B5GHdsgKO2hGYOZc=;
-        b=KLB8Y9kzjqUH7PlrW7Ek+gO0/iuMJyeLTcXk2MkakEB+PWlovOUmPgQb15GLR0Dns+
-         Xs24AnKwn7JlOellw5dgovf/B8W2Q0JcP6g86SaMCxy7xlZI3BChW7Slmwg6TJAzkgXj
-         f9LauxBDt1J5I2IXazOUG7SX1UWGlHjpLYHve3VuLhMKmLW1kXcDeY+qBB7BrXbstMKV
-         b7A2k3AzFS1S0Wm6/HPAUQv28u1EB1Q3u4lNgtVtDnFuh4+wGMPOvwIEE12oDNxZq9nB
-         U1ZbPofPJagkl5TOR5eRj+TBnL7/XO0KHz3sXOgbvwQ+28TUUsJw4fz74d0fJSMlgy5W
-         IveA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjtAZQPlFDHTQD0PsqB0VCvfHz0b5BDnS+AQsFJGCO1SnmUmVlS4AjcIDnXhY9lOsXneirSr6m13qWpkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2M6Um4O4gI3xMTiVfdmhEQqKfhrIGXA6SdaQo1S8Oy/KZFYzJ
-	+nLAR6pafADRxqbLlmWYIT3TkRIMWV4h41BbPE/znyQzXC/3zuY4A0iK
-X-Gm-Gg: ASbGncvNbyCK2/A8SEVRmprZAKNvgzbCqHiwjAMj9gn8MKzjN5Gu95USEbh8ATgxnZJ
-	GtpD2HNXGWiO9t/vRtmreeO8SYFPwsLhdqEwG+K8WoN/SrEac60326zpVozddA5Iwz4l/66CCgM
-	ZG4mIEvgIrgGpsm1DCCbxdnAn5t+xoWekZSOnXwd2XRUREqKsofD9ttmmE7GU5O+kY8OfJXiZJ1
-	I+4pBtPXEO4ffubDU1NtflJAiZAGegBuEtAntZcBFdNHU5iILPvXxnSRDr1P0qzvFZ0kIc/2Ovd
-	m96bxBLECIW6DvYVx2UfN4Nwv642oZWmj2UaXMFzxzC290MEhCpFunj5XUFDCMPRuSdfVO/H/cF
-	LPGWu/1ezfpKNLcRJ4b5wHtCNsfvEjeGyGCHb0SdN7DQxzFSS5k4Uyx6ANoIYIHHVE2sVGgYN
-X-Google-Smtp-Source: AGHT+IFT2RJlu9n5nJ14O2awXYHzG/b7P/0vMZRwfw1izahGTh5UHdT5ETZs+Qu+ku704EgqWpsTLQ==
-X-Received: by 2002:a05:6a00:2406:b0:772:490f:e31e with SMTP id d2e1a72fcca58-79396e69d5dmr30536664b3a.3.1760439694852;
-        Tue, 14 Oct 2025 04:01:34 -0700 (PDT)
-Received: from [10.125.192.72] ([210.184.73.204])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d096527sm14644037b3a.44.2025.10.14.04.01.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 04:01:34 -0700 (PDT)
-Message-ID: <84382429-02c1-12d5-bdf4-23e880246cf3@gmail.com>
-Date: Tue, 14 Oct 2025 19:01:15 +0800
+        d=1e100.net; s=20230601; t=1760439746; x=1761044546;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uX2jWFsdTD/h5vYL6pb2IaDViets6NfKjzKtZzds+8Q=;
+        b=sdPiLma84I8Rs7z7uaK98RNOb6f/FAC7gfwDPOS66MMY6/QIIkFHkKZz7XKaT4SG0Q
+         cSV61vHDC0tWSu6kgfCJV1MCMKIuI/zepUZGYfedvq/i8tsrgK3oKWpVyLITUd3FYItf
+         jv2pQfSpsLuya7g9vFwzn+9PITvX4mDn2Upotf8PVi1dI6Vs83XRvSHy1n5yQysdir19
+         nTb4LanXoN108UsOnTDcmNCycgmr6wpkqu4bPfUQqpkSyg9i/qF6zL3sNmB9R4r3ZYN5
+         ejNxzEPiwt16DZZkp1Zq9JgG6IUWoWzJD8EZANj4TwCplARNfF97bQh2G70+euFA5wTk
+         QlJg==
+X-Gm-Message-State: AOJu0YxPvAhhYvo35nqADd80pAIKm4F5ZUpnRj2KzFhkZD8UCmaQT+Jy
+	1dDpDLjc5bQ6SXLeF971EuC/LOJ4gpVHdp2q/KCOSf1xtbnT0fSjv4U2gPaPPXmIkc0Wnhl/x+T
+	kVQf4ATjV4O4Jpde+ZKQQfNlPoIQEov0ZYi/6gYB1j9VzIlQDg5YqZlP/dE0=
+X-Google-Smtp-Source: AGHT+IH6zAY1IJJcnu3w5pIvgTmsnxrhuLsO7j3HV89sKTTNXGWtAYsA7QWpHG8Ag/Ezx9FqcXASBQwYPPtfMTLRu/Qz+6FLfu8K
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
- zero runtime_remaining
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall
- <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Chengming Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>,
- Ingo Molnar <mingo@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Xi Wang <xii@google.com>,
- linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
- Chuyi Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
- Florian Bezdeka <florian.bezdeka@siemens.com>,
- Songtang Liu <liusongtang@bytedance.com>, Chen Yu <yu.c.chen@intel.com>,
- Matteo Martelli <matteo.martelli@codethink.co.uk>,
- =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <20250929074645.416-1-ziqianlu@bytedance.com>
- <c4a1bcea-fb00-6f3f-6bf6-d876393190e4@gmail.com>
- <20251014090728.GA41@bytedance>
-From: Hao Jia <jiahao.kernel@gmail.com>
-In-Reply-To: <20251014090728.GA41@bytedance>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:ca47:0:b0:430:a53c:a221 with SMTP id
+ e9e14a558f8ab-430a53ca43amr10752375ab.14.1760439746151; Tue, 14 Oct 2025
+ 04:02:26 -0700 (PDT)
+Date: Tue, 14 Oct 2025 04:02:26 -0700
+In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee2dc2.050a0220.91a22.0207.GAE@google.com>
+Subject: Forwarded: [PATCH] ntfs3: add debug warnings for run_lock initialization
+From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Hello Aaron,
+***
 
-Thank you for your reply.
+Subject: [PATCH] ntfs3: add debug warnings for run_lock initialization
+Author: kartikey406@gmail.com
 
-On 2025/10/14 17:11, Aaron Lu wrote:
-> Hi Hao,
-> 
-> On Tue, Oct 14, 2025 at 03:43:10PM +0800, Hao Jia wrote:
->>
->> Hello Aaron,
->>
->> On 2025/9/29 15:46, Aaron Lu wrote:
->>> When a cfs_rq is to be throttled, its limbo list should be empty and
->>> that's why there is a warn in tg_throttle_down() for non empty
->>> cfs_rq->throttled_limbo_list.
->>>
->>> When running a test with the following hierarchy:
->>>
->>>             root
->>>           /      \
->>>           A*     ...
->>>        /  |  \   ...
->>>           B
->>>          /  \
->>>         C*
->>>
->>> where both A and C have quota settings, that warn on non empty limbo list
->>> is triggered for a cfs_rq of C, let's call it cfs_rq_c(and ignore the cpu
->>> part of the cfs_rq for the sake of simpler representation).
->>>
->>
->> I encountered a similar warning a while ago and fixed it. I have a question
->> I'd like to ask. tg_unthrottle_up(cfs_rq_C) calls enqueue_task_fair(p) to
->> enqueue a task, which requires that the runtime_remaining of task p's entire
->> task_group hierarchy be greater than 0.
->>
->> In addition to the case you fixed above,
->> When bandwidth is running normally, Is it possible that there's a corner
->> case where cfs_A->runtime_remaining > 0, but cfs_B->runtime_remaining < 0
->> could trigger a similar warning?
-> 
-> Do you mean B also has quota set and cfs_B's runtime_remaining < 0?
-> In this case, B should be throttled and C is a descendent of B so should
-> also be throttled, i.e. C can't be unthrottled when B is in throttled
-> state. Do I understand you correctly?
->
-Yes, both A and B have quota set.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-Is there a possible corner case?
-Asynchronous unthrottling causes other running entities to completely 
-consume cfs_B->runtime_remaining (cfs_B->runtime_remaining < 0) but not 
-completely consume cfs_A->runtime_remaining (cfs_A->runtime_remaining > 
-0) when we call unthrottle_cfs_rq(cfs_rq_A) .
+Add debug messages to track when run_lock is initialized for regular
+files to help diagnose lockdep warnings.
 
-When we unthrottle_cfs_rq(cfs_rq_A), cfs_A->runtime_remaining > 0, but 
-if cfs_B->runtime_remaining < 0 at this time,
-therefore, when 
-enqueue_task_fair(p)->check_enqueue_throttle(cfs_rq_B)->throttle_cfs_rq(cfs_rq_B), 
-an warnning may be triggered.
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ntfs3/file.c  |  1 +
+ fs/ntfs3/inode.c | 83 +++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 58 insertions(+), 26 deletions(-)
 
-My core question is:
-When we call unthrottle_cfs_rq(cfs_rq_A), we only check 
-cfs_rq_A->runtime_remaining. However, 
-enqueue_task_fair(p)->enqueue_entity(C->B->A)->check_enqueue_throttle() 
-does require that the runtime_remaining of each task_group level of task 
-p is greater than 0.
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 4c90ec2fa2ea..0eb218a2b999 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -773,6 +773,7 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
+ int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 struct iattr *attr)
+ {
++	printk(KERN_WARNING "ntfs_setattr: testing by deepanshu \n");
+ 	struct inode *inode = d_inode(dentry);
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 	u32 ia_valid = attr->ia_valid;
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 3959f23c487a..222c97f7f299 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++// Created regular file inode// SPDX-License-Identifier: GPL-2.0
+ /*
+  *
+  * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
+@@ -50,7 +50,10 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 	/* Setup 'uid' and 'gid' */
+ 	inode->i_uid = sbi->options->fs_uid;
+ 	inode->i_gid = sbi->options->fs_gid;
+-
++	if (ino == 25) {
++		ntfs_warn(sb, "DEBUG: ntfs_read_mft ENTERED for inode 25");
++		//dump_stack();
++	}
+ 	err = mi_init(&ni->mi, sbi, ino);
+ 	if (err)
+ 		goto out;
+@@ -462,7 +465,11 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		if (ino != MFT_REC_MFT)
++		{
++			ntfs_warn(sb, "DEBUG: deepanshu  Read inode %lu, S_ISREG=%d, run_lock_init=%d",
++          ino, S_ISREG(mode), (ino != MFT_REC_MFT));
+ 			init_rwsem(&ni->file.run_lock);
++		}
+ 	} else if (S_ISCHR(mode) || S_ISBLK(mode) || S_ISFIFO(mode) ||
+ 		   S_ISSOCK(mode)) {
+ 		inode->i_op = &ntfs_special_inode_operations;
+@@ -527,33 +534,52 @@ static int ntfs_set_inode(struct inode *inode, void *data)
+ }
+ 
+ struct inode *ntfs_iget5(struct super_block *sb, const struct MFT_REF *ref,
+-			 const struct cpu_str *name)
++                         const struct cpu_str *name)
+ {
+-	struct inode *inode;
+-
+-	inode = iget5_locked(sb, ino_get(ref), ntfs_test_inode, ntfs_set_inode,
+-			     (void *)ref);
+-	if (unlikely(!inode))
+-		return ERR_PTR(-ENOMEM);
+-
+-	/* If this is a freshly allocated inode, need to read it now. */
+-	if (inode->i_state & I_NEW)
+-		inode = ntfs_read_mft(inode, name, ref);
+-	else if (ref->seq != ntfs_i(inode)->mi.mrec->seq) {
+-		/*
+-		 * Sequence number is not expected.
+-		 * Looks like inode was reused but caller uses the old reference
+-		 */
+-		iput(inode);
+-		inode = ERR_PTR(-ESTALE);
+-	}
+-
+-	if (IS_ERR(inode))
+-		ntfs_set_state(sb->s_fs_info, NTFS_DIRTY_ERROR);
+-
+-	return inode;
++    struct inode *inode;
++    unsigned long ino = ino_get(ref);
++    
++    if (ino == 25) {
++        printk(KERN_ERR "DEEPANSHU: ntfs_iget5 START for inode 25\n");
++        //dump_stack();
++    }
++    
++    inode = iget5_locked(sb, ino, ntfs_test_inode, ntfs_set_inode,
++                         (void *)ref);
++    
++    if (unlikely(!inode))
++        return ERR_PTR(-ENOMEM);
++    
++    if (inode->i_ino == 25) {
++        printk(KERN_ERR "DEEPANSHU: After iget5_locked for inode 25, I_NEW=%d, i_state=0x%x\n", 
++               !!(inode->i_state & I_NEW), inode->i_state);
++        //dump_stack();
++    }
++    
++    /* If this is a freshly allocated inode, need to read it now. */
++    if (inode->i_state & I_NEW) {
++        if (inode->i_ino == 25)
++            printk(KERN_ERR "DEEPANSHU: Calling ntfs_read_mft for inode 25\n");
++        inode = ntfs_read_mft(inode, name, ref);
++        if (inode->i_ino == 25 && IS_ERR(inode))
++            printk(KERN_ERR "DEEPANSHU: ntfs_read_mft FAILED for inode 25\n");
++    } else if (ref->seq != ntfs_i(inode)->mi.mrec->seq) {
++        if (inode->i_ino == 25)
++            printk(KERN_ERR "DEEPANSHU: inode 25 seq mismatch\n");
++        iput(inode);
++        inode = ERR_PTR(-ESTALE);
++    } else if (inode->i_ino == 25) {
++        printk(KERN_ERR "DEEPANSHU: inode 25 found in CACHE, skipping ntfs_read_mft!\n");
++        //dump_stack();
++    }
++
++    if (IS_ERR(inode))
++        ntfs_set_state(sb->s_fs_info, NTFS_DIRTY_ERROR);
++
++    return inode;
+ }
+ 
++
+ enum get_block_ctx {
+ 	GET_BLOCK_GENERAL = 0,
+ 	GET_BLOCK_WRITE_BEGIN = 1,
+@@ -1180,6 +1206,8 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		      umode_t mode, dev_t dev, const char *symname, u32 size,
+ 		      struct ntfs_fnd *fnd)
+ {
++	printk(KERN_WARNING "GET THE MESSAGE deepanshu \n");
++	//ntfs_warn(sb, "DEBUG: In inodde function");
+ 	int err;
+ 	struct super_block *sb = dir->i_sb;
+ 	struct ntfs_sb_info *sbi = sb->s_fs_info;
+@@ -1597,6 +1625,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		inode->i_size = size;
+ 		inode_nohighmem(inode);
+ 	} else if (S_ISREG(mode)) {
++		ntfs_warn(dir->i_sb, "DEBUG: Setting up regular file inode %lu", inode->i_ino);
+ 		inode->i_op = &ntfs_file_inode_operations;
+ 		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
+ 				       &ntfs_legacy_file_operations :
+@@ -1604,6 +1633,8 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		init_rwsem(&ni->file.run_lock);
++		ntfs_warn(sb, "DEBUG: Created regular file inode %lu, run_lock initialized", 
++              inode->i_ino);
+ 	} else {
+ 		inode->i_op = &ntfs_special_inode_operations;
+ 		init_special_inode(inode, mode, dev);
+-- 
+2.43.0
 
-Can we guarantee this?
-
-Thanks,
-Hao
-
->>
->> So, I previously tried to fix this issue using the following code, adding
->> the ENQUEUE_THROTTLE flag to ensure that tasks enqueued in
->> tg_unthrottle_up() aren't throttled.
->>
-> 
-> Yeah I think this can also fix the warning.
-> I'm not sure if it is a good idea though, because on unthrottle, the
-> expectation is, this cfs_rq should have runtime_remaining > 0 and if
-> it's not the case, I think it is better to know why.
-> 
-> Thanks.
 
