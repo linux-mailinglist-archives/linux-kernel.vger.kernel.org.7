@@ -1,166 +1,480 @@
-Return-Path: <linux-kernel+bounces-852850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D76BDA18F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:43:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEED6BDA123
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E533ABBE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D36C19A3863
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC26302CC7;
-	Tue, 14 Oct 2025 14:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBAD2FE057;
+	Tue, 14 Oct 2025 14:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cPd2oBQg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtDT5ALN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC85330217E;
-	Tue, 14 Oct 2025 14:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5102D301033;
+	Tue, 14 Oct 2025 14:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452606; cv=none; b=XmPG7S0Q2u8c4E3igXhouLdB1KA3s2RxK+IuNdG/FJUSbQ4DHdGnDYsWhQTrG19phCPHvMwN2uVt/4A8YuatThViE6ZG7DwBCv1fLh9oT97L+ngMPWnZHu5SI2dDqeUUIMPM2Rkiw0ayyWe4sI4Tmi0SR8WihH83fH4EVH2xGFg=
+	t=1760452596; cv=none; b=MOsxjwhyQ+Stm7rDWx7oMOa/EYAUaRcRLWoUjbHD8V7TNCyTony2+V+zgja74pfFe6yHVxJZuJosPcEQDnZ1HlMSnBrEmiAeRlelEJNyr6dIzpFVSf9Ny3lUBPNFEE4E9TOKd/fkbySdklnDb8uV77VaET5i5SKEl+0Q9nR58MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452606; c=relaxed/simple;
-	bh=GtG58/enpOmzqNC+68Zu2nFR08TJRD8qy0yK2jlXpGE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=SeZ340SaGPjS6Y/Xb9Kns7HH4CDhecj9OSNzl0beAURCJiakHGP4q60TjRmhdYWNmv72juVy3fQP/5yx60OsdLBjtzBwjyPfvNyPRV8B8G45EtbM8eiMm8ycFqBCUoXo23eschCFZAXhfQ8P5EDBKFezvv5fR1m0owJpZ58pyE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cPd2oBQg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87KUK020052;
-	Tue, 14 Oct 2025 14:36:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HHp72nypWYixrH9s++XlvQ+W5L9Rj75DBjIx86zvWS0=; b=cPd2oBQgS9k/s5sr
-	28TncrSrhyxpOUOriVBHUBrcHmorq+eJM7Z6VlUOkrlQZH+3RQ2zlJLW8XGNyRIl
-	e5w9A7oTbSsknpcqI5LNfcfythc+lB9zWo8kLgoIJD3gpBcUty03d17vO868MCyJ
-	s8pqLegLzp59+nqBroX/kWW4T44Q24iDEEBEY6fN9G2zc70zCFTtRTqZcSs8sMpY
-	1l7BeI3NDQBac1aj/6SiHPritVEHMtquysSx/zbInvWgT/kWo4PJsj3rd9eLS5pP
-	IELO8uQYsWqc0kAPTtGB+bP3n+wT8eyZr5EzAGF7yiin0b5Wec131M3CB/SyBN30
-	qTOtaA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0c0t2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 14:36:38 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59EEabv5007619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 14:36:37 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Tue, 14 Oct 2025 07:36:32 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 14 Oct 2025 22:35:35 +0800
-Subject: [PATCH v7 10/10] arm64: defconfig: Build NSS clock controller
- driver for IPQ5424
+	s=arc-20240116; t=1760452596; c=relaxed/simple;
+	bh=ThpuZ1xmK86i9CSvkP8swACLJKzVIWNqI7kp42HMWEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jBiQGxK47BgU8wEvPjUSAOIxOL0By9m8ppFbNoxwHkUS92pTdWToLq8ZC03fO+WqlWg4qtIAa0LAfOa7o8Np1wXLTPRIuRc5C82pfMEnM39c0qrHT80WNpq39IGE97rgHQZIFVuG05xFrL5hIRJe7OXQd3oZzqqU6T0AJmp66uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtDT5ALN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C4BC4CEE7;
+	Tue, 14 Oct 2025 14:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760452595;
+	bh=ThpuZ1xmK86i9CSvkP8swACLJKzVIWNqI7kp42HMWEU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LtDT5ALNKTlWiiD9eOgNUax2daYa5g5bgsqnxltGLKg4YTaSfN2H1n+Vev0eLhBhO
+	 oOyZHs7+T7Qr9R7YtiBferU7a+3p7zzjCH99JFR1Sbh3W/Ml0caQMeU8Ozx5ZHMVYY
+	 ELAwuVK53nEwrcFqX7fCyMU7youkp9PnCPfbcYXIC5btkXYITUhkaAsPHAhD37BtKJ
+	 ieES0yWIqSQy37pKnjEYuh0DoWnEFCRRJPiCj56xly/OCNBJoqt178agN6W4RLLqtZ
+	 MraO4lXdRf7ZQ2Y5Wb7nKlZOKtdzSsocEtVLQ6CwFrjhxk8AlHEUJC+QyzVdLAtt55
+	 SvrXxAhDMUHyw==
+From: Conor Dooley <conor@kernel.org>
+To: linus.walleij@linaro.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Valentina.FernandezAlanis@microchip.com
+Subject: [PATCH v2 2/5] pinctrl: add pic64gx "gpio2" pinmux driver
+Date: Tue, 14 Oct 2025 15:35:35 +0100
+Message-ID: <20251014-sprinkled-nimbly-345abb611f13@spud>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251014-retype-limit-e6cbe901aa07@spud>
+References: <20251014-retype-limit-e6cbe901aa07@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251014-qcom_ipq5424_nsscc-v7-10-081f4956be02@quicinc.com>
-References: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
-In-Reply-To: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Varadarajan
- Narayanan" <quic_varada@quicinc.com>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        "Anusha Rao" <quic_anusha@quicinc.com>,
-        Devi Priya
-	<quic_devipriy@quicinc.com>,
-        Manikanta Mylavarapu
-	<quic_mmanikan@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Konrad
- Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <quic_pavir@quicinc.com>, <quic_suruchia@quicinc.com>,
-        Luo Jie <quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760452536; l=836;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=GtG58/enpOmzqNC+68Zu2nFR08TJRD8qy0yK2jlXpGE=;
- b=xPw5JggRsSsxPiGvMeu2KUDJacEyHNxsTUi7/9PUSl3CxojphL0tcSeMbEBfhyqhJ3kv/joUB
- 2kM3WpZW/szBjdLkI7OEqvIotYRZGFlGDwT8OiId5yAubkbnTfXNKIs
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -1x-ssqL_iPiD0MGoZW0lIkUBUJ_FG21
-X-Proofpoint-ORIG-GUID: -1x-ssqL_iPiD0MGoZW0lIkUBUJ_FG21
-X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68ee5ff6 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=ikIlBLl75NxfxiEf-eQA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfX62wdkgCCheoX
- CMeGmVbGeTYmzNw6WWUbaHjaR2tjakPoMwpOBb91TX3m8dIdloyrGHSJ2N+yfAd2cLZhAk6vlrc
- MqcHchmqcZrhrHfmZcSUj6iHPfjY2k96zbkNjF/ERawR0sEEQtnXz7z9OYBYTua8EvdpEqpiC5m
- SJ5MEGb4gmch0gP+zSU6IExjdMh5Dpg8aZ4RdiJV8N2T1TRcHEQxEuJjYLzOgyxMs5Q1nTbHcwA
- M/oMiYCOc64laXmeusgt7SPldwucbClHsFLbmOW2T+8OrIKDS8cAIiZ7o/yQzNxK4eVbINBz4yg
- qNWqOP38GdWEXA04A7CezHs+WiefFDGXIBEgN3gLYUGsPRCEvWAGPvWObRC1vKuqxNu97hK4+ar
- QlAxgRJPFUzmW+GtPnVg68R6h3E3Dw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12157; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=y+AagTDGpxq0ENd7j9vAGBiPQJqExmGI4w+MFEJMxVs=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnv4s95VrfMTPwp4HjZ/EWT5o72G1cfPZ6obbXHw0q+Q 1CrO+5URykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACbSXsHwPzxL5im/XkXLm+tx HUL+NreuyjVdFmW50HbjKOstZekGaYZ/9lHyC8vX8v8//6E/cMOkmXt7p7If2JvavvjpW/aN7+u +sgMA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-NSS clock controller is needed for supplying clocks and resets to the
-networking blocks for the Ethernet functions on the IPQ5424 platforms.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-All boards based on the IPQ5424 SoC will require this driver to be enabled.
+The pic64gx has a second pinmux "downstream" of the iomux0 pinmux. The
+documentation for the SoC provides no name for this device, but it is
+used to swap pins between either GPIO controller #2 or select other
+functions, hence the "gpio2" name. Add a driver for it.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/Kconfig                 |   7 +
+ drivers/pinctrl/Makefile                |   1 +
+ drivers/pinctrl/pinctrl-pic64gx-gpio2.c | 357 ++++++++++++++++++++++++
+ 3 files changed, 365 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-pic64gx-gpio2.c
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e401915e2f2f..d4fc8e6683cb 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1414,6 +1414,7 @@ CONFIG_IPQ_GCC_5424=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_5424=m
- CONFIG_IPQ_NSSCC_9574=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
-
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 4f8507ebbdac..8b58f50d1184 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -486,6 +486,13 @@ config PINCTRL_PIC32MZDA
+ 	def_bool y if PIC32MZDA
+ 	select PINCTRL_PIC32
+ 
++config PINCTRL_PIC64GX
++	bool "pic64gx gpio2 pinctrl driver"
++	depends on ARCH_MICROCHIP
++	default y
++	help
++	  This selects the pinctrl driver for gpio2 on pic64gx.
++
+ config PINCTRL_PISTACHIO
+ 	bool "IMG Pistachio SoC pinctrl driver"
+ 	depends on OF && (MIPS || COMPILE_TEST)
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index e0cfb9b7c99b..f33976a6c91b 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -48,6 +48,7 @@ obj-$(CONFIG_PINCTRL_OCELOT)	+= pinctrl-ocelot.o
+ obj-$(CONFIG_PINCTRL_PALMAS)	+= pinctrl-palmas.o
+ obj-$(CONFIG_PINCTRL_PEF2256)	+= pinctrl-pef2256.o
+ obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
++obj-$(CONFIG_PINCTRL_PIC64GX)	+= pinctrl-pic64gx-gpio2.o
+ obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+ obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
+ obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
+diff --git a/drivers/pinctrl/pinctrl-pic64gx-gpio2.c b/drivers/pinctrl/pinctrl-pic64gx-gpio2.c
+new file mode 100644
+index 000000000000..ecabef1cea0d
+--- /dev/null
++++ b/drivers/pinctrl/pinctrl-pic64gx-gpio2.c
+@@ -0,0 +1,357 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/bitfield.h>
++#include <linux/module.h>
++#include <linux/mfd/syscon.h>
++#include <linux/mod_devicetable.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/seq_file.h>
++
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++
++#include "pinctrl-utils.h"
++
++#define PIC64GX_PINMUX_REG 0x0
++
++static const struct regmap_config pic64gx_gpio2_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.val_format_endian = REGMAP_ENDIAN_LITTLE,
++	.max_register = 0x0,
++};
++
++struct pic64gx_gpio2_pinctrl {
++	struct pinctrl_dev *pctrl;
++	struct device *dev;
++	struct regmap *regmap;
++	struct pinctrl_desc desc;
++};
++
++struct pic64gx_gpio2_pin_group {
++	const char *name;
++	const unsigned int *pins;
++	const unsigned int num_pins;
++	u32 mask;
++	u32 setting;
++};
++
++struct pic64gx_gpio2_function {
++	const char *name;
++	const char * const *groups;
++	const unsigned int num_groups;
++};
++
++static const struct pinctrl_pin_desc pic64gx_gpio2_pins[] = {
++	PINCTRL_PIN(0, "E14"),
++	PINCTRL_PIN(1, "E15"),
++	PINCTRL_PIN(2, "F16"),
++	PINCTRL_PIN(3, "F17"),
++	PINCTRL_PIN(4, "D19"),
++	PINCTRL_PIN(5, "B18"),
++	PINCTRL_PIN(6, "B10"),
++	PINCTRL_PIN(7, "C14"),
++	PINCTRL_PIN(8, "E18"),
++	PINCTRL_PIN(9, "D18"),
++	PINCTRL_PIN(10, "E19"),
++	PINCTRL_PIN(11, "C7"),
++	PINCTRL_PIN(12, "D6"),
++	PINCTRL_PIN(13, "D7"),
++	PINCTRL_PIN(14, "C9"),
++	PINCTRL_PIN(15, "C10"),
++	PINCTRL_PIN(16, "A5"),
++	PINCTRL_PIN(17, "A6"),
++	PINCTRL_PIN(18, "D8"),
++	PINCTRL_PIN(19, "D9"),
++	PINCTRL_PIN(20, "B8"),
++	PINCTRL_PIN(21, "A8"),
++	PINCTRL_PIN(22, "C12"),
++	PINCTRL_PIN(23, "B12"),
++	PINCTRL_PIN(24, "A11"),
++	PINCTRL_PIN(25, "A10"),
++	PINCTRL_PIN(26, "D11"),
++	PINCTRL_PIN(27, "C11"),
++	PINCTRL_PIN(28, "B9"),
++};
++
++static const unsigned int pic64gx_gpio2_mdio0_pins[] = {
++	0, 1
++};
++
++static const unsigned int pic64gx_gpio2_mdio1_pins[] = {
++	2, 3
++};
++
++static const unsigned int pic64gx_gpio2_spi0_pins[] = {
++	4, 5, 10, 11
++};
++
++static const unsigned int pic64gx_gpio2_can0_pins[] = {
++	6, 24, 28
++};
++
++static const unsigned int pic64gx_gpio2_pcie_pins[] = {
++	7, 8, 9
++};
++
++static const unsigned int pic64gx_gpio2_qspi_pins[] = {
++	12, 13, 14, 15, 16, 17
++};
++
++static const unsigned int pic64gx_gpio2_uart3_pins[] = {
++	18, 19
++};
++
++static const unsigned int pic64gx_gpio2_uart4_pins[] = {
++	20, 21
++};
++
++static const unsigned int pic64gx_gpio2_can1_pins[] = {
++	22, 23, 25
++};
++
++static const unsigned int pic64gx_gpio2_uart2_pins[] = {
++	26, 27
++};
++
++//TODO maybe a bit extra, but reduces the risk of adhd mistakes..
++#define PIC64GX_PINCTRL_GROUP(_name, _mask) { \
++	.name = "gpio_" #_name,	\
++	.pins = pic64gx_gpio2_##_name##_pins,	\
++	.num_pins = ARRAY_SIZE(pic64gx_gpio2_##_name##_pins), \
++	.mask = _mask,	\
++	.setting = 0x0,	\
++}, { \
++	.name = #_name,	\
++	.pins = pic64gx_gpio2_##_name##_pins,	\
++	.num_pins = ARRAY_SIZE(pic64gx_gpio2_##_name##_pins), \
++	.mask = _mask,	\
++	.setting = _mask,	\
++}
++
++static const struct pic64gx_gpio2_pin_group pic64gx_gpio2_pin_groups[] = {
++	PIC64GX_PINCTRL_GROUP(mdio0, BIT(0) | BIT(1)),
++	PIC64GX_PINCTRL_GROUP(mdio1, BIT(2) | BIT(3)),
++	PIC64GX_PINCTRL_GROUP(spi0, BIT(4) | BIT(5) | BIT(10) | BIT(11)),
++	PIC64GX_PINCTRL_GROUP(can0, BIT(6) | BIT(24) | BIT(28)),
++	PIC64GX_PINCTRL_GROUP(pcie, BIT(7) | BIT(8) | BIT(9)),
++	PIC64GX_PINCTRL_GROUP(qspi, GENMASK(17, 12)),
++	PIC64GX_PINCTRL_GROUP(uart3, BIT(18) | BIT(19)),
++	PIC64GX_PINCTRL_GROUP(uart4, BIT(20) | BIT(21)),
++	PIC64GX_PINCTRL_GROUP(can1, BIT(22) | BIT(23) | BIT(25)),
++	PIC64GX_PINCTRL_GROUP(uart2, BIT(26) | BIT(27)),
++};
++
++static const char * const pic64gx_gpio2_gpio_groups[] = {
++	"gpio_mdio0", "gpio_mdio1", "gpio_spi0", "gpio_can0", "gpio_pcie",
++	"gpio_qspi", "gpio_uart3", "gpio_uart4", "gpio_can1", "gpio_uart2"
++};
++
++static const char * const pic64gx_gpio2_mdio0_groups[] = {
++	"mdio0"
++};
++
++static const char * const pic64gx_gpio2_mdio1_groups[] = {
++	"mdio1"
++};
++
++static const char * const pic64gx_gpio2_spi0_groups[] = {
++	"spi0"
++};
++
++static const char * const pic64gx_gpio2_can0_groups[] = {
++	"can0"
++};
++
++static const char * const pic64gx_gpio2_pcie_groups[] = {
++	"pcie"
++};
++
++static const char * const pic64gx_gpio2_qspi_groups[] = {
++	"qspi"
++};
++
++static const char * const pic64gx_gpio2_uart3_groups[] = {
++	"uart3"
++};
++
++static const char * const pic64gx_gpio2_uart4_groups[] = {
++	"uart4"
++};
++
++static const char * const pic64gx_gpio2_can1_groups[] = {
++	"can1"
++};
++
++static const char * const pic64gx_gpio2_uart2_groups[] = {
++	"uart2"
++};
++
++#define PIC64GX_PINCTRL_FUNCTION(_name) { \
++	.name = #_name,	\
++	.groups = pic64gx_gpio2_##_name##_groups,	\
++	.num_groups = ARRAY_SIZE(pic64gx_gpio2_##_name##_groups), \
++}
++
++static const struct pic64gx_gpio2_function pic64gx_gpio2_functions[] = {
++	PIC64GX_PINCTRL_FUNCTION(gpio),
++	PIC64GX_PINCTRL_FUNCTION(mdio0),
++	PIC64GX_PINCTRL_FUNCTION(mdio1),
++	PIC64GX_PINCTRL_FUNCTION(spi0),
++	PIC64GX_PINCTRL_FUNCTION(can0),
++	PIC64GX_PINCTRL_FUNCTION(pcie),
++	PIC64GX_PINCTRL_FUNCTION(qspi),
++	PIC64GX_PINCTRL_FUNCTION(uart3),
++	PIC64GX_PINCTRL_FUNCTION(uart4),
++	PIC64GX_PINCTRL_FUNCTION(can1),
++	PIC64GX_PINCTRL_FUNCTION(uart2),
++};
++
++static void pic64gx_gpio2_pin_dbg_show(struct pinctrl_dev *pctrl_dev, struct seq_file *seq,
++				       unsigned int pin)
++{
++	struct pic64gx_gpio2_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
++	u32 val;
++
++	regmap_read(pctrl->regmap, PIC64GX_PINMUX_REG, &val);
++	val = (val & BIT(pin)) >> pin;
++	seq_printf(seq, "pin: %u val: %x\n", pin, val);
++}
++
++static int pic64gx_gpio2_groups_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(pic64gx_gpio2_pin_groups);
++}
++
++static const char *pic64gx_gpio2_group_name(struct pinctrl_dev *pctldev, unsigned int selector)
++{
++	return pic64gx_gpio2_pin_groups[selector].name;
++}
++
++static int pic64gx_gpio2_group_pins(struct pinctrl_dev *pctldev, unsigned int selector,
++				    const unsigned int **pins, unsigned int *num_pins)
++{
++	*pins = pic64gx_gpio2_pin_groups[selector].pins;
++	*num_pins = pic64gx_gpio2_pin_groups[selector].num_pins;
++
++	return 0;
++}
++
++static const struct pinctrl_ops pic64gx_gpio2_pinctrl_ops = {
++	.get_groups_count = pic64gx_gpio2_groups_count,
++	.get_group_name = pic64gx_gpio2_group_name,
++	.get_group_pins = pic64gx_gpio2_group_pins,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
++	.dt_free_map = pinctrl_utils_free_map,
++	.pin_dbg_show = pic64gx_gpio2_pin_dbg_show,
++};
++
++static int pic64gx_gpio2_pinmux_get_funcs_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(pic64gx_gpio2_functions);
++}
++
++static const char *pic64gx_gpio2_pinmux_get_func_name(struct pinctrl_dev *pctldev,
++						      unsigned int selector)
++{
++	return pic64gx_gpio2_functions[selector].name;
++}
++
++static int pic64gx_gpio2_pinmux_get_groups(struct pinctrl_dev *pctldev, unsigned int selector,
++					   const char * const **groups,
++					   unsigned int * const num_groups)
++{
++	*groups = pic64gx_gpio2_functions[selector].groups;
++	*num_groups = pic64gx_gpio2_functions[selector].num_groups;
++
++	return 0;
++}
++
++static int pic64gx_gpio2_pinmux_set_mux(struct pinctrl_dev *pctrl_dev, unsigned int fsel,
++					unsigned int gsel)
++{
++	struct pic64gx_gpio2_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctrl_dev);
++	struct device *dev = pctrl->dev;
++	const struct pic64gx_gpio2_pin_group *group;
++	const struct pic64gx_gpio2_function *function;
++
++	group = &pic64gx_gpio2_pin_groups[gsel];
++	function = &pic64gx_gpio2_functions[fsel];
++
++	dev_dbg(dev, "Setting func %s mask %x setting %x\n",
++		function->name, group->mask, group->setting);
++	regmap_assign_bits(pctrl->regmap, PIC64GX_PINMUX_REG, group->mask, group->setting);
++
++	return 0;
++}
++
++static const struct pinmux_ops pic64gx_gpio2_pinmux_ops = {
++	.get_functions_count = pic64gx_gpio2_pinmux_get_funcs_count,
++	.get_function_name = pic64gx_gpio2_pinmux_get_func_name,
++	.get_function_groups = pic64gx_gpio2_pinmux_get_groups,
++	.set_mux = pic64gx_gpio2_pinmux_set_mux,
++};
++
++static int pic64gx_gpio2_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct pic64gx_gpio2_pinctrl *pctrl;
++	void __iomem *base;
++
++	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
++	if (!pctrl)
++		return -ENOMEM;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base)) {
++		dev_err(dev, "Failed get resource\n");
++		return PTR_ERR(base);
++	}
++
++	pctrl->regmap = devm_regmap_init_mmio(dev, base, &pic64gx_gpio2_regmap_config);
++	if (IS_ERR(pctrl->regmap)) {
++		dev_err(dev, "Failed to map regmap\n");
++		return PTR_ERR(pctrl->regmap);
++	}
++
++	pctrl->desc.name = dev_name(dev);
++	pctrl->desc.pins = pic64gx_gpio2_pins;
++	pctrl->desc.npins = ARRAY_SIZE(pic64gx_gpio2_pins);
++	pctrl->desc.pctlops = &pic64gx_gpio2_pinctrl_ops;
++	pctrl->desc.pmxops = &pic64gx_gpio2_pinmux_ops;
++	pctrl->desc.owner = THIS_MODULE;
++
++	pctrl->dev = dev;
++
++	platform_set_drvdata(pdev, pctrl);
++
++	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
++	if (IS_ERR(pctrl->pctrl))
++		return PTR_ERR(pctrl->pctrl);
++
++	return 0;
++}
++
++static const struct of_device_id pic64gx_gpio2_of_match[] = {
++	{ .compatible = "microchip,pic64gx-pinctrl-gpio2" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, pic64gx_gpio2_of_match);
++
++static struct platform_driver pic64gx_gpio2_driver = {
++	.driver = {
++		.name = "pic64gx-pinctrl-gpio2",
++		.of_match_table = pic64gx_gpio2_of_match,
++	},
++	.probe = pic64gx_gpio2_probe,
++};
++module_platform_driver(pic64gx_gpio2_driver);
++
++MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
++MODULE_DESCRIPTION("pic64gx gpio2 pinctrl driver");
++MODULE_LICENSE("GPL");
 -- 
-2.34.1
+2.51.0
 
 
