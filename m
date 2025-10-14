@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-852575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BADABD95B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:34:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86690BD95AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F397F354419
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:34:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A58475000F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32D6313E1A;
-	Tue, 14 Oct 2025 12:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1781313552;
+	Tue, 14 Oct 2025 12:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ASHJO6Qc"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQF0Y6dc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89FE2BF3CF;
-	Tue, 14 Oct 2025 12:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0DD2DE1E5;
+	Tue, 14 Oct 2025 12:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445254; cv=none; b=GAKJWzAdqoQuhMFFlWaKaSQj4G1cqxz/ek24sKKEONFd0uLw+zX6chLEF6PhodtvYhgJSHCYfBTp5RWmCJk4aJiVZe71gntiBI50xKt/Kq9XsVGItAf9oB4SyB0YhhYAl3g1uzhih/kdRVrS2eosDU5I/o6hcAPYLB8vHTQEg90=
+	t=1760445253; cv=none; b=EjHtIjhaKt7aAjMEEg9H4VEPbm6SeHRRR0NyD/o5F/lewtBkeyqorm4BXeGJRv8d2K+hr7N3rmIjTZMbKyre64WFqlBNRIqVbDV0i29ur6/wmlrKcC1V+y1dmBB5pzjghRNWZK/OAfLi/4Ar0Xb73lDuGsW6Gv61KXpzFg0g9V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445254; c=relaxed/simple;
-	bh=oQLAeDQyVmjWiiZUx6Tf/I63RDM10DhJXwC5sITM4Uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hvHXkaMiAuvHt2K/kCeBeI4lQyE0/ExB3hkD4t3jqRNqUab5ST90wL7N8hb9CzK4WOQViGOIbLgjMPlNzWKoFbnua2E1XphVRu7xThnM5OhqhllvZfl8RtbK1ECmKBzvlL7BGffhCZb2OyytbXhosCqmdcriOwFr504yEKpnP2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ASHJO6Qc; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59ECXwC61067233;
-	Tue, 14 Oct 2025 07:33:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760445238;
-	bh=bvs+B4pFlwvao7cFjAjIJQY0fsHlgPIJmdN1Y1I3xzs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ASHJO6QcWEH818cl89M0aSyZFzA5x1GoqKsJ1ZolgA6+ZZhYnZFC8p+VBtU7WGefO
-	 fJOCq3+noG99JgDxpy/kn7IJghBCclly58SY5TIYQ+OGNB4DoBDJBcGNsi4thTKKFv
-	 bNf48hKSaRfq2MgEaCt1OtGmw6yaQ7o34wwIazy8=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59ECXwdZ439585
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 14 Oct 2025 07:33:58 -0500
-Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 14
- Oct 2025 07:33:57 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE211.ent.ti.com
- (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 14 Oct 2025 07:33:57 -0500
-Received: from [172.24.231.225] (a0507033-hp.dhcp.ti.com [172.24.231.225])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59ECXsED034631;
-	Tue, 14 Oct 2025 07:33:55 -0500
-Message-ID: <2b3d5d75-22d8-4b5c-8445-a5ca3fe0bc69@ti.com>
-Date: Tue, 14 Oct 2025 18:03:54 +0530
+	s=arc-20240116; t=1760445253; c=relaxed/simple;
+	bh=GNg0lILA/EASTwnAkarlJXxI1zxHDTzHg9YaU1hS5Fs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aVtbN/GcOOHIfoCvpEedzoFQVjZPVSrcG2CGszufUwQqPXKl/9sm8mj5rUVZWCrKV8VHCJpNaI/6bWZLeZBc5fD/SAYEvgS6h6u5Xp4atQZxws4G3MaQfMqDXAC36iy9YvNG29clSOEys4SWrN7Zq24L7G/aBShTKfRFD4hYRiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQF0Y6dc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDC7C4CEE7;
+	Tue, 14 Oct 2025 12:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760445252;
+	bh=GNg0lILA/EASTwnAkarlJXxI1zxHDTzHg9YaU1hS5Fs=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=gQF0Y6dcezXj0XBhp91YKYvi6f9489AxB6hJ2RzpGKbxAOs+lIXrw1+A0M52+Lio1
+	 iUnRwEDWz8+uYRtl+suOLv5dVv/XZfACvXqiVkqPJGyB84RMxTS/TKczE0n+ryYhsF
+	 NHoeQscfnARH1SakGvOlJ2iGlIMV+yDeSxK1SpQFojS9Qvy1/vyjJGWUlIMyEsKGES
+	 IL0rVeEmfP8oCqzsP7E+iwps1RRK97eGBr6sPMS9HeK9Nvk9OIL98ON+ume1cR/fWy
+	 7d3wseqIuK7FJ24j8rhUt4nH+K3Qwpgux3TOfEWmp4/qMq8ikm6AVarGOHM5CNkPdc
+	 a8fu3pevkG3CA==
+Message-ID: <a03637f5-a810-4620-8ba3-d502a4ce7dd3@kernel.org>
+Date: Tue, 14 Oct 2025 14:34:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,228 +49,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpts: fix timestamp loss due
- to race conditions
-To: Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <davem@davemloft.net>, <kuba@kernel.org>, <andrew+netdev@lunn.ch>,
-        <edumazet@google.com>
-CC: <linux-kernel@vger.kernel.org>, <c-vankar@ti.com>, <s-vadapalli@ti.com>,
-        <danishanwar@ti.com>
-References: <20251010150821.838902-1-a-garg7@ti.com>
- <629ffe15-e4d8-4b0c-a909-55fa4248965a@redhat.com>
-Content-Language: en-US
-From: Aksh Garg <a-garg7@ti.com>
-In-Reply-To: <629ffe15-e4d8-4b0c-a909-55fa4248965a@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v4 2/2] media: ivtv: Fix invalid access to file *
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Andy Walls <awalls@md.metrocast.net>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250819-cx18-v4l2-fh-v4-0-9db1635d6787@ideasonboard.com>
+ <20250819-cx18-v4l2-fh-v4-2-9db1635d6787@ideasonboard.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250819-cx18-v4l2-fh-v4-2-9db1635d6787@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-
-On 14/10/25 15:02, Paolo Abeni wrote:
-> On 10/10/25 5:08 PM, Aksh Garg wrote:
->> diff --git a/drivers/net/ethernet/ti/am65-cpts.c b/drivers/net/ethernet/ti/am65-cpts.c
->> index 59d6ab989c55..2e9719264ba5 100644
->> --- a/drivers/net/ethernet/ti/am65-cpts.c
->> +++ b/drivers/net/ethernet/ti/am65-cpts.c
->> @@ -163,7 +163,9 @@ struct am65_cpts {
->>  	struct device_node *clk_mux_np;
->>  	struct clk *refclk;
->>  	u32 refclk_freq;
->> -	struct list_head events;
->> +	/* separate lists to handle TX and RX timestamp independently */
->> +	struct list_head events_tx;
->> +	struct list_head events_rx;
->>  	struct list_head pool;
->>  	struct am65_cpts_event pool_data[AM65_CPTS_MAX_EVENTS];
->>  	spinlock_t lock; /* protects events lists*/
->> @@ -172,6 +174,7 @@ struct am65_cpts {
->>  	u32 ts_add_val;
->>  	int irq;
->>  	struct mutex ptp_clk_lock; /* PHC access sync */
->> +	struct mutex rx_ts_lock; /* serialize RX timestamp match */
->>  	u64 timestamp;
->>  	u32 genf_enable;
->>  	u32 hw_ts_enable;
->> @@ -245,7 +248,16 @@ static int am65_cpts_cpts_purge_events(struct am65_cpts *cpts)
->>  	struct am65_cpts_event *event;
->>  	int removed = 0;
->>  
->> -	list_for_each_safe(this, next, &cpts->events) {
->> +	list_for_each_safe(this, next, &cpts->events_tx) {
->> +		event = list_entry(this, struct am65_cpts_event, list);
->> +		if (time_after(jiffies, event->tmo)) {
->> +			list_del_init(&event->list);
->> +			list_add(&event->list, &cpts->pool);
->> +			++removed;
->> +		}
->> +	}
+On 19/08/2025 09:07, Jacopo Mondi wrote:
+> Since commit 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> all ioctl handlers have been ported to operate on the file * first
+> function argument.
 > 
-> Minor nit: you can move the loop in a separate helper taking the event
-> list as an argument and avoid some code duplication with the the rx loop.
-
-I will create a helper function for this.
-
+> The ivtv DVB layer calls ivtv_init_on_first_open() when the driver
+> needs to start streaming. This function calls the s_input() and
+> s_frequency() ioctl handlers directly, but being called from the driver
+> context, it doesn't have a valid file * to pass them. This causes the
+> ioctl handlers to deference an invalid pointer.
 > 
->> +
->> +	list_for_each_safe(this, next, &cpts->events_rx) {
->>  		event = list_entry(this, struct am65_cpts_event, list);
->>  		if (time_after(jiffies, event->tmo)) {
->>  			list_del_init(&event->list);
->> @@ -306,11 +318,21 @@ static int __am65_cpts_fifo_read(struct am65_cpts *cpts)
->>  				cpts->timestamp);
->>  			break;
->>  		case AM65_CPTS_EV_RX:
->> +			event->tmo = jiffies +
->> +				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
->> +
->> +			list_move_tail(&event->list, &cpts->events_rx);
->> +
->> +			dev_dbg(cpts->dev,
->> +				"AM65_CPTS_EV_RX e1:%08x e2:%08x t:%lld\n",
->> +				event->event1, event->event2,
->> +				event->timestamp);
->> +			break;
->>  		case AM65_CPTS_EV_TX:
->>  			event->tmo = jiffies +
->>  				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
->>  
->> -			list_move_tail(&event->list, &cpts->events);
->> +			list_move_tail(&event->list, &cpts->events_tx);
+> Fix this by moving the implementation of those ioctls to two helper
+> functions.
 > 
-> Similar thing here.
-
-The dbg_dev() message have different debug messages. So, do you think a 
-helper function here makes much difference?
-
+> The ivtv_do_s_input() helper accepts a struct ivtv * as first argument,
+> which is easily accessible in ivtv_init_on_first_open() as well as from
+> the file * argument of the ioctl handler.
 > 
->>  
->>  			dev_dbg(cpts->dev,
->>  				"AM65_CPTS_EV_TX e1:%08x e2:%08x t:%lld\n",
->> @@ -828,7 +850,7 @@ static bool am65_cpts_match_tx_ts(struct am65_cpts *cpts,
->>  	return found;
->>  }
->>  
->> -static void am65_cpts_find_ts(struct am65_cpts *cpts)
->> +static void am65_cpts_find_tx_ts(struct am65_cpts *cpts)
->>  {
->>  	struct am65_cpts_event *event;
->>  	struct list_head *this, *next;
->> @@ -837,7 +859,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
->>  	LIST_HEAD(events);
->>  
->>  	spin_lock_irqsave(&cpts->lock, flags);
->> -	list_splice_init(&cpts->events, &events);
->> +	list_splice_init(&cpts->events_tx, &events);
->>  	spin_unlock_irqrestore(&cpts->lock, flags);
->>  
->>  	list_for_each_safe(this, next, &events) {
->> @@ -850,7 +872,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
->>  	}
->>  
->>  	spin_lock_irqsave(&cpts->lock, flags);
->> -	list_splice_tail(&events, &cpts->events);
->> +	list_splice_tail(&events, &cpts->events_tx);
+> The ivtv_s_frequency() takes an ivtv_stream * instead. The stream * can
+> safely be accessed in ivtv_init_on_first_open() where it is hard-coded
+> to the IVTV_ENC_STREAM_TYPE_MPG stream type, as well as from the ioctl
+> handler as a valid stream type is associated to each open file handle
+> depending on which video device node has been opened in the ivtv_open()
+> file operation.
 > 
-> I see the behavior is pre-existing, but why splicing on tail? events
-> added in between should be older???
-
-I will handle this in future patch.
-
+> The bug has been reported by Smatch.
 > 
->>  	list_splice_tail(&events_free, &cpts->pool);
->>  	spin_unlock_irqrestore(&cpts->lock, flags);
->>  }
->> @@ -861,7 +883,7 @@ static long am65_cpts_ts_work(struct ptp_clock_info *ptp)
->>  	unsigned long flags;
->>  	long delay = -1;
->>  
->> -	am65_cpts_find_ts(cpts);
->> +	am65_cpts_find_tx_ts(cpts);
->>  
->>  	spin_lock_irqsave(&cpts->txq.lock, flags);
->>  	if (!skb_queue_empty(&cpts->txq))
->> @@ -899,16 +921,21 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
->>  {
->>  	struct list_head *this, *next;
->>  	struct am65_cpts_event *event;
->> +	LIST_HEAD(events_free);
->>  	unsigned long flags;
->> +	LIST_HEAD(events);
->>  	u32 mtype_seqid;
->>  	u64 ns = 0;
->>  
->>  	spin_lock_irqsave(&cpts->lock, flags);
->>  	__am65_cpts_fifo_read(cpts);
->> -	list_for_each_safe(this, next, &cpts->events) {
->> +	list_splice_init(&cpts->events_rx, &events);
->> +	spin_unlock_irqrestore(&cpts->lock, flags);
-> 
-> Why are you changing the behaviour here, releasing and reacquiring the
-> cpts->lock? It looks like a separate change, if needed at all.
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aKL4OMWsESUdX8KQ@stanley.mountain/
+> Fixes: 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-It was added as an optimization, as acquiring the lock for entire loop 
-will delay other events to be handled. I will add this optimization in 
-future patch.
+Tested-by: Hans Verkuil <hverkuil+cisco@kernel.org>
 
-> 
->> +	list_for_each_safe(this, next, &events) {
->>  		event = list_entry(this, struct am65_cpts_event, list);
->>  		if (time_after(jiffies, event->tmo)) {
->> -			list_move(&event->list, &cpts->pool);
->> +			list_move(&event->list, &events_free);
->>  			continue;
->>  		}
->>  
->> @@ -919,10 +946,14 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
->>  
->>  		if (mtype_seqid == skb_mtype_seqid) {
->>  			ns = event->timestamp;
->> -			list_move(&event->list, &cpts->pool);
->> +			list_move(&event->list, &events_free);
->>  			break;
->>  		}
->>  	}
->> +
->> +	spin_lock_irqsave(&cpts->lock, flags);
->> +	list_splice_tail(&events, &cpts->events_rx);
->> +	list_splice_tail(&events_free, &cpts->pool);
->>  	spin_unlock_irqrestore(&cpts->lock, flags);
->>  
->>  	return ns;
->> @@ -948,7 +979,9 @@ void am65_cpts_rx_timestamp(struct am65_cpts *cpts, struct sk_buff *skb)
->>  
->>  	dev_dbg(cpts->dev, "%s mtype seqid %08x\n", __func__, skb_cb->skb_mtype_seqid);
->>  
->> +	mutex_lock(&cpts->rx_ts_lock);
->>  	ns = am65_cpts_find_rx_ts(cpts, skb_cb->skb_mtype_seqid);
->> +	mutex_unlock(&cpts->rx_ts_lock);
-> 
-> The call chain is:
-> 
-> am65_cpsw_nuss_rx_poll() -> am65_cpsw_nuss_rx_packets() ->
-> am65_cpts_rx_timestamp()
-> 
-> this runs in BH context, can't acquire a mutex. Also I don't see why any
-> additional locking would be needed?
-> 
+I'll try the cx18 board next :-)
 
-The rationale for adding this lock was to handle concurrent RX threads 
-accessing the timestamp event list. If one RX thread moves all events 
-from events_rx to a temporary list and releases the spinlock, another 
-concurrent RX thread could acquire the lock and find events_rx empty, 
-potentially missing its timestamp.
+Regards,
 
-I need clarification on the RX processing behavior: Can 
-am65_cpsw_nuss_rx_packets() be called for a new RX packet concurrently 
-while a previous RX packet is still being processed, or is RX processing 
-serialized? If RX processing is serialized, then the lock is not 
-required at all.
+	Hans
 
-Anyways, I will remove the lock from this patch, as it was a part of the 
-optimization mentioned above.
-
-> /P
+> ---
+>  drivers/media/pci/ivtv/ivtv-driver.c | 11 ++++-------
+>  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
+>  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
+>  3 files changed, 25 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
+> index ecc20cd89926fe2ce4e472526a6b5fc0857615dd..7e2fb98cfccf02f701ceb4484dd1d330dd1dc867 100644
+> --- a/drivers/media/pci/ivtv/ivtv-driver.c
+> +++ b/drivers/media/pci/ivtv/ivtv-driver.c
+> @@ -1260,15 +1260,12 @@ static int ivtv_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+>  
+>  int ivtv_init_on_first_open(struct ivtv *itv)
+>  {
+> -	struct v4l2_frequency vf;
+>  	/* Needed to call ioctls later */
+> -	struct ivtv_open_id fh;
+> +	struct ivtv_stream *s = &itv->streams[IVTV_ENC_STREAM_TYPE_MPG];
+> +	struct v4l2_frequency vf;
+>  	int fw_retry_count = 3;
+>  	int video_input;
+>  
+> -	fh.itv = itv;
+> -	fh.type = IVTV_ENC_STREAM_TYPE_MPG;
+> -
+>  	if (test_bit(IVTV_F_I_FAILED, &itv->i_flags))
+>  		return -ENXIO;
+>  
+> @@ -1310,13 +1307,13 @@ int ivtv_init_on_first_open(struct ivtv *itv)
+>  
+>  	video_input = itv->active_input;
+>  	itv->active_input++;	/* Force update of input */
+> -	ivtv_s_input(NULL, &fh, video_input);
+> +	ivtv_do_s_input(itv, video_input);
+>  
+>  	/* Let the VIDIOC_S_STD ioctl do all the work, keeps the code
+>  	   in one place. */
+>  	itv->std++;		/* Force full standard initialization */
+>  	itv->std_out = itv->std;
+> -	ivtv_s_frequency(NULL, &fh, &vf);
+> +	ivtv_do_s_frequency(s, &vf);
+>  
+>  	if (itv->card->v4l2_capabilities & V4L2_CAP_VIDEO_OUTPUT) {
+>  		/* Turn on the TV-out: ivtv_init_mpeg_decoder() initializes
+> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> index 8077a71d4850ec773caa20c3fca08f92f3117d69..dfbc842b22453868a2075935a81db7ae313ee46c 100644
+> --- a/drivers/media/pci/ivtv/ivtv-ioctl.c
+> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
+> @@ -974,9 +974,8 @@ static int ivtv_g_input(struct file *file, void *fh, unsigned int *i)
+>  	return 0;
+>  }
+>  
+> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp)
+>  {
+> -	struct ivtv *itv = file2id(file)->itv;
+>  	v4l2_std_id std;
+>  	int i;
+>  
+> @@ -1017,6 +1016,11 @@ int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+>  	return 0;
+>  }
+>  
+> +static int ivtv_s_input(struct file *file, void *fh, unsigned int inp)
+> +{
+> +	return ivtv_do_s_input(file2id(file)->itv, inp);
+> +}
+> +
+>  static int ivtv_g_output(struct file *file, void *fh, unsigned int *i)
+>  {
+>  	struct ivtv *itv = file2id(file)->itv;
+> @@ -1065,10 +1069,9 @@ static int ivtv_g_frequency(struct file *file, void *fh, struct v4l2_frequency *
+>  	return 0;
+>  }
+>  
+> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf)
+> +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf)
+>  {
+> -	struct ivtv *itv = file2id(file)->itv;
+> -	struct ivtv_stream *s = &itv->streams[file2id(file)->type];
+> +	struct ivtv *itv = s->itv;
+>  
+>  	if (s->vdev.vfl_dir)
+>  		return -ENOTTY;
+> @@ -1082,6 +1085,15 @@ int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *v
+>  	return 0;
+>  }
+>  
+> +static int ivtv_s_frequency(struct file *file, void *fh,
+> +			    const struct v4l2_frequency *vf)
+> +{
+> +	struct ivtv_open_id *id = file2id(file);
+> +	struct ivtv *itv = id->itv;
+> +
+> +	return ivtv_do_s_frequency(&itv->streams[id->type], vf);
+> +}
+> +
+>  static int ivtv_g_std(struct file *file, void *fh, v4l2_std_id *std)
+>  {
+>  	struct ivtv *itv = file2id(file)->itv;
+> diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.h b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> index 42c2516379fcbbd0640820ab0e3abe9bf00b57ea..edc05eb8e060fd64d7ff94f8f7f5c315a2fa6298 100644
+> --- a/drivers/media/pci/ivtv/ivtv-ioctl.h
+> +++ b/drivers/media/pci/ivtv/ivtv-ioctl.h
+> @@ -9,6 +9,8 @@
+>  #ifndef IVTV_IOCTL_H
+>  #define IVTV_IOCTL_H
+>  
+> +struct ivtv;
+> +
+>  u16 ivtv_service2vbi(int type);
+>  void ivtv_expand_service_set(struct v4l2_sliced_vbi_format *fmt, int is_pal);
+>  u16 ivtv_get_service_set(struct v4l2_sliced_vbi_format *fmt);
+> @@ -17,7 +19,7 @@ int ivtv_set_speed(struct ivtv *itv, int speed);
+>  void ivtv_set_funcs(struct video_device *vdev);
+>  void ivtv_s_std_enc(struct ivtv *itv, v4l2_std_id std);
+>  void ivtv_s_std_dec(struct ivtv *itv, v4l2_std_id std);
+> -int ivtv_s_frequency(struct file *file, void *fh, const struct v4l2_frequency *vf);
+> -int ivtv_s_input(struct file *file, void *fh, unsigned int inp);
+> +int ivtv_do_s_frequency(struct ivtv_stream *s, const struct v4l2_frequency *vf);
+> +int ivtv_do_s_input(struct ivtv *itv, unsigned int inp);
+>  
+>  #endif
 > 
 
 
