@@ -1,326 +1,158 @@
-Return-Path: <linux-kernel+bounces-852338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DD8BD8B6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E4CBD8B76
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5012818A67C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEDB18A7B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7112F069D;
-	Tue, 14 Oct 2025 10:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C532F49FE;
+	Tue, 14 Oct 2025 10:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="tVK7s2Ic";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="LIerhxD4"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEVRacHY"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E152EC0B2;
-	Tue, 14 Oct 2025 10:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760437113; cv=fail; b=DI428N52SXG9zaXE5voRfBZZQURR4gkFTsvCvw4021ymirWPlPdHQnyeS6PmmpMZPqOsYGetipcSq/zkwzdtv6D9pDrbkIEHUpMbMJYfpld3ta/fWw4RTI6t4/QVaM3/oBin5BVoXtIOQL6ncgolwM8QleTkz2uomYDJ0ijIn6g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760437113; c=relaxed/simple;
-	bh=mnk2Tp4BqBjzOf+Sk6D0bwEHtz+eplJR5KzvV6YMaCY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YXi6yFTUiTPd3a1qprGEhHI1V6D6ZPp6dGnjQ4icoN1tDQsIh8+frvwivnvIab6lv1hSIMMi/UERJ+9VLG1kMNz6iE0wuxtXBo06bjalMynBosuvkQi8kqyIf+pz9XHNQBo4sgxB0n7QDqBMl6LJvX1Jqu7s8zYNJ45dnNPQMjQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=tVK7s2Ic; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=LIerhxD4; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id BC0BC480A02;
-	Tue, 14 Oct 2025 06:18:29 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1760437109;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=fP2AapzH0P5GM+gmZrivACasOzhAfhhFaaQEi0zlJ5s=;
- b=tVK7s2IcaXaRDIWeAu35hn0roBePdKh65fnWQz1zOp2UdusAkSYAdbtwtG+v6yicHiJVu
- EoqJvMFhj64Dw9ZDg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1760437109;
-	cv=none; b=BtN3+NiPlJacmV56GGpzf12DJ+m/cwBFjsgSQqYCF58E+ivEG9l8BKnQ752WFT93Vn5bwD2n0I/qzBJU8Qy8UtO8bEqTsHxXBenVJXkjAj7BEWYGl0MqnAUOewuRx0tDjlKFq5XxRnmzp2f9HCUCdWAl0uyhNrKyQka9Sy3UUvV5E4mml0Cj9gT04D00ICRSttt6Hn7/2fMczbxC2C70Adpnc5iJT5Hko1JZKd1IPTzyxZNrRj9YFU2/4t2cDvGT4h1YGx5UwVBaBZeJXr5G6jKNWF4KFiowvpfnzUieDZk1skA2PDtJ2oUeI+RWawfpd0MOP8MyqndBVOnLbFpAfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1760437109; c=relaxed/simple;
-	bh=mnk2Tp4BqBjzOf+Sk6D0bwEHtz+eplJR5KzvV6YMaCY=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=UqanI4lIHEbfZRaCAtCv7qvzXH2ERepnNl5Kdv2bSfHfzy/5NtsdofsF8hsgIbo9qsI1MHuQ5fKpO8i2l2e2vbx8h8tH2ZMYmgKL23WD2j6YxEzk6pwVAwuRhpP++cFyltSUQlx+myuR3pQtlLYQf4OKjm2NUWAyRa/7rO3pR8/PSP27h0GiDopQftZs4EYm+j/RoEcTcpjZM+HUaPBGFLmBJ23gFZ2tEuuLMsMFUkjC6DZXLeiIABRyBlAuOFMNchdjX38MYIdMDJFPwK87J12P/tBKrhMSxVEJ6Yip6+dbrwxEGTtOzJFoJm8RnzGO4Z8uh1MNd+8tKSDaelBoSQ==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1760437109;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=fP2AapzH0P5GM+gmZrivACasOzhAfhhFaaQEi0zlJ5s=;
- b=LIerhxD4YIoXWA3FJUBcDvr2DQWmp5D+JzPNJmjtPXQP1UnZ7Cic4x9wiofZ7IY826l9/
- 7ZUwthBjm5HvjrGaHF2VG+cxesh6Qrd8F7aHQ4WgCLOPIQbHuW/7zPR1XNS0kzlDOwjsidJ
- mz11v2wXbzDE7GweHYarHflE6FlAIgKh7QqCFcRg8lMlyuvw65sTOa7ngrp8FKmYRMgV/Hv
- Y62mCA27aFLJ+eQBh49VbhrD4N0yiRPaVt3aaF7aH0mBb23nJlPF6d5pmCMTtOuOlTH24Xk
- XygZj26tYYx4dZbYyUCbMijx/DSroPLiSpUmfbDKKPHY1JLPn1D0F/7mW84Q==
-Received: by srv8.prv.sapience.com (Postfix) id 91E5428001B;
-	Tue, 14 Oct 2025 06:18:29 -0400 (EDT)
-Message-ID: <b30331816621cc1f6a154233482f01798cf57cea.camel@sapience.com>
-Subject: Re: mainline boot fail nvme/block? [BISECTED]
-From: Genes Lists <lists@sapience.com>
-To: Inochi Amaoto <inochiama@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nvme@lists.infradead.org
-Cc: linux-pci@vger.kernel.org
-Date: Tue, 14 Oct 2025 06:18:28 -0400
-In-Reply-To: <xfzcvv6ezleds24wvha2apkz5kirhcmoydm3on2hnfrxcwuc3g@koj6plovnvbd>
-References: <4b392af8847cc19720ffcd53865f60ab3edc56b3.camel@sapience.com>
-	 <cf4e88c6-0319-4084-8311-a7ca28a78c81@kernel.dk>
-	 <3152ca947e89ee37264b90c422e77bb0e3d575b9.camel@sapience.com>
-	 <trdjd7zhpldyeurmpvx4zpgjoz7hmf3ugayybz4gagu2iue56c@zswmzvauqnxk>
-	 <622d6d7401b5cfd4bd5f359c7d7dc5b3bf8785d5.camel@sapience.com>
-	 <xfzcvv6ezleds24wvha2apkz5kirhcmoydm3on2hnfrxcwuc3g@koj6plovnvbd>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-WzP+G+VsL1ZgoEfePPDq"
-User-Agent: Evolution 3.58.1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED02A2EAD10
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760437159; cv=none; b=QnR3QQrbynsv4INVKcBnUGjQtd1/3RRDu8z6E9O7c5S/dXytV945EJXSgDnE7Oe32YVRpVrSCMNwgwTXegpdRZfSDgSpzTKBsPNlNq1oBjOGYZO0V4oH6NXYvmUq+ChWtBaUk77+632D/WsiD65vsPZl/lt216+Hd1IUFP5vrwA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760437159; c=relaxed/simple;
+	bh=XX+rZvIXhJtvIL7uOxz4xW1dsb6uuqCSyoLnZXBNsS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mf45c0yb6A+hjqIv0dZEA5HxLIxRstr796Xv/iRPT3P51P8aHEARvT3N3S2EvruNmdsa1mlbYOJZ+PXKS7UOaNkxfsbgn1HL7DtN3mBDhW/l9YGfXmsNxlRgrSq11ueuC+ceqy31MBVFitB6XUO2CHvXuiBeJoVZa8J8S7dBHfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEVRacHY; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8608f72582eso347914885a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:19:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760437157; x=1761041957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1GhdPCYEOIPlUxhGKbw+Pmeq+R0XeZpDT4H4TE9DD8w=;
+        b=YEVRacHYlyKqcZVQlt+WexZtwvOXk9UVLKgP64Ayn+4XASsRHsLO+WmxzMgxa2qbwb
+         +Klo+CPTmMljRK0NC93SlWyo5I4DN2CKOt3jcNoKRC5ECZJTJArIWynlreEyj2O0aWPX
+         p0hN2N8LMUamDTzii5ftX0BvrfmtK8DTOiGJduZvwkTtW3PohHRrKUoEmBsy5FZOGGlk
+         DG0B5gYdfYNHcrmNwarcueAnlXBzroNzwe177n2SIWa8SkA7JGyh0N+XznpVRx7AMnrI
+         a+5rbFzUlJqyuE6YgYQo8rTXcJ5icnTxVVZyGdePtHzc7bRYSdKtD7jzy520WkJB+hox
+         iPxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760437157; x=1761041957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1GhdPCYEOIPlUxhGKbw+Pmeq+R0XeZpDT4H4TE9DD8w=;
+        b=vY0ljw54hWHjNGqaL7xdxZnmPgKqLgHzHZpQXSjWuvny+jVKPxrxGlfXRnEvBU96C+
+         +RPLn52x4P81ofTJRx6+ER7Q32CXr6ceof+/XWWwlippfmwzu2NfKP29oSmb3P3CTmrs
+         jQHkF5TPSWrCM09V8etVVjNrIlfZFoT4YJH7h0pS/7CegncPNKfmziuztmmu6u3kkAIR
+         kL+Bb4vaGH6S4OE/7MpsdX4qDPC4ONrf4rfgyQqiPI4NHq8Q0NNFBFc4s0T/NCZXLscD
+         5uUfm0Byj96NEATEtpgTG5f3KBTb2OERH2YwzJHVKB/ng36ydDc17sH9FHOk+jPjZcnm
+         oBiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRiQhOWGlkNqKNURuhVfiNRWPSApzMpJ0Bm7N0DfptL0Rz78q6Qu5/jt0jYK12RDcai/CDVpBu+wlGrKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKvUp7ZUx1427AHn303JixLKHzFtzBusTuKqF0sutQdIbtCspj
+	MI4uYu3tbBR8O/xvYGgHJqRoGZTzUEMl2Erovte+wMDEPLSXqqjkuiwCUVTPOgfQG1N8jLQE8wv
+	nXJwFec8TublBFkYO6WzWKCgBNUkjMuk=
+X-Gm-Gg: ASbGnctr1YDEkxIbk6pjf0LS/KdQPbpJyhThk74iCtK56f/w16upHrt5xzzuHx2AB4H
+	sske75ddMHmS5x/Sirf4xgKdJOceZv+stgA3Ie612pXZUXU4jy7nBm9lRB9yRHfV+iGZ9YqITKm
+	qaMtGV4z4owJHT6JlMiXi4NVlQnOc9OwaNIkpCB/GMu7e8P9VtySpK9zQGW7uMQjDreV2K7zA2k
+	jic4c5+rksYjuVBX7DeDi84Upf/Hn98aibd4Xkq8NUsEOTm2sC8CupVAimT6qiNwZih
+X-Google-Smtp-Source: AGHT+IHkG+3MijbAqPzBuX6WT5qM1UH5wFEx4+o96mRJarvePfqJF8HiiyZhUvW6BxCxk3W2HxXrCx44GyONpuhGsYg=
+X-Received: by 2002:a05:620a:1a82:b0:864:c4b9:da16 with SMTP id
+ af79cd13be357-883570ce5e8mr3684480185a.73.1760437156675; Tue, 14 Oct 2025
+ 03:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-WzP+G+VsL1ZgoEfePPDq
+References: <20251013101636.69220-1-21cnbao@gmail.com> <aO11jqD6jgNs5h8K@casper.infradead.org>
+ <CAGsJ_4x9=Be2Prbjia8-p97zAsoqjsPHkZOfXwz74Z_T=RjKAA@mail.gmail.com>
+ <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
+ <CAGsJ_4xGSrfori6RvC9qYEgRhVe3bJKYfgUM6fZ0bX3cjfe74Q@mail.gmail.com> <CANn89iKSW-kk-h-B0f1oijwYiCWYOAO0jDrf+Z+fbOfAMJMUbA@mail.gmail.com>
+In-Reply-To: <CANn89iKSW-kk-h-B0f1oijwYiCWYOAO0jDrf+Z+fbOfAMJMUbA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 14 Oct 2025 18:19:05 +0800
+X-Gm-Features: AS18NWC6N5v2tw8omBV7hBy3g3GX8bmzsyDFnwNBZ4EEXltiuUXlhijttlnObnI
+Message-ID: <CAGsJ_4wJHpD10ECtWJtEWHkEyP67sNxHeivkWoA5k5++BCfccA@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
+To: Eric Dumazet <edumazet@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Huacai Zhou <zhouhuacai@oppo.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-10-14 at 08:54 +0800, Inochi Amaoto wrote:
-> On Mon, Oct 13, 2025 at 07:45:05AM -0400, Genes Lists wrote:
-> >=20
-...
+> >
+> > >
+> > > I think you are missing something to control how much memory  can be
+> > > pushed on each TCP socket ?
+> > >
+> > > What is tcp_wmem on your phones ? What about tcp_mem ?
+> > >
+> > > Have you looked at /proc/sys/net/ipv4/tcp_notsent_lowat
+> >
+> > # cat /proc/sys/net/ipv4/tcp_wmem
+> > 524288  1048576 6710886
+>
+> Ouch. That is insane tcp_wmem[0] .
+>
+> Please stick to 4096, or risk OOM of various sorts.
+>
+> >
+> > # cat /proc/sys/net/ipv4/tcp_notsent_lowat
+> > 4294967295
+> >
+> > Any thoughts on these settings?
+>
+> Please look at
+> https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+>
+> tcp_notsent_lowat - UNSIGNED INTEGER
+> A TCP socket can control the amount of unsent bytes in its write queue,
+> thanks to TCP_NOTSENT_LOWAT socket option. poll()/select()/epoll()
+> reports POLLOUT events if the amount of unsent bytes is below a per
+> socket value, and if the write queue is not full. sendmsg() will
+> also not add new buffers if the limit is hit.
+>
+> This global variable controls the amount of unsent data for
+> sockets not using TCP_NOTSENT_LOWAT. For these sockets, a change
+> to the global variable has immediate effect.
+>
+>
+> Setting this sysctl to 2MB can effectively reduce the amount of memory
+> in TCP write queues by 66 %,
+> or allow you to increase tcp_wmem[2] so that only flows needing big
+> BDP can get it.
 
-> > Thank you Inochi
-> >=20
-> > I tried this patch over 6.18-rc1.
-> >=20
-> > =C2=A0It get's further than without the patch but around the time I get
-> > prompted for passphrase for the luks partition
-> > (root is not encrypted) it crashes.=C2=A0
-> >=20
-> > I have uploaded 2 images I took of the screen when this happens and
-> > uploaded them to here:
-> >=20
-> > =C2=A0 =C2=A0=C2=A0https://0x0.st/KSNz.jpg
-> > =C2=A0 =C2=A0=C2=A0https://0x0.st/KSNi.jpg
-> >=20
->=20
-> This picture is only a WARNING from perf_get_x86_pmu_capability,
-> and no other information. So I am not sure whether it is caused
-> by this change. But from the original report I have, it solves
-> the problem at that time.
->=20
-> By the way, can you test the following change?
-> https://lore.kernel.org/all/2hyxqqdootjw5yepbimacuuapfsf26c5mmu5w2jsd
-> mamxvsjdq@gnibocldkuz5/
->=20
-> If it is OK, I will send a patch for it.
->=20
-> Regards,
-> Inochi
+We obtained these settings from our hardware vendors.
 
+It might be worth exploring these settings further, but I can=E2=80=99t qui=
+te see
+their connection to high-order allocations, since high-order allocations ar=
+e
+kernel macros.
 
-With this patch it boots with the same/similar warning as before, which
-I will include below since it's text instead of image.
+#define SKB_FRAG_PAGE_ORDER     get_order(32768)
+#define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MASK)
+#define PAGE_FRAG_CACHE_MAX_ORDER       get_order(PAGE_FRAG_CACHE_MAX_SIZE)
 
-Tested-by: Gene C <gene@sapience.com>
+Is there anything I=E2=80=99m missing?
 
-Thank you
-
-gene
-
-Warning from 6.18-rc1 with above patch:
-
-
-[  +0.003929] ------------[ cut here ]------------
-[  +0.000004] WARNING: CPU: 7 PID: 584 at arch/x86/events/core.c:3089
-perf_get_x86_pmu_capability+0x11/0xb0
-[  +0.000010] Modules linked in: snd_hda_codec sr_mod(+) iwlmvm(+)
-kvm_intel(+) dm_crypt cdrom encrypted_keys snd_>
-[  +0.000060]  industrialio mei_me processor_thermal_wt_req i2c_smbus
-spi_intel_pci intel_ipu6 soundcore processor>
-[  +0.000058]  ghash_clmulni_intel aesni_intel video intel_ish_ipc
-drm_display_helper intel_lpss_pci thunderbolt i>
-[  +0.000025] CPU: 7 UID: 0 PID: 584 Comm: (udev-worker) Not tainted
-6.18.0-rc1-test-1-00002-ge9cc50c96bb9 #2 PREE>
-[  +0.000005] Hardware name: Dell Inc. XPS 9320/0CR6NC, BIOS 2.23.0
-07/03/2025
-[  +0.000002] RIP: 0010:perf_get_x86_pmu_capability+0x11/0xb0
-[  +0.000004] Code: eb 9c e8 22 38 f8 00 66 90 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 4>
-[  +0.000002] RSP: 0018:ffffd1e041edba58 EFLAGS: 00010202
-[  +0.000003] RAX: 0000000000000000 RBX: ffffffffc206f000 RCX:
-00000000c0000080
-[  +0.000003] RDX: ffffffffc1e396e0 RSI: ffffffffc1e39408 RDI:
-ffffffffc1e396e0
-[  +0.000001] RBP: 0000000000000001 R08: 0000000000000000 R09:
-ffffffffb0e763fb
-[  +0.000002] R10: ffff8d0fdad72460 R11: ffff8d0fc0042600 R12:
-0000000000000000
-[  +0.000001] R13: ffffffffc17e4ca0 R14: 000071be141fd2f2 R15:
-0000000000000000
-[  +0.000002] FS:  000071be140c6880(0000) GS:ffff8d177bf79000(0000)
-knlGS:0000000000000000
-[  +0.000002] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000002] CR2: 00007d5cd598b808 CR3: 0000000109583004 CR4:
-0000000000f70ef0
-[  +0.000002] PKRU: 55555554
-[  +0.000001] Call Trace:
-[  +0.000003]  <TASK>
-[  +0.000002]  kvm_init_pmu_capability+0x27/0x130 [kvm
-83ffe9a0591f43a0ce126662332dfe4cf2561fa4]
-[  +0.000119]  kvm_x86_vendor_init+0x1de/0x19d0 [kvm
-83ffe9a0591f43a0ce126662332dfe4cf2561fa4]
-[  +0.000085]  ? __pfx_vt_init+0x10/0x10 [kvm_intel
-5fa84b05f575edf3826c8f8519ca550622307061]
-[  +0.000023]  vmx_init+0xf6/0x170 [kvm_intel
-5fa84b05f575edf3826c8f8519ca550622307061]
-[  +0.000015]  vt_init+0xf/0x360 [kvm_intel
-5fa84b05f575edf3826c8f8519ca550622307061]
-[  +0.000012]  do_one_initcall+0x5b/0x300
-[  +0.000009]  do_init_module+0x62/0x250
-[  +0.000005]  ? init_module_from_file+0x8a/0xe0
-[  +0.000004]  init_module_from_file+0x8a/0xe0
-[  +0.000006]  idempotent_init_module+0x114/0x310
-[  +0.000005]  __x64_sys_finit_module+0x6d/0xd0
-[  +0.000004]  ? syscall_trace_enter+0x8d/0x1d0
-[  +0.000003]  do_syscall_64+0x81/0x7f0
-[  +0.000005]  ? __wait_for_common+0x162/0x190
-[  +0.000005]  ? __pfx_schedule_timeout+0x10/0x10
-[  +0.000004]  ? __rseq_handle_notify_resume+0xa6/0x490
-[  +0.000005]  ? idempotent_init_module+0x1df/0x310
-[  +0.000005]  ? switch_fpu_return+0x4e/0xd0
-[  +0.000003]  ? do_syscall_64+0x226/0x7f0
-[  +0.000003]  ? do_syscall_64+0x226/0x7f0
-[  +0.000003]  ? do_user_addr_fault+0x21a/0x690
-[  +0.000006]  ? exc_page_fault+0x7e/0x1a0
-[  +0.000013] Bluetooth: hci0: Firmware SHA1: 0x937bca4a
-[  +0.003913] Bluetooth: hci0: Fseq status: Success (0x00)
-[  +0.000011] Bluetooth: hci0: Fseq executed: 00.00.02.41
-[  +0.000004] Bluetooth: hci0: Fseq BT Top: 00.00.02.41
-[  +8.297442] Key type trusted registered
-[  +0.014388] Key type encrypted registered
-[  +0.017993] sr 0:0:0:0: Power-on or device reset occurred
-[  +0.005943] sr 0:0:0:0: [sr0] scsi3-mmc drive: 24x/24x writer dvd-ram
-cd/rw xa/form2 cdda tray
-[  +0.000005] cdrom: Uniform CD-ROM driver Revision: 3.20
-[  +0.003929] ------------[ cut here ]------------
-[  +0.000004] WARNING: CPU: 7 PID: 584 at arch/x86/events/core.c:3089
-perf_get_x86_pmu_capability+0x11/0xb0
-[  +0.000010] Modules linked in: snd_hda_codec sr_mod(+) iwlmvm(+)
-kvm_intel(+) dm_crypt cdrom encrypted_keys snd_>
-[  +0.000060]  industrialio mei_me processor_thermal_wt_req i2c_smbus
-spi_intel_pci intel_ipu6 soundcore processor>
-[  +0.000058]  ghash_clmulni_intel aesni_intel video intel_ish_ipc
-drm_display_helper intel_lpss_pci thunderbolt i>
-[  +0.000025] CPU: 7 UID: 0 PID: 584 Comm: (udev-worker) Not tainted
-6.18.0-rc1-test-1-00002-ge9cc50c96bb9 #2 PREE>
-[  +0.000005] Hardware name: Dell Inc. XPS 9320/0CR6NC, BIOS 2.23.0
-07/03/2025
-[  +0.000002] RIP: 0010:perf_get_x86_pmu_capability+0x11/0xb0
-[  +0.000004] Code: eb 9c e8 22 38 f8 00 66 90 90 90 90 90 90 90 90 90
-90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 4>
-[  +0.000002] RSP: 0018:ffffd1e041edba58 EFLAGS: 00010202
-[  +0.000003] RAX: 0000000000000000 RBX: ffffffffc206f000 RCX:
-00000000c0000080
-[  +0.000003] RDX: ffffffffc1e396e0 RSI: ffffffffc1e39408 RDI:
-ffffffffc1e396e0
-[  +0.000001] RBP: 0000000000000001 R08: 0000000000000000 R09:
-ffffffffb0e763fb
-[  +0.000002] R10: ffff8d0fdad72460 R11: ffff8d0fc0042600 R12:
-0000000000000000
-[  +0.000001] R13: ffffffffc17e4ca0 R14: 000071be141fd2f2 R15:
-0000000000000000
-[  +0.000002] FS:  000071be140c6880(0000) GS:ffff8d177bf79000(0000)
-knlGS:0000000000000000
-[  +0.000002] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  +0.000002] CR2: 00007d5cd598b808 CR3: 0000000109583004 CR4:
-0000000000f70ef0
-[  +0.000002] PKRU: 55555554
-[  +0.000001] Call Trace:
-[  +0.000003]  <TASK>
-[  +0.000002]  kvm_init_pmu_capability+0x27/0x130 [kvm
-83ffe9a0591f43a0ce126662332dfe4cf2561fa4]
-[  +0.000119]  kvm_x86_vendor_init+0x1de/0x19d0 [kvm
-83ffe9a0591f43a0ce126662332dfe4cf2561fa4]
-[  +0.000085]  ? __pfx_vt_init+0x10/0x10 [kvm_intel
-5fa84b05f575edf3826c8f8519ca550622307061]
-[  +0.000023]  vmx_init+0xf6/0x170 [kvm_intel
-5fa84b05f575edf3826c8f8519ca550622307061]
-[  +0.000015]  vt_init+0xf/0x360 [kvm_intel
-5fa84b05f575edf3826c8f8519ca550622307061]
-[  +0.000012]  do_one_initcall+0x5b/0x300
-[  +0.000009]  do_init_module+0x62/0x250
-[  +0.000005]  ? init_module_from_file+0x8a/0xe0
-[  +0.000004]  init_module_from_file+0x8a/0xe0
-[  +0.000006]  idempotent_init_module+0x114/0x310
-[  +0.000005]  __x64_sys_finit_module+0x6d/0xd0
-[  +0.000004]  ? syscall_trace_enter+0x8d/0x1d0
-[  +0.000003]  do_syscall_64+0x81/0x7f0
-[  +0.000005]  ? __wait_for_common+0x162/0x190
-[  +0.000005]  ? __pfx_schedule_timeout+0x10/0x10
-[  +0.000004]  ? __rseq_handle_notify_resume+0xa6/0x490
-[  +0.000005]  ? idempotent_init_module+0x1df/0x310
-[  +0.000005]  ? switch_fpu_return+0x4e/0xd0
-[  +0.000003]  ? do_syscall_64+0x226/0x7f0
-[  +0.000003]  ? do_syscall_64+0x226/0x7f0
-[  +0.000003]  ? do_user_addr_fault+0x21a/0x690
-[  +0.000006]  ? exc_page_fault+0x7e/0x1a0
-[  +0.000004]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  +0.000003] RIP: 0033:0x71be1391876d
-[  +0.000045] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa
-48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c>
-[  +0.000002] RSP: 002b:00007ffdfcc7da58 EFLAGS: 00000246 ORIG_RAX:
-0000000000000139
-[  +0.000004] RAX: ffffffffffffffda RBX: 000064e3aeb57f80 RCX:
-000071be1391876d
-[  +0.000001] RDX: 0000000000000004 RSI: 000071be141fd2f2 RDI:
-0000000000000032
-[  +0.000002] RBP: 00007ffdfcc7daf0 R08: 0000000000000000 R09:
-000064e3aeb528f0
-[  +0.000001] R10: 0000000000000000 R11: 0000000000000246 R12:
-000071be141fd2f2
-[  +0.000001] R13: 0000000000020000 R14: 000064e3aeb507f0 R15:
-000064e3aeb57f80
-[  +0.000003]  </TASK>
-[  +0.000001] ---[ end trace 0000000000000000 ]---
-
-
-
---=20
-Gene
-
---=-WzP+G+VsL1ZgoEfePPDq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCaO4jdAAKCRA5BdB0L6Ze
-244RAQDk1/zoqO5wjghvcV/PzFr1pEfVFIEW5Kjc7eP+weAG3gD/ZhNV4oGBjWc0
-BxKw9gsEg3neYfcTDB9Bag9mtmFtJAQ=
-=xG1/
------END PGP SIGNATURE-----
-
---=-WzP+G+VsL1ZgoEfePPDq--
+Thanks
+Barry
 
