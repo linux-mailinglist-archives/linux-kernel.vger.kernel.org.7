@@ -1,224 +1,112 @@
-Return-Path: <linux-kernel+bounces-851865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D00BD77D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:51:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF43BD77D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437203E7A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:51:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 466144F38AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28022286887;
-	Tue, 14 Oct 2025 05:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66DC299959;
+	Tue, 14 Oct 2025 05:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="oTAbr2el"
-Received: from mx-relay47-hz3.antispameurope.com (mx-relay47-hz3.antispameurope.com [94.100.134.236])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ycq5VY40";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k5wjehNw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B40219E8
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.236
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760421069; cv=pass; b=hMYK+f+nkCxM+psYszYYtGO0hEc7dTzWB2CP0mupTYyBfyXvw3hoACiVkB1oWSnJifsnwI9YURlQO+PwPZk/5DISviMXka6m/SZyIG/dnYTPR9cKOpmNDHeMQ+bzNW8Abw0rex0oO8MukzNZgZfjMvfP5cqw+dfXyRLiqI3x53U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760421069; c=relaxed/simple;
-	bh=ZKBXzuLgHnPv9Mp/a52fJXSw1h9XVCMhyxdDTH7YLLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cPm4O5Ix4BmKI7SHy7cWASPoTfowmruhxBs09xUimmHNDGRfPZW6ke1JszlLrS7bVyJuF3QMvL4+qXMwuccXZQUG+86XOFIffuK2M0tJCh6PrIzcRRh74hxAmbNMRZ+DtjuvXvREgmB7UMGlyWY5swtwOSz7VW1Uk9De6Qtmhow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=oTAbr2el; arc=pass smtp.client-ip=94.100.134.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate47-hz3.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=H/kOwDFzfm3IalvPOezvdeJs36K8vMFT5gBD1NEeb8I=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1760421049;
- b=FIkjIXhestt77gUQW5WqLU/854Peo0zJIp9qJ/OO1PxaOrL09dac34ktbvB0Cv54RvlqvU/k
- EeEjDFXNU27m5kuKmwLoO8KXCExSmw0nJ0JBFb5lkws/cONxheIpBG4b6XVKMsN5vc1fKDbtlMA
- riX4kvdyvKibjqU1iz6oxqkhV6Cf+vxjvFL+W752N9LUkLbQ4sq1rZORztNGthJwM9XOanFkgjH
- ID3wEHUkm+WwWoW3bY4Rwe+E5UD4v+9LCvTN7q9WjvkqQuqkdgJuWyx5WeCAwQOcWFmMU3VdEBv
- mgfbA4IiWno3LShZDdspk1z3gxKa4qoPxbod1/GOfxqzQ==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1760421049;
- b=TImOD05EvKDlUwIBucDzEvEh6WWExCFeX7eoRNoOR6+CH5JWT+cZ8M/7OTrQdSE49P0AEGQI
- ZaoqJVX2N4dRTTcu9NFEwVvKWC4YUouvNHuoqeZ+3PA28jM3GONyqbUk+oG2ASM0zcp+2IY5mGk
- 4ZUGqbJdarGQXhBcMNhwoWvcNbq7hYBCEntWk/l0NzCnLkRKB2HYgueNlP9t0nx9ATk4BUixmtc
- Y/VAgbZm69/6uR0/X8D7R6DiiGIRjP57cZLDkjf2vV3TWcdLAvXVadodtROO8wLhUQdlBl67pL0
- n0ikhBv54QbhRmvoUWcdH+cMbr0KPvLFEcfndcOOd5ZUw==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay47-hz3.antispameurope.com;
- Tue, 14 Oct 2025 07:50:49 +0200
-Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 0231ECC0DE1;
-	Tue, 14 Oct 2025 07:50:35 +0200 (CEST)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Lizhi Hou <lizhi.hou@amd.com>,
-	Brian Xu <brian.xu@amd.com>,
-	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Michal Simek <michal.simek@amd.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] dmaengine: xilinx: xdma: Add regmap register ranges
-Date: Tue, 14 Oct 2025 07:50:33 +0200
-Message-ID: <20251014055034.274596-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8F752F88;
+	Tue, 14 Oct 2025 05:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760421129; cv=none; b=GSQ4iF2fSR82Fc4UMX69yV7RD1I+yOKgiGhSLPJRvMVSuoS1TANyvQ1ASyiCzPQ3KdJI3H7F+sYX2zZaoFa58cFVTEX5IHG+A1NqBPugwuHSFj7Sz7AEFvppVXzEuBOOahKjsdkWHq/gffK1e+WCTfyADPsMmb0he5+ndXEO3UA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760421129; c=relaxed/simple;
+	bh=rbGY7hsNZW/Gi92aeoA6ZkT6cOMkgjgAqpGxtROcp2U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pBF/v2rZFxZRC5o1WlB9S2bW90UwQx1V4Y1ICjLdtGIJxA1PCFPkw1MqXep/2zMB0lJ61S6lqsohCQgkwtHywr36/2cVEI+u9bnUsPOd6B8EmWqNjDPCnjstNOOYUUUcCGVV0EWJ9d8b6TXHWrhoxBc5e/pi0n2fqfNpsWXj578=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ycq5VY40; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k5wjehNw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760421124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cbrizgz6WPfeMwj+czbdKF5T2U16SbmHYGAnizEg+vY=;
+	b=ycq5VY40KUWYbIc/AX+OEXq33R4g6FFkD8rF7w4TJAo7vN7wy00Oi6AJHWe9CF6hjg4r++
+	7ijo5+zPv5F/j5CLbc460PL+N4SN5SO2LzTNcFJHIn8YzFCgdhiuIpsp9/NguePNebEG0g
+	Tu/Wb2dB0nZPbtYVcpNBK8KrJKKtuA5HHxDMj85vRI1is24jwzZPibGbjZFXEB4Cz241g1
+	aOSJ9FhlsAPBwJ90i8FBzqNiStsAjXNn/t4H+1xXK+qiYwsLA8AOPILVWRjNiX9Vc3SbPT
+	RPYhHjQ7oT7gXfHjx3hb81STL543bFmCphxMVvmLybvgxx9VjPBoDgiOSoMpTg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760421124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Cbrizgz6WPfeMwj+czbdKF5T2U16SbmHYGAnizEg+vY=;
+	b=k5wjehNwvQAXpyuVzwofHCnAvKBVYGv9jNAsmIz7UHNzIT+HtgCte7OkVMtBeMrfdcwA8u
+	FvrtdvtB7s1rKUCw==
+Subject: [PATCH 0/3] rv: Add explicit lockdep context for reactors
+Date: Tue, 14 Oct 2025 07:51:55 +0200
+Message-Id: <20251014-rv-lockdep-v1-0-0b9e51919ea8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay47-hz3.antispameurope.com with 4cm3Gh401Pz4MZvT
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:68dca67b7eb0fd836cb29e646ce2f625
-X-cloud-security:scantime:2.704
-DKIM-Signature: a=rsa-sha256;
- bh=H/kOwDFzfm3IalvPOezvdeJs36K8vMFT5gBD1NEeb8I=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1760421048; v=1;
- b=oTAbr2elQ/cu5qrtSmsWURpKSPjoms55QDehCWU1Iu6+zuwehmOXhYXc8M58ZriWdFjBg1yG
- i5ahv8CR8VmUtjFwKvDvPPGEnGQ0onyOySdRE0qnicpVlI3sg2zsdk7tv8fdedd3O7k/XO8mqhm
- 5JFt08ZsU/QA4PKhg/1gG5Q2QCkZMzLd+OjFJnS5WTsJSPcH+s3jwhLYKdN5kd3/HNnx7XL1JSu
- 71eFnc0wtsPmNG6nDWt6vX2m8WIG1WuoMQWPsFAyz9AlyiXbae599I0lKNMxRlq61VEfb08O26y
- wt3zquUgplLA/mryrg+YfUXdg72GuSjB7FuXLjXG9RJJg==
+X-B4-Tracking: v=1; b=H4sIAPvk7WgC/x2MQQqAIBAAvyJ7TlAjD30lOsi61VKoKEgg/j3pO
+ AMzDQplpgKraJCpcuEYBuhJAF4unCTZDwajzKKVnmWu8ol4e0rSOvQ4rLHKwQhSpoPff7btvX+
+ okYcCXAAAAA==
+X-Change-ID: 20251013-rv-lockdep-6acdc510260a
+To: Steven Rostedt <rostedt@goodmis.org>, 
+ Gabriele Monaco <gmonaco@redhat.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Nam Cao <namcao@linutronix.de>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760421123; l=1144;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=rbGY7hsNZW/Gi92aeoA6ZkT6cOMkgjgAqpGxtROcp2U=;
+ b=OWXRZxtpRS5N6vHKBEn+fGBPCt2eQH5ywoIhglpcmAQbdPX2za5gXvDVJItlCcECAyyvgPzMo
+ zxNZjUvfiLCAZ/XonWfOOLpyPiuMchOBpv7fnVE3JmWKMNId/u2lOsJ
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The XDMA bar is 64KiB, way too much for debugfs dump. Add register range
-definitions for all defined registers in PG195. As this is PCIe memory
-range all readable registers are marked as volatile.
+Reactors can be called from any context through tracepoints.
+When developing reactors care needs to be taken to only call APIs which
+are safe. As the tracepoints used during testing may not actually be
+called from restrictive contexts lockdep may not be helpful.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Add explicit overrides to help lockdep find invalid code patterns.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
-Although the change itself is independent, this patch context depends on
-[1].
+Thomas Weißschuh (3):
+      rv: Pass va_list to reactors
+      rv: Make rv_reacting_on() static
+      rv: Add explicit lockdep context for reactors
 
-[1] https://lore.kernel.org/all/20251013-xdma-max-reg-v5-1-83efeedce19d@amarulasolutions.com/
+ include/linux/rv.h               | 11 ++++++-----
+ include/rv/da_monitor.h          | 35 ++++++++++-------------------------
+ include/rv/ltl_monitor.h         | 18 +++++-------------
+ kernel/trace/rv/reactor_panic.c  |  6 +-----
+ kernel/trace/rv/reactor_printk.c |  6 +-----
+ kernel/trace/rv/rv_reactors.c    | 22 ++++++++++++++++++++--
+ 6 files changed, 43 insertions(+), 55 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251013-rv-lockdep-6acdc510260a
 
- drivers/dma/xilinx/xdma.c | 89 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 5ecf8223c112e..3d9e92bbc9bb0 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -33,12 +33,101 @@
- #include "../virt-dma.h"
- #include "xdma-regs.h"
- 
-+static const struct regmap_range xdma_wr_ranges[] = {
-+	/* H2C channel registers */
-+	regmap_reg_range(0x0004, 0x000c),
-+	regmap_reg_range(0x0040, 0x0040),
-+	regmap_reg_range(0x0088, 0x0098),
-+	regmap_reg_range(0x00c0, 0x00c0),
-+	/* C2H channel registers */
-+	regmap_reg_range(0x1004, 0x100c),
-+	regmap_reg_range(0x1040, 0x1040),
-+	regmap_reg_range(0x1088, 0x1098),
-+	regmap_reg_range(0x10c0, 0x10c0),
-+	/* IRQ Block registers */
-+	regmap_reg_range(0x2004, 0x2018),
-+	regmap_reg_range(0x2080, 0x208c),
-+	regmap_reg_range(0x20a0, 0x20a4),
-+	/* Config Block registers */
-+	regmap_reg_range(0x301c, 0x301c),
-+	regmap_reg_range(0x3040, 0x3044),
-+	regmap_reg_range(0x3060, 0x3060),
-+	/* H2C SGDMA registers */
-+	regmap_reg_range(0x4080, 0x408c),
-+	/* C2H SGDMA registers */
-+	regmap_reg_range(0x5080, 0x508c),
-+	/* SGDMA Common registers */
-+	regmap_reg_range(0x6010, 0x6018),
-+	regmap_reg_range(0x6020, 0x6028),
-+	/* MSI-X Vector Table and PBA */
-+	regmap_reg_range(0x8000, 0x81fc),
-+	regmap_reg_range(0x8fe0, 0x8fe0),
-+};
-+static const struct regmap_range xdma_rd_ranges[] = {
-+	/* H2C channel registers */
-+	regmap_reg_range(0x0000, 0x0004),
-+	regmap_reg_range(0x0040, 0x004c),
-+	regmap_reg_range(0x0088, 0x0090),
-+	regmap_reg_range(0x00c0, 0x00d0),
-+	/* C2H channel registers */
-+	regmap_reg_range(0x1000, 0x1004),
-+	regmap_reg_range(0x1040, 0x104c),
-+	regmap_reg_range(0x1088, 0x1090),
-+	regmap_reg_range(0x10c0, 0x10d0),
-+	/* IRQ Block registers */
-+	regmap_reg_range(0x2000, 0x2004),
-+	regmap_reg_range(0x2010, 0x2010),
-+	regmap_reg_range(0x2040, 0x204c),
-+	regmap_reg_range(0x2080, 0x208c),
-+	regmap_reg_range(0x20a0, 0x20a4),
-+	/* Config Block registers */
-+	regmap_reg_range(0x3000, 0x301c),
-+	regmap_reg_range(0x3040, 0x3044),
-+	regmap_reg_range(0x3060, 0x3060),
-+	/* H2C SGDMA registers */
-+	regmap_reg_range(0x4000, 0x4000),
-+	regmap_reg_range(0x4080, 0x408c),
-+	/* C2H SGDMA registers */
-+	regmap_reg_range(0x5000, 0x5000),
-+	regmap_reg_range(0x5080, 0x508c),
-+	/* SGDMA Common registers */
-+	regmap_reg_range(0x6000, 0x6000),
-+	regmap_reg_range(0x6010, 0x6010),
-+	regmap_reg_range(0x6020, 0x6020),
-+	/* MSI-X Vector Table and PBA */
-+	regmap_reg_range(0x8000, 0x81fc),
-+	regmap_reg_range(0x8fe0, 0x8fe0),
-+};
-+static const struct regmap_range xdma_precious_ranges[] = {
-+	/* H2C channel registers */
-+	regmap_reg_range(0x0044, 0x0044),
-+	/* C2H channel registers */
-+	regmap_reg_range(0x1044, 0x1044),
-+};
-+static const struct regmap_access_table xdma_wr_table = {
-+	.yes_ranges = xdma_wr_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(xdma_wr_ranges),
-+};
-+static const struct regmap_access_table xdma_rd_table = {
-+	.yes_ranges = xdma_rd_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(xdma_rd_ranges),
-+};
-+static const struct regmap_access_table xdma_precious_table = {
-+	.yes_ranges = xdma_precious_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(xdma_precious_ranges),
-+};
-+
- /* mmio regmap config for all XDMA registers */
- static const struct regmap_config xdma_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
- 	.max_register = XDMA_MAX_REG_OFFSET,
-+	.wr_table = &xdma_wr_table,
-+	.rd_table = &xdma_rd_table,
-+	.volatile_table = &xdma_rd_table,
-+	.precious_table = &xdma_precious_table,
-+	.cache_type = REGCACHE_NONE,
- };
- 
- /**
+Best regards,
 -- 
-2.43.0
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
