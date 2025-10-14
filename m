@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-852368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F8EBD8C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021C5BD8C78
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 419B135278D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE241924873
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636842EA14E;
-	Tue, 14 Oct 2025 10:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E0C2F28FF;
+	Tue, 14 Oct 2025 10:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K6nK6nN1"
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ccgx28eL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401912DC794
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1722C0F87
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760438033; cv=none; b=XOVZOGLR81IGkYeiwQPCK369Rg3D4XBBGN1mgYsKeD/Of2CniDdG2BTCbtsCcmRULMeX6Sp3lMnq8SwGV3CnyVEaLOCjFsan4SCafZhl2uUj1UIR2QLQkLpXfVWO0C1fV0cyeLLJ1Ee54oo6XxOkVksN4Z4ARjW/7RLB3X8n3M4=
+	t=1760438090; cv=none; b=lVWeR/AEKjyKGR3pozrGizcuvy81d7C2ET+aIAxnlXFpB33o4ItX55h8B4u5rqoNyAlzCnLpaiYtz8Qh5LnzYhwHsavE9OmuZVifXJHNoTpFMC4gmWyCJYpcurLDPF1UViVaW3WnmNpawII1owO9owCpXPIwOmm28ZOR+Fvb2Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760438033; c=relaxed/simple;
-	bh=QuEinUhar14YF6Y240Ai1C75X6imD/kq72QMKNsJnaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nta6Ddwj+JrwpCcPh3GaZ3tnE3UMiQaKowXOIlGjQ/p2u0az2V4u76JOoo/MbGhz/Iu1D4sOBTS/an8y48eEyl5UhrjxnwOpJ99pqcG1TgCAXXjD2F8LiJZKeX2Cj2LhzSgOvmxUpFKK504ZdsV5LEAICIzNC49nk/YVb4Fbq0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K6nK6nN1; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-6360397e8c7so5368644d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760438031; x=1761042831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QuEinUhar14YF6Y240Ai1C75X6imD/kq72QMKNsJnaw=;
-        b=K6nK6nN1LZvtp0hED3zEFDzNNzywxC7uHu5qIoAYDTMOe2xFKwCCMppI9y2WiakW6z
-         t2GFxrxJVJKp5AmXIfQKMwzJVpjEgc2yqkYjXvBziCM37VNwY9oVrntdOZCYIBLKf6Co
-         K1JTtw09FIbGrZkzLbB4gi9QXNjiLZwtPjhP6OqGY1YWI1vPM5UPoqQsPqP2cymCjpee
-         +Aful/AlBTAerfWQLlN2v1lSsSm0L1MoRvCpyO5v022/6XWUki199KpnMr39xFU0X4hF
-         uuRPDsHZbz/FyjuDW3+AuqpCxfW2/z5QVMvu69PmTaetzYkjt2As9VSd+vk5c52vnEpX
-         3CCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760438031; x=1761042831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QuEinUhar14YF6Y240Ai1C75X6imD/kq72QMKNsJnaw=;
-        b=hiYi7jPqSfVolww1GX4w3eCKwbBu3bWuQg2RzPu44O0FsjsSrhWqDBhs3WeSi8bXDS
-         bnHaZpFCd71qdTVI0CS0id7cD4ffDMY1XU0Q1jvHtko7qZXZZYNWwSj8VTDeCTP/ARFm
-         tkQRMa7C+MqYkkVjDo86VHp5AG5VfU8XA2Fl3I12mtav2kTfWxCkl0GWBhdIxXMXpxo1
-         yWoh+q07Md/uY52I2qyBt1lvp3M01mwANBPciUX9/06nZkPYtDY/Ba4ubT5ArgRqzXbr
-         VfBj09VY9KuZtT/wnDp7BNVp6wVJotoAz3/nPRdRB0nTtIimC07IEd8CHznfTsIB2hTH
-         lObQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYaNmnug+x8oXqPZjvxbOsJ/F8qB/+U1QNQx66a4zsvvhNdsSkZ0viseSzFpYxjTQXvbfWcjE7Wiarhe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwIabOH6d2wazA7TWhjS1BNvZX3mtDiooQYjBQPHWWgFTs1fWC
-	P3nbvJd1Gll4g4Ox1gL4Ln3rG1lof4P5h1tBOXomZsqM0Z7D6LilTk/PVA+5cQKobsSt+Q48dC1
-	IFPWqlJC1uJfzQbmkBS+3qfw1Wa3RskMEbVlhoqVAXg==
-X-Gm-Gg: ASbGncuLgp1LjT1pnuTFtJP6KvlmfDwWjclkvU0YeyDPVo5w7UR/72+peRm3/T1wq83
-	eKoSuDaDeVYzbx5OXiAGd5BSiMsOG1hWHem/HC/l2Q/8rJlFikEGQML4vmeaR1MbC/Ccn+i1pzj
-	XqPS29/1apI6yVVpuqXWRD5WI904QE4rswCXUqVXXjGqS9d8VayCwIcxFJzdFtSLwY4Ps67whTk
-	biXNpsXGcKLko1G+ZMvFD7V0w8PzdRsWKNqBKCh
-X-Google-Smtp-Source: AGHT+IHeonKC9+QYhOM7VuQykvKPFitUUF6gnFNcpL2LefNyxqXwa4BkJdaKg1KHUyXSH+yyFuP/4//FX0boj6kq7HM=
-X-Received: by 2002:a53:b243:0:b0:63b:9347:1a5c with SMTP id
- 956f58d0204a3-63ccb9035bcmr14962219d50.40.1760438031225; Tue, 14 Oct 2025
- 03:33:51 -0700 (PDT)
+	s=arc-20240116; t=1760438090; c=relaxed/simple;
+	bh=r0ma43gIJEny3CjklQrv4kJsylnr+QHBfZoc8biNriA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJqpZ8cRmqCdi5LaVLux/GBwYaQCC3JwWArkywqvjgtUpB6ym8nJKe6hRWQyrxS+VvQrW33A+0tTUgEhqpC8hb1lx3zNYzghAiB8rdfhw4moFQW7reFmWCZ+BYydBuSFV+Y17irQRTxfBRbPR01TEK9ggwbpbsP1GM9srNT2oEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ccgx28eL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=F1aeRgrBQkqCV5E89mAXaSfnx3KEktryo+h5xvr8hVQ=; b=Ccgx28eLZFlO8pqqk3rAnjakSr
+	tAXrBNT88WcsHJkekw49MRA4QM+OFZ8rYhZchh6ZFnrPzHBi/H48Xi9ggkczJzaEMe+Qyt1ESk2Ri
+	26KpS2r+lXpQwRPwPc79QmIfTxYWxTo3mBJ70evHU0y0PX0eNNsCzVzJytU0Oioz4pj9kaqNahcgz
+	8tNUZfN/Mn+sXUE4Tm41HNjKX5QHt2tbErJw+J/Dm3q/vFVvmtN9ybErDcsVOwJzguJVv9+U9C46Q
+	0cakSnTNNSrBIv4FQxo8wUQ2eSOzrs7i6Cn8EwiHWEJFaC8LODHK4cD4Gr3/Pi+CEIf+cEa+LHxb7
+	RYGArLsQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8cMY-00000008tuL-2KgX;
+	Tue, 14 Oct 2025 10:34:39 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 38E40300212; Tue, 14 Oct 2025 12:34:39 +0200 (CEST)
+Date: Tue, 14 Oct 2025 12:34:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Breno Leitao <leitao@debian.org>,
+	Kriish Sharma <kriish.sharma2006@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org, Menglong Dong <menglong8.dong@gmail.com>
+Subject: Re: [PATCH] sched: remove unused cpumask variable in mm_cid_get()
+Message-ID: <20251014103439.GU3245006@noisy.programming.kicks-ass.net>
+References: <20251009194818.1587650-1-kriish.sharma2006@gmail.com>
+ <v3zyf7pp64yd4kakqniq4thjf2egb3kavkwzgoqt6ye5cuqkys@jmkcwst6lrn2>
+ <67e75a68-7a03-46bb-ae40-b1a8f24c0b16@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926-manpower-glacial-e9756c82b427@spud> <CACRpkdYXh2MCs=vAif7BpxfYVRuDTkYYNwpV2t=J_ZRW+N4Vyg@mail.gmail.com>
- <20251001-unfreeze-ludicrous-9d744548bf65@spud> <20251009-amendable-trimming-da31551d730b@spud>
- <CACRpkdYssH8zObJTUH2VVB7FrVFmJUd+Ea7etTGbicQgkuU=CA@mail.gmail.com> <20251013-prune-deflector-b10b84425a33@spud>
-In-Reply-To: <20251013-prune-deflector-b10b84425a33@spud>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 12:33:36 +0200
-X-Gm-Features: AS18NWDV62aIljpFKFrK57lWd5X1J4MSy0Hiz2Im8y-KTaCpfNHGRNY7xZpNzks
-Message-ID: <CACRpkdaat_pNJ=_r51JuXXggDtmRrfjmN1AQffJVEA29yoojKg@mail.gmail.com>
-Subject: Re: [RFC 0/5] microchip mpfs/pic64gx pinctrl questions
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <67e75a68-7a03-46bb-ae40-b1a8f24c0b16@suse.cz>
 
-On Mon, Oct 13, 2025 at 3:55=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+On Tue, Oct 14, 2025 at 12:13:23PM +0200, Vlastimil Babka wrote:
+> On 10/14/25 11:56, Breno Leitao wrote:
+> > On Thu, Oct 09, 2025 at 07:48:18PM +0000, Kriish Sharma wrote:
+> >> The variable 'cpumask' in mm_cid_get() was assigned but never used,
+> >> causing the following build error with -Werror:
+> >> 
+> >> kernel/sched/sched.h: In function ‘mm_cid_get’:
+> >> kernel/sched/sched.h:3743:25: error: variable ‘cpumask’ set but not used [-Werror=unused-but-set-variable]
+> >>  3743 |         struct cpumask *cpumask;
+> >>       |                         ^~~~~~~
+> > 
+> > Thanks for the fix. I am hitting the same issue in my builds.
+> 
+> Let me add why this years old small issue became much more problematic in
+> 6.18-rc1. When I want to test my own files I'm developing on with e.g. "make
+> W=1 mm/slub.o", the W=1 hits earlier in:
+> 
+>   CC      kernel/sched/rq-offsets.s
+> In file included from kernel/sched/rq-offsets.c:5:
+> kernel/sched/sched.h:3718:18: error: variable 'cpumask' set but not used
+> [-Werror,-Wunused-but-set-variable]
+>  3718 |         struct cpumask *cpumask;
+>       |                         ^
+> 1 error generated.
+> make[2]: *** [scripts/Makefile.build:182: kernel/sched/rq-offsets.s] Error 1
+> 
+> So I can't get to the part where I test-compile my own code with W=1. So
+> fixing this ASAP in 6.18 would be appreciated, thanks!
+> 
+> FWIW I've bisected this to commit
+> 378b7708194f ("sched: Make migrate_{en,dis}able() inline")
 
-[me]
-> > entanglement of the GPIO function with another function, then
-> > there is the recent patch from Bartosz in commit
-> > 11aa02d6a9c222260490f952d041dec6d7f16a92
-> > which makes it possible to give the pin control framework
-> > an awareness of what a GPIO function is by reading hardware
-> > properties, and that it is sometimes separate from other functions.
->
-> That is unrelated, but interesting. What I don't really understand from
-> the commit message itself is whether this is useful if the pinctrl
-> driver is not also acting as a gpiochip driver. In my case, the pinctrl
-> hardware is not capable of doing anything more than muxing functions,
-> and the gpio function I talk about means routing a "real" gpio
-> controller's IO to the pins controlled by the driver I am talking about.
-> The 2 in "gpio 2" refers to the specific controller.
-> The rest of that thread makes it seem like this is intended for some
-> qcom devices where the pinctrl hardware is also a gpiochip.
-
-It's useful if you want to use the .strict setting on the pin
-controller and implement the shortcut GPIO enablement functions
-such as .gpio_request_enable, .gpio_disable_free
-and .gpio_set_direction.
-
-These are often preferred when using the pin control driver
-as a "back-end" for a GPIO "front-end".
-
-Yours,
-Linus Walleij
+People using W=1 and WERROR can keep the pieces. Anyway, this is a much
+more coherent explanation that the original patch.
 
