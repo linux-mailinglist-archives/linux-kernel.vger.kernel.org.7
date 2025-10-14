@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-853257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E99BDB081
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE94BDB078
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C0B425302
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B40242000F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161FD2C08AA;
-	Tue, 14 Oct 2025 19:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51EE284880;
+	Tue, 14 Oct 2025 19:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q4ZLWjNJ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEfsKjvr"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A110023D7D9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9A9235072
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760469454; cv=none; b=NPw48wq1NJLPCZqHfI/GEanlYiUkIPIxJzaK3Zk1rZxGTSkuyUEdkaPXqRvtmpThx8ihKBxDio/CEZ3dGW5p2BvzxAa3CVqiQyxnUFChHuynZZLZ9yc6il9dYYPNvrVdbOPMC4Y+vKsfjMWVjTNyfkXkIeggeJesGZaztVCIJDk=
+	t=1760469453; cv=none; b=Epu+icMuUBSJNdhMmBWLyttEOxHGn76PHpmiiX4JRFsc/nxAgmKmB634VaL9xcD9OUboErdtJessx39NvuX0FusY/ZtpAYmWLqKB95i2gpQgOns0NLGUh3d9FXrJgYayCjZ2nwVRQ0qoN9BeEpP44mNAtF2C8DcLB1ZchNQFTTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760469454; c=relaxed/simple;
-	bh=v7ZDvyx+at8OgOme+TAX8QT70PNDFj+9qBTaC8/DA+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XbMfCybSL/j8ND27uNnZmPg7XJdQVnbr0v+/UQoGoP+bZQI/bLzXvWCUZQgdSQ5s1fFCfWW9nilKj4KE7MGSjHd7R4x02Z/15a4sdv2Tzxo56WOsHVyV0VyNblJpbk4z0CPV+KSnzBcfC8XtgSokBQmGQAfnzXYXYSoRXQmouUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q4ZLWjNJ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5818de29d15so7130047e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:17:32 -0700 (PDT)
+	s=arc-20240116; t=1760469453; c=relaxed/simple;
+	bh=eBIenExFVpfeI4CKvfUIL9zyQjpNN1gRKVHCD4mPVUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s1V/CMFUpi9OWhDotOD8vsvHuAJa2Rr0PNf4voqTOCde1IlGC+tcX6EEi1Abxd7lurTJeCCIvt8IiZLWrDirrA6I0xAjD8cV/VsHvQnVvUUptdNdb/vMuiUZSUWRk/5RiJI7DT514vp6++encQE9dD1vKW9uW53gfV5wrFQgqbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEfsKjvr; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7814273415cso16221927b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760469451; x=1761074251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760469450; x=1761074250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9u2xhRjxMY0OHfkeZgBaJjHDhZQq+aqtFfr5uDFVIn8=;
-        b=Q4ZLWjNJDbCSVz7OScHAy552KlNdqIOKFqgFskvUBC8EtVOZPYNCIEoWl23FlDl2wg
-         RE4xw06ZDcScOtGUMxNWIgLfhQ7jz0V89DD/G/KCMMs89ZuoVfJ3oKXakLYviKX5o6s5
-         SaNjoRhqoCncO+Duoo8hKb61fk4MGqabEVhAJCfJdLc84M/9Zau82l8yajly4a4X0k7l
-         m4oIc2uE9vrIUQuMnHx9JUMMmNhtvYNseplDcVQeZAtFu6G9VjIQcZUs+BhbGeaKa3Fp
-         yjDNRObWF5BzPgaukDX2zwlOIkxSKX8LikkW/iLFzoA5fncZ5YHDBtipOs2fEKqg3QUf
-         88lw==
+        bh=6uDSBrC8cLuTSNHDyZiLCu5ZpZO8rOAjsl8ZFn/oXgY=;
+        b=hEfsKjvrWs1P6Dfs/r9uads9ds1PBDIIVFjqYNBIj5imDgTTMFQYtzu2leOyCr2Zm5
+         0Y8+RJ5oW2QPaDSFfYsJTz77Kspj8wZFAnLZbOE/KwW0XoFJsXxCZdRPFYsZ/I7kbgL0
+         uUT5wD9I4NdmjeM2hjoiRSfpUJAJO43+d5De1N/I8kqicxixuFOXh0WMQxIWCpUsQsaC
+         ZXSuqud+NuixOUv4xZJPOdPTZLUGcjubTiGpYXx5FUl81YXFjOHZQUIawn180Ex/fKYK
+         am8TSnr9NYiR1X4/MBZizwrCr/oz00lqW+5Du1h5PepCCk+iWVlNkQWAKdX54P817bPr
+         VyVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760469451; x=1761074251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760469450; x=1761074250;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9u2xhRjxMY0OHfkeZgBaJjHDhZQq+aqtFfr5uDFVIn8=;
-        b=K53o5FqYLJirDNZ3/IXYuJGjwiCdZBBFHhKJwY+n8E9JJwa4ONia43Fbg8o7Tk3em5
-         6IKiGuxG+KNyLQMYFhnbfZDlZh4mEtZqnXFAz+12GoKr+XdaIkuGn79OoxIDW+0zuV6J
-         1/faZCOu9Ig42xJTPuIgWqazOBJzLdwEGVSmynlO19b7GKszP47kQa84jd5QZcS0hXPS
-         r/0QkpHPiDLkAdJULf18e20NivhhMOjhqbVAydRx3Ei8stwRvTHJQKvK0wVD1bakgmen
-         jML/Rcm9J84cRqz3Zgk7URQIEJWzacE09cOWo0BJMggQiK3uR5QkNHTTvhidUBTTAkMN
-         Uqvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV67SHRp4LPL1Omf8xZ4Xx02LGaxy1FxOnzWQkcQoxu5jveTUmYSenZUY4JCE60oPd8WXIa7heT5dHruus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsiO9rM61pSSO0d7252B/C0d+lKhxfmdR5C4cDZDdQe19oQPX5
-	aDL5V5YCqgtZDXOYwxlVW3+i/Tc9ep40Qn+2ZxOEMTQq2YOMH76ICMkKz8myP8w57xZsiHg6H5A
-	cOZFaaPsALVVvKcDti7IDRr8xGw9b+rQ3pKQlBPRS4w==
-X-Gm-Gg: ASbGncuWhKZ/LDYyrBXYF+DF3ItKaAMtxE4Zg5KWpA5WD/HNuAQpQeOTFWaOtqTVIlI
-	/8M7yuRdHQBXHeeaNha/CvYODBiUvtBa+oBuUpGUodFgG+k8uP0Qxgt+8dGmKmIfxUJVbTrXhgs
-	Hf/6busBskaKL+/j9O0Q9ZdG5H9FQAUJgq6XyUtayeffV4OZIqF9Tm/DomO9shIHWlEw50NO2V7
-	DI3SR+IhiUVtX6uyiu3UJN65eOYVw==
-X-Google-Smtp-Source: AGHT+IEGUS4Gd3DOiYb0CWjdPtTrv4xdAxyOe7Tv+OqMwGviA724GimvTCnIrTO1U+O4G506e5yK1WmR/GzoIGF6mSU=
-X-Received: by 2002:a05:6512:3d23:b0:58b:189:871e with SMTP id
- 2adb3069b0e04-5906dc12463mr7452727e87.3.1760469450698; Tue, 14 Oct 2025
- 12:17:30 -0700 (PDT)
+        bh=6uDSBrC8cLuTSNHDyZiLCu5ZpZO8rOAjsl8ZFn/oXgY=;
+        b=Fbpl89rzHbd4laXGQLvdQzR3nGUTS0CujXQ7yI1DsAr6uljgPChesClswEkEPohJx2
+         hW4oO9wYTFnZwXgDPsg1UStfx5YusZDekPO+S1JDU0mX4sRz6bqrzvNSvDljG7OuKFoO
+         9ClOndZGtdtpQlARiPZRX6Zbk3u/BgC++D098BFUROMNuB/Z2F9QonOeEVfvFSk3FG1q
+         8tqPjZVK0M8VIDCsULqnVWEAs/iCKAiGlj/ZenHpMU0uqSfWYhRIKur4sxXG+/qShwUN
+         LmrXKzzYAYF7bME7zElp/41R7XEdGJW7NhPOhzWQFn213R4aNk+JP13BLFRCRWeqQqUb
+         rcgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzTOL9MJ0A0sju96IpPaSEgQsHhFcZXq5XIE1tyXnMn+ndAstSs54aXCOjHd2uhB5dCSw4bA/HeQkaKBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ax7uzM6M8+CInI16LNl+qW8YFl+6bMVgCWdyJb0dFa04gbYA
+	yLU0AN+0zH/7kFzyEriQTa37N2aBkmSuNxYj+ty6JdVkuNw/IFD2ZhNc
+X-Gm-Gg: ASbGnct7ZZKB6KUU3w1P7QJzMd8f/OXasWAh0nvsYS1nzceTWZK1DEGvMTwx49XPtNP
+	AjTaUujQoAbW9tdSltvXmt4CcT4bqno/MmEd14aoPP+b+WyvLpwv51JB1KjEcwJ3T9GHLzA1OBH
+	T823eTNHuZytizd6wT7crZAHB5Ngn2o6M/YyRTm1NfgUlQ9dGJjxvxjjUItXTvMw3T5ywwp9WbJ
+	bXEQOGTNJH1wj2UvYcieXpkq+WDNu/TJbli/KGFppIoRJ7vBlUosof+IRHEV3ryjYb5Bp1NW75S
+	1Mbq405wcvzbP0tqA8B7mqNt19EHUCvBecOssvdDainpGhVi2VVDbRROjyu0OoUAsr9GcUNejk/
+	JgAJNPt8u30Hqk8r8RLek5xYOqZqXd2wszbR47c10h2wRYzLbbdTyP4vpGC8d8ofCflDr9dQtRP
+	Vycy0aFR581QH9mLY4Fr4=
+X-Google-Smtp-Source: AGHT+IF1b9AAnvNc6gLY8LoyIsmgjxUrlXEDNaP9TOJPUcJClAPAZoYgKHkl+ZfyW0Pn5VZag/Uuqg==
+X-Received: by 2002:a53:ec89:0:b0:629:9c6b:b3ab with SMTP id 956f58d0204a3-63ccb825baamr16716867d50.1.1760469450484;
+        Tue, 14 Oct 2025 12:17:30 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:74::])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63cf0ee8ccasm3560031d50.13.2025.10.14.12.17.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 12:17:29 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Chris Mason <clm@fb.com>,
+	Kiryl Shutsemau <kirill@shutemov.name>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v5 0/3] mm/page_alloc: Batch callers of free_pcppages_bulk
+Date: Tue, 14 Oct 2025 12:17:27 -0700
+Message-ID: <20251014191727.788875-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <6d62386c-242a-4735-add3-fee9c6e0ba96@suse.cz>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014015712.2922237-1-gary.yang@cixtech.com>
- <20251014015712.2922237-2-gary.yang@cixtech.com> <CACRpkda-2BNj+Pt2kS9u_bbr41bsWGRGDqNd3EXVnys-xSqg0g@mail.gmail.com>
- <20251014-backyard-parted-572627bfc540@spud>
-In-Reply-To: <20251014-backyard-parted-572627bfc540@spud>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 21:17:19 +0200
-X-Gm-Features: AS18NWAUmIlF_t1r_m5_roptigL3TJ5IfhnwTJl60nwKQLpHKJKzA9shz3gKjcE
-Message-ID: <CACRpkdYX+Hz+LPvSq4vO2Y_JtruokSui-+CvB8dGua0p+FL9Qw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-To: Conor Dooley <conor@kernel.org>
-Cc: Gary Yang <gary.yang@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	cix-kernel-upstream@cixtech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 7:58=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+On Tue, 14 Oct 2025 19:54:28 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
+> On 10/14/25 16:50, Joshua Hahn wrote:
+> > Changelog
+> > =========
+> > v4 --> v5:
+> > - Wordsmithing
+> > - Patches 1/3 and 2/3 were left untouched.
+> > - Patch 3/3 no longer checks for the to_free == 0 case. It also now checks
+> >   for pcp->count > 0 as the condition inside the while loop, and the early
+> >   break checks for the opposite condition. Note that both to_free and
+> >   pcp->count can become negative due to high-order pages that are freed, so
+> >   we must check for (to_free <= 0 || pcp->count <= 0), instead of just
+> >   checking for == 0.
 
-> > > +          drive-strength:
-> > > +            description:
-> > > +              Can support 15 levels, from DS_LEVEL1 to DS_LEVEL15.
-> > > +              defined as macros in arch/arm64/boot/dts/cix/sky1-pinf=
-unc.h.
+Hello Vlastimil,
 
-(side note to Gary: drop the reference to the arch/arm64 etc
-sky1-pinfunc.h file,
-this is Linux-specific and U-Boot and BSD will be confused)
+> I don't see how that's possible?
+> - to_free is decremented by to_free_batched = min(to_free, batch); so it
+> can't go negative.
+> - pcp->count indeed decrements by nr_pages but it should be exactly zero
+> once pcp becomes empty. It's true that internally in free_pcppages_bulk()
+> the count parameter (where we pass to_free_batched) can go negative, but
+> that doesn't affect to_free_batched in the caller free_frozen_page_commit().
+> So testing for <= is unnecessary and only looks weird?
 
-> Isn't this wrong?
-> drive-strength is in mA but you're just shoving register values in here.
-> pw-bot: changes-requested
+You are totally right. For the first point, that must have been a slip up in
+my mind, for some reason, I thought it could go negative after looking at
+free_pcppages_bulk, but it obviously can't since we are taking the min as you
+pointed out.
 
-That's right, Gary do you think you can add a mA->strength value
-translation table into the driver and let this be configured in mA?
+The same goes for pcp->count, I realize that it cannot become negative. I think
+I was being too careful without really thinking too hard about what I was
+protecting against. I'll send in a fixlet in 3/3 which should hopefully be
+folded in.
 
-> >       type: object
-> >       $ref: /schemas/pinctrl/pinmux-node.yaml
-> >       $ref: /schemas/pinctrl/pincfg-node.yaml
-> >       additionalProperties: false
-> >
-> > Something like this, I never get this right before actually testcompili=
-ng...
->
-> spacemit,k1-pinctrl has a node of this type, that can be copied from
-> Gary. Essentially, you need an allOf: for the two references.
-
-Neat, thanks Conor!
-
-Yours,
-Linus Walleij
+Sorry about these mistakes, I think they could have been avoided had I
+thought more about the code. I hope you have a great day!
+Joshua
 
