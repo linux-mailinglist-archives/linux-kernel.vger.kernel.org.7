@@ -1,147 +1,91 @@
-Return-Path: <linux-kernel+bounces-851763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24A7BD7331
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C98BD7334
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C954440358C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5B5405768
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B023074AF;
-	Tue, 14 Oct 2025 03:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wYe59u/k"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21943074A9;
+	Tue, 14 Oct 2025 03:40:08 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A9B305E3B;
-	Tue, 14 Oct 2025 03:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D338D303A35
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760413169; cv=none; b=e8OiYn4HlBJalgauRDkq3UAYC3uydnPpDiFjFx2NSs1cqqCZtFTsJjo42XhENJM3JEG1CLLiaMmcRisylACCJJTZt2IPScUjp4QAhykIDQU6ckrxAPf/Roo9s3ILg2gFzNJ5mT3NiH1uH2FUuuuqzEfHWrMzIezntZF/gMPkj2g=
+	t=1760413208; cv=none; b=pB2fQJng5AZFA+BkhOKM3P8sfDOb7fW+35BuY+w04gwluhV3qzhWOJbZ0H32h8BhIuFQk21gIdlJHRiSL6GjHoIFzwfmQNsAlU98BaoQ2HXsXlSs+2OW32BSdhYscvFpa+FIuEq2ukw0YPmK7+UCtYX2QP/ths3IwJmA2ShCdms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760413169; c=relaxed/simple;
-	bh=dfOYQM6FikiJqXtJ3vwVZvQNvGVdhXDXHbo+1aXobwU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jj3Pc3H35PL2KTjWXRkJdvyTQgGJayMqIoLKQLALlT6OvZ2yvkDD0aCByiC1HMpFZnnniprQ6NMLk8K3nPsW6yx6rr3JAUi8N6Q6hX3tJojMGJPYmHeRURbc3uqMIG4o9rUhTSNcIBHyei8FToa0j+0sGmVMocUcuKrK9H5164c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wYe59u/k; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=105Uww+adoxXuzqGylGVzTMbR/EmwHYlpG5NHdEuhcs=; b=wYe59u/kOs9UsHGf4hYvdZeqiW
-	+eRP+XH341HXOUNe3mvNVS5mgB62btr7p5H4ZY3zM/OxdyLhUxwpRc9sJfMMmTpAn1FNcNFg5+g9V
-	tJu2VP74nrK3geDOZkgfeXlGIj8QtiDV4Jqy6WsNXDYbKCBKM1F3Z0Y09mXflbNV3YS8ChcIxvFZz
-	JLrcvboI0O7V69zPKq4t1Z7TQ3aMyZ6HMeqFln7YtWcvCJyptOo9WILzCQL3OY/Wp7+3BeRDfUFVw
-	KU4/1L8W8zXsDHlYMQdL7zKvuxosr0VXN6k7lXkmwsvK982DjZqx8yY2uyow+1aNDTW8iItXx288o
-	hPCeQkPw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8Vsk-0000000F4Ha-0Nu3;
-	Tue, 14 Oct 2025 03:39:26 +0000
-Message-ID: <80c32643-d2ac-4a12-a213-be4657cd6243@infradead.org>
-Date: Mon, 13 Oct 2025 20:39:25 -0700
+	s=arc-20240116; t=1760413208; c=relaxed/simple;
+	bh=vdrYUcCr6NuqyUs/413P07x6G7IAtoN91QqiuajyB4U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fCJvuYfiqVmiHzEyEqofy1vhkNgfCyEkksBgd9ECHePaPPQXM26w4QD7xqjepem0YIEeZw9Efm0Lqxaw9j6K+ZCuQIFTgjZ1Bsy8Lijv9Tf/ac//uBvoduIoQNZPNvXT++Md0jLGw+xUqMSHhR3KJyHTdIXpuSfZK+bXSfDBw6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-90f6e3cd204so1176568439f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:40:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760413206; x=1761018006;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lix5vfoEiesZ1voF/iZrjE9lM/ENTU3pNlIEqFOVDL8=;
+        b=QhOrx8G5nfKdwnGxd6ar5U4ffXewegyIxbgTZ+Wktku261I4f0Pw2wAe054PcbuYq2
+         yJzipFatrN83lgqXgOdWY4pOfnlJKDGU59EDKDIQBHn4gAUnz442fYVTTOLuNrWxVkPA
+         UKIclQTR1SLIQhJqtf8zKbMS9JRJVpqNrbopavIy/5bv+ugpmNn7zW9c6BzuEUdkTKov
+         yCXZHE/FmI3i+1nhI8EGkoqig+qcGpXms+y23mgm+qaFj4riWu2I5ruxm3ysSVLsS4PL
+         +87f+pYj7czaJFYxYcMoPAYshk5RPceCPrzejEzIR7HT/n1HHMQQihMx4004SjjOL76z
+         3pUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEEv0HF3BZP5M3Z/WSjiIqyDvhI/9+HDRACQKGb2anz1ceGeWvBOePqRCeVENnYois/+9VHW4XCbKSF90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH6Gd+XavJYqHRAcu1D1HdDuoNam5MwYkNvlR+FJzDiHhXNE6a
+	NiIB/Pan9kctsHg7EFk56VXYU+7C13BMdNWtHsPVunPCqovFL0obvUKke78zgKQ/xujJfrUlo+H
+	xqv+WhOx8gVxvRPyreA1D+FJ98KEOG3DWHqo66hb2D0Eck3m/YmO+0Dtbvh0=
+X-Google-Smtp-Source: AGHT+IE9UGCKARQRk/Ds4KOh7au7ZW2aIvoCVF+9fMMqOnHpx9ZL3skNbdtGzQCj8D4WoGVHwtOfcZsN+RjEH8B/lAE1rnCfwpqV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/rtla: rename common_xxx.rst files to
- common_xxx.txt
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Kernel Tracing <linux-trace-kernel@vger.kernel.org>
-Cc: Daniel Bristot de Oliveira <bristot@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
- Tomas Glozar <tglozar@redhat.com>, Crystal Wood <crwood@redhat.com>,
- Gopi Krishna Menon <krishnagopi487@gmail.com>
-References: <20251013092719.30780-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251013092719.30780-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a89:b0:42d:8b25:47ed with SMTP id
+ e9e14a558f8ab-42f8736d49amr253014265ab.6.1760413205999; Mon, 13 Oct 2025
+ 20:40:05 -0700 (PDT)
+Date: Mon, 13 Oct 2025 20:40:05 -0700
+In-Reply-To: <20251014033532.344635-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68edc615.050a0220.ac43.0085.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in hugetlb_vma_assert_locked
+From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+failed to apply patch:
+checking file fs/hugetlbfs/inode.c
+Hunk #1 FAILED at 478.
+Hunk #2 FAILED at 496.
+2 out of 2 hunks FAILED
+checking file mm/hugetlb.c
 
 
 
-On 10/13/25 2:27 AM, Bagas Sanjaya wrote:
-> From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> 
-> Sphinx reports htmldocs errors:
-> 
-> Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substitution referenced: "threshold".
-> Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tool".
-> Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "thresharg".
-> Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tracer".
-> Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substitution referenced: "tracer".
-> Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substitution referenced: "actionsperf".
-> Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined substitution referenced: "tool".
-> 
-> common_*.rst files are snippets that are intended to be included by rtla
-> docs (rtla*.rst). common_options.rst in particular contains
-> substitutions which depend on other common_* includes, so building it
-> independently as reST source results in above errors.
-> 
-> Rename all common_*.rst files to common_*.txt to prevent Sphinx from
-> building these snippets as standalone reST source and update all include
-> references accordingly.
-> 
-> Link: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#substitutions
-> Suggested-by: Tomas Glozar <tglozar@redhat.com>
-> Suggested-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> Reviewed-by: Tomas Glozar <tglozar@redhat.com>
-> Fixes: 05b7e10687c6 ("tools/rtla: Add remaining support for osnoise actions")
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Link: https://lore.kernel.org/r/20251008184522.13201-1-krishnagopi487@gmail.com
-> [Bagas: massage commit message and apply trailers]
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Tested on:
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+commit:         52ba7632 Add linux-next specific files for 20251013
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
+dashboard link: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1681cc58580000
 
-Thanks.
-
-> ---
-> This patch targets trace/fixes branch of linux-trace.git tree.
-> 
->  .../{common_appendix.rst => common_appendix.txt}     |  0
->  ...mmon_hist_options.rst => common_hist_options.txt} |  0
->  .../rtla/{common_options.rst => common_options.txt}  |  0
->  ...escription.rst => common_osnoise_description.txt} |  0
->  ...snoise_options.rst => common_osnoise_options.txt} |  0
->  ...common_timerlat_aa.rst => common_timerlat_aa.txt} |  0
->  ...scription.rst => common_timerlat_description.txt} |  0
->  ...erlat_options.rst => common_timerlat_options.txt} |  0
->  ...common_top_options.rst => common_top_options.txt} |  0
->  Documentation/tools/rtla/rtla-hwnoise.rst            |  8 ++++----
->  Documentation/tools/rtla/rtla-osnoise-hist.rst       | 10 +++++-----
->  Documentation/tools/rtla/rtla-osnoise-top.rst        | 10 +++++-----
->  Documentation/tools/rtla/rtla-osnoise.rst            |  4 ++--
->  Documentation/tools/rtla/rtla-timerlat-hist.rst      | 12 ++++++------
->  Documentation/tools/rtla/rtla-timerlat-top.rst       | 12 ++++++------
->  Documentation/tools/rtla/rtla-timerlat.rst           |  4 ++--
->  Documentation/tools/rtla/rtla.rst                    |  2 +-
->  17 files changed, 31 insertions(+), 31 deletions(-)
->  rename Documentation/tools/rtla/{common_appendix.rst => common_appendix.txt} (100%)
->  rename Documentation/tools/rtla/{common_hist_options.rst => common_hist_options.txt} (100%)
->  rename Documentation/tools/rtla/{common_options.rst => common_options.txt} (100%)
->  rename Documentation/tools/rtla/{common_osnoise_description.rst => common_osnoise_description.txt} (100%)
->  rename Documentation/tools/rtla/{common_osnoise_options.rst => common_osnoise_options.txt} (100%)
->  rename Documentation/tools/rtla/{common_timerlat_aa.rst => common_timerlat_aa.txt} (100%)
->  rename Documentation/tools/rtla/{common_timerlat_description.rst => common_timerlat_description.txt} (100%)
->  rename Documentation/tools/rtla/{common_timerlat_options.rst => common_timerlat_options.txt} (100%)
->  rename Documentation/tools/rtla/{common_top_options.rst => common_top_options.txt} (100%)
-
-
--- 
-~Randy
 
