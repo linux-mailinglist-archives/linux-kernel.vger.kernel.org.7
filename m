@@ -1,298 +1,135 @@
-Return-Path: <linux-kernel+bounces-852012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CBBBD7F2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55006BD7F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93FF3B6B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE77E427FEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A51D435F;
-	Tue, 14 Oct 2025 07:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880892D8DAF;
+	Tue, 14 Oct 2025 07:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4dc5d1R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCiTwd0U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B45723817D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACAD30E835
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427174; cv=none; b=gkZ40a3lI7Yqrwjv5OOgmOZ/uA+cQVHDr8RMVEJap8LfzkY6XXw/8A9z7tE8AIQe2vb7fi6CA2B8kFDlhanJ7/adXoO0Rh/RMrqgNdsglW/qmfAdcy09D5B4bVPVI9X622J47gPfzWsuCDmWo0cUilYdMK7qXxQvilOAjtnT/sA=
+	t=1760427201; cv=none; b=UpulPuXhhSlbiH8eBfGz+p4d6wePxS5kUoNN+BniX+R9ZqjRWkVLUxQLJvyENonjsOIPDE2eQmoWsPK9efBYtw9QE0Y3PwIyB7lnKOJw+ZZIq+opGLV/QiZTK3GNfnvmcZt7Xxl4W/TIWXFcW+GNaygLh4TbCtmpnw+uDl4Ci6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427174; c=relaxed/simple;
-	bh=zLFlHyMhc4frXkCjW8nh91AAlQjG+/KFAKkCfv1oTWA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BYbJmOH7x3IzxOiEDQX+hXrivmjEvRSGztPknUz2vKRWcWRGTLaX/JLml2HCDNQTVGJX9HkdRsYwZ3z+P2Dtdd8l3eoGaDM7BMBIU58YEGbCNsAtzipUmQKBNuLDhxL4RNqSYu00WFCPOrK9J4w7Fc8QvOYp7H5Sobymj3cpKKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4dc5d1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C81C4CEE7;
-	Tue, 14 Oct 2025 07:32:52 +0000 (UTC)
+	s=arc-20240116; t=1760427201; c=relaxed/simple;
+	bh=cH5DIwFsVy6Nw8TwJb1Z+ejcHY8Vpyz3tBKZIv6CZvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aMPdQSuzw/M+/mKYtbbyQ+UQsuJIKWg3kt2swSLY1r0rZ8UAAW7bvFn1ONPQSer7gGX0mNTXLT2crOqbh3/dG/zvUSf2/ETM1VyjIO3wOkRb0tHM105ZCod/JjdSzP61BqQt/MzpIRFUZ1ZdVXd+5cIbJv0Ukfj+27dadErHH+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCiTwd0U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F397C116D0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760427174;
-	bh=zLFlHyMhc4frXkCjW8nh91AAlQjG+/KFAKkCfv1oTWA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=l4dc5d1RMmxtxN/FkNNGPLTAoAr8CioZg769prRird3tLcGqTFnmg/gLXGCk4aIOT
-	 KQE8+zn9HvK7AsBoxwsjEcTDGZsJ7/VhzEwc/mOAcOkMXsa2ZPzBQLDQeEv2Fb95f0
-	 ASte+CiN6PKoNJQ8itD9RlwKglvgAyLbV+6vChwHAa3h10DqKGuRTtvQoLBM0zDCc+
-	 Hy0auRVMtQvNM3NpDTEr4T+ugfxdjxM64BkdOo2CAS/I/j9Ie0DGTUUhqlZeRhOhW4
-	 rL8faB0XofuhaqNAi3u9XTZCgdcXtEzJYa0OAmCxISOVaSLfM8Llk5gpUqGpN+DgDm
-	 v2Rg0yv1t7yvA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	stable@kernel.org,
-	Hong Yun <yhong@link.cuhk.edu.hk>
-Subject: [PATCH] f2fs: use global inline_xattr_slab instead of per-sb slab cache
-Date: Tue, 14 Oct 2025 15:32:48 +0800
-Message-ID: <20251014073248.1769839-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
+	s=k20201202; t=1760427201;
+	bh=cH5DIwFsVy6Nw8TwJb1Z+ejcHY8Vpyz3tBKZIv6CZvs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SCiTwd0Up3vnEw2qS5wfZwbgv9dab+XHfWUv7c9ia1VoYi3x3nG38DB2osDlDxCao
+	 wsnliE1L9V3SuC8ZbtGXXsKjCfuC7LvE6l258ZCUmcFbpZwJBbiCDIM5ua7BAiCVoL
+	 Qbqs2i6nx5OIsskivnfmA/e+fVsQulQzyQfhtSE1BmbU7/OSPQEw7wJVRdXP8mhAW2
+	 tR6LC5CPIEMM55OzpWLDEYh4inS8YZzoyh1Uu2lvkmAC+H4h4nkdPtHz6aDgowOVlI
+	 iA1uX189kKcyXiCcyF7XVnj2jOUtF/+80rng3L1Y9aQs8ErggIl5q+phuOskfPo1U9
+	 741YMq2gj+upQ==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3627a1979a0so3490168fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:33:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVqpX6TCqd8QqQOc9Zgq9ux3x8qhxmibxI2ny2BwY2JpJd2kRVXHOV27cq0RZWZGY03lIeeRFGgydRFptA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxepL3XLE3ezLfOot3Kum84e6uE+Wic+UTMg6bMDQr0oXOy6SU5
+	yzBzztSfbp0nacVLcvIxov8fT/dzSYQV4di8y2kNaLCUuhFMfO+C+YbOMqpMaqeIVOBUNISi+BL
+	GfTN61tBoeVMXso/NGilJusRWlAdQwAo=
+X-Google-Smtp-Source: AGHT+IEVzJJLhlo+ge61CBtv2HNYJfWVk5+8m0W9vSDO6yAaFjugC+feiJ+wT8OgVbcCjfcOjcc6zRAa+JGqSIDZyyk=
+X-Received: by 2002:a05:6870:70a7:b0:381:e796:fbdd with SMTP id
+ 586e51a60fabf-3c0f8db730dmr13485981fac.35.1760427200600; Tue, 14 Oct 2025
+ 00:33:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <f80021c8-f8e1-9ed2-4791-705c4d7b7b8a@redhat.com>
+In-Reply-To: <f80021c8-f8e1-9ed2-4791-705c4d7b7b8a@redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 14 Oct 2025 09:33:08 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHsiSB6aQVhqTbS0vhcEgk0TpP+4bxzSA5T0s6WrK2ZjQ@mail.gmail.com>
+X-Gm-Features: AS18NWDIakW39j6DvQPonyPRzolkq_4roZLA308ca2ajlGiqeuyh2W7vkUyhWu4
+Message-ID: <CAMj1kXHsiSB6aQVhqTbS0vhcEgk0TpP+4bxzSA5T0s6WrK2ZjQ@mail.gmail.com>
+Subject: Re: [PATCH] objtool: fix failure when being compiled on x32 system
+To: Mikulas Patocka <mpatocka@redhat.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As Hong Yun reported in mailing list:
+(cc lkml)
 
-loop7: detected capacity change from 0 to 131072
-------------[ cut here ]------------
-kmem_cache of name 'f2fs_xattr_entry-7:7' already exists
-WARNING: CPU: 0 PID: 24426 at mm/slab_common.c:110 kmem_cache_sanity_check mm/slab_common.c:109 [inline]
-WARNING: CPU: 0 PID: 24426 at mm/slab_common.c:110 __kmem_cache_create_args+0xa6/0x320 mm/slab_common.c:307
-CPU: 0 UID: 0 PID: 24426 Comm: syz.7.1370 Not tainted 6.17.0-rc4 #1 PREEMPT(full)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:109 [inline]
-RIP: 0010:__kmem_cache_create_args+0xa6/0x320 mm/slab_common.c:307
-Call Trace:
- __kmem_cache_create include/linux/slab.h:353 [inline]
- f2fs_kmem_cache_create fs/f2fs/f2fs.h:2943 [inline]
- f2fs_init_xattr_caches+0xa5/0xe0 fs/f2fs/xattr.c:843
- f2fs_fill_super+0x1645/0x2620 fs/f2fs/super.c:4918
- get_tree_bdev_flags+0x1fb/0x260 fs/super.c:1692
- vfs_get_tree+0x43/0x140 fs/super.c:1815
- do_new_mount+0x201/0x550 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x298/0x2f0 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x8e/0x3a0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+On Mon, 13 Oct 2025 at 22:21, Mikulas Patocka <mpatocka@redhat.com> wrote:
+>
+> Fix compilation failure when compiling the kernel with the x32 toolchain.
+>
+> In file included from check.c:16:
+> check.c: In function =E2=80=98check_abs_references=E2=80=99:
+> /usr/src/git/linux-2.6/tools/objtool/include/objtool/warn.h:47:17: error:=
+ format =E2=80=98%lx=E2=80=99 expects argument of type =E2=80=98long unsign=
+ed int=E2=80=99, but argument 7 has type =E2=80=98u64=E2=80=99 {aka =E2=80=
+=98long
+> long unsigned int=E2=80=99} [-Werror=3Dformat=3D]
+>    47 |                 "%s%s%s: objtool" extra ": " format "\n",        =
+       \
+>       |                 ^~~~~~~~~~~~~~~~~
+> /usr/src/git/linux-2.6/tools/objtool/include/objtool/warn.h:54:9: note: i=
+n expansion of macro =E2=80=98___WARN=E2=80=99
+>    54 |         ___WARN(severity, "", format, ##__VA_ARGS__)
+>       |         ^~~~~~~
+> /usr/src/git/linux-2.6/tools/objtool/include/objtool/warn.h:74:27: note: =
+in expansion of macro =E2=80=98__WARN=E2=80=99
+>    74 | #define WARN(format, ...) __WARN(WARN_STR, format, ##__VA_ARGS__)
+>       |                           ^~~~~~
+> check.c:4713:33: note: in expansion of macro =E2=80=98WARN=E2=80=99
+>  4713 |                                 WARN("section %s has absolute rel=
+ocation at offset 0x%lx",
+>       |                                 ^~~~
+>
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> Fixes: 0d6e4563fc03 ("objtool: Add action to check for absence of absolut=
+e relocations")
+>
+> ---
+>  tools/objtool/check.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Index: linux-2.6/tools/objtool/check.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-2.6.orig/tools/objtool/check.c        2025-10-13 21:42:48.00000=
+0000 +0200
+> +++ linux-2.6/tools/objtool/check.c     2025-10-13 21:48:33.000000000 +02=
+00
+> @@ -4710,8 +4710,8 @@ static int check_abs_references(struct o
+>
+>                 for_each_reloc(sec->rsec, reloc) {
+>                         if (arch_absolute_reloc(file->elf, reloc)) {
+> -                               WARN("section %s has absolute relocation =
+at offset 0x%lx",
+> -                                    sec->name, reloc_offset(reloc));
+> +                               WARN("section %s has absolute relocation =
+at offset 0x%llx",
+> +                                    sec->name, (unsigned long long)reloc=
+_offset(reloc));
+>                                 ret++;
+>                         }
+>                 }
 
-The bug can be reproduced w/ below scripts:
-- mount /dev/vdb /mnt1
-- mount /dev/vdc /mnt2
-- umount /mnt1
-- mounnt /dev/vdb /mnt1
-
-The reason is if we created two slab caches, named f2fs_xattr_entry-7:3
-and f2fs_xattr_entry-7:7, and they have the same slab size. Actually,
-slab system will only create one slab cache core structure which has
-slab name of "f2fs_xattr_entry-7:3", and two slab caches share the same
-structure and cache address.
-
-So, if we destroy f2fs_xattr_entry-7:3 cache w/ cache address, it will
-decrease reference count of slab cache, rather than release slab cache
-entirely, since there is one more user has referenced the cache.
-
-Then, if we try to create slab cache w/ name "f2fs_xattr_entry-7:3" again,
-slab system will find that there is existed cache which has the same name
-and trigger the warning.
-
-Let's changes to use global inline_xattr_slab instead of per-sb slab cache
-for fixing.
-
-Fixes: a999150f4fe3 ("f2fs: use kmem_cache pool during inline xattr lookups")
-Cc: stable@kernel.org
-Reported-by: Hong Yun <yhong@link.cuhk.edu.hk>
-Tested-by: Hong Yun <yhong@link.cuhk.edu.hk>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h  |  3 ---
- fs/f2fs/super.c | 17 ++++++++---------
- fs/f2fs/xattr.c | 32 +++++++++++---------------------
- fs/f2fs/xattr.h | 10 ++++++----
- 4 files changed, 25 insertions(+), 37 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 839032a4da39..c589aed069d9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1892,9 +1892,6 @@ struct f2fs_sb_info {
- 	spinlock_t error_lock;			/* protect errors/stop_reason array */
- 	bool error_dirty;			/* errors of sb is dirty */
- 
--	struct kmem_cache *inline_xattr_slab;	/* inline xattr entry */
--	unsigned int inline_xattr_slab_size;	/* default inline xattr slab size */
--
- 	/* For reclaimed segs statistics per each GC mode */
- 	unsigned int gc_segment_mode;		/* GC state for reclaimed segments */
- 	unsigned int gc_reclaimed_segs[MAX_GC_MODE];	/* Reclaimed segs for each mode */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6e52e36c1f1a..2ae341768a39 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2027,7 +2027,6 @@ static void f2fs_put_super(struct super_block *sb)
- 	kfree(sbi->raw_super);
- 
- 	f2fs_destroy_page_array_cache(sbi);
--	f2fs_destroy_xattr_caches(sbi);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < MAXQUOTAS; i++)
- 		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
-@@ -5016,13 +5015,9 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (err)
- 		goto free_iostat;
- 
--	/* init per sbi slab cache */
--	err = f2fs_init_xattr_caches(sbi);
--	if (err)
--		goto free_percpu;
- 	err = f2fs_init_page_array_cache(sbi);
- 	if (err)
--		goto free_xattr_cache;
-+		goto free_percpu;
- 
- 	/* get an inode for meta space */
- 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
-@@ -5351,8 +5346,6 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbi->meta_inode = NULL;
- free_page_array_cache:
- 	f2fs_destroy_page_array_cache(sbi);
--free_xattr_cache:
--	f2fs_destroy_xattr_caches(sbi);
- free_percpu:
- 	destroy_percpu_info(sbi);
- free_iostat:
-@@ -5555,10 +5548,15 @@ static int __init init_f2fs_fs(void)
- 	err = f2fs_create_casefold_cache();
- 	if (err)
- 		goto free_compress_cache;
--	err = register_filesystem(&f2fs_fs_type);
-+	err = f2fs_init_xattr_cache();
- 	if (err)
- 		goto free_casefold_cache;
-+	err = register_filesystem(&f2fs_fs_type);
-+	if (err)
-+		goto free_xattr_cache;
- 	return 0;
-+free_xattr_cache:
-+	f2fs_destroy_xattr_cache();
- free_casefold_cache:
- 	f2fs_destroy_casefold_cache();
- free_compress_cache:
-@@ -5599,6 +5597,7 @@ static int __init init_f2fs_fs(void)
- static void __exit exit_f2fs_fs(void)
- {
- 	unregister_filesystem(&f2fs_fs_type);
-+	f2fs_destroy_xattr_cache();
- 	f2fs_destroy_casefold_cache();
- 	f2fs_destroy_compress_cache();
- 	f2fs_destroy_compress_mempool();
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 58632a2b6613..9f20b67e90d1 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -23,11 +23,12 @@
- #include "xattr.h"
- #include "segment.h"
- 
-+struct kmem_cache *inline_xattr_slab;
- static void *xattr_alloc(struct f2fs_sb_info *sbi, int size, bool *is_inline)
- {
--	if (likely(size == sbi->inline_xattr_slab_size)) {
-+	if (likely(size == DEFAULT_XATTR_SLAB_SIZE)) {
- 		*is_inline = true;
--		return f2fs_kmem_cache_alloc(sbi->inline_xattr_slab,
-+		return f2fs_kmem_cache_alloc(inline_xattr_slab,
- 					GFP_F2FS_ZERO, false, sbi);
- 	}
- 	*is_inline = false;
-@@ -38,7 +39,7 @@ static void xattr_free(struct f2fs_sb_info *sbi, void *xattr_addr,
- 							bool is_inline)
- {
- 	if (is_inline)
--		kmem_cache_free(sbi->inline_xattr_slab, xattr_addr);
-+		kmem_cache_free(inline_xattr_slab, xattr_addr);
- 	else
- 		kfree(xattr_addr);
- }
-@@ -830,25 +831,14 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
- 	return err;
- }
- 
--int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi)
-+int __init f2fs_init_xattr_cache(void)
- {
--	dev_t dev = sbi->sb->s_bdev->bd_dev;
--	char slab_name[32];
--
--	sprintf(slab_name, "f2fs_xattr_entry-%u:%u", MAJOR(dev), MINOR(dev));
--
--	sbi->inline_xattr_slab_size = F2FS_OPTION(sbi).inline_xattr_size *
--					sizeof(__le32) + XATTR_PADDING_SIZE;
--
--	sbi->inline_xattr_slab = f2fs_kmem_cache_create(slab_name,
--					sbi->inline_xattr_slab_size);
--	if (!sbi->inline_xattr_slab)
--		return -ENOMEM;
--
--	return 0;
-+	inline_xattr_slab = f2fs_kmem_cache_create("f2fs_xattr_entry",
-+					DEFAULT_XATTR_SLAB_SIZE);
-+	return inline_xattr_slab ? 0 : -ENOMEM;
- }
- 
--void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi)
-+void f2fs_destroy_xattr_cache(void)
- {
--	kmem_cache_destroy(sbi->inline_xattr_slab);
--}
-+	kmem_cache_destroy(inline_xattr_slab);
-+}
-\ No newline at end of file
-diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index 4fc0b2305fbd..bce3d93e4755 100644
---- a/fs/f2fs/xattr.h
-+++ b/fs/f2fs/xattr.h
-@@ -89,6 +89,8 @@ struct f2fs_xattr_entry {
- 			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -	\
- 			DEF_INLINE_RESERVED_SIZE -			\
- 			MIN_INLINE_DENTRY_SIZE / sizeof(__le32))
-+#define DEFAULT_XATTR_SLAB_SIZE	(DEFAULT_INLINE_XATTR_ADDRS *		\
-+				sizeof(__le32) + XATTR_PADDING_SIZE)
- 
- /*
-  * On-disk structure of f2fs_xattr
-@@ -132,8 +134,8 @@ int f2fs_setxattr(struct inode *, int, const char *, const void *,
- int f2fs_getxattr(struct inode *, int, const char *, void *,
- 		size_t, struct folio *);
- ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
--int f2fs_init_xattr_caches(struct f2fs_sb_info *);
--void f2fs_destroy_xattr_caches(struct f2fs_sb_info *);
-+int __init f2fs_init_xattr_cache(void);
-+void f2fs_destroy_xattr_cache(void);
- #else
- 
- #define f2fs_xattr_handlers	NULL
-@@ -150,8 +152,8 @@ static inline int f2fs_getxattr(struct inode *inode, int index,
- {
- 	return -EOPNOTSUPP;
- }
--static inline int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi) { return 0; }
--static inline void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
-+static inline int __init f2fs_init_xattr_cache(void) { return 0; }
-+static inline void f2fs_destroy_xattr_cache(void) { }
- #endif
- 
- #ifdef CONFIG_F2FS_FS_SECURITY
--- 
-2.49.0
-
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
