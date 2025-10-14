@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-852896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37D2BDA2E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:58:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48D8BDA2EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D8CD4E5972
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:58:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 608454FB7A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5652FFDDB;
-	Tue, 14 Oct 2025 14:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688D92FFDFA;
+	Tue, 14 Oct 2025 14:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fr7zFS88"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p0kQet/l"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4865118A6B0;
-	Tue, 14 Oct 2025 14:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22F22FFDC6
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453892; cv=none; b=Lr0xupNBzgvgJ+7fn2FFBEzpsrX06FsAHCOgkNpfRfYH1SfIbe0fKpF9Eos9C2nVjrOu5/W9UXTzTI14I0kaT3Ps9+dTd0BB8/0o113k43BGfMMkrx/6+aSRHFTYYbWoFK2J5G0RdqTXieLw8vEv+A7aIkQi8aLyD1sB7ZKll1Q=
+	t=1760453899; cv=none; b=trcxU1Ka+Vto9pmGKRdBSBZUBE4iQvRLH7BRrQ46THDqO2plW8b5TbgRAeNCS6LClbJLCVywr8rCfR5rTmmPLCGVHY9oEnqE/5qwf4D/9CQPHD2GxheoRQBqPVovJZoTQE3A6VRB/dRgWdkEvS6M5OBKqYdYQYNLDB0b2fW8evs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453892; c=relaxed/simple;
-	bh=iVa7EOANGisZpVCN5woTl0K1g0oTi969VNzdtPz4cLo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dExaQFo+BufAalAhYBz1QXy8No+sPbSyqHbw4KHHKV/zOLBwHzSCcJhc2A1fU3Wd7qYuJWyqVIHtIm3F14K6f4MOtRgps0XBWXq2T2Zus6ZmqL2sN/1p5/uIa38R/j/hmxCgtbm0O1aEiToS5kIj8zJuPz3eBJUpqbgZBaLxCdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fr7zFS88; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D96C4CEE7;
-	Tue, 14 Oct 2025 14:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760453892;
-	bh=iVa7EOANGisZpVCN5woTl0K1g0oTi969VNzdtPz4cLo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Fr7zFS88jo9Y+b1IBY7d6aw2ZBkqJTySGTIEbL1gMlrbPxWsxa9XTyuWqHZklZe4a
-	 DP6ja8l9z/6jQvXMgKOSuE2zXmIzJZbTRPAFIufD1MspOrU8i3wacQoCwN8U2Az3dF
-	 p4eFyStmFiOASgys88VthQA6xfmgjZndL322fx/5aCo4E9xoqOaAAZTggDpwXWYTKU
-	 vmMFRuAFVw0VbLCHDo9iz94N0kOk9njcB5D/kkooaMdt3cvHBSEZR0iFK6J3cTVUY8
-	 RcHJrLuxEzPoGt3C3nDdZMt8Tb2kjIMRG2VKP6Yy2YK3Hik1aQoctjBqa+Sub7r7mY
-	 ni3v2tkmJuCOA==
-From: Chuck Lever <cel@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <linux-nfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: [GIT PULL] NFSD fixes for v6.18-rc
-Date: Tue, 14 Oct 2025 10:58:10 -0400
-Message-ID: <20251014145810.4880-1-cel@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760453899; c=relaxed/simple;
+	bh=R2Sf2U8v7Pq+Fg3Z0NqLmsByNIeFp1YqvdAKF4SarPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aid9JpDJDssFqBpx/W3hbk+cn6tx8x0L9DYg7a2/JlIjy8QN/JHo64XawQ7V8ThTfcCS5HA/6So5DBqgIDt2JTsqghBC0Topp7Mz8VzFtjkQfRZ5zIqsIZaDOiCE4/R12ADm2PWrTtapqV65WZQ4eSiMICXsaHYCLgWKJmZ2O7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p0kQet/l; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <55adf770-a6b2-46d0-98bd-cbcc03e344b0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760453894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jvro9e9/KYoRyaECvLBiqtrB+AY8FxjZREzbiFZyRD8=;
+	b=p0kQet/lLU+N4ylar5G4lDbEKyiMXbnIJ7BQQ9ZSf762+Cth2LXQuCyPSeHwNggxPojWsg
+	mCkAirn0ydepA4z/aJC9y3ejtFVbnF0dlmCH15xAYnEUZhVY+SV2UjWXxzXgwiAAL5wD5b
+	drxTDwxRVnSJUmF6+m8wE2L8Jx490kE=
+Date: Tue, 14 Oct 2025 15:58:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] gve: Check valid ts bit on RX descriptor before hw
+ timestamping
+To: Harshitha Ramamurthy <hramamurthy@google.com>, netdev@vger.kernel.org
+Cc: joshwash@google.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, willemb@google.com,
+ pkaligineedi@google.com, jfraker@google.com, ziweixiao@google.com,
+ thostet@google.com, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251014004740.2775957-1-hramamurthy@google.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20251014004740.2775957-1-hramamurthy@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The following changes since commit 73cc6ec1a89a6c443a77b9b93ddcea63b7cea223:
+On 14/10/2025 01:47, Harshitha Ramamurthy wrote:
+> From: Tim Hostetler <thostet@google.com>
+> 
+> The device returns a valid bit in the LSB of the low timestamp byte in
+> the completion descriptor that the driver should check before
+> setting the SKB's hardware timestamp. If the timestamp is not valid, do not
+> hardware timestamp the SKB.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b2c7aeb49056 ("gve: Implement ndo_hwtstamp_get/set for RX timestamping")
+> Reviewed-by: Joshua Washington <joshwash@google.com>
+> Signed-off-by: Tim Hostetler <thostet@google.com>
+> Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
 
-  nfsd: discard nfserr_dropit (2025-10-01 15:54:01 -0400)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.18-1
-
-for you to fetch changes up to 4b47a8601b71ad98833b447d465592d847b4dc77:
-
-  NFSD: Define a proc_layoutcommit for the FlexFiles layout type (2025-10-10 12:53:50 -0400)
-
-----------------------------------------------------------------
-nfsd-6.18 fixes:
-
-- Fix a crasher reported by rtm@csail.mit.edu
-
-----------------------------------------------------------------
-Chuck Lever (1):
-      NFSD: Define a proc_layoutcommit for the FlexFiles layout type
-
- fs/nfsd/flexfilelayout.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
