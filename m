@@ -1,146 +1,216 @@
-Return-Path: <linux-kernel+bounces-852627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79684BD97D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8A9BD97E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A982E18978F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:00:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6FE43352C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC55313532;
-	Tue, 14 Oct 2025 12:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12391313540;
+	Tue, 14 Oct 2025 12:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QEWCF3cO"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e10J7dXM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD9E31354B;
-	Tue, 14 Oct 2025 12:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0931DDA24
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446772; cv=none; b=EmGadCu/st3AZxVKf/8x31P3L1meXI39YZTCufU7f5m729HTZ8jOUHNXzI6s3kYcLTDiz8BX10u+27wZMzKsdL94GuVJV3HEyn49Ab3U2BZY4YUPd0+k08qdbsmOVJpCZwz+DwdDwLk+wtaYm8jNEFiIKLDActf9f+1ZLpFLPfE=
+	t=1760446782; cv=none; b=PqJjM8nXmH4ah5JpJhnT+gJjcPx+jbvpgtxCkhJidYehWD2G9S26zzg8nfg9t00SbQHvswlS6uoO5Fcd+CT5B9Yz+3T7aKfXPpQ/XTbChY/8YeWxmIym6HejAU6+lsatmTHlLdkvrKq7qy0SXbHk5DPDgi8PNnDUYrf+x8prO/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446772; c=relaxed/simple;
-	bh=dA8ZO6ChYJ9c/RyoUIv5bvOV40QV/ycga8CfhphPEKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VNy7gEImJkIf3Oeu3XmUqVWIrsQ/eJINDZnqWU/K/LQ/xp78JXnKnJFb1uRrXE35irxAUexIgvwwfLsj0jLA+RDF5Fs+4ixXL+S8UeU7RXrZwaogSSFq8xWx6waKUCls4VUb14//ywlJ01EmnAXcBePoqEfItuLrQdSDQrvxb7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QEWCF3cO; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6B0DE40E01AB;
-	Tue, 14 Oct 2025 12:59:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 44Ym9plS8O5S; Tue, 14 Oct 2025 12:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760446760; bh=CRAm/96OhU1MWiQAAgFQeaQhfDFuGGKHReG3tVOvRds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QEWCF3cOYhCsRumnVfUo0HdEP1854RnsFaKcAGAWUMOYOWCbZ6jhN7dNI0U79H6kA
-	 4rAti4K3TH9gI6vohOC+fj8fyenNbh7kcRth/oVOENuwsHDAhrQqRNqZY6KSj/M0Zi
-	 JEwqEROpLkHbI27UyFSA/CcE0d4DZn+JorHGTID1VXrfUY2BANjUpmvT4YDFy4B2xB
-	 4OZkC4qUUq2KgF/xfdhGWvtg5NSPkhIMGAWBqxftjjm5f1jBcl5DtHYZexStckF0tH
-	 uIcRktBDsfQMooTtqvrWI8/gGjK7FoTFIHX7/9ZOXvxOp5Rehpx7ZiWDraSzyRchzk
-	 FzzKwtLPwiGwmbsjFPLMKoDfmeQo1Q9VGSDVZ0ViSdeEqbvUvRh+cJ2FhMohAorkE5
-	 quQbP6oH/B0OGg4jTrVETO0YQNU3Zv9pFJnbbcdjljeYLmrtvVs3SPm4pTVRxZzF1g
-	 asy60+II+mmRNFgm/7zxDcMaE/KcLmIZaUislSsEGvyD1ZH+bwHHEE9muton/sUjIF
-	 yBPCOVuDdEUbrvB1eFae/+2oMBZQlSKBb+9j1LduuBTPIbSyE9/2KDEWw93/gz2CrY
-	 RCzjrZJwetKTNrn9kZSb3OSJmJ9D7nUGjamAfGidv0l4hx/OO6QiVaMF0t+Wfyd08J
-	 mbKOJqhJfrJwPpr8yXlgZL08=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B9B5740E019F;
-	Tue, 14 Oct 2025 12:59:15 +0000 (UTC)
-Date: Tue, 14 Oct 2025 14:59:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
- location only once
-Message-ID: <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
-References: <20250929112947.27267-4-jgross@suse.com>
- <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1760446782; c=relaxed/simple;
+	bh=Z1Th0V3A9t5q0RL6uoXSwWvKS3kowUSTZ0Ef18CL46Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Be1XtKu2N6ahCVmmKEUFSNztzd0fvf6ydMg8TzgrK4KBPLLOjSPe6OmJu2/LgpftUtK14DlNacsh44bgb6x0xeTfTKFIUkhqeHesU6yzny2PuAB9US/zlqWTSBZwN7HVXA4igswCvvoIuc9/MLon6fJ4Cl25IeC2UrmKL+sFN7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e10J7dXM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760446779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=iu1mp0L5rze+u9w9cyraP7Gulphe1rkUj/3PhF2TPeI=;
+	b=e10J7dXMx6+Dd9Vi/7zjM1dZtmm0esWwpkuHNE8Cnm0a/9qU/AJIxD/GrEovNopE2I3HyO
+	TmuFwyw3u+3raEPF01YjnJgRcQOE1/VOxwg2GdEu5oOLHguGorrj8Ta1Xvhmn8G+bXH7rn
+	SBTqLjhEkcjyzMo1i40wXJkOqiwrLrs=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-340-1JYCDe2AMGq8mUOy5rWvSQ-1; Tue, 14 Oct 2025 08:59:34 -0400
+X-MC-Unique: 1JYCDe2AMGq8mUOy5rWvSQ-1
+X-Mimecast-MFC-AGG-ID: 1JYCDe2AMGq8mUOy5rWvSQ_1760446773
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aff0df4c4abso726526966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:59:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760446773; x=1761051573;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iu1mp0L5rze+u9w9cyraP7Gulphe1rkUj/3PhF2TPeI=;
+        b=emoNJitCzIjohSXH7w4cSdKHnaJVCugyH+Lr31nc+2lUD0FeBW8NOcR/EsMiJyvz7b
+         K+rZ2uy5hXDQ1/npA88Fo8oGr1xzSNS0AsCo6UuhDH1YaeH1h08IEpBuH9QOEr0oMwBb
+         eTmjjHgXF6R4aHAPU1vhs1BN8ihjrMw65ZESXISEsBsMYUzfLUuwEOo7Hh6DrBc/Hf8v
+         5D5TVTj9kHi7wDG0bq+EeF5fG1uGtWSx3WfQp7mAHTGfSDASx6IELmjhRjjT7u76ASnq
+         CAaCUOpf8QMsQNHNfKx75HQgt39gBfX+VDpBzu/ekCkucEn9tQeLeUCE7C1Kjhzzhj5r
+         Ih2g==
+X-Gm-Message-State: AOJu0YzrEWWEhGUez2miRpOH1j2OSx2NtW5KIgDiLe9K5QBYYu8wp+kr
+	vonr41c1oK7wJbACbKwDnd3fa/Kd5/copd8CifDzn/jYqUEMRRzbIdIa/EmkTj+2GiSdDaYYjvk
+	dDEKWb93FpmbbIHAP2o4gFePYZEkK5TT9/nQtABrJKjjmqBhUGN/6/IfpAJaxbEQRkg==
+X-Gm-Gg: ASbGncsk7WqtLsnk/3c94TMwIc54l87ajY0sLFVMUf6RHXynfIiVdonw8AXSqQJ49ZT
+	nJB6N3AvIoSIPxeLMsva9DhYGTX2VrBGB4JVn2xtW5zenMtDoDZ9JYB6smZ/2/xOkwt3zDKUNrv
+	kxpGmWo1erdtcOIRXnqo3j+DImpM2Qk4y19rxBBtmOYgVJkXXIJQlOeJKfwAvatfhegh243rvg5
+	sSvnZLDXOykGsJQqg3uXTgHFvAuE9+MIA3Z/cJYigb+HaaZdDBgBOW237tQuqJM45cMIQiQTvx2
+	vpB00VBewzYx2YNTXdflkBlhnmn4Bdxj98VdGvrPIWyEgO0y1QSrXtyIOGjlwntMbYP9NChGlw=
+	=
+X-Received: by 2002:a17:906:f5a5:b0:b29:c2ae:78f8 with SMTP id a640c23a62f3a-b50ac5d08bamr2706962866b.46.1760446773164;
+        Tue, 14 Oct 2025 05:59:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEkEiy+cHw9UIH18Z36gnOBTWV4pz/7vpgUvMjb/aSdBKnsv8qXvi1i95BnCc/gOYElOXfN6Q==
+X-Received: by 2002:a17:906:f5a5:b0:b29:c2ae:78f8 with SMTP id a640c23a62f3a-b50ac5d08bamr2706957766b.46.1760446772515;
+        Tue, 14 Oct 2025 05:59:32 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b58244d17e1sm725071566b.75.2025.10.14.05.59.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 05:59:31 -0700 (PDT)
+Message-ID: <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+Date: Tue, 14 Oct 2025 14:59:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
+ large folios (CONFIG_NO_PAGE_MAPCOUNT)
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Muchun Song <muchun.song@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+References: <20250303163014.1128035-1-david@redhat.com>
+ <20250303163014.1128035-21-david@redhat.com>
+ <20251014122335.dpyk5advbkioojnm@master>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251014122335.dpyk5advbkioojnm@master>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 08:42:34AM -0000, tip-bot2 for Juergen Gross wrote:
-> @@ -648,6 +648,8 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
->  	u8 insn_buff[MAX_PATCH_LEN];
->  	u8 *instr;
->  	struct alt_instr *a, *b;
-> +	unsigned int instances = 0;
-> +	bool patched = false;
+On 14.10.25 14:23, Wei Yang wrote:
+> On Mon, Mar 03, 2025 at 05:30:13PM +0100, David Hildenbrand wrote:
+> [...]
+>> @@ -1678,6 +1726,22 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>> 		break;
+>> 	case RMAP_LEVEL_PMD:
+>> 	case RMAP_LEVEL_PUD:
+>> +		if (IS_ENABLED(CONFIG_NO_PAGE_MAPCOUNT)) {
+>> +			last = atomic_add_negative(-1, &folio->_entire_mapcount);
+>> +			if (level == RMAP_LEVEL_PMD && last)
+>> +				nr_pmdmapped = folio_large_nr_pages(folio);
+>> +			nr = folio_dec_return_large_mapcount(folio, vma);
+>> +			if (!nr) {
+>> +				/* Now completely unmapped. */
+>> +				nr = folio_large_nr_pages(folio);
+>> +			} else {
+>> +				partially_mapped = last &&
+>> +						   nr < folio_large_nr_pages(folio);
+> 
+> Hi, David
 
-Except that we have the reverse fir tree rule in tip for function-local vars.
+Hi!
 
-The tip-tree preferred ordering of variable declarations at the
-beginning of a function is reverse fir tree order::
+> 
+> Do you think this is better to be?
+> 
+> 	partially_mapped = last && nr < nr_pmdmapped;
 
-	struct long_struct_name *descriptive_name;
-	unsigned long foo, bar;
-	unsigned int tmp;
-	int ret;
+I see what you mean, it would be similar to the CONFIG_PAGE_MAPCOUNT 
+case below.
 
-The above is faster to parse than the reverse ordering::
+But probably it could then be
 
-	int ret;
-	unsigned int tmp;
-	unsigned long foo, bar;
-	struct long_struct_name *descriptive_name;
+	partially_mapped = nr < nr_pmdmapped;
 
-And even more so than random ordering::
+because nr_pmdmapped is only set when "last = true".
 
-	unsigned long foo, bar;
-	int ret;
-	struct long_struct_name *descriptive_name;
-	unsigned int tmp;
+I'm not sure if there is a good reason to change it at this point 
+though. Smells like a micro-optimization for PUD, which we probably 
+shouldn't worry about.
 
-> @@ -692,14 +698,19 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
->  		 * - feature not present but ALT_FLAG_NOT is set to mean,
->  		 *   patch if feature is *NOT* present.
->  		 */
-> -		if (!boot_cpu_has(a->cpuid) == !(a->flags & ALT_FLAG_NOT)) {
-> -			memcpy(insn_buff, instr, a->instrlen);
-> -			optimize_nops(instr, insn_buff, a->instrlen);
-> -		} else {
-> +		if (!boot_cpu_has(a->cpuid) != !(a->flags & ALT_FLAG_NOT)) {
->  			apply_one_alternative(instr, insn_buff, a);
-> +			patched = true;
->  		}
->  
-> -		text_poke_early(instr, insn_buff, a->instrlen);
-> +		instances--;
-> +		if (!instances) {
-> +			if (!patched) {
+> 
+> As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
+> folio yet.
 
-I don't see how this is making this code better - this is slowly turning into
-an unreadable mess with those magic "instances" and "patched".
+We do support partially mapped PUD-sized folios I think, but not 
+anonymous PUD-sized folios.
 
-And frankly, the justification for this patch is also meh: an interrupt might
-use the location?!? If this is a real issue then we better disable IRQs around
-it. But not make the code yucky.
-
-Thx.
+So consequently the partially_mapped variable will never really be used 
+later on, because the folio_test_anon() will never hit in the PUD case.
 
 -- 
-Regards/Gruss,
-    Boris.
+Cheers
 
-https://people.kernel.org/tglx/notes-about-netiquette
+David / dhildenb
+
 
