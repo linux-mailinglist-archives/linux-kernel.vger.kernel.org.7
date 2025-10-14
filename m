@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-853330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57437BDB4F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:47:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDFABDB501
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780E8547A27
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76783AE6BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E9E306B0D;
-	Tue, 14 Oct 2025 20:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BF1306D50;
+	Tue, 14 Oct 2025 20:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="AU+V64vL"
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ac1UXg+S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818F82BD5BC;
-	Tue, 14 Oct 2025 20:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063A2877FA;
+	Tue, 14 Oct 2025 20:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760474830; cv=none; b=GCoo5UIQ3j3C8bN0BTTQ4YV7Hg/kf9D/Jf9i/ueB2nCoTD4TWLIEon/NgqKgitO7dOmkYOxiN5zw6aKuhdScZW+mBnZ13t4LNbGiuJP1gPfqiUM0H5wL+aGV2Tlzseu5mRWNFs3teWa7QrF9Do2WIBQNtWEjvWWUislR0qQ0xjQ=
+	t=1760474890; cv=none; b=IskXLde4tYer1iicF+3UMowtCx1RwJjDaXHDrS9SuHLs+2C+Afu+8ldnMisgyAqyXJm2Z28xv2cJpX3b0MV1NDXaju75lUarDj2oK40+TesvxPiDtx8zbhzcVSrASfuFWo1IMC30Kiwha0bAtzjjLfspWVlzwQJK4rbpJ25161c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760474830; c=relaxed/simple;
-	bh=O2xu8KT6jgh+ye6JsDNiUiafB4U434onqsAXqGafFck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EUH2RDj0jXCpoa1+Nbl0XjwXXLsKcdzf06hB30sVN72j6bu6cyfm/WTeNcdMQHXfW4S2Zd3G1KeYoUdJMfyb5zQiDDwdjgHI5WcRRm87ePGiPJpfiWy+UkoAvyh/EvHPr/saRIEWcolzuXcBr7mD6kkZFnRKaXcYmaoAaIvqbv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=AU+V64vL; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0A2EB102E6F;
-	Tue, 14 Oct 2025 22:46:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1760474820;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=nuqzPscocXsv4QGjyp5D1JTIpMR6i71bIBd2xUs9GwA=;
-	b=AU+V64vLJIS8nNCskYQUQ6xa5LNBOJsrT6MDC0ynISJ+E0kFKF3GtvEtSz185FJmQxjXj5
-	NMdf69XtvShQojk/cVcN0D0hWzNXGhBW8o/URYh2/xE2BBRDlAxYewSODWq/h2u9CNj4Fo
-	EC3iVycbEEkQ4M7YamcnnIY0kkj3GdfvqfxyhrUkt4mhIjXPwa8lM+Ay0rE1yNDkCRKvN0
-	5ePw+RoIlzKOMiy9rDshvnVvYr3CQxvwwoBXhcEPbJm6ZwD9cnAubrZfjYUFOVvJhAS4ON
-	Cquol+3D3I13/Kv8RKPivc3yPZDAt1uZCb0pEh6zLHYURMD6Y9HRd63QQd2o+A==
-Message-ID: <ddc44948-4816-452f-8b78-b1dfe44d507b@nabladev.com>
-Date: Tue, 14 Oct 2025 22:46:56 +0200
+	s=arc-20240116; t=1760474890; c=relaxed/simple;
+	bh=Em10QkwHKTKXlsyI+2+xjbCURDQJuQZ+0ngrcp0Ttxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLVZ+YS2IjHi0JYNjfuSNuEcm9EPfWwSd/ab4UHzSryPUXjNznEzUH+MtkNcWefwoFD7KQHNnjJJyWliLfkDd2u0bVHENt8HFSf8TIaVW2K9gDBvT/CY7BbFeD82LSBIg6PYIJMkiSTIGoxw57uy8JOFmMq5pv7TwKg9G37CWaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ac1UXg+S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A1BC4CEE7;
+	Tue, 14 Oct 2025 20:48:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760474889;
+	bh=Em10QkwHKTKXlsyI+2+xjbCURDQJuQZ+0ngrcp0Ttxw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ac1UXg+SCBy9/GWTf/+/DigHGLV9tHgtMrbSVcPYyXrhuFmiThCmMHN9AJKuNqNRL
+	 Ufwo89GtcIXqjUwkdu3ynzYbGkO63J+XIJCkkYNhxXhwFaIraxXRmPVVgCpB5OxjTD
+	 d+y1Y6UGQ8TXXfnUwedOEYs9+m8PTH5ZLOHJ6IEkftT19EHlmcdOf5TVHTY+aeuNs1
+	 Cgmwt2YB0p9Az1C5Q8QjcVdYsNv4u9Pay4JrOzxRSSRGPxz9uyvbUUhXBR9L3XJivv
+	 APhB4MK8AyEYDnP8wl0QR0Ec37I4RM/KnZFPeLgRu3Te76fy7uR2LKIAubikoL6FXJ
+	 HCeltuj8/Nmfw==
+Date: Tue, 14 Oct 2025 15:48:07 -0500
+From: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional
+ clock
+Message-ID: <20251014204807.GA1075103-robh@kernel.org>
+References: <20251010183418.2179063-1-Frank.Li@nxp.com>
+ <20251014-flattop-limping-46220a9eda46@spud>
+ <20251014-projector-immovably-59a2a48857cc@spud>
+ <20251014120213.002308f2@kernel.org>
+ <20251014-unclothed-outsource-d0438fbf1b23@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] ARM: dts: imx: add power-supply for lcd panel
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Christoph Niedermaier <cniedermaier@dh-electronics.com>,
- Marek Vasut <marex@denx.de>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel@dh-electronics.com
-References: <20251014-imx6_dts_clean_2-v1-0-508b36e5a3fd@nxp.com>
- <20251014-imx6_dts_clean_2-v1-1-508b36e5a3fd@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marex@nabladev.com>
-In-Reply-To: <20251014-imx6_dts_clean_2-v1-1-508b36e5a3fd@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-unclothed-outsource-d0438fbf1b23@spud>
 
-On 10/14/25 9:38 PM, Frank Li wrote:
-> Add power-supply for lcd panel to fix below CHECK_DTBS warnings:
->    arch/arm/boot/dts/nxp/imx/imx6q-evi.dtb: panel (sharp,lq101k1ly04): 'power-supply' is a required property
+On Tue, Oct 14, 2025 at 08:35:04PM +0100, Conor Dooley wrote:
+> On Tue, Oct 14, 2025 at 12:02:13PM -0700, Jakub Kicinski wrote:
+> > On Tue, 14 Oct 2025 19:12:23 +0100 Conor Dooley wrote:
+> > > On Tue, Oct 14, 2025 at 07:02:50PM +0100, Conor Dooley wrote:
+> > > > On Fri, Oct 10, 2025 at 02:34:17PM -0400, Frank Li wrote:  
+> > > > > Add optional clock for OSC_IN and fix the below CHECK_DTBS warnings:
+> > > > >   arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dtb: switch@0 (nxp,sja1105q): Unevaluated properties are not allowed ('clocks' was unexpected)
+> > > > > 
+> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>  
+> > > > 
+> > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > pw-bot: not-applicable  
+> > > 
+> > > Hmm, I think this pw-bot command, intended for the dt patchwork has
+> > > probably screwed with the state in the netdev patchwork. Hopefully I can
+> > > fix that via
+> > 
+> > The pw-bot commands are a netdev+bpf thing :) They won't do anything
+> > to dt patchwork. IOW the pw-bot is a different bot than the one that
+> > replies when patch is applied.
+> 
+> Rob's recently added it to our patchwork too.
 
-...
+And the issue is that both PW projects might get updated and both don't 
+necessarily want the same state (like this case). So we need to 
+distinguish. Perhaps like one of the following:
 
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ull-dhcom-pdk2.dts b/arch/arm/boot/dts/nxp/imx/imx6ull-dhcom-pdk2.dts
-> index b29713831a74489e8cc0e651c18a40d85f9f9113..04e570d76e42cd67a38e0f3b2301598f712e6bd4 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6ull-dhcom-pdk2.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6ull-dhcom-pdk2.dts
-> @@ -199,7 +199,7 @@ touchscreen@38 {
->   		reg = <0x38>;
->   		interrupt-parent = <&gpio5>;
->   		interrupts = <4 IRQ_TYPE_EDGE_FALLING>; /* GPIO E */
-> -		power-supply = <&reg_panel_3v3>;
-> +		vcc-supply = <&reg_panel_3v3>;
-This looks like a different kind of change ?
+dt-pw-bot: <state>
+
+or
+
+pw-bot: <project> <state>
+
+Rob
 
