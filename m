@@ -1,195 +1,273 @@
-Return-Path: <linux-kernel+bounces-853414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D663BBDB958
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88241BDB98D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24A774FAB14
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:10:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4B61925E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A9F30DD33;
-	Tue, 14 Oct 2025 22:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B488930C609;
+	Tue, 14 Oct 2025 22:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="vRjj1Iz2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iwWFCDct"
-Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KCrUZjem"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464630595D;
-	Tue, 14 Oct 2025 22:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0B12DE6F5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760479844; cv=none; b=GzzZZ++kBudOjLolSr/BTmQLyg26En9kvRDFGGGAJamRSqWsyuSExuP754P7McPMC40PFPjlKkeF+MCleA470wUrGZlg+hQkpRmjQmvBwu6Otng4B+j+TTi9CmsNvdYofZ5wh4adla2Xkk+VmtjyNFmLQYlAujl1iejv6K2G5aw=
+	t=1760480158; cv=none; b=d7fVqmYV2PEzZOZ7WhXWOUeCytHvOKqOuOfEFnma1yhgYkBJ+LZES7cHgcJO//0+hwoYS+pZ7COd2GrVr4mLY5uKFRC3Oiu4Eh/fgnyVUQVIBAXlAEtFhUleC1D6y3bT62bphPLN7Qmb7KjgEcKeqdVDdYCx9F/pLY50qYN+4lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760479844; c=relaxed/simple;
-	bh=Y0ZWB8IW7WA3Tu8mFcSM9NS2fCmDXQy88DlyKa+fx6s=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=WgyGl1o6CBuUCf3LP9gTrZYpvnovU9iZuPOlNMpLKLdH81CG+qH5QBRhwleerk2hzqVQlysFj0d+yhn4K/5GhubOdkKVQSjTBaKsR4pLyiwy19t2HC6ywDS5nYULBHg4qO2lv2N/t1n1aSI4bcpsxaGTl/BKnjde1/c1TKPEBaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=vRjj1Iz2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iwWFCDct; arc=none smtp.client-ip=202.12.124.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailflow.stl.internal (Postfix) with ESMTP id 0EF761300683;
-	Tue, 14 Oct 2025 18:10:39 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 14 Oct 2025 18:10:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1760479838; x=1760487038; bh=nCzRbfcA8hHPMwFKOygEjL9TtP08HW4n43B
-	k2GKqoug=; b=vRjj1Iz2MJkRiS5oTgMN69YY9T5CviUbsSueOnyqMALlKoLh7yC
-	F0GyMWGoMaieW6VVoqxN/76Kf8BXa+mAuY2fx5ic4vurbiqZfp8UGUfqUglsez+F
-	e//U4w9egmHZnXSGLnKkvonWJDj850lqc3m4Y2KARjsEzY7sN1ZxlMXPAfe+TN1c
-	faN3HaM9wzmxKHLwXnc9zzlM1yqDxqqyKxl9t862tUXE+97RP6M/0e/IKnUVmGc0
-	75Ysc46PH/bff5A6VrDh5isNkbg9+PLWoK6xUBZ1Ukf0oPOXzIS3qXHVaO1enjNV
-	PhDqsBZ4y0aUxHxZFZ501FLY2BA+n5X2Elw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760479838; x=
-	1760487038; bh=nCzRbfcA8hHPMwFKOygEjL9TtP08HW4n43Bk2GKqoug=; b=i
-	wWFCDctDN6fTbgIeyP3+WP5OzVNSAHCGloQOLBJLDpkzsPUmwGboWIrqXVVflhuy
-	pL8Nj9AovR0zDR42pMxC9Xx3vzC9mJIito/nvOz7kDFn3lIRtPTh9qetJUlaqdJA
-	1yFqjPJ1tmw0wrvZdafT2MnEaR28OLjNkfBsC1d2loB3gWxtZLUdKqj9ATQf5dYZ
-	/phLJpA3tyIrGgzY81dE5JhtEAkvHgeTNNyIQJ4K3gLKWaYjjB88kGyN7YFA2qt+
-	qJMfxLBW/xxSST92Z3pa7QBLaCKoTSoMI/u7UwU1ryX2phtVa9XyXe7EBwJgJ/rT
-	Pm8PKokPejEsxh0+Sy3MA==
-X-ME-Sender: <xms:XMruaFuRT8IUuTMjKG1Dw0WHyOjGHDNfXyRE-_nVp-MOI_fakUzx5g>
-    <xme:XMruaNcG5qIHN3loksbZIoOceexzPVYZB3m0MFlN7v7iPHUT-OBQMT3-R4AgSGJpy
-    F4LDimAEuIL4DZn8RlZZTV4nEOoqE44hAHGM8uz2N-BVxnY5w>
-X-ME-Received: <xmr:XMruaBCr8PUP68p5xyBv2IrG4FxXTP8o3dAsBdcWY2_anfqWcF9PLzpLs2oJYv8sM08gZU8SNz8rNKAbWIDwRZfZNYVmIGisVM5S051kkx5o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddujedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:XMruaIlLW6kt8bsuAvkOEJYObTHM-44_i5n9WPzH3fXV5aO1bcA2kw>
-    <xmx:XMruaPhVqYQSbftP3_kDMT2NjLrpo1kVjx2g8f9L1MaXawYwkuOn5A>
-    <xmx:XMruaI16pFKOg_mv60A4rOIORMn7r6yl4PwtfngiItDQHs2j_EmxVg>
-    <xmx:XMruaDRhyP5ci8StbP1zoSb-2OZ4m2R3hTYOSSlLhMk0uGw48OMmeg>
-    <xmx:XsruaL1914rXeSmv2yP-lSzIlJexfiGmlhQv0Y75LbhTSC1UULawID9r>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 18:10:25 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760480158; c=relaxed/simple;
+	bh=M1j8XJ30eYUAcq6WGW4g/VpJ8uFOzrAajOSPXNfUTzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sE6WfxITybTkPSsTWqwMUd3E4Dyy7wlheo8XJFvrO8Tlt7DjTKbfxmv6QsaivIbzwvPCymgAUOiocycaIIPJ9iRw+XPalMW5jLxhXiCm3QldmcT5E8NBpT6MA01EbFn0bDpOD/jK1+DlifYBqzf2T0YRNg22mhmRnUYxQ9bvyyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KCrUZjem; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EKSS1x018419
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:15:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=dO8P+KcI/d4Q8sn/1ijHLrD1
+	nE6rqhU8O9CVWEaotTo=; b=KCrUZjemirsScd6We+F96ZU48x/Bqrn9hDPBGz/x
+	8fJOgcczJWxMsYS/s+FaCi1AFaaDgb0Kty9Vd7r8/0RIPMThJX17tP3H5AkQBuff
+	XEewIzafvzDjwIlwI1eNLy98PtsvBKnLKq+/pV+nF0XxJ/agln6Ngaoc1jV3s3Zn
+	AX2WvGeEJUubf5DSRNgDDpoQKXBX1nTyLi4g7sRQoZtF7anAcdLHTDICKvdS3xFT
+	we5yaqmQE6AEElwLJSy3LG8p1LOaBUp/mDLW4fR0aFssuHSHhmVQwlX3gU+vGUaX
+	tSIgIO53siZ6uZw0shQAZdY9vqQojLcF/G+xt2EBo3QApg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0c24hp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:15:56 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8544316ef6aso1512101385a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:15:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760480155; x=1761084955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dO8P+KcI/d4Q8sn/1ijHLrD1nE6rqhU8O9CVWEaotTo=;
+        b=vQB5gwURJBSGgKLVqz5XWzoo3kMKppe0FzbkqotC4Q69bZ3HevjG+MGFx6LNEm+2mN
+         OLIjZJVbRp/YtwL5PsmedveKpYPd2zzmSHEDJw3y8LNvWwZZfR3zzktbIPsctSQpYJHo
+         yl7Xg770JfxFN+YGcvKp+kUAMw5UfJMMWFSVWmqcsAvxb2+DGYtf+Ba+DDH8P2zbljn3
+         ftYxZSw9NW7jw6u78mRMkp5CRQ2KphsWCqrYbHlLuXQ6I637NPy+fBrai/2Ael0RtIfK
+         2Wxg2Y36JwQmwuQIvRIBWS/BeY8dh7c1wZ1ZMCHmpCGXG58TLK7bLtRtP7F6/Y+k98VX
+         4MGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyDouqohP3embAw3JmpXrgfIJM1Ri3GmfA/fDONxZ8o4FhBOTEvwOFgIyA0FSl88QClLr24/47etrvQlI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh+Q1n3g1awXLUdgHLEUdnnFDrGmsbGPRxMSa3WLUXztV5ScSV
+	1OadzjyCm5QilGBmgynmVwK8Cc+7FJFTfMT/oUElkxfay4co4S7aaq350J4WCWCHbMJ12XD6vhE
+	5dRKNKTzMgFVUqDrqg9hQ8me3bb1nBiHzERWnXhXg2QVMy6Fj6AeCpS8erl40KXnNAwc=
+X-Gm-Gg: ASbGnctbkU9cpSb0zL7dDlZPDKhxBR5kdjs/6jr2wPEMj2kZHRXrMYbpd/gX5o9MKgg
+	ii2c8XaP/7bgA76gZ6fPKMTqZVzXTbWRl43tW7y3GZnLmwsu4zsVi69wSJXPlR+1DPmu6D0dyuP
+	caMH62x1mEJmfbMmvnGG5F7HN3vznTtarssHI3YmTK9o0qSJtauMgLiN7rBrNEy+w/KblISw/aP
+	0EzTfy+6byULO8gOOAPn8YV28aBj35IeHb0nFr+OYqoM4XOgwQKkGONi/3B2vAkRKO6MbgXUvOC
+	l5VQ8RDwOZQ5Fs3XZAiZFVnuPJtKej5jVXGeZpKX5/hy+5lELaEFlwcG4FsF3UeMqXFI1l3a6zw
+	pIuO+gszJ6SNg158IHv8f1WBY0SeE0l+blicEO6Ydpq0jAxlOfiMD
+X-Received: by 2002:a05:622a:1a20:b0:4e7:250e:bbc4 with SMTP id d75a77b69052e-4e7250ebfe2mr130807071cf.69.1760480155066;
+        Tue, 14 Oct 2025 15:15:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFs72WZFEkjmQ1dyXbFz1Ye6bDNuzPRKg6wSnnk2SHSqHCWIZhOamKGqEdqEJtiaZPNUA4MTg==
+X-Received: by 2002:a05:622a:1a20:b0:4e7:250e:bbc4 with SMTP id d75a77b69052e-4e7250ebfe2mr130806721cf.69.1760480154462;
+        Tue, 14 Oct 2025 15:15:54 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591c20253bcsm957863e87.99.2025.10.14.15.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 15:15:53 -0700 (PDT)
+Date: Wed, 15 Oct 2025 01:15:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Sudarshan Shetty <tessolveupstream@gmail.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add support for QCS615 talos
+ evk board
+Message-ID: <wbg34hghu4gl277ppitctxgs5swlchjyjk425cjf4sbojlymlj@ca62bvncptny>
+References: <20251014120223.1914790-1-tessolveupstream@gmail.com>
+ <20251014120223.1914790-3-tessolveupstream@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Miklos Szeredi" <miklos@szeredi.hu>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Alexander Aring" <alex.aring@gmail.com>,
- "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
- "Paulo Alcantara" <pc@manguebit.org>,
- "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
- "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
- "Bharath SM" <bharathsm@microsoft.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Amir Goldstein" <amir73il@gmail.com>,
- "Namjae Jeon" <linkinjeon@kernel.org>,
- "Steve French" <smfrench@gmail.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Carlos Maiolino" <cem@kernel.org>,
- "Kuniyuki Iwashima" <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- samba-technical@lists.samba.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org
-Subject:
- Re: [PATCH 02/13] filelock: add a lm_may_setlease lease_manager callback
-In-reply-to: <87a320441f2b568c71649a7e6e99381b1dba6a8e.camel@kernel.org>
-References: <>, <87a320441f2b568c71649a7e6e99381b1dba6a8e.camel@kernel.org>
-Date: Wed, 15 Oct 2025 09:10:23 +1100
-Message-id: <176047982343.1793333.618816248171085890@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014120223.1914790-3-tessolveupstream@gmail.com>
+X-Proofpoint-GUID: p_oQ--gP1F18NsuYr7m4iEl9jgfs5S7r
+X-Proofpoint-ORIG-GUID: p_oQ--gP1F18NsuYr7m4iEl9jgfs5S7r
+X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68eecb9c cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8
+ a=4ClYx_WmNUqONUsMR88A:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfXyFNue3IoIbAh
+ uqxq/j94zt0/l5XcpEfzsigGR57GsbGRlE34wvbcHRaqA+xo2/s1JNp4hWQZYYYywb4HZjfdPYf
+ oeCbvDVoAenXqripI5FFlXP1s4jVeRQ8zMRZLiwGCpeAI4sUF9pJm/YBeoVIg+3Eud2/gY8JHWV
+ uI0Z+mZegUjiGk2xshTRqLFTMkJ3wjAh1cGldX431y9GAhNV0tmvTZhgJNC3GzlNKj4TFlQOw0o
+ EikpjBQCTtGs9nmjDRq8w4bRbcdFDnAcGrbhyhQVc/O3Pr712Q+qEkMp5gyEkzTQMctGQDmXIEQ
+ f/b6SCzbJgkGXjWdv1UA6ZxwDyf6dLoQZV2DwPbM8efA9q/Z/ghwS3FNlXrfAi4Ycn9PyUs/o35
+ vwR+ms4I5qUQ76UA70T/Jrm5oMT39Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
 
-On Tue, 14 Oct 2025, Jeff Layton wrote:
-> On Tue, 2025-10-14 at 16:34 +1100, NeilBrown wrote:
-> > On Tue, 14 Oct 2025, Jeff Layton wrote:
-> > > The NFSv4.1 protocol adds support for directory delegations, but it
-> > > specifies that if you already have a delegation and try to request a new
-> > > one on the same filehandle, the server must reply that the delegation is
-> > > unavailable.
-> > >=20
-> > > Add a new lease manager callback to allow the lease manager (nfsd in
-> > > this case) to impose this extra check when performing a setlease.
-> > >=20
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/locks.c               |  5 +++++
-> > >  include/linux/filelock.h | 14 ++++++++++++++
-> > >  2 files changed, 19 insertions(+)
-> > >=20
-> > > diff --git a/fs/locks.c b/fs/locks.c
-> > > index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..9e366b13674538dbf482ffd=
-eee92fc717733ee20 100644
-> > > --- a/fs/locks.c
-> > > +++ b/fs/locks.c
-> > > @@ -1826,6 +1826,11 @@ generic_add_lease(struct file *filp, int arg, st=
-ruct file_lease **flp, void **pr
-> > >  			continue;
-> > >  		}
-> > > =20
-> > > +		/* Allow the lease manager to veto the setlease */
-> > > +		if (lease->fl_lmops->lm_may_setlease &&
-> > > +		    !lease->fl_lmops->lm_may_setlease(lease, fl))
-> > > +			goto out;
-> > > +
-> >=20
-> > I don't see any locking around this.  What if the condition which
-> > triggers a veto happens after this check, and before the lm_change
-> > below?
-> > Should lm_change implement the veto?  Return -EAGAIN?
-> >=20
-> >=20
->=20
-> The flc_lock is held over this check and any subsequent lease addition.
-> Is that not sufficient?
+On Tue, Oct 14, 2025 at 05:32:23PM +0530, Sudarshan Shetty wrote:
+> Introduce the device tree support for the QCS615-based talos-evk
+> platform, which follows the SMARC (Smart Mobility ARChitecture)
+> standard. The platform is composed of two main hardware
+> components: the talos-evk-som and the talos-evk carrier board.
+> 
+> The talos-evk-som is a compact System on Module that integrates the
+> QCS615 SoC, PMIC, and essential GPIO connectivity. It follows the
+> SMARC standard, which defines a modular form factor allowing the SoM
+> to be paired with different carrier boards for varied applications.
+> 
+> The talos-evk is one such carrier board, designed for evaluation
+> and development purposes. It provides additional peripherals
+> such as UART, USB, and other interfaces to enable rapid
+> prototyping and hardware bring-up.
+> 
+> This initial device tree provides the basic configuration needed
+> to boot the platform to a UART shell. Further patches will extend
+> support for additional peripherals and subsystems.
+> 
+> The initial device tree includes basic support for:
+> 
+> - CPU and memory
+> 
+> - UART
+> 
+> - GPIOs
+> 
+> - Regulators
+> 
+> - PMIC
+> 
+> - Early console
+> 
+> - AT24MAC602 EEPROM
+> 
+> - MCP2515 SPI to CAN
+> 
+> QCS615 talos-evk uses a Quectel AF68E WiFi/BT module (PCIe for
+> WiFi and UART for Bluetooth), which is different from the RIDE
+> platform. Plan to enable these in a follow-up patch series.
+> 
+> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile           |   1 +
+>  arch/arm64/boot/dts/qcom/talos-evk-som.dtsi | 435 ++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/talos-evk.dts      |  42 ++
+>  3 files changed, 478 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-som.dtsi
+>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk.dts
+> 
+> +
+> +	extcon_usb_1: extcon-usb-1 {
+> +		compatible = "linux,extcon-usb-gpio";
+> +		vbus-gpio = <&pm8150_gpios 6 GPIO_ACTIVE_HIGH>;
+> +		id-gpio = <&pm8150_gpios 7 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-0 = <&usb1_vbus_det_default &usb1_id_det_default>;
+> +		pinctrl-names = "default";
+> +	};
 
-Ah - I didn't see that - sorry.
+Given that we are trying to switch to flattened DWC3 nodes and we are
+not going to support extcon in such a configuration (commit aeb0169217eb
+("usb: dwc3: qcom: Remove extcon functionality from glue layer")), I
+don't think this is a way to go. Please add a proper
+gpio-usb-b-connector node.
 
-But I still wonder why ->lm_change cannot do the veto.
+Also... This is not correct if SW1 is switched to the USB-Host. The ID
+is still connected to the micro-USB port and so it might generate some
+unpredicted interference. Unfortunately, DT isn't well-fitting for
+describing board options and SW1 is definitely an SoM option. Depending
+on its position the EVK should either use this gpio-usb-b-connector or
+an onboard USB hub (which ideally should also be described in DT). So,
+it feels like you need two different DT files, one for each SW1
+position.
 
-I also wonder if the current code can work.  If that loop finds an
-existing lease with the same file and the same owner the it invokes
-"continue" before the code that you added.
-So unless I'm misunderstanding (again) in the case that you are
-interested in, the new code doesn't run.
+> +
+> +&pm8150_gpios {
+> +	usb2_en: usb2-en-state {
+> +		pins = "gpio10";
+> +		function = "normal";
+> +		output-enable;
+> +		power-source = <0>;
+> +	};
+> +
+> +	usb1_vbus_det_default: usb1-vbus-det-default-state {
+> +		pins = "gpio6";
+> +		function = "normal";
+> +		output-enable;
+> +		power-source = <0>;
+> +	};
+> +
+> +	usb1_id_det_default: usb1-id-det-default-state {
+> +		pins = "gpio7";
+> +		function = "normal";
+> +		output-enable;
+> +		power-source = <0>;
+> +	};
 
-Thanks,
-NeilBrown
+Do you want to also describe gpio8 here?
+
+> +};
+> +
+
+
+[...]
+
+> +&usb_1_hsphy {
+> +	vdd-supply = <&vreg_l5a>;
+> +	vdda-pll-supply = <&vreg_l12a>;
+> +	vdda-phy-dpdm-supply = <&vreg_l13a>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_qmpphy {
+> +	vdda-phy-supply = <&vreg_l5a>;
+> +	vdda-pll-supply = <&vreg_l12a>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1 {
+> +	status = "okay";
+> +};
+> +
+> +/*
+> + * USB1 port supports both host and device modes.
+> + * By default, it operates in device mode.
+> + * To enable host mode, set switch SW1 to 'ON' position on the SoM.
+
+Is it device mode or is it an OTG mode? I don't have carrier board
+schematics, so I don't see if it is possible to enable VBUS on the
+micro-USB or not.
+
+> + */
+> +
+> +&usb_1_dwc3 {
+> +	dr_mode = "otg";
+
+JFYI: it's a default and can be omitted. Only host / peripheral needs to
+be specified explicitly.
+
+> +	extcon = <&extcon_usb_1>;
+> +};
+> +
+
+-- 
+With best wishes
+Dmitry
 
