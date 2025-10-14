@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-852039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EB1BD802F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:52:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD11BD8038
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E936F3BE441
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:52:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E4E14E499F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDF830E822;
-	Tue, 14 Oct 2025 07:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A4030E848;
+	Tue, 14 Oct 2025 07:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lYHdlgjg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bM2vIbQ/"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591B725F7B9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2A530DED9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760428321; cv=none; b=fM85PNj0vvhLpZg+80Ef7YBkLaGQbcCyDocQ8Jyf3bVl3IvThjtCTIwZYFRfBPN2gyT0oytuZZ56mmt9tvO2EnpvdWhvU2LZTyDUvKNzpskP1HBmh7MAmWCuMkEYsMltCv3MKEqPWwRRqVYuZtYGlM4fOXKTNzNTd065iD7FudY=
+	t=1760428379; cv=none; b=Ho0JJrlfAWVDLW4UpLHlCQ9nOm+hPba3EK+3HANv+ZCdNmXE14d+4ToOnw7GeaXBWhNlpWlxx9qPKy9/5OboIDVMPOzhpP86f1t5il/r0Z47nDtJPI6B+syigynDc4K1uM8bw/yJd6tbeLIy69M6D0EfOsh8NFKY9zozyrfbDY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760428321; c=relaxed/simple;
-	bh=qOlGTnjWC7S//4ct9mMhcN7fRfRzafEbye9A+w41OjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7eJbQL/3ZqLsVOe11N5eetvX5kSH4+QuF7pjGWEdTvo3spvLb4+FeLC9VuLrn4Wi9It05pWxZGJhDmUt24AAKiQzhVO5XsjwkbMt/wVx0pqep60CwVxrYsNNDXflBk+3v2blPOxHJrt+AkSBEGVAq+Cu5XwR87usk1f73tVI/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lYHdlgjg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E6RAx4016401
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:51:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Z0qtfAcbRRGVp6DETyBKrSN8epuMBuJtgVuS3PjeKqI=; b=lYHdlgjgVr3qv8Sr
-	r9abvsgc3pQ4XkE88OpfoSkvoSxnwgnq3EQCFOEcict/bDXTXPhPhy/F7eBZAX4T
-	MOJtDnXSS2rpptGgc7JVR+g78VVF6GlP9HJ/r9vuICrmV1t4TVgik8K9LEDa31YO
-	D9710R0JAzZtGR6M3Dh/Fo43smDEkIzxezLPfyU88ZDZ7Egra4CuQbBwdb3Q/3gV
-	IQb77YbMcpZHtAFiA/ToVXsPYzmLZMoDSadXFIVdgDwxo3EwxKMjT0h6zerz28Ah
-	2Z4feieEebgzHTZRYwnvSyOViqF41zyByI0J8uwyiCHdHEU8JdrWZ9+eP53+Home
-	wdgeEQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1abxwj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:51:59 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-879e3de728aso218198085a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:51:59 -0700 (PDT)
+	s=arc-20240116; t=1760428379; c=relaxed/simple;
+	bh=vwrJbLqYUIs2hdIZr04E/5ekc/E1RfYrlr8r6ix4a88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNBye+GyeHDrJtc2lYMRww8dk386tgHd2WNjXa2ZvkNq4z/SCDGseNOc0YnvFRCgsN/hxjiBfmihRxxaTsfgXtU4D742MNRPysOmTKmFYeJHS/VaK6JMZ+lNcAjOYUdBjSPHIHUN+KyM0ekcNzqVf4tDSnUwsbcJ3/7DVFaq09M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bM2vIbQ/; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so5755348e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760428375; x=1761033175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vwrJbLqYUIs2hdIZr04E/5ekc/E1RfYrlr8r6ix4a88=;
+        b=bM2vIbQ/T7wKhEPoz2u2iP2U8eDm6ZzLXRuCTG5L+Nkr51c1LuJO0bnYR5o/gOJvLJ
+         PqMc40rxLILHumK5eOrp7azICvxkO3KgyPSvqb9L/GkSFnRDu2veAiFq3pAIFyXBQr0b
+         GioXqiHn/vNKdtDIdIOkaVQahGRHf5Kt/XRWYUqbfIG6dWC+YTVexptKCupumVkpbLzG
+         sp759a+6uTPxPalIb2sEs/LhyfWSGQNUHtoe46r+K2PqXOKLTSIO/y3Ep88ZeHbGZxgu
+         5yeNFepW76upTfrjLPqVsrwBditNkbF4shMRrte9f3NvRm540BAH1Yy+1iDXI+G4HR43
+         SGwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760428318; x=1761033118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z0qtfAcbRRGVp6DETyBKrSN8epuMBuJtgVuS3PjeKqI=;
-        b=X9tyP0abiik9mtRZXmcyWJ3rrUsIdHfFbQkn/oTn8y7fEFlYrNhzVT0U1UxiLO0faR
-         wVUAc6TpqKhNy0jz8+hS+NpprjbBGy9A0pR/7Zp67TW2dY/I+RiuwerlKXAbLtnMW+nT
-         vCUfRstoBTov1WgkYRk1QIdsnWpLcF99LANnu7oRNbp7KgEWJaPh1R6zqs0qHFiVVZgv
-         rSOIXGC7CrWyqGdBhXVnb0BOJ+Y/UvjqfRLsQbEU7drLpTGFbblQh4mu+zlHX3zL2OtD
-         l2KZBnizbGeY8g9PfjhD80qRI29h2RUkS7bRVu6iFt+LCF4MkUJI0dbsapXhQCkHS3QY
-         XnvQ==
-X-Gm-Message-State: AOJu0YzZ3eKENeyTLIt343uc94piTxl1xaCJjV41AAIiLHQw+IntU5Ez
-	eZkl8ov6mbuB7E5yt0v4KfbfB9gHBmdRmiiNI6XDVJNmSQhbhApdJs8GRZCxPvW//wIrodjMgJv
-	YE6HUtU94glLKwuuADwNj5kyTK3eyfzdFIIfQCTYqM3vNlXhlVPGnwk9mlBRxCDkWm5o=
-X-Gm-Gg: ASbGncvIBzBc9j/Cwh17HuwhbKhqGnIQj/EsdWMDDuMLASUaO7flNT43CdaNiOHNOhC
-	vs+DTWBbvy7AVIdn2Lr8Kxeavw/yANyLbZBE4bZe1fHAhGKgPZlE8Yzz5TlQWc12MRrH8R9bywQ
-	4640lSwluUSzkVE4sZBkaLpmKj8joiBYFkrjQtK9Cb2+rVHEjBb2bdMHCdpI0IxjrsfUhpkIhWp
-	RL+MctCSBGDc7qWgRzHzNVHnb/jDk8mDOLLyrMjo+yCmFvB1koa+uIxdHLOiYDIksiuFo4xTLgS
-	v2roU6cjOt4wlbTCa6rAHjKkWEDCy94WPOXQPRJkeR17XY4noghNpk+fENcXQv3jp6LWgMMYifb
-	PGvyGMNVLxJITeqGKE39FUw==
-X-Received: by 2002:a05:620a:269a:b0:7e6:9e2b:6140 with SMTP id af79cd13be357-883541153abmr2177175385a.8.1760428318084;
-        Tue, 14 Oct 2025 00:51:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7dAVG2/lTAN89xViTE07+yt5E2ydVjSGhDeAoedXXt8eICGnDvQLJoPAGhJh54cblZhK0ow==
-X-Received: by 2002:a05:620a:269a:b0:7e6:9e2b:6140 with SMTP id af79cd13be357-883541153abmr2177173985a.8.1760428317632;
-        Tue, 14 Oct 2025 00:51:57 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c124b3sm1123874466b.55.2025.10.14.00.51.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 00:51:57 -0700 (PDT)
-Message-ID: <98b2bd9a-19e2-44f5-bdf2-fdd8e6c31815@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 09:51:55 +0200
+        d=1e100.net; s=20230601; t=1760428375; x=1761033175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vwrJbLqYUIs2hdIZr04E/5ekc/E1RfYrlr8r6ix4a88=;
+        b=HN6U+NLO+ATV8gko7J95Po9DvekqwSgrnkzOZuocLXxeNfH3XUSOOtesAumuqsLCjU
+         mPNNHsAm+4I7uNSKbr2X33TIqVfanpdDG/Z6LKDDmITNgQTCqN38Q9227mL5pO6MX6gR
+         ogZWrgXf4kMPjpA2sL9P/scASEhEVbKibApO6/lxLnWH+pcR0BHORz44EKFbZFroXYUu
+         I8lyqoLcN8cULuZPKZV+kJBhM/bQGE4xCEEDTJLDIy18uiz+FO15FjzkKcblciP89niW
+         5bmtaXMxhuLzYruFuX6+h9UTKf+TL5/PkV4VuIMzqpG6JwJnmJi3XZMt3P/xg3NdMzut
+         u62w==
+X-Gm-Message-State: AOJu0YxFNzvTaMZB7Ck4hM/CTa/J+JAJU4dfQcARB/O+on9O1uXg3acZ
+	niOm0czuMQ/NZTXEbH1Qbqk7IJ84fKjZjfVSHcj0N4F2TFkfvoZcDUYyHf2g5of7l04HDcBlR7k
+	QK+A6Sh6KlwMVw8YEBpgmukwt1AKu57Qyt2q7rOku/w==
+X-Gm-Gg: ASbGncsItTZX8S7clA29ESc/w0q93D/Ma1FxLkuFtbQTlPWcdxmcyFTkPknCw71iwNc
+	TEm77BLEVzG26sTHDdNwf9XVxwyeVAf+3v0SvL3yDtsUTldUSpAs01bUmRZGsqmqEQKjXCt4+Y9
+	iUJSa5it+2lDk12xRoDx3BztgSwCHmAkDqyemgzF78ODncNBa9YWY15pkmPn42ix+d0JZwe8iV8
+	7c8RTjU+mzq3wd3se6OCUqxdB7FyFI2Yf2ajVoh44nskWpgWuabT4UHBU0=
+X-Google-Smtp-Source: AGHT+IE6gg+MLBxMH7PzBTZswQ1htTybiRf8di7CCXjc7HVRjNQ5sXwPlBAm2r4gvNL/pfqQj+6D1NfuyxLQ/PTPyB4=
+X-Received: by 2002:a2e:9a12:0:b0:336:7c7c:5ba5 with SMTP id
+ 38308e7fff4ca-37609e10855mr73524151fa.23.1760428375403; Tue, 14 Oct 2025
+ 00:52:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] firmware: arm_scmi: Increase MAX_OPPS to 64
-To: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>, sudeep.holla@arm.com,
-        cristian.marussi@arm.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, mike.tipton@oss.qualcomm.com
-References: <20251014073454.461999-1-vivek.aknurwar@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251014073454.461999-1-vivek.aknurwar@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68ee011f cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=yHBzqE6aYKRmK_OBsYIA:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: W3QTdyld8AzGGaMsksAEm3KHJp-ipRMp
-X-Proofpoint-ORIG-GUID: W3QTdyld8AzGGaMsksAEm3KHJp-ipRMp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfX1NF77wNlJ06I
- UK35aW3JH3kATIlB95eAJ30QACJfDo7yRddW4Hj0PBJcPzvCUZqSW1cSZbECuene6yGDrn7dj/T
- i32MMreQJM2KLLzNEu7DUyLQQxCfRtSyFzkGmjVtr9zd+Gy0oahBeRFzvJik+oFfyP2FKJEI2vs
- hbLJyzdIC4fotRex/bLz895BJqlrSlmxECOOp4vuGRz6VJ4ywSWYDa7hMeNpWsJvyN7CRtG3RtO
- HeusJf3+am2CHE5CrD9ymtL78uLdaUHggNewcG3ZyLUvVs1+XzrWflyGCgkbmmQdJoi12r1JgsU
- AqbJ5XvwKUrU2Wl960TickjGK7mmzuVWLOi+muHquyneX4UvouzpBc9U9th8cTrYhHY3q3vuwis
- 5rOx6DKKcjeK8I1rO33fzTtbtYTfkw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- adultscore=0 clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
+References: <20250919153008.324338-1-marco.crivellari@suse.com>
+ <20250919153008.324338-2-marco.crivellari@suse.com> <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 14 Oct 2025 09:52:44 +0200
+X-Gm-Features: AS18NWBEnf1NwISRN12NIVApf9Z9zdxOb-FVRSihzo52lcsL7sWcjBRM1cAsi1s
+Message-ID: <CAAofZF45x0y1a8bEbv9BrPgVp8EGbfPYTjvL_sv=xnf-r80u8g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] PM: WQ_UNBOUND added to pm_wq workqueue
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/14/25 9:34 AM, Vivek Aknurwar wrote:
-> Some upcoming SoCs define more than 32 operating performance points (OPPs),
-> exceeding the current SCMI protocol limit. Increase MAX_OPPS to 64
-> (next power of 2) to support these configurations.
-> 
-> Signed-off-by: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
-> ---
+On Mon, Oct 13, 2025 at 8:51=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>[...]
+> Applied as 6.19 material, thanks!
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Many thanks!
 
-Konrad
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
