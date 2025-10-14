@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-852183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E705BD8604
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:15:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A51ABD864C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D49F406906
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:15:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D479A35169C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BBA2DEA8E;
-	Tue, 14 Oct 2025 09:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cxQdAUj3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72232E5D2A;
+	Tue, 14 Oct 2025 09:19:56 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589662E7F17
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0833285C99
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433310; cv=none; b=syFGLgcfhqB8qEdTnifPOmR3KCBfD3hyUO9/6Yxb88uWcHuIsiqcfocqaFRegn+0BLMnyZlcWG2Dxg0u+4AP2Rw4RGOhXx3/ybxMoiq1zb/R26AV55hyQJJew/3uqFPvs3rvr6FzooVMgmREMcoZW7mpqMjwvxGzwKJfWlmcCxY=
+	t=1760433596; cv=none; b=UZhdwAYcfv6bd6VN/Tu3Bs/dG/m69vVVyHQacXTMRUYEkr68Z0DNVBmh34Su3Qf2CSNhKEJzP+dZEEjhXpgNoQsYdnvsJ6wygstgLMTpWJwsXLvpQ9NwerVajF+3gnoUIogwsMRjF/MjTsFT2fX/ysmwXFVq69z37SoaBu42j3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433310; c=relaxed/simple;
-	bh=dUf3SgvGYlHaEs4USw9N4nJWZh+DpSXufR90IS9NURs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HF92vTy/eNetEOEAYgkqZ6Thiq5vxBDiG/rtSjNmw+FpblJsimw6Wtuv43Wbd348ysPuu2SOCmERTOke+cAyAGON2TMIZ28eMAqIUmt5PQi/KFSVNx5MXtKq+zn5i5QSVQd1IL8xPzcS5ItdqfSD45XAMmd1Oq8T7D5wPhBjiNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cxQdAUj3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760433306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=84qLuulQEWfDvvAd6y1sTa13pyZb7pX9XGxQ88tYQoo=;
-	b=cxQdAUj3nBFm0Mz1tUoPiBi9NsjkDbMhqNzlIVx0xNkju7vp3GxlQzwmqL4F1laiqzupn7
-	8KiGZcZTW63OrrZsg9O//GH2wPGat1wgzgzQ1+m1OwM6RjB2FE+nk/2Q8u3I84144N1r1P
-	hjkjAe2L9O2IRZhPmhsQZM8iZDIJs14=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-habP5WxuNy6IzIfoPvjpwQ-1; Tue,
- 14 Oct 2025 05:15:03 -0400
-X-MC-Unique: habP5WxuNy6IzIfoPvjpwQ-1
-X-Mimecast-MFC-AGG-ID: habP5WxuNy6IzIfoPvjpwQ_1760433299
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08D5B18002CD;
-	Tue, 14 Oct 2025 09:14:59 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.12])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8DCFA1800283;
-	Tue, 14 Oct 2025 09:14:57 +0000 (UTC)
-Date: Tue, 14 Oct 2025 17:14:53 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, glider@google.com,
-	dvyukov@google.com, elver@google.com, linux-mm@kvack.org,
-	vincenzo.frascino@arm.com, akpm@linux-foundation.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, sj@kernel.org,
-	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu
-Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three
- modes
-Message-ID: <aO4UjVmGkYg5Nyf6@MiWiFi-R3L-srv>
-References: <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv>
- <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
- <75a2eb31-3636-44d4-b2c9-3a24646499a4@gmail.com>
- <CA+fCnZf7jYPUyqHqonWhDKVi9eeN6aaaByMTBYCQrv2-8+hngQ@mail.gmail.com>
- <aMfWz4gwFNMx7x82@MiWiFi-R3L-srv>
- <CA+fCnZcWEuBerMeS4RCXQtged06MJhY=55KsYeJEOJn3K0psXQ@mail.gmail.com>
- <aNNY1AzfGua3Kk3S@MiWiFi-R3L-srv>
- <CACzwLxh10=H5LE0p86xKqfvObqq+6ZN5Cs0hJ9i1MKJHWnNx2w@mail.gmail.com>
- <aNTfPjS2buXMI46D@MiWiFi-R3L-srv>
- <CACzwLxiJ0pGur42Vigq=JnYecyZn-Z5BC3VcqxSUttT54kEusA@mail.gmail.com>
+	s=arc-20240116; t=1760433596; c=relaxed/simple;
+	bh=VJgMPLn1l+slzARbgJQjau6sONTpo4VaJ2HYwxfoqcs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uI0LojCyAmI8WJcKiTX/l6mqGNGs19/GTgXle2g+hYPbZDGqGELNxTc/wiSCujY7lNBZuuz6pheF4LoRuEJDCF3o3UYhZMDDAlShKaeHQasiiTkyAcfPpYmS8i4xpZ7/11L/QiBUpd0DpuxSWTVejX5gm9EnMWDHlqxRwfOKAvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b4736e043f9so803930866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:19:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760433593; x=1761038393;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eUWbRtnAFePUI1tMie+GrKRoLPPrc7Cc1NmHWueu9MU=;
+        b=m2AIKWSj74e7YpFkzYKJz9aaar+X/oiYRVGG1fYjEu2pxgFqHobcApx3VG9EBXvV+V
+         8220nkM0GmG0i9CSmAnNOSS9KIAR58UHpAyu9IktjBpl3mbUep8J7HzrK9MGy9hZRwGh
+         mOUndfHL/HJx5/f8FYNkfNwGkTIDsk0zm2fHdGE2V2Ooo3JCiHoYoB2KPL6jmnAQJMdR
+         VJDdi1+BfJcLgFtZFM1xr8LT9JatF1vybMNFQS1GmrofTwqh0roJPfikMXUIkPtwW997
+         dA4rq67Gp9/gzwW5ItNT8K/pmiKVuEcEVVzn7K+08pYjT19Mpu7PjUkszvDCLo7QH94N
+         9ALg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUbHbKeQ1cfbrusevJb05Wj7k5Oh+ydQxLhRTBEjYVY+Yder57N0/m//EOdnrHAtItVUvWoCniK43dpHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnq8OwROJOEOjTslFsAHErTU0umVTuWg036PE6TL8Hez3Ed1ar
+	SbU2s+ZyV/+DI1MliAbOsVgncHBPI2eCg+kMcL+dYu7JlVFYgAlg04Dj
+X-Gm-Gg: ASbGncv1frIvIrJyx8GSK22+UFMnbNxX3DrrvKXCnCGrVbkcyEX9Q4UOD1FsexEa1O0
+	dpvcxZ4DhsD78XmZy5zy+XpMRiJgJqXBLSO2EM1DKfNBmH7MIDdNpeCi6QaID6vxuJxrrlXqJYz
+	8IB9H2DeIAWLWpe3i1HvnuGH12nceZy4ebLqa2hUwVuHx61hEKoS6ChnQ7WeN6EXr0xXpYi/c8/
+	C8532wRu6Vd6QyMDCqO3bNBQw7db/Gx6AGmc1aDSOFZLM3mkOvvDV/LYgJlQK6O6O5GwzmMt75O
+	wX+JPVW12pQETKh1DdoPrsnlB28MVPpBHriSRERnRpFqm23gOuASouu1NrPgHjltjsfg00RMtk7
+	2OMjEuJu+Ym3GCGM5+9WAYJkH1tma0JMfmWzDuv7351iOjQ==
+X-Google-Smtp-Source: AGHT+IFjohny4b8ONv2Wek8GZB2PYRw08z+IDcEkU2PBHzAFqFb2nqGo/sSeqK8BBkKa1jGRp3pB8Q==
+X-Received: by 2002:a17:907:3f14:b0:b38:6689:b9f5 with SMTP id a640c23a62f3a-b50aa48dad9mr2709407866b.3.1760433592704;
+        Tue, 14 Oct 2025 02:19:52 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:2::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d61d04dfsm1118930066b.22.2025.10.14.02.19.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 02:19:52 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Tue, 14 Oct 2025 02:17:25 -0700
+Subject: [PATCH net v2] netdevsim: set the carrier when the device goes up
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACzwLxiJ0pGur42Vigq=JnYecyZn-Z5BC3VcqxSUttT54kEusA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251014-netdevsim_fix-v2-1-53b40590dae1@debian.org>
+X-B4-Tracking: v=1; b=H4sIACUV7mgC/3XNQQqDMBRF0a2ENzYliY1VR91HkRKbH/2DxpJIs
+ Ih7Lzjv+MK5OzIlpoxe7EhUOPMS0QtTCbxmFyeS7NELGGWsVrqWkVZPJfP7GXiTY+daZ1VzDW1
+ AJfBJFHg7vQcirRgqgZnzuqTv+Sj6TH+4oqWWtb2NprHed17dPY3s4mVJE4bjOH4TUOGYsAAAA
+ A==
+X-Change-ID: 20251013-netdevsim_fix-b9a8a5064f8f
+To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>, 
+ Andrew Lunn <andrew@lunn.ch>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1786; i=leitao@debian.org;
+ h=from:subject:message-id; bh=VJgMPLn1l+slzARbgJQjau6sONTpo4VaJ2HYwxfoqcs=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo7hW3j+Ib/nYC8U/xj494rOJsEYPBywCIJFrS+
+ CYsrtcb5OyJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaO4VtwAKCRA1o5Of/Hh3
+ bWSzEACsWRp0dx8Hba+M++EAUB/uUIZaaFAnYLaTeCSdrbCWdIKFSONIW+T3eqfEyEj2AYZ15MY
+ K2Ebz1MWYoyywEl7MQEX/YnALn3cz/EeFeqTKwyZKuA6Spp/1Lgn3uGlagPiRL09sUT1b23EFLr
+ rVizn3VYsK6NVgPDTjdebOGDBwOBQROZtDyC7aLIXu3xbvKzZ7b0Q6S4vyLhVcw7DXy2SHCTXVj
+ rPKYZaTZxLC3Svjf2m4qubZat6Moyfllt44L6pX9EiYK/m1QmDjZcdzePfVYgHaKOFaDa9wb8WI
+ 6fsNryZyWRiPjcKEKdLuvs7ouVw1gtVO84tL3tye9H8gb6CDnKy3Yfeg7FXAQTIe6XEzh0FgvLa
+ 3laXsdZL1+2hRgUcOLx6P1YgrBAPlPhp71Xefwe+w0tzKOrPAi91qmp2yyislz+2jWj+wM1Fat8
+ 29ZQgGzqx94W56310sYDHknxUhviOoAHCF79Ef8f8hbu2y971DiYIDTMHivK7Dwov2G1l5a0di2
+ Nm5rY1PnD4NzSWSR9SQ0jlQMrKXNwdv42rn1YXa7ZDyX8b6m3rRxX8HHzTvgUeln4/fghC5D8u5
+ IdUJgWdQICOzwAVJTTFLZn+hANGi4vFiCFyg9+mOfjSZQ7jjB/weVIHS2Z2yyMHLuiz4TFs7WKt
+ LY0xi2yiHuwZBEQ==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 10/14/25 at 10:27am, Sabyrzhan Tasbolatov wrote:
-> On Thu, Sep 25, 2025 at 11:21 AM Baoquan He <bhe@redhat.com> wrote:
-> >
-> > On 09/25/25 at 12:07am, Sabyrzhan Tasbolatov wrote:
-> > > On Wed, Sep 24, 2025 at 5:35 AM Baoquan He <bhe@redhat.com> wrote:
-> > > >
-> > > > On 09/23/25 at 07:49pm, Andrey Konovalov wrote:
-> > > > > Since the Sabyrzhan's patches are already in mm-stable (and I assume
-> > > > > will be merged during the next merge window), just rebase your changes
-> > > > > on top.
-> > > >
-> > > > That's fine, I will rebase.
-> > > >
-> > > > >
-> > > > > But also note that Sabyrzhan is planning to move out the
-> > > > > kasan_enabled() checks into include/linux/kasan.h (which is a clean-up
-> > > > > I would have also asked you to do with the kasan=off patches), so
-> > > > > maybe you should sync up with him wrt these changes.
-> > > >
-> > > > Hi Sabyrzhan,
-> > > >
-> > > > What's your thought? You want to do the cleanup after my rebasing on
-> > > > your merged patches or you prefer to do it ahead of time? Please let me
-> > > > know so that I can adjust my posting accordingly. Thanks.
-> > > >
-> > >
-> > > Hello,
-> > >
-> > > I can make all necessary changes only next week. Currently, traveling.
-> > > I will send the fix-up patch Andrey has described somewhere next week.
-> > > Please let me know if it's ok.
-> >
-> > Please take it easy, today is Thursday, I will wait for your clean up
-> > patch next week and post. I can do some preparation work for rebasing on
-> > your merged patches. Thanks.
-> 
-> Hello,
-> 
-> Just heads up that I've already sent cleanup patches [1] and
-> Andrew has merged them into mm-new tree.
-> Hopefully, one week's delay wasn't a problem.
+Bringing a linked netdevsim device down and then up causes communication
+failure because both interfaces lack carrier. Basically a ifdown/ifup on
+the interface make the link broken.
 
-Thanks for telling. I planned to rebase on top of that and repost in
-one week or two weeks. I am doing some patch back porting for RHEL.
+Commit 3762ec05a9fbda ("netdevsim: add NAPI support") added supported
+for NAPI, calling netif_carrier_off() in nsim_stop(). This patch
+re-enables the carrier symmetrically on nsim_open(), in case the device
+is linked and the peer is up.
 
-> 
-> [1] https://lore.kernel.org/all/20251009155403.1379150-1-snovitoll@gmail.com/
-> 
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: 3762ec05a9fbda ("netdevsim: add NAPI support")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+Changes in v2:
+- Reword the commit message to reference the symmetry between
+  nsim_open() and nsim_stop() in regarding to carrier. (Andrew Lunn)
+- Link to v1: https://lore.kernel.org/r/20251013-netdevsim_fix-v1-1-357b265dd9d0@debian.org
+---
+ drivers/net/netdevsim/netdev.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+index ebc3833e95b44..fa1d97885caaf 100644
+--- a/drivers/net/netdevsim/netdev.c
++++ b/drivers/net/netdevsim/netdev.c
+@@ -545,6 +545,7 @@ static void nsim_enable_napi(struct netdevsim *ns)
+ static int nsim_open(struct net_device *dev)
+ {
+ 	struct netdevsim *ns = netdev_priv(dev);
++	struct netdevsim *peer;
+ 	int err;
+ 
+ 	netdev_assert_locked(dev);
+@@ -555,6 +556,12 @@ static int nsim_open(struct net_device *dev)
+ 
+ 	nsim_enable_napi(ns);
+ 
++	peer = rtnl_dereference(ns->peer);
++	if (peer && netif_running(peer->netdev)) {
++		netif_carrier_on(dev);
++		netif_carrier_on(peer->netdev);
++	}
++
+ 	return 0;
+ }
+ 
+
+---
+base-commit: 0b4b77eff5f8cd9be062783a1c1e198d46d0a753
+change-id: 20251013-netdevsim_fix-b9a8a5064f8f
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
