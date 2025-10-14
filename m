@@ -1,158 +1,129 @@
-Return-Path: <linux-kernel+bounces-852934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCA9BDA49C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:18:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DCBBDA499
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519253A738B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:10:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84CF4503F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E90C2DEA7A;
-	Tue, 14 Oct 2025 15:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FF82FF65A;
+	Tue, 14 Oct 2025 15:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T0p9r5jB"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Y5B2OAhQ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FEE29A9C8
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760454613; cv=none; b=jzYwNQxloRiwccYYVahnzE+VC3u8CxBmR/30QbAsxWom8Za6WK7wGQZP1RfEwMMpbziOxH16OvHGscEiBpClkvdCX+XKuHWssDDqQujZSjjFdt/8ubJkBHjkug4twWjUZ4u7Y/8Yzptk+ETyB3KfYY2KnNZwYrywKjw+cOprn9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760454613; c=relaxed/simple;
-	bh=+9sQqZFGj6pjO2HmOLKtnRlFSVSp+ASbakb0jxv6v+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GqqwnnSJ16s/048l6eNYpxikZOg+uFO6o79mHYvItOWgoavwoMWRcg2RUneBD72DX7RbcwHrFE1fuBsLMtZgo44spvD9H3qRqA0AMR/2Uu0JyuKhS88yAl0e6O/oAjl92AB3/kDy1nSwsS3znBWjmvomVx1PaEySKO/O+zFn8YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T0p9r5jB; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e34c691a8so9485085e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760454610; x=1761059410; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9sQqZFGj6pjO2HmOLKtnRlFSVSp+ASbakb0jxv6v+E=;
-        b=T0p9r5jBQg5JXq08Q+XBRrtiI/r2VoweFjuZsy73GRkwFH5Ouzm2qK3t/9bV5A93g5
-         XlkljYlPrDtgMk+CwpK+9DXgorSbaA8QE16rIHIz5zrtZCx2etQcCum9T+boiJKrmv4H
-         qe4+55uzRQeaFraZP3rP2dC6Q+03bRKBj+Fj0iIe6anEtOItOWi8BBfnee3vQKucUBoD
-         jBsLlkMtdHpzDcivNOzVdf+jNkv9xF9gZqemJLWoZ665zYrZoMj7U1PRp7M0nhexeGJD
-         8gWL5FYaUjKp0XsrdLu+CC3RRzApd3cZ4iV8FDZHZOf9jx0pGXeGojLFEtCIwvKiYAIV
-         yDfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760454610; x=1761059410;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+9sQqZFGj6pjO2HmOLKtnRlFSVSp+ASbakb0jxv6v+E=;
-        b=l5hklqCrJReUt1MkUyyLrZh3AXb7AX8/SZfWvCUTHikyWHEMNRwJ/Er5DzX+AlkJog
-         9UmsgG9SAQWhjeWe3MvzL8DRA8sisKuNZXY0gRJRS7WQvDN6dZl64BKmm89VkYnuindc
-         qQGcIw1rY/1b74TRIDhm/fO40Z0MPyFu6aKQQ9ViOZ3Am+4ZUBjHHExGGnwyjRNByak8
-         uWhuo4rnrpEsXRo+0d5rqHX4V5G4lwmx2hXWOY/3sF7taoB0zFeUzLdQB5XnXzcu3ebo
-         qUXec/HacyNAkUysX0ay8dlypj3Pc7wyzlT7RdLIai4eUaujhNkn4jcBUpbz8U74p4jp
-         hJOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQBg6I/KZoO1Kbx7AgApu1vSTwus9l10aKYYlv+CMOhOCY36JvgcKh4S3LKyIDM1W5kmNt4x9QAFWN3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz29FcbXh2S1l2QUSCEo/bTNC2HtNxkDiY5crHbUro3WJmN4Ik
-	IZ3citl2Uo8nUij/S9qo7G3GkJeO2KcwBMqy0BpTWeE0RUb15Cvao1GrSvPIKby95cU=
-X-Gm-Gg: ASbGnctJL+SJ7FbSwy+NoJh5yU8uw3gioHWOEo1IChaHF0c0RbDcum6duu+plDvJPU3
-	GoDuyQkiuvlcD9IidWZ8OckYVk8PtzGdmRb50kAmpLa4BhWiJBE9Om2xN9SN/QFVlKzu1oN+JUm
-	Nwd5V2v5kE9cHioq6LDdiMU+Wv8EMiZLHBcg1OSD7z/jd6db3KnoYZnmJqb9ql6OgjJxjYqjaOw
-	YP9RniIzMv4iSeQfl9bFJ2s9R4fCKOp/dD1oshdaZz+J1Xr6ve5SkF/p22+KmCyXyWiK7Jov6h7
-	cWgq4DD9l95lhO112ZInqKPG4FzIGdvB1vCju3a1tjrF/Wp30xgG1V31pXPb0E6vIc+KXAhQpCU
-	zGlapKEOtxNuXs1FDlXZK4Oc=
-X-Google-Smtp-Source: AGHT+IGAXLObLFqWvdrlT8jNvhDt4TeOuL5i0Y/T3RwGkmTWxiheZJLoRR4en+J0WUHha4o/PPCBLQ==
-X-Received: by 2002:a05:600c:4e93:b0:45f:2919:5e9c with SMTP id 5b1f17b1804b1-46fa9a8ae60mr100424145e9.2.1760454609668;
-        Tue, 14 Oct 2025 08:10:09 -0700 (PDT)
-Received: from mordecai.tesarici.cz ([213.235.133.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489194dsm244369755e9.12.2025.10.14.08.10.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 08:10:09 -0700 (PDT)
-Date: Tue, 14 Oct 2025 17:10:03 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>, "zhaoyang.huang"
- <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- Mel Gorman <mgorman@techsingularity.net>, Vlastimil Babka <vbabka@suse.cz>,
- Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
- John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Subject: Re: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for
- order-0 allocation
-Message-ID: <20251014171003.57bbfd63@mordecai.tesarici.cz>
-In-Reply-To: <ecba7133-699c-4f3e-927c-bad5bd4c36a3@amd.com>
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
-	<20251014083230.1181072-3-zhaoyang.huang@unisoc.com>
-	<87953097-a105-4775-88a5-9b3a676ff139@amd.com>
-	<CAGWkznGN7W-txq_G+xpZ6DtH_1DNorYc=CxqUjebo7qfB4Sxsw@mail.gmail.com>
-	<ecba7133-699c-4f3e-927c-bad5bd4c36a3@amd.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FBF2F60D5;
+	Tue, 14 Oct 2025 15:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760454684; cv=pass; b=ER9rXBtuPb7MJSCF2cj4h/Ut8BdtwgmasvtGxl31+IMOvEvJ82MaSFh0260ocISl8daOQXeCH5c+nmyOrRHBeUjyGx6+T+tNqpflawbs3vM3bDInCsfrHJoEvvksOcmwSZ6uiHC6I8KYHROXDCdP1issHTLFnb88+bTG3ICPkoM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760454684; c=relaxed/simple;
+	bh=FT7rwYbfbYv/WUqESExDjKNVuc3tXZAx0bdt5TFToJE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oBlQ5eBR713jautlfyynvWll6eRsu0q8Ya/WVrqNvd5GgqJ/GaPVuD8I9xlUOLmyxJ0VDdMpDX8tZGWhVp55NWuFrbe3UKJTShk0+iY0MjvKdTCOTUVZV3dMXNLKfp/pEHJFnJYOYMtIg4kJIRjQWuv9NWEQJMxVyftQMGLMhlc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Y5B2OAhQ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760454622; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GvHyt0pU9WHVCquV5TD7GVuuvanrQd75qtwSFeAKtRGBdlrqPSRJA5QQQvrIQ/EuPr2s7GgTAXOfKvW01W6VBSsUygIWhVl6Ysx3qWhNsaM+czytxl37wPPebrUoOB0Nc2n3BRhXH+R+Uy+MqzZJtnwMxBJ/sfhC3M0txolELQE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760454622; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sA3fLEM3pMFmQ7m36DJ7taILG17fx4lcHYtgoNT4WgA=; 
+	b=EwD/BiKhlBqE//FJon2Zg96AGImNfF2YmXI5iwReKBaQ5p1dSdMToh4tbeEkLpveZrBqR27Fcxr6NIWZDC75NDK4vRTkl42qHF8Tz+A9pO/ELTQZ8b/fg24E1yn7VVLPJdnz6yBlCJYW62Paqft6npnsuPM3sMld3LuwtpkOTMY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760454622;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=sA3fLEM3pMFmQ7m36DJ7taILG17fx4lcHYtgoNT4WgA=;
+	b=Y5B2OAhQqVDdnHBPeubHxvlMXvKaO0BkkNVBjF/FuNfK7Zb3Tzvo0jSQ0i8ZoBwr
+	Sl1z4kIkbrCekFbg1olcbUHQRRVUGFgBPSmMEZVv4iQk9VOv66jWvhkIfbBoovspdYb
+	C5vDltOa7r/4918IQ/YBPa+uKLpsVzJRwNe62PRA=
+Received: by mx.zohomail.com with SMTPS id 1760454620674457.63817318714723;
+	Tue, 14 Oct 2025 08:10:20 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH 0/5] MediaTek UFS Cleanup and MT8196 Enablement
+Date: Tue, 14 Oct 2025 17:10:04 +0200
+Message-Id: <20251014-mt8196-ufs-v1-0-195dceb83bc8@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMxn7mgC/zXMwQ6CMBCE4Vdp9uwmFEEtr0I4lDroHlq0LYaE8
+ O42Eo//JPNtlBAFiTq1UcRHksyhhD4pck8bHmC5l6a6qltd6YZ9vmlz4WVK7OCa0VhzRXumcnh
+ FTLL+sH44OuK9FDMfI402gd3sveROBayZ/y4N+/4FA4QRLo0AAAA=
+X-Change-ID: 20251014-mt8196-ufs-cec4b9a97e53
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Stanley Chu <stanley.chu@mediatek.com>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+ kernel@collabora.com, linux-scsi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-phy@lists.infradead.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.3
 
-On Tue, 14 Oct 2025 15:04:14 +0200
-Christian K=C3=B6nig <christian.koenig@amd.com> wrote:
+In this series, the existing MediaTek UFS binding is expanded and
+completed to correctly describe not just the existing compatibles, but
+also to introduce a new compatible in the from of the MT8196 SoC.
 
-> On 14.10.25 14:44, Zhaoyang Huang wrote:
-> > On Tue, Oct 14, 2025 at 7:59=E2=80=AFPM Christian K=C3=B6nig
-> > <christian.koenig@amd.com> wrote: =20
-> >>
-> >> On 14.10.25 10:32, zhaoyang.huang wrote: =20
-> >>> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >>>
-> >>> The size of once dma-buf allocation could be dozens MB or much more
-> >>> which introduce a loop of allocating several thousands of order-0 pag=
-es.
-> >>> Furthermore, the concurrent allocation could have dma-buf allocation =
-enter
-> >>> direct-reclaim during the loop. This commit would like to eliminate t=
-he
-> >>> above two affections by introducing alloc_pages_bulk_list in dma-buf's
-> >>> order-0 allocation. This patch is proved to be conditionally helpful
-> >>> in 18MB allocation as decreasing the time from 24604us to 6555us and =
-no
-> >>> harm when bulk allocation can't be done(fallback to single page
-> >>> allocation) =20
-> >>
-> >> Well that sounds like an absolutely horrible idea.
-> >>
-> >> See the handling of allocating only from specific order is *exactly* t=
-here to avoid the behavior of bulk allocation.
-> >>
-> >> What you seem to do with this patch here is to add on top of the behav=
-ior to avoid allocating large chunks from the buddy the behavior to allocat=
-e large chunks from the buddy because that is faster. =20
-> > emm, this patch doesn't change order-8 and order-4's allocation
-> > behaviour but just to replace the loop of order-0 allocations into
-> > once bulk allocation in the fallback way. What is your concern about
-> > this? =20
->=20
-> As far as I know the bulk allocation favors splitting large pages into sm=
-aller ones instead of allocating smaller pages first. That's where the perf=
-ormance benefit comes from.
->=20
-> But that is exactly what we try to avoid here by allocating only certain =
-order of pages.
+The resets, which until now were completely absent from both the UFS
+host controller binding and the UFS PHY binding, are introduced to both.
+This also means the driver's undocumented and, in mainline, unused reset
+logic is reworked. In particular, the PHY reset is no longer a reset of
+the host controller node, but of the PHY node.
 
-This is a good question, actually. Yes, bulk alloc will split large
-pages if there are insufficient pages on the pcp free list. But is
-dma-buf indeed trying to avoid it, or is it merely using an inefficient
-API? And does it need the extra speed? Even if it leads to increased
-fragmentation?
+This means the host controller can reset the PHY through the common PHY
+framework.
 
-Petr T
+The resets remain optional.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Nicolas Frattaroli (5):
+      dt-bindings: ufs: mediatek,ufs: Add mt8196-ufshci variant
+      dt-bindings: phy: Add mediatek,mt8196-ufsphy variant
+      scsi: ufs: mediatek: Move MTK_SIP_UFS_CONTROL to mtk_sip_svc.h
+      phy: mediatek: ufs: Add support for resets
+      scsi: ufs: mediatek: Rework resets
+
+ .../devicetree/bindings/phy/mediatek,ufs-phy.yaml  |  16 +++
+ .../devicetree/bindings/ufs/mediatek,ufs.yaml      | 134 +++++++++++++++++++--
+ drivers/phy/mediatek/phy-mtk-ufs.c                 |  71 +++++++++++
+ drivers/ufs/host/ufs-mediatek-sip.h                |   9 --
+ drivers/ufs/host/ufs-mediatek.c                    |  67 ++++++-----
+ drivers/ufs/host/ufs-mediatek.h                    |   1 -
+ include/linux/soc/mediatek/mtk_sip_svc.h           |   3 +
+ 7 files changed, 251 insertions(+), 50 deletions(-)
+---
+base-commit: 40a3abb0f3e5229996c8ef0498fc8d8a0c2bd64f
+change-id: 20251014-mt8196-ufs-cec4b9a97e53
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
