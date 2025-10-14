@@ -1,150 +1,155 @@
-Return-Path: <linux-kernel+bounces-852969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371FFBDA53B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:24:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4028DBDA616
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58CD718839FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:25:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2FD85037DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827D92FF65C;
-	Tue, 14 Oct 2025 15:24:45 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035DC3002AF;
+	Tue, 14 Oct 2025 15:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sZKWoSnr"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E4D23C50A
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8812FFDF9;
+	Tue, 14 Oct 2025 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455485; cv=none; b=i3P9nUDYga0/84PsXDz1YvobUjeF1TAhO7FHGmexGrC5rT382ELyqU9kPXE3dkdQ2ouHLeGPEY012tXhowcTnShR9TwNq3NGaUf7SuL7hCCc11wmE9LbaPV0KOHC5YeXMxz4nrfZtWpC5vtJpAUKGxIa2Dhq97BbY3fuN73O91Y=
+	t=1760455544; cv=none; b=UxmRma1nqIrNkU8Yj0U4fZmblInoplg//I3+39uPaYKkKIeZl6WjBRXTCpB4JM/n/fEkXb08ULgJ4ZHb1jq/YW/kOCTuzxUQ423u1nxc1gpTUd8uJ1g46tDmgeRVs/VTkJzGKaPIwUk3n+X2usKtxPtGqzKw0fqNkCQ7wTJuhLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455485; c=relaxed/simple;
-	bh=i8btHZCMTtZjqQDQ84zJW0BiA+BbFXHeOXr1LKBiFdY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kpAmZI+hdYmCnIZZcnRTSJFC2nI4U+8wFJmR8In11XK16FbKrSmi41umCcE23rhkcj4U0QqPtUnEQcJYYsOz3Xk0aL4V+tfuH9E43oa9buuZvg9mKo0Df3SF0xFB/VQFbj5VN46iQ+KDziKPSsmyDrEvpuj5+9qT7T8/nZ3+I1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4257567fb7cso135719705ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:24:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760455482; x=1761060282;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wp4pEEGk8tezdbOvms1wig9qjZJ9jc0YnwBjsS4toMg=;
-        b=hKrOkHr9lOqP1QFnADBqslQRKqC5PE9++NN2je000oTSQd1dZhV71uBBuKgLuzYnV+
-         ujzyIGp8QPdYgVV2j+X360kVpZ1yAYnioWAdzGxZ53ti19iBkdZHY2UlUC+iMNogiFfi
-         ZL8fuCaXfsjSwX7Mu+9/gGOj/0jzG8Z6EqvA7aUhX1czl7S+TBGADiJg3sxEvpK/nVxZ
-         atNcwbZ8oPoyuB06mcfC+dQuupKiiscgOD452jyDt3J2lwL2QQ4EO2gLIsyHhxmwiN66
-         dHRQ5XKMxItbBc8uuPILLGD2fQxJ+yLWY7glrT4Ek3FP9yU70HiuIQwhCX8D5fsl46cY
-         zneQ==
-X-Gm-Message-State: AOJu0YwDxUMxH0rXvL8y9DW3CiopjMO0cW0JS2ss9IITT/aiRiOdJM8q
-	NOWsz9umU8rXieSbIrS7UtI0hOx22CDBUt88cU9K0yXSiMDVvS3MVTGpJt9kwNH2iPjS8Q1bvYc
-	1AiPiZJDZaSUs5UWxRzSt+R7X9IlSeemid5tYexSFBAjsy6diex2cApaGiyM=
-X-Google-Smtp-Source: AGHT+IFhAB+YYOWfywU6GGNTMFMvzm1m1taQa0yFEduLl5dVdZcdKr19VBuKccpgMUuBd1OGF+Pcy4lyyJ+8370QWnOeu5NVjs4X
+	s=arc-20240116; t=1760455544; c=relaxed/simple;
+	bh=krvauSEhJ1khgpbOy1S/5kMw6skc96mbQJbK77h4jIc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EofC3Ia2I81jXqGhsQfLZuj52aDcq4nBgL7DaSyC1+qLDNZsX30XBDJiqjaWuKYtt4HkOFoDzAsqdOtQuZjcd6It+X3bb7Ap0tKeRx5XfFfLPAxMMlUMVo9o0lJOccBuBd+x1UiJ8dobEwEu9E3TymMSwinJvddIjGmuJMV9Uro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sZKWoSnr; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 5C832C09F95;
+	Tue, 14 Oct 2025 15:25:20 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 537DE606EC;
+	Tue, 14 Oct 2025 15:25:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FDB8102F226E;
+	Tue, 14 Oct 2025 17:25:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760455538; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=8btb3cYWBCi2fD6kO9Qe/Zw0nyJJHpRTiZ2PSM3h1jo=;
+	b=sZKWoSnrDq4Y2e3rUgqskKukJEB+clPsD6+pUzG934MwjHnqCwDrYRENiH/cLmi4tMAyE/
+	eF/IxBktLq+/PJXyfcaH8XCqPYdQ+AYFiuqjjcSyD8LqQWvqH3NLMIP5Ls3uGZEOkWx5O0
+	74Uxb3NV9iv1Frb8QURozRVPvCx78CDI4gTg/rNjCE5dN2OymAtMMvK+n3iwyaL+OuvRZq
+	UBlcmWJDR8w2fgzzRGRMzQD5uXdSu3x31cXDmrD1VPe9wpASfFcr8BGS/v4PcNIPALXn0x
+	/6gxX4xo0Igy7vB2JfLtN+hWstQxRtZeNg1uGmC/Jil7l6jbbXCWuKK5zPknrw==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH net-next 00/15] net: macb: various cleanups
+Date: Tue, 14 Oct 2025 17:25:01 +0200
+Message-Id: <20251014-macb-cleanup-v1-0-31cd266e22cd@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c248:0:b0:42f:9353:c7bc with SMTP id
- e9e14a558f8ab-42f9353c88dmr231043285ab.6.1760455482701; Tue, 14 Oct 2025
- 08:24:42 -0700 (PDT)
-Date: Tue, 14 Oct 2025 08:24:42 -0700
-In-Reply-To: <685ada22.a00a0220.2e5631.0089.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee6b3a.a00a0220.361615.0007.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAE1r7mgC/x3MQQqDMBBG4avIrDtgQm2LV5EukvG3HaijJFoE8
+ e4Gl9/ivZ0ykiJTW+2U8NeskxW4W0XyDfYBa19MvvaNq92dxyCR5Ydg68xe8Iyv6CDNg0oyJwy
+ 6XbuODAsbtoXex3ECPD1YEWgAAAA=
+X-Change-ID: 20251014-macb-cleanup-2ce7b8b1ec56
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Andrew Lunn <andrew@lunn.ch>, Sean Anderson <sean.anderson@linux.dev>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Fix many oddities inside the MACB driver. They accumulated in my
+work-in-progress branch while working on MACB/GEM EyeQ5 support.
 
-***
+Part of this series has been seen on the lkml in March then June.
+See below for a semblance of a changelog.
 
-Subject: 
-Author: jkoolstra@xs4all.nl
+The initial goal was to post them alongside EyeQ5 support, but that
+makes for too big of a series. It'll come afterwards, with new
+features (interrupt coalescing, ethtool .set_channels() and XDP mostly).
 
-#syz test
+Thanks,
+Have a nice day,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes since June V2:
+ - Six patches are straight copies:
+   dt-bindings: net: cdns,macb: sort compatibles
+   net: macb: use BIT() macro for capability definitions
+   net: macb: Remove local variables clk_init and init in macb_probe()
+   net: macb: drop macb_config NULL checking
+   net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+   net: macb: sort #includes
+ - The "introduce DMA descriptor helpers" patch was split in two:
+   net: macb: simplify macb_dma_desc_get_size()
+   net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+ - Three patches come from Sean's feedback:
+   net: macb: remove gap in MACB_CAPS_* flags
+   net: macb: simplify macb_adj_dma_desc_idx()
+   net: macb: move bp->hw_dma_cap flags to bp->caps
+ - Take 1x Reviewed-by: Krzysztof Kozlowski
+ - Take 3x Reviewed-by: Sean Anderson
+ - Link: https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
 
 ---
- fs/minix/inode.c | 14 ++++++++++++++
- fs/minix/namei.c | 22 ++++++++++++++--------
- 2 files changed, 28 insertions(+), 8 deletions(-)
+Théo Lebrun (15):
+      dt-bindings: net: cdns,macb: sort compatibles
+      net: macb: use BIT() macro for capability definitions
+      net: macb: remove gap in MACB_CAPS_* flags
+      net: macb: Remove local variables clk_init and init in macb_probe()
+      net: macb: drop macb_config NULL checking
+      net: macb: simplify macb_dma_desc_get_size()
+      net: macb: simplify macb_adj_dma_desc_idx()
+      net: macb: move bp->hw_dma_cap flags to bp->caps
+      net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+      net: macb: remove bp->queue_mask
+      net: macb: replace min() with umin() calls
+      net: macb: drop `entry` local variable in macb_tx_map()
+      net: macb: drop `count` local variable in macb_tx_map()
+      net: macb: apply reverse christmas tree in macb_tx_map()
+      net: macb: sort #includes
 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index f007e389d5d2..e27907fc9bf2 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -517,6 +517,13 @@ static struct inode *V1_minix_iget(struct inode *inode)
- 		iget_failed(inode);
- 		return ERR_PTR(-ESTALE);
- 	}
-+	if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks == 1) {
-+		printk("MINIX-fs: directory inode (%lu) has single i_nlink\n",
-+		       inode->i_ino);
-+		brelse(bh);
-+		iget_failed(inode);
-+		return ERR_PTR(-EIO);
-+	}
- 	inode->i_mode = raw_inode->i_mode;
- 	i_uid_write(inode, raw_inode->i_uid);
- 	i_gid_write(inode, raw_inode->i_gid);
-@@ -555,6 +562,13 @@ static struct inode *V2_minix_iget(struct inode *inode)
- 		iget_failed(inode);
- 		return ERR_PTR(-ESTALE);
- 	}
-+	if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks == 1) {
-+		printk("MINIX-fs: directory inode (%lu) has single i_nlink\n",
-+		       inode->i_ino);
-+		brelse(bh);
-+		iget_failed(inode);
-+		return ERR_PTR(-EIO);
-+	}
- 	inode->i_mode = raw_inode->i_mode;
- 	i_uid_write(inode, raw_inode->i_uid);
- 	i_gid_write(inode, raw_inode->i_gid);
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index 8938536d8d3c..8297ee6651a1 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -161,15 +161,21 @@ static int minix_unlink(struct inode * dir, struct dentry *dentry)
- static int minix_rmdir(struct inode * dir, struct dentry *dentry)
- {
- 	struct inode * inode = d_inode(dentry);
--	int err = -ENOTEMPTY;
--
--	if (minix_empty_dir(inode)) {
--		err = minix_unlink(dir, dentry);
--		if (!err) {
--			inode_dec_link_count(dir);
--			inode_dec_link_count(inode);
--		}
-+	int err = -EIO;
-+
-+	if (dir->i_nlink <= 2)
-+		goto out;
-+
-+	err = -ENOTEMPTY;
-+	if (!minix_empty_dir(inode))
-+		goto out;
-+
-+	err = minix_unlink(dir, dentry);
-+	if (!err) {
-+		inode_dec_link_count(dir);
-+		inode_dec_link_count(inode);
- 	}
-+out:
- 	return err;
- }
- 
+ .../devicetree/bindings/net/cdns,macb.yaml         |   8 +-
+ drivers/net/ethernet/cadence/macb.h                |  71 +++---
+ drivers/net/ethernet/cadence/macb_main.c           | 257 +++++++++------------
+ drivers/net/ethernet/cadence/macb_ptp.c            |  16 +-
+ 4 files changed, 151 insertions(+), 201 deletions(-)
+---
+base-commit: 6a445aebc188bdb9a82519c5fe64eb92b1d025b9
+change-id: 20251014-macb-cleanup-2ce7b8b1ec56
+
+Best regards,
 -- 
-2.51.0
+Théo Lebrun <theo.lebrun@bootlin.com>
+
 
