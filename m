@@ -1,154 +1,116 @@
-Return-Path: <linux-kernel+bounces-853431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B726BDBA45
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C98CBDBA54
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412194F64A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B215C19A2F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C91E3081DC;
-	Tue, 14 Oct 2025 22:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8C130DD3B;
+	Tue, 14 Oct 2025 22:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AfMX25/0"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liNf9T2K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C017B2EA73B
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4273081DC;
+	Tue, 14 Oct 2025 22:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760480688; cv=none; b=QOzX8+SYVMAZWmN0ZqMP9l6Yvv1Ev8XgHAMl7mTmxyP6uN9MyuufEkV51ZZMY7WFNDGeqSFO5PpNcKrciU7qS7P152s0LWoHaAdBlfLg7HaZDlIpWFrziLtwLm+uQpYwN2czi6Vg6KXw09/4xL5w3g4c85HYviHpQ0di6J7hxlQ=
+	t=1760480730; cv=none; b=K21/qt7ZVRnlptZrJHGSLuTyQNuNaJXysgbZN1lMHZKe5AmHXwgKQNsYT1r2TXEw8hRCCqiw6Fp+Rl1aOD8Juuo/Fng3oT5nPLDGVdtdFV3IBfgu3ibvSLn93v5pelwpaGf9iMbESEAxax/+V1u71DIFUmSJ7lBYM9JTGSVM4eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760480688; c=relaxed/simple;
-	bh=pKj7nF9FZa4CVDaaC2vI4eiSd7iIaOqkYyjB/cLYWWQ=;
+	s=arc-20240116; t=1760480730; c=relaxed/simple;
+	bh=Bk6tOAIjGpqsinKNke8LjcxZyyMelB7HsuLcZ9QiFLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzowQMAR7KNgT4SHhiL3Mv9XKPGUxH8kFuG6lPo06olmEJSEcuxak29eeUqu+jf563qk4lxGzLYKxaHjbQikKPaTOb8e2bj4ktC8otHkRuZBdVe8gr9M2T1bardxVVAtYkYmz3Ql3YqctJf7wiFkoP3IRkpjrZ2YbALHED8On8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AfMX25/0; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b63148d25c3so253057a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760480686; x=1761085486; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VU+E0coYgVNDVEMZPHxDysYf7EYOnkoJs7l4tPFgGSs=;
-        b=AfMX25/0TQzmfcK/hscJ/q3U1LCZyIWKBrZlsvKyPAR8npiNzUhA7zKLKIpddTmQSv
-         cppG1JWC8OFzVe3Io5LtQmNqohuwswlqTo7m/Zea0F39qHlI+yiFHn3tY3RCEHJoi73x
-         jeFSNIJsxuGX5bo+T5a+5Ek00nt3obBxS9MPQZlzvNJkDrMtKwtqnIaWuSyRImJn+48+
-         2KBopwAIZnehbvBHu8dDgovTpqKFMDAn5cRl8y+5yboBfI7cOPLF5oJYtxM4iIGdf1Zx
-         afn47a2S3QStZ+wPAeWvTNTKWMZQVIaT9zy2jH185heb7Fsiiz0dNu/yrA/UKPwnAInh
-         sfkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760480686; x=1761085486;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VU+E0coYgVNDVEMZPHxDysYf7EYOnkoJs7l4tPFgGSs=;
-        b=nI22cpCu8hAo7kULNe9aVNWcqD4khPPGrIZUIIeEWV+6d0by7xNDbCsb3fjw1+uFOe
-         rxkUzYX2a7p9Rd0VQHpBv97gdjM/KeuYLH+9F/ZvY8HcTR6qJnBZkCFKVkcBNSHAtrOj
-         f9Xi076H3oQ1/ohJPy445oVZVlpm2RM3rHVBRhm6NyAsHkr9Ok08wSXWPtNJUzujqUwe
-         L0U9BVHCNrTG6euPWzJWK2UXcYdR+XRHK7gXN+diQwBa78i9gWQpVU/J/qB4E1EdtYXX
-         k4aXZznnIIwSW8P2mvIcrc+66cC+VifHMcD1xyF/9sX94jYafkuqBzXOkxgpJOQxC0UX
-         A0ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUu0ePz0W2AcO5gbp5wFUZYiCE/oY5fRTx4H01eHanmoFVSpunZUcwtXSTGzTuv6pKgZQnFaKTWp4JhkEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfWO3F/rXMQp7JImq2RDt8r7owMolVHWTgKXT2WHg04iBp9RSD
-	b5pKehd9AOnMg60rL8ftj+6T94zrmoTnOw1l4hhrS2TIsbwC6Y4Bky5bFT0Wfsdelhw=
-X-Gm-Gg: ASbGnctAz3GEis2FBfYVACvss4FLVpcPNxAWcMgUM7uhn+hIHqcxQeDE2mgdSG1uJo+
-	a9C2YqUIvcyLs0gLD4ATVsKgnxB3bRD8/iRPcatyHbP1FOLxq6S0GBNZIoCzFZ4Wp8MY9iUb+1x
-	YxkYd7H6JYipX0KKFf9X6LkUNZAALuFpbRuqUmQLwPPVCGVdpowP5L2pyXwbjGZiYWJ3Ka8ubel
-	4UX+rir5uKC8cp7nYT6X+P+gDd83GNMHMgtUZR0iKwRoB2fPoRDquB+iGERwdCLcmRmQq7x+GgH
-	6/FvvOlQdHITM1gjjWYaTjfbAXt16Ap8AEHN4OGgL+D0ANkA/cPAOyGvlS7LlOVvL6FdDGvUgcN
-	/5ry0imL4XGI55t1fXFEpU5uTkPFV7itGE4idtoZvAr37NHk0cScylLjKdFWgfPNFQlhQt+Z480
-	V71mKviIuQgjFkjxUxUBzi/yZxyv0=
-X-Google-Smtp-Source: AGHT+IEuiPLT+J2EGWyWH8Vlz1fhWHzXLhUTSRvMJ8Bb23RFgsXxsIuVuGY50FOYvF4QcobNAuFtTQ==
-X-Received: by 2002:a17:903:2acb:b0:265:e815:fcdf with SMTP id d9443c01a7336-28ec9c9741bmr395484345ad.17.1760480685978;
-        Tue, 14 Oct 2025 15:24:45 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b69c24043desm955564a12.3.2025.10.14.15.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 15:24:45 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1v8nRi-0000000Etua-2BV8;
-	Wed, 15 Oct 2025 09:24:42 +1100
-Date: Wed, 15 Oct 2025 09:24:42 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v7 03/14] fs: provide accessors for ->i_state
-Message-ID: <aO7NqqB41VYCw4Bh@dread.disaster.area>
-References: <20251009075929.1203950-1-mjguzik@gmail.com>
- <20251009075929.1203950-4-mjguzik@gmail.com>
- <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
- <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdl7AJbguhf2v+D5naFlYcEglvNwkhDnQlJCO6b/LU70ihiZ3aOyHuM9Im7Km+6fVvWUpkTptegklmjcMC7UQQK8cy2HYdlAP8s0d/TrwuPGWduTnTqxGX7TpDnxDxtERJSS8ug16NntBqSnQxusTV94oEz+P4CEEVuqVtD1YD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liNf9T2K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86892C4CEE7;
+	Tue, 14 Oct 2025 22:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760480729;
+	bh=Bk6tOAIjGpqsinKNke8LjcxZyyMelB7HsuLcZ9QiFLY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=liNf9T2KgDoTlDWPXHp4RjShC+K3DUZ+0h4AqtoTd5a53VZ7d5YZsQ2xbliHSWX/H
+	 AVZ2IY44zySEwbu1omBXNYZLH3hUhe8RRfB39VKCokTuCCpYc0d8X02zjxX39tUJdm
+	 hgyif4WSm0OFWdEZGKoCakhz3nMqpit0SfXdsKF9xRyyqcyvlh00LD+8ncN3i9odYu
+	 dkVbGv31nI9iBdSvy7vdV6MLmC6dTL+Q9s1qEu8o6uEKcz1lSwBVd7a1Svb2mF+atm
+	 BXSXWAKUrLOtE4IViy4GK0RO9pud1srhd9PoYGgtAov5ET0ycGndYzdr/b7HMYM26w
+	 TayD5VD/3V7+A==
+Date: Tue, 14 Oct 2025 15:25:24 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczy??ski <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Kees Cook <kees@kernel.org>,
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2] PCI: rcar-host: Add OF Kconfig dependency to avoid
+ objtool no-cfi warning
+Message-ID: <20251014222524.GA3575477@ax162>
+References: <20251014-rcar_pcie_probe-avoid-nocfi-objtool-warning-v2-1-6e0204b002c6@kernel.org>
+ <20251014191330.GA899677@bhelgaas>
+ <20251014194728.GD1206438@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com>
+In-Reply-To: <20251014194728.GD1206438@noisy.programming.kicks-ass.net>
 
-On Fri, Oct 10, 2025 at 05:51:06PM +0200, Mateusz Guzik wrote:
-> On Fri, Oct 10, 2025 at 4:44 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 09-10-25 09:59:17, Mateusz Guzik wrote:
-> > > +static inline void inode_state_set_raw(struct inode *inode,
-> > > +                                    enum inode_state_flags_enum flags)
-> > > +{
-> > > +     WRITE_ONCE(inode->i_state, inode->i_state | flags);
-> > > +}
-> >
-> > I think this shouldn't really exist as it is dangerous to use and if we
-> > deal with XFS, nobody will actually need this function.
-> >
+On Tue, Oct 14, 2025 at 09:47:28PM +0200, Peter Zijlstra wrote:
+> On Tue, Oct 14, 2025 at 02:13:30PM -0500, Bjorn Helgaas wrote:
 > 
-> That's not strictly true, unless you mean code outside of fs/inode.c
+> > Ugh.  This might be the best solution, but it's a bit problematic
+> > without a hint about why "depends on OF" is here.  Theoretically there
+> > are stubs for everything to make COMPILE_TEST work, so I think we're
+> > about to drop all the dependencies on OF.
 > 
-> First, something is still needed to clear out the state in
-> inode_init_always_gfp().
+> Its those stubs are exactly the problem.
+
+Yeah and I had thought about changing of_device_get_match_data() to use
+something like ERR_PTR() in the !OF case but that does not fix the issue
+since the call destination is still going to be invalid. To me, this is
+just one of the sharp edges of compile testing: you give up some code or
+configuration cleanliness/expectations for the flexibility of build
+testing.
+
+> > This dependency to avoid a no-cfi warning looks like the kind of thing
+> > that could someday go away if the tools get smarter.  Maybe we can add
+> > a Kconfig comment here, but I don't really know enough to write one.
+> > Something like this?
 > 
-> Afterwards there are few spots which further modify it without the
-> spinlock held (for example see insert_inode_locked4()).
+> Its not a CFI warning per-se, the compiler is hitting known UB
+> (unconditional NULL deref) and is currently emitting a NULL pointer
+> indirect call, but given how aggressive clang has been on encountering
+> UB it might just stop code-gen entirely and generate fall-through
+> warnings (been there done that).
 > 
-> My take on the situation is that the current I_NEW et al handling is
-> crap and the inode hash api is also crap.
+> Smarter compiler here is only going to make this worse.
 
-The inode hash implementation is crap, too. The historically poor
-scalability characteristics of the VFS inode cache is the primary
-reason we've never considered ever trying to port XFS to use it,
-even if we ignore all the inode lifecycle issues that would have to
-be solved first...
+Yeah, we are lucky that this is all LLVM does with this code.
 
-> For starters freshly allocated inodes should not be starting with 0,
-> but with I_NEW.
+For what it's worth, there is plenty of "depends on OF" that appears
+across the tree and I see exactly one instance that has a comment above
+it (none with the comment on the same line). Perhaps these are all
+historical if there was a point where stubs were not provided for !OF. I
+do not mind adding a comment if really so desired but this driver does
+not do anything without CONFIG_OF so it feels like the dependency is
+natural anyways.
 
-Not all inodes are cached filesystem inodes. e.g. anonymous inodes
-are initialised to inode->i_state = I_DIRTY.  pipe inodes also start
-at I_DIRTY. socket inodes don't touch i_state at init, so they
-essentially init i_state = 0....
-
-IOWs, the initial inode state depends on what the inode is being
-used for, and I_NEW is only relevant to inodes that are cached and
-can be found before the filesystem has fully initialised the VFS
-inode.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Cheers,
+Nathan
 
