@@ -1,232 +1,181 @@
-Return-Path: <linux-kernel+bounces-852092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A60CBD824A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:22:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D81BD8259
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4C518A1840
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:22:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 940AE4F9348
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C5530F927;
-	Tue, 14 Oct 2025 08:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F8130F92C;
+	Tue, 14 Oct 2025 08:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZh/f3/F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Id/xKfdF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94FF2DC785;
-	Tue, 14 Oct 2025 08:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676EF30F811
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430138; cv=none; b=HGWxbYFULhwszGbG/pI96Vh5U6JNRJydlGz5U8y3UbYBO9u1CFSe7u9xPHf2xTM6kj4azKdepZk2W9UPkEIkzWRbddkP2DrqJiknTuWi6gpIolKfUdbKr8DcKhTaEfj8CtL9nTKkHlYQWx5IBu+7I5qO6C8SzW3wbG63nbQaYgc=
+	t=1760430150; cv=none; b=jjJK/Ic2UjGHOLTDkmvxge3OS6cC25UB0RvZTRUgFYji4QUbhD1Uisj6gxUkILRMp1UMKK4whFLJgzoIWetjpPH4orFwMsECBZ+LEtWe9j993rHmqT93E9IQI/hzDUUsNLd56DJsObamBcoFxm6sryFDyvmh9h+6f58uC30Hr9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430138; c=relaxed/simple;
-	bh=Vlj6tP3JBHPNk8PgyCr78TrY0haPC3Xs1lzW10Q8cLQ=;
+	s=arc-20240116; t=1760430150; c=relaxed/simple;
+	bh=CAw+2q1jb4+KyAhmwvSFmEXCgypuAgJT26FqKT0LMNU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZkEkrWErCSMPH/V/KNXZgkuEqQoSZM8iGGtsvKNi0OMlVVtdd8kC9nkZKKkP27C3+t8XzIxMbW0WgK7CjwPWEbuOCOl+LVz/zlQ1m8Gpch+p6pMGBNvYf4iFcv2NQc17XcE/6l2pkaovvqHH7YBhJObhIOdTyWE65Tt+mS0W6Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZh/f3/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC85C4CEE7;
-	Tue, 14 Oct 2025 08:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760430137;
-	bh=Vlj6tP3JBHPNk8PgyCr78TrY0haPC3Xs1lzW10Q8cLQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lZh/f3/Fc7dCqb6CDiY5tbcF9lWWIzM7REjTEic65K1WxpJhP9paD7iOWZjj/Y+Wl
-	 MCwhrgVrUc2HiR6nIBY2UXCxb516F1/kDTinX8shqb2b+g5M4vLRBCdRSl4DcAMq2D
-	 nv+FOWHFuTQ9tv3hmz509d6OyfqKZWSPJnWQWj7GHIamJEaCB/IEhdg2RUA8aNrrBi
-	 Ys+gVyn7W4USl4yzyKCR0gqCgiCDDZpRwP4v//qwyN4LOSSi2nIoFwj4nKBWBtP5Gp
-	 Lr0ploa3eB3xB+jXVL2E5QMpBE65dRCaLJ6CLKEffRcdnsBSSHGfpFt3trToDEUu6/
-	 8PgGVHCVqCkCw==
-Message-ID: <b7b3de64-c656-4a84-8ba4-2d5c7eda9783@kernel.org>
-Date: Tue, 14 Oct 2025 10:22:07 +0200
+	 In-Reply-To:Content-Type; b=giGLfWvvl5UMAxSbTGsOx82vAca9nzLlcZ2Y/dBPy1ej7aynSFXu/Y8fz3YQjkX/CDNYkYjox0dfacHgZE77usDpQsAVKAZalw4TvfwzzTYpTFJ3n8x7GIeBsrx+ONEIXebCPdH934s0dEk1DYTlV/imgndlrrWvNxRGy+Z6PL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Id/xKfdF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87IIJ001489
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pJro/XUVZL6sNNGMbVoX0we2kE3710IaAzwCCDD1JY8=; b=Id/xKfdF8m1FfW4T
+	/NxROPG1I4FbwG5vwQejT71fkYEOpDq+6sZ1VRNbxu5Xo4q2npM20qib/mnu1j1o
+	iHWZEDGT4ApFl6ZgIbtzWUB0++K4mgHEcm9FZh3pGNOeW5cpxE7ihEJzURf1kCjI
+	RsAsshMotnH2E8o4Ia81HXcrGWqvHQ7IOIjT6ttoyuF5oYw8uJ0IcWaPJ0bYNt7b
+	La4NXGUH2AeBUbrYqloL2C4JgR/BGBb0kjTx/QiEn+X6vfjPwaDPfu3rhotM2wbC
+	Rb6vn9jrcfmp+8NoOgHaWZEq7+z65GH+QSPBM+L5Mmnx0SBlvVlg3tRJdDp/GfPy
+	FiuCjw==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa87qq5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:27 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-780f914b5a4so7485426b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:22:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760430146; x=1761034946;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pJro/XUVZL6sNNGMbVoX0we2kE3710IaAzwCCDD1JY8=;
+        b=ppkQrpyc4F+Gi6fbModVZWVF/A0QGZUJwICAL4LsFRCGxV55MGsGLVCvbPln2uBb1z
+         +QQh1uNP1AtVOUEXTC4CA6OqJxLKYHQAtC+4eQqHqwQwexC4AJHk5NZ0ce7HUNnqKeGC
+         StIw6HLks0odGRpxzNCsAvV1+tERVzIRvkbIOprN5AQlaSm2ifbNPMvpKikvmx6ZoPJ5
+         jX8khsZuVNYtWzS2s2R9VGjW9irg3/IYNSDRJGp3p523Pe0ck6UZ9R75U0itW1Edv/vy
+         Hpa4p7qILDxJP/JjpS1NrVBrd9HpBA+BFnysh21Bc3PZWutP8c/Hfy5slAlDpjsQ5yQS
+         1RYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgMP8Bztn6K8+Fp/xXnAImoUynyejzQJWZTei57zzR9FoWMRCTBk8UC8cn9eZ30WF9aQf8zm+Cl6M8Rx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpymCGMbWHyZGoMyBuZ2y5sy/p+KkPKlWwwtaItmZ9qtzt+fXZ
+	3m8nfdPjzToUGJrKpl6VuHiAnfr1ytzAUITYV/ByNA+qQk9Nbs3dYjyMXcEdmEBSpphJ2O0pS3D
+	m5Ts+ja+hXiHLC8bB1dODKdAdUqmKTw27eU/zg/E5Xp7QONlikAu0PJ08ORyLhBLhR+0=
+X-Gm-Gg: ASbGncsxahQfDbavBlkcP4xvgBDJPr3RIajdeuvJwmvAN5Wwkb3Dbolm3ZVU6kpX/kL
+	kvki4oq20HzLWX1JE+Ol3dGECrLffxTjCNO0Yo1Uq66WzqlM/sGwOdk3o+zVbe56UgDTtBNxs0C
+	X6uFOTkW6Q2svd7gDNYOuvE/AIemruX3wegnO4u9gPjMUc0Mg/CysDH52erTI/fZ0FUkpyItXVa
+	RmoOLkbxkKBEjS6GLqRIkztXlnwuI0MwOXcJqJ5puZPUCboMtasP7CKJkmEcIEDxnnnrUOElezR
+	9Fo6MOcQ/AwbTjze4WY0qD9DnOId5EVigY/qSF+SnnAKnLPmu2QbNj9S7jD/6WP28b9EzZie
+X-Received: by 2002:a05:6a00:17a5:b0:781:18de:f7e0 with SMTP id d2e1a72fcca58-793881eb478mr30456597b3a.31.1760430145846;
+        Tue, 14 Oct 2025 01:22:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtVXUxvT3BTmAWyeKc6CnqZyTjDz0qtj7wJr27aCf/zysLVgocmJ0HQDvzjqsQH/oZZheWKA==
+X-Received: by 2002:a05:6a00:17a5:b0:781:18de:f7e0 with SMTP id d2e1a72fcca58-793881eb478mr30456558b3a.31.1760430145348;
+        Tue, 14 Oct 2025 01:22:25 -0700 (PDT)
+Received: from [10.206.101.41] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm14124339b3a.64.2025.10.14.01.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 01:22:24 -0700 (PDT)
+Message-ID: <7f8cafd4-1e0d-13ee-bc1a-f0a230b4e3e2@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 13:52:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251010201607.1190967-1-royluo@google.com>
- <20251010201607.1190967-2-royluo@google.com>
- <066a9598-ad30-4327-be68-87299bba6fda@kernel.org>
- <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 4/8] media: iris: stop encoding PIPE value into fw_caps
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251013-iris-sc7280-v3-0-f3bceb77a250@oss.qualcomm.com>
+ <20251013-iris-sc7280-v3-4-f3bceb77a250@oss.qualcomm.com>
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+In-Reply-To: <20251013-iris-sc7280-v3-4-f3bceb77a250@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: N1KfQ0UZsz2YDnyxPtMUAXhgu-hzfnnP
+X-Proofpoint-ORIG-GUID: N1KfQ0UZsz2YDnyxPtMUAXhgu-hzfnnP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX/6cjs5zT9FDy
+ fAn+5MCi2abZrT8/8SEeu7VrWi7m4lMzbuaGSaRTSWeW1iYDfL/tfRLfZ91H5tjzCZJqvmRd0Kc
+ 2lNGK0OnZOFkNwW7oq+OVTqv9ABfyJDSKDH5K2cquKbw5JjkOjJUFYGGyiHpx5gDG3GRKyk5Jnd
+ qBrRLsANAgLLG3UnDvakxj0vtyDzRwc1zfNkmk/l41E7VQhAbSvu2Nmw/Mw7yT5eF2g+8bcN1zH
+ yjo3wX9seqaLyn6IkxxyEoaFBiloJhmoR1NUBS9Esj+l1aCcVaMJaJ2STcinlh12OPyjUZ56XPA
+ ywagJkZwTomBv+GfethEh6R+NG8t4NJPtmRNGphZyhV6h+kS8qklumaHBzRp1Fxxwo4k4AZkv5D
+ dSmIXRHjmHtz+MJadyQ7g9SLEIDHJg==
+X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ee0843 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=JV23JpkejX04UPURfCkA:9 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
 
-On 14/10/2025 03:40, Roy Luo wrote:
-> On Fri, Oct 10, 2025 at 5:09 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 10/10/2025 22:16, Roy Luo wrote:
->>> Document the device tree bindings for the DWC3 USB controller found in
->>> Google Tensor SoCs, starting with the G5 generation.
->>>
->>> The Tensor G5 silicon represents a complete architectural departure from
->>> previous generations (like gs101), including entirely new clock/reset
->>> schemes, top-level wrapper and register interface. Consequently,
->>> existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitating
->>> this new device tree binding.
->>>
->>> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
->>> Dual-Role Device single port with hibernation support.
->>
->> You still mix, completely unnecessarily, subsystems. For Greg this is
->> actually even undesired, but regardless don't do this for any cases
->> because it just makes everything slower or more difficult to apply.
->>
->> Really, think how maintainers should deal with your patches.
->>
+
+On 10/13/2025 7:38 AM, Dmitry Baryshkov wrote:
+> The value of the PIPE property depends on the number of pipes available
+> on the platform and is frequently the only difference between several
+> fw_caps. In order to reduce duplciation, use num_vpp_pipe from the
+> iris_platform_data rather than hardcoding the value into the fw_cap.
 > 
-> Understood, I will separate the patches into two distinct series: one for
-> the controller and one for the PHY.
-> Appreciate the feedback and the explanation.
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_ctrls.c            | 6 +++++-
+>  drivers/media/platform/qcom/iris/iris_platform_gen2.c    | 4 ++--
+>  drivers/media/platform/qcom/iris/iris_platform_qcs8300.h | 4 ++--
+>  drivers/media/platform/qcom/iris/iris_platform_sm8250.c  | 4 ++--
+>  4 files changed, 11 insertions(+), 7 deletions(-)
 > 
->>>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  .../bindings/usb/google,gs5-dwc3.yaml         | 141 ++++++++++++++++++
->>>  1 file changed, 141 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
->>> new file mode 100644
->>> index 000000000000..6fadea7f41e8
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
->>> @@ -0,0 +1,141 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +# Copyright (c) 2025, Google LLC
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
->>> +
->>> +maintainers:
->>> +  - Roy Luo <royluo@google.com>
->>> +
->>> +description:
->>> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
->>> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
->>> +  features Dual-Role Device single port with hibernation add-on.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: google,gs5-dwc3
->>> +
->>> +  reg:
->>> +    items:
->>> +      - description: Core DWC3 IP registers.
->>> +      - description: USB host controller configuration registers.
->>> +      - description: USB custom interrrupts control registers.
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: dwc3_core
->>> +      - const: host_cfg
->>> +      - const: usbint_cfg
->>> +
->>> +  interrupts:
->>> +    items:
->>> +      - description: Core DWC3 interrupt.
->>> +      - description: High speed power management event for remote wakeup from hibernation.
->>> +      - description: Super speed power management event for remote wakeup from hibernation.
->>
->> Wrap at 80 (see coding style) or just shorten these.
-> 
-> Ack, will fix it in the next patch.
-> 
->>
->>> +
->>> +  interrupt-names:
->>> +    items:
->>> +      - const: dwc_usb3
->>
->> So just "core"?
-> 
-> I'd prefer to stick to "dwc_usb3" as that's
-> 1. more expressive by referring to the underlying IP name,
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> index 0e9adb3982a49cfd7cbe5110cfd5f573f0f7bb38..8db3fa222bdb92a7ffff3dfe62d33f16c0550757 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -318,7 +318,11 @@ void iris_session_init_caps(struct iris_core *core)
+>  			continue;
+>  
+>  		core->inst_fw_caps_dec[cap_id].idx = i;
+> -		core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+> +		if (cap_id == PIPE)
+> +			core->inst_fw_caps_dec[cap_id].value =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +		else
+> +			core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+>  	}
+>  
+>  	caps = core->iris_platform_data->inst_fw_caps_enc;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index b444e816355624bca8248cce9da7adcd7caf6c5b..7ad03a800356ae9fb73bdbd6d09928d0b500cb3c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -161,9 +161,9 @@ static const struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>  	{
+>  		.cap_id = PIPE,
+>  		.min = PIPE_1,
 
+Could you please make .min same as .max here ? I understand the context of this
+patch, but since we are updating this cap, pls update min as well. So far, it
+picks the .value from cap to set it to firmware, so its never an issue, while
+keeping min and max same, it would indicate the SOC have that number of pipe and
+not variable.
 
-But that's completely redundant name.
-
-> 2. consistent with established dwc3 bindings such as
->     Documentation/devicetree/bindings/usb/snps,dwc3.yaml,
-
-If you use only one interrupt. You don't use one interrupt here.
-
->     Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml,
-> unless you have a strong preference for the alternative naming.
-
-Such namings are discouraged, because they tell absolutely nothing.
-Also, schematics or datasheets usually do not use them, either.
-
-
-Best regards,
-Krzysztof
+Regards,
+Vikash
 
