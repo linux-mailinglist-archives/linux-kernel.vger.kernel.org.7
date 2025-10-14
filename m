@@ -1,150 +1,178 @@
-Return-Path: <linux-kernel+bounces-852730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7A7BD9B9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED3CBD9C11
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47065423520
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0441887230
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C37D313539;
-	Tue, 14 Oct 2025 13:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9E314A73;
+	Tue, 14 Oct 2025 13:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9DFYFoD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQLkKiQf"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713B51D7E4A;
-	Tue, 14 Oct 2025 13:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7FE2F56
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760448674; cv=none; b=k8X2orvpbCMJOPJsjDTiYyJ0RSULj4rVIwX1uEG96kEGss3U2rXvLKyYqoo/rDT9lNVKfJONO+mtVvA9b5k777MFg4O/0lKV094nU5Le1O6pXayd94XfisOQvFB/hkTflEBcFVMVjTIqQgu5Ppu4e+j5w/hlRiLiezCu3N6W53g=
+	t=1760448697; cv=none; b=oPobD9alzzhvdK/3s9dXlsBMiAKAahaArRsaIgHmKtPwrsM4najBhYzoy6cWxJJIvZrvZyCsj3vO3a4PpZ182vIjFceMdWlx1qg3/DzHOohWdfaZ0G4EWJDgnYSpZ42T6QsACYtmQVD1HdBDjE2J+HHFNJMCmUfHqMUTsOwA/O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760448674; c=relaxed/simple;
-	bh=Pd+RXTNXqwtTl0Ps6q82IpRn8j9zy3XBl+4lbBTNB7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8Tpuqy4FVCTCD/PT6/ESAj+BfjegSySWLaLE0OJbencUWZGE5GUL8hMAXEy0u0asvGGH6s9881zDrpNRGK/M6Bw8IcCXE2srZsCaeiNbYSOUGOPNkRuXyKvdAvAmguh1AlewIdhF59S2xjgetE/SEB9po6kJsJIDafdWdfvkCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9DFYFoD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911A2C4CEE7;
-	Tue, 14 Oct 2025 13:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760448674;
-	bh=Pd+RXTNXqwtTl0Ps6q82IpRn8j9zy3XBl+4lbBTNB7s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O9DFYFoDzF00egIpQI7+sSk2FaOh6iFX2u4d1w81THKSYCDMlTInjn5WZTb3aCldv
-	 7arr+/E7J4eX7Uu8AWbwM0nxyXOgkJevOsTJKiWCZ+V7OIOcLwu5RgECoaguW8LiAG
-	 +RlLGfZuXpk4E78YsTJNjo7bAg7CID27fVCXRUgEDiiKFwa3HVKTHNyEemp8bDB9Zu
-	 oIj89hbDlH4kQvgw27eUqmRJyWO1my7H/j+Aw7wJ/IFtu2+8iLfcq6yWb1LB1kRBUR
-	 lnfkuPsQBy4CS6xUQzz7TopKQKX9H0dsoyavdt18wZF2C1rCU17hoeEC4FGAER2+jJ
-	 otPCpEeNcK/XA==
-Message-ID: <ed5bcdca-9a6d-4144-acd7-1c1feeaadb0f@kernel.org>
-Date: Tue, 14 Oct 2025 07:31:13 -0600
+	s=arc-20240116; t=1760448697; c=relaxed/simple;
+	bh=iIjZWpm1TiQUVzmyWQwDNnrEF5an80tu+OC+tdhyZC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdmjbT6Br89cGUwjQyLppKJkJ1WIGuaEzeGGe2WgGgmAyOrYw/HaXE2fXhO9itDTTtQqYeTZfYi/ryaBtwqXgIE1sw5SkXxlfWKdwMEgK1clAYW+EEBi9gb/yZpUqZ7p81Z7rtE3RyXIaBruu9lPFC5m+nDQM1/8BOP8NXQFxhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQLkKiQf; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so10312162a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760448694; x=1761053494; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JRUz1hWdNpegFSxtg102ODjrrEjXcJrCzI5fyTVJ/6Q=;
+        b=DQLkKiQfZND2IFf/h5wDCcU7nsL9b0MO2/wBM6KPAhNCZWhVN94HQy5fsrTU25tbgB
+         2Gq2QvLkWPnA0xkfn7ycw1MgwA2qLz0g6AbmWxcd6bS2Qhofps5FAzMPAi7eFfr7nrj3
+         9J10C2KCHIbn2+sRa1U7qZRnp1tmnEvHAE9WILBT/9Nb9MvbcypJtByoH3PDylNSnu6z
+         Ql/nNsHVyp7t4cPhcemA2LhGv6CkCqMoygInePHf8U8QXwjfwbEAM4W8B9Bdcu/4Y4re
+         drd4lrgRyWoBlvc2EOxKN69l9MeFWyOnJfPQUx/e+/qOIX/3Rdm/jJCyYkveMuFV8AjL
+         NL1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760448694; x=1761053494;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JRUz1hWdNpegFSxtg102ODjrrEjXcJrCzI5fyTVJ/6Q=;
+        b=HiqPdXnCrkCbDXIQZgPQWb6aGvz1ZNxM6xB52/HiTtGmNthf6Zbl0gtJq3zn51h52/
+         ySm5krPH0voRaI0ka3+0pCiJYRIDnuya/aMGYIYLZSIpXbyjEf+0tYOAqseIn/6n13Q/
+         dVVc6mv4+UEI4eBrgbXJZUnKe4n7ZFldQeeNwPvpIQP9Z45YxTgGVb2r2bnwbJ65s2O0
+         gcKKmpWfwhz0+GpSIcNNctdr1fCmwAIWRlUuQoSzm4g/6Wz3nlvsMCxSY0yqJcbE/895
+         04xhtXch6E9HaPDIJnEojP/1nb4TlROzU/dWrdL1x1eG2J/GPijpumafzEJKE8AULEo6
+         Mrrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsIsYpVFRcUT/AExu683gRtDIXg7rSMi8cvS9DEe1WbdH/hytu75lit3/gYrmKogFrNXM1T+k+HvKwQZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZnwiFvJJJSNuu2YTYYlNzRtdHyVK4uJtAAzAw4GEQCvr6vpMD
+	s5hH5lwoOLjTclS8K+Wt6rz4nHgqn7PTqTC99oTa46XRrqcr/Poq/VcS
+X-Gm-Gg: ASbGncubm0ymYlgFcPtohJYLxvN1dpU+pbvCYTA4WuobWrXFcfEXtLW3fxzLTKjgZah
+	UZigQsOKW8U92ABvjbKGxJOyUzXSglFH1JypnDUroQUGz1CeKq8hMYjKR/tYlCHxdoxGxZrx+Sp
+	hxDoa91+AIoKLEYdhKh+CvaD2t5hprEMZr5ZAE8x7bToaLSmVuGXpTcBia4/g90rrGwUZZw2WUq
+	IOx9vPWo8hGzhISUJgyYaB989/CuOsggy5k8Ww2xsBEYz8biJ1QoL1uBGP33hJPasIVxZTKvcP3
+	tPQnSKQVmoOSfpgnKP3YjpqmU9bctd0ZBTdB6QADAjtalA9areGPT3/4E3J/XArWIjcrSv5GEQW
+	9OtvT8MKlCYUdkXPB77uPYoZQMD/xZSVRuZuKdk2DzBaTmMTCzJ4=
+X-Google-Smtp-Source: AGHT+IEgU+DdjYJjvofvtunCeX3nSH0eRUv1dqIRtOgeOUMEIzSuMU2hUdZtSc3ZGyXswVn9RHzZCQ==
+X-Received: by 2002:a17:907:7f0b:b0:b46:31be:e8fe with SMTP id a640c23a62f3a-b50aa48c4f0mr2728492866b.11.1760448693406;
+        Tue, 14 Oct 2025 06:31:33 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d971ec69sm1123110766b.85.2025.10.14.06.31.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Oct 2025 06:31:32 -0700 (PDT)
+Date: Tue, 14 Oct 2025 13:31:32 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
+ large folios (CONFIG_NO_PAGE_MAPCOUNT)
+Message-ID: <20251014133132.6garfzi24xlh3jr5@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250303163014.1128035-1-david@redhat.com>
+ <20250303163014.1128035-21-david@redhat.com>
+ <20251014122335.dpyk5advbkioojnm@master>
+ <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
- pxamci_probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Rakuram Eswaran <rakuram.e96@gmail.com>, chenhuacai@kernel.org,
- david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, lkp@intel.com,
- skhan@linuxfoundation.org, ulf.hansson@linaro.org, zhoubinbin@loongson.cn
-References: <xxtrhbv5qm2crtvc5ejpgu5caadsmms3rfulmosjwq7lumrko3@5mlcpk24hymm>
- <20251012183804.15171-1-rakuram.e96@gmail.com>
- <6j7ix5yof7qmrp6cgxhqver7yimvmgj7dujqu4l7cnzbpjksfd@5sp7am47gigw>
- <8afff048-4fe1-440a-9739-e5a5ea43d6eb@kernel.org>
- <aO5BnwkNNyv_GOGS@stanley.mountain>
-Content-Language: en-US
-From: Khalid Aziz <khalid@kernel.org>
-In-Reply-To: <aO5BnwkNNyv_GOGS@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 10/14/25 6:27 AM, Dan Carpenter wrote:
-> On Mon, Oct 13, 2025 at 04:54:13PM -0600, Khalid Aziz wrote:
->>> @@ -703,20 +705,15 @@ static int pxamci_probe(struct platform_device *pdev)
->>>    	platform_set_drvdata(pdev, mmc);
->>> -	host->dma_chan_rx = dma_request_chan(dev, "rx");
->>> -	if (IS_ERR(host->dma_chan_rx)) {
->>> -		host->dma_chan_rx = NULL;
->>> +	host->dma_chan_rx = devm_dma_request_chan(dev, "rx");
->>> +	if (IS_ERR(host->dma_chan_rx))
->>>    		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
->>>    				     "unable to request rx dma channel\n");
->>> -	}
->>> -	host->dma_chan_tx = dma_request_chan(dev, "tx");
->>> -	if (IS_ERR(host->dma_chan_tx)) {
->>> -		dev_err(dev, "unable to request tx dma channel\n");
->>> -		ret = PTR_ERR(host->dma_chan_tx);
->>> -		host->dma_chan_tx = NULL;
->>> -		goto out;
->>> -	}
->>> +	host->dma_chan_tx = devm_dma_request_chan(dev, "tx");
->>> +	if (IS_ERR(host->dma_chan_tx))
->>> +		return dev_err_probe(dev, PTR_ERR(host->dma_chan_tx),
->>> +				     "unable to request tx dma channel\n");
->>
->> We should still release DMA rx channel before returning here.
->>
->>>    	if (host->pdata) {
->>>    		host->detect_delay_ms = host->pdata->detect_delay_ms;
->>> @@ -724,25 +721,21 @@ static int pxamci_probe(struct platform_device *pdev)
->>>    		host->power = devm_gpiod_get_optional(dev, "power", GPIOD_OUT_LOW);
->>>    		if (IS_ERR(host->power)) {
->>>    			ret = PTR_ERR(host->power);
->>> -			dev_err(dev, "Failed requesting gpio_power\n");
->>> -			goto out;
->>> +			return dev_err_probe(dev, ret, "Failed requesting gpio_power\n");
->>
->> Don't we need to release DMA Rx and Tx channels before we return from here?
->>
->>>    		}
->>>    		/* FIXME: should we pass detection delay to debounce? */
->>>    		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
->>> -		if (ret && ret != -ENOENT) {
->>> -			dev_err(dev, "Failed requesting gpio_cd\n");
->>> -			goto out;
->>> -		}
->>> +		if (ret && ret != -ENOENT)
->>> +			return dev_err_probe(dev, ret, "Failed requesting gpio_cd\n");
->>
->> Same here
->>
->>>    		if (!host->pdata->gpio_card_ro_invert)
->>>    			mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
->>>    		ret = mmc_gpiod_request_ro(mmc, "wp", 0, 0);
->>> -		if (ret && ret != -ENOENT) {
->>> -			dev_err(dev, "Failed requesting gpio_ro\n");
->>> -			goto out;
->>> -		}
->>> +		if (ret && ret != -ENOENT)
->>> +			return dev_err_probe(dev, ret, "Failed requesting gpio_ro\n");
->>
->> and here.
->>
->> Looking at Documentation/driver-api/driver-model/devres.rst,
->> dma_request_chan() is not devres managed interface and thus will not be
->> released automatically. Do you agree?
->>
-> 
-> The patch changes dma_request_chan() to devm_dma_request_chan().
-> 
+On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
+>On 14.10.25 14:23, Wei Yang wrote:
+>> On Mon, Mar 03, 2025 at 05:30:13PM +0100, David Hildenbrand wrote:
+>> [...]
+>> > @@ -1678,6 +1726,22 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>> > 		break;
+>> > 	case RMAP_LEVEL_PMD:
+>> > 	case RMAP_LEVEL_PUD:
+>> > +		if (IS_ENABLED(CONFIG_NO_PAGE_MAPCOUNT)) {
+>> > +			last = atomic_add_negative(-1, &folio->_entire_mapcount);
+>> > +			if (level == RMAP_LEVEL_PMD && last)
+>> > +				nr_pmdmapped = folio_large_nr_pages(folio);
+>> > +			nr = folio_dec_return_large_mapcount(folio, vma);
+>> > +			if (!nr) {
+>> > +				/* Now completely unmapped. */
+>> > +				nr = folio_large_nr_pages(folio);
+>> > +			} else {
+>> > +				partially_mapped = last &&
+>> > +						   nr < folio_large_nr_pages(folio);
+>> 
+>> Hi, David
+>
+>Hi!
+>
+>> 
+>> Do you think this is better to be?
+>> 
+>> 	partially_mapped = last && nr < nr_pmdmapped;
+>
+>I see what you mean, it would be similar to the CONFIG_PAGE_MAPCOUNT case
+>below.
+>
+>But probably it could then be
+>
+>	partially_mapped = nr < nr_pmdmapped;
+>
+>because nr_pmdmapped is only set when "last = true".
+>
+>I'm not sure if there is a good reason to change it at this point though.
+>Smells like a micro-optimization for PUD, which we probably shouldn't worry
+>about.
+>
+>> 
+>> As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
+>> folio yet.
+>
+>We do support partially mapped PUD-sized folios I think, but not anonymous
+>PUD-sized folios.
+>
+>So consequently the partially_mapped variable will never really be used later
+>on, because the folio_test_anon() will never hit in the PUD case.
+>
 
-Ah, yes. It does. That works then.
+Ok, folio_test_anon() takes care of it. We won't add it to defer list by
+accident.
 
-Thanks,
-Khalid
+>-- 
+>Cheers
+>
+>David / dhildenb
 
-> regards,
-> dan carpenter
-> 
-
+-- 
+Wei Yang
+Help you, Help me
 
