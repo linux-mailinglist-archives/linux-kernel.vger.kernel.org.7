@@ -1,72 +1,64 @@
-Return-Path: <linux-kernel+bounces-852804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F74CBD9F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:22:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7198CBD9F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A38400E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3251926C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE2721D3D9;
-	Tue, 14 Oct 2025 14:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F15326C383;
+	Tue, 14 Oct 2025 14:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h0mNarJ3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WyzEPo7O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mK+XKbGa"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0908320E03F;
-	Tue, 14 Oct 2025 14:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF1326E6E5;
+	Tue, 14 Oct 2025 14:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760451502; cv=none; b=PzX4y/RVGQqPWRGAmgAUIiXuhFDw50qq1VQCiuZ18x3kr6zmk3ikqYxlLipi8n5p1TR8+ZXqi/1z4SiE3Tun/5aNk3sDSAwkVEc+vDpE53FEzi3fSjDb8Fb/CNRyoWLOj+iEySa2zs35T67SvxbiRlLBu0ByA7ES5FZRv2S2COw=
+	t=1760451541; cv=none; b=htJafGjcmhbKO69t8E2TZGFf3vTPs8n9L+2XFQ2BC6yPvDWmTnk92lEZJwwaBbgSwVbaGoMzeykDEhMOXYcf6IV5ZbgVoUC5De6dPWmadf+15QMnmkMwrkiavX8lmI4tguUjvui0TV14kEa8xcu51CjkYYZ0qSfg4DcD6lYG7PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760451502; c=relaxed/simple;
-	bh=5snj9My2QSM0dtiT56JIRYIy8ffkHfAfbWRs7lYjNoY=;
+	s=arc-20240116; t=1760451541; c=relaxed/simple;
+	bh=zFvgiSA5zusH3E2W8KBAzMBZqLEN5paS14qc+yO4rlo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZOB5XfKQHeWBIEW9Okp6d18EnKI+UyPqRguEQLhHGhlge/VmWZDASaolLuYvcH3jh6H3XaGX+2Gqu0YMWWEesynczpcFMYJ3fJVtPwbQLUb4kTVivyN55owxNVAf9/LP0+fMCzV6uXmtwn/f5KOqJNqNoBo5XKw9DnIdAAj5hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h0mNarJ3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WyzEPo7O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 14 Oct 2025 16:18:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760451498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3OCZOYOLjihIB8UBgGUQzEYdAZdMGmP3BT+nzfdgAkQ=;
-	b=h0mNarJ3RAeeYcbytkzDKBYFORbfcHqbKK5CSbijo1jPVWWfdSVNhToMjN8pb4oGldFa52
-	BMb2wcOPvNKrBl3fTmA7PfiU/xY5gVj6FACmN2pu6LyJlfrgcNxGYFaynvmJZ6tXa7/T8d
-	aA3AAB4A/Janhp/yZ9gz3XLDozFqo6eSHYCl2jgAt9IN6o19d1h508bzwS8Rq3JD0MppKw
-	xtYrjReBKPk6lACDt4e+7tSMn+nOR448mtlIqXIqOOd8rwVPLZNBamr1iZa/bi8rGAMHvH
-	HNFqMIS9Q4SiEdvg02IlhOIHK9c2wyhASdu6AZkr5wiaeW0H/jENuzJVBfbDGg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760451498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3OCZOYOLjihIB8UBgGUQzEYdAZdMGmP3BT+nzfdgAkQ=;
-	b=WyzEPo7OusZqludNOfuhXueH09Ov5UkCCMtFFcS6LXtlJihzWVyU95d3MVIWseADtDQogO
-	5XqCTtkJtvxvlQCw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rv: Add explicit lockdep context for reactors
-Message-ID: <20251014160719-f5a075fa-7cdf-4367-8551-05cf7715a3e7@linutronix.de>
-References: <20251014-rv-lockdep-v1-0-0b9e51919ea8@linutronix.de>
- <20251014-rv-lockdep-v1-3-0b9e51919ea8@linutronix.de>
- <87qzv6szku.fsf@yellow.woof>
- <20251014094206-80eb5d6c-e4dd-4704-a40a-e2d0461c2185@linutronix.de>
- <4d0467cf03f4b818a40344b6ec8142582c26a876.camel@redhat.com>
- <20251014140813-692b312f-67d8-4f11-99f9-73d5d8d34c87@linutronix.de>
- <ef1503b097e6113cec24f2c20684635fe1337260.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBcMVweMSz/zfa6vEc/rZt/cAhN2d2CRFQOzwIguexXlDmrsWvCxd0PAjpDsy3BPtZR1LqHIlmL3BXPXzig+2Gmkx5GH0EnFsiX6mq5/qqua2TtukQTwWCqqwqLJHNCxVFDs7VwmDNLR+QUz4fUkvzycGGpVP5+zYW+z2ZHid/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mK+XKbGa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=zFvgiSA5zusH3E2W8KBAzMBZqLEN5paS14qc+yO4rlo=; b=mK+XKbGaLHq3d0/QUL2+M5dgX9
+	foOOVBR7UFbS0Hb0BQewQEJMZhkzWgQoVD+haFNW5y4aB2AE8TWCgSOn6QTXTsOeFvBobeU7vUSHG
+	t+Bt+AxsF+9UR6fNhcY+qQSPLQoOAYTewSbK4c81esrSKpjdBDA3kXgrscdatOS8bekEe9aTOFi5z
+	tq/zidrwA98TNBCVYJppnQ/K56TFv6EfjuD53C+Na0Bo8f6KhvrXsdIxg2ixjUbLbyFt6A0ES3E+r
+	tbQbuFgke0dAmILn4Bf1qDTre2zEcHcK9P9gpxL6HPPuMNwtpCvpTAste5mSEfR/pCbNSBUy1expZ
+	HbWRsnWw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8frb-0000000CEhY-17nv;
+	Tue, 14 Oct 2025 14:18:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 15CE1300212; Tue, 14 Oct 2025 16:18:56 +0200 (CEST)
+Date: Tue, 14 Oct 2025 16:18:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
+Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, x86@kernel.org
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+Message-ID: <20251014141856.GA3245006@noisy.programming.kicks-ass.net>
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+ <20251014132544.GBaO5PWEbKfbQFCXdB@fat_crate.local>
+ <ddb38d36-0194-414c-8614-1f37b1f38283@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,46 +67,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef1503b097e6113cec24f2c20684635fe1337260.camel@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ddb38d36-0194-414c-8614-1f37b1f38283@suse.com>
 
-On Tue, Oct 14, 2025 at 03:45:39PM +0200, Gabriele Monaco wrote:
-> On Tue, 2025-10-14 at 14:51 +0200, Thomas Weißschuh wrote:
-> > I can't follow here. lockdep can indicate problems, but it should not
-> > introduce
-> > problems on its own. So preventing the usage together with lockdep would be
-> > the
-> > proverbial head in the sand. If the tracepoints called by lockdep are an issue
-> > then we would just not call into lockdep in the first place. lockdep
-> > triggering
-> > these tracepoints should not be an issue in practice. I don't see a
-> > bulletproof
-> > way to prevent a tracepoint handler from calling another tracepoint, except
-> > maybe extending lockdep to also track that.
-> 
-> Forget about it, you're right. This leads to not using lockdep inside reactors
-> in the first place. We could even have notrace versions of the lockdep calls
-> (I'm not sure lockdep itself needs them), but that's getting horrid.
+On Tue, Oct 14, 2025 at 04:13:11PM +0200, J=FCrgen Gro=DF wrote:
 
-I still don't understand why the tracepoints called from lockdep are worse then
-the ones called from the reactors themselves? Any solution should also apply to
-those. Especially as even the simplest printk reactor runs into the same issue.
+> Could take some time, vacation is coming up...
 
-> Leaving for a moment concurrency quirks aside, a monitor that is reacting should
-> be done for a while and can be marked as not monitoring before reacting, instead
-> of after.
-> Trace handlers triggered in the same tracepoints should, in principle, be able
-> to tell they are not supposed to run. This at least stands for DA monitors, but
-> the same idea could work on LTL as well.
-> 
-> Of course this gets more complicated in practice, but perhaps suspending
-> monitors during reaction can be enough to allow these lockdep calls without
-> risking infinite loops.
-
-What would it mean to suspend a monitor? In my opinion we shouldn't sacrifice
-the accuracy of the monitors or the reliability of the reactors while trying to
-mitigate a theoretical problem.
-
-
-Thomas
+Enjoy! This patch has meanwhile gone away.
 
