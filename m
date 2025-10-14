@@ -1,279 +1,260 @@
-Return-Path: <linux-kernel+bounces-853150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C41BDAC25
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF384BDAC2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9A104EA468
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD644044CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6308F3019B5;
-	Tue, 14 Oct 2025 17:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="unEG4D0Q"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010006.outbound.protection.outlook.com [52.101.193.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74482C3768;
-	Tue, 14 Oct 2025 17:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760462390; cv=fail; b=leoe/ZxYOpvVV5DZyi0EcDtwAOFL4V47gz23vs6WOpuXP3mqu6l5QFmwI9wm9cg6reCiLppcJikCBtBf779EPTdS54fArGjJ68NEjn5mnDSkjSsK5YcghjsDi7SCmBUvoQqe+1ff676qpJk6xHIVAARTQJOfBeDoL5PANuAqZj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760462390; c=relaxed/simple;
-	bh=JZrRvxDoLvVUbAcl84RRbWQITW+xIQcP1coXYtXRamo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YQUJDVDN2zBKfM9THNDW5cYBbeji7h4ySOWNwB56VHlpG1LvBi0mXtOOtMGApVOMRld3/hcriQ9Vkusax58Xg9fF1C/WyQ6gjCGbKoIVEgypi0Qp4kNs3cnQF3lKZS20ERuzpNLqyeLfXiz4kkNOUiv7e/kCuevjqJNaJYXhmIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=unEG4D0Q; arc=fail smtp.client-ip=52.101.193.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YZ2nDfGze8DnRxReU5oyndZ2U8GRx3MuXzNGn3sMq8lZXJVquqSvCmhg/z9nuO+bzkscJdC+2D5QRKEjiMqxaS8ZjfhQN1Y8iYZi6X5y9U/bHbOTLrIYeHfL+zS5YUxUDm5h7unGxDKZGftNwiLV0NYBFR7E8tVGkAsR5657HGVWONtpBu5Zjjy/aqc2RSOdiu16ZnPSM0L534my/pUn3qQpymY6ki06uCOD3AixMUGIE0Hl8VEsdk0rjLDtlvwEV6zx9Qa2pylhmgksuUlXzU1DTNtpIxzMq4bYBc8KrWsCjOwwkR22hisxv3RX9zCoQJl3smiVVB9JTW0J3EZu/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0bcvAB+5He8MflbuoyZON8kOEYwUFMPDQDn+j2h0ypg=;
- b=I+vxBQRmSVcElSDScVtPNCkleT1bygLfjZa1TTJHtI/Yv8fFAoLyK4zNuYRmfXf4oFreKjq7VQGtlx0XOOT4A4fsG3SDHs4rADIpSIYGQZMheUzfZ8bhYevLUanFuFsFGJ8yXgGb8jI450ApQFH+S6W0amIyLOcHIRdiCuZRCiFcVbozlzUHSbDnP4qszeG+66IrExcP8OObyppgteHPjzLzn5CJz4YbV+VNIG117raApleMmuz3Xw0CNMGEFrhro5NSBKtdmUHOW5q9YOTMqB7xx/pb6Gq1a25//rXw3sXHZQ1jD31uocQGgHPvv/UC40pui+eDnUJckQMD4pwANw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=ew.tq-group.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0bcvAB+5He8MflbuoyZON8kOEYwUFMPDQDn+j2h0ypg=;
- b=unEG4D0Qe/Elv3CFXauMH8Q6fTSg8DyUqDnnZkmIbZZ5k+Kmx65ysdv6AR7lF1OI0xSZGORNEz5r4CWOJF5BXVDq6MKuVGaSZQn1CsuyXv/lFW7+hizFCk0mbXHkOO1XbEPioZ+1nvz+LxKgIE1I55fYTm2AImDUULC51yjSSCE=
-Received: from BLAPR03CA0099.namprd03.prod.outlook.com (2603:10b6:208:32a::14)
- by DS0PR12MB6607.namprd12.prod.outlook.com (2603:10b6:8:d1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Tue, 14 Oct
- 2025 17:19:46 +0000
-Received: from BL02EPF0001A0FC.namprd03.prod.outlook.com
- (2603:10b6:208:32a:cafe::6d) by BLAPR03CA0099.outlook.office365.com
- (2603:10b6:208:32a::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Tue,
- 14 Oct 2025 17:19:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BL02EPF0001A0FC.mail.protection.outlook.com (10.167.242.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 17:19:45 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 14 Oct
- 2025 10:19:44 -0700
-Received: from [172.19.71.207] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 14 Oct 2025 10:19:44 -0700
-Message-ID: <264a9596-b602-19ec-ff63-0e687a818f8d@amd.com>
-Date: Tue, 14 Oct 2025 10:19:43 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F9730649B;
+	Tue, 14 Oct 2025 17:20:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06B02FC86C;
+	Tue, 14 Oct 2025 17:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760462399; cv=none; b=gj5Jy47rjKZPGEkxVX70g1L4HPKVm5VowlVxbVdvoA11ZhQzwjMZou6Mczp7+vsKYnLWsElHxbj3xYvRnjKKjT7irnC2GzZDLe0lqNjTXX2GN/V6GmNGhKSIapHo/nwW2UmKmS4H6WEhpWeyzzS9P5/FARHBZ3adRlS7wgtR/co=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760462399; c=relaxed/simple;
+	bh=+Rok64GjH6bMzjCNLJns+E/72zeS8NKwoze0SUab/P0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WpmDhUWNdQhJ5OUgkAwVpOi8Xhja11OkDd98UfTvjco/4amlj0sD46xiSSBJslHZX38MYr2q8JXcdvpOvR/EJNYKDs3KSPhOsflWtiDFOdB4KMD1SQH6B0928X9xktEQmmdgG4ri+4s6ul04+amTU5DEdq2XZnAP++HlLY4oJ5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D193B1A9A;
+	Tue, 14 Oct 2025 10:19:47 -0700 (PDT)
+Received: from [10.1.36.66] (unknown [10.1.36.66])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 847AB3F66E;
+	Tue, 14 Oct 2025 10:19:53 -0700 (PDT)
+Message-ID: <e9eb077b-3253-49be-b997-a07dcde86cdc@arm.com>
+Date: Tue, 14 Oct 2025 18:19:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 1/1] dmaengine: xilinx: xdma: Add regmap register ranges
+User-Agent: Mozilla Thunderbird
+Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
+ information" causes regressions
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Sasha Levin <sashal@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
+References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
+ <08529809-5ca1-4495-8160-15d8e85ad640@arm.com>
+ <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
+ <8da42386-282e-4f97-af93-4715ae206361@arm.com>
+ <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi>
+ <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com>
+ <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
 Content-Language: en-US
-To: Alexander Stein <alexander.stein@ew.tq-group.com>, Brian Xu
-	<brian.xu@amd.com>, Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, "Vinod
- Koul" <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
-CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20251014055034.274596-1-alexander.stein@ew.tq-group.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <20251014055034.274596-1-alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FC:EE_|DS0PR12MB6607:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d2978eb-fb3a-41e3-e53c-08de0b45debf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QjIzOUtFWkp2T0tja25kWkQ2WmNXZmtLS2ZYbGtVSXkyWlZYOEdOSnVDUk94?=
- =?utf-8?B?TGQ3YThIYjl0OXp0MFAyeHBpVGFjRFVtYU81Rko5ZnNQQ01iR2pDdHBIZGx6?=
- =?utf-8?B?ZzFQdkllb3JOZXE0SmdZVVlmTkZ0VFhrWnAwRjJISWE1eGUzczJpZ01SNmRu?=
- =?utf-8?B?UDJscFY4Q250QXlBN2VKZHRwN0hpRFBvMXd4czNMOXAvUzZwVXBtMlAzTWRM?=
- =?utf-8?B?cEFmSk5RM1RkNXNsaThLclNEVFY3Uk1EVWo3NEdGUW11eXlZcFNyYkF1NC9s?=
- =?utf-8?B?Qm5RV0dKcXd1d2doTzJ1VHIwU2VzdE9UN2VGajR5L2E0VlBrNitDdGVwR3JL?=
- =?utf-8?B?OTJmNWdvdnFST3I1S0dRSnZUVVJHbEN2U2NWRnlkYktNTE1lakRsYWxpTkNM?=
- =?utf-8?B?Z0Y2UXc2YzFmU0FlQkxxZkFKZm5IbE5JSlEwemVKSFVlZ2R2c1Z4c0VQeURs?=
- =?utf-8?B?OFArdmR3VzVkRWRTTi83anJtcS9BQllqVXRuMUFrd05DVjlsbDlzWDl6aTZV?=
- =?utf-8?B?eEZ0ZFM5alBoYk92R2x4am9uWThwRFlVUTVwSkNqWE9SV0E2dnpJaWJIT2kz?=
- =?utf-8?B?M0gxb2dmMDVMbk9jV0QvYnlBNnBlQlZ4dWRLWmdGUEFKWGFUTCt0b1N6WWVK?=
- =?utf-8?B?TEJOeGdEelFqYjhvcWVkRXltdFVXaG5ka1d2dHlKOUJXaHN4M1dJc3I3MkQw?=
- =?utf-8?B?OEpPMHYyWWl3emgyZlR1a1RRYS9TVmhTSHVoZEJtS1Rrc2pqS1VxZFVUcTdJ?=
- =?utf-8?B?Ri91TWw5YWhFOHlSZEhKTUNGb3lBWjNiamlNN2o2K1FyM282Sk56TXNkVUZ5?=
- =?utf-8?B?NkpEeFh4T1hoMStoNEtJcU5ybXJaa1hxK0tyajErSmNJS0c5MEpzZ2c5QWhQ?=
- =?utf-8?B?eDBJRWd5dFNlUjFyejh2WEZIQ2dTbWlPazB1OXVPQUcraXl4Q21xaExKUDhJ?=
- =?utf-8?B?NUlMcitQR0lnUUZJb1FMQ3hxOUNXd1pXZmlYS1ExTTFLSWU0L2laTi9HM2lM?=
- =?utf-8?B?aDVQZXNXYm1JSWJDODZJQ2xtcjdWWjZHdldyOUI1ZDFBUG9iVnN6elBtdk4v?=
- =?utf-8?B?VXpCeElNN2VWU0VDaStTQ2pPa3YrdGw4VW1Rc1ZqbDgzbkhOVUVwUHI1ekpP?=
- =?utf-8?B?TjRMa2Q4aTBXL3paaGl0bjdvalhWcXVmMkJPOFpQcElOUmJTUUtub2llTFB1?=
- =?utf-8?B?cHlWRldjc29MaktOemRCcnZ5WS9haVphRGpBd2haT0d4OThvejBCS092L1ZV?=
- =?utf-8?B?M3Y0V05kRzhJc085bzBQWk1LY2RVaUMyc3ZHc2gybkRZWkQzOUg2R0JyUFUy?=
- =?utf-8?B?clVzc0hyL1hHcW11eEJnK2FYNU1idXU4U1FUZVRKQXRHUWlyV21QT3dQalMv?=
- =?utf-8?B?RzdjTDJXSHZIM1EvN29OVEZJUFNSdWJRSnhrY05GN2NWMmFZS2FyWWVyV05n?=
- =?utf-8?B?ZzFiNEUwVjBWK2J3U2d5Rlh3V1NFTHNoakhQVDlFT21heHQ0MVdEVW5LSUF5?=
- =?utf-8?B?MTFWWnpVRS84dnBpWkw2bFNvYWlzMU9SeVMxcVNFKy8vUStyMnk2Sjk4UVhI?=
- =?utf-8?B?RWVnV2x6Q01XREM0dW1ibnpWNEE1L0UwRlJxaVRhZUx3WWszUUpUaFg0SU94?=
- =?utf-8?B?eXZYLzZMMG5lNVhQUEszZDlKK3BCcWF1VktQbStscTk5T2pxMmhGZy9BS2M0?=
- =?utf-8?B?K1FDdEZiMHRZSFdDcnRjeCtDOXZKNEg2NzBzc2hDWjQ5eU5rS0hIdGM5L3BV?=
- =?utf-8?B?QXBmMGpZMFU2eStpU3lwRVhWbWxSdDczOTFVQVNveWVybXJoWEt5c2Q2d2p3?=
- =?utf-8?B?elZOYU83M1kya0tZNG8yd1FsTm9Qd2RyRkE1Z2lDMGVmVnZ6Q0wvaHExUHdD?=
- =?utf-8?B?R1oySlQ2QmhnRk52VVJTRkhnd2NHTFhmNW8xb1o5R2dnL1dHTHhVSm1YclhY?=
- =?utf-8?B?SWZXVWVyZlo0cnZTOWUrZTJyem01MUV5NXFndURpQlowVXZTZzZqV211MG9P?=
- =?utf-8?B?NDJJd2xNNTM5bEFCNWVzTE42cFhWSEZ5OUwrcnRQL1NLeXJWZjUrMktnbFQ5?=
- =?utf-8?B?VkgzMlhLbk5vWTcrRjRqdEYwV0RiRlREZDRteldaWXUxdWRiZ255OVFpNkpQ?=
- =?utf-8?Q?wO5E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 17:19:45.0513
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d2978eb-fb3a-41e3-e53c-08de0b45debf
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6607
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+On 10/14/25 16:54, Rafael J. Wysocki wrote:
+> On Tue, Oct 14, 2025 at 5:11 PM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> On 10/14/25 12:55, Sergey Senozhatsky wrote:
+>>> On (25/10/14 11:25), Christian Loehle wrote:
+>>>> On 10/14/25 11:23, Sergey Senozhatsky wrote:
+>>>>> On (25/10/14 10:50), Christian Loehle wrote:
+>>>>>>> Upstream fixup fa3fa55de0d ("cpuidle: governors: menu: Avoid using
+>>>>>>> invalid recent intervals data") doesn't address the problems we are
+>>>>>>> observing.  Revert seems to be bringing performance metrics back to
+>>>>>>> pre-regression levels.
+>>>>>>
+>>>>>> Any details would be much appreciated.
+>>>>>> How do the idle state usages differ with and without
+>>>>>> "cpuidle: menu: Avoid discarding useful information"?
+>>>>>> What do the idle states look like in your platform?
+>>>>>
+>>>>> Sure, I can run tests.  How do I get the numbers/stats
+>>>>> that you are asking for?
+>>>>
+>>>> Ideally just dump
+>>>> cat /sys/devices/system/cpu/cpu*/cpuidle/state*/*
+>>>> before and after the test.
+>>>
+>>> OK, got some data for you.  The terminology being used here is as follows:
+>>>
+>>> - 6.1-base
+>>>   is 6.1 stable with a9edb700846 "cpuidle: menu: Avoid discarding useful information"
+>>>
+>>> - 6.1-base-fixup
+>>>   is 6.1 stable with a9edb700846 and fa3fa55de0d6 "cpuidle: governors:
+>>>   menu: Avoid using invalid recent intervals data" cherry-pick
+>>>
+>>> - 6.1-revert
+>>>   is 6.1 stable with a9edb700846 reverted (and no fixup commit, obviously)
+>>>
+>>> Just to show the scale of regression, results of some of the benchmarks:
+>>>
+>>>   6.1-base:           84.5
+>>>   6.1-base-fixup:     76.5
+>>>   6.1-revert:         59.5
+>>>
+>>>   (lower is better, 6.1-revert has the same results as previous stable
+>>>   kernels).
+>> This immediately threw me off.
+>> The fixup was written for a specific system which had completely broken
+>> cpuidle. It shouldn't affect any sane system significantly.
+>> I double checked the numbers and your system looks fine, in fact none of
+>> the tests had any rejected cpuidle occurrences. So functionally base and
+>> base-fixup are identical for you. The cpuidle numbers are also reasonably
+>> 'in the noise', so just for the future some stats would be helpful on those
+>> scores.
+>>
+>> I can see a huge difference between base and revert in terms of cpuidle,
+>> so that's enough for me to take a look, I'll do that now.
+>> (6.1-revert has more C3_ACPI in favor of C1_ACPI.)
+>>
+>> (Also I can't send this email without at least recommending teo instead of menu
+>> for your platform / use-cases, if you deemed it unfit I'd love to know what
+>> didn't work for you!)
+> 
+> Well, yeah.
+> 
+> So I've already done some analysis.
+> 
+> There are 4 C-states, POLL, C1, C6 and C10 (at least that's what the
+> MWAIT hints tell me).
+> 
+> This is how many times each of them was requested during the workload
+> run on base 6.1.y:
+> 
+> POLL: 21445
+> C1: 2993722
+> C6: 767029
+> C10: 736854
+> 
+> and in percentage of the total idle state requests:
+> 
+> POLL: 0,47%
+> C1: 66,25%
+> C6: 16,97%
+> C10: 16,31%
+> 
+> With the problematic commit reverted, this became
+> 
+> POLL: 16092
+> C1: 2452591
+> C6: 750933
+> C10: 1150259
+> 
+> and (again) in percentage of the total:
+> 
+> POLL: 0,37%
+> C1: 56,12%
+> C6: 17,18%
+> C10: 26,32%
+> 
+> Overall, POLL is negligible and the revet had no effect on the number
+> of times C6 was requested.  The difference is for C1 and C10 and it's
+> 10% in both cases, but going in opposite directions so to speak: C1
+> was requested 10% less and C10 was requested 10% more after the
+> revert.
+> 
+> Let's see how this corresponds to the residency numbers.
+> 
+> For base 6.1.y there was
+> 
+> POLL: 599883
+> C1: 732303748
+> C6: 576785253
+> C10: 2020491489
+> 
+> and in percentage of the total
+> 
+> POLL: 0,02%
+> C1: 21,99%
+> C6: 17,32%
+> C10: 60,67%
+> 
+> After the revert it became
+> 
+> POLL: 469451
+> C1: 517623465
+> C6: 508945687
+> C10: 2567701673
+> 
+> and in percentage of the total
+> 
+> POLL: 0,01%
+> C1: 14,40%
+> C6: 14,16%
+> C10: 71,43%
+> 
+> so with the revert the CPUs spend around 7% more time in deep idle
+> states (C6 and C10 combined).
+> 
+> I have to say that this is consistent with the intent of the
+> problematic commit, which is to reduce the number of times the deepest
+> idle state is requested although it is likely to be too deep.
+> 
+> However, on the system in question this somehow causes performance to
+> drop significantly (even though shallow idle states are used more
+> often which should result in lower average idle state exit latency and
+> better performance).
+> 
+> One possible explanation is that this somehow affects turbo
+> frequencies.  That is, requesting shallower idle states on idle CPUs
+> prevents the other CPUs from getting sufficiently high turbo.
+> 
+> Sergey, can you please run the workload under turbostat on the base
+> 6.1.y and on 6.1.y with the problematic commit reverted and send the
+> turbostat output from both runs (note: turbostat needs to be run as
+> root)?
 
-On 10/13/25 22:50, Alexander Stein wrote:
-> The XDMA bar is 64KiB, way too much for debugfs dump. Add register range
-> definitions for all defined registers in PG195. As this is PCIe memory
-> range all readable registers are marked as volatile.
->
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
-> Although the change itself is independent, this patch context depends on
-> [1].
->
-> [1] https://lore.kernel.org/all/20251013-xdma-max-reg-v5-1-83efeedce19d@amarulasolutions.com/
->
->   drivers/dma/xilinx/xdma.c | 89 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 89 insertions(+)
->
-> diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-> index 5ecf8223c112e..3d9e92bbc9bb0 100644
-> --- a/drivers/dma/xilinx/xdma.c
-> +++ b/drivers/dma/xilinx/xdma.c
-> @@ -33,12 +33,101 @@
->   #include "../virt-dma.h"
->   #include "xdma-regs.h"
->   
-> +static const struct regmap_range xdma_wr_ranges[] = {
-> +	/* H2C channel registers */
-> +	regmap_reg_range(0x0004, 0x000c),
-> +	regmap_reg_range(0x0040, 0x0040),
-> +	regmap_reg_range(0x0088, 0x0098),
-> +	regmap_reg_range(0x00c0, 0x00c0),
-> +	/* C2H channel registers */
-> +	regmap_reg_range(0x1004, 0x100c),
-> +	regmap_reg_range(0x1040, 0x1040),
-> +	regmap_reg_range(0x1088, 0x1098),
-> +	regmap_reg_range(0x10c0, 0x10c0),
-> +	/* IRQ Block registers */
-> +	regmap_reg_range(0x2004, 0x2018),
-> +	regmap_reg_range(0x2080, 0x208c),
-> +	regmap_reg_range(0x20a0, 0x20a4),
-> +	/* Config Block registers */
-> +	regmap_reg_range(0x301c, 0x301c),
-> +	regmap_reg_range(0x3040, 0x3044),
-> +	regmap_reg_range(0x3060, 0x3060),
-> +	/* H2C SGDMA registers */
-> +	regmap_reg_range(0x4080, 0x408c),
-> +	/* C2H SGDMA registers */
-> +	regmap_reg_range(0x5080, 0x508c),
-> +	/* SGDMA Common registers */
-> +	regmap_reg_range(0x6010, 0x6018),
-> +	regmap_reg_range(0x6020, 0x6028),
-> +	/* MSI-X Vector Table and PBA */
-> +	regmap_reg_range(0x8000, 0x81fc),
-> +	regmap_reg_range(0x8fe0, 0x8fe0),
-> +};
-> +static const struct regmap_range xdma_rd_ranges[] = {
-> +	/* H2C channel registers */
-> +	regmap_reg_range(0x0000, 0x0004),
-> +	regmap_reg_range(0x0040, 0x004c),
-> +	regmap_reg_range(0x0088, 0x0090),
-> +	regmap_reg_range(0x00c0, 0x00d0),
-> +	/* C2H channel registers */
-> +	regmap_reg_range(0x1000, 0x1004),
-> +	regmap_reg_range(0x1040, 0x104c),
-> +	regmap_reg_range(0x1088, 0x1090),
-> +	regmap_reg_range(0x10c0, 0x10d0),
-> +	/* IRQ Block registers */
-> +	regmap_reg_range(0x2000, 0x2004),
-> +	regmap_reg_range(0x2010, 0x2010),
-> +	regmap_reg_range(0x2040, 0x204c),
-> +	regmap_reg_range(0x2080, 0x208c),
-> +	regmap_reg_range(0x20a0, 0x20a4),
-> +	/* Config Block registers */
-> +	regmap_reg_range(0x3000, 0x301c),
-> +	regmap_reg_range(0x3040, 0x3044),
-> +	regmap_reg_range(0x3060, 0x3060),
-> +	/* H2C SGDMA registers */
-> +	regmap_reg_range(0x4000, 0x4000),
-> +	regmap_reg_range(0x4080, 0x408c),
-> +	/* C2H SGDMA registers */
-> +	regmap_reg_range(0x5000, 0x5000),
-> +	regmap_reg_range(0x5080, 0x508c),
-> +	/* SGDMA Common registers */
-> +	regmap_reg_range(0x6000, 0x6000),
-> +	regmap_reg_range(0x6010, 0x6010),
-> +	regmap_reg_range(0x6020, 0x6020),
-> +	/* MSI-X Vector Table and PBA */
-> +	regmap_reg_range(0x8000, 0x81fc),
-> +	regmap_reg_range(0x8fe0, 0x8fe0),
-> +};
-> +static const struct regmap_range xdma_precious_ranges[] = {
-> +	/* H2C channel registers */
-> +	regmap_reg_range(0x0044, 0x0044),
-> +	/* C2H channel registers */
-> +	regmap_reg_range(0x1044, 0x1044),
-> +};
-> +static const struct regmap_access_table xdma_wr_table = {
-> +	.yes_ranges = xdma_wr_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(xdma_wr_ranges),
-> +};
-> +static const struct regmap_access_table xdma_rd_table = {
-> +	.yes_ranges = xdma_rd_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(xdma_rd_ranges),
-> +};
-> +static const struct regmap_access_table xdma_precious_table = {
-> +	.yes_ranges = xdma_precious_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(xdma_precious_ranges),
-> +};
-> +
->   /* mmio regmap config for all XDMA registers */
->   static const struct regmap_config xdma_regmap_config = {
->   	.reg_bits = 32,
->   	.val_bits = 32,
->   	.reg_stride = 4,
->   	.max_register = XDMA_MAX_REG_OFFSET,
-> +	.wr_table = &xdma_wr_table,
-> +	.rd_table = &xdma_rd_table,
-> +	.volatile_table = &xdma_rd_table,
-> +	.precious_table = &xdma_precious_table,
-> +	.cache_type = REGCACHE_NONE,
->   };
->   
->   /**
+That's the most plausible explanation and would also be my guess.
+FWIW most of the C3_ACPI (== C10) with revert are objectively wrong
+with 78% idle misses (they were already pretty high with base around 72.5%).
+
+I'll leave this here for easier following:
+
+===== 6.1-base: after minus before deltas (aggregated across CPUs) =====
++---------+-------------+------------+--------------+---------------+------------+------------+---------+
+|   state | time_diff_s | usage_diff | avg_resid_us | rejected_diff | above_diff | below_diff | share_% |
++---------+-------------+------------+--------------+---------------+------------+------------+---------+
+|    POLL |       0.600 |     21,445 |         28.0 |             0 |          0 |     19,846 |    0.02 |
+| C1_ACPI |     732.304 |  2,993,722 |        244.6 |             0 |      3,816 |    280,613 |   21.99 |
+| C2_ACPI |     576.785 |    767,029 |        752.0 |             0 |    272,105 |        453 |   17.32 |
+| C3_ACPI |   2,020.491 |    736,854 |      2,742.1 |             0 |    534,424 |          0 |   60.67 |
+|   TOTAL |   3,330.180 |  4,519,050 |              |             0 |    810,345 |    300,912 |  100.00 |
++---------+-------------+------------+--------------+---------------+------------+------------+---------+
+
+===== 6.1-revert: after minus before deltas (aggregated across CPUs) =====
++---------+-------------+------------+--------------+---------------+------------+------------+---------+
+|   state | time_diff_s | usage_diff | avg_resid_us | rejected_diff | above_diff | below_diff | share_% |
++---------+-------------+------------+--------------+---------------+------------+------------+---------+
+|    POLL |       0.469 |     16,092 |         29.2 |             0 |          0 |     14,855 |    0.01 |
+| C1_ACPI |     517.623 |  2,452,591 |        211.1 |             0 |      4,109 |    150,500 |   14.40 |
+| C2_ACPI |     508.946 |    750,933 |        677.8 |             0 |    327,457 |        427 |   14.16 |
+| C3_ACPI |   2,567.702 |  1,150,259 |      2,232.3 |             0 |    895,311 |          0 |   71.43 |
+|   TOTAL |   3,594.740 |  4,369,875 |              |             0 |  1,226,877 |    165,782 |  100.00 |
++---------+-------------+------------+--------------+---------------+------------+------------+---------+
+
+===== 6.1-revert minus 6.1-base (state-by-state deltas of the deltas) =====
++---------+-----------+----------+----------+---------------+----------+----------+
+|   state | Δshare_pp |   Δusage |  Δtime_s | Δavg_resid_us |   Δabove |   Δbelow |
++---------+-----------+----------+----------+---------------+----------+----------+
+|    POLL |     -0.00 |   -5,353 |   -0.130 |           1.2 |       +0 |   -4,991 |
+| C1_ACPI |     -7.59 | -541,131 | -214.680 |         -33.6 |     +293 | -130,113 |
+| C2_ACPI |     -3.16 |  -16,096 |  -67.840 |         -74.2 |  +55,352 |      -26 |
+| C3_ACPI |    +10.76 | +413,405 |  547.210 |        -509.8 | +360,887 |       +0 |
+|   TOTAL |     +0.00 | -149,175 |  264.560 |               | +416,532 | -135,130 |
++---------+-----------+----------+----------+---------------+----------+----------+
 
