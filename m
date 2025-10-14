@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-852889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C86BDA292
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:54:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34358BDA2A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0962F4F305A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265C9188797E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289E62FF673;
-	Tue, 14 Oct 2025 14:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01FD2FF66D;
+	Tue, 14 Oct 2025 14:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWND95o5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="U0wFU7Gc"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8275D26560A;
-	Tue, 14 Oct 2025 14:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9283A2773F7;
+	Tue, 14 Oct 2025 14:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453637; cv=none; b=WYXgLsCMhGqhFFYy5xvB9ZbgEfsCRBLmICzSwX5CTL7x1lLUTnKA45mPgIKsey5UY2lVYfaC08JseAPclCkXN/JDXOSer93HYlvS5yRCrADh6g673jOWZm0M3l/u5pt5uU1+b6rWhWT6Q8fdp6eG5VTVpveltM6GzOBaTO9OoMU=
+	t=1760453733; cv=none; b=A6ztHeq8Uesnc/Ea7HPd8NvqMaNwXeyORxFljyAvAvua7XKmP83M/OZXP0V76ZGVqVJ9VrvjiFtkqkL9Y371qrRNsAjMPFW9Q1mNG0mmJoQK0kBEqM4ugk09VRTwfFfybAqluESv8xuSIreVBcm/6udXHfX3oR67CQaot445JeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453637; c=relaxed/simple;
-	bh=t55w1mcoaaGAMC5XxQnXSI+Z5BnivzmiFCBAuKu0hyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uB3cBneXFoDimiQ1qsYwMuTZSBzSDho9uZV2b+rJS3K2FiFtu2x3/HW4Waz/ugQI4+2bx914aeBrCQcqQUmDNmWi1CCaTvA2VpIRssn+X1HVifR50zwLu3MW2TVraDl8QDU/b5TtPaDjmeQPhzHWpIkWbYJ31UtDr1huCkJm5Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWND95o5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D3E3C4CEE7;
-	Tue, 14 Oct 2025 14:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760453637;
-	bh=t55w1mcoaaGAMC5XxQnXSI+Z5BnivzmiFCBAuKu0hyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWND95o5fT67auIvjppHdA+vqXT1+rEl9L8fvOBRmSAh648FeDgX8frpLlriHsLWU
-	 C6+pmrRpzggc9+z/KPdme9qRyUi6S0OsMyUWiJlAMFATrkGV4vR9z5oVdPrrOnhwS7
-	 bOHB335vK0qTvCce1U1e1JtpMnC38Nue0FYe9nufFoHAY45WeUbXT6wr/UWPoT+dpe
-	 eVD/F2UxWyXApL7XI/bCEIpw9uxyiALzlV4p0er+DK2qUu9q7TTHNinXAuPMs7YWTD
-	 DNxkZG6GvDtb2KYUp0GgBmqwKemiyN9evrML6iXtQBapNcN+FyhviFYEdaNNUPnNR/
-	 /0ghvlq+HnRMw==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v8gPU-000000004Hk-2UTP;
-	Tue, 14 Oct 2025 16:53:56 +0200
-Date: Tue, 14 Oct 2025 16:53:56 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Oleksandr Suvorov <cryosay@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: ftdi_sio: add device ID for U-Blox EVK-M101
-Message-ID: <aO5kBAjE6EMG2aUE@hovoldconsulting.com>
-References: <20250926060235.3442748-1-cryosay@gmail.com>
+	s=arc-20240116; t=1760453733; c=relaxed/simple;
+	bh=oJjRXMYAtYfstJ1Qe7kiRTx+N9SnMeZBjZHi92bWT2w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s3p5RR2RomgdnJJD72iRcsiqYxWaxvPy0Vbhg8KTn+1fGDKeHwGbyBpV+lqKYcgsvKOr4alkHmPDsrNi5IdYQMHLaqJZDOhs7wV68hdG87G2UtLsharb9iTdh57lrVvYfPom7n19MrzFU3INsocqbma7hSNJ3/DjU5bHhgrxdJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=U0wFU7Gc; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8807540B1E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1760453730; bh=2NhCZaS0JRHpCMdnPaecLqGEPTG+OSiP6xNnzI2UmlA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=U0wFU7Gc5aXlrvnGS2+/0yPHl5lknOISny431eW8j9/31oHjg0V8CqS0veDMbj3Pq
+	 zNXqBUbFkT4E2ZHSz905Ed12lmOfNnqTovYrnFJ9IT4ZAgC638UPzc3+NPT/uyd/e2
+	 PaqT9D/NKZ+ivU/6gQqcfpSTI8am+lGw03CPbe2aGYUO5vShSnGBRlz38uG06FGaoX
+	 PXeiObeHWk5lWK6xyT9xiSodkGzAKghCBhHKeicqVVzd04W8tGlWyyw8+i4YNA1X+A
+	 EM2uuZFuEp72eJPB3hOmOZybWELdSZ2zeyFS72/qteF4Em6A2ViztDKvVdUQ1wBiRG
+	 OsWb0/j+s9rYQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 8807540B1E;
+	Tue, 14 Oct 2025 14:55:30 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Linux Serial <linux-serial@vger.kernel.org>
+Cc: Cengiz Can <cengiz@kernel.wtf>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ Tomas Mudrunka <tomas.mudrunka@gmail.com>, Jiri Slaby
+ <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Anselm =?utf-8?Q?Sch=C3=BCler?= <mail@anselmschueler.com>
+Subject: Re: [PATCH] Documentation: sysrq: Remove contradicting sentence on
+ extra /proc/sysrq-trigger characters
+In-Reply-To: <20251008112409.33622-1-bagasdotme@gmail.com>
+References: <20251008112409.33622-1-bagasdotme@gmail.com>
+Date: Tue, 14 Oct 2025 08:55:29 -0600
+Message-ID: <87wm4xbkim.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926060235.3442748-1-cryosay@gmail.com>
+Content-Type: text/plain
 
-On Fri, Sep 26, 2025 at 09:02:35AM +0300, Oleksandr Suvorov wrote:
-> The U-Blox 
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-Missing product name?
+> /proc/sysrq-trigger documentation states that only first character is
+> processed and the rest is ignored, yet it is not recommended to write
+> any extra characters to it. The latter statement is contradictive as
+> these characters are also ignored as implied by preceding sentence.
+>
+> Remove it.
+>
+> Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/admin-guide/sysrq.rst | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
+> index 9c7aa817adc72d..63ff415ce85d66 100644
+> --- a/Documentation/admin-guide/sysrq.rst
+> +++ b/Documentation/admin-guide/sysrq.rst
+> @@ -77,9 +77,7 @@ On other
+>  On all
+>  	Write a single character to /proc/sysrq-trigger.
+>  	Only the first character is processed, the rest of the string is
+> -	ignored. However, it is not recommended to write any extra characters
+> -	as the behavior is undefined and might change in the future versions.
+> -	E.g.::
+> +	ignored. E.g.::
 
-> has a USB Type-C port that presents itself as a USB device
-> (1546:0506) [1] with four attached FTDI serial ports, connected to:
-> - EVK-M101 current sensors
-> - EVK-M101 I2C
-> - EVK-M101 UART
-> - EVK-M101 port D
-> 
-> This commit registers U-Blox's VID/PID of this device so that FTDI SIO driver
-> successfully registers these 4 serial ports.
+I'm not sure this is right - there is a warning here that additional
+characters may acquire a meaning in the future, so one should not
+develop the habit of writing them now.  After all these years, I think
+the chances of fundamental sysrq changes are pretty small, but I still
+don't see why we would take the warning out?
 
-Are you sure you should not just register the UART port? Some FTDI chips
-support I2C but you'd need a different driver for that.
-
-> [1]
-> usb 5-1.3: new high-speed USB device number 11 using xhci_hcd
-> usb 5-1.3: New USB device found, idVendor=1546, idProduct=0506, bcdDevice= 8.00
-> usb 5-1.3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-> usb 5-1.3: Product: EVK-M101
-> usb 5-1.3: Manufacturer: u-blox AG
-> 
-> Datasheet: https://content.u-blox.com/sites/default/files/documents/EVK-M10_UserGuide_UBX-21003949.pdf
-
-The user guide also says "Do not use this COM port" for all ports but
-the UART port.
-
-Johan
+jon
 
