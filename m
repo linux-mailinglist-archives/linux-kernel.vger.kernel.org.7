@@ -1,106 +1,107 @@
-Return-Path: <linux-kernel+bounces-852185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B095EBD8631
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6F2BD8637
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D6E14F849F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B05A19234A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7C82E7BC0;
-	Tue, 14 Oct 2025 09:18:20 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EFB2DFA2D;
+	Tue, 14 Oct 2025 09:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3DR+sa1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3A271473
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC75025D546;
+	Tue, 14 Oct 2025 09:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433500; cv=none; b=fgEK6yTGPoZa/lb1BR/UDC/kKeY0rbsbntlyoDB2TPqkoMITKL6HVnD3Ts2pCPbCH4vFf4N5Rkgpxf2BqDTSzYDNrRI1ITO1MLVVx83JWK/K6OW07jExFpLtH7zEdzVxVfxtxvOlAKtU3EbrixXV7e3iCwLTyp/evyCiOVs5iPg=
+	t=1760433516; cv=none; b=f5UbiPszWDJluPW/gjsyKOAQBMoZGPwk9xBNldZR2DbGArbpU260Y3MvfmPJf6fLjfraf3oUv5U/EvPSgaYXBo/C92NR9kJUyfIuWWBjOMpyUAG2vjNhK5I9JHZSrelKU7ab/Mby5IrcMqwW0rrHlx5tkAIziXYEG3D7aAdZRds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433500; c=relaxed/simple;
-	bh=pRySc9wGvib0712pdmZwsSCJaX7osrehM2VEKQgyLbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMQpBO6TErI4EGv23Oz+caDLzQ9VgylncjLbOOvEr1KDDXiiFR+aEdJYVs1br1SyaqRbj/bIWZKxxq91McOMo13JoxoqzIPP3rxFqOVgdIQOkFbkWhuNLvlZhM8UonWoFaAc+HK42N4HjnYOddaxFP5Pt8V7qwR8bt6wr+WYKpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so923257366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:18:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760433497; x=1761038297;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z0XLyxJWaoIPYyxxXV4bvKlSgBwkx+wM+aGiKaURStA=;
-        b=os7qhPMUE1ADTmzoX0+j9SIFNJ5f5KbMrql99DmP8DllXSZAZIQhNXqkHAT4erMXhy
-         ZrP0P/RAskfgjDypU3ei6lIA+xK9x4keE1rpbXFwRFVm4f8AkNyf4pHNz8uxOMgK2iSw
-         RZfskFnostVxr3E7B9eT6PH2/Q6L22JEuIILj6GLMsup5FcwqnPE++GHSddRjqk8tFWg
-         vksQaPeHVGYzOGGHDypowhlWuK5ct2n+XiMnSc929jOC2f9mAAizzsNdLU8dOBVPK3wA
-         LlARV9yybcp4UtDUbNkh1OucPU4ap2eYh/tacI0169JA6y31a9S5uOCWcxM8c5/H5hGS
-         gFFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkTABHrXc1MWJH4PxdYq+TnZphdDLDI4ZkKKXyldIhIZcctWo7nSygVccVn4u1bLKgfpOwEtLwH4aFR1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2HRJ0aEWk5YppXEbXu+NdWB2znragQBWkMrvU2gIs6UXvl8Dc
-	R9B1mbN5sQF1qVtqoaMLqUafTNwNpryEsTffKqt53WY6ReEjq+ELzOi2
-X-Gm-Gg: ASbGnctj250yewl4V+2/pLtn4GN3R9PiROX+JKlq9H+K7i7GHKu7qVbVzjTkIPURMp1
-	zIJT4tE7Act40It9MkdP1dn85lvRbdj16SQ5co+/isWjJCb972nkpQTRTug/h1NuW42ulVUP1d5
-	Dhdhz1jZ4mAwX9DzDl0bZ38Ixfoqy8eUbILAQAeNZ6MCTI8WN0nmA5Ae4uQwRUcbrrn3r9CZDj1
-	U6XjaM1i+vFSCWIkcXiknIQeLrYL8pgcMNmyAoRK6WiY74T65CYdW6hvhrTx/Njcspcik45l4wZ
-	0AmlXW5+fiEUyxSW6ZPX8XrCchKUq8lv6vQTicxvSVgYgwrHSvitc6pSTTVzgPUR4xvSHVMa6wG
-	T6DMVVldK91cEn7EhKyCZsfmfrlpY6mGYyxA=
-X-Google-Smtp-Source: AGHT+IGKNEJ/R5tUjNTzQr8LYnYikZE7FzqSywVlP1BdDD46LFzgEzFplMLIppxM3bMlh8TiM4vnUA==
-X-Received: by 2002:a17:907:868b:b0:b3e:babd:f257 with SMTP id a640c23a62f3a-b50aa49207amr2854806566b.10.1760433496877;
-        Tue, 14 Oct 2025 02:18:16 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900e432sm1081271566b.65.2025.10.14.02.18.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 02:18:16 -0700 (PDT)
-Date: Tue, 14 Oct 2025 02:18:14 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, David Wei <dw@davidwei.uk>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net] netdevsim: set the carrier when the device goes up
-Message-ID: <ha53dregkpznr6qeym7v65zcyl27u4oe6cwqtcyrxbmz2i7o5u@2gbcfwb42az6>
-References: <20251013-netdevsim_fix-v1-1-357b265dd9d0@debian.org>
- <7e1d28c0-7276-448f-8d01-531b7e8bd195@lunn.ch>
+	s=arc-20240116; t=1760433516; c=relaxed/simple;
+	bh=wxJPkikuFfGHOuRJanJul4c3Ue8RTPBKYkHQql/b1vU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OMz16BgPDOebbvajxVWB5Dyrey/OGIo/y/ZFX7m4d+svHVkuv0VOMeZyYMcOeDqVXwf0L726A0oqLnsZiK/3rLYthm/lCo/VYB45ZnWNjDCQ5IKtnNVcU+ZCt/NxZoeCExetj3qSvLSjCdzje7E6WSkFyd4/47QG8VDZpE9Hjh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3DR+sa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE99FC4CEE7;
+	Tue, 14 Oct 2025 09:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760433515;
+	bh=wxJPkikuFfGHOuRJanJul4c3Ue8RTPBKYkHQql/b1vU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=j3DR+sa11unP5yeEO7s3VK585A5sd00VQoHhNKUamBA0W1lqLAWb2zEqZ+Cwn/U9v
+	 NAp8AGnRyRe+Dly4AC1ePfYhEH15CPr0oWTjNSDbsns3QAlRwSEcCGBJuR4+2IWhvV
+	 HMY+TgbhF9oFT23y6kGWtNU2QuxkZMh5cEXNheZKPPYUzk1A4539eF7ZZVzYLZCsa1
+	 SbGothdqYBa3fVR/8fSw9+mwIIRbqOf1sl5uffo4aK4qL36FQJLlH2PNUImpWukmY+
+	 sY++jaJd/QX4r0CCzGYqm5yVxHAvXK0e8nNi4xdzHMkWGk60Z8jUPwDSkVNYdMq7JJ
+	 EQclvUr3pX5wQ==
+Date: Tue, 14 Oct 2025 11:18:32 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: "Leo L. Schwab" <ewhac@ewhac.org>
+cc: Hans de Goede <hansg@kernel.org>, Kate Hsuan <hpa@redhat.com>, 
+    Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] HID: lg-g15 - Add support for Logitech G13.
+In-Reply-To: <20250917230550.1160621-1-ewhac@ewhac.org>
+Message-ID: <36553po4-qr86-rsn4-7534-6q197q92r6sr@xreary.bet>
+References: <20250917230550.1160621-1-ewhac@ewhac.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e1d28c0-7276-448f-8d01-531b7e8bd195@lunn.ch>
+Content-Type: text/plain; charset=US-ASCII
 
-Hello Andrew,
+On Wed, 17 Sep 2025, Leo L. Schwab wrote:
 
-On Mon, Oct 13, 2025 at 07:25:27PM +0200, Andrew Lunn wrote:
-> On Mon, Oct 13, 2025 at 10:09:22AM -0700, Breno Leitao wrote:
-> > Bringing a linked netdevsim device down and then up causes communication
-> > failure because both interfaces lack carrier. Basically a ifdown/ifup on
-> > the interface make the link broken.
-> > 
-> > When a device is brought up, if it has a peer and this peer device is
-> > UP, set both carriers to on.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Fixes: 3762ec05a9fbda ("netdevsim: add NAPI support")
+> The Logitech G13 is a gaming keypad with general-purpose macro keys,
+> four LED-backlit macro preset keys, five "menu" keys, backlight toggle
+> key, an analog thumbstick, RGB LED backlight, and a monochrome LCD
+> display.
 > 
-> It was not obvious what adding NAPI has to do with carrier status.  I
-> had to go look at 3762ec05a9fbda to see that that was when nsim_stop()
-> started to change the carrier on stop. This patch makes nsim_open()
-> somewhat symmetrical. If you need a respin, maybe expand the commit
-> message to explain this.
+> Support input event generation for all keys and the thumbstick, and
+> expose all LEDs.
+> 
+> Signed-off-by: Leo L. Schwab <ewhac@ewhac.org>
+> Reviewed-by: Hans de Goede <hansg@kernel.org>
+> Tested-by: Kate Hsuan <hpa@redhat.com>
+> ---
+> Changes in v6:
+>   - Alter interaction between `brightness` and `brightness_hw_changed`
+>     for the backlight as advised by Hans de Goede <hansg@kernel.org>.
+>   - On probe, query device for current state of HW backlight toggle;
+>     track in `backlight_disabled` and update sysfs.
+>   - Ensure non-backlight LED brightnesses report either 0 or 1.
+> Changes in v5:
+>   - None; resend v4 due to bounced email submission.
+> Changes in v4:
+>   - Minor changes recommended by Hans de Goede <hansg@kernel.org>.
+> Changes in v3:
+>   - Re-revise commit message.
+>   - Conditionally compile the section depending on
+>     CONFIG_LEDS_BRIGHTNESS_HW_CHANGED correctly this time.
+>   - Use led-class-multicolor facilities for the RGB backlight.
+>   - Changes recommended by Kate Hsuan <hpa@redhat.com>:
+>     - Use guard(mutex) construct.
+>     - Fix numerous style nits.
+> Changes in v2:
+>   - Add `#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED` bracket around new
+>     code segment dependent on that feature (fixes test robot build
+>     error).
+>   - Use `guard(mutex)` construct in new code (existing code left
+>     unmodified).
+>   - Commit message revised.
 
-Thanks for the review. I've sent a v2 with the updated message, given it
-adds clarity to the change.
+Applied to hid.git#for-6.19/logitech, thanks.
 
---breno
+-- 
+Jiri Kosina
+SUSE Labs
+
 
