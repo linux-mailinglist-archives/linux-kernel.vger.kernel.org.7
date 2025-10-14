@@ -1,238 +1,291 @@
-Return-Path: <linux-kernel+bounces-851905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50ACBD794F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:37:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516C8BD7958
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF861920CCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0B93A5B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517432BF00A;
-	Tue, 14 Oct 2025 06:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZvQ4/+1q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057F825A353
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7509B2C234E;
+	Tue, 14 Oct 2025 06:38:52 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10E52727E3;
+	Tue, 14 Oct 2025 06:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760423865; cv=none; b=hxMoDLEvMt5dhSOW3Xyy4cIU+eRaiPFo7R7FbC0HQMjdF7VAgcFypbT7UCbQHWNl/gf8oXLm1qm/vF/GBuhoELfRaD3WKMyWFoSbqo48V5HA6e4zjGKlppVL2pmTtlBlsBnzSlspEYAAo8rtrbHbqDhTTjr/Eat63DmkXeB6jug=
+	t=1760423931; cv=none; b=mQsu87H+umdhY8u1XR6gKMW8/3BaxCA1WaeCYLdu5TT2sIuDJ51f91ydZP4KYMAsrUoT2WUWwM5Lezt1CAcgQ5EaF4W6ZeprASAz44rvjmyKjOVF4Zx2gcxYF6t2ct8dpQ1/OhSupJjzLUePBkmKKzLWlEBpO2qVIK9PO8au1ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760423865; c=relaxed/simple;
-	bh=NYkvp+p2voCH4RCmlb/xXYOu7wBOq0CPLwcfmkUf/vg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=oY78rNwYCjoHKE7aLP3ZSU/+2BQshStlk5BQsDxetzhh+Us7b+lDRRSs7FQVrRm5QfTHlX7qW5VTc9FEKQ8FFmBRZskY1PzUvYRip30JZX4uxdkoG3fbYAbmIEjKGAjyEP8UQFpNNCTTygPW3Z3NLf1U3d11c8F+iMcyRsqAf6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZvQ4/+1q; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760423864; x=1791959864;
-  h=date:from:to:cc:subject:message-id;
-  bh=NYkvp+p2voCH4RCmlb/xXYOu7wBOq0CPLwcfmkUf/vg=;
-  b=ZvQ4/+1q0XO6cmxm1HxN7XVsWluWUuzJqGwSbG/e/gbrGeeVaIS1u1GE
-   cLjJiATErEyFQr+AB2EoPAw1zw8Jj7Ug8pHehwmy03dPNqg/eUeBeFsJZ
-   GOTyq4SslcGOl878OVEMdvqW8O/RzIF14824A6AjOL7jmnHX9/PM5bAtW
-   9s5CYkmHlC1XhQ/Xy0pbpNO4DgSBmnCr10UdoDM7sPRpwwmkVu6V/8Aop
-   3oEGBmSCHi7KtU0e5arxhUKiN/+RgWWZuk1eTOVadQWkgREDSZiBa2yLu
-   RjGj05sGz+FLTmE7LO62ttgNn/2cJuEx6lYUrSaL4y4fsDspHmGd1dwzt
-   Q==;
-X-CSE-ConnectionGUID: EKn4BVMvSDuzh6sI7I0SHg==
-X-CSE-MsgGUID: E/fwkGKYTACHzvuLHISyEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62726421"
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="62726421"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 23:37:44 -0700
-X-CSE-ConnectionGUID: cw/nR9rUSTC2cWabBA90vw==
-X-CSE-MsgGUID: XWl+8Em0SIeHcc9CJLrJgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="181030543"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 13 Oct 2025 23:37:43 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8Yf9-0002Tn-0a;
-	Tue, 14 Oct 2025 06:37:37 +0000
-Date: Tue, 14 Oct 2025 14:36:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cache] BUILD SUCCESS
- a0a0999507752574b80d7fbd179cce052c92791b
-Message-ID: <202510141448.qbWkWT2F-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1760423931; c=relaxed/simple;
+	bh=WTdEIPVnTjVYFmBVT010VFa83HYwQgS+DTRMlHzMHzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5NON7mG02PUiozuowqNgZh9FH7kVLZv6HuM6ccoEfHtUwX55Eq2l7PfPKN8X+BgheOJ7pPbZRiFTP7ZwufAuahqiVp2cPLVMaUi/Tt/fmSajVLmEABmWnw3guYKK6P7gZhF4c5//owAkpUzRZdVds/UwOJCaA4bpUGZEvVqJ0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c2dff70000001609-2b-68edefef43b4
+Date: Tue, 14 Oct 2025 15:38:33 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: NeilBrown <neil@brown.name>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, okorniev@redhat.com, Dai.Ngo@oracle.com,
+	tom@talpey.com, trondmy@kernel.org, anna@kernel.org,
+	kees@kernel.org, bigeasy@linutronix.de, clrkwllms@kernel.org,
+	mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 28/47] dept: add documentation for dept
+Message-ID: <20251014063833.GA58074@system.software.com>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-29-byungchul@sk.com>
+ <175947451487.247319.6809470356431942803@noble.neil.brown.name>
+ <20251013052354.GA75512@system.software.com>
+ <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0zTZxTG8/5v/bex5l112asYF0uMkQS8RLaTZZs188P7ySiYLNOIVPnH
+	NnJbi2hnttAIisyB0UC1FddyKdLWW0FdnUaGMKOMTukGdVLRKSAqoLTUqFhGMWZ+OXnye3Ke
+	53w4IqsK8HNFfW6BZMjVZqsFBacYnuFIHh0d1i11/7UcxiOlHNw85UbQN16KwNNsZiB8JibA
+	qPMAguG+X3mYDA0y8HNNkwCvO/9kwXE/xELz73cRBB7OBN+9izLocw5wYLPsYabGIwZeOl0y
+	cBYtBFtngIcnA4cE8N5uR+B90M1D4OIxAYpsL3i4bm3koL7nFgP37wV5iJYnwOGRAQRPok4W
+	ulrsDOwNx3i49lMLA/WRERY6bX4eessfc7C37iwDbacvMDBorWbgRigsgyZvJQuVE6UC2Mzl
+	CH4sqeLgzPMGAYp7UyHidgmapfRFSTlHS7reCNRz3INopH4PS4ubdtLLUTtHb9QQ6rOGZNTu
+	3UGbTiTR2ktDDHWMjfPU69ovUMfrRyzt7b4k0BG/X7Z23gbF51lStr5QMiz5MlOhq6uwy/J9
+	ybuar7ahIlQ9vwzJRYJXkPYKl+ydPnL5MVuGRJHDC0m7TxPHAl5EgsGXbFzPxh+Ts823mTKk
+	EFnsTCBBS3TamIVXEv/fHhTXSgyky316OlOFLQzZ17HuLf+AXD/6kItrFieRYGyIiXexOIE0
+	xMQ4luM1pOeuZXr1Q5xIWs5fm+4i+F85aSx+g97eOYf8diLIHUTY+l6s9b1Y6/+xdsS6kEqf
+	W5ij1WevSNGZcvW7Urbm5XjR1Ks5v5/Y+Asau5neirCI1DOUwdhTnYrXFhpNOa2IiKx6tvLT
+	3VNImaU1fScZ8jYbdmRLxlaUIHLqj5TLozuzVHibtkDaLkn5kuGdy4jyuUUo7duNkOf550rd
+	1ydv6X5I6U9Knxcd7d+/pLARpWZuObhY/mxmA6pIpibVnZBZsX6T0WzUaCyDn41980kG1lUF
+	HpyThdXWsMaTmu67MJlRd0S3MqPKVLu7bbJ96FVmgSuSuHrZRFpl/xdfrVrt2BbyL0h7ZUxZ
+	/Lz+6h8dbq0qYlZzRp12WRJrMGr/A5Tox9ZmAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTHfe7z9N5LQ8214riRRLMaozFBZZnbyTCIH6ZXjUSJk8TEaKN3
+	tuHNtYKiMSkCgzCHpVlbaUUrjmpKFaQV7bCGgWVzDBWY2k2RQQqKgE2Ul/BWbF0W/XLyP7//
+	+eecD4fF8hnJYladdUTUZCkzFLSUSFMSC+KDwRHVWl+DBB7nNxEYGy0hcK7WSUNJfYUEHl6r
+	QdAzVoJgYtqKocgzR2DW0MrA6ORTBua8rQhMHQYMTnc+BW/rQjQMtbxBYOwN0GAezCcQtJ9G
+	YBmwMjDo2wwjPY0SmOt+QcGT8WEE9kCIgkBTMYJZUzpcqHLRMN3+AIPZ+BDBxd5uDC/rwqa7
+	9TkC75VTNPTrb2DoCsyHv8aCNNwz/kDDSMc5Cl7X0WA75ZVApdWAoOBSLQ2mynoCnn9/YaBj
+	aIaCZyYDBTX126HHPkCgTV9Fhe8LT12PBau5gAqXlxQYrzZSMGl3MPDnpWcE7LrlYG3vkkDf
+	FQsDM70JMGfLhtaaFwx0nzESuDbyQJJsRMJEURkRHK4GSijqnKUF53knEqanDEgYrS7AQpE+
+	3LYMB7FQ6DoqVLcN08LU2CNa8I7biPBHFS+Ut8cLHks3IxTe+YfZ8dUe6fqDYoY6V9SsSdov
+	Vf18xsYc9sQfc7fcRTpUuaQURbE89zl/1vsKlyKWJdxy3udJjmCaW8H7/ZM4omO4pfx1999U
+	KZKymLPH8X7z+HtjIbeBv//IiSJaxgHfWVPLRLScM1N8cdvO//gC/l5FgEQ05lbx/tAgFdmF
+	uTj+coiN4CguhX/y3Pw+uohbxjc1/EbpkczyUdryUdryIW1D2IFi1Fm5mUp1xrrV2nRVXpb6
+	2OoD2Zn1KPyT9pMz5bfQaNfmZsSxSBEt84eGVXKJMlebl9mMeBYrYmRfnggj2UFl3nFRk71P
+	k5MhaptRHEsUsbKtaeJ+OXdIeURMF8XDouZ/l2KjFutQ2cUV61y/uivcKYGeNbFJ3wf2vDLn
+	7N7Y79uk/2kfKf4s9VP/tOO2+2uTvR2/1e9NNva5BjatNMlzEnVeotmSoPnE7LtZ2VDtOKna
+	GN3YyS76duj+0vjTE0l76Xmvb32TFv208HHfiV3zE1MHf79bNlWecuDHAd0Xk9/1b9uWtrb/
+	0FEF0aqUCauwRqt8B4xzrPqPAwAA
+X-CFilter-Loop: Reflected
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
-branch HEAD: a0a0999507752574b80d7fbd179cce052c92791b  x86/resctrl: Support Sub-NUMA Cluster (SNC) mode on Clearwater Forest
+On Tue, Oct 14, 2025 at 05:03:58PM +1100, NeilBrown wrote:
+> On Mon, 13 Oct 2025, Byungchul Park wrote:
+> > On Fri, Oct 03, 2025 at 04:55:14PM +1000, NeilBrown wrote:
+> > > On Thu, 02 Oct 2025, Byungchul Park wrote:
+> > > > This document describes the concept and APIs of dept.
+> > > >
+> > >
+> > > Thanks for the documentation.  I've been trying to understand it.
+> >
+> > You're welcome.  Feel free to ask me if you have any questions.
+> >
+> > > > +How DEPT works
+> > > > +--------------
+> > > > +
+> > > > +Let's take a look how DEPT works with the 1st example in the section
+> > > > +'Limitation of lockdep'.
+> > > > +
+> > > > +   context X    context Y       context Z
+> > > > +
+> > > > +                mutex_lock A
+> > > > +   folio_lock B
+> > > > +                folio_lock B <- DEADLOCK
+> > > > +                                mutex_lock A <- DEADLOCK
+> > > > +                                folio_unlock B
+> > > > +                folio_unlock B
+> > > > +                mutex_unlock A
+> > > > +                                mutex_unlock A
+> > > > +
+> > > > +Adding comments to describe DEPT's view in terms of wait and event:
+> > > > +
+> > > > +   context X    context Y       context Z
+> > > > +
+> > > > +                mutex_lock A
+> > > > +                /* wait for A */
+> > > > +   folio_lock B
+> > > > +   /* wait for A */
+> > > > +   /* start event A context */
+> > > > +
+> > > > +                folio_lock B
+> > > > +                /* wait for B */ <- DEADLOCK
+> > > > +                /* start event B context */
+> > > > +
+> > > > +                                mutex_lock A
+> > > > +                                /* wait for A */ <- DEADLOCK
+> > > > +                                /* start event A context */
+> > > > +
+> > > > +                                folio_unlock B
+> > > > +                                /* event B */
+> > > > +                folio_unlock B
+> > > > +                /* event B */
+> > > > +
+> > > > +                mutex_unlock A
+> > > > +                /* event A */
+> > > > +                                mutex_unlock A
+> > > > +                                /* event A */
+> > > > +
+> > >
+> > > I can't see the value of the above section.
+> > > The first section with no comments is useful as it is easy to see the
+> > > deadlock being investigate.  The section below is useful as it add
+> > > comments to explain how DEPT sees the situation.  But the above section,
+> > > with some but not all of the comments, does seem (to me) to add anything
+> > > useful.
+> >
+> > I just wanted to convert 'locking terms' to 'wait and event terms' by
+> > one step.  However, I can remove the section you pointed out that you
+> > thought was useless.
+> 
+> But it seems you did it in two steps???
+> 
+> If you think the middle section with some but not all of the comments
+> adds value (And maybe it does - maybe I just haven't seen it yet), the
+> please explain what value is being added at each step.
+> 
+> It is currently documented as:
+> 
+>  +Adding comments to describe DEPT's view in terms of wait and event:
+> 
+> then
+> 
+>  +Adding more supplementary comments to describe DEPT's view in detail:
+> 
+> Maybe if you said more DEPT's view so at this point so that when we see
+> the supplementary comments, we can understand how they relate to DEPT's
+> view.
 
-elapsed time: 851m
+As you pointed out, I'd better remove the middle part so as to simplify
+it.  It doesn't give much information I also think.
 
-configs tested: 146
-configs skipped: 119
+> > > > +
+> > > > +   context X    context Y       context Z
+> > > > +
+> > > > +                mutex_lock A
+> > > > +                /* might wait for A */
+> > > > +                /* start to take into account event A's context */
+> > >
+> > > What do you mean precisely by "context".
+> >
+> > That means one of task context, irq context, wq worker context (even
+> > though it can also be considered as task context), or something.
+> 
+> OK, that makes sense.  If you provide this definition for "context"
+> before you use the term, I think that will help the reader.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Thank you.  I will add it.
 
-tested configs:
-alpha                            allyesconfig    clang-19
-arc                   randconfig-001-20251014    clang-16
-arc                   randconfig-002-20251014    clang-16
-arm                   milbeaut_m10v_defconfig    gcc-15.1.0
-arm                        multi_v5_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251014    clang-16
-arm                   randconfig-002-20251014    clang-16
-arm                   randconfig-003-20251014    clang-16
-arm                   randconfig-004-20251014    clang-16
-arm64                 randconfig-001-20251014    clang-16
-arm64                 randconfig-002-20251014    clang-16
-arm64                 randconfig-003-20251014    clang-16
-arm64                 randconfig-004-20251014    clang-16
-csky                  randconfig-001-20251014    gcc-8.5.0
-csky                  randconfig-002-20251014    gcc-8.5.0
-hexagon                          allmodconfig    clang-19
-hexagon                          allyesconfig    clang-19
-hexagon               randconfig-001-20251014    gcc-8.5.0
-hexagon               randconfig-002-20251014    gcc-8.5.0
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    clang-20
-i386                             allyesconfig    clang-20
-i386        buildonly-randconfig-001-20251014    gcc-14
-i386        buildonly-randconfig-002-20251014    clang-20
-i386        buildonly-randconfig-002-20251014    gcc-14
-i386        buildonly-randconfig-003-20251014    clang-20
-i386        buildonly-randconfig-003-20251014    gcc-14
-i386        buildonly-randconfig-004-20251014    gcc-14
-i386        buildonly-randconfig-005-20251014    gcc-14
-i386        buildonly-randconfig-006-20251014    clang-20
-i386        buildonly-randconfig-006-20251014    gcc-14
-i386                                defconfig    clang-20
-i386                  randconfig-001-20251014    clang-20
-i386                  randconfig-002-20251014    clang-20
-i386                  randconfig-003-20251014    clang-20
-i386                  randconfig-004-20251014    clang-20
-i386                  randconfig-005-20251014    clang-20
-i386                  randconfig-006-20251014    clang-20
-i386                  randconfig-007-20251014    clang-20
-i386                  randconfig-011-20251014    gcc-14
-i386                  randconfig-012-20251014    gcc-14
-i386                  randconfig-013-20251014    gcc-14
-i386                  randconfig-014-20251014    gcc-14
-i386                  randconfig-015-20251014    gcc-14
-i386                  randconfig-016-20251014    gcc-14
-i386                  randconfig-017-20251014    gcc-14
-loongarch                        allmodconfig    clang-19
-loongarch             randconfig-001-20251014    gcc-8.5.0
-loongarch             randconfig-002-20251014    gcc-8.5.0
-m68k                             allmodconfig    clang-19
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    clang-19
-microblaze                       allmodconfig    clang-19
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    clang-19
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                   sb1250_swarm_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20251014    gcc-8.5.0
-nios2                 randconfig-002-20251014    gcc-8.5.0
-openrisc                          allnoconfig    clang-22
-openrisc                            defconfig    gcc-14
-parisc                            allnoconfig    clang-22
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251014    gcc-8.5.0
-parisc                randconfig-002-20251014    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    clang-22
-powerpc               randconfig-001-20251014    gcc-8.5.0
-powerpc               randconfig-002-20251014    gcc-8.5.0
-powerpc               randconfig-003-20251014    gcc-8.5.0
-powerpc                     redwood_defconfig    gcc-15.1.0
-powerpc                     tqm8540_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20251014    gcc-8.5.0
-powerpc64             randconfig-002-20251014    gcc-8.5.0
-powerpc64             randconfig-003-20251014    gcc-8.5.0
-riscv                             allnoconfig    clang-22
-riscv                               defconfig    gcc-14
-riscv                 randconfig-001-20251014    gcc-10.5.0
-riscv                 randconfig-002-20251014    gcc-10.5.0
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    gcc-14
-s390                  randconfig-001-20251014    gcc-10.5.0
-s390                  randconfig-002-20251014    gcc-10.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                         apsh4a3a_defconfig    gcc-15.1.0
-sh                                  defconfig    gcc-14
-sh                    randconfig-001-20251014    gcc-10.5.0
-sh                    randconfig-002-20251014    gcc-10.5.0
-sh                          sdk7786_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251014    gcc-10.5.0
-sparc                 randconfig-002-20251014    gcc-10.5.0
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20251014    gcc-10.5.0
-sparc64               randconfig-002-20251014    gcc-10.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    clang-19
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251014    gcc-10.5.0
-um                    randconfig-002-20251014    gcc-10.5.0
-um                           x86_64_defconfig    gcc-14
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251014    gcc-14
-x86_64      buildonly-randconfig-002-20251014    clang-20
-x86_64      buildonly-randconfig-003-20251014    gcc-14
-x86_64      buildonly-randconfig-004-20251014    clang-20
-x86_64      buildonly-randconfig-005-20251014    clang-20
-x86_64      buildonly-randconfig-006-20251014    gcc-14
-x86_64                              defconfig    clang-20
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20251014    gcc-14
-x86_64                randconfig-002-20251014    gcc-14
-x86_64                randconfig-003-20251014    gcc-14
-x86_64                randconfig-004-20251014    gcc-14
-x86_64                randconfig-005-20251014    gcc-14
-x86_64                randconfig-006-20251014    gcc-14
-x86_64                randconfig-007-20251014    gcc-14
-x86_64                randconfig-008-20251014    gcc-14
-x86_64                randconfig-071-20251014    gcc-14
-x86_64                randconfig-072-20251014    gcc-14
-x86_64                randconfig-073-20251014    gcc-14
-x86_64                randconfig-074-20251014    gcc-14
-x86_64                randconfig-075-20251014    gcc-14
-x86_64                randconfig-076-20251014    gcc-14
-x86_64                randconfig-077-20251014    gcc-14
-x86_64                randconfig-078-20251014    gcc-14
-x86_64                               rhel-9.4    clang-20
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251014    gcc-10.5.0
-xtensa                randconfig-002-20251014    gcc-10.5.0
-xtensa                         virt_defconfig    gcc-15.1.0
+> > > If the examples that follow It seems that the "context" for event A
+> > > starts at "mutex lock A" when it (possibly) waits for a mutex and ends
+> > > at "mutex unlock A" - which are both in the same process.  Clearly
+> > > various other events that happen between these two points in the same
+> > > process could be seen as the "context" for event A.
+> > >
+> > > However event B starts in "context X" with "folio_lock B" and ends in
+> > > "context Z" or "context Y" with "folio_unlock B".  Is that right?
+> >
+> > Right.
+> >
+> > > My question then is: how do you decide which, of all the event in all
+> > > the processes in all the system, between the start[S] and the end[E] are
+> > > considered to be part of the "context" of event A.
+> >
+> > DEPT can identify the "context" of event A only *once* the event A is
+> > actually executed, and builds dependencies between the event and the
+> > recorded waits in the "context" of event A since [S].
+> 
+> So a dependency is an ordered set of pairs of "context" and "wait" or
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I don't get what you were trying to tell here.  FWIW, DEPT focuses on
+*event* contexts and, within each event context, it tracks pairs of
+waits that appears since [S] and the interesting event that identifies
+the event context.
+
+> "context" and "event".  "wait"s and "event"s are linked by some abstract
+> identifier for the event (like lockdep's lock classes).
+
+Yeah, kind of.
+
+> How are the contexts abstracted. Is it just "same" or "different"
+
+I don't get this.  Can you explain in more detail?
+
+	Byungchul
+
+> I'll try reading the document again and see how much further I get.
+> 
+> Thanks,
+> NeilBrown
 
