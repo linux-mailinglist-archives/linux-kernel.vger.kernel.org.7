@@ -1,454 +1,153 @@
-Return-Path: <linux-kernel+bounces-853484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2266BDBC5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:19:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8E6BDBC65
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D06524F07B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:19:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834543B8AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F7D2F25EB;
-	Tue, 14 Oct 2025 23:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88DA2DCBF4;
+	Tue, 14 Oct 2025 23:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2W/crxW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpCnS0Wi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0842EB5B0;
-	Tue, 14 Oct 2025 23:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7652C21E8
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760483918; cv=none; b=Fv3j1WhLH4PDpMzpUsnxUCBsOSPZ5hiRTzD+slLxIhaxuJkc1U6VMbnMC75x+3mURLcDHIbDVH5areGlFfO0Mt2NXxmMKwHLDeBmYrTPkjk/Cc+SYi4in0JG3mwQOoOKvjx/3poQWTTQxRhEeIWUmUbUA4A08XftiMjSY0N8IQk=
+	t=1760484020; cv=none; b=KMLovCa2vUBlZup+fx1xSwh3XrFOzrKlMkWAcfuOi8TzfMx/yxNK8pHhr217Y3ioeDwZc22rmtxFh55nf0BehBwGcQeCzEt392HqwbaZtdpPyZMGU1Sh2p8PWtB4SwsLalmbT+EqpHspQtow3QUiPytFFQdurPEdag8cWen6mGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760483918; c=relaxed/simple;
-	bh=iU1b1tmxAfgBGN57RXP8uM5OEr3EPx4GGjCp+YIZ86Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DWgBUU6LMfxnhaHR10zES0Bs39g+CQYycqpGp1UdMnquleMBAA8wtGhasUMgVd0JOyyQ6iOYLQFveJXTs6zOLwYTycMJxG5/8zKKwUZ7zM/q5iAXCdSznuNkcGIL5a5RQP4cekXb/ADDgs1HVgTNTSSiS/BMYCP+StszDPu5sSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2W/crxW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D71C116C6;
-	Tue, 14 Oct 2025 23:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760483917;
-	bh=iU1b1tmxAfgBGN57RXP8uM5OEr3EPx4GGjCp+YIZ86Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S2W/crxWeJHM/nCt6O6XJQ8HvtHCBY3vaBZCmtaL/Dpm8MRP8OMrFu5ouZWdrIUe4
-	 IDo7EeaV2mBXbAvIx1MfqkpFS+yiDYNcgHOKOlb+GbcKJk2ztmnbXJMUK84mNyZbrk
-	 vZUVdIEU8VKhz7cNptMc3tr8Tm8rw8JRxa0G2AAHhOGZ6/+xY+rMWJ1b01JAD85MSD
-	 BRpcw1Oj8kZXR6Kg9816CgugkB9BWId4479sB5kotAC8yjPvmPuQEOKAAVxGc007n/
-	 GDob4VZBJd0Jhi3lwKoT2IY6Zg2qZOauzjtd92cwT4RBnmDEh8UVr4fThhI/yWx9EJ
-	 xj4VzGyyAhq8w==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-cifs@vger.kernel.org,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 3/3] ksmbd: Use HMAC-MD5 library for NTLMv2
-Date: Tue, 14 Oct 2025 16:17:59 -0700
-Message-ID: <20251014231759.136630-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251014231759.136630-1-ebiggers@kernel.org>
-References: <20251014231759.136630-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1760484020; c=relaxed/simple;
+	bh=Shh5OaCHcMULEmpCG3Oh2GMfhY1DSJW2K15TncMe0vs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AeX6lyxLNQhYm4rJH9IgLcpVttVvZtdkuu7J30xqGqGsdyEbOfud8LIpNPRQUcD7EWOKumXxs4IQCcXCpogTJNws0QRpYb7TI6Y8LE7Ep7L38ObysOco6tPRpo4Kld5ns5PWIB50nJE3D72HXsmW9f1HSquy6scNufGvmd8OdX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpCnS0Wi; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760484019; x=1792020019;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Shh5OaCHcMULEmpCG3Oh2GMfhY1DSJW2K15TncMe0vs=;
+  b=VpCnS0Wigx7T86MDvOlAK/YbsiKR0W+9IatC5B8scMq3uroRjEC/eM/7
+   kS9J11yfWBUwu+VUbh12XoufdrjFJRPNMrbfCbm/u99GHKExolvQcUxis
+   /VoboPUE9BqwwY/1ICyGo/FD3dcgU+MqLHwKcaqPh2Rjcl9PeeETDzOAy
+   j2B6uoPdEX5EZRE+8O4jNnrZKMU955lvy9ycSmbVECL7oNsOS2DKr7gER
+   7Ad1OW12+N+dLQ7LdJqZZYQtHXtjpmoRHbdbzXdP6EeQEAD88zvBc7q5A
+   r9j0U5RSwDO8da+mW3fwu8c2Vt7L56ofFA7RWJ+9gKBV9/VdYsqsnzmXZ
+   A==;
+X-CSE-ConnectionGUID: 4aGo7pLMRmO+NfVhq1dYdA==
+X-CSE-MsgGUID: 89QqZZB2QwaPoGnLev54vg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62804566"
+X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
+   d="scan'208";a="62804566"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 16:19:57 -0700
+X-CSE-ConnectionGUID: gKgXGwxpS/6QIEGmF33LTg==
+X-CSE-MsgGUID: 2vt3WlKPQNyV9H0gyFaqcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
+   d="scan'208";a="187318351"
+Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.111.172]) ([10.125.111.172])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 16:19:55 -0700
+Message-ID: <b6fdba02-cc3e-4d06-b013-fba94209e7a1@intel.com>
+Date: Tue, 14 Oct 2025 16:19:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/7] x86/mm: Use 'ptdesc' when freeing PMD pages
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
+ <20251014130437.1090448-4-baolu.lu@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251014130437.1090448-4-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For the HMAC-MD5 computations in NTLMv2, use the HMAC-MD5 library
-instead of a "hmac(md5)" crypto_shash.  This is simpler and faster.
-With the library there's no need to allocate memory, no need to handle
-errors, and the HMAC-MD5 code is accessed directly without inefficient
-indirect calls and other unnecessary API overhead.
+On 10/14/25 06:04, Lu Baolu wrote:
+> -#if defined(CONFIG_SPLIT_PMD_PTLOCKS)
+> -
+> +#if defined(CONFIG_SPLIT_PMD_PTLOCKS) || defined(CONFIG_X86_64)
 
-To preserve the existing behavior of NTLMv2 support being disabled when
-the kernel is booted with "fips=1", make ksmbd_auth_ntlmv2() check
-fips_enabled itself.  Previously it relied on the error from
-crypto_alloc_shash("hmac(md5)") being bubbled up.  I don't know for sure
-that this is actually needed, but this preserves the existing behavior.
+What's with the #ifdef munging? It's not mentioned in the changelog.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- fs/smb/server/Kconfig      |   3 +-
- fs/smb/server/auth.c       | 173 ++++++-------------------------------
- fs/smb/server/crypto_ctx.c |   8 --
- fs/smb/server/crypto_ctx.h |   6 +-
- fs/smb/server/server.c     |   2 -
- 5 files changed, 27 insertions(+), 165 deletions(-)
+I went looking at this because pmd_free_pte_page() is right in the
+middle of the action on this reported use after free:
 
-diff --git a/fs/smb/server/Kconfig b/fs/smb/server/Kconfig
-index 788104cfb082f..2775162c535c6 100644
---- a/fs/smb/server/Kconfig
-+++ b/fs/smb/server/Kconfig
-@@ -5,15 +5,14 @@ config SMB_SERVER
- 	depends on FILE_LOCKING
- 	select NLS
- 	select NLS_UTF8
- 	select NLS_UCS2_UTILS
- 	select CRYPTO
--	select CRYPTO_MD5
--	select CRYPTO_HMAC
- 	select CRYPTO_ECB
- 	select CRYPTO_LIB_ARC4
- 	select CRYPTO_LIB_DES
-+	select CRYPTO_LIB_MD5
- 	select CRYPTO_LIB_SHA256
- 	select CRYPTO_LIB_SHA512
- 	select CRYPTO_CMAC
- 	select CRYPTO_AEAD2
- 	select CRYPTO_CCM
-diff --git a/fs/smb/server/auth.c b/fs/smb/server/auth.c
-index 54918f43d2c6b..f2767c4b51326 100644
---- a/fs/smb/server/auth.c
-+++ b/fs/smb/server/auth.c
-@@ -11,10 +11,11 @@
- #include <linux/writeback.h>
- #include <linux/uio.h>
- #include <linux/xattr.h>
- #include <crypto/hash.h>
- #include <crypto/aead.h>
-+#include <crypto/md5.h>
- #include <crypto/sha2.h>
- #include <linux/random.h>
- #include <linux/scatterlist.h>
- 
- #include "auth.h"
-@@ -68,89 +69,20 @@ static char NEGOTIATE_GSS_HEADER[AUTH_GSS_LENGTH] = {
- void ksmbd_copy_gss_neg_header(void *buf)
- {
- 	memcpy(buf, NEGOTIATE_GSS_HEADER, AUTH_GSS_LENGTH);
- }
- 
--/**
-- * ksmbd_gen_sess_key() - function to generate session key
-- * @sess:	session of connection
-- * @hash:	source hash value to be used for find session key
-- * @hmac:	source hmac value to be used for finding session key
-- *
-- */
--static int ksmbd_gen_sess_key(struct ksmbd_session *sess, char *hash,
--			      char *hmac)
--{
--	struct ksmbd_crypto_ctx *ctx;
--	int rc;
--
--	ctx = ksmbd_crypto_ctx_find_hmacmd5();
--	if (!ctx) {
--		ksmbd_debug(AUTH, "could not crypto alloc hmacmd5\n");
--		return -ENOMEM;
--	}
--
--	rc = crypto_shash_setkey(CRYPTO_HMACMD5_TFM(ctx),
--				 hash,
--				 CIFS_HMAC_MD5_HASH_SIZE);
--	if (rc) {
--		ksmbd_debug(AUTH, "hmacmd5 set key fail error %d\n", rc);
--		goto out;
--	}
--
--	rc = crypto_shash_init(CRYPTO_HMACMD5(ctx));
--	if (rc) {
--		ksmbd_debug(AUTH, "could not init hmacmd5 error %d\n", rc);
--		goto out;
--	}
--
--	rc = crypto_shash_update(CRYPTO_HMACMD5(ctx),
--				 hmac,
--				 SMB2_NTLMV2_SESSKEY_SIZE);
--	if (rc) {
--		ksmbd_debug(AUTH, "Could not update with response error %d\n", rc);
--		goto out;
--	}
--
--	rc = crypto_shash_final(CRYPTO_HMACMD5(ctx), sess->sess_key);
--	if (rc) {
--		ksmbd_debug(AUTH, "Could not generate hmacmd5 hash error %d\n", rc);
--		goto out;
--	}
--
--out:
--	ksmbd_release_crypto_ctx(ctx);
--	return rc;
--}
--
- static int calc_ntlmv2_hash(struct ksmbd_conn *conn, struct ksmbd_session *sess,
- 			    char *ntlmv2_hash, char *dname)
- {
- 	int ret, len, conv_len;
- 	wchar_t *domain = NULL;
- 	__le16 *uniname = NULL;
--	struct ksmbd_crypto_ctx *ctx;
--
--	ctx = ksmbd_crypto_ctx_find_hmacmd5();
--	if (!ctx) {
--		ksmbd_debug(AUTH, "can't generate ntlmv2 hash\n");
--		return -ENOMEM;
--	}
-+	struct hmac_md5_ctx ctx;
- 
--	ret = crypto_shash_setkey(CRYPTO_HMACMD5_TFM(ctx),
--				  user_passkey(sess->user),
-+	hmac_md5_init_usingrawkey(&ctx, user_passkey(sess->user),
- 				  CIFS_ENCPWD_SIZE);
--	if (ret) {
--		ksmbd_debug(AUTH, "Could not set NT Hash as a key\n");
--		goto out;
--	}
--
--	ret = crypto_shash_init(CRYPTO_HMACMD5(ctx));
--	if (ret) {
--		ksmbd_debug(AUTH, "could not init hmacmd5\n");
--		goto out;
--	}
- 
- 	/* convert user_name to unicode */
- 	len = strlen(user_name(sess->user));
- 	uniname = kzalloc(2 + UNICODE_LEN(len), KSMBD_DEFAULT_GFP);
- 	if (!uniname) {
-@@ -164,17 +96,11 @@ static int calc_ntlmv2_hash(struct ksmbd_conn *conn, struct ksmbd_session *sess,
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 	UniStrupr(uniname);
- 
--	ret = crypto_shash_update(CRYPTO_HMACMD5(ctx),
--				  (char *)uniname,
--				  UNICODE_LEN(conv_len));
--	if (ret) {
--		ksmbd_debug(AUTH, "Could not update with user\n");
--		goto out;
--	}
-+	hmac_md5_update(&ctx, (const u8 *)uniname, UNICODE_LEN(conv_len));
- 
- 	/* Convert domain name or conn name to unicode and uppercase */
- 	len = strlen(dname);
- 	domain = kzalloc(2 + UNICODE_LEN(len), KSMBD_DEFAULT_GFP);
- 	if (!domain) {
-@@ -187,25 +113,16 @@ static int calc_ntlmv2_hash(struct ksmbd_conn *conn, struct ksmbd_session *sess,
- 	if (conv_len < 0 || conv_len > len) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
--	ret = crypto_shash_update(CRYPTO_HMACMD5(ctx),
--				  (char *)domain,
--				  UNICODE_LEN(conv_len));
--	if (ret) {
--		ksmbd_debug(AUTH, "Could not update with domain\n");
--		goto out;
--	}
--
--	ret = crypto_shash_final(CRYPTO_HMACMD5(ctx), ntlmv2_hash);
--	if (ret)
--		ksmbd_debug(AUTH, "Could not generate md5 hash\n");
-+	hmac_md5_update(&ctx, (const u8 *)domain, UNICODE_LEN(conv_len));
-+	hmac_md5_final(&ctx, ntlmv2_hash);
-+	ret = 0;
- out:
- 	kfree(uniname);
- 	kfree(domain);
--	ksmbd_release_crypto_ctx(ctx);
- 	return ret;
- }
- 
- /**
-  * ksmbd_auth_ntlmv2() - NTLMv2 authentication handler
-@@ -222,77 +139,37 @@ int ksmbd_auth_ntlmv2(struct ksmbd_conn *conn, struct ksmbd_session *sess,
- 		      struct ntlmv2_resp *ntlmv2, int blen, char *domain_name,
- 		      char *cryptkey)
- {
- 	char ntlmv2_hash[CIFS_ENCPWD_SIZE];
- 	char ntlmv2_rsp[CIFS_HMAC_MD5_HASH_SIZE];
--	struct ksmbd_crypto_ctx *ctx = NULL;
--	char *construct = NULL;
--	int rc, len;
--
--	rc = calc_ntlmv2_hash(conn, sess, ntlmv2_hash, domain_name);
--	if (rc) {
--		ksmbd_debug(AUTH, "could not get v2 hash rc %d\n", rc);
--		goto out;
--	}
--
--	ctx = ksmbd_crypto_ctx_find_hmacmd5();
--	if (!ctx) {
--		ksmbd_debug(AUTH, "could not crypto alloc hmacmd5\n");
--		return -ENOMEM;
--	}
--
--	rc = crypto_shash_setkey(CRYPTO_HMACMD5_TFM(ctx),
--				 ntlmv2_hash,
--				 CIFS_HMAC_MD5_HASH_SIZE);
--	if (rc) {
--		ksmbd_debug(AUTH, "Could not set NTLMV2 Hash as a key\n");
--		goto out;
--	}
--
--	rc = crypto_shash_init(CRYPTO_HMACMD5(ctx));
--	if (rc) {
--		ksmbd_debug(AUTH, "Could not init hmacmd5\n");
--		goto out;
--	}
-+	struct hmac_md5_ctx ctx;
-+	int rc;
- 
--	len = CIFS_CRYPTO_KEY_SIZE + blen;
--	construct = kzalloc(len, KSMBD_DEFAULT_GFP);
--	if (!construct) {
--		rc = -ENOMEM;
--		goto out;
-+	if (fips_enabled) {
-+		ksmbd_debug(AUTH, "NTLMv2 support is disabled due to FIPS\n");
-+		return -EOPNOTSUPP;
- 	}
- 
--	memcpy(construct, cryptkey, CIFS_CRYPTO_KEY_SIZE);
--	memcpy(construct + CIFS_CRYPTO_KEY_SIZE, &ntlmv2->blob_signature, blen);
--
--	rc = crypto_shash_update(CRYPTO_HMACMD5(ctx), construct, len);
-+	rc = calc_ntlmv2_hash(conn, sess, ntlmv2_hash, domain_name);
- 	if (rc) {
--		ksmbd_debug(AUTH, "Could not update with response\n");
--		goto out;
-+		ksmbd_debug(AUTH, "could not get v2 hash rc %d\n", rc);
-+		return rc;
- 	}
- 
--	rc = crypto_shash_final(CRYPTO_HMACMD5(ctx), ntlmv2_rsp);
--	if (rc) {
--		ksmbd_debug(AUTH, "Could not generate md5 hash\n");
--		goto out;
--	}
--	ksmbd_release_crypto_ctx(ctx);
--	ctx = NULL;
-+	hmac_md5_init_usingrawkey(&ctx, ntlmv2_hash, CIFS_HMAC_MD5_HASH_SIZE);
-+	hmac_md5_update(&ctx, cryptkey, CIFS_CRYPTO_KEY_SIZE);
-+	hmac_md5_update(&ctx, (const u8 *)&ntlmv2->blob_signature, blen);
-+	hmac_md5_final(&ctx, ntlmv2_rsp);
- 
--	rc = ksmbd_gen_sess_key(sess, ntlmv2_hash, ntlmv2_rsp);
--	if (rc) {
--		ksmbd_debug(AUTH, "Could not generate sess key\n");
--		goto out;
--	}
-+	/* Generate the session key */
-+	hmac_md5_usingrawkey(ntlmv2_hash, CIFS_HMAC_MD5_HASH_SIZE,
-+			     ntlmv2_rsp, CIFS_HMAC_MD5_HASH_SIZE,
-+			     sess->sess_key);
- 
- 	if (memcmp(ntlmv2->ntlmv2_hash, ntlmv2_rsp, CIFS_HMAC_MD5_HASH_SIZE) != 0)
--		rc = -EINVAL;
--out:
--	if (ctx)
--		ksmbd_release_crypto_ctx(ctx);
--	kfree(construct);
--	return rc;
-+		return -EINVAL;
-+	return 0;
- }
- 
- /**
-  * ksmbd_decode_ntlmssp_auth_blob() - helper function to construct
-  * authenticate blob
-diff --git a/fs/smb/server/crypto_ctx.c b/fs/smb/server/crypto_ctx.c
-index a5ec22ba8ae37..fe29d186baf68 100644
---- a/fs/smb/server/crypto_ctx.c
-+++ b/fs/smb/server/crypto_ctx.c
-@@ -64,13 +64,10 @@ static struct shash_desc *alloc_shash_desc(int id)
- {
- 	struct crypto_shash *tfm = NULL;
- 	struct shash_desc *shash;
- 
- 	switch (id) {
--	case CRYPTO_SHASH_HMACMD5:
--		tfm = crypto_alloc_shash("hmac(md5)", 0, 0);
--		break;
- 	case CRYPTO_SHASH_CMACAES:
- 		tfm = crypto_alloc_shash("cmac(aes)", 0, 0);
- 		break;
- 	default:
- 		return NULL;
-@@ -172,15 +169,10 @@ static struct ksmbd_crypto_ctx *____crypto_shash_ctx_find(int id)
- 		return ctx;
- 	ksmbd_release_crypto_ctx(ctx);
- 	return NULL;
- }
- 
--struct ksmbd_crypto_ctx *ksmbd_crypto_ctx_find_hmacmd5(void)
--{
--	return ____crypto_shash_ctx_find(CRYPTO_SHASH_HMACMD5);
--}
--
- struct ksmbd_crypto_ctx *ksmbd_crypto_ctx_find_cmacaes(void)
- {
- 	return ____crypto_shash_ctx_find(CRYPTO_SHASH_CMACAES);
- }
- 
-diff --git a/fs/smb/server/crypto_ctx.h b/fs/smb/server/crypto_ctx.h
-index c571d65a16f3e..b9476ed520ae4 100644
---- a/fs/smb/server/crypto_ctx.h
-+++ b/fs/smb/server/crypto_ctx.h
-@@ -8,12 +8,11 @@
- 
- #include <crypto/hash.h>
- #include <crypto/aead.h>
- 
- enum {
--	CRYPTO_SHASH_HMACMD5	= 0,
--	CRYPTO_SHASH_CMACAES,
-+	CRYPTO_SHASH_CMACAES	= 0,
- 	CRYPTO_SHASH_MAX,
- };
- 
- enum {
- 	CRYPTO_AEAD_AES_GCM = 16,
-@@ -31,21 +30,18 @@ struct ksmbd_crypto_ctx {
- 
- 	struct shash_desc		*desc[CRYPTO_SHASH_MAX];
- 	struct crypto_aead		*ccmaes[CRYPTO_AEAD_MAX];
- };
- 
--#define CRYPTO_HMACMD5(c)	((c)->desc[CRYPTO_SHASH_HMACMD5])
- #define CRYPTO_CMACAES(c)	((c)->desc[CRYPTO_SHASH_CMACAES])
- 
--#define CRYPTO_HMACMD5_TFM(c)	((c)->desc[CRYPTO_SHASH_HMACMD5]->tfm)
- #define CRYPTO_CMACAES_TFM(c)	((c)->desc[CRYPTO_SHASH_CMACAES]->tfm)
- 
- #define CRYPTO_GCM(c)		((c)->ccmaes[CRYPTO_AEAD_AES_GCM])
- #define CRYPTO_CCM(c)		((c)->ccmaes[CRYPTO_AEAD_AES_CCM])
- 
- void ksmbd_release_crypto_ctx(struct ksmbd_crypto_ctx *ctx);
--struct ksmbd_crypto_ctx *ksmbd_crypto_ctx_find_hmacmd5(void);
- struct ksmbd_crypto_ctx *ksmbd_crypto_ctx_find_cmacaes(void);
- struct ksmbd_crypto_ctx *ksmbd_crypto_ctx_find_gcm(void);
- struct ksmbd_crypto_ctx *ksmbd_crypto_ctx_find_ccm(void);
- void ksmbd_crypto_destroy(void);
- int ksmbd_crypto_create(void);
-diff --git a/fs/smb/server/server.c b/fs/smb/server/server.c
-index 8bce97633e01a..3cea16050e4f7 100644
---- a/fs/smb/server/server.c
-+++ b/fs/smb/server/server.c
-@@ -620,12 +620,10 @@ static void __exit ksmbd_server_exit(void)
- 
- MODULE_AUTHOR("Namjae Jeon <linkinjeon@kernel.org>");
- MODULE_DESCRIPTION("Linux kernel CIFS/SMB SERVER");
- MODULE_LICENSE("GPL");
- MODULE_SOFTDEP("pre: ecb");
--MODULE_SOFTDEP("pre: hmac");
--MODULE_SOFTDEP("pre: md5");
- MODULE_SOFTDEP("pre: nls");
- MODULE_SOFTDEP("pre: aes");
- MODULE_SOFTDEP("pre: cmac");
- MODULE_SOFTDEP("pre: aead2");
- MODULE_SOFTDEP("pre: ccm");
--- 
-2.51.0
+> https://lore.kernel.org/all/68eeb99e.050a0220.91a22.0220.GAE@google.com/
 
+so something fishy is going on. It would be great to narrow that report
+down to a _specific_ patch in the series.
 
