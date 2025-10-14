@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-853165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0467BDAD51
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:44:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04D8BDAD58
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9014D546A1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB47546EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B94303CBD;
-	Tue, 14 Oct 2025 17:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC930304BD5;
+	Tue, 14 Oct 2025 17:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvL3sS4O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlXcBMMJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C913026B971;
-	Tue, 14 Oct 2025 17:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DC335948;
+	Tue, 14 Oct 2025 17:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760463881; cv=none; b=fuf5cFjIAkjS6f48tnA7zTCDPbQ+qndKDRfz/rEg2okGX/RNaiYkzAehxT0Qbe27yXZMIMQWy/HiabV/8DFr3h+xb2x8ZQjjtpddzZfVThK05MyWXKk/yheD6GPKnxrCobqhUFT4qubHKdZZJ4MqDoJhQMgvJfvmUxigtmGgXb4=
+	t=1760464013; cv=none; b=VgQykJcuvnN1UYayQHTO2y8jeP10TB2I4aT2/Bnq/hlXoHfzOuCcN7U/TMwElVemEnzK1nMTUH/dQ0RhjXPuZaeQzaRLlHzF/MEEPvaL37ZKI9HURpYf2dc6nBRQc86LOcO6zhJkcWorZjgVZFyQhs4y4hL7XF22zN851Gc0xSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760463881; c=relaxed/simple;
-	bh=PND3tMFcHSXQbftmY3sVLMvaNBKZSZ0hGpr0vDTs9sE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfxeGfpyEIkE7PqBA9zNCZvt4u79Z+JOnVjh6JG3+fe1YMbpEehF6acTF3TY1lGtcSwQNsbsbU/DCE7sroYubIa6twb08ErRUzrd5UBb2bV7yzs08bUo9djlAHITj3F3OR6IEjXBdqPBrUsy0v0Wp7F6jHWoAR3ZPMcVQNkTjjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvL3sS4O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B73C4CEE7;
-	Tue, 14 Oct 2025 17:44:38 +0000 (UTC)
+	s=arc-20240116; t=1760464013; c=relaxed/simple;
+	bh=REAJKHktfM5uhBrHBHX1IL3/GQ/UWwWriUYpZT5i0i0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hvjV9hx/imYeOuz9IgJr1yclK5aqzRUb16AhBS/mOl8Fsn2eSYk+AYnZaFLLoBKES4P6gtVbEs7LA9tPw5zoKOFLkI/iDqJJEVtx3xaNnQARkhHBI/aBUexoeT4N1YQwlVM2KnP4pm5rOklKk9Fy4B3TZWj4QilsBtAbWq5afYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlXcBMMJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886DAC4CEE7;
+	Tue, 14 Oct 2025 17:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760463881;
-	bh=PND3tMFcHSXQbftmY3sVLMvaNBKZSZ0hGpr0vDTs9sE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hvL3sS4O0/9Rp25fZny11LsDbx8NYa863vhybCfL5A96ugwuGYbS5uKASWQbsO200
-	 XT3CeYL63+CYtUITLF0WuMgsTYwHiAApLc3S3MmF+BQXZTv8hwTu3kqyddnK1nYZg8
-	 0NXQZD1JNENF/DcAfg8vSUlyuT0aiqfqk9F34lU3rEUBQQBVEdxyBpWxejZGZ6QzF3
-	 eD9HP7P1Nv9iCxnEFYKrat/ahxk3u0SsEjezu4HfXs/iRmW4AEwmeLi8a5jorS8npe
-	 d7E3UqwiFejKguvpLz1t90LebXig7Fgkys2bK915snVhBqj41dUvFK1k3e3sZ37A3J
-	 Vke1bYn3IQVJQ==
-Date: Tue, 14 Oct 2025 18:44:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Lucas Zampieri <lzampier@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Charles Mirabile <cmirabil@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <dramforever@live.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: interrupt-controller: add UltraRISC
- DP1000 PLIC
-Message-ID: <20251014-petted-papyrus-435129236562@spud>
-References: <20251014154100.168236-1-lzampier@redhat.com>
- <20251014154100.168236-3-lzampier@redhat.com>
+	s=k20201202; t=1760464011;
+	bh=REAJKHktfM5uhBrHBHX1IL3/GQ/UWwWriUYpZT5i0i0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XlXcBMMJmLFepolcAl1W6bVqaq58HD498ZbWBeybAD42nc9rMQLs5p9VvaHyTBcPo
+	 9DGEcIdTrGRw7egfcDmil9IEBQxq7nMTU5O2qfbpjrbfgvChGy+2GFp57FeO2lb+Zo
+	 Ed4LeSDr1dAsue6PCdN/xo6t3bgEQbfV1tIkuo1NxeAe0DP39qtrc1hb46Gwu6MaEh
+	 e5ZOAcnKaX2ZGw/fy/geGx1MBZjJyHhooKCNTRux0OLOh55GZXmm51j70H2dKyhzdf
+	 63RB7Kjiha84VMK7NBMNrr/YMZoUzPgjg63dmC4hT0JkNcbK9ram5YmxIBDTa/hHRr
+	 Sy8lWgc5pa1NA==
+Received: from 82-132-215-36.dab.02.net ([82.132.215.36] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v8j6n-0000000DxEH-0qIj;
+	Tue, 14 Oct 2025 17:46:49 +0000
+Date: Tue, 14 Oct 2025 18:46:40 +0100
+Message-ID: <87cy6pxtof.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+In-Reply-To: <wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+	<86qzvcxi3j.wl-maz@kernel.org>
+	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+	<86o6qgxayt.wl-maz@kernel.org>
+	<86ms60x7w7.wl-maz@kernel.org>
+	<us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+	<86bjmeyh5m.wl-maz@kernel.org>
+	<graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+	<87sefpoj10.wl-maz@kernel.org>
+	<6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
+	<wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SBMBPhePSwNwsQCs"
-Content-Disposition: inline
-In-Reply-To: <20251014154100.168236-3-lzampier@redhat.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.215.36
+X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Tue, 14 Oct 2025 12:08:22 +0100,
+Thierry Reding <thierry.reding@gmail.com> wrote:
+>
 
---SBMBPhePSwNwsQCs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-On Tue, Oct 14, 2025 at 04:40:56PM +0100, Lucas Zampieri wrote:
-> From: Charles Mirabile <cmirabil@redhat.com>
->=20
-> Add compatible strings for the PLIC found in UltraRISC DP1000 SoC.
->=20
-> The PLIC is part of the UR-CP100 core and has a hardware bug requiring
-> a workaround, so the driver will match on the more generic core-specific
-> compatible (ultrarisc,cp100-plic) to apply the quirk across all SoCs
-> using UR-CP100 cores.
+> > The interrupt count for CPUs 2-7 no longer increments after taking CPU 1
+> > offline. Interestingly, bringing CPU 1 back online doesn't have an
+> > impact, so it doesn't go back to enabling 1:N mode.
+> 
+> Looks like that is because gic_set_affinity() gets called with the new
+> CPU mask when the CPU goes offline, but it's *not* called when the CPU
+> comes back online.
 
-The exact driver behaviour itself is not really appropriate here, all
-you need to do is say that the core has the bug!
-With the prescriptive bit about driver matching behaviour removed,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: changes-requested
+Indeed, because there is no need to change the affinity as far as the
+kernel is concerned -- the interrupt is on an online CPU and all is
+well.
 
->=20
-> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
-> ---
->  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml       | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifiv=
-e,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
-sifive,plic-1.0.0.yaml
-> index 5b827bc24301..34591d64cca3 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
-1.0.0.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
-1.0.0.yaml
-> @@ -74,6 +74,9 @@ properties:
->                - sophgo,sg2044-plic
->                - thead,th1520-plic
->            - const: thead,c900-plic
-> +      - items:
-> +          - const: ultrarisc,dp1000-plic
-> +          - const: ultrarisc,cp100-plic
->        - items:
->            - const: sifive,plic-1.0.0
->            - const: riscv,plic0
-> --
-> 2.51.0
->=20
+I think that's the point where a per-interrupt flag (let's call it
+IRQ_BCAST for the sake of argument) is required to decide what to
+do. Ideally, IRQ_BCAST would replace any notion of affinity, and you'd
+get the scatter-gun behaviour all the time. Which means no adjustment
+to the affinity on a CPU going offline (everything still works).
 
---SBMBPhePSwNwsQCs
-Content-Type: application/pgp-signature; name="signature.asc"
+But that's assumes a bunch of other things:
 
------BEGIN PGP SIGNATURE-----
+- when going offline, at least DPG1NS gets set to make sure this CPU
+  is not a target anymore if not going completely dead (still running
+  secure code, for example). The kernel could do it, but...
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6MAwAKCRB4tDGHoIJi
-0gnNAP9TKWqhJhzUUp3cCJPe5+VCmmPgdq2b1gK6o5qQaZNGSQEAvjL2WCBzA58u
-c8FoKcIciUJjkEw/LooNWCUxOKL2Ywk=
-=cYxS
------END PGP SIGNATURE-----
+- when going idle, should this CPU still be a target of 1:N
+  interrupts? That's a firmware decision what could severely impact
+  power on battery-bound machines if not carefully managed...
 
---SBMBPhePSwNwsQCs--
+- and should a CPU wake up from such an interrupt? Again, that's a
+  firmware decision, and I don't know how existing implementation deal
+  with that stuff.
+
+Someone needs to investigate these things, and work out all of the
+above. That will give us a set of conditions under which we could do
+something.
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
