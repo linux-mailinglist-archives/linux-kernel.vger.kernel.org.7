@@ -1,404 +1,179 @@
-Return-Path: <linux-kernel+bounces-852312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF6BBD8AB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:09:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1F8BD8A6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694653A5FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:04:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E58B4E6D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50902FDC56;
-	Tue, 14 Oct 2025 10:04:06 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696B12E7178;
-	Tue, 14 Oct 2025 10:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8F630F949;
+	Tue, 14 Oct 2025 10:04:23 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8273093C1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436246; cv=none; b=FCHVMjhAU28FSiVAQ0ihdfgfWJYKwTwnREsowTdrg3y1fLce2u5o5uFg84qvdKqfTGRG7FrSnBiFTYo+B62bm8k/CUX6PESNKZ10X9aUx1MBNkbI+GLt93jHDQITcU1BWmHBe9JB3SeU3N7P6SFG7hsyRAMOHGRr/U0CNXzDtF0=
+	t=1760436262; cv=none; b=BpU5o8AUQYrios+s3AxLZ6TxY5cKwYdo/axsU9KmDIHXjx6C+Qf00WvDQAWIjXAC8KW4hGL50lLZnD+JKo4XfPH2yLApPFXa8OWdwQ1PCL0XKHfx32SJTC1h/krgp6tYIeoFDcY5CQ/44UsIokXNZUa2JVhrNuf4XBXv/y5Z0uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436246; c=relaxed/simple;
-	bh=yux0N1wsHRgrMVj6ghdITAuELHZsqQtYUNoXNs4NIPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=czeTJB6x26WZukSiIwjG56PzzzN9NXDKLbjr3VpMi+HEBtJb2evOuiy/cUNhz7S1NWQpOaxJtuvqu3G14nUi+B2f1jL11tSPOuPeoUI7PVsFCjCGt9U66G6i8rFtnitu4TnyitVi4YZTL7wH5e7t64Pe6aU+gB1E+1Dg16uSUZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Cxrr8QIO5oEfgVAA--.46018S3;
-	Tue, 14 Oct 2025 18:04:00 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJAxT+YPIO5oAWLhAA--.35826S2;
-	Tue, 14 Oct 2025 18:03:59 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Xianglai Li <lixianglai@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: KVM: Use 64-bit register definition with eiointc
-Date: Tue, 14 Oct 2025 18:03:59 +0800
-Message-Id: <20251014100359.1159754-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1760436262; c=relaxed/simple;
+	bh=Ktrzl3+rFB0DYSw+mzf8Wr5le2N//JG3Jmezq490Eng=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=TnJ1v2LAjT6cdbnmcaUD4EiJOsjSYqgUCHmwjKdeE2zoN2pGndZoq0FpLX1KrAEJobn3jgsSjv4+nsqILKBsxoJJfPz4/PoR/VNpIqK4XRA76U1NAViBGDI/M62oB6kq79VbpJdEVQlSihRxoP/ryb9XGfguALN4PA350sKmkSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430929af37bso25671295ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:04:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760436260; x=1761041060;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GH+KMJg65TPnbgWnuocNKVgpnsMrWf8epTMXXTaDAq0=;
+        b=IR3GVZDMAElezsRWDtAa6UBHl//MX6AiFdLc+RsZynQAgSSRi9MstYoRv6yNUp4HLl
+         tYvcvqiMUw5wxJ2i/rvplc4NBdEoEgZEv3CH6vajV8R0CATw1ycbB2El89dfIDiEJn5/
+         cp1n0otJi3YAFGGkpaepT+G9crpCM+LsMDFqPbzj64nuylxHOMXVwknJzL6dvZjZoAZi
+         +luMTMJ+xPu7GDiwH+B6U9OiMb3klHltpE0r8LS8e6u8B2dL/GkLF9SXWTWKYMaaiADw
+         3P74ZBUV8LQ6Em34CH0nK/4YtfM9V6FFc/aemv6/3A8wCJ/YmS6k19+MS9FItTB5zosi
+         INdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlYGUuPYsPxSmImKeRszGzxgQWKphJj+Dy13ya29XacJnu1xICM0tvIG86A65sq5cClaVQgvM7FRnXVyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM0hxIi0E5JSCRWQeIregrL0DULHnRuuYinsGVOF/xtTNo2L4H
+	gGComEpYrH5qt2dFmFxMlba1kau/CeyLCgEznftCxu/FtQhOHADoaOw9KgHg9roSiL9q8NPHDlB
+	9OV+FQEaW4XBgFxhuzrkFkhU82c68cEeYMX1lZG4FjWO483eA7SmJ425olzg=
+X-Google-Smtp-Source: AGHT+IGz2nDs6O23O9XvrI8+go74XaGnVI0mw9uQ08Gv7HrjA7t3Y0/hk3lcuiAO7H/cMIk375ht76/469QuZmsy6j1NehDau3rk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxT+YPIO5oAWLhAA--.35826S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-Received: by 2002:a05:6e02:1c02:b0:42f:a4d7:ebac with SMTP id
+ e9e14a558f8ab-42fa4d7f0acmr152220895ab.4.1760436260071; Tue, 14 Oct 2025
+ 03:04:20 -0700 (PDT)
+Date: Tue, 14 Oct 2025 03:04:20 -0700
+In-Reply-To: <20251014051825.1084403-2-wilfred.opensource@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee2024.050a0220.ac43.00ef.GAE@google.com>
+Subject: [syzbot ci] Re: net/tls: support setting the maximum payload size
+From: syzbot ci <syzbot+cidd78f5a1c7478a8a@syzkaller.appspotmail.com>
+To: corbet@lwn.net, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	john.fastabend@gmail.com, kuba@kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, sd@queasysnail.net, 
+	shuah@kernel.org, wilfred.mallawa@wdc.com, wilfred.opensource@gmail.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-With in-kernel emulated eiointc driver, hardware register can be
-accessed by different size, there is reg_u8/reg_u16/reg_u32/reg_u64
-union type with eiointc register.
+syzbot ci has tested the following series
 
-Here use 64-bit type with register definition and remove union type
-since most registers are accessed with 64-bit method. And it makes
-eiointc emulated driver simpler.
+[v5] net/tls: support setting the maximum payload size
+https://lore.kernel.org/all/20251014051825.1084403-2-wilfred.opensource@gmail.com
+* [PATCH net-next v5 1/2] net/tls: support setting the maximum payload size
+* [PATCH net-next v5 2/2] selftests: tls: add tls record_size_limit test
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+and found the following issue:
+general protection fault in tls_setsockopt
+
+Full report is available here:
+https://ci.syzbot.org/series/210c88bf-945a-460c-9fe3-c55bd1958b5d
+
+***
+
+general protection fault in tls_setsockopt
+
+tree:      net-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
+base:      18a7e218cfcdca6666e1f7356533e4c988780b57
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/ae03b3d4-e809-4b0e-bd4a-76b4ae8e9d74/config
+C repro:   https://ci.syzbot.org/findings/d0b97737-6ea7-4c05-b10b-71dc834c9393/c_repro
+syz repro: https://ci.syzbot.org/findings/d0b97737-6ea7-4c05-b10b-71dc834c9393/syz_repro
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000023: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000118-0x000000000000011f]
+CPU: 1 UID: 0 PID: 5970 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:do_tls_setsockopt_tx_payload_len net/tls/tls_main.c:847 [inline]
+RIP: 0010:do_tls_setsockopt net/tls/tls_main.c:887 [inline]
+RIP: 0010:tls_setsockopt+0x189/0x1590 net/tls/tls_main.c:906
+Code: ff df 80 3c 08 00 74 08 4c 89 ff e8 51 67 3c f8 41 bc 18 01 00 00 4d 03 27 4c 89 e0 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 80 3c 38 00 74 08 4c 89 e7 e8 28 67 3c f8 49 83 3c 24 00 0f 84
+RSP: 0018:ffffc90003e57cc0 EFLAGS: 00010202
+RAX: 0000000000000023 RBX: ffff88816adfcc00 RCX: dffffc0000000000
+RDX: 0000000000000006 RSI: ffffffff8d7e872a RDI: ffffffff8bc074e0
+RBP: ffffc90003e57e38 R08: ffffffff8f9e0f77 R09: 1ffffffff1f3c1ee
+R10: dffffc0000000000 R11: fffffbfff1f3c1ef R12: 0000000000000118
+R13: 1ffff920007cafa4 R14: ffff88816b33bde8 R15: dffffc0000000000
+FS:  00005555585b2500(0000) GS:ffff8882a9d0f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000180 CR3: 000000010739e000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ do_sock_setsockopt+0x17c/0x1b0 net/socket.c:2360
+ __sys_setsockopt net/socket.c:2385 [inline]
+ __do_sys_setsockopt net/socket.c:2391 [inline]
+ __se_sys_setsockopt net/socket.c:2388 [inline]
+ __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2388
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f499fb8eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffecf309e88 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f499fde5fa0 RCX: 00007f499fb8eec9
+RDX: 0000000000000005 RSI: 000000000000011a RDI: 0000000000000003
+RBP: 00007f499fc11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f499fde5fa0 R14: 00007f499fde5fa0 R15: 0000000000000005
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:do_tls_setsockopt_tx_payload_len net/tls/tls_main.c:847 [inline]
+RIP: 0010:do_tls_setsockopt net/tls/tls_main.c:887 [inline]
+RIP: 0010:tls_setsockopt+0x189/0x1590 net/tls/tls_main.c:906
+Code: ff df 80 3c 08 00 74 08 4c 89 ff e8 51 67 3c f8 41 bc 18 01 00 00 4d 03 27 4c 89 e0 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 80 3c 38 00 74 08 4c 89 e7 e8 28 67 3c f8 49 83 3c 24 00 0f 84
+RSP: 0018:ffffc90003e57cc0 EFLAGS: 00010202
+RAX: 0000000000000023 RBX: ffff88816adfcc00 RCX: dffffc0000000000
+RDX: 0000000000000006 RSI: ffffffff8d7e872a RDI: ffffffff8bc074e0
+RBP: ffffc90003e57e38 R08: ffffffff8f9e0f77 R09: 1ffffffff1f3c1ee
+R10: dffffc0000000000 R11: fffffbfff1f3c1ef R12: 0000000000000118
+R13: 1ffff920007cafa4 R14: ffff88816b33bde8 R15: dffffc0000000000
+FS:  00005555585b2500(0000) GS:ffff8882a9d0f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000180 CR3: 000000010739e000 CR4: 00000000000006f0
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	df 80 3c 08 00 74    	filds  0x7400083c(%rax)
+   6:	08 4c 89 ff          	or     %cl,-0x1(%rcx,%rcx,4)
+   a:	e8 51 67 3c f8       	call   0xf83c6760
+   f:	41 bc 18 01 00 00    	mov    $0x118,%r12d
+  15:	4d 03 27             	add    (%r15),%r12
+  18:	4c 89 e0             	mov    %r12,%rax
+  1b:	48 c1 e8 03          	shr    $0x3,%rax
+  1f:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
+  26:	fc ff df
+* 29:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 e7             	mov    %r12,%rdi
+  33:	e8 28 67 3c f8       	call   0xf83c6760
+  38:	49 83 3c 24 00       	cmpq   $0x0,(%r12)
+  3d:	0f                   	.byte 0xf
+  3e:	84                   	.byte 0x84
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
 ---
- arch/loongarch/include/asm/kvm_eiointc.h | 55 +++------------
- arch/loongarch/kvm/intc/eiointc.c        | 89 +++++++++++++-----------
- 2 files changed, 57 insertions(+), 87 deletions(-)
-
-diff --git a/arch/loongarch/include/asm/kvm_eiointc.h b/arch/loongarch/include/asm/kvm_eiointc.h
-index a3a40aba8acf..8b7a2fa3f7f8 100644
---- a/arch/loongarch/include/asm/kvm_eiointc.h
-+++ b/arch/loongarch/include/asm/kvm_eiointc.h
-@@ -10,10 +10,7 @@
- 
- #define EIOINTC_IRQS			256
- #define EIOINTC_ROUTE_MAX_VCPUS		256
--#define EIOINTC_IRQS_U8_NUMS		(EIOINTC_IRQS / 8)
--#define EIOINTC_IRQS_U16_NUMS		(EIOINTC_IRQS_U8_NUMS / 2)
--#define EIOINTC_IRQS_U32_NUMS		(EIOINTC_IRQS_U8_NUMS / 4)
--#define EIOINTC_IRQS_U64_NUMS		(EIOINTC_IRQS_U8_NUMS / 8)
-+#define EIOINTC_IRQS_U64_NUMS		(EIOINTC_IRQS / 64)
- /* map to ipnum per 32 irqs */
- #define EIOINTC_IRQS_NODETYPE_COUNT	16
- 
-@@ -64,54 +61,18 @@ struct loongarch_eiointc {
- 	uint32_t status;
- 
- 	/* hardware state */
--	union nodetype {
--		u64 reg_u64[EIOINTC_IRQS_NODETYPE_COUNT / 4];
--		u32 reg_u32[EIOINTC_IRQS_NODETYPE_COUNT / 2];
--		u16 reg_u16[EIOINTC_IRQS_NODETYPE_COUNT];
--		u8 reg_u8[EIOINTC_IRQS_NODETYPE_COUNT * 2];
--	} nodetype;
-+	u64 nodetype[EIOINTC_IRQS_NODETYPE_COUNT / 4];
- 
- 	/* one bit shows the state of one irq */
--	union bounce {
--		u64 reg_u64[EIOINTC_IRQS_U64_NUMS];
--		u32 reg_u32[EIOINTC_IRQS_U32_NUMS];
--		u16 reg_u16[EIOINTC_IRQS_U16_NUMS];
--		u8 reg_u8[EIOINTC_IRQS_U8_NUMS];
--	} bounce;
--
--	union isr {
--		u64 reg_u64[EIOINTC_IRQS_U64_NUMS];
--		u32 reg_u32[EIOINTC_IRQS_U32_NUMS];
--		u16 reg_u16[EIOINTC_IRQS_U16_NUMS];
--		u8 reg_u8[EIOINTC_IRQS_U8_NUMS];
--	} isr;
--	union coreisr {
--		u64 reg_u64[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U64_NUMS];
--		u32 reg_u32[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U32_NUMS];
--		u16 reg_u16[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U16_NUMS];
--		u8 reg_u8[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U8_NUMS];
--	} coreisr;
--	union enable {
--		u64 reg_u64[EIOINTC_IRQS_U64_NUMS];
--		u32 reg_u32[EIOINTC_IRQS_U32_NUMS];
--		u16 reg_u16[EIOINTC_IRQS_U16_NUMS];
--		u8 reg_u8[EIOINTC_IRQS_U8_NUMS];
--	} enable;
-+	u64 bounce[EIOINTC_IRQS_U64_NUMS];
-+	u64 isr[EIOINTC_IRQS_U64_NUMS];
-+	u64 coreisr[EIOINTC_ROUTE_MAX_VCPUS][EIOINTC_IRQS_U64_NUMS];
-+	u64 enable[EIOINTC_IRQS_U64_NUMS];
- 
- 	/* use one byte to config ipmap for 32 irqs at once */
--	union ipmap {
--		u64 reg_u64;
--		u32 reg_u32[EIOINTC_IRQS_U32_NUMS / 4];
--		u16 reg_u16[EIOINTC_IRQS_U16_NUMS / 4];
--		u8 reg_u8[EIOINTC_IRQS_U8_NUMS / 4];
--	} ipmap;
-+	u64 ipmap;
- 	/* use one byte to config coremap for one irq */
--	union coremap {
--		u64 reg_u64[EIOINTC_IRQS / 8];
--		u32 reg_u32[EIOINTC_IRQS / 4];
--		u16 reg_u16[EIOINTC_IRQS / 2];
--		u8 reg_u8[EIOINTC_IRQS];
--	} coremap;
-+	u64 coremap[EIOINTC_IRQS / 8];
- 
- 	DECLARE_BITMAP(sw_coreisr[EIOINTC_ROUTE_MAX_VCPUS][LOONGSON_IP_NUM], EIOINTC_IRQS);
- 	uint8_t  sw_coremap[EIOINTC_IRQS];
-diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
-index c32333695381..eecdc8f4a565 100644
---- a/arch/loongarch/kvm/intc/eiointc.c
-+++ b/arch/loongarch/kvm/intc/eiointc.c
-@@ -11,21 +11,23 @@ static void eiointc_set_sw_coreisr(struct loongarch_eiointc *s)
- {
- 	int ipnum, cpu, cpuid, irq;
- 	struct kvm_vcpu *vcpu;
-+	u8 *coremap;
- 
-+	coremap = (u8 *)s->coremap;
- 	for (irq = 0; irq < EIOINTC_IRQS; irq++) {
--		ipnum = s->ipmap.reg_u8[irq / 32];
-+		ipnum = (s->ipmap >> (irq / 32 * 8)) & 0xFF;
- 		if (!(s->status & BIT(EIOINTC_ENABLE_INT_ENCODE))) {
- 			ipnum = count_trailing_zeros(ipnum);
- 			ipnum = (ipnum >= 0 && ipnum < 4) ? ipnum : 0;
- 		}
- 
--		cpuid = s->coremap.reg_u8[irq];
-+		cpuid = coremap[irq];
- 		vcpu = kvm_get_vcpu_by_cpuid(s->kvm, cpuid);
- 		if (!vcpu)
- 			continue;
- 
- 		cpu = vcpu->vcpu_id;
--		if (test_bit(irq, (unsigned long *)s->coreisr.reg_u32[cpu]))
-+		if (test_bit(irq, (unsigned long *)s->coreisr[cpu]))
- 			__set_bit(irq, s->sw_coreisr[cpu][ipnum]);
- 		else
- 			__clear_bit(irq, s->sw_coreisr[cpu][ipnum]);
-@@ -38,7 +40,7 @@ static void eiointc_update_irq(struct loongarch_eiointc *s, int irq, int level)
- 	struct kvm_vcpu *vcpu;
- 	struct kvm_interrupt vcpu_irq;
- 
--	ipnum = s->ipmap.reg_u8[irq / 32];
-+	ipnum = (s->ipmap >> (irq / 32 * 8)) & 0xFF;
- 	if (!(s->status & BIT(EIOINTC_ENABLE_INT_ENCODE))) {
- 		ipnum = count_trailing_zeros(ipnum);
- 		ipnum = (ipnum >= 0 && ipnum < 4) ? ipnum : 0;
-@@ -53,13 +55,13 @@ static void eiointc_update_irq(struct loongarch_eiointc *s, int irq, int level)
- 
- 	if (level) {
- 		/* if not enable return false */
--		if (!test_bit(irq, (unsigned long *)s->enable.reg_u32))
-+		if (!test_bit(irq, (unsigned long *)s->enable))
- 			return;
--		__set_bit(irq, (unsigned long *)s->coreisr.reg_u32[cpu]);
-+		__set_bit(irq, (unsigned long *)s->coreisr[cpu]);
- 		found = find_first_bit(s->sw_coreisr[cpu][ipnum], EIOINTC_IRQS);
- 		__set_bit(irq, s->sw_coreisr[cpu][ipnum]);
- 	} else {
--		__clear_bit(irq, (unsigned long *)s->coreisr.reg_u32[cpu]);
-+		__clear_bit(irq, (unsigned long *)s->coreisr[cpu]);
- 		__clear_bit(irq, s->sw_coreisr[cpu][ipnum]);
- 		found = find_first_bit(s->sw_coreisr[cpu][ipnum], EIOINTC_IRQS);
- 	}
-@@ -94,7 +96,7 @@ static inline void eiointc_update_sw_coremap(struct loongarch_eiointc *s,
- 		if (s->sw_coremap[irq + i] == cpu)
- 			continue;
- 
--		if (notify && test_bit(irq + i, (unsigned long *)s->isr.reg_u8)) {
-+		if (notify && test_bit(irq + i, (unsigned long *)s->isr)) {
- 			/* lower irq at old cpu and raise irq at new cpu */
- 			eiointc_update_irq(s, irq + i, 0);
- 			s->sw_coremap[irq + i] = cpu;
-@@ -108,7 +110,7 @@ static inline void eiointc_update_sw_coremap(struct loongarch_eiointc *s,
- void eiointc_set_irq(struct loongarch_eiointc *s, int irq, int level)
- {
- 	unsigned long flags;
--	unsigned long *isr = (unsigned long *)s->isr.reg_u8;
-+	unsigned long *isr = (unsigned long *)s->isr;
- 
- 	spin_lock_irqsave(&s->lock, flags);
- 	level ? __set_bit(irq, isr) : __clear_bit(irq, isr);
-@@ -127,27 +129,27 @@ static int loongarch_eiointc_read(struct kvm_vcpu *vcpu, struct loongarch_eioint
- 	switch (offset) {
- 	case EIOINTC_NODETYPE_START ... EIOINTC_NODETYPE_END:
- 		index = (offset - EIOINTC_NODETYPE_START) >> 3;
--		data = s->nodetype.reg_u64[index];
-+		data = s->nodetype[index];
- 		break;
- 	case EIOINTC_IPMAP_START ... EIOINTC_IPMAP_END:
- 		index = (offset - EIOINTC_IPMAP_START) >> 3;
--		data = s->ipmap.reg_u64;
-+		data = s->ipmap;
- 		break;
- 	case EIOINTC_ENABLE_START ... EIOINTC_ENABLE_END:
- 		index = (offset - EIOINTC_ENABLE_START) >> 3;
--		data = s->enable.reg_u64[index];
-+		data = s->enable[index];
- 		break;
- 	case EIOINTC_BOUNCE_START ... EIOINTC_BOUNCE_END:
- 		index = (offset - EIOINTC_BOUNCE_START) >> 3;
--		data = s->bounce.reg_u64[index];
-+		data = s->bounce[index];
- 		break;
- 	case EIOINTC_COREISR_START ... EIOINTC_COREISR_END:
- 		index = (offset - EIOINTC_COREISR_START) >> 3;
--		data = s->coreisr.reg_u64[vcpu->vcpu_id][index];
-+		data = s->coreisr[vcpu->vcpu_id][index];
- 		break;
- 	case EIOINTC_COREMAP_START ... EIOINTC_COREMAP_END:
- 		index = (offset - EIOINTC_COREMAP_START) >> 3;
--		data = s->coremap.reg_u64[index];
-+		data = s->coremap[index];
- 		break;
- 	default:
- 		ret = -EINVAL;
-@@ -223,26 +225,26 @@ static int loongarch_eiointc_write(struct kvm_vcpu *vcpu,
- 	switch (offset) {
- 	case EIOINTC_NODETYPE_START ... EIOINTC_NODETYPE_END:
- 		index = (offset - EIOINTC_NODETYPE_START) >> 3;
--		old = s->nodetype.reg_u64[index];
--		s->nodetype.reg_u64[index] = (old & ~mask) | data;
-+		old = s->nodetype[index];
-+		s->nodetype[index] = (old & ~mask) | data;
- 		break;
- 	case EIOINTC_IPMAP_START ... EIOINTC_IPMAP_END:
- 		/*
- 		 * ipmap cannot be set at runtime, can be set only at the beginning
- 		 * of irqchip driver, need not update upper irq level
- 		 */
--		old = s->ipmap.reg_u64;
--		s->ipmap.reg_u64 = (old & ~mask) | data;
-+		old = s->ipmap;
-+		s->ipmap = (old & ~mask) | data;
- 		break;
- 	case EIOINTC_ENABLE_START ... EIOINTC_ENABLE_END:
- 		index = (offset - EIOINTC_ENABLE_START) >> 3;
--		old = s->enable.reg_u64[index];
--		s->enable.reg_u64[index] = (old & ~mask) | data;
-+		old = s->enable[index];
-+		s->enable[index] = (old & ~mask) | data;
- 		/*
- 		 * 1: enable irq.
- 		 * update irq when isr is set.
- 		 */
--		data = s->enable.reg_u64[index] & ~old & s->isr.reg_u64[index];
-+		data = s->enable[index] & ~old & s->isr[index];
- 		while (data) {
- 			irq = __ffs(data);
- 			eiointc_update_irq(s, irq + index * 64, 1);
-@@ -252,7 +254,7 @@ static int loongarch_eiointc_write(struct kvm_vcpu *vcpu,
- 		 * 0: disable irq.
- 		 * update irq when isr is set.
- 		 */
--		data = ~s->enable.reg_u64[index] & old & s->isr.reg_u64[index];
-+		data = ~s->enable[index] & old & s->isr[index];
- 		while (data) {
- 			irq = __ffs(data);
- 			eiointc_update_irq(s, irq + index * 64, 0);
-@@ -262,16 +264,16 @@ static int loongarch_eiointc_write(struct kvm_vcpu *vcpu,
- 	case EIOINTC_BOUNCE_START ... EIOINTC_BOUNCE_END:
- 		/* do not emulate hw bounced irq routing */
- 		index = (offset - EIOINTC_BOUNCE_START) >> 3;
--		old = s->bounce.reg_u64[index];
--		s->bounce.reg_u64[index] = (old & ~mask) | data;
-+		old = s->bounce[index];
-+		s->bounce[index] = (old & ~mask) | data;
- 		break;
- 	case EIOINTC_COREISR_START ... EIOINTC_COREISR_END:
- 		index = (offset - EIOINTC_COREISR_START) >> 3;
- 		/* use attrs to get current cpu index */
- 		cpu = vcpu->vcpu_id;
--		old = s->coreisr.reg_u64[cpu][index];
-+		old = s->coreisr[cpu][index];
- 		/* write 1 to clear interrupt */
--		s->coreisr.reg_u64[cpu][index] = old & ~data;
-+		s->coreisr[cpu][index] = old & ~data;
- 		data &= old;
- 		while (data) {
- 			irq = __ffs(data);
-@@ -281,9 +283,9 @@ static int loongarch_eiointc_write(struct kvm_vcpu *vcpu,
- 		break;
- 	case EIOINTC_COREMAP_START ... EIOINTC_COREMAP_END:
- 		index = (offset - EIOINTC_COREMAP_START) >> 3;
--		old = s->coremap.reg_u64[index];
--		s->coremap.reg_u64[index] = (old & ~mask) | data;
--		data = s->coremap.reg_u64[index];
-+		old = s->coremap[index];
-+		s->coremap[index] = (old & ~mask) | data;
-+		data = s->coremap[index];
- 		eiointc_update_sw_coremap(s, index * 8, data, sizeof(data), true);
- 		break;
- 	default:
-@@ -451,10 +453,10 @@ static int kvm_eiointc_ctrl_access(struct kvm_device *dev,
- 		break;
- 	case KVM_DEV_LOONGARCH_EXTIOI_CTRL_LOAD_FINISHED:
- 		eiointc_set_sw_coreisr(s);
--		for (i = 0; i < (EIOINTC_IRQS / 4); i++) {
--			start_irq = i * 4;
-+		for (i = 0; i < (EIOINTC_IRQS / 8); i++) {
-+			start_irq = i * 8;
- 			eiointc_update_sw_coremap(s, start_irq,
--					s->coremap.reg_u32[i], sizeof(u32), false);
-+					s->coremap[i], sizeof(u64), false);
- 		}
- 		break;
- 	default:
-@@ -481,34 +483,41 @@ static int kvm_eiointc_regs_access(struct kvm_device *dev,
- 	switch (addr) {
- 	case EIOINTC_NODETYPE_START ... EIOINTC_NODETYPE_END:
- 		offset = (addr - EIOINTC_NODETYPE_START) / 4;
--		p = &s->nodetype.reg_u32[offset];
-+		p = s->nodetype;
-+		p += offset * 4;
- 		break;
- 	case EIOINTC_IPMAP_START ... EIOINTC_IPMAP_END:
- 		offset = (addr - EIOINTC_IPMAP_START) / 4;
--		p = &s->ipmap.reg_u32[offset];
-+		p = &s->ipmap;
-+		p += offset * 4;
- 		break;
- 	case EIOINTC_ENABLE_START ... EIOINTC_ENABLE_END:
- 		offset = (addr - EIOINTC_ENABLE_START) / 4;
--		p = &s->enable.reg_u32[offset];
-+		p = s->enable;
-+		p += offset * 4;
- 		break;
- 	case EIOINTC_BOUNCE_START ... EIOINTC_BOUNCE_END:
- 		offset = (addr - EIOINTC_BOUNCE_START) / 4;
--		p = &s->bounce.reg_u32[offset];
-+		p = s->bounce;
-+		p += offset * 4;
- 		break;
- 	case EIOINTC_ISR_START ... EIOINTC_ISR_END:
- 		offset = (addr - EIOINTC_ISR_START) / 4;
--		p = &s->isr.reg_u32[offset];
-+		p = s->isr;
-+		p += offset * 4;
- 		break;
- 	case EIOINTC_COREISR_START ... EIOINTC_COREISR_END:
- 		if (cpu >= s->num_cpu)
- 			return -EINVAL;
- 
- 		offset = (addr - EIOINTC_COREISR_START) / 4;
--		p = &s->coreisr.reg_u32[cpu][offset];
-+		p = s->coreisr[cpu];
-+		p += offset * 4;
- 		break;
- 	case EIOINTC_COREMAP_START ... EIOINTC_COREMAP_END:
- 		offset = (addr - EIOINTC_COREMAP_START) / 4;
--		p = &s->coremap.reg_u32[offset];
-+		p = s->coremap;
-+		p += offset * 4;
- 		break;
- 	default:
- 		kvm_err("%s: unknown eiointc register, addr = %d\n", __func__, addr);
-
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
--- 
-2.39.3
-
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
