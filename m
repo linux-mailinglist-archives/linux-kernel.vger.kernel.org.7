@@ -1,153 +1,209 @@
-Return-Path: <linux-kernel+bounces-853239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2085BBDAFD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:04:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CB1BDAFE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C5F8356425
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:04:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF0654EC30F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF88429B200;
-	Tue, 14 Oct 2025 19:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B842BDC35;
+	Tue, 14 Oct 2025 19:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ppx2mzVn"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Op5ZR0bJ"
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B499D23D7EF
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E89C23D7D9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760468645; cv=none; b=b0F8uzzPsaHKkMv87ErIpz/Vsa6xr+CWLLs6I6dlYf7Ve7P3t/1haydrlZazo4p1SOKN2CV6k7PjTAokeOgIeCo5ubJsIbdEP3umiRc9V6vQwxzQqwjenu9VtmeQZgaCOo6h4SB+HVVbSIluZzCGssfUw9Nend76tKutZhkfqgo=
+	t=1760468697; cv=none; b=QeI1eL8dHXFCSg0sPYagazM0JCw49pPrVGtNQTvjmCyR4aMW2LgqTanSCiKxg4vNKsa+A85qNyD5WvrYrpy51t5JUgewZbToXZj8wbsG0O2qy5HmHFQN7owffd+QFcYrNQoCdm31QYzpBT/UBB0MxjckYNs+Scw5yivLsNq2Jp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760468645; c=relaxed/simple;
-	bh=5y68QruZPAM2nXoI+E7P7xRzvuupmLhKZeN/D7gAGiM=;
+	s=arc-20240116; t=1760468697; c=relaxed/simple;
+	bh=N0AeLKKkCbDWNM2GHj2h68g3QkP1HDjh2+4qJG/csDY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a4tA3Ed4g/9zMlO6vXIvJhabWUzX+WL+3tT0mFJEJrHSUO3Lss8rrCXBVnF7oQMqP4lTutfHV4ek1FDVny3VOPFMke3cR7vDp5a5iCbZN9hGSPtT88J3zMGYyd8MBDY+ML85zmKJHN6lVjPlAF4vrIcTUyhUbGgGsoZwN7ozKzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ppx2mzVn; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-430a0a715f9so53845ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:04:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=SEUt3p9Z8KgfTB0ZIR1Yx5dXzPqGRslOO84oXyNy9ErPrQp/HOp0Zz6SFHjb7dG+vIkwstr3LgJDBqLMNYhqQmJKeHIh2YOCNlxBbH1HOVjVq7lI3DHkO93pAYWYIUYEUbETnOQrjAbwbvT48T4syFqcjL4n2Qk4Cs/6ajYjwFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Op5ZR0bJ; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-63606491e66so4275873d50.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760468642; x=1761073442; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760468695; x=1761073495; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K3xKBu+Miamd+V4YG8p75v/z/lqDKmiLl9I4U7VNKAE=;
-        b=Ppx2mzVnPLeu4TFcFXZxN0nE6DjB8K/K1QQE12e5N8lVuAsSTQ6mdCuaEldl/dS2tb
-         CQbvILd4J+uHmy/Iv3R7CcOMcuuo8n+F4SQDrWBGY2DjfrDilmhSN+GsxFK19t+035yz
-         PfeufSIrozS9/LTirFbmBG69l6B9/czimJMaLa5BKowMnFoTCRcowSlzYC9DSV+xKcAr
-         CDzg7o1/QxvJF2QGrgd+8nw+KtEsQK4srGPjDfQDCkM94rKEcfT4fXCPY/h48hbk06ha
-         6t1To4syX0lDPFid+GdE4ImzbftCTRm5Pr1IFh7DAq0Y4u+sQE78VWMPPDPIDAh/zVdB
-         OTVQ==
+        bh=5LFWIwNcJTb0LbxCmM/QhGZd9SB3ddKyXhVeoMfh/Zo=;
+        b=Op5ZR0bJrteLhX5O67vCItpxZDTwSSOtkbnvcjwLkSeyv3O+jsTvH4rj8yUv9PESCX
+         brGiAQoO8PQcWo/Ky6KlmN0+tNi9XRA5F1tTe4UKE2b7NLfHGmdENrF9lhBVW0EKIkAA
+         axc3S7g5lvRTvCs6m7X1tiy6Ojcn/nUCyVAJkLicQt241pzYVZkOCTruKA0IPCQdgOiC
+         maUdKcELwKS5wv7JxMQDV4z3YjcMDkfj/7/KFYPrIqFRI88SzUpGieR4Dq2IiPu0V2Hs
+         qjrwd2m/PrldMC4aX1Cz+kXvCG53wAYevIV5bMcfBZbW6qJHVjkXxBTZNeZnyU9MSsx/
+         AVMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760468642; x=1761073442;
+        d=1e100.net; s=20230601; t=1760468695; x=1761073495;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=K3xKBu+Miamd+V4YG8p75v/z/lqDKmiLl9I4U7VNKAE=;
-        b=Ea+NntLPRzYPDWS+4HJMyZH2iVSywkcjgrNpCi8GVUyWcRQso5ry5fArnmjwWUhRno
-         6S1HM5xrZx8J22UoAz3+85owy/JsihQkYg0dbaVr8sjdvLPPytruGmM32z70hs6quQ6M
-         9rtuB8R+/2sdqvr5EgUifUqebJ6qwvzSJQSfJiGhcsUYgiZFt+kFFdYr7VA7ZYJMXD8E
-         0gFCik40tr8x+GK7AH6XurxO1zVeZQFdu5uqBQfW5B/wtBTVUuOY9Ig2t77SmSlfxggj
-         B8Sr0UUv54ezgBPtFW/KL9NRZvGQNycTwUjdx5rfvYtUNLmetlWw8TtU7WZqIdh7s2OQ
-         KWvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9rQ8mxsfUfJwHRxS7+K5ZZUYndqwiRs43wVlYkck2b7VsZSAXK+MNABlNmxhgnQziuIHUX3FJYR9AnXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvLSs7wRp8KgZREenRYkFsS1LuYGcjR5Yw/NgBobUnwxOB9HRk
-	rUJsRkV4sJC3IpkQN4iiDxXe2288Hve47TmTP0vLoeZpjLAF/6Z64Zj4lgDbO5hdKCJYoLp0end
-	tfEnThWK/0HkhuyACch0gRvHWBtKOE6YG49zoEomk
-X-Gm-Gg: ASbGncuAcaRTF0abpPceJfKgk9hEMKje3Pk0rwgRaKmz9Hz5cW8HCftGjPFRz5KdOV3
-	pDFXl8bPuMsrif+HGzKASitzbY8kpLLZV1tomKMZUAsL59l52ratK3KpvOGqJ2h37iQsxxZu5te
-	LMNdK4U4TimSxQW/VWZ5oI1aDN7EWLxUV4NpZrZl9vkX/CKziTT+LiZLdduuqroiRzYhkEVOjwB
-	JHau2U5xA6bdHfjgqsvaIOkWSImjf4r/QKEpa+dPCIgnV5TLRzEhQcfuumh5TY=
-X-Google-Smtp-Source: AGHT+IGFq8+m5EUm1S0rfkHGcGMkfEEEniNyZUS3jih3A0xj2nWF9JKKfX2BM83QEzN490MbMoUDvrGaR7EKS8gi/HA=
-X-Received: by 2002:a05:622a:6081:b0:4b7:9e3a:3804 with SMTP id
- d75a77b69052e-4e882f377e0mr272151cf.16.1760468641464; Tue, 14 Oct 2025
- 12:04:01 -0700 (PDT)
+        bh=5LFWIwNcJTb0LbxCmM/QhGZd9SB3ddKyXhVeoMfh/Zo=;
+        b=iIPnkt5rupFh3Nc1c+LUo+k8zSko2a9VqnUYXFq707jTVgUmQkTiPLhTh3HvrCes4t
+         x9FWVKB4vVauPn2LD493JSHK+WfLZKSbNBwd9rqJIG51lEEA39yJWT0dDW18ouBjEBUa
+         AxXejX483LcKcJcVet3S7m812G0PBBYPSQMumFv3vliaYP3xJSc6hNci0EBCOwYkf+Gy
+         +V7WHZzPC5nEiG3dkOurp4O7eOArTHAubzB/spvDL9eNHZzDaa15WpfI3mnEntrbPXaM
+         befLj9h5WypCKminwK2lyXqHRNcg+fmcgG/VgS54l8pJ7AEzDLx/+U0qMFidlLGU/kut
+         4fhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ+6zL7Y89xRW6Y18xTgk0+8vzYHW2DXwE7w8iyhsWdKl1Vj24+41tMEtaoqlY4JGHBSRZx5dqfB8ODQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl6KT8Kmkc8eKFjEKQrNNgHhUqcvCAwfmzmBiSb9edtpJ26Mnd
+	aaZvWHu8380ai3JvWfZVR8HOFsv+KXQqxBAN8Ddzqtabs6+jhjHn9JdklpsfEjlFUYgy1KSUvY+
+	+ucYS917WL7cG1fTfuzIGCLqQrv7RpAc=
+X-Gm-Gg: ASbGncu0OQGRDMbtsJKVRAjj+DFdJQ7a0i3ulOwnk4bK/0eTOImV1Xr7mK9Pyp0AqcG
+	td3WabZfUztrxLMqKuqn0UzmMPiY6uEGTECnvWiEvJAiDUuSfoQvBmpxmWs2p14uwplZ00lowkH
+	8q0a7RMBEqETyYe7KTBAiTUlsVUhU06wpxp903tfUbhe6CqjW1RSnWTAR1p8ayJvjXm+sVHrtTw
+	fi5usqt9Vico6fisb92buRs
+X-Google-Smtp-Source: AGHT+IENp8MGH0xB25fjWT8oq2mwyBPcuUqJct7YWr59h/VAdp+CaWyYdVq+xLcQfadKFc+RgdG15n4qfGSudatVgQA=
+X-Received: by 2002:a53:ba85:0:b0:633:a326:3b07 with SMTP id
+ 956f58d0204a3-63ccb8d82cfmr16411233d50.24.1760468695058; Tue, 14 Oct 2025
+ 12:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010210134.2066321-2-xur@google.com> <aOsO5gO+5/OkZXVn@rli9-mobl>
-In-Reply-To: <aOsO5gO+5/OkZXVn@rli9-mobl>
-From: Rong Xu <xur@google.com>
-Date: Tue, 14 Oct 2025 12:03:49 -0700
-X-Gm-Features: AS18NWAPmte4S6P8LMDWE8am8OtuITHNTNfP7cWAg9SzB0qhAN67sAjUYloyCJA
-Message-ID: <CAF1bQ=QQQLp=m677dYGDwor=cbHR1JDeQuL92+MrZkQ-OQ_J3A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] kbuild: Disable AutoFDO and Propeller flags for
- kernel modules
-To: kernel test robot <lkp@intel.com>
-Cc: Alexey Gladkov <legion@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Bill Wendling <morbo@google.com>, Han Shen <shenhan@google.com>, 
-	Ingo Molnar <mingo@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Tamir Duberstein <tamird@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Yabin Cui <yabinc@google.com>, Sriraman Tallam <tmsriram@google.com>, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251014044135.177210-1-ghatto404@gmail.com> <20251014044135.177210-4-ghatto404@gmail.com>
+ <e114504e-4bdd-46b9-b708-8eebc3075163@oss.qualcomm.com> <CAMQHOhfjsi1L+3j3TrcjEjPp3xkn94KOdsrVZvJCyUDFBBSeqg@mail.gmail.com>
+ <d06a254f-bf54-4bdf-bd09-3ee5e5b31bad@oss.qualcomm.com>
+In-Reply-To: <d06a254f-bf54-4bdf-bd09-3ee5e5b31bad@oss.qualcomm.com>
+From: Ghatto <ghatto404@gmail.com>
+Date: Tue, 14 Oct 2025 15:04:44 -0400
+X-Gm-Features: AS18NWCHVKoCQ2wy6kKDp8pC-T3MMcjTx0pmcrDz7hEAH7pvV2HDWmC4HnxPwl8
+Message-ID: <CAMQHOhe=WYhtsjHMcRnJOi8UhnNNBfveTWRGSZ_bg24gFysAEw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: r0q: add touchscreen support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I'll filter -pie from vmlinux_o build (which produces a relocatable
-object) in the new patch.
+On Tue, Oct 14, 2025 at 11:18=E2=80=AFAM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 10/14/25 5:10 PM, Ghatto wrote:
+> > On Tue, Oct 14, 2025 at 7:01=E2=80=AFAM Konrad Dybcio
+> > <konrad.dybcio@oss.qualcomm.com> wrote:
+> >>
+> >> On 10/14/25 6:41 AM, Eric Gon=C3=A7alves wrote:
+> >>> Enable the ST-Microelectronics FTS2BA61Y touchscreen. This patch
+> >>> depends on "Input: add support for the STM FTS2BA61Y touchscreen".
+> >>
+> >> The second sentence doesn't really make sense to be included in
+> >> the git log
+> > I'll keep it to the cover letter then
+> >>
+> >>> The device has an issue where SPI 8 (the bus which the touchscreen is
+> >>> connected to) is not working properly right now, so
+> >>> spi-gpio is used instead.
+> >>
+> >> Some Samsung devices used to use spi/i2c-gpio intentionally, also
+> >> on downstream. I'm assuming this isn't the case for r0q.
+> > It isn't, the device uses fts2ba61y on the spi8 bus - I hosted the
+> > DT at https://github.com/ghatt-o/ss_experiments/blob/main/r0q.dts if yo=
+u
+> > want to take a look.
+> >>
+> >> Did you enable gpi_dma1, qupv3_id_1 before spi8, when testing
+> > The driver probes, but it fails to recognize the touchscreen device
+>
+> Could you post a complete dmesg and the precise DT diff you used?
+https://pastebin.com/QkYa8nMp (android dmesg) mainline dmesg doesn't have
+any relevant information other than spi/i2c probing, however, I've noticed
+both on deviceinfohw.ru and the dmesg that for some reason the touchscreen
+is on spi0.0 (even though DT says 8) and I'm not sure if that means it's on=
+ SPI
+but on a bugged out bus or if it's really just spi on bus 0
+@@ -85,7 +85,7 @@
+         * is used instead.
+         */
 
-Thanks,
+-       spi8 {
++       /*spi8 {
+                compatible =3D "spi-gpio";
+                pinctrl-names =3D "default", "sleep";
+                pinctrl-0 =3D <&spi_clk_tsp_active &spi_mosi_tsp_active
+&spi_miso_tsp_active>;
+@@ -106,7 +106,6 @@
+                touchscreen@0 {
+                        compatible =3D "st,fts2ba61y";
+                        reg =3D <0>;
+-                       spi-max-frequency =3D <5000000>;
 
--Rong
+                        vdd-supply =3D <&vreg_l8c_1p8>;
+                        avdd-supply =3D <&vreg_l11c_3p0>;
+@@ -120,8 +119,7 @@
 
-On Sat, Oct 11, 2025 at 7:14=E2=80=AFPM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on kees/for-next/kspp]
-> [also build test ERROR on linus/master kees/for-next/pstore v6.17 next-20=
-251010]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/xur-google-com/kbu=
-ild-Disable-AutoFDO-and-Propeller-flags-for-kernel-modules/20251011-050345
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git fo=
-r-next/kspp
-> patch link:    https://lore.kernel.org/r/20251010210134.2066321-2-xur%40g=
-oogle.com
-> patch subject: [PATCH 2/4] kbuild: Disable AutoFDO and Propeller flags fo=
-r kernel modules
-> :::::: branch date: 26 hours ago
-> :::::: commit date: 26 hours ago
-> config: loongarch-defconfig (https://download.01.org/0day-ci/archive/2025=
-1012/202510120709.Wx3q4Ppg-lkp@intel.com/config)
-> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd70=
-8029e0b2869e80abe31ddb175f7c35361f90)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251012/202510120709.Wx3q4Ppg-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/r/202510120709.Wx3q4Ppg-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> ld.lld: error: -r and -pie may not be used together
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
+                        status =3D "okay";
+                };
+-       };
+-
++       };*/
+
+        vph_pwr: regulator-vph-pwr {
+                compatible =3D "regulator-fixed";
+@@ -134,6 +132,10 @@
+        };
+ };
+
++&gpi_dma1 {
++       status =3D "okay";
++};
++
+ &apps_rsc {
+        regulators-0 {
+                compatible =3D "qcom,pm8350-rpmh-regulators";
+@@ -280,10 +282,38 @@
+        status =3D "okay";
+ };
+
++&spi8 {
++       spi-max-frequency =3D <5000000>;
++
++       touchscreen@0 {
++               compatible =3D "st,fts2ba61y";
++               reg =3D <0>;
++
++               vdd-supply =3D <&vreg_l8c_1p8>;
++               avdd-supply =3D <&vreg_l11c_3p0>;
++
++               interrupt-parent =3D <&tlmm>;
++               interrupts =3D <46 IRQ_TYPE_LEVEL_LOW>;
++
++               pinctrl-names =3D "default", "sleep";
++               pinctrl-0 =3D <&tsp_int_active>;
++               pinctrl-1 =3D <&tsp_int_sleep>;
++
++               status =3D "okay";
++       };
++
++
++       status =3D "okay";
++};
++
+ &qupv3_id_0 {
+        status =3D "okay";
+ };
+
++&qupv3_id_1 {
++       status =3D "okay";
++};
++
+ &tlmm {
+        gpio-reserved-ranges =3D <36 4>; /* SPI (Unused) */>
+> Konrad
+Resend (forgot to reply all)
 
