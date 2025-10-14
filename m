@@ -1,96 +1,125 @@
-Return-Path: <linux-kernel+bounces-852625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D43DBD97BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FACBD97C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6644F1894A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4309F189767D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9217B3148C3;
-	Tue, 14 Oct 2025 12:58:15 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7340B313E18;
-	Tue, 14 Oct 2025 12:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDA8313E06;
+	Tue, 14 Oct 2025 12:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HD+nY9Ki"
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C2131353E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446695; cv=none; b=gjOknC3aRQntBGnY3FArNgrHW31DrZ1T03/WS/A2JWyVTYCpPx4XD6aN/XuU9pxElSKMVjqFHeiVginj4zfIFoC11E/uC+hSnyDM9xMUYVrJLBi58fuh1bqLoNhQaI8UoAgQk3ODyIA7tGB4L0v4MnDyIBUvQ7gCQPYV/MgDQEk=
+	t=1760446726; cv=none; b=YXarSdtP3VvoO15K1DouXHypwFPWSWEX+EwsUoUsL4MBliq/Osyow4fxuHruQWpWucQ6SjM9RLORB3ZiFQSs5cL7sWBVl068QPsBejn1WBJ27twJ+0MUKTv6dj34GK5xyaqmv9/y8qhEGLTVLljpNHCmnuxxEp4uWJwicMqoKTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446695; c=relaxed/simple;
-	bh=jioduxtjG2D9UHtigEPZcxJXr8+DU/z9boK0Wb8p2yk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ez+8SuO0vqbO409lzn+iBezglr0cerv6FXA/oKNmP/PP2iLIZ9QzwRJj4NIVGVFqCLWYFMzE01GAN6GKfbeXpk+bnjkUdvXTTwVu6Jws86F5FY7PtHFjUUqlTFKKya/GdQ/1dw0Swyg2X+RRR8WxBHRYikHLm9NPGzZL4smQNfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 9084F92009C; Tue, 14 Oct 2025 14:58:10 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 8A89692009B;
-	Tue, 14 Oct 2025 13:58:10 +0100 (BST)
-Date: Tue, 14 Oct 2025 13:58:10 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Guenter Roeck <linux@roeck-us.net>, Bjorn Helgaas <bhelgaas@google.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
-In-Reply-To: <9f80ba5e-726b-ad68-b71f-ab23470bfa36@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2510141349560.39634@angie.orcam.me.uk>
-References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com> <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com> <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net> <aO1sWdliSd03a2WC@alpha.franken.de> <alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk>
- <74ed2ce0-744a-264f-6042-df4bbec0f58e@linux.intel.com> <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk> <9f80ba5e-726b-ad68-b71f-ab23470bfa36@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1760446726; c=relaxed/simple;
+	bh=ERKaxZi856JIVKreXO7sribpAgoWkWL8cPcVypMRmHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MenBvHJ5egod0jwoWBrNmUdHN/pLKarATQ5eNo5ImT5C8WdzrTT0+pmYukdgiacD0kDj6OgGNZTvWcD8M745lxHYW80ktQpJteLPCY78OJj5qTkZnCUFoOpP8lG5JHiTx9RmYj+A4bEVseUmypRdUNWCWEs6+3pS7PqUdX8moW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HD+nY9Ki; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-635c9db8a16so5042148d50.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760446723; x=1761051523; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ERKaxZi856JIVKreXO7sribpAgoWkWL8cPcVypMRmHo=;
+        b=HD+nY9Ki9ZCU+ZBbai3sK4TlP+Gj4PeD5IBvNbVgmRwrXEMP1rH1Kq7Wd2U4DC9ql2
+         mmbSs/sedO+Z+pqNh178iwTUljJhUPXdoP+VQFu2ruyAZTpafom4Dgb3i9C7kLT30HMb
+         nugdcECozBZLP8w6AumLU59dnaaYGy11Vk23pFabxvZWzNmDF8nOoZlM5WedT3ES7DKS
+         D/cB7mXIddWy/q7Wje43ITkR6khfIHEjDiCwmec977cTp60w5mWUdbX6XXjhJUkrWeWO
+         j4ESkWjq0mWBEgaoWoQnKZzyhE+qXTM8zA+qwVIdhoT3qqyvhnb1qjF3AFb5czRRY0iT
+         BJBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760446723; x=1761051523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ERKaxZi856JIVKreXO7sribpAgoWkWL8cPcVypMRmHo=;
+        b=nFF5EXqmfkMtmC6ey6YRONS2XU75GnykmOp38717cYA8zbPK96tiQkksl9KE+Gi3ys
+         2iErvbHPMgxCXSrO8+F1QogBBMu6G22fa9qNla4JIPrcMinwGZBWK6XEg9ZgItAPuXhz
+         JxYVzZ8uGr7LEJHwyv8/rguGC2HmVBgYrR1EPoJQ4UJwdUVDUn/nZLt2nS6hpuZsIkFd
+         T+XDYvhp2gNkfVupdRQqDIcYkDjY5jmbBOAhTmhnmpJEWzBy/zfNmQ3sbfrbhT+R3Dc8
+         2O68Ki+DHD0TERa09TAUAbc4sY5q665otGp0rZ7xTxT8J2Hom/4H7PcsvvQ5xA96sH9d
+         N+oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWIruFLV8z5xSPSOHEYAQG3NKhJZDuHlDOQdEbSUfHwSLwNffiXYOcGG+I/I/tchRsb/0yllKSKqU/HTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGsMRPzNxpaRpGJh6Wu8KM/wSeRDVsskfZM3x5mpKw9a9bgpCU
+	46lfRxtijoR7+vS4O/4zNVc7EjYD9BSqPZrzvB7lAxq7iho0bWBmXjdr2sTp53PpAAXznlbUAd5
+	CFzqOt+O0OXQ86NOyhjPKmDOc/sVWvZcEyfwjrLgs8g==
+X-Gm-Gg: ASbGnctmH5nlx+TnuR/X3/6IKJ2d6fKk6rnSOfj5r4Nl/m4Vx2H7VtyYcZPOrLWs1+Q
+	Em46dNDNzo1awidjhJIgfum7lKAsVVKnNuagnH3K8RknHmE3UnzAXPNyBoFhgb9f9STHKeWE9PF
+	aTTd66Jot8P65T1AWxtTqDKG3lp1rI/R/yp+DTY85QcJvK259YV9m8QkWssVlt9w204DYmMapq8
+	VTS0te5TcMYZYnlsTwO0uzxPtTtnw==
+X-Google-Smtp-Source: AGHT+IG7Kofwx6n9tYMDxUa5Z04wJalhfP6YJEHLa4yTiQQEa2UVqFp3ownpK3FKUhmGBn3Yg5tzw6HGtBhEHg9/vxk=
+X-Received: by 2002:a53:ba8d:0:b0:63d:24f9:5332 with SMTP id
+ 956f58d0204a3-63d24f953d8mr775113d50.55.1760446723523; Tue, 14 Oct 2025
+ 05:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <cover.1759824376.git.mazziesaccount@gmail.com>
+ <fe1f4a0947c864496f4eeec8eef806afcf6094a4.1759824376.git.mazziesaccount@gmail.com>
+ <CACRpkdZnoMvYBXN7b6dw+uPs=f1WXr9wX-0VF1c1qd-rq+17LQ@mail.gmail.com> <cac4222e-1f66-40e1-abf8-7d4661d43bbf@gmail.com>
+In-Reply-To: <cac4222e-1f66-40e1-abf8-7d4661d43bbf@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 14 Oct 2025 14:58:28 +0200
+X-Gm-Features: AS18NWAzYGkVtZF2eWYQ8i62TI7iWUixyj6KHyQnG8bjFDuI6exLbunxibrSSZs
+Message-ID: <CACRpkdbOKNPFxNJM-r+HdnfKYisWJrQXvG21EL9w4UQVP74D5A@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/13] dt-bindings: mfd: ROHM BD72720
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Oct 2025, Ilpo Järvinen wrote:
+On Tue, Oct 14, 2025 at 2:11=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-> >  Well, PCIBIOS_MIN_IO is never set for Malta and therefore stays at 0.
-> 
-> I meant whether pci-malta.c has to play with the ->start address at all 
-> if it would use PCIBIOS_MIN_IO.
+> > These are a bit idiomatic, not using the actual framework for such
+> > things (pin control) BUT: they are on the other hand crystal
+> > clear for an integrator working with this device tree, and only
+> > four pins so why over-engineer it. I am fine
+> > with them if the DT people are.
+>
+> I kind of like to emphasize the fact that this is not really a pin-mux
+> in a traditional sense. We can't change the routing after OTP is
+> written. As such, it more resembles "wiring" of the signal inside the
+> PMIC, and this property is not a control but tells us how the signal is
+> wired. But yeah, let's see what others think of it.
 
- Yes, we need either, not both.
+Just that the muxing is controlled by OTP and not by runtime
+software doesn't make it not pinmux. It is, because it is
+(one time) PROGRAMMED to a certain purpose. In a factory,
+nevertheless.
 
-> >  I'd have to go through the relevant datasheets to see whether it can 
-> > actually happen in reality.  Perhaps we can just hardwire PCIBIOS_MIN_IO 
-> > to 0x1000 instead, similarly to what other MIPS platforms do.
-> 
-> My patch did hardcode set it to 0x1000, I just noted before the patch that 
-> I'm not sure if the code should actually try to align the resulting "real 
-> start address" to 0x1000 if hose->io_resource->start != 0.
-> 
-> Or are you saying also the the if () check should be removed as well?
+But the pin control muxing subsystem is designed for muxing
+that is controlled by software at runtime, and as such, indeed
+not a good fit.
 
- That's what I meant, sorry to be unclear.
+Let's go with this!
 
-> >  NB there are commit c5de50dada14 ("MIPS: Malta: Change start address to 
-> > avoid conflicts.") and commit 27547abf36af ("MIPS: malta: Incorporate 
-> > PIIX4 ACPI I/O region in PCI controller resources") that fiddled with this 
-> > code piece.  Especially the latter one refers additional commits that may 
-> > give further insights.  And the former one removed a "FIXME" annotation, 
-> > which suggests I didn't consider the solution perfect back 20 years ago, 
-> > but given how long it stayed there it was surely good enough for its time.
-> 
-> It was "good enough" only because the arch specific 
-> pcibios_enable_resources() was lacking the check for whether the resource 
-> truly got assigned or not. The PIIX4 driver must worked just fine without 
-> those IO resources which is what most drivers do despite using 
-> pci(m)_enable_device() and not pci_enable_device_mem() (the latter 
-> doesn't even seem to come with m variant).
-
- As /proc/ioport contents indicate the resources did get assigned or there 
-would be no claiming driver reported.  I'm sure I did double-check it back 
-in the day too.
-
-  Maciej
+Yours,
+Linus Walleij
 
