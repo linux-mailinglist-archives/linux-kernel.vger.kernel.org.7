@@ -1,126 +1,82 @@
-Return-Path: <linux-kernel+bounces-853238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B60BDAFCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:03:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76ABBDAF09
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B24184EBC9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98A23AADE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54CA29B793;
-	Tue, 14 Oct 2025 19:03:15 +0000 (UTC)
-Received: from leontynka.twibright.com (leontynka.twibright.com [109.81.181.203])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C131CAA7B;
+	Tue, 14 Oct 2025 18:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6MEE7mJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A520235072;
-	Tue, 14 Oct 2025 19:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.81.181.203
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBFB213E9C;
+	Tue, 14 Oct 2025 18:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760468595; cv=none; b=ND5e8mJ7i0HtNQyarOVXV7kCqmjEq0u87Nu90y2wtZZz/gA0+w7rxvtUP47NRRRUYjzT9IkezUkZXk/em546MrtIwzTYVAxjKYUQKxcwpKbxvkQW4Pwukmk9dfULqtB2w3Z4/SeimQP2gepWuWrDF6L5Rp1SrB0YwJ5SbsKxe9Y=
+	t=1760466345; cv=none; b=qxuSMCN8SIyumqKwC9d/vhpUE52zpmNruQf6Y+EjcAuR3VR0b7duDTTqGf9t6C4ZW5lMt7l4YZWx08NgqW9nnHiLb22IvS24y8N4eNdgQlZwGXXtmjwaOBrg01ZipVUVmnmLT10c2zrbO04lC0Zd4TUI+id3I/afxuyS/9uH62U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760468595; c=relaxed/simple;
-	bh=PSh1yxYuQfaN8kfvio1jUgHSDJ2nwVo4I8fMu2elrRg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fr6zteLb2r/QaMTYbwppd6XIIqBz45bDw32ib7d689J6TR3Tzjt6A8OtH2K7TZydgdrQpqQ85S/C+3DO871KKgFmZmRh9mS26N0IrqjdPJZOuuGSNKVWcgTcZF5tTY9pCookxZnhppgWqLQylAp5K9baYiPTWMc8eTzFNYvt9yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=twibright.com; spf=pass smtp.mailfrom=twibright.com; arc=none smtp.client-ip=109.81.181.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=twibright.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=twibright.com
-Received: from mikulas (helo=localhost)
-	by leontynka.twibright.com with local-esmtp (Exim 4.96)
-	(envelope-from <mikulas@twibright.com>)
-	id 1v8jiO-00EeLE-2C;
-	Tue, 14 Oct 2025 20:25:40 +0200
-Date: Tue, 14 Oct 2025 20:25:40 +0200 (CEST)
-From: Mikulas Patocka <mikulas@twibright.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-cc: linux-kernel@vger.kernel.org, 
-    Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, 
-    Antoni Pokusinski <apokusinski01@gmail.com>, 
-    linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] hpfs: make check=none mount option excludable
-In-Reply-To: <d74eef30-fed4-46a8-801e-c86e8ed2632f@I-love.SAKURA.ne.jp>
-Message-ID: <889ee229-8f2f-2bd4-c870-fbd11a3c4098@twibright.com>
-References: <68794b99.a70a0220.693ce.0052.GAE@google.com> <8a2fc775-e4f7-406d-b6dd-8b1f3cd851a3@I-love.SAKURA.ne.jp> <d74eef30-fed4-46a8-801e-c86e8ed2632f@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1760466345; c=relaxed/simple;
+	bh=LAfkOdACrQ3d5VwlIx954g+/KHg9ZXj3o8sOyRUM4Gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qu3/yufePsCWbzr0HIJZ75QDrZ85rAhRJhKCWL1Oe1hURr4OiRZMlsNsF+QdUkbq/SobQlpSA3tqdxY8B2QdNAp+lf/84sLWMOyPAxAJyWhBc2EYHEK92jJimatjv9DDrkYiZCUQIifyB8jWkoCA41jTJ9dqdWNEvVIDxQizDaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6MEE7mJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C42C4CEE7;
+	Tue, 14 Oct 2025 18:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760466344;
+	bh=LAfkOdACrQ3d5VwlIx954g+/KHg9ZXj3o8sOyRUM4Gg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t6MEE7mJcgu00erqCJOXmjiHlJV4ZH80c0BzNQzkPdTeGftkgZ5dSxYgfaNlsxTtC
+	 GsD8FHsx/CpZGWHlUwy3Nr4hjSKGxRhz7lnnJY7obi8vcCdvOSlD3TIzw/3gSYK4E1
+	 vQpWDjTdF/lijEdy1qZDsoI1qzRUpZcDq3vWZX8uKRm1hpTi2QVGgO7apiiUBPEok+
+	 KvK1l6wYrCGRh6ExczqXY1t/ZwuE3MxLX6WX18oOw8h3Lb9FyfKUulsLLnk8Tm4Uk9
+	 lsxCgCw9+XD3JIRW7BMvo1hL+ctd2jSj0ENOhL0EROgfKG7MTXlTYHy5HyRkGOHKxE
+	 3zF1RlLIpIu+Q==
+Date: Tue, 14 Oct 2025 15:25:40 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Miaoqian Lin <linmq006@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Fix bool return value in gzip_is_compressed()
+Message-ID: <aO6VpLGVG5OOHnOY@x1>
+References: <20250828104652.53724-1-linmq006@gmail.com>
+ <4ecf3e76-27f8-47fd-a07d-7da2489af55f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ecf3e76-27f8-47fd-a07d-7da2489af55f@linux.intel.com>
 
+On Sat, Oct 11, 2025 at 11:48:56AM +0800, Mi, Dapeng wrote:
+> > +++ b/tools/perf/util/zlib.c
+> > @@ -88,7 +88,7 @@ bool gzip_is_compressed(const char *input)
+> >  	if (fd < 0)
+> > -		return -1;
+> > +		return false;
 
+> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-On Tue, 14 Oct 2025, Tetsuo Handa wrote:
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-> syzbot is reporting use-after-free read problem when a crafted HPFS image
-> was mounted with "check=none" option.
-> 
-> The "check=none" option is intended for only users who want maximum speed
-> and use the filesystem only on trusted input. But fuzzers are for using
-> the filesystem on untrusted input.
-> 
-> Mikulas Patocka (the HPFS maintainer) thinks that there is no need to add
-> some middle ground where "check=none" would check some structures and won't
-> check others. Therefore, to make sure that fuzzers and careful users do not
-> by error specify "check=none" at runtime, make "check=none" being
-> excludable at build time.
-
-Hi
-
-Would it be possible to change syzbot to not use the "check=none" option?
-
-Mikulas
-
-> Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-> Link: https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
-> Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
->  fs/hpfs/Kconfig | 11 +++++++++++
->  fs/hpfs/super.c |  2 ++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/fs/hpfs/Kconfig b/fs/hpfs/Kconfig
-> index ac1e9318e65a..d3dfbe76be8a 100644
-> --- a/fs/hpfs/Kconfig
-> +++ b/fs/hpfs/Kconfig
-> @@ -15,3 +15,14 @@ config HPFS_FS
->  
->  	  To compile this file system support as a module, choose M here: the
->  	  module will be called hpfs.  If unsure, say N.
-> +
-> +config HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
-> +	bool "Allow no-error-check mode for maximum speed"
-> +	depends on HPFS_FS
-> +	default n
-> +	help
-> +	  This option enables check=none mount option. If check=none is
-> +	  specified, users can expect maximum speed at the cost of minimum
-> +	  robustness. Sane users should not specify check=none option, for e.g.
-> +	  use-after-free bug will happen when the filesystem is corrupted or
-> +	  crafted.
-> diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-> index 8ab85e7ac91e..656b1ae01812 100644
-> --- a/fs/hpfs/super.c
-> +++ b/fs/hpfs/super.c
-> @@ -285,7 +285,9 @@ static const struct constant_table hpfs_param_case[] = {
->  };
->  
->  static const struct constant_table hpfs_param_check[] = {
-> +#ifdef CONFIG_HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
->  	{"none",	0},
-> +#endif
->  	{"normal",	1},
->  	{"strict",	2},
->  	{}
-> -- 
-> 2.47.3
-> 
-> 
-> 
+- Arnaldo
 
