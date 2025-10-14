@@ -1,160 +1,145 @@
-Return-Path: <linux-kernel+bounces-853295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A776FBDB24B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:01:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C34BDB275
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0ABF4FAED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:00:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6323D4E4462
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A180A305943;
-	Tue, 14 Oct 2025 20:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB3D305962;
+	Tue, 14 Oct 2025 20:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="mObzBgaj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y5OeRJOU"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGmlOR2E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF2F270576;
-	Tue, 14 Oct 2025 20:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3362FFDFB;
+	Tue, 14 Oct 2025 20:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760472043; cv=none; b=ZRZnECFZxgsgm3quQ4kRCAUvMq6vGU5CARst21klmOVhoqIrEfSuUC0ALKz09iVsNGmUvGvlcuMHe8f1GkmcYJI4MkAYBXtTuUdX5hLBGR5WbcbogzksVKiTWZ7b+X3MMLBHjw1PGPIpu+01t9NcLJ51Pszk+P9RkRp9W2iKlr4=
+	t=1760472423; cv=none; b=gYUhIJvjRk6Xlk9LLcWKqts/XSdbyNdzfJu5wbLxDR+R0Th8cwXib5evdAB5fT3hQVDce2LL3Q3bttEkP6kmeO8iQx4NQZ874TDWtdMi3PxQYYcxpvG1uWu6xsFaJ/axB2qXI3LVrH+W2nY+coNPkSe3AHl+VbQ8YKJ7DJtCQew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760472043; c=relaxed/simple;
-	bh=RPTDAXRUH48H3AuOqxa0FeN3HigldSnpntB2oGFh6IE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lXUUHzuP97zBxGvO1SUCGmPhOWTt3d4JO1BKWhp0VZ+NrjgpV+ImLZ0I6ZxhRxwd2sXHVCzHScU+EiLNqp37hb8hodi48Qjge5bYFm2HZpwUqZdLzy5U0GVouvbdMo166P9x2vrCQHS5lFa0LPuT6GALjU4tyZo60ik8//bnYD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=mObzBgaj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y5OeRJOU; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 4D121EC0979;
-	Tue, 14 Oct 2025 16:00:40 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 14 Oct 2025 16:00:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1760472040;
-	 x=1760558440; bh=nAxl708qa6gSnRG8kCG0KKh+WEJSc1Rsjsj0CGW+qi4=; b=
-	mObzBgajVP+Z4+HkmAJ54WcoMzfqCD9UcX65GSCNYUHmLmANNouhyS8twNIy83Ry
-	xh4s3IVeNox2LSbZSk+Slw/r655vZaB82na+F/kY9ihval8GEw270ILbkxLzq475
-	/9ysnopWzO8fKtT3HwAZsjo1mRNY2pAWhrRDTHhQRsLR6kpBKpoRJYqzk+WGWbFu
-	LlfLLlQTEh4gFqX6FI1+lHGNwsJhDgSGkWa4w8Yl6VUlxWl2xFW5MTENShTASvGt
-	T2KDgAit8AJ5kwifVl/1NziqZ/1hd+TPCws5iARQf09yKdoQtUgOhesc61kSvYga
-	dvQXtyiwKJWjQ/g1wMJ5yA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760472040; x=
-	1760558440; bh=nAxl708qa6gSnRG8kCG0KKh+WEJSc1Rsjsj0CGW+qi4=; b=Y
-	5OeRJOU4fqHMnQdlVW/TadlCpvcAwkXzT8UhAa8d7gp5A/zo5VMwjFG2baNBC4FA
-	TSU7CHCxQwKDVdNtNgxjzO2xxNRbKJCRWdKys49n8x/Qjg/qWRyhfbPawlSikNVc
-	8IzgHQ+IoLdo/Ux4SDWij3/fa5ZAfngSGeNxsJArtrvsUPUADIfqAa/A/4vcKGDU
-	SCcEiMfNWX9aVhwq7C7/KFhQBL4rMDz46+U6I26nHf5D6VPOrjVHjoYLtMzx12Py
-	qhoSc/52017ftfd5oT0iN9agcHsFw+jU+pzEFW8wfnDlJJ9Xd2iHQYpBg0rw7Z7Z
-	u54KcAYf7vgwx6pjYZXLQ==
-X-ME-Sender: <xms:5qvuaAdDrpWEwv-u-aasXbY69cKBjfSBzqzJ_WxRn9ZxklWtthOv2Q>
-    <xme:5qvuaDJSF2Qgr8uRZodgNq3LsERt-1rY16PQMI_MP2zwUOjdDxnmPtjPhYZTzsP9o
-    LxEYc_eKyfsudzGmIEk2UHjNAW2fCUUR2On27RiIEiXEUldqG-wZg>
-X-ME-Received: <xmr:5qvuaB3xi5KjXdLTdGvsgyXlEbXgSYDvkDAVztKJlkdU0Y08HwxT5Imdud0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddugeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucgh
-    ihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrth
-    htvghrnhepteetudelgeekieegudegleeuvdffgeehleeivddtfeektdekkeehffehudet
-    hffhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hlvgigsehshhgriigsohhtrdhorhhgpdhnsggprhgtphhtthhopedujedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtoheptghhuhhguhgrnhhgqhhinhhgsehinhhsphhurhdrtg
-    homhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghn
-    ihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
-    pdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehsoh
-    hngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihonhhghhhonhhgrdhsohhnghes
-    lhhinhhugidruggvvhdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrg
-    hilhdrtghomh
-X-ME-Proxy: <xmx:56vuaEaBczoypXRgxQ2vwcOpEatc8EpKuldURGbBn3iF7RZMksgdLA>
-    <xmx:56vuaDiR0EORGA6YSEoXACvx5T7iLGBZZ2SuWLJiexmr8x9XTRB7LA>
-    <xmx:56vuaL_jKvtp3aIGw3Dn9g_3HofzU__XjJuAmJZxhpSOOPIFv8CLoQ>
-    <xmx:56vuaJMu1tKSW7wt6ouQtZh0Tf_6X3JRL0BSCBLFkdvP3X_KTD-xzQ>
-    <xmx:6KvuaIOjQkDPfSTH2nx6Cw-5jE5I72Hkc0pO-Cbe1al3NqYjPBbEc2wc>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 16:00:37 -0400 (EDT)
-Date: Tue, 14 Oct 2025 14:00:35 -0600
-From: Alex Williamson <alex@shazbot.org>
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
- <martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
- <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
- <kpsingh@kernel.org>, <sdf@fomichev.me>, <haoluo@google.com>,
- <jolsa@kernel.org>, <kwankhede@nvidia.com>, <bpf@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] samples/bpf: Fix spelling typo in samples/bpf
-Message-ID: <20251014140035.31bd9154@shazbot.org>
-In-Reply-To: <20251014060849.3074-2-chuguangqing@inspur.com>
-References: <20251014060849.3074-1-chuguangqing@inspur.com>
-	<20251014060849.3074-2-chuguangqing@inspur.com>
+	s=arc-20240116; t=1760472423; c=relaxed/simple;
+	bh=Z0BJSHmaIit4mQsVLtMhOCrBGLBdeW7Lb3TblmP8GI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=WiDR5amnU+wLnx3SeIimCQNL1HXGrb6/fuk5LywvbffZedEsaOSGJSBF70hg8MsWoLPtrQmYt3iPeMwAk8Ale15HgNsg495IDTFHhjnV8WVDOaELzV9cwaAfc0NcTE9fCIAHY/6UFE51dXAaUUaSOaDip5uFX0yt7F/yzl+9Tes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGmlOR2E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE27DC4CEF9;
+	Tue, 14 Oct 2025 20:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760472423;
+	bh=Z0BJSHmaIit4mQsVLtMhOCrBGLBdeW7Lb3TblmP8GI4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TGmlOR2EXwPxxN97KqShYy7FJo/4wQ2KKY1aUcKc1PZpbWv7DJPwNEVK4AQs4RJkt
+	 hmksT6eYwRPlKziW5efSLEPDKmHYfwMbawCDM8fvIKmMDNUJa3/3871mXSM4Kyhzj9
+	 LtQStn0kICY2XnqVUnVcCAQfUxg8ziUjg3p+xkNwPN8xwz2sUTBVU/XUt8fVYA9lnC
+	 V5wpIURwrifNyC46lleFxZ/pcU5cbrz7XeC+MQ3PREZQvwNW1dQHA9tEedRxImWNWU
+	 0N15LOhkh5AJ8OlIVKbdQtq6HmdJZL9cHbA1ZoWbTY8mKeTJMN9Kya2YV7/92ClKjo
+	 JQnONMpBw/04g==
+Date: Tue, 14 Oct 2025 15:07:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vincent Liu <vincent.liu@nutanix.com>
+Cc: gregkh@linuxfoundation.org, dakr@kernel.org,
+	linux-kernel@vger.kernel.org, rafael@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] driver core: Check drivers_autoprobe for all added
+ devices
+Message-ID: <20251014200701.GA859701@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013181459.517736-1-vincent.liu@nutanix.com>
 
-On Tue, 14 Oct 2025 14:08:49 +0800
-Chu Guangqing <chuguangqing@inspur.com> wrote:
+On Mon, Oct 13, 2025 at 07:14:59PM +0100, Vincent Liu wrote:
+> When a device is hot-plugged, the drivers_autoprobe sysfs attribute is
+> not checked. This means that drivers_autoprobe is not working as
+> intended, e.g. hot-plugged PCIe devices will still be autoprobed and
+> bound to drivers even with drivers_autoprobe disabled.
+> 
+> Make sure all devices check drivers_autoprobe by pushing the
+> drivers_autoprobe check into device_initial_probe. This will only
+> affect devices on the PCI bus for now as device_initial_probe is only
+> called by pci_bus_add_device and bus_probe_device (but bus_probe_device
+> already checks for autoprobe).
 
-> do_hbm_test.sh:
-> The comment incorrectly used "upcomming" instead of "upcoming".
-> 
-> hbm.c
-> The comment incorrectly used "Managment" instead of "Management".
-> The comment incorrectly used "Currrently" instead of "Currently".
-> 
-> tcp_cong_kern.c
-> The comment incorrectly used "deteremined" instead of "determined".
-> 
-> tracex1.bpf.c
-> The comment incorrectly used "loobpack" instead of "loopback".
-> 
-> mtty.c
-> The comment incorrectly used "atleast" instead of "at least".
-> 
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> In particular for the PCI devices, only
+> hot-plugged PCIe devices/VFs should be affected as the default value of
+> pci/drivers_autoprobe remains 1 and can only be cleared from userland.
+
+I'm not sure what this last sentence is telling us.  Does
+"pci/drivers_autoprobe" refer to struct pci_sriov.drivers_autoprobe?
+If so, can you elaborate on the connection with struct
+subsys_private.drivers_autoprobe, which this patch tests?  I don't see
+anything in this patch related to pci_sriov.
+
+As far as I can tell, this patch is generic with respect to
+conventional PCI vs PCIe.  If so, I'd use "PCI" everywhere instead of
+a mix of PCI and PCIe.
+
+> Any future callers of device_initial_probe will respsect the
+> drivers_autoprobe sysfs attribute, but this should be the intended
+> purpose of drivers_autoprobe.
+
+Add "()" after function names to make them easily recognizable as
+functions.
+
+s/respsect/respect/
+s/but this should be the/which is the/  # maybe? not sure what you intend
+
+> Signed-off-by: Vincent Liu <vincent.liu@nutanix.com>
 > ---
->  samples/bpf/do_hbm_test.sh  | 2 +-
->  samples/bpf/hbm.c           | 4 ++--
->  samples/bpf/tcp_cong_kern.c | 2 +-
->  samples/bpf/tracex1.bpf.c   | 2 +-
->  samples/vfio-mdev/mtty.c    | 2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
+> v1->v2: Change commit subject to include driver core (no code change)
+> 	https://lore.kernel.org/20251001151508.1684592-1-vincent.liu@nutanix.com
+> ---
+>  drivers/base/bus.c |  3 +--
+>  drivers/base/dd.c  | 10 +++++++++-
+>  2 files changed, 10 insertions(+), 3 deletions(-)
 > 
-...
-> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> index 59eefe2fed10..6cb3e5974990 100644
-> --- a/samples/vfio-mdev/mtty.c
-> +++ b/samples/vfio-mdev/mtty.c
-> @@ -624,7 +624,7 @@ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
->  		u8 lsr = 0;
+> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> index 5e75e1bce551..320e155c6be7 100644
+> --- a/drivers/base/bus.c
+> +++ b/drivers/base/bus.c
+> @@ -533,8 +533,7 @@ void bus_probe_device(struct device *dev)
+>  	if (!sp)
+>  		return;
 >  
->  		mutex_lock(&mdev_state->rxtx_lock);
-> -		/* atleast one char in FIFO */
-> +		/* at least one char in FIFO */
->  		if (mdev_state->s[index].rxtx.head !=
->  				 mdev_state->s[index].rxtx.tail)
->  			lsr |= UART_LSR_DR;
-
-I'd suggest this go through bpf since it touches more there.  For mtty,
-
-Acked-by: Alex Williamson <alex@shazbot.org>
+> -	if (sp->drivers_autoprobe)
+> -		device_initial_probe(dev);
+> +	device_initial_probe(dev);
+>  
+>  	mutex_lock(&sp->mutex);
+>  	list_for_each_entry(sif, &sp->interfaces, node)
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 13ab98e033ea..37fc57e44e54 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -1077,7 +1077,15 @@ EXPORT_SYMBOL_GPL(device_attach);
+>  
+>  void device_initial_probe(struct device *dev)
+>  {
+> -	__device_attach(dev, true);
+> +	struct subsys_private *sp = bus_to_subsys(dev->bus);
+> +
+> +	if (!sp)
+> +		return;
+> +
+> +	if (sp->drivers_autoprobe)
+> +		__device_attach(dev, true);
+> +
+> +	subsys_put(sp);
+>  }
+>  
+>  /*
+> -- 
+> 2.43.7
+> 
 
