@@ -1,112 +1,265 @@
-Return-Path: <linux-kernel+bounces-853114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A2ABDAAB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:42:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A624ABDAADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8030D4FAE81
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84440582C6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C47302CB5;
-	Tue, 14 Oct 2025 16:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfYAn02o"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66A5302154;
+	Tue, 14 Oct 2025 16:42:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEDC2FF166
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E172FFFB8
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760460141; cv=none; b=jhyCS3DZCbq3q/gP62ZB6uK9pzS+PDg+DYLb5f1t666gvYTQMu3Tmt9iJy7igcEvAl1GpmRoztdwDu8HU/+eBqlVaD5f9NwUHGFFtcg2R47LhSEmzsbB6UzfnXznOog0B5qgRhMrJbc8YVoHc5BmwG5d7VbJYYMPMcQX35YTvP8=
+	t=1760460157; cv=none; b=Crue/RIRQdDY5VYMf16jpLxSoMlkgXaDeQvj9uBOvHG3tJ8vIceiMzupRkhtWydK8mtz0Eo7yL96o7SRWtXudBmufAXxucC+iTFps1t8NgOrE559q6d2XhDKL5EM8dYnmvgBv7qpfL7Q95u4cyxZVD4eI4bh9dw8+sIoN5AMtkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760460141; c=relaxed/simple;
-	bh=Qx/eEo2ROVIPmgrj6FFyvxVlP5xP/FaQp3gFsAscr8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WIKOcP46lNKLrbV/SZLxwwIhiUGSPCuNGWAoncutBzX+tAGvtzvMy1E+435BLzyECl19ryxyM3ft2GUjnU10GSlRgh+hwLRYcDdySZor/+/b36RWDB1v3pkZY/5gTLNgN8rIlC1Bt5sHBLSA/7QvM1y2bfWe14++CNyLzC4+0D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfYAn02o; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-269ba651d06so8621685ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760460138; x=1761064938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qx/eEo2ROVIPmgrj6FFyvxVlP5xP/FaQp3gFsAscr8Q=;
-        b=nfYAn02oEy1LxPZC/UTU+gUf46kkZR3qRioGbw4eEl78EMmQiDlU02q4wK1PZa93si
-         7Yl9tLoG6oUrdFHJy0Aw8ZEuR10Ls/SwkcXZiAFERx7kICel20dXe4231x3b5sP/hfBB
-         8P2GqXqg9S+DClGpRSHnbej+X5NVUo9xCfJwjdoU7y4uLO1LSDul7hPbyEGRW9s635JT
-         tt/LU6elijZ7hKxdFbjpV08RwSX8fFFN8tE2b/TYfTvB9JA3f5OyFBM8j/HM8iBz6grO
-         alWy7NMpuRjCCO1mMToJSeGMCi46mipVirpji21ICvHQ/eErfdL/12HVoSHT2hOq1d8u
-         eAOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760460138; x=1761064938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qx/eEo2ROVIPmgrj6FFyvxVlP5xP/FaQp3gFsAscr8Q=;
-        b=AGOMsOqZv0+iiLQg9DBURK0jplWIZW3/AR08dzuCxS7osrxaqTQEz6g9XLYCEO50ge
-         9FpGF5X5vXHNbo6hdxSeU7iMR8Uj+In1nSpeFGCHfq9/UvRqfTELa8uI8T2y0jmhuYrM
-         ypKIdWsXjGJvVuLmGR0XgKgV237TXSYfHCI7jp6B2uqVpgC0v/jPqYWNMHXSbGP8ahRf
-         04CuYELsJXlOW54Dq5O2qM7EU3+AlN4B9BpBm+r/1LBu35RtejKtVHniUJ8o0C0ki/bS
-         rP8pqGh7RtR1mMvbtT9T3xO+BSqcFtC2m9YJuPdh/15gBo113dQZXVkNP/XnfX+M49Eg
-         X9QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVF2NxlcWba7+vgWAM5ZeCa/UCoEvYi3lICfhH7osB2zZMiG7/McH5cfzqg9iTDTWvZLn0BAqcb4xpY1nA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgaRHq46BT9wqt8pknTl5W3yBDrEBqh5nUOSrorWQ57b85+mdQ
-	OF6Nd16ljXT75ke9pYJ/tVeWZI3588h2euT0ceAIskBuV+AqQFfmMMvRtPFrI3swPhXGbOMttyf
-	EqZxwbhvt9QoWX1wy8fClzhcHdV7D4ek=
-X-Gm-Gg: ASbGncsXP0OmwrjOMZubgI0PWSX8geyWMCIW2B8VBV2kwIhWp+ku1M+lIQWyCnew2iq
-	QxprYZjiAFabHobAYiUCy3CuOOOtT5ciwcNRPwJN6EHV81FeI9CNW3EXo2xLHAut/nJf7y9U83b
-	vN2Vxw1PCG89mOkGZY8zOwhJC8z7gfAW44z4W+MeLcqU4J3OL/7V7eq9E1SDSqG4SI7OScK3Yz/
-	Y67VxTN7BbrduHpQ0S/qYNwqB/2q06a4I+krkXsJAnNqpIjQS+O1QH/5GDSGzKQqfThlMrJ0PEr
-	RFvcePwHzI6T5Y7lU9H7jWQlVy1E2mNu2FPDwerqYmPH
-X-Google-Smtp-Source: AGHT+IFm0NocZUOA7deQKev6cTvUimVZbWYXQYPu94G9wpQohGmRSl6mxcEZ0e/f5qO6pZB6kdK7mFOzs9rqiJR2e0I=
-X-Received: by 2002:a17:902:ea07:b0:269:85aa:3776 with SMTP id
- d9443c01a7336-2902745664amr187372845ad.11.1760460138023; Tue, 14 Oct 2025
- 09:42:18 -0700 (PDT)
+	s=arc-20240116; t=1760460157; c=relaxed/simple;
+	bh=U0Rm8o5SIrRodpiWYPjiXcpztSQ9MnWHRrk2YHYlEBI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qfiYa1CtnFGG17ZWrUyHiLvM6KM+tFqw744zI/ZPSIWlDIeDSjJMEh0MLPkRp3/FNGZOMv31tQSLPvyB1nPeDbYBusK+6DvXW2trNT+jDjXRW4bzhiTpNieSpAN95s76vk1JaNgc0jcyJhcjX4CAw8JslW6I8ZMN0bJmBIgQ+eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8i6M-0004Ft-Eh; Tue, 14 Oct 2025 18:42:18 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8i6L-003aUP-2E;
+	Tue, 14 Oct 2025 18:42:17 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8i6L-00000000Btg-2VfZ;
+	Tue, 14 Oct 2025 18:42:17 +0200
+Message-ID: <6ba1fd1f07753c9b98a57c87bffbbee16971da7a.camel@pengutronix.de>
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, vkoul@kernel.org, 
+	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, 	biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Claudiu
+ Beznea	 <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang	
+ <wsa+renesas@sang-engineering.com>
+Date: Tue, 14 Oct 2025 18:42:17 +0200
+In-Reply-To: <77678dd6-071b-4911-a5c5-f1519c92e91a@tuxon.dev>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+	 <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+	 <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+	 <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+	 <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
+	 <6d4bc69c-1571-4d98-b0d4-214c68be118e@tuxon.dev>
+	 <c1099a8e422abbc5d12bf3f325cb9f2140c8c006.camel@pengutronix.de>
+	 <77678dd6-071b-4911-a5c5-f1519c92e91a@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013001422.1168581-1-ojeda@kernel.org> <aOzET46lagm-p8go@google.com>
- <aO51pV5WSmqnT4rL@yury> <aO54nxGil6a5hLQN@google.com> <aO55B_ishdHO2uiW@yury>
-In-Reply-To: <aO55B_ishdHO2uiW@yury>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 14 Oct 2025 18:42:04 +0200
-X-Gm-Features: AS18NWBtweXgcaBwWxSZPbyhJpQmvLi4CG8z_VcU2bxMhsLFlMa-fdtcHq67J60
-Message-ID: <CANiq72=oiJdA_0SyBCzNmf-XL9DbCN+sOrXmVR2TUhYeuZV29A@mail.gmail.com>
-Subject: Re: [PATCH] rust: bitmap: clean Rust 1.92.0 `unused_unsafe` warning
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Burak Emir <bqe@google.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Oct 14, 2025 at 6:23=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
-rote:
+Hi Claudiu,
+
+On Di, 2025-10-14 at 11:36 +0300, Claudiu Beznea wrote:
+> On 10/13/25 17:57, Philipp Zabel wrote:
+[...]
+> > > > On 10/8/25 13:23, Philipp Zabel wrote:
+> > > > > On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
+[...]
+> > > > > > The approaches considered were:
+> > > > > > a/ power domain
+[...]
+> > > > > Could you point me to the discussion related to a?
+[...]
+> > Thank you! From this discussion it still isn't clear to me whether
+> > Ulf's suggestion of using genpd on/off notifiers was considered and why
+>=20
+> The genpd on/off notifier suggestion wasn't tried, but only the
+> implementation of PWRRDY handling through the power domain (what Ulf
+> suggested though "Move the entire reset handling into the PM domain
+> provider, as it obviously knows when the domain is getting turned on/off"
+> in
+> https://lore.kernel.org/all/fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.de=
+v/).
+> Sorry if I mislead you.
+
+No worries, misunderstandings happen. Here I assumed the "power domain
+approach" meant letting the PWRRDY signal be controlled by power domain
+state, not specifically all code in the power domain driver. And I only
+learned about the genpd notifier suggestion after reading the thread.
+
+> Ulf suggested then here
+> https://lore.kernel.org/all/CAPDyKFpLnREr4C=3DwZ7o8Lb-CZbQa4Nr2VTuYdZHZ26=
+Rcb1Masg@mail.gmail.com/
+> that he is not agreeing anymore with having it as power domain due to the
+> discussion in thread
+> https://lore.kernel.org/all/TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR=
+01MB11346.jpnprd01.prod.outlook.com/
+> (I can't remember what made him taking back is ack on this solution and I
+> can't find something in the thread either).
+>=20
+> If I'm not wrong, with the information that we have at the moment, the be=
+st
+> for the notifier would have to register it (before runtime resume) and
+> implement it in this driver (reset-rzg2l-usbphy-ctrl) so that, when the
+> pm_runtime_resume_and_get()/pm_runtime_put() in
+> rzg2l_usbphy_ctrl_probe()/rzg2l_usbphy_ctrl_remove() will be called (or
+> suspend/resume) the notifier will be called and set the PWRRDY bit. Pleas=
+e
+> let me know if you see it otherwise.
+
+That sounds like a clean abstraction to me.
+
+> > it was dismissed.
+>=20
+> The power domain approach was dismissed as a result of discussion from th=
+is
+> thread:
+> https://lore.kernel.org/all/TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR=
+01MB11346.jpnprd01.prod.outlook.com/
+>=20
+> I don't remember exactly what triggered it and can't find it as well, sor=
+ry.
+
+Ok.
+
+> > From the DT patches it looks like there is no actual separate power
+> > domain for USB, just the single always-on CPG power domain (in rzg2l-
+> > cpg.c). Is that correct?
+>=20
+> That is correct, the CPG is a clock power domain. All the clocks that CPG
+> can be provided (including USB clocks) are part of CPG clock power domain=
+.
+>=20
+> > In the thread it sounded like there were
+> > multiple domains.
+>=20
+> You probably refer to this:
+> https://lore.kernel.org/all/fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.de=
+v/
+
+Yes, I was confused by this sentence near the end: "And the USB SYSC PM
+domain is parent for all USB PM domains provided by CPG (3 in this
+case)."
+
+> In there, I was trying to present to Ulf how I did implement (locally,
+> nothing posted) the handling of PWRRDY though power domains. In that case
+> the SYSC (System Controller), where the PWRRDY resides, was modeled as a
+> power domain, I passed to the reset-rzg2l-usbphy-ctrl DT node the phandle
+> to sysc USB power domain as:
+>=20
+> power-domains =3D <&cpg R9A08G045_PD_USB_PHY>, <&sysc R9A08G045_SYSC_PD_U=
+SB>;
+>=20
+> along with the cpg, and handled it in the reset-rzg2l-usbphy-ctrl probe()=
+.
+
+Ok, thank you for the clarification.
+
+> > Is the issue that you need the PWRRDY signal to be (de)asserted
+> > independently from the CPG power domain enable/disable?
+>=20
+> Yes. I need to de-assert it before clocks, MSTOP on probe/resume and asse=
+rt
+> it back after clocks, MSTOP, on remove/suspend.
+>=20
+> > (Why?)
+>=20
+> Due to hardware constraints. This is how Renesas HW team recommended.
+
+I still haven't understood this part. Isn't CPG the power domain
+enabled "before clocks, MSTOP on probe resume" and disabled "after
+clocks, MSTOP, on remove/suspend"? So PWRRDY could be toggled from
+genpd notifications. If it needs to be (de)asserted independently,
+wouldn't that mean the genpd notifier approach can not be used?
+The notifiers are called from genpd_power_on/off(), after all.
+
+> > Why can't the power domain provider (cpg) have the renesas,sysc-pwrrdy
+> > property and set the signal together with the power domain?
+>=20
+> That can be done but, passing a SYSC phandle to the CPG DT node will not =
+be
+> valid from the HW description point of view.
 >
-> OK, will do -rc1
+> > > > > I see v2 and v3 tried to control the bit from the PHY drivers, an=
+d in
+> > > > > v4 we were are already back to the reset driver.
+> > > > v2 passed the system controller (SYSC) phandle to the USB PHYs only=
+ (though
+> > > > renesas,sysc-signals DT property) where the PWRRDY bit was set. The=
+ PWRRDY
+> > > > bit was referenced counted in the SYSC driver though regmap APIs.
+> > > >=20
+> > > > v3 used the approach from v2 but passed the renesas,sysc-signals to=
+ all the
+> > > > USB related drivers.
+> > > >=20
+> > > > Then, in v4, the PWRRDY refcounting was dropped and passed
+> > > > renesas,sysc-signals only to the USB PHY CTRL DT node in the idea t=
+hat this
+> > > > is the node that will always be probed first as all the other USB b=
+locks
+> > > > need it and request resets from it.
+> > > >=20
+> > > > v5 and v6 kept the approach from v4 and only addressed misc comment=
+s or
+> > > > things that I noticed.
+> > >=20
+> > > Could you please let me know if you are OK with the approach proposed=
+ in
+> > > v7, so that I can start preparing a new version addressing your comme=
+nts?
+> >=20
+> > If the PWRRDY signal is an input to the USB2PHY control block, and not
+> > only to the PHY blocks, I have no issue with this being handled in the
+> > usb2phy reset driver -
+>=20
+> Yes, this is how the Renesas HW team confirmed they are related.
 
-Thanks Yury!
+Ok, understood. I concur that usb2phy-ctrl is the right place for the
+sysc property then.
 
-Yeah, these should generally be sent as "fixes" to Linus; otherwise we
-will have red CIs.
+> > iff it is not sensible to just control the
+> > signal from the power domain driver.
+>=20
+> As mentioned above, that can be done as well but, passing a SYSC phandle =
+to
+> the CPG DT node will not be valid from the HW description point of view.
+>
+> > If we have to handle it in the reset driver, I'd prefer to see this
+> > controlled with a dev_pm_genpd_add_notifier(). If that is not possible,
+> > I'd like to understand why.
+>=20
+> From the code inspection I did, that can be done. From what I can tell at
+> the moment, I'll have to register a gepnd notifier from
+> reset-rzg2l-usbphy-ctrl, before runtime resuming the device and control t=
+he
+> SYSC PWRRDY from it.
 
-(I don't add the Fixes tag for this sort of change because the
-original code is fine).
+I'd like that.
 
-Cheers,
-Miguel
+regards
+Philipp
 
