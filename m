@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-852498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97EA3BD9204
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:53:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1112BD9210
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B1A542D0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:52:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C3234FE2BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41B23101DA;
-	Tue, 14 Oct 2025 11:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482753101D9;
+	Tue, 14 Oct 2025 11:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bf9TjaCj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lHlc4Mk/"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C9230FC34;
-	Tue, 14 Oct 2025 11:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFED3101B9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760442741; cv=none; b=ZcEIgtde9O/kyBDXudICgOcjuPMkzcV6tkShw9JBPZs9/lSQGYDXi2hffQHdP/rzBD6wDUVzUKCnG2+yGbF6/khmIUkOmw3RoEEHrQRhEhHRvcN31aMalLH274Ew/jQ7aPmKx9oa+NkoGpIb30ymnugkmOse64e6ulSapr32/WM=
+	t=1760442759; cv=none; b=oLBcHyHzeE90h9tJiXgqB7Bmny0QzIBWzLqO6uTdjcJDIUJRDcy14qsAln7ehojBoYhIDQKMDgjuuMkBdPL4arnKkw5jQHdqYpPTo/m3uYtTI6bP6yVWZ5kX/6D98FzB38HXc6VTcpdedB+6UrD03qlL+I1G3R1t98JojIrCNx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760442741; c=relaxed/simple;
-	bh=6jYK4PZn1XRyhAZB96lG9ldxSf3c2FgryhczY+xLs5I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rD8yItNohTSzEHXWdD8EamemB5jzP/RSIiQcjRiznqSM4FIvGwjup79HkbzapaEf9i3e7uR+S+1ndaaiV48eEco/E0GA0IIP+wnD66FcW/LMi+tw7K4kh37ZJwDdAXZ+3/cyGFGiPqTxajxCf5k+KJ5mAEGZToKMi4iZRWTNOXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bf9TjaCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFB8C113D0;
-	Tue, 14 Oct 2025 11:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760442740;
-	bh=6jYK4PZn1XRyhAZB96lG9ldxSf3c2FgryhczY+xLs5I=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=Bf9TjaCj6uivY824E3TvQyxKeaQa/AjA3v7hAlGfjJeuOHMJ3b4kPoY3jAdtB5Yl/
-	 bi04Y6K1YYDhlH89zRl61BxuRrXzpFFOMqrfLWtyIrmDYDlXpgpHjSOR+6uxkf9AtA
-	 pnoFQZ+TCgVP1ztsS/NepKq2TXv2Kz6VSFUf8podLwkG5ltPsd2MpW8Af10TqY7jor
-	 w3fi3kW1pdExRnw3UiSvx2tJXwwo07bPFcrTNF9CHEjUWH25E86AkwIaI4UAA2echD
-	 4qWFiFH+CB1rsxhRg0rRdXejPEUtNHXFmbCZNUEXXD/Hq1bzoETlzLN4tdYmi8ae/a
-	 ZdYGQp4afIzbg==
-Message-ID: <37ceef4f-4ed6-4554-9baf-3cddf3e36bd7@kernel.org>
-Date: Tue, 14 Oct 2025 13:52:18 +0200
+	s=arc-20240116; t=1760442759; c=relaxed/simple;
+	bh=x1brUYGY3NW2WQ2EAUXI9/nXmf4kZlLdpbpO/yh7tw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwWDJAT0R4XFfUgz4cEh14oBNcMbHvv8+mWaWL6wXNhNdcRfhjMsgBUAlkskBX80TRc2Ucpm32iaOg84Y7I/DoCyXU9Hn2H4makHnZSaeuCLLFWsjS9H8ki5qFzfH7Rt7GR4sryz7Y2/KCxhn2njSv3DnCV0TE35ZxatRGyi3ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lHlc4Mk/; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=vZpO
+	rc8jIqdudWaU55WhDn+MoeYiJWe7gJ48hDY+d1M=; b=lHlc4Mk/T4KsX8seSNJQ
+	vvL90nUOyuUxzJ/sq5J3piw1hVW61or4bFrdau3nnoyj3BFHrxN3871raQO/I1my
+	Bz2hxNc6FqCtd7PgKMnKFKb4zz5l0ZkRZrRwumRqR9BKuI1SJ2ADJNcz2IFKsFdU
+	7nuBCXwtqXb1hDr3WwWQTUQ9u509yeoTAuKhGd6ojJX525GWTZA+l2Y1cCCedxki
+	RoGYmMz1ynzbjCONDddHsTpxmDfBZnv+OBHrb9nSx93bzg7mxVHuiXUmbzunV9v2
+	qfLQ147EJ76zXvWtGcSHT5C/ArHdi6hIp1iJlb+s0EIXecC51hGviWUiT95BVFMO
+	+g==
+Received: (qmail 2951131 invoked from network); 14 Oct 2025 13:52:28 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Oct 2025 13:52:28 +0200
+X-UD-Smtp-Session: l3s3148p1@0cGqBB1B1OIgAwDPXwQHAL/S9V79e5yL
+Date: Tue, 14 Oct 2025 13:52:28 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Elie Morisse <syniurge@gmail.com>,
+	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Michal Simek <michal.simek@amd.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Jean Delvare <jdelvare@suse.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Ajay Gupta <ajayg@nvidia.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Vignesh R <vigneshr@ti.com>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 23/80] i2c: Remove redundant pm_runtime_mark_last_busy()
+ calls
+Message-ID: <aO45fBIEqFyRq3_k@shikoro>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075415.3218608-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v2] media: i2c: imx214: Exit early on control init errors
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Ricardo Ribalda <ribalda@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
-Content-Language: en-US, nl
-In-Reply-To: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704075415.3218608-1-sakari.ailus@linux.intel.com>
 
-On 14/10/2025 13:00, Ricardo Ribalda wrote:
-> Now we try to initialize all the controls and at the very end check
-> ctrl_hdlr->error to check if one of them has failed.
+On Fri, Jul 04, 2025 at 10:54:15AM +0300, Sakari Ailus wrote:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 > 
-> This confuses smatch, who do not know how to track the state of
-> imx214->link_freq.
-> 
-> drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
-> 
-> Fix this by exiting early on control initialization errors.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Right now we are handling this with a quirk in media-ci, if Dan cannot
-> fix smatch in a kernel cycle we should merge this patch.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
-OK, will you keep track of this? This patch is delegated to me, so if you tell me when
-it should be merged, then I can do that. And if it is fixed in smatch, then you can just
-drop this patch in patchwork, of course.
-
-Until then it just stays in my TODO list.
-
-Regards,
-
-	Hans
-
-> ---
-> Changes in v2:
-> - Fix typo in commit message commit
-> - Move error tag where it belongs (Thanks Hans!)
-> - Link to v1: https://lore.kernel.org/r/20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org
-> ---
->  drivers/media/i2c/imx214.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..c66f0e18726c3fc15df91c37888a797bcea82134 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *imx214)
->  						   V4L2_CID_LINK_FREQ,
->  						   imx214->bus_cfg.nr_of_link_frequencies - 1,
->  						   0, imx214->bus_cfg.link_frequencies);
-> -	if (imx214->link_freq)
-> -		imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> +	if (!imx214->link_freq)
-> +		goto err_init_ctrl;
-> +
-> +	imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
->  
->  	/*
->  	 * WARNING!
-> @@ -1099,6 +1101,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
->  
->  	v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx214_ctrl_ops, &props);
->  
-> +err_init_ctrl:
->  	ret = ctrl_hdlr->error;
->  	if (ret) {
->  		v4l2_ctrl_handler_free(ctrl_hdlr);
-> 
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20250829-imx214-smatch-c4d4d47428d5
-> 
-> Best regards,
+With the dependencies being upstream now, applied to for-current,
+thanks!
 
 
