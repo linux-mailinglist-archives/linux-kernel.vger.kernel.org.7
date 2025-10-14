@@ -1,287 +1,378 @@
-Return-Path: <linux-kernel+bounces-852534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EC7BD93B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08068BD93AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C7E4221FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5A2421F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687DC3126C1;
-	Tue, 14 Oct 2025 12:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947DC3126CE;
+	Tue, 14 Oct 2025 12:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i1qujiP3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D6dhODXV"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14427311C20
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760443654; cv=fail; b=GKyH5J+/RInXeuAOJ5qBT6IValyeek+gij8UoV9XrybBsQF6oenx2Xyf1Inrg2HCoYgt/Ahbu4eTUecW8kgWzSLCjDzvGC5yGMMpeg7T9X38CiaHlr+lo6VZKAtK0CIQz0ddbFMeDbvbU9SWunqvk//XufmTpo8Hz7WKY7XPXS8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760443654; c=relaxed/simple;
-	bh=Kb61WDPjUvQuJWCTP0XAa5cxplJT8ATayQDSY0IiDKI=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nJTvzmvhRNG3wO5SvHohb5St+7zZtTqgtKpTXq6tsVw34iQ7vgZQ7UVAFpEBuzM9DYBuJajeBbUY60yCehWNlCGV8lDuSkP03wd6o7OcA1d7mO4xLs1EJIIYxRlWfGsAoF2e9AH97xBiWhu2RAa7a48w1omPcRnazPmh9konZUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i1qujiP3; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760443651; x=1791979651;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Kb61WDPjUvQuJWCTP0XAa5cxplJT8ATayQDSY0IiDKI=;
-  b=i1qujiP3K/PmxHttAVEx7kp3kF2MQrHxIph2Di8kMzwnQRLsCAoyyaiC
-   MvtVg32ztGnzVlHRK8jOGxD10a6poHQdTV0JFJ3ywMklYFhv8CedqGmvm
-   Vc7SaKeU8LO9aozpcQomk3kLizohwzH+WqmlsxKF9S+PN/OvmhtA0jlu0
-   qXt8x3GzY1KqR4Tzgn57Izwdkic6hQMC5De7GejqIBxsQBPIDwfKwRBDR
-   BIeAPzx2WOmjfrIsXM2LygioZoSm+YJBOwL6GNnvVJRkdbm/Hp8nyN4OF
-   DnxEmrk2bK8IsiKxVDqalNKfeEKD0fHtqJOYBU/jLTVnRdZVPaxyeqHcv
-   w==;
-X-CSE-ConnectionGUID: 465+0QxqRBaNHJ8dWDekMg==
-X-CSE-MsgGUID: 9fz7hlWxRPqqnm2DKOlNjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62696695"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="62696695"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 05:07:29 -0700
-X-CSE-ConnectionGUID: eqTPZNMOT/GB1xzVZLJ+Wg==
-X-CSE-MsgGUID: XFccN3LeQm6OV6eD9pGtkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="187166783"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 05:07:28 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 14 Oct 2025 05:07:27 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 14 Oct 2025 05:07:27 -0700
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.71) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 14 Oct 2025 05:07:27 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hDrbnbf1n8wbshF0bhSfBkz1ENYMIF8DXRPtA6MfaQ5pMg0BCMysmhyJkfOoC7HIT1jI4PZFAZ6mpWeqI+bmDclXC7lHcfAQg4Rg0g1XL9E/iVF+880aQHh9cPnJtgthn4+lzuGcbODP3IAKffK+bwJAt2y5F3z3FVzLtI7tNzIPvK8QbgaORwAemSRX1Tw2c8BlkLWzXFwcyUHok8PDjkJofKjPWnhN4V2wTs9OqEepzftPI2rWJH3A6GBEKtIl1vBxm72osNyZYFkwu2FXNxyYC9QceNaVpxLOUqLQxWnK8dWV7Y2d2twX8lR+Mv5qjKQ6SngXRyXqOMT9z7Sj+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iIMB4wgESG7VMUroohE6QNO/sppsRtBPOpHWm9NgUkE=;
- b=RkBfi1ZdCNdRO7CybTEOX7NnWuTA5PDyc6D03Hce2Cn+XzR0PUg3zyoRBDMdyu4nXY4dmbeyeltBIQC7lazw+yApYkFcO3RC8LKaX1MxfbXQYh+rs2kGBGICfySY2niDjjo2M2wfyoeG7rrhqerrSBo/Sr/ezYCK5Twbqj7Jd1PLtFw5oFMYyT6wqn0fPMfjfvBIflhFIUf5HB5x4x7/b25smAjZGTjAY8RFK/CakE+H2ekesMgzA52wcSmgFkasFjjz8k9czIF9BM6KG7wkgmwPC/snfQgYACQkElz9Kh1pdBDyLeYlsyhnk7eRAMbMqWgjnsn2EyikH6dHKPfJHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- PH3PPF4E874A00C.namprd11.prod.outlook.com (2603:10b6:518:1::d1e) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 12:07:24 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%5]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 12:07:24 +0000
-Message-ID: <f4a95e4b-93f6-4b36-b077-58d1c05bdfa2@intel.com>
-Date: Tue, 14 Oct 2025 20:07:10 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] sched/fair: Only update stats for allowed CPUs
- when looking for dst group
-To: Adam Li <adamli@os.amperecomputing.com>
-CC: <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <cl@linux.com>,
-	<linux-kernel@vger.kernel.org>, <patches@amperecomputing.com>,
-	<shkaushik@amperecomputing.com>, <mingo@redhat.com>, <peterz@infradead.org>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>
-References: <20251011064322.8500-1-adamli@os.amperecomputing.com>
- <90e7343e-7741-45d8-b076-d3852d1870fb@intel.com>
- <d6b78d12-298d-4316-91f4-bf7d3d7d5776@os.amperecomputing.com>
-Content-Language: en-US
-From: "Chen, Yu C" <yu.c.chen@intel.com>
-In-Reply-To: <d6b78d12-298d-4316-91f4-bf7d3d7d5776@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KL1PR01CA0088.apcprd01.prod.exchangelabs.com
- (2603:1096:820:2::28) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD4E3126A1;
+	Tue, 14 Oct 2025 12:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760443651; cv=none; b=ehCf4wjs1NMc8bx+Lm0dIHZyRs90Ee4Y/cGi1uivN65/FRYMkmQCmMX8dfuJfVJl84Ckku/SXruCMu87EIkhYkwgvitXoAlRl5ysNJUaPPfkR2m8JfWOIxphPDtaA5wXj9Kc9Hqr+49pQaEPjVwQ0IbB1rOnaUIADC6hujTQ128=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760443651; c=relaxed/simple;
+	bh=JmcIbjKLSe1ar0AiJpgb5o/5SVm++VaB0u54HlKmh2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3BlwCiLCmkcIOWzs4iJTmCJXrf5719PmRjIe+WLhBt3ZaefDleDSsAm8BVMHXuBoqhcK5SD7Ld70cQCH/B3dEf2pDpvUxNTEzlXdzKLH1RsiSiL84jlpGLGap1mo0QwzCvdrJMWTm+lNka9lN49Y9aUmP52sdIXB1/sR6aSHmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D6dhODXV; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760443643;
+	bh=JmcIbjKLSe1ar0AiJpgb5o/5SVm++VaB0u54HlKmh2E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=D6dhODXVSdMmQTBDLiNuHmSmHr69iHZKNBsH2S0h2WMXfUMJSYXz4CIf3J2zqEVX1
+	 G68VrF9z98s8yoljL9Pcx3bm8uvXs2LN8YeGaOsa9pXNk4rdkBebe4j7Bm3TocsVG8
+	 qYqldPwqiKf8hqUkh2V8t7O8Xzchd2D+8GCz2lK+Y9+qPZYwt5fbJ5Gmd4HbqVZhmE
+	 b4KEo6icrVEtmcyLsJI5ZfSOSu25EH+cwu2bjg0ngjX1rLgKyAInZ7kUkTeIh/lnrN
+	 g5lk3/kSlD4C6cRA1YoRQYFvroXjJF6yJVIuOPA3hB7E14udTD+ljiYTeKm94pniTJ
+	 9y6pgZwdq/Gdw==
+Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 43CF617E055D;
+	Tue, 14 Oct 2025 14:07:23 +0200 (CEST)
+Message-ID: <fc80e268-e3c7-4320-b8ab-b05a5bd4ff72@collabora.com>
+Date: Tue, 14 Oct 2025 14:07:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|PH3PPF4E874A00C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e8aecc1-82a4-454c-0d3c-08de0b1a3c3e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UXU4aUdCLzNCYmtIdlFiOG40R1E3Qm95TU01R0U0eVdqKzBTcGR3Wm5iM3g0?=
- =?utf-8?B?V1FVOVFvYitHMk5YeE9EeDFZcURxTkhKVGpvWTVFUERiL1RTa1NYODJrUVFr?=
- =?utf-8?B?cXdFdTVZdUpIV0RVU2t4TXFuMFpuZmt0OEVkbDhqN3hCWEl0djR1bzRicU4v?=
- =?utf-8?B?OXJxTjlqWnNQYmNZNGRKV0JFZVNrSDlmeS93T2RSNDRXK056QS9BSHBncCsx?=
- =?utf-8?B?bVU5ZDdWeXViNHhjYWptNzQ2SGFYMi9HMFVmSjZIK1VoamRnU0UvSGxjZktq?=
- =?utf-8?B?WjQzOUpFdTU3MUE3VmhQWUkxYmlwRXVuTlplcUtKWGRVbmkweHg2TmMwczls?=
- =?utf-8?B?VXR6UzFRdHNmelV3SnFhekdPVFZ2N2F4UFlna1ltd3FoMXpoa0VsSExOMENP?=
- =?utf-8?B?dmVONy9GRExmQUFBbzNUdnVqYTlPYnZVZkMxem9jWVpLQ1JyOWhJYUliUGFH?=
- =?utf-8?B?dmMrRmZ2Y09nTmhvMlhFOXBLZ05vS1RBU0ZXWDI4TzNkTmNBdHNqTkxqRDF4?=
- =?utf-8?B?ZFArSmU0ampDSUZIZFNWVDVSMHVXbkdsRUs3SUU1akNKeXJmbmVnT2FDMEly?=
- =?utf-8?B?cnR3V3Nldnh1R3FzOVc0cmFvUlFZbXRyRWRCZnJLYk5hU1JyNHBacDY0QlY1?=
- =?utf-8?B?WlkzQUFFMzE1N2hVM3g1c3JmUmtDWUlGemhSUGJEeG82c0RpNkpuRnRwOVJs?=
- =?utf-8?B?R2hqM2VzQkRETkUzTk1HU2pFWXdTL0plbEdGZ2tOV1ZsTkpIeGpJYTY0cFpu?=
- =?utf-8?B?MC9pcFJIamxNVWorZ2NzNFNVaWE2c01nQ2JUR2Mwdk5hbGJzdlg3dGRvQXB5?=
- =?utf-8?B?OFVDdEdBVlluMUVhbnNrcHcxRXpidEMxajhabnRwQW9mcDVsYXNDUGd1eHRq?=
- =?utf-8?B?V1AxRFY1eFRveDZza0Nna3JBdll2M2s0RUNXSFdZeldiOFhFaHFQOSsrK0lR?=
- =?utf-8?B?ZEFDZmkxZ2RHcStkb0EzYzR5QXYwQTJvaGJWM3RTdkV3Zlo2UjJmU2hzMmQr?=
- =?utf-8?B?Ky9KeXdOb2dLTit6ZjNoRnR0M09mMVp4SmlRWXZwZU5LYVhsbXVHQlkrdkxw?=
- =?utf-8?B?dnNtS3BqMFNlNGJPQUtzclc2WXdzWUZHSUdmU1BKUWQ2dGdrcDExRTg4T2pI?=
- =?utf-8?B?SzZWVjdvaGFGcUFFZ3BOSDhUNGk1K1psUHVsZ0Z0cnQvUDQ5REFDcWwrUzlp?=
- =?utf-8?B?eUJVZzQyekJVeXhQMks1K25TeEdySHZReitpdUVHbUUrL2N6SUk4NGdPalV2?=
- =?utf-8?B?VEV6aGVIeWJoSmVWNU56TGpXaU9yTi9XOEowbzBZN3A0c0tId05GbHkvdldl?=
- =?utf-8?B?ZkRLSEQycWUzUjlzYngrL2RweEF2ZXIwYko1UnVVc2IzTkdLZEw2Tk9KdDQy?=
- =?utf-8?B?V1N5ME9YbHV1RjhTWEF5bTYzcFpWSnkwVGtpdEV0aWthREF1cWQyR2VYeGJX?=
- =?utf-8?B?NnZrOGw3UnZQaW5WUk0xbjMyRzJiU1ExTitGMFVBOGZiazN1and2VVoyTXhW?=
- =?utf-8?B?cTdQYUw5TlRXa0wyNXF6TmQ2cmFjOS9ldDZrVzUvUjcxdWkrdk1yVkFPa0JH?=
- =?utf-8?B?NkZzUHoxdnJPeDVidWNuanFlV051VWhpWWV6bGlnQ1h4WFdCWjhBYmRrZ0FL?=
- =?utf-8?B?ZU9rZDFCMGJPVFV2eWw3Ymd1Y0pkZkNsa0ZzSTVqQkUvZUFiTzN5dm9tMW04?=
- =?utf-8?B?MHR1V1h0cUtFbGJ5NHA4RDVRSEZ0WkxkSUVPbE9aVkFOVDYwQUVYTnJMb3Rk?=
- =?utf-8?B?VHMySk1vYkJwTG5MWWJyOFNtREdGdVlPNUY5QzBweXh0ZERVQk5MaTBKVWQ2?=
- =?utf-8?B?N1dwQ25jM0cvbGcxNlJzZDU2b2QxNW01WWZkeTc4WUdjUS8rNjV6UndUb3ZC?=
- =?utf-8?B?aXNqV2Q2MlFJbFJLZGhxNStSdVRleUxxZFlXWXZjWlk4ZElZbEVZQ0p0RWVS?=
- =?utf-8?Q?zjVLpTverOHDa35WRnbiOwlHg93e2bH1?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UGR3d0p4RngvOVM2dlh0a0lxc0o2UDRmbXV4ZW9ja1R0enRFQnZFR3ErYnNO?=
- =?utf-8?B?V3lrWkd1dnFxbjhUTHBNYjEyeTBKUnVyVHFXbElBRlRTOFNTRWczNm4zam1R?=
- =?utf-8?B?RnlKb1hNcjRHNFpiNm9GRVRIeVVoQkFNTnlmNlFyTGVRVUg3bE52dzJRN2ZI?=
- =?utf-8?B?TnZvLy95d0xmeHkvQmFGZERiREZtOVJ0LzlhWk9uL3E0c0oyb0V2Q254bmdP?=
- =?utf-8?B?MG9jY2NSc3VuSk9VZzIvQkEzQTc4Ulc4WGtmMnNOb3BReE9UWS9YeEhZVEV5?=
- =?utf-8?B?c29KMlN1TndmdWp2aFJycDJaYVU5bXh0eGRyZHZDRG5tT3BsTTZtMHhDdktY?=
- =?utf-8?B?dDNPMG5lYnhnRW1PNFUyOTJZdXNZeHNDN3hCeE83UGtGdzJ6bm5uVnNMYXdl?=
- =?utf-8?B?d0g2S29uaWJIbG1aSzJkSVIvNGEvVlA3T1dtbnNqZEQwSGYvS2RlaXk4bXhm?=
- =?utf-8?B?ek1mWStldk13WGJsMU5rOGthUjhiM3ZvOGFlWldJK0lvUGtXblBYbkdMVFV6?=
- =?utf-8?B?Z1V6aGFacSt0WHgwSDRJZVV0U01zcGdMbXFXVDVsUEFPdnJXTVZBYzBHWnB1?=
- =?utf-8?B?bVVCOFdyOTRjZG43RCtoT0ticDFwZjhRQldycy85ei80Z01KRXRUMjFnTHpp?=
- =?utf-8?B?VVZDWVlWc1FybFc1Y2RhbW4xYWVZVEgrbEFra1JEUnc0SUlBRzVqYlp2Z0t0?=
- =?utf-8?B?d3Z0dm1Wb0JBczd0VE5hbEhjWVJuYTNkYStoZmhTMFkvSGVEb1phN1FxV1Z0?=
- =?utf-8?B?K3IxK0ZwQ2o3cDZCNC9KTVhGeFpkcm9lbjc1L2VKc3pBM0QzTWVJZW0xMXMy?=
- =?utf-8?B?WDVEekJ0eTJjUkxpUnpSM2pRU0h1b1VCN21wTm5jS1lSa1BsQTBPV0VKVllD?=
- =?utf-8?B?RllVSVVJd0dLMW1pTGVSMk9PcXRDYmdxVHR5Y01ESHhZYTNFSTFjc1FQQVVU?=
- =?utf-8?B?K1lKbzBGTGY5cjk2ZWhkVFpocnhZcU05WFFnZ1JmOEdleHhEUGtwSUpTUUdX?=
- =?utf-8?B?a3gxcWVDY0h5cUUyT3BTRTZjU0l2eW5uQTFrN2J5TUp3OXp0amxrRlYxb0Vz?=
- =?utf-8?B?S0NCL0pLb0EzUVRadW5sNnNMUHdJY0FwMEw2Q1Fwc0tpWlh6eE80K0k0SzlD?=
- =?utf-8?B?NjN4NjloYXZiM3l2UlpNWHlZMm9Ycm83V2IzdFh6WGFyUmNYekxRaHFZMDJB?=
- =?utf-8?B?OG9ENDBETlR1U3hJOXhMRk5yRG1FNlkrWW9DWEN3VCtpamFvUWpxSS9MenRo?=
- =?utf-8?B?WU9pZE04TkFNRHNkcHk5djlsWnYwS2V5N1E1YVllTTN5MEtNSHFDdWtvNTFl?=
- =?utf-8?B?c01UT0hkQzJmdGkrblhYL2xWcXZuakpTTkRMZzlrS3dQdVE5cmkvMGZENnNR?=
- =?utf-8?B?ZENtSU9MNXdLSjE1SnZXN2RndWNtZ1JjMFJJcHlBOFVmLzkwdEN5RUlpVUpj?=
- =?utf-8?B?RmpsRGRQR2lTdTFBOTdraUtzOEl4V0FwdldGSE1kekRubXF4TFdqTzZscUVS?=
- =?utf-8?B?eWkvR1JVYVhRMnB2eFZ2a0dmOTZPTWVUeU8vRXk5aUlUY0tjTlBpWGVodGtT?=
- =?utf-8?B?eG84bGpEVXRSdXJ0R3pVNi9EN1l0VkFlTWNZTE11aDJibE1NcTVpRFlkYmtK?=
- =?utf-8?B?aUlOdkdqSHZRVVdsbzZnU2tqNzJuYm8vOHBrQ0RlUUJCYXBjNVBLaUtOWDI0?=
- =?utf-8?B?NG84VC8xRVMyaGhBTGlhYm5mWG5iYXMwV25sSDVNY0FkbXhwcW12bTIwbktZ?=
- =?utf-8?B?SXhXcUxpRTNhZFRUcU9tdjF6bThLSlVPb2hJeHUxVHNsZDBMTTVKRWFoSTNr?=
- =?utf-8?B?V0FFMGhDWEtsRFpzTXRhaWNsOUd1QXNIVVlOZnJxc2NPUE9BN0loSmJCTTIz?=
- =?utf-8?B?WVk3Uk1TNnVmSUduT2VGTEl2V0pqS3dsRVBiRTBGdDhNSEJNakUwaWpCZHJj?=
- =?utf-8?B?bjBsVW1sZUZlK1NOTDdEcHdyeFNjdHAxZTc0WERLcDNqd0JpWXBjNFJyeGlr?=
- =?utf-8?B?enQwYmd0bEg3bmNLdnVxbVh5MHpOUXdhUEtZbUJYNUxSMHcyUUhZOEZIWTQ2?=
- =?utf-8?B?Nlp4T2VPQzdLK0tVM2h5ZGs3NS9wZSsxNTBtY2d1TUxvbWZZMk84b3YxQlJp?=
- =?utf-8?Q?a50D+gEzaQOy0vno6zyT6jaJI?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e8aecc1-82a4-454c-0d3c-08de0b1a3c3e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 12:07:24.4382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TGxOxsihF/qRP6PEC1rFgyvZGQ5JlznGFUY5XLZyuGV99rKMG6m0FFbhe3qkHd6WAXrbrp+FCRqzYj/dVQabNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF4E874A00C
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/8] media: v4l2-core: Introduce v4l2-isp.c
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Antoine Bouyer <antoine.bouyer@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
+ <20251014-extensible-parameters-validation-v7-5-6628bed5ca98@ideasonboard.com>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20251014-extensible-parameters-validation-v7-5-6628bed5ca98@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/14/2025 6:51 PM, Adam Li wrote:
-> Hi Chenyu,
+Hi Jacopo,
+
+Thanks for your efforts! Looks good to me!
+
+On 10/14/25 10:00, Jacopo Mondi wrote:
+> Add to the V4L2 framework helper functions to support drivers when
+> validating a buffer of V4L2 ISP parameters.
 > 
-> Thanks for your comments.
-> On 10/12/2025 1:42 AM, Chen, Yu C wrote:
->> On 10/11/2025 2:43 PM, Adam Li wrote:
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index bc0b7ce8a65d..d5ec15050ebc 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -10671,7 +10671,7 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
->>>        if (sd->flags & SD_ASYM_CPUCAPACITY)
->>>            sgs->group_misfit_task_load = 1;
->>>    -    for_each_cpu(i, sched_group_span(group)) {
->>> +    for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
->>
->> Looks good to me. One minor question, would pre-calculating the mask be better?
+> Driver shall use v4l2_isp_params_validate_buffer_size() to verify the
+> size correctness of the data received from userspace, and after having
+> copied the data to a kernel-only memory location, complete the
+> validation by calling v4l2_isp_params_validate_buffer().
 > 
-> I do agree pre-calculating the cpumask can save cpu cycles, without
-> doing mask AND at each loop.
+> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
+
+Thanks and best regards,
+Michael
+
+> ---
+>  MAINTAINERS                        |   2 +
+>  drivers/media/v4l2-core/Kconfig    |   4 ++
+>  drivers/media/v4l2-core/Makefile   |   1 +
+>  drivers/media/v4l2-core/v4l2-isp.c | 128 +++++++++++++++++++++++++++++++++++++
+>  include/media/v4l2-isp.h           |  91 ++++++++++++++++++++++++++
+>  5 files changed, 226 insertions(+)
 > 
->> Copied from select_idle_cpu():
->>
->> cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
->> cpumask_and(cpus, sched_group_span(sd), p->cpus_ptr);
->> for_each_cpu(i, cpus) {
->>
-> But I am not sure if it is safe to use the percpu 'select_rq_mask'
-> in update_sg_wakeup_stats(). Or we have to allocate a 'struct cpumask'.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 340353334299cd5eebf1f72132b7e91b6f5fdbfe..59ab4a34f72c0430a8d7966942acb2242ad923ca 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -26858,6 +26858,8 @@ M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/userspace-api/media/v4l/v4l2-isp.rst
+> +F:	drivers/media/v4l2-core/v4l2-isp.c
+> +F:	include/media/v4l2-isp.h
+>  F:	include/uapi/linux/media/v4l2-isp.h
+>  
+>  VF610 NAND DRIVER
+> diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
+> index 331b8e535e5bbf33f22638b2ae8bc764ad5fc407..d50ccac9733cc39a43426ae7e7996dd0b5b45186 100644
+> --- a/drivers/media/v4l2-core/Kconfig
+> +++ b/drivers/media/v4l2-core/Kconfig
+> @@ -82,3 +82,7 @@ config V4L2_CCI_I2C
+>  	depends on I2C
+>  	select REGMAP_I2C
+>  	select V4L2_CCI
+> +
+> +config V4L2_ISP
+> +	tristate
+> +	depends on VIDEOBUF2_CORE
+> diff --git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
+> index 2177b9d63a8ffc1127c5a70118249a2ff63cd759..329f0eadce994cc1c8580beb435f68fa7e2a7aeb 100644
+> --- a/drivers/media/v4l2-core/Makefile
+> +++ b/drivers/media/v4l2-core/Makefile
+> @@ -29,6 +29,7 @@ obj-$(CONFIG_V4L2_CCI) += v4l2-cci.o
+>  obj-$(CONFIG_V4L2_FLASH_LED_CLASS) += v4l2-flash-led-class.o
+>  obj-$(CONFIG_V4L2_FWNODE) += v4l2-fwnode.o
+>  obj-$(CONFIG_V4L2_H264) += v4l2-h264.o
+> +obj-$(CONFIG_V4L2_ISP) += v4l2-isp.o
+>  obj-$(CONFIG_V4L2_JPEG_HELPER) += v4l2-jpeg.o
+>  obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
+>  obj-$(CONFIG_V4L2_VP9) += v4l2-vp9.o
+> diff --git a/drivers/media/v4l2-core/v4l2-isp.c b/drivers/media/v4l2-core/v4l2-isp.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..35f0b701f1729c3c0ccc34b1c89189b179e0b684
+> --- /dev/null
+> +++ b/drivers/media/v4l2-core/v4l2-isp.c
+> @@ -0,0 +1,128 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Video4Linux2 generic ISP parameters and statistics support
+> + *
+> + * Copyright (C) 2025 Ideas On Board Oy
+> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> + */
+> +
+> +#include <media/v4l2-isp.h>
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/device.h>
+> +
+> +#include <media/videobuf2-core.h>
+> +
+> +int v4l2_isp_params_validate_buffer_size(struct device *dev,
+> +					 struct vb2_buffer *vb,
+> +					 size_t max_size)
+> +{
+> +	size_t header_size = offsetof(struct v4l2_isp_params_buffer, data);
+> +	size_t payload_size = vb2_get_plane_payload(vb, 0);
+> +
+> +	/* Payload size can't be greater than the destination buffer size */
+> +	if (payload_size > max_size) {
+> +		dev_dbg(dev, "Payload size is too large: %zu\n", payload_size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Payload size can't be smaller than the header size */
+> +	if (payload_size < header_size) {
+> +		dev_dbg(dev, "Payload size is too small: %zu\n", payload_size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_isp_params_validate_buffer_size);
+> +
+> +int v4l2_isp_params_validate_buffer(struct device *dev, struct vb2_buffer *vb,
+> +				    const struct v4l2_isp_params_buffer *buffer,
+> +				    const struct v4l2_isp_params_block_info *info,
+> +				    size_t num_blocks)
+> +{
+> +	size_t header_size = offsetof(struct v4l2_isp_params_buffer, data);
+> +	size_t payload_size = vb2_get_plane_payload(vb, 0);
+> +	size_t block_offset = 0;
+> +	size_t buffer_size;
+> +
+> +	/*
+> +	 * Currently only the first version of the V4L2 ISP parameters format is
+> +	 * supported. We accept both V0 and V1 to support existing drivers
+> +	 * compatible with V4L2 ISP that use either 0 or 1 as their "first
+> +	 * version" identifiers.
+> +	 */
+> +	if (buffer->version != V4L2_ISP_PARAMS_VERSION_V0 &&
+> +	    buffer->version != V4L2_ISP_PARAMS_VERSION_V1) {
+> +		dev_dbg(dev,
+> +			"Unsupported V4L2 ISP parameters format version: %u\n",
+> +			buffer->version);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Validate the size reported in the header */
+> +	buffer_size = header_size + buffer->data_size;
+> +	if (buffer_size != payload_size) {
+> +		dev_dbg(dev, "Data size %zu and payload size %zu are different\n",
+> +			buffer_size, payload_size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Walk the list of ISP configuration blocks and validate them. */
+> +	buffer_size = buffer->data_size;
+> +	while (buffer_size >= sizeof(struct v4l2_isp_params_block_header)) {
+> +		const struct v4l2_isp_params_block_info *block_info;
+> +		const struct v4l2_isp_params_block_header *block;
+> +
+> +		block = (const struct v4l2_isp_params_block_header *)
+> +			(buffer->data + block_offset);
+> +
+> +		if (block->type >= num_blocks) {
+> +			dev_dbg(dev,
+> +				"Invalid block type %u at offset %zu\n",
+> +				block->type, block_offset);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (block->size > buffer_size) {
+> +			dev_dbg(dev, "Premature end of parameters data\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* It's invalid to specify both ENABLE and DISABLE. */
+> +		if ((block->flags & (V4L2_ISP_PARAMS_FL_BLOCK_ENABLE |
+> +				     V4L2_ISP_PARAMS_FL_BLOCK_DISABLE)) ==
+> +		     (V4L2_ISP_PARAMS_FL_BLOCK_ENABLE |
+> +		     V4L2_ISP_PARAMS_FL_BLOCK_DISABLE)) {
+> +			dev_dbg(dev, "Invalid block flags %x at offset %zu\n",
+> +				block->flags, block_offset);
+> +			return -EINVAL;
+> +		}
+> +
+> +		/*
+> +		 * Match the block reported size against the info provided
+> +		 * one, but allow the block to only contain the header in
+> +		 * case it is going to be disabled.
+> +		 */
+> +		block_info = &info[block->type];
+> +		if (block->size != block_info->size &&
+> +		    (!(block->flags & V4L2_ISP_PARAMS_FL_BLOCK_DISABLE) ||
+> +		    block->size != sizeof(*block))) {
+> +			dev_dbg(dev,
+> +				"Invalid block size %u (expected %zu) at offset %zu\n",
+> +				block->size, block_info->size, block_offset);
+> +			return -EINVAL;
+> +		}
+> +
+> +		block_offset += block->size;
+> +		buffer_size -= block->size;
+> +	}
+> +
+> +	if (buffer_size) {
+> +		dev_dbg(dev, "Unexpected data after the parameters buffer end\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_isp_params_validate_buffer);
+> diff --git a/include/media/v4l2-isp.h b/include/media/v4l2-isp.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..8b4695663699e7f176384739cf54ed7fa2c578f8
+> --- /dev/null
+> +++ b/include/media/v4l2-isp.h
+> @@ -0,0 +1,91 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Video4Linux2 generic ISP parameters and statistics support
+> + *
+> + * Copyright (C) 2025 Ideas On Board Oy
+> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> + */
+> +
+> +#ifndef _V4L2_ISP_H_
+> +#define _V4L2_ISP_H_
+> +
+> +#include <linux/media/v4l2-isp.h>
+> +
+> +struct device;
+> +struct vb2_buffer;
+> +
+> +/**
+> + * v4l2_isp_params_buffer_size - Calculate size of v4l2_isp_params_buffer
+> + * @max_params_size: The total size of the ISP configuration blocks
+> + *
+> + * Users of the v4l2 extensible parameters will have differing sized data arrays
+> + * depending on their specific parameter buffers. Drivers and userspace will
+> + * need to be able to calculate the appropriate size of the struct to
+> + * accommodate all ISP configuration blocks provided by the platform.
+> + * This macro provides a convenient tool for the calculation.
+> + */
+> +#define v4l2_isp_params_buffer_size(max_params_size) \
+> +	(offsetof(struct v4l2_isp_params_buffer, data) + (max_params_size))
+> +
+> +/**
+> + * v4l2_isp_params_validate_buffer_size - Validate a V4L2 ISP buffer sizes
+> + * @dev: the driver's device pointer
+> + * @vb: the videobuf2 buffer
+> + * @max_size: the maximum allowed buffer size
+> + *
+> + * This function performs validation of the size of a V4L2 ISP parameters buffer
+> + * before the driver can access the actual data buffer content.
+> + *
+> + * After the sizes validation, drivers should copy the buffer content to a
+> + * kernel-only memory area to prevent userspace from modifying it,
+> + * before completing validation using v4l2_isp_params_validate_buffer().
+> + *
+> + * The @vb buffer as received from the vb2 .buf_prepare() operation is checked
+> + * against @max_size and it's validated to be large enough to accommodate at
+> + * least one ISP configuration block.
+> + */
+> +int v4l2_isp_params_validate_buffer_size(struct device *dev,
+> +					 struct vb2_buffer *vb,
+> +					 size_t max_size);
+> +
+> +/**
+> + * struct v4l2_isp_params_block_info - V4L2 ISP per-block info
+> + * @size: the block expected size
+> + *
+> + * The v4l2_isp_params_block_info collects information of the ISP configuration
+> + * blocks for validation purposes. It currently only contains the expected
+> + * block size.
+> + *
+> + * Drivers shall prepare a list of block info, indexed by block type, one for
+> + * each supported ISP block and correctly populate them with the expected block
+> + * size.
+> + */
+> +struct v4l2_isp_params_block_info {
+> +	size_t size;
+> +};
+> +
+> +/**
+> + * v4l2_isp_params_validate_buffer - Validate a V4L2 ISP parameters buffer
+> + * @dev: the driver's device pointer
+> + * @vb: the videobuf2 buffer
+> + * @buffer: the V4L2 ISP parameters buffer
+> + * @info: the list of per-block validation info
+> + * @num_blocks: the number of blocks
+> + *
+> + * This function completes the validation of a V4L2 ISP parameters buffer,
+> + * verifying each configuration block correctness before the driver can use
+> + * them to program the hardware.
+> + *
+> + * Drivers should use this function after having validated the correctness of
+> + * the vb2 buffer sizes by using the v4l2_isp_params_validate_buffer_size()
+> + * helper first. Once the buffer size has been validated, drivers should
+> + * perform a copy of the user provided buffer into a kernel-only memory buffer
+> + * to prevent userspace from modifying its content after it has been submitted
+> + * to the driver, and then call this function to complete validation.
+> + */
+> +int v4l2_isp_params_validate_buffer(struct device *dev, struct vb2_buffer *vb,
+> +				    const struct v4l2_isp_params_buffer *buffer,
+> +				    const struct v4l2_isp_params_block_info *info,
+> +				    size_t num_blocks);
+> +
+> +#endif /* _V4L2_ISP_H_ */
 > 
 
-Allocating dynamically would be costly. Using percpu select_rq_mask is
-safe in this scenario: the waker's CPU has already disabled local irq
-via raw_spinlock_irqsave(&p->pi_lock), so I suppose no one can modify
-it simultaneously. Moreover, if the fast wakeup path select_idle_sibling()
-  can use it, the slow path sched_balance_find_dst_cpu() should also be able
-to do so IMO.
-
-> I tested bellow patch. It can work and fix the bug.
-> If it is safe to use 'select_rq_mask' , I can submit V2 patch.
-> 
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -10664,6 +10664,7 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
->                                            struct task_struct *p)
->   {
->          int i, nr_running;
-> +       struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
-> 
->          memset(sgs, 0, sizeof(*sgs));
-> 
-> @@ -10671,7 +10672,8 @@ static inline void update_sg_wakeup_stats(struct sched_domain *sd,
->          if (sd->flags & SD_ASYM_CPUCAPACITY)
->                  sgs->group_misfit_task_load = 1;
-> 
-> -       for_each_cpu(i, sched_group_span(group)) {
-
-nice-to-have:
-maybe add a comment here that cpus is not empty, because
-we have cpumask_intersects() check in sched_balance_find_dst_group(),
-(just in case sgs->group_type incorrectly remain 0 which is 
-group_has_spare, if
-the cpus is empty)
-
-> +       cpumask_and(cpus, sched_group_span(group), p->cpus_ptr);
-> +       for_each_cpu(i, cpus) {
->                  struct rq *rq = cpu_rq(i);
->                  unsigned int local;
-> 
-> 
-
-and from my understanding, for this percpu version,
-
-Reviewed-by: Chen Yu <yu.c.chen@intel.com>
-
-thanks,
-Chenyu
 
