@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-853406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482F0BDB8E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A41EBDB8F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0661F4EBFF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7393818A8538
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407BB30F803;
-	Tue, 14 Oct 2025 22:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C577530DD3A;
+	Tue, 14 Oct 2025 22:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIlUCP1w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuXT4COZ"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7400430F7E6;
-	Tue, 14 Oct 2025 22:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721D530DD0D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760479396; cv=none; b=LWc6ssH0s8Jfx8lnlXv2PKi1IxPHe24jFUA3fhiENztfo/EMTpaNa8uo1gyze5Kf5mYkEobCHJgozgbKk9B1bKwFjxR43RxiS6ziqAAPxypNKpUTnytkih1dXeTOLly27p4fhXr5E8SypISdF3GYUJyZ/OA1KRwOhqJoZfH0+n4=
+	t=1760479467; cv=none; b=J53LAtKuAD2Oj2C9ApUgORWl2CnKB2pfZoR5j2FCvwXdQUvIsy3dKTDsmIUvDJ4FLmZUqFU8f913VUsstmAtO+cXtv/NxGCDXURXJ7Qm+amMGRURE95yKCp4rVFUgJpaNDT//CEvo3oVK4sw9janLIczjf3rbGpD6eTctC2xLP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760479396; c=relaxed/simple;
-	bh=ud9SO++TE5+DojUghUZcik1yBq88ekmRJTRwTpc+Zxw=;
+	s=arc-20240116; t=1760479467; c=relaxed/simple;
+	bh=pG515i7syHG3vED4MTNqB/DberSEKkguAtEkJvVagCY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4qtRpm94E/b+oDQgffPiwcfdN3qLPcB/ASIR8iqg3yJBjud85zzJ4fanEt+RKR6XK0VQIDHi7WMtwKRDvV23/cYBkNZ5GQtSdPAnplSEfNwUld4rPBdwEywm4yb3WO6td2yoEQWpZoq7ZOt8wZkztYBNz545z+LfBl8ZWRCz1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIlUCP1w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB8AC4AF09;
-	Tue, 14 Oct 2025 22:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760479395;
-	bh=ud9SO++TE5+DojUghUZcik1yBq88ekmRJTRwTpc+Zxw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QIlUCP1wMvPUTyXgUQS2PgffQlUVuWmX1udKI5ufzYR42kxrlQmaIpewF2tStmfKV
-	 N/aA7BOAOu5MRtK4aEZqKacUybeqLfwUjHUgCVAEiilDLtZCtzBMteiALt3y0OkGpV
-	 9qh7fRc3eh7a06C12M+yUBHaO4OuKzCVJQcJe4qr+duw046klYtZ0k6gnleQfqFAZz
-	 h1DQOMWxUiil8XgXt7t3a81etMW1d4pKqSk5CzfWULF8KUcO+o7DbPSxtbShlSIN/2
-	 o4JG8N4avjsP8fsJBx9/5d5PQQbATiQkb59yFJ674Fjhe7Qg/vq7RsNIEwVSrEQQuF
-	 ZlV5UocByMxSA==
-Message-ID: <b8137f4e-97d9-4e10-a80b-51ebacf3b3ac@kernel.org>
-Date: Wed, 15 Oct 2025 00:03:08 +0200
+	 In-Reply-To:Content-Type; b=JVV6DhKMM8Oz80/bIeao3BlOurwWaIGs2QFF5hsC7UKkDWMnX9Y0p8+5JGJ2blpfSpZvV2ZmGS3ITQTNO9lPamdzC0ZWAnhXNyCon0YERujKCWipBCZ80vhtsC1CALIPttr+wJ9nzCSc0MvGIk+i1Cu8mZEf51+JRF5JuFysn9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuXT4COZ; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33255011eafso6228809a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760479465; x=1761084265; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l6XDsENWGoamE2lQfBoeAOTQv2/NbQK1cLV8RQTx+rU=;
+        b=BuXT4COZt833j/MT8p8ax319LGdRXi0b/KO67c7Av6vdB9shb0wEtOhRxuuZN0iHrr
+         J1bcKGTvyVVFMRuKd5Vy28WN1lebSZeI3E8/nKnN1WKAq/m1E4mF2qIY+2ZWRqcB5gsO
+         9WLm0ODXxFQHclwoGz2JKNAeJ/b1hnONmz6nNHFH/t6Dc0gUX6C7blz9QA1NuyZWqYFw
+         spZ/RqlVAD4fyQ5eIajKbWdkEC/EUpesN95yRprQoI5ZOgfVBBeHWA6FuITANN+pV1Mk
+         2mJLz90hX+MJ2He1mWtIqxbGDsD1HRD4CC/c8RvD9aIAPKGScUyY7qMVoJ+OT40Rkhwz
+         Dyag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760479465; x=1761084265;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6XDsENWGoamE2lQfBoeAOTQv2/NbQK1cLV8RQTx+rU=;
+        b=A6hetq/TmhDdnxSBAY5MMqgjeKhcBP8UsjjN9Vv1s2dpKKrwSAfSGafmmpLgW5GvNF
+         OgCzrA570Jaltfg70XZGYxUCSOZVJDKsdLtlWXweamvZXA87Jdbamyn4GjIchfYFSC9e
+         LAWWpwnGFCJ0reKCkm+Hg8aM65JYK5QEK53hlUT9GuEnzDnPNLDfnGBcTjPpnzL9KX1v
+         xpYUV7pnHh/VhYNc5hhaRnGrv6pg4WTyk72eTz6RJvWe8Cu16KGETouoKxoOwmmu5Ian
+         SuDthvQdlBRM4dZwOzuHwGVmwU7LjSKeEWfhgYlFX8qwxBnuMQji06XVRyjdA2j0uHga
+         xqiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiqeC6o8w80h9cQsRjBbG38cSzUebfgA0BKcLTY+yy2824v83KOc5RYP4HNXtu3hWSDy/TRh28YNyTnAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlMo9KhbUosE+XTRXlprXixtJa3e0c/ct5VO7x2Tk+rvw2JqBr
+	/QoJNC4UZUf3cnF/HApxvLgQw/TvU6A7MRDYwcUcjPZafZKen8w3Gpsr
+X-Gm-Gg: ASbGnct8Idhro/Zhz0F7qMekmUyXg9ZighI6BeqHn0XENSDrxzYuls/0rTzEoyyVQjo
+	cPLthmEuvhMw2Q/fdG+B8fRs6HH1auIj1WVxReaLtoLr1bPoXimUdiwKYOoQmWG+LyDKRVOp/8n
+	ahCoyHICBwBJ8mQw22k3SuYjtkZ/ZbEAw60kXfjkxC6Dewk2w3jURtQXyHz99c98giY6MXUDJCn
+	Z/4P+08ugWPOyFDyIN5pn7mgrinRImxK41BegCa2XTrBHfOwSufzMYhZ5dASnnZXdp0izhZ34Z+
+	S0emtFGwKZhjrgZlyLYd1or3aC3zIBMXpyk88Y22C8tNJRiPLRLp5WTb82si3cFgvRMPATyEAUZ
+	vrCAiXXVnUTOkttju7Ow79DzgI+cIHMVSaYmyCgnIRhlr9kkSC263BYXwcWcZq1Dx4KxsC5sVTl
+	Lo17BcAaFUVetA8VWao8eCzOFT
+X-Google-Smtp-Source: AGHT+IHUB3rz/slBsn1LJeEC9+FO5BtqHcvv9o2+l1YGXAcHXI2KItjdeh1X4Zw/JN1lCdNJMeKK5A==
+X-Received: by 2002:a17:90b:1b41:b0:32e:8c14:5cd2 with SMTP id 98e67ed59e1d1-33b513d0b37mr31894521a91.28.1760479464543;
+        Tue, 14 Oct 2025 15:04:24 -0700 (PDT)
+Received: from [192.168.50.102] ([49.245.38.171])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df7e1d1sm13042068a12.40.2025.10.14.15.04.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 15:04:24 -0700 (PDT)
+Message-ID: <e890fbd0-7b05-47d2-a444-f61409e4bbf5@gmail.com>
+Date: Wed, 15 Oct 2025 06:04:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,103 +82,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: Drop duplicate CONFIG_OMAP_USB2 entry
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "michal.simek@amd.com" <michal.simek@amd.com>
-References: <20251014182035.239956-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <e97327ff-9dca-4764-9973-8223d6b50fa9@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e97327ff-9dca-4764-9973-8223d6b50fa9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
+ index=on
+Content-Language: en-GB
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, "Guilherme G . Piccoli"
+ <gpiccoli@igalia.com>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+From: Anand Jain <anajain.sg@gmail.com>
+In-Reply-To: <20251014015707.129013-1-andrealmeid@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 15/10/2025 00:00, Krzysztof Kozlowski wrote:
-> On 14/10/2025 20:20, Prabhakar wrote:
->> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->>
->> CONFIG_OMAP_USB2 is already enabled as a module in the default defconfig
->> since commit 8a703a728a745 ("arm64: defconfig: Enable USB2 PHY Driver").
->> Remove the duplicate entry to fix the following warning:
->>
->>     arch/arm64/configs/defconfig:1705:warning: override: reassigning to symbol OMAP_USB2
->>
->> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->> ---
->>  arch/arm64/configs/defconfig | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index e401915e2f2f..478ca72c0aeb 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -1702,7 +1702,6 @@ CONFIG_PHY_UNIPHIER_USB3=y
->>  CONFIG_PHY_TEGRA_XUSB=y
->>  CONFIG_PHY_AM654_SERDES=m
->>  CONFIG_PHY_J721E_WIZ=m
->> -CONFIG_OMAP_USB2=m
+On 14-Oct-25 9:57 AM, AndrÃ© Almeida wrote:
+> Hi everyone,
 > 
-> I don't understand. There is no such line in defconfig. Which next are
-> you referring to? Was it just broken in Renesas tree?
+> When using overlayfs with the mount option index=on, the first time a directory is
+> used as upper dir, overlayfs stores in a xattr "overlay.origin" the UUID of the
+> filesystem being used in the layers. If the upper dir is reused, overlayfs
+> refuses to mount for a different filesystem, by comparing the UUID with what's
+> stored at overlay.origin, and it fails with "failed to verify upper root origin"
+> on dmesg. Remounting with the very same fs is supported and works fine.
 > 
-Ah, no, it got broken by Michal. You should add proper fixes tag which
-results in automatic Cc.
+> However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
+> disk image with btrfs, a random UUID is assigned for the following disks each
+> time they are mounted, stored at temp_fsid and used across the kernel as the
+> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however shows
+> the original (and duplicated) UUID for all disks.
+> 
+> This feature doesn't work well with overlayfs with index=on, as when the image
+> is mounted a second time, will get a different UUID and ovl will refuse to
+> mount, breaking the user expectation that using the same image should work. A
+> small script can be find in the end of this cover letter that illustrates this.
+> 
+>  From this, I can think of some options:
+> 
+> - Use statfs() internally to always get the fsid, that is persistent. The patch
+> here illustrates that approach, but doesn't fully implement it.
+> - Create a new sb op, called get_uuid() so the filesystem returns what's
+> appropriated.
+> - Have a workaround in ovl for btrfs.
+> - Document this as unsupported, and userland needs to erase overlay.origin each
+> time it wants to remount.
+> - If ovl detects that temp_fsid and index are being used at the same time,
+> refuses to mount.
+> 
+> I'm not sure which one would be better here, so I would like to hear some ideas
+> on this.
+> 
+> Thanks!
+> 	André
+> 
+> ---
+> 
+> To reproduce:
+> 
+> mkdir -p dir1 dir2
+> 
+> fallocate -l 300m ./disk1.img
+> mkfs.btrfs -q -f ./disk1.img
+> 
+> # cloning the disks
+> cp disk1.img disk2.img
+> sudo mount -o loop ./disk1.img dir1
+> sudo mount -o loop ./disk2.img dir2
+> 
+> mkdir -p dir2/lower aux/upper aux/work
+> 
+> # this works
+> sudo mount -t overlay -o lowerdir=dir2/lower,upperdir=aux/upper,workdir=aux/work,userxattr none dir2/lower
+> 
+> sudo umount dir2/lower
+> sudo umount dir2
+> 
+> sudo mount -o loop ./disk2.img dir2
 
-@Michal,
+At this point, Btrfs assigns a new temporary FSID, but without it,
+the test case fails.
 
-Are you sure your commit did not introduce more of such issues?
+Temp FSID support only came in with kernel v6.7, so wondering,
+how is this test supposed to work on older kernels?
 
-Best regards,
-Krzysztof
+Thanks, Anand
+
+
+> 
+> # this doesn't works
+> sudo mount -t overlay -o lowerdir=dir2/lower,upperdir=aux/upper,workdir=aux/work,userxattr none dir2/lower
+> 
+> André Almeida (1):
+>    ovl: Use fsid as unique identifier for trusted origin
+> 
+>   fs/overlayfs/copy_up.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+
 
