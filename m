@@ -1,550 +1,291 @@
-Return-Path: <linux-kernel+bounces-852576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E238EBD95BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:35:07 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BADABD95B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18AC64FB4F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:35:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F397F354419
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9277B30F94E;
-	Tue, 14 Oct 2025 12:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32D6313E1A;
+	Tue, 14 Oct 2025 12:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="FOZr9O5D";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="25dsm+nD"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ASHJO6Qc"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F7730C371
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89FE2BF3CF;
+	Tue, 14 Oct 2025 12:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445299; cv=none; b=PLXhXy2dvfFo3LlIbRx1vU+oRnmt0PMRoZGwNqfz37hDp9f8C7/0oIssoHNiWMN4KQaWbZdbcVMWY75T//Lp6AoWm25F+ssBrj1wFXu7oN8SD1zVZFBKZ9IJ/OXq+4p9ySDijx71qxiRFzhLNpI66AjKvNv6yH/RHDVHhXWxyhc=
+	t=1760445254; cv=none; b=GAKJWzAdqoQuhMFFlWaKaSQj4G1cqxz/ek24sKKEONFd0uLw+zX6chLEF6PhodtvYhgJSHCYfBTp5RWmCJk4aJiVZe71gntiBI50xKt/Kq9XsVGItAf9oB4SyB0YhhYAl3g1uzhih/kdRVrS2eosDU5I/o6hcAPYLB8vHTQEg90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445299; c=relaxed/simple;
-	bh=wxkLaUGJ0zdM0tQZgAgKuDVsuYmSIEfiBNamLf3wuWI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tl7jh1RUGUKKPr7Kn+6fOlWW1/6oTmvObhYTqHyX2ITpxsFNBx5w1b/bqDHO3quVGDveEBf8TNZFicEJH3aPw3C53DBUqY2WtSTbfcFnIV+e5KbB00PcFYvSK5+x2vQVVXwJhxUIeZZ2rsAfT4qxHFXVvuXR+49DS84/9HwCfjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=FOZr9O5D; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=25dsm+nD; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1760445224; x=1761050024;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=SKywZ7zW2pC9aLOcLewdQn9XBeV9oaJ/MN56LeZN26A=;
-	b=FOZr9O5D81OiaDFYlN8DjPmAdJCdqMjf+ur+n7dthYtzH1N5zhFwSNqmGaVAUf5genjOWBz46LMn8
-	 91fDrlt9U+iNqosJ/O3kJRc8ey0ApEyiAXVoedRBFpEx/71I5GFu8/htBr6I863n7Fck8+IIK3qB3P
-	 3q87Kx3SjFv4fjl7mdAHxLrS88QfvJYFEWSkpf+jfHSEx41M0R3+i6SxgG3iYyISOnhPJrC+zaYdX2
-	 bnJtyMa9kMi88A2XfGEPErGHXC0/fmWFBB9sqq3Cyn19Hj3RIUtpVhbOxvHVxw5wxQHwn7R2zx9PCw
-	 DceT8sygOfjY2gFYsclIqclPK1rUgJQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1760445224; x=1761050024;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=SKywZ7zW2pC9aLOcLewdQn9XBeV9oaJ/MN56LeZN26A=;
-	b=25dsm+nDE7vhiH0xeVps1J3bsDWgWaSUzB1GV4+6Pw/4Bpv7ZNxMxyFhSzmJvhiwXJQXRa/tHIkBX
-	 3IDRBggAQ==
-X-HalOne-ID: 04a85f1a-a8fa-11f0-ad5a-632fe8569f3f
-Received: from localhost.localdomain (host-95-193-11-228.mobileonline.telia.com [95.193.11.228])
-	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 04a85f1a-a8fa-11f0-ad5a-632fe8569f3f;
-	Tue, 14 Oct 2025 12:33:43 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v5] rust: rbtree: add immutable cursor
-Date: Tue, 14 Oct 2025 14:33:39 +0200
-Message-Id: <20251014123339.2492210-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1760445254; c=relaxed/simple;
+	bh=oQLAeDQyVmjWiiZUx6Tf/I63RDM10DhJXwC5sITM4Uc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hvHXkaMiAuvHt2K/kCeBeI4lQyE0/ExB3hkD4t3jqRNqUab5ST90wL7N8hb9CzK4WOQViGOIbLgjMPlNzWKoFbnua2E1XphVRu7xThnM5OhqhllvZfl8RtbK1ECmKBzvlL7BGffhCZb2OyytbXhosCqmdcriOwFr504yEKpnP2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ASHJO6Qc; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59ECXwC61067233;
+	Tue, 14 Oct 2025 07:33:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760445238;
+	bh=bvs+B4pFlwvao7cFjAjIJQY0fsHlgPIJmdN1Y1I3xzs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ASHJO6QcWEH818cl89M0aSyZFzA5x1GoqKsJ1ZolgA6+ZZhYnZFC8p+VBtU7WGefO
+	 fJOCq3+noG99JgDxpy/kn7IJghBCclly58SY5TIYQ+OGNB4DoBDJBcGNsi4thTKKFv
+	 bNf48hKSaRfq2MgEaCt1OtGmw6yaQ7o34wwIazy8=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59ECXwdZ439585
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 14 Oct 2025 07:33:58 -0500
+Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 14
+ Oct 2025 07:33:57 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 07:33:57 -0500
+Received: from [172.24.231.225] (a0507033-hp.dhcp.ti.com [172.24.231.225])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59ECXsED034631;
+	Tue, 14 Oct 2025 07:33:55 -0500
+Message-ID: <2b3d5d75-22d8-4b5c-8445-a5ca3fe0bc69@ti.com>
+Date: Tue, 14 Oct 2025 18:03:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: ethernet: ti: am65-cpts: fix timestamp loss due
+ to race conditions
+To: Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <davem@davemloft.net>, <kuba@kernel.org>, <andrew+netdev@lunn.ch>,
+        <edumazet@google.com>
+CC: <linux-kernel@vger.kernel.org>, <c-vankar@ti.com>, <s-vadapalli@ti.com>,
+        <danishanwar@ti.com>
+References: <20251010150821.838902-1-a-garg7@ti.com>
+ <629ffe15-e4d8-4b0c-a909-55fa4248965a@redhat.com>
+Content-Language: en-US
+From: Aksh Garg <a-garg7@ti.com>
+In-Reply-To: <629ffe15-e4d8-4b0c-a909-55fa4248965a@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Sometimes we may need to iterate over, or find an element in a read
-only (or read mostly) red-black tree, and in that case we don't need a
-mutable reference to the tree, which we'll however have to take to be
-able to use the current (mutable) cursor implementation.
 
-This patch adds a simple immutable cursor implementation to RBTree,
-which enables us to use an immutable tree reference. The existing
-(fully featured) cursor implementation is renamed to CursorMut,
-while retaining its functionality.
 
-The only existing user of the [mutable] cursor for RBTrees (binder) is
-updated to match the changes.
+On 14/10/25 15:02, Paolo Abeni wrote:
+> On 10/10/25 5:08 PM, Aksh Garg wrote:
+>> diff --git a/drivers/net/ethernet/ti/am65-cpts.c b/drivers/net/ethernet/ti/am65-cpts.c
+>> index 59d6ab989c55..2e9719264ba5 100644
+>> --- a/drivers/net/ethernet/ti/am65-cpts.c
+>> +++ b/drivers/net/ethernet/ti/am65-cpts.c
+>> @@ -163,7 +163,9 @@ struct am65_cpts {
+>>  	struct device_node *clk_mux_np;
+>>  	struct clk *refclk;
+>>  	u32 refclk_freq;
+>> -	struct list_head events;
+>> +	/* separate lists to handle TX and RX timestamp independently */
+>> +	struct list_head events_tx;
+>> +	struct list_head events_rx;
+>>  	struct list_head pool;
+>>  	struct am65_cpts_event pool_data[AM65_CPTS_MAX_EVENTS];
+>>  	spinlock_t lock; /* protects events lists*/
+>> @@ -172,6 +174,7 @@ struct am65_cpts {
+>>  	u32 ts_add_val;
+>>  	int irq;
+>>  	struct mutex ptp_clk_lock; /* PHC access sync */
+>> +	struct mutex rx_ts_lock; /* serialize RX timestamp match */
+>>  	u64 timestamp;
+>>  	u32 genf_enable;
+>>  	u32 hw_ts_enable;
+>> @@ -245,7 +248,16 @@ static int am65_cpts_cpts_purge_events(struct am65_cpts *cpts)
+>>  	struct am65_cpts_event *event;
+>>  	int removed = 0;
+>>  
+>> -	list_for_each_safe(this, next, &cpts->events) {
+>> +	list_for_each_safe(this, next, &cpts->events_tx) {
+>> +		event = list_entry(this, struct am65_cpts_event, list);
+>> +		if (time_after(jiffies, event->tmo)) {
+>> +			list_del_init(&event->list);
+>> +			list_add(&event->list, &cpts->pool);
+>> +			++removed;
+>> +		}
+>> +	}
+> 
+> Minor nit: you can move the loop in a separate helper taking the event
+> list as an argument and avoid some code duplication with the the rx loop.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- drivers/android/binder/freeze.rs           |   4 +-
- drivers/android/binder/process.rs          |   2 +-
- drivers/android/binder/range_alloc/tree.rs |   2 +-
- rust/kernel/rbtree.rs                      | 238 +++++++++++++++++----
- 4 files changed, 199 insertions(+), 47 deletions(-)
+I will create a helper function for this.
 
-diff --git a/drivers/android/binder/freeze.rs b/drivers/android/binder/freeze.rs
-index e68c3c8bc55a..87bebef53d94 100644
---- a/drivers/android/binder/freeze.rs
-+++ b/drivers/android/binder/freeze.rs
-@@ -321,7 +321,7 @@ fn find_freeze_recipients(&self) -> Result<KVVec<(DArc<Node>, Arc<Process>)>, Al
-             KVVec::with_capacity(8, GFP_KERNEL).unwrap_or_else(|_err| KVVec::new());
- 
-         let mut inner = self.lock_with_nodes();
--        let mut curr = inner.nodes.cursor_front();
-+        let mut curr = inner.nodes.cursor_front_mut();
-         while let Some(cursor) = curr {
-             let (key, node) = cursor.current();
-             let key = *key;
-@@ -335,7 +335,7 @@ fn find_freeze_recipients(&self) -> Result<KVVec<(DArc<Node>, Arc<Process>)>, Al
-                 // Find the node we were looking at and try again. If the set of nodes was changed,
-                 // then just proceed to the next node. This is ok because we don't guarantee the
-                 // inclusion of nodes that are added or removed in parallel with this operation.
--                curr = inner.nodes.cursor_lower_bound(&key);
-+                curr = inner.nodes.cursor_lower_bound_mut(&key);
-                 continue;
-             }
- 
-diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-index f13a747e784c..76829df33fa2 100644
---- a/drivers/android/binder/process.rs
-+++ b/drivers/android/binder/process.rs
-@@ -1293,7 +1293,7 @@ fn deferred_release(self: Arc<Self>) {
-         {
-             while let Some(node) = {
-                 let mut lock = self.inner.lock();
--                lock.nodes.cursor_front().map(|c| c.remove_current().1)
-+                lock.nodes.cursor_front_mut().map(|c| c.remove_current().1)
-             } {
-                 node.to_key_value().1.release();
-             }
-diff --git a/drivers/android/binder/range_alloc/tree.rs b/drivers/android/binder/range_alloc/tree.rs
-index 7b1a248fcb02..838fdd2b47ea 100644
---- a/drivers/android/binder/range_alloc/tree.rs
-+++ b/drivers/android/binder/range_alloc/tree.rs
-@@ -207,7 +207,7 @@ pub(crate) fn reserve_new(
-     }
- 
-     pub(crate) fn reservation_abort(&mut self, offset: usize) -> Result<FreedRange> {
--        let mut cursor = self.tree.cursor_lower_bound(&offset).ok_or_else(|| {
-+        let mut cursor = self.tree.cursor_lower_bound_mut(&offset).ok_or_else(|| {
-             pr_warn!(
-                 "EINVAL from range_alloc.reservation_abort - offset: {}",
-                 offset
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index b8fe6be6fcc4..10f4df081889 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -243,34 +243,64 @@ pub fn values_mut(&mut self) -> impl Iterator<Item = &'_ mut V> {
-     }
- 
-     /// Returns a cursor over the tree nodes, starting with the smallest key.
--    pub fn cursor_front(&mut self) -> Option<Cursor<'_, K, V>> {
-+    pub fn cursor_front_mut(&mut self) -> Option<CursorMut<'_, K, V>> {
-         let root = addr_of_mut!(self.root);
-         // SAFETY: `self.root` is always a valid root node
-         let current = unsafe { bindings::rb_first(root) };
-         NonNull::new(current).map(|current| {
-             // INVARIANT:
-             // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
--            Cursor {
-+            CursorMut {
-                 current,
-                 tree: self,
-             }
-         })
-     }
- 
-+    /// Returns an immutable cursor over the tree nodes, starting with the smallest key.
-+    pub fn cursor_front(&self) -> Option<Cursor<'_, K, V>> {
-+        let root = &raw const self.root;
-+        // SAFETY: `self.root` is always a valid root node
-+        let current = unsafe { bindings::rb_first(root) };
-+        NonNull::new(current).map(|current| {
-+            // INVARIANT:
-+            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
-+            Cursor {
-+                current,
-+                _tree: PhantomData,
-+            }
-+        })
-+    }
-+
-     /// Returns a cursor over the tree nodes, starting with the largest key.
--    pub fn cursor_back(&mut self) -> Option<Cursor<'_, K, V>> {
-+    pub fn cursor_back_mut(&mut self) -> Option<CursorMut<'_, K, V>> {
-         let root = addr_of_mut!(self.root);
-         // SAFETY: `self.root` is always a valid root node
-         let current = unsafe { bindings::rb_last(root) };
-         NonNull::new(current).map(|current| {
-             // INVARIANT:
-             // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
--            Cursor {
-+            CursorMut {
-                 current,
-                 tree: self,
-             }
-         })
-     }
-+
-+    /// Returns a cursor over the tree nodes, starting with the largest key.
-+    pub fn cursor_back(&self) -> Option<Cursor<'_, K, V>> {
-+        let root = &raw const self.root;
-+        // SAFETY: `self.root` is always a valid root node
-+        let current = unsafe { bindings::rb_last(root) };
-+        NonNull::new(current).map(|current| {
-+            // INVARIANT:
-+            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
-+            Cursor {
-+                current,
-+                _tree: PhantomData,
-+            }
-+        })
-+    }
- }
- 
- impl<K, V> RBTree<K, V>
-@@ -421,12 +451,47 @@ pub fn remove(&mut self, key: &K) -> Option<V> {
-     /// If the given key exists, the cursor starts there.
-     /// Otherwise it starts with the first larger key in sort order.
-     /// If there is no larger key, it returns [`None`].
--    pub fn cursor_lower_bound(&mut self, key: &K) -> Option<Cursor<'_, K, V>>
-+    pub fn cursor_lower_bound_mut(&mut self, key: &K) -> Option<CursorMut<'_, K, V>>
-+    where
-+        K: Ord,
-+    {
-+        let best = self.find_best_match(key)?;
-+
-+        NonNull::new(best.as_ptr()).map(|current| {
-+            // INVARIANT:
-+            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
-+            CursorMut {
-+                current,
-+                tree: self,
-+            }
-+        })
-+    }
-+
-+    /// Returns a cursor over the tree nodes based on the given key.
-+    ///
-+    /// If the given key exists, the cursor starts there.
-+    /// Otherwise it starts with the first larger key in sort order.
-+    /// If there is no larger key, it returns [`None`].
-+    pub fn cursor_lower_bound(&self, key: &K) -> Option<Cursor<'_, K, V>>
-     where
-         K: Ord,
-     {
-+        let best = self.find_best_match(key)?;
-+
-+        NonNull::new(best.as_ptr()).map(|current| {
-+            // INVARIANT:
-+            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
-+            Cursor {
-+                current,
-+                _tree: PhantomData,
-+            }
-+        })
-+    }
-+
-+    fn find_best_match(&self, key: &K) -> Option<NonNull<bindings::rb_node>> {
-         let mut node = self.root.rb_node;
--        let mut best_match: Option<NonNull<Node<K, V>>> = None;
-+        let mut best_key: Option<&K> = None;
-+        let mut best_links: Option<NonNull<bindings::rb_node>> = None;
-         while !node.is_null() {
-             // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
-             // point to the links field of `Node<K, V>` objects.
-@@ -439,42 +504,30 @@ pub fn cursor_lower_bound(&mut self, key: &K) -> Option<Cursor<'_, K, V>>
-             let right_child = unsafe { (*node).rb_right };
-             match key.cmp(this_key) {
-                 Ordering::Equal => {
--                    best_match = NonNull::new(this);
-+                    // SAFETY: `this` is a non-null node so it is valid by the type invariants.
-+                    best_links = Some(unsafe { NonNull::new_unchecked(&mut (*this).links) });
-                     break;
-                 }
-                 Ordering::Greater => {
-                     node = right_child;
-                 }
-                 Ordering::Less => {
--                    let is_better_match = match best_match {
-+                    let is_better_match = match best_key {
-                         None => true,
-                         Some(best) => {
--                            // SAFETY: `best` is a non-null node so it is valid by the type invariants.
--                            let best_key = unsafe { &(*best.as_ptr()).key };
--                            best_key > this_key
-+                            best > this_key
-                         }
-                     };
-                     if is_better_match {
--                        best_match = NonNull::new(this);
-+                        best_key = Some(this_key);
-+                        // SAFETY: `this` is a non-null node so it is valid by the type invariants.
-+                        best_links = Some(unsafe { NonNull::new_unchecked(&mut (*this).links) });
-                     }
-                     node = left_child;
-                 }
-             };
-         }
--
--        let best = best_match?;
--
--        // SAFETY: `best` is a non-null node so it is valid by the type invariants.
--        let links = unsafe { addr_of_mut!((*best.as_ptr()).links) };
--
--        NonNull::new(links).map(|current| {
--            // INVARIANT:
--            // - `current` is a valid node in the [`RBTree`] pointed to by `self`.
--            Cursor {
--                current,
--                tree: self,
--            }
--        })
-+        best_links
-     }
- }
- 
-@@ -507,7 +560,7 @@ fn drop(&mut self) {
-     }
- }
- 
--/// A bidirectional cursor over the tree nodes, sorted by key.
-+/// A bidirectional mutable cursor over the tree nodes, sorted by key.
- ///
- /// # Examples
- ///
-@@ -526,7 +579,7 @@ fn drop(&mut self) {
- /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
- ///
- /// // Get a cursor to the first element.
--/// let mut cursor = tree.cursor_front().unwrap();
-+/// let mut cursor = tree.cursor_front_mut().unwrap();
- /// let mut current = cursor.current();
- /// assert_eq!(current, (&10, &100));
- ///
-@@ -564,7 +617,7 @@ fn drop(&mut self) {
- /// tree.try_create_and_insert(20, 200, flags::GFP_KERNEL)?;
- /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
- ///
--/// let mut cursor = tree.cursor_back().unwrap();
-+/// let mut cursor = tree.cursor_back_mut().unwrap();
- /// let current = cursor.current();
- /// assert_eq!(current, (&30, &300));
- ///
-@@ -577,7 +630,7 @@ fn drop(&mut self) {
- /// use kernel::rbtree::RBTree;
- ///
- /// let mut tree: RBTree<u16, u16> = RBTree::new();
--/// assert!(tree.cursor_front().is_none());
-+/// assert!(tree.cursor_front_mut().is_none());
- ///
- /// # Ok::<(), Error>(())
- /// ```
-@@ -628,7 +681,7 @@ fn drop(&mut self) {
- /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
- ///
- /// // Retrieve a cursor.
--/// let mut cursor = tree.cursor_front().unwrap();
-+/// let mut cursor = tree.cursor_front_mut().unwrap();
- ///
- /// // Get a mutable reference to the current value.
- /// let (k, v) = cursor.current_mut();
-@@ -655,7 +708,7 @@ fn drop(&mut self) {
- /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
- ///
- /// // Remove the first element.
--/// let mut cursor = tree.cursor_front().unwrap();
-+/// let mut cursor = tree.cursor_front_mut().unwrap();
- /// let mut current = cursor.current();
- /// assert_eq!(current, (&10, &100));
- /// cursor = cursor.remove_current().0.unwrap();
-@@ -665,7 +718,7 @@ fn drop(&mut self) {
- /// assert_eq!(current, (&20, &200));
- ///
- /// // Get a cursor to the last element, and remove it.
--/// cursor = tree.cursor_back().unwrap();
-+/// cursor = tree.cursor_back_mut().unwrap();
- /// current = cursor.current();
- /// assert_eq!(current, (&30, &300));
- ///
-@@ -694,7 +747,7 @@ fn drop(&mut self) {
- /// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
- ///
- /// // Get a cursor to the first element.
--/// let mut cursor = tree.cursor_front().unwrap();
-+/// let mut cursor = tree.cursor_front_mut().unwrap();
- /// let mut current = cursor.current();
- /// assert_eq!(current, (&10, &100));
- ///
-@@ -702,7 +755,7 @@ fn drop(&mut self) {
- /// assert!(cursor.remove_prev().is_none());
- ///
- /// // Get a cursor to the last element.
--/// cursor = tree.cursor_back().unwrap();
-+/// cursor = tree.cursor_back_mut().unwrap();
- /// current = cursor.current();
- /// assert_eq!(current, (&30, &300));
- ///
-@@ -726,18 +779,47 @@ fn drop(&mut self) {
- ///
- /// # Invariants
- /// - `current` points to a node that is in the same [`RBTree`] as `tree`.
--pub struct Cursor<'a, K, V> {
-+pub struct CursorMut<'a, K, V> {
-     tree: &'a mut RBTree<K, V>,
-     current: NonNull<bindings::rb_node>,
- }
- 
--// SAFETY: The [`Cursor`] has exclusive access to both `K` and `V`, so it is sufficient to require them to be `Send`.
--// The cursor only gives out immutable references to the keys, but since it has excusive access to those same
--// keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the user.
--unsafe impl<'a, K: Send, V: Send> Send for Cursor<'a, K, V> {}
-+/// A bidirectional immutable cursor over the tree nodes, sorted by key. This is a simpler
-+/// variant of CursorMut that is basically providing read only access.
-+///
-+/// # Examples
-+///
-+/// In the following example, we obtain a cursor to the first element in the tree.
-+/// The cursor allows us to iterate bidirectionally over key/value pairs in the tree.
-+///
-+/// ```
-+/// use kernel::{alloc::flags, rbtree::RBTree};
-+///
-+/// // Create a new tree.
-+/// let mut tree = RBTree::new();
-+///
-+/// // Insert three elements.
-+/// tree.try_create_and_insert(10, 100, flags::GFP_KERNEL)?;
-+/// tree.try_create_and_insert(20, 200, flags::GFP_KERNEL)?;
-+/// tree.try_create_and_insert(30, 300, flags::GFP_KERNEL)?;
-+///
-+/// // Get a cursor to the first element.
-+/// let cursor = tree.cursor_front().unwrap();
-+/// let current = cursor.current();
-+/// assert_eq!(current, (&10, &100));
-+///
-+/// # Ok::<(), Error>(())
-+pub struct Cursor<'a, K, V> {
-+    _tree: PhantomData<&'a RBTree<K, V>>,
-+    current: NonNull<bindings::rb_node>,
-+}
- 
--// SAFETY: The [`Cursor`] gives out immutable references to K and mutable references to V,
--// so it has the same thread safety requirements as mutable references.
-+// SAFETY: The immutable cursor gives out shared access to `K` and `V` so if `K` and `V` can be
-+// shared across threads, then it's safe to share the cursor.
-+unsafe impl<'a, K: Sync, V: Sync> Send for Cursor<'a, K, V> {}
-+
-+// SAFETY: The immutable cursor gives out shared access to `K` and `V` so if `K` and `V` can be
-+// shared across threads, then it's safe to share the cursor.
- unsafe impl<'a, K: Sync, V: Sync> Sync for Cursor<'a, K, V> {}
- 
- impl<'a, K, V> Cursor<'a, K, V> {
-@@ -749,6 +831,76 @@ pub fn current(&self) -> (&K, &V) {
-         unsafe { Self::to_key_value(self.current) }
-     }
- 
-+    /// # Safety
-+    ///
-+    /// - `node` must be a valid pointer to a node in an [`RBTree`].
-+    /// - The caller has immutable access to `node` for the duration of `'b`.
-+    unsafe fn to_key_value<'b>(node: NonNull<bindings::rb_node>) -> (&'b K, &'b V) {
-+        // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
-+        // point to the links field of `Node<K, V>` objects.
-+        let this = unsafe { container_of!(node.as_ptr(), Node<K, V>, links) };
-+        // SAFETY: The passed `node` is the current node or a non-null neighbor,
-+        // thus `this` is valid by the type invariants.
-+        let k = unsafe { &(*this).key };
-+        // SAFETY: The passed `node` is the current node or a non-null neighbor,
-+        // thus `this` is valid by the type invariants.
-+        let v = unsafe { &(*this).value };
-+        (k, v)
-+    }
-+
-+    /// Access the previous node without moving the cursor.
-+    pub fn peek_prev(&self) -> Option<(&K, &V)> {
-+        self.peek(Direction::Prev)
-+    }
-+
-+    /// Access the previous node without moving the cursor.
-+    pub fn peek_next(&self) -> Option<(&K, &V)> {
-+        self.peek(Direction::Next)
-+    }
-+
-+    fn peek(&self, direction: Direction) -> Option<(&K, &V)> {
-+        self.get_neighbor_raw(direction).map(|neighbor| {
-+            // SAFETY:
-+            // - `neighbor` is a valid tree node.
-+            // - By the function signature, we have an immutable reference to `self`.
-+            unsafe { Self::to_key_value(neighbor) }
-+        })
-+    }
-+
-+    fn get_neighbor_raw(&self, direction: Direction) -> Option<NonNull<bindings::rb_node>> {
-+        // SAFETY: `self.current` is valid by the type invariants.
-+        let neighbor = unsafe {
-+            match direction {
-+                Direction::Prev => bindings::rb_prev(self.current.as_ptr()),
-+                Direction::Next => bindings::rb_next(self.current.as_ptr()),
-+            }
-+        };
-+
-+        NonNull::new(neighbor)
-+    }
-+}
-+
-+// SAFETY: The [`CursorMut`] has exclusive access to both `K` and `V`, so it is sufficient to
-+// require them to be `Send`.
-+// The cursor only gives out immutable references to the keys, but since it has excusive access to
-+// those same keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the
-+// user.
-+unsafe impl<'a, K: Send, V: Send> Send for CursorMut<'a, K, V> {}
-+
-+// SAFETY: The [`CursorMut`] gives out immutable references to K and mutable references to V,
-+// so it has the same thread safety requirements as mutable references.
-+unsafe impl<'a, K: Sync, V: Sync> Sync for CursorMut<'a, K, V> {}
-+
-+
-+impl<'a, K, V> CursorMut<'a, K, V> {
-+    /// The current node
-+    pub fn current(&self) -> (&K, &V) {
-+        // SAFETY:
-+        // - `self.current` is a valid node by the type invariants.
-+        // - We have an immutable reference by the function signature.
-+        unsafe { Self::to_key_value(self.current) }
-+    }
-+
-     /// The current node, with a mutable value
-     pub fn current_mut(&mut self) -> (&K, &mut V) {
-         // SAFETY:
-@@ -920,7 +1072,7 @@ unsafe fn to_key_value_raw<'b>(node: NonNull<bindings::rb_node>) -> (&'b K, *mut
-     }
- }
- 
--/// Direction for [`Cursor`] operations.
-+/// Direction for [`Cursor`] and [`CursorMut`] operations.
- enum Direction {
-     /// the node immediately before, in sort order
-     Prev,
--- 
-2.39.2
+> 
+>> +
+>> +	list_for_each_safe(this, next, &cpts->events_rx) {
+>>  		event = list_entry(this, struct am65_cpts_event, list);
+>>  		if (time_after(jiffies, event->tmo)) {
+>>  			list_del_init(&event->list);
+>> @@ -306,11 +318,21 @@ static int __am65_cpts_fifo_read(struct am65_cpts *cpts)
+>>  				cpts->timestamp);
+>>  			break;
+>>  		case AM65_CPTS_EV_RX:
+>> +			event->tmo = jiffies +
+>> +				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
+>> +
+>> +			list_move_tail(&event->list, &cpts->events_rx);
+>> +
+>> +			dev_dbg(cpts->dev,
+>> +				"AM65_CPTS_EV_RX e1:%08x e2:%08x t:%lld\n",
+>> +				event->event1, event->event2,
+>> +				event->timestamp);
+>> +			break;
+>>  		case AM65_CPTS_EV_TX:
+>>  			event->tmo = jiffies +
+>>  				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
+>>  
+>> -			list_move_tail(&event->list, &cpts->events);
+>> +			list_move_tail(&event->list, &cpts->events_tx);
+> 
+> Similar thing here.
+
+The dbg_dev() message have different debug messages. So, do you think a 
+helper function here makes much difference?
+
+> 
+>>  
+>>  			dev_dbg(cpts->dev,
+>>  				"AM65_CPTS_EV_TX e1:%08x e2:%08x t:%lld\n",
+>> @@ -828,7 +850,7 @@ static bool am65_cpts_match_tx_ts(struct am65_cpts *cpts,
+>>  	return found;
+>>  }
+>>  
+>> -static void am65_cpts_find_ts(struct am65_cpts *cpts)
+>> +static void am65_cpts_find_tx_ts(struct am65_cpts *cpts)
+>>  {
+>>  	struct am65_cpts_event *event;
+>>  	struct list_head *this, *next;
+>> @@ -837,7 +859,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
+>>  	LIST_HEAD(events);
+>>  
+>>  	spin_lock_irqsave(&cpts->lock, flags);
+>> -	list_splice_init(&cpts->events, &events);
+>> +	list_splice_init(&cpts->events_tx, &events);
+>>  	spin_unlock_irqrestore(&cpts->lock, flags);
+>>  
+>>  	list_for_each_safe(this, next, &events) {
+>> @@ -850,7 +872,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
+>>  	}
+>>  
+>>  	spin_lock_irqsave(&cpts->lock, flags);
+>> -	list_splice_tail(&events, &cpts->events);
+>> +	list_splice_tail(&events, &cpts->events_tx);
+> 
+> I see the behavior is pre-existing, but why splicing on tail? events
+> added in between should be older???
+
+I will handle this in future patch.
+
+> 
+>>  	list_splice_tail(&events_free, &cpts->pool);
+>>  	spin_unlock_irqrestore(&cpts->lock, flags);
+>>  }
+>> @@ -861,7 +883,7 @@ static long am65_cpts_ts_work(struct ptp_clock_info *ptp)
+>>  	unsigned long flags;
+>>  	long delay = -1;
+>>  
+>> -	am65_cpts_find_ts(cpts);
+>> +	am65_cpts_find_tx_ts(cpts);
+>>  
+>>  	spin_lock_irqsave(&cpts->txq.lock, flags);
+>>  	if (!skb_queue_empty(&cpts->txq))
+>> @@ -899,16 +921,21 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
+>>  {
+>>  	struct list_head *this, *next;
+>>  	struct am65_cpts_event *event;
+>> +	LIST_HEAD(events_free);
+>>  	unsigned long flags;
+>> +	LIST_HEAD(events);
+>>  	u32 mtype_seqid;
+>>  	u64 ns = 0;
+>>  
+>>  	spin_lock_irqsave(&cpts->lock, flags);
+>>  	__am65_cpts_fifo_read(cpts);
+>> -	list_for_each_safe(this, next, &cpts->events) {
+>> +	list_splice_init(&cpts->events_rx, &events);
+>> +	spin_unlock_irqrestore(&cpts->lock, flags);
+> 
+> Why are you changing the behaviour here, releasing and reacquiring the
+> cpts->lock? It looks like a separate change, if needed at all.
+
+It was added as an optimization, as acquiring the lock for entire loop 
+will delay other events to be handled. I will add this optimization in 
+future patch.
+
+> 
+>> +	list_for_each_safe(this, next, &events) {
+>>  		event = list_entry(this, struct am65_cpts_event, list);
+>>  		if (time_after(jiffies, event->tmo)) {
+>> -			list_move(&event->list, &cpts->pool);
+>> +			list_move(&event->list, &events_free);
+>>  			continue;
+>>  		}
+>>  
+>> @@ -919,10 +946,14 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
+>>  
+>>  		if (mtype_seqid == skb_mtype_seqid) {
+>>  			ns = event->timestamp;
+>> -			list_move(&event->list, &cpts->pool);
+>> +			list_move(&event->list, &events_free);
+>>  			break;
+>>  		}
+>>  	}
+>> +
+>> +	spin_lock_irqsave(&cpts->lock, flags);
+>> +	list_splice_tail(&events, &cpts->events_rx);
+>> +	list_splice_tail(&events_free, &cpts->pool);
+>>  	spin_unlock_irqrestore(&cpts->lock, flags);
+>>  
+>>  	return ns;
+>> @@ -948,7 +979,9 @@ void am65_cpts_rx_timestamp(struct am65_cpts *cpts, struct sk_buff *skb)
+>>  
+>>  	dev_dbg(cpts->dev, "%s mtype seqid %08x\n", __func__, skb_cb->skb_mtype_seqid);
+>>  
+>> +	mutex_lock(&cpts->rx_ts_lock);
+>>  	ns = am65_cpts_find_rx_ts(cpts, skb_cb->skb_mtype_seqid);
+>> +	mutex_unlock(&cpts->rx_ts_lock);
+> 
+> The call chain is:
+> 
+> am65_cpsw_nuss_rx_poll() -> am65_cpsw_nuss_rx_packets() ->
+> am65_cpts_rx_timestamp()
+> 
+> this runs in BH context, can't acquire a mutex. Also I don't see why any
+> additional locking would be needed?
+> 
+
+The rationale for adding this lock was to handle concurrent RX threads 
+accessing the timestamp event list. If one RX thread moves all events 
+from events_rx to a temporary list and releases the spinlock, another 
+concurrent RX thread could acquire the lock and find events_rx empty, 
+potentially missing its timestamp.
+
+I need clarification on the RX processing behavior: Can 
+am65_cpsw_nuss_rx_packets() be called for a new RX packet concurrently 
+while a previous RX packet is still being processed, or is RX processing 
+serialized? If RX processing is serialized, then the lock is not 
+required at all.
+
+Anyways, I will remove the lock from this patch, as it was a part of the 
+optimization mentioned above.
+
+> /P
+> 
 
 
