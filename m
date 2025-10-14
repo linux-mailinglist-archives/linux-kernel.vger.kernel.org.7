@@ -1,156 +1,74 @@
-Return-Path: <linux-kernel+bounces-852090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716C3BD823B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FB4BD824D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C61284ECF4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:21:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FDF64F85CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7956330F812;
-	Tue, 14 Oct 2025 08:21:38 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482D030F93A;
+	Tue, 14 Oct 2025 08:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ccO+i3rs"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A3E2DF6F9;
-	Tue, 14 Oct 2025 08:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A1C2DF6F9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430098; cv=none; b=ocwxVipgsoPka/xBfcbVOZhCDZdJmfTEKFNPBp7DuAa4mwIMJjebsz0hqhBkXjMumP091QysCCCoyVUJ+limM1lbDYUkgAraQSjbXAL0fPWiLPd4AvMIpDLu6L8J3RRfzOWCsHYjRBifmvjOkisq/th27q4zaRL3v/WBcInOQ8Q=
+	t=1760430138; cv=none; b=sYGk9Z+yh4ccQ+oXM94mxF17XXLhzUGcCSGIbZqbL/KFgPg8hJLIxL0xyp+F5srdGKrgc/qy8M9tXu/5fKa7OHxgWfh64CYJz67afbjVZU0ZIly0eKQsbNlK8OpTc/+BnU6Dox91l6DTLcm7NykHRzqQKZOdJ6FaoHQ46S4CAL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430098; c=relaxed/simple;
-	bh=473X0j9Ino9F9/5cmJpbLGotA7lNWkRoIJnwi/7Sn0o=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pxZR1+RheJn02pfJSsXEhHcowQBT+cn2bWwlgvsSHwF0eevj0/2aTsyPFoqVn1MM/IyoHaTYcIyGBxQFMk8jhO/1m6YUio7wVmdc1+45mYE8MwYID2lrfNMgPqAjs9D23ZRbV4dYRXv0VbnIh6ozrnXtA0156mLpZ27qwTteHvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cm6c405WVzYQtxM;
-	Tue, 14 Oct 2025 16:20:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B53C51A141B;
-	Tue, 14 Oct 2025 16:21:32 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP2 (Coremail) with SMTP id Syh0CgDnPUYKCO5oHndMAQ--.28256S3;
-	Tue, 14 Oct 2025 16:21:32 +0800 (CST)
-Subject: Re: [PATCH 1/4] blk-mq-debugfs: warn about possible deadlock
-To: Ming Lei <ming.lei@redhat.com>
-Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
- axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20251014022149.947800-1-yukuai3@huawei.com>
- <20251014022149.947800-2-yukuai3@huawei.com> <aO4EniFy63IlWM_-@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <33c009e6-0cc3-bfc3-f7e5-8227cb467696@huaweicloud.com>
-Date: Tue, 14 Oct 2025 16:21:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1760430138; c=relaxed/simple;
+	bh=Spkjo3C5fEKztwgAVnODaBE9rlq/SBhyiTBYtnq2HSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwqyRQCLwGiT4kS0Jci18018sbBJHk9gRvR8E74kpF7SM5OaJgRMqp1emQA8UmJUwqdV9cSRfrnw+gUkpNdLYC5t6TACHjU4t07gFwLYSStylcGXiCHnj3S26R0f3I4zUdRrIAFmxGPXGJzEoQPIBXIJwHYXcRc5jPB+6pSYXHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ccO+i3rs; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=05i6rH8J2oLuwV/rA7IKRW9HHCCjCwweewhrFbHXQnk=; b=ccO+i3rs/wykBkUNsclWihZt3d
+	JI+rYBbSeLXr8buXHaIq5TL+kueballsGIWm8FvVtMmHwEO+5RVXtGzlC7L0LYzOQn0Sqqwyym6lT
+	xwcN/+2VAOQmi4ErEqVyJPFv+swC/s7cc2nlrL4Ghvfh7/IhpVc2GYKkjiMGzcQDP5Q7+vMkAh6d2
+	z9Mm4mso1H5IL7MZk4j5/5OhoHhwURdRaJJvfIOyJi2NxFcE7o1j7Z9pgn90/OH0WaPbw/c0HkpO9
+	vk5H4qICKegEjQ4yOIToWZctXWRU592kaE5IzepjnSSKRyUJg8NvmmuEnjxpTv06MpXi+yvp6ekMf
+	Gxo/vvYQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8aIL-000000052K6-3eOl;
+	Tue, 14 Oct 2025 08:22:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3BDBF300212; Tue, 14 Oct 2025 10:22:06 +0200 (CEST)
+Date: Tue, 14 Oct 2025 10:22:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Aditya Gollamudi <adigollamudi@gmail.com>
+Cc: linux-kernel@vger.kernel.org, mark.rutland@arm.com, kees@kernel.org,
+	mingo@kernel.org, ubizjak@gmail.com
+Subject: Re: [PATCH] include/linux/atomic: fix typos in atomic-arch-fallback.h
+Message-ID: <20251014082206.GN3245006@noisy.programming.kicks-ass.net>
+References: <20251014011351.88032-1-adigollamudi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aO4EniFy63IlWM_-@fedora>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDnPUYKCO5oHndMAQ--.28256S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFyDZw15KF4DJF1fKF4rKrg_yoW8Kr1kpa
-	yDGF15Gr40vrsxXasxZa17Jwnag3yvgF43CrWIkw4rArnxG3W3XF10vFWjkF93Zry8Gr40
-	qr45trykCryUKa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014011351.88032-1-adigollamudi@gmail.com>
 
-Hi,
-
-ÔÚ 2025/10/14 16:06, Ming Lei Ð´µÀ:
-> On Tue, Oct 14, 2025 at 10:21:46AM +0800, Yu Kuai wrote:
->> Creating new debugfs entries can trigger fs reclaim, hence we can't do
->> this with queue freezed, meanwhile, other locks that can be held while
->> queue is freezed should not be held as well.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   block/blk-mq-debugfs.c | 31 ++++++++++++++++++++++++-------
->>   1 file changed, 24 insertions(+), 7 deletions(-)
->>
->> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
->> index 4896525b1c05..66864ed0b77f 100644
->> --- a/block/blk-mq-debugfs.c
->> +++ b/block/blk-mq-debugfs.c
->> @@ -608,9 +608,23 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
->>   	{},
->>   };
->>   
->> -static void debugfs_create_files(struct dentry *parent, void *data,
->> +static void debugfs_create_files(struct request_queue *q, struct dentry *parent,
->> +				 void *data,
->>   				 const struct blk_mq_debugfs_attr *attr)
->>   {
->> +	/*
->> +	 * Creating new debugfs entries with queue freezed has the rist of
->> +	 * deadlock.
->> +	 */
->> +	WARN_ON_ONCE(q->mq_freeze_depth != 0);
->> +	/*
->> +	 * debugfs_mutex should not be nested under other locks that can be
->> +	 * grabbed while queue is freezed.
->> +	 */
->> +	lockdep_assert_not_held(&q->elevator_lock);
->> +	lockdep_assert_not_held(&q->rq_qos_mutex);
+On Mon, Oct 13, 2025 at 06:13:51PM -0700, Aditya Gollamudi wrote:
+> From: Adi Gollamudi <adigollamudi@gmail.com>
 > 
-> ->rq_qos_mutex use looks one real mess, in blk-cgroup.c, it is grabbed after
-> queue is frozen. However, inside block/blk-rq-qos.c, the two are re-ordered,
-> maybe we need to fix order between queue freeze and q->rq_qos_mutex first?
-> Or move on by removing the above line?
+> Fix typos in comments throughout the file, change "occured" to "occurred" in
+> include/linux/atomic/atomic-arch-fallback.h
 
-Yeah, I see this reoder as well, and I tried to fix this in the other
-thread for blkg configuration.
-
-- queue is freezed by new helper blkg_conf_start(), and unfreezed after
-   blkg_conf_end(), rq_qos_add() is now called between them.
-
-And for wbt, there are two cases:
-  - for blk-sysfs, queue is alredy freezed before rq_qos_add() as well;
-  - for wbt_enable_default(), this looks still problemaic, we should fix
-    the reorder seperatly.
-
-Perhaps, should I fix this simple problem first, and then rebase the
-thread to convert queue_lock to blkcg_mtuex?
-
-Thanks,
-Kuai
-
-
-Thanks,
-Kuai
-> 
-> Otherwise, this patch looks good.
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
-
+What does the comment on top of that file say?
 
