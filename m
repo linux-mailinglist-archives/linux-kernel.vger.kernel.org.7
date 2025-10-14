@@ -1,410 +1,140 @@
-Return-Path: <linux-kernel+bounces-852294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46560BD89E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE97BD8A13
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30E584E9EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:00:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E98704FBADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4CE2EBDD7;
-	Tue, 14 Oct 2025 10:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4709B2FB98B;
+	Tue, 14 Oct 2025 10:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S8N7o8B+"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m/+6nKNL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2862EAB7A
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8DA2F7AA3
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436000; cv=none; b=ScEhcgrCpT7zIsiFRjYvI2B2r81R2fnHCwBa4wCEl4J55a16HIHiaIDEArpRcD2cx8iL/bNR0zV1M5kNYGm817OSZF2+5LZZk7cGyO7wq3jxvNXJfx7OiwQHaf7SJuGebBIRNNI1tmcBavsHMw+IP/Cygl301d4cIPwfmC41k4s=
+	t=1760436135; cv=none; b=aEmXR982jCLMxbrGF93xbOr8RkdGXswKhDUtUr/uLd+XP49u4aK0QddX2sxJknjtmUR9G3a/ZIM2vZ9sI2DEXrsHqLEqJ4KOjqAIQ6/KzK0EQWlvsfQPEIM9H6c+5jGV4YKU75+AOTeA//xr5KFips+mCj2CM46QYdmluReSkS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436000; c=relaxed/simple;
-	bh=fdUm5XTIjPzkqxmKKjhEbQjwx4f2nBT1Nqh162xIXqY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tR8o+AtZ3rSSbrZL5xz5JHlg+is5zEykNMUW7dJy+xo3LEi/3n9j2Pttdfw4HZHNEGo4R+vSTrGH//WFUGbhMQsSk6VO0nRxR5vV8Xlj/ax7UChR6FJqi5+FXMKIDP+Z/aEvc3slgqhFG8CHLxEHoZXANIEMXOf9WGwkggm6/dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S8N7o8B+; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b456d2dc440so841011766b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760435996; x=1761040796; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I5Eia1uXG7qB/QbJ0GEaHySD/nNm7A3kv0KkMWdGEbc=;
-        b=S8N7o8B+AOej6f0IqBrQNbbAPixdb4h2i2PC+aAWdhcjQuXBgvITc2PYXXtbT0XBaZ
-         U00pYE/UWv5CQjb44HtDzm7Mxmt6MoAwvdfx27YonDVKiQyMVjTxE48hxW4nDCHSZq2Q
-         0cpTescykPLDYE38ZxgtFvO/D2PLzimVk1Xrhcgt2HamvTjcCGLBSCj6oH4YhuU7uTu4
-         qCvPHdy+KFSy5XKIXSNBfq/yFEWUsBSa+EqhZGLcb8WAQ30tm97dglDdvVudxPD0L+1i
-         9MZ2eHAmUEdwanZMtGw3Rr04d8EGa+u8Es6cZMs1rJ1rFJ9oB2MNyIEw/qqggdFT1k3j
-         2QBg==
+	s=arc-20240116; t=1760436135; c=relaxed/simple;
+	bh=KtcuDDpfkcmM1QwJQ873CWBxDwjgKZ5Wz7P9Hq/NKJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKbQQUvN/j6BWxu2YZ53GHdOjZ+QZ1qMMqWosvS/PIZH+cuJcOAcNT+NeLiggh5jIy1S8O35I0ahsUPLB31GCSzU4eqbb/qZedcmi4biNCNma9IOwuXXHfLRbn8Fw/gktk5GEtbS0NF0LW1q/nR+OwDeuQRtSOVlnW0ZwJhUh/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m/+6nKNL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87IBu001503
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:02:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7/bIQQMaDnARFreue2R/gE7kO5t8Efqe56u/lRw1p20=; b=m/+6nKNLIScw23oi
+	LOxx+npLl5gAFXC13iRUC249EtQCq/QJFZHJ1x5Muw6pzZcV7GeBdcuEtLN/X0pG
+	MOkr5c2B+t2qor3X0HR/sFXZjgYNRMPgAvg3ByDopVYx8HUEvoW6PVVcbYXYghG0
+	tQpmVkC53hJ09r+5XlgaIAqGsEyIGfMf3RsK1xJTnqif+noz5um828Flt83Vas4R
+	5V1Sdq2Fb9tVUcvR0BULboPTNftI0pWWvW5KTOt8L0TYWvs58f8Wt5kI3AvJcroE
+	3Bp+XvODijGQnz/qRsxVDIxiaEUYdGr9zvwbtqvh34OsXpIWhQ6hyZZj2AhmbbTZ
+	rlPoiw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa881uj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:02:12 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8643fb24cafso220937485a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:02:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760435996; x=1761040796;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I5Eia1uXG7qB/QbJ0GEaHySD/nNm7A3kv0KkMWdGEbc=;
-        b=KV6QdC55g3i0po6+mBW/Cry2Q1aac5+66QFQyKF4ys2LzY/RKuaZOpSsfZFAChJlDU
-         ++g2bOf/gVXttZArNk4cNg938Ph8pqpPjxQVLGpRswOrN/mAY9h4ykyN3ZKo1MrajObM
-         bgXDjMYhRHjVOiRu3WltNnytxSOOSlbsgNAsYv7mEkDX/7HcKaUt8DWT5Hcn0rDnxyhc
-         r1RQ+8EnkikI+57dBCGZ0n69JUECqLKGVG+suDDbZrnB2Mm0JgwF6mN3XFlKcsN0H6Ji
-         LFG+QD7uHA2owL0qLqH2E5tsqkaSsRn6eKYIHbs3/prWhe3zvcpnHOjwUAPf3yB5uJ4w
-         xOag==
-X-Forwarded-Encrypted: i=1; AJvYcCXC4jKlRyOaXZaoDU4HVm5bm4tbsNKp2+Id+XsSunV0eTUFYSBhBKkSoEiEfTPk1+5PmPJWY38dQt+hpyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY5WEFo9wF2OCMTM7lE9Ya/rfNQJaHyR1eBW6tf+o/J2oab+bE
-	23AHFCE02kimVGSamD9zoUFlQKwibjqp8btt6YVyGPoMkk+q4NDrE5GK8FfriW1VzFI=
-X-Gm-Gg: ASbGncvjqOUqpVRQpLTlyzA+piFPKmun+RYd6Xz7moBKiBVPVWvOtnISDYxOUqBKPWP
-	IHd/ihda1bggqOcu5WYiyPpz5NWWWCSg6yerShauj2vIh5lr/FxfHRBbWzspHsCa/HnzIom55WP
-	Rzu0XZBU8E+wEFHvNHJTUO6xQPSojRtij7aZT76nbyLKc4rwF98gMARCbCX7DvlvAISXEyf9GtY
-	NjrJcmah/o2EFQRjZYk7FiPAHmTFq6zTmpK5puCgdMQet76IbiecGtQ59JoXt+Ese8NkVA+9rij
-	jd3Crjdvv/3KoNwJwREWIgy2Lz972v7K3akwtxAAOHQaqrSdCKNTIVKbWCh3duH0JjwwSd/xSAp
-	HFgJKhuOumFH12S9Vp9gOlqTs4BZdhw7tCzvZLx06k9H6iA596qpV0q9ot2ixwsGNcT2MtqX5KX
-	HL7Ks0ESI/xbzzSLTHqlBBaw==
-X-Google-Smtp-Source: AGHT+IEWum7AMpFjUIJTFkvcRTOMl+sJqeexjwFcy+3nFXj72+XdrdPINFsTFSvXqF8hPvu7agUAQA==
-X-Received: by 2002:a17:907:6d19:b0:b45:60ad:daff with SMTP id a640c23a62f3a-b50aa99e0f1mr2514491566b.28.1760435995146;
-        Tue, 14 Oct 2025 02:59:55 -0700 (PDT)
-Received: from localhost (host-95-247-55-253.retail.telecomitalia.it. [95.247.55.253])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12b4csm1146894066b.56.2025.10.14.02.59.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 02:59:54 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 14 Oct 2025 12:02:03 +0200
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iivanov@suse.de, svarbanov@suse.de, mbrugger@suse.com,
-	Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH] of: reserved_mem: Add heuristic to validate reserved
- memory regions
-Message-ID: <aO4fm7OjHjh_vVgN@apocalypse>
-References: <20251014073403.32134-1-andrea.porta@suse.com>
+        d=1e100.net; s=20230601; t=1760436132; x=1761040932;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/bIQQMaDnARFreue2R/gE7kO5t8Efqe56u/lRw1p20=;
+        b=nwvE52WgfWQYh/3K4y6G3kgRZB8I4gLCzEoVW3BAJtYZ51qyaKtg2/eePdpCOZ3PV8
+         KndQLDXRvNsyXlgQ/tY6ze0rGdVN8kyCmYr2cMkgrKNZrm66zD9f00dBi8pcULgr/12O
+         fjmPBr/05jUswxQJrFmDXVfd2ykc3fBcHBAAx4Exl6Hp22clHHIrVQ1seYxTbF3/nzqN
+         +2V+ttCRw0AMuI+gdSTMw9wpOVk5OArThjfdis2LW4T3WgE1Hi9DpVvc7dsRDQie6Fm5
+         f/r0ivVohPEj9SxqoWt2TH15pTO8EA8oJe174XnMjm77yo62RC7qofwlz+i/piA4dVvW
+         989A==
+X-Forwarded-Encrypted: i=1; AJvYcCVobDMjpYuv/AFPnD7cnm3UtXgz6AupyJCT8rbMgpiD5d/67KZNbj/YNECejLktl++Qcbo5Z5J4ZB0H29k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyncNr137nmjphk1NXbisDLCAusgXP0wO93tvcH9mEOBok+j2MC
+	LdmTK21i/EIXEWU7Nvoqfy2bC5bfev/3fYzDkIcpTqsqKQIsNdEFnHs06XtYkTwXs6XJwDaYUHt
+	BXSr+cd/TB0eTRdoprVwh5fDyMokzF4ZC0yo5+khK/AWRkJQvevjNWu4y/eeFPdivF00=
+X-Gm-Gg: ASbGncvxdnXHvrfMV2TcVxufkY64NbXJRaelPy9yHRYzpltGwMJwXk7SyuvhaVoaXUK
+	XRa4Okv+YeQFCXmhmtpn9T6RCjF9DuQYw8l0aHsyIjM4khpA0pona1zjP5Vdy+4FBWfSz/wq0lL
+	qkcHLnFTkw1fKUUWFLd8+SRqXsfqXVCfX/MPDIL6hBzPNustzPOeqqfdIRIvEoiIVSNLotpaW0f
+	77+rWpXj7AVKw4V/LOEDmgaz5zY7xWC2IlOfEuAVdJ2iiiIPq2XcmGsFsnGBiKV3KjmOHoUz3ki
+	UTD6jefuDUvyc2OLeb07HdL3P6rlZ6FWAS8AfygFvfm8R7mY40t7/Bj2qfxzSweqLDYgLpvKR8N
+	zs5IpV21aoxKW6MBh2/AGBw==
+X-Received: by 2002:a05:620a:31aa:b0:85a:4bc8:3d2d with SMTP id af79cd13be357-88351fd204emr2338068385a.8.1760436131996;
+        Tue, 14 Oct 2025 03:02:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjD4aGdFChwtQmJ3im0EP2dQobF8/9Gj4hhmLzpJ7xVjkxi3RQCTnH/JsERi0vATs3so/Wnw==
+X-Received: by 2002:a05:620a:31aa:b0:85a:4bc8:3d2d with SMTP id af79cd13be357-88351fd204emr2338064485a.8.1760436131394;
+        Tue, 14 Oct 2025 03:02:11 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a52b1e89csm10858228a12.19.2025.10.14.03.02.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 03:02:10 -0700 (PDT)
+Message-ID: <226adffb-f619-4611-bd02-2123d618cb9f@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 12:02:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014073403.32134-1-andrea.porta@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] arm64: dts: qcom: r0q: enable ufs storage
+To: =?UTF-8?Q?Eric_Gon=C3=A7alves?= <ghatto404@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251014044135.177210-1-ghatto404@gmail.com>
+ <20251014044135.177210-6-ghatto404@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251014044135.177210-6-ghatto404@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: e_h1PNRSV0Ghb04xyAE_rVCFI1y7C0Uf
+X-Proofpoint-ORIG-GUID: e_h1PNRSV0Ghb04xyAE_rVCFI1y7C0Uf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfXxzcJy+EfbEql
+ 2qqxqb61FZsXeqWEASFXuoa3TBJrW62YyMOp/NkVFgO6RF2Kj4x4hexoqpbCbGkNCJBrZh3Cept
+ WTZVeWUQa9DUa/uNEjRBethGJ0jkrTcEF/8WJkxjdwY6gN9TuMFTPRi1fscY55jnx/tOpP7TwJs
+ sRKfSW3/PoPVMGlYlKdFKRsxEF4GHOi28nbDPHRRqHdY95kaRZ9rkRcIOivRPsF/S4Vi2RuUL0f
+ hBJ7hyQq/GkYjrv/sCoR2jkhl0e1tX+zwS0wv3Y0uOf1K9kouBDgQwbxkW1byMJ0zxpB6BVhvsT
+ /KXrcX8AuWWHKFz5uz8sqSgZVxuvImH6UOqpaER2gshTMsvd3a6iZlrYxvN/0+3Z9eSfuznnSUv
+ iPLx+Rc67KrR7/7h/uBx2Hdy1xWzng==
+X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ee1fa4 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=3C1SsP_EkSFyRXLkilwA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=Up9iDE1rbAkA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
 
-Hi, 
-
-On 09:34 Tue 14 Oct     , Andrea della Porta wrote:
-> When parsing static reserved-memory DT nodes, any node with a reg property
-> length that is not perfectly conformant is discarded.
-> Specifically, any reg property whose length is not a multiple of the parent's
-> (#address-cells + #size-cells) is dropped.
+On 10/14/25 6:41 AM, Eric Gonçalves wrote:
+> Enable UFS internal storage of the Samsung Galaxy S22.
 > 
-> Relax this condition (while still treating perfect multiples as having higher
-> precedence) by allowing regions that are subsets of the parent's addressable
-> space to be considered for inclusion.
-> For example, in the following scenario:
-> 
-> / {
->         #address-cells = <0x02>;
->         #size-cells = <0x02>;
-> 	...
-> 
->         reserved-memory {
->                 #address-cells = <0x02>;
->                 #size-cells = <0x02>;
-> 		...
-> 
->                 nvram {
->                         reg = <0x00 0x3fd16d00 0x37>;
-> 			...
-> 		};
-> 	};
-> };
-> 
-> Even though the reg property of the nvram node is not well-formed from a DT
-> syntax perspective, it still references a perfectly valid memory region of
-> 0x37 bytes that should be reserved.
-> 
-> This has at least one real-world equivalent on the Raspberry Pi 5, for example,
-> on which the firmware incorrectly overwrites the nvram node's reg property
-> without taking into account the actual value of the parent's #size-cells.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
 > ---
-> 
-> The aforementioned heuristic has been tested with several combo of #address,
-> #size and reg length and the results are shown in the following table:
-> 
-> Testing #address-cells 1, #size-cells 1
-> 
-> len     |t_len  |addr   |size   |#ignore
-> 0       |8      | INVALID
-> 4       |8      | INVALID
-> 8       |8      |1      |1      |0
-> 12      |8      | INVALID
-> 16      |8      |1      |1      |1
-> 20      |8      | INVALID
-> 24      |8      |1      |1      |2
-> 28      |8      | INVALID
-> 32      |8      |1      |1      |3
-> 36      |8      | INVALID
-> 40      |8      |1      |1      |4
-> 44      |8      | INVALID
-> 48      |8      |1      |1      |5
-> 52      |8      | INVALID
-> 56      |8      |1      |1      |6
-> 60      |8      | INVALID
-> 64      |8      |1      |1      |7
-> 68      |8      | INVALID
-> 72      |8      |1      |1      |8
-> 76      |8      | INVALID
-> 80      |8      |1      |1      |9
-> 84      |8      | INVALID
-> 88      |8      |1      |1      |10
-> 92      |8      | INVALID
-> 96      |8      |1      |1      |11
-> 
-> 
-> Testing #address-cells 2, #size-cells 1
-> 
-> len     |t_len  |addr   |size   |#ignore
-> 0       |12     | INVALID
-> 4       |12     | INVALID
-> 8       |12     | INVALID
-> 12      |12     |2      |1      |0
-> 16      |12     | INVALID
-> 20      |12     | INVALID
-> 24      |12     |2      |1      |1
-> 28      |12     | INVALID
-> 32      |12     | INVALID
-> 36      |12     |2      |1      |2
-> 40      |12     | INVALID
-> 44      |12     | INVALID
-> 48      |12     |2      |1      |3
-> 52      |12     | INVALID
-> 56      |12     | INVALID
-> 60      |12     |2      |1      |4
-> 64      |12     | INVALID
-> 68      |12     | INVALID
-> 72      |12     |2      |1      |5
-> 76      |12     | INVALID
-> 80      |12     | INVALID
-> 84      |12     |2      |1      |6
-> 88      |12     | INVALID
-> 92      |12     | INVALID
-> 96      |12     |2      |1      |7
-> 
-> 
-> Testing #address-cells 2, #size-cells 2
-> 
-> len     |t_len  |addr   |size   |#ignore
-> 0       |16     | INVALID
-> 4       |16     | INVALID
-> 8       |16     | INVALID
-> 12      |16     |2      |1      |0
-> 16      |16     |2      |2      |0
-> 20      |16     | INVALID
-> 24      |16     |2      |1      |1
-> 28      |16     | INVALID
-> 32      |16     |2      |2      |1
-> 36      |16     |2      |1      |2
-> 40      |16     | INVALID
-> 44      |16     | INVALID
-> 48      |16     |2      |2      |2
-> 52      |16     | INVALID
-> 56      |16     | INVALID
-> 60      |16     |2      |1      |4
-> 64      |16     |2      |2      |3
-> 68      |16     | INVALID
-> 72      |16     |2      |1      |5
-> 76      |16     | INVALID
-> 80      |16     |2      |2      |4
-> 84      |16     |2      |1      |6
-> 88      |16     | INVALID
-> 92      |16     | INVALID
-> 96      |16     |2      |2      |5
-> 
 
-I've just realized that maybe describing the testing matrix above in
-some more details could be beneficial, se here we are:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-len: INPUT (bytes) - the total length of the reg property array in the
-node (child of reserved-memory node) describing the reserved region.
-This can be a single element array in case of only one reg entry, or
-multiples ones.
-
-t_len: INPUT (bytes) - the length of one entry row in the reg array as
-expected by the root node, which is equal to (#address-cells + #size-cells)*4.
-
-addr: IN/OUT (# of cells): a.k.a calc_addr in the code, the input is equal to
-the root node's #address-cells. The output is equal to the number of address
-cells to be parsed from the reg property array of length 'len'.
-
-size: IN/OUT (# of cells): a.k.a. calc_size in the code, the input is equal to
-the root node's #size-cellsi. The output is equal to the number of size cells to
-be parsed from the reg property array of length 'len'.
-
-#ignore: the number of reg property array entries that will be discarded, this
-refers to the actual code in fdt_scan_reserved_mem_reg_nodes() which discard
-any entry among the first, and it has been described in this matrix just to be
-sure there is no regression in calculating that too.
-
-Hope this helps to make that table a little clearer.
-
-Many thanks,
-Andrea
-
->  drivers/of/of_reserved_mem.c | 88 ++++++++++++++++++++++++++++++++----
->  1 file changed, 78 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index 2e9ea751ed2d..f94069ef988e 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -130,6 +130,68 @@ static void __init fdt_reserved_mem_save_node(unsigned long node, const char *un
->  	return;
->  }
->  
-> +/**
-> + * reg_len_valid() - scan for a suitable #size-cells value and validate
-> + *		     the reg property length
-> + * @len:	Length of the reg property to be validated (bytes). Can be composed
-> + *		by more than one reg addr+size pairs
-> + * @calc_addr:	the number of address cells expected by the parent of the node
-> + *		containing the reg property. Currently it's just used as in param
-> + * @calc_size:	the number of size cells expected by the parent of the node
-> + *		containing the reg property (out param)
-> + *
-> + * This function tries to find the correct #size-cells number for the size portion
-> + * of a reg property, assuming the #address-cells passed in (calc_addr param)
-> + * is valid to avoid ambiguity.
-> + * Parent_len is the length in bytes of a single reg property * as expected by the
-> + * parent.
-> + * Either len is a multiple of parent_len, in which case there's no adjustment to
-> + * be made to calc_size and the region is automatically valid (this choice has the
-> + * priority), or it is not a multiple.
-> + * In the latter case, it finds the smallest calc_addr+calc_size for which len
-> + * is still a multiple and adjust calc_size accordingly.
-> + * The rationale is to avoid nonsensical combo e.g. #adress-cells 1 and #size-cells
-> + * 2 since it's not fully addressable, and to promote any other combo that is a
-> + * subset of the original space, e.g. with calc_addr=2 and calc_size=2, returning
-> + * calc_size=1 still makes sense since the region is included in the parent space.
-> + * The reason for that is to avoid dropping perfectly valid memory regions that
-> + * could just have been passed with the wrong format in the reg property (some fw
-> + * are reportedly doing that when updating the DT at boot).
-> + *
-> + * Returns:	true if the region is valid and can be further processed,
-> + *		false otherwise. If valid, calc_size is filled with the actual
-> + *		length (in cells) of the size part.
-> + *
-> + */
-> +static bool reg_len_valid(int len, const int *calc_addr, int *calc_size)
-> +{
-> +	int parent_len = (*calc_addr + *calc_size) * sizeof(__be32);
-> +	bool parent_multiple = (len % parent_len) / sizeof(__be32);
-> +	int row_n, calc_row_len = parent_len / sizeof(__be32);
-> +	int len_b = len / sizeof(__be32);
-> +
-> +	if (!len || !parent_len)
-> +		return false;
-> +
-> +	for (row_n = len_b / 2; row_n > 0; row_n--) {
-> +		int tmp_row_len = len_b / row_n;
-> +
-> +		if (calc_row_len > tmp_row_len &&
-> +		    tmp_row_len > *calc_addr &&
-> +		    (len_b % tmp_row_len == 0))
-> +			calc_row_len = tmp_row_len;
-> +	}
-> +
-> +	if (parent_multiple && calc_row_len != parent_len / sizeof(__be32)) {
-> +		*calc_size = calc_row_len - *calc_addr;
-> +		return true;
-> +	} else if (!parent_multiple) {
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static int __init early_init_dt_reserve_memory(phys_addr_t base,
->  					       phys_addr_t size, bool nomap)
->  {
-> @@ -154,9 +216,9 @@ static int __init early_init_dt_reserve_memory(phys_addr_t base,
->  static int __init __reserved_mem_reserve_reg(unsigned long node,
->  					     const char *uname)
->  {
-> -	int t_len = (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
-> +	int calc_addr, calc_size;
->  	phys_addr_t base, size;
-> -	int len;
-> +	int len, t_len;
->  	const __be32 *prop;
->  	bool nomap;
->  
-> @@ -164,17 +226,20 @@ static int __init __reserved_mem_reserve_reg(unsigned long node,
->  	if (!prop)
->  		return -ENOENT;
->  
-> -	if (len && len % t_len != 0) {
-> +	calc_addr = dt_root_addr_cells;
-> +	calc_size = dt_root_size_cells;
-> +	if (!reg_len_valid(len, &calc_addr, &calc_size)) {
->  		pr_err("Reserved memory: invalid reg property in '%s', skipping node.\n",
->  		       uname);
->  		return -EINVAL;
->  	}
->  
->  	nomap = of_get_flat_dt_prop(node, "no-map", NULL) != NULL;
-> +	t_len = (calc_addr + calc_size) * (int)sizeof(__be32);
->  
->  	while (len >= t_len) {
-> -		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
-> -		size = dt_mem_next_cell(dt_root_size_cells, &prop);
-> +		base = dt_mem_next_cell(calc_addr, &prop);
-> +		size = dt_mem_next_cell(calc_size, &prop);
->  
->  		if (size && early_init_dt_reserve_memory(base, size, nomap) == 0) {
->  			/* Architecture specific contiguous memory fixup. */
-> @@ -255,6 +320,7 @@ void __init fdt_scan_reserved_mem_reg_nodes(void)
->  	}
->  
->  	fdt_for_each_subnode(child, fdt, node) {
-> +		int calc_addr, calc_size;
->  		const char *uname;
->  
->  		prop = of_get_flat_dt_prop(child, "reg", &len);
-> @@ -263,19 +329,21 @@ void __init fdt_scan_reserved_mem_reg_nodes(void)
->  		if (!of_fdt_device_is_available(fdt, child))
->  			continue;
->  
-> +		calc_addr = dt_root_addr_cells;
-> +		calc_size = dt_root_size_cells;
->  		uname = fdt_get_name(fdt, child, NULL);
-> -		if (len && len % t_len != 0) {
-> +		if (!reg_len_valid(len, &calc_addr, &calc_size)) {
->  			pr_err("Reserved memory: invalid reg property in '%s', skipping node.\n",
->  			       uname);
->  			continue;
->  		}
->  
->  		if (len > t_len)
-> -			pr_warn("%s() ignores %d regions in node '%s'\n",
-> -				__func__, len / t_len - 1, uname);
-> +			pr_warn("%s() ignores %d regions in node '%s'\n", __func__,
-> +				len / ((calc_addr + calc_size) * (int)sizeof(__be32)) - 1, uname);
->  
-> -		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
-> -		size = dt_mem_next_cell(dt_root_size_cells, &prop);
-> +		base = dt_mem_next_cell(calc_addr, &prop);
-> +		size = dt_mem_next_cell(calc_size, &prop);
->  
->  		if (size)
->  			fdt_reserved_mem_save_node(child, uname, base, size);
-> -- 
-> 2.35.3
-> 
+Konrad
 
