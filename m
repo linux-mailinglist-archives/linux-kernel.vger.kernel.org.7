@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-851625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAF0BD6EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:12:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A318BD6ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1106118984B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:12:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 379514F7EBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE66628934F;
-	Tue, 14 Oct 2025 01:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646DA2BE632;
+	Tue, 14 Oct 2025 01:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdmLy205"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NADOmdDL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1028B23C50A;
-	Tue, 14 Oct 2025 01:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B878F2BD5B3;
+	Tue, 14 Oct 2025 01:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760404252; cv=none; b=AFejbj4gHyWv0x90G5QYG7Ku5BB7cj3kWxx+ULus1XFT1qgRr8s1T/AcEh1Lbc7GRntRId7gCuFOkXNqUYpIcHdE8KT09/C02VZAk2Mp6hd6zD/4072ChtyEKmHnRpZGybuYRQvi/+XbkLPceD7CtuRs8JPcofsZrw8a+NtgSJ8=
+	t=1760404255; cv=none; b=mt58xsPJdn0g+Ekf3xDJwTVr31dfAYlhcK+m7QM2ycaBzvd0cM+8kY5ccRLT1d0K6clyr+VKQpVDOk7C84nvDXSbqYfvRU6h1GbCx7Sz2UlDjm/VVA1UeoRJaGMdSlfCF88eKDUrjCsFLO0GN//Q8m5EuzKRiga9pmLfeiRrQ44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760404252; c=relaxed/simple;
-	bh=sVcHh+JZ71uI9+zxI0tjwmWqm3nVpXD0V5/SpmxdXDc=;
+	s=arc-20240116; t=1760404255; c=relaxed/simple;
+	bh=Inv94ODKFsUY5/yc+DW9FTTh+sIublfdkfgxei5yXqg=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cvY6l5XF3gJrepFCIKz0HHsxOIrnxRqD5mBM6uxEufV7R9EE14vyOfdia4gGLaR/X165DKIsCoKEIvFPdkYMgd6ZrItWVmhziYZ/nrn1vuQgHSLIYMyMiwthKYKFOVXC2v1tNgSmhBjx/S0O+VJqpSrSouO1WBhzyPaa/jzPtxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdmLy205; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DFCBC113D0;
-	Tue, 14 Oct 2025 01:10:51 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=S9qlJuDD9igQqP4VERhchXZ3dqetzfOmOCnNLFWRrm1EowweSmVuCycjcjdjdOEWofdTyAGqX9zVwFcMDzN3vi+MkkhZt8Eztt2Imm/FlNfgonsEPk5jxfu+jrkt/GONigcsR2lkVSl8nqsIMU1+Jx1vOuM1Hr+WW1pEfIH+QYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NADOmdDL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8A2C4CEE7;
+	Tue, 14 Oct 2025 01:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760404251;
-	bh=sVcHh+JZ71uI9+zxI0tjwmWqm3nVpXD0V5/SpmxdXDc=;
+	s=k20201202; t=1760404255;
+	bh=Inv94ODKFsUY5/yc+DW9FTTh+sIublfdkfgxei5yXqg=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OdmLy205mVHLQB7bRsX4a0xLVgEHLvAQfKaDs4YVykZaQqGcWQyjXZzFCA6IgVn25
-	 cddceicfqam6JZNvIgPLxxXGKlveQyzHLxL48x1H1j3imiWYHPwAQFi6odyFWgQtZm
-	 j79A3bl7hDixgS/wPMu+jn2Kh8w7M+XXclD42Nh3lTKqYTMhoanOfUZlxbwQOP/G9W
-	 KYyFJlrKBpBspkApSPWRXxjvuM661+gDeEVlHS7JZ2c1VQZDgLOlMXRR8bktkrwDEg
-	 T50P3Yk/03tP5LiiHTrMX6/s1S8I4ggypot0C9Df+/wREqmMFyaVjIKM70Ml5gHttg
-	 PshP+KWUIMYxA==
+	b=NADOmdDLlMxy8/c0Tr0hOzoNiJA20AIwUABt9ME9pd1+KrkCP5mQSeA4WeAoDaZhy
+	 fnem+VZgCLiZ3wmJcfmFlT6ltIG1010xujco1s5HEhV6ykN9wK3J5mp6mvArF7jEVb
+	 75h/rg2OoWLHSv4BCAEEIrM5JKg3b1m78bMc0hb9FK8UenD2fEXuSi/CzZSFs7xN9Q
+	 J1sqDuwaUAuFkQFTC97W5svPeAtb5UilJT1NDdYeLyq7xKbIJqUFU7cr3ZftcY6FIw
+	 rx0nSyDl/DW1Tgwvh49eIsC3JdfdVzY9HFhlp+sApYgQC+d5OoG69uP7Vc5WV6cnr7
+	 kmrjBsf6l0GqQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E11380A962;
-	Tue, 14 Oct 2025 01:10:38 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D23380A962;
+	Tue, 14 Oct 2025 01:10:42 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] net/ip6_tunnel: Prevent perpetual tunnel growth
+Subject: Re: [PATCH net] dpll: zl3073x: Handle missing or corrupted flash
+ configuration
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176040423700.3390136.16945162559318522251.git-patchwork-notify@kernel.org>
-Date: Tue, 14 Oct 2025 01:10:37 +0000
-References: <20251009-ip6_tunnel-headroom-v2-1-8e4dbd8f7e35@arista.com>
-In-Reply-To: <20251009-ip6_tunnel-headroom-v2-1-8e4dbd8f7e35@arista.com>
-To: Dmitry Safonov <dima@arista.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, tom@herbertland.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
- fw@strlen.de, fruggeri05@gmail.com
+ <176040424124.3390136.12798125695127253829.git-patchwork-notify@kernel.org>
+Date: Tue, 14 Oct 2025 01:10:41 +0000
+References: <20251008141445.841113-1-ivecera@redhat.com>
+In-Reply-To: <20251008141445.841113-1-ivecera@redhat.com>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Prathosh.Satish@microchip.com,
+ vadim.fedorenko@linux.dev, arkadiusz.kubalewski@intel.com, jiri@resnulli.us,
+ kuba@kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 09 Oct 2025 16:02:19 +0100 you wrote:
-> From: Dmitry Safonov <dima@arista.com>
+On Wed,  8 Oct 2025 16:14:45 +0200 you wrote:
+> If the internal flash contains missing or corrupted configuration,
+> basic communication over the bus still functions, but the device
+> is not capable of normal operation (for example, using mailboxes).
 > 
-> Similarly to ipv4 tunnel, ipv6 version updates dev->needed_headroom, too.
-> While ipv4 tunnel headroom adjustment growth was limited in
-> commit 5ae1e9922bbd ("net: ip_tunnel: prevent perpetual headroom growth"),
-> ipv6 tunnel yet increases the headroom without any ceiling.
+> This condition is indicated in the info register by the ready bit.
+> If this bit is cleared, the probe procedure times out while fetching
+> the device state.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2] net/ip6_tunnel: Prevent perpetual tunnel growth
-    https://git.kernel.org/netdev/net/c/21f4d45eba0b
+  - [net] dpll: zl3073x: Handle missing or corrupted flash configuration
+    https://git.kernel.org/netdev/net/c/fcb8b32a68fd
 
 You are awesome, thank you!
 -- 
