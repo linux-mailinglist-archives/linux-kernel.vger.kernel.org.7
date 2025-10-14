@@ -1,202 +1,161 @@
-Return-Path: <linux-kernel+bounces-851820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052ADBD75CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:08:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B194BD75D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E46154E1DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1C93E56A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347A4245023;
-	Tue, 14 Oct 2025 05:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86044241CB2;
+	Tue, 14 Oct 2025 05:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0aKgu/lD"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlN/OcwJ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6181ACEDA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783BBE555
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760418490; cv=none; b=uRU/I7SCUULU8FZxR/AOr1t09wf0ymvcz29QnOX5Y17jG9/JeOpE786EVrS6RhdgYUEOi0KbXWMO7fgZUnui7qf5DcNmLQm3+THBKJT67cDhUuFFHcNqGMf8zyT2+zX2evFvtQHmVl2tbucJX32TQ36J9FbJGi6j1wRbxNP25E0=
+	t=1760418524; cv=none; b=jek6iPbSq2SqWf4r3URa7iqq8OzV67sS421CFWz8y5o4uwj7/dQqDjOFrbr+qd9zu5Cj30hvRMxWtHPHbBNJACRkqDSiPn4WKfmytVzyQEh1z+IS6yfJwYxCmC1mzjYWqulPYq3FQTsm8Pk8T7QFyzjMGJrMcE5ubR+kb4x4ZzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760418490; c=relaxed/simple;
-	bh=932RvO+/hs821ixBu+SCgqlcqoMNm2aId1K7SmkKHX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XgXOtRB2L7mDxi4XlZTCEmN2ya/GmDCKVfdICSucxcneR56Ul3rTcVIB+qHBFD3qn8ObxxWQ6S8Yiz202B374Tr6qGkQFS+MM9tNm4E0INQxFIVQTSjmOf0zXKtA0m9+WjJ5B1z1zD3W7K8g4e7ObAglX4nrYg43j/oaxCDUjZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0aKgu/lD; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-855733c47baso957992685a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:08:07 -0700 (PDT)
+	s=arc-20240116; t=1760418524; c=relaxed/simple;
+	bh=hiNjZwxJJo1X69EqwOZbH5S5zv0mjdM4IbnMX1cmpqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VgqLo1T3CE6ooyer/F6Fdfsifx5d7PSOTHAaM7k6pypZt/kTsDq1BfoTJdyNPc6dd+yed21csJBQSf8NliXiaVoY7/Yz8CxAeW07ubVXQQ3COvwpgfAOD+fGaI3YPoZJKVg4s0qVbmOeyxP7lq30GVzCdnkjpQmPJ2ROQ32LSE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlN/OcwJ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27eceb38eb1so55334085ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:08:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760418487; x=1761023287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B5JkuuVSayA8Ofu2uznRObRn+eA97FQhk4dZT2qKwso=;
-        b=0aKgu/lD6fAoextUtvtm+M5Bn3PtLhDN4NvSNEZrlGVfDKYtHO3Ucb7TSSmfVItlX0
-         baEmLvVThX+a+n4Ny5TfuYHgQjfyqCk/CPUUSuCIfKUZwe8ggBbHE7v5IHgWCOXi3JWp
-         SC+9jR0xcOKz4v8B9tVF15XWwhxV4pt0uJ239ZebS/d3KAHmztNAupJDJmJ+i8VoUTON
-         WEUOumgOHc+mfL6OGGgWsnOsOz+djDYaHl8pFm6UZzHmCQN8br30RqOXDSADzYQXtwwf
-         1fLT8cniKziQ0xkrQHbmyaT2ZyLQJf8GHLWpXx+KtCR56fK+N/2BeTry/MwxEEmidtWr
-         gF9w==
+        d=gmail.com; s=20230601; t=1760418523; x=1761023323; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h1w46zoCvtGYydFKbWpCCDQMNSytOz7VPd57KZ8FzLk=;
+        b=BlN/OcwJklROy+eTL1C+klhIc4KnqEDPEna9IrA6wQzyU7F9WYchz5BvNYWC8+sCp1
+         hXZDkjCtCOO7HXJMdJwPx9bqyrysWqS4jh9NcGUI3wJtefk7n+ruJPL9Nj+Ag5mQng7f
+         FotOWRq+ahjmAJb+ZF+8cMx9trRVCqtJCD/cqgVU4Q2tY15coi4A7AuOvgot67CQRD/p
+         qyuEOK5up1hhHxR3dCLRwu7mVk0vJOivZ/qwh0cqCuZMVp9e2hvynHJvud1Zm4gu95Fj
+         h4fWpjL61f+S5Txlks29Smm2vluPx3nB7VGxV9Vd+/pgzzNWacV734eXkkJZLwOTkL2C
+         QK9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760418487; x=1761023287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B5JkuuVSayA8Ofu2uznRObRn+eA97FQhk4dZT2qKwso=;
-        b=jWCynsZYPEOVhdPu2LWiKLpjlEQCEeixGofTiG6OqDmPSwBT/vsktln25ALBnXMLCM
-         KlJq4xzNk2jJyzIF0HQHO10OplKhn/k0FnIXliRALcZYoaNV1VkETdUDVJijFFIaeve9
-         2QP3in6CK08aD0KFtUTYsqUttVfBTNzvlUyPkvlRgaXolclM3T4bR5G285wUVeA3NiSD
-         xU0k/Oh8GsT9pXhsNaakdvglpZmuPmkGIV2tp5UCjSbO17G8RcXrrtobAccSelwxJ2I+
-         jK8pSWrIlYshLEOS7k1F+KE++pLSl23RdRLU87fhLQgVHVKT9oeQ0W4eXC/em1pBtg6/
-         FgSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCyQ+7qtacecno0kpRPzZZHyE2UMJ875wOw8QeQRQmiyXpp/RUGD/zipFwkoiHRUsLqlZdHU9f9gj4T4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydIByTtlpEDCUwSEMzgp2C8J8qj3czXiQoznN+J9UB6kPNPSD5
-	MKse7Wq6tvM66FljvmNTf1lkH+JFtx2brc/LoEVYi7VbrZBzz16wQA7fvIMlGcEjUrm7BAtedvu
-	fLpKvS8QBvwRSGtj9trRZeZ9vgm09iCbNDmdJEBSy
-X-Gm-Gg: ASbGnctF1NAqQCQSMKrBxBElm0C6DmqhFFYZsVsQx6FPOSmpaXCKlo1L++6golzzgDq
-	n7qhhznaVfPO6Hi/tIn4aqWYJZ7MIB7ysXidL7+sRlsvhBgXMonrNqLP4pTUJs3EeADhbp+Kvj6
-	rZys7rIRR058NwrCzMFx33wYZZVl7xkAi/udr2vUC9s8Ng6rNylb+XIrk7syx1kSLmAO2IN/j7c
-	CGiXls138I/tbR4XlmIHEHXGNfvXAdhtS5qgkNly60=
-X-Google-Smtp-Source: AGHT+IG/8aE+aHcI9fnIx7BC8BEsSWywbVC7oJ9GTxoNgoK6tWmthKLsGkvfKsZG/szhyaZle3TfMxlghiUG7vn+aPI=
-X-Received: by 2002:ac8:7dc7:0:b0:4e7:1f14:c30c with SMTP id
- d75a77b69052e-4e71f14c405mr115414241cf.69.1760418486272; Mon, 13 Oct 2025
- 22:08:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760418523; x=1761023323;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h1w46zoCvtGYydFKbWpCCDQMNSytOz7VPd57KZ8FzLk=;
+        b=FStETyXlJ2o0qbquhwZi6LUtZBLWPpSthFnaFh03D2TfGcBAVbre2aweu5nKedTXM5
+         6IFkykDdsnmsEqfNuq5tZN36dN6oaD9WJd5+n/Ot82leNR3mgqbIEueW57JjgnmNPVEB
+         eR9BD9Vg+9ovb9qxZLgAsi/NY4lUaY0bgcY1fQO4y4QwE6zky/AOIXh0TNlu15DcdDfv
+         qIt0lZ1Y/H10Ta+21OR42UecYXRl0YtcF1W5sNnG9WLLj10TipIDx/POFmQFXiSo7vTH
+         tD/R5+COYJ8o9lvH90fZtmkrEFq8jqv0T6t6P0DbryEKQDHlytG/ulm36kE/B1b+r356
+         vIdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqlk5DwOL4L8PJCG8HHic+YfXtTekTkAVuZPiYNcR7HMVjzshwVLEsXLwnvq0cTnUUAERv8SL9fuWVuTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy67a4/aU3aAJ1L0j0swKiA/nl6Ll5l36J+9NwrpvzsyDDWAf5n
+	B7SZHnwV3segaI19bV4n8afTiS4F/zj8dqVxiMXgVlqtUlq/Hg3gxwfV
+X-Gm-Gg: ASbGncu0auXHwfP6M/YUNwWGCUHR34f3q99OgBBxlzpZafqDu5yMEoH9fvEmgCGCDli
+	1Hc+TbzEzQrxPSzIKOu0PBXAnVsiAvEkyxpwlUEW6cj4EeddEdjP0SDs//vZOOeUzL+oSR+xURC
+	N0QyfibvUl/1Paj24OQSS1c0J7JoOP0seJ/AlwDFPBpoPX8UM8ObJE8bZsCqCNOCRFVecpZW8aG
+	a3m3dg0Ddv8KTk6G+cOtzV42r9zwu3g2Y+1T8lJh1GIhPWCH31R+nzXqQg2wnn2WxtY6Ij+/ncH
+	xXSMRIgODWSw4MtY6w40RmiraehEadSdUMtM1qAn0wdEydxbHU3pUsWWVeYrvkCA5/8mMeo+tTf
+	enqNTAPXWYEpjTUZt16qcYv6r6MNgtM0JF1Dk4AMnIGJ4EnJSsXFmUuAaafdBPZDNUsv7eC51ZA
+	==
+X-Google-Smtp-Source: AGHT+IFBv/pjNzRJIKP7NS0jHQ2HGYXoiDJzsM3PJZaEWiyn91ehnTTQEt42pX7up1zTubYQE+UIBA==
+X-Received: by 2002:a17:903:2d0:b0:25e:78db:4a0d with SMTP id d9443c01a7336-290273eddd5mr287646635ad.36.1760418522740;
+        Mon, 13 Oct 2025 22:08:42 -0700 (PDT)
+Received: from ryzen ([2601:644:8200:ac2f::ea0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29055badc54sm84752255ad.37.2025.10.13.22.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 22:08:42 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Stanislaw Gruszka <stf_xl@wp.pl>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] wifi: rt2x00: check retval for of_get_mac_address
+Date: Mon, 13 Oct 2025 22:08:33 -0700
+Message-ID: <20251014050833.46377-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89i+wikOQQrGFXu=L3nKPG62rsBmWer5WpLg5wmBN+RdMqA@mail.gmail.com>
- <20251014035846.1519-1-21cnbao@gmail.com>
-In-Reply-To: <20251014035846.1519-1-21cnbao@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 13 Oct 2025 22:07:55 -0700
-X-Gm-Features: AS18NWCWxB4_7MksVcSk_C7g7SO9YHjPuxXQz_zjkiBQ0xejWPMAGosiT_EXkB8
-Message-ID: <CANn89iKCZyYi+J=5t2sdmvtERnknkwXrGi4QRzM9btYUywkDfw@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-To: Barry Song <21cnbao@gmail.com>
-Cc: corbet@lwn.net, davem@davemloft.net, hannes@cmpxchg.org, horms@kernel.org, 
-	jackmanb@google.com, kuba@kernel.org, kuniyu@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linyunsheng@huawei.com, mhocko@suse.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, surenb@google.com, v-songbaohua@oppo.com, vbabka@suse.cz, 
-	willemb@google.com, zhouhuacai@oppo.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 8:58=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> > >
-> > > diff --git a/Documentation/admin-guide/sysctl/net.rst b/Documentation=
-/admin-guide/sysctl/net.rst
-> > > index 2ef50828aff1..b903bbae239c 100644
-> > > --- a/Documentation/admin-guide/sysctl/net.rst
-> > > +++ b/Documentation/admin-guide/sysctl/net.rst
-> > > @@ -415,18 +415,6 @@ GRO has decided not to coalesce, it is placed on=
- a per-NAPI list. This
-> > >  list is then passed to the stack when the number of segments reaches=
- the
-> > >  gro_normal_batch limit.
-> > >
-> > > -high_order_alloc_disable
-> > > -------------------------
-> > > -
-> > > -By default the allocator for page frags tries to use high order page=
-s (order-3
-> > > -on x86). While the default behavior gives good results in most cases=
-, some users
-> > > -might have hit a contention in page allocations/freeing. This was es=
-pecially
-> > > -true on older kernels (< 5.14) when high-order pages were not stored=
- on per-cpu
-> > > -lists. This allows to opt-in for order-0 allocation instead but is n=
-ow mostly of
-> > > -historical importance.
-> > > -
-> >
-> > The sysctl is quite useful for testing purposes, say on a freshly
-> > booted host, with plenty of free memory.
-> >
-> > Also, having order-3 pages if possible is quite important for IOMM use =
-cases.
-> >
-> > Perhaps kswapd should have some kind of heuristic to not start if a
-> > recent run has already happened.
->
-> I don=E2=80=99t understand why it shouldn=E2=80=99t start when users cont=
-inuously request
-> order-3 allocations and ask kswapd to prepare order-3 memory =E2=80=94 it=
- doesn=E2=80=99t
-> make sense logically to skip it just because earlier requests were alread=
-y
-> satisfied.
->
-> >
-> > I am guessing phones do not need to send 1.6 Tbit per second on
-> > network devices (yet),
-> > an option  could be to disable it in your boot scripts.
->
-> A problem with the existing sysctl is that it only covers the TX path;
-> for the RX path, we also observe that kswapd consumes significant power.
-> I could add the patch below to make it support the RX path, but it feels
-> like a bit of a layer violation, since the RX path code resides in mm
-> and is intended to serve generic users rather than networking, even
-> though the current callers are primarily network-related.
+of_get_mac_address can return -EPROBE_DEFER when nvmem is not probed yet
+for whatever reason. In this case, nvmem mac assignments will not work.
 
-You might have a buggy driver.
+Based on the function path, this change only has effect for rt2800soc.c
+and rt2800pci.c. The former tends to use nvmem for assignments.
 
-High performance drivers use order-0 allocations only.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/net/wireless/ralink/rt2x00/rt2800lib.c |  4 +++-
+ drivers/net/wireless/ralink/rt2x00/rt2x00.h    |  2 +-
+ drivers/net/wireless/ralink/rt2x00/rt2x00dev.c | 10 ++++++++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+index b312b40f4aa3..af19153697ed 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+@@ -11010,7 +11010,9 @@ static int rt2800_validate_eeprom(struct rt2x00_dev *rt2x00dev)
+ 	 * Start validation of the data that has been read.
+ 	 */
+ 	mac = rt2800_eeprom_addr(rt2x00dev, EEPROM_MAC_ADDR_0);
+-	rt2x00lib_set_mac_address(rt2x00dev, mac);
++	retval = rt2x00lib_set_mac_address(rt2x00dev, mac);
++	if (retval)
++		return retval;
+ 
+ 	word = rt2800_eeprom_read(rt2x00dev, EEPROM_NIC_CONF0);
+ 	if (word == 0xffff) {
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00.h b/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+index 0b67b09695b6..4d6437deaa9a 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+@@ -1416,7 +1416,7 @@ static inline void rt2x00debug_dump_frame(struct rt2x00_dev *rt2x00dev,
+  */
+ u32 rt2x00lib_get_bssidx(struct rt2x00_dev *rt2x00dev,
+ 			 struct ieee80211_vif *vif);
+-void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr);
++int rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr);
+ 
+ /*
+  * Interrupt context handlers.
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+index ee667e1a7937..4af132acadb6 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
+@@ -984,14 +984,20 @@ static void rt2x00lib_rate(struct ieee80211_rate *entry,
+ 		entry->flags |= IEEE80211_RATE_SHORT_PREAMBLE;
+ }
+ 
+-void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
++int rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
+ {
+-	of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
++	int ret;
++
++	ret = of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+ 
+ 	if (!is_valid_ether_addr(eeprom_mac_addr)) {
+ 		eth_random_addr(eeprom_mac_addr);
+ 		rt2x00_eeprom_dbg(rt2x00dev, "MAC: %pM\n", eeprom_mac_addr);
+ 	}
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(rt2x00lib_set_mac_address);
+ 
+-- 
+2.51.0
 
-
->
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index d2423f30577e..8ad18ec49f39 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -18,6 +18,7 @@
->  #include <linux/init.h>
->  #include <linux/mm.h>
->  #include <linux/page_frag_cache.h>
-> +#include <net/sock.h>
->  #include "internal.h"
->
->  static unsigned long encoded_page_create(struct page *page, unsigned int=
- order,
-> @@ -54,10 +55,12 @@ static struct page *__page_frag_cache_refill(struct p=
-age_frag_cache *nc,
->         gfp_t gfp =3D gfp_mask;
->
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -       gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
-> -                  __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
-> -       page =3D __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
-> -                            numa_mem_id(), NULL);
-> +       if (!static_branch_unlikely(&net_high_order_alloc_disable_key)) {
-> +               gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_=
-COMP |
-> +                       __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
-> +               page =3D __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDE=
-R,
-> +                               numa_mem_id(), NULL);
-> +       }
->  #endif
->         if (unlikely(!page)) {
->
->
-> Do you have a better idea on how to make the sysctl also cover the RX pat=
-h?
->
-> Thanks
-> Barry
->
 
