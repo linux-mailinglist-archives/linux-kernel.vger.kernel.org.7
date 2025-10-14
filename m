@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-852027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7ADBD7F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:38:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF62DBD800E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B72844E5917
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3648F18A5C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BAE23CE;
-	Tue, 14 Oct 2025 07:38:48 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E199212572
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5479F30E823;
+	Tue, 14 Oct 2025 07:50:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0137A1E3DED;
+	Tue, 14 Oct 2025 07:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427527; cv=none; b=CgoShTur9Ayhu/qRXQNcd5MgWxtEqh2DuRp/yPj2sBXjDIk6bHYmVhLSTgxKrUOirJTqAb8hc//1+eK9UNTUN4l4l9LxpkDYXl2P90bBB/szxjevvDRfqxlX/dcoM9iyW3flC3r8gBshkrIPX/ZwGFObvXKmQs270JwhR8OYoC8=
+	t=1760428237; cv=none; b=ZRAbwsPUkxS8Ir7c0xaMa+samitbUgHC8MB+XMGkkW07axcKtjpmLuJe4Fs9ht+CW89M+ChyrUE613ZdpghwqXeJJ892HEVFEjYXqriZRfmvaVEyelHsAWOSNTvnzohri0Et/Y4aOzpzwx/33HKdtkCBcitc8RWmJPumjgKW+hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427527; c=relaxed/simple;
-	bh=k7NuzTf3FLpUlX7J9beOXhOSBIwIc0vexsMq9IYQx8w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rrHYX3BVy3R9QaZIDmzouyqMVF5I/v2VT6NUGwWWZ7FmvZ6w7fUbQKqMzgnCLUEAyW6bW1+eQW40cQdmLsWtVyOEZOpHdvZm79k6P9SvNpT3YACO0+SPFmUX3sUgJ7O5ZeKqmCAggU1T/Ry5RdQ2feKOHwP0rA74w0aw7HqvCxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43095c446dfso19487245ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:38:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760427525; x=1761032325;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWxizGH1oXySXmJCLKFpA1lSsvssfyqipcMSdPAIFqk=;
-        b=ZRJp5y5nwy/Q8xIiXB9dvusk+vj7kcKMp4/ZWL/jn5h47rNxDAlqmyS/imulcf6Bjm
-         W6moyqT5Y0l+fhlcURPuUtmMRam28eCQ7fHDMiHrPaEe2BC8sDMujQ7afqgQCSZh7ka0
-         dR9M9U1f+P409/HBNwyE5QvRlhcdzVN6a6FuD0OoVk7TQPUzHA+6httOjdOU1KrpdGbI
-         pjqM1Gr9YlBE34feP4kug8HDrFNxHM7uawlJlueu7u441x9GxUBCgL1InyPxsdfvuXqW
-         pXPcchxei2A03nRnkIHt3T5jHXs+twINKn1bQeZ9KhAgcfXPVH4vtdL+E5EXLZw+oDTr
-         +sig==
-X-Gm-Message-State: AOJu0Ywr+RKcybtTnlbTVYQscCjJmqFVBOcpDKM/izzVlsVpco/7zD9K
-	43+v7JKNS0TK7sHfckQwax0iF1YVYpodWGtWh7olx/UjJvJ+yutsqfRdXF1Q5dhKvZ62lbmeGLz
-	byeDq9k2MqD3GUnCagfmg1ew/k64/Z4CR1imKnyOj/jYdM+1KIDIQG9dEGA8=
-X-Google-Smtp-Source: AGHT+IEA0JIanLMA4cXGL+NJilYVCnIpnNFCPpdhva3gpNrrq0Neeg11HcillWxEQ9fsAdZh2pIS5UCrIDcDjGCTID3h87ZALUtQ
+	s=arc-20240116; t=1760428237; c=relaxed/simple;
+	bh=LF/wX3C8mmlPSeO26AlwuOqnE9fpiLF1bsBkySWWDJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iHag8F3d8WIPMFzAzqkzjzQ6JtHVWqTcb4FrsNhg78+qYhNpaxk6K0tLZbsMcG1o20zFPQIa4LHYL8E+8jYgx3AltdZp0surKXC0bw+BvxR0yMr0IzX0sHjz2fML2253rX6kgbAXqZvLZL+VgbAUbbNEve53bUWVayRWtGNEIb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cm5lc3Hnjz9sST;
+	Tue, 14 Oct 2025 09:42:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id dfjcQFiX-ub0; Tue, 14 Oct 2025 09:42:20 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cm5lc2Gfnz9sRy;
+	Tue, 14 Oct 2025 09:42:20 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 358268B768;
+	Tue, 14 Oct 2025 09:42:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id zsFJORiQt4Vt; Tue, 14 Oct 2025 09:42:20 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4DA788B763;
+	Tue, 14 Oct 2025 09:42:18 +0200 (CEST)
+Message-ID: <6942ea07-e6fa-4a5e-a003-0c7ee5e0c936@csgroup.eu>
+Date: Tue, 14 Oct 2025 09:42:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198a:b0:428:7ace:e591 with SMTP id
- e9e14a558f8ab-42f87403db4mr248213935ab.16.1760427525184; Tue, 14 Oct 2025
- 00:38:45 -0700 (PDT)
-Date: Tue, 14 Oct 2025 00:38:45 -0700
-In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68edfe05.050a0220.ac43.00c4.GAE@google.com>
-Subject: Forwarded: [PATCH] ntfs3: prevent MFT inode resize operations
-From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/35] powerpc/vdso/gettimeofday: Explicitly include
+ vdso/time32.h
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
+ <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>,
+ John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, Russell King
+ <linux@armlinux.org.uk>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+ Shannon Nelson <sln@onemain.com>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
+ <20251014-vdso-sparc64-generic-2-v4-6-e0607bf49dea@linutronix.de>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20251014-vdso-sparc64-generic-2-v4-6-e0607bf49dea@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
-
-***
-
-Subject: [PATCH] ntfs3: prevent MFT inode resize operations
-Author: kartikey406@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
 
-The MFT (Master File Table) inode does not have its run_lock rwsem
-initialized, as noted in ntfs_file_release(). When a truncate operation
-is attempted on the MFT inode, ntfs_truncate() tries to acquire the
-uninitialized run_lock, triggering a lockdep warning about using a
-non-static key.
+Le 14/10/2025 à 08:48, Thomas Weißschuh a écrit :
+> The usage of 'struct old_timespec32' requires vdso/time32.h. Currently
+> this header is included transitively, but that transitive inclusion is
+> about to go away.
+> 
+> Explicitly include the header.
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> Tested-by: Andreas Larsson <andreas@gaisler.com>
+> Reviewed-by: Andreas Larsson <andreas@gaisler.com>
 
-The MFT is a special system file that should not be resized by user
-operations. Add a check in ntfs_setattr() to reject any size change
-attempts on the MFT inode with -EPERM before reaching ntfs_truncate().
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-This is consistent with the existing design where ntfs_file_release()
-explicitly skips operations on MFT due to the missing run_lock
-initialization.
-
-Reported-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3e58a7dc1a8c00243999
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ntfs3/file.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 4c90ec2fa2ea..2555850483c4 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -792,7 +792,13 @@ int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 	if (ia_valid & ATTR_SIZE) {
- 		loff_t newsize, oldsize;
--
-+		ntfs_warn(inode->i_sb,
-+			   "DEBUG: Truncating inode %lu (MFT_REC_MFT is %d)",
-+			    inode->i_ino, MFT_REC_MFT);
-+		if (inode->i_ino == MFT_REC_MFT) {
-+			err = -EPERM;
-+			goto out;
-+		}
- 		if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
- 			/* Should never be here, see ntfs_file_open(). */
- 			err = -EOPNOTSUPP;
--- 
-2.34.1
+> ---
+>   arch/powerpc/include/asm/vdso/gettimeofday.h | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/powerpc/include/asm/vdso/gettimeofday.h b/arch/powerpc/include/asm/vdso/gettimeofday.h
+> index ab3df12c8d947ed3a5b0b173567ca8469afbf2d6..b2f0e971076acaea8bc70107fc0f5b2d23e0b312 100644
+> --- a/arch/powerpc/include/asm/vdso/gettimeofday.h
+> +++ b/arch/powerpc/include/asm/vdso/gettimeofday.h
+> @@ -8,6 +8,7 @@
+>   #include <asm/barrier.h>
+>   #include <asm/unistd.h>
+>   #include <uapi/linux/time.h>
+> +#include <vdso/time32.h>
+>   
+>   #define VDSO_HAS_CLOCK_GETRES		1
+>   
+> 
 
 
