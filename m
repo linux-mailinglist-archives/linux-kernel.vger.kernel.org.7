@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-852552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A342BD94E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C25A1BD9506
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597D41925F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FCFD1925925
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0375F313532;
-	Tue, 14 Oct 2025 12:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5156B313551;
+	Tue, 14 Oct 2025 12:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Dq4CZnV/"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FU7O+Xik"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EC031329C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180D2313532
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760444387; cv=none; b=B1L+w/gGoaK4QlHW0HxJGq21NN10heepFD99HFZAMLJkjCBFAXqAHjml6qtqGm1v5lPH7xwFwCgIY2dw8BecMKUnvkz7alEwj+NVZ83P7XcE5AskcrhrOhc7SuNdiSBeRXpi7YDvdMeRUUZUiONcs06bt9R3VW6f0gMGmBWv/20=
+	t=1760444550; cv=none; b=SYRL2nHkpSagZYIOI0DoYlvshmKbTouYOdToHq+zu9q7qFLVovl2FOkR4gIt0AIVkOHwTfk3WfFJuq6Q/qRQxIcw0TEkGc1Ypw2GmOj9q+xTyv14LUId9U3aAg++mqmNLVvBCMWMHCwpfGRsEg7FPHNz+veN0bisYLfJk+ucxZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760444387; c=relaxed/simple;
-	bh=9Cgq3/vxKjPa4FSJjaPLjZD4QjTbX4U3nZUHUx9kdvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DCcIpfG3hSCYTrPoypOqmc68qLvL0Lr+z54Qzd7wxefYQ72e1vsJgKHX+Orpi+UVGt8tUrbPljagh5jWZ+WwvNeDiD2JI+bBchV54Qr3ZO9AywaZ1Uer/uDFaUx9vpZ7cP4SkvQc03s1rpIm/pAipvmTLtZAulglUxQfybVjc0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Dq4CZnV/; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b608df6d2a0so4113415a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:19:45 -0700 (PDT)
+	s=arc-20240116; t=1760444550; c=relaxed/simple;
+	bh=Ad+Act/vyc65p5SZBMOE8fQZgfdis66PnpmCEaRCJyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ENHxAcA55B8RAk0Vd5jyWESB7tn4/EDiIg/c2GmymSghJ1XcM0S2KyoSqJiimQdhYY14ETVtONz5+Vf2xtm6/pAtDqkI/nVWqlk3jpr9koZUOd0WbYZ1YJimwDeB+DRr1uwa2JECvWOMCOVR0JbBtrcL0c7ycnK4myuTB/bcVhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FU7O+Xik; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-637e9f9f9fbso1801076a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760444385; x=1761049185; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dyztOWHi8asqtnrtL9aOW3mSM7WuQU1xzUJYBCn4JPE=;
-        b=Dq4CZnV//tza7E3FP5gglEEnLiYQEl0PS367PJDMB2Yk2ZUOnyaNuwG/ivneuv+Fk9
-         e8pYY0k0ZnJ0Q82eRec78UYGXUX2DzQcp8rqt2jsFtZlA++LGn/TBU+gZVzYtbcKDE7X
-         r8sJorh/rKuxZz7YeLO9XHY8xD6QcX2jZcrrUoSleap3qSYOrOlhUZ34Vj901AwFSDz6
-         6ruJRsLfNxiXhnzTskfWwoQQhp/ZwGgPrZWad0NShIxIsB5GC1e8ohQSO57b4t91888q
-         E0XDlEWcyicWjDZVfDda4QZczUCzzZ3zmvcSdAV4WU3wGFhf/LDcW/jQQLrZA4YkrDZW
-         lpkQ==
+        d=gmail.com; s=20230601; t=1760444547; x=1761049347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ad+Act/vyc65p5SZBMOE8fQZgfdis66PnpmCEaRCJyk=;
+        b=FU7O+XikGsec1PS6KeGLNPMk8QlwqA72Xfw5vrgURwaq+eIHka2r4ZZblcaUPKHEyI
+         2OX7wf2FVSevdlfFpmxB+UiQOKSZZkahhAWlqOHaitOsoLSxGWq5Qeas0Zkfh/ipIVcV
+         +fU5hcufMlqXE0uIPB2UvySzZeey9M14FMAxOUvbo/9jRnyUex1PaflBtvo6cgMcNhH+
+         wdZCOunamSR8O2Ue+PTwF7vvUgflfP4d97uExDnbw8lTZoTypaKpZExL6zOoZBRsU3bt
+         L+G1/qmgDZy8yRmkUCKXLrL3/f7wmMOWqvH1EpHRnAG4pKI7y/95R8c929vwMkfQtE5t
+         kTLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760444385; x=1761049185;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dyztOWHi8asqtnrtL9aOW3mSM7WuQU1xzUJYBCn4JPE=;
-        b=AxNhz80g6j9riUG+/iWK1x8TVKiBFxFo0AOcqQmNTE7sw9pjtX+u/iELoBXP/BlMXh
-         z/1MtDVmWTB0UNq2LnVBKjXq3Y6cvq6Y6DlNyV6pBvUgpL+EY+r/sahOt1o+LUCe9Zum
-         4cu+/E4Q+ao9x5cT+YyX9CNJ0trfKICYQIFKD0vMOmwiWActhMwfjrtnXA6fV4SkBcSY
-         ruQQX3VgXVJuuZmSBxlCiqj7DT8+x2FQymbrE7ukBQngdxIhs2uVFLRFUitGVvykQr8S
-         LmrAlDPOfo7PPufb1VodvY8ZRgrhd1t/oTNzANzDZvvWXnlQu2daAQm1HBc081nSQ4DI
-         TPlg==
-X-Gm-Message-State: AOJu0YwZXpzq7sBy7JuVQCmpbDbq2nxGhHsg0DUM/w/cRSys+SfR4N/0
-	nXJfY5Shj6y/apH0cypwSiPfLjPL+DvYPHNiCRH+ZWAVAZ7xUi8RMFqliJtoGxIJdJAUsUr8C3I
-	ik0WM
-X-Gm-Gg: ASbGncsILkSj3lGCcv1plflQLNm5AwX2DxCjigpQgkP/eiedKRRUuJRhoUXgHhLzAZb
-	EKAKPqSIYMBa0n4/XAb3CAtR+m0Gu1G3gSa4zNp48gLc/7it7ce7Tw/nvUeC19wD0ZkYi+VQNxy
-	hJ22Ed6hmnpvahPqOBKoXMIdrr4FOwZWmeeJjp5i0VNu0bIu+zbpr6LFM3h8Z4LslpVxHAYuttV
-	WEwmOgLNToBaZ8/lvARfy0S7/+B3kYi3Rt2UTTijEk/nPAXWQbbw+J+tDcNGnXgkRSKhFlpXlhr
-	I4NUw7h4q10OSgdV/dhLs+eau2TjwNvp76CT3Pju2vFZfi9LMsZGx1zlpkYkSYnIaFXG1tRTt62
-	veCeQRT7NKSUaD6+u8/yq72bT731pyMvioOhSHGNcPkGrnysE8sIZakHVrB6C+YjEst0pkafq41
-	NDMRIB9AA=
-X-Google-Smtp-Source: AGHT+IF3sLetSxQ1m94sJzX4H+YdIKP4pPPwBOsljLuRxv8OwwGf8uQEto0kkirs4QMlkzqClPfJIA==
-X-Received: by 2002:a17:903:3c6c:b0:269:9719:fffd with SMTP id d9443c01a7336-290273567e5mr321957135ad.1.1760444384799;
-        Tue, 14 Oct 2025 05:19:44 -0700 (PDT)
-Received: from [100.82.93.103] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e44ef9sm161761065ad.52.2025.10.14.05.19.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 05:19:44 -0700 (PDT)
-Message-ID: <94d19d6d-5bb5-4156-8499-0be3d227f478@bytedance.com>
-Date: Tue, 14 Oct 2025 20:19:40 +0800
+        d=1e100.net; s=20230601; t=1760444547; x=1761049347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ad+Act/vyc65p5SZBMOE8fQZgfdis66PnpmCEaRCJyk=;
+        b=m8F0l1VGl7HE7LKuH29Q81IgXaJ1PvzOJvRh+Jdp8LTWHyZZI9rfNoUSFbcQa4K6uM
+         Y9XOseynlrCwA0vmVJSAYxp/zPlnY+y1zQnwC3MdWmEFPhk6RL1P+G9C2mu9xLBYJQRa
+         3wvNyR9ADJVFI7qDzs0VWGvOblXfw70k1+Fe4+Y4fx1DxHJxANev7FbGXl5wPeNnYRnf
+         Uprqgu1F7o924OacteXgzjwn71eiTyWLk8LDDsznFQeUcjHzPpYSedVJKqm8gijI8Gik
+         9LfGPyO8mHT1fZfjxxEPK6rJ128ClNply3P+RfayygZ58RejtKhgBMphReaVLjLTiNS7
+         bQiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw+nThYFWsJJhNVcIFQl2gqthfEAEjwbxWVPcO0WynbOVPCWyLH4z3sEHt/X7r9tkT0R+mv2V5cHW5w3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ5pHn6YM39cnLCgBvjZU9+0yGnLwczaJmKFUaZB0FzR/H5BfZ
+	FY8kybHPHA36Z8fLvG7JnFkZ7gcc/D4ucqoMJ2YLb82HmppZMN3jngQN
+X-Gm-Gg: ASbGncte4QwEPK5LrCFUWLvMOnvhWTPcLKDnijCzbx2BBEhvtS0u/aoIv1RUS48D1pA
+	Q80RV5LgyipDNGkhoOssTYh71PpsZj1E7JuSZDF464A5AuOHv+5O3LDubzI0mWFVyft6pOeFI1t
+	BI5koCaO940i9gCzhuJmFaowV1qMadFaya3d994YMTXDPP9s0sXLdG80VtZja1ugRV37zEDjphL
+	M3dNHcDHBlXZwbR6ovUbR+egvybaAZCRtK54aT9515V0J8buOP1Z9BieidjJX0H4Gb2LcUAL/X4
+	Td24ZyZoAmwjNlSQtsKEbZ4W+jltEiZTQ32Nf4oPE2bQ7w+RrTlVg94SVVXX8GJhx69vuz7Ls4Y
+	SnLRfe/D4rgl2OU4dkqn5ts9RMbkQoL9zsc0LlZ1a1Kj2yahmyVNIx0dScYv60riM5mLdLlPXwE
+	1KAcjaO7upKLO7XcBjWW0v/B3QcLNmnGrwBfy2vmhPl2Hf1TlK1Uw=
+X-Google-Smtp-Source: AGHT+IEj2JtS1ykV7+4SnCPxXcV5s4F2p8zZ4Ybts8U4kG/OqGnxgxiwp/Y8Fv2A2MsHbr+lECLEwQ==
+X-Received: by 2002:a05:6402:d0e:b0:634:5381:530b with SMTP id 4fb4d7f45d1cf-639d5b8956cmr22376195a12.13.1760444547186;
+        Tue, 14 Oct 2025 05:22:27 -0700 (PDT)
+Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a52b0f358sm10963835a12.10.2025.10.14.05.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 05:22:26 -0700 (PDT)
+Date: Tue, 14 Oct 2025 14:22:25 +0200
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+	Maxime Ripard <mripard@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] drm/panel/panel-simple v6.17 WARNING regression
+Message-ID: <tguubjlh7ta7rvaq5pzzksamnc2kxy6yunsk3jeiiqz55on4yo@outv5vc3b2vl>
+References: <hlf4wdopapxnh4rekl5s3kvoi6egaga3lrjfbx6r223ar3txri@3ik53xw5idyh>
+ <DDHZ5GO9MPF0.CGYTVBI74FOZ@bootlin.com>
+ <kcunz2b2usmvadgrnnu65op5oi5ttblrc463twgxp5gqhnufav@eze53y23avel>
+ <DDI0OEMAGBI3.2WFIP0O7M73LB@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: 8250: always disable IRQ during THRE test
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- songmuchun@bytedance.com
-References: <20251014114727.1186-1-zhangpeng.00@bytedance.com>
-From: Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <20251014114727.1186-1-zhangpeng.00@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDI0OEMAGBI3.2WFIP0O7M73LB@bootlin.com>
 
+On Tue, Oct 14, 2025 at 01:43:21PM +0200, Luca Ceresoli wrote:
+> Alright. Let me know whether the series I've sent fixes 0, 1 or both
+> warnings.
 
+Hi Luca,
 
-在 2025/10/14 19:47, Peng Zhang 写道:
-> commit 039d4926379b ("serial: 8250: Toggle IER bits on only after irq
-> has been set up") moved IRQ setup before the THRE test, so the interrupt
-> handler can run during the test and race with its IIR reads. This can
-> produce wrong THRE test results and cause spurious registration of the
-> serial8250_backup_timeout timer. Unconditionally disable the IRQ for the
-> short duration of the test and re-enable it afterwards to avoid the race.
-> 
-> Fixes: 039d4926379b ("serial: 8250: Toggle IER bits on only after irq has been set up")
-> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
-> ---
->   drivers/tty/serial/8250/8250_port.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index 719faf92aa8a..addeef7a0d59 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -2147,8 +2147,7 @@ static void serial8250_THRE_test(struct uart_port *port)
->   	if (up->port.flags & UPF_NO_THRE_TEST)
->   		return;
->   
-> -	if (port->irqflags & IRQF_SHARED)
-> -		disable_irq_nosync(port->irq);
-> +	disable_irq_nosync(port->irq);
-disable_irq_nosync() may need to be changed to disable_irq() to prevent interrupts
-that are currently being handled.>   
->   	/*
->   	 * Test for UARTs that do not reassert THRE when the transmitter is idle and the interrupt
-> @@ -2170,8 +2169,7 @@ static void serial8250_THRE_test(struct uart_port *port)
->   		serial_port_out(port, UART_IER, 0);
->   	}
->   
-> -	if (port->irqflags & IRQF_SHARED)
-> -		enable_irq(port->irq);
-> +	enable_irq(port->irq);
->   
->   	/*
->   	 * If the interrupt is not reasserted, or we otherwise don't trust the iir, setup a timer to
+Just replying to have the info in this thread as well, the series fixed
+all warnings I saw, thanks!
 
+Kind regards,
+Ernest
 
