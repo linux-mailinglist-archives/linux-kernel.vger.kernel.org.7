@@ -1,54 +1,41 @@
-Return-Path: <linux-kernel+bounces-852717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76251BD9AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:24:12 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8239BD9B06
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 21F5034DBCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:24:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6376F34D99C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB47314B9E;
-	Tue, 14 Oct 2025 13:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FDLpWcw0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF8A314D2B;
+	Tue, 14 Oct 2025 13:22:17 +0000 (UTC)
+Received: from bkemail.birger-koblitz.de (bkemail.birger-koblitz.de [23.88.97.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA966314B6E;
-	Tue, 14 Oct 2025 13:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6E8314D02;
+	Tue, 14 Oct 2025 13:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.97.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760448108; cv=none; b=pPNXt+CTWlYs+dreLYr0UDjp16SNB9OUfl2RU2WorprIFW0/Ms10q/OFfAhzyaIXsK7ZY6YXgyJItYVLmqJcvaeBpSUi0p5O6+wIOOHRwoZF1y4TFoU3j0XVkhcu1ajUoHJN+u3rC+i2MOUVIQsXDnWJGn2C8JOYXk2KhCXjBTM=
+	t=1760448136; cv=none; b=EBTkQZs9oTRTXsliwLNhfxbcqqjx2tYdjV7CU7YFA8/qk0Sg06SnNbZiYK1hMO+lqV/1ErS38uq9cWH+hzEXsDyAIhcV+6u3p/mV4Msp0tQN7XBCQL+D1TXeR4IYeGf9TNFIgl0AGsh1paimg2926CP1sRvgtakmCj+EOug4xzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760448108; c=relaxed/simple;
-	bh=zCgNIkIe81eviywn2khOOfKzvpgqFCye5+tn1JB2k8U=;
+	s=arc-20240116; t=1760448136; c=relaxed/simple;
+	bh=HCk0Oh4t9aGXWl2LWbP437LJVt1RFvHxvovvsEDgKPY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kSoQ2wUG+oPNGqUKIMJP+LasvXYzTn7qzQyapGppL2NA513c+NN/Vca57TNjUGmIzNQTFQ/C3IIjRYEX7GV/G90Wl5oUwqq1jK0A3C0jVSxcrcVCbqko4qiVDhTfxWL4NJ8NiLrfCSrT/CilJ/I6prRa2XU+lJoqXRu9WfbEbNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FDLpWcw0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760448105;
-	bh=zCgNIkIe81eviywn2khOOfKzvpgqFCye5+tn1JB2k8U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FDLpWcw0QdVM7FZLv7GALWkFRQzRz88Rz/7SCz38RKgob7fEVhvcWSuo/lCAJJJg9
-	 uCYNCecDlFyuYrFMeQDRbTtSOCUXJ0r9p2wd1jIXqUbKVKm9FC58046YYpOmE6LS4s
-	 3FBi3WNJATGPXHWd+rp5QNHTBptH6vNr+XsvbonXtkyjYnso06FwSg6lN2/zzUMHkx
-	 F5pqMIX/ZLulBNiVmXsyj8uhEVaHhc1rIhBz6BhjDAYX98SiQwvGwC3cm5RU1spxGG
-	 yWk5JP5TnJkvcwcYRWjtovbL+zgHKB1Q5mO7VlMAiibduOMXzioEtvLn6EQGJa/SnX
-	 ustCBjyvJeQRQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BFBFF17E003B;
-	Tue, 14 Oct 2025 15:21:44 +0200 (CEST)
-Message-ID: <4e0d5f72-c35c-4c04-b0a0-dfcd5cb9ca59@collabora.com>
-Date: Tue, 14 Oct 2025 15:21:44 +0200
+	 In-Reply-To:Content-Type; b=UcV5BZ8Ujii/77cEsA8WmrZEvkKs4vI5zujqjwjAJH1cNTPraIDmb3DrukYQ3c0aWpQBnGYgOzgkJ4CZSjjfO2+QlpMRrXlvwH0SGq5fghwZvjvU3+KPQjysKKCNJNNEIaR/HgFGA0rp6AQtVQsz8wTV3eAM+aASp2gGC0Y6VAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de; spf=pass smtp.mailfrom=birger-koblitz.de; arc=none smtp.client-ip=23.88.97.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birger-koblitz.de
+Received: by bkemail.birger-koblitz.de (Postfix, from userid 109)
+	id 7CB0748536; Tue, 14 Oct 2025 13:22:12 +0000 (UTC)
+X-Spam-Level: 
+Received: from [IPV6:2a00:6020:47a3:e800:96c2:85f:dd97:a67d] (unknown [IPv6:2a00:6020:47a3:e800:96c2:85f:dd97:a67d])
+	by bkemail.birger-koblitz.de (Postfix) with ESMTPSA id 6A2CE48535;
+	Tue, 14 Oct 2025 13:22:11 +0000 (UTC)
+Message-ID: <4fcabfb2-9793-49be-bf60-bb8ac36f9e34@birger-koblitz.de>
+Date: Tue, 14 Oct 2025 15:22:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,28 +43,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] wifi: mt76: Use of_reserved_mem_region_to_resource()
- for "memory-region"
-To: "Rob Herring (Arm)" <robh@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250813214917.897113-1-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [Intel-wired-lan] [PATCH net-next v2] ixgbe: Add 10G-BX support
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Andrew Lunn <andrew@lunn.ch>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251014-10gbx-v2-1-980c524111e7@birger-koblitz.de>
+ <0c753725-fd6f-4f85-9371-f7342f86acff@lunn.ch>
+ <77cfe8ef-57d4-4dee-b89d-3f5504653413@molgen.mpg.de>
+From: Birger Koblitz <mail@birger-koblitz.de>
 Content-Language: en-US
-In-Reply-To: <20250813214917.897113-1-robh@kernel.org>
+In-Reply-To: <77cfe8ef-57d4-4dee-b89d-3f5504653413@molgen.mpg.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 13/08/25 23:49, Rob Herring (Arm) ha scritto:
-> Use the newly added of_reserved_mem_region_to_resource() function to
-> handle "memory-region" properties.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
+On 14/10/2025 15:07, Paul Menzel wrote:
+> Unfortunately I do not see the original patch on the mailing list *intel-wired-lan*, and lore.kernel.org also does not have it [1].
+>
+I have several emails from intel-wired-lan stating that "Your message to Intel-wired-lan awaits moderator approval" as I am not myself on that list.
+
+Birger
 
