@@ -1,315 +1,213 @@
-Return-Path: <linux-kernel+bounces-852156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC5FBD84E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:55:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D57BD84EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312C54EA85C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:55:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EE3133516DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519D22E6CCD;
-	Tue, 14 Oct 2025 08:55:12 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6709D2D876F;
-	Tue, 14 Oct 2025 08:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F52DF6F4;
+	Tue, 14 Oct 2025 08:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="So9vMaF3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC652E2DD2
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760432111; cv=none; b=XV6vSOp2d0dO+EOBfAOdYaq1Ilj5/Rirjl/2AbUaddKlDtroaGxW6uY/Ypqh0lTcA166eKt7gOxgwYTt4PT3Li5UGnELrSMekg/OfUKi9/TB2FwQ+W8lud6tREAquKx/7NuN6lVwKFFp2kELKcpmsh35cyDlkgsNU4RAczA1dVU=
+	t=1760432136; cv=none; b=nNoQAEPRxL6OzOoMDRisoe61Y6h2j4rCbbChOpMIJxJ8kO5lOLqa96AwGGo7J9K0euCxGdPyE2VcTBhzMIspgY0xNcm0cBHeYS/K6ouUhQdZRabTzhuCNsZeTil8pXvWNnT7atHumGOizxghCElFMxtG6ATB340G0hq7LWzIbmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760432111; c=relaxed/simple;
-	bh=hWXdcQhUcFY+cvazB+qNfVIEmYDhkgnSjvLZ5J1lZvM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UUa5YEo2prx+LqcRcqnFRKE6QYhW3GDN+VvUN/6ZeNnwSy/yNz+ZjPaBFnDstt2/JnHp8b4vFHf+mI4DMoBJVZq793YQBbMmc9sHam44IHSktOV355bvutNzvdOzTpqyqKmrG+6f43S1+uNx2KhgJkcDe/n0zw/p+IfZlh66gxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.239])
-	by gateway (Coremail) with SMTP id _____8AxP_DpD+5oEfIVAA--.46964S3;
-	Tue, 14 Oct 2025 16:55:05 +0800 (CST)
-Received: from [10.20.42.239] (unknown [10.20.42.239])
-	by front1 (Coremail) with SMTP id qMiowJAxvsHiD+5oK0nhAA--.60206S3;
-	Tue, 14 Oct 2025 16:55:03 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: KVM: Add AVEC support
-To: Bibo Mao <maobibo@loongson.cn>, chenhuacai@kernel.org
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev, kernel@xen0n.name,
- linux-kernel@vger.kernel.org
-References: <20251010064858.2392927-1-gaosong@loongson.cn>
- <39779e6d-2f09-4ee9-e5e0-97fc09efbbf5@loongson.cn>
- <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
- <5e83f343-7da1-3235-d681-0d5b8816d1b9@loongson.cn>
-From: gaosong <gaosong@loongson.cn>
-Message-ID: <ec40aefd-a347-efb2-ba23-f0a88bb4f07d@loongson.cn>
-Date: Tue, 14 Oct 2025 16:54:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1760432136; c=relaxed/simple;
+	bh=MMxriXDc8vMgRKXTLY/BEuuQfCNgW7+ZkriAu8GtKxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OeeRBK12hoNwosSZChKrEb3Cbg5oKkoX6KNjMzqGjNoaiOC4W+NACKY/ECtdpoSBDrRHdq35WynE35wq5yF+0dSONM5ijWiS23hFyNALacem0ga3MOwOa1qSyRZBRH/1hiBDpalGB9brsVaQSfg7N12+p0tW++kgbdF/rcH7hJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=So9vMaF3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760432133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwa8bTOFJEQ9KZgmpDkfmjTWpRXkCxQQorAAM5/0DZQ=;
+	b=So9vMaF3rwnzOylO9cAIWkAgINcUPTjlmtBDSy01rS+LQlMs5FzPXYjYYj8vUe3W9zIETR
+	hsH4dZb8maBnrlsMDlp1KOXQMlcOje5Y3VXRxvSduamhhimBKnL283Z3EldIRrGUYWxI2V
+	+LNWeimnLbojU0CpNxhdD1LxIII0ttM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-sYHeLI-bNr-jlEvJtrohWQ-1; Tue,
+ 14 Oct 2025 04:55:26 -0400
+X-MC-Unique: sYHeLI-bNr-jlEvJtrohWQ-1
+X-Mimecast-MFC-AGG-ID: sYHeLI-bNr-jlEvJtrohWQ_1760432124
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 61E4D19560A1;
+	Tue, 14 Oct 2025 08:55:24 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.30])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A49130002D0;
+	Tue, 14 Oct 2025 08:55:15 +0000 (UTC)
+Date: Tue, 14 Oct 2025 16:55:10 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+	axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 3/4] blk-rq-qos: fix possible deadlock
+Message-ID: <aO4P08Sw2YYjOYtu@fedora>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-4-yukuai3@huawei.com>
+ <aO4GPKKpLbj7kMoz@fedora>
+ <f0ab9c95-990b-a41d-477e-c1b20b392985@huaweicloud.com>
+ <aO4L2THnLFM-_Fb8@fedora>
+ <0351f07e-4ac4-a1e2-b4ee-08e49e7d0b6e@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5e83f343-7da1-3235-d681-0d5b8816d1b9@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowJAxvsHiD+5oK0nhAA--.60206S3
-X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWfJFWktr4ruw15Cr1Dtry8CrX_yoWDuF4rpr
-	1kAFWUXrWrGr1ktr1jqw1qvryUtr18tw1UXr1UJFy8Jr47tr1Yqr40gryqgF1UJw4rJF18
-	Xr15JrnxZF15JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU82g43UU
-	UUU==
+In-Reply-To: <0351f07e-4ac4-a1e2-b4ee-08e49e7d0b6e@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-在 2025/10/13 下午12:07, Bibo Mao 写道:
->
->
-> On 2025/10/13 上午11:18, gaosong wrote:
->> 在 2025/10/11 上午9:29, Bibo Mao 写道:
->>>
->>>
->>> On 2025/10/10 下午2:48, Song Gao wrote:
->>>> Add cpu_has_msgint() to check whether the host cpu supported avec,
->>>> and restore/save CSR_MSGIS0-CSR_MSGIS3.
->>>>
->>>> Signed-off-by: Song Gao <gaosong@loongson.cn>
->>>> ---
->>>> Based-on: 
->>>> https://patchew.org/linux/20250930093741.2734974-1-maobibo@loongson.cn/ 
->>>>
->>>> v2: fix build error.
->>> It is not necessary based on this patch, you can base it on master 
->>> branch. The later merged patch need based on previous version in 
->>> general.
->>>
->> Got it.
->>>>
->>>>   arch/loongarch/include/asm/kvm_host.h |  4 ++++
->>>>   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->>>>   arch/loongarch/include/uapi/asm/kvm.h |  1 +
->>>>   arch/loongarch/kvm/interrupt.c        |  3 +++
->>>>   arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
->>>>   arch/loongarch/kvm/vm.c               |  4 ++++
->>>>   6 files changed, 30 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
->>>> b/arch/loongarch/include/asm/kvm_host.h
->>>> index 392480c9b958..446f1104d59d 100644
->>>> --- a/arch/loongarch/include/asm/kvm_host.h
->>>> +++ b/arch/loongarch/include/asm/kvm_host.h
->>>> @@ -285,6 +285,10 @@ static inline bool kvm_guest_has_lbt(struct 
->>>> kvm_vcpu_arch *arch)
->>>>       return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | 
->>>> CPUCFG2_MIPSBT);
->>>>   }
->>>>   +static inline bool cpu_has_msgint(void)
->>>> +{
->>>> +    return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
->>>> +}
->>>>   static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
->>>>   {
->>>>       return arch->cpucfg[6] & CPUCFG6_PMP;
->>>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h 
->>>> b/arch/loongarch/include/asm/kvm_vcpu.h
->>>> index f1efd7cfbc20..3784ab4ccdb5 100644
->>>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
->>>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
->>>> @@ -15,6 +15,7 @@
->>>>   #define CPU_PMU                (_ULCAST_(1) << 10)
->>>>   #define CPU_TIMER            (_ULCAST_(1) << 11)
->>>>   #define CPU_IPI                (_ULCAST_(1) << 12)
->>>> +#define CPU_AVEC                        (_ULCAST_(1) << 14)
->>>>     /* Controlled by 0x52 guest exception VIP aligned to estat bit 
->>>> 5~12 */
->>>>   #define CPU_IP0                (_ULCAST_(1))
->>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h 
->>>> b/arch/loongarch/include/uapi/asm/kvm.h
->>>> index 57ba1a563bb1..de6c3f18e40a 100644
->>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
->>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
->>>> @@ -104,6 +104,7 @@ struct kvm_fpu {
->>>>   #define  KVM_LOONGARCH_VM_FEAT_PV_IPI        6
->>>>   #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME    7
->>>>   #define  KVM_LOONGARCH_VM_FEAT_PTW        8
->>>> +#define  KVM_LOONGARCH_VM_FEAT_MSGINT        9
->>>>     /* Device Control API on vcpu fd */
->>>>   #define KVM_LOONGARCH_VCPU_CPUCFG    0
->>>> diff --git a/arch/loongarch/kvm/interrupt.c 
->>>> b/arch/loongarch/kvm/interrupt.c
->>>> index 8462083f0301..adc278fb3cb9 100644
->>>> --- a/arch/loongarch/kvm/interrupt.c
->>>> +++ b/arch/loongarch/kvm/interrupt.c
->>>> @@ -21,6 +21,7 @@ static unsigned int 
->>>> priority_to_irq[EXCCODE_INT_NUM] = {
->>>>       [INT_HWI5]    = CPU_IP5,
->>>>       [INT_HWI6]    = CPU_IP6,
->>>>       [INT_HWI7]    = CPU_IP7,
->>>> +    [INT_AVEC]    = CPU_AVEC,
->>>>   };
->>>>     static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int 
->>>> priority)
->>>> @@ -36,6 +37,7 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
->>>> unsigned int priority)
->>>>       case INT_IPI:
->>>>       case INT_SWI0:
->>>>       case INT_SWI1:
->>>> +    case INT_AVEC:
->>>>           set_gcsr_estat(irq);
->>> Do we need cpu_has_msgint() here ? It is impossible that VMM inject 
->>> INT_AVEC interrrupt on non-msgint machine such as 3C5000.
->>>
->> yes we need , how about this?
->>
->> @@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
->> unsigned int priority)
->>          if (priority < EXCCODE_INT_NUM)
->>                  irq = priority_to_irq[priority];
->>
->> +        if (cpu_has_msgint() && (priority == INT_AVEC)) {
->> +                set_gcsr_estat(irq);
->> +                return 1;
->> +        }
->> +
->>          switch (priority) {
->>          case INT_TI:
->>          case INT_IPI:
-> This is workable. Another way is to add checking in irq inject root 
-> source function kvm_vcpu_ioctl_interrupt(). Both works for me.
->
-> BTW, I think that there should be modification with function 
-> kvm_deliver_intr() also. max irq bit is *INT_IPI + 1* where there will 
-> be problem with INT_AVEC. Should it be modified as *EXCCODE_INT_NUM*?
->
-Yes , we should.
-> void kvm_deliver_intr(struct kvm_vcpu *vcpu)
-> {
->         unsigned int priority;
->         unsigned long *pending = &vcpu->arch.irq_pending;
->         unsigned long *pending_clr = &vcpu->arch.irq_clear;
->
->         for_each_set_bit(priority, pending_clr, INT_IPI + 1)
->                 kvm_irq_clear(vcpu, priority);
->
->         for_each_set_bit(priority, pending, INT_IPI + 1)
->                 kvm_irq_deliver(vcpu, priority);
-> }
->
-  I'll corrrect it on v3.
+On Tue, Oct 14, 2025 at 04:42:30PM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/10/14 16:37, Ming Lei 写道:
+> > On Tue, Oct 14, 2025 at 04:24:23PM +0800, Yu Kuai wrote:
+> > > Hi,
+> > > 
+> > > 在 2025/10/14 16:13, Ming Lei 写道:
+> > > > On Tue, Oct 14, 2025 at 10:21:48AM +0800, Yu Kuai wrote:
+> > > > > Currently rq-qos debugfs entries is created from rq_qos_add(), while
+> > > > > rq_qos_add() requires queue to be freezed. This can deadlock because
+> > > > > creating new entries can trigger fs reclaim.
+> > > > > 
+> > > > > Fix this problem by delaying creating rq-qos debugfs entries until
+> > > > > it's initialization is complete.
+> > > > > 
+> > > > > - For wbt, it can be initialized by default of by blk-sysfs, fix it by
+> > > > >     calling blk_mq_debugfs_register_rq_qos() after wbt_init;
+> > > > > - For other policies, they can only be initialized by blkg configuration,
+> > > > >     fix it by calling blk_mq_debugfs_register_rq_qos() from
+> > > > >     blkg_conf_end();
+> > > > > 
+> > > > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> > > > > ---
+> > > > >    block/blk-cgroup.c | 6 ++++++
+> > > > >    block/blk-rq-qos.c | 7 -------
+> > > > >    block/blk-sysfs.c  | 4 ++++
+> > > > >    block/blk-wbt.c    | 7 ++++++-
+> > > > >    4 files changed, 16 insertions(+), 8 deletions(-)
+> > > > > 
+> > > > > diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+> > > > > index d93654334854..e4ccabf132c0 100644
+> > > > > --- a/block/blk-cgroup.c
+> > > > > +++ b/block/blk-cgroup.c
+> > > > > @@ -33,6 +33,7 @@
+> > > > >    #include "blk-cgroup.h"
+> > > > >    #include "blk-ioprio.h"
+> > > > >    #include "blk-throttle.h"
+> > > > > +#include "blk-mq-debugfs.h"
+> > > > >    static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu);
+> > > > > @@ -746,6 +747,11 @@ void blkg_conf_end(struct blkg_conf_ctx *ctx)
+> > > > >    	mutex_unlock(&q->elevator_lock);
+> > > > >    	blk_mq_unfreeze_queue(q, ctx->memflags);
+> > > > >    	blkdev_put_no_open(ctx->bdev);
+> > > > > +
+> > > > > +	mutex_lock(&q->debugfs_mutex);
+> > > > > +	blk_mq_debugfs_register_rq_qos(q);
+> > > > > +	mutex_unlock(&q->debugfs_mutex);
+> > > > > +
+> > > > >    }
+> > > > >    EXPORT_SYMBOL_GPL(blkg_conf_end);
+> > > > > diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+> > > > > index 654478dfbc20..d7ce99ce2e80 100644
+> > > > > --- a/block/blk-rq-qos.c
+> > > > > +++ b/block/blk-rq-qos.c
+> > > > > @@ -347,13 +347,6 @@ int rq_qos_add(struct rq_qos *rqos, struct gendisk *disk, enum rq_qos_id id,
+> > > > >    	blk_queue_flag_set(QUEUE_FLAG_QOS_ENABLED, q);
+> > > > >    	blk_mq_unfreeze_queue(q, memflags);
+> > > > > -
+> > > > > -	if (rqos->ops->debugfs_attrs) {
+> > > > > -		mutex_lock(&q->debugfs_mutex);
+> > > > > -		blk_mq_debugfs_register_rqos(rqos);
+> > > > > -		mutex_unlock(&q->debugfs_mutex);
+> > > > > -	}
+> > > > > -
+> > > > >    	return 0;
+> > > > >    ebusy:
+> > > > >    	blk_mq_unfreeze_queue(q, memflags);
+> > > > > diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> > > > > index 76c47fe9b8d6..52bb4db25cf5 100644
+> > > > > --- a/block/blk-sysfs.c
+> > > > > +++ b/block/blk-sysfs.c
+> > > > > @@ -688,6 +688,10 @@ static ssize_t queue_wb_lat_store(struct gendisk *disk, const char *page,
+> > > > >    	mutex_unlock(&disk->rqos_state_mutex);
+> > > > >    	blk_mq_unquiesce_queue(q);
+> > > > > +
+> > > > > +	mutex_lock(&q->debugfs_mutex);
+> > > > > +	blk_mq_debugfs_register_rq_qos(q);
+> > > > > +	mutex_unlock(&q->debugfs_mutex);
+> > > > >    out:
+> > > > >    	blk_mq_unfreeze_queue(q, memflags);
+> > > > > diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+> > > > > index eb8037bae0bd..a120b5ba54db 100644
+> > > > > --- a/block/blk-wbt.c
+> > > > > +++ b/block/blk-wbt.c
+> > > > > @@ -724,8 +724,13 @@ void wbt_enable_default(struct gendisk *disk)
+> > > > >    	if (!blk_queue_registered(q))
+> > > > >    		return;
+> > > > > -	if (queue_is_mq(q) && enable)
+> > > > > +	if (queue_is_mq(q) && enable) {
+> > > > >    		wbt_init(disk);
+> > > > > +
+> > > > > +		mutex_lock(&q->debugfs_mutex);
+> > > > > +		blk_mq_debugfs_register_rq_qos(q);
+> > > > > +		mutex_unlock(&q->debugfs_mutex);
+> > > > > +	}
+> > > > 
+> > > > ->debugfs_mutex only may be not enough, because blk_mq_debugfs_register_rq_qos()
+> > > > has to traverse rq_qos single list list, you may have to grab q->rq_qos_mutex
+> > > > for protect the list.
+> > > > 
+> > > 
+> > > I think we can't grab rq_qos_mutex to create debugfs entries, right?
+> > 
+> > It depends on the finalized order between rq_qos_mutex and freezing queue.
+> > 
+> > > With the respect of this, perhaps we can grab debugfs_mutex to protect
+> > > insering rq_qos list instead?
+> > 
+> > No, debugfs_mutex shouldn't protect rq_qos list, and rq_qos_mutex is
+> > supposed to do the job at least from naming viewpoint.
+> 
+> Ok, then we'll have to make sure the order is rq_qos_mutex before
+> freezing queue, I was thinking the inverse order because of the helper
+> blkg_conf_open_bdev_frozen().
+> 
+> I'll check first if this is possible.
 
-Thanks.
-Song Gao
-> Regards
-> Bibo Mao
->>
->> Thanks.
->> Song Gao
->>
->>
->>>>           break;
->>>>   @@ -63,6 +65,7 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, 
->>>> unsigned int priority)
->>>>       case INT_IPI:
->>>>       case INT_SWI0:
->>>>       case INT_SWI1:
->>>> +    case INT_AVEC:
->>>>           clear_gcsr_estat(irq);
->>> Ditto.
->>>
->>> The others look good to me.
->>>
->>> Regards
->>> Bibo Mao
->>>>           break;
->>>>   diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->>>> index 30e3b089a596..226c735155be 100644
->>>> --- a/arch/loongarch/kvm/vcpu.c
->>>> +++ b/arch/loongarch/kvm/vcpu.c
->>>> @@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
->>>>           *v = GENMASK(31, 0);
->>>>           return 0;
->>>>       case LOONGARCH_CPUCFG1:
->>>> -        /* CPUCFG1_MSGINT is not supported by KVM */
->>>> -        *v = GENMASK(25, 0);
->>>> +        *v = GENMASK(26, 0);
->>>>           return 0;
->>>>       case LOONGARCH_CPUCFG2:
->>>>           /* CPUCFG2 features unconditionally supported by KVM */
->>>> @@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
->>>>           return -EINVAL;
->>>>         switch (id) {
->>>> +    case LOONGARCH_CPUCFG1:
->>>> +        if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
->>>> +            return -EINVAL;
->>>> +        return 0;
->>>>       case LOONGARCH_CPUCFG2:
->>>>           if (!(val & CPUCFG2_LLFTP))
->>>>               /* Guests must have a constant timer */
->>>> @@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu 
->>>> *vcpu, int cpu)
->>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
->>>> +    if (cpu_has_msgint()) {
->>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
->>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
->>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
->>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
->>>> +    }
->>>>         /* Restore Root.GINTC from unused Guest.GINTC register */
->>>>       write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
->>>> @@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu 
->>>> *vcpu, int cpu)
->>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
->>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->>>> +    if (cpu_has_msgint()) {
->>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
->>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
->>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
->>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
->>>> +    }
->>>>         vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
->>>>   diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
->>>> index d8c813e2d72e..438885b6f2b1 100644
->>>> --- a/arch/loongarch/kvm/vm.c
->>>> +++ b/arch/loongarch/kvm/vm.c
->>>> @@ -37,6 +37,9 @@ static void kvm_vm_init_features(struct kvm *kvm)
->>>>           kvm->arch.support_features |= 
->>>> BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
->>>>       }
->>>>   +    if (cpu_has_msgint())
->>>> +        kvm->arch.support_features |= 
->>>> BIT(KVM_LOONGARCH_VM_FEAT_MSGINT);
->>>> +
->>>>       val = read_csr_gcfg();
->>>>       if (val & CSR_GCFG_GPMP)
->>>>           kvm->arch.support_features |= 
->>>> BIT(KVM_LOONGARCH_VM_FEAT_PMU);
->>>> @@ -153,6 +156,7 @@ static int kvm_vm_feature_has_attr(struct kvm 
->>>> *kvm, struct kvm_device_attr *attr
->>>>       case KVM_LOONGARCH_VM_FEAT_PMU:
->>>>       case KVM_LOONGARCH_VM_FEAT_PV_IPI:
->>>>       case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
->>>> +        case KVM_LOONGARCH_VM_FEAT_MSGINT:
->>>>           if (kvm_vm_support(&kvm->arch, attr->attr))
->>>>               return 0;
->>>>           return -ENXIO;
->>>>
->>>
->>
+You may misunderstand my point, I meant `debugfs_mutex` can't be used for
+protecting rq_qos list because of its name. But order between rq_qos_mutex
+and freeze queue might be fine in either way, just it has to be fixed.
+Not look into it yet.
+
+Thanks,
+Ming
 
 
