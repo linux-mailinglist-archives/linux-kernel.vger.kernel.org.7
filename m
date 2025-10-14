@@ -1,142 +1,174 @@
-Return-Path: <linux-kernel+bounces-852433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C899FBD8FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:20:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E8DBD8FAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9984D4F80C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5383A5069
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C773074B7;
-	Tue, 14 Oct 2025 11:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4913930C35B;
+	Tue, 14 Oct 2025 11:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JLtaCswH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gEU4ll0z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8851D2FD7DA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E93B30B516;
+	Tue, 14 Oct 2025 11:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760440815; cv=none; b=Zqo3uu5ubAxaGDWqRKXrInsO1s/Ms/OG1vAUoqLZtqb9CxhfPX7YYI3/L2HuvT73tTZVGWuNssZVdUaM+AAw9ubUg/JceZ0oti/QbAZyXI3svJr0mdt332dwrVyrGIK4IjcvQW2qWaUkA9Bi3b5o3UisD05X8zYW1wQaixVtdaE=
+	t=1760440819; cv=none; b=X7dYAKgdVM7bR9bSiEmt0hG0qL/qAzJxyWl6+NvfmfXCaTpK+P8CgQSc3pty9gsaME8khDK+sbr+wPhqylu7BFlhlLCkIABp5Th6j7QJSo4wYsgdtQO7g/jIjLQtx0t9iMdHqcymSE9m4t/NYCVh13KECCbdSvAWU2ASH1SVDb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760440815; c=relaxed/simple;
-	bh=yX5dyBuNEa2OXACHjn8fnbGsDn2mXnkquyRkiu3aCD8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TBNsfGlOGUqeFCl9ifZHmEfD7+vzxiCYe358edEosUYXjj5Y4tvoiB3U0y5a34QN0Go16iQtth5LywfdNp+bu8A5aawPUco0p8m5EMusZ+LXSX+Gf8PbHn6kYzFmw8KOsr359A2GBjAtPerbPF/p6b1dQ2FTtc9lBaYuM+OHKxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JLtaCswH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760440811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Imuve1iPcSxB4uVU/yFQsIzQ6zKzpq/61jJo3KbkM2Y=;
-	b=JLtaCswHk/AW7ow1AFK8jpTTCTDmRdtWf4uRPQp+yJ+Cxgn9K2tK3EJ3EGx3Yxyuv5VOvW
-	8MeIBKkAvdUbrmjYWsS33vur/yPGKfntdccd+N0/n4Jaz5s7kZS2eR6PLLvt3t0j3RlMxC
-	JICyHnc66knRbsr4oO8lRpKs7rDX7So=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-Ux4aw0vOPRG_k8GZL0yj6Q-1; Tue, 14 Oct 2025 07:20:09 -0400
-X-MC-Unique: Ux4aw0vOPRG_k8GZL0yj6Q-1
-X-Mimecast-MFC-AGG-ID: Ux4aw0vOPRG_k8GZL0yj6Q_1760440808
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e41c32209so30235465e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:20:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760440808; x=1761045608;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Imuve1iPcSxB4uVU/yFQsIzQ6zKzpq/61jJo3KbkM2Y=;
-        b=Bkv+1STpowTp8KqKHO13AP5fueq7C9L+oGTTY1L7ZQpKrfri+pcReI1vtXnGbAB+6D
-         k2oq4YATtPWG+OxmXeHWqCjVhcVan4IULLW8KIJ7PShPz0FVue3k43Ho3jGQ5C07ylyv
-         5r6zXRvx2nngpkRog136Zg7B/0d1XHVX2s1rpLC1opNftrWtAoFN7cv4wtw1OWT0PG8l
-         MPgJ/Dc9oKdZgI4GtinxO0MjYJ+Fj/8+i6fvF4Yh0Ikhq9fqUL+rVoLvi6JOKDNr74fj
-         Hv+LANYCbhtDKZN7AHwLgyRWXsOr5NVeTWUVEwNadyP7//XJXRjKCjlE8Zd3dY+M7vrt
-         u3Zg==
-X-Gm-Message-State: AOJu0Yw9+OTU9hRU0huQJEu5Dwwjvgj/S+W1d8MCfpDpdxZohOfKUZAd
-	h9+yrbb1NeXyl7mIL60TolB52TDJKm8AVG/+nXS9K1s8nx6xw5tIvSFPlvGgsr7S3FjkOAgpC+2
-	G5+U7g303LDE+hfOf6SQGh6cv6fG4yJ8LDl99nz22kWotozDpW4x41tDcgftCSeNqqA==
-X-Gm-Gg: ASbGncs9yvK2clbyF51gvxX5tGJC+di5eyFW9mSWt6onQu5lpUAX7Wc8kE7C04vmNCJ
-	uLNoLB0nVIkOpDcNd9Pwa7acnOI/TDk0gs+3arhN2gky2dMAPz8w9lt2WtT9vIP5rMCENL13Ln+
-	AUgayx6vLUwZgKPqkVWFxlkeCRtVEUo1eSV0WpJgETY36nVhqNKXGJsNxPY0IsFgEvuOyjTSlQR
-	QXPaHWTuJFjf7XwecBCo6Edqy5xalKR6QVX8fx/nQtt29p7bVgCZvXEJXJA1dUB+Lu5sCipmePw
-	vuHkwLofwLpHuykKMk3lMphhcj3USRFxZRIXHA8YR+Or1DxmBPk3ppfmR4PAY2UIdVjX8EGRFiK
-	ve6Eln+0WH5/WBE3rPDjoi1ylyg==
-X-Received: by 2002:a05:600c:37c9:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-46fa9b1b18emr175576655e9.36.1760440808236;
-        Tue, 14 Oct 2025 04:20:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPNHhJVacE21hOu+c1s40cKBm99NOdKTbqBsl6lzaW/V++U98Y1cwp6CoRkBLGlZny7BSyXQ==
-X-Received: by 2002:a05:600c:37c9:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-46fa9b1b18emr175576075e9.36.1760440807708;
-        Tue, 14 Oct 2025 04:20:07 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb492e6ddsm265506695e9.0.2025.10.14.04.20.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:20:07 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Paolo Bonzini
- <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- "David S. Miller" <davem@davemloft.net>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, Josh
- Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, Andrew
- Morton <akpm@linux-foundation.org>, Masahiro Yamada
- <masahiroy@kernel.org>, Han Shen <shenhan@google.com>, Rik van Riel
- <riel@surriel.com>, Jann Horn <jannh@google.com>, Dan Carpenter
- <dan.carpenter@linaro.org>, Oleg Nesterov <oleg@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Clark Williams <williams@redhat.com>, Yair
- Podemsky <ypodemsk@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>,
- Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [PATCH v6 16/29] KVM: VMX: Mark __kvm_is_using_evmcs static key
- as __ro_after_init
-In-Reply-To: <aO2TKOY5JV9OoRUg@google.com>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <20251010153839.151763-17-vschneid@redhat.com>
- <aO2TKOY5JV9OoRUg@google.com>
-Date: Tue, 14 Oct 2025 13:20:05 +0200
-Message-ID: <xhsmhtt01pw62.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1760440819; c=relaxed/simple;
+	bh=kvMcNwOtUusFFRY1RzL3Brr02ntzT+T98eFD9Xd5Mm0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Nasgpk3WXDKxHo33/018LP2wpBSddISOwwqSRko+3jVVMcjoDxhksB+a4xeb46Q2Xl34NCTkwykJlJMg5s9vmtiboUsf4kwFnnyi5Kv5ij1IW4EBifz1nc23LNUl8oKl7Q+gyW15+xsza8f3CuGYtMpS7UYnD2Ppl8wauHfaX/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gEU4ll0z; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760440818; x=1791976818;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=kvMcNwOtUusFFRY1RzL3Brr02ntzT+T98eFD9Xd5Mm0=;
+  b=gEU4ll0zP3MW7KsGCfxp1cg1vY/wKUgIY3yL1v76DPQyuWCOZTqQm7cu
+   5oTAYOrEutf6kU/NAfy+U1rfuRs4cuRhaF4VWy2dqq0G5kIzi+uPn+0GR
+   KITD/1+d1YS7N2PPp9Ryd5whm2hRo9pCxn+vyd4oQtToQ5wSVGs1D2t46
+   NVgsH6iMvsHGtMXOSxUlIJNcZ8t7Xnr31AdrZf7gi1RYFfP41QfCWEIBh
+   zQkr50MD6+xnYsm7M4lhViZgFgQSrl9h23S2Y1QJHRgtI+kouk12VhRPj
+   aKMQEiXy2yc+glsud5W0ujuiI5c8lfvRDk1W+mmqATmsdpFW0b1pwjOHZ
+   g==;
+X-CSE-ConnectionGUID: X7QbSytARXGFWYhtl6Re/Q==
+X-CSE-MsgGUID: xqV9rDZCRByui1ZhsJu5zQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="80035591"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="80035591"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 04:20:17 -0700
+X-CSE-ConnectionGUID: dhNMvwYETwyk7aT+PC3RJw==
+X-CSE-MsgGUID: zhQLlNvDQSOXnkX8pRc5sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="212477019"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.195])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 04:20:15 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 14 Oct 2025 14:20:11 +0300 (EEST)
+To: Guenter Roeck <linux@roeck-us.net>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+In-Reply-To: <df266709-a9b3-4fd8-af3a-c22eb3c9523a@roeck-us.net>
+Message-ID: <b587595c-98f5-dd5a-31a2-6265bff1dc3a@linux.intel.com>
+References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com> <df266709-a9b3-4fd8-af3a-c22eb3c9523a@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/mixed; BOUNDARY="8323328-1380350465-1760431885=:925"
+Content-ID: <34c8a03f-03d1-f48a-2b50-22202d7d51cf@linux.intel.com>
 
-On 13/10/25 17:02, Sean Christopherson wrote:
-> On Fri, Oct 10, 2025, Valentin Schneider wrote:
->> The static key is only ever enabled in
->>
->>   __init hv_init_evmcs()
->>
->> so mark it appropriately as __ro_after_init.
->>
->> Reported-by: Sean Christopherson <seanjc@google.com>
->> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
->> ---
->
-> Acked-by: Sean Christopherson <seanjc@google.com>
->
-> Holler if you want me to grab this for 6.19.  I assume the plan is to try and
-> take the whole series through tip?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks! At the very least getting all the __ro_after_init patches in would
-be good since they're standalone, I'll wait a bit to see how this goes :)
+--8323328-1380350465-1760431885=:925
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <dfb68ed0-92c9-e39b-cad7-6652b7b06feb@linux.intel.com>
 
+On Mon, 13 Oct 2025, Guenter Roeck wrote:
+> On Wed, Sep 24, 2025 at 04:42:27PM +0300, Ilpo J=E4rvinen wrote:
+> > Bridge windows are read twice from PCI Config Space, the first read is
+> > made from pci_read_bridge_windows() which does not setup the device's
+> > resources. It causes problems down the road as child resources of the
+> > bridge cannot check whether they reside within the bridge window or
+> > not.
+> >=20
+> > Setup the bridge windows already in pci_read_bridge_windows().
+> >=20
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+>=20
+> This patch causes some boot test failures for me. Specifically, booting
+> alpha images from PCI through a PCI bridge fails. Reverting it fixes
+> the problem.
+>=20
+> Bisect log attached for reference.
+>=20
+> Guenter
+>=20
+> ---
+> # bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
+> # good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+> git bisect start 'HEAD' 'v6.17'
+> # good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-20=
+25-10-01' of https://gitlab.freedesktop.org/drm/kernel
+> git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
+> # good: [bed0653fe2aacb0ca8196075cffc9e7062e74927] Merge tag 'iommu-updat=
+es-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux
+> git bisect good bed0653fe2aacb0ca8196075cffc9e7062e74927
+> # good: [6a74422b9710e987c7d6b85a1ade7330b1e61626] Merge tag 'mips_6.18' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
+> git bisect good 6a74422b9710e987c7d6b85a1ade7330b1e61626
+> # bad: [522ba450b56fff29f868b1552bdc2965f55de7ed] Merge tag 'clk-for-linu=
+s' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+> git bisect bad 522ba450b56fff29f868b1552bdc2965f55de7ed
+> # bad: [256e3417065b2721f77bcd37331796b59483ef3b] Merge tag 'for-linus' o=
+f git://git.kernel.org/pub/scm/virt/kvm/kvm
+> git bisect bad 256e3417065b2721f77bcd37331796b59483ef3b
+> # bad: [2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92] Merge tag 'pci-v6.18-ch=
+anges' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci
+> git bisect bad 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
+> # bad: [531abff0fa53bc3a2f7f69b2693386eb6bda96e5] Merge branch 'pci/contr=
+oller/qcom'
+> git bisect bad 531abff0fa53bc3a2f7f69b2693386eb6bda96e5
+> # bad: [fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3] Merge branch 'pci/resou=
+rce'
+> git bisect bad fead6a0b15bf3b33dba877efec6b4e7b4cc4abc3
+> # good: [0bb65e32495e6235a069b60e787140da99e9c122] Merge branch 'pci/p2pd=
+ma'
+> git bisect good 0bb65e32495e6235a069b60e787140da99e9c122
+> # good: [ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd] PCI: Use pbus_select_w=
+indow_for_type() during IO window sizing
+> git bisect good ebe091ad81e1d3e5cbb1592ebc18175b5ca3d2bd
+> # good: [15c5867b0ae6a47914b45daf3b64e2d2aceb4ee5] PCI: Don't print stale=
+ information about resource
+> git bisect good 15c5867b0ae6a47914b45daf3b64e2d2aceb4ee5
+> # good: [dc32e9346b26ba33e84ec3034a1e53a9733700f9] PCI/pwrctrl: Fix devic=
+e leak at device stop
+> git bisect good dc32e9346b26ba33e84ec3034a1e53a9733700f9
+> # good: [4c5cd8d64172de3730056366dc61392a3f2f003a] Merge branch 'pci/pm'
+> git bisect good 4c5cd8d64172de3730056366dc61392a3f2f003a
+> # bad: [a43ac325c7cbbfe72bdf9178059b3ee9f5a2c7dd] PCI: Set up bridge reso=
+urces earlier
+> git bisect bad a43ac325c7cbbfe72bdf9178059b3ee9f5a2c7dd
+> # first bad commit: [a43ac325c7cbbfe72bdf9178059b3ee9f5a2c7dd] PCI: Set u=
+p bridge resources earlier
+
+Hi,
+
+Is it possible to get some logs from this (both good and bad would be=20
+the best so comparing is possible)?
+
+I'm going to send a revert for the commit a43ac325c7cb ("PCI: Set up=20
+bridge resources earlier") today anyway because of another issue it caused
+but as I'm planning to pursue the same change later, it would be useful to=
+=20
+understand what goes wrong here so I know what additional supporting work=
+=20
+is needed before coming back with this change.
+
+--=20
+ i.
+--8323328-1380350465-1760431885=:925--
 
