@@ -1,138 +1,154 @@
-Return-Path: <linux-kernel+bounces-851608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1AEBD6E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:33:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FD4BD6E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3185318A4B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:33:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1ED2B4E2735
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0646E1C5496;
-	Tue, 14 Oct 2025 00:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uX1qN/6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FED1DE3DF;
+	Tue, 14 Oct 2025 00:40:17 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2AE1A9F86;
-	Tue, 14 Oct 2025 00:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08161DF49
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760401992; cv=none; b=Jpi1GIwVydtSPqXh2x91xKv9yUxeyE55ySzlZVhk3YBnFbAWB/6XwkAwbDW5p1KA8Kf696h3QG4wT9lATNu+wGJycpbqqdpL+F8g4s1ztcA56lZmZitZOxEXxEw9kDMEAzNZ5XlbHL8peMRMwocOYdDfH4CidSj5W4U1w1U+MzQ=
+	t=1760402416; cv=none; b=rMTPT2BHTGsQIcmawxQBA3t8Hwk4e8L7cViVj9Au8ZCF5aGgHRL/tqeIJSYnws5vpRCc6LOgUH6ju0D5U969LtM1/D13YMx1zwzCWT0+isA475mixwg5HlqxzbFyWRO1Q98uWdgM8s2MmypxjeDe4GHNSyfLSTYnrK3cqyHCa4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760401992; c=relaxed/simple;
-	bh=CONMfOkpLR/OR0Vcog2SL4bQ1cVtLbXbZRDLxFGSDjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PTR3Y+Roj5ihy6nWdku/e5YAhyQ8H0qcFxsgcgzXmOs585OLHblT5KKUIK+XJ4n3eS5Rw6UgdiNZ7OWUPSwKpV5FphKTgmiRGY1fFu1JYpdF+F/vIVgiccrXMXsJqqsbUQlNvec4W0pfOGWuFyQ3IJnYgVpl5iuTX1ovJc8K1XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uX1qN/6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41E9C4CEE7;
-	Tue, 14 Oct 2025 00:33:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760401991;
-	bh=CONMfOkpLR/OR0Vcog2SL4bQ1cVtLbXbZRDLxFGSDjY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uX1qN/6t8Zx63Cp7nxsMUxh6BMAYZfNzi+SFdtReZPisgOlQluDaf0ovqyKJgt1oW
-	 dMw3mT7kIfwEpqXgR8PiXrAG/5mbUapIeyhMAjnineOLuKSH5g7Ef+FaGAwZfWmCVO
-	 cnJKxqfMy1sz+deEqI8jOB2RhyjrnvJurrVoOCPiPqs5Lb1lsjVvxQngPBGuWBACJw
-	 gzQM9xyInUc6Pp2Lll/8+vTMyEnT9SJDxxSF4v0ZuZzjy/1wql08+WTMfQi+yY5XUe
-	 wMtnKtMhxhZ0BZYmbOihLSqP776rZXJ1Kbjr2Rwlw0GR2hYAgydc2svWNOLHdw2WXf
-	 B+1vRixraSGPA==
-Message-ID: <50eb0743-8b6b-4d6b-bf22-46a428cbe26a@kernel.org>
-Date: Tue, 14 Oct 2025 02:33:04 +0200
+	s=arc-20240116; t=1760402416; c=relaxed/simple;
+	bh=IPl9EQf6BtNRNurlVLQ0RfL/LiGQBF5rKGa+SxOTBeg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=K7DVoB0JqR4vMAl17+kpG2BTlRynlV7maRveolhLbdgaq5n6GpNW9KnAH9CzxGBHRAyhtb7LTjsNs7NYl/9+jQ48KkiMuWYgPafTjI8eZE268VD1uIaPAK87+yMeyB6AatJngWx81FSqWZslF76K0mjKOo+K3r4amQ3DGvoE/GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9374627bb7eso1426844039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:40:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760402414; x=1761007214;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C9XtdkcOQ7DKkYuGh3zZQxXfk2Er/NZSi44IpJOI6IQ=;
+        b=EKwjX9XpTb7Q3BKXcgYsvtpmew4gLGso6OByo1yz2a8FHd05/S9+PAYFLVG3GdzSzW
+         10aOA8lHSc71XUDpT3lVtCOeToXdgyhUqt0xnKUkWOLSPzPUlQ7fRKn1RWq+Q+2wpfwO
+         SwJX3xv2950vEZLGbTdBfmAVod26euegMDuPW7UVq/r84dtMIqJz2fiHPG3ibeeT4jfl
+         DlWMdZrN8YkQ5qScAkLquMPQAKwss3dKBu/vUtTEIyL2lICUobfPUfUxvPx20xWv2/xP
+         VfY1V2t7yH6+ppoiZywXvKOjXQzuqW0JaZrGj2R0lEJ7aotjp8QgiGB+ClUs03/R7aec
+         F2IA==
+X-Gm-Message-State: AOJu0YyEfXjk1U2dxXj9XvKHcZmDOqVimZacVJx70gfk1ZUFWWAzqPJf
+	KAHi6QK7oo4vGfvnlA2c5g/aqfTXUb/oJmwXmbUeGP+PQI+hMvG5Y1mBhOO+yS2eH3/NgraWjq2
+	HfpLRXYKPHx5wsK9zxkBOKI7ew9UTdGUWlped7rly2fRsrtszMg73X8k6zJI=
+X-Google-Smtp-Source: AGHT+IEKcZq5FiWlny6p4umqLu9/Ab9hITRo0l/imo9+vZzkT7IAskDYT0KKdXxdAUtIut6opgSh+xQ+HI7fAl7QQAykg/LcnC0g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] arm64: dts: exynos: add initial support for
- exynos8890
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250914150321.2632019-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250914150321.2632019-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2787:b0:42f:9c5e:4d57 with SMTP id
+ e9e14a558f8ab-42f9c5e4e17mr175990665ab.6.1760402414092; Mon, 13 Oct 2025
+ 17:40:14 -0700 (PDT)
+Date: Mon, 13 Oct 2025 17:40:14 -0700
+In-Reply-To: <68d26261.a70a0220.4f78.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ed9bee.050a0220.91a22.01f4.GAE@google.com>
+Subject: Forwarded: [PATCH v5] hugetlbfs: move lock assertions after early
+ returns in huge_pmd_unshare()
+From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/09/2025 17:03, Ivaylo Ivanov wrote:
-> Hey folks,
-> 
-> Before anything, this patchset depends on the following ones being merged,
-> either for dt-bindings for compatibles, and/or device drivers:
-> [1] https://lore.kernel.org/all/20250914112942.2604194-2-ivo.ivanov.ivanov1@gmail.com/
-> [2] https://lore.kernel.org/all/20250914114457.2610013-2-ivo.ivanov.ivanov1@gmail.com/
-> [3] https://lore.kernel.org/all/20250914122116.2616801-2-ivo.ivanov.ivanov1@gmail.com/
-> [4] https://lore.kernel.org/all/20250914124227.2619925-2-ivo.ivanov.ivanov1@gmail.com/
-> [11] https://lore.kernel.org/all/20250914134458.2624176-2-ivo.ivanov.ivanov1@gmail.com/
-> [13] https://lore.kernel.org/all/20250914145555.2631595-2-ivo.ivanov.ivanov1@gmail.com/
-> bindings only:
-> [5] https://lore.kernel.org/all/20250914131452.2622609-1-ivo.ivanov.ivanov1@gmail.com/
-> [6] https://lore.kernel.org/all/20250914131620.2622667-1-ivo.ivanov.ivanov1@gmail.com/
-> [7] https://lore.kernel.org/all/20250914131848.2622817-1-ivo.ivanov.ivanov1@gmail.com/
-> [8] https://lore.kernel.org/all/20250914132033.2622886-1-ivo.ivanov.ivanov1@gmail.com/
-> [9] https://lore.kernel.org/all/20250914132201.2622955-1-ivo.ivanov.ivanov1@gmail.com/
-> [10] https://lore.kernel.org/all/20250914132339.2623006-1-ivo.ivanov.ivanov1@gmail.com/
-> [12] https://lore.kernel.org/all/20250914135652.2626066-1-ivo.ivanov.ivanov1@gmail.com/
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-This dependency means I cannot do anything with it. Please list ONLY:
-1. Real dependencies. Driver cannot be a dependency for DTS. Dependency
-is for building or LOST functionality comparing to mainline kernel.
+***
 
-2. As separate list, the non-applied bindings used in this DTS. Bindings
-are not dependencies, but I cannot take DTS before they hit next.
+Subject: [PATCH v5] hugetlbfs: move lock assertions after early returns in huge_pmd_unshare()
+Author: kartikey406@gmail.com
 
-Best regards,
-Krzysztof
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+
+When hugetlb_vmdelete_list() processes VMAs during truncate operations,
+it may encounter VMAs where huge_pmd_unshare() is called without the
+required shareable lock. This triggers an assertion failure in
+hugetlb_vma_assert_locked().
+
+The previous fix in commit dd83609b8898 ("hugetlbfs: skip VMAs without
+shareable locks in hugetlb_vmdelete_list") skipped entire VMAs without
+shareable locks to avoid the assertion. However, this prevented pages
+from being unmapped and freed, causing a regression in fallocate(PUNCH_HOLE)
+operations where pages were not freed immediately, as reported by Mark Brown.
+
+Instead of checking locks in the caller or skipping VMAs, move the lock
+assertions in huge_pmd_unshare() to after the early return checks. The
+assertions are only needed when actual PMD unsharing work will be performed.
+If the function returns early because sz != PMD_SIZE or the PMD is not
+shared, no locks are required and assertions should not fire.
+
+This is cleaner than previous approaches because it keeps all the logic
+within huge_pmd_unshare() itself, while still allowing page unmapping and
+freeing to proceed for all VMAs.
+
+Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+Fixes: dd83609b8898 ("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
+Link: https://lore.kernel.org/mm-commits/20250925203504.7BE02C4CEF7@smtp.kernel.org/ [v1]
+Link: https://lore.kernel.org/mm-commits/20250928185232.BEDB6C4CEF0@smtp.kernel.org/ [v2]
+Link: https://lore.kernel.org/linux-mm/20251003174553.3078839-1-kartikey406@gmail.com/ [v3]
+Link: https://lore.kernel.org/linux-mm/20251008052759.469714-1-kartikey406@gmail.com/ [v4]
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+Changes in v5:
+- Move lock assertions after early return checks in huge_pmd_unshare()
+  per David's suggestion - cleaner approach that keeps logic within the
+  function itself
+- Revert all previous approaches (VMA skipping, flag additions, caller checks)
+
+Changes in v4:
+- Check __vma_shareable_lock() in __unmap_hugepage_range() before calling
+  huge_pmd_unshare() per Oscar's suggestion
+- Remove ZAP_FLAG_NO_UNSHARE flag per David's feedback
+
+Changes in v3:
+- Add ZAP_FLAG_NO_UNSHARE to skip only PMD unsharing, not entire VMA
+
+Changes in v2:
+- Skip entire VMAs without shareable locks (caused PUNCH_HOLE regression)
+
+Changes in v1:
+- Initial fix attempt
+---
+ mm/hugetlb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 795ee393eac0..0455119716ec 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -7614,13 +7614,12 @@ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	p4d_t *p4d = p4d_offset(pgd, addr);
+ 	pud_t *pud = pud_offset(p4d, addr);
+ 
+-	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
+-	hugetlb_vma_assert_locked(vma);
+ 	if (sz != PMD_SIZE)
+ 		return 0;
+ 	if (!ptdesc_pmd_is_shared(virt_to_ptdesc(ptep)))
+ 		return 0;
+-
++	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
++	hugetlb_vma_assert_locked(vma);
+ 	pud_clear(pud);
+ 	/*
+ 	 * Once our caller drops the rmap lock, some other process might be
+-- 
+2.34.1
+
 
