@@ -1,130 +1,183 @@
-Return-Path: <linux-kernel+bounces-851698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9CBBD715C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:29:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA6ABD711D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9AD219A1A24
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:30:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5301A34EAAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4655F3054D1;
-	Tue, 14 Oct 2025 02:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982E93043B8;
+	Tue, 14 Oct 2025 02:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="dOP6xvqW"
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HqtJfKtL"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF142288C6;
-	Tue, 14 Oct 2025 02:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725BE15E97;
+	Tue, 14 Oct 2025 02:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760408939; cv=none; b=VSzkeJkvXk1GZRfs4K4/LPaBTj4WWgC6e4nKT8s2UJ+iTl7SPgEU2cU4l0UeUNpL0siPjU4VCwOmgRcE2B7/e5n7nhUe2e4ON1FGYsJ5czW+V56AlnIf5hTrCcL/1NyCx630WsWXr/Dvug4Tycz5xYsh/1cHNE3MLJpy5Qr3R/8=
+	t=1760408618; cv=none; b=OQb8FC1ixp8UIDax+bfiEPRWs7GLguW0NGM47wBQBm0RLU8QKjtI4Wj+sqekwzrxcyESrpDLiwVR8QdBN9SHBld3kfuNGSXsGJB4vjF/EZzob2XOCX62ktAFJvISiGb+FUNT04DdyQzTBhf/vIC/DzbSaFnXsAUJ7f+GOppEm3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760408939; c=relaxed/simple;
-	bh=t4TmkTnxBxFsPMMgCpLUCqQfV3Ld9evdSq4pBq4ykKg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XZuN+2YSGqf7N69Uh7krFOWYBo6OO28lbiNTDL/ij/PUxfp/qCie2ChRatr11pbApXHTLvXqWso2zPdMR2FvS9Ct253hymYx5nNEdQEvY7YY4wKjxRKopi3DfF+9z1208j9qjHDzQ79Y2Agl7FoU0ytJRa550odSBQUJf+ovO1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=dOP6xvqW; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=L1Y/dJ23z38rGLpMWBLQrEYtDiYGHHrj1WObdSKChYM=;
-	b=dOP6xvqWwTiLG2O3TkqkahCHEdT60fKJv3t7U06dAwnPUsCh1cbGNi3f50NYAa1AZvwBXu5io
-	lKgcF4rxEB2cZOIs5txAQHmZs3BJ4njib76cWOU0GkvI3tLGV1wdvUan0Qk9g0TZYUIomiwDC3o
-	w4NRyeLlSGyBDGqnjnYBtvg=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4clynV0xygzRhR0;
-	Tue, 14 Oct 2025 10:28:30 +0800 (CST)
-Received: from kwepemk500007.china.huawei.com (unknown [7.202.194.92])
-	by mail.maildlp.com (Postfix) with ESMTPS id C51F91401E0;
-	Tue, 14 Oct 2025 10:28:49 +0800 (CST)
-Received: from huawei.com (10.50.87.129) by kwepemk500007.china.huawei.com
- (7.202.194.92) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 14 Oct
- 2025 10:28:49 +0800
-From: Yu Kuai <yukuai3@huawei.com>
-To: <nilay@linux.ibm.com>, <ming.lei@redhat.com>, <tj@kernel.org>,
-	<josef@toxicpanda.com>, <axboe@kernel.dk>
-CC: <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
-	<yukuai1@huaweicloud.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
-	<johnny.chenyi@huawei.com>
-Subject: [PATCH 4/4] blk-mq-debugfs: make blk_mq_debugfs_register_rqos() static
-Date: Tue, 14 Oct 2025 10:21:49 +0800
-Message-ID: <20251014022149.947800-5-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20251014022149.947800-1-yukuai3@huawei.com>
-References: <20251014022149.947800-1-yukuai3@huawei.com>
+	s=arc-20240116; t=1760408618; c=relaxed/simple;
+	bh=9wos1iQGekXRuYAqDwpm5kTkuWg2EB110LQ7Z+hNRvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njxjpzOkVPxSGSi7WQCluzZWX7mRGJ3HO0q1BU4VIBi87sfXPv6tqfv04Nku06J9EXeCFXc2gRzhKlALY9Z34FD9MPuDp1su4ooX67snds5uQE9Ulk2+35mTSHh0dB2GRnadNry7XHEPSF3fhQASe4Tp7tlindt8rkgsejr2IHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HqtJfKtL; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 03EE4264C7;
+	Tue, 14 Oct 2025 04:23:35 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id xpXP0q_EE9wl; Tue, 14 Oct 2025 04:23:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1760408614; bh=9wos1iQGekXRuYAqDwpm5kTkuWg2EB110LQ7Z+hNRvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HqtJfKtL8HZ9DpOd5ZJfDQVf3fbQi+zJObBC+vs+GH6yD7NPpSljr9Wah+T1FvhxZ
+	 jsr3tBjzcan5T9zdEuxtWiTtLCpcRbUMxaKBkCIeGaXShyEep2Fi/bREbJLeFJRijf
+	 M2Xg03bU9YmTKsPslZHLVJKtxhIqTtGAsiQk0+RLxF5VuzmxxHGTe2i8ez937G6B4s
+	 PTpfRloto+EeFqkzQfQMCMcQzusDKgURLkdAG1QiGRcB/ZUbgcP46LVUXAGQpHNEEq
+	 ksoc6KbJmm2VAlcPmA1a6zjMpNz0GfXV7GL7ZBzO2R2bDFIF7jQmTWe0rFHh/S22XK
+	 3qlxk8o+w6NoA==
+Date: Tue, 14 Oct 2025 02:23:23 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH 1/3] dt-binding: pinctrl: Document Loongson 2K0300 pin
+ controller
+Message-ID: <aO20G22p7OwJq6C-@pie>
+References: <20250811163749.47028-2-ziyao@disroot.org>
+ <20250811163749.47028-3-ziyao@disroot.org>
+ <CACRpkdYC6ueVGngC=KMqh9aW8DiMKWyxoa8dqb4N3sEEkpdsFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500007.china.huawei.com (7.202.194.92)
+In-Reply-To: <CACRpkdYC6ueVGngC=KMqh9aW8DiMKWyxoa8dqb4N3sEEkpdsFg@mail.gmail.com>
 
-Because it's only used inside blk-mq-debugfs.c now.
+On Tue, Oct 14, 2025 at 12:48:31AM +0200, Linus Walleij wrote:
+> On Mon, Aug 11, 2025 at 6:39 PM Yao Zi <ziyao@disroot.org> wrote:
+> 
+> > The pincontroller integarted in Loongson 2K0300 is able to configure
+> > function multiplexing for all the pins. It could also configure drive
+> > strength on basis of functions, which means all pins set to the same
+> > function share drive-strength setting. Drive-strength configuration
+> > isn't available for all functions, either.
+> >
+> > This binding utilizes two levels of subnodes, where the outer represents
+> > function and the inner represents groups. Drive-strength is allowed in
+> > the outer since it's shared among all groups configured to the function.
+> >
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> (...)
+> > +patternProperties:
+> > +  '^func-':
+> > +    type: object
+> > +
+> > +    $ref: pincfg-node.yaml#
+> > +
+> > +    properties:
+> > +      drive-strength:
+> > +        description:
+> > +          Maximum sink or source current as defined in pincfg-node.yaml. Note
+> > +          that drive strength could only be configured on function basis, i.e.,
+> > +          all pins multiplexed to the same function share the same
+> > +          configuration.
+> > +
+> > +          This could only be configured for several functions, including jtag,
+> > +          dvo, uart, gmac, sdio, spi, i2s, timer, usb and emmc.
+> > +        enum: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+> 
+> As Rob points out this is really odd, or rather the first time I see
+> something like this.
+> 
+> It is clear from the driver that these are all set by writing bits
+> in a 32bit register, with 2 or 3 bits dedicated to each function.
+> 
+> Its a bit weird, like each function has driver totempoles/stages
+> before the mux instead of after (which is the normal). But
+> I guess it is engineered like that then!
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-mq-debugfs.c | 4 +++-
- block/blk-mq-debugfs.h | 5 -----
- 2 files changed, 3 insertions(+), 6 deletions(-)
+Yes, it occurs strange to me at the first sight, too.
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index 1de9bab7ba80..919e484aa1b2 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -14,6 +14,8 @@
- #include "blk-mq-sched.h"
- #include "blk-rq-qos.h"
- 
-+static void blk_mq_debugfs_register_rqos(struct rq_qos *rqos);
-+
- static int queue_poll_stat_show(void *data, struct seq_file *m)
- {
- 	return 0;
-@@ -774,7 +776,7 @@ void blk_mq_debugfs_unregister_rqos(struct rq_qos *rqos)
- 	rqos->debugfs_dir = NULL;
- }
- 
--void blk_mq_debugfs_register_rqos(struct rq_qos *rqos)
-+static void blk_mq_debugfs_register_rqos(struct rq_qos *rqos)
- {
- 	struct request_queue *q = rqos->disk->queue;
- 	const char *dir_name = rq_qos_id_to_name(rqos->id);
-diff --git a/block/blk-mq-debugfs.h b/block/blk-mq-debugfs.h
-index 9f76603792fe..d94daa66556b 100644
---- a/block/blk-mq-debugfs.h
-+++ b/block/blk-mq-debugfs.h
-@@ -33,7 +33,6 @@ void blk_mq_debugfs_register_sched_hctx(struct request_queue *q,
- 				       struct blk_mq_hw_ctx *hctx);
- void blk_mq_debugfs_unregister_sched_hctx(struct blk_mq_hw_ctx *hctx);
- 
--void blk_mq_debugfs_register_rqos(struct rq_qos *rqos);
- void blk_mq_debugfs_register_rq_qos(struct request_queue *q);
- void blk_mq_debugfs_unregister_rqos(struct rq_qos *rqos);
- #else
-@@ -75,10 +74,6 @@ static inline void blk_mq_debugfs_unregister_sched_hctx(struct blk_mq_hw_ctx *hc
- {
- }
- 
--static inline void blk_mq_debugfs_register_rqos(struct rq_qos *rqos)
--{
--}
--
- static inline void blk_mq_debugfs_register_rq_qos(struct request_queue *q)
- {
- }
--- 
-2.39.2
+> 
+> It now looks like this:
+> 
+> +        func-uart {
+> +            drive-strength = <2>;
+> +
+> +            uart0-pins {
+> +                pinmux = <((40 << 8) | 0x3)>, <((41 << 8) | 0x3)>;
+> +            };
+> 
+> I think this is better:
+> 
+> uart0_default: uart0-pins {
+>      function = "uart0";
+>      drive-strength = <2>;
+>      pinmux = <((40 << 8) | 0x3)>, <((41 << 8) | 0x3)>;
+>  };
+> 
+> This is consistent with the bindings if you include both
+> $ref: pinmux-node.yaml#
+> $ref: pincfg-node.yaml#
+> 
+> And will configure it all in one go.
 
+To confirm my understanding, would you like to drop the outside node
+(which now refers to pincfg-node.yaml) and refer to both
+pinmux-node.yaml and pincfg-node.yaml in the single level of subnode?
+i.e.
+
+	pinctrl {
+		uart0_defaults: uart0-pins {
+			function = "uart0";
+			drive-strength = <2>;
+			pinmux = <...>;
+		};
+	};
+
+> Sure you need a lookup for the function strings in the driver
+> but it's OK.
+> 
+> It's odd to have "function" without "group" but it seems legal
+> and works fine for your usecase. The normal would be to
+> skip pinmux, have just pins = <40, 41>; and look up the
+> function value for each function for a pin from a table that
+> cross-reference in this case "uart0" to 3. But I
+> guess you don't wanna do that so pinmux is fine too.
+
+Thanks, glad to hear it's okay.
+
+> <((40 << 8) | 0x3)>, <((41 << 8) | 0x3)> is a bit odd, maybe
+> you want to also include an explanatory macro in the bindings.
+
+Sure, I will add a macro like the one included in the DTS change.
+
+> Yours,
+> Linus Walleij
+> 
+
+Thank you and Rob for the help! Will adapt the suggestions in v2.
+
+Best regards,
+Yao Zi
 
