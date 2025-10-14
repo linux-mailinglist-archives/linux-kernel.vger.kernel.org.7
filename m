@@ -1,313 +1,123 @@
-Return-Path: <linux-kernel+bounces-851749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2FCBD72C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:17:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2EABD72CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF9F188E1D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C3E189078F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676F43074B0;
-	Tue, 14 Oct 2025 03:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07691EF36C;
+	Tue, 14 Oct 2025 03:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="furKCoEl"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Qj5gE/XY"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD21306494;
-	Tue, 14 Oct 2025 03:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EDC634EC
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760411791; cv=none; b=X//iLaV9eyTxa7+peK3Jrzcjl6qZEuw6xgvk3KPCVpPeLvJvjw1I78qYns3DlugTvWGA8eHx/jmcw2/wQP7WIXf8rgEuIUNEBKj9fu1lOj6yKtOAJAfzOVuoLREnUh6epDJ5dNAJKGpioKt2Q5BSHc+kPyp+H+9udfg5Y0t82Pc=
+	t=1760411936; cv=none; b=SlQcInsGbdw1a/U99+hRoDN66zh3Ht6DR+FB+927XDBu9EdUmRV/Hfr4Ikt9XZly49/MulXUm7IQd5VjOnk5JTY2GOfPo95pzruQrbKKaHqlV+NTKxiSDD9Zsm5nED2MjTBJT9dUqM2/rVKWbCGEXsYoH3JsDXlS6U045ieh92Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760411791; c=relaxed/simple;
-	bh=Juc/Ajm/GlPGt5lxFcH4KCCulPGEMuMVo6qNVmRRKK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HxphiNHTqFApFzT1Y/SedoP4I1nkJiZguQN45cgauojvOcHmsk7vqWX1kRIK4P55AABsQy1LjWucbcggDIMXu8PxVXNOIPmvmPv4LP2OsVi7yy7L+kFN3hnIYSTm3hNqw0Pu5ioJVA5JI9IIZfABbSA9uN/9LwSt2GxG7vLWI7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=furKCoEl; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=qtet+JxpkGrJkedZ4q4cNXrn6sTB1GucoB6M5xSB0L0=; b=furKCoElTccKoxRbFVG3Gbxr/y
-	qB0Y9PkN81mHx4/tAWeO6JSsuXydilGOU8sNobQyg+rF2t1f+BRunSpqI4PovuTUOZqYq7n1Mwake
-	c2Yx9X09LQ05VILRUd0GxppJsOlhQr9a/OS+VSyWO1nOiEKwv5FZsniHxzKSxaBeDcCl7cW0bVS37
-	A0CzHrKYPtJOKeGkvW64YN5KHQ7UJOqQJWQLDYNGTAUZFqmPlPf57oPVLQJFiNNV1c78DsUJBHhe8
-	j6ZZJKsJLS2oUS4x9LrZMQc0jbvMv9jNZonmhBI8V7JvObkXyk9bSBt5+ubvr9F275JPhjFmBD3vs
-	OaMxd9Dg==;
-Received: from [50.53.43.113] (helo=smtpauth.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8VWP-00000004sx3-1385;
-	Tue, 14 Oct 2025 03:16:26 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] docs: power: clean up power_supply_class.rst
-Date: Mon, 13 Oct 2025 20:16:15 -0700
-Message-ID: <20251014031617.764429-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760411936; c=relaxed/simple;
+	bh=6lR/TQju9ey0aOHm4Um+2HHuV8O2PyLs66AmGS3EoSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t980RnDbiiSa8aPiMzPzE0yVtTE3mK/rQhhwq2F/1HqWA3WG9qqoqkGPAQbNlMuzni3qJleaQqTFk3mkPZxuPFNnnz1Qwwl9srj8rhWUjBsuBrs+aPOGud6haUYzNSLs1EPO0ga2sM1KRSVM6ViagjPcBQYpT5SkjXSXDncMSGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Qj5gE/XY; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so41265075e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1760411933; x=1761016733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RZkQk8i8I+bz9BlzrbCcwSCImHhYisNiBNVjldByEI8=;
+        b=Qj5gE/XYOWWRJ3ZU+ltFDTOPZFRXdFBwj4Nas8mmt2/5ZgLAt8onTEkutcDvmXNDzt
+         6WcVdVfc7zDgHNu9zgwcDkNEiEgGmP2ugnZOiNzggmEPCqHnLo6uX9xQ5oS9WqmB0wUT
+         ngksUCIuOBEAW3LNTzReQsAGWNhrwC74eGkUHeuliLbTSizG6E5ezAF3PMTMaqTwOwDM
+         SjTPIVZXX5PplBo68uUfIuTBLP4AmBMuzpFyTCw4M+BNHrhPqc9HjZm+88L+p13pRAFH
+         83nmTv4JFKB1/iA+evyWcJ2dFz8odM7L+FEA6NKY8t2X/eyUGKdzgIZYPpA9UXUMHyTo
+         CcQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760411933; x=1761016733;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RZkQk8i8I+bz9BlzrbCcwSCImHhYisNiBNVjldByEI8=;
+        b=cxiQSBl5vX5u8mRboR4ycHnljBPc33ngi4yDkIA7mISFVMqj/W9eI+u6SNxnWNIBg2
+         8LyTJuWM6FSoUWIE4SL56c7JVyzrypf8KnoJHTBB1tiMPxLXvETLd75/DpAh1itIFtTV
+         j1FsNo6n7iKFO+slKxa4ucpxwfQ2ZbT7gXwaAqCYGsiT/9eUDGsprlLiYoHw1frhiNYk
+         OtB3f08/fVpWFsV1lLEV7MxByu5avtFBGUgxmpddP4TNA0UjZWqkRiN1iUKcMdMK35gH
+         IvpMDHAhzZhLvOKK7Jxry8oRlWiqUkovwNcdoqcyDDm7VcnUmO2qogyc6ZlUd3+kS4Ge
+         fppg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMhTIc9njtz1M420OBunT++ak09h24mLqgixILlhx55nDwm1Tgvex7zHIbKCK5V06fckaEnXBvr1vF9Gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmZ8uPkxTifmVcfATkhdiIdfn0Zxq02YNsYm9/xNqDsKjI5G7H
+	jc2krjHBneH/hPo95cH3nV9QyovTufwAy9Cwf1a5K/IDa8/htN6PVto=
+X-Gm-Gg: ASbGncs1l/pidMMyiujFNgoDR182O/YCmQBZzE97kQJs1NFBVOG795UpVd7DVmUossO
+	gA95WKYk0SEB9lGwA17ZL/Ct+c32F8Iwg9ZBFIupdI8sm1/W0P0uYKrzwmCgnyufQ8mBsonYqcw
+	LhXu2TQr05uuT5cb+kvRPuP2mdHmZVbkd1PNzODw2gReTkbbhlc3mq1oSZpleWDidZAzVCHmt5d
+	1M/XY0sD++yQY3CQ+YGCJjXs2pGpVXQESP572DyH3Fiht7dqz/wVfnbRyfmge/lMU4nINREmG8y
+	cJBS+uDYGBNIQ6n94SXRH0lUY0PeIJE+IfqL2pFOXgIb+7VK2cAMZS1/GiOmYfBzZugFYkApTai
+	F1vsj2a4Xs0OMgRye5SM7FVttQmqOizYS8Bcoq9El/tuZO/cgo2VS5hSm3YtKaWzDoIUVHMa3+f
+	Li0MKloasDe4sePtKDWhYdLcDFrKk=
+X-Google-Smtp-Source: AGHT+IFREi6+xE8As6AfUHzhnF2zI2x/unVzciiXYX3NqYh0HkV9t5cMcjOgt5siISL+FR37Jj9fVg==
+X-Received: by 2002:a05:600c:37cd:b0:46e:59dd:1b55 with SMTP id 5b1f17b1804b1-46fa9a8b3e3mr168711425e9.2.1760411932553;
+        Mon, 13 Oct 2025 20:18:52 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4413.dip0.t-ipconnect.de. [91.43.68.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e13b6sm21160015f8f.44.2025.10.13.20.18.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 20:18:52 -0700 (PDT)
+Message-ID: <8e7c9b48-0809-4678-8747-313f2bcb5699@googlemail.com>
+Date: Tue, 14 Oct 2025 05:18:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.17 000/563] 6.17.3-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20251013144411.274874080@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20251013144411.274874080@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Clean up grammar, punctuation, etc., in the power supply class
-documentation.
+Am 13.10.2025 um 16:37 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.17.3 release.
+> There are 563 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Add article adjectives where needed.
-Hyphenate some adjectives.
-Fix punctuation.
-Fix some verb usage (singular/plural).
-Fix run-on sentences.
-Add "is" in a few places.
-Change "QA" to "Q&A".
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
----
- Documentation/power/power_supply_class.rst |   84 +++++++++----------
- 1 file changed, 42 insertions(+), 42 deletions(-)
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
---- linux-next-20251013.orig/Documentation/power/power_supply_class.rst
-+++ linux-next-20251013/Documentation/power/power_supply_class.rst
-@@ -7,35 +7,35 @@ Synopsis
- Power supply class used to represent battery, UPS, AC or DC power supply
- properties to user-space.
- 
--It defines core set of attributes, which should be applicable to (almost)
-+It defines a core set of attributes which should be applicable to (almost)
- every power supply out there. Attributes are available via sysfs and uevent
- interfaces.
- 
--Each attribute has well defined meaning, up to unit of measure used. While
-+Each attribute has a well-defined meaning, up to unit of measure used. While
- the attributes provided are believed to be universally applicable to any
- power supply, specific monitoring hardware may not be able to provide them
- all, so any of them may be skipped.
- 
--Power supply class is extensible, and allows to define drivers own attributes.
--The core attribute set is subject to the standard Linux evolution (i.e.
--if it will be found that some attribute is applicable to many power supply
--types or their drivers, it can be added to the core set).
-+The power supply class is extensible and allows drivers to define their own
-+attributes.  The core attribute set is subject to the standard Linux evolution
-+(i.e., if it will be found that some attribute is applicable to many power
-+supply types or their drivers, it can be added to the core set).
- 
--It also integrates with LED framework, for the purpose of providing
-+It also integrates with the LED framework, for the purpose of providing
- typically expected feedback of battery charging/fully charged status and
- AC/USB power supply online status. (Note that specific details of the
- indication (including whether to use it at all) are fully controllable by
--user and/or specific machine defaults, per design principles of LED
--framework).
-+user and/or specific machine defaults, per design principles of the LED
-+framework.)
- 
- 
- Attributes/properties
- ~~~~~~~~~~~~~~~~~~~~~
--Power supply class has predefined set of attributes, this eliminates code
--duplication across drivers. Power supply class insist on reusing its
-+The power supply class has a predefined set of attributes. This eliminates code
-+duplication across drivers. The power supply class insists on reusing its
- predefined attributes *and* their units.
- 
--So, userspace gets predictable set of attributes and their units for any
-+So, userspace gets a predictable set of attributes and their units for any
- kind of power supply, and can process/present them to a user in consistent
- manner. Results for different power supplies and machines are also directly
- comparable.
-@@ -61,7 +61,7 @@ Attributes/properties detailed
- |               **Charge/Energy/Capacity - how to not confuse**            |
- +--------------------------------------------------------------------------+
- | **Because both "charge" (µAh) and "energy" (µWh) represents "capacity"   |
--| of battery, this class distinguish these terms. Don't mix them!**        |
-+| of battery, this class distinguishes these terms. Don't mix them!**      |
- |                                                                          |
- | - `CHARGE_*`                                                             |
- |	attributes represents capacity in µAh only.                        |
-@@ -81,7 +81,7 @@ _NOW
- 
- STATUS
-   this attribute represents operating status (charging, full,
--  discharging (i.e. powering a load), etc.). This corresponds to
-+  discharging (i.e., powering a load), etc.). This corresponds to
-   `BATTERY_STATUS_*` values, as defined in battery.h.
- 
- CHARGE_TYPE
-@@ -92,10 +92,10 @@ CHARGE_TYPE
- 
- AUTHENTIC
-   indicates the power supply (battery or charger) connected
--  to the platform is authentic(1) or non authentic(0).
-+  to the platform is authentic(1) or non-authentic(0).
- 
- HEALTH
--  represents health of the battery, values corresponds to
-+  represents health of the battery. Values corresponds to
-   POWER_SUPPLY_HEALTH_*, defined in battery.h.
- 
- VOLTAGE_OCV
-@@ -103,11 +103,11 @@ VOLTAGE_OCV
- 
- VOLTAGE_MAX_DESIGN, VOLTAGE_MIN_DESIGN
-   design values for maximal and minimal power supply voltages.
--  Maximal/minimal means values of voltages when battery considered
-+  Maximal/minimal means values of voltages when battery is considered
-   "full"/"empty" at normal conditions. Yes, there is no direct relation
-   between voltage and battery capacity, but some dumb
-   batteries use voltage for very approximated calculation of capacity.
--  Battery driver also can use this attribute just to inform userspace
-+  A battery driver also can use this attribute just to inform userspace
-   about maximal and minimal voltage thresholds of a given battery.
- 
- VOLTAGE_MAX, VOLTAGE_MIN
-@@ -122,16 +122,16 @@ CURRENT_BOOT
-   Reports the current measured during boot
- 
- CHARGE_FULL_DESIGN, CHARGE_EMPTY_DESIGN
--  design charge values, when battery considered full/empty.
-+  design charge values, when battery is considered full/empty.
- 
- ENERGY_FULL_DESIGN, ENERGY_EMPTY_DESIGN
-   same as above but for energy.
- 
- CHARGE_FULL, CHARGE_EMPTY
--  These attributes means "last remembered value of charge when battery
--  became full/empty". It also could mean "value of charge when battery
-+  These attributes mean "last remembered value of charge when battery
-+  became full/empty". They also could mean "value of charge when battery is
-   considered full/empty at given conditions (temperature, age)".
--  I.e. these attributes represents real thresholds, not design values.
-+  I.e., these attributes represents real thresholds, not design values.
- 
- ENERGY_FULL, ENERGY_EMPTY
-   same as above but for energy.
-@@ -153,12 +153,12 @@ CHARGE_TERM_CURRENT
- CONSTANT_CHARGE_CURRENT
-   constant charge current programmed by charger.
- 
--
- CONSTANT_CHARGE_CURRENT_MAX
-   maximum charge current supported by the power supply object.
- 
- CONSTANT_CHARGE_VOLTAGE
-   constant charge voltage programmed by charger.
-+
- CONSTANT_CHARGE_VOLTAGE_MAX
-   maximum charge voltage supported by the power supply object.
- 
-@@ -208,10 +208,10 @@ TEMP_MAX
- 
- TIME_TO_EMPTY
-   seconds left for battery to be considered empty
--  (i.e. while battery powers a load)
-+  (i.e., while battery powers a load)
- TIME_TO_FULL
-   seconds left for battery to be considered full
--  (i.e. while battery is charging)
-+  (i.e., while battery is charging)
- 
- 
- Battery <-> external power supply interaction
-@@ -220,13 +220,13 @@ Often power supplies are acting as suppl
- time. Batteries are good example. So, batteries usually care if they're
- externally powered or not.
- 
--For that case, power supply class implements notification mechanism for
-+For that case, the power supply class implements a notification mechanism for
- batteries.
- 
--External power supply (AC) lists supplicants (batteries) names in
-+An external power supply (AC) lists supplicants (batteries) names in
- "supplied_to" struct member, and each power_supply_changed() call
--issued by external power supply will notify supplicants via
--external_power_changed callback.
-+issued by an external power supply will notify supplicants via
-+the external_power_changed callback.
- 
- 
- Devicetree battery characteristics
-@@ -241,14 +241,14 @@ battery node have names corresponding to
- for naming consistency between sysfs attributes and battery node properties.
- 
- 
--QA
--~~
-+Q&A
-+~~~
- 
- Q:
-    Where is POWER_SUPPLY_PROP_XYZ attribute?
- A:
--   If you cannot find attribute suitable for your driver needs, feel free
--   to add it and send patch along with your driver.
-+   If you cannot find an attribute suitable for your driver needs, feel free
-+   to add it and send a patch along with your driver.
- 
-    The attributes available currently are the ones currently provided by the
-    drivers written.
-@@ -258,18 +258,18 @@ A:
- 
- 
- Q:
--   I have some very specific attribute (e.g. battery color), should I add
-+   I have some very specific attribute (e.g., battery color). Should I add
-    this attribute to standard ones?
- A:
-    Most likely, no. Such attribute can be placed in the driver itself, if
--   it is useful. Of course, if the attribute in question applicable to
--   large set of batteries, provided by many drivers, and/or comes from
-+   it is useful. Of course, if the attribute in question is applicable to
-+   a large set of batteries, provided by many drivers, and/or comes from
-    some general battery specification/standard, it may be a candidate to
-    be added to the core attribute set.
- 
- 
- Q:
--   Suppose, my battery monitoring chip/firmware does not provides capacity
-+   Suppose my battery monitoring chip/firmware does not provide capacity
-    in percents, but provides charge_{now,full,empty}. Should I calculate
-    percentage capacity manually, inside the driver, and register CAPACITY
-    attribute? The same question about time_to_empty/time_to_full.
-@@ -278,11 +278,11 @@ A:
-    directly measurable by the specific hardware available.
- 
-    Inferring not available properties using some heuristics or mathematical
--   model is not subject of work for a battery driver. Such functionality
-+   model is not a subject of work for a battery driver. Such functionality
-    should be factored out, and in fact, apm_power, the driver to serve
--   legacy APM API on top of power supply class, uses a simple heuristic of
-+   legacy APM API on top of the power supply class, uses a simple heuristic of
-    approximating remaining battery capacity based on its charge, current,
--   voltage and so on. But full-fledged battery model is likely not subject
--   for kernel at all, as it would require floating point calculation to deal
--   with things like differential equations and Kalman filters. This is
-+   voltage and so on. But a full-fledged battery model is likely not a subject
-+   for the kernel at all, as it would require floating point calculations to
-+   deal with things like differential equations and Kalman filters. This is
-    better be handled by batteryd/libbattery, yet to be written.
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
