@@ -1,147 +1,197 @@
-Return-Path: <linux-kernel+bounces-852383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08507BD8D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:56:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D91BD8CF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C6B94EB37C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0D19222B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754C92FC02E;
-	Tue, 14 Oct 2025 10:56:08 +0000 (UTC)
-Received: from baidu.com (mx21.baidu.com [220.181.3.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895992FB629;
+	Tue, 14 Oct 2025 10:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP2GU09j"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D172FB99A;
-	Tue, 14 Oct 2025 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.3.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E4D2FABF5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760439368; cv=none; b=oj54E46ea/tOR/G/zxiQ8wJFiRtQcH3Z7n9YM+/TwAyxd6UWnyi1nn4frmBuoLU/j8+jwTN/UikwmSIIfGmr9daydJ4WnY2oKW9CN1O6arHTvtIHU8WP+pIy+x18eP0cgAPsDMxrFFfyy8A7h3qGRy0WGpY2fBPc34AqwYyaCjA=
+	t=1760439025; cv=none; b=F+6uACBpo6WOh6ybzYcTtHQI4LzXjsQGFFcHreipSAGRi1M2PUgJTKvbNYBqQN4Rw7ilk6of2M/U5Kj8Hmbkj4Cj8lwG9LOpYovDLk0l1w79Q2e0YqfDchHwAKDFj8N+8it/qN1PnKNyL9MXTcRx1+nwOCKKySfDZQvbTUNuzNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760439368; c=relaxed/simple;
-	bh=46oU0M6vfaQKa3PYOroPhc0emPkc5386Yytt8tuQfOI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gXhzxPRh1CU3/zZXiQPIWudWBDdIp0EZH4k1byIEP7ckme9QzmIryvRQb8UPeS6nhbCkaCI7mz9OWxcUhQxR7ZHeygsAslhUqV3ela9qRsXT1LMPmPsym3D9ONMyq2qallVFfew2jJ6UKW43IOqrajbLZjAIQj/Tw7ip79R5aYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.3.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Petr Mladek <pmladek@suse.com>, Lance Yang <lance.yang@linux.dev>
-CC: "wireguard@lists.zx2c4.com" <wireguard@lists.zx2c4.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "Liam R . Howlett"
-	<Liam.Howlett@oracle.com>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, David Hildenbrand <david@redhat.com>, "Randy
- Dunlap" <rdunlap@infradead.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, "Andrew
- Jeffery" <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
-	"Russell King" <linux@armlinux.org.uk>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>, Steven Rostedt
-	<rostedt@goodmis.org>, "Jonathan Corbet" <corbet@lwn.net>, Joel Granados
-	<joel.granados@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>, Phil
- Auld <pauld@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "Masami Hiramatsu" <mhiramat@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, "Pawan Gupta"
-	<pawan.kumar.gupta@linux.intel.com>, Simon Horman <horms@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>, Florian Westphal
-	<fw@strlen.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Kees Cook
-	<kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Feng Tang <feng.tang@linux.alibaba.com>, "Jason A .
- Donenfeld" <Jason@zx2c4.com>
-Subject: RE: [????] Re: [PATCH][v3] hung_task: Panic after fixed number of
- hung tasks
-Thread-Topic: [????] Re: [PATCH][v3] hung_task: Panic after fixed number of
- hung tasks
-Thread-Index: AQHcPO9h0grxiWd7ak27/owdD96L07TBdJLA
-Date: Tue, 14 Oct 2025 10:49:53 +0000
-Message-ID: <e3f7ddf68c2e42d7abf8643f34d84a18@baidu.com>
-References: <20251012115035.2169-1-lirongqing@baidu.com>
- <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
- <aO4boXFaIb0_Wiif@pathway.suse.cz>
-In-Reply-To: <aO4boXFaIb0_Wiif@pathway.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760439025; c=relaxed/simple;
+	bh=OsAT+//A7xxrcqc3BwTPqIQEwFp06t38UryCM1+xuf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZh1cpLrJeiYCkD1RQEODjZXIpBoipxen7VB+yM1sjqUq9UBgBWklVvR6YBUHZabHlmVClgPs7+xOCrZTxX0Dicsp4c9CI70Pu9119iJdfnH0Ypmo1ABu3CFmXA8Cyn8YAqO0yh3nEqIvSifUF/2U80ydE4d4CbfklNaTrAmQe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP2GU09j; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so41815665e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:50:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760439022; x=1761043822; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9oi5CZpumOfRO5UxrA3d1k5hJRdlXZM8E6FYaZHFNcA=;
+        b=SP2GU09jaGj+QUgC0bNK6tbdQSQwOqXxJdTDq/Omm1Q3feuAsVold8AwjWLUri3eTq
+         h3bGtZkpJrBi+1LSg+tUfG/Qy6Bo2r+e229A9ti1iq74NzawjkbRtGv4NDiMumbJwcEG
+         7iKrfOtlk2an8TgL7jJZ4Jo+/IOdzjkatmH0fVLFgm+vlSIZc7eKB9qiz1AUXeEZu5wI
+         rlSyuJuVK4PsZFTyEeN4aN2mf7EDSQaJR0bg7pUtY1Oo9/rWSVRW3tUqCOLM0qpcSJj1
+         UTXhhMXXscGegWB6N9C+62kh2TS3oO6aCDWe+B/2uYhaaPr43H2P8bGbyOFVJzIjgztJ
+         zhhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760439022; x=1761043822;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9oi5CZpumOfRO5UxrA3d1k5hJRdlXZM8E6FYaZHFNcA=;
+        b=c6RRnPG6eQrMamUDn0vlZuiz7+NMdXLCJaww0O/f0Eli2bV22RLBHkm7uc3VPHF5iQ
+         ptaz6/wkvEuV6eNtwh2hV6533QJUXZFXRYFdqBYEc2GAfJ3P+3b3fa+m/zzmRCMMHXra
+         QR8t/48NmOQCfguN1yXS25A8tdA1427m5jeg1sionjzuVROqE3CdOCn335tkGRqfkjJy
+         Ar35hniT/xYN0GLigATo+c7u+m7HOK2U0MCfTJjJPbXvIeJfy/tiWfmalzqlgG+WIQg+
+         MPEH6ZX5eGcnG4mCFCblNJvTjU+BNIJu195h/5ceAyajpPt7cyg65ic0h2T1GWvL9r1Y
+         A4Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5a5v2Gux1jEFh1f6CngjAObyw9iEQ10rKRIYHGBHPQ8rUqWIRCGTmCulIlpY7LP1mlGesMf9CcypvVAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZqOeG5Kilcg6H3najOFuH3PhjBbJgMkY4rnBdCY6spnrcRArk
+	H4xaq67UEWfRsZZg8kkHHKH4trlCC8nYBHrQpo0aQ+6Ws1Ayr2ARjNpy
+X-Gm-Gg: ASbGncvARPbIUwjIk3rJ5L7s8mNxbHCmVz1mFzwnqVKQ6CaOSN4Obg+HdwpVw46MUhV
+	2IJnP4sbHmU7pK0jBvgt/2F9XPQHAipMMYJKXzFXzQZYAv+KXx284gGCJaVO8cTY5vQG9qzeijb
+	NhAr1+XmMDryMzzEIolLCTGS4AuYWtkcE5N0QmOf+gxyEH817D1CvBOSH26CVwmoCrJ6kar1riL
+	Qwu/nGPRPNRIqMKz5TP732mks3+Ceg1Bff3vWOth9EGgyifzSUNgzUr0pAtOaHD2ZHE+6L9R+O1
+	NxYEVldRw9xzwlGIRupNXLmHC09eSmThYjz8JnQjZhuidIGJmmFxRMurEYXSvnZ9m4maui66sij
+	BH6lnDaEDJzE2dfk6szyFakYn9hxp3kGNdhnO5jr8qClyPbwy4KrRehkb/sAgVq87jgxjY4hfz3
+	sQK2FmN3QNKM19KNQUmK2U+7b5lSqkY9jTMJrXtqE=
+X-Google-Smtp-Source: AGHT+IHvthsh5d4gJ2f4pjbU+SaIy+7Qg5DdE7atHEiRKh31T49BVgFbO+XVGKpTwhTDtvlqb5L5oQ==
+X-Received: by 2002:a05:600c:4e01:b0:46e:37fe:f0e6 with SMTP id 5b1f17b1804b1-46fa9b090d0mr198199315e9.30.1760439021936;
+        Tue, 14 Oct 2025 03:50:21 -0700 (PDT)
+Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49be017sm230015965e9.13.2025.10.14.03.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:50:20 -0700 (PDT)
+Date: Tue, 14 Oct 2025 12:50:18 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+Message-ID: <6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+ <86qzvcxi3j.wl-maz@kernel.org>
+ <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+ <86o6qgxayt.wl-maz@kernel.org>
+ <86ms60x7w7.wl-maz@kernel.org>
+ <us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+ <86bjmeyh5m.wl-maz@kernel.org>
+ <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+ <87sefpoj10.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.50.48
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2s53ukplucxdxja3"
+Content-Disposition: inline
+In-Reply-To: <87sefpoj10.wl-maz@kernel.org>
 
 
-> On Tue 2025-10-14 13:23:58, Lance Yang wrote:
-> > Thanks for the patch!
-> >
-> > I noticed the implementation panics only when N tasks are detected
-> > within a single scan, because total_hung_task is reset for each
-> > check_hung_uninterruptible_tasks() run.
->=20
-> Great catch!
->=20
-> Does it make sense?
-> Is is the intended behavior, please?
->=20
+--2s53ukplucxdxja3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: IRQ thread timeouts and affinity
+MIME-Version: 1.0
 
-Yes, this is intended behavior
+On Sat, Oct 11, 2025 at 11:00:11AM +0100, Marc Zyngier wrote:
+> On Fri, 10 Oct 2025 16:03:01 +0100,
+> Thierry Reding <thierry.reding@gmail.com> wrote:
+> >=20
+> > On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
+> > >=20
+> > > CPU hotplug is the main area of concern, and I'm pretty sure it breaks
+> > > this distribution mechanism (or the other way around). Another thing
+> > > is that if firmware isn't aware that 1:N interrupts can (or should)
+> > > wake-up a CPU from sleep, bad things will happen. Given that nobody
+> > > uses 1:N, you can bet that any bit of privileged SW (TF-A,
+> > > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
+> > > around this).
+> >=20
+> > Okay, I can find out if CPU hotplug is a common use-case on these
+> > devices, or if we can run some tests with that.
+>=20
+> It's not so much whether CPU hotplug is of any use to your particular
+> box, but whether this has any detrimental impact on *any* machine
+> doing CPU hotplug.
+>=20
+> To be clear, this stuff doesn't go in if something breaks, no matter
+> how small.
 
-> > So some suggestions to align the documentation with the code's
-> > behavior below :)
->=20
-> > On 2025/10/12 19:50, lirongqing wrote:
-> > > From: Li RongQing <lirongqing@baidu.com>
-> > >
-> > > Currently, when 'hung_task_panic' is enabled, the kernel panics
-> > > immediately upon detecting the first hung task. However, some hung
-> > > tasks are transient and the system can recover, while others are
-> > > persistent and may accumulate progressively.
->=20
-> My understanding is that this patch wanted to do:
->=20
->    + report even temporary stalls
->    + panic only when the stall was much longer and likely persistent
->=20
-> Which might make some sense. But the code does something else.
->=20
+Of course. I do want to find a way to move forward with this, so I'm
+trying to find ways to check what impact this would have in conjunction
+with CPU hotplug.
 
-A single task hanging for an extended period may not be a critical issue, a=
-s users might still log into the system to investigate. However, if multipl=
-e tasks hang simultaneously-such as in cases of I/O hangs caused by disk fa=
-ilures-it could prevent users from logging in and become a serious problem,=
- and a panic is expected.=20
+I've done some minimal testing on a Tegra264 device where we have less
+CPUs. With your patch applied, I see that most interrupts are nicely
+distributed across CPUs. I'm going to use the serial interrupt as an
+example since it reliably triggers when I test on a system. Here's an
+extract after boot:
 
+	# cat /proc/interrupts
+	           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5    =
+   CPU6       CPU7
+	 25:         42         44         41         29         37         36    =
+     39         36    GICv3 547 Level     c4e0000.serial
 
-> > > --- a/kernel/hung_task.c
-> > > +++ b/kernel/hung_task.c
-> > > @@ -229,9 +232,11 @@ static void check_hung_task(struct task_struct
-> *t, unsigned long timeout)
-> > >   	 */
-> > >   	sysctl_hung_task_detect_count++;
-> > > +	total_hung_task =3D sysctl_hung_task_detect_count -
-> > > +prev_detect_count;
-> > >   	trace_sched_process_hang(t);
-> > > -	if (sysctl_hung_task_panic) {
-> > > +	if (sysctl_hung_task_panic &&
-> > > +			(total_hung_task >=3D sysctl_hung_task_panic)) {
-> > >   		console_verbose();
-> > >   		hung_task_show_lock =3D true;
-> > >   		hung_task_call_panic =3D true;
->=20
-> I would expect that this patch added another counter, similar to
-> sysctl_hung_task_detect_count. It would be incremented only once per chec=
-k
-> when a hung task was detected. And it would be cleared (reset) when no
-> hung task was found.
->=20
-> Best Regards,
-> Petr
+I then took CPU 1 offline:
+
+	# echo 0 > /sys/devices/system/cpu/cpu1/online
+
+After that it looks like the GIC automatically reverts to using the
+first CPU, since after a little while:
+
+	# cat /proc/interrupts
+	           CPU0       CPU2       CPU3       CPU4       CPU5       CPU6    =
+   CPU7
+	 25:        186         66         52         64         58         67    =
+     62    GICv3 547 Level     c4e0000.serial
+
+The interrupt count for CPUs 2-7 no longer increments after taking CPU 1
+offline. Interestingly, bringing CPU 1 back online doesn't have an
+impact, so it doesn't go back to enabling 1:N mode.
+
+Nothing did seem to break. Obviously this doesn't show anything about
+the performance yet, but it looks like at least things don't crash and
+burn.
+
+Anything else that you think I can test? Do we have a way of restoring
+1:N when all CPUs are back online?
+
+Thierry
+
+--2s53ukplucxdxja3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjuKuYACgkQ3SOs138+
+s6GjZxAAh0EtrqoNH2ELSK/goEd24inBc3Eoe37rgmkFvxq4QmjXZaEktcd2MVKQ
+PpYu00CutOwfzM202AXfZRem5KI2hg8pOLu9ZE/Y0GLaZsMyY9KmefuYNbRpuFFY
+ls/pYtncY0xRPfzF1KpSg/y3UhIt9l67KXjrTLcIgem/RXFhhIVGBbuabbcA0b8N
++3SD9lEqdVWByEB0skf4okYqSZK0aXN4gxBrm8G03fYDuuVtM/w5nvYLJTUMgTJh
+qMS0kNvVX3JOjaXvYt4HGZIcIi6cHLgK3PHAydGQ0A+rBdSRbSycXBF6hGpOViuY
+Cna1CRTsu1X/CPwmKyVRyxx+jfWMV25WEs4wr+LKMePNvcQswJep6jc3eTUEBGCV
+bD10EcJUNKz7jUs+Du7fc5zMY5NNzYmI7PGFGpfOIRr/Fjzwq3KbWIQNfBca5QBr
+aixPjI57v4Z9y58nPt1IDY4mk6jlMzB9p6FfhzRY5VyBChrjS8gnukhs7Heq7l5H
+uwhfVeYjB74NRns+V0Pcb3fKtt8xd6vx3w5U0oZQmhezfs9TITmJc7U3JQkgRNp2
+wApK8ECbCcA56N07U1jB5ihAsS3u/bbqWONgIAg6ldIBOYmBjuGvkNF02E9xNEu/
+SVcGFetyr9+PkcKbDfpVaKfxZPMtUxune9hno2u3QO9bylAQw/0=
+=QFps
+-----END PGP SIGNATURE-----
+
+--2s53ukplucxdxja3--
 
