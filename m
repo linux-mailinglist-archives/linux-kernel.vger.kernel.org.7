@@ -1,242 +1,149 @@
-Return-Path: <linux-kernel+bounces-852787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF113BD9EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:12:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91DCBD9EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B53E05026F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27757543842
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E375E316186;
-	Tue, 14 Oct 2025 14:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F86315D25;
+	Tue, 14 Oct 2025 14:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cj1p2wz3"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HINIdKOO"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1748315D55
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973B62ECD05
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450897; cv=none; b=kNx7/QwP6Ptl/QpoX+shOVJT8o/IJzzPuxAZ6iQYXNhiCu/9AOqo1iWXgY/3vBnPh0KaAvJRbhZHaZcQamgY3oe3+1CeHi5YWnGdWU/nURTgzHoudG32rl6gEpSL6j3cio6Z4K1mJR9t2pbM2+4UAkXd7ahs9MQemcLA+fhYYZg=
+	t=1760450891; cv=none; b=mgW/gMc1pLag5oDOFqSrGlqRW8u3ehSZ6yAMV7yI/LwTtmDy4XL2aFC92Go2Y/nf5hHZe6KQ3WYbP9NvPj+pTsuKpbN0xpyNwE/poq1IuBR1lUtcDMZvbEg4gJ6qvJeuoNlnS949DPTzgKodBeabFNpRcPcUTdjMXP7NAcDl7kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450897; c=relaxed/simple;
-	bh=3Uhj0iN4tv8k0NF8AvRfFrNRJcHVrmJ5n0se5wAQRd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KceU5yWv43QrxzSicCBbTftGo7NiQkCsjPiQSKMLyzZCaTN4mVvwb3BiBx1QgURWaR/gRYuR8zF/M30Oh3toQcJCt8eWg6vpgmCjsbmZoQXr4UQ2xU3P03hYwXLj+xPDZCcEdIFO5CzAyhpOpXQZWv/qaoIHtaSIsyB5SvIhACo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cj1p2wz3; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78118e163e5so4879716b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:08:14 -0700 (PDT)
+	s=arc-20240116; t=1760450891; c=relaxed/simple;
+	bh=n7R4IggRMS2QWBufKXlW4yIiJgS8ECJudvpdIBUSECc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VRIp25/hrMdH2p9P/GSwV/R5DveAYPB+q8nuSjGIDpt69+fIoVsbQ98mAITvlAJ5JW0iNrOXSM2htEvt3oFO3PMrJ5vGkjW4hrUsgB9Fw/7sQMIXEIWJ05BeoYarK+9ZE39ojCgTbIXOkptmgh4TagzLSAixiDGpv9Yt0Iaxt/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HINIdKOO; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-637dbabdb32so10673225a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760450894; x=1761055694; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9miMHnfOQBt4PukM0PBCS8HCzwLutxaqpSxJB0M7sY=;
-        b=Cj1p2wz3oLTNLGdtKyef92IuIPaYQm0gUKNof1f22Ooxtj7VEShNvI8g81nCseyZ+G
-         f7Q4GAS9hQhL5jVlDsa8boViaL2Na3dXWBa9VcaJBJ+yrStE+PTMjKSLOtBDIwelJbvY
-         kmAYrUcYdb23+3gbu/hVRgpphW/0tpzqqjWkNAO33F5dc6mysjlJ8aXKeRK30NyO63p/
-         k79ErM1VkHsh3Y2tyQSzDo6Oj8BhcNWrmLI9ZpQ+QJY8mzL8AIHNQfBweZGmzvRmJcJ2
-         YsH3yEwyLyIE4Lq9ektb4alZFWLdFJYEDceJTZWn54nfmwOZXf0acitJA/cYsQvb+P3D
-         flSA==
+        d=gmail.com; s=20230601; t=1760450888; x=1761055688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UxmeIWwCO+DcngB6umPUO6fAm2SQ1pPxfxXmVq4hIfA=;
+        b=HINIdKOOY33PkiZDjSl6H+xlz2+rQ8lRBI6ACLxbWwv8/BrGmsmgQltebAMRhWpHGe
+         KnSB/pbQZpbsIAF/1LD0+U4sRuFG644ku98PV5QBVYoDojHKLfk5Iku7kGTfkfk0JW4L
+         DbmRLl+gN7S4lxs8iRtR6CDvJVriBBYod5omk2HHJ+zqD6aGcGwixhAPppH3TRM63wm3
+         z5/GAN+fLXCD+fhpwUy0VkbkGhsGtumg9rMXQOR70H0RzIgyGL2tTHTT7O0tFPd+4CbY
+         m3pHhmx7+atPkS0xuzddiXb9l0nE78yugEmvY5kWyuBsfw1rk4bgG6Do0z6cY8gA9iVL
+         0y1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760450894; x=1761055694;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+9miMHnfOQBt4PukM0PBCS8HCzwLutxaqpSxJB0M7sY=;
-        b=Kbs86pHsUzxkejeyJggy3XWgsoEfJ4pKdlnTG1m4tFe9yMY96ycr+PLUowtYvY1NyD
-         OAy2vIeM0CeXbkRygGPGXuEJhvm0UrUNr4K/wKVXNfNf/2ltFKXMKPHdhlEfLA3GRPbR
-         Tp4p00uOG8jqBBTeAsjDzL/maljsAVxyvXKEzkhG1/5wDxf3RI2GDKur5denGNrlsl5w
-         rNu1Cr5mCSY5FRe0nejRs/5+xJBVA8ZvResmSfV6dB056QC7u+6C003l15NN5mjtXLMj
-         +HQ5A9tHL829ak3tkGdPCF0LqOqRxOWuw0uckw0qmR88WAUwoZJh6NMXIAtxjf0J6/F0
-         DwPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXy23J9PJzWhURH4fYd3o/W1du6LgMWLK3+DrJNh7+ZeBXIAenroaedxks3UvmH3Mz1RKS8kJYqG1afgYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5xUM7ze+Qtx2zKMVDaJiwe086spHWdxIrXvk6bLRx/Ui81D3H
-	SR5td/MFDszbFmxJQN2lHvP7vY0Aejf6FWKYPh9V4sSksBz7o/rMF40LuZCzZH2SvfdKNQcjo0A
-	lAH2NZoII+ZqeCelfj5yXsB6f+i24DtjrFyq1jICSdA==
-X-Gm-Gg: ASbGnctzHDUxiSmleALIAVKSb0gbctpkDRWCqchf3bhkKhcOfdyMEQ570+z8CxKEgnK
-	G6AVMPbSlQW97nnVsXcI1OiM6jnjQq8C+a4M96TPGLGCZN5SqjU4NVLSIVN8wZ4xnkvOzbcDZ4L
-	8Z82X+RT+KsaICnvI/CdfkKxfYA5+mIjiiiwUgMHWI0pxjtpMgrhl2l1bZJ6CRqB6/MFaIbkFwe
-	xnrkr1cZKZ2iKlHYdNHORa+elfGGpFdb91G9S7RCgti/JWKENFD1OHbe96vV88tvhIJ9C3Qq3gf
-	L88D0jephYIgk5hONmE0xQZWM1uKfw==
-X-Google-Smtp-Source: AGHT+IEBqme5QBWe13vB1+k/jUkIPGAfUY/crncHZt6R9wHUGuKNxTRr15JC6xfYK89cIfM/DHL7toDVGSsmBXZ8D0g=
-X-Received: by 2002:a17:903:1acf:b0:269:b2e5:900d with SMTP id
- d9443c01a7336-29027e5ee48mr300941025ad.5.1760450893675; Tue, 14 Oct 2025
- 07:08:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760450888; x=1761055688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UxmeIWwCO+DcngB6umPUO6fAm2SQ1pPxfxXmVq4hIfA=;
+        b=a60ts3IcRtIBIDJQcSdrWDKsnlyubfFK5VvKenFtEZE22J7YsASgCYFNpbUVxGt2u9
+         d1yMp4vM/LP5e5DzCYvPqQEYWbYBTFoX1Ft/jqItAJbkAdXZoCGJAuLRbV3D//NeWboc
+         F8sU5QdvaxSXWZ2CcKsCo5SBhjDMWKB6NeZT14DjgCpo9ZhZ5+qQWA5I8hVUHttZNWFt
+         tQdLKxkqr6WCH12h1ORc3QWE2UpJoTNmXQR8nM7zbtKje1h5Y0BUdiGUcb+LRsAtbzKL
+         QQxXzCv7y1D/htyGo2dE92eUrQgF0j3FhhjGhuXurSwuiCZvayWKXOiXTQI6lvYWx3Zc
+         i63w==
+X-Forwarded-Encrypted: i=1; AJvYcCWRHVI81RAp0P9CTXDXs3mVzG7jm5zWi6V63zWKEPiYFNYGw8a/1Ck59z8l6pmLnOVQx3pOsz4tGolmSoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3Ijnh9uYSKgbLd2uXuQjlp8zmgeYF9hQX36DzY2AWRLzsltDG
+	i6ajZz5PUC87wxjGQ5v9MbyJpblW16XMV9DZ0OXRXzuralZgU30o8EpH
+X-Gm-Gg: ASbGncuPiMcVNvgEXTEizE0QTU+ZW20sQzuMlGyGvThKHJWUVv5k76wHLt9Ioi2h74m
+	u1wckCx+ieBCdWiChyqv3Le+4J0T7zhboT/WsLTNe6X6vQKpEpEF52/vLNRMyz1TGu41QzlGukj
+	oBgy43048JOPDp0NTzkI4hEroBgk/LbSLnrJl9sW77imVXv6dmYu60TbcmJX1jT2KfOJ8jSkD6w
+	4FoAYU0/cA1FQEN7/+Vjp8BlpOJ8xbOsFsyyuJsv1cTme44ruiBHCwE397sh3LTV5f4l10IbwhD
+	hKNMOFt30w7at/fA5/yrWlw/eCWgVIAlnihEoRDwpLC0Vf8yejVyZd5L0GIkghaRDNBK8aUP7Tk
+	x8hDpb+C8nnj4A8WNo9bBjCwLbqu2rJyRU4RWx+pE5QdKSPFwnO76MJw=
+X-Google-Smtp-Source: AGHT+IEf3qv2wBAqdGd7LLNTogx5CIdl+mKJKNQg4yODTXzc7y9Gqv2epyMUaFIiqHtW+W3ofsjlrQ==
+X-Received: by 2002:a17:907:96a7:b0:b40:b6a9:f6f9 with SMTP id a640c23a62f3a-b50aa8a847emr2748899766b.19.1760450887527;
+        Tue, 14 Oct 2025 07:08:07 -0700 (PDT)
+Received: from krava ([2a00:102a:5031:2444:abe8:833e:114a:fe50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5c78c15decsm7838366b.50.2025.10.14.07.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 07:08:07 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 14 Oct 2025 16:08:03 +0200
+To: Shardul Bankar <shardulsb08@gmail.com>
+Cc: bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf 1/1] bpf: test_run: fix ctx leak in
+ bpf_prog_test_run_xdp error path
+Message-ID: <aO5ZQ9Kgd35nWNod@krava>
+References: <20251014120037.1981316-1-shardulsb08@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013144326.116493600@linuxfoundation.org> <CA+G9fYsdErtgqKuyPfFhMS9haGKavBVCHQnipv2EeXM3OK0-UQ@mail.gmail.com>
-In-Reply-To: <CA+G9fYsdErtgqKuyPfFhMS9haGKavBVCHQnipv2EeXM3OK0-UQ@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 14 Oct 2025 19:38:01 +0530
-X-Gm-Features: AS18NWA2QbZwAP54ku4GMgQeA8c25whyig2-qOvCGzHXJOcx6KjG9nVJKWajSPA
-Message-ID: <CA+G9fYuV-J7N0cAy30X+rLCRrER071nMkk9JC6kjDw1U0gEzJg@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/262] 6.12.53-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>, linux-s390@vger.kernel.org, 
-	Netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014120037.1981316-1-shardulsb08@gmail.com>
 
-On Tue, 14 Oct 2025 at 16:56, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> On Mon, 13 Oct 2025 at 20:38, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.12.53 release.
-> > There are 262 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.53-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> The S390 defconfig builds failed on the Linux stable-rc 6.12.53-rc1
-> and 6.6.112-rc1 tag build due to following build warnings / errors
-> with gcc and clang toolchains.
->
-> Also seen on 6.6.112-rc1.
->
-> * s390, build
->   - clang-21-defconfig
->   - clang-nightly-defconfig
->   - clang-nightly-lkftconfig-hardening
->   - clang-nightly-lkftconfig-lto-full
->   - clang-nightly-lkftconfig-lto-thing
->   - gcc-14-allmodconfig
->   - gcc-14-defconfig
->   - gcc-14-lkftconfig-hardening
->   - gcc-8-defconfig-fe40093d
->   - gcc-8-lkftconfig-hardening
->   - korg-clang-21-lkftconfig-hardening
->   - korg-clang-21-lkftconfig-lto-full
->   - korg-clang-21-lkftconfig-lto-thing
->
-> First seen on 6.12.53-rc1
-> Good: v6.12.52
-> Bad: 6.12.53-rc1 also seen on 6.6.112-rc1
->
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
->
-> Build regressions: arch/s390/net/bpf_jit_comp.c:1813:49: error:
-> 'struct bpf_jit' has no member named 'frame_off'
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> # Build error
-> arch/s390/net/bpf_jit_comp.c: In function 'bpf_jit_insn':
-> arch/s390/net/bpf_jit_comp.c:1813:49: error: 'struct bpf_jit' has no
-> member named 'frame_off'
->  1813 |                         _EMIT6(0xd203f000 | (jit->frame_off +
->       |                                                 ^~
-> arch/s390/net/bpf_jit_comp.c:211:55: note: in definition of macro '_EMIT6'
->   211 |                 *(u32 *) (jit->prg_buf + jit->prg) = (op1);     \
->       |                                                       ^~~
-> include/linux/stddef.h:16:33: error: invalid use of undefined type
-> 'struct prog_frame'
->    16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
->       |                                 ^~~~~~~~~~~~~~~~~~
-> arch/s390/net/bpf_jit_comp.c:211:55: note: in definition of macro '_EMIT6'
->   211 |                 *(u32 *) (jit->prg_buf + jit->prg) = (op1);     \
->       |                                                       ^~~
-> arch/s390/net/bpf_jit_comp.c:1814:46: note: in expansion of macro 'offsetof'
->  1814 |                                              offsetof(struct prog_frame,
->       |                                              ^~~~~~~~
-> include/linux/stddef.h:16:33: error: invalid use of undefined type
-> 'struct prog_frame'
->    16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
->       |                                 ^~~~~~~~~~~~~~~~~~
-> arch/s390/net/bpf_jit_comp.c:212:59: note: in definition of macro '_EMIT6'
->   212 |                 *(u16 *) (jit->prg_buf + jit->prg + 4) = (op2); \
->       |                                                           ^~~
-> arch/s390/net/bpf_jit_comp.c:1816:41: note: in expansion of macro 'offsetof'
->  1816 |                                0xf000 | offsetof(struct prog_frame,
->       |                                         ^~~~~~~~
-> arch/s390/net/bpf_jit_comp.c: In function '__arch_prepare_bpf_trampoline':
-> include/linux/stddef.h:16:33: error: invalid use of undefined type
-> 'struct prog_frame'
->    16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
->       |                                 ^~~~~~~~~~~~~~~~~~
-> arch/s390/net/bpf_jit_comp.c:212:59: note: in definition of macro '_EMIT6'
->   212 |                 *(u16 *) (jit->prg_buf + jit->prg + 4) = (op2); \
->       |                                                           ^~~
-> arch/s390/net/bpf_jit_comp.c:2813:33: note: in expansion of macro 'offsetof'
->  2813 |                        0xf000 | offsetof(struct prog_frame,
-> tail_call_cnt));
->       |                                 ^~~~~~~~
-> make[5]: *** [scripts/Makefile.build:229: arch/s390/net/bpf_jit_comp.o] Error 1
->
-> The git blame is pointing to,
->  $ git blame -L 1813  arch/s390/net/bpf_jit_comp.c
->    162513d7d81487 (Ilya Leoshkevich)    _EMIT6(0xd203f000 | (jit->frame_off +
->
-> Commit pointing to,
->    s390/bpf: Write back tail call counter for BPF_PSEUDO_CALL
->    [ Upstream commit c861a6b147137d10b5ff88a2c492ba376cd1b8b0 ]
+On Tue, Oct 14, 2025 at 05:30:37PM +0530, Shardul Bankar wrote:
+> Fix a memory leak in bpf_prog_test_run_xdp() where the context buffer
+> allocated by bpf_ctx_init() is not freed when the function returns early
+> due to a data size check.
+> 
+> On the failing path:
+>   ctx = bpf_ctx_init(...);
+>   if (kattr->test.data_size_in - meta_sz < ETH_HLEN)
+>       return -EINVAL;
+> 
+> The early return bypasses the cleanup label that kfree()s ctx, leading to a
+> leak detectable by kmemleak under fuzzing. Change the return to jump to the
+> existing free_ctx label.
+> 
+> Fixes: fe9544ed1a2e ("bpf: Support specifying linear xdp packet data size for BPF_PROG_TEST_RUN")
+> Reported-by: BPF Runtime Fuzzer (BRF)
+> Signed-off-by: Shardul Bankar <shardulsb08@gmail.com>
 
-Anders bisected reported regressions and also suggested the missing patches.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Ilya Leoshkevich,
-Is it a good idea to backport / cherry pick these two patches on the
-6.12 branch ?
+jirka
 
-b2268d550d20 ("s390/bpf: Centralize frame offset calculations")
-e26d523edf2a ("s390/bpf: Describe the frame using a struct instead of
-constants")
-
-
-> ## Build
-> * kernel: 6.12.53-rc1
-> * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> * git commit: 7e50c0945b4ab1d4019f9905f6cf5350082c6a84
-> * git describe: v6.12.52-263-g7e50c0945b4a
-> * test details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12.52-263-g7e50c0945b4a
->
-> ## Test Regressions (compared to v6.12.50-47-gf7ad21173a19)
-> * s390, build
->   - clang-21-defconfig
->   - clang-nightly-defconfig
->   - clang-nightly-lkftconfig-hardening
->   - clang-nightly-lkftconfig-lto-full
->   - clang-nightly-lkftconfig-lto-thing
->   - gcc-14-allmodconfig
->   - gcc-14-defconfig
->   - gcc-14-lkftconfig-hardening
->   - gcc-8-defconfig-fe40093d
->   - gcc-8-lkftconfig-hardening
->   - korg-clang-21-lkftconfig-hardening
->   - korg-clang-21-lkftconfig-lto-full
->   - korg-clang-21-lkftconfig-lto-thing
-
-- Naresh
+> ---
+>  net/bpf/test_run.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+> index dfb03ee0bb62..1782e83de2cb 100644
+> --- a/net/bpf/test_run.c
+> +++ b/net/bpf/test_run.c
+> @@ -1269,7 +1269,7 @@ int bpf_prog_test_run_xdp(struct bpf_prog *prog, const union bpf_attr *kattr,
+>  		goto free_ctx;
+>  
+>  	if (kattr->test.data_size_in - meta_sz < ETH_HLEN)
+> -		return -EINVAL;
+> +		goto free_ctx;
+>  
+>  	data = bpf_test_init(kattr, linear_sz, max_linear_sz, headroom, tailroom);
+>  	if (IS_ERR(data)) {
+> -- 
+> 2.34.1
+> 
 
