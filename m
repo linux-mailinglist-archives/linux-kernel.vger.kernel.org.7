@@ -1,188 +1,172 @@
-Return-Path: <linux-kernel+bounces-851775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200D2BD7383
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C49CBD73A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C568D3AE45B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907A218A2416
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E0730748B;
-	Tue, 14 Oct 2025 04:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYAx5FHF"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B939307AD7;
+	Tue, 14 Oct 2025 04:14:55 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51518FDAF
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2B73074BD
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760414972; cv=none; b=PtrJMdj7imQ0RqoBcL+B1IyV/kiHCWlZrceoiSwkGXwuuVPDIHDLEBd16ESiFqEcTYOYFDLhmJx4EQJ6jGMKaMrp8S0rL0uPt/Hv/vb3Sz+dLLo7E8nQeQbTKUBwNjnbCKX7XpwmgihN250B9Tyad5xq1ewb7PcIkHoNOlKBtfM=
+	t=1760415294; cv=none; b=p7R0umoZtT9cilZU85rtHJ494dDD7L+arnzZ/5n+h1WkR81lKeSEE1NbjJy/oaB8dAmaGNzbTOC7POMXGXqWDJa8RRgCLJaTqhCHdGUU2IpEzzDHXm5QTyx00PIhHphnsk6GmpfiHj7Cj4ogKV0ReMdYGurQiTPhctS+91aluSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760414972; c=relaxed/simple;
-	bh=3SJ+BAJ90/2fM1tvgHY4MUBt6A3UEulndiODvhiJaRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+y9avRjSMeYlPDETsSZeqpUzqMWHyViIW15e9dyW6Yvxk1+3oDD3ATVSBgdhgkthTL91rqqYgFJCPsIXOHsOmn9KPpgZBh0mgTg4fXXE+0NsNx6GVDgQht+kFUPOIzVYzroqt/Jf55ZO7DVN0pjQvPK3IjqBNsiE92H18EljBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYAx5FHF; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b57bf560703so3125781a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:09:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760414970; x=1761019770; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=T0FUz4z1xFNwCgvQPUMrt9kZD59yR5IRPj9qAd263rQ=;
-        b=bYAx5FHFLFmqOsHWaIS9zaZPMkzrGtd2FznZk/GkZhPYiEKwaCUuPF7YHz2Z8TCeX5
-         h97hNEL9GKIQbyT4cYkuoUmBGpXdE+ZYl4d4Q0k1y+nU5ATJE1OocffPSsBIgIYLEZ/U
-         EGmXYyakH7He74CDIhO+BV+2rT0pLAdmIFfy9C/Ntoi5fUC4mQgO6nA6booiWT+aUh46
-         8Fu9oITM4vJgoyHd7FkuHYRRs9mcaZV/X8o/WFsCRNEbaq5J69j14X7cygMCkg1c74UL
-         aluRakUUIXo9pEvVl7KGBHquCvkWDSyaKUJImyxWQwjM8PCLhCKJeu1X/QRZVU/fU5QA
-         aJBg==
+	s=arc-20240116; t=1760415294; c=relaxed/simple;
+	bh=kIvPmfBEgBtpAvEpXoAS7bDe7iZsb520ENnOs/hCpYo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sSIN5NF3FvyoOaNtCVGlHG/+iHQAmAlTTIIkqa8Lbs4Us7g1e8wN3HzhWSVsCmnmKha8GCNTjRsMgMhpx1Xs3LcXfIfBjRuaCkSu2XxEqbrZyS7rCmLFhoY8E+khABzSZGg2gR3e12X5lOJEM3LQ4gvTC2XRk+BQR5E6dd9TV3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-90f6e3cd204so1178664239f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:14:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760414970; x=1761019770;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1760415292; x=1761020092;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T0FUz4z1xFNwCgvQPUMrt9kZD59yR5IRPj9qAd263rQ=;
-        b=roCLwf8npnSaCESV6ZGCoV6OY2alINm7PwOsHfbsKDpq/cHqPBdGt082XqT4cjdLoT
-         WkNqciVPwC3Wj74h3ZHrlEm0moMPz1c4NsOmXtJCyY+h2r9ubAE5+9n86DZBkfztmFcQ
-         quJRLOTrmkXRTvHOMXIi91KTggRvmcZ3FE/aQOGvKC8ycFjeu4S46DUtYsyZzcRzD19K
-         aZ6jPmCKJMBz54ePp+lEQvM4eNcPO1ksVpdUyrgmPoyvd8NumUBxkbX3xVvzZFW9lW3J
-         VCJ9uPPLUU9WSj4nTHpZIC6jbbTnKym3c3yS3WjQLhZeT28tLB8k2IfZGUdH6VauV4bq
-         pXdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhAgn6Pw8zron/BwcFNj/SWBbFdabvipu7wu4rf0XTiNN6y2lkayHQU965B4/huMPLU1aY39N39fyaqgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuqJZ0hegXqWUZ0O8aSdK5jG3cgC0wS5qfMHRjqjexnq/FWhQN
-	l46Pdl+GYaR1ulTeKkEfE0LMus221xhAgVEmBKz9MuQ4CRkOTV1pXMlF
-X-Gm-Gg: ASbGnctnUS+FA4hsBeLZ1H7SvjeoCQkNXUCp+v2HU3Lq5wOfVWW04udlBnZ3Azq9LOY
-	dCuWEeTEmcbbTZyvoxT32p5MKHaZpdnqvfcq2Znb2OaoAkaoxjuNsOgbHFK6cO2f2wADLvFjGib
-	zgz2wG2plioOcwG+564ZRTS5PEdCTeKBehah77rEJXIXcB5ZeZWasfEC2tkkzDjZy+xG5OQl4vY
-	ZOKTltwhm02WYEVASQiuPf4DJ0SSyGVRjDyiIsouagvUW2Ydac0EXwgaXn8Onmb/dguqRhDruM1
-	CwVy6bq4HvpeNooo5I2vY3OLVwZi+qD/W2o28Yls9ftO3BFOhnH2tmT5p82tf/0Jn7sbUutdFTp
-	Z0MCfyJSvGdgsDoLDg41XXPSaB99k+RCeYkVv7qJxxsZIRgexX5PuioDhQsU996OLs1a0ylgWm7
-	5MHtZtNdpUlMj65XvM2uI=
-X-Google-Smtp-Source: AGHT+IEr20kAH+dfqBTsSZfMO0yg/OwD4bgTloNhcSIQWl/DGKL1nIf9DZfEY5q5FY5iCmPtfo18vw==
-X-Received: by 2002:a17:902:e806:b0:261:6d61:f28d with SMTP id d9443c01a7336-290273ffe94mr274157815ad.50.1760414970372;
-        Mon, 13 Oct 2025 21:09:30 -0700 (PDT)
-Received: from fedora (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de5dbfsm149146305ad.20.2025.10.13.21.09.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 21:09:29 -0700 (PDT)
-Date: Mon, 13 Oct 2025 21:09:27 -0700
-From: Tao Ren <rentao.bupt@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v4 11/13] ARM: dts: aspeed: facebook-fuji: Include
- facebook-fuji-data64.dts
-Message-ID: <aO3M90Ycp2DWyFuk@fedora>
-References: <20250728055618.61616-1-rentao.bupt@gmail.com>
- <20250728055618.61616-12-rentao.bupt@gmail.com>
- <79ddc7b9-ef26-4959-9a16-aa4e006eb145@roeck-us.net>
- <aO2kLyxGlGt12sKD@fedora>
- <e3dc7aee-c8af-4276-84e5-0f0c7926be05@roeck-us.net>
- <054cf209-61af-4d21-9a3b-d0f6dd24ee3b@roeck-us.net>
+        bh=2jwbkjR+ZzHATK8z4420j4Dt5fyZ0njfG80T687S5nI=;
+        b=bJVCMjl5R/vpVMedoD1mFpAFw0TefnKN5d2EDDEoLjofG7xmhJyTTF7YVVI0Y9WjhD
+         cgtjzsFyTjK3vI4PK7vfNGiqALf+rlmZzWMopYnGGA1JMRVPIedZx6nai+CkbyWbKugX
+         rUKvOf1IjRHL+vsXJzYZPHIOogTe9W/xIuesWHRJebSldbJO7/7BxYle9q6t0aI6uVcb
+         5U2kZTo5oW0u3OAoNNoUxcqfXVJQFvMFRSrRFSko+60OqbsPXmWWZSCM74x6hlgUiqMF
+         uXwKWmzs4pNlr7eg1WQFzCKwop+zzcidMw1UT2NWkTvQL7fBgUNCNGI7IntZLcCmpFM5
+         ytkw==
+X-Gm-Message-State: AOJu0YzeX/oNDwny1wSqEIVjSepnk0R094KVrhKl0Cc/235kK4HmbyWz
+	PwvTlufBx8ByQvMe9Nn24OokMzM45gYMUbzgMcovehkmUtcqU50QY+8E1TUHMRe/rieutld8vxr
+	rNhajfDNqRdUgYQQ0QrIPenKm3Jh9X1P5TsBEYhSNBfxNpBVIAFp2e2+2x0k=
+X-Google-Smtp-Source: AGHT+IHBl2n9b77zO57isMH/o6jLrI0I7yw8bUg1auh7HLYg/Az6aCobkk+usez83U0EAWcCG2Z4ZTKNoXQ2kbgprzlEpaVOB+or
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <054cf209-61af-4d21-9a3b-d0f6dd24ee3b@roeck-us.net>
+X-Received: by 2002:a05:6602:6184:b0:93e:2517:804e with SMTP id
+ ca18e2360f4ac-93e251784d1mr1790740339f.2.1760415291958; Mon, 13 Oct 2025
+ 21:14:51 -0700 (PDT)
+Date: Mon, 13 Oct 2025 21:14:51 -0700
+In-Reply-To: <68d26261.a70a0220.4f78.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68edce3b.050a0220.91a22.01fa.GAE@google.com>
+Subject: Forwarded: [PATCH v6] hugetlbfs: move lock assertions after early
+ returns in huge_pmd_unshare()
+From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Guenter,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On Mon, Oct 13, 2025 at 08:44:17PM -0700, Guenter Roeck wrote:
-> On 10/13/25 20:20, Guenter Roeck wrote:
-> > On 10/13/25 18:15, Tao Ren wrote:
-> > > Hi Guenter,
-> > > 
-> > > On Mon, Oct 13, 2025 at 05:20:57PM -0700, Guenter Roeck wrote:
-> > > > Hi,
-> > > > 
-> > > > On Sun, Jul 27, 2025 at 10:56:13PM -0700, rentao.bupt@gmail.com wrote:
-> > > > > From: Tao Ren <rentao.bupt@gmail.com>
-> > > > > 
-> > > > > Include "facebook-fuji-data64.dts" in facebook-fuji dts to avoid
-> > > > > duplicated code.
-> > > > > 
-> > > > > Fuji-data64 and Fuji are identical except the BMC flash layout.
-> > > > > 
-> > > > > Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
-> > > > 
-> > > > With this patch in the mainline kernel, the Ethernet interface I use for
-> > > > testing does not come online when loading fuji-bmc in qemu.
-> > > > 
-> > > > Reverting this patch fixes the problem.
-> > > > 
-> > > > Looking into this patch,
-> > > > 
-> > > > > -
-> > > > > -#include <dt-bindings/leds/common.h>
-> > > > > -#include "ast2600-facebook-netbmc-common.dtsi"
-> > > > > +#include "aspeed-bmc-facebook-fuji-data64.dts"
-> > > > ...
-> > > > > -&mac3 {
-> > > > > -    status = "okay";
-> > > > > -    phy-mode = "rgmii";
-> > > > > -    phy-handle = <&ethphy3>;
-> > > > > -    pinctrl-names = "default";
-> > > > > -    pinctrl-0 = <&pinctrl_rgmii4_default>;
-> > > > > -};
-> > > > 
-> > > > I don't see this in aspeed-bmc-facebook-fuji-data64.dts, meaning that
-> > > > interface is now disabled. Adding it back in fixes the problem.
-> > > > Also, MAC3 is explicitly enabled for fuji-bmc in qemu.
-> > > > 
-> > > > Was the interface disabled on purpose ?
-> > > > 
-> > > > Thanks,
-> > > > Guenter
-> > > 
-> > > The mac3 interface was removed in the latest patch (v4) per Andrew Lunn's
-> > > feedback, because the rgmii setting is incorrect.
-> > > 
-> > > I was planning to add mac3 back as soon as rgmii support is properly
-> > > handled in aspeed mac driver, but kindly let me know if you have other
-> > > suggestions.
-> > > 
-> > 
-> > All I can say is that it worked just fine with the qemu emulation,
-> > and that it is broken now. Since it was broken on purpose I guess I'll
-> > have to find a workaround or stop testing network interfaces with
-> > that emulation entirely.
-> > 
-> 
-> Ah, I see that mac3 was the only enabled Ethernet interface on that system,
-> so you effectively disabled networking on it.
-> 
-> I don't claim to understand the logic (how can anyone continue to use this bmc
-> without network interface ?) but I guess it is what it is. I'll stop testing it.
-> 
-> Guenter
+***
 
-Sorry for the inconvenience.. I have to take a local patch to enable
-mac3 in my environment, because as you said, it's not useful without
-network interface.
+Subject: [PATCH v6] hugetlbfs: move lock assertions after early returns in huge_pmd_unshare()
+Author: kartikey406@gmail.com
 
-Meanwhile, I will need to work with ASPEED to enable rgmii delay support
-in the ASPEED MAC driver so I can add mac3 back to the dts. If you are
-looking for a similar platform for testing, you could consider elbert.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
 
 
-Thanks,
+When hugetlb_vmdelete_list() processes VMAs during truncate operations,
+it may encounter VMAs where huge_pmd_unshare() is called without the
+required shareable lock. This triggers an assertion failure in
+hugetlb_vma_assert_locked().
 
-Tao
+The previous fix in commit dd83609b8898 ("hugetlbfs: skip VMAs without
+shareable locks in hugetlb_vmdelete_list") skipped entire VMAs without
+shareable locks to avoid the assertion. However, this prevented pages
+from being unmapped and freed, causing a regression in fallocate(PUNCH_HOLE)
+operations where pages were not freed immediately, as reported by Mark Brown.
+
+A subsequent fix in commit 06e8ca1b3dca ("hugetlbfs: check for shareable
+lock before calling huge_pmd_unshare()") addressed this by checking
+__vma_shareable_lock() in the caller before calling huge_pmd_unshare().
+However, a cleaner approach is to move the lock assertions in
+huge_pmd_unshare() itself to after the early return checks. The assertions
+are only needed when actual PMD unsharing work will be performed. If the
+function returns early because sz != PMD_SIZE or the PMD is not shared,
+no locks are required.
+
+This patch removes the check added in commit 06e8ca1b3dca ("hugetlbfs:
+check for shareable lock before calling huge_pmd_unshare()") and instead
+moves the assertions inside huge_pmd_unshare(), keeping all the logic
+within the function itself.
+
+Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+Fixes: dd83609b8898 ("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
+Tested-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/mm-commits/20250925203504.7BE02C4CEF7@smtp.kernel.org/ [v1]
+Link: https://lore.kernel.org/mm-commits/20250928185232.BEDB6C4CEF0@smtp.kernel.org/ [v2]
+Link: https://lore.kernel.org/linux-mm/20251003174553.3078839-1-kartikey406@gmail.com/ [v3]
+Link: https://lore.kernel.org/linux-mm/20251008052759.469714-1-kartikey406@gmail.com/ [v4]
+Link: https://lore.kernel.org/linux-mm/CADhLXY72yEVDjXWfxBUXfXhNfb8MWqwJmcb1daEHmDeFW+DRGw@mail.gmail.com/ [v5]
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+Changes in v6:
+- Remove __vma_shareable_lock() check from __unmap_hugepage_range()
+  that was added in v4 (commit 06e8ca1b3dca)
+- Move lock assertions after early returns in huge_pmd_unshare()
+- Complete implementation of David's cleaner approach
+
+Changes in v5:
+- Incomplete: only moved assertions, forgot to remove v4 check
+
+Changes in v4:
+- Check __vma_shareable_lock() in __unmap_hugepage_range() before calling
+  huge_pmd_unshare() per Oscar's suggestion
+
+Changes in v3:
+- Add ZAP_FLAG_NO_UNSHARE to skip only PMD unsharing
+
+Changes in v2:
+- Skip entire VMAs without shareable locks (caused PUNCH_HOLE regression)
+
+Changes in v1:
+- Initial fix attempt
+---
+ mm/hugetlb.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 85b2dac79d25..0455119716ec 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5885,7 +5885,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		}
+ 
+ 		ptl = huge_pte_lock(h, mm, ptep);
+-		if (__vma_shareable_lock(vma) && huge_pmd_unshare(mm, vma, address, ptep)) {
++		if (huge_pmd_unshare(mm, vma, address, ptep)) {
+ 			spin_unlock(ptl);
+ 			tlb_flush_pmd_range(tlb, address & PUD_MASK, PUD_SIZE);
+ 			force_flush = true;
+@@ -7614,13 +7614,12 @@ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	p4d_t *p4d = p4d_offset(pgd, addr);
+ 	pud_t *pud = pud_offset(p4d, addr);
+ 
+-	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
+-	hugetlb_vma_assert_locked(vma);
+ 	if (sz != PMD_SIZE)
+ 		return 0;
+ 	if (!ptdesc_pmd_is_shared(virt_to_ptdesc(ptep)))
+ 		return 0;
+-
++	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
++	hugetlb_vma_assert_locked(vma);
+ 	pud_clear(pud);
+ 	/*
+ 	 * Once our caller drops the rmap lock, some other process might be
+-- 
+2.34.1
+
 
