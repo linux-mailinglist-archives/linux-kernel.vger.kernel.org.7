@@ -1,175 +1,610 @@
-Return-Path: <linux-kernel+bounces-852473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C54BD9114
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:40:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761B4BD9117
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B3A3A3D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:40:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DAFE4EAD97
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C152FE055;
-	Tue, 14 Oct 2025 11:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DRW8Gmak"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010039.outbound.protection.outlook.com [52.101.84.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEBB223DF6;
+	Tue, 14 Oct 2025 11:40:57 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFC2223DF6;
-	Tue, 14 Oct 2025 11:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760442022; cv=fail; b=Dvq2zCG6tUWBjJQyqXHvjqpJdj7t1p0YysJNeyZJJlY64+Ic0Wdpt/BXaw1oQs/oJUu2bf9q3J5T/gVQ5Lqtd87//BPUXg5Lr1hdFUYj7VUsTcWnpkezwfHmyezFbFDfNYoO8e3iRwSFPrWW6wVAyi1ceIQ1z89p76XJT2JampA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760442022; c=relaxed/simple;
-	bh=8wcnxUgrrEiehfTBoWpd0iaWI8Ql31iDogs8GPPYlb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nK9OAPTce3qj89OvEngjmKQOhl1xMPz6rIUCGwcOzKEJ140SSZfGk2/+m+c4ghZXa2RfjbPnmriFxlF9Qvdyon81rYd9CofnjRfMvEAbg7McUcWyeiA79a5H//tDHTsI0m2M7NI5AseJy8Eeyi9G9rjjGTOgKxHjp+QUO6Pw8lQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DRW8Gmak; arc=fail smtp.client-ip=52.101.84.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bNbBsKWy8bsnwBUaxsZ2p1u8f9G3cet4TOcZw6mP1nWRUQVT61tBSyPv0FGeotn5sT6O1xFFeQd3drjcvQ3CqtXhUKKVWdea3OHga4tC8D84oJvqcDiqJ7iR5fdLSYckGSze/PA+Hcxj9dSF0nkwwl/DdhKsdgQNomzNxUsvg1E7vKB65QHqq5opFxQBAw8zj5acNtXs4yj4xHMk+4gKCBC44KA3XLhWvhyGVKsXMFWy/AWI3ep8r+nJHrpjmMigLYlMbXRRsoBkvprq32Qjz2+P1sFNSnrqQogSz9YSK83TaBb6d1t/I3f8p7X+VyPfn20F/o7bSC+ILZv8P195vQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HjzcDzpHwUE3KK4D5PG1D9xwZV4n+8lvGmEAXJQYBq4=;
- b=U1Ozas5Hpxs4RRKtvYFP3hZjg2OJjcMy5vbRxzSJq0jmSNJELD8nTkNCiIzod3KXn1d2uWAM6SWJDZvw1s8zUXk2xogid0TmL1zQs1L60XoFaghQ/h4ZNDEaegNay1cfDazF2jhmOH77mnD0TFlRFiN8pytE/ZK0dgYqnd+T5l4jeDTpW2oqm+oRCFwj/QlBConAK8Lb8I8DolUUG7ESZzt16O4HF8lX34XS5EJWdw4dz7q71UO72VwlVCW1Ah0hJjmkCXiRJJUkE2wY4FbwU9QjErMFHe1z8DOoanXOzbs1ZNsUbkPNYn4FpDE9EQjt5bAkrCDiKqQ8y3wmj3owMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HjzcDzpHwUE3KK4D5PG1D9xwZV4n+8lvGmEAXJQYBq4=;
- b=DRW8GmakD6ZAgA7f7lN/uHW5aPkxeLmUInDoicxDUybbfKoF38SlKZLOubaEiMj2mEJvTvRCt2Y6MXG1FjuOuD6OPaAe278q3m6uyJkVAx0+V5qLPRBHBKrPWhvjwRMqsDQVFiYQ0azJ7x1R28kS5HSRVFgEhrX8i7AMhrncyeIzSWjpEdNe0ABHqNfDF3f2s70oGbI4h0shqf4WXfGKTgei+YCZnT6rnpzV+1PMetBz+k3tUUq86sGn541UH+6ZWk8Vh8llnrhv6TTUBd/TckxvGlHpKaKvHkWivWmYQAGOjY6+DBtjYBtIekqu88wcqMqoQoHhDB0JFGPyDx6MxA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by AM8PR04MB8036.eurprd04.prod.outlook.com (2603:10a6:20b:242::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 11:40:17 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 11:40:17 +0000
-Date: Tue, 14 Oct 2025 14:40:13 +0300
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: William Breathitt Gray <wbg@kernel.org>, 
-	Mark Cave-Ayland <mark.caveayland@nutanix.com>, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andriy.shevchenko@linux.intel.com, broonie@kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: gpio: gpio-pci-idio-16 regression after LTS upgrade
-Message-ID: <63ersts3bg5v2sm4sem357wi7oguslbj7mictb4xwfkuo56uak@qqmqehv6cowf>
-References: <df4857cb-daae-4428-bd93-5878564624c5@nutanix.com>
- <20251009094905.223456-1-wbg@kernel.org>
- <DDHX9YA0ZMKO.C1MA3CHLT4ZZ@kernel.org>
- <jajbilboyqty3a5tbgjgwklrpcstv7gotkqis46cuzgew7ip4q@ej37jq2cev77>
- <DDI0AO1RKDJK.1M31TW8HEJHFU@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DDI0AO1RKDJK.1M31TW8HEJHFU@kernel.org>
-X-ClientProxiedBy: AM0PR02CA0152.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::19) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E382EB5A1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760442056; cv=none; b=Aj/sdv5G53hqmorzvdox3RypQp4kXyTZwtX3roR8R0tTwRAqZDKfDTixDN1rT8ZY+t9h9vDwH4FKWGeEnlxDdZYM8Mr6NlypzajRsEwC5KcK108+CVsfJF6u0VfjTtPHBmq/hlQjba0xnkevCPavmt/Kc+ZODmyfCxvjEj3CL+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760442056; c=relaxed/simple;
+	bh=M1dNORoRc4hxj1UiEqJRU3U2uAcO+FoN8xkcRDjDRvM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=t4daQZ9WJ4hY5bAKEdijleeaEXoYbBLPCyI0b2hK+2hM9Gd2wnEPEUwDaXoZGyqpIFGPIQcGPwfLcWzhKmm3mnejSGj1ClHxq8m+rBI4I0zyJ/4epOsFn7eAuYLe8TLRwalG73LNDvmocGKm49UIYs9+39pRVstsp/yy2QQ+3s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-427811cad57so307788635ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:40:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760442053; x=1761046853;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PAUKKVkRXBheGduKaeWvWTn/477z7dsqbwkt84tc7M=;
+        b=u9DvybMV0C+SBDsNCiHvMR6lgfX/S0JTpeFqBa2YsIOlYPZPY4qBdOBut05TC6uzg2
+         QYSr1SGerqXXILkTK3RMuI8Zw4y0jxrV3/5NbIFGqWeQfew9fKl03kvrN61Q/JwZUpw5
+         0h38BcyWiMDxgUcUsfaZxNslBKs71heDk65kwuvvobl5Mm02wwgP5euDcjIuaZOLuFE9
+         LpscE8z3vjwtmnjWE8BkMv+4Pt9aCEdMQIv694mKmEiqSdCSPFOiq6rW5KKtwk+HlvDi
+         Z+qFoJ/ylDEkyymzC/kvFbqTFMN3lnvbRW0YWXOMTZ3l7wO5pLO3r7Lfd6oNuN8V5NIX
+         sFVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHL49SSAxTgfdsFhV8zEu48hRnyPGM5H5IgnYFDoWupIGIy/RYdkJLN+2hU+UYY4k01jyrAJBP6q8O0OI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLNz8i6+gRILBWhrqJzfV2U+XJcXZZnhgaaHWyRxUcCHLy7mSZ
+	7EAo8+Ae9XJL7iYKgcrgS/UF3isOGmrtoc47rjwz7jPk93hgG0JwcsPrkgNkw8X0D9I+dx5HoDP
+	0LCxq847yRzB/EazJdbW3xxMQ9aNHSahOupSYiYVgekRdph8Zr82Q/rESkxk=
+X-Google-Smtp-Source: AGHT+IHDQOw0MGkhHMkqt81V1i7DK6QslMKoqOhfaUmigwCRgPhS97A7fo8C/0QFK+K1SSvMpG4XPLcD6tLx+1Y2+wXT2DxMF+7G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|AM8PR04MB8036:EE_
-X-MS-Office365-Filtering-Correlation-Id: efaff500-afdb-4e0e-b17e-08de0b167286
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|19092799006|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b38Sti0AKs2AaEVY4g3HVZ+N4D8Iuwd68RhHsIz58vuuJuv2cR6gobIZdbdj?=
- =?us-ascii?Q?XroEk0vmaNoEHvGYbQLOyAQP0CHmW0/qHnkDFi7zNcSla/vb+8MWxLW3NQX5?=
- =?us-ascii?Q?kYhSrrQcynhwA9KP6jXHPYfxhhI8ARMn8Hrdn92lVlqVl+uobe8B8Z9tkl34?=
- =?us-ascii?Q?qLcHoghSwT+n0eFvczP8KhPsW1+fOFz83LAuFL7tNdvTHGupqh2KxXHe4XVp?=
- =?us-ascii?Q?VjGaqrskS3/sn5HtsN2pVisZeW1zzTLHGzTslLMHL9OUoWAmD9dKKfPgPoZt?=
- =?us-ascii?Q?jvw6+lFy24nrCkq9Rkdc86N7xuKUoUcyMSJ5hTHT+FY4vqE6wkq5zrmsITia?=
- =?us-ascii?Q?NPNZPC7gDrQEGGKB9VwGMFEp6Op5aX5REjeYrGrykZSy6H2SJar7KEKCGUfF?=
- =?us-ascii?Q?drIsz1b9xM6JDJlrZcdVvWD0XXmhMLrPIJKOxTtjk7XbfguAJOhjOOyTsPo1?=
- =?us-ascii?Q?UQ9YQ4K81mc0aULBMJwWbINCrjohpd4jM+EvsuGgDhz0pwcTE2clD901FKi4?=
- =?us-ascii?Q?6q4Cb57UDqvhijGjWd+bL4Wd95N0JRGbeMUnrgjX2QZ7HnXGuX1ALhweFweW?=
- =?us-ascii?Q?TnjbhhykYGxAPGI+ONIIh2tbziPCONNg4Q3u4awg22H+KE2CaRhlbf1JjODN?=
- =?us-ascii?Q?r0RDKY8P7Lq0SlTG7uKgpVxP3qafwN5HeC8N7tie//zhhVMsH4/MTe1QquVc?=
- =?us-ascii?Q?Ei8fgJBcF4Q1w2paMkzZMJM40bMhkMLRJ8r6ItetnAWnEBd4+XmkaTKlCnbk?=
- =?us-ascii?Q?+dD09JYHLZnj0fNyiV6LaKo0fj02QLFxVoNrnvYU8Aoug2pcZzqK4zLthIwO?=
- =?us-ascii?Q?j3R8Dk53l5rfgCCoJYBAaMwPPbJHTGv4UGDPK8sOLXGpdNrE4jhODIR08Nsw?=
- =?us-ascii?Q?UGx2nQTdcKeE50y6QNOSjLYL2ALjqNno17bCrj5N3Lh+ddfbqiU+ncgmUpd9?=
- =?us-ascii?Q?aU0PdFTjBDGT+Ox5p4yC9esURwg4gEbb5mPkbv+JwsWTP7rBHjD4gACGVAk9?=
- =?us-ascii?Q?ebdaFDrS06WqKC+ekPPMF9zKorydYQWe4okdk4QhwoQ0KYiZ7hRkKucE82NI?=
- =?us-ascii?Q?n404DPfJYE85IGT4UmK2gajeeRczF89dDpNz+qND1Bcuc0XB4netNeuaXH8x?=
- =?us-ascii?Q?tp8WymWdt/TFWCl+Duo/rP73FZaAqxR6BG8ipwx/VVdWU+TQry5Of+i4uhh/?=
- =?us-ascii?Q?hrSZZw1xlAK1k60Dk5htrAzl+E1eF0jK+96Cgq5pMBy5PzdtUyBf7VC+OUiO?=
- =?us-ascii?Q?2Hvoj2kuYqywsj0/ytnJHk9zSs8qbAPOyo+Uc8X5q5Y5g004OsAaBUQoQIFq?=
- =?us-ascii?Q?xwbq02bP6sgMJRh5mJ19arV3nh5JHNg+4JdQSmVH2XLRxT3V+Uf8AYtIuoIx?=
- =?us-ascii?Q?tw5DRRLVQhcigFRwTQQsfRmkBq+/5FzXWPSEosBmSks5zWh/y0PzevShVXA+?=
- =?us-ascii?Q?+azkFJVCSRssOEXRhzotrpD2DkivF3Q/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?I/nxRU13po5fHp7cO0ET7XAmMlD9C8rCTyOZycT4LWzc0eW6iez/nHtkm9wN?=
- =?us-ascii?Q?PCBnvedDDsfGcWqW10btMT8m76bURyCDyxAbmcta8qfeioqSusAsQjNMdm7/?=
- =?us-ascii?Q?r0V3fsFdUio+sfXRdaeQ9cbPLMz38RAxHnsQc+elkEC1M5GpnkdkitKhfHDC?=
- =?us-ascii?Q?eA+PETIZhw2LZ6+b3c2ZpxonSicWnFdTlGaI5dzGMqFA3/+a9sS7bPhbXzLo?=
- =?us-ascii?Q?lmAj0iJd3TnbAsc0eRvNFdAuZeWT8+MyWre2Xe9uXh01Wf4iqBa56z/veS8y?=
- =?us-ascii?Q?awOwlV/0XL/5MY8jqmit7FVynMOyaaXl3n7ei0dKvCqBeaP/IOXRe8zue96v?=
- =?us-ascii?Q?McXK21i7ovfURck/ubQTqJFaaHHRbQ8Gr8jI/Sw1c9P1RdbGEKGJqzfg5ikD?=
- =?us-ascii?Q?xiDRo4s4Te39oCANYHHWN4LF0a9MaiC0UoWylH22cUbtWLf4kPqN2LBNjvfx?=
- =?us-ascii?Q?6R70+AbmbOUNFywbThQhfm9FRFRDzDstQdFv6rNpIs0LE+kq/T+2wnmU840T?=
- =?us-ascii?Q?eZ6F8m1Pew6shmbxuDCvm7LxdeRrVMw3llGZW1PVIxA60yBDeQA494ppVgU/?=
- =?us-ascii?Q?EwrdLa1xo5u+jGZXFBZmr0PUKFYdByjLz8zf2v64gC/mD7JT2xZ0fU04oFja?=
- =?us-ascii?Q?k2iAYoN88MAvzeavl+PgO2YLllXP/LDoomKEX2AwVUkzgc8Mq+RUyfmiUov4?=
- =?us-ascii?Q?jj3lxAiDygZogxrMTa6f8JlrfzBqiF+RJfkZQKupeAQv866zAmqCX4skFXbc?=
- =?us-ascii?Q?B+TNSsoVsX0t3XQl/VNk5jBFI+BKFGSW2XFkZe+PvYgewALASc7k46nTpXmC?=
- =?us-ascii?Q?VuJVc59J+v/onCmteAjrO6+LkK5n2WYAawG6gWjxcpLoWL3IXUwzT5ZCkeq0?=
- =?us-ascii?Q?br18Gv/0aFqB2RQ9KpI59RZEWh2RnoC799pn9OurGhi7aMQHwOmSDz8tS4m+?=
- =?us-ascii?Q?P8wWey7huCdVUEzCYpXwS9XrLJFq/W+ol4Zai8kAUhWpH4q92TWk/eRqhrcz?=
- =?us-ascii?Q?1kJ3KvICf/v712/4+YgG4XTbwvPWHjYkQ0QV5mFOKWfPH8NMLsVKYAMHsIzu?=
- =?us-ascii?Q?3BOnOvRBEtXlEdJNx1OwqH+h3aCkmHQfscZBX0FnqxlIfUb9EEjDi8Eq7whN?=
- =?us-ascii?Q?teZxrE1sbZTsDyDdiaGjiBFZdtm6GdTiF1gfZ2SrEky+VZv/51PrzXU8D/rs?=
- =?us-ascii?Q?qrIvI0tROJSLTw9DydEGiYVC1ucgPiAl9pC7Gp4eIV/E+o8+a336dPz01bv8?=
- =?us-ascii?Q?nrOhMtpvC1KBD+qB7KCAwnsu+O5bve7dLwYM6u5m5qfc0e8+FBDgCVL4tUXw?=
- =?us-ascii?Q?nP2QThqdyGZanqiRFw4iFH5Ghn3gjgCu/Tahdf7sa/I6ieUQOag1ymhQitrC?=
- =?us-ascii?Q?4AdBfMHrpJUjgg7wi9WIzz7j/3Urtoddr59oOdn9V7lHRN9PDBG3dveFalwy?=
- =?us-ascii?Q?ErdecbcGcPkj2KIpO3hd5wyA4Xxc/OKuMZGTrd0kfnvjN1/ZQTgC+IZjL6Fr?=
- =?us-ascii?Q?/Wmd10Xbm8uiExOmGsM6eQPjitFniXgzs5zPXcMM55RPpFIGPu2P2ZRS9Jh5?=
- =?us-ascii?Q?BW+OIoc21HjQQBggnQBNHvHn8KRSnY6XB0Rz3hZh?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efaff500-afdb-4e0e-b17e-08de0b167286
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 11:40:17.3255
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FFrD3Vgc/EdfbGKwzTf5JPlHWb3sZv8s2XaIzCgcl5wc9AyBFjCqXY/TBy8wT3xNDYJQIIZsUTzmMZykXdrwkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB8036
+X-Received: by 2002:a05:6e02:12ed:b0:42f:680c:9cc7 with SMTP id
+ e9e14a558f8ab-42f873de65dmr271168475ab.16.1760442053342; Tue, 14 Oct 2025
+ 04:40:53 -0700 (PDT)
+Date: Tue, 14 Oct 2025 04:40:53 -0700
+In-Reply-To: <20251014055828.124522-1-pedrodemargomes@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee36c5.050a0220.ac43.00fc.GAE@google.com>
+Subject: [syzbot ci] Re: ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
+From: syzbot ci <syzbot+ci6c8e6d88efa889f1@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, chengming.zhou@linux.dev, craftfever@murena.io, 
+	david@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	pedrodemargomes@gmail.com, xu.xin16@zte.com.cn
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 01:25:24PM +0200, Michael Walle wrote:
-> On Tue Oct 14, 2025 at 1:21 PM CEST, Ioana Ciornei wrote:
-> >> To fix the regression, I guess the patch can then be picked up by the
-> >> stable team along with the driver patch which will set the
-> >> .fixed_direction_output config field.
-> >
-> > Just to make sure that I understand, do you want me to add another patch
-> > that adds the new driver user or that will be handled separately?
-> 
-> No, no. No new patch. It's just that your patch (just the one which
-> has that property added to gpio-regmap) has to be submitted to the stable
-> kernels (by the one who is fixing the regression) I guess.
+syzbot ci has tested the following series
 
-Ok, understood.
+[v1] ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
+https://lore.kernel.org/all/20251014055828.124522-1-pedrodemargomes@gmail.com
+* [PATCH] ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
 
-Ioana
+and found the following issue:
+possible deadlock in __pte_offset_map_lock
+
+Full report is available here:
+https://ci.syzbot.org/series/15a341dd-23e3-4627-9fb9-00b92b7bae3f
+
+***
+
+possible deadlock in __pte_offset_map_lock
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      0d97f2067c166eb495771fede9f7b73999c67f66
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/31dfd455-a2ef-4c41-8f8d-172612e161d9/config
+C repro:   https://ci.syzbot.org/findings/5bddd702-c879-4aa6-b86d-5be2b4b3d0e2/c_repro
+syz repro: https://ci.syzbot.org/findings/5bddd702-c879-4aa6-b86d-5be2b4b3d0e2/syz_repro
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+ksmd/41 is trying to acquire lock:
+ffffffff8e245b20 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:318 [inline]
+ffffffff8e245b20 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ffffffff8e245b20 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:5221 [inline]
+ffffffff8e245b20 (fs_reclaim){+.+.}-{0:0}, at: kmem_cache_alloc_noprof+0x45/0x6e0 mm/slub.c:5252
+
+but task is already holding lock:
+ffff888112eeb8b8 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ffff888112eeb8b8 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: __pte_offset_map_lock+0x13e/0x210 mm/pgtable-generic.c:401
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+       _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+       spin_lock include/linux/spinlock.h:351 [inline]
+       map_pte mm/page_vma_mapped.c:72 [inline]
+       page_vma_mapped_walk+0xeea/0x20f0 mm/page_vma_mapped.c:291
+       try_to_migrate_one+0x5d8/0x34d0 mm/rmap.c:2339
+       rmap_walk_anon+0x553/0x730 mm/rmap.c:2855
+       try_to_migrate+0x319/0x3d0 mm/rmap.c:-1
+       migrate_folio_unmap mm/migrate.c:1319 [inline]
+       migrate_pages_batch+0x1432/0x35e0 mm/migrate.c:1882
+       migrate_pages+0x1d5a/0x2930 mm/migrate.c:2103
+       migrate_misplaced_folio+0x28c/0x840 mm/migrate.c:2724
+       do_numa_page mm/memory.c:6004 [inline]
+       handle_pte_fault mm/memory.c:6183 [inline]
+       __handle_mm_fault+0x3bab/0x5400 mm/memory.c:6318
+       handle_mm_fault+0x40a/0x8e0 mm/memory.c:6487
+       do_user_addr_fault+0x764/0x1380 arch/x86/mm/fault.c:1387
+       handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+       exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+       __get_user_8+0x14/0x30 arch/x86/lib/getuser.S:100
+       rseq_get_rseq_cs_ptr_val kernel/rseq.c:248 [inline]
+       rseq_get_rseq_cs kernel/rseq.c:270 [inline]
+       rseq_ip_fixup kernel/rseq.c:390 [inline]
+       __rseq_handle_notify_resume+0x13d/0x1220 kernel/rseq.c:438
+       rseq_handle_notify_resume include/linux/rseq.h:44 [inline]
+       resume_user_mode_work include/linux/resume_user_mode.h:62 [inline]
+       exit_to_user_mode_loop+0xbf/0x130 kernel/entry/common.c:43
+       exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+       syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+       syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+       do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&anon_vma->rwsem){++++}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       anon_vma_lock_write include/linux/rmap.h:122 [inline]
+       vma_prepare+0x25c/0x4b0 mm/vma.c:309
+       __split_vma+0x76e/0xa00 mm/vma.c:550
+       split_vma mm/vma.c:598 [inline]
+       vma_modify+0x13b3/0x1970 mm/vma.c:1631
+       vma_modify_flags+0x1e8/0x230 mm/vma.c:1649
+       mprotect_fixup+0x407/0x9c0 mm/mprotect.c:816
+       do_mprotect_pkey+0x8c5/0xcd0 mm/mprotect.c:990
+       __do_sys_mprotect mm/mprotect.c:1011 [inline]
+       __se_sys_mprotect mm/mprotect.c:1008 [inline]
+       __x64_sys_mprotect+0x80/0x90 mm/mprotect.c:1008
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&mapping->i_mmap_rwsem){++++}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       i_mmap_lock_write include/linux/fs.h:548 [inline]
+       dma_resv_lockdep+0x2f6/0x5b0 drivers/dma-buf/dma-resv.c:797
+       do_one_initcall+0x236/0x820 init/main.c:1283
+       do_initcall_level+0x104/0x190 init/main.c:1345
+       do_initcalls+0x59/0xa0 init/main.c:1361
+       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
+       kernel_init+0x1d/0x1d0 init/main.c:1483
+       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4897 [inline]
+       slab_alloc_node mm/slub.c:5221 [inline]
+       kmem_cache_alloc_noprof+0x45/0x6e0 mm/slub.c:5252
+       alloc_rmap_item mm/ksm.c:565 [inline]
+       get_next_rmap_item mm/ksm.c:2378 [inline]
+       ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+       walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+       walk_pte_range mm/pagewalk.c:88 [inline]
+       walk_pmd_range mm/pagewalk.c:155 [inline]
+       walk_pud_range mm/pagewalk.c:224 [inline]
+       walk_p4d_range mm/pagewalk.c:262 [inline]
+       walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+       __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+       walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+       scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+       ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+       ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+       kthread+0x711/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+other info that might help us debug this:
+
+Chain exists of:
+  fs_reclaim --> &anon_vma->rwsem --> ptlock_ptr(ptdesc)#2
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(ptlock_ptr(ptdesc)#2);
+                               lock(&anon_vma->rwsem);
+                               lock(ptlock_ptr(ptdesc)#2);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+4 locks held by ksmd/41:
+ #0: ffffffff8e259b88 (ksm_thread_mutex){+.+.}-{4:4}, at: ksm_scan_thread+0xc8/0x4b0 mm/ksm.c:2703
+ #1: ffff8881703b9760 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:368 [inline]
+ #1: ffff8881703b9760 (&mm->mmap_lock){++++}-{4:4}, at: scan_get_next_rmap_item mm/ksm.c:2596 [inline]
+ #1: ffff8881703b9760 (&mm->mmap_lock){++++}-{4:4}, at: ksm_do_scan+0x578/0x5c10 mm/ksm.c:2681
+ #2: ffffffff8e13d320 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #2: ffffffff8e13d320 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #2: ffffffff8e13d320 (rcu_read_lock){....}-{1:3}, at: ___pte_offset_map+0x29/0x250 mm/pgtable-generic.c:286
+ #3: ffff888112eeb8b8 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ #3: ffff888112eeb8b8 (ptlock_ptr(ptdesc)#2){+.+.}-{3:3}, at: __pte_offset_map_lock+0x13e/0x210 mm/pgtable-generic.c:401
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 41 Comm: ksmd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+ fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+ might_alloc include/linux/sched/mm.h:318 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x45/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 1 UID: 0 PID: 41 Comm: ksmd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 1 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 0 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 0 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 1 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 0 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 1 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 0 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:321
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 41, name: ksmd
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 1 UID: 0 PID: 41 Comm: ksmd Tainted: G        W           syzkaller #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8925
+ might_alloc include/linux/sched/mm.h:321 [inline]
+ slab_pre_alloc_hook mm/slub.c:4897 [inline]
+ slab_alloc_node mm/slub.c:5221 [inline]
+ kmem_cache_alloc_noprof+0x65/0x6e0 mm/slub.c:5252
+ alloc_rmap_item mm/ksm.c:565 [inline]
+ get_next_rmap_item mm/ksm.c:2378 [inline]
+ ksm_pte_entry+0x414/0xa60 mm/ksm.c:2501
+ walk_pte_range_inner+0x1ba/0x380 mm/pagewalk.c:50
+ walk_pte_range mm/pagewalk.c:88 [inline]
+ walk_pmd_range mm/pagewalk.c:155 [inline]
+ walk_pud_range mm/pagewalk.c:224 [inline]
+ walk_p4d_range mm/pagewalk.c:262 [inline]
+ walk_pgd_range+0x12bf/0x1d40 mm/pagewalk.c:303
+ __walk_page_range+0x14c/0x710 mm/pagewalk.c:410
+ walk_page_range_mm+0x454/0x660 mm/pagewalk.c:506
+ scan_get_next_rmap_item mm/ksm.c:2605 [inline]
+ ksm_do_scan+0x60c/0x5c10 mm/ksm.c:2681
+ ksm_scan_thread+0x10b/0x4b0 mm/ksm.c:2706
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
