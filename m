@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-853074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AA5BDA960
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:15:50 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAC2BDA969
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B482189028F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:16:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9BC84356A89
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A336A2F6169;
-	Tue, 14 Oct 2025 16:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5D8302162;
+	Tue, 14 Oct 2025 16:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gf51G+rn"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="0rN2zvH4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rpNEprz2"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C914B96E
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55032FA0C6;
+	Tue, 14 Oct 2025 16:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760458541; cv=none; b=IhUtDbXO2Gnh6fSB9pHCn1TKrPBZqrxv5JlcT4/tcyeWuoBV5iguFg0Erx3qXbwiz1OYLyzOcMRgEqvpiPYzMU47/YZ3K7dWFuZ++koQcEicHdmA3qgsoPJeB5zMaBKF2mSmlEV3w3bRAuYKJtvFnDPgChw/YGBQ3nKAmorsvFw=
+	t=1760458544; cv=none; b=Bw+pI6F06C790rI/B4bSCENyu/XNmlJSOz4LIucAeCW5WQQiF+OkJjUsejNDfV7JSocQ0N2PxRDpq9MvBKo1I872hQhCUf4ht11JwJhuAS5dxY5kzoAPiDK6geDtoBtbXjFjVWTgbGcyQ1opWqJpbQ5RFMWcBy4QBJ6iGjpABrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760458541; c=relaxed/simple;
-	bh=cKgxk6jiTeHyylnHogBfYDP2fUmT+YdxuibvKyiaGXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pj6fkIWB+fuW4aqTw+D1pZLBqYZW0jmSHXwT4pBVJO+wW2kh1rE7ElaZgaJeEkV7S6Zv7vG5t2K5sdx4mgXeMFpuUzwaNZjTuTbgeRH/vFGJUWSxLd9tXnDF3xhwWWeDKaFbE51NDaxMtIR0ay9xXj18wKM2lACcRL2fhV787+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gf51G+rn; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-87a0801ba1aso11623185a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:15:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760458538; x=1761063338; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewrwrknKHXB/uAbS3LbH0U+4arscjhN9e2UHVe6cDww=;
-        b=gf51G+rnc9IGAw5NyFtZkvpY3109qyAD3BqWt83Crd7p49RXe9dSmhnAzki74AEEEF
-         JboGnzkHho4Gekt3u2XlT/QIU0kGWodn5ER2hWMI1SrC1T7YjO0h/6bB0rpOUIAPcTfY
-         rbOZRD/sXT2XUl74M41o2xVTPZmVlqfLiv8Og=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760458538; x=1761063338;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ewrwrknKHXB/uAbS3LbH0U+4arscjhN9e2UHVe6cDww=;
-        b=thBEv1BspSqXrnPQLN8/Do3QZeHkbw4/Jx8h0ufPvdBXpVvlrHCFll0N/YEFx4sfGR
-         Yvx2NJMi6Kxs8q+Y1wbaYGIZUBQa4DHZ5sLB3+pkgeOnsQ1RCrixLN48bWzOTQt7RJJ5
-         slqlNH9NbbBMYBAJttCcu/v/5PoqXMRXb6U9C74lE7FABc/Zh1ZuMOfWyhQ+MgoVqiAI
-         9RfsAy7kUduF/nmnWkg18NDgIfgp2ATA29wJ46cZEYRRz13gmO4rje+cOwfqRjjRPhCM
-         lUm3OERsAW1myC6TTn6uaJhRZl//kEF0RvMtRjmfZ//St0twlkTbBYx1eLJcJenND9w/
-         1yRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjxhNSF4ZdkjMkCCpbbijj8E4IauXwOmxajQh/NRfoi6a+0HBJDZ77zrSIYMhyKzAEYcjuSn6K838dh9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeF5DxCH6moXByPxfHPKuwPLA1CGta+5MJhIau4mcqVeGscCQl
-	rh3Cp+wnPlw5YBtt5caRrlPFcoePNhOBjqeJS26cq4sUeFzrW/2DihKvBGUk+6DKO3IyOQB2r9o
-	H+kSOdDr4mnUG9Vq9JQVnlSKZkIzQ+7xuReP4k728NVl4vLi6zJsUhAM=
-X-Gm-Gg: ASbGncvgFzT84hA8CgJwJjziudsSw9GThWOmpkRA5yo3UqaWwKVdGYH0mDeCmdUrPFm
-	B2jx7X4LZnHNlZ5a6a1N8O0l0U9SWinTGd3kcAnw2OhyK7CU5byftjIkOzNWeI93V/NQVszE16G
-	NRBwEW+Y874i325YRlSppjphTBMqhw1ZvhBnUM7VdmHdgtwB3XGxh2k02msgUOkKkrUYrMpZWZ4
-	bmc8H6LenASsq+jF6tf4ssi+/XIunP8IsWtqkqUPoACXs3wdHhzL8iQlf7R2V/wLbDZCQ==
-X-Google-Smtp-Source: AGHT+IEojfPMQQk3wmAM9Q1dVYdLKmiUUYjXxV3T3mSLdv84y61D1MV9lsjnph7DcvmRn+shS0c8cY2yVTET3hV8Bg4=
-X-Received: by 2002:ac8:7d4e:0:b0:4c3:a0ef:9060 with SMTP id
- d75a77b69052e-4e6eacf3e4cmr310503061cf.26.1760458538020; Tue, 14 Oct 2025
- 09:15:38 -0700 (PDT)
+	s=arc-20240116; t=1760458544; c=relaxed/simple;
+	bh=Q6w1VqE53FfeBz4WyCau9FEGBSuaRabiVIaUWKK7iVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IZJwIixz+Lw22+9jE8rFGSODM9buV6lDMyFP2lg5c3mXIoiwctqt6I80GSd+5XbSDb8bBCfNnqdBRwtW9Ke8Vg7sLkfZlpLLREqE0uzBc+JgX5U733n1nDij2uLT1fxk+IkDrd9xV3Ih4eW9bzqgfC7lgc4mdSYl19F1QCLLIqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=0rN2zvH4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rpNEprz2; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A4E15140019B;
+	Tue, 14 Oct 2025 12:15:40 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 14 Oct 2025 12:15:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760458540;
+	 x=1760544940; bh=FX0qldBxQ77xaR9LMotvxqCgckJFEK9oGv3cR/G8Hdw=; b=
+	0rN2zvH4VOfjxTZJaIampjp7+aKRz8EtP0qFfSfOAZPbHT1OuTsi8qhCMXykKxT8
+	fTTgZJYeapddatvbSxbx3mI790tZcPPVtb3k1VCUOcQRf4vfJTKjByWbJWLHyCiM
+	FUpKCk4QF4Guq/7CJQeEVisgR1pZo7hGKWFiW48qG8f1TLKrjJEltbth2ObhOPdt
+	PswVZ02OaBzU7HwDO/acX6ipF9ddbxC6tNIALG+LI7WWRtTBmipa8W24IHPhe03N
+	BdVUtjWT5IiunhDqBGj/MjIAcFfpOrYE0eDjpadvBniFyXwcWy7V9EhPGrXashm/
+	IWf3bImhpDSBV477QmvajQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760458540; x=
+	1760544940; bh=FX0qldBxQ77xaR9LMotvxqCgckJFEK9oGv3cR/G8Hdw=; b=r
+	pNEprz20m7CD+xQwZPJ7j30cM12nJ3XD6iFaRbafP5ps/r0O38vbMupDPxkNPZvF
+	kvXhC6Q25I2sGuXypA4ezgbjov7gdgAd/7YlR1lmQCr2AOQwKgi9rRM0kPEQW5+a
+	V6Cz3ymUDN8/icRjoKI9r5/MF4RnBVWluVpdygMJQwfcLf46EztSkOdJHoYFr3Hu
+	XrNscHgKSEcOsjJ9baPh5eXe5+jXbFnfBJfymVX34vqecYf8aIdMpiGnFK2CGu7J
+	QZTBF7GuU6ftdsoca7CYsDvOMPtAjvjiG7bgd67s06f/5QUBHr2J21vTRgLh4TxE
+	I7zZvAQzKO2BrH8wK/Jxw==
+X-ME-Sender: <xms:LHfuaCstO4nbEHBisQb9Go7YPAIu7Ac__31BdXtzFys1FXFW0yp8Ww>
+    <xme:LHfuaAxNWGoNfBwcHh4sZUVZk72LHHumYnKI50Bg1BQm-dnqzNadurUL1rmV0cy66
+    Q5wHGWBXmwrl0Z9-MGHEzAQLFO5tGz1c9wQTOcN_NOt7hipLw>
+X-ME-Received: <xmr:LHfuaFBlV3IvfZwBDg7Ey9KpjxzuFdCR4iIKNLUOgeQKZtDynIbwTgRV2PltJKppLQ06PgBtMrQiEnEX5PPbvpkReUIx3TjhmDlMDTIgFwSTayDFjuxt>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtleekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
+    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehhfejueejleehtdehteefvdfgtdelffeuudejhfehgedufedvhfehueev
+    udeugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsvghrnhgusegsshgsvghrnhgurdgtohhmpdhnsggprhgtphhtthhopeeipdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtg
+    hpthhtohepsghfohhsthgvrhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepghhivhgv
+    mhgvrdhguhhluhesghhmrghilhdrtghomhdprhgtphhtthhopehjohgrnhhnvghlkhhooh
+    hnghesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:LHfuaOchLIkaVBpRBcAPU42TobfJZLnqGJ0TPMfBuMy8gx2jmzxXXg>
+    <xmx:LHfuaPlvPK9hOW8pCc_PvrK-4xW5Nwrx7AMEAsCjWS_IQ5in4AlnZw>
+    <xmx:LHfuaFFnrw-vZVcsjE4dNji4jQuUk_CMlE1p7ZkQtlEL4WHrUgG3Pw>
+    <xmx:LHfuaH6fcayc-8MJKjn8UAvlKhiNV4yNKxn_axFYYbd-C3FAvuDPjw>
+    <xmx:LHfuaLHO1szm_81gM-x6rZEqzjBNUlgWD6focfw0-3qzvzOTSy_n2Drl>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Oct 2025 12:15:39 -0400 (EDT)
+Message-ID: <3cfc568a-532f-44e0-a58e-6c3e042b173d@bsbernd.com>
+Date: Tue, 14 Oct 2025 18:15:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Miklos Szeredi <miklos@szeredi.hu>, Brian Foster <bfoster@redhat.com>
+Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
  <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
  <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
  <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
  <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
  <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
- <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
-In-Reply-To: <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Oct 2025 18:15:26 +0200
-X-Gm-Features: AS18NWD3DKKeraOhbOarAGzkUEqZ7zC_nG_AO-Oe_1HPhN0h50C60DqtXglynJA
-Message-ID: <CAJfpeguCe9-hbK8-XDGhaVHT1TD8oGH6E+vXRyY3cRs1rYYJ=A@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: lu gu <giveme.gulu@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd@bsbernd.com>
-Content-Type: multipart/mixed; boundary="000000000000cdb243064120b1b7"
+ <aO06hoYuvDGiCBc7@bfoster>
+ <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster>
+ <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <aO5XvcuhEpw6BmiV@bfoster>
+ <CAJfpegvkJQ2eW4dpkKApyGSwuXDw8s3+Z1iPH+uBO-AuGpfReQ@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegvkJQ2eW4dpkKApyGSwuXDw8s3+Z1iPH+uBO-AuGpfReQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---000000000000cdb243064120b1b7
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 14 Oct 2025 at 14:43, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> Will try the idea of marking folios writeback for the duration of the write.
+On 10/14/25 18:10, Miklos Szeredi wrote:
+> On Tue, 14 Oct 2025 at 15:57, Brian Foster <bfoster@redhat.com> wrote:
+> 
+>> But TBH, if the writeback thing or something similarly simple works for
+>> resolving the immediate bug, I wouldnt worry too much about it
+>> until/unless there are userspace fs' explicitly looking for that sort of
+>> behavior. Just my .02.
+> 
+> Agreed.
+> 
+> I just feel it unfortunate that this is default in libfuse and so many
+> filesystems will have auto_inval_data enabled which don't even need
+> it, and some mixed read-write workloads suffering badly as a
+> consequence.
 
-Attaching a test patch, minimally tested.
+Maybe we should disable it in libfuse-3.18 and hope for reports, in case
+there are regressions?
 
-Guangming, can you please test if this fixes the cache corruption?
 
 Thanks,
-Miklos
+Bernd
 
---000000000000cdb243064120b1b7
-Content-Type: text/x-patch; charset="US-ASCII"; name="fuse-write-through-set-writeback.patch"
-Content-Disposition: attachment; 
-	filename="fuse-write-through-set-writeback.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mgqrj1m00>
-X-Attachment-Id: f_mgqrj1m00
 
-ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZmlsZS5jIGIvZnMvZnVzZS9maWxlLmMKaW5kZXggOTA1NzI2
-YWMzYTdhLi4yZjEyYTUwMWRmOWQgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZmlsZS5jCisrKyBiL2Zz
-L2Z1c2UvZmlsZS5jCkBAIC0xMTIxLDkgKzExMjEsNiBAQCBzdGF0aWMgc3NpemVfdCBmdXNlX3Nl
-bmRfd3JpdGVfcGFnZXMoc3RydWN0IGZ1c2VfaW9fYXJncyAqaWEsCiAJYm9vbCBzaG9ydF93cml0
-ZTsKIAlpbnQgZXJyOwogCi0JZm9yIChpID0gMDsgaSA8IGFwLT5udW1fZm9saW9zOyBpKyspCi0J
-CWZvbGlvX3dhaXRfd3JpdGViYWNrKGFwLT5mb2xpb3NbaV0pOwotCiAJZnVzZV93cml0ZV9hcmdz
-X2ZpbGwoaWEsIGZmLCBwb3MsIGNvdW50KTsKIAlpYS0+d3JpdGUuaW4uZmxhZ3MgPSBmdXNlX3dy
-aXRlX2ZsYWdzKGlvY2IpOwogCWlmIChmbS0+ZmMtPmhhbmRsZV9raWxscHJpdl92MiAmJiAhY2Fw
-YWJsZShDQVBfRlNFVElEKSkKQEAgLTExNTMsNiArMTE1MCw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1
-c2Vfc2VuZF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVzZV9pb19hcmdzICppYSwKIAkJfQogCQlpZiAo
-aWEtPndyaXRlLmZvbGlvX2xvY2tlZCAmJiAoaSA9PSBhcC0+bnVtX2ZvbGlvcyAtIDEpKQogCQkJ
-Zm9saW9fdW5sb2NrKGZvbGlvKTsKKwkJZWxzZQorCQkJZm9saW9fZW5kX3dyaXRlYmFja19ub19k
-cm9wYmVoaW5kKGZvbGlvKTsKIAkJZm9saW9fcHV0KGZvbGlvKTsKIAl9CiAKQEAgLTEyMzIsNiAr
-MTIzMSw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1c2VfZmlsbF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVz
-ZV9pb19hcmdzICppYSwKIAkJCWZvbGlvX21hcmtfdXB0b2RhdGUoZm9saW8pOwogCiAJCWlmIChm
-b2xpb190ZXN0X3VwdG9kYXRlKGZvbGlvKSkgeworCQkJZm9saW9fd2FpdF93cml0ZWJhY2soZm9s
-aW8pOworCQkJZm9saW9fc3RhcnRfd3JpdGViYWNrKGZvbGlvKTsKIAkJCWZvbGlvX3VubG9jayhm
-b2xpbyk7CiAJCX0gZWxzZSB7CiAJCQlpYS0+d3JpdGUuZm9saW9fbG9ja2VkID0gdHJ1ZTsK
---000000000000cdb243064120b1b7--
 
