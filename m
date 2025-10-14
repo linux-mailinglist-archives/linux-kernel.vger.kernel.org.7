@@ -1,64 +1,51 @@
-Return-Path: <linux-kernel+bounces-853224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CB5BDAF60
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:38:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2FFDBDAF66
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4765E3B2141
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:38:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F553352CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21492BD59C;
-	Tue, 14 Oct 2025 18:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7372BD5B9;
+	Tue, 14 Oct 2025 18:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HPCZk9t8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qrIdm/nd"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36212951B3
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6669D2BD033;
+	Tue, 14 Oct 2025 18:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760467080; cv=none; b=tJXSEMg1ZRSdaGykc3yLvjPVTOmlwgvtkjXJ/4TVUYSn+xk+UnrNzJss5my3iRO5NajOag9/SGp6NwZe96XF7+xKuZsrUb+64eAV/j3e8HdM+FJYsBus4KAh1he6U8ZHuNQiq+63aDF9ZoDvrK5vxzDbn5/az6o7xTJJ/A15qcs=
+	t=1760467171; cv=none; b=d/4IJBLMaR+WAmG+03AJsKSnk6rkuu6W1EX706AQjxem4VVinT0BWy5SDYld2CJVMiBEbhEcWZ6MC2PInQn59//cDVMaswaiKIPfolzdP1dLBQX6ancC397oBah9X0XlZCoMO4SAiHlSgQ7gdOp4s6YUNHw9IET0yj235m5OGCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760467080; c=relaxed/simple;
-	bh=MJS+eUrMfmj2mMl0f3BB/puIU4qDp7SzMxeYKIl6gnY=;
+	s=arc-20240116; t=1760467171; c=relaxed/simple;
+	bh=Xh2eBKYYOAudGr9RMkzmILNtpywqr0tJTsvy9GaBpt8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DyJ6RMcaHONASnqO2J6bPJjxPN7022WuDDX3I43Xu+XdIAKHtiVt/CcssLFcl1AHmZowxtFkHiRg2xzvkCsrTc/4G+Q50EvAmM2yqvYjS2sn9zqUQzGZTnOXNP838esOyRfDMiv+r3QgO9rh83fy4nox+LJJRA4X9RnUbIw7eA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HPCZk9t8; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760467079; x=1792003079;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MJS+eUrMfmj2mMl0f3BB/puIU4qDp7SzMxeYKIl6gnY=;
-  b=HPCZk9t8/f8zhYwmYFJlpj7LCJbD5ZGC6NkmI4nWLIfVOpOVLjj8yJ0v
-   2RcA0/7pF/OXcVSpdFSJLXH64fyDcKzt31vfUDT9QEUU+haG8hKL5DlUL
-   7WE6Bx57AaZuSKocoAiRPK+SW1yQCZp3kjquVuGERLJMel0IKN98rnRBn
-   idIVStlBA2Kik/EhQb6OZbpxkQoMdENx8Kws4zbsUj+uC0S1G5oD40ij/
-   IuKgZ2k3gaUm0UtpWGDY9rxlR2BdDW+htBO0XqJrEoVSU7s0H9r1DAWXW
-   nlRSQ5VjZBd6o2SbUNaAS4DF0PX6MSfa9p4UFH6jBXSymkVNNL9pk5sGj
-   w==;
-X-CSE-ConnectionGUID: RYXOhm4KTyK5TiJCRuLCBA==
-X-CSE-MsgGUID: +uYtbnX8R0GGX+Rm2jBw7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62677352"
-X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
-   d="scan'208";a="62677352"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 11:37:58 -0700
-X-CSE-ConnectionGUID: +gZHGQ8lT3ac+qqPKj9LhQ==
-X-CSE-MsgGUID: xXQCKBV3R1CJMvk06TDBCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
-   d="scan'208";a="181897544"
-Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.111.172]) ([10.125.111.172])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 11:37:57 -0700
-Message-ID: <839b7bc9-b155-4458-ad36-fa083659283c@intel.com>
-Date: Tue, 14 Oct 2025 11:37:56 -0700
+	 In-Reply-To:Content-Type; b=V1UYd3CDTzXjZqb7MXq3Ze8ydPfFyD0aUqlgN1KXsR9QslnKVZWb/EVQmO0mdeY6jILckNfPt8sHRtWrDzj25uYOXunk/KgbZAS2jYMUBolMDymhtV3rZRTwAMaSGjmlo7wsAdVnUfNftkY28m950pH95fsolfoZdizItHP24nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qrIdm/nd; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=B/m/yNeA/Z2UE3cQi8e6b5O7/HPsSJCGOd9Cvkn1tDo=; b=qrIdm/ndYl+dfsGuG/f0c5ECjM
+	9+o0yosj/2lGow+ujb4omCSXDvQeTdzgx4ogHUBvCPZK+cCT7EcpGiKEOcPqq+3/RJ7BSY0uc8AmH
+	9oPHwjKaDW05cGxCYVO6TgXn2Qp9pZ3T0QxMsr7gEwbzWC7c3W+9QGl7LLXqtGqP4DJko1OoRpqfY
+	wRvMDxvm9MPl71IopkE0FzqSyyWn+i8CCHnGVmO3mrKHS+5lr14bDyIhSsL1qjycaXiWVQx5WnKL4
+	hf0d0hWzI4kFBs+NfSWhFr1oKLI9vqIQs8P6IkPGQRNkNL3v3ERGE2MFq7JVvVoniC8EuufhMiQEn
+	N1d5Ye0g==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8jvi-0000000HCEC-1CVf;
+	Tue, 14 Oct 2025 18:39:26 +0000
+Message-ID: <b55bf24c-4b45-4a6b-ae5b-7ded5bfcb25f@infradead.org>
+Date: Tue, 14 Oct 2025 11:39:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,112 +53,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 04/56] x86/bugs: Reset spectre_v1 mitigations
-To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
-Cc: Alexander Graf <graf@amazon.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-5-david.kaplan@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] Documentation: admin-guide: Correct spelling of
+ "userspace"
+To: Jonathan Corbet <corbet@lwn.net>, Akiyoshi Kurita <weibu@redadmin.org>,
+ linux-doc@vger.kernel.org
+Cc: Dave Jiang <dave.jiang@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Shannon Nelson <sln@onemain.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-kernel@vger.kernel.org
+References: <20250926190019.41788-1-weibu@redadmin.org>
+ <87seflbken.fsf@trenco.lwn.net>
+ <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
+ <87v7kh9wdu.fsf@trenco.lwn.net>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251013143444.3999-5-david.kaplan@amd.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <87v7kh9wdu.fsf@trenco.lwn.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/13/25 07:33, David Kaplan wrote:
-...
-> +#ifdef CONFIG_DYNAMIC_MITIGATIONS
-> +static void spectre_v1_reset_mitigation(void)
-> +{
-> +	setup_clear_cpu_cap(X86_FEATURE_FENCE_SWAPGS_USER);
-> +	setup_clear_cpu_cap(X86_FEATURE_FENCE_SWAPGS_KERNEL);
-> +	spectre_v1_mitigation = SPECTRE_V1_MITIGATION_AUTO;
-> +}
-> +#endif
-> +
->  static int __init nospectre_v1_cmdline(char *str)
->  {
->  	spectre_v1_mitigation = SPECTRE_V1_MITIGATION_NONE;
-> @@ -3794,3 +3805,10 @@ void __warn_thunk(void)
->  {
->  	WARN_ONCE(1, "Unpatched return thunk in use. This should not happen!\n");
->  }
-> +
-> +#ifdef CONFIG_DYNAMIC_MITIGATIONS
-> +void arch_cpu_reset_mitigations(void)
-> +{
-> +	spectre_v1_reset_mitigation();
-> +}
-> +#endif
 
-Are all the #ifdefs necessary? For instance, a single:
 
- void arch_cpu_reset_mitigations(void)
- {
-+	if (!IS_ENABLED(CONFIG_DYNAMIC_MITIGATIONS))
-+		return;
-...
+On 10/14/25 11:22 AM, Jonathan Corbet wrote:
+> Randy Dunlap <rdunlap@infradead.org> writes:
+> 
+>> On 10/14/25 7:57 AM, Jonathan Corbet wrote:
+>>> Akiyoshi Kurita <weibu@redadmin.org> writes:
+>>>
+>>>> The term "userspace" should be a single word. Fix the typo
+>>>> "userpace" accordingly.
+>>>>
+>>>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+>>>> ---
+>>>>  Documentation/admin-guide/tainted-kernels.rst | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+>>>> index a0cc017e4424..ed1f8f1e86c5 100644
+>>>> --- a/Documentation/admin-guide/tainted-kernels.rst
+>>>> +++ b/Documentation/admin-guide/tainted-kernels.rst
+>>>> @@ -186,6 +186,6 @@ More detailed explanation for tainting
+>>>>  
+>>>>   18) ``N`` if an in-kernel test, such as a KUnit test, has been run.
+>>>>  
+>>>> - 19) ``J`` if userpace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
+>>>> + 19) ``J`` if userspace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
+>>>>       to use the devices debugging features. Device debugging features could
+>>>>       cause the device to malfunction in undefined ways.
+>>>
+>>> Applied, thanks.
+>>
+>> Comparing to the "MSDOS" spelling patch:
+>>
+>> did you check/count "userspace" vs. "user space" vs. "user-space"
+>> in the kernel source tree?
+> 
+> No, but this patch was fixing "userpace", which is overtly wrong.  It
+> turns out that there's a surprising number of those, too, but still far
+> fewer.
 
-and removing *all* the #ifdefs might be enough to tell the compiler that
-all the *_reset_mitigation() functions are unreachable.
+oops, my bad.
 
-But the larger concern through all of this is that this is all *new*
-code. The reset concept is completely new and the reset functions look
-to be ad-hoc. They follow a few patterns, but nothing super consistent.
+-- 
+~Randy
 
-Also, this series is going to need to be broken up. I'd suggest going
-after the dynamic alternatives, first. I'm sure there's a need for that
-_somewhere_ other than for vulnerabilities.
-
-But, in the end, (IMNHO) this series really just adds complexity. It
-doesn't do enough refactoring or complexity reduction to go in with this
-approach.
 
