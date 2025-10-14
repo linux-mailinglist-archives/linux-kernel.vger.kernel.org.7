@@ -1,193 +1,209 @@
-Return-Path: <linux-kernel+bounces-852683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0554BD9A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:19:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EEBBD9A97
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD7C19A324B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0175B3AB1E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337E1DF49;
-	Tue, 14 Oct 2025 13:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D902314A74;
+	Tue, 14 Oct 2025 13:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gXjyZpFN"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TGu37ktP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C96313540
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97B830F949
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760447357; cv=none; b=QKJOJP+9O0yVeQJ4ZYwaUkayUPiER3uZWQGeP3nMbRNqthoZwV8TjySnyKXxNMGdjWJFsfzlkJmA6mDcd65KH5mP6FKA8ByEwnYev2KhcNEYcUoYwuFZmTfFLmwxBysX0TVoeWNRPuZ/hX98EyWITA4/o6YaNzMV+1h9T6jL9uA=
+	t=1760447381; cv=none; b=UnomO/Q8qWWFYjAQ0dr6/lqt6CM8vP5q3vUBD8wu3/tWSQIZSQn6m+/jseZokdYY751LvQibAZOel1ByXfNvGalS+knwNaKk6Si5Jzis2TfaEyrSQxXE/pwJyQsCuknUC1h5vGfVfkJD2sBHemTn5U4Zd35JzMRmD/ZFrRbOsCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760447357; c=relaxed/simple;
-	bh=cT09hkWb6p1Q5laBg5r/C0k/WyFKDN1nFOp/f0E9EIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7CdUjXCUp+33uyPamcQNFV4/US8o/S/Rty7YsYjl7ti2syktNMKc88PpL6tJKD4rCfhTEy98iRisEt/m3OykfPmYtXCW/sz8LeTr657ltZfq2X7u6xHna+Z77b3ew/bEE8hrEqKdRkAGA7hEyHqwHty1KTH3Tz89SVnPk5cplg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gXjyZpFN; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42420c7de22so2446890f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760447353; x=1761052153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBmndkyEtmuH2zqfJVf2MipvEX2Eu2YJsa5R9Svl5+o=;
-        b=gXjyZpFN7dPRuh+vX/6yZxiZDGG1mugCc3Ys83+jGOIfZiPoIIu6Muk8Bi6bRDciqQ
-         kEqlVA/S/G90lP17leDC4Xhue0LATzQolxuZts/beHU2j7OUgIzJWtmUS32qc87vibUp
-         dPTL96RLpIEagq8GNTPPHHZAWEVfm/fmLgrEGdBuR7P/Osj42j7USzNa1nOqQcZVoSTc
-         v21buuptH8kZmQ9Eh+FXeVWwRu3m3iEeyX/JzdpVc3+idFRM04kgaWuciIeBBKJI2tRB
-         LCWMX/t4aOA2bj69rpM2+hUlxQKGvylIkIaGRj3M661jQVHB7UfLKMgAgOGiCg8WMUxl
-         rNNw==
+	s=arc-20240116; t=1760447381; c=relaxed/simple;
+	bh=TrP32CCyZVGRO8t22mwdn7DMyjarK0p1mbw9fs+oVBo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uJe6mGxdyRkGFlkvpisWJ46nEUwIqbKfd6uucUmXmQNVChx33ahEvgGuuOn8YXPuSQyehwm6+r1UgTqib6VPJGDrSL+SycOgNGpuAtUcI+iSa2Dj/A7Jp3bVI22SGEriHYLtyVkOO/VhKFbD6pM2FqgUxtwQVNeAjXxRqCi9tNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TGu37ktP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760447378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e/j4fnNPw8xpYuDJO1o02FCXiuLtXdqBOYuHxFNejeY=;
+	b=TGu37ktPMQTPN7arxeCmKs9E6lztM/7+4NF40YFa4uY9r/+04i0sSO527XFzwlQbo0izgn
+	82JjQuIuwZhfL7NJwILJo3rMcUtNVK68mR/kQaS6glWJfAhgjcwkaxEiKnSqpWx5eigIWZ
+	8XS7Hw3TeSdu0tV3xgkZrP2E7Lljlv4=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-r-bLG98HPl2gYRmBPMctUw-1; Tue, 14 Oct 2025 09:09:37 -0400
+X-MC-Unique: r-bLG98HPl2gYRmBPMctUw-1
+X-Mimecast-MFC-AGG-ID: r-bLG98HPl2gYRmBPMctUw_1760447376
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-269af520712so99688785ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:09:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760447353; x=1761052153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XBmndkyEtmuH2zqfJVf2MipvEX2Eu2YJsa5R9Svl5+o=;
-        b=mYpMmryTFZz/ABAEgYablhYdQOt+Ya3TrFjNBaZIkFygE1Cb3eDexAgrsg18YR5Xmj
-         /uJXwB8b+PbDe1Ra5VNnUMypAPJlmJ2s/TjB2HHGyOoxil/D8+4Du4jbF1prBFF/w3+C
-         1rZpfQiWvgJIdh1z340AbLc1rWrRpGwxv2Y4rPjXKdPUc59UyziHwC/+2QJpe9Gix9eh
-         hxDskMn55NkHNqVMX+mYkTc7rJN18gmXUdfItJCZwX0YoTQPN8YI0kLbf0K47rg6q84g
-         9T/9b/v8bRvHRZFM5YA4QLTg4AIOcPZf9QJvwE/0WZozP52IW+MTwkN2F72aMQsifU7u
-         OxZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzoRVyjVwc4umMPNLSWhG2OMCYlCBrd8WiVw0Rm6d9ertv5uv8lDpn2KFfS0xoB0G+7g8wcs9c8Hjc9u8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFbvIB53sbblm757Zv8ELRfe5OpeE2QwgT9vlbik7ribWElHoP
-	eWi2cevSAtLye6RjeJ/FoSUe7+z+nC/dgL6l+dxnJ4hb1X4PZxDZIuAJ37vj4DtSVmY=
-X-Gm-Gg: ASbGncs7yNW4HUIYgtv5VlNAA1MtzfhPFxh5syRZW9V890dwuMgvVPfCMsWV7vYk+4d
-	eziJ47NdXmOH98BCJlwCSfoGADPX0eY3NPWEnvzmb04waMjBgH/5DTaBVYGAyY8b2DoFVKowgRp
-	LgUh4qbpLA4mt/46B/KafJbyV+ETv4BrJh4GVfL/ee+KvkS6W6txQY/Ps2Phgz/t89t5sg6fdW7
-	I1bs6N2vQb6n7tjjusAWWs5iG4LmUGtsIqVP9iwicP+XmpbJihKSfeKlKMyaQbjMeGRCKElBV7F
-	Ez6gQogAIH+g34ffkgy++GzUjCVQKtOkK9MGLbSyp3thSuAIDW1IpzdgJ4/y73SUsH8TVeHfyD0
-	LEd4KNqFZili6z81Dfe1hEaZKyQu/Meg1a0e4wHD381Rm2QGwx9dcIImkjbwPj9bVXiZ9pA==
-X-Google-Smtp-Source: AGHT+IFGpYfRWYGhqIaSZxufyw3cU/D950Wt8EiMNsuJCAolvX6QytVu1nn4m6ZLSmt3VXgOJE+wuQ==
-X-Received: by 2002:a05:6000:43d4:20b0:426:ed9d:4072 with SMTP id ffacd0b85a97d-426ed9d43d7mr1534097f8f.21.1760447352714;
-        Tue, 14 Oct 2025 06:09:12 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf70fsm22846162f8f.27.2025.10.14.06.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 06:09:12 -0700 (PDT)
-Date: Tue, 14 Oct 2025 15:09:10 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: "Li,Rongqing" <lirongqing@baidu.com>
-Cc: Lance Yang <lance.yang@linux.dev>,
-	"wireguard@lists.zx2c4.com" <wireguard@lists.zx2c4.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>, Russell King <linux@armlinux.org.uk>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Joel Granados <joel.granados@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Phil Auld <pauld@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Florian Westphal <fw@strlen.de>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Feng Tang <feng.tang@linux.alibaba.com>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [????] Re: [PATCH][v3] hung_task: Panic after fixed number of
- hung tasks
-Message-ID: <aO5Ldv4U8QSGgfog@pathway.suse.cz>
-References: <20251012115035.2169-1-lirongqing@baidu.com>
- <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
- <aO4boXFaIb0_Wiif@pathway.suse.cz>
- <e3f7ddf68c2e42d7abf8643f34d84a18@baidu.com>
+        d=1e100.net; s=20230601; t=1760447376; x=1761052176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e/j4fnNPw8xpYuDJO1o02FCXiuLtXdqBOYuHxFNejeY=;
+        b=MDvEmdYX2gkhPqPFtFj2fxVJ0yEai9fWEY6NCsBkUcQ8gNdOOTHBX8Y4gE6UuPkGSa
+         BN4EAQwRTiLn62MRkhqnqfm8dPxy/q6M5KNl8VSGExA0wBuDpIDNJhAuqwc4PDgxZfqV
+         ZNqxAk2sSnPz+p7VsHu7GWDj8JEEl+7kreCX35t15oHibkwIPaBErbDo1Nfuv0KojEwE
+         yC81+F9dxPXHNMEHCU4uL1RHXithBXgFbM6kSHGCF2Fb606e3oRZHlC0XXZYm15KI97P
+         mdsxIgRgf2CdsJ02MjvGg/X9XiSKr12hG6twie0AdkaYCoioc60FyuLWeooEP7KzZ7Q5
+         e3mw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4zjIWX+CN4wewCb5VhflJ8tjhJtEHC8c0md47yxEUgsyCnS6NoBcAZCWM815Nb1uKGURJSwnf/BckGf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNrCJMIbyH/KHtV66gXBAimLgy06G+gbYuumwmSuLEFiRvE8Et
+	r+Y/2+5kPymwBMQmdCH3TWrOTn9hQrsJo9E8XsXJZ6ckaj3Ls1D/df4jeV0v1ZWSFYeQH7tyDrm
+	GDOVM2yJN30K68QcucRPnzD9O2eiXqKGD30JcqvKw5wDz01knaGNHgQlzLaL93BzGXKEWpNHKCV
+	9z8VJFIpCzT/e6791J6dUj2cxaeZ3neUhO+jX2Eb0g
+X-Gm-Gg: ASbGnctAkrwATWKPGucNFG6gyu8rPq9inEVYhQ3LxxP1EEZQkUNOudJb0CrLYPo35Tw
+	UTDtMyt8hWXsHClwQMXJx4ZM+tWQRSiBrcvGDxaiccRdGmKUWRoQvUVza0REgTvtHUvxcQuK4mv
+	qBsJl/ATBLbxEu1v/B7D5r5w==
+X-Received: by 2002:a17:903:1b0d:b0:27e:ee83:fc80 with SMTP id d9443c01a7336-2902741f56fmr278502275ad.57.1760447375895;
+        Tue, 14 Oct 2025 06:09:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHs1i6dA1qn9RJPATHJa+lt5gIe1N1iZuuKEYCbVtVtylSs68XJ3a1ryegM0jvVhwbcA0kWJmPRTlPVv3z8nK0=
+X-Received: by 2002:a17:903:1b0d:b0:27e:ee83:fc80 with SMTP id
+ d9443c01a7336-2902741f56fmr278502005ad.57.1760447375293; Tue, 14 Oct 2025
+ 06:09:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3f7ddf68c2e42d7abf8643f34d84a18@baidu.com>
+References: <20250929133602.32462-1-piliu@redhat.com> <20250929135347.GH3289052@noisy.programming.kicks-ass.net>
+ <CAF+s44Q4SDXPRfYc4Ms5TcJgRU07QJB5H5VOHvyrZ31x9z49nw@mail.gmail.com>
+ <aNuEpt8IkvtkH9na@jlelli-thinkpadt14gen4.remote.csb> <20250930090441.GJ4067720@noisy.programming.kicks-ass.net>
+ <45e40d5e-f0b9-4c77-af1e-6ac915518acc@arm.com> <aOOyF3EvIG5HKEel@jlelli-thinkpadt14gen4.remote.csb>
+ <3408aca5-e6c9-434a-9950-82e9147fcbba@arm.com>
+In-Reply-To: <3408aca5-e6c9-434a-9950-82e9147fcbba@arm.com>
+From: Pingfan Liu <piliu@redhat.com>
+Date: Tue, 14 Oct 2025 21:09:24 +0800
+X-Gm-Features: AS18NWCYsx1WZef9Zr-wMGig_EYxnzdRSg8VmEkF_yrCq8DAS1t4VGVG6m71ppg
+Message-ID: <CAF+s44Tv1n0b1GSghSPP3xDPK4qzbzc629XMB9btzXuKgfKvcA@mail.gmail.com>
+Subject: Re: [PATCH] sched/deadline: Derive root domain from active cpu in
+ task's cpus_ptr
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 2025-10-14 10:49:53, Li,Rongqing wrote:
-> 
-> > On Tue 2025-10-14 13:23:58, Lance Yang wrote:
-> > > Thanks for the patch!
-> > >
-> > > I noticed the implementation panics only when N tasks are detected
-> > > within a single scan, because total_hung_task is reset for each
-> > > check_hung_uninterruptible_tasks() run.
-> > 
-> > Great catch!
-> > 
-> > Does it make sense?
-> > Is is the intended behavior, please?
-> > 
-> 
-> Yes, this is intended behavior
-> 
-> > > So some suggestions to align the documentation with the code's
-> > > behavior below :)
-> > 
-> > > On 2025/10/12 19:50, lirongqing wrote:
-> > > > From: Li RongQing <lirongqing@baidu.com>
-> > > >
-> > > > Currently, when 'hung_task_panic' is enabled, the kernel panics
-> > > > immediately upon detecting the first hung task. However, some hung
-> > > > tasks are transient and the system can recover, while others are
-> > > > persistent and may accumulate progressively.
-> > 
-> > My understanding is that this patch wanted to do:
-> > 
-> >    + report even temporary stalls
-> >    + panic only when the stall was much longer and likely persistent
-> > 
-> > Which might make some sense. But the code does something else.
-> > 
-> 
-> A single task hanging for an extended period may not be a critical
-> issue, as users might still log into the system to investigate.
-> However, if multiple tasks hang simultaneously-such as in cases
-> of I/O hangs caused by disk failures-it could prevent users from
-> logging in and become a serious problem, and a panic is expected.
+Hi Pierre,
 
-I see. This another approach and it makes sense as well.
-An this is much more clear description than the original text.
+Thanks for sharing your perspective.
 
-I would also update the subject to something like:
+On Sat, Oct 11, 2025 at 12:26=E2=80=AFAM Pierre Gondois <pierre.gondois@arm=
+.com> wrote:
+>
+>
+> On 10/6/25 14:12, Juri Lelli wrote:
+> > On 06/10/25 12:13, Pierre Gondois wrote:
+> >> On 9/30/25 11:04, Peter Zijlstra wrote:
+> >>> On Tue, Sep 30, 2025 at 08:20:06AM +0100, Juri Lelli wrote:
+> >>>
+> >>>> I actually wonder if we shouldn't make cppc_fie a "special" DEADLINE
+> >>>> tasks (like schedutil [1]). IIUC that is how it is thought to behave
+> >>>> already [2], but, since it's missing the SCHED_FLAG_SUGOV flag(/hack=
+),
+> >>>> it is not "transparent" from a bandwidth tracking point of view.
+> >>>>
+> >>>> 1 -https://elixir.bootlin.com/linux/v6.17/source/kernel/sched/cpufre=
+q_schedutil.c#L661
+> >>>> 2 -https://elixir.bootlin.com/linux/v6.17/source/drivers/cpufreq/cpp=
+c_cpufreq.c#L198
+> >>> Right, I remember that hack. Bit sad its spreading, but this CPPC thi=
+ng
+> >>> is very much like the schedutil one, so might as well do that I suppo=
+se.
+> >> IIUC, the sugov thread was switched to deadline to allow frequency upd=
+ates
+> >> when deadline tasks start to run. I.e. there should be no point updati=
+ng the
+> >> freq. after the deadline task finished running, cf [1] and [2]
+> >>
+> >> The CPPC FIE worker should not require to run that quickly as it seems=
+ to be
+> >> more like a freq. maintenance work (the call comes from the sched tick=
+)
+> >>
+> >> sched_tick()
+> >> \-arch_scale_freq_tick() / topology_scale_freq_tick()
+> >>    \-set_freq_scale() / cppc_scale_freq_tick()
+> >>      \-irq_work_queue()
+> > OK, but how much bandwidth is enough for it (on different platforms)?
+> > Also, I am not sure the worker follows cpusets/root domain changes.
+> >
+> >
+> To share some additional information, I could to reproduce the issue by
+> creating as many deadline tasks with a huge bandwidth that the platform
+> allows it:
+> chrt -d -T 1000000 -P 1000000 0 yes > /dev/null &
+>
+> Then kexec to another kernel. The available bandwidth of the root domain
+> gradually decreases with the number of CPUs unplugged.
+> At some point, there is not enough bandwidth and an overflow is detected.
+> (Same call stack as in the original message).
+>
+> So I'm not sure this is really related to the cppc_fie thread.
+> I think it's more related to checking the available bandwidth in a contex=
+t
+> which is not appropriate. The deadline bandwidth might lack when the
+> platform
+> is reset, but this should not be that important.
+>
 
-    hung_task: Panic when there are more than N hung tasks at the same time
+I think there are two independent issues.
+
+In your experiment, as CPUs are hot-removed one by one, at some point
+the hot-removal will fail due to insufficient DL bandwidth. There
+should be a warning message to inform users about what's happening,
+and users can then remove some DL tasks to continue the CPU
+hot-removal.
+
+Meanwhile, in the kexec case, this checking can be skipped since the
+system cannot roll back to a working state anyway
 
 
+Thanks,
 
-That said, I think that both approaches make sense.
+Pingfan
+> ---
+>
+> Question:
+> Since the cppc_fie worker doesn't have the SCHED_FLAG_SUGOV flag,
+> is this comment actually correct ?
+> /*
+>   * Fake (unused) bandwidth; workaround to "fix"
+>   * priority inheritance.
+>   */
+>
+> ---
+>
+> On a non-deadline related topic, the CPPC drivers creates a cppc_fie
+> worker in
+> case the CPPC counters to estimate the current frequency are in PCC
+> channels.
+> Accessing these channels requires to go through sleeping sections,
+> that's why a worker is used.
+>
+> However, CPPC counters might be accessed through FFH, which doesn't go
+> through
+> sleeping sections. In such case, the cppc_fie worker is never used and ne=
+ver
+> removed, so it would be nice to remote it.
+>
 
-Your approach would trigger the panic when many processes are stuck.
-Note that it still might be a transient state. But I agree that
-the more stuck processes exist the more serious the problem
-likely is for the heath of the system.
-
-My approach would trigger panic when a single process hangs
-for a long time. It will trigger more likely only when the problem
-is persistent. The seriousness depends on which particular process
-get stuck.
-
-I am fine with your approach. Just please, make more clear that
-the number means the number of hung tasks at the same time.
-And mention the problems to login, ...
-
-Best Regards,
-Petr
 
