@@ -1,78 +1,234 @@
-Return-Path: <linux-kernel+bounces-852806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7198CBD9F47
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7747ABD9F7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3251926C67
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:19:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28B11927019
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F15326C383;
-	Tue, 14 Oct 2025 14:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D81278157;
+	Tue, 14 Oct 2025 14:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mK+XKbGa"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SrqpRkY/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF1326E6E5;
-	Tue, 14 Oct 2025 14:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61141270557
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760451541; cv=none; b=htJafGjcmhbKO69t8E2TZGFf3vTPs8n9L+2XFQ2BC6yPvDWmTnk92lEZJwwaBbgSwVbaGoMzeykDEhMOXYcf6IV5ZbgVoUC5De6dPWmadf+15QMnmkMwrkiavX8lmI4tguUjvui0TV14kEa8xcu51CjkYYZ0qSfg4DcD6lYG7PI=
+	t=1760451705; cv=none; b=SU0kZdbViozUoedY/lDt0ZEN/5X7FdyzPtS1shizfn0o2Dg59QnC504A4vQr5fmz3Bv2JtnfKN4NyGy8bn1jg3wERPaISZ4O2O5bVNA4931FwxGfA2QbFvnTlSrYNnpbVrimmPhqgQ63TiWczARbctuF2Ty1i5lVHPmfax/FfJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760451541; c=relaxed/simple;
-	bh=zFvgiSA5zusH3E2W8KBAzMBZqLEN5paS14qc+yO4rlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBcMVweMSz/zfa6vEc/rZt/cAhN2d2CRFQOzwIguexXlDmrsWvCxd0PAjpDsy3BPtZR1LqHIlmL3BXPXzig+2Gmkx5GH0EnFsiX6mq5/qqua2TtukQTwWCqqwqLJHNCxVFDs7VwmDNLR+QUz4fUkvzycGGpVP5+zYW+z2ZHid/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mK+XKbGa; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=zFvgiSA5zusH3E2W8KBAzMBZqLEN5paS14qc+yO4rlo=; b=mK+XKbGaLHq3d0/QUL2+M5dgX9
-	foOOVBR7UFbS0Hb0BQewQEJMZhkzWgQoVD+haFNW5y4aB2AE8TWCgSOn6QTXTsOeFvBobeU7vUSHG
-	t+Bt+AxsF+9UR6fNhcY+qQSPLQoOAYTewSbK4c81esrSKpjdBDA3kXgrscdatOS8bekEe9aTOFi5z
-	tq/zidrwA98TNBCVYJppnQ/K56TFv6EfjuD53C+Na0Bo8f6KhvrXsdIxg2ixjUbLbyFt6A0ES3E+r
-	tbQbuFgke0dAmILn4Bf1qDTre2zEcHcK9P9gpxL6HPPuMNwtpCvpTAste5mSEfR/pCbNSBUy1expZ
-	HbWRsnWw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8frb-0000000CEhY-17nv;
-	Tue, 14 Oct 2025 14:18:56 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 15CE1300212; Tue, 14 Oct 2025 16:18:56 +0200 (CEST)
-Date: Tue, 14 Oct 2025 16:18:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
- location only once
-Message-ID: <20251014141856.GA3245006@noisy.programming.kicks-ass.net>
-References: <20250929112947.27267-4-jgross@suse.com>
- <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
- <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
- <20251014132544.GBaO5PWEbKfbQFCXdB@fat_crate.local>
- <ddb38d36-0194-414c-8614-1f37b1f38283@suse.com>
+	s=arc-20240116; t=1760451705; c=relaxed/simple;
+	bh=1Hf1GQnfilFRE9nB1w0R6O4CsxGa+shCweum3ftHKYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y9wxWGCn9TOymUynDJsB/nDpdr62LKDY5aqppxUvVXAeWRpwD2EScJ3DeeT3T+66jcY0k2BVkt6qN8hIzFNAU9eZJZ/aoIs80dECZL1/AQs9EsvA/iEIxvX9h5x193v0P/FW2KudCW/Xdx9yKeRn9V9C1sFiTyRJrrrDJdG8foM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SrqpRkY/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760451703; x=1791987703;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1Hf1GQnfilFRE9nB1w0R6O4CsxGa+shCweum3ftHKYs=;
+  b=SrqpRkY/7n8LqzjKgKGZ/EmbmwubQ6fqX3zQsZgZdP60cl20B6x3VsZy
+   iZO1TXyj9fU83yZFbrwG0Bj6DgmTPK0EdqBwfllXt15/pQIx6qkcOMzRX
+   51iXfbeX32rIYasdEpEvv275r/t37lvWtTUHNRfC5f34YQgoP37phk+g0
+   61NryUy66E8VcgjaWAkINBuW6+2H4w8eZewdI6xWqHkKV6LeHM2zEUydO
+   3TqfMZIZj6cJi4SL8bMNlj0z1vPrqp+HX8n4y3idaOGasAfE8GTap9dGM
+   3lsobBeuRwHAqggTTONYX4lYYZKW/0P2xWwp+KjMt/0vUP/5hM7gukbNK
+   g==;
+X-CSE-ConnectionGUID: 9OJHKsjrSWC3oyRPgFyl7w==
+X-CSE-MsgGUID: yw1qHzzzRVqknI1mYhO3/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62653250"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="62653250"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:21:43 -0700
+X-CSE-ConnectionGUID: fjCBQiILTRa4fpom3HZ2vQ==
+X-CSE-MsgGUID: xqmpdOA3RDOarD3OZxal3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="181449086"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:21:38 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	linmiaohe@huawei.com,
+	tony.luck@intel.com
+Cc: qiuxu.zhuo@intel.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	nao.horiguchi@gmail.com,
+	farrah.chen@intel.com,
+	jiaqiyan@google.com,
+	lance.yang@linux.dev,
+	richard.weiyang@gmail.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/1] mm: prevent poison consumption when splitting THP
+Date: Tue, 14 Oct 2025 22:19:35 +0800
+Message-ID: <20251014141935.1878315-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ddb38d36-0194-414c-8614-1f37b1f38283@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 04:13:11PM +0200, J=FCrgen Gro=DF wrote:
+When performing memory error injection on a THP (Transparent Huge Page)
+mapped to userspace on an x86 server, the kernel panics with the following
+trace. The expected behavior is to terminate the affected process instead
+of panicking the kernel, as the x86 Machine Check code can recover from an
+in-userspace #MC.
 
-> Could take some time, vacation is coming up...
+  mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd80000000070134
+  mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
+  mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e741e77539027db
+  mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC 0 microcode 80000320
+  mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+  mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
+  Kernel panic - not syncing: Fatal local machine check
 
-Enjoy! This patch has meanwhile gone away.
+The root cause of this panic is that handling a memory failure triggered by
+an in-userspace #MC necessitates splitting the THP. The splitting process
+employs a mechanism, implemented in try_to_map_unused_to_zeropage(), which
+reads the sub-pages of the THP to identify zero-filled pages. However,
+reading the sub-pages results in a second in-kernel #MC, occurring before
+the initial memory_failure() completes, ultimately leading to a kernel
+panic. See the kernel panic call trace on the two #MCs.
+
+  First Machine Check occurs // [1]
+    memory_failure()         // [2]
+      try_to_split_thp_page()
+        split_huge_page()
+          split_huge_page_to_list_to_order()
+            __folio_split()  // [3]
+              remap_page()
+                remove_migration_ptes()
+                  remove_migration_pte()
+                    try_to_map_unused_to_zeropage()  // [4]
+                      memchr_inv()                   // [5]
+                        Second Machine Check occurs  // [6]
+                          Kernel panic
+
+[1] Triggered by accessing a hardware-poisoned THP in userspace, which is
+    typically recoverable by terminating the affected process.
+
+[2] Call folio_set_has_hwpoisoned() before try_to_split_thp_page().
+
+[3] Pass the RMP_USE_SHARED_ZEROPAGE remap flag to remap_page().
+
+[4] Try to map the unused THP to zeropage.
+
+[5] Re-access sub-pages of the hw-poisoned THP in the kernel.
+
+[6] Triggered in-kernel, leading to a panic kernel.
+
+In Step[2], memory_failure() sets the poisoned flag on the sub-page of the
+THP by TestSetPageHWPoison() before calling try_to_split_thp_page().
+
+As suggested by David Hildenbrand, fix this panic by not accessing to the
+poisoned sub-page of the THP during zeropage identification, while
+continuing to scan unaffected sub-pages of the THP for possible zeropage
+mapping. This prevents a second in-kernel #MC that would cause kernel
+panic in Step[4].
+
+[ Credits to Andrew Zaborowski <andrew.zaborowski@intel.com> for his
+  original fix that prevents passing the RMP_USE_SHARED_ZEROPAGE flag
+  to remap_page() in Step[3] if the THP has the has_hwpoisoned flag set,
+  avoiding access to the entire THP for zero-page identification. ]
+
+Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
+Fixes: dafff3f4c850 ("mm: split underused THPs")
+Reported-by: Farrah Chen <farrah.chen@intel.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Tested-by: Farrah Chen <farrah.chen@intel.com>
+Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Acked-by: Lance Yang <lance.yang@linux.dev>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Acked-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+---
+v2 -> v3:
+  - No code changes.
+
+  - Rebased on top of v6.18-rc1 and retested.
+
+  - Add two "Fixes:" tags.
+
+  - Collect Lance Yang's "Acked-by:" tag.
+
+  - Collect Wei Yang's "Reviewed-by:" tag.
+
+  - Collect Zi Yan's "Acked-by:" tag.
+
+  - Collect Miaohe's "Reviewed-by:" tag.
+
+v1 -> v2:
+  - Apply David Hildenbrand's fix suggestion.
+
+  - Update the commit message to reflect the new fix.
+
+  - Add David Hildenbrand's "Suggested-by:" tag.
+
+  - Remove Andrew Zaborowski's SoB but add credits to him in the commit message.
+    [ I cannot reach him to get his SoB for the completely rewritten commit
+      message and new fix approach. ]
+
+ mm/huge_memory.c | 3 +++
+ mm/migrate.c     | 3 ++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1b81680b4225..1d1b74950332 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -4109,6 +4109,9 @@ static bool thp_underused(struct folio *folio)
+ 	if (khugepaged_max_ptes_none == HPAGE_PMD_NR - 1)
+ 		return false;
+ 
++	if (folio_contain_hwpoisoned_page(folio))
++		return false;
++
+ 	for (i = 0; i < folio_nr_pages(folio); i++) {
+ 		if (pages_identical(folio_page(folio, i), ZERO_PAGE(0))) {
+ 			if (++num_zero_pages > khugepaged_max_ptes_none)
+diff --git a/mm/migrate.c b/mm/migrate.c
+index e3065c9edb55..c0e9f15be2a2 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -301,8 +301,9 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+ 	struct page *page = folio_page(folio, idx);
+ 	pte_t newpte;
+ 
+-	if (PageCompound(page))
++	if (PageCompound(page) || PageHWPoison(page))
+ 		return false;
++
+ 	VM_BUG_ON_PAGE(!PageAnon(page), page);
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(pte_present(old_pte), page);
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.43.0
+
 
