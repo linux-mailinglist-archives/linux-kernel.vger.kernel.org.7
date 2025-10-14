@@ -1,133 +1,256 @@
-Return-Path: <linux-kernel+bounces-851654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AB5BD6FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:38:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D411BD6FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CA32634F951
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F2C18A785A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A3826D4C2;
-	Tue, 14 Oct 2025 01:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA2D26E718;
+	Tue, 14 Oct 2025 01:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vunw790x"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wgUc0p+h"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5852E21D3E6;
-	Tue, 14 Oct 2025 01:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F33A15B0EC
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760405876; cv=none; b=p0Vp2j/hAuxA7NfR/eWQbt4C1XXT4ROlKf33s5DylXAuG4fL8o7LjnTxFhxnlXq/nch188KDR93E5aiy0t8Ifhf60nOFUrjQ6WE/Rw8/CSvErfKR3XeBs+pHS73huH9oz/FhkvekK02HYfh3qblqUCicAJEsbf9/vBmAIcXlDNs=
+	t=1760406049; cv=none; b=PfSuuv9xhBe+6MGVW4dYSzeJP9DcIFJnaZkQfGz/Dg0xqT/qmdkoLUmmiYMR5IUtP29IblojStpoaWfEp1rw3rkD0Ue00LkB9g/9lWln6jgW8DMBhEDgDyhk3YWCMtvzOmaEBh6Tfcomo84ED6EfsKluYB04iksUdISBpZV6Rcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760405876; c=relaxed/simple;
-	bh=HrFBjoy4Zs+VZwHot4gEOtOJxRXfilQq4zCyRDBqeHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Rox6PwqCgz7tNdA+njPhqXNLOMrd+K4aHmtNuyO/vof1/MYHF72LOryXKZ5hgEDsK923CqiWjeNzhE0ICtE1Ggfl6BSBhkj2JbgDaPhZUXE1FbBC0hHZiwNSOuD0VNnvN1Wvgf7UTImNXadMxrJ+u3CmBYUxzfxBhq3NlSd9Lzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Vunw790x; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=SCW41sazUXG5KcMtr/XAw0GQBM/OgQxXYdOpaMbHEK8=; b=Vunw790xEYTNY49uEhIAewJymb
-	X5GikfhFUMnMl1ReMC5pYd1Xn1RLzH93C4HAYlVR/5MEu6Rri2ErZ9/du8zhiCFmDbbPVkXSb6kBQ
-	0AA3G9tsERMPDzo9RApk/350l6/1GQjLh8ExHR0hoN/son9IFKunn3cpwV5b3sbNfLBlzkjAEWnnl
-	fRkGvuoT+TmAXOZ4AIqtD5lW46KClOooxYpNXv8ljjl19q7MmHh2tZICmayRdETwSetCKmp2vFm/8
-	mPjAXxPvMTzmupw/prDDCTKAbl5DsN3yZc/0EapJIkVXicoPgsxMPGd16wHyOMFdv/ImqxcZlXB1v
-	+fqikLhw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8Tyl-0000000EuFp-3tOW;
-	Tue, 14 Oct 2025 01:37:31 +0000
-Message-ID: <b16d76de-688a-4697-bcfe-06f2785a1d3c@infradead.org>
-Date: Mon, 13 Oct 2025 18:37:30 -0700
+	s=arc-20240116; t=1760406049; c=relaxed/simple;
+	bh=SvUOg+GhCiLgOKSplnIErGjUnl2M+DDGuRcUuzNrrSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vy+nn+xJnpt/7eGrJUX7zlrM5Y12/goxaSGAwz8cokkM1Xb4fjyioH2HQzr30A/fBJJHOOxrdGBfSRfHP+Wfs9XA2Z5fyYRVrERSI+HmuFVDk0GtWzN/S8Kv5P1jbd9UMP38lFxY0vLZQ0+1Ya2YsOo5WFBs8KZSVh3wm+VEhUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wgUc0p+h; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so4267268b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760406045; x=1761010845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z0HrrIP4IFVgvTei6bJGzfuFKTrJwkNbVYBJNZOs3MY=;
+        b=wgUc0p+hwwd1D0aTTBPxPMJllxgGhuBtnQDHVXcBypuMeyptP9JJQRupKvw/Qxu4nM
+         6JozLu7q+eFMKFm9ifD9Fwx9WNsqR/bonN6BA2EvXxCTxwwufzkuTu+Vkv8e1UY6Hu9+
+         SZpRiUUpcVKDCMi8HRkn3AE9Wo/ykM+/12AO/1v3rxf3AS34kAxFhjnhW0LfyFYmVDTz
+         BS1cSC6gDUNEr+cqml4hpndYc/vqil1Gds0soQpTv7yenNjI3l0RGmrS/7iSSfU6Ja6n
+         gaihr7TLLzo66MI+3rUt+HKjptAJcr3mdOkIhNivPufamL/5Ybr+YpCG1o3paIkk76BC
+         HSiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760406045; x=1761010845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z0HrrIP4IFVgvTei6bJGzfuFKTrJwkNbVYBJNZOs3MY=;
+        b=qOnClNWQZ+IiRNQgFfQpsCiyPhp9HW4sWTc8ueSd+aJv+DP9kVtHlLxpoPGplnEsN8
+         sD06AC5fQ9qDWLX6bA08LP8m2AYF1DXa9FNRPYSaan3peQixGA5k5xfBqTes2W46jsab
+         VMd3XYYEukkepATawXEyBrqG/9jYxbUGSh5DHEmXDwwwqaaIwlDBz6iyRS59jupabtIB
+         Drmj5P57ZTNFHK3cv0HtVP2quwfI0nif1aa4x1stHUtBrVmzXz4dQ+QUlnWkX3M9sKCn
+         +vEMbb0Z5wTIzkoUGTZvQoP3y7v6lNBmcWaQq3c9wAfmoSA5r4O8lAQeRx0AjWPdovEm
+         da3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWO34xWCgPfO0dTVAvBuXp5lH21X5beCV+uV6L2dxaKI9yc3XCBXL+2ocDLY2Xq2kldkBQzxl4dUgut/xY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7nEtjOwPpyj/u0H4da245NJR2H0WjVCiyKvv3ucpNiVnv2+ic
+	H9Ab0jrKt5+SFT/tq1fVw+dtI1qG1XytotEV19k9gYJ5S4gjGmDPMDQFqFHFCw4H07mExjVyJkX
+	//LeBZrIcQzMxnFOwWtb7tlYVtuwa2tAzby49vlAT
+X-Gm-Gg: ASbGnctnxlDA/RBZmUW5TFzPAVuCCTfJ3UhDUTRzsmXniRyQjqZp05YF59ORjZOeXMx
+	yVyUoE/RtgyLZMcMKC33VwMYrgMkBTMYqn/xxNHOGIo7rt8D2CNxiip6j/iOx0zcRQNPn2PL9du
+	0ulGzq2oj0SsDxuekZ0eB3t5AyW7cL2lxIG2IGTWFiHZoRKjCTq2qGt6CCN8ADUwMwpHJqTuGFH
+	zC2Ib/nW4CyGmFg3NH7L+DMhovIzxJ6zKV+T9/1pR+Sdywv2kIlK348wRAYaDyedwtdjFzrMzGq
+X-Google-Smtp-Source: AGHT+IH/gaVhehz3sRp9VrrzaU79D/o/NZJP8CN7/dl/fC68uxDpeqnl6j3qA8EnLxqoVUctH31vKw6FBzQox/YYs6w=
+X-Received: by 2002:a17:903:2408:b0:28e:7fce:667e with SMTP id
+ d9443c01a7336-2902723f51emr324260245ad.17.1760406045183; Mon, 13 Oct 2025
+ 18:40:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][v3] hung_task: Panic after fixed number of hung tasks
-To: lirongqing <lirongqing@baidu.com>, Jonathan Corbet <corbet@lwn.net>,
- Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Andrew Morton <akpm@linux-foundation.org>, Lance Yang
- <lance.yang@linux.dev>, Masami Hiramatsu <mhiramat@kernel.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, Shuah Khan <shuah@kernel.org>,
- "Paul E . McKenney" <paulmck@kernel.org>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>, Feng Tang
- <feng.tang@linux.alibaba.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Kees Cook
- <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Phil Auld <pauld@redhat.com>, Joel Granados <joel.granados@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Stanislav Fomichev <sdf@fomichev.me>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>, Florian Westphal <fw@strlen.de>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20251012115035.2169-1-lirongqing@baidu.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251012115035.2169-1-lirongqing@baidu.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251010201607.1190967-1-royluo@google.com> <20251010201607.1190967-2-royluo@google.com>
+ <066a9598-ad30-4327-be68-87299bba6fda@kernel.org>
+In-Reply-To: <066a9598-ad30-4327-be68-87299bba6fda@kernel.org>
+From: Roy Luo <royluo@google.com>
+Date: Mon, 13 Oct 2025 18:40:08 -0700
+X-Gm-Features: AS18NWCf063mHzWv1lf5a6FraaWgtqWiANzRpv6KaU2cy8h_cSvnS3pGamEVoLc
+Message-ID: <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi--
+On Fri, Oct 10, 2025 at 5:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 10/10/2025 22:16, Roy Luo wrote:
+> > Document the device tree bindings for the DWC3 USB controller found in
+> > Google Tensor SoCs, starting with the G5 generation.
+> >
+> > The Tensor G5 silicon represents a complete architectural departure fro=
+m
+> > previous generations (like gs101), including entirely new clock/reset
+> > schemes, top-level wrapper and register interface. Consequently,
+> > existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitati=
+ng
+> > this new device tree binding.
+> >
+> > The USB controller on Tensor G5 is based on Synopsys DWC3 IP and featur=
+es
+> > Dual-Role Device single port with hibernation support.
+>
+> You still mix, completely unnecessarily, subsystems. For Greg this is
+> actually even undesired, but regardless don't do this for any cases
+> because it just makes everything slower or more difficult to apply.
+>
+> Really, think how maintainers should deal with your patches.
+>
 
-On 10/12/25 4:50 AM, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
-> 
+Understood, I will separate the patches into two distinct series: one for
+the controller and one for the PHY.
+Appreciate the feedback and the explanation.
 
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a51ab46..7d9a8ee 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1992,14 +1992,20 @@
->  			the added memory block itself do not be affected.
->  
->  	hung_task_panic=
-> -			[KNL] Should the hung task detector generate panics.
-> -			Format: 0 | 1
-> +			[KNL] Number of hung tasks to trigger kernel panic.
-> +			Format: <int>
-> +
-> +			Set this to the number of hung tasks that must be
-> +			detected before triggering a kernel panic.
-> +
-> +			0: don't panic
-> +			1: panic immediately on first hung task
-> +			N: panic after N hung tasks are detect
+> >
+> > Signed-off-by: Roy Luo <royluo@google.com>
+> > ---
+> >  .../bindings/usb/google,gs5-dwc3.yaml         | 141 ++++++++++++++++++
+> >  1 file changed, 141 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dw=
+c3.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml=
+ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
+> > new file mode 100644
+> > index 000000000000..6fadea7f41e8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
+> > @@ -0,0 +1,141 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +# Copyright (c) 2025, Google LLC
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
+> > +
+> > +maintainers:
+> > +  - Roy Luo <royluo@google.com>
+> > +
+> > +description:
+> > +  Describes the DWC3 USB controller block implemented on Google Tensor=
+ SoCs,
+> > +  starting with the G5 generation. Based on Synopsys DWC3 IP, the cont=
+roller
+> > +  features Dual-Role Device single port with hibernation add-on.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: google,gs5-dwc3
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: Core DWC3 IP registers.
+> > +      - description: USB host controller configuration registers.
+> > +      - description: USB custom interrrupts control registers.
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: dwc3_core
+> > +      - const: host_cfg
+> > +      - const: usbint_cfg
+> > +
+> > +  interrupts:
+> > +    items:
+> > +      - description: Core DWC3 interrupt.
+> > +      - description: High speed power management event for remote wake=
+up from hibernation.
+> > +      - description: Super speed power management event for remote wak=
+eup from hibernation.
+>
+> Wrap at 80 (see coding style) or just shorten these.
 
-			                            are detected
+Ack, will fix it in the next patch.
 
->  
-> -			A value of 1 instructs the kernel to panic when a
-> -			hung task is detected. The default value is controlled
-> -			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
-> -			option. The value selected by this boot parameter can
-> -			be changed later by the kernel.hung_task_panic sysctl.
-> +			The default value is controlled by the
-> +			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value
-> +			selected by this boot parameter can be changed later by the
-> +			kernel.hung_task_panic sysctl.
->  
->  	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
->  				terminal devices. Valid values: 0..8
+>
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: dwc_usb3
+>
+> So just "core"?
 
+I'd prefer to stick to "dwc_usb3" as that's
+1. more expressive by referring to the underlying IP name,
+2. consistent with established dwc3 bindings such as
+    Documentation/devicetree/bindings/usb/snps,dwc3.yaml,
+    Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml,
+unless you have a strong preference for the alternative naming.
 
--- 
-~Randy
+>
+> > +      - const: hs_pme
+> > +      - const: ss_pme
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: Non-sticky module clock.
+> > +      - description: Sticky module clock.
+> > +      - description: USB2 PHY APB clock.
+>
+> This looks wrong. This is not the USB2 phy, so how can it consume APB clo=
+ck?
 
+That's a fair point, I'll look into the necessity and placement of this spe=
+cific
+clk/reset and get back.
+
+Thanks,
+Roy Luo
+
+>
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: non_sticky
+> > +      - const: sticky
+> > +      - const: u2phy_apb
+> > +
+> > +  resets:
+> > +    items:
+> > +      - description: Non-sticky module reset.
+> > +      - description: Sticky module reset.
+> > +      - description: USB2 PHY APB reset.
+>
+> This as well.
+>
+> > +      - description: DRD bus reset.
+> > +      - description: Top-level reset.
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: non_sticky
+> > +      - const: sticky
+> > +      - const: u2phy_apb
+> > +      - const: drd_bus
+> > +      - const: top
+>
+>
+> Best regards,
+> Krzysztof
 
