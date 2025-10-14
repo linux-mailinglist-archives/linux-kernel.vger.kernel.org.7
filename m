@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-852480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430B9BD9159
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AACBD915E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06823E3F3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034D53E3D8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9A930FC3A;
-	Tue, 14 Oct 2025 11:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AA51F91C8;
+	Tue, 14 Oct 2025 11:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKzIVqWs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TWReYMcO"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A2620FABE;
-	Tue, 14 Oct 2025 11:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340B2F6583;
+	Tue, 14 Oct 2025 11:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760442336; cv=none; b=WxHomSoPg9/bO1EvvC3DGUbmG1ijqnmq7e/cUBybLoZDvFxpV95N+fI9OEc3q9ycV8R2ShZD+DlRVBV/TQdawRCnigU7xAPvjz75uIftTCR9sXRpVKIAl2UaV6L3nHhSpe2ZH1I0KL2Cjw8eRiPKnmk7TE0gB6rb5fN+80RuinY=
+	t=1760442369; cv=none; b=ZeTiYbYLwbZ4IU/22KjieLr2LX1/MIhDjO4tx9SQj6sJZ7eNJjGHemvNBY6PiwrhUoCVtrQtGFZnwOjCIFeEiJsklnuMSusirXdb4FBzRF1f3K5zxZpPkSdBQBVpDZfeyL9xf4rceC/jDkp6ITiNsjtrTfDpwUMafskQk9umaYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760442336; c=relaxed/simple;
-	bh=AG55P6B/228OvRnMfdhdS6msUeR9P92IqdLgbli+6Eo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iUg2QKdxfrdmJArJY5ACmQDpUJbMV0d6TqflqjLO/d9twHK/GeAvXecS5ZiAuctOJJvCopA4IwJ7MSyGrMfwj9dxNp4Pl/6TDaROKYtesrjvVjyU0lydNrusZk/06oEmCYuyOUG7ii88ZURx9C0dDCBwzMYlOJGj/ygz+vtcZE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKzIVqWs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99854C4CEE7;
-	Tue, 14 Oct 2025 11:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760442336;
-	bh=AG55P6B/228OvRnMfdhdS6msUeR9P92IqdLgbli+6Eo=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=UKzIVqWsrx39ae2o3rp+eWJZe6Rrzl1i7/1Qq6iVK+Udp8wGMgUeMWwfTcR9b6fni
-	 kWbLiG0PmfIa2tHkj4wLQ/GnsIY3pf5W0W7K+1lNMDQmB2NDq2/QekAyQSu8lmbaBW
-	 hzkot8GH3g4LZqqFQW5RUMpNlJxYMfn5B2NPAIq95PrTog6tZcEcfprs0/7ITryi/q
-	 HoMAvsgJ+1NdHtXlhfthqi2wwG5JH49o6S948g7kSsGnLuer3C4ZbWTEgT0qrZYNga
-	 9tuHRWhNdr4o3wROyqet1eo8Y/+Ub+QXh5HzBcIzjzRBTkU4fzsfb91sT0P+L1vSX+
-	 i2TGKibHlWFoA==
-Message-ID: <1ceeca1a-3429-4be0-a0fc-287616638c52@kernel.org>
-Date: Tue, 14 Oct 2025 13:45:33 +0200
+	s=arc-20240116; t=1760442369; c=relaxed/simple;
+	bh=zh3gtbXSbad8n/WFENsjqEdQRtU1t+VuBKeLZcIuCyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hZISR3xSN8uc1wUFgPOXVaTowizh3iPAUo6h4tdGE+nlZTix7ynYAhQv9xJrI7VXuISOlqIvW7AeXR5k7AWFsPI1a6MJ3rxW0yc4YUZdOG7J0FBrRJR/y9aF6LBjSALAuYFM+qEYPodRiLmui72N4ekCgsX8owZP0Vzxt4pmmEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TWReYMcO; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760442365;
+	bh=zh3gtbXSbad8n/WFENsjqEdQRtU1t+VuBKeLZcIuCyo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=TWReYMcOyfclxK+44jSQmchHsdlk6IIef/vqhGJE23lcMjrpnO1Et34zR/cQq9kAk
+	 rF+UbcMdgKjdvHYxxYigA1FNNnSZ3nfkkodefswzCN001LJtvDcFzbeXa6Owr7s6iS
+	 9qqkgib6MMZl3D+nKgBqOxrHD5fUnuPrRb7+EqtlOF3CWMNmEaxwfKLLK1CAzdFR4A
+	 l8Mar11CgfjWBkTS8lRDK2CziF+KrWXUnkTzhes4Ic1hPC5QEg7omk9FlxRTNwsn15
+	 yn5LdbSMY6dILtHYJxYEPEhzlfYPFESHmJnhXXqvrF09tA+TzQNy52wKKmcriF2AiQ
+	 3u2sVnc+uOG0Q==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 516D217E013C;
+	Tue, 14 Oct 2025 13:46:05 +0200 (CEST)
+Message-ID: <675d5338-09f0-439b-b22c-a3d50b243b5e@collabora.com>
+Date: Tue, 14 Oct 2025 13:46:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,469 +56,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: hverkuil+cisco@kernel.org
-Subject: Re: [PATCH v2 2/2] media: az6007: refactor to properly use dvb-usb-v2
-To: Jeongjun Park <aha310510@gmail.com>, mchehab@kernel.org,
- hverkuil@xs4all.nl
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, syzbot+a43c95e5c2c9ed88e966@syzkaller.appspotmail.com
-References: <20250908150730.24560-1-aha310510@gmail.com>
- <20250908150730.24560-3-aha310510@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250908150730.24560-3-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v5 4/5] PCI: mediatek: convert bool to single flags entry
+ and bitmap
+To: Christian Marangi <ansuelsmth@gmail.com>,
+ Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, upstream@airoha.com
+References: <20251012205900.5948-1-ansuelsmth@gmail.com>
+ <20251012205900.5948-5-ansuelsmth@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251012205900.5948-5-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Jeongjun Park,
-
-On 08/09/2025 17:07, Jeongjun Park wrote:
-> The az6007 driver has long since transitioned from dvb-usb to dvb-usb-v2,
-> but its implementation is still a mix of dvb-usb and dvb-usb-v2.
+Il 12/10/25 22:56, Christian Marangi ha scritto:
+> To clean Mediatek SoC PCIe struct, convert all the bool to a bitmap and
+> use a single flags to reference all the values. This permits cleaner
+> addition of new flag without having to define a new bool in the struct.
 > 
-> Addressing the various issues that arise from this requires comprehensive
-> refactoring to transition to the dvb-usb-v2 implementation.
-
-Since I dropped the previous patch, this patch doesn't apply anymore, so I'm dropping
-it as well.
-
-But in any case, this patch really needs to be tested on actual hardware.
-
-> 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot+a43c95e5c2c9ed88e966@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=a43c95e5c2c9ed88e966
-
-What does this syzkaller report have to do with refactoring? I think you're
-mixing refactoring and fixing a bug.
-
-Regards,
-
-	Hans
-
-> Fixes: 786baecfe78f ("[media] dvb-usb: move it to drivers/media/usb/dvb-usb")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/media/usb/dvb-usb-v2/az6007.c | 175 +++++++++++++-------------
->  1 file changed, 86 insertions(+), 89 deletions(-)
+>   drivers/pci/controller/pcie-mediatek.c | 28 +++++++++++++++-----------
+>   1 file changed, 16 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
-> index 4202042bdb55..5517675fd0b1 100644
-> --- a/drivers/media/usb/dvb-usb-v2/az6007.c
-> +++ b/drivers/media/usb/dvb-usb-v2/az6007.c
-> @@ -39,10 +39,10 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
->  #define AZ6007_READ_IR		0xb4
->  
->  struct az6007_device_state {
-> -	struct mutex		mutex;
->  	struct mutex		ca_mutex;
->  	struct dvb_ca_en50221	ca;
->  	unsigned		warm:1;
-> +	unsigned		ci_attached:1;
->  	int			(*gate_ctrl) (struct dvb_frontend *, int);
->  	unsigned char		data[4096];
->  };
-> @@ -97,25 +97,30 @@ static struct mt2063_config az6007_mt2063_config = {
->  	.refclock = 36125000,
->  };
->  
-> -static int __az6007_read(struct usb_device *udev, struct az6007_device_state *st,
-> +static int __az6007_read(struct dvb_usb_device *d, struct az6007_device_state *st,
->  			    u8 req, u16 value, u16 index, u8 *b, int blen)
->  {
->  	int ret;
->  
-> +	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
-> +		return -EAGAIN;
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 24cc30a2ab6c..1678461e56d3 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -142,24 +142,29 @@
+>   
+>   struct mtk_pcie_port;
+>   
+> +enum mtk_pcie_flags {
+
+enum mtk_pcie_quirks seems to be a better fit here, as this is used for... well..
+quirks.
+
+> +	NEED_FIX_CLASS_ID = BIT(0), /* host's class ID needed to be fixed */
+> +	NEED_FIX_DEVICE_ID = BIT(1), /* host's device ID needed to be fixed */
+> +	NO_MSI = BIT(2), /* Bridge has no MSI support, and relies on an
+> +			  * external block
+> +			  */
+
+Also perhaps... MTK_PCIE_FIX_CLASS_ID, MTK_PCIE_FIX_DEV_ID, MTK_PCIE_NO_MSI
+
+> +};
 > +
->  	if (blen > sizeof(st->data)) {
->  		pr_err("az6007: tried to read %d bytes, but I2C max size is %lu bytes\n",
->  		       blen, sizeof(st->data));
-> -		return -EOPNOTSUPP;
-> +		ret = -EOPNOTSUPP;
-> +		goto end_unlock;
->  	}
->  
-> -	ret = usb_control_msg(udev,
-> -			      usb_rcvctrlpipe(udev, 0),
-> +	ret = usb_control_msg(d->udev,
-> +			      usb_rcvctrlpipe(d->udev, 0),
->  			      req,
->  			      USB_TYPE_VENDOR | USB_DIR_IN,
->  			      value, index, b, blen, 5000);
->  	if (ret < 0) {
->  		pr_warn("usb read operation failed. (%d)\n", ret);
-> -		return -EIO;
-> +		ret = -EIO;
-> +		goto end_unlock;
->  	}
->  
->  	if (az6007_xfer_debug) {
-> @@ -125,6 +130,8 @@ static int __az6007_read(struct usb_device *udev, struct az6007_device_state *st
->  				     DUMP_PREFIX_NONE, b, blen);
->  	}
->  
-> +end_unlock:
-> +	mutex_unlock(&d->usb_mutex);
->  	return ret;
->  }
->  
-> @@ -134,25 +141,24 @@ static int az6007_read(struct dvb_usb_device *d, u8 req, u16 value,
->  	struct az6007_device_state *st = d_to_priv(d);
->  	int ret;
->  
-> -	if (mutex_lock_interruptible(&st->mutex) < 0)
-> -		return -EAGAIN;
-> -
-> -	ret = __az6007_read(d->udev, st, req, value, index, b, blen);
-> -
-> -	mutex_unlock(&st->mutex);
-> +	ret = __az6007_read(d, st, req, value, index, b, blen);
->  
->  	return ret;
->  }
->  
-> -static int __az6007_write(struct usb_device *udev, struct az6007_device_state *st,
-> +static int __az6007_write(struct dvb_usb_device *d, struct az6007_device_state *st,
->  			    u8 req, u16 value, u16 index, u8 *b, int blen)
->  {
->  	int ret;
->  
-> +	if (mutex_lock_interruptible(&d->usb_mutex) < 0)
-> +		return -EAGAIN;
-> +
->  	if (blen > sizeof(st->data)) {
->  		pr_err("az6007: tried to write %d bytes, but I2C max size is %lu bytes\n",
->  		       blen, sizeof(st->data));
-> -		return -EOPNOTSUPP;
-> +		ret = -EOPNOTSUPP;
-> +		goto end_unlock;
->  	}
->  
->  	if (az6007_xfer_debug) {
-> @@ -162,17 +168,21 @@ static int __az6007_write(struct usb_device *udev, struct az6007_device_state *s
->  				     DUMP_PREFIX_NONE, b, blen);
->  	}
->  
-> -	ret = usb_control_msg(udev,
-> -			      usb_sndctrlpipe(udev, 0),
-> +	ret = usb_control_msg(d->udev,
-> +			      usb_sndctrlpipe(d->udev, 0),
->  			      req,
->  			      USB_TYPE_VENDOR | USB_DIR_OUT,
->  			      value, index, b, blen, 5000);
->  	if (ret != blen) {
->  		pr_err("usb write operation failed. (%d)\n", ret);
-> -		return -EIO;
-> +		ret = -EIO;
-> +		goto end_unlock;
->  	}
->  
-> -	return 0;
-> +	ret = 0;
-> +end_unlock:
-> +	mutex_unlock(&d->usb_mutex);
-> +	return ret;
->  }
->  
->  static int az6007_write(struct dvb_usb_device *d, u8 req, u16 value,
-> @@ -181,12 +191,7 @@ static int az6007_write(struct dvb_usb_device *d, u8 req, u16 value,
->  	struct az6007_device_state *st = d_to_priv(d);
->  	int ret;
->  
-> -	if (mutex_lock_interruptible(&st->mutex) < 0)
-> -		return -EAGAIN;
-> -
-> -	ret = __az6007_write(d->udev, st, req, value, index, b, blen);
-> -
-> -	mutex_unlock(&st->mutex);
-> +	ret = __az6007_write(d, st, req, value, index, b, blen);
->  
->  	return ret;
->  }
-> @@ -580,10 +585,9 @@ static void az6007_ci_uninit(struct dvb_usb_device *d)
->  }
->  
->  
-> -static int az6007_ci_init(struct dvb_usb_adapter *adap)
-> +static int az6007_ci_init(struct dvb_usb_device *d)
->  {
-> -	struct dvb_usb_device *d = adap_to_d(adap);
-> -	struct az6007_device_state *state = adap_to_priv(adap);
-> +	struct az6007_device_state *state = d_to_priv(d);
->  	int ret;
->  
->  	pr_debug("%s()\n", __func__);
-> @@ -600,7 +604,7 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
->  	state->ca.poll_slot_status	= az6007_ci_poll_slot_status;
->  	state->ca.data			= d;
->  
-> -	ret = dvb_ca_en50221_init(&adap->dvb_adap,
-> +	ret = dvb_ca_en50221_init(&d->adapter[0].dvb_adap,
->  				  &state->ca,
->  				  0, /* flags */
->  				  1);/* n_slots */
-> @@ -610,6 +614,8 @@ static int az6007_ci_init(struct dvb_usb_adapter *adap)
->  		return ret;
->  	}
->  
-> +	state->ci_attached = true;
-> +
->  	pr_debug("CI initialized.\n");
->  
->  	return 0;
-> @@ -646,8 +652,6 @@ static int az6007_frontend_attach(struct dvb_usb_adapter *adap)
->  	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
->  	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
->  
-> -	az6007_ci_init(adap);
-> -
->  	return 0;
->  }
->  
-> @@ -667,8 +671,6 @@ static int az6007_cablestar_hdci_frontend_attach(struct dvb_usb_adapter *adap)
->  	st->gate_ctrl = adap->fe[0]->ops.i2c_gate_ctrl;
->  	adap->fe[0]->ops.i2c_gate_ctrl = drxk_gate_ctrl;
->  
-> -	az6007_ci_init(adap);
-> -
->  	return 0;
->  }
->  
-> @@ -699,50 +701,55 @@ static int az6007_power_ctrl(struct dvb_usb_device *d, int onoff)
->  
->  	pr_debug("%s()\n", __func__);
->  
-> -	if (!state->warm) {
-> -		mutex_init(&state->mutex);
-> +	mutex_lock(&d->i2c_mutex);
->  
-> +	if (!state->warm) {
->  		ret = az6007_write(d, AZ6007_POWER, 0, 2, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  		msleep(60);
->  		ret = az6007_write(d, AZ6007_POWER, 1, 4, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  		msleep(100);
->  		ret = az6007_write(d, AZ6007_POWER, 1, 3, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  		msleep(20);
->  		ret = az6007_write(d, AZ6007_POWER, 1, 4, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  
->  		msleep(400);
->  		ret = az6007_write(d, FX2_SCON1, 0, 3, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  		msleep(150);
->  		ret = az6007_write(d, FX2_SCON1, 1, 3, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  		msleep(430);
->  		ret = az6007_write(d, AZ6007_POWER, 0, 0, NULL, 0);
->  		if (ret < 0)
-> -			return ret;
-> +			goto end_unlock;
->  
->  		state->warm = true;
->  
-> -		return 0;
-> +		ret = 0;
-> +		goto end_unlock;
->  	}
->  
-> +	ret = 0;
-> +
->  	if (!onoff)
-> -		return 0;
-> +		goto end_unlock;
->  
->  	az6007_write(d, AZ6007_POWER, 0, 0, NULL, 0);
->  	az6007_write(d, AZ6007_TS_THROUGH, 0, 0, NULL, 0);
->  
-> -	return 0;
-> +end_unlock:
-> +	mutex_unlock(&d->i2c_mutex);
-> +	return ret;
->  }
->  
->  /* I2C */
-> @@ -758,7 +765,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->  	int length;
->  	u8 req, addr;
->  
-> -	if (mutex_lock_interruptible(&st->mutex) < 0)
-> +	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
->  		return -EAGAIN;
->  
->  	for (i = 0; i < num; i++) {
-> @@ -781,7 +788,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->  			value = addr | (1 << 8);
->  			length = 6 + msgs[i + 1].len;
->  			len = msgs[i + 1].len;
-> -			ret = __az6007_read(d->udev, st, req, value, index,
-> +			ret = __az6007_read(d, st, req, value, index,
->  					    st->data, length);
->  			if (ret >= len) {
->  				for (j = 0; j < len; j++)
-> @@ -802,7 +809,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->  			index = msgs[i].buf[0];
->  			value = addr | (1 << 8);
->  			length = msgs[i].len - 1;
-> -			ret =  __az6007_write(d->udev, st, req, value, index,
-> +			ret = __az6007_write(d, st, req, value, index,
->  					      &msgs[i].buf[1], length);
->  		} else {
->  			/* read bytes */
-> @@ -818,7 +825,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->  			value = addr;
->  			length = msgs[i].len + 6;
->  			len = msgs[i].len;
-> -			ret = __az6007_read(d->udev, st, req, value, index,
-> +			ret = __az6007_read(d, st, req, value, index,
->  					    st->data, length);
->  			if (ret >= len) {
->  				for (j = 0; j < len; j++)
-> @@ -829,7 +836,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->  			goto err;
->  	}
->  err:
-> -	mutex_unlock(&st->mutex);
-> +	mutex_unlock(&d->i2c_mutex);
->  
->  	if (ret < 0) {
->  		pr_info("%s ERROR: %i\n", __func__, ret);
-> @@ -861,7 +868,7 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
->  		return -ENOMEM;
->  
->  	/* Try to read the mac address */
-> -	ret = __az6007_read(d->udev, state, AZ6007_READ_DATA, 6, 0, mac, 6);
-> +	ret = __az6007_read(d, state, AZ6007_READ_DATA, 6, 0, mac, 6);
->  	if (ret == 6)
->  		ret = WARM;
->  	else
-> @@ -870,9 +877,9 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
->  	kfree(mac);
->  
->  	if (ret == COLD) {
-> -		__az6007_write(d->udev, state, 0x09, 1, 0, NULL, 0);
-> -		__az6007_write(d->udev, state, 0x00, 0, 0, NULL, 0);
-> -		__az6007_write(d->udev, state, 0x00, 0, 0, NULL, 0);
-> +		__az6007_write(d, state, 0x09, 1, 0, NULL, 0);
-> +		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
-> +		__az6007_write(d, state, 0x00, 0, 0, NULL, 0);
->  	}
->  
->  	pr_debug("Device is on %s state\n",
-> @@ -880,13 +887,6 @@ static int az6007_identify_state(struct dvb_usb_device *d, const char **name)
->  	return ret;
->  }
->  
-> -static void az6007_usb_disconnect(struct usb_interface *intf)
-> -{
-> -	struct dvb_usb_device *d = usb_get_intfdata(intf);
-> -	az6007_ci_uninit(d);
-> -	dvb_usbv2_disconnect(intf);
-> -}
-> -
->  static int az6007_download_firmware(struct dvb_usb_device *d,
->  	const struct firmware *fw)
->  {
-> @@ -895,6 +895,19 @@ static int az6007_download_firmware(struct dvb_usb_device *d,
->  	return cypress_load_firmware(d->udev, fw, CYPRESS_FX2);
->  }
->  
-> +static int az6007_init(struct dvb_usb_device *d)
-> +{
-> +	return az6007_ci_init(d);
-> +}
-> +
-> +static void az6007_exit(struct dvb_usb_device *d)
-> +{
-> +	struct az6007_device_state *state = d_to_priv(d);
-> +
-> +	if (state->ci_attached)
-> +		az6007_ci_uninit(d);
-> +}
-> +
->  /* DVB USB Driver stuff */
->  static struct dvb_usb_device_properties az6007_props = {
->  	.driver_name         = KBUILD_MODNAME,
-> @@ -912,6 +925,8 @@ static struct dvb_usb_device_properties az6007_props = {
->  	.download_firmware   = az6007_download_firmware,
->  	.identify_state	     = az6007_identify_state,
->  	.power_ctrl          = az6007_power_ctrl,
-> +	.init                = az6007_init,
-> +	.exit                = az6007_exit,
->  	.num_adapters        = 1,
->  	.adapter             = {
->  		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
-> @@ -935,6 +950,8 @@ static struct dvb_usb_device_properties az6007_cablestar_hdci_props = {
->  	.download_firmware   = az6007_download_firmware,
->  	.identify_state	     = az6007_identify_state,
->  	.power_ctrl          = az6007_power_ctrl,
-> +	.init                = az6007_init,
-> +	.exit                = az6007_exit,
->  	.num_adapters        = 1,
->  	.adapter             = {
->  		{ .stream = DVB_USB_STREAM_BULK(0x02, 10, 4096), }
-> @@ -955,37 +972,17 @@ static const struct usb_device_id az6007_usb_table[] = {
->  
->  MODULE_DEVICE_TABLE(usb, az6007_usb_table);
->  
-> -static int az6007_suspend(struct usb_interface *intf, pm_message_t msg)
-> -{
-> -	struct dvb_usb_device *d = usb_get_intfdata(intf);
-> -
-> -	az6007_ci_uninit(d);
-> -	return dvb_usbv2_suspend(intf, msg);
-> -}
-> -
-> -static int az6007_resume(struct usb_interface *intf)
-> -{
-> -	struct dvb_usb_device *d = usb_get_intfdata(intf);
-> -	struct dvb_usb_adapter *adap = &d->adapter[0];
-> -
-> -	az6007_ci_init(adap);
-> -	return dvb_usbv2_resume(intf);
-> -}
-> -
->  /* usb specific object needed to register this driver with the usb subsystem */
->  static struct usb_driver az6007_usb_driver = {
-> -	.name		= KBUILD_MODNAME,
-> -	.id_table	= az6007_usb_table,
-> -	.probe		= dvb_usbv2_probe,
-> -	.disconnect	= az6007_usb_disconnect,
-> -	.no_dynamic_id	= 1,
-> -	.soft_unbind	= 1,
-> -	/*
-> -	 * FIXME: need to implement reset_resume, likely with
-> -	 * dvb-usb-v2 core support
-> -	 */
-> -	.suspend	= az6007_suspend,
-> -	.resume		= az6007_resume,
-> +	.name = KBUILD_MODNAME,
-> +	.id_table = az6007_usb_table,
-> +	.probe = dvb_usbv2_probe,
-> +	.disconnect = dvb_usbv2_disconnect,
-> +	.suspend = dvb_usbv2_suspend,
-> +	.resume = dvb_usbv2_resume,
-> +	.reset_resume = dvb_usbv2_reset_resume,
-> +	.no_dynamic_id = 1,
-> +	.soft_unbind = 1,
->  };
->  
->  module_usb_driver(az6007_usb_driver);
-> --
-> 
+>   /**
+>    * struct mtk_pcie_soc - differentiate between host generations
+> - * @need_fix_class_id: whether this host's class ID needed to be fixed or not
+> - * @need_fix_device_id: whether this host's device ID needed to be fixed or not
+>    * @no_msi: Bridge has no MSI support, and relies on an external block
+>    * @device_id: device ID which this host need to be fixed
+>    * @ops: pointer to configuration access functions
+>    * @startup: pointer to controller setting functions
+>    * @setup_irq: pointer to initialize IRQ functions
+> + * @flags: pcie device flags.
+>    */
+>   struct mtk_pcie_soc {
+> -	bool need_fix_class_id;
+> -	bool need_fix_device_id;
+> -	bool no_msi;
+>   	unsigned int device_id;
+>   	struct pci_ops *ops;
+>   	int (*startup)(struct mtk_pcie_port *port);
+>   	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
+> +	u32 flags;
+
+u32 flags -> enum mtk_pcie_quirks quirks
+
+Cheers,
+Angelo
+
+>   };
+>   
+>   /**
+> @@ -703,7 +708,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>   	writel(val, port->base + PCIE_RST_CTRL);
+>   
+>   	/* Set up vendor ID and class code */
+> -	if (soc->need_fix_class_id) {
+> +	if (soc->flags & NEED_FIX_CLASS_ID) {
+>   		val = PCI_VENDOR_ID_MEDIATEK;
+>   		writew(val, port->base + PCIE_CONF_VEND_ID);
+>   
+> @@ -711,7 +716,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>   		writew(val, port->base + PCIE_CONF_CLASS_ID);
+>   	}
+>   
+> -	if (soc->need_fix_device_id)
+> +	if (soc->flags & NEED_FIX_DEVICE_ID)
+>   		writew(soc->device_id, port->base + PCIE_CONF_DEVICE_ID);
+>   
+>   	/* 100ms timeout value should be enough for Gen1/2 training */
+> @@ -1099,7 +1104,7 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+>   
+>   	host->ops = pcie->soc->ops;
+>   	host->sysdata = pcie;
+> -	host->msi_domain = pcie->soc->no_msi;
+> +	host->msi_domain = !!(pcie->soc->flags & NO_MSI);
+>   
+>   	err = pci_host_probe(host);
+>   	if (err)
+> @@ -1187,9 +1192,9 @@ static const struct dev_pm_ops mtk_pcie_pm_ops = {
+>   };
+>   
+>   static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
+> -	.no_msi = true,
+>   	.ops = &mtk_pcie_ops,
+>   	.startup = mtk_pcie_startup_port,
+> +	.flags = NO_MSI,
+>   };
+>   
+>   static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
+> @@ -1199,19 +1204,18 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
+>   };
+>   
+>   static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
+> -	.need_fix_class_id = true,
+>   	.ops = &mtk_pcie_ops_v2,
+>   	.startup = mtk_pcie_startup_port_v2,
+>   	.setup_irq = mtk_pcie_setup_irq,
+> +	.flags = NEED_FIX_CLASS_ID,
+>   };
+>   
+>   static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
+> -	.need_fix_class_id = true,
+> -	.need_fix_device_id = true,
+>   	.device_id = PCI_DEVICE_ID_MEDIATEK_7629,
+>   	.ops = &mtk_pcie_ops_v2,
+>   	.startup = mtk_pcie_startup_port_v2,
+>   	.setup_irq = mtk_pcie_setup_irq,
+> +	.flags = NEED_FIX_CLASS_ID | NEED_FIX_DEVICE_ID,
+>   };
+>   
+>   static const struct of_device_id mtk_pcie_ids[] = {
+
 
 
