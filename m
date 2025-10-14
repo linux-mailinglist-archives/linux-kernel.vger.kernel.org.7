@@ -1,115 +1,152 @@
-Return-Path: <linux-kernel+bounces-851787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF25BD7421
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:33:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BB0BD7436
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBC504E7D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:33:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D30184E7F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A625A2248AF;
-	Tue, 14 Oct 2025 04:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E813074AA;
+	Tue, 14 Oct 2025 04:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RR2Ozy/B"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CyunqR9C"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8BE757EA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D5B757EA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760416388; cv=none; b=TkViBjY3xC/mG12xisxgQjCYmSiYbtLuMo8rAfhrapzkfTAp83MPmosmMFSVWPCP/DFXWKqgTWeIIWMaUtIve4Ipv9HpYjq6BRPrCKVJBAHjxxsirYLbgeWcLf6qR95wQY5g68SjKBsXwM6nLuw1e+2kJtNek2daTyXaJ+GhndM=
+	t=1760416525; cv=none; b=k9e2JwSavAqc29V152prBgRiCJGDcr+AYOzuOUuUi+s9x4qcIQaSS7p0+rKXcQ0BYQGgIn6wi8gn7sLy7A+tZhJdwimPSVJ008UQBBfTS3QGVid6424CplxiR/es/m2cC+VIl9yMYU2qYfl928AAj+7ms9oN7TjOFZN/1ZeZ3Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760416388; c=relaxed/simple;
-	bh=EYTnj0kxKNcuJVZ7pnDXHS1E3libyGhLJqc0GmRPbvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hyJXllw58P5ocChJ8k3VMi66OB5gp322PiwZfWoL+Wn6tLa5VtHdfcVJ1e38YtwUu3+01lf7ipJMO2fnXyCC9OMVo2yW82I7Xrj2pCrOzArYj+dyD+Uio49YkAoL/8kbR/YaHspXPVs5B4fC1cJpWE+KnGhaK57vABp14YrtZ5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RR2Ozy/B; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2698384978dso34035485ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760416385; x=1761021185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rQQ/XgHke6UIRYqJr5dnidD5VIVkKed8Gfd4008Beis=;
-        b=RR2Ozy/BVgpF6vWiL6gldyv4JM1W/Dte+je3RXYTR9NsqHv87WMgdMMPT/8UW5hS6W
-         8oISnSBSXaIAt8sSTFuCz2EEb4nqQkm1VrRsVMbU88X5afRdYqWK44lYsXaRddGLmFxa
-         rZFxIT6dJz879LndDi11f5iL8HxqwJ2cn0253lyabH+iCT6M9/8Cht8Jm8H/gJEoUS54
-         3oAgYjJTXJRlWYPRXGNbFglbLB66NDNpxTe3868Yv9LLxnKPT4isnUyscLFjHllRtjQ4
-         LNrNT/E/XK0Z/tqlHsmOms+7yeiEj2d2VBQYtRntTuB5iU8v0nbqcLnV0VwX+Q4JHyqK
-         oEOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760416385; x=1761021185;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rQQ/XgHke6UIRYqJr5dnidD5VIVkKed8Gfd4008Beis=;
-        b=C5e99TNXtzsW9u2v02eccPLb4bEoa9BYHWeQl9KgM32726tKdFXWv59jrSubMbofXL
-         IQo95+zpOE7RnakVnwMlyi1vUNg/uS4hbw5A5vJ8YBdmc4M3t4XC7SMt1DXKH4U5+n0n
-         /Ro2kV13qShj7kJJcV8zAVh37x/gbrWJmnH9+SQz0g7ngCYxMxciJDRQO2iX043hNVup
-         kzfcM0W2sGb//ut1BaJ2dkqn0VPygoJ2J1BAfUAhMNqqCJjdpwfGeTIST0qFWkyAAygy
-         wqJQxHwkZ4zekw/7IXWVVi9vNSIJ/wDTIR2Y3vbZRj3fk64k/HRpP8bks38izz+cKYQy
-         mdSA==
-X-Gm-Message-State: AOJu0YxG8U2Yr9sVk7BO0ZkZiY5CtqNVBz5AdIShhaththEcwDsaIEZH
-	MUpUWvW4zc2pM0+T0JE/y4eDff1N+OqxGyt18IKAclkVtowovSH6nAelQLbPZT1B
-X-Gm-Gg: ASbGncuoQY0yqUFAigwQPkMH2Rk3PdoFxE2x1/+/eppahp+J8srb9l37VFnUN7qHTQx
-	4W9JxO1BFukmbJakCZRunGqlI7alJ9QpGOoFBA787j/U/seeeWNpmzdD8G8kWs5owIz+qTYPFkN
-	wz3Bsy6AQbS3l163k9VlVBBMnDUTnPVSkjhE0DdVbBe2CpTLGc01Hc0RqUk/bmkSlpU1JhNkhkk
-	+0L9WS7s32przUpsYDZuKpjonbygicRrZ6PbzZzV5LN8u5RfUe9ltr2YJyZXJ4r1L3/tdmTUn7h
-	hXvYC3NSSnowmh52P0vqMFPbZ7DalDHRPk+35+xN7tyAVHGhjQCorAROZ+Epvu2wJ3MbeLvT4nF
-	ebCm4hgF8QvuoZ2/6K6PGkBC9yaZTsDEDa1oYsTMtIm/VlZo=
-X-Google-Smtp-Source: AGHT+IH4BvUP9O6RcYyUlCrTnZYsXll8exqEGJhYncW0pXMtPsIDEpTJHqhK1/cvfPtVQ6xk8QZDLw==
-X-Received: by 2002:a17:903:3c2c:b0:270:b6d5:f001 with SMTP id d9443c01a7336-2902723faa2mr269612035ad.23.1760416384821;
-        Mon, 13 Oct 2025 21:33:04 -0700 (PDT)
-Received: from archlinux ([177.9.216.59])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290766cc2a1sm15962505ad.95.2025.10.13.21.33.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 21:33:04 -0700 (PDT)
-From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v1] mfd: max77705: support revision 0x2
-Date: Tue, 14 Oct 2025 00:32:55 -0400
-Message-ID: <20251014043255.176499-1-ghatto404@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760416525; c=relaxed/simple;
+	bh=uAwl1GNK6MVfiRj2npv6hyUGtVFuuhpcPe1Xltm/3To=;
+	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=L+Rg0RePW88WV1qenEeAHCwJIDvAM5iJBFiQVE1YJn2IMfY+agEBnwLJgAL2Vnruv643oo3ihWTeL4ZpayRG5LOAqUvFToDU8X1xh0YD8DO9Bk9N/MFoo1unBEAVtXZ7g7JVYpDRhReZ8QqsFQZTYzsjGOSp7QpHWHKFOPwXvcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CyunqR9C; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251014043513epoutp026dc6d1f5ec57d8fb1de38b6a9fe9252d~uQX3Zj05W2232922329epoutp02y
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:35:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251014043513epoutp026dc6d1f5ec57d8fb1de38b6a9fe9252d~uQX3Zj05W2232922329epoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760416513;
+	bh=KIHDVhuZ6TYpVfog+kFYWQMy8WRowbJlE3bnFZPEiMM=;
+	h=From:To:In-Reply-To:Subject:Date:References:From;
+	b=CyunqR9CuItd6hS9QXgYIvGu1+1Jc6sxnmog4KbWtHVaS92TUyUv9c9WdvFb83Hk/
+	 J8LumzsBTqdM0Nmmcy1sg7Z0myLgWkLZ3N08CNCW++JXjj+Tg93bmdoaA7qTN/pWDv
+	 gzMbC39XlhCWZlaPiV4YSaIzgmlwm6isDgsLKykg=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251014043512epcas1p1fda50efe0632504b562c17695cded6cc~uQX29KIV42282522825epcas1p1D;
+	Tue, 14 Oct 2025 04:35:12 +0000 (GMT)
+Received: from epcas1p3.samsung.com (unknown [182.195.38.119]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cm1bh2t5Lz6B9m6; Tue, 14 Oct
+	2025 04:35:12 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20251014043511epcas1p37bffc5c998bff21f27aba426deb77e95~uQX2K9LcL2696626966epcas1p3X;
+	Tue, 14 Oct 2025 04:35:11 +0000 (GMT)
+Received: from wkonkim01 (unknown [10.253.100.198]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251014043511epsmtip1954ec39f6a83fdc63043a6899695cd0e~uQX2IOiWL2405624056epsmtip1s;
+	Tue, 14 Oct 2025 04:35:11 +0000 (GMT)
+From: "Wonkon Kim" <wkon.kim@samsung.com>
+To: "'Bart Van Assche'" <bvanassche@acm.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<peter.wang@mediatek.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <f90010b2-7db1-412c-8526-47339bf4aa6b@acm.org>
+Subject: RE: [PATCH] ufs: core: Initialize a variable mode for PA_PWRMODE
+Date: Tue, 14 Oct 2025 13:35:11 +0900
+Message-ID: <065101dc3cc3$eda735c0$c8f5a140$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQFhT2clGfJ4dWcII9qWXyagEihcgwJWi3eIAdcMmwEC1X995AKKjmFatWp7pXA=
+Content-Language: ko
+X-CMS-MailID: 20251014043511epcas1p37bffc5c998bff21f27aba426deb77e95
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251002070057epcas1p49ac487359f24f6813ba8f9f44bcf0924
+References: <CGME20251002070057epcas1p49ac487359f24f6813ba8f9f44bcf0924@epcas1p4.samsung.com>
+	<20251002070027.228638-1-wkon.kim@samsung.com>
+	<4c894d68-7d0e-49a0-b582-477bcc7f351d@acm.org>
+	<000001dc3c1a$33e23030$9ba69090$@samsung.com>
+	<f90010b2-7db1-412c-8526-47339bf4aa6b@acm.org>
 
-Revision 0x2 has been tested on the r0q (Galaxy S22) board.
+> On 10/13/25 1:20 AM, Wonkon Kim wrote:
+> >> On 10/2/25 12:00 AM, Wonkon Kim wrote:
+> >>>    static bool ufshcd_is_pwr_mode_restore_needed(struct ufs_hba *hba)
+> >>>    {
+> >>>    	struct ufs_pa_layer_attr *pwr_info = &hba->pwr_info;
+> >>> -	u32 mode;
+> >>> +	u32 mode = 0;
+> >>>
+> >>>    	ufshcd_dme_get(hba, UIC_ARG_MIB(PA_PWRMODE), &mode);
+> >>
+> >> Since there is more code that passes a pointer to an uninitialized
+> >> variable to ufshcd_dme_get(), the untested patch below may be a
+> >> better
+> >> solution:
+> >>
+> >> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> >> index 127b691402f9..5226fbca29ec 100644
+> >> --- a/drivers/ufs/core/ufshcd.c
+> >> +++ b/drivers/ufs/core/ufshcd.c
+> >> @@ -4277,8 +4277,8 @@ int ufshcd_dme_get_attr(struct ufs_hba *hba,
+> >> u32 attr_sel,
+> >>    			get, UIC_GET_ATTR_ID(attr_sel),
+> >>    			UFS_UIC_COMMAND_RETRIES - retries);
+> >>
+> >> -	if (mib_val && !ret)
+> >> -		*mib_val = uic_cmd.argument3;
+> >> +	if (mib_val)
+> >> +		*mib_val = ret == 0 ? uic_cmd.argument3 : 0;
+> >>
+> >>    	if (peer && (hba->quirks & UFSHCD_QUIRK_DME_PEER_ACCESS_AUTO_MODE)
+> >>    	    && pwr_mode_change)
+> >>
+> >>
+> >
+> > There are some attributes to use 0 as valid value.
+> > e.g. PA_MAXRXHSGEAR is set to 0 for NO_HS=0 If it has 0 for valid
+> > value, most of value 0 are regarded as FALSE, unsupported or minimum.
+> > And these cases seems to check ret for command success/fail in code.
+> > However, is it ok to set 0 for ufshcd_send_uic_cmd() fail?
+> >
+> > If it can't, it needs to initialize mode.
+> > Value 0 for PA_PWRMODE is invalid.
+> 
+> Hi Wonkon,
+> 
+> Modifying ufshcd_dme_get_attr() doesn't exclude checking the return value
+> of ufshcd_dme_get_attr(). I propose to modify
+> ufshcd_dme_get_attr() such that it always initializes *mib_val and also to
+> check the ufshcd_dme_get_attr() return value wherever appropriate.
+> 
+> Thanks,
+> 
+> Bart.
 
-Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
----
- drivers/mfd/max77705.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Bart,
+I got it. I'll update it.
 
-diff --git a/drivers/mfd/max77705.c b/drivers/mfd/max77705.c
-index e1a9bfd65856..5201a4c9c3f5 100644
---- a/drivers/mfd/max77705.c
-+++ b/drivers/mfd/max77705.c
-@@ -105,8 +105,8 @@ static int max77705_i2c_probe(struct i2c_client *i2c)
- 		return -ENODEV;
- 
- 	pmic_rev = pmic_rev_value & MAX77705_REVISION_MASK;
--	if (pmic_rev != MAX77705_PASS3)
--		return dev_err_probe(dev, -ENODEV, "Rev.0x%x is not tested\n", pmic_rev);
-+	if (pmic_rev == MAX77705_PASS1)
-+		return dev_err_probe(dev, -ENODEV, "Rev.0x1 is not tested\n");
- 
- 	/* Active Discharge Enable */
- 	regmap_update_bits(max77705->regmap, MAX77705_PMIC_REG_MAINCTRL1, 1, 1);
--- 
-2.51.0
+
+Thanks,
+Wonkon Kim.
 
 
