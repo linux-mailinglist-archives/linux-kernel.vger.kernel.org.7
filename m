@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-852857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC02BBDA198
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:43:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F28BDA19B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA09A4E8984
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:43:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F9BC4E90E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB74A3002CE;
-	Tue, 14 Oct 2025 14:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A973002C5;
+	Tue, 14 Oct 2025 14:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IKds0kCZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="lCD1g43r"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF412FE071;
-	Tue, 14 Oct 2025 14:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8282F616D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452765; cv=none; b=K6bhPwgrNj6XRRAxXt5ymGCaT/yU3veb3qgWzDF2WegQvkRoImfDB8D74QBFH9/08HFhhel5t+d+m6DSu963YrngEmTDjOF5gmDx272DI02vHAhH0EZBeBXldLj3tr5Dz049Y9ynYNjnDiK1Cw9uP/UXhHanQyj9rIaiDHWozZc=
+	t=1760452780; cv=none; b=ahiiCuXHCThFYf8TEt/ecXDJjPtJGsP2XyIHkVag2r6T+pH0iiIN8zbOaEr5GjjkM4wuKh1NmeWfVgRtuvIAzpVOLh2RwB2koY0VsT3hG3w0bp8rhS2nddgdGuVVB1e/YEJII1rHBwvJw55E/4bWKrMQWyfei923KzII5fEFSHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452765; c=relaxed/simple;
-	bh=03XBU/ljH1CvtJGXcF3L5sF94xzuolTmpOzL/YZ+we4=;
+	s=arc-20240116; t=1760452780; c=relaxed/simple;
+	bh=K9UdknQRETW4MZX1ZU3bx3AEkIexbx1mUK4OnnOeiTM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mHYP0kt1tWRQCW6qJYKzHYHhBBbxQWecnPo5opPy+aEzYgG4Fa/I/M3iMVg7UpLpkxkvpTcyIp7mZS8WWujLtccSOhrjjPbukgjT5vRu1WMHK3cBsi6gfsKUgYkN99f926fMo9pqIYFqj3qVY7OQiy7wBfjL6TrWp2gWSyP3xUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IKds0kCZ reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 19B6E40E01C9;
-	Tue, 14 Oct 2025 14:39:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id VJANuCVHVFYv; Tue, 14 Oct 2025 14:39:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760452756; bh=/OPOJqx+RSwPZEPT1NeBc6SFZ8fOuD4CFHOmHdmHhAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IKds0kCZeXoyDTnUolCcERBOKeKbIanX81CMe8blGxEu2KaXBH6V8xOgrfnV7RHXk
-	 8qlK9hPZnfEajWC5TjvQZgISq1i/dsUmHsj+zACBIsmCReoUZpr36lCML+qoSoOEqd
-	 qzLpZEfFYgBo4DDRkE79w6MO4Z3MgrLftSF18eM1UNkeSF5sK3AD6MG+3SaWBuFngV
-	 ETUTKpcDvfTlc0VNtY9rvTFkPXmBqMqypNXWpfejqujf/MPeWlQzrcUJrFOv2D/oJA
-	 +fMRj8U2GOYeDvIsIjUqSzbxKh/O05vb137vW6TCXUn6PFhqd1sQk2ldKjt7snncQO
-	 /I1C0gUmhdj4F4wUerMEctXBs5ALmhuuYVnkDyKWYA2AdX3TGhut+hT0rnusdtYTxb
-	 Vv98IZxa/Lh6HyyLQEWAFaFrTjmw6mSHqAKjs22yOKPWGmz8J9QJhOf0rk19vsSyop
-	 fOZf11S0MZJYwPpGkoNskw7TM5+fQ4LCh6uyLSodXRU3Qj7koUUTjzBWaPWlJXOWl4
-	 XfLru5rURV9LcbJaG09a+1QIdshrbAP7XGnTggBUehC/858qEZZBq3jwD0Co8/C7y8
-	 lyIUFmFmdz4qKu2HkvKqQIzRTyIIUyAeyLynjC0rmEu0nVzb8eWR67fxADNABdWxiH
-	 F5zJUYwKCvW5GWrn71naGoso=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5C28E40E016D;
-	Tue, 14 Oct 2025 14:39:11 +0000 (UTC)
-Date: Tue, 14 Oct 2025 16:39:10 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
- location only once
-Message-ID: <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
-References: <20250929112947.27267-4-jgross@suse.com>
- <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
- <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
- <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
- <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
- <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
- <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
- <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uCRJPuZOZQiBQ80Euuh19A0u925GJHWV3eN5Fw/XD6O6euvR9Fd5IoAjbivBvDOk+WTpjVjxmC1xYxsjOiL+A5+x8nLQdviqoxntuWvGuNaGMXcSTicHTa09iDlkPf9dhGpau0Z4KqQ1sl5/Pqw3cE4zHKyrpnR9CdwDyt/f8eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=lCD1g43r; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-113-184.bstnma.fios.verizon.net [173.48.113.184])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59EEdHuu008528
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 10:39:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1760452759; bh=7RDxMvNV9uO3veLRooNIOYHHyh1ceXq3G+yLqWiTMTM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=lCD1g43r+h+FgZe1pWaLpL70YweCYF/7Hl4Vqj6lg6XqYzoIgjS/oFMtF00zqfxqv
+	 8dcIv4iiINgrybMaLtK5BPhHiWDt2qQnom1Lf2QbOB459N5nfn9t0150QZ8oxvKw8M
+	 RvhZVSqhborSqnvEDeR9ZYM9RbScoXNarzDMDKGI6MXwV5tAHz6DjaN0ybxXuABD22
+	 NphZ+jnc0HHV7DZxROPe/QXpA58SCeg5nJjXc4dvmqu0ns54rNKfszjlqCjyn3v0qz
+	 S9wq2nF9sW5b7FZ0bLBcCu8JylAwSbYWLujApuWKy1Yp06TNuVBpuvfAcqXRlCckuN
+	 dOcaw04KGjimA==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id D80FA2E00D9; Tue, 14 Oct 2025 10:39:16 -0400 (EDT)
+Date: Tue, 14 Oct 2025 10:39:16 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: John Stultz <jstultz@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Matthew Wilcox <willy@infradead.org>,
+        Arnd Bergmann <arnd@kernel.org>, Tyler Hicks <code@tyhicks.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ecryptfs is unmaintained and untested
+Message-ID: <20251014143916.GA569133@mit.edu>
+References: <20241028141955.639633-1-arnd@kernel.org>
+ <Zx-ndBo7wpYSHWPK@casper.infradead.org>
+ <ef98d985-6153-416d-9d5e-9a8a8595461a@app.fastmail.com>
+ <20241029043328.GB3213@mit.edu>
+ <CANDhNCpsoPcotnrjH6y0yEBf43652DRasSsEnAyEbrKN=tjEfQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CANDhNCpsoPcotnrjH6y0yEBf43652DRasSsEnAyEbrKN=tjEfQ@mail.gmail.com>
 
-On Tue, Oct 14, 2025 at 04:31:31PM +0200, J=C3=BCrgen Gro=C3=9F wrote:
-> I have this here in the commit message:
->=20
->   - In case of replacing an indirect with a direct call using the
->     ALT_FLAG_DIRECT_CALL flag, there is no longer the need to have that
->     instance before any other instances at the same location (the
->     original instruction is needed for finding the target of the direct
->     call).
->=20
-> which is explaining why the problem is occurring. Isn't that enough?
+On Mon, Oct 13, 2025 at 11:07:56PM -0700, John Stultz wrote:
+> 
+> Yeah. Sadly I'm one, as I needed something to migrate off of when
+> encfs was deprecated.
+> 
+> Is there another soon-to-be-deprecated filesystem to encrypt
+> directories I should move to? :)
 
-I can guess what this is about but a concrete example here would make it
-a lot clearer, I'd say.
+Well, the closest way of encrypting directories is fscrypt.  The good
+news is that it works on top of btrfs, ext4, f2fs, and ubifs, and it's
+not likely to be deprecated given that it is used by chromeos and
+android.  The bad news is that the integration with traditional Linux
+desktop setups (e.g., login, etc.) was never completed.
 
-Thx.
+This is probably because for many desktop and server configurations,
+using dm-crypt is actually better suited and more secure.  It
+certainly doesn't solve the "just encrypt a directory hierarchy in a
+file system" and the "support multiple users' who might have different
+encryption keys and which are mutually suspicious" use cases.  But
+this appears to not be sufficiently interesting for distributions to
+do that integration work.
 
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+					- Ted
 
