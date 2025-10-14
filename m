@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-853305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E65BDB2E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D01BDB302
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3BC5428E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308DE54723D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713CE30594F;
-	Tue, 14 Oct 2025 20:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mc3xoKx4"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E5A306495;
+	Tue, 14 Oct 2025 20:14:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD5D1946BC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 20:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03822306484;
+	Tue, 14 Oct 2025 20:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760472844; cv=none; b=aZpf+MJdRjGBvtyS770AapYdhZcCsw6p7TIJXWBTnT6bRot5+7DuXUpMnCAmaidaQppMb/HY5u/K6j+Qvbbr6LsEAL/qg8+tbUZM3O1vJSeE68IcX2H28yJer12WPPheBlY3/3w7vuAKbRwFGHMxwgWfz+5bbdL5HjcgWTiCLng=
+	t=1760472850; cv=none; b=JaUxE/NOI4d4xVHjjshVMwYHCVVY3TujSI5+fXL6Ibt6Sh59BllPEL53kS9/kkLf9MGXdaxlGt/yrHUMQy+Qm6/73sMx6R1my37wNHLNfKW/cgOpAdT2pMUd+449QXoJzWuiW9gKuvncaFfOt/+Sz+1H6m6c8oe54Maf8iZvlzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760472844; c=relaxed/simple;
-	bh=4SjEPEjlWep5gU3J6a93orAuWUCgYWFpGeMwqORKnmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nw+N1IwZGDTGcvtyp9trkDxMS24+TRiTtbioIvrUePP+dg3Dl8Yoph40KSZXyjpOKgPkgBxzzBQXqrthg+kONR/nBIW0XFpK0SWWrn6tolx7Wztit4bxxnQBbrxnsJzoctgisb8nYT8QW/6gdwNkSGVUwLgt6dlOibRjWO5qjxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mc3xoKx4; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-362e291924aso41382801fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760472841; x=1761077641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jRL7yP55FZsuArjzHnzTt8bkESp9r+xQAl9w62GS3Mk=;
-        b=Mc3xoKx4lEehWzQDHoTU+UXsbFg/vtl31qNH64lbPz/u1e/TEmdDATCsVoDH0bOTsa
-         9pEJWzCs+UOgeRmMjQOFC9/APu8+If1m4tnVpF73SnE2/Ik9OAvYz3Z1aqKjeEW5pcni
-         K/1S26gIwSihR0YvJ01vr69j3OSEHQ57qiw5xu8HNvMCU8h5wRn6X9hMO1nrR4+qt2pa
-         yPa6YpUIxjHiBpErq7e+XzGCyrKL5QyN4b+1iKMu3vCaNCI60nkW9gFH0kHCtk3fCpNe
-         afzz2Bb4V/WSYbyd8Dn/x9I8nBopQiCcdwCI56w8BySF2fIyD7mSHB/zjrCYPbqs6oCU
-         +/ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760472841; x=1761077641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jRL7yP55FZsuArjzHnzTt8bkESp9r+xQAl9w62GS3Mk=;
-        b=o6IYjMl55/5ph7XhQOhuZZhBRlZOJFmnQz8W+6ecskURKi75zvuAWtxf4ych8Wavoo
-         ZdLUB1hKXImoFygdcEghBlql4+QnWWfEiBWW49qrn0t4XoToN2ZeGN/hAFGk7pSD6AX9
-         kzoySBTXztvULKZvYRJGqd6JpdY3+yblXU57lXcs0a6wWOGonG5+yQIBNlERVddOZvYs
-         Sz3uTc/Ha6jGnSgXkLOUCztyK6QJublLXxI0aclcKe6rBAOzyjerTSbp9MCym151L0JX
-         0Ue82ma5pivWiuKmOuBGkaEU6jPPIGzjKR/LA3yiCfiu7PiOIJDaNJ1wY/RFjTgCejrA
-         mSBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0OpqkIeyhMV/RL5Iz48z52cvDEmyLsPw3qLepCCMRhYisxzEM/JqNaqhZZy4EpaIWcHGo4UmeCC+pwZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW1VSFYbE/UjCGE6PmnB6dyu14xbxDxZua163JUG+0J2YSDuJz
-	ZGmqGbijbC4JpfVe8uc5ADZgKT1zevgmLlxq5J3g6FSv7HPD0YsZ1TRhsmlSUqrd0/eOqLUBJoo
-	CI4NOxDNghZVNZ0+mJEmaY81zkyDj8wpR9P/36w8JEA==
-X-Gm-Gg: ASbGncvm07jPNkoMofAh+TEU/uVjgkneak9fTgwXngcaZ/8BVTHQdBRPqMrWb7yVygX
-	brF5Eb+hZDrE1ZCHFXife9V1ca37StW3DNCwAmcFf5/IXQBzbGIPlUcf7W8NZxH5DSX/rJH/M33
-	Kk+6VFwIfc5KSqeooLLikfB/YZLvuE9Tiz/i6iUZeO5DZKIRmDSCqPwS7HlbWxiscPm0ssdpJVj
-	ZpKV0FL+tu4fG8+r2f2Qm7rfdBCFfiSpTnbxPPV
-X-Google-Smtp-Source: AGHT+IG+c/RQZD+0BVP0nLHNcQQpCHhF3SSDuV5EMqiXVv1DgN4Em2i5iNrVkDIsVxWl80rtbzj95RlgyVMuiFXBe08=
-X-Received: by 2002:a05:651c:4344:10b0:376:3b32:ad9c with SMTP id
- 38308e7fff4ca-3763b32b732mr39537411fa.23.1760472841322; Tue, 14 Oct 2025
- 13:14:01 -0700 (PDT)
+	s=arc-20240116; t=1760472850; c=relaxed/simple;
+	bh=qjN9yMcbqb9el7V0EC31POCxcsJn4SiO/M7H0T1mlX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EDMRYxyNxQc/LW+j65jWQOG8A3BgEy3I2wBmSJvDeNDVeIOzBDvNut4SC9ftjBet+ZDPiw2XG6X3lWimQyQV+UE7IPcK6gqJ5GaLPGym0jOGH42FbXsQIl7OnvOIcwUWgo+0d0u5qkcYLTRhVGc/1ul5WE3YlOHXOGefWOU6djM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id C349E5C581;
+	Tue, 14 Oct 2025 20:13:59 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id E11338000E;
+	Tue, 14 Oct 2025 20:13:57 +0000 (UTC)
+Date: Tue, 14 Oct 2025 16:14:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] selftests/tracing: Add basic test for trace_marker_raw
+ file
+Message-ID: <20251014161403.1443c21f@gandalf.local.home>
+In-Reply-To: <20251014145149.3e3c1033@gandalf.local.home>
+References: <20251014145149.3e3c1033@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922152640.154092-1-herve.codina@bootlin.com>
- <20250922152640.154092-8-herve.codina@bootlin.com> <CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
- <20251001174205.71a08017@bootlin.com> <CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
- <aO5ekPxeg7tdFlHi@shikoro>
-In-Reply-To: <aO5ekPxeg7tdFlHi@shikoro>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 22:13:50 +0200
-X-Gm-Features: AS18NWASZOxDjvevo6edLy771RxyP0LAmvYlJlH8qS2O9u5M72Qx7DPeuUj90bc
-Message-ID: <CACRpkdacJCp8aCCrCAzD5F=_K3g25t_8kZGzaEoXMBnhY8hkzA@mail.gmail.com>
-Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: E11338000E
+X-Stat-Signature: u64ndhrjssy8xingoipzrnyc7oodekyq
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+lGRKZK6BAdeIUhgbLVSGrl3LBWC9yKi4=
+X-HE-Tag: 1760472837-564214
+X-HE-Meta: U2FsdGVkX1/2AyXiwXzfWQLkepWc1NQmahTza+SNdD+Qm5zhatbjZP0a5ZR8dtSSQy42AO+VKuBX0jwka3M1YxM5LsruxpTImGU4WTInj4Y5BmKmg6MH4+UH+3MnmSAMSHC6X+T7HDEugFj6pWARd8WDWhkibtt9CMYlbqOlfTc7Pj1IfDL2Td7Ra7sff6Dmn18fuhDMQ1aPcSJ5QgFXLkytMGFmlw8bz+lUHlWSEhnCQvfBe99OBE9jP438IUh3h1nUJLSYirvcc/Eo8+/ZUAlCcI+NmWkT2sg6aX4TsZgwGEYfCHmwgQwmepwgFbWIWr/TAAmmQD+H/aYY6JqenkzMYzzCWKE+DLklWdrTlLuvMjuCVvxiJrMheE2azhvq
 
-On Tue, Oct 14, 2025 at 4:30=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
 
-> Because the HW design kind of suggests it, I'd think. The GPIO
-> controller is a standard Synopsis one ("snps,dw-apb-gpio") without any
-> extras. The GPIOMUX (which is extra) is according to the docs part of
-> the system controller with a dedicated set of registers. Luckily,
-> self-contained and not mangled with other functionality.
 
-Aha I see. If this is so tightly coupled with the Synopsis
-designware GPIO then it should be mentioned in the commit
-I guess. Also:
+Shuah,
 
-config RZN1_IRQMUX
-       bool "Renesas RZ/N1 GPIO IRQ multiplexer support" if COMPILE_TEST
+After Masami gives an ack, could you take this through your tree.
 
-+      depends on GPIO_DWAPB || COMPILE_TEST
+I don't think it's urgent, but I want to make sure it gets upstream.
 
-?
+-- Steve
 
-I understand that it is convenient to make this a separate driver.
 
-I'm not sure it is the right thing to do, but it's no a hill I want to
-die on so if everyone else thinks I'm wrong, I can just shut up
-about it, it's not like this driver is a big obstacle or anything.
+On Tue, 14 Oct 2025 14:51:49 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Yours,
-Linus Walleij
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Commit 64cf7d058a00 ("tracing: Have trace_marker use per-cpu data to read
+> user space") made an update that fixed both trace_marker and
+> trace_marker_raw. But the small difference made to trace_marker_raw had a
+> blatant bug in it that any basic testing would have uncovered.
+> Unfortunately, the self tests have tests for trace_marker but nothing for
+> trace_marker_raw which allowed the bug to get upstream.
+> 
+> Add basic selftests to test trace_marker_raw so that this doesn't happen
+> again.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>
 
