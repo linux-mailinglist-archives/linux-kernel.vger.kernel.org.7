@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-852112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAF5BD8320
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 067FBBD8326
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B99224F24AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:34:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76D8C4F8F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4DC29ACD1;
-	Tue, 14 Oct 2025 08:34:14 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3B30F940;
+	Tue, 14 Oct 2025 08:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c31dqcLz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79C6236454
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AB229ACD1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430854; cv=none; b=Lk4q1kAuv7wpSAROWkd5T7g602i+B8KcaTXWV1oiuLrfK3eLccIafyZfDuEu/HOR06eZ/FGTyWRjgyr2Q/jqpSKJJ56rQ/CAHAXb7sAkkrRxa2TNTzIQWm5pTpPBsjqXRHMKMDD1kkPfqJu8gMkZlauPgS1VOSsIDET1+yuwMfI=
+	t=1760430894; cv=none; b=iDrgtAHEi4FhUzF+oyPXJCFME3JlZmKBQvXhk6+6HJUs5VOQC2ULv3cR6qR9L+KzfnCwsdx3v+tPVOMYG6eR0PORH9KdeWpAd78hhHTCTrCseGMPUUioGRqTvX8ftqEHMhThGSfz+eNWs5dGYoLUH1m1WCJri9iUla8HsL9xP1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430854; c=relaxed/simple;
-	bh=0B2UMYbqUDmb5TRAEFZ3iCetD125VgS2XRk3m5uYAII=;
+	s=arc-20240116; t=1760430894; c=relaxed/simple;
+	bh=pRsTyfPJ9UJjbA5j1H/hTOwtZY7SmFyXvGs+UofQcTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVo8GizkbThO/KB4dNUEV7NNbmnFt0kT4Zz4nS5ICoQR0E8t+DsCQYr7Rjwzwy7bfiOnU9hLrq7ydx1c0uNASFz11KVkzaswCYSRJyXTbdlxVm/7QQ3t5bEC1tiaJuk2xR+WuWkBlvdE9pHLVdRFy/f8PTvI4S2Mx6jg5aYUAFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63163a6556bso10042517a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:34:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760430851; x=1761035651;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AKUCHW/MBIZsUc3ODKKtWIaDlEQsfe7hY3IvRmB8i8o=;
-        b=QFs08H2TSlIKDFNcVSSwcAqTFSnYOThFIB9d6VERfipH7KKtrL+ACsdWdPWQ8cvW9l
-         yTMkaRMlDjSaUt0DmfQHrTTtqzZd1V/XTeFfvwdoAOynjbWkn/p2HoK/Agep1Ti0jKou
-         V0FfRQnkc9+dPuqH+PLR6eGr+9XxCb04yztOGTenGMEj1eDcKkVkDVnqjXSkAKT0rKbc
-         decHSHXeiuT9/auPYNq6U2/9vvVL/UfsiK5hJedmlbJtyjWW9O0MlQ3H0SxT5q/sbb9S
-         O/MZK4jgnmzy2i7QmxCEKpCfVW4Ys5VAv3WxRCfm5bi51/D5i2WEh6AwGGM4XCYCSoOa
-         Qj2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXLYFGQ4Dlhg+mKQfA1GUzxz+TWOQPtEbsL3llw+DaB2QuL3Ioro2vOiPtZao0QaY4xsD1n9aQYsQCSICY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvafaUHNvOe9MxX9gZJBX/uPtPumNMLu5KwhieWX+lU4wlSmod
-	u9h4Gk7EhGJVSoqoFhSShEMaG6Qiwy6Esy1usRhYQU0WuTzh3ruAvI3a
-X-Gm-Gg: ASbGncuFrE2GuhOmr1NGtjk2IqUGqcW44N6M7UEv7rihdrAEkHdvrqBysOqSOOmzps2
-	uHeVXi0LYIIdEUY+6xynhSCX9hCY9Ob4oI2ZIWT5aIr8lyzn+r4KMN7wU/iyVdyXgQwlcgKg+T+
-	i7u/P+UKllbhLucsQtKYSdE45c5pfq2Ti4IGLHj8PPGdu/qtCLJ939w2s0TtqP45KRLeZ+WZPa5
-	W1sIUbqIt68MpHsy/rwUde5dW3XOnpPvyoLKNK3HDiVbMNlHKnuXvcO7Pwwh7ftqvzz/QtLun2r
-	qCrdqibArww1blbsTfoEWTeehu9dLUZuI+yaSQ8eYpVMld2D+EUfz+G9dg5zOp1943DxelfXrdT
-	um2G5k9ralsSFPpBy9ONXocWGmdQdAWMyNG9J
-X-Google-Smtp-Source: AGHT+IH9yDBhkiPY34+r8L4QfGlETNuwKEKExxU3npIvUrJ6TVQTuSdRSJEPMfeufN3cm41sP9BTrQ==
-X-Received: by 2002:a05:6402:50c6:b0:632:930c:ed60 with SMTP id 4fb4d7f45d1cf-639d5c57a9cmr20902180a12.30.1760430850785;
-        Tue, 14 Oct 2025 01:34:10 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:70::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c322e91sm10304155a12.45.2025.10.14.01.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 01:34:10 -0700 (PDT)
-Date: Tue, 14 Oct 2025 01:34:07 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Changyuan Lyu <changyuanl@google.com>, rppt@kernel.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, anthony.yznaga@oracle.com, 
-	arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, corbet@lwn.net, dave.hansen@linux.intel.com, 
-	devicetree@vger.kernel.org, dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com, 
-	hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org, krzk@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
-	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com, pbonzini@redhat.com, 
-	peterz@infradead.org, robh@kernel.org, rostedt@goodmis.org, saravanak@google.com, 
-	skinsburskii@linux.microsoft.com, tglx@linutronix.de, thomas.lendacky@amd.com, will@kernel.org, 
-	x86@kernel.org
-Subject: Re: [PATCH v8 01/17] memblock: add MEMBLOCK_RSRV_KERN flag
-Message-ID: <2ege2jfbevtunhxsnutbzde7cqwgu5qbj4bbuw2umw7ke7ogcn@5wtskk4exzsi>
-References: <20250509074635.3187114-1-changyuanl@google.com>
- <20250509074635.3187114-2-changyuanl@google.com>
- <ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
- <mafs0wm4yluej.fsf@kernel.org>
- <mafs0h5w2lpqu.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lX+8oL89/pQEi2bD3ZZxrtgnHVxWaOZ+3+xCHTxYXUZgUYeY+9/6J1N0jeT2nw0+9X8AZ/1cDIZo1rIwJWcFOCE6kwsR8LpNN63F2apSXIxCa5QWMwAkqtfD4K6CECVhIZyzOVj5OBOPUQ+mZpTE4FLQeNPvSYUVGtIaLBkJQV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c31dqcLz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760430891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KPbpAfXFpG+F0XArG45/phfeDqh8oNdwtwM3KTn35LI=;
+	b=c31dqcLzu2Khj1cMedPA6Azp+ZYVImp1pnALNpmhF+wl/V2gxBS+Ey3CdZ0vVzoRSQP8PK
+	K/gOGikZqY1LbOyXa9wY3xc2OIngsK/NcghP2EBfcgecyZbyhz8rX5HBRnwXVEGJxPTgKl
+	x5SzUmEds5sCh/nv2KHgSuC4iC74iCA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-SXWV4OF1NRKazgloSSdOFg-1; Tue,
+ 14 Oct 2025 04:34:48 -0400
+X-MC-Unique: SXWV4OF1NRKazgloSSdOFg-1
+X-Mimecast-MFC-AGG-ID: SXWV4OF1NRKazgloSSdOFg_1760430886
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 557011956089;
+	Tue, 14 Oct 2025 08:34:45 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.30])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 674921955F21;
+	Tue, 14 Oct 2025 08:34:37 +0000 (UTC)
+Date: Tue, 14 Oct 2025 16:34:32 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+	axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 1/4] blk-mq-debugfs: warn about possible deadlock
+Message-ID: <aO4LGJ6I49dydw2J@fedora>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-2-yukuai3@huawei.com>
+ <aO4EniFy63IlWM_-@fedora>
+ <33c009e6-0cc3-bfc3-f7e5-8227cb467696@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <mafs0h5w2lpqu.fsf@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <33c009e6-0cc3-bfc3-f7e5-8227cb467696@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello Pratyush,
-
-On Mon, Oct 13, 2025 at 06:40:09PM +0200, Pratyush Yadav wrote:
-> On Mon, Oct 13 2025, Pratyush Yadav wrote:
-> >
-> > I suppose this would be useful. I think enabling memblock debug prints
-> > would also be helpful (using the "memblock=debug" commandline parameter)
-> > if it doesn't impact your production environment too much.
+On Tue, Oct 14, 2025 at 04:21:30PM +0800, Yu Kuai wrote:
+> Hi,
 > 
-> Actually, I think "memblock=debug" is going to be the more useful thing
-> since it would also show what function allocated the overlapping range
-> and the flags it was allocated with.
+> 在 2025/10/14 16:06, Ming Lei 写道:
+> > On Tue, Oct 14, 2025 at 10:21:46AM +0800, Yu Kuai wrote:
+> > > Creating new debugfs entries can trigger fs reclaim, hence we can't do
+> > > this with queue freezed, meanwhile, other locks that can be held while
+> > > queue is freezed should not be held as well.
+> > > 
+> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> > > ---
+> > >   block/blk-mq-debugfs.c | 31 ++++++++++++++++++++++++-------
+> > >   1 file changed, 24 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+> > > index 4896525b1c05..66864ed0b77f 100644
+> > > --- a/block/blk-mq-debugfs.c
+> > > +++ b/block/blk-mq-debugfs.c
+> > > @@ -608,9 +608,23 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
+> > >   	{},
+> > >   };
+> > > -static void debugfs_create_files(struct dentry *parent, void *data,
+> > > +static void debugfs_create_files(struct request_queue *q, struct dentry *parent,
+> > > +				 void *data,
+> > >   				 const struct blk_mq_debugfs_attr *attr)
+> > >   {
+> > > +	/*
+> > > +	 * Creating new debugfs entries with queue freezed has the rist of
+> > > +	 * deadlock.
+> > > +	 */
+> > > +	WARN_ON_ONCE(q->mq_freeze_depth != 0);
+> > > +	/*
+> > > +	 * debugfs_mutex should not be nested under other locks that can be
+> > > +	 * grabbed while queue is freezed.
+> > > +	 */
+> > > +	lockdep_assert_not_held(&q->elevator_lock);
+> > > +	lockdep_assert_not_held(&q->rq_qos_mutex);
+> > 
+> > ->rq_qos_mutex use looks one real mess, in blk-cgroup.c, it is grabbed after
+> > queue is frozen. However, inside block/blk-rq-qos.c, the two are re-ordered,
+> > maybe we need to fix order between queue freeze and q->rq_qos_mutex first?
+> > Or move on by removing the above line?
 > 
-> On my qemu VM with KVM, this results in around 70 prints from memblock.
-> So it adds a bit of extra prints but nothing that should be too
-> disrupting I think. Plus, only at boot so the worst thing you get is
-> slightly slower boot times.
+> Yeah, I see this reoder as well, and I tried to fix this in the other
+> thread for blkg configuration.
+> 
+> - queue is freezed by new helper blkg_conf_start(), and unfreezed after
+>   blkg_conf_end(), rq_qos_add() is now called between them.
+> 
+> And for wbt, there are two cases:
+>  - for blk-sysfs, queue is alredy freezed before rq_qos_add() as well;
+>  - for wbt_enable_default(), this looks still problemaic, we should fix
+>    the reorder seperatly.
+> 
+> Perhaps, should I fix this simple problem first, and then rebase the
+> thread to convert queue_lock to blkcg_mtuex?
 
-Unfortunately this issue is happening on production systems, and I don't
-have an easy way to reproduce it _yet_.
+As I mentioned, if you want to move on with patchset first, the line of
+`lockdep_assert_not_held(&q->rq_qos_mutex);` shouldn't be added until
+->rq_qos_mutex vs. freeze queue order is finalized.
 
-At the same time, "memblock=debug" has two problems:
 
- 1) It slows the boot time as you suggested. Boot time at large
-    environments is SUPER critical and time sensitive. It is a bit
-    weird, but it is common for machines in production to kexec
-    _thousands_ of times, and kexecing is considered downtime.
+Thanks,
+Ming
 
-    This would be useful if I find some hosts getting this issue, and
-    then I can easily enable the extra information to collect what
-    I need, but, this didn't pan out because the hosts I got
-    `memblock=debug` didn't collaborate.
-
- 2) "memblock=debug" is verbose for all cases, which also not necessary
-    the desired behaviour. I am more interested in only being verbose
-    when there is a known problem.
-
-That said, my suggestion is to only dump extra information when something goes
-wrong, not affecting the boot time neither boot verbosity.
 
