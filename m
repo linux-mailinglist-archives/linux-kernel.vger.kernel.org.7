@@ -1,226 +1,244 @@
-Return-Path: <linux-kernel+bounces-853086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1869DBDA9B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:26:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8CDBDA9BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23D6A5810C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 057651893571
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FB3301466;
-	Tue, 14 Oct 2025 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A433009ED;
+	Tue, 14 Oct 2025 16:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dd/zP/Wm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dpguHmMf";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XaWm1Xnd"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3DE24338F;
-	Tue, 14 Oct 2025 16:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760459164; cv=none; b=ojksO5/UAUQaDbGA3jkqFWt41eYK8BjdEvP2W+LhZ/TYfcYIDP5ajBX0jFpDFf9docxXeaA8o4I0mSf2ket+zfzVIJsOR/u6a1Fqqjd0VBuquvZ25W9MFZwNCX35vWqx+xPZZLKYzkXi1RkhONYtABDMkd8pPGckq/4Q/vOasXE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760459164; c=relaxed/simple;
-	bh=bxBIMlGSNC6HSyaMCqbzfCJUQB6E6GUXd6hdKLf8rz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rGmJtKC//DxqPq6nnU8o95TtM1keFaJ5HxJhvk0TSrIT1WuQbcOh2s5MsKmkiWqNunX599y0X/Iw9EU9m1OGVZhiEgFLv6vpc7kkXrMkzj+wa/vpYfM0f88Bpa9lecEkWErkXHZes9NohzyC/1n+1N1ytr5YXo/HW/qYF/mT7dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dd/zP/Wm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195D7C4CEE7;
-	Tue, 14 Oct 2025 16:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760459164;
-	bh=bxBIMlGSNC6HSyaMCqbzfCJUQB6E6GUXd6hdKLf8rz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dd/zP/WmqPShkSuYsCOw7uTVi2FyJ5f+7bWq71O/EbsBjTsAYh2R6aAHVhmQlEug/
-	 gE2h7vzVVwnFkUXItulK2FCydcKZfSSqP+k+ol51uh29y8yO8EhuvyqR/hX0io0WK0
-	 jSKgLibE+DiEDImS43Tc3+CisJAw5vJig65mhAVOWVlsc0ahEjLnw4PKi2oot23Zt1
-	 s3pWyuS5EU1w0gl1HoTGHtQDu6sWOdx6JQOySxen6KA7SUn90+nrLWwVDyggQkfRl5
-	 U28TiAo9cYmcTuBkOcYUbaPim9eHVb6DE6VCXeT5R0tLULiBU41P1icpImK+NcLyjn
-	 8zWSv81QjKNIw==
-Date: Tue, 14 Oct 2025 21:55:51 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ron Economos <re@w6rz.net>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Conor Dooley <conor@kernel.org>, bhelgaas@google.com, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv <linux-riscv@lists.infradead.org>, Paul Walmsley <pjw@kernel.org>, 
-	Greentime Hu <greentime.hu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	regressions@lists.linux.dev
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-Message-ID: <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
-References: <20251013212801.GA865570@bhelgaas>
- <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
- <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
- <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
- <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE29214204
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760459268; cv=fail; b=rdFe7SpyFl/01+9p7ARSr9/KJ6KhqFBc9mVcgc0lzoBYy4bnWMGjUoVlOoskyqQKa4f+B4Qif4cJ0L/q3S8X21zOlUCBYuvq84zdgYivAX6Ya/0KGWQJygUIfHMh+mjeKipKGUUSPqZb2ALq93brDdfHad9OVvt24ViyxZpmQjI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760459268; c=relaxed/simple;
+	bh=+B5rVuUGShb/bRHr5qU+b25zdhYc01Pl5jJ86eeq2sg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=t6SuDVt0NBgb6Px8Cu83+VtBQmPFNcW+rfxuZOh0+JqgHvIypSgRe9FN7GwwoKnq77+VLag2ylNOhLu1gkEofNJSrS4bawfKFbe1tkgxc3vHE90BqRaq/V/d/QtrEexefdJlejEBsOzj3tCmzRXQ1cCCsaHdrxX6qEMsHMjo8kI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dpguHmMf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XaWm1Xnd; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EEfKwW020556;
+	Tue, 14 Oct 2025 16:27:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=+B5rVuUGShb/bRHr5q
+	U+b25zdhYc01Pl5jJ86eeq2sg=; b=dpguHmMffBu820KGYnpP/2QxfaObVBIUwj
+	4GisgdL8q7dTxvol8DdhD0fGWSAsXmM9u8yMTEIYiYRugftqo/5PH44TpeIFgVbt
+	ISqcItz/fgu23xi39uGFFkv1Chl4VKBfNn3S5sRrdxo+xoEBVubrssyHQ1QPMksS
+	WXMl5YBt8I1Chgm4OMopc+equg8IudFthBiWLltwAl3vWcY4OglkeSOXxdcJXP7b
+	50ngnUBMQRf3gXvJKhMRtHW2Cwt2Q6S19/DQb7EXXoktZYHNFpp6bKLXsp9Kjaoh
+	EP/7Tp28191J1iWJkflYDfmbOi4Bgtb7aV5ce2OIRYn6bMCJCeIA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qfsrvqux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 16:27:15 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59EEpNEV016801;
+	Tue, 14 Oct 2025 16:27:14 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012020.outbound.protection.outlook.com [52.101.53.20])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp8x231-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 16:27:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X59a14B68EXFM3xkLHB7G2VpTvbJ+ihrtykTo0Z3c5THActkHXykJBTDfkgy6px68ufC788qkiQizeBxg5FZ4kDeYgbfQr5d4/IW6O4QD4P+XLUoLNVHNQ1iIVZDV7s59ZWaUIqH21BnragdqZyohzPRo57upSwg/BWUb1ilwKO83pO8yHgmonmI46+vJLeC/WhZKG3zj+3rwOWuwoLwJe2SCvAmY1Zmyr5xqAqhEU7V142IZx5cRNQ6X1wZRSjenk4WX1Wwds88TSUAFhVitILoLrhqDLGaQ4DzCki/zjZ58H+a7BopyTg1KjnLdgqyU4OFp6k5c7Dt/MHGJwi+6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+B5rVuUGShb/bRHr5qU+b25zdhYc01Pl5jJ86eeq2sg=;
+ b=mjzipyASAGeO8fx6Wx/C+hhms/qpu9OZ0/VwN7mp6An2fhfIXT8UHEmPN4cJszDcngbyg9Wxo2tZKbTyu5XtnWHHpOrAcx4XHEzqmvLjH0rtjumh3Tx2PX3l+Tnv6QKNbHQo7XRGGjDMfyHX6QOkddtiyrOrUz14JqfwCMSJLcHrYdPHs+lDL8fCZD2dnm35RSs1vaYNimIQRyaNh7Ya2hZoo05bT6+skBLnSWYxEHD7cYciwx7F7zUsCL3wNAOwY2BWe9T+bwt9VVn90COcH4xKPTzlv3xnxJZNTUiYN1a9j7iCxbaLZdMprylRKYAzhC0Nqe1vO87fpUxU8FbTWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+B5rVuUGShb/bRHr5qU+b25zdhYc01Pl5jJ86eeq2sg=;
+ b=XaWm1XndAt4vTVG9eNFJdHLCllGBFtItmGtoMr+3Hq4og4z9iG0i1g7lUyVV0CtM1YOn8gTz5i360CszebFV6xGbrXOWEZNZ5FHwQrO7dc+6IWRHzidisrw5AIiCEzIf8mdrBtC1wc0ZbBwnwyDSVnvd7z/fkLMEQnKbDQTpTEQ=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH0PR10MB4843.namprd10.prod.outlook.com (2603:10b6:610:cb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 16:27:11 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 16:27:11 +0000
+Date: Tue, 14 Oct 2025 17:27:09 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+        Liam.Howlett@oracle.com, baohua@kernel.org,
+        baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+        ioworker0@gmail.com, kirill@shutemov.name,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mpenttil@redhat.com,
+        npache@redhat.com, ryan.roberts@arm.com, ziy@nvidia.com,
+        richard.weiyang@gmail.com
+Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Message-ID: <c176f6d1-2f43-4920-8133-f405e6756c5a@lucifer.local>
+References: <20251008032657.72406-1-lance.yang@linux.dev>
+ <f33735d3-b38d-4b6a-aeba-b415e6b24ea2@lucifer.local>
+ <0bfdbccd-9d4a-409f-ae43-b44bb7347d70@linux.dev>
+ <f7392f43-b8f1-4e6a-b9c8-25ad8a47f82c@lucifer.local>
+ <95a223b1-8d57-40c3-8226-678b1db233aa@redhat.com>
+ <57cffedc-65c0-44f1-8364-3a3ff9bdc760@lucifer.local>
+ <b0e88b97-3c55-4be3-9782-4ab5e5d72ebe@linux.dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0e88b97-3c55-4be3-9782-4ab5e5d72ebe@linux.dev>
+X-ClientProxiedBy: LO2P265CA0221.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:b::17) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH0PR10MB4843:EE_
+X-MS-Office365-Filtering-Correlation-Id: f70f2061-a92f-4e5f-9b48-08de0b3e86cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uZjaQYCvsEp6Nyd+wA3D9ceMWK0LBC/oKi1/2CztAr5sHwPJUXi3ECJpmg5i?=
+ =?us-ascii?Q?rzffIGWxutNwCd6rpvnblE0TQQMVhgF8HBoKatw2ql33tLQnuj8Rs3yzHEoX?=
+ =?us-ascii?Q?5FMr99ldRInq44P7kCtYWtzjh8Pae9KUcaIGPe2EVyL1NnvjEFf90e094taw?=
+ =?us-ascii?Q?8pARJLg4vgAErURW9eM9EGc6QJRpwpLcRfzuu2J54Ojf9amRSb63C/diKSCs?=
+ =?us-ascii?Q?zKzPfRXWiffqpHZ1bDgnVd8+1nF4Ig+24DjMBQf/Doo6Av4/hv7v9lkP+eLk?=
+ =?us-ascii?Q?Z+DzJwcb+Ned0X9S2rVMRmUhkvgPt21zeEyE+VTUtNPav2ny36RJI7qX7T7N?=
+ =?us-ascii?Q?VgSoms4WWJekP7VdgPDQqShg8neYCrNpmX7bKdKTYcZetbovfTKvIWSwdKb4?=
+ =?us-ascii?Q?YhRRKOn+jnhvtqwofhbtmnGOREIED0yB838eq1R6rKXecVvoSSLEzrL/bJA3?=
+ =?us-ascii?Q?pG6Y3NqYiIi0Ong6x1ZlqPGUjkMMQd9fh8gu79FoNA2kJnL+s+Pj+xQ738eT?=
+ =?us-ascii?Q?w4jqyU1VodKMy5uC+SEAKxvD3XgK4nl58FU8ZDXQBomvF/xzStvcE0EANJ0Y?=
+ =?us-ascii?Q?teG+bJWJAWN+eMbgvvEk+Zr8uvSXLOWVtt1IB/elryQtNGhdF0GO/rJu5Ius?=
+ =?us-ascii?Q?2pqYh2ew/7k6d0wNFr7q8dZyJ0b6HIX190U453jgd5BLJwXoN+OWmykPT3/F?=
+ =?us-ascii?Q?nrm0bv1+YUUcfKebE+mybIahsNjV75gYYfxrGjytheUR0Jjhgdg7IgQbS3/t?=
+ =?us-ascii?Q?OGEREAdqSd0aAbVpv02KK9f9o/xwpNpMaNLdWcyuFh6DB++eAI5z/83xAjwm?=
+ =?us-ascii?Q?+4JnQg0IB4G+82EzoiDRDBiSezXDdzyITcmr7VBEvLrYQVUwlzqbhSInDNUG?=
+ =?us-ascii?Q?iRipJxZX/vKDFj5P9E4BAM6OgfoOoHbACwVNskqWKO9/tDjYR4clpnziWiPW?=
+ =?us-ascii?Q?+F+QUtZAbMh26T5yI/d0UobOiRRbLHDZfSP1kNkPZFEPru8JefNWoqszJLwg?=
+ =?us-ascii?Q?smRvZrYRufNPRMq6XWfhXo7nNfp/Gjl7Rpnm5Xzrn3us+Ge+Y7VHtueatDj3?=
+ =?us-ascii?Q?hW3XvIYHrEj4SkH3K0MLGMmkVv376rXuzLCUVJ7Hu0AgcYIdpMFGuBQuBGVv?=
+ =?us-ascii?Q?tuj0o3xHmk3HbxYXlL+cT4HJRkLwVyWBhkHsbi8/U9OiO1UTgFHauOB82vjQ?=
+ =?us-ascii?Q?k4cLEGB2qzLl67tMaRlTCcBlF5TKTjGvlJof9lJydbPIdkuX4K/a28y6d5fu?=
+ =?us-ascii?Q?76wOKsB3o4r/Pypc9Kyz7xRYKduotDmz4cPBFwqu8mpOO54i3Cq3ZRlly+i8?=
+ =?us-ascii?Q?cSV8nMdZWZwgtvyK/T9KE8hnjJvIYofvMZ1z1DkzH8Yn3KlQJ39bbX85kTrK?=
+ =?us-ascii?Q?d8caKFn/9y2hkvQXQwzfHLlf+lg2dNvsGdp4KfazgY2y8Lapi4+G7k7jMdqs?=
+ =?us-ascii?Q?bOWPgHV/dgDf3zaiGERsuvGP1BptKQLx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DitthsFct9ABDQsZpGFEqbD6C6GLr3bPSM+3Lpsu7ee0k83Hc7tKuje2hgm9?=
+ =?us-ascii?Q?XpH+a5uQ97oPJxNy01ImqLES+E5J2in/TaqPa9v6HoJucsaEB/nMgKJvlmLl?=
+ =?us-ascii?Q?unE8w0AC1fpM7s+FSJxV4WasXtgunxwC81KxHl73EBKsMyn2l1/EcEVD104+?=
+ =?us-ascii?Q?XEId3AyKYFCQuF7ppRa2cvCo46I5Erm04kp1bKPJ1kPvXeCs4rv3th8ZwLpP?=
+ =?us-ascii?Q?eiPqZVe2e2m1/atBsRIjP7+wzex8EWDTOdKiTxicPpWR1kCV9zK2nzzpE2lD?=
+ =?us-ascii?Q?E+1H3x33Ia6UqgH5WcLCyK7fJN1ESqOY6eET5qUqU1v3a+qAmyYZOGmT1xEy?=
+ =?us-ascii?Q?KSTTinUQubXKtotUcSVgHNUXG+809rhr3xoqRyTOzcbrMenY7h4OVIGpTL1e?=
+ =?us-ascii?Q?ctVURH+ZzHyJSvkWhyYcZpvevf1+XlhKJtpBKVunZbDZdvjN5AbqAoiNjWT6?=
+ =?us-ascii?Q?DSAvluhA8WeEb+PFuuLva9SGt7Kzy99DoMIR/oYTDJNSegpPkuZRVdF/H6Kl?=
+ =?us-ascii?Q?baaoHwj2BzvGIDZRQE5vO1rn77dwhXIte601BO4FVmJhnhweuNUlGLeC1RdM?=
+ =?us-ascii?Q?LVfuQWl62lxLM0Xo6VDcSqriSScP5G47KVnTHOAmmg7RNemW1mrBFXerII45?=
+ =?us-ascii?Q?HiFKtvOCu/hqNPMf+1I2W4BF6dkoDtI57t+m26vrz+rpnFqb3XZxi8xGTWiZ?=
+ =?us-ascii?Q?Vk5Uw1lNddYKp/jjf9LoIlmoJ3GB4GdJ9NU8FFxrlHLcffssaac1WhSbDpg8?=
+ =?us-ascii?Q?tVaXQygmFxarzLRJKxWtXdn7y3ER9BTM4ih8E7dk3EKr5cYZObyvQSlAgnnA?=
+ =?us-ascii?Q?mDe25nivKY4v2ior18PfVP96/PbvfWXaA2I54esql6+9V5bWSTXWT0aq2CBT?=
+ =?us-ascii?Q?9lN3r3qEQbs3X74sSOgHpEPlvwISpJAGk499ziPBfXgr70uv3hKz49be6NkY?=
+ =?us-ascii?Q?Moegt4uP/oYx69HXpLUkxXxR/Ms6jknCpxYJ/yNgEwbi7/8QMS+7HTjYNDtl?=
+ =?us-ascii?Q?eMsBp54UT2O8iT9yEMgsCaUTnakZSPiZyzp9YvXFqsSnHrS2jOMlsOs5euOC?=
+ =?us-ascii?Q?66+lyaU+KZUCPAW3lh4PCYB+KcVitNrJpyWchtkiNcmUmGPaV7/2DWV0XDZo?=
+ =?us-ascii?Q?r5jUpN8ld9b0zpCXib9on7Qj4s0flDUQuurCc8AZFyWwNqHqF/PepX3KlvX8?=
+ =?us-ascii?Q?yg7jHfSFJlEtj49nQfplN7WX86oEMkaq2cP05sZo9rc72Go14WDeaYnIuVFB?=
+ =?us-ascii?Q?VsHycks/zJw3GVtOQ1lRn4sYwc32sieqvRn4EOLAm/+6j5yRFd93iK2mQOZT?=
+ =?us-ascii?Q?V8bfpKL1HReZeKE8gzgC2pZF4nVouFdoKXR7Y6RQ2ew+YTC3uEx89VJ4l4jh?=
+ =?us-ascii?Q?Es4ppjdAOI/zpIXTR0N8L4ySNjJuBkD3RNpFmBlE15sUeo8AYP9ico+VmLTL?=
+ =?us-ascii?Q?9IYsdOxuKuQm7wHlxTxJW/sDFJc0J6bRLuq/mDz1AzRNeumT8xbclEXFKu8O?=
+ =?us-ascii?Q?+yZQrbt0FUdHRIycIp8kUmP8HdFhCq8My43WWJ2sBYANqCyvw2d/O+LLeuo/?=
+ =?us-ascii?Q?aas9lyqP2kbmUTfNOdcsFOxQt8erPzc5rgOUdzBIq8O0mHI72jNdNRptN0MM?=
+ =?us-ascii?Q?HQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	+zB8+iDqgie8iNVVYvcJd4DFunN3PohiDuo3IVepQ84qbxFab3yUzionZJXBmE19fHbjZ4hh4C9JHJLN/mggHxL2FY1bHxLfGn11c4WYJqPh+FJiLsCjqOz7WD+E/0JE/Bb3vWQ8NSaWysc195Ckrz3dyY3JX1gNfyWWsJuo5fnXJk6NgOaXOUwnnnKLd0+giwn3Li3J5H1kxW7YqKIloGuFzS94n2r6O0eSuxgBHDKmVO9fROkPadONM3FL8kNjA4r8+gQ/r2XAkIfjiC/vxWJcVl4zwFjt73436vf/Erl8CkNpLbO7Q+ZY0J/EDqPXtaCOiR/beg4myKAEEXFUoHswzWbdQek3HO7fwfJhXw5zvS2HBGgO2whmby1hEpbUMzMsD7FxhrC4Osy2eIgD1+0oaHZd6Az/YsJiXBRoYaA6R0CDF+SSpQ+albcWyZqOR7WEMoS1eadGJqcww7LEFy5rXuWp8c+7pZIEOU2wneXHH1txXaZqvtoW07sfLD/p7sRhgMdr+vcTMLN4UUwehGUPpDsWesM2HKaWOG/HmhwjnelWUE0dd8u3F6LoUcCT8dvtFBDa0B2LenBmsGpXHnJxHSmJ+u3UC/b+7HB3v98=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f70f2061-a92f-4e5f-9b48-08de0b3e86cf
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 16:27:11.1443
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7JlhangCn8o94dDzbgJKJ5spX6S9BKMkWRz85naea7DIDm41CLR3FZ9pJGipNZhfcvU8ztGxIao8teNG/AgEVoQRAfJ86kRy3+qLMMzjfig=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4843
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0
+ mlxlogscore=623 adultscore=0 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510140125
+X-Proofpoint-GUID: LhaDvkljrR-lWs1cU-xFtjWg9F-ReaQi
+X-Authority-Analysis: v=2.4 cv=APfYzRIR c=1 sm=1 tr=0 ts=68ee79e3 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=jxp4CzYOe_3-huScVboA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMSBTYWx0ZWRfX8h4FufQAIPyW
+ JbQJ9HDS/b+B9c7rxs0SkFDh9q5+5zetJdlfDI6xa4cVvGivQO/nkZnWPXkvBZXPWCEE8uuePHf
+ gaPnFATuOWgSfvSzI7ZSdhGQCgnUC8qtHBAs4MKg0+qrMK0Uw95E0xJaVxXbX4TvrkFnQT8Fmls
+ D4VvvuUr7nlnFYBwG7znv4yBI54dcErVTpzSV7Ldj9w2d2o9zaxXQ7cZeESkYOvEbb0sJlXGSai
+ sBiVcth2GWTaeeDX8eqVPxsX+5OhZXbInC6yxF4IPT414JDJEF19VxxzUb2c+G/MPH+24KWUGV6
+ 6iFmoAVy54IeCfakkOXdEDVvt/ymJxQW0ylaK2SGdraFuC199I3kdlUtIPrti3mFDxzpClw/2zd
+ qW2ijiluvy4nkNlyoPI3fGizpDfQ/A==
+X-Proofpoint-ORIG-GUID: LhaDvkljrR-lWs1cU-xFtjWg9F-ReaQi
 
-On Mon, Oct 13, 2025 at 10:52:48PM -0700, Ron Economos wrote:
-> On 10/13/25 22:36, Krishna Chaitanya Chundru wrote:
-> > 
-> > 
-> > On 10/14/2025 10:56 AM, Ron Economos wrote:
-> > > On 10/13/25 22:20, Krishna Chaitanya Chundru wrote:
-> > > > 
-> > > > 
-> > > > On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
-> > > > > [+cc FU740 driver folks, Conor, regressions]
-> > > > > 
-> > > > > On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
-> > > > > > The SiFive FU740 PCI driver fails on the HiFive
-> > > > > > Unmatched board with Linux
-> > > > > > 6.18-rc1. The error message is:
-> > > > > > 
-> > > > > > [    3.166624] fu740-pcie e00000000.pcie: host bridge
-> > > > > > /soc/pcie@e00000000
-> > > > > > ranges:
-> > > > > > [    3.166706] fu740-pcie e00000000.pcie:       IO
-> > > > > > 0x0060080000..0x006008ffff -> 0x0060080000
-> > > > > > [    3.166767] fu740-pcie e00000000.pcie:      MEM
-> > > > > > 0x0060090000..0x007fffffff -> 0x0060090000
-> > > > > > [    3.166805] fu740-pcie e00000000.pcie:      MEM
-> > > > > > 0x2000000000..0x3fffffffff -> 0x2000000000
-> > > > > > [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
-> > > > > > 0xdf0000000-0xdffffffff] for [bus 00-ff]
-> > > > > > [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
-> > > > > > [    3.579552] fu740-pcie e00000000.pcie: Failed to
-> > > > > > configure iATU in ECAM
-> > > > > > mode
-> > > > > > [    3.579655] fu740-pcie e00000000.pcie: probe with
-> > > > > > driver fu740-pcie
-> > > > > > failed with error -22
-> > > > > > 
-> > > > > > The normal message (on Linux 6.17.2) is:
-> > > > > > 
-> > > > > > [    3.381487] fu740-pcie e00000000.pcie: host bridge
-> > > > > > /soc/pcie@e00000000
-> > > > > > ranges:
-> > > > > > [    3.381584] fu740-pcie e00000000.pcie:       IO
-> > > > > > 0x0060080000..0x006008ffff -> 0x0060080000
-> > > > > > [    3.381682] fu740-pcie e00000000.pcie:      MEM
-> > > > > > 0x0060090000..0x007fffffff -> 0x0060090000
-> > > > > > [    3.381724] fu740-pcie e00000000.pcie:      MEM
-> > > > > > 0x2000000000..0x3fffffffff -> 0x2000000000
-> > > > > > [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll
-> > > > > > T, 8 ob, 8 ib, align
-> > > > > > 4K, limit 4096G
-> > > > > > [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
-> > > > > > [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-> > > > > > [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-> > > > > > [    3.988164] fu740-pcie e00000000.pcie: PCI host
-> > > > > > bridge to bus 0000:00
-> > > > > > 
-> > > > > > Reverting the following commits solves the issue.
-> > > > > > 
-> > > > > > 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc:
-> > > > > > Support ECAM mechanism by
-> > > > > > enabling iATU 'CFG Shift Feature'
-> > > > > > 
-> > > > > > 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom:
-> > > > > > Prepare for the DWC ECAM
-> > > > > > enablement
-> > > > > > 
-> > > > > > f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc:
-> > > > > > Prepare the driver for
-> > > > > > enabling ECAM mechanism using iATU 'CFG Shift Feature'
-> > > > > 
-> > > > > As Conor pointed out, we can't fix a code regression with a DT change.
-> > > > > 
-> > > > > #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the
-> > > > > driver for enabling ECAM mechanism using iATU 'CFG Shift
-> > > > > Feature'")
-> > > > Hi Conor,
-> > > > 
-> > > > Can you try with this patch and see if it is fixing the issue.
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-fu740.c
-> > > > b/drivers/pci/controller/dwc/pcie-fu740.c
-> > > > index 66367252032b..b5e0f016a580 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-fu740.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-fu740.c
-> > > > @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct
-> > > > platform_device *pdev)
-> > > > 
-> > > >         platform_set_drvdata(pdev, afp);
-> > > > 
-> > > > +       pci->pp.native_ecam = true;
-> > > > +
-> > > >         return dw_pcie_host_init(&pci->pp);
-> > > >  }
-> > > > 
-> > > > - Krishna Chaitanya.
-> > > > 
-> > > > > 
-> > > I've already tried it. It doesn't work. Same error message as before.
-> > Can you share us dmesg logs for this change.
-> > 
-> > - Krishna Chaitanya.
-> > > 
-> [    3.159763] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
-> ranges:
-> [    3.159853] fu740-pcie e00000000.pcie:       IO
-> 0x0060080000..0x006008ffff -> 0x0060080000
-> [    3.159916] fu740-pcie e00000000.pcie:      MEM
-> 0x0060090000..0x007fffffff -> 0x0060090000
-> [    3.159953] fu740-pcie e00000000.pcie:      MEM
-> 0x2000000000..0x3fffffffff -> 0x2000000000
-> [    3.160039] fu740-pcie e00000000.pcie: ECAM at [mem
-> 0xdf0000000-0xdffffffff] for [bus 00-ff]
-> [    3.571421] fu740-pcie e00000000.pcie: No iATU regions found
-> [    3.571472] fu740-pcie e00000000.pcie: Failed to configure iATU in ECAM
-> mode
-> [    3.571529] fu740-pcie e00000000.pcie: probe with driver fu740-pcie
-> failed with error -22
-> 
-> Same as before the change. The entire log is here:
-> 
-> https://www.w6rz.net/dmesg.txt
-> 
+On Wed, Oct 15, 2025 at 12:09:42AM +0800, Lance Yang wrote:
+> Hi David, Lorenzo,
+>
+> Thanks to both of you for the deep dive on this!!!
 
-Weird that the driver still creates ECAM even after skipping it using the flag.
-The flag is not meant for that purpose, but it should've worked anyway.
+That's ok :)
 
-Can you try this diff and share the dmesg log?
+>
+> The code we've been discussing was moved to a new helper by
+> another patch series[1], so let's call it a day on this
+> thread and leave it as-is and just review/change the logic
+> at its new home :)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 20c9333bcb1c..58080928df9f 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -523,8 +523,12 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
-        pp->cfg0_size = resource_size(res);
-        pp->cfg0_base = res->start;
+Ahh, please do make that clear in future, I reviewed this on the basis it
+was a dependency of [1] :)
 
-+       dev_info(dev, "%s: %d native_ecam: %d", __func__, __LINE__,
-+pp->native_ecam);
-+
-        pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res);
-        if (pp->ecam_enabled) {
-+               dev_info(dev, "%s: %d ECAM ENABLED", __func__, __LINE__);
-                ret = dw_pcie_create_ecam_window(pp, res);
-                if (ret)
-                        return ret;
-@@ -533,6 +537,7 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
-                pp->bridge->sysdata = pp->cfg;
-                pp->cfg->priv = pp;
-        } else {
-+               dev_info(dev, "%s: %d ECAM DISABLED", __func__, __LINE__);
-                pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-                if (IS_ERR(pp->va_cfg0_base))
-                        return PTR_ERR(pp->va_cfg0_base);
+I separately reviewed that on that basis.
 
-- Mani
+Will reply there...
 
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> [1]
+> https://lore.kernel.org/linux-mm/20251008043748.45554-1-lance.yang@linux.dev/
+>
+> Thanks a lot!
+> Lance
+
+Cheers, Lorenzo
 
