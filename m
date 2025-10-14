@@ -1,134 +1,76 @@
-Return-Path: <linux-kernel+bounces-853135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3384BDAB60
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EC6BDAB70
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A7064EDBD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0376118880A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59754304972;
-	Tue, 14 Oct 2025 16:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="yjIwtdsw"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055663043B4;
+	Tue, 14 Oct 2025 16:54:13 +0000 (UTC)
+Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1E3303CA3;
-	Tue, 14 Oct 2025 16:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEAD226863;
+	Tue, 14 Oct 2025 16:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760460777; cv=none; b=AGqikO1D+6+ISvXKyUH2XIV1ebgM0tFPkFVGz9xDMO/lFmAvq1qxOSQOvraLzVAT1lZjSb0xWoh/BWNe8Z0hw88sb9UiLFNajOMQ0RMEBScSpVBd4ryERBR9rq4m7hnFC0o4km2xIRSvYhN0/9BlXjOHXNKdINVQfFrl0rgUJhw=
+	t=1760460852; cv=none; b=t9FSSjTtZcp7iXXXX3CutkOWBkhsnkJ1sXVpu1/3BnPpn9jUB7u+Sk59rUUDE5Nte8m1sSB9cNPHgwDoLMl3kpnMH+QHoRGLdv3sPnV3llSQ5N4Og2ox3On+iZXr+FcStQsDy0eACLioUqREiDvB2hWJBjlcN6/6+8AVQjN4kh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760460777; c=relaxed/simple;
-	bh=GKy3CsgeVEziiA5cIc4W4QjNm8fGJ8NYQLZqkXShyDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELoLjuGGIAjTP4UcJgQo6a61RiCwKFBXUOsXFMWjk/ngvaCoXXlabeZEtZcXvTyXiFDosDm991pQ1Uwk1kQMEnkXVetDt2T4PmliGQl06jkxjTvNry8MzE44SpYtLfZKrK+Lw3qFjr/vN+wj0r1V2lNhFxh+4uFMvv1ZaUneeks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=yjIwtdsw; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from sunspire (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
+	s=arc-20240116; t=1760460852; c=relaxed/simple;
+	bh=MNtlUW+Go4VHKes9wK5C1QaotOof6YwbDxBautYjEuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Vise3GsoAF/5Y0Os7zB+FqhgZ+dYjulzsBNTrQfEiue2cgos6lYHeDAtVGrAqKuBVjN3ka1wNLvhmxO4A2F9t2ez0jYWWRpkr8IVLaIpQKD0bNnVd7WNKjk9YfVSBWdqlls6S+8DJfR2gNc2CbbBtu+wxiiSH8lq+wENNDxLAiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id A9007173BE2;
-	Tue, 14 Oct 2025 19:52:52 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1760460773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GKy3CsgeVEziiA5cIc4W4QjNm8fGJ8NYQLZqkXShyDw=;
-	b=yjIwtdswtZckUEClrroV9KVdsBJVYVuDBNpJKQM150BCjDDj0HGiXzbqbd2MKnBgBsWUBJ
-	2etxvuds5SYbXCoBLEjVsp9FmWrVCSBxK0XooZR/hklBYfcV1tDoR8QeGEChSBYyRFGP1D
-	pyvSJurL5yur27AzzIF84bC9lad9hkx5n8yLrpH1pZbARaveNh9G+GhJzvZdEKYhsL/ld6
-	zJNoFyE2N9sjNWInLspfMU8Hv195TPFLV1lFfAGmo5w/VHpUeLc0kbp4cuKJkaSoHXyG/S
-	Vsdtn+OYoBvR++Yldq3GWYsg9pfTIRPvK8PKtzz+7BHbRhz930wtTI8jhgwWIg==
-Date: Tue, 14 Oct 2025 19:52:49 +0300
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno S?? <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/19] iio: accel: bma220: split original driver
-Message-ID: <aO5_4Z7l_25Xhwrg@sunspire>
-References: <20251005-b4-bma220_improvements-v4-0-0f449ba31585@subdimension.ro>
- <20251005-b4-bma220_improvements-v4-7-0f449ba31585@subdimension.ro>
- <20251012155201.137d330b@jic23-huawei>
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by mail.lichtvoll.de (Postfix) with ESMTPSA id C3E0B156B3B;
+	Tue, 14 Oct 2025 16:54:07 +0000 (UTC)
+Authentication-Results: mail.lichtvoll.de;
+	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Theodore Ts'o <tytso@mit.edu>, John Stultz <jstultz@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Matthew Wilcox <willy@infradead.org>,
+ Arnd Bergmann <arnd@kernel.org>, Tyler Hicks <code@tyhicks.com>,
+ Damien Le Moal <damien.lemoal@opensource.wdc.com>, ecryptfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: ecryptfs is unmaintained and untested
+Date: Tue, 14 Oct 2025 18:54:07 +0200
+Message-ID: <4682858.LvFx2qVVIh@laptop>
+In-Reply-To:
+ <CANDhNCp=06eNkOqNX2dFrnYhpZX0xsEd06U1xCwORk1mwt=MCw@mail.gmail.com>
+References:
+ <20241028141955.639633-1-arnd@kernel.org> <20251014143916.GA569133@mit.edu>
+ <CANDhNCp=06eNkOqNX2dFrnYhpZX0xsEd06U1xCwORk1mwt=MCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cSLGsdkGlZvXJscF"
-Content-Disposition: inline
-In-Reply-To: <20251012155201.137d330b@jic23-huawei>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+
+John Stultz - 14.10.25, 18:38:52 CEST:
+> Mostly I avoid dm-crypt for personal files as I want the majority of
+> things (family pictures, etc) to be as simply recoverable as possible.
+> It's only for a small amount of things like email archives and
+> tax/financial documents that I'd like to have it be non-trivial to
+> access if my backup drive or desktop was stolen.
+
+See my hints about CryFS or gocryptfs in my other mail as used by Plasma 
+Vault. I believe it might suit your use case quite well.
+
+-- 
+Martin
 
 
---cSLGsdkGlZvXJscF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-Hi Jonathan,
-
-On Sun, Oct 12, 2025 at 03:52:01PM +0100, Jonathan Cameron wrote:
-> On Sun, 05 Oct 2025 16:12:16 +0300
-> Petre Rodan <petre.rodan@subdimension.ro> wrote:
->=20
-> > In preparation for the i2c module, move the original code into multiple
-> > source files without any other functional change.
-> >=20
-> > Create the additional bma220_core module which currently is not
-> > providing an abstracted bus type (this will change with the regmap
-> > patch).
-> > Fix a few includes in the context of this patch.
-> >=20
-> > Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
->=20
-> It required a bit of hand tweaking after the include tweak I made in the =
-previous patch.
-> Also due to comments in here I tweaked a bit more:
->=20
-> Please check the result on the iio.git / testing branch.
-
-I included two trivial patches in the new series 'bma220 events' that do a
-pre-cleanup of this driver.
-
-Thank you everyone for the feedback.
-
-best regards,
-peter
-
---cSLGsdkGlZvXJscF
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEGiKYHD4NvFCkTqJ3dCsnp2M6SWMFAmjuf98ACgkQdCsnp2M6
-SWPkkQ//SGUwmkD/fdR1PcYoNe3Hvh6N/wbE126MNIw1N9syvZJhu4S/uRfwnIIQ
-f5tcX8/4QhE7972CdeSC5fLuWE0O7IzeiV4HrfwUapgE5+lhCPAZV773LOqBj8QH
-ObtXMVgQ/uwWL92XR5XwZez8nPp/sy+CN7YGM93UyXIiLrjuLcgmkNn26Mwfvghx
-ZijjdfbSBU3JPx89rpOiY2RCLhM+UKoAcopPKVvo5wszrzgO3g8ajyACnSlGN0Ez
-Uhm4ObSwDoYr/UWdqgHDq4yJlBxT8SDlMeg7tOZb3lNpMNbBGhmgWcruJ2x7ereh
-ww/QMwDxb3wqrljiWthZx2+v0mvP9v18EnKyufz8CkiWgBsRhmAsJ8gLcmelXja3
-EvSHEVzToCrmbmg5MMIcou9AfzPqV5HIedh+OzYIneXX35h7hnZ9aEefRYyhRgK4
-ZWfHsil/d0W8Rmv6uWdT6zzbi9kF3TUUm32/6d6oJZOXEJ25Rs/t1Gar3/+UDlcP
-UpTEwGBj4plklAgl4iNKZErsq0fI4NFLchA13ckzTX9CUwhq9ngP6XukZIpBDjF5
-fSA2HYYVOzXtTdC+0GY9ANc1oNBWJ/8mmL+FEZ3mhSSOU7zYqEqEGnwCQ4ZYDZ3g
-sN6exKzpODmo+OTm9zeJ5+/tHEPu+f6vU3ETrbRzeBhxU5ITj9I=
-=vuEw
------END PGP SIGNATURE-----
-
---cSLGsdkGlZvXJscF--
 
