@@ -1,224 +1,152 @@
-Return-Path: <linux-kernel+bounces-852345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3DABD8BBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0056BD8BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 892E14FCB0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:22:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 594C94FD6DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2262F6583;
-	Tue, 14 Oct 2025 10:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C572EC0AB;
+	Tue, 14 Oct 2025 10:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VOcEkjAA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDz9KSu+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7899A2F5A09
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214662E8B7F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760437317; cv=none; b=r5Uq8gkHSK5dbXF5XoOEtge30edXvVvorkdBp5XHp0AI20R+7hVRitYJ3aeoXRt8EyzYjCSWfUI6P22U5m7P5moWD/VbPSIZI3bGdfHbcLGJSLl7Gzx0uYYoHOZpnRV6GnEluK39ZYEd5rz56277JcdfoBqEYWhw9koit38L00I=
+	t=1760437333; cv=none; b=kld9cmLGFwD5tiTDIZh6/XdOr31NfwepKBRcbujnu1Ur8FBzOW1T4a2NMhU7CBbRWiKkWSv5HRvMf4vvVE5ZZxejGIg9Pgyk33MLw/kR+V34AGyluOvH/S5cKRd3zPlgqt3V9Ry7Ag35A7XiowmW8PX2u0o5HIbRKA77vOrZNqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760437317; c=relaxed/simple;
-	bh=qzqeINd3TniuNVzah8+y5Pm00xrXr+NqqZ4nuDa0i34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Epr5pJdK1lXIGsPYvu/gIdTe6XENhvQKZiXgdTdsD9WFzImS1FaltKObp+8lrYq5nv8z0lGH4qLo6sxQ189k5KOAvzbqXZJPrJ/zvjJuUxpTpBbxKS0rBGdrnh2P+cbrvtjarJOPaOrkRtzpnm6iJl/srSiHcb9TZfslolEquBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VOcEkjAA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87Nl4031481
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:21:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=iNSQ6LRQ1Cbo1PkY0QhX/x6y
-	YGsX22LMPrXlD4eZXtY=; b=VOcEkjAAYW3HxoXQJrAPoPRS1H0DpnKc1Ejl+suy
-	45hI7iAXC+r1GPylGOksA/FHWeCB0X6xmINdZ2VDenqZooLgzv52c7zTi5xbWKoG
-	cvbTgYI1NbSH4c5HkutAUJObwdEh+t5n/de+j+Xv8YaRjw0MvjDGOBjuHgw92uc9
-	e6iDemj0fcTYqQw0lvNJfzoMYZDQELlqJ9Vqj+v95QJhasgsjK9luQjqsNhBBcB1
-	9RxYv8WuhGvQ8HF4SllFM9pof2CaviPX+GHRZkPdhG5xtmFkK9hHPBf1sZwVQ2B9
-	UrjDBDwLuHIFM9g8wVHZFCtFGCkSxg6ruESGA7LHVb0jTA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qff0r2fb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:21:55 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-827061b4ca9so2399500985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:21:55 -0700 (PDT)
+	s=arc-20240116; t=1760437333; c=relaxed/simple;
+	bh=8L1RGzt7soJt9IKppmbflYl6y+ueOV8Q0zaTAUUOegE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m3Ax6RDIslZ1TLAMWKsq9KLCwg6rw2PGNqV+Z7E+voPHFDzRTOhJ14MzXJw077wV9+5Va0Fm1y2a9YqjsUZOQed83OhgNjMhcQK5DWvITYIryHSoWWMQBgo+gfu2q65UQhwwVyGa4tAY69syTHjlfQE5f0yYOPw/6ZVZ0soiBYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDz9KSu+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760437331;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8L1RGzt7soJt9IKppmbflYl6y+ueOV8Q0zaTAUUOegE=;
+	b=bDz9KSu+3wrJj7urkwROd88Off118U2OGrVhwUMDjU8RN1P7zp7PpqK8zGJUHy6YdToHza
+	tQjQEOEtz4tTTtYyQb0PizzdzlP3QeTjS+sBwGv64UktrbYhQ+etMOyBWh4QBzCSKUnNHj
+	vqeXoAv9ddFzYrf80vWmg7nSi7y+te4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-yCAHfg4OPUSPqh5502eUOA-1; Tue, 14 Oct 2025 06:22:09 -0400
+X-MC-Unique: yCAHfg4OPUSPqh5502eUOA-1
+X-Mimecast-MFC-AGG-ID: yCAHfg4OPUSPqh5502eUOA_1760437329
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ecdc9dbc5fso3886026f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:22:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760437314; x=1761042114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iNSQ6LRQ1Cbo1PkY0QhX/x6yYGsX22LMPrXlD4eZXtY=;
-        b=SnO2YGEo+cz7RRT5OrKkTTg70hI93Xdp/m1UYOuYrJX/yd91+Sx1ohSjGYWo5haNuL
-         eGsiIj+HqPBLIwaZxGASirL8Do+KvMlBquQW4t/n0kFdAWT1qHNPcssMpMaBk+ucSjGO
-         TmHHmZvgBJKqLqXoKRsY22GRsonz+CzWQ3ic3yrtnIE0GX6v/7SSb5msIClcx4KheUAX
-         DBN/Mk+y2ZEXw6DuWEh7jGqwNmB1UFou5mrqo0SBOWsKPE+Ire3OMqQ3dZ/V+nwxBiAg
-         Am3BA7rb0kxZxC/I1aWcQjzVaHw+pMO82csXBjUWyunc0+GvlMevcyRKsYf/YkQnXbGd
-         iDew==
-X-Forwarded-Encrypted: i=1; AJvYcCV5u7KsJmR689kc7QCw8CKu+5BLoep2Ks8NUhPeXVoMTmHdwyMB2rfcJ0lZhJ7vrT3DrJxF81V0EKHzKDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfSVpz9DyGx3R5+FG0fiHfmGEFoubO+RzZZxKDhpVleq5whhrP
-	YdVyRUIBm/ar9NkSOhVH3WXztimorIEtaanLgAYyK2a97n41l2BTwb/eYEa7rPUH1tCikhPD6JN
-	nbY64mEQ8s0TauNIVshgQK5oH9kZ/aObMYStLiGGSPyFpvDD5rCfL0ehhtTeTDm12tBY=
-X-Gm-Gg: ASbGncs+D8Gb5z43342a9FgUw7x1Fi1NfVYylouM4WfO6IT9+n3XUVKq/VWoG0DdNXR
-	H8YPVWLvuj2422jVZYVvYbVe0PMjskUExFpjlXz1JJz9YcudFMmbdog9BlFICUA7gAjDJBJcGRB
-	eZcYJ8YhzGozVk+ANHzmQmolp+ao2GFRV+j1SQCV0tKuMNRfBduk1R1s2IgoBnHE9u3THp6pa+A
-	dIUSl0zIsWunWFJi8SX0MpktxbWc+NtQv3FB9Yag1VWSUljYN0iyBGsj9ba/oWF5QO1avxZu1+X
-	A0tOmfhe4g4mZP9BoVtJUZw0js86Olo729n3DctX9rLIz/Awm3RMtPwr02W6Lkuv55E0shb2Ees
-	d1ll0BkSbX74rEaQruq0MkgfmTpJ3k2jZM6WEA30OWp6GkqwBbeiq
-X-Received: by 2002:a05:620a:2981:b0:84a:f7cc:1eaf with SMTP id af79cd13be357-88350f575a5mr3980331185a.35.1760437314182;
-        Tue, 14 Oct 2025 03:21:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDMRw6EyVXSGprMYoPwa1DMLzUKICAtaPYbkxU2KjxKpjARAfamItqNhipppks0GQVOsrWYg==
-X-Received: by 2002:a05:620a:2981:b0:84a:f7cc:1eaf with SMTP id af79cd13be357-88350f575a5mr3980327285a.35.1760437313692;
-        Tue, 14 Oct 2025 03:21:53 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5908856e301sm5095511e87.93.2025.10.14.03.21.52
+        d=1e100.net; s=20230601; t=1760437328; x=1761042128;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8L1RGzt7soJt9IKppmbflYl6y+ueOV8Q0zaTAUUOegE=;
+        b=VXYEMZPXnvdgSLav9lAsYLAOIELMLmC8/wFojIfWKQDBL2VLM56AeGWPvQSqtwoo4P
+         CQDoP/O69+195TRzCE2UYfzKAfoFRYkk3J5/xM+4sz6VOnVP+DVCjFvmdrPyeL2mbuV5
+         w1H/kA1v/iw81RuQImCxD7kxn7uHeL2PjSVNdT/7klnST3USU2ed2TxV6BxKz+Dpgnuy
+         dSRw/q3/PpJ/qJK+xNapGTLA9poKM7t3n1SHQmIV3hw19XaP77jqW7okglpDhm0Zl80E
+         e8DhKyXO2s9XK8Jh5TsXKx7yrq2V1xeL3RWAaJ/FInu7x+/kdj1P8CYe09QsJmedJUtl
+         eu5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjlVT3XRpBqkSnTruCgkaLfd9Pb6VlARlKybBR5CzVGMiOtuq1LrjscTjqvCVU3bv9kdPkyT6JB/Qzf3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/oQzf2IePOJ1O26etnN1gkS0fmof1YilhACfb4ZQc7RzqvgWu
+	3tbrdI+2GoKw0+rjWKRtCNR9PDpnjWsssYZkhJS9BDciZQjgINoccx4lhMANXbMa1PghprrqLZ4
+	4i/RPHLbEsAWsBxTyCvJS6Q2UglFmREdC4bAlbujIl7k2sULqgfh1Z6a+MRsZ8McdckwLF+ELGt
+	+Y
+X-Gm-Gg: ASbGnctcUnPor2/ls1Ox/ArBOeD+iLy3MhH0TqaZspbS5v9wNODS7lR9WsdPljYxvlo
+	WlAqRye6/V6C8T78+IgaWjp7I9XhayX0rdZLbyqfR0qJH4OM2yHxnN5XIM7Zeka4CwvJuPX8rEZ
+	BcV/Y2l7HZYznLuipNcXCdYa2uMicfiZh74M2iyLWI3SCwNFFmewF1kb3omYa9yI2kQtkUljIL+
+	hQvMzqEzT5hDv58XGk3ZhKdDzR7LP6Pq4C7d0EG5vMrID2/yhMOQsmUomPjtISCONdb3GX6Xdb/
+	5Wyk7ZIlV6KCK5hp/mGRVImMOIMqtHuUIX+pj/E+I750MHKtacJoM4nZ2YNLVUsuQQ==
+X-Received: by 2002:a05:6000:2c0c:b0:3f0:2ab8:710f with SMTP id ffacd0b85a97d-42666ac39afmr12909542f8f.8.1760437328623;
+        Tue, 14 Oct 2025 03:22:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHI8UJI60MTklfSrxiStm/XC5egkna5mdYCP8ifnCsQpxVWUiBUgX/rrIY4dwlcC95NJb48vQ==
+X-Received: by 2002:a05:6000:2c0c:b0:3f0:2ab8:710f with SMTP id ffacd0b85a97d-42666ac39afmr12909529f8f.8.1760437328184;
+        Tue, 14 Oct 2025 03:22:08 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e1284sm22705271f8f.45.2025.10.14.03.22.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 03:21:52 -0700 (PDT)
-Date: Tue, 14 Oct 2025 13:21:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: xiangxu.yin@oss.qualcomm.com
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: Enable DisplayPort on QCS615
- Ride platform
-Message-ID: <kxwavurs7ebp5f22gxutvw4thwm24twqpahszhyxsodsikunja@7hl3y65ppqmo>
-References: <20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com>
- <20251014-add-displayport-support-to-qcs615-devicetree-v2-3-1209df74d410@oss.qualcomm.com>
+        Tue, 14 Oct 2025 03:22:07 -0700 (PDT)
+Message-ID: <4d0467cf03f4b818a40344b6ec8142582c26a876.camel@redhat.com>
+Subject: Re: [PATCH 3/3] rv: Add explicit lockdep context for reactors
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
+ Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 14 Oct 2025 12:22:06 +0200
+In-Reply-To: <20251014094206-80eb5d6c-e4dd-4704-a40a-e2d0461c2185@linutronix.de>
+References: <20251014-rv-lockdep-v1-0-0b9e51919ea8@linutronix.de>
+	 <20251014-rv-lockdep-v1-3-0b9e51919ea8@linutronix.de>
+	 <87qzv6szku.fsf@yellow.woof>
+	 <20251014094206-80eb5d6c-e4dd-4704-a40a-e2d0461c2185@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014-add-displayport-support-to-qcs615-devicetree-v2-3-1209df74d410@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX1KCFUx77zA7I
- SH/DDO0tmQkfU9F/sLQHfZhETA9yLuHmP4RyM2dE0JadgTqnULeIbOk1CpHWq31BXifJ7TW/EWL
- jt++mjk442AtHdUlxBQMmFUNEOJ1TI8mbO65RKW0aB/SUXNtsCVcrj6XJ2bgiAfT3D4V0lMCtSr
- IklKf6NvrA4WZ7bvqi34k0ZvgmDhlssrvf5HopwHve7PWg+oufhnyBlEK7zFEcD3oJ4mRfSFxEW
- gaHgDH2JNQel6NyaHRbtlNWF+Ee07MjncEl7hxC6AtyZXTSkctTwFnfaz0nDMAN6kaW6OA6A/qy
- UcUoOvDLVlX6NEOjy3G/k2ouYwKTBYnUH9ud1wte6TnSoEVdHeBl2pGBRv2VVCEQ5hIE+A0JdlL
- QMONli5EGPei6BXyB7vM+I5hCvx11g==
-X-Proofpoint-GUID: pbqDIAnnByiHbiJm2mxGOC7K3uhPZUcT
-X-Authority-Analysis: v=2.4 cv=PriergM3 c=1 sm=1 tr=0 ts=68ee2443 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=552JS0bYzuNWtSTagGgA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: pbqDIAnnByiHbiJm2mxGOC7K3uhPZUcT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 impostorscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
 
-On Tue, Oct 14, 2025 at 05:42:12PM +0800, Xiangxu Yin via B4 Relay wrote:
-> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> 
-> Add DP connector node and configure MDSS DisplayPort controller for
-> QCS615 Ride platform. Include lane mapping and PHY supply settings
-> to support DP output.
-> 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> index 9ac1dd3483b56f9d1652f8a38f62d759efa92b6a..0b8bcabdd90a0820b1f9c85e43b78e40eb8a9a38 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> @@ -39,6 +39,20 @@ xo_board_clk: xo-board-clk {
->  		};
->  	};
->  
-> +	dp0-connector {
-> +		compatible = "dp-connector";
-> +		label = "DP0";
-> +		type = "mini";
-> +
-> +		hpd-gpios = <&io_expander 8 GPIO_ACTIVE_HIGH>;
+On Tue, 2025-10-14 at 11:46 +0200, Thomas Wei=C3=9Fschuh wrote:
+> On Tue, Oct 14, 2025 at 09:38:09AM +0200, Nam Cao wrote:
+> > The reactors are invoked in tracepoints' handlers, thus they must not
+> > trigger another tracepoint, otherwise we may be stuck in an infinite lo=
+op.
+> > (this is why preempt_enable_notrace() exists alongside preempt_enable()=
+).
+>=20
+> Sounds reasonable. However today not even the printk reactor satisfies th=
+is
+> rule as it transitively calls trace_console().
 
-Not the gpio102/ 103 / 104? Interesting.
+That's a valid concern, I assume it would become a problem also if we wante=
+d to
+use locks inside event handlers, as it was discussed some time ago to bette=
+r
+handle concurrency.
 
-> +
-> +		port {
-> +			dp0_connector_in: endpoint {
-> +				remote-endpoint = <&mdss_dp0_out>;
-> +			};
-> +		};
-> +	};
-> +
->  	dp-dsi0-connector {
->  		compatible = "dp-connector";
->  		label = "DSI0";
-> @@ -423,6 +437,16 @@ &mdss {
->  	status = "okay";
->  };
->  
-> +&mdss_dp0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dp0_out {
-> +	data-lanes = <3 2 0 1>;
+> > I'm not familiar with the internal lockdep. But I think these would
+> > trigger trace_lock_acquire() and trace_lock_release().
+>=20
+> Indeed. Right now no monitor attaches to those tracepoints. We could
+> prevent monitors from attaching to certain "well-known" tracepoints.
+> But then we still need to manually track which those are, which is ugly.
+> Or we move the invocation of the reactor to a workqueue/task_work.
 
-It's not a board peculiarity. All QCS615 / SM6150 devices are affected
-by this twist. Please move this to the SoC DT file.
+I'm afraid also workqueues might open a rabbit-hole (waking up a task fight=
+s
+with locks in many scheduling tracepoints).
+At a quick glance task_works also do some IPI/wakeups that are traced.
+If I get it correctly we are looking for something absolutely lock-free/tra=
+ce-
+free, I can't really think of much at the moment, maybe abusing RCU callbac=
+ks
+but those would have their set of problems too.
 
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000>;
-> +	remote-endpoint = <&dp0_connector_in>;
-> +};
-> +
->  &mdss_dsi0 {
->  	vdda-supply = <&vreg_l11a>;
->  	status = "okay";
-> @@ -623,6 +647,13 @@ &usb_qmpphy {
->  	status = "okay";
->  };
->  
-> +&usb_qmpphy_2 {
-> +	vdda-phy-supply = <&vreg_l5a>;
-> +	vdda-pll-supply = <&vreg_l12a>;
-> +
-> +	status = "okay";
-> +};
-> +
->  &usb_1 {
->  	status = "okay";
->  };
-> 
-> -- 
-> 2.34.1
-> 
-> 
+As much as it might be interesting to write monitors on lockdep tracepoints=
+,
+this seems challenging.
 
--- 
-With best wishes
-Dmitry
+We could opt for a foolproof Kconfig solution and prevent reactors if lockd=
+ep is
+active (leaving only the error tracepoints that are hopefully still safe).
+
+Gabriele
+
 
