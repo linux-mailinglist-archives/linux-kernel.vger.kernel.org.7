@@ -1,265 +1,242 @@
-Return-Path: <linux-kernel+bounces-852336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E23DBD8B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:16:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9596ABD8B64
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE6CB4FCB15
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:15:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AA794EF7DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A792D2485;
-	Tue, 14 Oct 2025 10:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4182F28F0;
+	Tue, 14 Oct 2025 10:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DlIaN3lm"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010029.outbound.protection.outlook.com [52.101.61.29])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GgYufA6Z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E920D2F56;
-	Tue, 14 Oct 2025 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436937; cv=fail; b=RIe1NDb3vrZzMuS2zrucGfnJmlXVxepgD0k5M1BjpdB0eS/FzadAWg42fMdrkFAsmeQROH4mHYK3B6weKkIKyYnKdsnWEo/rZLQ+wcRQOSnsClO/f/WIRW7xj7OcpH6xraAFAMUojgTnv62E99iElWx5FRbVp1mzo6tsvGtRbl4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436937; c=relaxed/simple;
-	bh=V9FMSf5sdSxrQJYNLc4FKBwaETbs8xZWEn1VqS+Cs00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=r+U0Nngd45QJLw5Q0ZeqmWGTfcWFeXscj+9Mm60hs2ENkGDHnn2gSlINvrdjryN3fuhoXxYZ52j7RuJweago3tCmH+LXsxhl2LMatbFm1tWt5Dz0K8OrvBRCL+3ZswugWka+WFEzOz8Pdad/5wIHr/D4DvCKDL/c4sMKKdCW+Ws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DlIaN3lm; arc=fail smtp.client-ip=52.101.61.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kInsgDlaFDiZVYoSGR+4ba1oBUoyKQt7ETRsjEZtW874tlgJs1+tVyiF7MiXqouHqeu6dLZQlQQrsWI62chW8jJctFlZvDggvUFsS0Np39vdHCEXE9Gm9zYAnqr7vMQIei/MHobgr0NRFjZ1KTP5W9QvTCA05IxbhSy3kgkGXQrKgzI5KkIoGa+qqfESifqULNKeQHYhakjHWC8Vg6O2KP0ttarZbOzO8J19W3c4UxJh6TC1j3IoRu0colG0C2OKxe8pbMASFQ1GH5z8MFbpXR3mJLztRdbR6RMs7s43zIBVKC50E1p2xwXB5bLfCbL7g01aQ5UDCNB9MZyWYM6wdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BaZM3ZCv2k3rT2U28N3om/a3XnvZlvfWLffh5EMsh4g=;
- b=M5ej2qe4VIQIBnWL4V0bNrsjK7awFj1A5iCDvT2T2F5mthghlHo6Uxayt4RbtLgvECQ0hA6kCyav7aT+Xtfz9LEo2MQgCWzw8u8SCu5KgdpaTn80GM6g/JsTZ2ayrikVL26kIf7RjXTZ2p4CJ/Zj06Q4HN8IeapbcPdDDrL9qNDLhbVJYqNg7CKlFU3503t1iMtrrr6ziLWjGb0HR4Rm/l26nY97IsNFdHo5fzCd10ghN2sl8aZ2ayAPITyeGS04zvBsld1USvkPpxibIp8KaLY1i1SxD/a9xxawUt+vHy13mlMmstoekSjo5xR7OaMSE0UWBDKuKIrz00tTHMBeGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BaZM3ZCv2k3rT2U28N3om/a3XnvZlvfWLffh5EMsh4g=;
- b=DlIaN3lmwtkFvJBvi1gDHmua8Jlt1Yr4mhagYrw3Cmkok/fYJSP6YZZjl+c5svC70jdyN1WOjvaBWw1VchoBWDMicplQRjl+ywbZ5TMSo7JM5emSWbB9o5IH88F8rnonnF/zOLj2visCHn4Gn25cWV4PBESU0MYX/r9nYVYL4n0nLvKqfbPLaARqz8VxaFQ5LsPfxovcCRnojfrl8pb7rcm1ZjspqJCA09M/9KUJcyFSqo/U32OeNLds6aOzMEl8UYNPl7sFtjikWQJGIKMsdaR7Iva4+ksYRP9xE9vcWL5prHSKWWGIP9U6UyDvrNRIEwUnhCq6OkU42hIBTczIog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8317.namprd12.prod.outlook.com (2603:10b6:8:f4::10) by
- MW4PR12MB6753.namprd12.prod.outlook.com (2603:10b6:303:1ec::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 10:15:32 +0000
-Received: from DS0PR12MB8317.namprd12.prod.outlook.com
- ([fe80::8ca4:5dd7:f617:f15c]) by DS0PR12MB8317.namprd12.prod.outlook.com
- ([fe80::8ca4:5dd7:f617:f15c%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 10:15:32 +0000
-Date: Tue, 14 Oct 2025 12:15:25 +0200
-From: Thierry Reding <treding@nvidia.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, 
-	kyarlagadda@nvidia.com, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] spi: tegra210-quad: Fix timeout handling
-Message-ID: <dhbvszhpgmgxqdatbbou3z2mj5bu7vnbr7ko4ufunlycpudsml@6xnz57kowygw>
-X-NVConfidentiality: public
-References: <20251010152001.2399799-1-va@nvidia.com>
- <20251010152001.2399799-2-va@nvidia.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b22zu7prl4mp6eej"
-Content-Disposition: inline
-In-Reply-To: <20251010152001.2399799-2-va@nvidia.com>
-X-ClientProxiedBy: FR4P281CA0147.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b8::7) To DS0PR12MB8317.namprd12.prod.outlook.com
- (2603:10b6:8:f4::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A8E2ECD03
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760437092; cv=none; b=V4R867Ma3L+KS+vVSXIpoVFsbdn5KeJ1/mSK0CfV3sGmTVvkfsFiIAJQZYrB1PlNFIm+9I/jesucHW9QL9NCg7AWE0NyS7eF2POMGbnfiwv7vzR5bHmJEJeU5OogYTHYrmWIxSY0n3dJxYPnntC72j1rNtRqT4goJiuzKTpxU6c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760437092; c=relaxed/simple;
+	bh=w7gnzCZQ6nRhynPolPCfbnwk0UwzKPoJZt3kck8zss4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtkWWgZnpcvbNV+sNlDSpwMOiRNfW2hcm2FYJ8XataiHNUmEAwE7vxQhCLsd5VNJ1+zkdW7ZjV2PSJ+y9ch/IfO6jdPLNTZmYxoiZQ6N3wHw8Go2c3UEk5YDgNnpXOYL8i62TwZ6MTDJcGguh4JgI8JQNXjcC7iWACkid0s9gO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GgYufA6Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87Os9021230
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:18:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=pwptx/VesgCBtJDbpJ0h31jG
+	Os/N1oEOleOLOClW4QM=; b=GgYufA6ZQVAqzPGbedZW2BexYSPUaA55oJrvgezu
+	A9V1NsT3tYXIon1derOce/NFCbGJTyXqdI57sTwCmYv2OtA8JS4JxzCKlkcm+8NJ
+	IKDWONthUSPJIw0LBqR3s44PkHHF4loLfAOfFwJY9X9usWUii65PGa6AYrpPNtFi
+	D2tdFwb1QHLECrwPzWxc0fiYLgorn/YOo8GJxPNPCrIVoysmRpFQ4lnyzu35aLtT
+	RoiktZN2jiZorPe7y1eF2fvVcDvVkaPd2WBu6n16G2+0mu0HVygWJprXRsAVh07V
+	Elu7sTtrHvrrxug7sGu0WEYeJ7Vz1By+4Mt0VxLnII811g==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwjc0n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:18:08 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-88d842aa73aso26194685a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:18:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760437087; x=1761041887;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pwptx/VesgCBtJDbpJ0h31jGOs/N1oEOleOLOClW4QM=;
+        b=mpHoH0PhgAq4yVYPOTPGTarwMrwY1DVPi8Xv6Jc8GoZtgxvh8sd1YV3WFe3cB1afc2
+         se69cwBV+6civZNVDhCKRMGoRDBn4dks3S2Qd5VVvpz51PrPuR3zRceYQdFEWnk6CR13
+         oha13NAaDNvJRcNprLKvI0zCudItGeIBtAV2m48louVm60t3XknJrKOVND76nHSwnxRE
+         XS/Su/ka4Icf53emg462X4OlYeG1kuuyPncZFOZqmp1/P3/8DffVcPGg1Z8yTGH95g/+
+         w2jvFYir8PEfAdxJtKXwKE0iuViqmYX9H7DN6Lytd2LkgOYGjBI52V4AeIUg0CGHV5Wy
+         T4lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrbJlpZuJeidWmREgwoNQpeO9BtirBhvtp9xMHKzxcL0xT6ZEb9HULb7VrWd0m5Y8HFNr8yDSAkr60rzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzejzEGa+RKCDC2P12UlrEt/ttrOi/MaBVHQKXMNzUHZBuROfKR
+	Qd/vjNe9ZUMEVyrgiwPDvgFHbNjypontC21AVxO8X/K/hGT2NGKGQlOKmriwUxrWNQndZzmVFMN
+	/IafZKcn+7nkQoGO3ZxZx0fzpiVjvuO9NbjRvV3XLpEhaWTuUW+wFAlGC4oe8jvbQzo8=
+X-Gm-Gg: ASbGncuRUSEvdV7lICK1pSjT2inM6Q/Z1zEOO8Hmfm2vJiLpFulzrsTce2AGsqY0oJx
+	06IDa7IQvA0RkFcG6f22CBT32gmMf9JMZ2f2f9T5QJuAZGdk2d15jIti2iUZvIjH0sRVJTAvvFP
+	7Xsfe/rXtGaBRd1susy/+CSuENApNadvB9OenR3iPgTc9hS+ASEx6DukkFGIpeXXBoKbPvzlP/K
+	2FIsgxatR/DbYBULMI0bHSuSn1J0nxrh/IWLvLX1NXXIj6r09+PeuSYUxPwpogLtVAcJLFC0ift
+	zhdhMttDBo9FIK/b8h6YJIVrxiH18tVjD/2KFkf2FiX89QdNPcf0XWEMxyQ56oWq7p2g7n+cQV5
+	PijaOMm/HfhIoGeuneBplOfd0gOV72aLQ3iLzQdm9qVGl1YQ+JUGz
+X-Received: by 2002:a05:620a:25cf:b0:82e:ef43:38f0 with SMTP id af79cd13be357-8834d1ab25cmr3439239885a.0.1760437087177;
+        Tue, 14 Oct 2025 03:18:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJhGGgyvvXZT48tFGwd0V8RDCf9K7hHaMnSajQnKeeUDp+q+bm7eaDMfpNfVN/V/oft3MlEw==
+X-Received: by 2002:a05:620a:25cf:b0:82e:ef43:38f0 with SMTP id af79cd13be357-8834d1ab25cmr3439234785a.0.1760437086684;
+        Tue, 14 Oct 2025 03:18:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea109afsm40265551fa.33.2025.10.14.03.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:18:05 -0700 (PDT)
+Date: Tue, 14 Oct 2025 13:18:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: xiangxu.yin@oss.qualcomm.com
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: Add DisplayPort and QMP USB3DP
+ PHY for SM6150
+Message-ID: <mij6av23fni6i4yb72xbjv3s2mil4eankjwt5n7jbafslvilem@qsk3644ilgcp>
+References: <20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com>
+ <20251014-add-displayport-support-to-qcs615-devicetree-v2-2-1209df74d410@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8317:EE_|MW4PR12MB6753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8fcb6f05-ed2a-42a4-a8f6-08de0b0a9b48
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9IGOHK/BVPddTO9OGX/bKUtFGp5cksp0m9lZPC6CzHHL1+/GU7inwth9iHIi?=
- =?us-ascii?Q?n3eudwr6i3wqKf0kiX9FRNcXd/WXpKSE8EJ2VKWLvpb3TIlPQPcpLrKoSjZI?=
- =?us-ascii?Q?lHFoEvHJov0ger/9fEnVfVZXgqDCx+1l4t7nPC7k2MK7ht4Tl/IgsC5SfUsA?=
- =?us-ascii?Q?ndpkkKTK+NN+0KsLdMR46e9vWRRVAuZRevs7QUbmJA343aPe2VYo7kKWNdcn?=
- =?us-ascii?Q?VwCt4skGAwkNXjxic1A1O6oyy5R5wSGeAfkg+rJTQa88te1gsyMKzqpoVM1i?=
- =?us-ascii?Q?9tb6MmjX7vrRwxc6tSE2WfaRpMjUQv6yF1lS61SHxCOHCwqUNg5iUuHz+Q49?=
- =?us-ascii?Q?gdyYVU1ZS6kyq7QQnq8A57EleCz4c2JVL7F1G8PDjMUk5LKWpzBuzn5jNqZ3?=
- =?us-ascii?Q?j5bt3j/82txmyHAxh9Su6Cx058jFXxPBkjwEl2gV3JeXQPlp9AJhPCm9oRZk?=
- =?us-ascii?Q?Sjsh7WZAAmeD13kkPkBwfMPoNngTxMKdOpO7QmhYVuro15rOqFbI+Cdkpq1A?=
- =?us-ascii?Q?Wjq6Geb+Skln6ABUSLTyIRFSnVZHt+efo3DI5KnENOcBwWSuPAeSGHlwGXGG?=
- =?us-ascii?Q?tUyP+VyAdtOlRGgw1m+ALunuzZwKcp/urYR5aoST8nluHoi2wQqQtpAv2nr8?=
- =?us-ascii?Q?HS5bOajiQovvH3A4keJ7nLGpMdesDG1rZDF63mLk2C2XoBtXktWIjiyl/JlA?=
- =?us-ascii?Q?N9atQx8mrXTRX8wOAnloAXvprkZiCoyle7RZLijh6Xgr5EYP+H1RnmD74/41?=
- =?us-ascii?Q?2OKfEEeWwq4+1eTt5frBI3HBg2sKsyhRGYZV6sZhQyRUSxF1NPY0M0QkCQU8?=
- =?us-ascii?Q?pL+PiqdknWktdTqn2XTb2TdT6HxGi55Jx8NytDn1m7twaww8i8YGjfD/HEmk?=
- =?us-ascii?Q?PJ9/RupH0RLRXUlS5PadhyCDi7OXGDL/Xq4oJpHoYtImRwwHVPSFBJcknAAL?=
- =?us-ascii?Q?FrABQx6m9pBvw+kUo2yV/4l35o2y1LHQ8/eNWQEc0cZqPYIQKnty/8wDMt0C?=
- =?us-ascii?Q?1hQ4ByrE6dsR5VnYazDXr0Qbzn7z1gadL8UVkgg8saq2LhpwqX4QDB+js+qS?=
- =?us-ascii?Q?yKaMt9pb/jfL4qRGDF8paykjta12/yzi/yWYvWYZmxbmyv+Ahh2ligmfc6p1?=
- =?us-ascii?Q?ywpNuGr4i+VpiQEdRayXIwRzyFl6dZdxKaRLDwjdXizB/fmVL92ScfTNj0jD?=
- =?us-ascii?Q?96sTEE8AO7TZ2BFeerIu0LBZDt9UW4oOLsUIQJKX9fiZ4Z6/q/vLWVdbUSAR?=
- =?us-ascii?Q?KrctO/Kb70F9+uyg3nkng0hyYjtZUWpoFgjCfjPVosKgyC66t9qSHV0pUKPc?=
- =?us-ascii?Q?bj7fL7tAMZAoDHfgmAqTUnjEtcyl8tBXvtPo5dO7eekppmc0FLndO4QXhuxT?=
- =?us-ascii?Q?g3742YkVbK+KPl/Etftfs+csYQKDFP0fkz4suNdpRGTu32/KQHVy+netj8zy?=
- =?us-ascii?Q?jQYUJ369vr1yFaGWzag+Xn2A485hofEx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OqUDptGZNhrR362vDflcM/NJpbUx8ZMOzlFX1pUPVj1CxnpDaMB/M0/NBhBq?=
- =?us-ascii?Q?SRnsu29CKjmdpnx8rUYBryyCYLEeaZaEPjA41Q9aiFJgT6mws+YUOVXoUrvT?=
- =?us-ascii?Q?h8F7NcpqnGSq58z7cdmBgnbRs2i9pwHP1AsToma6JRORpAZxLVSbFKn+Exls?=
- =?us-ascii?Q?KhIW1dbyK6FVoZqgoYJy+ehA+CeigVGiDvitWoFm3mA2MHrgK505Rv+96ytY?=
- =?us-ascii?Q?0DhzYEWswUq2p4uLZH6Lvv499hYpisSrTCqaC9nVPc15lUasmIoK1nZMwiuE?=
- =?us-ascii?Q?VwQxdOfD6m9fcY2YCsoY7Ayx1CJOC6ziC1NoEI8TO/zmVFAvDf57meyvp04L?=
- =?us-ascii?Q?MpTxbGgFXUAQmGJoBlWrJciBbHWxmpwt0MVipW4Jmx1qYPhkHObCanFswhBn?=
- =?us-ascii?Q?d7stYH5b4M2b8VPxwz14D5gG2XBxY5HKFrK+W6R0ITVO1hbu8hIKFJB4frFP?=
- =?us-ascii?Q?ID7mNKROoeO7d85Fy/M6dlrmnAxPo9W+IM/Kp7PNd76IJUu4krC2hEhBa8D/?=
- =?us-ascii?Q?jsGnQFFne3JTDr20QZUf87ZksUF5A5QmG3MaYU1aVcEPaxwrohoQjvdq5cCO?=
- =?us-ascii?Q?rbyzUeKX8khtDLq/YPuW0CHAZCw474v5cSLBkBSngoA+YhorK2lgk/0uk//A?=
- =?us-ascii?Q?sBT4yN+1Tb40LbFY1b8CpE9Nl0/GxoDb8DeOL02w+4b0QXHUFJvWOVVZqrP2?=
- =?us-ascii?Q?+6DpiAV9ZVlzvw47EWZIikmGYh60j3Bd4Ef3G4a1v/OrWm4mh2l9Gpdn9Bt4?=
- =?us-ascii?Q?uoNkRNjPgfKrfSNOUadC1CIZjKGEfs9fTzvt4VROgSe0FcFtKHs6loSfNTUg?=
- =?us-ascii?Q?f7f6IxcOBQP7e2zqESsGhrzcFgS6VZGt2/W2Y9D0C8QKpxUwBm/FVAS2VLme?=
- =?us-ascii?Q?4DL+RSVXrVfXVJT3xvX434diiJLRpKD1NlEQ1ejmx6hvTiplJ3gnd78gVqj+?=
- =?us-ascii?Q?FlBp3STyLEq4bYg3q5wJ/rl6jVaepHtSrLrrqxYqE2goxLbGhk/WMx+WsB5Y?=
- =?us-ascii?Q?lK4dn3vPPV1O+YJYACG5/bInFs35XpK6LPjz5s/ma66HccN0eyOPIw9z1LHL?=
- =?us-ascii?Q?/0Z7FHORsh2j+yXQf9LzU0gaiK4dGmHL5563l30ieG7EMlGhSxCqBgEYskul?=
- =?us-ascii?Q?FK/kfChN2s6FFKtyWBgWzLFPQMLeHf/XMCm1TlZf7jQ8T0MrZXGebYZxkgUq?=
- =?us-ascii?Q?jhQJs37BfdvRkpJ6JmnCSrqrgZvP/iKwjWoA59Q6W356zsQT4AYtxd2T7iJp?=
- =?us-ascii?Q?Yz3xWzr1TCbOG6AiUf50UDllel4BEw5JeErBzwg/68ua15oWK4Io6QSmVpwr?=
- =?us-ascii?Q?llfpjzc3sxbaCb1eLdcSX9fqEj5lDvDOc34yNYHNRyObs951ZQ+ftb0A4u50?=
- =?us-ascii?Q?WyTESKG8wyf4E/quYQ/9a2e6NXyqBEra3PBIdo/UNJ8jx/QFs7538ukPjGmm?=
- =?us-ascii?Q?mubbpXNLytKYyPQMWt7dnpKYunr9hLrvaooO3s8hLcfJNmJNNcqTZwR9MALS?=
- =?us-ascii?Q?3dbKioQ4EOIl28koq6fONJJjinvorunC6jYY4fGtWGKRoWYdaDAigGsFQwNy?=
- =?us-ascii?Q?JsJPTNZA1yOdrE4wIVhheAg+hRyj5BFD8kBDnij+7Vhc6fAzEiSaAfbCOQKM?=
- =?us-ascii?Q?me/r9TT9yVhsNsVVHPJyfwfCnR4c7NR6fvfQ4gmf6e94?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcb6f05-ed2a-42a4-a8f6-08de0b0a9b48
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8317.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 10:15:31.9228
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PwBlqDJXlQsCeZzQqjfHib6JBoRymFICnhbtYrl6ems+LNj1UX1GqDr5ZGE2i1BRLsTJkPhzOTgFtledQKYddQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6753
-
---b22zu7prl4mp6eej
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/2] spi: tegra210-quad: Fix timeout handling
-MIME-Version: 1.0
+In-Reply-To: <20251014-add-displayport-support-to-qcs615-devicetree-v2-2-1209df74d410@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX1xFFWjOjAn+k
+ uwV+swOm1lDr/A7pTeo2hdKKz4KhHfeSGzQGcw0b7Q+dnuPyQ5wEc8lIV/6plD6CyA8WcFXz+oe
+ Xvuwxiac/j5t5x+eAhkcezu8U1ymyiLw5CQmzCjX7awCkGdtINDRLOeyBw77Nd4KhmqnifaHY3a
+ LoRL4ZZ/pfiQcC6Pf71GbScMgSjKvQjtOdV/VnH0XPIluAp20TmHfjdSTGkL7xjVp/ONi1aiWK+
+ 4awXovn7FQ3Cz2Cq96k3A8xlsOQ40hIy4OqKxGPhdZujuHzKbmu5HivUAZ6rKY2eZsncI9ZM0mC
+ Rayi4RQkQCDnpvv4lpectyjyA1fq0U2cfO9tNVzsJGG6O43PB6Oqy9QUVqlHQ8E+gP6fCYkDTD8
+ RAPRdekNRuAEugAXpo7XwRtZhI5Y8g==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68ee2360 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=j4UgqydKDgg0KIll92UA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: UIshg513w-veQlc5dgiulRc-zcCoP10C
+X-Proofpoint-ORIG-GUID: UIshg513w-veQlc5dgiulRc-zcCoP10C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
-On Fri, Oct 10, 2025 at 03:20:00PM +0000, Vishwaroop A wrote:
-> When the CPU that the QSPI interrupt handler runs on (typically CPU 0)
-> is excessively busy, it can lead to rare cases of the IRQ thread not
-> running before the transfer timeout is reached.
->=20
-> While handling the timeouts, any pending transfers are cleaned up and
-> the message that they correspond to is marked as failed, which leaves
-> the curr_xfer field pointing at stale memory.
->=20
-> To avoid this, clear curr_xfer to NULL upon timeout and check for this
-> condition when the IRQ thread is finally run.
->=20
-> While at it, also make sure to clear interrupts on failure so that new
-> interrupts can be run.
->=20
-> A better, more involved, fix would move the interrupt clearing into a
-> hard IRQ handler. Ideally we would also want to signal that the IRQ
-> thread no longer needs to be run after the timeout is hit to avoid the
-> extra check for a valid transfer.
->=20
-> Fixes: 921fc1838fb0 ("spi: tegra210-quad: Add support for Tegra210 QSPI c=
-ontroller")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
+On Tue, Oct 14, 2025 at 05:42:11PM +0800, Xiangxu Yin via B4 Relay wrote:
+> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> 
+> Introduce DisplayPort controller node and associated QMP USB3-DP PHY
+> for SM6150 SoC. Update clock and endpoint connections to enable DP
+> integration.
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
 > ---
->  drivers/spi/spi-tegra210-quad.c | 31 ++++++++++++++++++++++++-------
->  1 file changed, 24 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-q=
-uad.c
-> index 3be7499db21e..c2f880d08109 100644
-> --- a/drivers/spi/spi-tegra210-quad.c
-> +++ b/drivers/spi/spi-tegra210-quad.c
-> @@ -1024,8 +1024,10 @@ static void tegra_qspi_handle_error(struct tegra_q=
-spi *tqspi)
->  	dev_err(tqspi->dev, "error in transfer, fifo status 0x%08x\n", tqspi->s=
-tatus_reg);
->  	tegra_qspi_dump_regs(tqspi);
->  	tegra_qspi_flush_fifos(tqspi, true);
-> -	if (device_reset(tqspi->dev) < 0)
-> +	if (device_reset(tqspi->dev) < 0) {
->  		dev_warn_once(tqspi->dev, "device reset failed\n");
-> +		tegra_qspi_mask_clear_irq(tqspi);
-> +	}
->  }
-> =20
->  static void tegra_qspi_transfer_end(struct spi_device *spi)
-> @@ -1175,12 +1177,14 @@ static int tegra_qspi_combined_seq_xfer(struct te=
-gra_qspi *tqspi,
->  							  QSPI_DMA_CTL);
->  				}
-> =20
-> -				/* Reset controller if timeout happens */
-> -				if (device_reset(tqspi->dev) < 0)
-> -					dev_warn_once(tqspi->dev,
-> -						      "device reset failed\n");
-> -				ret =3D -EIO;
-> -				goto exit;
-> +			/* Reset controller if timeout happens */
-> +			if (device_reset(tqspi->dev) < 0) {
-> +				dev_warn_once(tqspi->dev,
-> +					      "device reset failed\n");
-> +				tegra_qspi_mask_clear_irq(tqspi);
-> +			}
-> +			ret =3D -EIO;
-> +			goto exit;
+>  arch/arm64/boot/dts/qcom/sm6150.dtsi | 110 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 108 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm6150.dtsi b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> index 6128d8c48f9c0807ac488ddac3b2377678e8f8c3..cdf53d74c778c652080b0288278353e20c317379 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+> @@ -17,6 +17,7 @@
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/power/qcom,rpmhpd.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> +#include <dt-bindings/phy/phy-qcom-qmp.h>
+>  
+>  / {
+>  	interrupt-parent = <&intc>;
+> @@ -3717,6 +3718,7 @@ port@0 {
+>  						reg = <0>;
+>  
+>  						dpu_intf0_out: endpoint {
+> +							remote-endpoint = <&mdss_dp0_in>;
+>  						};
+>  					};
+>  
+> @@ -3749,6 +3751,84 @@ opp-307200000 {
+>  				};
+>  			};
+>  
+> +			mdss_dp0: displayport-controller@ae90000 {
+> +				compatible = "qcom,sm6150-dp", "qcom,sm8150-dp", "qcom,sm8350-dp";
+> +
+> +				reg = <0x0 0x0ae90000 0x0 0x200>,
+> +				      <0x0 0x0ae90200 0x0 0x200>,
+> +				      <0x0 0x0ae90400 0x0 0x600>,
+> +				      <0x0 0x0ae90a00 0x0 0x600>,
+> +				      <0x0 0x0ae91000 0x0 0x600>;
+> +
+> +				interrupt-parent = <&mdss>;
+> +				interrupts = <12>;
+> +
+> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
+> +				clock-names = "core_iface",
+> +					      "core_aux",
+> +					      "ctrl_link",
+> +					      "ctrl_link_iface",
+> +					      "stream_pixel",
+> +					      "stream_1_pixel";
+> +
+> +				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
+> +						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
+> +				assigned-clock-parents = <&usb_qmpphy_2 QMP_USB43DP_DP_LINK_CLK>,
+> +							 <&usb_qmpphy_2 QMP_USB43DP_DP_VCO_DIV_CLK>;
 
-Vishwaroop,
+Missing PIXEL1_CLK_SRC assignment
 
-It looks like somehow this hunk got messed up when you applied the patch
-to your tree. The entire block above needs to remain indented like it
-was. The only addition was the curly brackets and the call to
-tegra_qspi_mask_clear_irq().
+> +
+> +				phys = <&usb_qmpphy_2 QMP_USB43DP_DP_PHY>;
+> +				phy-names = "dp";
+> +
+> +				operating-points-v2 = <&dp_opp_table>;
+> +				power-domains = <&rpmhpd RPMHPD_CX>;
+> +
+> +				#sound-dai-cells = <0>;
+> +
+> +				status = "disabled";
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +						mdss_dp0_in: endpoint {
+> +							remote-endpoint = <&dpu_intf0_out>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +						mdss_dp0_out: endpoint {
 
-Thierry
+I thought that we need a data-lanes property somewhere here.
 
---b22zu7prl4mp6eej
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjuIroACgkQ3SOs138+
-s6EzehAAgCLdkFD4kGsefIPxfNIF3HjvYWalHI/ZsITv7BKAWZKrxRldU13jmuOm
-gs5h+QAL3HwLKfLAoOrC9RBd2W/z56uYmC6z4Ab7DXUe4CdFFladO+syykoFu1kE
-TtZYdnL0yue3019gIMAxfqEYG6sRJsFfvInUlha/O7BXcC8zZbkz2rFkqdPf7Wnr
-Ffgr87/8MSaPaf4vaHtWlm+pd5DuBK9XOIGOCehbsEqvrg9zn7nlBSQuPeQawHs8
-96TVzxXw1rmeYs+A9T1RDPuL+pNNMIo4v3pFhmMrjXoc1thDGPVDR9OehwnDmseP
-Dsh9jUms0YqeQUsNsgIdqjBq+AX9WJRYgezITtpwIh8RILqv2kpTEVAiklmKp2fN
-HtaXhJ3s3g4prVVp9T0fvRGhn0D3F+LNHxwMt56oQE+gZy9UYJ4BpzwQbWqph67X
-b2aAyOThTdxGR5h/dIIUVN44vIoAHkNRbBQVmcbfbisqx5OIwG8c1qYOxyAKDYHj
-MsdG7fVtbOz7VhS8ouGQOQHrOs+/Ugn32vKBTF2Qj3mLJdryYCKBtlPFGfse/0VA
-GOTrn1rCuib3KXxHZip0LAtIMfviSRqywgBJc1PHbes4nKRpqVSEkUuV1t+GYGSR
-7IIwTI4z1yrUZhBeTohJ+LFGkW2LyHMkgJJ4L76ACMnvJaIA6mA=
-=UT84
------END PGP SIGNATURE-----
-
---b22zu7prl4mp6eej--
+> +						};
+> +					};
+> +				};
+> +
+-- 
+With best wishes
+Dmitry
 
