@@ -1,210 +1,318 @@
-Return-Path: <linux-kernel+bounces-851837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFA1BD7686
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:21:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313BFBD768C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D902019A283E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC0218A1AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F86291C07;
-	Tue, 14 Oct 2025 05:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD7D2877EE;
+	Tue, 14 Oct 2025 05:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fX41j3W8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p8leib+/"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7920264A8D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BF86342
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760419256; cv=none; b=erTOSGz9Rj9QqN0NQdLp+vfg8ZQROE0IWWMZWqXLGO/Yc1WWnS9dh/D4ZHZNRTnOVuJH1LyXHfOvEvy/dNIbMBNBL1OEOEDO9DGcsD8eHyS6RKCGEoQ3hN+G3OK0WpjrsP4ONy2AB+tRktv5KKrsMPePtMd9/+JMQu8pAvlHT/Q=
+	t=1760419456; cv=none; b=fw7DEEkjV4bH2Y/qQ8pHUSL7teI8PfINElWuWe6eOUTEaB96nNsMtlmSQPKbXxiLIfbmH32Wznsg0Mz/NfpjG5N23PgqdNLg35r3WSDDLys1FOVza/oKrbR5HG+Epx3fzcaFf9R8ZSHn7XW+eoa07FEegggSvjiQPnDu9bDXUv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760419256; c=relaxed/simple;
-	bh=UxrCrURIYoEaGcszpb56z3jQjOCNpu2sTBsM6wrz+yQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPirCyInojeHWZhymcihs2CBKiUsPh2svp2lCcJGUGr/hFHEGXugOYKNfWm+P2tJOg72UhrdpPERneVBfi+jAHeeangb/NNXAxEJ0exSpRryl+0hx888XjYsQPwmyTVK9LVxW4fOuD7v4yea2uUJT3LzE92tO5GlJtcP3Fwr+jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fX41j3W8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DHDXV8019427
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:20:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yvqF8DYLjafvi+gMij4k/ZfLIN5YYyS6USXN/Cv/VcM=; b=fX41j3W8rvIocm7p
-	JUQz0BlDwmPhjDPs3ykoqGHbg0BTCr1Y2rloEKSmcmY5XcZOzI0BLc4kpZDngQjf
-	dLEDXdq9fiMEj7qY9JOH9Jx4boZUqzR5Xr3/EO792xJJuLT7VO2h8Tkvxb7l1OUR
-	qYK1rtiH32nzpIFzsg1SF/8rgXyxrlNdOnkuRliU082bMP66HVirpOMCaP9J3YpF
-	kH4f0ClRKlE7oi1E74lqHWiTQ4etfv9Hfg6GFcqCSro6Z+7tcKdXqwGawsb375tK
-	93jnhlzHGqUHBlbutNlr8FHuwXw3cGGVzaeK/U4apiPaGf/T6+gjk3Klld8cXm9f
-	pa9WXg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfery7tp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:20:53 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2681642efd9so87466635ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:20:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760419252; x=1761024052;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvqF8DYLjafvi+gMij4k/ZfLIN5YYyS6USXN/Cv/VcM=;
-        b=BH0MJ9tM19P5xARqhrQ985QUQ/rx4lLa9sDTr32n26ZlppdYiP+HVELoVFeWTldUnS
-         k3XSfLPQgT17j/1fg13rTaWwM2RADGs0sx70Yn/dQcbBzUc/pX9TA3NVJAoKaxZMvEdr
-         9xo5tIff8BdvE83Pig1B8LZjR3DNELTLKggSZtZHQcTt1VwoKIAQEBl/yShOC+9oM0US
-         GPxtcsTEbYlK/xK3BKt3/7q1h14VGpe0SqhYBhgnK53KTD9i4qmzSXmKDga1iYNKVeR8
-         rh0EcMXiruvD/IPDfo8It2Q+rwDtYOAPqJaEijuToyqeCNZ4r0OEehZcMxzO7T7fUOkG
-         IAow==
-X-Forwarded-Encrypted: i=1; AJvYcCULBduQAjvpUXqPhUFB4Q/YDMGGZeKAsGbYzmto0ckMUX3YFWg4leS7lCEMz7jfrdWjupwcTXWxJDKRhzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS87XukjMUA/OYBO7XG9fN+5gX2ef4B4/DsZSordUHI360UQco
-	wz3jHSC1oWNgR1ILsyEmGijvaCkSV5+w+2HLBKryGUhlSefLxurm3AKoc3fzsDq9gCxlIcaGwHL
-	mSRarjrk9dr6iPlVMbBgFRZwBFYEO4Pij0wbSE/zvn01Y8kvCVDUZ//2cLbUD7mSVPKv8N7xFVq
-	A=
-X-Gm-Gg: ASbGncv/QM6Zg0DjFGKa7gxH3bflajgj7HbgqFAOUTppuMyMQqP6e5encXQ2Wei53Wv
-	ykWFGNwH78lDN1I9io9CGgpATe2QJWgyH9+R8aIR/Es+bbFBqk1XcVCaClD6ydHcIAixbGTenmP
-	Uz50FeYW0pDc0sVSpwv9hx9sCbKj/C6L0yXkqM7SoSwxtflUzIorfYgK0ZwPLu4LDDusno5aQuI
-	Eb4aLdNiuVyB0I8i+4JnbTx0eCI1kDodre61XTDL0PW+fPGYtjOPcu4zt1+qCagzIixelTvS24y
-	FUMRFwdklrHxltbLPTwRHRi3lcYZ7wVTFIVy2+0Mox8i3GxxPYluIx6j0E0j7hc+bAwgXHwePQ=
-	=
-X-Received: by 2002:a17:903:244c:b0:27e:dc53:d222 with SMTP id d9443c01a7336-290273713c8mr281598395ad.44.1760419251723;
-        Mon, 13 Oct 2025 22:20:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsL1A/NUIg/+/5DcYNeqv6XyMlYlzj4jSQQAAeiL0ON/Muf4qcSsKga9vyJuwXAaA1wTT+9w==
-X-Received: by 2002:a17:903:244c:b0:27e:dc53:d222 with SMTP id d9443c01a7336-290273713c8mr281598155ad.44.1760419251227;
-        Mon, 13 Oct 2025 22:20:51 -0700 (PDT)
-Received: from [10.218.42.132] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f894c8sm151716115ad.122.2025.10.13.22.20.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 22:20:50 -0700 (PDT)
-Message-ID: <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 10:50:45 +0530
+	s=arc-20240116; t=1760419456; c=relaxed/simple;
+	bh=BGq6gtuVw1ZkzpsV6xc9p1v0Lm/eZZH90GULnLK4vPM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=nCenb3p+XWVSaaoSVvIj7G5VbbsZmnqKkgkvmB5mF7SZ36YyFg/GxYkXD2SzbuTqP0AZYOfrZpXqjqMLLU3DQIaXIQAOFeshNzO9Y4J3CyBwN2Tau8b/Wkgfd/2j5J9Iin7+FbwTZVr9wz7vdSX+Vs5OcdazcKSuQ/QhlON+jQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p8leib+/; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760419449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rpX3fKP+qE+Cx5wSUCGxJKl073ySrCz333lfcH4KD3U=;
+	b=p8leib+/+Uzn8bRajg1xnIwVcJSrt3m0lLnVFEIkwQAkMvKJQmbU9EGJUvpUGsXfHbBKMz
+	ViA1mGiVwlTmDegFHZtPQpjF1hQMZ/LGvEipWPUwAW24TAK7NbpWInZInaEKhsMcGnXez2
+	/yS+HTRDNOUcLHOMcRQGei7svVjH4HY=
+Date: Tue, 14 Oct 2025 13:23:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-To: Bjorn Helgaas <helgaas@kernel.org>, Ron Economos <re@w6rz.net>,
-        Conor Dooley <conor@kernel.org>
-Cc: bhelgaas@google.com, rishna.chundru@oss.qualcomm.com, mani@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Paul Walmsley
- <pjw@kernel.org>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Samuel Holland <samuel.holland@sifive.com>,
-        regressions@lists.linux.dev
-References: <20251013212801.GA865570@bhelgaas>
+Subject: Re: [PATCH][v3] hung_task: Panic after fixed number of hung tasks
 Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20251013212801.GA865570@bhelgaas>
+To: lirongqing <lirongqing@baidu.com>
+References: <20251012115035.2169-1-lirongqing@baidu.com>
+Cc: wireguard@lists.zx2c4.com, linux-arm-kernel@lists.infradead.org,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-doc@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>, Randy Dunlap <rdunlap@infradead.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, linux-aspeed@lists.ozlabs.org,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
+ Russell King <linux@armlinux.org.uk>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
+ Petr Mladek <pmladek@suse.com>, Joel Granados <joel.granados@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Phil Auld <pauld@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Simon Horman <horms@kernel.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+ Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ "Paul E . McKenney" <paulmck@kernel.org>,
+ Feng Tang <feng.tang@linux.alibaba.com>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20251012115035.2169-1-lirongqing@baidu.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=R64O2NRX c=1 sm=1 tr=0 ts=68edddb5 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=fhfb3jyVSOwbcj7u4KkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: hguuRFd3vPqOflRrHTEp6kxSdQfN4nFq
-X-Proofpoint-ORIG-GUID: hguuRFd3vPqOflRrHTEp6kxSdQfN4nFq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXxoBmz3yT+UfE
- DgNSkU+GeI9km7wIWsFpP6lPqmqJQ3DLl7xiUuji8YGcwuoiXkMZODdBXzwYfE8ZXLun32sKmOp
- kf4FmHwa2E21J2gRPeEzW/s5mBcSWqFyP2U1CiiArhiezK49RGCfggUdH2MfteQZg25PTWxrzH3
- r/wVeMXgZzJoOZCpZeyIXr3yPlc95wlCMhLbHkE+ELEy2M45M+IELyKt+0YGyym6jRAZBiQ4xfp
- DJKQeLihLuFNKiHQwRUhnGTDFR62LZMzix7l+UIRolFjBvUW9hqxax6e9hn1FGhSCLj/lnBGbQ1
- cNiH8x6jKaZX2wHMCl6OvFamVh3ju6h3rZjZ2wL0kIjvU7ADFrpUepfR54QokV4p5blHhrI1S0F
- GHKfTPXlhyLwsPpjoRG11LxnBz85lQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_09,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
+Thanks for the patch!
 
+I noticed the implementation panics only when N tasks are detected
+within a single scan, because total_hung_task is reset for each
+check_hung_uninterruptible_tasks() run.
 
-On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
-> [+cc FU740 driver folks, Conor, regressions]
+So some suggestions to align the documentation with the code's
+behavior below :)
+
+On 2025/10/12 19:50, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
 > 
-> On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
->> The SiFive FU740 PCI driver fails on the HiFive Unmatched board with Linux
->> 6.18-rc1. The error message is:
->>
->> [    3.166624] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
->> ranges:
->> [    3.166706] fu740-pcie e00000000.pcie:       IO
->> 0x0060080000..0x006008ffff -> 0x0060080000
->> [    3.166767] fu740-pcie e00000000.pcie:      MEM
->> 0x0060090000..0x007fffffff -> 0x0060090000
->> [    3.166805] fu740-pcie e00000000.pcie:      MEM
->> 0x2000000000..0x3fffffffff -> 0x2000000000
->> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
->> 0xdf0000000-0xdffffffff] for [bus 00-ff]
->> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
->> [    3.579552] fu740-pcie e00000000.pcie: Failed to configure iATU in ECAM
->> mode
->> [    3.579655] fu740-pcie e00000000.pcie: probe with driver fu740-pcie
->> failed with error -22
->>
->> The normal message (on Linux 6.17.2) is:
->>
->> [    3.381487] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
->> ranges:
->> [    3.381584] fu740-pcie e00000000.pcie:       IO
->> 0x0060080000..0x006008ffff -> 0x0060080000
->> [    3.381682] fu740-pcie e00000000.pcie:      MEM
->> 0x0060090000..0x007fffffff -> 0x0060090000
->> [    3.381724] fu740-pcie e00000000.pcie:      MEM
->> 0x2000000000..0x3fffffffff -> 0x2000000000
->> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, align
->> 4K, limit 4096G
->> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
->> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->> [    3.988164] fu740-pcie e00000000.pcie: PCI host bridge to bus 0000:00
->>
->> Reverting the following commits solves the issue.
->>
->> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc: Support ECAM mechanism by
->> enabling iATU 'CFG Shift Feature'
->>
->> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom: Prepare for the DWC ECAM
->> enablement
->>
->> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc: Prepare the driver for
->> enabling ECAM mechanism using iATU 'CFG Shift Feature'
+> Currently, when 'hung_task_panic' is enabled, the kernel panics
+> immediately upon detecting the first hung task. However, some hung
+> tasks are transient and the system can recover, while others are
+> persistent and may accumulate progressively.
 > 
-> As Conor pointed out, we can't fix a code regression with a DT change.
+> This patch extends the 'hung_task_panic' sysctl to allow specifying
+> the number of hung tasks that must be detected before triggering
+> a kernel panic. This provides finer control for environments where
+> transient hangs may occur but persistent hangs should still be fatal.
 > 
-> #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the driver for enabling ECAM mechanism using iATU 'CFG Shift Feature'")
-Hi Conor,
-
-Can you try with this patch and see if it is fixing the issue.
-diff --git a/drivers/pci/controller/dwc/pcie-fu740.c 
-b/drivers/pci/controller/dwc/pcie-fu740.c
-index 66367252032b..b5e0f016a580 100644
---- a/drivers/pci/controller/dwc/pcie-fu740.c
-+++ b/drivers/pci/controller/dwc/pcie-fu740.c
-@@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct platform_device 
-*pdev)
-
-         platform_set_drvdata(pdev, afp);
-
-+       pci->pp.native_ecam = true;
-+
-         return dw_pcie_host_init(&pci->pp);
-  }
-
-- Krishna Chaitanya.
-
+> The sysctl can be set to:
+> - 0: disabled (never panic)
+> - 1: original behavior (panic on first hung task)
+> - N: panic when N hung tasks are detected
 > 
+> This maintains backward compatibility while providing more flexibility
+> for handling different hang scenarios.
+> 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+> Diff with v2: not add new sysctl, extend hung_task_panic
+> 
+>   Documentation/admin-guide/kernel-parameters.txt      | 20 +++++++++++++-------
+>   Documentation/admin-guide/sysctl/kernel.rst          |  3 ++-
+>   arch/arm/configs/aspeed_g5_defconfig                 |  2 +-
+>   kernel/configs/debug.config                          |  2 +-
+>   kernel/hung_task.c                                   | 16 +++++++++++-----
+>   lib/Kconfig.debug                                    | 10 ++++++----
+>   tools/testing/selftests/wireguard/qemu/kernel.config |  2 +-
+>   7 files changed, 35 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index a51ab46..7d9a8ee 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1992,14 +1992,20 @@
+>   			the added memory block itself do not be affected.
+>   
+>   	hung_task_panic=
+> -			[KNL] Should the hung task detector generate panics.
+> -			Format: 0 | 1
+> +			[KNL] Number of hung tasks to trigger kernel panic.
+> +			Format: <int>
+> +
+> +			Set this to the number of hung tasks that must be
+> +			detected before triggering a kernel panic.
+> +
+> +			0: don't panic
+> +			1: panic immediately on first hung task
+> +			N: panic after N hung tasks are detect
+
+The description should be more specific :)
+
+N: panic after N hung tasks are detected in a single scan
+
+Would it be better and cleaner?
+
+>   
+> -			A value of 1 instructs the kernel to panic when a
+> -			hung task is detected. The default value is controlled
+> -			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
+> -			option. The value selected by this boot parameter can
+> -			be changed later by the kernel.hung_task_panic sysctl.
+> +			The default value is controlled by the
+> +			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value
+> +			selected by this boot parameter can be changed later by the
+> +			kernel.hung_task_panic sysctl.
+>   
+>   	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
+>   				terminal devices. Valid values: 0..8
+> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+> index f3ee807..0a8dfab 100644
+> --- a/Documentation/admin-guide/sysctl/kernel.rst
+> +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> @@ -397,7 +397,8 @@ a hung task is detected.
+>   hung_task_panic
+>   ===============
+>   
+> -Controls the kernel's behavior when a hung task is detected.
+> +When set to a non-zero value, a kernel panic will be triggered if the
+> +number of detected hung tasks reaches this value
+
+Hmm... that is also ambiguous ...
+
++When set to a non-zero value, a kernel panic will be triggered if the
++number of hung tasks found during a single scan reaches this value.
+
+>   This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+>   
+>   = =================================================
+> diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
+> index 61cee1e..c3b0d5f 100644
+> --- a/arch/arm/configs/aspeed_g5_defconfig
+> +++ b/arch/arm/configs/aspeed_g5_defconfig
+> @@ -308,7 +308,7 @@ CONFIG_PANIC_ON_OOPS=y
+>   CONFIG_PANIC_TIMEOUT=-1
+>   CONFIG_SOFTLOCKUP_DETECTOR=y
+>   CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
+> -CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
+> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
+>   CONFIG_WQ_WATCHDOG=y
+>   # CONFIG_SCHED_DEBUG is not set
+>   CONFIG_FUNCTION_TRACER=y
+> diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
+> index e81327d..9f6ab7d 100644
+> --- a/kernel/configs/debug.config
+> +++ b/kernel/configs/debug.config
+> @@ -83,7 +83,7 @@ CONFIG_SLUB_DEBUG_ON=y
+>   #
+>   # Debug Oops, Lockups and Hangs
+>   #
+> -# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
+> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC=0
+>   # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
+>   CONFIG_DEBUG_ATOMIC_SLEEP=y
+>   CONFIG_DETECT_HUNG_TASK=y
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index b2c1f14..3929ed9 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -81,7 +81,7 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
+>    * hung task is detected:
+>    */
+>   static unsigned int __read_mostly sysctl_hung_task_panic =
+> -	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
+> +	CONFIG_BOOTPARAM_HUNG_TASK_PANIC;
+>   
+>   static int
+>   hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
+> @@ -218,8 +218,11 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
+>   }
+>   #endif
+>   
+> -static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> +static void check_hung_task(struct task_struct *t, unsigned long timeout,
+> +		unsigned long prev_detect_count)
+>   {
+> +	unsigned long total_hung_task;
+> +
+>   	if (!task_is_hung(t, timeout))
+>   		return;
+>   
+> @@ -229,9 +232,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>   	 */
+>   	sysctl_hung_task_detect_count++;
+>   
+> +	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
+>   	trace_sched_process_hang(t);
+>   
+> -	if (sysctl_hung_task_panic) {
+> +	if (sysctl_hung_task_panic &&
+> +			(total_hung_task >= sysctl_hung_task_panic)) {
+>   		console_verbose();
+>   		hung_task_show_lock = true;
+>   		hung_task_call_panic = true;
+> @@ -300,6 +305,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+>   	int max_count = sysctl_hung_task_check_count;
+>   	unsigned long last_break = jiffies;
+>   	struct task_struct *g, *t;
+> +	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
+>   
+>   	/*
+>   	 * If the system crashed already then all bets are off,
+> @@ -320,7 +326,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+>   			last_break = jiffies;
+>   		}
+>   
+> -		check_hung_task(t, timeout);
+> +		check_hung_task(t, timeout, prev_detect_count);
+>   	}
+>    unlock:
+>   	rcu_read_unlock();
+> @@ -389,7 +395,7 @@ static const struct ctl_table hung_task_sysctls[] = {
+>   		.mode		= 0644,
+>   		.proc_handler	= proc_dointvec_minmax,
+>   		.extra1		= SYSCTL_ZERO,
+> -		.extra2		= SYSCTL_ONE,
+> +		.extra2		= SYSCTL_INT_MAX,
+>   	},
+>   	{
+>   		.procname	= "hung_task_check_count",
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 3034e294..077b9e4 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1258,12 +1258,14 @@ config DEFAULT_HUNG_TASK_TIMEOUT
+>   	  Keeping the default should be fine in most cases.
+>   
+>   config BOOTPARAM_HUNG_TASK_PANIC
+> -	bool "Panic (Reboot) On Hung Tasks"
+> +	int "Number of hung tasks to trigger kernel panic"
+>   	depends on DETECT_HUNG_TASK
+> +	default 0
+>   	help
+> -	  Say Y here to enable the kernel to panic on "hung tasks",
+> -	  which are bugs that cause the kernel to leave a task stuck
+> -	  in uninterruptible "D" state.
+> +	  The number of hung tasks must be detected to trigger kernel panic.
+> +
+> +	  - 0: Don't trigger panic
+> +	  - N: Panic when N hung tasks are detected
+
++	  - N: Panic when N hung tasks are detected in a single scan
+
+With these documentation changes, this patch would accurately describe 
+its behavior, IMHO.
+
+>   
+>   	  The panic can be used in combination with panic_timeout,
+>   	  to cause the system to reboot automatically after a
+> diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
+> index 936b18b..0504c11 100644
+> --- a/tools/testing/selftests/wireguard/qemu/kernel.config
+> +++ b/tools/testing/selftests/wireguard/qemu/kernel.config
+> @@ -81,7 +81,7 @@ CONFIG_WQ_WATCHDOG=y
+>   CONFIG_DETECT_HUNG_TASK=y
+>   CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
+>   CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
+> -CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
+> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
+>   CONFIG_PANIC_TIMEOUT=-1
+>   CONFIG_STACKTRACE=y
+>   CONFIG_EARLY_PRINTK=y
+
 
