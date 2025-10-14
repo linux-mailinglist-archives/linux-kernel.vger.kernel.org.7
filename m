@@ -1,92 +1,60 @@
-Return-Path: <linux-kernel+bounces-852565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B57BD9554
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AF3BD955D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A016353272
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784FA544AFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50FD313E19;
-	Tue, 14 Oct 2025 12:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF580313E0E;
+	Tue, 14 Oct 2025 12:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NZg3VAbg"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5KakaIof"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020CC313559
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4631352D;
+	Tue, 14 Oct 2025 12:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760444840; cv=none; b=kQqP7DVDHCHoQKwwnLdG7md8bQgm0uminh6iWNUukaYO5DJYdclK2+KzYZnwjEG1hxCkH67QxXgvoWLd9NMu043tVXLC1h1BPZpvt3r9xapZeBG1Q+89lONXddqi85GVrYI7mbvGv0SGvnrBiKlT8UnQ1qDcIfRrMApmPlD0mzQ=
+	t=1760444858; cv=none; b=pRbH1Sqv5eEdVymDX6WCi0wHShe8S+OfXofIN7WcsusUmO4fB3dvWD3P29FOy6TTFfRCQ4XfL2ZUN7d53SbdTYArquyM9L/HBSchXG59NLS3/sX++wTud5ZjGNDRY0woLaut1uDG3aVEc6SjTPpTqGR/0y/KXBHTiwD/Vs0v+Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760444840; c=relaxed/simple;
-	bh=UpiGm1rT9EBDp1/84eMBMTQZvXgS8tY9SKg2mGiKuq0=;
+	s=arc-20240116; t=1760444858; c=relaxed/simple;
+	bh=qdggzO2D/Kd+fYeG9PsGsHhuIsXOu5H6fGpCCu/jeRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/t089i/DAfP1/cgHa8T8DPEgnmGLdkDXSO/GC5ZgMX2Mmt85Bop4Dr/Jml0gBrXhyswaXawNQ5NDGvD1EXACxUGiHVnAX3Ouz/wL83OVK0hT+e9hwnSfI8MRU+PMfiIeds2BVRjuB9uGYkTQkD7jpV7hJ+1TEp6hfzQOS3Z6MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NZg3VAbg; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e52279279so37638555e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760444836; x=1761049636; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjHopu1UwDxsV5IdNPvI1jrj2EChfALYrLzFCq9lMBc=;
-        b=NZg3VAbgYfyuhhHWEl8X/2XvmJHHHRVPSgPCcXTIHGLuCpv/nfLkznKXKjUHy7sYCp
-         +zb9IY6o+xvxizK0KHyyvv88aXXbQXdlWwl51Dw3G9h3+zNvgmUyGPrwGcsb94x2tg0k
-         eQh2DQHWYpagg7TdYtBHFF+71BCf3p4MWHusQbbaIOi+KoSGrCUgPsk71+GtV1VFF9At
-         J5t30adq0S54wUrl1GPFekg9ABQqP0+7+lrkjseLMggs3oHcJuKIXGlaW+sZNx8r9dQq
-         5s8L0vt/i/MWt2PToWydqgmcmtHw1RqNn/wB0mxgugCiQSNdlMRUN1Flpz8nBWv6nA/y
-         icBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760444836; x=1761049636;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QjHopu1UwDxsV5IdNPvI1jrj2EChfALYrLzFCq9lMBc=;
-        b=DhkFlrHOJfafMVC6wjOkf0rguy91Q8PkpUikTcn50fK97peI02I0jSjk2d9yQXnDbW
-         X51R1adWUvAT0v3lb0v0rgYH7lpt9Ba3jyi2trvD4k9jFbe2WpMIGEVFF9gbFvYFJPf3
-         E/L/sz1VJc1c3v7LAIDmsZ7wsNpLUUFMqXWWipi1PNbE2KNPAZGHNlkxCHv/ayvC4QHJ
-         WjRoKNe2LnlneVufTSABBUso6SNFALnqWz6o1kuIj9N06oWN4X3H+Z6dIG4BeZ3d6q3o
-         jDo/YZgsQEu36xvBuX66DiWV09TpnwJdF+xbIfO2CExAE8ayZaspKv9IGZj4vwuIFp5n
-         /z+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmXe6l/1pNG2P/rwyd5Yme+3j/8LGYiwo1ZhNpIIPukFz37a4mP5z9mlvUjLAE4/JlhWqW2YBB/CmHC4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT90FSagJ87qS/wx37gAwu8Aew6h510QOzmOYubywtcJiGHXrl
-	IkQeBbjBVI+LDCWq5InlXEXS/V4Vsp/wqc2xj7cqQmdxrSmS9wPjuPPrFdWGB2xDXQE=
-X-Gm-Gg: ASbGncvOkMQhCWL0ubHCNNzd352kJRVuzNrWHOVLpB12UCLliivFJjRyMXXD7icS1b4
-	Cflcbv9538YkFEnHh515OGf6Mb3J/mfZv3IdeBph1qCMWGeysBLJuh0YibyMQ1mlcBSmgo4GFzM
-	q9dyqtMGIKG4eQIU+VVnCGKwIUUENlWKndAQjhZAXxsSxPa91sB68fFDnrAB3b3/n8R8JNGESwC
-	ojLTjeanBSKRh3BYwvucevh9MQbM4AFrmBo0Q3Ny8xukYorrUVd9W9/b50ltY8TGq8QrWTrPXkw
-	UeOzIUdVRJjLmKO5093ligVpl8yP80LE2Ha6uheQ6VrU8q2Y5xFP1miq04DO325o0nwfPQmAOC5
-	ZYMSmIvY2t7rh7rSlIgLXdIQ8ywhkP4BDs076fKTAnf2K48uGY1SMFz7YHWQxCQ==
-X-Google-Smtp-Source: AGHT+IGpLJmj5ZZeE5vtmTg4lu6fLIqoCQTKP25wq9imxhpp1Co0qw1M1pvst4NVF+ct3P1g5F4ilQ==
-X-Received: by 2002:a05:600c:c116:b0:46e:3709:d88a with SMTP id 5b1f17b1804b1-46fa9b17e16mr141372525e9.33.1760444836001;
-        Tue, 14 Oct 2025 05:27:16 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb4989601sm232872755e9.9.2025.10.14.05.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 05:27:15 -0700 (PDT)
-Date: Tue, 14 Oct 2025 15:27:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Khalid Aziz <khalid@kernel.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Rakuram Eswaran <rakuram.e96@gmail.com>, chenhuacai@kernel.org,
-	david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	lkp@intel.com, skhan@linuxfoundation.org, ulf.hansson@linaro.org,
-	zhoubinbin@loongson.cn
-Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
- pxamci_probe()
-Message-ID: <aO5BnwkNNyv_GOGS@stanley.mountain>
-References: <xxtrhbv5qm2crtvc5ejpgu5caadsmms3rfulmosjwq7lumrko3@5mlcpk24hymm>
- <20251012183804.15171-1-rakuram.e96@gmail.com>
- <6j7ix5yof7qmrp6cgxhqver7yimvmgj7dujqu4l7cnzbpjksfd@5sp7am47gigw>
- <8afff048-4fe1-440a-9739-e5a5ea43d6eb@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+0PqcPaQcfcCM92i/08+GBW7bMKiSb6BjJM49CWwZjrDoRNovu1U9I826EotGvKn2IPAruFryf51OpO5Ix0wd12AVBS6KSOdXAjno8j5lAeArmJgu2+ILLWLg9c4ZmZK4T/wZDmIx+gX2k9B/sBnWqRFUbb2x/3uFOB/4rU/lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5KakaIof; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QyT8a6xTN6cFhxquXbZ2kYWpr0cYAghxKfrpKvxJbOc=; b=5KakaIofM9Ae7SVAEBCuk5tGOV
+	3K3k/CHMOlFgWID0ivc+FKllftOh7XBJ0cuqH7AoidMJ/+yN/JxJoQzzq1SZpNiyTcNvhcBhq/tt1
+	T4HYISk9iai7Od3T8wSMhB67EFCBcCxjdO7zaqROdNMDK7mIk1OAjyO6QgyVQG3QgPAA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v8e7f-00AuKg-JQ; Tue, 14 Oct 2025 14:27:23 +0200
+Date: Tue, 14 Oct 2025 14:27:23 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Birger Koblitz <mail@birger-koblitz.de>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] ixgbe: Add 10G-BX support
+Message-ID: <0c753725-fd6f-4f85-9371-f7342f86acff@lunn.ch>
+References: <20251014-10gbx-v2-1-980c524111e7@birger-koblitz.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,77 +63,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8afff048-4fe1-440a-9739-e5a5ea43d6eb@kernel.org>
+In-Reply-To: <20251014-10gbx-v2-1-980c524111e7@birger-koblitz.de>
 
-On Mon, Oct 13, 2025 at 04:54:13PM -0600, Khalid Aziz wrote:
-> > @@ -703,20 +705,15 @@ static int pxamci_probe(struct platform_device *pdev)
-> >   	platform_set_drvdata(pdev, mmc);
-> > -	host->dma_chan_rx = dma_request_chan(dev, "rx");
-> > -	if (IS_ERR(host->dma_chan_rx)) {
-> > -		host->dma_chan_rx = NULL;
-> > +	host->dma_chan_rx = devm_dma_request_chan(dev, "rx");
-> > +	if (IS_ERR(host->dma_chan_rx))
-> >   		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
-> >   				     "unable to request rx dma channel\n");
-> > -	}
-> > -	host->dma_chan_tx = dma_request_chan(dev, "tx");
-> > -	if (IS_ERR(host->dma_chan_tx)) {
-> > -		dev_err(dev, "unable to request tx dma channel\n");
-> > -		ret = PTR_ERR(host->dma_chan_tx);
-> > -		host->dma_chan_tx = NULL;
-> > -		goto out;
-> > -	}
-> > +	host->dma_chan_tx = devm_dma_request_chan(dev, "tx");
-> > +	if (IS_ERR(host->dma_chan_tx))
-> > +		return dev_err_probe(dev, PTR_ERR(host->dma_chan_tx),
-> > +				     "unable to request tx dma channel\n");
+On Tue, Oct 14, 2025 at 06:18:27AM +0200, Birger Koblitz wrote:
+61;8003;1c> Adds support for 10G-BX modules, i.e. 10GBit Ethernet over a single strand
+> Single-Mode fiber
+> The initialization of a 10G-BX SFP+ is the same as for a 10G SX/LX module,
+> and is identified according to SFF-8472 table 5-3, footnote 3 by the
+> 10G Ethernet Compliance Codes field being empty, the Nominal Bit
+> Rate being compatible with 12.5GBit, and the module being a fiber module
+> with a Single Mode fiber link length.
 > 
-> We should still release DMA rx channel before returning here.
+> This was tested using a Lightron WSPXG-HS3LC-IEA 1270/1330nm 10km
+> transceiver:
+> $ sudo ethtool -m enp1s0f1
+>    Identifier                          : 0x03 (SFP)
+>    Extended identifier                 : 0x04 (GBIC/SFP defined by 2-wire interface ID)
+>    Connector                           : 0x07 (LC)
+>    Transceiver codes                   : 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+>    Encoding                            : 0x01 (8B/10B)
+>    BR Nominal                          : 10300MBd
+>    Rate identifier                     : 0x00 (unspecified)
+>    Length (SMF)                        : 10km
+>    Length (OM2)                        : 0m
+>    Length (OM1)                        : 0m
+>    Length (Copper or Active cable)     : 0m
+>    Length (OM3)                        : 0m
+>    Laser wavelength                    : 1330nm
+>    Vendor name                         : Lightron Inc.
+>    Vendor OUI                          : 00:13:c5
+>    Vendor PN                           : WSPXG-HS3LC-IEA
+>    Vendor rev                          : 0000
+>    Option values                       : 0x00 0x1a
+>    Option                              : TX_DISABLE implemented
+>    BR margin max                       : 0%
+>    BR margin min                       : 0%
+>    Vendor SN                           : S142228617
+>    Date code                           : 140611
+>    Optical diagnostics support         : Yes
 > 
-> >   	if (host->pdata) {
-> >   		host->detect_delay_ms = host->pdata->detect_delay_ms;
-> > @@ -724,25 +721,21 @@ static int pxamci_probe(struct platform_device *pdev)
-> >   		host->power = devm_gpiod_get_optional(dev, "power", GPIOD_OUT_LOW);
-> >   		if (IS_ERR(host->power)) {
-> >   			ret = PTR_ERR(host->power);
-> > -			dev_err(dev, "Failed requesting gpio_power\n");
-> > -			goto out;
-> > +			return dev_err_probe(dev, ret, "Failed requesting gpio_power\n");
-> 
-> Don't we need to release DMA Rx and Tx channels before we return from here?
-> 
-> >   		}
-> >   		/* FIXME: should we pass detection delay to debounce? */
-> >   		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
-> > -		if (ret && ret != -ENOENT) {
-> > -			dev_err(dev, "Failed requesting gpio_cd\n");
-> > -			goto out;
-> > -		}
-> > +		if (ret && ret != -ENOENT)
-> > +			return dev_err_probe(dev, ret, "Failed requesting gpio_cd\n");
-> 
-> Same here
-> 
-> >   		if (!host->pdata->gpio_card_ro_invert)
-> >   			mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
-> >   		ret = mmc_gpiod_request_ro(mmc, "wp", 0, 0);
-> > -		if (ret && ret != -ENOENT) {
-> > -			dev_err(dev, "Failed requesting gpio_ro\n");
-> > -			goto out;
-> > -		}
-> > +		if (ret && ret != -ENOENT)
-> > +			return dev_err_probe(dev, ret, "Failed requesting gpio_ro\n");
-> 
-> and here.
-> 
-> Looking at Documentation/driver-api/driver-model/devres.rst,
-> dma_request_chan() is not devres managed interface and thus will not be
-> released automatically. Do you agree?
-> 
+> Signed-off-by: Birger Koblitz <mail@birger-koblitz.de>
 
-The patch changes dma_request_chan() to devm_dma_request_chan().
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-regards,
-dan carpenter
-
+    Andrew
 
