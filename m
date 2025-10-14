@@ -1,206 +1,276 @@
-Return-Path: <linux-kernel+bounces-852898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBCBBDA2F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:58:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3236DBDA318
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D8018A31EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35EF3E13F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F532FFDD0;
-	Tue, 14 Oct 2025 14:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987A21EEA5F;
+	Tue, 14 Oct 2025 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gLO7rds4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ndGMd3vk"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAE52FE059
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D9F2FFDCA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453931; cv=none; b=XaGIHtVCPH8Mv7NpwlENR6hMZUTbeGZynxpggDoSkamVEZQFb+9wydVlxfl0Qn16kTcipZVb6sk6ghPD6FqcUUmdwF7i9U6uTAlj6bDdnfayYAmIA2g5hHBfoWH5f+d0tSRH7EptRqx17WnO/95bhDELHwgdhsQeLT8T7PcdjmE=
+	t=1760453949; cv=none; b=asF/ZnLp4/QVGMSGax7c9YBTDn9bX6+t8p/RoiRIl19Us7qLR1IkOjxlu4EThHOajUxpIQigesW+b8Wvo82/qLWop9bVhNfuA2Je0nDrOEG6yFsB5uBduYz+QyCYrvHD35g86xWQSn4a76zyU1GJa9/3n55fLWW/zFD18Re5fd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453931; c=relaxed/simple;
-	bh=HSo0KuHSB/BlRXcOM0cxgb/12IkP5el72NZGx/wpaMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cLeMxmoh4kMfsSJ2cpjGV0N4okCnQo4nqW1+CJ2CDyUj3jttnIpdpN4+7vf3ThRuGMAVLkrZHIW3/6GjAHD4MBU5SNKugEAtVUFfrxZ2dprpnVLvJUjPdBiEGUxuqTA1XhzIb/sRDljDACC7qlfy9m6dYoKwLMdH0XGMfIylzYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gLO7rds4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760453928;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AYVbINRSmFk2th/S/4+k/CpnsMJciemy/4mjE5VYBng=;
-	b=gLO7rds4P1DT5e9vFNGD5mS7dTT2hdBTjPH7tYEp/YVo6EqBrMDrdqMCXIcgZ1ynwV62zp
-	gJRJ2/jsclRKjmnFIm2UUzJIrsa0aEmfnyTFqB08ixdrwhjgWK4JHsUSIHn3qn8GdQaZ6o
-	NICgjVqe7jow/i3wOotQOGv7D0MmRTA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-529-HXo3hiO4NUK-19f2J3Nb8w-1; Tue, 14 Oct 2025 10:58:47 -0400
-X-MC-Unique: HXo3hiO4NUK-19f2J3Nb8w-1
-X-Mimecast-MFC-AGG-ID: HXo3hiO4NUK-19f2J3Nb8w_1760453926
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e36686ca1so50626775e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:58:47 -0700 (PDT)
+	s=arc-20240116; t=1760453949; c=relaxed/simple;
+	bh=NhtmRhm7ndhen0e3a4IWvzrXrj6/aX6wOhDZxyZza5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J73uYNeeglNkxdRcK9YUvXDD9vzr9yNILBSTE+lPr8sRWCzP35AUgLSVrBoa/fX8AOGgvwB/wiW4FRDRmW6EHJMgrSf31aqG5cavELUIVHUAkksko7bll1rsEN2Wf1537vHyepVpT/aRzPYF1j9Rb1hjeDSwYj15zHBKL/5nJWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ndGMd3vk; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-43f8116a130so2483135b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760453946; x=1761058746; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bkA3DsnAjaOe1kWah6dgRh2HdZ2TK46Tu48uO23EzeA=;
+        b=ndGMd3vk8jM1pIYbJnfvoTiyi8FoRhleqwrBh31iZR28Wn3YgnoAWe323XjA24DQWW
+         3RIS2gjhnka7kANi06kgYbRZtTEOeJrzScSbvpoCqM7tMmr5xAlMSTD2BVeala0UFu1n
+         D2RDDyeypXc4xRZXQJZ4Y3PV7O1QGVMuXt7eZIKyfRKUh2yJk6RMSecQymqu4pVaojO2
+         8Enm5uC2r1Set8a1vnegn/f/MPYzDZ23e6s8GXYPnQtVgT3FrUUWmJtNLSfMBgFT5iJL
+         DCVB4jEyAR7zNqInLJ1HinK1nfxOy4hyu5hh+uh5W4pJxqgNjTYXWcHx16tv5wZf9hz7
+         o6/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760453926; x=1761058726;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AYVbINRSmFk2th/S/4+k/CpnsMJciemy/4mjE5VYBng=;
-        b=rTjy/BlQKF2dUMlQmbRlu6MIi1enta42i9rbXEuAgZwldBNCTuvd3qJoeoiZTko2pm
-         MuyEGLWNukdymNkATxLBfMNpvgcUjYWAkCx9HUYw3V/qq9STHBn0ZW487SAfyUmOLz/E
-         zo3ovk+JHl2W7qjPdWZhSvF0WW7FLAac5mA2nv2CcwhhuRh5beqAq7Ptfyib6vVvNr7Y
-         DL8FkdpHSW6cR0RI+KMXXCosbeMU1l4BLsmRzhzTU8UDG9HB0/avacwghz+2h8nmLPJg
-         cZs0wkjbwfgp12rVieyd2taA809g6Eb5Ibsd4FTuC/OvKf6+//VBziSUsnjYEcNf14eE
-         kt5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWy74PiUD2XO+s7YM0wh9nNBx8UOA/pAORTmdz/cnLsTSYqE97FqyAl1dvsDuXTCPlqL7rKDMm0DLRanFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxyTNeLLqIufSqZr5QRYoUvvADpkYZiRoTTsyv0PJ64vrZeMqS
-	dM8D4mlHN/ZAKkwhMb7542kSNQxvCD2I9ya9WMN1bgd4V5tpyn+s9irdK3fmaSrQu/LN3Aky+N1
-	0OLciFNZsRnvC31VUxwjzcbZaV4Bn8n64D8eyljpm79vuyE0pr3iA2d9xL+66KP7sfA==
-X-Gm-Gg: ASbGncvB1IjWx0nvbYjtHgEa3cgupo6VTC7ZnKXOILoXl0A9BL2IB5/HCrWeeH6hJ0x
-	qEw6RRmRDgS7DetWHPXJp1qVzAv6oxClFsUJPNf3cxi9/pFLk3gCYjsxLh1lltWxp5M0+/PyMBP
-	xd51XIaCC60e2YLQn/OeSFkVneg7drSjSNinuIue0uix+ehyukm3AX0zdvzD0Qm5jGpq+nEym7d
-	hPBBj9L6iaeopmp9L0lE4XiRQLpzD393gQT8LwVuj/Hzmv4zNrZAT5zafcuxpABJKSeFRTKMtK1
-	tE0GnW/f8mCxQ+XDI7BFyZOcLKYxK+03doIMXNcTt3H0y3YiBgTrwnMfR9TDguErX5KsKnseJA=
-	=
-X-Received: by 2002:a05:600c:4688:b0:45c:b540:763d with SMTP id 5b1f17b1804b1-46fa9b18258mr188890325e9.33.1760453926202;
-        Tue, 14 Oct 2025 07:58:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8kReNouh/FMllDhZL1/LjU5H2+MzwpSXXqIoRDT/EXSsokN8bUOOMTMa3S5ppFayGgVWyaA==
-X-Received: by 2002:a05:600c:4688:b0:45c:b540:763d with SMTP id 5b1f17b1804b1-46fa9b18258mr188890205e9.33.1760453925803;
-        Tue, 14 Oct 2025 07:58:45 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e13b6sm24159844f8f.44.2025.10.14.07.58.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 07:58:45 -0700 (PDT)
-Message-ID: <313d2c86-d13e-4f79-b977-81a43d685cf6@redhat.com>
-Date: Tue, 14 Oct 2025 16:58:44 +0200
+        d=1e100.net; s=20230601; t=1760453946; x=1761058746;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bkA3DsnAjaOe1kWah6dgRh2HdZ2TK46Tu48uO23EzeA=;
+        b=Ha8k9iA9d8EsWGAZBd78NsFvJBr0n1ohGtnwnwAy4eSMhO75V4D+2ojq00YmOqP7pR
+         wGy7D9EkHIEMaslpww9OFhraid7olr9AJ0Dsv+e2ptB//0C+AXGGghGsY/m7qOzfCjD/
+         HEQVHUYgIwr7doPnQjVZh6Li0gLUG/WMZ3W8L97j6lGcVr8kyMGzu9mF8aojFLewKeL4
+         +HY31KVVwU8b8E7OlwT2Q/fYD5S+YSnT0ST5AHXd2LC/o5Ro5Q6bJJDPOCcZuQnGuCSO
+         0a8ByUMfL4/vNL2ArEv0hyba10Q+U175as6xWDVxAJNYDHrPm49LMMZPEQvU3acuuGVa
+         Wbhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGrtZSvxhh48XP4QlZgWjFp9OYYpJZDkmTyueamg62sabiJt9wDRkkLevroyVnuihzDf/rKaQJ4c6bvJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvulbNy+1NJ5EyYUFbIxt8E5md3FnF2bXJZPGMC88xQZfq3CxR
+	oTOteDTDDM1OXIDl3HUX+6t0e7hhxJr4Gwpl55SlLp627YdDmfPSgv9/VDp1oWoj7OrbYgzIJjz
+	5tB3cat8zVpUFbp18sWYFsH0RjtrZVI34rsO5f9O1
+X-Gm-Gg: ASbGncu3/18ulF1TkcillV3oqu7ydGlYxDgdyrwvwvscQIv5c5oQcDDqA8VJO1dxGJ/
+	O93uLpuxJXavLnDzvZXlmHSM1H4NjUsDAdGqCz6OxGyYBaHrIiWp15OSZ2a4hcVxO6rp1HTJ3Ly
+	JvcXtillRBLqz9kDOUKV/ef6JZf4k/nB85V/vUw1BIQ4kPJhQIZEEAiyv3Tu9Dzj0qlouJ0C/tZ
+	aAL6A2SB6isHSvRjoP2fprZkF+qiJoo/FvZN0g9GUTbsphjlSMUadjtgBiyGOU+otraaRrnx12D
+	G8Ngrh7x
+X-Google-Smtp-Source: AGHT+IHixQM4D7/C9rvMcEsB1y1V6c33YBzzOkECVikf4/w8buGAafM7wqHTb2wd9uqoervTXG8HHlEiUKNWOxEwi7A=
+X-Received: by 2002:a05:6808:11c6:b0:43f:afc9:b889 with SMTP id
+ 5614622812f47-4417b4080edmr10801592b6e.50.1760453946012; Tue, 14 Oct 2025
+ 07:59:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v2 1/2] mm: add spurious fault fixing support for huge
- pmd
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Huang Ying <ying.huang@linux.alibaba.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <yang@os.amperecomputing.com>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Yin Fengwei <fengwei_yin@linux.alibaba.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
- <20251013092038.6963-2-ying.huang@linux.alibaba.com>
- <4c453dcc-2837-4f1a-905b-3462270f5e31@lucifer.local>
- <2861a35d-4f8e-4ee1-bd11-b915580c9ce3@redhat.com>
- <86bb70dd-2602-48f3-a683-5ec62b37fd46@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <86bb70dd-2602-48f3-a683-5ec62b37fd46@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <68ee633c.050a0220.1186a4.002a.GAE@google.com>
+In-Reply-To: <68ee633c.050a0220.1186a4.002a.GAE@google.com>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Tue, 14 Oct 2025 16:58:54 +0200
+X-Gm-Features: AS18NWCNgIb01RCF4Y9Jg-O5lmrWBTRPt9GoCeuQXeptheZO1YJO6W6vZZWdYBA
+Message-ID: <CANp29Y6VadSqY3Pt8Leih+W+czo7-yYZE33juiaCKLHYZQ1p4w@mail.gmail.com>
+Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in fscrypt_crypt_data_unit
+To: syzbot <syzbot+7add5c56bc2a14145d20@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, linux-ext4@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.10.25 16:49, Lorenzo Stoakes wrote:
-> On Tue, Oct 14, 2025 at 04:38:05PM +0200, David Hildenbrand wrote:
->>
->>>
->>> 		/* Skip spurious TLB flush for retried page fault */
->>> 		if (vmf->flags & FAULT_FLAG_TRIED)
->>> 			goto unlock;
->>> 		/*
->>> 		 * This is needed only for protection faults but the arch code
->>> 		 * is not yet telling us if this is a protection fault or not.
->>> 		 * This still avoids useless tlb flushes for .text page faults
->>> 		 * with threads.
->>> 		 */
->>> 		if (vmf->flags & FAULT_FLAG_WRITE)
->>> 			flush_tlb_fix_spurious_fault(vmf->vma, vmf->address,
->>> 						     vmf->pte);
->>>
->>>
->>> So I don't see why it's so egregious to have the equivalent here, or actually
->>> ideally to abstract the code entirely.
->>
->> Let's definitely not duplicate such comments whereby one instance will end
->> up bitrotting.
-> 
-> We're duplicating the code in two places, how would that bitrot happen exactly?
+#syz set subsystems: ext4, fscrypt
 
-Often we adjust/fix comments to make scenarios/conditions clearer or 
-extend them to cover some new conditions.
-
-So even without any code changes people will just ignore to update other 
-comments.
-
-Code you can at least test with the hope to find inconsistencies.
-
-So copying rather large comments is usually never the answer :)
-
-Well, just like copying larger chunks of code, agreed.
-
--- 
-Cheers
-
-David / dhildenb
-
+On Tue, Oct 14, 2025 at 4:50=E2=80=AFPM syzbot
+<syzbot+7add5c56bc2a14145d20@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    3a8660878839 Linux 6.18-rc1
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13d25dcd98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbbd3e7f3c2e28=
+265
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D7add5c56bc2a141=
+45d20
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/d996feb56093/dis=
+k-3a866087.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/fa6f6bc3b02a/vmlinu=
+x-3a866087.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/7571083a68d6/b=
+zImage-3a866087.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+7add5c56bc2a14145d20@syzkaller.appspotmail.com
+>
+> EXT4-fs (loop5): mounted filesystem 00000000-0000-0000-0000-000000000000 =
+r/w without journal. Quota mode: writeback.
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:150 [inline]
+> BUG: KMSAN: uninit-value in aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:28=
+3
+>  subshift lib/crypto/aes.c:150 [inline]
+>  aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
+>  aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
+>  crypto_ecb_crypt crypto/ecb.c:23 [inline]
+>  crypto_ecb_encrypt2+0x142/0x300 crypto/ecb.c:40
+>  crypto_lskcipher_crypt_sg+0x3ac/0x930 crypto/lskcipher.c:188
+>  crypto_lskcipher_encrypt_sg+0x8b/0xc0 crypto/lskcipher.c:207
+>  crypto_skcipher_encrypt+0x111/0x1e0 crypto/skcipher.c:194
+>  xts_encrypt+0x2e1/0x570 crypto/xts.c:269
+>  crypto_skcipher_encrypt+0x18a/0x1e0 crypto/skcipher.c:195
+>  fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
+>  fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
+>  ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
+>  mpage_submit_folio fs/ext4/inode.c:2080 [inline]
+>  mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
+>  mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
+>  ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
+>  ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
+>  do_writepages+0x3f2/0x860 mm/page-writeback.c:2604
+>  filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+>  __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+>  file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
+>  generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
+>  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+>  ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
+>  vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
+>  generic_write_sync include/linux/fs.h:3046 [inline]
+>  ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
+>  ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+>  new_sync_write fs/read_write.c:593 [inline]
+>  vfs_write+0xbe2/0x15d0 fs/read_write.c:686
+>  ksys_pwrite64 fs/read_write.c:793 [inline]
+>  __do_sys_pwrite64 fs/read_write.c:801 [inline]
+>  __se_sys_pwrite64 fs/read_write.c:798 [inline]
+>  __x64_sys_pwrite64+0x2ab/0x3b0 fs/read_write.c:798
+>  x64_sys_call+0xe77/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:1=
+9
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was stored to memory at:
+>  le128_xor include/crypto/b128ops.h:69 [inline]
+>  xts_xor_tweak+0x566/0xbd0 crypto/xts.c:123
+>  xts_xor_tweak_pre crypto/xts.c:135 [inline]
+>  xts_encrypt+0x278/0x570 crypto/xts.c:268
+>  crypto_skcipher_encrypt+0x18a/0x1e0 crypto/skcipher.c:195
+>  fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
+>  fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
+>  ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
+>  mpage_submit_folio fs/ext4/inode.c:2080 [inline]
+>  mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
+>  mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
+>  ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
+>  ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
+>  do_writepages+0x3f2/0x860 mm/page-writeback.c:2604
+>  filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+>  __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+>  file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
+>  generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
+>  ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+>  ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
+>  vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
+>  generic_write_sync include/linux/fs.h:3046 [inline]
+>  ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
+>  ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+>  new_sync_write fs/read_write.c:593 [inline]
+>  vfs_write+0xbe2/0x15d0 fs/read_write.c:686
+>  ksys_pwrite64 fs/read_write.c:793 [inline]
+>  __do_sys_pwrite64 fs/read_write.c:801 [inline]
+>  __se_sys_pwrite64 fs/read_write.c:798 [inline]
+>  __x64_sys_pwrite64+0x2ab/0x3b0 fs/read_write.c:798
+>  x64_sys_call+0xe77/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:1=
+9
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was created at:
+>  __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:5206
+>  alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2416
+>  alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
+>  alloc_pages_noprof mm/mempolicy.c:2507 [inline]
+>  folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2517
+>  filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1020
+>  __filemap_get_folio+0xb45/0x1930 mm/filemap.c:2012
+>  write_begin_get_folio include/linux/pagemap.h:784 [inline]
+>  ext4_write_begin+0x6d9/0x2d70 fs/ext4/inode.c:1318
+>  generic_perform_write+0x365/0x1050 mm/filemap.c:4242
+>  ext4_buffered_write_iter+0x61a/0xce0 fs/ext4/file.c:299
+>  ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+>  new_sync_write fs/read_write.c:593 [inline]
+>  vfs_write+0xbe2/0x15d0 fs/read_write.c:686
+>  ksys_pwrite64 fs/read_write.c:793 [inline]
+>  __do_sys_pwrite64 fs/read_write.c:801 [inline]
+>  __se_sys_pwrite64 fs/read_write.c:798 [inline]
+>  __x64_sys_pwrite64+0x2ab/0x3b0 fs/read_write.c:798
+>  x64_sys_call+0xe77/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:1=
+9
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> CPU: 1 UID: 0 PID: 5879 Comm: syz.5.3882 Tainted: G        W           sy=
+zkaller #0 PREEMPT(none)
+> Tainted: [W]=3DWARN
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/02/2025
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
+-bugs/68ee633c.050a0220.1186a4.002a.GAE%40google.com.
 
