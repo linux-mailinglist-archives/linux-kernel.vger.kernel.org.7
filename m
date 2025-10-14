@@ -1,206 +1,262 @@
-Return-Path: <linux-kernel+bounces-852074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2EDBD81B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:09:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EB8BD81D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A838E34E876
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A3218971D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F38330F558;
-	Tue, 14 Oct 2025 08:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4592730F7E4;
+	Tue, 14 Oct 2025 08:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jzql7MQ1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="db9Xkwgg"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7346C30EF98;
-	Tue, 14 Oct 2025 08:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE7930F53A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429377; cv=none; b=H2xx15KibLETfYR5JFVWKcK+FecqzMx1lGs/LLL0axsc/iXINOSe9pHPWtfD/T2dCBhFa0Q/fsV67IhxrYK1Hm5SH9qxOkWj02jgmcBlGkGNyW8jYrVObzHsG4n0STHWqk2/BsbK8tz/wPnJII+qXdBVNZfx5CvAOpiuBvZ6WJo=
+	t=1760429503; cv=none; b=siDW59nXgtECW6moadLctv/wNVNmHff4AUeBRU4UbMyVhMB32P+YwwqfxIVH0pIjG4N8JpEuMxop+9xCV7CPpGg2qkqGV7Q5onplBeHenZgepK/lhBHvRJUbLPEQuDZ83kTmuRasemyIADRvRH4x/66gK+3KYPvN+F57r2sberc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429377; c=relaxed/simple;
-	bh=aod1SyLTuA8l9vg6WTwLEHjQq4wmSw6FgH1FjGpTX9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=olIo4jh8hrsbhN51K2gZeTHRiiFohTp+KdA76Hqs/CLfz07oOZSjzpUYm/rg+dlYEXRWqRpsS11hzeW1BQ+a1o8khEa9Tg83gHKrV1XRVB/U3bz7St9ZThOMRq0MdRE6HJiNF4SgTOQgeIkef3XHUCILbef8zxDh7/797sURFvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jzql7MQ1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A130DC4CEE7;
-	Tue, 14 Oct 2025 08:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760429376;
-	bh=aod1SyLTuA8l9vg6WTwLEHjQq4wmSw6FgH1FjGpTX9Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jzql7MQ10q+YZCucKA5N988SKunyz3/4BxYsHwt/dfNEgNaGWj6mdI/P1x+PjaR5e
-	 +LZFrfj/8KAjK5mRkvr+6txwTGE4T2ClQ0EJKHW9wXsQ/0x+kczVv5gKZh3fgFBKFd
-	 e04P+Y519liUIsDjciV0ag5TW+I40EcLNhh9urCfmNEzR0FkxLz07qpVHyA2dTm022
-	 cFrrkqW4wT7aEZgk2d+QMB36oZqjt2KrzRIiWvOWdeh+/kP4gWLkbIQYnMIqi4Y0Xd
-	 ySTMGqPiPfZjdAA8qV+XAP+6itCrtJUFGHHd8yOYbs7ioCItmj887THgKXMp3ipvpi
-	 UxVOejTv+F+ug==
-Message-ID: <b6af124c-6d51-437e-bf51-d799ffbaaf55@kernel.org>
-Date: Tue, 14 Oct 2025 10:09:31 +0200
+	s=arc-20240116; t=1760429503; c=relaxed/simple;
+	bh=jRf7YqINEV3bz3VzIw9FGruew0rkW3g2hYiZe9BkV/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jSFyrJM/b4o/+NOj06kqm8YzI8y7S1zh8V5Qn0Lxhl78EGREiw0FyRVPI8eR+G9oz8egim1rzYuB4dbXocSW2OZhM5s30r7sQqSHRH1z6BzQ2s6GJXR1HxT6f+7wyf/GyBzPLzCaZ9b42JwkFzkCZnj9q5rqII9X1CI4J15uof4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=db9Xkwgg; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso4432546a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1760429497; x=1761034297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fjoc325jjBewUa+PMCJv73wF7zKdUoHfwyGW6ASR27s=;
+        b=db9XkwggaIFq52fj5VBy8nLGfDS+HI+EDAYvf607o/yPHKB89UxJIerJkqOEJNabu+
+         n4ohwJlbREOEAs/4iH12HMCqS8f8BJhnjFwUtQyqYqXRbI6Pv8Jx69G2J6nIpADE+hBc
+         dMZSme5f+jEQTwQbW6LYGqIKguWDBex1xd/lFK9UhZQ/4gpPSsArsRyWROiklwk+S6GH
+         oRn2qszcW4nYpcDer9jpX5Qhka/SZSLrIgmsu7vs94TR/C/3j7isSrQRWnkHxQnfMaw9
+         I7SfoWtJjVbG+N8YP0yBVYa4KlKLQBCDoRdqDL+QLQ0ApgVEmbTs53rp50LbqQzohHJ2
+         tS5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760429497; x=1761034297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fjoc325jjBewUa+PMCJv73wF7zKdUoHfwyGW6ASR27s=;
+        b=s3ieVb/HLNnev7ire4BJ0lvqe/jMEs86oZbw5LPoaRXh9IoNDV7tqkrBhoXeocbDBu
+         C9Qz18kcGEDCPi9kF1I9VN+GE/EssGCNCy1DSvu8hkQe+Fa+1VRBYAY+3bgFEPP7h3A6
+         +mncRfs8jsaCnTJlGYjGc9AqXYSvl8s+qBGUOzGxKsPweg6f0fIk4d3SCFOI/wZZMYKt
+         Sb3LmphM7OrXYdtCsy81P2UHVO03UKdjNTuKMOrHWoJm6Oybqz0tP94xxuD9s5eD9zUW
+         HzlgP+TMH4JvyigmF6NS3Yi71J1kaoOLmF+lsixGq7fQfUyo737lweqLvdTPe+5W4i0f
+         mBiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK2j10SEUT2Ll+HJGeaBbhxsv96lRHIgfRtBdoXgIakFh54UOEebBZTa1Mcl0x1+7ndFDkwyYGtZEvhUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj9GbYCVJJqssS9ITKyqk3nj1k9lsPciC/IzMGQNS6rksbwGuA
+	UBljPbtiJRmXvvl6Ae/I+rNLoOuElz20ughvevxVOIUBwrF1Vq3k2r3ZTNIw5l8Lcq8IQDFZfg3
+	jZJd6lCIt1iihTbZPkTDwLiugQpj1td+B6GMEjS8iYw==
+X-Gm-Gg: ASbGncuR8RbYfUQwX7IPX7czrRym6oLExO1J2XG5Nqv+NF5YyZgiVNTY4fOyBVbk8ma
+	bahs0yoPgpnlFzpVM8f798uibwR+es9AfnRisJpiHP8sRDXTprR8BGKhB736X6cVHL8Pq1H0dE7
+	+Kxg12iE2NTB6Jkxx0BWEVxYcqm7FM+B41YiK8hpBkN5Di1F5sMA3yjJM2ndXU8+Y/ael7r4V0H
+	6xabO1OJ+DvQ1+oq1vvN4smRWgV7YNyvP2EEDf8/wRplsCc36COOzKLTVBf/UtBsvpH61I0QIEK
+	POUqqoDDZ8dYNUneSA==
+X-Google-Smtp-Source: AGHT+IGtEx/vxjLQYcfILlv2zX9NsM7oAL80JOcH+vHwVkTXyNROQzVhxfWjHb2rsJrrKGXRKWkc/te+HJHHsQEbDto=
+X-Received: by 2002:a17:903:37c3:b0:269:a4ed:13c9 with SMTP id
+ d9443c01a7336-290273ee214mr299435315ad.30.1760429497506; Tue, 14 Oct 2025
+ 01:11:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: regulator: Add MAX77675 binding
- header
-To: Joan-Na-adi <joan.na.devcode@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Joan Na <joan.na@analog.com>
-References: <20251014053142.15835-1-joan.na@analog.com>
- <20251014053142.15835-2-joan.na@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251014053142.15835-2-joan.na@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251002060732.100213-1-apatel@ventanamicro.com>
+ <20251002060732.100213-5-apatel@ventanamicro.com> <20edc3a9-2efe-4431-b198-f00b3940777c@gmail.com>
+ <CAK9=C2U+H5xZaK6g5qcytESyC9H8gkU_jEUDJanEs1qzcGgYCQ@mail.gmail.com> <69205060-6a47-4140-8026-6e5a50ad1512@gmail.com>
+In-Reply-To: <69205060-6a47-4140-8026-6e5a50ad1512@gmail.com>
+From: Mayuresh Chitale <mchitale@ventanamicro.com>
+Date: Tue, 14 Oct 2025 13:40:59 +0530
+X-Gm-Features: AS18NWDB2JU-ih8bTEc-UVtcOhI_T3P9jU2EM9UEyVjJe9OcrAhVJmGT69VbA0s
+Message-ID: <CAN37VV4jFyuEYw0cxU00FucgV=so5SfTon_1hdvbVuqX1QzYCQ@mail.gmail.com>
+Subject: Re: [PATCH 04/11] rvtrace: Add functions to start/stop tracing on a
+ component path
+To: Bo Gan <ganboing@gmail.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
+	Mayuresh Chitale <mchitale@gmail.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/10/2025 07:31, Joan-Na-adi wrote:
-> From: Joan Na <joan.na@analog.com>
-> 
-> Add binding header for the MAX77675 PMIC regulator. This header defines
-> voltage ID and regulator index macros used both in device tree sources
-> and in the driver implementation.
-> 
-> Fixes:
-> - Removed unused macros
-> - Renamed macros for clarity
+Hi Bo,
 
+On Mon, Oct 13, 2025 at 10:23=E2=80=AFAM Bo Gan <ganboing@gmail.com> wrote:
+>
+> On 10/12/25 20:43, Anup Patel wrote:
+> > On Wed, Oct 8, 2025 at 2:45=E2=80=AFPM Bo Gan <ganboing@gmail.com> wrot=
+e:
+> >>
+> >> On 10/1/25 23:07, Anup Patel wrote:
+> >>> From: Mayuresh Chitale <mchitale@ventanamicro.com>
+> >>>
+> >>> The perf driver framework needs to be able to start / stop all compon=
+ents
+> >>> in a trace component path during its operation. Add rvtrace_path_star=
+t()
+> >>> and rvtrace_path_stop() functions for this purpose.
+> >>>
+> >>> Co-developed-by: Anup Patel <apatel@ventanamicro.com>
+> >>> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> >>> Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
+> >>> ---
+> >>>    drivers/hwtracing/rvtrace/rvtrace-core.c | 44 ++++++++++++++++++++=
+++++
+> >>>    include/linux/rvtrace.h                  |  6 ++++
+> >>>    2 files changed, 50 insertions(+)
+> >>>
+> >>> diff --git a/drivers/hwtracing/rvtrace/rvtrace-core.c b/drivers/hwtra=
+cing/rvtrace/rvtrace-core.c
+> >>> index 7013d50ca569..109be40d4b24 100644
+> >>> --- a/drivers/hwtracing/rvtrace/rvtrace-core.c
+> >>> +++ b/drivers/hwtracing/rvtrace/rvtrace-core.c
+> >>> @@ -614,6 +614,50 @@ static void rvtrace_release_path_nodes(struct rv=
+trace_path *path)
+> >>>        }
+> >>>    }
+> >>>
+> >>> +int rvtrace_path_start(struct rvtrace_path *path)
+> >>> +{
+> >>> +     const struct rvtrace_driver *rtdrv;
+> >>> +     struct rvtrace_component *comp;
+> >>> +     struct rvtrace_path_node *node;
+> >>> +     int ret;
+> >>> +
+> >>> +     list_for_each_entry(node, &path->comp_list, head) {
+> >>> +             comp =3D node->comp;
+> >>> +             rtdrv =3D to_rvtrace_driver(comp->dev.driver);
+> >>> +             if (!rtdrv->start)
+> >>> +                     continue;
+> >>> +
+> >>> +             ret =3D rtdrv->start(comp);
+> >>> +             if (ret)
+> >>> +                     return ret;
+> >>> +     }
+> >>> +
+> >>> +     return 0;
+> >>> +}
+> >>> +EXPORT_SYMBOL_GPL(rvtrace_path_start);
+> >>> +
+> >>> +int rvtrace_path_stop(struct rvtrace_path *path)
+> >>> +{
+> >>> +     const struct rvtrace_driver *rtdrv;
+> >>> +     struct rvtrace_component *comp;
+> >>> +     struct rvtrace_path_node *node;
+> >>> +     int ret;
+> >>> +
+> >>> +     list_for_each_entry(node, &path->comp_list, head) {
+> >>> +             comp =3D node->comp;
+> >>> +             rtdrv =3D to_rvtrace_driver(comp->dev.driver);
+> >>> +             if (!rtdrv->stop)
+> >>> +                     continue;
+> >>> +
+> >>> +             ret =3D rtdrv->stop(comp);
+> >>> +             if (ret)
+> >>> +                     return ret;
+> >>> +     }
+> >>> +
+> >>> +     return 0;
+> >>> +}
+> >>> +EXPORT_SYMBOL_GPL(rvtrace_path_stop);
+> >>> +
+> >>>    struct rvtrace_path *rvtrace_create_path(struct rvtrace_component =
+*source,
+> >>>                                         struct rvtrace_component *sin=
+k,
+> >>>                                         enum rvtrace_component_mode m=
+ode)
+> >>> diff --git a/include/linux/rvtrace.h b/include/linux/rvtrace.h
+> >>> index f2174f463a69..e7bd335d388f 100644
+> >>> --- a/include/linux/rvtrace.h
+> >>> +++ b/include/linux/rvtrace.h
+> >>> @@ -273,10 +273,14 @@ struct rvtrace_path *rvtrace_create_path(struct=
+ rvtrace_component *source,
+> >>>                                         struct rvtrace_component *sin=
+k,
+> >>>                                         enum rvtrace_component_mode m=
+ode);
+> >>>    void rvtrace_destroy_path(struct rvtrace_path *path);
+> >>> +int rvtrace_path_start(struct rvtrace_path *path);
+> >>> +int rvtrace_path_stop(struct rvtrace_path *path);
+> >>>
+> >>>    /**
+> >>>     * struct rvtrace_driver - Representation of a RISC-V trace driver
+> >>>     * id_table: Table to match components handled by the driver
+> >>> + * start:        Callback to start tracing
+> >>> + * stop:         Callback to stop tracing
+> >>>     * probe:        Driver probe() function
+> >>>     * remove:       Driver remove() function
+> >>>     * get_trace_id: Get/allocate a trace ID
+> >>> @@ -285,6 +289,8 @@ void rvtrace_destroy_path(struct rvtrace_path *pa=
+th);
+> >>>     */
+> >>>    struct rvtrace_driver {
+> >>>        const struct rvtrace_component_id *id_table;
+> >>> +     int                     (*start)(struct rvtrace_component *comp=
+);
+> >>> +     int                     (*stop)(struct rvtrace_component *comp)=
+;
+> >>>        int                     (*probe)(struct rvtrace_component *com=
+p);
+> >>>        void                    (*remove)(struct rvtrace_component *co=
+mp);
+> >>>        int                     (*get_trace_id)(struct rvtrace_compone=
+nt *comp,
+> >>
+> >> I'd suggest add another function (*quiesce) or something like that. Tr=
+ace
+> >> components have a tr??Empty bit that indicates trace has been all flus=
+hed
+> >> out. Also along the path when you do rvtrace_path_stop, you need to en=
+sure
+> >> the source has stopped and quiescent before beginning to stop the sink=
+.
+> >> Otherwise you'll get partial or corrupted trace. In essence, follow Co=
+ntrol
+> >> Interface Spec 11.3 Enabling and Disabling. FYI: my userspace driver:
+> >> https://github.com/ganboing/riscv-trace-umd/blob/master/rvtrace/funnel=
+.py#L223
+> >
+> > It's better to add functions on a need basis rather than adding
+> > it now without any potential user.
+> >
+> > Regards,
+> > Anu
+>
+> Hi Anup, my previous comment also applies to your current use case where =
+you
+> have encoder->RAM sink directly connected together. Having a longer path,
+> e.g., funnels in between makes it worse. The driver needs to poll the emp=
+ty
+> bit tr??Empty (bit 3) of the control register to check if trace has been
+> completely flushed. Otherwise, you get a partial trace, possibly with las=
+t
+> few messages missing or truncated. So, yes, there's really a need to do s=
+o.
 
-This makes no sense. Fixes what? There are no macros before.
-
-Please read submitting patches how to write proper changelogs.
-
-> 
-> Signed-off-by: Joan Na <joan.na@analog.com>
-> ---
->  .../regulator/maxim,max77675-regulator.h      | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 include/dt-bindings/regulator/maxim,max77675-regulator.h
-> 
-> diff --git a/include/dt-bindings/regulator/maxim,max77675-regulator.h b/include/dt-bindings/regulator/maxim,max77675-regulator.h
-> new file mode 100644
-> index 000000000000..b3b52d1668c2
-> --- /dev/null
-> +++ b/include/dt-bindings/regulator/maxim,max77675-regulator.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD 2-Clause */
-> +/*
-> + * This header provides macros for MAXIM MAX77675 device bindings.
-> + *
-> + * Copyright (c) 2025, Analog Device inc.
-> + * Author: Joan Na <joan.na@analog.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_REGULATOR_MAX77675_
-> +#define _DT_BINDINGS_REGULATOR_MAX77675_
-> +
-> +/* FPS source */
-> +#define MAX77675_FPS_SLOT_0       0x0
-> +#define MAX77675_FPS_SLOT_1       0x1
-> +#define MAX77675_FPS_SLOT_2       0x2
-> +#define MAX77675_FPS_SLOT_3       0x3
-> +#define MAX77675_FPS_DEF          0x4
-> +
-> +/* nEN Manual Reset Time Configuration (MRT) */
-> +#define MAX77675_MRT_4S           0x0
-> +#define MAX77675_MRT_8S           0x1
-> +#define MAX77675_MRT_12S          0x2
-> +#define MAX77675_MRT_16S          0x3
-
-None of these are bindings.
-
-
-> +
-> +/* nEN Mode Configuration */
-> +#define MAX77675_EN_PUSH_BUTTON   0x0
-> +#define MAX77675_EN_SLIDE_SWITCH  0x1
-> +#define MAX77675_EN_LOGIC         0x2
-
-Neither these.
-
-> +
-> +/* Debounce Timer Enable (DBEN_nEN) */
-> +#define MAX77675_DBEN_100US       0x0
-> +#define MAX77675_DBEN_30000US     0x1
-> +
-> +/* Rising slew rate control for SBB0 when ramping up */
-> +#define MAX77675_SR_2MV_PER_US    0x0  // 2 mV/us
-> +#define MAX77675_SR_USE_DVS       0x1  // Use DVS slew rate setting (maxim,dvs-slew-rate)
-> +
-> +/* Dynamic Voltage Scaling (DVS) Slew Rate */
-> +#define MAX77675_DVS_SLEW_5MV_PER_US    0x0  // 5 mV/us
-> +#define MAX77675_DVS_SLEW_10MV_PER_US   0x1  // 10 mV/us
-> +
-> +/* Latency Mode */
-> +#define MAX77675_HIGH_LATENCY_MODE  0x0   // High latency, low quiescent current (~100us)
-> +#define MAX77675_LOW_LATENCY_MODE   0x1   // Low latency, high quiescent current (~10us)
-> +
-> +/* SIMO Buck-Boost Drive Strength (All Channels) */
-> +#define MAX77675_DRV_SBB_STRENGTH_MAX  0x0  // Maximum drive strength (~0.6 ns transition time)
-> +#define MAX77675_DRV_SBB_STRENGTH_HIGH 0x1  // High drive strength (~1.2 ns transition time)
-> +#define MAX77675_DRV_SBB_STRENGTH_LOW  0x2  // Low drive strength (~1.8 ns transition time)
-> +#define MAX77675_DRV_SBB_STRENGTH_MIN  0x3  // Minimum drive strength (~8 ns transition time)
-> +
-
-
-Drop entire header. Not a binding. Otherwise explain me which ABI are
-you binding?
-
-
-Best regards,
-Krzysztof
+I think this can also be implemented in the component's 'stop' callback.
+>
+> Bo
 
