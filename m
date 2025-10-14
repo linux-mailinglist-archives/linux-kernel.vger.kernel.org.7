@@ -1,242 +1,114 @@
-Return-Path: <linux-kernel+bounces-852072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D815BD81BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4AFBD81BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341EF189AFD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:09:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0318A00D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ABF30F54D;
-	Tue, 14 Oct 2025 08:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1egXWzn"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB9230DEB6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C305A3074AC;
+	Tue, 14 Oct 2025 08:08:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932E330DEB6
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429307; cv=none; b=g8/3WtUACRgatI0bYC696WcME19ufiEUMvRNOdPW361/hXoOwQoer08cZLaDM/nK7weLZxEWGOxL85K/EyBSO5tle/yf26BOMhZtm26t68iFI/YdSzwVPxFDmvpgQkbZ+FCKpp2TzhClmFw/KXkxGReX/06X4fKJU7TdHVSNrhM=
+	t=1760429322; cv=none; b=B3EZ5son/l+bo1Wrc57/dtkHWwvV5KThgJ6cZN7e93SjI2SHyeKlVjV/qUEFPW46HmLAktkYbWIrtXfMZWQiVjQ34i+N/hI/Fd3e9vBFzi2qMyTBsBOuoR8bj9Nc+grBEmzJHUNBfuMP/QRz/kQCLnMurUp+vQXLp3f5q/ZrOJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429307; c=relaxed/simple;
-	bh=iX8ybayOoB+zfG3Kr8ZxGBnoJV6Y9ikxx5cuxcSDcqo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XcIR6DD2/N9dXbOW73z2Od++YIojOUnPDyIeM/2RksObQZniMN8EVk7pERK4yYKc7taQIZOpkupQsq2salVkMmRpeJJA1mi8lHa9f1tp4TCFIxssfme3JOMeGLHHpR9qvK43K6CpfUxpVIglDdyOmndaVxWsWocTVaanY7qG3EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1egXWzn; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-28832ad6f64so56537595ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760429305; x=1761034105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lNULsJSShi9Qv044L8BUWXwBT0WWB+xiPbW9Mna22LI=;
-        b=D1egXWzn9qKfGDk05loyj0KG1RHa+0j34FhjHtEvxf1y10PZv2ZJE8zZZT5BvGFrLs
-         GawQZxlmjdYZFGFWufVxmz/CdIEPScQBsdmPJk+xzHrpP13PaMUQYje1B1svKRMjK+pa
-         XVsSZMeT5fjFY8Ib/Zio3cP0DhqQz+Tb7RC7h4njR9mgi7Vby80J4zhxZN5G3B01X+kB
-         JBqO5eyB0BODhzzVFZcl+8Jbw6FQUbkvFsDg+DfZeyWoHQGQBHm9Hd1b+ei2EXORnmof
-         wWRJi3S5CnsXZNxuq4E6bz6QcL4iycEInp8cmws2Uszm4ralrVbk/8wou79zOBubg7wi
-         1E6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760429305; x=1761034105;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lNULsJSShi9Qv044L8BUWXwBT0WWB+xiPbW9Mna22LI=;
-        b=BXRLzXxszRgtLHIhgAeA3TpUmqWz/exRtkCeivTwe6QqSz2oQCIxF++hCdVwJSYgO1
-         +KY3vfhslAwmOO8nVubIrZqw/bxIBOjkS49KQ22ntM13rTxMKXT1nd3Txt/Orf8lucmP
-         SIJTV1g0vcEL11ixETocsn6Y4MKjEFCczQUx986qropAfnNEHzr6X+4OualVwUyVIHFl
-         u0PtJmC2NpugL8qcqcFSfHIksbggXv+41zeg5mm40365DB/Mue0xp6wD+qqhJJ82r9pX
-         AMaf1I4TTS5qWX7UR7bT7TmGLPDpGI+mHJeiCx4yGoDVBhn3EuG6O1dLqoeWkUKhJ7p+
-         S0vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjuEYJw1KXzn800kJYJV7ND/gVxMHscikl2Zd5lGiSaQO1n10lMF1zUT4kCUXycKikWfs4le8Qv/VWDZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM+M6TczlrR8PGan93aYnipXbVMDgvKCbWlUrtHC8hThuzdicw
-	6kNdPOxCuDze/3WqdmnjbbEYxU8dzXS81tSXjYQaw9bxV0kr0+6cDOyn
-X-Gm-Gg: ASbGncs3RrGYYIchPt8D/qEgw+SpzhIZdpVbsvKeqg0SmA/KOydI91V9ypByaUOSgqT
-	IbK1D32EEFTvfPhjskWem3ISEg/DAYkZo4EmsSyu3gCIT7pm5Lua1EVN+N9SoTlVW6H1mTKNBbC
-	clEO4q3EK2hZBM4yGlxiXDg89fX0ihR9QlZPqO828nIcXFaToR0D3Sqe/0Rejyh3jAg+BJUcoOy
-	NkDUiRPpzp2KhzN2Ly9SdyUaxwweiESoDZFEtofjy/cQrKQXQqMOEksAF6pLqoThSfGmvpv/mFv
-	iblvK0w8wUJODw8Xe3nDVWwwuakNa2rb78ZZXrKXeTCKO7I5tAfznTf7go3oydJ23iNyk1ueWhd
-	WGdyQLt+4BARvfd3eEaiA0L2UcnpgP4INRm4l85dAi3tRZ/lLECgro/YpwJ0fRwBnKK6wnpB87v
-	eucGa9xMxPiq9pVg==
-X-Google-Smtp-Source: AGHT+IEgCv4Yi86mKXuSGOsGI+y5z9FGwzXobVA9uILnehkakJ1dqhotPD42azyffPNXp0Nf9zpNBg==
-X-Received: by 2002:a17:902:d58e:b0:28e:8c3a:fb02 with SMTP id d9443c01a7336-2902723eeb6mr285920325ad.14.1760429305163;
-        Tue, 14 Oct 2025 01:08:25 -0700 (PDT)
-Received: from Barrys-MBP.hub ([47.72.128.212])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08912sm155263155ad.78.2025.10.14.01.08.15
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 14 Oct 2025 01:08:24 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: mhocko@suse.com
-Cc: 21cnbao@gmail.com,
-	alexei.starovoitov@gmail.com,
-	corbet@lwn.net,
-	davem@davemloft.net,
-	david@redhat.com,
-	edumazet@google.com,
-	hannes@cmpxchg.org,
-	harry.yoo@oracle.com,
-	horms@kernel.org,
-	jackmanb@google.com,
-	kuba@kernel.org,
-	kuniyu@google.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linyunsheng@huawei.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	roman.gushchin@linux.dev,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	vbabka@suse.cz,
-	willemb@google.com,
-	willy@infradead.org,
-	zhouhuacai@oppo.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-Date: Tue, 14 Oct 2025 16:08:12 +0800
-Message-Id: <20251014080812.2985-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <aO37Od0VxOGmWCjm@tiehlicka>
-References: <aO37Od0VxOGmWCjm@tiehlicka>
+	s=arc-20240116; t=1760429322; c=relaxed/simple;
+	bh=U082kiNJks56nUau37vHGWQ7iF35vD0dHRbASbE6BjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cKPnEv5hEQcnozKbQBpPdsNVFRWn3kgN7grHsk+UH4wV8RFz+FHLu8c6a1pThCfsEsFDIVSKXDqNVDdxj8uc6o0SOA/dq2YfJ1TQvDr0E6C3dtEiGw+suu6lhaltJmWtBq1s3/bQTBsxTTzeJ0QlCQJi2P43RZFfAS8DH+DxGyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 084D21A9A;
+	Tue, 14 Oct 2025 01:08:32 -0700 (PDT)
+Received: from [10.57.83.223] (unknown [10.57.83.223])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 831123F6A8;
+	Tue, 14 Oct 2025 01:08:38 -0700 (PDT)
+Message-ID: <f6e31f0d-a256-4d58-adfb-4d3d97dbaef2@arm.com>
+Date: Tue, 14 Oct 2025 09:08:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: mm: relax VM_ALLOW_HUGE_VMAP if BBML2_NOABORT
+ is supported
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, dev.jain@arm.com, cl@gentwo.org,
+ catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251013232803.3065100-1-yang@os.amperecomputing.com>
+ <20251013232803.3065100-3-yang@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20251013232803.3065100-3-yang@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 3:26 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Mon 13-10-25 20:30:13, Vlastimil Babka wrote:
-> > On 10/13/25 12:16, Barry Song wrote:
-> > > From: Barry Song <v-songbaohua@oppo.com>
-> [...]
-> > I wonder if we should either:
-> >
-> > 1) sacrifice a new __GFP flag specifically for "!allow_spin" case to
-> > determine it precisely.
->
-> As said in other reply I do not think this is a good fit for this
-> specific case as it is all or nothing approach. Soon enough we discover
-> that "no effort to reclaim/compact" hurts other usecases. So I do not
-> think we need a dedicated flag for this specific case. We need a way to
-> tell kswapd/kcompactd how much to try instead.
+On 14/10/2025 00:27, Yang Shi wrote:
+> When changing permissions for vmalloc area, VM_ALLOW_HUGE_VMAP area is
+> exclueded because kernel can't split the va mapping if it is called on
+> partial range.
+> It is no longer true if the machines support BBML2_NOABORT after commit
+> a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full").
+> So we can relax this restriction and update the comments accordingly.
 
-+Baolin, who may have observed the same issue.
+Is there actually any user that benefits from this modified behaviour in the
+current kernel? If not, then I'd prefer to leave this for Dev to modify
+systematically as part of his series to enable VM_ALLOW_HUGE_VMAP by default for
+arm64. I believe he's planning to post that soon.
 
-An issue with vmscan is that kcompactd is woken up very late, only after
-reclaiming a large number of order-0 pages to satisfy an order-3
-application.
+Thanks,
+Ryan
 
-static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
-{
+> 
+> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> ---
+>  arch/arm64/mm/pageattr.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index c21a2c319028..b4dcae6273a8 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -157,13 +157,13 @@ static int change_memory_common(unsigned long addr, int numpages,
+>  
+>  	/*
+>  	 * Kernel VA mappings are always live, and splitting live section
+> -	 * mappings into page mappings may cause TLB conflicts. This means
+> -	 * we have to ensure that changing the permission bits of the range
+> -	 * we are operating on does not result in such splitting.
+> +	 * mappings into page mappings may cause TLB conflicts on the machines
+> +	 * which don't support BBML2_NOABORT.
+>  	 *
+>  	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
+> -	 * Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
+> -	 * mappings are updated and splitting is never needed.
+> +	 * Disallow VM_ALLOW_HUGE_VMAP mappings if the systems don't support
+> +	 * BBML2_NOABORT to guarantee that only page mappings are updated and
+> +	 * splitting is never needed on those machines.
+>  	 *
+>  	 * So check whether the [addr, addr + size) interval is entirely
+>  	 * covered by precisely one VM area that has the VM_ALLOC flag set.
+> @@ -171,7 +171,8 @@ static int change_memory_common(unsigned long addr, int numpages,
+>  	area = find_vm_area((void *)addr);
+>  	if (!area ||
+>  	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
+> -	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
+> +	    !(area->flags & VM_ALLOC) || ((area->flags & VM_ALLOW_HUGE_VMAP) &&
+> +	    !system_supports_bbml2_noabort()))
+>  		return -EINVAL;
+>  
+>  	if (!numpages)
 
-...
-                balanced = pgdat_balanced(pgdat, sc.order, highest_zoneidx);
-                if (!balanced && nr_boost_reclaim) {
-                        nr_boost_reclaim = 0;
-                        goto restart;
-                }
-
-                /*
-                 * If boosting is not active then only reclaim if there are no
-                 * eligible zones. Note that sc.reclaim_idx is not used as
-                 * buffer_heads_over_limit may have adjusted it.
-                 */
-                if (!nr_boost_reclaim && balanced)
-                        goto out;
-...
-                if (kswapd_shrink_node(pgdat, &sc))
-                        raise_priority = false;
-...
-
-out:
-
-                ...
-                /*
-                 * As there is now likely space, wakeup kcompact to defragment
-                 * pageblocks.
-                 */
-                wakeup_kcompactd(pgdat, pageblock_order, highest_zoneidx);
-}
-
-As pgdat_balanced() needs at least one 3-order pages to return true:
-
-bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
-                         int highest_zoneidx, unsigned int alloc_flags,
-                         long free_pages)
-{
-        ...  
-        if (free_pages <= min + z->lowmem_reserve[highest_zoneidx])
-                return false;
-
-        /* If this is an order-0 request then the watermark is fine */
-        if (!order)
-                return true;
-
-        /* For a high-order request, check at least one suitable page is free */
-        for (o = order; o < NR_PAGE_ORDERS; o++) {
-                struct free_area *area = &z->free_area[o];
-                int mt;
-
-                if (!area->nr_free)
-                        continue;
-
-                for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
-                        if (!free_area_empty(area, mt)) 
-                                return true;
-                }    
-
-#ifdef CONFIG_CMA
-                if ((alloc_flags & ALLOC_CMA) &&
-                    !free_area_empty(area, MIGRATE_CMA)) {
-                        return true;
-                }    
-#endif
-                if ((alloc_flags & (ALLOC_HIGHATOMIC|ALLOC_OOM)) &&
-                    !free_area_empty(area, MIGRATE_HIGHATOMIC)) {
-                        return true;
-                }
-
-}
-
-This appears to be incorrect and will always lead to over-reclamation in order0
-to satisfy high-order applications.
-
-I wonder if we should "goto out" earlier to wake up kcompactd when there
-is plenty of memory available, even if no order-3 pages exist.
-
-Conceptually, what I mean is:
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index c80fcae7f2a1..d0e03066bbaa 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -7057,9 +7057,8 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
-                 * eligible zones. Note that sc.reclaim_idx is not used as
-                 * buffer_heads_over_limit may have adjusted it.
-                 */
--               if (!nr_boost_reclaim && balanced)
-+               if (!nr_boost_reclaim && (balanced || we_have_plenty_memory_to_compact()))
-                        goto out;
-
-                /* Limit the priority of boosting to avoid reclaim writeback */
-                if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
-                        raise_priority = false;
-
-
-Thanks
-Barry
 
