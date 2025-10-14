@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-852971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034BDBDA570
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:26:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D7FBDA582
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7C1023538A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152091882197
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A85723C50A;
-	Tue, 14 Oct 2025 15:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E9F3002C9;
+	Tue, 14 Oct 2025 15:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vln4QgwU"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LEX+B5Hj"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C816C2FFDF4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81792FFFBB
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455546; cv=none; b=MUFqBypjkz+2lWB14FlK2zlfOeFE0ZiFExDsgbyjPZ/JRXIJuelZcF24WpyVQS73z4dR6xSCZqtuEVDZJeojDVAosA5rOGWsLwKPxaQzUomq6pFChLXK0JpAiUq3il504pz/BXIoyTVc1lDV+vB5Na1K51XvzWgZNgTUrlIUkiY=
+	t=1760455547; cv=none; b=Z1yUg2jT6hmdIrbZHDhf91hOtTwFrD42TtVkP/i6s83P3+jaTXX6oZ9JunimnttQldoMkp7saQyqX3zqUyMBusRgf1V3dHusALI61S1DImGKsR4aZQBZkl6TYayrv7fGlj2R4wCTL30PrlyKe7Q9QhGG2PMK7oOXeWxwGms8lJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455546; c=relaxed/simple;
-	bh=+BmgP1cwOI6VJAkhu18VNjfPGCwfgpuV7lA+QJYNabk=;
+	s=arc-20240116; t=1760455547; c=relaxed/simple;
+	bh=skjeb9m1dGsaidHY563Qo5KHmcSoE8kWERBvfxpPeoY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mh/qp45z+4O82ifIN1Jq5huuLyuw8dMFcN7795iF43+cOCNeHbs2zJHEwnjD72o0PGeGNsHYjZ+w6I7t/jSc0PQMX5GYe7MvOa7FYKTD6aaOj3qS+jpGiWaL6++UGthasZN8FP9WByIZQOTds6LypZ2b4wwu3Lhe+fJZpw5zLBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vln4QgwU; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=rQpzcloCrIrBPW66Pf08xQicEL1mynEo727qpLRptZgQeKCWIpCz4rB2c1kL60goIPz2uVCRiK6z90ks+ime++2Mgz7JB1xdiq94x3cuwa1OoHB5181O9YEvS7E/JkzMi15eI/XtQEIJ/4Dt4yKIErc3QD5WKOcIPtWi0j8Y3no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LEX+B5Hj; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id DBD594E410B4;
-	Tue, 14 Oct 2025 15:25:41 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EF8E1C09F97;
+	Tue, 14 Oct 2025 15:25:24 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AEFA2606EC;
-	Tue, 14 Oct 2025 15:25:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 86829102F22A4;
-	Tue, 14 Oct 2025 17:25:38 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 070A6606EC;
+	Tue, 14 Oct 2025 15:25:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DFEEB102F22AE;
+	Tue, 14 Oct 2025 17:25:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760455540; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1760455542; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=BDLjVHEfWE+OX2EBzF2dDXKhMxIya0aonkUpZfjwFpc=;
-	b=vln4QgwUJ3MGIz+BpttXJ1iUA6zRlssetcE0sHykllYoICGqYZ76acIeYhnJcNaM9NSh2X
-	vjrIrErW91LO3QJZTJMLHvVh8dJGksfpL+qAOrl5JyIdBZCZyXD+rj9q4nXK+7pPlZvMFL
-	Uu8ZBVZ5tTG3wn+emjJxzyZV4u7HrZwDl6QxjFNO9NH2UkHy1nTDAzL+tMaE547TFNfrbr
-	YRYtGQuiILsE6AKhGB69QvAvFBzRcTEbi3rGBKKC4E0y0+OE5IohNM6Yj0R7z0CIvT5b20
-	1uHXmtFntMUQgrqokSotoYOFA+UNTsJ7QvksKCCd+7NiIY/MkxQyB39FexykBg==
+	bh=/rQ5vb0gTZk6xhmOYWFfgtO4Z5qUdTmwmfvvH5Af3Xg=;
+	b=LEX+B5HjNdHQYoVls6/sYp4dW4EgP994xFMJfAHQ031nw8tgtW+p77v9a/r69xYs1kMBAl
+	nf0fDrUxFOAeqcAAAy/MdO8M1fqDHPWC7Eioux+cyDmQj0ukIsVC6W6VMofI+qF4Kk3mZx
+	JuU6JQadqSrSu/gSH8jqHp5DqgClWK8JqfX6q8NLbvgkg8xK+crJT+TZE28D4n4pRGH8te
+	F2jZVq/L0hrD5JiiCdWo3wjUoSTAaCfblybt1tB1mAOsGIs8vMmPZJL33qW1JQZv/8fkyJ
+	CvQPb680KcromhLBPEbRhfS0y+J5k/TEtg2EhW9f46Hwa+5cTNZt+SVFj+gB7A==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Tue, 14 Oct 2025 17:25:02 +0200
-Subject: [PATCH net-next 01/15] dt-bindings: net: cdns,macb: sort
- compatibles
+Date: Tue, 14 Oct 2025 17:25:03 +0200
+Subject: [PATCH net-next 02/15] net: macb: use BIT() macro for capability
+ definitions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251014-macb-cleanup-v1-1-31cd266e22cd@bootlin.com>
+Message-Id: <20251014-macb-cleanup-v1-2-31cd266e22cd@bootlin.com>
 References: <20251014-macb-cleanup-v1-0-31cd266e22cd@bootlin.com>
 In-Reply-To: <20251014-macb-cleanup-v1-0-31cd266e22cd@bootlin.com>
 To: Andrew Lunn <andrew+netdev@lunn.ch>, 
@@ -80,45 +80,72 @@ Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
  =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
  Maxime Chevallier <maxime.chevallier@bootlin.com>, 
  =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Andrew Lunn <andrew@lunn.ch>, Sean Anderson <sean.anderson@linux.dev>
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-Compatibles inside this enum are sorted-ish. Make it sorted.
+Replace all capabilities values by calls to the BIT() macro.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- Documentation/devicetree/bindings/net/cdns,macb.yaml | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/cadence/macb.h | 42 ++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-index 1029786a855c569f32171cd3484b0043622e9fc4..02f14a0b72f9c5c489c2e9a605d7f020c124fe31 100644
---- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-+++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-@@ -47,18 +47,18 @@ properties:
-           - const: cdns,macb          # Generic
+diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+index 0830c48973aa0b9991f06c142d83b850572f2388..869d02284707cb771233276a073e1afdeeba43ce 100644
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -756,27 +756,27 @@
+ #define MACB_MAN_C45_CODE			2
  
-       - enum:
--          - atmel,sama5d29-gem        # GEM XL IP (10/100) on Atmel sama5d29 SoCs
-           - atmel,sama5d2-gem         # GEM IP (10/100) on Atmel sama5d2 SoCs
-+          - atmel,sama5d29-gem        # GEM XL IP (10/100) on Atmel sama5d29 SoCs
-           - atmel,sama5d3-gem         # Gigabit IP on Atmel sama5d3 SoCs
-           - atmel,sama5d4-gem         # GEM IP (10/100) on Atmel sama5d4 SoCs
-+          - cdns,emac                 # Generic
-+          - cdns,gem                  # Generic
-+          - cdns,macb                 # Generic
-           - cdns,np4-macb             # NP4 SoC devices
-           - microchip,sama7g5-emac    # Microchip SAMA7G5 ethernet interface
-           - microchip,sama7g5-gem     # Microchip SAMA7G5 gigabit ethernet interface
-           - raspberrypi,rp1-gem       # Raspberry Pi RP1 gigabit ethernet interface
-           - sifive,fu540-c000-gem     # SiFive FU540-C000 SoC
--          - cdns,emac                 # Generic
--          - cdns,gem                  # Generic
--          - cdns,macb                 # Generic
+ /* Capability mask bits */
+-#define MACB_CAPS_ISR_CLEAR_ON_WRITE		0x00000001
+-#define MACB_CAPS_USRIO_HAS_CLKEN		0x00000002
+-#define MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII	0x00000004
+-#define MACB_CAPS_NO_GIGABIT_HALF		0x00000008
+-#define MACB_CAPS_USRIO_DISABLED		0x00000010
+-#define MACB_CAPS_JUMBO				0x00000020
+-#define MACB_CAPS_GEM_HAS_PTP			0x00000040
+-#define MACB_CAPS_BD_RD_PREFETCH		0x00000080
+-#define MACB_CAPS_NEEDS_RSTONUBR		0x00000100
+-#define MACB_CAPS_MIIONRGMII			0x00000200
+-#define MACB_CAPS_NEED_TSUCLK			0x00000400
+-#define MACB_CAPS_QUEUE_DISABLE			0x00000800
+-#define MACB_CAPS_QBV				0x00001000
+-#define MACB_CAPS_PCS				0x01000000
+-#define MACB_CAPS_HIGH_SPEED			0x02000000
+-#define MACB_CAPS_CLK_HW_CHG			0x04000000
+-#define MACB_CAPS_MACB_IS_EMAC			0x08000000
+-#define MACB_CAPS_FIFO_MODE			0x10000000
+-#define MACB_CAPS_GIGABIT_MODE_AVAILABLE	0x20000000
+-#define MACB_CAPS_SG_DISABLED			0x40000000
+-#define MACB_CAPS_MACB_IS_GEM			0x80000000
++#define MACB_CAPS_ISR_CLEAR_ON_WRITE		BIT(0)
++#define MACB_CAPS_USRIO_HAS_CLKEN		BIT(1)
++#define MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII	BIT(2)
++#define MACB_CAPS_NO_GIGABIT_HALF		BIT(3)
++#define MACB_CAPS_USRIO_DISABLED		BIT(4)
++#define MACB_CAPS_JUMBO				BIT(5)
++#define MACB_CAPS_GEM_HAS_PTP			BIT(6)
++#define MACB_CAPS_BD_RD_PREFETCH		BIT(7)
++#define MACB_CAPS_NEEDS_RSTONUBR		BIT(8)
++#define MACB_CAPS_MIIONRGMII			BIT(9)
++#define MACB_CAPS_NEED_TSUCLK			BIT(10)
++#define MACB_CAPS_QUEUE_DISABLE			BIT(11)
++#define MACB_CAPS_QBV				BIT(12)
++#define MACB_CAPS_PCS				BIT(24)
++#define MACB_CAPS_HIGH_SPEED			BIT(25)
++#define MACB_CAPS_CLK_HW_CHG			BIT(26)
++#define MACB_CAPS_MACB_IS_EMAC			BIT(27)
++#define MACB_CAPS_FIFO_MODE			BIT(28)
++#define MACB_CAPS_GIGABIT_MODE_AVAILABLE	BIT(29)
++#define MACB_CAPS_SG_DISABLED			BIT(30)
++#define MACB_CAPS_MACB_IS_GEM			BIT(31)
  
-       - items:
-           - enum:
+ /* LSO settings */
+ #define MACB_LSO_UFO_ENABLE			0x01
 
 -- 
 2.51.0
