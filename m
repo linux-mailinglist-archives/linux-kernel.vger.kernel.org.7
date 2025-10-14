@@ -1,212 +1,266 @@
-Return-Path: <linux-kernel+bounces-851902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E12BD7910
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E129FBD79B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB6834E4508
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA0A18A729E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E152BE657;
-	Tue, 14 Oct 2025 06:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l6v6uzQV"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD9527280E;
+	Tue, 14 Oct 2025 06:45:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76A3289811
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0101E3DED;
+	Tue, 14 Oct 2025 06:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760423314; cv=none; b=kuuM09HoyOyIuYro96n/sJNqY9iIe4uqrodX/wTPEM0yqXjhaqK1lgv2eYkMsqU0ebNYY7Esqcm0cxSAh6f+MQBJ9Z9iKXbEo3WJXCKN9eNxc/10z2mNG0q7DbaQu89P2y7l9//42hxNpwnj7/xn06pSZRrkSFw6+7JIjrJ0VxM=
+	t=1760424334; cv=none; b=ZN9/D6Kpia/8jshWZh03psZocTqLdLwRqVsmkbk0PU446QPpV6oxwcz1nFqCEjyQTBo1whdh+KSn3IcNU7c6atNcZ0rdcrqHUkkLIfGsjiJcb0vv7m/rn283AILzJ/H3SiN7JvDLOwC5SGq3MAz/MJOrZ3YbDppXLA+tVkQD1yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760423314; c=relaxed/simple;
-	bh=OpDb8zcmf7OOOUcsljWtaBvRup8+IOw7WICjSqXWuEE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CI8IeJS4zL/6RbZcl9SzD0iBYyyOTBBkNUHb+QxsRSg0LTIVHZJMWHDlmGJdBbbw3ZfqSx1iejUz6awe75DQa2PCsoMBokZq6dU2BcCom9UtlUokS0bhZ1qUCJDg5pBEf6zA0vdk/LB1K5S5MS/6HWhWSavJPVK+B+LzaaXp2Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l6v6uzQV; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7b4f7a855baso3417807a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760423312; x=1761028112; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=brM2AXzbshOug5S8YTD/rMQwcF1ZQ1CEjKwrbSaUSno=;
-        b=l6v6uzQV7BveO2h89PmRTKoHW8euu9I+keWirj34S0msvsJW2fBEG+HQhQXHtVZRyZ
-         bAmYTGJHxisFUgCov0+FcZe5K3abP4f2iZQ1Mn8bqT1S5RdQ5PBur1UZht0L9S11fGL9
-         qvghedPpPUz2aOXxXqme5WX3y1mfUmjSYsaQfIKUId1PlcXO3i6iGhpRgl9QMDKyZQIm
-         p/ozVMclJLwaU7GrB/cH5E3zGZTbcBdanWzalRPrUD7jI774MtRkJCGCAMYwWOcp9/nR
-         uJ2MuQ+FFOGkY5hm9dqA9Nb7ZFoYr/vo+y60HABh2tfrPuBcSM3/LfuL472B1WxPBJ25
-         5sBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760423312; x=1761028112;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=brM2AXzbshOug5S8YTD/rMQwcF1ZQ1CEjKwrbSaUSno=;
-        b=AebVRuqtPbvBiRCmAupPhU7cJZblVaszorJqLUXlHOAMF2m1xH8+Z/g+62QS/p/tVF
-         PtfXvJzpT38hLrpFJD2/ObPVmaHt1g+y7QR132ESvP/M2UjF4hsclP4VvdmUcfW2xiZC
-         tGbQWfpE1VFPAuUEb0r8D//Kp8t7Xs7v2jNMO2pd6lgMMRV10i/8uh2wb9nXYMhB0fFz
-         p3EUtwboFGXzQ1vV/fXVllMRHKTRr9xEn+3eu4r9bqS2iCLUt6HxfAp5muWcNPq9xwiK
-         Ms0xUl58DDXKHOfLxPekRWgfdPj3mnYkc+SW5gQaUH7MktaBbv7aWbIusA/1DWolDJdh
-         t6mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIrYdtXElzvvxQEZt/ZdKedYuz2wV3EqI+x833uE98XyZhsMLAPL9k3njJ7uLZAAXsF+SzDP8qDhV3k9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9BQW0apJ0bB51cVArO/oPEiXSUQXrz2tJSW8s0/od8eaXqWSi
-	DtSc8tlc69ii0+N8cphIn7bH6pXSSgzT5TVjYXp4kSjiFi8iGZPx6Cfb7cMlUE1nfg==
-X-Gm-Gg: ASbGncskkFYcs8Ldc2Hc82k40Lh1id0U8WB8OOlZdsZWrwLD7m5qZyOtWTiJQBFISxH
-	BBne63SC7HRX9KJhpALjxeSqfFBPu3IdPTDHtAWrTP5c1EYXGhhG9hgkVv7RFqA3LaxHqkKhN/k
-	E8nNQKJhYMvbz5sneBvNpeqv9js9xA2kAy+cd2o/ZwyaKaVZj8oz5oUpZOcxJ7p1ulXiq5rWogs
-	va1b7ZKK24HMMyTWu2W9iRw4FGCe6p5TzD13tpec92+Yx3vRZrODSH7pdrL6fPkwnl/M40BjCTn
-	i9dDwIeTUv3vHCkRhjJxZzBlxEOIxkAIQtQrl53YRQWVHj3ipr1EI/Taf3QGi6zhYktabrXaysC
-	TM/9U7MjM1DAGQXtCgCqrkx9P6egH/fJBToIb58EgtAB/Ofc2VrptLy2hS5YEDDnxfGl5H2wm1L
-	1F9o+XrVxg1O0oU1hfcnBnrqul/72DFzlX
-X-Google-Smtp-Source: AGHT+IHpAC62Y/PpF9N39pOEV4oQ+R34+qD97A9mi5Ss82ojK2v3fSuKrUmSuLa+MCNnAOAp+Ihp0w==
-X-Received: by 2002:a05:6830:710c:b0:744:f113:fef8 with SMTP id 46e09a7af769-7c0df7becc1mr11002097a34.35.1760423311621;
-        Mon, 13 Oct 2025 23:28:31 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f915eed4sm4209133a34.36.2025.10.13.23.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 23:28:30 -0700 (PDT)
-Date: Mon, 13 Oct 2025 23:28:16 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Kalesh Singh <kaleshsingh@google.com>
-cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-    david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-    pfalcato@suse.de, kernel-team@android.com, android-mm@google.com, 
-    stable@vger.kernel.org, SeongJae Park <sj@kernel.org>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-    Jann Horn <jannh@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, 
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-    Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-    Juri Lelli <juri.lelli@redhat.com>, 
-    Vincent Guittot <vincent.guittot@linaro.org>, 
-    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-    Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-    Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-    linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-    linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] mm: fix off-by-one error in VMA count limit
- checks
-In-Reply-To: <20251013235259.589015-2-kaleshsingh@google.com>
-Message-ID: <144f3ee6-1a5f-57fc-d5f8-5ce54a3ac139@google.com>
-References: <20251013235259.589015-1-kaleshsingh@google.com> <20251013235259.589015-2-kaleshsingh@google.com>
+	s=arc-20240116; t=1760424334; c=relaxed/simple;
+	bh=W8vlS2pNcU8IVeInIL6N8F8MawlVLSU4YNXnTOXhY5Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nHevP7ntfwo24jaz/3YYoXmTp+ssqcNS9QaGQUoE7Y3BiVKBy7kK/wf2rwz4wmEXaHSe3+Adf3t6LoUhdTswATxvSuB06jIvRoF46OiLpHWou7jcmmYvgEnLQlGYgIw3zfQvn5qItUWmOv0X400S4t3q4pAKKSn86LDxNq+IQUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cm4685c90zYQtrJ;
+	Tue, 14 Oct 2025 14:28:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 603E81A17F2;
+	Tue, 14 Oct 2025 14:28:57 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP2 (Coremail) with SMTP id Syh0CgBnvUWn7e1ojqZDAQ--.26196S3;
+	Tue, 14 Oct 2025 14:28:57 +0800 (CST)
+Subject: Re: [PATCH v4] block: plug attempts to batch allocate tags multiple
+ times
+To: Xue He <xue01.he@samsung.com>, axboe@kernel.dk,
+ akpm@linux-foundation.org, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <CGME20251010064008epcas5p3c507d64678fadfb71574050b01357341@epcas5p3.samsung.com>
+ <20251010063538.3597-1-xue01.he@samsung.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <979713cc-b2f6-00fa-7021-17d0e74a6913@huaweicloud.com>
+Date: Tue, 14 Oct 2025 14:28:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20251010063538.3597-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBnvUWn7e1ojqZDAQ--.26196S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3XF15GF1kur1fXr4DJrWfuFg_yoW7Crykpr
+	W3Ja13Gr4FqF129FsxXayDZr1Fywn7GF1xJa1ftw1rurykCFnxWr4rJF4Sqa4xAFWkJF48
+	Xrs8Jry5uw4qqa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUBVbkUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, 13 Oct 2025, Kalesh Singh wrote:
+Hi,
 
-> The VMA count limit check in do_mmap() and do_brk_flags() uses a
-> strict inequality (>), which allows a process's VMA count to exceed
-> the configured sysctl_max_map_count limit by one.
+在 2025/10/10 14:35, Xue He 写道:
+> This patch aims to enable batch allocation of sufficient tags after
+> batch IO submission with plug mechanism, thereby avoiding the need for
+> frequent individual requests when the initial allocation is
+> insufficient.
 > 
-> A process with mm->map_count == sysctl_max_map_count will incorrectly
-> pass this check and then exceed the limit upon allocation of a new VMA
-> when its map_count is incremented.
+> ------------------------------------------------------------
+> Perf:
+> base code: __blk_mq_alloc_requests() 1.31%
+> patch: __blk_mq_alloc_requests() 0.71%
+> ------------------------------------------------------------
 > 
-> Other VMA allocation paths, such as split_vma(), already use the
-> correct, inclusive (>=) comparison.
-> 
-> Fix this bug by changing the comparison to be inclusive in do_mmap()
-> and do_brk_flags(), bringing them in line with the correct behavior
-> of other allocation paths.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: <stable@vger.kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Pedro Falcato <pfalcato@suse.de>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
-> Acked-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 > ---
+> changes since v1:
+> - Modify multiple batch registrations into a single loop to achieve
+>    the batch quantity
 > 
-> Changes in v3:
->  - Collect Reviewed-by and Acked-by tags.
+> changes since v2:
+> - Modify the call location of remainder handling
+> - Refactoring sbitmap cleanup time
 > 
-> Changes in v2:
->  - Fix mmap check, per Pedro
+> changes since v3:
+> - Add handle operation in loop
+> - Add helper sbitmap_find_bits_in_word
 > 
->  mm/mmap.c | 2 +-
->  mm/vma.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Signed-off-by: hexue <xue01.he@samsung.com>
+> ---
+>   block/blk-mq.c | 39 ++++++++++++++++++---------------
+>   lib/sbitmap.c  | 58 ++++++++++++++++++++++++++++++++++----------------
+>   2 files changed, 62 insertions(+), 35 deletions(-)
 > 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 644f02071a41..da2cbdc0f87b 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
->  		return -EOVERFLOW;
->  
->  	/* Too many mappings? */
-> -	if (mm->map_count > sysctl_max_map_count)
-> +	if (mm->map_count >= sysctl_max_map_count)
->  		return -ENOMEM;
->  
->  	/*
-> diff --git a/mm/vma.c b/mm/vma.c
-> index a2e1ae954662..fba68f13e628 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -2797,7 +2797,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
->  		return -ENOMEM;
->  
-> -	if (mm->map_count > sysctl_max_map_count)
-> +	if (mm->map_count >= sysctl_max_map_count)
->  		return -ENOMEM;
->  
->  	if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
-> -- 
-> 2.51.0.760.g7b8bcc2412-goog
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index ba3a4b77f578..695ccc72e69f 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -458,26 +458,31 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
+>   	unsigned long tag_mask;
+>   	int i, nr = 0;
+>   
+> -	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
+> -	if (unlikely(!tag_mask))
+> -		return NULL;
+> +	do {
+> +		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
+> +		if (unlikely(!tag_mask)) {
+> +			if (nr == 0)
+> +				return NULL;
+> +			break;
+> +		}
+> +		tags = blk_mq_tags_from_data(data);
+> +		for (i = 0; tag_mask; i++) {
+> +			if (!(tag_mask & (1UL << i)))
+> +				continue;
+> +			tag = tag_offset + i;
+> +			prefetch(tags->static_rqs[tag]);
+> +			tag_mask &= ~(1UL << i);
+> +			rq = blk_mq_rq_ctx_init(data, tags, tag);
+> +			rq_list_add_head(data->cached_rqs, rq);
+> +			data->nr_tags--;
+> +			nr++;
+> +		}
+> +		if (!(data->rq_flags & RQF_SCHED_TAGS))
+> +			blk_mq_add_active_requests(data->hctx, nr);
+> +	} while (data->nr_tags);
+>   
+> -	tags = blk_mq_tags_from_data(data);
+> -	for (i = 0; tag_mask; i++) {
+> -		if (!(tag_mask & (1UL << i)))
+> -			continue;
+> -		tag = tag_offset + i;
+> -		prefetch(tags->static_rqs[tag]);
+> -		tag_mask &= ~(1UL << i);
+> -		rq = blk_mq_rq_ctx_init(data, tags, tag);
+> -		rq_list_add_head(data->cached_rqs, rq);
+> -		nr++;
+> -	}
+> -	if (!(data->rq_flags & RQF_SCHED_TAGS))
+> -		blk_mq_add_active_requests(data->hctx, nr);
+>   	/* caller already holds a reference, add for remainder */
+>   	percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
+> -	data->nr_tags -= nr;
+>   
+>   	return rq_list_pop(data->cached_rqs);
+>   }
+> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+> index 4d188d05db15..c0a8da1beec9 100644
+> --- a/lib/sbitmap.c
+> +++ b/lib/sbitmap.c
+> @@ -208,6 +208,32 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
+>   	return nr;
+>   }
+>   
+> +static unsigned long sbitmap_find_bits_in_word(struct sbitmap_word *map,
+> +				    unsigned int depth, unsigned int alloc_hint, bool wrap,
+> +				    unsigned long *val, int nr_tags, unsigned int map_depth)
 
-Sorry for letting you go so far before speaking up (I had to test what
-I believed to be true, and had hoped that meanwhile one of your many
-illustrious reviewers would say so first, but no): it's a NAK from me.
+The parameters depth, alloc_hint, wrap are not necessary, the only
+caller always pass in 0.
 
-These are not off-by-ones: at the point of these checks, it is not
-known whether an additional map/vma will have to be added, or the
-addition will be merged into an existing map/vma.  So the checks
-err on the lenient side, letting you get perhaps one more than the
-sysctl said, but not allowing any more than that.
+> +{
+> +	unsigned long local_val, nr;
+> +
+> +	while (1) {
+> +		local_val = READ_ONCE(map->word);
+> +		if (local_val == (1UL << (map_depth - 1)) - 1) {
+> +			if (!sbitmap_deferred_clear(map, depth, alloc_hint, wrap))
+> +				return -1UL;
+> +			continue;
+> +		}
+> +
+> +		nr = find_first_zero_bit(&local_val, map_depth);
+> +		if (nr + nr_tags <= map_depth)
+> +			break;
 
-Which is all that matters, isn't it? Limiting unrestrained growth.
+With the respect we can allocate multiple times, and it's not necessary
+to allocate nr_tags at once, perhaps it'll make  sense to skip this
+checking.
 
-In this patch you're proposing to change it from erring on the
-lenient side to erring on the strict side - prohibiting merges
-at the limit which have been allowed for many years.
+> +
+> +		if (!sbitmap_deferred_clear(map, depth, alloc_hint, wrap))
+> +			return -1UL;
+> +	};
+> +
+> +	*val = local_val;
+> +	return nr;
+> +}
+> +
+>   static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
+>   					     int index,
+>   					     unsigned int shallow_depth)
+> @@ -534,26 +560,22 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
+>   		unsigned int map_depth = __map_depth(sb, index);
+>   		unsigned long val;
+>   
+> -		sbitmap_deferred_clear(map, 0, 0, 0);
+> -		val = READ_ONCE(map->word);
+> -		if (val == (1UL << (map_depth - 1)) - 1)
+> +		nr = sbitmap_find_bits_in_word(map, 0, 0, 0, &val, nr_tags, map_depth);
+> +		if (nr == -1UL)
+>   			goto next;
+>   
+> -		nr = find_first_zero_bit(&val, map_depth);
+> -		if (nr + nr_tags <= map_depth) {
+> -			atomic_long_t *ptr = (atomic_long_t *) &map->word;
+> -
+> -			get_mask = ((1UL << nr_tags) - 1) << nr;
+> -			while (!atomic_long_try_cmpxchg(ptr, &val,
+> -							  get_mask | val))
+> -				;
+> -			get_mask = (get_mask & ~val) >> nr;
+> -			if (get_mask) {
+> -				*offset = nr + (index << sb->shift);
+> -				update_alloc_hint_after_get(sb, depth, hint,
+> -							*offset + nr_tags - 1);
+> -				return get_mask;
+> -			}
+> +		atomic_long_t *ptr = (atomic_long_t *) &map->word;
+> +
+> +		get_mask = ((1UL << nr_tags) - 1) << nr;
+> +		while (!atomic_long_try_cmpxchg(ptr, &val,
+> +						  get_mask | val))
+> +			;
+> +		get_mask = (get_mask & ~val) >> nr;
+> +		if (get_mask) {
+> +			*offset = nr + (index << sb->shift);
+> +			update_alloc_hint_after_get(sb, depth, hint,
+> +						*offset + nr_tags - 1);
+> +			return get_mask;
 
-Whatever one thinks about the merits of erring on the lenient versus
-erring on the strict side, I see no reason to make this change now,
-and most certainly not with a Fixes Cc: stable. There is no danger
-in the current behaviour; there is danger in prohibiting what was
-allowed before.
+I feel it's better to fold in above into the helper and return get_mask
+directly.
 
-As to the remainder of your series: I have to commend you for doing
-a thorough and well-presented job, but I cannot myself see the point in
-changing 21 files for what almost amounts to a max_map_count subsystem.
-I call it misdirected effort, not at all to my taste, which prefers the
-straightforward checks already there; but accept that my taste may be
-out of fashion, so won't stand in the way if others think it worthwhile.
+BTW, the sbitmap and blk-mq changes are not quite related, and you can
+split them into seperate patches.
 
-Hugh
+Thanks,
+Kuai
+
+>   		}
+>   next:
+>   		/* Jump to next index. */
+> 
+
 
