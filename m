@@ -1,91 +1,103 @@
-Return-Path: <linux-kernel+bounces-853334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB92BDB516
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7C0BDB51F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14BEB4EABD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86D6F18A5A41
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8ADD30748A;
-	Tue, 14 Oct 2025 20:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C97307AE1;
+	Tue, 14 Oct 2025 20:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnlTStHO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axsarSWx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB8B27F736;
-	Tue, 14 Oct 2025 20:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD25B30505F;
+	Tue, 14 Oct 2025 20:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760475021; cv=none; b=jelSFZrVe2AZDznSVjwHh84dYBBSh6gT8ror4MQFWEmg6JK/43cgV1321ZOgqpFWhlP9Kzc51Eea1iw9xl5qd8Mw1z4DvSsHDKkoc1eYPB6vEYJxoc9l8Nt2NV/PxZ6+fdG75EWlIA1+lTHHcf7ChGyXJYkEE7ca3FaT6kGFwE0=
+	t=1760475036; cv=none; b=oeJjPMikxLBkpnt5OSGSavmkMlQj3qGryfh/5F7tcpF5KSnmQ9MX9X+MjvYwWFlU9PQxGEYx+sMoJIc4CTpsqhSOVF6719yPQ7Zlb5KMimF3tLvHyW8vwJSE6IVCfiPXOcLw8sHTIAL8HEgT7/qSU688YerNaQcn7WgZagNoyWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760475021; c=relaxed/simple;
-	bh=pUZy9tdk4f39b5vD2vlJ6uCU8Q+eks0yazNcf05FS+A=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RxJM3pBZc5Fv71X/iJScmooVCf0RohPVcdaMRGjbxCdPNYn6EXy4zSclcgf0N909TBH4/GpERerKrilAJdlVfEKyKH4KWP40jsKBcv8yz0g3/OI4t6hYeZReCYLKgqR0CPMZ2pH5C5MJEDN7MZGTNrZHZYiIrxm/EpZmQiIq2sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnlTStHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16847C4CEE7;
-	Tue, 14 Oct 2025 20:50:21 +0000 (UTC)
+	s=arc-20240116; t=1760475036; c=relaxed/simple;
+	bh=5rxoTWolHOm4oraQzi00YA/zUXuac4iY3HiED5t3UAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZjFXygtVo6CxNiA7NDXEKrNo54KlyLLi7noeF9r7PBtGdPVCIkRplHbaPQ4/wuprn968JMm/Mx8oFJmwD7xcbUBQlkEMmmEnjFu3lkP3lKmg4rqUyFs9WpZb7djpnqz61D3NROyNzhIXwut25Qm+IitmZrA9FmF8oUkuMPy8qHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axsarSWx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45767C4CEE7;
+	Tue, 14 Oct 2025 20:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760475021;
-	bh=pUZy9tdk4f39b5vD2vlJ6uCU8Q+eks0yazNcf05FS+A=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SnlTStHO1aECjfnAfqYP27nfOEIcO4c0qT4K7cjiRR8XSkDr6+NFTe00+RFLFnHiy
-	 gim8syMGGZmyHdKu32QQfD1GW0Jdb8qNuleNakomcy+B5HLkCxepRhyXWKgGn4R4mD
-	 Lxek+Y50EkP2RJbzdmMtLIcyAqQWOV2nINAtr/a+fRgRrgAxg/Ol9njW2NTn6yNwPc
-	 49wT9OmKe68ROTMNhwU/ygmICfBWBMxf4qXpuUd7GfACwnRcd6dC3NRVDVWQshojSV
-	 8gkSQdaDqO8trRqB//l75g9G8IVJXXqF1pk/67DTWQGD3c3u5DoASn7Iq3ceQgN3Ho
-	 SUfH/H5OWIXqw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71746380AAF2;
-	Tue, 14 Oct 2025 20:50:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1760475035;
+	bh=5rxoTWolHOm4oraQzi00YA/zUXuac4iY3HiED5t3UAw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=axsarSWx827Fh8I2C7WoflR8ZEe8mbgEs9R6CNEb6ECRF5VzvbWJ7lxhJgY29BVla
+	 00hCz190I4TJB55vPEw8SOgjqeKIwZNiDizKvjrSRahk1tH4/0AZQwjEGe6AFvBQW7
+	 KMeLDw8WmfkNZa/bigvyqkE8GtU9qkyFABpYhCWiuxdm4ZxzvEPywsTf5N66DmsQpT
+	 OK747OQH2ZOYXfuDc5kNybLckElodrxrtoImcUoDyIeBQJ3xD4cAtL9fAycICL2Oeo
+	 VVEnQeIDZi1UX4ffYitoGKZ/qhA4CW0Ud24/ggKohRDgxpn3zp1xwRgHW83PZ6s3pf
+	 Cz5dN01+ANVYw==
+Date: Tue, 14 Oct 2025 15:50:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Simon Horman <horms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 16/33] PCI: Flush PCI probe workqueue on cpuset isolated
+ partition change
+Message-ID: <20251014205034.GA906667@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: dsa: b53: implement port isolation support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176047500627.92082.6355801879246780611.git-patchwork-notify@kernel.org>
-Date: Tue, 14 Oct 2025 20:50:06 +0000
-References: <20251013152834.100169-1-jonas.gorski@gmail.com>
-In-Reply-To: <20251013152834.100169-1-jonas.gorski@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: florian.fainelli@broadcom.com, andrew@lunn.ch, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013203146.10162-17-frederic@kernel.org>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 13 Oct 2025 17:28:34 +0200 you wrote:
-> Implement port isolation support via the Protected Ports register.
+On Mon, Oct 13, 2025 at 10:31:29PM +0200, Frederic Weisbecker wrote:
+> The HK_TYPE_DOMAIN housekeeping cpumask is now modifyable at runtime. In
+> order to synchronize against PCI probe works and make sure that no
+> asynchronous probing is still pending or executing on a newly made
+> isolated CPU, the housekeeping susbsystem must flush the PCI probe
+> works.
 > 
-> Protected ports can only communicate with unprotected ports, but not
-> with each other, matching the expected behaviour of isolated ports.
+> However the PCI probe works can't be flushed easily since they are
+> queued to the main per-CPU workqueue pool.
 > 
-> Tested on BCM963268BU.
-> 
-> [...]
+> Solve this with creating a PCI probe specific pool and provide and use
+> the appropriate flushing API.
 
-Here is the summary with links:
-  - [net-next] net: dsa: b53: implement port isolation support
-    https://git.kernel.org/netdev/net-next/c/bdec4271e808
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+s/modifyable/modifiable/
+s/newly made isolated/newly isolated/
+s/susbsystem/subsystem/
+s/PCI probe specific pool/PCI probe-specific pool/
 
