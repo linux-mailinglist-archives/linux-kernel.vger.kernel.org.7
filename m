@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-852555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F173BD9509
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:23:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD8CBD952A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490A1425EC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:23:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4319A4ED8AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541AF31353B;
-	Tue, 14 Oct 2025 12:23:10 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F67F313E06;
+	Tue, 14 Oct 2025 12:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DaOYctO2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7836C20296C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DDC31353D;
+	Tue, 14 Oct 2025 12:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760444589; cv=none; b=LH/fObEoFHoXAGgGAJ3ZEh3nuuwNOGz/2READ0ewCt2M9d4H07Hcxm9MgOczlPlYaHhGnoOfDPhCqiAnjg6a+zr2/cixboXdMj6+/IwvTpbphfltweaK6OGoeWebOaMQQZDKLacfYIuyZ9IzJyjmtXifbJxW+AbeftB7GA6dcXE=
+	t=1760444624; cv=none; b=Ml9A0oiLkZnUevKHmvnc38olKn6xUsemW/MCvzNNb8ryzRNCSCc2Cp3YR48K0hrvbVjLhOr8F0xfxqDYOI0cWFnUv2A9gCRjEy1aOOLQ98Dhj9pw5oHxj+7MtBvN2RJJ5QETg59FYGNkNwOvFRgre8Y2B02dODCcavRboz/hi/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760444589; c=relaxed/simple;
-	bh=vH6VvyKheY6dFjawkXkdm43f+zC3B5o8qm4ofBZ/OGY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dhQMyAcan9I8XOGa++NdtIR/YOGuJqVCXZWkco2owWeu6w7rzT3QOautDqwsQ0VbMCT8QIOKo6gDNSwXMFDBsCWEnjxuMQ65SjlaXk6JmNNQkRQAPGIEi3anxZEvgjD3P2J221ic9lCkQIUWYINJ/0F1itJvONbzh66enkzALBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42f81a589caso314984245ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:23:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760444586; x=1761049386;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZEUEDxQ6XRGrERhsgqDQ/kbhdq8PHjMl3e4/8x+0tNs=;
-        b=OJ+UFqrAy9DTayDhL1LYRuUk7LB9DvFyN4qC5ClKzzjyINYDeo1DGgYfpfo1Kwwe+V
-         ThCdF4aBBmU5lX/YT2MB0yKNH/KO/rDTWFFBtxPAhI2enV/KaxYgM/17yKKzs610cR/q
-         LkH5SmlcyZB44ufa09UazbJ0ZIlIRx9+C6cV+gINQ1+LMuAeqmr8TzxgNyxhh5oJGGVj
-         n3fLgc0VPSsVu26t36CLWbinhcFCEEUsbqHc1OnTceD9X1ee0Y/xdLCRzs8s79nt4Wi+
-         yN7t0sxVdv/iEteqXezzYXiQhn30WIcj/IdwuIMun2AOpDJwGUS934ha0HMIh8rjFPUu
-         jAVQ==
-X-Gm-Message-State: AOJu0Yw5ao/Ur5y+1fEM1GdnIpOyB9c1A0mBdW71BwK2ybLcGt3/FfDl
-	q1VvPIxg2cJ7/CF4inznSyJ9wy1yiHXd6TPvjfK+d9a25t2+jMHcpapl17eLREbVzaSoZDTmFh2
-	bCFHq2hwgT06rjSPPFWIoPOeuQxFfZjASPEqNaprZacykM+bex6zZUQIZ44U=
-X-Google-Smtp-Source: AGHT+IG29iCVy9DT0dWRDZPqoAO+30mOiF6cKAHM8IjPkxRbLzhd99aUrf0I7uVouscuIFTi825fCro9qJHCgb5c+Nd/55pvqdZw
+	s=arc-20240116; t=1760444624; c=relaxed/simple;
+	bh=CafyeVLIYPhJPVMUhLBEGd8+CQQAGixD0ZmUS6mVJSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vENAQoRtGBbYrh4+1K0aH2MTj9cJtDAzyQfyJ9rIJIRb8CHCUIXpMYV7/A09iZKTf+unULd56uW/cgLDHcQ2afVeslgwVECf4TAZxDC8pulBEpg1xoJ1QkSrxG2X0VwvxaolLFZ1Tpn3NfS7BtnaXQIJ2lupKhxU67aTKp/QXG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DaOYctO2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=A2wa4K0qWIFLcAnfmzypd+kDyosnJxyDAY3/uLjy03g=; b=DaOYctO2Ib9IIYYgqETAyF2zIt
+	0+gdutChlJDPIJbn0lIc0SwMbpflnjgYWoOc7FgRiawhAQkz3x9py/RpPBWx2KjwC06eTD7fneq09
+	bJp8jk4J3cRK3O0DZ32q6J+QQnBtn7Yuch+Q5V6lLihMBGmKAPfrwfQwJwNJSINqraC9zCmT40rC0
+	AdvyMhuGPULRwEJ7U7cWltvUNxOa67xECIx+3RpFdtsy+6jYWsUbO04FuEhB+0FBHrauAfDjxX6Az
+	8eX0hhGCHsZm3ry0U70sKnfyLUXe2QZoTMr6f0tpaMuvj2+vMOCYW47xmewnSGd8YFn+YzsGaDYuT
+	cy3bAg7A==;
+Received: from i53875b75.versanet.de ([83.135.91.117] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v8e3s-0007Hl-IL; Tue, 14 Oct 2025 14:23:28 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: robh@kernel.org,
+	WeiHao Li <cn.liweihao@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/8] drm/rockchip: Add MIPI DSI support for RK3368
+Date: Tue, 14 Oct 2025 14:23:18 +0200
+Message-ID: <176044455977.1550590.10827811203766869968.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250905025632.222422-1-cn.liweihao@gmail.com>
+References: <20250905025632.222422-1-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c5:b0:430:a013:b523 with SMTP id
- e9e14a558f8ab-430a013b5b7mr38887105ab.25.1760444586546; Tue, 14 Oct 2025
- 05:23:06 -0700 (PDT)
-Date: Tue, 14 Oct 2025 05:23:06 -0700
-In-Reply-To: <8a2fc775-e4f7-406d-b6dd-8b1f3cd851a3@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee40aa.050a0220.ac43.0100.GAE@google.com>
-Subject: Re: [syzbot] [fs?] KASAN: use-after-free Read in hpfs_get_ea
-From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Fri, 05 Sep 2025 10:56:24 +0800, WeiHao Li wrote:
+> This series adds MIPI DSI support for the Rockchip RK3368 SoC, enabling
+> native display connectivity through the MIPI DSI host controller and
+> PHY. The changes span multiple subsystems, including clock control,
+> DRM/VOP integration, DSI controller binding.
+> 
+> Key changes:
+>  - Update dw-mipi-dsi-rockchip driver to preperly handle RK3368 dsi
+>    initialization.
+>  - Add missing lut_size of vop_data for RK3368.
+>  - Add missing clock ID SCLK_MIPIDSI_24M to the RK3368 CRU driver,
+>    which is required for enabling the 24MHz reference clock.
+>  - Add MIPI DSI node to rk3368.dtsi with correct clocks, resets,
+>    and register mappings.
+>  - Add dt-bindings document.
+> 
+> [...]
 
-Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+Applied, thanks!
 
-Tested on:
+[1/8] drm/rockchip: dsi: Add support for RK3368
+      commit: 6dd6949c76afbec037a66e6b9bcb6e2c5dee933e
+[2/8] drm/rockchip: vop: add lut_size for RK3368 vop_data
+      commit: 8e944ab8196e421f20386f51c5ffc43baa145932
+[8/8] dt-bindings: display: rockchip,dw-mipi-dsi: Document RK3368 DSI
+      commit: 2b756d321bf9f4e93437198d212c6ccec137b295
 
-commit:         3a866087 Linux 6.18-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d2bb34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=858c39e0498e4460
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12cb467c580000
 
-Note: testing is done by a robot and is best-effort only.
+Moved patch8 (dt-binding) in front of patch1 (driver addition)
+
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
