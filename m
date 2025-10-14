@@ -1,434 +1,200 @@
-Return-Path: <linux-kernel+bounces-852122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832ABBD8395
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:41:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACC5BD8398
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD7474FAC47
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B9442647F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4205930FC3A;
-	Tue, 14 Oct 2025 08:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C7430FC1F;
+	Tue, 14 Oct 2025 08:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Iwy+EznP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ivPmnqiV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5neRTWO+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfEVIgkQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+hcqb1bq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7347930F95C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2732630F53D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431244; cv=none; b=EFe53yhs7ixP8WdxpCQMmZvOQDMurOie9p9WUiWgSJgZtlLTCGwLyrMW1vA/vpIr649AJ9LSbyRVtMYkykcGaUVwVt5YiDEDygp3ZbG4i6mPtBp9j68zFxqGRe5sdLvek/QXnnkv+AeEDjQFIRBoRgj2X15g6uxeC+2xBTkmJVc=
+	t=1760431265; cv=none; b=XDX596JXd7Rl+LO3boVMUgqkvrN+rp8FJJetSVsJiwo4f/PwEg1/KgDscHFZJB3HScw2zUfCZja6NBj0w15RAY6Tmzmdrb9MhWrKQ/5eUi9kTaLui26PgPNV8elfTb0gw/oH77C+CBNkyBEp7QY11KDR4f5G4i5y4b/Enar0PYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431244; c=relaxed/simple;
-	bh=TndOlSdT95UlcUJaunSQHZ73ZZXRqzhfr+2roSZndts=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=piDiqZoS/PlLk3k55oBTbqnfXwHPVwarxCaSdxPEB3/UnU8miSTCJ8HQsWBxzXgNrcW8Pt5CQEB/u+Oiz21RWntHfGkb981DcyTzq1LY/bE86JcbOjdh6yQdkDqPyHuvI+RZSZMi4ON2NvotD5VUUdHLnwH38mr1J9F5kzL6uqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Iwy+EznP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87JMq030981
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:40:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	e0lBHZjW4Nqh3Y78+2kAAI6SB4C9VOdQTWThro0j6dA=; b=Iwy+EznPi41jd4PN
-	jBq0cazI0u+/77vK9DkTqOna1EToQIlbFDPt580xUhMQM2+5pRpu2BQIiamkosd0
-	FSewwRScVPH16pVFoLK+Pe++AXU0BkoGmkhslQxU5vtpkZFJh0ti0fBH6ohdtGlA
-	c+N2vq/tOtLeMaJzPYqKOC+muQ9n76GDfB8whAZoEDP2dn2dnwig/wou+zh/opb/
-	bdery5qslGJ5BsMMEXMrQ2F0X8FzxqAqpdBx5aVN/DPK76shV4VDjfmbPYArT7+t
-	6iMaaGDXf/Fj1Au6+EokFX28uKB+sAzQ6K1fkx7lTrxHWkAQ3orf4ZSiWQp8jDsr
-	ySC+Uw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qff0qrdq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:40:41 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eae48beaaso9104101a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:40:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760431239; x=1761036039;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e0lBHZjW4Nqh3Y78+2kAAI6SB4C9VOdQTWThro0j6dA=;
-        b=fK0FqinuKODCjdm6+IjwuHBm3hEH6GfE46RpOCh+DNGk0WEOHw0oiLN/JOqNta9DAK
-         udGtgZmej3SjXpphRhPVBx0H+W28jqyc0TZpOr/NYZyMKEGN8IatvwmSbd+3hzW3StUO
-         AojjeVXHGex3XUc0H581INGhZ8vFWjBGE97e11CIzexraK34PMPXSquiEg2Txsfc/bnr
-         qp/e5oK72eTy/Pwvzp0PXyHLxlMM14A49LdLkmoRe2ZtJAFYks+TUiOpkHEigAQr9jK0
-         Ag3z0RuqJk6Xj4dcYwTsXGrIdbH58mNIA7dswjoQBBp9JlZNk8sQZskcfvMewrHicdaj
-         dzJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOZTBC0MeYbidMOvHE9m1xeUj/QhBu5aF2LO0r9jAAjL72w1fLt6z40zN/sIyDKlqgJrOu0kGALcO/Q14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ6Yguh159+8guqECbEYPRZbiVmgaG6UzwWVRwCw/A7Ab+ZMcV
-	d7a+EZNeR2Ft3Mf/+zcYicXlJUknE7NcoNdNnC2mx/U+M/PelFmw2s7ENC/vfXiOuOrFbFO1lzB
-	qtjK5wjaaI8S+4YllPOsPsqTJ5Xo3QcmtYziy4PI2Jj/8drH8eDJlnmloPFwZJe1mLwQ=
-X-Gm-Gg: ASbGncslmuckyRpXEoYScItPsGSoCMQ0APVZjJKRKAdTM30/njk3yCDZ3B8fpprviJB
-	cFQtGVc5scXAajHt9u2i88xpMFeYJUbw0ixOeei/nWucnF+wKdEmmePN7YVeKOExyFqoMk0JmMk
-	H9oIjSwmcIugYyxZs5OwOG0jJ8g2yLgZCYR8/p/V+isWhfyprabIrq9H0U/GjEnblDjv+OtxDT3
-	IS8s4cYjfh3crce9sgHEb9UxRohtVMEx2xjpmAoNlqmf5dPrrWStlDf3k7lwWR4Re3HOcyJ7vjq
-	JMVyUx0P38AnautyTzTfbvryDyFU6s9aHcrAZf9gicKqGozrz/GdVLwtbwgoeXCJEuc9+la/
-X-Received: by 2002:a17:90b:4c88:b0:32e:59ef:f403 with SMTP id 98e67ed59e1d1-33b513b4b5cmr36367216a91.17.1760431238325;
-        Tue, 14 Oct 2025 01:40:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyuJ0AQVSW9HrfUfYRJdSSW9YMDbY+7vSKqX2NNGvLMI++1PPQFj33hZtMzUd0RFY+wGqucg==
-X-Received: by 2002:a17:90b:4c88:b0:32e:59ef:f403 with SMTP id 98e67ed59e1d1-33b513b4b5cmr36367155a91.17.1760431237617;
-        Tue, 14 Oct 2025 01:40:37 -0700 (PDT)
-Received: from [10.0.0.3] ([106.222.229.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a4bafesm15631518a91.11.2025.10.14.01.40.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 01:40:37 -0700 (PDT)
-Message-ID: <664d5589-46a2-a592-3e7c-01f255613f2f@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 14:10:33 +0530
+	s=arc-20240116; t=1760431265; c=relaxed/simple;
+	bh=pPl6RhapejOsMg81F6RD18xhwMoZrS5BV8bYDWQ519A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Pl/gKvdyqvy8iwBLRECRPhDjy0dsiQpJ57wX7lqc6ERFEF7FREglMMy2YVpsbwF5jdhsyen6nxKV3M5Q8oL6SgOSiAT0vACT9HJH8ohJmdRTdQvwuUOZfvNwn1GmyLiUFLTyiRIIxRkI3SSzoQDRk8sA/C2lmY4UJMmeTMCnilM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ivPmnqiV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5neRTWO+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfEVIgkQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+hcqb1bq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E48A41F7B9;
+	Tue, 14 Oct 2025 08:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760431261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oD4N98xqKoKzh5mdGTCdnVsbHNjiWYye8KSN/sZHlMo=;
+	b=ivPmnqiVD3lW6jQtv5IXSI6u5paQvz6x5PzlMIRpvkecw9HYw29HXFVkuA3TKyDYn1Z92E
+	zLt37ChvkwBQpypkjMZRtY+aPZ0gm3UtRDtDua2d6HPvc1CHVlkJF0Y14GNE/OmW4BK65d
+	o1Wto531LjdoSVYZywG0DKuSNEgR4qg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760431261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oD4N98xqKoKzh5mdGTCdnVsbHNjiWYye8KSN/sZHlMo=;
+	b=5neRTWO+ATqOjBCTRINXXRjrSI3gGlw1SSYXbB1BZqstYzTpvbUsvM/PbD5iUH/a/9M14U
+	bsIHj7dks+8Q5bCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760431260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oD4N98xqKoKzh5mdGTCdnVsbHNjiWYye8KSN/sZHlMo=;
+	b=qfEVIgkQ6o1sjqnc/Fe1/M8RBgZ5CyPLyFHFFahDDSqNve1L2QZemFc8anbNSIey5dmbo/
+	RZBJiPu7AhwdGmcX03BlRuBWSRALYSUVqPlnTNE489bYdYOnXLMYRXTkizv6MgqmSfTo1d
+	IqUyykSGOJ9ugU5dOW0ZN7RV4nBws4A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760431260;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oD4N98xqKoKzh5mdGTCdnVsbHNjiWYye8KSN/sZHlMo=;
+	b=+hcqb1bqPU4mvm3h4A0Qx6ro8PLXOpwb3KsRtMV8dZ+GA22ZHLY+UKDeTKdxO4zF7epyDH
+	OOVSZ/mlRdpHf8CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D04A813A44;
+	Tue, 14 Oct 2025 08:41:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G1uFMpwM7mg1IAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 14 Oct 2025 08:41:00 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Tue, 14 Oct 2025 10:40:57 +0200
+Subject: [PATCH] slab: fix clearing freelist in free_deferred_objects()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-Subject: Re: [PATCH v3 8/8] media: iris: enable support for SC7280 platform
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251013-iris-sc7280-v3-0-f3bceb77a250@oss.qualcomm.com>
- <20251013-iris-sc7280-v3-8-f3bceb77a250@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20251013-iris-sc7280-v3-8-f3bceb77a250@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXzKiyUb7fwxrb
- EwRrxLWHefuOh5PjTEqxoQU9+Iod7iyZJfSfgAX6BCacNMkMi8RqQM3gHJY1g4+v1mLbnsK/zT8
- zhtVMZcxiazbAOmcfBwur4H1inkSILP3qKooz33lz/QnqMYwJTsGEic28oGSsfvYMcLjy9Y+o04
- t2WNoi+nqMpoRgR+wjKFUKVhrPfuk9TjbJAY0t+aQDnR6QHLDQL/jCz4SWrWHm7yqQywbiouEf8
- U0ipZzJJQd7i6to6f3XrbFW5HPrvs4iO8LliWP1RhziQYaErY9tWN31FhTLm6tjEPKk04x/s13e
- fMPKU9A/VRa+3SWtH1R0D6E8wcp1NFB3FDG5Y5Li8aOBE410czvM3jyn87Y3yobUPcr5uplN05t
- IVVKkzJYjMJgB7pH8W40BIpr0d1A2w==
-X-Proofpoint-GUID: ir6Svdu29PMy-FDBkKCks3J0wt7ab_H2
-X-Authority-Analysis: v=2.4 cv=PriergM3 c=1 sm=1 tr=0 ts=68ee0c89 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=7b6Sf04faytPFaYNhJoA:9 a=QEXdDO2ut3YA:10
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-ORIG-GUID: ir6Svdu29PMy-FDBkKCks3J0wt7ab_H2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 impostorscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+Message-Id: <20251014-fix-freelist-v1-1-e402301f276d@suse.cz>
+X-B4-Tracking: v=1; b=H4sIAJgM7mgC/x2MQQqAIBAAvyJ7TlDRg30lOoSutRAWuxFB+Pek4
+ zDMvCDIhAKjeoHxJqGjdrCDgrQtdUVNuTM444I11utCjy6MuJNc2sVoA+aUXPHQk5Ox+383za1
+ 9wZAMpF4AAAA=
+X-Change-ID: 20251014-fix-freelist-29915edcc2f4
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+ Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org
+Cc: kernel test robot <oliver.sang@intel.com>, 
+ Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1866; i=vbabka@suse.cz;
+ h=from:subject:message-id; bh=pPl6RhapejOsMg81F6RD18xhwMoZrS5BV8bYDWQ519A=;
+ b=owEBiQF2/pANAwAIAbvgsHXSRYiaAcsmYgBo7gyZePWrRv20PZ4gtsekRnTDi/+wx3O6/MQId
+ xlDIfKeSv6JAU8EAAEIADkWIQR7u8hBFZkjSJZITfG74LB10kWImgUCaO4MmRsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDIACgkQu+CwddJFiJriLwgAnf3jwUayx0cBRT96peMbd7s7WEPHx6C
+ LMsjWXyIMckLoLLip3RhZfPU3p+/e2zr/i7qR0ZRuef2J156WM40iqlqlIvUBRWDb6vu9Pp2dQi
+ Fueb68BrxnZNVX4pp7Yl/oNIWMKaHZvlYOKiXDdLgMdiK13YyefYBY4iW29lioG9CWzM0nVob0s
+ CSenTaTXRczmjAHlU+7cG5TJ5zAUkKWJVHUAMSzBEcyTSTJgsBOC5jGeMfBdIz/b56xpIcLpxRN
+ 5oe/zNFWvI+cLTFDXDfcZSPb4C4q58GPQsH/31SIZw7/7ygcaB8ixJbd3NGVTmZPxE8lREJSLuV
+ ITcFp8oqpJg==
+X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
+ fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,intel.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
+defer_free() links pending objects using the slab's freelist offset
+which is fine as they are not free yet. free_deferred_objects() then
+clears this pointer to avoid confusing the debugging consistency checks
+that may be enabled for the cache.
 
+However, with CONFIG_SLAB_FREELIST_HARDENED, even the NULL pointer needs
+to be encoded appropriately using set_freepointer(), otherwise it's
+decoded as something else and triggers the consistency checks, as found
+by the kernel test robot.
 
-On 10/13/2025 7:39 AM, Dmitry Baryshkov wrote:
-> As a part of migrating code from the old Venus driver to the new Iris
-> one, add support for the SC7280 platform. It is very similar to SM8250,
-> but it (currently) uses no reset controls (there is an optional
-> GCC-generated reset, it will be added later) and no AON registers
-> region. Extend the VPU ops to support optional clocks and skip the AON
-> shutdown for this platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  .../platform/qcom/iris/iris_platform_common.h      |  4 ++
->  .../media/platform/qcom/iris/iris_platform_gen1.c  | 52 ++++++++++++++++++++++
->  .../platform/qcom/iris/iris_platform_sc7280.h      | 27 +++++++++++
->  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
->  drivers/media/platform/qcom/iris/iris_resources.c  |  2 +-
->  drivers/media/platform/qcom/iris/iris_vpu2.c       |  6 +++
->  drivers/media/platform/qcom/iris/iris_vpu_common.c | 34 ++++++++++----
->  7 files changed, 119 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 104ff38219e30e6d52476d44b54338c55ef2ca7b..43cd6bf94ab600e53f983c9e11b63dc0a572e6ad 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -42,6 +42,7 @@ enum pipe_type {
->  };
->  
->  extern const struct iris_platform_data qcs8300_data;
-> +extern const struct iris_platform_data sc7280_data;
->  extern const struct iris_platform_data sm8250_data;
->  extern const struct iris_platform_data sm8550_data;
->  extern const struct iris_platform_data sm8650_data;
-> @@ -50,7 +51,9 @@ extern const struct iris_platform_data sm8750_data;
->  enum platform_clk_type {
->  	IRIS_AXI_CLK, /* AXI0 in case of platforms with multiple AXI clocks */
->  	IRIS_CTRL_CLK,
-> +	IRIS_AHB_CLK,
->  	IRIS_HW_CLK,
-> +	IRIS_HW_AXI_CLK,
+Use set_freepointer() to prevent the issue.
 
-s/IRIS_HW_AXI_CLK/IRIS_HW_AHB_CLK
+Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202510101652.7921fdc6-lkp@intel.com
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+will be added to slab/for-next-fixes and sent later this week
+---
+ mm/slub.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
->  	IRIS_AXI1_CLK,
->  	IRIS_CTRL_FREERUN_CLK,
->  	IRIS_HW_FREERUN_CLK,
-> @@ -230,6 +233,7 @@ struct iris_platform_data {
->  	u32 hw_response_timeout;
->  	struct ubwc_config_data *ubwc_config;
->  	u32 num_vpp_pipe;
-> +	bool no_aon;
->  	u32 max_session_count;
->  	/* max number of macroblocks per frame supported */
->  	u32 max_core_mbpf;
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen1.c b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> index 2b3b8bd00a6096acaae928318d9231847ec89855..828864902501aef072d60935fe57019a70dcb9f4 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> @@ -12,6 +12,8 @@
->  #include "iris_vpu_buffer.h"
->  #include "iris_vpu_common.h"
->  
-> +#include "iris_platform_sc7280.h"
-> +
->  #define BITRATE_MIN		32000
->  #define BITRATE_MAX		160000000
->  #define BITRATE_PEAK_DEFAULT	(BITRATE_DEFAULT * 2)
-> @@ -364,3 +366,53 @@ const struct iris_platform_data sm8250_data = {
->  	.enc_ip_int_buf_tbl = sm8250_enc_ip_int_buf_tbl,
->  	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8250_enc_ip_int_buf_tbl),
->  };
-> +
-> +const struct iris_platform_data sc7280_data = {
-> +	.get_instance = iris_hfi_gen1_get_instance,
-> +	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
-> +	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
-> +	.get_vpu_buffer_size = iris_vpu_buf_size,
-> +	.vpu_ops = &iris_vpu2_ops,
-> +	.set_preset_registers = iris_set_sm8250_preset_registers,
-> +	.icc_tbl = sm8250_icc_table,
-> +	.icc_tbl_size = ARRAY_SIZE(sm8250_icc_table),
-> +	.bw_tbl_dec = sc7280_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(sc7280_bw_table_dec),
-> +	.pmdomain_tbl = sm8250_pmdomain_table,
-> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8250_pmdomain_table),
-> +	.opp_pd_tbl = sc7280_opp_pd_table,
-> +	.opp_pd_tbl_size = ARRAY_SIZE(sc7280_opp_pd_table),
-> +	.clk_tbl = sc7280_clk_table,
-> +	.clk_tbl_size = ARRAY_SIZE(sc7280_clk_table),
-> +	/* Upper bound of DMA address range */
-> +	.dma_mask = 0xe0000000 - 1,
-> +	.fwname = "qcom/vpu/vpu20_p1.mbn",
-> +	.pas_id = IRIS_PAS_ID,
-> +	.inst_caps = &platform_inst_cap_sm8250,
-> +	.inst_fw_caps_dec = inst_fw_cap_sm8250_dec,
-> +	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8250_dec),
-> +	.inst_fw_caps_enc = inst_fw_cap_sm8250_enc,
-> +	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8250_enc),
-> +	.tz_cp_config_data = &tz_cp_config_sm8250,
-> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
-> +	.num_vpp_pipe = 4,
+diff --git a/mm/slub.c b/mm/slub.c
+index b1f15598fbfd..64c17afc375b 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -6443,15 +6443,16 @@ static void free_deferred_objects(struct irq_work *work)
+ 		slab = virt_to_slab(x);
+ 		s = slab->slab_cache;
+ 
++
++		/* Point 'x' back to the beginning of allocated object */
++		x -= s->offset;
+ 		/*
+ 		 * We used freepointer in 'x' to link 'x' into df->objects.
+ 		 * Clear it to NULL to avoid false positive detection
+ 		 * of "Freepointer corruption".
+ 		 */
+-		*(void **)x = NULL;
++		set_freepointer(s, x, NULL);
+ 
+-		/* Point 'x' back to the beginning of allocated object */
+-		x -= s->offset;
+ 		__slab_free(s, slab, x, x, 1, _THIS_IP_);
+ 	}
+ 
 
-num_vpp_pipe would be 1 for this.
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251014-fix-freelist-29915edcc2f4
 
-> +	.no_aon = true,
-> +	.max_session_count = 16,
-> +	.max_core_mbpf = NUM_MBS_8K,
-> +	.max_core_mbps = ((7680 * 4320) / 256) * 60,
-> +	.dec_input_config_params_default =
-> +		sm8250_vdec_input_config_param_default,
-> +	.dec_input_config_params_default_size =
-> +		ARRAY_SIZE(sm8250_vdec_input_config_param_default),
-> +	.enc_input_config_params = sm8250_venc_input_config_param,
-> +	.enc_input_config_params_size =
-> +		ARRAY_SIZE(sm8250_venc_input_config_param),
-> +
-> +	.dec_ip_int_buf_tbl = sm8250_dec_ip_int_buf_tbl,
-> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8250_dec_ip_int_buf_tbl),
-> +	.dec_op_int_buf_tbl = sm8250_dec_op_int_buf_tbl,
-> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8250_dec_op_int_buf_tbl),
-> +
-> +	.enc_ip_int_buf_tbl = sm8250_enc_ip_int_buf_tbl,
-> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8250_enc_ip_int_buf_tbl),
-> +};
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sc7280.h b/drivers/media/platform/qcom/iris/iris_platform_sc7280.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f2dea77f2805f48ab00822fe9d70ffafadc47494
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sc7280.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +
-> +#ifndef __IRIS_PLATFORM_SC7280_H__
-> +#define __IRIS_PLATFORM_SC7280_H__
-> +
-> +static const struct bw_info sc7280_bw_table_dec[] = {
-> +	{ ((3840 * 2160) / 256) * 60, 1896000, },
-> +	{ ((3840 * 2160) / 256) * 30,  968000, },
-> +	{ ((1920 * 1080) / 256) * 60,  618000, },
-> +	{ ((1920 * 1080) / 256) * 30,  318000, },
-> +};
-> +
-> +static const char * const sc7280_opp_pd_table[] = { "cx" };
-> +
-> +static const struct platform_clk_data sc7280_clk_table[] = {
-> +	{IRIS_CTRL_CLK,    "core"         },
-> +	{IRIS_AXI_CLK,     "bus"          },
+Best regards,
+-- 
+Vlastimil Babka <vbabka@suse.cz>
 
-s/bus/iface
-
-> +	{IRIS_AHB_CLK,     "iface"        },
-
-s/iface/bus
-
-> +	{IRIS_HW_CLK,      "vcodec_core"  },
-> +	{IRIS_HW_AXI_CLK,  "vcodec_bus"   },
-
-s/IRIS_HW_AXI_CLK/IRIS_HW_AHB_CLK
-
-Please rename at all relevant places.
-
-Thanks,
-Dikshita
-
-> +};
-> +
-> +#endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 00e99be16e087c4098f930151fd76cd381d721ce..9bc9b34c2576581635fa8d87eed1965657eb3eb3 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -357,6 +357,10 @@ static const struct of_device_id iris_dt_match[] = {
->  		.data = &qcs8300_data,
->  	},
->  #if (!IS_ENABLED(CONFIG_VIDEO_QCOM_VENUS))
-> +	{
-> +		.compatible = "qcom,sc7280-venus",
-> +		.data = &sc7280_data,
-> +	},
->  	{
->  		.compatible = "qcom,sm8250-venus",
->  		.data = &sm8250_data,
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> index cf32f268b703c1c042a9bcf146e444fff4f4990d..164490c49c95ee048670981fdab014d20436ef85 100644
-> --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> @@ -112,7 +112,7 @@ int iris_prepare_enable_clock(struct iris_core *core, enum platform_clk_type clk
->  
->  	clock = iris_get_clk_by_type(core, clk_type);
->  	if (!clock)
-> -		return -EINVAL;
-> +		return -ENOENT;
->  
->  	return clk_prepare_enable(clock);
->  }
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
-> index de7d142316d2dc9ab0c4ad9cc8161c87ac949b4c..9c103a2e4e4eafee101a8a9b168fdc8ca76e277d 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
-> @@ -3,9 +3,15 @@
->   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
-> +#include <linux/bits.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/reset.h>
-> +
->  #include "iris_instance.h"
->  #include "iris_vpu_common.h"
->  
-> +#include "iris_vpu_register_defines.h"
-> +
->  static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
->  {
->  	struct platform_inst_caps *caps = inst->core->iris_platform_data->inst_caps;
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> index 2d6548e47d47967c1c110489cb8088130fb625fd..f8fd120873ccdcb5239985d0d6a8bbda144a98f6 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -179,12 +179,14 @@ int iris_vpu_power_off_controller(struct iris_core *core)
->  
->  	writel(MSK_SIGNAL_FROM_TENSILICA | MSK_CORE_POWER_ON, core->reg_base + CPU_CS_X2RPMH);
->  
-> -	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
-> +	if (!core->iris_platform_data->no_aon) {
-> +		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
->  
-> -	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
-> -				 val, val & BIT(0), 200, 2000);
-> -	if (ret)
-> -		goto disable_power;
-> +		ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
-> +					 val, val & BIT(0), 200, 2000);
-> +		if (ret)
-> +			goto disable_power;
-> +	}
->  
->  	writel(REQ_POWER_DOWN_PREP, core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_CONTROL);
->  
-> @@ -207,6 +209,7 @@ int iris_vpu_power_off_controller(struct iris_core *core)
->  	writel(0x0, core->reg_base + WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG);
->  
->  disable_power:
-> +	iris_disable_unprepare_clock(core, IRIS_AHB_CLK);
->  	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
->  	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
->  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
-> @@ -218,6 +221,7 @@ void iris_vpu_power_off_hw(struct iris_core *core)
->  {
->  	dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], false);
->  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
-> +	iris_disable_unprepare_clock(core, IRIS_HW_AXI_CLK);
->  	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
->  }
->  
-> @@ -251,11 +255,17 @@ int iris_vpu_power_on_controller(struct iris_core *core)
->  
->  	ret = iris_prepare_enable_clock(core, IRIS_CTRL_CLK);
->  	if (ret)
-> -		goto err_disable_clock;
-> +		goto err_disable_axi_clock;
-> +
-> +	ret = iris_prepare_enable_clock(core, IRIS_AHB_CLK);
-> +	if (ret && ret != -ENOENT)
-> +		goto err_disable_ctrl_clock;
->  
->  	return 0;
->  
-> -err_disable_clock:
-> +err_disable_ctrl_clock:
-> +	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
-> +err_disable_axi_clock:
->  	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
->  err_disable_power:
->  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
-> @@ -275,13 +285,19 @@ int iris_vpu_power_on_hw(struct iris_core *core)
->  	if (ret)
->  		goto err_disable_power;
->  
-> +	ret = iris_prepare_enable_clock(core, IRIS_HW_AXI_CLK);
-> +	if (ret && ret != -ENOENT)
-> +		goto err_disable_hw_clock;
-> +
->  	ret = dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], true);
->  	if (ret)
-> -		goto err_disable_clock;
-> +		goto err_disable_hw_axi_clock;
->  
->  	return 0;
->  
-> -err_disable_clock:
-> +err_disable_hw_axi_clock:
-> +	iris_disable_unprepare_clock(core, IRIS_HW_AXI_CLK);
-> +err_disable_hw_clock:
->  	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
->  err_disable_power:
->  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
-> 
 
