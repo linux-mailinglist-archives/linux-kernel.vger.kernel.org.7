@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-853355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7452CBDB5E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDFDBDB5EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D091928458
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A061E580856
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5991530C361;
-	Tue, 14 Oct 2025 21:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C9030C61F;
+	Tue, 14 Oct 2025 21:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hGU6+te2"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZbJzPl8b"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C90306B32
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A4630BBAA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760476234; cv=none; b=K7HsaIMEnlZAsIWdfIS1wJogSIkiVEgeX96Vf9YzlXgm+V3zTUuVA7JiMIRq2bmblGIqp/uqnpvTp564ntc+hqbHp3aT/NTLbosL5x0NIOja6TBTYa2r8xxMqMuxGsVXgZKVQyicHHDXm5qIuygyKe6/VpBm/95HroFdPcKgeUI=
+	t=1760476254; cv=none; b=ujZMHB5GGwD2lhm9YMivA58Apt4tUChvNyo0Zps6DT8SsMfDSxjH6JWpFBK82eSS+0cM3xyoDV+MZi9Xxn6PKyT74Nap5mTdYxlWfbEAgxMYZxAyGKHKY3WnRReLSNDsVF4eVGbNrlZh7z94uwxwzAMqEwurd2Zuxmo5V1JnSAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760476234; c=relaxed/simple;
-	bh=EDvODqamZOphTpcYh9B/CCtQYxjXGLO+jG1P52nUNI0=;
+	s=arc-20240116; t=1760476254; c=relaxed/simple;
+	bh=BQJLULTT/Wn1VgzHKtiLeywejDNqOrYVAnsXBZ3US70=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mgJC7CsFiHEUOBiaDKSB26+XcgCvPYJ2DqFQYG8MR69TfMgeHjm7SIjO5h2+YHmno2d0m/si8iqxZS9FHzw0ZDWMhs6k7C6DLKCmHtrEG8BK13PPylrJumBJT7whxVJDZb9aKo5pM1TQjcQpfXQZsIl+TVrWpzUanJFTumvSy5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hGU6+te2; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=lxKhr1Ej14E91j/PuaOK3ovaxCILNnTZ93Pz7jO0Tyed7cnzfQnP+H6BVf2CyDUiDKkRv1BfwLDzzJ7FcHJ8nS+yYf9PjIAG9f88Wbxw6Koq+sPYerp9C1Patc/1RwEu/8gJ+nH5rJLADlTJkctQquV3H0O3F4KtK8UD/otE7RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZbJzPl8b; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e34bd8eb2so59188115e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:10:31 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42420c7de22so2715071f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760476230; x=1761081030; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760476250; x=1761081050; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oIqDBu+bnb+H785D5/vHRnkCuDzXg4G0wmJXPEv+JqU=;
-        b=hGU6+te2xAvQlu822yEMq8zkxWyDinD9GiurHIO+1OypWjmgpojwuob/jjYZKM9eGC
-         xmz8p9Un1JbbfPVQHFfvnI9wk06SPtbNkVHQW3AHSW4HaB3LutNq+dXEv3KOS1F+IKiN
-         1Q2xhz8tPwb0rLfbubhuW4e9VGO/3KMV8Zwel3MJk3EmGAfEOED6plYz9L04Xz9DUy0M
-         4LLLlhdB8sBryPcpc6xKpTJJdFG+f6SDB9a5Anh0H0gwlipMJeqQhBUKKpEA/ocKvXmc
-         XZS26hXvXg+TtFeWpJAW/cB46iRCXSS1bBHjQkkfKrvhZmPlSmFcZ3yXW86S7VPj4Rve
-         6YsQ==
+        bh=OU1/mxCO0gs9pfD0TKLeg6fFAQ0zkZSd+iwsC02HbYM=;
+        b=ZbJzPl8bPNCMym5feI7/o2aOEF/tWHhMsATv3KmaMXPx+M444TxSmAwCxW1+XYULAD
+         mwu5exkDWQmwduqtokHm7w5lz8SQ8/RoHcZpkgQNML0saav1Qp4pc45eT77MvZdps2fW
+         5UF8OWAMWt6mXwnD+n7Pxy3i6vh8oHadLBVcNMW6gKgTwYfS6lFFN37m9L2Y28GR8LwY
+         ICkGnUegvjf+0k+6M0EnSuTzj22IcXtI0wv0onIPIQAVlkfpF/Fu6Ppi/mCzfn+yKG+k
+         mUd/TTtZKX71n9/u04tArcXcXMscXdj0tWWX9pns/q+QZ9ckqVyDoZbemuvCyxhoPJOk
+         mo5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760476230; x=1761081030;
+        d=1e100.net; s=20230601; t=1760476250; x=1761081050;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIqDBu+bnb+H785D5/vHRnkCuDzXg4G0wmJXPEv+JqU=;
-        b=Gg1gVYoTzjv9tth3EX+ZUHCKfH7EL6XcMo+559EOUtvsxmjYsZGoSvO80YokVg1FdF
-         CkrBhOjoO94pamg4+3D6ATDZumVwG8s9BGWhs3NJeFquGQdL/Zmonu2fF802YrgSrUVh
-         PSMQRZLm8yHZGDig0jHDXUk3JNk8/QB0TKP5PQNuGKBYhu+hn0GFSzgQQtwdryTop8vX
-         awC4GvUSPuvBrJmW3/qv2VKotwD3lBu0/cKhNpuOF5ALE0EaxILKnrnrIbYvBbRXbJ/1
-         QUBManJPBBhLlPicA09Tt5mWcg+c6bAtaKG3P73nfIrxwPMIqGYr7xUsj5d3FYNA3tXd
-         X5hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRlbs8XINl0vQ4kVLBfhfGSvqnyP+kk4tcJ/T+eWm9JrZ2ERZbiJmQZmM7fM7W2lvVtdgBf9o76WuFc28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7mHTWZE7Kfk3RfkHwx3EaSnG7kwb9OJK2OrF6c98DDAbMDxZ7
-	ZeDxFk3XL/zHqjTYi0cfy3jbKwfnpWB6zTAOLoe+AI+jD2rLryF3mcRH561ujVITtII=
-X-Gm-Gg: ASbGncv+H96AgNe5Bx/2Fx0oUVA95jIKJlge85XAGwW4965KApDSGVq6swFAv/NJqL3
-	ozoBlGJ30IxiHCSIqqbfOpuzJbn9lE7ou84/kmr2HCbzKhzPNHey1bJONRVoSMIeDuHkUotZP/A
-	e1uSBNFB2DK+F0hwR7jNP5rKy0w9rC2Qi4q8IT+ExBANf0YCUQ4qtS7o+P/NM1CIEehIEWTPZgK
-	zyMSfip22GPduhszld/xF3v3WXSL+g5YbZS6OQB3F8GoT8aK4EJGqUsFd4mm7prWcUP4owg4nwk
-	UZCdbgCG+1FNFCvHppYs/pnwAZCfdhTA/aOmExJYxniy8OcuBYOOr7WYDH4bQqWBD8BeHksy+CO
-	py7zErv+igqqbk5HwmrSzYtmCVJalGB2knfIx8WidYHUrp4DjGhIVHkVIqY650rW1xotUpO6PWf
-	MaFQk5RjHQrbo=
-X-Google-Smtp-Source: AGHT+IEbhID2cy30VH28xdYyFKoHwK5zb9GEgSYaTfKLNAL9ivTZVl5Wqfb64+N4E6V8zmftUTcSQw==
-X-Received: by 2002:a05:600c:502c:b0:46e:45d3:82fa with SMTP id 5b1f17b1804b1-46fa9aa0eacmr170991135e9.10.1760476230196;
-        Tue, 14 Oct 2025 14:10:30 -0700 (PDT)
+        bh=OU1/mxCO0gs9pfD0TKLeg6fFAQ0zkZSd+iwsC02HbYM=;
+        b=o9U1Ws4eLLHJAhjSu69m0InJbszip7j6JwLUibV19l5ELNBVtsFy4wYDM4Y2Ebif7r
+         /9zqSMyIh/DxUjNpQeGyKx7Tc1LYQhM1MbznpKJ9Pq0o/d+0OleDkpM9zpPwfpw3LT+9
+         PfQQhYVUyTqZH8eEuQm9xDZpfJ4+v6fwQlQnpuKdEhbnoL3wPdUiwwVvlnIBeX2P13kb
+         FAzPDzT3P1JV0GLJGoEuzTDVGrpwitegauY1fjBmEZ0txNdxGs+5cpU5tHDvLFJxKMIX
+         OTyT0sAfNgW4igCZfcbrNRMgmoP4MuYRYA5vRhSlv+QjOLcHsy9Gt6iEMvl2FwtrDDMM
+         GVHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWe7XBkVSeMRhK+V3nU1E4sR38ewUUPesMp9jWnfOBf88ZSkOInJoZJvRZN9hnn7qnu3vvX5m5H1jn4BM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Lvjenql1dVhqkcyXvVtJ5YO1JiXT43DXbnIKnjZINSbhGV99
+	8hyUTAtHj3mX7uDp/0rrifVs7adcKQIpav5JvIiGXBaq8eka8cWjBR4R0sn5Q48m18A=
+X-Gm-Gg: ASbGncu/q1RPFlDkdUlGcMaQVYUJ/JFzt1wFtUf86PmSu+dqdcxukMMlK+0geOFkMIO
+	BL8UOu8T3C7N0JcamIesN3V5XgVu4mUKGSxLxZvSemgQI1zpLXTW/H5J3Dl+/fdZKHXkHfCSfwv
+	sEBgaHKyOhu5xOK3iyaOhJqm5gR38qxkoJ4DWEzvOcW7OpH3QhbJepAJT8bBYanB9a44YghIhIy
+	C7yEKatiVUjBWroJPllsTkYpy4QFHVtXE/g1dXRNqs3PadOE9fSvJ3ANtr+dQ+dbeuTsbVyEnuo
+	KrQXIb/yyRIolqIV6G7yaQ5xE2gLSt8uUzZ7pFwbY6AeB6DGiNh08aPdPC03Au0t5yvUuxxI24V
+	5NsORGIllsDLCF4uaNe3GZ9I2SxObl+tBWOvrRRkJ+Yp8K9xXnXnsv0DZC+omHkB6iY+M7tylBG
+	CbXa0HXGDqfcZlqPDCa4l0rg==
+X-Google-Smtp-Source: AGHT+IG4aszTNfWkZ+8pnaYDUBRKBttfxEAtdOpVVT5WH4tPRBG36HzZa82lsANKG9dSujuWlON6Tg==
+X-Received: by 2002:a5d:64e8:0:b0:426:d71c:9a34 with SMTP id ffacd0b85a97d-426d71ca0b4mr7446024f8f.51.1760476250194;
+        Tue, 14 Oct 2025 14:10:50 -0700 (PDT)
 Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe74sm25122327f8f.35.2025.10.14.14.10.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d3desm25578034f8f.7.2025.10.14.14.10.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 14:10:29 -0700 (PDT)
-Message-ID: <269f3575-b315-4855-a2f8-243a91cd62f4@linaro.org>
-Date: Tue, 14 Oct 2025 22:10:27 +0100
+        Tue, 14 Oct 2025 14:10:49 -0700 (PDT)
+Message-ID: <8b64ff99-d3c3-4d5d-ad7e-1d11d0a8fcb4@linaro.org>
+Date: Tue, 14 Oct 2025 22:10:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/32] media: i2c: ov5675: Use %pe format specifier
+Subject: Re: [PATCH 18/32] media: i2c: ov9282: Use %pe format specifier
 To: Ricardo Ribalda <ribalda@chromium.org>,
  Linus Walleij <linus.walleij@linaro.org>,
  Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -125,11 +125,11 @@ Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
 References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
- <mtwaxgCCtRmzwKQWossgjGCuiRpYsskzaiJXACP41oCx5DY1kIZtPt-agjTCBTTa_kRJb5g4XI-AoGUeIQ8nmQ==@protonmail.internalid>
- <20251013-ptr_err-v1-16-2c5efbd82952@chromium.org>
+ <MY_AlfixYZV-8oPbVR2rAt2c2MXqa44vOl4wBVxfvw8IARVU6fXVfIgMIEjDtagmcTUarlGkxLViwG6BYfcSUA==@protonmail.internalid>
+ <20251013-ptr_err-v1-18-2c5efbd82952@chromium.org>
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20251013-ptr_err-v1-16-2c5efbd82952@chromium.org>
+In-Reply-To: <20251013-ptr_err-v1-18-2c5efbd82952@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -139,28 +139,28 @@ On 13/10/2025 15:14, Ricardo Ribalda wrote:
 > omitting PTR_ERR().
 > 
 > This patch fixes this cocci report:
-> ./i2c/ov5675.c:1188:9-16: WARNING: Consider using %pe to print PTR_ERR()
+> ./i2c/ov9282.c:1133:3-10: WARNING: Consider using %pe to print PTR_ERR()
 > 
 > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
->   drivers/media/i2c/ov5675.c | 4 ++--
+>   drivers/media/i2c/ov9282.c | 4 ++--
 >   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
-> index 30e27d39ee445c2603b8fecf7a1107969eb97df3..ea26df328189eef449ce121c0f62a4ef02631830 100644
-> --- a/drivers/media/i2c/ov5675.c
-> +++ b/drivers/media/i2c/ov5675.c
-> @@ -1184,8 +1184,8 @@ static int ov5675_get_hwcfg(struct ov5675 *ov5675)
->   	ov5675->xvclk = devm_v4l2_sensor_clk_get(dev, NULL);
->   	if (IS_ERR(ov5675->xvclk))
->   		return dev_err_probe(dev, PTR_ERR(ov5675->xvclk),
-> -				     "failed to get xvclk: %ld\n",
-> -				     PTR_ERR(ov5675->xvclk));
-> +				     "failed to get xvclk: %pe\n",
-> +				     ov5675->xvclk);
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index a9f6176e9729d500a40004de92c35b9abf89b08c..3e24d88f603c1432865b4d880670e4b67f1b5cec 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -1129,8 +1129,8 @@ static int ov9282_parse_hw_config(struct ov9282 *ov9282)
+>   	ov9282->reset_gpio = devm_gpiod_get_optional(ov9282->dev, "reset",
+>   						     GPIOD_OUT_LOW);
+>   	if (IS_ERR(ov9282->reset_gpio)) {
+> -		dev_err(ov9282->dev, "failed to get reset gpio %ld",
+> -			PTR_ERR(ov9282->reset_gpio));
+> +		dev_err(ov9282->dev, "failed to get reset gpio %pe",
+> +			ov9282->reset_gpio);
+>   		return PTR_ERR(ov9282->reset_gpio);
+>   	}
 > 
->   	xvclk_rate = clk_get_rate(ov5675->xvclk);
->   	if (xvclk_rate != OV5675_XVCLK_19_2) {
 > 
 > --
 > 2.51.0.760.g7b8bcc2412-goog
