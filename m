@@ -1,189 +1,204 @@
-Return-Path: <linux-kernel+bounces-852198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782A2BD86D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:25:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5270BD870C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB1A192187E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:26:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 19472351DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A222E2E7160;
-	Tue, 14 Oct 2025 09:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LK4uOVBN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2DF2E7BB5;
+	Tue, 14 Oct 2025 09:32:02 +0000 (UTC)
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B8B25D546
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F852DE1E5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433940; cv=none; b=hzR4SM10R7SLiJjQbIwssghTrbtkin139q5raPh/SolqqOcSZ1EXTVNSWeXgcHzkelppsB4rztDMC6mrGAOc81S/W1+Ryff08z0p2ipdDY7Oz9KV9om5638UiH/e7npM9Uk1K+AjmYc6MxzIsLus98VK+FxrS9gllp+knruktSQ=
+	t=1760434322; cv=none; b=mcESoNvDVrKRmmLAGHzjRzGcjqIm0KqIPrMNxJJb3YjgZ0zz0pSO/f6fcfcsMwOYyvPZm58NCjIR5B6HEKLpY/Fo9Dg3ScAW3dmrmTI4U6Wbo0dcZmYsBC0cUmZIIX0BOmNWnkAERPMzPQ0XKlvDLL70TIjozqZjzK1x77FkYj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433940; c=relaxed/simple;
-	bh=rZCAygjY0OWPeTvsMe7UoXhWjSZufdU/LV1/KfHjJRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ax7/37J1DBi4hYY1MIDgqMVx0VQBar8ZzrklGIAw1PEZZWvdfcf8k8n6X5HpOknYhXrvCAU4tGu1VJCNFzBdXDt9kAOg4jXV3CoDJGItXVMFCp0yOzWMtBJ5lmMzSTR6U6e27UlJ/27Lb0A9/2ZYEqSDKzYWjUQkUJt7YDIcoKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LK4uOVBN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760433936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PfLdBJrnTMVkOACQmFhZRlAwlSYvcBsyR97wH5UAbz4=;
-	b=LK4uOVBNgBuVGhYeXWYKuLCJtWkhdgkQdidSjF3onDLLdBm0Sd8x5fNbiO7E0WcB5DieK0
-	6CUHR+4Um59D5oczQ+libTwJjoW5r/HlJUt203x95FwdOVT9PebfF39HmA1GssU3Hc4aqI
-	M/LxBX31ERphlOz1zcqrHsHZw0kDA8o=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-694-P-hHgAvTNSetomZdwLBV_g-1; Tue, 14 Oct 2025 05:25:35 -0400
-X-MC-Unique: P-hHgAvTNSetomZdwLBV_g-1
-X-Mimecast-MFC-AGG-ID: P-hHgAvTNSetomZdwLBV_g_1760433934
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3efe4fcc9ccso4405709f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:25:35 -0700 (PDT)
+	s=arc-20240116; t=1760434322; c=relaxed/simple;
+	bh=pkxa8puQtgGel9mbOE5DfNSU9jrsaW0tXQm2k4FGibE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wh6KabR3H+E/B9FDBnklI1oOlw3Zftf9egtsjPE6Ce1fw7cNnnWSb3gKQTK5Pj11DP+OzuG5tamLLQABCWK20O38XVZms1H6JcbhJKrTDXtUtRMGdWTQNNhLfeQO525WNEScgBBBAKeh6QOKiAnsdToJS/VHsWP8LWJt8u8lYwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-42f7b17f9f7so40968045ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:32:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760433934; x=1761038734;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PfLdBJrnTMVkOACQmFhZRlAwlSYvcBsyR97wH5UAbz4=;
-        b=iRz9ZhL8uPqH5IkFdbSGeBPSCwbR1lsWdzcM63vXWimuwS7fuHV/g8d6ca9cBnIPsR
-         XNxN0dQz5Bf+uTJye2pf7WipGK04jTPe3JZvgmIZ2pqREht+yTsUdYmfNpG6JXN9NSYa
-         do/kZeU6lLQ/d/X34OS54OF+lw2JO+uMXyNckuY36KTiIaSTztS+KXDiVFtv7SF4d8Fz
-         3x9VtG4aAbEkBMp16on4ayeEko9G5QPfmMdVPMTFpExoSGKOeRA90RZRx8E5YZ9ZhcN+
-         eIrdniURbPdGXpk05LhkRM88rMPkHfenC3FXVhdor/UjVwgJLnPCAx3xMeY+x8od7Jqo
-         qcLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGpZTQve24LouEyWOzAOcjEmMp+JPdM+wjhLRCNXnRTEFg4RBvrz4lheVvMfhIFG6MfAyKF/929npyZ24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO26v+EjSjFhPjEeYvzRxuznzmur82ZqywZA03NpEs8p4w9XwP
-	nRa2o0qEw/c7Wp20KKuCKUGlrCIT01qrmzWS6nhkCyrmhBLdBmRpEeyvm/a+tOtg+DLxzDUO3Zk
-	TdWB6NSnEGGBHhYVYvYeqalBRQl6gwAfjVtsKgsTeLavZRn7TPCJBOfJi0Hvr+xk8nCWc1wlPPY
-	do
-X-Gm-Gg: ASbGncuc9FxtcGaaC1TEyAHpqGHZr9Jhy0EKG/8aGAiAv9fYJjKmJWvb1w4CyFx/hZL
-	CEN56e3sDRu62TbYAl4KNDE21QdIWdD1icEM/+0hxIO2hOcrQnmWbqodmQd09UkYweMQX0TeYp+
-	gxD5Nt+O0KTGNJI0OI2xXX4FRYfgF2VXKhYalBECir7iGq5ae5kOTeDA2Rh+qoBEWDe23FUJQfg
-	kIRo/LLWyUcEKU9uWCLNPk6nH0XeVLkDvDT+4bhcaF/sIH+ZEypxZ/sPrGQ36VAL1Z1sgO13R6N
-	/LCBRNtJQ+wSZvBJRriwx/VgcFiZe28C0w==
-X-Received: by 2002:a05:6000:2485:b0:425:8133:ec6c with SMTP id ffacd0b85a97d-42666ac634cmr13951508f8f.9.1760433934212;
-        Tue, 14 Oct 2025 02:25:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNy4HULkh4edX8RYJTZCVGTdNQF7IsmD0wybDN7UvL+JUlMATmv35cRvOQ3uVINtBjnY95mQ==
-X-Received: by 2002:a05:6000:2485:b0:425:8133:ec6c with SMTP id ffacd0b85a97d-42666ac634cmr13951481f8f.9.1760433933753;
-        Tue, 14 Oct 2025 02:25:33 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e8141sm22498086f8f.48.2025.10.14.02.25.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 02:25:33 -0700 (PDT)
-Date: Tue, 14 Oct 2025 05:25:30 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Maxime Coquelin <mcoqueli@redhat.com>
-Cc: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
-Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
-Message-ID: <20251014051537-mutt-send-email-mst@kernel.org>
-References: <20251007130622.144762-1-eperezma@redhat.com>
- <20251007130622.144762-2-eperezma@redhat.com>
- <20251014042459-mutt-send-email-mst@kernel.org>
- <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1760434319; x=1761039119;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mpBgoDCD1NZyU8yXWBy8hXEWr5MI7i37aL5+z3xg+Dc=;
+        b=b3eBHnSkFjJ+ddwURlTSjBaPfvLi4su8zZapsCGbjo5M2yoL4KvknH4hpcvzOi5Wnx
+         S1T2yydFaN4DKC7pnGfrOL44IXGL5gxSugfXlBI5/pTACNJUtitzwLaw29Ix7IkV3dAj
+         7Sy34CMWg9wYqUpOOTPCZQebMHqugoxSIgN/MOSX/RFfy6h/XxJgtSlbB+rKfgw5b5qd
+         gMCu4mICfmmaM2bAIciEzo6kZyqYRU/bOWLXTWgmWDU2BDRnv5rCJljFUmyh6Gdg/DjE
+         kL50n8M1Rr9blamT83RovgVy5I7LJzKRXZL0wcZ50VDQgcC4lxLByvfTquiMa2kS/MGw
+         EI3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWCPbVLPdB3qvqmRJxeQWlR9s+wT6IEMdI+67X8syCPU+7yUg0z4xVojis9RSVF6Iq4c/5kxZVzplIfxJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpkYHrEXLsDlrMVH7Yl8jHHZgVdCz/Z85PN0qlm1lY1+lyzh63
+	qTi2VuNI3VAm4ZibEY/HwRc85G9cwlRfBSQrUAhmZ/0BbMxmQvlMX3DmAgmlTnpG
+X-Gm-Gg: ASbGnctmG6HUA63G8029wbOR/Ao9rc0okYFynm3mz50/8YI+v8Fd482tkXiWRUZBBjs
+	gJgGwdI5yGSo9nYn38DgwfLercEECL36TfX2pkVcWTJTOaKb69pEVwhQ6ik01qX+S4QXyzh9tW7
+	N29HwGNsslfQVOqhSyMIGJBosFzUzoQSz7brZ+0XJloPbAfxwbUHYJAdFlrJCop5UIgD3xzKkNJ
+	jXsdgiVbujELqi+1jAimYsKSIIQiO8wISqVb7g/Xn1Hkg4m+kOYSN7L9FfJqSuvYU4ePak10UMA
+	cAbprhYS1QnuQxCr21TWXOFXEFvfl0/YL1/TE/2+BwaBvNIEw9OCJ2+zI9cnN9nWI8PJOf6/bW+
+	QM8coSgrEET6POtvVuLzfe5y8hXIXXx2xM96k1YaIr7EMJPEuqNPSLvA4AcqwL9EOKYibxAIntk
+	JZJpUA2Ro=
+X-Google-Smtp-Source: AGHT+IF+ySr4SWETIPAn4yEdtgQO84PO6XTGe3x/4W9DoPxcVPhvvB6HnvKjdFF0IgCenc2fDyWJOQ==
+X-Received: by 2002:a05:6e02:19ca:b0:425:8c47:13fb with SMTP id e9e14a558f8ab-42f873d1c2dmr263642985ab.17.1760434319483;
+        Tue, 14 Oct 2025 02:31:59 -0700 (PDT)
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com. [209.85.166.172])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f9034235fsm60808725ab.24.2025.10.14.02.31.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 02:31:59 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-428551be643so43059895ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:31:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCY8EIqr8AL2d1WDuzdM6P+XY/UjFvmP6/LzBgrYq/hiTnVNSd0MWSBH5odW1IyQP+zyhvEqPLwUJ7H7k=@vger.kernel.org
+X-Received: by 2002:a05:6102:161e:b0:4f7:d553:3cfa with SMTP id
+ ada2fe7eead31-5d5e2278aaamr7047842137.12.1760433964277; Tue, 14 Oct 2025
+ 02:26:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com> <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu> <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
+ <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Oct 2025 11:25:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWMkKFLEZ34j=JV0Ls+o80UfC6s3yD5x-9G2K8ZV-Y-9w@mail.gmail.com>
+X-Gm-Features: AS18NWBTuiqEZg-SFYGrxqYZDbYb0o6XrCJ3YERltbZU5Ho7kkUOk_8aIEnP1Zk
+Message-ID: <CAMuHMdWMkKFLEZ34j=JV0Ls+o80UfC6s3yD5x-9G2K8ZV-Y-9w@mail.gmail.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC
+ scheduling bits
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, thomas.weissschuh@linutronix.de, 
+	Li Chen <chenl311@chinatelecom.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Mete Durlu <meted@linux.ibm.com>, Tobias Huschle <huschle@linux.ibm.com>, 
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>, 
+	Guo Weikang <guoweikang.kernel@gmail.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Brian Gerst <brgerst@gmail.com>, 
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Andrea Righi <arighi@nvidia.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Tim Chen <tim.c.chen@linux.intel.com>, 
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
-> On Tue, Oct 14, 2025 at 10:29 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio Pérez wrote:
-> > > An userland device implemented through VDUSE could take rtnl forever if
-> > > the virtio-net driver is running on top of virtio_vdpa.  Let's break the
-> > > device if it does not return the buffer in a longer-than-assumible
-> > > timeout.
-> >
-> > So now I can't debug qemu with gdb because guest dies :(
-> > Let's not break valid use-cases please.
-> >
-> >
-> > Instead, solve it in vduse, probably by handling cvq within
-> > kernel.
-> 
-> Would a shadow control virtqueue implementation in the VDUSE driver work?
-> It would ack systematically messages sent by the Virtio-net driver,
-> and so assume the userspace application will Ack them.
-> 
-> When the userspace application handles the message, if the handling fails,
-> it somehow marks the device as broken?
-> 
-> Thanks,
-> Maxime
+Hoi Peter,
 
-Yes but it's a bit more convoluted  than just acking them.
-Once you use the buffer you can get another one and so on
-with no limit.
-One fix is to actually maintain device state in the
-kernel, update it, and then notify userspace.
+On Thu, 28 Aug 2025 at 14:57, Peter Zijlstra <peterz@infradead.org> wrote:
+> Now, when I look at unifying those config options (there's a metric ton
+> of crap that's duplicated in the arch/*/Kconfig), I end up with something
+> like the below.
+>
+> And while that isn't exact, it is the closest I could make it without
+> making a giant mess of things.
+>
+> WDYT?
 
+Thanks for your patch, which is now commit 7bd291abe2da09f5 ("sched:
+Unify the SCHED_{SMT,CLUSTER,MC} Kconfig") in v6.18-rc1.
 
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -41,6 +41,44 @@ config HOTPLUG_SMT
+>  config SMT_NUM_THREADS_DYNAMIC
+>         bool
+>
+> +config ARCH_SUPPORTS_SCHED_SMT
+> +       bool
+> +
+> +config ARCH_SUPPORTS_SCHED_CLUSTER
+> +       bool
+> +
+> +config ARCH_SUPPORTS_SCHED_MC
+> +       bool
+> +
+> +config SCHED_SMT
+> +       bool "SMT (Hyperthreading) scheduler support"
+> +       depends on ARCH_SUPPORTS_SCHED_SMT
+> +       default y
 
-> >
-> > > A less agressive path can be taken to recover the device, like only
-> > > resetting the control virtqueue.  However, the state of the device after
-> > > this action is taken races, as the vq could be reset after the device
-> > > writes the OK.  Leaving TODO anyway.
-> > >
-> > > Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> > > ---
-> > >  drivers/net/virtio_net.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > index 31bd32bdecaf..ed68ad69a019 100644
-> > > --- a/drivers/net/virtio_net.c
-> > > +++ b/drivers/net/virtio_net.c
-> > > @@ -3576,6 +3576,7 @@ static bool virtnet_send_command_reply(struct virtnet_info *vi, u8 class, u8 cmd
-> > >  {
-> > >       struct scatterlist *sgs[5], hdr, stat;
-> > >       u32 out_num = 0, tmp, in_num = 0;
-> > > +     unsigned long end_time;
-> > >       bool ok;
-> > >       int ret;
-> > >
-> > > @@ -3614,11 +3615,20 @@ static bool virtnet_send_command_reply(struct virtnet_info *vi, u8 class, u8 cmd
-> > >
-> > >       /* Spin for a response, the kick causes an ioport write, trapping
-> > >        * into the hypervisor, so the request should be handled immediately.
-> > > +      *
-> > > +      * Long timeout so a malicious device is not able to lock rtnl forever.
-> > >        */
-> > > +     end_time = jiffies + 30 * HZ;
-> > >       while (!virtqueue_get_buf(vi->cvq, &tmp) &&
-> > >              !virtqueue_is_broken(vi->cvq)) {
-> > >               cond_resched();
-> > >               cpu_relax();
-> > > +
-> > > +             if (time_after(end_time, jiffies)) {
-> > > +                     /* TODO Reset vq if possible? */
-> > > +                     virtio_break_device(vi->vdev);
-> > > +                     break;
-> > > +             }
-> > >       }
-> > >
-> > >  unlock:
-> > > --
-> > > 2.51.0
-> >
+This is now enabled by default everywhere, while it was disabled by
+default on most architectures before...
 
+> +       help
+> +         Improves the CPU scheduler's decision making when dealing with
+> +         MultiThreading at a cost of slightly increased overhead in some
+> +         places. If unsure say N here.
+
+So it should default to n?
+If it is really needed on some architectures or platforms, I guess
+they can still select it explicitly?
+
+> +
+> +config SCHED_CLUSTER
+> +       bool "Cluster scheduler support"
+> +       depends on ARCH_SUPPORTS_SCHED_CLUSTER
+> +       default y
+
+Likewise.
+
+> +       help
+> +         Cluster scheduler support improves the CPU scheduler's decision
+> +         making when dealing with machines that have clusters of CPUs.
+> +         Cluster usually means a couple of CPUs which are placed closely
+> +         by sharing mid-level caches, last-level cache tags or internal
+> +         busses.
+> +
+> +config SCHED_MC
+> +       bool "Multi-Core Cache (MC) scheduler support"
+> +       depends on ARCH_SUPPORTS_SCHED_MC
+> +       default y
+
+Likewise.
+
+> +       help
+> +         Multi-core scheduler support improves the CPU scheduler's decision
+> +         making when dealing with multi-core CPU chips at a cost of slightly
+> +         increased overhead in some places. If unsure say N here.
+
+Likewise.
+
+> +
+>  # Selected by HOTPLUG_CORE_SYNC_DEAD or HOTPLUG_CORE_SYNC_FULL
+>  config HOTPLUG_CORE_SYNC
+>         bool
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
