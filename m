@@ -1,188 +1,111 @@
-Return-Path: <linux-kernel+bounces-852990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DEABDA703
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6730EBDA65E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D87250333C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EBE91882603
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC5E3019CA;
-	Tue, 14 Oct 2025 15:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54EF30274B;
+	Tue, 14 Oct 2025 15:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNgSryB+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gN/wTTWG"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3F2FBDE9;
-	Tue, 14 Oct 2025 15:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7FD2D29D0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455667; cv=none; b=oZL2i22CowHsgSxrUmIU8GBizHYcKYAi2yqBAUmY/eZy5VJ8+7DQd1D1axrkt+sse3WmKsSyN8NuJ3C3JCnd3yrgCQYFttls4Gj+VPW22s03M//ej5V9mNJExtlId2KA6dks0nWU5lJByPLNDFEBVEkfjQwzKRqEVZa3BqWDAAk=
+	t=1760455729; cv=none; b=XPJoyrob6jGpBFfxQ2SSo1zDZ46zp/AAeDnKrdkp06MLcHk/PAjKzgeTc4wnUw+HLJePFgkMRMgiWPZLmSxFan1l5d7wT4dzS+YfGFofY3/1lhTHFkz9ZbJpYj4B9+2yX0uObch6TYvadeOBfFH6YNeatNCSahe5FrgYdbrRFJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455667; c=relaxed/simple;
-	bh=rcbQ/4zVKPt71QNu9FJMs9RnxpPz+SCqZaHgRW8i6xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNwWdP38uuejwvEmHYAxwPBTph2BDpcrJnTBbjoa26HfqcYQGzdULa+oQmD6UWsaEAhmTtHUffgCKOtdp+WTcGDhocl4juRdbx6ntyidsMJgMjPuQLdnBuKgS3GV9JvyYwXE2j+XbixN3lKmUFDrhY4DBUYuKf3G7LqhDxf31GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNgSryB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E376C4CEE7;
-	Tue, 14 Oct 2025 15:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760455667;
-	bh=rcbQ/4zVKPt71QNu9FJMs9RnxpPz+SCqZaHgRW8i6xw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cNgSryB+BZuqNdIe8HWdP29pEuHcFy+pTb7q0EsxHOIKC1M6hctcZ3JfySAzPW7gv
-	 yq9ea8HY+WFyN9Oi98YXBp0KVGTZW6D+mUU6BHHnUobvgZp+3YlFNfukqendjM9A+m
-	 4ZbR2e4Eu4INVDKLAj1Xg7BX4HuuWI0HwRdMAG+d9eQmvAFSg4SLUhKQDG0DgKuoAC
-	 BATlcMW2YW8xmJy5cBIfgN5irj6eWgttXzmvlyPnPa9fozv1ZVEHIoLFsFMVyFb0MN
-	 JAyWg9fSI09X8+pM7YNyPYqFPJ5FdKFW7yfNjdWxM7ZXppDypjc0IIYmYcKJGs5hMI
-	 wgDUlgv8hkx5Q==
-Message-ID: <f046fdda-3bad-4f7f-8587-dca30d183f82@kernel.org>
-Date: Tue, 14 Oct 2025 17:27:41 +0200
+	s=arc-20240116; t=1760455729; c=relaxed/simple;
+	bh=sseQkxVw01RGGymMZQnYe0MAonlReqfHRFNRr3ke7iQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OZUc63vaQoSxLiTpySMTCKzOc9d7izStsGTDn/BMnt4q0+u5zCX90nVfESuvnYz1Z+LXLL9CjjJ1+eyMhM/Mr5gE/gJaZdga1B6kawnggXBivSkdQbxI1SYM5pSaMDkrCnJ6QzaP4KhzRgjwd6uh4hSLUQq9lBm6c8J8fVe2sk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gN/wTTWG; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760455715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3LfrRntdqnp7+Z8riKYEbqCkp0MkSxiqZIXsXw6PRKU=;
+	b=gN/wTTWGL9N/luOOdsW4j68R1OpjZ71pxwaSmzY8QKH20jAP2ifGFglkGhFL6+YRWzzyRp
+	YzuTakDCxjxTj+eMz/WOaxFF0o370GIkCcjAxMNpXDhJeA0Nlsc3syciZ9KNI5IEZzd4++
+	BbDLfbsATBqqetEgJ2hse9wRlW17Hzw=
+From: Hao Ge <hao.ge@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v3] slab: Add check for memcg_data != OBJEXTS_ALLOC_FAIL in folio_memcg_kmem
+Date: Tue, 14 Oct 2025 23:27:51 +0800
+Message-Id: <20251014152751.499376-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v1] mptcp: fix incorrect IPv4/IPv6 check
-Content-Language: en-GB, fr-BE
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Davide Caratti <dcaratti@redhat.com>,
- netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251014122619.316463-1-jiayuan.chen@linux.dev>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20251014122619.316463-1-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jiayuan,
+From: Hao Ge <gehao@kylinos.cn>
 
-Thank you for sharing this patch!
+Since OBJEXTS_ALLOC_FAIL and MEMCG_DATA_OBJEXTS currently share
+the same bit position, we cannot determine whether memcg_data still
+points to the slabobj_ext vector simply by checking
+folio->memcg_data & MEMCG_DATA_OBJEXTS.
 
-On 14/10/2025 14:26, Jiayuan Chen wrote:
-> When MPTCP falls back to normal TCP, it needs to reset proto_ops. However,
-> for sockmap and TLS, they have their own custom proto_ops, so simply
-> checking sk->sk_prot is insufficient.
-> 
-> For example, an IPv6 request might incorrectly follow the IPv4 code path,
-> leading to kernel panic.
+If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
+and during the release of the associated folio, the BUG check is triggered
+because it was mistakenly assumed that a valid folio->memcg_data
+was not cleared before freeing the folio.
 
-Did you experiment issues, or is it a supposition? If yes, do you have
-traces containing such panics (or just a WARN()?), and ideally the
-userspace code that was leading to this?
+So let's check for memcg_data != OBJEXTS_ALLOC_FAIL in folio_memcg_kmem.
 
-What is unclear to me is how you got an MPTCP + TLS + sockmap socket.
-And if yes, can we set sk_socket->ops to inet(6)_stream_ops and nothing
-else without having any other issues?
+Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
+Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v3: Simplify the solution, per Harry's suggestion in the v1 comments
+    Add Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+---
+ include/linux/memcontrol.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-And do we maybe have to update some code in subflow.c also looking at
-sk->sk_prot? I guess no because there, the socket is created by MPTCP,
-and it should be set to tcp(v6)_prot. Except if there is some BPF code
-that can change that?
-
-> Note that Golang has enabled MPTCP by default [1]
-> 
-> [1] https://go-review.googlesource.com/c/go/+/607715
-> 
-> Fixes: 8e2b8a9fa512 ("mptcp: don't overwrite sock_ops in mptcp_is_tcpsk()")
-If I understand the issue correctly, was it not present from the
-beginning, before the mentioned commit?
-
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> ---
->  net/mptcp/protocol.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-> index 0292162a14ee..efcdaeff91f8 100644
-> --- a/net/mptcp/protocol.c
-> +++ b/net/mptcp/protocol.c
-> @@ -62,10 +62,10 @@ static u64 mptcp_wnd_end(const struct mptcp_sock *msk)
->  static const struct proto_ops *mptcp_fallback_tcp_ops(const struct sock *sk)
->  {
->  #if IS_ENABLED(CONFIG_MPTCP_IPV6)
-> -	if (sk->sk_prot == &tcpv6_prot)
-> +	if (sk->sk_family == AF_INET6)
-
-sk_prot was proving it was a TCP + IPv4/6 socket, and then that's OK to
-set inet(6)_stream_ops. I guess we could only check the family, but, can
-we always return inet(6)_stream_ops no matter what sk->sk_prot is?
-
-If the protocol has been modified, the stream one has maybe been
-modified too, no?
-
->  		return &inet6_stream_ops;
->  #endif
-> -	WARN_ON_ONCE(sk->sk_prot != &tcp_prot);
-> +	WARN_ON(sk->sk_family != AF_INET);
-
-Please keep the WARN_ON_ONCE().
-
-Maybe we should not return inet_stream_ops in case the previous
-condition was wrong, and not change sk_socket->ops.
-
->  	return &inet_stream_ops;
->  }
-
-Note about the subject: if it is a fix for an older commit, it should
-target 'net', not 'net-next' (+ cc stable). Can you also have a clearer
-subject mentioning 'proto' and 'fallback' please?
-
-Cheers,
-Matt
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 873e510d6f8d..7ed15f858dc4 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -534,7 +534,9 @@ static inline struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *ob
+ static inline bool folio_memcg_kmem(struct folio *folio)
+ {
+ 	VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
+-	VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio);
++	VM_BUG_ON_FOLIO((folio->memcg_data != OBJEXTS_ALLOC_FAIL) &&
++			(folio->memcg_data & MEMCG_DATA_OBJEXTS),
++			folio);
+ 	return folio->memcg_data & MEMCG_DATA_KMEM;
+ }
+ 
 -- 
-Sponsored by the NGI0 Core fund.
+2.25.1
 
 
