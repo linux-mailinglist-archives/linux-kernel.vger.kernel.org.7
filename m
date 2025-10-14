@@ -1,162 +1,219 @@
-Return-Path: <linux-kernel+bounces-851708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25131BD71BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF81BD71CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D42DF3A4A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D014189D541
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00196305053;
-	Tue, 14 Oct 2025 02:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F63306B3E;
+	Tue, 14 Oct 2025 02:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RCNw1VaP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gnNcNtJY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87E53043D4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB84305954
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760409525; cv=none; b=KRNCKCjbdf8dduYkGve5gUDM4KfpcCMcaq0XEvoNBIgcrh09fbusfKcMQTi68mpRt9wKq6dE4UwQJPTUIa5BIcNMrNTo3v6kgpcGJD+OD3HKFfdU9DD9kwf9ryJJQ++sM+FdU6A6uyGviP+c3NKjTjC5igsMOmqXC0xTxE9li7k=
+	t=1760409576; cv=none; b=ddvx20jdoSDe0SqaSdaAMCR4FMbojUxijQNd3EDekaUuThcHYUuGk/EKWt3FBFnIcux4UHbvsIsUFJyL8WD0m9SSbkF8TXPiExcDU6x4PVJHXlrkJ2URetNAGdYaBV0gqhMVvpWPqzkRf6dOEKSxMSUe8BifL5w7J4MQthqWHII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760409525; c=relaxed/simple;
-	bh=F9WzBVDyVycmq7vPxd/pkL66x9p6CV5hQB/KCgNH4Gc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BzGhWf1dLil2VSFFAr+vuKYkr2RVH99YY0Z17+EoVCosIf1b2cZoLCwixRcXGQALS4QflfYaIUUkDFUFjrNebMg/kSEKfya0j7/WFUUmA9TNmg/lv+WbmruiMVeKw9cAEvhcRNz2O58vyuT1PxvPhirI0jmbLpFqu7eg5iCNuCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RCNw1VaP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760409521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F9WzBVDyVycmq7vPxd/pkL66x9p6CV5hQB/KCgNH4Gc=;
-	b=RCNw1VaPSg3+pNq56QGXqas4Kf3XqN/Fsnse4H4O9MFD0DYIBYEHecRoruaL712rNDS9yZ
-	PV5N0RGjLSXogSc4S6cO6ZdrUvyXvo3OwItR0cfT/qgCTiBHN/qzYAv3g8Rn3BUaCP1NKV
-	Y2XadLS4vCqZRNnKZLqguWr+bVjgMbs=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-461-3LGXgQK6OmyEdOBH46-_ow-1; Mon, 13 Oct 2025 22:38:39 -0400
-X-MC-Unique: 3LGXgQK6OmyEdOBH46-_ow-1
-X-Mimecast-MFC-AGG-ID: 3LGXgQK6OmyEdOBH46-_ow_1760409519
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32ee4998c50so9091788a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:38:39 -0700 (PDT)
+	s=arc-20240116; t=1760409576; c=relaxed/simple;
+	bh=gJl0FfQuDtF2eNgYEi2LJEGUJxfSedvbty82t8RTVFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fJ5xAq9oA2Z2Af8/mP07HqJoBFLu8LrHLsA0qOgxgMgjBx0ybZUr8i6WQjuicCxwAvz6LUTtpcZzaw7wiG2YwcP8LIcUqj3oOHoDXuYkUKsIei9I3zwHyFtSZ9oCpSZTzT2hd/SIwDeBV18aWjWWUaTYbCMeyqeXbkXz9to7u1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gnNcNtJY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DHDTE2016735
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e1liYZOex6u3499p/8XbqN27JoYRD6zSaqlCfAiBYXU=; b=gnNcNtJYdDP4XeIJ
+	OyO1R5md2VLhg1Lopy5qqpA4VK7aTRyqXZ0RNDAtYgH1qcUeag59B5gjWmODsqLm
+	PoaUN0y9fDPVZ5aucviQfnha1CtPnFRiOYAQshyYOcs3Bbyz8E1KhmOEVhdV7YiJ
+	LoqrFKUMGYVFZypIfIDkkK0mDLLOmo+CRIjRk3CB50sXZnlMlwOkcWpv7u0cHBeB
+	lh9gOVMkAyQGG1toqIE1bfqh5KnCtzkgGpXTQaQx9A+Fi4DG1O5ibemE7qkAlEhW
+	pgyzlptyX2arTnET5bUNX49nBBqBgi7aK7IdDB5EQhXu6WCWGgypaIk9xUgBf5XC
+	itkJdg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1ab6gf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:39:32 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-28973df6a90so92390725ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:39:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760409518; x=1761014318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F9WzBVDyVycmq7vPxd/pkL66x9p6CV5hQB/KCgNH4Gc=;
-        b=RBBwWJFXPolRcHTW+iw0ijgF+Y4wpC9YHsFPDwXaNy8YoqyCUeDrwNcCx4J7YkuEqK
-         71M6u5jk4DbT0BYqHdo+q8fAGWeBEnFhFAh6kR0uWxftGKUbE9EzKbH9/RRZHVqyXlc1
-         o9SPUnlhnLsk0JzKF3je/sR8rk0SPNMp8aZlKbHORGggKgRxiFivsnPtxhUIu6D2W9y5
-         F+M1VG6WBDIR1z+ys43qg6LUYuTYJ6BvXJNI+JOQQ2g6jDjKXtHUUSVGIJwmkGKGCWrg
-         +zTqjOwsHGbdBb5n7FoFvcoBeq8uVuHsNztfsa9AIq8HIksBJCKDiVnaJpiD15HtHt79
-         FDPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOtNzcoHhxiOk9U3ucObZ7uAND7l0TaEU7TSL8LGZXao34OjD4k+LECrrNQ2EJLhn6IXWjJ/wVFxWBttw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE9utlyppniLua1I5mjLRXoHOhlhTeLvQzd9rh5WrgneNc3WWl
-	xdRlZm75q3W3KpukM/OV8xuU8mmigLvagUXkX975B1ywO5M3DavzCRoLwTk3okujDvBgpVEsQMF
-	2FZxcsc3KIUapTMz12tiXK/orkMnE52KuNz4lCMccD6B0JHHxZLwD8KeETKzXz1loS8+9bB+eBe
-	W8KjB+OcqfexK19G5L3/i9LVmB7vllpYeZOpANBOfg
-X-Gm-Gg: ASbGnct2csDX5uuSege9QaGadmK06yObHyODiKpIJS+qRKTcaJiP8tozAIUikzo+Ni2
-	IwhHyfqLyxwDbIi3iU0siEMGJmABrxFLAOoOfqlHkvHDT5YhPb23x8DA5Iof7IMAgmZSqhEIVoU
-	4ePIDs3SrkNFGTLxJdag==
-X-Received: by 2002:a17:90b:3a8a:b0:32e:ddbc:9bd6 with SMTP id 98e67ed59e1d1-33b5138408emr32261210a91.27.1760409518573;
-        Mon, 13 Oct 2025 19:38:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWo2mJ/OJVRxxXfZ0wTtK20NpMnbcmMczKNA7M+EwFeHZP2mOQW/Q28ZNj2mhuSiTGeul/i4cDsb6qp4PF9tM=
-X-Received: by 2002:a17:90b:3a8a:b0:32e:ddbc:9bd6 with SMTP id
- 98e67ed59e1d1-33b5138408emr32261181a91.27.1760409518079; Mon, 13 Oct 2025
- 19:38:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760409571; x=1761014371;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1liYZOex6u3499p/8XbqN27JoYRD6zSaqlCfAiBYXU=;
+        b=w8hRHIA2uouA3IHR5cWX7SV/Z9P0L8SlZRwsZaRJ+V1cfg1r2kCoXiILvWpyiCnRU4
+         n8q3yxYfTNb9pKIs/yNZfZu1N1tmsgzD8bXAak1qLB9i3ivUHRAsNggm6AOxhLC9jIUm
+         p0k2k7zUBaa27DpAldTA2fw7XOHfVFyakhI6kZxE4rRwD5zcTcbofdFdq2On8PxRccVY
+         BuXLEb/zJEnHZqKWoHa+RqyxMygLg7Kncme9AxngpWUnjbT5j5yiNBb826VV2ODyBDZG
+         WGK2LmEcBl5rwqAPVOP9Xg/nvml4b0v9RdEnm6jotDKz46FN+IqToF5QcaMJiYsZcLpE
+         HI4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXx5EiQ3KceP0YeRtosW0fjDpjj54VJ9AwfgYa9eeIv5FWxqaEs/LjYTkI2STjkz9Od7Ndy1T0tERTZB4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziRF+adq3lvEON+h8gUHoEl8ME43/Bzd1hl7yEAdbx+m8XaNIJ
+	uaaGeSItIJqtp/iQWvS46fybtrtTV3/vlMBzASPUcB5n5B7QHOVlsNGOkWLxoTXQp+3CvRWs9/x
+	O5XjmLeGwVLIS0IwO2LltVJlld9HD1NC9zs8GbYvvw9kuL1K+vUBFjJWQzVG63Kk786Y=
+X-Gm-Gg: ASbGncvowTQtg++PfllOurPHm3t5UyhxjARP8UmNW66DDk9Jau2Jwr6xqikjqqYYRPw
+	bp1cet6rt+uMSg9khSDOy97U6DrOhJtXZqd+OgCmmlmxSG+B9od2DpWIrYbvU1hkzsGFoEYPOn1
+	SN6P7TbJvU3LWN5SSkWiWAueAHPBrYr82cGtsDqn+PFxTZbiEOHWhExwUn8DT0/xbvGnVbC+3Yf
+	nC93j5J5gz1gTRQtoTgGvNFOmHxA2QGUfgtLMuvhu7o88zhEh5YokU5Lwz3A8sEWlW80u4RUUdC
+	YQpUPX1vjW3umAWHey5eyfMFgHxXz+NTR7t2LYt1ER/1GqrfYJA1wYgBGZ+QDzdN1kcDZhTwTOS
+	D
+X-Received: by 2002:a17:903:3c66:b0:269:9e4d:4c8b with SMTP id d9443c01a7336-29027379a40mr313265515ad.21.1760409571382;
+        Mon, 13 Oct 2025 19:39:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzomiFefnWgNLltTkzNNBTfg0uOb7fx//fR5/hrzk7NEI1Z5j0/t2K0xrD/6XVsL6pRiF72w==
+X-Received: by 2002:a17:903:3c66:b0:269:9e4d:4c8b with SMTP id d9443c01a7336-29027379a40mr313265215ad.21.1760409570900;
+        Mon, 13 Oct 2025 19:39:30 -0700 (PDT)
+Received: from [192.168.1.3] ([122.164.228.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f837dcsm146768865ad.111.2025.10.13.19.39.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 19:39:30 -0700 (PDT)
+Message-ID: <654b804d-fbeb-45ea-a6fd-9d551224c934@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 08:09:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68e96ebf.050a0220.91a22.0177.GAE@google.com> <CACGkMEtnrayDWKFdJ1P22QyCrZuDK0C2LihhOtvhUyTOKSp_HQ@mail.gmail.com>
- <CACGkMEt0aJh1yAj+q1UNnXToLa_yGc9fT_HfeNptHsOQ7vXG+w@mail.gmail.com>
- <CACGkMEsh_j9wCAv-LwOVxLjvUzEuKuu+7ZGMGcdJr7ettdBYTQ@mail.gmail.com>
- <0f20cd6a-d9aa-4837-a120-1e2e7dbdc954@redhat.com> <20251013040810-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251013040810-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 14 Oct 2025 10:38:25 +0800
-X-Gm-Features: AS18NWDKDcpLfi6N1AuOSwJdJOcHa0VoPUyyf3FrzZSA7dT2cKqu6klh5288pTo
-Message-ID: <CACGkMEs3iV8kpEmZJzch3jUxZqV5Ff4k51SR+LGKW9sg2WAZhQ@mail.gmail.com>
-Subject: Re: [syzbot] [virt?] upstream test error: KMSAN: use-after-free in vring_map_one_sg
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, 
-	syzbot <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com>, eperezma@redhat.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: ti,hd3ss3220: Add support for
+ VBUS based on ID state
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251008175750.1770454-1-krishna.kurapati@oss.qualcomm.com>
+ <20251008175750.1770454-2-krishna.kurapati@oss.qualcomm.com>
+ <odikli6rfdyid5oqavurtqytgnwgh5hpmka2jt5tprpdw7cd72@icpnjnkfowt7>
+ <20251009131543.GA379737-robh@kernel.org>
+ <cbpne2d7yr2vpxmrrveqajlp3irzsglxroxyyjmviuci2ewted@6ewwp6yyybk5>
+ <2a088c8f-5555-490e-a70d-308a876924ca@oss.qualcomm.com>
+ <CAO9ioeX51SzaMS4TK7=xfCXBNYi7SGsMBZAv4FrZ1LzONWFw3A@mail.gmail.com>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <CAO9ioeX51SzaMS4TK7=xfCXBNYi7SGsMBZAv4FrZ1LzONWFw3A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68edb7e4 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=8YinarrYfdS0Dhyguhy4yQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=DEfk8Nzn-u4LZ7i_Gp8A:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: ZJEDbPbHDRQrzEogUH8l78EZLeUiBgGc
+X-Proofpoint-ORIG-GUID: ZJEDbPbHDRQrzEogUH8l78EZLeUiBgGc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfX1kXbxxPs+Gzb
+ Ka+z05QV2FV1PX0TvIuG9/ULu15YEfnTzhyjQuQ0jjqWB6hCIpqMR2X7yu6/csBrXUhZacM7lI3
+ 0rhdzlEZy7Gd7VsXe3rOW8L8yn/dPYD4vJZXdB7cYdrJDZLkWL/646pB4WGathD2FZk4QJL1Sda
+ mSkeKXWysm68JCI40YIiftO0q8nxHfirqAksuBRmRcFH94PyDfXTTuRJ0/DIbne7LByo825jABA
+ XtgF1Fw8ZwGVK4o/mtpQBdYogTTGeKKv9gqllZWEaqrjcALuUQymdLCS/eEvM03t1qJ81dFEPQ4
+ xHOj1VN1ZQ7jMUK+AZTny62lSSbLRhS1+U8Kgtc7TorO21/a/bFIDjjAXwW1spDda/FqOZhMReD
+ vasIFop3DMtxzfTVQK7sQBndH0K6HA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_09,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
 
-On Mon, Oct 13, 2025 at 4:08=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Mon, Oct 13, 2025 at 09:37:29AM +0200, Paolo Abeni wrote:
-> > On 10/13/25 9:20 AM, Jason Wang wrote:
-> > > On Mon, Oct 13, 2025 at 1:29=E2=80=AFPM Jason Wang <jasowang@redhat.c=
-om> wrote:
-> > >> On Sat, Oct 11, 2025 at 3:40=E2=80=AFPM Jason Wang <jasowang@redhat.=
-com> wrote:
-> > >>>
-> > >>> #syz test
-> > >>>
-> > >>> On Sat, Oct 11, 2025 at 4:38=E2=80=AFAM syzbot
-> > >>> <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com> wrote:
-> > >>
-> > >> Paolo, it looks like the GSO tunnel features will leave uninitialize=
-d
-> > >> vnet header field which trigger KMSAN warning.
-> > >>
-> > >> Please have a look at the patch (which has been tested by syzbot) or
-> > >> propose another one.
-> > >
-> > > Forget the attachment.
-> >
-> > I have a few questions. The report mentions both UaF and uninit; the
-> > patch addresses "just" the uninit access. It's not clear to me if and
-> > how the UaF is addressed, and why/if it's related to the uninit access.
->
->
-> I'd like to understand that, too.
->
-> > Do you know better?
 
-Unfortunately, I didn't spot any UAF.
 
-> >
-> > It looks like the uninit root cause is on "the other side"? i.e. the
-> > device not initializing properly the header.
+On 10/13/2025 2:38 PM, Dmitry Baryshkov wrote:
+> On Mon, 13 Oct 2025 at 04:17, Krishna Kurapati PSSNV
+> <krishna.kurapati@oss.qualcomm.com> wrote:
+>>
+>>
+>>
+>> On 10/9/2025 8:08 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Oct 09, 2025 at 08:15:43AM -0500, Rob Herring wrote:
+>>>> On Wed, Oct 08, 2025 at 09:31:59PM +0300, Dmitry Baryshkov wrote:
+>>>>> On Wed, Oct 08, 2025 at 11:27:49PM +0530, Krishna Kurapati wrote:
+>>>>>> Update the bindings to support reading ID state and VBUS, as per the
+>>>>>> HD3SS3220 data sheet. The ID pin is kept high if VBUS is not at VSafe0V and
+>>>>>> asserted low once VBUS is at VSafe0V, enforcing the Type-C requirement that
+>>>>>> VBUS must be at VSafe0V before re-enabling VBUS.
+>>>>>>
+>>>>>> Add id-gpios property to describe the input gpio for USB ID pin and vbus-
+>>>>>> supply property to describe the regulator for USB VBUS.
+>>>>>>
+>>>>>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>>>>>> ---
+>>>>>>    .../devicetree/bindings/usb/ti,hd3ss3220.yaml       | 13 +++++++++++++
+>>>>>>    1 file changed, 13 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>>>>>> index bec1c8047bc0..c869eece39a7 100644
+>>>>>> --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+>>>>>> @@ -25,6 +25,19 @@ properties:
+>>>>>>      interrupts:
+>>>>>>        maxItems: 1
+>>>>>>
+>>>>>> +  id-gpios:
+>>>>>> +    description:
+>>>>>> +      An input gpio for USB ID pin. Upon detecting a UFP device, HD3SS3220
+>>>>>> +      will keep ID pin high if VBUS is not at VSafe0V. Once VBUS is at VSafe0V,
+>>>>>> +      the HD3SS3220 will assert ID pin low. This is done to enforce Type-C
+>>>>>> +      requirement that VBUS must be at VSafe0V before re-enabling VBUS.
+>>>>>> +
+>>>>>
+>>>>> Stray empty line?
+>>>>>
+>>>>>> +    maxItems: 1
+>>>>>> +
+>>>>>> +  vbus-supply:
+>>>>>> +    description: A phandle to the regulator for USB VBUS if needed when host
+>>>>>> +      mode or dual role mode is supported.
+>>>>>
+>>>>> Why are we adding the property here while we can use the vbus-supply of
+>>>>> the usb-c-connector?
+>>>>
+>>>> Normally, that's my question on both of these, too. However, it does
+>>>> look like both are connected to the chip. There's VBUS_DET which is
+>>>> connected to Vbus (thru a 900k resistor). So having these here does look
+>>>> like accurate representation of the h/w. The commit message should make
+>>>> this more clear. Honestly, that's really the only part I care about.
+>>>> How it works is not so important.
+>>>
+>>> The VBUS_DET pin is used by the controller to detect the VBUS provided
+>>> by the USB-C partner and to identify when it's safe to turn on the
+>>> device's VBUS supply. I think this still fits into the description of
+>>> the connector's vbus-supply.
+>>>
+> 
+>>    In case we put the vbus supply in usb-c-connector node, is there any
+>> way we can get its phandle reference in hd3 driver given that the
+>> connector node is not a child or parent of port controller node.
+> 
+> Sure. Use devm_of_regulator_get() passing connector node to the function.
+> 
 
-The trace is in the TX path, so it's not the device side.
+I am not sure if I am asking the right question, but in case there are 
+multiple connector nodes, each one corresponding to one port controller 
+node, how do we get the reference of proper connector node in hd3 driver 
+since the port controller node and connector node are not parent/child 
+or each of them don't have reference to one another.
 
-> > Would unconditionally
-> > clearing the hash info implicitly disable such feature?
-
-The feature is not used on the TX side in virtio-net. On the RX side
-(e.g TUN) it has not been implemented yet.
-
-> >
-> > The syzbot dashboard mentions a (no more available) reproducer. Do you
-> > have it cached somewhere?
-
-I don't.
-
-Thanks
-
-> >
-> > Thanks,
-> >
-> > Paolo
->
-
+Regards,
+Krishna,
 
