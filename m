@@ -1,171 +1,156 @@
-Return-Path: <linux-kernel+bounces-852187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC9ABD8646
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:19:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E64BD8688
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC4064F7172
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:19:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBC084FA4A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5F82C11F0;
-	Tue, 14 Oct 2025 09:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA8E2EAB89;
+	Tue, 14 Oct 2025 09:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vju3B45/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrdcrRav"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366172877CB
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC7B2DBF40;
+	Tue, 14 Oct 2025 09:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433559; cv=none; b=LOHbH+8eIk7rngCqiDT1oJDDAdlJl/As40i1ZkNYteYP68QMMcWu1+si52eM1lxbhlCltS4/xub1zFhi9rZUSwtDj1I43rkMf1ie4pSCW/AHdVNzuV1lT8bdsxvos3lixH4WN0wgoWeOJYY0v4UvM4B0mZbCOt6IC2SvLd6SWyA=
+	t=1760433641; cv=none; b=tub7O5TqrEbxXsNc7IhvIQl6d7KDmJoYsuu7ukK6XhqI5gXd8aSsqU5m3V8VfDIELZDvvkD1NAOQlcYQJN4cj0ZpQZ31/Pevq3qldJWalToxpzxcPqX1CNjHoKgD38pCsNbnm5BSMHvvt/t5Ikx7Vhm8wdbdzwBz6T/bk6j2rU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433559; c=relaxed/simple;
-	bh=KCXqlj2/eMDCK2VlI2slSyknIFjdtmFTDQyXloiv5ME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Me2e6/cFR0JYs+qooBrMYez71TXrBKJDTf2mA4x1LnfrKPp8w3zDdOuzQk9015vBfGKpFFUu5GV8hMRsEgLERKK1quaSJIsU4Gmb1zuNbBYUugfMozGb+ZYfTcteVH1x1PuS3tlE/1qWMdN27o3Z1yUzMe6edJfpOqQmyvdfhv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vju3B45/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87OGG021173
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:19:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/M4+9qjbR0xmZ9AUGWwlamLg
-	Bh7AibV8Qv6wfylCGO0=; b=Vju3B45/mSf52hBqT0GENjluUCDiOtbOR2hShHAR
-	BcJk1V4XprO6TdfMxVoQMolPrcpWikbRccTF2XTe/aPr9dkq10/7H6n3b1n8X4NF
-	fFkCyHEKD1v3gwT9UVs0LNGGqc/uySAoxA71KPKW80lOwiEJT6ydGQv4aOLGbbgA
-	ideY2iQsyPOj9sDoQt4yZvoLWbLAEIl+or1dOB/8T2NVGhoNfeQLSDpOlEEQYhHs
-	rcatz2WUT+eM9xAbkiJzlJNwXlwekkWTNvuCCoRwFLAaIFdIBCuPr5ntVPQ8Xb5a
-	PCSfkuykNjcai38qTdQkegbwlpPr10Mj5xeSIHzRYWAkCQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwj65q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:19:16 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-854bec86266so2370727685a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:19:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760433555; x=1761038355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/M4+9qjbR0xmZ9AUGWwlamLgBh7AibV8Qv6wfylCGO0=;
-        b=rXCeFpLvnTewqm1emL/nzCloNRbyTJ6tZnAW/EsQFfePi8neOfjr1GTo+DH+JyPFT4
-         TtFXOvmNgWzEp9XSdnnI2BLZ/madxPnY8dyL+21gRnB3zQAku+cssQg1tf3uTTklQR7f
-         wKBXHvDfEDkRH53ILhPHPTLH7H6Ldh6NrVWZpgSyDmmtiG99cZrS2cTFWC97QmyczdLZ
-         9Lh+cl6qDX2n+FwgNk7AYmzjZqwDhNur0U+yAqcWj4TSNcDLnU4GorjE8CT9OQykc2t/
-         JI617TcSA7XoJvv5sk97vg74lRSgCB2iLelYUHSa412vSl1hoQQ0l0jnR/tgsjXZYSWH
-         /L6w==
-X-Forwarded-Encrypted: i=1; AJvYcCX0gGvm7CPqADHfiv2XQScHGSkR/Dkl5YbZjSR/htFc8brIHYpnd0ZH9vrGE/dVrRbM5VIp2wmyg+44q6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTd9by7Vq/iJpB3ld9wTBmHuraNdr7aMERNy1jFXQjHqgZBfQ2
-	GncCU5mnqsQcBLgzlu7lYv3zQzHF3l+GJYyb/94l6KrxjaQ/8cB2CSaNVZ9WrbesbyM8G3yXXT3
-	KJ0GqFTd6e4jGArajQ1SnFNuJjrZOPQQPoRtibUt98pm1MoS8eEo8e+UIkLUi1qdqSvU=
-X-Gm-Gg: ASbGnctLlSZ2Qgh8sGFPO18vcx+H+DUB/tkDCx1hkaohpuXpFQP2Kt2/Ew+nKOw1CkQ
-	wjcet7Y4m/YZWJpcAiQjAk0qPoEO3/7qUNAQr85Hu8BYPb5HweCTkTqZVK83Ommle5miBsLYbyv
-	tz/C7LOc2Tl6uAv5ysptwNr0QmRIOvsvtpPsRBZyiWKKW5Ulssgorxas/BndFaGwwNZ7heUPQgA
-	TQJj6Z+XlGu2f3mmErpkhacwMSJT5g0H9SOm74DmMn3F5uM8BG4msYuXPbPAaoI3sbZB0lBzxMN
-	sl8DR+1UIo/a2JpuTVp5eeSwen8nltHTMcPh4KGmXbcFSFUeRMjIEWBpic5pL+O2pMyMx4u0eTc
-	OpHj+ICf1my2U77NKXcY4bs7uiCOC0nh0Y7vSq7utcLrhrycvfX+j
-X-Received: by 2002:a05:620a:2a0b:b0:86f:b068:32c2 with SMTP id af79cd13be357-88352ba768amr3441609785a.65.1760433555018;
-        Tue, 14 Oct 2025 02:19:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJ0Bdv9ZRjNQZJ2bun3sNcAh/K42pzla7s+n3DhqMnWjW0vg5zZPO+f31pSNhVt7Buy9t+Hg==
-X-Received: by 2002:a05:620a:2a0b:b0:86f:b068:32c2 with SMTP id af79cd13be357-88352ba768amr3441607285a.65.1760433554567;
-        Tue, 14 Oct 2025 02:19:14 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762ea11d19sm39716781fa.37.2025.10.14.02.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 02:19:13 -0700 (PDT)
-Date: Tue, 14 Oct 2025 12:19:12 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonathan@marek.ca, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_rajeevny@quicinc.com,
-        quic_vproddut@quicinc.com
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: qcs8300: add Display Serial
- Interface device nodes
-Message-ID: <v6cvbds3fsbf7ebfi33mpkrgbrrb4oxubgpshzjn4o75j2jzcn@nnaenoukfu2n>
-References: <20251006013924.1114833-1-quic_amakhija@quicinc.com>
- <20251006013924.1114833-7-quic_amakhija@quicinc.com>
- <fsqytqhe72bgmloyzm6khoprq6bysf52ufz6oi6epos7uadyho@wg4rxs6f2xyl>
- <374098ea-23f1-4d1a-8f70-313a7e384f8d@quicinc.com>
+	s=arc-20240116; t=1760433641; c=relaxed/simple;
+	bh=NsvPz3eeiUzykuYNbrmqimhNSjFlj+QITEVnMeVM70E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ds+Lho2sDfTji6ymXbMCi2+qI1YBqxUJQgLV+EJOq8BNqZaBOedSbJSBfngZ9ONnBX+0FjgDx1ykhGK7qH/5N8aG+eM8mmxLFJ+jYOUsK/PikLjXkPngTTDhyf6o0Juq5aTdHX3kZRlPSD2iHujzIfHItmPtx9eYle3nwV6ECQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrdcrRav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B5A41C4CEE7;
+	Tue, 14 Oct 2025 09:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760433640;
+	bh=NsvPz3eeiUzykuYNbrmqimhNSjFlj+QITEVnMeVM70E=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZrdcrRavo8QWeMTxSfKByW3jq6Fy+ld/Sug7JM4RIQ+uWkCO4iADN5FhsAU6Sc/FY
+	 zEPsoAbGeGfaiw2uobr+mC/8e6oP4wm6jVBYSzQDkwcAxQi4YcDb1CyTnEwlJZfdY3
+	 wudYxTSTc1VbVhaCP9DZtwzpPGunHrDmFXyyyIbhA5KerAm+ddzRA6nMYTFY4YOQJz
+	 gI2dADYDOl6t3OPW/0NHXslnEfywrlGWUTL1ZwZ2T4Vwib91LcYYmaB0gtFXKN8Sau
+	 O0lcpN9bkerkAeDJSShSpKnrQAN1ZjoBHcblQ+usbgtnTd1GN5zLoVeFmI/VgucgQd
+	 2NdAwXBdzaHfQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43D0CCD184;
+	Tue, 14 Oct 2025 09:20:40 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v7 0/3] Add support for sound profile switching and
+ leverage for OnePlus slider
+Date: Tue, 14 Oct 2025 11:20:32 +0200
+Message-Id: <20251014-op6-tri-state-v7-0-938a6367197b@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <374098ea-23f1-4d1a-8f70-313a7e384f8d@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX7Z7pXBgQxNOX
- 07VeXlKEZ8OU9UKBPMeKZot+ooQjb/xZ9fjiFulARVtcayEsl8zlWddGcPKfOsX3L0s+LU6OUpf
- TTe24bxtUPgrKK4lVS7ERquv2jrRmlRkmN6TYE9TjifjinHUjOsDTzir4sq6IGg9cmIXrvvk6Dr
- HlojxCiAQJI5YttV3zsC9U+hoGG20WRIMXuXLOMj793x6mbAcq36tCb+zNd+nP1QFXMVqHRh9ne
- cLOjd0gqqpCwdZ2LIeD5VfwkJFdrN0b2PhZlReGmmGahxnfPMP3Hwzuy/kdfyR3rlg9gKDeA7oU
- a6IP2ru2MzG9MYAwLxisOw3hOYAkccyImfEAHhjeHoAhhNhV3fF3BzlRUjF9l18RpXjXCBcRzS2
- MhBEpJ152SxMp5JNxeIJ+ZPXZxlpZg==
-X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68ee1594 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=KBoXMGrBdGQ6yHO1rqoA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Z6lWzdh_Lex_l18KkuUW228AmN6D9hIe
-X-Proofpoint-ORIG-GUID: Z6lWzdh_Lex_l18KkuUW228AmN6D9hIe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOAV7mgC/3XOQW7CMBAF0Ksgr+vI43jshBX3qFikZiAjVTiyX
+ YsQ5e416QIVieUf/fc1i0gUmZLY7xYRqXDicK3BfeyEH4frhSSfahZaaVQGehkmK3NkmfKQSdI
+ JBoUDAGgU1UyRznzb9j6PNY+ccojzNl/M4yp8KBQbsM4prQ2Y5sK5SWGmeOD43Yw/4gFL+79sO
+ 1Qd9G/KuJXf/FhQKmlMC9op1yG4A9/qir//Wfu0roVXa6tF23uN/st3Xj/tuq6/jsM2Lj4BAAA
+ =
+X-Change-ID: 20250419-op6-tri-state-ed1a05a11125
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, 
+ Benjamin Tissoires <bentiss@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Casey Connolly <casey.connolly@linaro.org>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc: linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Gergo Koteles <soyer@irl.hu>, David Heidelberg <david@ixit.cz>, 
+ Casey Connolly <casey@connolly.tech>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1992; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=NsvPz3eeiUzykuYNbrmqimhNSjFlj+QITEVnMeVM70E=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBo7hXnC5WjMyUQ6uq8eAgtYhKt3jxje1nMI49Pw
+ nBIerSNcdWJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaO4V5wAKCRBgAj/E00kg
+ cu08D/4yPNgeVepF9WCgyg2jwjC2U+BJP0XyW0YUmoypKiod7skNFNLy+gNkSky+Uv+gx9vjx8E
+ 9GLaW5lfQIOIWhBunrW2yydsqCWqHA7LKS76Dnk6TxnGnBkvxo5lsF0IxsVPrBVgV1EVu5I8siR
+ xpoAKm1fmZrAU41bRYpd8jummStaO456Soq9Sc5tpGfhfrJDg/03VfX/utgCMwmBLL+iGYkqL2s
+ ilwGt8Ysxq2WM4eIKn4G0bX2gLzhMotoaoBJqD498im9F+iomRvVaN3tiUWimWLlRI9kgoPoxtF
+ tyUHHSlVICRGqOjEwm2rFlwQ2shuHB7vo02eLmN1r0bE6GDpMy4syXORApsUz3xRe/95BxvBe0e
+ 3txQnvvfNcGB2dCP84O0T1RrsCKRKMu12SFpdC96G7hleRd70Cs0bHGU/tl1KT84oHbPoZIDSdO
+ 9zzOoG8xQuYnOmtOz16NrHSx91Qtxzz0KOABzCcx5yXPSXdJI5COVKiMdPyFtO1czJq6uWpqYgg
+ XamZfsDqok/CXGUVHe8MTQwwGk116kzQEG41XqKTtHKz4emnGWq3de44opIP0jZfIDKyCA0+hxT
+ YQuN4611WWnhBNCqEEQv4HVDocVoA/UPz36YXrQG617Erm3ZWXoodSMOlmP/jw0VYTT9P8TRGmO
+ qlEddzkPRU41Dkg==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Tue, Oct 14, 2025 at 11:54:31AM +0530, Ayushi Makhija wrote:
-> On 10/6/2025 3:44 PM, Dmitry Baryshkov wrote:
-> > On Mon, Oct 06, 2025 at 07:09:23AM +0530, Ayushi Makhija wrote:
-> >> Add device tree nodes for the DSI0 controller with their corresponding
-> >> PHY found on Qualcomm QCS8300 SoC.
-> >>
-> >> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> >> ---
-> >>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 98 ++++++++++++++++++++++++++-
-> >>  1 file changed, 97 insertions(+), 1 deletion(-)
-> >>
-> >> +
-> >> +				mdss_dsi_opp_table: opp-table {
-> >> +					compatible = "operating-points-v2";
-> >> +
-> >> +					opp-358000000 {
-> >> +						opp-hz = /bits/ 64 <358000000>;
-> >> +						required-opps = <&rpmhpd_opp_svs_l1>;
-> >> +					};
-> > 
-> > Does it really support only a single freq?
-> > 
-> 
-> Hi Dmitry, yes it support only single opp frequency, I got this information from ipcat sw for monaco, similar
-> we have used for LeMans.
-> 
+This series add initial support for OnePlus 6 and 6T, but other OnePlus
+phones contains same mechanism to switch sound profiles.
 
-Thanks for the confirmation.
+This code was tested for two years within the downstream Snapdragon 845 tree.
+It is now perfectly integrated with feedbackd in the Phosh environment.
 
+The series is also available (until merged) at
+  git@gitlab.com:dhxx/linux.git b4/op6-tri-state
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Changes in v7:
+- Separated GPIO number fix from the original commit
+  "arm64: dts: qcom: sdm845-oneplus: Add alert-slider"
+- Rebased again next-20251008
+- Link to v6: https://lore.kernel.org/r/20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz
 
+Changes in v6:
+- Rebased again next-20250731, otherwise just a resent.
+- Link to v5: https://lore.kernel.org/r/20250419-op6-tri-state-v5-0-443127078517@ixit.cz
 
+Changes in v5:
+- Dropped merged
+  "Input: gpio-keys - add support for linux,input-value DTS property"
+- Link to v4: https://lore.kernel.org/all/cover.1677022414.git.soyer@irl.hu/
 
+Changes in v4:
+- DTS: use default debounce-interval, order alphabetically
+- Link to v3: https://lore.kernel.org/lkml/cover.1676850819.git.soyer@irl.hu/
+
+Changes in v3:
+- rename tri-state-key to alert-slider, fix DTS warnings,
+
+Changes in v2:
+- rebase to qcom/for-next
+add SND_PROFILE_* identifiers to input-event-codes.h
+
+---
+Gergo Koteles (3):
+      Input: add ABS_SND_PROFILE
+      arm64: dts: qcom: sdm845-oneplus: Correct gpio used for slider
+      arm64: dts: qcom: sdm845-oneplus: Add alert-slider
+
+ Documentation/input/event-codes.rst                |  6 ++++
+ .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 39 ++++++++++++++++++++--
+ drivers/hid/hid-debug.c                            |  1 +
+ include/uapi/linux/input-event-codes.h             |  9 +++++
+ 4 files changed, 53 insertions(+), 2 deletions(-)
+---
+base-commit: 52ba76324a9d7c39830c850999210a36ef023cde
+change-id: 20250419-op6-tri-state-ed1a05a11125
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+David Heidelberg <david@ixit.cz>
+
+
 
