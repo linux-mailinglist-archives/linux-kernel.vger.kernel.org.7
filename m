@@ -1,116 +1,140 @@
-Return-Path: <linux-kernel+bounces-852497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C29BD91E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:52:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D84BD9201
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C14E4FF166
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:52:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 483214FF1C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5273B3101B5;
-	Tue, 14 Oct 2025 11:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198453101CE;
+	Tue, 14 Oct 2025 11:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R/bVAIHJ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p8gsXycd"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B0030FF30
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A58F3101B6;
+	Tue, 14 Oct 2025 11:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760442734; cv=none; b=Mkx3e0nJ9hCXvQzLAQds3Tvqi604/otFomxHPJMBF4DEQC+sb7rQ7mntIVo8UlFfqst1Nyf6CTwcKWNVk/CtC/S3hMdNWlgW0zjJzEkDz2q6feXmaRylEeZReZ9OpbZh15xwzGhIKRPTRl2DPWMT8BdQEOJbx+thiYT58IztVvs=
+	t=1760442750; cv=none; b=JUO+dtNEvieH92L2l48EHNBbk5ntWpHEgmnGc+16rshof8n9OWcxNK2qsuJHcwj6QB6wAaHIjVY0X+rCSlnfB5HSzvVY4XAe+t3thP4yUQbViPRseZON9TbAi3OmFZ32CpkmUun4KuZPR/5y7eOJugn6DCA+M2tK4cd6GKaqL/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760442734; c=relaxed/simple;
-	bh=C4Zwi47MIN47+HMZt7z5ewf90C8CD0KEwxfGhCDU9l4=;
+	s=arc-20240116; t=1760442750; c=relaxed/simple;
+	bh=3XVJuLXTqcUwfWrdJ5RIn39dvkfVJ7NKAlswAxMmqtk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/4CFt69nQXvWItJhQ3krZ5+b8wg+YFYKzLZ7OXlOzOSPdcRwrnuJy5nsjvWNyz9nRc+I9c/2XSjkseRU1uYiQslU9XuNYfqRGxabP3Kpa2/qD40p4a0Uyu1YG6CEmtTdB3SUl3tSlO1YmGXLXOjJi1zmMhU+t5ZUfNhMUnBqAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R/bVAIHJ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e48d6b95fso46024865e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760442731; x=1761047531; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5kwp6ZoI0Qw9Lio9IILJuSek2MXZc7hvFxHIxIa6Qg=;
-        b=R/bVAIHJfCIZYlJSwLQaunMl3C3ZTP2ijIPWD578I7cyOkYACaGLG36bcjYk5Rv1+v
-         kPcUV38je4qpQC8RoUY9hEE1kHTawfOld0R9Q6cZ59CkKoQJUnafSQ250r92qaUO2A+q
-         l/WPFO3iIA0y6k6IyjwEfPXrv6/jblOt1bVB3KBGahBXKIdC7Clo6CbCRI1sjsYPJ+zk
-         aVqt8FLmU/Yn0DDDyHd5MMI0KtBn53a9EOvXs8ur/cSCberUx3Wjz5YE8gRsX1B3B6Gh
-         MZoF+5XUcYBGFSHOScZqCmQ/mcLX6yeLlEhKU+4ef41F5whnXkmlP9f7fr7t1avBf/QB
-         oAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760442731; x=1761047531;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S5kwp6ZoI0Qw9Lio9IILJuSek2MXZc7hvFxHIxIa6Qg=;
-        b=Kh2ZFmZBYqvIxHzKGVxoJ+HRHI0ldfkeW4dWF6kjblOUM/DQxCM1I0YwlXbg4SzIyF
-         2/S4pX5XEpe5opaSitzqndqwhq5Umy9EhVn782opkqBQjBxtkgR7Q9H8Bu0FjULcP9J3
-         laCoPibtoVVcg8pSLWiWyBVTTqqkMDzwGLjd8lyRUF06VhzAukApSFFhnx20Q0E/0NDU
-         CBrylTv6kC+TQWWx6LjDDGR1DvJ+rEqOjE25YjoG0Y0AouL2CNrv5Mz0Tg5EY09VqZcG
-         liA6YDz9ZWqKi6IGkGA8kDgEqlhfFkn93keA0HdOlp2EbjzZ1po+wmsULUlwxtV64PwM
-         PIiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCcJwEHKIT6k85Hi0trCEq0dFq005Nea97z2xZr1geEqh+gNW4xvP1SqO0Hb1VBXNyh7LASG0DySN7XWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGZqYdMyZ032NWdjslePNCakiMseM3ezpBjTfEO1lbvPx1TXSa
-	hWaYtcqdvBkIoqgsbX5699dzbzWkwMEVLBNGkRvq/LC2XyseF4Ebg9F0V0Ir2FaKHvQ=
-X-Gm-Gg: ASbGnctZNWiUsmzEQycnVRG6Sy+JRetRr7LKQKQnN0VIRg2Eq7Wji2TdRJTLKIpeAjC
-	zx5JxWQnbYhVUkhUYCg/Cc95d4S+XS+aG9+PInb/e1Rzhd+1j4goweiYMn8idbxaFG23iP9+lS3
-	2B0Co9reN7Bfbl5P02feCEXNY08fnprFGAeJFXUGKtf4AEzHKFcj2o1LqOOYiGXkjMWedJuV5IJ
-	1Lw3pHEj6jk2uh5Zz4Omd/dOeI1LONv4UvPv42dbW54NfQlktJhB33Lq9nUGNP9eAUGFy/sigjK
-	u5YIakYfKuIUZjJS8AsDQXIR2voo8wfyoWRJ8lwgccyT3VM2X8cwAJZCAyBud07tkeHMW3R9+g3
-	VTb4Hl9kLghMw+oOeCY4mBPqNASvJC7d3IJU6yRUzEZrhxGGDi1o/
-X-Google-Smtp-Source: AGHT+IE0T5cvpE7QhDWujs9OdISYV+M+qLIfcBtU5FuqXOEPjcO1IUVOft+IiRF/W2H0Fcynpk8rfA==
-X-Received: by 2002:a05:600c:3b29:b0:46e:7e22:ff6a with SMTP id 5b1f17b1804b1-46fa9aa1d79mr180603815e9.15.1760442731072;
-        Tue, 14 Oct 2025 04:52:11 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489af92sm255991685e9.17.2025.10.14.04.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:52:09 -0700 (PDT)
-Date: Tue, 14 Oct 2025 14:52:07 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] dt-bindings: display: msm: Document the Glymur
- DiplayPort controller
-Message-ID: <mugh42lzc64wfkcacwo3z3pj7o5m3gx2ksjh47q3q6gu5dwqly@vfvs2n3czy6v>
-References: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
- <20250911-glymur-display-v1-3-d391a343292e@linaro.org>
- <mgbv5zoptfox664jswi3imvibrd7d2teazeuied37dw3ooiex5@lli2bsap7d3x>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ch2KmE/X6/nz5ziSWq3IB5XfjNt30zwkOh53PVgSxuG6eje2mvz2S02Rfkm2/eKZNkeNRZFrLqCQeSdF/gdpEUYjZ6R5dn033unqJv4MdnTM86AMorFVWrO7SNQURqa7+4RFUYTZNwooJa+2ZM+n6M3peQPrato5jEKRY1/2j2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p8gsXycd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C22B3C7B;
+	Tue, 14 Oct 2025 13:50:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1760442642;
+	bh=3XVJuLXTqcUwfWrdJ5RIn39dvkfVJ7NKAlswAxMmqtk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p8gsXycdcA3BtZ7uS5smhn0oU3DLtZaFu41WcGnW99Wf2sh46ZnM8v/1cWyjefm0E
+	 7DeLaXAVKw+nIBtIsampBkDXrt5TYy6HQvxGaOgLQSQA/wiebRWih8jk3eNXGiPCiq
+	 9h3kVgyIcYP7+XexV3f+SxWlu77qkZy+xYRHxZkQ=
+Date: Tue, 14 Oct 2025 13:52:18 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Hans Verkuil <hverkuil+cisco@kernel.org>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Andy Walls <awalls@md.metrocast.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Dan Carpenter <dan.carpenter@linaro.org>, stable@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] media: pci: Fix invalid access to file *
+Message-ID: <3cqjf6pts5fzs5gziog3g3jay6txcvxshm554uqpzgb6ymnukh@dsbo27d47rol>
+References: <20250819-cx18-v4l2-fh-v4-0-9db1635d6787@ideasonboard.com>
+ <0627cfba-798a-482b-b335-cc78a609c150@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <mgbv5zoptfox664jswi3imvibrd7d2teazeuied37dw3ooiex5@lli2bsap7d3x>
+In-Reply-To: <0627cfba-798a-482b-b335-cc78a609c150@kernel.org>
 
-On 25-09-11 16:01:30, Dmitry Baryshkov wrote:
-> On Thu, Sep 11, 2025 at 03:28:50PM +0300, Abel Vesa wrote:
-> > Document the DisplayPort controller found in the Qualcomm Glymur SoC.
-> > There are 4 controllers and their base addresses and layouts differ,
-> > therefore being incompatible with all previous platforms.
-> 
-> ... and it's a new core revision.
-> 
-> BTW: any additional clocks or regions for DP?
+Hi Hans
 
-No new regions and AFAICT no new clocks.
+On Tue, Oct 14, 2025 at 09:05:20AM +0200, Hans Verkuil wrote:
+> Hi Jacopo,
+>
+> On 19/08/2025 09:07, Jacopo Mondi wrote:
+> > Since commits
+> > 7b9eb53e8591 ("media: cx18: Access v4l2_fh from file")
+> > 9ba9d11544f9 ("media: ivtv: Access v4l2_fh from file")
+> >
+> > All the ioctl handlers access their private data structures
+> > from file *
+> >
+> > The ivtv and cx18 drivers call the ioctl handlers from their
+> > DVB layer without a valid file *, causing invalid memory access.
+> >
+> > The issue has been reported by smatch in
+> > "[bug report] media: cx18: Access v4l2_fh from file"
+> >
+> > Fix this by providing wrappers for the ioctl handlers to be
+> > used by the DVB layer that do not require a valid file *.
+>
+> This series should go to the fixes branch for v6.18, right?
+> This looks like a pure regression, so I think that makes sense.
+>
 
-Sorry for the late reply.
+I think so, yes
+
+> BTW, why is there a Link: tag in the cx18 patch? It just links to
+> the v1 of the patch and that doesn't add meaningful information.
+> Linus likes Link:, but only if it really adds useful information.
+
+Good question. I presume it's probably a copy&paste error, as it has no
+place in the patch.
+
+Would you like me to resend or will you remove it ?
+
+
+>
+> Regards,
+>
+> 	Hans
+>
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > ---
+> > Changes in v4:
+> > - Slightly adjust commit messages
+> > - Link to v3: https://lore.kernel.org/r/20250818-cx18-v4l2-fh-v3-0-5e2f08f3cadc@ideasonboard.com
+> >
+> > Changes in v3:
+> > - Change helpers to accept the type they're going to operate on instead
+> >   of using the open_id wrapper type as suggested by Laurent
+> > - Link to v2: https://lore.kernel.org/r/20250818-cx18-v4l2-fh-v2-0-3f53ce423663@ideasonboard.com
+> >
+> > Changes in v2:
+> > - Add Cc: stable@vger.kernel.org per-patch
+> >
+> > ---
+> > Jacopo Mondi (2):
+> >       media: cx18: Fix invalid access to file *
+> >       media: ivtv: Fix invalid access to file *
+> >
+> >  drivers/media/pci/cx18/cx18-driver.c |  9 +++------
+> >  drivers/media/pci/cx18/cx18-ioctl.c  | 30 +++++++++++++++++++-----------
+> >  drivers/media/pci/cx18/cx18-ioctl.h  |  8 +++++---
+> >  drivers/media/pci/ivtv/ivtv-driver.c | 11 ++++-------
+> >  drivers/media/pci/ivtv/ivtv-ioctl.c  | 22 +++++++++++++++++-----
+> >  drivers/media/pci/ivtv/ivtv-ioctl.h  |  6 ++++--
+> >  6 files changed, 52 insertions(+), 34 deletions(-)
+> > ---
+> > base-commit: a75b8d198c55e9eb5feb6f6e155496305caba2dc
+> > change-id: 20250818-cx18-v4l2-fh-7eaa6199fdde
+> >
+> > Best regards,
+>
 
