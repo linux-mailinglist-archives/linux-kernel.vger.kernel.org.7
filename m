@@ -1,109 +1,211 @@
-Return-Path: <linux-kernel+bounces-851965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA43BD7D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:13:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0452DBD7D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B0A6234C8AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E42189D156
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409C23093CA;
-	Tue, 14 Oct 2025 07:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F17030DECD;
+	Tue, 14 Oct 2025 07:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rjqkNCmN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dxs24Z2R"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZZvdEf6I"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411C01E47CC;
-	Tue, 14 Oct 2025 07:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3842E30DD3B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760426021; cv=none; b=Tr5ACWmsUoa7dRKmhPSKF0og8AqyuIcyMDo82Zcr9DPeD9saCqYlylknfp2G0WbG+OxBKxXTIcS0YFkhGr5cRkWy5+d/fNrs17kVm1TW2avlUjXLdyvL/rZC455SNRCG65UWFs+5B7G+MrXAKdSU+rNnOW4ePIAx2/ASFcAo9O4=
+	t=1760426045; cv=none; b=LMFccEwpnrW78HHRrNUXhqczccnjG9lwknsfrYaxH9Q0gepBITraLiClWgHyIwWFETplww0OK+yl44dZGDG2VvEwhWarigBSAa4QiFYT+ybCNlfRRTufBXZzXr5b7kwi455QHFZVPoyomM5MPf8YSa6I8JYCOX5n5CsSIEMj9iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760426021; c=relaxed/simple;
-	bh=aCFRQ2uXFCWX8qcAcovmc+WThMu+KsEfxKioJXrl2kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DybhZJZGN4NMK9As1acOIB703V+j1NxOnV2DWz2vDu3y5cDHTtw9nETfEYriRBHAElr2J5Chxwg9m2Bty3RzIPEdfoEPbfg5L3on2QzlfzJMN0d7mz1V+IdTSkUA2jp8UesODxSyH2wTI1Kv7a+RrETuOLCVJnFAFRpj9E1cq9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rjqkNCmN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dxs24Z2R; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 14 Oct 2025 09:13:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760426017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iu4oVZPri1i6HI/Yl4ijceB1lmcQihIYwMZtjTrm+ZE=;
-	b=rjqkNCmNjv+DJJuWVDIxJPA7aXV+oo+TrFeZkVMgYlPBPdfTJpZEbblDuGUkXY0MjkdLOG
-	az8/GWmIE7QyT5zCaz1VZObSc3RDJqdHtusreOZKMNJSuZQPkQla9dJKhmnWlod92Zyupp
-	WKuC/7mObCkF0izw0Sz868ZMEwQ7nT3gmT5xHYZzJFXL1FRdEtJTQF6GCVRHXfENAjn9eN
-	Dzgx5yK3hq5xr0vjR4d0/6oHzyEvZVQNSbtl/WrZABU56dvqofgzkMIGd0QRwI/sObmhBw
-	DDhYFEBr3ZWrGoL249ACO88Bs9qGdxQF/IKNfvBpv4U6smINmsSo4u3ddvOMNg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760426017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iu4oVZPri1i6HI/Yl4ijceB1lmcQihIYwMZtjTrm+ZE=;
-	b=dxs24Z2RrO1hSCIbUQgkm5fZUHc9IcZSal7CGI0mNlXcHZpFZCuflGaWKGGgNie9SThmQ5
-	CmJf1lphKVc+DoAw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Nam Cao <namcao@linutronix.de>, linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rv: Add explicit lockdep context for reactors
-Message-ID: <20251014090745-6dea5b0a-0b4a-4666-98f4-475a7fad475a@linutronix.de>
-References: <20251014-rv-lockdep-v1-0-0b9e51919ea8@linutronix.de>
- <20251014-rv-lockdep-v1-3-0b9e51919ea8@linutronix.de>
- <1a0d9a427b36d4bcff992dfb8694436cd24d6af3.camel@redhat.com>
+	s=arc-20240116; t=1760426045; c=relaxed/simple;
+	bh=ofrRWHTc0iq5SR+suJzAIcoxSg/tlD3mx3P7zHJZZBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXEMlDPfd9RtuTqntWhZx3bIPo21tSQqw+q8Kw2/zEyngYjrjwAkUB/5XVJeFO0/uF+JX0915K9cUxeOr7Bi3tYiX/dKoysjBTBXpClo2U8ys9Xzjlu4p416dLPod4LTej2LStNqcJKmBe6FDKBFc9dSGzkuIxeT03UYe12RoDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZZvdEf6I; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 398441A135F;
+	Tue, 14 Oct 2025 07:14:00 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 09945606EC;
+	Tue, 14 Oct 2025 07:14:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B48C7102F224B;
+	Tue, 14 Oct 2025 09:13:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760426038; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=1rQPGkIVi3ODkc5CC6srqTaTWUcBBf3OLgjQBFg0e8Q=;
+	b=ZZvdEf6IsnbwHKU53mCP/OJVvqaMjPPYJ6LVInAyhJAnoY5WHLT0aiiBaULt3scVtTDLfT
+	MrlZ2yAeFbtlptpU58fw1BkWZsNgWzGhTJ53QT8KpCGw2yl/YYNSD3Q3ufDZmne+1ywRl5
+	+7gNdp6rf94tvaKq84k92Xn+G5h3/XhB46xtaTO8T9w0Ln60XmksgF7Zne+VIN0SHmaltX
+	Lm1J8uJKhiwBAJqKn7WReaj1cst9KJkCySbLwSdL0TEiEPXatY3WzkjuFpipKViGtJ+T1E
+	NAcTO+x1RMvIk/TYApPpC2NoR5ozDBKtwvAZuoI/B9y6QBNHphj6Q6YLHYrMmQ==
+Message-ID: <72d9b0f3-da27-4e30-b07b-d85be23b1407@bootlin.com>
+Date: Tue, 14 Oct 2025 09:13:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 14/15] dt-bindings: mtd: sunxi: Add H616 compatible
+To: Conor Dooley <conor@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Wentao Liang <vulab@iscas.ac.cn>, Johan Hovold <johan@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20251013152645.1119308-1-richard.genoud@bootlin.com>
+ <20251013152645.1119308-15-richard.genoud@bootlin.com>
+ <20251013-parrot-sandpaper-4e31d2d1a6b3@spud>
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Content-Language: en-US, fr
+Organization: Bootlin
+In-Reply-To: <20251013-parrot-sandpaper-4e31d2d1a6b3@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1a0d9a427b36d4bcff992dfb8694436cd24d6af3.camel@redhat.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Oct 14, 2025 at 08:55:44AM +0200, Gabriele Monaco wrote:
-> On Tue, 2025-10-14 at 07:51 +0200, Thomas Wei�schuh wrote:
-> > Reactors can be called from any context through tracepoints.
-> > When developing reactors care needs to be taken to only call APIs which
-> > are safe. As the tracepoints used during testing may not actually be
-> > called from restrictive contexts lockdep may not be helpful.
-> > 
-> > Add explicit overrides to help lockdep find invalid code patterns.
-> > 
-> > The usage of LD_WAIT_FREE will trigger lockdep warnings in the panic
-> > reactor. These are indeed valid warnings but they are out of scope for
-> > RV and will instead be fixed by the printk subsystem.
+Le 13/10/2025 à 21:44, Conor Dooley a écrit :
+> On Mon, Oct 13, 2025 at 05:26:44PM +0200, Richard Genoud wrote:
+>> The H616 NAND controller is quite different from the A10 and A23 ones,
+>> some registers offset changed, and some new one are introduced.
+>> Also, the DMA handling is different (it uses chained descriptors)
+>>
+>> So, introduce a new compatible to represent this version of the IP.
+>>
+>> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+>> ---
+>>   .../mtd/allwinner,sun4i-a10-nand.yaml         | 57 ++++++++++++++++---
+>>   1 file changed, 48 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mtd/allwinner,sun4i-a10-nand.yaml b/Documentation/devicetree/bindings/mtd/allwinner,sun4i-a10-nand.yaml
+>> index 054b6b8bf9b9..4b82de9fae17 100644
+>> --- a/Documentation/devicetree/bindings/mtd/allwinner,sun4i-a10-nand.yaml
+>> +++ b/Documentation/devicetree/bindings/mtd/allwinner,sun4i-a10-nand.yaml
+>> @@ -6,9 +6,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>>   
+>>   title: Allwinner A10 NAND Controller
+>>   
+>> -allOf:
+>> -  - $ref: nand-controller.yaml
+>> -
+>>   maintainers:
+>>     - Chen-Yu Tsai <wens@csie.org>
+>>     - Maxime Ripard <mripard@kernel.org>
+>> @@ -18,6 +15,8 @@ properties:
+>>       enum:
+>>         - allwinner,sun4i-a10-nand
+>>         - allwinner,sun8i-a23-nand-controller
+>> +      - allwinner,sun50i-h616-nand-controller
+>> +
+>>     reg:
+>>       maxItems: 1
+>>   
+>> @@ -25,14 +24,12 @@ properties:
+>>       maxItems: 1
+>>   
+>>     clocks:
+>> -    items:
+>> -      - description: Bus Clock
+>> -      - description: Module Clock
+>> +    minItems: 2
+>> +    maxItems: 4
+>>   
+>>     clock-names:
+>> -    items:
+>> -      - const: ahb
+>> -      - const: mod
+>> +    minItems: 2
+>> +    maxItems: 4
 > 
-> Looks like a nice addition!
+> The clock descriptions and names should remain out here, with your new
+> min/max constraints, since they're identical at indices 0 and 1 to for
+> both types of device. The if/then should only set the min to 4 for the
+> new device and the max to 2 for the existing ones.
+
+Indeed.
 
 Thanks!
 
-> If I get it correctly, this patch does trigger a lockdep warning with the
-> current state of the kernel. Is there a plan of fixing the warning in printk?
+> 
+> Cheers,
+> Conor.
+> 
+> pw-bot: changes-requested
+> 
+>>   
+>>     resets:
+>>       maxItems: 1
+>> @@ -85,6 +82,48 @@ required:
+>>   
+>>   unevaluatedProperties: false
+>>   
+>> +allOf:
+>> +  - $ref: nand-controller.yaml
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - allwinner,sun4i-a10-nand
+>> +              - allwinner,sun8i-a23-nand-controller
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: Bus Clock
+>> +            - description: Module Clock
+>> +        clock-names:
+>> +          items:
+>> +            - const: ahb
+>> +            - const: mod
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - allwinner,sun50i-h616-nand-controller
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: Bus Clock
+>> +            - description: Module Clock
+>> +            - description: ECC Clock
+>> +            - description: MBus Clock
+>> +        clock-names:
+>> +          items:
+>> +            - const: ahb
+>> +            - const: mod
+>> +            - const: ecc
+>> +            - const: mbus
+>> +
+>>   examples:
+>>     - |
+>>       #include <dt-bindings/interrupt-controller/arm-gic.h>
 
-This will be fixed as soon as the console drivers are converted to the
-nonblocking APIs. And there are a few other lockdep warnings that will pop up
-after that in other kernel subsystems which are currently hidden by the printk
-one. None of which should be the responsibility of RV to fix.
 
-> I assume this series would need to wait for that or did you have other ideas?
-
-I think this series can go in as-is. Only the panic reactor is affected and the
-panic will still go through anyways. *After* the panic will be a lockdep splat.
-
-
-Thomas
+-- 
+Richard Genoud, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
