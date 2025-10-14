@@ -1,166 +1,133 @@
-Return-Path: <linux-kernel+bounces-853411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EED8BDB91C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:07:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9719CBDB92B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB8DC4ED75C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:07:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86F8A4F04A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E7330B522;
-	Tue, 14 Oct 2025 22:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2AD3081CD;
+	Tue, 14 Oct 2025 22:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z9mE685U"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAQi4/73"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A717F214204
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8253A2D46D8;
+	Tue, 14 Oct 2025 22:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760479633; cv=none; b=DXnvrHgyvl8ySpCPvZ05hD6o1gZv+2oIWjWHFcBOb8df9lkhXO/sBCLt8MspgDTghUk9g9bDI9TTJ+Q9p0sZHWvLnNxdlehgpsMzuXwU+qx4g5RsriKFnK+ggclIMOpX0qEiQkqaHcm5ADUoQCYdXTy7C35eOG2PlDxl6Vem5NE=
+	t=1760479693; cv=none; b=QiiMdlIMnOZCIS2g51SgQ0IIGBfRBU03pzNWb8mv0pYUkx9XebCx1tqM6wenk6ZDwI4YdH47g5RhArGyvyik4iTjdbyK059iPqyUaRa+hX0v57A/CgmjCxhVtxsswJIu7umpXeDPXVAGxG++LfMmf9eBsrrxFOSk3FoSqBCf6gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760479633; c=relaxed/simple;
-	bh=wnFdZqXYeAXtbdV313BIpvSA6zjC7j+fKfwJsNp0zGA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OMnlTfnOND95TDPD1HHCUUgkCfsK+6h1PHui1yePZSca2ZS6JddYRgTlGDlLsZL5EvPJqIr9ULM5tzDOMnq2kUfAOiPMSZUtYx4sqZneyKfrmfDjkodp5CDVoPkqwTqNtbMD/YqK9rMhJIJ5RUfF5JWESV088sRN+UGBkncFXwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z9mE685U; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2ea9366aso8281446b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760479631; x=1761084431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rNX6O4uSRV6iEU2BzMigXWXOKgqDw50DhtKf0yhiqyU=;
-        b=Z9mE685US1p2wdXd+WcyJ9iz3V7u9A6OyXhRP4DxPQFTUpq/2FyxThnl/aYgCTTrbx
-         q7g+V/e2LZ4GjQU8OcFhDszhOb+ahi+Hc9/WMdn4Tna8cn6bxDU4MtvrQ4tH3OP3bZi+
-         PftUgsvJ6pqrA0iTQq0rbPSbKrWFC7FiOgT4xUQ9ouf7W5+i/ACVZyFmbB0xn3dJfmoF
-         anxa3/QFvoyvY3fA7w2+XBw4BLxOsSjtZJmOhzKA1UB4QRbZ2GOjzW770fadd+SWXSfU
-         uc6rCP1+3tVlHtb1fD7QRAvtt8nguFR5XL5AgX8rgoMekgL2Zt1PMv0yHokjV+NVP1lO
-         wS0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760479631; x=1761084431;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rNX6O4uSRV6iEU2BzMigXWXOKgqDw50DhtKf0yhiqyU=;
-        b=L70PTktNADP6SKEljfSzJJTduTA0qIVJH6UP6dnO0la7bNSj5XKOQcTMMb+v9vMT+I
-         HlPiduNKBQ+UMfJ31CpeFuoGBzcPwdijfHKAtLCXviLQMV3jUCWRsLzaerpBa+mbkahn
-         BrzOxD42F1YKNMawwxsqH+TAi5egKOpru8AJ3x7gJgacgPR2XTlksu1r7xHnQQZ0/1Zk
-         CBC7ipQ9X1uyk5hHxBGJuU5AIUbcnVe1Y+S9KSTxtT9ofajY2qOA5TSpzwMPX8tM0wL5
-         d3FnMdcfXNcuBD6gBRynke+xkfUYzrkOiGkka7TjgdWF+rZx45Aqp9n7FBbRAcmadQ8l
-         hsow==
-X-Forwarded-Encrypted: i=1; AJvYcCUP0FFuRnlqN/5AXzsZlEN0nWQI5zjY0NSSmlrktHD+QdKpjxvF94bskyXYoVV3OXgPQPUeu7Ax6hkn5o0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBnlpJvy+AYs1WcnQOGB66gPKac9MHNa/cD6DymIctJBTHTfxm
-	CBtNET0/k99Gi5dZeLlxnIum0SApEF/h2xzXYhY6sMD6QOwwVVlsZ9xazMLBnttRkjn6OKDwVCn
-	Wfychew==
-X-Google-Smtp-Source: AGHT+IHD0tqHmqymVNcD8hqYAvtsPSzCGMVrD/Mio+rZshGt1MLStR36lR/TpeQEYFeF/VGOe08XUjNTM8E=
-X-Received: from pjro4.prod.google.com ([2002:a17:90a:b884:b0:330:acc9:302e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a125:b0:244:3a85:cd7c
- with SMTP id adf61e73a8af0-32da81394ebmr34974900637.10.1760479630838; Tue, 14
- Oct 2025 15:07:10 -0700 (PDT)
-Date: Tue, 14 Oct 2025 15:07:09 -0700
-In-Reply-To: <CALMp9eRJaO9z=u5y0e+D44_U_FH1ye2s+cHNHmtERxEe+k2Dsw@mail.gmail.com>
+	s=arc-20240116; t=1760479693; c=relaxed/simple;
+	bh=f4so7NqnRUr6AWlJ8b9KwzJood07O4nAUzz9RgXezHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=er73T10x8rhhX5/u80J3mU4ZTB9ecPBScr0maplR7Mbc8/TSZjDCSC8hLEHCCsRSLzbh6P9ThUiZUxUKo9zxTjxZDoD/ufFmN7WSG9bb1XRNVhaETlf3r8+Jlc/10vupRSDQJvC880MTe6wSCuuqYnT62tlO1g7tqJ+7DDYWC+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAQi4/73; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C330C4CEE7;
+	Tue, 14 Oct 2025 22:08:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760479693;
+	bh=f4so7NqnRUr6AWlJ8b9KwzJood07O4nAUzz9RgXezHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PAQi4/73VpLqoDftoj5wJV9cixrdhbTpov0QHjrFoBFc8QdqUGaoIgovzd5BQ8+Kp
+	 bhFszhqJLuGzX1BVVBGFkZw1ZDG9sH3Om8DhXt1xr0gd3Ms+VJoi5K6grtEcWDmnsk
+	 H0lXYWz9YxEvUxvhGFg3R5019jlYziV+ebUB4pBuby1mXpi5Cst6ISezZi3Y10REDN
+	 PkmBp3+bu1AExXm+gEaJn34LReMki6YItwhg1IM9+U8iF9EGkaqeTUs/EzfTuso1xh
+	 v+Dp29trfHGteMnmtbAAO3gn3l7lkRLUw8toBPxhOdwe8YS8aJSgs9yOiB86r3A2Fa
+	 cWV8F6XhA2oSw==
+Date: Tue, 14 Oct 2025 23:08:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Joan-Na-adi <joan.na.devcode@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Joan Na <joan.na@analog.com>
+Subject: Re: [PATCH v3 3/3] dt-bindings: regulator: Add MAX77675 regulator
+ binding
+Message-ID: <1603c2ad-d2d1-457f-8273-e397c541b782@sirena.org.uk>
+References: <20251014053142.15835-1-joan.na@analog.com>
+ <20251014053142.15835-4-joan.na@analog.com>
+ <512ffe3d-5ab3-4e87-afd2-46f0005a8d17@kernel.org>
+ <08b4c0a0-cc59-4640-94ff-2d243c558a67@sirena.org.uk>
+ <1d1808d5-f166-488d-97b0-78fdd7d8ed0e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251009223153.3344555-1-jmattson@google.com> <20251009223153.3344555-3-jmattson@google.com>
- <aO1-IV-R6XX7RIlv@google.com> <CALMp9eRQZuDy8-H3b8tbdZVQSznUK9=yhuBV9vBFAQz3UP+iRg@mail.gmail.com>
- <aO6-CbTRPp1ZNIWq@google.com> <CALMp9eRJaO9z=u5y0e+D44_U_FH1ye2s+cHNHmtERxEe+k2Dsw@mail.gmail.com>
-Message-ID: <aO7JjaymjPMBcjrz@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: SVM: Don't set GIF when clearing EFER.SVME
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FTWivOCAVqJuz5DR"
+Content-Disposition: inline
+In-Reply-To: <1d1808d5-f166-488d-97b0-78fdd7d8ed0e@kernel.org>
+X-Cookie: Madness takes its toll.
 
-On Tue, Oct 14, 2025, Jim Mattson wrote:
-> On Tue, Oct 14, 2025 at 2:18=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Tue, Oct 14, 2025, Jim Mattson wrote:
-> > > On Mon, Oct 13, 2025 at 3:33=E2=80=AFPM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > >
-> > > > On Thu, Oct 09, 2025, Jim Mattson wrote:
-> > > > > Clearing EFER.SVME is not architected to set GIF.
-> > > >
-> > > > But it's also not architected to leave GIF set when the guest is ru=
-nning, which
-> > > > was the basic gist of the Fixes commit.  I suspect that forcing GIF=
-=3D1 was
-> > > > intentional, e.g. so that the guest doesn't end up with GIF=3D0 aft=
-er stuffing the
-> > > > vCPU into SMM mode, which might actually be invalid.
-> > > >
-> > > > I think what we actually want is to to set GIF when force-leaving n=
-ested.  The
-> > > > only path where it's not obvious that's "safe" is toggling SMM in
-> > > > kvm_vcpu_ioctl_x86_set_vcpu_events().  In every other path, setting=
- GIF is either
-> > > > correct/desirable, or irrelevant because the caller immediately and=
- unconditionally
-> > > > sets/clears GIF.
-> > > >
-> > > > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > > > index a6443feab252..3392c7e22cae 100644
-> > > > --- a/arch/x86/kvm/svm/nested.c
-> > > > +++ b/arch/x86/kvm/svm/nested.c
-> > > > @@ -1367,6 +1367,8 @@ void svm_leave_nested(struct kvm_vcpu *vcpu)
-> > > >                 nested_svm_uninit_mmu_context(vcpu);
-> > > >                 vmcb_mark_all_dirty(svm->vmcb);
-> > > >
-> > > > +               svm_set_gif(svm, true);
-> > > > +
-> > > >                 if (kvm_apicv_activated(vcpu->kvm))
-> > > >                         kvm_make_request(KVM_REQ_APICV_UPDATE, vcpu=
-);
-> > > >         }
-> > > >
-> > >
-> > > This seems dangerously close to KVM making up "hardware" behavior, bu=
-t
-> > > I'm okay with that if you are.
-> >
-> > Regardless of what KVM does, we're defining hardware behavior, i.e. kee=
-ping GIF
-> > unchanged defines behavior just as much as setting GIF.  The only way t=
-o truly
-> > avoid defining behavior would be to terminate the VM and completely pre=
-vent
-> > userspace from accessing its state.
->=20
-> This can't be the only instance of "undefined behavior" that KVM deals
-> with.
 
-Oh, for sure.  But unsurprisingly, people only care about cases that actual=
-ly
-matter in practice.  E.g. the other one that comes to mind is SHUTDOWN on A=
-MD:
+--FTWivOCAVqJuz5DR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	/*
-	 * VMCB is undefined after a SHUTDOWN intercept.  INIT the vCPU to put
-	 * the VMCB in a known good state.  Unfortuately, KVM doesn't have
-	 * KVM_MP_STATE_SHUTDOWN and can't add it without potentially breaking
-	 * userspace.  At a platform view, INIT is acceptable behavior as
-	 * there exist bare metal platforms that automatically INIT the CPU
-	 * in response to shutdown.
-	 *
+On Tue, Oct 14, 2025 at 11:54:41PM +0200, Krzysztof Kozlowski wrote:
+> On 14/10/2025 15:11, Mark Brown wrote:
+> > On Tue, Oct 14, 2025 at 10:14:15AM +0200, Krzysztof Kozlowski wrote:
+> >> On 14/10/2025 07:31, Joan-Na-adi wrote:
 
-> What about, say, misaligned accesses to xAPIC memory?
+> >>> +  maxim,en-mode:
+> >>> +    description: |
+> >>> +      Enable mode configuration.
+> >>> +      "push-button"  - Push button
+> >>> +      "slide-switch" - Slide switch
+> >>> +      "logic" - Logic mode
 
-Drops all accesses (doesn't even set the destination on reads).
+> >> You just repeat the name in the description. Say something useful.
+
+> > Do you have concrete suggestions there?  I can see dropping the
+> > descriptions entirely but otherwise I'm not sure there's much to
+> > usefully add.
+
+> Then just drop descriptions. I could imagine datasheet has something
+> more, but if not, then really no point to copy paste.
+
+I suspect someone said descriptions were needed...  TBH I think just
+the enumerated names are clear enough.
+
+> >>> +  maxim,dvs-slew-rate-mv-per-us:
+
+> >> Except you said mv/us, not us. Confusing.
+
+> > That's what I'd expect for a slew rate?  It's the speed with which the
+> > device ramps between voltages during voltage transitions, mV/us is a
+> > perfectly normal unit for that.
+
+> Yeah, but the property unit suffix "-us" says that unit is us, so not
+> mv/us. I think we did not have that case so far, unless I missed such,
+> so either we ignore description mismatch from property-units or we
+> change it to something, like "-mvperus".
+> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+
+Right, and the above does say "mv-per-us" which is how I'd have expected
+those units to be formatted rather than "mvperus".
+
+--FTWivOCAVqJuz5DR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjuyccACgkQJNaLcl1U
+h9DzAQf+J8wr4nH5jE8loa1E9aZWNCree6ocxQorbFa0fF1wr5dcfStv3cNHZUdK
+Cj04aZy0x5TGZHuhN7YokFub/5eVynNjXOlvHCMbXLyhjgBxK8cfzfLedYDqC4H8
+qrQccY+8xgYNCIEypgjnsHdGbsLrWpb+pqLF3G0FD0QDw+OVJiZXBOXtcHLdgRXf
+GCHNOWNBr1Acgq90HCLHTkM1blj/e/CMFgiCNnZxWSuu5g5kFNyffDGkoXQqoZft
+pljalKMliRJNMTqp9uoI7XIX86Y0xI/VWMtrBGdHy19hKuCMdtE8aVm826/eoZ7N
+o+6NQSEHfKfK9bdqYCOngWLtnpAO7A==
+=Rx33
+-----END PGP SIGNATURE-----
+
+--FTWivOCAVqJuz5DR--
 
