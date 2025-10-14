@@ -1,259 +1,190 @@
-Return-Path: <linux-kernel+bounces-852873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6AEBDA249
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7E0BDA2A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E33F188B2B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B01189CC08
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A972D8DD0;
-	Tue, 14 Oct 2025 14:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF72FFDC1;
+	Tue, 14 Oct 2025 14:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WzBMxbxl"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4sKEVR6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E102FE584
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AD32FAC0E;
+	Tue, 14 Oct 2025 14:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453216; cv=none; b=FGDnj7YyQpAJxAWyAKRWO4xu9fTWhn4c3p0jZysgMoU5XGgLsxWmGVVRSaQd1AWBv8i5iJbl+9Ge5sEwCGO449pAQeeqnb2YgROSdjvGB3L0ABoEtfpvkx3B9L5wFNVs8aqq9H4iWO3OyW/LfYWL6Ls8gl+c9rZsJaSgPKZPIQ0=
+	t=1760453606; cv=none; b=FV5+6LKKX5j3wfvtUpiTGHb5Z26s0S43SyPKssvoegNk5OfVszay+nM36KUoIZDKmQF/PN9uIm08mpAiFOQ+baP11CXSLVz0le87KJBaGmzL643woq/2/UcP4r4/nyJkNqaWTcGAbq2Cl1nZSOxFmGMgdTgmpQ+GZ4c8WtAz3Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453216; c=relaxed/simple;
-	bh=ND/vJuh1HCmw2CAtnjEyZ4WbjNWTAzpzK3UuBwHAQn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aIx9dfVTuKxMmRpJ3vdrsFDLwaLCMo1OCxczgtEhEGAoW4C+jHJ3yxdjDfR8x3RxWDi1vLvfHQrJYVe+YBGva0oVRtg33lxaY1awRl06Yj1Qcq2TYLt/jygHMO4EhId8ZAu+3vjUXgWl5D6IKiKNDdF9wb0u9dp3I0nvl+/R7Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WzBMxbxl; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b48d8deafaeso1138947166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760453212; x=1761058012; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ND/vJuh1HCmw2CAtnjEyZ4WbjNWTAzpzK3UuBwHAQn8=;
-        b=WzBMxbxlhs8Ihal984ylAm2Ns2Tp/2IJw0g1pKGLYdD/ZvVQnklkXe3+CYzB36uu79
-         Yt5b+Pb2gp1osJA5ts0NlpMGC/xVR4B25PZIq9nHGaMh6WU8bb15gZVMIum2t8B0QvXh
-         /9KrfDDDXLacpf0oYvLVzxoYm3Rx/2e5ztRzJZn7yZMLAAKJ8y5juO/JiHW/Ozj+JL9m
-         DVp1W4kYLxVY3sSXETtyW/HWFb5qX42O/L0VsAhBPArHp1Kov7iTx9RaGOJNEhiJsLzO
-         YjHdoAsld3g7QaKoEH2oj9q6OgsUWzCT9SNwbWwTs87zxSMJrJKt1AQkolvL7yFG1PCF
-         QmzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760453212; x=1761058012;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ND/vJuh1HCmw2CAtnjEyZ4WbjNWTAzpzK3UuBwHAQn8=;
-        b=FuXj3DqQi9/kkvjQnMc+wpARKKaZQ1nO5ttwPUe+hhNPZUFlpUOSaauneIHhtUzt2P
-         kArq8yAWGL9sZc7KNYL2UAUZz5oiUqudlUuMwQgomW1OUCls2n9VXfkCcG/VLbXzqhbS
-         e4TOLBHS3EG8rUGuT4Tcgy7koz0OHImvqDQljG+1mOYdKfMsFlsyHxaAKrlMfDRVKMcu
-         KwV2YwbLazH+AazFQjDaLyG5Hxv3kFiaFW5V7gJBmDR9eCFCnXU49zdHwUzGykSYGjCr
-         Mv90bn0bZ9VP1saUxLAnW1BA3mqm/EgZ+DaH/0GeTGYPdzVcUnRSG+3GLwukwt1cGCS7
-         e0CA==
-X-Gm-Message-State: AOJu0YySn7sPUJHngpccDHUqEkTbPn6BCepW2nBKhTnGDtwU7j8MCipj
-	22A0klkXA/02neFq0Ewyv42aCHFG5NlXKPpE1Wca74kpDWtbK3zYh/upLprwLDl9A2o=
-X-Gm-Gg: ASbGncskZLWgrzO1yBWo76P7ZoDaUBciJDOm/Amj6pRw9N10qIKsssoHEWnkY774eUl
-	sz+lXMe8eaxr4lyLa1fcPMu1XW35VvQ3+M9lvTA0cmZ2OEtpp7qdRjoyfOCa5ximJd0wF03UCkS
-	rJxipxYwhR4WyifGgn69gmiXddGcAMRqZbSd0ss2IDyMf9i1NR4rkI5Uj957RcPn9ZrW9pq+NOp
-	+lqP7MsZiQ7kilE3RBCrd5FX+ISmHf4g79t3rwduTYJVx9tQ51ThjaaHgnLOVHZLA/gUHSff5ef
-	ydiY9QdX5mVoV6+n9sUhOfSD3tQkr2+P041CqwMGq0G+9SAYUqpwVY555b+mj9kSjsVc2avbBiX
-	zTYA2u8W5UB69M/jQ8EFhTq8NSnxj2SbsDsY4ry1nFO60+coPLajDPOK1DxSMz67H51rWBovLV5
-	MIRf3fwN8UIoNTh8d3SpHGM0ffm8d8zcRjpHv3i+TT19LEU1U+7DmSVx2XJ8x9HtE=
-X-Google-Smtp-Source: AGHT+IFhS9S/g0bPhwV48NSh2gdWVNnegNtV2ygKzFS/LP1cVSmHwQKZvr2j+fay1Ei5C2aPjby/Sg==
-X-Received: by 2002:a17:907:2d1e:b0:b45:cd43:8a93 with SMTP id a640c23a62f3a-b50acb0e5a8mr2818530066b.62.1760453212362;
-        Tue, 14 Oct 2025 07:46:52 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d61cd9f5sm1157893266b.21.2025.10.14.07.46.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 07:46:52 -0700 (PDT)
-Message-ID: <407933ba-536e-490b-a7b3-eb81cb75cd0c@suse.com>
-Date: Tue, 14 Oct 2025 16:46:51 +0200
+	s=arc-20240116; t=1760453606; c=relaxed/simple;
+	bh=z6qNyT2/oj6cU0ryqpoJ0qcaj3pCu/T9Mq36j0ZaZyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sp/V5AP7qWM9SNoOqJHIoUkiVVDHL5bOVMIVEaJwnyvHu8oBtEiY8ppQ5KxZwTlZFwlf+VzuUYG++sga5hU2QMOVX/XBl3VNvZLil1kbdFlqa1NqJMU/jFdZEcdC/mnGbJQ+vo1MVcmvZqjKLIcPG9u9Z7dRLh5/xjAuhtHrB8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4sKEVR6; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760453605; x=1791989605;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z6qNyT2/oj6cU0ryqpoJ0qcaj3pCu/T9Mq36j0ZaZyo=;
+  b=l4sKEVR66ZK+Cy48wJ5OpovUsLSslsJkYLDuGZDEyEUut3YxLFcTYLhL
+   TVOlB65xvps7t6sowFRHPy/DiK7s0lEFgPYgmw22LO9rvD8DfTmU6TBMx
+   fB67F0mZeEYh8udo1koN4OxQzNhUn0K+c0K7L5vTl1adoAStw6Xq8BU7P
+   6zgy++zrhPytlctb1eNCvSaH/1778TsUab2xsiQp6ZL2YbY83zZXw1TD8
+   LXrwVYIeeXTon/S1LMUdW5L4AQ7PTJc2wPemCBNPUzjXxaqM1KEU/ffji
+   OMxiiv7fJ/02deZskt+SDKW0ivjbymwsfngClO+guN7kJZdyHl5dNFLQJ
+   A==;
+X-CSE-ConnectionGUID: pC1ofzHLQx2J0vM7lnIo0g==
+X-CSE-MsgGUID: 9b1W4DuhRZOl5ayR7PRpgQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="73215493"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="73215493"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:53:24 -0700
+X-CSE-ConnectionGUID: poiBxSkoQCCEVEGLJGVzdw==
+X-CSE-MsgGUID: 8lac8hSAQea4DlnmA1UaEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="219043783"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 14 Oct 2025 07:53:14 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8gNb-0002tJ-14;
+	Tue, 14 Oct 2025 14:52:23 +0000
+Date: Tue, 14 Oct 2025 22:46:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH 7/9] clk: samsung: Implement automatic clock gating mode
+ for CMUs
+Message-ID: <202510142228.IQJSNIFa-lkp@intel.com>
+References: <20251013-automatic-clocks-v1-7-72851ee00300@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
- location only once
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-References: <20250929112947.27267-4-jgross@suse.com>
- <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
- <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
- <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
- <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
- <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
- <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
- <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
- <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------unXNy7P1rRHRHSennmTtZ0Gc"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-automatic-clocks-v1-7-72851ee00300@linaro.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------unXNy7P1rRHRHSennmTtZ0Gc
-Content-Type: multipart/mixed; boundary="------------MgQOQdfIx1ZIRj31XPx1A2xU";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-Message-ID: <407933ba-536e-490b-a7b3-eb81cb75cd0c@suse.com>
-Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
- location only once
-References: <20250929112947.27267-4-jgross@suse.com>
- <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
- <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
- <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
- <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
- <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
- <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
- <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
- <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
-In-Reply-To: <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
+Hi Peter,
 
---------------MgQOQdfIx1ZIRj31XPx1A2xU
-Content-Type: multipart/mixed; boundary="------------TnccYDscM5BoUvuG4xFFEtIa"
+kernel test robot noticed the following build errors:
 
---------------TnccYDscM5BoUvuG4xFFEtIa
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+[auto build test ERROR on 4a71531471926e3c391665ee9c42f4e0295a4585]
 
-T24gMTQuMTAuMjUgMTY6MzksIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gVHVlLCBP
-Y3QgMTQsIDIwMjUgYXQgMDQ6MzE6MzFQTSArMDIwMCwgSsO8cmdlbiBHcm/DnyB3cm90ZToN
-Cj4+IEkgaGF2ZSB0aGlzIGhlcmUgaW4gdGhlIGNvbW1pdCBtZXNzYWdlOg0KPj4NCj4+ICAg
-IC0gSW4gY2FzZSBvZiByZXBsYWNpbmcgYW4gaW5kaXJlY3Qgd2l0aCBhIGRpcmVjdCBjYWxs
-IHVzaW5nIHRoZQ0KPj4gICAgICBBTFRfRkxBR19ESVJFQ1RfQ0FMTCBmbGFnLCB0aGVyZSBp
-cyBubyBsb25nZXIgdGhlIG5lZWQgdG8gaGF2ZSB0aGF0DQo+PiAgICAgIGluc3RhbmNlIGJl
-Zm9yZSBhbnkgb3RoZXIgaW5zdGFuY2VzIGF0IHRoZSBzYW1lIGxvY2F0aW9uICh0aGUNCj4+
-ICAgICAgb3JpZ2luYWwgaW5zdHJ1Y3Rpb24gaXMgbmVlZGVkIGZvciBmaW5kaW5nIHRoZSB0
-YXJnZXQgb2YgdGhlIGRpcmVjdA0KPj4gICAgICBjYWxsKS4NCj4+DQo+PiB3aGljaCBpcyBl
-eHBsYWluaW5nIHdoeSB0aGUgcHJvYmxlbSBpcyBvY2N1cnJpbmcuIElzbid0IHRoYXQgZW5v
-dWdoPw0KPiANCj4gSSBjYW4gZ3Vlc3Mgd2hhdCB0aGlzIGlzIGFib3V0IGJ1dCBhIGNvbmNy
-ZXRlIGV4YW1wbGUgaGVyZSB3b3VsZCBtYWtlIGl0DQo+IGEgbG90IGNsZWFyZXIsIEknZCBz
-YXkuDQoNCk9rYXksIEknbGwgZXhwYW5kIHRoYXQgd2l0aCB0aGUgY29uY3JldGUgZXhhbXBs
-ZS4NCg0KDQpKdWVyZ2VuDQo=
---------------TnccYDscM5BoUvuG4xFFEtIa
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-soc-samsung-exynos-sysreg-add-gs101-hsi0-and-misc-compatibles/20251014-045559
+base:   4a71531471926e3c391665ee9c42f4e0295a4585
+patch link:    https://lore.kernel.org/r/20251013-automatic-clocks-v1-7-72851ee00300%40linaro.org
+patch subject: [PATCH 7/9] clk: samsung: Implement automatic clock gating mode for CMUs
+config: loongarch-randconfig-001-20251014 (https://download.01.org/0day-ci/archive/20251014/202510142228.IQJSNIFa-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251014/202510142228.IQJSNIFa-lkp@intel.com/reproduce)
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510142228.IQJSNIFa-lkp@intel.com/
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+All error/warnings (new ones prefixed by >>):
 
---------------TnccYDscM5BoUvuG4xFFEtIa--
+>> drivers/clk/samsung/clk.c:481:13: error: too many arguments to function call, expected 5, have 6
+     478 |                 samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     479 |                                                 cmu->sysreg_clk_regs,
+     480 |                                                 cmu->nr_sysreg_clk_regs,
+     481 |                                                 NULL, 0);
+         |                                                       ^
+   drivers/clk/samsung/clk.h:453:20: note: 'samsung_clk_extended_sleep_init' declared here
+     453 | static inline void samsung_clk_extended_sleep_init(void __iomem *reg_base,
+         |                    ^                               ~~~~~~~~~~~~~~~~~~~~~~~
+     454 |                         const unsigned long *rdump,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     455 |                         unsigned long nr_rdump,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~
+     456 |                         const struct samsung_clk_reg_dump *rsuspend,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     457 |                         unsigned long nr_rsuspend) {}
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/samsung/clk.c:511:23: error: too many arguments to function call, expected 5, have 6
+     509 |                 samsung_clk_extended_sleep_init(reg_base, NULL,
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     510 |                         cmu->clk_regs, cmu->nr_clk_regs,
+     511 |                         cmu->suspend_regs, cmu->nr_suspend_regs);
+         |                                            ^~~~~~~~~~~~~~~~~~~~
+   drivers/clk/samsung/clk.h:453:20: note: 'samsung_clk_extended_sleep_init' declared here
+     453 | static inline void samsung_clk_extended_sleep_init(void __iomem *reg_base,
+         |                    ^                               ~~~~~~~~~~~~~~~~~~~~~~~
+     454 |                         const unsigned long *rdump,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     455 |                         unsigned long nr_rdump,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~
+     456 |                         const struct samsung_clk_reg_dump *rsuspend,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     457 |                         unsigned long nr_rsuspend) {}
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 errors generated.
+--
+>> Warning: drivers/clk/samsung/clk-exynos-arm64.c:249 function parameter 'init_clk_regs' not described in 'exynos_arm64_register_cmu_pm'
 
---------------MgQOQdfIx1ZIRj31XPx1A2xU--
 
---------------unXNy7P1rRHRHSennmTtZ0Gc
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+vim +481 drivers/clk/samsung/clk.c
 
------BEGIN PGP SIGNATURE-----
+   462	
+   463	/* Enable Dynamic Root Clock Gating of bus components*/
+   464	void samsung_en_dyn_root_clk_gating(struct device_node *np,
+   465					    struct samsung_clk_provider *ctx,
+   466					    const struct samsung_cmu_info *cmu)
+   467	{
+   468		if (ctx && !ctx->auto_clock_gate)
+   469			return;
+   470	
+   471		ctx->sysreg = syscon_regmap_lookup_by_phandle(np, "samsung,sysreg");
+   472		if (!IS_ERR_OR_NULL(ctx->sysreg)) {
+   473			regmap_write(ctx->sysreg, ctx->drcg_offset, 0xffffffff);
+   474			/* not every sysreg controller has memclk reg*/
+   475			if (ctx->memclk_offset)
+   476				regmap_write_bits(ctx->sysreg, ctx->memclk_offset, 0x1, 0x0);
+   477	
+   478			samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
+   479							cmu->sysreg_clk_regs,
+   480							cmu->nr_sysreg_clk_regs,
+ > 481							NULL, 0);
+   482		} else {
+   483			pr_warn("%pOF: Unable to get CMU sysreg\n", np);
+   484			ctx->sysreg = NULL;
+   485		}
+   486	}
+   487	
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjuYlsFAwAAAAAACgkQsN6d1ii/Ey82
-ugf/VnvqJ3RlCNQfLQzT9fQvKSfYl2rZXlCA3Ref0fvAi+Ya84LM0Di4pFcLsCzccMjuvXlu3B0M
-qAtmDiu0WxdlyWu0teYLMHEn7uqPWHPS+xgfIU9i5qBGpR0KZQ87tExMoIfLW1mAWVMK4FQ28x9g
-zT4r2CP7NOSVT1eUbMpBNw8xic2XThPEZHukFkFUGYurXlh8n+8wchs2yutw0xCrQ6GZ3mwh7C08
-dg6f44qex4XkdbKHw2KZFLBVH5gVzMF68ErMHnKt2Ra9trhWcISGWn2XyCQ/jLKqhTVemSdVtUCq
-Ye5TXX5ecgg0LEzFc/GrOHUBwcd8sia7KmdFrpwWZA==
-=Lj8d
------END PGP SIGNATURE-----
-
---------------unXNy7P1rRHRHSennmTtZ0Gc--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
