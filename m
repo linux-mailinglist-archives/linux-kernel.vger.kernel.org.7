@@ -1,211 +1,176 @@
-Return-Path: <linux-kernel+bounces-852131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0EEBD83D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:43:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604C4BD83E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D891921092
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:43:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB0BE4FD5F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9823101C1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001FB31064A;
 	Tue, 14 Oct 2025 08:42:39 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ywiHOtKU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rQMgxQPO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E80730FF08;
-	Tue, 14 Oct 2025 08:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7749330FF1E;
+	Tue, 14 Oct 2025 08:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431359; cv=none; b=fyIyEabspqEkIXYcpLd3H1rJjeUaCQQRVACKyvrxaoUWnQUi8EARfvH5jr5lejxpgdyW8JTRxMN+BZl6RkiobirEKlx3hvIQvRL9XWkrAQNCeY7yqrZ90p1A6exUQ4ZIw2WbKbwBYWB7Gf6ox2/tRp2AihG3IdDG0mWyYOXY02w=
+	t=1760431359; cv=none; b=uzzHsAlKaFywilT5TkhJFMOugPhPYmenMAYi/0Uw5LZbpTL6PsXyASqFOyDmqIFAy1f96ulBT/bG35m0+qJANJtQJB6jn+/vTBm8HNIs7nC1M49kYJ5Xo2fw+fWoIasG8lQu5YToGkh73pYoqzFq2+l3/dUDy1Ftct+Jh1tpq5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760431359; c=relaxed/simple;
-	bh=ZkKc9rPHt+omLYuKwr0SbBzH4TvE/tyK0uafEmZz3ao=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=HYGvPblU+3hkcY4E57unUVTI8+FL/lHXqMmm/DJWDNheFV27wG7WD3yRDgOAOjrKoXt9bObjP3K2JnyimkcrVX/aBpsC7i1NkeFrFw7breERL8zB3n6/gHh9pVWLQHlz+50jRNISOyDwgaynbVmi8Wc2TyU/D1HcPzS5N8gdYOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cm74N42RpzKHMg6;
-	Tue, 14 Oct 2025 16:41:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 825681A155B;
-	Tue, 14 Oct 2025 16:42:32 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP2 (Coremail) with SMTP id Syh0CgBXrET2DO5o2SJOAQ--.27272S3;
-	Tue, 14 Oct 2025 16:42:32 +0800 (CST)
-Subject: Re: [PATCH 3/4] blk-rq-qos: fix possible deadlock
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
- axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20251014022149.947800-1-yukuai3@huawei.com>
- <20251014022149.947800-4-yukuai3@huawei.com> <aO4GPKKpLbj7kMoz@fedora>
- <f0ab9c95-990b-a41d-477e-c1b20b392985@huaweicloud.com>
- <aO4L2THnLFM-_Fb8@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <0351f07e-4ac4-a1e2-b4ee-08e49e7d0b6e@huaweicloud.com>
-Date: Tue, 14 Oct 2025 16:42:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	bh=ofetTIjST2/q5MFo4UTNlzlcM2AqB0N5fPsUCqIFq7k=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GHDAkbwCVB2KwBvHY5Ax8YX2G7B0HKJ6G6Pfs/SWy189YxQ3664cfmKrKaOi8OTyPFdQSB7bsR+tu12vD32v0emHLwNDcKw/PHBO+RJQKb5LYWiZmyYKIBRHCo4XlLjgxkQd6ty5Ntsdak5IPKaimJjVrI/8VjgN6whHCTjvUOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ywiHOtKU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rQMgxQPO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 14 Oct 2025 08:42:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760431355;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vRPd44Y/gynMcsUwSZsbFrZufYssZc3UEU1c5oBj26c=;
+	b=ywiHOtKUeb97oLPnqJ2J3OY0p+I+08Gk3ZizlTZFOYq30Aw2mVVx9Aw8GoIE0FJB5XkFAB
+	MbbfYwZmR/8ThPnkGvbEI/newBq8Zv0JNCk4EImNINP95X0Ro8XiC8A2gyuDY5BmOWJQy5
+	+v3zllKTLi9ET8fswfPS+J0YdOZr0FbsLyY7yiadZ1EQPVoxOAQBLpw+dxwJsaq/7oDTff
+	uJe1S7YOfoNnoE9aS3orJinTQLz6aPulK3Mu6oO3zbv6NhWYGWtaodHZCspZCMmBvx33R1
+	Yls1H4g/ZAsCnw4/wmrhY//Lxa0IHuPaSb29yC2dV6xO6NlhK1BTH592fvp4DQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760431355;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vRPd44Y/gynMcsUwSZsbFrZufYssZc3UEU1c5oBj26c=;
+	b=rQMgxQPO9pbYjQ1/x0UjE8bfdy1CXQhEJek66rlaOeJ3o939OET7doGEs8RvZJ/eJFklEP
+	KHFM9zj4W8zpZ1DA==
+From: "tip-bot2 for Juergen Gross" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/alternative: Patch a single alternative location
+ only once
+Cc: Juergen Gross <jgross@suse.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250929112947.27267-4-jgross@suse.com>
+References: <20250929112947.27267-4-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aO4L2THnLFM-_Fb8@fedora>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBXrET2DO5o2SJOAQ--.27272S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFy7tr4xArWrAFWrtrWxCrg_yoWruF4fpa
-	ykKF45Aa1qqrn8Xa4j9w43Wr93t3yFgF4UZrWrGF1avr9FkF1IvF18tFWUGFy0vr9rCr40
-	qr1UWrsa9FyYkrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Message-ID: <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The following commit has been merged into the x86/core branch of tip:
 
-在 2025/10/14 16:37, Ming Lei 写道:
-> On Tue, Oct 14, 2025 at 04:24:23PM +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/10/14 16:13, Ming Lei 写道:
->>> On Tue, Oct 14, 2025 at 10:21:48AM +0800, Yu Kuai wrote:
->>>> Currently rq-qos debugfs entries is created from rq_qos_add(), while
->>>> rq_qos_add() requires queue to be freezed. This can deadlock because
->>>> creating new entries can trigger fs reclaim.
->>>>
->>>> Fix this problem by delaying creating rq-qos debugfs entries until
->>>> it's initialization is complete.
->>>>
->>>> - For wbt, it can be initialized by default of by blk-sysfs, fix it by
->>>>     calling blk_mq_debugfs_register_rq_qos() after wbt_init;
->>>> - For other policies, they can only be initialized by blkg configuration,
->>>>     fix it by calling blk_mq_debugfs_register_rq_qos() from
->>>>     blkg_conf_end();
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>> ---
->>>>    block/blk-cgroup.c | 6 ++++++
->>>>    block/blk-rq-qos.c | 7 -------
->>>>    block/blk-sysfs.c  | 4 ++++
->>>>    block/blk-wbt.c    | 7 ++++++-
->>>>    4 files changed, 16 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
->>>> index d93654334854..e4ccabf132c0 100644
->>>> --- a/block/blk-cgroup.c
->>>> +++ b/block/blk-cgroup.c
->>>> @@ -33,6 +33,7 @@
->>>>    #include "blk-cgroup.h"
->>>>    #include "blk-ioprio.h"
->>>>    #include "blk-throttle.h"
->>>> +#include "blk-mq-debugfs.h"
->>>>    static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu);
->>>> @@ -746,6 +747,11 @@ void blkg_conf_end(struct blkg_conf_ctx *ctx)
->>>>    	mutex_unlock(&q->elevator_lock);
->>>>    	blk_mq_unfreeze_queue(q, ctx->memflags);
->>>>    	blkdev_put_no_open(ctx->bdev);
->>>> +
->>>> +	mutex_lock(&q->debugfs_mutex);
->>>> +	blk_mq_debugfs_register_rq_qos(q);
->>>> +	mutex_unlock(&q->debugfs_mutex);
->>>> +
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(blkg_conf_end);
->>>> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
->>>> index 654478dfbc20..d7ce99ce2e80 100644
->>>> --- a/block/blk-rq-qos.c
->>>> +++ b/block/blk-rq-qos.c
->>>> @@ -347,13 +347,6 @@ int rq_qos_add(struct rq_qos *rqos, struct gendisk *disk, enum rq_qos_id id,
->>>>    	blk_queue_flag_set(QUEUE_FLAG_QOS_ENABLED, q);
->>>>    	blk_mq_unfreeze_queue(q, memflags);
->>>> -
->>>> -	if (rqos->ops->debugfs_attrs) {
->>>> -		mutex_lock(&q->debugfs_mutex);
->>>> -		blk_mq_debugfs_register_rqos(rqos);
->>>> -		mutex_unlock(&q->debugfs_mutex);
->>>> -	}
->>>> -
->>>>    	return 0;
->>>>    ebusy:
->>>>    	blk_mq_unfreeze_queue(q, memflags);
->>>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->>>> index 76c47fe9b8d6..52bb4db25cf5 100644
->>>> --- a/block/blk-sysfs.c
->>>> +++ b/block/blk-sysfs.c
->>>> @@ -688,6 +688,10 @@ static ssize_t queue_wb_lat_store(struct gendisk *disk, const char *page,
->>>>    	mutex_unlock(&disk->rqos_state_mutex);
->>>>    	blk_mq_unquiesce_queue(q);
->>>> +
->>>> +	mutex_lock(&q->debugfs_mutex);
->>>> +	blk_mq_debugfs_register_rq_qos(q);
->>>> +	mutex_unlock(&q->debugfs_mutex);
->>>>    out:
->>>>    	blk_mq_unfreeze_queue(q, memflags);
->>>> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
->>>> index eb8037bae0bd..a120b5ba54db 100644
->>>> --- a/block/blk-wbt.c
->>>> +++ b/block/blk-wbt.c
->>>> @@ -724,8 +724,13 @@ void wbt_enable_default(struct gendisk *disk)
->>>>    	if (!blk_queue_registered(q))
->>>>    		return;
->>>> -	if (queue_is_mq(q) && enable)
->>>> +	if (queue_is_mq(q) && enable) {
->>>>    		wbt_init(disk);
->>>> +
->>>> +		mutex_lock(&q->debugfs_mutex);
->>>> +		blk_mq_debugfs_register_rq_qos(q);
->>>> +		mutex_unlock(&q->debugfs_mutex);
->>>> +	}
->>>
->>> ->debugfs_mutex only may be not enough, because blk_mq_debugfs_register_rq_qos()
->>> has to traverse rq_qos single list list, you may have to grab q->rq_qos_mutex
->>> for protect the list.
->>>
->>
->> I think we can't grab rq_qos_mutex to create debugfs entries, right?
-> 
-> It depends on the finalized order between rq_qos_mutex and freezing queue.
-> 
->> With the respect of this, perhaps we can grab debugfs_mutex to protect
->> insering rq_qos list instead?
-> 
-> No, debugfs_mutex shouldn't protect rq_qos list, and rq_qos_mutex is
-> supposed to do the job at least from naming viewpoint.
+Commit-ID:     a17e1039874831c49d3c15d699a65a8f8130dbb5
+Gitweb:        https://git.kernel.org/tip/a17e1039874831c49d3c15d699a65a8f813=
+0dbb5
+Author:        Juergen Gross <jgross@suse.com>
+AuthorDate:    Mon, 29 Sep 2025 13:29:47 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 14 Oct 2025 10:38:11 +02:00
 
-Ok, then we'll have to make sure the order is rq_qos_mutex before
-freezing queue, I was thinking the inverse order because of the helper
-blkg_conf_open_bdev_frozen().
+x86/alternative: Patch a single alternative location only once
 
-I'll check first if this is possible.
+Instead of patching a single location potentially multiple times in
+case of nested ALTERNATIVE()s, do the patching only after having
+evaluated all alt_instr instances for that location.
 
-Thanks,
-Kuai
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
+This has multiple advantages:
 
+- In case of replacing an indirect with a direct call using the
+  ALT_FLAG_DIRECT_CALL flag, there is no longer the need to have that
+  instance before any other instances at the same location (the
+  original instruction is needed for finding the target of the direct
+  call).
+
+- In case of nested ALTERNATIVE()s there is no intermediate replacement
+  visible. This avoids any problems in case e.g. an interrupt is
+  happening between the single instances and the patched location is
+  used during handling the interrupt.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/kernel/alternative.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index d86a012..90c0d16 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -648,6 +648,8 @@ void __init_or_module noinline apply_alternatives(struct =
+alt_instr *start,
+ 	u8 insn_buff[MAX_PATCH_LEN];
+ 	u8 *instr;
+ 	struct alt_instr *a, *b;
++	unsigned int instances =3D 0;
++	bool patched =3D false;
+=20
+ 	DPRINTK(ALT, "alt table %px, -> %px", start, end);
+=20
+@@ -677,9 +679,13 @@ void __init_or_module noinline apply_alternatives(struct=
+ alt_instr *start,
+ 		 * padding for all alt_instr entries for this site (nested
+ 		 * alternatives result in consecutive entries).
+ 		 */
+-		for (b =3D a+1; b < end && instr_va(b) =3D=3D instr_va(a); b++) {
+-			u8 len =3D max(a->instrlen, b->instrlen);
+-			a->instrlen =3D b->instrlen =3D len;
++		if (!instances) {
++			for (b =3D a+1; b < end && instr_va(b) =3D=3D instr_va(a); b++) {
++				u8 len =3D max(a->instrlen, b->instrlen);
++				a->instrlen =3D b->instrlen =3D len;
++			}
++			instances =3D b - a;
++			patched =3D false;
+ 		}
+=20
+ 		instr =3D instr_va(a);
+@@ -692,14 +698,19 @@ void __init_or_module noinline apply_alternatives(struc=
+t alt_instr *start,
+ 		 * - feature not present but ALT_FLAG_NOT is set to mean,
+ 		 *   patch if feature is *NOT* present.
+ 		 */
+-		if (!boot_cpu_has(a->cpuid) =3D=3D !(a->flags & ALT_FLAG_NOT)) {
+-			memcpy(insn_buff, instr, a->instrlen);
+-			optimize_nops(instr, insn_buff, a->instrlen);
+-		} else {
++		if (!boot_cpu_has(a->cpuid) !=3D !(a->flags & ALT_FLAG_NOT)) {
+ 			apply_one_alternative(instr, insn_buff, a);
++			patched =3D true;
+ 		}
+=20
+-		text_poke_early(instr, insn_buff, a->instrlen);
++		instances--;
++		if (!instances) {
++			if (!patched) {
++				memcpy(insn_buff, instr, a->instrlen);
++				optimize_nops(instr, insn_buff, a->instrlen);
++			}
++			text_poke_early(instr, insn_buff, a->instrlen);
++		}
+ 	}
+=20
+ 	kasan_enable_current();
 
