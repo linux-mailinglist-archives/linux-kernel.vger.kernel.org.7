@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-852450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6802BD903D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:28:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72689BD9053
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CADD3A7CB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:28:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51C3A4FE814
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7BF30CD93;
-	Tue, 14 Oct 2025 11:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12D330CDA0;
+	Tue, 14 Oct 2025 11:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fa28oB77"
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zi+GOJLa"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4330FF28
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE9F3101AB
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760441221; cv=none; b=NubbK7OsGYFAuYWr3b081KYKo2+ehAGlk71jAgvPnv1nkIhcicIdLziH3t/+iCedDYt4IJ0h2i3cKSJa/KZ0ovWsYlXEKpw1dq7DLcyfrCexcuS9McSAqOWhq0Og+sHGYhD8oghUEK7M8gVVwpG/r6HgaZTktyNLFM2UeHBI8+Y=
+	t=1760441226; cv=none; b=SoZzLX4XVtPYDuk4n7J1QwoWajwGcWtDkPtRbpThLE5V09ya3oh6JTNiK82szyyNtveuyZeS+YFKxHG/IDtIy/gdgYwJvYu9uMol02f91A0NJkke9cAVPqmo9jq6KHppudytjzI0/OnOnZwwFKNo5DaPoFKQZaIKiFguiTt2gcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760441221; c=relaxed/simple;
-	bh=9UBTPaJM795jgL9QFzpBm8/hFhK0/nTuD4q5tVTvhPw=;
+	s=arc-20240116; t=1760441226; c=relaxed/simple;
+	bh=T1Nmm/R6LFBiTFjOpeGfSLW0d5l/K2N7bsDjPiEWPmo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OuVe27w/+71PDf+t80VNdN6Seti50YX/urVFEc55sN76oEmAeDaEtjxrQDG2u349XYWFQnYWbGIqRImZ0To+dzVuKv37RwNyfRogyMRGkcEqiq5MstzWt2LsQOGgzSrzWdjeSnSBEIN9GQC3YCAJmq7JBuX/6pysyHvt9dVDTdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fa28oB77; arc=none smtp.client-ip=209.85.215.196
+	 MIME-Version; b=opAkia9kKsGGFs9wkS3Hl41ueyG5Rlj6Y2cJKtRtyKltDuKX4xc1ytI4Kh5kalsXkxY4D0YAXo4pPG9g5iiC6f0/PevvHMT+jdDuzROwWsDW/98+1AfsZbFXYqgmcwH0fKJtpiPQlhHV7tnumIp6Gwohj4j7DqMfNmigAzo+4Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zi+GOJLa; arc=none smtp.client-ip=209.85.210.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b63148d25c3so3427432a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:26:57 -0700 (PDT)
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7841da939deso4570758b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:27:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760441217; x=1761046017; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760441223; x=1761046023; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UUUWsY7ufR6oqn2huC+LiTtkNemBc7wwNq571Svxhxg=;
-        b=Fa28oB775qTKKYLCutJH9HB1NJGHWdnuHe8YyZEzlnCGkAtNn82UtCSnR2bpes+Y2p
-         qce5MNCf/qhajwosxaXhIujakgaD1Kx3eVqAjX0kKVc8wrb0epRpBh8i6xkd2wQcJFkT
-         ppUBAzEGdfgOhST6vKBb4/Y6j6/2p8gHzCufzRMwFpE4B+PaLsEVC6GZMwhrzdqz/ufG
-         e36eKh0FZCOxnqx5gRIaiJLgR4wytTJU3e8U7G1jfCthQac7geQYJdXfi9C6juJFvx+N
-         Vy07JN9+NheSS/d5FpAuLFkSw5bRx1Zdinb4jF3gHu1UE7/LGNIRhSAEDGaPb4mYDGIQ
-         FwEw==
+        bh=7Q3iRfExEJqSXZ9Zc1Icg4TjF6EtAHQb2pCdXlTokh4=;
+        b=Zi+GOJLaSWqNICUjGYoVC6y93s4bW9axrH/dehEFEQGplsW2aYB30xT8OWdZlqTDbc
+         64ZoCrnWHzrl7bhLdPPfC4PG7DkCIJQnXy2aQFR02K2ZMSj3m6sq9G/5s3iG8Ea1jvxO
+         ICqhYT1H8smExYECw1vXUxFfWPuRMVqnDUftDBZuMDA6NlVmtkUQQIdcvLBf4AvvcdKy
+         vioJ+4zKYqJtAlZYiXw2/BeE1ANXEO+4blwEpSOkiT8LU2pERusPaXob4ScEgZjH1yKY
+         LiMcc0hmEUuv1n2PlZnAqhhcgkDr1vvtGiUSgC0S6Vfzlxz/KEmL0zK2GfHQVh7N3sHi
+         xrjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760441217; x=1761046017;
+        d=1e100.net; s=20230601; t=1760441223; x=1761046023;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UUUWsY7ufR6oqn2huC+LiTtkNemBc7wwNq571Svxhxg=;
-        b=xEnd0KlFfJ1dJHkvpcbk7MzBLa7hkyBkip1mWWAUUWtxj3MNEXiSeRj3GT0b+cEtoO
-         VYRPCo8SA6hjkm8v8229myrDu80cIadX3GWwUYwkX5RpVhmziMB1RkOpYWqzlY9TRYQQ
-         ZsvaMFmiTR545vvUJPKbTz3/968/nwcl6NorJTTfblyo/NiUe6kjBjKM89Wnw3Hgg610
-         hVYlsNKcLTSD0KdU5omactANAE5Ib/8SYxVsfSJbyy25p4sOF1K3q6/EM6yu70okR1bQ
-         f6ZsOJNmZZrAMVyK73ykP6PNtfwHLwk8QHXfFygaVV33tzWLipUZXz6/0VBnYmy6g9Yq
-         Tk6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUv1Cy1DlcknrM4ssKmiQHmVmlphJd3G4IXpmH4wBaP2c7YEMmpNQaqL4T/g8npkg8PBRZnOcTclDRj/iU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT71e/pEdtWUAWs8h2gl7pygjofEStXTf4n/guaj8M9NIh18Q+
-	DTtggP7S9Fpf9AdDqSzVau3UeHQhmBomObYmMxUQuBP23gllELRGIaFv
-X-Gm-Gg: ASbGnct9E3rG3q9jDclNRNhjRmvTzZYzfjlEwE+apnRZtwsvZdjoDvmR5aTKaC3ttf1
-	Rv6Buy9W+jzOcxcI63Oqk/O1ibn+3es0gAzNDkeiOnU2+RxIY+viuxOTD2FSwfqN6x0pi6ErSB7
-	D2yPEWLOHM+JZ9MEBGsxkR/A7ubbtgf2QqKy03B8XuT76A2Kzp/eKmlbC7P8yEx6EMZie5GpQz4
-	vu5hpjKBBa8wvLZd7aGAwZfNAiJWvJKRAydc3iz44ZnHAM1lRRgf+TpBVSiNZd3uaMuVhks1ouZ
-	fqtufYceuaQ2qwGqMGpJ8Dg+hUsEUQavTc+37k7g8TKOOMKQGv26DbSjGmQhUTM+K2N4Yx1L5C0
-	iZibRLJ1p8p6Uzr+NjvctYhqIw6azV8hRu4IQ+tTcrUWVAkEwASOH
-X-Google-Smtp-Source: AGHT+IHwj+Dz4L8DnGND7olSFpVsnMTn5Lw/TEHpx72gcX3uQG8ce7dMeM/FZb/y/sUkqHY1JHLYcw==
-X-Received: by 2002:a17:902:f788:b0:274:506d:7fcc with SMTP id d9443c01a7336-28ec9c0c7e1mr394581375ad.6.1760441217252;
-        Tue, 14 Oct 2025 04:26:57 -0700 (PDT)
+        bh=7Q3iRfExEJqSXZ9Zc1Icg4TjF6EtAHQb2pCdXlTokh4=;
+        b=ruw7/p/saPy9HY3CFWWwuFhVy8cnmRVV8Bq6vBvSdDEHZuuWAno5elfTWFr7o9X8Xu
+         pmPbJtWbEdhrrE47EkBElglxq1GVczDz2mGDI7PpskeTmx+mdqufPn/hb/4O2/QSuMG2
+         n7Db72v3UHI9iEWFqGQXcn0Zf50TrohxyTb0qa6v68+UjSLyvmYqR25GPsKNibVs2a2E
+         uZXPCQ/c13UGccFtQPyAFSG7+1HTw30ny2JFqTpCSYmTglP7Suay6LyQgdEHCiFhhYge
+         eKaZmbFN3sOc7VesGRRgQRm9V/UcaTLNgIthJaxPWC72UFxxEcCq0M4ibhQSoqHgh9xQ
+         F8GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhqT8Z3Ov1cutB5apbcuQcowS1N/8Y06gYUkaAIZ7mGFK66ps/BwREznGQu5GMUobOgzBYFpNDN3++s2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQMmtnwEu9cxbmCbtyufxKD8y+UUSyLBEyToW9BOw6KoThoYsJ
+	kd6ArWKFpCPEPgIGSNgXtRFgOg4e0QvmoMiX4HIuVQBe45Sa9/v2gVdZ
+X-Gm-Gg: ASbGncshcethojkZZXAH82MgWByvfn7XVYMepE1T84zlWpP45ghTDwJef9ATkIZp1IL
+	W9a+5rXjoEJhZIKZH2niWnBGdzWbR9qzYxxWtUQ7nBu42XBBB1vrs8fAdjQkkjX3Zq9JOPohvKf
+	KzUc7YTu4s6WLLGflcR0MsgslepUZ/Jzmfb69CqR98oqvsci2+kodn1TwVBVC/TeqE87/wfrBEx
+	LZq2GoW97DTDemU69xbfCPxKjN/LdBA3vB8pkqjNqkxkbvMO39z2TmHi/6vHUaJROTvmtpb1cIn
+	Sm+TuemnJpBcgpHnAQx9UVFEziHSI1KMlwpXwlpjixOUCPORgC5W/67sN0DkmpR2UShaqweGsgA
+	MIcJFL9e8X75kJ8w9CnDO2GNbi0nEIgs4HqFOVO5e7g==
+X-Google-Smtp-Source: AGHT+IESAHoQT5qoaRUX6Sg1Z4sRZoIKiFEVF1CVFjtoN9V7EZsWdw8UMx2i81q1k2h2feHx/dvUDQ==
+X-Received: by 2002:a17:902:e550:b0:268:15f:8358 with SMTP id d9443c01a7336-29027402ca0mr302264415ad.42.1760441223089;
+        Tue, 14 Oct 2025 04:27:03 -0700 (PDT)
 Received: from 7950hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e2062fsm161807285ad.48.2025.10.14.04.26.51
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e2062fsm161807285ad.48.2025.10.14.04.26.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:26:56 -0700 (PDT)
+        Tue, 14 Oct 2025 04:27:02 -0700 (PDT)
 From: Menglong Dong <menglong8.dong@gmail.com>
 X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
 To: ast@kernel.org,
@@ -97,9 +97,9 @@ Cc: daniel@iogearbox.net,
 	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: [PATCH bpf-next 1/4] rcu: factor out migrate_enable_rcu and migrate_disable_rcu
-Date: Tue, 14 Oct 2025 19:26:37 +0800
-Message-ID: <20251014112640.261770-2-dongml2@chinatelecom.cn>
+Subject: [PATCH bpf-next 2/4] bpf: introduce bpf_prog_run_pin_on_cpu_rcu()
+Date: Tue, 14 Oct 2025 19:26:38 +0800
+Message-ID: <20251014112640.261770-3-dongml2@chinatelecom.cn>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251014112640.261770-1-dongml2@chinatelecom.cn>
 References: <20251014112640.261770-1-dongml2@chinatelecom.cn>
@@ -111,59 +111,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out migrate_enable_rcu/migrate_disable_rcu from
-rcu_read_lock_dont_migrate/rcu_read_unlock_migrate.
-
-These functions will be used in the following patches.
-
-It's a little weird to define them in rcupdate.h. Maybe we should move
-them to sched.h?
+Introduce bpf_prog_run_pin_on_cpu_rcu(), which will be called with
+rcu_read_lock. migrate_disable_rcu and migrate_enable_rcu are used to get
+better performance when CONFIG_PREEMPT_RCU is not enabled.
 
 Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 ---
- include/linux/rcupdate.h | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ include/linux/filter.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index c5b30054cd01..43626ccc07e2 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -988,18 +988,32 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
- 	preempt_enable_notrace();
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index f5c859b8131a..48eb42358543 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -747,6 +747,18 @@ static inline u32 bpf_prog_run_pin_on_cpu(const struct bpf_prog *prog,
+ 	return ret;
  }
  
--static __always_inline void rcu_read_lock_dont_migrate(void)
-+/* This can only be used with rcu_read_lock held */
-+static inline void migrate_enable_rcu(void)
++/* The same as bpf_prog_run_pin_on_cpu, except rcu_read_lock should be held */
++static inline u32 bpf_prog_run_pin_on_cpu_rcu(const struct bpf_prog *prog,
++					      const void *ctx)
 +{
-+	WARN_ON_ONCE(!rcu_read_lock_held());
-+	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
-+		migrate_enable();
-+}
++	u32 ret;
 +
-+/* This can only be used with rcu_read_lock held */
-+static inline void migrate_disable_rcu(void)
- {
-+	WARN_ON_ONCE(!rcu_read_lock_held());
- 	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
- 		migrate_disable();
-+}
-+
-+static __always_inline void rcu_read_lock_dont_migrate(void)
-+{
- 	rcu_read_lock();
 +	migrate_disable_rcu();
- }
- 
- static inline void rcu_read_unlock_migrate(void)
- {
++	ret = bpf_prog_run(prog, ctx);
 +	migrate_enable_rcu();
- 	rcu_read_unlock();
--	if (IS_ENABLED(CONFIG_PREEMPT_RCU))
--		migrate_enable();
- }
++	return ret;
++}
++
+ #define BPF_SKB_CB_LEN QDISC_CB_PRIV_LEN
  
- /**
+ struct bpf_skb_data_end {
 -- 
 2.51.0
 
