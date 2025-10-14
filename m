@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-852679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376DFBD997C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB979BD9A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 268104FC9F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:13:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADAA73E71B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829003195E4;
-	Tue, 14 Oct 2025 13:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021EE3195FD;
+	Tue, 14 Oct 2025 13:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YT2T7mSx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+qtMEY1"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA553191B2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943503195F1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760447288; cv=none; b=oKMCJtmAIKrm3g98fP26/W65cGoXeIxtA+RVgo2E2M/E0Pl8jugcKJu7EFDAtawpXpAHFYRmNqRZEx0xn1dKnSRdcJToKTmNLNn2y6vqKQP8pjCx2E3kTJ/eLxsquXMIPQyWiiXPQ2rjsRD72kVbhvQZCqCHOvwW2c8xEzRChsk=
+	t=1760447297; cv=none; b=ieI2grRjJp48eZKdeqhwHqOS319J/Dztm46HxAkFvz+bTIOJL0rASKh+lcyyotwaNvWaPwDSd7jMnGGZkwSF6LJBpPiwvUfyutpHoKoPCtCBt6ezRjRRciWhiDEavjU3MXBTgtcwoME0UJ9CwYcrky7jlHidvpih9YK6kk4MBmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760447288; c=relaxed/simple;
-	bh=J/aPVU8JbHxYyfCDcj6K7oo52RWRfEFFerOeOF+XTLA=;
+	s=arc-20240116; t=1760447297; c=relaxed/simple;
+	bh=F4I8Kvtwn3jusskaFJsgVirsMtZJ1VpejkaxbIoXrsI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WjnEdOPzTg2i8bJJs8RO3zpgFucYC2j1XtwiqAlnBZFLAua0ra7NyC/88oXwNoLb0JOiwxaHJjcZOrBntAUtwJE0WGpsPd4bUSldSGGTFE22uTe8RY4TCkG6/XKr80cmH73xs91pglfP97zNxklC4wmCJ6iNpY/I3d3+HubZ2zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YT2T7mSx; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=Anrhqh8TAVzLgjOpdk9yOXUndE1VoyXKCzYkb8HGGzY1vl57ygmUkRFoZlgWTQElOtUjNm8sqBu2KN/nV/wK9R971jTHm8l+BqV/QRwvWiCm81r6Bq8bwmiHdMVEnrhKvaIfbPTv+f4b1rph4S/T72idLB9YFR2pPfzUUDOjunw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+qtMEY1; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760447288; x=1791983288;
+  t=1760447296; x=1791983296;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=J/aPVU8JbHxYyfCDcj6K7oo52RWRfEFFerOeOF+XTLA=;
-  b=YT2T7mSxoBXSgHsoSk1C3TgDcczA/RNkUsO4sfaLjdBmWlrnC7VSaD+5
-   ecvjMePp+Fm0oetjp7ZFFGmzlMej4vyw6sv3yYNJZB9K9OHyafzCd+GNG
-   NouXztDedsASjskgvaUiVnEcUIh3ombJOvyjOQgOiiOcdSUCkFaHy4PL6
-   LCCco+QtwLIQTT4Lhleu1AYQD5PkWvj9LPugLUngslxYsjQ/DJWLAnDhm
-   VyJ2k3JmnHuK2gka/yUULOKv8nWvak0rJC0/F7B078VD0imq4WRjHliaw
-   1MnmCgRRXdK6DCwBspnr/mI0Bu6qpHpxDBghfjrrxNqZ3cXmw/DgShSfR
-   g==;
-X-CSE-ConnectionGUID: +TqURtZeQ7im1nYf3KuHeA==
-X-CSE-MsgGUID: KVBDti22REy9vHOppMDJTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62515443"
+  bh=F4I8Kvtwn3jusskaFJsgVirsMtZJ1VpejkaxbIoXrsI=;
+  b=T+qtMEY13GCTC6bysN6wSIt8VsW144MSnv+A3GtF/1XvBsPH/a/vZqda
+   FWvzV2MpDYkv4D2kSu1YBxZuAY+uIhvPb6yMN95GYKz0fwDOoy0FVC/IY
+   hj+vQaa7rzRTo2kiibq/Dsr99JUc7qps78EVXaftp2VaGBvzDA2lklUxU
+   pBidxCNI29we/7HxEFwvBEE3fnHvWWAoIhoX9W5BK9Lu9JFIBqW3dlCrQ
+   4Z2Bo+Y/LDEnV5rKSDy1PKOs/eQSI9SKiQ4DVB250m2J7iDgH3RguXCww
+   K4VvpjEK0KDXRWFyKoYHbXkZgv7vtifa4uFRv3DJ/odQsRfd5o5MIogi4
+   A==;
+X-CSE-ConnectionGUID: jvnBOUSQS2CQXMkEOFu5Ng==
+X-CSE-MsgGUID: hnQ7dA6UTvuAPnuhAVotYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62515477"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62515443"
+   d="scan'208";a="62515477"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 06:08:07 -0700
-X-CSE-ConnectionGUID: EIHOS615R1+i2QYo8Z03rQ==
-X-CSE-MsgGUID: UH1eyTeURm+UWSuYvSl9nw==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 06:08:14 -0700
+X-CSE-ConnectionGUID: tSK9WVeGSxqGkNXKwf99Kg==
+X-CSE-MsgGUID: OTzctZkDTmCiQhcd/KV4OQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="182675673"
+   d="scan'208";a="182675699"
 Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa010.fm.intel.com with ESMTP; 14 Oct 2025 06:07:59 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 14 Oct 2025 06:08:06 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -88,10 +88,11 @@ Cc: iommu@lists.linux.dev,
 	x86@kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v6 5/7] x86/mm: Use pagetable_free()
-Date: Tue, 14 Oct 2025 21:04:35 +0800
-Message-ID: <20251014130437.1090448-6-baolu.lu@linux.intel.com>
+Subject: [PATCH v6 6/7] mm: Introduce deferred freeing for kernel page tables
+Date: Tue, 14 Oct 2025 21:04:36 +0800
+Message-ID: <20251014130437.1090448-7-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
 References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
@@ -103,47 +104,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The kernel's memory management subsystem provides a dedicated interface,
-pagetable_free(), for freeing page table pages. Updates two call sites to
-use pagetable_free() instead of the lower-level __free_page() or
-free_pages(). This improves code consistency and clarity, and ensures the
-correct freeing mechanism is used.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
+This introduces a conditional asynchronous mechanism, enabled by
+CONFIG_ASYNC_KERNEL_PGTABLE_FREE. When enabled, this mechanism defers the
+freeing of pages that are used as page tables for kernel address mappings.
+These pages are now queued to a work struct instead of being freed
+immediately.
+
+This deferred freeing allows for batch-freeing of page tables, providing
+a safe context for performing a single expensive operation (TLB flush)
+for a batch of kernel page tables instead of performing that expensive
+operation for each page table.
+
+On x86, CONFIG_ASYNC_KERNEL_PGTABLE_FREE is selected if CONFIG_IOMMU_SVA
+is enabled, because both Intel and AMD IOMMU architectures could
+potentially cache kernel page table entries in their paging structure
+cache, regardless of the permission.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 ---
- arch/x86/mm/init_64.c        | 2 +-
- arch/x86/mm/pat/set_memory.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/Kconfig     |  1 +
+ mm/Kconfig           |  3 +++
+ include/linux/mm.h   | 16 +++++++++++++---
+ mm/pgtable-generic.c | 37 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 54 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 0e4270e20fad..3d9a5e4ccaa4 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1031,7 +1031,7 @@ static void __meminit free_pagetable(struct page *page, int order)
- 		free_reserved_pages(page, nr_pages);
- #endif
- 	} else {
--		__free_pages(page, order);
-+		pagetable_free(page_ptdesc(page));
- 	}
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index fa3b616af03a..ded29ee848fd 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -279,6 +279,7 @@ config X86
+ 	select HAVE_PCI
+ 	select HAVE_PERF_REGS
+ 	select HAVE_PERF_USER_STACK_DUMP
++	select ASYNC_KERNEL_PGTABLE_FREE 	if IOMMU_SVA
+ 	select MMU_GATHER_RCU_TABLE_FREE
+ 	select MMU_GATHER_MERGE_VMAS
+ 	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 0e26f4fc8717..a83df9934acd 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -908,6 +908,9 @@ config PAGE_MAPCOUNT
+ config PGTABLE_HAS_HUGE_LEAVES
+ 	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
+ 
++config ASYNC_KERNEL_PGTABLE_FREE
++	def_bool n
++
+ # TODO: Allow to be enabled without THP
+ config ARCH_SUPPORTS_HUGE_PFNMAP
+ 	def_bool n
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index bb235a9f991e..fe5515725c46 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3031,6 +3031,14 @@ static inline void __pagetable_free(struct ptdesc *pt)
+ 	__free_pages(page, compound_order(page));
  }
  
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index d2d54b8c4dbb..4366e7d11afd 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -429,7 +429,7 @@ static void cpa_collapse_large_pages(struct cpa_data *cpa)
- 
- 	list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
- 		list_del(&ptdesc->pt_list);
--		__free_page(ptdesc_page(ptdesc));
-+		pagetable_free(ptdesc);
- 	}
++#ifdef CONFIG_ASYNC_KERNEL_PGTABLE_FREE
++void pagetable_free_kernel(struct ptdesc *pt);
++#else
++static inline void pagetable_free_kernel(struct ptdesc *pt)
++{
++	__pagetable_free(pt);
++}
++#endif
+ /**
+  * pagetable_free - Free pagetables
+  * @pt:	The page table descriptor
+@@ -3040,10 +3048,12 @@ static inline void __pagetable_free(struct ptdesc *pt)
+  */
+ static inline void pagetable_free(struct ptdesc *pt)
+ {
+-	if (ptdesc_test_kernel(pt))
++	if (ptdesc_test_kernel(pt)) {
+ 		ptdesc_clear_kernel(pt);
+-
+-	__pagetable_free(pt);
++		pagetable_free_kernel(pt);
++	} else {
++		__pagetable_free(pt);
++	}
  }
  
+ #if defined(CONFIG_SPLIT_PTE_PTLOCKS)
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index 567e2d084071..1c7caa8ef164 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -406,3 +406,40 @@ pte_t *__pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
+ 	pte_unmap_unlock(pte, ptl);
+ 	goto again;
+ }
++
++#ifdef CONFIG_ASYNC_KERNEL_PGTABLE_FREE
++static void kernel_pgtable_work_func(struct work_struct *work);
++
++static struct {
++	struct list_head list;
++	/* protect above ptdesc lists */
++	spinlock_t lock;
++	struct work_struct work;
++} kernel_pgtable_work = {
++	.list = LIST_HEAD_INIT(kernel_pgtable_work.list),
++	.lock = __SPIN_LOCK_UNLOCKED(kernel_pgtable_work.lock),
++	.work = __WORK_INITIALIZER(kernel_pgtable_work.work, kernel_pgtable_work_func),
++};
++
++static void kernel_pgtable_work_func(struct work_struct *work)
++{
++	struct ptdesc *pt, *next;
++	LIST_HEAD(page_list);
++
++	spin_lock(&kernel_pgtable_work.lock);
++	list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
++	spin_unlock(&kernel_pgtable_work.lock);
++
++	list_for_each_entry_safe(pt, next, &page_list, pt_list)
++		__pagetable_free(pt);
++}
++
++void pagetable_free_kernel(struct ptdesc *pt)
++{
++	spin_lock(&kernel_pgtable_work.lock);
++	list_add(&pt->pt_list, &kernel_pgtable_work.list);
++	spin_unlock(&kernel_pgtable_work.lock);
++
++	schedule_work(&kernel_pgtable_work.work);
++}
++#endif
 -- 
 2.43.0
 
