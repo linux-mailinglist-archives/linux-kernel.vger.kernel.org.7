@@ -1,197 +1,259 @@
-Return-Path: <linux-kernel+bounces-852872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F43BDA1FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6AEBDA249
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12D054EEAA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E33F188B2B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F61F2FE077;
-	Tue, 14 Oct 2025 14:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A972D8DD0;
+	Tue, 14 Oct 2025 14:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="O4XD0DHQ"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WzBMxbxl"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58C62FCC04
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E102FE584
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453207; cv=none; b=Q5mJfSsHuUjVa2uI7YjWPEGD6sm/JNcQ45R2eXjcXxQ7Ap0a5IW4yy7JiZQHAFjtmViN9garO9HhQ/UgoywkjImveVn+75TqWCCoSXFxjUQ4YofoSa7WQ1ETiPLP0BC4aXb2Rzp0iC0UvtX1Hnsth/4sr58DAo4APmZ+zYLKY0g=
+	t=1760453216; cv=none; b=FGDnj7YyQpAJxAWyAKRWO4xu9fTWhn4c3p0jZysgMoU5XGgLsxWmGVVRSaQd1AWBv8i5iJbl+9Ge5sEwCGO449pAQeeqnb2YgROSdjvGB3L0ABoEtfpvkx3B9L5wFNVs8aqq9H4iWO3OyW/LfYWL6Ls8gl+c9rZsJaSgPKZPIQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453207; c=relaxed/simple;
-	bh=mQD076zqipwjL0zhWvp4jYIm/DeAQnP22lZJv1kJu3s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=so889swK1AktDssIvixdOg5XOJclU+YG+OBczyzKHkQeLCGi829JWmANyUNenQKlzZVx9+sdQmb2ivvxkNf5M4g9rtIEqIfDWqAhGprNxKCl4e0kJyvi3y1bMJFAIWm8uPeg3j/MR1REgSpMaxA+5JTsoWxUQuuSyyVa2JsaDCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=O4XD0DHQ; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 2BFC9240105
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:46:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760453203; bh=mQD076zqipwjL0zhWvp4jYIm/DeAQnP22lZJv1kJu3s=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
-	b=O4XD0DHQilBK/3qihxb2hOZfYSUf2PAIBMQhQSdzIO7p6S8RbDwG5cC9Wi5ciTEv3
-	 wf1jpPQ6CJftIE7ixYsUUJaKGxNY+oCOZ1yR6Yx1vrFIDz+Px7nJETOsF81O5L2iGJ
-	 JFZX7+omfWzT4bsE8bvWmVf0dOM67c7aVJFHRQa8mXYSsmokN/bYa+3bPF/LURGgdM
-	 tXVhv7x0MFu31iO62TeQ4OGM0VbU+MBJgOj6R9pJuiPgENqqgBYOQpYZE3bv/DVDF2
-	 HGrZzPX6eZ7jjv3hBglpNhvkH8HyIoHBd89gWrUDrD6vOldZxK5UBTql/I4eYwTdGZ
-	 Ti/PrMlIIftUw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cmH9D2NQyz6v1l;
-	Tue, 14 Oct 2025 16:46:40 +0200 (CEST)
-Message-ID: <d3e51448678bf5a94746cc34825c35073c02d00e.camel@posteo.de>
-Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
-From: Markus Probst <markus.probst@posteo.de>
-To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Lorenzo
- Stoakes	 <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki
- <urezki@gmail.com>, Boqun Feng	 <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, bjorn3_gh@protonmail.com,  Benno Lossin
- <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
- <tmgross@umich.edu>, 	rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-leds@vger.kernel.org
-Date: Tue, 14 Oct 2025 14:46:42 +0000
-In-Reply-To: <DDHGUQ9B4J2K.X1VXMMU6O5O4@kernel.org>
-References: <20251012145221.172116-1-markus.probst@posteo.de>
-	 <20251012145221.172116-3-markus.probst@posteo.de>
-	 <aO1GM4WXs37Zpm0G@google.com> <DDHGUQ9B4J2K.X1VXMMU6O5O4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760453216; c=relaxed/simple;
+	bh=ND/vJuh1HCmw2CAtnjEyZ4WbjNWTAzpzK3UuBwHAQn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aIx9dfVTuKxMmRpJ3vdrsFDLwaLCMo1OCxczgtEhEGAoW4C+jHJ3yxdjDfR8x3RxWDi1vLvfHQrJYVe+YBGva0oVRtg33lxaY1awRl06Yj1Qcq2TYLt/jygHMO4EhId8ZAu+3vjUXgWl5D6IKiKNDdF9wb0u9dp3I0nvl+/R7Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WzBMxbxl; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b48d8deafaeso1138947166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760453212; x=1761058012; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ND/vJuh1HCmw2CAtnjEyZ4WbjNWTAzpzK3UuBwHAQn8=;
+        b=WzBMxbxlhs8Ihal984ylAm2Ns2Tp/2IJw0g1pKGLYdD/ZvVQnklkXe3+CYzB36uu79
+         Yt5b+Pb2gp1osJA5ts0NlpMGC/xVR4B25PZIq9nHGaMh6WU8bb15gZVMIum2t8B0QvXh
+         /9KrfDDDXLacpf0oYvLVzxoYm3Rx/2e5ztRzJZn7yZMLAAKJ8y5juO/JiHW/Ozj+JL9m
+         DVp1W4kYLxVY3sSXETtyW/HWFb5qX42O/L0VsAhBPArHp1Kov7iTx9RaGOJNEhiJsLzO
+         YjHdoAsld3g7QaKoEH2oj9q6OgsUWzCT9SNwbWwTs87zxSMJrJKt1AQkolvL7yFG1PCF
+         QmzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760453212; x=1761058012;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ND/vJuh1HCmw2CAtnjEyZ4WbjNWTAzpzK3UuBwHAQn8=;
+        b=FuXj3DqQi9/kkvjQnMc+wpARKKaZQ1nO5ttwPUe+hhNPZUFlpUOSaauneIHhtUzt2P
+         kArq8yAWGL9sZc7KNYL2UAUZz5oiUqudlUuMwQgomW1OUCls2n9VXfkCcG/VLbXzqhbS
+         e4TOLBHS3EG8rUGuT4Tcgy7koz0OHImvqDQljG+1mOYdKfMsFlsyHxaAKrlMfDRVKMcu
+         KwV2YwbLazH+AazFQjDaLyG5Hxv3kFiaFW5V7gJBmDR9eCFCnXU49zdHwUzGykSYGjCr
+         Mv90bn0bZ9VP1saUxLAnW1BA3mqm/EgZ+DaH/0GeTGYPdzVcUnRSG+3GLwukwt1cGCS7
+         e0CA==
+X-Gm-Message-State: AOJu0YySn7sPUJHngpccDHUqEkTbPn6BCepW2nBKhTnGDtwU7j8MCipj
+	22A0klkXA/02neFq0Ewyv42aCHFG5NlXKPpE1Wca74kpDWtbK3zYh/upLprwLDl9A2o=
+X-Gm-Gg: ASbGncskZLWgrzO1yBWo76P7ZoDaUBciJDOm/Amj6pRw9N10qIKsssoHEWnkY774eUl
+	sz+lXMe8eaxr4lyLa1fcPMu1XW35VvQ3+M9lvTA0cmZ2OEtpp7qdRjoyfOCa5ximJd0wF03UCkS
+	rJxipxYwhR4WyifGgn69gmiXddGcAMRqZbSd0ss2IDyMf9i1NR4rkI5Uj957RcPn9ZrW9pq+NOp
+	+lqP7MsZiQ7kilE3RBCrd5FX+ISmHf4g79t3rwduTYJVx9tQ51ThjaaHgnLOVHZLA/gUHSff5ef
+	ydiY9QdX5mVoV6+n9sUhOfSD3tQkr2+P041CqwMGq0G+9SAYUqpwVY555b+mj9kSjsVc2avbBiX
+	zTYA2u8W5UB69M/jQ8EFhTq8NSnxj2SbsDsY4ry1nFO60+coPLajDPOK1DxSMz67H51rWBovLV5
+	MIRf3fwN8UIoNTh8d3SpHGM0ffm8d8zcRjpHv3i+TT19LEU1U+7DmSVx2XJ8x9HtE=
+X-Google-Smtp-Source: AGHT+IFhS9S/g0bPhwV48NSh2gdWVNnegNtV2ygKzFS/LP1cVSmHwQKZvr2j+fay1Ei5C2aPjby/Sg==
+X-Received: by 2002:a17:907:2d1e:b0:b45:cd43:8a93 with SMTP id a640c23a62f3a-b50acb0e5a8mr2818530066b.62.1760453212362;
+        Tue, 14 Oct 2025 07:46:52 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d61cd9f5sm1157893266b.21.2025.10.14.07.46.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 07:46:52 -0700 (PDT)
+Message-ID: <407933ba-536e-490b-a7b3-eb81cb75cd0c@suse.com>
+Date: Tue, 14 Oct 2025 16:46:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+ <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
+ <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
+ <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
+ <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
+ <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
+ <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------unXNy7P1rRHRHSennmTtZ0Gc"
 
-On Mon, 2025-10-13 at 22:11 +0200, Danilo Krummrich wrote:
-> On Mon Oct 13, 2025 at 8:34 PM CEST, Alice Ryhl wrote:
-> > On Sun, Oct 12, 2025 at 02:52:39PM +0000, Markus Probst wrote:
-> > > Implement the core abstractions needed for led class devices,
-> > > including:
-> > >=20
-> > > * `led::LedOps` - the trait for handling leds, including
-> > > =C2=A0 `brightness_set`, `brightness_get` and `blink_set`
-> > >=20
-> > > * `led::InitData` - data set for the led class device
-> > >=20
-> > > * `led::Device` - a safe wrapper around `led_classdev`
-> > >=20
-> > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> >=20
-> > > +pub trait LedOps: Send + 'static + Sized {
-> > > +=C2=A0=C2=A0=C2=A0 /// If set true, [`LedOps::brightness_set`] and
-> > > [`LedOps::blink_set`] must not sleep
-> > > +=C2=A0=C2=A0=C2=A0 /// and perform the operation immediately.
-> > > +=C2=A0=C2=A0=C2=A0 const BLOCKING: bool;
-> > > +=C2=A0=C2=A0=C2=A0 /// The max brightness level
-> > > +=C2=A0=C2=A0=C2=A0 const MAX_BRIGHTNESS: u32;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0 /// Sets the brightness level.
-> > > +=C2=A0=C2=A0=C2=A0 ///
-> > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
-> > > +=C2=A0=C2=A0=C2=A0 fn brightness_set(&self, brightness: u32) -> Resu=
-lt<()>;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0 /// Gets the current brightness level.
-> > > +=C2=A0=C2=A0=C2=A0 fn brightness_get(&self) -> u32 {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEFAU=
-LT_ERROR)
-> > > +=C2=A0=C2=A0=C2=A0 }
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0 /// Activates hardware accelerated blinking.
-> > > +=C2=A0=C2=A0=C2=A0 ///
-> > > +=C2=A0=C2=A0=C2=A0 /// delays are in milliseconds. If both are zero,=
- a sensible
-> > > default should be chosen.
-> > > +=C2=A0=C2=A0=C2=A0 /// The caller should adjust the timings in that =
-case and if
-> > > it can't match the values
-> > > +=C2=A0=C2=A0=C2=A0 /// specified exactly. Setting the brightness to =
-0 will
-> > > disable the hardware accelerated
-> > > +=C2=A0=C2=A0=C2=A0 /// blinking.
-> > > +=C2=A0=C2=A0=C2=A0 ///
-> > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
-> > > +=C2=A0=C2=A0=C2=A0 fn blink_set(&self, _delay_on: &mut usize, _delay=
-_off: &mut
-> > > usize) -> Result<()> {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEFAU=
-LT_ERROR)
-> > > +=C2=A0=C2=A0=C2=A0 }
-> >=20
-> > These functions should probably take a &Device<Bound> argument so
-> > that
-> > they can use methods that require a bound device (such as IO).
->=20
-> Indeed!
->=20
-> @Markus: Note that this guarantee is given by the LED device
-> registration being
-> lifetime controlled by devres, while led_classdev_unregister() is
-> synchronized
-> against those callbacks.
->=20
-> For the latter, please double check that this is actually the case --
-> I'm not
-> familiar with the LED subsystem, I'm reviewing from driver-core
-> perspective. But
-> from a quick look it should be the case. :)
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------unXNy7P1rRHRHSennmTtZ0Gc
+Content-Type: multipart/mixed; boundary="------------MgQOQdfIx1ZIRj31XPx1A2xU";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Message-ID: <407933ba-536e-490b-a7b3-eb81cb75cd0c@suse.com>
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+ <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
+ <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
+ <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
+ <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
+ <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
+ <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
+In-Reply-To: <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
 
-There is also the led_classdev->dev device, but I assume you mean the
-parent of the led classdev (the one being passed on register)?
+--------------MgQOQdfIx1ZIRj31XPx1A2xU
+Content-Type: multipart/mixed; boundary="------------TnccYDscM5BoUvuG4xFFEtIa"
 
-Thanks
-- Markus Probst
+--------------TnccYDscM5BoUvuG4xFFEtIa
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+T24gMTQuMTAuMjUgMTY6MzksIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gVHVlLCBP
+Y3QgMTQsIDIwMjUgYXQgMDQ6MzE6MzFQTSArMDIwMCwgSsO8cmdlbiBHcm/DnyB3cm90ZToN
+Cj4+IEkgaGF2ZSB0aGlzIGhlcmUgaW4gdGhlIGNvbW1pdCBtZXNzYWdlOg0KPj4NCj4+ICAg
+IC0gSW4gY2FzZSBvZiByZXBsYWNpbmcgYW4gaW5kaXJlY3Qgd2l0aCBhIGRpcmVjdCBjYWxs
+IHVzaW5nIHRoZQ0KPj4gICAgICBBTFRfRkxBR19ESVJFQ1RfQ0FMTCBmbGFnLCB0aGVyZSBp
+cyBubyBsb25nZXIgdGhlIG5lZWQgdG8gaGF2ZSB0aGF0DQo+PiAgICAgIGluc3RhbmNlIGJl
+Zm9yZSBhbnkgb3RoZXIgaW5zdGFuY2VzIGF0IHRoZSBzYW1lIGxvY2F0aW9uICh0aGUNCj4+
+ICAgICAgb3JpZ2luYWwgaW5zdHJ1Y3Rpb24gaXMgbmVlZGVkIGZvciBmaW5kaW5nIHRoZSB0
+YXJnZXQgb2YgdGhlIGRpcmVjdA0KPj4gICAgICBjYWxsKS4NCj4+DQo+PiB3aGljaCBpcyBl
+eHBsYWluaW5nIHdoeSB0aGUgcHJvYmxlbSBpcyBvY2N1cnJpbmcuIElzbid0IHRoYXQgZW5v
+dWdoPw0KPiANCj4gSSBjYW4gZ3Vlc3Mgd2hhdCB0aGlzIGlzIGFib3V0IGJ1dCBhIGNvbmNy
+ZXRlIGV4YW1wbGUgaGVyZSB3b3VsZCBtYWtlIGl0DQo+IGEgbG90IGNsZWFyZXIsIEknZCBz
+YXkuDQoNCk9rYXksIEknbGwgZXhwYW5kIHRoYXQgd2l0aCB0aGUgY29uY3JldGUgZXhhbXBs
+ZS4NCg0KDQpKdWVyZ2VuDQo=
+--------------TnccYDscM5BoUvuG4xFFEtIa
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------TnccYDscM5BoUvuG4xFFEtIa--
+
+--------------MgQOQdfIx1ZIRj31XPx1A2xU--
+
+--------------unXNy7P1rRHRHSennmTtZ0Gc
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjuYlsFAwAAAAAACgkQsN6d1ii/Ey82
+ugf/VnvqJ3RlCNQfLQzT9fQvKSfYl2rZXlCA3Ref0fvAi+Ya84LM0Di4pFcLsCzccMjuvXlu3B0M
+qAtmDiu0WxdlyWu0teYLMHEn7uqPWHPS+xgfIU9i5qBGpR0KZQ87tExMoIfLW1mAWVMK4FQ28x9g
+zT4r2CP7NOSVT1eUbMpBNw8xic2XThPEZHukFkFUGYurXlh8n+8wchs2yutw0xCrQ6GZ3mwh7C08
+dg6f44qex4XkdbKHw2KZFLBVH5gVzMF68ErMHnKt2Ra9trhWcISGWn2XyCQ/jLKqhTVemSdVtUCq
+Ye5TXX5ecgg0LEzFc/GrOHUBwcd8sia7KmdFrpwWZA==
+=Lj8d
+-----END PGP SIGNATURE-----
+
+--------------unXNy7P1rRHRHSennmTtZ0Gc--
 
