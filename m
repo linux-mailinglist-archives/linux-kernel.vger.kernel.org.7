@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-852764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A117DBD9D6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:00:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CFBBD9D71
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB2CC4F3AD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:00:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD6514F9E0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2340313E26;
-	Tue, 14 Oct 2025 14:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49340314A9B;
+	Tue, 14 Oct 2025 14:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="uQr9jUW2"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j2Q9L++4"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209713148D5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC084314B7C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450400; cv=none; b=HgZBhYgUtl2Hygj/qIS3/VaqzZI1E2W43Y2Fj5+xJDCUm4KAaQZMfH75WdZeuOKy4dtwDOyQ36qSvjc5cfavSMNmCfRxSm3VrNpp00Ou3tw1zDNHtz1y/j7d2CzDm0/pa+OsFWxt6RQAvX46yOnktrkkILBd3Mu76vZnjW/b2Sw=
+	t=1760450408; cv=none; b=dcRVmhy8KsFUY2BvXsDh8NVPoWLT89cIDrBJaZ9TOBG+qD6lN0eBCy95CZm/yk63PYixUvsJCzKvXKyVfJTd9m+jlxpFicbmXIVl6vw0pcfVakUs6KSkb7Zo6A5YUG+6M231KvkGoEqUGCURLpmKiUIeDS4bu3ov1ZKgClr9Ikk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450400; c=relaxed/simple;
-	bh=XqYhWcXRRW0UNGCW/ZMfInGwJuhMAQ6n/LIE759FKq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JU9zlo+SVMrsMIU9nZsL/JQICaL9+VairhfaVbm0eEce7f06keB37+AcZszM6+iUgI05SX/W1vnBMhXcNm4N6yWMZ0An5XYRCf636Xu7VRyHEhPPJUhyHYsRIesHZnaNa2GpVM38EDz/Z4/pmsXQiBKJM1EJq1gJ0TdHLBqACeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=uQr9jUW2; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
-	by cmsmtp with ESMTPS
-	id 8eAHvuxCRv7248fZFvJ76I; Tue, 14 Oct 2025 13:59:57 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 8fZCvj6EJ0HUD8fZCvv1sx; Tue, 14 Oct 2025 13:59:55 +0000
-X-Authority-Analysis: v=2.4 cv=TIhFS0la c=1 sm=1 tr=0 ts=68ee575d
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=zQCNmZIh7_oNgwDxKbcA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=v07wzL3TXtGZaExHEmWCCWHx1M46lpQfmqmvV9srVYE=; b=uQr9jUW2J2+sl7Ylaf9V1+EJdl
-	sj1UMif8i+GkVA6XMk3XjbxQwAA/wj8TR6deKul3v1ldvMzivH9AbBae6yE/jSwZK0gKCFkFJyG2r
-	ddEbZdNAiOBjd0Zm28bSyOP+fpWeWoxUim7abKJH82kCYlV21+KPEkDMdg3gejQR7L4oPI13WYDaj
-	wr5QRboc9GbS/2na0l2qnL4ZvRMoFEXsjtSypl5/6YtQvhk+K4aRnknRmeLlzmeMoqpv6bXCe/F9X
-	6zrYY3urN/hGJ5rH7wxznBCOlX8PjXG6Dy1zHMer/1xdwplU/eABt5a1QIq0uCAFfLYOroPST78iY
-	Gk5pjdeQ==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:43702 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <re@w6rz.net>)
-	id 1v8fZC-00000001lbq-0kth;
-	Tue, 14 Oct 2025 07:59:53 -0600
-Message-ID: <048b0b99-a0ea-4295-a1c0-821b6a353cfa@w6rz.net>
-Date: Tue, 14 Oct 2025 06:59:51 -0700
+	s=arc-20240116; t=1760450408; c=relaxed/simple;
+	bh=5gLf7zFeMUxeJ1r3oPEvHCY3fIEwl0nZJqlny92eUQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZI3PLW7euYU/EqOxYcco9um7j9v5tpKapc433DdeVebPs35l3gJ6+Izg0Ie+/9MY5Bg5A0FGuNztYVIhjozzhcI9cHlx126hvesc+vCXtjbQj5p3hOXmOfe8Ib0JhcvFByhLBKRh8Z/Z4EdWrq3CbMmRyu9No+8qpeUgMWf1Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j2Q9L++4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MAdevGeNe8Y946QS65C8/lB+ZL2XFuMi5HaHoj+dwCw=; b=j2Q9L++43ozMaHAizIHsyH2ciF
+	k83y0vWqAisftkKlrQO6O63DDIZgfVTVGJqCub2Sq/iAMw2TS+RWUX3xl0d7+OMhI3tlM+kPPExvt
+	D+BuWWPVf3+OflRPR+UrWi7nZWNAYRuFR+ao/rQroLtNDFtAKCOITeTkBa0ZCgvd3ADe7HSUn/pyv
+	zlw205XzF97a5FxT1rF8GN9KYeHw3pLsieIeHdc5O40JUgBDKI+RZh0+paBe11zSLzeQgDqHAlNoX
+	J2j4/dzlQUw+IpD7LE+VprmmOi+C8FjskB78oBGHB3fEGES0lMS0HgYwn2RfI8UKkM39tqBiBKqna
+	g73p1aFQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8fZG-0000000BvUJ-2n54;
+	Tue, 14 Oct 2025 14:00:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 575CF3001AE; Tue, 14 Oct 2025 15:59:58 +0200 (CEST)
+Date: Tue, 14 Oct 2025 15:59:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srikar Dronamraju <srikar@linux.ibm.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Chen Yu <yu.c.chen@intel.com>, Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
+ when balance is not due
+Message-ID: <20251014135958.GW3245006@noisy.programming.kicks-ass.net>
+References: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
+ <20251013142638.GM3245006@noisy.programming.kicks-ass.net>
+ <aa3d20e6d451e0d0b812fe16e9d403c1033feeaa.camel@linux.intel.com>
+ <20251014092436.GK4067720@noisy.programming.kicks-ass.net>
+ <aO5VK4PO_REXNhnN@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/196] 6.6.112-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251013144315.184275491@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20251013144315.184275491@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v8fZC-00000001lbq-0kth
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:43702
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 35
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHFkg6NoNdaMeUPpUy4Vgu0llurJORm7n7O1SzeKt4A3vpvv1OX5OkFJoTQG94R01dxgE9Ypl42O6O4szMci/JZnXIwBDbTU8MrX7xtrxq1bLudCdl1S
- btFuN8gIUal3bT/p/YcIHROAqg34oCa7Epy6AwSVqFC5t0iWM5qDvOslYoY4DwMX0T+kUstlcPwqOp5wa1GT+ODcgboMme4yYhU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO5VK4PO_REXNhnN@linux.ibm.com>
 
-On 10/13/25 07:43, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.112 release.
-> There are 196 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.112-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Oct 14, 2025 at 07:20:35PM +0530, Srikar Dronamraju wrote:
+> * Peter Zijlstra <peterz@infradead.org> [2025-10-14 11:24:36]:
+> 
+> > On Mon, Oct 13, 2025 at 02:54:19PM -0700, Tim Chen wrote:
+> > 
+> > 
+> > Right, Yu Chen said something like that as well, should_we_balance() is
+> > too late.
+> > 
+> > Should we instead move the whole serialize thing inside
+> > sched_balance_rq() like so:
+> > 
+> > @@ -12122,21 +12148,6 @@ static int active_load_balance_cpu_stop(void *data)
+> >  	return 0;
+> >  }
+> >  
+> > -/*
+> > - * This flag serializes load-balancing passes over large domains
+> > - * (above the NODE topology level) - only one load-balancing instance
+> > - * may run at a time, to reduce overhead on very large systems with
+> > - * lots of CPUs and large NUMA distances.
+> > - *
+> > - * - Note that load-balancing passes triggered while another one
+> > - *   is executing are skipped and not re-tried.
+> > - *
+> > - * - Also note that this does not serialize rebalance_domains()
+> > - *   execution, as non-SD_SERIALIZE domains will still be
+> > - *   load-balanced in parallel.
+> > - */
+> > -static atomic_t sched_balance_running = ATOMIC_INIT(0);
+> > -
+> >  /*
+> >   * Scale the max sched_balance_rq interval with the number of CPUs in the system.
+> >   * This trades load-balance latency on larger machines for less cross talk.
+> > @@ -12192,7 +12203,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+> >  	/* Earliest time when we have to do rebalance again */
+> >  	unsigned long next_balance = jiffies + 60*HZ;
+> >  	int update_next_balance = 0;
+> > -	int need_serialize, need_decay = 0;
+> > +	int need_decay = 0;
+> >  	u64 max_cost = 0;
+> >  
+> >  	rcu_read_lock();
+> > @@ -12216,13 +12227,6 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+> >  		}
+> >  
+> >  		interval = get_sd_balance_interval(sd, busy);
+> > -
+> > -		need_serialize = sd->flags & SD_SERIALIZE;
+> > -		if (need_serialize) {
+> > -			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+> > -				goto out;
+> > -		}
+> > -
+> >  		if (time_after_eq(jiffies, sd->last_balance + interval)) {
+> >  			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+> >  				/*
+> > @@ -12236,9 +12240,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+> >  			sd->last_balance = jiffies;
+> >  			interval = get_sd_balance_interval(sd, busy);
+> >  		}
+> > -		if (need_serialize)
+> > -			atomic_set_release(&sched_balance_running, 0);
+> > -out:
+> > +
+> >  		if (time_after(next_balance, sd->last_balance + interval)) {
+> >  			next_balance = sd->last_balance + interval;
+> >  			update_next_balance = 1;
+> 
+> I think this is better since previously the one CPU which was not suppose to
+> do the balancing may increment the atomic variable. If the CPU, that was
+> suppose to do the balance now tries it may fail since the variable was not
+> yet decremented.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
-
-Tested-by: Ron Economos <re@w6rz.net>
-
+Right, it would do that acquire and then still have at least 2 ways to
+not actually balance, which is a waste.
 
