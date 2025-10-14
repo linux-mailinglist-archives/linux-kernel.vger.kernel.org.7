@@ -1,147 +1,106 @@
-Return-Path: <linux-kernel+bounces-852175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D910BD85AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:11:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86320BD85C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 810104E7B13
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:11:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CACD4E481F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988212E6112;
-	Tue, 14 Oct 2025 09:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xz/BeiXx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B5B2E7180;
+	Tue, 14 Oct 2025 09:13:04 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F2F1E3DED
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9CD2DAFDD;
+	Tue, 14 Oct 2025 09:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433100; cv=none; b=PC5TKlPNGi3ixUWb7QccRTrR7HMZmWo8eeqr8NS2DNcnSxBi6a4Ub1d1F+akmb8kJ3FhKYK2IXCvjk9NttxR7pqAf+76m090Rv7OrkB5of8jYcXC766pJGpLl2bkUUsW4SP9iMkyTL2b5fyKcaxjRLPKwORB1qPihXJeWjkqDNg=
+	t=1760433183; cv=none; b=P3IokeRDFtLLSq0tDjaSmQMgZk9BZYb5BpAcW6U/LkQ/vgeE9N9EmkqTICTqGgk+0Y74NKWZ+gU6kDv4JE5bywZsSK5UrE4exQsutawcAIlCvbCL2Ap9Eg8b9VUswEu/pmOnh12ucmvgiDvAmlMeNsNcqG27lWvwop6pA09LM5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433100; c=relaxed/simple;
-	bh=M/XOu2Wm57St5QEjUrTwvBtEPb90StpFpKykt2ha1xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cg3k+DVL+b2SAE9xyRV80mGP3rZqLmrITDJ+K48xWimWLbUr6RmparP4YxZfGGdTpA+pqGljmYMpaR4RuRtdohjOW/2Op9k+GaBCpNZHUtEkrcu8UNnwiAL3zqcdexYjFsavEHFWcplU2m0awboQ8NC5LlStCxaolI2jkbwU4UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xz/BeiXx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760433096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DmZChAiP55LH7fuGlLhGHRkAsOIwC7Uf7Qc1D8RxjL0=;
-	b=Xz/BeiXxLX/EWRcckharZ4tszA834Hxu9N9IbxMPG9vEqpeTKmrNc5oFpxUoMh7xFq8FGD
-	pZOv+SsGKCMz2jL1kuyo9VWe8+GozyamnXHX5EwlHKLIyFPTgnU/fRWujBrRV2xUMrVeXT
-	7ioJy0i9dpQ+loROThssMd8wyAL37nc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-tv7oFco2PICeWDrDHHm0WQ-1; Tue, 14 Oct 2025 05:11:35 -0400
-X-MC-Unique: tv7oFco2PICeWDrDHHm0WQ-1
-X-Mimecast-MFC-AGG-ID: tv7oFco2PICeWDrDHHm0WQ_1760433094
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e3af78819so26072205e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:11:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760433094; x=1761037894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DmZChAiP55LH7fuGlLhGHRkAsOIwC7Uf7Qc1D8RxjL0=;
-        b=aaZj15SmjX1G9Rm6bi5CNSnn3b/0Atr7kENzltwAW5Fs2VPoEPq3Hp2ozEY0Fb3pWI
-         uKqasVhRXY7c8XcpscjqlmouN54M6RmYgaJKJ9fbrppw9tTBLi3hgSj1hx2BEk0cSjNG
-         B28L2C7o7lBrdkCB8QF11g2M5Zp4+4W5d2nSmQOhM16i8cWWRGJ1/M/a0KsRmLXmPBX9
-         DZ5diVi6mSjz24gIroCRJfycvU5Y7Km8O8tappmSkLAHbA/0qK74yllxMXl74KVLoVYp
-         mwo33HNXUFk1sLql7Uo7ascbFdJTAf71khMjhhnVhxTvE4Tib6Vc4d4tbZMklAB2zTwE
-         a0rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqJwW1qq5ccUx/edisdEZ42mFHmALinVlWSuc38Lf0nQRQ1m2TVRus0Jo8ckaPGK9to4AdntVnl4KTNQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy31rwlKZmx2mXDpulDJP3/gxcpsy0wRIIe9paYsswSFuFruj7z
-	pV4ycAdi734BW0nrOGFONpCIHfxVC2Wi/9bSJGM/u0A6nXUUqJoOVE7ySmRdE4Yy5LNu/iJ6WLW
-	lOufZPPRcbzw83iq/+d1keKdpgpQAsRW1zyGejMrL4RfOb0diFMeuKWNw41+eMSc4UQ==
-X-Gm-Gg: ASbGncv13V6tKVC6QvrXBUK+P7Tx0SBIAiOcaSga85nkhmcAy/dvgn3/0o7tj0xgqoc
-	Lp6GnrO4NtZg53qiDbZco/HH+4589y4wCsWsHnR77+8lAA8Q8Ustz882xa2SMxJkL6Y2C4tDl9P
-	GYPkLljW8hI9cY6yjvortfpr7W+yCMtGiZU+OUtetqh1xWRIHnpXvh/2QW1ECm0KPR1qzghdZcJ
-	lZ3he+AEy0kjfHMFKL13BnWGgPKL/WfCNxjBu/rnS5uExeVC4TM5ngeF12XZnn0imPJMwdprXPH
-	98APdF799wltNmqhHJnMWT3SrYVbPxTlvQe9YqI/Swr8Qi6TjG8UzdBdqv72kjDUNQqy0iy4
-X-Received: by 2002:a05:600c:1986:b0:46e:4246:c90d with SMTP id 5b1f17b1804b1-46fa9aa4711mr148996025e9.11.1760433094374;
-        Tue, 14 Oct 2025 02:11:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmrDXjCw08WD1TQhj3YC4hMNp555u6CSxx5SZw+8OCS1At5RI/2QEFWI5fYDiJWMd8bQmAcA==
-X-Received: by 2002:a05:600c:1986:b0:46e:4246:c90d with SMTP id 5b1f17b1804b1-46fa9aa4711mr148995905e9.11.1760433094004;
-        Tue, 14 Oct 2025 02:11:34 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab4e22d8sm145329615e9.5.2025.10.14.02.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 02:11:33 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:11:31 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	m.szyprowski@samsung.com, venkat88@linux.ibm.com,
-	jstultz@google.com
-Subject: Re: [PATCH] sched/deadline: stop dl_server before CPU goes offline
-Message-ID: <aO4Tw1SzNpgWutK8@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251009184727.673081-1-sshegde@linux.ibm.com>
+	s=arc-20240116; t=1760433183; c=relaxed/simple;
+	bh=z8sn68NAt+PgmEPPSA+MhaLGdC4iQ6NqOu8t5akaAwA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TtYsY5vE2c3/4y/+Heg4NUZXWuiWUa1kxjaOWV/dZE9jp/1gUyTF9l5W/735Df+fkFWpRYsXkiZf30S6btpxUF5ieo9PdAcdXjha48NfeItRgU0yApC0CoNXf3IkVMd6rthZ2mrGV6iPNkill7nGfCRrKOxw29snRTClKEpZNjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f78ea74aa8dd11f0a38c85956e01ac42-20251014
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:af83a9a0-ebd0-4a87-9321-d4aed1796afd,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:51336594ba71906da8c015481ffb2ede,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
+	,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f78ea74aa8dd11f0a38c85956e01ac42-20251014
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 720667590; Tue, 14 Oct 2025 17:12:54 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] iio: adc: ti_am335x_adc: Limit step_avg to valid range for gcc complains
+Date: Tue, 14 Oct 2025 17:12:50 +0800
+Message-Id: <d5e5e8cbbc9354ca1dd4745253df6cde07822325.1760433015.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009184727.673081-1-sshegde@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+FIELD_PREP() checks that a value fits into the available bitfield, add a
+check for step_avg to fix gcc complains.
 
-On 10/10/25 00:17, Shrikanth Hegde wrote:
-> From: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> IBM CI tool reported kernel warning[1] when running a CPU removal
-> operation through drmgr[2]. i.e "drmgr -c cpu -r -q 1"
-> 
-> WARNING: CPU: 0 PID: 0 at kernel/sched/cpudeadline.c:219 cpudl_set+0x58/0x170
-> NIP [c0000000002b6ed8] cpudl_set+0x58/0x170
-> LR [c0000000002b7cb8] dl_server_timer+0x168/0x2a0
-> Call Trace:
-> [c000000002c2f8c0] init_stack+0x78c0/0x8000 (unreliable)
-> [c0000000002b7cb8] dl_server_timer+0x168/0x2a0
-> [c00000000034df84] __hrtimer_run_queues+0x1a4/0x390
-> [c00000000034f624] hrtimer_interrupt+0x124/0x300
-> [c00000000002a230] timer_interrupt+0x140/0x320
-> 
-> Git bisects to: commit 4ae8d9aa9f9d ("sched/deadline: Fix dl_server getting stuck")
-> 
-> This happens since: 
-> - dl_server hrtimer gets enqueued close to cpu offline, when 
->   kthread_park enqueues a fair task.
-> - CPU goes offline and drmgr removes it from cpu_present_mask.
-> - hrtimer fires and warning is hit.
-> 
-> Fix it by stopping the dl_server before CPU is marked dead.
-> 
-> [1]: https://lore.kernel.org/all/8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com/
-> [2]: https://github.com/ibm-power-utilities/powerpc-utils/tree/next/src/drmgr
-> 
-> [sshegde: wrote the changelog and tested it]
-> Fixes: 4ae8d9aa9f9d ("sched/deadline: Fix dl_server getting stuck")
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> Closes: https://lore.kernel.org/all/8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+which gcc complains about:
+  drivers/iio/adc/ti_am335x_adc.c: In function 'tiadc_step_config':
+  include/linux/compiler_types.h:572:38: error: call to
+'__compiletime_assert_491' declared with attribute error: FIELD_PREP: value
+too large for the field include/linux/mfd/ti_am335x_tscadc.h:58:29: note:
+in expansion of macro 'FIELD_PREP'
+    #define STEPCONFIG_AVG(val) FIELD_PREP(GENMASK(4, 2), (val))
+                                ^~~~~~~~~~
+drivers/iio/adc/ti_am335x_adc.c:127:17: note: in expansion of macro 'STEPCONFIG_AVG'
+	stepconfig = STEPCONFIG_AVG(ffs(adc_dev->step_avg[i]) - 1)
 
-Looks good to me.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510102117.Jqxrw1vF-lkp@intel.com/
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+changes in v2: use '<=',adc_dev->step_avg[i]'s max value is STEPCONFIG_AVG_16
+---
+ drivers/iio/adc/ti_am335x_adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-
-Thanks!
-Juri
+diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
+index 99f274adc870..a1a28584de93 100644
+--- a/drivers/iio/adc/ti_am335x_adc.c
++++ b/drivers/iio/adc/ti_am335x_adc.c
+@@ -123,7 +123,7 @@ static void tiadc_step_config(struct iio_dev *indio_dev)
+ 
+ 		chan = adc_dev->channel_line[i];
+ 
+-		if (adc_dev->step_avg[i])
++		if (adc_dev->step_avg[i] && adc_dev->step_avg[i] <= STEPCONFIG_AVG_16)
+ 			stepconfig = STEPCONFIG_AVG(ffs(adc_dev->step_avg[i]) - 1) |
+ 				     STEPCONFIG_FIFO1;
+ 		else
+-- 
+2.25.1
 
 
