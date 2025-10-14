@@ -1,92 +1,72 @@
-Return-Path: <linux-kernel+bounces-852079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD81BD81E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6225BD81EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8BC64F6317
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:13:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F7DC4F51E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB430F815;
-	Tue, 14 Oct 2025 08:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD43730F818;
+	Tue, 14 Oct 2025 08:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7J+v9Al"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DggjA9CH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF01430F808
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9E2C17A0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429618; cv=none; b=iaCgnB2X1WUikofe1bFgrEhUtHwp35aIE71bfrq2NBgXun1EK05zj7Fe/8On4E4FhIVkk6Wtt9NHT2gpEB3NMzqoB8vjf1h6yjLURhSdSQUZlXjJmsJmWlMrPAWVy+ib2YtDpUPeXa9MNPfIn461ztmsZ3Lr31KFNc3TwLXpyL0=
+	t=1760429654; cv=none; b=txx7O7/LnfWuwud9SHZBHOyy6jxSsfawyRpAoiRvYt55EiFh/qf48RqQTwt4viRcjPnKnTzWFgveOji50hV54GuBSwashWHpYZU88kcAQ8H8E9xZElCUljKq/gIQ50BBZp79FruGe5PwAfNEJabv+FtI0WLEG6hTZG1fEKwuNaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429618; c=relaxed/simple;
-	bh=+2LmzIVa9DmNGLrlYbtdQtzdJ1I1DZNXxMZgk2QxwOw=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n6lbKcNFh4x9FL9rxVvHao/1Wqo23KDCCgN0PFFKBH5gQKm22pRKaqbf8x7JGzvUaqbHu/FETvhDFt3sK5Gvoi0xrrswZAe2+aYEgH7tUDpscsZ2Th6iL3M7NwBRUhot438ew6DOvOAojXLBL6EhU7MmyqIdAV8a71DnW1mTX+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7J+v9Al; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2e363118so42566235e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760429614; x=1761034414; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xhf78mDj7L6zLhIAA4NyhL+vPp3/tw4ip9YZY4CJYUQ=;
-        b=B7J+v9AlWbhVAKfWfPfKYDadG9kT/Z51UvUYwKAb7TboPwAcAMk2ZdO8B8RkJ39/7N
-         vRy9JDojfvVKi38l322Aw8OReN9crk3h3r843gW1kGI1GLMfc62WPHvEqoGSe2H4b3IA
-         xf2WM88sAuNa+Kk0OvtgIuK4cqRkKqP0DQv0flpWaS7J3dQjlbU/+2qaZDGYl0ypoTQO
-         xrJJLl2jicLv+VFqRDoId8I4rN51gLURRZ9Gs3ASCPomR+/aIcN42s92+1ILCvIE7v3E
-         3GMNqy8kz11jFHobZSR/Iz7ZKwyRnGQBTkGZ3nl54o6u99lfUy4lpcQQOFyFfz37WPSJ
-         r9Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760429614; x=1761034414;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xhf78mDj7L6zLhIAA4NyhL+vPp3/tw4ip9YZY4CJYUQ=;
-        b=qgISfoziUgWIIstuaFWA/skqtI60Te2CUoWByIpFaFwQ2sE+AywYZq7ls6pj8IaUgg
-         iCDB6cshIE0ZaxVNXsvOFGWpZie39dyO1mibCQqPyiruFU2UhpW3QWzTX9++EFajoDXL
-         Tn4KuQgDXkvqxGdChN0dSios/d9G/u59eODLFR5xCHW7rSoonj5BaKVd5vVxP6/kDQwO
-         FSo0F4ntyMCKF0fk/+UALQucL3PDLF7C+9jmmUkGmjZucfw6+HCmH6o6ieX9k8QbFrh1
-         rbsLBMAdMJcJA2YWTRAXSh0cC/iwuJJLSwaei+ijiKi+xSwytCGJGgFUOR/IqwsYOqVA
-         oA6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAAjztZqLKX33U1Miv162fKvHIMVKpclkpMt7pjS93cZcp9a/fJEPePigplR0Op9X3DxkVqf3JlXrCH3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzLnlRhi9XRycp1M49tiuh2dvljo2oIad1w46z9AoiamQBKppJ
-	i/etbuT9HJFkrPqan6R/gJqo5E6r4cAc1ckwwUIlojhKbYyF9P/Smmxj
-X-Gm-Gg: ASbGncvXo6cyxIGeabVYYwOUWedjEjiAOQgSO81iHCVwkBAlo5GtTLbUdjUyD9DUqOj
-	zUMZKNHWVeFiKz7iY5ZevIEeoWQa+U20jcYpNw4kG6xLIVnkZmXUnpRp747WXVeBPKMo6usOdTR
-	1MdbsS4xaU+pD7U6ZpITnJzteL2MA0Pve39423T/U//quAq6Deduve25mBeZDwp4nWWw5g7joCX
-	97ntVaG9y7XJOmzttdN82PobjTKshDFYbm1Wvfg02Wwo5yntbIORYvbiNb8tTgaomHWm+5Q8R97
-	5GjxXTCTlGQJ4megZR63z8gWiSjZtUaM+uPD0CiwZfMKoQcsttuEDr9JV/FIPZC45IMK+McW4AM
-	N7Be4DILvxsyRuHz1wqCsHwbpRcxqX2OHn/YRj80nS15cp8CIue1yTRjrKpCoSfOxJtiW7A5fTJ
-	S4kuTwS+uTOIP4b/XCUy+iUdOGi/UBt4PZJumRRw9qVib/3xqp7vvplo0=
-X-Google-Smtp-Source: AGHT+IE/yvvNi7f9ywz4oKxH3zGAx/TZVEsNIIjjDV3XuFHg8dmmWzqobqnhmfB1Aan5xjCCgtdy/A==
-X-Received: by 2002:a05:600c:314b:b0:46c:adf8:c845 with SMTP id 5b1f17b1804b1-46fa9a98f32mr174482375e9.16.1760429613749;
-        Tue, 14 Oct 2025 01:13:33 -0700 (PDT)
-Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49c3eeasm225979145e9.14.2025.10.14.01.13.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 01:13:33 -0700 (PDT)
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-X-Google-Original-From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-Date: Tue, 14 Oct 2025 10:13:31 +0200
-To: Anusha Srivatsa <asrivats@redhat.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maxime Ripard <mripard@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	regressions@lists.linux.dev
-Subject: [REGRESSION] drm/panel/panel-simple v6.17 WARNING regression
-Message-ID: <hlf4wdopapxnh4rekl5s3kvoi6egaga3lrjfbx6r223ar3txri@3ik53xw5idyh>
+	s=arc-20240116; t=1760429654; c=relaxed/simple;
+	bh=2N7WirJiTitl3E+4QT7hrbRBkPt79WDZ8mozpEXe1rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=os+KElidd1ePjta8oXvvbkAx/8r1u2cG/9TXIEn08jzJg1+LSN1/h7rWgocon7C90bvcfHquLPGXHxXigdo1aioka3r+OarHw6fn5cvXP7JBtVo/zNQVAUfequsMQHUCEqO3CZSNn9Q0rkvPkVHzNhv61w13cGc4mdfMM+CtQMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DggjA9CH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760429651;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KhY2pcNK+wt0Bap0KmbvY+1ivcnNm5JdAKXQeXYN/Q4=;
+	b=DggjA9CHU/8kVFMBcSMNwB7tj1uM8+qoE78M1iLlrh0peiLhXUQwbO5juoIFbmHtvcZmOC
+	Kams/3ogfAcYIsa5YTSRp63sE4gTSz9oKOIAIw9E1jwuSL9PXaJ2INVSaWpjB6iniUFQdF
+	5GeKIv9Jlt1OFZcArOIURvbsbHqcyCc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-472-wQssW_E7OQOLXJm-ubB3AQ-1; Tue,
+ 14 Oct 2025 04:14:04 -0400
+X-MC-Unique: wQssW_E7OQOLXJm-ubB3AQ-1
+X-Mimecast-MFC-AGG-ID: wQssW_E7OQOLXJm-ubB3AQ_1760429642
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D124119560AF;
+	Tue, 14 Oct 2025 08:14:01 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.30])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C87EC1955F21;
+	Tue, 14 Oct 2025 08:13:54 +0000 (UTC)
+Date: Tue, 14 Oct 2025 16:13:48 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai3@huawei.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+	axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: Re: [PATCH 3/4] blk-rq-qos: fix possible deadlock
+Message-ID: <aO4GPKKpLbj7kMoz@fedora>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-4-yukuai3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,161 +75,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251014022149.947800-4-yukuai3@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello everyone,
+On Tue, Oct 14, 2025 at 10:21:48AM +0800, Yu Kuai wrote:
+> Currently rq-qos debugfs entries is created from rq_qos_add(), while
+> rq_qos_add() requires queue to be freezed. This can deadlock because
+> creating new entries can trigger fs reclaim.
+> 
+> Fix this problem by delaying creating rq-qos debugfs entries until
+> it's initialization is complete.
+> 
+> - For wbt, it can be initialized by default of by blk-sysfs, fix it by
+>   calling blk_mq_debugfs_register_rq_qos() after wbt_init;
+> - For other policies, they can only be initialized by blkg configuration,
+>   fix it by calling blk_mq_debugfs_register_rq_qos() from
+>   blkg_conf_end();
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-cgroup.c | 6 ++++++
+>  block/blk-rq-qos.c | 7 -------
+>  block/blk-sysfs.c  | 4 ++++
+>  block/blk-wbt.c    | 7 ++++++-
+>  4 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+> index d93654334854..e4ccabf132c0 100644
+> --- a/block/blk-cgroup.c
+> +++ b/block/blk-cgroup.c
+> @@ -33,6 +33,7 @@
+>  #include "blk-cgroup.h"
+>  #include "blk-ioprio.h"
+>  #include "blk-throttle.h"
+> +#include "blk-mq-debugfs.h"
+>  
+>  static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu);
+>  
+> @@ -746,6 +747,11 @@ void blkg_conf_end(struct blkg_conf_ctx *ctx)
+>  	mutex_unlock(&q->elevator_lock);
+>  	blk_mq_unfreeze_queue(q, ctx->memflags);
+>  	blkdev_put_no_open(ctx->bdev);
+> +
+> +	mutex_lock(&q->debugfs_mutex);
+> +	blk_mq_debugfs_register_rq_qos(q);
+> +	mutex_unlock(&q->debugfs_mutex);
+> +
+>  }
+>  EXPORT_SYMBOL_GPL(blkg_conf_end);
+>  
+> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+> index 654478dfbc20..d7ce99ce2e80 100644
+> --- a/block/blk-rq-qos.c
+> +++ b/block/blk-rq-qos.c
+> @@ -347,13 +347,6 @@ int rq_qos_add(struct rq_qos *rqos, struct gendisk *disk, enum rq_qos_id id,
+>  	blk_queue_flag_set(QUEUE_FLAG_QOS_ENABLED, q);
+>  
+>  	blk_mq_unfreeze_queue(q, memflags);
+> -
+> -	if (rqos->ops->debugfs_attrs) {
+> -		mutex_lock(&q->debugfs_mutex);
+> -		blk_mq_debugfs_register_rqos(rqos);
+> -		mutex_unlock(&q->debugfs_mutex);
+> -	}
+> -
+>  	return 0;
+>  ebusy:
+>  	blk_mq_unfreeze_queue(q, memflags);
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index 76c47fe9b8d6..52bb4db25cf5 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -688,6 +688,10 @@ static ssize_t queue_wb_lat_store(struct gendisk *disk, const char *page,
+>  	mutex_unlock(&disk->rqos_state_mutex);
+>  
+>  	blk_mq_unquiesce_queue(q);
+> +
+> +	mutex_lock(&q->debugfs_mutex);
+> +	blk_mq_debugfs_register_rq_qos(q);
+> +	mutex_unlock(&q->debugfs_mutex);
+>  out:
+>  	blk_mq_unfreeze_queue(q, memflags);
+>  
+> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+> index eb8037bae0bd..a120b5ba54db 100644
+> --- a/block/blk-wbt.c
+> +++ b/block/blk-wbt.c
+> @@ -724,8 +724,13 @@ void wbt_enable_default(struct gendisk *disk)
+>  	if (!blk_queue_registered(q))
+>  		return;
+>  
+> -	if (queue_is_mq(q) && enable)
+> +	if (queue_is_mq(q) && enable) {
+>  		wbt_init(disk);
+> +
+> +		mutex_lock(&q->debugfs_mutex);
+> +		blk_mq_debugfs_register_rq_qos(q);
+> +		mutex_unlock(&q->debugfs_mutex);
+> +	}
 
-Commit 94d50c1a2ca3 ("drm/bridge: get/put the bridge reference in drm_bridge_attach/detach()")
-introduced a regression with the below warning dure probe with panel
-dpi described in the device tree.
-
-[    9.160074] ------------[ cut here ]------------
-[    9.160092] WARNING: CPU: 0 PID: 66 at /usr/src/kernel/lib/refcount.c:25 drm_bridge_attach+0x2c/0x1dc
-[    9.160138] refcount_t: addition on 0; use-after-free.
-[    9.160147] Modules linked in: coda_vpu(+) snd_soc_fsl_asrc snd_compress v4l2_jpeg pwm_imx27 imx_vdoa spi_imx imx6_media(C) imx_media_common(C) videobuf2_dma_contig etnaviv snd_soc_fsl_ssi v4l2_mem2mem imx_pcm_dma panel_simple gpio_keys gpu_sched pwm_bl loop fuse ipv6 autofs4
-[    9.160423] CPU: 0 UID: 0 PID: 66 Comm: kworker/u10:2 Tainted: G         C          6.17.0-rc5-0.0.0-devel #1 PREEMPT 
-[    9.160459] Tainted: [C]=CRAP
-[    9.160476] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[    9.160497] Workqueue: events_unbound deferred_probe_work_func
-[    9.160535] Call trace: 
-[    9.160546]  unwind_backtrace from show_stack+0x10/0x14
-[    9.160603]  show_stack from dump_stack_lvl+0x54/0x68
-[    9.160637]  dump_stack_lvl from __warn+0x7c/0xd4
-[    9.160672]  __warn from warn_slowpath_fmt+0x130/0x1c4
-[    9.160726]  warn_slowpath_fmt from drm_bridge_attach+0x2c/0x1dc
-[    9.160780]  drm_bridge_attach from imx_pd_bind+0x74/0xa0
-[    9.160836]  imx_pd_bind from component_bind_all+0xfc/0x254
-[    9.160881]  component_bind_all from imx_drm_bind+0xa8/0x154
-[    9.160903]  imx_drm_bind from try_to_bring_up_aggregate_device+0x1f8/0x2b0
-[    9.160959]  try_to_bring_up_aggregate_device from __component_add+0x9c/0x160
-[    9.161003]  __component_add from imx_pd_probe+0xa8/0x160
-[    9.161042]  imx_pd_probe from platform_probe+0x5c/0x90
-[    9.161066]  platform_probe from really_probe+0xd0/0x3a4
-[    9.161093]  really_probe from __driver_probe_device+0x8c/0x1d4
-[    9.161144]  __driver_probe_device from driver_probe_device+0x34/0xd0
-[    9.161195]  driver_probe_device from __device_attach_driver+0xa4/0x134
-[    9.161248]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
-[    9.161299]  bus_for_each_drv from __device_attach+0xa4/0x1cc
-[    9.161328]  __device_attach from bus_probe_device+0x84/0x88
-[    9.161354]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
-[    9.161395]  deferred_probe_work_func from process_one_work+0x158/0x2e0
-[    9.161434]  process_one_work from worker_thread+0x254/0x3fc
-[    9.161449]  worker_thread from kthread+0x128/0x24c
-[    9.161473]  kthread from ret_from_fork+0x14/0x28
-[    9.161494] Exception stack(0xe0aa1fb0 to 0xe0aa1ff8)
-[    9.161505] 1fa0:                                     00000000 00000000 00000000 00000000
-[    9.161517] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    9.161529] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    9.161539] ---[ end trace 0000000000000000 ]---
-
-Note that this commit was added to branch 'drm-next-2025-07-30',
-which did not contain an already mainlined fix for another regression [1].
-Without that fix [2], this new regression is masked.
-
-Reverting 94d50c1a2ca3 on top of
-commit 260f6f4fda93 ("Merge tag 'drm-next-2025-07-30' of https://gitlab.freedesktop.org/drm/kernel")
-fixes the issue. At that point, [1] was fixed in mainline, and the new
-regression reported here was merged in. v6.17-rc1 to v6.17-rc7 are in
-this state.
-
-However, later on, another regression seems to be introduced by
-commit 8fa5909400f3 ("drm/bridge: get the bridge returned by drm_bridge_chain_get_first_bridge()")
-so reverting 94d50c1a2ca3 on top of drm-misc-next does not solve
-everything. This was tested by rebasing drm-misc-next onto (260f6f4fda93
-plus the revert of 94d50c1a2ca3) and then bisecting.
-
-So in v6.18-rc1, both regressions are present.
-
-There, I get the following additional warnings:
-
-[    9.732278] ------------[ cut here ]------------
-[    9.732336] WARNING: CPU: 0 PID: 38 at lib/refcount.c:22 drm_bridge_get+0x10/0x18
-[    9.744608] refcount_t: saturated; leaking memory.
-[    9.749634] Modules linked in: nvmem_snvs_lpgpr phy_mxs_usb coda_vpu v4l2_jpeg spi_imx imx_vdoa imx6_media(C) pwm_imx27 snd_soc_fsl_asrc snd_soc_fsl_ssi snd_compress 4
-[    9.776972] CPU: 0 UID: 0 PID: 38 Comm: kworker/u8:3 Tainted: G        WC          6.18.0-rc1-00214-g1226cd7c7686 #138 PREEMPT 
-[    9.788476] Tainted: [W]=WARN, [C]=CRAP
-[    9.792320] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[    9.798858] Workqueue: events_unbound deferred_probe_work_func
-[    9.804729] Call trace: 
-[    9.804744]  unwind_backtrace from show_stack+0x10/0x14
-[    9.812532]  show_stack from dump_stack_lvl+0x68/0x74
-[    9.817614]  dump_stack_lvl from __warn+0x7c/0xe0
-[    9.822355]  __warn from warn_slowpath_fmt+0x130/0x1c0
-[    9.827526]  warn_slowpath_fmt from drm_bridge_get+0x10/0x18
-[    9.833218]  drm_bridge_get from drm_bridge_connector_init+0xc8/0x72c
-[    9.839685]  drm_bridge_connector_init from imx_pd_bind+0x80/0xa0
-[    9.845809]  imx_pd_bind from component_bind_all+0xf4/0x254
-[    9.851422]  component_bind_all from imx_drm_bind+0x98/0x128
-[    9.857109]  imx_drm_bind from try_to_bring_up_aggregate_device+0x1d0/0x29c
-[    9.864097]  try_to_bring_up_aggregate_device from __component_add+0xa0/0x164
-[    9.871263]  __component_add from imx_pd_probe+0xa8/0x164
-[    9.876690]  imx_pd_probe from platform_probe+0x5c/0x90
-[    9.881940]  platform_probe from really_probe+0xd0/0x3a4
-[    9.887280]  really_probe from __driver_probe_device+0x8c/0x1d4
-[    9.893227]  __driver_probe_device from driver_probe_device+0x30/0xc0
-[    9.899694]  driver_probe_device from __device_attach_driver+0x98/0x10c
-[    9.906337]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
-[    9.912634]  bus_for_each_drv from __device_attach+0xa8/0x1c8
-[    9.918409]  __device_attach from bus_probe_device+0x88/0x8c
-[    9.924097]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
-[    9.930563]  deferred_probe_work_func from process_one_work+0x154/0x2dc
-[    9.937205]  process_one_work from worker_thread+0x250/0x3f0
-[    9.942883]  worker_thread from kthread+0x12c/0x24c
-[    9.947787]  kthread from ret_from_fork+0x14/0x28
-[    9.952513] Exception stack(0xe0961fb0 to 0xe0961ff8)
-[    9.957575] 1fa0:                                     00000000 00000000 00000000 00000000
-[    9.965762] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    9.973948] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    9.981052] ---[ end trace 0000000000000000 ]---
-
-[    9.985782] ------------[ cut here ]------------
-[    9.985835] WARNING: CPU: 0 PID: 38 at lib/refcount.c:28 drm_bridge_connector_init+0x328/0x72c
-[    9.999210] refcount_t: underflow; use-after-free.
-[   10.004119] Modules linked in: mux_core error nvmem_snvs_lpgpr phy_mxs_usb coda_vpu v4l2_jpeg spi_imx imx_vdoa imx6_media(C) pwm_imx27 snd_soc_fsl_asrc snd_soc_fsl_ss4
-[   10.032757] CPU: 0 UID: 0 PID: 38 Comm: kworker/u8:3 Tainted: G        WC          6.18.0-rc1-00214-g1226cd7c7686 #138 PREEMPT 
-[   10.044260] Tainted: [W]=WARN, [C]=CRAP
-[   10.048104] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[   10.054642] Workqueue: events_unbound deferred_probe_work_func
-[   10.060511] Call trace: 
-[   10.060523]  unwind_backtrace from show_stack+0x10/0x14
-[   10.068309]  show_stack from dump_stack_lvl+0x68/0x74
-[   10.073390]  dump_stack_lvl from __warn+0x7c/0xe0
-[   10.078127]  __warn from warn_slowpath_fmt+0x130/0x1c0
-[   10.083296]  warn_slowpath_fmt from drm_bridge_connector_init+0x328/0x72c
-[   10.090115]  drm_bridge_connector_init from imx_pd_bind+0x80/0xa0
-[   10.096238]  imx_pd_bind from component_bind_all+0xf4/0x254
-[   10.101843]  component_bind_all from imx_drm_bind+0x98/0x128
-[   10.107525]  imx_drm_bind from try_to_bring_up_aggregate_device+0x1d0/0x29c
-[   10.114512]  try_to_bring_up_aggregate_device from __component_add+0xa0/0x164
-[   10.121676]  __component_add from imx_pd_probe+0xa8/0x164
-[   10.127101]  imx_pd_probe from platform_probe+0x5c/0x90
-[   10.132348]  platform_probe from really_probe+0xd0/0x3a4
-[   10.137683]  really_probe from __driver_probe_device+0x8c/0x1d4
-[   10.143632]  __driver_probe_device from driver_probe_device+0x30/0xc0
-[   10.150099]  driver_probe_device from __device_attach_driver+0x98/0x10c
-[   10.156742]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
-[   10.163035]  bus_for_each_drv from __device_attach+0xa8/0x1c8
-[   10.168804]  __device_attach from bus_probe_device+0x88/0x8c
-[   10.174490]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
-[   10.180955]  deferred_probe_work_func from process_one_work+0x154/0x2dc
-[   10.187595]  process_one_work from worker_thread+0x250/0x3f0
-[   10.193270]  worker_thread from kthread+0x12c/0x24c
-[   10.198172]  kthread from ret_from_fork+0x14/0x28
-[   10.202895] Exception stack(0xe0961fb0 to 0xe0961ff8)
-[   10.207956] 1fa0:                                     00000000 00000000 00000000 00000000
-[   10.216145] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[   10.224330] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[   10.231448] ---[ end trace 0000000000000000 ]---
+->debugfs_mutex only may be not enough, because blk_mq_debugfs_register_rq_qos()
+has to traverse rq_qos single list list, you may have to grab q->rq_qos_mutex
+for protect the list.
 
 
-[1]: https://lore.kernel.org/all/20250612081834.GA248237@francesco-nb/
-[2]: https://lore.kernel.org/all/20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org/
-
-#regzbot ^introduced: 94d50c1a2ca31d80f12d9c2bdbc41437751e320c
-#regzbot ^introduced: 8fa5909400f377351836419223c33f1131f0f7d3
-
-Does this ring a bell for anyone?
-
-Kind regards,
-Ernest
+Thanks,
+Ming
 
 
