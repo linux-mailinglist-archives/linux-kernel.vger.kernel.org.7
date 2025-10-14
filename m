@@ -1,198 +1,166 @@
-Return-Path: <linux-kernel+bounces-852843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D3FBDA135
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D76BDA18F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCD0581256
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E533ABBE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3480301011;
-	Tue, 14 Oct 2025 14:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC26302CC7;
+	Tue, 14 Oct 2025 14:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8pRU42v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cPd2oBQg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0642E3009F6;
-	Tue, 14 Oct 2025 14:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC85330217E;
+	Tue, 14 Oct 2025 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452594; cv=none; b=DWsra+bzfp/EjZVkGi9LpB2pLAQBt0jECxQJaYFEY/Ed0gTMdUdNNVLedd6ddqeEbt1nRY3AiRsLLbXgxo5K8Qc/0xG57U5BhZCMtvf+3c04uN9W56b5/nENOmfi3UkpMQdYmFiQshX4OUALZMMYRkmoSe94MaJlTJ31LLUi6XE=
+	t=1760452606; cv=none; b=XmPG7S0Q2u8c4E3igXhouLdB1KA3s2RxK+IuNdG/FJUSbQ4DHdGnDYsWhQTrG19phCPHvMwN2uVt/4A8YuatThViE6ZG7DwBCv1fLh9oT97L+ngMPWnZHu5SI2dDqeUUIMPM2Rkiw0ayyWe4sI4Tmi0SR8WihH83fH4EVH2xGFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452594; c=relaxed/simple;
-	bh=Pgc6BBCsBW8XDbmZ8YQIRgh9zAzzQPZv6WP96LVDEYE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e51mCHWjtpnT6jE57u2CMhosmwvkClrjusPt3Lfj+OV3X7DWreCueR/QbRyxK5xRcnEvDo9CgLGpTBBKnsWoZQfNvxurn2S2IBFMfqRFy3gHm15KQFCm5DUwOlM3k/jkuUSOQIN4ZvHO2x7EfQ5QvrHzjARpV66E1ivUglOI4qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8pRU42v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2104C116C6;
-	Tue, 14 Oct 2025 14:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760452593;
-	bh=Pgc6BBCsBW8XDbmZ8YQIRgh9zAzzQPZv6WP96LVDEYE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y8pRU42vh4TJKlqygyq4RlWIBRh5hBdbLvbj5FBLQOIdNN6ZGeHrmDH1vD8LFBqKm
-	 DzwQWii+3jomscaaZeM8JifXeoWzcolbCbSdUi39xtKTysrLmIpFNZ5hFLRlSbj9la
-	 zXkSv4XM6Qvck8K3U/pQfXqfkbVfgzaicV0jjfu3LNmPpu6LEEyK2VT9NJxL5u+w4k
-	 grd0ZpIbjgnczFYvDO9NOLJ+acVkDfItvzUgN608iWiwCP2BcqY7vak2/FhbUVtWXA
-	 jYbja3Me3xM/r2wOb8ZnbaigQjcnwlPafb5RjKIoCaGfY16T3QL2ZIMD0HP0Cix8hA
-	 LTAlza9Tlc4UA==
-From: Conor Dooley <conor@kernel.org>
-To: linus.walleij@linaro.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Valentina.FernandezAlanis@microchip.com
-Subject: [PATCH v2 1/5] dt-bindings: pinctrl: document pic64gx "gpio2" pinmux
-Date: Tue, 14 Oct 2025 15:35:34 +0100
-Message-ID: <20251014-stream-zipfile-cd8d6c12b2da@spud>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251014-retype-limit-e6cbe901aa07@spud>
-References: <20251014-retype-limit-e6cbe901aa07@spud>
+	s=arc-20240116; t=1760452606; c=relaxed/simple;
+	bh=GtG58/enpOmzqNC+68Zu2nFR08TJRD8qy0yK2jlXpGE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=SeZ340SaGPjS6Y/Xb9Kns7HH4CDhecj9OSNzl0beAURCJiakHGP4q60TjRmhdYWNmv72juVy3fQP/5yx60OsdLBjtzBwjyPfvNyPRV8B8G45EtbM8eiMm8ycFqBCUoXo23eschCFZAXhfQ8P5EDBKFezvv5fR1m0owJpZ58pyE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cPd2oBQg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87KUK020052;
+	Tue, 14 Oct 2025 14:36:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HHp72nypWYixrH9s++XlvQ+W5L9Rj75DBjIx86zvWS0=; b=cPd2oBQgS9k/s5sr
+	28TncrSrhyxpOUOriVBHUBrcHmorq+eJM7Z6VlUOkrlQZH+3RQ2zlJLW8XGNyRIl
+	e5w9A7oTbSsknpcqI5LNfcfythc+lB9zWo8kLgoIJD3gpBcUty03d17vO868MCyJ
+	s8pqLegLzp59+nqBroX/kWW4T44Q24iDEEBEY6fN9G2zc70zCFTtRTqZcSs8sMpY
+	1l7BeI3NDQBac1aj/6SiHPritVEHMtquysSx/zbInvWgT/kWo4PJsj3rd9eLS5pP
+	IELO8uQYsWqc0kAPTtGB+bP3n+wT8eyZr5EzAGF7yiin0b5Wec131M3CB/SyBN30
+	qTOtaA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0c0t2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 14:36:38 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59EEabv5007619
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 14:36:37 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Tue, 14 Oct 2025 07:36:32 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Date: Tue, 14 Oct 2025 22:35:35 +0800
+Subject: [PATCH v7 10/10] arm64: defconfig: Build NSS clock controller
+ driver for IPQ5424
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4000; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=qSnLnUgqur9FS7P/2OjboBAMKA41gDk5jloxjVocg0o=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnv4s9+DyjZ+IXbWW+xsVOEofOWaVvUkw9dv/Lp6q87c 7ge/lkV2lHKwiDGxSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJ7LJm+Cuoe3rRFAWJl7nz srR/Mp1McfHy9t+amrlm6yXh7dkfG5YzMkw5t/MDLzv7/MkvE2w8nGf6LHohMnPBc77Lqyf5P2b 79YcXAA==
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20251014-qcom_ipq5424_nsscc-v7-10-081f4956be02@quicinc.com>
+References: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
+In-Reply-To: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        "Anusha Rao" <quic_anusha@quicinc.com>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>,
+        Manikanta Mylavarapu
+	<quic_mmanikan@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_suruchia@quicinc.com>,
+        Luo Jie <quic_luoj@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760452536; l=836;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=GtG58/enpOmzqNC+68Zu2nFR08TJRD8qy0yK2jlXpGE=;
+ b=xPw5JggRsSsxPiGvMeu2KUDJacEyHNxsTUi7/9PUSl3CxojphL0tcSeMbEBfhyqhJ3kv/joUB
+ 2kM3WpZW/szBjdLkI7OEqvIotYRZGFlGDwT8OiId5yAubkbnTfXNKIs
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -1x-ssqL_iPiD0MGoZW0lIkUBUJ_FG21
+X-Proofpoint-ORIG-GUID: -1x-ssqL_iPiD0MGoZW0lIkUBUJ_FG21
+X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68ee5ff6 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=ikIlBLl75NxfxiEf-eQA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfX62wdkgCCheoX
+ CMeGmVbGeTYmzNw6WWUbaHjaR2tjakPoMwpOBb91TX3m8dIdloyrGHSJ2N+yfAd2cLZhAk6vlrc
+ MqcHchmqcZrhrHfmZcSUj6iHPfjY2k96zbkNjF/ERawR0sEEQtnXz7z9OYBYTua8EvdpEqpiC5m
+ SJ5MEGb4gmch0gP+zSU6IExjdMh5Dpg8aZ4RdiJV8N2T1TRcHEQxEuJjYLzOgyxMs5Q1nTbHcwA
+ M/oMiYCOc64laXmeusgt7SPldwucbClHsFLbmOW2T+8OrIKDS8cAIiZ7o/yQzNxK4eVbINBz4yg
+ qNWqOP38GdWEXA04A7CezHs+WiefFDGXIBEgN3gLYUGsPRCEvWAGPvWObRC1vKuqxNu97hK4+ar
+ QlAxgRJPFUzmW+GtPnVg68R6h3E3Dw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
 
-From: Conor Dooley <conor.dooley@microchip.com>
+NSS clock controller is needed for supplying clocks and resets to the
+networking blocks for the Ethernet functions on the IPQ5424 platforms.
 
-The pic64gx has a second pinmux "downstream" of the iomux0 pinmux. The
-documentation for the SoC provides no name for this device, but it is
-used to swap pins between either GPIO controller #2 or select other
-functions, hence the "gpio2" name. Currently there is no documentation
-about what each bit actually does that is publicly available, nor (I
-believe) what pins are affected. That info is as follows:
+All boards based on the IPQ5424 SoC will require this driver to be enabled.
 
-pin     role (1/0)
----     ----------
-E14	MAC_0_MDC/GPIO_2_0
-E15	MAC_0_MDIO/GPIO_2_1
-F16	MAC_1_MDC/GPIO_2_2
-F17	MAC_1_MDIO/GPIO_2_3
-D19	SPI_0_CLK/GPIO_2_4
-B18	SPI_0_SS0/GPIO_2_5
-B10	CAN_0_RXBUS/GPIO_2_6
-C14	PCIE_PERST_2#/GPIO_2_7
-E18	PCIE_WAKE#/GPIO_2_8
-D18	PCIE_PERST_1#/GPIO_2_9
-E19	SPI_0_DO/GPIO_2_10
-C7	SPI_0_DI/GPIO_2_11
-D6	QSPI_SS0/GPIO_2_12
-D7	QSPI_CLK (B)/GPIO_2_13
-C9	QSPI_DATA0/GPIO_2_14
-C10	QSPI_DATA1/GPIO_2_15
-A5	QSPI_DATA2/GPIO_2_16
-A6	QSPI_DATA3/GPIO_2_17
-D8	MMUART_3_RXD/GPIO_2_18
-D9	MMUART_3_TXD/GPIO_2_19
-B8	MMUART_4_RXD/GPIO_2_20
-A8	MMUART_4_TXD/GPIO_2_21
-C12	CAN_1_TXBUS/GPIO_2_22
-B12	CAN_1_RXBUS/GPIO_2_23
-A11	CAN_0_TX_EBL_N/GPIO_2_24
-A10	CAN_1_TX_EBL_N/GPIO_2_25
-D11	MMUART_2_RXD/GPIO_2_26
-C11	MMUART_2_TXD/GPIO_2_27
-B9	CAN_0_TXBUS/GPIO_2_28
-
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
- .../microchip,pic64gx-pinctrl-gpio2.yaml      | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
-new file mode 100644
-index 000000000000..07d6befb299c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip PIC64GX GPIO2 Mux
-+
-+maintainers:
-+  - Conor Dooley <conor.dooley@microchip.com>
-+
-+description:
-+  The "GPIO2 Mux" determines whether GPIO2 or select other functions are
-+  available on package pins on PIC64GX. Some of these functions must be
-+  mapped to this mux via iomux0 for settings here to have any impact.
-+
-+properties:
-+  compatible:
-+    const: microchip,pic64gx-pinctrl-gpio2
-+
-+  reg:
-+    maxItems: 1
-+
-+  pinctrl-use-default: true
-+
-+patternProperties:
-+  '^mux-':
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      function:
-+        description:
-+          A string containing the name of the function to mux to the group.
-+        enum: [ mdio0, mdio1, spi0, can0, pcie, qspi, uart3, uart4, can1, uart2, gpio ]
-+
-+      groups:
-+        description:
-+          An array of strings. Each string contains the name of a group.
-+        items:
-+          enum: [ mdio0, mdio1, spi0, can0, pcie, qspi, uart3, uart4, can1, uart2,
-+                  gpio_mdio0, gpio_mdio1, gpio_spi0, gpio_can0, gpio_pcie,
-+                  gpio_qspi, gpio_uart3, gpio_uart4, gpio_can1, gpio_uart2 ]
-+
-+    required:
-+      - function
-+      - groups
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinctrl@41000000 {
-+      compatible = "microchip,pic64gx-pinctrl-gpio2";
-+      reg = <0x41000000 0x4>;
-+      pinctrl-use-default;
-+      pinctrl-names = "default";
-+      pinctrl-0 = <&mdio0_gpio2>, <&mdio1_gpio2>, <&spi0_gpio2>, <&qspi_gpio2>,
-+                  <&uart3_gpio2>, <&uart4_gpio2>, <&can1_gpio2>, <&can0_gpio2>,
-+                  <&uart2_gpio2>;
-+
-+      mux-gpio2 {
-+        function = "gpio";
-+        groups = "gpio_mdio1", "gpio_spi0", "gpio_can0", "gpio_pcie",
-+                 "gpio_qspi", "gpio_uart3", "gpio_uart4", "gpio_can1";
-+      };
-+    };
-+
-+...
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index e401915e2f2f..d4fc8e6683cb 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1414,6 +1414,7 @@ CONFIG_IPQ_GCC_5424=y
+ CONFIG_IPQ_GCC_6018=y
+ CONFIG_IPQ_GCC_8074=y
+ CONFIG_IPQ_GCC_9574=y
++CONFIG_IPQ_NSSCC_5424=m
+ CONFIG_IPQ_NSSCC_9574=m
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_MMCC_8994=m
+
 -- 
-2.51.0
+2.34.1
 
 
