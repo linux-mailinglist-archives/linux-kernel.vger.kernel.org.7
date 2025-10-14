@@ -1,110 +1,153 @@
-Return-Path: <linux-kernel+bounces-852613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD086BD974B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:53:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805A2BD975D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6103E38F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5704319A00D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A25F313537;
-	Tue, 14 Oct 2025 12:53:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01808313537;
+	Tue, 14 Oct 2025 12:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q5DPMoPQ"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00FC30C62B
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9456530C62B;
+	Tue, 14 Oct 2025 12:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446409; cv=none; b=FMsi3CGKEYNuKCXDFSwk1XeQp5npix9rNszAEA+9al6LGfevFdiBZGAeOvBdTpgN8WK5S5SospfPLHUQmuxCq1+DGoTr4tzJt9nbr9F2EzSa/oGq2O4d7XrI/EAiVJi7MxV/ZAT0/lok9b22LsJ9iMuffwSt0I2CifhZmmCqiGo=
+	t=1760446436; cv=none; b=swR1IrBu6K26lpPQ7PGgkwdZX49ZBBoNvl/deGJo7hEkozzlay1ijL69YBvFJhAYfzHsZyhKcYQJxPkp5ie8YGkD8FjwciZlFUAcL86Csxsgh2MltI+3UkgAFrYrPfJuMNDNpBXQhs6jVOmC/e58pQVKqjQCypdBJsgh6d9lW0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446409; c=relaxed/simple;
-	bh=wlnpgxqKUtHipo1UE96/JGVHbGGSvs00Xy199A6lNvg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XzsM2dCabAmmcUhBbpD3B3oDxIIziuqDR/uKgXF2L66TAqI+ZpEHafAP8kOLZyVuT5ajJ7CyJR8HNy+WHv2mDNX48LyZjQOlo2DH9OM/IDreflQl/piHFhZY+ud5ZeUaWYbMGVBeA6TYXLmZkZWZkxr4cjTZFOKv8uwFk9egRIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42f9f48ee30so27269795ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:53:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760446407; x=1761051207;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmp3P1Th37YuAjSeDEeB29rL1viZDNUJ5c1OsKnH9ZU=;
-        b=pw0xsN1XjrBolMrhobBd9ex3po5g8PLDtxNK8IaBdd4sfHWdCZDjTPtPWVR6shxpa+
-         omSGsZ6x8Mr3N53HACsdWmLU3IOeJohToLw6dyfJawafNSObYjDgyttIyQc9cydmC/oQ
-         QexJ/5bvTTIfYw32u9IPEG68w77KiK2jyag0INWm9R+NmxUDDNN5YdfRe5uuL3qNK2De
-         43ssdwzoT7bupvtj0u2qxMLSYEXcCHY7X9a98vHXpsWZCyVj7j0SFArbHd56Ui7JZ5AS
-         ht/8MJ/BGMqzSTOe1PfR5bM7CJNefkSWXCA6daGhLfZxl2/pOrairBpBZ4vSIAwIyjD3
-         tOQg==
-X-Gm-Message-State: AOJu0YyhYuWhELNDclCNUXaNl6QmvADceV/gISoIDWOHby+uLA1Q8m4D
-	iMCPRHKNQnmLuG2sn+7268tCVj4WAY6CJpfaODCjscQ+U7E3RdHoHuFwDXAP0HrBdzCtsCoSMIg
-	ytkG5YOGDUGPql0YCtLre5btlM2mYy0wGfAGL+vxbpFHp1NUA0TRSeYIBgqo=
-X-Google-Smtp-Source: AGHT+IEbe40n/brTiMJYQJ2dGBXpFhf9lNJA7z1YrB1L2kvwLeIOSIdBC7Nau4AopWOMaPmWh/VmrG5BmAono/kei91bD/3Fyhna
+	s=arc-20240116; t=1760446436; c=relaxed/simple;
+	bh=q9zIjSidFBIRFCrnOKMvPEiDAuZDTAqyRB7v7LzDRZ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oeqFQfGuts+ZJToZwuGeJ2oVYXSIpvCd828em0Qty31wUqssbY4Xs5NphTlYqGkSYg3iZcBc/YPEDbw655m/RCH0ik56PI5g2+o06kUv26bA1k/B09zt0VkzEjvSy/mAey4pJmNOYuIhmclwrNkbIGiEBoYz+IFsM5gMtSP6zmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q5DPMoPQ; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59ECrlHH1150031;
+	Tue, 14 Oct 2025 07:53:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760446427;
+	bh=jsywbNi22h13gbkifxSghvCHg0dJUfQFj5xl0Ab043A=;
+	h=From:To:CC:Subject:Date;
+	b=Q5DPMoPQDAvpd1zwt9xOu/zbs6SVf4Oe6IdKOqXEAfuHavXXFRhkzo5Vqw/Tr5naW
+	 uZXpoLUJzY2TqBkD0wexomB/g4es+Lue2LHVAqiE9hiaWTNpjTialU0k8WEzR96mO3
+	 eTMTh6Ps4S9nMm/OE8eqFzNkkGZRUT90r3X2g7yQ=
+Received: from DLEE202.ent.ti.com (dlee202.ent.ti.com [157.170.170.77])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59ECrlxX3814784
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 Oct 2025 07:53:47 -0500
+Received: from DLEE215.ent.ti.com (157.170.170.118) by DLEE202.ent.ti.com
+ (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Oct
+ 2025 07:53:47 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE215.ent.ti.com
+ (157.170.170.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 07:53:47 -0500
+Received: from toolbox.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.73.74])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59ECrhPT055621;
+	Tue, 14 Oct 2025 07:53:44 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v3 0/5] TI-K3-DTS: Cleanup CPSW DT Nodes
+Date: Tue, 14 Oct 2025 18:23:38 +0530
+Message-ID: <20251014125349.3408784-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd84:0:b0:424:14a4:5064 with SMTP id
- e9e14a558f8ab-42f872bc7damr289497125ab.0.1760446406860; Tue, 14 Oct 2025
- 05:53:26 -0700 (PDT)
-Date: Tue, 14 Oct 2025 05:53:26 -0700
-In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee47c6.050a0220.ac43.0101.GAE@google.com>
-Subject: Forwarded: [PATCH] ntfs3: initialize run_lock for $Extend inode records
-From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hello,
 
-***
+This series cleans up the CPSW Device-tree nodes by updating the SoC and
+board files to keep CPSW disabled in the SoC files and enable it only in
+the board files.
 
-Subject: [PATCH] ntfs3: initialize run_lock for $Extend inode records
-Author: kartikey406@gmail.com
+The following is a summary of the SoCs, CPSW instance and the Boards that
+this series affects:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+-----    -------    ----------------  --------------------------------------------
+S.No.      SoC        CPSW Instance                    Board(s)
+-----    -------    ----------------  --------------------------------------------
+  1.       AM62          CPSW3G           AM625-Beagleplay, AM62-LP-SK, AM625-SK
+  2.       AM65        MCU CPSW2G         AM654-Base-Board, IOT-2050 Based Boards
+  3.       J7200       MCU CPSW2G         J7200-Common-Processor-Board
+  4.       J721E       MCU CPSW2G         J721E-Common-Processor-Board
+  5.       J721S2      MCU CPSW2G         AM68-SK-Base-Board, J721S2-Common-Processor-Board
 
-Inodes from the $Extend directory (NTFS system metadata files) were not
-having their run_lock rwsem initialized. These inodes are assigned
-ntfs_file_inode_operations but skip the normal S_ISREG initialization
-path where run_lock is initialized.
+Series is based on linux-next tagged next-20251010.
 
-When operations like truncate are called on these inodes, the code
-attempts to acquire the uninitialized run_lock, triggering lockdep
-warnings about using non-static keys.
+v2 of this series is at:
+https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250611114336.2392320-1-s-vadapalli@ti.com/
+Changes since v2:
+- Rebased series on next-20251010.
+- In the first patch, the changes that were made within
+  'k3-am625-sk.dts' in the previous version, have been
+  moved into 'k3-am625-sk-common.dtsi'
+- The 'status' property within 'nodes' has been ordered to follow:
+  https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
 
-Initialize run_lock for $Extend records to match the initialization done
-for regular files.
+Test Logs:
+1. AM654-Base-Board:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/3af178c71cd2da436f60b87928dcb1eb
+2. AM68-SK-Base-Board:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/b027a6849f3c17e11fad8324a905aa68
+3. J7200-Common-Processor-Board:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/70d0d96fab92b894253c1884499d6fc1
+4. J721E-Common-Processor-Board:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/2c88aadf36923b1d27672b64489cb2dc
+5. J721S2-Common-Processor-Board:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/0abbae2ef99f82871aa520e1ab973c85
 
-Reported-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ntfs3/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+Regards,
+Siddharth.
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 3959f23c487a..180cd984339b 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -472,6 +472,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 		/* Records in $Extend are not a files or general directories. */
- 		inode->i_op = &ntfs_file_inode_operations;
- 		mode = S_IFREG;
-+		init_rwsem(&ni->file.run_lock);
- 	} else {
- 		err = -EINVAL;
- 		goto out;
+Siddharth Vadapalli (5):
+  arm64: dts: ti: k3-am62: disable "cpsw3g" in SoC file and enable in
+    board file
+  arm64: dts: ti: k3-am65: disable "mcu_cpsw" in SoC file and enable in
+    board file
+  arm64: dts: ti: k3-j7200: disable "mcu_cpsw" in SoC file and enable in
+    board file
+  arm64: dts: ti: k3-j721e: disable "mcu_cpsw" in SoC file and enable it
+    in board file
+  arm64: dts: ti: k3-j721s2: disable "mcu_cpsw" in SoC file and enable
+    in board files
+
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts               | 4 ++++
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 ++
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts         | 1 +
+ arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi         | 1 +
+ arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi     | 4 ----
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi                | 2 ++
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts         | 1 +
+ arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts       | 1 +
+ arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts  | 1 +
+ arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi        | 2 ++
+ arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts  | 1 +
+ arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi        | 2 ++
+ arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts | 1 +
+ arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi       | 2 ++
+ 14 files changed, 21 insertions(+), 4 deletions(-)
+
 -- 
-2.43.0
+2.51.0
 
 
