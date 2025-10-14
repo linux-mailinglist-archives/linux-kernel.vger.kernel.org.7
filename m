@@ -1,96 +1,174 @@
-Return-Path: <linux-kernel+bounces-852160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E710BD8510
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:57:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C05BD8545
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 010D33515A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFDD3A8D3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2ABB2E040E;
-	Tue, 14 Oct 2025 08:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF33F2E2296;
+	Tue, 14 Oct 2025 08:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RpwxJjTR"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtXN8YGD"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27AA21B9F5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D4B26E706
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760432256; cv=none; b=jFq+1fnc9uba5pIDMQXE3ksQY3MJYhx52POmKmffkZ4/AK/jCvZ+iClTCac/plKo7qFKd+c6aCcTRyes7lMRAJu7FMxN4k5uiR+IvEE9fvQRY404i92Sb5ECx7XUeblEw3N8a8k/g9/cRoUIbTVGtCdLRCgvnpg0aGF5b9IQD8U=
+	t=1760432337; cv=none; b=bFDuJwCmFTX84cyxdQaJ+m6cMTgPLE64r/UGCcSftAPHSTH5j54fX7i83rN7sO3LhOci+cXeCdbn0YGG4Q1i2RqX5M6KQ++QZJN5eoj/BR+0gcAsxlclLOa2URpJDx+rL4S2gOLCRG0VGcLHyccT8SxX3TACP5PL9ChsswtDtk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760432256; c=relaxed/simple;
-	bh=E4F6zCQxofT/ijQ1Lk9Sq4gLTN9jp0PKg+b/gO7SpP8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZakzJjhRcdcOiduDv+i+KhMDhrlBf501uWyDE7rWIkFJyKFaNOYozMwgIMeHccpCFJluvH/pI4xLSyyuu3tz2Lu3DlZUVoI9KGwVy7JX4cMK7Jwz7cw4Z4zxM0gTwmGc2FZjJaMrwSQrTKQwkPxpNea8AZvaxedunRjr7Ah7X0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RpwxJjTR; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46fa88b5760so16469575e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:57:34 -0700 (PDT)
+	s=arc-20240116; t=1760432337; c=relaxed/simple;
+	bh=k7HmEga+OGGjtgmIR/2QroLQNi9uv52kHnYxNBFHLV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GMO/lvyuOHX4OP4pUdvo2AlEdroiPi5n2QB/JY3H+VvmMBuAzFo1KzT8Lk66XFW9zheuUdZV/y8dSO5l3UDUW9HbgApuNmSDjLuwbYhsuMeYVzj6in22i7c4iw0g5QG0P+903etPvPMokNNuKbPpUmElnM7Ox/ExfBmmws/yS9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtXN8YGD; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-930c3c772daso2421696241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760432253; x=1761037053; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4F6zCQxofT/ijQ1Lk9Sq4gLTN9jp0PKg+b/gO7SpP8=;
-        b=RpwxJjTRuqD6Kf8gUfHFbqCYZGabmOZcoSLYgjVCiNFH+fQTuezj9B0Ht+rDYeZb8G
-         7O6EJ2F2IqHdehTSVk46golNqldpJubQRXBn60FFFtCL5HB3aImGWPX+mOFhXdEJxexP
-         wy24ypfgsLlKBn+bKQzxMxXjRxs8EIFWRjVknMkxcmnoY7T1OWKMrbeY9tYoShf40EoU
-         ARR0JwHa5EFlVuRIiVeYLmpTy2ayFgpjNkttZ4gWf/xiy5u/XOneIGrQ3Qk61D/v85xB
-         F6w4WEmqDT29zhhdzQOZO0GrbdeO9SspoiT25reLIw13HY53CkbmnKt8MtitIdouCyvU
-         egwg==
+        d=gmail.com; s=20230601; t=1760432335; x=1761037135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gLYcGa961yhxxYkbsF/rLk6YVjYontQ0KHKihOwI8T4=;
+        b=mtXN8YGDM0aISxB1DFvAzepVL1SlQTXIBH/eXYSynkkF62flVL0bcfSFF4YgFvOE2Z
+         VDZ+HZjn6sMYNJus6FjEkZ3JKqpk577g14t6Ap5QU2EZzHfn7PbH8tuL1/+8Bxpe8a1W
+         mfeQvTRWaXHGTsMcUE4KHla8XG6jkqEDdvmiyP8sYQyOtJUrKYVUfMxcqsGDP7l6eXU7
+         jgrAztgdpiFtHXrQd1eDz0dCaeAAEpaOq9mPhm1fEbbtOosJeiKm8U27IyoQ4NFA47YZ
+         DEj2P1BxTsuQsxF5hwByvDFU5D5Y2Bz+jB5vvMCT3wj2fRo5rv/jn0chWIYmoNifgLNS
+         9Xgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760432253; x=1761037053;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4F6zCQxofT/ijQ1Lk9Sq4gLTN9jp0PKg+b/gO7SpP8=;
-        b=U6cyx8y5hBPoqVITDPGkzfBL5xOW+TiN3Z15OdU77fnKDfv5BKG86niZ+Y+mgeOSSa
-         hIl7OVTYfAqaAk0vsSboFoUuSyc58RVqD9Cck8jLmYKPcXmFjkpbjSXUMmhITNhjEGyw
-         nCcTMjw24qTTacJtppM/toaEZsTiWIDgCbhDleLXZyF5ikGvVrmIt07c1JWV0Yu1tWFD
-         EBfd0kCUuoii/XO9tyRr9+fNmYKuR/vRzDk6MHQW6b//pWUHt/J1MoSNZ4O4YQ5kDwFw
-         02rAZ6zS4nSd2ypWoe4nInJf93c9WTTb82aAXFOhQlz8rlDg8BiK8Wp3GsVJ92BmhuxF
-         +YoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhLNeuTp2nQhkoUGn0PyQ77YHuiZg043963I1n9eG8pDT2e0Zv+PXcyQG2iXaVWMB654ayEFrv4p/KhS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqcP0yy+C0JWU4Z5zH5V12sskfdOWQ+obs5C+NRGcxrwdtHUBf
-	9Garh3e7KT+go6hY5Dn370PV5v0K/BQiy4apM8pK7tdJHZJRoT1JTtT4HP4FGEUEhDeXsw1Cp79
-	G+Eqz7if8Q2QjFA==
-X-Google-Smtp-Source: AGHT+IG3ne3PsSqSbyFbnpOiDKEA5Cl7N+bezBY3keJ7BevMSp8mdAb5PmKQd21efPgwnEf76x9mBJX1JTeeNg==
-X-Received: from wmpj26.prod.google.com ([2002:a05:600c:489a:b0:46e:3921:1b1])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:6287:b0:46f:b42e:e365 with SMTP id 5b1f17b1804b1-46fb42ee3f5mr101990975e9.39.1760432253068;
- Tue, 14 Oct 2025 01:57:33 -0700 (PDT)
-Date: Tue, 14 Oct 2025 08:57:32 +0000
-In-Reply-To: <68edea17.050a0220.91a22.01fd.GAE@google.com>
+        d=1e100.net; s=20230601; t=1760432335; x=1761037135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gLYcGa961yhxxYkbsF/rLk6YVjYontQ0KHKihOwI8T4=;
+        b=gmi5YSC4SEVSox5eeOqt8Uqk6EH53dc00fZbItakvJb4bwPo9fn133NrRxlttsoH9F
+         TnbCHyUlSjIWl4JsXUK2hCg3nCaOf+qm5FZlNQV3zYpmcRbsafeNhPWharKSfFcP73wk
+         l3g6uCRNq1pRBoIYg+OsX4o9lC4xha/H2KXvG9ktxjRMgwaX/6cNJF2hzZe+/2qEmfI+
+         rTFZoLWm7P2fDUMFK6qm+aBBInBdoePLDDJ4ikW9QfDv8zI2xEANbvKPQW1h7avmCsLk
+         BVdAvzqwKdiEvbXiWbPFAJaNlZrtdyDSgu+7LhlMMzFulKHPtNbc9sBPdsv7Is7jicqx
+         LRhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWhzybKNCsY0NeM8c3gtTqk0QaY4fKmQhD3O04ayAVUtx5ChNVzEPtSN039UTfwmd+y6xOauosMJZnspg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTxWW93piyx59I9he8L1Pe9bqkU305pFGttDvDhyI79zbbs5XQ
+	CMGl9PhGvoZ0IQbcmA8IsnTuZWt7GNzTyq5b0Im0o1Ge+kqy+CZyTiSlN3NHoxRwNkt14uVR25e
+	FjysDjJs9dBIXd3hUP3X3KWipgC5Vhxs=
+X-Gm-Gg: ASbGncslrlgJqhGWx0qwkVIGrnwV0ADcJucFaKpvV/wXoacqkWBqJ4VySPTUl6hvKF3
+	B6JkemWxj8cdktHY0cVASCZ2eatZFa31CS32XFNKyOZODFJFwrzzYD89R+FE3OMjZ7PaohHgjrF
+	i2DWVc4cjgcrzGlEA0fpFMVMZaSv0f/KlaKF7cFeR4Lk2+sz2UGVFvPUGq4NpPvMu0a8BdO9ADc
+	wb2Jssj6ub0QkLOlYTQ1q0/17FiNzK8BZ8Fq2O3OwA40za2/zj0n+OL9A==
+X-Google-Smtp-Source: AGHT+IGX4PksrMyWa5G15wFPdlRrAfYAlpyBh8eq+zBl1laEShj5dhtzQCGqBWE2Cgx+teji5G7o41ixrF4TOb83K1Q=
+X-Received: by 2002:a05:6102:3e14:b0:529:e9a5:c216 with SMTP id
+ ada2fe7eead31-5d5e22127b3mr9320305137.4.1760432334547; Tue, 14 Oct 2025
+ 01:58:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com> <68edea17.050a0220.91a22.01fd.GAE@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDHX5G54GS7D.1YC8514SPRGQF@google.com>
-Subject: Re: [syzbot ci] Re: KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Brendan Jackman <jackmanb@google.com>
-To: syzbot ci <syzbot+ci693402a94575bcb2@syzkaller.appspotmail.com>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <jackmanb@google.com>, 
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>, 
-	<pbonzini@redhat.com>, <seanjc@google.com>, <tglx@linutronix.de>, 
-	<x86@kernel.org>
-Cc: <syzbot@lists.linux.dev>, <syzkaller-bugs@googlegroups.com>
+MIME-Version: 1.0
+References: <20251013101636.69220-1-21cnbao@gmail.com> <aO11jqD6jgNs5h8K@casper.infradead.org>
+ <CAGsJ_4x9=Be2Prbjia8-p97zAsoqjsPHkZOfXwz74Z_T=RjKAA@mail.gmail.com> <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
+In-Reply-To: <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 14 Oct 2025 16:58:43 +0800
+X-Gm-Features: AS18NWBgpajHqeXyjq2SfshUK90UReXA3HYugsOOoYy5fZXYwfWha3ufAj0-PzY
+Message-ID: <CAGsJ_4xGSrfori6RvC9qYEgRhVe3bJKYfgUM6fZ0bX3cjfe74Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
+To: Eric Dumazet <edumazet@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Huacai Zhou <zhouhuacai@oppo.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue Oct 14, 2025 at 6:13 AM UTC, syzbot ci wrote:
-> BUG: using __this_cpu_write() in preemptible code in x86_emulate_instruction
+On Tue, Oct 14, 2025 at 1:04=E2=80=AFPM Eric Dumazet <edumazet@google.com> =
+wrote:
+>
+> On Mon, Oct 13, 2025 at 9:09=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Tue, Oct 14, 2025 at 5:56=E2=80=AFAM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > On Mon, Oct 13, 2025 at 06:16:36PM +0800, Barry Song wrote:
+> > > > On phones, we have observed significant phone heating when running =
+apps
+> > > > with high network bandwidth. This is caused by the network stack fr=
+equently
+> > > > waking kswapd for order-3 allocations. As a result, memory reclamat=
+ion becomes
+> > > > constantly active, even though plenty of memory is still available =
+for network
+> > > > allocations which can fall back to order-0.
+> > >
+> > > I think we need to understand what's going on here a whole lot more t=
+han
+> > > this!
+> > >
+> > > So, we try to do an order-3 allocation.  kswapd runs and ... succeeds=
+ in
+> > > creating order-3 pages?  Or fails to?
+> > >
+> >
+> > Our team observed that most of the time we successfully obtain order-3
+> > memory, but the cost is excessive memory reclamation, since we end up
+> > over-reclaiming order-0 pages that could have remained in memory.
+> >
+> > > If it fails, that's something we need to sort out.
+> > >
+> > > If it succeeds, now we have several order-3 pages, great.  But where =
+do
+> > > they all go that we need to run kswapd again?
+> >
+> > The network app keeps running and continues to issue new order-3 alloca=
+tion
+> > requests, so those few order-3 pages won=E2=80=99t be enough to satisfy=
+ the
+> > continuous demand.
+>
+> These pages are freed as order-3 pages, and should replenish the buddy
+> as if nothing happened.
 
-Ah. And now I realise I never booted my debug config on an actual
-Skylake host, I'd better do that, presumably running the KVM selftests
-with DEBUG_PREEMPT etc would have been enough to catch this earlier.
+Ideally, that would be the case if the workload were simple. However, the
+system may have many other processes and kernel drivers running
+simultaneously, also consuming memory from the buddy allocator and possibly
+taking the replenished pages. As a result, we can still observe multiple
+kswapd wakeups and instances of over-reclamation caused by the network
+stack=E2=80=99s high-order allocations.
 
-Anyway, I guest we just want to use vcpu->arch.last_vmentry_cpu instead
-of smp_processor_id()?
+>
+> I think you are missing something to control how much memory  can be
+> pushed on each TCP socket ?
+>
+> What is tcp_wmem on your phones ? What about tcp_mem ?
+>
+> Have you looked at /proc/sys/net/ipv4/tcp_notsent_lowat
+
+# cat /proc/sys/net/ipv4/tcp_wmem
+524288  1048576 6710886
+
+# cat /proc/sys/net/ipv4/tcp_mem
+131220  174961  262440
+
+# cat /proc/sys/net/ipv4/tcp_notsent_lowat
+4294967295
+
+Any thoughts on these settings?
+
+Thanks
+Barry
 
