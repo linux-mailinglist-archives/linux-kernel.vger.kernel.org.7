@@ -1,204 +1,247 @@
-Return-Path: <linux-kernel+bounces-851917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8158FBD79D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:48:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24E1BD79F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F63192126E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB563B66EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D0F26FA56;
-	Tue, 14 Oct 2025 06:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7622D3725;
+	Tue, 14 Oct 2025 06:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JCnONr74"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rYWX/qG8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1E1tA4+Y"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF472773FC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB2B27E045;
+	Tue, 14 Oct 2025 06:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760424514; cv=none; b=btnmdMWtQltnURAlLWCjIG99Yrwu+ggwH/HZWfbIkjPZXexCsRnoT3wTaR0gTT07T/Ch+YqFYZu99EWOWzG5VNDmB2YO8WHw4fONFfySCqS+Hyx/5gFeHoFv385/zehnxxiZ+wTQ8o/TkksbQSbCzSnarb9GrOsMXGlNuPE2LM8=
+	t=1760424556; cv=none; b=frM9XZ2Do3nnx2lbM10UgUUMDorSxnJNK7GOScr6reCIHNAcxac6q4yE/ZG1nVWX/t1deO9CUta+DVPpPPXsWc2lT54MWTDCmLqqbClJXiaKqKkImtps2uVd3E8THujyN4SXByBY5CzlAPK2ygAHJ7coORZna/rW0OBI2rkU+3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760424514; c=relaxed/simple;
-	bh=Pb4X6pA3zjo0/luemi6ccC2exhFezbhgdoWaxhzllq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BP3W/d5tHB6Oj6uG/6PCHr9gFh2X5Lp68uhRVsax8rjqRXoGJZtTkCtNIeE4KvDoCsrVuxI1s0JWkwuFev5R+ejhrA/NQF5uXk8UkaGprtUo3SwYgblsL+ehxiex1ov3eyLYrlvtuDG0Tt435elQEDFIThYuUxhhwA74PhgGu60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JCnONr74; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760424510;
+	s=arc-20240116; t=1760424556; c=relaxed/simple;
+	bh=WwQPXUZQ1CD/U6+1AhNXbknubQ1GwIXwbHY5eStZBoM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BrLHhmzVXUr8JN4/duAjhqJwHjozM/gUNGQh9bgg8Iw6py0tyEfhSsfQa/TsOYEvfDbIF2c++s1QEOUQnxTAKAovj2h20/RzMkr/FjPxzNojFeKA7/AtHJe7sz58g2pi3+k3f0WR3jw7sou2/MdHWiDPGM7CDNZsG8YAUCzBYng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rYWX/qG8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1E1tA4+Y; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760424546;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Jyokv8TZ9xK9Xt60THWv2ud2nta75kmCieKYYuxCcI=;
-	b=JCnONr74aHbpKqwBDgklaSuyHWJqlURlO9FmktUjkNqbvpdejficWhi/B3gNrBfUFODCkD
-	/iCoyafQwBl+1xjrZ+QjD6QFqCncGEaLV8Ku1itRFR5lRffhu1xaS/YJKP+c8XYYVhvTBI
-	GaygqterNU5eNlgx52A9wUBBmoceqig=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, kwankhede@nvidia.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- Chu Guangqing <chuguangqing@inspur.com>
-Subject: Re: [PATCH v2 1/1] samples/bpf: Fix spelling typo in samples/bpf
-Date: Tue, 14 Oct 2025 14:48:19 +0800
-Message-ID: <2240784.irdbgypaU6@7950hx>
-In-Reply-To: <20251014060849.3074-2-chuguangqing@inspur.com>
-References:
- <20251014060849.3074-1-chuguangqing@inspur.com>
- <20251014060849.3074-2-chuguangqing@inspur.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CyAyJkTiCv4dcZmMoFGTGoezzU3KDiXW+Swc/WCxjXw=;
+	b=rYWX/qG8iMm1wcjaEudd/TRA7CxmOSAJAxNy9Rg65rqCsSSWYEsZWI+aVkiJcII5dWjHM5
+	FoEtHoCJL//akDVp4CslL3/nu1EVy5SdAIZ1tagwX/43JYM+YUDCmgsp7U2nXUTUkeGdXR
+	CL6ErCEj1oOtBumEsq5QdMrTinL6Tbp3RFz0hNpXRJHylB4MAQ47iPsizdi1695t9xfdOV
+	mcqLRvud8P9mT1avHyDn96tdYZ5Y+p15N6xH1COlpqzf0YYXbPezmW5m1yf9i2SaVrceAv
+	wJGQmk2SxRRqLm5ltctXhNYwTw6ig99XdMSojhXnGGLUDf4f1B9KsbzaNw4XBg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760424546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CyAyJkTiCv4dcZmMoFGTGoezzU3KDiXW+Swc/WCxjXw=;
+	b=1E1tA4+Y0jiwi4wv/DH5gQFWs6pSKK+Hnz6vAw3y3oxzoCHsgkFIgSnLjn1FLemI9xtJL4
+	TszOjCfDnTUyysDg==
+Subject: [PATCH v4 00/35] sparc64: vdso: Switch to the generic vDSO library
+Date: Tue, 14 Oct 2025 08:48:46 +0200
+Message-Id: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAE7y7WgC/3XN0QrCIBTG8VcJrzP0qNN11XtEF5uebUK4oSVF7
+ N2zQQyiXf4PfL/zIgmjx0SOuxeJmH3yYygh9ztihyb0SL0rTYCBYhqAZpdGmqYm2krSHkOZWwo
+ UVAfIlMEaLCnjKWLnHwt8vpQefLqN8bn8yfxz/ZJyi8ycMopCV41oHUjHT1cf7rc4Bv84OCQfN
+ sNKGa42KShUq7rOsEqDkPofJVaq5nqTEoUSla5b3lqDaH6peZ7fFnm1mFYBAAA=
+X-Change-ID: 20250722-vdso-sparc64-generic-2-25f2e058e92c
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
+ John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
+ Shannon Nelson <sln@onemain.com>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Arnd Bergmann <arnd@kernel.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760424546; l=7292;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=WwQPXUZQ1CD/U6+1AhNXbknubQ1GwIXwbHY5eStZBoM=;
+ b=1MQSoiY2CB8rgixAK/04YHsF9QTmUBDjyn/YHDVYC4dzNsdELt8yAk3zJpQNm5lnuvvk1RuU+
+ 8Kb2gbYyYjrCWdAj+OMqVexodS8qoO6k3YfCXIVxNQ+O9Ixv9iK4rdD
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 2025/10/14 14:08, Chu Guangqing wrote:
-> do_hbm_test.sh:
-> The comment incorrectly used "upcomming" instead of "upcoming".
-> 
-> hbm.c
-> The comment incorrectly used "Managment" instead of "Management".
-> The comment incorrectly used "Currrently" instead of "Currently".
-> 
-> tcp_cong_kern.c
-> The comment incorrectly used "deteremined" instead of "determined".
-> 
-> tracex1.bpf.c
-> The comment incorrectly used "loobpack" instead of "loopback".
-> 
-> mtty.c
-> The comment incorrectly used "atleast" instead of "at least".
-> 
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+The generic vDSO provides a lot common functionality shared between
+different architectures. SPARC is the last architecture not using it,
+preventing some necessary code cleanup.
 
-Hi, Guangqing.
+Make use of the generic infrastructure.
 
-The change log is preferred when you send a new version, which
-can make people know the difference in this version quickly. It
-could follow the SOB like this:
+Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+SPARC64 can not map .bss into userspace, so the vDSO datapages are
+switched over to be allocated dynamically. This requires changes to the
+s390 and random subsystem vDSO initialization as preparation.
+The random subsystem changes in turn require some cleanup of the vDSO
+headers to not end up as ugly #ifdef mess.
+
+Tested on a Niagara T4 and QEMU.
+
+This has a semantic conflict with my series "vdso: Reject absolute
+relocations during build" [0]. The last patch of this series expects all
+users of the generic vDSO library to use the vdsocheck tool.
+This is not the case (yet) for SPARC64. I do have the patches for the
+integration, the specifics will depend on which series is applied first.
+
+Based on v6.18-rc1.
+
+[0] https://lore.kernel.org/lkml/20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de/
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
-v2:
-- xxx
+Changes in v4:
+- Rebase on v6.18-rc1.
+- Keep inclusion of asm/clocksource.h from linux/clocksource.h
+- Reword description of "s390/time: Set up vDSO datapage later"
+- Link to v3: https://lore.kernel.org/r/20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de
+
+Changes in v3:
+- Allocate vDSO data pages dynamically (and lots of preparations for that)
+- Drop clock_getres()
+- Fix 32bit clock_gettime() syscall fallback
+- Link to v2: https://lore.kernel.org/r/20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de
+
+Changes in v2:
+- Rebase on v6.17-rc1
+- Drop RFC state
+- Fix typo in commit message
+- Drop duplicate 'select GENERIC_TIME_VSYSCALL'
+- Merge "sparc64: time: Remove architecture-specific clocksource data" into the
+  main conversion patch. It violated the check in __clocksource_register_scale()
+- Link to v1: https://lore.kernel.org/r/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de
+
 ---
+Arnd Bergmann (1):
+      clocksource: remove ARCH_CLOCKSOURCE_DATA
 
-The content that wrapped by the "---" will not be visible after the
-patch being applied, so you can put whatever you want here.
+Thomas Weißschuh (34):
+      selftests: vDSO: vdso_test_correctness: Handle different tv_usec types
+      arm64: vDSO: getrandom: Explicitly include asm/alternative.h
+      arm64: vDSO: gettimeofday: Explicitly include vdso/clocksource.h
+      arm64: vDSO: compat_gettimeofday: Add explicit includes
+      ARM: vdso: gettimeofday: Add explicit includes
+      powerpc/vdso/gettimeofday: Explicitly include vdso/time32.h
+      powerpc/vdso: Explicitly include asm/cputable.h and asm/feature-fixups.h
+      LoongArch: vDSO: Explicitly include asm/vdso/vdso.h
+      MIPS: vdso: Add include guard to asm/vdso/vdso.h
+      MIPS: vdso: Explicitly include asm/vdso/vdso.h
+      random: vDSO: Add explicit includes
+      vdso/gettimeofday: Add explicit includes
+      vdso/helpers: Explicitly include vdso/processor.h
+      vdso/datapage: Remove inclusion of gettimeofday.h
+      vdso/datapage: Trim down unnecessary includes
+      random: vDSO: trim vDSO includes
+      random: vDSO: remove ifdeffery
+      random: vDSO: split out datapage update into helper functions
+      random: vDSO: only access vDSO datapage after random_init()
+      s390/time: Set up vDSO datapage later
+      vdso/datastore: Reduce scope of some variables in vvar_fault()
+      vdso/datastore: Drop inclusion of linux/mmap_lock.h
+      vdso/datastore: Map pages through struct page
+      vdso/datastore: Allocate data pages dynamically
+      sparc64: vdso: Link with -z noexecstack
+      sparc64: vdso: Remove obsolete "fake section table" reservation
+      sparc64: vdso: Replace code patching with runtime conditional
+      sparc64: vdso: Move hardware counter read into header
+      sparc64: vdso: Move syscall fallbacks into header
+      sparc64: vdso: Introduce vdso/processor.h
+      sparc64: vdso: Switch to the generic vDSO library
+      sparc64: vdso2c: Drop sym_vvar_start handling
+      sparc64: vdso2c: Remove symbol handling
+      sparc64: vdso: Implement clock_gettime64()
 
-> ---
->  samples/bpf/do_hbm_test.sh  | 2 +-
->  samples/bpf/hbm.c           | 4 ++--
->  samples/bpf/tcp_cong_kern.c | 2 +-
->  samples/bpf/tracex1.bpf.c   | 2 +-
->  samples/vfio-mdev/mtty.c    | 2 +-
+ arch/arm/include/asm/vdso/gettimeofday.h           |   2 +
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h  |   3 +
+ arch/arm64/include/asm/vdso/gettimeofday.h         |   2 +
+ arch/arm64/kernel/vdso/vgetrandom.c                |   2 +
+ arch/loongarch/kernel/process.c                    |   1 +
+ arch/loongarch/kernel/vdso.c                       |   1 +
+ arch/mips/include/asm/vdso/vdso.h                  |   5 +
+ arch/mips/kernel/vdso.c                            |   1 +
+ arch/powerpc/include/asm/vdso/gettimeofday.h       |   1 +
+ arch/powerpc/include/asm/vdso/processor.h          |   3 +
+ arch/s390/kernel/time.c                            |   4 +-
+ arch/sparc/Kconfig                                 |   3 +-
+ arch/sparc/include/asm/clocksource.h               |   9 -
+ arch/sparc/include/asm/processor.h                 |   3 +
+ arch/sparc/include/asm/processor_32.h              |   2 -
+ arch/sparc/include/asm/processor_64.h              |  25 --
+ arch/sparc/include/asm/vdso.h                      |   2 -
+ arch/sparc/include/asm/vdso/clocksource.h          |  10 +
+ arch/sparc/include/asm/vdso/gettimeofday.h         | 184 ++++++++++
+ arch/sparc/include/asm/vdso/processor.h            |  41 +++
+ arch/sparc/include/asm/vdso/vsyscall.h             |  10 +
+ arch/sparc/include/asm/vvar.h                      |  75 ----
+ arch/sparc/kernel/Makefile                         |   1 -
+ arch/sparc/kernel/time_64.c                        |   6 +-
+ arch/sparc/kernel/vdso.c                           |  69 ----
+ arch/sparc/vdso/Makefile                           |   8 +-
+ arch/sparc/vdso/vclock_gettime.c                   | 380 ++-------------------
+ arch/sparc/vdso/vdso-layout.lds.S                  |  26 +-
+ arch/sparc/vdso/vdso.lds.S                         |   2 -
+ arch/sparc/vdso/vdso2c.c                           |  24 --
+ arch/sparc/vdso/vdso2c.h                           |  45 +--
+ arch/sparc/vdso/vdso32/vdso32.lds.S                |   4 +-
+ arch/sparc/vdso/vma.c                              | 274 +--------------
+ drivers/char/random.c                              |  71 ++--
+ include/linux/clocksource.h                        |   6 +-
+ include/linux/vdso_datastore.h                     |   6 +
+ include/vdso/datapage.h                            |  23 +-
+ include/vdso/helpers.h                             |   1 +
+ init/main.c                                        |   2 +
+ kernel/time/Kconfig                                |   4 -
+ lib/vdso/datastore.c                               |  73 ++--
+ lib/vdso/getrandom.c                               |   3 +
+ lib/vdso/gettimeofday.c                            |  17 +
+ .../testing/selftests/vDSO/vdso_test_correctness.c |   8 +-
+ 44 files changed, 448 insertions(+), 994 deletions(-)
+---
+base-commit: 28b1ac5ccd8d4900a8f53f0e6e84d517a7ccc71f
+change-id: 20250722-vdso-sparc64-generic-2-25f2e058e92c
 
-You titled the patch "samples/bpf: Fix spelling typo in samples/bpf",
-but this file is not in the samples/bpf, right? So I think we'd better
-split it out.
-
-And it's preferred to tag you patch with "bpf" or "bpf-next", such
-as [PATCH bpf-next V2], so the CI can run some testings for you,
-even though it's not necessary for this patch.
-
-BTW, "Guangqing Chu" will be better, according to the habit :)
-
-Thanks!
-Menglong Dong
-
->  5 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/samples/bpf/do_hbm_test.sh b/samples/bpf/do_hbm_test.sh
-> index 38e4599350db..7f4f722787d5 100755
-> --- a/samples/bpf/do_hbm_test.sh
-> +++ b/samples/bpf/do_hbm_test.sh
-> @@ -112,7 +112,7 @@ function start_hbm () {
->  processArgs () {
->    for i in $args ; do
->      case $i in
-> -    # Support for upcomming ingress rate limiting
-> +    # Support for upcoming ingress rate limiting
->      #in)         # support for upcoming ingress rate limiting
->      #  dir="-i"
->      #  dir_name="in"
-> diff --git a/samples/bpf/hbm.c b/samples/bpf/hbm.c
-> index bf66277115e2..fc88d4dbdf48 100644
-> --- a/samples/bpf/hbm.c
-> +++ b/samples/bpf/hbm.c
-> @@ -5,7 +5,7 @@
->   * modify it under the terms of version 2 of the GNU General Public
->   * License as published by the Free Software Foundation.
->   *
-> - * Example program for Host Bandwidth Managment
-> + * Example program for Host Bandwidth Management
->   *
->   * This program loads a cgroup skb BPF program to enforce cgroup output
->   * (egress) or input (ingress) bandwidth limits.
-> @@ -24,7 +24,7 @@
->   *		beyond the rate limit specified while there is available
->   *		bandwidth. Current implementation assumes there is only
->   *		NIC (eth0), but can be extended to support multiple NICs.
-> - *		Currrently only supported for egress.
-> + *		Currently only supported for egress.
->   *    -h	Print this info
->   *    prog	BPF program file name. Name defaults to hbm_out_kern.o
->   */
-> diff --git a/samples/bpf/tcp_cong_kern.c b/samples/bpf/tcp_cong_kern.c
-> index 2311fc9dde85..339415eac477 100644
-> --- a/samples/bpf/tcp_cong_kern.c
-> +++ b/samples/bpf/tcp_cong_kern.c
-> @@ -5,7 +5,7 @@
->   * License as published by the Free Software Foundation.
->   *
->   * BPF program to set congestion control to dctcp when both hosts are
-> - * in the same datacenter (as deteremined by IPv6 prefix).
-> + * in the same datacenter (as determined by IPv6 prefix).
->   *
->   * Use "bpftool cgroup attach $cg sock_ops $prog" to load this BPF program.
->   */
-> diff --git a/samples/bpf/tracex1.bpf.c b/samples/bpf/tracex1.bpf.c
-> index 0ab39d76ff8f..ceedf0b1d479 100644
-> --- a/samples/bpf/tracex1.bpf.c
-> +++ b/samples/bpf/tracex1.bpf.c
-> @@ -20,7 +20,7 @@ SEC("kprobe.multi/__netif_receive_skb_core*")
->  int bpf_prog1(struct pt_regs *ctx)
->  {
->  	/* attaches to kprobe __netif_receive_skb_core,
-> -	 * looks for packets on loobpack device and prints them
-> +	 * looks for packets on loopback device and prints them
->  	 * (wildcard is used for avoiding symbol mismatch due to optimization)
->  	 */
->  	char devname[IFNAMSIZ];
-> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> index 59eefe2fed10..6cb3e5974990 100644
-> --- a/samples/vfio-mdev/mtty.c
-> +++ b/samples/vfio-mdev/mtty.c
-> @@ -624,7 +624,7 @@ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
->  		u8 lsr = 0;
->  
->  		mutex_lock(&mdev_state->rxtx_lock);
-> -		/* atleast one char in FIFO */
-> +		/* at least one char in FIFO */
->  		if (mdev_state->s[index].rxtx.head !=
->  				 mdev_state->s[index].rxtx.tail)
->  			lsr |= UART_LSR_DR;
-> 
-
-
-
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
