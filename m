@@ -1,172 +1,137 @@
-Return-Path: <linux-kernel+bounces-852769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBFFBD9DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A260BD9DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074231922B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6E3192358F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5852320459A;
-	Tue, 14 Oct 2025 14:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44130314A9F;
+	Tue, 14 Oct 2025 14:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsmibqZP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="F01Y80gW";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="h30FJP+i"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CEB1D555;
-	Tue, 14 Oct 2025 14:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81423148B5;
+	Tue, 14 Oct 2025 14:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450670; cv=none; b=bSF3iDYCBjPL0G3oNFrVddT7cpFEmZoEbibQw3wNL5uWEE48YD+zlAS88lWisTabqUWXymec6RgVwsZwMcN7Wj0cYa1BamfcTnDkYkGPFF3Ws3mTts/ogdhAKXnzAyrdQtABSJFKwm79waHrgi9Isrv2EDyeeFbii/9ERgoXq30=
+	t=1760450711; cv=none; b=Zn4Tl9meSlBJZGhiQf9rjK6ZkiUR4SZjm6A8B/LUWRNTokDQDMWLx/piHUQd4C+zaXQXFahK7P2P8o3Tv5+d2uoBFQh+ojCKWSI5s0OgozHp13L8tEpCI1OkXrweYxt1fKSAe90gtWoRRJRgCMU4i1M38MT/4rZmQXTTE3q/NJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450670; c=relaxed/simple;
-	bh=frZy9oGFvGHgFZBr5Y7kQCzcpftquk7efK652Jvx0iQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9Pb+MuEJfNo7SYTTPN43p5NAR6RZcnEwACrCyYKl/02UWteslkzyQ6tJFL0MccvehgQ+QMVtQhu+wk/5WwicZFVvsGbzK8N5W/nsZXmwZBmXBvfG3E1vHzfb/8RCnqH0MlunYKysTFEJp4MdhGjY9lSckT8hc3VEVi4JnaeIW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsmibqZP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3B2C4CEE7;
-	Tue, 14 Oct 2025 14:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760450670;
-	bh=frZy9oGFvGHgFZBr5Y7kQCzcpftquk7efK652Jvx0iQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tsmibqZPDtQvyJ03XUnrYjHoCl7S0+/xSDHq2noNIXb+9hkAu21HfJ+oVu9ES2lIU
-	 qc7F2qQY/QpyClDV0pCgB5/deUrenKah63hy2z9ZtIvwbKW+n1y07EXDWJ/+LUuGfD
-	 ZUdWID+VqPi8bP13uCtY5VkGfwzxd6wdWatnctbM/++uVksB7Ca2Xgw8XpjvGUDWGD
-	 vV9pdKFjFVPVxgknAGNW5dlHWor17pyW4vCfalA35SNp+6sg6jHt1o7ra+5zWkGcsz
-	 I1XcgOEDTgTDtr+1fYpKpn0Prd4r2R7CQSYcBSYiXDGUUY68ehO4TR8bSljW0Cg/je
-	 GzL6MfIHy1CLQ==
-Date: Tue, 14 Oct 2025 23:04:25 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf stat: Additional verbose details for <not
- supported> events
-Message-ID: <aO5YaR_B8ZYMdHa_@google.com>
-References: <20251005181421.2787960-1-irogers@google.com>
- <aOYkRdU5pn_jTOq3@google.com>
- <CAP-5=fUqYeaE_P3ApXvq7j9SRuNXpLf+mK-4XBsvv2R=OTccbQ@mail.gmail.com>
- <aOdNWrIAQMkaVsqR@google.com>
- <CAP-5=fVERf8jf3MrwiEfQtChvC1KUe0EEASK1aVk-UKkk=Pb0w@mail.gmail.com>
+	s=arc-20240116; t=1760450711; c=relaxed/simple;
+	bh=qXgvWo/arDfz4FQGxhmSd+d+QgpyevLvyROQW/TPwQo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qGuJIfkVR3u3A2y1sDyxn5fvsV1sN26UZurtIemwi+MLePGv0Uv+JcVUzJgsgE0gPvC3QWfmVx3ichuWilml+eXFHKRYI+sUSSL0AeMbSqt6idgG9tIxoYxseQYYUq6E2s525Ow0hVJ5IMzyVl5TGQm2gDz318Sv9KVzkn/70ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=F01Y80gW; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=h30FJP+i; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1760450672; bh=bs3pDuZF7k0IowhT2GCL0eg
+	O4YvxtwPIPG+lhIu5moA=; b=F01Y80gW6+ESDXKSws0j1x/dTV9RV/yDsnc98htnqdjfwOlmo8
+	6K/ezvRS1+abziPdc22/0hGtGaGm3vNrTYnhNQWhVJD7UHdGrd6BlyLw7ep4+iRIGWw7YhosaR8
+	YCGT8C3su6M2oW5tR1cdHdbMFR5afuv7c7THz1XKBwSVzJR4sk1wlNCUqTcUfT7Cm8rBdD4/Ixm
+	z0xwSzyXWltiMHzlXAno/6tV4aW7dl78wRAFGSJlzUxBQtItVmR7V588WMds6tiizIOw0FhkI1V
+	3sLvvSsIuzqn9ZyV8EHMWqAKaq2ZSJzG2q2WD5JMZPkwCV133XjbpPHkjFY5bhgWgiw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1760450672; bh=bs3pDuZF7k0IowhT2GCL0eg
+	O4YvxtwPIPG+lhIu5moA=; b=h30FJP+ip4dEkH/Jff3KdHwdN+vJvU6dB+LfknzUOokJe8hZB8
+	G2URqHWNdt9wBKC5Uz4/84ONbPnjigI9BEAg==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Tue, 14 Oct 2025 16:04:25 +0200
+Subject: [PATCH v10 2/3] dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVERf8jf3MrwiEfQtChvC1KUe0EEASK1aVk-UKkk=Pb0w@mail.gmail.com>
+Message-Id: <20251014-msm8937-v10-2-b3e8da82e968@mainlining.org>
+References: <20251014-msm8937-v10-0-b3e8da82e968@mainlining.org>
+In-Reply-To: <20251014-msm8937-v10-0-b3e8da82e968@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Robert Marko <robimarko@gmail.com>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Das Srinagesh <quic_gurus@quicinc.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760450666; l=1121;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=qXgvWo/arDfz4FQGxhmSd+d+QgpyevLvyROQW/TPwQo=;
+ b=KQDScanAjFKMO8WzDyf//3eLkzU7mYF2IuY0W2qnqGctb6YwYg75o445X1+D+2aljXYfz4S83
+ uYr3TK7uTgkADB25RqKgSowWJXwMrczqGSJrs7t8TrBEk7+u1YKd9Gn
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Thu, Oct 09, 2025 at 06:31:51AM -0700, Ian Rogers wrote:
-> On Wed, Oct 8, 2025 at 10:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Wed, Oct 08, 2025 at 09:31:53AM -0700, Ian Rogers wrote:
-> > > On Wed, Oct 8, 2025 at 1:43 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Sun, Oct 05, 2025 at 11:14:21AM -0700, Ian Rogers wrote:
-> > > > > If an event shows as "<not supported>" in perf stat output, in verbose
-> > > > > mode add the strerror output to help diagnose the issue.
-> > > > >
-> > > > > Consider:
-> > > > > ```
-> > > > > $ perf stat -e cycles,data_read,instructions true
-> > > > >
-> > > > >  Performance counter stats for 'true':
-> > > > >
-> > > > >            357,457      cycles:u
-> > > > >    <not supported> MiB  data_read:u
-> > > > >            156,182      instructions:u                   #    0.44  insn per cycle
-> > > > >
-> > > > >        0.001250315 seconds time elapsed
-> > > > >
-> > > > >        0.001283000 seconds user
-> > > > >        0.000000000 seconds sys
-> > > > > ```
-> > > > >
-> > > > > To understand why the data_read uncore event failed, with this change:
-> > > > > ```
-> > > > > $ perf stat -v -e cycles,data_read,instructions true
-> > > > > Using CPUID GenuineIntel-6-8D-1
-> > > > > cycles -> cpu/cycles/
-> > > > > data_read -> uncore_imc_free_running_0/data_read/
-> > > > > data_read -> uncore_imc_free_running_1/data_read/
-> > > > > instructions -> cpu/instructions/
-> > > > > Control descriptor is not initialized
-> > > > > Warning:
-> > > > > kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-> > > > > Warning:
-> > > > > kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-> > > > > Warning:
-> > > > > kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-> > > > > Warning:
-> > > > > data_read:u event is not supported by the kernel.
-> > > > > Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
-> > > > > Warning:
-> > > > > kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
-> > > > > Warning:
-> > > > > data_read:u event is not supported by the kernel.
-> > > > > Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
-> > > > > cycles:u: 351621 362833 362833
-> > > > > failed to read counter data_read:u
-> > > > > failed to read counter data_read:u
-> > > > > instructions:u: 156184 362833 362833
-> > > > >
-> > > > >  Performance counter stats for 'true':
-> > > > >
-> > > > >            351,621      cycles:u
-> > > > >    <not supported> MiB  data_read:u
-> > > > >            156,184      instructions:u                   #    0.44  insn per cycle
-> > > > >
-> > > > >        0.001584472 seconds time elapsed
-> > > > >
-> > > > >        0.001811000 seconds user
-> > > > >        0.000000000 seconds sys
-> > > > > ```
-> > > > > where without this change only "data_read:u event is not supported by
-> > > > > the kernel." is shown.
-> > > >
-> > > > I think what you say is:
-> > > >
-> > > > Before:
-> > > >   data_read:u event is not supported by the kernel.
-> > > >
-> > > > After:
-> > > >   data_read:u event is not supported by the kernel.
-> > > >   Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
-> > >
-> > > I kept things verbose as unfortunately the
-> > > "kernel.perf_event_paranoid=2" is important as is the use of
-> > > per-thread mode. Different paranoia levels lead to different errors
-> > > and unfortunately a lot of the time the error gets reported as "
-> > > data_read:u event is not supported by the kernel." and I'm not sure
-> > > all users will get that the key part there is the :u modifier.
-> >
-> > Yep, I'm ok with the change.  But the changelog was a bit unclear what
-> > is being added exactly.  IIUC we already have the paranoid message with
-> > the verbose level 1.
-> 
-> I thought the line:
-> """
-> where without this change only "data_read:u event is not supported by
-> the kernel." is shown.
-> """
-> covered this?
+Document Xiaomi Redmi 3S (land).
+Add qcom,msm8937 for msm-id, board-id allow-list.
 
-Yep, I've updated the commit log a little bit and applied to
-perf-tools-next.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks,
-Namhyung
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 18b5ed044f9f..639a59d991de 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -191,6 +191,11 @@ properties:
+               - xiaomi,riva
+           - const: qcom,msm8917
+ 
++      - items:
++          - enum:
++              - xiaomi,land
++          - const: qcom,msm8937
++
+       - items:
+           - enum:
+               - flipkart,rimob
+@@ -1167,6 +1172,7 @@ allOf:
+               - qcom,apq8094
+               - qcom,apq8096
+               - qcom,msm8917
++              - qcom,msm8937
+               - qcom,msm8939
+               - qcom,msm8953
+               - qcom,msm8956
+
+-- 
+2.51.0
 
 
