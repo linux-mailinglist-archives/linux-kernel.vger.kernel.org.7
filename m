@@ -1,133 +1,195 @@
-Return-Path: <linux-kernel+bounces-853412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9719CBDB92B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D663BBDB958
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86F8A4F04A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:08:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 24A774FAB14
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2AD3081CD;
-	Tue, 14 Oct 2025 22:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A9F30DD33;
+	Tue, 14 Oct 2025 22:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAQi4/73"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="vRjj1Iz2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iwWFCDct"
+Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8253A2D46D8;
-	Tue, 14 Oct 2025 22:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464630595D;
+	Tue, 14 Oct 2025 22:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760479693; cv=none; b=QiiMdlIMnOZCIS2g51SgQ0IIGBfRBU03pzNWb8mv0pYUkx9XebCx1tqM6wenk6ZDwI4YdH47g5RhArGyvyik4iTjdbyK059iPqyUaRa+hX0v57A/CgmjCxhVtxsswJIu7umpXeDPXVAGxG++LfMmf9eBsrrxFOSk3FoSqBCf6gs=
+	t=1760479844; cv=none; b=GzzZZ++kBudOjLolSr/BTmQLyg26En9kvRDFGGGAJamRSqWsyuSExuP754P7McPMC40PFPjlKkeF+MCleA470wUrGZlg+hQkpRmjQmvBwu6Otng4B+j+TTi9CmsNvdYofZ5wh4adla2Xkk+VmtjyNFmLQYlAujl1iejv6K2G5aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760479693; c=relaxed/simple;
-	bh=f4so7NqnRUr6AWlJ8b9KwzJood07O4nAUzz9RgXezHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er73T10x8rhhX5/u80J3mU4ZTB9ecPBScr0maplR7Mbc8/TSZjDCSC8hLEHCCsRSLzbh6P9ThUiZUxUKo9zxTjxZDoD/ufFmN7WSG9bb1XRNVhaETlf3r8+Jlc/10vupRSDQJvC880MTe6wSCuuqYnT62tlO1g7tqJ+7DDYWC+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAQi4/73; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C330C4CEE7;
-	Tue, 14 Oct 2025 22:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760479693;
-	bh=f4so7NqnRUr6AWlJ8b9KwzJood07O4nAUzz9RgXezHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PAQi4/73VpLqoDftoj5wJV9cixrdhbTpov0QHjrFoBFc8QdqUGaoIgovzd5BQ8+Kp
-	 bhFszhqJLuGzX1BVVBGFkZw1ZDG9sH3Om8DhXt1xr0gd3Ms+VJoi5K6grtEcWDmnsk
-	 H0lXYWz9YxEvUxvhGFg3R5019jlYziV+ebUB4pBuby1mXpi5Cst6ISezZi3Y10REDN
-	 PkmBp3+bu1AExXm+gEaJn34LReMki6YItwhg1IM9+U8iF9EGkaqeTUs/EzfTuso1xh
-	 v+Dp29trfHGteMnmtbAAO3gn3l7lkRLUw8toBPxhOdwe8YS8aJSgs9yOiB86r3A2Fa
-	 cWV8F6XhA2oSw==
-Date: Tue, 14 Oct 2025 23:08:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Joan-Na-adi <joan.na.devcode@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Joan Na <joan.na@analog.com>
-Subject: Re: [PATCH v3 3/3] dt-bindings: regulator: Add MAX77675 regulator
- binding
-Message-ID: <1603c2ad-d2d1-457f-8273-e397c541b782@sirena.org.uk>
-References: <20251014053142.15835-1-joan.na@analog.com>
- <20251014053142.15835-4-joan.na@analog.com>
- <512ffe3d-5ab3-4e87-afd2-46f0005a8d17@kernel.org>
- <08b4c0a0-cc59-4640-94ff-2d243c558a67@sirena.org.uk>
- <1d1808d5-f166-488d-97b0-78fdd7d8ed0e@kernel.org>
+	s=arc-20240116; t=1760479844; c=relaxed/simple;
+	bh=Y0ZWB8IW7WA3Tu8mFcSM9NS2fCmDXQy88DlyKa+fx6s=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=WgyGl1o6CBuUCf3LP9gTrZYpvnovU9iZuPOlNMpLKLdH81CG+qH5QBRhwleerk2hzqVQlysFj0d+yhn4K/5GhubOdkKVQSjTBaKsR4pLyiwy19t2HC6ywDS5nYULBHg4qO2lv2N/t1n1aSI4bcpsxaGTl/BKnjde1/c1TKPEBaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=vRjj1Iz2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iwWFCDct; arc=none smtp.client-ip=202.12.124.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 0EF761300683;
+	Tue, 14 Oct 2025 18:10:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 14 Oct 2025 18:10:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1760479838; x=1760487038; bh=nCzRbfcA8hHPMwFKOygEjL9TtP08HW4n43B
+	k2GKqoug=; b=vRjj1Iz2MJkRiS5oTgMN69YY9T5CviUbsSueOnyqMALlKoLh7yC
+	F0GyMWGoMaieW6VVoqxN/76Kf8BXa+mAuY2fx5ic4vurbiqZfp8UGUfqUglsez+F
+	e//U4w9egmHZnXSGLnKkvonWJDj850lqc3m4Y2KARjsEzY7sN1ZxlMXPAfe+TN1c
+	faN3HaM9wzmxKHLwXnc9zzlM1yqDxqqyKxl9t862tUXE+97RP6M/0e/IKnUVmGc0
+	75Ysc46PH/bff5A6VrDh5isNkbg9+PLWoK6xUBZ1Ukf0oPOXzIS3qXHVaO1enjNV
+	PhDqsBZ4y0aUxHxZFZ501FLY2BA+n5X2Elw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760479838; x=
+	1760487038; bh=nCzRbfcA8hHPMwFKOygEjL9TtP08HW4n43Bk2GKqoug=; b=i
+	wWFCDctDN6fTbgIeyP3+WP5OzVNSAHCGloQOLBJLDpkzsPUmwGboWIrqXVVflhuy
+	pL8Nj9AovR0zDR42pMxC9Xx3vzC9mJIito/nvOz7kDFn3lIRtPTh9qetJUlaqdJA
+	1yFqjPJ1tmw0wrvZdafT2MnEaR28OLjNkfBsC1d2loB3gWxtZLUdKqj9ATQf5dYZ
+	/phLJpA3tyIrGgzY81dE5JhtEAkvHgeTNNyIQJ4K3gLKWaYjjB88kGyN7YFA2qt+
+	qJMfxLBW/xxSST92Z3pa7QBLaCKoTSoMI/u7UwU1ryX2phtVa9XyXe7EBwJgJ/rT
+	Pm8PKokPejEsxh0+Sy3MA==
+X-ME-Sender: <xms:XMruaFuRT8IUuTMjKG1Dw0WHyOjGHDNfXyRE-_nVp-MOI_fakUzx5g>
+    <xme:XMruaNcG5qIHN3loksbZIoOceexzPVYZB3m0MFlN7v7iPHUT-OBQMT3-R4AgSGJpy
+    F4LDimAEuIL4DZn8RlZZTV4nEOoqE44hAHGM8uz2N-BVxnY5w>
+X-ME-Received: <xmr:XMruaBCr8PUP68p5xyBv2IrG4FxXTP8o3dAsBdcWY2_anfqWcF9PLzpLs2oJYv8sM08gZU8SNz8rNKAbWIDwRZfZNYVmIGisVM5S051kkx5o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddujedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:XMruaIlLW6kt8bsuAvkOEJYObTHM-44_i5n9WPzH3fXV5aO1bcA2kw>
+    <xmx:XMruaPhVqYQSbftP3_kDMT2NjLrpo1kVjx2g8f9L1MaXawYwkuOn5A>
+    <xmx:XMruaI16pFKOg_mv60A4rOIORMn7r6yl4PwtfngiItDQHs2j_EmxVg>
+    <xmx:XMruaDRhyP5ci8StbP1zoSb-2OZ4m2R3hTYOSSlLhMk0uGw48OMmeg>
+    <xmx:XsruaL1914rXeSmv2yP-lSzIlJexfiGmlhQv0Y75LbhTSC1UULawID9r>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Oct 2025 18:10:25 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FTWivOCAVqJuz5DR"
-Content-Disposition: inline
-In-Reply-To: <1d1808d5-f166-488d-97b0-78fdd7d8ed0e@kernel.org>
-X-Cookie: Madness takes its toll.
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Alexander Aring" <alex.aring@gmail.com>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
+ "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
+ "Bharath SM" <bharathsm@microsoft.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>,
+ "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Amir Goldstein" <amir73il@gmail.com>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "Kuniyuki Iwashima" <kuniyu@google.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, netfs@lists.linux.dev,
+ ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, netdev@vger.kernel.org
+Subject:
+ Re: [PATCH 02/13] filelock: add a lm_may_setlease lease_manager callback
+In-reply-to: <87a320441f2b568c71649a7e6e99381b1dba6a8e.camel@kernel.org>
+References: <>, <87a320441f2b568c71649a7e6e99381b1dba6a8e.camel@kernel.org>
+Date: Wed, 15 Oct 2025 09:10:23 +1100
+Message-id: <176047982343.1793333.618816248171085890@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
+On Tue, 14 Oct 2025, Jeff Layton wrote:
+> On Tue, 2025-10-14 at 16:34 +1100, NeilBrown wrote:
+> > On Tue, 14 Oct 2025, Jeff Layton wrote:
+> > > The NFSv4.1 protocol adds support for directory delegations, but it
+> > > specifies that if you already have a delegation and try to request a new
+> > > one on the same filehandle, the server must reply that the delegation is
+> > > unavailable.
+> > >=20
+> > > Add a new lease manager callback to allow the lease manager (nfsd in
+> > > this case) to impose this extra check when performing a setlease.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/locks.c               |  5 +++++
+> > >  include/linux/filelock.h | 14 ++++++++++++++
+> > >  2 files changed, 19 insertions(+)
+> > >=20
+> > > diff --git a/fs/locks.c b/fs/locks.c
+> > > index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..9e366b13674538dbf482ffd=
+eee92fc717733ee20 100644
+> > > --- a/fs/locks.c
+> > > +++ b/fs/locks.c
+> > > @@ -1826,6 +1826,11 @@ generic_add_lease(struct file *filp, int arg, st=
+ruct file_lease **flp, void **pr
+> > >  			continue;
+> > >  		}
+> > > =20
+> > > +		/* Allow the lease manager to veto the setlease */
+> > > +		if (lease->fl_lmops->lm_may_setlease &&
+> > > +		    !lease->fl_lmops->lm_may_setlease(lease, fl))
+> > > +			goto out;
+> > > +
+> >=20
+> > I don't see any locking around this.  What if the condition which
+> > triggers a veto happens after this check, and before the lm_change
+> > below?
+> > Should lm_change implement the veto?  Return -EAGAIN?
+> >=20
+> >=20
+>=20
+> The flc_lock is held over this check and any subsequent lease addition.
+> Is that not sufficient?
 
---FTWivOCAVqJuz5DR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ah - I didn't see that - sorry.
 
-On Tue, Oct 14, 2025 at 11:54:41PM +0200, Krzysztof Kozlowski wrote:
-> On 14/10/2025 15:11, Mark Brown wrote:
-> > On Tue, Oct 14, 2025 at 10:14:15AM +0200, Krzysztof Kozlowski wrote:
-> >> On 14/10/2025 07:31, Joan-Na-adi wrote:
+But I still wonder why ->lm_change cannot do the veto.
 
-> >>> +  maxim,en-mode:
-> >>> +    description: |
-> >>> +      Enable mode configuration.
-> >>> +      "push-button"  - Push button
-> >>> +      "slide-switch" - Slide switch
-> >>> +      "logic" - Logic mode
+I also wonder if the current code can work.  If that loop finds an
+existing lease with the same file and the same owner the it invokes
+"continue" before the code that you added.
+So unless I'm misunderstanding (again) in the case that you are
+interested in, the new code doesn't run.
 
-> >> You just repeat the name in the description. Say something useful.
-
-> > Do you have concrete suggestions there?  I can see dropping the
-> > descriptions entirely but otherwise I'm not sure there's much to
-> > usefully add.
-
-> Then just drop descriptions. I could imagine datasheet has something
-> more, but if not, then really no point to copy paste.
-
-I suspect someone said descriptions were needed...  TBH I think just
-the enumerated names are clear enough.
-
-> >>> +  maxim,dvs-slew-rate-mv-per-us:
-
-> >> Except you said mv/us, not us. Confusing.
-
-> > That's what I'd expect for a slew rate?  It's the speed with which the
-> > device ramps between voltages during voltage transitions, mV/us is a
-> > perfectly normal unit for that.
-
-> Yeah, but the property unit suffix "-us" says that unit is us, so not
-> mv/us. I think we did not have that case so far, unless I missed such,
-> so either we ignore description mismatch from property-units or we
-> change it to something, like "-mvperus".
-> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-
-Right, and the above does say "mv-per-us" which is how I'd have expected
-those units to be formatted rather than "mvperus".
-
---FTWivOCAVqJuz5DR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjuyccACgkQJNaLcl1U
-h9DzAQf+J8wr4nH5jE8loa1E9aZWNCree6ocxQorbFa0fF1wr5dcfStv3cNHZUdK
-Cj04aZy0x5TGZHuhN7YokFub/5eVynNjXOlvHCMbXLyhjgBxK8cfzfLedYDqC4H8
-qrQccY+8xgYNCIEypgjnsHdGbsLrWpb+pqLF3G0FD0QDw+OVJiZXBOXtcHLdgRXf
-GCHNOWNBr1Acgq90HCLHTkM1blj/e/CMFgiCNnZxWSuu5g5kFNyffDGkoXQqoZft
-pljalKMliRJNMTqp9uoI7XIX86Y0xI/VWMtrBGdHy19hKuCMdtE8aVm826/eoZ7N
-o+6NQSEHfKfK9bdqYCOngWLtnpAO7A==
-=Rx33
------END PGP SIGNATURE-----
-
---FTWivOCAVqJuz5DR--
+Thanks,
+NeilBrown
 
