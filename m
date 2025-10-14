@@ -1,101 +1,69 @@
-Return-Path: <linux-kernel+bounces-852681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95773BD9A8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22651BD9A3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB1C580DC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242613E311C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F6631960A;
-	Tue, 14 Oct 2025 13:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A03F3164D5;
+	Tue, 14 Oct 2025 13:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D1srO15R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="F2boAKcd"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728BA319600;
-	Tue, 14 Oct 2025 13:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB216313E3F;
+	Tue, 14 Oct 2025 13:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760447303; cv=none; b=aRy4AVQwoIBSiSoI1X3kBMKoltrrWChJCymsc9N53NMITVB4eyxgV2Es65Rcpn6m1bZS7NtjP2kyBWtsJMfFBJwOJKelyFoxsK/nMR68BnOZfYrJRnRbgdwTtyc0TT9CbjJklLpN7/7lRyMj7vm3d95T4cQbVSDP2FievSdPfLI=
+	t=1760447178; cv=none; b=lrMl/blOUVBlcE8PQKtzLX6Os4talQtEA5nYsVB2een3MJ+R8ldcYNJUQMFhsBFQva1Nb2wbmos0gvtZhm8T+5G1ONM/Ro2KyfK864HNEcr21PfgF82ZSSv8gA9iI1sZ+fxq2w9UTGhJeJA9gKXkEQ+kf7zHvXq9udfLmrNqS4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760447303; c=relaxed/simple;
-	bh=i9IOH9O/QwIEJOJX4Hmu4TbYsCb1D/4y6+SywTSOJWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OH5ArCG6LgVuiztDoqpbfDJvRNN0MEUiMWmCWmNAQwim7s7UPZuX9lqK1mL2AgX4aA52SRbD0yOp/js0CnNaZZcNv84tMOp1+KxofgZCm/p0Z2/lpDdGxyKK2ecukOAo/6mxlt8O+Hltds40fLc4HYXMi40joEYt98nOZ0Ckwyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D1srO15R; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760447302; x=1791983302;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=i9IOH9O/QwIEJOJX4Hmu4TbYsCb1D/4y6+SywTSOJWg=;
-  b=D1srO15RM0Gmo4UiVPf1izv1zpJjKaHumqUgW7BuMIO4wKzsynFbRuhJ
-   d2zu/gia5D4GDpx7O8mQLkvppgri/vJBHyg2Mbn46WDgkX0i/72gKArbd
-   VHkH/awaFyGhMd6PQjmEcydwQdgVUW5BiC1ysKmbdUrVFWyYp/MlBZOPh
-   XiKuetaFRTE0dAK73WOgTqtTVGkMdWj0PycpWZGEgsE358eHWlwoUiiyo
-   drGTm1FUivnrSq91PUdm2pCngwVaIdhR5eJmoP0o6UN5ki5VTFrzU4R1i
-   TtfGDderCrnkkbH79dUoSErY2NyvS+pOsJKFBZI70L11oAqFCF7ByNqL8
-   A==;
-X-CSE-ConnectionGUID: MEkm/SdZTzSHkqR8yyPaJw==
-X-CSE-MsgGUID: J5VHLOpFS4+1owjjQlt6Pg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62515502"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62515502"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 06:08:21 -0700
-X-CSE-ConnectionGUID: 53aYxaR4Qh2tVgAdaUeJww==
-X-CSE-MsgGUID: cJiEiFtbThGI+AD5JzUPxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="182675720"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa010.fm.intel.com with ESMTP; 14 Oct 2025 06:08:13 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Jann Horn <jannh@google.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Yi Lai <yi1.lai@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: iommu@lists.linux.dev,
-	security@kernel.org,
-	x86@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v6 7/7] iommu/sva: Invalidate stale IOTLB entries for kernel address space
-Date: Tue, 14 Oct 2025 21:04:37 +0800
-Message-ID: <20251014130437.1090448-8-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
-References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1760447178; c=relaxed/simple;
+	bh=FMRMKN/65QkSbO6rI6e3u+TLrLLYCKdJGv94LrhicwY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OO1xVoxVosQpUmo375rnL31yWFsy632aodWBB5WAop+P/XQGUtEzwrQCbeYwAEsn0FPrv/dfYFLXIx0Zinol/Do+yTA56NDax5Kem8utRY7HkKoz1e96qVFh2TMAljoS9K7SlPspfvWu15jlOPC+fgxVjP9iux4w9b66SmYFj1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=F2boAKcd; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59E6ZMve2905485;
+	Tue, 14 Oct 2025 06:05:51 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=cX2hAgeSX8sQp3EdzeOZ8RwmbnMTQ6NpxUrU47Ri+L4=; b=F2boAKcdRUHV
+	7hPTeY2+8gRBsulA9BHaZ0UfEpLiF4Dxo79DBEn4GBRwgesIq9Eo89rikTuoK9nl
+	0DuA/iz2DcnblPtu8Z7FzgMGl5UDuEpUr2XEztBiD91vkn3uvoYP5H8QiyVF1t8r
+	m7z57FjH6w4QZCZteMz0Pd55jyC4oEJhnArSRvmD2MCFeyY+omDBTZR45I3SA+um
+	SsMy8eBNXCdqHpMC78OSPHI2TK0jf+NDaYb+KrAsuAaxrkjnxb/66A5GMTd6FR2d
+	4NA+OEFssyjjrajTlR9v9CAphr/W7MSIVDbNHPnQclhH+eLnsRRVCmVxLnCppIPg
+	UnZ55DuogQ==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49shcr1uw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 14 Oct 2025 06:05:51 -0700 (PDT)
+Received: from devbig091.ldc1.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 14 Oct 2025 13:05:50 +0000
+From: Chris Mason <clm@meta.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+CC: Chris Mason <clm@meta.com>, <axboe@kernel.dk>, <nilay@linux.ibm.com>,
+        <ming.lei@redhat.com>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+        <johnny.chenyi@huawei.com>
+Subject: Re: [PATCH v2 for-6.18/block 05/10] blk-mq: cleanup shared tags case in blk_mq_update_nr_requests()
+Date: Tue, 14 Oct 2025 06:05:01 -0700
+Message-ID: <20251014130507.4187235-2-clm@meta.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250910080445.239096-6-yukuai1@huaweicloud.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,179 +71,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: oXRUz5I_LbfgTMXS2msoifkYZ9NEjaw6
+X-Authority-Analysis: v=2.4 cv=Y7r1cxeN c=1 sm=1 tr=0 ts=68ee4aaf cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=AiHppB-aAAAA:8 a=i0EeH86SAAAA:8
+ a=aQaWdk62591M1yJ-J1UA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: oXRUz5I_LbfgTMXS2msoifkYZ9NEjaw6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE0MDEwMCBTYWx0ZWRfX/u6Xghdx8Xa/
+ 9KLjvFdLx9+x2Kr9FiF1WDuy1/9VEG6qkeBY0OzZszEXY1LdYp2en2BaWykpWCtmEwfovAmcFuP
+ CaVHfP2n8gC/9/wQChA0dHw8t2hOzsuro+KRhNZlTsmNH61JrZWKW+e5Zl80h43Y59rxgM/bDgP
+ TZ2e52p3prKqcsat4tKCue81RVan057d0tjMEmmYSH/loT6eW9koFGndNtIB3R/E04gMpX/qhPL
+ 5o3Z811ynZlX3LWrHq7pArGoQK2Db0TeIroXhUhH2SmhVkLXq2CbCkiK/sppDi+ZtAX6CaYRwj1
+ mV55XfWWeWOo30Mh/plGXJ1rngOkhJ3RZairsTUEQg7BAwHCCRvuiFKuxFcGoJYPgD5tgdbMmv3
+ s/V/0qqozVfuHqCCPnxL000AP/de3A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
 
-In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
-shares and walks the CPU's page tables. The x86 architecture maps the
-kernel's virtual address space into the upper portion of every process's
-page table. Consequently, in an SVA context, the IOMMU hardware can walk
-and cache kernel page table entries.
+Hi everyone,
 
-The Linux kernel currently lacks a notification mechanism for kernel page
-table changes, specifically when page table pages are freed and reused.
-The IOMMU driver is only notified of changes to user virtual address
-mappings. This can cause the IOMMU's internal caches to retain stale
-entries for kernel VA.
+My review automation flagged this one in linux-next, and it looks like a
+valid bug to me:
 
-A Use-After-Free (UAF) and Write-After-Free (WAF) condition arises when
-kernel page table pages are freed and later reallocated. The IOMMU could
-misinterpret the new data as valid page table entries. The IOMMU might
-then walk into attacker-controlled memory, leading to arbitrary physical
-memory DMA access or privilege escalation. This is also a Write-After-Free
-issue, as the IOMMU will potentially continue to write Accessed and Dirty
-bits to the freed memory while attempting to walk the stale page tables.
+On Wed, 10 Sep 2025 16:04:40 +0800 Yu Kuai <yukuai1@huaweicloud.com> wrote:
 
-Currently, SVA contexts are unprivileged and cannot access kernel
-mappings. However, the IOMMU will still walk kernel-only page tables
-all the way down to the leaf entries, where it realizes the mapping
-is for the kernel and errors out. This means the IOMMU still caches
-these intermediate page table entries, making the described vulnerability
-a real concern.
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> For shared tags case, all hctx->sched_tags/tags are the same, it doesn't
+> make sense to call into blk_mq_tag_update_depth() multiple times for the
+> same tags.
+> 
 
-To mitigate this, a new IOMMU interface is introduced to flush IOTLB
-entries for the kernel address space. This interface is invoked from the
-x86 architecture code that manages combined user and kernel page tables,
-specifically before any kernel page table page is freed and reused.
+[ ... ]
 
-This addresses the main issue with vfree() which is a common occurrence
-and can be triggered by unprivileged users. While this resolves the
-primary problem, it doesn't address some extremely rare case related to
-memory unplug of memory that was present as reserved memory at boot,
-which cannot be triggered by unprivileged users. The discussion can be
-found at the link below.
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 9b97f2f3f2c9..80c20700bce8 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -4935,34 +4935,35 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
+>
+>  	blk_mq_quiesce_queue(q);
+>
+> -	queue_for_each_hw_ctx(q, hctx, i) {
+> -		if (!hctx->tags)
+> -			continue;
+> -		/*
+> -		 * If we're using an MQ scheduler, just update the scheduler
+> -		 * queue depth. This is similar to what the old code would do.
+> -		 */
+> -		if (hctx->sched_tags) {
+> -			ret = blk_mq_tag_update_depth(hctx, &hctx->sched_tags,
+> -						      nr);
+> -		} else {
+> -			ret = blk_mq_tag_update_depth(hctx, &hctx->tags, nr);
+> -		}
+> -		if (ret)
+> -			goto out;
+> -	}
+> -
+> -	q->nr_requests = nr;
+> -	if (q->elevator && q->elevator->type->ops.depth_updated)
+> -		q->elevator->type->ops.depth_updated(q);
+> -
+>  	if (blk_mq_is_shared_tags(set->flags)) {
+>  		if (q->elevator)
+>  			blk_mq_tag_update_sched_shared_tags(q);
+                        ^^^^
 
-Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
-Cc: stable@vger.kernel.org
-Suggested-by: Jann Horn <jannh@google.com>
-Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Link: https://lore.kernel.org/linux-iommu/04983c62-3b1d-40d4-93ae-34ca04b827e5@intel.com/
----
- include/linux/iommu.h     |  4 ++++
- drivers/iommu/iommu-sva.c | 29 ++++++++++++++++++++++++++++-
- mm/pgtable-generic.c      |  2 ++
- 3 files changed, 34 insertions(+), 1 deletion(-)
+Does blk_mq_tag_update_sched_shared_tags() use the wrong value here?
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index c30d12e16473..66e4abb2df0d 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -1134,7 +1134,9 @@ struct iommu_sva {
- 
- struct iommu_mm_data {
- 	u32			pasid;
-+	struct mm_struct	*mm;
- 	struct list_head	sva_domains;
-+	struct list_head	mm_list_elm;
- };
- 
- int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode);
-@@ -1615,6 +1617,7 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev,
- 					struct mm_struct *mm);
- void iommu_sva_unbind_device(struct iommu_sva *handle);
- u32 iommu_sva_get_pasid(struct iommu_sva *handle);
-+void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end);
- #else
- static inline struct iommu_sva *
- iommu_sva_bind_device(struct device *dev, struct mm_struct *mm)
-@@ -1639,6 +1642,7 @@ static inline u32 mm_get_enqcmd_pasid(struct mm_struct *mm)
- }
- 
- static inline void mm_pasid_drop(struct mm_struct *mm) {}
-+static inline void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end) {}
- #endif /* CONFIG_IOMMU_SVA */
- 
- #ifdef CONFIG_IOMMU_IOPF
-diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
-index 1a51cfd82808..d236aef80a8d 100644
---- a/drivers/iommu/iommu-sva.c
-+++ b/drivers/iommu/iommu-sva.c
-@@ -10,6 +10,8 @@
- #include "iommu-priv.h"
- 
- static DEFINE_MUTEX(iommu_sva_lock);
-+static bool iommu_sva_present;
-+static LIST_HEAD(iommu_sva_mms);
- static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
- 						   struct mm_struct *mm);
- 
-@@ -42,6 +44,7 @@ static struct iommu_mm_data *iommu_alloc_mm_data(struct mm_struct *mm, struct de
- 		return ERR_PTR(-ENOSPC);
- 	}
- 	iommu_mm->pasid = pasid;
-+	iommu_mm->mm = mm;
- 	INIT_LIST_HEAD(&iommu_mm->sva_domains);
- 	/*
- 	 * Make sure the write to mm->iommu_mm is not reordered in front of
-@@ -132,8 +135,13 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
- 	if (ret)
- 		goto out_free_domain;
- 	domain->users = 1;
--	list_add(&domain->next, &mm->iommu_mm->sva_domains);
- 
-+	if (list_empty(&iommu_mm->sva_domains)) {
-+		if (list_empty(&iommu_sva_mms))
-+			iommu_sva_present = true;
-+		list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
-+	}
-+	list_add(&domain->next, &iommu_mm->sva_domains);
- out:
- 	refcount_set(&handle->users, 1);
- 	mutex_unlock(&iommu_sva_lock);
-@@ -175,6 +183,13 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
- 		list_del(&domain->next);
- 		iommu_domain_free(domain);
- 	}
-+
-+	if (list_empty(&iommu_mm->sva_domains)) {
-+		list_del(&iommu_mm->mm_list_elm);
-+		if (list_empty(&iommu_sva_mms))
-+			iommu_sva_present = false;
-+	}
-+
- 	mutex_unlock(&iommu_sva_lock);
- 	kfree(handle);
- }
-@@ -312,3 +327,15 @@ static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
- 
- 	return domain;
- }
-+
-+void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
-+{
-+	struct iommu_mm_data *iommu_mm;
-+
-+	guard(mutex)(&iommu_sva_lock);
-+	if (!iommu_sva_present)
-+		return;
-+
-+	list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
-+		mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm, start, end);
-+}
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index 1c7caa8ef164..8c22be79b734 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -13,6 +13,7 @@
- #include <linux/swap.h>
- #include <linux/swapops.h>
- #include <linux/mm_inline.h>
-+#include <linux/iommu.h>
- #include <asm/pgalloc.h>
- #include <asm/tlb.h>
- 
-@@ -430,6 +431,7 @@ static void kernel_pgtable_work_func(struct work_struct *work)
- 	list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
- 	spin_unlock(&kernel_pgtable_work.lock);
- 
-+	iommu_sva_invalidate_kva_range(PAGE_OFFSET, TLB_FLUSH_ALL);
- 	list_for_each_entry_safe(pt, next, &page_list, pt_list)
- 		__pagetable_free(pt);
- }
--- 
-2.43.0
+In the old code, q->nr_requests was updated to nr before calling
+blk_mq_tag_update_sched_shared_tags(). But in the new code, this
+function is called while q->nr_requests still contains the old value.
 
+Looking at blk_mq_tag_update_sched_shared_tags():
+
+    void blk_mq_tag_update_sched_shared_tags(struct request_queue *q)
+    {
+        sbitmap_queue_resize(&q->sched_shared_tags->bitmap_tags,
+                             q->nr_requests - q->tag_set->reserved_tags);
+    }
+
+It reads q->nr_requests to calculate the new sbitmap size. With the
+reordering, this will resize the sbitmap to the old depth instead of
+the new depth passed in nr.
+
+-chris
 
