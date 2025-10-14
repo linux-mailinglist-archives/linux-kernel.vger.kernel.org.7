@@ -1,124 +1,226 @@
-Return-Path: <linux-kernel+bounces-851870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D096FBD77E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:53:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE94BD77EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C320F4F58AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E1FE192099B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8917F296BBC;
-	Tue, 14 Oct 2025 05:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C281D6DB5;
+	Tue, 14 Oct 2025 05:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJ1+ybYH"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="fs+OCGSr"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885DD28D8DB
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DFF29AB03
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760421164; cv=none; b=mTGDTaQGpMjDwwfj59gJ223B1lD3O0H2LggmFDfIZO1Ty3lExXpmU1GafC+XBnuDHUVpeoh0CZCtoGsJmx0Fdfn5U1Ea5RQlWMfn5yeQuHjvl0y9Ce0mT2KddAHJ/LfjjhZYZu0GnJi4KW61ZHEDrRCdhUDjqvJsvxzClBlN55M=
+	t=1760421182; cv=none; b=mPYdxUHyndyoGi5JwmEzAoeQTJkPWzNNEAkroCdaXWnku2BkTbcxccV0Lv3QsXOqoGD8OB2K/3CrVfu4uoHWRegu/OfdPXPOyK+hzO9Dhxe5eRZw1nRbrdFDbiZMF52sI3jWmWxOcTy9OfbsS1wrAN+oswmSVj49VCweYQH+Ks8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760421164; c=relaxed/simple;
-	bh=xiqFJOykby4cQK17gVtELNe3dahFjsM+TAM/4GuYD9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rdd7dziSlgbIrTU6dVA5FFUiDUhaC2d4wFC2ZlTQKG9+RBnW9tBe6X25Im96mabvulE26L9VUp4o4z9tpz9F4VZKCKaSyIahHmt4rgHW19cWxTuw5iPiZ9LpgXzluz9pV5P+xxuMztlosX9bcWH57dvjtqFDluPN9z8WotGQ4IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJ1+ybYH; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3306d3ab2e4so4908934a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760421161; x=1761025961; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mWlNVmLtjnf8rAcNm545u/wbHRU51ZDEKLc4vvLow4M=;
-        b=DJ1+ybYHL4cjKKbSwkXU6gG1UUY9+h5g+o1p/XIGZoO7DSK4y/CnqS5A0e+NYJe7fP
-         09KHxRjHC4ZvC7WGZP3c3yZxE4qNP4pH1mdTIi8GbuAVtQKELP2d9r39iSBLUIq1Qf/r
-         c4UDvNA2xUsSQGhcPrxQ85ELUVg3HwxMPDwRAzm748x9/YtMvF6vhP7v2RgjlvxhcvI6
-         OONC3FagZW5enMG0bpmzBxV+JKy6mxneZF0Yb6Sy1bpjQ2ukXUiJJHawKG/XCyUNQwin
-         0wEeM6So8r42Wo4X2VfkxllL7k4zH+w1byiU4bvSI0qU6gWP2UL2Tx8VymUZqjAPYkBu
-         bXjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760421161; x=1761025961;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mWlNVmLtjnf8rAcNm545u/wbHRU51ZDEKLc4vvLow4M=;
-        b=WwaqVPelmXNHDMgJx3ivkjSMGQM5ywMYJNqF93+HmV2k0Ga7qxgDPq86densVsyDm4
-         9AE0wnrjmoHEZODzPHNV11ObHwimQ9OFFSrmB/R7Wr6XqW8omQdimE2prA18vG3QR9st
-         7XkMI40fYlDMkH51jnYRX2/uYQS9o4i2DbOmHHVpinzViYAWKtwEPztJbZJeqBy1Ezkh
-         H3Su7G9sYHG1PbrowmpGwoudrVmSltKhq1UmrR0Wp2rWXFvvU6bC2lxzxafE4uKz4Kz6
-         aGTs2cBwNXzx+7A4eIDpdyDkiUsAvC8bRRxxKzWGDgng9YZUU4YR0zwtYl7/Q6Nu55oZ
-         RbbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeKmho/InFZn8W9OQNzVIAWelA26ohDdw9uoIPbZd0O6ugFXXo5m4koF8dIcYkKhKrsQUXdHPthHnDIwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVYU7n03wdC+dMLJ7LfpQeGj7KqeWa6THThs6Ec1zMxQgMHWd2
-	BZQ6gLFhYHWbp5Jsb7RFS7GWnFlHM9puRszoYy8AObvjDFWoPD0lPvEH
-X-Gm-Gg: ASbGncvc1YL/Decszf+9NUu1l3+cC4FuERvsbllKShkowAAHBTk59zU6v3dS+HwcHj2
-	qaUFDNVqRrzCZdKfzBi/YeM3D7ZNGvnysmTp/OiolesMzBEB+WhQadq0DPLQwM8E0g6JfVxwFxb
-	ObSlYVc1zZ6UP+9D9/1mVMM4qoGq8djeu1j53M04CRexKjPZrIYnBUp6Lj5sgub8WBhONgjPqmr
-	MVo9/91AFRBvwzpdMh4NanX9qBbY+u4KFfoV1ZwHFjEuivQhO3FAKFTlQj2PVmWshciYPajf1gv
-	2fA5FaHNbQIk1UvNYR8XhRWQeg/ehVWythKcqFSx2Hrp2P+JYrsd3buNttwAmXdmxTAE9pTWu1X
-	35U1itMSzMO3wiq77tzg0oy5zxXeiBfGOoG+gR2RcDXI0d0UpkTCsWA6DrVxCQiPFyxefWbrjiY
-	k4oqY=
-X-Google-Smtp-Source: AGHT+IGZ4VytOKfxuKimiMVWhQiKhxNFaYk8/G36/eeE0Sx6uLTpUHGY3Bg+9lWRu14oZFzlLrNxWg==
-X-Received: by 2002:a17:90b:224a:b0:332:3515:3049 with SMTP id 98e67ed59e1d1-33b5112504amr30797652a91.4.1760421161516;
-        Mon, 13 Oct 2025 22:52:41 -0700 (PDT)
-Received: from arawal-thinkpadp1gen4i.rmtin.csb ([2402:a00:401:b8b3:f979:38a1:d361:cdf4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b62657166sm14391472a91.11.2025.10.13.22.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 22:52:41 -0700 (PDT)
-From: rawal.abhishek92@gmail.com
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: arawal@redhat.com,
-	jamie.bainbridge@gmail.com,
-	Abhishek Rawal <rawal.abhishek92@gmail.com>,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] r8152: Advertise software timestamp information.
-Date: Tue, 14 Oct 2025 11:22:33 +0530
-Message-ID: <20251014055234.46527-1-rawal.abhishek92@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760421182; c=relaxed/simple;
+	bh=G0/UGo0ozvQ4jmGDO22pHXhjbWpCehf6BxKXmQ1M/uE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Md6878QFwmFcvElsT1KjOY9DxFEMg6lB/druQDlGv0QcanDn2klkege2LgwtdptiXCQbgCGQmbL0xkndjG/h95qYMGX+U/HEnzUO3HJ11KG8m3K2PCjFFLrTfj609hdJu7+ZoAD6h00n8Q3d47q5HPuNuDeJQwO9mjmxgwwVvgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=fs+OCGSr; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6006b.ext.cloudfilter.net ([10.0.30.211])
+	by cmsmtp with ESMTPS
+	id 8PeKvqMfMv7248XxtvELRw; Tue, 14 Oct 2025 05:52:54 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 8XxtviLgFMem58Xxtv74WV; Tue, 14 Oct 2025 05:52:53 +0000
+X-Authority-Analysis: v=2.4 cv=bZtrUPPB c=1 sm=1 tr=0 ts=68ede535
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=HaFmDPmJAAAA:8
+ a=rGH4yh80M_cO9nZo6tcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tjFZRGr9e1ufehZZIU8TnF6ufx2C24WBWJ4fCdRYGpU=; b=fs+OCGSrJSqmZXQAoNGP1aKdrc
+	clChslfPhCxPWvpV+0l00GWwfhcAQ0qMUErxiIMYL5kISvubmAj66dwFaeHCL2VNe0G9onknkQzns
+	St2AUPt5tVS227hzDCCXnRQevlu651pfYvbgi2ZbBZqcwx67JNHSmc8G5tM1a+c5gcAGsFpHRG1c4
+	FR5wyrBfFb+Yr9nhw+O6rU+Z/IO29NUwQG/rukoLCJgfsK0G7RfzsiYwY+4Xa/S2hJtVosxa1Fp4A
+	LDWtojpoZLj7kaHNhnwmWe5c+BCEujiasdTwpDt/s8mn/qXP1IjR/IYoEYdfNyeEqLIbn4QzQ9r92
+	mm/SRhpQ==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:55152 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1v8Xxp-00000003IY1-3ScS;
+	Mon, 13 Oct 2025 23:52:49 -0600
+Message-ID: <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
+Date: Mon, 13 Oct 2025 22:52:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, Conor Dooley <conor@kernel.org>
+Cc: bhelgaas@google.com, mani@kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>,
+ Paul Walmsley <pjw@kernel.org>, Greentime Hu <greentime.hu@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, regressions@lists.linux.dev
+References: <20251013212801.GA865570@bhelgaas>
+ <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
+ <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
+ <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v8Xxp-00000003IY1-3ScS
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:55152
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 18
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCwUJZeXVTjrEfYJcHhmY6PqxF6LAD0PuWh8LV2f/QtQNf9tKAXD9W3aansmVvxYf4ftvVK1ppcNdP17eITIluyXmoypzEjdGTMT1LYw8hf10QK7UGNT
+ GYaUdMUQp8J9/eLkmeT48h4NutFEjKlIfr1D5/vxmC2A0Sb/pmxazFBiERJKajk2wQfeTyqRQNne13Bidhc1OtSOSjbXeaWIV00=
 
-From: Abhishek Rawal <rawal.abhishek92@gmail.com>
+On 10/13/25 22:36, Krishna Chaitanya Chundru wrote:
+>
+>
+> On 10/14/2025 10:56 AM, Ron Economos wrote:
+>> On 10/13/25 22:20, Krishna Chaitanya Chundru wrote:
+>>>
+>>>
+>>> On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
+>>>> [+cc FU740 driver folks, Conor, regressions]
+>>>>
+>>>> On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
+>>>>> The SiFive FU740 PCI driver fails on the HiFive Unmatched board 
+>>>>> with Linux
+>>>>> 6.18-rc1. The error message is:
+>>>>>
+>>>>> [    3.166624] fu740-pcie e00000000.pcie: host bridge 
+>>>>> /soc/pcie@e00000000
+>>>>> ranges:
+>>>>> [    3.166706] fu740-pcie e00000000.pcie:       IO
+>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
+>>>>> [    3.166767] fu740-pcie e00000000.pcie:      MEM
+>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
+>>>>> [    3.166805] fu740-pcie e00000000.pcie:      MEM
+>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
+>>>>> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
+>>>>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
+>>>>> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
+>>>>> [    3.579552] fu740-pcie e00000000.pcie: Failed to configure iATU 
+>>>>> in ECAM
+>>>>> mode
+>>>>> [    3.579655] fu740-pcie e00000000.pcie: probe with driver 
+>>>>> fu740-pcie
+>>>>> failed with error -22
+>>>>>
+>>>>> The normal message (on Linux 6.17.2) is:
+>>>>>
+>>>>> [    3.381487] fu740-pcie e00000000.pcie: host bridge 
+>>>>> /soc/pcie@e00000000
+>>>>> ranges:
+>>>>> [    3.381584] fu740-pcie e00000000.pcie:       IO
+>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
+>>>>> [    3.381682] fu740-pcie e00000000.pcie:      MEM
+>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
+>>>>> [    3.381724] fu740-pcie e00000000.pcie:      MEM
+>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
+>>>>> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 
+>>>>> ib, align
+>>>>> 4K, limit 4096G
+>>>>> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
+>>>>> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+>>>>> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+>>>>> [    3.988164] fu740-pcie e00000000.pcie: PCI host bridge to bus 
+>>>>> 0000:00
+>>>>>
+>>>>> Reverting the following commits solves the issue.
+>>>>>
+>>>>> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc: Support ECAM 
+>>>>> mechanism by
+>>>>> enabling iATU 'CFG Shift Feature'
+>>>>>
+>>>>> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom: Prepare for 
+>>>>> the DWC ECAM
+>>>>> enablement
+>>>>>
+>>>>> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc: Prepare the 
+>>>>> driver for
+>>>>> enabling ECAM mechanism using iATU 'CFG Shift Feature'
+>>>>
+>>>> As Conor pointed out, we can't fix a code regression with a DT change.
+>>>>
+>>>> #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the driver 
+>>>> for enabling ECAM mechanism using iATU 'CFG Shift Feature'")
+>>> Hi Conor,
+>>>
+>>> Can you try with this patch and see if it is fixing the issue.
+>>> diff --git a/drivers/pci/controller/dwc/pcie-fu740.c 
+>>> b/drivers/pci/controller/dwc/pcie-fu740.c
+>>> index 66367252032b..b5e0f016a580 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-fu740.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-fu740.c
+>>> @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct 
+>>> platform_device *pdev)
+>>>
+>>>         platform_set_drvdata(pdev, afp);
+>>>
+>>> +       pci->pp.native_ecam = true;
+>>> +
+>>>         return dw_pcie_host_init(&pci->pp);
+>>>  }
+>>>
+>>> - Krishna Chaitanya.
+>>>
+>>>>
+>> I've already tried it. It doesn't work. Same error message as before.
+> Can you share us dmesg logs for this change.
+>
+> - Krishna Chaitanya.
+>>
+[    3.159763] fu740-pcie e00000000.pcie: host bridge 
+/soc/pcie@e00000000 ranges:
+[    3.159853] fu740-pcie e00000000.pcie:       IO 
+0x0060080000..0x006008ffff -> 0x0060080000
+[    3.159916] fu740-pcie e00000000.pcie:      MEM 
+0x0060090000..0x007fffffff -> 0x0060090000
+[    3.159953] fu740-pcie e00000000.pcie:      MEM 
+0x2000000000..0x3fffffffff -> 0x2000000000
+[    3.160039] fu740-pcie e00000000.pcie: ECAM at [mem 
+0xdf0000000-0xdffffffff] for [bus 00-ff]
+[    3.571421] fu740-pcie e00000000.pcie: No iATU regions found
+[    3.571472] fu740-pcie e00000000.pcie: Failed to configure iATU in 
+ECAM mode
+[    3.571529] fu740-pcie e00000000.pcie: probe with driver fu740-pcie 
+failed with error -22
 
-Driver calls skb_tx_timestamp(skb) in rtl8152_start_xmit(), but does not advertise the capability in ethtool.
-Advertise software timestamp capabilities on struct ethtool_ops.
+Same as before the change. The entire log is here:
 
-Signed-off-by: Abhishek Rawal <rawal.abhishek92@gmail.com>
-Reviewed-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
----
- drivers/net/usb/r8152.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 44cba7acfe7d9bfbcc96a1e974762657bd1c3c33..f896e9f28c3b0ce2282912c9ea37820160df3a45 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -9311,6 +9311,7 @@ static const struct ethtool_ops ops = {
- 	.set_ringparam = rtl8152_set_ringparam,
- 	.get_pauseparam = rtl8152_get_pauseparam,
- 	.set_pauseparam = rtl8152_set_pauseparam,
-+	.get_ts_info = ethtool_op_get_ts_info,
- };
- 
- static int rtl8152_ioctl(struct net_device *netdev, struct ifreq *rq, int cmd)
--- 
-2.51.0
+https://www.w6rz.net/dmesg.txt
 
 
