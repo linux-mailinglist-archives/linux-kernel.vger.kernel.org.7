@@ -1,209 +1,202 @@
-Return-Path: <linux-kernel+bounces-852684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51EEBBD9A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:21:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E3EBD9AB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0175B3AB1E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D8858202E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D902314A74;
-	Tue, 14 Oct 2025 13:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E67314B77;
+	Tue, 14 Oct 2025 13:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TGu37ktP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FHoYdPTX"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013033.outbound.protection.outlook.com [40.107.201.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97B830F949
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760447381; cv=none; b=UnomO/Q8qWWFYjAQ0dr6/lqt6CM8vP5q3vUBD8wu3/tWSQIZSQn6m+/jseZokdYY751LvQibAZOel1ByXfNvGalS+knwNaKk6Si5Jzis2TfaEyrSQxXE/pwJyQsCuknUC1h5vGfVfkJD2sBHemTn5U4Zd35JzMRmD/ZFrRbOsCU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760447381; c=relaxed/simple;
-	bh=TrP32CCyZVGRO8t22mwdn7DMyjarK0p1mbw9fs+oVBo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uJe6mGxdyRkGFlkvpisWJ46nEUwIqbKfd6uucUmXmQNVChx33ahEvgGuuOn8YXPuSQyehwm6+r1UgTqib6VPJGDrSL+SycOgNGpuAtUcI+iSa2Dj/A7Jp3bVI22SGEriHYLtyVkOO/VhKFbD6pM2FqgUxtwQVNeAjXxRqCi9tNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TGu37ktP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760447378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e/j4fnNPw8xpYuDJO1o02FCXiuLtXdqBOYuHxFNejeY=;
-	b=TGu37ktPMQTPN7arxeCmKs9E6lztM/7+4NF40YFa4uY9r/+04i0sSO527XFzwlQbo0izgn
-	82JjQuIuwZhfL7NJwILJo3rMcUtNVK68mR/kQaS6glWJfAhgjcwkaxEiKnSqpWx5eigIWZ
-	8XS7Hw3TeSdu0tV3xgkZrP2E7Lljlv4=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-r-bLG98HPl2gYRmBPMctUw-1; Tue, 14 Oct 2025 09:09:37 -0400
-X-MC-Unique: r-bLG98HPl2gYRmBPMctUw-1
-X-Mimecast-MFC-AGG-ID: r-bLG98HPl2gYRmBPMctUw_1760447376
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-269af520712so99688785ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:09:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760447376; x=1761052176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e/j4fnNPw8xpYuDJO1o02FCXiuLtXdqBOYuHxFNejeY=;
-        b=MDvEmdYX2gkhPqPFtFj2fxVJ0yEai9fWEY6NCsBkUcQ8gNdOOTHBX8Y4gE6UuPkGSa
-         BN4EAQwRTiLn62MRkhqnqfm8dPxy/q6M5KNl8VSGExA0wBuDpIDNJhAuqwc4PDgxZfqV
-         ZNqxAk2sSnPz+p7VsHu7GWDj8JEEl+7kreCX35t15oHibkwIPaBErbDo1Nfuv0KojEwE
-         yC81+F9dxPXHNMEHCU4uL1RHXithBXgFbM6kSHGCF2Fb606e3oRZHlC0XXZYm15KI97P
-         mdsxIgRgf2CdsJ02MjvGg/X9XiSKr12hG6twie0AdkaYCoioc60FyuLWeooEP7KzZ7Q5
-         e3mw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4zjIWX+CN4wewCb5VhflJ8tjhJtEHC8c0md47yxEUgsyCnS6NoBcAZCWM815Nb1uKGURJSwnf/BckGf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNrCJMIbyH/KHtV66gXBAimLgy06G+gbYuumwmSuLEFiRvE8Et
-	r+Y/2+5kPymwBMQmdCH3TWrOTn9hQrsJo9E8XsXJZ6ckaj3Ls1D/df4jeV0v1ZWSFYeQH7tyDrm
-	GDOVM2yJN30K68QcucRPnzD9O2eiXqKGD30JcqvKw5wDz01knaGNHgQlzLaL93BzGXKEWpNHKCV
-	9z8VJFIpCzT/e6791J6dUj2cxaeZ3neUhO+jX2Eb0g
-X-Gm-Gg: ASbGnctAkrwATWKPGucNFG6gyu8rPq9inEVYhQ3LxxP1EEZQkUNOudJb0CrLYPo35Tw
-	UTDtMyt8hWXsHClwQMXJx4ZM+tWQRSiBrcvGDxaiccRdGmKUWRoQvUVza0REgTvtHUvxcQuK4mv
-	qBsJl/ATBLbxEu1v/B7D5r5w==
-X-Received: by 2002:a17:903:1b0d:b0:27e:ee83:fc80 with SMTP id d9443c01a7336-2902741f56fmr278502275ad.57.1760447375895;
-        Tue, 14 Oct 2025 06:09:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHs1i6dA1qn9RJPATHJa+lt5gIe1N1iZuuKEYCbVtVtylSs68XJ3a1ryegM0jvVhwbcA0kWJmPRTlPVv3z8nK0=
-X-Received: by 2002:a17:903:1b0d:b0:27e:ee83:fc80 with SMTP id
- d9443c01a7336-2902741f56fmr278502005ad.57.1760447375293; Tue, 14 Oct 2025
- 06:09:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F89C314B73;
+	Tue, 14 Oct 2025 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760447390; cv=fail; b=r1xkNiMIFSch9HyXu2VmYOD7yqxUPUpcWqRxdEWEn5f3exYuJqjqysPYjaYa20TtlY2s4MYsEoOh+VHyBoIdwJ6M7CIP0/k5AHxQRXvg1uw1s4QUlahxr0VceiEwxPGU6/2z+6gwnS6lxtImLt6knzKX/szyDHw6OCek0sNnrpE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760447390; c=relaxed/simple;
+	bh=ktxYK9YZ8ZXm6HuihNlkGPtDxcP7rNbxjDwaDWzWgjg=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=ekFDyfe+PbZ4ttzqP5OQpdo5UTHK6dSxcIWnZBMLXiY86WgDyTrI8s5qer5R5skp2q2VqvGv+9tAwAQqMGFCmpAWrPhSFZFHpVisT0sqy/VeoaQCWjU6Jdy3CNWTF2ld1C755uuymL9/GRjXx2DRQNViZ2itor23QZlmTOl3ml0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FHoYdPTX; arc=fail smtp.client-ip=40.107.201.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tC4NQuVqqjqvmV5k429GYz/1qhgOw5xP6iKm5J3LxvR8Am08BriXlNrTc9Y/ervqaSewnQqXt0TiGqO6A7GusLkMgelIkYMvb2GmLkHvu4CqKG6GLPR5Flenk97gP3+mqfJLOwpUCiB5Wsb0IX9rLDoQ6GbtPu9cCv0KNr5EVt0UM70RlJwp/+GJPUgDtN483pUkSObKgsCMTN6egzXFbw0g3Q/jNCvm4cuACxv2UGGSnLVAmvhZy4juFIa8uy1BFacoAP0fkJw+DoYadhDASjSkGikYqa99zEENUad+6AQ5a13TZ9+j0KP4q1W1OtQY3D0oXf3w6RR6cvau1uH0GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iz9Ebc9hY0RxNSw4CjQ17WWljALZMgg2iYOZvTba+aM=;
+ b=il5XMwcKUn99VvqgMZEi60/Zt10G5J3+mnaqnXvZnRhADob1bpD6oMKgvMBem0sxl8vnyTXFHPsHExqsLsotCVAcpXBk6wIUeBza8zwKEJ0rkHOlPTo0C1VBXyfe48XputQN+yItFRqcPIcNOaXbr7ko8EbywMXxHydHGwQOk+KQldD9PUZF+d4YtFdXx0wXkCPssQGTKn/9A6SowiP9tCoW4yZCDlxhwJlHmgepV8GXWqt9mbdGOBZZ8Y7t1jmo11NM7VBXOryUUR3XQqKJd8VIj0eLX6rFV7GQbVIr8i4GXnM1xvY9ihSOpQxNKCKPzRBwm3zFyDHvRhjOLJeSBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iz9Ebc9hY0RxNSw4CjQ17WWljALZMgg2iYOZvTba+aM=;
+ b=FHoYdPTXb9HASkPk+DqxCbMrCYrUKgMSVUtBXzYvPt272DAdT4AeEGIGNbr/DwSqkQbuywu+yg6lYJh7GUop4XtNedLWDgX7IjmUzUmKCyYQmJ0ir78ATOgr7e1Tq62YT9nNRDO9GnoIfvq4Y3UJTJ+HaA8/UQt4l+QONbdBsOrkRbO6W9VFoirgptEwEWR3KpJyWyjCQbexIbeit422BMA6p7Gc4Mc4p5N5rxlnmGizf+rGU3mHB6bzlZ1r6Puo3hs/oooVcJ6YG++sYIiUkceqGBIcFjpcDYeEtDEj+kKoirjGwxsxj3SZSu1Np7NIu5NjDOfKGzriezAgIIzV+A==
+Received: from SJ0PR03CA0208.namprd03.prod.outlook.com (2603:10b6:a03:2ef::33)
+ by DS0PR12MB9422.namprd12.prod.outlook.com (2603:10b6:8:1bb::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 14 Oct
+ 2025 13:09:43 +0000
+Received: from SJ1PEPF00001CDC.namprd05.prod.outlook.com
+ (2603:10b6:a03:2ef:cafe::b) by SJ0PR03CA0208.outlook.office365.com
+ (2603:10b6:a03:2ef::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.10 via Frontend Transport; Tue,
+ 14 Oct 2025 13:09:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00001CDC.mail.protection.outlook.com (10.167.242.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 13:09:42 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 14 Oct
+ 2025 06:09:26 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Oct
+ 2025 06:09:25 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 06:09:25 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/196] 6.1.156-rc1 review
+In-Reply-To: <20251013144314.549284796@linuxfoundation.org>
+References: <20251013144314.549284796@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929133602.32462-1-piliu@redhat.com> <20250929135347.GH3289052@noisy.programming.kicks-ass.net>
- <CAF+s44Q4SDXPRfYc4Ms5TcJgRU07QJB5H5VOHvyrZ31x9z49nw@mail.gmail.com>
- <aNuEpt8IkvtkH9na@jlelli-thinkpadt14gen4.remote.csb> <20250930090441.GJ4067720@noisy.programming.kicks-ass.net>
- <45e40d5e-f0b9-4c77-af1e-6ac915518acc@arm.com> <aOOyF3EvIG5HKEel@jlelli-thinkpadt14gen4.remote.csb>
- <3408aca5-e6c9-434a-9950-82e9147fcbba@arm.com>
-In-Reply-To: <3408aca5-e6c9-434a-9950-82e9147fcbba@arm.com>
-From: Pingfan Liu <piliu@redhat.com>
-Date: Tue, 14 Oct 2025 21:09:24 +0800
-X-Gm-Features: AS18NWCYsx1WZef9Zr-wMGig_EYxnzdRSg8VmEkF_yrCq8DAS1t4VGVG6m71ppg
-Message-ID: <CAF+s44Tv1n0b1GSghSPP3xDPK4qzbzc629XMB9btzXuKgfKvcA@mail.gmail.com>
-Subject: Re: [PATCH] sched/deadline: Derive root domain from active cpu in
- task's cpus_ptr
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <4ad822af-297a-4de0-b676-6963760a8384@rnnvmail201.nvidia.com>
+Date: Tue, 14 Oct 2025 06:09:25 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDC:EE_|DS0PR12MB9422:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ff67f58-0288-4f92-d729-08de0b22f0df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?LzFPTlowWC9ldlloSEQxSS8vRVVTWkUxeFVhMVR1ZURhalRuaVpXR0svSkFJ?=
+ =?utf-8?B?c2RXM2xqVGVUNitTZkl4eWlSS21oUTZjMlJ4RmtHMko3b04xbGNDcUtyOTJt?=
+ =?utf-8?B?ekthRWJzdnpyVnIwc1hCVzErODRNeEJ4dENlZFA4cG5sRDFPSk93UGtqNlVP?=
+ =?utf-8?B?QTJva3ZzN09QaVRlTXVERFhleE4vVm1DOVd5OFk0c1FXQXR2b2dTT2MwalN6?=
+ =?utf-8?B?SW9aZVp0aGc1RFp3RUpVQ05zbkJHSUZYeU9EalNFeWNCOG01ZWlhZXU5Nmcv?=
+ =?utf-8?B?RUltQ3pqTGpBRU1UTlZkSXM5RmphU1g0NHd2ZDFxek5wMjFTVk8vczY3azYv?=
+ =?utf-8?B?bmlOdEdjNzlzVWNLS21uNEM5Z0lvRkxZaEh3RVI2TzVIK3I2bm4vR0Q2WVh5?=
+ =?utf-8?B?bTlSUjMyUnVwT09IY2RKM2lqS3IxMkFIR3liajVXbkN5bmgwMnFSZTVkWlNk?=
+ =?utf-8?B?TDA5cTZKVzBNTU1RVXoxc25kQmlFL1p4RzVDWENYdFFBRVlQUnRyZFM5Mkxr?=
+ =?utf-8?B?M0MxVTZPQkNWSElLUEY1S2dLUmpZTENwRlpodUlSUmhxdzQ3K1dqTGxXNUxE?=
+ =?utf-8?B?T2dFQ1c3Z2xLQTN4MnZKRlBuVjFKUzJVTDlhbjlpKzNRSWNpTkJRRTBZVWlR?=
+ =?utf-8?B?dyt3YjVQU3FFZkFKU0pFTVRKV1JFNGNEMkg5VWs2VXRSVktJUDBJL3pnYzlj?=
+ =?utf-8?B?NG1PdFBzVkhWMUkvbS9LRXpJckQ0RmlJclVNdm94QzNrWkZ4ckYyYTU2SkdO?=
+ =?utf-8?B?NEFNeGxqamc5eEJPZ3ZOazdVMVhmZ3YxQTkydWVYZE5EdzllMUtueTRkNnNC?=
+ =?utf-8?B?R2dycTNpblZ6S3RGZU1QcUlzSytvTm9Kb1dZVE5TVFpJTFgxK0o1Umdqc2gv?=
+ =?utf-8?B?UFY4bVg1cjdpOWRScmc4RTVWMUVJYTQwNzhZeS9MZVFjazN5RlhURlFWa1Mv?=
+ =?utf-8?B?citwTFFVR1ZxOVp3bnNEMGpkUHFEODdFQ0tva2ljVjRQaGI5SWVUeVo0cEoz?=
+ =?utf-8?B?YmdTK3hrOGNQQVFvSU5lSEM3K01WOE81dkFnUVRKWlMrejlxaHJaNDRRRTdT?=
+ =?utf-8?B?K1Q3bGRUUmFyb1VzTUpHcTZ0cU1WTmdYbzR5dnpkVUNjVmFNdS9RTjA5Y0NY?=
+ =?utf-8?B?SFRzVVRlbGhXaUk3YXZaRm4vd21lZGdySGJGVXhSelZKVmNFbURmY2pXRWhp?=
+ =?utf-8?B?OTZlU0lqODV1eURGMVFNdnM2UldHL2pPenhSeW5OSEc5NHMzblYvSnlQdW14?=
+ =?utf-8?B?RW5RVFlYYzZFRDNJYVcyb2hseGtVUDZBRFcrZFZKL1J4WWhyajExNWdpd2dl?=
+ =?utf-8?B?N0lJNm1CNnFCK21qSnZXZHgzd24xVTdpZ21SREdzRVZRdFJzUGExaGRRMjFx?=
+ =?utf-8?B?S0RoZmI5Ly9wSTFRNVlHKzBLOEt0MWc1dkdtZlQ1YkdCbjNaZFRkS29kU2lE?=
+ =?utf-8?B?MjUyQjM0VE5JYWo3dmtBSU5ic0J3VFR2aEtydU4rU2JTUWNGZWM1bi8xYmlM?=
+ =?utf-8?B?TFlRMzlxVDYwcnNMVkI0ZUVnZWlnZXp0eVlMbjVnUFE4MGZqVEk2bkhsakdT?=
+ =?utf-8?B?SEZGUWhuaXdKSjM1cFJ3L0NLOU9yajZkN1NxM0JQQlJRQllMcnBsQjhJNXN2?=
+ =?utf-8?B?SldHSDBIeFhIcU5HdXoxbFh1K3BzSnlBc0VMOEoxTk81SlVCVUdudldXeFJh?=
+ =?utf-8?B?ak9NRDRRMlZJSFB6OWpVbnczN3RDRFV4bHBwMUZSMlBBazNJZURVbHlyU3lU?=
+ =?utf-8?B?bkI1UW5pK2xhY1dWdHlOVFplNW85VFFxcDJkVlZ3YWN4dC9QNW5ZVUhjNis3?=
+ =?utf-8?B?TmcvQ3QvdlZybWRiRkg1TUZyb1lacFRFNFUvMEVaQU5Vd0RxUktHM2ZKa0Y5?=
+ =?utf-8?B?S3NML0RjLzd4MTBNYUtkRnZVSGRDY2hQcDRJeW1Fcm5BSzJBdERpU09qVk4x?=
+ =?utf-8?B?QW9tM1hLWEd1NldSa2pIRHJDNm5tQmFFemVNVG9UeTZQbG1yOUY2S3hUTDBD?=
+ =?utf-8?B?bWp3c2NkY3lrKy9PSk96V3hOU2M1am11V0VKSHpzVk81T25sbVQyNnlpMTdl?=
+ =?utf-8?B?R0FnNGlYUXBmVmZnSVJUd2drdzhSbG1PWDJ3NmY1ZnllRkVydVp3VWdPdndO?=
+ =?utf-8?Q?D8ZQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 13:09:42.9279
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ff67f58-0288-4f92-d729-08de0b22f0df
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CDC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9422
 
-Hi Pierre,
+On Mon, 13 Oct 2025 16:42:53 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.156 release.
+> There are 196 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.156-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Thanks for sharing your perspective.
+Failures detected for Tegra ...
 
-On Sat, Oct 11, 2025 at 12:26=E2=80=AFAM Pierre Gondois <pierre.gondois@arm=
-.com> wrote:
->
->
-> On 10/6/25 14:12, Juri Lelli wrote:
-> > On 06/10/25 12:13, Pierre Gondois wrote:
-> >> On 9/30/25 11:04, Peter Zijlstra wrote:
-> >>> On Tue, Sep 30, 2025 at 08:20:06AM +0100, Juri Lelli wrote:
-> >>>
-> >>>> I actually wonder if we shouldn't make cppc_fie a "special" DEADLINE
-> >>>> tasks (like schedutil [1]). IIUC that is how it is thought to behave
-> >>>> already [2], but, since it's missing the SCHED_FLAG_SUGOV flag(/hack=
-),
-> >>>> it is not "transparent" from a bandwidth tracking point of view.
-> >>>>
-> >>>> 1 -https://elixir.bootlin.com/linux/v6.17/source/kernel/sched/cpufre=
-q_schedutil.c#L661
-> >>>> 2 -https://elixir.bootlin.com/linux/v6.17/source/drivers/cpufreq/cpp=
-c_cpufreq.c#L198
-> >>> Right, I remember that hack. Bit sad its spreading, but this CPPC thi=
-ng
-> >>> is very much like the schedutil one, so might as well do that I suppo=
-se.
-> >> IIUC, the sugov thread was switched to deadline to allow frequency upd=
-ates
-> >> when deadline tasks start to run. I.e. there should be no point updati=
-ng the
-> >> freq. after the deadline task finished running, cf [1] and [2]
-> >>
-> >> The CPPC FIE worker should not require to run that quickly as it seems=
- to be
-> >> more like a freq. maintenance work (the call comes from the sched tick=
-)
-> >>
-> >> sched_tick()
-> >> \-arch_scale_freq_tick() / topology_scale_freq_tick()
-> >>    \-set_freq_scale() / cppc_scale_freq_tick()
-> >>      \-irq_work_queue()
-> > OK, but how much bandwidth is enough for it (on different platforms)?
-> > Also, I am not sure the worker follows cpusets/root domain changes.
-> >
-> >
-> To share some additional information, I could to reproduce the issue by
-> creating as many deadline tasks with a huge bandwidth that the platform
-> allows it:
-> chrt -d -T 1000000 -P 1000000 0 yes > /dev/null &
->
-> Then kexec to another kernel. The available bandwidth of the root domain
-> gradually decreases with the number of CPUs unplugged.
-> At some point, there is not enough bandwidth and an overflow is detected.
-> (Same call stack as in the original message).
->
-> So I'm not sure this is really related to the cppc_fie thread.
-> I think it's more related to checking the available bandwidth in a contex=
-t
-> which is not appropriate. The deadline bandwidth might lack when the
-> platform
-> is reset, but this should not be that important.
->
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    119 tests:	118 pass, 1 fail
 
-I think there are two independent issues.
+Linux version:	6.1.156-rc1-gb9f52894e35f
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-In your experiment, as CPUs are hot-removed one by one, at some point
-the hot-removal will fail due to insufficient DL bandwidth. There
-should be a warning message to inform users about what's happening,
-and users can then remove some DL tasks to continue the CPU
-hot-removal.
-
-Meanwhile, in the kexec case, this checking can be skipped since the
-system cannot roll back to a working state anyway
+Test failures:	tegra194-p2972-0000: boot.py
 
 
-Thanks,
-
-Pingfan
-> ---
->
-> Question:
-> Since the cppc_fie worker doesn't have the SCHED_FLAG_SUGOV flag,
-> is this comment actually correct ?
-> /*
->   * Fake (unused) bandwidth; workaround to "fix"
->   * priority inheritance.
->   */
->
-> ---
->
-> On a non-deadline related topic, the CPPC drivers creates a cppc_fie
-> worker in
-> case the CPPC counters to estimate the current frequency are in PCC
-> channels.
-> Accessing these channels requires to go through sleeping sections,
-> that's why a worker is used.
->
-> However, CPPC counters might be accessed through FFH, which doesn't go
-> through
-> sleeping sections. In such case, the cppc_fie worker is never used and ne=
-ver
-> removed, so it would be nice to remote it.
->
-
+Jon
 
