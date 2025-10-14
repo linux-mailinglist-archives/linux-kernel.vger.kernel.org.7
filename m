@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-852626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FACBD97C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79684BD97D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4309F189767D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A982E18978F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDA8313E06;
-	Tue, 14 Oct 2025 12:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC55313532;
+	Tue, 14 Oct 2025 12:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HD+nY9Ki"
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QEWCF3cO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C2131353E
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD9E31354B;
+	Tue, 14 Oct 2025 12:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446726; cv=none; b=YXarSdtP3VvoO15K1DouXHypwFPWSWEX+EwsUoUsL4MBliq/Osyow4fxuHruQWpWucQ6SjM9RLORB3ZiFQSs5cL7sWBVl068QPsBejn1WBJ27twJ+0MUKTv6dj34GK5xyaqmv9/y8qhEGLTVLljpNHCmnuxxEp4uWJwicMqoKTo=
+	t=1760446772; cv=none; b=EmGadCu/st3AZxVKf/8x31P3L1meXI39YZTCufU7f5m729HTZ8jOUHNXzI6s3kYcLTDiz8BX10u+27wZMzKsdL94GuVJV3HEyn49Ab3U2BZY4YUPd0+k08qdbsmOVJpCZwz+DwdDwLk+wtaYm8jNEFiIKLDActf9f+1ZLpFLPfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446726; c=relaxed/simple;
-	bh=ERKaxZi856JIVKreXO7sribpAgoWkWL8cPcVypMRmHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MenBvHJ5egod0jwoWBrNmUdHN/pLKarATQ5eNo5ImT5C8WdzrTT0+pmYukdgiacD0kDj6OgGNZTvWcD8M745lxHYW80ktQpJteLPCY78OJj5qTkZnCUFoOpP8lG5JHiTx9RmYj+A4bEVseUmypRdUNWCWEs6+3pS7PqUdX8moW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HD+nY9Ki; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-635c9db8a16so5042148d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760446723; x=1761051523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ERKaxZi856JIVKreXO7sribpAgoWkWL8cPcVypMRmHo=;
-        b=HD+nY9Ki9ZCU+ZBbai3sK4TlP+Gj4PeD5IBvNbVgmRwrXEMP1rH1Kq7Wd2U4DC9ql2
-         mmbSs/sedO+Z+pqNh178iwTUljJhUPXdoP+VQFu2ruyAZTpafom4Dgb3i9C7kLT30HMb
-         nugdcECozBZLP8w6AumLU59dnaaYGy11Vk23pFabxvZWzNmDF8nOoZlM5WedT3ES7DKS
-         D/cB7mXIddWy/q7Wje43ITkR6khfIHEjDiCwmec977cTp60w5mWUdbX6XXjhJUkrWeWO
-         j4ESkWjq0mWBEgaoWoQnKZzyhE+qXTM8zA+qwVIdhoT3qqyvhnb1qjF3AFb5czRRY0iT
-         BJBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760446723; x=1761051523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ERKaxZi856JIVKreXO7sribpAgoWkWL8cPcVypMRmHo=;
-        b=nFF5EXqmfkMtmC6ey6YRONS2XU75GnykmOp38717cYA8zbPK96tiQkksl9KE+Gi3ys
-         2iErvbHPMgxCXSrO8+F1QogBBMu6G22fa9qNla4JIPrcMinwGZBWK6XEg9ZgItAPuXhz
-         JxYVzZ8uGr7LEJHwyv8/rguGC2HmVBgYrR1EPoJQ4UJwdUVDUn/nZLt2nS6hpuZsIkFd
-         T+XDYvhp2gNkfVupdRQqDIcYkDjY5jmbBOAhTmhnmpJEWzBy/zfNmQ3sbfrbhT+R3Dc8
-         2O68Ki+DHD0TERa09TAUAbc4sY5q665otGp0rZ7xTxT8J2Hom/4H7PcsvvQ5xA96sH9d
-         N+oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWIruFLV8z5xSPSOHEYAQG3NKhJZDuHlDOQdEbSUfHwSLwNffiXYOcGG+I/I/tchRsb/0yllKSKqU/HTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGsMRPzNxpaRpGJh6Wu8KM/wSeRDVsskfZM3x5mpKw9a9bgpCU
-	46lfRxtijoR7+vS4O/4zNVc7EjYD9BSqPZrzvB7lAxq7iho0bWBmXjdr2sTp53PpAAXznlbUAd5
-	CFzqOt+O0OXQ86NOyhjPKmDOc/sVWvZcEyfwjrLgs8g==
-X-Gm-Gg: ASbGnctmH5nlx+TnuR/X3/6IKJ2d6fKk6rnSOfj5r4Nl/m4Vx2H7VtyYcZPOrLWs1+Q
-	Em46dNDNzo1awidjhJIgfum7lKAsVVKnNuagnH3K8RknHmE3UnzAXPNyBoFhgb9f9STHKeWE9PF
-	aTTd66Jot8P65T1AWxtTqDKG3lp1rI/R/yp+DTY85QcJvK259YV9m8QkWssVlt9w204DYmMapq8
-	VTS0te5TcMYZYnlsTwO0uzxPtTtnw==
-X-Google-Smtp-Source: AGHT+IG7Kofwx6n9tYMDxUa5Z04wJalhfP6YJEHLa4yTiQQEa2UVqFp3ownpK3FKUhmGBn3Yg5tzw6HGtBhEHg9/vxk=
-X-Received: by 2002:a53:ba8d:0:b0:63d:24f9:5332 with SMTP id
- 956f58d0204a3-63d24f953d8mr775113d50.55.1760446723523; Tue, 14 Oct 2025
- 05:58:43 -0700 (PDT)
+	s=arc-20240116; t=1760446772; c=relaxed/simple;
+	bh=dA8ZO6ChYJ9c/RyoUIv5bvOV40QV/ycga8CfhphPEKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNy7gEImJkIf3Oeu3XmUqVWIrsQ/eJINDZnqWU/K/LQ/xp78JXnKnJFb1uRrXE35irxAUexIgvwwfLsj0jLA+RDF5Fs+4ixXL+S8UeU7RXrZwaogSSFq8xWx6waKUCls4VUb14//ywlJ01EmnAXcBePoqEfItuLrQdSDQrvxb7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QEWCF3cO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6B0DE40E01AB;
+	Tue, 14 Oct 2025 12:59:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 44Ym9plS8O5S; Tue, 14 Oct 2025 12:59:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760446760; bh=CRAm/96OhU1MWiQAAgFQeaQhfDFuGGKHReG3tVOvRds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QEWCF3cOYhCsRumnVfUo0HdEP1854RnsFaKcAGAWUMOYOWCbZ6jhN7dNI0U79H6kA
+	 4rAti4K3TH9gI6vohOC+fj8fyenNbh7kcRth/oVOENuwsHDAhrQqRNqZY6KSj/M0Zi
+	 JEwqEROpLkHbI27UyFSA/CcE0d4DZn+JorHGTID1VXrfUY2BANjUpmvT4YDFy4B2xB
+	 4OZkC4qUUq2KgF/xfdhGWvtg5NSPkhIMGAWBqxftjjm5f1jBcl5DtHYZexStckF0tH
+	 uIcRktBDsfQMooTtqvrWI8/gGjK7FoTFIHX7/9ZOXvxOp5Rehpx7ZiWDraSzyRchzk
+	 FzzKwtLPwiGwmbsjFPLMKoDfmeQo1Q9VGSDVZ0ViSdeEqbvUvRh+cJ2FhMohAorkE5
+	 quQbP6oH/B0OGg4jTrVETO0YQNU3Zv9pFJnbbcdjljeYLmrtvVs3SPm4pTVRxZzF1g
+	 asy60+II+mmRNFgm/7zxDcMaE/KcLmIZaUislSsEGvyD1ZH+bwHHEE9muton/sUjIF
+	 yBPCOVuDdEUbrvB1eFae/+2oMBZQlSKBb+9j1LduuBTPIbSyE9/2KDEWw93/gz2CrY
+	 RCzjrZJwetKTNrn9kZSb3OSJmJ9D7nUGjamAfGidv0l4hx/OO6QiVaMF0t+Wfyd08J
+	 mbKOJqhJfrJwPpr8yXlgZL08=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B9B5740E019F;
+	Tue, 14 Oct 2025 12:59:15 +0000 (UTC)
+Date: Tue, 14 Oct 2025 14:59:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+Message-ID: <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
- <fe1f4a0947c864496f4eeec8eef806afcf6094a4.1759824376.git.mazziesaccount@gmail.com>
- <CACRpkdZnoMvYBXN7b6dw+uPs=f1WXr9wX-0VF1c1qd-rq+17LQ@mail.gmail.com> <cac4222e-1f66-40e1-abf8-7d4661d43bbf@gmail.com>
-In-Reply-To: <cac4222e-1f66-40e1-abf8-7d4661d43bbf@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 14:58:28 +0200
-X-Gm-Features: AS18NWAzYGkVtZF2eWYQ8i62TI7iWUixyj6KHyQnG8bjFDuI6exLbunxibrSSZs
-Message-ID: <CACRpkdbOKNPFxNJM-r+HdnfKYisWJrQXvG21EL9w4UQVP74D5A@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/13] dt-bindings: mfd: ROHM BD72720
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
 
-On Tue, Oct 14, 2025 at 2:11=E2=80=AFPM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
+On Tue, Oct 14, 2025 at 08:42:34AM -0000, tip-bot2 for Juergen Gross wrote:
+> @@ -648,6 +648,8 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+>  	u8 insn_buff[MAX_PATCH_LEN];
+>  	u8 *instr;
+>  	struct alt_instr *a, *b;
+> +	unsigned int instances = 0;
+> +	bool patched = false;
 
-> > These are a bit idiomatic, not using the actual framework for such
-> > things (pin control) BUT: they are on the other hand crystal
-> > clear for an integrator working with this device tree, and only
-> > four pins so why over-engineer it. I am fine
-> > with them if the DT people are.
->
-> I kind of like to emphasize the fact that this is not really a pin-mux
-> in a traditional sense. We can't change the routing after OTP is
-> written. As such, it more resembles "wiring" of the signal inside the
-> PMIC, and this property is not a control but tells us how the signal is
-> wired. But yeah, let's see what others think of it.
+Except that we have the reverse fir tree rule in tip for function-local vars.
 
-Just that the muxing is controlled by OTP and not by runtime
-software doesn't make it not pinmux. It is, because it is
-(one time) PROGRAMMED to a certain purpose. In a factory,
-nevertheless.
+The tip-tree preferred ordering of variable declarations at the
+beginning of a function is reverse fir tree order::
 
-But the pin control muxing subsystem is designed for muxing
-that is controlled by software at runtime, and as such, indeed
-not a good fit.
+	struct long_struct_name *descriptive_name;
+	unsigned long foo, bar;
+	unsigned int tmp;
+	int ret;
 
-Let's go with this!
+The above is faster to parse than the reverse ordering::
 
-Yours,
-Linus Walleij
+	int ret;
+	unsigned int tmp;
+	unsigned long foo, bar;
+	struct long_struct_name *descriptive_name;
+
+And even more so than random ordering::
+
+	unsigned long foo, bar;
+	int ret;
+	struct long_struct_name *descriptive_name;
+	unsigned int tmp;
+
+> @@ -692,14 +698,19 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
+>  		 * - feature not present but ALT_FLAG_NOT is set to mean,
+>  		 *   patch if feature is *NOT* present.
+>  		 */
+> -		if (!boot_cpu_has(a->cpuid) == !(a->flags & ALT_FLAG_NOT)) {
+> -			memcpy(insn_buff, instr, a->instrlen);
+> -			optimize_nops(instr, insn_buff, a->instrlen);
+> -		} else {
+> +		if (!boot_cpu_has(a->cpuid) != !(a->flags & ALT_FLAG_NOT)) {
+>  			apply_one_alternative(instr, insn_buff, a);
+> +			patched = true;
+>  		}
+>  
+> -		text_poke_early(instr, insn_buff, a->instrlen);
+> +		instances--;
+> +		if (!instances) {
+> +			if (!patched) {
+
+I don't see how this is making this code better - this is slowly turning into
+an unreadable mess with those magic "instances" and "patched".
+
+And frankly, the justification for this patch is also meh: an interrupt might
+use the location?!? If this is a real issue then we better disable IRQs around
+it. But not make the code yucky.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
