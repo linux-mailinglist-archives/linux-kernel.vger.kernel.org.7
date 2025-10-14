@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-852145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF04BD8459
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:49:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0291EBD845F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA5E4244EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:49:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 145EB4FA4FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEFA27FD52;
-	Tue, 14 Oct 2025 08:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2592DEA8E;
+	Tue, 14 Oct 2025 08:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="MQAwv6e/"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFBx9bav"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95139202997;
-	Tue, 14 Oct 2025 08:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A172D29CF;
+	Tue, 14 Oct 2025 08:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431754; cv=none; b=r+GO5E6vqVbgJ9vzs2folLhaJ2VcIilwopVNPSwiHcVRr3xdGk7mLonU/Wb4XS6o4qPWk+alQHxVCAKWqK/+pyYrm/hNHS9vjlhX2khsba7Qx3xSrxMQ00lC7lNINMjL++VoFThnzvHWooCL9ENrVk5xJN21SORLJlzMtFc0OiE=
+	t=1760431756; cv=none; b=Cs3CuDdiGLfPYUa4OxFckHEgenKenpUDkiPi4sgR3drfVW2vIYMHae3U7mBQItOg5YI56iJmFh5xNepPv+1UnFH2545e5y8HFdnV53hzKs0/KuIes3tAKOllEO0rfevhJV+bZrmJBpSd6bk41MQtUu+S+4WhnbXsq/ZBLjlw7Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431754; c=relaxed/simple;
-	bh=WQexiRq4fQWw2JqEm4SCteSrSFsC6KjlrIH8sbIyiOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nkI7hnkLANDqoF5wr82CNUMvrvklFRBbz/NhdWFsCozNZ/bn/j0cBhCZgcKlJ9KFDBnmWjkiagx+KC5kb7x3aU7GRLIyp9tESQelcYiqHuTOtoRRXsx/DVTxYpHjrHa4zpCDkPKWsTYtECrNuvuVhKqWsIs19f9wMXftB0GE13c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=MQAwv6e/; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=217Upr648lskEmoBhQhc+kkP7dnozYY5n/hTFx/FrSk=; t=1760431752;
-	x=1760863752; b=MQAwv6e/uaeFvWvksdSzb8bM5vGSBDVZZJyLjDbzVKcqHUO4nuFED7iVmP8W5
-	rYZXrYeiY/bJDwDc7fD9uFOhm2OPFBIkrlbfmLBrEfDV9YlHi9Cytz3MXebrC4cnKgGKkg3+dlLP4
-	2Ykm+3ilNAitc6BLSMwaPZqbCwVF/Vo2V93fC7cburTn9LVLmPJiiKrX8NZveN4+KOPgvMP4yJuP6
-	0tmplsARDaR6G1zgXwXzaqeNJNlnWH80/QdPHyECIlD31IgaGojOKPmUWSTtq4OtVXQKX2K+/DBh5
-	VRTlBQgF27sXb3JWC8mzl2tELg0+QdEtJmZpGjPH0ly4kb7PUQ==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1v8aiJ-002zMU-2V;
-	Tue, 14 Oct 2025 10:48:59 +0200
-Message-ID: <10b21bc4-01a5-43b7-b7e2-267f09ecab43@leemhuis.info>
-Date: Tue, 14 Oct 2025 10:48:58 +0200
+	s=arc-20240116; t=1760431756; c=relaxed/simple;
+	bh=ZWsZSog7HrbpnMFVU+7KNiUIgCPM0oI+ET725s9AGU8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pGxwp1uySoV5KwzHl+/ziEQfMbswuytXlbF1RLcA+DPs9yDVBFQO5P25uuxJ37/ulZ89NUfLFEW59oNB2byir97vkqAFeeHFTI8lWcR2gRAzf748z3qlAu/mG981XAoXS0aSEYGY1P3c3oTtIdcDiDeIQLHJW9r1kkvBbHtdckI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFBx9bav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4939C4CEE7;
+	Tue, 14 Oct 2025 08:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760431755;
+	bh=ZWsZSog7HrbpnMFVU+7KNiUIgCPM0oI+ET725s9AGU8=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=aFBx9bavSewQYx0m7wvFHJ6PS2qVBbu48OarvxkjOyk9gkuCAN7FNSzGIPppPaTpV
+	 BmofD7ZSlB3kQm1FaQgwoYqVm9IchNNQq8LAMVrkm0BsDauaUy3hXQR2SNuj6dlSOi
+	 r/5G4uQ+QocV4LhgoFaOk0lMXlNuGF1mEhRs5n27Q49UZJvWGVdMFkCuqrrtCpEhHs
+	 wQcWw+J4VMxeoTMjclQNl2lMKtq8aWCNKYXRvllXMBqF7UqhqE6vYxJLQbNWGEwNHJ
+	 ihWulbP34SilV7VwExQNkvuTJCncN9cvKuZs6p0iSPsDINbMgRqxzk4YjbFte52R8z
+	 j3f6oeNlQp9eg==
+Message-ID: <5247d3ed-fa93-4839-a867-3ab72c687977@kernel.org>
+Date: Tue, 14 Oct 2025 10:49:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,94 +49,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: Kconfig: Fix build error from CONFIG_HID_HAPTIC
-To: Jonathan Denose <jdenose@google.com>, Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Lucas GISSOT <lucas.gissot.pro@gmail.com>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
- <aO1q4coXPqU/K6KI@visitorckw-System-Product-Name>
- <CAMCVhVNLr+2ivRo9T4rVt4mkncwbOfXEL9bE=pDGRp=Qjy1c9A@mail.gmail.com>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 MEK4
-In-Reply-To: <CAMCVhVNLr+2ivRo9T4rVt4mkncwbOfXEL9bE=pDGRp=Qjy1c9A@mail.gmail.com>
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH] media: i2c: imx214: Exit early on control init errors
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Ricardo Ribalda <ribalda@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760431752;6397cce2;
-X-HE-SMSGID: 1v8aiJ-002zMU-2V
+Content-Transfer-Encoding: 7bit
 
-On 10/13/25 23:23, Jonathan Denose wrote:
-> On Mon, Oct 13, 2025 at 4:11 PM Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
->> On Mon, Oct 13, 2025 at 08:54:57PM +0000, Jonathan Denose wrote:
->>> Temporarily change CONFIG_HID_HAPTIC to be bool instead of tristate, until
->>> we implement a permanent solution.
->>>
->>> ---
->>
->> The "---" line here will cause many tools used for applying patches,
->> like git am, to discard the content below it [1].
->>
->> Please don't add this line unless you don't want the following content
->> to appear in the commit message.
->>
->> [1]: https://www.kernel.org/doc/html/v6.17/process/submitting-patches.html#commentary
->>
->> Regards,
->> Kuan-Wei
+On 29/08/2025 14:21, Ricardo Ribalda wrote:
+> Now we try to initialize all the controls and at the very end check
+> ctrl_hdlr->error to check if one of them has failed.
 > 
-> Yes, that was intentional, the information below the '---' was
-> included as additional information and not for the commit message. 
-But at least some of it should be in there (and likely all of it,
-despite what checkpatch says) to make the commit-msg properly work
-stand-alone. Especially Link: or Closes: tags to the reports (and I
-don't care, but ideally with a preceding Reported-by: tag mentioning the
-reporters) should be in there.
-Documentation/process/submitting-patches.rst and
-Documentation/process/5.Posting.rst explain this in more details.
+> This confuses smatch, who do not know how to track the state of
+> imx214->link_freq.
+> 
+> drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
+> 
+> Fix this by exiting early on control initi errors.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Right now we are handling this with a quirk in media-ci, if Dan cannot
+> fix smatch in a kernel cycle we should merge this patch.
+> ---
+>  drivers/media/i2c/imx214.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..7da9e8fa2b622adba53fa6b544bca9859da23e3e 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>  						   V4L2_CID_LINK_FREQ,
+>  						   imx214->bus_cfg.nr_of_link_frequencies - 1,
+>  						   0, imx214->bus_cfg.link_frequencies);
+> -	if (imx214->link_freq)
+> -		imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +	if (!imx214->link_freq)
+> +		goto err_init_ctrl;
+> +
+> +	imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+>  
+>  	/*
+>  	 * WARNING!
+> @@ -1101,6 +1103,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>  
+>  	ret = ctrl_hdlr->error;
+>  	if (ret) {
+> +err_init_ctrl:
 
-Ciao, Thorsten
+This label should move up two lines, before the 'ret = ctrl_hdlr->error;' line.
+
+Otherwise 'ret' isn't set to the correct error.
+
+Regards,
+
+	Hans
+
+>  		v4l2_ctrl_handler_free(ctrl_hdlr);
+>  		dev_err(imx214->dev, "failed to add controls: %d\n", ret);
+>  		return ret;
+> 
+> ---
+> base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
+> change-id: 20250829-imx214-smatch-c4d4d47428d5
+> 
+> Best regards,
+
 
