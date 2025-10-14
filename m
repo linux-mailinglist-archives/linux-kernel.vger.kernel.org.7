@@ -1,39 +1,52 @@
-Return-Path: <linux-kernel+bounces-852142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A665ABD843A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF04BD8459
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53D2934EC7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA5E4244EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9BC2877CB;
-	Tue, 14 Oct 2025 08:48:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B059322068F;
-	Tue, 14 Oct 2025 08:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEFA27FD52;
+	Tue, 14 Oct 2025 08:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="MQAwv6e/"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95139202997;
+	Tue, 14 Oct 2025 08:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431687; cv=none; b=qlhTwBC9+dhipdrUQIGDOtEz+wMfHJGtT+ZwP3bAr+06StNFsEaier4dGof0l06qLEkRYMu5yA/S627RL1ltcOP4sBxLXhYTl9JBEOsRWmvSoFnBHNywxsWsH0rRhmdP6uJt0Zlds7kc6FuEtM4Swd/16vBtDtJ+RfPQcPhc9mE=
+	t=1760431754; cv=none; b=r+GO5E6vqVbgJ9vzs2folLhaJ2VcIilwopVNPSwiHcVRr3xdGk7mLonU/Wb4XS6o4qPWk+alQHxVCAKWqK/+pyYrm/hNHS9vjlhX2khsba7Qx3xSrxMQ00lC7lNINMjL++VoFThnzvHWooCL9ENrVk5xJN21SORLJlzMtFc0OiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431687; c=relaxed/simple;
-	bh=E3HQll0idNq6id5MYj4s9sVcDcTmbmCXUUSyJppEjRg=;
+	s=arc-20240116; t=1760431754; c=relaxed/simple;
+	bh=WQexiRq4fQWw2JqEm4SCteSrSFsC6KjlrIH8sbIyiOI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEEyD+P+olMQ4R96QCozV9JAoQN2SlKUBe3aex21IwzT7fyq2iyCcmspBIE32XwwxM8EdGLE0hiXf9EaaRs7ivZc/GlDkjTgs1eT1/C9t5Vzu71nqjBEtq6xW0JpuRTjQ9NmYbPfWc2DYpx6HOoAFrnVKKAlxjMIarLQh1nqMIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 336A31A9A;
-	Tue, 14 Oct 2025 01:47:57 -0700 (PDT)
-Received: from [10.57.5.128] (unknown [10.57.5.128])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2ED03F6A8;
-	Tue, 14 Oct 2025 01:48:02 -0700 (PDT)
-Message-ID: <0c362b01-5f51-4aab-9ad5-a37173fbfe3a@arm.com>
-Date: Tue, 14 Oct 2025 09:48:26 +0100
+	 In-Reply-To:Content-Type; b=nkI7hnkLANDqoF5wr82CNUMvrvklFRBbz/NhdWFsCozNZ/bn/j0cBhCZgcKlJ9KFDBnmWjkiagx+KC5kb7x3aU7GRLIyp9tESQelcYiqHuTOtoRRXsx/DVTxYpHjrHa4zpCDkPKWsTYtECrNuvuVhKqWsIs19f9wMXftB0GE13c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=MQAwv6e/; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=217Upr648lskEmoBhQhc+kkP7dnozYY5n/hTFx/FrSk=; t=1760431752;
+	x=1760863752; b=MQAwv6e/uaeFvWvksdSzb8bM5vGSBDVZZJyLjDbzVKcqHUO4nuFED7iVmP8W5
+	rYZXrYeiY/bJDwDc7fD9uFOhm2OPFBIkrlbfmLBrEfDV9YlHi9Cytz3MXebrC4cnKgGKkg3+dlLP4
+	2Ykm+3ilNAitc6BLSMwaPZqbCwVF/Vo2V93fC7cburTn9LVLmPJiiKrX8NZveN4+KOPgvMP4yJuP6
+	0tmplsARDaR6G1zgXwXzaqeNJNlnWH80/QdPHyECIlD31IgaGojOKPmUWSTtq4OtVXQKX2K+/DBh5
+	VRTlBQgF27sXb3JWC8mzl2tELg0+QdEtJmZpGjPH0ly4kb7PUQ==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1v8aiJ-002zMU-2V;
+	Tue, 14 Oct 2025 10:48:59 +0200
+Message-ID: <10b21bc4-01a5-43b7-b7e2-267f09ecab43@leemhuis.info>
+Date: Tue, 14 Oct 2025 10:48:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,117 +54,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/10] PM: EM: Implement em_notify_pd_created/updated()
-To: Changwoo Min <changwoo@igalia.com>
-Cc: christian.loehle@arm.com, tj@kernel.org, pavel@kernel.org,
- len.brown@intel.com, rafael@kernel.org, kernel-dev@igalia.com,
- linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
+Subject: Re: [PATCH] HID: Kconfig: Fix build error from CONFIG_HID_HAPTIC
+To: Jonathan Denose <jdenose@google.com>, Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Lucas GISSOT <lucas.gissot.pro@gmail.com>, linux-input@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20251014001055.772422-1-changwoo@igalia.com>
- <20251014001055.772422-10-changwoo@igalia.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20251014001055.772422-10-changwoo@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251013-hid-haptic-kconfig-fix-v1-1-b1ad90732625@google.com>
+ <aO1q4coXPqU/K6KI@visitorckw-System-Product-Name>
+ <CAMCVhVNLr+2ivRo9T4rVt4mkncwbOfXEL9bE=pDGRp=Qjy1c9A@mail.gmail.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
+ JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
+ apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
+ QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
+ OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
+ Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
+ Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
+ sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
+ /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
+ rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
+ ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCaOO74gUJHfEI0wAKCRBytubv
+ TFg9Lc4iD/4omf2z88yGmior2f1BCQTAWxI2Em3S4EJY2+Drs8ZrJ1vNvdWgBrqbOtxN6xHF
+ uvrpM6nbYIoNyZpsZrqS1mCA4L7FwceFBaT9CTlQsZLVV/vQvh2/3vbj6pQbCSi7iemXklF7
+ y6qMfA7rirvojSJZ2mi6tKIQnD2ndVhSsxmo/mAAJc4tiEL+wkdaX1p7bh2Ainp6sfxTqL6h
+ z1kYyjnijpnHaPgQ6GQeGG1y+TSQFKkb/FylDLj3b3efzyNkRjSohcauTuYIq7bniw7sI8qY
+ KUuUkrw8Ogi4e6GfBDgsgHDngDn6jUR2wDAiT6iR7qsoxA+SrJDoeiWS/SK5KRgiKMt66rx1
+ Jq6JowukzNxT3wtXKuChKP3EDzH9aD+U539szyKjfn5LyfHBmSfR42Iz0sofE4O89yvp0bYz
+ GDmlgDpYWZN40IFERfCSxqhtHG1X6mQgxS0MknwoGkNRV43L3TTvuiNrsy6Mto7rrQh0epSn
+ +hxwwS0bOTgJQgOO4fkTvto2sEBYXahWvmsEFdLMOcAj2t7gJ+XQLMsBypbo94yFYfCqCemJ
+ +zU5X8yDUeYDNXdR2veePdS3Baz23/YEBCOtw+A9CP0U4ImXzp82U+SiwYEEQIGWx+aVjf4n
+ RZ/LLSospzO944PPK+Na+30BERaEjx04MEB9ByDFdfkSbM7BTQRSeAENARAAzu/3satWzly6
+ +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
+ s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
+ ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
+ ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
+ z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
+ M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
+ zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
+ 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
+ 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
+ FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
+ WD0tBQJo47viBQkd8QjTAAoJEHK25u9MWD0tCH8P/1b+AZ8K3D4TCBzXNS0muN6pLnISzFa0
+ cWcylwxX2TrZeGpJkg14v2R0cDjLRre9toM44izLaz4SKyfgcBSj9XET0103cVXUKt6SgT1o
+ tevoEqFMKKp3vjDpKEnrcOSOCnfH9W0mXx/jDWbjlKbBlN7UBVoZD/FMM5Ul0KSVFJ9Uij0Z
+ S2WAg50NQi71NBDPcga21BMajHKLFzb4wlBWSmWyryXI6ouabvsbsLjkW3IYl2JupTbK3viH
+ pMRIZVb/serLqhJgpaakqgV7/jDplNEr/fxkmhjBU7AlUYXe2BRkUCL5B8KeuGGvG0AEIQR0
+ dP6QlNNBV7VmJnbU8V2X50ZNozdcvIB4J4ncK4OznKMpfbmSKm3t9Ui/cdEK+N096ch6dCAh
+ AeZ9dnTC7ncr7vFHaGqvRC5xwpbJLg3xM/BvLUV6nNAejZeAXcTJtOM9XobCz/GeeT9prYhw
+ 8zG721N4hWyyLALtGUKIVWZvBVKQIGQRPtNC7s9NVeLIMqoH7qeDfkf10XL9tvSSDY6KVl1n
+ K0gzPCKcBaJ2pA1xd4pQTjf4jAHHM4diztaXqnh4OFsu3HOTAJh1ZtLvYVj5y9GFCq2azqTD
+ pPI3FGMkRipwxdKGAO7tJVzM7u+/+83RyUjgAbkkkD1doWIl+iGZ4s/Jxejw1yRH0R5/uTaB MEK4
+In-Reply-To: <CAMCVhVNLr+2ivRo9T4rVt4mkncwbOfXEL9bE=pDGRp=Qjy1c9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760431752;6397cce2;
+X-HE-SMSGID: 1v8aiJ-002zMU-2V
 
-
-
-On 10/14/25 01:10, Changwoo Min wrote:
-> Implement two event notifications when a performance domain is created
-> (EM_CMD_PD_CREATED) and updated (EM_CMD_PD_UPDATED). The message format
-> of these two event notifications is the same as EM_CMD_GET_PD_TABLE --
-> containing the performance domain's ID and its energy model table.
+On 10/13/25 23:23, Jonathan Denose wrote:
+> On Mon, Oct 13, 2025 at 4:11 PM Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+>> On Mon, Oct 13, 2025 at 08:54:57PM +0000, Jonathan Denose wrote:
+>>> Temporarily change CONFIG_HID_HAPTIC to be bool instead of tristate, until
+>>> we implement a permanent solution.
+>>>
+>>> ---
+>>
+>> The "---" line here will cause many tools used for applying patches,
+>> like git am, to discard the content below it [1].
+>>
+>> Please don't add this line unless you don't want the following content
+>> to appear in the commit message.
+>>
+>> [1]: https://www.kernel.org/doc/html/v6.17/process/submitting-patches.html#commentary
+>>
+>> Regards,
+>> Kuan-Wei
 > 
-> Signed-off-by: Changwoo Min <changwoo@igalia.com>
-> ---
->   kernel/power/em_netlink.c | 44 +++++++++++++++++++++++++++++++++++++++
->   kernel/power/em_netlink.h |  6 ++++++
->   2 files changed, 50 insertions(+)
-> 
-> diff --git a/kernel/power/em_netlink.c b/kernel/power/em_netlink.c
-> index 90ae6f1c9c9a..2c55c758de6b 100644
-> --- a/kernel/power/em_netlink.c
-> +++ b/kernel/power/em_netlink.c
-> @@ -215,6 +215,50 @@ int em_nl_get_pd_table_doit(struct sk_buff *skb, struct genl_info *info)
->   
->   
->   /**************************** Event encoding *********************************/
-> +static void __em_notify_pd_table(const struct em_perf_domain *pd, int ntf_type)
-> +{
-> +	struct sk_buff *msg;
-> +	int msg_sz, ret = -EMSGSIZE;
-> +	void *hdr;
-> +
-> +	if (!genl_has_listeners(&em_nl_family, &init_net, EM_NLGRP_EVENT))
-> +		return;
-> +
-> +	msg_sz = __em_nl_get_pd_table_size(pd);
-> +
-> +	msg = genlmsg_new(msg_sz, GFP_KERNEL);
-> +	if (!msg)
-> +		return;
-> +
-> +	hdr = genlmsg_put(msg, 0, 0, &em_nl_family, 0, ntf_type);
-> +	if (!hdr)
-> +		goto out_free_msg;
-> +
-> +	ret = __em_nl_get_pd_table(msg, pd);
-> +	if (ret)
-> +		goto out_free_msg;
-> +
-> +	genlmsg_end(msg, hdr);
-> +
-> +	genlmsg_multicast(&em_nl_family, msg, 0, EM_NLGRP_EVENT, GFP_KERNEL);
-> +
-> +	return;
-> +
-> +out_free_msg:
-> +	nlmsg_free(msg);
-> +	return;
-> +}
-> +
-> +void em_notify_pd_created(const struct em_perf_domain *pd)
-> +{
-> +	__em_notify_pd_table(pd, EM_CMD_PD_CREATED);
-> +}
-> +
-> +void em_notify_pd_updated(const struct em_perf_domain *pd)
-> +{
-> +	__em_notify_pd_table(pd, EM_CMD_PD_UPDATED);
-> +}
-> +
->   static int __em_notify_pd_deleted_size(const struct em_perf_domain *pd)
->   {
->   	int id_sz = nla_total_size(sizeof(u32)); /* EM_A_PD_TABLE_PD_ID */
-> diff --git a/kernel/power/em_netlink.h b/kernel/power/em_netlink.h
-> index d56e5865e1ed..583d7f1c3939 100644
-> --- a/kernel/power/em_netlink.h
-> +++ b/kernel/power/em_netlink.h
-> @@ -13,7 +13,9 @@
->   int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
->   			    void *data);
->   struct em_perf_domain *em_perf_domain_get_by_id(int id);
-> +void em_notify_pd_created(const struct em_perf_domain *pd);
->   void em_notify_pd_deleted(const struct em_perf_domain *pd);
-> +void em_notify_pd_updated(const struct em_perf_domain *pd);
->   #else
->   static inline
->   int for_each_em_perf_domain(int (*cb)(struct em_perf_domain*, void *),
-> @@ -27,7 +29,11 @@ struct em_perf_domain *em_perf_domain_get_by_id(int id)
->   	return NULL;
->   }
->   
-> +static inline void em_notify_pd_created(const struct em_perf_domain *pd) {}
-> +
->   static inline void em_notify_pd_deleted(const struct em_perf_domain *pd) {}
-> +
-> +static inline void em_notify_pd_updated(const struct em_perf_domain *pd) {}
->   #endif
->   
->   #endif /* _EM_NETLINK_H */
+> Yes, that was intentional, the information below the '---' was
+> included as additional information and not for the commit message. 
+But at least some of it should be in there (and likely all of it,
+despite what checkpatch says) to make the commit-msg properly work
+stand-alone. Especially Link: or Closes: tags to the reports (and I
+don't care, but ideally with a preceding Reported-by: tag mentioning the
+reporters) should be in there.
+Documentation/process/submitting-patches.rst and
+Documentation/process/5.Posting.rst explain this in more details.
 
-
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Ciao, Thorsten
 
