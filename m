@@ -1,225 +1,171 @@
-Return-Path: <linux-kernel+bounces-852323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7E1BD8AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375AABD8B09
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B4871349E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:09:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F29F3A73C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D1E2EDD60;
-	Tue, 14 Oct 2025 10:09:46 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E4F2FB98B;
+	Tue, 14 Oct 2025 10:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ENOCMBvR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4532ED15F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EC916F265
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436586; cv=none; b=Ee75g5Bh86ET6BG7XafXFOwPifOLisaKQRHW57gCisC8gAduZXqDnTHG1zkd07jYwv68J8+VRvI3GILXunJhH+dvvqPtBBH+ud0jDciKDlGU9YQcMfC8e2FNYJq0+hIu/kCxUmY/2VxUB62Wa082OTLfPZKtKpQKaqU26oKhIwQ=
+	t=1760436652; cv=none; b=B7Cu9sO32PqkTiemf0+G5eJpIvHWLw0hehHnZI50ECUo98Lc68GV45dMFPjG1CSAWZmUGJdr6SmKPVRIDPu6eGJkVb5rkWoBXE67cUZrVpKs3gAg3k5v3aCPFIGwFVIbXo7FRYUb19W8GRhaLtT/CcuLR+5WZrMLEFBKkK746B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436586; c=relaxed/simple;
-	bh=J99FI+lwR/syZ0sNfvEjQfPJK6O2lyLp+Q5k/L3dBM0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IJ0llN3ZOv2vnCvQt9gByRvD6FXYJ28/72JZTbarPEINFhfJh/7w/YAzxHupw8ALgyS6ECSdPQg7AH8R+EPU17rezSUo9DFwY8DxsFvM9Ox3XrGMa9QlkFhbpnr/+bH6ES8ygC0PwMCszyHTPwmGxBgQhPUP/OZSKPo7P8n8xk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-927b19c5023so1126202839f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:09:44 -0700 (PDT)
+	s=arc-20240116; t=1760436652; c=relaxed/simple;
+	bh=6UNxFkPs7S0fth1zlm3KPMvDq2slzrLkx1c/5aAf7/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ijTqS39l0/J5JKMbyrOCllelQY4gEFAHMP21bk7BtU9g/FTBYd2CtP+7t/lLddqwEJtDn0e2WZMnATXd986DeCasHGB1Cw4scU6DFhA7GrdOIYpsDloB8YZH9tW2nlf6d1G1u/9eGL30KNmZahZ5b4B061C8eyXSUfkkBonTozM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ENOCMBvR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87HIs001466
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:10:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+GDf+gAOY9mdDvVU8qCaZ3Le3uxmX96IsgcRA5hA398=; b=ENOCMBvReXNVx7ga
+	EOmOXAyXdH53PeiVHByaKn5Kj9ItG2NqsAfiLnOYhYzzWx4blee9BcF02t4kmF1V
+	rpN192Yfde/xFzrBfqmsDIOYMdb1zNfWRDZw4AFZ7yU/gDklvhabmz0A86zSctqW
+	XLFZILWJbSNltVWQ+DvyvCqzRtg2swzbAa3EjoYA9PfAyjtWBHmKVFiBVT1e01Eo
+	/HAgtSa5LWRik0bYhf9R55jn9rgUNXmrrDwkO2trHXRiWo9DEV6ZMtQTZbokyRve
+	SCKnXwaHDDMYqJYbzLbxDwhg8sLi7PHvg3lCVk81BI6ghjhO4fnO7QqZLA514ONs
+	cRGK6g==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa882jn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:10:49 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78117b8e49fso16102083b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:10:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760436583; x=1761041383;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1760436648; x=1761041448;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MbE6hFyL7cs2WccLSn5D38rYbn63t6Fzd2HO3xX5DaQ=;
-        b=hGIivYsUnZK/doPP/SkXyWlGtJ1EmjkfEVNKwssajOzmeNLlvcYAQXu+qbBaWEkCzJ
-         oJ7nYC6v7/hrOSLcD0pkwHUEURsj3DvO61AXg5yphO9EJxedgPjkUcscIoVMe4a7vEua
-         SbKlSpkw5uWCMBxb/HKxdKfSEszJzl17b9nNnIw3/Vnh5dgSU10BG4ZKPIadbT0o/whV
-         57jQiQurarcg/aHgU7PtR5sCxAFoEVhSdcJsyfvOsKghpZAeDY0f9eG8JKv5TXdqA3B2
-         +HfduBgx1rdPvQNFxSLsNfXkIPIpAzSqepjklIfWgqafYdPtbqXx0znTqrcT4yWzno0f
-         hzoQ==
-X-Gm-Message-State: AOJu0YxIahM4DNpcJ01NvDKkyjlLgX88rqdTi6ry0Kfop+hxS3NUeh/P
-	gGtuoGmuakSXuRk7Y5ZK6Ay9WFLlUj26iYFFdcu/JGCDyOsXhlQoOBtSuuDpP7D1m5Pw5TnTODj
-	NpihZM451PS41+5z+vk6ohpqw4lE4BOBZU56Q77cN286g01uytCO3JrVmMFY=
-X-Google-Smtp-Source: AGHT+IHgC1+h32p1AwK+zRQMHL7GQd13Hap4AIqrW+y9pC8yY/v6BOO4Fv79mUfuZOFh5uCzciey/I0tMlTAVY47R5cmw8cooKiS
+        bh=+GDf+gAOY9mdDvVU8qCaZ3Le3uxmX96IsgcRA5hA398=;
+        b=JI+kdV/tkqlNawKU8rkHNFw+Of1ebPGII2bkXXbqqtHbZrEFEqp4tC2mlKNYEjESyq
+         v5V+d06oym66FaNVMQkEuaCN/r0x85knSXI5CfgHiSWYOrZgB9R+p8N5qvcNhZrq6n9H
+         s3ZENc+XGpHYZ0J9euovya5U09i4SK7XNveDs76BY/9+9xEa3YpY/UOtiWNZ0nUkApEb
+         DlXOJcTPSLwkvnC7nw1lz/lt5SWNCnIMtpjCdKA8a8Q4W3AWShn3hoIrK4PkmolbEbJU
+         mZWV3c8YIfvr4GkBJ2QLj8fAeF7mF2haPrfpOLCUyq2UwebWZCL+BhsyISoFNjzgh+0s
+         jB1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgUNWKfHOPjqxcZBctKIQPcULbNXJ1+vPYkjbd0E4fdQkI/PAk+grMpd3vf+iw2QjAC/PIcCsfKSRhWIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQQ83VLPdqwrHQteudb0hGjI5w4xiMcAV+StIi/YTV4jaPv5me
+	xyCfAVITcKYUdkb6gGPipurpbRVKCMTSV+dP09bIk+oTZ6chhji+3CmMdjrkXtEkIEO1KJZmWNl
+	7W0d1iG5dWXFXRmTRjyA1ZDih+rhYOAQpzFEdsDRWMbdxjiEAvDhci6lHGwnYbfbAD4o=
+X-Gm-Gg: ASbGncsdGUYQ0hno9d0kED3slH/7g0LxnJW+Ov3tHrz7BOAz0wFURrLf2Sb4GWrbWuD
+	2frHBond7Snebq89kQp2U24xAPYVwl4/7w3jJC2NIR6Tjqbk8AVhj1Gj+vqa/7BcYZgpCM6rvl0
+	FEeT1RTyF/+uQ8dm53mXpB5Yq+UpqLzymNiLti+hTbSDVj4k7cU7VQ6L/r/39zTJi3LZWR7GQcJ
+	EvNE59kF0+MVrZPmkOEwF4GQf1qoLzu+H5JgS6E1oU0AcqCvbQFsyia9uFY1Lkbjgxsznb83oJ9
+	kyM0eKvHtSo/DnHjDEJYglTgYgI+f+WCdL2qyNovpjfLjLopG8GP7b+ejSNGMio6GDPxRhY/
+X-Received: by 2002:a05:6a20:2451:b0:24a:b9e:4a6c with SMTP id adf61e73a8af0-32da845e56amr32763015637.44.1760436648456;
+        Tue, 14 Oct 2025 03:10:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4+I2XVu7f/J1cjzoxMqKeCVBL6tL6m/uv3wlVqh90v+MzZWe5SVtdgYsVmRmojAWrthABug==
+X-Received: by 2002:a05:6a20:2451:b0:24a:b9e:4a6c with SMTP id adf61e73a8af0-32da845e56amr32762977637.44.1760436647980;
+        Tue, 14 Oct 2025 03:10:47 -0700 (PDT)
+Received: from [10.206.101.41] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060962sm14772927b3a.1.2025.10.14.03.10.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 03:10:47 -0700 (PDT)
+Message-ID: <2d581ed7-f240-6b84-3bd9-eadc3c1041fa@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 15:40:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b05:b0:430:a65c:a83a with SMTP id
- e9e14a558f8ab-430a65cc7ebmr6703835ab.32.1760436583562; Tue, 14 Oct 2025
- 03:09:43 -0700 (PDT)
-Date: Tue, 14 Oct 2025 03:09:43 -0700
-In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee2167.050a0220.ac43.00f1.GAE@google.com>
-Subject: Forwarded: [PATCH] ntfs3: add debug warnings for run_lock initialization
-From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 7/8] media: iris: move common register definitions to the
+ header
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
+ <20251008-iris-sc7280-v1-7-def050ba5e1f@oss.qualcomm.com>
+ <b7eba4b5-1189-7506-4767-0ef3234fc6f2@oss.qualcomm.com>
+ <dzorzudzpjipvlkwik3uylomwi2dy5ticxromzegzgi2jhibot@reqv5ul5ifuc>
+ <3802fe42-0c94-8c10-7b6c-6c3adf863ef9@oss.qualcomm.com>
+ <t5obao7tm34uilnzoa24shknvdtzqkc5uwek4cxwbof3tgqylb@jehfugyxvups>
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+In-Reply-To: <t5obao7tm34uilnzoa24shknvdtzqkc5uwek4cxwbof3tgqylb@jehfugyxvups>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Rhc5wSaGeqAwu0Y5YcAkg7TKKlLTPHX0
+X-Proofpoint-ORIG-GUID: Rhc5wSaGeqAwu0Y5YcAkg7TKKlLTPHX0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX1IxNWhIMfwrT
+ ONpO/kAvh6mL5z/vo/yUsS3UhTfznFc/JEbmIbbNKoLFH6JW2d5RECTyn8Y3Y9Y/U01keMI0Lj4
+ rJoCsoQrvsHrVrTf8bp2D9/YgQuk4AvI+6G8F0XBibwIcS6UIBJRD0atOVYtWNS+Y1Sst6YPxzn
+ Jvm5NWgu9r5nDLfwPt175+lkH1YtG98nlk6i2r9y6Qky2aKcIGwuAuGl5uOrHM0REpZKslvlr9t
+ 9J9CGwSoZY6GgtLS07Dj8JL0i29zYTUNU4m4Xox31wMt2XcXEGogCpeeyA7WPDNHR8vvvRDq3mC
+ 0Nuimjy7oPK7Ol0fKfwJVOrLkLr2bC/rzFNkKNwU0MsIGDYamHHzE9Y7+qnO8lPkZsacLBgy8ix
+ 26Pg0++hNq/NHUS/FJaMTQZ4bjjfXw==
+X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ee21a9 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=UHACNdNzX4dSgP2fR3kA:9 a=QEXdDO2ut3YA:10
+ a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+On 10/14/2025 3:21 PM, Dmitry Baryshkov wrote:
+> On Tue, Oct 14, 2025 at 02:43:56PM +0530, Vikash Garodia wrote:
+>>
+>> On 10/9/2025 8:18 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Oct 09, 2025 at 11:40:25AM +0530, Dikshita Agarwal wrote:
+>>>>
+>>>>
+>>>> On 10/8/2025 10:03 AM, Dmitry Baryshkov wrote:
+>>>>> Simplify adding new platforms by moving common registers definitions
+>>>>> from VPU 3.x and "common" file to the header with other register
+>>>>> defines.
+>>>>>
+>>>>
+>>>> Similar to
+>>>> https://lore.kernel.org/all/20250925-knp_video-v1-5-e323c0b3c0cd@oss.qualcomm.com/
+>>>> ?
+>>>
+>>> Yes, but moving more registers. I can rebase on top of that series if it
+>>> lands first. Or I can just pick that patch into the series, to remove
+>>> the dependency. What would be yours / Bryan's preference?
+>>>
+>>
+>> My vote would be to rebase this one on top of earlier one.
+> 
+> Ack, I will rebase. Seeing that none of the patches in that series are
+> in R-B state, I will probably pick up just that patch into this series.
+> I hope it's fine with everybody.
+> 
 
-Subject: [PATCH] ntfs3: add debug warnings for run_lock initialization
-Author: kartikey406@gmail.com
+Should be good. I can keep the patch in my series as well, in my next rev, so
+whichever lands first, Bryan can simply drop the patch in later series.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-Add debug messages to track when run_lock is initialized for regular
-files to help diagnose lockdep warnings.
-
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ntfs3/file.c  |  1 +
- fs/ntfs3/inode.c | 57 ++++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 51 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 4c90ec2fa2ea..0eb218a2b999 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -773,6 +773,7 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
- int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 struct iattr *attr)
- {
-+	printk(KERN_WARNING "ntfs_setattr: testing by deepanshu \n");
- 	struct inode *inode = d_inode(dentry);
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 	u32 ia_valid = attr->ia_valid;
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 3959f23c487a..dafac23e20be 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+// Created regular file inode// SPDX-License-Identifier: GPL-2.0
- /*
-  *
-  * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
-@@ -50,7 +50,10 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 	/* Setup 'uid' and 'gid' */
- 	inode->i_uid = sbi->options->fs_uid;
- 	inode->i_gid = sbi->options->fs_gid;
--
-+	if (ino == 25) {
-+		ntfs_warn(sb, "DEBUG: ntfs_read_mft ENTERED for inode 25");
-+		dump_stack();
-+	}
- 	err = mi_init(&ni->mi, sbi, ino);
- 	if (err)
- 		goto out;
-@@ -462,7 +465,11 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
- 							      &ntfs_aops;
- 		if (ino != MFT_REC_MFT)
-+		{
-+			ntfs_warn(sb, "DEBUG: deepanshu  Read inode %lu, S_ISREG=%d, run_lock_init=%d",
-+          ino, S_ISREG(mode), (ino != MFT_REC_MFT));
- 			init_rwsem(&ni->file.run_lock);
-+		}
- 	} else if (S_ISCHR(mode) || S_ISBLK(mode) || S_ISFIFO(mode) ||
- 		   S_ISSOCK(mode)) {
- 		inode->i_op = &ntfs_special_inode_operations;
-@@ -529,27 +536,58 @@ static int ntfs_set_inode(struct inode *inode, void *data)
- struct inode *ntfs_iget5(struct super_block *sb, const struct MFT_REF *ref,
- 			 const struct cpu_str *name)
- {
-+	
- 	struct inode *inode;
--
-+	unsigned long ino = ino_get(ref);
-+	 if (ino == 25) {
-+                ntfs_warn(sb, "DEBUG: ntfs_iget5 called for inode 25");
-+                dump_stack();
-+        }
- 	inode = iget5_locked(sb, ino_get(ref), ntfs_test_inode, ntfs_set_inode,
- 			     (void *)ref);
- 	if (unlikely(!inode))
- 		return ERR_PTR(-ENOMEM);
--
-+	 if (ino == 25)
-+                ntfs_warn(sb, "DEBUG: inode 25 - I_NEW=%d", !!(inode->i_state & I_NEW));
- 	/* If this is a freshly allocated inode, need to read it now. */
--	if (inode->i_state & I_NEW)
-+	if (inode->i_state & I_NEW){
-+		if (ino == 25)
-+                        ntfs_warn(sb, "DEBUG: Calling ntfs_read_mft for inode 25");
- 		inode = ntfs_read_mft(inode, name, ref);
-+		if (ino == 25 && IS_ERR(inode)) {
-+                        ntfs_warn(sb, "DEBUG: ntfs_read_mft FAILED for inode 25, error=%ld",
-+                                  PTR_ERR(inode));
-+                        dump_stack();
-+                }
-+	}
- 	else if (ref->seq != ntfs_i(inode)->mi.mrec->seq) {
- 		/*
- 		 * Sequence number is not expected.
- 		 * Looks like inode was reused but caller uses the old reference
- 		 */
-+		if (ino == 25 && IS_ERR(inode)) {
-+                        ntfs_warn(sb, "DEBUG: ntfs_read_mft FAILED for inode 25, error=%ld",
-+                                  PTR_ERR(inode));
-+                        dump_stack();
-+                }
- 		iput(inode);
- 		inode = ERR_PTR(-ESTALE);
- 	}
- 
--	if (IS_ERR(inode))
--		ntfs_set_state(sb->s_fs_info, NTFS_DIRTY_ERROR);
-+	else if (ino == 25) {
-+                ntfs_warn(sb, "DEBUG: inode 25 found in cache, skipping ntfs_read_mft!");
-+                dump_stack();
-+        }
-+
-+	/*if (IS_ERR(inode))
-+		ntfs_set_state(sb->s_fs_info, NTFS_DIRTY_ERROR);*/
-+	if (IS_ERR(inode)) {
-+                if (ino == 25)
-+                        ntfs_warn(sb, "DEBUG: inode 25 IS_ERR, setting DIRTY_ERROR");
-+                ntfs_set_state(sb->s_fs_info, NTFS_DIRTY_ERROR);
-+        } else if (ino == 25) {
-+                ntfs_warn(sb, "DEBUG: inode 25 returning successfully");
-+        }
- 
- 	return inode;
- }
-@@ -1180,6 +1218,8 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 		      umode_t mode, dev_t dev, const char *symname, u32 size,
- 		      struct ntfs_fnd *fnd)
- {
-+	printk(KERN_WARNING "GET THE MESSAGE deepanshu \n");
-+	//ntfs_warn(sb, "DEBUG: In inodde function");
- 	int err;
- 	struct super_block *sb = dir->i_sb;
- 	struct ntfs_sb_info *sbi = sb->s_fs_info;
-@@ -1597,6 +1637,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 		inode->i_size = size;
- 		inode_nohighmem(inode);
- 	} else if (S_ISREG(mode)) {
-+		ntfs_warn(dir->i_sb, "DEBUG: Setting up regular file inode %lu", inode->i_ino);
- 		inode->i_op = &ntfs_file_inode_operations;
- 		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
- 				       &ntfs_legacy_file_operations :
-@@ -1604,6 +1645,8 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
- 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
- 							      &ntfs_aops;
- 		init_rwsem(&ni->file.run_lock);
-+		ntfs_warn(sb, "DEBUG: Created regular file inode %lu, run_lock initialized", 
-+              inode->i_ino);
- 	} else {
- 		inode->i_op = &ntfs_special_inode_operations;
- 		init_special_inode(inode, mode, dev);
--- 
-2.43.0
-
+Regards,
+Vikash
 
