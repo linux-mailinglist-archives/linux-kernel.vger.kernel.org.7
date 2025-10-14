@@ -1,81 +1,83 @@
-Return-Path: <linux-kernel+bounces-852778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5674BD9E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:08:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92209BD9E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947E018927F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E24F188231F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E86F314D08;
-	Tue, 14 Oct 2025 14:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C327314D37;
+	Tue, 14 Oct 2025 14:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQKbDPrI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lK8uoZSY"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851EB314B85;
-	Tue, 14 Oct 2025 14:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EF8314D0F;
+	Tue, 14 Oct 2025 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450783; cv=none; b=B+gsfZcR1kRLD1Av/233y6oh89QkD713mvU+Zm0Rfue4JKquKSYStqlbxyMSjLHv9d5ln29SnQQoSqjx7Qz0Thj4BNcTr92Fd9MSu5sKKiqJr6maJuZo3p+Re6JFBMhjhosu8J7ymk8bIJjo7JxTHull2c/CNl1jBS7surKa2c0=
+	t=1760450794; cv=none; b=oKEUxaqAHseYsKCxHy4ApSMxqyQnrtJYK7WqMAXt0JBmHX1xGafCry+16IqxSUtvUOTtWr+o6RDX8WmGixL4UZA9cWlVo+QM4SlknTKo8HIIxAD4UQDoyYPfITrNNu17xShL+U8i1K/wUulZgLGsd/HGtv90A74AfLdW59Iczv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450783; c=relaxed/simple;
-	bh=wR2HX3Ov24o2Od5ZUKmuoqwoAIH2OIztzSM45ZrhFAs=;
+	s=arc-20240116; t=1760450794; c=relaxed/simple;
+	bh=IT6dBKIlwdnA1ddOUgBgq0XZQweKSrhrXqeilv7m9Us=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3VOb08hK9/5Djfj/ss6fjovgJCIMb4i85A3IKXbVGvv1B8434vpXDWlmreqya4WnENkQnLRHzg8JJCHcyAtBU0ZUUNKYfeZgFCFnAmsPMsVc4p6pW1iujpnAM/IA0KA8m4aVhPtaAOhBZI5kSOFALpSNx2a86cRtFZ5F4uHU9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQKbDPrI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90EE0C4CEE7;
-	Tue, 14 Oct 2025 14:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760450783;
-	bh=wR2HX3Ov24o2Od5ZUKmuoqwoAIH2OIztzSM45ZrhFAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UQKbDPrIEpj3FXKC8fC26WCSgLUH3q36UBwoxThdeX+fMv+cTvrzHfATJkOiAkENU
-	 ww7M26Fa9tjs29A5e9j3zktCvReb6jBqP40eEslCofUrRm8//dR/8d++y7nQgVryqw
-	 U48/MTkICO95v1amm9Pa5oBRqQlXBdSOiji+pW7dsxo56NHzkVxkn64DDounEjGhYU
-	 J6NqfSVyIzF3CPSvEaSan+TX6v7h4roH7OKfscqWMc9uA757VFmd4FYk23egsJpLQj
-	 tBeCssEx94sOAJJbL5V+qoE7eL7pGkR1HHwKzedC6QrxcFigBA5esGQwbdi9LVMMDM
-	 nHsG0at31lvMA==
-Date: Tue, 14 Oct 2025 23:06:12 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Tengda Wu <wutengda@huaweicloud.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] perf bpf_counter: Fix opening of "any"(-1) CPU events
-Message-ID: <aO5Y1PSs_KOuuy32@google.com>
-References: <20251009132912.141116-1-irogers@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/MXe82plfYMa0wkG46j2wdWRgoN0+s/pEFclxoANR7itats49npXODelI/J6vxAg16uFAHXeV3moL/KCI7p+QD6gINLTCIM3wkUVMR+D8x7sZd8cmXCHrqKwGPzqlb95Xv+7QFC0fQR5N1r5ToeWn1k1SPSC4KKFRlcUaWBE1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lK8uoZSY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=e/V73HB2j0SB/c9ybjOOfbzsInvf4MCE5FolGwdySDg=; b=lK8uoZSYpxxAgKRKV/Hch8ByIS
+	EVXALti/OcHwaKhZzxpYN1cvdWxikT7SKQRge3XVTafJJd3OjMjoxORgfBybUR4FJoAvcx3hdgiQP
+	gXE/pec3m+6ks+KKgnkEsB8xiSabU4tVrQK6swmiAIX0qZP/qgZ+AgOhAk0u2w3nuCVcWnwUx7JZn
+	Op9Cirp81R0019U2e0Q+C7ycK39oog7XyMkE5MiYqpIJzv0LfyrzzUsJXW2LMg+Zm3NtSmP+7z1mM
+	vOjgQ0c2xJlIx7YMUOisNNHfTzhkry+JzUsmXVtZLi4+YuLGpup5hzOhLOuC75093AZdIealQjdUw
+	pJMyaopg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8ffM-0000000C1Ts-0nWf;
+	Tue, 14 Oct 2025 14:06:16 +0000
+Date: Tue, 14 Oct 2025 15:06:15 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
+Subject: Re: [PATCH 0/2] optimization of dma-buf system_heap allocation
+Message-ID: <aO5Y1x82YN81Mh7J@casper.infradead.org>
+References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009132912.141116-1-irogers@google.com>
+In-Reply-To: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
 
-On Thu, Oct 09, 2025 at 06:29:11AM -0700, Ian Rogers wrote:
-> The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
-> wanting to aggregate a count against a CPU, which avoids the need for
-> atomics so let's not change that. Force evsels used for BPF counters
-> to require a CPU when not in system-wide mode so that the "any"(-1)
-> value isn't used during map propagation and evsel's CPU map matches
-> that of the PMU.
+On Tue, Oct 14, 2025 at 04:32:28PM +0800, zhaoyang.huang wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 > 
-> Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing hybrid")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> This series of patches would like to introduce alloc_pages_bulk_list in
+> dma-buf which need to call back the API for page allocation.
 
-Applied to perf-tools-next, thanks!
-
-Best regards,
-Namhyung
+Start with the problem you're trying to solve.
 
