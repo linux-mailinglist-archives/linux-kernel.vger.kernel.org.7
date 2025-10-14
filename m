@@ -1,162 +1,241 @@
-Return-Path: <linux-kernel+bounces-852230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3FEBD87F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:42:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A13B2BD8805
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D591923624
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 815644FB6E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF3A2ECE8A;
-	Tue, 14 Oct 2025 09:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BC32FD7BD;
+	Tue, 14 Oct 2025 09:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCtWSxsw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aWHwgHox"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFAC2EAD0D;
-	Tue, 14 Oct 2025 09:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B922E8E04;
+	Tue, 14 Oct 2025 09:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434948; cv=none; b=GQ2PkGvM5zag3FnBzm3SI3+Vap2k6AUppvwmrOyUX2ECqoPGIdAyxUSml05Uc7stAVI7Ue3ApMwKEZOvrZKEUsm4snfdBgJPQotDVmjse7O6UX34pOB8ANb9DpAepb69GZVlvlwpxsQQZXHz97vHP3YCRv1wV9f84fi885g7jWg=
+	t=1760434954; cv=none; b=iafkMQBatzPnLwTsjts5swlXOMuIs/kEfQsHx/5HfYqdT5AVBD7lbTPGp2Qe3+Bh+1R4tl0xd/Zmuhfa1JL68pyUP8y8PwDMLW3oxFAQWR/TikSBLiSI9baXDL7bTeCPHCXmHSuF1NHlYjxQbuVjw6DAKkOhbI43H1XISlvbvbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434948; c=relaxed/simple;
-	bh=0RP0L9rrdtLO/ij41A3dkWhYQztRaChrcp5Pto7llj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MeyMqEETWYZJlDxZ7EmvaVJA8UoUhBW9dHQ6z4tlBzzHjVX2cAbMm8KiGy083V4g9+qf2lZYBdxkadTodjFZ9otozPFxkg/0vzD/aViF1KldoUF65j4XXGzcWvn1JFQhTcoHokLyCHVKPTxcROi0Aa/Up4qGFR9zLfne0w8irFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCtWSxsw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AAA3CC116D0;
-	Tue, 14 Oct 2025 09:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760434947;
-	bh=0RP0L9rrdtLO/ij41A3dkWhYQztRaChrcp5Pto7llj8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PCtWSxswtFDAJ42NmbXTP+UVZTscYBkn/kxrn8NH0/HxYS5jlUvvDf/gYGUcFC6PP
-	 10dZI/QPs64jpG0CZ5FhYetDdbO+0FPC9Dr/wltkNvabUDCk0U95dKR7AMy+EGXBne
-	 ArI2+3v0AOm/xtXB/fGk2BRRxvvbZPnlAVs0ekgDlzOcdB+1JNG/rZTgzIb/4MKiiI
-	 01L0wwY5kvclZqKblHf3rczA17IEGNd0pLX/abJ1bAkdydqE6KX7PU4nOpx7zTgpPS
-	 g0ACGI1XTwIqzKWx+SQM8+ZiIIB4X3KT9tFVdsN8bBN8DHGzO9uFo+VQ6M3vfkE46s
-	 vlwAkWlQy6NNw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B658CCD187;
-	Tue, 14 Oct 2025 09:42:27 +0000 (UTC)
-From: Xiangxu Yin via B4 Relay <devnull+xiangxu.yin.oss.qualcomm.com@kernel.org>
-Date: Tue, 14 Oct 2025 17:42:12 +0800
-Subject: [PATCH v2 3/3] arm64: dts: qcom: Enable DisplayPort on QCS615 Ride
- platform
+	s=arc-20240116; t=1760434954; c=relaxed/simple;
+	bh=fyvsiAplX9W/n9nhtuP7G9+XkvoehypKI7yt/ohUwZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kKX6lfbDhdpefoWWor74NrxOYbHA6e/MOUbjEjtcoUPZsA5cTZGUfTQ4zywEgjcrkgK0YluuomNrKPKXR/OOlEiBLSavz3NZiEWd1apJLMpezJXv7DL/6KtV79rTPvXtHSvdknlE78vbPChQHr9aoiDO6Nv+aX7V3lmJ4ML+maQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aWHwgHox; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760434950;
+	bh=fyvsiAplX9W/n9nhtuP7G9+XkvoehypKI7yt/ohUwZw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aWHwgHoxpOOHTADIbwZAPiqXMEHzCSX0jMxP+GwmabX6ehKRbFBkszUVRpwe9kIGe
+	 SEMPr93gS1UOX6deodcJSGBaftl/M2EGulmjX5WV6y51J29p//Ew9DxVchaP3jVzOx
+	 rLcKPQPBsEiBEfw96ML/oAik1RTN3fuSHxZHSoc3VZIcnsgWtKrgPYrqLM6tGXuXBI
+	 mUr740mZplpK5n816s4UYs0nLmBiwmg/hmlRH6bYH8EYHKHve6U45HHAbh0yw4pFKZ
+	 W7jwLyTqSZwikBG8ijce57sjVjqDVWQSTUJSxjUNvphqJvKLGZ3flrspcAAMRHf8+K
+	 3Ae0WhwNvi5ZQ==
+Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8678B17E055D;
+	Tue, 14 Oct 2025 11:42:29 +0200 (CEST)
+Message-ID: <b0a802b0-e6b8-4a6f-a65c-ad2d11a7c1f6@collabora.com>
+Date: Tue, 14 Oct 2025 11:42:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/8] media: uapi: Introduce V4L2 generic ISP types
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Dafna Hirschfeld <dafna@fastmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Antoine Bouyer <antoine.bouyer@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
+ <20251014-extensible-parameters-validation-v7-1-6628bed5ca98@ideasonboard.com>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20251014-extensible-parameters-validation-v7-1-6628bed5ca98@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251014-add-displayport-support-to-qcs615-devicetree-v2-3-1209df74d410@oss.qualcomm.com>
-References: <20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com>
-In-Reply-To: <20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, fange.zhang@oss.qualcomm.com, 
- yongxing.mou@oss.qualcomm.com, li.liu@oss.qualcomm.com, 
- Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760434946; l=1594;
- i=xiangxu.yin@oss.qualcomm.com; s=20241125; h=from:subject:message-id;
- bh=A/SsuVWsiV6vdsaEJQHVzPt+4G+6gB6Bn9Pd+6Y41VM=;
- b=zrQOwsN5AaLhGuLku7P3b3PlCYskdq/dqPR6U4lC3jeOxAhy5o06b+N+BbDs+5xvC/zunln5V
- n0aVs8SvMmdCDwzP8dhOOZdm4J468+Q4XEGyulkqipLqzsBmuxyRf7b
-X-Developer-Key: i=xiangxu.yin@oss.qualcomm.com; a=ed25519;
- pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
-X-Endpoint-Received: by B4 Relay for xiangxu.yin@oss.qualcomm.com/20241125
- with auth_id=542
-X-Original-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Reply-To: xiangxu.yin@oss.qualcomm.com
 
-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Hi Jacopo,
 
-Add DP connector node and configure MDSS DisplayPort controller for
-QCS615 Ride platform. Include lane mapping and PHY supply settings
-to support DP output.
+Thanks for your efforts!
 
-Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+On 10/14/25 10:00, Jacopo Mondi wrote:
+> Introduce v4l2-isp.h in the Linux kernel uAPI.
+> 
+> The header includes types for generic ISP configuration parameters
+> and will be extended in the future with support for generic ISP statistics
+> formats.
+> 
+> Generic ISP parameters support is provided by introducing two new
+> types that represent an extensible and versioned buffer of ISP
+> configuration parameters.
+> 
+> The v4l2_params_buffer represents the container for the ISP
+> configuration data block. The generic type is defined with a 0-sized
+> data member that the ISP driver implementations shall properly size
+> according to their capabilities. The v4l2_params_block_header structure
+> represents the header to be prepend to each ISP configuration block.
+> 
+> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 9ac1dd3483b56f9d1652f8a38f62d759efa92b6a..0b8bcabdd90a0820b1f9c85e43b78e40eb8a9a38 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -39,6 +39,20 @@ xo_board_clk: xo-board-clk {
- 		};
- 	};
- 
-+	dp0-connector {
-+		compatible = "dp-connector";
-+		label = "DP0";
-+		type = "mini";
-+
-+		hpd-gpios = <&io_expander 8 GPIO_ACTIVE_HIGH>;
-+
-+		port {
-+			dp0_connector_in: endpoint {
-+				remote-endpoint = <&mdss_dp0_out>;
-+			};
-+		};
-+	};
-+
- 	dp-dsi0-connector {
- 		compatible = "dp-connector";
- 		label = "DSI0";
-@@ -423,6 +437,16 @@ &mdss {
- 	status = "okay";
- };
- 
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	data-lanes = <3 2 0 1>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000>;
-+	remote-endpoint = <&dp0_connector_in>;
-+};
-+
- &mdss_dsi0 {
- 	vdda-supply = <&vreg_l11a>;
- 	status = "okay";
-@@ -623,6 +647,13 @@ &usb_qmpphy {
- 	status = "okay";
- };
- 
-+&usb_qmpphy_2 {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
+Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
 
--- 
-2.34.1
+Thanks and best regards,
+Michael
 
+> ---
+>  MAINTAINERS                         |   6 +++
+>  include/uapi/linux/media/v4l2-isp.h | 102 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 108 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 46126ce2f968e4f9260263f1574ee29f5ff0de1c..e9ac834d212f88222437e8d806800b2516d44f01 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -26853,6 +26853,12 @@ F:	drivers/media/i2c/vd55g1.c
+>  F:	drivers/media/i2c/vd56g3.c
+>  F:	drivers/media/i2c/vgxy61.c
+>  
+> +V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
+> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	include/uapi/linux/media/v4l2-isp.h
+> +
+>  VF610 NAND DRIVER
+>  M:	Stefan Agner <stefan@agner.ch>
+>  L:	linux-mtd@lists.infradead.org
+> diff --git a/include/uapi/linux/media/v4l2-isp.h b/include/uapi/linux/media/v4l2-isp.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..779168f9058e3bcf6451f681e247d34d95676cc0
+> --- /dev/null
+> +++ b/include/uapi/linux/media/v4l2-isp.h
+> @@ -0,0 +1,102 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Video4Linux2 generic ISP parameters and statistics support
+> + *
+> + * Copyright (C) 2025 Ideas On Board Oy
+> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> + */
+> +
+> +#ifndef _UAPI_V4L2_ISP_H_
+> +#define _UAPI_V4L2_ISP_H_
+> +
+> +#include <linux/stddef.h>
+> +#include <linux/types.h>
+> +
+> +/**
+> + * enum v4l2_isp_params_version - V4L2 ISP parameters versioning
+> + *
+> + * @V4L2_ISP_PARAMS_VERSION_V0: First version of the V4L2 ISP parameters format
+> + *				(for compatibility)
+> + * @V4L2_ISP_PARAMS_VERSION_V1: First version of the V4L2 ISP parameters format
+> + *
+> + * V0 and V1 are identical in order to support drivers compatible with the V4L2
+> + * ISP parameters format already upstreamed which use either 0 or 1 as their
+> + * versioning identifier. Both V0 and V1 refers to the first version of the
+> + * V4L2 ISP parameters format.
+> + *
+> + * Future revisions of the V4L2 ISP parameters format should start from the
+> + * value of 2.
+> + */
+> +enum v4l2_isp_params_version {
+> +	V4L2_ISP_PARAMS_VERSION_V0 = 0,
+> +	V4L2_ISP_PARAMS_VERSION_V1
+> +};
+> +
+> +#define V4L2_ISP_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
+> +#define V4L2_ISP_PARAMS_FL_BLOCK_ENABLE		(1U << 1)
+> +
+> +/*
+> + * Reserve the first 8 bits for V4L2_ISP_PARAMS_FL_* flag.
+> + *
+> + * Driver-specific flags should be defined as:
+> + * #define DRIVER_SPECIFIC_FLAG0     ((1U << V4L2_ISP_PARAMS_FL_DRIVER_FLAGS(0))
+> + * #define DRIVER_SPECIFIC_FLAG1     ((1U << V4L2_ISP_PARAMS_FL_DRIVER_FLAGS(1))
+> + */
+> +#define V4L2_ISP_PARAMS_FL_DRIVER_FLAGS(n)       ((n) + 8)
+> +
+> +/**
+> + * struct v4l2_isp_params_block_header - V4L2 extensible parameters block header
+> + * @type: The parameters block type (driver-specific)
+> + * @flags: A bitmask of block flags (driver-specific)
+> + * @size: Size (in bytes) of the parameters block, including this header
+> + *
+> + * This structure represents the common part of all the ISP configuration
+> + * blocks. Each parameters block shall embed an instance of this structure type
+> + * as its first member, followed by the block-specific configuration data.
+> + *
+> + * The @type field is an ISP driver-specific value that identifies the block
+> + * type. The @size field specifies the size of the parameters block.
+> + *
+> + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_ISP_FL_* and
+> + * driver-specific flags specified by the driver header.
+> + */
+> +struct v4l2_isp_params_block_header {
+> +	__u16 type;
+> +	__u16 flags;
+> +	__u32 size;
+> +} __attribute__((aligned(8)));
+> +
+> +/**
+> + * struct v4l2_isp_params_buffer - V4L2 extensible parameters configuration
+> + * @version: The parameters buffer version (driver-specific)
+> + * @data_size: The configuration data effective size, excluding this header
+> + * @data: The configuration data
+> + *
+> + * This structure contains the configuration parameters of the ISP algorithms,
+> + * serialized by userspace into a data buffer. Each configuration parameter
+> + * block is represented by a block-specific structure which contains a
+> + * :c:type:`v4l2_isp_params_block_header` entry as first member. Userspace
+> + * populates the @data buffer with configuration parameters for the blocks that
+> + * it intends to configure. As a consequence, the data buffer effective size
+> + * changes according to the number of ISP blocks that userspace intends to
+> + * configure and is set by userspace in the @data_size field.
+> + *
+> + * The parameters buffer is versioned by the @version field to allow modifying
+> + * and extending its definition. Userspace shall populate the @version field to
+> + * inform the driver about the version it intends to use. The driver will parse
+> + * and handle the @data buffer according to the data layout specific to the
+> + * indicated version and return an error if the desired version is not
+> + * supported.
+> + *
+> + * For each ISP block that userspace wants to configure, a block-specific
+> + * structure is appended to the @data buffer, one after the other without gaps
+> + * in between. Userspace shall populate the @data_size field with the effective
+> + * size, in bytes, of the @data buffer.
+> + */
+> +struct v4l2_isp_params_buffer {
+> +	__u32 version;
+> +	__u32 data_size;
+> +	__u8 data[] __counted_by(data_size);
+> +};
+> +
+> +#endif /* _UAPI_V4L2_ISP_H_ */
+> 
 
 
