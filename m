@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-852374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC42BD8CBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CB7BD8CE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B963E423B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:44:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7D73E6C28
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D12F9DA1;
-	Tue, 14 Oct 2025 10:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D792FB08D;
+	Tue, 14 Oct 2025 10:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lhv2rd2W"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lCLA3pdV"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728BA2D24A6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02E42EC0B2;
+	Tue, 14 Oct 2025 10:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760438673; cv=none; b=agWnO4sUL29LfiHaHiK9GDgEH6VX48bz2Guz4fK5FbFyt2yhsCbs+Qurpo38I4EXXIth4VbOlNmUbLJgex8YoEonRJ+KDCMovr2Xfj73rryz4jtpxo1mGC+jRB6z/C5uJacK1vPZlsUGqNNplhieQdPPmTV05aksB5TIV6cDsQY=
+	t=1760438940; cv=none; b=jDUn3zIcj/uaJk7rRaYThpBzvzYO0tU2puwvUcbBUrRbJS+KykrV4wz4NvyCoybu24booOBPVA1ymFG48jJcw/+V3N2Vqx7lBGtEPNYPDlYYxSONzZM77V0USw39cS0lHdbqUdIxgRa4p4vl1H2r+9CGQpnFpyti3pE834ZBsIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760438673; c=relaxed/simple;
-	bh=s3P3SxQQQdWjgG+0wxnCeO4S365wlkK1npK4z7KMX4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cuAdhSugrBuUUp+FOpFtDFNfo35/AKbpydciBmXzYjWH78eOV2ok1rT9WOrrFwckhfto2mbUibUKiP4uWX6mj7rU58STV08D3yUaRTm0POMoKLGh5v7h5/8V+GH2fbS+Qd+dUMRDiBqn5q9jSjkSFcyoqBFF6TEXvUF8VdTRzOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lhv2rd2W; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7815092cd2fso3619547b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:44:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760438670; x=1761043470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=THAYM86a8lGfJC89oRqulnlUSAmMtqdsc6KSglKPv6Q=;
-        b=lhv2rd2WH9CZuFONezi4NEyOx2PohReRg+WuXsteVAy3mTZnfIBBL0yKNW6pshaf+c
-         L1uouiMZwnO0gI2ActMrSsqF5O5g3GTH8FyddAYuOPjB/ZnegPG6gf4V+cfPKztQme66
-         Y1/TbVe+Nxje5DEYZ9rRCEx7L6qFh+BKONDI6IxppbCCcDXmsqeovfq/f7CnFZo9bMwF
-         XWvSPpYpWsxexsIIH26rE9POCgGKjvhKNOtEkIFxYYueUl9CgF+xh6hRf6cURJufu1L/
-         YATa3cFJOo4HKE/Qg1vnoj3wIGpU9/gR77YBAi6FSIqWe3wbKZVM9JzapJCqH0yS1fr/
-         nFfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760438670; x=1761043470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=THAYM86a8lGfJC89oRqulnlUSAmMtqdsc6KSglKPv6Q=;
-        b=GiyiNNOGAcsCilm5OH3JzYWzNcbTv13NPB7EE6zvm+w1tQZG0ryLslvl6V5zclvASg
-         hK3jan1SZ89J6wqoR8l3r13lOLHbDF3+GI8A3qK3cen8i95duJYswl4joOnKLOOayJih
-         7/RFIbu3ejHITpO1s+IvtQkR50/HdY2dDuOpzDKT9QckzGxXZiizawFhO+U8hkPtdhJt
-         vAHVY9al5tkYFdxjbVqd1ERcG+UVVe3kT+iZ06PvJsj8Ri54H0UlcbqYvLAkHxdGhqLp
-         ie8MU/7kBBwwCLs4m18hIICpM7psnJHLQ8eBJz0XlhRboipfuwohV68lw0yjn/gz2fmH
-         u39g==
-X-Forwarded-Encrypted: i=1; AJvYcCVYISf58RGri5jPgUxt7qlY4YWwMcqFDzRIoNhgb2gJLD84cBf8NepYHcqePM81wNQewbqDA+y3MzKEOG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIFV9Ps0Fq+CuOPFrpRPWq+80GK6PbU9OaQRHFHU/UMUTll3aK
-	CGztafg0i6+qjknHejaySdXM/79PVXuMaARvkS6wEBsiNV6vifgGeyg+59DPa4LhwBlk3GlVRNV
-	qffcR2CzF7UOoWS10FgBSXnvX2+NDIJJNdDwczMqt/A==
-X-Gm-Gg: ASbGncuFpw94hW4c6vRy4ow23vq9Ua3PuKeBf7ONgK/1FlfRxJt84c1KlMGMEg8NWD2
-	W9+x6d2dxHZoSNx6FRuXnjY+MlZahLZvJY81gW3vy0znH4AE0ei6HarQmge+74Dl1MUlcEg7uAL
-	/j/9SdZmy0Wl/XPfI2JGTCoI4iKGwFryogUFENn3Ds/Q182VyX/X1QBqp3eS2/S65NZb+iT22NB
-	tpOLUBxYS0uR1m2t/DHFi2N5UR2Pg==
-X-Google-Smtp-Source: AGHT+IFp4+6M8ipAZ5PvzMBFmhPMOi8dNCbnfx7iCHUB+I0mJ3szARsJfZuBKpYg4FajfdIRV8gYXT4SlaoN9/M/6LQ=
-X-Received: by 2002:a05:690e:182:b0:63c:f5a7:400 with SMTP id
- 956f58d0204a3-63cf5a70a44mr7374154d50.68.1760438670439; Tue, 14 Oct 2025
- 03:44:30 -0700 (PDT)
+	s=arc-20240116; t=1760438940; c=relaxed/simple;
+	bh=jsZ35PKJoIyRJL+lhaOaWpvfX5vguopAXv8JOUir99c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZjZG8ACHyFKOMK9mViuzKn7tE2oKQmPQv17QFRw20zEGx8jXCXiXYafyhj14yCavhnehYkE+Q5pwmoDwLIIwjq2V1tj5qDB9X4oN13ioqEvsSVbmXKyEdYrsI/Heapx1BRldMSZnPUbF+kSMJf9+TRmzYUZ1ndDQc+aledymCqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lCLA3pdV; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4TK3DsBWtfaz0TuDxRr37u83eeyXIsUWSIrJ5//loOc=; b=lCLA3pdVWW5yhqAcccqogx0EQm
+	kcFkufSMqfEj7xlRtiCtgniW17DK8YiIlxRl+Apd5hcLMLiRRxexqvWbTZZJdA+GmcaPHNMkhy8yp
+	TcEwNdjyNJWU2mk9r8rNPvGPmdV+b27FYAXJhquXvpZ78womnf12J3RutLlYDu8zT2nwvAsABEf/5
+	Z6l63Oql5hRbwZIrrU4kpIqdQ3PyyNEinCMk04PFBTN4olBD1JwI0IL1KfF3y9HRi/XmAqv78U10B
+	jf7PGzQkN0aQUaLbuYQ8xxfKL1o8LKq9JLvR7G55ZfPYdUoHX7CiB6+y+UF/7SlEcxQKKKA8bogyy
+	zXlTAQgA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8ca8-000000056MU-06Jf;
+	Tue, 14 Oct 2025 10:48:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 53B15300212; Tue, 14 Oct 2025 12:48:39 +0200 (CEST)
+Date: Tue, 14 Oct 2025 12:48:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, Ryo Takakura <ryotkkr98@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v13 01/17] preempt: Track NMI nesting to separate per-CPU
+ counter
+Message-ID: <20251014104839.GN4067720@noisy.programming.kicks-ass.net>
+References: <20251013155205.2004838-1-lyude@redhat.com>
+ <20251013155205.2004838-2-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014015712.2922237-1-gary.yang@cixtech.com> <20251014015712.2922237-2-gary.yang@cixtech.com>
-In-Reply-To: <20251014015712.2922237-2-gary.yang@cixtech.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 12:44:15 +0200
-X-Gm-Features: AS18NWAu8xsDVfGUGNQZd3TKgpRR7nZFuc-hAgCzcqzNK32irDscIbUpkUaITw8
-Message-ID: <CACRpkda-2BNj+Pt2kS9u_bbr41bsWGRGDqNd3EXVnys-xSqg0g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	cix-kernel-upstream@cixtech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013155205.2004838-2-lyude@redhat.com>
 
-Hi Gary,
+On Mon, Oct 13, 2025 at 11:48:03AM -0400, Lyude Paul wrote:
 
-thanks for your patch!
+>  #define __nmi_enter()						\
+>  	do {							\
+>  		lockdep_off();					\
+>  		arch_nmi_enter();				\
+> -		BUG_ON(in_nmi() == NMI_MASK);			\
+> -		__preempt_count_add(NMI_OFFSET + HARDIRQ_OFFSET);	\
+> +		BUG_ON(__this_cpu_read(nmi_nesting) == UINT_MAX);	\
+> +		__this_cpu_inc(nmi_nesting);			\
 
-On Tue, Oct 14, 2025 at 3:57=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> w=
-rote:
+An NMI that nests from here..
 
+> +		__preempt_count_add(HARDIRQ_OFFSET);		\
+> +		if (__this_cpu_read(nmi_nesting) == 1)		\
 
-> +# Client device subnode's properties
-> +patternProperties:
-> +  'pins$':
-> +    type: object
-> +    additionalProperties: false
-> +    patternProperties:
-> +      '(^pins|pins?$)':
-> +        type: object
-> +        additionalProperties: false
-> +        description:
-> +          A pinctrl node should contain at least one subnodes representi=
-ng the
-> +          pinctrl groups available on the machine. Each subnode will lis=
-t the
-> +          pins it needs, and how they should be configured, with regard =
-to muxer
-> +          configuration, pullups, and drive strength.
-> +
-> +        properties:
-> +          pinmux:
-> +            description:
-> +              Values are constructed from pin number and mux setting and=
- are
-> +              defined as macros in arch/arm64/boot/dts/cix/sky1-pinfunc.=
-h directly.
-> +
-> +          bias-disable: true
-> +
-> +          bias-pull-up: true
-> +
-> +          bias-pull-down: true
-> +
-> +          drive-strength:
-> +            description:
-> +              Can support 15 levels, from DS_LEVEL1 to DS_LEVEL15.
-> +              defined as macros in arch/arm64/boot/dts/cix/sky1-pinfunc.=
-h.
-> +
-> +        required:
-> +          - pinmux
+.. until here, will see nmi_nesting > 1 and not set NMI_OFFSET.
 
-Can't you just include both pinmux-node.yaml and pincfg-node.yaml
-to get validation from the generic schemas?
-
-'pins$':
-  type: object
-  additionalProperties: false
-  patternProperties:
-    '(^pins|pins?$)':
-      type: object
-      $ref: /schemas/pinctrl/pinmux-node.yaml
-      $ref: /schemas/pinctrl/pincfg-node.yaml
-      additionalProperties: false
-
-Something like this, I never get this right before actually testcompiling..=
-.
-
-Yours,
-Linus Walleij
+> +			__preempt_count_add(NMI_OFFSET);	\
 
