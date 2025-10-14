@@ -1,201 +1,434 @@
-Return-Path: <linux-kernel+bounces-852121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3964BBD838C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:39:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832ABBD8395
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC8884F8BA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:39:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD7474FAC47
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2C42BE64F;
-	Tue, 14 Oct 2025 08:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4205930FC3A;
+	Tue, 14 Oct 2025 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKiWRSTq"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Iwy+EznP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BFC30F53D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7347930F95C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431189; cv=none; b=So7RGP3/9kDDwY82nL6vOyn3DyzDovsV2UlJua/zqnLc7UOLkqJ+0LlFBrrafUBnBT3DiqMdaFPW56bGUXwQ5yv8KaFq6DswAbbE6NMtlav+ooQY4xThp4Q5ykBqEBBoVtpV2qA644djcDoD5ZEuVNnscPu4DnmhPfrveHbcBfM=
+	t=1760431244; cv=none; b=EFe53yhs7ixP8WdxpCQMmZvOQDMurOie9p9WUiWgSJgZtlLTCGwLyrMW1vA/vpIr649AJ9LSbyRVtMYkykcGaUVwVt5YiDEDygp3ZbG4i6mPtBp9j68zFxqGRe5sdLvek/QXnnkv+AeEDjQFIRBoRgj2X15g6uxeC+2xBTkmJVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431189; c=relaxed/simple;
-	bh=hoQgCpk0WoxOoFSs/WuXrmbPtqn324Nd1OaXF4bX8iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mECtvJ6LyYaqrOiyV4OuXLhAYVjsfCqzoPRrgvxt7LGhltUUX6XekL3xI3i95izP9tine0PCUwb4qgJRJKo7ouXk4rEzmSOHKrTXIy0BcBJFD1DpnHCsmNFdhlsID09bjqSBNYkT1/0RiabD0QzXvcctxsKD/c8ZMpHHtPX69KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKiWRSTq; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3658479f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760431186; x=1761035986; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YFWOuvnUfMwybXOtMoOd4svMVvGqzTx63g0iMz9e+aA=;
-        b=SKiWRSTq7uaM8DykeikPzuVJd68LbyzZVKqyB1S3hWokRr/lSUzFBapG2OCVdy2jfv
-         487LmatTnJVEw8P4xOm5mHknSy0z5Ay6Pr6jmo3sG1wv/UD70iUhuctAE8ZY/U60M4AE
-         dTnwDh1gSogKBKQYrVB0yD2FFDbshsr+6Uj3m5Jnlwq0QEGCOD2gM2fFW2w51Mi8f145
-         y3IoXACjQu+Et5shll3mPOtAI/AX1ZL1GXys2/alU/xAd+hu6xFTWgXa5K/2G1sKiqhN
-         pYX333D0nNggtfRY05b4rutdjkFRbtSprIL3ognbfokMXCgpS31GFYtwBOAWzGvjDgOj
-         EA3w==
+	s=arc-20240116; t=1760431244; c=relaxed/simple;
+	bh=TndOlSdT95UlcUJaunSQHZ73ZZXRqzhfr+2roSZndts=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=piDiqZoS/PlLk3k55oBTbqnfXwHPVwarxCaSdxPEB3/UnU8miSTCJ8HQsWBxzXgNrcW8Pt5CQEB/u+Oiz21RWntHfGkb981DcyTzq1LY/bE86JcbOjdh6yQdkDqPyHuvI+RZSZMi4ON2NvotD5VUUdHLnwH38mr1J9F5kzL6uqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Iwy+EznP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87JMq030981
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:40:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e0lBHZjW4Nqh3Y78+2kAAI6SB4C9VOdQTWThro0j6dA=; b=Iwy+EznPi41jd4PN
+	jBq0cazI0u+/77vK9DkTqOna1EToQIlbFDPt580xUhMQM2+5pRpu2BQIiamkosd0
+	FSewwRScVPH16pVFoLK+Pe++AXU0BkoGmkhslQxU5vtpkZFJh0ti0fBH6ohdtGlA
+	c+N2vq/tOtLeMaJzPYqKOC+muQ9n76GDfB8whAZoEDP2dn2dnwig/wou+zh/opb/
+	bdery5qslGJ5BsMMEXMrQ2F0X8FzxqAqpdBx5aVN/DPK76shV4VDjfmbPYArT7+t
+	6iMaaGDXf/Fj1Au6+EokFX28uKB+sAzQ6K1fkx7lTrxHWkAQ3orf4ZSiWQp8jDsr
+	ySC+Uw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qff0qrdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:40:41 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eae48beaaso9104101a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:40:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760431186; x=1761035986;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YFWOuvnUfMwybXOtMoOd4svMVvGqzTx63g0iMz9e+aA=;
-        b=Tk6Uet3CS80gnPZkG8n5yNBVMTP9J/0zxZFXVvX4xpPTKyjC6ekG1p6+kxdb9KTZye
-         kOBme29Ox2DyI/jo0GcA1t9oHD++OCk3bE7pnUwEGbN7mlESsMHcbhYGMnjC0UID2Pzh
-         gxkrTEtOk1HL3/kifkx/icvPvsLLT6n+33AD+5SPdQ1hTNEF0iKPoUV60cuPSF+TDsGq
-         fewcL1rjb2IWhacu5cARcqP9PqYpQHFrp6qqxt00jPWw16s17MYQiwih5+QzcWhYIlQD
-         7ZGF6G1Lf8Zh8VHLYQbTa1mwQwv7Jnu/yz310p/kjaV8lLycqd7FHBZQjKEFVzMzWDY6
-         Iqdw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0KEzZE3KY6aUBD/Qrw8wZnIoqQiqDgp7vcfbGlTmuC4XY4tOI/QUaHEU0Nn5tOfShA2M4sJgSgpTBq/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaA7b5LDHC40yv9+oOhS4Od9RbNjdFupaGuWpQuCtOGa++j0pB
-	m7m1S+5Afm2lSaOMguGKiEdzjSFEtu3e0FfipOefeBi1YrkrCU7Hi3uIsE4lJyd22Mo=
-X-Gm-Gg: ASbGnctHYzgGPja+xZnhfibZlo8x7IxnMpDQgsR9AnsMIelyLE8xNE2qcE0cYMZ73Is
-	jt1hc+8Pa67/0eq9l9Bjysy32fY7pJMAR7XdOe3Fy+7lfFrsFAFR5qBa702hLXxxZpyb8sZkjYw
-	30wpEUGx37J9DQ2elNGLvTufJnBuV8KWiB6a8Da8SKbfdB4/AkgHelpCM9eBcmTd7FbQU2uCzbw
-	BOyIQrWgI34TLY3/KVmUPfppPLfTI/8+0isHb7wSwvYfkS9lWTEWj80r9MySdFModKULSCuOgZ4
-	8Pg0fJi/XXFWPWftCxm5UtEZnVloOn3Eoz2dSNv6k4uuJ7tiFU/f2p5fePkTReOFGVarlwNqJIk
-	DB0qX3vGp5sp13KimmF/cOxT6ny4FCqU2mgApQIQgXlzi6Q1MooMuSsd5Dq6IlQ==
-X-Google-Smtp-Source: AGHT+IFDjuNxGsj9w5KIK44evH4nW82BXa1kd591GncY0F3Cb/1CX97GoQ+hu6emUu0ZcgJJ0c1fpA==
-X-Received: by 2002:a05:6000:40da:b0:3f8:8aa7:465d with SMTP id ffacd0b85a97d-4266e7d4580mr13949163f8f.30.1760431185690;
-        Tue, 14 Oct 2025 01:39:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce5e8a06sm22476317f8f.55.2025.10.14.01.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 01:39:45 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:39:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to
- simplify lock handling
-Message-ID: <202510121908.7aduLIkw-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1760431239; x=1761036039;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0lBHZjW4Nqh3Y78+2kAAI6SB4C9VOdQTWThro0j6dA=;
+        b=fK0FqinuKODCjdm6+IjwuHBm3hEH6GfE46RpOCh+DNGk0WEOHw0oiLN/JOqNta9DAK
+         udGtgZmej3SjXpphRhPVBx0H+W28jqyc0TZpOr/NYZyMKEGN8IatvwmSbd+3hzW3StUO
+         AojjeVXHGex3XUc0H581INGhZ8vFWjBGE97e11CIzexraK34PMPXSquiEg2Txsfc/bnr
+         qp/e5oK72eTy/Pwvzp0PXyHLxlMM14A49LdLkmoRe2ZtJAFYks+TUiOpkHEigAQr9jK0
+         Ag3z0RuqJk6Xj4dcYwTsXGrIdbH58mNIA7dswjoQBBp9JlZNk8sQZskcfvMewrHicdaj
+         dzJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOZTBC0MeYbidMOvHE9m1xeUj/QhBu5aF2LO0r9jAAjL72w1fLt6z40zN/sIyDKlqgJrOu0kGALcO/Q14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ6Yguh159+8guqECbEYPRZbiVmgaG6UzwWVRwCw/A7Ab+ZMcV
+	d7a+EZNeR2Ft3Mf/+zcYicXlJUknE7NcoNdNnC2mx/U+M/PelFmw2s7ENC/vfXiOuOrFbFO1lzB
+	qtjK5wjaaI8S+4YllPOsPsqTJ5Xo3QcmtYziy4PI2Jj/8drH8eDJlnmloPFwZJe1mLwQ=
+X-Gm-Gg: ASbGncslmuckyRpXEoYScItPsGSoCMQ0APVZjJKRKAdTM30/njk3yCDZ3B8fpprviJB
+	cFQtGVc5scXAajHt9u2i88xpMFeYJUbw0ixOeei/nWucnF+wKdEmmePN7YVeKOExyFqoMk0JmMk
+	H9oIjSwmcIugYyxZs5OwOG0jJ8g2yLgZCYR8/p/V+isWhfyprabIrq9H0U/GjEnblDjv+OtxDT3
+	IS8s4cYjfh3crce9sgHEb9UxRohtVMEx2xjpmAoNlqmf5dPrrWStlDf3k7lwWR4Re3HOcyJ7vjq
+	JMVyUx0P38AnautyTzTfbvryDyFU6s9aHcrAZf9gicKqGozrz/GdVLwtbwgoeXCJEuc9+la/
+X-Received: by 2002:a17:90b:4c88:b0:32e:59ef:f403 with SMTP id 98e67ed59e1d1-33b513b4b5cmr36367216a91.17.1760431238325;
+        Tue, 14 Oct 2025 01:40:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyuJ0AQVSW9HrfUfYRJdSSW9YMDbY+7vSKqX2NNGvLMI++1PPQFj33hZtMzUd0RFY+wGqucg==
+X-Received: by 2002:a17:90b:4c88:b0:32e:59ef:f403 with SMTP id 98e67ed59e1d1-33b513b4b5cmr36367155a91.17.1760431237617;
+        Tue, 14 Oct 2025 01:40:37 -0700 (PDT)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a4bafesm15631518a91.11.2025.10.14.01.40.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 01:40:37 -0700 (PDT)
+Message-ID: <664d5589-46a2-a592-3e7c-01f255613f2f@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 14:10:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+Subject: Re: [PATCH v3 8/8] media: iris: enable support for SC7280 platform
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251013-iris-sc7280-v3-0-f3bceb77a250@oss.qualcomm.com>
+ <20251013-iris-sc7280-v3-8-f3bceb77a250@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20251013-iris-sc7280-v3-8-f3bceb77a250@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXzKiyUb7fwxrb
+ EwRrxLWHefuOh5PjTEqxoQU9+Iod7iyZJfSfgAX6BCacNMkMi8RqQM3gHJY1g4+v1mLbnsK/zT8
+ zhtVMZcxiazbAOmcfBwur4H1inkSILP3qKooz33lz/QnqMYwJTsGEic28oGSsfvYMcLjy9Y+o04
+ t2WNoi+nqMpoRgR+wjKFUKVhrPfuk9TjbJAY0t+aQDnR6QHLDQL/jCz4SWrWHm7yqQywbiouEf8
+ U0ipZzJJQd7i6to6f3XrbFW5HPrvs4iO8LliWP1RhziQYaErY9tWN31FhTLm6tjEPKk04x/s13e
+ fMPKU9A/VRa+3SWtH1R0D6E8wcp1NFB3FDG5Y5Li8aOBE410czvM3jyn87Y3yobUPcr5uplN05t
+ IVVKkzJYjMJgB7pH8W40BIpr0d1A2w==
+X-Proofpoint-GUID: ir6Svdu29PMy-FDBkKCks3J0wt7ab_H2
+X-Authority-Analysis: v=2.4 cv=PriergM3 c=1 sm=1 tr=0 ts=68ee0c89 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=7b6Sf04faytPFaYNhJoA:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-ORIG-GUID: ir6Svdu29PMy-FDBkKCks3J0wt7ab_H2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 phishscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-Hi Peng,
 
-kernel test robot noticed the following build warnings:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/remoteproc-core-Drop-redundant-initialization-of-ret-in-rproc_shutdown/20251010-202737
-base:   3b9b1f8df454caa453c7fb07689064edb2eda90a
-patch link:    https://lore.kernel.org/r/20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c%40nxp.com
-patch subject: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to simplify lock handling
-config: i386-randconfig-141-20251012 (https://download.01.org/0day-ci/archive/20251012/202510121908.7aduLIkw-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+On 10/13/2025 7:39 AM, Dmitry Baryshkov wrote:
+> As a part of migrating code from the old Venus driver to the new Iris
+> one, add support for the SC7280 platform. It is very similar to SM8250,
+> but it (currently) uses no reset controls (there is an optional
+> GCC-generated reset, it will be added later) and no AON registers
+> region. Extend the VPU ops to support optional clocks and skip the AON
+> shutdown for this platform.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  .../platform/qcom/iris/iris_platform_common.h      |  4 ++
+>  .../media/platform/qcom/iris/iris_platform_gen1.c  | 52 ++++++++++++++++++++++
+>  .../platform/qcom/iris/iris_platform_sc7280.h      | 27 +++++++++++
+>  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
+>  drivers/media/platform/qcom/iris/iris_resources.c  |  2 +-
+>  drivers/media/platform/qcom/iris/iris_vpu2.c       |  6 +++
+>  drivers/media/platform/qcom/iris/iris_vpu_common.c | 34 ++++++++++----
+>  7 files changed, 119 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index 104ff38219e30e6d52476d44b54338c55ef2ca7b..43cd6bf94ab600e53f983c9e11b63dc0a572e6ad 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -42,6 +42,7 @@ enum pipe_type {
+>  };
+>  
+>  extern const struct iris_platform_data qcs8300_data;
+> +extern const struct iris_platform_data sc7280_data;
+>  extern const struct iris_platform_data sm8250_data;
+>  extern const struct iris_platform_data sm8550_data;
+>  extern const struct iris_platform_data sm8650_data;
+> @@ -50,7 +51,9 @@ extern const struct iris_platform_data sm8750_data;
+>  enum platform_clk_type {
+>  	IRIS_AXI_CLK, /* AXI0 in case of platforms with multiple AXI clocks */
+>  	IRIS_CTRL_CLK,
+> +	IRIS_AHB_CLK,
+>  	IRIS_HW_CLK,
+> +	IRIS_HW_AXI_CLK,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202510121908.7aduLIkw-lkp@intel.com/
+s/IRIS_HW_AXI_CLK/IRIS_HW_AHB_CLK
 
-smatch warnings:
-drivers/remoteproc/remoteproc_core.c:1841 rproc_trigger_recovery() warn: missing error code? 'ret'
-drivers/remoteproc/remoteproc_core.c:1993 rproc_shutdown() warn: missing error code? 'ret'
+>  	IRIS_AXI1_CLK,
+>  	IRIS_CTRL_FREERUN_CLK,
+>  	IRIS_HW_FREERUN_CLK,
+> @@ -230,6 +233,7 @@ struct iris_platform_data {
+>  	u32 hw_response_timeout;
+>  	struct ubwc_config_data *ubwc_config;
+>  	u32 num_vpp_pipe;
+> +	bool no_aon;
+>  	u32 max_session_count;
+>  	/* max number of macroblocks per frame supported */
+>  	u32 max_core_mbpf;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen1.c b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> index 2b3b8bd00a6096acaae928318d9231847ec89855..828864902501aef072d60935fe57019a70dcb9f4 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
+> @@ -12,6 +12,8 @@
+>  #include "iris_vpu_buffer.h"
+>  #include "iris_vpu_common.h"
+>  
+> +#include "iris_platform_sc7280.h"
+> +
+>  #define BITRATE_MIN		32000
+>  #define BITRATE_MAX		160000000
+>  #define BITRATE_PEAK_DEFAULT	(BITRATE_DEFAULT * 2)
+> @@ -364,3 +366,53 @@ const struct iris_platform_data sm8250_data = {
+>  	.enc_ip_int_buf_tbl = sm8250_enc_ip_int_buf_tbl,
+>  	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8250_enc_ip_int_buf_tbl),
+>  };
+> +
+> +const struct iris_platform_data sc7280_data = {
+> +	.get_instance = iris_hfi_gen1_get_instance,
+> +	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
+> +	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
+> +	.get_vpu_buffer_size = iris_vpu_buf_size,
+> +	.vpu_ops = &iris_vpu2_ops,
+> +	.set_preset_registers = iris_set_sm8250_preset_registers,
+> +	.icc_tbl = sm8250_icc_table,
+> +	.icc_tbl_size = ARRAY_SIZE(sm8250_icc_table),
+> +	.bw_tbl_dec = sc7280_bw_table_dec,
+> +	.bw_tbl_dec_size = ARRAY_SIZE(sc7280_bw_table_dec),
+> +	.pmdomain_tbl = sm8250_pmdomain_table,
+> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8250_pmdomain_table),
+> +	.opp_pd_tbl = sc7280_opp_pd_table,
+> +	.opp_pd_tbl_size = ARRAY_SIZE(sc7280_opp_pd_table),
+> +	.clk_tbl = sc7280_clk_table,
+> +	.clk_tbl_size = ARRAY_SIZE(sc7280_clk_table),
+> +	/* Upper bound of DMA address range */
+> +	.dma_mask = 0xe0000000 - 1,
+> +	.fwname = "qcom/vpu/vpu20_p1.mbn",
+> +	.pas_id = IRIS_PAS_ID,
+> +	.inst_caps = &platform_inst_cap_sm8250,
+> +	.inst_fw_caps_dec = inst_fw_cap_sm8250_dec,
+> +	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8250_dec),
+> +	.inst_fw_caps_enc = inst_fw_cap_sm8250_enc,
+> +	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8250_enc),
+> +	.tz_cp_config_data = &tz_cp_config_sm8250,
+> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+> +	.num_vpp_pipe = 4,
 
-vim +/ret +1841 drivers/remoteproc/remoteproc_core.c
+num_vpp_pipe would be 1 for this.
 
-70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1829  int rproc_trigger_recovery(struct rproc *rproc)
-70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1830  {
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1831  	struct device *dev = &rproc->dev;
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1832  	int ret;
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1833  
-c42baf6f84c7694 Peng Fan             2025-10-10  1834  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
-c42baf6f84c7694 Peng Fan             2025-10-10  1835  	ret = ACQUIRE_ERR(mutex_intr, &lock);
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1836  	if (ret)
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1837  		return ret;
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1838  
-0b145574b6cd2b3 Alex Elder           2020-02-28  1839  	/* State could have changed before we got the mutex */
-0b145574b6cd2b3 Alex Elder           2020-02-28  1840  	if (rproc->state != RPROC_CRASHED)
-c42baf6f84c7694 Peng Fan             2025-10-10 @1841  		return ret;
+> +	.no_aon = true,
+> +	.max_session_count = 16,
+> +	.max_core_mbpf = NUM_MBS_8K,
+> +	.max_core_mbps = ((7680 * 4320) / 256) * 60,
+> +	.dec_input_config_params_default =
+> +		sm8250_vdec_input_config_param_default,
+> +	.dec_input_config_params_default_size =
+> +		ARRAY_SIZE(sm8250_vdec_input_config_param_default),
+> +	.enc_input_config_params = sm8250_venc_input_config_param,
+> +	.enc_input_config_params_size =
+> +		ARRAY_SIZE(sm8250_venc_input_config_param),
+> +
+> +	.dec_ip_int_buf_tbl = sm8250_dec_ip_int_buf_tbl,
+> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8250_dec_ip_int_buf_tbl),
+> +	.dec_op_int_buf_tbl = sm8250_dec_op_int_buf_tbl,
+> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8250_dec_op_int_buf_tbl),
+> +
+> +	.enc_ip_int_buf_tbl = sm8250_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8250_enc_ip_int_buf_tbl),
+> +};
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sc7280.h b/drivers/media/platform/qcom/iris/iris_platform_sc7280.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f2dea77f2805f48ab00822fe9d70ffafadc47494
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sc7280.h
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +
+> +#ifndef __IRIS_PLATFORM_SC7280_H__
+> +#define __IRIS_PLATFORM_SC7280_H__
+> +
+> +static const struct bw_info sc7280_bw_table_dec[] = {
+> +	{ ((3840 * 2160) / 256) * 60, 1896000, },
+> +	{ ((3840 * 2160) / 256) * 30,  968000, },
+> +	{ ((1920 * 1080) / 256) * 60,  618000, },
+> +	{ ((1920 * 1080) / 256) * 30,  318000, },
+> +};
+> +
+> +static const char * const sc7280_opp_pd_table[] = { "cx" };
+> +
+> +static const struct platform_clk_data sc7280_clk_table[] = {
+> +	{IRIS_CTRL_CLK,    "core"         },
+> +	{IRIS_AXI_CLK,     "bus"          },
 
-Please change this to either "return 0;" or "return -ERRORCODE;"
+s/bus/iface
 
-0b145574b6cd2b3 Alex Elder           2020-02-28  1842  
-0b145574b6cd2b3 Alex Elder           2020-02-28  1843  	dev_err(dev, "recovering %s\n", rproc->name);
-0b145574b6cd2b3 Alex Elder           2020-02-28  1844  
-ba194232edc032b Peng Fan             2022-09-28  1845  	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-ba194232edc032b Peng Fan             2022-09-28  1846  		ret = rproc_attach_recovery(rproc);
-ba194232edc032b Peng Fan             2022-09-28  1847  	else
-ba194232edc032b Peng Fan             2022-09-28  1848  		ret = rproc_boot_recovery(rproc);
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1849  
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1850  	return ret;
-70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1851  }
+> +	{IRIS_AHB_CLK,     "iface"        },
 
-[ snip ]
+s/iface/bus
 
-c13b780c4597e1e Suman Anna           2022-02-13  1976  int rproc_shutdown(struct rproc *rproc)
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1977  {
-b5ab5e24e960b9f Ohad Ben-Cohen       2012-05-30  1978  	struct device *dev = &rproc->dev;
-ee3d85da617a065 Peng Fan             2025-10-10  1979  	int ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1980  
-c42baf6f84c7694 Peng Fan             2025-10-10  1981  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
-c42baf6f84c7694 Peng Fan             2025-10-10  1982  	ret = ACQUIRE_ERR(mutex_intr, &lock);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1983  	if (ret) {
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1984  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-c13b780c4597e1e Suman Anna           2022-02-13  1985  		return ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1986  	}
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1987  
-c42baf6f84c7694 Peng Fan             2025-10-10  1988  	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
-c42baf6f84c7694 Peng Fan             2025-10-10  1989  		return -EINVAL;
-5e6a0e05270e3a4 Shengjiu Wang        2022-03-28  1990  
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1991  	/* if the remote proc is still needed, bail out */
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1992  	if (!atomic_dec_and_test(&rproc->power))
-c42baf6f84c7694 Peng Fan             2025-10-10 @1993  		return ret;
+> +	{IRIS_HW_CLK,      "vcodec_core"  },
+> +	{IRIS_HW_AXI_CLK,  "vcodec_bus"   },
 
-Same.
+s/IRIS_HW_AXI_CLK/IRIS_HW_AHB_CLK
 
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1994  
-fcd58037f28bf70 Arnaud Pouliquen     2018-04-10  1995  	ret = rproc_stop(rproc, false);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1996  	if (ret) {
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1997  		atomic_inc(&rproc->power);
-c42baf6f84c7694 Peng Fan             2025-10-10  1998  		return ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1999  	}
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2000  
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2001  	/* clean up all acquired resources */
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2002  	rproc_resource_cleanup(rproc);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2003  
-33467ac3c8dc805 Loic Pallardy        2020-04-16  2004  	/* release HW resources if needed */
-33467ac3c8dc805 Loic Pallardy        2020-04-16  2005  	rproc_unprepare_device(rproc);
-33467ac3c8dc805 Loic Pallardy        2020-04-16  2006  
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2007  	rproc_disable_iommu(rproc);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2008  
-988d204cdaf604c Bjorn Andersson      2016-08-11  2009  	/* Free the copy of the resource table */
-a0c10687ec9506b Bjorn Andersson      2016-12-30  2010  	kfree(rproc->cached_table);
-a0c10687ec9506b Bjorn Andersson      2016-12-30  2011  	rproc->cached_table = NULL;
-988d204cdaf604c Bjorn Andersson      2016-08-11  2012  	rproc->table_ptr = NULL;
-c42baf6f84c7694 Peng Fan             2025-10-10  2013  
-c13b780c4597e1e Suman Anna           2022-02-13  2014  	return ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2015  }
+Please rename at all relevant places.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Dikshita
 
+> +};
+> +
+> +#endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> index 00e99be16e087c4098f930151fd76cd381d721ce..9bc9b34c2576581635fa8d87eed1965657eb3eb3 100644
+> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> @@ -357,6 +357,10 @@ static const struct of_device_id iris_dt_match[] = {
+>  		.data = &qcs8300_data,
+>  	},
+>  #if (!IS_ENABLED(CONFIG_VIDEO_QCOM_VENUS))
+> +	{
+> +		.compatible = "qcom,sc7280-venus",
+> +		.data = &sc7280_data,
+> +	},
+>  	{
+>  		.compatible = "qcom,sm8250-venus",
+>  		.data = &sm8250_data,
+> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
+> index cf32f268b703c1c042a9bcf146e444fff4f4990d..164490c49c95ee048670981fdab014d20436ef85 100644
+> --- a/drivers/media/platform/qcom/iris/iris_resources.c
+> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
+> @@ -112,7 +112,7 @@ int iris_prepare_enable_clock(struct iris_core *core, enum platform_clk_type clk
+>  
+>  	clock = iris_get_clk_by_type(core, clk_type);
+>  	if (!clock)
+> -		return -EINVAL;
+> +		return -ENOENT;
+>  
+>  	return clk_prepare_enable(clock);
+>  }
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> index de7d142316d2dc9ab0c4ad9cc8161c87ac949b4c..9c103a2e4e4eafee101a8a9b168fdc8ca76e277d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> @@ -3,9 +3,15 @@
+>   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+> +#include <linux/bits.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/reset.h>
+> +
+>  #include "iris_instance.h"
+>  #include "iris_vpu_common.h"
+>  
+> +#include "iris_vpu_register_defines.h"
+> +
+>  static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
+>  {
+>  	struct platform_inst_caps *caps = inst->core->iris_platform_data->inst_caps;
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> index 2d6548e47d47967c1c110489cb8088130fb625fd..f8fd120873ccdcb5239985d0d6a8bbda144a98f6 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> @@ -179,12 +179,14 @@ int iris_vpu_power_off_controller(struct iris_core *core)
+>  
+>  	writel(MSK_SIGNAL_FROM_TENSILICA | MSK_CORE_POWER_ON, core->reg_base + CPU_CS_X2RPMH);
+>  
+> -	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+> +	if (!core->iris_platform_data->no_aon) {
+> +		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>  
+> -	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+> -				 val, val & BIT(0), 200, 2000);
+> -	if (ret)
+> -		goto disable_power;
+> +		ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+> +					 val, val & BIT(0), 200, 2000);
+> +		if (ret)
+> +			goto disable_power;
+> +	}
+>  
+>  	writel(REQ_POWER_DOWN_PREP, core->reg_base + WRAPPER_IRIS_CPU_NOC_LPI_CONTROL);
+>  
+> @@ -207,6 +209,7 @@ int iris_vpu_power_off_controller(struct iris_core *core)
+>  	writel(0x0, core->reg_base + WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG);
+>  
+>  disable_power:
+> +	iris_disable_unprepare_clock(core, IRIS_AHB_CLK);
+>  	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
+>  	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
+>  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+> @@ -218,6 +221,7 @@ void iris_vpu_power_off_hw(struct iris_core *core)
+>  {
+>  	dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], false);
+>  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
+> +	iris_disable_unprepare_clock(core, IRIS_HW_AXI_CLK);
+>  	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
+>  }
+>  
+> @@ -251,11 +255,17 @@ int iris_vpu_power_on_controller(struct iris_core *core)
+>  
+>  	ret = iris_prepare_enable_clock(core, IRIS_CTRL_CLK);
+>  	if (ret)
+> -		goto err_disable_clock;
+> +		goto err_disable_axi_clock;
+> +
+> +	ret = iris_prepare_enable_clock(core, IRIS_AHB_CLK);
+> +	if (ret && ret != -ENOENT)
+> +		goto err_disable_ctrl_clock;
+>  
+>  	return 0;
+>  
+> -err_disable_clock:
+> +err_disable_ctrl_clock:
+> +	iris_disable_unprepare_clock(core, IRIS_CTRL_CLK);
+> +err_disable_axi_clock:
+>  	iris_disable_unprepare_clock(core, IRIS_AXI_CLK);
+>  err_disable_power:
+>  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+> @@ -275,13 +285,19 @@ int iris_vpu_power_on_hw(struct iris_core *core)
+>  	if (ret)
+>  		goto err_disable_power;
+>  
+> +	ret = iris_prepare_enable_clock(core, IRIS_HW_AXI_CLK);
+> +	if (ret && ret != -ENOENT)
+> +		goto err_disable_hw_clock;
+> +
+>  	ret = dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], true);
+>  	if (ret)
+> -		goto err_disable_clock;
+> +		goto err_disable_hw_axi_clock;
+>  
+>  	return 0;
+>  
+> -err_disable_clock:
+> +err_disable_hw_axi_clock:
+> +	iris_disable_unprepare_clock(core, IRIS_HW_AXI_CLK);
+> +err_disable_hw_clock:
+>  	iris_disable_unprepare_clock(core, IRIS_HW_CLK);
+>  err_disable_power:
+>  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
+> 
 
