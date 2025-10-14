@@ -1,118 +1,298 @@
-Return-Path: <linux-kernel+bounces-852028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C057BD7F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:39:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CBBBD7F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7001B18A3399
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93FF3B6B48
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA2E2ECE89;
-	Tue, 14 Oct 2025 07:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A51D435F;
+	Tue, 14 Oct 2025 07:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MQLDKaai"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4dc5d1R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2D922A4DA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B45723817D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427553; cv=none; b=AsZwTOzcEZaiFb6N4pPztcWtZSB+ijGbHGnOYNZ2JOMqjlI+PGuqo1PTQJNDRL8mkscLcV9zpwlvjL1u+Y7kcvQhdYxHsWmQ9//OGJMqyZZCN+2Cg6GW4T3eJY0T1UPLolqyW1qeAm7QomzactKXYmff5olIkyIMKKOycQaz73c=
+	t=1760427174; cv=none; b=gkZ40a3lI7Yqrwjv5OOgmOZ/uA+cQVHDr8RMVEJap8LfzkY6XXw/8A9z7tE8AIQe2vb7fi6CA2B8kFDlhanJ7/adXoO0Rh/RMrqgNdsglW/qmfAdcy09D5B4bVPVI9X622J47gPfzWsuCDmWo0cUilYdMK7qXxQvilOAjtnT/sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427553; c=relaxed/simple;
-	bh=Ws25b5KIlwTyCP8dDyVIBLRtzRsitC0cQKdPkKx5rKI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h2/iScnpVmOotPoXAHGxgIcGKbIWhRZq/xcXKgo5FGkG5iR1Hqigm5spLbBMecC8ORnkI0rTzhYtTZSsGpzV0P1WQohFnls6ZMV4GDe5KBl7OxtaD4lDYQABJNmSWo8+zKi5CTOEPpHqJdztXg2A+GsHGZ95gF8gN1qamOmGzYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MQLDKaai; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760427549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I+mNHQsLdfiv7vvTT3E1UI4YOke0x16loHcS0d4AOZ4=;
-	b=MQLDKaai5WqoMeKkVhL5qiNYP7gjBPWmj1uk8J0VWoMR1Tgo01ja4mstwwH5QZNOo7dJmz
-	v6Mfp7r7day3XuNRRhUVxjsE+IQGkuBFGTxrjovQRpfeZ2fGNAO3AARdUaksgJIyPu9614
-	OXF0KZqH1EmjUAk8Z6jx5ZGmNDx4Huc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-ZK0_ab1bM1WDvPzXqHRJ3Q-1; Tue, 14 Oct 2025 03:32:50 -0400
-X-MC-Unique: ZK0_ab1bM1WDvPzXqHRJ3Q-1
-X-Mimecast-MFC-AGG-ID: ZK0_ab1bM1WDvPzXqHRJ3Q_1760427169
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ecdb10a612so3287588f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:32:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760427169; x=1761031969;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I+mNHQsLdfiv7vvTT3E1UI4YOke0x16loHcS0d4AOZ4=;
-        b=LgSuHtfRr8GiGIEf7i4fVSk3/5NtyPqStKfcQqMOeRiZe6AdlH+0GJrOmXdUd0zvuO
-         l8BMoh30VEVMJLdM30PXR2JdGNGNS5xgRSliNC5a+z2UlqP7YVlJ+qX+BuK4vgPWzhfI
-         3haOUcWyNdCPS4fZbdkXXkKDiAEB8GtNknenbSeSH1Od5uhunxuZUw+noZNVzO4hzrPe
-         iltiOS9xzn9pyMSDXsRxKcZP2zcvixLWj+kIDxTVveDgte5Al6ckWwPKW5wEyjGWRsng
-         AUgLykisbPsXox6rr+xFtLf3h8Khv2NsbcIJYx8wRJvHsY0sB/xTToZSunV/r9bd9ngy
-         W1sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPssg2BhQ7y/tjl6FmBevKlzwDPaf1iYcSdOAlv4fmeba1Sjm+96EOl41cQG7vUZITmXS1Gbq4XsqrxTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBq7izr9vYKS9VleB6+w5K+9IYiLoH2qHNLg4ZO9EkV/sDex4n
-	VJDozq/w3xP4aSkwDho/RHNPbUfGe/UnOBrRijkVbI5HF1ydKXfxhUZvdHExKevtDGLdVF7QiAQ
-	FLbWzrLo9YggXyxtU7ZzE/2/dkCKJ0PwxSb4q828q7Kl+/dBlL2bkeQtMczzpmSBL4w==
-X-Gm-Gg: ASbGncsPABinX/3TXq59kTxRKx13hrmnXXhfXyrARyG4hd8hYWG9wgq6HqBT0fHsV1F
-	WnssvOnAUKqSi8jbRBjkrvMxtMkPjXVx14GP6dvhfKugzaZU1hmpY3uV6xN/PzXXhv0JpyjHw4Q
-	7EFNbw1ImLldL9tmv9/E55S+9kF/0hOvlugx0Fawt2Mhq+tvsR/NyGzMwx0FvBtP2IXUMGx9O9k
-	Ng8/4lSZBQa2ybAKbCMdaPLv21xFBj55ZErG9ibtSQ2+bpfyQRjzUBNsp5GNFdAUseq8pwQzeyE
-	hoMa8npxESaG2joO2n/GQDHEivVXq8WiYJxn+2E0+y8jpvQHPvYI7goNKqhe6cC8/v/H20rs2Z5
-	1TjeZbq8BhBfkAuLarTIrQmM=
-X-Received: by 2002:a05:6000:4023:b0:3ec:e277:288c with SMTP id ffacd0b85a97d-4266e7d90e2mr15348989f8f.31.1760427169478;
-        Tue, 14 Oct 2025 00:32:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpkrFos/JoFF/exw8H13iEBsM6KPGAsZOyXjflOcvr7yhgSOkA9HU+kH6Zn/mcbepjNdm+gQ==
-X-Received: by 2002:a05:6000:4023:b0:3ec:e277:288c with SMTP id ffacd0b85a97d-4266e7d90e2mr15348979f8f.31.1760427169091;
-        Tue, 14 Oct 2025 00:32:49 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5833dcsm22073162f8f.19.2025.10.14.00.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 00:32:48 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jocelyn Falempe <jfalempe@redhat.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org
-Subject: Re: [PATCH 2/6] drm/panic: Fix overlap between qr code and logo
-In-Reply-To: <20251009122955.562888-3-jfalempe@redhat.com>
-References: <20251009122955.562888-1-jfalempe@redhat.com>
- <20251009122955.562888-3-jfalempe@redhat.com>
-Date: Tue, 14 Oct 2025 09:32:47 +0200
-Message-ID: <87frbmq6ow.fsf@ocarina.mail-host-address-is-not-set>
+	s=arc-20240116; t=1760427174; c=relaxed/simple;
+	bh=zLFlHyMhc4frXkCjW8nh91AAlQjG+/KFAKkCfv1oTWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BYbJmOH7x3IzxOiEDQX+hXrivmjEvRSGztPknUz2vKRWcWRGTLaX/JLml2HCDNQTVGJX9HkdRsYwZ3z+P2Dtdd8l3eoGaDM7BMBIU58YEGbCNsAtzipUmQKBNuLDhxL4RNqSYu00WFCPOrK9J4w7Fc8QvOYp7H5Sobymj3cpKKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4dc5d1R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C81C4CEE7;
+	Tue, 14 Oct 2025 07:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760427174;
+	bh=zLFlHyMhc4frXkCjW8nh91AAlQjG+/KFAKkCfv1oTWA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l4dc5d1RMmxtxN/FkNNGPLTAoAr8CioZg769prRird3tLcGqTFnmg/gLXGCk4aIOT
+	 KQE8+zn9HvK7AsBoxwsjEcTDGZsJ7/VhzEwc/mOAcOkMXsa2ZPzBQLDQeEv2Fb95f0
+	 ASte+CiN6PKoNJQ8itD9RlwKglvgAyLbV+6vChwHAa3h10DqKGuRTtvQoLBM0zDCc+
+	 Hy0auRVMtQvNM3NpDTEr4T+ugfxdjxM64BkdOo2CAS/I/j9Ie0DGTUUhqlZeRhOhW4
+	 rL8faB0XofuhaqNAi3u9XTZCgdcXtEzJYa0OAmCxISOVaSLfM8Llk5gpUqGpN+DgDm
+	 v2Rg0yv1t7yvA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	stable@kernel.org,
+	Hong Yun <yhong@link.cuhk.edu.hk>
+Subject: [PATCH] f2fs: use global inline_xattr_slab instead of per-sb slab cache
+Date: Tue, 14 Oct 2025 15:32:48 +0800
+Message-ID: <20251014073248.1769839-1-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Jocelyn Falempe <jfalempe@redhat.com> writes:
+As Hong Yun reported in mailing list:
 
-> The borders of the qr code was not taken into account to check if it
-> overlap with the logo, leading to the logo being partially covered.
->
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
+loop7: detected capacity change from 0 to 131072
+------------[ cut here ]------------
+kmem_cache of name 'f2fs_xattr_entry-7:7' already exists
+WARNING: CPU: 0 PID: 24426 at mm/slab_common.c:110 kmem_cache_sanity_check mm/slab_common.c:109 [inline]
+WARNING: CPU: 0 PID: 24426 at mm/slab_common.c:110 __kmem_cache_create_args+0xa6/0x320 mm/slab_common.c:307
+CPU: 0 UID: 0 PID: 24426 Comm: syz.7.1370 Not tainted 6.17.0-rc4 #1 PREEMPT(full)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:109 [inline]
+RIP: 0010:__kmem_cache_create_args+0xa6/0x320 mm/slab_common.c:307
+Call Trace:
+ __kmem_cache_create include/linux/slab.h:353 [inline]
+ f2fs_kmem_cache_create fs/f2fs/f2fs.h:2943 [inline]
+ f2fs_init_xattr_caches+0xa5/0xe0 fs/f2fs/xattr.c:843
+ f2fs_fill_super+0x1645/0x2620 fs/f2fs/super.c:4918
+ get_tree_bdev_flags+0x1fb/0x260 fs/super.c:1692
+ vfs_get_tree+0x43/0x140 fs/super.c:1815
+ do_new_mount+0x201/0x550 fs/namespace.c:3808
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x298/0x2f0 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x8e/0x3a0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+The bug can be reproduced w/ below scripts:
+- mount /dev/vdb /mnt1
+- mount /dev/vdc /mnt2
+- umount /mnt1
+- mounnt /dev/vdb /mnt1
 
+The reason is if we created two slab caches, named f2fs_xattr_entry-7:3
+and f2fs_xattr_entry-7:7, and they have the same slab size. Actually,
+slab system will only create one slab cache core structure which has
+slab name of "f2fs_xattr_entry-7:3", and two slab caches share the same
+structure and cache address.
+
+So, if we destroy f2fs_xattr_entry-7:3 cache w/ cache address, it will
+decrease reference count of slab cache, rather than release slab cache
+entirely, since there is one more user has referenced the cache.
+
+Then, if we try to create slab cache w/ name "f2fs_xattr_entry-7:3" again,
+slab system will find that there is existed cache which has the same name
+and trigger the warning.
+
+Let's changes to use global inline_xattr_slab instead of per-sb slab cache
+for fixing.
+
+Fixes: a999150f4fe3 ("f2fs: use kmem_cache pool during inline xattr lookups")
+Cc: stable@kernel.org
+Reported-by: Hong Yun <yhong@link.cuhk.edu.hk>
+Tested-by: Hong Yun <yhong@link.cuhk.edu.hk>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/f2fs.h  |  3 ---
+ fs/f2fs/super.c | 17 ++++++++---------
+ fs/f2fs/xattr.c | 32 +++++++++++---------------------
+ fs/f2fs/xattr.h | 10 ++++++----
+ 4 files changed, 25 insertions(+), 37 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 839032a4da39..c589aed069d9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1892,9 +1892,6 @@ struct f2fs_sb_info {
+ 	spinlock_t error_lock;			/* protect errors/stop_reason array */
+ 	bool error_dirty;			/* errors of sb is dirty */
+ 
+-	struct kmem_cache *inline_xattr_slab;	/* inline xattr entry */
+-	unsigned int inline_xattr_slab_size;	/* default inline xattr slab size */
+-
+ 	/* For reclaimed segs statistics per each GC mode */
+ 	unsigned int gc_segment_mode;		/* GC state for reclaimed segments */
+ 	unsigned int gc_reclaimed_segs[MAX_GC_MODE];	/* Reclaimed segs for each mode */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 6e52e36c1f1a..2ae341768a39 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2027,7 +2027,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 	kfree(sbi->raw_super);
+ 
+ 	f2fs_destroy_page_array_cache(sbi);
+-	f2fs_destroy_xattr_caches(sbi);
+ #ifdef CONFIG_QUOTA
+ 	for (i = 0; i < MAXQUOTAS; i++)
+ 		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
+@@ -5016,13 +5015,9 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (err)
+ 		goto free_iostat;
+ 
+-	/* init per sbi slab cache */
+-	err = f2fs_init_xattr_caches(sbi);
+-	if (err)
+-		goto free_percpu;
+ 	err = f2fs_init_page_array_cache(sbi);
+ 	if (err)
+-		goto free_xattr_cache;
++		goto free_percpu;
+ 
+ 	/* get an inode for meta space */
+ 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
+@@ -5351,8 +5346,6 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->meta_inode = NULL;
+ free_page_array_cache:
+ 	f2fs_destroy_page_array_cache(sbi);
+-free_xattr_cache:
+-	f2fs_destroy_xattr_caches(sbi);
+ free_percpu:
+ 	destroy_percpu_info(sbi);
+ free_iostat:
+@@ -5555,10 +5548,15 @@ static int __init init_f2fs_fs(void)
+ 	err = f2fs_create_casefold_cache();
+ 	if (err)
+ 		goto free_compress_cache;
+-	err = register_filesystem(&f2fs_fs_type);
++	err = f2fs_init_xattr_cache();
+ 	if (err)
+ 		goto free_casefold_cache;
++	err = register_filesystem(&f2fs_fs_type);
++	if (err)
++		goto free_xattr_cache;
+ 	return 0;
++free_xattr_cache:
++	f2fs_destroy_xattr_cache();
+ free_casefold_cache:
+ 	f2fs_destroy_casefold_cache();
+ free_compress_cache:
+@@ -5599,6 +5597,7 @@ static int __init init_f2fs_fs(void)
+ static void __exit exit_f2fs_fs(void)
+ {
+ 	unregister_filesystem(&f2fs_fs_type);
++	f2fs_destroy_xattr_cache();
+ 	f2fs_destroy_casefold_cache();
+ 	f2fs_destroy_compress_cache();
+ 	f2fs_destroy_compress_mempool();
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 58632a2b6613..9f20b67e90d1 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -23,11 +23,12 @@
+ #include "xattr.h"
+ #include "segment.h"
+ 
++struct kmem_cache *inline_xattr_slab;
+ static void *xattr_alloc(struct f2fs_sb_info *sbi, int size, bool *is_inline)
+ {
+-	if (likely(size == sbi->inline_xattr_slab_size)) {
++	if (likely(size == DEFAULT_XATTR_SLAB_SIZE)) {
+ 		*is_inline = true;
+-		return f2fs_kmem_cache_alloc(sbi->inline_xattr_slab,
++		return f2fs_kmem_cache_alloc(inline_xattr_slab,
+ 					GFP_F2FS_ZERO, false, sbi);
+ 	}
+ 	*is_inline = false;
+@@ -38,7 +39,7 @@ static void xattr_free(struct f2fs_sb_info *sbi, void *xattr_addr,
+ 							bool is_inline)
+ {
+ 	if (is_inline)
+-		kmem_cache_free(sbi->inline_xattr_slab, xattr_addr);
++		kmem_cache_free(inline_xattr_slab, xattr_addr);
+ 	else
+ 		kfree(xattr_addr);
+ }
+@@ -830,25 +831,14 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
+ 	return err;
+ }
+ 
+-int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi)
++int __init f2fs_init_xattr_cache(void)
+ {
+-	dev_t dev = sbi->sb->s_bdev->bd_dev;
+-	char slab_name[32];
+-
+-	sprintf(slab_name, "f2fs_xattr_entry-%u:%u", MAJOR(dev), MINOR(dev));
+-
+-	sbi->inline_xattr_slab_size = F2FS_OPTION(sbi).inline_xattr_size *
+-					sizeof(__le32) + XATTR_PADDING_SIZE;
+-
+-	sbi->inline_xattr_slab = f2fs_kmem_cache_create(slab_name,
+-					sbi->inline_xattr_slab_size);
+-	if (!sbi->inline_xattr_slab)
+-		return -ENOMEM;
+-
+-	return 0;
++	inline_xattr_slab = f2fs_kmem_cache_create("f2fs_xattr_entry",
++					DEFAULT_XATTR_SLAB_SIZE);
++	return inline_xattr_slab ? 0 : -ENOMEM;
+ }
+ 
+-void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi)
++void f2fs_destroy_xattr_cache(void)
+ {
+-	kmem_cache_destroy(sbi->inline_xattr_slab);
+-}
++	kmem_cache_destroy(inline_xattr_slab);
++}
+\ No newline at end of file
+diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+index 4fc0b2305fbd..bce3d93e4755 100644
+--- a/fs/f2fs/xattr.h
++++ b/fs/f2fs/xattr.h
+@@ -89,6 +89,8 @@ struct f2fs_xattr_entry {
+ 			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -	\
+ 			DEF_INLINE_RESERVED_SIZE -			\
+ 			MIN_INLINE_DENTRY_SIZE / sizeof(__le32))
++#define DEFAULT_XATTR_SLAB_SIZE	(DEFAULT_INLINE_XATTR_ADDRS *		\
++				sizeof(__le32) + XATTR_PADDING_SIZE)
+ 
+ /*
+  * On-disk structure of f2fs_xattr
+@@ -132,8 +134,8 @@ int f2fs_setxattr(struct inode *, int, const char *, const void *,
+ int f2fs_getxattr(struct inode *, int, const char *, void *,
+ 		size_t, struct folio *);
+ ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
+-int f2fs_init_xattr_caches(struct f2fs_sb_info *);
+-void f2fs_destroy_xattr_caches(struct f2fs_sb_info *);
++int __init f2fs_init_xattr_cache(void);
++void f2fs_destroy_xattr_cache(void);
+ #else
+ 
+ #define f2fs_xattr_handlers	NULL
+@@ -150,8 +152,8 @@ static inline int f2fs_getxattr(struct inode *inode, int index,
+ {
+ 	return -EOPNOTSUPP;
+ }
+-static inline int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi) { return 0; }
+-static inline void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
++static inline int __init f2fs_init_xattr_cache(void) { return 0; }
++static inline void f2fs_destroy_xattr_cache(void) { }
+ #endif
+ 
+ #ifdef CONFIG_F2FS_FS_SECURITY
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.49.0
 
 
