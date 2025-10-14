@@ -1,178 +1,87 @@
-Return-Path: <linux-kernel+bounces-852731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED3CBD9C11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32AA8BD9BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0441887230
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03D53AD7F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9E314A73;
-	Tue, 14 Oct 2025 13:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQLkKiQf"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513130C377;
+	Tue, 14 Oct 2025 13:34:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7FE2F56
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCD81D63F5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760448697; cv=none; b=oPobD9alzzhvdK/3s9dXlsBMiAKAahaArRsaIgHmKtPwrsM4najBhYzoy6cWxJJIvZrvZyCsj3vO3a4PpZ182vIjFceMdWlx1qg3/DzHOohWdfaZ0G4EWJDgnYSpZ42T6QsACYtmQVD1HdBDjE2J+HHFNJMCmUfHqMUTsOwA/O4=
+	t=1760448846; cv=none; b=iDhPDxqWUXO0OA5xjJ+Wzq7s8c5RZx/9y/WW03rdntFMqVSrTdfPxWNrQ2kT40Bs4yA/jqpDZuQ4JWDlJEYVEEE0r18x+54ehki2pJEUhfSCk9ndbW9drbAQVliA1osEQsRH+vwJedkv+PYgnfSZkJ9Pe/Ww3NmEfEfSS9q+u84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760448697; c=relaxed/simple;
-	bh=iIjZWpm1TiQUVzmyWQwDNnrEF5an80tu+OC+tdhyZC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OdmjbT6Br89cGUwjQyLppKJkJ1WIGuaEzeGGe2WgGgmAyOrYw/HaXE2fXhO9itDTTtQqYeTZfYi/ryaBtwqXgIE1sw5SkXxlfWKdwMEgK1clAYW+EEBi9gb/yZpUqZ7p81Z7rtE3RyXIaBruu9lPFC5m+nDQM1/8BOP8NXQFxhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQLkKiQf; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so10312162a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760448694; x=1761053494; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JRUz1hWdNpegFSxtg102ODjrrEjXcJrCzI5fyTVJ/6Q=;
-        b=DQLkKiQfZND2IFf/h5wDCcU7nsL9b0MO2/wBM6KPAhNCZWhVN94HQy5fsrTU25tbgB
-         2Gq2QvLkWPnA0xkfn7ycw1MgwA2qLz0g6AbmWxcd6bS2Qhofps5FAzMPAi7eFfr7nrj3
-         9J10C2KCHIbn2+sRa1U7qZRnp1tmnEvHAE9WILBT/9Nb9MvbcypJtByoH3PDylNSnu6z
-         Ql/nNsHVyp7t4cPhcemA2LhGv6CkCqMoygInePHf8U8QXwjfwbEAM4W8B9Bdcu/4Y4re
-         drd4lrgRyWoBlvc2EOxKN69l9MeFWyOnJfPQUx/e+/qOIX/3Rdm/jJCyYkveMuFV8AjL
-         NL1g==
+	s=arc-20240116; t=1760448846; c=relaxed/simple;
+	bh=Oolezyqw+kvNC+RWO1uqutmHqpU9z5Wcp55o9OelYVg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=urIaHHuEBlWPj3zDPOOUJkPl1LEvmdLtVLT/djsI/R++oyqMZNDeg2UBhXwd4Oh/X8qnwoqwXtUqOSqZ7OJTeehcLdpf+qAp8GL9KY3jvYJYL/ZGXGvKSM6HsUVNKmwQcliq6pAlLZ7iBRkFaDg7zqWV4rd/fh16OnBIAgVROR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42fa6ace903so99317995ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:34:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760448694; x=1761053494;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JRUz1hWdNpegFSxtg102ODjrrEjXcJrCzI5fyTVJ/6Q=;
-        b=HiqPdXnCrkCbDXIQZgPQWb6aGvz1ZNxM6xB52/HiTtGmNthf6Zbl0gtJq3zn51h52/
-         ySm5krPH0voRaI0ka3+0pCiJYRIDnuya/aMGYIYLZSIpXbyjEf+0tYOAqseIn/6n13Q/
-         dVVc6mv4+UEI4eBrgbXJZUnKe4n7ZFldQeeNwPvpIQP9Z45YxTgGVb2r2bnwbJ65s2O0
-         gcKKmpWfwhz0+GpSIcNNctdr1fCmwAIWRlUuQoSzm4g/6Wz3nlvsMCxSY0yqJcbE/895
-         04xhtXch6E9HaPDIJnEojP/1nb4TlROzU/dWrdL1x1eG2J/GPijpumafzEJKE8AULEo6
-         Mrrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsIsYpVFRcUT/AExu683gRtDIXg7rSMi8cvS9DEe1WbdH/hytu75lit3/gYrmKogFrNXM1T+k+HvKwQZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZnwiFvJJJSNuu2YTYYlNzRtdHyVK4uJtAAzAw4GEQCvr6vpMD
-	s5hH5lwoOLjTclS8K+Wt6rz4nHgqn7PTqTC99oTa46XRrqcr/Poq/VcS
-X-Gm-Gg: ASbGncubm0ymYlgFcPtohJYLxvN1dpU+pbvCYTA4WuobWrXFcfEXtLW3fxzLTKjgZah
-	UZigQsOKW8U92ABvjbKGxJOyUzXSglFH1JypnDUroQUGz1CeKq8hMYjKR/tYlCHxdoxGxZrx+Sp
-	hxDoa91+AIoKLEYdhKh+CvaD2t5hprEMZr5ZAE8x7bToaLSmVuGXpTcBia4/g90rrGwUZZw2WUq
-	IOx9vPWo8hGzhISUJgyYaB989/CuOsggy5k8Ww2xsBEYz8biJ1QoL1uBGP33hJPasIVxZTKvcP3
-	tPQnSKQVmoOSfpgnKP3YjpqmU9bctd0ZBTdB6QADAjtalA9areGPT3/4E3J/XArWIjcrSv5GEQW
-	9OtvT8MKlCYUdkXPB77uPYoZQMD/xZSVRuZuKdk2DzBaTmMTCzJ4=
-X-Google-Smtp-Source: AGHT+IEgU+DdjYJjvofvtunCeX3nSH0eRUv1dqIRtOgeOUMEIzSuMU2hUdZtSc3ZGyXswVn9RHzZCQ==
-X-Received: by 2002:a17:907:7f0b:b0:b46:31be:e8fe with SMTP id a640c23a62f3a-b50aa48c4f0mr2728492866b.11.1760448693406;
-        Tue, 14 Oct 2025 06:31:33 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d971ec69sm1123110766b.85.2025.10.14.06.31.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Oct 2025 06:31:32 -0700 (PDT)
-Date: Tue, 14 Oct 2025 13:31:32 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
- large folios (CONFIG_NO_PAGE_MAPCOUNT)
-Message-ID: <20251014133132.6garfzi24xlh3jr5@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250303163014.1128035-1-david@redhat.com>
- <20250303163014.1128035-21-david@redhat.com>
- <20251014122335.dpyk5advbkioojnm@master>
- <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+        d=1e100.net; s=20230601; t=1760448844; x=1761053644;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2lluWPSgKsvJDxp8SvDJVrTNnwYAQggcgTTnz8HrJBw=;
+        b=Gc5hBeQaPW+iVJRj/6Z0cxMkig+dEs/oK2q6YyJXzwpix4tvUVQD4Kl3z6rIl/GIW4
+         XA7T723vukplK3uncjJENhS150hns6ucjW5UfTIwjUyGHZrNzlaQfJI+JXTYUkKT0Fmy
+         xpJS8p8MrI3tmD1+OnlwWm8S9QiY9Z61uo60Uv8PPSQjeXYeS6Z7te4IDA5bNSu9MCaU
+         bZqSLlRT5xZVBlLSI5ZC3Wi5eV45KktocAAceOSVml/Yb0V+JUq/nWeuob0AG1ZTkqw/
+         U1fkh/64o3p5ohlWvG+QYjejdtv55D5ZwtnVOoq3xuiQBYdcaz/PmB8Y/etY/KXAQ3sS
+         bPiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyLpv2ejljTZarrIFe1MdXm4CRx6FVNRtcL/XJRwdojSxb5A1JXB95jy4rSa3mVOXbaPTda17dnYhrXL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8MC9nwyqeXPRkfFN0fkMOvz0hQaFLlloGI+C8Zr8vePOTpfu+
+	QqFgt8qA6oykA0b/QcgBURNKmSW7+Myz2uib8Qy257anoevayRj89B7fnaFOsZuGVzmE3+l0Zod
+	t5o7m2sBl0LZi/hKstXdmzkLYStHySzaD+Sbpb8gqubJAoIr4BypjiL5vORk=
+X-Google-Smtp-Source: AGHT+IGucV46oB6P2mfvmEcjzDfsoZtk7fur/6WmtFMn2gnDzGLDBRpIamMK/U6EleLdnlIiXACJgvgI35Yh/z7KIl+xW5WnC7SF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a05:6e02:194d:b0:42f:9db5:26d0 with SMTP id
+ e9e14a558f8ab-42f9db52b1cmr158682585ab.1.1760448844106; Tue, 14 Oct 2025
+ 06:34:04 -0700 (PDT)
+Date: Tue, 14 Oct 2025 06:34:04 -0700
+In-Reply-To: <20251014125319.639727-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee514c.050a0220.ac43.0107.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in ntfs_setattr
+From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
->On 14.10.25 14:23, Wei Yang wrote:
->> On Mon, Mar 03, 2025 at 05:30:13PM +0100, David Hildenbrand wrote:
->> [...]
->> > @@ -1678,6 +1726,22 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->> > 		break;
->> > 	case RMAP_LEVEL_PMD:
->> > 	case RMAP_LEVEL_PUD:
->> > +		if (IS_ENABLED(CONFIG_NO_PAGE_MAPCOUNT)) {
->> > +			last = atomic_add_negative(-1, &folio->_entire_mapcount);
->> > +			if (level == RMAP_LEVEL_PMD && last)
->> > +				nr_pmdmapped = folio_large_nr_pages(folio);
->> > +			nr = folio_dec_return_large_mapcount(folio, vma);
->> > +			if (!nr) {
->> > +				/* Now completely unmapped. */
->> > +				nr = folio_large_nr_pages(folio);
->> > +			} else {
->> > +				partially_mapped = last &&
->> > +						   nr < folio_large_nr_pages(folio);
->> 
->> Hi, David
->
->Hi!
->
->> 
->> Do you think this is better to be?
->> 
->> 	partially_mapped = last && nr < nr_pmdmapped;
->
->I see what you mean, it would be similar to the CONFIG_PAGE_MAPCOUNT case
->below.
->
->But probably it could then be
->
->	partially_mapped = nr < nr_pmdmapped;
->
->because nr_pmdmapped is only set when "last = true".
->
->I'm not sure if there is a good reason to change it at this point though.
->Smells like a micro-optimization for PUD, which we probably shouldn't worry
->about.
->
->> 
->> As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
->> folio yet.
->
->We do support partially mapped PUD-sized folios I think, but not anonymous
->PUD-sized folios.
->
->So consequently the partially_mapped variable will never really be used later
->on, because the folio_test_anon() will never hit in the PUD case.
->
+Hello,
 
-Ok, folio_test_anon() takes care of it. We won't add it to defer list by
-accident.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
->-- 
->Cheers
->
->David / dhildenb
+Reported-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
+Tested-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
 
--- 
-Wei Yang
-Help you, Help me
+Tested on:
+
+commit:         3a866087 Linux 6.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1125f304580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e58a7dc1a8c00243999
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17ffcc58580000
+
+Note: testing is done by a robot and is best-effort only.
 
