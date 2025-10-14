@@ -1,166 +1,110 @@
-Return-Path: <linux-kernel+bounces-852109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC33BD82F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AE8BD85CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45ED5189FA1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:32:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC1C1921726
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31F430FC1D;
-	Tue, 14 Oct 2025 08:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805682E6CBB;
+	Tue, 14 Oct 2025 09:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rI/lA1AX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b="a4Y5H+f5"
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3C916F265;
-	Tue, 14 Oct 2025 08:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE75E2E7F17
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430736; cv=none; b=BbiQvwzXxb/1QmuibsfKAyN1vgk9iDlBW0Vfniq3dR83mj3Xw2nme7cm6TIgFVR6A34mzjaa3XY4oiJeHx3Rda46/VGOM/iGvno42rWUsLfCiq+PYT/tH5IXTk7IuTdqShMqrYNvlo2IJMm3JoefYlR7uMqTcbqhcNK0P3IigkE=
+	t=1760433191; cv=none; b=clsgwUGBcEtRF4J1bdGTx3wobwPQTE6T0dvZVZRlqCySOum0Pqp7vTb0dcsWZXxQs0RcG12H4Qb3seh+LO4VDm9VTnj8caUcvgeL5tPUFzverC/bsMYnR0k0D4tYnuK6zOGw4sHVYPoEc0oxrOQ1wqiu8FitA2GIBA2ISO0ssHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430736; c=relaxed/simple;
-	bh=79Z8WAUQAlqHzUnTiERxYcnCSSAkZtyqlEAok9nIYMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvLi1Cv0orER606hQNW5EuDxRFzMrQptYECHYZTPZEAX6DGK+t75NAzYuLispif+JgIPFB1fdmX7nbyesLpLFjvieEjjYpA5FnIOCBQC7wU7D6svBo/JHhO4eHA8Se7ufazwYiZIcTzQWCyIjXqcLSCoy8z8GfYM5XLeED3NQp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rI/lA1AX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE77C4CEE7;
-	Tue, 14 Oct 2025 08:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760430735;
-	bh=79Z8WAUQAlqHzUnTiERxYcnCSSAkZtyqlEAok9nIYMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rI/lA1AXn1hCQJhcNCyjkW6MrbFzQpLG/WieRsxB3RryypZMk0rg8ehuoUNNU/cVT
-	 z/uoM6yqvb+aXmPBFY/uGJXxxHFFTQqn+U3UwllHJcOgtYga61iGqbaItiDSaQpg6p
-	 mcs/hTyRceLNhu1nh1vYS3oX6BjoSbvtrpIR4U7Npsf4nRVXLsfW1A2oullTcm7aHG
-	 Wge1rcRAMbRPt5h87r2Dy3GRDnlC1Ve+o6XRrR5M80qYjZhXUr2mqMzIY6t4nkzrGh
-	 0Cykwzn3STulKiQTj97e25y7FPPQ/hauvlrwcIkjZQOoWEUAsmxWv8vHuChFUGUswA
-	 X5BRd7pqSBqtg==
-Date: Tue, 14 Oct 2025 01:32:09 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel test robot <lkp@intel.com>,
-	Kees Cook <kees@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH] PCI: rcar-host: Avoid objtool no-cfi warning in
- rcar_pcie_probe()
-Message-ID: <20251014083209.GA2696801@ax162>
-References: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
- <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
+	s=arc-20240116; t=1760433191; c=relaxed/simple;
+	bh=r8EO7w4EMwuG8IuGOQrNcrG0OyJU1PN0MzRw+k561y0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e3LySlny5Le425mXDBEZ0re7BKT+vY5K42fTgR4FYONDjdM8vFW3CeCK5F/rOjBWAggRh4HCcmTk7a8lWLkqamC9mzzTDgpP4GoAH7rSgy1YLf4FV5zAqrSOEv4RVQsZbrVLqrJZxwMB76bgK2p74+NN67GRTlgo9WAtEZQGcp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b=a4Y5H+f5; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 59E8X0v9086980
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:33:00 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 59E8WfXa085643;
+	Tue, 14 Oct 2025 16:32:41 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (BJMBX01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4cm6pz4wdzz2Nc5jJ;
+	Tue, 14 Oct 2025 16:30:19 +0800 (CST)
+Received: from bj03382pcu03.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Tue, 14 Oct 2025 16:32:38 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand
+	<david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mel Gorman
+	<mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Sumit Semwal
+	<sumit.semwal@linaro.org>,
+        Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        "T . J . Mercier" <tjmercier@google.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [PATCH 0/2] optimization of dma-buf system_heap allocation
+Date: Tue, 14 Oct 2025 16:32:28 +0800
+Message-ID: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 59E8WfXa085643
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unisoc.com;
+	s=default; t=1760430772;
+	bh=jHNbOSkAKxEmrSis/ca++e1CL7eRGk9nY48IkitfWL0=;
+	h=From:To:Subject:Date;
+	b=a4Y5H+f5gs9OCSDBq5C514+UWWtOCiAX3I0FjR3BiI8uaOItTC9h6bTMGdI6XPKWK
+	 2E8qo7NI4ZSakzlCNUAGhcF707/K58wB9x5Fiej2In1Ifa922vtKbABLHqsDPdBTlg
+	 +0DIqOHIdVDGSfhGpP3dUfOeaZHVKbS9BtL35hz6J3bl9/x5v78poNS84MfTlQNFpN
+	 Eg3/cRlrBHyUeqTgzkbNsfcRAsDhhVVnscxN0X1NjeaQeQsIbeYV9BS+bbIUf39WBa
+	 MkPVD6C+zFUFIqHCavBPmuwvwEmKmMzuihbIrySnlHvoYNTSt2yuvRuPM0ysqYM2SP
+	 rDY6UoMvEygsw==
 
-Hi Geert,
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-On Tue, Oct 14, 2025 at 09:16:58AM +0200, Geert Uytterhoeven wrote:
-> On Mon, 13 Oct 2025 at 20:26, Nathan Chancellor <nathan@kernel.org> wrote:
-> > ---
-> > Another alternative is to make this driver depend on CONFIG_OF since it
-> > clearly requires it but that would restrict compile testing so I went
-> > with this first.
-> > ---
-> >  drivers/pci/controller/pcie-rcar-host.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> > index 213028052aa5..15514c9c1927 100644
-> > --- a/drivers/pci/controller/pcie-rcar-host.c
-> > +++ b/drivers/pci/controller/pcie-rcar-host.c
-> > @@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
-> >                 goto err_clk_disable;
-> >
-> >         host->phy_init_fn = of_device_get_match_data(dev);
-> > -       err = host->phy_init_fn(host);
-> > +       err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
-> >         if (err) {
-> >                 dev_err(dev, "failed to init PCIe PHY\n");
-> >                 goto err_clk_disable;
-> 
-> I am afraid you're playing a big game of whack-a-mole, since we tend
-> to remove these checks, as they can never happen in practice (driver
-> is probed from DT only, and all entries in rcar_pcie_of_match[] have
-> a non-NULL .data member)...
+This series of patches would like to introduce alloc_pages_bulk_list in
+dma-buf which need to call back the API for page allocation.
 
-Thanks for the input! Yeah, that is fair, as I alluded to in the scissor
-area. We could just do
+Zhaoyang Huang (2):
+  mm: call back alloc_pages_bulk_list since it is useful
+  driver: dma-buf: use alloc_pages_bulk_list for order-0 allocation
 
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 41748d083b93..d8688abc5b27 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -243,6 +243,7 @@ config PCI_TEGRA
- config PCIE_RCAR_HOST
- 	bool "Renesas R-Car PCIe controller (host mode)"
- 	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on OF
- 	depends on PCI_MSI
- 	select IRQ_MSI_LIB
- 	help
+ drivers/dma-buf/heaps/system_heap.c | 33 +++++++++++++++---------
+ include/linux/gfp.h                 |  9 +++++--
+ mm/mempolicy.c                      | 14 +++++------
+ mm/page_alloc.c                     | 39 ++++++++++++++++++++---------
+ 4 files changed, 62 insertions(+), 33 deletions(-)
 
-since it is required for the driver to function. Another alternative
-would be something like either:
+-- 
+2.25.1
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index 213028052aa5..c237e04392e6 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -941,6 +941,9 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	u32 data;
- 	int err;
- 
-+	if (!IS_ENABLED(CONFIG_OF))
-+		return -ENODEV;
-+
- 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
- 	if (!bridge)
- 		return -ENOMEM;
-
-or
-
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index 213028052aa5..2aee2e0d9a1d 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -980,8 +980,12 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		goto err_clk_disable;
- 
--	host->phy_init_fn = of_device_get_match_data(dev);
--	err = host->phy_init_fn(host);
-+	if (IS_ENABLED(CONFIG_OF)) {
-+		host->phy_init_fn = of_device_get_match_data(dev);
-+		err = host->phy_init_fn(host);
-+	} else {
-+		err = -ENODEV;
-+	}
- 	if (err) {
- 		dev_err(dev, "failed to init PCIe PHY\n");
- 		goto err_clk_disable;
-
-to keep the ability to compile test the driver without CONFIG_OF while
-having no impact on the final object code and avoiding the NULL call. I
-am open to other thoughts and ideas as well.
-
-Cheers,
-Nathan
 
