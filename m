@@ -1,171 +1,201 @@
-Return-Path: <linux-kernel+bounces-852324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375AABD8B09
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3572BD8B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F29F3A73C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2873A1831
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E4F2FB98B;
-	Tue, 14 Oct 2025 10:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ENOCMBvR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1B42FD1A7;
+	Tue, 14 Oct 2025 10:11:17 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EC916F265
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F9C2ED14B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436652; cv=none; b=B7Cu9sO32PqkTiemf0+G5eJpIvHWLw0hehHnZI50ECUo98Lc68GV45dMFPjG1CSAWZmUGJdr6SmKPVRIDPu6eGJkVb5rkWoBXE67cUZrVpKs3gAg3k5v3aCPFIGwFVIbXo7FRYUb19W8GRhaLtT/CcuLR+5WZrMLEFBKkK746B4=
+	t=1760436676; cv=none; b=fW56QJmGc99s3F71kCNNoP9kpAp6aWf8NkvV5ZPV/3dLykEenTgvtjfYZOVBmPm+HqiS8Y2BMykwpz/Ea4hGZod7N4R6ZolaHZ7rIdiyckp3Cd+k1szqJ6e+ckXeeQEFxbTkeUacp6cNSKmjbzTXx8I6m+aTKlNmgCL0v1DQrHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436652; c=relaxed/simple;
-	bh=6UNxFkPs7S0fth1zlm3KPMvDq2slzrLkx1c/5aAf7/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ijTqS39l0/J5JKMbyrOCllelQY4gEFAHMP21bk7BtU9g/FTBYd2CtP+7t/lLddqwEJtDn0e2WZMnATXd986DeCasHGB1Cw4scU6DFhA7GrdOIYpsDloB8YZH9tW2nlf6d1G1u/9eGL30KNmZahZ5b4B061C8eyXSUfkkBonTozM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ENOCMBvR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87HIs001466
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:10:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+GDf+gAOY9mdDvVU8qCaZ3Le3uxmX96IsgcRA5hA398=; b=ENOCMBvReXNVx7ga
-	EOmOXAyXdH53PeiVHByaKn5Kj9ItG2NqsAfiLnOYhYzzWx4blee9BcF02t4kmF1V
-	rpN192Yfde/xFzrBfqmsDIOYMdb1zNfWRDZw4AFZ7yU/gDklvhabmz0A86zSctqW
-	XLFZILWJbSNltVWQ+DvyvCqzRtg2swzbAa3EjoYA9PfAyjtWBHmKVFiBVT1e01Eo
-	/HAgtSa5LWRik0bYhf9R55jn9rgUNXmrrDwkO2trHXRiWo9DEV6ZMtQTZbokyRve
-	SCKnXwaHDDMYqJYbzLbxDwhg8sLi7PHvg3lCVk81BI6ghjhO4fnO7QqZLA514ONs
-	cRGK6g==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa882jn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:10:49 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78117b8e49fso16102083b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:10:49 -0700 (PDT)
+	s=arc-20240116; t=1760436676; c=relaxed/simple;
+	bh=diJOq20R167i4F7BbQcP+KUQPlmtwyEeVhCpAACAcPg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ie9IgI9Pm1ftYm9w9xeMumn4nOqnsfzIUgCAYlT3pWXIjTkZoMVsewZzcnuY1dWeBZFpJA5NtYfzt7TzJ5wTtnF5aO+UHw9KFg97d/TwnkeTbDPbEyhGxwkIQfjUVlsXxwbbGnMqzL1JAIHvOa98LGhRRhBiL0yxSn8Nr8AaG0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b403bb7843eso1098332566b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:11:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760436648; x=1761041448;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+GDf+gAOY9mdDvVU8qCaZ3Le3uxmX96IsgcRA5hA398=;
-        b=JI+kdV/tkqlNawKU8rkHNFw+Of1ebPGII2bkXXbqqtHbZrEFEqp4tC2mlKNYEjESyq
-         v5V+d06oym66FaNVMQkEuaCN/r0x85knSXI5CfgHiSWYOrZgB9R+p8N5qvcNhZrq6n9H
-         s3ZENc+XGpHYZ0J9euovya5U09i4SK7XNveDs76BY/9+9xEa3YpY/UOtiWNZ0nUkApEb
-         DlXOJcTPSLwkvnC7nw1lz/lt5SWNCnIMtpjCdKA8a8Q4W3AWShn3hoIrK4PkmolbEbJU
-         mZWV3c8YIfvr4GkBJ2QLj8fAeF7mF2haPrfpOLCUyq2UwebWZCL+BhsyISoFNjzgh+0s
-         jB1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXgUNWKfHOPjqxcZBctKIQPcULbNXJ1+vPYkjbd0E4fdQkI/PAk+grMpd3vf+iw2QjAC/PIcCsfKSRhWIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQQ83VLPdqwrHQteudb0hGjI5w4xiMcAV+StIi/YTV4jaPv5me
-	xyCfAVITcKYUdkb6gGPipurpbRVKCMTSV+dP09bIk+oTZ6chhji+3CmMdjrkXtEkIEO1KJZmWNl
-	7W0d1iG5dWXFXRmTRjyA1ZDih+rhYOAQpzFEdsDRWMbdxjiEAvDhci6lHGwnYbfbAD4o=
-X-Gm-Gg: ASbGncsdGUYQ0hno9d0kED3slH/7g0LxnJW+Ov3tHrz7BOAz0wFURrLf2Sb4GWrbWuD
-	2frHBond7Snebq89kQp2U24xAPYVwl4/7w3jJC2NIR6Tjqbk8AVhj1Gj+vqa/7BcYZgpCM6rvl0
-	FEeT1RTyF/+uQ8dm53mXpB5Yq+UpqLzymNiLti+hTbSDVj4k7cU7VQ6L/r/39zTJi3LZWR7GQcJ
-	EvNE59kF0+MVrZPmkOEwF4GQf1qoLzu+H5JgS6E1oU0AcqCvbQFsyia9uFY1Lkbjgxsznb83oJ9
-	kyM0eKvHtSo/DnHjDEJYglTgYgI+f+WCdL2qyNovpjfLjLopG8GP7b+ejSNGMio6GDPxRhY/
-X-Received: by 2002:a05:6a20:2451:b0:24a:b9e:4a6c with SMTP id adf61e73a8af0-32da845e56amr32763015637.44.1760436648456;
-        Tue, 14 Oct 2025 03:10:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4+I2XVu7f/J1cjzoxMqKeCVBL6tL6m/uv3wlVqh90v+MzZWe5SVtdgYsVmRmojAWrthABug==
-X-Received: by 2002:a05:6a20:2451:b0:24a:b9e:4a6c with SMTP id adf61e73a8af0-32da845e56amr32762977637.44.1760436647980;
-        Tue, 14 Oct 2025 03:10:47 -0700 (PDT)
-Received: from [10.206.101.41] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060962sm14772927b3a.1.2025.10.14.03.10.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 03:10:47 -0700 (PDT)
-Message-ID: <2d581ed7-f240-6b84-3bd9-eadc3c1041fa@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 15:40:39 +0530
+        d=1e100.net; s=20230601; t=1760436672; x=1761041472;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FqlD9/jxWx+SqyVejHbNGdrLmCnbltXLXPbTGXfqaRs=;
+        b=tQLJiaZ20F1mukkWNbN6/HB0gdMt9uvQgKRg3RkaaUuIhMIS4Peb29vQdjti6t2R92
+         TiYqXdh7AqpSRf3JEqiV4i/5krHoBMsx9ZSulCAZ+HRgWqExR3MCuCv5kLcHPaIFSnwu
+         GQg28p2dEOjuvxYSMA49vmLpIN3Y04v4xgI+FlUDUAUAlcKJHDIAJ7CC/w3JqCfnCgow
+         dlrSGpLlqX+gxmtVjLWWytSfNpVtjp5eUiO3TUuXkFsG+yE30ziY06AaAnC1XKHDHAFc
+         jKLDrqM4rmXijtsj/NPtl6P6RnVQ2EZxGWzvMbznbT3W+V+lYxcbLThvrejdof+qtgpi
+         G9Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSEIHEvygIg53pby8BmaBMKsEZ3C8K1AMp5IvNHrFtA4AF1FOf8DQUcMTNNbzwkPAf9lK3GQb8nLe1svA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyQQ0/2ybKXbfaDw6oFWm65/pIntxy+ELzB8R8eAa1Dz3VSOnZ
+	O2TMsT4X3cUbq+yJ1oKTCxN7Dt+gJ35t/L6XviHdlKnpWwlnurXQqhkz
+X-Gm-Gg: ASbGnctWvHyA3p43ZyxSKZa+XH/yqtpAOxunEq2oi5qadVyhOu/vpTjhf/HvxtyfwI1
+	gHjzgl6hFGjwNXlY4obeZiundxEA3g99kRvod3kc4GCTl29jp/GeHNDJbO+m6Wy/SNwotM+jNmF
+	s4gRDlQ12MA5pB4JtUAKqfzzVCzFhNYmCH4pC8sNg0fEPfUcVbIB+S+FXMKhiBawUFPFxWGUiXO
+	A+AKnNYiBofEqqeN46sUIrTlRWHMVpsiMuzUleCt9zfQ/Y0iB0fQ8/4klD3OQRxRnq35gE2h9F+
+	UaqIjwCD/UhYlbBiJNpRGgcCaH1xhIoRcbQkfbhC2vxhYFutI/lLD1rzaGjRqAuntUNKGIZ6IQF
+	NQ9fcZDJ8/yg6mzpz/nBl4wlEz/PgClYI7pFoXAqQO5uh8HM=
+X-Google-Smtp-Source: AGHT+IEwipovpqBK93TMYmLFdHdsp5nUq5tfJlCe61SggYjQfLXN+qxeGeAXS3mptg07SPANLwU9xA==
+X-Received: by 2002:a17:907:3d8f:b0:b04:2ee1:8e2 with SMTP id a640c23a62f3a-b50abfd6d7bmr2772743866b.36.1760436671790;
+        Tue, 14 Oct 2025 03:11:11 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d900e52fsm1091637966b.69.2025.10.14.03.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:11:11 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Tue, 14 Oct 2025 03:10:51 -0700
+Subject: [PATCH net v2] netpoll: Fix deadlock in memory allocation under
+ spinlock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 7/8] media: iris: move common register definitions to the
- header
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
- <20251008-iris-sc7280-v1-7-def050ba5e1f@oss.qualcomm.com>
- <b7eba4b5-1189-7506-4767-0ef3234fc6f2@oss.qualcomm.com>
- <dzorzudzpjipvlkwik3uylomwi2dy5ticxromzegzgi2jhibot@reqv5ul5ifuc>
- <3802fe42-0c94-8c10-7b6c-6c3adf863ef9@oss.qualcomm.com>
- <t5obao7tm34uilnzoa24shknvdtzqkc5uwek4cxwbof3tgqylb@jehfugyxvups>
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <t5obao7tm34uilnzoa24shknvdtzqkc5uwek4cxwbof3tgqylb@jehfugyxvups>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Rhc5wSaGeqAwu0Y5YcAkg7TKKlLTPHX0
-X-Proofpoint-ORIG-GUID: Rhc5wSaGeqAwu0Y5YcAkg7TKKlLTPHX0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX1IxNWhIMfwrT
- ONpO/kAvh6mL5z/vo/yUsS3UhTfznFc/JEbmIbbNKoLFH6JW2d5RECTyn8Y3Y9Y/U01keMI0Lj4
- rJoCsoQrvsHrVrTf8bp2D9/YgQuk4AvI+6G8F0XBibwIcS6UIBJRD0atOVYtWNS+Y1Sst6YPxzn
- Jvm5NWgu9r5nDLfwPt175+lkH1YtG98nlk6i2r9y6Qky2aKcIGwuAuGl5uOrHM0REpZKslvlr9t
- 9J9CGwSoZY6GgtLS07Dj8JL0i29zYTUNU4m4Xox31wMt2XcXEGogCpeeyA7WPDNHR8vvvRDq3mC
- 0Nuimjy7oPK7Ol0fKfwJVOrLkLr2bC/rzFNkKNwU0MsIGDYamHHzE9Y7+qnO8lPkZsacLBgy8ix
- 26Pg0++hNq/NHUS/FJaMTQZ4bjjfXw==
-X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ee21a9 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=UHACNdNzX4dSgP2fR3kA:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
+Message-Id: <20251014-fix_netpoll_aa-v2-1-dafa6a378649@debian.org>
+X-B4-Tracking: v=1; b=H4sIAKoh7mgC/3XNQQqDMBBG4auEf21KJlZoXPUeRSTViQ5IUhIRi
+ 3j3gvuuH3zvQOEsXNCqA5k3KZIiWmUrhWH2cWItI1oFa2xDhmodZO8jr5+0LL33enCO/NAES/U
+ DlcInc5D9Al+IvKKrFGYpa8rfa7LRlf55G2nS7u7JOArOBvMc+S0+3lKe0J3n+QPsafDvsgAAA
+ A==
+X-Change-ID: 20251013-fix_netpoll_aa-c991ac5f2138
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ usamaarif642@gmail.com, riel@surriel.com, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3356; i=leitao@debian.org;
+ h=from:subject:message-id; bh=diJOq20R167i4F7BbQcP+KUQPlmtwyEeVhCpAACAcPg=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo7iG+e+KvlPELHSh3pE1LAOo9iBeEMaBEvy9Sy
+ qdf0lFVaL2JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaO4hvgAKCRA1o5Of/Hh3
+ ba/hD/92wVFdGWwzjFmmcYXZPTFg0jTqu6d5M5Xb5FmrSxKsSHN9Tv0M32R5u3+M/kHqTKxrKBu
+ FBCg78DOayY2+JrCogaKvvL0H+yqifwxpxuW787x5nlPyDyB/12CWLZSJr3aktrj8bT5CoqqHOx
+ TS0qLwGaQz0DyPhwA3xMq3flHZSY487EWowdaqrZhyVFKD5T2qPbbfrUkTGfpphpMtxwNfgLcmh
+ cqfX1EzpMzm4GZ9meLmlUAqr5fYHQlst+W0Avc9oDC3aKIAZBd+VJJIdamCrdku0vRa4gzWoPCP
+ A4OFBkg0LjxL/P2/mR3RIA8hrzvseZBy1Bpw7C5IiXaBbj0um2EmXG95dsbXKtZGFXx7UkDSGAn
+ jRsSVVuc1Jx7PmUqvnKkGRH9Tml1XwRGMUZpZ7CVU4B2wHkXl5jJsb9ediwkWguXUAAZxNVrPFo
+ n61Mvcuj7ue2sL1NuTEEgBZBfmVSHUyUTa5Rgf1jxU7sQUlTrarWLL+LxzSjPgwJai/kEnJfPJv
+ HdyfDNCbhZkqx/g9qLm8X89q+vpJJB4+wvalIjC9p45wb1Dkd41ZoCWN1Us/8U9zV/t6tFQ+vo+
+ dO0TLZXZMMo5NK0PcjqXdkLInE4EXJeX3FE4gaymh/wLvUb6LpyTCBBbevNBMrYo09jeOtwIkxF
+ xCmFaPWdBfarQ9Q==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
+Fix a AA deadlock in refill_skbs() where memory allocation while holding
+skb_pool->lock can trigger a recursive lock acquisition attempt.
 
-On 10/14/2025 3:21 PM, Dmitry Baryshkov wrote:
-> On Tue, Oct 14, 2025 at 02:43:56PM +0530, Vikash Garodia wrote:
->>
->> On 10/9/2025 8:18 PM, Dmitry Baryshkov wrote:
->>> On Thu, Oct 09, 2025 at 11:40:25AM +0530, Dikshita Agarwal wrote:
->>>>
->>>>
->>>> On 10/8/2025 10:03 AM, Dmitry Baryshkov wrote:
->>>>> Simplify adding new platforms by moving common registers definitions
->>>>> from VPU 3.x and "common" file to the header with other register
->>>>> defines.
->>>>>
->>>>
->>>> Similar to
->>>> https://lore.kernel.org/all/20250925-knp_video-v1-5-e323c0b3c0cd@oss.qualcomm.com/
->>>> ?
->>>
->>> Yes, but moving more registers. I can rebase on top of that series if it
->>> lands first. Or I can just pick that patch into the series, to remove
->>> the dependency. What would be yours / Bryan's preference?
->>>
->>
->> My vote would be to rebase this one on top of earlier one.
-> 
-> Ack, I will rebase. Seeing that none of the patches in that series are
-> in R-B state, I will probably pick up just that patch into this series.
-> I hope it's fine with everybody.
-> 
+The deadlock scenario occurs when the system is under severe memory
+pressure:
 
-Should be good. I can keep the patch in my series as well, in my next rev, so
-whichever lands first, Bryan can simply drop the patch in later series.
+1. refill_skbs() acquires skb_pool->lock (spinlock)
+2. alloc_skb() is called while holding the lock
+3. Memory allocator fails and calls slab_out_of_memory()
+4. This triggers printk() for the OOM warning
+5. The console output path calls netpoll_send_udp()
+6. netpoll_send_udp() attempts to acquire the same skb_pool->lock
+7. Deadlock: the lock is already held by the same CPU
 
-Regards,
-Vikash
+Call stack:
+  refill_skbs()
+    spin_lock_irqsave(&skb_pool->lock)    <- lock acquired
+    __alloc_skb()
+      kmem_cache_alloc_node_noprof()
+        slab_out_of_memory()
+          printk()
+            console_flush_all()
+              netpoll_send_udp()
+                skb_dequeue()
+                  spin_lock_irqsave(&skb_pool->lock)     <- deadlock attempt
+
+This bug was exposed by commit 248f6571fd4c51 ("netpoll: Optimize skb
+refilling on critical path") which removed refill_skbs() from the
+critical path (where nested printk was being deferred), letting nested
+printk being calld form inside refill_skbs()
+
+Refactor refill_skbs() to never allocate memory while holding
+the spinlock.
+
+Another possible solution to fix this problem is protecting the
+refill_skbs() from nested printks, basically calling
+printk_deferred_{enter,exit}() in refill_skbs(), then, any nested
+pr_warn() would be deferred.
+
+I prefer tthis approach, given I _think_ it might be a good idea to move
+the alloc_skb() from GFP_ATOMIC to GFP_KERNEL in the future, so, having
+the alloc_skb() outside of the lock will be necessary step.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: 248f6571fd4c51 ("netpoll: Optimize skb refilling on critical path")
+---
+Changes in v2:
+- Added a return after the successful path (Rik van Riel)
+- Changed the Fixes tag to point to the commit that exposed the problem.
+- Link to v1: https://lore.kernel.org/r/20251013-fix_netpoll_aa-v1-1-94a1091f92f0@debian.org
+---
+ net/core/netpoll.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 60a05d3b7c249..c19dada9283ce 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -232,14 +232,28 @@ static void refill_skbs(struct netpoll *np)
+ 
+ 	skb_pool = &np->skb_pool;
+ 
+-	spin_lock_irqsave(&skb_pool->lock, flags);
+-	while (skb_pool->qlen < MAX_SKBS) {
++	while (1) {
++		spin_lock_irqsave(&skb_pool->lock, flags);
++		if (skb_pool->qlen >= MAX_SKBS)
++			goto unlock;
++		spin_unlock_irqrestore(&skb_pool->lock, flags);
++
+ 		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
+ 		if (!skb)
+-			break;
++			return;
+ 
++		spin_lock_irqsave(&skb_pool->lock, flags);
++		if (skb_pool->qlen >= MAX_SKBS)
++			/* Discard if len got increased (TOCTOU) */
++			goto discard;
+ 		__skb_queue_tail(skb_pool, skb);
++		spin_unlock_irqrestore(&skb_pool->lock, flags);
+ 	}
++
++	return;
++discard:
++	dev_kfree_skb_any(skb);
++unlock:
+ 	spin_unlock_irqrestore(&skb_pool->lock, flags);
+ }
+ 
+
+---
+base-commit: c5705a2a4aa35350e504b72a94b5c71c3754833c
+change-id: 20251013-fix_netpoll_aa-c991ac5f2138
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
