@@ -1,171 +1,201 @@
-Return-Path: <linux-kernel+bounces-852095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4873BD826E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C90BD8277
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64DC3E8BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD8F3E7CC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D354030F927;
-	Tue, 14 Oct 2025 08:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d5F/ktAF"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121AA30F936;
+	Tue, 14 Oct 2025 08:24:30 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE781A5B9D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E8030F812;
+	Tue, 14 Oct 2025 08:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430202; cv=none; b=dWvZqEfIXhRto9yAA0EQWfJHa4t7HTwwKvfGEKc0cTeq8GrYzr662gjBLPzy8Oof/rgRFNtV1/xgxg4O2UQlfLQuDEeKCYfZxW3k4PffynyE/HDTsA9ALIUQ69vQf5JtblwP5ZeJee6EooLhKehWYknPbI/KTMOa1RUPg4C4ZD0=
+	t=1760430269; cv=none; b=Nmj9NNO9j4L8gHoIWDIc/G5Vt9acPKrdcvfhFCvdCwXKIGgssBAttEXPxfus15kN3r/cIw22KkXAR1YRRse/sgnTjHyzdbgYKQsabR8t3yPvUU2886bmLPqLo+bbH9LHN1HM8IMWpPylomZmLc86KIaytwAP/d9+VX2AsMFrLTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430202; c=relaxed/simple;
-	bh=QpLLN7omLU7FVeu70pu6uFOP+AtOBErrgm75t8rLSRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nZIOFtrG5RoxPOEjibYB8mm/k9U46TMT6fugMjbt8VzRtqH0+cUVnH5SU4ItrILTS8ov9r2wWNP564OocvsvDDQLHXv/PVXQ14/TP6ze+mzWjX1rhkRmhCRe+GkskCVay3cEJI18wbzx0gQw8oMHjUtvFjkKq1X2cF8OdB3GqaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d5F/ktAF; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7815092cd0aso2393697b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760430199; x=1761034999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y9TclHM+FlxL8k/EdZlfp0sKQpkcWovBD/evGnk/JRY=;
-        b=d5F/ktAFXiAlca/nL4hv1iOe9/I8zrpQX5eD+YjxQvMcYsXB3gO0yt6NdWCwZZ1Q8f
-         YGm/uQWNq9Z302yY+mMQLJSQTzyTGw64d4voZuBwYDnLfJjZ/9ZYGSzDaRVh1Oihsyvh
-         8oKbrs+cvUN7M5292eAW5DZCwfjbkCyQXaGP/YhGeWcgOw4qkwYQ815xURYyl2yt/suN
-         XZtcl4QSVC7UHy9+ml8+wKOZ5EGmBnY0j9EpKCpNTrYcnDyF2qc766x2kqReFaBw0Zo7
-         yOZp27Y1L9JGsiD2XKQhRQdoRk8SF2q0YzB3vHEjTo0/lrv5Tv+y87v8+kcC5qHSnvJ0
-         5IcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760430199; x=1761034999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y9TclHM+FlxL8k/EdZlfp0sKQpkcWovBD/evGnk/JRY=;
-        b=g/Z28wV4fHtXNkcLEqeEi7qwRuW91h/xPplwR3GPDjYQO6+EpYBA45D9yDTyAnSNtg
-         sZprDb7Kk0DHG6N5ZEEYhq9ESmQ9h9/Gq95LYl1UIFdIILrhoKu38p0uSgM5veNA2vas
-         iNRFVf0vZ5DZbRP3C+iIXYHe4KpApKUjMa7YsG4F/IzekDT3KsBMb9GKOst0Crsgo4sb
-         8WSzGElaSmhRnx7gjSEF76B7CebhZm7vwUtXKslbHBsM1KdXlDH6MLNXyPzhz2gfzWXa
-         U8wF/UTbFECyCZW89SnmCbwTQU/0ze8CuS/fJm4eSBNYMQ3VJL0q6zjHEitDABiC0fnp
-         cr6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU8060sE41fow8vjKN66ab/frcU9goK0xN9yhoUyaT8VL9UghnrJJS2jZFgOuDswXslnwCyuQAkgjt3TI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXQElBofd/zqI/6oId+6GA+otnrRyn33hSPt5D2YAnrZURmf3s
-	NpQRz+brtDm2XtaSYTG0eOVUmD4BnVasPLVmsJnftsne9mzOCQvScMNmU9gs6DRZPMFP2SsWQbi
-	+UtGb19WP8k2gKfizts8+V+q9bcK14o/6tiFxm5FcXw==
-X-Gm-Gg: ASbGncsUj23hWhbDqRPQ81SYBVaNclZBVPxs9Ylh1OlSYTRPR5rWMFAaL2nMEYkJ0SG
-	96nPGlEPs5tIlTW+gljHdVYpsJmuBJ6XSQo5MG3OFs8DVeIgq7c5vR4I5oQq4dQNoNAsooso6SH
-	3wyCbjfvws2tn4RWNoI9Kdjq0ZDhWLZMhVaM8g8D9PUDkeHi2/RGCDBEcW2B/rRw8xwyZPFpb2f
-	qGvqSaEoGr/4xruITDjUeqUiODQg1uqylU9PtNK
-X-Google-Smtp-Source: AGHT+IGUPFI5jCPwxpBaBsUtA4t105DOhgNvQsDGVLBIPQELjrZFFsrZcl9lsa37EFuLVIbBf5ZvE7ZH81SU0iQy1BA=
-X-Received: by 2002:a05:690e:424d:b0:5fc:5d98:3478 with SMTP id
- 956f58d0204a3-63ccb7fabcfmr16158005d50.7.1760430198919; Tue, 14 Oct 2025
- 01:23:18 -0700 (PDT)
+	s=arc-20240116; t=1760430269; c=relaxed/simple;
+	bh=8JrZTvOKOspIqTm9lXxYbdi62Pe7w4YunwBg0UpB/94=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=h/ZwQbtpTk+BL0x5heEpS9n6/79torfGA2VdGAySojkFXrt2PpRfpHQgE6mND1vwnvC7PLqjlvnDhnT6b2vbOfBPb8Y8SsQMEM3f2Ni9cEHJglmM+VDkgwQdO147p016bU6Gsoonr8/JEZJj+BBjw+X5vsR6fRhBBkA2kNgBvRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cm6gS4gvCzKHMZZ;
+	Tue, 14 Oct 2025 16:23:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 955801A08AE;
+	Tue, 14 Oct 2025 16:24:24 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP2 (Coremail) with SMTP id Syh0CgBXrUW3CO5od7FMAQ--.28833S3;
+	Tue, 14 Oct 2025 16:24:24 +0800 (CST)
+Subject: Re: [PATCH 3/4] blk-rq-qos: fix possible deadlock
+To: Ming Lei <ming.lei@redhat.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+ axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-4-yukuai3@huawei.com> <aO4GPKKpLbj7kMoz@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f0ab9c95-990b-a41d-477e-c1b20b392985@huaweicloud.com>
+Date: Tue, 14 Oct 2025 16:24:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009223501.570949-1-jelonek.jonas@gmail.com> <20251009223501.570949-2-jelonek.jonas@gmail.com>
-In-Reply-To: <20251009223501.570949-2-jelonek.jonas@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 10:23:06 +0200
-X-Gm-Features: AS18NWBS0RiqVLOn6OGw-S2jkVsKedTw5UCNSQ2_7gUR2ne-WB-LpCsCs8TF6SE
-Message-ID: <CACRpkdb6bTFbTtNsO59GXFa9eMK9x=+BGK5Vx4bKv62wxiSpiw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/2] dt-bindings: gpio: add gpio-split controller
-To: Jonas Jelonek <jelonek.jonas@gmail.com>, Peter Rosin <peda@axentia.se>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aO4GPKKpLbj7kMoz@fedora>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBXrUW3CO5od7FMAQ--.28833S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw1fZr1kZw4rJry8tw1DJrb_yoWrGrWkpa
+	ykKa15Can2vFs5Xa4Uua1xWr97J39YgF4UArWrCF1avrnrCr1SvF1ktFWUGFy0vrZrCr4v
+	vr15XrsYvr1UKFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Jonas,
+Hi,
 
-thanks for your patch!
+ÔÚ 2025/10/14 16:13, Ming Lei Ð´µÀ:
+> On Tue, Oct 14, 2025 at 10:21:48AM +0800, Yu Kuai wrote:
+>> Currently rq-qos debugfs entries is created from rq_qos_add(), while
+>> rq_qos_add() requires queue to be freezed. This can deadlock because
+>> creating new entries can trigger fs reclaim.
+>>
+>> Fix this problem by delaying creating rq-qos debugfs entries until
+>> it's initialization is complete.
+>>
+>> - For wbt, it can be initialized by default of by blk-sysfs, fix it by
+>>    calling blk_mq_debugfs_register_rq_qos() after wbt_init;
+>> - For other policies, they can only be initialized by blkg configuration,
+>>    fix it by calling blk_mq_debugfs_register_rq_qos() from
+>>    blkg_conf_end();
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   block/blk-cgroup.c | 6 ++++++
+>>   block/blk-rq-qos.c | 7 -------
+>>   block/blk-sysfs.c  | 4 ++++
+>>   block/blk-wbt.c    | 7 ++++++-
+>>   4 files changed, 16 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+>> index d93654334854..e4ccabf132c0 100644
+>> --- a/block/blk-cgroup.c
+>> +++ b/block/blk-cgroup.c
+>> @@ -33,6 +33,7 @@
+>>   #include "blk-cgroup.h"
+>>   #include "blk-ioprio.h"
+>>   #include "blk-throttle.h"
+>> +#include "blk-mq-debugfs.h"
+>>   
+>>   static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu);
+>>   
+>> @@ -746,6 +747,11 @@ void blkg_conf_end(struct blkg_conf_ctx *ctx)
+>>   	mutex_unlock(&q->elevator_lock);
+>>   	blk_mq_unfreeze_queue(q, ctx->memflags);
+>>   	blkdev_put_no_open(ctx->bdev);
+>> +
+>> +	mutex_lock(&q->debugfs_mutex);
+>> +	blk_mq_debugfs_register_rq_qos(q);
+>> +	mutex_unlock(&q->debugfs_mutex);
+>> +
+>>   }
+>>   EXPORT_SYMBOL_GPL(blkg_conf_end);
+>>   
+>> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+>> index 654478dfbc20..d7ce99ce2e80 100644
+>> --- a/block/blk-rq-qos.c
+>> +++ b/block/blk-rq-qos.c
+>> @@ -347,13 +347,6 @@ int rq_qos_add(struct rq_qos *rqos, struct gendisk *disk, enum rq_qos_id id,
+>>   	blk_queue_flag_set(QUEUE_FLAG_QOS_ENABLED, q);
+>>   
+>>   	blk_mq_unfreeze_queue(q, memflags);
+>> -
+>> -	if (rqos->ops->debugfs_attrs) {
+>> -		mutex_lock(&q->debugfs_mutex);
+>> -		blk_mq_debugfs_register_rqos(rqos);
+>> -		mutex_unlock(&q->debugfs_mutex);
+>> -	}
+>> -
+>>   	return 0;
+>>   ebusy:
+>>   	blk_mq_unfreeze_queue(q, memflags);
+>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>> index 76c47fe9b8d6..52bb4db25cf5 100644
+>> --- a/block/blk-sysfs.c
+>> +++ b/block/blk-sysfs.c
+>> @@ -688,6 +688,10 @@ static ssize_t queue_wb_lat_store(struct gendisk *disk, const char *page,
+>>   	mutex_unlock(&disk->rqos_state_mutex);
+>>   
+>>   	blk_mq_unquiesce_queue(q);
+>> +
+>> +	mutex_lock(&q->debugfs_mutex);
+>> +	blk_mq_debugfs_register_rq_qos(q);
+>> +	mutex_unlock(&q->debugfs_mutex);
+>>   out:
+>>   	blk_mq_unfreeze_queue(q, memflags);
+>>   
+>> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+>> index eb8037bae0bd..a120b5ba54db 100644
+>> --- a/block/blk-wbt.c
+>> +++ b/block/blk-wbt.c
+>> @@ -724,8 +724,13 @@ void wbt_enable_default(struct gendisk *disk)
+>>   	if (!blk_queue_registered(q))
+>>   		return;
+>>   
+>> -	if (queue_is_mq(q) && enable)
+>> +	if (queue_is_mq(q) && enable) {
+>>   		wbt_init(disk);
+>> +
+>> +		mutex_lock(&q->debugfs_mutex);
+>> +		blk_mq_debugfs_register_rq_qos(q);
+>> +		mutex_unlock(&q->debugfs_mutex);
+>> +	}
+> 
+> ->debugfs_mutex only may be not enough, because blk_mq_debugfs_register_rq_qos()
+> has to traverse rq_qos single list list, you may have to grab q->rq_qos_mutex
+> for protect the list.
+> 
 
-Including Peter Rosin (the gpio-mux author) and Geert Uytterhoeven
-on this review, as they have worked with similar stuff. Please include
-them on future postings. The result definitely need Peters ack before
-we can merge it.
+I think we can't grab rq_qos_mutex to create debugfs entries, right?
+With the respect of this, perhaps we can grab debugfs_mutex to protect
+insering rq_qos list instead?
 
-On Fri, Oct 10, 2025 at 12:35=E2=80=AFAM Jonas Jelonek <jelonek.jonas@gmail=
-.com> wrote:
+Thanks,
+Kuai
 
-> Add dt-schema for a virtual gpio-split controller which exposes virtual
-> GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
->
-> The gpio-split controller is a gpio-controller, thus has mostly the same
-> semantics. However, it requires a mux-control to be specified upon which
-> it will operate.
->
-> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
 
-So if I understand it correctly this models a 1-to-many input-only
-GPIO multiplexer, we need an illustration such as
-
-        +----- A
-IN     /
-<-----o------- B
-    / |\
-    | | +----- C
-    | |  \
-    | |   +--- D
-    | |
-   M1 M0
-
-MUX CONTROL
-
- M1 M0   INPUT
-  0  0   A
-  0  1   B
-  1  0   C
-  1  1   D
-
-Is this correct? In that case include something like this
-verbatim in the bindings (feel free to copy/modify this)
-as it makes it much easier to understand what is going on.
-
-That's a very minimal example of a way to turn 3 GPIO
-lines into 4 GPIO lines, which is a bit crazy but I'm not
-the one to tell vendors what to do :D
-
-> +  mux-controls:
-> +    maxItems: 1
-
-So this needs a description, it is a phandle to the
-gpio multiplexer (reference /schemas/mux/gpio-mux.yaml
-explicitly!) used by the splitter.
-
-You should also in the same patch add an example to
-/schemas/mux/gpio-mux.yaml showing how this is used
-to muliplex GPIOs so people find this new usecase easily.
-
-> +  shared-gpio:
-> +    description:
-> +      GPIO that is shared by the virtual GPIOs and controlled via the mu=
-x.
-
-So this one is shared one-to-many, and I think the bindings
-overall makes sense.
-
-Maybe "gpio-split" is a bit ambiguous?
-We have io-channel-mux, so what about "gpio-line-mux"
-simply?
-
-The fact that GPIO lines are used to do the muxing is just
-a detail since a mux is an abstract concept, it could have
-just as well been muxed with some I2C device for example.
-
-Yours,
-Linus Walleij
 
