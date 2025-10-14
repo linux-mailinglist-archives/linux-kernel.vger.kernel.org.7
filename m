@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-852864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D06BDA20D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A63BDA21F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49EC0581F06
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6031F19A4DCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F2430170C;
-	Tue, 14 Oct 2025 14:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898E12FDC40;
+	Tue, 14 Oct 2025 14:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wcBR3W7A"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b="FBgizFy2"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4DF2FF164
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891C52F7AB0;
+	Tue, 14 Oct 2025 14:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452895; cv=none; b=mcW9idiQ0UqFdasmGd2Ubqg4DRyPXGjvlrB9saJol1vtJ/Pvyj6StKugMwXy8l0Sm6sfO6VGxhwDfKWJ09yQbjBz6f9m3cP2AJFiPW+/aOWYeuj+FQMqC22sbIdA/FcgepHfc1dyKp1jiCj4rz0egp623kLiV2in7W4fra9A5fU=
+	t=1760452978; cv=none; b=NiJHh7m1beEi121mVZ5rMXcmRZdQxQbJD2/c7dSqgQrpWBshMoXu14mzE66wYugozzL5JpNb55OJlzUnPyAnQUxa5SNm8qXwG6xSxSqXWopSeEa5avDDOtFj988BYL7d/quIuQWpgQNd/+MLXQW72RZCNZZ+1m3oj+0btv/Iu3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452895; c=relaxed/simple;
-	bh=EnFd3hKLw7xglwwAfM0zsnf/4D4i4YLszNYTMx7pwrQ=;
+	s=arc-20240116; t=1760452978; c=relaxed/simple;
+	bh=N13x1nvnuSJuCyjLOXkobgpSeb/7E32zTOMfW1aipCM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wvc5eYLHNfUPGXcMdlg7PT9tDLiDYnoZNKddych+cpg2kN5NKf+ZqMP1GNJroxodJSiZXGMzsmtHgbUnOwZI3IpqZIEfI6xDZQ3ChZ4+VPjut1VbXv6mp6eJuNTKFOdJas9yufqYW5VpmUm4Ctr55AwSfNgaWNrabbxoxXkCGV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wcBR3W7A; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c9f46ef5-b7fe-4592-b458-ecb91652d2ed@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760452880;
+	 In-Reply-To:Content-Type; b=gkqCF2wlPD+ad53nSOBfwiPEUBCOYDiZW3bQYEdseTErfrkSWF6F2xyF+bRtxzergsSJs/sujPkn48Pahtv1XcsLo/VT8+3AJEtigkui1UXAZ9rUnwQHNZnTPSKiAwIl586CLXz106yOyWA+i9WGY7b10mhLstL12SZgTop3ra4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io; spf=pass smtp.mailfrom=gtucker.io; dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b=FBgizFy2; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gtucker.io
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CBFC543EB3;
+	Tue, 14 Oct 2025 14:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gtucker.io; s=gm1;
+	t=1760452968;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CYEZcyD6SgizdudERHV1+QQWcWpelGTwNBq9Zz7nboU=;
-	b=wcBR3W7A1MLjmuD0laWyZl/i3lVq1YSI3HECA4D2THldQYOuCm4+vWkIYMAGRIUiODD2sx
-	ht7jOzaToTsV1Qh7H/vEAnMHu5gYDS5D67TalwIuwTBLiwnY65frzmmUliYJUpMW04/QOl
-	Pl8jMP7IM0kCl+qOHXDAtwWxcylNYCw=
-Date: Tue, 14 Oct 2025 07:41:15 -0700
+	bh=jwEtsBEHQHNjKmiVlv9ptHV7LTbzYaxJdAEv4ya/P3Y=;
+	b=FBgizFy2hVc3HStDI/6HKg/pS1UHJF+HzARUS37epj+Qzl0yhf/clJdPfMUV3HNwrNFrXU
+	DAjp/oTgccSTrfhhqFyWSjwyoXDuJ+549whSSci89Ax6ofg6OuDLpqWGaEFnKC/0Vc+KcO
+	RbCtyYVa4NunSQtbpAhVllxWgp+L9FkmReVwo1Nip7UlBj7mpRzMThFrNgvz4JZYHtJG87
+	HDOhgtglsi6xbAWuWucIfn8zLdng9z+rZHA7zU011RBhnrdQnvWRBd6tibY9VFv6yKTMLi
+	saSILGzz+eVUD0nKXQp+qzUH4yzgblS1KMsAZMFpbd+37s9yhhpvZk6096pZtw==
+Message-ID: <29c33635-cd83-4a47-aea0-460f196f1e3a@gtucker.io>
+Date: Tue, 14 Oct 2025 16:42:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] RDMA/rxe: remove redundant assignment to variable
- page_offset
-To: Colin Ian King <coking@nvidia.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251014120343.2528608-1-coking@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20251014120343.2528608-1-coking@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] kbuild: add Makefile.container with CONTAINER
+ option
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>, Miguel Ojeda <ojeda@kernel.org>,
+ rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, automated-testing@lists.yoctoproject.org,
+ Arnd Bergmann <arnd@arndb.de>, workflows@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20251014094511.627258-1-gtucker@gtucker.io>
+ <20251014094511.627258-2-gtucker@gtucker.io>
+ <CANiq72nVxPY8xB9xEnkZ=zNFh0EfQvaMAPH4ygRr-yEwpK=OWg@mail.gmail.com>
+ <20251014170842.2fc00c88@nimda.home>
+Content-Language: en-US
+From: Guillaume Tucker <gtucker@gtucker.io>
+In-Reply-To: <20251014170842.2fc00c88@nimda.home>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-GND-Sasl: gtucker@gtucker.io
 
-在 2025/10/14 5:03, Colin Ian King 写道:
-> The variable page_offset is being assigned a value at the start of
-> a loop and being redundantly zero'd at the end of the loop, there
-> is no code that reads the zero'd value. The assignment is redundant
-> and can be removed.
+Hi Onur,
+
+On 14/10/2025 4:08 pm, Onur Özkan wrote:
+> On Tue, 14 Oct 2025 13:58:10 +0200
+> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
 > 
-> Signed-off-by: Colin Ian King <coking@nvidia.com>
-> ---
->   drivers/infiniband/sw/rxe/rxe_mr.c  | 1 -
->   drivers/infiniband/sw/rxe/rxe_odp.c | 1 -
->   2 files changed, 2 deletions(-)
+>> On Tue, Oct 14, 2025 at 11:45 AM Guillaume Tucker
+>> <gtucker@gtucker.io> wrote:
+>>>
+>>> Add scripts/Makefile.container to wrap the make command in a
+>>> container using the CONTAINER= variable to specify the image name.
+>>> For example:
+>>>
+>>>      make -f scripts/Makefile.container CONTAINER=korg-gcc defconfig
+>>>
+>>> The container image name is entirely arbitrary and the container
+>>> tool may be Docker, Podman or any other compatible alternative
+>>> specified by the CONTAINER_COMMAND variable.  The default is set to
+>>> docker for now.
+>>
+>> IIUC, this wraps reruns `make` inside the container, but it means
+>> hardcoding a particular tool and path, right? (unless one sets even
+>> more variables)
+>>
+>> The cover letter says one can create an alias for this, but one could
+>> also do that for the underlying call anyway, unless I am missing
+>> something. And if we do this, then I would prefer one doesn't need to
+>> type `-f ...`.
+>>
+>> Put another way, for a user, what is the benefit of having this extra
+>> way of running in a container? For instance, I could see the benefit
+>> if different tools had different flags or it was a complicated
+>> procedure, but I think at least `podman` shares the flags used here.
+>>
+>> Should this instead be a document inside `Documentation/` somewhere
+>> that explains how to do this, pitfalls, advanced options, etc. and
+>> give example command lines for different tools?
+>>
+>> If we do end up with `CONTAINER=`, then I think it should make it work
+>> without having to pass `-f ...`, to make it easier. Or, even better,
+>> like the KUnit script, we could have a script that does the right
+>> thing and reads a config from the user, so that one can just type
+>> something like, picking whatever tooling the user configured (e.g.
+>> Docker vs. Podman, default image, etc.):
+>>
+>>      scripts/container.py defconfig
+>>
 > 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
-> index bcb97b3ea58a..b1df05238848 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_mr.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_mr.c
-> @@ -452,7 +452,6 @@ static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned int leng
->   
->   		length -= bytes;
->   		iova += bytes;
-> -		page_offset = 0;
->   	}
-static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned 
-int length)
-{
-	unsigned int page_offset;
-	...
-	while (length > 0) {
-		index = rxe_mr_iova_to_index(mr, iova);
-		page = xa_load(&mr->page_list, index);
-		page_offset = rxe_mr_iova_to_page_offset(mr, iova);
-	...
-		page_offset = 0;
-	}
+> I think this functionality would be better implemented as a script
+> (like you mentioned) rather than a Makefile. The current approach is
+> likely to run into several practical issues (e.g. file permission
+> mismatches between host and container, the need to manually remove
+> containers with `docker rm`, etc.) and addressing all of these
+> reliably in Makefile can become quite messy. Writing a python (or even
+> perl) script would make it much easier to maintain. Also, it can be
+> self-documented quite nicely with `scripts/container.py --help` command.
 
-	return 0;
-}>
->   	return 0;
-> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-> index f58e3ec6252f..ae71812bea82 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-> @@ -358,7 +358,6 @@ int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
->   
->   		length -= bytes;
->   		iova += bytes;
-> -		page_offset = 0;
->   	}
-int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
-			    unsigned int length)
-{
-	unsigned int page_offset;
-...
-	while (length > 0) {
-		index = rxe_odp_iova_to_index(umem_odp, iova);
-		page_offset = rxe_odp_iova_to_page_offset(umem_odp, iova);
-...
-		page_offset = 0;
-	}
+Our emails have crossed - OK I'll take a look into this.  I fear a
+script is actually going to be more difficult to maintain and will
+require additional dependencies on the host i.e. Python.  But like I
+wrote in my previous email, I'm happy to consider some alternatives
+and see if we can find a consensus.
 
-	mutex_unlock(&umem_odp->umem_mutex);
-
-	return 0;
-}
- From the above, in the functions rxe_mr_flush_pmem_iova and 
-rxe_odp_flush_pmem_iova, within the while loop, the variable page_offset 
-is assigned a value. At the end of the loop, page_offset is set to 0. 
-However, this assignment at the end of the loop is actually unnecessary.
+The issue with file ownership can be addressed with user id mapping
+in principle.  Garbage collecting containers is not something I've
+looked into as it's not a new problem compared to starting containers
+explicitly.  I'll keep these things in mind too when comparing
+solutions.
 
 Thanks,
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-
-Zhu Yanjun
-
->   
->   	mutex_unlock(&umem_odp->umem_mutex);
-
-
+Guillaume
 
