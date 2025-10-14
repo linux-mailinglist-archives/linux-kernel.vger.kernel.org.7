@@ -1,182 +1,110 @@
-Return-Path: <linux-kernel+bounces-852856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC61BDA1DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:45:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC02BBDA198
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9081188B9F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:43:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA09A4E8984
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584312FFFBE;
-	Tue, 14 Oct 2025 14:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB74A3002CE;
+	Tue, 14 Oct 2025 14:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/x99eKQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IKds0kCZ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40712FE05A;
-	Tue, 14 Oct 2025 14:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF412FE071;
+	Tue, 14 Oct 2025 14:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452754; cv=none; b=ArMbFlqd7AJlMx7ByUMooiKCy+6ropxvSOsEiVaC+fMEjOqM1a7s8OLsbLwzxZ4mMWOjKOF2kYP3JP9X2O8f7ke2I38BvVvpKYO0H+SH9B86A5JhBBhDqG9crelPzpoRxKuRa+CcUPIfpPqp+I7joWOagPGCE55hnVJhdrqi5TM=
+	t=1760452765; cv=none; b=K6bhPwgrNj6XRRAxXt5ymGCaT/yU3veb3qgWzDF2WegQvkRoImfDB8D74QBFH9/08HFhhel5t+d+m6DSu963YrngEmTDjOF5gmDx272DI02vHAhH0EZBeBXldLj3tr5Dz049Y9ynYNjnDiK1Cw9uP/UXhHanQyj9rIaiDHWozZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452754; c=relaxed/simple;
-	bh=JIFXO/maDYxsszQjgtyWILDuEObhd/8GxCOtcj6zkMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b3FsCWQaVoWseT4WYlciqaTHX+A4qXvqm6OJCJGL/CzbAtVbLk/bCpIt7UCM5ijCrlDZDVacBkfY8qmcZqimIdORiZk8LqG4ZmbQg2TeoFVeMMYI4OtEvAVSP8zr6XtfV517AF+TnrfOhnfGIWoMLstiRX9Y04yadqIpD0PwB0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/x99eKQ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760452753; x=1791988753;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JIFXO/maDYxsszQjgtyWILDuEObhd/8GxCOtcj6zkMY=;
-  b=V/x99eKQNk2zT/WKr2vPK3khZS54Mfqk2gw+ssfy8EbX0iFSe24zEXcB
-   j7A1bAMEXakBkuI7PzCGEm7oCsHnDv7mht2R3Sw2nAxmiJoXQ6ldVu8iM
-   SdPQcAuHw1D4P8BPY4MLwy9NwHlJskRI3RMO5xQKWAVxSLHF+FOCO72Og
-   Wh0qXYbbk0Wgx1Bq5r7PrfvKmfs6CAQth+5tvmlWZRAYg98VwhOgd48Dd
-   vZ8OcQfRAVuOTgRQ7310lKJB7xg4r0krR77El8W/6ZG90LcQqNXk7Mex7
-   +iDbD7zBZOGfcysBg96fIm7NlLuLJWXDnNnRQvszjVFNxfGd6j9g8bjBN
-   w==;
-X-CSE-ConnectionGUID: Rl4x+ZsLSe+eRAtlqTyM5Q==
-X-CSE-MsgGUID: WsIV1bCOSayADzt3qsOOXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="80247041"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="80247041"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:39:12 -0700
-X-CSE-ConnectionGUID: AyZDS/eFQvS2rijZuAiWKA==
-X-CSE-MsgGUID: OTVzpTZ0SYSiJH3cLuwg3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="186321436"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.111.176]) ([10.125.111.176])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:39:11 -0700
-Message-ID: <565e8042-9a77-4dad-b111-156fcb9210e2@intel.com>
-Date: Tue, 14 Oct 2025 07:39:09 -0700
+	s=arc-20240116; t=1760452765; c=relaxed/simple;
+	bh=03XBU/ljH1CvtJGXcF3L5sF94xzuolTmpOzL/YZ+we4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHYP0kt1tWRQCW6qJYKzHYHhBBbxQWecnPo5opPy+aEzYgG4Fa/I/M3iMVg7UpLpkxkvpTcyIp7mZS8WWujLtccSOhrjjPbukgjT5vRu1WMHK3cBsi6gfsKUgYkN99f926fMo9pqIYFqj3qVY7OQiy7wBfjL6TrWp2gWSyP3xUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IKds0kCZ reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 19B6E40E01C9;
+	Tue, 14 Oct 2025 14:39:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id VJANuCVHVFYv; Tue, 14 Oct 2025 14:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760452756; bh=/OPOJqx+RSwPZEPT1NeBc6SFZ8fOuD4CFHOmHdmHhAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IKds0kCZeXoyDTnUolCcERBOKeKbIanX81CMe8blGxEu2KaXBH6V8xOgrfnV7RHXk
+	 8qlK9hPZnfEajWC5TjvQZgISq1i/dsUmHsj+zACBIsmCReoUZpr36lCML+qoSoOEqd
+	 qzLpZEfFYgBo4DDRkE79w6MO4Z3MgrLftSF18eM1UNkeSF5sK3AD6MG+3SaWBuFngV
+	 ETUTKpcDvfTlc0VNtY9rvTFkPXmBqMqypNXWpfejqujf/MPeWlQzrcUJrFOv2D/oJA
+	 +fMRj8U2GOYeDvIsIjUqSzbxKh/O05vb137vW6TCXUn6PFhqd1sQk2ldKjt7snncQO
+	 /I1C0gUmhdj4F4wUerMEctXBs5ALmhuuYVnkDyKWYA2AdX3TGhut+hT0rnusdtYTxb
+	 Vv98IZxa/Lh6HyyLQEWAFaFrTjmw6mSHqAKjs22yOKPWGmz8J9QJhOf0rk19vsSyop
+	 fOZf11S0MZJYwPpGkoNskw7TM5+fQ4LCh6uyLSodXRU3Qj7koUUTjzBWaPWlJXOWl4
+	 XfLru5rURV9LcbJaG09a+1QIdshrbAP7XGnTggBUehC/858qEZZBq3jwD0Co8/C7y8
+	 lyIUFmFmdz4qKu2HkvKqQIzRTyIIUyAeyLynjC0rmEu0nVzb8eWR67fxADNABdWxiH
+	 F5zJUYwKCvW5GWrn71naGoso=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5C28E40E016D;
+	Tue, 14 Oct 2025 14:39:11 +0000 (UTC)
+Date: Tue, 14 Oct 2025 16:39:10 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+Message-ID: <20251014143910.GHaO5gjk3IRSLRwqhY@fat_crate.local>
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+ <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
+ <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
+ <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
+ <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
+ <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cxl/port: Avoid missing port component registers
- setup
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- shiju.jose@huawei.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251001060337.431639-1-ming.li@zohomail.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251001060337.431639-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 14, 2025 at 04:31:31PM +0200, J=C3=BCrgen Gro=C3=9F wrote:
+> I have this here in the commit message:
+>=20
+>   - In case of replacing an indirect with a direct call using the
+>     ALT_FLAG_DIRECT_CALL flag, there is no longer the need to have that
+>     instance before any other instances at the same location (the
+>     original instruction is needed for finding the target of the direct
+>     call).
+>=20
+> which is explaining why the problem is occurring. Isn't that enough?
 
+I can guess what this is about but a concrete example here would make it
+a lot clearer, I'd say.
 
-On 9/30/25 11:03 PM, Li Ming wrote:
-> port->nr_dports is used to represent how many dports added to the cxl
-> port, it will increase in add_dport() when a new dport is being added to
-> the cxl port, but it will not be reduced when a dport is removed from
-> the cxl port.
-> 
-> Currently, when the first dport is added to a cxl port, it will trigger
-> component registers setup on the cxl port, the implementation is using
-> port->nr_dports to confirm if the dport is the first dport.
-> 
-> A corner case here is that adding dport could fail after port->nr_dports
-> updating and before checking port->nr_dports for component registers
-> setup. If the failure happens during the first dport attaching, it will
-> cause that CXL subsystem has not chance to execute component registers
-> setup for the cxl port. the failure flow like below:
-> 
-> port->nr_dports = 0
-> dport 1 adding to the port:
-> 	add_dport()	# port->nr_dports: 1
-> 	failed on devm_add_action_or_reset() or sysfs_create_link()
-> 	return error	# port->nr_dports: 1
-> dport 2 adding to the port:
-> 	add_dport()	# port->nr_dports: 2
-> 	no failure
-> 	skip component registers setup because of port->nr_dports is 2
-> 
-> The solution here is that moving component registers setup closer to
-> add_dport(), so if add_dport() is executed correctly for the first
-> dport, component registers setup on the port will be executed
-> immediately after that.
-> 
-> Fixes: f6ee24913de2 ("cxl: Move port register setup to when first dport appear")
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Thx.
 
-applied to cxl/fixes
+--=20
+Regards/Gruss,
+    Boris.
 
-> ---
-> v3:
-> - add fix tag
-> - add review tags
-> 
-> v2:
-> - remove dport from port->dports in case of component registers setup
->   failed.
-> 
-> base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
-> ---
->  drivers/cxl/core/port.c | 26 ++++++++++++++------------
->  1 file changed, 14 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index d5f71eb1ade8..8128fd2b5b31 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -1182,6 +1182,20 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
->  	if (rc)
->  		return ERR_PTR(rc);
->  
-> +	/*
-> +	 * Setup port register if this is the first dport showed up. Having
-> +	 * a dport also means that there is at least 1 active link.
-> +	 */
-> +	if (port->nr_dports == 1 &&
-> +	    port->component_reg_phys != CXL_RESOURCE_NONE) {
-> +		rc = cxl_port_setup_regs(port, port->component_reg_phys);
-> +		if (rc) {
-> +			xa_erase(&port->dports, (unsigned long)dport->dport_dev);
-> +			return ERR_PTR(rc);
-> +		}
-> +		port->component_reg_phys = CXL_RESOURCE_NONE;
-> +	}
-> +
->  	get_device(dport_dev);
->  	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
->  	if (rc)
-> @@ -1200,18 +1214,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
->  
->  	cxl_debugfs_create_dport_dir(dport);
->  
-> -	/*
-> -	 * Setup port register if this is the first dport showed up. Having
-> -	 * a dport also means that there is at least 1 active link.
-> -	 */
-> -	if (port->nr_dports == 1 &&
-> -	    port->component_reg_phys != CXL_RESOURCE_NONE) {
-> -		rc = cxl_port_setup_regs(port, port->component_reg_phys);
-> -		if (rc)
-> -			return ERR_PTR(rc);
-> -		port->component_reg_phys = CXL_RESOURCE_NONE;
-> -	}
-> -
->  	return dport;
->  }
->  
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
