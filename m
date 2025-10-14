@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-852384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF43BD8D35
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:56:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43295BD8D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15880189D41C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1506424698
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288812FC00A;
-	Tue, 14 Oct 2025 10:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B38430C351;
+	Tue, 14 Oct 2025 10:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Am9Svbac"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OP6eVhU1"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C2B2E6CAA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3232FC027;
+	Tue, 14 Oct 2025 10:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760439385; cv=none; b=jnANsmN8HWdlm71rVDMouGcf2thl4pILc72i2p07cj69Ad3doW0QrXKg4AUIkr2SjQlbbTkYCzOWsc0kdywQ2tn8kfvhx5MrZ7/ytsF78bWks/wiIANi6KTMuKC4tcjU1g1jA/zuV+YEkgEf2oR8lQVKlHH1ThgOhXl0BLD6WjI=
+	t=1760439434; cv=none; b=ZVf78XxTnkUXA8lMnqw109QhLsBRW54mmkap8Gcqwd4+sHiRCLk1IPmKrfKa0Cll9QVhrCG5WnEmsOq0LLbfEmp50yzpJwVpLiJ3exISfV+YJAPF0LBQdAK4hiC9Gk8hgwurltxWb5pIJRGkRjkQpGYq5SEnqYFYp3XkjFO4ZbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760439385; c=relaxed/simple;
-	bh=NxyYwmFE/Vmy0G0S81ZjcVRRbXsLAoL45Mza4FIAEZc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=j0mAfJSO7T78oKGX11QKsvtnxxPwWSsbwSHZpOod4UmuHFbLn9W1QzmeBMMDQMaO5XU7X0KRBVDHDmQ80Gb+31FGGzNmGrCY5tuqZcPAolvKiu7lNsZB29GGIF5grKa6AAOnLbwH1hNbxrlkGVci2cwV6bMhpX6HiMdCa8tjKsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Am9Svbac; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760439384; x=1791975384;
-  h=date:from:to:cc:subject:message-id;
-  bh=NxyYwmFE/Vmy0G0S81ZjcVRRbXsLAoL45Mza4FIAEZc=;
-  b=Am9SvbacDhLyw+jUqehrvOQG7/mK3g1Zia43mWTNgtNzY2v5hr5lTTLW
-   GAlhnxVaYfHsezS0RH+JZPV2+8P/+yKM6v0pnuwDYHjmWAGp+ruMvXfr9
-   RcGQhkSluNvxsRaOslG5tpN124Gj9gJ/rlLz+Z/be8AMYI968cLq3w9yf
-   26d8+nLOWAhaSUZxAKBT3jC5/7IUJYVDMCh7gnnxICrunK1B2ttrtq5hf
-   8Teg3UaYgTuz22F1eC5sqcckXV4tUF7uQ6UhpEq9T9qfDxN/KwZqyFOWg
-   fhwcR0ctTyJ/3/Ou4srp4kNDHbxqgPC3HGi8GWGOG7j5oeQbz/eT5DfeO
-   g==;
-X-CSE-ConnectionGUID: M90H1w1EQhC+cAPZ9jsU1w==
-X-CSE-MsgGUID: QvAKeILoREGGwL6FdNJcBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66252632"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="66252632"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 03:56:24 -0700
-X-CSE-ConnectionGUID: nICoBFMvSYWdCY0wnIUvWw==
-X-CSE-MsgGUID: HU5JgTB5ThmAh3fmIqDObg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="186272811"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 14 Oct 2025 03:56:22 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8chX-0002fx-33;
-	Tue, 14 Oct 2025 10:56:19 +0000
-Date: Tue, 14 Oct 2025 18:55:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/entry] BUILD SUCCESS
- 4ab13be5ed12f4954d1f46cc6298e1adb2d6681b
-Message-ID: <202510141814.yFCEC79L-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1760439434; c=relaxed/simple;
+	bh=a9rpBedeHHWfLoFjXCvL8sKLJKtkk0zG8IsLUWufvwQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UnWg6Kjz5s7wnEb0vFBU3W6jcbdzFpWjGxiUQ/3WJZNNWIdqa704Ceq4pzuKQT9U/xOLSjuGewNweSOK4reoQdlWTlot+gaLYWkCSOI+OE4uB5Hm5o8OP1vuVty5YN562vJz8buHbIivIuotBTvHxGR4jP0gkwb7A/EN6AnJm6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OP6eVhU1; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59EAuJws1574212;
+	Tue, 14 Oct 2025 05:56:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760439379;
+	bh=qi1LkwkemxDwRczDTwIi3saBfj0msSIBiXSKcB0bX6s=;
+	h=From:To:CC:Subject:Date;
+	b=OP6eVhU19QVRk99rI7gpL9pp//PAAPI/cypqKUF4HbEgIS+EA8yqn9r4+GG5v9yDY
+	 CV4TGLfJ1UDiIEmbQCJRzO9RMdQSbeeLfndJtFk07ptRgmjuxYiiqdwMOHr2+KDE47
+	 F1Jdr7zkUZ6+jDirOHm+JV9OI7td1n70Ak9WWwes=
+Received: from DLEE212.ent.ti.com (dlee212.ent.ti.com [157.170.170.114])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59EAuIjV3750010
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 Oct 2025 05:56:18 -0500
+Received: from DLEE208.ent.ti.com (157.170.170.97) by DLEE212.ent.ti.com
+ (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Oct
+ 2025 05:56:18 -0500
+Received: from fllvem-mr08.itg.ti.com (10.64.41.88) by DLEE208.ent.ti.com
+ (157.170.170.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 05:56:18 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by fllvem-mr08.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59EAuIJL2927094;
+	Tue, 14 Oct 2025 05:56:18 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 59EAuH3v009009;
+	Tue, 14 Oct 2025 05:56:17 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <horms@kernel.org>, <namcao@linutronix.de>, <jacob.e.keller@intel.com>,
+        <m-malladi@ti.com>, <christian.koenig@amd.com>,
+        <sumit.semwal@linaro.org>, <sdf@fomichev.me>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linaro-mm-sig@lists.linaro.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-media@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next v3 0/6] Add AF_XDP zero copy support
+Date: Tue, 14 Oct 2025 16:26:06 +0530
+Message-ID: <20251014105613.2808674-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/entry
-branch HEAD: 4ab13be5ed12f4954d1f46cc6298e1adb2d6681b  x86/fred: Fix 64bit identifier in fred_ss
+This series adds AF_XDP zero coppy support to icssg driver.
 
-elapsed time: 820m
+Tests were performed on AM64x-EVM with xdpsock application [1].
 
-configs tested: 65
-configs skipped: 119
+A clear improvement is seen Transmit (txonly) and receive (rxdrop)
+for 64 byte packets. 1500 byte test seems to be limited by line
+rate (1G link) so no improvement seen there in packet rate
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Having some issue with l2fwd as the benchmarking numbers show 0
+for 64 byte packets after forwading first batch packets and I am
+currently looking into it.
 
-tested configs:
-alpha                          allyesconfig    clang-19
-arc                 randconfig-001-20251014    clang-16
-arc                 randconfig-002-20251014    clang-16
-arm                 randconfig-001-20251014    clang-16
-arm                 randconfig-002-20251014    clang-16
-arm                 randconfig-003-20251014    clang-16
-arm                 randconfig-004-20251014    clang-16
-arm64               randconfig-001-20251014    clang-16
-arm64               randconfig-002-20251014    clang-16
-arm64               randconfig-003-20251014    clang-16
-arm64               randconfig-004-20251014    clang-16
-hexagon                        allmodconfig    clang-19
-hexagon                        allyesconfig    clang-19
-i386                           allmodconfig    clang-20
-i386                            allnoconfig    clang-20
-i386                           allyesconfig    clang-20
-i386      buildonly-randconfig-001-20251014    gcc-14
-i386      buildonly-randconfig-002-20251014    clang-20
-i386      buildonly-randconfig-002-20251014    gcc-14
-i386      buildonly-randconfig-003-20251014    clang-20
-i386      buildonly-randconfig-003-20251014    gcc-14
-i386      buildonly-randconfig-004-20251014    gcc-14
-i386      buildonly-randconfig-005-20251014    gcc-14
-i386      buildonly-randconfig-006-20251014    clang-20
-i386      buildonly-randconfig-006-20251014    gcc-14
-i386                              defconfig    clang-20
-i386                randconfig-001-20251014    clang-20
-i386                randconfig-002-20251014    clang-20
-i386                randconfig-003-20251014    clang-20
-i386                randconfig-004-20251014    clang-20
-i386                randconfig-005-20251014    clang-20
-i386                randconfig-006-20251014    clang-20
-i386                randconfig-007-20251014    clang-20
-i386                randconfig-011-20251014    gcc-14
-i386                randconfig-012-20251014    gcc-14
-i386                randconfig-013-20251014    gcc-14
-i386                randconfig-014-20251014    gcc-14
-i386                randconfig-015-20251014    gcc-14
-i386                randconfig-016-20251014    gcc-14
-i386                randconfig-017-20251014    gcc-14
-openrisc                        allnoconfig    clang-22
-parisc                          allnoconfig    clang-22
-powerpc                         allnoconfig    clang-22
-riscv                           allnoconfig    clang-22
-s390                            allnoconfig    clang-22
-um                             allmodconfig    clang-19
-um                              allnoconfig    clang-22
-um                             allyesconfig    clang-19
-x86_64                          allnoconfig    clang-20
-x86_64                         allyesconfig    clang-20
-x86_64    buildonly-randconfig-001-20251014    gcc-14
-x86_64    buildonly-randconfig-002-20251014    clang-20
-x86_64    buildonly-randconfig-003-20251014    gcc-14
-x86_64    buildonly-randconfig-004-20251014    clang-20
-x86_64    buildonly-randconfig-005-20251014    clang-20
-x86_64    buildonly-randconfig-006-20251014    gcc-14
-x86_64                            defconfig    clang-20
-x86_64                                kexec    clang-20
-x86_64                             rhel-9.4    clang-20
-x86_64                         rhel-9.4-bpf    gcc-14
-x86_64                        rhel-9.4-func    clang-20
-x86_64                  rhel-9.4-kselftests    clang-20
-x86_64                       rhel-9.4-kunit    gcc-14
-x86_64                         rhel-9.4-ltp    gcc-14
-x86_64                        rhel-9.4-rust    clang-20
+AF_XDP performance using 64 byte packets in Kpps.
+Benchmark:	XDP-SKB		XDP-Native	XDP-Native(ZeroCopy)
+rxdrop		259		462		645
+txonly		350		354		760
+l2fwd 		178		240		0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+AF_XDP performance using 1500 byte packets in Kpps.
+Benchmark:	XDP-SKB		XDP-Native	XDP-Native(ZeroCopy)
+rxdrop		82		82		82
+txonly		81		82		82
+l2fwd 		81		82		82
+
+[1]: https://github.com/xdp-project/bpf-examples/tree/master/AF_XDP-example
+
+v2: https://lore.kernel.org/all/20250901100227.1150567-1-m-malladi@ti.com/#t
+
+Meghana Malladi (6):
+  net: ti: icssg-prueth: Add functions to create and destroy Rx/Tx
+    queues
+  net: ti: icssg-prueth: Add XSK pool helpers
+  net: ti: icssg-prueth: Add AF_XDP zero copy for TX
+  net: ti: icssg-prueth: Make emac_run_xdp function independent of page
+  net: ti: icssg-prueth: Add AF_XDP zero copy for RX
+  net: ti: icssg-prueth: Enable zero copy in XDP features
+
+ drivers/net/ethernet/ti/icssg/icssg_common.c | 470 ++++++++++++++++---
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 394 +++++++++++++---
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |  25 +-
+ 3 files changed, 740 insertions(+), 149 deletions(-)
+
+
+base-commit: db1b6006668623b46a3f6b3fe6b5f030e4c60a42
+-- 
+2.43.0
+
 
