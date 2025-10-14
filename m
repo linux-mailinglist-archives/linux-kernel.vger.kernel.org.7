@@ -1,113 +1,125 @@
-Return-Path: <linux-kernel+bounces-851908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B90BBD7985
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:41:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A672BD7994
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E4C3B5958
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:41:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 066024E91A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5692D12F5;
-	Tue, 14 Oct 2025 06:41:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5E52D23B8;
+	Tue, 14 Oct 2025 06:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUS0zvyh"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12462D0C7D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F78A2C11F9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760424088; cv=none; b=NorooP8nycwslNyxtqPLC8jM2YAsb9et2DRB3/vGNhQRo8i/lHA6CYtZ3umAlEiFRhnSK/wZvOMjws7iY8b9nAntbOj7f2RmmeZWJGAPi3P7+ePfInu171sKkOy0Bp587Hp6stPC2H/CE+LdIFMLZ4hGhbCBdxSPote2OcmOeoc=
+	t=1760424208; cv=none; b=tIJzD3UhJ8Qk3e7nCyKcdzj5+l92xfDaCCZgmqevR7y8t9pBX9NnsVp943omqrqtAqZv5MsDmASBVBeHdg3Ne4WPTWA7kWOAFhKgein1mZ5GwWBSf3uMTxIUg2OFllqWt1rO+8wFcQVu0FFZzTxYeyx2x5k4/xP8rRiCz9zwxMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760424088; c=relaxed/simple;
-	bh=xsCA2QA3aByKKN9mzfJtCmvz/r2kEajE37D7kFDURms=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Z7flrZl2MWaFQKXt17whbmArQX/0Cd6kcpgpLYwYD0i1oWG/vC6lQSpTtrKvpfH60JYgn487Eutr5cMZM+u2LCEDrRkWMx4rgP6NyonfB1g1gwAbEUUb1ulAscBA8ufKFOscYd14ilsgJ701dvj0/Ppe1ebIe0itFN28lxcTGeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-426d38c1e8fso99091085ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:41:26 -0700 (PDT)
+	s=arc-20240116; t=1760424208; c=relaxed/simple;
+	bh=8BmtnVuF+NR+683lGUyRlkHB0hCfWgNPU/uJQGt18PE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aZP4YIDusyJfTuE9jGG0lNIwIl0NUOBcykpxIqCILNTabnhlCdwaSf8kU6qYsc8RPV7b1cr0mJ+/3ZE7NItcfHmktPzrn6xmI5pG7CFHrBet8s/HHV3fx4eChN67M0+7hUkAPOPaD49+RTluwD0v3krIhKavGAqCTF4yTFBwTj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUS0zvyh; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-854cfde0ca2so1040611785a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760424206; x=1761029006; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MhrDyaN2J3TqzVAMvoBpM4UfVuraiqPhFHlfn6YNa1Q=;
+        b=CUS0zvyhgV2/Go22Y7HkQ19GOeOGM7KKKP/JOjpK1ecUY32SpPMkhlzMCad2Pngq3I
+         ghnd72vjwOUWBfzW1GQ2LkjOdpClhw4Y+vd/FvRwH1Q0L5L1LVbf+G9agyg5oszD6lst
+         mFwbc0HBY092wPiXq9dBHw2Twl7zFWS+rmsgoEM9g01v3Y69XBiU6Zb0R28hJjwEJrsf
+         DUTrZX4rXGDfaeXl5MiQENJ5nnJ/6F2LTGR2nVumQDmqzc2kyPEAIW/6I3sV6N50Z10k
+         019NEAHfXny7YSruo2tyCkmp5PclMHCw+/gaX1U6Pg8wxkfplCUZAaAi+Ukc2kQ+bwdr
+         Un6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760424086; x=1761028886;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b8DQxZ5iEBLeUGYy76vYnItUZbuCk9FL1bC3osdo4tM=;
-        b=o3zeNPOdVvM1uGXjpy9AqVeYlJB3+QQtDCqXOeVb9AYyf8CVtcW0wDumCroqf7krLf
-         p+YKdein1fsqcPek5b6Tn6HbGGQDGij4+Wp79GnzGTejVZP9n58JhM45O/WH/Csj5jVU
-         USRLsms/VxFNq8IwoJ1+e4rRwkGTQCwDcrIw/glki/NBJvTTyEfAbdndSn/OB+O0tGP6
-         vnaR3b7fke28wLHBjoEplEe0BId25QFvBgp7Ag+IhT3piiIP+5z8MKJOPN8hFB5oH4OK
-         faHZsfAf+NI3r5DbDd/mb8pFF28D3BaiyS7dwpuGLcYD7WNquqGYTFk71m6dRNHBPWCx
-         ytMQ==
-X-Gm-Message-State: AOJu0YwyVtyxdbSvOYrxA+ABsR7uro91jNaBfjnr45N6hN1WmQDD1m2x
-	LMZE+jr3zO5+mBMG3xW9CfC1z/4KZwdazKX5FuPXpSQoLvkRDNnNifPhZL81Ky6KM0kRiqMkbOg
-	b+1q62QMoBtV2rgUz4/4CIDZxrqleFKm+OMYOHTGTzs+sVdrsrJsAq+gn9n4=
-X-Google-Smtp-Source: AGHT+IE677NfgeBMNrSzfFfGjLUvejb0pttkfKUpctLjPLyHJlfZMsoZGnIpVjhAtiaPKViUhyDmXOMxtNLerAoKyz/lEZxplqrv
+        d=1e100.net; s=20230601; t=1760424206; x=1761029006;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MhrDyaN2J3TqzVAMvoBpM4UfVuraiqPhFHlfn6YNa1Q=;
+        b=v/YKRti2b1d9uMHC8vrQ53UBo9ttvB262bq+H6sskSZg4Jq8LbYUGMjpmLF9QDK6X+
+         +4CHbzSz8QAuzBw2egAJCdyS5eiKz0q1am8iHXurtW/vfatrphbZJ02JjLeOU8sQW66L
+         O1PXJbhBTvrWJjMr/tydkK6bIBUZGbjRqQIOTlfF2F7j6jAeJEC34Y16Mi9cAQ5QCrWG
+         M4hi2wGQPPFSlLp8Vox53yd5niYX4Q4Lqfnb24VSLHEjvVeiou/zbkIZvI4ZSTNzoEO+
+         6zj2Z/GIeExYhb+4JnwAvwEuJkFAcZgdNYtspdkTO0sqnNlWNyX/jLXggR6b+dx/xDUe
+         W8TA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/+Q9FxTHFJKHayzFEbH761xBoueeebtY94NUkaI5rVXHT4H/+GP8ydn+nQDx6wMCtD6qjSEbiVLrvx8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyESSyCnpf293ABDnjrLPU+z8b/qZNWlLI1TtIydwPuZAySLCns
+	EnR5rRjRxLwipAWJXokCW5KcGNW5VQHp7kvmVCawiXdJgSv+7Y1Xj6k8D3PReDubHc6SlFmYCYV
+	7G59gTZM61m9V9KdIMhj3zodfQ/rEqYk=
+X-Gm-Gg: ASbGncuTVnBJOf7FR6VuIp1JXb+0zkA+QDl6mqm4vuWooyRR3W/4IoKwqLV5SDdKnDG
+	6MOFDyfkzeDPGxtFcoyvtjCCCFQ9YfN36OExDXsZ+L67sG11JYIGgcCdBK6H0q4qbt26l2GkJg8
+	cubvf1CFqkvQEVjY9Pi4Slz6QXjr5M/FH2VzHzwcCpFMXI+uSDIK56NmqX8sw7q1vezPlkYaAc3
+	FBkFFDSwZYrWth3qme9QBEY9rlBrUCvxWKjWNMhjnj9RkNmOqTT0npPNeUeSL2PR6uB4BrWrGI2
+	3CE=
+X-Google-Smtp-Source: AGHT+IFYutlmQKCrkDt8XJQ+cgRq1f7xMcV72qnx5j0NhR1+uR1WTW9C1BFQIW6/sa8OGzcLx/Y98zV9viwi45m4nU0=
+X-Received: by 2002:a05:620a:1709:b0:848:6b67:ea57 with SMTP id
+ af79cd13be357-883502b6ce7mr3038377185a.16.1760424205591; Mon, 13 Oct 2025
+ 23:43:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2501:b0:425:8d77:547f with SMTP id
- e9e14a558f8ab-42f87362767mr211787735ab.5.1760424085736; Mon, 13 Oct 2025
- 23:41:25 -0700 (PDT)
-Date: Mon, 13 Oct 2025 23:41:25 -0700
-In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68edf095.050a0220.91a22.01fe.GAE@google.com>
-Subject: Forwarded: [PATCH] ntfs3: initialize run_lock for MFT inode in ntfs_read_mft
-From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <CANn89i+wikOQQrGFXu=L3nKPG62rsBmWer5WpLg5wmBN+RdMqA@mail.gmail.com>
+ <20251014035846.1519-1-21cnbao@gmail.com> <CANn89iKCZyYi+J=5t2sdmvtERnknkwXrGi4QRzM9btYUywkDfw@mail.gmail.com>
+In-Reply-To: <CANn89iKCZyYi+J=5t2sdmvtERnknkwXrGi4QRzM9btYUywkDfw@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 14 Oct 2025 14:43:13 +0800
+X-Gm-Features: AS18NWBkvzMB1sYbudY7gB27K6cY5x7_rxgh42n5L8scA-jiQSzN7FZuNS0QWLY
+Message-ID: <CAGsJ_4ySSn6B+x+4zE0Ld1+AM4q-WnS0LfxzWw22oXr7n5NZ=g@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
+To: Eric Dumazet <edumazet@google.com>
+Cc: corbet@lwn.net, davem@davemloft.net, hannes@cmpxchg.org, horms@kernel.org, 
+	jackmanb@google.com, kuba@kernel.org, kuniyu@google.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linyunsheng@huawei.com, mhocko@suse.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, surenb@google.com, v-songbaohua@oppo.com, vbabka@suse.cz, 
+	willemb@google.com, zhouhuacai@oppo.com, ziy@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+> >
+> > A problem with the existing sysctl is that it only covers the TX path;
+> > for the RX path, we also observe that kswapd consumes significant power.
+> > I could add the patch below to make it support the RX path, but it feels
+> > like a bit of a layer violation, since the RX path code resides in mm
+> > and is intended to serve generic users rather than networking, even
+> > though the current callers are primarily network-related.
+>
+> You might have a buggy driver.
 
-***
+We are observing the RX path as follows:
 
-Subject: [PATCH] ntfs3: initialize run_lock for MFT inode in ntfs_read_mft
-Author: kartikey406@gmail.com
+do_softirq
+    taskset_hi_action
+       kalPacketAlloc
+           __netdev_alloc_skb
+               page_frag_alloc_align
+                   __page_frag_cache_refill
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+This appears to be a fairly common stack.
 
-The run_lock rwsem was not being initialized for MFT inodes when
-accessed outside the initial mount path. This caused lockdep warnings
-when operations like truncate tried to acquire the uninitialized lock.
+So it is a buggy driver?
 
-During initial mount (!sb->s_root), the MFT inode's run_lock is
-correctly initialized. However, if the MFT inode is accessed later
-through the regular S_ISREG path in ntfs_read_mft, the condition
-"if (ino != MFT_REC_MFT)" skips initialization, leading to an
-uninitialized lock being used.
+>
+> High performance drivers use order-0 allocations only.
+>
 
-Remove the MFT check so run_lock is always initialized for regular
-files, ensuring the lock is properly initialized in all code paths.
+Do you have an example of high-performance drivers that use only order-0 memory?
 
-Reported-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ntfs3/inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 3959f23c487a..80d80dfad308 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -461,8 +461,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 				       &ntfs_file_operations;
- 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
- 							      &ntfs_aops;
--		if (ino != MFT_REC_MFT)
--			init_rwsem(&ni->file.run_lock);
-+		init_rwsem(&ni->file.run_lock);
- 	} else if (S_ISCHR(mode) || S_ISBLK(mode) || S_ISFIFO(mode) ||
- 		   S_ISSOCK(mode)) {
- 		inode->i_op = &ntfs_special_inode_operations;
--- 
-2.34.1
-
+Thanks
+Barry
 
