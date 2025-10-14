@@ -1,179 +1,222 @@
-Return-Path: <linux-kernel+bounces-852182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E8DBD8600
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A1ABD85F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F723E0EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:15:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F843BE81B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB102E7645;
-	Tue, 14 Oct 2025 09:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30512E7645;
+	Tue, 14 Oct 2025 09:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PtZcO4xe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKZxf22Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4190B29E0E5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3384429E0E5;
+	Tue, 14 Oct 2025 09:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433297; cv=none; b=ErW68N1tcwQyxkwALch2MWeEGNJBuq5y1lNKREzIBlzRrHTmi9iEoTmxeMxt12cei8yUk7R1JoC9wmBfdvvx6r5OhOxOwECH8ukqNphCQdGR5Rwrv6NeE+uLlvTIhuwia1vsrABbbirLsi9eP8F6Q7ms5Nde7Jpj74plTnn7dPE=
+	t=1760433287; cv=none; b=doiAFfJAqExyP2J7EBxqpRapwVdB0N7JzO+IaSM1MvhYwg6j7CGtHk1pm+uj8sX8mDQmZOlJLYvOD1LMwi4QiWsaVf8YppQrZ7mAaL1lEA4f1RQihLvjJlXMu4zEcnmmRTZnBJDxjBkAt9nn+YxoVdIdO7ZdUhT6/wbUXjuN5Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433297; c=relaxed/simple;
-	bh=Oe9BwXCx5mTi7D94IVeSvUgRbst/UVU8w13GJgYIh6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ezu27fjdF7AO1GvUN/xRjeqMgu/sAKuYtXQb2B+Ge2f/gcRTQRZqGeztNnjr9EPhwLyv0xQX39JzIV95cC/fn4xHRD/LI/o8HZpAiMWK++PhUjZ+5yjvU/s5jRDEHohowj7yvVP+Ym5QeBcdzqxW7iG44CkDe9xjR7ysx5X0Kk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PtZcO4xe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760433295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZjFzk/lXUrsoKBLaVwr+eBWd6g6pix2Ksz3wpcPF/28=;
-	b=PtZcO4xeHzbc9fjkdzrog89GHfoKaDEW7RzAxGf5IYoQthsgbDeYQtTATCb+s9HBMMnUjT
-	ryTbIA5PMmOG7UBpCTdh0sgdcu9v3uPQO9vne/Mvk6F7Es0k2CHrcyb+YrXUM2qOXdC9A6
-	G1+pKJxghWKxzlXkvSIl69SMqKtCb/A=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-n__gqF7WO3S65dnebGuaUQ-1; Tue, 14 Oct 2025 05:14:53 -0400
-X-MC-Unique: n__gqF7WO3S65dnebGuaUQ-1
-X-Mimecast-MFC-AGG-ID: n__gqF7WO3S65dnebGuaUQ_1760433292
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5906653c9b4so2928746e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:14:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760433292; x=1761038092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZjFzk/lXUrsoKBLaVwr+eBWd6g6pix2Ksz3wpcPF/28=;
-        b=XTctArrWRNQWmuthbUydRoNuzeP9H5FyH2FT0hDcsRNFANrVs8+I2j8yaB0IV7jj2E
-         h8ZMbH1wQqItJFd/O1QZKgU5HqqCCyIr71EFbHBiFWPncauxISFKWLDkbiGY43x08e42
-         +VqExI2HilsBye5zlLrHXChFr2NSc6TXr6J6+mE1st5kMj1NFO6wnDXdfJUTygzVu935
-         96t7+6MVqzMY7gmSQzWV85M22eAWuDgmBcdsL2FrOaPiK57pFaXsEmB3K6c4DR6PuQcH
-         WXbdQhfldJstxP+JxkE2Js5Q4AIAkIDpDwZHfqPp3X2msnh0gey0S6tDHhyc6GNEkA0Y
-         uScw==
-X-Forwarded-Encrypted: i=1; AJvYcCX447KgcvKL3t1mhEY9mcd+fj3Pp3fTwjc6h1pkNSbu7oLLLvCZvFHO4hRwyOBGvo5odBJp8W+4LkBOXlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1T14q856RkhVCICPrKVPsyxd5diRleqpcIaRR7FU/Jy9q1gDg
-	NQBArD56SRPqnTr5K3Ud+1N+tDTeBoBIgnIsbccCIbbwGtgrtxWO3l5rmp17usiO//LrwNK6XZY
-	M9YL7jbjTKe8cIDnmbg62a5RoA/GeeLwPaINUApd/YPg4mJqWi4/nTbf56zJ7kWRRaMuF4fIcaM
-	PrCLPdsxqCKcTtIWlGcBgo90DpK0sQjUYBXZmIDm8w
-X-Gm-Gg: ASbGncs4fAB36t+gLQtnrsjxScL8hAKy/ceqK5mzOa1Yk0/i0Cx12Tim/z06QDkI9/s
-	PBBG7IxmsW4kFKImyGb41NM6av09US/zL+HNQDWsHXVXdRUd1N+RQBAoITw4Qx7tRRXtqTupm/K
-	Qz0f8k4nShwWc87ARd76A=
-X-Received: by 2002:a05:6512:131a:b0:57f:42c8:409 with SMTP id 2adb3069b0e04-5906dd6aa55mr6464983e87.39.1760433292099;
-        Tue, 14 Oct 2025 02:14:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQaadRipU0EaeNi46sv19M3AVTnexyca5jXwlVD7EkR3B7khaZ93kLadMtEiUtbufik7xqECGA8OqqwXCTMOY=
-X-Received: by 2002:a05:6512:131a:b0:57f:42c8:409 with SMTP id
- 2adb3069b0e04-5906dd6aa55mr6464970e87.39.1760433291667; Tue, 14 Oct 2025
- 02:14:51 -0700 (PDT)
+	s=arc-20240116; t=1760433287; c=relaxed/simple;
+	bh=IBkCqz1KQ1uX83QuJ3HllJmulH8qpC3R2cWzYAaQB/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIVZXRU+2ZfkpA3Bs8h1smuKNM1hdmruQ7OyhYBx4m9tDSf8GRgpxHyfxyodnjKUZo9dUzkLYCkBESNwa43QfME0w+KJDIl/r3oIe+SARLXSb0NaS3Ma8hNc8IJIiEczYo+ah+uXVwWSxGuebWXDDYtyGMQJMlXrFzNMu3uZVI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKZxf22Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD61C4CEE7;
+	Tue, 14 Oct 2025 09:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760433286;
+	bh=IBkCqz1KQ1uX83QuJ3HllJmulH8qpC3R2cWzYAaQB/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mKZxf22Qjtehf9Ju4hs4d1ZMls1QVC7xp1pg19tXZDUQGb2nMv21rX7z/REtSlZnn
+	 wdhZGctfOsCWA9ciC70TZNp9kr+a2rqxnEMKifOapN7x5EA3zolq/NQnJkZAJppQRs
+	 vN+2MI68O+Z6k7v8gSxVxBKjmzOynSflXzuDdH+Tp/pMAWfSXRKg9ML0HHI9XoLDo0
+	 gLZ+wE46cDHUuqsOuymef9yyVINznxtQIgzfjCc7kwee4kkI9zQ7A4k7a9BqOfRAKZ
+	 1KUsGf4Pkc3K2Bf7aET6QtHfXzDY8krzRLjehgxV2AakTlYjkVjMWbmoVDXqpa6YtG
+	 I1P5+AKe9VnHg==
+Date: Tue, 14 Oct 2025 10:14:41 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 17/18] riscv: dts: starfive: jh7100: Use physical
+ memory ranges for DMA
+Message-ID: <20251014-unsocial-composer-880ea10cc1d1@spud>
+References: <20251009015839.3460231-1-samuel.holland@sifive.com>
+ <20251009015839.3460231-18-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007130622.144762-1-eperezma@redhat.com> <20251007130622.144762-2-eperezma@redhat.com>
- <20251014042459-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251014042459-mutt-send-email-mst@kernel.org>
-From: Maxime Coquelin <mcoqueli@redhat.com>
-Date: Tue, 14 Oct 2025 11:14:40 +0200
-X-Gm-Features: AS18NWAOeQa0WEHFwSIShkcFXHYVmOKdwTw9vdFnAxBWu2pL8g9mbBpXpqcp2jo
-Message-ID: <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
-Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Yongji Xie <xieyongji@bytedance.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kExO0No+kM/nXpTw"
+Content-Disposition: inline
+In-Reply-To: <20251009015839.3460231-18-samuel.holland@sifive.com>
+
+
+--kExO0No+kM/nXpTw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 10:29=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
->
-> On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio P=C3=A9rez wrote:
-> > An userland device implemented through VDUSE could take rtnl forever if
-> > the virtio-net driver is running on top of virtio_vdpa.  Let's break th=
-e
-> > device if it does not return the buffer in a longer-than-assumible
-> > timeout.
->
-> So now I can't debug qemu with gdb because guest dies :(
-> Let's not break valid use-cases please.
->
->
-> Instead, solve it in vduse, probably by handling cvq within
-> kernel.
+On Wed, Oct 08, 2025 at 06:57:53PM -0700, Samuel Holland wrote:
+> JH7100 provides a physical memory region which is a noncached alias of
+> normal cacheable DRAM. Now that Linux can apply PMAs by selecting
+> between aliases of a physical memory region, any page of DRAM can be
+> marked as noncached for use with DMA, and the preallocated DMA pool is
+> no longer needed. This allows portable kernels to boot on JH7100 boards.
+>=20
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+>=20
+> Changes in v2:
+>  - Move the JH7100 DT changes from jh7100-common.dtsi to jh7100.dtsi
+>  - Keep RISCV_DMA_NONCOHERENT and RISCV_NONSTANDARD_CACHE_OPS selected
+>=20
+>  arch/riscv/Kconfig.errata                     | 19 ---------------
+>  arch/riscv/Kconfig.socs                       |  2 ++
+>  .../boot/dts/starfive/jh7100-common.dtsi      | 24 -------------------
+>  arch/riscv/boot/dts/starfive/jh7100.dtsi      |  4 ++++
+>  4 files changed, 6 insertions(+), 43 deletions(-)
+>=20
+> diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+> index e318119d570de..62700631a5c5d 100644
+> --- a/arch/riscv/Kconfig.errata
+> +++ b/arch/riscv/Kconfig.errata
+> @@ -53,25 +53,6 @@ config ERRATA_SIFIVE_CIP_1200
+> =20
+>  	  If you don't know what to do here, say "Y".
+> =20
+> -config ERRATA_STARFIVE_JH7100
+> -	bool "StarFive JH7100 support"
+> -	depends on ARCH_STARFIVE
+> -	depends on !DMA_DIRECT_REMAP
+> -	depends on NONPORTABLE
+> -	select DMA_GLOBAL_POOL
+> -	select RISCV_DMA_NONCOHERENT
+> -	select RISCV_NONSTANDARD_CACHE_OPS
+> -	select SIFIVE_CCACHE
+> -	default n
+> -	help
+> -	  The StarFive JH7100 was a test chip for the JH7110 and has
+> -	  caches that are non-coherent with respect to peripheral DMAs.
+> -	  It was designed before the Zicbom extension so needs non-standard
+> -	  cache operations through the SiFive cache controller.
+> -
+> -	  Say "Y" if you want to support the BeagleV Starlight and/or
+> -	  StarFive VisionFive V1 boards.
 
-Would a shadow control virtqueue implementation in the VDUSE driver work?
-It would ack systematically messages sent by the Virtio-net driver,
-and so assume the userspace application will Ack them.
+Hmm, removing this is going to break old devicetrees, right? Shouldn't we
+just keep this with a wording change stating that it has been replaced,
+rather than removing it right away?
 
-When the userspace application handles the message, if the handling fails,
-it somehow marks the device as broken?
+Cheers,
+Conor.
 
-Thanks,
-Maxime
+> -
+>  config ERRATA_THEAD
+>  	bool "T-HEAD errata"
+>  	depends on RISCV_ALTERNATIVE
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index 848e7149e4435..a8950206fb750 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -50,6 +50,8 @@ config SOC_STARFIVE
+>  	bool "StarFive SoCs"
+>  	select PINCTRL
+>  	select RESET_CONTROLLER
+> +	select RISCV_DMA_NONCOHERENT
+> +	select RISCV_NONSTANDARD_CACHE_OPS
+>  	select ARM_AMBA
+>  	help
+>  	  This enables support for StarFive SoC platform hardware.
+> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv=
+/boot/dts/starfive/jh7100-common.dtsi
+> index ae1a6aeb0aeaa..47d0cf55bfc02 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+> @@ -42,30 +42,6 @@ led-ack {
+>  		};
+>  	};
+> =20
+> -	reserved-memory {
+> -		#address-cells =3D <2>;
+> -		#size-cells =3D <2>;
+> -		ranges;
+> -
+> -		dma-reserved@fa000000 {
+> -			reg =3D <0x0 0xfa000000 0x0 0x1000000>;
+> -			no-map;
+> -		};
+> -
+> -		linux,dma@107a000000 {
+> -			compatible =3D "shared-dma-pool";
+> -			reg =3D <0x10 0x7a000000 0x0 0x1000000>;
+> -			no-map;
+> -			linux,dma-default;
+> -		};
+> -	};
+> -
+> -	soc {
+> -		dma-ranges =3D <0x00 0x80000000 0x00 0x80000000 0x00 0x7a000000>,
+> -			     <0x00 0xfa000000 0x10 0x7a000000 0x00 0x01000000>,
+> -			     <0x00 0xfb000000 0x00 0xfb000000 0x07 0x85000000>;
+> -	};
+> -
+>  	wifi_pwrseq: wifi-pwrseq {
+>  		compatible =3D "mmc-pwrseq-simple";
+>  		reset-gpios =3D <&gpio 37 GPIO_ACTIVE_LOW>;
+> diff --git a/arch/riscv/boot/dts/starfive/jh7100.dtsi b/arch/riscv/boot/d=
+ts/starfive/jh7100.dtsi
+> index 7de0732b8eabe..34ff65d65ac7e 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
+> @@ -7,11 +7,15 @@
+>  /dts-v1/;
+>  #include <dt-bindings/clock/starfive-jh7100.h>
+>  #include <dt-bindings/reset/starfive-jh7100.h>
+> +#include <dt-bindings/riscv/physical-memory.h>
+> =20
+>  / {
+>  	compatible =3D "starfive,jh7100";
+>  	#address-cells =3D <2>;
+>  	#size-cells =3D <2>;
+> +	riscv,physical-memory-regions =3D
+> +		<0x00 0x80000000 0x08 0x00000000 (PMA_RWXA | PMA_NONCOHERENT_MEMORY) 0=
+x0>,
+> +		<0x10 0x00000000 0x08 0x00000000 (PMA_RWX | PMA_NONCACHEABLE_MEMORY | =
+PMR_ALIAS(1)) 0x0>;
+> =20
+>  	cpus: cpus {
+>  		#address-cells =3D <1>;
+> --=20
+> 2.47.2
+>=20
 
->
-> > A less agressive path can be taken to recover the device, like only
-> > resetting the control virtqueue.  However, the state of the device afte=
-r
-> > this action is taken races, as the vq could be reset after the device
-> > writes the OK.  Leaving TODO anyway.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> >  drivers/net/virtio_net.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index 31bd32bdecaf..ed68ad69a019 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -3576,6 +3576,7 @@ static bool virtnet_send_command_reply(struct vir=
-tnet_info *vi, u8 class, u8 cmd
-> >  {
-> >       struct scatterlist *sgs[5], hdr, stat;
-> >       u32 out_num =3D 0, tmp, in_num =3D 0;
-> > +     unsigned long end_time;
-> >       bool ok;
-> >       int ret;
-> >
-> > @@ -3614,11 +3615,20 @@ static bool virtnet_send_command_reply(struct v=
-irtnet_info *vi, u8 class, u8 cmd
-> >
-> >       /* Spin for a response, the kick causes an ioport write, trapping
-> >        * into the hypervisor, so the request should be handled immediat=
-ely.
-> > +      *
-> > +      * Long timeout so a malicious device is not able to lock rtnl fo=
-rever.
-> >        */
-> > +     end_time =3D jiffies + 30 * HZ;
-> >       while (!virtqueue_get_buf(vi->cvq, &tmp) &&
-> >              !virtqueue_is_broken(vi->cvq)) {
-> >               cond_resched();
-> >               cpu_relax();
-> > +
-> > +             if (time_after(end_time, jiffies)) {
-> > +                     /* TODO Reset vq if possible? */
-> > +                     virtio_break_device(vi->vdev);
-> > +                     break;
-> > +             }
-> >       }
-> >
-> >  unlock:
-> > --
-> > 2.51.0
->
+--kExO0No+kM/nXpTw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO4UgQAKCRB4tDGHoIJi
+0uKUAQD80+kPIuFiDo0jFL5AOngNkEUr28ECrOoIkr5OlYN8UgEAh9hDrsZWp8fb
+oE38JjdP0xJl6Q+HfnlMtSej1XDlZws=
+=jxde
+-----END PGP SIGNATURE-----
+
+--kExO0No+kM/nXpTw--
 
