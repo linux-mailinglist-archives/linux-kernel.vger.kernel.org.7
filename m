@@ -1,152 +1,240 @@
-Return-Path: <linux-kernel+bounces-851788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BB0BD7436
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D478BD743F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D30184E7F91
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727083E2B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E813074AA;
-	Tue, 14 Oct 2025 04:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E523074B3;
+	Tue, 14 Oct 2025 04:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CyunqR9C"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjEjbffy"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D5B757EA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA36EACD
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760416525; cv=none; b=k9e2JwSavAqc29V152prBgRiCJGDcr+AYOzuOUuUi+s9x4qcIQaSS7p0+rKXcQ0BYQGgIn6wi8gn7sLy7A+tZhJdwimPSVJ008UQBBfTS3QGVid6424CplxiR/es/m2cC+VIl9yMYU2qYfl928AAj+7ms9oN7TjOFZN/1ZeZ3Mg=
+	t=1760416547; cv=none; b=kjLH4EpbCvnNni5LAKFDiirBNU0apKhZQyc69OsUf5XjlIW3UxRC9mnqGkb8mwK9/40E7rkK9IF0jRFllIloPPkbtc2uQ19jsnwapJdPTKss/gPcS8jXkVDZSp6vj3v2/adJIh4NCzK+p8E+OVCYrgvxKYEh/VuwuNVgM3jN520=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760416525; c=relaxed/simple;
-	bh=uAwl1GNK6MVfiRj2npv6hyUGtVFuuhpcPe1Xltm/3To=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=L+Rg0RePW88WV1qenEeAHCwJIDvAM5iJBFiQVE1YJn2IMfY+agEBnwLJgAL2Vnruv643oo3ihWTeL4ZpayRG5LOAqUvFToDU8X1xh0YD8DO9Bk9N/MFoo1unBEAVtXZ7g7JVYpDRhReZ8QqsFQZTYzsjGOSp7QpHWHKFOPwXvcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CyunqR9C; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251014043513epoutp026dc6d1f5ec57d8fb1de38b6a9fe9252d~uQX3Zj05W2232922329epoutp02y
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:35:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251014043513epoutp026dc6d1f5ec57d8fb1de38b6a9fe9252d~uQX3Zj05W2232922329epoutp02y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760416513;
-	bh=KIHDVhuZ6TYpVfog+kFYWQMy8WRowbJlE3bnFZPEiMM=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=CyunqR9CuItd6hS9QXgYIvGu1+1Jc6sxnmog4KbWtHVaS92TUyUv9c9WdvFb83Hk/
-	 J8LumzsBTqdM0Nmmcy1sg7Z0myLgWkLZ3N08CNCW++JXjj+Tg93bmdoaA7qTN/pWDv
-	 gzMbC39XlhCWZlaPiV4YSaIzgmlwm6isDgsLKykg=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251014043512epcas1p1fda50efe0632504b562c17695cded6cc~uQX29KIV42282522825epcas1p1D;
-	Tue, 14 Oct 2025 04:35:12 +0000 (GMT)
-Received: from epcas1p3.samsung.com (unknown [182.195.38.119]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cm1bh2t5Lz6B9m6; Tue, 14 Oct
-	2025 04:35:12 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20251014043511epcas1p37bffc5c998bff21f27aba426deb77e95~uQX2K9LcL2696626966epcas1p3X;
-	Tue, 14 Oct 2025 04:35:11 +0000 (GMT)
-Received: from wkonkim01 (unknown [10.253.100.198]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251014043511epsmtip1954ec39f6a83fdc63043a6899695cd0e~uQX2IOiWL2405624056epsmtip1s;
-	Tue, 14 Oct 2025 04:35:11 +0000 (GMT)
-From: "Wonkon Kim" <wkon.kim@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<peter.wang@mediatek.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <f90010b2-7db1-412c-8526-47339bf4aa6b@acm.org>
-Subject: RE: [PATCH] ufs: core: Initialize a variable mode for PA_PWRMODE
-Date: Tue, 14 Oct 2025 13:35:11 +0900
-Message-ID: <065101dc3cc3$eda735c0$c8f5a140$@samsung.com>
+	s=arc-20240116; t=1760416547; c=relaxed/simple;
+	bh=c+ge+c+ebDs8I/q16pyAoCo5NQkEU4qR0hOyR1QFOLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dWv5ahU/b6/xPxLLB7U97/KimeruRJdhew3RQEIwWk7w74v/gcO6l8n43+cKJqVltYbJXmxgW5h6y0sOwpPZyDWr9P8B4XwbeTJ/1e78JasczPplDMDqi4iW4+LlcV9geQeklGjRX7UgjpCjlonTSOFY0ynUZzrpJR4jD1lKjs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjEjbffy; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so6287388a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760416545; x=1761021345; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JQUsZzfMdSbr2YfhigERer1vfyxYhaVTqb/kc0tYoo=;
+        b=cjEjbffymUOzTsSvVcJLwfIo9vqj3sn2LqtlY+CtmWMhQ6O1ng8uQrc8tm9RbDyobo
+         OS9RY/hj7zHe8DARO9kCQseRJSYSVTj1uIMiitgzmdygnV44jqlzWV7ac/b5d6LqgnvX
+         0sFNhXSbkeQJyQcNPVskfUama/AYzxvCBD94XP9ceSCEEYEzNS3Dj8JwrYQ5rMKLGR2E
+         kYDyyGsFw1lEIbT41E2ymTOAe9vnacUoe3AtCK8rNmi33a4SKbMprICwhk13kXbts795
+         BV9Tf7CSB6BowVo3QTyHFCTz+ETYXmUoG998uSOowJ6k8UErHfqLBoWIbiJABPDF1HJ8
+         9nkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760416545; x=1761021345;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7JQUsZzfMdSbr2YfhigERer1vfyxYhaVTqb/kc0tYoo=;
+        b=s9y5Zhelj7ZjgGcc5sjQ+MDKA7iDno28gbH6ziWgGbFn1NVW5+FIsgPV+/gbi1vWm9
+         9uszgsj/fzTn85Ubuom3n6C9D3Xb8bhHdWapUlhiqzQqeIDlgL+o/PDqx4kO9y9CF89u
+         Q1X35M+rvlKwY6hPhj4DUFpr09KqUfvl74RVvv9HDgqVD+p186Dh7bejX8lpRqeS2mqg
+         /ytA6v6/COhvo0I1iOTTAdChZzSvPRUOrfqZk0Jqvv0n8mZzW0KDElYalJF1AoPmB14L
+         rPTTWt+fyam5YRx07OmoTg3Rj4/uM2ww8funRq9cGpgNeYLcBF5p5RgTBfz1h3UtG52y
+         druQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFOMGpvs2C7xnI1E82Oo/G6KRkkCuS/AfOBMHI+k2Xcy0hh2FAQXGRzZFA5r5Y3inZPsvSFYCInyEy7+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztLNDwWPkQct0wRi8QlyZfvOMbNUANkehtuEYmqodPOWN/SaD+
+	PHwzbIsvlpHuL8lfGVLgLX9s7rI1LyF2bD0EpvL6KMLrYpT+S2UqJVOC
+X-Gm-Gg: ASbGncve7n9v0KeX7g+fYxSnytzbCGLk//BxaDSPBhi4bxz1JeBskPOaCDor47AXYrL
+	wwrwLO/7dw9Yx3/qnMoXBYWR0o5ucBav+0oCFxLUuRoIFRas2OdF0tmAUUQ+LOx1zeVdiw2B/0S
+	bdLL/GSH3RwRWzrIr1BkCy1Opf5I0P+OHkKEJI451Ie+Kb7yZgwGI2zUqz+5q4hs7da5GMPFAOe
+	BVqwZtRRaCG5VPw3+zkGoaKDOIGQMwZymS5msEKl6aIL6YcaHX5Uvae7VlFDon1oQpRSJ9fazdn
+	AODPVgINazWz+1dnnQJ76Qy3mWyWbagxAGVTZoHdYwvMrPWX/7YGvR4SEeQsGhMCXVwnowBKD/B
+	AE1IXAJwPS1+yGIlDdubKn5uBfVc3wq4JvBeT/HXTakUVKQ24MmLRuTDbaPviTMnW0nr7ZAOI2x
+	YRwI8CaDTmWXwGTkgMgz+UjHOa
+X-Google-Smtp-Source: AGHT+IGhDHawC3MkQ4YAyLlsEm3b6W7BIxoNI2FhDwZZJHSH2UowbYagb3+VKa1PMADrFu16wiqV9A==
+X-Received: by 2002:a17:90b:1d09:b0:330:6f16:c4d8 with SMTP id 98e67ed59e1d1-33b510f9064mr36496258a91.7.1760416545365;
+        Mon, 13 Oct 2025 21:35:45 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09aa20sm13439262b3a.39.2025.10.13.21.35.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 21:35:44 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <04dbdd20-69c1-48fe-9bc7-7e9ffaedbe9a@roeck-us.net>
+Date: Mon, 13 Oct 2025 21:35:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQFhT2clGfJ4dWcII9qWXyagEihcgwJWi3eIAdcMmwEC1X995AKKjmFatWp7pXA=
-Content-Language: ko
-X-CMS-MailID: 20251014043511epcas1p37bffc5c998bff21f27aba426deb77e95
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251002070057epcas1p49ac487359f24f6813ba8f9f44bcf0924
-References: <CGME20251002070057epcas1p49ac487359f24f6813ba8f9f44bcf0924@epcas1p4.samsung.com>
-	<20251002070027.228638-1-wkon.kim@samsung.com>
-	<4c894d68-7d0e-49a0-b582-477bcc7f351d@acm.org>
-	<000001dc3c1a$33e23030$9ba69090$@samsung.com>
-	<f90010b2-7db1-412c-8526-47339bf4aa6b@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/13] ARM: dts: aspeed: facebook-fuji: Include
+ facebook-fuji-data64.dts
+To: Tao Ren <rentao.bupt@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ Tao Ren <taoren@meta.com>
+References: <20250728055618.61616-1-rentao.bupt@gmail.com>
+ <20250728055618.61616-12-rentao.bupt@gmail.com>
+ <79ddc7b9-ef26-4959-9a16-aa4e006eb145@roeck-us.net> <aO2kLyxGlGt12sKD@fedora>
+ <e3dc7aee-c8af-4276-84e5-0f0c7926be05@roeck-us.net>
+ <054cf209-61af-4d21-9a3b-d0f6dd24ee3b@roeck-us.net> <aO3M90Ycp2DWyFuk@fedora>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <aO3M90Ycp2DWyFuk@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> On 10/13/25 1:20 AM, Wonkon Kim wrote:
-> >> On 10/2/25 12:00 AM, Wonkon Kim wrote:
-> >>>    static bool ufshcd_is_pwr_mode_restore_needed(struct ufs_hba *hba)
-> >>>    {
-> >>>    	struct ufs_pa_layer_attr *pwr_info = &hba->pwr_info;
-> >>> -	u32 mode;
-> >>> +	u32 mode = 0;
-> >>>
-> >>>    	ufshcd_dme_get(hba, UIC_ARG_MIB(PA_PWRMODE), &mode);
-> >>
-> >> Since there is more code that passes a pointer to an uninitialized
-> >> variable to ufshcd_dme_get(), the untested patch below may be a
-> >> better
-> >> solution:
-> >>
-> >> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> >> index 127b691402f9..5226fbca29ec 100644
-> >> --- a/drivers/ufs/core/ufshcd.c
-> >> +++ b/drivers/ufs/core/ufshcd.c
-> >> @@ -4277,8 +4277,8 @@ int ufshcd_dme_get_attr(struct ufs_hba *hba,
-> >> u32 attr_sel,
-> >>    			get, UIC_GET_ATTR_ID(attr_sel),
-> >>    			UFS_UIC_COMMAND_RETRIES - retries);
-> >>
-> >> -	if (mib_val && !ret)
-> >> -		*mib_val = uic_cmd.argument3;
-> >> +	if (mib_val)
-> >> +		*mib_val = ret == 0 ? uic_cmd.argument3 : 0;
-> >>
-> >>    	if (peer && (hba->quirks & UFSHCD_QUIRK_DME_PEER_ACCESS_AUTO_MODE)
-> >>    	    && pwr_mode_change)
-> >>
-> >>
-> >
-> > There are some attributes to use 0 as valid value.
-> > e.g. PA_MAXRXHSGEAR is set to 0 for NO_HS=0 If it has 0 for valid
-> > value, most of value 0 are regarded as FALSE, unsupported or minimum.
-> > And these cases seems to check ret for command success/fail in code.
-> > However, is it ok to set 0 for ufshcd_send_uic_cmd() fail?
-> >
-> > If it can't, it needs to initialize mode.
-> > Value 0 for PA_PWRMODE is invalid.
+On 10/13/25 21:09, Tao Ren wrote:
+> Hi Guenter,
 > 
-> Hi Wonkon,
+> On Mon, Oct 13, 2025 at 08:44:17PM -0700, Guenter Roeck wrote:
+>> On 10/13/25 20:20, Guenter Roeck wrote:
+>>> On 10/13/25 18:15, Tao Ren wrote:
+>>>> Hi Guenter,
+>>>>
+>>>> On Mon, Oct 13, 2025 at 05:20:57PM -0700, Guenter Roeck wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Sun, Jul 27, 2025 at 10:56:13PM -0700, rentao.bupt@gmail.com wrote:
+>>>>>> From: Tao Ren <rentao.bupt@gmail.com>
+>>>>>>
+>>>>>> Include "facebook-fuji-data64.dts" in facebook-fuji dts to avoid
+>>>>>> duplicated code.
+>>>>>>
+>>>>>> Fuji-data64 and Fuji are identical except the BMC flash layout.
+>>>>>>
+>>>>>> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+>>>>>
+>>>>> With this patch in the mainline kernel, the Ethernet interface I use for
+>>>>> testing does not come online when loading fuji-bmc in qemu.
+>>>>>
+>>>>> Reverting this patch fixes the problem.
+>>>>>
+>>>>> Looking into this patch,
+>>>>>
+>>>>>> -
+>>>>>> -#include <dt-bindings/leds/common.h>
+>>>>>> -#include "ast2600-facebook-netbmc-common.dtsi"
+>>>>>> +#include "aspeed-bmc-facebook-fuji-data64.dts"
+>>>>> ...
+>>>>>> -&mac3 {
+>>>>>> -    status = "okay";
+>>>>>> -    phy-mode = "rgmii";
+>>>>>> -    phy-handle = <&ethphy3>;
+>>>>>> -    pinctrl-names = "default";
+>>>>>> -    pinctrl-0 = <&pinctrl_rgmii4_default>;
+>>>>>> -};
+>>>>>
+>>>>> I don't see this in aspeed-bmc-facebook-fuji-data64.dts, meaning that
+>>>>> interface is now disabled. Adding it back in fixes the problem.
+>>>>> Also, MAC3 is explicitly enabled for fuji-bmc in qemu.
+>>>>>
+>>>>> Was the interface disabled on purpose ?
+>>>>>
+>>>>> Thanks,
+>>>>> Guenter
+>>>>
+>>>> The mac3 interface was removed in the latest patch (v4) per Andrew Lunn's
+>>>> feedback, because the rgmii setting is incorrect.
+>>>>
+>>>> I was planning to add mac3 back as soon as rgmii support is properly
+>>>> handled in aspeed mac driver, but kindly let me know if you have other
+>>>> suggestions.
+>>>>
+>>>
+>>> All I can say is that it worked just fine with the qemu emulation,
+>>> and that it is broken now. Since it was broken on purpose I guess I'll
+>>> have to find a workaround or stop testing network interfaces with
+>>> that emulation entirely.
+>>>
+>>
+>> Ah, I see that mac3 was the only enabled Ethernet interface on that system,
+>> so you effectively disabled networking on it.
+>>
+>> I don't claim to understand the logic (how can anyone continue to use this bmc
+>> without network interface ?) but I guess it is what it is. I'll stop testing it.
+>>
+>> Guenter
 > 
-> Modifying ufshcd_dme_get_attr() doesn't exclude checking the return value
-> of ufshcd_dme_get_attr(). I propose to modify
-> ufshcd_dme_get_attr() such that it always initializes *mib_val and also to
-> check the ufshcd_dme_get_attr() return value wherever appropriate.
+> Sorry for the inconvenience.. I have to take a local patch to enable
+> mac3 in my environment, because as you said, it's not useful without
+> network interface.
 > 
-> Thanks,
+> Meanwhile, I will need to work with ASPEED to enable rgmii delay support
+> in the ASPEED MAC driver so I can add mac3 back to the dts. If you are
+> looking for a similar platform for testing, you could consider elbert.
 > 
-> Bart.
 
-Hi Bart,
-I got it. I'll update it.
+AFAICS aspeed-bmc-facebook-elbert.dtb does not work with the fuji-bmc machine.
+The console interface or wiring seems to be different.
 
+As I said, I'll stop testing the network interface on fuji-bmc. That reduces
+test coverage, but there is nothing I can do about that. I already made the
+necessary changes in my testbed, so from my perspective the issue is closed.
 
-Thanks,
-Wonkon Kim.
+Guenter
 
 
