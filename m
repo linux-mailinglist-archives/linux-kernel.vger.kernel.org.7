@@ -1,151 +1,142 @@
-Return-Path: <linux-kernel+bounces-851583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C916BD6D48
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:07:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF936BD6D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79EE9404487
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:07:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A7E74F5BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087CC27453;
-	Tue, 14 Oct 2025 00:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EADB224FA;
+	Tue, 14 Oct 2025 00:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUvbjhcC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HvKRBlXO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435CD34BA5B;
-	Tue, 14 Oct 2025 00:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367A61A26B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760400414; cv=none; b=En7aP5q3EzE7M4EQq0uFuTz0WBzjEACXAM+0xMaDRZIt6PbSB75Cyq9Oezooc7xAkWi6zlOxXfK+xP2/6F/17XwnatSEA4LWsEyK5ex3o4hp+OdIlKtWV4EWHh/I7ZFUmDyi2jIqF1+OOHEoIDiDzDSJUn+0EnN+9H+WIWxpQS0=
+	t=1760400447; cv=none; b=UBModwaZMoR4HTbXy7Zdk8HNxKxmuxU9b7latBE8B2Wz5MytqTGZo7UI/0d/grL73NC5h8nV1hQijnlEMrXg0cW6j40e7s6Z0oo46kJxkL0z0umgBZaXGmBaMdF7IDMkoO+hscF1Ejy3atOHUSHB54il4KdDXiPtpk0bLzq4LsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760400414; c=relaxed/simple;
-	bh=XXYR+wR+uPbI+Ltuoy2z2Qb88tw6ivM08Razh0yrfy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IIof+cUF2gwQf/JV2IzABUVmRf1Pb2uTywYemeiKjNDE55/yudGRvJV5KiQ2DFiN48OkvTqk+DJO0V1tPz0UUnJN9pufF6nX3voT0WGSjboyv7JU8g5wuqnZmiHEsgH8oywaKifRXN7AU80WVEsylBLLIaNDvci2u5QVFoRjURg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUvbjhcC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA2EC4CEE7;
-	Tue, 14 Oct 2025 00:06:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760400413;
-	bh=XXYR+wR+uPbI+Ltuoy2z2Qb88tw6ivM08Razh0yrfy0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YUvbjhcCNjfWrgQoROeSZuaPdG6xDJiSqNHw+Jdqx/kHIkoMx4Uy7SBunIhqHsteZ
-	 sNMhwLWFBSFNK+s/bQ02BmDbKHwKDc1Yc8CyKV42ERj8KxsntWMv8/JC2E2q4YRoJW
-	 MutfQk+oFNnLM0dshAWuBlvrAS2tJjdYrW35E6ncVHyhtVh7ne+b14kR6kD8dg9abI
-	 o7eQJMVouNE0CNXClzGLyBal6g26YTicuqLCiFCSnttPoS+wvyTYwZmSe8EsbP+SPH
-	 ZcO/Hit5Gik4pn1PmkgxP/MMT8UjjCUfXMyL6B55OWkraSC3aLbDCn3PcUECX48XWb
-	 N0f/4aaMMp3VA==
-Message-ID: <cb753c72-70ca-44b9-a33c-af2b1c7e69c8@kernel.org>
-Date: Tue, 14 Oct 2025 02:06:46 +0200
+	s=arc-20240116; t=1760400447; c=relaxed/simple;
+	bh=sddReqsaz8eLzv5j+uCqjuSBZlVdS1F7COeMoD+e74U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GCxOUYo2U1dBbCQ0ZvydDTKRW0lb6wAcn+XfYLjQepbwp66oqZp4hq3b44x+tKzwt0+G0Kl4XB55ox8dOy8RCS/z2VfNPEhtyi7ibpgoG5zbrIkrDuUG1IMTEB+5g+FnNv49N/bfsDmXQy1nwD7zPC0iaKNdNT8NYki+F7kj/4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HvKRBlXO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso150685e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760400444; x=1761005244; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vMm+3DwYc57Ap+tGlaHsprQ869OBpYwPHVEmSgDdMcs=;
+        b=HvKRBlXOzv3CtAnwhi3XfzLUYZdpvcn0gulLNgjrPnUBAUhffZUEd+72G8GLXelWID
+         7B09lESuTvNl3tci+v4Mc9xHcCSgddqYNhTNwovYilJt9hEZZthEMMyc4tCwUklCbEis
+         8EBARVJgA8QlKbPql+gSdYsawmMnrgHvdnnE+IvuagO6qXZXwVeftT7Zr1Yu69VG/KEM
+         S8kXyJv8HG5J+hRLqkgsykaHqsDaWN57m1/eQnx3CCxhG37tpTJWFGPZsOB2pWVoATOb
+         m/yJsKCpa5GwU4HpYySFociwZj3MwURnADVhc4kVzkLNLP21FFgTl2hfvqM3A05YAAbW
+         xgtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760400444; x=1761005244;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vMm+3DwYc57Ap+tGlaHsprQ869OBpYwPHVEmSgDdMcs=;
+        b=akIaaXlE6sf5JI/f4vVAV6anY7T3AEYcxpm+pFSisaOyab8fgSrc3bK+bLgYFi5+SD
+         IRCHtbqqiDCH8nVR+m75wz0zvI6FLzi0g0ybdFwFwl0p6xa8sjw0KJcgbyG3dtB4PNXG
+         XYO4/7ny4YNixcaxfvbPAB/X49Hi2praDd3GL3m5w6Gu7bwatkCfuiETL5Vmm5I0V1TC
+         gDD1lot+qUlARD3GT0Yvuh/ItRvfTOW4lfXRXZC4ynIk8wMK0dvmRytNytwCPC9ehBsN
+         SzGCnvFtX4V/fu49fl03GNWcwaMXfmikJVN/uYHvu5QcG5cnyW/1wi6xOlP8bESwC7PG
+         gUyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYJ2rG0lZXqUFMnAK1BvqJcF/mcpi+rquWQMcJ00KNrjAk+wb0o3OUZ5PfnT7Kx4RH+37Xci2jbWWr1rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Fd3mEJ3VZZ1jXOqqD05MCNo1Ua8DkI30KhxwQPAa+E/Mj9qn
+	4jYFnCHDfh8F5IebG0RZXmqbyu0MRqw5sZO921RylZjgCVhAlAjG7BgIHTvQPlrICdMKETBOOZs
+	DA5XhwBTvpJfcelC0i1aTHmEcVYMVPu2LfOqHiWyLUsiXB8MYf0ZH+2FIpOs=
+X-Gm-Gg: ASbGncsxkoDCcNdJaRUa6TEhUbNNoCvkiRh+k+MSwsMq/wMb1KGX/Akr6JTx8zZ9TUb
+	9Mg5Y4Itsme1PzmKMtBjFXZhCBHYk2wxNz6wdrklIudP06Xe/KoAZlQpQgF6mUUuyY5WEg3rrdW
+	fgSpfMaqztO2Ma8IlWbjXHgk7cpSk/w3j03muAVQRsOB0d/VUZzTkl4b4Z9eUVNMVJJU7N1wOtY
+	bv/eRRWg3jUVZa3tj6UeuqaowfUvk0BU3woPX0MI6S1ky6JU80oE1zCfGyve0dJplln9xMmdbG8
+X-Google-Smtp-Source: AGHT+IEfUpm7jUZSRfnU0C0FFysE4UdCaRG1nCop1BnDe0FupZuPsPJRbm12NwMwO0cQ4O9JYCiPLSfXNWeTUgmSYMc=
+X-Received: by 2002:a05:600c:258:b0:45f:2e6d:ca01 with SMTP id
+ 5b1f17b1804b1-46fa9b27c4dmr9968455e9.4.1760400444288; Mon, 13 Oct 2025
+ 17:07:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindings: mmc: Add dll-presets values for HS400
- and HS200 modes
-To: Ram Prakash Gupta <quic_rampraka@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, quic_pragalla@quicinc.com,
- quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
- quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
- Sachin Gupta <quic_sachgupt@quicinc.com>
-References: <20251013145316.1087274-1-quic_rampraka@quicinc.com>
- <20251013145316.1087274-2-quic_rampraka@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251013145316.1087274-2-quic_rampraka@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251013-usbcore-tracing-v1-0-b885a3121b09@google.com>
+ <20251013-usbcore-tracing-v1-1-b885a3121b09@google.com> <24db7c90-16d6-4122-8bda-aee2a2c930bf@rowland.harvard.edu>
+In-Reply-To: <24db7c90-16d6-4122-8bda-aee2a2c930bf@rowland.harvard.edu>
+From: Kuen-Han Tsai <khtsai@google.com>
+Date: Tue, 14 Oct 2025 08:06:57 +0800
+X-Gm-Features: AS18NWB0Kxa7h3QNdNpyTtcwVGiNqLivxymxe8yrp9JvNSNy-LBpInicvco97IM
+Message-ID: <CAKzKK0o5vTe-nxE7nBOUqb=Y3dnT_F-KUtOThSe0vXs9-z6gdg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] usb: core: Centralize device state update logic
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Mathias Nyman <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/10/2025 16:53, Ram Prakash Gupta wrote:
-> From: Sachin Gupta <quic_sachgupt@quicinc.com>
-> 
-> Document the 'dll-presets' property for MMC device tree bindings.
-> The 'dll-presets' property defines the DLL configurations for HS400
-> and HS200 modes.
-> 
-> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
-> different tuning.
-> 
-> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
-> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> index 594bd174ff21..f7b3b1ced3ce 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> @@ -138,6 +138,11 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description: platform specific settings for DLL_CONFIG reg.
->  
-> +  qcom,dll-presets:
-> +    maxItems: 10
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: platform specific settings for DLL registers.
+Hi Alan,
 
-One of my questions, never answered in original submission and in your
-versions, was to see the DTS user of it. I still do not see the DTS user.
+On Mon, Oct 13, 2025 at 9:16=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> On Mon, Oct 13, 2025 at 10:01:22AM +0800, Kuen-Han Tsai wrote:
+> > Introduce a new static inline function, update_usb_device_state(), to
+> > centralize the process of changing a device's state, including the
+> > management of active_duration during suspend/resume transitions.
+> >
+> > This change prepares for adding tracepoints, allowing tracing logic to
+> > be added in a single, central location within the new helper function.
+> >
+> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+> > ---
+> >  drivers/usb/core/hub.c | 28 ++++++++++++++++------------
+> >  1 file changed, 16 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> > index 256fe8c86828d51c33442345acdb7f3fe80a98ce..ce3d94c960470e9be7979b1=
+021551eab5fd03517 100644
+> > --- a/drivers/usb/core/hub.c
+> > +++ b/drivers/usb/core/hub.c
+> > @@ -2147,6 +2147,20 @@ static void update_port_device_state(struct usb_=
+device *udev)
+> >       }
+> >  }
+> >
+> > +static inline void update_usb_device_state(struct usb_device *udev,
+> > +                                        enum usb_device_state new_stat=
+e)
+> > +{
+> > +     if (udev->state =3D=3D USB_STATE_SUSPENDED &&
+> > +         new_state !=3D USB_STATE_SUSPENDED)
+> > +             udev->active_duration -=3D jiffies;
+> > +     else if (new_state =3D=3D USB_STATE_SUSPENDED &&
+> > +              udev->state !=3D USB_STATE_SUSPENDED)
+> > +             udev->active_duration +=3D jiffies;
+> > +
+> > +     udev->state =3D new_state;
+> > +     update_port_device_state(udev);
+> > +}
+>
+> This seems complicated enough to be a standalone function, not inline.
+>
 
-Best regards,
-Krzysztof
+Thanks for the suggestion. I will change it into a static void function.
+
+Regards,
+Kuen-Han
 
