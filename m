@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-852305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45473BD8A91
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13118BD8A8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E27544AC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D0E544CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4864F2FDC56;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71B72ECE8A;
 	Tue, 14 Oct 2025 10:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SO4egynB"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rg+Vx0Oy"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F752EBDD0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D572F5A13
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436178; cv=none; b=A5blHdQa9zcMRPtPntk6+IXYTOllv2yafIhIep/GQYrthBU2jcL4+qaT4uVF2GTGd6CCu7HSxrJlUNNg2WvD1k7WDW5LaTMVp7rPQNLtkjBFgsEc/CGFO9Z6d6C4ulgAmhByTo8X9QW5E9ni5gAvVO3uhvvRZtGJn+cTBTnMBxI=
+	t=1760436179; cv=none; b=hH053QAJPh2ddur2dcwDUpiL0lBvgE6cLixjJOvvHs4n0NQV3n82jgQ7/mP/ECY81NAYWEVn4RAz+GWdNtSPummFw3g0b99JlGNj9mmKCOKXz8nD6gFi+TZAATYOkIdnGxB2HGspTuIIsLGU2Cuem5vJbMqgUvrt+OAM6W1Qrjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436178; c=relaxed/simple;
-	bh=SVtMO7VUBLSAh8tqnEqoTPss3ef9mx54zpbAairZ8UQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VPynNK5sEdaFU6VhNcTWi9GzqZm6j6bCmZvYdX+TjunrtMSXQOKd1jWDUAaBpkqSJdTRbZeRZ3cqRxwB/B5XsSIqLz8/5MleM670y0wdlkMwoEnAjMNWow0KHtB+J8keItQBH83+Q3v6AaEHRgLLGB0tJLihb+b6jjYGn12eg+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SO4egynB; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1760436179; c=relaxed/simple;
+	bh=SjQNMcKFiFxf1UzqcFbV5V5FIrz1nf5P1xbHJ87t43c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XFC476muCmzwVyKL00MJfpkWfm7KqDYhzTroiQZVnD131Us3WSBa1vQrTHeHwvEbnZNW8OGHXF5U8nHUKD67ZhJV1ygCLu7Qntg/SFcVR+MJf5aX4CxlxHT/axIM14l87NO0dNtCQCq5RF0grpR8q/DhpWIIr6sBR8YW5e4XmgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rg+Vx0Oy; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f7469so33500115e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:02:54 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e6a6a5e42so22427965e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:02:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760436173; x=1761040973; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1c6b+GqeawN6AugUtZw8SvN92PfqxV890zC2ujYfseM=;
-        b=SO4egynBNsI7pVx3JIPcQb6FqMyNtjDKDwMTFVmsHYvGM+Bu1PX/YufamEkA2tM7fm
-         h8y6ta//VeMVdf30KsoOS7+IONJZIoVU8EzWx5EM30QpGyT9utNcF3Cg1TcmVWrUPZf5
-         yAZ2gmcpJtmdJSji+qjniy/A0smxLw4TVOQSckHQJ1NsFaI6QRdfu98de71u7Z9iVuug
-         ZFf67PUU+Um9YtBfsV6ERShlNqVhOUMqNylPW4xREY+znVAuhRpyqNAxQk/LNUe05n1V
-         +uwe+pRkNiI/4MFAfadDksktc1qRn7Jnx0yOn2Rnnm+r5m5Vk31SLXM43V372GipZZmm
-         Ng+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760436173; x=1761040973;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1760436175; x=1761040975; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1c6b+GqeawN6AugUtZw8SvN92PfqxV890zC2ujYfseM=;
-        b=nllQmJe6FfChrojgLapNFDdDmIubBXVhUdjI72mXXP0rRMEoT4vBfKuFWUAA6mkxGG
-         97NpQP4grwpqVchFduQRs4Z0QyzanjOFTIl1FMPC/X46q7IwJwv8CKnYCjD7uwYiTLe6
-         YKsgoxpINt23ljlhacjIdlKn8GUXGruN97u8h/omaKp2LK5KIuZmIPjPxsl/AZteiXgO
-         Ov1uqCNVYnB2MRzGvNLzNO3Ap2JRtohlHI7mDwxDSursnoapo7idpixFIDwgjU2vzK4Y
-         dKjThsgtXfVDa//BCbGz85//PvnidMWDCyA4lQUVeJFnK/n38NAUuURkpMcINCQxdqb7
-         Q0EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9VDK6zK5iw6k7koKwfKHREYgn56toMPV2md6XBI0dkn/C2P9hDxXDXHxxjyFoQAiHisQp5UusEPp4ZZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypwi6bz9ercA13x4uGeTbRMWnX5BBK7BD8TL4zRVJtHViaPKbp
-	olStH4L9uuD2Y4Zmj5ixZhG0oZLKHV5NpMvLxD8y3bIcihGQn/dHfF5JFMpWBxWnnhg=
-X-Gm-Gg: ASbGncuR71+v7ZrVUK5ja5R7yk9mKVQVqASzq2GkEn1x2rNeNssuR0RopLClOs5wmHR
-	6zj3X8y6S7rM93E4xmR2fCVRG7XLx+l8n1B0tvAc2x4AcS3KIl0UIwJvKRBZZ1f3cspWR/YTbkc
-	nIO/tOY/SVXqOOyss38U8TKPHGB1H16Kvu5VnBb7K2llYdYg5eR0XQQebGCkitr+V1k+mM2xCqD
-	ye/rQjjsAVw88qfJMKkKx2Otm+YOdE1f7uP/SPsA6yuaqL/HoumxDOYwtr+D/7BhMoaRES3qQmG
-	XY5AfyxqMJvR89O5B5Fe+uXH8niNaP0zGYSZKBxxIsYzzJEKAKvGsa7/Nerg+mnHR58jx/WYNBR
-	EfA+O3eiJDz4+cE/CGh2BBZTPSSzBYo+On3rb5Ngx4NoDjpvD6s9xkg==
-X-Google-Smtp-Source: AGHT+IFeF879+ZVKEsJpJII/6YXJBFFuE25hKrVz1ilfZmhvgCYyYIsyl9axbuskS/eO0lovEnBZtQ==
-X-Received: by 2002:a05:600c:502c:b0:46e:1f86:aeba with SMTP id 5b1f17b1804b1-46fa9af014cmr155783425e9.17.1760436172814;
-        Tue, 14 Oct 2025 03:02:52 -0700 (PDT)
+        bh=cVJfqn+CURZR5kgzfDjtV++23e8mA5V4+ieWpLbcMzI=;
+        b=rg+Vx0OyC0tKcb+PkXiZfGOl3Wxsg+Ht/I4kztmIH7KvASEMHNz7KHbBTf76rS4r5U
+         b+3sgrQta9u/XoKTRefaOncJ1aLQ+I4l6Hctxf1w1NQB8ZNpygG1hOlzzNFJQs0iCbK8
+         KR/7ce3g7xI9c7PhUMs8SXVWyccNRtNvKVtyfiks5F9ahCzxr5H6p3aUhFHzWllWkdCK
+         RyZho6Wui23kftLL7Jp9cn8V7uPtQYUFt+ID3r8fZ66wsUG+t3slaibv735VkD/A//kN
+         xgFe7e6dLO5z1SCoobg554dOHN9MXVWr5U4AwZ48hsfogNg+tTdaDCBd+Fnh674jEAVt
+         DHyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760436175; x=1761040975;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cVJfqn+CURZR5kgzfDjtV++23e8mA5V4+ieWpLbcMzI=;
+        b=N36m7nNUsBsTXE7rlZesSKydBD0dHDijco7fnlMrAzpd088l/AOlPvS4hRQ3JPNHwT
+         ydBu4vjTGqSPJFfefGCzanqaCOLOXHcPRgKG+AgxMw8r/CmJjrWvNlLUrbXnUcXipQeF
+         52elJkmcxxb6YBlY/KbGoLSyT4PEWzH2MS1P0hLRDPDxZkeB3b63F3Q5gnjOnpCs6wW8
+         60CwoppSP8QETMt3cV5i5KSRKaMYgc1gVjvgYvFumotabU/ZAN/TdQhl4azO8Ukb0Vae
+         MMW78Au0lyGJ0ew+cWovakSNsi0HJDw4cuDiy22NfZ0pRdEoyWW3dLMGaHxCOZuhCjVd
+         xP3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXNfKV0XrGnkhsmlijt5kWLZWPpc5rOPz3zDm2Bgd/FMIrVcD41OPI5MDauMPKm8VI5oXonCd5Dzd6dIqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXLtMskKdkR3GNdbt54u5KnXOfabSzJ2V+GM5ryiwgqrq48wH0
+	BG4LzLJLmwmOK+FsjbqWAN0SpQ48NqnwWuzmg/q0fvtOl3dN1+CZDh3fPuljsI+zF2g=
+X-Gm-Gg: ASbGncuOoxh2A3LJMz/nOSazo48G+tRGt2v9zbhhRbvnV3F0j9aRbjS5H2yfj+qmnbl
+	92z7xl65cMUYdtw15bai+nES7DXL/lyGInDcqCTyyLVyUNtj0rfgUJSaENCX5NerLfL9ZB1mc9J
+	SNcDXl+VIMc8AGgSUR1+fnKTka56/r0XHJHA9RmO0KLOikC58jk4VzaMsB/DdUD5g1tPfNAb5Bc
+	rfwedQ3eV9s6GWFxvC6edgN2BHwM9Ygg/neN/zOzUoF7+rH5L/VMUdkAfdQ0sYPUugYZQ7xRCKh
+	oxHHL6rZGhc8Yjng8THDYxe2rPktHwNDDoAiedES21YkUhwfNVsSSQWMn0ZRg+0NsJNCL9k9toP
+	2sSQHNVKjYisZ4d/jCYxVDb7Uad353VUfCgVkP+uibDw=
+X-Google-Smtp-Source: AGHT+IHn1J3P6w0TT3kflXZRWIHbxv02CVqgaJ7Zj1UOEcse11mXhprORjqLY8jjisVskI0JowAdcg==
+X-Received: by 2002:a05:600c:1e86:b0:46e:4581:6634 with SMTP id 5b1f17b1804b1-46fa9b018e1mr176937295e9.29.1760436175311;
+        Tue, 14 Oct 2025 03:02:55 -0700 (PDT)
 Received: from hackbox.lan ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489197dsm239615305e9.10.2025.10.14.03.02.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489197dsm239615305e9.10.2025.10.14.03.02.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 03:02:51 -0700 (PDT)
+        Tue, 14 Oct 2025 03:02:53 -0700 (PDT)
 From: Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH v3 0/4] phy: qcom: edp: Add support for Glymur platform
-Date: Tue, 14 Oct 2025 13:02:26 +0300
-Message-Id: <20251014-phy-qcom-edp-add-glymur-support-v3-0-2772837032ef@linaro.org>
+Date: Tue, 14 Oct 2025 13:02:27 +0300
+Subject: [PATCH v3 1/4] dt-bindings: phy: Add DP PHY compatible for Glymur
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,11 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALIf7mgC/4XNTQ6CMBCG4auQrh3TH5DWlfcwLgqt0ARobaGRE
- O5uITHRFct3Mnm+BQXtjQ7omi3I62iCsUMKdspQ3cqh0WBUakQxLbDADFw7w6u2PWjlQCoFTTf
- 3k4cwOWf9CFRyQkolaMUFSorz+mne+8L9kbo1YbR+3gcj2a5fOz+0IwEMmrP6UglJ8qK6dWaQ3
- p6tb9CGR/oLimOQJjA9F4xxovNS/YHrun4AN9TtnSABAAA=
-X-Change-ID: 20250903-phy-qcom-edp-add-glymur-support-2a8117d92b89
+Message-Id: <20251014-phy-qcom-edp-add-glymur-support-v3-1-2772837032ef@linaro.org>
+References: <20251014-phy-qcom-edp-add-glymur-support-v3-0-2772837032ef@linaro.org>
+In-Reply-To: <20251014-phy-qcom-edp-add-glymur-support-v3-0-2772837032ef@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -95,70 +94,57 @@ Cc: Dmitry Baryshkov <lumag@kernel.org>,
  Konrad Dybcio <konradybcio@kernel.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, 
  linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
 X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1831; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=SVtMO7VUBLSAh8tqnEqoTPss3ef9mx54zpbAairZ8UQ=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo7h+83gSTsRn9fQ8mn3dvjXIkW9tI8b06P5FCJ
- a90fnDYkB6JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaO4fvAAKCRAbX0TJAJUV
- VoTyD/wLoSKlk6qM/kYRJn3q2sUnNKCGjNvMO4l1wD77dL6VELuCYerCQ1iqRE9M2vqXsmHU0Kb
- 9LYILHrsywic2wK1SZvJ1FKfGx7dvreGXljDLjqx34ANm5bwu1ZforYQonfw7ngEkThuGQl0T1V
- XyVcqDy/zkAvoJ0nU0PCaH3DlWj3H81shqWEwiJtQIPLaO5xrmbrW75yC/v78cNjKIVR8HC9xFf
- EjbPbCXZY1n9UIuewFuQbK+dYTOxeA3Ze0V6BWWeRYiFWdbXfH1grqXzrBiiMcaSxer6z/ZL6P0
- UJWSSCFqNbA96c0scoRuM0fjDNhLnsilrYuBYEfBkaSNczAOWTzU0Lb5o0I0OyrCmwU4/k2t/Ff
- Uj4dnrYYXRDVmt2Sse97ZJLLvijcmC0v7avLMCOxJQBQIQ2V/4qg/I6QP/tONMHYn1Qs8qBwkuS
- ryIsn7/Hzg0AwloJLq+dxZhPAI6fyqOX7TmFTQSFxs2w0PCu6lPfMo/W+WYMOHFaxI3pGh4PV0Z
- hdct7EEVRw3ivOwmPqvL7y6FeZT9UJqflZitZB75V2vWl6AjUyVbg5kPSkpP/SeRzYttUL2jJqR
- KULGBIJMsm7fxfe5SKeaJrcapOFh41xwHdTne44Ylb1Kk8NRmcOde4Zk3ciYoG2Ncn7X9Z9iJpB
- c5ZZQjFbfS1j2Qg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1167; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=SjQNMcKFiFxf1UzqcFbV5V5FIrz1nf5P1xbHJ87t43c=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo7h+/P9kfefQL9Xhu238N4OW/+ki3a8ZQcLA+5
+ /LnZTJxNsaJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaO4fvwAKCRAbX0TJAJUV
+ Vg0BD/0TH9WNgHrWjeqkeEuXihRVj7jKEy9+iMDKrSQ8/rwR7ChvS6cRGpe+u/O4DAzGomvgO8Q
+ lx7b2fwpoWlEowETy6PImWEB2TmpNXUBdD4zo/BDHLaoISEcdcHToJpihgWYI5rMnQ9zhRIKshe
+ q9ufkvxu3L/+/u+FG9LCc7sES2xB8WjJFaoPQpROLNfaNB+9455YfeteCb3SvePUAzbtO3qJavG
+ P4igEdfz7GaknEHv9wlIiYb08v5jJJKCc+PROmlHQfojvQvbED6Rn9+YuymS57MnV0bhTRt8Mb9
+ QVXW6+6YpfLU3eTjLBgPlrGF4wjF0kuAl766P+FjYwDscU0MUaTXk3FVehoO2uLB3KXmXJpvpQT
+ zTlh2jLKjy/lJk9aHxChoS/hVQk3Ac+U6LPqYcfEplRrKF9nXeBWYoRbQ4+olOltcY01+QnIeKx
+ 1Pp/9Wx2UxS4HDM3pFw8g3MvCkA8FRpo5kcQXqDBFVt1+kFy0vUhmlD3SIzpzohIgWX4m1+tx3X
+ WsPCgPkRq9UoKN9VSpzP1urz1ueT52u2OrGpa1X0AbIvOCaE+eBdacV669Tgx/F1mk6nR5OynX7
+ lar0vq/2GI9bGPxHKSu0ZAvctRDk2YWF6csnxydqF1krfDNbM0Gh7dxwEVGM05IFMnpuhpkrJLX
+ dxT0tKQyUxjylrQ==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The Glymur platform implements the eDP/DP PHY version 8.
-Add the necessary registers, rework the driver to accommodate
-this new version and add the Glymur specific configuration data.
+The Glymur platform is the first one to use the eDP PHY version 8.
+This makes it incompatible with any of the earlier platforms and therefore
+requires a dedicated compatible. So document it.
 
-This patchset depends on:
-https://lore.kernel.org/all/20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org/
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
-Changes in v4:
-- Force fallthrough for 5400 and 8100 link rates in qcom_edp_com_configure_pll_v8,
-  as they use the same values.
-- Picked up Rob's and Konrad's R-b tags.
+ Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v3:
-- Split the DP_AUX_CFG_SIZE change into as separate patch, as per
-  Konrad's request.
-- Re-worded the dt-bindings commit, as per Krzysztof's request.
-- Link to v2: https://lore.kernel.org/r/20250909-phy-qcom-edp-add-glymur-support-v2-0-02553381e47d@linaro.org
+diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+index bfc4d75f50ff9e31981fe602478f28320545e52b..4a1daae3d8d47ca5f08d97a1864cfd615dcf108d 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+@@ -18,6 +18,7 @@ properties:
+   compatible:
+     oneOf:
+       - enum:
++          - qcom,glymur-dp-phy
+           - qcom,sa8775p-edp-phy
+           - qcom,sc7280-edp-phy
+           - qcom,sc8180x-edp-phy
+@@ -72,6 +73,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - qcom,glymur-dp-phy
+             - qcom,x1e80100-dp-phy
+     then:
+       properties:
 
-Changes in v2:
-- Sorted alphabetically the both the compatible and v8 specific
-  configuration.
-- Prefixed the new offsets with DP in order differentiate from PCIe ones
-- Link to v1: https://lore.kernel.org/r/20250904-phy-qcom-edp-add-glymur-support-v1-0-e83c6b9a145b@linaro.org
-
----
-Abel Vesa (4):
-      dt-bindings: phy: Add DP PHY compatible for Glymur
-      phy: qcom: edp: Fix the DP_PHY_AUX_CFG registers count
-      phy: qcom-qmp: qserdes-com: Add v8 DP-specific qserdes register offsets
-      phy: qcom: edp: Add Glymur platform support
-
- .../devicetree/bindings/phy/qcom,edp-phy.yaml      |   2 +
- drivers/phy/qualcomm/phy-qcom-edp.c                | 232 ++++++++++++++++++++-
- .../phy/qualcomm/phy-qcom-qmp-dp-qserdes-com-v8.h  |  52 +++++
- 3 files changed, 279 insertions(+), 7 deletions(-)
----
-base-commit: b529e9498b7948df2be579282cbf0d5a9a3b7f9a
-change-id: 20250903-phy-qcom-edp-add-glymur-support-2a8117d92b89
-
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.48.1
 
 
