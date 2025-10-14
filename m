@@ -1,403 +1,129 @@
-Return-Path: <linux-kernel+bounces-852364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAB5BD8C5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:29:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E98BD8C5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2611D1924A10
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:30:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 503824FD197
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E592F6588;
-	Tue, 14 Oct 2025 10:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqHNndW3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E532D248E;
+	Tue, 14 Oct 2025 10:30:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABA22EA720;
-	Tue, 14 Oct 2025 10:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7E02EFD88
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760437782; cv=none; b=b6aN3RcKG0mjcXESY3ro4iX1ALSWov7HBOH7lVWl6BPnyo8WnjlMzJU9CMlOlFHzaehHoHwSs2vf39fk1EZd//Sn5Bt1N3oZddJclUf/0fB59jEN96cwhHOuYSZ6NmBUQD8z3HTtmKjVkWAcPRrQIeBioOrQKZT5GglyQYBX1mo=
+	t=1760437807; cv=none; b=ZHItoizy/QrndMHeoqmQu9EXCz/G0pNblj+TNauUz0Qdl0zQZKvUqeiAi88Dk6fZEly+GKQdX4/f5nbJwCzDGbZFrE+Pgpv02BzYTdicDZlo6knn60Fna409R/8gB8bpiGn3+abkjOvnKKVaXTL94b8EqmwATCQBqQYvwUv5BFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760437782; c=relaxed/simple;
-	bh=E1jd3FCeCJCpobMOmX+i/2X+14vARAFZp8J4A6jMGJ8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HZHGBESvAxCjM7B1lOFP6EzdzxecxVCdbmSDEDc4X3GZ6RG8XonlzmkafLTB9z3lnbWiPLl3rBk5omHiv8/nExCjQeARjP8i48Y6KlQE6VL3V3D3o9pJX2rKWfBU3rJdKnEm1I0iVHVeQAmFYgA87Fp9prcv7hXeh72inbl6zi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqHNndW3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449FCC4CEE7;
-	Tue, 14 Oct 2025 10:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760437781;
-	bh=E1jd3FCeCJCpobMOmX+i/2X+14vARAFZp8J4A6jMGJ8=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=EqHNndW3oDYfNAjZxmu4zy4pjGTsKJqKMOkLC+GEwJFHDuzwjpzRia+uHELkhzCnZ
-	 GfxMx2/s9CDWnht7EWpyq0p4y5QgjQvCFxnnrLBFSBtCPi/Gd1Aoo6NRhRjvFC7bKo
-	 ACoLf7gqPnwdlOcyJ8ff0wP43IK2rWnXeEEOU2GUJDsUsT1EvoSbrXeeHvrxE1RmZt
-	 GXj4QGmFHLG8xreW6wiwxhPx2U26tSj9/ifLqxcguxaqQd1Pxw1ST7ZcXbjJVc973u
-	 KqmEET9LWIJoMwZ53cy/s5Ww9HRJsSvksavo0eWKTIayTH20FIwUqIMEAsZTDLjNy6
-	 GQi1xpOqgH4BA==
-Message-ID: <1b41205e-9af2-487f-889c-d6fb328dfbb2@kernel.org>
-Date: Tue, 14 Oct 2025 12:29:37 +0200
+	s=arc-20240116; t=1760437807; c=relaxed/simple;
+	bh=1vIra1mm0mDhoaK8D9LL4naUD17ZaI1yiDmiXcvd5+k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UpTGK5hDRdYSWCM2BFPMXnpbfzj4NoZAT9/Bf9fP4T4IXCI7hWI4Ej3Fx55td08iNG+p8uD2M0mrlq99ocRFwMrkNWEaB8+u4KXDAZDKylldmVrC5/ei73ExEMC+zpcRid2AR9guuqA8MpSojQMHTfBLqGZlNsrkUpjjlACIhpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42f86e96381so143238305ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:30:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760437805; x=1761042605;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sm+iAyGR48fjgzp4tYN5hqjsiCQ5ox6kNAx7zNJCp6U=;
+        b=KXIr3Eumx0Uo8GXoE+i247rROxwHEz+hGguoOHDAuVOJ4UBX7xMsWumPUNg8uaAfUo
+         /WiubWRgo1nGgI42agoOZdfHG7sNJ0WVWC3r3YzMoB3FTMvy6hED6J0ea3iZGqYTgdmW
+         wnmFwBNjro8yEjAmIRlmo1Y3M9MCTjSqjjvLjrnrNuByFDNgfPnCGdLJ94lxUt6I6i85
+         Y/slWMwdpEBn03KkZwf8TFqj1SRdUPUhoKqTNmjp5ID2x+QOtpFTYNFfYYYM2Q5b7tx8
+         AITn5NtKPDU1967F0IPdZBWINNrHT2wNVfBuP+xIGhVaKIBrN2c969VK3nH8nrfffPUX
+         h+AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd7gFm79FhsLSWrpglSF+vxgE/7BugMbElNGIJRngQZiUWfRwxyDu40TvNuqhLr6NCkoKtg8jtyU3Yz9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvf1iLmqdIsR0tvIEMJ71QgCu6KM152jTjOT6W8xVsjWRJJ5sF
+	Bo7OFSjGXfWsH/CSSKeZYOL1SYXhgtmA1DrG1GpCRl2MRcWAPnZrFgADEjAbFRhu2KDU4uKvQCJ
+	oPUIAdpnbDwbOoi0782tlUaw0y24I4F+Oa2c2qbwaP13/7ATTQriwx0xxVQ0=
+X-Google-Smtp-Source: AGHT+IGbr/M9Z9VEoYqj0F3vdXWkl7NRbeZPxz+EivLB0t2DRaTLbLuZZEWBBqVOPBwC1tW4sC2rZVDBZ77hMUYP3osBe+RFxMPy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v2] media: dvb-usb: az6027: fix out-of-bounds in
- az6027_i2c_xfer()
-To: Jeongjun Park <aha310510@gmail.com>, mchehab@kernel.org,
- hverkuil@kernel.org
-Cc: christophe.jaillet@wanadoo.fr, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250907135335.308595-1-aha310510@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250907135335.308595-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:194d:b0:42f:9db5:26d0 with SMTP id
+ e9e14a558f8ab-42f9db52b1cmr151869505ab.1.1760437803917; Tue, 14 Oct 2025
+ 03:30:03 -0700 (PDT)
+Date: Tue, 14 Oct 2025 03:30:03 -0700
+In-Reply-To: <20251014100933.632340-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee262b.050a0220.91a22.0206.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in ntfs_setattr
+From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/09/2025 15:53, Jeongjun Park wrote:
-> msg[i].len is a user-controlled value, the current implementation easily
-> causes out-of-bounds errors in az6027_i2c_xfer().
-> 
-> Therefore, to prevent this, we need to strengthen bounds checking through
-> a comprehensive refactoring of az6027_usb_in_op/az6027_usb_out_op/
-> az6027_i2c_xfer.
-> 
-> Fixes: 786baecfe78f ("[media] dvb-usb: move it to drivers/media/usb/dvb-usb")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
-> v2: Change to fix the root cause of oob
-> - Link to v1: https://lore.kernel.org/all/20250421115045.81394-1-aha310510@gmail.com/
-> ---
->  drivers/media/usb/dvb-usb/az6027.c | 105 ++++++++++++++++++++---------
->  1 file changed, 72 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
-> index 056935d3cbd6..c021362e9b8a 100644
-> --- a/drivers/media/usb/dvb-usb/az6027.c
-> +++ b/drivers/media/usb/dvb-usb/az6027.c
-> @@ -296,12 +296,19 @@ static struct stb6100_config az6027_stb6100_config = {
->  
->  /* check for mutex FIXME */
->  static int az6027_usb_in_op(struct dvb_usb_device *d, u8 req,
-> -			    u16 value, u16 index, u8 *b, int blen)
-> +			    u16 value, u16 index, u8 *b, int blen, int buf_size)
->  {
->  	int ret = -1;
->  	if (mutex_lock_interruptible(&d->usb_mutex))
->  		return -EAGAIN;
->  
-> +	if (blen > buf_size) {
-> +		err("usb in %d bytes, but max size is %d bytes\n",
-> +			blen, buf_size);
-> +		ret = -EOPNOTSUPP;
-> +		goto end_unlock;
-> +	}
-> +
->  	ret = usb_control_msg(d->udev,
->  			      usb_rcvctrlpipe(d->udev, 0),
->  			      req,
-> @@ -321,6 +328,7 @@ static int az6027_usb_in_op(struct dvb_usb_device *d, u8 req,
->  	deb_xfer("in: req. %02x, val: %04x, ind: %04x, buffer: ", req, value, index);
->  	debug_dump(b, blen, deb_xfer);
->  
-> +end_unlock:
->  	mutex_unlock(&d->usb_mutex);
->  	return ret;
->  }
-> @@ -330,16 +338,24 @@ static int az6027_usb_out_op(struct dvb_usb_device *d,
->  			     u16 value,
->  			     u16 index,
->  			     u8 *b,
-> -			     int blen)
-> +			     int blen,
-> +			     int buf_size)
->  {
->  	int ret;
->  
-> -	deb_xfer("out: req. %02x, val: %04x, ind: %04x, buffer: ", req, value, index);
-> -	debug_dump(b, blen, deb_xfer);
-> -
->  	if (mutex_lock_interruptible(&d->usb_mutex))
->  		return -EAGAIN;
->  
-> +	if (blen > buf_size) {
-> +		err("usb out %d bytes, but max size is %d bytes\n",
-> +			blen, buf_size);
-> +		ret = -EOPNOTSUPP;
-> +		goto end_unlock;
-> +	}
-> +
-> +	deb_xfer("out: req. %02x, val: %04x, ind: %04x, buffer: ", req, value, index);
-> +	debug_dump(b, blen, deb_xfer);
-> +
->  	ret = usb_control_msg(d->udev,
->  			      usb_sndctrlpipe(d->udev, 0),
->  			      req,
-> @@ -350,6 +366,7 @@ static int az6027_usb_out_op(struct dvb_usb_device *d,
->  			      blen,
->  			      2000);
->  
-> +end_unlock:
->  	if (ret != blen) {
->  		warn("usb out operation failed. (%d)", ret);
->  		mutex_unlock(&d->usb_mutex);
-> @@ -375,7 +392,7 @@ static int az6027_streaming_ctrl(struct dvb_usb_adapter *adap, int onoff)
->  	index = 0;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen, 0);
->  	if (ret != 0)
->  		warn("usb out operation failed. (%d)", ret);
->  
-> @@ -399,7 +416,7 @@ static int az6027_rc_query(struct dvb_usb_device *d, u32 *event, int *state)
->  int az6027_power_ctrl(struct dvb_usb_device *d, int onoff)
->  {
->  	u8 v = onoff;
-> -	return az6027_usb_out_op(d,0xBC,v,3,NULL,1);
-> +	return az6027_usb_out_op(d,0xBC,v,3,NULL,1,0);
+Hello,
 
-Hmm, this will now just fail, right? Since 1 > 0. I wonder if this is a bug and the '1' should
-be '0'? Or if the USB core will just ignore the length if the buffer is NULL.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: trying to register non-static key in ntfs_setattr
 
-I'm not familiar enough with that to be sure.
+RSP: 002b:00007f1742abe038 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
+RAX: ffffffffffffffda RBX: 00007f17436a5fa0 RCX: 00007f174344eec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000013c0
+RBP: 00007f17434d1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f17436a6038 R14: 00007f17436a5fa0 R15: 00007ffe27f6bb68
+ </TASK>
+ntfs_setattr: testing by deepanshu 
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 1 UID: 0 PID: 6674 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ assign_lock_key+0x133/0x150 kernel/locking/lockdep.c:984
+ register_lock_class+0x105/0x320 kernel/locking/lockdep.c:1299
+ __lock_acquire+0x99/0xd20 kernel/locking/lockdep.c:5112
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x3a/0x50 kernel/locking/rwsem.c:1590
+ ntfs_truncate fs/ntfs3/file.c:483 [inline]
+ ntfs_setattr+0x71a/0xbf0 fs/ntfs3/file.c:807
+ notify_change+0xc18/0xf60 fs/attr.c:546
+ do_truncate+0x1a4/0x220 fs/open.c:68
+ vfs_truncate+0x493/0x520 fs/open.c:118
+ do_sys_truncate+0xdb/0x190 fs/open.c:141
+ __do_sys_truncate fs/open.c:153 [inline]
+ __se_sys_truncate fs/open.c:151 [inline]
+ __x64_sys_truncate+0x5b/0x70 fs/open.c:151
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f174344eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f1742abe038 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
+RAX: ffffffffffffffda RBX: 00007f17436a5fa0 RCX: 00007f174344eec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000013c0
+RBP: 00007f17434d1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f17436a6038 R14: 00007f17436a5fa0 R15: 00007ffe27f6bb68
+ </TASK>
 
->  }
->  */
->  
-> @@ -431,7 +448,7 @@ static int az6027_ci_read_attribute_mem(struct dvb_ca_en50221 *ca,
->  	index = 0;
->  	blen = 1;
->  
-> -	ret = az6027_usb_in_op(d, req, value, index, b, blen);
-> +	ret = az6027_usb_in_op(d, req, value, index, b, blen, 12);
->  	if (ret < 0) {
->  		warn("usb in operation failed. (%d)", ret);
->  		ret = -EINVAL;
-> @@ -468,7 +485,7 @@ static int az6027_ci_write_attribute_mem(struct dvb_ca_en50221 *ca,
->  	index = value;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(d, req, value1, index, NULL, blen);
-> +	ret = az6027_usb_out_op(d, req, value1, index, NULL, blen, 0);
->  	if (ret != 0)
->  		warn("usb out operation failed. (%d)", ret);
->  
-> @@ -504,7 +521,7 @@ static int az6027_ci_read_cam_control(struct dvb_ca_en50221 *ca,
->  	index = 0;
->  	blen = 2;
->  
-> -	ret = az6027_usb_in_op(d, req, value, index, b, blen);
-> +	ret = az6027_usb_in_op(d, req, value, index, b, blen, 12);
->  	if (ret < 0) {
->  		warn("usb in operation failed. (%d)", ret);
->  		ret = -EINVAL;
-> @@ -544,7 +561,7 @@ static int az6027_ci_write_cam_control(struct dvb_ca_en50221 *ca,
->  	index = value;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(d, req, value1, index, NULL, blen);
-> +	ret = az6027_usb_out_op(d, req, value1, index, NULL, blen, 0);
->  	if (ret != 0) {
->  		warn("usb out operation failed. (%d)", ret);
->  		goto failed;
-> @@ -575,7 +592,7 @@ static int CI_CamReady(struct dvb_ca_en50221 *ca, int slot)
->  	index = 0;
->  	blen = 1;
->  
-> -	ret = az6027_usb_in_op(d, req, value, index, b, blen);
-> +	ret = az6027_usb_in_op(d, req, value, index, b, blen, 12);
->  	if (ret < 0) {
->  		warn("usb in operation failed. (%d)", ret);
->  		ret = -EIO;
-> @@ -604,7 +621,7 @@ static int az6027_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
->  	index = 0;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(d, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(d, req, value, index, NULL, blen, 0);
->  	if (ret != 0) {
->  		warn("usb out operation failed. (%d)", ret);
->  		goto failed;
-> @@ -616,7 +633,7 @@ static int az6027_ci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
->  	index = 0;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(d, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(d, req, value, index, NULL, blen, 0);
->  	if (ret != 0) {
->  		warn("usb out operation failed. (%d)", ret);
->  		goto failed;
-> @@ -660,7 +677,7 @@ static int az6027_ci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
->  	index = 0;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(d, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(d, req, value, index, NULL, blen, 0);
->  	if (ret != 0) {
->  		warn("usb out operation failed. (%d)", ret);
->  		goto failed;
-> @@ -692,7 +709,7 @@ static int az6027_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int o
->  	index = 0;
->  	blen = 1;
->  
-> -	ret = az6027_usb_in_op(d, req, value, index, b, blen);
-> +	ret = az6027_usb_in_op(d, req, value, index, b, blen, 12);
->  	if (ret < 0) {
->  		warn("usb in operation failed. (%d)", ret);
->  		ret = -EIO;
-> @@ -771,7 +788,7 @@ static int az6027_ci_init(struct dvb_usb_adapter *a)
->  /*
->  static int az6027_read_mac_addr(struct dvb_usb_device *d, u8 mac[6])
->  {
-> -	az6027_usb_in_op(d, 0xb7, 6, 0, &mac[0], 6);
-> +	az6027_usb_in_op(d, 0xb7, 6, 0, &mac[0], 6, 6);
->  	return 0;
->  }
->  */
-> @@ -831,7 +848,7 @@ static int az6027_frontend_poweron(struct dvb_usb_adapter *adap)
->  	index = 3;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen, 0);
->  	if (ret != 0)
->  		return -EIO;
->  
-> @@ -851,7 +868,7 @@ static int az6027_frontend_reset(struct dvb_usb_adapter *adap)
->  	index = 3;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen, 0);
->  	if (ret != 0)
->  		return -EIO;
->  
-> @@ -861,7 +878,7 @@ static int az6027_frontend_reset(struct dvb_usb_adapter *adap)
->  	blen = 0;
->  	msleep_interruptible(200);
->  
-> -	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen, 0);
->  	if (ret != 0)
->  		return -EIO;
->  
-> @@ -872,7 +889,7 @@ static int az6027_frontend_reset(struct dvb_usb_adapter *adap)
->  	index = 3;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen, 0);
->  	if (ret != 0)
->  		return -EIO;
->  
-> @@ -894,7 +911,7 @@ static int az6027_frontend_tsbypass(struct dvb_usb_adapter *adap, int onoff)
->  	index = 0;
->  	blen = 0;
->  
-> -	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen);
-> +	ret = az6027_usb_out_op(adap->dev, req, value, index, NULL, blen, 0);
->  	if (ret != 0)
->  		return -EIO;
->  
-> @@ -955,6 +972,7 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
->  	u16 index;
->  	u16 value;
->  	int length;
-> +	int ret;
->  	u8 req;
->  	u8 *data;
->  
-> @@ -981,7 +999,12 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
->  			}
->  			value = msg[i].buf[0] & 0x00ff;
->  			length = 1;
-> -			az6027_usb_out_op(d, req, value, index, data, length);
-> +			ret = az6027_usb_out_op(d, req, value, index,
-> +						data, length, 256);
-> +			if (ret != 0) {
-> +				i = ret;
-> +				break;
-> +			}
->  		}
->  
->  		if (msg[i].addr == 0xd0) {
-> @@ -995,7 +1018,13 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
->  				index = (((msg[i].buf[0] << 8) & 0xff00) | (msg[i].buf[1] & 0x00ff));
->  				value = msg[i].addr + (msg[i].len << 8);
->  				length = msg[i + 1].len + 6;
-> -				az6027_usb_in_op(d, req, value, index, data, length);
-> +				ret = az6027_usb_in_op(d, req, value, index,
-> +							data, length, 256);
-> +				if (ret != 0) {
-> +					i = ret;
-> +					break;
-> +				}
-> +
->  				len = msg[i + 1].len;
->  				for (j = 0; j < len; j++)
->  					msg[i + 1].buf[j] = data[j + 5];
-> @@ -1013,9 +1042,12 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
->  				value = msg[i].addr + (2 << 8);
->  				length = msg[i].len - 2;
->  				len = msg[i].len - 2;
-> -				for (j = 0; j < len; j++)
-> -					data[j] = msg[i].buf[j + 2];
-> -				az6027_usb_out_op(d, req, value, index, data, length);
-> +				ret = az6027_usb_out_op(d, req, value, index,
-> +							&msg[i].buf[2], length, 256);
-> +				if (ret != 0) {
-> +					i = ret;
-> +					break;
-> +				}
->  			}
->  		}
->  
-> @@ -1026,7 +1058,13 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
->  				index = 0x0;
->  				value = msg[i].addr;
->  				length = msg[i].len + 6;
-> -				az6027_usb_in_op(d, req, value, index, data, length);
-> +				ret = az6027_usb_in_op(d, req, value, index,
-> +							data, length, 256);
-> +				if (ret != 0) {
-> +					i = ret;
-> +					break;
-> +				}
-> +
->  				len = msg[i].len;
->  				for (j = 0; j < len; j++)
->  					msg[i].buf[j] = data[j + 5];
-> @@ -1042,11 +1080,12 @@ static int az6027_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[], int n
->  				value = msg[i].addr + (1 << 8);
->  				length = msg[i].len - 1;
->  				len = msg[i].len - 1;
-> -
-> -				for (j = 0; j < len; j++)
-> -					data[j] = msg[i].buf[j + 1];
-> -
-> -				az6027_usb_out_op(d, req, value, index, data, length);
-> +				ret = az6027_usb_out_op(d, req, value, index,
-> +							&msg[i].buf[1], length, 256);
-> +				if (ret != 0) {
-> +					i = ret;
-> +					break;
-> +				}
->  			}
->  		}
->  	}
-> --
-> 
 
-Regards,
+Tested on:
 
-	Hans
+commit:         3a866087 Linux 6.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12fbcc58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e58a7dc1a8c00243999
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14dbcc58580000
+
 
