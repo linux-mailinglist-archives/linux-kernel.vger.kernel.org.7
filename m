@@ -1,105 +1,94 @@
-Return-Path: <linux-kernel+bounces-852419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68029BD8EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:09:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D2EBD8F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88853425B3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:09:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A3124EAE11
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D8C308F15;
-	Tue, 14 Oct 2025 11:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CC2302759;
+	Tue, 14 Oct 2025 11:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H/02+A+J"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-teism.eu header.i=@bit-teism.eu header.b="YgRUIhal"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67CA3081B9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E1A3090D0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760440127; cv=none; b=jRGV73wkfA6NBRXemx3O7VwWux/jmuwpB9lbvsuvYsHe18WyrCxocYZVUHZF9IKwq3ABQXYFY3/YI8eZNMRQ6KuDGzeRRBuZvtKuzI9Qzv1OZ3mGZAENk1f4gRYSF6R4xSzl7EfIuz9Pc2dSoc50rFtcYFNJ+6y3Rkw7mfSsox0=
+	t=1760440692; cv=none; b=WdzZv8CQZqvtOtZT5WKN4EwxpnPkmAhAPYrrGch2EP8Vn/pqn3iyLBHx7dhwX1dU3Zh2+jTOZ1/aSgMwRQsmxRpr1Bj6J9x/dmG/FiSdVqhAoadxBpD2vTtfmVCCh+jstQpesA2c9oSV415tiYOWA1wOITqhLfcIaCFFv/vLmSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760440127; c=relaxed/simple;
-	bh=P+5GauTt6GT2A5ICewQhAYJjsy2WOR/Fp4RhjgMbv+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpRu9k+TNIfMtNyO3RnMy6AoommwySscGC9LoJOF1fjCPuIIXGPQjtvBeSH4aoe6WnD9JtogtubrV7dMyolmY8Huw6rHU9TStv41C8Jk6tYrRBUSm5qXJ60KaMBXA7YwMBD0yNlRw6mqxMC6nvRPQkgjvJqBp2hqdccz+Z3g/4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H/02+A+J; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3305c08d9f6so4231778a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760440125; x=1761044925; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kIl7+t2byU2rLxGt9Fvez6I/u2Ic/lM71HIRdn+BxNU=;
-        b=H/02+A+Jy1afx8MazniDdIkPUcfD3mozlAvQd3k00bvcAnKT9uWCcdBtRjpainlonI
-         nyAN92GepjCoe20RpotEEe6h3gac/V13RTXHleFFcU3pMqUJsAbm9vygupmOdlWwS2FE
-         JcdBE7DQ0/jjuceG3b6B7zWIaUIecCrDSG6gI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760440125; x=1761044925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kIl7+t2byU2rLxGt9Fvez6I/u2Ic/lM71HIRdn+BxNU=;
-        b=PeMkgiS1oIIXliz9w1uhWCgtgsaXXiQDsQb32bp8/YxDB1Hn/y7atzMlY0tWlhVeP2
-         5LbWOVM8DKPhSVPz//WqQrTxyE+1pQOqWTr0Jj7Y+S2fUYUxzrKzruEZjXpBaZw/0eTL
-         V9YXVPqST25AlHeAQB29GwmvEHmwTlAMUlUUoKOaSkX/lyWDL/UjNz0Ngg2x7GuI4EUv
-         MOa7ce3nCTlGfJ+R8MOHoXX8nxWJIqGV4ginUl74D1QQtA66xZLvPtlKQbMk4t4jVFgT
-         7oV5UCrhJP9pUt0ICezZVDWiI3P1LDToUks7jdjiJcMBp3tkvqZxYsO//Yk1OfKSc5t7
-         paJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc6G9FzaBpASQqt/eDUd09PYhJjGFoBs6LFMuXZiHMNdeb6sW+TM/rUpAe7joierBrPHosKzX84Yx+e5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9vk/yCd1WTq4Y3zerS/J/5rQvDvE6DPeZSejQVcow1LpSmiOy
-	Ls7LSmZwlTWONA5rXzQSLEhcTazZ3QiL38mG8Y/vvmHvszh5db/zj8PGCHN1kWeR+g==
-X-Gm-Gg: ASbGncv4WxZcc01TMaSOrcDYF1UlS7PwlhzKk+G6gSGhCAXi19zJImhhiW7Gvjdg/Nr
-	tvadBMxhw9QIUrWl8p7zdOMLOiESsIVNKJ1nWjhJd7mdhn2c4JC8fZgWDi/a3lBy+XS1Sh2skA+
-	yvr9Be4pgptfSpsvSUmvUqtAeo0fRuRv8Vxp94NLJzJH1E9M4YJNxmB3mYv+nz81RirDYg6MRgk
-	Nt2sL3nef1wdLdkLwTv8g8yglNSWgWPjWSaO1qfCJo6QLzE7ogeSnfrMuvS1x5rf1JmOmD+S8Ke
-	qxrxvuRYwH4WZhLmbVVi9fALeqgYazyjgAYuGMvbJRua0CduIKPRLJscoOtGUD1oomys7s9NZUP
-	ovaQfNcbmdyI3X1boV1FtZ1jax61Aac5sSCUr6h6bs2KTY+KdhbHd7A==
-X-Google-Smtp-Source: AGHT+IHZp5MLtuj8aEbRYmVAG30fR1mkEeXUfh1F7/djMcG98/l7AMsS3SPYvh8TdHqkm61PdymDQA==
-X-Received: by 2002:a17:90b:4acf:b0:32e:6111:40ab with SMTP id 98e67ed59e1d1-339eda4744dmr37545449a91.3.1760440124929;
-        Tue, 14 Oct 2025 04:08:44 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:f7c9:39b0:1a9:7d97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61a1d386sm15642214a91.5.2025.10.14.04.08.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:08:44 -0700 (PDT)
-Date: Tue, 14 Oct 2025 20:08:39 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Christian Loehle <christian.loehle@arm.com>, Sasha Levin <sashal@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-Message-ID: <gl4gcdqg4d7kqvnbmo3vuymdzcxjoi3qubgaiuu4pzlashxzjr@z7fqi3lek3e7>
-References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
- <2025101451-unlinked-strongly-2fb3@gregkh>
- <zfmoe4i3tpz3w4wrduhyxtyxtsdvgydtff3a235owqpzuzjug7@ulxspaydpvgi>
- <2025101421-citrus-barley-9061@gregkh>
+	s=arc-20240116; t=1760440692; c=relaxed/simple;
+	bh=Os9XzOaNHUFrlOo+HyQ0RyjGmoRzjK2tnqLhyCZaTvM=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=nCLV7WYPZB6E05xTC12FcCy8w9xJuLrFIPG6mV4tMYBqb8HFsJM5N8elhQC7IEdf2xMZFSPNgKc18Gh9CpI8n+OGv/ZODtf46qiiws7f2t2JrblMZWVIM8Kg8DeZZ0DLRvrp8t/foJcsFDJzf3QbtEwra9OJfQyzhlCezWru2Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-teism.eu; spf=pass smtp.mailfrom=bit-teism.eu; dkim=pass (2048-bit key) header.d=bit-teism.eu header.i=@bit-teism.eu header.b=YgRUIhal; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-teism.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-teism.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=bit-teism.eu; s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:
+	From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PTn/YbEkANztox+RBOWdGm9P0uuiVqL2+pLsLQ23ZDk=; b=YgRUIhalzf0LzhANsdqC9Qyqxa
+	aAGnctsHZ44QHGVd1yHOmrEUsV5Sp32Jkf81lzkwLQo3abZ9XqwnqDBtO5LMbNg9IQi6ImzwodMRE
+	PPi37sI8kjprSG5XzaW+WilfifikkMM5uahSeyqiUGvea61nK1kE2FTbuZVUL6Qr0dQ2CMkpS+0xo
+	poUU1jOCuqeGHGknQTaHkYb33Vz3luTQNoO0btG/X+Ttcxq/2PbNjmopFflM9gdgGKoOjd1QPlBSd
+	/BLRfJUzvVYAm8gdMwJYqFCZHb25Oh1CiB9DwqwJHeVlcSamL/pbllz+avxtBFTgZhkipmyvJmjyF
+	zlANP96Q==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1v8cu5-002FhW-4P
+	for linux-kernel@vger.kernel.org;
+	Tue, 14 Oct 2025 13:09:17 +0200
+Message-ID: <0f74210b-c614-4b24-8065-dcd5f69d8e16@bit-teism.eu>
+Date: Tue, 14 Oct 2025 13:09:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025101421-citrus-barley-9061@gregkh>
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-teism.eu>
+Subject: Bit Tao (was low jitter, fair pay politics, unification in Bitstreams
+ System)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On (25/10/14 10:02), Greg Kroah-Hartman wrote:
-> The point is still the same, commit fa3fa55de0d6 ("cpuidle: governors:
-> menu: Avoid using invalid recent intervals data"), is not backported to
-> 6.1.y, it is however in the following released kernels:
-> 	5.10.241 5.15.190 6.6.103 6.12.43 6.15.11 6.16.2 6.17
-> so something got lost in our trees and it needs to be backported.
+Yes, I have reached perfection in translation of Islam. I have updated 
+the general project name to Bit Tao.
 
-I can send a backport for 6.1, unless someone else wants to do it
-(or is already on it).
+It really also reflects the want of Bit Kernel potential branchoff, to 
+have Lightweight Kernel Threads only (instead of legacy kernel threads). 
+This is fair pay compliant. (And other stuff I said, should all be 
+reflected in Bit Tao now).
+
+Fair Pay compliance also includes potential Isa CPU and language, as 
+indicated by Bit Tao. This way typical involved are with right concepts 
+for this. Test what Bit Tao indicates for you, if you wonder.
+
+I also suggest Bit Wavelet (fair pay compliant constant-q filter, 
+compression and more.) And Soundhacker, versions have been part of the 
+culture for a while. And SinAI Game Genie, for easy game creation with 
+Open Source background. (Some of it is already looking better than the 
+manual stuff!)
+
+With full fluent translation of Islam, as Teistic background: 
+https://bit-teism.eu/
+
+Light Be With You.
+Ywe Cærlyn
+Budi,
+Bitstreams System.
+
+
 
