@@ -1,176 +1,127 @@
-Return-Path: <linux-kernel+bounces-852658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EC5BD9985
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0A1BD9877
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A46580D09
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EFC546E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF363148C3;
-	Tue, 14 Oct 2025 13:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AE12116F4;
+	Tue, 14 Oct 2025 13:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUwjqM/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5WuHwNM"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C70313540;
-	Tue, 14 Oct 2025 13:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011C615530C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446991; cv=none; b=smiQCcmOYc0DudJ5+Zfc11P04NLKkgT+u3z328aM5Amv4E19dnAG+pAhl2nZLDat1+PIf5wrrySDvvGrN/MThPjWrPIx1l3j4B2YQ90K4ClqfguSC+Qc38XqNhXjdVKrdUrHhQAlsznEd6BTwUsbaKWyX6sbFzwsd/vNiGsCvFY=
+	t=1760446916; cv=none; b=gb4V4sZyQup2NBaS+LQzQXpRxhYnRe4h/s/DwUkFRw+jE6QmjzAK1gz/gn1aTMMk1Ezdklq2VAhCfYHI5Lj3cTUDmagbohe0Y2xHAtNdj4ub4RtAhwUCxW0hdHe/tDcTJIeeDvantbp6OfOk2y23W5UQHpsqqG7OwXvPxqc3Y9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446991; c=relaxed/simple;
-	bh=0v37jZyYyYbs1da6KxGG2cFegI9umxnQEvbsHhkFM28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lt0V9yKlN96fi9fZt3MNdkR4NzChxkmwKwgBO+wLPEBH62w5Vy7yXyRrdlpjRmEYUEFSAJ+Ciq3r+Opijq+WbjrCHUcEb5AU7yiSbSZEhwEPGXiTLSslnApQMd6OIkdWMPKjh07Ted+dNjKUUTafgLGC8cko2XSJbKXwLZ8D+Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUwjqM/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B06C113D0;
-	Tue, 14 Oct 2025 13:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760446989;
-	bh=0v37jZyYyYbs1da6KxGG2cFegI9umxnQEvbsHhkFM28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gUwjqM/Sp7OkEWnxQ5EJqSzP//ahSQwGJ/3PIjk6jR+DkLYwOzYfX/z5GFKsvASfA
-	 nAQB75EFZ3pqVL5V1s0cRCTPZf994kcLHYtcjtxtgCsLdYCi0WKYZbEyRICnLGBmbS
-	 RSzd3zqn2NJfBH1MAoGqwh8tSjd4cnmlPTk06dv0i94pFfAOtYX1hLvUiSg8yEB+oq
-	 5KQamKGczN9IpOXVNd1BEVwDrTYJzmqAp8fGFiaYBBSPY5PlQIQxMYKUxqZU7d3unU
-	 vRyi1QMSY4bUicB5hLQSA/mYL5rTPKn7JsevbDqdUlklpDVB4bIB64/yEeCVLwX6sF
-	 JJM0cdAuM1Q6Q==
-Date: Tue, 14 Oct 2025 18:32:59 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel test robot <lkp@intel.com>, Kees Cook <kees@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH] PCI: rcar-host: Avoid objtool no-cfi warning in
- rcar_pcie_probe()
-Message-ID: <uebexl7d5gfjopb26gstftahu2ouab3ekonw4dzgegw3on5cwr@vqc2zmxiluvt>
-References: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
- <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
- <20251014083209.GA2696801@ax162>
+	s=arc-20240116; t=1760446916; c=relaxed/simple;
+	bh=2PZ7Dxiux29sn2cxLLbfjy5baL0JUF5GxdCqMf2A7vA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hwLhtBBrF0eEGmsFllA1cU1m5xnJX0KZJHXYDXvOT7jkWlwMTpAE91KqOuozD/VbuEWj6OVYawyjzAEjUlRmEsm16pdO1+mCwAYU+TZOZZRQCJH66hbDCRVDnja7fHdd43uR5/2N5izbSfHXnEk1YGBmmibaUfd0xa/Qiz+C0YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5WuHwNM; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so3165609f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760446913; x=1761051713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Orem4t6QfSI5JFiug2h5DjVy4ER1OmliqxRluIkKeWg=;
+        b=X5WuHwNM3pxJoKh2q75+gfboP50bMXVfYAczv0kox+2KJ8OpzfKOq8AVucrnCXVnLv
+         Az92vUSAhz0QjQGDyuFb3UdnmhKP74BEwSQOasnxOMlu7gY8hsoPo9avdafBoshXokDh
+         woRq7tMdufnWEmYVhmXbNbudYkrFC+khWf6GC8vzhbgWCcNs3iEjQ6beMEAnbMyC3myU
+         s08+94Dr+GwbPdoF1ImXT1KXGZ+1fBuqgCsHLzU0DL2TWUJV8tNahrf2xP3t0D+HOzxz
+         HpFH6QCOLS42ek8ah0KeZEJNCYbIuSfxaSpW6g1cwwaVyf01IA3QvJphpwMz9dd30y1R
+         NmdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760446913; x=1761051713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Orem4t6QfSI5JFiug2h5DjVy4ER1OmliqxRluIkKeWg=;
+        b=rEelVAN6qqcRhdFR2ifC/4JvIVZaRMV/lHq4HXa8VZz1Vrk+KMFBk1z8O/owd59VWj
+         g/iVka+dEzQ2D7LALnJnzlvgEAy0KU2ZoIGhQYThz5PObjUdHOTSkqDk+heVLykmLQv9
+         LZGyAssPsQ3HufKTAdhY7Af9YTDC5ctD7Z0uucghhpovVsRjgArLPmSM0JAZ5n4ZR4E8
+         uFlLhUrs+ZXL0fSLGdBlqq5xuhPzqMiR9Xb3gwcTlo5iDiKXD5LRtkTfK7DrD/kK4gVv
+         eAZMSGQbPmEbHVdc/It4/7jX+OHkFU35pqNGHo01Ga4x4OE+tW88H/9T2sW87rwV6v/X
+         rcMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBQ3OBGmD/5kLcWfoUx8WfHvepG567mgrpPZzheaq7cbGqwl+o73f6x2vsppU1LEOjfPPj6m2YgiEZ7eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznVwWmHfvJPqSaZtlPtp7EaUDIrVzVnvf/VHaorJM+GTVuoEul
+	eoROGhOPHRoNq8iZI6Co1qWXTh8cgE73CgOfBGxJpsihzO88MxeF95yt
+X-Gm-Gg: ASbGncuHmrx4XC/sMXKnLbGNW+b4LbU6o1NZBfvYpD+1I07DoI6Mv45xGLAz4tu4qKO
+	mKqHrlpoZRRONNysZEvQ6US4Pji1fgHlGJuSBDvEZDMpNDGDEBCpMERtFjUfEfCb5NdZpIUpAF5
+	etVyOi1R9mwUAZy6oNvsqts7/D0dYJPOnByDsdDN/rONCnE0/5+he24bh9jxHv9CQlDzfTjlzjD
+	9IXvLSRYZEvNpJm7o4HRF/zM22Tfaa6fj0wNEty+QoaToqbWsamGJo1/gEd+C4xfNqTzA6bZpsw
+	T+NYNkfXkXas6e7G78SVJiwCL3cmBa13xMK1pDdXfr2E/cntf5GHTLFncfvGoEolT+F3ZtBJWxZ
+	NzDAuyeuWG2n8uJ8XQNNNGNfLyhZZdGQC6hBWcOGdjGC/iCwiyA2bK4OdcULhLEETWZ/OUCDqfA
+	==
+X-Google-Smtp-Source: AGHT+IGZAuguHs2vAFoS95VzADN/By/zVpX3eGPY3Q5ZY95Qs8yWuNrHeiJWEnxBhgf85YsKK7wXPg==
+X-Received: by 2002:a05:6000:2c0c:b0:3f1:5bdd:190a with SMTP id ffacd0b85a97d-42666ac3a16mr15370706f8f.3.1760446913058;
+        Tue, 14 Oct 2025 06:01:53 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:7ec0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf790sm22831336f8f.28.2025.10.14.06.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 06:01:52 -0700 (PDT)
+Message-ID: <2ebc6019-d8b6-4d6f-981e-a61819b67e19@gmail.com>
+Date: Tue, 14 Oct 2025 14:03:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014083209.GA2696801@ax162>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 00/24][pull request] Add support for providers
+ with large rx buffer
+To: netdev@vger.kernel.org, io-uring@vger.kernel.org
+Cc: Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Simon Horman <horms@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Mina Almasry <almasrymina@google.com>, Willem de Bruijn
+ <willemb@google.com>, Dragos Tatulea <dtatulea@nvidia.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ Mark Bloch <mbloch@nvidia.com>, David Wei <dw@davidwei.uk>,
+ linux-kernel@vger.kernel.org
+References: <cover.1760440268.git.asml.silence@gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1760440268.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 01:32:09AM -0700, Nathan Chancellor wrote:
-> Hi Geert,
-> 
-> On Tue, Oct 14, 2025 at 09:16:58AM +0200, Geert Uytterhoeven wrote:
-> > On Mon, 13 Oct 2025 at 20:26, Nathan Chancellor <nathan@kernel.org> wrote:
-> > > ---
-> > > Another alternative is to make this driver depend on CONFIG_OF since it
-> > > clearly requires it but that would restrict compile testing so I went
-> > > with this first.
-> > > ---
-> > >  drivers/pci/controller/pcie-rcar-host.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> > > index 213028052aa5..15514c9c1927 100644
-> > > --- a/drivers/pci/controller/pcie-rcar-host.c
-> > > +++ b/drivers/pci/controller/pcie-rcar-host.c
-> > > @@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
-> > >                 goto err_clk_disable;
-> > >
-> > >         host->phy_init_fn = of_device_get_match_data(dev);
-> > > -       err = host->phy_init_fn(host);
-> > > +       err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
-> > >         if (err) {
-> > >                 dev_err(dev, "failed to init PCIe PHY\n");
-> > >                 goto err_clk_disable;
-> > 
-> > I am afraid you're playing a big game of whack-a-mole, since we tend
-> > to remove these checks, as they can never happen in practice (driver
-> > is probed from DT only, and all entries in rcar_pcie_of_match[] have
-> > a non-NULL .data member)...
-> 
-> Thanks for the input! Yeah, that is fair, as I alluded to in the scissor
-> area. We could just do
-> 
-> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> index 41748d083b93..d8688abc5b27 100644
-> --- a/drivers/pci/controller/Kconfig
-> +++ b/drivers/pci/controller/Kconfig
-> @@ -243,6 +243,7 @@ config PCI_TEGRA
->  config PCIE_RCAR_HOST
->  	bool "Renesas R-Car PCIe controller (host mode)"
->  	depends on ARCH_RENESAS || COMPILE_TEST
-> +	depends on OF
->  	depends on PCI_MSI
->  	select IRQ_MSI_LIB
->  	help
-> 
-> since it is required for the driver to function. Another alternative
-> would be something like either:
-> 
-> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> index 213028052aa5..c237e04392e6 100644
-> --- a/drivers/pci/controller/pcie-rcar-host.c
-> +++ b/drivers/pci/controller/pcie-rcar-host.c
-> @@ -941,6 +941,9 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	u32 data;
->  	int err;
->  
-> +	if (!IS_ENABLED(CONFIG_OF))
-> +		return -ENODEV;
-> +
->  	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
->  	if (!bridge)
->  		return -ENOMEM;
-> 
-> or
-> 
-> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-> index 213028052aa5..2aee2e0d9a1d 100644
-> --- a/drivers/pci/controller/pcie-rcar-host.c
-> +++ b/drivers/pci/controller/pcie-rcar-host.c
-> @@ -980,8 +980,12 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	if (err)
->  		goto err_clk_disable;
->  
-> -	host->phy_init_fn = of_device_get_match_data(dev);
-> -	err = host->phy_init_fn(host);
-> +	if (IS_ENABLED(CONFIG_OF)) {
-> +		host->phy_init_fn = of_device_get_match_data(dev);
-> +		err = host->phy_init_fn(host);
-> +	} else {
-> +		err = -ENODEV;
-> +	}
->  	if (err) {
->  		dev_err(dev, "failed to init PCIe PHY\n");
->  		goto err_clk_disable;
-> 
-> to keep the ability to compile test the driver without CONFIG_OF while
-> having no impact on the final object code and avoiding the NULL call. I
-> am open to other thoughts and ideas as well.
-> 
+Oops, should be 0/6 in the subject.
 
-TBH, I hate both of these CONFIG_OF checks as most of the controller drivers
-are just OF drivers. If we were to sprinkle CONFIG_OF check, then it has to be
-done in almost all controller drivers (except VMD, Hyper-V).
-
-If compiler is getting smart enough to detect these NULL invocations, then it
-may start to trigger the same issue for other OF APIs as well. So I'd prefer to
-have the OF dependency in Kconfig, sacrificing COMPILE_TEST on non-OF configs.
-
-- Mani
+On 10/14/25 14:01, Pavel Begunkov wrote:
+> Many modern network cards support configurable rx buffer lengths larger
+> than typically used PAGE_SIZE. When paired with hw-gro larger rx buffer
+> sizes can drastically reduce the number of buffers traversing the stack
+> and save a lot of processing time. Another benefit for memory providers
+> like zcrx is that the userspace will be getting larger contiguous chunks
+> as well.
+> 
+> This series adds net infrastructure for memory providers configuring
+> the size and implements it for bnxt. It'll be used by io_uring/zcrx,
+> which is intentionally separated to simplify merging. You can find
+> a branch that includes zcrx changes at [1] and an example liburing
+> program at [3].
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Pavel Begunkov
+
 
