@@ -1,138 +1,266 @@
-Return-Path: <linux-kernel+bounces-852638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5CABD9892
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA4BBD988C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCE6547666
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53CF519A355A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B68E3148B7;
-	Tue, 14 Oct 2025 13:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6142531353C;
+	Tue, 14 Oct 2025 13:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UolIS9Rl"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QP+jxGCT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D15F76026
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F79B1AA7A6;
+	Tue, 14 Oct 2025 13:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446939; cv=none; b=TVaPp8iyIS9qX/7QseW4nqNR6hOEg43NqJ6YdYHUD+7N7ZaenfBLtPgXu36xg9vEuZp1OmcpwWMLbtIu9TQGdG9UgfW+ZUMjBLdIyUHB9AQcm9qYZScQ7nAp63uW0BiNtmxQlo4PZDnZ1UYWnjWVjZxnP1WCnkM4rg27GbtDRM0=
+	t=1760446966; cv=none; b=SFUS2/yOgxABT5VeCZc3PAi2cvpJWy+MdUsNkJmP+ukC4mRnb865k1iDJwv7VAFEWdeRelW75QMNCEdIK+6PeHf5ySDvHq281+dfzpznOc4joQmupprKFoA8758FLoCvqjYpVV7SWsS69lsbiWKBRnjq1E5MjvHVS0ArsPD5nCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446939; c=relaxed/simple;
-	bh=XGY7u+lqhb/sqJLYAZEut8PFrDzJJEOreAKW851JRMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uAZ/FbhdMpc/rTI8E/W/Ds2JLr2Hk9k3K1mQe4yGFaBa5JLjznwxfZANZ/9kImmAwgJ+5y2IHnARKyrUfOZzx5AVU33k+CZGuwLb6ClIuWbd4foKR+vtCKt46+fOKPI+YrWM7ddC7r44MbAFY7DhGOxXbMNRxfKJUGS/uqI0XEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UolIS9Rl; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7811fa91774so4568855b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760446937; x=1761051737; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vUG8NnvzxTzuqf3xDOLZ/nhw7UAeONEASLUMUFNz60=;
-        b=UolIS9RlZ/Uh0SCZ0OeXi4AqrVUxKgDRf5bzfBm7wVI9slyUihPbfYEvqHaZiBUX7b
-         TVEx1HFvvgkmlEpCPnXzzaTfQ/2Yt3YOPBZSA3FPNhuls/5S09Aq3EH4JFIpadx9KpMG
-         xtxcD4ZlK35cXn0nozTaOzDx5PEa4/Mawho54BoO6OjX0MAK3Q1bDiIfFFUbxezEGX2B
-         gqj9/sdseiJLmL7GZ1aUzQxwKd8ZXUr/p8cBm6TgkjDWHfUGdbVM6Kr0JHB4qrhq3NoH
-         8ZPdSeQzLVm4itHRlHrbSC+nJ1s41e9tZ9cXRZ0hH2blJBZcs0IqHEuwlcvOJtG6zBim
-         0RkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760446937; x=1761051737;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9vUG8NnvzxTzuqf3xDOLZ/nhw7UAeONEASLUMUFNz60=;
-        b=dKJxdJ5Y9x72QDXD/exB2I7S5AAAQ+sjXnIpMgK4IctiyW2UAP0lDMDaT+NT75oq+L
-         /Yyn/+lNVPZaA1CwL2Lg7zOE+MCiDOKiIXvj+EC6kWj3Z+1DWTo+EHbdVPUvKWlfNpcY
-         MRIcP/RcmqBHX9+GGikrU3NKWVCPv/He8BFPIz4STIQa24GDtpandLARVP7tQPrrlRul
-         C96F8w6Knig2CR8gIMItp86zzFSnXmUsLZ1Ak6QMxLEAnWQTJAQvK21s8PAPT4fGILP1
-         FhwrXCCNK00fhQxTAJA823wlObzGX0md2SBdXIWQiqh7QKRam9Ez8LiEND1reaCFJYFG
-         YpMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9DWh3pf/eG2WKDux8VcuZl72JzfTzxDpoUlAkO78TPkYfVHZijBUIeMaHUyqetp+R1Y1lvy8BwYSPCzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn8lXjCLTH2+yXeHXMolf8lJqeN/JkhdFZw4SKH8oSYTmrROvh
-	a35SvKyNLY/dwiWkfKw9HuKB1uy0Kj3Z2UFLPDIde6PeaIcEqHdKuN5v
-X-Gm-Gg: ASbGnctDhPR+hSOXm+ZTfiEFm3ZEdZMLT26FqoWhsAWwyM8DrLW7HcfqCqtyIFEHspW
-	C/3T5SBjoilBFtBjczYbU6xqxKrcfDrXf/hwSgtRl/3+8I+RjPbEIelXPuyoss57nG+pmKWiknS
-	2iVIcC5m77f7k2Iu3KS0W//1BXn1t2xmRT9BC9tTXgbruO9Qv8CsO+2W8Bavx7mspKtKTiw9G+T
-	au4RZptm4/D1KvKcx34h3p+CCvOBBowW0eBC+VOMoKBNMue8QbTOSH+BR1ljOEzCMMBz5wIvK3R
-	NLmQjmNjbiujAaCZEDLjWvRmQwfAEA2vsUoWBDaJVAmyHxa/Mn8yWaA+2lLXU+Ba0HOknjdkMS9
-	Z5cvIcOb268aUS8pH/Lx/BHOUuka0fwuU3oph
-X-Google-Smtp-Source: AGHT+IF4gyFwIQTa6KYBIdWHVozU4jIMjBZx4vqsFvot1tX3tYw5PWnT47+yK/5qpppovCPchU7vng==
-X-Received: by 2002:a05:6a00:1894:b0:776:130f:e1a1 with SMTP id d2e1a72fcca58-79385709579mr28317674b3a.5.1760446937136;
-        Tue, 14 Oct 2025 06:02:17 -0700 (PDT)
-Received: from OSVS.. ([183.101.168.247])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992dc86a93sm15012439b3a.75.2025.10.14.06.02.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 06:02:15 -0700 (PDT)
-From: Jaehun Gou <p22gone@gmail.com>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jaehun Gou <p22gone@gmail.com>,
-	Seunghun Han <kkamagui@gmail.com>,
-	Jihoon Kwon <jimmyxyz010315@gmail.com>
-Subject: [PATCH] fs: exfat: fix improper check of dentry.stream.valid_size
-Date: Tue, 14 Oct 2025 22:01:46 +0900
-Message-ID: <20251014130146.3948175-1-p22gone@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760446966; c=relaxed/simple;
+	bh=hXryTLF8q4y9elXCJ9ilK+iRM0tSIZ+XhIIktNp3FKA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SpCoaMWhd9BXx49FxGH+HVluw89k4VpcBqHK1FydT9QP8zLQwwkSYeK7OhkKjxUgBAaonxZpu/xCGoBsdWQ8PBZhu7vTt4/OPHhYauNyeoOPw3D/8zVrJoGnSQ6yr9GuEgTBDBe7yBgIZfwE4OeM71YM3pCqDmy64TUB9/4PudE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QP+jxGCT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BF32BC113D0;
+	Tue, 14 Oct 2025 13:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760446965;
+	bh=hXryTLF8q4y9elXCJ9ilK+iRM0tSIZ+XhIIktNp3FKA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=QP+jxGCTf6NNkMd/LvINqkSbT8hKmKDbSTdEaqX/Cub2N1BRRQ0hko+J4YqqmIlYu
+	 0TYXeKMrAmlW0tVHkiYJRVKrYJhE2Xes1KQea4KyAGRxlSmH/QSBquOmN9RFS92zRV
+	 DGrkqwntQxCFLMWAQdkq/N95XwbIhdbYZF7+pNxgXhdrEg11HFfih0JLV7MBmlefb6
+	 Xw5MLmZqhTePYsDMa/6yteGvjwPdPjhDjFyEVUBM4VFTl+LBu5vmNdtEkCHQoz3CGR
+	 D/juyEFJVJG+Gz2sKunUeweE3Yzqf+6LsDkg64Q3RHdp6w4X8Uhtx7obKvKvtIai5k
+	 LZDE3btdAzh+Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F8DCCD184;
+	Tue, 14 Oct 2025 13:02:45 +0000 (UTC)
+From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
+Date: Tue, 14 Oct 2025 15:01:47 +0200
+Subject: [PATCH v12 01/18] Documentation: admin-guide: media: add rockchip
+ camera interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240220-rk3568-vicap-v12-1-c6dbece6bb98@collabora.com>
+References: <20240220-rk3568-vicap-v12-0-c6dbece6bb98@collabora.com>
+In-Reply-To: <20240220-rk3568-vicap-v12-0-c6dbece6bb98@collabora.com>
+To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gerald Loacker <gerald.loacker@wolfvision.net>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Markus Elfring <Markus.Elfring@web.de>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Kever Yang <kever.yang@rock-chips.com>, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Collabora Kernel Team <kernel@collabora.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Alexander Shiyan <eagle.alexander923@gmail.com>, 
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Michael Riesch <michael.riesch@collabora.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760446963; l=7244;
+ i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
+ bh=weR2XLDhr0Y9vmX8tmMM8NPOkUIjnZIPDkW5+rbOIus=;
+ b=SQymRTY9qGJzRFmie2nzw36zEd9j23TQaMJdtzmKbIg8wbiTNYFLYiXj1YbvgCmnQdvq95Sp2
+ Wz+dkf+GTiFDtCykOLGKonPa22st46+b2g4al6j8goEldcGPd7FhiS8
+X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
+ pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
+X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
+ with auth_id=371
+X-Original-From: Michael Riesch <michael.riesch@collabora.com>
+Reply-To: michael.riesch@collabora.com
 
-We found an infinite loop bug in the exFAT file system that can lead to a
-Denial-of-Service (DoS) condition. When a dentry in an exFAT filesystem is
-malformed, the following system calls — SYS_openat, SYS_ftruncate, and
-SYS_pwrite64 — can cause the kernel to hang.
+From: Michael Riesch <michael.riesch@collabora.com>
 
-Root cause analysis shows that the size validation code in exfat_find()
-does not check whether dentry.stream.valid_size is negative. As a result,
-the system calls mentioned above can succeed and eventually trigger the DoS
-issue.
+Add a document that describes the different variants of the Rockchip
+Camera Interface (CIF), their hardware layout, as well as their
+representation in the media controller centric rkcif device driver,
+which is located under drivers/media/platform/rockchip/rkcif.
 
-This patch adds a check for negative dentry.stream.valid_size to prevent
-this vulnerability.
-
-Co-developed-by: Seunghun Han <kkamagui@gmail.com>
-Signed-off-by: Seunghun Han <kkamagui@gmail.com>
-Co-developed-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
-Signed-off-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
-Signed-off-by: Jaehun Gou <p22gone@gmail.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 ---
- fs/exfat/namei.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ .../admin-guide/media/rkcif-rk3568-vicap.dot       | 21 ++++++
+ Documentation/admin-guide/media/rkcif.rst          | 83 ++++++++++++++++++++++
+ Documentation/admin-guide/media/v4l-drivers.rst    |  1 +
+ MAINTAINERS                                        |  7 ++
+ 4 files changed, 112 insertions(+)
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 7eb9c67fd35f..2364b49f050a 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -642,10 +642,14 @@ static int exfat_find(struct inode *dir, const struct qstr *qname,
- 
- 	info->type = exfat_get_entry_type(ep);
- 	info->attr = le16_to_cpu(ep->dentry.file.attr);
--	info->size = le64_to_cpu(ep2->dentry.stream.valid_size);
- 	info->valid_size = le64_to_cpu(ep2->dentry.stream.valid_size);
- 	info->size = le64_to_cpu(ep2->dentry.stream.size);
- 
-+	if (info->valid_size < 0) {
-+		exfat_fs_error(sb, "data valid size is invalid(%lld)", info->valid_size);
-+		return -EIO;
-+	}
+diff --git a/Documentation/admin-guide/media/rkcif-rk3568-vicap.dot b/Documentation/admin-guide/media/rkcif-rk3568-vicap.dot
+new file mode 100644
+index 000000000000..02340135a2ac
+--- /dev/null
++++ b/Documentation/admin-guide/media/rkcif-rk3568-vicap.dot
+@@ -0,0 +1,21 @@
++digraph board {
++        rankdir=TB
++        n00000001 [label="{{<port0> 0} | rkcif-dvp0\n/dev/v4l-subdev0 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++        n00000001:port1 -> n00000004
++        n00000004 [label="rkcif-dvp0-id0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
++        n0000000a [label="{{<port0> 0} | rkcif-mipi0\n/dev/v4l-subdev1 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++        n0000000a:port1 -> n0000000d
++        n0000000a:port1 -> n00000013 [style=dashed]
++        n0000000a:port1 -> n00000019 [style=dashed]
++        n0000000a:port1 -> n0000001f [style=dashed]
++        n0000000d [label="rkcif-mipi0-id0\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
++        n00000013 [label="rkcif-mipi0-id1\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
++        n00000019 [label="rkcif-mipi0-id2\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
++        n0000001f [label="rkcif-mipi0-id3\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
++        n00000025 [label="{{} | it6801 2-0048\n/dev/v4l-subdev2 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
++        n00000025:port0 -> n00000001:port0
++        n00000029 [label="{{<port0> 0} | rockchip-mipi-csi fdfb0000.csi\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
++        n00000029:port1 -> n0000000a:port0
++        n0000002e [label="{{} | imx415 4-001a\n/dev/v4l-subdev4 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
++        n0000002e:port0 -> n00000029:port0
++}
+diff --git a/Documentation/admin-guide/media/rkcif.rst b/Documentation/admin-guide/media/rkcif.rst
+new file mode 100644
+index 000000000000..f35f644a54a0
+--- /dev/null
++++ b/Documentation/admin-guide/media/rkcif.rst
+@@ -0,0 +1,83 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- 	if (unlikely(EXFAT_B_TO_CLU_ROUND_UP(info->size, sbi) > sbi->used_clusters)) {
- 		exfat_fs_error(sb, "data size is invalid(%lld)", info->size);
- 		return -EIO;
++=========================================
++Rockchip Camera Interface (CIF)
++=========================================
++
++Introduction
++============
++
++The Rockchip Camera Interface (CIF) is featured in many Rockchip SoCs in
++different variants.
++The different variants are combinations of common building blocks, such as
++
++* INTERFACE blocks of different types, namely
++
++  * the Digital Video Port (DVP, a parallel data interface)
++  * the interface block for the MIPI CSI-2 receiver
++
++* CROP units
++
++* MIPI CSI-2 receiver (not available on all variants): This unit is referred
++  to as MIPI CSI HOST in the Rockchip documentation.
++  Technically, it is a separate hardware block, but it is strongly coupled to
++  the CIF and therefore included here.
++
++* MUX units (not available on all variants) that pass the video data to an
++  image signal processor (ISP)
++
++* SCALE units (not available on all variants)
++
++* DMA engines that transfer video data into system memory using a
++  double-buffering mechanism called ping-pong mode
++
++* Support for four streams per INTERFACE block (not available on all
++  variants), e.g., for MIPI CSI-2 Virtual Channels (VCs)
++
++This document describes the different variants of the CIF, their hardware
++layout, as well as their representation in the media controller centric rkcif
++device driver, which is located under drivers/media/platform/rockchip/rkcif.
++
++Variants
++========
++
++Rockchip PX30 Video Input Processor (VIP)
++-----------------------------------------
++
++The PX30 Video Input Processor (VIP) features a digital video port that accepts
++parallel video data or BT.656.
++Since these protocols do not feature multiple streams, the VIP has one DMA
++engine that transfers the input video data into system memory.
++
++The rkcif driver represents this hardware variant by exposing one V4L2 subdevice
++(the DVP INTERFACE/CROP block) and one V4L2 device (the DVP DMA engine).
++
++Rockchip RK3568 Video Capture (VICAP)
++-------------------------------------
++
++The RK3568 Video Capture (VICAP) unit features a digital video port and a MIPI
++CSI-2 receiver that can receive video data independently.
++The DVP accepts parallel video data, BT.656 and BT.1120.
++Since the BT.1120 protocol may feature more than one stream, the RK3568 VICAP
++DVP features four DMA engines that can capture different streams.
++Similarly, the RK3568 VICAP MIPI CSI-2 receiver features four DMA engines to
++handle different Virtual Channels (VCs).
++
++The rkcif driver represents this hardware variant by exposing up to three V4L2
++subdevices:
++
++* rkcif-dvp0: INTERFACE/CROP block for the DVP
++* rockchip-mipi-csi fdfb0000.csi: MIPI CSI-2 receiver
++* rkcif-mipi0: INTERFACE/CROP block for the MIPI CSI-2 receiver
++
++and up to five V4L2 devices:
++
++* rkcif-dvp0-id0: The support for multiple streams on the DVP is not yet
++  implemented, as it is hard to find test hardware. Thus, this video device
++  represents the first DMA engine of the RK3568 DVP.
++* rkcif-mipi0-id[0...3]: The four DMA engines of the RK3568 MIPI CSI-2
++  receiver. Each DMA engine can capture a certain MIPI CSI-2 Virtual Channel.
++
++.. kernel-figure:: rkcif-rk3568-vicap.dot
++    :alt:   Topology of the RK3568 Video Capture (VICAP) unit
++    :align: center
+diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
+index 3bac5165b134..694fad685ff5 100644
+--- a/Documentation/admin-guide/media/v4l-drivers.rst
++++ b/Documentation/admin-guide/media/v4l-drivers.rst
+@@ -25,6 +25,7 @@ Video4Linux (V4L) driver-specific documentation
+ 	qcom_camss
+ 	raspberrypi-pisp-be
+ 	rcar-fdp1
++	rkcif
+ 	rkisp1
+ 	raspberrypi-rp1-cfe
+ 	saa7134
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 46126ce2f968..3f9fbb5d73da 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22210,6 +22210,13 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
+ F:	drivers/net/can/rockchip/
+ 
++ROCKCHIP CAMERA INTERFACE (RKCIF) DRIVER
++M:	Mehdi Djait <mehdi.djait@linux.intel.com>
++M:	Michael Riesch <michael.riesch@collabora.com>
++L:	linux-media@vger.kernel.org
++S:	Maintained
++F:	Documentation/admin-guide/media/rkcif*
++
+ ROCKCHIP CRYPTO DRIVERS
+ M:	Corentin Labbe <clabbe@baylibre.com>
+ L:	linux-crypto@vger.kernel.org
+
 -- 
-2.43.0
+2.39.5
+
 
 
