@@ -1,242 +1,283 @@
-Return-Path: <linux-kernel+bounces-853440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44946BDBABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:43:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894D1BDBAAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29053AD4EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34A81891A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0F22E9722;
-	Tue, 14 Oct 2025 22:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2272C2D8764;
+	Tue, 14 Oct 2025 22:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pS1DcPtW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="i6D/lyue"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4B72405FD;
-	Tue, 14 Oct 2025 22:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F76A259CA5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760481798; cv=none; b=QsWcROdgfSV5BBPJW29tbIwJQrdll6jGVd+oWkTfQ05qc/gXjphPAti3RuF69JxGYVbFDwJalZ1PW+Cr/TLY5ZLpluGQb6TlYa/hFsEQ1uHdVLnfZqS5YrHcdsSYUua8FGr3+lnlqoY0uOXFFhHhO+GmbueXfeawhJVKU7vcid0=
+	t=1760481706; cv=none; b=SPciRSjf/tlevX7bXKvMy9odQSZShi8vGQh4vUbILg98LIrkrFV+LVg1n+3OFg2nydC+0okn/GhjFVMHgnl8nIJ5Ze3dC1nN+/DgpmcNFTZE//9yYJe4MEtYFREoqNl0niU5bU4V1XWKI4a2otswUETRGIEkNQV+NSCE7GmIzNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760481798; c=relaxed/simple;
-	bh=MLrJat3xYrtBUlgpr4HqaIIP/bFxWTF5YaEXdnEHebQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R72Ysvn5syYBa8yCBXfUAuG2kYU3sTE37A2nR9Jx3bs1dHAukEn/yP++dvOqVUizp+w1XuJwv2EEEGER7a2OLjhhkYOqmwHk2/T2QTnUwm16SXYVPqv1LL0b0woEZK3jG47HR+o8Q0SLrYNHd972V9t4GSmDb/w7SIFJqp+6JOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pS1DcPtW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554DAC4CEE7;
-	Tue, 14 Oct 2025 22:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760481797;
-	bh=MLrJat3xYrtBUlgpr4HqaIIP/bFxWTF5YaEXdnEHebQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pS1DcPtWiaKQJMW1RscipQUHJH2tnusFQAFw/epGKlmGoVgwpo9YCoFRyMoiRgDfo
-	 IifKSzdS8QmFbY7VTA46SzyHLrV/J7UHM0ow0f91b6vV2K3fRUCwYZWx/Bsc75txAs
-	 iz7Xbq0iPbwyBJnpQqf5T4Iy1pK8BmYLlL8rFhtTQTss9dF/4EKmD86fdZ/bNZbeoF
-	 dZmqouyUICYYJujqpWfYJbHoGvfp6kSWNoG4uzI6TF2Vul9onYhjjBzTC/XawZq3Tx
-	 X8RxuYQtB/fTiqR8GF/AMGDerMd0mgQtNPI48G+qI1LrKZdDMdCTZ0xzXiWA760naC
-	 Us8y0jP/IDOdA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>
-Cc: linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: watchdog: Convert marvell,orion-wdt to DT schema
-Date: Tue, 14 Oct 2025 17:41:26 -0500
-Message-ID: <20251014224127.1212608-2-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760481706; c=relaxed/simple;
+	bh=MbRQFribj+5STwgaWMFF3WBwk/TcGInw+Ndx6s4fwT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qb+cDpjBwkHvxogJnJlE/WLOIYdnc/oyrlIccic9q33CPCLecE3/eSHXpHcZtoZuH7AFp1Zg4+m3CmGke2boNKIPBo3cH03lIuSuK7yZTDvCY4ltkpBnS06MQJ+/qvgrXLUA8VXWxhnXCUGvNwFL2NDqo7PVshOoVVf3fUdYTWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=i6D/lyue; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id 8m7pv0jdLaPqL8niBvpduw; Tue, 14 Oct 2025 22:41:43 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 8ni9vOOA225G78niAva65P; Tue, 14 Oct 2025 22:41:42 +0000
+X-Authority-Analysis: v=2.4 cv=LuqSymdc c=1 sm=1 tr=0 ts=68eed1a6
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=HaFmDPmJAAAA:8
+ a=vM3gs7XVnYeaolmWJR8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1h7AsFu1o7hpH/VvaWjvJ1mc5DROWm0EZY2CZM9c6zk=; b=i6D/lyueiejs9mWI6IaG7hUb+J
+	2faXEfA4RxC6kvu0ivMYfsr+3oxGVfXG6GQ5bGQF0CgA7ui0oiT1DI+Ufd5vshTByeRDqiliatBq5
+	/YcaiOoilHu0W9qKrpui1ePxqTNdKFkxF3tG6Ker2Nwo2EwbSRrBKAmrKNCWdx5eiafV7y4ebuSgW
+	hAULpIqQIa65mKFINvYwVR8HpIiDZHPO+cv/ehYAp0JbUaDRTe9Hei3zu8FqSPWEO/gS42GYANZQO
+	NA4srgXt2rmNCNKdq/rei3UnBCf9KtLzrF+LY5OXZLXugyP1SKoPTx52MfM6ESp0ZGp8ruY9lRtPd
+	IeWNzTag==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:53688 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <re@w6rz.net>)
+	id 1v8ni9-00000000nz7-3GFL;
+	Tue, 14 Oct 2025 16:41:41 -0600
+Message-ID: <18ef2c73-fb10-47b3-838f-bc9d3fd2dbc2@w6rz.net>
+Date: Tue, 14 Oct 2025 15:41:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, Conor Dooley <conor@kernel.org>,
+ bhelgaas@google.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>,
+ Paul Walmsley <pjw@kernel.org>, Greentime Hu <greentime.hu@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, regressions@lists.linux.dev
+References: <20251013212801.GA865570@bhelgaas>
+ <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
+ <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
+ <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
+ <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
+ <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v8ni9-00000000nz7-3GFL
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:53688
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 6
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFyG2dX94J7cDLsTuX+Tqk13+k/0QfFFUGs3l9slBXFSjjs5TkLV+Rp1Or3FMeywPkkxz37Lmp/qaFJuysjUID7HVMXFOv2nTr8ebcOoz7mt69Owl0Nt
+ FMFlucMj2WoJWFSZfSDEYzp/blnHDUddM6DxWH2B47jC2fgE0rxqeKt/eAOI9KwXTwfwwHUOg4Pg2sPS0XNB798UM/NVfnYs9GI=
 
-Convert the Marvell Orion and Armada watchdog binding to DT schema
-format. It's a straight-forward conversion.
+On 10/14/25 09:25, Manivannan Sadhasivam wrote:
+> On Mon, Oct 13, 2025 at 10:52:48PM -0700, Ron Economos wrote:
+>> On 10/13/25 22:36, Krishna Chaitanya Chundru wrote:
+>>>
+>>> On 10/14/2025 10:56 AM, Ron Economos wrote:
+>>>> On 10/13/25 22:20, Krishna Chaitanya Chundru wrote:
+>>>>>
+>>>>> On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
+>>>>>> [+cc FU740 driver folks, Conor, regressions]
+>>>>>>
+>>>>>> On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
+>>>>>>> The SiFive FU740 PCI driver fails on the HiFive
+>>>>>>> Unmatched board with Linux
+>>>>>>> 6.18-rc1. The error message is:
+>>>>>>>
+>>>>>>> [    3.166624] fu740-pcie e00000000.pcie: host bridge
+>>>>>>> /soc/pcie@e00000000
+>>>>>>> ranges:
+>>>>>>> [    3.166706] fu740-pcie e00000000.pcie:       IO
+>>>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
+>>>>>>> [    3.166767] fu740-pcie e00000000.pcie:      MEM
+>>>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
+>>>>>>> [    3.166805] fu740-pcie e00000000.pcie:      MEM
+>>>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
+>>>>>>> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
+>>>>>>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
+>>>>>>> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
+>>>>>>> [    3.579552] fu740-pcie e00000000.pcie: Failed to
+>>>>>>> configure iATU in ECAM
+>>>>>>> mode
+>>>>>>> [    3.579655] fu740-pcie e00000000.pcie: probe with
+>>>>>>> driver fu740-pcie
+>>>>>>> failed with error -22
+>>>>>>>
+>>>>>>> The normal message (on Linux 6.17.2) is:
+>>>>>>>
+>>>>>>> [    3.381487] fu740-pcie e00000000.pcie: host bridge
+>>>>>>> /soc/pcie@e00000000
+>>>>>>> ranges:
+>>>>>>> [    3.381584] fu740-pcie e00000000.pcie:       IO
+>>>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
+>>>>>>> [    3.381682] fu740-pcie e00000000.pcie:      MEM
+>>>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
+>>>>>>> [    3.381724] fu740-pcie e00000000.pcie:      MEM
+>>>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
+>>>>>>> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll
+>>>>>>> T, 8 ob, 8 ib, align
+>>>>>>> 4K, limit 4096G
+>>>>>>> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
+>>>>>>> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+>>>>>>> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+>>>>>>> [    3.988164] fu740-pcie e00000000.pcie: PCI host
+>>>>>>> bridge to bus 0000:00
+>>>>>>>
+>>>>>>> Reverting the following commits solves the issue.
+>>>>>>>
+>>>>>>> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc:
+>>>>>>> Support ECAM mechanism by
+>>>>>>> enabling iATU 'CFG Shift Feature'
+>>>>>>>
+>>>>>>> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom:
+>>>>>>> Prepare for the DWC ECAM
+>>>>>>> enablement
+>>>>>>>
+>>>>>>> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc:
+>>>>>>> Prepare the driver for
+>>>>>>> enabling ECAM mechanism using iATU 'CFG Shift Feature'
+>>>>>> As Conor pointed out, we can't fix a code regression with a DT change.
+>>>>>>
+>>>>>> #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the
+>>>>>> driver for enabling ECAM mechanism using iATU 'CFG Shift
+>>>>>> Feature'")
+>>>>> Hi Conor,
+>>>>>
+>>>>> Can you try with this patch and see if it is fixing the issue.
+>>>>> diff --git a/drivers/pci/controller/dwc/pcie-fu740.c
+>>>>> b/drivers/pci/controller/dwc/pcie-fu740.c
+>>>>> index 66367252032b..b5e0f016a580 100644
+>>>>> --- a/drivers/pci/controller/dwc/pcie-fu740.c
+>>>>> +++ b/drivers/pci/controller/dwc/pcie-fu740.c
+>>>>> @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct
+>>>>> platform_device *pdev)
+>>>>>
+>>>>>          platform_set_drvdata(pdev, afp);
+>>>>>
+>>>>> +       pci->pp.native_ecam = true;
+>>>>> +
+>>>>>          return dw_pcie_host_init(&pci->pp);
+>>>>>   }
+>>>>>
+>>>>> - Krishna Chaitanya.
+>>>>>
+>>>> I've already tried it. It doesn't work. Same error message as before.
+>>> Can you share us dmesg logs for this change.
+>>>
+>>> - Krishna Chaitanya.
+>> [    3.159763] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
+>> ranges:
+>> [    3.159853] fu740-pcie e00000000.pcie:       IO
+>> 0x0060080000..0x006008ffff -> 0x0060080000
+>> [    3.159916] fu740-pcie e00000000.pcie:      MEM
+>> 0x0060090000..0x007fffffff -> 0x0060090000
+>> [    3.159953] fu740-pcie e00000000.pcie:      MEM
+>> 0x2000000000..0x3fffffffff -> 0x2000000000
+>> [    3.160039] fu740-pcie e00000000.pcie: ECAM at [mem
+>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
+>> [    3.571421] fu740-pcie e00000000.pcie: No iATU regions found
+>> [    3.571472] fu740-pcie e00000000.pcie: Failed to configure iATU in ECAM
+>> mode
+>> [    3.571529] fu740-pcie e00000000.pcie: probe with driver fu740-pcie
+>> failed with error -22
+>>
+>> Same as before the change. The entire log is here:
+>>
+>> https://www.w6rz.net/dmesg.txt
+>>
+> Weird that the driver still creates ECAM even after skipping it using the flag.
+> The flag is not meant for that purpose, but it should've worked anyway.
+>
+> Can you try this diff and share the dmesg log?
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 20c9333bcb1c..58080928df9f 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -523,8 +523,12 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
+>          pp->cfg0_size = resource_size(res);
+>          pp->cfg0_base = res->start;
+>
+> +       dev_info(dev, "%s: %d native_ecam: %d", __func__, __LINE__,
+> +pp->native_ecam);
+> +
+>          pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res);
+>          if (pp->ecam_enabled) {
+> +               dev_info(dev, "%s: %d ECAM ENABLED", __func__, __LINE__);
+>                  ret = dw_pcie_create_ecam_window(pp, res);
+>                  if (ret)
+>                          return ret;
+> @@ -533,6 +537,7 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
+>                  pp->bridge->sysdata = pp->cfg;
+>                  pp->cfg->priv = pp;
+>          } else {
+> +               dev_info(dev, "%s: %d ECAM DISABLED", __func__, __LINE__);
+>                  pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
+>                  if (IS_ERR(pp->va_cfg0_base))
+>                          return PTR_ERR(pp->va_cfg0_base);
+>
+> - Mani
+>
+After testing with this patch, I must have transferred the wrong image 
+to the target when testing before. The "pci->pp.native_ecam = true;" 
+patch to pcie-fu740.c does work. Here's the message with the debug prints:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2:
- - Fix order of clock descriptions
- - Add 2nd interrupt found on some Armada platforms
- - Add reference to watchdog.yaml and drop timeout-sec
-
- .../devicetree/bindings/watchdog/marvel.txt   |  45 --------
- .../bindings/watchdog/marvell,orion-wdt.yaml  | 100 ++++++++++++++++++
- 2 files changed, 100 insertions(+), 45 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/watchdog/marvel.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/marvell,orion-wdt.yaml
-
-diff --git a/Documentation/devicetree/bindings/watchdog/marvel.txt b/Documentation/devicetree/bindings/watchdog/marvel.txt
-deleted file mode 100644
-index c1b67a78f00c..000000000000
---- a/Documentation/devicetree/bindings/watchdog/marvel.txt
-+++ /dev/null
-@@ -1,45 +0,0 @@
--* Marvell Orion Watchdog Time
--
--Required Properties:
--
--- Compatibility : "marvell,orion-wdt"
--		  "marvell,armada-370-wdt"
--		  "marvell,armada-xp-wdt"
--		  "marvell,armada-375-wdt"
--		  "marvell,armada-380-wdt"
--
--- reg		: Should contain two entries: first one with the
--		  timer control address, second one with the
--		  rstout enable address.
--
--For "marvell,armada-375-wdt" and "marvell,armada-380-wdt":
--
--- reg		: A third entry is mandatory and should contain the
--                  shared mask/unmask RSTOUT address.
--
--Clocks required for compatibles = "marvell,orion-wdt",
--				  "marvell,armada-370-wdt":
--- clocks : Must contain a single entry describing the clock input
--
--Clocks required for compatibles = "marvell,armada-xp-wdt"
--				  "marvell,armada-375-wdt"
--				  "marvell,armada-380-wdt":
--- clocks : Must contain an entry for each entry in clock-names.
--- clock-names : Must include the following entries:
--  "nbclk" (L2/coherency fabric clock),
--  "fixed" (Reference 25 MHz fixed-clock).
--
--Optional properties:
--
--- interrupts	: Contains the IRQ for watchdog expiration
--- timeout-sec	: Contains the watchdog timeout in seconds
--
--Example:
--
--	wdt@20300 {
--		compatible = "marvell,orion-wdt";
--		reg = <0x20300 0x28>, <0x20108 0x4>;
--		interrupts = <3>;
--		timeout-sec = <10>;
--		clocks = <&gate_clk 7>;
--	};
-diff --git a/Documentation/devicetree/bindings/watchdog/marvell,orion-wdt.yaml b/Documentation/devicetree/bindings/watchdog/marvell,orion-wdt.yaml
-new file mode 100644
-index 000000000000..fdc7bc45dfde
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/marvell,orion-wdt.yaml
-@@ -0,0 +1,100 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/marvell,orion-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell Orion Watchdog Timer
-+
-+maintainers:
-+  - Andrew Lunn <andrew@lunn.ch>
-+  - Gregory Clement <gregory.clement@bootlin.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - marvell,orion-wdt
-+      - marvell,armada-370-wdt
-+      - marvell,armada-xp-wdt
-+      - marvell,armada-375-wdt
-+      - marvell,armada-380-wdt
-+
-+  reg:
-+    minItems: 2
-+    items:
-+      - description: Timer control register address
-+      - description: RSTOUT enable register address
-+      - description: Shared mask/unmask RSTOUT register address
-+
-+  clocks:
-+    minItems: 1
-+    items:
-+      - description: L2/coherency fabric clock input
-+      - description: Reference 25 MHz fixed-clock supply
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: nbclk
-+      - const: fixed
-+
-+  interrupts:
-+    minItems: 1
-+    items:
-+      - description: timeout
-+      - description: pre-timeout
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - marvell,armada-375-wdt
-+              - marvell,armada-380-wdt
-+    then:
-+      properties:
-+        reg:
-+          minItems: 3
-+    else:
-+      properties:
-+        reg:
-+          maxItems: 2
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - marvell,armada-xp-wdt
-+              - marvell,armada-375-wdt
-+              - marvell,armada-380-wdt
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+        clock-names:
-+          minItems: 2
-+        interrupts:
-+          minItems: 2
-+
-+      required:
-+        - clock-names
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    watchdog@20300 {
-+        compatible = "marvell,orion-wdt";
-+        reg = <0x20300 0x28>, <0x20108 0x4>;
-+        interrupts = <3>;
-+        timeout-sec = <10>;
-+        clocks = <&gate_clk 7>;
-+    };
--- 
-2.51.0
+[    3.227746] fu740-pcie e00000000.pcie: host bridge 
+/soc/pcie@e00000000 ranges:
+[    3.227833] fu740-pcie e00000000.pcie:       IO 
+0x0060080000..0x006008ffff -> 0x0060080000
+[    3.227896] fu740-pcie e00000000.pcie:      MEM 
+0x0060090000..0x007fffffff -> 0x0060090000
+[    3.227934] fu740-pcie e00000000.pcie:      MEM 
+0x2000000000..0x3fffffffff -> 0x2000000000
+[    3.227993] fu740-pcie e00000000.pcie: dw_pcie_host_get_resources: 
+526 native_ecam: 1
+[    3.228019] fu740-pcie e00000000.pcie: dw_pcie_host_get_resources: 
+539 ECAM DISABLED
+[    3.331449] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, 
+align 4K, limit 4096G
+[    3.531131] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
+[    3.731132] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+[    3.835131] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
+[    3.835465] fu740-pcie e00000000.pcie: PCI host bridge to bus 0000:00
 
 
