@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-851901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F7CBD7907
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:28:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E12BD7910
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A551920E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:28:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB6834E4508
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291FC3064BD;
-	Tue, 14 Oct 2025 06:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E152BE657;
+	Tue, 14 Oct 2025 06:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMBrqawU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l6v6uzQV"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E822BE037
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76A3289811
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760423235; cv=none; b=a41zpcRPWrkrW06usZMQgBmPjXfN1ePNHhjuzT5wO6FgoHJS+TJ35TYWiHxOvAakyuWUFd/j0IHNIYUKv4yu1elNPDdSm5LVJLfhcudLC/oWzcauKkUjBBFutYPtnh6Lehcb/jHvEMzdzDipGSDeOLdLAYAQKYcRqY3/ntRcUWE=
+	t=1760423314; cv=none; b=kuuM09HoyOyIuYro96n/sJNqY9iIe4uqrodX/wTPEM0yqXjhaqK1lgv2eYkMsqU0ebNYY7Esqcm0cxSAh6f+MQBJ9Z9iKXbEo3WJXCKN9eNxc/10z2mNG0q7DbaQu89P2y7l9//42hxNpwnj7/xn06pSZRrkSFw6+7JIjrJ0VxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760423235; c=relaxed/simple;
-	bh=PNTKEmXKtFVp+YUrykXB7+qvHmZ2GbnocnQ5aHbHOFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FncLolqeSY8rTx8rwavYAs050/cLfG6uqXXN5FwzYZG1NzCXZbiRy8HvWhEx6bc0EE91sGfAF7nITO++0VXk3Y9ogxbgEBa+fYVumzw6zJql+8XYEfGzmeai/SZakBlAApfwdW9E9HI9bHGJM3vBpBUsCdufG59xM/E7kG7QaWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMBrqawU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F3AC4CEE7;
-	Tue, 14 Oct 2025 06:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760423234;
-	bh=PNTKEmXKtFVp+YUrykXB7+qvHmZ2GbnocnQ5aHbHOFo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lMBrqawULRzvYy0wurRKyyANwKU0YOvBSGJ2zy40SVWKz4mRmwYIRlBJ47cMDgggp
-	 hwo3RASu8FI70WBUgEJ/78paOSgtC44iIGy44VWTGeXLO/bvBsHz+FIMaM/UrSZBmH
-	 TcooA1nviR3eWioycxFliXC0gDmYV+aNQ0+QnWMrjzxsh7MoyEaSnSyPeOFWy4VVFD
-	 4C+VTDkXfO9y6DgVxH3f15+ySCUimEJ1yW7aZLgpvRgNM0Sj5WvRvFta+z0S/FKl72
-	 d31LFFIOoLNub/DMtJ9dAynQepqgskp7f5WNo4eMiPEsGrt7Z2547HPNzSfXVjbWYE
-	 NJNW8RyLUgTJw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH 4/4] f2fs: use f2fs_filemap_get_folio() to support fault injection
-Date: Tue, 14 Oct 2025 14:27:04 +0800
-Message-ID: <20251014062704.1734984-4-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
-In-Reply-To: <20251014062704.1734984-1-chao@kernel.org>
-References: <20251014062704.1734984-1-chao@kernel.org>
+	s=arc-20240116; t=1760423314; c=relaxed/simple;
+	bh=OpDb8zcmf7OOOUcsljWtaBvRup8+IOw7WICjSqXWuEE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CI8IeJS4zL/6RbZcl9SzD0iBYyyOTBBkNUHb+QxsRSg0LTIVHZJMWHDlmGJdBbbw3ZfqSx1iejUz6awe75DQa2PCsoMBokZq6dU2BcCom9UtlUokS0bhZ1qUCJDg5pBEf6zA0vdk/LB1K5S5MS/6HWhWSavJPVK+B+LzaaXp2Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l6v6uzQV; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7b4f7a855baso3417807a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760423312; x=1761028112; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=brM2AXzbshOug5S8YTD/rMQwcF1ZQ1CEjKwrbSaUSno=;
+        b=l6v6uzQV7BveO2h89PmRTKoHW8euu9I+keWirj34S0msvsJW2fBEG+HQhQXHtVZRyZ
+         bAmYTGJHxisFUgCov0+FcZe5K3abP4f2iZQ1Mn8bqT1S5RdQ5PBur1UZht0L9S11fGL9
+         qvghedPpPUz2aOXxXqme5WX3y1mfUmjSYsaQfIKUId1PlcXO3i6iGhpRgl9QMDKyZQIm
+         p/ozVMclJLwaU7GrB/cH5E3zGZTbcBdanWzalRPrUD7jI774MtRkJCGCAMYwWOcp9/nR
+         uJ2MuQ+FFOGkY5hm9dqA9Nb7ZFoYr/vo+y60HABh2tfrPuBcSM3/LfuL472B1WxPBJ25
+         5sBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760423312; x=1761028112;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=brM2AXzbshOug5S8YTD/rMQwcF1ZQ1CEjKwrbSaUSno=;
+        b=AebVRuqtPbvBiRCmAupPhU7cJZblVaszorJqLUXlHOAMF2m1xH8+Z/g+62QS/p/tVF
+         PtfXvJzpT38hLrpFJD2/ObPVmaHt1g+y7QR132ESvP/M2UjF4hsclP4VvdmUcfW2xiZC
+         tGbQWfpE1VFPAuUEb0r8D//Kp8t7Xs7v2jNMO2pd6lgMMRV10i/8uh2wb9nXYMhB0fFz
+         p3EUtwboFGXzQ1vV/fXVllMRHKTRr9xEn+3eu4r9bqS2iCLUt6HxfAp5muWcNPq9xwiK
+         Ms0xUl58DDXKHOfLxPekRWgfdPj3mnYkc+SW5gQaUH7MktaBbv7aWbIusA/1DWolDJdh
+         t6mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIrYdtXElzvvxQEZt/ZdKedYuz2wV3EqI+x833uE98XyZhsMLAPL9k3njJ7uLZAAXsF+SzDP8qDhV3k9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9BQW0apJ0bB51cVArO/oPEiXSUQXrz2tJSW8s0/od8eaXqWSi
+	DtSc8tlc69ii0+N8cphIn7bH6pXSSgzT5TVjYXp4kSjiFi8iGZPx6Cfb7cMlUE1nfg==
+X-Gm-Gg: ASbGncskkFYcs8Ldc2Hc82k40Lh1id0U8WB8OOlZdsZWrwLD7m5qZyOtWTiJQBFISxH
+	BBne63SC7HRX9KJhpALjxeSqfFBPu3IdPTDHtAWrTP5c1EYXGhhG9hgkVv7RFqA3LaxHqkKhN/k
+	E8nNQKJhYMvbz5sneBvNpeqv9js9xA2kAy+cd2o/ZwyaKaVZj8oz5oUpZOcxJ7p1ulXiq5rWogs
+	va1b7ZKK24HMMyTWu2W9iRw4FGCe6p5TzD13tpec92+Yx3vRZrODSH7pdrL6fPkwnl/M40BjCTn
+	i9dDwIeTUv3vHCkRhjJxZzBlxEOIxkAIQtQrl53YRQWVHj3ipr1EI/Taf3QGi6zhYktabrXaysC
+	TM/9U7MjM1DAGQXtCgCqrkx9P6egH/fJBToIb58EgtAB/Ofc2VrptLy2hS5YEDDnxfGl5H2wm1L
+	1F9o+XrVxg1O0oU1hfcnBnrqul/72DFzlX
+X-Google-Smtp-Source: AGHT+IHpAC62Y/PpF9N39pOEV4oQ+R34+qD97A9mi5Ss82ojK2v3fSuKrUmSuLa+MCNnAOAp+Ihp0w==
+X-Received: by 2002:a05:6830:710c:b0:744:f113:fef8 with SMTP id 46e09a7af769-7c0df7becc1mr11002097a34.35.1760423311621;
+        Mon, 13 Oct 2025 23:28:31 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f915eed4sm4209133a34.36.2025.10.13.23.28.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 23:28:30 -0700 (PDT)
+Date: Mon, 13 Oct 2025 23:28:16 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Kalesh Singh <kaleshsingh@google.com>
+cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
+    david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+    pfalcato@suse.de, kernel-team@android.com, android-mm@google.com, 
+    stable@vger.kernel.org, SeongJae Park <sj@kernel.org>, 
+    Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+    Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+    Jann Horn <jannh@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+    Masami Hiramatsu <mhiramat@kernel.org>, 
+    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+    Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+    Juri Lelli <juri.lelli@redhat.com>, 
+    Vincent Guittot <vincent.guittot@linaro.org>, 
+    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+    Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+    Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+    linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+    linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] mm: fix off-by-one error in VMA count limit
+ checks
+In-Reply-To: <20251013235259.589015-2-kaleshsingh@google.com>
+Message-ID: <144f3ee6-1a5f-57fc-d5f8-5ce54a3ac139@google.com>
+References: <20251013235259.589015-1-kaleshsingh@google.com> <20251013235259.589015-2-kaleshsingh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Use f2fs_filemap_get_folio() instead of __filemap_get_folio() in:
-- f2fs_find_data_folio
-- f2fs_write_begin
-- f2fs_read_merkle_tree_page
+On Mon, 13 Oct 2025, Kalesh Singh wrote:
 
-So that, we can trigger fault injection in those places.
+> The VMA count limit check in do_mmap() and do_brk_flags() uses a
+> strict inequality (>), which allows a process's VMA count to exceed
+> the configured sysctl_max_map_count limit by one.
+> 
+> A process with mm->map_count == sysctl_max_map_count will incorrectly
+> pass this check and then exceed the limit upon allocation of a new VMA
+> when its map_count is incremented.
+> 
+> Other VMA allocation paths, such as split_vma(), already use the
+> correct, inclusive (>=) comparison.
+> 
+> Fix this bug by changing the comparison to be inclusive in do_mmap()
+> and do_brk_flags(), bringing them in line with the correct behavior
+> of other allocation paths.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: <stable@vger.kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Pedro Falcato <pfalcato@suse.de>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+> Acked-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> ---
+> 
+> Changes in v3:
+>  - Collect Reviewed-by and Acked-by tags.
+> 
+> Changes in v2:
+>  - Fix mmap check, per Pedro
+> 
+>  mm/mmap.c | 2 +-
+>  mm/vma.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 644f02071a41..da2cbdc0f87b 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -374,7 +374,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+>  		return -EOVERFLOW;
+>  
+>  	/* Too many mappings? */
+> -	if (mm->map_count > sysctl_max_map_count)
+> +	if (mm->map_count >= sysctl_max_map_count)
+>  		return -ENOMEM;
+>  
+>  	/*
+> diff --git a/mm/vma.c b/mm/vma.c
+> index a2e1ae954662..fba68f13e628 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -2797,7 +2797,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
+>  		return -ENOMEM;
+>  
+> -	if (mm->map_count > sysctl_max_map_count)
+> +	if (mm->map_count >= sysctl_max_map_count)
+>  		return -ENOMEM;
+>  
+>  	if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
+> -- 
+> 2.51.0.760.g7b8bcc2412-goog
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c   | 4 ++--
- fs/f2fs/verity.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Sorry for letting you go so far before speaking up (I had to test what
+I believed to be true, and had hoped that meanwhile one of your many
+illustrious reviewers would say so first, but no): it's a NAK from me.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0279340336be..f993ffed89df 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1273,7 +1273,7 @@ struct folio *f2fs_find_data_folio(struct inode *inode, pgoff_t index,
- 	struct address_space *mapping = inode->i_mapping;
- 	struct folio *folio;
- 
--	folio = __filemap_get_folio(mapping, index, FGP_ACCESSED, 0);
-+	folio = f2fs_filemap_get_folio(mapping, index, FGP_ACCESSED, 0);
- 	if (IS_ERR(folio))
- 		goto read;
- 	if (folio_test_uptodate(folio))
-@@ -3567,7 +3567,7 @@ static int f2fs_write_begin(const struct kiocb *iocb,
- 	 * Do not use FGP_STABLE to avoid deadlock.
- 	 * Will wait that below with our IO control.
- 	 */
--	folio = __filemap_get_folio(mapping, index,
-+	folio = f2fs_filemap_get_folio(mapping, index,
- 				FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
- 	if (IS_ERR(folio)) {
- 		err = PTR_ERR(folio);
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index f0ab9a3c7a82..05b935b55216 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -263,7 +263,7 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
- 
- 	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
- 
--	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-+	folio = f2fs_filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
- 	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
- 		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
- 
--- 
-2.49.0
+These are not off-by-ones: at the point of these checks, it is not
+known whether an additional map/vma will have to be added, or the
+addition will be merged into an existing map/vma.  So the checks
+err on the lenient side, letting you get perhaps one more than the
+sysctl said, but not allowing any more than that.
 
+Which is all that matters, isn't it? Limiting unrestrained growth.
+
+In this patch you're proposing to change it from erring on the
+lenient side to erring on the strict side - prohibiting merges
+at the limit which have been allowed for many years.
+
+Whatever one thinks about the merits of erring on the lenient versus
+erring on the strict side, I see no reason to make this change now,
+and most certainly not with a Fixes Cc: stable. There is no danger
+in the current behaviour; there is danger in prohibiting what was
+allowed before.
+
+As to the remainder of your series: I have to commend you for doing
+a thorough and well-presented job, but I cannot myself see the point in
+changing 21 files for what almost amounts to a max_map_count subsystem.
+I call it misdirected effort, not at all to my taste, which prefers the
+straightforward checks already there; but accept that my taste may be
+out of fashion, so won't stand in the way if others think it worthwhile.
+
+Hugh
 
