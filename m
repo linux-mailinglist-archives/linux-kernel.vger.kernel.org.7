@@ -1,137 +1,77 @@
-Return-Path: <linux-kernel+bounces-852202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A769EBD86EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:27:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC48BD86F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 987194F97B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4A4420778
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381852E7648;
-	Tue, 14 Oct 2025 09:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4352E7BAD;
+	Tue, 14 Oct 2025 09:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0PpmZW7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5Xx93bt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1482080C1;
-	Tue, 14 Oct 2025 09:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C492DCF6B;
+	Tue, 14 Oct 2025 09:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434032; cv=none; b=uuvDOooqIJIFlZ5NS9tMgWvbndMuedeXOT6NngXOHtrHaXxi3rUmmMvTtj40Jtl1ed94iMY1q3+NB4n7dq/iiZfwRFAOSVs3WFH62FELSXmW0anL6LRXD1Y6zXuewqdWcnvwOfOvTpTcklGZRUxC6i+SjL9fbjauJT2CY00TZDA=
+	t=1760434056; cv=none; b=JP/dHN9spHUP665/q14Fbg+WE+O8JdNl81KzO3jrjFLAgCcLKJIFOyzwQsvwZ6n62GVbeTorD0A5CDJqozh33KUV/miMIa7ryNw+DD7IsfKRUdpDxTG3yOfl+sXCgPl0Qej/4Nr/Mb3t0NEGYIWjSTu9ysqJqcuv7ukj6t/KkqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434032; c=relaxed/simple;
-	bh=uJ91W/Oe+hLKgKfDBdTIEryOTLkn+T9poBz0FLdEPfo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UKhE11O/6T5Nz/D7vmPszbiiIhwV8f6Ho4hQW5ZTCe2mlf+0ZHpnAkyb6wCc1Bu3DPNXbXWWvKPJtWsoHeaoeuJIST2lIm8IB7jlb5iM9uvZTbiduZMjUOs62G9zEPC+72SJ/VVIU4HkSN520ieCJLZfQhfzOp+70U5atWdYpzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0PpmZW7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C600C4CEE7;
-	Tue, 14 Oct 2025 09:27:12 +0000 (UTC)
+	s=arc-20240116; t=1760434056; c=relaxed/simple;
+	bh=RZQAsmOMMg41pdQsZ6dTV2IUjsNDb8CKMzlSCflj2n8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EALc3/aXIOD4UK1UYVn3nLj60+Rn5ZnvBH0QYxy99rXSHYsayDCbH8U+fNH+VAPG82ZYROmZXlUjqDtNqTnm0RejJuXY7vcImcR78aLBEubd5opGbVx0Af+vicimYmxB08NeuUtrZ43H8AD/vv50dW1EKa+J3fBN7se0AFmwUUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5Xx93bt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A6EC4CEE7;
+	Tue, 14 Oct 2025 09:27:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760434032;
-	bh=uJ91W/Oe+hLKgKfDBdTIEryOTLkn+T9poBz0FLdEPfo=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=e0PpmZW7sX/ccukfc2NL0KT8mSFowVtRbsm2X3ZylAbG6hWad4ZqMfx8Q8tjT86Dd
-	 Uoeb62IFoAk3BKcR/8xGpaAUxp1aC3o1kMfLpT7BWi2sxs9bkkYKu7ZWv4HaDDi8qm
-	 VkazGZXN063tw6R1YL+uXtWfWIPxv72yFFiApF0wmLR2yqUnw3wJ4IaJDK92IQUYb6
-	 XE1ywG+W1zjbxzq90LX5btG0KbrVlPaqsUyuHUTyyabNYPLloffyP02RKGxsw5Y1bu
-	 P3Q17PQaBf+MfzM3vxn14Or/ZTF5mtsfdiVUOvRnH+P/4RdvAQUzJZrD1pO0s3lM/w
-	 fYnXap/n4ju2A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F03CCD184;
-	Tue, 14 Oct 2025 09:27:12 +0000 (UTC)
-From: Prasad Kumpatla via B4 Relay <devnull+prasad.kumpatla.oss.qualcomm.com@kernel.org>
-Date: Tue, 14 Oct 2025 14:57:10 +0530
-Subject: [PATCH v2] soc: qcom: pd-mapper: Add Kaanapali compatible
+	s=k20201202; t=1760434055;
+	bh=RZQAsmOMMg41pdQsZ6dTV2IUjsNDb8CKMzlSCflj2n8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=D5Xx93btsixS50gQrKveGsSHnpLTj2f6DpRDiC0/WX1y8rij0/rPpZXYCUAEah3uY
+	 70l3+zYahKAWH6TmIRuR596RpFib7L6RxqN04097XWvUt6D7NqA+mZ36orKsbftxSE
+	 01yyW0l4Nj/OkM9LRlKHqdDh6edsy6xu1ZBmOSOEoyFx5SGOEuPYWEPeAjalloGYzW
+	 AekLxdxKxO0ml8pLxGY6JCbc1vGLFP2EhjDX9JauFShX1feuhA1AMfiwruQqUUZPdy
+	 pZs8NzxcQeHa2buesDC1VBI2k3hf2G09s6vTdRD7WPJSaPd8OA/1tnT7jaSIYR3S1d
+	 5A5Y+9Mcc8E0A==
+Date: Tue, 14 Oct 2025 11:27:32 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Xinpeng Sun <xinpeng.sun@intel.com>
+cc: bentiss@kernel.org, srinivas.pandruvada@linux.intel.com, even.xu@intel.com, 
+    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] HID: intel-thc-hid: intel-quicki2c: Fix wrong type
+ casting
+In-Reply-To: <20251009033108.1212471-1-xinpeng.sun@intel.com>
+Message-ID: <rr345r6p-3sr8-so4r-5r5o-0pq0o033057p@xreary.bet>
+References: <20251009033108.1212471-1-xinpeng.sun@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251014-knp-pdmapper-v2-v2-1-ba44422ac503@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAG0X7mgC/13MywrCMBCF4Vcps3ZKkkaCrnwPcTFNJzZoLiZah
- NJ3N7hw4ebAtzj/CpWL5wrHboXCi68+xQa168DOFK+MfmoGJdReCqnxFjPmKVDOXHBRaNjI0Zn
- BajbQXrmw8+9v8XxpdiUFfM6F6dcRB/XfkSjRWaf1SDwYQ6dUa/940d2mEPo2sG0f20QgkKwAA
- AA=
-X-Change-ID: 20251014-knp-pdmapper-v2-7e71bf73c4e7
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>, 
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760434031; l=1855;
- i=prasad.kumpatla@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
- bh=sCqvfA32ZCOl3TIUlO+J7YRwsshujOttwAP0Dgj/0+A=;
- b=/84Xt5SlsU4+IEZFisXbbIcOZxoiS/C2GvlOxuDvVZ2jn9L/zQ+eub17Jy8qQOSf3uT7eIFop
- 95v6Npr3K4NB5QkrDmdmaJqm07H5Y+pBgI8Gwe6QzhOrH8Fw7OwQCDL
-X-Developer-Key: i=prasad.kumpatla@oss.qualcomm.com; a=ed25519;
- pk=I3mn8JNlYnnm7frqMGXms1Rm2H+0gpAfknMlnBYqCzw=
-X-Endpoint-Received: by B4 Relay for
- prasad.kumpatla@oss.qualcomm.com/20251014 with auth_id=541
-X-Original-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Reply-To: prasad.kumpatla@oss.qualcomm.com
+Content-Type: text/plain; charset=US-ASCII
 
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+On Thu, 9 Oct 2025, Xinpeng Sun wrote:
 
-Add support for the Qualcomm Kaanapali SoC to the protection
-domain mapper. Kaanapali shares the same protection domain
-configuration as SM8550, except charger_pd as it move to SoCCP.
+> The type definition of qcdev->i2c_max_frame_size is already
+> u32, so remove the unnecessary type casting le16_to_cpu.
+> 
+> Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509280841.pxmgBzKW-lkp@intel.com/
 
-Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
----
-Changes in v2:
-- Add separate pd domain data for Kaanapali SoC.
-- Link to v1: https://lore.kernel.org/r/20250924-knp-pdmapper-v1-1-fcf44bae377a@oss.qualcomm.com
----
+Applied to hid.git#for-6.18/upstream-fixes, thanks.
 
----
- drivers/soc/qcom/qcom_pd_mapper.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/soc/qcom/qcom_pd_mapper.c b/drivers/soc/qcom/qcom_pd_mapper.c
-index 6384f271953d..1bcbe69688d2 100644
---- a/drivers/soc/qcom/qcom_pd_mapper.c
-+++ b/drivers/soc/qcom/qcom_pd_mapper.c
-@@ -360,6 +360,15 @@ static const struct qcom_pdm_domain_data mpss_wlan_pd = {
- 	},
- };
- 
-+static const struct qcom_pdm_domain_data *kaanapali_domains[] = {
-+	&adsp_audio_pd,
-+	&adsp_root_pd,
-+	&adsp_sensor_pd,
-+	&cdsp_root_pd,
-+	&mpss_root_pd_gps,
-+	NULL,
-+};
-+
- static const struct qcom_pdm_domain_data *msm8996_domains[] = {
- 	&msm8996_adsp_audio_pd,
- 	&msm8996_adsp_root_pd,
-@@ -552,6 +561,7 @@ static const struct of_device_id qcom_pdm_domains[] __maybe_unused = {
- 	{ .compatible = "qcom,apq8074", .data = NULL, },
- 	{ .compatible = "qcom,apq8084", .data = NULL, },
- 	{ .compatible = "qcom,apq8096", .data = msm8996_domains, },
-+	{ .compatible = "qcom,kaanapali", .data = kaanapali_domains, },
- 	{ .compatible = "qcom,msm8226", .data = NULL, },
- 	{ .compatible = "qcom,msm8909", .data = NULL, },
- 	{ .compatible = "qcom,msm8916", .data = NULL, },
-
----
-base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
-change-id: 20251014-knp-pdmapper-v2-7e71bf73c4e7
-
-Best regards,
 -- 
-Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-
+Jiri Kosina
+SUSE Labs
 
 
