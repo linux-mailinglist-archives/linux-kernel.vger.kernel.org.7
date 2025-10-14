@@ -1,91 +1,66 @@
-Return-Path: <linux-kernel+bounces-852828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC0BBDA03C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:32:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEC3BDA057
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67C6E34C0DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E58F3B39A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB3A2D7D41;
-	Tue, 14 Oct 2025 14:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gANwOdXe"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F902D7D41;
+	Tue, 14 Oct 2025 14:33:16 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8552D248C;
-	Tue, 14 Oct 2025 14:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD192BDC13
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452369; cv=none; b=L5LoAnaWrshWKkD4lNQa3Mv4zHzLmJh3Zaihmyzg51bxiqhIFRt2pNvcTyJhH1KQlC0Dk0X2JzvEmabP9U2duY0kkxWltZzhJTzn5a2z2nkKIBJ6Hf4AJ8UkCiKtl9xrFrJwy1Vo/iHLWjK9qQE0Eo2uSqkl6V/fBttQjlSxTxM=
+	t=1760452396; cv=none; b=afOj6+5ChEFvVchNEvw0X1tgIZbxYFnctuE6b5DUAzDp39gTCSI7LwzJ+nWmY44S/VdneXFlllicd7L9QL/5IFSVBnsIlMXDCmkUK7qyfDCJlu4z0JQOcTsVw/HKrcPKWfn4N1+AUCJ8uwpUGRfFXfapaDkDvPM6SSVsGMEOgPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452369; c=relaxed/simple;
-	bh=oHAN/0DxWPNDDT78S8xHGvdeMdd39Ebo18SZ31HvRdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dyW+wJs0nNLYXTAQfjd/CtFUVVDlXzkf0J/M4/aQsJLI8XYhWtwDqR2+kCNOxDL2tS+eo2ui6oerJhrHT3kmsaTxV24NF2Op/d9u3wdHZ02zNJff7KeFwIIzBNkAi7gU/+DG1KWGxgwpfkXUEMSt5C4B+9tWwwNpJXMlxFXpy9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gANwOdXe; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0GqYhA2elC/r2rvCKhRwX+jvXdEIHrho/9mEfMhvs2g=; b=gANwOdXeFS4A8Uk10aaWilWR7d
-	ySohtwrkya4BSFA9MNyJwI2SZVkT1JJHEAJ1YXe7UWprbY1XwtET/2V4R4oRn4GF67uKnvqNrQQpm
-	yhej7D3Ampn9gV2sdpBOC//k6+7VCRkiUzXc9CAocGziSDmflGDKxlzctCPJMtuj1ame1R/WX62J3
-	/q00WWJeO563d2TrDkgqDV3wLGgpDguZTVQJuU95qNOMg6pvwsczOA0E/TTHHdN4VGFQz3RMBH5p7
-	s4BBoP6jBFf72/l5Iy/B7dE73hYHCsC/5tBuD4pR9oLkR5r5JzFIJiPt40JHliYisLm0SxqKtLxy/
-	LUkZzWEA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8g4v-0000000CSAd-1Vaf;
-	Tue, 14 Oct 2025 14:32:41 +0000
-Date: Tue, 14 Oct 2025 15:32:41 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
- large folios (CONFIG_NO_PAGE_MAPCOUNT)
-Message-ID: <aO5fCT62gZZw9-wQ@casper.infradead.org>
-References: <20250303163014.1128035-1-david@redhat.com>
- <20250303163014.1128035-21-david@redhat.com>
- <20251014122335.dpyk5advbkioojnm@master>
- <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+	s=arc-20240116; t=1760452396; c=relaxed/simple;
+	bh=G/6KdXu31T1VAui/RJwqf6i/24VbdcZQazuZ9wjU2fQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OmRfJRDqr9bCH72P/7RpHezo2Gcy8YivtxQWPXYKxCqVCQb7ROTr05iQbJGihTjTF9RnFxfEm0mr8Q+CH0YnUjonaHcc8Saa8d6ncWO0wS6xXWYY2xyvylKCtnIpwT+3Owjur5lM+g8jieapJo9vop2buRwk7fW2y+0RbqrJowo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59EEX9fU098047;
+	Tue, 14 Oct 2025 23:33:09 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59EEX9ve098044
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 14 Oct 2025 23:33:09 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <3ee9de25-9a65-4945-8049-0df6fcd389aa@I-love.SAKURA.ne.jp>
+Date: Tue, 14 Oct 2025 23:33:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [udf] WARNING in invalidate_bh_lru
+To: syzbot <syzbot+9743a41f74f00e50fc77@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org
+References: <000000000000eccdc505f061d47f@google.com>
+ <000000000000af5c290612ac6d86@google.com>
+ <20240311093258.2oc6siuzmntx5jqk@quack3>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20240311093258.2oc6siuzmntx5jqk@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
 
-On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
-> > As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
-> > folio yet.
-> 
-> We do support partially mapped PUD-sized folios I think, but not anonymous
-> PUD-sized folios.
+#syz fix: fs: Block writes to mounted block devices
 
-I don't think so?  The only mechanism I know of to allocate PUD-sized
-chunks of memory is hugetlb, and that doesn't permit partial mappings.
 
