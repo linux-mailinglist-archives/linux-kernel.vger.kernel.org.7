@@ -1,110 +1,145 @@
-Return-Path: <linux-kernel+bounces-853030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF1BBDA7BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:50:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47152BDA812
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7A019A122C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:50:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7500D501CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A979301003;
-	Tue, 14 Oct 2025 15:50:24 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDE130100E;
+	Tue, 14 Oct 2025 15:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GX+yctSw"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4F32F90C4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068321C3C08;
+	Tue, 14 Oct 2025 15:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760457024; cv=none; b=UVYmsjmTg0xiqhonW1voOJbNgYQ89DC19KJFyZkCkSiJPxfOJNCR3anfIBfmUIRaeH79zglWBH5m8WWrl09or+qllbdU5CFdJlTRO4n/SNrOGewCHEgxPvtFeXtvVrbQogYAZtYt5Jzh6J/TnhhJ5r4rvxwTMDyiZxYl5Y6P/XI=
+	t=1760456990; cv=none; b=ieQsLjihXVMxFLRChIXwHTUjibGLpfVgD/3Z6g7r1+nu7HlO1YL5U1ZDE1TXSpHBuMRzSurde0HF3IzfSM2v7cWmqfuW2mbyI69YR6joh1j0OYOuAHqqC1kRRQuZXQP7bhaVX8Mvy0VOYAje2S8yeSryAtrlbSzf3WBzaVgEyzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760457024; c=relaxed/simple;
-	bh=8wW9A7Hfsu2FtyE9eu1L3cGcD1B8XIMVxYU+07MkaFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nekJzWs5avvgkzpdXZiuCysIQa8kWzva5yG9tqjdHM62T8iIIraxYiQq7dLxmeFzsLfNxizLqfIuGs/rWrLZ5g5EX5UE33pz1QrAXx+xlft/MRJDN9zqOOAIQ42/0X+NN05my4gC0chrzhPcpyA6aDXQAvu4Ym5tXqDKumazKeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=horky.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=horky.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3ee18913c0so894079266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:50:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760457019; x=1761061819;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IfvNFpgoA7JDzu03KtbY8j7pJNqAnrxvwDDVwSnZugI=;
-        b=Kr86HVqGSPLtYITe8fLbL6V8jbY91B7zmoiiA0qX0OYrPVHcHo0vZEViyTVYT6rSzj
-         rny8Cq6S2EwCo/amxxC0skkMQYTDRjg8UsLZ0gYhosy9zl/Cm2JGxuNgknTPn6lvAi8G
-         8z/hYkoobIPCRk5fMA0HTMmwyutiBrSMkx3zsvPmuZXObxcFAPEfuz/0BxqgIfTxXI4f
-         z/9JcWYtkOwC2bABp4iKiacmsxH9t4wSCl+pJGapZxMNaCL8Zftzbk4qWy3f08Ii/ECH
-         hjFSqaZ63UiOTQkDRt6GKd7911MTFyE0JwTYDqEQ+w/wk84Wfb/bYLZODyGzhd+FKKKx
-         iNjw==
-X-Gm-Message-State: AOJu0YzQYBzC4SgY6+k8kXcu8eAk3XynuWnD+ldyv+WzydZ8GrPUxQs4
-	OzfiYRZCd3+Jr2XGkRWu6zvqhzob1BVudVlt3rkTPDF3daCex31GUyxH/zp2+Pk4
-X-Gm-Gg: ASbGnctSdf8jDz1z2AsGtqWsbHcAJ7rRvnkV9BTPh/zemWi/7P0hcnlN4kkcW98WiXw
-	D2VXviKdlDrp9k14iC7T6ryaSYqF2AgXFL6H3f1ivrFHjw2MRl3BsQZpJhFeL5xjSBDRk2/uuMK
-	7OnDfbOzINXxh6Ch23nhtgyiDeXZHmkDmOVxaJi+PtKDjjiqAUfT0I/FZGl694Jd1GJor7VfYy1
-	/XgY+zzaCwDCXRrWIcYp8CP7hAGy8fgoVpw6qSGSn16kjlQLlUCPZgKGoWKxyS7YJHlA/2H3WBn
-	uCf5GIowfxluNtJIjy7Q0ZYfLssRwjH4AIhqrGI6epdLmHZVBDgSNJg5MVD59VW8LGSv68X+qwo
-	W86k2X5lhpP0tfOrnyDjcxsYrPSG05N3mlEczZdfQf7zVXmPMaS+Kl4xqQQRPUVeSqk7eJ4n8u2
-	TMvhsIJg3d
-X-Google-Smtp-Source: AGHT+IFrzNcJc4LRTCmc3RmtM+wWnHntc5d+dwnNIGh9HbsQnpZNJt9jkLHH9KTbAU1PSvCVFPd1mg==
-X-Received: by 2002:a17:907:1b21:b0:b5c:66ce:bfe6 with SMTP id a640c23a62f3a-b5c66cec14bmr94865166b.55.1760457018931;
-        Tue, 14 Oct 2025 08:50:18 -0700 (PDT)
-Received: from jamaica.cek.cz (ip-78-44-100-18.bb.vodafone.cz. [78.44.100.18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccd7bda3csm7165666b.84.2025.10.14.08.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 08:50:18 -0700 (PDT)
-From: =?UTF-8?q?Jakub=20Hork=C3=BD?= <jakub.git@horky.net>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Jakub=20Hork=C3=BD?= <jakub.git@horky.net>
-Subject: [PATCH] kconfig/mconf: Initialize the default locale at startup
-Date: Tue, 14 Oct 2025 17:49:32 +0200
-Message-ID: <20251014154933.3990990-1-jakub.git@horky.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760456990; c=relaxed/simple;
+	bh=O2OnOz5scUDSd+QFrf/tvNMYuICl3jWPJOhwXXYif2c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z9ma/fttP2P6PX0y7131a12YVq3QFx4ts0ZdlOKv5yxmGbz7msv3HGgcaGzx3qW0QInJ8P5bWUMyPJpkJUaNKBxQpWT3+gUYDmQG9D1D46i3HB/e0yCrkJjAA2mZ9GQuPRKBbrREqNSnvt6dj8uKWRxRfZWQQ8uHE0dKkI25Ias=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GX+yctSw; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760456987;
+	bh=O2OnOz5scUDSd+QFrf/tvNMYuICl3jWPJOhwXXYif2c=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GX+yctSwy6m7W9I4+JzKb3R4HW7aDUAyt/mwtGFQlJEWqFbA3pyAC/lsNAcMdaJEg
+	 ytEZeHKXOE8nVkaeMSpoym697Y3LMcOJq48f52J/rDwtVCh4K31E3d9lvzb52FX+Fq
+	 baqnVCBJzPLwoFV/QYHl2+p1DtAD4RDbocqA3mvmE0xGEq6YIHlajUSsESS46DyoTs
+	 DITm5FqB2WbwuTvcSZgETgzwECjyeYZKjMNX4K0HbymnvM6uOU5iRGuSh3+GFXP4ls
+	 NapHKToYf+lwlI4MRl65y/v4h10GefoDlhelFcJi0H5jYUZAOwjkCdu9Q/eKoFmjNo
+	 ra45orkWevLkg==
+Received: from jupiter.universe (dyndsl-091-248-212-042.ewe-ip-backbone.de [91.248.212.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 10E6F17E0FC2;
+	Tue, 14 Oct 2025 17:49:47 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id C7D4B480044; Tue, 14 Oct 2025 17:49:46 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Date: Tue, 14 Oct 2025 17:49:34 +0200
+Subject: [PATCH net] net: stmmac: dwmac-rk: Fix disabling
+ set_clock_selection
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251014-rockchip-network-clock-fix-v1-1-c257b4afdf75@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAA1x7mgC/x2M0QqDMAwAf0XybKAt2jF/RXzQmM3gaCWVTRD/3
+ bDHO447obAKF+iqE5S/UiQnA19XQMuY3owyG0NwofXON6iZVlpkw8T7L+uK9DGDLzkw0MPF5xi
+ nyAQ22JRN/+c9WA7Ddd10TxPpcQAAAA==
+X-Change-ID: 20251014-rockchip-network-clock-fix-2c7069a6b6ec
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ David Wu <david.wu@rock-chips.com>
+Cc: netdev@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, kernel@collabora.com, stable@vger.kernel.org, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1840;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=O2OnOz5scUDSd+QFrf/tvNMYuICl3jWPJOhwXXYif2c=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGjucRo2uFWL3tpG3umZXtieNofXO4nAVctBy
+ 5GLiCh0M1e+rYkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJo7nEaAAoJENju1/PI
+ O/qaMRgP/iHJbV5a//GQfdq66WDDNHayu81bXQstYRXDdc/7YdmVEcv0rb8N0XNFrKluxH9R0bR
+ sQ4PWok9aNKOApOWZ08lrrbr4IgNP0oMfR4CRiIEn6p28TI+jjKkq9/639UPolu+/iPapqnkSF6
+ rE2ooV/kOppR6SQrB9+wLisBqnT3QShTnaq7HWhn6jJPWT9u+el0CbscGum+IYuJ/K3iUw2QTJM
+ KgpF4PnJyNCb6V3Et6gOhT67VIU7CFWi/8sAMy0Q3nQrl5wJl1UxFjeHf6KmVxq6Mgs5Q6vpRJf
+ MSvEtO86J9cBNFmgcrcVOasDrgnvvX9ZRbJbfbg4yzOG8C2MBUZ3ZmzOazQTAVqMoIybmZlPvoR
+ nj0khD6HikFTzc9vWa536n1ZuuJH0IIzbX9qZtSvp202bu5nJ7I6k5dvaAfDlHHwPQTMIbKdx4J
+ rzBYGfRYUNusTavH45VWs+4pJed1PIvGJAJ2cm5iVTh0kup4eUS7iPTzDO6uyKVXDrGmLJQmRFC
+ mSY3nIlCJpvo02UCAncaD3OLR7165ubeG+pD1p3pLDQhyQO91xgydGwpXYj1aq6xT04jdgJH5V/
+ B8aO3l2FIdl2KMrX8GYf0ji7K5J9qoiJ0l+R05gQ4rt1GK+BfBsZitLWjW47/3KpUAAQ58gCARc
+ t70WWOTk/R/hbaOtx56g2KQ==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-Fix bug where make menuconfig doesn't initialize the default locale, which
-causes ncurses menu borders to be displayed incorrectly (lqqqqk) in
-UTF-8 terminals that don't support VT100 ACS by default, such as PuTTY.
+On all platforms set_clock_selection() writes to a GRF register. This
+requires certain clocks running and thus should happen before the
+clocks are disabled.
 
-Signed-off-by: Jakub Horký <jakub.git@horky.net>
+This has been noticed on RK3576 Sige5, which hangs during system suspend
+when trying to suspend the second network interface. Note, that
+suspending the first interface works, because the second device ensures
+that the necessary clocks for the GRF are enabled.
+
+Cc: stable@vger.kernel.org
+Fixes: 2f2b60a0ec28 ("net: ethernet: stmmac: dwmac-rk: Add gmac support for rk3588")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- scripts/kconfig/mconf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
-index 84ea9215c0a7..1e3322af06d5 100644
---- a/scripts/kconfig/mconf.c
-+++ b/scripts/kconfig/mconf.c
-@@ -18,6 +18,7 @@
- #include <strings.h>
- #include <signal.h>
- #include <unistd.h>
-+#include <locale.h>
- 
- #include <list.h>
- #include <xalloc.h>
-@@ -931,6 +932,8 @@ int main(int ac, char **av)
- 
- 	signal(SIGINT, sig_handler);
- 
-+	setlocale(LC_ALL, "");
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 51ea0caf16c1..0786816e05f0 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1446,14 +1446,15 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
+ 		}
+ 	} else {
+ 		if (bsp_priv->clk_enabled) {
++			if (bsp_priv->ops && bsp_priv->ops->set_clock_selection) {
++				bsp_priv->ops->set_clock_selection(bsp_priv,
++					      bsp_priv->clock_input, false);
++			}
 +
- 	if (ac > 1 && strcmp(av[1], "-s") == 0) {
- 		silent = 1;
- 		/* Silence conf_read() until the real callback is set up */
+ 			clk_bulk_disable_unprepare(bsp_priv->num_clks,
+ 						   bsp_priv->clks);
+ 			clk_disable_unprepare(bsp_priv->clk_phy);
+ 
+-			if (bsp_priv->ops && bsp_priv->ops->set_clock_selection)
+-				bsp_priv->ops->set_clock_selection(bsp_priv,
+-					      bsp_priv->clock_input, false);
+-
+ 			bsp_priv->clk_enabled = false;
+ 		}
+ 	}
+
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251014-rockchip-network-clock-fix-2c7069a6b6ec
+
+Best regards,
 -- 
-2.43.0
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
