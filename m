@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-853489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C3ABDBCA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:26:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6065BDBCA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540F9189953B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C862B189C5DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375E2E62D4;
-	Tue, 14 Oct 2025 23:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5377F2E888A;
+	Tue, 14 Oct 2025 23:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="jHzp/zUR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAIs28Yo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF281DB122
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760484377; cv=pass; b=IinMw6ope61ogtG+aXh1EP+K5iYmCHGKJEdbXscBBNNLjWJe5+UPPUL9Z8VZpui1DBEAUrWE729E6R25XK62WrnzQmyXcfT+W4+3AvVc6ZAVfGUI0zVxgbi9UD+bCcKu9sNqgBM5SH81UTH8DxeJymmQdnlbpyrzaKmujy6KsCg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760484377; c=relaxed/simple;
-	bh=oer4k1kYVxL29x3Z+c80IUZi4Z44i9jq1hZ/CsvBSMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aWVoRnKn3cLsAwLKVS+Pz+ZogHHMv1ZEgA8cfsIPUgoWMPnhn6g1l+tC48JNQEiUNu2Ti3GOxQGXA2Z13GywJQvmlSX/Fo6Keu42ceePbS4EiwYeWIkwx2nk839C3JiPp65n21FFNv3TnhXtUWqSGIegNEpyG1jwnAkcbsu364A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=jHzp/zUR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1760484355; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l3aEtCGOBFmw34kvncruL5I0CAdmjLd3ugm7GxNnrDugRlCX1pNAn1nGj+UCi8IF+iZWZP+bphH2YeYCmBe22nu2AIqvMnnXUxUMYJpVTLBKwkm6qU87LBZ9f0X5zhrTb3GEnQYicbEF/1sEdzuCcnjaxNEtRcmsWHWV7mQO4h8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760484355; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Wi2ZRrHxNn49/AQiAXirHuf6hBMU43LJAxsXybMZx9M=; 
-	b=OvXJKhdvXFT+1mRA3lrvqzmVSlsS061cLS4Qq/zklmCCihLBuMEkoNDeLKKfpPpgZ635w9OWtSLhs2p/CB6F+uX66Th6l6LasIxPVAmAJnLwaAH9VR7OiuKyPxgVlDxnBsqb1Bk2MZRzv7z0E+W/fm8VAFVHdxRCBbxVBcmg8t8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760484355;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=Wi2ZRrHxNn49/AQiAXirHuf6hBMU43LJAxsXybMZx9M=;
-	b=jHzp/zUROnFSKCcXwfpokPJi3hn+exWK8MY378jA/sx8UqtGFN6zk+4+onS4Cpch
-	uXOKmaunxZ61XfqiDBegacWKWHH3NyouKTI0fjdFGkl1ytYcj/VFeW9pfBXK6oZKfx8
-	vyxie3ebiqzH1Hn9CepsNrbD/wFJAji83KHmYPxA=
-Received: by mx.zohomail.com with SMTPS id 1760484353782985.1438714110084;
-	Tue, 14 Oct 2025 16:25:53 -0700 (PDT)
-Date: Wed, 15 Oct 2025 00:25:46 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	dri-devel@lists.freedesktop.org, Boris Brezillon <boris.brezillon@collabora.com>, 
-	kernel@collabora.com
-Subject: Re: [PATCH v5 12/12] MAINTAINERS: Add Adrian Larumbe as Panfrost
- driver maintainer
-Message-ID: <mrp2orrfpxhb2w66lzrjnqpnhf67ahkqislc6tjbzzwjm57a35@c7hod3cwkzou>
-References: <20251007150216.254250-1-adrian.larumbe@collabora.com>
- <20251007150216.254250-13-adrian.larumbe@collabora.com>
- <971fd0e3-474a-4685-ade2-f4563372f74d@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965BD221F13;
+	Tue, 14 Oct 2025 23:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760484422; cv=none; b=BHaXjElSrTL2R0JHIcDpzB4hL3dVmXvN4EdKjpzybwUn5wQPA2jVCvXIo79LZgE2I26ssywu4p7IO7URt+OJrnXSwlKRcY/4NlLA2D69JPAAHr0pnHEx3+Ox2521vldk0xn7hWSrNzCivvN/RiZYWZxI5sxB1C4UtxBgVIYe8/M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760484422; c=relaxed/simple;
+	bh=5P1c3HZEgKsH8ctIgX15GY1ZMuJMbfzZtY7o952H6bs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PYUX+ztO4lW0Om9kjdpUaHRDPnbWnU6o144abHD4nxgvEnxl0yQ7gxlOrY5hKaxSZKVFwoIKtJHB+fAN+56hBDR6gdicAc/x5Rsv7H7i9fYMyu0nF/9SGezzjvRylXUkPKqpa9mLKAU710KJvUA/WkOxYZEKhtlAJPxNJmwl3K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAIs28Yo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B5FC4CEE7;
+	Tue, 14 Oct 2025 23:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760484421;
+	bh=5P1c3HZEgKsH8ctIgX15GY1ZMuJMbfzZtY7o952H6bs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IAIs28YoYYvTrrE6xrA4Mqu+f7sL30GgVRQxjsd5CChdUvpnaZYJYVeiDell/F2IN
+	 H9pgChYZCjj9nKJS6e181RNvep2M6yeUfhzb/IJ2zfnLF659Eyjx3NQ8j/gvPXAYZS
+	 x3cnJiO3jzpTH46snLMjJVB0vCMNNLOdcCQbHgYvmZWyhdKt8mw1l3HRCL6GSMC5bL
+	 82BWfHUGktSP1x3HxRKj0fZ1SEBQAAYADoP5dMMel/SZpsWaTnMVrIPmh21IgYY2oD
+	 2cS3lRg2oVeaon1x3iJ2d8VmUbt1sGjKjr+Jhie7/jUpc5cXeod+vjihF24pc6Hyts
+	 dfD5G9P7ZgSZg==
+From: Sasha Levin <sashal@kernel.org>
+To: nathan@kernel.org
+Cc: Matt.Kelly2@boeing.com,
+	akpm@linux-foundation.org,
+	andrew.j.oppelt@boeing.com,
+	anton.ivanov@cambridgegreys.com,
+	ardb@kernel.org,
+	arnd@arndb.de,
+	bhelgaas@google.com,
+	bp@alien8.de,
+	chuck.wolber@boeing.com,
+	dave.hansen@linux.intel.com,
+	dvyukov@google.com,
+	hpa@zytor.com,
+	jinghao7@illinois.edu,
+	johannes@sipsolutions.net,
+	jpoimboe@kernel.org,
+	justinstitt@google.com,
+	kees@kernel.org,
+	kent.overstreet@linux.dev,
+	linux-arch@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	llvm@lists.linux.dev,
+	luto@kernel.org,
+	marinov@illinois.edu,
+	masahiroy@kernel.org,
+	maskray@google.com,
+	mathieu.desnoyers@efficios.com,
+	matthew.l.weber3@boeing.com,
+	mhiramat@kernel.org,
+	mingo@redhat.com,
+	morbo@google.com,
+	ndesaulniers@google.com,
+	oberpar@linux.ibm.com,
+	paulmck@kernel.org,
+	peterz@infradead.org,
+	richard@nod.at,
+	rostedt@goodmis.org,
+	samitolvanen@google.com,
+	samuel.sarkisian@boeing.com,
+	sashal@kernel.org,
+	steven.h.vanderleest@boeing.com,
+	tglx@linutronix.de,
+	tingxur@illinois.edu,
+	tyxu@illinois.edu,
+	wentaoz5@illinois.edu,
+	x86@kernel.org
+Subject: [RFC PATCH 0/4] Enable Clang's Source-based Code Coverage and MC/DC for x86-64
+Date: Tue, 14 Oct 2025 19:26:35 -0400
+Message-ID: <20251014232639.673260-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250829181007.GA468030@ax162>
+References: <20250829181007.GA468030@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <971fd0e3-474a-4685-ade2-f4563372f74d@arm.com>
 
-On 09.10.2025 16:47, Steven Price wrote:
-> On 07/10/2025 16:01, Adrián Larumbe wrote:
-> > Add Adrian Larumbe as Panfrost driver maintainer.
-> >
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
->
-> Acked-by: Steven Price <steven.price@arm.com>
->
-> Welcome! And thank you for helping out.
+This series adds support for Clang's Source-based Code Coverage to the
+Linux kernel, enabling more accurate coverage measurement at the source
+level compared to gcov. This is particularly valuable for safety-critical
+use cases (automotive, medical, aerospace) where MC/DC coverage is required
+for certification.
 
-Thanks a lot, I'm very glad to be onboard.
+Changes since previous patchset [1]:
+- Rebased on v6.18-rc1
+- Adapted to lib/crypto reorganization (curve25519 exclusion moved to
+  lib/crypto/Makefile)
+- Minor correctness fixes throughout the codebase
 
-> > ---
-> >  MAINTAINERS | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 5257d52679d6..cb68fdec3da4 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -2066,6 +2066,7 @@ F:	drivers/gpu/drm/arm/display/komeda/
-> >  ARM MALI PANFROST DRM DRIVER
-> >  M:	Boris Brezillon <boris.brezillon@collabora.com>
-> >  M:	Rob Herring <robh@kernel.org>
-> > +M:      Adrián Larumbe <adrian.larumbe@collabora.com>
->
-> NIT: it looks like you've used spaces not a tab.
+The implementation has been tested with a kernel build using Clang 18+ and
+boots successfully in a KVM environment with instrumentation enabled.
 
-Oops, thanks for catching this.
+[1] https://lore.kernel.org/all/20240905043245.1389509-1-wentaoz5@illinois.edu/
 
-> Also while we're here...
->
-> @RobH: Does it still make sense for you to be listed as a maintainer? I
-> haven't seen you active on Panfrost for a while.
->
-> >  R:	Steven Price <steven.price@arm.com>
->
-> And given that I've been doing a fair bit of the merging recently I'm
-> wondering if I should upgrade myself to 'M'?
+Wentao Zhang (4):
+  llvm-cov: add Clang's Source-based Code Coverage support
+  llvm-cov: add Clang's MC/DC support
+  x86: disable llvm-cov instrumentation
+  x86: enable llvm-cov support
 
-I'll resend a new series flagging the two of us as maintainers.
+ Makefile                          |   9 ++
+ arch/Kconfig                      |   1 +
+ arch/x86/Kconfig                  |   2 +
+ arch/x86/crypto/Makefile          |   1 +
+ arch/x86/kernel/vmlinux.lds.S     |   2 +
+ include/asm-generic/vmlinux.lds.h |  36 +++++
+ kernel/Makefile                   |   1 +
+ kernel/llvm-cov/Kconfig           | 121 ++++++++++++++
+ kernel/llvm-cov/Makefile          |   8 +
+ kernel/llvm-cov/fs.c              | 253 ++++++++++++++++++++++++++++++
+ kernel/llvm-cov/llvm-cov.h        | 157 ++++++++++++++++++
+ lib/crypto/Makefile               |   3 +-
+ scripts/Makefile.lib              |  23 +++
+ scripts/mod/modpost.c             |   2 +
+ 14 files changed, 618 insertions(+), 1 deletion(-)
+ create mode 100644 kernel/llvm-cov/Kconfig
+ create mode 100644 kernel/llvm-cov/Makefile
+ create mode 100644 kernel/llvm-cov/fs.c
+ create mode 100644 kernel/llvm-cov/llvm-cov.h
 
-> Thanks,
-> Steve
->
-> >  L:	dri-devel@lists.freedesktop.org
-> >  S:	Supported
+-- 
+2.51.0
 
-Adrian Larumbe
 
