@@ -1,150 +1,150 @@
-Return-Path: <linux-kernel+bounces-852113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067FBBD8326
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:35:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F65CBD833B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76D8C4F8F1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A393619204E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3B30F940;
-	Tue, 14 Oct 2025 08:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BF630F922;
+	Tue, 14 Oct 2025 08:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c31dqcLz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zIBBSoBj"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AB229ACD1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E4629ACD1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430894; cv=none; b=iDrgtAHEi4FhUzF+oyPXJCFME3JlZmKBQvXhk6+6HJUs5VOQC2ULv3cR6qR9L+KzfnCwsdx3v+tPVOMYG6eR0PORH9KdeWpAd78hhHTCTrCseGMPUUioGRqTvX8ftqEHMhThGSfz+eNWs5dGYoLUH1m1WCJri9iUla8HsL9xP1I=
+	t=1760430939; cv=none; b=a7qG9h69zT1qoM/cQxX6deKg/2YSEP62AbBu3aeQGyxs7IvmZXrwzgzPWMrPzbFaA/yKalUwFLWFl+U04xEk9M+Lwhqtdwr4o02NDwHGhBKOgxfxM7nWG9wQYlDOl13nRs0gVtmQ68IkuondLfqrlWynNYlEIR/hIpV+Hqvpt0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430894; c=relaxed/simple;
-	bh=pRsTyfPJ9UJjbA5j1H/hTOwtZY7SmFyXvGs+UofQcTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lX+8oL89/pQEi2bD3ZZxrtgnHVxWaOZ+3+xCHTxYXUZgUYeY+9/6J1N0jeT2nw0+9X8AZ/1cDIZo1rIwJWcFOCE6kwsR8LpNN63F2apSXIxCa5QWMwAkqtfD4K6CECVhIZyzOVj5OBOPUQ+mZpTE4FLQeNPvSYUVGtIaLBkJQV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c31dqcLz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760430891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KPbpAfXFpG+F0XArG45/phfeDqh8oNdwtwM3KTn35LI=;
-	b=c31dqcLzu2Khj1cMedPA6Azp+ZYVImp1pnALNpmhF+wl/V2gxBS+Ey3CdZ0vVzoRSQP8PK
-	K/gOGikZqY1LbOyXa9wY3xc2OIngsK/NcghP2EBfcgecyZbyhz8rX5HBRnwXVEGJxPTgKl
-	x5SzUmEds5sCh/nv2KHgSuC4iC74iCA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-93-SXWV4OF1NRKazgloSSdOFg-1; Tue,
- 14 Oct 2025 04:34:48 -0400
-X-MC-Unique: SXWV4OF1NRKazgloSSdOFg-1
-X-Mimecast-MFC-AGG-ID: SXWV4OF1NRKazgloSSdOFg_1760430886
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 557011956089;
-	Tue, 14 Oct 2025 08:34:45 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 674921955F21;
-	Tue, 14 Oct 2025 08:34:37 +0000 (UTC)
-Date: Tue, 14 Oct 2025 16:34:32 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
-	axboe@kernel.dk, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH 1/4] blk-mq-debugfs: warn about possible deadlock
-Message-ID: <aO4LGJ6I49dydw2J@fedora>
-References: <20251014022149.947800-1-yukuai3@huawei.com>
- <20251014022149.947800-2-yukuai3@huawei.com>
- <aO4EniFy63IlWM_-@fedora>
- <33c009e6-0cc3-bfc3-f7e5-8227cb467696@huaweicloud.com>
+	s=arc-20240116; t=1760430939; c=relaxed/simple;
+	bh=iw1p+SqR6z5jGWmeQEKMSq89hjZJ38vNsMWIPYEonh8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tp/cCqWqFuhkwsqAHLupW5ZENhuOw1Iykl55gP+n/9tt11sAjNh5f9BuR5ghqWu/2vlYWXHiLhth4r9YPxDoo7GOIgTmXO3TfTMubZyi8Ii21pakTV5ZZ7Vg4LDGMXXMQ9U7ZA/2kN3aGsCy/GqLgbcNIn7yaJSXw6+EIF+/Uqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zIBBSoBj; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id ACA07C09F84;
+	Tue, 14 Oct 2025 08:35:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AC137606EC;
+	Tue, 14 Oct 2025 08:35:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D15DB102F224B;
+	Tue, 14 Oct 2025 10:35:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760430931; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=yJRi0HibOeKtbgfq4iDcVBuMVTWuMio4cjtfayeTuVk=;
+	b=zIBBSoBj/QJlk2scYqbB71RnzLWlY5113OOtGVaFYxyk4bdGnYR1o668Xdlf3xvEx9gQyF
+	bNGmo82EZuCtSHe5PYbvTX9GiQvU/bgoOgrn+DeciQq7AthyT9XDl4F8SaWUHBUXX6z5E9
+	P79Q0oai2nwpPvtI4nRQIvaI/f55wy/OF2Gr4EcfE1y4KmxBTi5CLKZK0HfNHMUiHjYLIz
+	mbxyPiNDJmlcocGXIjVrlaS/XC6RaDO1n13oj6lQVIQ2nu72++EBXvNrEYU+jgAki57v5C
+	z6BEUDpXkHYTMiWnQ+zeypTatRqw060jLixGeJoHQ3wHyjflGuXL0E5z4mRurQ==
+From: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+Date: Tue, 14 Oct 2025 10:35:23 +0200
+Subject: [PATCH] firmware: ti_sci: replace ifdeffery by pm_sleep_ptr()
+ macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <33c009e6-0cc3-bfc3-f7e5-8227cb467696@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251014-ti-sci-pm-ops-cleanup-v1-1-70b50b73ac85@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAEoL7mgC/x3MSwqAMAwA0atI1gasHwSvIi5sTDWgtTQqgnh3i
+ 8u3mHlAOQordNkDkS9R2X2CyTOgZfQzo0zJUBZlYwpT4yGoJBg23IMirTz6M6CxLbvK1RVZgtS
+ GyE7u/9sP7/sB4QCI1mcAAAA=
+X-Change-ID: 20251014-ti-sci-pm-ops-cleanup-1b7ef3f43cbc
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Richard Genoud <richard.genoud@bootlin.com>, Udit Kumar <u-kumar1@ti.com>, 
+ Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Oct 14, 2025 at 04:21:30PM +0800, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/10/14 16:06, Ming Lei 写道:
-> > On Tue, Oct 14, 2025 at 10:21:46AM +0800, Yu Kuai wrote:
-> > > Creating new debugfs entries can trigger fs reclaim, hence we can't do
-> > > this with queue freezed, meanwhile, other locks that can be held while
-> > > queue is freezed should not be held as well.
-> > > 
-> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> > > ---
-> > >   block/blk-mq-debugfs.c | 31 ++++++++++++++++++++++++-------
-> > >   1 file changed, 24 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-> > > index 4896525b1c05..66864ed0b77f 100644
-> > > --- a/block/blk-mq-debugfs.c
-> > > +++ b/block/blk-mq-debugfs.c
-> > > @@ -608,9 +608,23 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
-> > >   	{},
-> > >   };
-> > > -static void debugfs_create_files(struct dentry *parent, void *data,
-> > > +static void debugfs_create_files(struct request_queue *q, struct dentry *parent,
-> > > +				 void *data,
-> > >   				 const struct blk_mq_debugfs_attr *attr)
-> > >   {
-> > > +	/*
-> > > +	 * Creating new debugfs entries with queue freezed has the rist of
-> > > +	 * deadlock.
-> > > +	 */
-> > > +	WARN_ON_ONCE(q->mq_freeze_depth != 0);
-> > > +	/*
-> > > +	 * debugfs_mutex should not be nested under other locks that can be
-> > > +	 * grabbed while queue is freezed.
-> > > +	 */
-> > > +	lockdep_assert_not_held(&q->elevator_lock);
-> > > +	lockdep_assert_not_held(&q->rq_qos_mutex);
-> > 
-> > ->rq_qos_mutex use looks one real mess, in blk-cgroup.c, it is grabbed after
-> > queue is frozen. However, inside block/blk-rq-qos.c, the two are re-ordered,
-> > maybe we need to fix order between queue freeze and q->rq_qos_mutex first?
-> > Or move on by removing the above line?
-> 
-> Yeah, I see this reoder as well, and I tried to fix this in the other
-> thread for blkg configuration.
-> 
-> - queue is freezed by new helper blkg_conf_start(), and unfreezed after
->   blkg_conf_end(), rq_qos_add() is now called between them.
-> 
-> And for wbt, there are two cases:
->  - for blk-sysfs, queue is alredy freezed before rq_qos_add() as well;
->  - for wbt_enable_default(), this looks still problemaic, we should fix
->    the reorder seperatly.
-> 
-> Perhaps, should I fix this simple problem first, and then rebase the
-> thread to convert queue_lock to blkcg_mtuex?
+Using pm_sleep_ptr() macro allows to remove ifdeffery and '__maybe_unused'
+annotations.
 
-As I mentioned, if you want to move on with patchset first, the line of
-`lockdep_assert_not_held(&q->rq_qos_mutex);` shouldn't be added until
-->rq_qos_mutex vs. freeze queue order is finalized.
+Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
+---
+ drivers/firmware/ti_sci.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 49fd2ae01055d0f425062147422471f0fd49e4bd..99a2e0e2960f463918950fef8829409ec365ce70 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -3706,7 +3706,7 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
+ 	}
+ }
+ 
+-static int __maybe_unused ti_sci_suspend(struct device *dev)
++static int ti_sci_suspend(struct device *dev)
+ {
+ 	struct ti_sci_info *info = dev_get_drvdata(dev);
+ 	struct device *cpu_dev, *cpu_dev_max = NULL;
+@@ -3746,7 +3746,7 @@ static int __maybe_unused ti_sci_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
++static int ti_sci_suspend_noirq(struct device *dev)
+ {
+ 	struct ti_sci_info *info = dev_get_drvdata(dev);
+ 	int ret = 0;
+@@ -3758,7 +3758,7 @@ static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
++static int ti_sci_resume_noirq(struct device *dev)
+ {
+ 	struct ti_sci_info *info = dev_get_drvdata(dev);
+ 	int ret = 0;
+@@ -3780,7 +3780,7 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+ 	return 0;
+ }
+ 
+-static void __maybe_unused ti_sci_pm_complete(struct device *dev)
++static void ti_sci_pm_complete(struct device *dev)
+ {
+ 	struct ti_sci_info *info = dev_get_drvdata(dev);
+ 
+@@ -3791,12 +3791,10 @@ static void __maybe_unused ti_sci_pm_complete(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops ti_sci_pm_ops = {
+-#ifdef CONFIG_PM_SLEEP
+-	.suspend = ti_sci_suspend,
+-	.suspend_noirq = ti_sci_suspend_noirq,
+-	.resume_noirq = ti_sci_resume_noirq,
+-	.complete = ti_sci_pm_complete,
+-#endif
++	.suspend = pm_sleep_ptr(ti_sci_suspend),
++	.suspend_noirq = pm_sleep_ptr(ti_sci_suspend_noirq),
++	.resume_noirq = pm_sleep_ptr(ti_sci_resume_noirq),
++	.complete = pm_sleep_ptr(ti_sci_pm_complete),
+ };
+ 
+ /* Description for K2G */
 
-Thanks,
-Ming
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251014-ti-sci-pm-ops-cleanup-1b7ef3f43cbc
+
+Best regards,
+-- 
+Thomas Richard (TI.com) <thomas.richard@bootlin.com>
 
 
