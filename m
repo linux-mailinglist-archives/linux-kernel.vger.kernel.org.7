@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-853166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04D8BDAD58
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:46:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C582BDAD60
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB47546EF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:46:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 83DCA4EB835
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC930304BD5;
-	Tue, 14 Oct 2025 17:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5B028FA91;
+	Tue, 14 Oct 2025 17:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlXcBMMJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KASKeYjV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DC335948;
-	Tue, 14 Oct 2025 17:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D0635948
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464013; cv=none; b=VgQykJcuvnN1UYayQHTO2y8jeP10TB2I4aT2/Bnq/hlXoHfzOuCcN7U/TMwElVemEnzK1nMTUH/dQ0RhjXPuZaeQzaRLlHzF/MEEPvaL37ZKI9HURpYf2dc6nBRQc86LOcO6zhJkcWorZjgVZFyQhs4y4hL7XF22zN851Gc0xSw=
+	t=1760464051; cv=none; b=Gp0+1dMuiQiEU3UuQeqwSh8hILqVxaxDlO+3i+bsItGmwJtkfIVE8v1AsYm9D6fkjh1ZHaCCuK9YOgXyPdE/oTA7nrtZGmeiqczWmPMcD2f1oMrP8tB4Hz3tWi11GTTi5Yd6lzbjeyNw7PgfOA8DY7NGJ7ONv7TxddO8RjGwQiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464013; c=relaxed/simple;
-	bh=REAJKHktfM5uhBrHBHX1IL3/GQ/UWwWriUYpZT5i0i0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hvjV9hx/imYeOuz9IgJr1yclK5aqzRUb16AhBS/mOl8Fsn2eSYk+AYnZaFLLoBKES4P6gtVbEs7LA9tPw5zoKOFLkI/iDqJJEVtx3xaNnQARkhHBI/aBUexoeT4N1YQwlVM2KnP4pm5rOklKk9Fy4B3TZWj4QilsBtAbWq5afYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlXcBMMJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886DAC4CEE7;
-	Tue, 14 Oct 2025 17:46:51 +0000 (UTC)
+	s=arc-20240116; t=1760464051; c=relaxed/simple;
+	bh=OC84EuBFP9yfoy7CzUJOQryfa1blEGQPmqdzo1E57lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ha4A8MHiIPJrOYgEkY+7SONHr7Iukv+eUbWaGWah52IKL0AQ61KUKceu+Vzgm5ob4P1jTVwEhRw+wrin7PfTOBbqGVcUgJ6ES9wZD+twKJ8Q5f44TinzK4OQgoMQOORgk6QQA8nCo4rHYb/irg6D7oYklfM/0dcP1me9mBrCCiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KASKeYjV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6666FC4CEE7;
+	Tue, 14 Oct 2025 17:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760464011;
-	bh=REAJKHktfM5uhBrHBHX1IL3/GQ/UWwWriUYpZT5i0i0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XlXcBMMJmLFepolcAl1W6bVqaq58HD498ZbWBeybAD42nc9rMQLs5p9VvaHyTBcPo
-	 9DGEcIdTrGRw7egfcDmil9IEBQxq7nMTU5O2qfbpjrbfgvChGy+2GFp57FeO2lb+Zo
-	 Ed4LeSDr1dAsue6PCdN/xo6t3bgEQbfV1tIkuo1NxeAe0DP39qtrc1hb46Gwu6MaEh
-	 e5ZOAcnKaX2ZGw/fy/geGx1MBZjJyHhooKCNTRux0OLOh55GZXmm51j70H2dKyhzdf
-	 63RB7Kjiha84VMK7NBMNrr/YMZoUzPgjg63dmC4hT0JkNcbK9ram5YmxIBDTa/hHRr
-	 Sy8lWgc5pa1NA==
-Received: from 82-132-215-36.dab.02.net ([82.132.215.36] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v8j6n-0000000DxEH-0qIj;
-	Tue, 14 Oct 2025 17:46:49 +0000
-Date: Tue, 14 Oct 2025 18:46:40 +0100
-Message-ID: <87cy6pxtof.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-	<86qzvcxi3j.wl-maz@kernel.org>
-	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-	<86o6qgxayt.wl-maz@kernel.org>
-	<86ms60x7w7.wl-maz@kernel.org>
-	<us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
-	<86bjmeyh5m.wl-maz@kernel.org>
-	<graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
-	<87sefpoj10.wl-maz@kernel.org>
-	<6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
-	<wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1760464050;
+	bh=OC84EuBFP9yfoy7CzUJOQryfa1blEGQPmqdzo1E57lI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KASKeYjVUTH3PqDcchUO7bZMufvM0SIz0SRz6YfNNx3+DP67690bNiCO70/AdPkoS
+	 RYDN9GDYn9/g/fAtEPGeitem5XDOAEGfW/2NoP2fbrP5Oo74eQOPZq47E1+/YqdiOs
+	 lZb4dqnG87/WhJM4y6/k35RpA200Dtq7z9c0rH0WHrgBQlP8kfLd3M6FfFLA3iln17
+	 RQxmvOPgAWayoDtCYuTYw6sTrcehXuLLF2yxXVnmt9UmH4mLRymFlmNizDTPEUmCU5
+	 IGqMYrZhj+kag9011XEm5zKgxk8Bspm8jyTROMIVUi8CuEUDq+0r7QKiWp8lVXPRi8
+	 5DRTSWwpgKgqg==
+Date: Tue, 14 Oct 2025 18:47:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org,
+	Charles Mirabile <cmirabil@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <dramforever@live.com>, linux-riscv@lists.infradead.org,
+	Zhang Xincheng <zhangxincheng@ultrarisc.com>
+Subject: Re: [PATCH v2 3/3] irqchip/plic: add support for UltraRISC DP1000
+ PLIC
+Message-ID: <20251014-coma-zeppelin-56256bf7e3e6@spud>
+References: <20251013111539.2206477-1-lzampier@redhat.com>
+ <20251013111539.2206477-4-lzampier@redhat.com>
+ <20251013-trimness-stainless-48343053f204@spud>
+ <6b7c3c90-d3bd-4d75-9cc0-74d3945fbdfd@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.215.36
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Eck5RHWSnCUGqPAQ"
+Content-Disposition: inline
+In-Reply-To: <6b7c3c90-d3bd-4d75-9cc0-74d3945fbdfd@iscas.ac.cn>
 
-On Tue, 14 Oct 2025 12:08:22 +0100,
-Thierry Reding <thierry.reding@gmail.com> wrote:
->
 
-[...]
+--Eck5RHWSnCUGqPAQ
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > The interrupt count for CPUs 2-7 no longer increments after taking CPU 1
-> > offline. Interestingly, bringing CPU 1 back online doesn't have an
-> > impact, so it doesn't go back to enabling 1:N mode.
-> 
-> Looks like that is because gic_set_affinity() gets called with the new
-> CPU mask when the CPU goes offline, but it's *not* called when the CPU
-> comes back online.
+On Tue, Oct 14, 2025 at 05:14:17PM +0800, Vivian Wang wrote:
+> Hi Conor,
+>=20
+> On 10/14/25 02:30, Conor Dooley wrote:
+> > On Mon, Oct 13, 2025 at 12:15:38PM +0100, Lucas Zampieri wrote:
+> >> From: Charles Mirabile <cmirabil@redhat.com>
+> >>
+> >> Add a new compatible for the plic found in UltraRISC DP1000 with a qui=
+rk to
+> >> work around a known hardware bug with IRQ claiming.
+> >>
+> >> When claiming an interrupt on the DP1000 PLIC all other interrupts mus=
+t be
+> >> disabled before the claim register is accessed to prevent incorrect
+> >> handling of the interrupt.
+> >>
+> >> When the PLIC_QUIRK_CLAIM_REGISTER is present, during plic_handle_irq
+> >> the enable state of all interrupts is saved and then all interrupts
+> >> except for the first pending one are disabled before reading the claim
+> >> register. The interrupts are then restored before further processing of
+> >> the claimed interrupt continues.
+> >>
+> >> The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
+> >> SoCs using UR-CP100 cores, regardless of the specific SoC implementati=
+on.
+> > Why is that? I expect that you're doing that intentionally given the
+> > ultrarisc employee listed as a co-developer, but with only one SoC using
+> > this IP core it seems possible that this bug in the hardware could be
+> > fixed for other SoCs that are built using this IP core.
+> > Is there a plan to, for example, change the core version to UR-CP101
+> > when the bug is fixed?
+>=20
+> I originally proposed to match on ultrarisc,cp100-plic under the
+> assumption that it would be the case.
+>=20
+> Furthermore, it is my understanding that if the bug is fixed in, say,
+> UR-DP1001, then the PLIC node can simply be
+>=20
+> =A0 =A0 compatible =3D "ultrarisc,dp1001-plic", "sifive,plic-1.0.0";
+>=20
+> I meant my reply that I had assumed this bug was associated with the
+> UR-CP100 core, but I should have stated so more clearly.=A0
 
-Indeed, because there is no need to change the affinity as far as the
-kernel is concerned -- the interrupt is on an online CPU and all is
-well.
+Ah ye, very true, could be done that way if there's a changed version
+that's compliant.
 
-I think that's the point where a per-interrupt flag (let's call it
-IRQ_BCAST for the sake of argument) is required to decide what to
-do. Ideally, IRQ_BCAST would replace any notion of affinity, and you'd
-get the scatter-gun behaviour all the time. Which means no adjustment
-to the affinity on a CPU going offline (everything still works).
+--Eck5RHWSnCUGqPAQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But that's assumes a bunch of other things:
+-----BEGIN PGP SIGNATURE-----
 
-- when going offline, at least DPG1NS gets set to make sure this CPU
-  is not a target anymore if not going completely dead (still running
-  secure code, for example). The kernel could do it, but...
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6MrQAKCRB4tDGHoIJi
+0lASAQDunHKDUhoLhTyJvT7pkWAOan78lbIL/4qDP7M47VuIvgD/U4EAlAQLiNV8
+FsdMjrvL/8CLKBVSBkHa1eYJxzoq4AY=
+=LWPz
+-----END PGP SIGNATURE-----
 
-- when going idle, should this CPU still be a target of 1:N
-  interrupts? That's a firmware decision what could severely impact
-  power on battery-bound machines if not carefully managed...
-
-- and should a CPU wake up from such an interrupt? Again, that's a
-  firmware decision, and I don't know how existing implementation deal
-  with that stuff.
-
-Someone needs to investigate these things, and work out all of the
-above. That will give us a set of conditions under which we could do
-something.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+--Eck5RHWSnCUGqPAQ--
 
