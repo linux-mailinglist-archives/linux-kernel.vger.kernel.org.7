@@ -1,109 +1,219 @@
-Return-Path: <linux-kernel+bounces-853213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE808BDAEEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78E9BDAEF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BF618A0CCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D2A400547
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2D1277CAE;
-	Tue, 14 Oct 2025 18:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D424296BD3;
+	Tue, 14 Oct 2025 18:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="QdPUfnCY"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCeelzAi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6A213E9C;
-	Tue, 14 Oct 2025 18:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B6927F01E;
+	Tue, 14 Oct 2025 18:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760466129; cv=none; b=IF2o/zR8gWftT81boeiMCkS1RvIEF7ZAvaqUnIXNwME9+LjG9a2tI+G17gb6HbpZKGUwUKPLOuaaSDYrsVt3OLCqfgLIe/IUXJAW7BlE3hWwRZyk1zDNKKoKxPkcqABK0BTXs62lHuP+T2ESyxhi4FMOJhUwMgKsVp2ulDdOZbo=
+	t=1760466150; cv=none; b=s1xmnAQe+ds9IUb73OTd0dWvWsSVScdcT/hLXB36xVOgAvOjkabTD/Fuyoq28Cwn2xcSOh94Ugp/d+cZUXGGEMHerre7J6cjBLrFXyQGGG3KqTnF8N8zarZWIOIhBRy34BN3FtD3DniaKi7a7jdq3xfcWD1uPm92VrX/nXCuJFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760466129; c=relaxed/simple;
-	bh=cCUURDd07Yw9p/jOHDANOrc/VydF7BvuWq/CmhJ9tA4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NFWyERtTY52qtwe3rJbu2G/ELMib/M31TfYUaErBHys/XVvk4NxMa9H1t3fnvtCPyIuPAkyHV9QXbsHhd4GgWJBNkcC5SqS1pRWxv4AyDXKxbqqcmaCDdIyzeG2uUNp5tL4pJo9usn0dCvwvG0qXsTSM4oO4PFFJwburi+qzGKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=QdPUfnCY; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 781B740B18
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1760466126; bh=CBzFDqgIBt7OUHVz+Kf+Lf4hpJX8ECAmro/oMxEjUzw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=QdPUfnCYGG2KdH28Gwm2VX02LtL/rO3sRF5MS5NHcRHAtwwf0yDudfztzQQ7qkK4m
-	 X4HpxoaTcx/VDlxbFG5migLzyR4TNs6n+s/QPybHP+j5sWryQOzWBfUqeTQPFObhXw
-	 l3rU7w8TUvKI3GPZSAO1tBCOzvlxwOxBgu42NrY6258wp8uIjTWoF+LkRMEifrLS1D
-	 3OHOXWPwuTzMrkHGobdtX5TytpFt9/udZ2YfQ86sgX+J12fL9W5qQARtHMwK/k2iaY
-	 OKG0HAvpWRaSFavGs2rrosTRjqHmLETM3Odfbvv7gFc6u8TEdWPxahYa+D9sdy1SAD
-	 HVZFX+oUt5X7Q==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 781B740B18;
-	Tue, 14 Oct 2025 18:22:06 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Randy Dunlap <rdunlap@infradead.org>, Akiyoshi Kurita
- <weibu@redadmin.org>, linux-doc@vger.kernel.org
-Cc: Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shannon Nelson <sln@onemain.com>, Jason
- Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: admin-guide: Correct spelling of
- "userspace"
-In-Reply-To: <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
-References: <20250926190019.41788-1-weibu@redadmin.org>
- <87seflbken.fsf@trenco.lwn.net>
- <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
-Date: Tue, 14 Oct 2025 12:22:05 -0600
-Message-ID: <87v7kh9wdu.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1760466150; c=relaxed/simple;
+	bh=khlNisH8i2Ud4Fkv3yboxw0azYLQViia2aglBjxVop0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzjBQ+aI9Uypif4iflKdf7s8osTJUsh9NdL4IV/sBFwmRu3tXBPnncNvKs10dRQAKloIIZSiQ6aqey+kq3vN0L8rdUcJOgz6MR6SwgVfgwH8X19A9KZZNXWVGGkGpnwOln8dn1qIZb9bEyC2Nw+SgnAH0PiRBHaHlAwVw15WDwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCeelzAi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA6FC4CEE7;
+	Tue, 14 Oct 2025 18:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760466149;
+	bh=khlNisH8i2Ud4Fkv3yboxw0azYLQViia2aglBjxVop0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YCeelzAi4il5II6IqjasPsEDpq2aeQMC+tk37SVCi8T2Ppu84kRj/4n7+SEG9CfUi
+	 bNCNsR7EZ+s3ByhN73AuPNf4jsIZ04J/L8Yr8GM/XcNVyxRHEWr3K856/iBf8zdHsV
+	 DKwWEIva1/9IKVl7Uq6cVDJQ+NZUIpo5KHsKKL0L6hTvyi1dV8cmdVtGMCC5enBg22
+	 zwP8kwVkdkpR6D3M+L009s2de0ztI2bG7LjD6lNKcQDdzhkAXd5HR1rei10/hDCmKT
+	 FaAnR8VK8Twh8fj9k8PZrw8bz44MdbsOUtBqlYvLDcAiFaziyDLU/qG+ous/znQpf4
+	 4c8ANYnwvO0lw==
+Date: Tue, 14 Oct 2025 11:22:29 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>, Pavel Reichl <preichl@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH 1/2] xfs: quietly ignore deprecated mount options
+Message-ID: <20251014182229.GY6188@frogsfrogsfrogs>
+References: <20251013233229.GR6188@frogsfrogsfrogs>
+ <2800646.mvXUDI8C0e@natalenko.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2800646.mvXUDI8C0e@natalenko.name>
 
-Randy Dunlap <rdunlap@infradead.org> writes:
+On Tue, Oct 14, 2025 at 01:27:40PM +0200, Oleksandr Natalenko wrote:
+> Hello.
+> 
+> On úterý 14. října 2025 1:32:29, středoevropský letní čas Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Apparently we can never deprecate mount options in this project, because
+> > it will invariably turn out that some foolish userspace depends on some
+> > behavior and break.  From Oleksandr Natalenko:
+> > 
+> > > In v6.18, the attr2 XFS mount option is removed. This may silently
+> > > break system boot if the attr2 option is still present in /etc/fstab
+> > > for rootfs.
+> > >
+> > > Consider Arch Linux that is being set up from scratch with / being
+> > > formatted as XFS. The genfstab command that is used to generate
+> > > /etc/fstab produces something like this by default:
+> > >
+> > > /dev/sda2 on / type xfs (rw,relatime,attr2,discard,inode64,logbufs=8,logbsize=32k,noquota)
+> > >
+> > > Once the system is set up and rebooted, there's no deprecation warning
+> > > seen in the kernel log:
+> > >
+> > > # cat /proc/cmdline
+> > > root=UUID=77b42de2-397e-47ee-a1ef-4dfd430e47e9 rootflags=discard rd.luks.options=discard quiet
+> > >
+> > > # dmesg | grep -i xfs
+> > > [    2.409818] SGI XFS with ACLs, security attributes, realtime, scrub, repair, quota, no debug enabled
+> > > [    2.415341] XFS (sda2): Mounting V5 Filesystem 77b42de2-397e-47ee-a1ef-4dfd430e47e9
+> > > [    2.442546] XFS (sda2): Ending clean mount
+> > >
+> > > Although as per the deprecation intention, it should be there.
+> > >
+> > > Vlastimil (in Cc) suggests this is because xfs_fs_warn_deprecated()
+> > > doesn't produce any warning by design if the XFS FS is set to be
+> > > rootfs and gets remounted read-write during boot. This imposes two
+> > > problems:
+> > >
+> > > 1) a user doesn't see the deprecation warning; and
+> > > 2) with v6.18 kernel, the read-write remount fails because of unknown
+> > >    attr2 option rendering system unusable:
+> > >
+> > > systemd[1]: Switching root.
+> > > systemd-remount-fs[225]: /usr/bin/mount for / exited with exit status 32.
+> > >
+> > > # mount -o rw /
+> > > mount: /: fsconfig() failed: xfs: Unknown parameter 'attr2'.
+> > >
+> > > Thorsten (in Cc) suggested reporting this as a user-visible regression.
+> > >
+> > > From my PoV, although the deprecation is in place for 5 years already,
+> > > it may not be visible enough as the warning is not emitted for rootfs.
+> > > Considering the amount of systems set up with XFS on /, this may
+> > > impose a mass problem for users.
+> > >
+> > > Vlastimil suggested making attr2 option a complete noop instead of
+> > > removing it.
+> > 
+> > IOWs, the initrd mounts the root fs with (I assume) no mount options,
+> > and mount -a remounts with whatever options are in fstab.  However,
+> > XFS doesn't complain about deprecated mount options during a remount, so
+> > technically speaking we were not warning all users in all combinations
+> > that they were heading for a cliff.
+> > 
+> > Gotcha!!
+> > 
+> > Now, how did 'attr2' get slurped up on so many systems?  The old code
+> > would put that in /proc/mounts if the filesystem happened to be in attr2
+> > mode, even if user hadn't mounted with any such option.  IOWs, this is
+> > because someone thought it would be a good idea to advertise system
+> > state via /proc/mounts.
+> > 
+> > The easy way to fix this is to reintroduce the four mount options but
+> > map them to a no-op option that ignores them, and hope that nobody's
+> > depending on attr2 to appear in /proc/mounts.  (Hint: use the fsgeometry
+> > ioctl).
+> > 
+> > Lessons learned:
+> > 
+> >  1. Don't expose system state via /proc/mounts; the only strings that
+> >     ought to be there are options *explicitly* provided by the user.
+> >  2. Never tidy, it's not worth the stress and irritation.
+> > 
+> > Reported-by: oleksandr@natalenko.name
+> > Reported-by: vbabka@suse.cz
+> > Cc: <stable@vger.kernel.org> # v6.18-rc1
+> > Fixes: b9a176e54162f8 ("xfs: remove deprecated mount options")
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/xfs/xfs_super.c |   13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > index e85a156dc17d16..e1df41991fccc3 100644
+> > --- a/fs/xfs/xfs_super.c
+> > +++ b/fs/xfs/xfs_super.c
+> > @@ -102,7 +102,7 @@ static const struct constant_table dax_param_enums[] = {
+> >   * Table driven mount option parser.
+> >   */
+> >  enum {
+> > -	Opt_logbufs, Opt_logbsize, Opt_logdev, Opt_rtdev,
+> > +	Opt_quietlyignore, Opt_logbufs, Opt_logbsize, Opt_logdev, Opt_rtdev,
+> >  	Opt_wsync, Opt_noalign, Opt_swalloc, Opt_sunit, Opt_swidth, Opt_nouuid,
+> >  	Opt_grpid, Opt_nogrpid, Opt_bsdgroups, Opt_sysvgroups,
+> >  	Opt_allocsize, Opt_norecovery, Opt_inode64, Opt_inode32,
+> > @@ -115,6 +115,14 @@ enum {
+> >  };
+> >  
+> >  static const struct fs_parameter_spec xfs_fs_parameters[] = {
+> > +	/*
+> > +	 * These mount options were advertised in /proc/mounts even if the
+> > +	 * filesystem had not been mounted with that option.  Quietly ignore
+> > +	 * them to avoid breaking scripts that captured /proc/mounts.
+> > +	 */
+> > +	fsparam_flag("attr",		Opt_quietlyignore),
+> 
+> Should have been "attr2" here I suppose.
 
-> On 10/14/25 7:57 AM, Jonathan Corbet wrote:
->> Akiyoshi Kurita <weibu@redadmin.org> writes:
->> 
->>> The term "userspace" should be a single word. Fix the typo
->>> "userpace" accordingly.
->>>
->>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
->>> ---
->>>  Documentation/admin-guide/tainted-kernels.rst | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
->>> index a0cc017e4424..ed1f8f1e86c5 100644
->>> --- a/Documentation/admin-guide/tainted-kernels.rst
->>> +++ b/Documentation/admin-guide/tainted-kernels.rst
->>> @@ -186,6 +186,6 @@ More detailed explanation for tainting
->>>  
->>>   18) ``N`` if an in-kernel test, such as a KUnit test, has been run.
->>>  
->>> - 19) ``J`` if userpace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
->>> + 19) ``J`` if userspace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
->>>       to use the devices debugging features. Device debugging features could
->>>       cause the device to malfunction in undefined ways.
->> 
->> Applied, thanks.
->
-> Comparing to the "MSDOS" spelling patch:
->
-> did you check/count "userspace" vs. "user space" vs. "user-space"
-> in the kernel source tree?
+Yeah, sorry about that, will fix for v2.
 
-No, but this patch was fixing "userpace", which is overtly wrong.  It
-turns out that there's a surprising number of those, too, but still far
-fewer.
+Maybe I should use fs_param_deprecated here too.
 
-jon
+--D
+
+> Thanks.
+> 
+> > +	fsparam_flag("noattr2",		Opt_quietlyignore),
+> > +
+> >  	fsparam_u32("logbufs",		Opt_logbufs),
+> >  	fsparam_string("logbsize",	Opt_logbsize),
+> >  	fsparam_string("logdev",	Opt_logdev),
+> > @@ -1408,6 +1416,8 @@ xfs_fs_parse_param(
+> >  		return opt;
+> >  
+> >  	switch (opt) {
+> > +	case Opt_quietlyignore:
+> > +		return 0;
+> >  	case Opt_logbufs:
+> >  		parsing_mp->m_logbufs = result.uint_32;
+> >  		return 0;
+> > @@ -1528,7 +1538,6 @@ xfs_fs_parse_param(
+> >  		xfs_mount_set_dax_mode(parsing_mp, result.uint_32);
+> >  		return 0;
+> >  #endif
+> > -	/* Following mount options will be removed in September 2025 */
+> >  	case Opt_max_open_zones:
+> >  		parsing_mp->m_max_open_zones = result.uint_32;
+> >  		return 0;
+> > 
+> 
+> -- 
+> Oleksandr Natalenko, MSE
+
+
 
