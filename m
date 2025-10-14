@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-853331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDFABDB501
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:48:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD70BDB50D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76783AE6BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:48:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 138944E230B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BF1306D50;
-	Tue, 14 Oct 2025 20:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7A43074A6;
+	Tue, 14 Oct 2025 20:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ac1UXg+S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INYZIRSr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063A2877FA;
-	Tue, 14 Oct 2025 20:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83747274B58;
+	Tue, 14 Oct 2025 20:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760474890; cv=none; b=IskXLde4tYer1iicF+3UMowtCx1RwJjDaXHDrS9SuHLs+2C+Afu+8ldnMisgyAqyXJm2Z28xv2cJpX3b0MV1NDXaju75lUarDj2oK40+TesvxPiDtx8zbhzcVSrASfuFWo1IMC30Kiwha0bAtzjjLfspWVlzwQJK4rbpJ25161c=
+	t=1760474965; cv=none; b=cYLbcmeJ2WRCSjd6OjL7jKiTcN8rwJNqZOvdYwbxhsZV0a3zfPgUheXHevbXOvLztRHHltrZDq/G/xdfsjvEjTNejgmw78BCr34aNqrzJAM1MM/3NU30fDR/5WnGwhpznh7pcO2BTn4ARdyKO3oiKiarDhxoxvTnMjoAfJzZjrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760474890; c=relaxed/simple;
-	bh=Em10QkwHKTKXlsyI+2+xjbCURDQJuQZ+0ngrcp0Ttxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLVZ+YS2IjHi0JYNjfuSNuEcm9EPfWwSd/ab4UHzSryPUXjNznEzUH+MtkNcWefwoFD7KQHNnjJJyWliLfkDd2u0bVHENt8HFSf8TIaVW2K9gDBvT/CY7BbFeD82LSBIg6PYIJMkiSTIGoxw57uy8JOFmMq5pv7TwKg9G37CWaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ac1UXg+S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A1BC4CEE7;
-	Tue, 14 Oct 2025 20:48:09 +0000 (UTC)
+	s=arc-20240116; t=1760474965; c=relaxed/simple;
+	bh=tXxoIaagHe+5VMj+FXUqlWujyDPl5vQQh4jPiiPWkL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IrVuD4qYm4sS15ujdthRrhCWNLRgFkWHNDPjd0UQdAvSBRaEZsii9Y9xLqMpysTFZNEUBXkFZn2FbTu4QTrcM4vSj2JXJyuptRUTRQPuPsWk/+vonaWzWWAZHUZ+KMFfpYizYFuflBxv4Y9j76jKzfviw9O6HysB4KWO/YIeCDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INYZIRSr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7AF3C4CEE7;
+	Tue, 14 Oct 2025 20:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760474889;
-	bh=Em10QkwHKTKXlsyI+2+xjbCURDQJuQZ+0ngrcp0Ttxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ac1UXg+SCBy9/GWTf/+/DigHGLV9tHgtMrbSVcPYyXrhuFmiThCmMHN9AJKuNqNRL
-	 Ufwo89GtcIXqjUwkdu3ynzYbGkO63J+XIJCkkYNhxXhwFaIraxXRmPVVgCpB5OxjTD
-	 d+y1Y6UGQ8TXXfnUwedOEYs9+m8PTH5ZLOHJ6IEkftT19EHlmcdOf5TVHTY+aeuNs1
-	 Cgmwt2YB0p9Az1C5Q8QjcVdYsNv4u9Pay4JrOzxRSSRGPxz9uyvbUUhXBR9L3XJivv
-	 APhB4MK8AyEYDnP8wl0QR0Ec37I4RM/KnZFPeLgRu3Te76fy7uR2LKIAubikoL6FXJ
-	 HCeltuj8/Nmfw==
-Date: Tue, 14 Oct 2025 15:48:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional
- clock
-Message-ID: <20251014204807.GA1075103-robh@kernel.org>
-References: <20251010183418.2179063-1-Frank.Li@nxp.com>
- <20251014-flattop-limping-46220a9eda46@spud>
- <20251014-projector-immovably-59a2a48857cc@spud>
- <20251014120213.002308f2@kernel.org>
- <20251014-unclothed-outsource-d0438fbf1b23@spud>
+	s=k20201202; t=1760474965;
+	bh=tXxoIaagHe+5VMj+FXUqlWujyDPl5vQQh4jPiiPWkL0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=INYZIRSrT7y702jE2lZ9osZtFn4C2FROtPO81si8JKVE5YyVwJ0X6M3nwdMo8tz11
+	 ber2+g8dRiw6VZCKo7uTr+wwcUiCYCQ0lR2Qw9MGGrmpY8Hxo/rwwmlD5tWxY59HLM
+	 72UDkgsf9SYxEwvbZDFneR4vUVIf4QjUlTAAemlNZjo0JjwBEAbcqJM1yC3iPsNXbB
+	 G4x07ssr76MD4diwFdsXsMPIDdldl8V4BpfWR6ZltETs7ZQZ7ixBy6wQEFUzpaPo47
+	 fnuja1AOJIpy1vvMy1z21tzlUcmVCaqEN2TRWEg8tAY/CH6WoHo62S6+Mcwxk1vX3O
+	 o4FCOdB2nGOSQ==
+Message-ID: <fa3c1732-328d-46a2-8514-2e7f9ca6c63f@kernel.org>
+Date: Tue, 14 Oct 2025 21:49:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014-unclothed-outsource-d0438fbf1b23@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+ Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org,
+ will@kernel.org, saravanak@google.com, conor+dt@kernel.org, robh@kernel.org,
+ mchehab@kernel.org, krzk+dt@kernel.org, abhinav.kumar@linux.dev,
+ vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ bjorn.andersson@oss.qualcomm.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <aec0f40a-8346-4194-8b18-1022fe3366bb@arm.com>
+ <0d0560cc-9757-4c7b-8de4-170148d99481@oss.qualcomm.com>
+ <ead7cf8b-fbc4-4242-a9da-b313dded1abc@arm.com>
+ <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
+ <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com>
+ <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
+ <8d88cd9d-16e8-43f9-8eb3-89862da1d0c1@arm.com>
+ <hOs24ZavnUyKYyNwBWwRpYnrsefzBfp95yuy9zyp1ByxR9_3VacGX1Yntt8pCE4w3gllPwvevs1AZqghmwKoFg==@protonmail.internalid>
+ <zcgn4xw2xghyna2eysavujbzbiydyki7p7upzzv7one5mdyjy6@sj7f75kc4vwu>
+ <fb767586-a376-48eb-97b4-bf33061642b9@kernel.org>
+ <a4WDx80rJP1GnGNEK0OOD5lh-m-MiAvireXdpiM9ETLKZ084sBJ2UthU_QqRbU_nwD4XtsdiyEqQ0AhxguzJ6g==@protonmail.internalid>
+ <6gx74wxie4wcabq27wo5y7v36uuurez4jxlzanroepqazdlgtw@sdtv2ld47d3q>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <6gx74wxie4wcabq27wo5y7v36uuurez4jxlzanroepqazdlgtw@sdtv2ld47d3q>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 08:35:04PM +0100, Conor Dooley wrote:
-> On Tue, Oct 14, 2025 at 12:02:13PM -0700, Jakub Kicinski wrote:
-> > On Tue, 14 Oct 2025 19:12:23 +0100 Conor Dooley wrote:
-> > > On Tue, Oct 14, 2025 at 07:02:50PM +0100, Conor Dooley wrote:
-> > > > On Fri, Oct 10, 2025 at 02:34:17PM -0400, Frank Li wrote:  
-> > > > > Add optional clock for OSC_IN and fix the below CHECK_DTBS warnings:
-> > > > >   arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dtb: switch@0 (nxp,sja1105q): Unevaluated properties are not allowed ('clocks' was unexpected)
-> > > > > 
-> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>  
-> > > > 
-> > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > pw-bot: not-applicable  
-> > > 
-> > > Hmm, I think this pw-bot command, intended for the dt patchwork has
-> > > probably screwed with the state in the netdev patchwork. Hopefully I can
-> > > fix that via
-> > 
-> > The pw-bot commands are a netdev+bpf thing :) They won't do anything
-> > to dt patchwork. IOW the pw-bot is a different bot than the one that
-> > replies when patch is applied.
-> 
-> Rob's recently added it to our patchwork too.
+On 14/10/2025 19:35, Dmitry Baryshkov wrote:
+>> Each function id can be associated with a device and a compat string
+>> associated with it.
+> So, which part of the hardware is described by the -cb device? What does
+> it mean_here_?
 
-And the issue is that both PW projects might get updated and both don't 
-necessarily want the same state (like this case). So we need to 
-distinguish. Perhaps like one of the following:
+The non-pixel path video encoder, the tz video encoder...
 
-dt-pw-bot: <state>
+What's not clear about that ?
 
-or
-
-pw-bot: <project> <state>
-
-Rob
+---
+bod
 
