@@ -1,181 +1,171 @@
-Return-Path: <linux-kernel+bounces-852094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D81BD8259
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:22:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4873BD826E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 940AE4F9348
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64DC3E8BBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F8130F92C;
-	Tue, 14 Oct 2025 08:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D354030F927;
+	Tue, 14 Oct 2025 08:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Id/xKfdF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d5F/ktAF"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676EF30F811
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE781A5B9D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430150; cv=none; b=jjJK/Ic2UjGHOLTDkmvxge3OS6cC25UB0RvZTRUgFYji4QUbhD1Uisj6gxUkILRMp1UMKK4whFLJgzoIWetjpPH4orFwMsECBZ+LEtWe9j993rHmqT93E9IQI/hzDUUsNLd56DJsObamBcoFxm6sryFDyvmh9h+6f58uC30Hr9M=
+	t=1760430202; cv=none; b=dWvZqEfIXhRto9yAA0EQWfJHa4t7HTwwKvfGEKc0cTeq8GrYzr662gjBLPzy8Oof/rgRFNtV1/xgxg4O2UQlfLQuDEeKCYfZxW3k4PffynyE/HDTsA9ALIUQ69vQf5JtblwP5ZeJee6EooLhKehWYknPbI/KTMOa1RUPg4C4ZD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430150; c=relaxed/simple;
-	bh=CAw+2q1jb4+KyAhmwvSFmEXCgypuAgJT26FqKT0LMNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=giGLfWvvl5UMAxSbTGsOx82vAca9nzLlcZ2Y/dBPy1ej7aynSFXu/Y8fz3YQjkX/CDNYkYjox0dfacHgZE77usDpQsAVKAZalw4TvfwzzTYpTFJ3n8x7GIeBsrx+ONEIXebCPdH934s0dEk1DYTlV/imgndlrrWvNxRGy+Z6PL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Id/xKfdF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87IIJ001489
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pJro/XUVZL6sNNGMbVoX0we2kE3710IaAzwCCDD1JY8=; b=Id/xKfdF8m1FfW4T
-	/NxROPG1I4FbwG5vwQejT71fkYEOpDq+6sZ1VRNbxu5Xo4q2npM20qib/mnu1j1o
-	iHWZEDGT4ApFl6ZgIbtzWUB0++K4mgHEcm9FZh3pGNOeW5cpxE7ihEJzURf1kCjI
-	RsAsshMotnH2E8o4Ia81HXcrGWqvHQ7IOIjT6ttoyuF5oYw8uJ0IcWaPJ0bYNt7b
-	La4NXGUH2AeBUbrYqloL2C4JgR/BGBb0kjTx/QiEn+X6vfjPwaDPfu3rhotM2wbC
-	Rb6vn9jrcfmp+8NoOgHaWZEq7+z65GH+QSPBM+L5Mmnx0SBlvVlg3tRJdDp/GfPy
-	FiuCjw==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa87qq5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:22:27 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-780f914b5a4so7485426b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:22:27 -0700 (PDT)
+	s=arc-20240116; t=1760430202; c=relaxed/simple;
+	bh=QpLLN7omLU7FVeu70pu6uFOP+AtOBErrgm75t8rLSRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nZIOFtrG5RoxPOEjibYB8mm/k9U46TMT6fugMjbt8VzRtqH0+cUVnH5SU4ItrILTS8ov9r2wWNP564OocvsvDDQLHXv/PVXQ14/TP6ze+mzWjX1rhkRmhCRe+GkskCVay3cEJI18wbzx0gQw8oMHjUtvFjkKq1X2cF8OdB3GqaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d5F/ktAF; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7815092cd0aso2393697b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760430199; x=1761034999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y9TclHM+FlxL8k/EdZlfp0sKQpkcWovBD/evGnk/JRY=;
+        b=d5F/ktAFXiAlca/nL4hv1iOe9/I8zrpQX5eD+YjxQvMcYsXB3gO0yt6NdWCwZZ1Q8f
+         YGm/uQWNq9Z302yY+mMQLJSQTzyTGw64d4voZuBwYDnLfJjZ/9ZYGSzDaRVh1Oihsyvh
+         8oKbrs+cvUN7M5292eAW5DZCwfjbkCyQXaGP/YhGeWcgOw4qkwYQ815xURYyl2yt/suN
+         XZtcl4QSVC7UHy9+ml8+wKOZ5EGmBnY0j9EpKCpNTrYcnDyF2qc766x2kqReFaBw0Zo7
+         yOZp27Y1L9JGsiD2XKQhRQdoRk8SF2q0YzB3vHEjTo0/lrv5Tv+y87v8+kcC5qHSnvJ0
+         5IcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760430146; x=1761034946;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJro/XUVZL6sNNGMbVoX0we2kE3710IaAzwCCDD1JY8=;
-        b=ppkQrpyc4F+Gi6fbModVZWVF/A0QGZUJwICAL4LsFRCGxV55MGsGLVCvbPln2uBb1z
-         +QQh1uNP1AtVOUEXTC4CA6OqJxLKYHQAtC+4eQqHqwQwexC4AJHk5NZ0ce7HUNnqKeGC
-         StIw6HLks0odGRpxzNCsAvV1+tERVzIRvkbIOprN5AQlaSm2ifbNPMvpKikvmx6ZoPJ5
-         jX8khsZuVNYtWzS2s2R9VGjW9irg3/IYNSDRJGp3p523Pe0ck6UZ9R75U0itW1Edv/vy
-         Hpa4p7qILDxJP/JjpS1NrVBrd9HpBA+BFnysh21Bc3PZWutP8c/Hfy5slAlDpjsQ5yQS
-         1RYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMP8Bztn6K8+Fp/xXnAImoUynyejzQJWZTei57zzR9FoWMRCTBk8UC8cn9eZ30WF9aQf8zm+Cl6M8Rx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpymCGMbWHyZGoMyBuZ2y5sy/p+KkPKlWwwtaItmZ9qtzt+fXZ
-	3m8nfdPjzToUGJrKpl6VuHiAnfr1ytzAUITYV/ByNA+qQk9Nbs3dYjyMXcEdmEBSpphJ2O0pS3D
-	m5Ts+ja+hXiHLC8bB1dODKdAdUqmKTw27eU/zg/E5Xp7QONlikAu0PJ08ORyLhBLhR+0=
-X-Gm-Gg: ASbGncsxahQfDbavBlkcP4xvgBDJPr3RIajdeuvJwmvAN5Wwkb3Dbolm3ZVU6kpX/kL
-	kvki4oq20HzLWX1JE+Ol3dGECrLffxTjCNO0Yo1Uq66WzqlM/sGwOdk3o+zVbe56UgDTtBNxs0C
-	X6uFOTkW6Q2svd7gDNYOuvE/AIemruX3wegnO4u9gPjMUc0Mg/CysDH52erTI/fZ0FUkpyItXVa
-	RmoOLkbxkKBEjS6GLqRIkztXlnwuI0MwOXcJqJ5puZPUCboMtasP7CKJkmEcIEDxnnnrUOElezR
-	9Fo6MOcQ/AwbTjze4WY0qD9DnOId5EVigY/qSF+SnnAKnLPmu2QbNj9S7jD/6WP28b9EzZie
-X-Received: by 2002:a05:6a00:17a5:b0:781:18de:f7e0 with SMTP id d2e1a72fcca58-793881eb478mr30456597b3a.31.1760430145846;
-        Tue, 14 Oct 2025 01:22:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtVXUxvT3BTmAWyeKc6CnqZyTjDz0qtj7wJr27aCf/zysLVgocmJ0HQDvzjqsQH/oZZheWKA==
-X-Received: by 2002:a05:6a00:17a5:b0:781:18de:f7e0 with SMTP id d2e1a72fcca58-793881eb478mr30456558b3a.31.1760430145348;
-        Tue, 14 Oct 2025 01:22:25 -0700 (PDT)
-Received: from [10.206.101.41] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm14124339b3a.64.2025.10.14.01.22.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 01:22:24 -0700 (PDT)
-Message-ID: <7f8cafd4-1e0d-13ee-bc1a-f0a230b4e3e2@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 13:52:19 +0530
+        d=1e100.net; s=20230601; t=1760430199; x=1761034999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y9TclHM+FlxL8k/EdZlfp0sKQpkcWovBD/evGnk/JRY=;
+        b=g/Z28wV4fHtXNkcLEqeEi7qwRuW91h/xPplwR3GPDjYQO6+EpYBA45D9yDTyAnSNtg
+         sZprDb7Kk0DHG6N5ZEEYhq9ESmQ9h9/Gq95LYl1UIFdIILrhoKu38p0uSgM5veNA2vas
+         iNRFVf0vZ5DZbRP3C+iIXYHe4KpApKUjMa7YsG4F/IzekDT3KsBMb9GKOst0Crsgo4sb
+         8WSzGElaSmhRnx7gjSEF76B7CebhZm7vwUtXKslbHBsM1KdXlDH6MLNXyPzhz2gfzWXa
+         U8wF/UTbFECyCZW89SnmCbwTQU/0ze8CuS/fJm4eSBNYMQ3VJL0q6zjHEitDABiC0fnp
+         cr6A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8060sE41fow8vjKN66ab/frcU9goK0xN9yhoUyaT8VL9UghnrJJS2jZFgOuDswXslnwCyuQAkgjt3TI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQElBofd/zqI/6oId+6GA+otnrRyn33hSPt5D2YAnrZURmf3s
+	NpQRz+brtDm2XtaSYTG0eOVUmD4BnVasPLVmsJnftsne9mzOCQvScMNmU9gs6DRZPMFP2SsWQbi
+	+UtGb19WP8k2gKfizts8+V+q9bcK14o/6tiFxm5FcXw==
+X-Gm-Gg: ASbGncsUj23hWhbDqRPQ81SYBVaNclZBVPxs9Ylh1OlSYTRPR5rWMFAaL2nMEYkJ0SG
+	96nPGlEPs5tIlTW+gljHdVYpsJmuBJ6XSQo5MG3OFs8DVeIgq7c5vR4I5oQq4dQNoNAsooso6SH
+	3wyCbjfvws2tn4RWNoI9Kdjq0ZDhWLZMhVaM8g8D9PUDkeHi2/RGCDBEcW2B/rRw8xwyZPFpb2f
+	qGvqSaEoGr/4xruITDjUeqUiODQg1uqylU9PtNK
+X-Google-Smtp-Source: AGHT+IGUPFI5jCPwxpBaBsUtA4t105DOhgNvQsDGVLBIPQELjrZFFsrZcl9lsa37EFuLVIbBf5ZvE7ZH81SU0iQy1BA=
+X-Received: by 2002:a05:690e:424d:b0:5fc:5d98:3478 with SMTP id
+ 956f58d0204a3-63ccb7fabcfmr16158005d50.7.1760430198919; Tue, 14 Oct 2025
+ 01:23:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 4/8] media: iris: stop encoding PIPE value into fw_caps
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251013-iris-sc7280-v3-0-f3bceb77a250@oss.qualcomm.com>
- <20251013-iris-sc7280-v3-4-f3bceb77a250@oss.qualcomm.com>
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <20251013-iris-sc7280-v3-4-f3bceb77a250@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: N1KfQ0UZsz2YDnyxPtMUAXhgu-hzfnnP
-X-Proofpoint-ORIG-GUID: N1KfQ0UZsz2YDnyxPtMUAXhgu-hzfnnP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX/6cjs5zT9FDy
- fAn+5MCi2abZrT8/8SEeu7VrWi7m4lMzbuaGSaRTSWeW1iYDfL/tfRLfZ91H5tjzCZJqvmRd0Kc
- 2lNGK0OnZOFkNwW7oq+OVTqv9ABfyJDSKDH5K2cquKbw5JjkOjJUFYGGyiHpx5gDG3GRKyk5Jnd
- qBrRLsANAgLLG3UnDvakxj0vtyDzRwc1zfNkmk/l41E7VQhAbSvu2Nmw/Mw7yT5eF2g+8bcN1zH
- yjo3wX9seqaLyn6IkxxyEoaFBiloJhmoR1NUBS9Esj+l1aCcVaMJaJ2STcinlh12OPyjUZ56XPA
- ywagJkZwTomBv+GfethEh6R+NG8t4NJPtmRNGphZyhV6h+kS8qklumaHBzRp1Fxxwo4k4AZkv5D
- dSmIXRHjmHtz+MJadyQ7g9SLEIDHJg==
-X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ee0843 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=JV23JpkejX04UPURfCkA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
+References: <20251009223501.570949-1-jelonek.jonas@gmail.com> <20251009223501.570949-2-jelonek.jonas@gmail.com>
+In-Reply-To: <20251009223501.570949-2-jelonek.jonas@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 14 Oct 2025 10:23:06 +0200
+X-Gm-Features: AS18NWBS0RiqVLOn6OGw-S2jkVsKedTw5UCNSQ2_7gUR2ne-WB-LpCsCs8TF6SE
+Message-ID: <CACRpkdb6bTFbTtNsO59GXFa9eMK9x=+BGK5Vx4bKv62wxiSpiw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] dt-bindings: gpio: add gpio-split controller
+To: Jonas Jelonek <jelonek.jonas@gmail.com>, Peter Rosin <peda@axentia.se>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jonas,
 
-On 10/13/2025 7:38 AM, Dmitry Baryshkov wrote:
-> The value of the PIPE property depends on the number of pipes available
-> on the platform and is frequently the only difference between several
-> fw_caps. In order to reduce duplciation, use num_vpp_pipe from the
-> iris_platform_data rather than hardcoding the value into the fw_cap.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_ctrls.c            | 6 +++++-
->  drivers/media/platform/qcom/iris/iris_platform_gen2.c    | 4 ++--
->  drivers/media/platform/qcom/iris/iris_platform_qcs8300.h | 4 ++--
->  drivers/media/platform/qcom/iris/iris_platform_sm8250.c  | 4 ++--
->  4 files changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> index 0e9adb3982a49cfd7cbe5110cfd5f573f0f7bb38..8db3fa222bdb92a7ffff3dfe62d33f16c0550757 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> @@ -318,7 +318,11 @@ void iris_session_init_caps(struct iris_core *core)
->  			continue;
->  
->  		core->inst_fw_caps_dec[cap_id].idx = i;
-> -		core->inst_fw_caps_dec[cap_id].value = caps[i].value;
-> +		if (cap_id == PIPE)
-> +			core->inst_fw_caps_dec[cap_id].value =
-> +				core->iris_platform_data->num_vpp_pipe;
-> +		else
-> +			core->inst_fw_caps_dec[cap_id].value = caps[i].value;
->  	}
->  
->  	caps = core->iris_platform_data->inst_fw_caps_enc;
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index b444e816355624bca8248cce9da7adcd7caf6c5b..7ad03a800356ae9fb73bdbd6d09928d0b500cb3c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -161,9 +161,9 @@ static const struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
->  	{
->  		.cap_id = PIPE,
->  		.min = PIPE_1,
+thanks for your patch!
 
-Could you please make .min same as .max here ? I understand the context of this
-patch, but since we are updating this cap, pls update min as well. So far, it
-picks the .value from cap to set it to firmware, so its never an issue, while
-keeping min and max same, it would indicate the SOC have that number of pipe and
-not variable.
+Including Peter Rosin (the gpio-mux author) and Geert Uytterhoeven
+on this review, as they have worked with similar stuff. Please include
+them on future postings. The result definitely need Peters ack before
+we can merge it.
 
-Regards,
-Vikash
+On Fri, Oct 10, 2025 at 12:35=E2=80=AFAM Jonas Jelonek <jelonek.jonas@gmail=
+.com> wrote:
+
+> Add dt-schema for a virtual gpio-split controller which exposes virtual
+> GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
+>
+> The gpio-split controller is a gpio-controller, thus has mostly the same
+> semantics. However, it requires a mux-control to be specified upon which
+> it will operate.
+>
+> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+
+So if I understand it correctly this models a 1-to-many input-only
+GPIO multiplexer, we need an illustration such as
+
+        +----- A
+IN     /
+<-----o------- B
+    / |\
+    | | +----- C
+    | |  \
+    | |   +--- D
+    | |
+   M1 M0
+
+MUX CONTROL
+
+ M1 M0   INPUT
+  0  0   A
+  0  1   B
+  1  0   C
+  1  1   D
+
+Is this correct? In that case include something like this
+verbatim in the bindings (feel free to copy/modify this)
+as it makes it much easier to understand what is going on.
+
+That's a very minimal example of a way to turn 3 GPIO
+lines into 4 GPIO lines, which is a bit crazy but I'm not
+the one to tell vendors what to do :D
+
+> +  mux-controls:
+> +    maxItems: 1
+
+So this needs a description, it is a phandle to the
+gpio multiplexer (reference /schemas/mux/gpio-mux.yaml
+explicitly!) used by the splitter.
+
+You should also in the same patch add an example to
+/schemas/mux/gpio-mux.yaml showing how this is used
+to muliplex GPIOs so people find this new usecase easily.
+
+> +  shared-gpio:
+> +    description:
+> +      GPIO that is shared by the virtual GPIOs and controlled via the mu=
+x.
+
+So this one is shared one-to-many, and I think the bindings
+overall makes sense.
+
+Maybe "gpio-split" is a bit ambiguous?
+We have io-channel-mux, so what about "gpio-line-mux"
+simply?
+
+The fact that GPIO lines are used to do the muxing is just
+a detail since a mux is an abstract concept, it could have
+just as well been muxed with some I2C device for example.
+
+Yours,
+Linus Walleij
 
