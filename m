@@ -1,162 +1,238 @@
-Return-Path: <linux-kernel+bounces-851953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97A7BD7C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:58:57 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B6DBD7C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E55C4F8BE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:57:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A30A34392E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FB5313532;
-	Tue, 14 Oct 2025 06:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E720E313E25;
+	Tue, 14 Oct 2025 06:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SJgQY6rh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SIY964ib"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w5WafnkN"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6B4312807;
-	Tue, 14 Oct 2025 06:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3929231329D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760424577; cv=none; b=bs9NNKSXaiiSd73zknSI5Qkxi72tA4u5WBPFjvMZzpaEIO/leylliswkb638d6FfQvubpqG+YaWn712Jand1QcsaDnzjTc9FVRAZ+HUMsK5MKe1EjYC86cPQWvueiFs8M42hlNC4vGjih5fw+gZmNgE1EWYxdAPKatifHeNygZ0=
+	t=1760424585; cv=none; b=YDjRk6qhoG35srXs6eNWgVJpOuMf+a0DGsbmuyp6IVncgR+VFBDWBco6eLcyUxZ2DxcR0KBqXtdz5ZCKJQtNFuJKYdD+aKsuhKHpBnAg7JlIUa8OYkzQk3Fyb3/7VZ5tir2arQdKUfKRm6Xmyp7GVCk47J1Cd60wkcnlZibHz6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760424577; c=relaxed/simple;
-	bh=R2dVhre2T8n2qzoofQAXu+jOBab42AUukdse5kq9VNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HKBE+NXw3yyicslN5RoZ7mIXrGI8qH0sCRXyuAxeaZt2KLN9arsP3vN9hBJPn6/VQ43H+Rt0+pZNQyOBSv1uv+QB9KXuR4jwyd/c+z57fsusCFesmfBLUMj0wGeT1O+LifVCyZErNIDZAXtBhSyBaDP8dHl4EYSVi/4f8thLX/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SJgQY6rh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SIY964ib; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760424571;
+	s=arc-20240116; t=1760424585; c=relaxed/simple;
+	bh=KHv1oPWvS56/sbOUxmLhi54A3IbzEbCV65h12OeEbZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U1uz5dGn1AI80YEuFpk5cXyxPxBEoMtLdCSxlNM+8jf3sxLxHVVRdn5/5ur/CzTKiUdZSlE+NK1rfeFZgZ9DoIuZmnhspqGRnfnjxiFAGAAcxYg6ribbgfX+4YJyGrL2A5+e2P63J8ScHYeEnH06yeHjhgBV3E2iYKle/Pmpu9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w5WafnkN; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0c833afd-64d5-4128-a03a-c47ff834b7ab@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760424580;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ctw6z2zVCPFpRDjjK/Bor9mxmqzsDUqKVIr3JUMCPTE=;
-	b=SJgQY6rhi25HikAnpR7m/+GjLKzcNc+ulNm4jRwhYzAViDq+VP67/bKFvOBYac0wWIrn+b
-	LR8qvE1dqWDxfktw/5U7BfPdmvX3fw+leswF6u4EUUZt79ha6aaf1DiZ0w1bh1fouAFTuM
-	LMnxZcrPAy4dE2S29w935gxNTNOf6uFnG/AOzGFwHX04yd4PVRBz0mXxa5411vSov58+vz
-	9tTort9wcS77PhZ1BQtYbKyglH9HvCLPxCWo8h8G6fr7gz3Hw8TZw5Mb5xPpH2hYB2s8QS
-	qSc1ahRm2X3yVQoa04eqlEXSreVJUrQ6KKwI77QtKer6u2Y51WjgnEhmbUsIvw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760424571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ctw6z2zVCPFpRDjjK/Bor9mxmqzsDUqKVIr3JUMCPTE=;
-	b=SIY964ibeBMDBfSWXaREGK3RST6oxNsrRUMtMNHo2iwqdWDn6tl1cXZPULW50EDd444CJr
-	f6JBTw9BW/3/cxBA==
-Date: Tue, 14 Oct 2025 08:49:21 +0200
-Subject: [PATCH v4 35/35] clocksource: remove ARCH_CLOCKSOURCE_DATA
+	bh=bqw4wlUUpqHY1zTsNaI6KPl3Fd0ZPpUoNdegpj+F+GI=;
+	b=w5WafnkN4Pd2sN5sguTO6JcMstbnbaCkYxq3XgFIaIrllCvPiKOHODjcdp9y30yM/FexFh
+	0pcwSDLv37z03FGyQCA5tU7vNXsY0ws+RtvH5bmZqDj7hWbTrmm58CuHQwJ1DACW62YOUc
+	CQPua4UYMtenb+k2wGn7Mg7mB3yKIDY=
+Date: Tue, 14 Oct 2025 14:49:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251014-vdso-sparc64-generic-2-v4-35-e0607bf49dea@linutronix.de>
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
-In-Reply-To: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
- John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
- Shannon Nelson <sln@onemain.com>
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
- linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760424546; l=1786;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=dQYrfrH6p59kOQp8CklF/Vp09pCtZ6J6GVY/7odturY=;
- b=Wu1NQgBNvnEB5LIkZlAVc2nl5UHIvAcwoDQQL5xS07arY9KRRtvEqZcoP347fwi2GCQ3xtn0+
- zA44cRMjJacBd8KGBEIzRjLhJyEIekF9k/Hds3wcM4CPYv+/tJE/JoO
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Subject: Re: [PATCH v4 0/4] reparent the THP split queue
+To: Zi Yan <ziy@nvidia.com>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ david@redhat.com, lorenzo.stoakes@oracle.com, harry.yoo@oracle.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ lance.yang@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Qi Zheng <zhengqi.arch@bytedance.com>
+References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
+ <925E0247-2976-4D85-A8AA-E8C92C64CED4@nvidia.com>
+ <df9a3e22-caca-4298-b7d8-5334ce5446a0@linux.dev>
+ <C3134C16-584F-41D2-88E4-4B94B58C16F2@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <C3134C16-584F-41D2-88E4-4B94B58C16F2@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Zi,
 
-After sparc64, there are no remaining users of ARCH_CLOCKSOURCE_DATA
-and it can just be removed.
+On 10/14/25 12:37 AM, Zi Yan wrote:
+> On 13 Oct 2025, at 3:23, Qi Zheng wrote:
+> 
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: John Stultz <jstultz@google.com>
-[Thomas: drop sparc64 bits from the patch]
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Tested-by: Andreas Larsson <andreas@gaisler.com>
-Reviewed-by: Andreas Larsson <andreas@gaisler.com>
----
- include/linux/clocksource.h | 6 +-----
- kernel/time/Kconfig         | 4 ----
- 2 files changed, 1 insertion(+), 9 deletions(-)
+[snip]
 
-diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
-index 65b7c41471c390463770c2da13694e58e83b84ea..12d853b1883265cb47d93e33d8370e3957e7e695 100644
---- a/include/linux/clocksource.h
-+++ b/include/linux/clocksource.h
-@@ -25,8 +25,7 @@ struct clocksource_base;
- struct clocksource;
- struct module;
- 
--#if defined(CONFIG_ARCH_CLOCKSOURCE_DATA) || \
--    defined(CONFIG_GENERIC_GETTIMEOFDAY)
-+#if defined(CONFIG_GENERIC_GETTIMEOFDAY)
- #include <asm/clocksource.h>
- #endif
- 
-@@ -106,9 +105,6 @@ struct clocksource {
- 	u64			max_idle_ns;
- 	u32			maxadj;
- 	u32			uncertainty_margin;
--#ifdef CONFIG_ARCH_CLOCKSOURCE_DATA
--	struct arch_clocksource_data archdata;
--#endif
- 	u64			max_cycles;
- 	u64			max_raw_delta;
- 	const char		*name;
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index 7c6a52f7836cef248e0949060b50baa293f446cf..fe33118770978682d0ff6c6e7990896f42703b50 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -9,10 +9,6 @@
- config CLOCKSOURCE_WATCHDOG
- 	bool
- 
--# Architecture has extra clocksource data
--config ARCH_CLOCKSOURCE_DATA
--	bool
--
- # Architecture has extra clocksource init called from registration
- config ARCH_CLOCKSOURCE_INIT
- 	bool
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index b5eea2091cdf6..5353c7bd2c9af 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -4286,8 +4286,10 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>          }
+>>          folios_put(&fbatch);
+>>
+>> -       if (sc->nr_to_scan)
+>> +       if (sc->nr_to_scan) {
+>> +               cond_resched();
+>>                  goto retry;
+>> +       }
+>>
+>>          /*
+>>           * Stop shrinker if we didn't split any page, but the queue is empty.
+>>
+> 
+> It does not fix the issue, but only gets rid of the soft lockup warning.
+> "echo 3 | sudo tee /proc/sys/vm/drop_caches" just runs forever.
 
--- 
-2.51.0
+Oh, my bad, I didn't notice that.
+
+> 
+> Looking at the original code, sc->nr_to_scan was one of the two conditions
+> on breaking out of split_queue scanning and was never checked again
+> afterwards. When split_queue size is smaller than nr_to_scan, your code
+> will retry forever but not the original one. After I added pr_info() to
+> print sc->nr_to_scan at
+> 1) before retry:,
+> 2) before for (... folio_batch_count();...),
+> 3) before "if (sc->nr_to_scan)",
+> 
+> I see that 1) printed 2, 2) and 3) kept printing 1. It matches my
+> above guess.
+
+Got it.
+
+> 
+> The below patch fixes the issue:
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 43a3c499aec0..d38816a0c117 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -4415,7 +4415,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>   	}
+>   	folios_put(&fbatch);
+> 
+> -	if (sc->nr_to_scan)
+> +	if (sc->nr_to_scan && !list_empty(&ds_queue->split_queue))
+>   		goto retry;
+> 
+>   	/*
+> 
+
+Thanks! After applying this locally, I no longer see softlockup and
+no longer see deferred_split_scan() in perf hotspots.
+
+Will do this in the next version.
+
+Thanks,
+Qi
+
+> 
+> 
+>>
+>>> [   36.441592] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
+>>> [   36.441594] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
+>>> [   36.441598] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
+>>> [   36.441601] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
+>>> [   36.441602] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
+>>> [   36.441603] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
+>>> [   36.441604] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
+>>> [   36.441606] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
+>>> [   36.441607] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [   36.441608] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
+>>> [   36.441614] Call Trace:
+>>> [   36.441616]  <TASK>
+>>> [   36.441619]  deferred_split_scan+0x1e0/0x480
+>>> [   36.441627]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+>>> [   36.441630]  ? kvfree_rcu_queue_batch+0x96/0x1c0
+>>> [   36.441634]  ? do_raw_spin_unlock+0x46/0xd0
+>>> [   36.441639]  ? kfree_rcu_monitor+0x1da/0x2c0
+>>> [   36.441641]  ? list_lru_count_one+0x47/0x90
+>>> [   36.441644]  do_shrink_slab+0x153/0x360
+>>> [   36.441649]  shrink_slab+0xd3/0x390
+>>> [   36.441652]  drop_slab+0x7d/0x130
+>>> [   36.441655]  drop_caches_sysctl_handler+0x98/0xb0
+>>> [   36.441660]  proc_sys_call_handler+0x1c7/0x2c0
+>>> [   36.441664]  vfs_write+0x221/0x450
+>>> [   36.441669]  ksys_write+0x6c/0xe0
+>>> [   36.441672]  do_syscall_64+0x50/0x200
+>>> [   36.441675]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>> [   36.441678] RIP: 0033:0x7f7fe36e7687
+>>> [   36.441685] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+>>> [   36.441686] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+>>> [   36.441688] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
+>>> [   36.441689] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
+>>> [   36.441690] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
+>>> [   36.441691] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+>>> [   36.441692] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
+>>> [   36.441694]  </TASK>
+>>> [   64.441531] watchdog: BUG: soft lockup - CPU#0 stuck for 53s! [tee:810]
+>>> [   64.441537] Modules linked in:
+>>> [   64.441545] CPU: 0 UID: 0 PID: 810 Comm: tee Tainted: G             L      6.17.0-mm-everything-2024-01-29-07-19-no-mglru+ #526 PREEMPT(voluntary)
+>>> [   64.441548] Tainted: [L]=SOFTLOCKUP
+>>> [   64.441552] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
+>>> [   64.441555] RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
+>>> [   64.441565] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
+>>> [   64.441566] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
+>>> [   64.441568] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
+>>> [   64.441570] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
+>>> [   64.441571] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
+>>> [   64.441572] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
+>>> [   64.441573] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
+>>> [   64.441574] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
+>>> [   64.441576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [   64.441577] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
+>>> [   64.441581] Call Trace:
+>>> [   64.441583]  <TASK>
+>>> [   64.441591]  deferred_split_scan+0x1e0/0x480
+>>> [   64.441598]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+>>> [   64.441599]  ? kvfree_rcu_queue_batch+0x96/0x1c0
+>>> [   64.441603]  ? do_raw_spin_unlock+0x46/0xd0
+>>> [   64.441607]  ? kfree_rcu_monitor+0x1da/0x2c0
+>>> [   64.441610]  ? list_lru_count_one+0x47/0x90
+>>> [   64.441613]  do_shrink_slab+0x153/0x360
+>>> [   64.441618]  shrink_slab+0xd3/0x390
+>>> [   64.441621]  drop_slab+0x7d/0x130
+>>> [   64.441624]  drop_caches_sysctl_handler+0x98/0xb0
+>>> [   64.441629]  proc_sys_call_handler+0x1c7/0x2c0
+>>> [   64.441632]  vfs_write+0x221/0x450
+>>> [   64.441638]  ksys_write+0x6c/0xe0
+>>> [   64.441641]  do_syscall_64+0x50/0x200
+>>> [   64.441645]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>> [   64.441648] RIP: 0033:0x7f7fe36e7687
+>>> [   64.441654] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+>>> [   64.441656] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+>>> [   64.441658] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
+>>> [   64.441659] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
+>>> [   64.441660] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
+>>> [   64.441661] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+>>> [   64.441662] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
+>>> [   64.441663]  </TASK>
+>>>
+>>>
+>>>
+>>> --
+>>> Best Regards,
+>>> Yan, Zi
+> 
+> 
+> --
+> Best Regards,
+> Yan, Zi
 
 
