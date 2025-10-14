@@ -1,113 +1,72 @@
-Return-Path: <linux-kernel+bounces-851744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE07BD72A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9645CBD7297
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C0664F3D3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:16:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84E0F4EFD03
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62C030AD0D;
-	Tue, 14 Oct 2025 03:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8F73054C7;
+	Tue, 14 Oct 2025 03:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Xx0hOixa"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b4L22p3a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC7C309DDB
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33170307AEC;
+	Tue, 14 Oct 2025 03:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760411715; cv=none; b=irdZ+hVP09ImCTUgwLYDAsKH405iM7FRbWCXgNEvmxNruff4ev5rLIKj2cT3k1ZBg3985rrcA6ZlN7RZ97mS0lI6YZTUWGYHif7sTMmb46My/+hPhiu9LDC63VCLr+PQEkJBE5+6pYNvJH8Jvxzc95X3VLxDFT6UF+Ymy5M8aUI=
+	t=1760411706; cv=none; b=FJ8DXwrL/hLua/PsUOJLeYlVE22Mfj+a3D/M/R4HRPEqTny42vEYalbV4YRXwrS2Tl2lRSvMURBVrfmIpu/OKsvuFIuXZ2SEikT3msBUuruH/3O9Z2YXpi6Ry39pd0Bcw30M7rUU/HlNtFbvxwdrDKR6ruwM5JJbKOd2MPnk9a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760411715; c=relaxed/simple;
-	bh=OsVZTQ1MyiSKr3/7iUE60rxwcYFEmk0jXWEJNuaWHSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mT5ChH5a38ZTIxLiXmK4GgsBs/tNUWVo5k458+hZuMlP6DAQF4NJwc6g2Gguz3LHVRcaFJDMrxl/oCs8RS8ggJEPOvdwIscjpABIuxNuiCQTrJjQiRFsC9S1oGtBzlYlphF6RcUuCNxNtrN3XBYIa1JCN1VqTz0LjIrzaY8GzxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Xx0hOixa; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so67156595ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760411711; x=1761016511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6P8xZEQeIO5H4AzeXprUKU3oEf9nN+exJfE8nbRaRqY=;
-        b=Xx0hOixavcFeu6tPsgTydMQDUVjaGTL+jFou2oMet9/laxKUBHnzvZP/kKfzbK+OKX
-         5z/B5S7TWtUnysMNccO2p1Y7TA+GbrfyOppkxdNhv2s/mHbH6RiR1aFDcIf9Gv3ZOq4Z
-         GufDcxHH9e6Dna9WlgBHLM73h5uNLKqoVQtHS73q2LDqcXqsRspsvvfMXbTsVym6zEpT
-         DXDECAHmsM+wv/CzIm4R1kEZYwGBfMySFqmMVjGdCM6ZK66Kh5VXy+xem78m+wKjG/Vo
-         zvunj+ZEGI7vxq8cb3ll7luThcIdkTyArY3YGmcjpUcByVz69GycfkH5M9hilYAP6o6j
-         +bzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760411711; x=1761016511;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6P8xZEQeIO5H4AzeXprUKU3oEf9nN+exJfE8nbRaRqY=;
-        b=nroog/cjsksNY2l8s8kHatIfKpsWt6W8kTgT3O3FTw6xFEYq308HBT/Hkex0T+T80A
-         rasWHsdVjYaDSo4UB2bRLoQjsyHpCTlQutKSROe2XknDlIuEPe8xuwvncRCJsuTd93wE
-         kFrYUDVmIu7VLrVojRd5JgJ98HIjACaNSl1s5kmeL3ea0YmWClYMInmmbK2+vxzp4fPc
-         s41CfYBIMn0U4uegvEudVM08lvAxbyIm2C1G70NvhXDZcrJqDJSKvNSY6i7XH1r6OH+Y
-         vci5Ox7p67D3uDdjkQtQJqZUyBJTLYsb2lwi0sqtmkvnAdevH1sTLblD6SUZHqwFkbbU
-         thgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNoswwY84fDXXFSceu4uOk9wNF71Up1cw1M4/b9XcSLu6SS6XCW/WQem5kvsfUlr7oEYSEzzwVxu82nt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJKNMoIxED5H01gYSVCQ/IKssq0CbEfa2Aln/dzgZIbDHjMt1P
-	a2h4M8lK8+xu9afRn/do/5njjmzfFkxhcQdTgwIDY4/RB7ri+gj9CsRLx3udr+VviN4=
-X-Gm-Gg: ASbGncv4R5NSwgJBexWRfnp3hK5KLaLHf1nMNhyM4W1GMugxc1DlLcfKbwGFWbtfaIX
-	eEjeidh6Wd1pn94UVjU9zIZDMULVSXHGaMJ6v/43adMgn4sdMdo4luYeJoY2fE1WiOpp2i3jTKu
-	7TGWPLw3CqtsbSosQlTA6ryrGc449lV+mUCDAIsz2MmlcRgMQb/IItQ8FPmNo23Hnjynl5cvEVr
-	99USM6C1/CDe5EBvVi4VNlU/5NTbg1Omi91jnNTvBWInDNTyu7uq2/6pbR1rJb2t6Qh7v30ZAYn
-	m4efNbASO1vKP+StbO+T6RzvJP0kiORUZ/cXexOYfpP8wS4ljxyO4iN35KvXpUidRiuXdmWIYO4
-	PjpfxkBctojFhBEp6TE2NxPavXikmXPPNNxIap8yO5TR2/jYM9I1wddnFrmYjt2iv41jH7n92S8
-	q68XpErf5NAoWxcMPs2LtrrwpIB2c=
-X-Google-Smtp-Source: AGHT+IEnhbhgD5wvfXgKIYQpP+Lfyce302o3Owp60kynW6BbE9VY04c0yKjSZIvlB5ornO/n4cUtAg==
-X-Received: by 2002:a17:902:ef07:b0:269:82a5:fa19 with SMTP id d9443c01a7336-290272e3adcmr281603745ad.45.1760411710696;
-        Mon, 13 Oct 2025 20:15:10 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f3de4asm148315845ad.92.2025.10.13.20.15.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 13 Oct 2025 20:15:10 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: akpm@linux-foundation.org,
-	alex@ghiti.fr,
-	anup@brainfault.org,
-	aou@eecs.berkeley.edu,
-	atish.patra@linux.dev,
-	catalin.marinas@arm.com,
-	cuiyunhui@bytedance.com,
-	dianders@chromium.org,
-	johannes@sipsolutions.net,
-	lihuafei1@huawei.com,
-	mark.rutland@arm.com,
-	masahiroy@kernel.org,
-	maz@kernel.org,
-	mingo@kernel.org,
-	nicolas.schier@linux.dev,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	suzuki.poulose@arm.com,
-	thorsten.blum@linux.dev,
-	wangjinchao600@gmail.com,
-	will@kernel.org,
-	yangyicong@hisilicon.com,
-	zhanjie9@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1760411706; c=relaxed/simple;
+	bh=JEwYEiTF+lrV+WrYB82xOF+okUr2wYSqJC8XxFxiDBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXhRCwEzOMh31Y8QES1b3HhpJJik3Y7TpJNpkZfGFwOLI5zo/uGZ2bRrRUWJmQui5YiAvwUhNDTnnBWW4vOc/cB8zOPNmGn09w06V6vXsmSa0xHs3spsFw/o7MV1N78EBsMYoyP2zIWrsWuY8JHzCP9CDayo8ZL9tHtcK48+cJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b4L22p3a; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760411704; x=1791947704;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JEwYEiTF+lrV+WrYB82xOF+okUr2wYSqJC8XxFxiDBo=;
+  b=b4L22p3aGhU/7WVpSIBbKUyAjUOFlj4PUcivDTmaF61tGQ4phvtN7j7e
+   Z7e64u/TBli4BhTqqLH+o2/PD9E9uaDCO63w0R00wvTo3zSVix1ZpHrzD
+   oKIN6XxvEHFV+5eK9Y9CfO0hjC2/RD6Clcz7V+TrccDmFJkUnTlIszCN0
+   OPI56uPuEsYZaktnqIbSpt7Nh8/8b1xZcwU2DoEIhTRlSsa8V5N0C6+1v
+   JbDhN3l37mEp7fbeNFmHUzwvBb3lduHgXXKKBH3xV2ocFaO1ry6vcLv3t
+   v43H0p951IVdKR59SxGdMPBG14f/ykbM8/6fsr4P2E7eGb70JhdyylM74
+   A==;
+X-CSE-ConnectionGUID: /igm9wfYSca8xYqi+qnt5Q==
+X-CSE-MsgGUID: 5DHOkE++TLiJL40raNKHww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62662056"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
+   d="scan'208";a="62662056"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 20:15:03 -0700
+X-CSE-ConnectionGUID: 79xk/1D9QAGIVLVrYRGt5A==
+X-CSE-MsgGUID: ieNVOFFRRuON/T6NvJEDVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
+   d="scan'208";a="182198536"
+Received: from yungchua-desk.itwn.intel.com ([10.227.8.136])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2025 20:15:01 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Paul Walmsley <pjw@kernel.org>
-Subject: [PATCH v4 2/2] riscv: add HARDLOCKUP_DETECTOR_PERF support
-Date: Tue, 14 Oct 2025 11:14:25 +0800
-Message-Id: <20251014031425.93284-3-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20251014031425.93284-1-cuiyunhui@bytedance.com>
-References: <20251014031425.93284-1-cuiyunhui@bytedance.com>
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH 0/7] ASoC/soundwire: add fake BPT frame to align Intel DMA buffer size
+Date: Tue, 14 Oct 2025 11:14:43 +0800
+Message-ID: <20251014031450.3781789-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -116,66 +75,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the HARDLOCKUP_DETECTOR_PERF function based on RISC-V SSE.
+There is a constraint on Intel DMA buffer size that needs to be a
+multiple of data block size. This series adds some fake BRA frames
+to add some extra buffer size to meet the constraint.
+The change is mainly on the soundwire tree. It would be better to go
+through the soundwire tree.
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Paul Walmsley <pjw@kernel.org>
----
- arch/riscv/Kconfig           |  3 +++
- drivers/perf/riscv_pmu_sbi.c | 10 ++++++++++
- 2 files changed, 13 insertions(+)
+Bard Liao (7):
+  soundwire: cadence_master: make frame index trace more readable
+  soundwire: only compute BPT stream in sdw_compute_dp0_port_params
+  soundwire: cadence_master: set data_per_frame as frame capability
+  soundwire: cadence: export sdw_cdns_bpt_find_bandwidth
+  ASoC: SOF: Intel: export hda_sdw_bpt_get_buf_size_aligment
+  soundwire: cadence_master: add fake_size parameter to
+    sdw_cdns_prepare_read_dma_buffer
+  soundwire: intel_ace2x: add fake frame to BRA read command
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index badbb2b366946..0ae3291b303f9 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -186,6 +186,9 @@ config RISCV
- 	select HAVE_PAGE_SIZE_4KB
- 	select HAVE_PCI
- 	select HAVE_PERF_EVENTS
-+	select HAVE_PERF_EVENTS_NMI if RISCV_PMU_SBI_SSE
-+	select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && HAVE_PERF_EVENTS_NMI
-+	select WATCHDOG_PERF_ADJUST_PERIOD if HARDLOCKUP_DETECTOR_PERF && CPU_FREQ
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
-diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-index c852f64a50221..0c7c5924687c9 100644
---- a/drivers/perf/riscv_pmu_sbi.c
-+++ b/drivers/perf/riscv_pmu_sbi.c
-@@ -22,6 +22,7 @@
- #include <linux/sched/clock.h>
- #include <linux/soc/andes/irq.h>
- #include <linux/workqueue.h>
-+#include <linux/nmi.h>
- 
- #include <asm/errata_list.h>
- #include <asm/sbi.h>
-@@ -1192,6 +1193,13 @@ static int pmu_sbi_setup_sse(struct riscv_pmu *pmu)
- }
- #endif
- 
-+#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
-+bool arch_perf_nmi_is_available(void)
-+{
-+	return IS_ENABLED(CONFIG_RISCV_PMU_SBI_SSE);
-+}
-+#endif
-+
- static int pmu_sbi_starting_cpu(unsigned int cpu, struct hlist_node *node)
- {
- 	struct riscv_pmu *pmu = hlist_entry_safe(node, struct riscv_pmu, node);
-@@ -1618,6 +1626,8 @@ static int __init pmu_sbi_devinit(void)
- 	/* Notify legacy implementation that SBI pmu is available*/
- 	riscv_pmu_legacy_skip_init();
- 
-+	lockup_detector_retry_init();
-+
- 	return ret;
- }
- device_initcall(pmu_sbi_devinit)
+ drivers/soundwire/cadence_master.c            | 85 +++++++++++++++++--
+ drivers/soundwire/cadence_master.h            |  7 +-
+ .../soundwire/generic_bandwidth_allocation.c  |  3 +
+ drivers/soundwire/intel_ace2x.c               | 61 +++++++++++--
+ include/sound/hda-sdw-bpt.h                   |  7 ++
+ sound/soc/sof/intel/hda-sdw-bpt.c             | 13 +++
+ 6 files changed, 161 insertions(+), 15 deletions(-)
+
 -- 
-2.39.5
+2.43.0
 
 
