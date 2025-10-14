@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-853243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1ACBDB005
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DC6BDB011
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C7984F05CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:11:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9A4D4EFAD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351B32C0278;
-	Tue, 14 Oct 2025 19:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AF92C2359;
+	Tue, 14 Oct 2025 19:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TD9f64jw"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoNMO7gE"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3051B2BCF5D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FF82C15B1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760469094; cv=none; b=N39lsFedkiq7BOPig897johxCSGCnezO6azKSJ7PCIl9l+h8jQE9VKjyDprOP+nxYyUcsa4EM8n0zUyK65/MWFzXhFIa3FfHJfikHxIwHNUnNXNVf6XMmSPmY8vzJ4BtohBKOvssR1Urth7O/PscHd9e1Cg942Mify0OBupBvbs=
+	t=1760469100; cv=none; b=sUXCikmci28uPs+TtOSN7NyXQ3v8Ic64+y7L8LsL6OIkP9tqvxfqPTmI8Ed0g/A/y017LY1jWKu1OtApaojgR6LfxZ7YZG9Bw5yDfOC1/5X74qvQIq5Rw9F8O1XHtWpG5X0I2lfL9edM2iwg6Lb0f4tnrRa/6nFTDFliLKLj8oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760469094; c=relaxed/simple;
-	bh=JoNiSlBHX0lRsNEM+X+qf5ROfd4SBePaFleHfgcatAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k5iSQae5Q+KlA8VOagwVAd2UpMrazOrCmt4dFNPwtO4if1Zz1Hk5rW9paVy5ZrJPuW8Mhqprhf+4RUY4CY74ftOT6fi4T29Sng/BsvWNBa83GV0jhpMxSKiMpoKOUcig566RZRBlLmutscIqflgbsmlY2ja53g4BG+n8RAnk+SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TD9f64jw; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1760469100; c=relaxed/simple;
+	bh=S+PaKb4dQqXhsbGRU/uKTbWTAhncSD2zvQfzn4XNbaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iqEDt2KjaZNYksJcKPdPWPHmWzf572/JkWBMAbBv2wevyqFZtrQIquXqoQrvs93cg7nBwC+vXoUyVtpfWLREblkgjO9qCzg4O5cwNMISBpsbPvcqcc2nMPibV1gJQ+3s5uWdLUFh2iIL8rMFDF0u6P6e9ug+j/nXBBL78rBV8/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoNMO7gE; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b55517e74e3so6365821a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:11:33 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-26a0a694ea8so41728555ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:11:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760469092; x=1761073892; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=St16IbHkGZRw0WWM1PwYJ2PuL1/1u5d5uZewUoKrBqc=;
-        b=TD9f64jwwsmeEorCpnClT+/WvjXKc8O2j6YfZab/WgoOsNL//MKLDWg1+2bzw7WGiv
-         yXTTBX5iMqYLzjRlUYnfRZOrmyBsSHwdNk3vj5zLd51wPW3OvjjXgoCi9944toudOnl4
-         USOvPG05TDIve+VJVd9Ti0gI+3lQkXdtKvy0+Amz+wtv03TD5zVz9pUqQuv8aXWBgx38
-         +5+XYpDuYap5Pcs503C6vZsM9GhfIIugGy/gVzbPEl0BsM48iPWdh6ccne0tP9vTmHUD
-         MPTy+BJJJNY3hqijGAyP4+Q4oM0v8jwJnri9bmqYz6kUGT5Uv5iTJ+eyGwmvDOvPtYUd
-         NVwQ==
+        d=gmail.com; s=20230601; t=1760469098; x=1761073898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jwe7YXxDoU+cIzHCYhHi5EBndZPOQECM5/AlfPL09Ic=;
+        b=MoNMO7gEFJpfhT0fJmnqe8fE8uaO59YuIZXtSdoDHDb208twu/1cJnqPqcQmbMgeY5
+         Ay2x5mueKrDvQV/O6w/CdmdTI/qTDxgxb0UXet9SzD7Gd6brvIBcnHjzzzZcA9HxjyA6
+         xwPKXa6KXrLccKYyKTjHG2TlF35Z1kupvgWOZXoJpvC5R+J6mai3bTGfOTdSBqmbLZSL
+         FDzdkMBd661JSRZ5EuUhWw8lZweWNc+pd2bulKZ/v6OBLG78ix5bD1ozJ1N1d0/1984q
+         WzIeF1holATdocVUwNfrNfIwBuAnI7OWENnKB5s1PNORwvvvS12uNhK/QZ9x3l+XZy5g
+         1e/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760469092; x=1761073892;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=St16IbHkGZRw0WWM1PwYJ2PuL1/1u5d5uZewUoKrBqc=;
-        b=sxghumotxDsJ5ahNlaIWteVh00wNCio6D6deoxip5CR7bWEcJEh3/JR8w5m18SzQXY
-         JFxfTVMxcaAccTl+H2ZVRctfR5dwdVNBmZnto39EKNNbMePw6UwbOcCNrcfV5qtzdWKp
-         ZhNMUBI0iq9HGnbdQ4lKmPIx4J4URoY5K32mjZSggzmF3268h2YRzNNoivpDazscxGE3
-         EuBrpkHitZRUkxTL7bxfjva7DI+AtCqQ1AUloKwhnRvEppuMAWR9jQ1hLAqJy2VKtDpN
-         7psoUVUyy0ruwogdgaTqFkOsH/v7vQQu8CiWfgSuhaHKMOKKbH1XG7bNuo2piFJFbbTt
-         wWJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ekyTVXUcdDILwWLi6Yi32wKVvPPzEqLN5tDIz09Py46AcUa/ST+M6LF0FTRtY7lg9p1d3bfKtcNjUGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8hi4WFpakE++jprAyCK4QMBHUUQqtiyZ6niKNp1Hbf05WZ7/c
-	0MsPL3m8QuAMVd0K2jpWRYLHdUv51JwT/kuw73nJXv6lFbE6KVirhGAI
-X-Gm-Gg: ASbGnctJkAGQXIhwEy+TtnRfJ52SL4pE9aMvHLZReVbLB9Dl+8dmwTzcAthgz3owEGB
-	rgm+ZcJeUW5jQR1rnYtzBluiJUw704dh4MT1ev8OKiLxf3f7eEF1wtDmVHJOwtyiZW8gbaqyFgr
-	u2s9UjtDMQy3hiMfLkHmGQWkZX5HPT+rZNWEwgGUoujbQgpAvuGea/NtJROsq8BdLoeGdxKDuKq
-	6rd2NAk1W9hSRuZZtwG0SCL6lXt5L0FAkTlAPTRFfkdNiRmnzNMA0d66OYzc7n91pNcT8POmjHO
-	i5c8BfxZiPHQ/jm7NUDS6Vx5R+kjPr0pINqFwUro8Us7H2as/7BsDXuAwc6gZii1qTg0Ctu2FZH
-	oYnCiipoLC5vbbQhWG8EI0YqsxXTRL6RuXMC+odKE4unJPqllumJjM8/vcun5
-X-Google-Smtp-Source: AGHT+IHCjOQ38l5+wUDId9pV67uaFxJ6e4csyg6AZzHE9fI8Bkcg7dp7NE09q8EsSbM69FmMTL2HpA==
-X-Received: by 2002:a17:902:f60c:b0:24e:593b:d107 with SMTP id d9443c01a7336-290273ed7aamr298836245ad.32.1760469092296;
-        Tue, 14 Oct 2025 12:11:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760469098; x=1761073898;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jwe7YXxDoU+cIzHCYhHi5EBndZPOQECM5/AlfPL09Ic=;
+        b=bSlr2Dwpi6xbI4CwZMMzJgBZKuwP2DiC3OYJQOrCiaqywnAbnaYvioLZKF54rOBVku
+         dAgpSuE5URQFC2hrHrMMsbWAdbyiviJ+fxRYAPigFzbLcGPbWyZILw+moglLH2ytd9OZ
+         ItEiHnn4ZPOBPzKsdUhEWhMU4gSAguB+F/skY96iFFUil0KMPf/9ONW0ce8kZtBVjhEJ
+         LLBNvHPsaxiPhqW/T3BVSK9+aFHXrFCiguNdGM74BO0aOsB31kimF44yJRhcruPQxKst
+         AR1/VYJDzBAnhszwKM2RD29kEi5XsB6JDMsr80R8kpCEPn/YEeDKBuCQnsnX/WxMj9vd
+         3kuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBUKc1T5dY2xryrdk/2yCoEDe9jXLcOXNkU6cbPuuu7+mIqcrIJtpgGG/H0Ai9omMv54SpFaf3n+PbdFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygtGj7zEJnMDPnyXbOV0GugTxcpVnCjNcRcs959EC39EHc52Wq
+	GGWrNI4MIpGDn2cssU6t82DIpM/BN8PLiyO+e5YprzkQdooZi7p13KPS
+X-Gm-Gg: ASbGncuZPCj6BaMvOowvXzyB5hVLu5ADLiffBi3gnbGZFUIgUgQPRsqDPsXaCZKyYXK
+	qywwo1vTrG43uO/e42RsUxpvcZx0GqHbZYhQluuOK5K+aEWSTEemXLJmOXn5F5LqZdWllfsrdtK
+	GaY5BLnxcgtFQrKsfChUZuebruEBy4pyQZDMss0Wox9qIQdQpXuDXlThY4LMe9LN71uWx8r62WO
+	s1owwujDsIC0/9mrM4wx2WyjXKnC30t+Phy3zC5eWQ3+EqNM2O2RBqB+Gn5Mtt4c3lRsUZqJAXs
+	9kRaaJ+qF8UkbG2KX1fDcGnPG6VZUiZEFyE0Uk1A3McazeGk5NTNwvigmSrWBzNwIB0qFIdEt9V
+	3jdLPAtspzPsPBZW2/FUksWQAzAbFj7W9MqzY7w2Hs3oMUwLEg1iVLxj5USuB5I1oTFOdZ8A=
+X-Google-Smtp-Source: AGHT+IH6L9b+RAsdBPIs/9RaZ2biO3IFLWe3hSdfFmc60wanjgFfuMqCTaW562R6ttOdauQ5UDfmIQ==
+X-Received: by 2002:a17:902:fc4c:b0:28e:a875:f7d1 with SMTP id d9443c01a7336-2902729036bmr315973415ad.10.1760469097611;
+        Tue, 14 Oct 2025 12:11:37 -0700 (PDT)
 Received: from iku.. ([2401:4900:1c07:c7d3:9987:bec4:a0:deaf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de658bsm172402755ad.22.2025.10.14.12.11.27
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de658bsm172402755ad.22.2025.10.14.12.11.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 12:11:31 -0700 (PDT)
+        Tue, 14 Oct 2025 12:11:36 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -86,10 +88,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/2] Add support for configuring pin properties on RZ/T2H-N2H SoCs
-Date: Tue, 14 Oct 2025 20:11:19 +0100
-Message-ID: <20251014191121.368475-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/2] dt-bindings: pinctrl: renesas,r9a09g077: Document pin configuration properties
+Date: Tue, 14 Oct 2025 20:11:20 +0100
+Message-ID: <20251014191121.368475-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251014191121.368475-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251014191121.368475-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,29 +104,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi all,
+Document the pin configuration properties supported by the RZ/T2H pinctrl
+driver. The RZ/T2H SoC supports configuring various electrical properties
+through the DRCTLm (I/O Buffer Function Switching) registers.
 
-This patch series adds support for configuring pin properties on the
-Renesas RZ/T2H-N2H SoCs. The RZ/T2H allows configuring pin properties
-through the DRCTLm (I/O Buffer Function Switching) registers, including:
-- Drive strength (low/middle/high/ultra high)
-- Pull-up/pull-down/no-bias configuration (3 options: no pull, pull-up,
-  pull-down)
-- Schmitt trigger control (enable/disable)
-- Slew rate control (2 options: slow/fast)
+Add documentation for the following standard properties:
+- bias-disable, bias-pull-up, bias-pull-down: Control internal
+  pull-up/pull-down resistors (3 options: no pull, pull-up, pull-down)
+- input-schmitt-enable, input-schmitt-disable: Control Schmitt trigger
+  input
+- slew-rate: Control output slew rate (2 options: slow/fast)
 
-Cheers,
-Prabhakar 
+Add documentation for the custom property:
+- renesas,drive-strength: Control output drive strength using discrete
+  levels (0-3) representing low, medium, high, and ultra high strength.
+  This custom property is needed because the hardware uses fixed discrete
+  levels rather than configurable milliamp values.
 
-Lad Prabhakar (2):
-  dt-bindings: pinctrl: renesas,r9a09g077: Document pin configuration
-    properties
-  pinctrl: renesas: rzt2h: Add pin configuration support
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ .../bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- .../pinctrl/renesas,r9a09g077-pinctrl.yaml    |  13 +
- drivers/pinctrl/renesas/pinctrl-rzt2h.c       | 230 ++++++++++++++++++
- 2 files changed, 243 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
+index 36d665971484..9085d5cfb1c8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
+@@ -72,6 +72,19 @@ definitions:
+       input: true
+       input-enable: true
+       output-enable: true
++      bias-disable: true
++      bias-pull-down: true
++      bias-pull-up: true
++      input-schmitt-enable: true
++      input-schmitt-disable: true
++      slew-rate:
++        enum: [0, 1]
++      renesas,drive-strength:
++        description:
++          Drive strength configuration value. Valid values are 0 to 3, representing
++          increasing drive strength from low, medium, high and ultra high.
++        $ref: /schemas/types.yaml#/definitions/uint32
++        enum: [0, 1, 2, 3]
+     oneOf:
+       - required: [pinmux]
+       - required: [pins]
 -- 
 2.43.0
 
