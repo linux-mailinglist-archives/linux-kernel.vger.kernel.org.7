@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-852281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB0EBD896A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:54:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05C4BD8985
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0675A18A3C66
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:54:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F2324E0592
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A3B2E7BC0;
-	Tue, 14 Oct 2025 09:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OtbbamBV"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1B2EB5CD;
+	Tue, 14 Oct 2025 09:56:21 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3AE222587
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDF72E2EF0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760435653; cv=none; b=uHZ/lJuQJQdvqQvXJjH6v1zY73oGmQ3y3siZuwaSN5/hnfJXY3xB3v3hHDGTuvFueE/X1L4RJZ0lPD+NYxKkFCuXzuLnFlRPx1eAQJ0Dnbj4mlsVrao7VWtnRHxx9yiOU/IXUnm8BMvZVSxxBHt+zRDRCzYw6iriv071K9hgGRs=
+	t=1760435780; cv=none; b=Nh+kYXQQwYl5/drGCntdk0PMo4uVpchADA0HD48ve7kBEVgAPhpy4vFnoQReSG6wvKC7Q3YWqJVpqE7x1sug7Rpjrog0UouVweR8IEQOkw+McLX1ytNTiyN1qVWr6gh8Cy4rSy/0JwjtqXLOrmmruTEJ7d9yXa/wp55TXClWkVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760435653; c=relaxed/simple;
-	bh=AQsd3tszvMzMFI7EyskeFQST3Zl/n3StTV/Ej7mwCg0=;
+	s=arc-20240116; t=1760435780; c=relaxed/simple;
+	bh=Mpchhi+Fh/IRqTNpL7ycpB6a+myWh9FixXmfhSjVEqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMc5dpjimq6IJ1AK1dh0YniUfD+T+JqBD+WKzUQQdo9/r6ZRQeIH1Q+tYemLXzvymw3D2CH4xj11zY8AA/TukaaZnG++d278q6J6b9BKXR44JzCXmBwJfJ6uRDk+MJVqOjeelU6Od9Aa5EYFtAh9N4M0SN2TdirZuEkpubofyNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OtbbamBV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OUuElKex+YjpTZz+0yh5h7s4/4h/ma9PSVmn3e6TGQU=; b=OtbbamBVjIDMuBw/2bwJuJJXb8
-	q5shAqZIyeFrf3ZYXUxxZoTU0I7L1PG79gtVGU+hl+Lijr7jibkrUHahpCZM1Irq74FzjVINJs9jo
-	wkEqEVZ7IYc64VJHype7YT27AeqWyH7PNyO0TI4b+nvMCzYJYMYphxaTwF2fCYtGPjxoN70i3NKTp
-	WDEF8eaFPXON3Kpi2qmFxz9Gf9Ut+tIJdwmsrIGmyPQ0q+VB3ZvK0XFM7QW3jKfjk1rD8Ys3I/GIM
-	gX90Et8U5B9OjJkW5ZyFV3dzcPMJz1g5/nw/vaMBCmpJ65MLOXpm+yPVLTJ2vygunj6Ow8cwGZkEJ
-	pmbGwSmw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8bjL-00000008DDR-0soO;
-	Tue, 14 Oct 2025 09:54:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CA487300212; Tue, 14 Oct 2025 11:54:07 +0200 (CEST)
-Date: Tue, 14 Oct 2025 11:54:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Clark Williams <williams@redhat.com>
-Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
- expired deadline
-Message-ID: <20251014095407.GM4067720@noisy.programming.kicks-ass.net>
-References: <20251007122904.31611-1-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9g9u4gfL2yD5BdSPSbhRt3Hk9loBkNvv5TpbhacE9ZCz2BRzhLo/U2+9MwLAJxvbZ/YBE5hkldHt6baesRlReP8J9h9rDDPdbsTvA3sGjnpO1/nyvsSFx1frALl4F5bGkcsxzIlv3rl1wO7M3HKTA9cHfFWtRqmBLvXRlqDWmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-639102bba31so1665548a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:56:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760435777; x=1761040577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PNWrH3ibK1A0oJOgc28AFjo9DlplMc+4m4rED6UPK/o=;
+        b=Y01TA/FqwpdIRoIw6SPJG4uHBzcsaCHzq9azRSRKS3mldTXRu6y+xVwt1uoa60CiHV
+         I7mLFkVpV3gyPWT5F0zTblSDiEdjjPckVN5t8QNfRNDcOaJ1jWpm+PaUeB36JkB+eIwV
+         AoURDDRF+cRknwh1TGjt2pDWeBiUJrlw/Xo9qDiiW8FiOBILxdqYeAvUjsU7IX/Ye3TZ
+         Urr+QWfoWtsMnH+OriF1T3l8hbXmuno2nirGmzcaejpx/tiOhp9k2f2CmPtw/RqRq/6t
+         sH4yR9NqGi253F6kV87eM2krLKZdFwAqVmb4POVgPNoME08zpis1uJF+OkIL52HeIdUK
+         +31w==
+X-Forwarded-Encrypted: i=1; AJvYcCWriU8NZyzW2v+A0OtWrUEGzwh8QCpz4QyBR5FCt7m2jRF+hQzmL2Pja4DIjKpQ7Dwmg6c4gjSE4T1Y8U4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGwX5D1o4aZxNssQUSmj6SjA6LyR6yNVU16nuf/IhAWOSkB3EL
+	a2Vt0mFpgpzoZ1P1Cp+nHXpwosdVGX1ZiCpS2AbHEHn5PX+UrOWa35Cu
+X-Gm-Gg: ASbGncvO2vBgXME2Je/pPQChGVfZCzXGFRw/ew5N56UvS0gZel5ExsD0sZ7OpbRHbw3
+	hLzeDyWDBfr93U0Kee/6nyizo7pfuIErOTMZKZ6aQfCHvD8Rt7b420PlDFtu53z8B4k0Np/HP6k
+	ZeEm3OzmiiDoeZFpc8p6YOEXIsQgD2ezpvzehEoPQlHFlJQKjKkdYVlWXP7h+eWhFK+BnAETiez
+	MdGTv9pzoRofR4kU/brS3VPdcRs9QsG/tj4RZpWzrMClB0wzK17DdVrP85pMsxKu/uDYNS0d6Jm
+	bfVu9fG3Xka+ndGgNT+1aRQQBzct18MBpJkCUAMn7+s0fb1Ema+EpF/HYpAKMQAl/dD7z7Yv+Sb
+	B1+Q/zrhblVXyQD7pekrOpHjyxanVGgJDOZvYnpFXzIzZng==
+X-Google-Smtp-Source: AGHT+IERV23ZXJ/VGs6V6Z60hxYDlIdN22yBbnSFl7QLWOm9hnG+wBC6zXyB7jvuqY1odJXkn1JBtw==
+X-Received: by 2002:a05:6402:5244:b0:634:544b:a755 with SMTP id 4fb4d7f45d1cf-639d5c3294cmr24317805a12.19.1760435777006;
+        Tue, 14 Oct 2025 02:56:17 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:9::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c133feasm11074887a12.35.2025.10.14.02.56.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 02:56:16 -0700 (PDT)
+Date: Tue, 14 Oct 2025 02:56:14 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, 
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] sched: remove unused cpumask variable in mm_cid_get()
+Message-ID: <v3zyf7pp64yd4kakqniq4thjf2egb3kavkwzgoqt6ye5cuqkys@jmkcwst6lrn2>
+References: <20251009194818.1587650-1-kriish.sharma2006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251007122904.31611-1-gmonaco@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251009194818.1587650-1-kriish.sharma2006@gmail.com>
 
-On Tue, Oct 07, 2025 at 02:29:04PM +0200, Gabriele Monaco wrote:
-> Recent changes to the deadline server leave it running when the system
-> is idle. If the system is idle for longer than the dl_server period and
-> the first scheduling occurs after a fair task wakes up, the algorithm
-> picks the server as the earliest deadline (in the past) and that boosts
-> the fair task that just woke up while:
->  * the deadline is in the past
->  * the server consumed all its runtime (in background)
->  * there is no starvation (idle for about a period)
+On Thu, Oct 09, 2025 at 07:48:18PM +0000, Kriish Sharma wrote:
+> The variable 'cpumask' in mm_cid_get() was assigned but never used,
+> causing the following build error with -Werror:
 > 
-> Prevent the server from boosting a task when the deadline is in the
-> past. Instead, replenish a new period and start the server as deferred.
-> 
-> Fixes: 4ae8d9aa9f9d ("sched/deadline: Fix dl_server getting stuck")
-> To: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Clark Williams <williams@redhat.com>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
-> 
-> This behaviour was observed using the RV monitors in [1] and the patch
-> was validated on an adapted version of the models. The models are not
-> exhaustively validating the dl_server behaviour.
-> 
-> [1] - https://lore.kernel.org/lkml/20250919140954.104920-21-gmonaco@redhat.com
-> 
->  kernel/sched/deadline.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 72c1f72463c7..b3e3d506a18d 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2371,6 +2371,17 @@ static struct task_struct *__pick_task_dl(struct rq *rq)
->  			dl_server_stop(dl_se);
->  			goto again;
->  		}
-> +		/*
-> +		 * If the CPU was idle for long enough time and wakes up
-> +		 * because of a fair task, the dl_server may run after its
-> +		 * period elapsed. Replenish a new period as deferred, since we
-> +		 * are clearly not handling starvation here.
-> +		 */
-> +		if (dl_time_before(dl_se->deadline, rq_clock(rq))) {
-> +			dl_se->dl_defer_running = 0;
-> +			replenish_dl_new_period(dl_se, rq);
-> +			goto again;
-> +		}
->  		rq->dl_server = dl_se;
->  	} else {
->  		p = dl_task_of(dl_se);
-> 
+> kernel/sched/sched.h: In function ‘mm_cid_get’:
+> kernel/sched/sched.h:3743:25: error: variable ‘cpumask’ set but not used [-Werror=unused-but-set-variable]
+>  3743 |         struct cpumask *cpumask;
+>       |                         ^~~~~~~
 
-I'm a bit confused, should not enqueue ensure deadline is in the future?
-And if it doesn't shouldn't we fix the enqueue path somewhere?
+Thanks for the fix. I am hitting the same issue in my builds.
+
+> Removing the unused variable allows the kernel to compile without errors.
+> 
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
