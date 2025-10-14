@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-852040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD11BD8038
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:53:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FCABD806B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E4E14E499F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1CA3B41DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A4030E848;
-	Tue, 14 Oct 2025 07:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bM2vIbQ/"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0DB30EF98;
+	Tue, 14 Oct 2025 07:55:10 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2A530DED9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B5130EF6C;
+	Tue, 14 Oct 2025 07:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760428379; cv=none; b=Ho0JJrlfAWVDLW4UpLHlCQ9nOm+hPba3EK+3HANv+ZCdNmXE14d+4ToOnw7GeaXBWhNlpWlxx9qPKy9/5OboIDVMPOzhpP86f1t5il/r0Z47nDtJPI6B+syigynDc4K1uM8bw/yJd6tbeLIy69M6D0EfOsh8NFKY9zozyrfbDY4=
+	t=1760428509; cv=none; b=cUhVTQ+fmUlSdkrSoIC0N2mtOOg5OTV+RFDfF9uUp/Bz+lLpoMW9xWGENTaE09HeKna1V0ZcUd4kVmKWolu3nzsHxcPrYsKqrEPsNsJIbGYGO2FdAbacrEtn/nDtDY1pSUiXpMnKlcoRlsVdDK/X3Io/xv5erBP+JKYXineZfmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760428379; c=relaxed/simple;
-	bh=vwrJbLqYUIs2hdIZr04E/5ekc/E1RfYrlr8r6ix4a88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZNBye+GyeHDrJtc2lYMRww8dk386tgHd2WNjXa2ZvkNq4z/SCDGseNOc0YnvFRCgsN/hxjiBfmihRxxaTsfgXtU4D742MNRPysOmTKmFYeJHS/VaK6JMZ+lNcAjOYUdBjSPHIHUN+KyM0ekcNzqVf4tDSnUwsbcJ3/7DVFaq09M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bM2vIbQ/; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so5755348e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760428375; x=1761033175; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vwrJbLqYUIs2hdIZr04E/5ekc/E1RfYrlr8r6ix4a88=;
-        b=bM2vIbQ/T7wKhEPoz2u2iP2U8eDm6ZzLXRuCTG5L+Nkr51c1LuJO0bnYR5o/gOJvLJ
-         PqMc40rxLILHumK5eOrp7azICvxkO3KgyPSvqb9L/GkSFnRDu2veAiFq3pAIFyXBQr0b
-         GioXqiHn/vNKdtDIdIOkaVQahGRHf5Kt/XRWYUqbfIG6dWC+YTVexptKCupumVkpbLzG
-         sp759a+6uTPxPalIb2sEs/LhyfWSGQNUHtoe46r+K2PqXOKLTSIO/y3Ep88ZeHbGZxgu
-         5yeNFepW76upTfrjLPqVsrwBditNkbF4shMRrte9f3NvRm540BAH1Yy+1iDXI+G4HR43
-         SGwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760428375; x=1761033175;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vwrJbLqYUIs2hdIZr04E/5ekc/E1RfYrlr8r6ix4a88=;
-        b=HN6U+NLO+ATV8gko7J95Po9DvekqwSgrnkzOZuocLXxeNfH3XUSOOtesAumuqsLCjU
-         mPNNHsAm+4I7uNSKbr2X33TIqVfanpdDG/Z6LKDDmITNgQTCqN38Q9227mL5pO6MX6gR
-         ogZWrgXf4kMPjpA2sL9P/scASEhEVbKibApO6/lxLnWH+pcR0BHORz44EKFbZFroXYUu
-         I8lyqoLcN8cULuZPKZV+kJBhM/bQGE4xCEEDTJLDIy18uiz+FO15FjzkKcblciP89niW
-         5bmtaXMxhuLzYruFuX6+h9UTKf+TL5/PkV4VuIMzqpG6JwJnmJi3XZMt3P/xg3NdMzut
-         u62w==
-X-Gm-Message-State: AOJu0YxFNzvTaMZB7Ck4hM/CTa/J+JAJU4dfQcARB/O+on9O1uXg3acZ
-	niOm0czuMQ/NZTXEbH1Qbqk7IJ84fKjZjfVSHcj0N4F2TFkfvoZcDUYyHf2g5of7l04HDcBlR7k
-	QK+A6Sh6KlwMVw8YEBpgmukwt1AKu57Qyt2q7rOku/w==
-X-Gm-Gg: ASbGncsItTZX8S7clA29ESc/w0q93D/Ma1FxLkuFtbQTlPWcdxmcyFTkPknCw71iwNc
-	TEm77BLEVzG26sTHDdNwf9XVxwyeVAf+3v0SvL3yDtsUTldUSpAs01bUmRZGsqmqEQKjXCt4+Y9
-	iUJSa5it+2lDk12xRoDx3BztgSwCHmAkDqyemgzF78ODncNBa9YWY15pkmPn42ix+d0JZwe8iV8
-	7c8RTjU+mzq3wd3se6OCUqxdB7FyFI2Yf2ajVoh44nskWpgWuabT4UHBU0=
-X-Google-Smtp-Source: AGHT+IE6gg+MLBxMH7PzBTZswQ1htTybiRf8di7CCXjc7HVRjNQ5sXwPlBAm2r4gvNL/pfqQj+6D1NfuyxLQ/PTPyB4=
-X-Received: by 2002:a2e:9a12:0:b0:336:7c7c:5ba5 with SMTP id
- 38308e7fff4ca-37609e10855mr73524151fa.23.1760428375403; Tue, 14 Oct 2025
- 00:52:55 -0700 (PDT)
+	s=arc-20240116; t=1760428509; c=relaxed/simple;
+	bh=IHowtJL9x/C0CNs0hMFB5pFinod+WpZOHGrarKvYLg4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KIQ/uFvX+GAOUEAKxDeGBEJb4EM0qQ04Y0t1EKZ4TzJeXGb/2zqQ8krD+Ekl2GJ4pxawbBHEIahC+R4nLyPmLfLF9k3ADguqpK+v8Ue57dUynFeympfUAvSXutlc4LkOXjOUSbMaHZcwUeinL/GXRbgBchFmoFaqcmCNyRpqJO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201613.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202510141553491891;
+        Tue, 14 Oct 2025 15:53:49 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ Jtjnmail201613.home.langchao.com (10.100.2.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Tue, 14 Oct 2025 15:53:48 +0800
+Received: from inspur.com (10.100.2.96) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Tue, 14 Oct 2025 15:53:48 +0800
+Received: from localhost.localdomain.com (unknown [10.94.17.151])
+	by app1 (Coremail) with SMTP id YAJkCsDwEnaKAe5oBjMXAA--.536S4;
+	Tue, 14 Oct 2025 15:53:47 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <menglong.dong@linux.dev>
+CC: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@fomichev.me>, <haoluo@google.com>, <jolsa@kernel.org>,
+	<kwankhede@nvidia.com>, <bpf@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Chu Guangqing
+	<chuguangqing@inspur.com>
+Subject: Re: Re: [PATCH v2 1/1] samples/bpf: Fix spelling typo in samples/bpf
+Date: Tue, 14 Oct 2025 15:53:45 +0800
+Message-ID: <20251014075345.4603-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919153008.324338-1-marco.crivellari@suse.com>
- <20250919153008.324338-2-marco.crivellari@suse.com> <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hvTogN-egwXWRp3F1iJ0HS_eSJ4hEavjrMuKF5RVxuHQ@mail.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 14 Oct 2025 09:52:44 +0200
-X-Gm-Features: AS18NWBEnf1NwISRN12NIVApf9Z9zdxOb-FVRSihzo52lcsL7sWcjBRM1cAsi1s
-Message-ID: <CAAofZF45x0y1a8bEbv9BrPgVp8EGbfPYTjvL_sv=xnf-r80u8g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] PM: WQ_UNBOUND added to pm_wq workqueue
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: YAJkCsDwEnaKAe5oBjMXAA--.536S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jr13AF1kuFyUGrWfuw17Wrg_yoWfKFc_CF
+	WrX3WIgw1FqF92gF4DKr4akF9Fqan8GF4kKrW7KF9a9a4fZa42grs8Jr9akry3JF1FgFs8
+	Cr98ArZ5ur4agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvf
+	C2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?qbSzd5RRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KQmqHA3s9NDu8GMoWI/4CEXmAHVmcTo90YKWnwc+PgZy2ExH+tCelJSUZMxRrLacvT+B
+	4f/jHCUEX6tbPUdsP7I=
+Content-Type: text/plain
+tUid: 20251014155349a5e70e424ddfe216cf0043303c578a50
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Mon, Oct 13, 2025 at 8:51=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->[...]
-> Applied as 6.19 material, thanks!
+Hi Menglong,
 
-Many thanks!
+>The change log is preferred when you send a new version, which
+>can make people know the difference in this version quickly. It
+>could follow the SOB like this:
+>
+>Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+>---
+>v2:
+>- xxx
+>---
+There are no other changes in Version 2 except that all (relevant fixes) have been combined into a single patch.
 
---=20
+v1:
+ - https://lore.kernel.org/all/20251014023450.1023-1-chuguangqing@inspur.com/
 
-Marco Crivellari
+>You titled the patch "samples/bpf: Fix spelling typo in samples/bpf",
+>but this file is not in the samples/bpf, right? So I think we'd better
+>split it out.
+In version 1, someone requested "One patch for all typos".
+Please refer to this email.
+https://lore.kernel.org/all/CAADnVQKMgbDV2poeHYmJg0=GD-F2zDTcjSxcUDZSO3Y5EwD17Q@mail.gmail.com/
 
-L3 Support Engineer, Technology & Product
+>BTW, "Guangqing Chu" will be better, according to the habit :)
+I prefer using the current spelling order.
+
+Best regards
+Chu Guangqing
+
 
