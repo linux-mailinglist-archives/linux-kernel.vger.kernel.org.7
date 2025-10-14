@@ -1,200 +1,127 @@
-Return-Path: <linux-kernel+bounces-852691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C44BBD9AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:21:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34266BD9A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85C6188BFA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:16:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 242C6501EE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC19B315D38;
-	Tue, 14 Oct 2025 13:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4713161A0;
+	Tue, 14 Oct 2025 13:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ClwGZL1o"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010061.outbound.protection.outlook.com [52.101.201.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MzaNRXIn"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B2A31A072;
-	Tue, 14 Oct 2025 13:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760447405; cv=fail; b=lgGedn7e1yBTn4zIhbyHmuBuCjXNtWkWrPnKdZOsTpRZTOIkXaIeB0sU26cQH4ZZWMbgzJjyEOFuHAfdVldp+AvG5Od2ImWIWAe+kL86y3TwG+I771GRHOmxHAOfyGfNmYllUmqhKaSrlrJtagDDPp5qW/T5dE3r90eY9DNaHxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760447405; c=relaxed/simple;
-	bh=5WrawJx19HGks7dX6NhkxoAVfeFYklboejcCC9sJsJM=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=mHFzrHPY1qZAj40rt211uIOn2v60Q3JH7zh222MAaFeDHCxuW9ajQg1Fs2x0aJSHzlixTUb2/t5bRjYxrcqYJzTL90yGubFUNwi6zQ+cauEm3RqW8yCfsaWfLll3osxZ1DXJneUyKFcf7oHHRhezwtkDm+bahznN6uU9qgzNhbE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ClwGZL1o; arc=fail smtp.client-ip=52.101.201.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ljCx6a0doe6Sy3VMYo9M3HjXXLRfkw8qFBa4dlFq/PUoUVbH2qM44hX1Gr3kCBxhW46HjCHaQE98PJSCxOLo7GGwjjeTtq5JVklb7NKw6+/hTw2/pljNKuMXxb6Tvf/PWm/t7aKRUmKm3MvmAiLos/apQuybL9k/n01eJ0rxIOawWiMcp6e+8cEYEpvizKPF1VMhgnDIDtYOvmASXLW6hHBbhOovcixyi6eg3WeKqgHkeFUJ7PLz8VCAcGQFp4qa90JC24pwalPiR/aS2SvBjed3KJ/B5/zGXU/bRppvxdE67YUg4ngdn3THYNfTR7Hb1Ffuxhicj1eFHFIEnvtDPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vdv6XaQoSAKbDidwEHpN2PHni3sZKYzPPAdKdke0WJ0=;
- b=wE1VsYoAN4HmO1a4nFxRfee1WTisNLN3nHQsQRh1rcp3bFzYTzKuL8hZMUpUzjwHzh8o7kBGU9V9zw2dum456pFjyzJTRTItGAFXFM9GZdGtGDmthxEMLAQ+MuqCwifNv1vTd1/1mTfUeylU/PyiAbdkQTxl4dxLU45QA6vTujgCI/MZsjEZTsjjEVAl2nS6UwofRbFy4QdDvn+0gQByaZT4HSOzBDiGh8b7iIdpoXb88k0+IBNwtyMNS0hwtZgqONY/QdOwO/74htXQYqENCfkGMlCWWduM4co4Zp6Ikg0Y6LTachC1tE9kbUD1dnkzZHiWZAxQLENDMtvLWr2tkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=temperror action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vdv6XaQoSAKbDidwEHpN2PHni3sZKYzPPAdKdke0WJ0=;
- b=ClwGZL1ogCOCLaso265GRLfiLnpRh395CdaAVtKb53nXfGz2SEzr7QroXqxiR8hO4jAxmG2l/KmhfemmXoJCEv07/SaxXJdpVGDKRh0bF6vA7pY5rHENSKHlk1p8YuJpFHlUVAK2oLUKoy9QW7nXMNrTfuQTth7M9u2PvRdqF3rtTBHpipOGxGq9CJSIrKnUkzaIUqYd70jfjzBOMd5rzucECW2COZdfZMPbRgnWkoEi21ZsXYoH/Ch+Iko7aUy1KdMhEbDtjA9sQp8tjUcRx75IccoOoeWtqGsgNNVz2Rj8z/RKsLgmso2tRciN6OJyWdrsD21Iwkxpf+PNateVng==
-Received: from MN2PR16CA0053.namprd16.prod.outlook.com (2603:10b6:208:234::22)
- by IA1PR12MB9062.namprd12.prod.outlook.com (2603:10b6:208:3aa::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Tue, 14 Oct
- 2025 13:09:56 +0000
-Received: from BL6PEPF0001AB58.namprd02.prod.outlook.com
- (2603:10b6:208:234:cafe::10) by MN2PR16CA0053.outlook.office365.com
- (2603:10b6:208:234::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Tue,
- 14 Oct 2025 13:09:55 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 216.228.118.233) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=nvidia.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of nvidia.com: DNS Timeout)
-Received: from mail.nvidia.com (216.228.118.233) by
- BL6PEPF0001AB58.mail.protection.outlook.com (10.167.241.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 13:09:54 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 14 Oct
- 2025 06:09:39 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 14 Oct 2025 06:09:39 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 14 Oct 2025 06:09:39 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
-	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
-	<achill@achill.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.17 000/563] 6.17.3-rc1 review
-In-Reply-To: <20251013144411.274874080@linuxfoundation.org>
-References: <20251013144411.274874080@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A56315783;
+	Tue, 14 Oct 2025 13:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760447458; cv=none; b=KG95t2Ayp9YzcqQq7J60N62vTvrGOPH80pvx2pENOw4ZdHkEgs0FMjBXF9MwUOoIe0I2XWZaoytZpLBQiuE9+HJzupk3TpTARc0WH0CMA48zlRYgeiastHPntZCfFznW3RzloROPKgMpwTZXLOnEy37YDQVicE80SPFJ87LA2qM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760447458; c=relaxed/simple;
+	bh=SnHE+KYEHYlkFQ1P6HZQnLB2xV8QwDDqPT4rwxwlJ6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtqG+MKE1/18+ajc6v8doyQbjs9Hp98QagOgup5dkCaQwvbEuTvzh6hmvccjBWBW+Nu1mLNsJRz1BvtswbHGJ1XYa5a6IWcG831DuWXwUezKFu+tX0PkhDWZAyHTXHE6Uv4SF1H+9ecTXE+s4RlAaU9W+w/l7oTWZCovLz262N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MzaNRXIn; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6AE6522BF5;
+	Tue, 14 Oct 2025 15:10:54 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 4JnGNg-KN5pZ; Tue, 14 Oct 2025 15:10:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1760447453; bh=SnHE+KYEHYlkFQ1P6HZQnLB2xV8QwDDqPT4rwxwlJ6I=;
+	h=From:To:Cc:Subject:Date;
+	b=MzaNRXInIU7n2CLfs0Q63SN1pA0bzrgbHPLGdxUwBtuQE50Unl5MFqC1beR0aBI97
+	 7zN9/3SRr6cLvYDN9fb9l3VrercwRqWpFJJ2M01BfQdzBAV3JhJP0BoooPnBXu66RH
+	 V9feFn5KKkZTMaFl01skCvUFYmkTOie6f5hlZHMQfFtE8jr3JfqOdcgY1jWgwFRDAv
+	 vtwgau6IOjbWhbKB2X9+I99g1FR6uEN4DixGMDUlteF6R241nWaqagNc0WQVaZTwO/
+	 G6GJOyPaLVjcLKH4Npo/K5z0AnbVasQ+4bjwNYi7d5oBWY1a7NBliAaNYc1DeZXHQG
+	 XOrLTvg73lQvw==
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Han Gao <gaohan@iscas.ac.cn>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v3 0/5] Add reset controllers for other TH1520 subsystems
+Date: Tue, 14 Oct 2025 13:10:27 +0000
+Message-ID: <20251014131032.49616-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <d420b656-424c-488f-8d1d-3d67bda19855@drhqmail201.nvidia.com>
-Date: Tue, 14 Oct 2025 06:09:39 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB58:EE_|IA1PR12MB9062:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2eba1b2b-b3f8-4f61-1cb5-08de0b22f80e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U0pzRjE0Q3ptNklIV3V1aTVrNzRuS2VRYjVVU2ZtMjBYN1ZlN0pWcFh2NmlP?=
- =?utf-8?B?Y01wS2lWcHU3b1huaXBZbFpoSmhOcllmdXZtU3Q4MGhKMktxQUhtV1V1amVq?=
- =?utf-8?B?bXM5VmtQa3NRVEE3TmpSZmRtMHZjYVV5TlVwZS9HWVd6eEV2c3ZXYkdQcm9u?=
- =?utf-8?B?SnJST2JtZUpCL1ZBYlErQzQ3Ly9TTzRvczJKc2x2Qm81TmRscER6Q3JBY3lJ?=
- =?utf-8?B?YkhGRzFDbTJ6bGd1ZDQvQXpwZkd3QUZFQTgwUEg1enVydS9NUVB3aFZ3MlV6?=
- =?utf-8?B?cnkzTDFGdFc5NUlVRDllSTNBK0E0TWhoVHk3aVVkd2VnQnpNc3lVVWZHclhm?=
- =?utf-8?B?Wm9Ed2JNZlpIdHNOMm9vVjJraXl0aHZIOTV1clNzR25WQzQxa3ZrVzdNM3Mw?=
- =?utf-8?B?eFBkbGFRM2hHNWFaYVFnaWo4TkRMTSt0MFVXWWNkWjhQekttbzhjbmUwTlhI?=
- =?utf-8?B?aVBoK3JGV3hhTy9oanhlU0VWR0tPR3MvUjVxUVFSTTljalI4NzVOeFBvMTh5?=
- =?utf-8?B?VVpUUjVYSHIxRm4zQXVrN1pNNWdic1RFSEpmeTlWbWwyamk5ZmtXSUtidFNs?=
- =?utf-8?B?T29PUktyaXdCQzdUcXZ6MERPMVFKWmoxUXlYTUpZbVQyQlhTUkxkOGFBTFhq?=
- =?utf-8?B?bmRaMW13Vm84SzFuaFlzVGR5M0pWVkZMcEZZdFpPdVp5OG1FRWN6WWtBT0tK?=
- =?utf-8?B?RFZDU0s0ZnVNY0kzeFlMU21GN2V0TjB3eVNwRGV5U3FXeTN1V2J5V2FUbjdY?=
- =?utf-8?B?ZnhvbmpXR2M2WFRHLzIyQTg0RmpaY1Azc2pCcWRxQ1I1dmlzVFF2U29wVno5?=
- =?utf-8?B?ZUF5MzNwMzlSMVR0RXBRdldXdmR5QjV1amhaOXZ0Zk0zMkk1L2VYQXFHYjh2?=
- =?utf-8?B?d3pIa1BsaEc4QmhqVzFqMnpueEZHSThOSEQ1VmNNcE1nZW5HOEF0d21jSlc3?=
- =?utf-8?B?Y2NYT2c3aVpPYll0VUdyZzZmcjRsUjBMTHZWVDZBTE1nT0p4cmxKbzAzTEtE?=
- =?utf-8?B?SnVjYUNlbDZJUmlZQjhydVYzcFBEeE5TbTkvOEQvTngxUnNSa3RUSld5a21k?=
- =?utf-8?B?dkEwMURkV1Naa2RhTXczOUlZbFNielhVWktmZ2ZVRnpXSWF6azdGdENxZ0Fh?=
- =?utf-8?B?UGRtS1dWUDZyYTlvT3RmQWZUK3c0OVRvU3ZEOEFzVk5ZWk9iUGlnUnZpdVE0?=
- =?utf-8?B?cmNJcTcxRXlRNFhHMVdHbVphVzN6TzFYb3czU2xqUWdhNVBaenkxZERsbzVa?=
- =?utf-8?B?MkZZcS9vNDAwbXdESFdzdWtJMkJyL2NWWEdQcjFsU3NwM21DK3NBQjNicWl0?=
- =?utf-8?B?K2E2dm9HcGgvZ3dCWDAwUERTeUZMMXhhV2UvRWhUZHlzTDBLWHJFb01NL0Zn?=
- =?utf-8?B?TGdaSXoyWnF1bEhXSTRmaXBxRm9zTTA4V3VsTVVObTQ4U2ZOeG9SS2VBUEgx?=
- =?utf-8?B?bjV1T05zYnFiY1pTTzc5ZDBuQWdFNmRhbWxqMVBnbktPZEJ6d1RJR3RTRmlD?=
- =?utf-8?B?WTIvUTVQcjVxWUg5OVpqcTNRRXJaQVVjZ3BESG13Lzc2ZVpjaXJlVEVnRGsz?=
- =?utf-8?B?YVp0bDU1aGtaQ212Q2pkOVRjcHJlQ21vZ09RSDNKU25PemVzWGZkWldWdlpv?=
- =?utf-8?B?WGxtMXFVL1NJMDJkUXFUdmw3N0xHWGl5ZVlJYVZPL1phRmN3c3NQMlh0R0Q3?=
- =?utf-8?B?Z0tocWFsQXBzN1lsYXZIUUFhbVZ5M2E1aURzc2d4eHE5ZEtDVlkzelhrWFIr?=
- =?utf-8?B?UFVOMit0QXJiYTVHMUVvZkg5cGJoOTZKRmhWL2N2MWRUY3ZRSVRkdVBJZmZl?=
- =?utf-8?B?VC9yTXVRR0VzZ0ExVnRMNHk1ekRzZzBkY2xUakkyV0JJMUpLR0FZemx5VGRs?=
- =?utf-8?B?OW4wM3NvNk0rekI0ek5jaFRsWjRiSURSN2hNSUxsbWtub3EzdE9pVFBBL05t?=
- =?utf-8?B?Q2hRQU52ZHVyNlE0YUxLNTR3aVVLeGtGV2JFV0VrS2w1OWR4NDJBWXZYdzdl?=
- =?utf-8?B?anJERzhTUGxQb0huRWN4dFphdnhjNGNYbzJLd2RsNWVxMEw0cllxZUFhbmtw?=
- =?utf-8?B?TUh1MXJKcElINzMwMG04eVNOT2FUaXRYeDJDalJack1MUVowbE05dkV5Mmt1?=
- =?utf-8?Q?CXXU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 13:09:54.9924
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2eba1b2b-b3f8-4f61-1cb5-08de0b22f80e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB58.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9062
+Content-Transfer-Encoding: 8bit
 
-On Mon, 13 Oct 2025 16:37:41 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.17.3 release.
-> There are 563 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+TH1520 SoC is split into several subsystems, and each of them comes with
+distinct reset controllers. We've already had the one for VO subsystem
+documented as "thead,th1520-reset" and supported, and this series adds
+support for others, including AO, VI, MISC, AP, DSP and VO.
 
-All tests passing for Tegra ...
+For TH1520_RESET_ID_{NPU,WDT0,WDT1}, these're reset signals that have
+been introduced along with support for the VO reset controller. However,
+registers in control of these resets don't stay in the VO reset region,
+instead they're AP-subsystem resets, thus the original ABI is
+problematic. I remove them in PATCH 1 and reintroduce them in PATCH 2.
 
-Test results for stable-v6.17:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    120 tests:	120 pass, 0 fail
+Note the reset controller for AO subsystem is marked as "reserved" in
+devicetree since AON firmware may make use of it and access in Linux
+side may cause races.
 
-Linux version:	6.17.3-rc1-g99cf54e7bd2f
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+This series is based on next-20251013, thanks for your time and review.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Changed from v2
+- Collect review tags
+- Fix duplicated dt-binding IDs for DSP-subsystem resets
+- Link to v2: https://lore.kernel.org/all/20250915095331.53350-1-ziyao@disroot.org/
 
-Jon
+Changed from v1
+- Make a separate patch for the ABI-breaking change of
+  TH1520_RESET_ID_{NPU,WDT0,WDT1}
+- Fix the duplicated dt-binding IDs
+- Sort compatibles/reset-signal definitions in alphabetical order in
+  the driver
+- Sort dt-binding IDs in alphabetical order by subsystem names
+- Link to v1: https://lore.kernel.org/all/20250901042320.22865-1-ziyao@disroot.org/
+
+Yao Zi (5):
+  dt-bindings: reset: thead,th1520-reset: Remove non-VO-subsystem resets
+  dt-bindings: reset: thead,th1520-reset: Add controllers for more
+    subsys
+  reset: th1520: Prepare for supporting multiple controllers
+  reset: th1520: Support reset controllers in more subsystems
+  riscv: dts: thead: Add reset controllers of more subsystems for TH1520
+
+ .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
+ arch/riscv/boot/dts/thead/th1520.dtsi         |  37 +
+ drivers/reset/reset-th1520.c                  | 835 +++++++++++++++++-
+ .../dt-bindings/reset/thead,th1520-reset.h    | 219 ++++-
+ 4 files changed, 1083 insertions(+), 16 deletions(-)
+
+-- 
+2.50.1
+
 
