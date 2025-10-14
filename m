@@ -1,182 +1,228 @@
-Return-Path: <linux-kernel+bounces-851661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324B2BD702B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9909EBD7031
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE95D4E4267
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF44518A8534
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054F9265606;
-	Tue, 14 Oct 2025 01:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E324263F22;
+	Tue, 14 Oct 2025 01:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DhO0hF6g"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2xXydRP"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E671CEACB;
-	Tue, 14 Oct 2025 01:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F5225D1FC
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760406716; cv=none; b=h5QfhYH21j373uLqmpSac5KEePTB39m3oyb1YVtdJJmds5feeYGaYV+uTnKLnJSUSb7jDz6D5o8pW5U96XAtFNNrHDB3DSKDAEhNFcvm8eWsjwHBhXWmoBdVjeqad4yjhPqzxYsumLpGfqZnwP5eCEgnw68G8hcW2LlXXEVzV5I=
+	t=1760406869; cv=none; b=W1UlA9Io3L8HKUD3g09xIXwZ17Tt4Kub2+J0YsnQJNrOOdR07ISKhWkhmVO5xvkgnl1MmJX5lIYdMc4plgzEoWf+EFrEPzUuuaNIz7VBE+CZPVRoZcoRPj9Jft6kvESkF1ESDJIJM2w1jvbxX7NJejsX1JQ3zRGGOE+BMbVLFXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760406716; c=relaxed/simple;
-	bh=D5pq7pWAQYFwhyzSZxyrhL2+MSp19sOiqhoesc+kuCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q8tal22yz/gOiwBhSJ2lCQ0H7mMhSjy54WW2c3uzK0y8uNOxZ8mSI9MF29HGmrAOrwPvi8xxbflAjlRNED53KG42JxSQZ0Rvg3JnbW+1J72yS/MKScfmjHbqdvdebHRRxQxPPfqcWtvTTNnspWfZJZB8cy+yhk15eKeyed2RE08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DhO0hF6g; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=GdHHVHX1eK4OumztheWLpvPpWCbLWAPVj4gP9BXPPI8=; b=DhO0hF6gqhy8rmkGEl7on7+oJv
-	VtSUYvYuPcOlDu5fO8rCTFa2F1N/jdAP20m8Nb67fTrBo/fW7xZkTs3E4kNWHnFynKs20G0xEsolC
-	MqH/ufxF3g2GzV+W64oAUH6OPetfyV6FPMJEqWTE/ij6PONb6v3EHCJOmal94Lc0Bi4hK+35ayHKR
-	mt+8n05mNcD2DsFYZBume6lwYieckkKHhLNsYjifIvTzRXNk9td5Pk/x3BSq6HPF1OGCgGKUidim1
-	8H0TuKmkhlQR6ai4NxMDf9cGRmyXPY/ia4v6vaMJvdCXmK4AZRsHC3b9HHij78SAmfr3e1ZC9jXim
-	CxkRoeLg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8UCc-0000000EvJR-1Gkr;
-	Tue, 14 Oct 2025 01:51:50 +0000
-Message-ID: <3efcf624-58f1-4390-b6e2-a0aa5e62a9a3@infradead.org>
-Date: Mon, 13 Oct 2025 18:51:49 -0700
+	s=arc-20240116; t=1760406869; c=relaxed/simple;
+	bh=T5J7OmcAxaPiSEye30W0ZOJTUvh/8wOGnJoBjAsSIOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rKeW2wkL3n9oGffoxx6zgOJvMJHrB6qLCiyGcbdAZPCd/Qo+6pA31KU+0uTzlHYpNCxpIi0dPFdFa9/KcW8SI1bhM00xw4SQ2XX68tQfCuZg7A2KaggKeO93JHusY2JlM4Z8ZWrLspQRftZZkhemKEhalAJ1E7ay6gzK84yhiwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2xXydRP; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-639fb035066so7512197a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:54:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760406866; x=1761011666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ik32QQu1F3n92X36Hdeq9+CsYS30S+qNycANq42cjDY=;
+        b=m2xXydRPuFN1hEDeW8V68YP8RvUZPuHdnxdbZu7ruEc97eM1jE2dUtd5pNh8HkeAuF
+         /KJs0b+YWUhvfQF6p+uXannI/pQHaHg0s66d407GmCdw6R5q0J+dRmdEStnq9uDosh9H
+         r+M5ZFucZodnplRb9tetVK+cmXzp1qXJUx6yl6cqk1/RJxZ0B5HcrV9UWd9D5vakccQu
+         XYZ/dLEMkMKOM2hyv42tX0iwbjrox8XVbv0chf/yIXq/3DC7AWk7xI+JrsqVyX907AyF
+         TXZZi8Fy0MlbrPF+T2nML5vo5MzPNdti104Sx9Qw4fvk8VSagV87DzkEfqyT7Hp8fs+/
+         4roA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760406866; x=1761011666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ik32QQu1F3n92X36Hdeq9+CsYS30S+qNycANq42cjDY=;
+        b=bZITE/9SBLMVZ7tbX3jeWR6qIMg0pUu8Ej/4tSENTO7kpr8zjETFzQbbizCVRoASd2
+         tEsKkSq1EL2nvodooGIYIbawem7JQVqDaJRanAiG4Hwsrjyt9fxsRFOprReILBDIKaI1
+         97WidPQld1NoeDHi9qZ5T5Ieo3x9TJVUBVotx7SuCCs8mgPEJ26kxAiHo1oPQuG+3gy6
+         6PWrlkEwQaYL3wZhFwQGTgBQylPYSIaN5BKBNaEr5jotFlfryRCblS5BadIoSm31gbzB
+         8+1N7JXdtUsbxm6WukY07eJNmInTZSY/mVb7WpKE8x6cTpQhI296wj113+J5lInc3KrC
+         FX8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUqLhLiwIu+hLHsgk4jLLkqFirQRTsCz7y5GB6UPHxQd/qMYy2mxd6sKU5M3Y1aB3Z6Q86lQ1ZnaMufjpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPhYcfkTn+DpAQsI3K8yllldro1ZfwXa98IhApV2nPxzEEfNDq
+	CMzaw5joVzfMcrQAi0XbhQ++T9GFF+tpimpx2vvjxR3hj6QNAyY1yNg1QIs/N4PPqsZlzdzyLmj
+	JYaR2TeR6vtdVXr57qUcngnKLYjE38Ec=
+X-Gm-Gg: ASbGncvMAmIOcfTv12bF0WhBFw6oboERsUBCVXuDOmpX4SU6xpQcj+vByrOJqyOtoQJ
+	S2q960lB4w14VIQFOW3vDHJSJ3LEldNCBaahBVFrQGSBNTpyJ/WwU2e2RbQ0RZL/iePxxXyAt/m
+	oMXfwFLJtPrbu8krOAPbf0+5Ka2dvrL4fx7KuhU9EumzgfJ6HNcPlKkn4dnP+JetaOODr8XAwTk
+	kiorS54Z98VnZsF+PjZgseudxOA5HsQmNzh0A==
+X-Google-Smtp-Source: AGHT+IEIwL92OleUUPX8SMcFqaEBb3u6X2yfff0qC3j0KF5wSLhgWS1eaHLjQKiAE6ArF6J7UL6js8sAh5poiNQTYBY=
+X-Received: by 2002:a17:907:d1d:b0:b41:873d:e226 with SMTP id
+ a640c23a62f3a-b50aa48cabdmr2092647466b.1.1760406865724; Mon, 13 Oct 2025
+ 18:54:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] Documentation: kvm: new UAPI for handling SEA
-To: Jiaqi Yan <jiaqiyan@google.com>, maz@kernel.org, oliver.upton@linux.dev
-Cc: duenwen@google.com, rananta@google.com, jthoughton@google.com,
- vsethi@nvidia.com, jgg@nvidia.com, joey.gouly@arm.com,
- suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com,
- will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org,
- kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251013185903.1372553-1-jiaqiyan@google.com>
- <20251013185903.1372553-4-jiaqiyan@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251013185903.1372553-4-jiaqiyan@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251013131537.1927035-1-dolinux.peng@gmail.com> <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+In-Reply-To: <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Tue, 14 Oct 2025 09:54:14 +0800
+X-Gm-Features: AS18NWDaf7q3M1w8lIGQrPCBFol7jT1DFpi3r6Xob_q4wKIj2XFCbo4A4CQJ9Q4
+Message-ID: <CAErzpmvOj_ecnN02EKuMtZ7ZTdxV_Uo4NOUG5+YS1uJsA0NG0w@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
+ btf_find_by_name_kind lookup
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: andrii@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Oct 14, 2025 at 7:40=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Mon, Oct 13, 2025 at 6:16=E2=80=AFAM pengdonglin <dolinux.peng@gmail.c=
+om> wrote:
+> >
+> > From: pengdonglin <pengdonglin@xiaomi.com>
+> >
+> > Currently, when the funcgraph-args feature is in use, the
+> > btf_find_by_name_kind function is invoked quite frequently. However,
+> > this function only supports linear search. When the number of btf_type
+> > entries to search through is large, such as in the vmlinux BTF which
+> > contains over 80,000 named btf_types, it consumes a significant amount
+> > of time.
+> >
+> > This patch optimizes the btf_find_by_name_kind lookup by sorting BTF
+> > types according to their names and kinds. Additionally, it modifies
+> > the search direction. Now, it first searches the BTF and then its base.
+>
+> Well, the latter is a meaningful change outside of sorting. Split it
+> out and justify separately?
 
+Thanks, I will split it out in v2.
 
-On 10/13/25 11:59 AM, Jiaqi Yan wrote:
-> Document the new userspace-visible features and APIs for handling
-> synchronous external abort (SEA)
-> - KVM_CAP_ARM_SEA_TO_USER: How userspace enables the new feature.
-> - KVM_EXIT_ARM_SEA: exit userspace gets when it needs to handle SEA
->   and what userspace gets while taking the SEA.
-> 
-> Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> ---
->  Documentation/virt/kvm/api.rst | 61 ++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 6ae24c5ca5598..43bc2a1d78e01 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -7272,6 +7272,55 @@ exit, even without calls to ``KVM_ENABLE_CAP`` or similar.  In this case,
->  it will enter with output fields already valid; in the common case, the
->  ``unknown.ret`` field of the union will be ``TDVMCALL_STATUS_SUBFUNC_UNSUPPORTED``.
->  Userspace need not do anything if it does not wish to support a TDVMCALL.
-> +
-> +::
-> +		/* KVM_EXIT_ARM_SEA */
-> +		struct {
-> +  #define KVM_EXIT_ARM_SEA_FLAG_GPA_VALID   (1ULL << 0)
-> +			__u64 flags;
-> +			__u64 esr;
-> +			__u64 gva;
-> +			__u64 gpa;
-> +		} arm_sea;
-> +
-> +Used on arm64 systems. When the VM capability KVM_CAP_ARM_SEA_TO_USER is
-> +enabled, a VM exit is generated if guest causes a synchronous external abort
-> +(SEA) and the host APEI fails to handle the SEA.
-> +
-> +Historically KVM handles SEA by first delegating the SEA to host APEI as there
-> +is high chance that the SEA is caused by consuming uncorrected memory error.
-> +However, not all platforms support SEA handling in APEI, and KVM's fallback
-> +is to inject an asynchronous SError into the guest, which usually panics
-> +guest kernel unpleasantly. As an alternative, userspace can participate into
+>
+> >
+> > It should be noted that this change incurs some additional memory and
+> > boot-time overhead. Therefore, the option is disabled by default.
+> >
+> > Here is a test case:
+> >
+> >  # echo 1 > options/funcgraph-args
+> >  # echo function_graph > current_tracer
+> >
+> > Before:
+> >  # time cat trace | wc -l
+> >  124176
+> >
+> >  real    0m16.154s
+> >  user    0m0.000s
+> >  sys     0m15.962s
+> >
+> > After:
+> >  # time cat trace | wc -l
+> >  124176
+> >
+> >  real    0m0.948s
+> >  user    0m0.000s
+> >  sys     0m0.973s
+> >
+> > An improvement of more than 20 times can be observed.
+> >
+> > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+> > ---
+> >  include/linux/btf.h |   1 +
+> >  kernel/bpf/Kconfig  |  13 ++++
+> >  kernel/bpf/btf.c    | 160 +++++++++++++++++++++++++++++++++++++++++---
+> >  3 files changed, 165 insertions(+), 9 deletions(-)
+> >
+>
+> Just a few observations (if we decide to do the sorting of BTF by name
+> in the kernel):
+>
+> - given we always know kind we are searching for, I'd sort by kind,
+> then by name, it probably will be a touch faster because we'll be
+> quickly skipping lots of elements clustered by kind we don't care
+> about;
 
-                                                                           in
+Good catch, thanks.
 
-> +the SEA handling by enabling KVM_CAP_ARM_SEA_TO_USER at VM creation, after
-> +querying the capability. Once enabled, when KVM has to handle the guest
+>
+> - instead of having BPF_SORT_BTF_BY_NAME_KIND, we should probably just
+> have a lazy sorting approach, and maybe employ a bit more
+> sophisticated heuristic. E.g., not by number of BTF types (or at least
+> not just by that), but by the total number of entries we had to skip
+> to find something. For small BTFs we might not reach this budget ever.
+> For vmlinux BTF we are almost definitely hitting it on
+> first-second-third search. Once the condition is hit, allocate
+> sorted_ids index, sort, remember. On subsequent searches use the
+> index.
 
-                                                                     guest-
-> +caused SEA, it returns to userspace with KVM_EXIT_ARM_SEA, with details
-> +about the SEA available in 'arm_sea'.
-> +
-> +The 'esr' field holds the value of the exception syndrome register (ESR) while
-> +KVM taking the SEA, which tells userspace the character of the current SEA,
-   KVM takes
+Thanks, I appreciate the suggestion and will include it in v2.
+However, due to the
+memory overhead, I believe a BPF_SORT_BTF_BY_NAME_KIND option might
+be necessary.
 
-> +such as its Exception Class, Synchronous Error Type, Fault Specific Code and
-> +so on. For more details on ESR, check the Arm Architecture Registers
-> +documentation.
-> +
-> +The following values are defined for the 'flags' field
+>
+> WDYT?
+>
+> [...]
+>
+> > +static void btf_sort_by_name_kind(struct btf *btf)
+> > +{
+> > +       const struct btf_type *t;
+> > +       struct btf_sorted_ids *sorted_ids;
+> > +       const char *name;
+> > +       u32 *ids;
+> > +       u32 total, cnt =3D 0;
+> > +       u32 i, j =3D 0;
+> > +
+> > +       total =3D btf_type_cnt(btf);
+> > +       for (i =3D btf->start_id; i < total; i++) {
+> > +               t =3D btf_type_by_id(btf, i);
+> > +               name =3D btf_name_by_offset(btf, t->name_off);
+> > +               if (str_is_empty(name))
+> > +                       continue;
+> > +               cnt++;
+> > +       }
+> > +
+> > +       /* Use linear search when the number is below the threshold */
+> > +       if (cnt < 8)
+>
+> kind of a random threshold, at least give it a name
 
-Above needs an ending like '.' or ':'.
-(or maybe "::" depending how it is processed by Sphinx)
+Thanks, I will fix it in v2.
 
-> +
-> +  - KVM_EXIT_ARM_SEA_FLAG_GPA_VALID -- the faulting guest physical address
-> +    is valid and userspace can get its value in the 'gpa' field.
-> +
-> +Note userspace can tell whether the faulting guest virtual address is valid
-> +from the FnV bit in 'esr' field. If FnV bit in 'esr' field is not set, the
-> +'gva' field hols the valid faulting guest virtual address.
-
-               holds (or contains)> +
-> +Userspace needs to take actions to handle guest SEA synchronously, namely in
-> +the same thread that runs KVM_RUN and receives KVM_EXIT_ARM_SEA. One of the
-> +encouraged approaches is to utilize the KVM_SET_VCPU_EVENTS to inject the SEA
-> +to the faulting VCPU. This way, the guest has the opportunity to keep running
-> +and limit the blast radius of the SEA to the particular guest application that
-> +caused the SEA. Userspace may also emulate the SEA to VM by itself using the
-> +KVM_SET_ONE_REG API. In this case, it can use the valid values from 'gva' and
-> +'gpa' fields to manipulate VCPU's registers (e.g. FAR_EL1, HPFAR_EL1).
-> +
->  ::
->  
->  		/* Fix the size of the union. */
-> @@ -8689,6 +8738,18 @@ This capability indicate to the userspace whether a PFNMAP memory region
->  can be safely mapped as cacheable. This relies on the presence of
->  force write back (FWB) feature support on the hardware.
->  
-> +7.45 KVM_CAP_ARM_SEA_TO_USER
-> +----------------------------
-> +
-> +:Architecture: arm64
-> +:Target: VM
-> +:Parameters: none
-> +:Returns: 0 on success, -EINVAL if unsupported.
-> +
-> +This capability, if KVM_CHECK_EXTENSION indicates that it is available, means
-> +that KVM has an implementation that allows userspace to participate in handling
-> +synchronous external abort caused by VM, by an exit of KVM_EXIT_ARM_SEA.
-> +
->  8. Other capabilities.
->  ======================
->  
-
--- 
-~Randy
-
+>
+> > +               return;
+> > +
+> > +       sorted_ids =3D kvmalloc(struct_size(sorted_ids, ids, cnt), GFP_=
+KERNEL);
+> > +       if (!sorted_ids) {
+> > +               pr_warn("Failed to allocate memory for sorted_ids\n");
+> > +               return;
+> > +       }
+>
+> [...]
 
