@@ -1,132 +1,197 @@
-Return-Path: <linux-kernel+bounces-852868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC545BDA1E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F43BDA1FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA01F4F3438
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:45:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12D054EEAA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BC22FABF7;
-	Tue, 14 Oct 2025 14:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F61F2FE077;
+	Tue, 14 Oct 2025 14:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="dro/0FNx"
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="O4XD0DHQ"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A362FC022
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58C62FCC04
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453145; cv=none; b=Xp6gidW6DZKN6XLPS6+HXbHp+4EOEkUSphdXWrtCfqRaL2eT0x04qQjYWKQluWvCS9Z4In1fbMs9G2CWCLZlaFbZFjHTF5At61L4ls7oB9aAsMpUvBxvz8gIYypYbESLC6dE7373ibP3TmbDwE49ZWOdL3RGIL2E0IlGxCI+ll4=
+	t=1760453207; cv=none; b=Q5mJfSsHuUjVa2uI7YjWPEGD6sm/JNcQ45R2eXjcXxQ7Ap0a5IW4yy7JiZQHAFjtmViN9garO9HhQ/UgoywkjImveVn+75TqWCCoSXFxjUQ4YofoSa7WQ1ETiPLP0BC4aXb2Rzp0iC0UvtX1Hnsth/4sr58DAo4APmZ+zYLKY0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453145; c=relaxed/simple;
-	bh=lZ6B11CxW1q7O+cXORcRUdlfHrH0UkzWMMy7VXqgN2Q=;
-	h=From:Subject:To:CC:Message-ID:Date:MIME-Version:Content-Type; b=TVPIqMW9+DbqDcyzN7i3O6Xq5Xu1NwuvhQHxKD4nYQ5kRpdOV6cjeub5VeQLE5eOIHjfkPG904sL8k5seYR2Ulc1IBU+A6GB8Zv7pMbx9S46pMeJAuDLrucShMRamN7vvnHUf0MLnQVwPQu69iFos9lQhCdgoW2CfFAYYmDgY4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=dro/0FNx; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=aW0vtNY+80ANt8g8vBvYcKAPWFdtwqr1pnE2CY5Stqs=;
-	b=dro/0FNxZxUiay6DtOjZwbwDtlcfnS0Fs+LJ/+ezGGoyQ3bZYjhpRO1l7q8uIfrpgGDlB0flo
-	seuAzsXwSbYnxP+sCAr8CSTYCdkLPb6FgEMF/cmrKjs7olLxbMlAR1KTENuyDdBCgd95HwIZTsb
-	VL4GVyWC3PRBi0a3NFj1k18=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cmH7f56K8zRhR7;
-	Tue, 14 Oct 2025 22:45:18 +0800 (CST)
-Received: from kwepemh200008.china.huawei.com (unknown [7.202.181.115])
-	by mail.maildlp.com (Postfix) with ESMTPS id AD6821402DA;
-	Tue, 14 Oct 2025 22:45:38 +0800 (CST)
-Received: from [10.174.176.125] (10.174.176.125) by
- kwepemh200008.china.huawei.com (7.202.181.115) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 14 Oct 2025 22:45:37 +0800
-From: Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: [Question] Received vtimer interrupt but ISTATUS is 0
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Joey
- Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-CC: "moderated list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
-	<linux-arm-kernel@lists.infradead.org>, "open list:KERNEL VIRTUAL MACHINE FOR
- ARM64 (KVM/arm64)" <kvmarm@lists.linux.dev>, open list
-	<linux-kernel@vger.kernel.org>, "wanghaibin.wang@huawei.com"
-	<wanghaibin.wang@huawei.com>, Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <14b30b59-12bb-fc69-8447-aae86fcafcd1@huawei.com>
-Date: Tue, 14 Oct 2025 22:45:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+	s=arc-20240116; t=1760453207; c=relaxed/simple;
+	bh=mQD076zqipwjL0zhWvp4jYIm/DeAQnP22lZJv1kJu3s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=so889swK1AktDssIvixdOg5XOJclU+YG+OBczyzKHkQeLCGi829JWmANyUNenQKlzZVx9+sdQmb2ivvxkNf5M4g9rtIEqIfDWqAhGprNxKCl4e0kJyvi3y1bMJFAIWm8uPeg3j/MR1REgSpMaxA+5JTsoWxUQuuSyyVa2JsaDCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=O4XD0DHQ; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 2BFC9240105
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:46:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760453203; bh=mQD076zqipwjL0zhWvp4jYIm/DeAQnP22lZJv1kJu3s=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=O4XD0DHQilBK/3qihxb2hOZfYSUf2PAIBMQhQSdzIO7p6S8RbDwG5cC9Wi5ciTEv3
+	 wf1jpPQ6CJftIE7ixYsUUJaKGxNY+oCOZ1yR6Yx1vrFIDz+Px7nJETOsF81O5L2iGJ
+	 JFZX7+omfWzT4bsE8bvWmVf0dOM67c7aVJFHRQa8mXYSsmokN/bYa+3bPF/LURGgdM
+	 tXVhv7x0MFu31iO62TeQ4OGM0VbU+MBJgOj6R9pJuiPgENqqgBYOQpYZE3bv/DVDF2
+	 HGrZzPX6eZ7jjv3hBglpNhvkH8HyIoHBd89gWrUDrD6vOldZxK5UBTql/I4eYwTdGZ
+	 Ti/PrMlIIftUw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cmH9D2NQyz6v1l;
+	Tue, 14 Oct 2025 16:46:40 +0200 (CEST)
+Message-ID: <d3e51448678bf5a94746cc34825c35073c02d00e.camel@posteo.de>
+Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
+From: Markus Probst <markus.probst@posteo.de>
+To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Lorenzo
+ Stoakes	 <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki
+ <urezki@gmail.com>, Boqun Feng	 <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, bjorn3_gh@protonmail.com,  Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
+ <tmgross@umich.edu>, 	rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-leds@vger.kernel.org
+Date: Tue, 14 Oct 2025 14:46:42 +0000
+In-Reply-To: <DDHGUQ9B4J2K.X1VXMMU6O5O4@kernel.org>
+References: <20251012145221.172116-1-markus.probst@posteo.de>
+	 <20251012145221.172116-3-markus.probst@posteo.de>
+	 <aO1GM4WXs37Zpm0G@google.com> <DDHGUQ9B4J2K.X1VXMMU6O5O4@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemh200008.china.huawei.com (7.202.181.115)
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=xsFNBGiDvXgBEADAXUceKafpl46S35UmDh2wRvvx+UfZbcTjeQOlSwKP7YVJ4JOZrVs93qReNLkO
+  WguIqPBxR9blQ4nyYrqSCV+MMw/3ifyXIm6Pw2YRUDg+WTEOjTixRCoWDgUj1nOsvJ9tVAm76Ww+
+  /pAnepVRafMID0rqEfD9oGv1YrfpeFJhyE2zUw3SyyNLIKWD6QeLRhKQRbSnsXhGLFBXCqt9k5JA
+  RhgQof9zvztcCVlT5KVvuyfC4H+HzeGmu9201BVyihJwKdcKPq+n/aY5FUVxNTgtI9f8wIbmfAja
+  oT1pjXSp+dszakA98fhONM98pOq723o/1ZGMZukyXFfsDGtA3BB79HoopHKujLGWAGskzClwTjRQ
+  xBqxh/U/lL1pc+0xPWikTNCmtziCOvv0KA0arDOMQlyFvImzX6oGVgE4ksKQYbMZ3Ikw6L1Rv1J+
+  FvN0aNwOKgL2ztBRYscUGcQvA0Zo1fGCAn/BLEJvQYShWKeKqjyncVGoXFsz2AcuFKe1pwETSsN6
+  OZncjy32e4ktgs07cWBfx0v62b8md36jau+B6RVnnodaA8++oXl3FRwiEW8XfXWIjy4umIv93tb8
+  8ekYsfOfWkTSewZYXGoqe4RtK80ulMHb/dh2FZQIFyRdN4HOmB4FYO5sEYFr9YjHLmDkrUgNodJC
+  XCeMe4BO4iaxUQARAQABzRdtYXJrdXMucHJvYnN0QHBvc3Rlby5kZcLBkQQTAQgAOxYhBIJ0GMT0
+  rFjncjDEczR2H/jnrUPSBQJog714AhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEDR2
+  H/jnrUPSgdkQAISaTk2D345ehXEkn5z2yUEjaVjHIE7ziqRaOgn/QanCgeTUinIv6L6QXUFvvIfH
+  1OLPwQ1hfvEg9NnNLyFezWSy6jvoVBTIPqicD/r3FkithnQ1IDkdSjrarPMxJkvuh3l7XZHo49GV
+  HQ8i5zh5w4YISrcEtE99lJisvni2Jqx7we5tey9voQFDyM8jxlSWv3pmoUTCtBkX/eKHJXosgsuS
+  B4TGDCVPOjla/emI5c9MhMG7O4WEEmoSdPbmraPw66YZD6uLyhV4DPHbiDWRzXWnClHSyjB9rky9
+  lausFxogvu4l9H+KDsXIadNDWdLdu1/enS/wDd9zh5S78rY2jeXaG4mnf4seEKamZ7KQ6FIHrcyP
+  ezdDzssPQcTQcGRMQzCn6wP3tlGk7rsfmyHMlFqdRoNNv+ZER/OkmZFPW655zRfbMi0vtrqK2Awm
+  9ggobb1oktfd9PPNXMUY+DNVlgR2G7jLnenSoQausLUm0pHoNE8TWFv851Y6SOYnvn488sP1Tki5
+  F3rKwclawQFHUXTCQw+QSh9ay8xgnNZfH+u9NY7w3gPoeKBOAFcBc2BtzcgekeWS8qgEmm2/oNFV
+  G0ivPQbRx8FjRKbuF7g3YhgNZZ0ac8FneuUtJ2PkSIFTZhaAiC0utvxk0ndmWFiW4acEkMZGrLaM
+  L2zWNjrqwsD2zsFNBGiDvXgBEADCXQy1n7wjRxG12DOVADawjghKcG+5LtEf31WftHKLFbp/HArj
+  BhkT6mj+CCI1ClqY+FYU5CK/s0ScMfLxRGLZ0Ktzawb78vOgBVFT3yB1yWBTewsAXdqNqRooaUNo
+  8cG/NNJLjhccH/7PO/FWX5qftOVUJ/AIsAhKQJ18Tc8Ik73v427EDxuKb9mTAnYQFA3Ev3hAiVbO
+  6Rv39amVOfJ8sqwiSUGidj2Fctg2aB5JbeMln0KCUbTD1LhEFepeKypfofAXQbGwaCjAhmkWy/q3
+  IT1mUrPxOngbxdRoOx1tGUC0HCMUW1sFaJgQPMmDcR0JGPOpgsKnitsSnN7ShcCr1buel7vLnUMD
+  +TAZ5opdoF6HjAvAnBQaijtK6minkrM0seNXnCg0KkV8xhMNa6zCs1rq4GgjNLJue2EmuyHooHA4
+  7JMoLVHcxVeuNTp6K2+XRx0Pk4e2Lj8IVy9yEYyrywEOC5XRW37KJjsiOAsumi1rkvM7QREWgUDe
+  Xs0+RpxI3QrrANh71fLMRo7LKRF3Gvw13NVCCC9ea20P4PwhgWKStkwO2NO+YJsAoS1QycMi/vKu
+  0EHhknYXamaSV50oZzHKmX56vEeJHTcngrM8R1SwJCYopCx9gkz90bTVYlitJa5hloWTYeMD7FNj
+  Y6jfVSzgM/K4gMgUNDW/PPGeMwARAQABwsF2BBgBCAAgFiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IF
+  AmiDvXgCGwwACgkQNHYf+OetQ9LHDBAAhk+ab8+WrbS/b1/gYW3q1KDiXU719nCtfkUVXKidW5Ec
+  Idlr5HGt8ilLoxSWT2Zi368iHCXS0WenGgPwlv8ifvB7TOZiiTDZROZkXjEBmU4nYjJ7GymawpWv
+  oQwjMsPuq6ysbzWtOZ7eILx7cI0FjQeJ/Q2baRJub0uAZNwBOxCkAS6lpk5Fntd2u8CWmDQo4SYp
+  xeuQ+pwkp0yEP30RhN2BO2DXiBEGSZSYh+ioGbCHQPIV3iVj0h6lcCPOqopZqyeCfigeacBI0nvN
+  jHWz/spzF3+4OS+3RJvoHtAQmProxyGib8iVsTxgZO3UUi4TSODeEt0i0kHSPY4sCciOyXfAyYoD
+  DFqhRjOEwBBxhr+scU4C1T2AflozvDwq3VSONjrKJUkhd8+WsdXxMdPFgBQuiKKwUy11mz6KQfcR
+  wmDehF3UaUoxa+YIhWPbKmycxuX/D8SvnqavzAeAL1OcRbEI/HsoroVlEFbBRNBZLJUlnTPs8ZcU
+  4+8rq5YX1GUrJL3jf6SAfSgO7UdkEET3PdcKFYtS+ruV1Cp5V0q4kCfI5jk25iiz8grM2wOzVSsc
+  l1mEkhiEPH87HP0whhb544iioSnumd3HJKL7dzhRegsMizatupp8D65A2JziW0WKopa1iw9fti3A
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-Hi all,
+On Mon, 2025-10-13 at 22:11 +0200, Danilo Krummrich wrote:
+> On Mon Oct 13, 2025 at 8:34 PM CEST, Alice Ryhl wrote:
+> > On Sun, Oct 12, 2025 at 02:52:39PM +0000, Markus Probst wrote:
+> > > Implement the core abstractions needed for led class devices,
+> > > including:
+> > >=20
+> > > * `led::LedOps` - the trait for handling leds, including
+> > > =C2=A0 `brightness_set`, `brightness_get` and `blink_set`
+> > >=20
+> > > * `led::InitData` - data set for the led class device
+> > >=20
+> > > * `led::Device` - a safe wrapper around `led_classdev`
+> > >=20
+> > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> >=20
+> > > +pub trait LedOps: Send + 'static + Sized {
+> > > +=C2=A0=C2=A0=C2=A0 /// If set true, [`LedOps::brightness_set`] and
+> > > [`LedOps::blink_set`] must not sleep
+> > > +=C2=A0=C2=A0=C2=A0 /// and perform the operation immediately.
+> > > +=C2=A0=C2=A0=C2=A0 const BLOCKING: bool;
+> > > +=C2=A0=C2=A0=C2=A0 /// The max brightness level
+> > > +=C2=A0=C2=A0=C2=A0 const MAX_BRIGHTNESS: u32;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0 /// Sets the brightness level.
+> > > +=C2=A0=C2=A0=C2=A0 ///
+> > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
+> > > +=C2=A0=C2=A0=C2=A0 fn brightness_set(&self, brightness: u32) -> Resu=
+lt<()>;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0 /// Gets the current brightness level.
+> > > +=C2=A0=C2=A0=C2=A0 fn brightness_get(&self) -> u32 {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEFAU=
+LT_ERROR)
+> > > +=C2=A0=C2=A0=C2=A0 }
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0 /// Activates hardware accelerated blinking.
+> > > +=C2=A0=C2=A0=C2=A0 ///
+> > > +=C2=A0=C2=A0=C2=A0 /// delays are in milliseconds. If both are zero,=
+ a sensible
+> > > default should be chosen.
+> > > +=C2=A0=C2=A0=C2=A0 /// The caller should adjust the timings in that =
+case and if
+> > > it can't match the values
+> > > +=C2=A0=C2=A0=C2=A0 /// specified exactly. Setting the brightness to =
+0 will
+> > > disable the hardware accelerated
+> > > +=C2=A0=C2=A0=C2=A0 /// blinking.
+> > > +=C2=A0=C2=A0=C2=A0 ///
+> > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
+> > > +=C2=A0=C2=A0=C2=A0 fn blink_set(&self, _delay_on: &mut usize, _delay=
+_off: &mut
+> > > usize) -> Result<()> {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEFAU=
+LT_ERROR)
+> > > +=C2=A0=C2=A0=C2=A0 }
+> >=20
+> > These functions should probably take a &Device<Bound> argument so
+> > that
+> > they can use methods that require a bound device (such as IO).
+>=20
+> Indeed!
+>=20
+> @Markus: Note that this guarantee is given by the LED device
+> registration being
+> lifetime controlled by devres, while led_classdev_unregister() is
+> synchronized
+> against those callbacks.
+>=20
+> For the latter, please double check that this is actually the case --
+> I'm not
+> familiar with the LED subsystem, I'm reviewing from driver-core
+> perspective. But
+> from a quick look it should be the case. :)
 
-I'm having a very strange problem that can be simplified to a vtimer 
-interrupt being received but ISTATUS is 0. Why dose this happen? 
-According to analysis, it may be the timer condition is met and the 
-interrupt is generated. Maybe some actions(cancel timer?) are done in 
-the VM, ISTATUS becomes 0 and he hardware needs to clear the interrupt. 
-But the clear command is sent too slowly, the OS has already read the 
-ICC_IAR_EL1. So hypervisor executed kvm_arch_timer_handler but ISTATUS is 0.
-The code flow is as follows:
-kvm_arch_timer_handler
-     ->if (kvm_timer_should_fire)
-         ->the value of SYS_CNTV_CTL is 0b001(ISTATUS=0,IMASK=0,ENABLE=1)
-     ->return IRQ_HANDLED
+There is also the led_classdev->dev device, but I assume you mean the
+parent of the led classdev (the one being passed on register)?
 
-Because ISTATUS is 0, kvm_timer_update_irq will not be executed to 
-inject this interrupt into the VM. Since EOImode is 1 and the vtimer 
-interrupt has IRQD_FORWARDED_TO_VCPU flag, hypervisor will not write 
-ICC_DIR_EL1 to deactivate the interrupt. This interrupt remains in 
-active state, blocking subsequent interrupt from being process. 
-Fortunately, in kvm_timer_vcpu_load it will be determined again whether 
-an interrupt needs to be injected into the VM. But the delay will 
-definitely increase.
-
-What I want to discuss is the solution to this problem. My solution is 
-to add a deactivation action:
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index dbd74e4885e2..46baba531d51 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -228,8 +228,13 @@ static irqreturn_t kvm_arch_timer_handler(int irq, 
-void *dev_id)
-         else
-                 ctx = map.direct_ptimer;
-
--       if (kvm_timer_should_fire(ctx))
-+       if (kvm_timer_should_fire(ctx)) {
-                 kvm_timer_update_irq(vcpu, true, ctx);
-+       } else {
-+               struct vgic_irq *irq;
-+               irq = vgic_get_vcpu_irq(vcpu, timer_irq(timer_ctx));
-+               gic_write_dir(irq->hwintid);
-+       }
-
-         if (userspace_irqchip(vcpu->kvm) &&
-             !static_branch_unlikely(&has_gic_active_state))
-
-If you have any new ideas or other solutions to this problem, please let 
-me know.
-
-Looking forward to your reply.
-
-Kunkun Jiang
-
-
-
+Thanks
+- Markus Probst
 
