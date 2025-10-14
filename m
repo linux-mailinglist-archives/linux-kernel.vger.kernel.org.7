@@ -1,161 +1,340 @@
-Return-Path: <linux-kernel+bounces-852965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EACBDA597
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:27:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 013B2BDA5AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3081504969
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:19:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB3B9503774
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0B22C11D4;
-	Tue, 14 Oct 2025 15:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R6NhpyYl"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7D52ED14E;
+	Tue, 14 Oct 2025 15:20:35 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACCB1F790F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97E42BE7BA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455185; cv=none; b=fD2LKQ1ZfdFDEKbpbngzMl8UzvU3GjYhgdFgEsEDE6ePXHysp+S6k02X6HkUAsHYZPzzcbMccOSqY2bYTWLyt0z/V/BELs/wWEWHIxv7BVA8zTXAbfRq4/GDjTF5fEZQmpkkU4DL5Z4heQUDx4OEVCSOdeH1/qFieYm6u/TtvN0=
+	t=1760455234; cv=none; b=bBLG9S9w+6HkM246BTml+t4GcFnECBUl/G5F78yve9YFM4e3iCVha+/5TCHuIqy+/omKwNDs3u2lGLFiEcw6RHBJG3GDk0KuShAmzYX+i3mq0J4UaZmpH5dL8/3nUoA3glwIYsDIHQsrf13L8WKfz2PPcu+1Ym8qMtkfP7u7l2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455185; c=relaxed/simple;
-	bh=yO2ygkBHkX0cwFC257fCD00j1go4wNKJ735oVxo9cj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIkmD4anJFN+A0h5Dl6NTURWVYhox3r5Yl4fw48oStAD+kfEr0kdgs3yokHQXGgTiOlG6+YuP854dIGQHFtj8WoawyGPfWDhgYvD9jH/HGHKhvn+1IHdiuXdNUmrf0wC8SL+YGFCefzthX6klcJv04TsVlWGvi89iRsatPTEDzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R6NhpyYl; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7811fa91774so4745508b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760455183; x=1761059983; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Ir76BHl669cEuMaEpM03W9flQt3ajXteIgC+QNdmFc=;
-        b=R6NhpyYlC1syj4h8jK7YlL5h24dJJXCBqGQ0+hKIr2Egrr485eL8d9Wdp08d4x55ji
-         u1jMPyDpUI3aC0vNopD3ryHorQHtdxXYurCzYjWVQCM2hb/YtCFgUIgRsy/FKhW1rD68
-         ndfM756QayXU/VfCb2RLRJqAlgIX5pXYRdL77rJWs2ZbkfEnqAjRWp2+QvlfHWNnpLNT
-         hW1Tjx3gktO54uXgwda5yZDSMu5aeFdEUZey6npJ27GMYbs65flUznzMFFvFbH5O0/RY
-         pFt74v3jxlknmH+plrCh/WSA3XwLjACFh5hguzVvqtZzydz2brUJzJams2zXvgRlspyJ
-         9J9A==
+	s=arc-20240116; t=1760455234; c=relaxed/simple;
+	bh=XcDfuVByH35+D45pc6KAesfdPTwzVdWfGTCQhqWmnfE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=R1rxLGAs5sfz0wuRx7TvFeyrpCLHS3eRvFsPvwRy3xK/F+WxlWjIPTipTlifUsmKrRrf6CbtO2PzLnJspGckTX0hWMfQig6xT/WPaoBqMIPw2N+1k4jXK7vAgOIDFZXwZ5ZUvghk9aH+Hhv9vUvYNfu3wCyU5k7aGG98VJLeH3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-425788b03a0so302143155ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:20:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760455183; x=1761059983;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Ir76BHl669cEuMaEpM03W9flQt3ajXteIgC+QNdmFc=;
-        b=fmbNzdlYMMLPu+KBLkLZUzJN0nSwUQQOh/52yOaqoGhYPWFq8HBcC/p0jmrExJw9KD
-         g3HaH5qnUtR5ybLf+3Vdhumysc5UZ3npD1Dnq7OuWrXMIGGOMq2PCvKb/Tt5ovARajHM
-         Lz8q2Gsn23dp4qw7aRNX2HqFZOYw6I3uzUCktt9xEH1+ZMterDhx79EV43Qw6bAcCJpU
-         p21gh4SnuvpWMlXGKXe7BdqngBGezf38SUJavhPhYfDP+2xIgwsm8IAfrk81rYxC15dC
-         M3FqMd1fUcXJQjuysIhOh55y1S4U3ERl1pswEWC2dpsqhyEy78YgubhdIjN65pVCvhkd
-         zejA==
-X-Forwarded-Encrypted: i=1; AJvYcCXelM2VTmuZJ5u2hSTUeK0G3pLaGN4JJsJj93X0GLNQJUayJ8OdxsWeaUK0xW8Gec1C4uw+r0dshdQU86s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy10Uc//WqaIPELMO+xirzXmguFQy8+y/J2izgq9l4zVBoafFTZ
-	2oodVIV9zqObJl9EDsYy4gZEZbtJkJuoiB1M1EJ6eYlUFCTt5HNzLTkcOGQds1XZ9R0=
-X-Gm-Gg: ASbGncutLmGGl7koWvw9nZqUbJSsA3Uw/TXgSyHCHXUMQ0MhwLZGeFH5PhnOsxyX+lC
-	vrR0IrJqXUOFaa86U7hOptKllye5P6BLR3y2NzB3Zc0dOlt7smzQBPBiKZtlIyzK3tKW0EZESWD
-	BqSol8GCGDwSIsoapfGAkp8d1UdG34kSYg8sSR79vSmM41DVfAl86JN67zWagEQOqf1GM6J24cZ
-	q4OKja3XDkJ/Y9Omn5B61w+jBJS+rQn+Dp4QDO7kzn2LeoJhsNPIMIqxROunDFRdvpCg0wz01vs
-	fW/LeumgWZc8QasF922/LDNBpZVTCHtgUCaFEvBHtQlQJjfbV1+2OKvB2c2ZaSITEN0PxXGKyHN
-	h9+ws9moEgP38pcqB+rgwA+a7gZvHa+9pyj/XSQC7yyAq2Aqo
-X-Google-Smtp-Source: AGHT+IFyB19tBrRI78lBip24cgwJen4HE5EwQh3gPEKFeov+dsUsLURXmK6mh2xyEaOoeOtVoeTxeQ==
-X-Received: by 2002:a05:6a20:734b:b0:2e2:3e68:6e61 with SMTP id adf61e73a8af0-32da820723dmr32624654637.16.1760455182842;
-        Tue, 14 Oct 2025 08:19:42 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:68ce:31e8:3a83:30af])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d9932edsm15282751b3a.73.2025.10.14.08.19.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 08:19:42 -0700 (PDT)
-Date: Tue, 14 Oct 2025 09:19:40 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] remoteproc: imx_rproc: Use device managed API to
- clean up the driver
-Message-ID: <aO5qDExs3j8k5cjf@p14s>
-References: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
+        d=1e100.net; s=20230601; t=1760455232; x=1761060032;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mn35/2JTFaHnA6Z7lXfIqNB14+ih7+65Pw0j+6ifjM4=;
+        b=JsW0YhCaITxFqMNiHupE7e6mvttMiQM2SYF1fzpgtWeLwbLZ7O/LYlbMwveN72ykrJ
+         fCforIfnUIKfr4qtYeXNVC8PQXI1fSTeUffRGux48eMkGDQLQi3Mnn5mTGWBHmI6JL3F
+         Hn6/b27vlFkjlHGDSCu1IcPbKiEad32F6iUxnH/lBDNMUlVxDgb2XLSjBej2qisT+pIC
+         QqO/pT0K/WbfHwhi0k2rRX50QwG7HeAGgf/etHpfHGZwzPcupcWjOGN1+00471QKji/t
+         l/Mzk8af7Pv+Zdn0OEQc9mtAAFDK6QpDsDB+5+6oLJxDircZbKA2eARMpf6mG4m1fp5P
+         Wv/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXwcXyXpTcQmNONgL2KoW6ypMTIw1VlLz49Kyfs4IRQGp4QLnvdgpQpsd1+sSYWvPwLh5iNZoHjb9x5UxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO3316GqX/zxcFislxklr98gC4RA2M7nLBjGqTN6pWdVi4SFb1
+	3n6vwte2XSf+YXUiKDcDrX4sj6sKww9gp478Rsqsr1/HqUVdUFd2/AVlRhTrhiRuuwU+lX2yig6
+	s6i5z2crfyH7GQ3YZ7qfB86U/JYHXoZdYkOpaFwcNiAPOHHexwgFv+XAjcYk=
+X-Google-Smtp-Source: AGHT+IHZd1FqleaYFCbg/Avpmg7pCplPOdp/Rct8b7B4RbsAWvkA1Hhn8FA175ebVYnJbzfta+mu5bqXbicw+86ypD8Sq6yQygSX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
+X-Received: by 2002:a05:6e02:2303:b0:430:a8c5:fdb7 with SMTP id
+ e9e14a558f8ab-430a8c5ff61mr17339195ab.3.1760455231830; Tue, 14 Oct 2025
+ 08:20:31 -0700 (PDT)
+Date: Tue, 14 Oct 2025 08:20:31 -0700
+In-Reply-To: <68ec7960.a70a0220.b3ac9.0017.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee6a3f.050a0220.91a22.021b.GAE@google.com>
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-out-of-bounds Read in
+ mcp2221_raw_event (2)
+From: syzbot <syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com>
+To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 26, 2025 at 08:33:14PM +0800, Peng Fan wrote:
-> Tested on
-> i.MX8MP-EVK, i.MX8MM-EVK, i.MX93-11x11-EVK, i.MX8QXP-MEK, and i.MX8ULP-EVK.
-> 
-> Retested all the patches for V3 on above platforms. And pass build
-> with patch incremental applied with ARM64 defconfig. pass build for
-> imx_v6_v7_defconfig with all patches applied.
-> 
-> This is the 2nd series to cleanup the driver.
-> 
-> Patch 1:
-> Fix the runtime usage. This is not critical bug fix, so it could be
-> defered to 6.18.
-> 
-> Patch 2-6:
-> Use devres managed API to cleanup the error handling path and remove path.
-> 
-> Thanks to Ulf for the suggestion on the runtime PM fix in patch 1.
-> Thanks to Daniel and Frank for the internal reviewing.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Changes in v3:
-> - Follow Ulf's suggestion to address the runtime PM in patch 1, and add
->   Ulf's suggested-by tag. I dropped Frank and Daniel's tag in patch 1.
-> - With the changes in patch 1, the remove() is kept, then there are very
->   minor conflicts when picking remaining patches in V2, so I still keep
->   R-b tag from Frank and Daniel for patch 2-6.
-> - Link to v2: https://lore.kernel.org/r/20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com
-> 
-> Changes in v2:
-> - Address a build warning in patch 4/6
-> - Add R-b from Frank and Daniel
-> - Link to v1: https://lore.kernel.org/r/20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com
-> 
-> ---
-> Peng Fan (6):
->       remoteproc: imx_rproc: Fix runtime PM cleanup and improve remove path
->       remoteproc: imx_rproc: Use devm_add_action_or_reset() for workqueue cleanup
->       remoteproc: imx_rproc: Use devm_add_action_or_reset() for mailbox cleanup
->       remoteproc: imx_rproc: Use devm_clk_get_enabled() and simplify cleanup
->       remoteproc: imx_rproc: Use devm_add_action_or_reset() for scu cleanup
->       remoteproc: imx_rproc: Use devm_rproc_add() helper
-> 
->  drivers/remoteproc/imx_rproc.c | 100 +++++++++++++++++++----------------------
->  1 file changed, 47 insertions(+), 53 deletions(-)
+syzbot has found a reproducer for the following issue on:
 
-I have applied this set.
+HEAD commit:    3a8660878839 Linux 6.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a705e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=1018672fe70298606e5f
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132ebb34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140fe52f980000
 
-Mathieu
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e767e8931970/disk-3a866087.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4cb12bdcfcea/vmlinux-3a866087.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b08acfae954d/bzImage-3a866087.xz
 
-> ---
-> base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-> change-id: 20250926-imx_rproc_v3-a50abed3288a
-> 
-> Best regards,
-> -- 
-> Peng Fan <peng.fan@nxp.com>
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in mcp2221_raw_event+0x1070/0x10a0 drivers/hid/hid-mcp2221.c:948
+Read of size 1 at addr ffff8880721cbfff by task kworker/0:7/6094
+
+CPU: 0 UID: 0 PID: 6094 Comm: kworker/0:7 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ mcp2221_raw_event+0x1070/0x10a0 drivers/hid/hid-mcp2221.c:948
+ __hid_input_report.constprop.0+0x314/0x450 drivers/hid/hid-core.c:2139
+ hid_irq_in+0x35e/0x870 drivers/hid/usbhid/hid-core.c:286
+ __usb_hcd_giveback_urb+0x38b/0x610 drivers/usb/core/hcd.c:1661
+ usb_hcd_giveback_urb+0x39b/0x450 drivers/usb/core/hcd.c:1745
+ dummy_timer+0x1809/0x3a00 drivers/usb/gadget/udc/dummy_hcd.c:1995
+ __run_hrtimer kernel/time/hrtimer.c:1777 [inline]
+ __hrtimer_run_queues+0x202/0xad0 kernel/time/hrtimer.c:1841
+ hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1858
+ handle_softirqs+0x219/0x8e0 kernel/softirq.c:622
+ __do_softirq kernel/softirq.c:656 [inline]
+ invoke_softirq kernel/softirq.c:496 [inline]
+ __irq_exit_rcu+0x109/0x170 kernel/softirq.c:723
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:739
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
+ sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1052
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
+RIP: 0010:kasan_check_range+0x12/0x1b0 mm/kasan/generic.c:199
+Code: 00 00 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 40 d6 48 85 f6 0f 84 64 01 00 00 48 89 f8 41 54 <44> 0f b6 c2 48 01 f0 55 53 0f 82 d7 00 00 00 eb 0f cc cc cc 48 b8
+RSP: 0018:ffffc900037b6b60 EFLAGS: 00000202
+RAX: ffff888077da86b0 RBX: ffff888077da8668 RCX: ffffffff819803ae
+RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888077da86b0
+RBP: ffff888077da86b0 R08: 0000000000000002 R09: 0000000000000000
+R10: ffff888077da866f R11: 0000000000000000 R12: ffffffff8c6df2a0
+R13: ffffffff9ae57620 R14: 0000000000000000 R15: ffff888026709978
+ instrument_atomic_write include/linux/instrumented.h:82 [inline]
+ atomic_set include/linux/atomic/atomic-instrumented.h:67 [inline]
+ osq_lock_init include/linux/osq_lock.h:25 [inline]
+ __mutex_init+0xae/0x120 kernel/locking/mutex.c:53
+ i2c_register_adapter+0x15d/0x1370 drivers/i2c/i2c-core-base.c:1544
+ i2c_add_adapter drivers/i2c/i2c-core-base.c:1673 [inline]
+ i2c_add_adapter+0x10a/0x1b0 drivers/i2c/i2c-core-base.c:1653
+ devm_i2c_add_adapter+0x1b/0x90 drivers/i2c/i2c-core-base.c:1845
+ mcp2221_probe+0x5f1/0xc50 drivers/hid/hid-mcp2221.c:1289
+ __hid_device_probe drivers/hid/hid-core.c:2775 [inline]
+ hid_device_probe+0x5ba/0x8d0 drivers/hid/hid-core.c:2812
+ call_driver_probe drivers/base/dd.c:581 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:659
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
+ bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1aa0 drivers/base/core.c:3689
+ hid_add_device+0x31b/0x5c0 drivers/hid/hid-core.c:2951
+ usbhid_probe+0xd38/0x13f0 drivers/hid/usbhid/hid-core.c:1435
+ usb_probe_interface+0x303/0xa40 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:581 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:659
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
+ bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1aa0 drivers/base/core.c:3689
+ usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
+ usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:581 [inline]
+ really_probe+0x241/0xa90 drivers/base/dd.c:659
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
+ bus_for_each_drv+0x159/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1aa0 drivers/base/core.c:3689
+ usb_new_device+0xd07/0x1a60 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x2f34/0x4fe0 drivers/usb/core/hub.c:5952
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3263
+ process_scheduled_works kernel/workqueue.c:3346 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3427
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 5918:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:56
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:77
+ poison_kmalloc_redzone mm/kasan/common.c:400 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:417
+ kmalloc_noprof include/linux/slab.h:957 [inline]
+ kzalloc_noprof include/linux/slab.h:1094 [inline]
+ ipv6_add_addr+0x4e3/0x1fe0 net/ipv6/addrconf.c:1120
+ add_addr+0xde/0x350 net/ipv6/addrconf.c:3201
+ add_v4_addrs+0x642/0x980 net/ipv6/addrconf.c:3263
+ addrconf_gre_config net/ipv6/addrconf.c:3545 [inline]
+ addrconf_init_auto_addrs+0x51a/0x810 net/ipv6/addrconf.c:3559
+ addrconf_notify+0xe93/0x19e0 net/ipv6/addrconf.c:3740
+ notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ __dev_notify_flags+0x12c/0x2e0 net/core/dev.c:9676
+ netif_change_flags+0x108/0x160 net/core/dev.c:9705
+ do_setlink.constprop.0+0xb53/0x4380 net/core/rtnetlink.c:3151
+ rtnl_changelink net/core/rtnetlink.c:3769 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3928 [inline]
+ rtnl_newlink+0x1446/0x2000 net/core/rtnetlink.c:4065
+ rtnetlink_rcv_msg+0x95e/0xe90 net/core/rtnetlink.c:6954
+ netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x8c8/0xdd0 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg net/socket.c:742 [inline]
+ __sys_sendto+0x4a3/0x520 net/socket.c:2244
+ __do_sys_sendto net/socket.c:2251 [inline]
+ __se_sys_sendto net/socket.c:2247 [inline]
+ __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2247
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880721cbc00
+ which belongs to the cache kmalloc-cg-512 of size 512
+The buggy address is located 583 bytes to the right of
+ allocated 440-byte region [ffff8880721cbc00, ffff8880721cbdb8)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x721c8
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88813ff30140 ffffea0001e68c00 dead000000000002
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88813ff30140 ffffea0001e68c00 dead000000000002
+head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000002 ffffea0001c87201 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000004
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5796, tgid 5796 (sshd-session), ts 52056965840, free_ts 15121629475
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1850
+ prep_new_page mm/page_alloc.c:1858 [inline]
+ get_page_from_freelist+0x10a3/0x3a30 mm/page_alloc.c:3884
+ __alloc_frozen_pages_noprof+0x25f/0x2470 mm/page_alloc.c:5183
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:3039 [inline]
+ allocate_slab mm/slub.c:3212 [inline]
+ new_slab+0x24a/0x360 mm/slub.c:3266
+ ___slab_alloc+0xdc4/0x1ae0 mm/slub.c:4636
+ __slab_alloc.constprop.0+0x63/0x110 mm/slub.c:4755
+ __slab_alloc_node mm/slub.c:4831 [inline]
+ slab_alloc_node mm/slub.c:5253 [inline]
+ __do_kmalloc_node mm/slub.c:5626 [inline]
+ __kmalloc_node_track_caller_noprof+0x4db/0x8a0 mm/slub.c:5736
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:601
+ __alloc_skb+0x166/0x380 net/core/skbuff.c:670
+ alloc_skb include/linux/skbuff.h:1383 [inline]
+ alloc_skb_with_frags+0xe0/0x860 net/core/skbuff.c:6671
+ sock_alloc_send_pskb+0x7f9/0x980 net/core/sock.c:2965
+ unix_stream_sendmsg+0x39f/0x1340 net/unix/af_unix.c:2455
+ sock_sendmsg_nosec net/socket.c:727 [inline]
+ __sock_sendmsg net/socket.c:742 [inline]
+ sock_write_iter+0x566/0x610 net/socket.c:1195
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x7d3/0x11d0 fs/read_write.c:686
+ ksys_write+0x1f8/0x250 fs/read_write.c:738
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1394 [inline]
+ __free_frozen_pages+0x7df/0x1160 mm/page_alloc.c:2906
+ __free_pages mm/page_alloc.c:5302 [inline]
+ free_contig_range+0x183/0x4b0 mm/page_alloc.c:7146
+ destroy_args+0xb69/0x12e0 mm/debug_vm_pgtable.c:958
+ debug_vm_pgtable+0x1a32/0x3640 mm/debug_vm_pgtable.c:1345
+ do_one_initcall+0x123/0x6e0 init/main.c:1283
+ do_initcall_level init/main.c:1345 [inline]
+ do_initcalls init/main.c:1361 [inline]
+ do_basic_setup init/main.c:1380 [inline]
+ kernel_init_freeable+0x5c8/0x920 init/main.c:1593
+ kernel_init+0x1c/0x2b0 init/main.c:1483
+ ret_from_fork+0x675/0x7d0 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff8880721cbe80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880721cbf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880721cbf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                                ^
+ ffff8880721cc000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8880721cc080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	00 00                	add    %al,(%rax)
+   4:	0f 1f 40 00          	nopl   0x0(%rax)
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+  10:	90                   	nop
+  11:	90                   	nop
+  12:	90                   	nop
+  13:	90                   	nop
+  14:	90                   	nop
+  15:	90                   	nop
+  16:	90                   	nop
+  17:	90                   	nop
+  18:	0f 1f 40 d6          	nopl   -0x2a(%rax)
+  1c:	48 85 f6             	test   %rsi,%rsi
+  1f:	0f 84 64 01 00 00    	je     0x189
+  25:	48 89 f8             	mov    %rdi,%rax
+  28:	41 54                	push   %r12
+* 2a:	44 0f b6 c2          	movzbl %dl,%r8d <-- trapping instruction
+  2e:	48 01 f0             	add    %rsi,%rax
+  31:	55                   	push   %rbp
+  32:	53                   	push   %rbx
+  33:	0f 82 d7 00 00 00    	jb     0x110
+  39:	eb 0f                	jmp    0x4a
+  3b:	cc                   	int3
+  3c:	cc                   	int3
+  3d:	cc                   	int3
+  3e:	48                   	rex.W
+  3f:	b8                   	.byte 0xb8
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
