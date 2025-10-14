@@ -1,119 +1,92 @@
-Return-Path: <linux-kernel+bounces-851597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50F5BD6DE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1964BD6DB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104C419A01F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA3C404C6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21438296BA2;
-	Tue, 14 Oct 2025 00:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeCSFKGw"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA92D77F1;
+	Tue, 14 Oct 2025 00:18:13 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333AF79F2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6350D2BF3CF;
+	Tue, 14 Oct 2025 00:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760400917; cv=none; b=piN/UkdoA/XxvmtmK6ljQgrf3GBfDvz5x6EGDqlRO91wqnPO2vUUZMy0JFNJ7FfrnSiEFHQK3O+tEfShwXQrbIhpw2MWahIv+yKBk3VE/0PlxNb3F9tfhaf+PpibmUnikNGT8kDeQhkJp+Qqei1Ww4g3PUPMY2oJPFcXhiBYASk=
+	t=1760401092; cv=none; b=qsGvPc2SgNehVRsFZ01QIFC7OMxc+LrfEdieYclgrZAbnvXxaEgrL3SweRILjNkZbaBIy6m+T5fnkBtn1tNltyDBtM3POTVx/kS9JRPSTgqRrZboy0pM4D2GDhLlxmpbKiT/dgXQw57q7+fJ7lm3OdNRh9GKFDEF3MS7+mCyMO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760400917; c=relaxed/simple;
-	bh=vbtIGUm7hDdWO8OPCXJs9MmT4PDfOXY/wBQB8dWOQGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sTaJiKqHrORQLQJ+derJ5mzaN6nvRAgXBTwC4gDUsTbq9aNxpxEuGWhKPwKD1k8uyAMN7CwO/5PDOTU0NEtynKccqkPRlwImMtQMEEKXsQpepoaKLd0ovRYZux9PYAWzosUrDIv6571iCPT1UjrUd1Sokvzvv+ybLnxWaTX2iVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeCSFKGw; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-330b4739538so4484644a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760400915; x=1761005715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vbtIGUm7hDdWO8OPCXJs9MmT4PDfOXY/wBQB8dWOQGc=;
-        b=HeCSFKGwr7E8XCLsM7jqGL0sUNJPfKMJ+gySIOCB2J/36RUowrNa+BlAhRId3/X4Yu
-         m+Y/FwbXAp1RI8X8nqranpfLed2kZ5IH8fTU1ML4B/fo59bwwnrDl5aLHSPeSQlhxXQv
-         4QxYjzxRfKkU1nHEmzuh0+fbHMLi15dl/YKD7o92zuk76nKvlkVf0ON8+YVysvnQOrhf
-         XPnCSsQEnK8lsuT3K5OREbbdZrFsj+SrITDOoEU8RjkhmGQ+a3sEu3gJ0rtHAFmi9Q4D
-         mTlk0wahXasBfbKRsjw2FmeimJgIlzcOU1dPcEz0jXFkgFjJuCDZIm7X2z6OzwEwQunw
-         Wg7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760400915; x=1761005715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vbtIGUm7hDdWO8OPCXJs9MmT4PDfOXY/wBQB8dWOQGc=;
-        b=Z8KjEi50fHo+F46gio6H2YTm/chnXuTjgu5QUe58bAoFA9Mnt1o/eYrOkFD7S3t1Do
-         ugyynHhc/4IpVdb9odNjb5QigqPoadnE35igJUcVYxKoRVrE1S1wdEaU2PsvwP5Ip+/J
-         wk/MI1DAJw3t6rOY+0atqaYePNZo7ySja4UO8uzo55HGhtmKfcpH9a4Az5PUSG3yiq/r
-         TghaEfEcP9E38sY1qlC3TYfn0+ue7R+hO5hOZTALFQ5+IGSd2cxdyMAAIeP+e+4Blvku
-         SVLqztzMyl6RiFYZl+30wX8GAM5oqIdBRM0aCxBiBnIsTuLb3UcfT+wVZVxTPcwGx7OF
-         ysqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxlH8RhGgAM0h4Z0uCKnxuZfTYBY3xXxRGDEipVD2MWhbUJLUecXQItwLpbO0RayFegBzfptzmWn38k5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUqtSZpiR/Q0tG8kUWNK6XJqVeBrLAE71ty1EadTCpGUsiQYFf
-	pOQikvYUA4KTFckMzBsXCb0oA1Ho4Vpt6zqEAtEaoo4ciYwwa5KF+Vr2/rcw650CyoHVKTtZeVO
-	Bcn7duGKhflIn7zpr5k/xzCFRbQAjbVg=
-X-Gm-Gg: ASbGncs/vBsmfliSOHh6tHR69ZavrNUnKGY1pFADSfMUxezLLpVDdZ5AofWI1g8GAXn
-	N9IVUF6lVTktlBmmMQ8bprE1NIu0feFmrJzjC7U/cAoZIB0zEiGH4gzuZPEfS5APkDV3Pf9NPAf
-	/ER/K03xJbvUod7KcXWi6pYNYbqnNJIfTWmJFrMFWpNNpfitagGkqpSxxfzWZD4yL/IJAVtgV1J
-	JDbJvfNtUmvQFsKc8AgvktDIwmHZKab4MSqLCAnfA==
-X-Google-Smtp-Source: AGHT+IHARnLdlryg1PhvKDEi7oBisiWZjKWZuSu8vpVm+0nfd2Qp81tXbKk1PVPW5Er2+jS8pPs2aKsNpGBsv4cI6g0=
-X-Received: by 2002:a17:90b:4a52:b0:332:84c1:31de with SMTP id
- 98e67ed59e1d1-33b513ced6emr28797119a91.25.1760400915524; Mon, 13 Oct 2025
- 17:15:15 -0700 (PDT)
+	s=arc-20240116; t=1760401092; c=relaxed/simple;
+	bh=dMe29rV2C8DIvpYQosZ4uZQ/K559pFQf7acE7cY6i80=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U7xFqwP8qqXoUrfOjJf9IfrDKnU1nZsA1BtdJQBYmNfham9se2D2DCfYnbgZ6vnw53DSedUHQ/U4E1kJzkauv2QcRRDBafZmnPWhVoboi08WGRAyMyAQDxmx0K3B9vpU3JbmF+0BgNC51cVgQYX4kBAFsBNhuvlCqYMBGNnkdE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from ofsar (unknown [116.232.147.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 1837A340E9A;
+	Tue, 14 Oct 2025 00:18:06 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Aurelien Jarno <aurelien@aurel32.net>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH v3 0/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+Date: Tue, 14 Oct 2025 08:18:00 +0800
+Message-ID: <176040093505.976672.8840719266527899813.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250926175833.3048516-1-aurelien@aurel32.net>
+References: <20250926175833.3048516-1-aurelien@aurel32.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
- <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com> <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
-In-Reply-To: <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 13 Oct 2025 17:15:00 -0700
-X-Gm-Features: AS18NWC8zop_0pqhOu3uFzZiyqIm33mL5cLx3lr7v0iVW2czeb3AtY-0ka9aqwc
-Message-ID: <CAEf4BzaZ=UC9Hx_8gUPmJm-TuYOouK7M9i=5nTxA_3+=H5nEiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
- btf_find_by_name_kind lookup
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: pengdonglin <dolinux.peng@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 4:53=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Oct 13, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > Just a few observations (if we decide to do the sorting of BTF by name
-> > in the kernel):
->
-> iirc we discussed it in the past and decided to do sorting in pahole
-> and let the kernel verify whether it's sorted or not.
-> Then no extra memory is needed.
-> Or was that idea discarded for some reason?
 
-Don't really remember at this point, tbh. Pre-sorting should work
-(though I'd argue that then we should only sort by name to make this
-sorting universally useful, doing linear search over kinds is fast,
-IMO). Pre-sorting won't work for program BTFs, don't know how
-important that is. This indexing on demand approach would be
-universal. =C2=AF\_(=E3=83=84)_/=C2=AF
+On Fri, 26 Sep 2025 19:54:36 +0200, Aurelien Jarno wrote:
+> The BPI-F3 board has a 24c02 eeprom connected to the i2c bus #2. It
+> holds board data. This patchset adds support for it.
+> 
+> Changes between version 2 and version 3:
+> 
+> - Revert the name change for i2c2-0-cfg and i2c2-0-pins, the second cell
+>   is not a function number, but an index.
+> 
+> [...]
 
-Overall, paying 300KB for sorted index for vmlinux BTF for cases where
-we repeatedly need this seems ok to me, tbh.
+Applied, thanks!
+
+[1/3] riscv: dts: spacemit: enable the i2c2 adapter on BPI-F3
+      https://github.com/spacemit-com/linux/commit/dcca2287773b69201b756723e8d45b6b8ad81b34
+[2/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+      https://github.com/spacemit-com/linux/commit/bfce75e2345fa1ecbf046e696994132f56d6db1c
+[3/3] riscv: dts: spacemit: add i2c aliases on BPI-F3
+      https://github.com/spacemit-com/linux/commit/859ce3828f0b462e991c24224390def4c8fea673
+
+Best regards,
+-- 
+Yixun Lan
+
 
