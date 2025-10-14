@@ -1,285 +1,197 @@
-Return-Path: <linux-kernel+bounces-852417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6122BD8EDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B10A0BD8EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C6A24E4403
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:09:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A34D4E2B91
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93AA30BBA5;
-	Tue, 14 Oct 2025 11:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D60305063;
+	Tue, 14 Oct 2025 11:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhLYJIPM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7028YIM"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2102FF171;
-	Tue, 14 Oct 2025 11:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792592ECD3F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760440039; cv=none; b=P8Fo28q4oaAT+aaYgX2WXzB+UHfid06yJ+9n8yPkVZsogDP/lDq3sdGPeyEcnulwvyiWT/7IuOC4lSNSoMhO9RBPJ8cFstRNL0hG2BSzJfsR67FuhUeOPv+Wa2cHfksccNxioB+cJibtByvU9TDA4vqEG3pvGKdyXkkRwEeyZVM=
+	t=1760440117; cv=none; b=TQk/UZi1XiAdlwKjQ6rqMBN5nP3gkWZ0Uz3XhSwzvoUQAYaRosj/sMxLLnEFPCkPbh1v5fk2chNQjWWvh0ytD5OkAYH7Md4LNjDXr6MSiozQIxapTsJTmjyFU7oiHZhAViIKsQH7C8chHZd6imrAKNEB5jfJjM4Lb81gr046krs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760440039; c=relaxed/simple;
-	bh=vm1dKhrADJ6xB8i1PHqbfOm9fjnjW3EW0kBfuZbOrbA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Uf5U8KjeoG8LbMG5Hcy5ZdScqijRGxFOh+SyAjGD6WB+w30ZkD8CCu5SUGaSw1xICLCS7ODPbE3D00O/w5xswpO3owaP4A3TnqcbU4MlhKLc9QzY0DqpgmixTyiXUY0LnOMRnnWI7pFWSVaPdOCg5oeyLFjS/VLmbMkFiScWnWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhLYJIPM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A28AC4CEE7;
-	Tue, 14 Oct 2025 11:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760440038;
-	bh=vm1dKhrADJ6xB8i1PHqbfOm9fjnjW3EW0kBfuZbOrbA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=nhLYJIPMQHHZdKW2t/DP0opIk1BHSYOIjik0sN4Kaj3ZHZTMlRySZPIaPNgKZakdM
-	 /N3PYhSIRChruW+qdkpJU/hmUpDeQbynic4rk6i0DFZPRS5uvfVOxnaWvzQqaiOn/e
-	 kNVvurl9lz1pns+QLuPeKqlcoLi9IMf+E8nHrtA4b4wVFbKevGnNc/gOM+TP6dpO7p
-	 zKLEeNeARNJ9G/kr0+emF2Ua/nHxnFnmdqhSEXK+T5brieuZVRqazqfZCqFVrEVlSK
-	 n0tNu8DzW3Mi2XyGrghiRzI2M9VfDZf8/oWwGvJ//wNOnFIhPy9LrPoaZ9BA0whWV/
-	 WVVI6j27h4mng==
-Message-ID: <9a8d3d9e1ac6c5cb12d880410003fd0601e0abc2.camel@kernel.org>
-Subject: Re: [PATCH 01/13] filelock: push the S_ISREG check down to
- ->setlease handlers
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Chuck Lever	 <chuck.lever@oracle.com>, Alexander Aring
- <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>,  Paulo
- Alcantara	 <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N	 <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
- Bharath SM	 <bharathsm@microsoft.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"	 <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>,
- Tyler Hicks <code@tyhicks.com>, Olga Kornievskaia	 <okorniev@redhat.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, Namjae
- Jeon <linkinjeon@kernel.org>, Steve French	 <smfrench@gmail.com>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
- Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller"	
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
- <horms@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, 	samba-technical@lists.samba.org,
- netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
- netdev@vger.kernel.org
-Date: Tue, 14 Oct 2025 07:07:14 -0400
-In-Reply-To: <176042024558.1793333.16859845484527356211@noble.neil.brown.name>
-References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>
-	, <20251013-dir-deleg-ro-v1-1-406780a70e5e@kernel.org>
-	 <176042024558.1793333.16859845484527356211@noble.neil.brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760440117; c=relaxed/simple;
+	bh=G2RPqglnkhxPCycGIsQsokk1Hrp2ASUzryFOm8mZU2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcVWIza63DLgnhXI3SdtlXCjHubafbmngIEVbBtEsQVSDuNZvg0QdUhYVZkaIUJ6CH7/cPpe93Xhu7RrHB3HSMtVBDOBhYhjtbkCCWDMD1Ecx8rq0bNVW0QI4w/OFpHV7UHep90I+A9ZKr/sDxCDpvzpylS3GDWndAZeDB3js/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k7028YIM; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so5893087f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760440114; x=1761044914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPetjpKaANYcaWLgkrrduiZNuU2Q3v8y55EcDsrfO0c=;
+        b=k7028YIMojxl1wnK5gaAt8Rj9NA1p+0Yitq5Wz7awORHiKh88jmNKcMdGUZi6CjKXh
+         /ssqe0hJ2n45OkLCFjxNwk4GqlBJK7Pibzsrqgp6GJiAjg8FYRe7T067Q/uKw7o2XnQc
+         pI1J/TzM9WVqotDU21QGWSipbCXl3FEoiyAkLjvdCEoqp8GCJiCppC6jqWMtvkVTSH0y
+         ZR+oTbPRs2RaLOTJJjBz6OpOyKY95nO5bgiRdhJcprb5rq3vnQieUF7N08h6DxZiQ/Pm
+         /zKLwdp/AC0WAjwJ4WDsxX9X0GqkhaLgfWxSHiecNfItjRyokU4wAJuXFLqhWUeWBSW9
+         k8KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760440114; x=1761044914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TPetjpKaANYcaWLgkrrduiZNuU2Q3v8y55EcDsrfO0c=;
+        b=r8t31BDz/IKQGwk76lC5goJHyO5XZmWil/E9Msk+svEMS+NIq5+NbxQ3YttANq2RUx
+         oI2QiJymuDJE+AYyi7wE6Ns97Jf7xpKqKH14VMDflzEQMQg/U185ShZd14evJGR3bPXA
+         quTHO6BC/4/MeVjFePk7QwhdC05eiCuoLf9nnELpVHjCFbJCo3woSrlytjX5uHuoIx68
+         +cD7RCM6+MnXwEgdqSrqvPZZcdZj9NpFOI+GcQWUlHKkjQK1RB9rz1+4Xsz29r8QBA6v
+         EwK7dVMM3J75KgSULEc/VVw5SjfmKxn/QloGeLy6UmrafwENCA4/IHP1+xKhSygZITYx
+         2wZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+tmYv6hednFbamzNCcwwlRaj1kN/ntOJYrsUlTwem5si7IDOKpRDGLPNKXuXUh0I4SVlANXJeRomNW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuizFGClJDiLXFWxfjtuL/Ui87KsHj0uBAVq8wmt29o3S16q8F
+	24GTYrYSUct2+pgVBSHN1kgFI+o0HB4SO+c/rYIke+pgvcGEnaxDRSWZ
+X-Gm-Gg: ASbGnctlYyt+zDJ/ulHGCVjjHW+eR0dePz9WgzHedZfrVRkwpZVIUNQtQLiKVwWi3+f
+	Fyq9kM0VoU3+mFm/Ix62bQy3lTvVYBTKSwRKz0LAsucprNsXcxCZS2i2s3mxGzzW60U7USb51J0
+	oL4dTqVTTa/hvCITD7YQh+UfJ2Bcm56jsA6Jkf6PpCz0KXLBoXhJ4Rfjzom8x7DZpg6bt3uZpgH
+	xcUBRiri31/3dLQxz/jo4ZtUgJGIXWq8t01csc5B1B/mjHvdVHFK2IH2NI3TxVNFQOuKJPCv0vM
+	Jdox1OgGuxXh+ltpBWDv3jcL4ylQB37iLiGKNpYssALsraIY6xmC/1Ms2yjGouaw+ITNxxSci4X
+	g+BNGNa6zTAochBRB+EZD40SOGVotZB0+IkthPC+S2SITCjO5NkQSavNnu9vMdMzlNTZAt7hczq
+	JdjjD0ry8zTO+I/NPNx0aibWajFXl11EV/7+opUV8=
+X-Google-Smtp-Source: AGHT+IESDQkkKQFxDd3gKEVsTIe3KB0qZiIE+wyBsS0WnJH2Bh8XOS/Fj/147wchmYc+eDbh7IytIw==
+X-Received: by 2002:a05:6000:2910:b0:3d1:c2cf:da07 with SMTP id ffacd0b85a97d-42666ac48bamr14569143f8f.4.1760440105681;
+        Tue, 14 Oct 2025 04:08:25 -0700 (PDT)
+Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57cc03sm23711273f8f.4.2025.10.14.04.08.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 04:08:24 -0700 (PDT)
+Date: Tue, 14 Oct 2025 13:08:22 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: IRQ thread timeouts and affinity
+Message-ID: <wosxizbb5z3goikqglsdbrgmshith62upwnavnbqeq5dndfau3@bna46rg3w2ak>
+References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
+ <86qzvcxi3j.wl-maz@kernel.org>
+ <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
+ <86o6qgxayt.wl-maz@kernel.org>
+ <86ms60x7w7.wl-maz@kernel.org>
+ <us2hfdn7jpfepdmwk2p62w64p7xagaeoemg3hdt2vm54emtwlv@m6fkuti7hvfa>
+ <86bjmeyh5m.wl-maz@kernel.org>
+ <graeplkpsgbolpnnq2pndpdb7fymyy7zvm37osbdtre347tns2@mjbgzwterefv>
+ <87sefpoj10.wl-maz@kernel.org>
+ <6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nz4k73ft56a2tnts"
+Content-Disposition: inline
+In-Reply-To: <6hb5vyl5xxsxfcwk4v3xpq277wusj5jq4tubdpjocpjc5smj3w@wx574kluhedj>
 
-On Tue, 2025-10-14 at 16:37 +1100, NeilBrown wrote:
-> On Tue, 14 Oct 2025, Jeff Layton wrote:
-> > When nfsd starts requesting directory delegations, setlease handlers ma=
-y
-> > see requests for leases on directories. Push the !S_ISREG check down
-> > into the non-trivial setlease handlers, so we can selectively enable
-> > them where they're supported.
+
+--nz4k73ft56a2tnts
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: IRQ thread timeouts and affinity
+MIME-Version: 1.0
+
+On Tue, Oct 14, 2025 at 12:50:18PM +0200, Thierry Reding wrote:
+> On Sat, Oct 11, 2025 at 11:00:11AM +0100, Marc Zyngier wrote:
+> > On Fri, 10 Oct 2025 16:03:01 +0100,
+> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > >=20
+> > > On Fri, Oct 10, 2025 at 03:18:13PM +0100, Marc Zyngier wrote:
+> > > >=20
+> > > > CPU hotplug is the main area of concern, and I'm pretty sure it bre=
+aks
+> > > > this distribution mechanism (or the other way around). Another thing
+> > > > is that if firmware isn't aware that 1:N interrupts can (or should)
+> > > > wake-up a CPU from sleep, bad things will happen. Given that nobody
+> > > > uses 1:N, you can bet that any bit of privileged SW (TF-A,
+> > > > hypervisors) is likely to be buggy (I've already spotted bugs in KVM
+> > > > around this).
+> > >=20
+> > > Okay, I can find out if CPU hotplug is a common use-case on these
+> > > devices, or if we can run some tests with that.
 > >=20
-> > FUSE is special: It's the only filesystem that supports atomic_open and
-> > allows kernel-internal leases. Ensure that we don't allow directory
-> > leases by default going forward by explicitly disabling them there.
+> > It's not so much whether CPU hotplug is of any use to your particular
+> > box, but whether this has any detrimental impact on *any* machine
+> > doing CPU hotplug.
+> >=20
+> > To be clear, this stuff doesn't go in if something breaks, no matter
+> > how small.
 >=20
-> What is special about atomic_open w.r.t leases?
+> Of course. I do want to find a way to move forward with this, so I'm
+> trying to find ways to check what impact this would have in conjunction
+> with CPU hotplug.
 >=20
-
-Good question:
-
-We want to break the parent's lease when creating new files, but
-opening an existing file should not. Using atomic_open implies that the
-VFS doesn't know the state of the dentry yet. If it doesn't exist and
-the file is created during the atomic_open, it'll be too late for the
-VFS to break the lease. So, if your filesystem supports atomic_open,
-but uses the standard kernel-internal lease implementation (like FUSE
-does), then it can't properly handle directory leases.
-
-This could probably be fixed by FUSE implementing its own ->setlease
-method that handles them properly, but that's beyond the scope of this
-work (and would probably require plumbing in libfuse and the underlying
-filesystems). Since directory leases are brand-new, the simplest way
-around this is to just blanket deny them on FUSE for now.
-
-I'll plan to write something along these lines for the changelog.
-
+> I've done some minimal testing on a Tegra264 device where we have less
+> CPUs. With your patch applied, I see that most interrupts are nicely
+> distributed across CPUs. I'm going to use the serial interrupt as an
+> example since it reliably triggers when I test on a system. Here's an
+> extract after boot:
 >=20
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/fuse/dir.c          | 1 +
-> >  fs/locks.c             | 5 +++--
-> >  fs/nfs/nfs4file.c      | 2 ++
-> >  fs/smb/client/cifsfs.c | 3 +++
-> >  4 files changed, 9 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> > index ecaec0fea3a132e7cbb88121e7db7fb504d57d3c..667774cc72a1d49796f531f=
-cb342d2e4878beb85 100644
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -2230,6 +2230,7 @@ static const struct file_operations fuse_dir_oper=
-ations =3D {
-> >  	.fsync		=3D fuse_dir_fsync,
-> >  	.unlocked_ioctl	=3D fuse_dir_ioctl,
-> >  	.compat_ioctl	=3D fuse_dir_compat_ioctl,
-> > +	.setlease	=3D simple_nosetlease,
-> >  };
-> > =20
-> >  static const struct inode_operations fuse_common_inode_operations =3D =
-{
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index 04a3f0e2072461b6e2d3d1cd12f2b089d69a7db3..0b16921fb52e602ea2e0c3d=
-e39d9d772af98ba7d 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -1929,6 +1929,9 @@ static int generic_delete_lease(struct file *filp=
-, void *owner)
-> >  int generic_setlease(struct file *filp, int arg, struct file_lease **f=
-lp,
-> >  			void **priv)
-> >  {
-> > +	if (!S_ISREG(file_inode(filp)->i_mode))
-> > +		return -EINVAL;
-> > +
-> >  	switch (arg) {
-> >  	case F_UNLCK:
-> >  		return generic_delete_lease(filp, *priv);
-> > @@ -2018,8 +2021,6 @@ vfs_setlease(struct file *filp, int arg, struct f=
-ile_lease **lease, void **priv)
-> > =20
-> >  	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE)=
-)
-> >  		return -EACCES;
-> > -	if (!S_ISREG(inode->i_mode))
-> > -		return -EINVAL;
-> >  	error =3D security_file_lock(filp, arg);
-> >  	if (error)
-> >  		return error;
-> > diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> > index 7f43e890d3564a000dab9365048a3e17dc96395c..7317f26892c5782a39660ca=
-e87ec1afea24e36c0 100644
-> > --- a/fs/nfs/nfs4file.c
-> > +++ b/fs/nfs/nfs4file.c
-> > @@ -431,6 +431,8 @@ void nfs42_ssc_unregister_ops(void)
-> >  static int nfs4_setlease(struct file *file, int arg, struct file_lease=
- **lease,
-> >  			 void **priv)
-> >  {
-> > +	if (!S_ISREG(file_inode(file)->i_mode))
-> > +		return -EINVAL;
-> >  	return nfs4_proc_setlease(file, arg, lease, priv);
-> >  }
-> > =20
-> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> > index 05b1fa76e8ccf1e86f0c174593cd6e1acb84608d..03c44c1d9bb631b87a8b67a=
-a16e481d6bb3c7d14 100644
-> > --- a/fs/smb/client/cifsfs.c
-> > +++ b/fs/smb/client/cifsfs.c
-> > @@ -1149,6 +1149,9 @@ cifs_setlease(struct file *file, int arg, struct =
-file_lease **lease, void **priv
-> >  	struct inode *inode =3D file_inode(file);
-> >  	struct cifsFileInfo *cfile =3D file->private_data;
-> > =20
-> > +	if (!S_ISREG(inode->i_mode))
-> > +		return -EINVAL;
-> > +
-> >  	/* Check if file is oplocked if this is request for new lease */
-> >  	if (arg =3D=3D F_UNLCK ||
-> >  	    ((arg =3D=3D F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
-> >=20
-> > --=20
-> > 2.51.0
-> >=20
-> >=20
+> 	# cat /proc/interrupts
+> 	           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5  =
+     CPU6       CPU7
+> 	 25:         42         44         41         29         37         36  =
+       39         36    GICv3 547 Level     c4e0000.serial
+>=20
+> I then took CPU 1 offline:
+>=20
+> 	# echo 0 > /sys/devices/system/cpu/cpu1/online
+>=20
+> After that it looks like the GIC automatically reverts to using the
+> first CPU, since after a little while:
+>=20
+> 	# cat /proc/interrupts
+> 	           CPU0       CPU2       CPU3       CPU4       CPU5       CPU6  =
+     CPU7
+> 	 25:        186         66         52         64         58         67  =
+       62    GICv3 547 Level     c4e0000.serial
+>=20
+> The interrupt count for CPUs 2-7 no longer increments after taking CPU 1
+> offline. Interestingly, bringing CPU 1 back online doesn't have an
+> impact, so it doesn't go back to enabling 1:N mode.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Looks like that is because gic_set_affinity() gets called with the new
+CPU mask when the CPU goes offline, but it's *not* called when the CPU
+comes back online.
+
+Thierry
+
+--nz4k73ft56a2tnts
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjuLyYACgkQ3SOs138+
+s6HKKRAAsKq6KQD9SNZ7hoquknxqVobKoCxv4LN0G9P8nD9bTQQvGw/ocGG3Pu4Z
+/tHLC34ssVALvO9tOxRi8wsWM6O7wiQhKmFskX4u8MRbXAoHBKOJO2pW69ZwW/5Z
+HJEwKhmDymvpH2htv4gvcHdL7iQJfK1hLD2wRnzXllgwnCFA50leSfPCS/jr2LQP
+tZJY2An4Dtr/TvT+gSEVxEuHNJRHavLEqGbg4mY0OEsGhkoQ/wDEq3TOCuDV2CFH
+DZm2+rk7fGRP59gV3a5xOgCb1MAsfCsraw2mshaeOo4XzrCVByW0G0W9IuYzbfjW
+UGJTc5VikmKdvjHvrgQo0RtGLcH7D13+piuwCeTV0zEhjmtI43y4lvXWPVhc0E2v
+1VAFoVT/UUop7FKy0CT+UOvhjvIQFehJXfxz99sXrjnV0udGR28rpSYU4289LxGp
+xtV5Z8XSeh5qp5Vgj99N3pv4jE/nYpumLEO8BxrNld1gLOeH2l44XztHeHqTsZH5
+wKccisf+h2ADiLiTK6EHI1u2exQ1C2Xu8KeKI/xz9UDDyDBPxYxcfGGdm/510qq3
+wtoZ4d4BjJ6OXB2G+IC9qVpKpxW587UxYrfKt1/Gjs8BdqU9doN5uSq0JEqu0UMd
+Tf0dE61kCSlqDSWLBz4ZVewIafm68sFm7t8pBrzIyViYGJ4VN6A=
+=gdpR
+-----END PGP SIGNATURE-----
+
+--nz4k73ft56a2tnts--
 
