@@ -1,194 +1,155 @@
-Return-Path: <linux-kernel+bounces-851771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D106DBD7370
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 609D8BD7374
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38C854E91D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:59:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 743784E9A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82AE3074AC;
-	Tue, 14 Oct 2025 03:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867982F7AAD;
+	Tue, 14 Oct 2025 04:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8saI6vW"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOPlwEpj"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873E6272E61
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881A81D47B4
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760414341; cv=none; b=A+EPKKGuYL7+XFaI2lJ54GxFvHSZ6Nqn9Fc8naREj3lo07quyFTdsFn5t8X/3z+jca4G37iJWt92AQas478UYl+OXjFKg1AGwon8klhBe5m6HsQtGBaA0oJpV+ZVJ/Q3vpHohlfppVklpEgAdxwalts+gTK8vqa1HBXcWXfBdWM=
+	t=1760414518; cv=none; b=FxWjg0tx5k7qQ8lkb7xAZZzFy1/pBNJmSUdp+7zP3tvUK/cksMatg+EfpegSllclhkL9PJd0ufLoO6XQeOcxrZ+JAn8LlGBQk4t3iqnPGSEpEbBBcJ9wambOey1Imh9d0CrNadelC6k+arW2f/40rOWWLzwZYDt9ssrS67JagyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760414341; c=relaxed/simple;
-	bh=0mrsJv0zMKIskTlEd49XtUdQ1utrmWpTHE7Oji0ElAY=;
+	s=arc-20240116; t=1760414518; c=relaxed/simple;
+	bh=6rKEi5rVMoICrmlvGRwYms/LqfiAGgM+OUJeZoAy+hU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NclEGfMPfaThGi5WX7tZsGfEiE8cEHjr4bvGQpfidhw0b+ZQsVqHF9GQWYm6UK/w/EOei04cor62+ZowkjUaXkptAevtJ4EhDvGDYKqhJWN1dimM94jHFdAze+tAH3hAw0232knn2nESmoRGm5HTEHowOTkg60eSXyHV1n7B+Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8saI6vW; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=TV58rTCfwdGLZDxq8yNuYC9joVzHupWqm2dGRHAnbr6ILwv69qgGDoX9dWhZdRzMJFi/XBqC+rYvRBF7rxAR9ER6umSykdG5BDq51OAj+UGL4n9Q1YtqsBNPOQccg7LJwtjdz9Y+g8+p4OYVk5PeYCQc3ElJtHofmHwX78mAy8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOPlwEpj; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-26983b5411aso33234135ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 20:58:59 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-78125ed4052so5725002b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760414339; x=1761019139; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760414517; x=1761019317; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KIZEfbziMhDeXPLAiUOw0zvjCU/6+aE66j2icymvwcI=;
-        b=O8saI6vWtmlZ0vfF8A2yNlJUOXvVH04edwOVGmoJrQ+J6tm7APa+sfBZSqkB6LQbEn
-         LXGstI4DbWwGrXhcFgTpiW0D7weLKG7eZPUpFozcG5APTs7Q35ZFtLSu02xpO4JWdhDu
-         4XizJ1eMX9I3zWyNYkhHOGpcmP3ivZtxZwFKMGMxEYm6HaXiCyiyDM8QbiqNxS4LXjiQ
-         4jRgm8kIpwpKMGa2DiHXZ/abxHTXlRgTiOLmiVi/LRFBp5UFjK0Ftx8DOeTjZV40tZZe
-         AmF92vttBZDa8wLK1Bw27pbybtVdNbok4qDOGn3cgWhARSJANy51OiuwoE6GqPIjhTc+
-         cuuA==
+        bh=bsB0izycZm3OO4+5XE/3dmw7Fn4MStV5GzPqI2plKC8=;
+        b=SOPlwEpjI4nGte158TcRP4ZAEKhHLaV0Ivnjt/7QcwyntDWzwWu9vZ9mTajkSWFiKL
+         UCT1pIaqrH9cGKsdnY60PsMPTazeaBzgGGE5TrFRX0yyn9d72Jw76gUB/g7bQMzzTKTI
+         zb5vpu7IraTdzfEo3I9pAXZTfC/SriJKvtuQszrL887ychpm8tJYV/x8qU3cRCWeZ+hK
+         0cLgVwYN3LnUCIbgXQk+/1QMtSImT41xrFy4NbpSTjFbMbAqv/SgGL+54PHO8H7aAs7N
+         JEm1daD0Wa1LoVY4+Orc69rPMEZKsLEyCjJPpDAVnPPBtqn2HsQXPyCnHb2RidBdCEg0
+         h6AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760414339; x=1761019139;
+        d=1e100.net; s=20230601; t=1760414517; x=1761019317;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KIZEfbziMhDeXPLAiUOw0zvjCU/6+aE66j2icymvwcI=;
-        b=E5gRAMyw10kyrvwaWgiqWazYE2RGomwhO3SJz90wSUmR8I2F5HWIMFVl8rIUSB5/mH
-         9cqDD4fy/vPWFH/T29EgHnYWl97laecPz4wq7EWgnIY/zAO+9RLT6fScY4uZDF8wm9oE
-         T0KSpzmNubG00yY2en3H3oOYV+UcO6DfcA4Uae3xIJO1rgRtfT/awox27RtlnWbSqjba
-         9gdrTpFZ24uXT+OwhB5RcHce4pA+6LV4gi54gIrB8ALQhCCPHJChC4ipGGIELvtF8pIU
-         sjnVA1OZdXQlgf/TfMhtUd4q+FCGA1sANGraBlcvUJXSOf8aTLiHUTZrQtqlJx2eStuw
-         KDtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2DTrkfqAGbvs7XY+lEXnapRmauhhY1MforV958OoLZmWg8iByvBSnRVcQ/tGKesnJdKgRiM+7qPrJNy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjg0hT2txkkncjo3ZzIaq1fDi9xfkYERZBUaNMYBF6n6V9K3u0
-	qXr3n0URzA78ydszU5GyT7O1S6lu96fI+QPH9XnIDOQlqksrlm+buyU6
-X-Gm-Gg: ASbGncuDeh6D81EOcD6V9q1syzHhp4eanN6GK+adKK5xe20vu191c+rJtYwLyvXF89g
-	cBCwi9omMGvQ6P3pNG4xyYfALvkGLovXNk3Nt/5OMCjr65RRxXIyABlIDLbVXUdopiXdAHUSaJc
-	quLdMsiSA8z1HELMde7YIA+gZbgzWDPha1c0dWjOJR1NDw4RQFkUqATa5TzQvGMoBNAVdipOoSX
-	+z2nn2uXtCAvHyhJDjh0dSqzIH6rDUnXRGD/G8Pjm5IME4dqnI6P/A5slJD/lY+Y6G0lYO4pcaZ
-	rpMuDd/8mIfbPttoSFnSDHXXYvhLmVimri8AXLRzWFMnhbZd+nZq6WwLWJdATLGJtJYca9/RGeD
-	ooqVWHzg5b20oKMGpaiFtf7rKHcRQRMjQvSa//pMnEBBIr+cuwg+v8FepEFr9Zo6Gowpm8IeqJU
-	Yzh+1Xc9rq
-X-Google-Smtp-Source: AGHT+IGL3EC7uzisf8wnwsneVP9C7iO5pEmo4F4CA0O58hvdMK9aZKrTbYI/GrA5pn66KoRLAHTokA==
-X-Received: by 2002:a17:902:f641:b0:27e:edd9:576e with SMTP id d9443c01a7336-290273ef199mr269866415ad.30.1760414338517;
-        Mon, 13 Oct 2025 20:58:58 -0700 (PDT)
-Received: from Barrys-MBP.hub ([47.72.128.212])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f95ecbsm144418965ad.130.2025.10.13.20.58.50
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 13 Oct 2025 20:58:57 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: edumazet@google.com
-Cc: 21cnbao@gmail.com,
-	corbet@lwn.net,
-	davem@davemloft.net,
-	hannes@cmpxchg.org,
-	horms@kernel.org,
-	jackmanb@google.com,
-	kuba@kernel.org,
-	kuniyu@google.com,
-	linux-doc@vger.kernel.org,
+        bh=bsB0izycZm3OO4+5XE/3dmw7Fn4MStV5GzPqI2plKC8=;
+        b=Nh1hQJ++rcExBBRLyCiAUzYcan4atjhWacL5uuHiYScoR3Y7lcZX9UZH8dBxoe50+b
+         GXNBTVMoH/HwSWutZp+T7ej0IDt85KaJs5tsbMeM8R6pf8269HuloQMYTBNKUwOdD6zY
+         xTk2+opuc/73QepIyVmck0eBQG8m5fzX7n6Dh07BHiMYolCALqfUli1iyBEgV6nHQ6Q7
+         gZ8cnnmXgCwlddgyTXnG/gW3P5QTvOLKNW/RvMb2/aTkxnUKOOXZzhEPENmt6kgodqe9
+         0Ird+6IRmHBoiuFXycu2op+VQRJeYBPiK8PHt6GsE+aC8/0X5xCGJ4zEY4GFbagqLCvc
+         B3qA==
+X-Forwarded-Encrypted: i=1; AJvYcCXktbMuFFCOKkar1t3n1Gnwj3Ysf9Mk3FnH5K/etxl8q+Y0YLGU2tIjJuat3vffvkDjgCIlSqux0oPem5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK8JiJK1j2fClyhwAnL74K841BNdlwY4FE7qPxV8QOC2P8KbQB
+	Karn+9e2DTuMHB7moGMyWT22QZU/jiIn1w6YTbGXu37SS+JNhX1lKZwk
+X-Gm-Gg: ASbGncuPnHpec4td0+glOU2NC/04deWeBCzns0w8LDeF1xBjiYKPON9BquHk4KCzDKR
+	guc/cdaKwT8FVG5lEfwQG1M7LGEWfHRAyqU1Gc1STPXBS/mEudLlctH0H2dt+PCi6/0yEE9KDpY
+	fnTaVFBQ5vOJQRXPKyUEZceee5wpPgTZZKC1HT+gL3IMPwCU0OYPLKlQ7McPPS1LNvtw6cVx/dq
+	suRBrnqNFnOpSeTFl6j/r/ZRNgYS7AcOelaRDlV/gyyjJ/3hhNPb4Tso6rzNa3ULUwQKF67+2jR
+	T8t7tQ5sh3/0UTMbwvqnmeCuTq2taSsKGN+SyjKNQc5pTMGo5IzyAcwCEPuuTj6I6JoVUlXrlG6
+	/SY7tV4IRkA9/gc3wP43Ic+6l/p0oE7K7MaVImMfVQ8ZxlbHULZIV
+X-Google-Smtp-Source: AGHT+IFrtfF17eWlEmSsbrrCEoLlRLW+h84XvFQh9e46H8cF0iymlCZDGFzyK4npmcVJn/1/I4iB5w==
+X-Received: by 2002:a05:6a00:2e13:b0:781:1771:c12c with SMTP id d2e1a72fcca58-7938269d8b7mr29748487b3a.0.1760414516006;
+        Mon, 13 Oct 2025 21:01:56 -0700 (PDT)
+Received: from ustb520lab-MS-7E07.. ([115.25.44.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09a87asm13378751b3a.46.2025.10.13.21.01.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 21:01:55 -0700 (PDT)
+From: Jiaming Zhang <r772577952@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: broonie@kernel.org,
+	cryolitia@uniontech.com,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linyunsheng@huawei.com,
-	mhocko@suse.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	vbabka@suse.cz,
-	willemb@google.com,
-	zhouhuacai@oppo.com,
-	ziy@nvidia.com
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-Date: Tue, 14 Oct 2025 11:58:46 +0800
-Message-Id: <20251014035846.1519-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <CANn89i+wikOQQrGFXu=L3nKPG62rsBmWer5WpLg5wmBN+RdMqA@mail.gmail.com>
-References: <CANn89i+wikOQQrGFXu=L3nKPG62rsBmWer5WpLg5wmBN+RdMqA@mail.gmail.com>
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	pierre-louis.bossart@linux.dev,
+	quic_wcheng@quicinc.com,
+	r772577952@gmail.com,
+	syzkaller@googlegroups.com,
+	tiwai@suse.com
+Subject: [PATCH] ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
+Date: Tue, 14 Oct 2025 12:01:49 +0800
+Message-Id: <20251014040149.1031348-1-r772577952@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2025101225-lisp-monkhood-af34@gregkh>
+References: <2025101225-lisp-monkhood-af34@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-> >
-> > diff --git a/Documentation/admin-guide/sysctl/net.rst b/Documentation/admin-guide/sysctl/net.rst
-> > index 2ef50828aff1..b903bbae239c 100644
-> > --- a/Documentation/admin-guide/sysctl/net.rst
-> > +++ b/Documentation/admin-guide/sysctl/net.rst
-> > @@ -415,18 +415,6 @@ GRO has decided not to coalesce, it is placed on a per-NAPI list. This
-> >  list is then passed to the stack when the number of segments reaches the
-> >  gro_normal_batch limit.
-> >
-> > -high_order_alloc_disable
-> > -------------------------
-> > -
-> > -By default the allocator for page frags tries to use high order pages (order-3
-> > -on x86). While the default behavior gives good results in most cases, some users
-> > -might have hit a contention in page allocations/freeing. This was especially
-> > -true on older kernels (< 5.14) when high-order pages were not stored on per-cpu
-> > -lists. This allows to opt-in for order-0 allocation instead but is now mostly of
-> > -historical importance.
-> > -
->
-> The sysctl is quite useful for testing purposes, say on a freshly
-> booted host, with plenty of free memory.
->
-> Also, having order-3 pages if possible is quite important for IOMM use cases.
->
-> Perhaps kswapd should have some kind of heuristic to not start if a
-> recent run has already happened.
+Hi Greg,
 
-I don’t understand why it shouldn’t start when users continuously request
-order-3 allocations and ask kswapd to prepare order-3 memory — it doesn’t
-make sense logically to skip it just because earlier requests were already
-satisfied.
+Thanks for the guidance. You're right, the root cause of this issue is
+that a USB audio device is created without a proper interface.
 
->
-> I am guessing phones do not need to send 1.6 Tbit per second on
-> network devices (yet),
-> an option  could be to disable it in your boot scripts.
+To fix this issue, I added a check for the NULL return value in
+try_to_register_card() before calling usb_interface_claimed().
+I have tested patch with the reproducer on the latest version (v6.18-rc1),
+the issue was not triggered again.
 
-A problem with the existing sysctl is that it only covers the TX path;
-for the RX path, we also observe that kswapd consumes significant power.
-I could add the patch below to make it support the RX path, but it feels
-like a bit of a layer violation, since the RX path code resides in mm
-and is intended to serve generic users rather than networking, even
-though the current callers are primarily network-related.
+Please let me know if any changes are needed.
 
-diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-index d2423f30577e..8ad18ec49f39 100644
---- a/mm/page_frag_cache.c
-+++ b/mm/page_frag_cache.c
-@@ -18,6 +18,7 @@
- #include <linux/init.h>
- #include <linux/mm.h>
- #include <linux/page_frag_cache.h>
-+#include <net/sock.h>
- #include "internal.h"
+Best regards,
+Jiaming Zhang
+---
+
+In try_to_register_card(), the return value of usb_ifnum_to_if() is
+passed directly to usb_interface_claimed() without a NULL check, which
+will lead to a NULL pointer dereference when creating an invalid
+USB audio device. Fix this by adding a check to ensure the interface
+pointer is valid before passing it to usb_interface_claimed().
+
+Reported-by: Jiaming Zhang <r772577952@gmail.com>
+Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
+---
+ sound/usb/card.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 1d5a65eac933..270dad84d825 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -891,10 +891,16 @@ get_alias_quirk(struct usb_device *dev, unsigned int id)
+  */
+ static int try_to_register_card(struct snd_usb_audio *chip, int ifnum)
+ {
++	struct usb_interface *iface;
++
+ 	if (check_delayed_register_option(chip) == ifnum ||
+-	    chip->last_iface == ifnum ||
+-	    usb_interface_claimed(usb_ifnum_to_if(chip->dev, chip->last_iface)))
++	    chip->last_iface == ifnum)
++		return snd_card_register(chip->card);
++
++	iface = usb_ifnum_to_if(chip->dev, chip->last_iface);
++	if (iface && usb_interface_claimed(iface))
+ 		return snd_card_register(chip->card);
++
+ 	return 0;
+ }
  
- static unsigned long encoded_page_create(struct page *page, unsigned int order,
-@@ -54,10 +55,12 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
-        gfp_t gfp = gfp_mask;
- 
- #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
--       gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
--                  __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
--       page = __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
--                            numa_mem_id(), NULL);
-+       if (!static_branch_unlikely(&net_high_order_alloc_disable_key)) {
-+               gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
-+                       __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
-+               page = __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
-+                               numa_mem_id(), NULL);
-+       }
- #endif
-        if (unlikely(!page)) {
-
-
-Do you have a better idea on how to make the sysctl also cover the RX path?
-
-Thanks
-Barry
+-- 
+2.34.1
 
 
