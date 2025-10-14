@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-853205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E07BDAE99
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:11:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7775BDAEAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E2F2234DA5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:11:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A6A24F536D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5722308F1B;
-	Tue, 14 Oct 2025 18:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B7B30B509;
+	Tue, 14 Oct 2025 18:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WU3N63Y8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfHtZUaP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190D2F5A37;
-	Tue, 14 Oct 2025 18:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64632F5A37;
+	Tue, 14 Oct 2025 18:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760465503; cv=none; b=kpg+xjNhcaWyGfmqjoWPqMUy4CJfeT7y9K7yE/LjKtrjgXIZUyudDcu2CAKU9vZAAT1KYJtiZSS4KdJlV1r6DmucdcnM8fR1StzWoB3zjefUjh+8J1whdrLUeRcE6APTxsZMZ+fugKU6DwGvLax0+XtyQqO3eCCkOH13Xz7M0M0=
+	t=1760465548; cv=none; b=jsaFm4PrQuJX+Il0SJI2qyeTyHKA4KnvnPKn+nL2THGIXTcZWvIFDWzRotjRXyW/Z/4oHT79wezluWY3p6QnD6c3rSB69J+du0WMZI+GJ8KfekR4U1ujIRug3MR0TYX2zpf8v7JVJcXrvNsaQLk56hwkfDn64aqYSJLnlRyih1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760465503; c=relaxed/simple;
-	bh=JeTQjAfWq9qM7cX1ZWKKyO/92NXNQXfNZe0RuspUR38=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IgiaopvbAD5hSylARBL08Wo+uPACe6LzcWyG/VBEMVPiEtpwjrkc9XTZ93DZjaOqfkEDFrAoxq/QMVZyLKUSrZTP4dwGIpxwiFGKAOu2+XIbik7ZcopGAwRDS7g/So3TBX0DO+vt4mTLaUoGkq8rZfuDyoc6NTS3k7BFo9+HWrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WU3N63Y8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52790C4CEE7;
-	Tue, 14 Oct 2025 18:11:38 +0000 (UTC)
+	s=arc-20240116; t=1760465548; c=relaxed/simple;
+	bh=Pqcib0WjbsS5HXmt5nz+n1gNtS1aHnpdeM+eaWk0/tA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XdMjO7fmKoBc0yXgaTTR06LIItpnnfuyG1y3ChMJdS096Q+ZBBC+SXMXq58kKf5F2CvDF2spkR/eFSiq2WqG0ghqxbPuvoZTxXx2BSGnIOY4R0tnbYps30od4RsTQ+OIW2dj3joHa2R84w5qZS/jwOg4fPM7LUf1BkBHo4XW3bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfHtZUaP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB69C4CEE7;
+	Tue, 14 Oct 2025 18:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760465502;
-	bh=JeTQjAfWq9qM7cX1ZWKKyO/92NXNQXfNZe0RuspUR38=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WU3N63Y8qVgYf/CMD3+ZEVauHtnG/khipBSxd35KYOM8AoGNhGyV372X/5YIQAus1
-	 5IqeAd+ZPk6HTTUi8ORf4P8o09Z8Tp42lFdxvgH6AC0UxkQ2KMe83omDbJMpiWmu0x
-	 msYTdGEb/Atc8i0coyPDuzUUQ+Wy10BZaeI5iVi4ttwKy7NH2jNMTSx7le96FeFWlv
-	 jcIPFRVmTrMijx7X67sIZCvH7THO2Z+sDioRrGvkIIj8LHV4lmuv58c9ukcyVRVJNH
-	 kTO9ueveloC/GBffnu+awJhTMHmHGc+d+29BCZbq0n3Zo7K21M58zIO1/pGfadSjK5
-	 yhVtcpHdHbNlA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: achill@achill.org,
-	akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.12 000/262] 6.12.53-rc1 review
-Date: Tue, 14 Oct 2025 20:11:33 +0200
-Message-ID: <20251014181133.1257293-1-ojeda@kernel.org>
-In-Reply-To: <20251013144326.116493600@linuxfoundation.org>
-References: <20251013144326.116493600@linuxfoundation.org>
+	s=k20201202; t=1760465548;
+	bh=Pqcib0WjbsS5HXmt5nz+n1gNtS1aHnpdeM+eaWk0/tA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SfHtZUaP7Xv+2c8o/IN5J369CD5NfIElsWrVENcfHOkKhaxXBQVlpFB3ZW+ceoGS6
+	 JgDtjUxARywZWBIC1eXwIGfaryQ1ocVy1UG3FLRA5V0AJT/qko5QCkCrKMIQyvWLuc
+	 RSUfChW40u6gLhyqRUy7rIlfQNWCK7KBM3VkiIH8dyg2gqtRAXkDu6Kz357OU5vIqY
+	 Pcjt7xDuZsmzCEWsnJPS6pcc1sP4SwwF+NgjZbSs1BvO9Xsdfz4UOPJa6txSVy5+mb
+	 KwfWEFS1aZbt91ZkNngSTahCKA38gVjoTRepoOBXXjGf715Mbv8uBuJ2YFdies8G8Z
+	 UYoP2Vqi16Wdg==
+Date: Tue, 14 Oct 2025 19:12:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional
+ clock
+Message-ID: <20251014-projector-immovably-59a2a48857cc@spud>
+References: <20251010183418.2179063-1-Frank.Li@nxp.com>
+ <20251014-flattop-limping-46220a9eda46@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dNGbIiFgaQ40TQAb"
+Content-Disposition: inline
+In-Reply-To: <20251014-flattop-limping-46220a9eda46@spud>
 
-On Mon, 13 Oct 2025 16:42:22 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.53 release.
-> There are 262 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
-> Anything received after that time might be too late.
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
+--dNGbIiFgaQ40TQAb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+On Tue, Oct 14, 2025 at 07:02:50PM +0100, Conor Dooley wrote:
+> On Fri, Oct 10, 2025 at 02:34:17PM -0400, Frank Li wrote:
+> > Add optional clock for OSC_IN and fix the below CHECK_DTBS warnings:
+> >   arch/arm/boot/dts/nxp/imx/imx6qp-prtwd3.dtb: switch@0 (nxp,sja1105q):=
+ Unevaluated properties are not allowed ('clocks' was unexpected)
+> >=20
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>=20
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> pw-bot: not-applicable
 
-Thanks!
+Hmm, I think this pw-bot command, intended for the dt patchwork has
+probably screwed with the state in the netdev patchwork. Hopefully I can
+fix that via
+pw-bot: new
 
-Cheers,
-Miguel
+
+
+--dNGbIiFgaQ40TQAb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6ShwAKCRB4tDGHoIJi
+0vWaAQCzkRMH+0Oz7FRQT7PW4SO9mUoYYstikY/KIQg56FyuwQD/SSOUBbG+ssoH
++/o68oUVn7ns7Mg+yge4k1PI35BS3Qw=
+=qaS9
+-----END PGP SIGNATURE-----
+
+--dNGbIiFgaQ40TQAb--
 
