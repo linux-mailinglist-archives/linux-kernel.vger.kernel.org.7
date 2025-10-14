@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-852786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91DCBD9EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:13:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC34BD9EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27757543842
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:08:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EB6A504515
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F86315D25;
-	Tue, 14 Oct 2025 14:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB275314B6D;
+	Tue, 14 Oct 2025 14:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HINIdKOO"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qmHUBqwK"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973B62ECD05
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C976314B95
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450891; cv=none; b=mgW/gMc1pLag5oDOFqSrGlqRW8u3ehSZ6yAMV7yI/LwTtmDy4XL2aFC92Go2Y/nf5hHZe6KQ3WYbP9NvPj+pTsuKpbN0xpyNwE/poq1IuBR1lUtcDMZvbEg4gJ6qvJeuoNlnS949DPTzgKodBeabFNpRcPcUTdjMXP7NAcDl7kE=
+	t=1760450958; cv=none; b=jORDk4zq6ISXT8j3WMoVPYf9HvhxBCLGuWj2m2SC5TB9KOf1GwXLy+0ubAdga27WK/ivCXCsf7Fp2rUJVAq7EE4fVvmvRf08PDCfTex3KnoBi6rkIaKHJv3IneuVRo1L9EZgcyKX7/qH1HwnhRplBRXLBdrc1Mjb5FbtJYZmjsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450891; c=relaxed/simple;
-	bh=n7R4IggRMS2QWBufKXlW4yIiJgS8ECJudvpdIBUSECc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VRIp25/hrMdH2p9P/GSwV/R5DveAYPB+q8nuSjGIDpt69+fIoVsbQ98mAITvlAJ5JW0iNrOXSM2htEvt3oFO3PMrJ5vGkjW4hrUsgB9Fw/7sQMIXEIWJ05BeoYarK+9ZE39ojCgTbIXOkptmgh4TagzLSAixiDGpv9Yt0Iaxt/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HINIdKOO; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-637dbabdb32so10673225a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760450888; x=1761055688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UxmeIWwCO+DcngB6umPUO6fAm2SQ1pPxfxXmVq4hIfA=;
-        b=HINIdKOOY33PkiZDjSl6H+xlz2+rQ8lRBI6ACLxbWwv8/BrGmsmgQltebAMRhWpHGe
-         KnSB/pbQZpbsIAF/1LD0+U4sRuFG644ku98PV5QBVYoDojHKLfk5Iku7kGTfkfk0JW4L
-         DbmRLl+gN7S4lxs8iRtR6CDvJVriBBYod5omk2HHJ+zqD6aGcGwixhAPppH3TRM63wm3
-         z5/GAN+fLXCD+fhpwUy0VkbkGhsGtumg9rMXQOR70H0RzIgyGL2tTHTT7O0tFPd+4CbY
-         m3pHhmx7+atPkS0xuzddiXb9l0nE78yugEmvY5kWyuBsfw1rk4bgG6Do0z6cY8gA9iVL
-         0y1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760450888; x=1761055688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UxmeIWwCO+DcngB6umPUO6fAm2SQ1pPxfxXmVq4hIfA=;
-        b=a60ts3IcRtIBIDJQcSdrWDKsnlyubfFK5VvKenFtEZE22J7YsASgCYFNpbUVxGt2u9
-         d1yMp4vM/LP5e5DzCYvPqQEYWbYBTFoX1Ft/jqItAJbkAdXZoCGJAuLRbV3D//NeWboc
-         F8sU5QdvaxSXWZ2CcKsCo5SBhjDMWKB6NeZT14DjgCpo9ZhZ5+qQWA5I8hVUHttZNWFt
-         tQdLKxkqr6WCH12h1ORc3QWE2UpJoTNmXQR8nM7zbtKje1h5Y0BUdiGUcb+LRsAtbzKL
-         QQxXzCv7y1D/htyGo2dE92eUrQgF0j3FhhjGhuXurSwuiCZvayWKXOiXTQI6lvYWx3Zc
-         i63w==
-X-Forwarded-Encrypted: i=1; AJvYcCWRHVI81RAp0P9CTXDXs3mVzG7jm5zWi6V63zWKEPiYFNYGw8a/1Ck59z8l6pmLnOVQx3pOsz4tGolmSoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Ijnh9uYSKgbLd2uXuQjlp8zmgeYF9hQX36DzY2AWRLzsltDG
-	i6ajZz5PUC87wxjGQ5v9MbyJpblW16XMV9DZ0OXRXzuralZgU30o8EpH
-X-Gm-Gg: ASbGncuPiMcVNvgEXTEizE0QTU+ZW20sQzuMlGyGvThKHJWUVv5k76wHLt9Ioi2h74m
-	u1wckCx+ieBCdWiChyqv3Le+4J0T7zhboT/WsLTNe6X6vQKpEpEF52/vLNRMyz1TGu41QzlGukj
-	oBgy43048JOPDp0NTzkI4hEroBgk/LbSLnrJl9sW77imVXv6dmYu60TbcmJX1jT2KfOJ8jSkD6w
-	4FoAYU0/cA1FQEN7/+Vjp8BlpOJ8xbOsFsyyuJsv1cTme44ruiBHCwE397sh3LTV5f4l10IbwhD
-	hKNMOFt30w7at/fA5/yrWlw/eCWgVIAlnihEoRDwpLC0Vf8yejVyZd5L0GIkghaRDNBK8aUP7Tk
-	x8hDpb+C8nnj4A8WNo9bBjCwLbqu2rJyRU4RWx+pE5QdKSPFwnO76MJw=
-X-Google-Smtp-Source: AGHT+IEf3qv2wBAqdGd7LLNTogx5CIdl+mKJKNQg4yODTXzc7y9Gqv2epyMUaFIiqHtW+W3ofsjlrQ==
-X-Received: by 2002:a17:907:96a7:b0:b40:b6a9:f6f9 with SMTP id a640c23a62f3a-b50aa8a847emr2748899766b.19.1760450887527;
-        Tue, 14 Oct 2025 07:08:07 -0700 (PDT)
-Received: from krava ([2a00:102a:5031:2444:abe8:833e:114a:fe50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5c78c15decsm7838366b.50.2025.10.14.07.08.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 07:08:07 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 14 Oct 2025 16:08:03 +0200
-To: Shardul Bankar <shardulsb08@gmail.com>
-Cc: bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf 1/1] bpf: test_run: fix ctx leak in
- bpf_prog_test_run_xdp error path
-Message-ID: <aO5ZQ9Kgd35nWNod@krava>
-References: <20251014120037.1981316-1-shardulsb08@gmail.com>
+	s=arc-20240116; t=1760450958; c=relaxed/simple;
+	bh=PBU4fhmS7xNaU4hsexHHxQh75ZgP+S8EWiuxCN5cjGw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W9Qij6ZIlKu2/rD3lu9ZaPxiBCCmf71l4Yj5eZATkDHWsvsELECwVSrBoTrRQhNjQqjXrw7EWQbqt4SQBer0W5E3yvduOzdbLviEbrEaFkQBhROXW6+prQjT4VOnMhmXUHZEOvtyYc4O+ZIJRu50Bw+v+Bn2DKMtYMgs3thrAQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qmHUBqwK; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760450944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HTt/KzKieiee5hMQF+Yl+hZuVbxPhLlk+WHV6D9guo8=;
+	b=qmHUBqwKWNT5vYFudzOiUF4zcASTLZYuSKIEBYKIYVECM3evlnYbwtVC8+wujvSBGhkRvY
+	OyuizPA56TwSUlr7qmo4GZLrjp3R+5oetCgXTIS7kckygImIJsFsBocWRNnvc2skNg4ZEq
+	Ug6JIGrNsyZQALcEojvwDxh6J+Z7bGw=
+From: Hao Ge <hao.ge@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v2] slab: Add check for memcg_data's upper bits in folio_memcg_kmem
+Date: Tue, 14 Oct 2025 22:08:15 +0800
+Message-Id: <20251014140815.383823-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014120037.1981316-1-shardulsb08@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 14, 2025 at 05:30:37PM +0530, Shardul Bankar wrote:
-> Fix a memory leak in bpf_prog_test_run_xdp() where the context buffer
-> allocated by bpf_ctx_init() is not freed when the function returns early
-> due to a data size check.
-> 
-> On the failing path:
->   ctx = bpf_ctx_init(...);
->   if (kattr->test.data_size_in - meta_sz < ETH_HLEN)
->       return -EINVAL;
-> 
-> The early return bypasses the cleanup label that kfree()s ctx, leading to a
-> leak detectable by kmemleak under fuzzing. Change the return to jump to the
-> existing free_ctx label.
-> 
-> Fixes: fe9544ed1a2e ("bpf: Support specifying linear xdp packet data size for BPF_PROG_TEST_RUN")
-> Reported-by: BPF Runtime Fuzzer (BRF)
-> Signed-off-by: Shardul Bankar <shardulsb08@gmail.com>
+From: Hao Ge <gehao@kylinos.cn>
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+This is because OBJEXTS_ALLOC_FAIL and OBJEXTS_ALLOC_FAIL currently share
+the same bit position. Therefore, we cannot simply determine whether
+memcg_data still points to the slabobj_ext vector by checking
+folio->memcg_data & MEMCG_DATA_OBJEXTS.
 
-jirka
+We can distinguish between these two cases by checking whether the upper
+bits set:
 
-> ---
->  net/bpf/test_run.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-> index dfb03ee0bb62..1782e83de2cb 100644
-> --- a/net/bpf/test_run.c
-> +++ b/net/bpf/test_run.c
-> @@ -1269,7 +1269,7 @@ int bpf_prog_test_run_xdp(struct bpf_prog *prog, const union bpf_attr *kattr,
->  		goto free_ctx;
->  
->  	if (kattr->test.data_size_in - meta_sz < ETH_HLEN)
-> -		return -EINVAL;
-> +		goto free_ctx;
->  
->  	data = bpf_test_init(kattr, linear_sz, max_linear_sz, headroom, tailroom);
->  	if (IS_ERR(data)) {
-> -- 
-> 2.34.1
-> 
+1) MEMCG_DATA_OBJEXTS is set, but upper bits are not set,
+   so it should mean obj_exts allocation failed (OBJEXTS_ALLOC_FAIL),
+   thus do not report error, or
+
+2) MEMCG_DATA_OBJEXTS is set, and upper bits are also set, so someone
+   did not clear a valid folio->memcg_data before freeing the folio
+   (report error).
+
+So let's add check for memcg_data's upper bits in folio_memcg_kmem.
+
+Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v2: Per Vlastimil and Harry's suggestion, instead of introducing a new bit,
+    implement this by checking if the highest bit is set.
+    Many thanks to Vlastimil and Harry.
+---
+ include/linux/memcontrol.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 873e510d6f8d..f9f7ba14be04 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -534,7 +534,9 @@ static inline struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *ob
+ static inline bool folio_memcg_kmem(struct folio *folio)
+ {
+ 	VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
+-	VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio);
++	VM_BUG_ON_FOLIO((folio->memcg_data & MEMCG_DATA_OBJEXTS) &&
++			(folio->memcg_data & ~(ULONG_MAX >> 1)),
++			folio);
+ 	return folio->memcg_data & MEMCG_DATA_KMEM;
+ }
+ 
+-- 
+2.25.1
+
 
