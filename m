@@ -1,101 +1,166 @@
-Return-Path: <linux-kernel+bounces-853287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486A7BDB1CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:47:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A5DBDB1E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 873694E36D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4F71925617
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3572DA753;
-	Tue, 14 Oct 2025 19:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDA030170E;
+	Tue, 14 Oct 2025 19:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XX59pz1J"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cgftkfUr"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD0F27280E;
-	Tue, 14 Oct 2025 19:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BF22FF64A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760471257; cv=none; b=GL5oqyu1DoLG9u/NEJ2mjYB9IP6tGBHTwNwgCDTUrw0O6tWlLNUbdHDsKSy53jYfwZMEQ6ie8Rp6MoS8emDJAQbRQCueEQI4S81NuvCkmqaJyhCrRMJZRVZbM+Wson63hK5wzh5hPfZKDk9CRWpMIInLsxT8qgzrQbTlzRPziMU=
+	t=1760471429; cv=none; b=MKHBmlaFuuYw8/OdUidLrpDa+tGNe4221QKo1YabFuVXF4g7fnFq1gyvAl7mfL+MabTQNyHvYOC3K8BSDNKpe2xvERYRU3KT0/fgLGir2t1xrcDzO0f1+2gKzBLWhxucAHgiB8IFlE3WukcEeVy7KtQf6Z4cEzOuFSTd69+9MKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760471257; c=relaxed/simple;
-	bh=0S/EKsWggzQkapDkJ1mnKJi6Np27cypVP77NWqf3IFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krgsQLr02WvXp2yfcsO/DlIK6AZXaN+qNRB8ZbQO7wdfOEuT9GVdIhSmWXSfPqELpM7C8PyxmOMssEitYrF5kvRMVmiTCgpaFg3NR644uLdl8JJ20vdGwdeL1TsDZxHRhrPgRe4GS9j+Y+13SdDjuaZZoJ0U5p+THt92XWoEhkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XX59pz1J; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9zsB+Z9veiz23XOub9hUkvExAVgUxc80kZIPD9+X7bI=; b=XX59pz1JME4ECjGTWmUxXFqUsD
-	54ciJmMk21ZCK10jWkBtnTXW/UGhkQ6q5vnuh6V1YNtvRiuGzM/muwNGDNfVTiyWmx0OE4vqPQVuL
-	DYQgkz5mgXB+JPWhr119pzMhGTX/1c6lBoDp+iPpz/YX00fP1wTfyGOhAgIniISA10IZwM5VftJOh
-	MrhHbH/N/US9w/uyk6PW2lQXGf/UMd677wMOtvnMFXfn+tcCuK3kXlSVIMULGQLex8Mghhr1b6/D+
-	dFlf1TTvNQ++pUat2xF4484U/MVRkylLPg5TJHWXdzcvAzAZqQc6Uv64GhFnTz0m5sB1IG97XkZJk
-	KQB4r4zQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8kzZ-00000005PO4-2bMj;
-	Tue, 14 Oct 2025 19:47:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 33D0C300212; Tue, 14 Oct 2025 21:47:29 +0200 (CEST)
-Date: Tue, 14 Oct 2025 21:47:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczy??ski <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Kees Cook <kees@kernel.org>,
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] PCI: rcar-host: Add OF Kconfig dependency to avoid
- objtool no-cfi warning
-Message-ID: <20251014194728.GD1206438@noisy.programming.kicks-ass.net>
-References: <20251014-rcar_pcie_probe-avoid-nocfi-objtool-warning-v2-1-6e0204b002c6@kernel.org>
- <20251014191330.GA899677@bhelgaas>
+	s=arc-20240116; t=1760471429; c=relaxed/simple;
+	bh=Mnlqh6Cht/0getfLLNgLfhatm+njIti5tG7bquUeZAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EjPc6Tz2Xea+aXlAPLss5X86i0P2/+UHS1t3kE9Bn5DZicmyK9Ugh4noYf0/HZbqNfISJYqHtpsfkydSqfg933T5b2MPLNix6m3mrQFBqETgr7W+Vf8ll+P4sbvUEUi4yFncnTDt4Z6RIX1BMJ+lJAeVYYi8Tqzh3vH75BTZaLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cgftkfUr; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso42825885e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760471425; x=1761076225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MkhCJA/dXOXcwZ7S2jDqDvDpKsjxlEMR9YOOSuHW/cQ=;
+        b=cgftkfUrpBNXzTTeo0/ikV9tskeeIguaI3V0sJZ79Cukn//qku+8pdYbrG425mKXMV
+         h6xKmNN0ziNJqdxfFBQIcbjrgxkmrrZwINIBhN9B1+gqJiBkvuQqt9LC+j+leOfHoTCA
+         Y8LaLip7EtHsmM1QGZ7OI7/OhU/8I2EGKN7wiTV8uef8YzG6vZUXA5zjiZKm3oJ6Vd+Y
+         OJdLaCnu819G1HgdCAAdHy84xV36P64djs3s98R3PrAFaL4WHfIa1pZyctAROrDH17hN
+         55BOkYJhmPxtPpHpzFUcs1GKhfB6KQleljvT7zSgTGdw+r3NMworGUz/Q7twEpUjTAPw
+         qXrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760471426; x=1761076226;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MkhCJA/dXOXcwZ7S2jDqDvDpKsjxlEMR9YOOSuHW/cQ=;
+        b=VueB7gTdyIHb8iHOuNdN5hasU6wsIpXYseafMZUkxmUJhTdBeKPBD+j2W3mFPycw4i
+         Ud2B2YZRgg/d5e+2ZOcXxmwU90PYN6Vb2Yb1B4OZ1glwXETu9nKZMwPN493EfeZNYOcg
+         AAlFX/RftzH2mPwndD4Pgx0EqjOkXj8+8X5XOxBezwo5qeoq8XplYtVW0FmioQ5NyKzc
+         2/FPUlEMpS6Jm+ozP7usCwn6yFDHlh5vQImRmgJtRjCJw8oWWK+lDxsqDkRfkeJRsBEd
+         +vJ2J9AqN2anAGjtR9wW3uU23j3otk9hSivDpNbD91krca3b9WXP1OtE297/u6Ds4/7l
+         05Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCitqQIDCLoi92sLzdZ80o9HzNqInpjNuKaOM/IYFarObEetaf0mzyBr1c6C7w9lDxAdhJf/FAEFR1mNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUWYLgTV44ddTXta1+WrqpVeChlOU0nVShRwDPBvh7s0I6GXhU
+	9YqeqmsTfBoLVigmDlGI2ch+cbGVjIrNPTpNmHJ/ruMWc62zQYwnW60T
+X-Gm-Gg: ASbGncsCI+zztq77Uapqgbn3JnRR/hMs151rMeISih7V/46za3fszh4BLw7dts21Onj
+	NiA98/242Ijuu+mss5s49LuTtBc10BqF+16gyoN4obeBRwHarPLLIqFC9QpftlZPqpT+Gi353WT
+	R/VfW9XWn+YkUPIqIkUXoI8DIZAHsjfuSoh8r6O2ffB8rLJE/lyHcQf7XupghLqQGuHedTiMz1J
+	9G+8bH51GPtcnIRpbM2ME39bzGpyP5H+pnTpgbEEkGMjkNxwkYuFR7GwO7yKZ7O3tyf3ptsJikQ
+	FEkrkiHgTI50wz11CoqVwAOKTaa5UWn+SL5M6ZNnZI/44pPEQpq6jzfANSSTX+IXvQW5I6Z3VLn
+	jRJQTkAVpWbbSnUng8ZGnN/cKiDsSk+qmxXCJBlVDJLXRobL7ml3WSQvXXyrlWq4F6XKxKxKPBy
+	WMd6M9WBL+TC0yylghv9v6hVzw0n54SQ==
+X-Google-Smtp-Source: AGHT+IHvY3jSRZiPAPUTjqLzv3in2vImFrsh3WPQgcjJugI6dCptqZos5H5Y/+xsV4lVpQrYH25Z3g==
+X-Received: by 2002:a05:600c:1e86:b0:46e:6a6a:5cf7 with SMTP id 5b1f17b1804b1-46fa9aa0f6dmr179572755e9.12.1760471425371;
+        Tue, 14 Oct 2025 12:50:25 -0700 (PDT)
+Received: from localhost.localdomain (bzq-79-177-131-159.red.bezeqint.net. [79.177.131.159])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49d03e2sm257969595e9.19.2025.10.14.12.50.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 12:50:23 -0700 (PDT)
+From: Itamar-Dalal <dalalitamar@gmail.com>
+To: linux-mm@kvack.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	riel@surriel.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	harry.yoo@oracle.com,
+	jannh@google.com,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	shuah@kernel.org,
+	Itamar-Dalal <dalalitamar@gmail.com>
+Subject: [PATCH] =?UTF-8?q?Add=20a=20new=20test=20'migrate.cow=5Fafter=5Ff?= =?UTF-8?q?ork'=20that=20verifies=20correct=20RMAP=20handling=20of=20Copy-?= =?UTF-8?q?On-Write=20pages=20after=20fork().=20Before=20a=20write,=20pare?= =?UTF-8?q?nt=20and=20child=20share=20the=20same=20PFN;=20after=20a=20writ?= =?UTF-8?q?e,=20the=20child=E2=80=99s=20PFN=20differs,=20confirming=20prop?= =?UTF-8?q?er=20COW=20duplication.?=
+Date: Tue, 14 Oct 2025 22:49:44 +0300
+Message-Id: <20251014194944.20341-1-dalalitamar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014191330.GA899677@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 02:13:30PM -0500, Bjorn Helgaas wrote:
+Signed-off-by: Itamar-Dalal <dalalitamar@gmail.com>
+---
+ tools/testing/selftests/mm/rmap.c | 45 ++++++++++++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 1 deletion(-)
 
-> Ugh.  This might be the best solution, but it's a bit problematic
-> without a hint about why "depends on OF" is here.  Theoretically there
-> are stubs for everything to make COMPILE_TEST work, so I think we're
-> about to drop all the dependencies on OF.
-
-Its those stubs are exactly the problem.
-
-> This dependency to avoid a no-cfi warning looks like the kind of thing
-> that could someday go away if the tools get smarter.  Maybe we can add
-> a Kconfig comment here, but I don't really know enough to write one.
-> Something like this?
-
-Its not a CFI warning per-se, the compiler is hitting known UB
-(unconditional NULL deref) and is currently emitting a NULL pointer
-indirect call, but given how aggressive clang has been on encountering
-UB it might just stop code-gen entirely and generate fall-through
-warnings (been there done that).
-
-Smarter compiler here is only going to make this worse.
+diff --git a/tools/testing/selftests/mm/rmap.c b/tools/testing/selftests/mm/rmap.c
+index 13f7bccfd0a9..2ba3361fecf0 100644
+--- a/tools/testing/selftests/mm/rmap.c
++++ b/tools/testing/selftests/mm/rmap.c
+@@ -430,4 +430,47 @@ TEST_F(migrate, ksm)
+ 	propagate_children(_metadata, data);
+ }
+ 
+-TEST_HARNESS_MAIN
++TEST_F(migrate, cow_after_fork)
++{
++	struct global_data *data = &self->data;
++	int status;
++	pid_t pid;
++	unsigned long parent_pfn, child_pfn;
++	int pagemap_fd;
++	char *region;
++
++	/* Map private anonymous memory and fault it in */
++	region = mmap(NULL, data->mapsize, PROT_READ | PROT_WRITE,
++		MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++	ASSERT_NE(region, MAP_FAILED);
++	memset(region, 0xaa, data->mapsize);
++
++	pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
++	ASSERT_NE(pagemap_fd, -1);
++	parent_pfn = pagemap_get_pfn(pagemap_fd, region);
++	close(pagemap_fd);
++
++	pid = fork();
++	ASSERT_NE(pid, -1);
++
++	if (pid == 0) {
++		/* Child: write to trigger COW */
++		region[0] = 0xbb;
++
++		pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
++		ASSERT_NE(pagemap_fd, -1);
++		child_pfn = pagemap_get_pfn(pagemap_fd, region);
++		close(pagemap_fd);
++
++		/* Expect PFN to differ after write (COW happened) */
++		if (child_pfn == parent_pfn)
++			_exit(FAIL_ON_CHECK);
++		_exit(0);
++	}
++
++	waitpid(pid, &status, 0);
++	ASSERT_EQ(WEXITSTATUS(status), 0);
++	munmap(region, data->mapsize);
++}
++
++TEST_HARNESS_MAIN
+\ No newline at end of file
+-- 
+2.34.1
 
 
