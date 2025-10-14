@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-851887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F365BD7887
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C8DBD7876
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B28D4F7610
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC43F3BE742
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C152C0267;
-	Tue, 14 Oct 2025 06:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D955330DD06;
+	Tue, 14 Oct 2025 06:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNQaCvdw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CcJtUZCz"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA14F2BDC3E;
-	Tue, 14 Oct 2025 06:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B830BBB2
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760422150; cv=none; b=XGKtLPg2ifGDHvo6G73izKMf1daeKbXET4LdUKS6tU10wO8YE4sSjDHFxeX/NIkaoaQI36EuMQ25EWx8ioQQdZgUqrQUPF2Hy8QZYj99nqYxDchdictcjLJkIHqkybXq/e/C9nhZbVVvBhyCx8udtsSVxwy2rjKmq4eFvXoQybQ=
+	t=1760422093; cv=none; b=ObLx1FLkSdXsK9nw+gFgo9LjBobxnR6uCeO74/ltV5snjl7nC9YEqGHEQ68y9n4CR+Ll9ncut2EDhLfQUnktsNYrdzbWLReH5HB7MGfTLbY88m2h0O2xOrdznMIa8SxN591PefaLHWfmeF2Zrbzk9xow2goM3kebzJUDMGj/5Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760422150; c=relaxed/simple;
-	bh=bw2rjJak5ibp1HP9mzPAfpKK+w4tEZn4HwIaBKC9xNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hT9CCAKJPc7PAUkaXMwLjCmVtA95AWWgUcSGUcLpycuRXjNsXd8Ex4dks6vUJikjGg+p4Jvj7tTCdRLl62w8/r7kG+Pzj0RhMOgtkfFhrba1SBLFjRNcsPZw1CYAb87j4BjVvKkTFbSlOVs0R8a1KrbXXdoLEF216Rxj0LGTy8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNQaCvdw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 975BFC4CEE7;
-	Tue, 14 Oct 2025 06:09:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760422149;
-	bh=bw2rjJak5ibp1HP9mzPAfpKK+w4tEZn4HwIaBKC9xNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hNQaCvdw+dAbqIb6yGCfHP2L4Qw8xFoYjYIz/1TFurOmzBOXsypefaakwaDGPwHMi
-	 50XVA5+MUxV0cv5yGdqyXhlA98lZ6rhZJCCk7ok07B29cTeqLo4Bbx1GjavR8IJII+
-	 Wg+1CCMYmwx8VbfvFT3mzfTP/xvACHDBqEvjJUIE+TvHop0lT1Rd/wNv3SJIXb0TCY
-	 u0K1vsubzgub6AOY7ZnOQZq3FgLKETgDJlKbSoluRwj2Am5OvMwghmpUXuBsLL0vja
-	 UQ90+u4oPLAysqvj/dLrJ85EaIQ17mf3ocTnyK9yzD+hpgcgz+BApHP81c9gDZgrJq
-	 4RuBSN+MzBCQQ==
-Date: Mon, 13 Oct 2025 23:07:37 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Enzo Matsumiya <ematsumiya@suse.de>
-Cc: linux-cifs@vger.kernel.org, Steve French <sfrench@samba.org>,
-	samba-technical@lists.samba.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>
-Subject: Re: [PATCH 0/8] smb: client: More crypto library conversions
-Message-ID: <20251014060737.GD2763@sol>
-References: <20251012015738.244315-1-ebiggers@kernel.org>
- <ihoaj3ymhuesevdb7k2kg2a2axdkishrrrjr2teigelhkxmt4s@do2n6pkdmaas>
+	s=arc-20240116; t=1760422093; c=relaxed/simple;
+	bh=lof0YmaEG+LixcrlFfIQ7Ogl4ET9WZzFbwtodBp/9N0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gs7g1EoMGu4A7Dcvxczs3mZm66gTBaa88aLxTfSWSvr9MrZcdmQQRlOrw3qJjSJypXs1iIEuvw9D9Xk2Wv7p8lidt/jRNaJNkh09zoyNvdfD1y14aBCmVFQqroZk5HCP92z6/nR+qdIOwNEOLXYZnDqzI5YA0DQ823mwkl7FpUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CcJtUZCz; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4f323cf89bso867489366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760422089; x=1761026889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lof0YmaEG+LixcrlFfIQ7Ogl4ET9WZzFbwtodBp/9N0=;
+        b=CcJtUZCzLKwef2qI/CAlnpT8LJuw+YBJESBvjS8IJHRmV1xox3O/l7nZz1ruPh9kx/
+         dM15/ZMjyqyrAccFGAdWXGLdmJvTne6V7EZJAB1diKNklyN7ZtCHB1UDZk+pBUeAYKmQ
+         YzGxl5yT7qPWV6g/C63rOC00e+4HvfnOzsqfR3eBr/H6SkLsygvjNnVkDGGlPa8VNPRO
+         /5jfmiFYcagW0Dxtm/0aA7hPhif9s5XDQGc9YOfWHZRrWNxH5LKVKVPoSAGa2zWLkLpb
+         cVGaSKOg3Qp5F7VGXPvZdjAGzhulpdX9+NkOgQJKls3QhKWcc16Fj2K5vtQzuEmc1sGJ
+         lnhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760422089; x=1761026889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lof0YmaEG+LixcrlFfIQ7Ogl4ET9WZzFbwtodBp/9N0=;
+        b=relGlHN8P2iDGLo2rHhTLDD2RcJ+heg0LiHQj7mfts/sravIIyF/RmyRaZXUJNXQxq
+         KSxzBww6oeCW25Df9Xy3svSgkvL9M6XrPzZoA62ALLRIaXhnwSo4nCijIJJLYyV1owAt
+         +tSFhSBDLqvRpTVijW8ROwcD80avQB8cgz/gUbiCW7eDPLfYx77UrKCWIXt1mHLJNssp
+         p2DYjLMQ6/dl43VOkjIqvLmEYkDZYSG3ClALQlXAPWLIV+Ln5vquKds+Mas6bIeOi3rD
+         uhQEk110vobj4EsUzix6hjv8hJ9AZObT3+eEANVL+wXW5aQLVylybqhbWxCdByySSZSz
+         kwTg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3k3HChyIuKR9sJoFJqEoE/sClx+qWvJ+R+z2wh990wRHJNO7UCcbkrpvKIgjhncUanLo8NwYP80CabRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa/OUoJ7thxtWzZud8mvFdlMnSXjVPb+pB+ApAz8ILEq1m7iYu
+	KX6weLVcMGJbyERJzX7vJYr5O9zAnBBrdiSkwMsi2WiObuFB+YWQTYlZqzxWuHTGbG3EWMy0CLF
+	sEFlHQJBjR39b4n8UvtTQdIs9toCDbQtsWjdwEd4=
+X-Gm-Gg: ASbGncv3AfiYV2DRz5S+dY1YIn6hCE/B6Zl6JofiFSfGHTDaprABT2dVcyUbxmC+80/
+	ucbqdV4kHkDNg9PZ8c2Ihymm3r0wF/mKMYiWRny4qeHid79wD2JY1AIP+hkAO1sXzVaJCtICi9o
+	ECTwIZWvLfFf2F9F2FuQoCehHGyyKhnc9kWGNFHjoXkiPOLpGmEYZ50IKpRhfDWdscLupasBqSA
+	F/1K6yA8+hkmfXv6V24TLkHcPqic79E+a+z+EGli8D1yx6hflaa0GNuT7Tacg==
+X-Google-Smtp-Source: AGHT+IGgdgiIGSvQYNIALqQ9pUoUutRB3h3EQJkldTUgUBPgd6YP8ch3nDyhEbNc4+8Rle8rXUNdTCWvtn+Bk1FuOVQ=
+X-Received: by 2002:a17:907:d86:b0:b3f:d9e9:baab with SMTP id
+ a640c23a62f3a-b50aa8a9056mr2856602866b.27.1760422088618; Mon, 13 Oct 2025
+ 23:08:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ihoaj3ymhuesevdb7k2kg2a2axdkishrrrjr2teigelhkxmt4s@do2n6pkdmaas>
+References: <20241028141955.639633-1-arnd@kernel.org> <Zx-ndBo7wpYSHWPK@casper.infradead.org>
+ <ef98d985-6153-416d-9d5e-9a8a8595461a@app.fastmail.com> <20241029043328.GB3213@mit.edu>
+In-Reply-To: <20241029043328.GB3213@mit.edu>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 13 Oct 2025 23:07:56 -0700
+X-Gm-Features: AS18NWBRClzXhRlv_9uytilT7uxCBXfaLucmkCNNwGt2ZbA0vKObHGKWy_fvfp0
+Message-ID: <CANDhNCpsoPcotnrjH6y0yEBf43652DRasSsEnAyEbrKN=tjEfQ@mail.gmail.com>
+Subject: Re: ecryptfs is unmaintained and untested
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>, Matthew Wilcox <willy@infradead.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Tyler Hicks <code@tyhicks.com>, Damien Le Moal <damien.lemoal@opensource.wdc.com>, 
+	ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 13, 2025 at 11:44:37AM -0300, Enzo Matsumiya wrote:
-> Hi Eric,
-> 
-> On 10/11, Eric Biggers wrote:
-> > This series converts fs/smb/client/ to access SHA-512, HMAC-SHA256, MD5,
-> > and HMAC-MD5 using the library APIs instead of crypto_shash.
-> > 
-> > This simplifies the code significantly.  It also slightly improves
-> > performance, as it eliminates unnecessary overhead.
-> > 
-> > Tested with Samba with all SMB versions, with mfsymlinks in the mount
-> > options, 'server min protocol = NT1' and 'server signing = required' in
-> > smb.conf, and doing a simple file data and symlink verification test.
-> > That seems to cover all the modified code paths.
-> > 
-> > However, with SMB 1.0 I get "CIFS: VFS: SMB signature verification
-> > returned error = -13", regardless of whether this series is applied or
-> > not.  Presumably, testing that case requires some other setting I
-> > couldn't find.
-> > 
-> > Regardless, these are straightforward conversions and all the actual
-> > crypto is exactly the same as before, as far as I can tell.
-> 
-> I think the overall series looks good and do a great cleanup.
-> 
-> Just a minor nit about fips_enabled: since it's now being handled
-> explicitly (rather than an error on cifs_alloc_hash() currently), I
-> think it makes sense to move the check to mount code path when
-> 'sectype == NTLMv2' (I don't particularly care about SMB1, but
-> something similar can be done for 'smb1 && sign' cases I guess).
+On Mon, Oct 28, 2024 at 9:33=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+> On Mon, Oct 28, 2024 at 09:50:37PM +0000, Arnd Bergmann wrote:
+> > On Mon, Oct 28, 2024, at 15:02, Matthew Wilcox wrote:
+> > >
+> > > This comment has been there since June 2021, so I think we can just
+> > > delete ecryptfs now?
+> >
+> > I have no opinion on removing ecryptfs, but I don't how possibly
+> > removing it is related to the patch I sent, as far as I can tell
+> > it just means it relies on both CONFIG_BLOCK and CONFIG_BUFFER_HEAD
+> > then.
+> >
+> > Is there any indication that the last users that had files on
+> > ecryptfs are unable to update their kernels?
+>
+> Debian is still shipping ecryptfs-utils and is building and including
+> the ecryptfs kernel module in their distro kernel.`
+>
+> So it seems likely that there are probably a non-zero (although
+> probably relatively small) number of ecryptfs users out there.
 
-For MD5 message signing and NTLMv2, this series keeps the fips_enabled
-checks where they were before.  That is, they're inserted where the
-calls to cifs_alloc_hash() were before.  I think moving them to earlier
-locations is best done in later patches, as it's not obvious (at least
-to me) exactly how to do that.
+Yeah. Sadly I'm one, as I needed something to migrate off of when
+encfs was deprecated.
 
-I spent a while reading the code again, and this is what I came up with:
+Is there another soon-to-be-deprecated filesystem to encrypt
+directories I should move to? :)
 
-- For MD5 message signing: cifs_enable_signing() is probably the right
-  place to disallow it.  However, it's called regardless of the signing
-  algorithm.  So it needs a parameter passed in that tells it that the
-  signing algorithm will be MD5 (or equivalently the dialect is SMB1).
+I definitely think we need some loud warnings and Tylers' suggestion
+for a read-only grace period would be helpful.
 
-- For NTLMv2: select_sec() and SMB2_select_sec() are where the
-  authentication protocol is selected and are probably the right places
-  to disallow NTLMv2 and RawNTLMSSP.  However, those are two places, not
-  one.  We'd have to remember to put the fips_enabled check in both.
-
-The nice thing about keeping the fips_enabled checks next to the actual
-uses of the algorithms is that it ensures they stay in sync.  So maybe
-we should just stay with that here.
-
-- Eric
+thanks
+-john
 
