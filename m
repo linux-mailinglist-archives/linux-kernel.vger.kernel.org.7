@@ -1,221 +1,157 @@
-Return-Path: <linux-kernel+bounces-852290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B9CBD89FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCA0BD89D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5C7542FC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F64423B1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B653043B8;
-	Tue, 14 Oct 2025 09:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A752ECD1B;
+	Tue, 14 Oct 2025 09:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgAAaxiV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gcBtrU98"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA2F2EBDC5;
-	Tue, 14 Oct 2025 09:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509A72E5D2A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760435949; cv=none; b=LLIhfwE+5OrO/H88sAtCIQaKEaIq5XDipK3fYPp/N/FeRBJFANprzLzHOOaojPhGI6dTpNkWSeYhR9GnSp4ConHUet0FCPz+gtRLSAJVP+dH9q0e86zUpKNNytYWT/sxvBvG2pTc9Zt/sISgHSyZbNUVw6i9Ui9klRcFoX/0tPw=
+	t=1760435933; cv=none; b=VsfamnMs7aWVO3E63MvkwgLfNB8mQUL5Qr2L2o69vDE47hn7flS2tpxqjPIW64onWSCYyjk1cr6mAh9rqOx42diekGTf5RisE4W6gsUDGw/kOFJEwwwkK1R8Z+vdvLx8VfU1pTDMuSRuesG2UiWGXg2NHfKfce6tPR9y85F/LhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760435949; c=relaxed/simple;
-	bh=Y0bEX5hkAWRJGif5UBaJSI/DJMYF6LpNlNLgCxXcdQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZUqGTotezM5C5Gfn+8aJ6LPYdZpoK7gaH6PWLtEpo0J225GgCtZVXQ2M5Xss0W5Dvhz9GFzGuyJ/lArhOyLh98khyOmjjLE5rBg91KQvs6AAGwlxdtNYAd+38KISVeS/WcnSILcrvFAK8IqbUMz6lDDuYKaCx9HYUNHNBLoDaKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgAAaxiV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 075D9C4CEE7;
-	Tue, 14 Oct 2025 09:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760435948;
-	bh=Y0bEX5hkAWRJGif5UBaJSI/DJMYF6LpNlNLgCxXcdQ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OgAAaxiVcgTmp+m3JLTe9FVIKnHuVzIyx7Zd6lxzOOsRxgW/1jR+2UWkpI+lcgQ6V
-	 JlSRhEOKj6zTUaNJ5Kmqh6lGuXNMdrvEhycEn4LVjlCWPg6db+whgEjKao8qeDGPYE
-	 7iETeBDpoqKAYQPqksB+k5aNRuOcrO08Uoz8inrI6l1rhq90hn0XotgXYPhRNpz7Ne
-	 KqFbmn/fOWSGwzhT1ymEnGGg4+E5J2gnelPEofdRnhqOu+GD9J4GRyn07uHAJx+WIT
-	 zBxnNaP2PB4gCZOJ0+vDCnv81jPJ2BanIy+TF93TE1s5Qps/gH+rbjufpGJT4GX6zy
-	 H8EZYZg9jknmA==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [PATCH v2 4/4] irqchip/gic-its: Rework platform MSI deviceID detection
-Date: Tue, 14 Oct 2025 11:58:45 +0200
-Message-ID: <20251014095845.1310624-5-lpieralisi@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251014095845.1310624-1-lpieralisi@kernel.org>
-References: <20251014095845.1310624-1-lpieralisi@kernel.org>
+	s=arc-20240116; t=1760435933; c=relaxed/simple;
+	bh=io6QOTrYaDE9s028FeLKTAMlnHfbHghqFVrGpVGtXBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LVHwnl00yUEggP+ufdTlRsbD7M3dMHAnVHZCIyDJcpb34kEycnk+blk9MCvPl0OKrKekUi4lb9vqjL3jSESqzgn2TAy3DBGfe0E6MN1/EJp/DH+u9lqWlgWyp8QOD54S0iuUPey5LU1wqRFPFZZAytWbnfj/gmevDbZwLeReWpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gcBtrU98; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87JSC025684
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:58:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DSMjHDTClxj+PalxEbTH9ZRHAQzCK5GT1sDSL01c+XQ=; b=gcBtrU98KIZEpLYh
+	ajS7NMK8LRgG2D3spy3qGrrfnkkdBYIZaAY7ZXf/4p9xO+iwPdYfho5g9lGnf+0m
+	2PNHN9hKwSOo5WbbPBEqNNiTmhrjNmMrrsUNogN8xwe8jkrf031Dde1xt9xcE25V
+	k5thqj+03KxurUwL+ALqPlQTD4tvmNs+PLvWilI14lcRE1bPR3Sx6QfBQ+Q7Tp2v
+	bJauW+nyoYomBwYxqq9XNWlXA6PqSAdhy5b+QC6ochfNjmtB3CW4qSAhLLT9CdtE
+	33v//0+v9u4MVjS+CHR7RQdaL0QL1bRQD9RiNV0VlBcSDu81z0ZGFPwyvMj14McY
+	VTUsCg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qgdfyvfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:58:51 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-886eaf88e01so257492385a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:58:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760435930; x=1761040730;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DSMjHDTClxj+PalxEbTH9ZRHAQzCK5GT1sDSL01c+XQ=;
+        b=GBdmuIB2epXL3kKvWvNhJa1eqwA+QMcLDcmllPu4djzuWh+fF0Avr6CbpcMKpuhQNv
+         hJZWezSCQYFc37uLF2+Ox2sXlPAyGv2sL3eRlfmZDSRxO3YWaezMPhdsXazya2i6o2Bv
+         8STGevm3xbzYEqTgFCq9RoqKHeRdgmnA+WeNLxIFyYxZEvAtpY164JETal0i4eIDifPg
+         YSaNdX5JaZ0Pc1+/aWRmlSyFEFyXTakVmQ52PSG7AbozxgI3MnJ+wEExc8/CUTS1MAvv
+         c9JWehYf5oTcDUZElyOBUnhPjWXeuW0+L+m3ARiKTFXgT4l9DRaoT8m1f6w/8VKZt/dk
+         ekdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQqAYhQSfd6atEVaq/m9E+HpGKJS+vNw/YQvxmE50ALevaACWS+pL7h8zzCxzn3bzGBTsaKFSwskddPN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw32H4pTNTyEzh5rdT7opcJ7hQ5Lj/LeH3oCws5b4nmrHQ5qJ51
+	L6Y963rOaG4XeRvy1um63hvgj9TDZwWakLIMHgVxwI+80j85689FT2jTEsz8ScbLc4+xMdBFQGp
+	gL39G70cK1bwxCFGPcSfxxlI4HCDOl+PpSlbOv5NzjUBXhod50TmaP0EnWfZe6Z9MKBA=
+X-Gm-Gg: ASbGnculOG6nmtcH8nlmGP4YjlYgFPsQiEw63dFyOc1919OAy2pr5dByBggLeTzUj0b
+	SP708Ol7VHyZKNW28dm4pbJk+tv+zJDJ3WFNeHpUdHukcwdjTfUzcg7L2g55+/dSxyS8d+dHHOj
+	NMQqtf/TEggKRjcK9H/T9PLUTuJBlLqRnUudjZGncA4SejlXdgahrvGX+y31s+ip4MdKq7VsvPY
+	NZYpTW3NhEzJTRPLa8uNxhw2BjPYkmXZqhCAhK4vKKuUaqFmT/Vn1s4nBJ1N/ahR/Nqg2DwCkGe
+	2GzR9liDKoglplOO96nKfzFi6HA5/caBIswfkq+XAA4kWvW4YKum17dmfkkZi268iYkaHlF9D9j
+	MPyKRk+b0dcFmRBm3hvd++w==
+X-Received: by 2002:a05:620a:17a7:b0:812:81c6:266c with SMTP id af79cd13be357-8835420965cmr1951153785a.9.1760435930133;
+        Tue, 14 Oct 2025 02:58:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7NHtM1Gsh82E8FOY9EtkI41PKGeex0f4/Fw4cwVtCr7GMZQ8YGlpxMTjOqOvo/5wbIBEfeA==
+X-Received: by 2002:a05:620a:17a7:b0:812:81c6:266c with SMTP id af79cd13be357-8835420965cmr1951152485a.9.1760435929662;
+        Tue, 14 Oct 2025 02:58:49 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c133feasm11078988a12.35.2025.10.14.02.58.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 02:58:49 -0700 (PDT)
+Message-ID: <91113d48-a8ef-4a24-a73f-6d32ac271a00@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 11:58:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] arm64: dts: qcom: r0q: enable more peripherals
+To: =?UTF-8?Q?Eric_Gon=C3=A7alves?= <ghatto404@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251014044135.177210-1-ghatto404@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251014044135.177210-1-ghatto404@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyNSBTYWx0ZWRfX7VbswA8IEhdk
+ EEF481gWyxEBQYp2mwX7rZEpTTo5OQavQkOoLvr9rSEYry/JxlTNG9k1VOdiZlqD2dV/Qv7t6wf
+ 2MXSGmxZlsdCmqSMVneytS/x1DG22SgQ3JwIF+IMqnSkIN3KyasKno/u0An/xpWCLh4MZtOIzDE
+ 2KyRDlL9QdNiXIjG9V5mFOQsSOV3wMEW2ry/F4ix0WKkUBvQsXq41PmWR7V+Q8m/otkVcwEwgrh
+ G9dJ6HBdWcMlZOkQefY/zEncAaq3GGxgdJAqMbjCZZ+1ZhNqWsAwYoS9ifcyJ6SdzJVZavWQMsr
+ LQG1F4TaAyFybj4QHJ+G7dbe3PL6b9vvtPYjnqmun0D1a4CIVa2A+glwhp9OhYKCYTLb7eFwYKp
+ GnGUBv7qmT4ZqJmEGTR9e7R8bAeznA==
+X-Proofpoint-GUID: X7nyl7agva81xvcT_989al3DFxols-j7
+X-Proofpoint-ORIG-GUID: X7nyl7agva81xvcT_989al3DFxols-j7
+X-Authority-Analysis: v=2.4 cv=J4ynLQnS c=1 sm=1 tr=0 ts=68ee1edb cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=NEAV23lmAAAA:8 a=Ar6MW_cJkJo_tvb_ExEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 suspectscore=0 clxscore=1015 phishscore=0 spamscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110025
 
-Current code retrieving platform devices MSI devID in the GIC ITS MSI
-parent helpers suffers from some minor issues:
+On 10/14/25 6:41 AM, Eric Gonçalves wrote:
+> This patchset adds support for multiple devices found on the Galaxy S22,
+> side buttons, touchscreen, max77705 charger/fuelgauge, RTC and UFS. It
+> depends on "Input: add support for the STM FTS2BA61Y touchscreen" for
+> TS to be enabled - and for the fuelgauge/charger to work,
+> "mfd: max77705: support revision 0x2" is needed too.
+> 
+> Thanks!
+> 
+> Changes in v2:
+> - split the gpio keys patch into 2 for small refactor
+> - rename spi-gpio: spi-gpio@0 to spi8
+> - use tabs instead of spaces on max77705 nodes
+> - added new patch that fixes adsp_mem and video_mem memory regions
+> I couldn't find the clock-frequency for i2c5 bus :(
 
-- It leaks a struct device_node reference
-- It triggers an excessive WARN_ON on wrong of_phandle_args count detection
-- It is duplicated between GICv3 and GICv5 for no good reason
-- It does not use the OF phandle iterator code that simplifies
-  the msi-parent property parsing
+You can boot downstram and run debugcc to dump the current state
+(incl. rates) of all clocks
 
-Implement a helper function that addresses the full set of issues in one go
-by consolidating GIC v3 and v5 code and converting the msi-parent parsing
-loop to the more modern OF phandle iterator API, fixing the
-struct device_node reference leak in the process.
+https://github.com/linux-msm/debugcc
 
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Sascha Bischoff <sascha.bischoff@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>
-Cc: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-its-msi-parent.c | 98 ++++++++----------------
- 1 file changed, 33 insertions(+), 65 deletions(-)
+Or /sys/kernel/debug/clk/gcc_name_of_the_clock/clk_rate
 
-diff --git a/drivers/irqchip/irq-gic-its-msi-parent.c b/drivers/irqchip/irq-gic-its-msi-parent.c
-index eb1473f1448a..a65f762b7dd4 100644
---- a/drivers/irqchip/irq-gic-its-msi-parent.c
-+++ b/drivers/irqchip/irq-gic-its-msi-parent.c
-@@ -142,83 +142,51 @@ static int its_v5_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
- #define its_v5_pci_msi_prepare	NULL
- #endif /* !CONFIG_PCI_MSI */
- 
--static int of_pmsi_get_dev_id(struct irq_domain *domain, struct device *dev,
--				  u32 *dev_id)
-+static int __of_pmsi_get_dev_id(struct irq_domain *domain, struct device *dev, u32 *dev_id,
-+				phys_addr_t *pa, bool is_v5)
- {
--	int ret, index = 0;
-+	struct of_phandle_iterator it;
-+	uint32_t args;
-+	int ret;
- 
- 	/* Suck the DeviceID out of the msi-parent property */
--	do {
--		struct of_phandle_args args;
-+	of_for_each_phandle(&it, ret, dev->of_node, "msi-parent", "#msi-cells", -1) {
-+		/* GICv5 ITS domain matches the MSI controller node parent */
-+		struct device_node *np __free(device_node) = is_v5 ? of_get_parent(it.node)
-+							     : of_node_get(it.node);
- 
--		ret = of_parse_phandle_with_args(dev->of_node,
--						 "msi-parent", "#msi-cells",
--						 index, &args);
--		if (args.np == irq_domain_get_of_node(domain)) {
--			if (WARN_ON(args.args_count != 1))
--				return -EINVAL;
--			*dev_id = args.args[0];
--			break;
-+		if (np == irq_domain_get_of_node(domain)) {
-+			if (of_phandle_iterator_args(&it, &args, 1) != 1) {
-+				dev_warn(dev, "Bogus msi-parent property\n");
-+				ret = -EINVAL;
-+			}
-+
-+			if (!ret && is_v5)
-+				ret = its_translate_frame_address(it.node, pa);
-+
-+			if (!ret)
-+				*dev_id = args;
-+
-+			of_node_put(it.node);
-+			return ret;
- 		}
--		index++;
--	} while (!ret);
--
--	if (ret) {
--		struct device_node *np = NULL;
--
--		ret = of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &np, dev_id);
--		if (np)
--			of_node_put(np);
- 	}
- 
--	return ret;
-+	struct device_node *msi_ctrl __free(device_node) = NULL;
-+
-+	return of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &msi_ctrl, dev_id);
-+}
-+
-+static int of_pmsi_get_dev_id(struct irq_domain *domain, struct device *dev,
-+			      u32 *dev_id)
-+{
-+	return __of_pmsi_get_dev_id(domain, dev, dev_id, NULL, false);
- }
- 
- static int of_v5_pmsi_get_msi_info(struct irq_domain *domain, struct device *dev,
- 				   u32 *dev_id, phys_addr_t *pa)
- {
--	int ret, index = 0;
--	/*
--	 * Retrieve the DeviceID and the ITS translate frame node pointer
--	 * out of the msi-parent property.
--	 */
--	do {
--		struct of_phandle_args args;
--
--		ret = of_parse_phandle_with_args(dev->of_node,
--						 "msi-parent", "#msi-cells",
--						 index, &args);
--		if (ret)
--			break;
--		/*
--		 * The IRQ domain fwnode is the msi controller parent
--		 * in GICv5 (where the msi controller nodes are the
--		 * ITS translate frames).
--		 */
--		if (args.np->parent == irq_domain_get_of_node(domain)) {
--			if (WARN_ON(args.args_count != 1))
--				return -EINVAL;
--			*dev_id = args.args[0];
--
--			ret = its_translate_frame_address(args.np, pa);
--			if (ret)
--				return -ENODEV;
--			break;
--		}
--		index++;
--	} while (!ret);
--
--	if (ret) {
--		struct device_node *np = NULL;
--
--		ret = of_map_id(dev->of_node, dev->id, "msi-map", "msi-map-mask", &np, dev_id);
--		if (np) {
--			ret = its_translate_frame_address(np, pa);
--			of_node_put(np);
--		}
--	}
--
--	return ret;
-+	return __of_pmsi_get_dev_id(domain, dev, dev_id, pa, true);
- }
- 
- int __weak iort_pmsi_get_dev_id(struct device *dev, u32 *dev_id)
--- 
-2.50.1
+may also give you a good result, although YMMV
 
+Konrad
 
