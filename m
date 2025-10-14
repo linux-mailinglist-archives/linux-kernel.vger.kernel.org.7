@@ -1,194 +1,131 @@
-Return-Path: <linux-kernel+bounces-852111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD96BD830B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:33:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAF5BD8320
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BA942355B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:33:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B99224F24AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DB530F554;
-	Tue, 14 Oct 2025 08:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b="xSuX/NcK"
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4DC29ACD1;
+	Tue, 14 Oct 2025 08:34:14 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340542C15BA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79C6236454
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430800; cv=none; b=NR9DHSRz7HvMVbu7LNoFfG/rG04U5tZ7C6CqCzWPtammTB0V26LlFeAOFOGaA4mR8NndVwIMV42qUOflZwqO+utXFfkLbAze6vCwKCFmFYk+1HzxNReo5sA77e+R+MC12MnsR+smyGeXSAywQ5U2ShJy1Ny7INo3h1UKvDbYTY8=
+	t=1760430854; cv=none; b=Lk4q1kAuv7wpSAROWkd5T7g602i+B8KcaTXWV1oiuLrfK3eLccIafyZfDuEu/HOR06eZ/FGTyWRjgyr2Q/jqpSKJJ56rQ/CAHAXb7sAkkrRxa2TNTzIQWm5pTpPBsjqXRHMKMDD1kkPfqJu8gMkZlauPgS1VOSsIDET1+yuwMfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430800; c=relaxed/simple;
-	bh=ABwOP1knGJkFDoc+XtKo0TwfI7cNvHWprhqJUcSx7yw=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MmDOU/e1LxF8mBJt6g/Ao3Pj+8HHlJRAmTZPZPMCZpwLO9vWVSfxZT2rA45XQAn8Tt+/s3FhnqV1msnjHZpBt0Jbmntd0/lrhEmk9zbAY8o2eJOi3FwY+okh0grqQfere1ivfmIvXv6CmcCf0VS/xE9VPMHbLvRyWIUyKdPRj3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; dkim=pass (2048-bit key) header.d=unisoc.com header.i=@unisoc.com header.b=xSuX/NcK; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-	by SHSQR01.spreadtrum.com with ESMTP id 59E8XD9o088188
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:33:13 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 59E8Wojt086369;
-	Tue, 14 Oct 2025 16:32:50 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (BJMBX01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4cm6q862xFz2Nc5jJ;
-	Tue, 14 Oct 2025 16:30:28 +0800 (CST)
-Received: from bj03382pcu03.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Tue, 14 Oct 2025 16:32:47 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand
-	<david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman
-	<mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        "T . J . Mercier" <tjmercier@google.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for order-0 allocation
-Date: Tue, 14 Oct 2025 16:32:30 +0800
-Message-ID: <20251014083230.1181072-3-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
+	s=arc-20240116; t=1760430854; c=relaxed/simple;
+	bh=0B2UMYbqUDmb5TRAEFZ3iCetD125VgS2XRk3m5uYAII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVo8GizkbThO/KB4dNUEV7NNbmnFt0kT4Zz4nS5ICoQR0E8t+DsCQYr7Rjwzwy7bfiOnU9hLrq7ydx1c0uNASFz11KVkzaswCYSRJyXTbdlxVm/7QQ3t5bEC1tiaJuk2xR+WuWkBlvdE9pHLVdRFy/f8PTvI4S2Mx6jg5aYUAFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63163a6556bso10042517a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:34:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760430851; x=1761035651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AKUCHW/MBIZsUc3ODKKtWIaDlEQsfe7hY3IvRmB8i8o=;
+        b=QFs08H2TSlIKDFNcVSSwcAqTFSnYOThFIB9d6VERfipH7KKtrL+ACsdWdPWQ8cvW9l
+         yTMkaRMlDjSaUt0DmfQHrTTtqzZd1V/XTeFfvwdoAOynjbWkn/p2HoK/Agep1Ti0jKou
+         V0FfRQnkc9+dPuqH+PLR6eGr+9XxCb04yztOGTenGMEj1eDcKkVkDVnqjXSkAKT0rKbc
+         decHSHXeiuT9/auPYNq6U2/9vvVL/UfsiK5hJedmlbJtyjWW9O0MlQ3H0SxT5q/sbb9S
+         O/MZK4jgnmzy2i7QmxCEKpCfVW4Ys5VAv3WxRCfm5bi51/D5i2WEh6AwGGM4XCYCSoOa
+         Qj2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXLYFGQ4Dlhg+mKQfA1GUzxz+TWOQPtEbsL3llw+DaB2QuL3Ioro2vOiPtZao0QaY4xsD1n9aQYsQCSICY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvafaUHNvOe9MxX9gZJBX/uPtPumNMLu5KwhieWX+lU4wlSmod
+	u9h4Gk7EhGJVSoqoFhSShEMaG6Qiwy6Esy1usRhYQU0WuTzh3ruAvI3a
+X-Gm-Gg: ASbGncuFrE2GuhOmr1NGtjk2IqUGqcW44N6M7UEv7rihdrAEkHdvrqBysOqSOOmzps2
+	uHeVXi0LYIIdEUY+6xynhSCX9hCY9Ob4oI2ZIWT5aIr8lyzn+r4KMN7wU/iyVdyXgQwlcgKg+T+
+	i7u/P+UKllbhLucsQtKYSdE45c5pfq2Ti4IGLHj8PPGdu/qtCLJ939w2s0TtqP45KRLeZ+WZPa5
+	W1sIUbqIt68MpHsy/rwUde5dW3XOnpPvyoLKNK3HDiVbMNlHKnuXvcO7Pwwh7ftqvzz/QtLun2r
+	qCrdqibArww1blbsTfoEWTeehu9dLUZuI+yaSQ8eYpVMld2D+EUfz+G9dg5zOp1943DxelfXrdT
+	um2G5k9ralsSFPpBy9ONXocWGmdQdAWMyNG9J
+X-Google-Smtp-Source: AGHT+IH9yDBhkiPY34+r8L4QfGlETNuwKEKExxU3npIvUrJ6TVQTuSdRSJEPMfeufN3cm41sP9BTrQ==
+X-Received: by 2002:a05:6402:50c6:b0:632:930c:ed60 with SMTP id 4fb4d7f45d1cf-639d5c57a9cmr20902180a12.30.1760430850785;
+        Tue, 14 Oct 2025 01:34:10 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:70::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c322e91sm10304155a12.45.2025.10.14.01.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 01:34:10 -0700 (PDT)
+Date: Tue, 14 Oct 2025 01:34:07 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Changyuan Lyu <changyuanl@google.com>, rppt@kernel.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, anthony.yznaga@oracle.com, 
+	arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
+	catalin.marinas@arm.com, corbet@lwn.net, dave.hansen@linux.intel.com, 
+	devicetree@vger.kernel.org, dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com, 
+	hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org, krzk@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
+	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com, pbonzini@redhat.com, 
+	peterz@infradead.org, robh@kernel.org, rostedt@goodmis.org, saravanak@google.com, 
+	skinsburskii@linux.microsoft.com, tglx@linutronix.de, thomas.lendacky@amd.com, will@kernel.org, 
+	x86@kernel.org
+Subject: Re: [PATCH v8 01/17] memblock: add MEMBLOCK_RSRV_KERN flag
+Message-ID: <2ege2jfbevtunhxsnutbzde7cqwgu5qbj4bbuw2umw7ke7ogcn@5wtskk4exzsi>
+References: <20250509074635.3187114-1-changyuanl@google.com>
+ <20250509074635.3187114-2-changyuanl@google.com>
+ <ef6wfr72set5wa5el3wbbu4yd5tnc4p2rhtjpb5kpmncv3xs5d@i3c5v3ciioi3>
+ <mafs0wm4yluej.fsf@kernel.org>
+ <mafs0h5w2lpqu.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 59E8Wojt086369
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unisoc.com;
-	s=default; t=1760430784;
-	bh=K7+5gnU0m4ULo+Ba+y5s66MuVOBWfTtrRajsj8ay8+0=;
-	h=From:To:Subject:Date:In-Reply-To:References;
-	b=xSuX/NcK03y5esnExK/NNHsgEI0OVUwyBxdOhoPg1QqdB5l1iFdFp6lug4g1HSEeN
-	 98BXkanBOwOKSVWebSeadOW+Awoa8DA7l6Qy9PUc/AU3bjHNyqF+1Pd2qYZzt1OZlb
-	 SOOuN9wCeIqUAd5axIGA7v6UwZxQxfha2sZr5bGzD7kTsIAvJNzPTIkiuxFTgNzmtc
-	 ZiXttiRlixfhILDlObIzhdM6Y8js4uTDTugnamf3zDFU39likolRlTAqYgriDo9dFx
-	 LiPujVT1bcIL/QFWMHXs+7UAoYG8CT2eliKXmu8omC8ucBJCc0Eb3/fzR1b4u97Uui
-	 sr9i4BpJ+wj7w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mafs0h5w2lpqu.fsf@kernel.org>
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Hello Pratyush,
 
-The size of once dma-buf allocation could be dozens MB or much more
-which introduce a loop of allocating several thousands of order-0 pages.
-Furthermore, the concurrent allocation could have dma-buf allocation enter
-direct-reclaim during the loop. This commit would like to eliminate the
-above two affections by introducing alloc_pages_bulk_list in dma-buf's
-order-0 allocation. This patch is proved to be conditionally helpful
-in 18MB allocation as decreasing the time from 24604us to 6555us and no
-harm when bulk allocation can't be done(fallback to single page
-allocation)
+On Mon, Oct 13, 2025 at 06:40:09PM +0200, Pratyush Yadav wrote:
+> On Mon, Oct 13 2025, Pratyush Yadav wrote:
+> >
+> > I suppose this would be useful. I think enabling memblock debug prints
+> > would also be helpful (using the "memblock=debug" commandline parameter)
+> > if it doesn't impact your production environment too much.
+> 
+> Actually, I think "memblock=debug" is going to be the more useful thing
+> since it would also show what function allocated the overlapping range
+> and the flags it was allocated with.
+> 
+> On my qemu VM with KVM, this results in around 70 prints from memblock.
+> So it adds a bit of extra prints but nothing that should be too
+> disrupting I think. Plus, only at boot so the worst thing you get is
+> slightly slower boot times.
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
- drivers/dma-buf/heaps/system_heap.c | 36 +++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+Unfortunately this issue is happening on production systems, and I don't
+have an easy way to reproduce it _yet_.
 
-diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
-index bbe7881f1360..71b028c63bd8 100644
---- a/drivers/dma-buf/heaps/system_heap.c
-+++ b/drivers/dma-buf/heaps/system_heap.c
-@@ -300,8 +300,8 @@ static const struct dma_buf_ops system_heap_buf_ops = {
- 	.release = system_heap_dma_buf_release,
- };
- 
--static struct page *alloc_largest_available(unsigned long size,
--					    unsigned int max_order)
-+static void alloc_largest_available(unsigned long size,
-+		    unsigned int max_order, unsigned int *num_pages, struct list_head *list)
- {
- 	struct page *page;
- 	int i;
-@@ -312,12 +312,19 @@ static struct page *alloc_largest_available(unsigned long size,
- 		if (max_order < orders[i])
- 			continue;
- 
--		page = alloc_pages(order_flags[i], orders[i]);
--		if (!page)
-+		if (orders[i]) {
-+			page = alloc_pages(order_flags[i], orders[i]);
-+			if (page) {
-+				list_add(&page->lru, list);
-+				*num_pages = 1;
-+			}
-+		} else
-+			*num_pages = alloc_pages_bulk_list(LOW_ORDER_GFP, size / PAGE_SIZE, list);
-+
-+		if (list_empty(list))
- 			continue;
--		return page;
-+		return;
- 	}
--	return NULL;
- }
- 
- static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
-@@ -335,6 +342,8 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
- 	struct list_head pages;
- 	struct page *page, *tmp_page;
- 	int i, ret = -ENOMEM;
-+	unsigned int num_pages;
-+	LIST_HEAD(head);
- 
- 	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
- 	if (!buffer)
-@@ -348,6 +357,8 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
- 	INIT_LIST_HEAD(&pages);
- 	i = 0;
- 	while (size_remaining > 0) {
-+		num_pages = 0;
-+		INIT_LIST_HEAD(&head);
- 		/*
- 		 * Avoid trying to allocate memory if the process
- 		 * has been killed by SIGKILL
-@@ -357,14 +368,15 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
- 			goto free_buffer;
- 		}
- 
--		page = alloc_largest_available(size_remaining, max_order);
--		if (!page)
-+		alloc_largest_available(size_remaining, max_order, &num_pages, &head);
-+		if (!num_pages)
- 			goto free_buffer;
- 
--		list_add_tail(&page->lru, &pages);
--		size_remaining -= page_size(page);
--		max_order = compound_order(page);
--		i++;
-+		list_splice_tail(&head, &pages);
-+		max_order = folio_order(lru_to_folio(&head));
-+		size_remaining -= PAGE_SIZE * (num_pages << max_order);
-+		i += num_pages;
-+
- 	}
- 
- 	table = &buffer->sg_table;
--- 
-2.25.1
+At the same time, "memblock=debug" has two problems:
 
+ 1) It slows the boot time as you suggested. Boot time at large
+    environments is SUPER critical and time sensitive. It is a bit
+    weird, but it is common for machines in production to kexec
+    _thousands_ of times, and kexecing is considered downtime.
+
+    This would be useful if I find some hosts getting this issue, and
+    then I can easily enable the extra information to collect what
+    I need, but, this didn't pan out because the hosts I got
+    `memblock=debug` didn't collaborate.
+
+ 2) "memblock=debug" is verbose for all cases, which also not necessary
+    the desired behaviour. I am more interested in only being verbose
+    when there is a known problem.
+
+That said, my suggestion is to only dump extra information when something goes
+wrong, not affecting the boot time neither boot verbosity.
 
