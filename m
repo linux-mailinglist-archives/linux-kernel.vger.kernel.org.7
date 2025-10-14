@@ -1,225 +1,350 @@
-Return-Path: <linux-kernel+bounces-852744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1140BBD9CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DD3BD9CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 366414E9465
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:42:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B235423F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A37A3148AB;
-	Tue, 14 Oct 2025 13:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBvy9DjB"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79E0313E32
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E985E3148CC;
+	Tue, 14 Oct 2025 13:44:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90BA265CB2
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760449333; cv=none; b=Ros6KcNfgkmXt3SUk8x8WTJN99q51thBwQg4Ms9M7LG5aW8uNB7uZcugE00+WGKvktFK+kZcUTWMJ+rsEmmYUTHNGmNrnxYTThdnCDd2NOtZGzYBq8JIkPucS0YnzZHZBXDea6pR6SgcpQU3WyZeTpmJMVhrxPyPIiG5CsZN1q0=
+	t=1760449443; cv=none; b=G3k4S3RCyzDekQzQWFFD8d6YpAevTkrvAzfTDUPnPX0t/fN5ZBjRp1qS1Ps2AKEgWeNMPUSaWxNOaA2avGYjNOkgdbvfQGHPBlIm+fIJwiJVTyARYiAgp1ybqDz0PIjtIRlao2CIk7/xuXmVoELofnNOYYm8CrbIGlJUYp18Zkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760449333; c=relaxed/simple;
-	bh=OKOMtNPPPvwpUDAua7xe8iqVmBDTcsCkgiidETRvTIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gO/iosvB2loHnZX9xOQeYG8gkyZ2xOXeJ0Q7iBNJYrE6fIPxSu1ufCLaa9dblvTw64tNxlWs3tLwlQat//vN5fEsaIODnAUEtDzpmK1hwxtfiYIgxwq1pDgZXHAIf8wRAhIRjE3saA+Gdl5Kx+vwk6n3C0LkgxfWltmtGjmYxTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBvy9DjB; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-72e565bf2feso55544647b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760449331; x=1761054131; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iShRlMjD16vCOvZiANOmQCZA2Q2Y8AtPdzjclXG3tnc=;
-        b=YBvy9DjB5UPp4yhyuSNlbBhPHzFTxs1ot8Tzcs/bBCIH4lUN+Pan+GuEZsgXek74JS
-         GSk7knL1nVF0XkaQhON//ZmMNu4qvzHwz32ahQTl9oRpS39MCsEy7aw6DHVJcA0vfKeK
-         WF4jZVSwo6eeTT/OovBtJrHyPB4AzV862jzvxEJ+gisjtsKcekwhrFBCLHImbosgcKpY
-         x/sN38SkT8qtM9rxdEEbKNHLISzFhKV2iLIxYHUQMSc4b/xLM6gb+fvrFmmSBbxM45ks
-         Myju8ox6DAs+aQ/1befs43bI6ZuTFqQUmHRrTD0zrVTMhRyZmAUM3M+aqYijvUEy4vvk
-         RjaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760449331; x=1761054131;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iShRlMjD16vCOvZiANOmQCZA2Q2Y8AtPdzjclXG3tnc=;
-        b=mOseFxHhPVgMwP4c7kW1+dh2Xn0huWDTGA4Hp3PPpJMi9M+MPqopXFah4Yb37iNdZZ
-         PvpvGnj+Vol5QlNRwM2t8Ugx3HLSNhmm1jb70j1eUFPXmz/+alJ4TbmK+Ey/3vrbiEHO
-         Ke8IZik8R5KPxjwsPm0Ty36nkhRn/ckP0z42tWIgBu5CmtDCNI37yXEF/f52tL8jQ5eF
-         k5LrjV37Fb3BfZCr8iJuD6kpZMa/Eljjkt9RFYj5/wlTsTeQue+Smt7c9HBXCAkDb4f4
-         Nbvc64jdWeVXVbnAfgRxiCnDPHweWN0fjrKTgJjZMOsp3rjiy0UJwhNi6bVu372lvMgZ
-         KF/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW4c6x41SG4T26ea9SoPFsUS4QjPx0aQxFEVTkfVmq0U49vQx9W0QBObPbn3MZRwqGA5fuAk2CIfBV2Y04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrlZ1Dm1sPpgb+bJACAItY+0BDGnasjcQt5DeQhPb3ZvlkaVeQ
-	iy6SvXXCtqChESrHLpH8u0i+3QOK5EEKYQLXgGHZVmtVxwhp9BmfOU2g
-X-Gm-Gg: ASbGncsrRIPX2jz64tJ0PIjc5zb8qRMXFxmckEfbEJBF/JLp/YOpJeslhqB9YjoiURn
-	+weYL9iUMNY2KBjULJtuca1mQCH+Krw45sKSrPQNW8KY6SijEkchvoIldSoKLzvnq8ePkYBcg5i
-	zxfHMv6yVzm1Xll7En0dtf7u/VWU4Nn2PlZPaqR+RfLNlDWftxIi+q/QMYJ4guBOPozFRrv0XVC
-	GluupjlrnfTgTp8ggCejh0vaMW05Pgd1/vAH01Tf/U+xSvhWGWkmxg+HjlC7fNYWdUstjsTxMlA
-	DX+r/W7vg7KkG7H5n0pP3RkFxTLH2XqRhPGnZu2uFDwVh+FuNeb5Ret+prioplgP8FnNDtxQHVf
-	Vf0N57pc0wVAX5rqDit45XWdPdJmVscXdOADWiHbNOkDQIzYZQYT1vqaUqe5g1JVjeNE8zQOxdB
-	RR2ATMmiifVaXDPQfE662u8Ev4NOB98w==
-X-Google-Smtp-Source: AGHT+IHEmGnQT19nB8fpJYZ36lJocxSeUy5ie5UanJzwR4STBWqUUl84lcuO3sceBz22ooJBZ+7W0A==
-X-Received: by 2002:a53:accc:0:20b0:63c:f5a7:3e1 with SMTP id 956f58d0204a3-63cf5a70b41mr9090122d50.61.1760449330421;
-        Tue, 14 Oct 2025 06:42:10 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:51::])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63cd95e3f9asm4749876d50.21.2025.10.14.06.42.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 06:42:10 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 0/3] mm/page_alloc: Batch callers of free_pcppages_bulk
-Date: Tue, 14 Oct 2025 06:42:08 -0700
-Message-ID: <20251014134208.2826738-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251014112946.8581-1-hdanton@sina.com>
-References: 
+	s=arc-20240116; t=1760449443; c=relaxed/simple;
+	bh=NL5gMjzIm0QbUfN+rnFWw63P7rg5EKBSFSryLFbyvDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGB4nuelkRh7JFZHgUGAhGHHju/PtjMrSDbv2/tqm+6qaF4j7ediyc4QVDukijPHgYoudGIhAmzTruEHW1104E9+tHMak225/pAhT97hGS5LwDVFBSSwWXEJKDQCk3fL3QIlV1BX9rrKyufMFxnRdLL42lqGIb9Ao9d631aVAAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E7DB1A9A;
+	Tue, 14 Oct 2025 06:43:51 -0700 (PDT)
+Received: from [10.57.7.84] (unknown [10.57.7.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE97E3F66E;
+	Tue, 14 Oct 2025 06:43:56 -0700 (PDT)
+Message-ID: <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
+Date: Tue, 14 Oct 2025 14:43:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
+To: Mostafa Saleh <smostafa@google.com>, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, praan@google.com,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <20250929155001.3287719-1-smostafa@google.com>
+ <20250929155001.3287719-5-smostafa@google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250929155001.3287719-5-smostafa@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 14 Oct 2025 19:29:45 +0800 Hillf Danton <hdanton@sina.com> wrote:
-
-> On Mon, 13 Oct 2025 12:08:08 -0700 Joshua Hahn wrote:
-> > Motivation & Approach
-> > =====================
-> > 
-> > While testing workloads with high sustained memory pressure on large machines
-> > in the Meta fleet (1Tb memory, 316 CPUs), we saw an unexpectedly high number
-> > of softlockups. Further investigation showed that the zone lock in
-> > free_pcppages_bulk was being held for a long time, and was called to free
-> > 2k+ pages over 100 times just during boot.
-> > 
-> > This causes starvation in other processes for the zone lock, which can lead
-> > to the system stalling as multiple threads cannot make progress without the
-> > locks. We can see these issues manifesting as warnings:
-> > 
-> > [ 4512.591979] rcu: INFO: rcu_sched self-detected stall on CPU
-> > [ 4512.604370] rcu:     20-....: (9312 ticks this GP) idle=a654/1/0x4000000000000000 softirq=309340/309344 fqs=5426
-> > [ 4512.626401] rcu:              hardirqs   softirqs   csw/system
-> > [ 4512.638793] rcu:      number:        0        145            0
-> > [ 4512.651177] rcu:     cputime:       30      10410          174   ==> 10558(ms)
-> > [ 4512.666657] rcu:     (t=21077 jiffies g=783665 q=1242213 ncpus=316)
-
-Hello Hillf, thank you for your review.
-
-> > While these warnings are benign, they do point to the underlying issue of
+On 2025-09-29 4:49 pm, Mostafa Saleh wrote:
+> Integrate the selftests as part of kunit.
 > 
-> No fix is needed if it is benign.
-
-Maybe this is poor wording on my part. What I mean to say is that these
-warning messages can help us understand that the system is trending negatively,
-even though the warning messages themselves may not indiate that something
-has crashed or broken completely.
-
-> > lock contention. To prevent starvation in both locks, batch the freeing of
-> > pages using pcp->batch.
-> > 
-> > Because free_pcppages_bulk is called with the pcp lock and acquires the zone
-> > lock, relinquishing and reacquiring the locks are only effective when both of
-> > them are broken together (unless the system was built with queued spinlocks).
-> > Thus, instead of modifying free_pcppages_bulk to break both locks, batch the
-> > freeing from its callers instead.
-> > 
-> > A similar fix has been implemented in the Meta fleet, and we have seen
-> > significantly less softlockups.
-> > 
-> Fine, softlockup is not cured.
+> Now instead of the test only being run at boot, it can run:
 > 
-> > Testing
-> > =======
-> > The following are a few synthetic benchmarks, made on three machines. The
-> > first is a large machine with 754GiB memory and 316 processors.
-> > The second is a relatively smaller machine with 251GiB memory and 176
-> > processors. The third and final is the smallest of the three, which has 62GiB
-> > memory and 36 processors.
-> > 
-> > On all machines, I kick off a kernel build with -j$(nproc).
-> > Negative delta is better (faster compilation).
-> > 
-> > Large machine (754GiB memory, 316 processors)
-> > make -j$(nproc)
-> > +------------+---------------+-----------+
-> > | Metric (s) | Variation (%) | Delta(%)  |
-> > +------------+---------------+-----------+
-> > | real       |        0.8070 |  - 1.4865 |
-> > | user       |        0.2823 |  + 0.4081 |
-> > | sys        |        5.0267 |  -11.8737 |
-> > +------------+---------------+-----------+
-> > 
-> > Medium machine (251GiB memory, 176 processors)
-> > make -j$(nproc)
-> > +------------+---------------+----------+
-> > | Metric (s) | Variation (%) | Delta(%) |
-> > +------------+---------------+----------+
-> > | real       |        0.2806 |  +0.0351 |
-> > | user       |        0.0994 |  +0.3170 |
-> > | sys        |        0.6229 |  -0.6277 |
-> > +------------+---------------+----------+
-> > 
-> > Small machine (62GiB memory, 36 processors)
-> > make -j$(nproc)
-> > +------------+---------------+----------+
-> > | Metric (s) | Variation (%) | Delta(%) |
-> > +------------+---------------+----------+
-> > | real       |        0.1503 |  -2.6585 |
-> > | user       |        0.0431 |  -2.2984 |
-> > | sys        |        0.1870 |  -3.2013 |
-> > +------------+---------------+----------+
-> > 
-> > Here, variation is the coefficient of variation, i.e. standard deviation / mean.
-> > 
-> > Based on these results, it seems like there are varying degrees to how much
-> > lock contention this reduces. For the largest and smallest machines that I ran
-> > the tests on, it seems like there is quite some significant reduction. There
-> > is also some performance increases visible from userspace.
-> > 
-> > Interestingly, the performance gains don't scale with the size of the machine,
-> > but rather there seems to be a dip in the gain there is for the medium-sized
-> > machine.
-> >
-> Explaining the dip helps land this work in the next tree.
+> - With CONFIG_IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST=y
+>    It will automatically run at boot as before.
+> 
+> - Otherwise with CONFIG_IOMMU_IO_PGTABLE_KUNIT_TEST=m:
+>    1) on module load:
+>       Once the module load the self test will run
+>       # modprobe io-pgtable-arm-selftests
+> 
+>    2) debugfs
+>       With CONFIG_KUNIT_DEBUGFS=y You can run the test with
+>       # echo 1 > /sys/kernel/debug/kunit/io-pgtable-arm-test/run
+> 
+>    3) Using kunit.py
+>       You can also use the helper script which uses Qemu in the background
+> 
+>       # ./tools/testing/kunit/kunit.py run --build_dir build_kunit_arm64 --arch arm64 \
+>         --make_options LLVM=1 --kunitconfig ./kunit/kunitconfig
+>        [18:01:09] ============= io-pgtable-arm-test (1 subtest) ==============
+>        [18:01:09] [PASSED] arm_lpae_do_selftests
+>        [18:01:09] =============== [PASSED] io-pgtable-arm-test ===============
+>        [18:01:09] ============================================================
+> 
+> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Pranjal Shrivastava <praan@google.com>
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> ---
+>   drivers/iommu/Kconfig                    | 11 ++--
+>   drivers/iommu/Makefile                   |  2 +-
+>   drivers/iommu/io-pgtable-arm-selftests.c | 82 +++++++++++++-----------
+>   3 files changed, 51 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 553522ef3ca9..d50685433347 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -40,12 +40,13 @@ config IOMMU_IO_PGTABLE_LPAE
+>   	  sizes at both stage-1 and stage-2, as well as address spaces
+>   	  up to 48-bits in size.
+>   
+> -config IOMMU_IO_PGTABLE_LPAE_SELFTEST
+> -	tristate "LPAE selftests"
+> -	depends on IOMMU_IO_PGTABLE_LPAE
+> +config IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST
+> +	tristate "KUnit tests for LPAE"
+> +	depends on IOMMU_IO_PGTABLE_LPAE && KUNIT
+> +	default KUNIT_ALL_TESTS
+>   	help
+> -	  Enable self-tests for LPAE page table allocator. This performs
+> -	  a series of page-table consistency checks during boot.
+> +	  Enable kunit tests for LPAE page table allocator. This performs
+> +	  a series of page-table consistency checks.
+>   
+>   	  If unsure, say N here.
+>   
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 5250a2eea13f..ac3851570303 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -12,7 +12,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+>   obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+>   obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+>   obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
+> -obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST) += io-pgtable-arm-selftests.o
+> +obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST) += io-pgtable-arm-selftests.o
+>   obj-$(CONFIG_IOMMU_IO_PGTABLE_DART) += io-pgtable-dart.o
+>   obj-$(CONFIG_IOMMU_IOVA) += iova.o
+>   obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
+> diff --git a/drivers/iommu/io-pgtable-arm-selftests.c b/drivers/iommu/io-pgtable-arm-selftests.c
+> index 32c6a5c7af53..b61849a8a685 100644
+> --- a/drivers/iommu/io-pgtable-arm-selftests.c
+> +++ b/drivers/iommu/io-pgtable-arm-selftests.c
+> @@ -6,7 +6,8 @@
+>    *
+>    * Author: Will Deacon <will.deacon@arm.com>
+>    */
+> -#include <linux/device/faux.h>
+> +#include <kunit/device.h>
+> +#include <kunit/test.h>
+>   #include <linux/io-pgtable.h>
+>   #include <linux/kernel.h>
+>   
+> @@ -47,13 +48,14 @@ static void arm_lpae_dump_ops(struct io_pgtable_ops *ops)
+>   		cfg->pgsize_bitmap, cfg->ias, cfg->oas);
+>   }
+>   
+> -#define __FAIL(ops, i)	({						\
+> -		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
+> -		arm_lpae_dump_ops(ops);					\
+> -		-EFAULT;						\
+> +#define __FAIL(test, ops, i)	({						\
+> +		KUNIT_FAIL(test, "");						\
+> +		kunit_err(test, "selftest: test failed for fmt idx %d\n", (i));	\
 
-I do agree that I left this on a bit of a cliffhanger here. I'm a bit confused
-as to why there is this kind of behavior as well, although I have a theory
-as to why this behavior is seen. Going back to why we see zone lock contention
-in the first place, I think it might have to do with the memory vs. processors
-ratio that leads to such contention issues.
+This looks suspect - AFAICS open-coded kunit_err() is intended for test 
+infrastucture errors (like the allocation in the next hunk below), while 
+for an actual test report message it seems it should just be:
 
-The lower the memory:processor ratio is, it seems like there is already
-less zone lock contention. If we rank these machines by their mem:proc ratio:
+	KUNIT_FAIL(test, "selftest: test failed for fmt idx %d\n", (i));
 
-Large machine : 2.38
-Small machine : 1.72
-Medium machine: 1.42
+> +		arm_lpae_dump_ops(ops);						\
+> +		-EFAULT;							\
+>   })
+>   
+> -static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+> +static int arm_lpae_run_tests(struct kunit *test, struct io_pgtable_cfg *cfg)
+>   {
+>   	static const enum io_pgtable_fmt fmts[] = {
+>   		ARM_64_LPAE_S1,
+> @@ -69,7 +71,7 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+>   		cfg_cookie = cfg;
+>   		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
+>   		if (!ops) {
+> -			pr_err("selftest: failed to allocate io pgtable ops\n");
+> +			kunit_err(test, "selftest: failed to allocate io pgtable ops\n");
+>   			return -ENOMEM;
+>   		}
+>   
+> @@ -78,13 +80,13 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+>   		 * Empty page tables shouldn't provide any translations.
+>   		 */
+>   		if (ops->iova_to_phys(ops, 42))
+> -			return __FAIL(ops, i);
+> +			return __FAIL(test, ops, i);
+>   
+>   		if (ops->iova_to_phys(ops, SZ_1G + 42))
+> -			return __FAIL(ops, i);
+> +			return __FAIL(test, ops, i);
+>   
+>   		if (ops->iova_to_phys(ops, SZ_2G + 42))
+> -			return __FAIL(ops, i);
+> +			return __FAIL(test, ops, i);
+>   
+>   		/*
+>   		 * Distinct mappings of different granule sizes.
+> @@ -97,16 +99,16 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+>   					   IOMMU_READ | IOMMU_WRITE |
+>   					   IOMMU_NOEXEC | IOMMU_CACHE,
+>   					   GFP_KERNEL, &mapped))
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			/* Overlapping mappings */
+>   			if (!ops->map_pages(ops, iova, iova + size, size, 1,
+>   					    IOMMU_READ | IOMMU_NOEXEC,
+>   					    GFP_KERNEL, &mapped))
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			iova += SZ_1G;
+>   		}
+> @@ -117,18 +119,18 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+>   			size = 1UL << j;
+>   
+>   			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			if (ops->iova_to_phys(ops, iova + 42))
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			/* Remap full block */
+>   			if (ops->map_pages(ops, iova, iova, size, 1,
+>   					   IOMMU_WRITE, GFP_KERNEL, &mapped))
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+> -				return __FAIL(ops, i);
+> +				return __FAIL(test, ops, i);
+>   
+>   			iova += SZ_1G;
+>   		}
+> @@ -144,11 +146,11 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+>   				   IOMMU_READ | IOMMU_WRITE |
+>   				   IOMMU_NOEXEC | IOMMU_CACHE,
+>   				   GFP_KERNEL, &mapped))
+> -			return __FAIL(ops, i);
+> +			return __FAIL(test, ops, i);
+>   		if (mapped != size)
+> -			return __FAIL(ops, i);
+> +			return __FAIL(test, ops, i);
+>   		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+> -			return __FAIL(ops, i);
+> +			return __FAIL(test, ops, i);
+>   
+>   		free_io_pgtable_ops(ops);
+>   	}
+> @@ -156,7 +158,7 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+>   	return 0;
+>   }
+>   
+> -static int arm_lpae_do_selftests(void)
+> +static void arm_lpae_do_selftests(struct kunit *test)
+>   {
+>   	static const unsigned long pgsize[] = {
+>   		SZ_4K | SZ_2M | SZ_1G,
+> @@ -169,18 +171,19 @@ static int arm_lpae_do_selftests(void)
+>   	};
+>   
+>   	int i, j, k, pass = 0, fail = 0;
+> -	struct faux_device *dev;
+> +	struct device *dev;
+>   	struct io_pgtable_cfg cfg = {
+>   		.tlb = &dummy_tlb_ops,
+>   		.coherent_walk = true,
+>   		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
+>   	};
+>   
+> -	dev = faux_device_create("io-pgtable-test", NULL, 0);
+> -	if (!dev)
+> -		return -ENOMEM;
+> +	dev = kunit_device_register(test, "io-pgtable-test");
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, dev);
 
-It seems like this is the order in which we see the gains as well. I this
-explanation also kind of makes sense -- the more memory we have, the more
-memory each pcp will have, and the longer free_pcppages_bulk would have taken
-before (and vice versa). This is the case, at least for my setup, where each
-machine is onlined in one node (zone) and so the pcp watermarks really
-do scale with the size of the system.
+Conversely, this is infrastructure, not an actual test of expected 
+io-pgtable behaviour, so I think just:
 
-I didn't want to include this in the cover letter, because this was purely an
-untested conjecture.
+	cfg.iommu_dev = kunit_device_register(test, "io-pgtable-test");
+	if (IS_ERR(cfg.iommu_dev))
+		return;
 
-I hope this helps!
-Joshua
+(it doesn't return NULLs either)
+
+Otherwise, there's clearly scope for plenty more follow-up work 
+streamlining and breaking the whole thing up into KUnit idioms, pulling 
+the v7s test in, etc... However as a first step to at least set things 
+firmly on the right KUnit-shaped path, I agree this seems enough for now.
+
+Thanks,
+Robin.
+
+> +	if (IS_ERR_OR_NULL(dev))
+> +		return;
+>   
+> -	cfg.iommu_dev = &dev->dev;
+> +	cfg.iommu_dev = dev;
+>   
+>   	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
+>   		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
+> @@ -189,9 +192,9 @@ static int arm_lpae_do_selftests(void)
+>   				cfg.pgsize_bitmap = pgsize[i];
+>   				cfg.ias = address_size[k];
+>   				cfg.oas = address_size[j];
+> -				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
+> -					pgsize[i], cfg.ias, cfg.oas);
+> -				if (arm_lpae_run_tests(&cfg))
+> +				kunit_info(test, "selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
+> +					   pgsize[i], cfg.ias, cfg.oas);
+> +				if (arm_lpae_run_tests(test, &cfg))
+>   					fail++;
+>   				else
+>   					pass++;
+> @@ -199,17 +202,20 @@ static int arm_lpae_do_selftests(void)
+>   		}
+>   	}
+>   
+> -	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
+> -	faux_device_destroy(dev);
+> -
+> -	return fail ? -EFAULT : 0;
+> +	kunit_info(test, "selftest: completed with %d PASS %d FAIL\n", pass, fail);
+>   }
+>   
+> -static void arm_lpae_exit_selftests(void)
+> -{
+> -}
+> +static struct kunit_case io_pgtable_arm_test_cases[] = {
+> +	KUNIT_CASE(arm_lpae_do_selftests),
+> +	{},
+> +};
+> +
+> +static struct kunit_suite io_pgtable_arm_test = {
+> +	.name = "io-pgtable-arm-test",
+> +	.test_cases = io_pgtable_arm_test_cases,
+> +};
+> +
+> +kunit_test_suite(io_pgtable_arm_test);
+>   
+> -subsys_initcall(arm_lpae_do_selftests);
+> -module_exit(arm_lpae_exit_selftests);
+>   MODULE_DESCRIPTION("io-pgtable-arm library selftest");
+>   MODULE_LICENSE("GPL");
 
