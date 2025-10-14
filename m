@@ -1,329 +1,302 @@
-Return-Path: <linux-kernel+bounces-852876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E69BDA21C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:48:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5D6BDA26D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 306A34ECE05
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2AE61885E05
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393AC26A1B6;
-	Tue, 14 Oct 2025 14:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2E22FC007;
+	Tue, 14 Oct 2025 14:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vV3Uoitp"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ns4XmrU9";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hHPJWuUb"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D51D2FDC59
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453281; cv=none; b=afP4XXaV76gWilG+ZZZEWQPBDSsDr9zspehFT9wvA4cXdWgtI0Rw5qgbopHMpix95Yz4lTU8ZaZfTz7yL4LOR/iNb0pQYpD2Jazq8I5FvjOQjS5ucq569o0hgTkO57HpFkIbVjsdl5lXBBtpYi1/snab9FtvBqV+2aCSK2d+ssQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453281; c=relaxed/simple;
-	bh=t3JeelhavgJlvR1ZwyHoapB3tFs5Z7kTAMrAmctRWGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vr7a1ey6BwGD9HDCfTUfwNKFUcC0YnuTcLFfYhSEl3s4x/Kz3feM/t/6yQlFVuhIoeSLIBRryyvmcmRU1XdjZ3w8ffDGJBcRyNScNn/xZiYZEHU7qEAqPBbJXz3zswbecXP4SBh+9JR8bHgCXrdHWYPFUKnri9A+8XpsAjyScB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vV3Uoitp; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-781251eec51so4508163b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:47:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8A52F7AAC
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760453390; cv=fail; b=Wq15zYl2D/AXWH3lzsD+Kn7JiOXKr6/JughyagvHre7oEyBDXz+JLo6FBbgeO6InNNHOmEpTWBBaJkPSWo9GaM3kfdAIeq0KiXPVNooigLUH4bfQevkAhe8gyuFELU6ZDeNrlCtmnm5eG2elU1SL71OE2U/uetAQa7nSoUIrMRQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760453390; c=relaxed/simple;
+	bh=fpXXdv5diyGBO274ceSZFIUPA6hInqaE30f3ekp85Z0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=sR0DhvTvxIUJP74CkUuJgWps4+BMi/KboYnZV/qeWJwYRS2U4VB65xDfR3LHo8lHg8QBGotxQLRTYa37ZNlWnxuOVZcsiKEdX3RIoXDgL2x59OjLEvxVyhwQwc8fCRLXOwdqL5YIXN9DfEylQHdnZO7nWItkbRdxR6LZD4c7RwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ns4XmrU9; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hHPJWuUb; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EEgCs9004443;
+	Tue, 14 Oct 2025 14:49:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=hCm5XcQizFKXw0o++b
+	PcLrGmydBNctS1K+3kcbarOm8=; b=Ns4XmrU9ND1eK4pE7ihGg8lXK5eu+OZpX+
+	8t5rEN4qcB1nCVMqExaYPpN3vwN07PvMTEgRkJCJ8V1mWXI7r9o54ycKQrLtA0tk
+	D0ZwJZkJNLu4YIWWGnPAIvWZYiaOm57jej6gUJoi4AYNjeSNpSW/s6AOYpblMwCR
+	KLXAYClpj0tiIoVF+5WjXeLyEy6wrFpis4gmPpsFQB6lbLcwXlLBuuMWHq0BIGAX
+	gJuvhtm3iC/8vswJNI/iPXrc7DhBoGIPLX41utjf/MbuCsoP5TsfMMJUs8hdq2kn
+	ID3QMFUDHaXGu91VpdC6RVD3CBZ7ViulFOCdwSj2nq6XgF/4La5Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qe59cj2v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 14:49:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59EEBb91037461;
+	Tue, 14 Oct 2025 14:49:13 GMT
+Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013032.outbound.protection.outlook.com [40.93.196.32])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp91tw4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 14:49:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RRKf09EPkrhQ2zhyNrB5o/++0nLDU3YsDj5fFK15nJzLesTt29Rv8zIjsPI1vWJt3C62kEkSuzR8+pmgBnuQRBxTDgIBHf3QUtasdGBsl5LZ6F5x+iTmupnoUa03YfpYlfu/KrBz8aLX20BNoowsBDV87zDuGPoRFC9+W8KQ1ZmGtAyvGbUyQkS3nMjh1MJBOGv99843Ttx4Pu+px1jL/DhmOFMK6f6LWJuyUVIrQdfIfY3JM2tfpVoaiq7nuRPTkOBdeALTzCSTdm6lDhh9gkWRZ2HJkiiZQYLmCji6ukq+Ug5v0cIbbHSbY3cIZk/5lI+MlmEu2uA9mFX0usWldA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hCm5XcQizFKXw0o++bPcLrGmydBNctS1K+3kcbarOm8=;
+ b=au92xtirc7OPTxKJ5Bhj6ctmHk8iVdyHxqDbp8S/RO0AZYE0YFqXXFwUH3hWJhnGM+fN/tquRLkbZQOJBNXi6WZQK87L1Eqg2GTqnSjBRb9vGJfXOB5yP4b0zzZaD1XmE4OfLOAzd4mbABzXhidaJgwXsuGcpCgFbtT41usZjhrHGf6x865823uEGPQiA4FFoZa9JdK3G4/b4rdJ2fyhELwwAvotlnuhaWFFm4BYBWS2yLbC2tWAOrTf0EVtQYB4uMlXiw9uZT3kG4Te1tW+GDhRAlNaGIMd0/FyhHEq5g6ACdH2sTsQZyrGB13VpyfXv72au5ZTBT23NAfbiTbjuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760453279; x=1761058079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1VMcv/WwJNqD/h/B11jXsfWcJyNALBVGkv849SpavMk=;
-        b=vV3Uoitp8Aukhu2RowZJIq6s+IAG5Y+PTgMLAjaKbJ4biLMW/kXde6ttjAV1VurSyz
-         N+gJazeUU35ZC2MtK8QD59MXFqP7aF7XCkwDd4YO0/IUSMNqeay5nLSyewcCrpEGlvsf
-         GAwqDwQcdXXQ8x5NjH0aykL6LxDeCSctr+FlIl49zAqI3qXciGGRyfZdGzlGHQm7MtTQ
-         rzfeT2BmgFP7JUiD/aowXOdvWvtjysSkhlf9SYQ1t1YnHXpRnbHMMVy84zHeMlPVhMg9
-         8RWArdNiJWrvBsj1eqwe4BupPtA5wkG1HcQi0PtM15Z/yb7WQc/wl1K3c8FKJmiwZhW8
-         fZFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760453279; x=1761058079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1VMcv/WwJNqD/h/B11jXsfWcJyNALBVGkv849SpavMk=;
-        b=m9VAJrZOzLe8HAlyIsWFK5zfFT9jkKk7YTHeRN7w+q2nQ7Hc8i5Ej+X4iUz4hgNHLJ
-         2Eo/lzzPp00y2qiTO95LOOg7RHGIsCS1XGmYO6fePnJZipiD4U7WOX+3kxUe6QgR+wvz
-         1FcwwYibb2WGqo5M/lxcDUoHtQeM3/bSMRaNedg3Nd9hnJhg+SZU+rYWzzRfHWCekeXd
-         cftAOo2Zoy/W8gwEJRyeRR87NHIeYSXTGAR4mFg++6uGfYliW9gyQNLgQfAA53sC5Vip
-         LiKySR/V9LhxZtYFXulWrUK4Spbolikv8GHRbLVxdGeNr8tn36INEaX/wknipiSMM1xz
-         fwmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcSL6dAi87oUhcC2P4/zEN0R6POihoWKuRHu0w3GlgQQzIvaTScGkovZM7dYZQbCfNBbFQvKGUflSsmQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7e8/bhfCrntUnT3RiabE9aqiyX4S4zD6X20DBidf8JK5rv1Dy
-	jV3/xAiuqHnJduEvzR+WPtkjdCjfqEBUP6Tm4/VVUcAhOGLERWGMy3cJ0B/d4sh85nXgZImitt0
-	jkua8aZc=
-X-Gm-Gg: ASbGncvD0ceBhPFG56pfe3fPvNow3hMPAYhiYF0arrr51W8K2maFHQj1pzxA+vq/+2Z
-	+C79RSRYcsMx+VnMw6tkeWoFcHpQL2MyGBUMRPKXFA/1+EogqqDQFg2Lk/8My53UtokpOfhlYyn
-	sAtDKC3PAKirzATf80vwaU/4UGdnvwatVerylTyOwBOHi/tec/dTVnHgruvRkn01E7B3yrmS+f4
-	FAOjd/93edaAgW/cUZ6Gexl/IiIpxNfQWXuFlJ0tk3LAqdsyHKrA7yR1/HvwipCR7/p4Msw71ej
-	agON9KLQyclJ0yublBTYCc2C1JaE3ISw5qneHzm6npd/lVJHa2T6TYw6v9JpmVgJts4SA/n/QpU
-	8K1+Md9Y/B3jYYKm5yGx+1tU0mWnOJNAJ0KP0NG03DTiCi+Y/
-X-Google-Smtp-Source: AGHT+IE531tDBs5FFqjRlBMygQj0EV+WwZcvk7j9g7oDPATu+ePcqqw7IhSErv/dNjmnMcH6Dc3ZYQ==
-X-Received: by 2002:a05:6a00:1956:b0:781:15b0:beb4 with SMTP id d2e1a72fcca58-79387242fd1mr28404032b3a.21.1760453278868;
-        Tue, 14 Oct 2025 07:47:58 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:68ce:31e8:3a83:30af])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0966d7sm15310465b3a.40.2025.10.14.07.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 07:47:58 -0700 (PDT)
-Date: Tue, 14 Oct 2025 08:47:56 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dawei Li <dawei.li@linux.dev>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
-Subject: Re: [PATCH v4 1/3] rpmsg: char: Reuse eptdev logic for anonymous
- device
-Message-ID: <aO5inFRpD_aVxtxD@p14s>
-References: <20250609151531.22621-1-dawei.li@linux.dev>
- <20250609151531.22621-2-dawei.li@linux.dev>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hCm5XcQizFKXw0o++bPcLrGmydBNctS1K+3kcbarOm8=;
+ b=hHPJWuUbL02Re+xCrJNWiuWkFn8UhwLb8hCslDQaNEPVTKZupBowitKpjDnNW+Kfgaciiyc5vSKd437L7ol84IqqHrg0T/P4hd+kRDBlniUF9a+w015QJwmiFPUIYUZsQWH5ub2bW0g6aLrXYs9ilJn3KpgaZ+xMkgbtrOYHpec=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH2PR10MB4326.namprd10.prod.outlook.com (2603:10b6:610:78::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Tue, 14 Oct
+ 2025 14:49:10 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 14:49:09 +0000
+Date: Tue, 14 Oct 2025 15:49:07 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Huang Ying <ying.huang@linux.alibaba.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Yang Shi <yang@os.amperecomputing.com>,
+        "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Yin Fengwei <fengwei_yin@linux.alibaba.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH -v2 1/2] mm: add spurious fault fixing support for huge
+ pmd
+Message-ID: <86bb70dd-2602-48f3-a683-5ec62b37fd46@lucifer.local>
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+ <20251013092038.6963-2-ying.huang@linux.alibaba.com>
+ <4c453dcc-2837-4f1a-905b-3462270f5e31@lucifer.local>
+ <2861a35d-4f8e-4ee1-bd11-b915580c9ce3@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2861a35d-4f8e-4ee1-bd11-b915580c9ce3@redhat.com>
+X-ClientProxiedBy: LO4P265CA0230.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:315::6) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609151531.22621-2-dawei.li@linux.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH2PR10MB4326:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ab1708d-bb9e-4aa9-1795-08de0b30d4f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jEFg2iMzE7e5FO7NvH116HQqVyYylC/OJvOr+rl/ztRmzgBvngbB0yuyw6m+?=
+ =?us-ascii?Q?UVkIfMAMQp3HvKNk20PYQ5ZAf7wohVKRGJweRdIshiMdWBIhLZZuk8yO3PEz?=
+ =?us-ascii?Q?gHULFHx/AsiWhSaJ1aKRJgpzefwODwTDp+m63uYIKC4Fy0JkRJuH6tRVPZLW?=
+ =?us-ascii?Q?CKmCX4HkN6jy2/iVj4YMnE3XcMjso1UeI5zPOJgkO+29+MYRWxz4EvTMll+N?=
+ =?us-ascii?Q?pvQwqQyFulPMbJkHgO0HcPctv5EhPffRjWYGN5Lp9YB+WNX0dLX/c+JhEFIH?=
+ =?us-ascii?Q?TRYIGG6h2383d+ozc/ACDyZhIuoRsLjsOv4iJ6M+WevhFQoaq5l86i9yuLsK?=
+ =?us-ascii?Q?DKrRyKMar7/WSqXH+knwnwqRfD0jdO89WULNdCtDp4BcfyXoncuzInDGL0sR?=
+ =?us-ascii?Q?YZNdAjCyP/86a9Khl78Zo2d+i3afxDEhgH61ZZrcdYZvsMSxfhUq6FuIVe0v?=
+ =?us-ascii?Q?HfCBUEv9vQb0ZQspn7vmEAzOAux0orNUFsva+wVUXC3TOz7HqiSFjk/RZfc/?=
+ =?us-ascii?Q?L0EGgyHMFK1btdhm63SFSOC/PlCFqAZpGZjZ+MT60VAslUp1NzGlJKX/kcGj?=
+ =?us-ascii?Q?4v4iDU5M6jkejP53ky0+jsbZ2rMupxdx7l0gzL+wrTAGJVJfJB56JAzAm9Nk?=
+ =?us-ascii?Q?4Nl6AQaAcijHgpndbqG9B55SEDFfx9Vq+k5aYQ5V7OAGbUFa93YjCVwCuCq2?=
+ =?us-ascii?Q?it+UfZw6WGnVMmMISYKqvFBOaSMIxOb2xJYW6VouNruzktkLDjEMf/NRszfk?=
+ =?us-ascii?Q?IV5eaYa6fwtPm5wQRLzEh2IyX5r5jr/n1xCuFoDZOpjtrvP00JdkdAU92KJx?=
+ =?us-ascii?Q?SBYcSLzYJJ4BsOzSnCGAMZhxRW3p2hKUvcxI/lA8iOuDWiSSewPgzGYl2WD8?=
+ =?us-ascii?Q?+oSQiAouc9vlUBeBmqfCg0MiUsXCeTnFOMYZwjdh2b/wN35FsyQP2EYTISKr?=
+ =?us-ascii?Q?jlEXaxIJyzU3BIAhO2hNAc5dPta8PZOGQQEuVyC0pudpjolFsMDrI4lId6bz?=
+ =?us-ascii?Q?ibb53IF1zHX1vLmxY8eFk1DFy+D3fKHW5mLH4rSypouryMDYWAv4+66g54ko?=
+ =?us-ascii?Q?SbpC7/ZsOzlf6w50X/0qs37xilkJTFFUeBZN1QrcJDV/QAaN9LTAXbfxFjw0?=
+ =?us-ascii?Q?WceKCqYUG67ZDW2j2oJJ5w+IIuTmi8mY1hHn8w7zQUGhnAM3vaqSkwI+VlaG?=
+ =?us-ascii?Q?22q8R84ljUBIc/dbGc/JWQz43yOSS0lu4jVgHOfpuU7+eP52H+fz/JvyHTwF?=
+ =?us-ascii?Q?RG0fn0n9igr75mCVYC2olQgamG/pNS6jpym/W6jDiTW+v/HSeFowvnqP6czU?=
+ =?us-ascii?Q?CCGO5tlUtzOF/wgynbbpC+LOH8IudXdBC/oNbICJ84cXr/KSz5xqKb3Z9nMR?=
+ =?us-ascii?Q?6lfUtN2IvodYj1IlWX4S1vIheNzcIbcejbPInK79kblbNVsrxcvLb929cjwu?=
+ =?us-ascii?Q?xUwuULNBN96+QIknCmfDRApJtN4iaGZS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CEUWE8+MN+v3aXjBB8bKqDsAeiHLglokhx3I8kS9M8faN/03xwSTPG+yd9lN?=
+ =?us-ascii?Q?XKEoouwW2+QTmaLtL/lqp5vUkQbFwkGWoJ+dAoD3xjeqRZvxuOn87H3BVlQK?=
+ =?us-ascii?Q?9SCAtm0iJvZC4Di3/ITrZjYoSpkLHzGkMuvy/2zq+y+1Bry6ksCoFQ5U9K15?=
+ =?us-ascii?Q?sHbW5by+HjHWq62iSAJH6DV3ADkPYQZuRic18DcCXiyfMI80Dd4BIAiOzq0m?=
+ =?us-ascii?Q?5/vlHbCRycCwoj+TOihWrvjfjvPhZKMiBikYYws0bTq75gdNsztdRI3S9tCM?=
+ =?us-ascii?Q?W/hTgBgWixXG10OHgrUTdPMVzlCwsAfzehAOnNUWOwc8chvbskwPVxsD0kYO?=
+ =?us-ascii?Q?g3xlb105nv22HhUyKR98zbdSRd7VrpIQPu8BXNJeGJyHvSqTDIMuU5eqJYcR?=
+ =?us-ascii?Q?OF5krbH5PBipbYAMEXAku6c5rats++LZslKAq0fTHIPGSh+BebNy8BWy80Ty?=
+ =?us-ascii?Q?IyD3tXMRLZUeopdSpFcSgvW4DlWXBeT9vHeBooCIdFgBggNrC5dKqwg9gHm3?=
+ =?us-ascii?Q?x3VP1LUg3K/6aC/QTdxDDDOl4pEyoBRzSHOznfP2Duq/UGhLS/5IzG5ZmRwu?=
+ =?us-ascii?Q?t33rHfafrY8yEYJ3+QZfyGCuMad1YdY2l2EXYB4j/VP6G5THpCQiJM2mPjYH?=
+ =?us-ascii?Q?faVlQoyEuy48IRmH9k7Up43O1cXh+6y7l0OmYrmLsJqYnRUpohC+/pGUCGRR?=
+ =?us-ascii?Q?qul693mqpeZpNLKSD+81qoohoDGvhlsc//u7ikwOE50OC+KEaOfYKgMpPxPp?=
+ =?us-ascii?Q?dYAy2N2e8ATrhWd1lvY0NJrSb5iFUA+AcGClk6cSqSGZ0OvliYUBmwJ5b/PM?=
+ =?us-ascii?Q?LYz2BLuT5fPiC8xK51qu8iNdOcZQQ0LDZ8P7MnCp6iiPuaQex5yCRh9aL7J7?=
+ =?us-ascii?Q?jEKSdlWO2CgiYd5tyaLzCGbyJdvdKQpLfNtbF4a8tiR03XygMO8JMmsH5r/h?=
+ =?us-ascii?Q?Ep6vlqJUInIpzC5fKU3MEFgwR6A/WQNjyAb4xZraBeSubjFRGuiAcdZb5R9+?=
+ =?us-ascii?Q?BMimcKaX8MAA9Vl0RvuyF7dFn7zMcPneS3/F/rDGiMyfYVIxT0s12v3dYAOT?=
+ =?us-ascii?Q?1EDEIj1b4140LA0TF6NNFvjZI2TL/xwWyCl5JvC9ipmBzpz29t41NFFB/2e+?=
+ =?us-ascii?Q?vKPiPu9fMgBS63pmaRpeEyEUYn6YQr2O8NuLF8QpreVm9dAfspQoRlm2M/ZD?=
+ =?us-ascii?Q?b3I+2QvyC3cx+f8pkjL0JPjg66WHYqz+CV0ncrk9qpT43IvU4uWu6DPvU4sU?=
+ =?us-ascii?Q?86k5R97Ta8cQx/607Q62FG5BLsbb+4kGWo1uxKcwGVoa3UyZ1nrcMzdH5qOM?=
+ =?us-ascii?Q?qUVZvppU2He//4Se1mZZozxXH02lymSzVmNKFK4X2hgQPcYxg7cxyHAJx7pY?=
+ =?us-ascii?Q?8WNsqjeuhL5vM/jGDINpQi+BC7aPMR4WDHyzqsJo++lTM44hWDc7jDMHczDQ?=
+ =?us-ascii?Q?MV187XFN3jGy4kNUTF3N1SEXIqI3yJHO4pJPfY0Q7wGbMJotpWSB5vqHvKp1?=
+ =?us-ascii?Q?QWORtC669STrOXovD0tuWxb0FqTOwbwGc6Twqsucp2ZzUMgVfdJ+2MhbGdCT?=
+ =?us-ascii?Q?UCinScTUBv58gj5iy8527Nvi9v1SltzPilVwlv8VmDkSo35tO/XIe5SFZV2r?=
+ =?us-ascii?Q?Zg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	yvk0My/Q04n9tKcQof6fjKYgG2phmUybWWulX1Wqaf7RcrCshf/+xAhKEP2JUU4VIO7FJSsBz93pqBoP7sXGEIFUEIMxXz4xr8sVXQPJWEA9GDLA8dT9nZghMS8zBeLQBmGCIfjiQdoJQJkDxIU8WdcSLE4rHMX1P2K8I8dLfgjWr0OTw+TKZ5yCAJ903ktDZFFSltxi8t7p6f3SSQmbVnW6OzKOnicPJNOejrMyEav5HzG9F/ViYi/AmoPYGQvgfdjs/m3CWMvlSiIWzpq6i+U7G+WqdimEngRqTK7OjkLxkNUMs4jxpUtW4IBE0XDUYi7YKdJOkmJlxFr4JgzeI85FtxuadSGW/kBhTatd2MAwbdGxjycllzLizNgh93lGYzaUXHU6FHCCqqz6z1zKcyamHX3ZMR6yO3jTcYDdZvCob5LqP2vbB6WDLGegJjmiFIZBIosW18Si27CI+CSWFHnh1lf8OJ3FkdSQ+sGVDYzDdN+gGFOe5PGUPos4JnsjWWlygJBaJzjz6/QACqn/5LfMPLJK7SIBOg9yFHpq5sUTVgWNzFZD/z0/QIR9CYAaz1a2a4CdCqUEkt3ESmwC4Zhmso9Zi289amY+VBkvtSg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ab1708d-bb9e-4aa9-1795-08de0b30d4f9
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 14:49:09.4101
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4MbwB8Q4G7s7WLI9Z0t2CQlqX4qobxlpsiezN5sYHgNgff9K8hW+FCTBnhbk55KPwJ0nw+UcvuZq+GOogAooCCfPxgDxEJK8FATwFkgnMkU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4326
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510140111
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxMCBTYWx0ZWRfXx4SA9j691EOw
+ h8RxIR90dmEXE129J9CBgtABPYzVsbOVP7SC49g1an6/sF2dry9yZnzC4kBl8XzaUHb4nkkHplP
+ K06BGIe+nPk5g6m//MCjIUJ+PDviCXZ+IVz0AmOw31MyzO07CqwVkn/pBmHGrFY7zcVU1p44ob4
+ Dsa3s+wgaDv4CPUBzzVlXI/gVAzh7JTzUj9aFO/qkI1p2QyhwSNP3nAtX2qCxKLycZYEPEC0ScN
+ 1J0H/Hpjqf1Y9y7b6HiVmQiKadsl0mEYjb0Nfi3l+i5qCr1HlhD5xdQchggWfehj/cjkZXLELS4
+ oq1eADZAJwAjdpwS1Bq9RkJVe6niBhKUQZJ8MamlV3XEv7i82Y7A4n5zFmmGBFi392Ip7RmfeXM
+ auFbXkK3ORpDDrIcD5Wss3kmVxyQ1A==
+X-Authority-Analysis: v=2.4 cv=V7JwEOni c=1 sm=1 tr=0 ts=68ee62e9 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=XsKhEmAtKFYngn54E4QA:9 a=CjuIK1q_8ugA:10 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: atHhCjo18SSWPUEw3_WA8dMdDnHT636F
+X-Proofpoint-GUID: atHhCjo18SSWPUEw3_WA8dMdDnHT636F
 
-Hi,
+On Tue, Oct 14, 2025 at 04:38:05PM +0200, David Hildenbrand wrote:
+>
+> >
+> > 		/* Skip spurious TLB flush for retried page fault */
+> > 		if (vmf->flags & FAULT_FLAG_TRIED)
+> > 			goto unlock;
+> > 		/*
+> > 		 * This is needed only for protection faults but the arch code
+> > 		 * is not yet telling us if this is a protection fault or not.
+> > 		 * This still avoids useless tlb flushes for .text page faults
+> > 		 * with threads.
+> > 		 */
+> > 		if (vmf->flags & FAULT_FLAG_WRITE)
+> > 			flush_tlb_fix_spurious_fault(vmf->vma, vmf->address,
+> > 						     vmf->pte);
+> >
+> >
+> > So I don't see why it's so egregious to have the equivalent here, or actually
+> > ideally to abstract the code entirely.
+>
+> Let's definitely not duplicate such comments whereby one instance will end
+> up bitrotting.
 
-On Mon, Jun 09, 2025 at 11:15:29PM +0800, Dawei Li wrote:
-> Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> abstracted in procedures below:
-> - fd = open("/dev/rpmsg_ctrlX")
-> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
->   generated.
-> - fd_ep = open("/dev/rpmsgY", O_RDWR)
-> - operations on fd_ep(write, read, poll ioctl)
-> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> - close(fd_ep)
-> - close(fd)
-> 
-> This /dev/rpmsgY abstraction is less favorable for:
-> - Performance issue: It's time consuming for some operations are involved:
->   - Device node creation.
->     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
->     overhead is based on coordination between DEVTMPFS and userspace
->     tools such as udev and mdev.
-> 
->   - Extra kernel-space switch cost.
-> 
->   - Other major costs brought by heavy-weight logic like device_add().
-> 
-> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
->     that a dynamically created device node can be opened only once.
-> 
-> - For some container application such as docker, a client can't access
->   host's device node unless specified explicitly. But in case of
->   /dev/rpmsgY, which is generated dynamically and whose existence is
->   unknown for clients in advance, this uAPI based on device node doesn't
->   fit well.
-> 
-> An anonymous inode based approach is introduced to address the issues above.
+We're duplicating the code in two places, how would that bitrot happen exactly?
 
-The above line is too long and gives me a checkpatch warning.  Please refactor
-and send again.
+I mean as I also say, probably better to just de-duplicate in general.
 
-Thanks,
-Mathieu
+It's one thing referring to a comment _above_ another function, it's quite
+another to refer to comments buried in a branch buried inside another function
+and to hand wave about it.
 
-> Rather than generating device node and opening it, rpmsg code just creates
-> an anonymous inode representing eptdev and return the fd to userspace.
-> 
-> The legacy abstraction based on struct dev and struct cdev is honored
-> for:
-> - Avoid legacy uAPI break(RPMSG_CREATE_EPT_IOCTL)
-> - Reuse existing logic:
->   -- dev_err() and friends.
->   -- Life cycle management of struct device.
-> 
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 80 ++++++++++++++++++++++++++------------
->  1 file changed, 56 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index eec7642d2686..6c19f2146698 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -91,7 +91,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  	/* wake up any blocked readers */
->  	wake_up_interruptible(&eptdev->readq);
->  
-> -	cdev_device_del(&eptdev->cdev, &eptdev->dev);
-> +	if (eptdev->dev.devt)
-> +		cdev_device_del(&eptdev->cdev, &eptdev->dev);
->  	put_device(&eptdev->dev);
->  
->  	return 0;
-> @@ -132,21 +133,17 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
->  	return 0;
->  }
->  
-> -static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
-> +static int __rpmsg_eptdev_open(struct rpmsg_eptdev *eptdev)
->  {
-> -	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
->  	struct rpmsg_endpoint *ept;
->  	struct rpmsg_device *rpdev = eptdev->rpdev;
->  	struct device *dev = &eptdev->dev;
->  
-> -	mutex_lock(&eptdev->ept_lock);
->  	if (eptdev->ept) {
-> -		mutex_unlock(&eptdev->ept_lock);
->  		return -EBUSY;
->  	}
->  
->  	if (!eptdev->rpdev) {
-> -		mutex_unlock(&eptdev->ept_lock);
->  		return -ENETRESET;
->  	}
->  
-> @@ -164,21 +161,32 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  	if (!ept) {
->  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
->  		put_device(dev);
-> -		mutex_unlock(&eptdev->ept_lock);
->  		return -EINVAL;
->  	}
->  
->  	ept->flow_cb = rpmsg_ept_flow_cb;
->  	eptdev->ept = ept;
-> -	filp->private_data = eptdev;
-> -	mutex_unlock(&eptdev->ept_lock);
->  
->  	return 0;
->  }
->  
-> -static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
-> +static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  {
->  	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-> +	int ret;
-> +
-> +	mutex_lock(&eptdev->ept_lock);
-> +	ret = __rpmsg_eptdev_open(eptdev);
-> +	if (!ret)
-> +		filp->private_data = eptdev;
-> +	mutex_unlock(&eptdev->ept_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
-> +{
-> +	struct rpmsg_eptdev *eptdev = filp->private_data;
->  	struct device *dev = &eptdev->dev;
->  
->  	/* Close the endpoint, if it's not already destroyed by the parent */
-> @@ -400,12 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
->  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
->  
->  	ida_free(&rpmsg_ept_ida, dev->id);
-> -	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
-> +	if (eptdev->dev.devt)
-> +		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
->  	kfree(eptdev);
->  }
->  
-> -static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> -						      struct device *parent)
-> +static struct rpmsg_eptdev *rpmsg_eptdev_alloc(struct rpmsg_device *rpdev,
-> +					       struct device *parent, bool cdev)
->  {
->  	struct rpmsg_eptdev *eptdev;
->  	struct device *dev;
-> @@ -428,33 +437,50 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
->  	dev->groups = rpmsg_eptdev_groups;
->  	dev_set_drvdata(dev, eptdev);
->  
-> -	cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
-> -	eptdev->cdev.owner = THIS_MODULE;
-> +	if (cdev) {
-> +		cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
-> +		eptdev->cdev.owner = THIS_MODULE;
-> +	}
->  
->  	return eptdev;
->  }
->  
-> -static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> +static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
-> +						      struct device *parent)
-> +{
-> +	return rpmsg_eptdev_alloc(rpdev, parent, true);
-> +}
-> +
-> +static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
-> +			    struct rpmsg_channel_info chinfo, bool cdev)
->  {
->  	struct device *dev = &eptdev->dev;
->  	int ret;
->  
->  	eptdev->chinfo = chinfo;
->  
-> -	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> -	if (ret < 0)
-> -		goto free_eptdev;
-> -	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> +	if (cdev) {
-> +		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> +		if (ret < 0)
-> +			goto free_eptdev;
->  
-> +		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> +	}
-> +
-> +	/* Anonymous inode device still need device name for dev_err() and friends */
->  	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
->  	if (ret < 0)
->  		goto free_minor_ida;
->  	dev->id = ret;
->  	dev_set_name(dev, "rpmsg%d", ret);
->  
-> -	ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> -	if (ret)
-> -		goto free_ept_ida;
-> +	ret = 0;
-> +
-> +	if (cdev) {
-> +		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> +		if (ret)
-> +			goto free_ept_ida;
-> +	}
->  
->  	/* We can now rely on the release function for cleanup */
->  	dev->release = rpmsg_eptdev_release_device;
-> @@ -464,7 +490,8 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
->  free_ept_ida:
->  	ida_free(&rpmsg_ept_ida, dev->id);
->  free_minor_ida:
-> -	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> +	if (cdev)
-> +		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->  free_eptdev:
->  	put_device(dev);
->  	kfree(eptdev);
-> @@ -472,6 +499,11 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
->  	return ret;
->  }
->  
-> +static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> +{
-> +	return rpmsg_eptdev_add(eptdev, chinfo, true);
-> +}
-> +
->  int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
->  			       struct rpmsg_channel_info chinfo)
->  {
-> -- 
-> 2.25.1
-> 
+And _those_ comments might very well be moved when the function is sensibly
+refactored (as it needs to be tbh).
+
+So yeah, in general I'd agree _if_ you were doing something
+similar-but-not-the-same AND referencing a clearly identifiable comment
+(e.g. above the function).
+
+But this isn't that at all.
+
+Anyway TL;DR is that we should just de-dupe the code.
+
+>
+> When talking about spurious faults I assume the educated reader will usually
+> find the right comments -- like you easily did :P
+
+Yeah but I'm familiar with the (kinda hideous) code there, it wasn't so much
+'easily' found and for somebody else they'd maybe get confused as to what on
+earth that's referring to.
+
+>
+> However I agree that ...
+>
+> >
+> > In commit b22cc9a9c7ff ("mm/rmap: convert "enum rmap_level" to "enum
+> > pgtable_level"") David introduced:
+> >
+> > 	enum pgtable_level {
+> > 		PGTABLE_LEVEL_PTE = 0,
+> > 		PGTABLE_LEVEL_PMD,
+> > 		PGTABLE_LEVEL_PUD,
+> > 		PGTABLE_LEVEL_P4D,
+> > 		PGTABLE_LEVEL_PGD,
+> > 	};
+> >
+> > Which allows for sensible abstraction.
+>
+> ... if there is an easier way to just unify the code and have the comments
+> at a central place, even better.
+
+Yup we're agreed on that :)
+
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
+
+Cheers, Lorenzo
 
