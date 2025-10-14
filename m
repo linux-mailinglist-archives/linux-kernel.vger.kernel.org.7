@@ -1,110 +1,73 @@
-Return-Path: <linux-kernel+bounces-852902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896D8BDA306
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:59:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D5CBDA320
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B894A18A372A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:00:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5357B5023C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FB3002AE;
-	Tue, 14 Oct 2025 14:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cuwboClK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC5A2FFDC0;
+	Tue, 14 Oct 2025 14:59:34 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F38D2FFFB9;
-	Tue, 14 Oct 2025 14:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D660119D093
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453957; cv=none; b=nSHFsuV7gX6DsvY/FGdtBgH3OHR7FT+V4cPsH8mI+FFtd5xSe/vheDcgnVR3AzI4+Q1whPSuKPXc80Jk5uMWtm4Z1TGvmP7gjmaM4iXdeSBK4Ro2Rz5hWMufd++ESuU+uHpkv2I3bHgaDbJh6wIJbj0R9h6G9RO8U948VVMqTTA=
+	t=1760453974; cv=none; b=lqX3sNZQZmKxEcHZ1QZJsYs/BBloUpSFo4sGAVrxvCPETqvMf8sptiXwtjjBRHow14XFJHRR2Leq+wniYoQqyA7iaQsoyUyz/fSsUJD18VznRcJpfmfhio1Hy2XVcjAJsbl8aVbptxx+0x/zkmr+2wfMAkqi66O56R3m2JPyZmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453957; c=relaxed/simple;
-	bh=vUTHM+SWkI/RV5I02QaaIF2/tUM7KgdwTICyd2lXCaI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qEdfqUBT/akwgt+68SEay+nUTWcla/Y32+nHMBqepc6lqj0Sd+6aOXfLpeqq4PTb0aCk70n3U17mh+Ntb3YT3z5Ylp86d39RB/3XyjJs2Z6Aa/ZKvQXDHxGqU6hvhp/c505pqIvrSX6eTk+7x4vs/0Upc6euVncE//fy6CYxI/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cuwboClK; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760453955; x=1791989955;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vUTHM+SWkI/RV5I02QaaIF2/tUM7KgdwTICyd2lXCaI=;
-  b=cuwboClKzOvf06beVeeg42gXXLyZ39jjO0RGaDUf1PmF730MIeJ4lVuq
-   q8VkNEGHYudYEpJH22+9xhXq3KBzxJJF072H2qxzoVTk+dFbzU/i7R93x
-   HwgIEm5TQfB+VW7rzrbadEq9j3jA8ZzUXLLwmEAg6CziSGhrLx+8SHf9N
-   AprvP1IESwApNn++6pjtdX2HYCZauScRPqaNNoyG1ghwQT10NmzLmPrgI
-   E40AAC+LNtrDQkGbilCEy07mFgkTVLAsHtvXJzIjjEwgWFvP1rCfaZMYf
-   EWS6uYaL/w2OBwrrrFB9aGyws0ZRlnquyQLsiJpf8wkch11ElVCNTM9x3
-   w==;
-X-CSE-ConnectionGUID: ZdyG4dAsTdegMZstqUV9qA==
-X-CSE-MsgGUID: tRVP7JR1TKGmzWhiz7T6JA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="66473195"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="66473195"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:59:14 -0700
-X-CSE-ConnectionGUID: gCXVd/D9QH6QXFLAtnwRYg==
-X-CSE-MsgGUID: 9ZKEbwLcR5GDfuCSuWUNOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="182344421"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.195])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:59:12 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-iio@vger.kernel.org,
-	William Breathitt Gray <wbg@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: [PATCH v2 1/1] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
-Date: Tue, 14 Oct 2025 17:59:05 +0300
-Message-Id: <20251014145905.4862-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1760453974; c=relaxed/simple;
+	bh=Pe7SZtMJam45KWCoqEg7vdFDhTltPbuePEBl3c9BQGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rvuwjb7QH7r4dHYafrvOcfD67XLeIWDKnF8ytPXFUv/eJ8be7GB/gLvEGI17UJMisOBCs0xHRwr6TsMSugxNL6GM6qxdCMShCJ5mtAUa2mKN7wpww5Dh4oFni/60TZa+jzjJtzGjwI+vyYjgpj99p4pmbq4987r4EokVLrrjTAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59EEx9Qo002315;
+	Tue, 14 Oct 2025 23:59:09 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59EEx9cP002312
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 14 Oct 2025 23:59:09 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <04bd83f8-2a34-4756-8309-8f2fbdb0f239@I-love.SAKURA.ne.jp>
+Date: Tue, 14 Oct 2025 23:59:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ntfs3: prevent operations on NTFS system files
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com,
+        almaz.alexandrovich@paragon-software.com
+References: <20251014143942.643856-1-kartikey406@gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20251014143942.643856-1-kartikey406@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Jarkko's address is going to bounce soon and I agreed to be the new
-maintainer.
+On 2025/10/14 23:39, Deepanshu Kartikey wrote:
+> NTFS system files (inode numbers below MFT_REC_FREE) should not have
+> their size modified by userspace as this can corrupt the filesystem.
 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
-
-v2: Add S: Supported
-
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46126ce2f968..393a475fbd1e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12822,8 +12822,9 @@ S:	Orphan
- F:	drivers/ptp/ptp_dfl_tod.c
- 
- INTEL QUADRATURE ENCODER PERIPHERAL DRIVER
--M:	Jarkko Nikula <jarkko.nikula@linux.intel.com>
-+M:	Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
- L:	linux-iio@vger.kernel.org
-+S:	Supported
- F:	drivers/counter/intel-qep.c
- 
- INTEL SCU DRIVERS
-
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
--- 
-2.39.5
+Excuse me, but how can truncate operation succeed? As far as I tested,
+truncate operation on files in $Extend directory fails even without your patch
+( https://lkml.kernel.org/r/842b3b43-0a1c-4fe8-adff-94fdb2cee59b@I-love.SAKURA.ne.jp ).
+Are there other NTFS system files which do not belong to $Extend directory?
 
 
