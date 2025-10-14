@@ -1,88 +1,169 @@
-Return-Path: <linux-kernel+bounces-853066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5E5BDA924
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A352BBDA92D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EFC633498E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94DB818A7EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A062F30146F;
-	Tue, 14 Oct 2025 16:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E023019AD;
+	Tue, 14 Oct 2025 16:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xVqSR5mP"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1Hut6Jt7"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EC8221FCB
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5276524338F;
+	Tue, 14 Oct 2025 16:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760458195; cv=none; b=u0rJsBDsbn47aGuYX4oiZaxFzjfG+qsSAYjxo6NpVZPYDslM8GHDb47qOB9t5rmtiHtsj9FwL6wP5Cdy3EQOvseq3ipwLStGQDDpE+CLgt4jdOXL+0Dvshh4dRTP2fhxZsSbo5gRTml/79NzRzhO5+OIhhb1fjHk599nxXJ42tM=
+	t=1760458247; cv=none; b=rS2pW3mUg3K5j3LlnqZuL6XkXQPyrnlOofY8OfRsXCEElSATEdE1ABQjY+gkna4wO7OvtLAlmXrxsWg3VZJZquC8IGBzFzEQUi1ksr3ii3itBIHBRQBO8mKkysil3ZsFPlvoVixp2Vg2IUbGbdDyy98Cql0aQP5HfsXVOcotRGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760458195; c=relaxed/simple;
-	bh=Whutt4xQd6Pv4Eivvs00SmQKWn9c93fGKp+BqvRd0JY=;
+	s=arc-20240116; t=1760458247; c=relaxed/simple;
+	bh=H/s5+ANG6P7dbnAbRrl7NGS2jbhYC27S0c+hYRzhYH8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZgVfHok0kaY3glrj9mbWflFuS6jjQC25yiQMtKoaz5pys6TJ16jwMbc5qKqBmaJg59P0tXrzWg8DQ3mT+KfJ7FYF7pj8KkBb0zqv/qhC43LnJsjUo8x16X+xycL99M0MPcEBPatYtK+NXFC6eB4uEiNlqrfq8qq5db7UYElHGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xVqSR5mP; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b0e88b97-3c55-4be3-9782-4ab5e5d72ebe@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760458190;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+Twt08nWN4Np4W7evQ3ot+OSGaLX8P0SMb0zqLKEwM=;
-	b=xVqSR5mP5Kwg/dvugAJHEPNCg7sb/bH/6mecSofbYeyIVMvdk1hXmF83ovYbzQEl0s0o4/
-	wnR6gkCzhFWaxScV9CsI+UfFEXQM3ZndKVGWOhUwaZ7/gHbPC7EkT2B+7RGNVPBkkFNWcH
-	lisHrpd9o+mpdDdPxI+g0xwEbQIJYmw=
-Date: Wed, 15 Oct 2025 00:09:42 +0800
+	 In-Reply-To:Content-Type; b=Em0aqgJVNnnEU+GCzQf0txvRyXRCScKHd+IZ+m25E1lCZFmCIIz/Pkrit/A6cbwTA2jgm+ISU3r07fZ3vyTY3OvqA6xPdG+kSiVwUF7l1B9ean61DQa60f4TLc/vx30rba+C5wZXwWAdosYRF49LK3DpJ6z4ofcmyLBd7d1GgIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1Hut6Jt7; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cmK2D1WNbzm0yt2;
+	Tue, 14 Oct 2025 16:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1760458239; x=1763050240; bh=Ps7mj9LCeV6vgaN7TCVO+fAJ
+	E22Xnqinq7TSVO/rcI4=; b=1Hut6Jt73U0qSAdyNP3tZFH84mOzxmAoDsHbnGHs
+	2f3LDKq46jLoijWDfYHYPaZc8bBp4u7B+cjlURsfcv3JVlej97i6w1ENiRXuh1v8
+	crIGiOA61hms+UVjwT+xZq0arwUM3jeXpgxEpK9ud8orAvo79ledWj8GwlP3dbZA
+	A9nGn9qVbLr9NulSLLFc0YkzyqjaIX/N4P/SIjyXv4y1aWzMk6GTkpsZ+ZI7oNjz
+	MWPKHycX3K4k8BCM3V3yC39lWR1Bm5JmH8NokPP46wnEgDCoZb5Cuq9kBeDDjmH6
+	frkx4FyfHo1v7OL9yB0c1aKXFjkd1BawoZ5jHNF2svo46Q==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id rpFy6Ce4o2Be; Tue, 14 Oct 2025 16:10:39 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cmK1r4ltyzm0yTq;
+	Tue, 14 Oct 2025 16:10:23 +0000 (UTC)
+Message-ID: <d027689e-9c45-4584-ac35-411b74b551a9@acm.org>
+Date: Tue, 14 Oct 2025 09:10:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
- non-swap entries
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 1/2] ufs: core:Add vendor-specific callbacks and update
+ setup_xfer_req interface
+To: palash.kambar@oss.qualcomm.com, mani@kernel.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, peter.griffin@linaro.org, krzk@kernel.org,
+ peter.wang@mediatek.com, beanhuo@micron.com, quic_nguyenb@quicinc.com,
+ adrian.hunter@intel.com, ebiggers@kernel.org, neil.armstrong@linaro.org,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
+ quic_nitirawa@quicinc.com
+References: <20251014060406.1420475-1-palash.kambar@oss.qualcomm.com>
+ <20251014060406.1420475-2-palash.kambar@oss.qualcomm.com>
 Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
- ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
- ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com
-References: <20251008032657.72406-1-lance.yang@linux.dev>
- <f33735d3-b38d-4b6a-aeba-b415e6b24ea2@lucifer.local>
- <0bfdbccd-9d4a-409f-ae43-b44bb7347d70@linux.dev>
- <f7392f43-b8f1-4e6a-b9c8-25ad8a47f82c@lucifer.local>
- <95a223b1-8d57-40c3-8226-678b1db233aa@redhat.com>
- <57cffedc-65c0-44f1-8364-3a3ff9bdc760@lucifer.local>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <57cffedc-65c0-44f1-8364-3a3ff9bdc760@lucifer.local>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251014060406.1420475-2-palash.kambar@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi David, Lorenzo,
+On 10/13/25 11:04 PM, palash.kambar@oss.qualcomm.com wrote:
+> On QCOM UFSHC V6 in MCQ mode, a race condition exists where simultaneous
+> data and hibernate commands can cause data commands to be dropped when
+> the Auto-Hibernate Idle Timer (AHIT) is near expiration.
+> 
+> To mitigate this, AHIT is disabled before updating the SQ tail pointer,
+> and re-enabled only when no active commands remain. This prevents
+> conflicting command sequences from reaching the UniPro layer during
+> critical timing windows.
+> 
+> To support this:
+> - Introduce a new vendor operation `compl_command` to allow vendors to
+>    handle command completion in a customized manner.
+> - Update the argument list for the existing `setup_xfer_req` vendor
+>    operation to align with the updated UFS core interface.
+> - Modify the Exynos-specific `setup_xfer_req` implementation to match
+>    the new interface and support the AHIT handling logic.
 
-Thanks to both of you for the deep dive on this!!!
+Yikes. Please disable AHIT entirely or disable/enable AHIT from inside
+the runtime power management callbacks rather than inventing a new
+mechanism for tracking whether any commands are outstanding.
 
-The code we've been discussing was moved to a new helper by
-another patch series[1], so let's call it a day on this
-thread and leave it as-is and just review/change the logic
-at its new home :)
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 568a449e7331..fd771d6c315e 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -2383,11 +2383,11 @@ void ufshcd_send_command(struct ufs_hba *hba, unsigned int task_tag,
+>   		memcpy(dest, src, utrd_size);
+>   		ufshcd_inc_sq_tail(hwq);
+>   		spin_unlock(&hwq->sq_lock);
+> +		hba->vops->setup_xfer_req(hba, lrbp);
 
-[1] 
-https://lore.kernel.org/linux-mm/20251008043748.45554-1-lance.yang@linux.dev/
+What will happen if hba->vops->setup_xfer_req == NULL? Will the above
+code trigger a kernel crash?
 
-Thanks a lot!
-Lance
+> @@ -5637,6 +5637,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
+>   	}
+>   	cmd = lrbp->cmd;
+>   	if (cmd) {
+> +		hba->vops->compl_command(hba, lrbp);
+>   		if (unlikely(ufshcd_should_inform_monitor(hba, lrbp)))
+>   			ufshcd_update_monitor(hba, lrbp);
+>   		ufshcd_add_command_trace(hba, task_tag, UFS_CMD_COMP);
+
+Yikes. New unconditional indirect function calls in the hot path are not
+acceptable because these have a negative performance impact.
+
+> @@ -5645,6 +5646,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
+>   		/* Do not touch lrbp after scsi done */
+>   		scsi_done(cmd);
+>   	} else {
+> +		hba->vops->compl_command(hba, lrbp);
+>   		if (cqe) {
+>   			ocs = le32_to_cpu(cqe->status) & MASK_OCS;
+>   			lrbp->utr_descriptor_ptr->header.ocs = ocs;
+
+Same comment here.
+
+> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> index 70d195179eba..d87276f45e01 100644
+> --- a/drivers/ufs/host/ufs-exynos.c
+> +++ b/drivers/ufs/host/ufs-exynos.c
+> @@ -910,11 +910,15 @@ static int exynos_ufs_post_pwr_mode(struct ufs_hba *hba,
+>   }
+>   
+>   static void exynos_ufs_specify_nexus_t_xfer_req(struct ufs_hba *hba,
+> -						int tag, bool is_scsi_cmd)
+> +						struct ufshcd_lrb *lrbp)
+>   {
+>   	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+>   	u32 type;
+> +	int tag;
+> +	bool is_scsi_cmd;
+>   
+> +	tag = lrbp->task_tag;
+> +	is_scsi_cmd = !!lrbp->cmd;
+>   	type =  hci_readl(ufs, HCI_UTRL_NEXUS_TYPE);
+>   
+>   	if (is_scsi_cmd)
+
+I'm about to remove lrbp->cmd so please don't introduce any new users of
+this structure member.
+
+Bart.
 
