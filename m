@@ -1,143 +1,188 @@
-Return-Path: <linux-kernel+bounces-852019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADD2BD7F6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:37:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50011BD7F53
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53AF3A3712
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:35:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41BA94F85DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AE42D9EF2;
-	Tue, 14 Oct 2025 07:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D130E823;
+	Tue, 14 Oct 2025 07:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YxJx0KAx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NeETP5mB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F5F2D3EC1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7672BF00A;
+	Tue, 14 Oct 2025 07:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427340; cv=none; b=DQY+AujaqKRl1QUTGYGOdr0fuMwoYLG461gsQjFao8B8D3jUFpITwW/U2PcFNtJr6lo9cT+RpEB9+3tlAwdgCyxxRC4bzd+OPv5ZlZD1y04KluuyR5qlfejfcK85bBiQ11tlDLAu2Qv3rjauifJSzYdeQzzfZi35p49uhx7t630=
+	t=1760427364; cv=none; b=F016hsHEAQe12eSvtvTbL2TTKiaodVenJ7lAPglAtelxBwIgfFH1lQnBXiNzeO00DCOEeu9dgQFY2tifs/NYGPIjkwnFoCYoId2i8FhN/T+0+kg3j2HW/eBQtbwtuNqF68KEtgVJ4XvjGH/D5pQ+6+xYBcgvVMfeLffnAe6hCg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427340; c=relaxed/simple;
-	bh=+9KJgUfIBS11iAKR5LnNdo1j7qdwGm2mPaEPeiV2PwE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yu8W4Av6+VyX1YVYdkNULTtFSYqlw51VyCZeXnOhjm/kwU/rVVkgWclULA9Nn4C5x83uxvoT5JoVst0ON/g73QZsT4cgdnKP9nqPn1hGm2Fm3IBXgs6HRApIo0ZSBEUXa+GRtyJ0ipO5wEEcl5i3A00NXLQpQy7OoHWR8lkQt9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YxJx0KAx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E6RE80016500
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:35:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=aA7JCiuVVRCy3V30ThlamZSn/80oafKR6lF
-	slO98isQ=; b=YxJx0KAxO2DqDO8I0IKd7HJf3ZDdKG0xzvCT/lLqkhtagBriu9E
-	qR42JQe0OQhY2Nke4Vpeh9pTtdbGcOAVVfNmtg+l2gTL5Q9iWQAoBlQFET1Wiere
-	cY+l05G5XIiXa8S1mE4DhMJ9Lqhgir+iR2ftCKJUGRcUOJjKDRmL9mQaJ+qfRwEd
-	6fILSLEHu+Cwag/8EcpfEgRIB06tWg7Bm6J9U9gWDisWxCXc3W4cn7sJz0ssCohl
-	2JRGe6Jph4NnrktfzmOxvVOoxqVGEsRTdCHbT/QAGbbWy9MyEAUVGjnszAi7uIdv
-	WkBaRAjf0QALrxwJ6CXxZJn89NMjzq1BobA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1abwhp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:35:38 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-26985173d8eso178209995ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:35:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760427337; x=1761032137;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aA7JCiuVVRCy3V30ThlamZSn/80oafKR6lFslO98isQ=;
-        b=Q+fiy35xxeRi0Sbb7Yhxs7NYPBBTa0CmCl01tYqCdPsgqmP0QeVsY0VCVsqzaH6AKU
-         ZlXuiAjpUu0bZgSjr9xwSnxBw6/F2QbWlpP1sgQDD1kuLSXyx/YRlJB5D0dev5VwHlu5
-         Qrn2aqSiTI/9GqIfHKNzaHeOcijMl4XeINrWfvoLoYwt115Z0qxtPIJ91VhcrEDs7kwp
-         E9smxZ/hRlI7stQKgxfMDS746IPt3B9VlrcTeNjgU74LVABwAYAIbS7Z3Oj3YO3QgooY
-         COgBxKQxC4P91o7reKvYs2nLzYJtqN9BaXJTr1aElF7wXQh5PCEiFUSud9CKUr+dkbPf
-         qT3Q==
-X-Gm-Message-State: AOJu0YyAAj6njucnlIJuWCvVFhTy54gqHfOPpM2D6Q9rcBKzf+jGM+uM
-	ExkrN/QDOekYuDYAO7hrWZafKyJ77seiKWZadqTzppzWJKpJCHcDvKIEVUjcjPzOJq1K7c/+iyR
-	g69O80Bog46daChm7aJzFGUTykokNQ/lz94YVVcsnsMsFaei7zvKYttqMzoNH44df8qk=
-X-Gm-Gg: ASbGnctB7rZhIKNjzS4KIgU1KZ7p4OvnZpjZe2bNjZtEiXPKVJikY6SfMeileZL1O3f
-	X8pZR64GaqYR9Qnf+sCZpw+Mf8JU0rH9svfZAUu7N6aCsCJxCxpvswegl18B2B15FVat+0YtXYB
-	faVk/sduxVfp4C0HlPn0XQQQUTomlBC4e5i4GOQp4prTHUmrXy9bRJ/DrPgqX7GgRFwydX1nYPP
-	iUYn/xJKqDRAL9ygnS20EZU0+NT6sn9jk3gQ9JZ1bQc+kPy5wNbZOntXFtCw5VCjbBFtzWPXoCZ
-	YStx4JvY4cA9dEKbgS8TgGBrrmFNfrkXj8bzU2Ii7AkJPqgBQU1VTRQW6LYwdQZW3ed8LI/Rq78
-	N523YqzkTD1CQqBjmUSw=
-X-Received: by 2002:a17:903:2acc:b0:264:ee2:c40f with SMTP id d9443c01a7336-2902730237dmr320265105ad.52.1760427337281;
-        Tue, 14 Oct 2025 00:35:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOxdIo88Y+BDPv1KzmWMec2XJ9wxExeRxOPDZ/MXxz4c5ZQPBmyG0bxZVL0yu6B0smPV2waQ==
-X-Received: by 2002:a17:903:2acc:b0:264:ee2:c40f with SMTP id d9443c01a7336-2902730237dmr320264835ad.52.1760427336782;
-        Tue, 14 Oct 2025 00:35:36 -0700 (PDT)
-Received: from hu-viveka-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f93b66sm156070585ad.124.2025.10.14.00.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 00:35:36 -0700 (PDT)
-From: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
-To: sudeep.holla@arm.com, cristian.marussi@arm.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, mike.tipton@oss.qualcomm.com,
-        Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
-Subject: [PATCH 1/1] firmware: arm_scmi: Increase MAX_OPPS to 64
-Date: Tue, 14 Oct 2025 00:34:54 -0700
-Message-Id: <20251014073454.461999-1-vivek.aknurwar@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1760427364; c=relaxed/simple;
+	bh=2284CvY5KmX5EI9TFoaFTarD8eR3jMtTJMBg6GQjNRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJGJQABz+Td97f456XwXr2PrN4snGeNRJEpF5kiXWiX7Py4qTtEEqvBRBVPLpI3dJZq/CCq3yI3w/yWvnVZtzApyqhGw0DSjzl25nY01+m5U5oSbXKDgSCGj+nNcKaz1bIvumVkt6/bIyPFe848iwSssq3zR5M2FGxTMwsPi14k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NeETP5mB; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760427362; x=1791963362;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2284CvY5KmX5EI9TFoaFTarD8eR3jMtTJMBg6GQjNRU=;
+  b=NeETP5mBo5TBVX8A2D1tqSu8bWV8LrJXJLMLl7rZ6tx563C2NLy6rObi
+   8MEorqkaUXb/y1VdbyEDwZPkDDl2bC10hXfqwcPPgD4tQlLbzHx8nZ1Er
+   mtwNC6IExHoAumaQIYe/XHUrPp9rp63bhbPikqpuBSea971Dzh11/F3dG
+   bCxuSiTEF0NaD1kr4Ot8dygByRmtZAjt97wrjrbW05fObZiGZuy6VxMaC
+   nrmjXqEIQCBb+GARrTQCFWdPnC7aoSSnjs2vX69SaWNvJ5b/kWqWJAQ2y
+   0x+eZXu7CcRpno+xK+MPrmVuPswaMuQoQp1ckQxALP6itU228qn+X0B76
+   A==;
+X-CSE-ConnectionGUID: CqGbbvIHQ2ik6kFTQ94w+A==
+X-CSE-MsgGUID: 5Q0DaljVRxCmMznHi+4lAg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62676435"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
+   d="scan'208";a="62676435"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 00:36:01 -0700
+X-CSE-ConnectionGUID: gTATWPGlTfSS0LfoG70TaA==
+X-CSE-MsgGUID: mhAv5gGKRSmK6SgdH2mMkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
+   d="scan'208";a="205508506"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2025 00:35:58 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8ZZT-0002Vz-2H;
+	Tue, 14 Oct 2025 07:35:49 +0000
+Date: Tue, 14 Oct 2025 15:34:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Siddharth Nayyar <sidnayyar@google.com>, petr.pavlu@suse.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, arnd@arndb.de,
+	linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
+	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com,
+	gprocida@google.com
+Subject: Re: [PATCH v2 10/10] module loader: enforce symbol import protection
+Message-ID: <202510141538.VZqnRzHh-lkp@intel.com>
+References: <20251013153918.2206045-11-sidnayyar@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68edfd4a cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=5ooIImjpSQmp0NYUP-EA:9 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-GUID: HJV_T-8toN86AKBbVkPjTVERxZvabEqv
-X-Proofpoint-ORIG-GUID: HJV_T-8toN86AKBbVkPjTVERxZvabEqv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfX4Ls8j2mMW08Z
- Wkr7wcm/ItVE8hiQmB7OaFhtpjWsBJg+rS1EZeGN2U4tbN7c6WgNA3CFYGuui27kK+11GLL+Ipo
- Z/Ult7Is0jf2uKnDxaeiN2Rec/Sg4Xw9Z9p6OkQRDaoPI4SUQq1UQUVYigpYZr8GI+OjWxndGRy
- tRGderyBJostaZK7xLhCRE8Ef5qxkYtT37c98Vrkjk9tXyZkS5HrnzPYPGTB+QO1gFO5M5OI5qN
- GcHX2IFQJLFx4mf7k4fYxWn9qMmyuPVD1MjJQRJNzW9AcR+hfzzBtT6WB0YJjomBK7VSSo9uwV9
- 9fC+YvxN9nGe5byfSHGWHn3P3XJc+f8tQOkUx1kZcUsJmOPF+LT24lBxUm94uHpTqohIgP+n0Px
- GGd7qOe6pLOFfHvz3nglpwyx3vkFcw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- adultscore=0 clxscore=1011 bulkscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013153918.2206045-11-sidnayyar@google.com>
 
-Some upcoming SoCs define more than 32 operating performance points (OPPs),
-exceeding the current SCMI protocol limit. Increase MAX_OPPS to 64
-(next power of 2) to support these configurations.
+Hi Siddharth,
 
-Signed-off-by: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
----
- drivers/firmware/arm_scmi/perf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 683fd9b85c5c..2249ef7fe790 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -27,7 +27,7 @@
- /* Updated only after ALL the mandatory features for that version are merged */
- #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x40000
- 
--#define MAX_OPPS		32
-+#define MAX_OPPS		64
- 
- enum scmi_performance_protocol_cmd {
- 	PERF_DOMAIN_ATTRIBUTES = 0x3,
+[auto build test ERROR on arnd-asm-generic/master]
+[also build test ERROR on soc/for-next linus/master v6.18-rc1 next-20251013]
+[cannot apply to mcgrof/modules-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Nayyar/define-kernel-symbol-flags/20251014-005305
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251013153918.2206045-11-sidnayyar%40google.com
+patch subject: [PATCH v2 10/10] module loader: enforce symbol import protection
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251014/202510141538.VZqnRzHh-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251014/202510141538.VZqnRzHh-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510141538.VZqnRzHh-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> kernel/module/main.c:1271:32: error: no member named 'sig_ok' in 'struct module'
+    1271 |         if (fsa.is_protected && !mod->sig_ok) {
+         |                                  ~~~  ^
+   1 error generated.
+
+
+vim +1271 kernel/module/main.c
+
+  1228	
+  1229	/* Resolve a symbol for this module.  I.e. if we find one, record usage. */
+  1230	static const struct kernel_symbol *resolve_symbol(struct module *mod,
+  1231							  const struct load_info *info,
+  1232							  const char *name,
+  1233							  char ownername[])
+  1234	{
+  1235		struct find_symbol_arg fsa = {
+  1236			.name	= name,
+  1237			.gplok	= !(mod->taints & (1 << TAINT_PROPRIETARY_MODULE)),
+  1238			.warn	= true,
+  1239		};
+  1240		int err;
+  1241	
+  1242		/*
+  1243		 * The module_mutex should not be a heavily contended lock;
+  1244		 * if we get the occasional sleep here, we'll go an extra iteration
+  1245		 * in the wait_event_interruptible(), which is harmless.
+  1246		 */
+  1247		sched_annotate_sleep();
+  1248		mutex_lock(&module_mutex);
+  1249		if (!find_symbol(&fsa))
+  1250			goto unlock;
+  1251	
+  1252		if (fsa.license == GPL_ONLY)
+  1253			mod->using_gplonly_symbols = true;
+  1254	
+  1255		if (!inherit_taint(mod, fsa.owner, name)) {
+  1256			fsa.sym = NULL;
+  1257			goto getname;
+  1258		}
+  1259	
+  1260		if (!check_version(info, name, mod, fsa.crc)) {
+  1261			fsa.sym = ERR_PTR(-EINVAL);
+  1262			goto getname;
+  1263		}
+  1264	
+  1265		err = verify_namespace_is_imported(info, fsa.sym, mod);
+  1266		if (err) {
+  1267			fsa.sym = ERR_PTR(err);
+  1268			goto getname;
+  1269		}
+  1270	
+> 1271		if (fsa.is_protected && !mod->sig_ok) {
+  1272			pr_warn("%s: Cannot use protected symbol %s\n",
+  1273				mod->name, name);
+  1274			fsa.sym = ERR_PTR(-EACCES);
+  1275			goto getname;
+  1276		}
+  1277	
+  1278		err = ref_module(mod, fsa.owner);
+  1279		if (err) {
+  1280			fsa.sym = ERR_PTR(err);
+  1281			goto getname;
+  1282		}
+  1283	
+  1284	getname:
+  1285		/* We must make copy under the lock if we failed to get ref. */
+  1286		strscpy(ownername, module_name(fsa.owner), MODULE_NAME_LEN);
+  1287	unlock:
+  1288		mutex_unlock(&module_mutex);
+  1289		return fsa.sym;
+  1290	}
+  1291	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
