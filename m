@@ -1,196 +1,315 @@
-Return-Path: <linux-kernel+bounces-852154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A247BD84D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:55:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC5FBD84E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 113F3351082
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:55:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 312C54EA85C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360BE2DE701;
-	Tue, 14 Oct 2025 08:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WaPc2BRM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D31E2DE1FA;
-	Tue, 14 Oct 2025 08:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519D22E6CCD;
+	Tue, 14 Oct 2025 08:55:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6709D2D876F;
+	Tue, 14 Oct 2025 08:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760432096; cv=none; b=R95odEbob44S+SJh8I37l3y72masKBMcVGL5ONOHkRibKGoNAJDBI0CVALNCv3bmBKoEpHBjwGyn2cz6PfnL4/R05TUvHY4qi2/z6r/uycCOfmWmXlU6UXIpGz5hNi1t3SefAbFkMYFzgSLORdvJVqGfk/UtKkrK5JSOHOG+Nlc=
+	t=1760432111; cv=none; b=XV6vSOp2d0dO+EOBfAOdYaq1Ilj5/Rirjl/2AbUaddKlDtroaGxW6uY/Ypqh0lTcA166eKt7gOxgwYTt4PT3Li5UGnELrSMekg/OfUKi9/TB2FwQ+W8lud6tREAquKx/7NuN6lVwKFFp2kELKcpmsh35cyDlkgsNU4RAczA1dVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760432096; c=relaxed/simple;
-	bh=bepUQbrGttB/U3jbIE3oO/Sn/Mcj/LgtFELZpY005IE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LtT2TSTTNJgkpGm1gpHMUXAQsIYVdMUQisDpoA+kraa/NLQUC1imr9AIgDQ1DT0mzczMjhpQYjAqnlFwyY/iXy6lAo78Khk8pVqWObo7ZLnx/4a5RYRHg36nVs2MGgSj97kCQ4Iy3z85A0NMwakhOfiqpniOT4tPl1jDKE2/uy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WaPc2BRM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760432092;
-	bh=bepUQbrGttB/U3jbIE3oO/Sn/Mcj/LgtFELZpY005IE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WaPc2BRMFp+RTe3E+BZ3HSPzFO/30hD0z7pwsBxev4SSXiKZW3DpSWLkm2/v67GZa
-	 UgX8aza9Qt1n56vlrTZGhQIsr7/+TnSiyb61TI/7xnAdbgq+ISSLDQCJMIQwpH1mBP
-	 PI+O5E8HQS5aM+ggKHGSHRYqfZaxUprVkJ4uWV7G7p7ShUY1JdvVDZm6Pt67SWMXFf
-	 OUcpbLYApV/84ezSRbYj8G1xd9sEKSHav0lOt9NhA6sUWIEH3egbO2vsQQHVbf7dOj
-	 b6QQaXuSAzPgsfN3se6c/D1+WWGAdl2RDnnsRjT643G7lNJt+OldRGaX3g40ybb4xw
-	 2F4GEtMKkFjTA==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B55B917E04DA;
-	Tue, 14 Oct 2025 10:54:51 +0200 (CEST)
-Message-ID: <e4672b5e-8f22-4220-b666-4aad06787c71@collabora.com>
-Date: Tue, 14 Oct 2025 10:54:51 +0200
+	s=arc-20240116; t=1760432111; c=relaxed/simple;
+	bh=hWXdcQhUcFY+cvazB+qNfVIEmYDhkgnSjvLZ5J1lZvM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UUa5YEo2prx+LqcRcqnFRKE6QYhW3GDN+VvUN/6ZeNnwSy/yNz+ZjPaBFnDstt2/JnHp8b4vFHf+mI4DMoBJVZq793YQBbMmc9sHam44IHSktOV355bvutNzvdOzTpqyqKmrG+6f43S1+uNx2KhgJkcDe/n0zw/p+IfZlh66gxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.239])
+	by gateway (Coremail) with SMTP id _____8AxP_DpD+5oEfIVAA--.46964S3;
+	Tue, 14 Oct 2025 16:55:05 +0800 (CST)
+Received: from [10.20.42.239] (unknown [10.20.42.239])
+	by front1 (Coremail) with SMTP id qMiowJAxvsHiD+5oK0nhAA--.60206S3;
+	Tue, 14 Oct 2025 16:55:03 +0800 (CST)
+Subject: Re: [PATCH v2] LoongArch: KVM: Add AVEC support
+To: Bibo Mao <maobibo@loongson.cn>, chenhuacai@kernel.org
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev, kernel@xen0n.name,
+ linux-kernel@vger.kernel.org
+References: <20251010064858.2392927-1-gaosong@loongson.cn>
+ <39779e6d-2f09-4ee9-e5e0-97fc09efbbf5@loongson.cn>
+ <a2d41419-2268-c041-9858-9287056d7f31@loongson.cn>
+ <5e83f343-7da1-3235-d681-0d5b8816d1b9@loongson.cn>
+From: gaosong <gaosong@loongson.cn>
+Message-ID: <ec40aefd-a347-efb2-ba23-f0a88bb4f07d@loongson.cn>
+Date: Tue, 14 Oct 2025 16:54:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 8/8] media: Documentation: kapi: Add v4l2 generic ISP
- support
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Antoine Bouyer <antoine.bouyer@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
- <20251014-extensible-parameters-validation-v7-8-6628bed5ca98@ideasonboard.com>
+In-Reply-To: <5e83f343-7da1-3235-d681-0d5b8816d1b9@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20251014-extensible-parameters-validation-v7-8-6628bed5ca98@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowJAxvsHiD+5oK0nhAA--.60206S3
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWfJFWktr4ruw15Cr1Dtry8CrX_yoWDuF4rpr
+	1kAFWUXrWrGr1ktr1jqw1qvryUtr18tw1UXr1UJFy8Jr47tr1Yqr40gryqgF1UJw4rJF18
+	Xr15JrnxZF15JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU82g43UU
+	UUU==
 
-Hi Jacopo,
+在 2025/10/13 下午12:07, Bibo Mao 写道:
+>
+>
+> On 2025/10/13 上午11:18, gaosong wrote:
+>> 在 2025/10/11 上午9:29, Bibo Mao 写道:
+>>>
+>>>
+>>> On 2025/10/10 下午2:48, Song Gao wrote:
+>>>> Add cpu_has_msgint() to check whether the host cpu supported avec,
+>>>> and restore/save CSR_MSGIS0-CSR_MSGIS3.
+>>>>
+>>>> Signed-off-by: Song Gao <gaosong@loongson.cn>
+>>>> ---
+>>>> Based-on: 
+>>>> https://patchew.org/linux/20250930093741.2734974-1-maobibo@loongson.cn/ 
+>>>>
+>>>> v2: fix build error.
+>>> It is not necessary based on this patch, you can base it on master 
+>>> branch. The later merged patch need based on previous version in 
+>>> general.
+>>>
+>> Got it.
+>>>>
+>>>>   arch/loongarch/include/asm/kvm_host.h |  4 ++++
+>>>>   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
+>>>>   arch/loongarch/include/uapi/asm/kvm.h |  1 +
+>>>>   arch/loongarch/kvm/interrupt.c        |  3 +++
+>>>>   arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
+>>>>   arch/loongarch/kvm/vm.c               |  4 ++++
+>>>>   6 files changed, 30 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/loongarch/include/asm/kvm_host.h 
+>>>> b/arch/loongarch/include/asm/kvm_host.h
+>>>> index 392480c9b958..446f1104d59d 100644
+>>>> --- a/arch/loongarch/include/asm/kvm_host.h
+>>>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>>>> @@ -285,6 +285,10 @@ static inline bool kvm_guest_has_lbt(struct 
+>>>> kvm_vcpu_arch *arch)
+>>>>       return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | 
+>>>> CPUCFG2_MIPSBT);
+>>>>   }
+>>>>   +static inline bool cpu_has_msgint(void)
+>>>> +{
+>>>> +    return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
+>>>> +}
+>>>>   static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
+>>>>   {
+>>>>       return arch->cpucfg[6] & CPUCFG6_PMP;
+>>>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h 
+>>>> b/arch/loongarch/include/asm/kvm_vcpu.h
+>>>> index f1efd7cfbc20..3784ab4ccdb5 100644
+>>>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
+>>>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
+>>>> @@ -15,6 +15,7 @@
+>>>>   #define CPU_PMU                (_ULCAST_(1) << 10)
+>>>>   #define CPU_TIMER            (_ULCAST_(1) << 11)
+>>>>   #define CPU_IPI                (_ULCAST_(1) << 12)
+>>>> +#define CPU_AVEC                        (_ULCAST_(1) << 14)
+>>>>     /* Controlled by 0x52 guest exception VIP aligned to estat bit 
+>>>> 5~12 */
+>>>>   #define CPU_IP0                (_ULCAST_(1))
+>>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h 
+>>>> b/arch/loongarch/include/uapi/asm/kvm.h
+>>>> index 57ba1a563bb1..de6c3f18e40a 100644
+>>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+>>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+>>>> @@ -104,6 +104,7 @@ struct kvm_fpu {
+>>>>   #define  KVM_LOONGARCH_VM_FEAT_PV_IPI        6
+>>>>   #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME    7
+>>>>   #define  KVM_LOONGARCH_VM_FEAT_PTW        8
+>>>> +#define  KVM_LOONGARCH_VM_FEAT_MSGINT        9
+>>>>     /* Device Control API on vcpu fd */
+>>>>   #define KVM_LOONGARCH_VCPU_CPUCFG    0
+>>>> diff --git a/arch/loongarch/kvm/interrupt.c 
+>>>> b/arch/loongarch/kvm/interrupt.c
+>>>> index 8462083f0301..adc278fb3cb9 100644
+>>>> --- a/arch/loongarch/kvm/interrupt.c
+>>>> +++ b/arch/loongarch/kvm/interrupt.c
+>>>> @@ -21,6 +21,7 @@ static unsigned int 
+>>>> priority_to_irq[EXCCODE_INT_NUM] = {
+>>>>       [INT_HWI5]    = CPU_IP5,
+>>>>       [INT_HWI6]    = CPU_IP6,
+>>>>       [INT_HWI7]    = CPU_IP7,
+>>>> +    [INT_AVEC]    = CPU_AVEC,
+>>>>   };
+>>>>     static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int 
+>>>> priority)
+>>>> @@ -36,6 +37,7 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
+>>>> unsigned int priority)
+>>>>       case INT_IPI:
+>>>>       case INT_SWI0:
+>>>>       case INT_SWI1:
+>>>> +    case INT_AVEC:
+>>>>           set_gcsr_estat(irq);
+>>> Do we need cpu_has_msgint() here ? It is impossible that VMM inject 
+>>> INT_AVEC interrrupt on non-msgint machine such as 3C5000.
+>>>
+>> yes we need , how about this?
+>>
+>> @@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, 
+>> unsigned int priority)
+>>          if (priority < EXCCODE_INT_NUM)
+>>                  irq = priority_to_irq[priority];
+>>
+>> +        if (cpu_has_msgint() && (priority == INT_AVEC)) {
+>> +                set_gcsr_estat(irq);
+>> +                return 1;
+>> +        }
+>> +
+>>          switch (priority) {
+>>          case INT_TI:
+>>          case INT_IPI:
+> This is workable. Another way is to add checking in irq inject root 
+> source function kvm_vcpu_ioctl_interrupt(). Both works for me.
+>
+> BTW, I think that there should be modification with function 
+> kvm_deliver_intr() also. max irq bit is *INT_IPI + 1* where there will 
+> be problem with INT_AVEC. Should it be modified as *EXCCODE_INT_NUM*?
+>
+Yes , we should.
+> void kvm_deliver_intr(struct kvm_vcpu *vcpu)
+> {
+>         unsigned int priority;
+>         unsigned long *pending = &vcpu->arch.irq_pending;
+>         unsigned long *pending_clr = &vcpu->arch.irq_clear;
+>
+>         for_each_set_bit(priority, pending_clr, INT_IPI + 1)
+>                 kvm_irq_clear(vcpu, priority);
+>
+>         for_each_set_bit(priority, pending, INT_IPI + 1)
+>                 kvm_irq_deliver(vcpu, priority);
+> }
+>
+  I'll corrrect it on v3.
 
-Thanks for your efforts!
-
-On 10/14/25 10:01, Jacopo Mondi wrote:
-> Add to the driver-api documentation the v4l2-isp.h types and
-> helpers documentation.
-> 
-> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  Documentation/driver-api/media/v4l2-core.rst |  1 +
->  Documentation/driver-api/media/v4l2-isp.rst  | 49 ++++++++++++++++++++++++++++
->  MAINTAINERS                                  |  1 +
->  3 files changed, 51 insertions(+)
-> 
-> diff --git a/Documentation/driver-api/media/v4l2-core.rst b/Documentation/driver-api/media/v4l2-core.rst
-> index ad987c34ad2a8460bb95e97adc4d850d624e0b81..a5f5102c64cca57b57b54ab95882b26286fb27de 100644
-> --- a/Documentation/driver-api/media/v4l2-core.rst
-> +++ b/Documentation/driver-api/media/v4l2-core.rst
-> @@ -27,3 +27,4 @@ Video4Linux devices
->      v4l2-common
->      v4l2-tveeprom
->      v4l2-jpeg
-> +    v4l2-isp
-> diff --git a/Documentation/driver-api/media/v4l2-isp.rst b/Documentation/driver-api/media/v4l2-isp.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..42c2550602979609e92a09e3cd1fe3dcbafd6416
-> --- /dev/null
-> +++ b/Documentation/driver-api/media/v4l2-isp.rst
-> @@ -0,0 +1,49 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +V4L2 generic ISP parameters and statistics support
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +
-> +Design rationale
-> +================
-> +
-> +ISP configuration parameters and statistics are processed and collected by
-> +drivers and exchanged with userspace through data types that usually
-> +reflect the ISP peripheral registers layout.
-> +
-> +Each ISP driver defines its own metadata capture format for parameters and
-> +a metadata output format for statistics. The buffer layout is realized by a
-> +set of C structures that reflects the registers layout. The number and types
-> +of C structures is fixed by the format definition and becomes part of the Linux
-> +kernel uAPI/uABI interface.
-> +
-> +Because of the hard requirement of backward compatibility when extending the
-> +user API/ABI interface, modifying an ISP driver capture or output metadata
-> +format after it has been accepted by mainline is very hard if not impossible.
-> +
-> +It generally happens, in facts, that after the first accepted revision of an
-
-s/in facts/in fact
-
-> +ISP driver the buffer layout need to be modified, either to support new hardware
-
-s/need/needs
-
-> +blocks, fix bugs found later on or support different revisions of the same IP.
-> +
-> +Each of these situation would require defining a new metadata format, making it
-
-s/situation/situations
-
-> +really hard to maintain and extend drivers and requiring userspace to use a
-> +the correct format depending on the kernel revision in use.
-> +
-> +V4L2 ISP configuration parameters
-> +=================================
-> +
-> +For these reasons, Video4Linux2 defines generic types for ISP configuration
-> +parameters and statistics. Drivers are still expected to define their own
-> +formats for their metadata output and capture nodes, but the buffer layout can
-> +be defined using the extensible and versioned types defined by
-> +include/uapi/linux/media/v4l2-isp.h.
-> +
-> +Drivers are expected to provide the definitions of their supported ISP blocks,
-> +the control flags and the expected maximum size of a buffer.
-> +
-> +For driver developers a set of helper functions to assist them with validation
-> +of the buffer received from userspace is available in the form of helper
-> +functions in drivers/media/v4l2-core/v4l2-isp.c
-
-"helper function" is used twice, maybe:
-
-A set of helper functions that assist driver developers with the
-validation of the buffer received from userspace is available in
-drivers/media/v4l2-core/v4l2-isp.c
-?
-
-> +
-> +V4L2 ISP support driver documentation
-> +=====================================
-> +.. kernel-doc:: include/media/v4l2-isp.h
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 59ab4a34f72c0430a8d7966942acb2242ad923ca..3cc24092995bcb01051cc301ca212c32938cf745 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26857,6 +26857,7 @@ V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
->  M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/driver-api/media/v4l2-isp.rst
->  F:	Documentation/userspace-api/media/v4l/v4l2-isp.rst
->  F:	drivers/media/v4l2-core/v4l2-isp.c
->  F:	include/media/v4l2-isp.h
-> 
-
-With the comments above addressed,
-
-Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
-
-Thanks and best regards,
-Michael
+Thanks.
+Song Gao
+> Regards
+> Bibo Mao
+>>
+>> Thanks.
+>> Song Gao
+>>
+>>
+>>>>           break;
+>>>>   @@ -63,6 +65,7 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, 
+>>>> unsigned int priority)
+>>>>       case INT_IPI:
+>>>>       case INT_SWI0:
+>>>>       case INT_SWI1:
+>>>> +    case INT_AVEC:
+>>>>           clear_gcsr_estat(irq);
+>>> Ditto.
+>>>
+>>> The others look good to me.
+>>>
+>>> Regards
+>>> Bibo Mao
+>>>>           break;
+>>>>   diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>>>> index 30e3b089a596..226c735155be 100644
+>>>> --- a/arch/loongarch/kvm/vcpu.c
+>>>> +++ b/arch/loongarch/kvm/vcpu.c
+>>>> @@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
+>>>>           *v = GENMASK(31, 0);
+>>>>           return 0;
+>>>>       case LOONGARCH_CPUCFG1:
+>>>> -        /* CPUCFG1_MSGINT is not supported by KVM */
+>>>> -        *v = GENMASK(25, 0);
+>>>> +        *v = GENMASK(26, 0);
+>>>>           return 0;
+>>>>       case LOONGARCH_CPUCFG2:
+>>>>           /* CPUCFG2 features unconditionally supported by KVM */
+>>>> @@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
+>>>>           return -EINVAL;
+>>>>         switch (id) {
+>>>> +    case LOONGARCH_CPUCFG1:
+>>>> +        if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
+>>>> +            return -EINVAL;
+>>>> +        return 0;
+>>>>       case LOONGARCH_CPUCFG2:
+>>>>           if (!(val & CPUCFG2_LLFTP))
+>>>>               /* Guests must have a constant timer */
+>>>> @@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu 
+>>>> *vcpu, int cpu)
+>>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+>>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
+>>>>       kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
+>>>> +    if (cpu_has_msgint()) {
+>>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
+>>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
+>>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
+>>>> +        kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
+>>>> +    }
+>>>>         /* Restore Root.GINTC from unused Guest.GINTC register */
+>>>>       write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
+>>>> @@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu 
+>>>> *vcpu, int cpu)
+>>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
+>>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+>>>>       kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
+>>>> +    if (cpu_has_msgint()) {
+>>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
+>>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
+>>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
+>>>> +        kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
+>>>> +    }
+>>>>         vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
+>>>>   diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+>>>> index d8c813e2d72e..438885b6f2b1 100644
+>>>> --- a/arch/loongarch/kvm/vm.c
+>>>> +++ b/arch/loongarch/kvm/vm.c
+>>>> @@ -37,6 +37,9 @@ static void kvm_vm_init_features(struct kvm *kvm)
+>>>>           kvm->arch.support_features |= 
+>>>> BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
+>>>>       }
+>>>>   +    if (cpu_has_msgint())
+>>>> +        kvm->arch.support_features |= 
+>>>> BIT(KVM_LOONGARCH_VM_FEAT_MSGINT);
+>>>> +
+>>>>       val = read_csr_gcfg();
+>>>>       if (val & CSR_GCFG_GPMP)
+>>>>           kvm->arch.support_features |= 
+>>>> BIT(KVM_LOONGARCH_VM_FEAT_PMU);
+>>>> @@ -153,6 +156,7 @@ static int kvm_vm_feature_has_attr(struct kvm 
+>>>> *kvm, struct kvm_device_attr *attr
+>>>>       case KVM_LOONGARCH_VM_FEAT_PMU:
+>>>>       case KVM_LOONGARCH_VM_FEAT_PV_IPI:
+>>>>       case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
+>>>> +        case KVM_LOONGARCH_VM_FEAT_MSGINT:
+>>>>           if (kvm_vm_support(&kvm->arch, attr->attr))
+>>>>               return 0;
+>>>>           return -ENXIO;
+>>>>
+>>>
+>>
 
 
