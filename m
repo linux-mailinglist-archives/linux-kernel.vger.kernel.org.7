@@ -1,196 +1,226 @@
-Return-Path: <linux-kernel+bounces-852603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1945BD96E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7573BD96F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF411927F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4873F19A0042
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D46D313E26;
-	Tue, 14 Oct 2025 12:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B31730F94E;
+	Tue, 14 Oct 2025 12:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FILiOJ2K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QZWOd6Av"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC563313E0B
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D78934BA46
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445904; cv=none; b=mrEDoPW9PSihEa2DRhKGbpQwPKg1YJHUFgBMAdRz11aG+Rs7C1ir8tK0Gj+Y72PQJMmI8c0M1C3QiGyLJK0fv2mZKOfgRL/mE8/pnwzYRKIzdaSV7nctGHt0juZ5SWdbzaRT6JSMyaFxZM+C8+goLfVM1nLEpe+dPIqrXQIsdoo=
+	t=1760445926; cv=none; b=ML9spwEFgpo4JOrnWZew4Htu1g+9qc6vxmRgki+TiVvllZT0uhZOzUrFYN9hw5qMk0diIAkD3RqxixwoAl/+BsfJjbisY7GrN2VpMDvxQwq/YW/WolFxgOWltm7i647w5ViCesedDQP9HUfbyUTSH5aAxIY+ArEFLlJFd75tuYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445904; c=relaxed/simple;
-	bh=IrdiHcJ9N5g16Q3ASpx314J/26lOuQJs6WEhZdyqT3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gVaBWJxQWJnTnv7+zn2R+f6R5q6sOrNeP7T9jpvbkvuXb0mBSSubsbnF7+X8IEM6SgkHYp9uocPqp+nqs2u3/8AX4Ofovn46a8+ML7ViA53riG2cfM/j5iegMo+ekXZzIKcPSs1TCheVV26Z3Tcs2LDlCdcGqPPr+RDawzN1hh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FILiOJ2K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760445900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oq5FU6UUWvw2KLYz4msTSjy80Lvwg4TbSIDB93lwHNo=;
-	b=FILiOJ2KE0GykacXyD6iUmL+TpbK3IKaJtGMEfccgphe+9CYoRUes68QzyEyKIxlC0ZuUU
-	x32BgbI3gnKRTpyMTsvP3paHypL9NAw/Cb+oYUI/VJ6mIdjcZhGJRu1fTHbqjyCiGbWGts
-	jMv4/XnEerPUl2vx88ImjvTnLPcVSDI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-384-oo5zEpIzMWGwc7mivSUkhQ-1; Tue, 14 Oct 2025 08:44:59 -0400
-X-MC-Unique: oo5zEpIzMWGwc7mivSUkhQ-1
-X-Mimecast-MFC-AGG-ID: oo5zEpIzMWGwc7mivSUkhQ_1760445898
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-401dbafbcfaso4191494f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:44:59 -0700 (PDT)
+	s=arc-20240116; t=1760445926; c=relaxed/simple;
+	bh=2HloXGZvRD+88/eG4ZgEhcmqaAV/Ri/MXMiO2AoLeJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gLOkR0hEpzzUE3QsKRLp3FpZUFsdAhCprmZR+5Zn0X7Pa1iXSAkQFK5cTtIGTshEBb5c7/poTJQc3I1zuM0UqtdgtRQQtGimk6D/pEb22sFSdNDuQ+24ZuA9OprRz1EDxIKz0KT40jUGeHEVHC7q5eUd8HoauUI0lHQUwHYREC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QZWOd6Av; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b404a8be3f1so123245066b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760445922; x=1761050722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JEOQpQJo98QyfYnBlnV0kP+HUCRx4XT+4+xOb+xrqYg=;
+        b=QZWOd6AvX4xSk0ozoQ8EOxK8HGRVtr3tBQLZS8CD8z31RdQDUk7swwzco5uHtneiSV
+         uAb8th1Q8utKWpeyaoLB6e2i0J3zjcrFUJyKF+Agy+LvwgmBsE9fJKKgqW9JHEKTfLNO
+         yVrA75gr3tTs5Xqioj2lfxfmQE0kPxn411XNLq10cfT/C+CbkuW2e3pdyW2L7whXLW5K
+         2jcXGlOZ4UV4sSy1nFZ6K8F9TTDyPZvg1vZ5gr2it2dee/2KrzbVnG1ZSTq5pJtLGC5F
+         NCc/iLm/3fWM0KLMR/h6OwQu5wN8eusTXWrWcHRmmUI7F+RnaqaJi7tdb0tu4pgRnSGP
+         YGtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760445898; x=1761050698;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oq5FU6UUWvw2KLYz4msTSjy80Lvwg4TbSIDB93lwHNo=;
-        b=uwl7U7U2NARhX+QlzHai1zhENKd8NcGhrTD42ImVcdPChWycPUi4OGiKHSU2N9RVOC
-         kqqOUfkNQDl/V8ElciUOYVf3jH0U/Ghn+1ZC8CJ98PLUKp5kkl3E82XFDA6PnjQJlnjm
-         LXUh1/p5GTSwYNYG3mOO5XeuV+EvptGIezvv8b+FgGImnYK22C4xdB+vkgbhwoWIFyaF
-         c+cvj2EfwRYSzpBe2/LyBDgy9YyOxVeMxVmo2ivJZ7uPuZQph12IXXnqDtO2t7VZiKmN
-         xftb+0ijPBSfdSxoXLzsc4Bdk4Dlk2VoDKI3ZFZe7FROVezJaQmt1ZdLBpo2x/P2XlYK
-         I18w==
-X-Gm-Message-State: AOJu0Yw+OPEDjWW0Kr7Rb/WR2ug0yx6g37RGRai3KdKLxWMSdyVkFWd1
-	sZZmzH3GEh8Zq5btKu95U1rkbh0fHb5dNacmqJ3bImhUtFiXqfkD7j+eUkWl6BhaFX8MoWuGcsB
-	GvQB8ObEZ9CiWfNKu/ydfDl2ww+hl4zAVwMCb0enQqYyxxi28liY3IkZ34OUBPM56RopQRGQ/0J
-	y9woX8bJHiIbHXTBgO50JIwtJ2mF9lnRl+8YeM+PlbyPh7yQ==
-X-Gm-Gg: ASbGncszijZEzLN+ABeQBpyxDlwpOcUoVxc7ARkpxJVPWoJPC94Qy3M89yiIExOBpJ/
-	MVZEq6pI3bTbKF3r71FWToxIw64VyDekQJxnfcZVGW1TbPII1a7iGeOzLMERGUWglBTz4n2PgSN
-	UuTv8Hq/VGeqY8P8WB4E2LeaODT1iKpUnQAdsXdl8zez4Y410R+4CnMtCaF6i6NblY+hxNvoU6+
-	UNd5HnvbVduOEHo+wXLh8n4JjkGpv5lzNVrce2BiqUGiqm+9jsrNHSobgjKxkcjwboTP/Lqsg+n
-	3+I1aY8ikM+cX0dOnOyXMC3tzqicebaMOFw=
-X-Received: by 2002:a05:6000:2003:b0:3eb:5e99:cbb9 with SMTP id ffacd0b85a97d-42666ac410emr16251750f8f.10.1760445898060;
-        Tue, 14 Oct 2025 05:44:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxSeyruCmc9SGR2jeGa4d8IULuUIdP5u2aBzan4Fq5iEL1yjTsOV2vBHOnBmYhi1j6hNaRzA==
-X-Received: by 2002:a05:6000:2003:b0:3eb:5e99:cbb9 with SMTP id ffacd0b85a97d-42666ac410emr16251717f8f.10.1760445897499;
-        Tue, 14 Oct 2025 05:44:57 -0700 (PDT)
-Received: from localhost ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426e50ef821sm8878961f8f.38.2025.10.14.05.44.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 05:44:56 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	stable@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v1] vmw_balloon: indicate success when effectively deflating during migration
-Date: Tue, 14 Oct 2025 14:44:55 +0200
-Message-ID: <20251014124455.478345-1-david@redhat.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1760445922; x=1761050722;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JEOQpQJo98QyfYnBlnV0kP+HUCRx4XT+4+xOb+xrqYg=;
+        b=VB6m3oiv13o4wAm3/Wc4rh6N4cAF4Dc9AsVPnigerWMebRycRWoHauYs3qEbQ/mHXW
+         0xsXaGSaPMOUI3Bbq82XpgeMdCPtdiPhVo847yEpD8VW/wqwZmU33fSoItkmFNlw+aJO
+         3dwbAzTdOyPf2PfyWYlQs3xBlaSCPZ9DpGvYgnHL6cQnbh2PCXsMMP8hvcNQ1GjeQGuo
+         DUe31mbZrD8ZMy2ndBtUHtAZA+o7gme1iKz+0TwKOnt5bnuPW6FIgVWvTW1BN8miwlQI
+         uVEsIR8TpykT0jMNaN6tk+3/Vq5bWbCB+3mRJ2q1B/wEA++kFJsLErKeUAegMsRFwhF+
+         BNfw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/E17fvqCS6vrUQZfqhwgXEITmgHIbHN+S20pBjfzNW5WKTk8EzOOlxBvcdMB9qqnlB1qRAnm5RSFfzP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSg7o+j/THx+udT3+jd0KBNAFi6P2+5rbzdRvhY9PO31wc/Jbj
+	gTMRq29EaYgVTi+auqFLUQxihMH4czimD7a9d+9mVTaSJT7WHtqxjCQrG9WR9p15r9s=
+X-Gm-Gg: ASbGnctqwcOnfeYhu++e8HJBY8h2/u1IEuxUxOMZb+Y36kl+v/K4oM6OxxMWKEMOfL2
+	QUWF6hnabDqvl45h6K375t6DqH2ZA4s2Lbw5AUCo/kyUNOpYdxmiGizPy7sTflMTzVNBPe3dldC
+	CUWM+SCfJvbgbCac5fIfGGjmUeVBEYiyCIXc7rrOFkzN3vRzYBcGXypzf8bGyIP+S1lKlPkxXw/
+	5KpoYzETZnW4vTDFX5ruz84ObL/yVcC47wItzfjWEnGRPPmF8sJ7xGfTNd61ATDFbkABf5gyed8
+	xtK8vVUL+dty8WQr0hM3PCFM80Ev6Auh7WfKJqIWXAACmsJPOQmd0bo/fxdiPcqEgL7MrH0aU5a
+	9Ixb3Zw5WbnF/o/6xwxHeYvosothvjzePnwWdGWzTL60pJnIKJFYC8oeoUnc/uTxJWMHNmZ0C8J
+	nCHg==
+X-Google-Smtp-Source: AGHT+IF98YZGXnc/a9+tF96u8G13aSwGmApwD+ogJyUi8W1JPjF4gTRZUKJnX0ICaKrlb9YoA4BxHw==
+X-Received: by 2002:a17:907:7ea6:b0:b46:b8a9:ea6 with SMTP id a640c23a62f3a-b50ac6cd23fmr1429210866b.9.1760445921504;
+        Tue, 14 Oct 2025 05:45:21 -0700 (PDT)
+Received: from mordecai.tesarici.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d66cc4b8sm1150612066b.30.2025.10.14.05.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 05:45:21 -0700 (PDT)
+Date: Tue, 14 Oct 2025 14:45:13 +0200
+From: Petr Tesarik <ptesarik@suse.com>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand
+ <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, Mel Gorman
+ <mgorman@techsingularity.net>, Vlastimil Babka <vbabka@suse.cz>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <linaro-mm-sig@lists.linaro.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, Zhaoyang Huang <huangzhaoyang@gmail.com>,
+ <steve.kang@unisoc.com>
+Subject: Re: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for
+ order-0 allocation
+Message-ID: <20251014144513.445a370d@mordecai.tesarici.cz>
+In-Reply-To: <20251014083230.1181072-3-zhaoyang.huang@unisoc.com>
+References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
+	<20251014083230.1181072-3-zhaoyang.huang@unisoc.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When migrating a balloon page, we first deflate the old page to then
-inflate the new page.
+On Tue, 14 Oct 2025 16:32:30 +0800
+"zhaoyang.huang" <zhaoyang.huang@unisoc.com> wrote:
 
-However, if inflating the new page succeeded, we effectively deflated
-the old page, reducing the balloon size.
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> 
+> The size of once dma-buf allocation could be dozens MB or much more
+> which introduce a loop of allocating several thousands of order-0 pages.
+> Furthermore, the concurrent allocation could have dma-buf allocation enter
+> direct-reclaim during the loop. This commit would like to eliminate the
+> above two affections by introducing alloc_pages_bulk_list in dma-buf's
+> order-0 allocation. This patch is proved to be conditionally helpful
+> in 18MB allocation as decreasing the time from 24604us to 6555us and no
+> harm when bulk allocation can't be done(fallback to single page
+> allocation)
+> 
+> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> ---
+>  drivers/dma-buf/heaps/system_heap.c | 36 +++++++++++++++++++----------
+>  1 file changed, 24 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+> index bbe7881f1360..71b028c63bd8 100644
+> --- a/drivers/dma-buf/heaps/system_heap.c
+> +++ b/drivers/dma-buf/heaps/system_heap.c
+> @@ -300,8 +300,8 @@ static const struct dma_buf_ops system_heap_buf_ops = {
+>  	.release = system_heap_dma_buf_release,
+>  };
+>  
+> -static struct page *alloc_largest_available(unsigned long size,
+> -					    unsigned int max_order)
+> +static void alloc_largest_available(unsigned long size,
+> +		    unsigned int max_order, unsigned int *num_pages, struct list_head *list)
 
-In that case, the migration actually worked: similar to migrating+
-immediately deflating the new page. The old page will be freed back to
-the buddy.
+This interface feels weird. Maybe you could return the number of pages
+instead of making this a void function and passing a pointer to get that
+number?
 
-Right now, the core will leave the page be marked as isolated (as
-we returned an error). When later trying to putback that page, we will
-run into the WARN_ON_ONCE() in balloon_page_putback().
+>  {
+>  	struct page *page;
+>  	int i;
+> @@ -312,12 +312,19 @@ static struct page *alloc_largest_available(unsigned long size,
+>  		if (max_order < orders[i])
+>  			continue;
+>  
+> -		page = alloc_pages(order_flags[i], orders[i]);
+> -		if (!page)
+> +		if (orders[i]) {
+> +			page = alloc_pages(order_flags[i], orders[i]);
 
-That handling was changed in commit 3544c4faccb8 ("mm/balloon_compaction:
-stop using __ClearPageMovable()"); before that change, we would have
-tolerated that way of handling it.
+nitpick: Since the lowest order is special-cased now, you can simply
+use HIGH_ORDER_GFP here and remove order_flags[] entirely.
 
-To fix it, let's just return 0 in that case, making the core effectively
-just clear the "isolated" flag + freeing it back to the buddy as if the
-migration succeeded. Note that the new page will also get freed when the
-core puts the last reference.
+> +			if (page) {
+> +				list_add(&page->lru, list);
+> +				*num_pages = 1;
+> +			}
+> +		} else
+> +			*num_pages = alloc_pages_bulk_list(LOW_ORDER_GFP, size / PAGE_SIZE, list);
+> +
+> +		if (list_empty(list))
+>  			continue;
+> -		return page;
+> +		return;
+>  	}
+> -	return NULL;
+>  }
+>  
+>  static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+> @@ -335,6 +342,8 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+>  	struct list_head pages;
+>  	struct page *page, *tmp_page;
+>  	int i, ret = -ENOMEM;
+> +	unsigned int num_pages;
+> +	LIST_HEAD(head);
+>  
+>  	buffer = kzalloc(sizeof(*buffer), GFP_KERNEL);
+>  	if (!buffer)
+> @@ -348,6 +357,8 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+>  	INIT_LIST_HEAD(&pages);
+>  	i = 0;
+>  	while (size_remaining > 0) {
+> +		num_pages = 0;
+> +		INIT_LIST_HEAD(&head);
+>  		/*
+>  		 * Avoid trying to allocate memory if the process
+>  		 * has been killed by SIGKILL
+> @@ -357,14 +368,15 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+>  			goto free_buffer;
+>  		}
+>  
+> -		page = alloc_largest_available(size_remaining, max_order);
+> -		if (!page)
+> +		alloc_largest_available(size_remaining, max_order, &num_pages, &head);
+> +		if (!num_pages)
+>  			goto free_buffer;
+>  
+> -		list_add_tail(&page->lru, &pages);
+> -		size_remaining -= page_size(page);
+> -		max_order = compound_order(page);
+> -		i++;
+> +		list_splice_tail(&head, &pages);
+> +		max_order = folio_order(lru_to_folio(&head));
+> +		size_remaining -= PAGE_SIZE * (num_pages << max_order);
 
-Note that this also makes it all be more consistent: we will no longer
-unisolate the page in the balloon driver while keeping it marked as
-being isolated in migration core.
+This looks complicated. What about changing alloc_largest_available()
+to return the total number of pages and using PAGE_SIZE * num_page?
 
-This was found by code inspection.
+Ah, you still have to look at the folio order to determine the new
+value of max_order, so no big win. Hm. You could pass a pointer to
+max_order down to alloc_largest_available(), but at that point I think
+it's a matter of taste (aka bikeshedding).
 
-Fixes: 3544c4faccb8 ("mm/balloon_compaction: stop using __ClearPageMovable()")
-Cc: <stable@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jerrin Shaji George <jerrin.shaji-george@broadcom.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
+Petr T
 
-I have no easy way to test this, and I assume it happens very very rarely
-(inflation during migration failing).
-
-I would prefer this to go through the MM-tree, as I have some follow-up
-balloon_compaction reworks also mess with this code.
-
----
- drivers/misc/vmw_balloon.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 6df51ee8db621..cc1d18b3df5ca 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1737,7 +1737,7 @@ static int vmballoon_migratepage(struct balloon_dev_info *b_dev_info,
- {
- 	unsigned long status, flags;
- 	struct vmballoon *b;
--	int ret;
-+	int ret = 0;
- 
- 	b = container_of(b_dev_info, struct vmballoon, b_dev_info);
- 
-@@ -1796,17 +1796,15 @@ static int vmballoon_migratepage(struct balloon_dev_info *b_dev_info,
- 		 * A failure happened. While we can deflate the page we just
- 		 * inflated, this deflation can also encounter an error. Instead
- 		 * we will decrease the size of the balloon to reflect the
--		 * change and report failure.
-+		 * change.
- 		 */
- 		atomic64_dec(&b->size);
--		ret = -EBUSY;
- 	} else {
- 		/*
- 		 * Success. Take a reference for the page, and we will add it to
- 		 * the list after acquiring the lock.
- 		 */
- 		get_page(newpage);
--		ret = 0;
- 	}
- 
- 	/* Update the balloon list under the @pages_lock */
-@@ -1817,7 +1815,7 @@ static int vmballoon_migratepage(struct balloon_dev_info *b_dev_info,
- 	 * If we succeed just insert it to the list and update the statistics
- 	 * under the lock.
- 	 */
--	if (!ret) {
-+	if (status == VMW_BALLOON_SUCCESS) {
- 		balloon_page_insert(&b->b_dev_info, newpage);
- 		__count_vm_event(BALLOON_MIGRATE);
- 	}
-
-base-commit: 1c58c31dc83e39f4790ae778626b6b8b59bc0db8
--- 
-2.51.0
+> +		i += num_pages;
+> +
+>  	}
+>  
+>  	table = &buffer->sg_table;
 
 
