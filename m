@@ -1,95 +1,210 @@
-Return-Path: <linux-kernel+bounces-852862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75BEBDA1FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD400BDA204
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E19F3A53D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:44:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A6F3A5A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6D93009CB;
-	Tue, 14 Oct 2025 14:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE663016E8;
+	Tue, 14 Oct 2025 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qU7eZR7V"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ERhq6RRI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C002FF14D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024E30147F;
+	Tue, 14 Oct 2025 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452856; cv=none; b=YG01nCp0uhg9dP8dvERq3dDDZh97vmGl/gY4dlmcAxmEETl3Zrb57UQQvf9nROhnXnhlAE7juedAhRGtVle5Th3Jt2qZBA/R0Wl4OBvBUaGkuUbzK94aUxkdmGC7L0h7jcbSNLPTbx/ftQR78hvYG/3iMJ4lJVUNMN4NOjIftVI=
+	t=1760452870; cv=none; b=fSUlQGvd7gbnW1Rw9RSUNeTUgkbnim9p5pqSW5JuRvHsgCOLT+LUkZDZTPRonfTAm1AAa3r91j17DyGCPidzjawlajAh09vPsAaR+DSzBK4kGj80nghTqElfCAoF7g+WmRAoV98ftIlN+zg6ihuOGoyo6783i717qIFua6hyETo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452856; c=relaxed/simple;
-	bh=zQl0PXoTYkJaRbM1iHFgNK6CBXrdzevy/TEH5ZCbwd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhkgJ5EJHq+/9SdNQKDGw7WmKbNeP+nyWHDkqLofvZX8V0A50oU7sv/kgStBAtC5fFf7Yq/ff8PxERMnQnzqlnUsp1tdRRTIgh7DKD907al9bjs0s0iMIcjY+Bazbf0Zb8hxYYlEpXo2PoUtAdLiWUw8JZPLgceT/OjqcWElEoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qU7eZR7V; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27eeafd4882so735185ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:40:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760452854; x=1761057654; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zQl0PXoTYkJaRbM1iHFgNK6CBXrdzevy/TEH5ZCbwd4=;
-        b=qU7eZR7VWY9qR/+uMfAVJYTItPxnppqItwoUpkzZDiaJ+0GBRMbgx8bheFrXaxUQka
-         W582Xfwdp8pZnLF3mNWNWq/iupd4SH+SsZeQzuhGKeKxC91qeJSbNDpOKdmwluv1iut1
-         7Oqjdlcfs1WcaBEZ2yC+laDCKH4/GtcWjJiqKIWyIWe/VdIojn4JhH03xtslVqeu+SHj
-         Buy+w4HjDukQivw0tLGtKFnUC4huvXtpBSGDnXx6YYQoZnFgrveYpTz154uNNuIM7MM6
-         7oIX5QFEbI9NM4M6dBw0OxYyjqx19O4ggf3s0wad8FLfxUlDaQq4TkQwO3U1PTrrfRqQ
-         Xj2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760452854; x=1761057654;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zQl0PXoTYkJaRbM1iHFgNK6CBXrdzevy/TEH5ZCbwd4=;
-        b=aaK5IBYP+Xj9QOGgF8oug1L/ZAvAZamqP8TefrOJ8xEm+aYudxx+bIBDpPcyLLvXQP
-         ITlmfzf+l4CUZqIKLH03OQcH/CvEIVqbgAMPvq1lcCdnSlHqww1cD/7TCEQWyZuSUA9Q
-         xjnVDSjAWu1y+gqmvg+++7atibtVtdb1HYSS9lDzUeWhS8+JcOqkpVnov8frrH8LkeOM
-         NdRhgHqxbX1Henoyffb3t0JWydrRQqVVwJ2/kR+MeXhdP16y2pTGa8uo5aFZ1iVQkk8y
-         dkKcZQHienjuaaY5GPaQAUgplLrIZVW2Aap76g4iwtWZKPi3kuxNP9wosA9P80Vy1TIH
-         Orfw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1h9Lv23sitVl/EF3vQN1uIxXu8oB5g7cKIS/zEc1fJAB3WY/56qN0pp/NCmFoT3hS7Tm6OhGEeY0qhDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGHegzp95mIR8apvhxtb8EQR7AP4v9tgiEnlrPWHS2Zys5dcS7
-	xY/MfTo07qKAg9ck27a2c+vHG/4WKhdwkQ1VTIbUbmnX8n4ZwSVPuvGxT2d96HlUREhokYvWqzZ
-	rfP0Hn8+ZE/gpva9Mgz588sX67mvsiPLaPRcUe3HjJA+zGQ6siGxlZEKyqWw=
-X-Gm-Gg: ASbGncvgHQcDmUtKWPII/r5WGixSxrOF5sEBXWZqWyk5OSTKJ0vgPWVX+a4QQVpSBQw
-	AL+9gIYxCBDdEbp2q4F9LRlciUpRgTLlluiJ4L4HafIdO4o8jO7Iw2J2jC6zblfAgTEC2vYjx95
-	dl4A3AYWRTjoaHtPtxTKL3nY/BnJF2iGtv0Nz/wPD9wVnTpol09Jt+KhmNjuZln7bOBMZ0bKsjb
-	j5vyc24VjvpaSLEXygEMhwkovGxwULxC8cYLfQW9N8uDAKMa4Co0XIFS/CfpUWTQUpcsBkHmg==
-X-Google-Smtp-Source: AGHT+IEEg+Qlx1F8v6GOZqbMCmMpwPTSQkRn7icyC0J4Ul7WK+r/sh3gEihm7+CRTLWikmx7RGdEXelYtrNLtfx9tP8=
-X-Received: by 2002:a17:902:ceca:b0:266:b8a2:f605 with SMTP id
- d9443c01a7336-29027600f6cmr35086445ad.3.1760452853859; Tue, 14 Oct 2025
- 07:40:53 -0700 (PDT)
+	s=arc-20240116; t=1760452870; c=relaxed/simple;
+	bh=bzXzVGoX6Soh/go+uDrQi2kQPxtg+NUe8G2AQ2W5LuA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Wv4I0NcO0EZfsbC5SWW5Y03mFckry1rHI2fpMRjnsVDeZtsRoMJeqQDmySiniVqzAC56EZ95Ll8LR/ZGcIqcKGX2U5dGjailCsNH/m+O8qlozhyNGbwkVtHaiU5QNydlHDlvQH5D3jUuQVVdv8wqRKHtriH2SYO48w6vZNRrSFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ERhq6RRI; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760452868; x=1791988868;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=bzXzVGoX6Soh/go+uDrQi2kQPxtg+NUe8G2AQ2W5LuA=;
+  b=ERhq6RRIgr4CCaB9QL3xKKMrR91sRxR8Spx/nXTNzIZ/AoVrhV+I6CUd
+   tySlr1w9KJX2DVwfbmNILpqodVRNJHufJW5wSN4Z6dpqKQOUwrWNcZ3sy
+   jVqg/tlFvf/gjl9ifbp/ry9ne0CI2Nx2whlP6TG4oDlA8XEaxbrsVSSAJ
+   m5uJ2YcNZclpoM48xFrFsi6UhNwGm5d3TxNWnhZi2XMRDFi8JykHyKcL6
+   4n0nYQPAPQQmZ4AXeA1cq7VfdiLjJFADdTcVbnUepa44JLWB2c0PMlXGa
+   6bDt0ll+pP0h6G8qGw5qREHlEUWsOg7S1vc9Sy7hVss5dfGsypC9uNIQF
+   Q==;
+X-CSE-ConnectionGUID: QSc3pEGPR2yStoe8rHCUOw==
+X-CSE-MsgGUID: 7wAnVZLLQZWgxwcKYi5R2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62319485"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="62319485"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:41:07 -0700
+X-CSE-ConnectionGUID: 3ulb3REWRsyEgBFO1He+uA==
+X-CSE-MsgGUID: LKZYOFdXSha35f1JqLHp7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="187205148"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.195])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:40:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 14 Oct 2025 17:40:56 +0300 (EEST)
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+    helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com, 
+    bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, 
+    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com, 
+    naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com, 
+    mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v12 3/3] Documentation: tracing: Add documentation about
+ PCI tracepoints
+In-Reply-To: <20251014123159.57764-4-xueshuai@linux.alibaba.com>
+Message-ID: <cf4d3079-2d1b-dfa4-aa5f-e018962131bd@linux.intel.com>
+References: <20251014123159.57764-1-xueshuai@linux.alibaba.com> <20251014123159.57764-4-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014-b4-ksft-error-on-fail-v2-1-b3e2657237b8@google.com>
-In-Reply-To: <20251014-b4-ksft-error-on-fail-v2-1-b3e2657237b8@google.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Tue, 14 Oct 2025 16:40:41 +0200
-X-Gm-Features: AS18NWDK3JVbrYrBllRzjfsjRSq9Nkan3UUoQRMetB4LzmgAZBq5PRB_jdQIyt0
-Message-ID: <CA+i-1C1dU8gP=phC1UD=sc62Gy=ODUN3oAeUUKRnLJgMFW-OKQ@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests/run_kselftest.sh: exit with error if tests fail
-To: Shuah Khan <shuah@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323328-19756653-1760452856=:925"
 
-On Tue, 14 Oct 2025 at 16:35, Brendan Jackman <jackmanb@google.com> wrote:
-> +kselftest_failures_file=$(mktemp --tmpdir kselftest-failures-XXXXXX)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Argh this is still wrong, I forgot about Thomas' other comment from
-[0]. I am just gonna send an immediate v3, please ignore this v2.
+--8323328-19756653-1760452856=:925
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-[0] https://lore.kernel.org/all/20251010082310-b25e69f3-4568-4886-a0c9-3bd611bce073@linutronix.de/
+On Tue, 14 Oct 2025, Shuai Xue wrote:
+
+> The PCI tracing system provides tracepoints to monitor critical hardware
+> events that can impact system performance and reliability. Add
+> documentation about it.
+>=20
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
+>  Documentation/trace/events-pci.rst | 74 ++++++++++++++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+>  create mode 100644 Documentation/trace/events-pci.rst
+>=20
+> diff --git a/Documentation/trace/events-pci.rst b/Documentation/trace/eve=
+nts-pci.rst
+> new file mode 100644
+> index 000000000000..500b27713224
+> --- /dev/null
+> +++ b/Documentation/trace/events-pci.rst
+> @@ -0,0 +1,74 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +Subsystem Trace Points: PCI
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +
+> +Overview
+> +=3D=3D=3D=3D=3D=3D=3D=3D
+> +The PCI tracing system provides tracepoints to monitor critical hardware=
+ events
+> +that can impact system performance and reliability. These events normall=
+y show
+> +up here:
+> +
+> +=09/sys/kernel/tracing/events/pci
+> +
+> +Cf. include/trace/events/pci.h for the events definitions.
+> +
+> +Available Tracepoints
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +pci_hp_event
+> +------------
+> +
+> +Monitors PCI hotplug events including card insertion/removal and link
+> +state changes.
+> +::
+> +
+> +    pci_hp_event  "%s slot:%s, event:%s\n"
+> +
+> +**Event Types**:
+> +
+> +* ``LINK_UP`` - PCIe link established
+> +* ``LINK_DOWN`` - PCIe link lost
+> +* ``CARD_PRESENT`` - Card detected in slot
+> +* ``CARD_NOT_PRESENT`` - Card removed from slot
+> +
+> +**Example Usage**:
+> +
+> +    # Enable the tracepoint
+> +    echo 1> /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+> +
+> +    # Monitor events (the following output is generated when a device is=
+ hotplugged)
+> +    cat /sys/kernel/debug/tracing/trace_pipe
+> +       irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 000=
+0:00:02.0 slot:10, event:CARD_PRESENT
+> +
+> +       irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 000=
+0:00:02.0 slot:10, event:LINK_UP
+> +
+> +pcie_link_event
+> +---------------
+> +
+> +Monitors PCIe link speed changes and provides detailed link status infor=
+mation.
+> +::
+> +
+> +    pcie_link_event  "%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_s=
+peed:%s, width:%u, flit_mode:%u, status:%s\n"
+> +
+> +**Parameters**:
+> +
+> +* ``type`` - PCIe device type (4=3DRoot Port, etc.)
+> +* ``reason`` - Reason for link change:
+> +
+> +  - ``0`` - Link retrain
+> +  - ``1`` - Bus enumeration
+> +  - ``2`` - Bandwidth controller enable
+> +  - ``3`` - Bandwidth controller IRQ
+
+Maybe these two should be called "Bandwidth notification" as that's the=20
+name of the underlying mechanism.
+
+For the entire series,
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+> +  - ``4`` - Hotplug event
+> +
+> +
+> +**Example Usage**:
+> +
+> +    # Enable the tracepoint
+> +    echo1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
+> +
+> +    # Monitor events (the following output is generated when a device is=
+ hotplugged)
+> +    cat /sys/kernel/debug/tracing/trace_pipe
+> +       irq/51-pciehp-88      [001] .....   381.545386: pcie_link_event: =
+0000:00:02.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:1=
+6.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
+>=20
+
+--=20
+ i.
+
+--8323328-19756653-1760452856=:925--
 
