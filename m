@@ -1,141 +1,261 @@
-Return-Path: <linux-kernel+bounces-852823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6561BDA009
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:30:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229B2BDA012
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526943ACD68
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717BA3E0CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A9627FD40;
-	Tue, 14 Oct 2025 14:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC96D2BE029;
+	Tue, 14 Oct 2025 14:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XnDmjJCJ"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KVo5kcHS"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9F52030A
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08E6188713
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452246; cv=none; b=JDKWb5SbN9sNoDpTADfUS1KOovbZvjrbNdDci2X2xbnCkT7T14eYh4hwUfl/DZ2z+RKwU5GCgRuvPqFRxNBtpR2K9PVXcYzqMhNe9auytMks9OmozkmrLjuuPsLiJe39IdkFTIUrtfxiksxHSc4mpUX1nA9+Bg9izOsKM9M4Fn8=
+	t=1760452308; cv=none; b=hP66UuCS00PcY5dPRXF4pzf/REj18a+xeB4KRCAIYxSc9fGpHCbK07py0JmIXbUsJyGuA02lnqRwvDLnWiK1ejuxf4c1J8VL34Ib34u3VSEqSB7ZLYam62WAJVR3ejq22lQrE9pQCNKr8HneWBn7ViVPf+vRAVgKVdAg1UStwdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452246; c=relaxed/simple;
-	bh=lmyEFnb3rou3T29UZK/sbNnlwieTzVpKAj+DLZhNS/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N62yfPVFRajtefd/t/AxbvPh2+2Hl7/MG9We3KtftZVe5HLpezdwJGzojs3imbe18dXum8kZHKnGN3d32lAFYnnmOhP0EOAQ2QhJKvv39qhDHgtkE/M6C9k9YvhcNpNjpIMLjKotAqx8m3o61G3uUeRQpukVuWkbpNKJ/vI6lxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XnDmjJCJ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=wVaO
-	xQ5fv5jrDfBBuBq5m0mQE4kjfRcP5F7ECYlPJL0=; b=XnDmjJCJf/e0+D7ZOOpm
-	vb3HFnucGnhx3G66gU/QBXJdHXIoRoJNCAKJeUu2b5uFSZS0gLYOPbO3JlxSCU6A
-	kd/rSnjgqd406F+B+q+1CpoSN2ELk46Wr6Qhm7Qcl+fx9NUsSSK+iXleR45SUPtb
-	Q/UVPHG6WZfWro0S7ckNIpo4bM3r6TDGWi+qS5Mw2K8DgQHhFQb8SaNCVw7fGNIm
-	M4dqdN32dCnarMtCiE6S2fyP7G4HFROxflK4nYpFBw+IS9yQ4RZgCsc0FIRbvkwB
-	4ueIfsWUlvSoWRsUp9ToEh05jdP1+MNntA8+8LvP2k/Cbnz7phExHksv1A7+17U4
-	Jg==
-Received: (qmail 3000523 invoked from network); 14 Oct 2025 16:30:42 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Oct 2025 16:30:42 +0200
-X-UD-Smtp-Session: l3s3148p1@nBSBOh9B/wRtKPEV
-Date: Tue, 14 Oct 2025 16:30:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <aO5ekPxeg7tdFlHi@shikoro>
-References: <20250922152640.154092-1-herve.codina@bootlin.com>
- <20250922152640.154092-8-herve.codina@bootlin.com>
- <CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
- <20251001174205.71a08017@bootlin.com>
- <CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
+	s=arc-20240116; t=1760452308; c=relaxed/simple;
+	bh=JgvLxORsQAPrTHwTo2xAyAxHV0Ae8bBX3gLVrgSO1rU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qfH6hKzlp+QE2lA21Xe4sx2EiDLWLMjdNCB2qLoDG0O8NtfcbWS2Liqt3ZcpMueqfFL1+HOxoR4TJzBNN5otU9658n4N2R52cX9M9or2tBIIHPaGjVUyYZvTXtEp++UK1jO3PmCODaeoIVTVpOQ2S/cxsswdVdS/7jK1vBF53Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KVo5kcHS; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so11158119a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760452305; x=1761057105; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JgvLxORsQAPrTHwTo2xAyAxHV0Ae8bBX3gLVrgSO1rU=;
+        b=KVo5kcHSIZHD9L7w8Cpk5E7nLrEz/vLZO/10k3DvpFjp8WCtpFw2i23BdBj34wzoUg
+         c9IP4uf6zfsD5OrhJDzCQ2zrk5P/84xdxSKJk3Az65SMztcnCOc2RFwHpjCJwhQAH8NQ
+         dK7tllg4hZNbS26yxyz7Xc5mSw67koiV5T2+lbQ6dmJMHEahGMCL5U3TqxPJ7Q9sptyE
+         vG9Tt4N5BcOrDPTv6BiTqWLITih0Yi6/x3BZkAh41rcluKOSDLQ6laAi4238Fy+VorcT
+         rLwMW2tFBzQEosgwM83L6ngeX+Jx+Dq+uJLCTZO8AT6g7GalOrlnE7gLAkqOVsnCK+tt
+         0yEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760452305; x=1761057105;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JgvLxORsQAPrTHwTo2xAyAxHV0Ae8bBX3gLVrgSO1rU=;
+        b=oVHTh2emKx3BS6rbfvhG8kEFqE9jZAe3emoxWladTIxcCQbhSrnLXlc5FUFFqkdWov
+         R4Hdy/+MdXFNqWaN+3Tdx/gRzll3e0gUTcNMnWsBF18tc3IsluIK33PbAyCKZ9UuIcOV
+         rZM4eJNk3RW1S7f0P4+C7Y+iistRBwXAaGO/Kjefh9T7NNJKbS0kbkKrpSHZh/bX0wSf
+         2mLoXhhfo1+LFfXF0N7rfkJ6zAN8pLdkWoVMeUPCuHj7khgaRddqYasNb8NJltCFrlGD
+         ZMKssBP707/a9ICaDJizaPzb6RX3BFyW8O7yEKtAFQKfkAnqHNHY/K1oTprHduCqRqDR
+         tWXQ==
+X-Gm-Message-State: AOJu0YwoL8b32Ub28xfCQE2D3CqPSQ0Y9OUl6b3/QOuZkKiU3YGlpUm9
+	72j3XKQT4fd0dB7uC5mI1/zy0l6GgGq/45OFnb3YqB/6xuk9rFFcaDg1cAsMGAZokcQ=
+X-Gm-Gg: ASbGnctKZnimkyx99mgSklD5SF9BY56YgoJLaZ5sem7PrqIaJIayvs/KhjNW9ezW5G1
+	8SpQqHfMPO8Pbj/yX4ttJRrz6tRUXNs5b3LpDXW7ib70z2dVR4NT8pdESsavAv5HbTL4/CcIun7
+	AerRGrTFYorZscGqMjgT/+gvzmoUGZM/HXqPyzx7w0ENa+pI/30o8iqOzowaHGQ5QzsgqPmJhg0
+	1+s6tlyq6M7gLbtF1XzwuRMfInW2KL4eL0H8BBaNb4scLschxulyPzeLM8d9nyTyFmBl1rwKsBD
+	mqkrRVcb2vG6hmwo+ccrFWDiZI+ZoolXmYOwdkv0mwFaCw7Dse+CazDX0dBQii5bcvxQZBIFrgo
+	QiSAmF5GKB8PXSqy8vQCsTofsr58DWx/Vhue76+ckrIWZCddZXMhvPL+gKKGenMHRSnInNvS7gm
+	LP5x0nRvr0gXWOLjMiOz6EOoW8yHGZUk7cTFBXu9CTUNtAW6+7O4Tshfw91P6IJfZERw1sToZfE
+	A==
+X-Google-Smtp-Source: AGHT+IGdWn0aH4NrK+4cP+oP6vJTAzVcgTKir5sjl8a5hf/0/czkkp8fVA2jdw4wv5oaJgpGbbglfA==
+X-Received: by 2002:a17:906:7313:b0:b41:297c:f7bb with SMTP id a640c23a62f3a-b50aaa9b6f8mr2804638266b.26.1760452292249;
+        Tue, 14 Oct 2025 07:31:32 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d8c12a1esm1166895366b.47.2025.10.14.07.31.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 07:31:31 -0700 (PDT)
+Message-ID: <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
+Date: Tue, 14 Oct 2025 16:31:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s0BX72F7mRu03JEh"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+ <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
+ <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
+ <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
+ <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------V3w28Kk40KowdXgJEp4GJiUI"
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------V3w28Kk40KowdXgJEp4GJiUI
+Content-Type: multipart/mixed; boundary="------------dqqvkgAvnyXL345s9cxnJRyd";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Message-ID: <bafc306d-b43e-464f-94e6-f59eeaa7d690@suse.com>
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
+ <4fd058ac-3af5-4778-842c-9a185d828c9d@suse.com>
+ <20251014141245.GCaO5aXSQqglFrT9Iy@fat_crate.local>
+ <c0fb45d5-c4a0-498d-8378-dd96ec261c8c@suse.com>
+ <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
+In-Reply-To: <20251014142656.GFaO5dsDlJ6d_WY_fk@fat_crate.local>
 
---s0BX72F7mRu03JEh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--------------dqqvkgAvnyXL345s9cxnJRyd
+Content-Type: multipart/mixed; boundary="------------A50p6pJHTxuNzoshAMh0nS6W"
 
-Hi Linus,
+--------------A50p6pJHTxuNzoshAMh0nS6W
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-giving some details about the HW until Herve can return to this topic.
+T24gMTQuMTAuMjUgMTY6MjYsIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gVHVlLCBP
+Y3QgMTQsIDIwMjUgYXQgMDQ6MjI6MDlQTSArMDIwMCwgSsO8cmdlbiBHcm/DnyB3cm90ZToN
+Cj4+IEkgcmVhbGx5IHJhbiBpbnRvIGlzc3VlcyB3aGlsZSB3cml0aW5nIG15IHBhcmF2aXJ0
+IE1TUiBzZXJpZXMsIGFzIEkgaGFkDQo+PiBhbiBBTFRFUk5BVElWRTMoKSBpbnZvY2F0aW9u
+IG1vZGlmeWluZyB0aGUgb3JpZ2luYWwgaW5zdHJ1Y3Rpb24gKHRoZQ0KPj4gaW5kaXJlY3Qg
+cGFyYXZpcnQgY2FsbCkgd2l0aCBhbiBXUk1TUiBhbmQgdGhlbiB0cnlpbmcgdG8gdHVybiB0
+aGUgbm8NCj4+IGxvbmdlciBleGlzdGluZyBpbmRpcmVjdCBjYWxsIGludG8gYSBkaXJlY3Qg
+b25lLg0KPiANCj4gU28gcHV0ICp0aGF0KiBpbiB0aGUgY29tbWl0IG1lc3NhZ2UuIEFsb25n
+IHdpdGggYSBkZXRhaWxlZCBleGFtcGxlIG9mIHdoYXQNCj4geW91IHdlcmUgc2VlaW5nLiBU
+aGlzIGlzIGJhemlsbGlvbiBtaWxlcyBtb3JlIHVzZWZ1bCB0aGFuIHNvbWUgaHlwb3RoZXRp
+Y2FsbHksDQo+IHBvdGVudGlhbGx5IC4uLiBjYXNlLg0KDQpJIGhhdmUgdGhpcyBoZXJlIGlu
+IHRoZSBjb21taXQgbWVzc2FnZToNCg0KICAgLSBJbiBjYXNlIG9mIHJlcGxhY2luZyBhbiBp
+bmRpcmVjdCB3aXRoIGEgZGlyZWN0IGNhbGwgdXNpbmcgdGhlDQogICAgIEFMVF9GTEFHX0RJ
+UkVDVF9DQUxMIGZsYWcsIHRoZXJlIGlzIG5vIGxvbmdlciB0aGUgbmVlZCB0byBoYXZlIHRo
+YXQNCiAgICAgaW5zdGFuY2UgYmVmb3JlIGFueSBvdGhlciBpbnN0YW5jZXMgYXQgdGhlIHNh
+bWUgbG9jYXRpb24gKHRoZQ0KICAgICBvcmlnaW5hbCBpbnN0cnVjdGlvbiBpcyBuZWVkZWQg
+Zm9yIGZpbmRpbmcgdGhlIHRhcmdldCBvZiB0aGUgZGlyZWN0DQogICAgIGNhbGwpLg0KDQp3
+aGljaCBpcyBleHBsYWluaW5nIHdoeSB0aGUgcHJvYmxlbSBpcyBvY2N1cnJpbmcuIElzbid0
+IHRoYXQgZW5vdWdoPw0KDQoNCkp1ZXJnZW4NCg==
+--------------A50p6pJHTxuNzoshAMh0nS6W
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-> Are these IRQ lines ever muxed for anything else than
-> GPIO? In that case go ahead with this solution, I guess.
-> But the title of your patch seems to suggest it is
-> only used by GPIO.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-True, it only muxes 96 GPIOs to the 8 available irqs.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-> If it is only used for GPIO, why make it a separate
-> driver instead of just putting the muxing into the
-> GPIO driver?
+--------------A50p6pJHTxuNzoshAMh0nS6W--
 
-Because the HW design kind of suggests it, I'd think. The GPIO
-controller is a standard Synopsis one ("snps,dw-apb-gpio") without any
-extras. The GPIOMUX (which is extra) is according to the docs part of
-the system controller with a dedicated set of registers. Luckily,
-self-contained and not mangled with other functionality.
+--------------dqqvkgAvnyXL345s9cxnJRyd--
 
-I am just stating where this comes from. I haven't looked into the
-details of your suggestion. It may or may not make sense to add this to
-the Synopsis driver with a dedicated compatible for RZ/N1D. I'll leave
-this for Herve, though.
-
-Happy hacking,
-
-   Wolfram
-
-
---s0BX72F7mRu03JEh
-Content-Type: application/pgp-signature; name="signature.asc"
+--------------V3w28Kk40KowdXgJEp4GJiUI
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjuXpAACgkQFA3kzBSg
-KbZ50Q/+Nv6tC7a/spZ1gdx4lLrfThzj43fuAydmqVYZUCb+H2YhdYpYWZp2u9UK
-JqD7HJypFbMeFX2P/JgJBGNwPy0tBNgBWUz+yBd7JCuhQePY1OsaWYD3RyvC1AID
-UEeZ7QltxuHqoMIQfH2mk0Q5v8CmtsDY+Pk9g2cS7IYfg9S2Lsar2WU8UpvAuCyt
-TktyLQ4NyMAl5Iwr7T/ZkKLNAkSxJ1sH3YZ+pit+aQ5PNbHPYJzrDkD0/DhqohgB
-eyNnno1zPlrI2ujNj/rhtjsGr+d87qhMwwPHpL7fXKnjPe2imo2K9FYjmPORpTbZ
-Yt0+oVAT6OIwXl+TcRfhrS//61p9DJIZKAKvETymyOpPqnaFCCJm26IugSmuC1C6
-56EZ0Gsc4GOKm4YZ0qGBmUriGRPoYBGaU6UglyNrqGrmcj2P5B4rr/isOOjy3baE
-fiMYvzr6opP/h1xhcV0cWBld15YGfEn+1kKOt+JGixgpbJjq4CAKkMnDk/CxVuVm
-CoCMZD3HVscS+/vSb4OuQiJbzSNotc0nxNCZcM50Pl5MBhfeMt10/fxFqpgdL3Sf
-jFj10D4FvstEb+ASTd+hMwDiuuhHK3nh0RKXL8+N7XKRrKtYqR6Cbkh+tAIYe+HO
-0WK1Q0CJJ+ydmLLJw4XgGtTILkBATJixuJAF5uJVV1QJQE60GPs=
-=R48r
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjuXsMFAwAAAAAACgkQsN6d1ii/Ey9T
+QggAkrXoGggjNIBFJAQ5Ih5HIlD5+0tDq6tcCkVgUvAlQB6a3aOgOey96Lpd9phX5glmfDEOfQxO
+h5aBbpzs+oBTSzwdCgui9sGhoeayDmGEXKEBLg+5sQSZH6E8BgFagMhSvGaEmrMvSvTcnJPOOFoo
+T5u6Clx4q9rTk0owV0EYRzyY6uuD0dtVrDK5Gy7lWWYtE7ehslytPt67tIOREJ3E8eIjmCmRdACt
+7OTAZp9fjmMtdcgNRP9KMY90Siz/Of5CBUiMThC+QAPKytHOJixIi3jU4FHhmdD+QUVodK3hErFq
+gvY0+XTr3mdIsurC2IhfQuChTT0DAh0QYu92LkFG4A==
+=pEWD
 -----END PGP SIGNATURE-----
 
---s0BX72F7mRu03JEh--
+--------------V3w28Kk40KowdXgJEp4GJiUI--
 
