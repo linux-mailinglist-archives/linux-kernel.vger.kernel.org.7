@@ -1,122 +1,143 @@
-Return-Path: <linux-kernel+bounces-852017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939EDBD7F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AADD2BD7F6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F41425E6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53AF3A3712
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020812E6CB3;
-	Tue, 14 Oct 2025 07:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AE42D9EF2;
+	Tue, 14 Oct 2025 07:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iMdIXGjq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YxJx0KAx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219F6242925
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F5F2D3EC1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427298; cv=none; b=om8T2zWJMmYkE5GjHQf305/5pwLcYcUa2QIGebGCgJwSssGdax+iTHJ8taTGRa7bQi/e8AsyVakWnfxl48ZjeJC693lB2RyOKGJCW9UpV2lMILxZYIAhkneDagaGA+rv16exCMf1DLySeJM2DNsI0okrXJueByp44tSj86/YFs4=
+	t=1760427340; cv=none; b=DQY+AujaqKRl1QUTGYGOdr0fuMwoYLG461gsQjFao8B8D3jUFpITwW/U2PcFNtJr6lo9cT+RpEB9+3tlAwdgCyxxRC4bzd+OPv5ZlZD1y04KluuyR5qlfejfcK85bBiQ11tlDLAu2Qv3rjauifJSzYdeQzzfZi35p49uhx7t630=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427298; c=relaxed/simple;
-	bh=insi5QuAvcDo4ELXBPMiD7HNYLAxnQ0SSVuXp/JizwI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jsnV5KCYahj5cUx9ZC8HUG4sCSY4FydWZg3IgYWhqEf2vEgHmtDJYqavWcGYiEppnIcW2MBMPiwRuoH4FF4R/8fUWRi/VTXrNDUUM3bNIPyWE/O5pYYriCfe8EGBfzI+3GhPxd9TiPts7IfkSO5dZCdTsVxlLizWzolmLtKOsLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iMdIXGjq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760427295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vZAYJ7xq6WZ4FioBhdfbaQnlgRPAlKAdI8jcSI5iXTs=;
-	b=iMdIXGjqdcdMDoRIKCjXv4W8pnoSXZYu+OiqyLVQdbWgVIr8SIaM1OLTk1g/vZKLjsAOYm
-	JKaYFOVRx6eakAIoBQn9k7I1XEmSymfiXszJnStjMSTzWnAOSwadZQfb4nOOzODIGRQfFa
-	ztu5jaU/mrt/dYAjWbWjsSA7hHuVihA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-8-NDxBSe6LPtWND7budzYVHw-1; Tue, 14 Oct 2025 03:34:53 -0400
-X-MC-Unique: NDxBSe6LPtWND7budzYVHw-1
-X-Mimecast-MFC-AGG-ID: NDxBSe6LPtWND7budzYVHw_1760427292
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4256fae4b46so3511085f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:34:53 -0700 (PDT)
+	s=arc-20240116; t=1760427340; c=relaxed/simple;
+	bh=+9KJgUfIBS11iAKR5LnNdo1j7qdwGm2mPaEPeiV2PwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yu8W4Av6+VyX1YVYdkNULTtFSYqlw51VyCZeXnOhjm/kwU/rVVkgWclULA9Nn4C5x83uxvoT5JoVst0ON/g73QZsT4cgdnKP9nqPn1hGm2Fm3IBXgs6HRApIo0ZSBEUXa+GRtyJ0ipO5wEEcl5i3A00NXLQpQy7OoHWR8lkQt9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YxJx0KAx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E6RE80016500
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:35:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=aA7JCiuVVRCy3V30ThlamZSn/80oafKR6lF
+	slO98isQ=; b=YxJx0KAxO2DqDO8I0IKd7HJf3ZDdKG0xzvCT/lLqkhtagBriu9E
+	qR42JQe0OQhY2Nke4Vpeh9pTtdbGcOAVVfNmtg+l2gTL5Q9iWQAoBlQFET1Wiere
+	cY+l05G5XIiXa8S1mE4DhMJ9Lqhgir+iR2ftCKJUGRcUOJjKDRmL9mQaJ+qfRwEd
+	6fILSLEHu+Cwag/8EcpfEgRIB06tWg7Bm6J9U9gWDisWxCXc3W4cn7sJz0ssCohl
+	2JRGe6Jph4NnrktfzmOxvVOoxqVGEsRTdCHbT/QAGbbWy9MyEAUVGjnszAi7uIdv
+	WkBaRAjf0QALrxwJ6CXxZJn89NMjzq1BobA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1abwhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:35:38 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-26985173d8eso178209995ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:35:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760427292; x=1761032092;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vZAYJ7xq6WZ4FioBhdfbaQnlgRPAlKAdI8jcSI5iXTs=;
-        b=ZYFsNAECTuxdyHrXNiq42aRF3LPbcqMa2a3qg7VxpzKeXRNQnw8oX1daFioxB4aAG+
-         6AehgcpCQLGaFkN/gQStRTiLASiNQ1BppUyCQxHzuTjVoYsyhrS/7A5vRy1ZdBI4iO7k
-         kDKBKKEtvA1QkHtATnm3PrtNBF5VPeDshhEK88ymA8Ylj5eTCFYrmWAHlBCHuPFXVndL
-         DgdJ/ghuitbYJj4c+1HfkWzWsua6GrUhf4HaIJ9wsrmj3rnvl29pP6OhOuvVXDUBZjVU
-         yv3xvwGYSvchadykAimTRcAYNL+kONinA7PtZqYFNPhvg8IacJmL3oPlg+fL+njb0U3m
-         hNCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWu7Eg3cKd1uVzCw3LDj8bVtlUMWLmXlqYS3rV9F6QeJ+Ztkioj2HzqBSPjV/kwylLp8Fy2ZhM4gyikA/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzshda+eoiNjZKiRdn57LMxembUHvFqVQve6oKcDvdJn55mNLB/
-	uYyNKzbgSki7ew1S8ww0w3Yfu86Ws+oDFSSL46ReanFJoMOJZAgEqaiOgJp7qNM9FcbqqETQm59
-	ih3oF40BkXzxDmlzaAe9H4F+Q4oapkv8cDdZo0/6decJAQanhtNrfEvAyjjwG28ARxw==
-X-Gm-Gg: ASbGncsF3iksZ6ILvarwcjOFdY8cvwwcJGGlKZrn6+EtKP82wA9t0EQMPQQus2ciHZ9
-	XGweiZCT3RHp1MTdsBOwjSMxtRgrI+XzYvH238I4KGIxq8eZsQsp7Ia4CnfZ3UdOfm/zdIiK03G
-	1QP70H6V7J6nu3ypQYUH4Jvg+dM3nC5ePhkQu6eqe1ke7surgwXLiSyIcoKIH8iP/S6oL0sc1EB
-	EeSKTSITZfz3HM/xemOQNnppVJz1k48ttBR0YufF7l8cF2ZIa3QVRgOSTA3pjZCjqC4x1Tgkz2i
-	PaTm0nK0nAb5CdyVYRGLjruI5txcvPoqb1+0QH4RGHQvcp8IQ5WNfGtRZwr7EvZmYACN/t5xEdD
-	+Eu1uanFPtLg0PFzKpm5FJUI=
-X-Received: by 2002:a05:6000:2401:b0:3e7:46bf:f89d with SMTP id ffacd0b85a97d-4266e8de2c2mr16860032f8f.44.1760427292313;
-        Tue, 14 Oct 2025 00:34:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxNwSeqZAx1bogXJDeVtjJdr6RSvW9zsie6Xf2fYECED9RUObVAre57ulfyG8aTO0EyMtU8g==
-X-Received: by 2002:a05:6000:2401:b0:3e7:46bf:f89d with SMTP id ffacd0b85a97d-4266e8de2c2mr16860020f8f.44.1760427291948;
-        Tue, 14 Oct 2025 00:34:51 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5d015esm22720436f8f.33.2025.10.14.00.34.51
+        d=1e100.net; s=20230601; t=1760427337; x=1761032137;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aA7JCiuVVRCy3V30ThlamZSn/80oafKR6lFslO98isQ=;
+        b=Q+fiy35xxeRi0Sbb7Yhxs7NYPBBTa0CmCl01tYqCdPsgqmP0QeVsY0VCVsqzaH6AKU
+         ZlXuiAjpUu0bZgSjr9xwSnxBw6/F2QbWlpP1sgQDD1kuLSXyx/YRlJB5D0dev5VwHlu5
+         Qrn2aqSiTI/9GqIfHKNzaHeOcijMl4XeINrWfvoLoYwt115Z0qxtPIJ91VhcrEDs7kwp
+         E9smxZ/hRlI7stQKgxfMDS746IPt3B9VlrcTeNjgU74LVABwAYAIbS7Z3Oj3YO3QgooY
+         COgBxKQxC4P91o7reKvYs2nLzYJtqN9BaXJTr1aElF7wXQh5PCEiFUSud9CKUr+dkbPf
+         qT3Q==
+X-Gm-Message-State: AOJu0YyAAj6njucnlIJuWCvVFhTy54gqHfOPpM2D6Q9rcBKzf+jGM+uM
+	ExkrN/QDOekYuDYAO7hrWZafKyJ77seiKWZadqTzppzWJKpJCHcDvKIEVUjcjPzOJq1K7c/+iyR
+	g69O80Bog46daChm7aJzFGUTykokNQ/lz94YVVcsnsMsFaei7zvKYttqMzoNH44df8qk=
+X-Gm-Gg: ASbGnctB7rZhIKNjzS4KIgU1KZ7p4OvnZpjZe2bNjZtEiXPKVJikY6SfMeileZL1O3f
+	X8pZR64GaqYR9Qnf+sCZpw+Mf8JU0rH9svfZAUu7N6aCsCJxCxpvswegl18B2B15FVat+0YtXYB
+	faVk/sduxVfp4C0HlPn0XQQQUTomlBC4e5i4GOQp4prTHUmrXy9bRJ/DrPgqX7GgRFwydX1nYPP
+	iUYn/xJKqDRAL9ygnS20EZU0+NT6sn9jk3gQ9JZ1bQc+kPy5wNbZOntXFtCw5VCjbBFtzWPXoCZ
+	YStx4JvY4cA9dEKbgS8TgGBrrmFNfrkXj8bzU2Ii7AkJPqgBQU1VTRQW6LYwdQZW3ed8LI/Rq78
+	N523YqzkTD1CQqBjmUSw=
+X-Received: by 2002:a17:903:2acc:b0:264:ee2:c40f with SMTP id d9443c01a7336-2902730237dmr320265105ad.52.1760427337281;
+        Tue, 14 Oct 2025 00:35:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOxdIo88Y+BDPv1KzmWMec2XJ9wxExeRxOPDZ/MXxz4c5ZQPBmyG0bxZVL0yu6B0smPV2waQ==
+X-Received: by 2002:a17:903:2acc:b0:264:ee2:c40f with SMTP id d9443c01a7336-2902730237dmr320264835ad.52.1760427336782;
+        Tue, 14 Oct 2025 00:35:36 -0700 (PDT)
+Received: from hu-viveka-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f93b66sm156070585ad.124.2025.10.14.00.35.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 00:34:51 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jocelyn Falempe <jfalempe@redhat.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org
-Subject: Re: [PATCH 3/6] drm/panic: Fix qr_code, ensure vmargin is positive
-In-Reply-To: <20251009122955.562888-4-jfalempe@redhat.com>
-References: <20251009122955.562888-1-jfalempe@redhat.com>
- <20251009122955.562888-4-jfalempe@redhat.com>
-Date: Tue, 14 Oct 2025 09:34:50 +0200
-Message-ID: <87cy6qq6lh.fsf@ocarina.mail-host-address-is-not-set>
+        Tue, 14 Oct 2025 00:35:36 -0700 (PDT)
+From: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
+To: sudeep.holla@arm.com, cristian.marussi@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, mike.tipton@oss.qualcomm.com,
+        Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
+Subject: [PATCH 1/1] firmware: arm_scmi: Increase MAX_OPPS to 64
+Date: Tue, 14 Oct 2025 00:34:54 -0700
+Message-Id: <20251014073454.461999-1-vivek.aknurwar@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68edfd4a cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=5ooIImjpSQmp0NYUP-EA:9 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: HJV_T-8toN86AKBbVkPjTVERxZvabEqv
+X-Proofpoint-ORIG-GUID: HJV_T-8toN86AKBbVkPjTVERxZvabEqv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfX4Ls8j2mMW08Z
+ Wkr7wcm/ItVE8hiQmB7OaFhtpjWsBJg+rS1EZeGN2U4tbN7c6WgNA3CFYGuui27kK+11GLL+Ipo
+ Z/Ult7Is0jf2uKnDxaeiN2Rec/Sg4Xw9Z9p6OkQRDaoPI4SUQq1UQUVYigpYZr8GI+OjWxndGRy
+ tRGderyBJostaZK7xLhCRE8Ef5qxkYtT37c98Vrkjk9tXyZkS5HrnzPYPGTB+QO1gFO5M5OI5qN
+ GcHX2IFQJLFx4mf7k4fYxWn9qMmyuPVD1MjJQRJNzW9AcR+hfzzBtT6WB0YJjomBK7VSSo9uwV9
+ 9fC+YvxN9nGe5byfSHGWHn3P3XJc+f8tQOkUx1kZcUsJmOPF+LT24lBxUm94uHpTqohIgP+n0Px
+ GGd7qOe6pLOFfHvz3nglpwyx3vkFcw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 clxscore=1011 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
 
-Jocelyn Falempe <jfalempe@redhat.com> writes:
+Some upcoming SoCs define more than 32 operating performance points (OPPs),
+exceeding the current SCMI protocol limit. Increase MAX_OPPS to 64
+(next power of 2) to support these configurations.
 
-> Depending on qr_code size and screen size, the vertical margin can
-> be negative, that means there is not enough room to draw the qr_code.
->
-> So abort early, to avoid a segfault by trying to draw at negative
-> coordinates.
->
-> Fixes: cb5164ac43d0f ("drm/panic: Add a QR code panic screen")
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
+Signed-off-by: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
+---
+ drivers/firmware/arm_scmi/perf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 683fd9b85c5c..2249ef7fe790 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -27,7 +27,7 @@
+ /* Updated only after ALL the mandatory features for that version are merged */
+ #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x40000
+ 
+-#define MAX_OPPS		32
++#define MAX_OPPS		64
+ 
+ enum scmi_performance_protocol_cmd {
+ 	PERF_DOMAIN_ATTRIBUTES = 0x3,
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.34.1
 
 
