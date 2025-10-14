@@ -1,96 +1,87 @@
-Return-Path: <linux-kernel+bounces-852760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A77BD9D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:57:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C4ABD9D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426F73B4531
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6978818A41E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29389313E37;
-	Tue, 14 Oct 2025 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="RvJH0BSw"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A92531353C;
+	Tue, 14 Oct 2025 13:57:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1960D30C36C;
-	Tue, 14 Oct 2025 13:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F25313E1A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450216; cv=none; b=Dbrn781Ya/FmanHT7JbuRpcqQDE46AH1EuPj3IJz8bdxOv9xeBgzmjL3nblab1xRI6YX++GuHndJrcvQvgD7eyu6RTUE+0yCi2yZYHN+jQattLMVcNqJGMUmyiJ+1wFQNLcNoIEz4CyjdM1soTsYcGb1AmWP9NXu+NnhRiIUKD0=
+	t=1760450225; cv=none; b=Ff/ozav/Avsbo5w4pyU34I3DoV2PlQEzyFviyOOSuk8/sRx5WOhlMKsYTW/H+1Xdo5TgCZHjMIwEMPzyrJPvkfTUPLiBQKLGy+Wskyxa2L6WjwOMtIybDFTCBEd4wXqn0eqcUjy6OQPhqKSoqp0qLMpmjY0K9x6N3YBJvIdyTZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450216; c=relaxed/simple;
-	bh=PRqYDMj3V0mpjuoGt3aazHK0eVFqNNCONPDyZsC7524=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EFE4HwSFeS9jENkdI68KoAKsb9kfLyVuaa6hmQSxPSoG/DRS8OUDh03Eg+uqxEntdDy5ovP1s2+zMYyTNUhtAt05juFd4rx5QkILrHZSZs4pa+4Mymt1UWSbYPjy+7dpD23bX195v07Zl45LU4D5scpp+vjqVPztOrUV9FGZGHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=RvJH0BSw; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DF8A540B21
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1760450214; bh=PRqYDMj3V0mpjuoGt3aazHK0eVFqNNCONPDyZsC7524=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=RvJH0BSwjh/wtqfhQDf0P8XDljS+zuNCsbBIC5CyawwUqzRAbAGVOd7QUlaLqPvDt
-	 Oq1Z4K276ZiVoMIbhMHvNt9SXjPQm9X+tS3Q0SsmxDowuoDiRUbqt5+ui8a6wtsaZk
-	 KrnFjtyGAe9gtG55X8EeGkUAJc6wwT6iTFPF3OpWP0XpCuzawcJAbGM7qSR/7tcOER
-	 YR6PviAGMl9tYt6OthIITDZnIoSxEK3kcy8Fy7LFhrg/QNxAEqnaNb8ozO2HjeXWaD
-	 9jT3T5rLrZtaJ1ctR+4HRBqZtisbD/YvGpn0prCNWsEeVrgmLRNEKjjGbtpDvnXTf1
-	 0MN8S3y4G4Arw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id DF8A540B21;
-	Tue, 14 Oct 2025 13:56:53 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux EFI <linux-efi@vger.kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Hugo Osvaldo
- Barrera <hugo@whynothugo.nl>
-Subject: Re: [PATCH v3] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
-In-Reply-To: <20251013085718.27085-1-bagasdotme@gmail.com>
-References: <20251013085718.27085-1-bagasdotme@gmail.com>
-Date: Tue, 14 Oct 2025 07:56:53 -0600
-Message-ID: <87jz0xd1sq.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1760450225; c=relaxed/simple;
+	bh=5YzqR6FO35MStpZhsgsJ1AFVYtReqhpA/fgeEqiVF3g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Gm9gLUViwPqb6+uill5J5IlOOZMZDfj0WRD/F5VqV+N6H5QPq0oKHXirhwGqUH62slIaIYqBTD1ssCUz4Du7isWWLLKZepndAnxgeCAikWLSz3S+nfh7xFJQFKIgo2AQxfICANVSFU/flw12aYaqzn4cVL4U1qpnSn2WPuDj/iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42f67904af6so337883465ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:57:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760450223; x=1761055023;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zOd+QAyfKKv22fuf+dORkpAdSTzN0DulbD16Tp0tVeM=;
+        b=matA/FRpGKG0pLghHHSwOAbrIlsNC28WojifrBa7F/DE3PfAYzkeb9bx1ptDjSgTbx
+         S58X3MeXr/ws8Kttkjlaljr09ADA+VkEjcx9UdHCvBG8NNDX+9ly/fRyBjZdXfpavC19
+         itj+6TJS7x6B18bZ/8k/T1d/VqBVMrHBA6VfmYNA8IqRrsf7xkOZeb+DrHTOm2yY6Rkz
+         1brBSs6zhLO6/+4aRdMcUVrymitRTqCkoUnuoqNTdndCp75QhkY8uTRgNPAFxo21T9Ar
+         +nFR7hN4P0iiy+FXIBqjhkK2GweLpd8JbyCTB8kzEAdb4veEoKDFE7QxmFXFzvSdLLy2
+         jDOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYT2stFrkT7P0HZWT9sK05wtuQ+wdkR1t2Vx9TMA6H96Ys7buCIbrUEbIOheB9SGANsuBKvExSM6vQMxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEtvhKU5JvGdwhWTqz4jyQ5R91qGVAWo9PPBAKjSCdh9zTrS6p
+	9MjD/QLT7pwz+4DKVDotWh5Pl9UAFYh6TkMsY0dUy67zX3N48amu+TPn7fDzoZsqWpEqqMDw1Wb
+	N3hIHSv9eR99VzZan/kGL6PLN6lSDVzYNaHy/Qi8lTtP2wq16KpSY0R58mg8=
+X-Google-Smtp-Source: AGHT+IHtYQxClrjPaG2+Z+jLZxmaceP2CARPiONlCBxHQ+ILxgdIPymrh61D8igQSdTqpgRo+h8Mqr9CNjdN9FjJnfRerDovowPy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:250c:b0:42d:8b1c:570c with SMTP id
+ e9e14a558f8ab-42f87352e96mr237129675ab.5.1760450223386; Tue, 14 Oct 2025
+ 06:57:03 -0700 (PDT)
+Date: Tue, 14 Oct 2025 06:57:03 -0700
+In-Reply-To: <20251014132504.642005-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee56af.a00a0220.361615.0000.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in ntfs_setattr
+From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+Hello,
 
-> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
->
-> Since the Handover Protocol was deprecated, the recommended approach is
-> to provide an initrd using a UEFI boot service with the
-> LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
-> approach has been no more than an admonition with a link to an existing
-> implementation.
->
-> Provide a short explanation of this functionality, to ease future
-> implementations without having to reverse engineer existing ones.
->
-> Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-> Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
-> [Bagas: Don't use :ref: link to EFI stub documentation and refer to
-> OVMF/edk2 implementation]
-> Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> No changes since v2 [1].
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Applied, thanks.
+Reported-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
+Tested-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
 
-jon
+Tested on:
+
+commit:         3a866087 Linux 6.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11cb05e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e58a7dc1a8c00243999
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=164f467c580000
+
+Note: testing is done by a robot and is best-effort only.
 
