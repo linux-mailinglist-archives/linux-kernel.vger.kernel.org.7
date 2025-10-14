@@ -1,78 +1,221 @@
-Return-Path: <linux-kernel+bounces-853094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADF5BDA9EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:32:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 378F2BDA9F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7AE3A75A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:32:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7303E3516F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794A4302CC4;
-	Tue, 14 Oct 2025 16:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4483009E9;
+	Tue, 14 Oct 2025 16:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuDODLDQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4ezOjIV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A3030277E;
-	Tue, 14 Oct 2025 16:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CE35CDF1;
+	Tue, 14 Oct 2025 16:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760459498; cv=none; b=adghnmY3qY7ndDPIP9YJjCz0mNFnUaOG0HxesMYHOZGybDK6WDkzjdJyoSQHMtBB4wMvP4o9rQ55wH2ySByvh+GXLfKCp0fdAR9bnHZNHXmQxlVltzOaMcjD+6LFWI0FxTttHZja4r/u6Go1/j1ydh1So/Dx09LCVkdHc6hezcA=
+	t=1760459589; cv=none; b=khPibdJucBdmKYCrybDiNvWGTmLpR5J3YEATNRnDh/62jM8mnN4SSHAaePEHgCARy/eA5+OYMMb/FziDRaqmbFWLy4pG4hvFzCvDjDSCPnne76EVRd0uELLxSyeky0uKOTRsQloid/iEKMtqG4fWbuzwNWfcBcT0ftBVIoVTgtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760459498; c=relaxed/simple;
-	bh=n4oXF6XPkxdkZVvqZAtKMMcOctTEfQjVOptgzpkPE4c=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=u9xB+iRBu+qR/Ds2R4s7NtdFrZbyVXlpwo++pgFkoYG/8qZoZSJRZiAdUvn4Cwrvwb0/6Xrk9UlM7bJEzqv+LUe7jixHVtZ40I+u1GvN4WjlTA2U+RAqRBseHWwU4eDM6KrPcVWNyhhMu+9rR6DckHlYwpl0vwjfbhTTlN8q1c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tuDODLDQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0763C4CEE7;
-	Tue, 14 Oct 2025 16:31:38 +0000 (UTC)
+	s=arc-20240116; t=1760459589; c=relaxed/simple;
+	bh=D+E6b9xuGUDEplIh1+X+xjW+DVXmn5cvE2zLqdeGK1k=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=evPpTTlGB95rVFrdSBX1VxS1DIEUgp0Do9rEkkTj5f/7d1Z2/peYi5eQzWgBQMprDdpCuZWWvoUhc7rmZ2O1o37Ean4ye5AvK3QhTvZwNG9oZvQp/zTtLMEVWYokw/eZzZxRsbsZ7FOp5ZDEXFsBtekkFAsJfNhaNiUqVZKaQuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4ezOjIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FDD7C4CEE7;
+	Tue, 14 Oct 2025 16:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760459498;
-	bh=n4oXF6XPkxdkZVvqZAtKMMcOctTEfQjVOptgzpkPE4c=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=tuDODLDQ7NMTp7zsw647v1EiPAty0Ebq1NTNuUDHx4foF8XsbJvo2Tec22Xkn0wG+
-	 g4QsbHjeMCLZJza+Kh8if49Vuy1iSkGXbtcrTcgdLDVP7dfh68Xms1bR3tMC54/5oD
-	 UCIoNNceSB864ooMfxmFwwfCBmb8kgbxJcqPb2eoPzv4cuBphui2A5zFgRa5jNeX5q
-	 AjbQPm0/j8SAhuaoQll+b6AI1Uwz/aMqrdX3pg8tv6iDTGDpwe16fo8rpg8kjGsUvk
-	 2mMqvXJh8oW7HHkEHyvBBPAwWj6a4IY9LFh0I+zxzXhBO9vUiIb8gAqHdGoXwSPNUH
-	 XCXg9DYp0RMlQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34025380AAEA;
-	Tue, 14 Oct 2025 16:31:25 +0000 (UTC)
-Subject: Re: [GIT PULL] NFSD fixes for v6.18-rc
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251014145810.4880-1-cel@kernel.org>
-References: <20251014145810.4880-1-cel@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251014145810.4880-1-cel@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.18-1
-X-PR-Tracked-Commit-Id: 4b47a8601b71ad98833b447d465592d847b4dc77
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9b332cece987ee1790b2ed4c989e28162fa47860
-Message-Id: <176045948386.10193.5996695726053877508.pr-tracker-bot@kernel.org>
-Date: Tue, 14 Oct 2025 16:31:23 +0000
-To: Chuck Lever <cel@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+	s=k20201202; t=1760459584;
+	bh=D+E6b9xuGUDEplIh1+X+xjW+DVXmn5cvE2zLqdeGK1k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O4ezOjIVbLFTb9tq+/Dr/a2j7f4BA2HY0JYIUAnrPtdYTSNXQxoIvuePdc3hCzNzX
+	 qV5RBijVRxO+hLbM7OFjz+kQjPWJINKwwAjuiutVbE9YL59nVf1rHTs+aZL0VuHSFM
+	 bocWF5sy8cj1t3y53QZRObhG6TB9IqvQu2wPRdrXInvfvZMByI8/PhV/Bf9U3TMkVE
+	 2jB+6U4MyZs/SFgcsHOPFD9aZGcVDykYoJ7QzYEOQhbYdSnCCvESZursC5sGFpaA60
+	 z4ynFNxQYsD6MhtfdGmMtcKpn9M5mxcqxyOyvv6b3oRHntQ5RrCRSZ0FN6SKEFvFvC
+	 2Gn4vKPLQ9I1A==
+Received: from 82-132-221-186.dab.02.net ([82.132.221.186] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v8hxN-0000000DwIE-3qph;
+	Tue, 14 Oct 2025 16:33:02 +0000
+Date: Tue, 14 Oct 2025 17:32:56 +0100
+Message-ID: <87frblxx3b.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Kunkun Jiang <jiangkunkun@huawei.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey
+ Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"moderated list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
+	<linux-arm-kernel@lists.infradead.org>,
+	"open list:KERNEL VIRTUAL MACHINE FOR\
+ ARM64 (KVM/arm64)" <kvmarm@lists.linux.dev>,
+	open list
+	<linux-kernel@vger.kernel.org>,
+	"wanghaibin.wang@huawei.com"
+	<wanghaibin.wang@huawei.com>
+Subject: Re: [Question] Received vtimer interrupt but ISTATUS is 0
+In-Reply-To: <14b30b59-12bb-fc69-8447-aae86fcafcd1@huawei.com>
+References: <14b30b59-12bb-fc69-8447-aae86fcafcd1@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 82.132.221.186
+X-SA-Exim-Rcpt-To: jiangkunkun@huawei.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, wanghaibin.wang@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The pull request you sent on Tue, 14 Oct 2025 10:58:10 -0400:
+On Tue, 14 Oct 2025 15:45:37 +0100,
+Kunkun Jiang <jiangkunkun@huawei.com> wrote:
+> 
+> Hi all,
+> 
+> I'm having a very strange problem that can be simplified to a vtimer
+> interrupt being received but ISTATUS is 0. Why dose this happen?
+> According to analysis, it may be the timer condition is met and the
+> interrupt is generated. Maybe some actions(cancel timer?) are done in
+> the VM, ISTATUS becomes 0 and he hardware needs to clear the
+> interrupt. But the clear command is sent too slowly, the OS has
+> already read the ICC_IAR_EL1. So hypervisor executed
+> kvm_arch_timer_handler but ISTATUS is 0.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.18-1
+If what you describe is accurate, and that the HW takes so long to
+retire the timer interrupt that we cannot trust having taken an
+interrupt, how long until we can trust that what we have is actually
+correct?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9b332cece987ee1790b2ed4c989e28162fa47860
+Given that it takes a full exit from the guest before we can handle
+the interrupt, I am rather puzzled that you observe this sort of bad
+behaviours on modern HW. You either have an insanely fast CPU with a
+very slow GIC, or a very bizarre machine (a bit like a ThunderX -- not
+a compliment).
 
-Thank you!
+How does it work when context-switching from a vcpu that has a pending
+timer interrupt to one that doesn't? Do you also see spurious
+interrupts?
+
+> The code flow is as follows:
+> kvm_arch_timer_handler
+>     ->if (kvm_timer_should_fire)
+>         ->the value of SYS_CNTV_CTL is 0b001(ISTATUS=0,IMASK=0,ENABLE=1)
+>     ->return IRQ_HANDLED
+> 
+> Because ISTATUS is 0, kvm_timer_update_irq will not be executed to
+> inject this interrupt into the VM. Since EOImode is 1 and the vtimer
+> interrupt has IRQD_FORWARDED_TO_VCPU flag, hypervisor will not write
+> ICC_DIR_EL1 to deactivate the interrupt. This interrupt remains in
+> active state, blocking subsequent interrupt from being
+> process. Fortunately, in kvm_timer_vcpu_load it will be determined
+> again whether an interrupt needs to be injected into the VM. But the
+> delay will definitely increase.
+
+Right, so you are at most a context switch away from your next
+interrupt, just like in the !vcpu case. While not ideal, that's not
+fatal.
+
+> 
+> What I want to discuss is the solution to this problem. My solution is
+> to add a deactivation action:
+> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+> index dbd74e4885e2..46baba531d51 100644
+> --- a/arch/arm64/kvm/arch_timer.c
+> +++ b/arch/arm64/kvm/arch_timer.c
+> @@ -228,8 +228,13 @@ static irqreturn_t kvm_arch_timer_handler(int
+> irq, void *dev_id)
+>         else
+>                 ctx = map.direct_ptimer;
+> 
+> -       if (kvm_timer_should_fire(ctx))
+> +       if (kvm_timer_should_fire(ctx)) {
+>                 kvm_timer_update_irq(vcpu, true, ctx);
+> +       } else {
+> +               struct vgic_irq *irq;
+> +               irq = vgic_get_vcpu_irq(vcpu, timer_irq(timer_ctx));
+> +               gic_write_dir(irq->hwintid);
+> +       }
+> 
+>         if (userspace_irqchip(vcpu->kvm) &&
+>             !static_branch_unlikely(&has_gic_active_state))
+> 
+> If you have any new ideas or other solutions to this problem, please
+> let me know.
+
+That's not right.
+
+For a start, this is GICv3 specific, and will break on everything
+else. Also, why the round-trip via the vgic_irq when you already have
+the interrupt number that has fired *as a parameter*?
+
+Finally, this breaks with NV, as you could have switched between EL1
+and EL2 timers, and since you cannot trust you are in the correct
+interrupt context (interrupt firing out of context), you can't trust
+irq->hwintid either, as the mappings will have changed.
+
+Something like the patchlet below should do the trick, but I'm
+definitely not happy about this sort of sorry hacks.
+
+	M.
+
+diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+index dbd74e4885e24..3db7c6bdffbc0 100644
+--- a/arch/arm64/kvm/arch_timer.c
++++ b/arch/arm64/kvm/arch_timer.c
+@@ -206,6 +206,13 @@ static void soft_timer_cancel(struct hrtimer *hrt)
+ 	hrtimer_cancel(hrt);
+ }
+ 
++static void set_timer_irq_phys_active(struct arch_timer_context *ctx, bool active)
++{
++	int r;
++	r = irq_set_irqchip_state(ctx->host_timer_irq, IRQCHIP_STATE_ACTIVE, active);
++	WARN_ON(r);
++}
++
+ static irqreturn_t kvm_arch_timer_handler(int irq, void *dev_id)
+ {
+ 	struct kvm_vcpu *vcpu = *(struct kvm_vcpu **)dev_id;
+@@ -230,6 +237,8 @@ static irqreturn_t kvm_arch_timer_handler(int irq, void *dev_id)
+ 
+ 	if (kvm_timer_should_fire(ctx))
+ 		kvm_timer_update_irq(vcpu, true, ctx);
++	else
++		set_timer_irq_phys_active(ctx, false);
+ 
+ 	if (userspace_irqchip(vcpu->kvm) &&
+ 	    !static_branch_unlikely(&has_gic_active_state))
+@@ -659,13 +668,6 @@ static void timer_restore_state(struct arch_timer_context *ctx)
+ 	local_irq_restore(flags);
+ }
+ 
+-static inline void set_timer_irq_phys_active(struct arch_timer_context *ctx, bool active)
+-{
+-	int r;
+-	r = irq_set_irqchip_state(ctx->host_timer_irq, IRQCHIP_STATE_ACTIVE, active);
+-	WARN_ON(r);
+-}
+-
+ static void kvm_timer_vcpu_load_gic(struct arch_timer_context *ctx)
+ {
+ 	struct kvm_vcpu *vcpu = ctx->vcpu;
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jazz isn't dead. It just smells funny.
 
