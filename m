@@ -1,207 +1,220 @@
-Return-Path: <linux-kernel+bounces-852052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A68BD80BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:59:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47FDBD80CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 481734F5030
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576B03BD694
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC2330EF7F;
-	Tue, 14 Oct 2025 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A570230F53A;
+	Tue, 14 Oct 2025 08:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3lhGg7F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uJV6aLvv"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C82830E852
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992C26E704;
+	Tue, 14 Oct 2025 08:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760428774; cv=none; b=HNimiSPZJHVqibutXxd8uo/ShsoCBaUajobFGbVKT6v8e/enHmdTRSblmU1ixzlfs3z/AFKVqUqXJZGIotL8Rd3iAvQ+0MDTD2RBydJOHHHQtcJCcVb1VilwR07sOvz6QRjLfG6dHSPZdM8KnRwRjipGIEAKnFaqXjHdLE3qFUE=
+	t=1760428879; cv=none; b=W6E5kSUReV8JRezour2aV/BMO/ggF/dCJktnxy7tdh8Wo0Lr325Z75cNthJ6OUek+S5+fVT9aX8fvXW0D2SdD+Ccmh639KVj4pU5eiDd81ZmuZwyNY2cbrtJZaiTONZ6Pivz4ULv86V3IvCQXvthw2iqCt1RL1vDxtIFxIAsyCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760428774; c=relaxed/simple;
-	bh=srzEV4uHOz9yBYJFcr3/HRQwSQglUYfQiebcdxSVhPc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CReQAsoas18gRYhDH0ntHuvsK1g7be/9dnhcbkGFISTRrAlr09e1vCYDkYVdK0qxhFM1n0s/IOGnHIPC9dvWZkGLb6SKMgV3avvnTByQSVw5jHdsSRoZ2mSK5M3ACB9+92u+s9G0MVdHzQS7BMtQ6YV6tevbmGnXS2qD8XkQZIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3lhGg7F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760428771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g+evH2w+/SD0aBvnKN9sijIvN4jHoC6G+ugKhqQCEeQ=;
-	b=S3lhGg7FsSHFSVopLNmwMW5PiqiVDe7Z27Uj0AahhUD9/NEqbGZFcwjJGZNhc1VZJ+VIqO
-	79bgW876zL3iHWQJpgfAyaNYnJsYVKa1T70VCOweDKsmVF1cTJkP6Ya3a/5G5V9mpHLPLY
-	D5rb8PeQiGXSHRJvwKhMb61E2dDapoE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7-fAPCJHrCPuG_nSVhDITMig-1; Tue, 14 Oct 2025 03:59:26 -0400
-X-MC-Unique: fAPCJHrCPuG_nSVhDITMig-1
-X-Mimecast-MFC-AGG-ID: fAPCJHrCPuG_nSVhDITMig_1760428766
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-426d314d0deso2063217f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:59:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760428765; x=1761033565;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g+evH2w+/SD0aBvnKN9sijIvN4jHoC6G+ugKhqQCEeQ=;
-        b=wXuNURbFDuSgqUFfSRTf84tA5gsabLfyrep5EDzMmprcsqvjHgQ/VIGK+J2CtDCUpL
-         T/cG0XArzOOerJ7u3G+/UzhcSHQpzAVn4di9KDMQPuWnvDRjIqtke1m7AIV9AgptbhkK
-         /KJtUBxRRCEacqtFEnEH10w+a6pkHOzp2jWwzOlofL7Cx2BGC8JJcqaVgv/catlJj1rt
-         otU13GY2lrSuL+GDrywKYPh0h5yqz6seRYrv/PcvkWAnEtjOEjaG8ydmCIqE2t3TjEdh
-         6Huw2d0hhNE9zmG/vicb7e29IccZfgK/djhkObOh6YM2BYPd1b0i58Ihng+ck09Typ2T
-         Hhyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFGoK2SnJQ0Us1Fjs1rUz6Zf0TzyVf1gt2qRswCnWGrg+RLa5k64+YQxj28b4qtQ7xwPR+h3XosJQvZlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG6UiX9l7bQukRnXuz58j02Rd4KhuaRGvf4PvJPjziAddXHUhC
-	+AgP2QYAaIQGXtES4nxr5PKAcfrkF8stScdx5LNofBxw3FDlASB86DbTczLJ3H7xf+llyCysxq+
-	tHFbvHFzO7G6iu0TMZ5p3L67cOJbAzHvxTtajQUZGiKHzQyUbAqnw12R15OkBSlTazQ==
-X-Gm-Gg: ASbGncvCDyckc7iiBsYGk/JVUvH2hUepD5WdFYO0KuJaqepOFHnUhrPWt/hj7Ww56dG
-	bwyUAWDdRxFpLy8IVcJJc6Bggk9duSEgDb8fnx5D+C1dDHEtyQ3TAuLD4OAwz4Z7Cv8I+1u28yV
-	XfH+kURulgypSwUyDoVB+wjX9qxC08bZ90EiUipsqoiwyUge7LUgIfmcmx2cr/cK1QBncP0Q8cY
-	j+dOkOoLPm2M56QOkC03+eSt/JHLasgV0zc66R/Qt5HrUZST/2qah0HBH1WwwSZfJT5yrf8bW4k
-	Ew3tbDV9XTEnesJLgISjHudx57pWSr97QTpUHXVxU9xtEsl0W/4OAQTkuOiIjp7QvHXZCOF+iw=
-	=
-X-Received: by 2002:a5d:5f54:0:b0:3ee:1586:6c73 with SMTP id ffacd0b85a97d-42667177de1mr15280661f8f.19.1760428765585;
-        Tue, 14 Oct 2025 00:59:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE68IeQzBd2dgMq8g6Muhrra3mxHKk25wfQSGnOAJFSGP9NdV805qDrZXher1hu8/MM+LRtlw==
-X-Received: by 2002:a5d:5f54:0:b0:3ee:1586:6c73 with SMTP id ffacd0b85a97d-42667177de1mr15280642f8f.19.1760428765181;
-        Tue, 14 Oct 2025 00:59:25 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426f2f72e18sm862060f8f.0.2025.10.14.00.59.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 00:59:24 -0700 (PDT)
-Message-ID: <57b73517-9b4a-4203-a39f-3d412ad4c7b9@redhat.com>
-Date: Tue, 14 Oct 2025 09:59:23 +0200
+	s=arc-20240116; t=1760428879; c=relaxed/simple;
+	bh=yBFgeA9u02Yi9+0VS/oBb8STABvotvLYI8KT4LZTPQk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WI0D24koRwhqVmE/hLskzPM2k9Ic2/EH4GXuI1bb9owwNnmmcn68UKDtqeOmYbVpi+cm9zBh8M6XNZcenXs4/VkWqLoFa2WOSrmZqAujsJdkaG125AXb3QmoI0FtXFGAbzlpnn1ph+Rf6wHrcmbpdap1pwzPby5HJygnkdrtqQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uJV6aLvv; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.1.182] (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 82760741;
+	Tue, 14 Oct 2025 09:59:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1760428774;
+	bh=yBFgeA9u02Yi9+0VS/oBb8STABvotvLYI8KT4LZTPQk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uJV6aLvvKs5sNImKeND8JRNHZguXhGEzynvij1YpMtoEeIdH5S9lWG0+IG6xMGW+Q
+	 z4WelrHtVPZs8Y/3ZXLtIAXEM7xrvq/iJNyze6qKdyRpp+ZKrMJlc+QGYBERNX+NOC
+	 FoLGRq8lnyXX4B9bXywCxhC13jD3sAaTU6gBK4mY=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: [PATCH v7 0/8] media: Introduce V4L2 generic ISP support
+Date: Tue, 14 Oct 2025 10:00:52 +0200
+Message-Id: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Regerssion] [KSM] KSM CPU overhead in 6.16+ kernel compared to
- <=6.15 versions ("folio_walk_start" kernel object overhead)
-From: David Hildenbrand <david@redhat.com>
-To: craftfever@murena.io
-Cc: akpm@linux-foundation.org, chengming.zhou@linux.dev,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, regressions@lists.linux.dev, xu.xin16@zte.com.cn
-References: <80b153cd-8bba-4bcd-9b56-3b2ad3f295e1@redhat.com>
- <46d26246-5bd5-43f7-b1a4-dc721f717413@airmail.cc>
- <26a8f0aa-8d67-47ba-841c-2daf7010a2aa@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <26a8f0aa-8d67-47ba-841c-2daf7010a2aa@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADQD7mgC/43QTWrDMBAF4KsErasy+rOkrHqP0oU8GjWCxA6SM
+ SnBd68SaJNFTb18A/O9Ya6sUslU2X53ZYXmXPM4tGBfdgwPYfgknmPLTII0YEFwukw01NwfiZ9
+ DCSeaqFQ+h2OOYWrLHJ0SySaDCD1rzLlQypd7xftHy4dcp7F83RtncZv+4O5/fBYcuE8oLXq00
+ uFbjhTqOPRjKPEVxxO7dczyyRWwwZXNtYTOC0eotVpx1cN1wm9w1e3eiABOadcrWHH1kyu33Ku
+ bqyCRCd5jL9KKax6uF2aDa5pLXey91p0Lae0P3a8rAOwGt2uuSVb46JPyZP5wl2X5Bn6YOGePA
+ gAA
+X-Change-ID: 20250701-extensible-parameters-validation-c831f7f5cc0b
+To: Dafna Hirschfeld <dafna@fastmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Antoine Bouyer <antoine.bouyer@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5897;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=yBFgeA9u02Yi9+0VS/oBb8STABvotvLYI8KT4LZTPQk=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBo7gNFW2i/Ij79z6GLHAlCu1SQNniCRvS+A0w/h
+ XiN2fpYguWJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaO4DRQAKCRByNAaPFqFW
+ PI5cEAC+LvUeJCDvL7UgZ3+iURdVzRot9hKbZAD679moLW7iRtCJMGjkTD3pWBaSu2y69loogrN
+ d2OaXKk0Or/02HajmsLBf/lZIqHrEcV2944Hn9bQOjtroM+PUbOEGISX/5Pwbb14twfkPo5UcpU
+ w3vYn1MkkZpKL9KRgcmOZ4MmDvjzCIZWA+gNbEy3fqeaD+SUtK8ASpzkioMLjgANhOC2S0nH+vQ
+ HWYMckh8ldm345WNV2qTzYYSW5nIjqOkEgoPzVbYC93ZqfmGysJmlJaHe40kEx4RQ7jxSHgwj+x
+ PZjIVgxctLOhrhEepHHSKlWIGwrsOd1bBW5aw7jP1mxcAc/0q2kXfH8kFuWjV6jxKwQKeynCdfJ
+ 34Zk1bqK0npC3Bt+mxUkoobzRoLhxOgTUbiQF2XhUiGUWCXt5SqKoLuz7tEQTkT2kWbzcBwe/6L
+ SeWtQyRclZ/LkCvvUK4opEaUlLcb6z4ujTBCgBnqusi9n8DYV/qMYCSSLhiYU4rC/XfYXCtynSH
+ kmrVlpiWqXts6r1uSoPTE8SqvASdWn7xKckEt/vMuNf42/OBQuIv/fiQ/hSTzJlv3yJ95D+ysL8
+ GRDB6RirecYuk5G+SYFJz1DnW/sTqkz3KvppcRLW6/4LIfFk88PbtahUU/eub9OVtEE5JOzRgLV
+ pnhOXaxzmLZL65g==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-On 13.10.25 21:58, David Hildenbrand wrote:
-> On 13.10.25 21:54, craftfever wrote:
->>
->> Unfortunately, yes I can reproduce it. And I thought that lockups does
->> not happen anymore, but I was wrong, I booted today with 6.17.2 updated
->> and KSM enabled and whole situation is back. But, it only happens, when
->> scanning pages corresponding to a process with huge VM size, like
->> Chromium with 1TB of virtual memory. The rest is alright. It's look
->> like, that the folio_walk_start called with much higher frequency, than
->> in 6.12-6.15 versions. in that version page scanning of huge VM size
->> processes is pretty fast and flawless) Right now, when Chromium is
->> running, I expecting constant 42% folio_walk_start and 15%
->> ksm_scan_thread on 6.17.2 kernel (contrary to 1% folio_walk_start and
->> even less ksm_scan_thread in 6.12-6.15). I must admin that whole system
->> is not freezing, just Chromium with high CPU usage from ksmd and kernel.
-> 
-> What about 6.16?
-> 
+Extensible parameters meta formats have been introduced in the Linux
+kernel v6.12 initially to support different revision of the RkISP1 ISP
+implemented in different SoC. In order to avoid breaking userspace
+everytime an ISP configuration block is added or modified in the uAPI
+these new formats, which are versionated and extensible by their
+definition have been introduced.
 
-What you replied to in private:
+See for reference:
+e9d05e9d5db1 ("media: uapi: rkisp1-config: Add extensible params format")
+6c53a7b68c5d ("media: rkisp1: Implement extensible params support")
 
-Just compared stock kernels (6.16.8 and 6.17.2) and must admit that the
-behavior pretty same, same lockup, when just starting Chromium and same
-kernel objects and ksmd overhead. No difference. (Approx 20-32% of
-"folio_walk_start" and 10% ksm_scan_thread at this time on both kernels)
+The Amlogic C3 ISP driver followed shortly, introducing an extensible
+format for the ISP configuration:
 
+6d406187ebc0 ("media: uapi: Add stats info and parameters buffer for C3 ISP")
 
-IIUC, 6.16.8 dos not contain a backport of Lorenzos fix, so we can rule that one out I think.
+with a very similar, if not identical, implementation of the routines to
+validate and handle the ISP configuration in the ISP driver in the
+c3-isp-params.c file.
 
-There is another VMA merging related one in 6.16:
+fb2e135208f3 ("media: platform: Add C3 ISP driver")
 
-commit 879bca0a2c4f40b08d09a95a2a0c3c6513060b5c
-Author: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Date:   Tue Apr 8 10:29:31 2025 +0100
+With the recent upstreaming attempt of the Mali C55 ISP driver from Dan,
+a third user of extensible parameters is going to be itroduced in the
+kernel, duplicating again in the driver the procedure for validating and
+handling the ISP configuration blocks
 
-     mm/vma: fix incorrectly disallowed anonymous VMA merges
-     
-     Patch series "fix incorrectly disallowed anonymous VMA merges", v2.
-     
-     It appears that we have been incorrectly rejecting merge cases for 15
-     years, apparently by mistake.
-     
-     Imagine a range of anonymous mapped momemory divided into two VMAs like
-     this, with incompatible protection bits:
-     
-Could you try reverting 879bca0a2c4f40b08d09a95a2a0c3c6513060b5c on top of 6.16 and
-see if the problem goes away?
+https://patchwork.linuxtv.org/project/linux-media/patch/20250624-c55-v10-15-54f3d4196990@ideasonboard.com/
 
-Meanwhile I'll try using an ordinary pagewalk that covers a larger area
-instead of a foliowalk that walks each address.
+To avoid duplicating again the validation routines and common types
+definition, this series introduces v4l2-isp.c/.h for the kAPI
+and v4l2-isp.h for the uAPI and re-organize the RkISP1
+and Amlogic C3 drivers to use the common types and the helper validation
+routines.
 
+The v4l2-isp abstraction will be augmented to support statistcs as well.
+
+If the here proposed approach is accepted, I propose to rebase the Mali
+C55 driver on top of this series, to use the new common types and
+helpers.
+
+Tested on Mali C55 and RkISP1 with camshark
+
+Thanks
+  j
+
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+---
+Changes in v7:
+- Moved version to the v4l2-isp uAPI
+- Moved version check to the v4l2-isp.c helpers
+- Link to v6: https://lore.kernel.org/r/20251007-extensible-parameters-validation-v6-0-5f719d9f39e5@ideasonboard.com
+
+Changes in v6:
+- Rename all symbols to v4l2_isp
+- Changed the interface of the two buffer validation functions
+- Reworked the rkisp1 and c3 porting accordingly
+- Updated documentation
+- I have moved v4l2_params_buffer_size() from uAPI because it was
+  convenient for linux but not required in userspace
+- Link to v5: https://lore.kernel.org/r/20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com
+
+Changes in v5:
+- Move everything to v4l2-isp prefix except from format documentation
+  which still is about 'extensible-parameters' (to be paired in future
+  with extensbile-stats)
+- Simplify documentation and move it part to the driver-api
+  Documentation
+- Remove 'group' and 'features' from the generic handlers definition and
+  adjust rkisp1 accordingly
+- Link to v4: https://lore.kernel.org/r/20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com
+
+Changes in v4:
+- Fix the definition of V4L2_PARAMS_FL_PLATFORM_FLAGS
+- Add __counted_by() attribute to the data[] flexible-array member of
+  v4l2_params_buffer
+- Minor style change
+- Link to v3: https://lore.kernel.org/r/20250819-extensible-parameters-validation-v3-0-9dc008348b30@ideasonboard.com
+
+Changes in v3:
+- Rebased on latest media-committers/next
+- Take in Dan's suggestion in block size validation
+- Documentation minor spelling fixes
+- Link to v2: https://lore.kernel.org/r/20250710-extensible-parameters-validation-v2-0-7ec8918ec443@ideasonboard.com
+
+Changes in v2:
+- Make v4l2_params_buffer directly usable
+- Centralize ENABLE/DISABLE flags definition and validation
+- Take in Dan's v4l2_params_buffer_size()
+- Allow blocks to only contain the header if they're going to be
+  disabled
+- Documentation fixes as reported by Nicolas
+- Link to v1: https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com
+
+---
+Jacopo Mondi (8):
+      media: uapi: Introduce V4L2 generic ISP types
+      media: uapi: Convert RkISP1 to V4L2 extensible params
+      media: uapi: Convert Amlogic C3 to V4L2 extensible params
+      media: Documentation: uapi: Add V4L2 ISP documentation
+      media: v4l2-core: Introduce v4l2-isp.c
+      media: rkisp1: Use v4l2-isp for validation
+      media: amlogic-c3: Use v4l2-isp for validation
+      media: Documentation: kapi: Add v4l2 generic ISP support
+
+ Documentation/driver-api/media/v4l2-core.rst       |   1 +
+ Documentation/driver-api/media/v4l2-isp.rst        |  49 ++++++
+ .../userspace-api/media/v4l/meta-formats.rst       |   1 +
+ Documentation/userspace-api/media/v4l/v4l2-isp.rst | 121 ++++++++++++++
+ MAINTAINERS                                        |  10 ++
+ drivers/media/platform/amlogic/c3/isp/Kconfig      |   1 +
+ .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 124 +++-----------
+ drivers/media/platform/rockchip/rkisp1/Kconfig     |   1 +
+ .../media/platform/rockchip/rkisp1/rkisp1-params.c | 183 +++++++++------------
+ drivers/media/v4l2-core/Kconfig                    |   4 +
+ drivers/media/v4l2-core/Makefile                   |   1 +
+ drivers/media/v4l2-core/v4l2-isp.c                 | 128 ++++++++++++++
+ include/media/v4l2-isp.h                           |  91 ++++++++++
+ include/uapi/linux/media/amlogic/c3-isp-config.h   |  92 +++--------
+ include/uapi/linux/media/v4l2-isp.h                | 102 ++++++++++++
+ include/uapi/linux/rkisp1-config.h                 | 107 +++---------
+ 16 files changed, 660 insertions(+), 356 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20250701-extensible-parameters-validation-c831f7f5cc0b
+
+Best regards,
 -- 
-Cheers
-
-David / dhildenb
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
 
