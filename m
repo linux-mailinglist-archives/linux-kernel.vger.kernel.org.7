@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-853212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F29BDAEDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE808BDAEEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D5E14F7265
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BF618A0CCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA640278E7B;
-	Tue, 14 Oct 2025 18:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2D1277CAE;
+	Tue, 14 Oct 2025 18:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AW8Cls/m"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="QdPUfnCY"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEDD27978C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6A213E9C;
+	Tue, 14 Oct 2025 18:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760466047; cv=none; b=HsDUlfqTtnzLXbkXmmB0y1nXDEjQ7Fy1r6v+O2rjnpY/AHTsBNa4EgCUC/upCIU9mYU/SG8pVqhhJfjyrzIm6Chy754ahWEGzMcdfFY3XXv2PZF5IRB9dIvf+F9i4GGQ+TKUOFe1A0a8+kLM2BgV1xqI4F281VfZPQRLUOA4dhU=
+	t=1760466129; cv=none; b=IF2o/zR8gWftT81boeiMCkS1RvIEF7ZAvaqUnIXNwME9+LjG9a2tI+G17gb6HbpZKGUwUKPLOuaaSDYrsVt3OLCqfgLIe/IUXJAW7BlE3hWwRZyk1zDNKKoKxPkcqABK0BTXs62lHuP+T2ESyxhi4FMOJhUwMgKsVp2ulDdOZbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760466047; c=relaxed/simple;
-	bh=CUG6T+r/hfMhOw8rHMOtfZw23pJjarr+bxDbxbOdKBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aNfNIvvS30JG5h2MvNPMF9tTwBSmtSmeqZ8oL+5kjw3S18OlZd7woSCXBMJwemf1I8ldqQTjuoj5NO1oPLEktaVshKJaSsp/uTzJILT0RwFvGpVyf4emaokJHUFjeXMuqfonKCbxdG38Du60Ufl6rEfwYI4975r+VMnvjU+Gt0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AW8Cls/m; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-28e8c5d64d8so52605835ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760466045; x=1761070845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=peXcX1ppZ4e00pH7Z4pOcPmB5An4hWwhyX+wypJtg6s=;
-        b=AW8Cls/mk+2T/r48yailjIUe+i1sDh00iNDdtaZSg39G4C+z+PynMvuJO6QoAW7kkH
-         7Ptr5vAwusJW4/WM/FM9T+NuPybHTl3gxpucK4qQ9X/dMmVPEhXAaz9Wujn+YUSR5+U9
-         Hq/P9zYEgd9FWEOuO40G92XUjftOyDdEFLY9ePrcsWyw/6wCRfME59KRecQi5xmQjw7j
-         RljwfpLqpqIIrXr/HKpDudUkbT+MHLcEAyFS38H/D48zPDLUqqEkGzroLvT16UMi/c0j
-         gNOg0z4miiUXMwbYgYz72xLCWTi/YWWMwn1pcU5XoHUfZ+sggcT9K0CiwqVWAaDJSrUf
-         iZRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760466045; x=1761070845;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=peXcX1ppZ4e00pH7Z4pOcPmB5An4hWwhyX+wypJtg6s=;
-        b=o/vfoe3Hg9OxoSgMhqZ2SnQKTp33nRbpyId04kZn+k00BPmdMASoVgQkNBmG2b6Eou
-         cqCqQF/jieWrQWu0lOButwxdlB6/81vKSS7P+OEo+c65JwczFcTht76M1EdObQ/+F1Yp
-         8a3PKUbe3LhkkJDi2+8/YbrXWoeF5BXsUr+hyTaiAGozGIFNE3rDCU/TF3FVCi9hCEc7
-         wrG3b68j7zbaBG4sd43K8cdixdiJbtlgWYhP8v/wLiX0IKqaRcNakdEEOtRscQeDsuwd
-         wdYz6IBiwtP+JtIpRBW4JVLKeQlA+QlMX+kiPs40XszLGTWYdOeKE3uRtuXEI56z1Bay
-         rx8Q==
-X-Gm-Message-State: AOJu0YwqASnmr+Q6Thtd6CGtndkLlpUut65yn5lZUImJ098lrgdN/a9k
-	o+/RhKD433ShBSePRQSVmYax6I4mLY1CusH1FVA5MXTC9N919foL6rQF
-X-Gm-Gg: ASbGnct5Z0Pgome+Epp2garNEhiuG25GYcZRyEbimhL6L/SQyytoiGX65Mo+pRbS7cl
-	1lb9Y6IgidFcsb7KdGmQeTSr4yXZa2ZjX1Ys0IZW2zgAOec7UpzTyZseAZP0UqXtoWgGNensDml
-	c8DW20KHT6OchNiuqq4K6ec/rHRlHocSEoTKa+3JijsuLy9O9SrGiyDO6Sx1n7PxvL6C0eDz929
-	FQiH0t50hT76bNOyd/ARUpaEGpuzmpKumdlTBG6PsyyXm9hArj+HZd49QDXYaxivvQi8iBrbdnB
-	v/+SZjgKUaqsJFSKMnlswdQoIRwULlY3wAZQwI0XiBYE0bB3azFAFgA5IgImUtSjbiJUxCvPILm
-	oU0pPtfsu25lXYAPGCbe4M+frMttGv5Y/m2n1EVoeCUruOkdz4KvY08j5XaBTKbBR/ytTB6b/ow
-	==
-X-Google-Smtp-Source: AGHT+IEm4RK8/f0buMj4SrH2mJYbC2pmx4tgbD6W7/Sd4CDFLw57bVndhNrBr7LEAGTVcL+wXU3wIg==
-X-Received: by 2002:a17:902:e785:b0:267:d2a9:eabb with SMTP id d9443c01a7336-2902739ad39mr313529185ad.25.1760466044665;
-        Tue, 14 Oct 2025 11:20:44 -0700 (PDT)
-Received: from iku.. ([2401:4900:1c07:6d70:c338:e681:47e3:e797])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f07253sm172244795ad.62.2025.10.14.11.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 11:20:43 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nishanth Menon <nm@ti.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] arm64: defconfig: Drop duplicate CONFIG_OMAP_USB2 entry
-Date: Tue, 14 Oct 2025 19:20:35 +0100
-Message-ID: <20251014182035.239956-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760466129; c=relaxed/simple;
+	bh=cCUURDd07Yw9p/jOHDANOrc/VydF7BvuWq/CmhJ9tA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NFWyERtTY52qtwe3rJbu2G/ELMib/M31TfYUaErBHys/XVvk4NxMa9H1t3fnvtCPyIuPAkyHV9QXbsHhd4GgWJBNkcC5SqS1pRWxv4AyDXKxbqqcmaCDdIyzeG2uUNp5tL4pJo9usn0dCvwvG0qXsTSM4oO4PFFJwburi+qzGKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=QdPUfnCY; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 781B740B18
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1760466126; bh=CBzFDqgIBt7OUHVz+Kf+Lf4hpJX8ECAmro/oMxEjUzw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QdPUfnCYGG2KdH28Gwm2VX02LtL/rO3sRF5MS5NHcRHAtwwf0yDudfztzQQ7qkK4m
+	 X4HpxoaTcx/VDlxbFG5migLzyR4TNs6n+s/QPybHP+j5sWryQOzWBfUqeTQPFObhXw
+	 l3rU7w8TUvKI3GPZSAO1tBCOzvlxwOxBgu42NrY6258wp8uIjTWoF+LkRMEifrLS1D
+	 3OHOXWPwuTzMrkHGobdtX5TytpFt9/udZ2YfQ86sgX+J12fL9W5qQARtHMwK/k2iaY
+	 OKG0HAvpWRaSFavGs2rrosTRjqHmLETM3Odfbvv7gFc6u8TEdWPxahYa+D9sdy1SAD
+	 HVZFX+oUt5X7Q==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 781B740B18;
+	Tue, 14 Oct 2025 18:22:06 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>, Akiyoshi Kurita
+ <weibu@redadmin.org>, linux-doc@vger.kernel.org
+Cc: Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shannon Nelson <sln@onemain.com>, Jason
+ Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: admin-guide: Correct spelling of
+ "userspace"
+In-Reply-To: <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
+References: <20250926190019.41788-1-weibu@redadmin.org>
+ <87seflbken.fsf@trenco.lwn.net>
+ <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
+Date: Tue, 14 Oct 2025 12:22:05 -0600
+Message-ID: <87v7kh9wdu.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-CONFIG_OMAP_USB2 is already enabled as a module in the default defconfig
-since commit 8a703a728a745 ("arm64: defconfig: Enable USB2 PHY Driver").
-Remove the duplicate entry to fix the following warning:
+> On 10/14/25 7:57 AM, Jonathan Corbet wrote:
+>> Akiyoshi Kurita <weibu@redadmin.org> writes:
+>> 
+>>> The term "userspace" should be a single word. Fix the typo
+>>> "userpace" accordingly.
+>>>
+>>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+>>> ---
+>>>  Documentation/admin-guide/tainted-kernels.rst | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+>>> index a0cc017e4424..ed1f8f1e86c5 100644
+>>> --- a/Documentation/admin-guide/tainted-kernels.rst
+>>> +++ b/Documentation/admin-guide/tainted-kernels.rst
+>>> @@ -186,6 +186,6 @@ More detailed explanation for tainting
+>>>  
+>>>   18) ``N`` if an in-kernel test, such as a KUnit test, has been run.
+>>>  
+>>> - 19) ``J`` if userpace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
+>>> + 19) ``J`` if userspace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
+>>>       to use the devices debugging features. Device debugging features could
+>>>       cause the device to malfunction in undefined ways.
+>> 
+>> Applied, thanks.
+>
+> Comparing to the "MSDOS" spelling patch:
+>
+> did you check/count "userspace" vs. "user space" vs. "user-space"
+> in the kernel source tree?
 
-    arch/arm64/configs/defconfig:1705:warning: override: reassigning to symbol OMAP_USB2
+No, but this patch was fixing "userpace", which is overtly wrong.  It
+turns out that there's a surprising number of those, too, but still far
+fewer.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/configs/defconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e401915e2f2f..478ca72c0aeb 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1702,7 +1702,6 @@ CONFIG_PHY_UNIPHIER_USB3=y
- CONFIG_PHY_TEGRA_XUSB=y
- CONFIG_PHY_AM654_SERDES=m
- CONFIG_PHY_J721E_WIZ=m
--CONFIG_OMAP_USB2=m
- CONFIG_PHY_XILINX_ZYNQMP=m
- CONFIG_ARM_CCI_PMU=m
- CONFIG_ARM_CCN=m
--- 
-2.43.0
-
+jon
 
