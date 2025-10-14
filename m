@@ -1,560 +1,283 @@
-Return-Path: <linux-kernel+bounces-851896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149F8BD78E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:20:43 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91064BD786A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0271403BDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:20:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14E0234CEB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8464E21930A;
-	Tue, 14 Oct 2025 06:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EC186342
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41ADD30B52F;
+	Tue, 14 Oct 2025 06:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="esqaaJGm"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD659305979
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760422836; cv=none; b=UfD5NadxMHt3k+6U0syQ+gJDS8Yt3Cbc0OpGxMe/eTWrZ6IxWEbtqS2KxbQqsy3lVGu2VjHBU7y9nHkhGICDPbIWgIlJSsYdGiaa9Thkqs2EE8hbb0MwPVJbCQLbVeqL/bfp4YvU8nfkG0hyglnyVrMY6IALzEk5YPlYpU0z7D8=
+	t=1760421935; cv=none; b=oGcehFQQCLobT45re6CqSaxq4TUngyH8Yy1FlqR9Cxd6V0a6ArmBbKV1kZ11t/NyZu5JJEDwk6BgPP3TwNxDfin+pNZmjv9C2LOjXSfPlRZXA04tHs3/eFZgxw/BHU7Y/U+25y/q7Ej3sZp3N9m6BZGNWn4uwW0WqxlR2jBmZhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760422836; c=relaxed/simple;
-	bh=yH9gzrC7ZI3syxVVTw7H+oNqLZyu0z4ckYuJrmEF+xI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=lZDBAcDVZV0dkAJQlOMbWb2aF6sezk0KSAZmvhfmRuoHdYO6OIko7vLfD3dy3yGK6Coi4XsOYKD7PzgsaTFugH9PO0b7qjX9x6L6/HrbdhzGPVi9gQOQEQpBPxlLZWUf+W3VBn38nSJ30P/hbKbnDzhXNmhPKvf/KeFi9Ftd53c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cm3Jn20tyz9sS7;
-	Tue, 14 Oct 2025 07:52:25 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 4egiN9TgGf1Y; Tue, 14 Oct 2025 07:52:25 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cm3Jn0qPSz9sRy;
-	Tue, 14 Oct 2025 07:52:25 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F1ED38B767;
-	Tue, 14 Oct 2025 07:52:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id FZPNwzUO7_7x; Tue, 14 Oct 2025 07:52:24 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F12C8B763;
-	Tue, 14 Oct 2025 07:52:24 +0200 (CEST)
-Message-ID: <efedcf6c-2fe5-4580-a7b1-d14609da916b@csgroup.eu>
-Date: Tue, 14 Oct 2025 07:52:24 +0200
+	s=arc-20240116; t=1760421935; c=relaxed/simple;
+	bh=T5apiLwg8DZ17F7BR3sbSact3RiVuLfrwTbJn0aivNQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YNZlXCXhbIRQJqEpXrAz+EsdX7C/S1n9gbW66E6iBOYNvaUkF6ZBjHbJcsaQBvaml4d8Jy/vaJWjmZaq/bK3vbulsCPTvdNw72ncyuiR2NTxxOTrCyvOrBr9qyULXIBmUKuTKx7cjatRVwTumujt+Mm6NYXUY/4Yn1IXWYdIpHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=esqaaJGm; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-330b0bb4507so4394901a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:05:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760421933; x=1761026733; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHqnznsT0SOwqI2tDjUXYkjuoGbZvuJjFziumXqVraE=;
+        b=esqaaJGmvYJwab66FZDHWTnIWZLPsfOYrDVFUx2WPi9NOsl2w4/3KDFa5okZHQ+b5W
+         T+e+6x6pqRiDUvC1Ebg9i249VwTDNXoHKYMmk8UQ6aH+M9dC6KpV4mCYOQmuGWYqvXPJ
+         aZyM37O7jtBGaFnarjyYMkriDufRANXV9ajTALK40jqlCHrzfJmPWzAY/ncEmGOaE/R9
+         qs526NBHol/ZQoyBQR1ng1W90h/1zd0k9b0Vf2Wa9mZLGJo0SpRGGYTJnn/7UvJLH3eR
+         kRcieyDJdQJDr1hC1g4VkxaWj6WvKVCk8guPIG/JlO8gqXD4p9SYzUNHBkH76N6QAMdf
+         WGyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760421933; x=1761026733;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HHqnznsT0SOwqI2tDjUXYkjuoGbZvuJjFziumXqVraE=;
+        b=jYOQ0bCMOST/IKuE/gWtXPJLjqJEP/3OQjS6PPJMmm4qgvAHpKJcoJzUL8XpnGgi4l
+         /N99cFKrcVcounyWRN8rVjRbR9z5Rb5xE6WaASinxg/RJzGMY5FDK/oRRKNlP8ULp8Yg
+         UPGueI9PWg5E8xEml0NEc2d54TKMBgbZiBG44KjFsGwD3DDsqeThTcsyRGNnZSi7FxrS
+         rv2eNFDSuGMSdQZqxAUmqBCOw8mle8jEMLkFhsaY/LnMBAqru6JvKSF5Joq9MZg75wz9
+         lz0oGtKleruJoCT1u+NXT+NU6BvdMW0J7Q6GulDFEHem0SpZVNl/FFlKitH9OUvtUCo5
+         OgUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpU8jbm6brVJE97Wf7urDJvjy8MSy5hcYKlWYsMIM8Z2nShYsy8wi06++FQaYzQ3BqWTU82lsQNu264FY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yypi3Q4UqiMXBQmbZ9L3K7lKV7ZZSzlQJ9hERG5I2154azwOLkW
+	K8RvqdivnTLOgs4bzLzlNTK0UTfULiRu9cBg8uV4mI5ei/AnIMbk1kKt
+X-Gm-Gg: ASbGncsTFVndxYn7HdkHk/M8grIjwyshle4iVbaEYUNHa+Z0yqCV37sXbEzR4011a7M
+	WH0bZkuGd0Y61AI7GuCjg/blxDbRQlRPXWWLTzKbH6w3W4ahN+SG/oqhih6S1E90bVc9jFBGcfT
+	1oo31tYHeLrplWxH2p8YWhlYz5MjPfNzXDhAlR9X7CiDKOiSSFiANI8FPogG8D7O7n7d/MvkaLW
+	1ZVxqanzilF9wi9hKD0Jplc1sxFrDuWucKLQ2wWvtrFvuuPQbMMKBsNkEfjtZr05iWBW+202qso
+	SpIEiTwMCoZO3hU+D8D/UejxSQPE/+FiGZPGQ1PCZyzBaBsfyPnsw+O2GAIJJeSJdoG7t43tVOr
+	YX7qIergy3yzqaEnSy1ZkVsgoN8IF9v4hlhuAwJO2XOzw
+X-Google-Smtp-Source: AGHT+IE/bSBVC/4X++gZ1NL/yvcqA6f/k0gbNSg/p1CV28T6Zcy3HyCXNpW/DJjLf00FJ/ax10zCWA==
+X-Received: by 2002:a17:90b:1c89:b0:32b:df0e:9283 with SMTP id 98e67ed59e1d1-33b51399970mr30703695a91.34.1760421933015;
+        Mon, 13 Oct 2025 23:05:33 -0700 (PDT)
+Received: from ryzoh.. ([2804:14c:5fc8:8033:1c15:530:dc8b:d173])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-33b52a2522asm8313102a91.8.2025.10.13.23.05.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 23:05:32 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	craftfever@murena.io
+Cc: Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: [PATCH] ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
+Date: Tue, 14 Oct 2025 02:58:28 -0300
+Message-Id: <20251014055828.124522-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fsl_msi: Translate bitmap to hwirq on fsl,mpic
-To: Ben Collins <bcollins@kernel.org>
-References: <2025042122-cute-skua-c6de4a@boujee-and-buff>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-Cc: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>,
- linux-kernel@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <2025042122-cute-skua-c6de4a@boujee-and-buff>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Currently, scan_get_next_rmap_item() walks every page address in a VMA
+to locate mergeable pages. This becomes highly inefficient when scanning
+large virtual memory areas that contain mostly unmapped regions.
 
-Le 22/04/2025 à 04:35, Ben Collins a écrit :
-> On PPC_32 QorIQ, the hwirq bitmap is done with the cascade being the most
-> significant bits and the srs on the cascade being the least. This has the
-> effect of filling up one cascade before the next.
-> 
-> Since each cascade has 32 srs and is tied to a single CPU and interrupt,
-> this means no load balancing of MSIs.
-> 
-> Rework this case to translate between the bitmap and hwirq so that MSIs
-> are allocated across the cascades round-robin to achieve load balancing.
-> 
-> Also, to avoid holes in the bitmap, allocate it for exactly what the
-> hardware supports.
-> 
-> Tested on P4080 (which had the problem) and T4240 (which did not, but
-> also no regressions).
-> 
-> Signed-off-by: Ben Collins <bcollins@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: linux-kernel@vger.kernel.org
+This patch replaces the per-address lookup with a range walk using
+walk_page_range(). The range walker allows KSM to skip over entire
+unmapped holes in a VMA, avoiding unnecessary lookups.
 
-This patch doesn't apply:
+To evaluate this change, I created a test that maps a 1 TB virtual area
+where only the first and last 10 MB are populated with identical data.
+With this patch applied, KSM scanned and merged the region approximately
+seven times faster.
 
-$ LANG= b4 shazam 2025042122-cute-skua-c6de4a@boujee-and-buff
-Grabbing thread from 
-lore.kernel.org/all/2025042122-cute-skua-c6de4a@boujee-and-buff/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 1 messages in the thread
-Analyzing 0 code-review messages
-Checking attestation on all messages, may take a moment...
+This problem was previously discussed in [1].
+
+[1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
+
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
 ---
-   [PATCH] fsl_msi: Translate bitmap to hwirq on fsl,mpic
----
-Total patches: 1
----
-Applying: fsl_msi: Translate bitmap to hwirq on fsl,mpic
-Patch failed at 0001 fsl_msi: Translate bitmap to hwirq on fsl,mpic
-error: patch failed: arch/powerpc/sysdev/fsl_msi.c:412
-error: arch/powerpc/sysdev/fsl_msi.c: patch does not apply
+ mm/ksm.c | 136 ++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 79 insertions(+), 57 deletions(-)
 
-Christophe
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 3aed0478fdce..584fd987e8ae 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2455,15 +2455,80 @@ static bool should_skip_rmap_item(struct folio *folio,
+ 	return true;
+ }
+ 
++struct ksm_walk_private {
++	struct page *page;
++	struct ksm_rmap_item *rmap_item;
++	struct ksm_mm_slot *mm_slot;
++};
++
++static int ksm_walk_test(unsigned long addr, unsigned long next, struct mm_walk *walk)
++{
++	struct vm_area_struct *vma = walk->vma;
++
++	if (!vma || !(vma->vm_flags & VM_MERGEABLE))
++		return 1;
++	return 0;
++}
++
++static int ksm_pte_entry(pte_t *pte, unsigned long addr,
++			    unsigned long end, struct mm_walk *walk)
++{
++	struct mm_struct *mm = walk->mm;
++	struct vm_area_struct *vma = walk->vma;
++	struct ksm_walk_private *private = (struct ksm_walk_private *) walk->private;
++	struct ksm_mm_slot *mm_slot = private->mm_slot;
++	pte_t ptent = ptep_get(pte);
++	struct page *page = pfn_to_online_page(pte_pfn(ptent));
++	struct ksm_rmap_item *rmap_item;
++	struct folio *folio;
++
++	ksm_scan.address = addr;
++
++	if (ksm_test_exit(mm))
++		return 1;
++
++	if (!page)
++		return 0;
++
++	folio = page_folio(page);
++	if (folio_is_zone_device(folio) || !folio_test_anon(folio))
++		return 0;
++
++	folio_get(folio);
++
++	flush_anon_page(vma, page, ksm_scan.address);
++	flush_dcache_page(page);
++	rmap_item = get_next_rmap_item(mm_slot,
++		ksm_scan.rmap_list, ksm_scan.address);
++	if (rmap_item) {
++		ksm_scan.rmap_list =
++				&rmap_item->rmap_list;
++
++		if (should_skip_rmap_item(folio, rmap_item)) {
++			folio_put(folio);
++			return 0;
++		}
++		ksm_scan.address = end;
++		private->page = page;
++	} else
++		folio_put(folio);
++
++	private->rmap_item = rmap_item;
++	return 1;
++}
++
++struct mm_walk_ops walk_ops = {
++	.pte_entry = ksm_pte_entry,
++	.test_walk = ksm_walk_test,
++	.walk_lock = PGWALK_RDLOCK,
++};
++
+ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+ {
+ 	struct mm_struct *mm;
+ 	struct ksm_mm_slot *mm_slot;
+ 	struct mm_slot *slot;
+-	struct vm_area_struct *vma;
+-	struct ksm_rmap_item *rmap_item;
+-	struct vma_iterator vmi;
+-	int nid;
++	int nid, ret;
+ 
+ 	if (list_empty(&ksm_mm_head.slot.mm_node))
+ 		return NULL;
+@@ -2527,64 +2592,21 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+ 
+ 	slot = &mm_slot->slot;
+ 	mm = slot->mm;
+-	vma_iter_init(&vmi, mm, ksm_scan.address);
+ 
+ 	mmap_read_lock(mm);
+ 	if (ksm_test_exit(mm))
+ 		goto no_vmas;
+ 
+-	for_each_vma(vmi, vma) {
+-		if (!(vma->vm_flags & VM_MERGEABLE))
+-			continue;
+-		if (ksm_scan.address < vma->vm_start)
+-			ksm_scan.address = vma->vm_start;
+-		if (!vma->anon_vma)
+-			ksm_scan.address = vma->vm_end;
+-
+-		while (ksm_scan.address < vma->vm_end) {
+-			struct page *tmp_page = NULL;
+-			struct folio_walk fw;
+-			struct folio *folio;
+-
+-			if (ksm_test_exit(mm))
+-				break;
+-
+-			folio = folio_walk_start(&fw, vma, ksm_scan.address, 0);
+-			if (folio) {
+-				if (!folio_is_zone_device(folio) &&
+-				     folio_test_anon(folio)) {
+-					folio_get(folio);
+-					tmp_page = fw.page;
+-				}
+-				folio_walk_end(&fw, vma);
+-			}
+-
+-			if (tmp_page) {
+-				flush_anon_page(vma, tmp_page, ksm_scan.address);
+-				flush_dcache_page(tmp_page);
+-				rmap_item = get_next_rmap_item(mm_slot,
+-					ksm_scan.rmap_list, ksm_scan.address);
+-				if (rmap_item) {
+-					ksm_scan.rmap_list =
+-							&rmap_item->rmap_list;
+-
+-					if (should_skip_rmap_item(folio, rmap_item)) {
+-						folio_put(folio);
+-						goto next_page;
+-					}
+-
+-					ksm_scan.address += PAGE_SIZE;
+-					*page = tmp_page;
+-				} else {
+-					folio_put(folio);
+-				}
+-				mmap_read_unlock(mm);
+-				return rmap_item;
+-			}
+-next_page:
+-			ksm_scan.address += PAGE_SIZE;
+-			cond_resched();
+-		}
++	struct ksm_walk_private walk_private = {
++		.page = NULL,
++		.rmap_item = NULL,
++		.mm_slot = ksm_scan.mm_slot
++	};
++	ret = walk_page_range(mm, ksm_scan.address, -1, &walk_ops, (void *) &walk_private);
++	*page = walk_private.page;
++	if (ret) {
++		mmap_read_unlock(mm);
++		return walk_private.rmap_item;
+ 	}
+ 
+ 	if (ksm_test_exit(mm)) {
+-- 
+2.39.5
 
-> ---
->   arch/powerpc/sysdev/fsl_msi.c | 232 ++++++++++++++++++++++++----------
->   arch/powerpc/sysdev/fsl_msi.h |   7 +-
->   2 files changed, 167 insertions(+), 72 deletions(-)
-> 
-> diff --git a/arch/powerpc/sysdev/fsl_msi.c b/arch/powerpc/sysdev/fsl_msi.c
-> index 7b9a5ea9cad9d..37f2143187ee1 100644
-> --- a/arch/powerpc/sysdev/fsl_msi.c
-> +++ b/arch/powerpc/sysdev/fsl_msi.c
-> @@ -29,17 +29,63 @@
->   #include "fsl_pci.h"
->   
->   #define MSIIR_OFFSET_MASK	0xfffff
-> +
->   #define MSIIR_IBS_SHIFT		0
->   #define MSIIR_SRS_SHIFT		5
-> +#define MSIIR_SRS_MASK		0x7
-> +
->   #define MSIIR1_IBS_SHIFT	4
->   #define MSIIR1_SRS_SHIFT	0
-> -#define MSI_SRS_MASK		0xf
-> +#define MSIIR1_SRS_MASK		0xf
-> +
->   #define MSI_IBS_MASK		0x1f
->   
-> -#define msi_hwirq(msi, msir_index, intr_index) \
-> -		((msir_index) << (msi)->srs_shift | \
-> +#define MSI_MPIC_SIZE		0x10
-> +#define MSI_IPIC_SIZE		0x04
-> +
-> +#define msi_to_hwirq(msi, msir_index, intr_index) \
-> +		(((msir_index) << (msi)->srs_shift) | \
->   		 ((intr_index) << (msi)->ibs_shift))
->   
-> +static inline int msi_to_bit(struct fsl_msi *msi, int msir_index, int intr_index)
-> +{
-> +	if (!msi->srs_shift)
-> +		return msi_to_hwirq(msi, msir_index, intr_index);
-> +
-> +	return msir_index | (intr_index << hweight32(msi->srs_mask));
-> +}
-> +
-> +static inline int bit_to_hwirq(struct fsl_msi *msi, int bit)
-> +{
-> +	int hwirq;
-> +
-> +	if (!msi->srs_shift)
-> +		return bit;
-> +
-> +	hwirq  = (bit & msi->srs_mask) << msi->srs_shift;
-> +	hwirq |=  bit >> hweight32(msi->srs_mask);
-> +
-> +	return hwirq;
-> +}
-> +
-> +static inline int hwirq_to_bit(struct fsl_msi *msi, int hwirq)
-> +{
-> +	int bit;
-> +
-> +	if (!msi->srs_shift)
-> +		return hwirq;
-> +
-> +	bit  = (hwirq >> msi->srs_shift) & msi->srs_mask;
-> +	bit |= (hwirq & MSI_IBS_MASK) << msi->srs_shift;
-> +
-> +	return bit;
-> +}
-> +
-> +#define hwirq_to_srs(msi, hwirq) \
-> +		(((hwirq) >> (msi)->srs_shift) & (msi)->srs_mask)
-> +#define hwirq_to_ibs(msi, hwirq) \
-> +		(((hwirq) >> (msi)->ibs_shift) & MSI_IBS_MASK)
-> +
->   static LIST_HEAD(msi_head);
->   
->   struct fsl_msi_feature {
-> @@ -72,7 +118,7 @@ static void fsl_msi_print_chip(struct irq_data *irqd, struct seq_file *p)
->   	irq_hw_number_t hwirq = irqd_to_hwirq(irqd);
->   	int cascade_virq, srs;
->   
-> -	srs = (hwirq >> msi_data->srs_shift) & MSI_SRS_MASK;
-> +	srs = hwirq_to_srs(msi_data, hwirq);
->   	cascade_virq = msi_data->cascade_array[srs]->virq;
->   
->   	seq_printf(p, "fsl-msi-%d", cascade_virq);
-> @@ -107,8 +153,9 @@ static const struct irq_domain_ops fsl_msi_host_ops = {
->   static int fsl_msi_init_allocator(struct fsl_msi *msi_data)
->   {
->   	int rc, hwirq;
-> +	int num_irqs = msi_data->nr_msi_regs * IRQS_PER_MSI_REG;
->   
-> -	rc = msi_bitmap_alloc(&msi_data->bitmap, NR_MSI_IRQS_MAX,
-> +	rc = msi_bitmap_alloc(&msi_data->bitmap, num_irqs,
->   			      irq_domain_get_of_node(msi_data->irqhost));
->   	if (rc)
->   		return rc;
-> @@ -117,7 +164,7 @@ static int fsl_msi_init_allocator(struct fsl_msi *msi_data)
->   	 * Reserve all the hwirqs
->   	 * The available hwirqs will be released in fsl_msi_setup_hwirq()
->   	 */
-> -	for (hwirq = 0; hwirq < NR_MSI_IRQS_MAX; hwirq++)
-> +	for (hwirq = 0; hwirq < num_irqs; hwirq++)
->   		msi_bitmap_reserve_hwirq(&msi_data->bitmap, hwirq);
->   
->   	return 0;
-> @@ -135,7 +182,8 @@ static void fsl_teardown_msi_irqs(struct pci_dev *pdev)
->   		irq_set_msi_desc(entry->irq, NULL);
->   		irq_dispose_mapping(entry->irq);
->   		entry->irq = 0;
-> -		msi_bitmap_free_hwirqs(&msi_data->bitmap, hwirq, 1);
-> +		msi_bitmap_free_hwirqs(&msi_data->bitmap,
-> +				       hwirq_to_bit(msi_data, hwirq), 1);
->   	}
->   }
->   
-> @@ -171,44 +219,41 @@ static void fsl_compose_msi_msg(struct pci_dev *pdev, int hwirq,
->   	else
->   		msg->data = hwirq;
->   
-> -	pr_debug("%s: allocated srs: %d, ibs: %d\n", __func__,
-> -		 (hwirq >> msi_data->srs_shift) & MSI_SRS_MASK,
-> -		 (hwirq >> msi_data->ibs_shift) & MSI_IBS_MASK);
-> +	pr_debug("%s: allocated srs: %i, ibs: %i\n", __func__,
-> +		 hwirq_to_srs(msi_data, hwirq),
-> +		 hwirq_to_ibs(msi_data, hwirq));
->   }
->   
-> +#ifdef CONFIG_EPAPR_PARAVIRT
-> +static const char * const of_msi_match[] = {
-> +	"fsl,vmpic-msi",
-> +	"fsl,vmpic-msi-v4.3",
-> +	NULL,
-> +};
-> +#endif
-> +
->   static int fsl_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
->   {
->   	struct pci_controller *hose = pci_bus_to_host(pdev->bus);
->   	struct device_node *np;
-> -	phandle phandle = 0;
-> -	int rc, hwirq = -ENOMEM;
-> +	int n_bit, bit = -ENOMEM;
->   	unsigned int virq;
->   	struct msi_desc *entry;
->   	struct msi_msg msg;
->   	struct fsl_msi *msi_data;
->   
-> -	if (type == PCI_CAP_ID_MSI) {
-> -		/*
-> -		 * MPIC version 2.0 has erratum PIC1. For now MSI
-> -		 * could not work. So check to prevent MSI from
-> -		 * being used on the board with this erratum.
-> -		 */
-> -		list_for_each_entry(msi_data, &msi_head, list)
-> -			if (msi_data->feature & MSI_HW_ERRATA_ENDIAN)
-> -				return -EINVAL;
-> -	}
-> -
-> +#ifdef CONFIG_EPAPR_PARAVIRT
-> +	phandle ph = 0;
->   	/*
->   	 * If the PCI node has an fsl,msi property, then we need to use it
-> -	 * to find the specific MSI.
-> +	 * to find the specific MSI. This is deprecated on physical hardware
-> +	 * and only used by ePAPR to restrict use of PAMU registered devices.
->   	 */
->   	np = of_parse_phandle(hose->dn, "fsl,msi", 0);
->   	if (np) {
-> -		if (of_device_is_compatible(np, "fsl,mpic-msi") ||
-> -		    of_device_is_compatible(np, "fsl,vmpic-msi") ||
-> -		    of_device_is_compatible(np, "fsl,vmpic-msi-v4.3"))
-> -			phandle = np->phandle;
-> -		else {
-> +		if (of_device_compatible_match(np, of_msi_match)) {
-> +			ph = np->phandle;
-> +		} else {
->   			dev_err(&pdev->dev,
->   				"node %pOF has an invalid fsl,msi phandle %u\n",
->   				hose->dn, np->phandle);
-> @@ -217,54 +262,73 @@ static int fsl_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type)
->   		}
->   		of_node_put(np);
->   	}
-> +#endif
->   
-> +	/*
-> +	 * fsl_teardown_msi_irqs() will cleanup already allocated descriptors if
-> +	 * we return an error. Hence the lack of cleaning up previous
-> +	 * iterations.
-> +	 */
-> +	n_bit = 0;
->   	msi_for_each_desc(entry, &pdev->dev, MSI_DESC_NOTASSOCIATED) {
-> +		int hwirq;
-> +
-> +		if (n_bit >= nvec)
-> +			break;
-> +
->   		/*
-> -		 * Loop over all the MSI devices until we find one that has an
-> +		 * Loop over all the MSI devices until we find one that has the
->   		 * available interrupt.
->   		 */
->   		list_for_each_entry(msi_data, &msi_head, list) {
->   			/*
-> -			 * If the PCI node has an fsl,msi property, then we
-> -			 * restrict our search to the corresponding MSI node.
-> -			 * The simplest way is to skip over MSI nodes with the
-> -			 * wrong phandle. Under the Freescale hypervisor, this
-> -			 * has the additional benefit of skipping over MSI
-> -			 * nodes that are not mapped in the PAMU.
-> +			 * MPIC version 2.0 has erratum PIC1. For now MSI could not
-> +			 * work. So check to prevent MSI from being used on the board
-> +			 * with this erratum.
->   			 */
-> -			if (phandle && (phandle != msi_data->phandle))
-> +			if (type == PCI_CAP_ID_MSI &&
-> +			    msi_data->feature & MSI_HW_ERRATA_ENDIAN)
->   				continue;
->   
-> -			hwirq = msi_bitmap_alloc_hwirqs(&msi_data->bitmap, 1);
-> -			if (hwirq >= 0)
-> +#ifdef CONFIG_EPAPR_PARAVIRT
-> +			/* Check for phandle on ePAPR */
-> +			if (ph && (ph != msi_data->phandle))
-> +				continue;
-> +#endif
-> +
-> +			bit = msi_bitmap_alloc_hwirqs(&msi_data->bitmap, 1);
-> +			if (bit >= 0)
->   				break;
->   		}
->   
-> -		if (hwirq < 0) {
-> -			rc = hwirq;
-> -			dev_err(&pdev->dev, "could not allocate MSI interrupt\n");
-> -			goto out_free;
-> +		if (bit < 0) {
-> +			dev_err(&pdev->dev,
-> +				"could not allocate MSI interrupt\n");
-> +			return bit;
->   		}
->   
-> +		hwirq = bit_to_hwirq(msi_data, bit);
-> +
->   		virq = irq_create_mapping(msi_data->irqhost, hwirq);
->   
->   		if (!virq) {
-> -			dev_err(&pdev->dev, "fail mapping hwirq %i\n", hwirq);
-> -			msi_bitmap_free_hwirqs(&msi_data->bitmap, hwirq, 1);
-> -			rc = -ENOSPC;
-> -			goto out_free;
-> +			dev_err(&pdev->dev, "failed to map hwirq %i\n", hwirq);
-> +			msi_bitmap_free_hwirqs(&msi_data->bitmap, bit, 1);
-> +			return -ENOSPC;
->   		}
-> +
->   		/* chip_data is msi_data via host->hostdata in host->map() */
->   		irq_set_msi_desc(virq, entry);
->   
->   		fsl_compose_msi_msg(pdev, hwirq, &msg, msi_data);
->   		pci_write_msi_msg(virq, &msg);
-> +
-> +		n_bit++;
->   	}
-> -	return 0;
->   
-> -out_free:
-> -	/* free by the caller of this function */
-> -	return rc;
-> +	WARN_ON(n_bit != nvec);
-> +
-> +	return 0;
->   }
->   
->   static irqreturn_t fsl_msi_cascade(int irq, void *data)
-> @@ -284,10 +348,11 @@ static irqreturn_t fsl_msi_cascade(int irq, void *data)
->   	switch (msi_data->feature & FSL_PIC_IP_MASK) {
->   	case FSL_PIC_IP_MPIC:
->   		msir_value = fsl_msi_read(msi_data->msi_regs,
-> -			msir_index * 0x10);
-> +					  msir_index * MSI_MPIC_SIZE);
->   		break;
->   	case FSL_PIC_IP_IPIC:
-> -		msir_value = fsl_msi_read(msi_data->msi_regs, msir_index * 0x4);
-> +		msir_value = fsl_msi_read(msi_data->msi_regs,
-> +					  msir_index * MSI_IPIC_SIZE);
->   		break;
->   #ifdef CONFIG_EPAPR_PARAVIRT
->   	case FSL_PIC_IP_VMPIC: {
-> @@ -308,18 +373,31 @@ static irqreturn_t fsl_msi_cascade(int irq, void *data)
->   		intr_index = ffs(msir_value) - 1;
->   
->   		err = generic_handle_domain_irq(msi_data->irqhost,
-> -				msi_hwirq(msi_data, msir_index,
-> +				msi_to_hwirq(msi_data, msir_index,
->   					  intr_index + have_shift));
->   		if (!err)
->   			ret = IRQ_HANDLED;
->   
-> -		have_shift += intr_index + 1;
-> -		msir_value = msir_value >> (intr_index + 1);
-> +		have_shift  += intr_index + 1;
-> +		msir_value >>= intr_index + 1;
->   	}
->   
->   	return ret;
->   }
->   
-> +static ssize_t irq_bitmap_show(struct device *dev,
-> +			       struct device_attribute *attr, char *buf)
-> +{
-> +	struct fsl_msi *msi = dev_get_drvdata(dev);
-> +
-> +	if (msi->bitmap.bitmap == NULL)
-> +		return 0;
-> +
-> +	return bitmap_print_to_pagebuf(false, buf, msi->bitmap.bitmap,
-> +				       msi->bitmap.irq_count);
-> +}
-> +static DEVICE_ATTR_RO(irq_bitmap);
-> +
->   static void fsl_of_msi_remove(struct platform_device *ofdev)
->   {
->   	struct fsl_msi *msi = platform_get_drvdata(ofdev);
-> @@ -327,7 +405,10 @@ static void fsl_of_msi_remove(struct platform_device *ofdev)
->   
->   	if (msi->list.prev != NULL)
->   		list_del(&msi->list);
-> -	for (i = 0; i < NR_MSI_REG_MAX; i++) {
-> +
-> +	device_remove_file(&ofdev->dev, &dev_attr_irq_bitmap);
-> +
-> +	for (i = 0; i < msi->nr_msi_regs; i++) {
->   		if (msi->cascade_array[i]) {
->   			virq = msi->cascade_array[i]->virq;
->   
-> @@ -382,14 +463,16 @@ static int fsl_msi_setup_hwirq(struct fsl_msi *msi, struct platform_device *dev,
->   	}
->   
->   	/* Release the hwirqs corresponding to this MSI register */
-> -	for (i = 0; i < IRQS_PER_MSI_REG; i++)
-> +	for (i = 0; i < IRQS_PER_MSI_REG; i++) {
->   		msi_bitmap_free_hwirqs(&msi->bitmap,
-> -				       msi_hwirq(msi, offset, i), 1);
-> +				       msi_to_bit(msi, offset, i), 1);
-> +	}
->   
->   	return 0;
->   }
->   
->   static const struct of_device_id fsl_of_msi_ids[];
-> +
->   static int fsl_of_msi_probe(struct platform_device *dev)
->   {
->   	struct fsl_msi *msi;
-> @@ -412,8 +495,27 @@ static int fsl_of_msi_probe(struct platform_device *dev)
->   	}
->   	platform_set_drvdata(dev, msi);
->   
-> +	if (device_create_file(&dev->dev, &dev_attr_irq_bitmap)) {
-> +		dev_err(&dev->dev,
-> +			"couldn't create device file for irq_bitmap\n");
-> +	}
-> +
-> +	if (of_device_is_compatible(dev->dev.of_node, "fsl,mpic-msi-v4.3") ||
-> +	    of_device_is_compatible(dev->dev.of_node, "fsl,vmpic-msi-v4.3")) {
-> +		msi->nr_msi_regs = NR_MSI_REG_MSIIR1;
-> +		msi->ibs_shift   = MSIIR1_IBS_SHIFT;
-> +		msi->srs_mask    = MSIIR1_SRS_MASK;
-> +		msi->srs_shift   = MSIIR1_SRS_SHIFT;
-> +	} else {
-> +		msi->nr_msi_regs = NR_MSI_REG_MSIIR;
-> +		msi->ibs_shift   = MSIIR_IBS_SHIFT;
-> +		msi->srs_mask    = MSIIR_SRS_MASK;
-> +		msi->srs_shift   = MSIIR_SRS_SHIFT;
-> +	}
-> +
->   	msi->irqhost = irq_domain_add_linear(dev->dev.of_node,
-> -				      NR_MSI_IRQS_MAX, &fsl_msi_host_ops, msi);
-> +					msi->nr_msi_regs * IRQS_PER_MSI_REG,
-> +					&fsl_msi_host_ops, msi);
->   
->   	if (msi->irqhost == NULL) {
->   		dev_err(&dev->dev, "No memory for MSI irqhost\n");
-> @@ -440,8 +542,6 @@ static int fsl_of_msi_probe(struct platform_device *dev)
->   				dev->dev.of_node);
->   			goto error_out;
->   		}
-> -		msi->msiir_offset =
-> -			features->msiir_offset + (res.start & 0xfffff);
->   
->   		/*
->   		 * First read the MSIIR/MSIIR1 offset from dts
-> @@ -475,10 +575,7 @@ static int fsl_of_msi_probe(struct platform_device *dev)
->   
->   	p = of_get_property(dev->dev.of_node, "msi-available-ranges", &len);
->   
-> -	if (of_device_is_compatible(dev->dev.of_node, "fsl,mpic-msi-v4.3") ||
-> -	    of_device_is_compatible(dev->dev.of_node, "fsl,vmpic-msi-v4.3")) {
-> -		msi->srs_shift = MSIIR1_SRS_SHIFT;
-> -		msi->ibs_shift = MSIIR1_IBS_SHIFT;
-> +	if (msi->nr_msi_regs == NR_MSI_REG_MSIIR1) {
->   		if (p)
->   			dev_warn(&dev->dev, "%s: dose not support msi-available-ranges property\n",
->   				__func__);
-> @@ -494,9 +591,6 @@ static int fsl_of_msi_probe(struct platform_device *dev)
->   		static const u32 all_avail[] =
->   			{ 0, NR_MSI_REG_MSIIR * IRQS_PER_MSI_REG };
->   
-> -		msi->srs_shift = MSIIR_SRS_SHIFT;
-> -		msi->ibs_shift = MSIIR_IBS_SHIFT;
-> -
->   		if (p && len % (2 * sizeof(u32)) != 0) {
->   			dev_err(&dev->dev, "%s: Malformed msi-available-ranges property\n",
->   				__func__);
-> diff --git a/arch/powerpc/sysdev/fsl_msi.h b/arch/powerpc/sysdev/fsl_msi.h
-> index e2a1bfc7c2377..0515030af9acb 100644
-> --- a/arch/powerpc/sysdev/fsl_msi.h
-> +++ b/arch/powerpc/sysdev/fsl_msi.h
-> @@ -15,7 +15,6 @@
->   #define NR_MSI_REG_MSIIR1	16 /* MSIIR1 can index 16 MSI registers */
->   #define NR_MSI_REG_MAX		NR_MSI_REG_MSIIR1
->   #define IRQS_PER_MSI_REG	32
-> -#define NR_MSI_IRQS_MAX	(NR_MSI_REG_MAX * IRQS_PER_MSI_REG)
->   
->   #define FSL_PIC_IP_MASK   0x0000000F
->   #define FSL_PIC_IP_MPIC   0x00000001
-> @@ -32,11 +31,13 @@ struct fsl_msi {
->   	unsigned long cascade_irq;
->   
->   	u32 msiir_offset; /* Offset of MSIIR, relative to start of CCSR */
-> -	u32 ibs_shift; /* Shift of interrupt bit select */
-> -	u32 srs_shift; /* Shift of the shared interrupt register select */
-> +	u32 ibs_shift;    /* Shift of interrupt bit select */
-> +	u32 srs_mask;     /* Mask of the shared interrupt register select */
-> +	u32 srs_shift;    /* Shift for shared interrupt register select */
->   	void __iomem *msi_regs;
->   	u32 feature;
->   	struct fsl_msi_cascade_data *cascade_array[NR_MSI_REG_MAX];
-> +	u32 nr_msi_regs;
->   
->   	struct msi_bitmap bitmap;
->   
---
-pw-bot: cr
 
