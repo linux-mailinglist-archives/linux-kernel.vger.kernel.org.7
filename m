@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-852991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BE7BDA6A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:34:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77285BDA76A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A7A3A4701
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2D27546119
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB6C302742;
-	Tue, 14 Oct 2025 15:28:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B862FFF87;
-	Tue, 14 Oct 2025 15:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30422303A02;
+	Tue, 14 Oct 2025 15:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ui+5zuIW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8833009CA;
+	Tue, 14 Oct 2025 15:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455690; cv=none; b=kU668W+KJOecpy9vLz5YlxlfvnkDDAi328pkvd7jd/xnlLPZAhENGplhkfeW06kzpwxKenWvjQqilAz1mavCJU6gvDQ1hUht941yS0okN5m3uMU/yNetf6VOSISSgMfv4/cdD//CgiJMKb5Wzoqku5uc2LV7tsfyD1FgM+mdsM8=
+	t=1760455784; cv=none; b=kSC6JEr+GQ6FuMXklLoiOKDyhvIoB+vYEKlLUxTUKoRjVeywwXq7eYxFfzfCqv+WTT0CHYgIQER2O/wqK3WUPJOHPgU3KDVjAMryhnmXpoJPAkcTg1uyJb390f+SaHVMd5XUc74M5UT7nnkt9wlanlSR4ttKUaZIjSnST+99tjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455690; c=relaxed/simple;
-	bh=2gwkqKgmkP93tErYouCSL+EKMNFEFMnu3v8rIzZDWWk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=soOinV0oUrKGcDZUP23uGDaZAVsh3LPqR6dLLa8jL6PrNVQRDmnbt1F0gKZMM/3nIoLhPw13bwBsG3G9KORntgudcftU/AxFxqdzeZsGKX/Z610eiT/9xLQjvLlOb0b7Im+dDi8Tt+vN883LcaH2KnraXaJ6T9GZ3ueMQYKGfbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B4A91A9A;
-	Tue, 14 Oct 2025 08:27:58 -0700 (PDT)
-Received: from JFWG9VK6KM.emea.arm.com (JFWG9VK6KM.cambridge.arm.com [10.1.27.150])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C4303F66E;
-	Tue, 14 Oct 2025 08:28:05 -0700 (PDT)
-From: Leonardo Bras <leo.bras@arm.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Leonardo Bras <leo.bras@arm.com>,
-	kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1760455784; c=relaxed/simple;
+	bh=BCLZnlFtfyfyqV95kvnr8DLzhbdzdFCeJdir6zX5uTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dN/EBU/2Id29XX6ksZbS2alp59ZJ77GhDPDYQkStcFXBdtLD2B8D6UaDEQuokN+X6PRS75FPER2XfNLN0LnVb0GKhSsAy2Avs5+1DuQ70ccaKyzoRaNcz4eTskCVHIY4A7oTJomJXHTDrQjEuozg12U2yWVbjhRKIF90TCRkhpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ui+5zuIW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D838AC4CEE7;
+	Tue, 14 Oct 2025 15:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760455784;
+	bh=BCLZnlFtfyfyqV95kvnr8DLzhbdzdFCeJdir6zX5uTc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ui+5zuIWnH9o2ODiPohYBuH53HAXcp05rYdTb2k/l4FZoTMYVTi/zn2mHtu4w/lxw
+	 4DU9Ds3qR9LCrH7/YQhG3qZKpC0uS9r88ZG//Xe/U7h5UnivDsuLe8gDRQqdqSBC1b
+	 KQzYtLhIYs3yF0eT9UYpeOySOWVQKuhQ99brGjB4ZuTiTUUO+DqSGvumpszs7kE5CV
+	 uNGFXL7ivKgcEL+L7Z668sMoxp8Y9RHnwP5EVJcaN9vYxuvQC1GA6yKTpTuD/s/avo
+	 0zWtljnka2dgEzaAkYjQ8wcfF2tOSt9fsYmE5RWHhLKm2YHMMNsTVBCFerys4sxb7v
+	 1/o2JHyUIXgZw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Corey Minyard <corey@minyard.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: openbmc@lists.ozlabs.org,
+	openipmi-developer@lists.sourceforge.net,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] doc/kvm/api: Fix VM exit code for full dirty ring
-Date: Tue, 14 Oct 2025 16:28:02 +0100
-Message-ID: <20251014152802.13563-1-leo.bras@arm.com>
-X-Mailer: git-send-email 2.50.1
+Subject: [PATCH] dt-bindings: ipmi: Convert nuvoton,npcm750-kcs-bmc to DT schema
+Date: Tue, 14 Oct 2025 10:29:34 -0500
+Message-ID: <20251014152935.3782463-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,44 +65,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While reading the documentation, I saw a exit code I could not grep for, to
-figure out it has a slightly different name.
+Convert the nuvoton,npcm750-kcs-bmc binding to DT schema format. It's a
+straight-forward conversion.
 
-Fix that name in documentation so it points to the right exit code.
-
-Signed-off-by: Leonardo Bras <leo.bras@arm.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/virt/kvm/api.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/ipmi/npcm7xx-kcs-bmc.txt         | 40 --------------
+ .../ipmi/nuvoton,npcm750-kcs-bmc.yaml         | 55 +++++++++++++++++++
+ 2 files changed, 55 insertions(+), 40 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
+ create mode 100644 Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 6ae24c5ca559..3382adefc772 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -8503,21 +8503,21 @@ It's not necessary for userspace to harvest the all dirty GFNs at once.
- However it must collect the dirty GFNs in sequence, i.e., the userspace
- program cannot skip one dirty GFN to collect the one next to it.
- 
- After processing one or more entries in the ring buffer, userspace
- calls the VM ioctl KVM_RESET_DIRTY_RINGS to notify the kernel about
- it, so that the kernel will reprotect those collected GFNs.
- Therefore, the ioctl must be called *before* reading the content of
- the dirty pages.
- 
- The dirty ring can get full.  When it happens, the KVM_RUN of the
--vcpu will return with exit reason KVM_EXIT_DIRTY_LOG_FULL.
-+vcpu will return with exit reason KVM_EXIT_DIRTY_RING_FULL.
- 
- The dirty ring interface has a major difference comparing to the
- KVM_GET_DIRTY_LOG interface in that, when reading the dirty ring from
- userspace, it's still possible that the kernel has not yet flushed the
- processor's dirty page buffers into the kernel buffer (with dirty bitmaps, the
- flushing is done by the KVM_GET_DIRTY_LOG ioctl).  To achieve that, one
- needs to kick the vcpu out of KVM_RUN using a signal.  The resulting
- vmexit ensures that all dirty GFNs are flushed to the dirty rings.
- 
- NOTE: KVM_CAP_DIRTY_LOG_RING_ACQ_REL is the only capability that
+diff --git a/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt b/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
+deleted file mode 100644
+index 4fda76e63396..000000000000
+--- a/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
++++ /dev/null
+@@ -1,40 +0,0 @@
+-* Nuvoton NPCM KCS (Keyboard Controller Style) IPMI interface
+-
+-The Nuvoton SOCs (NPCM) are commonly used as BMCs
+-(Baseboard Management Controllers) and the KCS interface can be
+-used to perform in-band IPMI communication with their host.
+-
+-Required properties:
+-- compatible : should be one of
+-    "nuvoton,npcm750-kcs-bmc"
+-    "nuvoton,npcm845-kcs-bmc", "nuvoton,npcm750-kcs-bmc"
+-- interrupts : interrupt generated by the controller
+-- kcs_chan : The KCS channel number in the controller
+-
+-Example:
+-
+-    lpc_kcs: lpc_kcs@f0007000 {
+-        compatible = "nuvoton,npcm750-lpc-kcs", "simple-mfd", "syscon";
+-        reg = <0xf0007000 0x40>;
+-        reg-io-width = <1>;
+-
+-        #address-cells = <1>;
+-        #size-cells = <1>;
+-        ranges = <0x0 0xf0007000 0x40>;
+-
+-        kcs1: kcs1@0 {
+-            compatible = "nuvoton,npcm750-kcs-bmc";
+-            reg = <0x0 0x40>;
+-            interrupts = <0 9 4>;
+-            kcs_chan = <1>;
+-            status = "disabled";
+-        };
+-
+-        kcs2: kcs2@0 {
+-            compatible = "nuvoton,npcm750-kcs-bmc";
+-            reg = <0x0 0x40>;
+-            interrupts = <0 9 4>;
+-            kcs_chan = <2>;
+-            status = "disabled";
+-        };
+-    };
+diff --git a/Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml b/Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml
+new file mode 100644
+index 000000000000..fc5df1c5e3bc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ipmi/nuvoton,npcm750-kcs-bmc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Nuvoton NPCM KCS BMC
++
++maintainers:
++  - Avi Fishman <avifishman70@gmail.com>
++  - Tomer Maimon <tmaimon77@gmail.com>
++  - Tali Perry <tali.perry1@gmail.com>
++
++description:
++  The Nuvoton SOCs (NPCM) are commonly used as BMCs (Baseboard Management
++  Controllers) and the KCS interface can be used to perform in-band IPMI
++  communication with their host.
++
++properties:
++  compatible:
++    oneOf:
++      - const: nuvoton,npcm750-kcs-bmc
++      - items:
++          - enum:
++              - nuvoton,npcm845-kcs-bmc
++          - const: nuvoton,npcm750-kcs-bmc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  kcs_chan:
++    description: The KCS channel number in the controller
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    maximum: 3
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - kcs_chan
++
++additionalProperties: false
++
++examples:
++  - |
++    kcs@0 {
++        compatible = "nuvoton,npcm750-kcs-bmc";
++        reg = <0x0 0x40>;
++        interrupts = <9 4>;
++        kcs_chan = <1>;
++    };
 -- 
-2.50.1 (Apple Git-155)
+2.51.0
 
 
