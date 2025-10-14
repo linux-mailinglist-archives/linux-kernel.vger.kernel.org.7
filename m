@@ -1,154 +1,189 @@
-Return-Path: <linux-kernel+bounces-852086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267D5BD821D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:17:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A16BD8214
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6CD18A1992
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457F1402F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0275330F527;
-	Tue, 14 Oct 2025 08:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA0930F527;
+	Tue, 14 Oct 2025 08:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgyuLe8E"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLdJKlx9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F082D879B
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375502DC777;
+	Tue, 14 Oct 2025 08:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429862; cv=none; b=ZOtieMcWum7qGui62kKR1CAadu9m6DFx1yBqsHpjetX/I+/V175jH/1x3zSUsPOYA4jwWK1F+MkWpLr4+QkT0OLSEJbr421+gLHuO6xriPbET6qVqYMg61MZRI8F1eZJh+yFb+cjmJOXjLN2QwTYLgl5nvKK78EHWypCGkDSbx0=
+	t=1760429851; cv=none; b=kLcUDh8kHIHYdnO0fdsjC834LQvVq/eqcVgN5PkkTeoBWZofzVkMMeNcfjRSZnHgV3Mhi6CQkb7bjgcJJXUTMxLnHBgUaGnPHrqOqlCUU+oBpvFkQ11Qcjzpve7IsxZJ5BdX7Vz5V2n5Hj3Xbve2c+H9UzIxlykB2pCdJM5yIfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429862; c=relaxed/simple;
-	bh=ZenOGeLl3E07i4+rFBn+dvevjdsbRCIJ235ulzP9wXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6Q7mBMWlJpFFXv4yLxSY1qBd1DFkQm55IWOKkBngxFvUj3Lj8kmVjzd5+VY75EkbeEGptS6hAW6kjGT8iR6hfHlZalM5UMULs+oZEn0QNRyoUxr3EYFGbsmYAbywYztgRBpmUoKa6Ru2gk+4ziR5/hcABgutnnmxPri0UBP0R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgyuLe8E; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-91bdf1a4875so995589241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760429860; x=1761034660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hB5XUi1+cDwXRPWde5CzSKgVrGaXvz4WI2PJ/mRCG6U=;
-        b=bgyuLe8ExLUhNGvtBKCIGR1wNkk2Xc0z0JCYLYkJFQ4uugGucHzJIFAlC/8sHbJzWo
-         AhM57hqCDwsFeyRbrFzw4bgufX+sSPq+i4V392HFVmN2p1IobGdw1ilLJck2hhh085LN
-         2XyfgVU5eWwIvf5SYbB1b3nusA16BrmfUpPfh9usHfvjgF5YVs6SOR6GYzLXIXG+XYTg
-         mWtzlL84GGWlG4+efMubetaMcLIDNHDAngbZ5Ptrhl9vR3ybOzsyFWxRivIsnouRnnm0
-         thVYt2k7RXbLCSgnyE10z1xr2KqiTxLYOVtOzY5qX3CMWQFj5cjLsp9CCAFe6RFOGM2y
-         96xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760429860; x=1761034660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hB5XUi1+cDwXRPWde5CzSKgVrGaXvz4WI2PJ/mRCG6U=;
-        b=EzYBaxRCmaPYUJnFTANUcztc/Eobnh8xez0nrh61uxIsBdGmcLeR6U3EAezaXyEdyn
-         ZmqfSmvSOG3u5kaAVGKpEJb1vM/AdRPj8JxjoEJT4weoes3MTZFKniJbD2t9tGkjxSdS
-         b+ch4DpXqbOP0GZUVaGx6CV2Wm4urlZz4DYyzF4JfCPOh2hp8ZesmlYeXiaaxtmfVk/k
-         A0bRWENlEa56jSRA6Umj8rQ1EYCo+Tyr13QsJTcVOzp6PXXpx1jNX19noc0fXU4Ta9UC
-         10x14IwCxkHpyYGnWpgavc6trWotQx+RoEvMCuSbZBFFPH7Ok2QUmOHf72XwW7kGkZi1
-         hmNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgpb0V8r9LEzSamcndL79WmT/iqUPRByQkED5jRUqMhU/w2Lm8DEZSbcEnZx+PQ31W25u6GHAqFrXghNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8ETBtm2XRJE1jnU3R0Y569NrTs4Wfn+ePYYSUv22LACdqxUOF
-	a+7O8k0jIMQTPsZeuI/j4yNvEbJ1kK0af08mUZ2cLlsAv5iCGL7kTyeToddBxXVNgkTXeX+r3MM
-	KmZwzqAO/pD/QDjkCk6lwrM0ScRWmE8E=
-X-Gm-Gg: ASbGncsBgoIj1ywKM5Z1WhwFz3n1jvS6ziXO/1qapDj9fMe/ozuOnup4we8B49IdFzw
-	AysyRLZXeO+9BZnusLhBCyChQdw6hBP/K6fCTUf68AmDgaZjgRQicFWHTfFD9db1XYTkqacHGuX
-	WHfteAdsOyRjhUqUqXxFGJJdwQlr3d3OecbOJpP2XT/m0eEktIvOIQ46Y/rF/A0kdFIpeIQWLRJ
-	dU5pj/LAjGA/XmpKZBkC8BDWwTfzjXmoFrk3ABYYLeBDyD0wkc8hKNmHOcbu0fhglg9
-X-Google-Smtp-Source: AGHT+IE74/+9NMWbvU+qO/+W07sc5FWF1iW+Jodkjrw6Ldi09g2hF8G7tsWXqr3Kth9KAyQqpDa/9zGf3F+nkghdsOo=
-X-Received: by 2002:a05:6102:f07:b0:4fc:1a18:aaa2 with SMTP id
- ada2fe7eead31-5d5e2217442mr8155988137.5.1760429859483; Tue, 14 Oct 2025
- 01:17:39 -0700 (PDT)
+	s=arc-20240116; t=1760429851; c=relaxed/simple;
+	bh=kYSJbdpApVHKl5lbFF9uXk0Y7li8c3YVSGSITvk5GXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RpLSP79byih8ZgHw6qIWMt7yEhUYfpEsKuBSbYeHRToJ041cD2UlmyTBmQukg/kHUar2DeVM6u0g+bi4okAVfyLrfJSGJh5vmCrR0Z4ZYwvLqIa5injZ+RD7tpMibkmAS5BYDLEF0MlpUjKoYmnFyviApUqnkgYxb9s8X9IM344=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLdJKlx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69E9C4CEE7;
+	Tue, 14 Oct 2025 08:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760429850;
+	bh=kYSJbdpApVHKl5lbFF9uXk0Y7li8c3YVSGSITvk5GXY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dLdJKlx9o8qtsGAryUv1KGIfVMFdFAhIQYXCsrspMHLJXaSaboZ11+8WqCXIIfuPx
+	 vktvrGaZ+Yjzk+2EnGJ0ZvuQQBLHvdoUG6TpuGKey5oi66QXP1zZSL+MChtiyhwSY9
+	 qERtw/7ysvmvvpG7vQAyA7BptHGRj8zGnEPGAMHO9qHQOcfC2TWSoaZC3DXNhnUJrQ
+	 GIxCGQTriOq0wDmS8RbaXlrE7vHPap9octFA/xD6di4BJwqZm2T1TsBecDETZQSoOc
+	 c2KKWAZF48YSwFyvRtxekN1wOWDX8VeKDo03LToaKGiSqmgiFvUqScMgHDt4kvNfnu
+	 RR2p8E4FEZkTw==
+Message-ID: <3b220b8b-06b4-4738-8818-6fb4b85e89a8@kernel.org>
+Date: Tue, 14 Oct 2025 10:17:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89i+wikOQQrGFXu=L3nKPG62rsBmWer5WpLg5wmBN+RdMqA@mail.gmail.com>
- <20251014035846.1519-1-21cnbao@gmail.com> <CANn89iKCZyYi+J=5t2sdmvtERnknkwXrGi4QRzM9btYUywkDfw@mail.gmail.com>
- <CAGsJ_4ySSn6B+x+4zE0Ld1+AM4q-WnS0LfxzWw22oXr7n5NZ=g@mail.gmail.com> <CANn89i+j_CZM9Q=xTkSq-7cjeRkt29JikD3WqvmPihDrUHBQEQ@mail.gmail.com>
-In-Reply-To: <CANn89i+j_CZM9Q=xTkSq-7cjeRkt29JikD3WqvmPihDrUHBQEQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 14 Oct 2025 16:17:21 +0800
-X-Gm-Features: AS18NWDxwbBeHYYzY9zkajM9730iY7yUrkf_deZ_-1VTrKeqK4m8413YWm5g-Tc
-Message-ID: <CAGsJ_4xC=5nCSOv9P7ySONeXwdXN-YK2V+4OZ2zdCOeYiQHvzQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-To: Eric Dumazet <edumazet@google.com>
-Cc: corbet@lwn.net, davem@davemloft.net, hannes@cmpxchg.org, horms@kernel.org, 
-	jackmanb@google.com, kuba@kernel.org, kuniyu@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linyunsheng@huawei.com, mhocko@suse.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, surenb@google.com, v-songbaohua@oppo.com, vbabka@suse.cz, 
-	willemb@google.com, zhouhuacai@oppo.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] regulator: max77675: Add MAX77675 regulator driver
+To: Joan-Na-adi <joan.na.devcode@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Joan Na <joan.na@analog.com>
+References: <20251014053142.15835-1-joan.na@analog.com>
+ <20251014053142.15835-3-joan.na@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251014053142.15835-3-joan.na@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 3:01=E2=80=AFPM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Mon, Oct 13, 2025 at 11:43=E2=80=AFPM Barry Song <21cnbao@gmail.com> w=
-rote:
-> >
-> > > >
-> > > > A problem with the existing sysctl is that it only covers the TX pa=
-th;
-> > > > for the RX path, we also observe that kswapd consumes significant p=
-ower.
-> > > > I could add the patch below to make it support the RX path, but it =
-feels
-> > > > like a bit of a layer violation, since the RX path code resides in =
-mm
-> > > > and is intended to serve generic users rather than networking, even
-> > > > though the current callers are primarily network-related.
-> > >
-> > > You might have a buggy driver.
-> >
-> > We are observing the RX path as follows:
-> >
-> > do_softirq
-> >     taskset_hi_action
-> >        kalPacketAlloc
-> >            __netdev_alloc_skb
-> >                page_frag_alloc_align
-> >                    __page_frag_cache_refill
-> >
-> > This appears to be a fairly common stack.
-> >
-> > So it is a buggy driver?
->
-> No idea, kalPacketAlloc is not in upstream trees.
->
-> It apparently needs high order allocations. It will fail at some point.
->
-> >
-> > >
-> > > High performance drivers use order-0 allocations only.
-> > >
-> >
-> > Do you have an example of high-performance drivers that use only order-=
-0 memory?
->
-> About all drivers using XDP, and/or using napi_get_frags()
->
-> XDP has been using order-0 pages from the very beginning.
+On 14/10/2025 07:31, Joan-Na-adi wrote:
+> From: Joan Na <joan.na@analog.com>
+> 
+> This patch adds support for the Maxim Integrated MAX77675 PMIC regulator.
 
-Thanks! But there are still many drivers using netdev_alloc_skb()=E2=80=94w=
-e
-shouldn=E2=80=99t overlook them, right?
 
-net % git grep netdev_alloc_skb | wc -l
-     359
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
 
-Thanks
-Barry
+...
+
+> +	config.dev = &client->dev;
+> +	config.regmap = maxreg->regmap;
+> +	config.driver_data = maxreg;
+> +
+> +	regulators_np = of_get_child_by_name(client->dev.of_node, "regulators");
+
+
+Where do you drop this reference?
+
+
+> +	if (!regulators_np) {
+> +		dev_err(maxreg->dev, "No 'regulators' subnode found in DT\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	for (i = 0; i < MAX77675_ID_NUM_MAX; i++) {
+> +		const struct regulator_desc *desc = &max77675_regulators[i];
+> +		struct regulator_dev *rdev;
+> +		struct device_node *child_np;
+> +
+> +		child_np = of_get_child_by_name(regulators_np, desc->name);
+> +		if (!child_np) {
+> +			dev_warn(maxreg->dev, "No DT node for regulator %s\n", desc->name);
+> +			continue;
+> +		}
+> +
+> +		config.of_node = child_np;
+> +
+> +		rdev = devm_regulator_register(&client->dev, desc, &config);
+
+
+Can't you drop child_np reference here?
+
+> +		if (IS_ERR(rdev)) {
+> +			ret = PTR_ERR(rdev);
+> +			dev_err(maxreg->dev,
+> +				"Failed to register regulator %d (%s): %d\n",
+> +				i, desc->name, ret);
+> +			of_node_put(child_np);
+> +			return ret;
+
+
+return dev_err_probe
+
+> +		}
+> +		of_node_put(child_np);
+> +	}
+> +
+> +	i2c_set_clientdata(client, maxreg);
+> +
+> +	return 0;
+> +}
+> +
+> +static void max77675_regulator_remove(struct i2c_client *client)
+> +{
+> +	/* Nothing to clean up currently */
+
+
+So drop it, do not add dead code.
+
+> +}
+> +
+> +static const struct i2c_device_id max77675_i2c_id[] = {
+> +	{ "max77675", 0 },
+> +	{ }
+Best regards,
+Krzysztof
 
