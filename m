@@ -1,138 +1,172 @@
-Return-Path: <linux-kernel+bounces-853281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6800EBDB192
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BF5BDB19E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D72424497
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0C458060B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0703F2D2383;
-	Tue, 14 Oct 2025 19:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0C32D3EFC;
+	Tue, 14 Oct 2025 19:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SyR9iHL1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kvWvC9yH"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011054.outbound.protection.outlook.com [52.101.62.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95B92C0F7F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760470961; cv=none; b=bV2T5Vc/yjNuRLLnArizV76AJYtAIMXd4oCNszn0z9lcL0CvJolTmIYJFKiQjm3AZzxZ/Z6X08KQZ4y6MW8Wkf99PZsQwo99P2+3VeGMxZDDAnm7zxbW+nrvA4TdlEm1Lo9E5jNBDkUlgNB4ZNuOeGHr8ocS+Uh6E2xUu9AfPbI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760470961; c=relaxed/simple;
-	bh=2w0OhVkvnqpMVxyWLgeAGvU/GU1+uEwxJVS3uCjOURM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QDahu0QcEcx20z+2E8EzL97dT+WqfsYKrgWA9p2ulafG/kbhEp5lQH315OsFREbbDkQJ3CBJdkweucQyP00gku/NzpoBHqyMkgpJ0rFYCpMdcMX517T8SIXX90+qZhuFMDNDlfuQJdWiyBEtoSOqJIpo9yxPS2/2ZlzV8KV1rBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SyR9iHL1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EFI66M001615
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:42:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2w0OhVkvnqpMVxyWLgeAGvU/GU1+uEwxJVS3uCjOURM=; b=SyR9iHL1pvupWiM5
-	+q7vsipHk80xBqckt3H1wwpuByrGKvH5B5wkWw3zJ/Z869cdcwC3PCos3tujb3IT
-	nv9KUclG30dG6MkgwUlLDhHyUm1clnL3gUbPTgKpr7u3dm6I9YMgX1bT6GpAsIMa
-	NyDRfdZo5Cwm2srC6OQ+UtIWeTICXCHBd6RTH96ctmgUS2bEuRqL2wqEmITG4VF9
-	uDfY+woTlRxJuP7TsnYvjq2KJ91dhu4a4uHuxr6q6rGqlZLfS+zLjeeQGyu0cKIy
-	QdgOU+XnoVvtviq8Yt6xOR5qiRsHIBg47PuLGK2PMdMCh5UKnpF650LKLlzL4e4R
-	MFcZMw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdk9s3e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:42:38 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-859df490f9dso1303625685a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:42:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760470957; x=1761075757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2w0OhVkvnqpMVxyWLgeAGvU/GU1+uEwxJVS3uCjOURM=;
-        b=qLkm7x3eU8vMFzs6khOypwDzlD+g1YzxfkjCYIKLeDA17kW2zPD8qYeiNFoNDmel4i
-         wrROis5acJmFLBLSKVp3XQG+/d3xAdN/rw7JmkFXaKS5xJghBXo8IGCPxexPLnTz2bcu
-         wf2lkIPMLkDsi39lKkvBTQWhMpkOReaHRoYs9kbMyKlKBvmOmdAKHefNGH8GZ+rIi/h5
-         Z1qsnW/8M/Kofw35w2uFhcy68YHVaNZM/+gNAIfjSFoutz+PWbNYwdpDfJW6VWQjJqDg
-         ICCqPm/AuThzAQWjF7tCPQkI291sCZHavf6MFD3PtL5T2ErNnBmFdCZgTJeaY5GwSFiu
-         BU0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Wm8tRtlCWzbbu1sbnWMBlgW2jKtrNPqotXHV1jInErM+rWXfBO2Vz079KDuFgw30+zk+FOEYfu5aXBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpsdtM5lo7O4nwS7Cm748HJv3pI2xJiK65SqcghIfWv0/P4pOy
-	bWGQ87+dgNGpo2dGvomF/2YLg5Go7BQuqzNjTomej5qPqZozEZKgihlnSSHgjQ23tWKJwrmyNJ6
-	Vk/vC4u2dqekxyXbrZKuDqcP7x1PgL/H+DXvPNtgxKvGJ8gYbGFkuJCwQYQ7M3ynxfXpo1uP/Ux
-	yvk7zKY0rK4j0LbnQvcxNxEUcCH5O+xJkNce75sE12Lg==
-X-Gm-Gg: ASbGncusz7j4F40LSFGWmtFsNEKqN2jk+ye/GU/FRa7tEkX1/kzjbB5Muc+aIQjWynv
-	Qq3tEK3ayc0g9ciIk79rwiIiSWHQY4kaTZ04FhhT8PKoh0CkDdfAh9FpD5SLPtN03PBWSJkB8aF
-	J2QfDp3VBImkcfCXhapfxdmCfYCW2pZ2qDh89x3ZOAErdMDf5fb5FtPQ==
-X-Received: by 2002:a05:620a:2a0b:b0:827:b6d0:3896 with SMTP id af79cd13be357-8835069a1damr3630596585a.0.1760470957567;
-        Tue, 14 Oct 2025 12:42:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHy3sTRoJsTak90pgrQQ8wD0f2bthSMA/ymChE+mOsrkVzDaV2i1I2/Kh6A+2MXfghhSWBFEQg/Rjz1F8Lf84Q=
-X-Received: by 2002:a05:620a:2a0b:b0:827:b6d0:3896 with SMTP id
- af79cd13be357-8835069a1damr3630593685a.0.1760470957071; Tue, 14 Oct 2025
- 12:42:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2B92D24B9;
+	Tue, 14 Oct 2025 19:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760471061; cv=fail; b=nqeL7/Rxqq7H1g8Xv4meSJEzqOahX7svKdfskB5b/wDgVkOfoH+m79ag73SLoZpK2M1KLyOAsmq5Xn2H6teZcRzuk2PwPjFrC+vMCS9RgT0gWZVlFaK73ZOwgbQJD2cZK1iX5PFDR573TQetVaku1/yTotYMvDtblfcPSopoODw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760471061; c=relaxed/simple;
+	bh=5fuMNxJNuKWNcx1hfxPmymZmPKtEAfuWRgBikLNmvHY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qGydcTaA6ZHmUge0lF/9FHNN+eYgevENToHSouaYt0zVcfPqYXd9lJUSh+7VH/Su3+igjlF9u9b+z5JTq/k55W/OlZHOebbzTt7GOjYuY1DDeFmdG00Qw6FYNKxZKz84BI2elKb4vmO4oJPZKagZnGdS4BcTOYBg776ZIupPmk8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kvWvC9yH; arc=fail smtp.client-ip=52.101.62.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mCyo1MzZfZJaLXUwnVKR8+RTa81teNVsPMKBmgDQxz3CU17iFhVGIrSknpFd07OM9q8z+EIMfO9hDvAL5G3flSbw/v9+jpXumtOQ89XThKIaSOD4pECoZWR7D2ifBeidVmTN9F4SpuqTGl2wWiCpSD4NZNGUzuMXlfxsMEmTl6ZvYrczaaEKlzb+XRZo2VR8zL9hLGN/tTpvWjbsgRak6R8f9OwQhai4kMWXIxwFdeWSGhGqMX/11ikrKit3ZZ5RIwT89afvO5IfpG29cDgyKMHTPoKhgc9MVIrQ/JKWBuEfsKqRmLZTS85w5OWIF/hhRCpGNnoYXb/LNGArDIXflA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OE3xfK6Q6IKlbE6aLJku8utulslQc1EfgL0E3qe0cZ0=;
+ b=y5c9PgPDcqnKbOUhL8WHkBBMNzSi+VwqpgYc+QdO4yZ3hrvGa0nbL1+x+EmlU6lPRpANPRonxAaBPN42jDeKawpKWJSWeeqd0UZyT3oBYS4ksB4yYYzqCCk681b/hAbc9FyfwEYOnkYDqa6BIZmZvKpSCEnmhboS7MKi5TdGi9q16yv22+Vv0N6VU9tOKMKgD2mwQJw1NOl3SJslxX1Zy0XyNnWCI02ybkyrPeTaxCHsnMSZc8/UvJbVfw1Q7tcmMZLe7tMCRqDX8J3ZIpDnPScgs63UJ+0GVSLbzNNqr2SNBdyEQrVPcRNKLLuCB8YmP+g30wpsOHhWKJJEaMOnHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OE3xfK6Q6IKlbE6aLJku8utulslQc1EfgL0E3qe0cZ0=;
+ b=kvWvC9yHG4H3ox7BMNVZdMUVoJkUypBn6Ubr1xKqJOFvKLFCQrGNhHdkLCxp64IL5tNiauNGdu1gwhSC+0zTKAM+TMqQL40X2Zygc731wkFhM/pnurFUNxUxWVHT3/ZP/2UbEXn1wpHGpB2N9a2qJhTLRVA3hCbEcMtkbntTr68=
+Received: from SN7PR04CA0197.namprd04.prod.outlook.com (2603:10b6:806:126::22)
+ by LV8PR12MB9205.namprd12.prod.outlook.com (2603:10b6:408:191::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 19:44:13 +0000
+Received: from SN1PEPF00026368.namprd02.prod.outlook.com
+ (2603:10b6:806:126:cafe::31) by SN7PR04CA0197.outlook.office365.com
+ (2603:10b6:806:126::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.10 via Frontend Transport; Tue,
+ 14 Oct 2025 19:44:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SN1PEPF00026368.mail.protection.outlook.com (10.167.241.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 19:44:13 +0000
+Received: from jallen-jump-host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 14 Oct
+ 2025 12:44:12 -0700
+From: John Allen <john.allen@amd.com>
+To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<seanjc@google.com>, <pbonzini@redhat.com>, <dave.hansen@intel.com>
+CC: <rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>,
+	<weijiang.yang@intel.com>, <chao.gao@intel.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <mingo@redhat.com>,
+	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, John Allen
+	<john.allen@amd.com>
+Subject: [PATCH v4 0/2] Support for SEV-ES guest shadow stack
+Date: Tue, 14 Oct 2025 19:43:45 +0000
+Message-ID: <20251014194347.2374-1-john.allen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251011001038.352393-1-linux@treblig.org>
-In-Reply-To: <20251011001038.352393-1-linux@treblig.org>
-From: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 21:42:26 +0200
-X-Gm-Features: AS18NWCzGHahCTCoi4NKzxpX1pOXRnYv-7AhbWeCyZ6P7MJDMKYseIP7279m4TM
-Message-ID: <CAFEp6-030D5f1NMasJ8=PPqgRpY9aNZqxXjrXLHa8gfaYcKj5g@mail.gmail.com>
-Subject: Re: [PATCH v2] wifi: wcn36xx: Remove unused wcn36xx_smd_update_scan_params
-To: linux@treblig.org
-Cc: jeff.johnson@oss.qualcomm.com, linux-kernel@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: dbUstg6Rdj2mO1BxXO1iTIjCUjIxCUHV
-X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68eea7ae cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=3WJfbomfAAAA:8 a=EUspDBNiAAAA:8
- a=dNIyxH4hxPn-D1A5x2sA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=1cNuO-ABBywtgFSQhe9S:22
-X-Proofpoint-GUID: dbUstg6Rdj2mO1BxXO1iTIjCUjIxCUHV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX/YN5BVvAVTeo
- ARY4RfsDQtibTT+hLOyV9GLkyDCY+TKVYuJvBvzlY9CH9nq0aPaH+FUi8ng6ybQhTO5JBMcu7Z7
- u1xHcxofME/kn3fD3q+1u9KxYczDkwowsllhrO39rQvPgsQb0GvWB8qcKDSuEhFCB5FpI+2hyLX
- Z/RwaVJVFQWOyPhm3vb4FlWOP0FcRS5ISOWDoHOFSSIgyUUiJrRCzUCDxv0v0VR41hH/gHATFUK
- i8eNv5QduY9f3k0I89RdMQq8nAHJbn6rSafoMmpDOah0Ej7T96d9psPHcbNbT6y+CHG0Yfq55dk
- zJdiDtHFnoqnfE+oKlEuaqH0e3dXu+t2BAmsvXrLi3EVZieMRZwV65fp5z7iFBHJeJtj/WB2I/1
- xJr+xc21RHx5yY8tPfY7FQT6TuG7NA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00026368:EE_|LV8PR12MB9205:EE_
+X-MS-Office365-Filtering-Correlation-Id: c60697ca-b574-4b2b-094e-08de0b5a0d68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?y3lsOcfkPaop41dHnPYj+HAQ16No49JH9CG1KC1AkUl0EAWIKBrHJD2FtfnF?=
+ =?us-ascii?Q?PWMwrGv84NERrop2oPZZ4ZqDjeKzYE/KmHhqs1uSPlmDXsS/5S/HG8aXiGR8?=
+ =?us-ascii?Q?dQ90Iu+RbzHVNrRhv+9OimsKPNXuzoqnDQG7OUyP3DROd025JmGxykcg+v/a?=
+ =?us-ascii?Q?eORhsUfW7PFerxr+nYiCJHOF/wEdfU9kXU+ARQoEfBtRD7VOymoYc80d02Zo?=
+ =?us-ascii?Q?hbuCzRvoVsIknJk9w7KnxHVwAG1RXBREU+uXFcOn8ay7kfRudLc86fYu7UL6?=
+ =?us-ascii?Q?v0Oo7EGe5om0klAe/RzoEv+cV0UrItKiLVAIaB4ycwhV6eR4FFBBP5IH6IxR?=
+ =?us-ascii?Q?x3omM2vtnY5osgAHcZ2OXoCDgX4VPMefEFvp7x/k7v5IoejyvCtFJPXkbxCj?=
+ =?us-ascii?Q?A2mdTuDtNLKd3klclzhXEXeZ6yGE6tvHcPKEN4UIEOHDQ4+JHCdRDLznIOZp?=
+ =?us-ascii?Q?t0DNQikgSx7s/22CzVn3facqfkoLXa/3KVjAKEj3vnaR+9IbC+F1hbU1j3fR?=
+ =?us-ascii?Q?s4tP/bSEq55MpSvCUO/mxPrmw6oaPniZWUTNyQ0fKtgHUh5lioF6inWVEidw?=
+ =?us-ascii?Q?tc1fgHXI61LfBNVpHQ3AMyMj/pwjO1X5F97ej524EjhpEB7sWTw581RfpT5A?=
+ =?us-ascii?Q?WnMMo0XSwWRt+AZN+LNxspvkN5W00MHSg/np6LzfpR/2wv8+6eUfoBDQ2e8R?=
+ =?us-ascii?Q?Vq7dXh5AHoWd8uIv0LVhYExUkTHvZup9H0bh1YH2iLPF3C/kbmjUQxc/vkbf?=
+ =?us-ascii?Q?5oUpy6uBb4VwE16kz8OmpwbX7+/+xumcT8ljVy9J8YAtlBfgVdp7Plo/L/8e?=
+ =?us-ascii?Q?1SRgurgHtzKc31jr9BpvoL4SWZ4ITVuvl8eOKrFwp3hxdeBM94CFsCGfAYxs?=
+ =?us-ascii?Q?nwn7HnnwoEgbjX5oic7+dJxyHtzJAjKIAHHsSuXzVAjWZvzxkZiqRSvq4JIU?=
+ =?us-ascii?Q?B5bv/UancJ3+LdS4MYIXIyTbN5q9CAjJhU3Zgoc4foA515BNIyN/wUv9yOac?=
+ =?us-ascii?Q?WneFJmjZLnAQvjAoy1FN84FDDCx8keiEcfrQFFOB72mVTA+aVJj3h9zFSZiN?=
+ =?us-ascii?Q?fkt03k9KEHaex0aI2OqZkDYcBmPSQvCHoPMNEyGbJE8cb8ZTinw0Kmaho7lE?=
+ =?us-ascii?Q?fsSVuhgta2FzSmDOs6y42Z0XvkQ15THITEpPuNbO8JztJBMry5kcRl1lmqUk?=
+ =?us-ascii?Q?FEwvc5lEhqxVynSYR0XlygXxkjzX1SlI48EjLw9sAkeBU4NHQ82Xq7bSFOXX?=
+ =?us-ascii?Q?aBguQe6Ja1YjG0dCxiLOz5v9nbbat4iOek7gChmErsLmvSaMbr9mh5qlhBfJ?=
+ =?us-ascii?Q?XIysbEpPiENoMrbd2zuoPBMwLvWtFfmECja5yMbWuIl5uONj3YpUbs5pSK81?=
+ =?us-ascii?Q?1coLEqUgZwevZc9TzgYL7lA3BWZPATfz54/FhZcJEj63aBXDKmVnYFiFGB+l?=
+ =?us-ascii?Q?8ywbq7OOkXX78kCTU1NoUdqIzLrneIbBnx7BCFwOMk8eEoZdf9sjoauD/uK8?=
+ =?us-ascii?Q?88X9pbJBOF8x+xet8WrZQS4y+veVKeK9QjYsLjjJpSFZkBqMBvJ2eVsqEgh5?=
+ =?us-ascii?Q?KCVCIjmcfQOj370qnjc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 19:44:13.2469
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c60697ca-b574-4b2b-094e-08de0b5a0d68
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00026368.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9205
 
-On Sat, Oct 11, 2025 at 2:10=E2=80=AFAM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> wcn36xx_smd_update_scan_params() last use was removed in 2020 by
-> commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
->
-> Remove it.
->
-> This leaves the wcn36xx_hal_update_scan_params_req_ex and
-> wcn36xx_hal_update_scan_params_resp structs unused.
->
-> Remove them, together with the unused
-> wcn36xx_hal_update_scan_params_req.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+For shadow stack support in SVM when using SEV-ES, the guest kernel
+needs to save XSS to the GHCB in order for the hypervisor to determine
+the XSAVES save area size.
+---
+v4:
+  - Use CPUID_LEAF_XSTATE instead of open coding 0xd.
+v3:
+  - Only CPUID.0xD.1 consumes XSS. Limit including XSS in GHCB for this
+    case.
+v2:
+  - Update changelog for patch 2/2
 
-Acked-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+John Allen (2):
+  x86/boot: Move boot_*msr helpers to asm/shared/msr.h
+  x86/sev-es: Include XSS value in GHCB CPUID request
+
+ arch/x86/boot/compressed/sev.c    |  7 ++++---
+ arch/x86/boot/compressed/sev.h    |  6 +++---
+ arch/x86/boot/cpucheck.c          | 16 ++++++++--------
+ arch/x86/boot/msr.h               | 26 --------------------------
+ arch/x86/coco/sev/vc-shared.c     | 13 +++++++++++++
+ arch/x86/include/asm/shared/msr.h | 15 +++++++++++++++
+ arch/x86/include/asm/svm.h        |  1 +
+ 7 files changed, 44 insertions(+), 40 deletions(-)
+ delete mode 100644 arch/x86/boot/msr.h
+
+-- 
+2.47.3
+
 
