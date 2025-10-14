@@ -1,222 +1,143 @@
-Return-Path: <linux-kernel+bounces-852181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A1ABD85F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:14:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E705BD8604
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F843BE81B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D49F406906
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30512E7645;
-	Tue, 14 Oct 2025 09:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BBA2DEA8E;
+	Tue, 14 Oct 2025 09:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKZxf22Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cxQdAUj3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3384429E0E5;
-	Tue, 14 Oct 2025 09:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589662E7F17
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760433287; cv=none; b=doiAFfJAqExyP2J7EBxqpRapwVdB0N7JzO+IaSM1MvhYwg6j7CGtHk1pm+uj8sX8mDQmZOlJLYvOD1LMwi4QiWsaVf8YppQrZ7mAaL1lEA4f1RQihLvjJlXMu4zEcnmmRTZnBJDxjBkAt9nn+YxoVdIdO7ZdUhT6/wbUXjuN5Go=
+	t=1760433310; cv=none; b=syFGLgcfhqB8qEdTnifPOmR3KCBfD3hyUO9/6Yxb88uWcHuIsiqcfocqaFRegn+0BLMnyZlcWG2Dxg0u+4AP2Rw4RGOhXx3/ybxMoiq1zb/R26AV55hyQJJew/3uqFPvs3rvr6FzooVMgmREMcoZW7mpqMjwvxGzwKJfWlmcCxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760433287; c=relaxed/simple;
-	bh=IBkCqz1KQ1uX83QuJ3HllJmulH8qpC3R2cWzYAaQB/g=;
+	s=arc-20240116; t=1760433310; c=relaxed/simple;
+	bh=dUf3SgvGYlHaEs4USw9N4nJWZh+DpSXufR90IS9NURs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIVZXRU+2ZfkpA3Bs8h1smuKNM1hdmruQ7OyhYBx4m9tDSf8GRgpxHyfxyodnjKUZo9dUzkLYCkBESNwa43QfME0w+KJDIl/r3oIe+SARLXSb0NaS3Ma8hNc8IJIiEczYo+ah+uXVwWSxGuebWXDDYtyGMQJMlXrFzNMu3uZVI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKZxf22Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD61C4CEE7;
-	Tue, 14 Oct 2025 09:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760433286;
-	bh=IBkCqz1KQ1uX83QuJ3HllJmulH8qpC3R2cWzYAaQB/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKZxf22Qjtehf9Ju4hs4d1ZMls1QVC7xp1pg19tXZDUQGb2nMv21rX7z/REtSlZnn
-	 wdhZGctfOsCWA9ciC70TZNp9kr+a2rqxnEMKifOapN7x5EA3zolq/NQnJkZAJppQRs
-	 vN+2MI68O+Z6k7v8gSxVxBKjmzOynSflXzuDdH+Tp/pMAWfSXRKg9ML0HHI9XoLDo0
-	 gLZ+wE46cDHUuqsOuymef9yyVINznxtQIgzfjCc7kwee4kkI9zQ7A4k7a9BqOfRAKZ
-	 1KUsGf4Pkc3K2Bf7aET6QtHfXzDY8krzRLjehgxV2AakTlYjkVjMWbmoVDXqpa6YtG
-	 I1P5+AKe9VnHg==
-Date: Tue, 14 Oct 2025 10:14:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 17/18] riscv: dts: starfive: jh7100: Use physical
- memory ranges for DMA
-Message-ID: <20251014-unsocial-composer-880ea10cc1d1@spud>
-References: <20251009015839.3460231-1-samuel.holland@sifive.com>
- <20251009015839.3460231-18-samuel.holland@sifive.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HF92vTy/eNetEOEAYgkqZ6Thiq5vxBDiG/rtSjNmw+FpblJsimw6Wtuv43Wbd348ysPuu2SOCmERTOke+cAyAGON2TMIZ28eMAqIUmt5PQi/KFSVNx5MXtKq+zn5i5QSVQd1IL8xPzcS5ItdqfSD45XAMmd1Oq8T7D5wPhBjiNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cxQdAUj3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760433306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=84qLuulQEWfDvvAd6y1sTa13pyZb7pX9XGxQ88tYQoo=;
+	b=cxQdAUj3nBFm0Mz1tUoPiBi9NsjkDbMhqNzlIVx0xNkju7vp3GxlQzwmqL4F1laiqzupn7
+	8KiGZcZTW63OrrZsg9O//GH2wPGat1wgzgzQ1+m1OwM6RjB2FE+nk/2Q8u3I84144N1r1P
+	hjkjAe2L9O2IRZhPmhsQZM8iZDIJs14=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-habP5WxuNy6IzIfoPvjpwQ-1; Tue,
+ 14 Oct 2025 05:15:03 -0400
+X-MC-Unique: habP5WxuNy6IzIfoPvjpwQ-1
+X-Mimecast-MFC-AGG-ID: habP5WxuNy6IzIfoPvjpwQ_1760433299
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08D5B18002CD;
+	Tue, 14 Oct 2025 09:14:59 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.12])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8DCFA1800283;
+	Tue, 14 Oct 2025 09:14:57 +0000 (UTC)
+Date: Tue, 14 Oct 2025 17:14:53 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, glider@google.com,
+	dvyukov@google.com, elver@google.com, linux-mm@kvack.org,
+	vincenzo.frascino@arm.com, akpm@linux-foundation.org,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org, sj@kernel.org,
+	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu
+Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three
+ modes
+Message-ID: <aO4UjVmGkYg5Nyf6@MiWiFi-R3L-srv>
+References: <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv>
+ <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
+ <75a2eb31-3636-44d4-b2c9-3a24646499a4@gmail.com>
+ <CA+fCnZf7jYPUyqHqonWhDKVi9eeN6aaaByMTBYCQrv2-8+hngQ@mail.gmail.com>
+ <aMfWz4gwFNMx7x82@MiWiFi-R3L-srv>
+ <CA+fCnZcWEuBerMeS4RCXQtged06MJhY=55KsYeJEOJn3K0psXQ@mail.gmail.com>
+ <aNNY1AzfGua3Kk3S@MiWiFi-R3L-srv>
+ <CACzwLxh10=H5LE0p86xKqfvObqq+6ZN5Cs0hJ9i1MKJHWnNx2w@mail.gmail.com>
+ <aNTfPjS2buXMI46D@MiWiFi-R3L-srv>
+ <CACzwLxiJ0pGur42Vigq=JnYecyZn-Z5BC3VcqxSUttT54kEusA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kExO0No+kM/nXpTw"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251009015839.3460231-18-samuel.holland@sifive.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACzwLxiJ0pGur42Vigq=JnYecyZn-Z5BC3VcqxSUttT54kEusA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+On 10/14/25 at 10:27am, Sabyrzhan Tasbolatov wrote:
+> On Thu, Sep 25, 2025 at 11:21 AM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 09/25/25 at 12:07am, Sabyrzhan Tasbolatov wrote:
+> > > On Wed, Sep 24, 2025 at 5:35 AM Baoquan He <bhe@redhat.com> wrote:
+> > > >
+> > > > On 09/23/25 at 07:49pm, Andrey Konovalov wrote:
+> > > > > Since the Sabyrzhan's patches are already in mm-stable (and I assume
+> > > > > will be merged during the next merge window), just rebase your changes
+> > > > > on top.
+> > > >
+> > > > That's fine, I will rebase.
+> > > >
+> > > > >
+> > > > > But also note that Sabyrzhan is planning to move out the
+> > > > > kasan_enabled() checks into include/linux/kasan.h (which is a clean-up
+> > > > > I would have also asked you to do with the kasan=off patches), so
+> > > > > maybe you should sync up with him wrt these changes.
+> > > >
+> > > > Hi Sabyrzhan,
+> > > >
+> > > > What's your thought? You want to do the cleanup after my rebasing on
+> > > > your merged patches or you prefer to do it ahead of time? Please let me
+> > > > know so that I can adjust my posting accordingly. Thanks.
+> > > >
+> > >
+> > > Hello,
+> > >
+> > > I can make all necessary changes only next week. Currently, traveling.
+> > > I will send the fix-up patch Andrey has described somewhere next week.
+> > > Please let me know if it's ok.
+> >
+> > Please take it easy, today is Thursday, I will wait for your clean up
+> > patch next week and post. I can do some preparation work for rebasing on
+> > your merged patches. Thanks.
+> 
+> Hello,
+> 
+> Just heads up that I've already sent cleanup patches [1] and
+> Andrew has merged them into mm-new tree.
+> Hopefully, one week's delay wasn't a problem.
 
---kExO0No+kM/nXpTw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for telling. I planned to rebase on top of that and repost in
+one week or two weeks. I am doing some patch back porting for RHEL.
 
-On Wed, Oct 08, 2025 at 06:57:53PM -0700, Samuel Holland wrote:
-> JH7100 provides a physical memory region which is a noncached alias of
-> normal cacheable DRAM. Now that Linux can apply PMAs by selecting
-> between aliases of a physical memory region, any page of DRAM can be
-> marked as noncached for use with DMA, and the preallocated DMA pool is
-> no longer needed. This allows portable kernels to boot on JH7100 boards.
->=20
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->=20
-> Changes in v2:
->  - Move the JH7100 DT changes from jh7100-common.dtsi to jh7100.dtsi
->  - Keep RISCV_DMA_NONCOHERENT and RISCV_NONSTANDARD_CACHE_OPS selected
->=20
->  arch/riscv/Kconfig.errata                     | 19 ---------------
->  arch/riscv/Kconfig.socs                       |  2 ++
->  .../boot/dts/starfive/jh7100-common.dtsi      | 24 -------------------
->  arch/riscv/boot/dts/starfive/jh7100.dtsi      |  4 ++++
->  4 files changed, 6 insertions(+), 43 deletions(-)
->=20
-> diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-> index e318119d570de..62700631a5c5d 100644
-> --- a/arch/riscv/Kconfig.errata
-> +++ b/arch/riscv/Kconfig.errata
-> @@ -53,25 +53,6 @@ config ERRATA_SIFIVE_CIP_1200
-> =20
->  	  If you don't know what to do here, say "Y".
-> =20
-> -config ERRATA_STARFIVE_JH7100
-> -	bool "StarFive JH7100 support"
-> -	depends on ARCH_STARFIVE
-> -	depends on !DMA_DIRECT_REMAP
-> -	depends on NONPORTABLE
-> -	select DMA_GLOBAL_POOL
-> -	select RISCV_DMA_NONCOHERENT
-> -	select RISCV_NONSTANDARD_CACHE_OPS
-> -	select SIFIVE_CCACHE
-> -	default n
-> -	help
-> -	  The StarFive JH7100 was a test chip for the JH7110 and has
-> -	  caches that are non-coherent with respect to peripheral DMAs.
-> -	  It was designed before the Zicbom extension so needs non-standard
-> -	  cache operations through the SiFive cache controller.
-> -
-> -	  Say "Y" if you want to support the BeagleV Starlight and/or
-> -	  StarFive VisionFive V1 boards.
+> 
+> [1] https://lore.kernel.org/all/20251009155403.1379150-1-snovitoll@gmail.com/
+> 
 
-Hmm, removing this is going to break old devicetrees, right? Shouldn't we
-just keep this with a wording change stating that it has been replaced,
-rather than removing it right away?
-
-Cheers,
-Conor.
-
-> -
->  config ERRATA_THEAD
->  	bool "T-HEAD errata"
->  	depends on RISCV_ALTERNATIVE
-> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> index 848e7149e4435..a8950206fb750 100644
-> --- a/arch/riscv/Kconfig.socs
-> +++ b/arch/riscv/Kconfig.socs
-> @@ -50,6 +50,8 @@ config SOC_STARFIVE
->  	bool "StarFive SoCs"
->  	select PINCTRL
->  	select RESET_CONTROLLER
-> +	select RISCV_DMA_NONCOHERENT
-> +	select RISCV_NONSTANDARD_CACHE_OPS
->  	select ARM_AMBA
->  	help
->  	  This enables support for StarFive SoC platform hardware.
-> diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv=
-/boot/dts/starfive/jh7100-common.dtsi
-> index ae1a6aeb0aeaa..47d0cf55bfc02 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
-> @@ -42,30 +42,6 @@ led-ack {
->  		};
->  	};
-> =20
-> -	reserved-memory {
-> -		#address-cells =3D <2>;
-> -		#size-cells =3D <2>;
-> -		ranges;
-> -
-> -		dma-reserved@fa000000 {
-> -			reg =3D <0x0 0xfa000000 0x0 0x1000000>;
-> -			no-map;
-> -		};
-> -
-> -		linux,dma@107a000000 {
-> -			compatible =3D "shared-dma-pool";
-> -			reg =3D <0x10 0x7a000000 0x0 0x1000000>;
-> -			no-map;
-> -			linux,dma-default;
-> -		};
-> -	};
-> -
-> -	soc {
-> -		dma-ranges =3D <0x00 0x80000000 0x00 0x80000000 0x00 0x7a000000>,
-> -			     <0x00 0xfa000000 0x10 0x7a000000 0x00 0x01000000>,
-> -			     <0x00 0xfb000000 0x00 0xfb000000 0x07 0x85000000>;
-> -	};
-> -
->  	wifi_pwrseq: wifi-pwrseq {
->  		compatible =3D "mmc-pwrseq-simple";
->  		reset-gpios =3D <&gpio 37 GPIO_ACTIVE_LOW>;
-> diff --git a/arch/riscv/boot/dts/starfive/jh7100.dtsi b/arch/riscv/boot/d=
-ts/starfive/jh7100.dtsi
-> index 7de0732b8eabe..34ff65d65ac7e 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
-> @@ -7,11 +7,15 @@
->  /dts-v1/;
->  #include <dt-bindings/clock/starfive-jh7100.h>
->  #include <dt-bindings/reset/starfive-jh7100.h>
-> +#include <dt-bindings/riscv/physical-memory.h>
-> =20
->  / {
->  	compatible =3D "starfive,jh7100";
->  	#address-cells =3D <2>;
->  	#size-cells =3D <2>;
-> +	riscv,physical-memory-regions =3D
-> +		<0x00 0x80000000 0x08 0x00000000 (PMA_RWXA | PMA_NONCOHERENT_MEMORY) 0=
-x0>,
-> +		<0x10 0x00000000 0x08 0x00000000 (PMA_RWX | PMA_NONCACHEABLE_MEMORY | =
-PMR_ALIAS(1)) 0x0>;
-> =20
->  	cpus: cpus {
->  		#address-cells =3D <1>;
-> --=20
-> 2.47.2
->=20
-
---kExO0No+kM/nXpTw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO4UgQAKCRB4tDGHoIJi
-0uKUAQD80+kPIuFiDo0jFL5AOngNkEUr28ECrOoIkr5OlYN8UgEAh9hDrsZWp8fb
-oE38JjdP0xJl6Q+HfnlMtSej1XDlZws=
-=jxde
------END PGP SIGNATURE-----
-
---kExO0No+kM/nXpTw--
 
