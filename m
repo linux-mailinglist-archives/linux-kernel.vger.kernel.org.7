@@ -1,124 +1,206 @@
-Return-Path: <linux-kernel+bounces-852842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2EBBDA129
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4249BBDA17A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91195807FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8572E3A1581
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35963009DC;
-	Tue, 14 Oct 2025 14:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5739302156;
+	Tue, 14 Oct 2025 14:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgCD/UXE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ne0TeY1D"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45423002CF;
-	Tue, 14 Oct 2025 14:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF835301481;
+	Tue, 14 Oct 2025 14:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452592; cv=none; b=AmchrYHkeIq7TYMMJVd7FKX1HG0S3BmsKYR43yjXbXQ6etUgcNKmg2FfPQsV9kGkUX+wHDd99hm5NNxTIqtPmGAuq1zv040tJX4VocQmqcUc2H8X8tLpDwh2AIPHOlzGPr/75XWozW/2miHtPLVlPyQhzkaaqHuQ2a+2qSZZzlU=
+	t=1760452602; cv=none; b=ufRx/yDophCU1hE5Rhafx17ckKgZikgYUJ/tU0YRFm2CnGSMvOERz/ugEBB217P+ZRiyCiEoj6/iOmzq+p5rIWS2wKneXjMTdC88mu9tnTJticM4QuiX3p501+qjH7BuNAC/IYKBnIH5aJAfD53YE++0BIEScRiHNQAj6GdCTq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452592; c=relaxed/simple;
-	bh=CXJIb47qjvL1os6NZGukfyQqPMkQTZckFnpfkwrlrCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KNXxjEiZYAzkOCmec0e+8I71iXrhMpn9ZbwWz3SAkatPMartLhb4RkGr7WOxGzAMeU9jIvZATNvPkJB5q/tqKwoyBqtS/ngEKrYQF5T9JMrY2iZGGQaK+z19rrASiCOCZGk7ILtdRXLYiR9jcWgTvqO9AG1Pzhb4EgD1CJwXAJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgCD/UXE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85646C4CEE7;
-	Tue, 14 Oct 2025 14:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760452591;
-	bh=CXJIb47qjvL1os6NZGukfyQqPMkQTZckFnpfkwrlrCk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WgCD/UXE52eTTd4ak74JrtlM9GfbI/tKTmAnESN4yAGaYd9AUN4lj5bcy2ObiBBKM
-	 7a0Kh55Ep46Bt9e0K5X3slhnmikQttYkbLBItOKL6tLyBJ04675TKBIwc+raUphd6V
-	 uqST1lOdSVXIVvaFbxZ5wb350XSnxIXEH1bCJKP0U7TKFYnC0EI02J1cKG234IV6jR
-	 JHnLrsI/NtZhwgcwtQFWtBTOXYlTez1pcvfjAz9rqdf41BS+5nLPmzNcC2UGZm0Xgn
-	 P3yam5UIiKSKo3DTQaHYPuGaTxJF2u9vrYx8bo2JhVcy0mOWqdyxp74DE74Q5s2tLD
-	 DSrVMWprbL/lQ==
-From: Conor Dooley <conor@kernel.org>
-To: linus.walleij@linaro.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Valentina.FernandezAlanis@microchip.com
-Subject: [PATCH v2 0/5] Microchip mpfs/pic64gx pinctrl
-Date: Tue, 14 Oct 2025 15:35:33 +0100
-Message-ID: <20251014-retype-limit-e6cbe901aa07@spud>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760452602; c=relaxed/simple;
+	bh=zUUtBSY5nFGqSJST2WpVVBRsc6QhERRYMf7OHNQPv/4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=HjwZrfSc9ZYhX/Eit479PO77QmNukvi9+i59nZBAOTb08gvQE52YACOMODqOhGWkVaYl93ZsTz0GcT70VKNPnO6R9RprhGemdYnwP80DBfh1Fk5tT6lRO3RTuVSDMR/eIeVsdMQRkV45V/lM6TJIuIxMwjZUm2ykON/Lkc3+uYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ne0TeY1D; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87HYY009007;
+	Tue, 14 Oct 2025 14:36:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EOtNG1Hwpt3IljLqm4P2p35C96JhlC1Y2VDt01gzeVc=; b=ne0TeY1DQJY9tqhq
+	cONSUfPOyyxlAqfztZp8fL4StM45l+mu5MYKTWBWDkK/Va8NmGAJc+SvytDfm26H
+	Q/xzhCdFXVyRyrNsxxcgyzkAybY2T/igRLQAxsAIL2o9/17PBKT5RPgObFytKxgH
+	RubNN2x7zuZe7FpQrhANwzIbaLP1y2vOrsSz7GlMVSFkHnIY2vQz5h63vLDSbhMZ
+	8vJuGys8xtbt+HyHZLjv7iML2kA5zeSvjCfmmN7w07pvpH/4Df5ju0O1hiqK4T8+
+	FnJ/PRV4NAIzPo6d/fwVEtDDf8Y9WiLIvH6IW0MgfW1TdOlMrOk5J7jPze8jODF8
+	ngL+pg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfm5gv5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 14:36:33 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59EEaWKt005666
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 14:36:32 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Tue, 14 Oct 2025 07:36:26 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Date: Tue, 14 Oct 2025 22:35:34 +0800
+Subject: [PATCH v7 09/10] arm64: dts: qcom: ipq5424: Add NSS clock
+ controller node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2396; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=Ui2aesXem31ZXmaUFi/+2FfZKEA0ExeZLnwmEAVQraQ=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnv4rc6TJnNcWj9i94oltcCnU+d993JedW149y9OL0Xc ROq09U1OkpZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRvl6G/8VvBRV9T2+b4szz 9PTnVU8nFITKpnYyC3vNaHklE6NdE8TwzzZ1p5bT4Tchn14HZlx/mKiWnVds2SU16zq38yUtjSe NzAA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20251014-qcom_ipq5424_nsscc-v7-9-081f4956be02@quicinc.com>
+References: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
+In-Reply-To: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        "Anusha Rao" <quic_anusha@quicinc.com>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>,
+        Manikanta Mylavarapu
+	<quic_mmanikan@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_suruchia@quicinc.com>,
+        Luo Jie <quic_luoj@quicinc.com>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760452536; l=1949;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=zUUtBSY5nFGqSJST2WpVVBRsc6QhERRYMf7OHNQPv/4=;
+ b=c0eIJWaCdAYSN7kBydCu4+o2vf94DHDk6qj4QORmCl8gEUFWlEaMIk1LRXLDdEuFAmCfZZObD
+ E+fnuGTolHLB6sckIkA5QrnPvw7IPU2S20DjHUEkBDiTw9sJ97lsN0o
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gtnxNHZ7ZCyMxlJPoAWABq5vRwbqEwLo
+X-Proofpoint-ORIG-GUID: gtnxNHZ7ZCyMxlJPoAWABq5vRwbqEwLo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMCBTYWx0ZWRfX5du//NvK2Jm4
+ TXu3iodsM406p74hVH0WbtXVhAPKoJa0LV3KPBB40KIRviTVJE2vl7i5BdyulFxSsN+mbelYKvo
+ tYSDME9NmVVhTEABKlyFUxgbKk2dvCy3AMN2s4zSmAvEVhraEWUPl71XtuzrCGfCeYEOlar3X56
+ 4ow6+jiSZm8U4VGlPxhlIkcQfNICqqvSRLPERA5X6T0hc655WusJNNsNx82LntRn5uAJJ4bE1qS
+ UDjK/A8LO04hKsLkmT65NY6Hx9J4ziS0fDC4AfGVnwunGxPGRQFSs4x7RYrEYDvZsR8HgTBki1t
+ JCEHx53zOUHJ2m1GbfwnjbDLgoTAZvmNTKB6HH8q/Rwli5sCowqQFI8tSER2wD6lt32QO4Hm158
+ VNu/a+0u/Zhz+jvKIM74ryRzROvg4w==
+X-Authority-Analysis: v=2.4 cv=V71wEOni c=1 sm=1 tr=0 ts=68ee5ff1 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=pA3aE4n4XothnxmHxHYA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 spamscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110020
 
-From: Conor Dooley <conor.dooley@microchip.com>
+NSS clock controller provides the clocks and resets to the networking
+hardware blocks on the IPQ5424, such as PPE (Packet Process Engine) and
+UNIPHY (PCS) blocks.
 
-Hey folks,
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
 
-Following from my RFC recently [0] I've got a v2 here that's implemented
-the change from using the pinmux property to using functions and groups
-that you asked for Linus.
-
-There's some use of macros to cut down on redefining groups etc multiple
-times that I figured would help me avoid ADHD mistakes, but I can just
-get rid of that if you hate it.
-
-I'll follow this with a reply to the gpio2 driver with some comments
-about the noun use that we discussed on Monday Linus.
-
-I'm not expecting this version to get applied, and it doesn't apply
-right now due to a missing dep that is the first patch in [1]. I maintain
-that binding directory though, so it's not as if we wouldn't be able to
-trivially figure out how to deal with that anyway.
-
-Cheers,
-Conor.
-
-0 - https://lore.kernel.org/all/20250926-manpower-glacial-e9756c82b427@spud/
-1 - https://lore.kernel.org/all/20251013-posting-alright-8f945a4bebfd@spud/
-
-CC: Linus Walleij <linus.walleij@linaro.org>
-CC: Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: linux-kernel@vger.kernel.org
-CC: linux-gpio@vger.kernel.org
-CC: devicetree@vger.kernel.org
-CC: Valentina.FernandezAlanis@microchip.com
-
-Conor Dooley (5):
-  dt-bindings: pinctrl: document pic64gx "gpio2" pinmux
-  pinctrl: add pic64gx "gpio2" pinmux driver
-  dt-bindings: pinctrl: document polarfire soc iomux0 pinmux
-  pinctrl: add polarfire soc iomux0 pinmux driver
-  MAINTAINERS: add Microchip RISC-V pinctrl drivers/bindings to entry
-
- .../microchip,mpfs-pinctrl-iomux0.yaml        |  88 +++++
- .../microchip,pic64gx-pinctrl-gpio2.yaml      |  73 ++++
- .../microchip,mpfs-mss-top-sysreg.yaml        |  13 +-
- MAINTAINERS                                   |   4 +
- drivers/pinctrl/Kconfig                       |  14 +
- drivers/pinctrl/Makefile                      |   2 +
- drivers/pinctrl/pinctrl-mpfs-iomux0.c         | 278 ++++++++++++++
- drivers/pinctrl/pinctrl-pic64gx-gpio2.c       | 357 ++++++++++++++++++
- 8 files changed, 828 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,mpfs-pinctrl-iomux0.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
- create mode 100644 drivers/pinctrl/pinctrl-mpfs-iomux0.c
- create mode 100644 drivers/pinctrl/pinctrl-pic64gx-gpio2.c
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+index ef2b52f3597d..a3938f4db168 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+@@ -3,7 +3,7 @@
+  * IPQ5424 device tree source
+  *
+  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+- * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -815,6 +815,36 @@ apss_clk: clock-controller@fa80000 {
+ 			#interconnect-cells = <1>;
+ 		};
+ 
++		clock-controller@39b00000 {
++			compatible = "qcom,ipq5424-nsscc";
++			reg = <0 0x39b00000 0 0x100000>;
++			clocks = <&cmn_pll IPQ5424_XO_24MHZ_CLK>,
++				 <&cmn_pll IPQ5424_NSS_300MHZ_CLK>,
++				 <&cmn_pll IPQ5424_PPE_375MHZ_CLK>,
++				 <&gcc GPLL0_OUT_AUX>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <&gcc GCC_NSSCC_CLK>;
++			clock-names = "xo",
++				      "nss",
++				      "ppe",
++				      "gpll0_out",
++				      "uniphy0_rx",
++				      "uniphy0_tx",
++				      "uniphy1_rx",
++				      "uniphy1_tx",
++				      "uniphy2_rx",
++				      "uniphy2_tx",
++				      "bus";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#interconnect-cells = <1>;
++		};
++
+ 		pcie3: pcie@40000000 {
+ 			compatible = "qcom,pcie-ipq5424", "qcom,pcie-ipq9574";
+ 			reg = <0x0 0x40000000 0x0 0xf1c>,
 
 -- 
-2.51.0
+2.34.1
 
 
