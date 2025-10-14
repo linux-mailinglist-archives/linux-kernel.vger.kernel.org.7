@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-852014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55006BD7F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:35:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37582BD7F11
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE77E427FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C8D18A5B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880892D8DAF;
-	Tue, 14 Oct 2025 07:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E02D221703;
+	Tue, 14 Oct 2025 07:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCiTwd0U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmtW6Bvx"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACAD30E835
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8322989B7
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427201; cv=none; b=UpulPuXhhSlbiH8eBfGz+p4d6wePxS5kUoNN+BniX+R9ZqjRWkVLUxQLJvyENonjsOIPDE2eQmoWsPK9efBYtw9QE0Y3PwIyB7lnKOJw+ZZIq+opGLV/QiZTK3GNfnvmcZt7Xxl4W/TIWXFcW+GNaygLh4TbCtmpnw+uDl4Ci6o=
+	t=1760427226; cv=none; b=Zh76J+d1YHk5WdkYw9f+WEA40rL59Mz9BGFoi+urL3pHSkG2Qp3a2AVvwsjr2q+xjF4OiSwzDdregdtcruI2gQCHM5FZVfNKLGatlRrFBAy2gp0DmQa7bHLW0bTr57ClcIF3fzMPNF71NVZNYjMxTRDaE/uYeyZB2yGOYuFlpZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427201; c=relaxed/simple;
-	bh=cH5DIwFsVy6Nw8TwJb1Z+ejcHY8Vpyz3tBKZIv6CZvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aMPdQSuzw/M+/mKYtbbyQ+UQsuJIKWg3kt2swSLY1r0rZ8UAAW7bvFn1ONPQSer7gGX0mNTXLT2crOqbh3/dG/zvUSf2/ETM1VyjIO3wOkRb0tHM105ZCod/JjdSzP61BqQt/MzpIRFUZ1ZdVXd+5cIbJv0Ukfj+27dadErHH+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCiTwd0U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F397C116D0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760427201;
-	bh=cH5DIwFsVy6Nw8TwJb1Z+ejcHY8Vpyz3tBKZIv6CZvs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SCiTwd0Up3vnEw2qS5wfZwbgv9dab+XHfWUv7c9ia1VoYi3x3nG38DB2osDlDxCao
-	 wsnliE1L9V3SuC8ZbtGXXsKjCfuC7LvE6l258ZCUmcFbpZwJBbiCDIM5ua7BAiCVoL
-	 Qbqs2i6nx5OIsskivnfmA/e+fVsQulQzyQfhtSE1BmbU7/OSPQEw7wJVRdXP8mhAW2
-	 tR6LC5CPIEMM55OzpWLDEYh4inS8YZzoyh1Uu2lvkmAC+H4h4nkdPtHz6aDgowOVlI
-	 iA1uX189kKcyXiCcyF7XVnj2jOUtF/+80rng3L1Y9aQs8ErggIl5q+phuOskfPo1U9
-	 741YMq2gj+upQ==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3627a1979a0so3490168fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:33:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqpX6TCqd8QqQOc9Zgq9ux3x8qhxmibxI2ny2BwY2JpJd2kRVXHOV27cq0RZWZGY03lIeeRFGgydRFptA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxepL3XLE3ezLfOot3Kum84e6uE+Wic+UTMg6bMDQr0oXOy6SU5
-	yzBzztSfbp0nacVLcvIxov8fT/dzSYQV4di8y2kNaLCUuhFMfO+C+YbOMqpMaqeIVOBUNISi+BL
-	GfTN61tBoeVMXso/NGilJusRWlAdQwAo=
-X-Google-Smtp-Source: AGHT+IEVzJJLhlo+ge61CBtv2HNYJfWVk5+8m0W9vSDO6yAaFjugC+feiJ+wT8OgVbcCjfcOjcc6zRAa+JGqSIDZyyk=
-X-Received: by 2002:a05:6870:70a7:b0:381:e796:fbdd with SMTP id
- 586e51a60fabf-3c0f8db730dmr13485981fac.35.1760427200600; Tue, 14 Oct 2025
- 00:33:20 -0700 (PDT)
+	s=arc-20240116; t=1760427226; c=relaxed/simple;
+	bh=E9FSOYcm7i09XJeInxjrbVFWzFXzEPihfDfXGS9CtnA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=RTpQqtQENMzlIX6BRtdGYDECd3cuAe3/9Bw/4n1J10WBGCEh8gE+kCAo7s0p1EHgLp8nOB6ree3v8/glo29kwtadaV8UQJyVK78CXPoqh0rMXvkKTBYlAb5kN/OqT+7W0Tv8k3u9E/uAOmqxqv0UCtEZcHDtGxAM6tYcVqK+fEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmtW6Bvx; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b463f986f80so142496966b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:33:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760427223; x=1761032023; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7IEg98LpWuzbKCtN9pX9/aXP/aM01CWdHEywDKCbeZI=;
+        b=FmtW6Bvxr/EfXlZC9MGmVI57bwooQ0HMsCJ2jBEBMfXwj5lc858+8ZrBle0DMAQFW3
+         lzYD2yt9uOyMCfUHteckG0ek7bKAxzlAGhlc+MW8015G1E2Q6ILqI1dG8OPOOL5Wf69q
+         hULMGSsSaCJxahe5L+CXAdfbyUnp5W1VxrKvtxkdm68wP0GzqgiUJgAE5FgZPUYD+lng
+         m4Jq2tordGRh6WnL32OSbFrM//RmQfnlKBWIyy4gIesID0sbF6a/Z5myIuEdrzYt/wdD
+         jmlyGdhLB2ZUDCkfqvH0z+QC83/3VWnKjtIqpXL1jcS1iJCW9O9B/woVpBzHNXaes4d2
+         wHDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760427223; x=1761032023;
+        h=content-transfer-encoding:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7IEg98LpWuzbKCtN9pX9/aXP/aM01CWdHEywDKCbeZI=;
+        b=SRSRVw2lQLMckAkeJnYIo0J9mrGNysJ6TUxUxAyJzDkUh+YoyZ547XdWWXk4d/mnFi
+         MMeswn49xhAt0RC2oOj8owRyoNES1Txd8mBYbqGzpKox72CA87tC69u/ZzuCGJdr1Xiz
+         F8mG2nr8qHSrstoV1CUniBCfVhFNerXW+yKVVAmBRnAcKctirhBfe+FpgqB6h6rvRgTp
+         zz3Ql5Em7pwPF5bhferhCU7T93gIOmp29HlQJR14F3VqWfEr3dQM5sfFP/kOsHvfzLa+
+         QK1d2Cyw2LsWrSr+5RVbppZKXn11VTo1ZEUb76xsuKWVH2HLsWoNZB1YG1syU6WY7kax
+         m4dg==
+X-Gm-Message-State: AOJu0Yw6qHKk/L3k83Oy/od74XsydXJxG+uOIPya7TqSOF2bTptSYGyJ
+	qm3IAC+02gMplsUed7nt6gGFsdsMjYsuBOu1glIH9P/UtneQTs3FvnrAjZldXnSB
+X-Gm-Gg: ASbGnctSN8gPfvOUuk2ZLkdpBYBEXpnf3oZ7jKJUy2gdYibejKSOXPvqKBtdSdYoujB
+	/8YjTPRW3rK6b/QnGY0ncpFY5lBrvf2jyRHfZ9T6j3QiV5FRyW/8Ss9v86cnRlertJk+PYLdLzi
+	OWH0L+7sSVPvVIwV4dr2CaVyBDZV9eCMyd9jdqLHGytKgYAToaL0+AqkvkxD3zm+D+FKcdwlhqE
+	o0ilIOV8CJTPzYbbCE9HiuJDbmAXiPXeswzUs8IQYSFq0jD4u/nly8jSn3KGI8JTLw1eqrcPEid
+	+kWrTi+dI/hEPZ1dPwMdNfkYroycwDuP7KEE2Wq7uGZN/VMh7jwEs4Hn+GturmtmJi4KhUqq46y
+	OTIfaJ5/mIvRsJCqPIH837WX85z9AFwue29vJx+jiAjQLxH75BQchyBsVO8YRbu0tokgXLyNXSr
+	c=
+X-Google-Smtp-Source: AGHT+IEeVHwAx0FPVDhlI8GXtseViCYJAPnq2mlIoZD9ebgPh39iXaRoB2Ty4ZTXHVVflb/KGAktig==
+X-Received: by 2002:a17:907:d86:b0:b49:5103:c0b4 with SMTP id a640c23a62f3a-b50ac5d07f2mr2700342666b.56.1760427222709;
+        Tue, 14 Oct 2025 00:33:42 -0700 (PDT)
+Received: from [10.0.72.158] ([213.52.63.204])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d9113a67sm1113181966b.70.2025.10.14.00.33.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 00:33:42 -0700 (PDT)
+Message-ID: <46facf7f-de3e-4cb2-b452-df7ffe9b474b@gmail.com>
+Date: Tue, 14 Oct 2025 09:33:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f80021c8-f8e1-9ed2-4791-705c4d7b7b8a@redhat.com>
-In-Reply-To: <f80021c8-f8e1-9ed2-4791-705c4d7b7b8a@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 14 Oct 2025 09:33:08 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHsiSB6aQVhqTbS0vhcEgk0TpP+4bxzSA5T0s6WrK2ZjQ@mail.gmail.com>
-X-Gm-Features: AS18NWDIakW39j6DvQPonyPRzolkq_4roZLA308ca2ajlGiqeuyh2W7vkUyhWu4
-Message-ID: <CAMj1kXHsiSB6aQVhqTbS0vhcEgk0TpP+4bxzSA5T0s6WrK2ZjQ@mail.gmail.com>
-Subject: Re: [PATCH] objtool: fix failure when being compiled on x32 system
-To: Mikulas Patocka <mpatocka@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Johan Korsnes <johan.korsnes@gmail.com>
+Subject: USB charging: How to determine maximum allowed current draw
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-(cc lkml)
+Hi,
 
-On Mon, 13 Oct 2025 at 22:21, Mikulas Patocka <mpatocka@redhat.com> wrote:
->
-> Fix compilation failure when compiling the kernel with the x32 toolchain.
->
-> In file included from check.c:16:
-> check.c: In function =E2=80=98check_abs_references=E2=80=99:
-> /usr/src/git/linux-2.6/tools/objtool/include/objtool/warn.h:47:17: error:=
- format =E2=80=98%lx=E2=80=99 expects argument of type =E2=80=98long unsign=
-ed int=E2=80=99, but argument 7 has type =E2=80=98u64=E2=80=99 {aka =E2=80=
-=98long
-> long unsigned int=E2=80=99} [-Werror=3Dformat=3D]
->    47 |                 "%s%s%s: objtool" extra ": " format "\n",        =
-       \
->       |                 ^~~~~~~~~~~~~~~~~
-> /usr/src/git/linux-2.6/tools/objtool/include/objtool/warn.h:54:9: note: i=
-n expansion of macro =E2=80=98___WARN=E2=80=99
->    54 |         ___WARN(severity, "", format, ##__VA_ARGS__)
->       |         ^~~~~~~
-> /usr/src/git/linux-2.6/tools/objtool/include/objtool/warn.h:74:27: note: =
-in expansion of macro =E2=80=98__WARN=E2=80=99
->    74 | #define WARN(format, ...) __WARN(WARN_STR, format, ##__VA_ARGS__)
->       |                           ^~~~~~
-> check.c:4713:33: note: in expansion of macro =E2=80=98WARN=E2=80=99
->  4713 |                                 WARN("section %s has absolute rel=
-ocation at offset 0x%lx",
->       |                                 ^~~~
->
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Fixes: 0d6e4563fc03 ("objtool: Add action to check for absence of absolut=
-e relocations")
->
-> ---
->  tools/objtool/check.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Index: linux-2.6/tools/objtool/check.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-2.6.orig/tools/objtool/check.c        2025-10-13 21:42:48.00000=
-0000 +0200
-> +++ linux-2.6/tools/objtool/check.c     2025-10-13 21:48:33.000000000 +02=
-00
-> @@ -4710,8 +4710,8 @@ static int check_abs_references(struct o
->
->                 for_each_reloc(sec->rsec, reloc) {
->                         if (arch_absolute_reloc(file->elf, reloc)) {
-> -                               WARN("section %s has absolute relocation =
-at offset 0x%lx",
-> -                                    sec->name, reloc_offset(reloc));
-> +                               WARN("section %s has absolute relocation =
-at offset 0x%llx",
-> +                                    sec->name, (unsigned long long)reloc=
-_offset(reloc));
->                                 ret++;
->                         }
->                 }
+I'm writing logic to determine the maximum current draw my USB device
+(gadget) may safely draw from a USB host port. I haven't found any
+appropriate place for this logic, so as for now, it lives in the driver
+for my Type-C controller.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+This means I have easy access to the negotiated USB Type-C current at
+either 3.0A or 1.5A. If the Type-C controller reports Default current
+I would like to proceed with the BC1.2 negotiation next. This is also
+quite straight-forward, as the driver handling BC1.2 updates the usbphy
+that I have a reference to. Hence, the usbphy notifier callback will
+inform me about the outcome of the BC1.2 negotiation.
+
+Now, the problem is if the outcome of that negotiation is SDP. In that
+case, I need to know whether the gadget is enumerated/configured or not.
+If the gadget is non-enumerated, I'm only allowed to draw 100mA (USB2),
+while if it's enumerated, we're allowed to draw 500mA. I don't see how
+I can obtain this state from my Type-C driver.
+
+I noticed that the UDC driver, together with the composite driver, do
+inform the usbphy about the correct SDP current, based on enumeration
+and suspend state. But, things are a bit racy, as the phy driver itself
+uses 500mA as default/initialization value for SDP:
+
+#define DEFAULT_SDP_CUR_MAX	500
+
+Is there something I've missed? Reading Neil Brown's LWN articles on USB
+charging, there is reference to on-going work on a dedicated driver for
+handling USB charging. Or, is it the extcon framework I should be using?
+
+Kind regards,
+Johan
 
