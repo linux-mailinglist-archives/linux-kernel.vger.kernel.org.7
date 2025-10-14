@@ -1,166 +1,175 @@
-Return-Path: <linux-kernel+bounces-851711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AFABD71DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67828BD71E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E3124F583A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:41:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0515C4E9225
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D692DBF4B;
-	Tue, 14 Oct 2025 02:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B383054D3;
+	Tue, 14 Oct 2025 02:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fUx99iIT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="07DD0Elf"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722A0305E0D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8403524E4D4
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760409695; cv=none; b=tfPkwsU+FvBktC7IujdhxShboOT0BpneyVn7Ek8rpS1LG8x03m7R5oXwIU9ndE12ji/EPEKkXv1A4Efmg6doqDqYSZ6t0Am/UOIlQxsaPjV8bDrgMMvUfDAhRD7qcD6rihgy2wRxWUdRPlodz8Fjqx1cBVJo8cmONs16nLTqM58=
+	t=1760409772; cv=none; b=hasWoM7wkYuVdlEpRO24RkxqsQR76VjRdiJQtOaf4gMdwrv54T7UYlE8POYEr8lGT7hsG3wdESGdIjAmpjtK3LBgg5eofa1IwS7Lk3BHuJl08PmEL/waVwe2VGlr5tlQhq/sDrKGAhZqwlYsQlhcgQXvKmH/+hswE6QOYSd+rQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760409695; c=relaxed/simple;
-	bh=FesAsJKYMIp69r5jNUmgk2+yCV5fpSg+id8ZUd4wHRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pbPeOpTn7kms3B5AAr7FzRrtsYeMOA18iMQ6r8k5rtStzPcLMzyHUE2kkfJvbnRFntlP68HR68Wi9UWn+jAzwoxtgXrZj0S+DCIXkE1uHZadvB0ZoguIga4dzfMz6RHfv6gIxgdQMPdUdFX8a1tqO631xNzgJ8vfLKn+jNwnUiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fUx99iIT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760409692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bEHVj37748wlo1Rr9T+KOAhMaCHHGe0IX7mzFNTp1RY=;
-	b=fUx99iITkjSV5+0bjAKIBNMlEDHclyq5hfTBJ/XX+CDroIuYuWQR8zqkImMgqAliupFKmq
-	lu07e9tKQoCxHrnktkdM26J3Pb3M6dfeW4EOBvt3m15wGdkPgYgabgmNhc8CIvN44MxTlB
-	Pr16I0fCHMu+InnJiX17SfcuMDKz6CQ=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-245-EaQZ9LmeNb2W1y9qd-AQ6A-1; Mon, 13 Oct 2025 22:41:28 -0400
-X-MC-Unique: EaQZ9LmeNb2W1y9qd-AQ6A-1
-X-Mimecast-MFC-AGG-ID: EaQZ9LmeNb2W1y9qd-AQ6A_1760409687
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-33428befc5bso10875022a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:41:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760409687; x=1761014487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bEHVj37748wlo1Rr9T+KOAhMaCHHGe0IX7mzFNTp1RY=;
-        b=IT+k9tK4CNKSGeAAOjUfzpCPj1MJbFFQTD8Nbvv49MQYw6/qnGzvI8Es0YmMnOksew
-         qsXuNp1tlYQMUIYUcjCkf8A+Cnu0aRMYJCJ9GoXLg9YG+FywkUx0eAVOPx0/gmfiEOhU
-         KYJTe8WCQ5xVYPl1+wyf28pLdH+Ul9NEM3EOGvIjZnAZlEaxwl4MhOXWHK0+SFEXm1JQ
-         ecSWaI42Zldj2EB2PHO8FgYm4543y73Dw4CMb6ytktzs2cWabb2TGMWv2UkHmjtOCNNk
-         KXqXPMTz32++9eybgdYjxk/WRj0KI61CMnRVejOhr6wv2wLs5WIzhI+hW0v0YNgk0k9h
-         4wsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6bEFD5JxOPALYwIxXHcBCCNrL9lgx1G0zPy5jE4Hm6aVC0SyyamGS9GTXyE3ImjvKs64//Gci1zNxJio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybFS7Kh0//Mh5R36sJohyi2Y0ek0zGHyzw7PYtTL7myRL1koHQ
-	JnEw06g4bAGnWG4IRTjfkgmqdRSg8gDA7F5aanRwFTPlh9lu7FohANeJ9vNsMeurFUshBI0JSNJ
-	YgYYUTdIrZlQ+gkzGnPsbZpE+evXsj4jRy4zd5DeUMCD/sQEe7DVCVe2lVdbPEy9gdTkQ3CYCE2
-	sd2IT7+omRWeq0bO/Bo/3nDjkX6S6XzptmfB/Apk65
-X-Gm-Gg: ASbGncsCirPfyjcMSSQ1a3hQsRL0Dni3TrUxVtEEFejQnFB0A4UYoiuSSStzJhV+CGj
-	0IYCu2M8Xzamnu0BD7CQDV3sYHGPSPVCYyyv/enp7DxGxk1QSN1pVgqOFKMFXNp3v2lM9YazfEP
-	QozZPlhinl8J0Ir+558Q==
-X-Received: by 2002:a17:90b:4d8c:b0:32e:9da9:3e60 with SMTP id 98e67ed59e1d1-33b513b4be4mr27494962a91.36.1760409687342;
-        Mon, 13 Oct 2025 19:41:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVyXKijoZhCbhaM1uVxKyL4j+fxECZx9zvv301QvM9TvPOtRuf953kdpJIsVLBO4PqCK6k5TW9iqdaCuQsZ14=
-X-Received: by 2002:a17:90b:4d8c:b0:32e:9da9:3e60 with SMTP id
- 98e67ed59e1d1-33b513b4be4mr27494937a91.36.1760409686869; Mon, 13 Oct 2025
- 19:41:26 -0700 (PDT)
+	s=arc-20240116; t=1760409772; c=relaxed/simple;
+	bh=ufwSis+dqMj2iORGLrxMyRhfQat/i+Nh0sxIq0CEZuU=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=H/tqXtRsj7IV9R9mtLtUwz3etkQ5KjV/V5v+IEAwHMQyFIjKLzzGAWHQie7j+I3TzhxvQ8ePA3aZ03l3N6FMCpZ7Cz7jssPKAkhYZ3+Hl7T+Zf+V4pjNj7SDg091I6F429qudpPjr/XCqRPqt1tJTznTGbBDB9ESCNG9RgDumT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=07DD0Elf; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=kIwr8YgoSYJTUz0mk+fkFoDy4KcY1CFydN/oz9Xg81E=;
+	b=07DD0ElfGUUuMojzHFUJ1tNA8PA29/f2GGt9V9pRJ5ueXAGRIFEj5FyGPl9hWtNvnrrXICNt2
+	phT9H6wcjzIqf8E+66e8gp8U40cc86LCmhR1QaTz1p12TpkJBGzdTEvsCkv77+XgjkY4wqO7p0b
+	UQ8wHBGNeACAWaWK3RDJ+H8=
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4clz5T26wPzLlVR;
+	Tue, 14 Oct 2025 10:42:21 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD5C818001B;
+	Tue, 14 Oct 2025 10:42:40 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 14 Oct 2025 10:42:40 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 14 Oct 2025 10:42:39 +0800
+Subject: Re: [PATCH v2 1/1] mm: prevent poison consumption when splitting THP
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+CC: <ziy@nvidia.com>, <baolin.wang@linux.alibaba.com>,
+	<Liam.Howlett@oracle.com>, <npache@redhat.com>, <ryan.roberts@arm.com>,
+	<dev.jain@arm.com>, <baohua@kernel.org>, <nao.horiguchi@gmail.com>,
+	<farrah.chen@intel.com>, <jiaqiyan@google.com>, <lance.yang@linux.dev>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <tony.luck@intel.com>
+References: <20250928032842.1399147-1-qiuxu.zhuo@intel.com>
+ <20251011075520.320862-1-qiuxu.zhuo@intel.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <cb58512e-e789-612a-7142-f0fdb505becf@huawei.com>
+Date: Tue, 14 Oct 2025 10:42:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68e96ebf.050a0220.91a22.0177.GAE@google.com> <CACGkMEtnrayDWKFdJ1P22QyCrZuDK0C2LihhOtvhUyTOKSp_HQ@mail.gmail.com>
- <CACGkMEt0aJh1yAj+q1UNnXToLa_yGc9fT_HfeNptHsOQ7vXG+w@mail.gmail.com>
- <CACGkMEsh_j9wCAv-LwOVxLjvUzEuKuu+7ZGMGcdJr7ettdBYTQ@mail.gmail.com>
- <0f20cd6a-d9aa-4837-a120-1e2e7dbdc954@redhat.com> <20251013040810-mutt-send-email-mst@kernel.org>
- <3480dcc9-a41a-4ae6-960d-4a13eed359e2@redhat.com>
-In-Reply-To: <3480dcc9-a41a-4ae6-960d-4a13eed359e2@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 14 Oct 2025 10:41:15 +0800
-X-Gm-Features: AS18NWA4EsxWvwBl_demfRui_W5z61fQiTX7YBDfYDzXzEmfq6AzT5KekgTc338
-Message-ID: <CACGkMEucE6c=50egk=Hryie2fxZaEjFt22mLX20+T=68rFLNnw@mail.gmail.com>
-Subject: Re: [syzbot] [virt?] upstream test error: KMSAN: use-after-free in vring_map_one_sg
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, 
-	syzbot <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com>, eperezma@redhat.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251011075520.320862-1-qiuxu.zhuo@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-On Mon, Oct 13, 2025 at 4:17=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On 10/13/25 10:08 AM, Michael S. Tsirkin wrote:
-> > On Mon, Oct 13, 2025 at 09:37:29AM +0200, Paolo Abeni wrote:
-> >> On 10/13/25 9:20 AM, Jason Wang wrote:
-> >>> On Mon, Oct 13, 2025 at 1:29=E2=80=AFPM Jason Wang <jasowang@redhat.c=
-om> wrote:
-> >>>> On Sat, Oct 11, 2025 at 3:40=E2=80=AFPM Jason Wang <jasowang@redhat.=
-com> wrote:
-> >>>>>
-> >>>>> #syz test
-> >>>>>
-> >>>>> On Sat, Oct 11, 2025 at 4:38=E2=80=AFAM syzbot
-> >>>>> <syzbot+ac856b8b866cca41352c@syzkaller.appspotmail.com> wrote:
-> >>>>
-> >>>> Paolo, it looks like the GSO tunnel features will leave uninitialize=
-d
-> >>>> vnet header field which trigger KMSAN warning.
-> >>>>
-> >>>> Please have a look at the patch (which has been tested by syzbot) or
-> >>>> propose another one.
-> >>>
-> >>> Forget the attachment.
-> >>
-> >> I have a few questions. The report mentions both UaF and uninit; the
-> >> patch addresses "just" the uninit access. It's not clear to me if and
-> >> how the UaF is addressed, and why/if it's related to the uninit access=
+On 2025/10/11 15:55, Qiuxu Zhuo wrote:
+> When performing memory error injection on a THP (Transparent Huge Page)
+> mapped to userspace on an x86 server, the kernel panics with the following
+> trace. The expected behavior is to terminate the affected process instead
+> of panicking the kernel, as the x86 Machine Check code can recover from an
+> in-userspace #MC.
+> 
+>   mce: [Hardware Error]: CPU 0: Machine Check Exception: f Bank 3: bd80000000070134
+>   mce: [Hardware Error]: RIP 10:<ffffffff8372f8bc> {memchr_inv+0x4c/0xf0}
+>   mce: [Hardware Error]: TSC afff7bbff88a ADDR 1d301b000 MISC 80 PPIN 1e741e77539027db
+>   mce: [Hardware Error]: PROCESSOR 0:d06d0 TIME 1758093249 SOCKET 0 APIC 0 microcode 80000320
+>   mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+>   mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
+>   Kernel panic - not syncing: Fatal local machine check
+> 
+> The root cause of this panic is that handling a memory failure triggered by
+> an in-userspace #MC necessitates splitting the THP. The splitting process
+> employs a mechanism, implemented in try_to_map_unused_to_zeropage(), which
+> reads the sub-pages of the THP to identify zero-filled pages. However,
+> reading the sub-pages results in a second in-kernel #MC, occurring before
+> the initial memory_failure() completes, ultimately leading to a kernel
+> panic. See the kernel panic call trace on the two #MCs.
+> 
+>   First Machine Check occurs // [1]
+>     memory_failure()         // [2]
+>       try_to_split_thp_page()
+>         split_huge_page()
+>           split_huge_page_to_list_to_order()
+>             __folio_split()  // [3]
+>               remap_page()
+>                 remove_migration_ptes()
+>                   remove_migration_pte()
+>                     try_to_map_unused_to_zeropage()  // [4]
+>                       memchr_inv()                   // [5]
+>                         Second Machine Check occurs  // [6]
+>                           Kernel panic
+> 
+> [1] Triggered by accessing a hardware-poisoned THP in userspace, which is
+>     typically recoverable by terminating the affected process.
+> 
+> [2] Call folio_set_has_hwpoisoned() before try_to_split_thp_page().
+> 
+> [3] Pass the RMP_USE_SHARED_ZEROPAGE remap flag to remap_page().
+> 
+> [4] Try to map the unused THP to zeropage.
+> 
+> [5] Re-access sub-pages of the hw-poisoned THP in the kernel.
+> 
+> [6] Triggered in-kernel, leading to a panic kernel.
+> 
+> In Step[2], memory_failure() sets the poisoned flag on the sub-page of the
+> THP by TestSetPageHWPoison() before calling try_to_split_thp_page().
+> 
+> As suggested by David Hildenbrand, fix this panic by not accessing to the
+> poisoned sub-page of the THP during zeropage identification, while
+> continuing to scan unaffected sub-pages of the THP for possible zeropage
+> mapping. This prevents a second in-kernel #MC that would cause kernel
+> panic in Step[4].
+> 
+> [ Credits to Andrew Zaborowski <andrew.zaborowski@intel.com> for his
+>   original fix that prevents passing the RMP_USE_SHARED_ZEROPAGE flag
+>   to remap_page() in Step[3] if the THP has the has_hwpoisoned flag set,
+>   avoiding access to the entire THP for zero-page identification. ]
+> 
+> Reported-by: Farrah Chen <farrah.chen@intel.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Tested-by: Farrah Chen <farrah.chen@intel.com>
+> Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> ---
+> v1 -> v2:
+>   - Apply David Hildenbrand's fix suggestion.
+> 
+>   - Update the commit message to reflect the new fix.
+> 
+>   - Add David Hildenbrand's "Suggested-by:" tag.
+> 
+>   - Remove Andrew Zaborowski's SoB but add credits to him in the commit message.
+>     [ I cannot reach him to get his SoB for the completely rewritten commit
+>       message and new fix approach. ]
+> 
+>  mm/huge_memory.c | 3 +++
+>  mm/migrate.c     | 3 ++-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+
+LGTM. Thanks for your fix.
+
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+
+Thanks.
 .
-> >
-> > I'd like to understand that, too.
->
-> Somewhat related: the syzbot dashboard reports that the issue is no more
-> reproducible on plain Linus' tree:
->
-> https://syzkaller.appspot.com/bug?extid=3Dac856b8b866cca41352c
-
-Interesting.
-
->
-> """
-> * repros no longer work on HEAD.
-> """
->
-> Possibly there was some external problem?
-
-I think at least we need to make sure no information as we did in
-virtio_net_hdr_from_skb():
-
-static inline int virtio_net_hdr_from_skb(const struct sk_buff *skb,
-                                          struct virtio_net_hdr *hdr,
-                                          bool little_endian,
-                                          bool has_data_valid,
-                                          int vlan_hlen)
-{
-        memset(hdr, 0, sizeof(*hdr));   /* no info leak */
-
-Thanks
-
->
-> /P
->
->
-
 
