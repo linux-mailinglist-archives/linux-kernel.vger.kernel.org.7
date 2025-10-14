@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-853352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB06BDB5BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:08:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D7DBDB5C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D833AE241
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:08:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B1821927594
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFE630C355;
-	Tue, 14 Oct 2025 21:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD9830BF60;
+	Tue, 14 Oct 2025 21:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Lfw1zTrq"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OVnBbebO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3D32D0625
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B27730BBAA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760476124; cv=none; b=UgnZHfeNYpfdxoDTwI4XN7nL+W5SgnLCHnsvqLYCidpSe57k8Sa42S4mh2bkppU3OrLKD5Aa+WpW3mNfwoUiaP8mnUxiOrpZXvWENHYcO9/dubmGP54xGMKEIz+wYvDXTbdX+FntnyfH+KXDml6gQf/zJtRLr/Qtv/a0RqXR4Yg=
+	t=1760476198; cv=none; b=D6bhTLX0iLPie+/ctNoRvd5izYFO8w0DjZDhC38YYnjdl2GKwTpO3ooLgit1Rll1P0g/vYkprCoi7OyV260HKzJFf/YtDqrE6KiqmTdgE1Wz0f5co6h4llbYj3XuIVL/w+E3CJ2gk4li8Pk2DlyOgoyoqfGyk9NLeWQZBngGsMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760476124; c=relaxed/simple;
-	bh=cnJtV5UStc6Ve+q6PTyQ+wuRR2r/C1//Qxh9geDvSXE=;
+	s=arc-20240116; t=1760476198; c=relaxed/simple;
+	bh=FEscob/e+90GaHE2E4U+4fd6PQekvU5FL8BnBdihcrc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J1PaldXPKcO68qLQb1AGHKb+XqHYB2RlYc3UuLtcSyqdRNHTN2LwwccTAgPlOzFNsk9k327XwJWuX4kLDZKANKzomqzOQ6usNc9K2NC+5VYi9HzdSrpqUi/Du8wMgEOR3bJimOqNsjT2oMKiNzP8An1QiInFohai/A3D2k0ONnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Lfw1zTrq; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-426edfffc66so195474f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:08:41 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=pAC9k+ruuTdvuWJ4m0dtDECu4lbfVt18fC/vzI3jULqMipDq4dfvc4oavjyL7cz+SCZ8/V3dYXFMi0MDWxG2XPzP9mZpr370ptQBzyzhVtLkA+dDRg7MFRWhaq5JfjNIGReMrOeXx36ZqqycxEUOYbKLx9xvF6JiJ2hEfo2eS/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OVnBbebO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e326e4e99so1807155e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760476120; x=1761080920; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=siBEdSXb+TOq19NSx1UjT5CHbXYzR/FE6uFr7iLMMvY=;
-        b=Lfw1zTrqg30dCP1eGdjNWY1Sg+fLzbbnCj2N5NGwOLbjEQH3ttPTbko59Y/Dm7AqC3
-         8Az4V4TIVgwIf9OjHF7tACJhT6HNTkOdq/8UwZXkKv4vNmABEYfHbVQRLVVkhIr/SZEF
-         9Bkl/jurIDeDJ9TZUkZb07rFBjelYmG04ffr+lSduAlrXyn+oUDyydpibupUaaEPLb2z
-         /9ZKbWURBaP3hsVK7AZVL9KFBBq5Rl82rV7czuwyF2GLS3cFSUXSfO93VF2aqAIW9QdL
-         H1eftBtweRms6ZTY/VTz9tHN8JSpkPvepNFbg7bmyOE62pEBpGvz403YvkiQIzi9zOvj
-         defw==
+        d=linaro.org; s=google; t=1760476194; x=1761080994; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aAFIy48SiNIefLRd1BAuON2DcAPzB6rd2TTAzyi/zmQ=;
+        b=OVnBbebOPYmvppTEawHH7DqNLzG9FMcBK6Ik4fk3zeO40bwYGlgf1dTyA+0Q8nU0Wd
+         3eImoFfukZ5Yb1ds2vJFpo4fsQMuJx7auuObwTuGbpognVDUC869NUvjkmHj8Z6gDEZc
+         7+BA3s2jVFYBVsX+uD6zx34LD7tsZy+WrZ/r710UmV8uBJ4nAw0exnUlJ7oY+kKYLFgy
+         CignPqzaZDI4XiymQES4VkJ4GxrkycUXEEBQ9IjLchk7KiITwg99oPcPru7KtrdkcqRy
+         NyA0hZe50+GnxctAbjBEpatbXb5E7YaV9/nltPamC8NlatXc+4Am1IefgYWFyME7poa+
+         iyHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760476120; x=1761080920;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=siBEdSXb+TOq19NSx1UjT5CHbXYzR/FE6uFr7iLMMvY=;
-        b=VnWJqV1IuuEiiMeMj3xb6m62kqfbyGC4m5IGeaqqOyQVmyDmEGj6IJwSk4IoUYKDD/
-         qFuE2kkY1qgwZV+9Wn8+LoNlfKc3fZSOPrIaqzQ8fNCGkqYh8No9+DJEX0mJvBUob4o4
-         vHvZj3Pvm5ezyIPU50rF4HtrTESrp3BChlgYwgewMnxkE1HawVa49E6EruKC+w62Q/iN
-         r9S4L4CBuDMA/v5a9NeIZWAriOrSQay1CWS7RA72GQgjPto8MhDTyWSCqbOAXlkf669i
-         L0f7dIRFhAIFdEE2Z/MATutDXNUIgDPDF8V9Bxl8tjRs0Bq85JCWTKUu2JxE+f1mBfjn
-         hFkg==
-X-Gm-Message-State: AOJu0YzqRkGPADoTFv6Sx7kkooGDXDRgV/fB3DRj+h9C+dHL7oEMh4LW
-	y2ichASC8tWfLDL+pdajz+R6PK83mEvh7626Jz8CKWeOG74NUdYQNwxZCXw8Y/d8dfA=
-X-Gm-Gg: ASbGnctczABpH+d6faLyYMPUSM89Pm+gPxVDHXN+XEb7QVMKy/vXnHM73w3lmJYqiLR
-	27/DSZJvqXGoPa6BwOO2xY6OL4ZuJPW96M0ham5gI7Dnug2apZuAw+ISymUSfz92DiGJuQBtMPc
-	MtxgiNldx6BTI8Xx6n7B+QRtOS1st4wz7c96ZOO6hM1J7iBq92wC5vHBrxadejZTyF9cwoJ6W+D
-	nolyrVJBQUr/UXEoTYGiRgdjQioWkRiWZH/ZP3dGKCFTQRZRURJaBFMtPE0H+yhVYIaiczvswlw
-	/CqswWSr5jU30y55pi68qh6ls0lk8HRqLhdtoMAWR+In8ivqjf3Kf3BAj5KMzmK/QIQ1kEitKeg
-	3xj1i9WNC7Detsc9hnv5wISbfmLhnfK2pFqCcAkYb0Llklr3ZTMYWWdMjLRap9nrlYFssknkNXC
-	XemUPs
-X-Google-Smtp-Source: AGHT+IFIANIwScg+5GHJALy/pEalv764AKxh+pONr/MZ4Z/a40QUVzKfGvCzQ2ZGEWok1LqkLwNKLw==
-X-Received: by 2002:a05:6000:4284:b0:426:d30a:88b0 with SMTP id ffacd0b85a97d-426d30a8fc8mr10165982f8f.22.1760476119851;
-        Tue, 14 Oct 2025 14:08:39 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f36738sm174176085ad.87.2025.10.14.14.08.35
+        d=1e100.net; s=20230601; t=1760476194; x=1761080994;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAFIy48SiNIefLRd1BAuON2DcAPzB6rd2TTAzyi/zmQ=;
+        b=GoG3eVCLyEliXEvOcn6eP7JQirFIcl0KU3Brf7nNopSKTUoNBskLGlxupbUWXxZj5l
+         dgVZIAnz+M7raOVkfOLgyrx9ge2hCVfrQ4LttAi9rp+VmtdUZ4dOiakHKphUiKy9FGxJ
+         IkE7GbuMUnhh1zApLI6pxp7ICfBdBpx2ZVN9evbJOTcX7low3zUvK7HucLYBWBxoOPxS
+         Tunh+an6f8kQbh60jxaN+Rud8kzooKlNEU9y9JlHezXYbENvt/p5W4VD2xpF2On2hGis
+         kNfUS51YKOTTumXuIHlNihWFsooHxfACiaXnL2y6Je0SfkPvIMcS5BENhKdOZld7LOab
+         JG7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbRmyngAMxh3ahaduQRKmkGoEtuqHxaNVQEpU/jZ5YAkI3PQg88L2oSUqOaZJUnuRV3/AAC8mX538gVo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3ElXnUKoJvwJBB0Xj0Jw3wlIFIsE9nXgQ8HDe0uYCM8V4kh4+
+	WNNtNpl0TGn7a1yBCOZhU2IQvk0SXZOHebRdsMrsL1YDdxz9Ei0pmBUQVkL+sofL4jA=
+X-Gm-Gg: ASbGncv9Y5uezeLDHb3fCJz5qMGSdj2piEURTpZpiBhyGjU4lZWRAB6ZPciie4Qyf0R
+	cLUAZ9rVdfH7F8PpIfdsLoQ6KRCedyS/976M+QB55rf+IofIf6Hh/Yk0X6V8RsR2huZz/7bhOkQ
+	Qo39BftK5GpoUJH2YGM+A3Il2zBprsI3fpq1WyPoQZR8IIrpSmH4bv0TPmEA2Olzuv5spgOM2CK
+	FjxkEUyUzvCm03dgtxwGUBS/O2H357o8lFt6kU3oJnsBF47G7wLKmhmhhVjoPPt2xpJaUywzzSs
+	XZ4L2pIACN8KmsBA90NwQQMVqltwrQgjqbk8Y1kwtI4ohstc32agP5GGxm2mD1bVJZBfnWkeKa4
+	uhQZ0tunwiYGLufyPccgdnZlxOumGSXGrpYMnEHQvwg5XmZM+OR52DRvDlBo3tCJ/anCgOq98L/
+	pMmX9moN9YU2WZPT4emYgjQQ==
+X-Google-Smtp-Source: AGHT+IHMLDEl/2OUqyd6dsVKt1UGXh3BaRNNfQRox5yRqmlsYRCZeNTg0aqnPOJfK+LSUdRcw9kJiQ==
+X-Received: by 2002:a05:6000:2389:b0:411:3c14:3ad9 with SMTP id ffacd0b85a97d-4266e7c7b2fmr20416940f8f.21.1760476194354;
+        Tue, 14 Oct 2025 14:09:54 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582b39sm25169444f8f.15.2025.10.14.14.09.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 14:08:39 -0700 (PDT)
-Message-ID: <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
-Date: Wed, 15 Oct 2025 07:38:33 +1030
+        Tue, 14 Oct 2025 14:09:53 -0700 (PDT)
+Message-ID: <ebc5be79-7184-4a91-92fc-8a181ba096b5@linaro.org>
+Date: Tue, 14 Oct 2025 22:09:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,100 +82,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
- index=on
-To: dsterba@suse.cz, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014182414.GD13776@twin.jikos.cz>
+Subject: Re: [PATCH 11/32] media: i2c: imx412: Use %pe format specifier
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Leon Luo <leonl@leopardimaging.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Jacopo Mondi <jacopo+renesas@jmondi.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Julien Massot <julien.massot@collabora.com>, Jacopo Mondi
+ <jacopo@jmondi.org>, Daniel Scally <djrscally@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, Yong Zhi
+ <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
+ Tianshu Qiu <tian.shu.qiu@intel.com>, Tiffany Lin
+ <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rui Miguel Silva <rmfrfs@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Dafna Hirschfeld <dafna@fastmail.com>,
+ Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Yemike Abhilash Chandra <y-abhilashchandra@ti.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev
+References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
+ <U1BUWm68sWNPUXHr6NOsnc48bb6eXIL5tcAzrNijItgutDvPaBTmCI0qf2ERLQB_2BFYEBVNvWTQdmx5z_UU-g==@protonmail.internalid>
+ <20251013-ptr_err-v1-11-2c5efbd82952@chromium.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20251014182414.GD13776@twin.jikos.cz>
+In-Reply-To: <20251013-ptr_err-v1-11-2c5efbd82952@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2025/10/15 04:54, David Sterba 写道:
-> On Mon, Oct 13, 2025 at 10:57:06PM -0300, André Almeida wrote:
->> Hi everyone,
->>
->> When using overlayfs with the mount option index=on, the first time a directory is
->> used as upper dir, overlayfs stores in a xattr "overlay.origin" the UUID of the
->> filesystem being used in the layers. If the upper dir is reused, overlayfs
->> refuses to mount for a different filesystem, by comparing the UUID with what's
->> stored at overlay.origin, and it fails with "failed to verify upper root origin"
->> on dmesg. Remounting with the very same fs is supported and works fine.
->>
->> However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
->> disk image with btrfs, a random UUID is assigned for the following disks each
->> time they are mounted, stored at temp_fsid and used across the kernel as the
->> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however shows
->> the original (and duplicated) UUID for all disks.
->>
->> This feature doesn't work well with overlayfs with index=on, as when the image
->> is mounted a second time, will get a different UUID and ovl will refuse to
->> mount, breaking the user expectation that using the same image should work. A
->> small script can be find in the end of this cover letter that illustrates this.
->>
->> >From this, I can think of some options:
->>
->> - Use statfs() internally to always get the fsid, that is persistent. The patch
->> here illustrates that approach, but doesn't fully implement it.
->> - Create a new sb op, called get_uuid() so the filesystem returns what's
->> appropriated.
->> - Have a workaround in ovl for btrfs.
->> - Document this as unsupported, and userland needs to erase overlay.origin each
->> time it wants to remount.
->> - If ovl detects that temp_fsid and index are being used at the same time,
->> refuses to mount.
->>
->> I'm not sure which one would be better here, so I would like to hear some ideas
->> on this.
+On 13/10/2025 15:14, Ricardo Ribalda wrote:
+> The %pe format specifier is designed to print error pointers. It prints
+> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
+> omitting PTR_ERR().
 > 
-> I haven't looked deeper if there's a workable solution, but the feature
-> combination should be refused. I don't think this will affect many
-> users.
+> This patch fixes this cocci report:
+> ./i2c/imx412.c:931:3-10: WARNING: Consider using %pe to print PTR_ERR()
 > 
-
-I believe the root problem is that we're not fully implementing the 
-proper handling just like other single-device fses.
-
-We do not use on-disk flags which means at least one fsid is registered 
-into btrfs, thus we have to use different temp-fsid.
-
-If fully single-device feature flag is properly implemented, we should 
-be able to return the same uuid without extra hacks thus solve the problem.
-
-Thanks,
-Qu
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>   drivers/media/i2c/imx412.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx412.c b/drivers/media/i2c/imx412.c
+> index 7bbd639a9ddfa7fa76d3a4594be1e1c4d002c98a..b3826f80354703b17b416dc233854da3f5736e38 100644
+> --- a/drivers/media/i2c/imx412.c
+> +++ b/drivers/media/i2c/imx412.c
+> @@ -927,8 +927,8 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
+>   	imx412->reset_gpio = devm_gpiod_get_optional(imx412->dev, "reset",
+>   						     GPIOD_OUT_LOW);
+>   	if (IS_ERR(imx412->reset_gpio)) {
+> -		dev_err(imx412->dev, "failed to get reset gpio %ld\n",
+> -			PTR_ERR(imx412->reset_gpio));
+> +		dev_err(imx412->dev, "failed to get reset gpio %pe\n",
+> +			imx412->reset_gpio);
+>   		return PTR_ERR(imx412->reset_gpio);
+>   	}
+> 
+> 
+> --
+> 2.51.0.760.g7b8bcc2412-goog
+> 
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
