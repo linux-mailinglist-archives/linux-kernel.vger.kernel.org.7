@@ -1,361 +1,487 @@
-Return-Path: <linux-kernel+bounces-853004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF2EBDA6E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:38:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1E0BDA770
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55F93B83AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:35:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4B1350198E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FCC293B75;
-	Tue, 14 Oct 2025 15:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931B8246BDE;
+	Tue, 14 Oct 2025 15:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kvT9Qodk"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010032.outbound.protection.outlook.com [52.101.69.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c9HDrotK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E084928D8D1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760456107; cv=fail; b=Q16aIh6Cq3E3vM0T1IOqyoi5aOvAS2OU0OHuDy5jwMDvkl7pmnXqfyhGyMnES696eMNFZ1YJDJu2xehfJ6jFhiaDdxibISZfoyO7hJ9VxfJAQPkkk7zrd4PNQ1YQ1/pJzVDvVMXxRnj7ZAlNqKNUPWr9SGBfECjrqa8GRHTWi/w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760456107; c=relaxed/simple;
-	bh=YSuU/MQbif3qq5s9amKq1vZ4ieJhGNhytazGKj8+MUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=t7cJCgtzqG2Ywq2Yiq9EbXVC+s9zPnEIEzJrehx1Ky5RajuljZ3oYZCXDpQnHlVgKWuD70dJubsNtKztsEbOd77+oA+YmD+8k0kT8W/hVxVZPTcs9y6cJiE+Rrd6NOXsG/CSJ+dfMfdhjXurGuEQ0uyhrLY4BYz8MUtOAMqf6gU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kvT9Qodk; arc=fail smtp.client-ip=52.101.69.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g3XJi6i67LCq9qFqqt+nxONLWy4D/GiJwvdLGY6/PF/VSZAplp4eQfcQnu4JPCCd12fsTvsiwDbLh4ZERiCDt8LjbbbZFmRf6zMPMoGZpllsJJZPV2C26g4ydYKEzed1EHbKv0NgrwmASw8YOQzMbflz8q2xP9Tb26lPzaBvflOFWJbyunSli3nyiveEEdQwo0qdZ2V+fdK0veDVE0HNYIqvChkTrXbgN4e882KElJMT+6/YbL8mhiNqfyh3nmWb4XlqSizkgCgTiqwY9muqsUiB9yYg5wf6TMiRYSPDT7S3Axyn9opO4aw4xqHQ5SJRv5TgujhQI7Jmk1Isi4BvgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Db1s4zc2ZLyKDq8btQkzsNu5P0kbBRecYNovjyMhfks=;
- b=Km1Xr4bL5oLAkTiW3za4qTL8s/9Hd5de0xvJHDX+2+c/iqa8HN4+dZz6AobxP2plzWd6e/5Nd1AdEm/Dw2rvrQEAfACj3zCU/ywwW7IzEvkUNJCanQiSSVjsFemzMQq+IvjDlmoFf7Bhq/f1Wc+vxmZGLSDJn8k5qS2F1txy0CtqIP0Ac36D9/YvBBzeAXjVbHEMu152ldAVZ/gr92KW2Cl89K7rssAFlai1EynqIX012ZfFa5zfIcJXw7wTNLehVYNSCS3uPVrnyd4xuJ+ogOTLrLa/rXZ0FZOlzOPE7dJ4mwj7Op5wCm/7Z8M8enpTU3JkLatHy2UYG8eU9CWWJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Db1s4zc2ZLyKDq8btQkzsNu5P0kbBRecYNovjyMhfks=;
- b=kvT9Qodkgi+dMLugFrWuhhpyhswsxDD1NCayQpu5OghsJBnrXFXsuqn1KsVojEAk0utiD2gYQuI4LWt8K2wZRTbG414b09ViKirCSgXq+Ui0L/tusMdcjs2qqk5TZ7JlHZ8zo2OFwEtE5mcF7WlFeM+HXtA7SjwGwd0n2I4RC8/ilEr0/Hra4hFtKhurdUeNplHfLlgELkP7WNJQo48/ldmVGDe9dbZwdRwA70rHxgvj9WCLbYRqzJPEt1SbRr6LgQWS99rvkpgXpkp8vtQze/oZjwszgN45ruX2GObNxJ+VX84Ti6Oxk9Q+uDoghu2k9AXUk6Mjgqad7Ie4K8bM6g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AS8PR04MB7720.eurprd04.prod.outlook.com (2603:10a6:20b:299::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 15:35:01 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 15:35:01 +0000
-Date: Tue, 14 Oct 2025 11:34:53 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>, Liu Ying <victor.liu@nxp.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/imx: dc: Sort bits and bitfields in descending order
-Message-ID: <aO5tne2YgKpM+Ijy@lizhi-Precision-Tower-5810>
-References: <20251014114148.43922-1-marek.vasut@mailbox.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014114148.43922-1-marek.vasut@mailbox.org>
-X-ClientProxiedBy: SJ0PR03CA0009.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::14) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93184296BBB
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760456154; cv=none; b=MV4qJJF8q1PYjNLkUtXOh+X+WcD9uuL62xnxKJuovsUgtH2aYfcJraPbe+WfkNZOYy14njAnGbXCAhLD6wYy94mrzWsoqQn8E1WELr5TwDkQg2egUo+6bJX4WcDaRbPrfAUCZ0yTWewXGuFAN4tKLd0FA5WsFwkB0lsUddF0r4M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760456154; c=relaxed/simple;
+	bh=h9O9YfvHgRK4pYbs4jacz0KXOEx7UP+LwPtZLz0f32U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NJFFySmzBlqA1xP0Tt+o8G5hzaaByu1dWer+1fWyOcicyGuE5nvAzMBvk7QhBpD6Dzc1aOj5noAvxI3/mhkM5lcGvmjvC7Bi1d4tCaaXilyIaCjmy0XwFEV7dkAtP+9K/DRvYTVRpIZLFxNFsQ794EbqM4Sk4UTGHnP5nOUgcHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c9HDrotK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87OGH021140
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:35:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=8b75bEAsWB9Fz6VWxCILAoiZY0eXy9b9mMB
+	Cdy3bt/Y=; b=c9HDrotK9WRvzSvH+E4RTMrgFphFWCCR2X8lSVcERRRttoawZM4
+	cuWVKt29G/BVS9TkfGgyZKYZCre55Owd72wdUfxI2U4nV8JVlhidd+CrwJ9Xger0
+	jK639aviu498OTXwRLHZU4F6scTgWwWnr3AXctnVLfNA2FWzhoGOhWvZylklPSAZ
+	ov1xqhg+iWGgtqqp2uPCAPx7/6kdnMRn2W7edSOi6CAN40emqGESOEQZBe3mcbyl
+	/PSznWS6ERhx1LnCzkEIB28R9Lx9dSR3loS+AO8W678JxGKFsgqB57H2BcNup/LR
+	Pc4kknzGtRdJFGBpNKKFVKHhJpvj8Nhi/Cg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwkbk3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:35:51 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8892285b436so1187492585a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:35:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760456150; x=1761060950;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8b75bEAsWB9Fz6VWxCILAoiZY0eXy9b9mMBCdy3bt/Y=;
+        b=tM5mdVbqQjsxKKktgE++lgBHpXwodEzgpSQodpIqt5MLopBUmV1HGyr3nUFCd+Ojk8
+         KeqAtsDd8v3uDx1MH/1g6f5wNICfKcWGhCIlCfp0XMmh2GFv3vZkSrTpJBhaAZe6eI6v
+         cgMUr7UDA57wIA5BkSDRuVB8n1SzoMcu+1t4EED1CWxBdgS/nric1A/tnXt99oZo0hL6
+         f+adR84Bk1y70NqGBtuSDZv44BUQ0ATw85ymrFhJ8GGdCXW3SXmrSZmr4KyO4u4QcQS3
+         NqV7sDREzEuUlg1ElabOQnMcM3r2A2DKahk8vSzjHQK8oNibs0jUVAuWoNzU2O0XBXnV
+         bh3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOwQCpj+vrUDpFiOR/gtSdPeEkiSMlW7Q3mKlzR0sClamalMrDb4LAzMDrMW9q6KuZ+JVpMVmL8ZxS+Os=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfdSm3yM2RpvEToxxzjUTwyVcqYGYhRNKQVkaXeMyBc+gt1BFr
+	EMfD/YNEpUJTRxMzFoczCST3+rnPK2PEKeuAMvi48H9XkubegEQvVaEdHvev1EYVEwojNdBWLAO
+	D8gNfaVhEHDz8rJh3i+EpxylcysrtkM+dpAPGpm1Bk1MATN+X4W/hPJuWVbiMz+1x7WY=
+X-Gm-Gg: ASbGncvahr6FSswnwrbtU7MEzIkFdTW4ae9HMDN0uuOXyTYu9pSYk3sgVXG8vVP3OFW
+	u+MMzjpIgAaFhh4eRXD09nQnx0re9l9sfl04w6Zj2MSY5Y5sqOV45qoWv7ugLlx/FAjlkrPYwTQ
+	JA3Mudz66+UDGBolCmPpM2f7Ie0kHTLclXESgChVO7fLSaloCqkBNlVGd5YFgUVs0hIjrSyUHSS
+	TRJME6x9q+0vbsBmUL06tLPEOeTM0zF1EaMgnT9KDCF0swx8zxzFvBtknrp7J2onVe+V8ewe0z8
+	UF23K2TTX4Ou1K/aeCqzHccj7K/CfkQ3PvuAR8mA70+lsFLgQpNDGA==
+X-Received: by 2002:a05:620a:1a9f:b0:864:c43:865d with SMTP id af79cd13be357-883523d711cmr3619231585a.54.1760456149816;
+        Tue, 14 Oct 2025 08:35:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9B7zyZg3oK/9ofrQ2WZP0uWvK03uQ3Ex+n06/Ha3FxT+8LJtWjP9Tb3y1S2Fn4mVp8vMjDA==
+X-Received: by 2002:a05:620a:1a9f:b0:864:c43:865d with SMTP id af79cd13be357-883523d711cmr3619223685a.54.1760456149116;
+        Tue, 14 Oct 2025 08:35:49 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583316sm24108193f8f.20.2025.10.14.08.35.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 08:35:48 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: broonie@kernel.org
+Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH] ASoC: codecs: pm4125: remove duplicate code
+Date: Tue, 14 Oct 2025 16:35:41 +0100
+Message-ID: <20251014153541.283899-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB7720:EE_
-X-MS-Office365-Filtering-Correlation-Id: 950a6b8d-78ae-47a9-4a7b-08de0b373d7a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|366016|52116014|7416014|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GOm006vQ+anmlPeP5a0NeLroYgtc8yDPrmnHykKcjihSRKmC39foalUadnFp?=
- =?us-ascii?Q?3cXWDbqf3poombSeOeXkjZgpwtKTN7HCQGCs/l8a3xYWxYFVg+wRq2tlUGIy?=
- =?us-ascii?Q?nA9yLsTubFuexHbnvnlmAi8jXaqDeOG0VgCKNj3f195zbwz0r0YeeiGmIHYe?=
- =?us-ascii?Q?PIBVlHGsGqUFIFo0cyPIPbB2Bg5LiPmIrNToMyQCbYvakcD2pGMLlREE6xVN?=
- =?us-ascii?Q?HVDrbmqGyDAJbxqkGnpCUARCyQ/pohUjb8hNUprxHLdJyaREcw1rzRP/1zNI?=
- =?us-ascii?Q?VU4hUEdm4phkfXBqsNtovPd2NgpuJ+5cIAuflvOGZIwMYfu7SecVHETiEqw8?=
- =?us-ascii?Q?qFMzXEAmdlIy7nn1cOeiT0hKi3UPY2fI+D8FU0QdcRTQJrtmiJ7IbR9CcGEy?=
- =?us-ascii?Q?z3tZLgBy5+OIC6SvO0cKs5nJd+TaTIR0e2Uywt5zU1ZlqvWm41w9us8ESEPb?=
- =?us-ascii?Q?Gqlkt9iBPaKxU/bX/vO2H087NriFNWK5RERTm36D0VPMSSlQ8sTwDJVWmMUO?=
- =?us-ascii?Q?AGjabpxraJ2nBIn0RssayXI2X/2bSF3lvfbpZGuq5UW2h6UT+pfj6YJhSLfi?=
- =?us-ascii?Q?m8KUsp6Pw23k2KtFbWxC8md72/fpQCtGNdHrVVyoDgZE2HWxJfXfgrALbe8A?=
- =?us-ascii?Q?6NK6Q43WDyPvj/5cAfVo9jfRSwoN6jaW0FNpf6eiOv6ZUjMEgAQhEBzJE6dJ?=
- =?us-ascii?Q?cQXhjAktHlqueEm3K3biovnFT7jMN0fgqwixIx8m6XV5Dn/nLTnWquoNARhQ?=
- =?us-ascii?Q?RdxoIm23MVuP+vjMHoVvXzqKoMoo/ieGzflcNt76M7QCEsK2pearbBbGdqdZ?=
- =?us-ascii?Q?OxDM23A48DuZ/yL0IIt6yp5WrmywIUagltQFSu5WDg59+gUOp8HcnsMnXPvA?=
- =?us-ascii?Q?uYXP8M9ew5mElGZOlkNvpbkRbHuxlxtvEpMITPTNgP/rAZsr4yYPDBvQeb4Q?=
- =?us-ascii?Q?5WXnNGbQmojGA/N7/EN6qg+9Ahn3EfU33guXbK7bX5XaFzqxge6NTA35WWyv?=
- =?us-ascii?Q?gvf9t8nN8yQM1pd9pXck+VqF8ipoQRiT0bTVp4b6bmT0N0JyI5OdaSXHsJ0x?=
- =?us-ascii?Q?/6HKCuujIIo6Bsaw0AudiZ80AfQgY04egSl93Fs+Ahm/DeRKrJomU40dlQkU?=
- =?us-ascii?Q?kx229r2efRCnVvEmO9qPrKFmDcRVntSTLisk9Cpf1INvv7Wpr03dk9EJ1nLk?=
- =?us-ascii?Q?NS2krOUEZA8coQgUH2hSL+xGLrqdr/pBBEs55EEFji8q9ElFa4STXAIOZrtU?=
- =?us-ascii?Q?e+EDCNsWF4mmiOUe+JQU1CJWC2INelhS/zfdd1FH6wqYO6H/PI8tLQB36+3C?=
- =?us-ascii?Q?jE0aPFEwufweOdB16OS62+jH4dNnXIBag+4zDK1VtUP93ai2/4qtQHjtYbNX?=
- =?us-ascii?Q?9x+vrxiaWvYoiFZrhBZECXBb6T5l51hkO+m4+1pXuhvd8uWcnCdhcCA35RAO?=
- =?us-ascii?Q?XFl0bQ4T8n8XcpmLD+xv54hqZNXt7o1y4/gBGzjXUzXqlx5nommXEALV2nak?=
- =?us-ascii?Q?bOsyyVwS30e07dEx289m2RSi7sOTLTNqIXgD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(52116014)(7416014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pN83KgjsOx1pIdjP7bdYC7JivMgpu+HeZGOkeygXvG8rim/btFTM7mOhqWb4?=
- =?us-ascii?Q?NVUHIToiYsOytib/WEXp1VramLBIwi8lZeS5JOBGpsVLkDpIRXH/D0wsZqnj?=
- =?us-ascii?Q?NFvYTTSscbNFAXy1f1qsSD2x2HmvoNF82joGnSg2X/r/ebr/ToCuvPxtKZVe?=
- =?us-ascii?Q?0ogdOq2o62bc+fZQtlEJFYSMy8cCuf9AmZNet8bijlOwApIbSfd28/4qJd5O?=
- =?us-ascii?Q?mj4G1KNGC69leQAZiSd8h8dHFEV7dgT84okYSNVS6ubklRYFNn3AQVBIYCtu?=
- =?us-ascii?Q?48AgF6VCmZimSBUYcA6IYD4zcc+6mFIsxCkiLqu2SzLcPRNHLlXuHgVfwOzE?=
- =?us-ascii?Q?xZENu9zR3xaRkSzuT4K7cllX8E57iG0Ko0ri1B/X5TiNWxtUQ7bQ6KabjhgX?=
- =?us-ascii?Q?CdN9dTckt+BX/DF4gRo2/gfKwIPkL0lKJW2WRkkSVd13bdFaCN1/j8DgoPqv?=
- =?us-ascii?Q?Fj7nHz/FSyzq+eg+oOMWM6k5XOUglrg/5dJOsrR4xux6B/qgqdNoikl14dQQ?=
- =?us-ascii?Q?cmUbqgA8qjK8aWqaDy/P2MzqYSGkX94WtImP0Gz0sa7PerYBj0ZZS+JSM8hR?=
- =?us-ascii?Q?BVIjYxIUikV2TdcbCyXFPvP+2E+tAG+fTwKebUp1e6YQp+X6RSjbed2EfIRx?=
- =?us-ascii?Q?YW3jAMVnPpB+MwetCZ95mg+wLqzoRmt7EDVC/cRv6lyjNDoXTUCQNHjIl8JN?=
- =?us-ascii?Q?KB7moxFbwjw3eTjpLgrNF0lT8QFn0oriQbp0UkTTiOPepXj69Nc2BhCnTOgf?=
- =?us-ascii?Q?YygEsIc46Lw97uUpwOxtrguax37a1o2FuZgr7cy843DqV0t+qerhrC6rOFaa?=
- =?us-ascii?Q?eLQnjdpCGQYWccLCaTFwWbxDHDQ8PKphXCdZxMJLgS1OBgURNBb2fAyje7LX?=
- =?us-ascii?Q?LLCPQxmCE7+VF1faz5aQwGdGVb4WZ85UFx8AmrEC8C/bmXuASR9CmO742Xk6?=
- =?us-ascii?Q?FU00yomGs1VRl0tz9Q3U/AdAKOLgPxKJOkfRMxOMV0GS6m9OS2gsvwEHC9+m?=
- =?us-ascii?Q?D2BhIVbMaR9T1AfejIKm/vwowm5DrWfiNLH5MR7/6m5YXwCpmu4lAnFDnnzA?=
- =?us-ascii?Q?fOSKuIpLv8PxrCBPcOwmqtD8WuUlyCXABH9fyEkpfldbEJFFqPXuvUen+7oh?=
- =?us-ascii?Q?7hjAeub4+88f8f2/fVCLlmQrbO/7zr+xiUN+PdA3xX188HWxd5EGrZ8pp7Ky?=
- =?us-ascii?Q?bEtDcvHWVlsao3RSqKS6OD6CD/rexKwmPtaBM0y048jPtwNGRNpQZW0ziyNw?=
- =?us-ascii?Q?lRzKRDmp/txb919WrX4/kSW9jGv0OllRQkFzD/0PAKMY3zJtCIn+Y8wHQ3x5?=
- =?us-ascii?Q?sU2gUe73FSklBwYQA0NHXOtX18fah/y3/jRuY8le7KSZHBkGx1Rhu72woUPM?=
- =?us-ascii?Q?ZGGRvbk7y+Z+t6wDCro+t1tTqHyHtLcYevP8OWCgiHoEAoapYRBsdgy43sgg?=
- =?us-ascii?Q?GuEMazFSSX1HDr+VEgF6DFuij+VzcEE81XNDmV9RcEiKOO9v2dfSGeIx1avw?=
- =?us-ascii?Q?TgEsKhNzzDYuZZnqVx1oJeOWZKsRyrD0V+r6xtOs1iGCGVGiHAdJOHmuJtp8?=
- =?us-ascii?Q?f5D1E4y8sNXfsMJ8/kI=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 950a6b8d-78ae-47a9-4a7b-08de0b373d7a
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 15:35:01.6756
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F7IHCDLY4/IPSpA2DMRaR/+jjGjlfccIT/Bi+Bb2QM/pf1EPfi7rCG0C8B1JnFvYDfi15yr9ralEqz2xy2CN9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7720
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX6HnvawylcE71
+ oB/qmwUFoNj+dy6xq3i875TggVsxWrTguXr4ZZoSs4cx7yjDsSLmGJcd25miLKuc0VTuo6M5YNE
+ pYq/BbdXNXh2A+X1bLVXwqurYRTpHdDbN+CNrY0UWzN73liq46x8BiwgiAFA1keqmFVdbdwlK1E
+ PgLddTNTQkeGGipWty0zgR/a3iJoVdboEaAFdE1TaLxKNCDFABX7+6WPRCwoXmTyY3pgK0Farmm
+ EVF7o6E8TRJqmthydyoCd3S6jNH+ga+AAPocnx7m8QWsCkCxYYtUeG/UZN97Alv9dLk84ErQZGQ
+ U/1HmsFNGOvWQb1wv3mojp+yCUguknqpciZ5MK/emfb1usfr8MEl1hqwGlI9hJVP8scb/HLu2XJ
+ eFotp8K2SS/Hfs4LNVska+aL5lURZQ==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68ee6dd7 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=iXy9AVFDh87vi-9b7QEA:9 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: aaU4Am2H01GALvnzBNgABD8SSqzSu147
+X-Proofpoint-ORIG-GUID: aaU4Am2H01GALvnzBNgABD8SSqzSu147
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
-On Tue, Oct 14, 2025 at 01:41:07PM +0200, Marek Vasut wrote:
-> Consistently sort bits and bitfields from highest to lowest bits.
-> No functional change.
->
-> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+With recent addition of wcd-common, lot of code duplication in
+pm4125 codec can be removed now.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+---
+ sound/soc/codecs/Kconfig      |  2 +
+ sound/soc/codecs/pm4125-sdw.c | 64 ++++---------------------------
+ sound/soc/codecs/pm4125.c     | 71 +++++++----------------------------
+ sound/soc/codecs/pm4125.h     | 18 +--------
+ 4 files changed, 25 insertions(+), 130 deletions(-)
 
-> ---
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Liu Ying <victor.liu@nxp.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: imx@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/gpu/drm/imx/dc/dc-ed.c |  8 ++++----
->  drivers/gpu/drm/imx/dc/dc-fg.c |  4 ++--
->  drivers/gpu/drm/imx/dc/dc-fu.c | 10 +++++-----
->  drivers/gpu/drm/imx/dc/dc-fu.h |  4 ++--
->  drivers/gpu/drm/imx/dc/dc-lb.c | 28 ++++++++++++++--------------
->  5 files changed, 27 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/gpu/drm/imx/dc/dc-ed.c b/drivers/gpu/drm/imx/dc/dc-ed.c
-> index 86ecc22d0a554..d42f33d6f3fcc 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-ed.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-ed.c
-> @@ -15,12 +15,12 @@
->  #include "dc-pe.h"
->
->  #define PIXENGCFG_STATIC	0x8
-> -#define  POWERDOWN		BIT(4)
-> -#define  SYNC_MODE		BIT(8)
-> -#define  SINGLE			0
->  #define  DIV_MASK		GENMASK(23, 16)
->  #define  DIV(x)			FIELD_PREP(DIV_MASK, (x))
->  #define  DIV_RESET		0x80
-> +#define  SYNC_MODE		BIT(8)
-> +#define  SINGLE			0
-> +#define  POWERDOWN		BIT(4)
->
->  #define PIXENGCFG_DYNAMIC	0xc
->
-> @@ -28,9 +28,9 @@
->  #define  SYNC_TRIGGER		BIT(0)
->
->  #define STATICCONTROL		0x8
-> +#define  PERFCOUNTMODE		BIT(12)
->  #define  KICK_MODE		BIT(8)
->  #define  EXTERNAL		BIT(8)
-> -#define  PERFCOUNTMODE		BIT(12)
->
->  #define CONTROL			0xc
->  #define  GAMMAAPPLYENABLE	BIT(0)
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fg.c b/drivers/gpu/drm/imx/dc/dc-fg.c
-> index 7f6c1852bf724..28f372be92472 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fg.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-fg.c
-> @@ -56,9 +56,9 @@
->
->  #define FGINCTRL		0x5c
->  #define FGINCTRLPANIC		0x60
-> -#define  FGDM_MASK		GENMASK(2, 0)
-> -#define  ENPRIMALPHA		BIT(3)
->  #define  ENSECALPHA		BIT(4)
-> +#define  ENPRIMALPHA		BIT(3)
-> +#define  FGDM_MASK		GENMASK(2, 0)
->
->  #define FGCCR			0x64
->  #define  CCGREEN(x)		FIELD_PREP(GENMASK(19, 10), (x))
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
-> index f94c591c81589..1d8f74babef8a 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fu.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-fu.c
-> @@ -18,11 +18,11 @@
->  #define BASEADDRESSAUTOUPDATE(x)	FIELD_PREP(BASEADDRESSAUTOUPDATE_MASK, (x))
->
->  /* BURSTBUFFERMANAGEMENT */
-> +#define LINEMODE_MASK			BIT(31)
->  #define SETBURSTLENGTH_MASK		GENMASK(12, 8)
->  #define SETBURSTLENGTH(x)		FIELD_PREP(SETBURSTLENGTH_MASK, (x))
->  #define SETNUMBUFFERS_MASK		GENMASK(7, 0)
->  #define SETNUMBUFFERS(x)		FIELD_PREP(SETNUMBUFFERS_MASK, (x))
-> -#define LINEMODE_MASK			BIT(31)
->
->  /* SOURCEBUFFERATTRIBUTES */
->  #define BITSPERPIXEL_MASK		GENMASK(21, 16)
-> @@ -31,20 +31,20 @@
->  #define STRIDE(x)			FIELD_PREP(STRIDE_MASK, (x) - 1)
->
->  /* SOURCEBUFFERDIMENSION */
-> -#define LINEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
->  #define LINECOUNT(x)			FIELD_PREP(GENMASK(29, 16), (x))
-> +#define LINEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
->
->  /* LAYEROFFSET */
-> -#define LAYERXOFFSET(x)			FIELD_PREP(GENMASK(14, 0), (x))
->  #define LAYERYOFFSET(x)			FIELD_PREP(GENMASK(30, 16), (x))
-> +#define LAYERXOFFSET(x)			FIELD_PREP(GENMASK(14, 0), (x))
->
->  /* CLIPWINDOWOFFSET */
-> -#define CLIPWINDOWXOFFSET(x)		FIELD_PREP(GENMASK(14, 0), (x))
->  #define CLIPWINDOWYOFFSET(x)		FIELD_PREP(GENMASK(30, 16), (x))
-> +#define CLIPWINDOWXOFFSET(x)		FIELD_PREP(GENMASK(14, 0), (x))
->
->  /* CLIPWINDOWDIMENSIONS */
-> -#define CLIPWINDOWWIDTH(x)		FIELD_PREP(GENMASK(13, 0), (x) - 1)
->  #define CLIPWINDOWHEIGHT(x)		FIELD_PREP(GENMASK(29, 16), (x) - 1)
-> +#define CLIPWINDOWWIDTH(x)		FIELD_PREP(GENMASK(13, 0), (x) - 1)
->
->  enum dc_linemode {
->  	/*
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.h b/drivers/gpu/drm/imx/dc/dc-fu.h
-> index e016e1ea5b4e0..f678de3ca8c0a 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fu.h
-> +++ b/drivers/gpu/drm/imx/dc/dc-fu.h
-> @@ -33,13 +33,13 @@
->  #define A_SHIFT(x)			FIELD_PREP_CONST(GENMASK(4, 0), (x))
->
->  /* LAYERPROPERTY */
-> +#define SOURCEBUFFERENABLE		BIT(31)
->  #define YUVCONVERSIONMODE_MASK		GENMASK(18, 17)
->  #define YUVCONVERSIONMODE(x)		FIELD_PREP(YUVCONVERSIONMODE_MASK, (x))
-> -#define SOURCEBUFFERENABLE		BIT(31)
->
->  /* FRAMEDIMENSIONS */
-> -#define FRAMEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
->  #define FRAMEHEIGHT(x)			FIELD_PREP(GENMASK(29, 16), (x))
-> +#define FRAMEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
->
->  /* CONTROL */
->  #define INPUTSELECT_MASK		GENMASK(4, 3)
-> diff --git a/drivers/gpu/drm/imx/dc/dc-lb.c b/drivers/gpu/drm/imx/dc/dc-lb.c
-> index 38f966625d382..ca1d714c8d6e6 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-lb.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-lb.c
-> @@ -17,12 +17,12 @@
->  #include "dc-pe.h"
->
->  #define PIXENGCFG_DYNAMIC			0x8
-> -#define  PIXENGCFG_DYNAMIC_PRIM_SEL_MASK	GENMASK(5, 0)
-> -#define  PIXENGCFG_DYNAMIC_PRIM_SEL(x)		\
-> -		FIELD_PREP(PIXENGCFG_DYNAMIC_PRIM_SEL_MASK, (x))
->  #define  PIXENGCFG_DYNAMIC_SEC_SEL_MASK		GENMASK(13, 8)
->  #define  PIXENGCFG_DYNAMIC_SEC_SEL(x)		\
->  		FIELD_PREP(PIXENGCFG_DYNAMIC_SEC_SEL_MASK, (x))
-> +#define  PIXENGCFG_DYNAMIC_PRIM_SEL_MASK	GENMASK(5, 0)
-> +#define  PIXENGCFG_DYNAMIC_PRIM_SEL(x)		\
-> +		FIELD_PREP(PIXENGCFG_DYNAMIC_PRIM_SEL_MASK, (x))
->
->  #define STATICCONTROL				0x8
->  #define  SHDTOKSEL_MASK				GENMASK(4, 3)
-> @@ -37,24 +37,24 @@
->  #define BLENDCONTROL				0x10
->  #define  ALPHA_MASK				GENMASK(23, 16)
->  #define  ALPHA(x)				FIELD_PREP(ALPHA_MASK, (x))
-> -#define  PRIM_C_BLD_FUNC_MASK			GENMASK(2, 0)
-> -#define  PRIM_C_BLD_FUNC(x)			\
-> -		FIELD_PREP(PRIM_C_BLD_FUNC_MASK, (x))
-> -#define  SEC_C_BLD_FUNC_MASK			GENMASK(6, 4)
-> -#define  SEC_C_BLD_FUNC(x)			\
-> -		FIELD_PREP(SEC_C_BLD_FUNC_MASK, (x))
-> -#define  PRIM_A_BLD_FUNC_MASK			GENMASK(10, 8)
-> -#define  PRIM_A_BLD_FUNC(x)			\
-> -		FIELD_PREP(PRIM_A_BLD_FUNC_MASK, (x))
->  #define  SEC_A_BLD_FUNC_MASK			GENMASK(14, 12)
->  #define  SEC_A_BLD_FUNC(x)			\
->  		FIELD_PREP(SEC_A_BLD_FUNC_MASK, (x))
-> +#define  PRIM_A_BLD_FUNC_MASK			GENMASK(10, 8)
-> +#define  PRIM_A_BLD_FUNC(x)			\
-> +		FIELD_PREP(PRIM_A_BLD_FUNC_MASK, (x))
-> +#define  SEC_C_BLD_FUNC_MASK			GENMASK(6, 4)
-> +#define  SEC_C_BLD_FUNC(x)			\
-> +		FIELD_PREP(SEC_C_BLD_FUNC_MASK, (x))
-> +#define  PRIM_C_BLD_FUNC_MASK			GENMASK(2, 0)
-> +#define  PRIM_C_BLD_FUNC(x)			\
-> +		FIELD_PREP(PRIM_C_BLD_FUNC_MASK, (x))
->
->  #define POSITION				0x14
-> -#define  XPOS_MASK				GENMASK(15, 0)
-> -#define  XPOS(x)				FIELD_PREP(XPOS_MASK, (x))
->  #define  YPOS_MASK				GENMASK(31, 16)
->  #define  YPOS(x)				FIELD_PREP(YPOS_MASK, (x))
-> +#define  XPOS_MASK				GENMASK(15, 0)
-> +#define  XPOS(x)				FIELD_PREP(XPOS_MASK, (x))
->
->  enum dc_lb_blend_func {
->  	DC_LAYERBLEND_BLEND_ZERO,
-> --
-> 2.51.0
->
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index 160c07699a8b..a952ca0d09c4 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -1567,6 +1567,7 @@ config SND_SOC_PEB2466
+ 
+ config SND_SOC_PM4125
+ 	depends on SND_SOC_PM4125_SDW
++	select SND_SOC_WCD_COMMON
+ 	tristate
+ 	depends on SOUNDWIRE || !SOUNDWIRE
+ 
+@@ -1575,6 +1576,7 @@ config SND_SOC_PM4125_SDW
+ 	select SND_SOC_PM4125
+ 	select SND_SOC_WCD_MBHC
+ 	select REGMAP_IRQ
++	select SND_SOC_WCD_COMMON
+ 	depends on SOUNDWIRE
+ 	select REGMAP_SOUNDWIRE
+ 	help
+diff --git a/sound/soc/codecs/pm4125-sdw.c b/sound/soc/codecs/pm4125-sdw.c
+index 4ed09fbe3f54..3167b38e2876 100644
+--- a/sound/soc/codecs/pm4125-sdw.c
++++ b/sound/soc/codecs/pm4125-sdw.c
+@@ -20,12 +20,12 @@
+ #include <sound/soc.h>
+ #include "pm4125.h"
+ 
+-static struct pm4125_sdw_ch_info pm4125_sdw_rx_ch_info[] = {
++static struct wcd_sdw_ch_info pm4125_sdw_rx_ch_info[] = {
+ 	WCD_SDW_CH(PM4125_HPH_L, PM4125_HPH_PORT, BIT(0)),
+ 	WCD_SDW_CH(PM4125_HPH_R, PM4125_HPH_PORT, BIT(1)),
+ };
+ 
+-static struct pm4125_sdw_ch_info pm4125_sdw_tx_ch_info[] = {
++static struct wcd_sdw_ch_info pm4125_sdw_tx_ch_info[] = {
+ 	WCD_SDW_CH(PM4125_ADC1, PM4125_ADC_1_2_DMIC1L_BCS_PORT, BIT(0)),
+ 	WCD_SDW_CH(PM4125_ADC2, PM4125_ADC_1_2_DMIC1L_BCS_PORT, BIT(1)),
+ };
+@@ -46,12 +46,6 @@ static struct sdw_dpn_prop pm4125_dpn_prop[PM4125_MAX_SWR_PORTS] = {
+ 	}
+ };
+ 
+-struct device *pm4125_sdw_device_get(struct device_node *np)
+-{
+-	return bus_find_device_by_of_node(&sdw_bus_type, np);
+-}
+-EXPORT_SYMBOL_GPL(pm4125_sdw_device_get);
+-
+ int pm4125_sdw_hw_params(struct pm4125_sdw_priv *priv, struct snd_pcm_substream *substream,
+ 			 struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
+ {
+@@ -83,19 +77,6 @@ int pm4125_sdw_hw_params(struct pm4125_sdw_priv *priv, struct snd_pcm_substream
+ }
+ EXPORT_SYMBOL_GPL(pm4125_sdw_hw_params);
+ 
+-static int pm4125_update_status(struct sdw_slave *slave, enum sdw_slave_status status)
+-{
+-	struct pm4125_sdw_priv *priv = dev_get_drvdata(&slave->dev);
+-
+-	if (priv->regmap && status == SDW_SLAVE_ATTACHED) {
+-		/* Write out any cached changes that happened between probe and attach */
+-		regcache_cache_only(priv->regmap, false);
+-		return regcache_sync(priv->regmap);
+-	}
+-
+-	return 0;
+-}
+-
+ /*
+  * Handle Soundwire out-of-band interrupt event by triggering the first irq of the slave_irq
+  * irq domain, which then will be handled by the regmap_irq threaded irq.
+@@ -104,18 +85,9 @@ static int pm4125_update_status(struct sdw_slave *slave, enum sdw_slave_status s
+ static int pm4125_interrupt_callback(struct sdw_slave *slave, struct sdw_slave_intr_status *status)
+ {
+ 	struct pm4125_sdw_priv *priv = dev_get_drvdata(&slave->dev);
+-	struct irq_domain *slave_irq = priv->slave_irq;
+-	u32 sts1, sts2, sts3;
+-
+-	do {
+-		handle_nested_irq(irq_find_mapping(slave_irq, 0));
+-		regmap_read(priv->regmap, PM4125_DIG_SWR_INTR_STATUS_0, &sts1);
+-		regmap_read(priv->regmap, PM4125_DIG_SWR_INTR_STATUS_1, &sts2);
+-		regmap_read(priv->regmap, PM4125_DIG_SWR_INTR_STATUS_2, &sts3);
+ 
+-	} while (sts1 || sts2 || sts3);
+-
+-	return IRQ_HANDLED;
++	return wcd_interrupt_callback(slave, priv->slave_irq, PM4125_DIG_SWR_INTR_STATUS_0,
++				PM4125_DIG_SWR_INTR_STATUS_1, PM4125_DIG_SWR_INTR_STATUS_2);
+ }
+ 
+ static const struct reg_default pm4125_defaults[] = {
+@@ -369,32 +341,10 @@ static const struct regmap_config pm4125_regmap_config = {
+ };
+ 
+ static const struct sdw_slave_ops pm4125_slave_ops = {
+-	.update_status = pm4125_update_status,
++	.update_status = wcd_update_status,
+ 	.interrupt_callback = pm4125_interrupt_callback,
+ };
+ 
+-static int pm4125_sdw_component_bind(struct device *dev, struct device *master, void *data)
+-{
+-	pm_runtime_set_autosuspend_delay(dev, 3000);
+-	pm_runtime_use_autosuspend(dev);
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-
+-	return 0;
+-}
+-
+-static void pm4125_sdw_component_unbind(struct device *dev, struct device *master, void *data)
+-{
+-	pm_runtime_disable(dev);
+-	pm_runtime_set_suspended(dev);
+-	pm_runtime_dont_use_autosuspend(dev);
+-}
+-
+-static const struct component_ops pm4125_sdw_component_ops = {
+-	.bind = pm4125_sdw_component_bind,
+-	.unbind = pm4125_sdw_component_unbind,
+-};
+-
+ static int pm4125_probe(struct sdw_slave *pdev, const struct sdw_device_id *id)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -476,7 +426,7 @@ static int pm4125_probe(struct sdw_slave *pdev, const struct sdw_device_id *id)
+ 			priv->ch_info[i].master_ch_mask = PM4125_SWRM_CH_MASK(master_ch_mask[i]);
+ 	}
+ 
+-	ret = component_add(dev, &pm4125_sdw_component_ops);
++	ret = component_add(dev, &wcd_sdw_component_ops);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -490,7 +440,7 @@ static int pm4125_remove(struct sdw_slave *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+-	component_del(dev, &pm4125_sdw_component_ops);
++	component_del(dev, &wcd_sdw_component_ops);
+ 
+ 	return 0;
+ }
+diff --git a/sound/soc/codecs/pm4125.c b/sound/soc/codecs/pm4125.c
+index 706fc668ffe2..27fe363db8b9 100644
+--- a/sound/soc/codecs/pm4125.c
++++ b/sound/soc/codecs/pm4125.c
+@@ -69,6 +69,7 @@ struct pm4125_priv {
+ 	struct wcd_mbhc *wcd_mbhc;
+ 	struct wcd_mbhc_config mbhc_cfg;
+ 	struct wcd_mbhc_intr intr_ids;
++	struct wcd_common common;
+ 	struct irq_domain *virq;
+ 	const struct regmap_irq_chip *pm4125_regmap_irq_chip;
+ 	struct regmap_irq_chip_data *irq_chip;
+@@ -76,9 +77,6 @@ struct pm4125_priv {
+ 	unsigned long status_mask;
+ 	s32 micb_ref[PM4125_MAX_MICBIAS];
+ 	s32 pullup_ref[PM4125_MAX_MICBIAS];
+-	u32 micb1_mv;
+-	u32 micb2_mv;
+-	u32 micb3_mv;
+ 
+ 	int hphr_pdm_wd_int;
+ 	int hphl_pdm_wd_int;
+@@ -644,16 +642,6 @@ static int pm4125_codec_enable_ear_pa(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
+ 
+-static int pm4125_get_micb_vout_ctl_val(struct device *dev, u32 micb_mv)
+-{
+-	if (micb_mv < 1600 || micb_mv > 2850) {
+-		dev_err(dev, "%s: unsupported micbias voltage (%u mV)\n", __func__, micb_mv);
+-		return -EINVAL;
+-	}
+-
+-	return (micb_mv - 1600) / 50;
+-}
+-
+ static int pm4125_codec_enable_adc(struct snd_soc_dapm_widget *w,
+ 				   struct snd_kcontrol *kcontrol, int event)
+ {
+@@ -855,7 +843,7 @@ static int pm4125_codec_enable_micbias_pullup(struct snd_soc_dapm_widget *w,
+ static int pm4125_connect_port(struct pm4125_sdw_priv *sdw_priv, u8 port_idx, u8 ch_id, bool enable)
+ {
+ 	struct sdw_port_config *port_config = &sdw_priv->port_config[port_idx - 1];
+-	const struct pm4125_sdw_ch_info *ch_info = &sdw_priv->ch_info[ch_id];
++	const struct wcd_sdw_ch_info *ch_info = &sdw_priv->ch_info[ch_id];
+ 	struct sdw_slave *sdev = sdw_priv->sdev;
+ 	u8 port_num = ch_info->port_num;
+ 	u8 ch_mask = ch_info->ch_mask;
+@@ -1266,15 +1254,8 @@ static const struct snd_soc_dapm_route pm4125_audio_map[] = {
+ 
+ static int pm4125_set_micbias_data(struct device *dev, struct pm4125_priv *pm4125)
+ {
+-	int vout_ctl;
+-
+-	/* Set micbias voltage */
+-	vout_ctl = pm4125_get_micb_vout_ctl_val(dev, pm4125->micb1_mv);
+-	if (vout_ctl < 0)
+-		return -EINVAL;
+-
+ 	regmap_update_bits(pm4125->regmap, PM4125_ANA_MICBIAS_LDO_1_SETTING,
+-			   PM4125_ANA_MICBIAS_MICB_OUT_VAL_MASK, vout_ctl << 3);
++			   PM4125_ANA_MICBIAS_MICB_OUT_VAL_MASK, pm4125->common.micb_vout[0]);
+ 	return 0;
+ }
+ 
+@@ -1418,31 +1399,6 @@ static const struct snd_soc_component_driver soc_codec_dev_pm4125 = {
+ 	.endianness = 1,
+ };
+ 
+-static void pm4125_dt_parse_micbias_info(struct device *dev, struct pm4125_priv *priv)
+-{
+-	struct device_node *np = dev->of_node;
+-	u32 prop_val = 0;
+-	int ret;
+-
+-	ret = of_property_read_u32(np, "qcom,micbias1-microvolt", &prop_val);
+-	if (!ret)
+-		priv->micb1_mv = prop_val / 1000;
+-	else
+-		dev_warn(dev, "Micbias1 DT property not found\n");
+-
+-	ret = of_property_read_u32(np, "qcom,micbias2-microvolt", &prop_val);
+-	if (!ret)
+-		priv->micb2_mv = prop_val / 1000;
+-	else
+-		dev_warn(dev, "Micbias2 DT property not found\n");
+-
+-	ret = of_property_read_u32(np, "qcom,micbias3-microvolt", &prop_val);
+-	if (!ret)
+-		priv->micb3_mv = prop_val / 1000;
+-	else
+-		dev_warn(dev, "Micbias3 DT property not found\n");
+-}
+-
+ static int pm4125_codec_hw_params(struct snd_pcm_substream *substream,
+ 				  struct snd_pcm_hw_params *params,
+ 				  struct snd_soc_dai *dai)
+@@ -1560,7 +1516,7 @@ static int pm4125_bind(struct device *dev)
+ 		return ret;
+ 	}
+ 
+-	pm4125->rxdev = pm4125_sdw_device_get(pm4125->rxnode);
++	pm4125->rxdev = of_sdw_find_device_by_node(pm4125->rxnode);
+ 	if (!pm4125->rxdev) {
+ 		dev_err(dev, "could not find rxslave with matching of node\n");
+ 		ret = -EINVAL;
+@@ -1570,7 +1526,7 @@ static int pm4125_bind(struct device *dev)
+ 	pm4125->sdw_priv[AIF1_PB] = dev_get_drvdata(pm4125->rxdev);
+ 	pm4125->sdw_priv[AIF1_PB]->pm4125 = pm4125;
+ 
+-	pm4125->txdev = pm4125_sdw_device_get(pm4125->txnode);
++	pm4125->txdev = of_sdw_find_device_by_node(pm4125->txnode);
+ 	if (!pm4125->txdev) {
+ 		dev_err(dev, "could not find txslave with matching of node\n");
+ 		ret = -EINVAL;
+@@ -1615,7 +1571,7 @@ static int pm4125_bind(struct device *dev)
+ 		goto link_remove_dev_tx;
+ 	}
+ 
+-	pm4125->regmap = dev_get_regmap(&pm4125->tx_sdw_dev->dev, NULL);
++	pm4125->regmap = pm4125->sdw_priv[AIF1_CAP]->regmap;
+ 	if (!pm4125->regmap) {
+ 		dev_err(dev, "could not get TX device regmap\n");
+ 		ret = -EINVAL;
+@@ -1631,11 +1587,7 @@ static int pm4125_bind(struct device *dev)
+ 	pm4125->sdw_priv[AIF1_PB]->slave_irq = pm4125->virq;
+ 	pm4125->sdw_priv[AIF1_CAP]->slave_irq = pm4125->virq;
+ 
+-	ret = pm4125_set_micbias_data(dev, pm4125);
+-	if (ret < 0) {
+-		dev_err(dev, "Bad micbias pdata\n");
+-		goto link_remove_dev_rx;
+-	}
++	pm4125_set_micbias_data(dev, pm4125);
+ 
+ 	ret = snd_soc_register_component(dev, &soc_codec_dev_pm4125,
+ 					 pm4125_dais, ARRAY_SIZE(pm4125_dais));
+@@ -1716,7 +1668,12 @@ static int pm4125_probe(struct platform_device *pdev)
+ 
+ 	pm4125_reset(pm4125);
+ 
+-	pm4125_dt_parse_micbias_info(dev, pm4125);
++	pm4125->common.dev = dev;
++	pm4125->common.max_bias = 3;
++	ret = wcd_dt_parse_micbias_info(&pm4125->common);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get micbias\n");
++
+ 	atomic_set(&pm4125->gloal_mbias_cnt, 0);
+ 
+ 	cfg = &pm4125->mbhc_cfg;
+@@ -1724,7 +1681,7 @@ static int pm4125_probe(struct platform_device *pdev)
+ 	cfg->anc_micbias = MIC_BIAS_2;
+ 	cfg->v_hs_max = WCD_MBHC_HS_V_MAX;
+ 	cfg->num_btn = PM4125_MBHC_MAX_BUTTONS;
+-	cfg->micb_mv = pm4125->micb2_mv;
++	cfg->micb_mv = pm4125->common.micb_mv[1];
+ 	cfg->linein_th = 5000;
+ 	cfg->hs_thr = 1700;
+ 	cfg->hph_thr = 50;
+diff --git a/sound/soc/codecs/pm4125.h b/sound/soc/codecs/pm4125.h
+index 3520c711b744..25fd3106f44f 100644
+--- a/sound/soc/codecs/pm4125.h
++++ b/sound/soc/codecs/pm4125.h
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/soundwire/sdw.h>
+ #include <linux/soundwire/sdw_type.h>
++#include "wcd-common.h"
+ 
+ #define PM4125_ANA_BASE_ADDR			0x3000
+ #define PM4125_DIG_BASE_ADDR			0x3400
+@@ -202,26 +203,13 @@ enum pm4125_rx_sdw_ports {
+ 	PM4125_MAX_SWR_PORTS = PM4125_COMP_PORT,
+ };
+ 
+-struct pm4125_sdw_ch_info {
+-	int port_num;
+-	unsigned int ch_mask;
+-	unsigned int master_ch_mask;
+-};
+-
+-#define WCD_SDW_CH(id, pn, cmask)		\
+-	[id] = {				\
+-		.port_num = pn,			\
+-		.ch_mask = cmask,		\
+-		.master_ch_mask = cmask,	\
+-	}
+-
+ struct pm4125_priv;
+ struct pm4125_sdw_priv {
+ 	struct sdw_slave *sdev;
+ 	struct sdw_stream_config sconfig;
+ 	struct sdw_stream_runtime *sruntime;
+ 	struct sdw_port_config port_config[PM4125_MAX_SWR_PORTS];
+-	struct pm4125_sdw_ch_info *ch_info;
++	struct wcd_sdw_ch_info *ch_info;
+ 	bool port_enable[PM4125_MAX_SWR_CH_IDS];
+ 	unsigned int master_channel_map[SDW_MAX_PORTS];
+ 	int active_ports;
+@@ -240,8 +228,6 @@ int pm4125_sdw_set_sdw_stream(struct pm4125_sdw_priv *pm4125, struct snd_soc_dai
+ int pm4125_sdw_hw_params(struct pm4125_sdw_priv *pm4125, struct snd_pcm_substream *substream,
+ 			 struct snd_pcm_hw_params *params, struct snd_soc_dai *dai);
+ 
+-struct device *pm4125_sdw_device_get(struct device_node *np);
+-
+ #else
+ static inline int pm4125_sdw_free(struct pm4125_sdw_priv *pm4125,
+ 				  struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+-- 
+2.51.0
+
 
