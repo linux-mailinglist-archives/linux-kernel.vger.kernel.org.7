@@ -1,333 +1,216 @@
-Return-Path: <linux-kernel+bounces-851849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5E6BD76E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:33:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA75BD7707
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB7B406F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:33:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45A9A4E8619
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B364F296BAF;
-	Tue, 14 Oct 2025 05:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A16729B8D8;
+	Tue, 14 Oct 2025 05:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEOX6lXv"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="EMHXmtH6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ih+RDekg"
+Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1739D28D84F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861CE13DBA0;
+	Tue, 14 Oct 2025 05:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760419983; cv=none; b=DmgzMUYhAoHUqrzvHzu0+6WyO39XaL1P2Mq4zSmXg1Dl/8varCvQ2KPk6Yf3TnLw35GwiexUNtx4v0K5YuPWT4QaqMUtPHey8UET6X+HXcs83SjgTIUQhvwduWzfWW9GMSnbL6aw4dN4ZlKDy8SMlJG2l9KMp7th5zTlfGWvFmc=
+	t=1760420101; cv=none; b=uql13z7X+xXzIiYlu646JIWcKnkDlDOPyAwu7tkm/ZejwmE9ud1esGWpdc4WQn2no8qD+KVV0l8uzWcEz54CwjplhpNwv48qO6Qz+rcJc3MIQzNp24InsM0RNhoXdXruwDuTPPnDhRCmnpDGSmtbMqIl0zKvlzRcnqymn8dMqG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760419983; c=relaxed/simple;
-	bh=L4IWpUT1tu+22s1TJPENmdfGuR7+rrfCVl2+130p6ns=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qXysC2Y87IJ+WgF+9iW4t4GynfjbaA/6z0K08XF0HkqFloGqwGYsXBoriXsVaYL4/ixmfSozxqOrBphrq1Fg2ZUqWx4lpyzIWGByEiZ+fr7yoUHQEsN0Q43rWBgYJfVzGlXf8Mrk0JW2x8+69hp5uRrJ7P1yo2GlNTFW0YTuCO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEOX6lXv; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-791c287c10dso4157610b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760419981; x=1761024781; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BnpCg/t/Khm10HtRlVhL990/eXBRCmOVH33yOfrVJ48=;
-        b=YEOX6lXv22vp67L2960T4Hr04osU4bhbXCP3XZZHtAjBsV5Un0Uk3xLpaOSUEXPViY
-         ghwV7Z0iXLv2lPWDJVCykt9pvxq5mtR+oK9nmndf3LIQtlM3/t+CSl4emBfuB2+xi5GN
-         sKAxvi6hhAMebEzN74BtTkV7BeoHHYoa1jkFyEdeVEuR4oJCcuqnzDGor/Oqr3R2wlha
-         7xrJWQKpd8gZI4b0u/2R/pySl0ptJS+NYXsTVHwVaIT5kIUGKdwQbabVsY9RcnAqmiuW
-         3ccGk+GoTgWvA/5K4yfA6WFmKcreK70ofpW17tpIUCWuaJzZXfJV1RPjjebDddj+Eg4D
-         il+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760419981; x=1761024781;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BnpCg/t/Khm10HtRlVhL990/eXBRCmOVH33yOfrVJ48=;
-        b=J/suwkqtETSwyP/L4/8u3IY/C/xGcGlwlGjgfzOeuaKNAx1LjIxXY1MlZ8aSf322vK
-         xlZnS7bHihCS13INFa6WW2qUyq7p1FTqjJInxP/2+FPaCGaSCXRj4IYvt2pcrHoCtB/4
-         6+MkbBSwC/aZTL7rZDcD/5mjotEMne603EB8bhAeK3jiAhJ9FR09TQka7cw8JOWScaST
-         Bn++P5Ehfwq/LB4I8IWUE0surspC8zGy/45v4Z43n0VBJAep6uZ3Fu5MOOa5sPaMopZ8
-         /CkTS3fGqilG/Hg7yylSLdneEagKRH5nKyRVahv+W9CiPaDt/h6YoH8LFh1gOJo4AoMR
-         QoBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHFjbi6v1nJarjTHRQDYvPtV/DRuNOz6mjNCD8A2RcW62E9CPN1GgHYaFTWUYTC/d3AXIr+ZriDqd1zSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbBo7Pzu+xXMOFVOZoO6twSpQMSWIu5dWijlRB97xK/DzxdyT/
-	Zr7lJzj5Lw3xI5hbiEF04gaX6o8KTu+fPXKQv4JGcOWPcBekTJvkgN/T
-X-Gm-Gg: ASbGncswfk0uTOJoiBmLfa5beJsIzZ/hclwozRdiVDE4R+A2PW7CiwOA4NmHBsxSxIv
-	wYJXM7VNny/jn7VcgKnOWt8i/5KY3rts/eKDHoRv5HjoUBnVV4jcEJrf1ghZX3Ep5DzfCY43lfY
-	LmEfmGCHjfxNiC55sPvFDSLAtIhhe4W3Ox3+8kk0KKc1hvhql30pPUEHgqj1Jk1DJzAXvxM0e+L
-	pWbgGIBnOwejzpun10WCWwmZuEfe+0vxKrlb6BBCWdbFiqAo7UHtyjg883dYhREqDiY1hTifJsy
-	V0Lv6/M8FcWSwJTuxPbQeLheDOvpGoKDuWot4QJiTkyGdtI5vuYnrKrFX3Zo7ZxoHpFNN9tsZSc
-	eNxIC+gEm7PNaYWGvNB08O8O0v7MjRojcNgwIBbVC7dufdAo4uPudxjNYOblNzDc0OrFzwzk=
-X-Google-Smtp-Source: AGHT+IHH6PKXbyw9C/xLYLyPoKQlnHQrTueCaiEP4hA278xAUbmnESZgWV2xXhtSHenWJKnrXmxUpA==
-X-Received: by 2002:a05:6a00:1146:b0:77f:472b:bc73 with SMTP id d2e1a72fcca58-793859f31cemr29601385b3a.6.1760419981130;
-        Mon, 13 Oct 2025 22:33:01 -0700 (PDT)
-Received: from HYB-iPCgmhaB8Cy.ad.analog.com ([59.9.235.253])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bb11ca0sm13707518b3a.32.2025.10.13.22.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 22:33:00 -0700 (PDT)
-From: Joan-Na-adi <joan.na.devcode@gmail.com>
-X-Google-Original-From: Joan-Na-adi <joan.na@analog.com>
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Joan Na <joan.na@analog.com>
-Subject: [PATCH v3 3/3] dt-bindings: regulator: Add MAX77675 regulator binding
-Date: Tue, 14 Oct 2025 14:31:42 +0900
-Message-Id: <20251014053142.15835-4-joan.na@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251014053142.15835-1-joan.na@analog.com>
-References: <20251014053142.15835-1-joan.na@analog.com>
+	s=arc-20240116; t=1760420101; c=relaxed/simple;
+	bh=X5WPVB8Em/gBcebUeg/HDVgnFFFK8ttMHgLzywHakA4=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=qFzThTzxYIDivtZcTbW1KntBvvXOrmNP++4/WVC5ujNMN+If8IJX2toWZGghvVHLKDCUdLe8eomN8kVm5wIgftB+BRKN8vhpTVLYxKatvcqdXmOwBQq1dsBEngmYIFAj65iwarrhHA6gm44yyy1p5lhtkBVvTOQpL/cA6RcFnAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=EMHXmtH6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ih+RDekg; arc=none smtp.client-ip=202.12.124.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.stl.internal (Postfix) with ESMTP id 9C94F1300216;
+	Tue, 14 Oct 2025 01:34:57 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 14 Oct 2025 01:34:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1760420097; x=1760427297; bh=sKvX0cwi5L2mQqOKfWbZAQQCGUflq024x5h
+	ZczDrYtI=; b=EMHXmtH6b1fssNuWNAbg39nPBc2L6iLo9Ov6TFV9qllyxag3kQl
+	VvtR8X+4Za9g2Vw/Na+uS9UetgsfpRkZL1jz1/auc6Oy9Fq/N3API8bZzlIeqS+8
+	OjId+x1I54l5gE4nOruTpTX/eIn+DMjXL5K+xkpQQMMBYqKYZbAoJbxHVEnJCxyO
+	GuwVNtYCGxxVYsar+VUXpQgttiAqGWRjkt15aK64LQqfqxqxFr0g6wXKB/Ibf2XG
+	/cxaxnXKKVd6RVbRRMfLB3f2m4fsB0FeJxFOUSfB6WZiuqXvwmbis9V2yhheF05K
+	VmxNfUjA1k1l+mLURd+ZuZFqVsb6BMYN94A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760420097; x=
+	1760427297; bh=sKvX0cwi5L2mQqOKfWbZAQQCGUflq024x5hZczDrYtI=; b=i
+	h+RDekgtuViqOuIRe5nRpsoy76Bx+bzGVh5cBTj8/X62C0XR7TEIA2xbt2Ubxpid
+	ZHq1+y+7InziK5qe1r9LHucLnuKtgHqiO+FJDRNHoj+tR9Q3PyID4LVM/3M3ybRX
+	tIH70Tx5Za71PjvLbkA/yeToEismdKYiPPzND/ygwI7geT796CZq/6emzH7eNm4V
+	Kce1Eyi/Y3RiDRX6XMGOfP6tmK6MicTRdw6J7gWuQcQoU6VJmgQ73wKrjDyZY++8
+	u8xiIYup5XPh8TtZB2Jq/GVp2aBKUBf6LKfVQd6UoWatyJpdJXN19DN+foHp9Ekz
+	zoZtogTA7a4Db2it5V2NQ==
+X-ME-Sender: <xms:_-DtaGDSStk9-hdw2H6ZL83waWfdVJ9YX5PyZE66IpkrirSbEhiR2w>
+    <xme:_-DtaPgz524KR1bIMerhs2C7YXAmbZW4Lsj3EsWSvpJwVeGY-BzhhonTtr5xmV6Ss
+    GpABGkyA-RB0RJhi2Lq8cCoQS1KXsJC00AQOjfMWlRhV5yMIA>
+X-ME-Received: <xmr:_-DtaB2IaBnzbz1hHV5senq7g_aSWzgh3eK-gJYcQFcoiXy_Aqk709eaLtyG4VXyvm7TKsTwnzEKdhghfx2bsou0ue1yREccsDhltZNVqC4X>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudeljeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepgeefpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqtghifhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:_-DtaBIY-oFTdHKRTw3D8L3q4PTHVD4zpV8goGnqHXyVH0nbHG8b-g>
+    <xmx:_-DtaE2CVchSpis3kE9Qdx37fJ6LzhXT6BNt0IM3jeZVpKMoYnyecg>
+    <xmx:_-DtaL64I2eH2ZO8gGbqN6_6BowsHFpdQspB-a4TT9QeVF7PfU6YCw>
+    <xmx:_-DtaBHiAd6eRDoVhivjdRfsp-KtS_QT_guqr2aFH_bbkXfblrXRRA>
+    <xmx:AeHtaDciWRkXrzOWRd6sH4KgBlnrwJkD0ZAWHMp6JhGiQZ8mFgAE876O>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Oct 2025 01:34:44 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Alexander Aring" <alex.aring@gmail.com>,
+ "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Steve French" <sfrench@samba.org>,
+ "Paulo Alcantara" <pc@manguebit.org>,
+ "Ronnie Sahlberg" <ronniesahlberg@gmail.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>, "Tom Talpey" <tom@talpey.com>,
+ "Bharath SM" <bharathsm@microsoft.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>,
+ "David Howells" <dhowells@redhat.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Amir Goldstein" <amir73il@gmail.com>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Steve French" <smfrench@gmail.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Carlos Maiolino" <cem@kernel.org>,
+ "Kuniyuki Iwashima" <kuniyu@google.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, netfs@lists.linux.dev,
+ ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, netdev@vger.kernel.org,
+ "Jeff Layton" <jlayton@kernel.org>
+Subject:
+ Re: [PATCH 02/13] filelock: add a lm_may_setlease lease_manager callback
+In-reply-to: <20251013-dir-deleg-ro-v1-2-406780a70e5e@kernel.org>
+References: <20251013-dir-deleg-ro-v1-0-406780a70e5e@kernel.org>,
+ <20251013-dir-deleg-ro-v1-2-406780a70e5e@kernel.org>
+Date: Tue, 14 Oct 2025 16:34:43 +1100
+Message-id: <176042008301.1793333.506325387242251221@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-From: Joan Na <joan.na@analog.com>
+On Tue, 14 Oct 2025, Jeff Layton wrote:
+> The NFSv4.1 protocol adds support for directory delegations, but it
+> specifies that if you already have a delegation and try to request a new
+> one on the same filehandle, the server must reply that the delegation is
+> unavailable.
+>=20
+> Add a new lease manager callback to allow the lease manager (nfsd in
+> this case) to impose this extra check when performing a setlease.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/locks.c               |  5 +++++
+>  include/linux/filelock.h | 14 ++++++++++++++
+>  2 files changed, 19 insertions(+)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 0b16921fb52e602ea2e0c3de39d9d772af98ba7d..9e366b13674538dbf482ffdeee9=
+2fc717733ee20 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1826,6 +1826,11 @@ generic_add_lease(struct file *filp, int arg, struct=
+ file_lease **flp, void **pr
+>  			continue;
+>  		}
+> =20
+> +		/* Allow the lease manager to veto the setlease */
+> +		if (lease->fl_lmops->lm_may_setlease &&
+> +		    !lease->fl_lmops->lm_may_setlease(lease, fl))
+> +			goto out;
+> +
 
-Add device tree binding YAML schema for the Maxim MAX77675 PMIC regulator.
-This defines the node properties and supported regulator names for use
-in device tree sources.
+I don't see any locking around this.  What if the condition which
+triggers a veto happens after this check, and before the lm_change
+below?
+Should lm_change implement the veto?  Return -EAGAIN?
 
-Fixed:
-- Missing explanation of `maxim,fps-slot` default value
-- Updated DT binding enums to use string values (e.g., "low", "high") instead of integers
-- Converted several binary properties to boolean type
-- Renamed time-based properties to use standard unit suffixes (e.g., "-sec", "-us")
-- Added default values for properties
+NeilBrown
 
-Signed-off-by: Joan Na <joan.na@analog.com>
----
- .../bindings/regulator/maxim,max77675.yaml    | 205 ++++++++++++++++++
- 1 file changed, 205 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77675.yaml
 
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77675.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77675.yaml
-new file mode 100644
-index 000000000000..6be29eced039
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77675.yaml
-@@ -0,0 +1,205 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/maxim,max77675.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Maxim MAX77675 PMIC Regulator
-+
-+maintainers:
-+  - Joan Na <joan.na@analog.com>
-+
-+description: |
-+  The MAX77675 is a PMIC providing multiple switching buck regulators
-+  (SBB0–SBB3), accessible via I2C. Each SBB can be configured individually
-+  in the Device Tree. Additional PMIC settings can be configured through
-+  device-specific properties.
-+  Users should use the macros from dt-bindings/regulator/maxim,max77675-regulator.h
-+
-+allOf:
-+  - $ref: regulator.yaml#
-+
-+properties:
-+  compatible:
-+    const: maxim,max77675
-+
-+  reg:
-+    maxItems: 1
-+
-+  maxim,en-mode:
-+    description: |
-+      Enable mode configuration.
-+      "push-button"  - Push button
-+      "slide-switch" - Slide switch
-+      "logic" - Logic mode
-+    $ref: /schemas/types.yaml#/definitions/string
-+    enum: ["push-button", "slide-switch", "logic"]
-+    default: "slide-switch"
-+
-+  maxim,latency-mode:
-+    description: |
-+      Latency mode for voltage transition:
-+      "high" - High latency (100μs)
-+      "low"  - Low latency (10μs)
-+    $ref: /schemas/types.yaml#/definitions/string
-+    enum: ["high", "low"]
-+    default: "high"
-+
-+  maxim,drv-sbb-strength:
-+    description: |
-+      SIMO Buck-Boost Drive Strength Trim.
-+      Controls the drive strength of the SIMO regulator's power MOSFETs.
-+      This setting affects the switching speed, which impacts power efficiency and EMI.
-+      "max"  – Maximum drive strength (~0.6 ns transition time)
-+      "high" – High drive strength (~1.2 ns transition time)
-+      "low"  – Low drive strength (~1.8 ns transition time)
-+      "min"  – Minimum drive strength (~8 ns transition time)
-+    $ref: /schemas/types.yaml#/definitions/string
-+    enum: ["max", "high", "low", "min"]
-+    default: "max"
-+
-+  maxim,dvs-slew-rate-mv-per-us:
-+    description: |
-+      Dynamic rising slew rate for output voltage transitions, in mV/μs.
-+      This setting is only used when 'maxim,fixed-slew-rate' is not present.
-+    enum: [5, 10]
-+    default: 5
-+
-+  maxim,en-debounce-time-us:
-+    description: |
-+      Debounce time for the enable pin, in microseconds
-+    enum: [100, 30000]
-+    default: 100
-+
-+  maxim,manual-reset-time-sec:
-+    description: |
-+      Manual reset time in seconds:
-+    enum: [4, 8, 12, 16]
-+    default: 4
-+
-+  maxim,en-pullup-disable:
-+    type: boolean
-+    description: |
-+      Disable internal pull-up for EN pin.
-+      When set, the internal pull-up is disabled.
-+      Defaults to enabled if this property is not specified.
-+    default: false
-+
-+  maxim,bias-low-power-request:
-+    type: boolean
-+    description: |
-+      Request low-power bias mode.
-+      When set, the device enters low-power bias mode.
-+      Defaults to normal bias mode if this property is not specified.
-+    default: false
-+
-+  maxim,simo-int-ldo-always-on:
-+    type: boolean
-+    description: |
-+      Set internal LDO to always supply 1.8V
-+      When set, the internal LDO always supplies 1.8V.
-+      By default, the SIMO internal channel supplies 1.8V during low-power mode
-+    default: false
-+
-+  regulators:
-+    type: object
-+    description: Regulator child nodes
-+    patternProperties:
-+      "^sbb[0-3]$":
-+        type: object
-+        $ref: regulator.yaml#
-+    properties:
-+      maxim,fps-slot:
-+        description: |
-+          FPS (Flexible Power Sequencer) slot selection.
-+          The Flexible Power Sequencer allows resources to power up under hardware or software control.
-+          Additionally, each resource can power up independently or among a group of other regulators
-+          with adjustable power-up and power-down slots.
-+          This device's regulators provide an additional property to configure the FPS parameters,
-+          allowing each regulator to be assigned to an FPS slot for proper power management control.
-+          "slot0"   - Assign to FPS Slot 0
-+          "slot1"   - Assign to FPS Slot 1
-+          "slot2"   - Assign to FPS Slot 2
-+          "slot3"   - Assign to FPS Slot 3
-+          "default" - Use the default FPS slot value stored in OTP and read from the register
-+        $ref: /schemas/types.yaml#/definitions/string
-+        enum: ["slot0", "slot1", "slot2", "slot3", "default"]
-+        default: default
-+
-+      maxim,fixed-slew-rate:
-+        type: boolean
-+        description: |
-+          Use fixed slew rate of 2 mV/μs for output voltage transitions.
-+          When this property is present, the device uses a constant 2 mV/μs slew rate
-+          and ignores any dynamic slew rate configuration.
-+          When absent, the device uses the dynamic slew rate specified
-+          by 'maxim,dvs-slew-rate-mv-per-us'
-+        default: true
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - regulators
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/regulator/maxim,max77675-regulator.h>
-+
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      max77675: pmic@44 {
-+        compatible = "maxim,max77675";
-+        reg = <0x44>;
-+
-+        maxim,en-mode = "slide-switch";
-+        maxim,latency-mode = "high";
-+        maxim,drv-sbb-strength = "max";
-+        maxim,dvs-slew-rate-mv-per-us = <5>;
-+        maxim,manual-reset-time-sec = <4>;
-+        maxim,en-debounce-time-us = <100>;
-+
-+        regulators {
-+          sbb0: sbb0 {
-+            regulator-name = "sbb0";
-+            regulator-min-microvolt = <500000>;
-+            regulator-max-microvolt = <5500000>;
-+            maxim,fps-slot = "default";
-+            maxim,slew-rate-use-dvs;
-+          };
-+
-+          sbb1: sbb1 {
-+            regulator-name = "sbb1";
-+            regulator-min-microvolt = <500000>;
-+            regulator-max-microvolt = <5500000>;
-+            regulator-allow-set-voltage;
-+            maxim,fps-slot = "default";
-+            maxim,slew-rate-use-dvs;
-+          };
-+
-+          sbb2: sbb2 {
-+            regulator-name = "sbb2";
-+            regulator-min-microvolt = <500000>;
-+            regulator-max-microvolt = <5500000>;
-+            regulator-allow-set-voltage;
-+            maxim,fps-slot = "default";
-+            maxim,slew-rate-use-dvs;
-+          };
-+
-+          sbb3: sbb3 {
-+            regulator-name = "sbb3";
-+            regulator-min-microvolt = <500000>;
-+            regulator-max-microvolt = <5500000>;
-+            regulator-allow-set-voltage;
-+            maxim,fps-slot = "default";
-+            maxim,slew-rate-use-dvs;
-+          };
-+        };
-+      };
-+    };
-+
---
-2.34.1
+>  		/*
+>  		 * No exclusive leases if someone else has a lease on
+>  		 * this file:
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index c2ce8ba05d068b451ecf8f513b7e532819a29944..70079beddf61aa32ef01f1114cf=
+0cb3ffaf2131a 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -49,6 +49,20 @@ struct lease_manager_operations {
+>  	int (*lm_change)(struct file_lease *, int, struct list_head *);
+>  	void (*lm_setup)(struct file_lease *, void **);
+>  	bool (*lm_breaker_owns_lease)(struct file_lease *);
+> +
+> +	/**
+> +	 * lm_may_setlease - extra conditions for setlease
+> +	 * @new: new file_lease being set
+> +	 * @old: old (extant) file_lease
+> +	 *
+> +	 * This allows the lease manager to add extra conditions when
+> +	 * setting a lease, based on the presence of an existing lease.
+> +	 *
+> +	 * Return values:
+> +	 *   %false: @new and @old conflict
+> +	 *   %true: No conflict detected
+> +	 */
+> +	bool (*lm_may_setlease)(struct file_lease *new, struct file_lease *old);
+>  };
+> =20
+>  struct lock_manager {
+>=20
+> --=20
+> 2.51.0
+>=20
+>=20
 
 
