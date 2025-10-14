@@ -1,147 +1,107 @@
-Return-Path: <linux-kernel+bounces-851699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2769EBD7171
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:32:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCF7BD71B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781B618A6743
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:32:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC6554F914B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB92926E70B;
-	Tue, 14 Oct 2025 02:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKPASsOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CE03043CA;
+	Tue, 14 Oct 2025 02:36:15 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C686FC5;
-	Tue, 14 Oct 2025 02:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C07426E70B;
+	Tue, 14 Oct 2025 02:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760409128; cv=none; b=EOe4lgxCTHbGnVP9uX/7hmVs34LjJeeJobM9cQDqPbVt5gOeEDmm3wMkANkusoD3oNF8zXOA5l52+LFIZc/OWBUB/gyu8s0bqLOTOpIpmOnpbxBaqBLMeEJZo5Ki3lhVLA6N4Dqd1f5nZ5aiLCvIHrezoJ/93QG3bsCn5Fv+k9s=
+	t=1760409374; cv=none; b=ZX5RfcyHtIGUG6huazyW0QS7Q8xFbvTXgNhIWgglRoMSoLqNYDoZdkm4wM2tvnEtSq88k0Er+PO6MpXD7wHaBzkJYsNJFMEbl2B9Z0BYkIOwo5cLSNNvAYiOL6p8pbBnRq6L2qlrDqTKcCXUEr4qctk5AKnI4Wq95SyErAWEhR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760409128; c=relaxed/simple;
-	bh=hvh0/CVH1q7GZls0x4FYc/CDuECbVwGi+uucaNdgKJg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qsFum2/2df2qM0EqmHZTLVcyP1qk1HuhsCqcfMIdUWf3dgU6ZtsFT1aPYx1UNJqmJjTT8SJ59bENcuuK4Ei1JtP/wzMQHoRoTY9eLn8sdQfmGaKVxMDDA/fkgLqvpC9CVkbZyujSw0HKx++6e1cuJ+hh8Kp0kuBRz9p/xft30/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKPASsOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45DD1C4CEE7;
-	Tue, 14 Oct 2025 02:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760409127;
-	bh=hvh0/CVH1q7GZls0x4FYc/CDuECbVwGi+uucaNdgKJg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=mKPASsOnVHscC/vSVssVmfpFznal6/UONj4wBrULPCf4KzlYKWeo4N4gjoQ5zL4PP
-	 LWoktla5sw4CACr9UVKEzrkWao/DcS4FE/Y2k4d4RatNhAOKX8+K7R7cav5kXRC+Vp
-	 B6dEhOjKe6ivDhrGe9dds7R8z1sdUGWHIGU086McFi+yIRK8knDSJdrbg4U4barReE
-	 e4HMe3wCGJoYRPIky8DSJ0BG15rotHQcZbnKAz4DcAqgDJTy5KLgCGnuj5OQvh69vl
-	 QLC+SCPVLtui8UTn6uZlP3AQszXatDdYa0tr5jssaIXeb1vw/wMqHFyNPFfTJpIztI
-	 nnA7ScUF8jzbg==
-Message-ID: <3067598f-9465-4544-a35f-6c09b5a8d4ad@kernel.org>
-Date: Tue, 14 Oct 2025 11:32:04 +0900
+	s=arc-20240116; t=1760409374; c=relaxed/simple;
+	bh=UOBLRDWP3KfLWh9KvekABQaGY+mxS8RLhrBRxuq5cqM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SCe52hZCH9jrOCwjjthrNJ5hdf+RwLif2aWWvlGrc8dacBzp3oEpIsie+eFmLC7AkiGaDcLGXe+r3AtvnKm8jlxzrR24to9203lwuQGcsYRL3BKatFJ5O9y0DSjTUtyGEhOnAqwpSo82v7mBQyGoPn6s+p7coDHNq+ZgEpL+Orc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201616.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202510141034531290;
+        Tue, 14 Oct 2025 10:34:53 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ Jtjnmail201616.home.langchao.com (10.100.2.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Tue, 14 Oct 2025 10:34:52 +0800
+Received: from inspur.com (10.100.2.96) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Tue, 14 Oct 2025 10:34:52 +0800
+Received: from localhost.localdomain.com (unknown [10.94.17.151])
+	by app1 (Coremail) with SMTP id YAJkCsDwEnbMtu1ojngWAA--.532S4;
+	Tue, 14 Oct 2025 10:34:52 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@fomichev.me>, <haoluo@google.com>, <jolsa@kernel.org>,
+	<kwankhede@nvidia.com>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH 0/5] Some spelling error fixes in samples directory
+Date: Tue, 14 Oct 2025 10:34:45 +0800
+Message-ID: <20251014023450.1023-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/9] can: calc_bittiming: add PWM calculation
-From: Vincent Mailhol <mailhol@kernel.org>
-To: kernel test robot <lkp@intel.com>, Marc Kleine-Budde
- <mkl@pengutronix.de>, Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: oe-kbuild-all@lists.linux.dev,
- =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251013-canxl-netlink-v1-8-f422b7e2729f@kernel.org>
- <202510140553.qo3f0I9s-lkp@intel.com>
- <b4a32eff-1ca8-4707-b48b-b3b4dd04c25f@kernel.org>
- <289f4023-9559-4b84-b4fe-b6eda646e858@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <289f4023-9559-4b84-b4fe-b6eda646e858@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: YAJkCsDwEnbMtu1ojngWAA--.532S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY97AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aV
+	CY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAC
+	I402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxV
+	W8ZVWrXwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?Ux3sQJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KbL+mgpZCA5XI2yvXw9hUGLYCkjExQ2ACPWY91Y3ubonMZ2Gz+fLeWXyfAFC8MhSS8+4
+	d2r5OB+GZ4nMHdN3nYQ=
+Content-Type: text/plain
+tUid: 20251014103453247b529822dfc325ba2395e2ca27cfc9
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On 14/10/2025 at 11:19, Vincent Mailhol wrote:
-> On 14/10/2025 at 11:05, Vincent Mailhol wrote:
->> On 14/10/2025 at 06:21, kernel test robot wrote:
->>> Hi Vincent,
->>>
->>> kernel test robot noticed the following build warnings:
->>>
->>> [auto build test WARNING on cb6649f6217c0331b885cf787f1d175963e2a1d2]
->>>
->>> url:    https://github.com/intel-lab-lkp/linux/commits/Vincent-Mailhol/can-dev-can_dev_dropped_skb-drop-CAN-FD-skbs-if-FD-is-off/20251013-191232
->>> base:   cb6649f6217c0331b885cf787f1d175963e2a1d2
->>> patch link:    https://lore.kernel.org/r/20251013-canxl-netlink-v1-8-f422b7e2729f%40kernel.org
->>> patch subject: [PATCH 8/9] can: calc_bittiming: add PWM calculation
->>> config: riscv-randconfig-001-20251014 (https://download.01.org/0day-ci/archive/20251014/202510140553.qo3f0I9s-lkp@intel.com/config)
->>> compiler: riscv64-linux-gcc (GCC) 10.5.0
->>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251014/202510140553.qo3f0I9s-lkp@intel.com/reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202510140553.qo3f0I9s-lkp@intel.com/
->>>
->>> All warnings (new ones prefixed by >>):
->>>
->>>    In file included from include/linux/can/dev.h:18,
->>>                     from net/can/raw.c:53:
->>>    include/linux/can/bittiming.h: In function 'can_calc_pwm':
->>>>> include/linux/can/bittiming.h:204:1: warning: no return statement in function returning non-void [-Wreturn-type]
->>>      204 | }
->>>          | ^
->>>
->>> Kconfig warnings: (for reference only)
->>>    WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
->>>    Depends on [n]: BINFMT_ELF [=y] && ELF_CORE [=n]
->>>    Selected by [y]:
->>>    - RISCV [=y]
->>>
->>>
->>> vim +204 include/linux/can/bittiming.h
->>>
->>>    200	
->>>    201	static inline int
->>>    202	can_calc_pwm(struct net_device *dev, struct netlink_ext_ack *extack)
->>>    203	{
->>>  > 204	}
->>>    205	#endif /* CONFIG_CAN_CALC_BITTIMING */
->>>    206	
->>
->> I see, this only occurs if CONFIG_CAN_CALC_BITTIMING is not set.
->>
->> What is surprising enough is that can_calc_tdco() has the exact same
->> issue but we never received a report.
-> 
-> Actually, can_calc_tdco() is not getting a warning because it returns
-> void. But this doesn't change the fact that it should be returning an
-> error when CONFIG_CAN_CALC_BITTIMING is not set.
+Fixes for some spelling errors in samples directory
 
-I spoke too quickly. can_calc_tdco() is only called when no TDC
-parameters are provided. In that case, if CONFIG_CAN_CALC_BITTIMING is
-not set, doing nothing is the correct approach. i.e. there is nothing
-to fix here. So there will be no fix patch to net/main and I will
-directly incorporate the fix in a v2.
+Chu Guangqing (5):
+  samples/bpf: Fix a spelling typo in do_hbm_test.sh
+  samples: bpf: Fix a spelling typo in hbm.c
+  samples/bpf: Fix a spelling typo in tracex1.bpf.c
+  samples/bpf: Fix a spelling typo in tcp_cong_kern.c
+  vfio-mdev: Fix a spelling typo in mtty.c
 
-Sorry for the noise!
+ samples/bpf/do_hbm_test.sh  | 2 +-
+ samples/bpf/hbm.c           | 4 ++--
+ samples/bpf/tcp_cong_kern.c | 2 +-
+ samples/bpf/tracex1.bpf.c   | 2 +-
+ samples/vfio-mdev/mtty.c    | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
+-- 
+2.47.3
 
-Yours sincerely,
-Vincent Mailhol
 
