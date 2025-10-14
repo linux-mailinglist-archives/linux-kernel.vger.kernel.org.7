@@ -1,137 +1,276 @@
-Return-Path: <linux-kernel+bounces-852209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04348BD8709
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:31:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814AEBD8712
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C693188A054
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:32:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4DD42330C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19752DCF6B;
-	Tue, 14 Oct 2025 09:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C68E2EAB89;
+	Tue, 14 Oct 2025 09:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zqKcNixX"
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gWBViclZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824032AEF5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A182DE6E1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434302; cv=none; b=f6Ow73PJFsvIYJQ41fPLuMSmihU6Zz2gpGZ+A/zx0rqOYXjrkTK3eOtofn2wmWUjjPsRR0QQ2zCSTJla9djrY6ISLQ773r4P4HLhKKjc7HxovIhqRGiQ8TpyV8qyPe9ZLngsOGnGMdXZdiAABYRoAIO2i6t+p5+NvTCFaMZpnXc=
+	t=1760434328; cv=none; b=kEjbVNKmJXg6kK/FGuTI8XxQSuFxgt2XupctgfWOuJWYyHz1OsciyKCEAVmHcP/E4Jcnukw3CuggeXmWSkUsH0ubUswVxaaDhvkqJs37YvNLXB6iSFrd4YEQnaPW9b0s15PzA18I9Pz3daDwuAKVBelKFRjTqpR+6sNQEhfICMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434302; c=relaxed/simple;
-	bh=8cvKIarSkBijJe+UuuzaIt5vygtV6rMdWJ+oHNw2EJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WHh6rWaIHfPZBBBTSyJfpg+DcxZoxAt3sdJ1LNf6pAJIYkbq+Hb4nFQKOY9FoIpnA1KkZG4YDYdOXzlMfohRZt25K8+Km88+6JuUhY5Gku0vm6EQNPcydQKw0uK7v7UHOsrkdy9wFo/JeqCwGs87ruooU3JFW/QIgDir40xWy8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zqKcNixX; arc=none smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-635380a4a67so6197210d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760434299; x=1761039099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8cvKIarSkBijJe+UuuzaIt5vygtV6rMdWJ+oHNw2EJI=;
-        b=zqKcNixXy2zj19jwqD2ac91sF9hgouUhrnx0xNDue8Alffa8X9+A1hM7H4UIhNbF2X
-         mha6CJ6z0uejcims8dL2SrOdwJhRqaJ2EW1XdJwfdOZxCSGNC+YzHJsKBTqLP4UfMEP3
-         BcXZd0Aa/n4nYBk530lS7aLQjk8+MJhUvEWGeGVk2AW4/625hSdpWRX22TvPLbLTe27K
-         n1Nhwf4/00sOQf6NqtX4siZud1Ulm+YZKqP4xrWi+3ouqg4u+O6lJ1Ocee4ZynvFFPR+
-         ps/92Tn063ZP1cZjukGqbcME91nlJ2FEjwX1q+lEUB3BlhGLQQz3NDTLV2LTgto/9lqq
-         E9xg==
+	s=arc-20240116; t=1760434328; c=relaxed/simple;
+	bh=eRzM5C9qWaNHhC1MvvT3VmhBXsn9RAKRCJSHqOQCu68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kwlueJWUc8yPRg+dtkPd7f/DYFFvMNkNow3QdMTIB2s95WjcAJL0zARQsC4xOzMq3a6CYEGEBTXSNSJSNQ++H1dhEyQVhwTawGgZ8NGvqnyZlL8TAftO+iJiTUOFP517qfK5r+9edWhUiFtOywxsAWjhZf1hFbDOuf+5tRkLuiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gWBViclZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760434325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3QZlc0shzy81sMsvIKnfBpa7QTHlQS3qga/okOnQIR4=;
+	b=gWBViclZzJGHababD+/C83ejCNlxtgr5tRz5FGGQcV/TwJhVrBBNHofiF/fmpDhHrY09YZ
+	jRmEf9Asj5pEXHBHXVoGAsLU6mx/jqTnaGJbdjSxdbJLNTNoPZlkt/8Z6VhgPpLh0eMPff
+	eq4wNQYRiCQBQmFG5OmS6cxUoAVon2U=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-619-ofvjJ_TsOpO1JTJ72TIg-A-1; Tue, 14 Oct 2025 05:32:03 -0400
+X-MC-Unique: ofvjJ_TsOpO1JTJ72TIg-A-1
+X-Mimecast-MFC-AGG-ID: ofvjJ_TsOpO1JTJ72TIg-A_1760434323
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ecdc9dbc5fso3846854f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:32:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760434299; x=1761039099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8cvKIarSkBijJe+UuuzaIt5vygtV6rMdWJ+oHNw2EJI=;
-        b=E9k8tKjnhk/wMFiAUUqyziNJaTTtK0Csx8A2Y6tPslTOI/PJk8oPHAXYAwXsh5YUuV
-         vSsNqpRr3Va7/PllIQ6eLMuiBdNBI5h1+Su22NKf4isM7WNEH16e+B3fxlpd37DxdzsE
-         uH/P5y7gPozmajvsSUFiG2DY5GYrNFn10z2AW3xdGglbeUUmvIiCwyVPtS5dFTr3ffFn
-         vMGj8BIrpCivIMfeyevmUJKAny4Ni0ewBzfTau8wGBxp1NaE62qxE8qmJKNVjqFB52Qo
-         TcvSAo24WWSJm4OwtCsYG7d15NYoe1XGVUrf+pdsg4A8yzJO5wUK12F/UMdPOXamIxDC
-         a5IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBs9tolDex963B/eNZ+095C+TXKdg4s6LVk4LhTY3lZMNXsXhpfK3Qyea9AcRXSKl/0EHRVp99/840tZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJfxXJy4wrhWEMRRsEOzfYInMKW0lj/k6Cm4UfAlr5x/BXxDh7
-	k//By05veeO7PBfS9zb3+G2HVVHqd9RGhmo+Hw/1FSditTx9TdrRgaJtqPB0O4SHDAWPigwJohh
-	N5MGDs3fiUnPh7HFUxl23YQZ2wpAPfEXXM4WynbxdwQ==
-X-Gm-Gg: ASbGncs4OsH2wAwxESHeBq0ZiDm3HDj4fvvswBnfCm2yq+Sb7xh0mqgVOL0fs5gIcCX
-	9pPpepmXOWvOwCFF1taBSEdbXqQK5thZpEVgpo9WWvJlQQeVFTZY921DMrJLEmaB14ntu/wL7Mw
-	mn9zYN8UsSUJCWd41SmC9UE6oTE19N/8+JqtZvNYaBuoncds+ABCqqMXS8z+ikQD8jf98fQAA7C
-	A2/dQ6utsdbrEmZDNe0MZN7llH2CxQ=
-X-Google-Smtp-Source: AGHT+IGpfT1cl8woYMQjpU4Hfvq9tR+YuLgZGpBnk++5ZO2YaY91O5P1sxo8/L5tsI4hAc1GBqgPgrvYoCRQYmV9EAA=
-X-Received: by 2002:a53:a146:0:b0:630:e716:e358 with SMTP id
- 956f58d0204a3-63ccb854dd7mr15136764d50.14.1760434299398; Tue, 14 Oct 2025
- 02:31:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760434323; x=1761039123;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3QZlc0shzy81sMsvIKnfBpa7QTHlQS3qga/okOnQIR4=;
+        b=Auccoh5N/94WywrLq6SLcYcUy7+l55tA9a7TJ8m7oSUhyuJqiEaUOLZnPKUBIpfn6R
+         he9076HtdWis435Jf7Vx/h2JxLFovBZuun8HPrDtL2Z5/aakjvcoi9tEvHZBMLZcGAom
+         2GeKyFTYzB8dtcKvjYh8/0HY4Qp1B8nIJX9l/7PT1TXnRC6CeMcop0JJ3PQ+pWazZX/t
+         diu/1cDDfGG7+oWy81ggB/nXeb5Xl5JPYDAAfb7EyGbYZo+GwIvPxSKAjW3h5v6B8PnC
+         t0EBiiqc5FcveeVViwh+SPvjKmysRACm9A/0bkfCYVTWZGXlLPs+cex3WpFxmCd/Iljc
+         LT2Q==
+X-Gm-Message-State: AOJu0YzYQf1uGG/kJzVnGq/IdKURzxNhDUgN59j4p/7BLd8EQFeaY5eF
+	kPUXlmHAD9j1cFbT2j6o+0mD2o7vKTLYJCCsa/ZU+lXkpvtzft1GfNaCmfNXxbTtIvbKbt693k3
+	EgJcEtWG0wmnvWdx9Dz2CIo6APujbmU607bRQ+93m/22OYv66p9SN/bZxWsSO0CIBbg==
+X-Gm-Gg: ASbGncsbjJzFdIRNNQNV5CSsMHXjzt3GTMIzVBKpSnc8jezzQCYRLS8YYcayBi6XIQs
+	au2aRSZLsATICzxgJiiwBo/TSpST/VhA6YIB632Oq/AJCam41ha5p5crxhcTQxLACX8WNw40i0M
+	WnR8xXeDmJPnaYwSNbikGVAq2gjbQq0qGoCAvQBfTqF9+uKG+tmdPGEtny4RjQzOLqMnbAYWaz8
+	/YpUQn4qqZpi/jjPbJJqKsSUTU0s4z3VuabiEic1pKwosqS3lzsnw/dwvvKvrPYT6C79PsPElTR
+	rzuIDGdNXFATebMdGnZ3VS794rPtZnUzqFdpA58ZqkOsB+U8DzlOy39hv1/RICqsIGdYSDZSfg9
+	0pbH56IXbo37i
+X-Received: by 2002:a05:6000:3103:b0:426:eebb:9143 with SMTP id ffacd0b85a97d-426eebb9381mr1418618f8f.58.1760434322711;
+        Tue, 14 Oct 2025 02:32:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhqHjyC63QplvCGM6Yssbj/O1tdcTt46og/02B7l4yzSA1JA0eySQZ0KLlE2nLKTw4HEoXwQ==
+X-Received: by 2002:a05:6000:3103:b0:426:eebb:9143 with SMTP id ffacd0b85a97d-426eebb9381mr1418589f8f.58.1760434322286;
+        Tue, 14 Oct 2025 02:32:02 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57cc0esm22904313f8f.6.2025.10.14.02.32.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 02:32:01 -0700 (PDT)
+Message-ID: <629ffe15-e4d8-4b0c-a909-55fa4248965a@redhat.com>
+Date: Tue, 14 Oct 2025 11:32:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
- <86v7koxk1z.wl-maz@kernel.org> <CAFEAcA8=yhQ-ygoA-fqxzwg69OkdW2nBM0O9X3Lmww4eXuVMWA@mail.gmail.com>
- <867bwzxe9r.wl-maz@kernel.org> <CAFEAcA8FhgcaM_OsHKB3+3Z7B_oZJqU4LHX_j9p-ZQrHfWGX7g@mail.gmail.com>
- <CAJ7pxebGOj5Z1iW6VPjzj73eY1hZFjS5uXMkee8XCm09DtFcKQ@mail.gmail.com>
-In-Reply-To: <CAJ7pxebGOj5Z1iW6VPjzj73eY1hZFjS5uXMkee8XCm09DtFcKQ@mail.gmail.com>
-From: Peter Maydell <peter.maydell@linaro.org>
-Date: Tue, 14 Oct 2025 10:31:28 +0100
-X-Gm-Features: AS18NWAJX94qy4FaMKCiJ2t5Jr7n_3WauLvwbqWyfMVGv2EBw5_zyhfXEJWTZIA
-Message-ID: <CAFEAcA8VL4wE2w9PegPD_AVSKCZzzzx-jFru7dDOq4Tz5xs76A@mail.gmail.com>
-Subject: Re: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow
- lockless read when ready
-To: Salil Mehta <salil.mehta@opnsrc.net>
-Cc: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, salil.mehta@huawei.com, 
-	jonathan.cameron@huawei.com, will@kernel.org, catalin.marinas@arm.com, 
-	mark.rutland@arm.com, james.morse@arm.com, sudeep.holla@arm.com, 
-	lpieralisi@kernel.org, jean-philippe@linaro.org, tglx@linutronix.de, 
-	oliver.upton@linux.dev, richard.henderson@linaro.org, andrew.jones@linux.dev, 
-	mst@redhat.com, david@redhat.com, philmd@linaro.org, ardb@kernel.org, 
-	borntraeger@linux.ibm.com, alex.bennee@linaro.org, gustavo.romero@linaro.org, 
-	npiggin@gmail.com, linux@armlinux.org.uk, karl.heubaum@oracle.com, 
-	miguel.luis@oracle.com, darren@os.amperecomputing.com, 
-	ilkka@os.amperecomputing.com, vishnu@os.amperecomputing.com, 
-	gankulkarni@os.amperecomputing.com, wangyanan55@huawei.com, 
-	wangzhou1@hisilicon.com, linuxarm@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: ethernet: ti: am65-cpts: fix timestamp loss due
+ to race conditions
+To: Aksh Garg <a-garg7@ti.com>, netdev@vger.kernel.org, davem@davemloft.net,
+ kuba@kernel.org, andrew+netdev@lunn.ch, edumazet@google.com
+Cc: linux-kernel@vger.kernel.org, c-vankar@ti.com, s-vadapalli@ti.com,
+ danishanwar@ti.com
+References: <20251010150821.838902-1-a-garg7@ti.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251010150821.838902-1-a-garg7@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 14 Oct 2025 at 04:02, Salil Mehta <salil.mehta@opnsrc.net> wrote:
-> On Mon, Oct 13, 2025 at 4:48=E2=80=AFPM Peter Maydell <peter.maydell@lina=
-ro.org> wrote:
-> > That said, QEMU's current code for this could be refactored
-> > to avoid the reset-time read of ICC_CTLR_EL1 from the kernel.
-> > We do this so we can set the userspace struct field for this
-> > register to the right value. But we could ask the kernel for
-> > that value once on VM startup since it's not going to change mid-run.
-> >
-> > That would bring ICC_CTLR_EL1 into line with the other cpuif
-> > registers, where QEMU assumes it knows what the kernel's
-> > reset value of them is (mostly "0") and doesn't bother to ask.
-> > This is different from how we handle ONE_REG sysregs, where
-> > I'm pretty sure we do ask the kernel the value of all of them
-> > on a vcpu reset. (And then write the values back again, which
-> > is a bit silly but nobody's ever said it was a performance
-> > problem for them :-))
->
->
-> This is effectively what the mentioned patch in the commit-log is doing.
-> Pasting here again:
->
-> https://lore.kernel.org/qemu-devel/20251001010127.3092631-22-salil.mehta@=
-opnsrc.net/
+On 10/10/25 5:08 PM, Aksh Garg wrote:
+> diff --git a/drivers/net/ethernet/ti/am65-cpts.c b/drivers/net/ethernet/ti/am65-cpts.c
+> index 59d6ab989c55..2e9719264ba5 100644
+> --- a/drivers/net/ethernet/ti/am65-cpts.c
+> +++ b/drivers/net/ethernet/ti/am65-cpts.c
+> @@ -163,7 +163,9 @@ struct am65_cpts {
+>  	struct device_node *clk_mux_np;
+>  	struct clk *refclk;
+>  	u32 refclk_freq;
+> -	struct list_head events;
+> +	/* separate lists to handle TX and RX timestamp independently */
+> +	struct list_head events_tx;
+> +	struct list_head events_rx;
+>  	struct list_head pool;
+>  	struct am65_cpts_event pool_data[AM65_CPTS_MAX_EVENTS];
+>  	spinlock_t lock; /* protects events lists*/
+> @@ -172,6 +174,7 @@ struct am65_cpts {
+>  	u32 ts_add_val;
+>  	int irq;
+>  	struct mutex ptp_clk_lock; /* PHC access sync */
+> +	struct mutex rx_ts_lock; /* serialize RX timestamp match */
+>  	u64 timestamp;
+>  	u32 genf_enable;
+>  	u32 hw_ts_enable;
+> @@ -245,7 +248,16 @@ static int am65_cpts_cpts_purge_events(struct am65_cpts *cpts)
+>  	struct am65_cpts_event *event;
+>  	int removed = 0;
+>  
+> -	list_for_each_safe(this, next, &cpts->events) {
+> +	list_for_each_safe(this, next, &cpts->events_tx) {
+> +		event = list_entry(this, struct am65_cpts_event, list);
+> +		if (time_after(jiffies, event->tmo)) {
+> +			list_del_init(&event->list);
+> +			list_add(&event->list, &cpts->pool);
+> +			++removed;
+> +		}
+> +	}
 
-No, that is not what I have in mind. What I mean is that
-we can just read the ICC_CTLR_EL1 value once on startup
-(in our realize method, I think) and then use that value in
-reset. That should not require any of that machinery to pause
-the VM and keep retrying.
+Minor nit: you can move the loop in a separate helper taking the event
+list as an argument and avoid some code duplication with the the rx loop.
 
--- PMM
+> +
+> +	list_for_each_safe(this, next, &cpts->events_rx) {
+>  		event = list_entry(this, struct am65_cpts_event, list);
+>  		if (time_after(jiffies, event->tmo)) {
+>  			list_del_init(&event->list);
+> @@ -306,11 +318,21 @@ static int __am65_cpts_fifo_read(struct am65_cpts *cpts)
+>  				cpts->timestamp);
+>  			break;
+>  		case AM65_CPTS_EV_RX:
+> +			event->tmo = jiffies +
+> +				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
+> +
+> +			list_move_tail(&event->list, &cpts->events_rx);
+> +
+> +			dev_dbg(cpts->dev,
+> +				"AM65_CPTS_EV_RX e1:%08x e2:%08x t:%lld\n",
+> +				event->event1, event->event2,
+> +				event->timestamp);
+> +			break;
+>  		case AM65_CPTS_EV_TX:
+>  			event->tmo = jiffies +
+>  				msecs_to_jiffies(AM65_CPTS_EVENT_RX_TX_TIMEOUT);
+>  
+> -			list_move_tail(&event->list, &cpts->events);
+> +			list_move_tail(&event->list, &cpts->events_tx);
+
+Similar thing here.
+
+>  
+>  			dev_dbg(cpts->dev,
+>  				"AM65_CPTS_EV_TX e1:%08x e2:%08x t:%lld\n",
+> @@ -828,7 +850,7 @@ static bool am65_cpts_match_tx_ts(struct am65_cpts *cpts,
+>  	return found;
+>  }
+>  
+> -static void am65_cpts_find_ts(struct am65_cpts *cpts)
+> +static void am65_cpts_find_tx_ts(struct am65_cpts *cpts)
+>  {
+>  	struct am65_cpts_event *event;
+>  	struct list_head *this, *next;
+> @@ -837,7 +859,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
+>  	LIST_HEAD(events);
+>  
+>  	spin_lock_irqsave(&cpts->lock, flags);
+> -	list_splice_init(&cpts->events, &events);
+> +	list_splice_init(&cpts->events_tx, &events);
+>  	spin_unlock_irqrestore(&cpts->lock, flags);
+>  
+>  	list_for_each_safe(this, next, &events) {
+> @@ -850,7 +872,7 @@ static void am65_cpts_find_ts(struct am65_cpts *cpts)
+>  	}
+>  
+>  	spin_lock_irqsave(&cpts->lock, flags);
+> -	list_splice_tail(&events, &cpts->events);
+> +	list_splice_tail(&events, &cpts->events_tx);
+
+I see the behavior is pre-existing, but why splicing on tail? events
+added in between should be older???
+
+>  	list_splice_tail(&events_free, &cpts->pool);
+>  	spin_unlock_irqrestore(&cpts->lock, flags);
+>  }
+> @@ -861,7 +883,7 @@ static long am65_cpts_ts_work(struct ptp_clock_info *ptp)
+>  	unsigned long flags;
+>  	long delay = -1;
+>  
+> -	am65_cpts_find_ts(cpts);
+> +	am65_cpts_find_tx_ts(cpts);
+>  
+>  	spin_lock_irqsave(&cpts->txq.lock, flags);
+>  	if (!skb_queue_empty(&cpts->txq))
+> @@ -899,16 +921,21 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
+>  {
+>  	struct list_head *this, *next;
+>  	struct am65_cpts_event *event;
+> +	LIST_HEAD(events_free);
+>  	unsigned long flags;
+> +	LIST_HEAD(events);
+>  	u32 mtype_seqid;
+>  	u64 ns = 0;
+>  
+>  	spin_lock_irqsave(&cpts->lock, flags);
+>  	__am65_cpts_fifo_read(cpts);
+> -	list_for_each_safe(this, next, &cpts->events) {
+> +	list_splice_init(&cpts->events_rx, &events);
+> +	spin_unlock_irqrestore(&cpts->lock, flags);
+
+Why are you changing the behaviour here, releasing and reacquiring the
+cpts->lock? It looks like a separate change, if needed at all.
+
+> +	list_for_each_safe(this, next, &events) {
+>  		event = list_entry(this, struct am65_cpts_event, list);
+>  		if (time_after(jiffies, event->tmo)) {
+> -			list_move(&event->list, &cpts->pool);
+> +			list_move(&event->list, &events_free);
+>  			continue;
+>  		}
+>  
+> @@ -919,10 +946,14 @@ static u64 am65_cpts_find_rx_ts(struct am65_cpts *cpts, u32 skb_mtype_seqid)
+>  
+>  		if (mtype_seqid == skb_mtype_seqid) {
+>  			ns = event->timestamp;
+> -			list_move(&event->list, &cpts->pool);
+> +			list_move(&event->list, &events_free);
+>  			break;
+>  		}
+>  	}
+> +
+> +	spin_lock_irqsave(&cpts->lock, flags);
+> +	list_splice_tail(&events, &cpts->events_rx);
+> +	list_splice_tail(&events_free, &cpts->pool);
+>  	spin_unlock_irqrestore(&cpts->lock, flags);
+>  
+>  	return ns;
+> @@ -948,7 +979,9 @@ void am65_cpts_rx_timestamp(struct am65_cpts *cpts, struct sk_buff *skb)
+>  
+>  	dev_dbg(cpts->dev, "%s mtype seqid %08x\n", __func__, skb_cb->skb_mtype_seqid);
+>  
+> +	mutex_lock(&cpts->rx_ts_lock);
+>  	ns = am65_cpts_find_rx_ts(cpts, skb_cb->skb_mtype_seqid);
+> +	mutex_unlock(&cpts->rx_ts_lock);
+
+The call chain is:
+
+am65_cpsw_nuss_rx_poll() -> am65_cpsw_nuss_rx_packets() ->
+am65_cpts_rx_timestamp()
+
+this runs in BH context, can't acquire a mutex. Also I don't see why any
+additional locking would be needed?
+
+/P
+
 
