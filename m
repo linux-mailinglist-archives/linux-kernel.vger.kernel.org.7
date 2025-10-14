@@ -1,118 +1,173 @@
-Return-Path: <linux-kernel+bounces-852590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D46BD968F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C944BD96B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43534501B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:41:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D334501A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76D0313E1E;
-	Tue, 14 Oct 2025 12:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EC3314B6E;
+	Tue, 14 Oct 2025 12:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nXjYcVAf"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NvJCwlbj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8776B314A9B;
-	Tue, 14 Oct 2025 12:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55544314A9B;
+	Tue, 14 Oct 2025 12:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445605; cv=none; b=U+v6gQs7QZ7DGhA/C44aU0UkveIhHuPrf1zoJZyZ5xdoEYXP6oa4UOHyyj82L2TphZEUfDKgKt7rq2zMu3fXWFgD2fchPR+qwA8dtODoU+RnNfjjCgTcDh/jzxlsVqZupyfeEqH/HR/E1p3Yc32z3AJrtXe590cd7gaA88tMvjA=
+	t=1760445711; cv=none; b=cpV+tHzAVQsAXcxEB2LHr4bz3P05kIVVUXbjb6YFFReskh5g0gt+hYYmL/MWhLrF2zmlaQ2JyKckJwZOtVDZl9RzwGTfVSHjvy4VtCcraGeJv72TgFVXo69kuIdzjV2SEmZDjFQ4Cp/3eKSQ96nWvNOkmYJ4/t8NZxzOg8ywKXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445605; c=relaxed/simple;
-	bh=DRhmHRgT/le2KFserQHBusRx67PjyobFTm0/DGsI4b0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RXuor2jCLRRC3pb7H6AXv7diZKqp5qItbDfzUmpv66oQF3uCw8DBO4NMXIwg9T6Sn31eZtimDpXXvAuzZpMrMhu1T2qAC/nKJ2cpc+IUB0auXnnfrCNKzLsPpKpshSye0EiZ9Tty/tn4iZ1sj7OdIq9zUuKc9veOXkCfpdRvdf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nXjYcVAf; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E2E0BC09F8C;
-	Tue, 14 Oct 2025 12:39:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E23BB606EC;
-	Tue, 14 Oct 2025 12:39:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3576102F2259;
-	Tue, 14 Oct 2025 14:39:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760445594; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=O4tcipbPC2HHYlMaJKaUuOAv9lqowVzpEH7IATfw+yU=;
-	b=nXjYcVAfgH3BO4xp2vWGR7034d2dX9xSrhM1MME8bOUErSzq5CWI1cL4fSQ4VHxE68pARz
-	ngIK1el073vvINjm45En7XD08UQnETY7HgrX2uRObSUY8MOUlELo/2stYHk/mq4q3aXP/r
-	j8Cvmu503+CPhATKURildyWFTljcz1VyoIMN1L0AaWWMEs2S6obJ89dLSTcj/TZ/wcsHOO
-	gqK9LI/+WNslXfMpF+FSwvHnvZnnCLXx7t5j846G2Z7qf/Me8HUe1DXPu0lZGyzYvty0+r
-	3yKYHBfK5QSkItH6+SD0Oat8ERm/xKXlQP3MwXp364+zbojSbO8di1tGX65lwg==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: watchdog: Convert marvell,orion-wdt to DT
- schema
-In-Reply-To: <CAL_JsqJO-Fir5DLhZGsSWN2ZXNH+ynsqFXKKqAbePi30jf5EhA@mail.gmail.com>
-References: <20251013213146.695195-1-robh@kernel.org>
- <87o6q9g6kc.fsf@BLaptop.bootlin.com>
- <CAL_JsqJO-Fir5DLhZGsSWN2ZXNH+ynsqFXKKqAbePi30jf5EhA@mail.gmail.com>
-Date: Tue, 14 Oct 2025 14:39:50 +0200
-Message-ID: <87ldldfyi1.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1760445711; c=relaxed/simple;
+	bh=Fh2zvIdneAnx+rNA7JVNRSLfcG52gBkauKLz308+u2A=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eX0UBEjFQhGh8KgOHVz23aOjIYcPWOCXtbWbzexRwZxo+tHAqLB+//v34yH/SoLtSlxPzfy4tq1yjKcNyU0AUzoz3dZulg6SOEYd3+XmC/XsKYnXvo4ncC751WVMFQEiXxioroim6DQ9Mt9iKRECcQp0gC9zC8BGO6PiiDXJgBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NvJCwlbj; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760445709; x=1791981709;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=Fh2zvIdneAnx+rNA7JVNRSLfcG52gBkauKLz308+u2A=;
+  b=NvJCwlbjVvn8QQzj126fK8eDs74iPIUprLJcMRnFvHJjtnaRr024Ery3
+   FPqmvJmnrvWKnzwEcLTUtiPcI6D9Qr6P+prVr2uPE/thIZWON25IizlLQ
+   U11WOsdOoEm5PeZZaCMUCyr5KxqjnaebhpKO6Xj333vKOQ7WzqUzGF3rY
+   CKp25CADu78ufiS5pEroaF++Dg1PEL9+yv8HwUX21eELx3uOefSvIV6f1
+   rNg26J/horcV0dt58hlABqSKC+jhNNGUCAb/KFGMXVb8cU1lHWFyHJHJb
+   Prjh8dGt8lBCK5Rk3f7QLcd/LUjquoqNYeNZ/+kp2WnJR5DnbDtDfGyqo
+   g==;
+X-CSE-ConnectionGUID: MI5gX/+sQBKuP2yih3HHkQ==
+X-CSE-MsgGUID: APBvlQ6mQ4eGr+kkubu1Kw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62308580"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="62308580"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 05:41:48 -0700
+X-CSE-ConnectionGUID: ATtpmtE3RAO3kOU5hd16zg==
+X-CSE-MsgGUID: GIHMxPqSSyie+IHuRd3C/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="181424203"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.195])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 05:41:46 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 14 Oct 2025 15:41:42 +0300 (EEST)
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Guenter Roeck <linux@roeck-us.net>, Bjorn Helgaas <bhelgaas@google.com>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 03/24] MIPS: PCI: Use pci_enable_resources()
+In-Reply-To: <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk>
+Message-ID: <9f80ba5e-726b-ad68-b71f-ab23470bfa36@linux.intel.com>
+References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com> <20250829131113.36754-4-ilpo.jarvinen@linux.intel.com> <9085ab12-1559-4462-9b18-f03dcb9a4088@roeck-us.net> <aO1sWdliSd03a2WC@alpha.franken.de> <alpine.DEB.2.21.2510132229120.39634@angie.orcam.me.uk>
+ <74ed2ce0-744a-264f-6042-df4bbec0f58e@linux.intel.com> <alpine.DEB.2.21.2510141232400.39634@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/mixed; BOUNDARY="8323328-336658487-1760445640=:925"
+Content-ID: <41cc3ac1-8798-33f2-459c-a96547ccac52@linux.intel.com>
 
-Rob Herring <robh@kernel.org> writes:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Tue, Oct 14, 2025 at 4:45=E2=80=AFAM Gregory CLEMENT
-> <gregory.clement@bootlin.com> wrote:
->>
->> Hello Rob,
->>
->> Thank you for your work. I have one question:
->>
->> > +  reg:
->> > +    minItems: 2
->>
->> Should we also include this constraint here?
->>
->>     maxItems: 3
->
-> No, that is implicit with the length of 'items'. (For json-schema,
-> it's not though. The tools add it automatically.)
+--8323328-336658487-1760445640=:925
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <c7e2fab7-1980-c80e-bb98-a51bc4deb605@linux.intel.com>
 
-Thanks for the explanation!
+On Tue, 14 Oct 2025, Maciej W. Rozycki wrote:
 
-then for this patch:
+> On Tue, 14 Oct 2025, Ilpo J=E4rvinen wrote:
+>=20
+> > > As you can see there are holes in the map below 0x100, so e.g. if the=
+ bus=20
+> > > master IDE I/O space registers (claimed last in the list by `ata_piix=
+')=20
+> > > were assigned to 00000030-0000003f, then all hell would break loose. =
+ It=20
+> > > is exactly the mapping that happened in the absence of the code piece=
+ in=20
+> > > question IIRC.
+> >=20
+> > Are you sure pci-malta.c has to do anything like this as=20
+> > pcibios_align_resource() does lower bound IO resource start addresses i=
+f=20
+> > PCIBIOS_MIN_IO is set?
+>=20
+>  Well, PCIBIOS_MIN_IO is never set for Malta and therefore stays at 0.
 
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+I meant whether pci-malta.c has to play with the ->start address at all=20
+if it would use PCIBIOS_MIN_IO.
 
-Gregory
+> I could boot 2.6.11 with the hunk reverted and see what happens, not a bi=
+g=20
+> deal (I should have old GCC somewhere as a kernel such old would surely b=
+e=20
+> a pain to build with modern GCC).  This stuff was badly broken before=20
+> commit ae81aad5c2e1 (and there was support there too for the Atlas board,=
+=20
+> a weird one with a Philips SAA9730 southbridge and supporting a subset of=
+=20
+> the same CPU core cards as the Malta board does).
+>=20
+> > How about this patch below?
+> >=20
+> > (I'm not sure if it should actually be
+> > =09PCIBIOS_MIN_IO =3D 0x1000 - hose->io_resource->start;
+> > to allow resources starting from 0x1000 if ->start is not at 0.)
+>=20
+>  I'd have to go through the relevant datasheets to see whether it can=20
+> actually happen in reality.  Perhaps we can just hardwire PCIBIOS_MIN_IO=
+=20
+> to 0x1000 instead, similarly to what other MIPS platforms do.
 
->
->>
->> This would further restrict the binding.
->>
->> Gregory
->>
->> > +    items:
->> > +      - description: Timer control register address.
->> > +      - description: RSTOUT enable register address.
->> > +      - description: Shared mask/unmask RSTOUT register address.
->> > +
+My patch did hardcode set it to 0x1000, I just noted before the patch that=
+=20
+I'm not sure if the code should actually try to align the resulting "real=
+=20
+start address" to 0x1000 if hose->io_resource->start !=3D 0.
+
+Or are you saying also the the if () check should be removed as well?
+
+> After all=20
+> Malta's southbridge is on the mainboard and therefore always the same,=20
+> regardless of the northbridge (system controller in MIPS-speak) which=20
+> comes with the pluggable CPU core card.
+>=20
+>  NB there are commit c5de50dada14 ("MIPS: Malta: Change start address to=
+=20
+> avoid conflicts.") and commit 27547abf36af ("MIPS: malta: Incorporate=20
+> PIIX4 ACPI I/O region in PCI controller resources") that fiddled with thi=
+s=20
+> code piece.  Especially the latter one refers additional commits that may=
+=20
+> give further insights.  And the former one removed a "FIXME" annotation,=
+=20
+> which suggests I didn't consider the solution perfect back 20 years ago,=
+=20
+> but given how long it stayed there it was surely good enough for its time=
+=2E
+
+It was "good enough" only because the arch specific=20
+pcibios_enable_resources() was lacking the check for whether the resource=
+=20
+truly got assigned or not. The PIIX4 driver must worked just fine without=
+=20
+those IO resources which is what most drivers do despite using=20
+pci(m)_enable_device() and not pci_enable_device_mem() (the latter=20
+doesn't even seem to come with m variant).
 
 --=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ i.
+--8323328-336658487-1760445640=:925--
 
