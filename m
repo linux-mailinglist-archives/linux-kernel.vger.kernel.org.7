@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-852993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77285BDA76A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:46:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB94ABDA718
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2D27546119
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:32:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 880565464A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30422303A02;
-	Tue, 14 Oct 2025 15:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6760E303A27;
+	Tue, 14 Oct 2025 15:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ui+5zuIW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMkaAH4V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8833009CA;
-	Tue, 14 Oct 2025 15:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFB23009D4;
+	Tue, 14 Oct 2025 15:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455784; cv=none; b=kSC6JEr+GQ6FuMXklLoiOKDyhvIoB+vYEKlLUxTUKoRjVeywwXq7eYxFfzfCqv+WTT0CHYgIQER2O/wqK3WUPJOHPgU3KDVjAMryhnmXpoJPAkcTg1uyJb390f+SaHVMd5XUc74M5UT7nnkt9wlanlSR4ttKUaZIjSnST+99tjw=
+	t=1760455793; cv=none; b=j1XQWKi8WN7G9scTqLgLlqifMz8E6LUlB14GppTm3GpgaMApJ0sI5c6NWHZ7qSCgsvFYaGIeOTdfCAm2Mi0Cs/acguuvWhw/74+oP4MZW647NzVOhMouA9nDKwC8IcGijt67ppD7EfDZqNiIemql979tk0+kqmXoU3ZF9hnbhog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455784; c=relaxed/simple;
-	bh=BCLZnlFtfyfyqV95kvnr8DLzhbdzdFCeJdir6zX5uTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dN/EBU/2Id29XX6ksZbS2alp59ZJ77GhDPDYQkStcFXBdtLD2B8D6UaDEQuokN+X6PRS75FPER2XfNLN0LnVb0GKhSsAy2Avs5+1DuQ70ccaKyzoRaNcz4eTskCVHIY4A7oTJomJXHTDrQjEuozg12U2yWVbjhRKIF90TCRkhpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ui+5zuIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D838AC4CEE7;
-	Tue, 14 Oct 2025 15:29:43 +0000 (UTC)
+	s=arc-20240116; t=1760455793; c=relaxed/simple;
+	bh=zYExi83W0RHyJrqMwtyqJRZDpbfqUykmcag8kOhkVUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WpP3fCN/FAyeO/tZaFyw7dOjdU068HiY4vz9IlQVRT31a5YJLmDYsqrBFayvicpVXz20dW9grdyOw/MxcJopBdIzKrJRj9SrFbf4EO9BWc7gbW+xFIHAz3+QU2WKZKED0EcmwQm5YtRxnLV80Ikd7LNsIfqxbENqTxpc8SXusWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eMkaAH4V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40A1C4CEE7;
+	Tue, 14 Oct 2025 15:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760455784;
-	bh=BCLZnlFtfyfyqV95kvnr8DLzhbdzdFCeJdir6zX5uTc=;
+	s=k20201202; t=1760455793;
+	bh=zYExi83W0RHyJrqMwtyqJRZDpbfqUykmcag8kOhkVUI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Ui+5zuIWnH9o2ODiPohYBuH53HAXcp05rYdTb2k/l4FZoTMYVTi/zn2mHtu4w/lxw
-	 4DU9Ds3qR9LCrH7/YQhG3qZKpC0uS9r88ZG//Xe/U7h5UnivDsuLe8gDRQqdqSBC1b
-	 KQzYtLhIYs3yF0eT9UYpeOySOWVQKuhQ99brGjB4ZuTiTUUO+DqSGvumpszs7kE5CV
-	 uNGFXL7ivKgcEL+L7Z668sMoxp8Y9RHnwP5EVJcaN9vYxuvQC1GA6yKTpTuD/s/avo
-	 0zWtljnka2dgEzaAkYjQ8wcfF2tOSt9fsYmE5RWHhLKm2YHMMNsTVBCFerys4sxb7v
-	 1/o2JHyUIXgZw==
+	b=eMkaAH4VUyJhLA+HEJG27I9pneelGaB8Y6DWmSQOO2qeeoZXmbHeHdaRSz/LHr53U
+	 JPYOf98BlNoLSMpffIHQoztBZpWlMtYt//Z+NMY0C8lTN6IkgBtGj+7sZaFBKvazQK
+	 E9CtgO2JZrsSYLEub6xnkVsKyOp4AhLYEisIjvdpRIP1O2+7+P2jkRaUBf1tzHqlfH
+	 Od4tZLfPZ1AKRu1RegKMPhC2hGkEE4jilFtA7C3oxCdksozbgdtDOoVcIe2rNQvbih
+	 2H4v9pDdDYwYpxfza+OAhd/gDcolFANkctu1tFo+4aYdsjhR+LX7aiqEH1EE3GDS1/
+	 ocRhZ/HwW3phw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>,
-	Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Corey Minyard <corey@minyard.net>,
+To: Corey Minyard <corey@minyard.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: openbmc@lists.ozlabs.org,
-	openipmi-developer@lists.sourceforge.net,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: openipmi-developer@lists.sourceforge.net,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: ipmi: Convert nuvoton,npcm750-kcs-bmc to DT schema
-Date: Tue, 14 Oct 2025 10:29:34 -0500
-Message-ID: <20251014152935.3782463-1-robh@kernel.org>
+Subject: [PATCH] dt-bindings: ipmi: Convert aspeed,ast2400-ibt-bmc to DT schema
+Date: Tue, 14 Oct 2025 10:29:47 -0500
+Message-ID: <20251014152948.3782738-1-robh@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,123 +62,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the nuvoton,npcm750-kcs-bmc binding to DT schema format. It's a
+Convert the aspeed,ast2400-ibt-bmc binding to DT schema format. It's a
 straight-forward conversion.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/ipmi/npcm7xx-kcs-bmc.txt         | 40 --------------
- .../ipmi/nuvoton,npcm750-kcs-bmc.yaml         | 55 +++++++++++++++++++
- 2 files changed, 55 insertions(+), 40 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
- create mode 100644 Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml
+ .../bindings/ipmi/aspeed,ast2400-ibt-bmc.txt  | 28 ------------
+ .../bindings/ipmi/aspeed,ast2400-ibt-bmc.yaml | 44 +++++++++++++++++++
+ 2 files changed, 44 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.txt
+ create mode 100644 Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.yaml
 
-diff --git a/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt b/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
+diff --git a/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.txt b/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.txt
 deleted file mode 100644
-index 4fda76e63396..000000000000
---- a/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
+index 25f86da804b7..000000000000
+--- a/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.txt
 +++ /dev/null
-@@ -1,40 +0,0 @@
--* Nuvoton NPCM KCS (Keyboard Controller Style) IPMI interface
+@@ -1,28 +0,0 @@
+-* Aspeed BT (Block Transfer) IPMI interface
 -
--The Nuvoton SOCs (NPCM) are commonly used as BMCs
--(Baseboard Management Controllers) and the KCS interface can be
--used to perform in-band IPMI communication with their host.
+-The Aspeed SOCs (AST2400 and AST2500) are commonly used as BMCs
+-(BaseBoard Management Controllers) and the BT interface can be used to
+-perform in-band IPMI communication with their host.
 -
 -Required properties:
+-
 -- compatible : should be one of
--    "nuvoton,npcm750-kcs-bmc"
--    "nuvoton,npcm845-kcs-bmc", "nuvoton,npcm750-kcs-bmc"
--- interrupts : interrupt generated by the controller
--- kcs_chan : The KCS channel number in the controller
+-	"aspeed,ast2400-ibt-bmc"
+-	"aspeed,ast2500-ibt-bmc"
+-	"aspeed,ast2600-ibt-bmc"
+-- reg: physical address and size of the registers
+-- clocks: clock for the device
+-
+-Optional properties:
+-
+-- interrupts: interrupt generated by the BT interface. without an
+-  interrupt, the driver will operate in poll mode.
 -
 -Example:
 -
--    lpc_kcs: lpc_kcs@f0007000 {
--        compatible = "nuvoton,npcm750-lpc-kcs", "simple-mfd", "syscon";
--        reg = <0xf0007000 0x40>;
--        reg-io-width = <1>;
--
--        #address-cells = <1>;
--        #size-cells = <1>;
--        ranges = <0x0 0xf0007000 0x40>;
--
--        kcs1: kcs1@0 {
--            compatible = "nuvoton,npcm750-kcs-bmc";
--            reg = <0x0 0x40>;
--            interrupts = <0 9 4>;
--            kcs_chan = <1>;
--            status = "disabled";
--        };
--
--        kcs2: kcs2@0 {
--            compatible = "nuvoton,npcm750-kcs-bmc";
--            reg = <0x0 0x40>;
--            interrupts = <0 9 4>;
--            kcs_chan = <2>;
--            status = "disabled";
--        };
--    };
-diff --git a/Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml b/Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml
+-	ibt@1e789140 {
+-		compatible = "aspeed,ast2400-ibt-bmc";
+-		reg = <0x1e789140 0x18>;
+-		interrupts = <8>;
+-		clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
+-	};
+diff --git a/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.yaml b/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.yaml
 new file mode 100644
-index 000000000000..fc5df1c5e3bc
+index 000000000000..c4f7cdbbe16b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/ipmi/nuvoton,npcm750-kcs-bmc.yaml
-@@ -0,0 +1,55 @@
++++ b/Documentation/devicetree/bindings/ipmi/aspeed,ast2400-ibt-bmc.yaml
+@@ -0,0 +1,44 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/ipmi/nuvoton,npcm750-kcs-bmc.yaml#
++$id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-ibt-bmc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Nuvoton NPCM KCS BMC
++title: Aspeed Block Transfer (BT) IPMI interface
 +
 +maintainers:
-+  - Avi Fishman <avifishman70@gmail.com>
-+  - Tomer Maimon <tmaimon77@gmail.com>
-+  - Tali Perry <tali.perry1@gmail.com>
-+
-+description:
-+  The Nuvoton SOCs (NPCM) are commonly used as BMCs (Baseboard Management
-+  Controllers) and the KCS interface can be used to perform in-band IPMI
-+  communication with their host.
++  - Joel Stanley <joel@jms.id.au>
 +
 +properties:
 +  compatible:
-+    oneOf:
-+      - const: nuvoton,npcm750-kcs-bmc
-+      - items:
-+          - enum:
-+              - nuvoton,npcm845-kcs-bmc
-+          - const: nuvoton,npcm750-kcs-bmc
++    enum:
++      - aspeed,ast2400-ibt-bmc
++      - aspeed,ast2500-ibt-bmc
++      - aspeed,ast2600-ibt-bmc
 +
 +  reg:
++    maxItems: 1
++
++  clocks:
 +    maxItems: 1
 +
 +  interrupts:
 +    maxItems: 1
 +
-+  kcs_chan:
-+    description: The KCS channel number in the controller
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+    maximum: 3
-+
 +required:
 +  - compatible
 +  - reg
-+  - interrupts
-+  - kcs_chan
++  - clocks
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    kcs@0 {
-+        compatible = "nuvoton,npcm750-kcs-bmc";
-+        reg = <0x0 0x40>;
-+        interrupts = <9 4>;
-+        kcs_chan = <1>;
++    #include <dt-bindings/clock/aspeed-clock.h>
++
++    bt@1e789140 {
++        compatible = "aspeed,ast2400-ibt-bmc";
++        reg = <0x1e789140 0x18>;
++        interrupts = <8>;
++        clocks = <&syscon ASPEED_CLK_GATE_LCLK>;
 +    };
 -- 
 2.51.0
