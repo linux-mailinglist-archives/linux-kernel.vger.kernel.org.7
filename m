@@ -1,238 +1,112 @@
-Return-Path: <linux-kernel+bounces-851954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B6DBD7C61
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42803BD7C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A30A34392E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F32401CEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E720E313E25;
-	Tue, 14 Oct 2025 06:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w5WafnkN"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC98308F39;
+	Tue, 14 Oct 2025 06:54:19 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3929231329D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0482405FD
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760424585; cv=none; b=YDjRk6qhoG35srXs6eNWgVJpOuMf+a0DGsbmuyp6IVncgR+VFBDWBco6eLcyUxZ2DxcR0KBqXtdz5ZCKJQtNFuJKYdD+aKsuhKHpBnAg7JlIUa8OYkzQk3Fyb3/7VZ5tir2arQdKUfKRm6Xmyp7GVCk47J1Cd60wkcnlZibHz6A=
+	t=1760424859; cv=none; b=TyNnE+rBVm0283O2M1ZxmYZtnAVqL4OZ9xruJi/307gdNE35QnbH42XoZfPfsE9iIbT4MXmyBS26HUcCI9FH6jWnoJ1rGpIq03dSt0DRulUD4KZMk7ZR2KhdVjOTskog1l2Wd8SDmK1VXFh6wvVKW9X2D6zqKUMJ4vsVjqkNuGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760424585; c=relaxed/simple;
-	bh=KHv1oPWvS56/sbOUxmLhi54A3IbzEbCV65h12OeEbZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U1uz5dGn1AI80YEuFpk5cXyxPxBEoMtLdCSxlNM+8jf3sxLxHVVRdn5/5ur/CzTKiUdZSlE+NK1rfeFZgZ9DoIuZmnhspqGRnfnjxiFAGAAcxYg6ribbgfX+4YJyGrL2A5+e2P63J8ScHYeEnH06yeHjhgBV3E2iYKle/Pmpu9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w5WafnkN; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0c833afd-64d5-4128-a03a-c47ff834b7ab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760424580;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bqw4wlUUpqHY1zTsNaI6KPl3Fd0ZPpUoNdegpj+F+GI=;
-	b=w5WafnkN4Pd2sN5sguTO6JcMstbnbaCkYxq3XgFIaIrllCvPiKOHODjcdp9y30yM/FexFh
-	0pcwSDLv37z03FGyQCA5tU7vNXsY0ws+RtvH5bmZqDj7hWbTrmm58CuHQwJ1DACW62YOUc
-	CQPua4UYMtenb+k2wGn7Mg7mB3yKIDY=
-Date: Tue, 14 Oct 2025 14:49:27 +0800
+	s=arc-20240116; t=1760424859; c=relaxed/simple;
+	bh=tqzwhNo1IWfDraFay+LYC+wpOQbn/Qdpr11j6JPhO7E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YLhsKChF5VeMunKFPxjoywPbWA+fq2abXO1Wi+Xt3UsfJ9CeDdUqlPz1nEAJCoDXn3vWhKCFl0XiIkR9RKw+gnUhJshLWgSRPe37gxj9PON9ZzxZdQ7XayGVjJ43K5i1rjaHYDNc7vg0Ktz6zY6lqTv6q8R2S80dwCj9zovP+mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201614.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202510141454085612;
+        Tue, 14 Oct 2025 14:54:08 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Tue, 14 Oct 2025 14:54:09 +0800
+Received: from inspur.com (10.100.2.96) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Tue, 14 Oct 2025 14:54:08 +0800
+Received: from localhost.localdomain.com (unknown [10.94.17.151])
+	by app1 (Coremail) with SMTP id YAJkCsDwEnaP8+1oNfoWAA--.533S4;
+	Tue, 14 Oct 2025 14:54:08 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <alain.volmat@foss.st.com>, <rgallaispou@gmail.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, Chu
+ Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH 1/1] drm/sti: call drm_edid_connector_update when edit is NULL
+Date: Tue, 14 Oct 2025 14:54:06 +0800
+Message-ID: <20251014065406.4017-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 0/4] reparent the THP split queue
-To: Zi Yan <ziy@nvidia.com>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- david@redhat.com, lorenzo.stoakes@oracle.com, harry.yoo@oracle.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- lance.yang@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Qi Zheng <zhengqi.arch@bytedance.com>
-References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
- <925E0247-2976-4D85-A8AA-E8C92C64CED4@nvidia.com>
- <df9a3e22-caca-4298-b7d8-5334ce5446a0@linux.dev>
- <C3134C16-584F-41D2-88E4-4B94B58C16F2@nvidia.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <C3134C16-584F-41D2-88E4-4B94B58C16F2@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: YAJkCsDwEnaP8+1oNfoWAA--.533S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4Uuw4rAF4rAry7XryxXwb_yoW3XFX_WF
+	y8WFWfXrsIkr92yw129r45ZF9avayruFWkGrn3ta4xtr47X3y5G3yDtFyjva17Xr4UtF9I
+	k3ZagFy5Zr93GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?4D1F9pRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+Kbv0OT9rPYAOFMwQ4lF3QtMZ76xEoBV/ntrbBgynwF5g283VgfV0MswHKSjGP+0/JESk
+	ZnH34Vg4+HwgcfDdH1s=
+Content-Type: text/plain
+tUid: 20251014145408de091ac489bfdb1d3b874b4e775fbbdb
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Hi Zi,
+call drm_edid_connector_update to reset the information when edit is NULL.
+We can see the following comments in drm_edid.c
+If EDID is NULL, reset the information.
 
-On 10/14/25 12:37 AM, Zi Yan wrote:
-> On 13 Oct 2025, at 3:23, Qi Zheng wrote:
-> 
+Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+---
+ drivers/gpu/drm/sti/sti_hdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[snip]
-
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index b5eea2091cdf6..5353c7bd2c9af 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -4286,8 +4286,10 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->>          }
->>          folios_put(&fbatch);
->>
->> -       if (sc->nr_to_scan)
->> +       if (sc->nr_to_scan) {
->> +               cond_resched();
->>                  goto retry;
->> +       }
->>
->>          /*
->>           * Stop shrinker if we didn't split any page, but the queue is empty.
->>
-> 
-> It does not fix the issue, but only gets rid of the soft lockup warning.
-> "echo 3 | sudo tee /proc/sys/vm/drop_caches" just runs forever.
-
-Oh, my bad, I didn't notice that.
-
-> 
-> Looking at the original code, sc->nr_to_scan was one of the two conditions
-> on breaking out of split_queue scanning and was never checked again
-> afterwards. When split_queue size is smaller than nr_to_scan, your code
-> will retry forever but not the original one. After I added pr_info() to
-> print sc->nr_to_scan at
-> 1) before retry:,
-> 2) before for (... folio_batch_count();...),
-> 3) before "if (sc->nr_to_scan)",
-> 
-> I see that 1) printed 2, 2) and 3) kept printing 1. It matches my
-> above guess.
-
-Got it.
-
-> 
-> The below patch fixes the issue:
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 43a3c499aec0..d38816a0c117 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -4415,7 +4415,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->   	}
->   	folios_put(&fbatch);
-> 
-> -	if (sc->nr_to_scan)
-> +	if (sc->nr_to_scan && !list_empty(&ds_queue->split_queue))
->   		goto retry;
-> 
->   	/*
-> 
-
-Thanks! After applying this locally, I no longer see softlockup and
-no longer see deferred_split_scan() in perf hotspots.
-
-Will do this in the next version.
-
-Thanks,
-Qi
-
-> 
-> 
->>
->>> [   36.441592] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
->>> [   36.441594] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
->>> [   36.441598] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
->>> [   36.441601] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
->>> [   36.441602] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
->>> [   36.441603] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
->>> [   36.441604] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
->>> [   36.441606] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
->>> [   36.441607] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   36.441608] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
->>> [   36.441614] Call Trace:
->>> [   36.441616]  <TASK>
->>> [   36.441619]  deferred_split_scan+0x1e0/0x480
->>> [   36.441627]  ? _raw_spin_unlock_irqrestore+0xe/0x40
->>> [   36.441630]  ? kvfree_rcu_queue_batch+0x96/0x1c0
->>> [   36.441634]  ? do_raw_spin_unlock+0x46/0xd0
->>> [   36.441639]  ? kfree_rcu_monitor+0x1da/0x2c0
->>> [   36.441641]  ? list_lru_count_one+0x47/0x90
->>> [   36.441644]  do_shrink_slab+0x153/0x360
->>> [   36.441649]  shrink_slab+0xd3/0x390
->>> [   36.441652]  drop_slab+0x7d/0x130
->>> [   36.441655]  drop_caches_sysctl_handler+0x98/0xb0
->>> [   36.441660]  proc_sys_call_handler+0x1c7/0x2c0
->>> [   36.441664]  vfs_write+0x221/0x450
->>> [   36.441669]  ksys_write+0x6c/0xe0
->>> [   36.441672]  do_syscall_64+0x50/0x200
->>> [   36.441675]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>> [   36.441678] RIP: 0033:0x7f7fe36e7687
->>> [   36.441685] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
->>> [   36.441686] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
->>> [   36.441688] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
->>> [   36.441689] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
->>> [   36.441690] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
->>> [   36.441691] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
->>> [   36.441692] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
->>> [   36.441694]  </TASK>
->>> [   64.441531] watchdog: BUG: soft lockup - CPU#0 stuck for 53s! [tee:810]
->>> [   64.441537] Modules linked in:
->>> [   64.441545] CPU: 0 UID: 0 PID: 810 Comm: tee Tainted: G             L      6.17.0-mm-everything-2024-01-29-07-19-no-mglru+ #526 PREEMPT(voluntary)
->>> [   64.441548] Tainted: [L]=SOFTLOCKUP
->>> [   64.441552] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
->>> [   64.441555] RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
->>> [   64.441565] Code: 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 53 48 89 f3 e8 92 68 fd fe 80 e7 02 74 06 fb 0f 1f 44 00 00 <65> ff 0d d0 5f 7e 01 74 06 5b c3 cc cc cc cc 0f 1f 44 00 00 5b c3
->>> [   64.441566] RSP: 0018:ffffc900029afb60 EFLAGS: 00000202
->>> [   64.441568] RAX: 0000000000000001 RBX: 0000000000000286 RCX: ffff888101168670
->>> [   64.441570] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffff888101168658
->>> [   64.441571] RBP: 0000000000000001 R08: ffff88813ba44ec0 R09: 0000000000000000
->>> [   64.441572] R10: 00000000000001a8 R11: 0000000000000000 R12: ffff8881011685e0
->>> [   64.441573] R13: 0000000000000000 R14: ffff888101168000 R15: ffffc900029afd60
->>> [   64.441574] FS:  00007f7fe3655740(0000) GS:ffff8881b7e5d000(0000) knlGS:0000000000000000
->>> [   64.441576] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   64.441577] CR2: 0000563d4d439bf0 CR3: 000000010873c006 CR4: 0000000000370ef0
->>> [   64.441581] Call Trace:
->>> [   64.441583]  <TASK>
->>> [   64.441591]  deferred_split_scan+0x1e0/0x480
->>> [   64.441598]  ? _raw_spin_unlock_irqrestore+0xe/0x40
->>> [   64.441599]  ? kvfree_rcu_queue_batch+0x96/0x1c0
->>> [   64.441603]  ? do_raw_spin_unlock+0x46/0xd0
->>> [   64.441607]  ? kfree_rcu_monitor+0x1da/0x2c0
->>> [   64.441610]  ? list_lru_count_one+0x47/0x90
->>> [   64.441613]  do_shrink_slab+0x153/0x360
->>> [   64.441618]  shrink_slab+0xd3/0x390
->>> [   64.441621]  drop_slab+0x7d/0x130
->>> [   64.441624]  drop_caches_sysctl_handler+0x98/0xb0
->>> [   64.441629]  proc_sys_call_handler+0x1c7/0x2c0
->>> [   64.441632]  vfs_write+0x221/0x450
->>> [   64.441638]  ksys_write+0x6c/0xe0
->>> [   64.441641]  do_syscall_64+0x50/0x200
->>> [   64.441645]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>> [   64.441648] RIP: 0033:0x7f7fe36e7687
->>> [   64.441654] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
->>> [   64.441656] RSP: 002b:00007ffdffcbba10 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
->>> [   64.441658] RAX: ffffffffffffffda RBX: 00007f7fe3655740 RCX: 00007f7fe36e7687
->>> [   64.441659] RDX: 0000000000000002 RSI: 00007ffdffcbbbb0 RDI: 0000000000000003
->>> [   64.441660] RBP: 00007ffdffcbbbb0 R08: 0000000000000000 R09: 0000000000000000
->>> [   64.441661] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
->>> [   64.441662] R13: 0000558d40be64c0 R14: 00007f7fe383de80 R15: 0000000000000002
->>> [   64.441663]  </TASK>
->>>
->>>
->>>
->>> --
->>> Best Regards,
->>> Yan, Zi
-> 
-> 
-> --
-> Best Regards,
-> Yan, Zi
+diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+index 4e7c3d78b2b9..31a72f7f4d43 100644
+--- a/drivers/gpu/drm/sti/sti_hdmi.c
++++ b/drivers/gpu/drm/sti/sti_hdmi.c
+@@ -1008,6 +1008,7 @@ static int sti_hdmi_connector_get_modes(struct drm_connector *connector)
+ 	return count;
+ 
+ fail:
++	drm_edid_connector_update(connector, NULL);
+ 	DRM_ERROR("Can't read HDMI EDID\n");
+ 	return 0;
+ }
+-- 
+2.43.7
 
 
