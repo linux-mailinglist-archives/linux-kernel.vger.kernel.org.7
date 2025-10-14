@@ -1,342 +1,99 @@
-Return-Path: <linux-kernel+bounces-851831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B24BD764F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:16:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D54BD765C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C3F9B34EC7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0CC319A23AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60D226F2BF;
-	Tue, 14 Oct 2025 05:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766E728851E;
+	Tue, 14 Oct 2025 05:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eQ5oB9Sw"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013063.outbound.protection.outlook.com [40.93.196.63])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vyloUoVM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49462367D9;
-	Tue, 14 Oct 2025 05:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760418995; cv=fail; b=NlC37JhhZDVxXyYQZhkj+1X8UFrtb2q/h1ens/RwiulTY8PsAJ9tqdJI8KA4YGdlaIhsMIV9xkfiffZ7ICcUkWXGMgL9WE/Ldo5f8mffuz4NaVza2dT9BBm9JC3rfw1QNB210ZBKlMhydr7v9c1cyeZkGbiIwcfbJJwX9f0Q6zg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760418995; c=relaxed/simple;
-	bh=DkAFsEokUv4GQEWwRBJp9AjjSnSAwuZ/kl3TzN/iUQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jPoVc8H5BT7rep2bXcFhOubgpkQoJKaCuQ1g2k7UL9+M5Gil8sPFbsLBT4d2GHseucsPcmeKEhkgeOgXprWwGzFhG/jfWuH4HzCXGCIHcz8LD426Uo9AVXIZqV1alBe59PFPicsY1L/rS5KyqPmCJWiw+13vGj2VGSD3I15jlU0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eQ5oB9Sw; arc=fail smtp.client-ip=40.93.196.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ArV+wUaIqGy2ppfX6JCUqzPq6qRrFw6mLwff0C24Wnpr9EctsDZKiUlFGdKQhbCENTAtIqn0dB2CK7dGqYrLyjxZHohWB+6NxaEgEzygb11Z32PaVdJNzz3a1JSLr/Tz+OAZvAQhBVgNPfJrD6jKGgWvSqnhqfqqTY2YoSJtoqTzVEzglK5XHRbA1NUpjrVXNqdSN/IHwzitDePaLU8EwXSYWgCjy4sLPQVxMqd99R2orThb47uN4iz2j321wUnWEordHJaXl15hczFzaGNfFLVWgRXvjuvIBHkk0W+ss9t1uKpdQIcBxDEOmuc6O91T0GWVaQOQjPFrunkT2BnxYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dHwQtuRgYQkZfsPSnKTIqcgvFvblW38pCCUh+jpEy9I=;
- b=AzxWEUNQAF/IKaH1WvzpKq7BVU+Sd5k0ddcIFUb4lFuAls11a6/T5U/IF594/8Zz9h51dUjj5A+gsCHlewbFIP0F3ab9OyyPfa1KAMdUfqXD1ySYBoTpSZ5XeDdZKdFUtcz5xdn1G2j2sxTmYMvUsb9/A3bqGv/wbAURghBcsCLPFJ6P4xTX1h9Y6UcNiyxg4bifyr9p+PnwrewKGGyn3R6tttztd6gBOt0AdmQAQt8jyyQiiJyVt8mzKfXSOW4+qY44+fwEEF9goc6TCzA2pHejWmWwr/SZ24jCpLYfxS/rdNTQmua+k7ce+QTFwpNxdFveZu2UgYphxUBwa2+eMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dHwQtuRgYQkZfsPSnKTIqcgvFvblW38pCCUh+jpEy9I=;
- b=eQ5oB9Sw+LsUhdy4CeWN46qgr1D6f3WLNLuaZf33ppGmTmrNdeZiLm8MW9CLVJetWdaJqEvVv5qHjLPwO53lzkHi5G3TOK/Zhtu38srTprXwHPMhblVZ+TlIP9KItCjpSiWNTfUHYM0p2Z8u9p8WA8zD5HlOGFZ+rGQn07iwLiHxvXIF5Vy/1kbPbQre9R5SjxhBRBanoxVbRW0LCh4kx4W4Zax2P2gevMVcApI8kxUWFA0dshtxBbDuIZnbu/2fY9/NbdoH7XH3EXX+02soDWUd29J9XG/KhOIkOHXyV06ENLXTZFFiUD8vgRZTLfVCzBZhpyTVwOFejp9qGxHNig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- MW4PR12MB6900.namprd12.prod.outlook.com (2603:10b6:303:20e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 05:16:30 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 05:16:30 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>,
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
- Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v4 02/24] clk: tegra: set CSUS as vi_sensor's gate for Tegra20,
- Tegra30 and Tegra114
-Date: Tue, 14 Oct 2025 14:16:23 +0900
-Message-ID: <3368358.XrmoMso0CX@senjougahara>
-In-Reply-To: <20251008073046.23231-3-clamor95@gmail.com>
-References:
- <20251008073046.23231-1-clamor95@gmail.com>
- <20251008073046.23231-3-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SG2PR01CA0195.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::17) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A90284886;
+	Tue, 14 Oct 2025 05:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760419077; cv=none; b=T7VhalUtyV65fh3qGOVRVtwnWTfPHJpzUxE7hr4cMvaXAfXx5M60YHVXVryeAbwpLEbdodm0b8npr0iOYlRK+UjnxbxxDFmByBnm0RHJMATVDRJPciuXjGmOGYvK1cI5tyiQd9glGf/LeuSU4/Z31uvWejWS4hyRXwdUTgNOLxo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760419077; c=relaxed/simple;
+	bh=Dtyuh444g7DKNV9pBujDeAEPnHQc6ECr+0VZ8XEmtLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7Tz5dWmTow7+OoWrZON4Q3qu0Gwmjoz3t9AS/9O+yh1Vrg83M6kmiatHRMGQYqp7S1mQl2qkMIueCSVpYK216+pi4NJAHBgniYD07cSQVDOeZKZ4t/+EAq715Z5cyKo6Ztkv9+41nwCrU6k0e1kri0tDNibFiO5ixLm6Xa8trg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vyloUoVM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E24C4CEE7;
+	Tue, 14 Oct 2025 05:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760419077;
+	bh=Dtyuh444g7DKNV9pBujDeAEPnHQc6ECr+0VZ8XEmtLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vyloUoVMeriqUBxf4K0Hfe8g+pgSVltbBgkoVN9CDRPjHJrLzeX+Lo0Xqp8RBDM5W
+	 fqmMoGjZLE0zbY+vdPp04VfiRJ3APWSMeqdcgO27ekl646QDi0HunWydzdQKJxnSxZ
+	 Lb3YYyScq3TBqOrWMoYSHHuv2vRAvOoP64wSx8ZM=
+Date: Tue, 14 Oct 2025 07:17:53 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Kuen-Han Tsai <khtsai@google.com>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: core: Add tracepoints for device allocation and
+ state changes
+Message-ID: <2025101423-caravan-dominoes-0037@gregkh>
+References: <20251013-usbcore-tracing-v1-0-b885a3121b09@google.com>
+ <20251013-usbcore-tracing-v1-2-b885a3121b09@google.com>
+ <66a98159-b75c-41f0-8b4d-0ce9b1c8e4ec@rowland.harvard.edu>
+ <CAKzKK0pzfSFJ15esnGB9gY_HMrgubZ1QtSkLOUo2FvsNGtCi6g@mail.gmail.com>
+ <3d4f625f-eecb-4265-ac86-1420d646aa14@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|MW4PR12MB6900:EE_
-X-MS-Office365-Filtering-Correlation-Id: a86faf23-175f-4ffd-870f-08de0ae0d548
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cmtqNzdVWGFpZ1FiUVl0Mlc0WUdnUHEwZHlOZ3Z3bTgwWFpUMjFqUG9IL2dI?=
- =?utf-8?B?UzRIUGZ2UXF2VTRZWVk2OU1GVHFKelk4aG8ybTRwaWNSSXVhNjF0bW9vbCtE?=
- =?utf-8?B?bXFKeHV6K280ek9VSmU3NVV2RThzWEhqNExVbXlMQ29RNG9abTBrOU9Uc01H?=
- =?utf-8?B?WloyaW5HQUFkZE91ZHExc2I5MnJRSHBvWVBWRUk0NHZzeVlJYlRyTmhQa1du?=
- =?utf-8?B?L2R1Znk4K1JFaXZock9HRUljd3BuVHlEaitqSnlTVTc5OXBuTWNBN3Bwcllu?=
- =?utf-8?B?UUdhMWZXdTB3OU1EdUljdy9jNFVrZ2dyMGV4SVFWbHEyQzRId3NNY3VoTUo4?=
- =?utf-8?B?a0VFaGtZeFcvOUMvbW4wbVBMTGMwTHNtTDdsclZJSFZCU1NMbTZrazBNN21V?=
- =?utf-8?B?RktrUGpoNThCMDY1NXFaWE0yZUhIY1ZodW45bG1FUHAzNWkwYWd6MDlWcG42?=
- =?utf-8?B?VTdnYmRkdEt2UEUwLzBPZHpEVmhuSkRPaGRnK0NJMmZkWkVEMWQ2UnBsbUNh?=
- =?utf-8?B?azNLYUFKM2pZb3Y1ZVUvT01pNDJicE5rM2VHWUpKU1hBQXJzaVUxSzA3Y3Qz?=
- =?utf-8?B?U3FJeDEvZzFTV29UU1EwU1pySXVDSDJzSGF4RTdUMVh5ajJzaGRhdGF5bVhP?=
- =?utf-8?B?bDFzL1ZQbWdaVlZOTjJVNEVxUmwzZDZ2U0EwdEs5TmRvUExxTXBrNE8vK1Rk?=
- =?utf-8?B?ZVhIWFhPaml3UVdtczhtNytGUXlmY3hSUnorRkk3bVBnOWtiM2JCR2Y1NVFJ?=
- =?utf-8?B?QTlkMC93T2lRdG1pNnhSZEdBWFFwMUdWUE14UkhHYjFkUWVuTXdlNUMraGRY?=
- =?utf-8?B?dWx6YnlsaG1vVWM3bmVkbDhiVlpmVGRzV1dYUDUxOGFFaDBqQVJoakNtTDY2?=
- =?utf-8?B?N1UrYW4rRDM0L3FlbUt1NHp3emw0SVptZkJWNEM2SUJHdjN2bzFmdmF3OHo3?=
- =?utf-8?B?YzNZdjNsbWE1SndQUUJndWplZ2UxNUIxaEtmdlV2L1MrZXY3UW5jM0IvVStr?=
- =?utf-8?B?TXJPTXl1Z1JIQ1p6MktiZ3cwQWNsUHBCeDZaem54VzVBMVZRYngzTUJSdmFS?=
- =?utf-8?B?TGtLcDU0UnV1aitDd1lUVGR4REVOSmFwZHFKSzk1YWNJOXpvM0hGVHFQMVRs?=
- =?utf-8?B?dXBGMFFjQ1NMVjZqdjd6amNvaVlFNzdTZlZIZmFOQWhCbWNyc1l2eFdNdzha?=
- =?utf-8?B?dWtmVE50UkM5Ui9XTkI5UFFPOTNpSGVNMkZ4VHVHQTB1WU9iQmNIZXZEQTJ1?=
- =?utf-8?B?UnBLY1B1cjdPVlpTamZ1WVBDd21wemhtZ3BsRG1NVE5kakNaZWRMeW96UVVN?=
- =?utf-8?B?dXFNZVM3TWdMZFRncWpVOUltWm1BYTlsOE9CMnk0aW5idHFxaXVVMVhvVDlJ?=
- =?utf-8?B?aE5Bc3dHNGJUazRMZ0NKS1hpTVhha3MrRFY2Um1nQW9Td3E0SVZGaC9XRUVV?=
- =?utf-8?B?MlpDMmJTd0phK3Z0OVB0MGRFTGZFQzdHR3llbnBBSnJWQ1NSZnlHYUJwa0ps?=
- =?utf-8?B?bGhzSnU4aFlPZnU2MFFOR0cxVUNQQUhUeVpnODVyakwzR0lrb0syRTYva244?=
- =?utf-8?B?S0VwOXVqK0FyQXhSaGw5R0QzaHk2cWdSbjBSa1N4UDVNR2ZGblJ0aEJYOUM1?=
- =?utf-8?B?bk5NSTNwOUY1U1pNTWNFMzkvMU93R0JLSEdraUR5cUk0dkZ6STNYaTRubTJr?=
- =?utf-8?B?L0JIWnduaGIzY0xyb0hRU1JJWWx1K1dpS09TMkZESytJTXBCcnI1SktiSHp2?=
- =?utf-8?B?RFBZU011N1hVcVFtTE0ramIzaVI2aTJyeldzWTVaV1hxblYyRDl5MStzWGFF?=
- =?utf-8?B?UVdreXpPSDFtSUZUN21YUmNGRmFsd3p3clZmb01ZOUxidVJucWRwZ0hHNHFC?=
- =?utf-8?B?R2hjV3VENlJBL3lyamVrSHJ5Mm52TFhaVjgwcFVHanI2UlIxUC9ueEtaWUp6?=
- =?utf-8?B?NDBhT2R4MlhHVEc4SkkwOFJxUVhSWW1rckZYNlI2RnZmTFh1R0FUaHJZbkYx?=
- =?utf-8?Q?ayipM16FNqd6gjlyQg3q3lAv0djEQI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bnd6UGJWdVVad2ZNMVJ2U1lYRFpWdnpZS3hQZnpUOGcydXNlQVNRcVRCT21B?=
- =?utf-8?B?dWdhMGU2eXRKbXkxbmtOZDNvRjlzYzFyTERmbk5wTjVWbi9SRVQ5bUt0NXhu?=
- =?utf-8?B?VzZ6MkQ0WWlkcUd1bnhxcUxmYjRPQXhpSmxCVVN1bXlXdW5Jc1VyRHVqMS93?=
- =?utf-8?B?bm1jRW9kcU1oYUdTL0kvY1krMDB5Y1AzNjRWWE0rWGJ6ZzdFb0xxcGI5VmZJ?=
- =?utf-8?B?bGtkZ28vaXVQVy83bW00YmE5UUkwOS9aZU9RWkJIaGZTT3VlZy9qYWc2R1Vi?=
- =?utf-8?B?Q3ZKRFliOG9SWGlTQmlXYnBYemlURHN5Z2RUYndPZWRodFBYQkF2NUhLL3pw?=
- =?utf-8?B?UEhIdjhPZUtybWpVLzN2N0F4dWE5OGRpRTBGblFldTF2ZDN5ZWdOYTFoNVJr?=
- =?utf-8?B?eHNBcEkrdFZwUkIrQ2NNQ081S05USXljeEZULzRMR0U5ZHB3N1ZzT2RBY1Fp?=
- =?utf-8?B?dkx3ajBpWnk4bVhzU2ZxTmlQQys2U1BwRmliV2VwbmlSWVlBYlZjeWw1NEJk?=
- =?utf-8?B?TVNoUnZGVG15aGM3MFZSTCtDM3JLb1BHSnM5OG9TbWtOaDJZUEkzNnUwTnBu?=
- =?utf-8?B?dGRvanVaMHBrY0M1Qyt2NkloVS9hb214bTRjL1BMYlRvQmQra3l1YU1YUVll?=
- =?utf-8?B?WXk4VW92blVjcVZ2KzFjMnAxdk5qYnhhaHhBbnhldkx1UU9GYVViaTlVdjY0?=
- =?utf-8?B?c1JUUXZTY1J2c0xPeC9aOWRsdjdMUUFJU1VRUVROMzlWZE8zUzhwOGpPenFz?=
- =?utf-8?B?U0ZycE9jZGgwd2hFcnhrQWxVK2xkcjhvb3RpR0tBcXZweHZZQmlDb3RFK3ZC?=
- =?utf-8?B?a3hmM25CbXZVWnBkUWRleDJZTjhQWk4vNlI1b1I2L1dDbGszOWhaSkpucHlo?=
- =?utf-8?B?VWc1L05NalBBZVBKM2pwaE5GWFN2NVFOajYxOUNqNGpkWkxGbnpSNmNWWG10?=
- =?utf-8?B?dEZ1dEN6MmtqbXRtZzVwSnJrNWRpVEZYcGxqNlFSZUk5THpXTUlDM3RtOFBz?=
- =?utf-8?B?S1Y4Z1I3aENyQmVqdCs4a3BqTFJIT1lxRU9oYmFmSWVQNG9PUHJjM1FhTzBa?=
- =?utf-8?B?ekpSWE96KzVuVnZQTDV1QndZRUhPMkZ0aHJDdDJyeDhJeWlmUnIreStqcXhZ?=
- =?utf-8?B?cnNxU3YveEc3ZGhTeXQzZzZ3ejNsaVJGanZGcVVPc3VvNTlHeVFKZGkrY1hF?=
- =?utf-8?B?NVFRTThzNk0ySjVCcitIQlhiWDl3WmFRejc1cDJWeFpnc0pMOWhFN2E3b1I1?=
- =?utf-8?B?ZkFsMEFHOHFaZmtvK3IyM05pWmZwdDRkWFl2ZWdLajczQnQ5TTZHSEhoaVZn?=
- =?utf-8?B?U05YV1Y4aTV1dFdwWjRmQVhoWjlWN3pyTjRtVHpLaDRabEczTDhUVzJyOFlK?=
- =?utf-8?B?dUhMUTF6YVQxOVRseVAvY1VRbk8vVFpPUUdqeXlqa0Z0cmR1U0ZUenNxL01k?=
- =?utf-8?B?S0dQVk5JTGFoa2dRTmtHVTVYOWZNVXRUOU5pdHY5NjBVNDQ2UU05L2gxc080?=
- =?utf-8?B?dnFBenc2eFJ3QTVsQ1lodVJSdmlyOXNzajdqUHlaZ3RKSS82Rm9YVkJJZDdD?=
- =?utf-8?B?ZG5jY3ZHSFAyOWVzd0UwNE1Sd2xwL09PcmY1aE9ORzUwYTkrbGdaUHE5ZkZz?=
- =?utf-8?B?RG8wZS9zemxIbXluamgrcXlJd0I0ZXRYMGlxZW5XWmNkNGlibmFUSEdzazA2?=
- =?utf-8?B?VU9BUnpMY3pINFFPRTVaVmt5V1RVeGJxdmkwSDR1cjFRVmVwSk5RSk81Q2VJ?=
- =?utf-8?B?L29zUHlydW1jcFo3ZHZ1VUQxK3hwbk8vUjFvOEpUNjZFSFg2d3NGS2p0WlJO?=
- =?utf-8?B?M2pOdGVJOUtpbGhobWI2aWxua0VmNlFIcnhiN05qZ1FDL3NnRTc3Qm5MbG04?=
- =?utf-8?B?T28vTVY4MzU4dEpwRHNqOU41WmdJdTh3QmRKU0o2ODBIZkc3NlF6cDhaNWla?=
- =?utf-8?B?NGhtSnRIakM4akFWV09vVEV4bHdEVnRFM1FuSk5QQjVOSDBybFpDcFZ5S0w3?=
- =?utf-8?B?K0h6SzRVUW84b2FDbFE4OHE4VWlrNHVDU3NpS01VTERvcVFCUDZVQ2ZpcTVG?=
- =?utf-8?B?dlRpd1VFb0gxRHM5Uyt3N3dwMnpqR1N2SXJ1R1EycXp3Q1VqWmo0TkZhOEpu?=
- =?utf-8?Q?G3jv0PRDl+bkKlYwbwgzGkjDr?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a86faf23-175f-4ffd-870f-08de0ae0d548
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 05:16:30.4401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5YBPghOH2V1T6QFfm/phtMQsPcLU/VJnVlWUWTw3lztGrvOoAaXd5I3/UeGKv7PUqPml2QsQGsH8slfKjBRz+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6900
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d4f625f-eecb-4265-ac86-1420d646aa14@rowland.harvard.edu>
 
-On Wednesday, October 8, 2025 4:30=E2=80=AFPM Svyatoslav Ryhel wrote:
-> The CSUS clock is a clock gate for the output clock signal primarily
-> sourced from the VI_SENSOR clock. This clock signal is used as an input
-> MCLK clock for cameras.
->=20
-> Unlike later Tegra SoCs, the Tegra 20 can change its CSUS parent, which i=
-s
-> why csus_mux is added in a similar way to how CDEV1 and CDEV2 are handled=
-.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra114.c |  7 ++++++-
->  drivers/clk/tegra/clk-tegra20.c  | 20 +++++++++++++-------
->  drivers/clk/tegra/clk-tegra30.c  |  7 ++++++-
->  3 files changed, 25 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-teg=
-ra114.c
-> index 186b0b81c1ec..00282b0d3763 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -691,7 +691,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] =
-__initdata =3D {
->  	[tegra_clk_tsec] =3D { .dt_id =3D TEGRA114_CLK_TSEC, .present =3D true =
-},
->  	[tegra_clk_xusb_host] =3D { .dt_id =3D TEGRA114_CLK_XUSB_HOST, .present=
- =3D true },
->  	[tegra_clk_msenc] =3D { .dt_id =3D TEGRA114_CLK_MSENC, .present =3D tru=
-e },
-> -	[tegra_clk_csus] =3D { .dt_id =3D TEGRA114_CLK_CSUS, .present =3D true =
-},
->  	[tegra_clk_mselect] =3D { .dt_id =3D TEGRA114_CLK_MSELECT, .present =3D=
- true },
->  	[tegra_clk_tsensor] =3D { .dt_id =3D TEGRA114_CLK_TSENSOR, .present =3D=
- true },
->  	[tegra_clk_i2s3] =3D { .dt_id =3D TEGRA114_CLK_I2S3, .present =3D true =
-},
-> @@ -1047,6 +1046,12 @@ static __init void tegra114_periph_clk_init(void _=
-_iomem *clk_base,
->  					     0, 82, periph_clk_enb_refcnt);
->  	clks[TEGRA114_CLK_DSIB] =3D clk;
-> =20
-> +	/* csus */
-> +	clk =3D tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
-> +					     clk_base, 0, TEGRA114_CLK_CSUS,
-> +					     periph_clk_enb_refcnt);
-> +	clks[TEGRA114_CLK_CSUS] =3D clk;
-> +
->  	/* emc mux */
->  	clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
->  			       ARRAY_SIZE(mux_pllmcp_clkm),
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegr=
-a20.c
-> index 2c58ce25af75..d8d5afeb6f9b 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -530,7 +530,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] _=
-_initdata =3D {
->  	[tegra_clk_rtc] =3D { .dt_id =3D TEGRA20_CLK_RTC, .present =3D true },
->  	[tegra_clk_timer] =3D { .dt_id =3D TEGRA20_CLK_TIMER, .present =3D true=
- },
->  	[tegra_clk_kbc] =3D { .dt_id =3D TEGRA20_CLK_KBC, .present =3D true },
-> -	[tegra_clk_csus] =3D { .dt_id =3D TEGRA20_CLK_CSUS, .present =3D true }=
-,
->  	[tegra_clk_vcp] =3D { .dt_id =3D TEGRA20_CLK_VCP, .present =3D true },
->  	[tegra_clk_bsea] =3D { .dt_id =3D TEGRA20_CLK_BSEA, .present =3D true }=
-,
->  	[tegra_clk_bsev] =3D { .dt_id =3D TEGRA20_CLK_BSEV, .present =3D true }=
-,
-> @@ -834,6 +833,12 @@ static void __init tegra20_periph_clk_init(void)
->  				    clk_base, 0, 93, periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_CDEV2] =3D clk;
-> =20
-> +	/* csus */
-> +	clk =3D tegra_clk_register_periph_gate("csus", "csus_mux", 0,
-> +					     clk_base, 0, TEGRA20_CLK_CSUS,
-> +					     periph_clk_enb_refcnt);
-> +	clks[TEGRA20_CLK_CSUS] =3D clk;
-> +
->  	for (i =3D 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
->  		data =3D &tegra_periph_clk_list[i];
->  		clk =3D tegra_clk_register_periph_data(clk_base, data);
-> @@ -1093,14 +1098,15 @@ static struct clk *tegra20_clk_src_onecell_get(st=
-ruct of_phandle_args *clkspec,
->  	hw =3D __clk_get_hw(clk);
-> =20
->  	/*
-> -	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> -	 * clock is created by the pinctrl driver. It is possible for clk user
-> -	 * to request these clocks before pinctrl driver got probed and hence
-> -	 * user will get an orphaned clock. That might be undesirable because
-> -	 * user may expect parent clock to be enabled by the child.
-> +	 * Tegra20 CDEV1, CDEV2 and CSUS clocks are a bit special case, their
-> +	 * parent clock is created by the pinctrl driver. It is possible for
-> +	 * clk user to request these clocks before pinctrl driver got probed
-> +	 * and hence user will get an orphaned clock. That might be undesirable
-> +	 * because user may expect parent clock to be enabled by the child.
->  	 */
->  	if (clkspec->args[0] =3D=3D TEGRA20_CLK_CDEV1 ||
-> -	    clkspec->args[0] =3D=3D TEGRA20_CLK_CDEV2) {
-> +	    clkspec->args[0] =3D=3D TEGRA20_CLK_CDEV2 ||
-> +	    clkspec->args[0] =3D=3D TEGRA20_CLK_CSUS) {
->  		parent_hw =3D clk_hw_get_parent(hw);
->  		if (!parent_hw)
->  			return ERR_PTR(-EPROBE_DEFER);
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegr=
-a30.c
-> index 82a8cb9545eb..ca367184e185 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -779,7 +779,6 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] _=
-_initdata =3D {
->  	[tegra_clk_rtc] =3D { .dt_id =3D TEGRA30_CLK_RTC, .present =3D true },
->  	[tegra_clk_timer] =3D { .dt_id =3D TEGRA30_CLK_TIMER, .present =3D true=
- },
->  	[tegra_clk_kbc] =3D { .dt_id =3D TEGRA30_CLK_KBC, .present =3D true },
-> -	[tegra_clk_csus] =3D { .dt_id =3D TEGRA30_CLK_CSUS, .present =3D true }=
-,
->  	[tegra_clk_vcp] =3D { .dt_id =3D TEGRA30_CLK_VCP, .present =3D true },
->  	[tegra_clk_bsea] =3D { .dt_id =3D TEGRA30_CLK_BSEA, .present =3D true }=
-,
->  	[tegra_clk_bsev] =3D { .dt_id =3D TEGRA30_CLK_BSEV, .present =3D true }=
-,
-> @@ -1008,6 +1007,12 @@ static void __init tegra30_periph_clk_init(void)
->  				    0, 48, periph_clk_enb_refcnt);
->  	clks[TEGRA30_CLK_DSIA] =3D clk;
-> =20
-> +	/* csus */
-> +	clk =3D tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
-> +					     clk_base, 0, TEGRA30_CLK_CSUS,
-> +					     periph_clk_enb_refcnt);
-> +	clks[TEGRA30_CLK_CSUS] =3D clk;
-> +
->  	/* pcie */
->  	clk =3D tegra_clk_register_periph_gate("pcie", "clk_m", 0, clk_base, 0,
->  				    70, periph_clk_enb_refcnt);
->=20
+On Mon, Oct 13, 2025 at 11:24:47PM -0400, Alan Stern wrote:
+> On Tue, Oct 14, 2025 at 08:05:25AM +0800, Kuen-Han Tsai wrote:
+> > Hi Alan,
+> > 
+> > On Mon, Oct 13, 2025 at 9:20 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> > >
+> > > Suggestion: Rather than printing the meaningless numerical value of
+> > > __entry->state, print the string value returned by
+> > > usb_state_string(__entry->state).
+> > 
+> > I kept it consistent with the udc_log_gadget tracepoint, which also
+> > uses the numerical value for the USB state.
+> > 
+> > If we change the state to a string, should we convert the speed field
+> > to a string using usb_speed_string()?
+> > 
+> > I lean toward keeping both as numerical values, but I am happy to
+> > switch both to strings if you prefer. Please let me know what you
+> > think is best.
+> 
+> I agree that if one of them uses strings then so should the other.
+> 
+> As for whether you should change them...  I don't care very much, since 
+> I haven't used tracepoints in my gadget debugging.  I was just thinking 
+> of what other people might like.
+> 
+> Greg, do you have a recommendation?
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Strings are always easier for people to understand, otherwise we have to
+go look the value up somewhere.  So both should use them.
 
+thanks,
 
-
+greg k-h
 
