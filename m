@@ -1,246 +1,193 @@
-Return-Path: <linux-kernel+bounces-853049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B436BDA893
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:59:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669C6BDA8A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 142F13565B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:59:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E83243566E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3173D30170B;
-	Tue, 14 Oct 2025 15:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4821301020;
+	Tue, 14 Oct 2025 15:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BC6vOCHd"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZSPpJwA8"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012002.outbound.protection.outlook.com [52.101.66.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53762BE029;
-	Tue, 14 Oct 2025 15:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760457553; cv=none; b=oS0wrP1cNoLgu407fuyV+lqUtSf2qO3/TGIan1JZEbFu7x/mG7QPNk9k6Ys/AV4JHQjuD/uC3+38Bl96uTuCA7lcEQdMw0n7bDpVRaZvPNvUZjWcJz2AkCVSM/Y8+uU4OQY80x8MTq5Ztv4DPfPxDgiKRoqTQwPUbtCtmKGpW/c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760457553; c=relaxed/simple;
-	bh=Cv3+0bdWHxsmuDhQ8zLrQ2TdE8JMQBBh3cle+GrPpPg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WYbIHzR9vAC1rHhuw7dFG27R9lGQ79TQ+RO7IHyLXY9WqXZSpXMmJGk1z7KnmOxGOkpM5iINrX4TNtYue3nmJuUDUijJTw7+bK6HuIwl7fRZQBFnircqg6aYvQ5EMbDOR+cTmT7Z96SFskXesqMxcKVeAlW4jDU5aLliMM0bgas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BC6vOCHd; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EBLWCC020097;
-	Tue, 14 Oct 2025 15:59:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=ATCasm+SNbcvU+hgj+0l+2g8Eiuvo3QQPP16vdtgz
-	MU=; b=BC6vOCHdmg04nV6qYMRKOhhPrJ7cwhlvYVlTvfafsFo35TMTIz6/mIWXW
-	DiFKXhALI/PFlRStnoGbIqY6nMbG9eS0tapdgA4Zryv/64jOJHhNZtCdG/iULraC
-	HLb6D2Vyh+hNAdC8G3Na6sVzKVURvPHazSu8EEmfZCiqJGDvW9WLXl6Ep5WoKQhT
-	2rOTiQNJCQNx8IFGPbkXCgtkZWUvSrJDRrTwpUHx7WoWc2vFUM6JrARf1qiOVKt0
-	zV2ihiNOzRCUXGCM+WK+TVjA03H2vWk0CEb8wa5Ohfs5otuoBS0F14frE4BoN+2g
-	bHmJr+EZFM/hO1JzBmyQGsNfNjxAQ==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qey8qpra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 15:59:04 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59EEGtDX003663;
-	Tue, 14 Oct 2025 15:59:03 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49r1xxuvdr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 15:59:03 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59EFwxLY17563972
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 15:58:59 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6CEE02006A;
-	Tue, 14 Oct 2025 15:58:59 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A6F1C20063;
-	Tue, 14 Oct 2025 15:58:52 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 14 Oct 2025 15:58:52 +0000 (GMT)
-From: Gerd Bayer <gbayer@linux.ibm.com>
-To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Shay Drori <shayd@nvidia.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Gerd Bayer <gbayer@linux.ibm.com>, Tariq Toukan <tariqt@nvidia.com>,
-        Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [PATCH] s390/pci: Avoid deadlock between PCI error recovery and mlx5 crdump
-Date: Tue, 14 Oct 2025 17:58:52 +0200
-Message-ID: <20251014155852.1684916-1-gbayer@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA4C2FF166
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760457596; cv=fail; b=I9aSpRA8mvBdmgJP4b5tmyR2wJGIJfjz9teOwkQuV6QGbqAWmzxAliEqJhBH/LouEttCPIykzKRlAeU052Ma1KF3Cmb+A1VMIQQb9CeKQEcwnyih/gO9+NerwCyDKmPlnVu+Wn+16NjKgEOaU0dN5ZXZgKcYhA0hCYVJ09kDXyU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760457596; c=relaxed/simple;
+	bh=V1KSLMNdCDqf/cO/WKpsoDZ8nwZFhFrL0f1YqUyHbPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=s87o+qUILWVZGYpC1Aip9ojlX18T3KGZEoyMOWinW3FFRnqGaZgYoUGtN5mPGdpRiOpLex8zrSmmakqRmS0tvrsUZ4CoJiv79QOUPdDinEzpFA1wuVl5NkBKMtiiWTwWl0B4NuFUxGKAUKNfahV1RGzYVO9z2+DkhiB6vgnnYuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZSPpJwA8; arc=fail smtp.client-ip=52.101.66.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m44je7/a2rproicWd+El3mxyp5DuiGg4vw/ROIgfQCDcwiNf2Nh0XrFgrFG5RCt0ltNdOXRCaHuvWYd0vKDiN6C00DaJnjfM5UPFHspcTB8UBgWAlNXq5TiLP+q/c0ALf2+m4EkDJuxRxaXgPSBfKqXqLvQTV5g8XntK4DJ2DqGA2mJNTgkhXNkSrqhWsgh9bMqB2qKuXpQPC6k9otgDqFboWo9jAPzUqmz6WpSqUySrfeoE1KPkdNXjvC5OfDFTLGZ9pwO6wzoRRj1+ToojmqiwxYTDf/zqVHNI7tAW9xEhWdWocFW4o340uUBckiUCYqaDWOd9RVpjNUjC9fK8YQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4zifuc/1EF40LOUbpOqE6J2pwr/2giM9orZq8EijypQ=;
+ b=NScaRTpsBoQghoevfIat7/QdRlyFoxWZC8NQewWW332O34FIo5Fjc+kNdgmEXIce7RMt2/Rng4EgCZIhJAjJe81TOv0XqEBPm7eodF9BglSFGis7OI9PhVOGX8p1doOBpj81Dcsb88ggHcnYf/Vj43LzSZ1VmBxqCJHlSjSW2157YHERfVvDO2englRC0+Ja24ORlQTeY/oGGxZwwAAsbnwSFOm50v5cOKN3LVAR0dK1WdrKVQug/bwWw+oTDZxD7W6tiqOFEAM7HUz99dLXIpSP0Gj4+GBYlJwCKQCqALKM3ouN7xoK+86v/re7YKJ4raRzd4NSje+03KoO1VTNlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4zifuc/1EF40LOUbpOqE6J2pwr/2giM9orZq8EijypQ=;
+ b=ZSPpJwA8RLg7bg+VDaMFcy/o2fyujy5Brr6iEqYmAVxErsYpZdNkE+q2kEznbuzAs8JeFFMub+B84mYE1jqXceBo0nr2Xa2ZpH/9xn5FcSf06tIqNDxkxSSEIRoLeRChFRJwHTUNEZtGRcQPCv9r/u69ykqZR17dCOJ+5Jei6IGhw72OBlsSHy/HfJ5SrLX6t9xMvuNF+UodW2zJi3d9UEHzYjxcBh6npWfyewHg1Wg5xAtW29/4/9nWnnBbJeHce1h9rhxsuQ0ygItifP9x7GZZV/NAIYaEzzrZVpVoP2175bQvRdc8a+lDacC/ggNu+HjBYRmmIiy1O17J6GIH2A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by VI0PR04MB11538.eurprd04.prod.outlook.com (2603:10a6:800:2ca::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Tue, 14 Oct
+ 2025 15:59:51 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 15:59:51 +0000
+Date: Tue, 14 Oct 2025 11:59:44 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/8] firmware: imx: scu-irq: Remove unused export of
+ imx_scu_enable_general_irq_channel
+Message-ID: <aO5zcO+xLvADuEtS@lizhi-Precision-Tower-5810>
+References: <20251014-imx-firmware-v1-0-ba00220613ca@nxp.com>
+ <20251014-imx-firmware-v1-5-ba00220613ca@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-imx-firmware-v1-5-ba00220613ca@nxp.com>
+X-ClientProxiedBy: PH0PR07CA0018.namprd07.prod.outlook.com
+ (2603:10b6:510:5::23) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: t567cn2NCJ0Gnp5Ep6bO0w1cB8b52nrw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxMSBTYWx0ZWRfX0WTciNDtlrxZ
- fujmjphion22mM0VCyDMkVeQF30fIVe7pSI1SZadFFiMpwDFVvrtBtAIS55I9BHNaNN4Z/jmiwr
- 4Jcb8CLT1Kg/SJhxKJD8qqHgFkJiQmOa5y6aBZQ/W8fV9p4I80RRmNJ0Ytmm2qV/QvhRGQboWTq
- d5iNWJGieTXTCO1LszOmSWrkbYGOc24hTduR7CdLGpkGaIfc5cDN+DEPWbxJUqwAP4croGCAZlf
- PI7jbfMO4wFVQbaIeLFdJ9G6ciCOeNmOsWCxKvNE2Z1i8cUsUWdTYbE7y4A/tL3NTmDnGebzEQq
- YxV0norOqsJ0vanoUxvBfp7nc+pQ9P4cW9NoHE2Fja935UE2jAJYFwd+n5pw8KSvaW9/uE0x16g
- 9sebdN825ectDVSVG2j2pYqXCr5wQA==
-X-Proofpoint-GUID: t567cn2NCJ0Gnp5Ep6bO0w1cB8b52nrw
-X-Authority-Analysis: v=2.4 cv=QZ5rf8bv c=1 sm=1 tr=0 ts=68ee7348 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=ZSSbZbepod2aoZfJsqwA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0
- spamscore=0 malwarescore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110011
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB11538:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a3343e9-8901-4422-21d4-08de0b3ab54b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MWz3DYVtgUnrQM+VnKC6E3Xh128t7GEQLAfz0q+ZKjBUNTMJ66cP+zCteiXs?=
+ =?us-ascii?Q?7NulK2YwYQfQ6Ii1zd2oI/v2tASH1mOx2wKBzpwIzTBSv0U3Idg5tKJnQAj8?=
+ =?us-ascii?Q?ht7qaVebpt8rdHxApkvuWnJqIwATTSAUn4UHkzgNSqZ/tGrRL4jzk50vxCpY?=
+ =?us-ascii?Q?2wjx5kCk5M7SFyXXkEE0WM9AdzrRxFipR3I6h+gOXsmlL85ZvDyVblR+GFqy?=
+ =?us-ascii?Q?8vpUDCP2b4g5OaB2j+AnZvrkMkFUSfzYCJuAtMriU4V8yaiEjZrBNU7YCm/C?=
+ =?us-ascii?Q?Jy+D2IM8p0slF+tyeKmlF4bJtxA0/JxHTupRQsWKUqkWI4jUpW6okxsRzeaK?=
+ =?us-ascii?Q?sQqOxe5ujE+hkaXK81tcA+6h+dKkf4Ommey/XrfaZmahwxxQVWv7plSWvFNz?=
+ =?us-ascii?Q?5IA/OSnj0oy4ZsugpRQkCNucYU5dCfQkUFIAwXP9VZU2z3r1zWR74XxHrFv5?=
+ =?us-ascii?Q?knVKgY+rvzEheZHrLwvPV7pSIm1FTDgv+wYzdm/ILvhpPJ3Q1wg4YeVrXYWX?=
+ =?us-ascii?Q?UJco95cG2aWpgU9/xhm9sJCDVqWiYdYRaSgpsbO3EE2tcnTse3Idmi4lYkjN?=
+ =?us-ascii?Q?+VRRV3H7ZaZ0pcJmwp3dpEp7In0CObiUaK3PSOZAfQV0M7NxaLqgbUu4FNqw?=
+ =?us-ascii?Q?yxJLeb4oHE4Z26o2XAQJHnKgRidFTS0UJMLd1ctaUueaf/5HtL1XbQbphbS/?=
+ =?us-ascii?Q?9QyW7V7uIU8xzpVRHBrq+qifGjwoPhwFM53WE34IeAGGnTaAK1TRa4bE2kHB?=
+ =?us-ascii?Q?OsmCfTnPyjhY4Z3J37TGDajPmUphEKC2VdGy3F2bgzPag5Bja11AqE1dHZ/f?=
+ =?us-ascii?Q?LNdD3wNefakPv32AELxyI/51v0jmMztCUbatP2RtdVSUr6XeVFlFFkHyIJdF?=
+ =?us-ascii?Q?YQGR3sxmcQIXFUPoc+ywQ148/UhPIVLTTZq9SmBtzFcoYO84CyCDhJ9NV/Hz?=
+ =?us-ascii?Q?KuLnfKnstWTWiIx6/oodcuAkbuqaR+UbIy2QUkOUuWV+fNg7DyAxOxyXoPmi?=
+ =?us-ascii?Q?lFxbpxHbFwojkjqYtJ3AQgnR5TvfKhFlWHzDv5uoOvs/qMANsLnQZWRXboSc?=
+ =?us-ascii?Q?eys1Xy+13FiJrg4+dmKhR+XrsdICWPnJa52wFYXJcCil9xc4xzIUGSBo3TxL?=
+ =?us-ascii?Q?VLaJfcBLmkIHbJfwyXf3RbhT+Kd0GWQUI4YvqeGuafMtwX9vJkyIoC0CFWI2?=
+ =?us-ascii?Q?+aBU/r3GUBUNc/CJkJQIGYqL2gSyDI7SYzIhKvxrqSAEmEOe0gvf+Zbx8rPQ?=
+ =?us-ascii?Q?HGvysraiw4TRXtbPRXXTx26Z1wpryybOjsZes8XUKmf4LwLN1h6v8tchHFgj?=
+ =?us-ascii?Q?y+DEj2oo5tkChuzDfJRRze/ANLj+g+yuBq0H7vW95hIFBAfqG1r6NEHtnnd+?=
+ =?us-ascii?Q?onqTkHcS34a+1HVwGBAcWKiLLIigQElScLC1Xn7xFMhxt+q8oaB0rR0ixr5h?=
+ =?us-ascii?Q?/Nzrc7fGplpoRKJNbAb7Opsikzn22BANi/7V9/YN8/8jIzREzYBIO1M1MkIN?=
+ =?us-ascii?Q?NxTZtXSXRF0IwBXv06H+NPhPGcsfSuIdew5I?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VSux+aaJqWFmaCku4ZMtXTKMOyjNbBYRSE2CUopdqmG9iM4UZ66uLQuhQ8XZ?=
+ =?us-ascii?Q?UOkKVgIN1Xtq4Tv2v4n/MOBtcklGOpYa2hpjRPjEk6zGqXqOlI/D9S1V1pgE?=
+ =?us-ascii?Q?ZwS+aJfKsrgLM4xfZpXGVznRvXDdKmTn5OILkq0SWF3OhapaEj/ZHqjajqVd?=
+ =?us-ascii?Q?J3xGFhnogmmc7kTu2GSxQ7fWeV30smdR/KEVKEm+Av6yBGseC+XBY9xkfJen?=
+ =?us-ascii?Q?rYZAaxFXyF43RgMDXkDizoRJF03DFKMCY6Z5Qk+eAPHN2wt+YelwMP8Ee0i6?=
+ =?us-ascii?Q?MI3vQOD4xFbdTNXBhA313rYOOWA/NyeNE+HdLnlKpiu6WSHlrwy02c2rl6aR?=
+ =?us-ascii?Q?T773XrvtLKDJxb8lLkKyeTFFGS66nMsuTQx3wXA2FBiGpmfkPv0ZCT4PXcHX?=
+ =?us-ascii?Q?1ttVI0/D0M2mrAi6GmJpMUPn0GifoeU87B0PSPnyUdQ5KAOD5DrDvrl4Y/MS?=
+ =?us-ascii?Q?QvNhNmb/HJU34HTpf0vG/7u6RUVghiaZ6rRnhjzSd+Q81VMQA3HjYVNPZ4Ec?=
+ =?us-ascii?Q?fe9AcAAl6jBeak4UKv7R8HRuYjyDCGpB/3OxJzcH5fBK3nlngBqRpbnPRzwI?=
+ =?us-ascii?Q?b0edjJvzJXFT66BjBoJ83DQNRwqgPHA/OoNESPigTzwGv0VjJmVUW0hiKvJj?=
+ =?us-ascii?Q?wecadz7lhNSvmi6Y6OWDYHbv293YOx6HDXNsho5dqgvcm3SxyLrmGLNhHkIe?=
+ =?us-ascii?Q?je1xljHUylHzvFwonispCmgFOZQHU9dwk5DBw/SQWkJH0D4kBrrA2PZtfUVp?=
+ =?us-ascii?Q?NXpOrZwD9ocfWm0YCqa3qiCcDEseBIN34CMntBLBKrmmle5OtU6VC6FGEJdj?=
+ =?us-ascii?Q?/3YL2CuXPg2ndHABTqhefmXx5RF15YM56ujyMOVo7BZ6fzac1xgqECvTYDkY?=
+ =?us-ascii?Q?F9w4X6A+R58SiSsM+LTtRhO4wB1YNqw2wDbQjyC2WXvjXSv/Qz55jVBkw0Vp?=
+ =?us-ascii?Q?ODR70akAEJQIlRp46AG/NpdpEEpW+kJPCTzC6yOGgTADWat9zxCb7dXZfwXc?=
+ =?us-ascii?Q?4pu9/rOZ6oCzZY2empwXjBkNes3Nv8foR/hDNR3PQ6V2NLJggeW+X81fYiKe?=
+ =?us-ascii?Q?Jhes3NuTFKyjaOBm02m0kR5VoMxdqviLN5uSaTbFwLcVYaHXvVc7qvHgUhlR?=
+ =?us-ascii?Q?AO9Q3YF8bh5ygVU7B3QsMagtGlr+bs741PnPqFokw78mRCFssrocnosJmQr+?=
+ =?us-ascii?Q?/yStHwerOc8ZJS4rSqpT3kLooIC70O9daTy65NoKFfWJxhCTAr97KA9P5AND?=
+ =?us-ascii?Q?/Y9yvgRgWEeKxgj3ptgz6SSc+nVPJJJ0xZUa6IL4fNxSuF5AiDUrSAZQyO8b?=
+ =?us-ascii?Q?QLda8GAYqFsiB5uXfP5S3uookwouVHIDhmQLg5jJCgKkKIpefFzmSVNKlQHu?=
+ =?us-ascii?Q?wb/NsbK+lCg6OWTmtKhblFEQeX26hXKGLC6eIl5yrb4nI/m9cGu+mafh5ep0?=
+ =?us-ascii?Q?PjeuG5/1+4VGBU7uEYqoAxYBEtElBXF5HP6zJsFGCpN0PsR4XQ76RQenEWaH?=
+ =?us-ascii?Q?GSLY0Jz/hAfHrfYQUjdrMnwwpr4eNy5Vh882qQDx+ihxqXocfCHjdRGUajz/?=
+ =?us-ascii?Q?G64QoDWx1D/Tb28BvHripLGf6DBbgIS6BsvVohji?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a3343e9-8901-4422-21d4-08de0b3ab54b
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 15:59:51.1945
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OREMfy/fjFQzJ4qgeEcm+74pTH/C/RWNKa57p7OtQF2c3KCf9ywQbtfrw2WCTO+QJbZq13Mi0nIIQZweY2Q6Dw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11538
 
-Do not block PCI config accesses through pci_cfg_access_lock() when
-executing the s390 variant of PCI error recovery: Acquire just
-device_lock() instead of pci_dev_lock() as powerpc's EEH and
-generig PCI AER processing do.
+On Tue, Oct 14, 2025 at 12:54:42PM +0800, Peng Fan wrote:
+> Since its introduction, this symbol has not been used by any loadable
+> modules. It remains only referenced within imx-scu.c, which is always built
+> together with imx-scu-irq.c
 
-During error recovery testing a pair of tasks was reported to be hung:
+imx_scu_enable_general_irq_channel is only referenced within imx-scu.c,
+which always built together with imx-scu-irq.c.
 
-[10144.859042] mlx5_core 0000:00:00.1: mlx5_health_try_recover:338:(pid 5553): health recovery flow aborted, PCI reads still not working
-[10320.359160] INFO: task kmcheck:72 blocked for more than 122 seconds.
-[10320.359169]       Not tainted 5.14.0-570.12.1.bringup7.el9.s390x #1
-[10320.359171] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[10320.359172] task:kmcheck         state:D stack:0     pid:72    tgid:72    ppid:2      flags:0x00000000
-[10320.359176] Call Trace:
-[10320.359178]  [<000000065256f030>] __schedule+0x2a0/0x590
-[10320.359187]  [<000000065256f356>] schedule+0x36/0xe0
-[10320.359189]  [<000000065256f572>] schedule_preempt_disabled+0x22/0x30
-[10320.359192]  [<0000000652570a94>] __mutex_lock.constprop.0+0x484/0x8a8
-[10320.359194]  [<000003ff800673a4>] mlx5_unload_one+0x34/0x58 [mlx5_core]
-[10320.359360]  [<000003ff8006745c>] mlx5_pci_err_detected+0x94/0x140 [mlx5_core]
-[10320.359400]  [<0000000652556c5a>] zpci_event_attempt_error_recovery+0xf2/0x398
-[10320.359406]  [<0000000651b9184a>] __zpci_event_error+0x23a/0x2c0
-[10320.359411]  [<00000006522b3958>] chsc_process_event_information.constprop.0+0x1c8/0x1e8
-[10320.359416]  [<00000006522baf1a>] crw_collect_info+0x272/0x338
-[10320.359418]  [<0000000651bc9de0>] kthread+0x108/0x110
-[10320.359422]  [<0000000651b42ea4>] __ret_from_fork+0x3c/0x58
-[10320.359425]  [<0000000652576642>] ret_from_fork+0xa/0x30
-[10320.359440] INFO: task kworker/u1664:6:1514 blocked for more than 122 seconds.
-[10320.359441]       Not tainted 5.14.0-570.12.1.bringup7.el9.s390x #1
-[10320.359442] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[10320.359443] task:kworker/u1664:6 state:D stack:0     pid:1514  tgid:1514  ppid:2      flags:0x00000000
-[10320.359447] Workqueue: mlx5_health0000:00:00.0 mlx5_fw_fatal_reporter_err_work [mlx5_core]
-[10320.359492] Call Trace:
-[10320.359521]  [<000000065256f030>] __schedule+0x2a0/0x590
-[10320.359524]  [<000000065256f356>] schedule+0x36/0xe0
-[10320.359526]  [<0000000652172e28>] pci_wait_cfg+0x80/0xe8
-[10320.359532]  [<0000000652172f94>] pci_cfg_access_lock+0x74/0x88
-[10320.359534]  [<000003ff800916b6>] mlx5_vsc_gw_lock+0x36/0x178 [mlx5_core]
-[10320.359585]  [<000003ff80098824>] mlx5_crdump_collect+0x34/0x1c8 [mlx5_core]
-[10320.359637]  [<000003ff80074b62>] mlx5_fw_fatal_reporter_dump+0x6a/0xe8 [mlx5_core]
-[10320.359680]  [<0000000652512242>] devlink_health_do_dump.part.0+0x82/0x168
-[10320.359683]  [<0000000652513212>] devlink_health_report+0x19a/0x230
-[10320.359685]  [<000003ff80075a12>] mlx5_fw_fatal_reporter_err_work+0xba/0x1b0 [mlx5_core]
-[10320.359728]  [<0000000651bbf852>] process_one_work+0x1c2/0x458
-[10320.359733]  [<0000000651bc073e>] worker_thread+0x3ce/0x528
-[10320.359735]  [<0000000651bc9de0>] kthread+0x108/0x110
-[10320.359737]  [<0000000651b42ea4>] __ret_from_fork+0x3c/0x58
-[10320.359739]  [<0000000652576642>] ret_from_fork+0xa/0x30
+>
+> As such, exporting imx_scu_enable_general_irq_channel is unnecessary, so
+> remove the export.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-No kernel log of the exact same error with an upstream kernel is
-available - but the very same deadlock situation can be constructed there,
-too:
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-- task: kmcheck
-  mlx5_unload_one() tries to acquire devlink lock while the PCI error
-  recovery code has set pdev->block_cfg_access by way of
-  pci_cfg_access_lock()
-- task: kworker
-  mlx5_crdump_collect() tries to set block_cfg_access through
-  pci_cfg_access_lock() while devlink_health_report() had acquired
-  the devlink lock.
-
-A similar deadlock situation can be reproduced by requesting a
-crdump with
-  > devlink health dump show pci/<BDF> reporter fw_fatal
-
-while PCI error recovery is executed on the same <BDF> physical function
-by mlx5_core's pci_error_handlers. On s390 this can be injected with
-  > zpcictl --reset-fw <BDF>
-
-Tests with this patch failed to reproduce that second deadlock situation,
-the devlink command is rejected with "kernel answers: Permission denied" -
-and we get a kernel log message of:
-
-Oct 14 13:32:39 b46lp03.lnxne.boe kernel: mlx5_core 1ed0:00:00.1: mlx5_crdump_collect:50:(pid 254382): crdump: failed to lock vsc gw err -5
-
-because the config read of VSC_SEMAPHORE is rejected by the underlying
-hardware.
-
-Two prior attempts to address this issue have been discussed and
-ultimately rejected [1], with the primary argument that s390's
-implementation of PCI error recovery is imposing restriction that
-neither powerpc's EEH nor PCI AER handling need. Tests show that PCI
-error recovery on s390 is running to completion even without blocking
-access to PCI config space.
-
-Link[1]: https://lore.kernel.org/all/20251007144826.2825134-1-gbayer@linux.ibm.com/
-
-Fixes: 4cdf2f4e24ff ("s390/pci: implement minimal PCI error recovery")
-Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
-
----
-
-Hi Niklas, Shay, Jason,
-
-by now I believe fixing this in s390/pci is the right way to go, since
-the other PCI error recovery implementations apparently don't require
-this strict blocking of accesses to the PCI config space.
-
-Hi Alexander, Vasily, Heiko,
-
-while I sent this to netdev since prior versions were discussed there,
-I assume this patch will go through the s390 tree, right?
-
-Thanks,
-Gerd
----
- arch/s390/pci/pci_event.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/s390/pci/pci_event.c b/arch/s390/pci/pci_event.c
-index d930416d4c90..da0de34d2e5c 100644
---- a/arch/s390/pci/pci_event.c
-+++ b/arch/s390/pci/pci_event.c
-@@ -187,7 +187,7 @@ static pci_ers_result_t zpci_event_attempt_error_recovery(struct pci_dev *pdev)
- 	 * is unbound or probed and that userspace can't access its
- 	 * configuration space while we perform recovery.
- 	 */
--	pci_dev_lock(pdev);
-+	device_lock(&pdev->dev);
- 	if (pdev->error_state == pci_channel_io_perm_failure) {
- 		ers_res = PCI_ERS_RESULT_DISCONNECT;
- 		goto out_unlock;
-@@ -254,7 +254,7 @@ static pci_ers_result_t zpci_event_attempt_error_recovery(struct pci_dev *pdev)
- 	if (driver->err_handler->resume)
- 		driver->err_handler->resume(pdev);
- out_unlock:
--	pci_dev_unlock(pdev);
-+	device_unlock(&pdev->dev);
- 	zpci_report_status(zdev, "recovery", status_str);
- 
- 	return ers_res;
--- 
-2.48.1
-
+>  drivers/firmware/imx/imx-scu-irq.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/firmware/imx/imx-scu-irq.c b/drivers/firmware/imx/imx-scu-irq.c
+> index 1346b75596293892ccd90a856d46f52171d88734..0be9c4c75d826a641e7078a265d30f146e8eb14d 100644
+> --- a/drivers/firmware/imx/imx-scu-irq.c
+> +++ b/drivers/firmware/imx/imx-scu-irq.c
+> @@ -259,4 +259,3 @@ int imx_scu_enable_general_irq_channel(struct device *dev)
+>
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL(imx_scu_enable_general_irq_channel);
+>
+> --
+> 2.37.1
+>
 
