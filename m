@@ -1,241 +1,159 @@
-Return-Path: <linux-kernel+bounces-852231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13B2BD8805
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA56BD8817
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 815644FB6E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A4342720B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BC32FD7BD;
-	Tue, 14 Oct 2025 09:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09762ED844;
+	Tue, 14 Oct 2025 09:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aWHwgHox"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jsy4B3Gh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B922E8E04;
-	Tue, 14 Oct 2025 09:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1702ECE97
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434954; cv=none; b=iafkMQBatzPnLwTsjts5swlXOMuIs/kEfQsHx/5HfYqdT5AVBD7lbTPGp2Qe3+Bh+1R4tl0xd/Zmuhfa1JL68pyUP8y8PwDMLW3oxFAQWR/TikSBLiSI9baXDL7bTeCPHCXmHSuF1NHlYjxQbuVjw6DAKkOhbI43H1XISlvbvbw=
+	t=1760434994; cv=none; b=pRf/ibpcugEV52d1X/0JD4+bLtnePvjfS6EC8pihyg1QvfA3jTYjUmi6DadrrC9563hTUFITDb7x5KXvo1h3YLtLQGgBgxPKqEMK6hrui7Q+RRetolzsQ1IwxiL+qSioglokZX4vLwTyhskll+lMgRgK5OxvUBHjWQzcuGELAr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434954; c=relaxed/simple;
-	bh=fyvsiAplX9W/n9nhtuP7G9+XkvoehypKI7yt/ohUwZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kKX6lfbDhdpefoWWor74NrxOYbHA6e/MOUbjEjtcoUPZsA5cTZGUfTQ4zywEgjcrkgK0YluuomNrKPKXR/OOlEiBLSavz3NZiEWd1apJLMpezJXv7DL/6KtV79rTPvXtHSvdknlE78vbPChQHr9aoiDO6Nv+aX7V3lmJ4ML+maQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aWHwgHox; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760434950;
-	bh=fyvsiAplX9W/n9nhtuP7G9+XkvoehypKI7yt/ohUwZw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aWHwgHoxpOOHTADIbwZAPiqXMEHzCSX0jMxP+GwmabX6ehKRbFBkszUVRpwe9kIGe
-	 SEMPr93gS1UOX6deodcJSGBaftl/M2EGulmjX5WV6y51J29p//Ew9DxVchaP3jVzOx
-	 rLcKPQPBsEiBEfw96ML/oAik1RTN3fuSHxZHSoc3VZIcnsgWtKrgPYrqLM6tGXuXBI
-	 mUr740mZplpK5n816s4UYs0nLmBiwmg/hmlRH6bYH8EYHKHve6U45HHAbh0yw4pFKZ
-	 W7jwLyTqSZwikBG8ijce57sjVjqDVWQSTUJSxjUNvphqJvKLGZ3flrspcAAMRHf8+K
-	 3Ae0WhwNvi5ZQ==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8678B17E055D;
-	Tue, 14 Oct 2025 11:42:29 +0200 (CEST)
-Message-ID: <b0a802b0-e6b8-4a6f-a65c-ad2d11a7c1f6@collabora.com>
-Date: Tue, 14 Oct 2025 11:42:28 +0200
+	s=arc-20240116; t=1760434994; c=relaxed/simple;
+	bh=6nTVpzL+pnnzT1najm9SzeZ30GY62APu0L74wo8Irus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAylhioCENvtf1P0i7Ni9wXyAfwMSmeULWkh+4Jlq8f+aNjjE1jOT6nZbqCQhzZvbg+CbHw04DwKldPliIPEQonPRvB9dHul1f47BCmQHH74dhUbK2OPa+zI3MRkAH1w916rHx57DJBhhknsovfA61jt+1iJ8hcetu1ouVCIBYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jsy4B3Gh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=f6rZC2r3D+QmTRPrD47lvKiuUx1xMTBsNLxjfTus9P4=; b=jsy4B3GhB0gYf51EGuu/8i6S+0
+	heXsjkNFFtH9a9kUp0Djlgmm6XN13WbvIC4iCBSfcF94jLyTDOCjE/OCul4atiGZgLjMN0SfYtseQ
+	uTJwU4vNVH21N/bEivr3OSFYVfxEDswHm8sBn4AmxyKu2nZt5SSH9UkbQwb/zlaP6WWsJIOacmqiA
+	jYGy/Wn1Wdo7tQQ6TIBJcKznISkuqawoeVG70ouXf1D6tqCAIrpRaIHIvVj1sp1BpvccwfegFaXV/
+	IpgvOawS050tqWWxoPCiOjPrk0h91U9RYHYF4QtTFSvJPofVm4xig9RvWv1P7GYLidaTyq9zpaMd2
+	I3QJtHUQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8bYa-000000054WD-2a47;
+	Tue, 14 Oct 2025 09:43:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 505A9300399; Tue, 14 Oct 2025 11:42:59 +0200 (CEST)
+Date: Tue, 14 Oct 2025 11:42:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Chen Yu <yu.c.chen@intel.com>, Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
+ when balance is not due
+Message-ID: <20251014094259.GR3245006@noisy.programming.kicks-ass.net>
+References: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
+ <20251013142638.GM3245006@noisy.programming.kicks-ass.net>
+ <aa3d20e6d451e0d0b812fe16e9d403c1033feeaa.camel@linux.intel.com>
+ <20251014092436.GK4067720@noisy.programming.kicks-ass.net>
+ <e84de5a9-b498-4152-846a-c72e1ac66109@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/8] media: uapi: Introduce V4L2 generic ISP types
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Antoine Bouyer <antoine.bouyer@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
- <20251014-extensible-parameters-validation-v7-1-6628bed5ca98@ideasonboard.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20251014-extensible-parameters-validation-v7-1-6628bed5ca98@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e84de5a9-b498-4152-846a-c72e1ac66109@linux.ibm.com>
 
-Hi Jacopo,
+On Tue, Oct 14, 2025 at 03:03:41PM +0530, Shrikanth Hegde wrote:
 
-Thanks for your efforts!
-
-On 10/14/25 10:00, Jacopo Mondi wrote:
-> Introduce v4l2-isp.h in the Linux kernel uAPI.
+> > @@ -11758,6 +11775,12 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+> >   		goto out_balanced;
+> >   	}
+> > +	if (idle != CPU_NEWLY_IDLE && (sd->flags & SD_SERIALIZE)) {
+> > +		if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+> > +			goto out_balanced;
 > 
-> The header includes types for generic ISP configuration parameters
-> and will be extended in the future with support for generic ISP statistics
-> formats.
-> 
-> Generic ISP parameters support is provided by introducing two new
-> types that represent an extensible and versioned buffer of ISP
-> configuration parameters.
-> 
-> The v4l2_params_buffer represents the container for the ISP
-> configuration data block. The generic type is defined with a 0-sized
-> data member that the ISP driver implementations shall properly size
-> according to their capabilities. The v4l2_params_block_header structure
-> represents the header to be prepend to each ISP configuration block.
-> 
-> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Maybe goto out instead of out_balanced ?
 
-Reviewed-by: Michael Riesch <michael.riesch@collabora.com>
+That would be inconsistent with the !should_we_balance() goto
+out_balanced right above this, no?
 
-Thanks and best regards,
-Michael
-
-> ---
->  MAINTAINERS                         |   6 +++
->  include/uapi/linux/media/v4l2-isp.h | 102 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 108 insertions(+)
+> > +		need_unlock = true;
+> > +	}
+> > +
+> >   	group = sched_balance_find_src_group(&env);
+> >   	if (!group) {
+> >   		schedstat_inc(sd->lb_nobusyg[idle]);
+> > @@ -11998,6 +12021,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+> >   	    sd->balance_interval < sd->max_interval)
+> >   		sd->balance_interval *= 2;
+> >   out:
+> > +	if (need_unlock)
+> > +		atomic_set_release(&sched_balance_running, 0);
+> > +
+> >   	return ld_moved;
+> >   }
+> > @@ -12122,21 +12148,6 @@ static int active_load_balance_cpu_stop(void *data)
+> >   	return 0;
+> >   }
+> > -/*
+> > - * This flag serializes load-balancing passes over large domains
+> > - * (above the NODE topology level) - only one load-balancing instance
+> > - * may run at a time, to reduce overhead on very large systems with
+> > - * lots of CPUs and large NUMA distances.
+> > - *
+> > - * - Note that load-balancing passes triggered while another one
+> > - *   is executing are skipped and not re-tried.
+> > - *
+> > - * - Also note that this does not serialize rebalance_domains()
+> > - *   execution, as non-SD_SERIALIZE domains will still be
+> > - *   load-balanced in parallel.
+> > - */
+> > -static atomic_t sched_balance_running = ATOMIC_INIT(0);
+> > -
+> >   /*
+> >    * Scale the max sched_balance_rq interval with the number of CPUs in the system.
+> >    * This trades load-balance latency on larger machines for less cross talk.
+> > @@ -12192,7 +12203,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+> >   	/* Earliest time when we have to do rebalance again */
+> >   	unsigned long next_balance = jiffies + 60*HZ;
+> >   	int update_next_balance = 0;
+> > -	int need_serialize, need_decay = 0;
+> > +	int need_decay = 0;
+> >   	u64 max_cost = 0;
+> >   	rcu_read_lock();
+> > @@ -12216,13 +12227,6 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+> >   		}
+> >   		interval = get_sd_balance_interval(sd, busy);
+> > -
+> > -		need_serialize = sd->flags & SD_SERIALIZE;
+> > -		if (need_serialize) {
+> > -			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+> > -				goto out;
+> > -		}
+> > -
+> >   		if (time_after_eq(jiffies, sd->last_balance + interval)) {
+> >   			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+> >   				/*
+> > @@ -12236,9 +12240,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+> >   			sd->last_balance = jiffies;
+> >   			interval = get_sd_balance_interval(sd, busy);
+> >   		}
+> > -		if (need_serialize)
+> > -			atomic_set_release(&sched_balance_running, 0);
+> > -out:
+> > +
+> >   		if (time_after(next_balance, sd->last_balance + interval)) {
+> >   			next_balance = sd->last_balance + interval;
+> >   			update_next_balance = 1;
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 46126ce2f968e4f9260263f1574ee29f5ff0de1c..e9ac834d212f88222437e8d806800b2516d44f01 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26853,6 +26853,12 @@ F:	drivers/media/i2c/vd55g1.c
->  F:	drivers/media/i2c/vd56g3.c
->  F:	drivers/media/i2c/vgxy61.c
->  
-> +V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
-> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	include/uapi/linux/media/v4l2-isp.h
-> +
->  VF610 NAND DRIVER
->  M:	Stefan Agner <stefan@agner.ch>
->  L:	linux-mtd@lists.infradead.org
-> diff --git a/include/uapi/linux/media/v4l2-isp.h b/include/uapi/linux/media/v4l2-isp.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..779168f9058e3bcf6451f681e247d34d95676cc0
-> --- /dev/null
-> +++ b/include/uapi/linux/media/v4l2-isp.h
-> @@ -0,0 +1,102 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Video4Linux2 generic ISP parameters and statistics support
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
-> +
-> +#ifndef _UAPI_V4L2_ISP_H_
-> +#define _UAPI_V4L2_ISP_H_
-> +
-> +#include <linux/stddef.h>
-> +#include <linux/types.h>
-> +
-> +/**
-> + * enum v4l2_isp_params_version - V4L2 ISP parameters versioning
-> + *
-> + * @V4L2_ISP_PARAMS_VERSION_V0: First version of the V4L2 ISP parameters format
-> + *				(for compatibility)
-> + * @V4L2_ISP_PARAMS_VERSION_V1: First version of the V4L2 ISP parameters format
-> + *
-> + * V0 and V1 are identical in order to support drivers compatible with the V4L2
-> + * ISP parameters format already upstreamed which use either 0 or 1 as their
-> + * versioning identifier. Both V0 and V1 refers to the first version of the
-> + * V4L2 ISP parameters format.
-> + *
-> + * Future revisions of the V4L2 ISP parameters format should start from the
-> + * value of 2.
-> + */
-> +enum v4l2_isp_params_version {
-> +	V4L2_ISP_PARAMS_VERSION_V0 = 0,
-> +	V4L2_ISP_PARAMS_VERSION_V1
-> +};
-> +
-> +#define V4L2_ISP_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
-> +#define V4L2_ISP_PARAMS_FL_BLOCK_ENABLE		(1U << 1)
-> +
-> +/*
-> + * Reserve the first 8 bits for V4L2_ISP_PARAMS_FL_* flag.
-> + *
-> + * Driver-specific flags should be defined as:
-> + * #define DRIVER_SPECIFIC_FLAG0     ((1U << V4L2_ISP_PARAMS_FL_DRIVER_FLAGS(0))
-> + * #define DRIVER_SPECIFIC_FLAG1     ((1U << V4L2_ISP_PARAMS_FL_DRIVER_FLAGS(1))
-> + */
-> +#define V4L2_ISP_PARAMS_FL_DRIVER_FLAGS(n)       ((n) + 8)
-> +
-> +/**
-> + * struct v4l2_isp_params_block_header - V4L2 extensible parameters block header
-> + * @type: The parameters block type (driver-specific)
-> + * @flags: A bitmask of block flags (driver-specific)
-> + * @size: Size (in bytes) of the parameters block, including this header
-> + *
-> + * This structure represents the common part of all the ISP configuration
-> + * blocks. Each parameters block shall embed an instance of this structure type
-> + * as its first member, followed by the block-specific configuration data.
-> + *
-> + * The @type field is an ISP driver-specific value that identifies the block
-> + * type. The @size field specifies the size of the parameters block.
-> + *
-> + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_ISP_FL_* and
-> + * driver-specific flags specified by the driver header.
-> + */
-> +struct v4l2_isp_params_block_header {
-> +	__u16 type;
-> +	__u16 flags;
-> +	__u32 size;
-> +} __attribute__((aligned(8)));
-> +
-> +/**
-> + * struct v4l2_isp_params_buffer - V4L2 extensible parameters configuration
-> + * @version: The parameters buffer version (driver-specific)
-> + * @data_size: The configuration data effective size, excluding this header
-> + * @data: The configuration data
-> + *
-> + * This structure contains the configuration parameters of the ISP algorithms,
-> + * serialized by userspace into a data buffer. Each configuration parameter
-> + * block is represented by a block-specific structure which contains a
-> + * :c:type:`v4l2_isp_params_block_header` entry as first member. Userspace
-> + * populates the @data buffer with configuration parameters for the blocks that
-> + * it intends to configure. As a consequence, the data buffer effective size
-> + * changes according to the number of ISP blocks that userspace intends to
-> + * configure and is set by userspace in the @data_size field.
-> + *
-> + * The parameters buffer is versioned by the @version field to allow modifying
-> + * and extending its definition. Userspace shall populate the @version field to
-> + * inform the driver about the version it intends to use. The driver will parse
-> + * and handle the @data buffer according to the data layout specific to the
-> + * indicated version and return an error if the desired version is not
-> + * supported.
-> + *
-> + * For each ISP block that userspace wants to configure, a block-specific
-> + * structure is appended to the @data buffer, one after the other without gaps
-> + * in between. Userspace shall populate the @data_size field with the effective
-> + * size, in bytes, of the @data buffer.
-> + */
-> +struct v4l2_isp_params_buffer {
-> +	__u32 version;
-> +	__u32 data_size;
-> +	__u8 data[] __counted_by(data_size);
-> +};
-> +
-> +#endif /* _UAPI_V4L2_ISP_H_ */
-> 
-
 
