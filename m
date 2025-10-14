@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-852532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A20BD939A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBBFBD937C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26E083E8AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92182422501
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C6A3126C8;
-	Tue, 14 Oct 2025 12:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="nT8zfuOg"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673423112B4;
+	Tue, 14 Oct 2025 12:04:36 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AD73126D1;
-	Tue, 14 Oct 2025 12:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEA33101D4
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760443613; cv=none; b=qsmOiRn2v+L1CrcF1ZBGT1NDLNxkVR3NzKzPHHlm1z2KRqoML9BCTq4Ywa744b/0W9m5MoQYZ5ibAVEkngA/tWM3dq5ITv44kLF4UAPBHSZH7NPkus/Rj+wtolSJhMrfH0/q1cNkRO4eZXHsDe8oqI8SNE2Ckhiy/+c4uzaG8ws=
+	t=1760443476; cv=none; b=YaYpi68giXk+tynCxCqxK/KutXQPJLqe9TT5GHp6/psJfuYZj1rXjDUR+kie2ZHblLWM+D15dnUkdiadOTHn8k0+cs7zAi7KvMBijSA6mWx3O6OqrDRX2EZYMl0SUSgYQNp8/Sb28xWquR1ChPhvVIQ7DClJ2LtU9XzkWg57J6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760443613; c=relaxed/simple;
-	bh=g4J9HQuskix95nGVq29iELEGA0lIY+LzY+yk2Odn53I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=h3JhI8jwQCvEn3m8amUbMvslHghZMQXXNZ5yEsDJaijOPf58Ya4Gr6R4X5P0PZqt5yuKny9Wj7upHO/RoCG7F9Lb67OMWnf5SF9Vbr1pfoWbDXa0z2EfXD9e67vHAmRolT9RVHEO6ScUx2RS3ImPlK6BPr4qDjTTAaOtHr2WnOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=nT8zfuOg; arc=none smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59E5rhto3790310;
-	Tue, 14 Oct 2025 12:57:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=dk201812; bh=e+gRf74dlOTVykywKohC4yB
-	asJPVNgvt6uf0YxnMDu4=; b=nT8zfuOgiRwJyG6n4K7imt1yI9F3J1mlnxt4RE3
-	6lSaNEyp9jnFiCMhlF62Nf3/+qDvkr0uxi2pjvq1FoobRU2AFSmYUc0ltv/Two/p
-	LNRIQf4dGuYp+Y+g5cd8yLLvZE9w1MFYyU5U3Ol3nsDCfCqplJ4JYglwc2LgNxff
-	AUr4c2SlvL4XfzQMBMoCGteIyE3WxIQXbw47zlH4AMx9Ee2v/gd+xUSshIVo8GaR
-	/rBjI9koSdGys9BphtYzg+1hA569BX1Mfadr3SaOqG22TcYcZEwfWfdBgsWvccXd
-	Smb7+OK7YzehVgBkMLJ5XR8LwogQ3/MTRqklsrFX/iazWxw==
-Received: from hhmail01.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 49qfaru4ny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 12:57:43 +0100 (BST)
-Received: from HHMAIL05.hh.imgtec.org (10.100.10.120) by
- HHMAIL01.hh.imgtec.org (10.100.10.19) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.36; Tue, 14 Oct 2025 12:57:43 +0100
-Received: from
- 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
- (172.25.6.89) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Tue, 14 Oct 2025 12:57:42 +0100
-From: Matt Coster <matt.coster@imgtec.com>
-Date: Tue, 14 Oct 2025 12:57:31 +0100
-Subject: [PATCH] drm/imagination: Optionally depend on POWER_SEQUENCING
+	s=arc-20240116; t=1760443476; c=relaxed/simple;
+	bh=5kDBCsrNHD+lfYpSaurI9bABB4ZUqKNpN1zxDJ8qQIU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G6LnYEkHZzJH8S9CsTiBEGhKxjPoL7V4LOdqpWNQv8K1zi5PmRGGAhufqz/e0XxJUzNsARSjhnvSjQ0nPKNmnYoJFVZqHl7eLVOIN3TLavlGhCjudyV/hAAZpPT2u76EYn3VyInz/zmyzsG8eWUhGA9I6+V6E6VvPaFRZQnkCng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 59EC3vK0060853
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 20:03:57 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Tue, 14 Oct 2025
+ 20:03:57 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
+        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
+        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+        <ben717@andestech.com>, <inochiama@gmail.com>,
+        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
+        <shradha.t@samsung.com>, <pjw@kernel.org>, <randolph.sklin@gmail.com>,
+        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
+Subject: [PATCH v8 1/5] PCI: dwc: Allow adjusting the number of ob/ib windows in glue driver
+Date: Tue, 14 Oct 2025 20:03:45 +0800
+Message-ID: <20251014120349.656553-2-randolph@andestech.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251014120349.656553-1-randolph@andestech.com>
+References: <20251014120349.656553-1-randolph@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251014-pwrseq-dep-v1-1-49aabd9d8fa1@imgtec.com>
-X-B4-Tracking: v=1; b=H4sIAKs67mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA0Nj3YLyouLUQt2U1AJdg2RDU4vEFAsDI8tkJaCGgqLUtMwKsGHRsbW
- 1ANjYEjdcAAAA
-X-Change-ID: 20251013-pwrseq-dep-0c158ad8029c
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Michal Wilczynski
-	<m.wilczynski@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC: Frank Binns <frank.binns@imgtec.com>,
-        Alessio Belle
-	<alessio.belle@imgtec.com>,
-        Alexandru Dadu <alexandru.dadu@imgtec.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, kernel test robot <lkp@intel.com>,
-        Matt Coster
-	<matt.coster@imgtec.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1265;
- i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=g4J9HQuskix95nGVq29iELEGA0lIY+LzY+yk2Odn53I=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMWS8s9r2lb8g/5L3yy19FUx+FWz7a+wbbnR+vmXCt//Kq
- q8LtroYdJSyMIhxMMiKKbLsWGG5Qu2PmpbEjV/FMHNYmUCGMHBxCsBEvnkxMrw6dOpqvo2nwJqq
- 3l8CIsYpV1kzNm4zOXS0YaXtnoTOH32MDKdUfng+PrTZ95ta27W4jU/7oi51LOs9tvFjkFqJat6
- 8aH4A
-X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
- fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Authority-Analysis: v=2.4 cv=O+A0fR9W c=1 sm=1 tr=0 ts=68ee3ab7 cx=c_pps
- a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17
- a=PZZNL22YEvsA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=QyXUC8HyAAAA:8
- a=dkdM1tVOqM7zQlyInTkA:9 a=QEXdDO2ut3YA:10 a=t8nPyN_e6usw4ciXM-Pk:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: gUdNoCzFQDpPDzLkiSAfk7M3XJANJxa1
-X-Proofpoint-GUID: gUdNoCzFQDpPDzLkiSAfk7M3XJANJxa1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE0MDA5MyBTYWx0ZWRfXwEFmTnlHBIdm
- +E7OUQBIR0MLnYbQYDdVzTDjB/x2P2l1KyLfCrSjk2D9F5b1ADLwVEL9uhu9Q4v5GVM1HAvE8W8
- Z2OyViRF+F0kUMKzTZxDcLAT55RmR4K8JyxW9B/r93DajYYFV6iEmYvnThUXRxc2MguSrYt/3Tf
- mcQK6vWBZrkn2XTKu4kvMnXgTnsKeVdijk3LY1WVwqMUAYzHvVurUvA2HdtdJL7Xe131Ks7rpO1
- o2fD4XARDMUGCXnF4JdfAm1MCBhiENbAO3yOwv5VhhqKs8VDaftHTxRo+1VD2DAmGXljqKstMoF
- Fs53NoX841XrE41mij1tGavVVijcD0q+vP4uMJjzRweid0ab4a5eQxgNcwpKGdBZolsVgCxnP+P
- BjuhrI7f9/3hViWkfXzhNBn97nDceA==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59EC3vK0060853
 
-When the change using pwrseq was added, I nixed the dependency on
-POWER_SEQUENCING since we didn't want it pulled in on platforms where
-it's not needed [1]. I hadn't, however, considered the link-time
-implications of this for configs with POWER_SEQUENCING=m.
+The number of ob/ib windows is determined through write-read loops
+on registers in the core driver. Some glue drivers need to adjust
+the number of ob/ib windows to meet specific requirements,such as
+hardware limitations. This change allows the glue driver to adjust
+the number of ob/ib windows to satisfy platform-specific constraints.
+The glue driver may adjust the number of ob/ib windows, but the values
+must stay within hardware limits.
 
-[1]: https://lore.kernel.org/r/a265a20e-8908-40d8-b4e0-2c8b8f773742@imgtec.com/
-
-Fixes: e38e8391f30b ("drm/imagination: Use pwrseq for TH1520 GPU power management")
-Cc: stable@vger.kernel.org
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510111806.CMulNMKW-lkp@intel.com/
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+Signed-off-by: Randolph Lin <randolph@andestech.com>
 ---
- drivers/gpu/drm/imagination/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/dwc/pcie-designware.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
-index 3bfa2ac212dc..7e7ffb9c2257 100644
---- a/drivers/gpu/drm/imagination/Kconfig
-+++ b/drivers/gpu/drm/imagination/Kconfig
-@@ -6,6 +6,7 @@ config DRM_POWERVR
- 	depends on ARM64
- 	depends on DRM
- 	depends on PM
-+	depends on POWER_SEQUENCING || !POWER_SEQUENCING
- 	select DRM_EXEC
- 	select DRM_GEM_SHMEM_HELPER
- 	select DRM_SCHED
-
----
-base-commit: db74b04edce1bc86b9a5acc724c7ca06f427ab60
-change-id: 20251013-pwrseq-dep-0c158ad8029c
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index c644216995f6..a860890febc3 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -851,8 +851,16 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
+ 		max = 0;
+ 	}
+ 
+-	pci->num_ob_windows = ob;
+-	pci->num_ib_windows = ib;
++	if (!pci->num_ob_windows)
++		pci->num_ob_windows = ob;
++	else if (pci->num_ob_windows > ob)
++		dev_err(pci->dev, "Adjusted ob windows exceed the limit\n");
++
++	if (!pci->num_ib_windows)
++		pci->num_ib_windows = ib;
++	else if (pci->num_ib_windows > ib)
++		dev_err(pci->dev, "Adjusted ib windows exceed the limit\n");
++
+ 	pci->region_align = 1 << fls(min);
+ 	pci->region_limit = (max << 32) | (SZ_4G - 1);
+ 
+-- 
+2.34.1
 
 
