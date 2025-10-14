@@ -1,62 +1,67 @@
-Return-Path: <linux-kernel+bounces-853251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24F1BDB045
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:13:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563CFBDB05C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 985523BFFFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:13:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37B5B4F57FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826C22C15A0;
-	Tue, 14 Oct 2025 19:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B9B2BEFEF;
+	Tue, 14 Oct 2025 19:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQfNSLMc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Xb4AaGVP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA612BE7A6;
-	Tue, 14 Oct 2025 19:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6BB23D7D9;
+	Tue, 14 Oct 2025 19:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760469212; cv=none; b=hTsWl5tlqyXvWrnduf4nf7SdDsr7HKF5StKEgAwyYhvEcqxiq9690RcUIMQPJrb3DJFPRmZl0B6Dj1SEldX6Zs0vAf7p37wmTcry9Kav/jX0yHkRUTqd4p90D8ikR6xWmf1Gdg892Gsk9Z65bdfwtEKeHKnXMNvD5C9Nzjchkm0=
+	t=1760469291; cv=none; b=Abgm/2dtHVcjzf1WdL5H8fRC7gwuSi0+8fDTLEKYB6HTyO6rBGn9Zhlq6gOAlT0I5rF+BIwFTwuHOC5qdOwTP/0WbtVWZtGc4dDtaREGi4Yjb93uwTAMFPwwWXauWRvKt2SflyTNe5c3yxIpiTRrQ4yCNigQHISE4TI6q+uc3OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760469212; c=relaxed/simple;
-	bh=VeQgHIyvUFeBDOXS6P2izT3xDp9jOMmhgF0q1loUIqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Edk2k7L7qike1+d3ki1BV/4f0EQWGVFiU36giGJeKkt/2nPeAih60GmtIKnHXSi034TIP+ezOAaj8PyVcm2JXiPAQt/kx5ou6LV9JnyxRUUIAd1LeGun/PHYa93S7hm+1dcxZraBOvw8H0Za+zx3UO4BuJzUqKu4kmkMtsO0GkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQfNSLMc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24428C4CEE7;
-	Tue, 14 Oct 2025 19:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760469212;
-	bh=VeQgHIyvUFeBDOXS6P2izT3xDp9jOMmhgF0q1loUIqQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=CQfNSLMcWllvP4XtgkrBezgM3iRNGCyeKHBos3S3qa4N1X+3aEqm7qoex1o/DWiHu
-	 Yaz5ZLyWoXTC34ZpeMV8JzWCin3oeYT43/Nz5I53XoaKJL6xrnlUNkIsjbxQsFpj4x
-	 XrDB8FbFJ2XfYkay4HeuyItd468Dchp1gxdPRh9oHqcV4RB/Yqhzf+f31yKnw/SJjP
-	 3OIGyLc5xXh0IkS5UfkOLTckUIQCRavAwnEjY0wy3VmUqaMag7tlAODjWXBJJ94D2k
-	 2HGte1SMbgW2nODLKC26lCixwhZsOg/ElWKH1epxu24IImyN5upkf1DhDTUXR4gabt
-	 fPfbWlujJWXlg==
-Date: Tue, 14 Oct 2025 14:13:30 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Kees Cook <kees@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] PCI: rcar-host: Add OF Kconfig dependency to avoid
- objtool no-cfi warning
-Message-ID: <20251014191330.GA899677@bhelgaas>
+	s=arc-20240116; t=1760469291; c=relaxed/simple;
+	bh=bUDWiwFGl4fPYs7f2cQbNpM7+WNvkhlDCn1i6bVu0O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ez4mq7f9a8QnbHuGvlHK2N2baG62urzbvjbvHtyYFdORhBqk2T/rRWUYjV/FVcxFWT3uC3Yj09Ckhl4ITt5mUMtHON5c6Djzo/GB92l7BTnnARDx/gguQukXq5uL56v5vLq12s1S0q9QZOfR+aFBLXvZV3/RfASrA2unhtVEfJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Xb4AaGVP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QNUximqet6DWhyIz4nhEhfE/R+ezClJhU7cuTBXoYag=; b=Xb4AaGVPDNsB5EUGG4ObRO3h6n
+	DdfCBjHziOyMg1DbFj0LI4V46gaeDsVOVqZ7R7SJEGlu8vwilTtUnr+gm3fvdGWgvidwkYMsGBUNa
+	+BM7VJDn13srbGPuxSr6UCA+jQGCqnVFKN2/6ObMDl1kAwNsnIYCuNDVFT1nZPUWoxSI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v8kTV-00Awk6-Os; Tue, 14 Oct 2025 21:14:21 +0200
+Date: Tue, 14 Oct 2025 21:14:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Tao Ren <rentao.bupt@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Tao Ren <taoren@meta.com>
+Subject: Re: [PATCH v4 11/13] ARM: dts: aspeed: facebook-fuji: Include
+ facebook-fuji-data64.dts
+Message-ID: <33b9d6d4-bb2f-47e6-8d3d-94a2ca2b8474@lunn.ch>
+References: <20250728055618.61616-1-rentao.bupt@gmail.com>
+ <20250728055618.61616-12-rentao.bupt@gmail.com>
+ <79ddc7b9-ef26-4959-9a16-aa4e006eb145@roeck-us.net>
+ <aO2kLyxGlGt12sKD@fedora>
+ <ea64d3c1-e517-4bd8-9a2e-56432f286347@lunn.ch>
+ <4e099ead-e6df-4489-a775-1730bc852dcf@roeck-us.net>
+ <f801a4cb-3d27-439c-82f2-d5ee5aa0d810@lunn.ch>
+ <7197bfc7-fef6-40b2-b3f3-182e9428dc12@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,70 +70,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014-rcar_pcie_probe-avoid-nocfi-objtool-warning-v2-1-6e0204b002c6@kernel.org>
+In-Reply-To: <7197bfc7-fef6-40b2-b3f3-182e9428dc12@roeck-us.net>
 
-On Tue, Oct 14, 2025 at 11:20:27AM -0700, Nathan Chancellor wrote:
-> After commit 894af4a1cde6 ("objtool: Validate kCFI calls"), compile
-> testing pcie-rcar-host.c with CONFIG_FINEIBT=y and CONFIG_OF=n results
-> in a no-cfi objtool warning in rcar_pcie_probe():
+On Tue, Oct 14, 2025 at 09:39:02AM -0700, Guenter Roeck wrote:
+> On 10/14/25 08:11, Andrew Lunn wrote:
+> > > > If it is already in mainline, i don't care too much if it is wrong. We
+> > > > don't want to cause regressions.
+> > > > 
+> > > > I only object when adding new nodes which are wrong. If we keep adding
+> > > > broken nodes, there is no incentive to fix the broken driver to do the
+> > > 
+> > > This wasn't adding an allegedly (sorry, it worked for me) broken node,
+> > > it was removing one that worked for me all along. Obviously I do not know
+> > > if it worked (or if it is even used) on real hardware, but it worked for
+> > > the fuji-bmc qemu emulation.
+> > 
+> > It probably does work on real hardware, because it is one of those
+> > "two wrongs makes a right" cases. So i see this as a regression. The
+> > node should not be removed. It should hopefully get corrected sometime
+> > in the future when somebody actually fixes the aspeed driver, and
+> > fixes both wrongs.
 > 
->   $ cat allno.config
->   CONFIG_CFI=y
->   CONFIG_COMPILE_TEST=y
->   CONFIG_CPU_MITIGATIONS=y
->   CONFIG_GENERIC_PHY=y
->   CONFIG_MITIGATION_RETPOLINE=y
->   CONFIG_MODULES=y
->   CONFIG_PCI=y
->   CONFIG_PCI_MSI=y
->   CONFIG_PCIE_RCAR_HOST=y
->   CONFIG_X86_KERNEL_IBT=y
-> 
->   $ make -skj"$(nproc)" ARCH=x86_64 KCONFIG_ALLCONFIG=1 LLVM=1 clean allnoconfig vmlinux
->   vmlinux.o: warning: objtool: rcar_pcie_probe+0x191: no-cfi indirect call!
-> 
-> When CONFIG_OF is unset, of_device_get_match_data() returns NULL, so
-> LLVM knows this indirect call has no valid destination and drops the
-> kCFI setup before the call, triggering the objtool check that makes sure
-> all indirect calls have kCFI setup.
-> 
-> This driver depends on OF for probing with non-NULL data for every match
-> so this call will never be NULL in practice. Add a hard Kconfig
-> dependency on OF to avoid the warning.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.O2IX0Jek-lkp@intel.com/
-> Closes: https://github.com/ClangBuiltLinux/linux/issues/2134
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
-> Changes in v2:
-> - Switch from NULL check to avoiding CONFIG_OF=n case altogether (Mani,
->   Geert).
-> - Drop Peter and Kees's reviews, as solution is not the same.
-> - Link to v1: https://patch.msgid.link/20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org
-> ---
->  drivers/pci/controller/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> index 41748d083b93..d8688abc5b27 100644
-> --- a/drivers/pci/controller/Kconfig
-> +++ b/drivers/pci/controller/Kconfig
-> @@ -243,6 +243,7 @@ config PCI_TEGRA
->  config PCIE_RCAR_HOST
->  	bool "Renesas R-Car PCIe controller (host mode)"
->  	depends on ARCH_RENESAS || COMPILE_TEST
-> +	depends on OF
+> So you are trying to force the issue by disabling the Ethernet interface
+> on fuji-bmc until the problem in the driver (whatever it is) has been fixed ?
+> That just seems odd.
 
-Ugh.  This might be the best solution, but it's a bit problematic
-without a hint about why "depends on OF" is here.  Theoretically there
-are stubs for everything to make COMPILE_TEST work, so I think we're
-about to drop all the dependencies on OF.
+No, i see this as a regression, it probably used to work, so it should
+still work.
 
-This dependency to avoid a no-cfi warning looks like the kind of thing
-that could someday go away if the tools get smarter.  Maybe we can add
-a Kconfig comment here, but I don't really know enough to write one.
-Something like this?
+I'm just pushing back on adding new nodes which are broken. If it is a
+new node, it should not cause a regression.
 
-  depends on OF   # avoid no-cfi warning https://lore.kernel.org/r/202510092124.O2IX0Jek-lkp@intel.com/
+	Andrew
 
