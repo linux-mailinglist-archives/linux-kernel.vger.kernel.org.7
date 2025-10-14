@@ -1,124 +1,164 @@
-Return-Path: <linux-kernel+bounces-853182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB691BDADE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80126BDADF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C16B0344BD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F0963AB1FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7954B304BD5;
-	Tue, 14 Oct 2025 17:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB9F3074BD;
+	Tue, 14 Oct 2025 17:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xU12w+3h"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bu/eZlsz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84236296BA7;
-	Tue, 14 Oct 2025 17:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C488273804;
+	Tue, 14 Oct 2025 17:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464668; cv=none; b=anrFmagFqCdmtKEux/Sed90GFh0A/qyFeZADSh2+WD/VlHyBJ/Q3Ezqv3z/P++MPJLCx3rkSRAPr34EO5s/i/cqEhTpEFD6/K75iXWoQ9DWhPfM4VLi/R0+pQkQMJFBV+IpSPCzwh38FM3mtwJJ5cTfntjXdXdckz+uJtCYhQpI=
+	t=1760464734; cv=none; b=SD587kYrE7rwtxgfwtggI6yYJ7U0UX1tk33LHpjC/Jg2Puf3406bLtV+WTChA9wbrjeFEQueCfj6/WYuRuGAqIoZJsmQgM0YrcgSlR8JJW4BZ7Pzplu//U37fMbUsUMn06+hJeVgokDicSqSPWkVHPwpqmOlO8gN8fOFxZ2QeoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464668; c=relaxed/simple;
-	bh=+MCW3pWeUmZPyGxMrX0RxPKRd723eQqL7FGWAFlCJcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BMloozitSiGsv+AnOCcGR9UNBmpcMyzN/wzzi1nSKx5kgOdj7bFqIzCnEoz7aaPYRxczVOdlNhYKmOMIDGM4N7qM+MhvTIlhtTrvQFB60iP7bOSJhBTM8I2njex9W28pnug/V4wEoSAm0FjFSptnPDd0+j8Bhu01Y1N0umvljvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xU12w+3h; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=r2+wIsDTT/YrPhAA/dkQ7vm5iMhdp0goW9on/CiFr/g=; b=xU12w+3hNb9ltRQ40yzAiQ8eEX
-	eLwUXtuCe25tCXZsYxXQTs+wkOHgDCKEcULtHzYWGIvnZesaKEsFuXaZrLofohWUYKsGPhrFqV9Z0
-	370bdaiGaI2xWJuJRLXFIOO+Nf3bY728T0JZOGqGLelCLpSOUg+YKO9ojPcADR84Ogh5J4QqY8yRh
-	otLPq8KSHppiyeMt6/JUFFLz9LvwttJ+1ata50ti6Io3BRevw4GldC8lrbjBwLPBr7ZRY1La3BAwx
-	Do0QiyD9dLqIyMbfchLI5eGzjVYYgwn764pH5x6e0iNt+YM905C7sM8dwnHv93J4iuLrzBGdTB9ni
-	EYjoIj7A==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8jHN-0000000H7sL-3awZ;
-	Tue, 14 Oct 2025 17:57:45 +0000
-Message-ID: <d6cd375c-dad6-4047-9574-bac7dfc24315@infradead.org>
-Date: Tue, 14 Oct 2025 10:57:45 -0700
+	s=arc-20240116; t=1760464734; c=relaxed/simple;
+	bh=XDE6Yxeh5XTmulB/+mdNcqgIXS4uoK/1f8lE5Ir5Ezg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s94aD5k/8lc4sdzw+6NamAPv0Wuz0lz+vakkrKrLE3D9IAq3/EIEVugdw3lvpnX3rocb/TInW1t1ZkUzHTEJts5RUMsTNiYH+EAyj4gbT8MuDf/vfnASLSF9jidbQAo7V/LQLzgxAlutPGz6fSyADNDE9nlHWYO1xI3T8TbVhbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bu/eZlsz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0128C4CEE7;
+	Tue, 14 Oct 2025 17:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760464733;
+	bh=XDE6Yxeh5XTmulB/+mdNcqgIXS4uoK/1f8lE5Ir5Ezg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bu/eZlsz44HxEbI47lj8muJJ1DeQ5g63sPU/8wR/cfumSftjo+mx1WWB7eCjqTgxm
+	 mj2N1DKHcHqc9qcyJM+Mme3ktfwcJLpWKUH4l8ExKtww8bTqPCLqgnTqnFZf82fs3C
+	 asYvnH6Q/I+Cn6GCWxIDT4B7nijvusMAZ7Mm21vCTz8n6c8KAPw1BYFvf1x6W2I/+d
+	 sMGLcrwHMvbNwdKCDHhl7Wl6U39+xof8+9+4vuTPnf6gNjtzPyrt+8BTOeYvA80/e3
+	 7HxvHGN1n5aaPHGiwOmDZ4gJWs0n5Y4+NpVa82qK1vqUhAG5ZvkA8tZdDr3xDqqWgV
+	 ywhKGFc5I6vkw==
+Date: Tue, 14 Oct 2025 18:58:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Gary Yang <gary.yang@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	cix-kernel-upstream@cixtech.com
+Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
+Message-ID: <20251014-backyard-parted-572627bfc540@spud>
+References: <20251014015712.2922237-1-gary.yang@cixtech.com>
+ <20251014015712.2922237-2-gary.yang@cixtech.com>
+ <CACRpkda-2BNj+Pt2kS9u_bbr41bsWGRGDqNd3EXVnys-xSqg0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: sysrq: Remove contradicting sentence on
- extra /proc/sysrq-trigger characters
-To: Jonathan Corbet <corbet@lwn.net>, Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Serial <linux-serial@vger.kernel.org>
-Cc: Cengiz Can <cengiz@kernel.wtf>, Tomas Mudrunka
- <tomas.mudrunka@gmail.com>, Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
-References: <20251008112409.33622-1-bagasdotme@gmail.com>
- <87wm4xbkim.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <87wm4xbkim.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r7QY2DKFaWvZjWwF"
+Content-Disposition: inline
+In-Reply-To: <CACRpkda-2BNj+Pt2kS9u_bbr41bsWGRGDqNd3EXVnys-xSqg0g@mail.gmail.com>
 
 
+--r7QY2DKFaWvZjWwF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/14/25 7:55 AM, Jonathan Corbet wrote:
-> Bagas Sanjaya <bagasdotme@gmail.com> writes:
-> 
->> /proc/sysrq-trigger documentation states that only first character is
->> processed and the rest is ignored, yet it is not recommended to write
->> any extra characters to it. The latter statement is contradictive as
->> these characters are also ignored as implied by preceding sentence.
->>
->> Remove it.
->>
->> Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
->> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
->> ---
->>  Documentation/admin-guide/sysrq.rst | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
->> index 9c7aa817adc72d..63ff415ce85d66 100644
->> --- a/Documentation/admin-guide/sysrq.rst
->> +++ b/Documentation/admin-guide/sysrq.rst
->> @@ -77,9 +77,7 @@ On other
->>  On all
->>  	Write a single character to /proc/sysrq-trigger.
->>  	Only the first character is processed, the rest of the string is
->> -	ignored. However, it is not recommended to write any extra characters
->> -	as the behavior is undefined and might change in the future versions.
->> -	E.g.::
->> +	ignored. E.g.::
-> 
-> I'm not sure this is right - there is a warning here that additional
-> characters may acquire a meaning in the future, so one should not
-> develop the habit of writing them now.  After all these years, I think
-> the chances of fundamental sysrq changes are pretty small, but I still
-> don't see why we would take the warning out?
+On Tue, Oct 14, 2025 at 12:44:15PM +0200, Linus Walleij wrote:
+> Hi Gary,
+>=20
+> thanks for your patch!
+>=20
+> On Tue, Oct 14, 2025 at 3:57=E2=80=AFAM Gary Yang <gary.yang@cixtech.com>=
+ wrote:
+>=20
+>=20
+> > +# Client device subnode's properties
+> > +patternProperties:
+> > +  'pins$':
+> > +    type: object
+> > +    additionalProperties: false
+> > +    patternProperties:
+> > +      '(^pins|pins?$)':
+> > +        type: object
+> > +        additionalProperties: false
+> > +        description:
+> > +          A pinctrl node should contain at least one subnodes represen=
+ting the
+> > +          pinctrl groups available on the machine. Each subnode will l=
+ist the
+> > +          pins it needs, and how they should be configured, with regar=
+d to muxer
+> > +          configuration, pullups, and drive strength.
+> > +
+> > +        properties:
+> > +          pinmux:
+> > +            description:
+> > +              Values are constructed from pin number and mux setting a=
+nd are
+> > +              defined as macros in arch/arm64/boot/dts/cix/sky1-pinfun=
+c.h directly.
+> > +
+> > +          bias-disable: true
+> > +
+> > +          bias-pull-up: true
+> > +
+> > +          bias-pull-down: true
+> > +
+> > +          drive-strength:
+> > +            description:
+> > +              Can support 15 levels, from DS_LEVEL1 to DS_LEVEL15.
+> > +              defined as macros in arch/arm64/boot/dts/cix/sky1-pinfun=
+c.h.
 
-but the following paragraph says:
+Isn't this wrong?
+drive-strength is in mA but you're just shoving register values in here.
+pw-bot: changes-requested
 
-	Alternatively, write multiple characters prepended by underscore.
-	This way, all characters will be processed. E.g.::
+> > +
+> > +        required:
+> > +          - pinmux
+>=20
+> Can't you just include both pinmux-node.yaml and pincfg-node.yaml
+> to get validation from the generic schemas?
+>=20
+> 'pins$':
+>   type: object
+>   additionalProperties: false
+>   patternProperties:
+>     '(^pins|pins?$)':
 
-		echo _reisub > /proc/sysrq-trigger
+Why does this pattern allow foopin but not pinfoo?
+Also seems overkill to have both suffix and prefix options, instead of
+just sticking to one!
 
-so it is confuzing.
+>       type: object
+>       $ref: /schemas/pinctrl/pinmux-node.yaml
+>       $ref: /schemas/pinctrl/pincfg-node.yaml
+>       additionalProperties: false
+>=20
+> Something like this, I never get this right before actually testcompiling=
+=2E..
 
+spacemit,k1-pinctrl has a node of this type, that can be copied from
+Gary. Essentially, you need an allOf: for the two references.
 
--- 
-~Randy
+--r7QY2DKFaWvZjWwF
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6PWQAKCRB4tDGHoIJi
+0pbcAQDMSqerReJ65uUM71ikHTc6L6kMQSFvvRzk3Z2gSbEsQQEAxn/UVVjIsZKM
+A4ol0es58WdnPRa/MXvsm6KKAtTLrwk=
+=9CrM
+-----END PGP SIGNATURE-----
+
+--r7QY2DKFaWvZjWwF--
 
