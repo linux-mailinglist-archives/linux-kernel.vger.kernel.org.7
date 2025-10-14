@@ -1,226 +1,161 @@
-Return-Path: <linux-kernel+bounces-852007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FC8BD7EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:33:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C09BD7E42
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5F714F9E6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A3418A2E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E9530F812;
-	Tue, 14 Oct 2025 07:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FF630E0C7;
+	Tue, 14 Oct 2025 07:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QFg6gbt2"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UUliR8ml"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE91030F527
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C1F30E0E7
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427062; cv=none; b=cVqgssnYQAeGUY3kaKDecu8SJTLddmZuiNbAkZYlVCvnFByPxl0HTx/bS6CvNZ+Z7SMyPJbgSVaOErYlaLps3mehoIrla3qXhsexw2Ba8th5jPos9X6YJr8lv0IBuHMRyvUzN9q4nt6SV9IV3uej8tSbQJhbMAc+GNDEeFKuELg=
+	t=1760426948; cv=none; b=WdwUb791vTYBz9Za3Ao2pPefit12VhRRDo4PXmZRuWfzI2HEqd6vAsCaoqt6KNOtyLmIdMAkZDQ+7lRF2oEAT8dBEjrIgvR+FQxNMs6DQseP3pkAlVr8m/lTQPi26L44NXxtwhLQXegj93UrnZyG/jWxNlrhYhpNnGA7BKXiMJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427062; c=relaxed/simple;
-	bh=oBWHsb5ZrCzAgydcykXvb0C1NNG8ufvsu6D1kbmawFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gh1mRBLKoxM3s15gniHGGRKnE5hCc/MUs0hKoATQeO6xRpMDn672JDSHBtIoti12oxPPlH3vOUXM+/PPTWRihMRs8XM/R9eY8twhVRX6o7JXw6x8aww4BUTOPyngfbfN31QKF2maSBUcED+Uvb+zod5Ak1RHQS8rB6P+kWYKSTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QFg6gbt2; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760427053;
+	s=arc-20240116; t=1760426948; c=relaxed/simple;
+	bh=JNuhmQpLyHp4WKhXVh+NWQJYhWa7lt7g2fgI78A18lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AEL1D0ChhOLxkGE9Ic7SNj6JcdBYvpqKyjr3vlIi8p+2hHy+zbBoa5BL0Q3RUWTFx8z/DcrvKyEkvABAcDdXZlnvuuTHyql0+4UmnJdckXrr94HtF0aFFAxvNJGDy76maLeV90Tu2BRHCIzTJKvWpqM/faN3KdocFuVfEZyMNtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UUliR8ml; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760426940;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=id2gx6Q2/ekEzaepGLYaw2eJ/2EtAa9+sxPsv0v9VY0=;
-	b=QFg6gbt22U24VjFjsc12JX2neXDKov0QYC1zwupgyoyGO0rq9yGmcpSLbZibfkUSXI5aty
-	DGIzQmaROOfq4TldRqXtsEZ/6vQH/xLOmXUaAkaO8KCo+D8A4Qp4M+avgwN7DRKmldjBhR
-	Jeea7BWXa2NSfPKGKrgsaiBSnTNTvYM=
-From: chenxiaosong.chenxiaosong@linux.dev
-To: stfrench@microsoft.com,
-	metze@samba.org,
-	pali@kernel.org,
-	linkinjeon@kernel.org,
-	smfrench@gmail.com,
-	sfrench@samba.org,
-	senozhatsky@chromium.org,
-	tom@talpey.com,
-	pc@manguebit.org,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	bharathsm@microsoft.com,
-	christophe.jaillet@wanadoo.fr
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 20/22] smb: move FILE_BOTH_DIRECTORY_INFO to common/cifspdu.h
-Date: Tue, 14 Oct 2025 15:28:54 +0800
-Message-ID: <20251014072856.3004683-10-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251014072856.3004683-1-chenxiaosong.chenxiaosong@linux.dev>
-References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251014072856.3004683-1-chenxiaosong.chenxiaosong@linux.dev>
+	bh=RksJCWcE518u9BgQ05Pnya764wbR3ztonK23iFG2Arc=;
+	b=UUliR8ml7Z9+85UFn2Yu//vQLQC0CBPSsVvrPNl3xbKRVxthzIElem0zeV5+vTqXPPEBWY
+	8oXVs3Y8AXJAm3221SQAl9BJ6WyM20sBQAYEY1QuJ2GKNLPmvLm1hZwTfvxBiO8D6Woqfs
+	elAJcWNRF323MeFzer6mvfkYPxU8pnM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-153-ByqCRlS6PV2vVo7CF5__jQ-1; Tue, 14 Oct 2025 03:28:59 -0400
+X-MC-Unique: ByqCRlS6PV2vVo7CF5__jQ-1
+X-Mimecast-MFC-AGG-ID: ByqCRlS6PV2vVo7CF5__jQ_1760426938
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e32eb4798so25554375e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:28:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760426938; x=1761031738;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RksJCWcE518u9BgQ05Pnya764wbR3ztonK23iFG2Arc=;
+        b=rTxOy7LcsxIwf6EAoWv997FEEuOnaIiuHo0rGzD2OfZTNEKGivf2jBUbmkmyDTgMaz
+         s6/Pacy6kPd/u8sY1e4nJRyqSiCFQOw82U2mME/TaV8Ff8uFih77Z8EGXqgq2PtKaUVY
+         YTZD0NsdEtEiov3qlhcNFGpvniGLuPBj5ECasYnIYVXux/ND1vUK2j3C7r4Hsv9l1pyJ
+         +dHCJZzwlPFoRtUA74m4DHILC94VcRl5cwdGeg1NRu6O3gzRvGR+M0ylimcSYLibrq61
+         qT8eW6Sjb946VaCTIZo+yshZZe1Ah9kmV74fHnDkjqEWZ8jEoqzrEVRFPrMiNxujgo6R
+         7IRg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+hT4+pKhNkwZhtazBPTqpeBbxPCtOf/Y9nPNQTGrBmeu/ern6dxwZEppKgkEtFKBHFMdTQqBXeJyV8mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZtCbx3iWw7keHFkJFWrKMDykQKkiFQqYAibLoH4mMlDzwtg1p
+	yXXDHVxJXSRl4tgyZNDxgE4wLrO++PlTwW1Q6VmQymBRZqtPWaCuk3tOmz51nkIz+pydWnMWrKK
+	nmPeWiWERLEEYcBUkpKERCOgjpX/1iAQh9humUc1XHQvKk6OdTEnIB7YhcKt21sGp2Q==
+X-Gm-Gg: ASbGnctjslAi6c/HDaFsJYF7XKsX0M5YR4yr65OvfrHMDGoUAqE5QgH7xZ3ELG2R0bq
+	pU2yGGwVkcrdPjWf7W0O4cdIUno5JyChTN1f6WpYQQsHNhTw+V6yqlbB/S4ErCswVy9w/fijo50
+	ImWUwgOTf6ABCKiVvHf0uoyeCPDiZ3v8xeDihtd7h/Z/Cg+oNbMFqTFlQfy11I0QmoiTQ2ZM3G/
+	C0N5g78KGuP3OygHPmDNpT2dXFJFmutyWWdsr7L2t89Lh2Ldi9gBhBoAao5HbXz9b+0d8utWtue
+	5xBPZgJM9WVHktI4vDJpP1Nu7+ARJ44Uz4qa4Lc3PLrVH56J88Ql+QlPiBx81yqGf3b5f9jFVYi
+	Vqaku
+X-Received: by 2002:a05:600c:4506:b0:45b:8a0e:cda9 with SMTP id 5b1f17b1804b1-46fa9a8638dmr171107435e9.2.1760426938081;
+        Tue, 14 Oct 2025 00:28:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPr+Tuwu+hIBP/9A/MtGnkGPTpr2HNYr7jhZYylqwePWeGRerNFPNHp1Rv8vI/VkWXky412w==
+X-Received: by 2002:a05:600c:4506:b0:45b:8a0e:cda9 with SMTP id 5b1f17b1804b1-46fa9a8638dmr171107285e9.2.1760426937724;
+        Tue, 14 Oct 2025 00:28:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc57530b3sm107980145e9.12.2025.10.14.00.28.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 00:28:57 -0700 (PDT)
+Message-ID: <95cc648b-ebec-479a-ba8f-b663f39bc516@redhat.com>
+Date: Tue, 14 Oct 2025 09:28:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/draw: fix color truncation in drm_draw_fill24
+To: Francesco Valla <francesco@valla.it>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251003-drm_draw_fill24_fix-v1-1-8fb7c1c2a893@valla.it>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20251003-drm_draw_fill24_fix-v1-1-8fb7c1c2a893@valla.it>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+On 03/10/2025 12:33, Francesco Valla wrote:
+> The color parameter passed to drm_draw_fill24() was truncated to 16
+> bits, leading to an incorrect color drawn to the target iosys_map.
+> Fix this behavior, widening the parameter to 32 bits.
 
-Rename "struct file_both_directory_info" to "FILE_BOTH_DIRECTORY_INFO",
-then move duplicate definitions to common header file.
+Merged to drm-misc-fixes.
 
-Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
----
- fs/smb/client/cifspdu.h    | 18 ------------------
- fs/smb/common/cifspdu.h    | 19 +++++++++++++++++++
- fs/smb/server/smb2pdu.c    | 14 +++++++-------
- fs/smb/server/smb_common.h | 18 ------------------
- 4 files changed, 26 insertions(+), 43 deletions(-)
+Thanks for your contribution.
 
-diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-index f89abcb88dee..3db5e7e6172e 100644
---- a/fs/smb/client/cifspdu.h
-+++ b/fs/smb/client/cifspdu.h
-@@ -2167,24 +2167,6 @@ typedef struct {
- 	char FileName[];
- } __attribute__((packed)) SEARCH_ID_FULL_DIR_INFO; /* level 0x105 FF rsp data */
- 
--typedef struct {
--	__le32 NextEntryOffset;
--	__u32 FileIndex;
--	__le64 CreationTime;
--	__le64 LastAccessTime;
--	__le64 LastWriteTime;
--	__le64 ChangeTime;
--	__le64 EndOfFile;
--	__le64 AllocationSize;
--	__le32 ExtFileAttributes;
--	__le32 FileNameLength;
--	__le32 EaSize; /* length of the xattrs */
--	__u8   ShortNameLength;
--	__u8   Reserved;
--	__u8   ShortName[24];
--	char FileName[];
--} __attribute__((packed)) FILE_BOTH_DIRECTORY_INFO; /* level 0x104 FFrsp data */
--
- typedef struct {
- 	__u32  ResumeKey;
- 	__le16 CreationDate; /* SMB Date */
-diff --git a/fs/smb/common/cifspdu.h b/fs/smb/common/cifspdu.h
-index d7c9f17ed220..cf5e3ee577d0 100644
---- a/fs/smb/common/cifspdu.h
-+++ b/fs/smb/common/cifspdu.h
-@@ -401,4 +401,23 @@ typedef struct {
- 	char FileName[];
- } __attribute__((packed)) FILE_FULL_DIRECTORY_INFO; /* level 0x102 rsp data */
- 
-+/* See MS-CIFS 2.2.8.1.7 */
-+typedef struct {
-+	__le32 NextEntryOffset;
-+	__u32 FileIndex;
-+	__le64 CreationTime;
-+	__le64 LastAccessTime;
-+	__le64 LastWriteTime;
-+	__le64 ChangeTime;
-+	__le64 EndOfFile;
-+	__le64 AllocationSize;
-+	__le32 ExtFileAttributes;
-+	__le32 FileNameLength;
-+	__le32 EaSize; /* length of the xattrs */
-+	__u8   ShortNameLength;
-+	__u8   Reserved;
-+	__u8   ShortName[24];
-+	char FileName[];
-+} __attribute__((packed)) FILE_BOTH_DIRECTORY_INFO; /* level 0x104 FFrsp data */
-+
- #endif /* _COMMON_CIFSPDU_H */
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index 6121060d84ae..8c5700102cc6 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -3798,7 +3798,7 @@ static int readdir_info_level_struct_sz(int info_level)
- 	case FILE_FULL_DIRECTORY_INFORMATION:
- 		return sizeof(FILE_FULL_DIRECTORY_INFO);
- 	case FILE_BOTH_DIRECTORY_INFORMATION:
--		return sizeof(struct file_both_directory_info);
-+		return sizeof(FILE_BOTH_DIRECTORY_INFO);
- 	case FILE_DIRECTORY_INFORMATION:
- 		return sizeof(FILE_DIRECTORY_INFO);
- 	case FILE_NAMES_INFORMATION:
-@@ -3829,9 +3829,9 @@ static int dentry_name(struct ksmbd_dir_info *d_info, int info_level)
- 	}
- 	case FILE_BOTH_DIRECTORY_INFORMATION:
- 	{
--		struct file_both_directory_info *fbdinfo;
-+		FILE_BOTH_DIRECTORY_INFO *fbdinfo;
- 
--		fbdinfo = (struct file_both_directory_info *)d_info->rptr;
-+		fbdinfo = (FILE_BOTH_DIRECTORY_INFO *)d_info->rptr;
- 		d_info->rptr += le32_to_cpu(fbdinfo->NextEntryOffset);
- 		d_info->name = fbdinfo->FileName;
- 		d_info->name_len = le32_to_cpu(fbdinfo->FileNameLength);
-@@ -3960,9 +3960,9 @@ static int smb2_populate_readdir_entry(struct ksmbd_conn *conn, int info_level,
- 	}
- 	case FILE_BOTH_DIRECTORY_INFORMATION:
- 	{
--		struct file_both_directory_info *fbdinfo;
-+		FILE_BOTH_DIRECTORY_INFO *fbdinfo;
- 
--		fbdinfo = (struct file_both_directory_info *)kstat;
-+		fbdinfo = (FILE_BOTH_DIRECTORY_INFO *)kstat;
- 		fbdinfo->FileNameLength = cpu_to_le32(conv_len);
- 		fbdinfo->EaSize =
- 			smb2_get_reparse_tag_special_file(ksmbd_kstat->kstat->mode);
-@@ -4217,9 +4217,9 @@ static int reserve_populate_dentry(struct ksmbd_dir_info *d_info,
- 	}
- 	case FILE_BOTH_DIRECTORY_INFORMATION:
- 	{
--		struct file_both_directory_info *fbdinfo;
-+		FILE_BOTH_DIRECTORY_INFO *fbdinfo;
- 
--		fbdinfo = (struct file_both_directory_info *)d_info->wptr;
-+		fbdinfo = (FILE_BOTH_DIRECTORY_INFO *)d_info->wptr;
- 		memcpy(fbdinfo->FileName, d_info->name, d_info->name_len);
- 		fbdinfo->FileName[d_info->name_len] = 0x00;
- 		fbdinfo->FileNameLength = cpu_to_le32(d_info->name_len);
-diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
-index e325c2e89aa5..9e72c45c100b 100644
---- a/fs/smb/server/smb_common.h
-+++ b/fs/smb/server/smb_common.h
-@@ -87,24 +87,6 @@ struct file_names_info {
- 	char FileName[];
- } __packed;   /* level 0xc FF resp data */
- 
--struct file_both_directory_info {
--	__le32 NextEntryOffset;
--	__u32 FileIndex;
--	__le64 CreationTime;
--	__le64 LastAccessTime;
--	__le64 LastWriteTime;
--	__le64 ChangeTime;
--	__le64 EndOfFile;
--	__le64 AllocationSize;
--	__le32 ExtFileAttributes;
--	__le32 FileNameLength;
--	__le32 EaSize; /* length of the xattrs */
--	__u8   ShortNameLength;
--	__u8   Reserved;
--	__u8   ShortName[24];
--	char FileName[];
--} __packed; /* level 0x104 FFrsp data */
--
- struct file_id_both_directory_info {
- 	__le32 NextEntryOffset;
- 	__u32 FileIndex;
 -- 
-2.43.0
+
+Jocelyn
+
+> 
+> Fixes: 31fa2c1ca0b2 ("drm/panic: Move drawing functions to drm_draw")
+> 
+> Signed-off-by: Francesco Valla <francesco@valla.it>
+> ---
+>   drivers/gpu/drm/drm_draw.c          | 2 +-
+>   drivers/gpu/drm/drm_draw_internal.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_draw.c b/drivers/gpu/drm/drm_draw.c
+> index 9dc0408fbbeadbe8282a2d6b210e0bfb0672967f..5b956229c82fb6e232e3342705a226c8e14c8568 100644
+> --- a/drivers/gpu/drm/drm_draw.c
+> +++ b/drivers/gpu/drm/drm_draw.c
+> @@ -127,7 +127,7 @@ EXPORT_SYMBOL(drm_draw_fill16);
+>   
+>   void drm_draw_fill24(struct iosys_map *dmap, unsigned int dpitch,
+>   		     unsigned int height, unsigned int width,
+> -		     u16 color)
+> +		     u32 color)
+>   {
+>   	unsigned int y, x;
+>   
+> diff --git a/drivers/gpu/drm/drm_draw_internal.h b/drivers/gpu/drm/drm_draw_internal.h
+> index f121ee7339dc11537f677c833f0ee94fe0e799cd..20cb404e23ea6263b535ea2b81b25f84c37be8a2 100644
+> --- a/drivers/gpu/drm/drm_draw_internal.h
+> +++ b/drivers/gpu/drm/drm_draw_internal.h
+> @@ -47,7 +47,7 @@ void drm_draw_fill16(struct iosys_map *dmap, unsigned int dpitch,
+>   
+>   void drm_draw_fill24(struct iosys_map *dmap, unsigned int dpitch,
+>   		     unsigned int height, unsigned int width,
+> -		     u16 color);
+> +		     u32 color);
+>   
+>   void drm_draw_fill32(struct iosys_map *dmap, unsigned int dpitch,
+>   		     unsigned int height, unsigned int width,
+> 
+> ---
+> base-commit: e406d57be7bd2a4e73ea512c1ae36a40a44e499e
+> change-id: 20251003-drm_draw_fill24_fix-ea52d32a933d
+> 
+> Best regards,
+
 
 
