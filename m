@@ -1,275 +1,228 @@
-Return-Path: <linux-kernel+bounces-853408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C55BDB901
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:05:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8148BDB82A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CD791355C19
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:05:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B12F74EF6A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238C230DD27;
-	Tue, 14 Oct 2025 22:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F28F2EA173;
+	Tue, 14 Oct 2025 21:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eimdwUMt"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="T7hq7VxW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA4230CDAA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A812E8E11;
+	Tue, 14 Oct 2025 21:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760479488; cv=none; b=XNxNGw5bP1uF1FjzYlE+4CzJzEJjQ4mjn16voJm4cEeRPZ+Y1/uIwoMy5nzK6ZSnZ98Ej1dG1QhqCuGwnD1uONVSbc8YqdMYc+PHuJNh6ktgq1luQ3tCp0jU3YSkLI6lcJX77B9Kzg0Qa7dcXgPSrqhxE2kiqyvQfUA+pukxMD4=
+	t=1760479098; cv=none; b=mn2Fml8p/Da87JCwVkC8Dm7LLh9U9nurfpdUaIwQOd4Zs+H2LwA9ILQjfsbEkSkFCE3Ivm0SJgmN8gwKnc1x9JVjwBdXXQolCMx+S7F3tq2CJOPnD8v82GT44QLnDz0yPjQuHLFmRwkwQLdbasmcGA5IMvYYfulmjl+3poZbXXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760479488; c=relaxed/simple;
-	bh=TjKD1HJCmzN9QjVHtgXTv+J9VVzCcdw7vjNr+JLntjo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kKecucR8Q/I58YlRqk5bXETdcMyKjciF+iX1cgBWHDHxYlpqlQFOhIDqf0mATa2m07NPiGgII900PbwMJrWZHiI6XIt7uf+mdoXsdJjI/u7ZCQkwX/kztNDrgSchg2GFQ9NdNlWso0FWTtPx6Pm0YIgGoSo6cyYbi+SfMtagQz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eimdwUMt; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eceb38eb1so67979155ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760479486; x=1761084286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=em9G7k50/YoPb9HbweOv7zMBAXiBoWznZJD05Jcou8E=;
-        b=eimdwUMtIJ41S5r0cEbwhsI5edttw11Kc23lY0C8EVRmWfBAT36T+apSYUq2TAVycK
-         6jZ89pyu/JpEWCeBy0Y5va1LfU8KP6uA4PfTvst8YJm0ydHLehk41U36cw+5Sj16xYx1
-         Q9ba9HEDwYSYDpgKUwq4ZLbW4bntZyeMkZzQmaGtEXVyApENROMYUEkWf41x/lj5vWE6
-         P6TTnfhpfQ7vewN9rJ7hpx7Car9dAkigIWpTna/DMMDZeZXgck66aIveZAR7xlJoHJB+
-         ueYbR1QBZ1ycUQSmWsk/W3+oP/Adzfa5Q7r/ny37w9XizuvB5n6IwXAseERaU7m7fvuO
-         yiNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760479486; x=1761084286;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=em9G7k50/YoPb9HbweOv7zMBAXiBoWznZJD05Jcou8E=;
-        b=jKXs+EdFjS0uzsZsgsnD9OXs5k/xWzmrXLc6xb6aurGGNB3Jn+fQYGiZ3bgVLsHWqe
-         oblZ7jY7qA50nsI3ljC9Svjw85dZ4pBzpyjkF2xUH2M7W6spejWT1hIFN2eSCPE25xND
-         jpCwyzvwaYc6t9eHk2N0Tk27OKEZbcUyAtqsBtKDhOnOifZ/xDL0GNnAH8C0igKDAclK
-         9dITvXmCRdLurPfLqopJnYpQHaMeY8q4FgLAAz5cRwiv9MUOHcBBjJK/07B5z1eAR9Ta
-         3dN8Khq2DRdTRnS5aWLzGko+PnHK4e3dfhDNlKgFRgKo+3MJWWjKIEhq1cGVplyJH15O
-         XxNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiYiCztrwAYDdfxJsQWJSC+te1gpCV96Xlk14eV1fMqb/BN319BrpMI9euE5I4Tk36bqlnYfxgpb4cW/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlmUQd0Ym18XTmIH8H+ulddKnHtUv4EAxsfP3uUc1/MKXsJ3jY
-	uihAVnEyZEtV7Qv2cYHWcL16QL1wdS1B4YqRiIPXlgZTw7skEJOjmYE2
-X-Gm-Gg: ASbGncs8edc0Sszc7ShPY3JJTe3pUI9v5bZm/6kecNQeK8s5GY091lHJS/cPL6smOba
-	nad3SSUH/yLZpu0TN44VoQmqjY3cWsakZB68wb88L8EoRi51FQ34z3T/w5cQywuFlpxPQp+9+6S
-	s/itsdQUWHufdcASnwTruLtDr2QNtwsmhgc+As7dtTSXmHzMLhJfc+4T42c74ZcHJqQ4laLwtv/
-	9qIquyhaLuW49l16VMIGdLgLIxLtyH0/gabk+36lmESE9bYQnJI2QUKBc8cykIbqUXa6mxpxzSL
-	oGihstgf6LZ3IP98A8Sa/rI//1EPV2Oc4dHWWvkHk9gu8ckwwJitz0Yp56114vluQlxDbm4kIW4
-	YoJZb4nfBFpIP2H8YE6jk+HJbqC88HgxwJ/4D2Jf/G5hwaPlV9F1TvksfV9aKWU6aUqy4jNIJGe
-	8RJm0KkjIdTe6m/7p5Bhjw
-X-Google-Smtp-Source: AGHT+IFkpy/T9xOcAh37FUeV77inYRWjgwBQGuYQSlksDCArTvA7VvnPknld6pHnbM60IY3q2F64IQ==
-X-Received: by 2002:a17:902:e78f:b0:277:71e6:b04d with SMTP id d9443c01a7336-2902735691cmr341952385ad.3.1760479485597;
-        Tue, 14 Oct 2025 15:04:45 -0700 (PDT)
-Received: from ?IPV6:2804:14c:5fc8:8033:858f:c73d:3967:699f? ([2804:14c:5fc8:8033:858f:c73d:3967:699f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de6c7bsm174749665ad.3.2025.10.14.15.04.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 15:04:45 -0700 (PDT)
-Message-ID: <be137610-65a7-4402-86d8-3d169e3ac064@gmail.com>
-Date: Tue, 14 Oct 2025 18:57:54 -0300
+	s=arc-20240116; t=1760479098; c=relaxed/simple;
+	bh=MU32Uf17vhJNmgQ+q3c45nMjWHFPK0nmpNTytsj5ufY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K33ZVAnBRbFF347UJzqbudfJSgOoOhVmCwQiwiQo0Mh48Eb5MaPDimfzZzcnYMOGcHTVk4a+3GZAASt3/1v0AqSVqVAzhR2dYWcKYX0KsumnHs0SH5514Ml3AHNuGZdredWg5oX03VFBcBb4RqbLetpM/q+Q5Rh3iU4erWCQMr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=T7hq7VxW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=XxnfDRKN9o/tjcf4e+ZHTtKwkTd93J07pUeKthYb3wQ=; b=T7hq7VxWOOfvkWkFQtmY0Wi8lC
+	7cGsW2sWrEp7Besg9hJxrhHAmHGlNPU7c8OdSAPZ7WIOBSfsT6ywKvyJWn2JEpBCnOj+J+8OFIUhT
+	T7RQnD/y1wjhUC7/IPOXi7IFJGczARkhsurkAGgFagHvjaRakqbZWLil8b9GKZbkSYH8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v8n1w-00AxMX-4b; Tue, 14 Oct 2025 23:58:04 +0200
+Date: Tue, 14 Oct 2025 23:58:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, danishanwar@ti.com,
+	rogerq@kernel.org, pmohan@couthit.com, basharath@couthit.com,
+	afd@ti.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, pratheesh@ti.com,
+	prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
+	rogerq@ti.com, krishna@couthit.com, mohan@couthit.com
+Subject: Re: [PATCH net-next v3 1/3] net: ti: icssm-prueth: Adds helper
+ functions to configure and maintain FDB
+Message-ID: <ff651c3d-108b-48f8-b69b-fb0b522edd4e@lunn.ch>
+References: <20251014124018.1596900-1-parvathi@couthit.com>
+ <20251014124018.1596900-2-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-Subject: Re: [PATCH v2] ksm: use range-walk function to jump over holes in
- scan_get_next_rmap_item
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251014151126.87589-1-pedrodemargomes@gmail.com>
- <77b69bcb-6df0-4c3a-bb7c-a003fd51d292@redhat.com>
-Content-Language: en-US
-In-Reply-To: <77b69bcb-6df0-4c3a-bb7c-a003fd51d292@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014124018.1596900-2-parvathi@couthit.com>
+
+> +void icssm_prueth_sw_fdb_tbl_init(struct prueth *prueth)
+> +{
+> +	struct fdb_tbl *t = prueth->fdb_tbl;
+> +
+> +	t->index_a = (struct fdb_index_array_t *)((__force const void *)
+> +			prueth->mem[V2_1_FDB_TBL_LOC].va +
+> +			V2_1_FDB_TBL_OFFSET);
+
+We have
+
+> +#define V2_1_FDB_TBL_LOC          PRUETH_MEM_SHARED_RAM
+
+and existing code like:
+
+void __iomem *sram_base = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
+
+so it seems like
+
+t->index_a = sram_base + V2_1_FDB_TBL_OFFSET;
+
+with no needs for any casts, since sram_base is a void * so can be
+assigned to any pointer type.
+
+And there are lots of cascading defines like:
+
+/* 4 queue descriptors for port 0 (host receive). 32 bytes */
+#define HOST_QUEUE_DESC_OFFSET          (HOST_QUEUE_SIZE_ADDR + 16)
+
+/* table offset for queue size:
+ * 3 ports * 4 Queues * 1 byte offset = 12 bytes
+ */
+#define HOST_QUEUE_SIZE_ADDR            (HOST_QUEUE_OFFSET_ADDR + 8)
+/* table offset for queue:
+ * 4 Queues * 2 byte offset = 8 bytes
+ */
+#define HOST_QUEUE_OFFSET_ADDR          (HOST_QUEUE_DESCRIPTOR_OFFSET_ADDR + 8)
+/* table offset for Host queue descriptors:
+ * 1 ports * 4 Queues * 2 byte offset = 8 bytes
+ */
+#define HOST_QUEUE_DESCRIPTOR_OFFSET_ADDR       (HOST_Q4_RX_CONTEXT_OFFSET + 8)
+
+allowing code like:
+
+	sram = sram_base + HOST_QUEUE_SIZE_ADDR;
+	sram = sram_base + HOST_Q1_RX_CONTEXT_OFFSET;
+	sram = sram_base + HOST_QUEUE_OFFSET_ADDR;
+	sram = sram_base + HOST_QUEUE_DESCRIPTOR_OFFSET_ADDR;
+	sram = sram_base + HOST_QUEUE_DESC_OFFSET;
+
+> +	t->mac_tbl_a = (struct fdb_mac_tbl_array_t *)((__force const void *)
+> +			t->index_a + FDB_INDEX_TBL_MAX_ENTRIES *
+> +			sizeof(struct fdb_index_tbl_entry_t));
+
+So i think this could follow the same pattern, also allowing some of
+these casts to be removed.
+
+I just don't like casts, they suggest bad design.
+
+> +static u8 icssm_pru_lock_done(struct fdb_tbl *fdb_tbl)
+> +{
+> +	return readb((u8 __iomem *)&fdb_tbl->locks->pru_locks);
+
+And maybe the __iomem attribute can be added to struct, either per
+member, or at the top level? It is all iomem, so we want sparse to be
+able to check all accesses.
+
+> +static int icssm_prueth_sw_fdb_spin_lock(struct fdb_tbl *fdb_tbl)
+> +{
+> +	u8 done;
+> +	int ret;
+> +
+> +	/* Take the host lock */
+> +	writeb(1, (u8 __iomem *)&fdb_tbl->locks->host_lock);
+> +
+> +	/* Wait for the PRUs to release their locks */
+> +	ret = read_poll_timeout(icssm_pru_lock_done, done, done == 0,
+> +				1, 10, false, fdb_tbl);
+> +	if (ret)
+> +		return -ETIMEDOUT;
+> +
+> +	return 0;
+
+Documentation says:
+
+ * Returns: 0 on success and -ETIMEDOUT upon a timeout.
+
+So no need for the if statement.
 
 
+> +static s16
+> +icssm_prueth_sw_fdb_search(struct fdb_mac_tbl_array_t *mac_tbl,
+> +			   struct fdb_index_tbl_entry_t *bucket_info,
+> +			   const u8 *mac)
+> +{
+> +	u8 mac_tbl_idx = bucket_info->bucket_idx;
+> +	int i;
+> +
+> +	for (i = 0; i < bucket_info->bucket_entries; i++, mac_tbl_idx++) {
+> +		if (ether_addr_equal(mac,
+> +				     mac_tbl->mac_tbl_entry[mac_tbl_idx].mac))
+> +			return mac_tbl_idx;
+> +	}
+> +
+> +	return -ENODATA;
 
-On 10/14/25 12:59, David Hildenbrand wrote:
-> On 14.10.25 17:11, Pedro Demarchi Gomes wrote:
->> Currently, scan_get_next_rmap_item() walks every page address in a VMA
->> to locate mergeable pages. This becomes highly inefficient when scanning
->> large virtual memory areas that contain mostly unmapped regions.
->>
->> This patch replaces the per-address lookup with a range walk using
->> walk_page_range(). The range walker allows KSM to skip over entire
->> unmapped holes in a VMA, avoiding unnecessary lookups.
->> This problem was previously discussed in [1].
->>
->> Changes since v1 [2]:
->> - Use pmd_entry to walk page range
->> - Use cond_resched inside pmd_entry()
->> - walk_page_range returns page+folio
->>
->> [1] https://lore.kernel.org/linux- 
->> mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
->> [2] https://lore.kernel.org/linux-mm/20251014055828.124522-1- 
->> pedrodemargomes@gmail.com/
->>
->> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
->> ---
-> 
-> [...]
-> 
->> +
->> +static int ksm_pmd_entry(pmd_t *pmd, unsigned long addr,
->> +                unsigned long end, struct mm_walk *walk)
->> +{
->> +    struct mm_struct *mm = walk->mm;
->> +    struct vm_area_struct *vma = walk->vma;
->> +    struct ksm_walk_private *private = (struct ksm_walk_private *) 
->> walk->private;
->> +    struct folio *folio;
->> +    pte_t *start_pte, *pte, ptent;
->> +    spinlock_t *ptl;
->> +    int ret = 0;
->> +
->> +    start_pte = pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
->> +    if (!start_pte) {
->> +        ksm_scan.address = end;
->> +        return 0;
->> +    }
-> 
-> Please take more time to understand the details. If there is a THP there 
-> you actually have to find the relevant page.
-> 
+It is traditional to return errno in an int. But i don't see why a s16
+cannot be used.
 
-Ok
+> +icssm_prueth_sw_fdb_find_bucket_insert_point(struct fdb_tbl *fdb,
+> +					     struct fdb_index_tbl_entry_t
+> +					     *bkt_info,
+> +					     const u8 *mac, const u8 port)
+> +{
+> +	struct fdb_mac_tbl_array_t *mac_tbl = fdb->mac_tbl_a;
+> +	struct fdb_mac_tbl_entry_t *e;
+> +	u8 mac_tbl_idx;
+> +	int i, ret;
+> +	s8 cmp;
+> +
+> +	mac_tbl_idx = bkt_info->bucket_idx;
+> +
+> +	for (i = 0; i < bkt_info->bucket_entries; i++, mac_tbl_idx++) {
+> +		e = &mac_tbl->mac_tbl_entry[mac_tbl_idx];
+> +		cmp = memcmp(mac, e->mac, ETH_ALEN);
+> +		if (cmp < 0) {
+> +			return mac_tbl_idx;
+> +		} else if (cmp == 0) {
+> +			if (e->port != port) {
+> +				/* MAC is already in FDB, only port is
+> +				 * different. So just update the port.
+> +				 * Note: total_entries and bucket_entries
+> +				 * remain the same.
+> +				 */
+> +				ret = icssm_prueth_sw_fdb_spin_lock(fdb);
+> +				if (ret) {
+> +					pr_err("PRU lock timeout\n");
+> +					return -ETIMEDOUT;
+> +				}
 
->> +
->> +    for (; addr < end; pte++, addr += PAGE_SIZE) {
->> +        ptent = ptep_get(pte);
->> +        struct page *page = vm_normal_page(vma, addr, ptent);
->> +        ksm_scan.address = addr;
-> 
-> Updating that value from in here is a bit nasty. I wonder if you should 
-> rather make the function also return the address of the found page as well.
-> 
-> In the caller, if we don't find any page, there is no need to update the
-> address from this function I guess. We iterated the complete MM space in 
-> that case.
-> 
+icssm_prueth_sw_fdb_spin_lock() returns an errno. Don't replace it.
 
-Ok
+Also, pr_err() is bad practice and probably checkpatch is telling you
+this. Ideally you want to indicate which device has an error, so you
+should be using dev_err(), or maybe netdev_err().
 
->> +
->> +        if (ksm_test_exit(mm)) {
->> +            ret = 1;
->> +            break;
->> +        }
->> +
->> +        if (!page)
->> +            continue;
->> +
->> +        folio = page_folio(page);
->> +        if (folio_is_zone_device(folio) || !folio_test_anon(folio))
->> +            continue;
->> +
->> +        ret = 1;
->> +        folio_get(folio);
->> +        private->page = page;
->> +        private->folio = folio;
->> +        private->vma = vma;
->> +        break;
->> +    }
->> +    pte_unmap_unlock(start_pte, ptl);
->> +
->> +    cond_resched();
->> +    return ret;
->> +}
->> +
->> +struct mm_walk_ops walk_ops = {
->> +    .pmd_entry = ksm_pmd_entry,
->> +    .test_walk = ksm_walk_test,
->> +    .walk_lock = PGWALK_RDLOCK,
->> +};
->> +
->>   static struct ksm_rmap_item *scan_get_next_rmap_item(struct page 
->> **page)
->>   {
->>       struct mm_struct *mm;
->>       struct ksm_mm_slot *mm_slot;
->>       struct mm_slot *slot;
->> -    struct vm_area_struct *vma;
->>       struct ksm_rmap_item *rmap_item;
->> -    struct vma_iterator vmi;
->>       int nid;
->>       if (list_empty(&ksm_mm_head.slot.mm_node))
->> @@ -2527,64 +2595,40 @@ static struct ksm_rmap_item 
->> *scan_get_next_rmap_item(struct page **page)
->>       slot = &mm_slot->slot;
->>       mm = slot->mm;
->> -    vma_iter_init(&vmi, mm, ksm_scan.address);
->>       mmap_read_lock(mm);
->>       if (ksm_test_exit(mm))
->>           goto no_vmas;
->> -    for_each_vma(vmi, vma) {
->> -        if (!(vma->vm_flags & VM_MERGEABLE))
->> -            continue;
->> -        if (ksm_scan.address < vma->vm_start)
->> -            ksm_scan.address = vma->vm_start;
->> -        if (!vma->anon_vma)
->> -            ksm_scan.address = vma->vm_end;
->> -
->> -        while (ksm_scan.address < vma->vm_end) {
->> -            struct page *tmp_page = NULL;
->> -            struct folio_walk fw;
->> -            struct folio *folio;
->> +get_page:
->> +    struct ksm_walk_private walk_private = {
->> +        .page = NULL,
->> +        .folio = NULL,
->> +        .vma = NULL
->> +    };
->> -            if (ksm_test_exit(mm))
->> -                break;
->> +    walk_page_range(mm, ksm_scan.address, -1, &walk_ops, (void *) 
->> &walk_private);
->> +    if (walk_private.page) {
->> +        flush_anon_page(walk_private.vma, walk_private.page, 
->> ksm_scan.address);
->> +        flush_dcache_page(walk_private.page);
-> 
-> Keep working on the folio please.
-> 
+> +	if (left > 0) {
+> +		hash_prev =
+> +			icssm_prueth_sw_fdb_hash
+> +			(FDB_MAC_TBL_ENTRY(left - 1)->mac);
+> +	}
 
-Ok
+> +		empty_slot_idx =
+> +			icssm_prueth_sw_fdb_check_empty_slot_right(mt, mti);
 
->> +        rmap_item = get_next_rmap_item(mm_slot,
->> +            ksm_scan.rmap_list, ksm_scan.address);
->> +        if (rmap_item) {
->> +            ksm_scan.rmap_list =
->> +                    &rmap_item->rmap_list;
->> -            folio = folio_walk_start(&fw, vma, ksm_scan.address, 0);
->> -            if (folio) {
->> -                if (!folio_is_zone_device(folio) &&
->> -                     folio_test_anon(folio)) {
->> -                    folio_get(folio);
->> -                    tmp_page = fw.page;
->> -                }
->> -                folio_walk_end(&fw, vma);
->> +            ksm_scan.address += PAGE_SIZE;
->> +            if (should_skip_rmap_item(walk_private.folio, rmap_item)) {
->> +                folio_put(walk_private.folio);
->> +                goto get_page;
-> 
-> Can you make that a while() loop to avoid the label?
-> 
+There are a couple of odd indentations like this. I wounder if it
+makes sense to shorten the prefix? Do you really need all of
+icssm_prueth_sw_fdb_ ?
 
-Ok, I will make this corrections and send a v3. Thanks!
-
-
+	Andrew
 
