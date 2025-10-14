@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-853176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F56BDADB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA346BDADA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8253B6C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402A319A46E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716ED307AEB;
-	Tue, 14 Oct 2025 17:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F0930748E;
+	Tue, 14 Oct 2025 17:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WQEy0Trj"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DNwgBZ25"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C436304BD5;
-	Tue, 14 Oct 2025 17:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90607308F1B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464380; cv=none; b=aOyhD4cMzLPQkSLWFCcJCGz+61skC/Wrdglg4Hl/JIruaDEEpznm3w3j1mjQKCT5wxkbOruZbBYuRkPfn2Tf20TzQmyyy5WNunRuL3uM6pc71NkwWqoJB4N8JCn7qgNwfTtaxe6pMz3NR3mdDOo4jw+VGv9/RRWeDrulcjdagyU=
+	t=1760464366; cv=none; b=IgrEWFlvaKgOXkcrR1147cOeTD3YxLuMhrM2k9dXEmmwBcZCMvBBLnHDoudnDj2cB9gDNGpQOlP2Zm+eZSND7BmhxGEu9f9V4W/Y85ol/XCPKL6XLF/8ZSDFCYoA7OZxVnrLqNkQCLcy2sH81oWg6Z7Gi/boSJitYIWFine03/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464380; c=relaxed/simple;
-	bh=kexxsKahBXX+ujeGmTQYh71gVLh57G05sz5dgwnzyQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRNkoVPVXJJbpowAkRsY5YiVZx69dCFAPMhDQaYf8UHAP2iqmL7hWgmEP3Jrq3yjwxJfRghVZnxabf9FPk0uZW7y7l69EEVhpaPhldPqIgeT0umZgvNfFwOLaALyX3TnIK5gDGpvJmXX4MRqdXiDRuVVVzMHVLE6F0UzeY+bVGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WQEy0Trj; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1910840E019F;
-	Tue, 14 Oct 2025 17:52:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id E5nrVJtG0MVW; Tue, 14 Oct 2025 17:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1760464370; bh=gV4lE5UFn6VJqMxc+EX/6N78lShVXPpvo+ef/MYPIf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WQEy0TrjnoI3BZhHgQXUUnUlRWArLgEiogBtLs36J73jLN8i+mCZIikW4Yw+1W9SG
-	 7GTcokMB9G3dvJinVdI5BvPxehC2ZUjH0a4TDV8ud7yJpBCN96gq/HuJF1M2dgg+HQ
-	 sFm3fEN1ATnE7L+lG5Naqm6hokqo5wDe3FuB8KRUKY6KnW3iBPKway55xp7DOiSi/b
-	 eoVEU+7ECbB1QwTn2k4N3wP3Jkddzehq8s4btsTTVsRpGKeA1X8l2w4VEMebg4Bjsp
-	 aXtNQ95a5+bZAaodqoGDeRdPirES0SqZsKavgINNY/OyJdNYBWLtynaqOOv9H/sNEM
-	 MrYThWOVvvV+YM6ABUI2lmz1/vxsEaTTavjDPyTuPngEnc9JpT4w6+7O7jPXU9mr59
-	 aj7F55Wc5uDcT0ysXOJcbe/VZZxQJqVvJQmRhjEcYxnvsr4ukWhqynBk4pU43j9IqX
-	 KaNLLZeiN8p80keJWBGWb7QV3eKZo7IpdcCc9J8PcnsBrlTQwGRvY8hLT6kpPu5L+3
-	 3X8QFbC+mC+5TXbnNjCll+8l3xKWIglp/WLvvbzlR2AE18H+HhW0yUsjzfAFggp3EG
-	 8+BtciHvzid5cnIdzumajiygVMVOWN2eX1xp03DKwspXZWAc9zonvK5RitACmFKzWd
-	 QNILU1t9yI46YztcLSAeq7eY=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 729DF40E016D;
-	Tue, 14 Oct 2025 17:52:44 +0000 (UTC)
-Date: Tue, 14 Oct 2025 19:52:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Naik, Avadhut" <avadnaik@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
-	john.allen@amd.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Incorporate DRAM address in EDAC messages
-Message-ID: <20251014175238.GIaO6N5sWpG7EReE5P@fat_crate.local>
-References: <20251013193726.2221539-1-avadhut.naik@amd.com>
- <20251013220019.GFaO12cwSvbedQwGr6@fat_crate.local>
- <20251014135206.GA361227@yaz-khff2.amd.com>
- <e78b6556-24c0-469b-81d5-98380aee1f6b@amd.com>
+	s=arc-20240116; t=1760464366; c=relaxed/simple;
+	bh=Vk8hTPSpCZlav1c+s4Whx35A6sxLw90BVbohmPvOMCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=liWMKad7ZYIrL88xMpjoYMuLp9ytifbn0aSnCb72aiNQGbu7zFgqAtIThF2ATM3WXynyMRUAF0PwptI8xQL8A9+F3q02+OuximHBzVdWGRtr1wgsS5015tFy96tniG3daGwjgmeD+qNVHGF7iX0y/nKBjx1XB2ajODQ3xKLowWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DNwgBZ25; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-93e2d42d9b4so164513939f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1760464363; x=1761069163; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jGxq/8VkxT40k9wgER3vpLBqBiF/8xTWMryj+EkLgt4=;
+        b=DNwgBZ25P39+PSjhMW1xeeESU+UlIXe5mtsZBHJcGVvMJVxNmk8MeVNM1ItNhXafF3
+         PKn6V8v1QDfvpPRSmbSw24b3BxX7ENuGFwctvOk6XS7+nm9BgzK6hOrbyQxprWPk4y1K
+         RvtjY9AAcVATGm0vPz0H7JLaEX2gfYm1iE9rQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760464363; x=1761069163;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGxq/8VkxT40k9wgER3vpLBqBiF/8xTWMryj+EkLgt4=;
+        b=l14dsw+M1zbUBjzCZUOgMGkrOTwKnltoJxf+FQLJ+i/ccafT3EtA+nQTVLCJ9bZCgZ
+         y9/7hqyuuOGERAYYISkSlBIVsbth7w66KoFr1mnJqjKp5ciSUzB90Qow/Pw4souA4isx
+         EEYdjIoEuBanhgTaZUCKQK3VNATYI1rJ8MB32sDm3MK7nBEqe6QlbRVI3Wh2rpn+PslJ
+         w/3t9XUz/Tkze8oh9P7rwChNC3piL0inxV66UkGRakOQ4JALwcjLs7ek6kJ/GtB8C3wS
+         7lp0h+YA2LQI32PT3AE0h7MwML3t4PnF+Trk3Wfxqa4gNw9YmM9gKQVDqVnAaOnvyb2v
+         IoEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFPfvL5HkxngzO1HQDWXvmY8OzZMOhJGkSShn7IidMlpQdJHItLeN3Vd+JRb11zSvxt0pbNlt50jXhE4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykwSgDmmiNtnUzCTD1OXRvSSB/PSjwPnhTsKbrpEKJDhxfbFDq
+	F9IebwjyD4fO+7hYieB2vLDcPl2nNh/M9Oyjn5iiwYjGgEKcSXKmJllkOEE1SCRghQs=
+X-Gm-Gg: ASbGncvt+CyeiF+VIKa7u3+g5vPS0mmmGLbSDSx06plQy5ezWP+oqpPM10TN8bTZcYK
+	DZMxgTFELpahKxFUYiuAqbk7OfXPOeUcJh0L1YENJLurB1QYtjtz7EkACQfySKGC6qOrOVbz8SV
+	Ku1tAWRVS6ebi0dOQySAt3lx7sVMfoH2LsGxYcXu7rg6RJjXOnfaCBcj+nfyZg7dq4WHvYiATGI
+	0XncTA+jKrgXyCMrpRxF5S1eOznY54XS5OWo3fgQj989zXCZZvsjHbggyYkjW2fuy5xl9+61CIV
+	kJF/0BzkCJ0GeiLE4xM1sURpvOt5qeGa7c5z0R2Gpq2+PFs3BEwClk5Db8Af2/4dGlHGc759bB4
+	kHS5Wkf2rb1OYmAXB45hK1ybGvT1Nnm81nNMNWnFYRc01QDbMBOfS0/ueHafScxNZ
+X-Google-Smtp-Source: AGHT+IED4NsTeiB2tjQZ1qN+qgCtT8LJzFvJwI544fSE/j1qtAtUcoMqpbm1m3kTi+yIqsP0iV05WQ==
+X-Received: by 2002:a05:6e02:1fe3:b0:42f:95a1:2e8 with SMTP id e9e14a558f8ab-42f95a104bfmr177063845ab.24.1760464363522;
+        Tue, 14 Oct 2025 10:52:43 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430a7c45b1csm4645205ab.40.2025.10.14.10.52.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 10:52:43 -0700 (PDT)
+Message-ID: <6e9ba617-8731-4a78-bb56-eeecc6a25897@linuxfoundation.org>
+Date: Tue, 14 Oct 2025 11:52:42 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e78b6556-24c0-469b-81d5-98380aee1f6b@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/262] 6.12.53-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20251013144326.116493600@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251013144326.116493600@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 12:13:36PM -0500, Naik, Avadhut wrote:
-> > The "DRAM address" helps memory vendors analyze failures. System
-> > builders want to collect this data and pass it along to the memory
-> > vendors.
+On 10/13/25 08:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.53 release.
+> There are 262 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.53-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-How real is such a use case? It sounds to me like wishful thinking and that no
-one is going to use it in the end and we'll end up warming up the universe
-with electrons needlessly...
+Compiled and booted on my test system. No dmesg regressions.
 
-> > The DRAM address is not contained in architectural data like
-> > MCA info, and getting the address from MCA requires using additional
-> > system-specific hardware info. It's much more reliable to get the DRAM
-> > address from the system with the error rather than try to post-process
-> > it later.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Ok, a bit better.
-
-Now, why isn't that address part of the tracepoint so that system builders can
-consume structured data instead of parsing scnprintf()-ed strings and trying
-to guess what's there?
-
-Also, some of the fields of TRACE_EVENT(mce_record already contain the fields
-this set is adding - CS or so, for example. So there's redundancy already.
-
-> If yes, will add this information to commit messages and resend.
-
-When that happens, remove all text gunk which talks about what a patch does
-- that should be visible from the diff.
-
-And this is not the first time I'm saying this: folks, please stop explaining
-the code.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+thanks,
+-- Shuah
 
