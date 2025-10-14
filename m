@@ -1,51 +1,76 @@
-Return-Path: <linux-kernel+bounces-853186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754A7BDAE06
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:00:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EADBBDAE0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F7954EFDE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B309E3AFE00
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177963074BD;
-	Tue, 14 Oct 2025 17:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB5A2877DE;
+	Tue, 14 Oct 2025 18:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d8ZryYYQ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Oz2Mo6R3"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3270273804;
-	Tue, 14 Oct 2025 17:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A21B275AE4
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464797; cv=none; b=VMqQsAA6VyFK5uNmf89NUdDZ92h/t+mVQAiu1Ws8+GWFjwHMto2RuudtWnbHC8Dvmq3oWFEAl4fynqJZBC4bxvJYI5XJD+GH5V0weao5JOtuDeYcwjax4Ry3xwt8jGkn+Pxzb5hDTRc9Ne2q/WFOPkONMI3qqNesrnT7Asu99dE=
+	t=1760464806; cv=none; b=Gcm++NVcY3k6QBba0c8O1QyFJFAeDYXv9ai4gwW5KGOCTO5DExhvGEeXNfsWhZaTmX5jhSF7P4EWufGYoouPwFieovuSsrVJTuV7O4Ru2r+GnuPX0nuAmyBjPeKWijCdUiThWbSXeYRE9X2/8lMOyjrBSgVIoGBX+Z6WAlakbpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464797; c=relaxed/simple;
-	bh=7ZxFIrTz+Z6hfPvArLPPMKcbzUQoz04LKWrVrZPmolU=;
+	s=arc-20240116; t=1760464806; c=relaxed/simple;
+	bh=21ukBTCCWgadknZW2SMkQg2BIIiZPeGfnkE/wF+Fy9M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JA8adK8Gr8akyda/8HJtm+ynispLqUIMV/Pf+aIpqidT7sezILlmNTihSUa9BiAB9RuYUnW+VgGeta9PAJnKJ5qs5s50zgFun060JEskVf3BViI7hu8ou7LwuK6clMExE/R57ROS8m6EAWc9bJ00lMrXvHJkHxeLSLaB3iXI1Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d8ZryYYQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=/rcB6BDIY3QkbB1OwWvapEATZoB6lJdXX3krwk4TwBU=; b=d8ZryYYQkEk9ihZBGp1/Xt08S8
-	6Fx6DNY90cOOABImjEG9hvspf72JIE7qq+0p4KiAl5M+BryW4/92sl2G8VIzey5fu3yNT2Xfd3HSw
-	a/zDgG53ejKZofKnUbzB2dTiv2f17Uu8/UGj+I5JSnYxMsZwkJz/ac+wssn0brImABe2E15AcWaP3
-	ODjZaFABnrRhmBBYDK/9BDsgRNRB+giHx6cDSwNFgq3GysRMxsie4onMkSrOc4l5oP8UMavx+xgoz
-	DChFAmvmS/ER8ZwyMZO521K6NY2hQEgpDfLqEK33WnGmoRfBhxKZhqA5lomc+RwOYgfgp4qDI7WHN
-	aWjYclAQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8jJS-0000000H89G-3PQS;
-	Tue, 14 Oct 2025 17:59:54 +0000
-Message-ID: <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
-Date: Tue, 14 Oct 2025 10:59:54 -0700
+	 In-Reply-To:Content-Type; b=baUg587nUpJCwg+UAITRcyzxn+VSbe3eAD00xoE+iYvXxz/3hiwgc8VqE33ZOnZeUzksO799+qTzkVs4dz8ZR0y0tDSSC6NjKE38YZUiK5zl26I7MrgvqhPSSXCl2n+a7+L6aaAaJa1jYyZewN0xJ27v7yQTdm0pgRFmHOYqerA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Oz2Mo6R3; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-430abca3354so425715ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:00:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1760464803; x=1761069603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WoAS4TyvZHgjNFjXDlSUMotpNCainLerBGX8bzDNj1k=;
+        b=Oz2Mo6R3hoIpdbJpBi/6B0wo3OIU5/djPpobSyGGKIEHQ4XVcftOYFADm192yejjOO
+         bwxlQLcymw1tnJFS8+iWkoisDy3yWral8fLhjDsW/mkQ+YJ9fPqYRlXTEclUBs/i05Fe
+         2NjWx0+JZ7e83cuGfrolAINeEm+4an6w2TnpY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760464803; x=1761069603;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WoAS4TyvZHgjNFjXDlSUMotpNCainLerBGX8bzDNj1k=;
+        b=mOrF+2kDKGQB7WlMJ4jnc3tvX7bgK7AZkW7w9Ra+4fQ0z+lJQHCqPCZb/+ZiFBHF9H
+         LIaQQTWHfV6ZVlA2Yfa/NkS7wQ0XKGRLymG2c8qKjlMy/enf/pBE1/CQ+dLGwxzOGf6t
+         v73RmSxxQCne4xyIJYzZ7phnW2/0VrgJZH6CskoOR0QyIY5dnMzMpa6lwKZTDra4q5b0
+         AqMQpr+x0GK+gJWg5PKDG2QiLQRhifTVb+/m0AXdtPDeKJDZaS034ciJ1ZNEf0xo+glH
+         yd2OcLNZfnsNkfZ/xSWXFiUnGZNdaGO0VZqkGtOIEhw8mqIv/w0ep7PGLEHOcYldoeqK
+         Z2Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCX58qCCOON8lb9hunnCPmZP7RD2jj64QZDjdMkeYsd8F75rx2+eBvHO/Y+1hX7jYZmZiC6YSmR7UP65LoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyubGPwHEbvHiOXd21zHeT52AltTCREvNWdDyZOrZcMwcA16Vqn
+	b4pP+jvTTBXRyev3gCNBR2+jq8btt3XpoGvDl9d51ByFpnPlfNRCqJXxoTSHmEyfJsM=
+X-Gm-Gg: ASbGncvKF212CdUZzs3qs+GVkMXoM9h3Li+er9+T6t/GLR3AGyOizQb96NwqaYvI7y4
+	CsYObVblQquImcBkJeMhziuaEsO13EmTZZcqTsYAbCOrT7+qkidnqvwlbCpBZgeCehnuOaND/nq
+	brPc49hI586ikQnitndS9h6pjK5arREky0phVGdxX8Wdle0QFPs67GwkEXFUydtBd+v6ZTGbiLz
+	lqhw4BtP9Cgd6UG9ZLksNj/lVSWj7L3P4v5CptTIdmf/r3ambAlrvYKjJ6pnNs1ye/BUGtJaOkt
+	WrdKcj61ykIL92Sj3jDQ8gBq5pbYQQfOoVX508FCQXebsa09LbSn/IWU6EB6vVdnRjZhmSeWNDe
+	MEb2Ldrs/JuqcAcp4cjVNvaVtGTqJ1xIHy7LXfYJ6LykwErMWqt41k3msYs+UcTdW
+X-Google-Smtp-Source: AGHT+IGs+0qZ3roynS5JzK/onWLpnh+nlFehYpcK9FuZyG1lduY4TIIg1ukL/IPrYrEz/ELyjmlwjw==
+X-Received: by 2002:a05:6e02:2501:b0:42d:8598:410c with SMTP id e9e14a558f8ab-42f8736931bmr330675805ab.10.1760464802510;
+        Tue, 14 Oct 2025 11:00:02 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-430a3869174sm8014535ab.15.2025.10.14.11.00.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 11:00:02 -0700 (PDT)
+Message-ID: <24b09edf-7f27-4f01-b745-8918da8b3c37@linuxfoundation.org>
+Date: Tue, 14 Oct 2025 12:00:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,56 +78,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: admin-guide: Correct spelling of
- "userspace"
-To: Jonathan Corbet <corbet@lwn.net>, Akiyoshi Kurita <weibu@redadmin.org>,
- linux-doc@vger.kernel.org
-Cc: Dave Jiang <dave.jiang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Shannon Nelson <sln@onemain.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-kernel@vger.kernel.org
-References: <20250926190019.41788-1-weibu@redadmin.org>
- <87seflbken.fsf@trenco.lwn.net>
+Subject: Re: [PATCH 6.1 000/196] 6.1.156-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20251013144314.549284796@linuxfoundation.org>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <87seflbken.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251013144314.549284796@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 10/14/25 7:57 AM, Jonathan Corbet wrote:
-> Akiyoshi Kurita <weibu@redadmin.org> writes:
+On 10/13/25 08:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.156 release.
+> There are 196 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
->> The term "userspace" should be a single word. Fix the typo
->> "userpace" accordingly.
->>
->> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
->> ---
->>  Documentation/admin-guide/tainted-kernels.rst | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
->> index a0cc017e4424..ed1f8f1e86c5 100644
->> --- a/Documentation/admin-guide/tainted-kernels.rst
->> +++ b/Documentation/admin-guide/tainted-kernels.rst
->> @@ -186,6 +186,6 @@ More detailed explanation for tainting
->>  
->>   18) ``N`` if an in-kernel test, such as a KUnit test, has been run.
->>  
->> - 19) ``J`` if userpace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
->> + 19) ``J`` if userspace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
->>       to use the devices debugging features. Device debugging features could
->>       cause the device to malfunction in undefined ways.
+> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> Anything received after that time might be too late.
 > 
-> Applied, thanks.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.156-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Comparing to the "MSDOS" spelling patch:
+Compiled and booted on my test system. No dmesg regressions.
 
-did you check/count "userspace" vs. "user space" vs. "user-space"
-in the kernel source tree?
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
--- 
-~Randy
-
+thanks,
+-- Shuah
 
