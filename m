@@ -1,230 +1,109 @@
-Return-Path: <linux-kernel+bounces-852328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F0BD8AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E162BD8B36
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92DA11923DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953903A4A22
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EB32ECD26;
-	Tue, 14 Oct 2025 10:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CBF2FD1A7;
+	Tue, 14 Oct 2025 10:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3EvzCqS2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g3FtNIyC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3EvzCqS2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g3FtNIyC"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="d85UoATp"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA3C1E990E
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634CB2DC320
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436808; cv=none; b=WcLPF2PDpWBfcdli1f/vjNzaad7Vezhngr85QbvxCFtfG1tNJGRtX6rF2oKQk3NDaBhuKbC4XvwqzXW/VpIctYQdvNH+ighZgu34ewbK3+e0/iRCK52ucE8KhrgSGWo2JabbXpGHPuC5OHFIjnw/e6esvKsjckdzka3wwrMJGFA=
+	t=1760436832; cv=none; b=pr3o+sS3iUzmYJOV7hSc7x9j3tLYVFjGaGGPGubjVV93o5zbk7A8TY5xRGLR2kEWcC2f8UDuvUAx8lArf8BLI+Ng3zMsUtY1Ya2d4LyifQoAcuewoGX3fPq5jIJrhmdoEXdnHS+QqjuzMm87uQwuU2DuiGcClNZC9ZFm6vMBI1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436808; c=relaxed/simple;
-	bh=UY2Vkjnbydzqw/zcYf9FkNGPwUf1nlwvl8Cs2RQ5S0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tkoy7bGQati/W+H5mTmsuxGo4mNIQ02asIYdambcAxiN1/ZTETyW+FEGbEJoXWBPPJPNvkPn7spuHyLeg6IVPORgwVpnVPqgPzWCn+dzVcfhsivCW4h9mzZfAHINLlB5J2UH4GOq04Zqz6X90VbBz+Xcn9dk2eNf4klwYfOs+dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3EvzCqS2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g3FtNIyC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3EvzCqS2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g3FtNIyC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 485C222110;
-	Tue, 14 Oct 2025 10:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760436804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CbwkeHzFm3DtPTQ3D79qC5uh3vmriiMk9eW/DTm8kzM=;
-	b=3EvzCqS2DqrrdOjZQdJufLb/9lzQ6DRRaelZeViRMCoE/Drn/n4pPmcjGlyu/sdDghW/DG
-	mxWiDTSBuG01CMkwDZJYQD3bHcUqEBWZUihXzhwojZJaxg7q7FWag7voVFYNfGkJtxWx1m
-	ftxUyE8XN8TDk19EdTObXZtWVBGIoUI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760436804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CbwkeHzFm3DtPTQ3D79qC5uh3vmriiMk9eW/DTm8kzM=;
-	b=g3FtNIyCrBDppkZTEO2OPuW3HHzJhnrdUNvdwKJHS0QKB+q4hs/hpgcbQzDwKbSBxX86pF
-	zwsdOAyhq7aeHtBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=3EvzCqS2;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=g3FtNIyC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760436804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CbwkeHzFm3DtPTQ3D79qC5uh3vmriiMk9eW/DTm8kzM=;
-	b=3EvzCqS2DqrrdOjZQdJufLb/9lzQ6DRRaelZeViRMCoE/Drn/n4pPmcjGlyu/sdDghW/DG
-	mxWiDTSBuG01CMkwDZJYQD3bHcUqEBWZUihXzhwojZJaxg7q7FWag7voVFYNfGkJtxWx1m
-	ftxUyE8XN8TDk19EdTObXZtWVBGIoUI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760436804;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CbwkeHzFm3DtPTQ3D79qC5uh3vmriiMk9eW/DTm8kzM=;
-	b=g3FtNIyCrBDppkZTEO2OPuW3HHzJhnrdUNvdwKJHS0QKB+q4hs/hpgcbQzDwKbSBxX86pF
-	zwsdOAyhq7aeHtBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F10A13A44;
-	Tue, 14 Oct 2025 10:13:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6jw0C0Qi7mh6egAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 14 Oct 2025 10:13:24 +0000
-Message-ID: <67e75a68-7a03-46bb-ae40-b1a8f24c0b16@suse.cz>
-Date: Tue, 14 Oct 2025 12:13:23 +0200
+	s=arc-20240116; t=1760436832; c=relaxed/simple;
+	bh=Eh5BVoIdj3E+g/qo7JJOEx2ayp6tBh/70JNpJI0OD+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlZwcGuyocYIseArhMaVnTtPMtnoVHtj48FZFMvxNj2okjYDJg9hHqz8vAd9PAF3uLGNtr0BAzDNoCVFryjXarRK7wcVY345pX1ZsC3n0zHwG0X8OImAMiTVrgzhWXKmj4Nb24lB4jQhzpTEpe7uFenvt8Mh+Voazs/VgZBCswU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=d85UoATp; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-426edfffc66so504827f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1760436829; x=1761041629; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MszmfM3qK8hojDktVnhjA9AYopNSPQh34JsmCIb7qSc=;
+        b=d85UoATp6fQGf77g72ufnB+c5XzyTEdYJpJ14ctGTEu/Sahws0rO3IgWEUJcWak6xM
+         euwiPhvxcZ3gOWW3NLlzMZ+FnnpDl9BsItmr5CXTDFwibSpW3awPUFodQZMSoiyXS5LU
+         tV9xx9GKK7lOayJSDblSwVye7gWNCEvq2XpYlmaWjQ/hYr+iD2113aTwn5qxygvYjV/S
+         XDl4NUTgUkLu/9/BSQCHk/WP2hs6z+s6vcSi0pzL6eW6NiSgZyw+uJg6IeGvyNSlndGA
+         WQPX2Ui+es4PLgUPGrIhx8B43nzbNPZEkhts4ipWPU4FnLgrdOUAKBX99Aiy8QGCaKkR
+         NP2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760436829; x=1761041629;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MszmfM3qK8hojDktVnhjA9AYopNSPQh34JsmCIb7qSc=;
+        b=DORMXvga50Qo+qJ3NdMMgaMOaOIjG2AsBf9UWTrAzdUEOuTxoWmuGQS2Tpo0tPX4El
+         eZd4aRR5mqR4VssItRm2YPbYv3Ni5lMxJ7JL4F52tWvB7MHkRaXDU9SYzMHSni+6tIKu
+         0K0BMl9ORcy3y3ai7JHNr/JWsw1nkH6/tc1p5AN+potxOIBXsk1wrNklv4OEyoVnZFYT
+         hf67K7UXpxyjbA9HNxDjDhVsUlPH6i1bgyetv1kCsE5eA/v2o9iX5lPtNeevO+jbDR0b
+         uVjihASiC93wZxM+KSL92WXNnnDK322PKITlaGSw01Gb9fUOdd8JZDcrZLqn1gfOlgSC
+         WJCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTy2RDV3akH1JjjkH1jy/xhBaTRBKP4ZN+jdVKU/lLmatYHkTlSh6cA5vZ1zyQDFvUecqB2UAl5MsSwTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsj3ufPyS4r3pG3/exbs434vIQpuFj3Li/89vUGHA4pT1R0HoN
+	c9Jm5yUOpnIfL7E1llafK0F8n5Nv4+veIBBI7nCli5YDYqaru4SBbD9hZg0JRZMXRN4=
+X-Gm-Gg: ASbGncsGRSnHm6rGn3wQgOksmmAbQjHnsOiYBIYClNAS6eVmXTHYagBUCUx73jQQqnX
+	BKdImlu1danvKaBgKc7ppPluVEjNQvs0GxSNVWEwpNlp4APj6yH5n5XJL8jCH1iW/CMvG68nd73
+	Vp4zt9z/bgs73mMG07v1D3Ja4w0EgDQLWq4MbLTN+jS2cLWJgEm6NHNWQrrLpri4N2Q7gccKN05
+	wIZd6+HTd8+b1tjh533QsW98e3YbWor7dvacm4PRC9UmItDCak5fMh0PopOo1x2tp262yNv7Lig
+	CfYLTZgdmnyZJIXsV6G/3NYTDcxXFLbLCupfl0bIwIP7LtTTTvnkPTlk3SXouOzt986sTOlScp1
+	nhxFxGv9MTMNBU8vlyxoY6dkmXQ==
+X-Google-Smtp-Source: AGHT+IFWdFmuBH45KApzDATfMiXATkGI8VwBnZcXpUsUtaPvnVOQgNZ6Tnlsi5kbUQn142h2b+DYoA==
+X-Received: by 2002:a05:6000:4009:b0:425:86d1:bcc7 with SMTP id ffacd0b85a97d-42586d1c0cdmr15589331f8f.23.1760436828649;
+        Tue, 14 Oct 2025 03:13:48 -0700 (PDT)
+Received: from localhost ([2a09:bac1:2880:f0::3df:19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe69sm23371423f8f.32.2025.10.14.03.13.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:13:47 -0700 (PDT)
+Date: Tue, 14 Oct 2025 11:13:46 +0100
+From: Matt Fleming <matt@readmodwrite.com>
+To: Jan Kara <jack@suse.cz>
+Cc: adilger.kernel@dilger.ca, kernel-team@cloudflare.com,
+	libaokun1@huawei.com, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, willy@infradead.org
+Subject: Re: ext4 writeback performance issue in 6.12
+Message-ID: <20251014101346.ep73uuigr25xu5a2@matt-Precision-5490>
+References: <20251006115615.2289526-1-matt@readmodwrite.com>
+ <20251008150705.4090434-1-matt@readmodwrite.com>
+ <2nuegl4wtmu3lkprcomfeluii77ofrmkn4ukvbx2gesnqlsflk@yx466sbd7bni>
+ <20251009101748.529277-1-matt@readmodwrite.com>
+ <ytvfwystemt45b32upwcwdtpl4l32ym6qtclll55kyyllayqsh@g4kakuary2qw>
+ <20251009172153.kx72mao26tc7v2yu@matt-Precision-5490>
+ <ok5xj3zppjeg7n6ltuv4gnd5bj5adyd6w5pbvaaaenz7oyb2sz@653qwjse63x7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched: remove unused cpumask variable in mm_cid_get()
-Content-Language: en-US
-To: Breno Leitao <leitao@debian.org>,
- Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
- skhan@linuxfoundation.org, Menglong Dong <menglong8.dong@gmail.com>
-References: <20251009194818.1587650-1-kriish.sharma2006@gmail.com>
- <v3zyf7pp64yd4kakqniq4thjf2egb3kavkwzgoqt6ye5cuqkys@jmkcwst6lrn2>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <v3zyf7pp64yd4kakqniq4thjf2egb3kavkwzgoqt6ye5cuqkys@jmkcwst6lrn2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 485C222110
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[debian.org,gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[redhat.com,infradead.org,linaro.org,arm.com,goodmis.org,google.com,suse.de,vger.kernel.org,gmail.com,linuxfoundation.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ok5xj3zppjeg7n6ltuv4gnd5bj5adyd6w5pbvaaaenz7oyb2sz@653qwjse63x7>
 
-On 10/14/25 11:56, Breno Leitao wrote:
-> On Thu, Oct 09, 2025 at 07:48:18PM +0000, Kriish Sharma wrote:
->> The variable 'cpumask' in mm_cid_get() was assigned but never used,
->> causing the following build error with -Werror:
->> 
->> kernel/sched/sched.h: In function ‘mm_cid_get’:
->> kernel/sched/sched.h:3743:25: error: variable ‘cpumask’ set but not used [-Werror=unused-but-set-variable]
->>  3743 |         struct cpumask *cpumask;
->>       |                         ^~~~~~~
+On Fri, Oct 10, 2025 at 07:23:54PM +0200, Jan Kara wrote:
 > 
-> Thanks for the fix. I am hitting the same issue in my builds.
+> Maybe I misunderstood what you wrote about your profiles but you wrote that
+> we were spending about 4% of CPU time in the block allocation code. Even if
+> we get that close to 0%, you'd still gain only 4%. Or am I misunderstanding
+> something?
 
-Let me add why this years old small issue became much more problematic in
-6.18-rc1. When I want to test my own files I'm developing on with e.g. "make
-W=1 mm/slub.o", the W=1 hits earlier in:
-
-  CC      kernel/sched/rq-offsets.s
-In file included from kernel/sched/rq-offsets.c:5:
-kernel/sched/sched.h:3718:18: error: variable 'cpumask' set but not used
-[-Werror,-Wunused-but-set-variable]
- 3718 |         struct cpumask *cpumask;
-      |                         ^
-1 error generated.
-make[2]: *** [scripts/Makefile.build:182: kernel/sched/rq-offsets.s] Error 1
-
-So I can't get to the part where I test-compile my own code with W=1. So
-fixing this ASAP in 6.18 would be appreciated, thanks!
-
-FWIW I've bisected this to commit
-378b7708194f ("sched: Make migrate_{en,dis}able() inline")
-
->> Removing the unused variable allows the kernel to compile without errors.
->> 
->> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-> 
-> Reviewed-by: Breno Leitao <leitao@debian.org>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
+Ah, I see. Yeah that's true but that's 4% of CPU cycles that could be
+put to better use elsehwere :D
 
