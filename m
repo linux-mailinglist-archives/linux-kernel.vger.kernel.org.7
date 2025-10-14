@@ -1,299 +1,361 @@
-Return-Path: <linux-kernel+bounces-853003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B09BDA69A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF2EBDA6E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16BD31884607
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55F93B83AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0AC3002BD;
-	Tue, 14 Oct 2025 15:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FCC293B75;
+	Tue, 14 Oct 2025 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKhNXcAo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kvT9Qodk"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010032.outbound.protection.outlook.com [52.101.69.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB232F0C49
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760456010; cv=none; b=Bhr+KVSd6EKsgw6v3+MSFRnf3VRBKmKQxGOfrfp+SoFch9HOTfC4u8Vk9/zY403XsGtz7IHMXVcQUbvFAXig+FQXyQ3Fg1LuNAdHzOdEiWUVk7S2JA/GQAWiSGL/oRSptMB8qL3IY8qWK5/hTVFE5f4YLPoegq9t7jLsOnsVHAY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760456010; c=relaxed/simple;
-	bh=A5tDhDfx2NrPSdbsqzXdlZzxceL/afhanUpACY9p8F4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=M+FBVlrpoJEcvQIuFBg0GJwkgjZlyspOqLmHwUEXAEccmeBDkOxn8JJzgAGHmw0DGkVbHxOPTzhhzvL1dKM8VAMWIko/MBVYWPChLheDE0NSjs1WxEmRU57crQpncxWTgwEyurIt/nlBVd2fHmROyD/SwRBbtNAD4vvzO/eBwZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKhNXcAo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760456007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+1UVYE8sOFf7urKOQ7gZ7h3LRzinBvs61P0Q6ItQr+k=;
-	b=aKhNXcAo/UM2bvc9V0lageY8H4TGmjNrV+zCpxJamtY2IFHfDpK6zD9dmsA0Dg3KW2ekbl
-	tVgq3m2K5jQ06VKx8s/J4NzFj9FiMcn+n/G30SPEEnpQAJuhPc+xY0GtkLqgOTmWNxFprn
-	7ibLNaluQMvkbGjD5X6gCmlhrdGbuR8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-YZ3YMIuUN_6SOjkn7Xi2mQ-1; Tue, 14 Oct 2025 11:33:21 -0400
-X-MC-Unique: YZ3YMIuUN_6SOjkn7Xi2mQ-1
-X-Mimecast-MFC-AGG-ID: YZ3YMIuUN_6SOjkn7Xi2mQ_1760456000
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e32eb4798so28425185e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:33:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760456000; x=1761060800;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+1UVYE8sOFf7urKOQ7gZ7h3LRzinBvs61P0Q6ItQr+k=;
-        b=QVI0B1a1dvmz52Mcf9KgwyNNyxhnagZWqft1O3YRK5zorPSQGyvS6nD5jKHd4bnSxW
-         GsnFKD7hqmbK7MjO2vMpeOHv/y7u8VHyAN42XH5BER6y9upOMTX4OXCK2EtAXhnIlzWu
-         mfOQofFsvJKowgT5xA9EzkvtdileAiwox9oxajr4sixZq7fqDNS9Ph+K+TAbhrhgDtvi
-         ZEPpg5Hg3eTPXRCd/Xh3z1VKuYh6W8vQ0gbdp0lYQjbE+Ik1YZI/lcBX4+KH0O+8SB4N
-         H0gCAaOxn9QUcXc/BeojYWS+NzsLM7PSzjIvp/pLQrsiAzHaY6eM8VdfqldV1uPpI3ZR
-         4NQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoTVkJCFXf7GosRWx2t/6S1enppNU34nyR6DMmUkQeceeX+XFrAtRzcGKKlZxbT0sF+BpmdmE92hJ/nHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzzsbSWwrhP1EGfYMDTDgAeV3A1awjenhMO7pKNksYfu8HvGaS
-	EEaM6QTAACLHKc4eH1lt+DCtVeegYzqt8Y3XWfanmEl7/OqOx/jlrjxEEwTzMX2PTCLwLM73bZu
-	gOD/LQNUUgXZ0PyuuocTrlCo2O2S6yy5p6gl0LVWYBvR6kfHonU2U14QExUahEFfeRg==
-X-Gm-Gg: ASbGnctlTCUNkcsAIQ5u98p7AUhUZC5is0kHpimHwY2E/jCzCO2RvJ/4j6XunTfR96O
-	8qiew5jevbf9q6Pq1ai4Zq2Ft/5+nNufSWvvbNl9Y4vhfPM5cUJI5bclI5ATNQCi68ThPUt6/w5
-	PgQwArD2dc93zETQnsk/xtLgRwmt6j70JfzrYDNJcIAwwUgEje3GKPoUnznbrHd4CGaOS72xPH8
-	MGA33JzIfkLnwXWrDdK+6+d8fY0Am85ISiVVwxg85Jr0Hx0buAuZqbVnIBwXyCIktMrBhjgPNWM
-	SVXnSCJQU9SIwB+HxE7xDtQ4hk8rJXQBaBpz6be/KIW68OikBh0ejhVmrvpDhrcOLpmkiGOrkw=
-	=
-X-Received: by 2002:a05:600c:4506:b0:45b:8a0e:cda9 with SMTP id 5b1f17b1804b1-46fa9a8638dmr184763975e9.2.1760456000236;
-        Tue, 14 Oct 2025 08:33:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhJpIXD7XQ5pJSvl2kMtYK5HLrtya1KimSbQX7gY+SFRx0KBjyrmvvoAE0I1/rLJ3ZdqjMkg==
-X-Received: by 2002:a05:600c:4506:b0:45b:8a0e:cda9 with SMTP id 5b1f17b1804b1-46fa9a8638dmr184763725e9.2.1760455999749;
-        Tue, 14 Oct 2025 08:33:19 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb32a84edsm132343605e9.4.2025.10.14.08.33.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 08:33:19 -0700 (PDT)
-Message-ID: <e2c77ce4-c260-4d10-b9b6-93a507080e61@redhat.com>
-Date: Tue, 14 Oct 2025 17:33:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E084928D8D1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760456107; cv=fail; b=Q16aIh6Cq3E3vM0T1IOqyoi5aOvAS2OU0OHuDy5jwMDvkl7pmnXqfyhGyMnES696eMNFZ1YJDJu2xehfJ6jFhiaDdxibISZfoyO7hJ9VxfJAQPkkk7zrd4PNQ1YQ1/pJzVDvVMXxRnj7ZAlNqKNUPWr9SGBfECjrqa8GRHTWi/w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760456107; c=relaxed/simple;
+	bh=YSuU/MQbif3qq5s9amKq1vZ4ieJhGNhytazGKj8+MUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=t7cJCgtzqG2Ywq2Yiq9EbXVC+s9zPnEIEzJrehx1Ky5RajuljZ3oYZCXDpQnHlVgKWuD70dJubsNtKztsEbOd77+oA+YmD+8k0kT8W/hVxVZPTcs9y6cJiE+Rrd6NOXsG/CSJ+dfMfdhjXurGuEQ0uyhrLY4BYz8MUtOAMqf6gU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kvT9Qodk; arc=fail smtp.client-ip=52.101.69.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g3XJi6i67LCq9qFqqt+nxONLWy4D/GiJwvdLGY6/PF/VSZAplp4eQfcQnu4JPCCd12fsTvsiwDbLh4ZERiCDt8LjbbbZFmRf6zMPMoGZpllsJJZPV2C26g4ydYKEzed1EHbKv0NgrwmASw8YOQzMbflz8q2xP9Tb26lPzaBvflOFWJbyunSli3nyiveEEdQwo0qdZ2V+fdK0veDVE0HNYIqvChkTrXbgN4e882KElJMT+6/YbL8mhiNqfyh3nmWb4XlqSizkgCgTiqwY9muqsUiB9yYg5wf6TMiRYSPDT7S3Axyn9opO4aw4xqHQ5SJRv5TgujhQI7Jmk1Isi4BvgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Db1s4zc2ZLyKDq8btQkzsNu5P0kbBRecYNovjyMhfks=;
+ b=Km1Xr4bL5oLAkTiW3za4qTL8s/9Hd5de0xvJHDX+2+c/iqa8HN4+dZz6AobxP2plzWd6e/5Nd1AdEm/Dw2rvrQEAfACj3zCU/ywwW7IzEvkUNJCanQiSSVjsFemzMQq+IvjDlmoFf7Bhq/f1Wc+vxmZGLSDJn8k5qS2F1txy0CtqIP0Ac36D9/YvBBzeAXjVbHEMu152ldAVZ/gr92KW2Cl89K7rssAFlai1EynqIX012ZfFa5zfIcJXw7wTNLehVYNSCS3uPVrnyd4xuJ+ogOTLrLa/rXZ0FZOlzOPE7dJ4mwj7Op5wCm/7Z8M8enpTU3JkLatHy2UYG8eU9CWWJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Db1s4zc2ZLyKDq8btQkzsNu5P0kbBRecYNovjyMhfks=;
+ b=kvT9Qodkgi+dMLugFrWuhhpyhswsxDD1NCayQpu5OghsJBnrXFXsuqn1KsVojEAk0utiD2gYQuI4LWt8K2wZRTbG414b09ViKirCSgXq+Ui0L/tusMdcjs2qqk5TZ7JlHZ8zo2OFwEtE5mcF7WlFeM+HXtA7SjwGwd0n2I4RC8/ilEr0/Hra4hFtKhurdUeNplHfLlgELkP7WNJQo48/ldmVGDe9dbZwdRwA70rHxgvj9WCLbYRqzJPEt1SbRr6LgQWS99rvkpgXpkp8vtQze/oZjwszgN45ruX2GObNxJ+VX84Ti6Oxk9Q+uDoghu2k9AXUk6Mjgqad7Ie4K8bM6g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS8PR04MB7720.eurprd04.prod.outlook.com (2603:10a6:20b:299::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 15:35:01 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 15:35:01 +0000
+Date: Tue, 14 Oct 2025 11:34:53 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>, Liu Ying <victor.liu@nxp.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/imx: dc: Sort bits and bitfields in descending order
+Message-ID: <aO5tne2YgKpM+Ijy@lizhi-Precision-Tower-5810>
+References: <20251014114148.43922-1-marek.vasut@mailbox.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014114148.43922-1-marek.vasut@mailbox.org>
+X-ClientProxiedBy: SJ0PR03CA0009.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::14) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
- non-swap entries
-From: David Hildenbrand <david@redhat.com>
-To: Lance Yang <lance.yang@linux.dev>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
- ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
- ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com
-References: <20251008032657.72406-1-lance.yang@linux.dev>
- <f33735d3-b38d-4b6a-aeba-b415e6b24ea2@lucifer.local>
- <0bfdbccd-9d4a-409f-ae43-b44bb7347d70@linux.dev>
- <f7392f43-b8f1-4e6a-b9c8-25ad8a47f82c@lucifer.local>
- <d2e5b099-94bd-444d-9946-182807443539@linux.dev>
- <c44e198d-7d46-491e-adc1-86cc306c27db@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <c44e198d-7d46-491e-adc1-86cc306c27db@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB7720:EE_
+X-MS-Office365-Filtering-Correlation-Id: 950a6b8d-78ae-47a9-4a7b-08de0b373d7a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|366016|52116014|7416014|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GOm006vQ+anmlPeP5a0NeLroYgtc8yDPrmnHykKcjihSRKmC39foalUadnFp?=
+ =?us-ascii?Q?3cXWDbqf3poombSeOeXkjZgpwtKTN7HCQGCs/l8a3xYWxYFVg+wRq2tlUGIy?=
+ =?us-ascii?Q?nA9yLsTubFuexHbnvnlmAi8jXaqDeOG0VgCKNj3f195zbwz0r0YeeiGmIHYe?=
+ =?us-ascii?Q?PIBVlHGsGqUFIFo0cyPIPbB2Bg5LiPmIrNToMyQCbYvakcD2pGMLlREE6xVN?=
+ =?us-ascii?Q?HVDrbmqGyDAJbxqkGnpCUARCyQ/pohUjb8hNUprxHLdJyaREcw1rzRP/1zNI?=
+ =?us-ascii?Q?VU4hUEdm4phkfXBqsNtovPd2NgpuJ+5cIAuflvOGZIwMYfu7SecVHETiEqw8?=
+ =?us-ascii?Q?qFMzXEAmdlIy7nn1cOeiT0hKi3UPY2fI+D8FU0QdcRTQJrtmiJ7IbR9CcGEy?=
+ =?us-ascii?Q?z3tZLgBy5+OIC6SvO0cKs5nJd+TaTIR0e2Uywt5zU1ZlqvWm41w9us8ESEPb?=
+ =?us-ascii?Q?Gqlkt9iBPaKxU/bX/vO2H087NriFNWK5RERTm36D0VPMSSlQ8sTwDJVWmMUO?=
+ =?us-ascii?Q?AGjabpxraJ2nBIn0RssayXI2X/2bSF3lvfbpZGuq5UW2h6UT+pfj6YJhSLfi?=
+ =?us-ascii?Q?m8KUsp6Pw23k2KtFbWxC8md72/fpQCtGNdHrVVyoDgZE2HWxJfXfgrALbe8A?=
+ =?us-ascii?Q?6NK6Q43WDyPvj/5cAfVo9jfRSwoN6jaW0FNpf6eiOv6ZUjMEgAQhEBzJE6dJ?=
+ =?us-ascii?Q?cQXhjAktHlqueEm3K3biovnFT7jMN0fgqwixIx8m6XV5Dn/nLTnWquoNARhQ?=
+ =?us-ascii?Q?RdxoIm23MVuP+vjMHoVvXzqKoMoo/ieGzflcNt76M7QCEsK2pearbBbGdqdZ?=
+ =?us-ascii?Q?OxDM23A48DuZ/yL0IIt6yp5WrmywIUagltQFSu5WDg59+gUOp8HcnsMnXPvA?=
+ =?us-ascii?Q?uYXP8M9ew5mElGZOlkNvpbkRbHuxlxtvEpMITPTNgP/rAZsr4yYPDBvQeb4Q?=
+ =?us-ascii?Q?5WXnNGbQmojGA/N7/EN6qg+9Ahn3EfU33guXbK7bX5XaFzqxge6NTA35WWyv?=
+ =?us-ascii?Q?gvf9t8nN8yQM1pd9pXck+VqF8ipoQRiT0bTVp4b6bmT0N0JyI5OdaSXHsJ0x?=
+ =?us-ascii?Q?/6HKCuujIIo6Bsaw0AudiZ80AfQgY04egSl93Fs+Ahm/DeRKrJomU40dlQkU?=
+ =?us-ascii?Q?kx229r2efRCnVvEmO9qPrKFmDcRVntSTLisk9Cpf1INvv7Wpr03dk9EJ1nLk?=
+ =?us-ascii?Q?NS2krOUEZA8coQgUH2hSL+xGLrqdr/pBBEs55EEFji8q9ElFa4STXAIOZrtU?=
+ =?us-ascii?Q?e+EDCNsWF4mmiOUe+JQU1CJWC2INelhS/zfdd1FH6wqYO6H/PI8tLQB36+3C?=
+ =?us-ascii?Q?jE0aPFEwufweOdB16OS62+jH4dNnXIBag+4zDK1VtUP93ai2/4qtQHjtYbNX?=
+ =?us-ascii?Q?9x+vrxiaWvYoiFZrhBZECXBb6T5l51hkO+m4+1pXuhvd8uWcnCdhcCA35RAO?=
+ =?us-ascii?Q?XFl0bQ4T8n8XcpmLD+xv54hqZNXt7o1y4/gBGzjXUzXqlx5nommXEALV2nak?=
+ =?us-ascii?Q?bOsyyVwS30e07dEx289m2RSi7sOTLTNqIXgD?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(52116014)(7416014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pN83KgjsOx1pIdjP7bdYC7JivMgpu+HeZGOkeygXvG8rim/btFTM7mOhqWb4?=
+ =?us-ascii?Q?NVUHIToiYsOytib/WEXp1VramLBIwi8lZeS5JOBGpsVLkDpIRXH/D0wsZqnj?=
+ =?us-ascii?Q?NFvYTTSscbNFAXy1f1qsSD2x2HmvoNF82joGnSg2X/r/ebr/ToCuvPxtKZVe?=
+ =?us-ascii?Q?0ogdOq2o62bc+fZQtlEJFYSMy8cCuf9AmZNet8bijlOwApIbSfd28/4qJd5O?=
+ =?us-ascii?Q?mj4G1KNGC69leQAZiSd8h8dHFEV7dgT84okYSNVS6ubklRYFNn3AQVBIYCtu?=
+ =?us-ascii?Q?48AgF6VCmZimSBUYcA6IYD4zcc+6mFIsxCkiLqu2SzLcPRNHLlXuHgVfwOzE?=
+ =?us-ascii?Q?xZENu9zR3xaRkSzuT4K7cllX8E57iG0Ko0ri1B/X5TiNWxtUQ7bQ6KabjhgX?=
+ =?us-ascii?Q?CdN9dTckt+BX/DF4gRo2/gfKwIPkL0lKJW2WRkkSVd13bdFaCN1/j8DgoPqv?=
+ =?us-ascii?Q?Fj7nHz/FSyzq+eg+oOMWM6k5XOUglrg/5dJOsrR4xux6B/qgqdNoikl14dQQ?=
+ =?us-ascii?Q?cmUbqgA8qjK8aWqaDy/P2MzqYSGkX94WtImP0Gz0sa7PerYBj0ZZS+JSM8hR?=
+ =?us-ascii?Q?BVIjYxIUikV2TdcbCyXFPvP+2E+tAG+fTwKebUp1e6YQp+X6RSjbed2EfIRx?=
+ =?us-ascii?Q?YW3jAMVnPpB+MwetCZ95mg+wLqzoRmt7EDVC/cRv6lyjNDoXTUCQNHjIl8JN?=
+ =?us-ascii?Q?KB7moxFbwjw3eTjpLgrNF0lT8QFn0oriQbp0UkTTiOPepXj69Nc2BhCnTOgf?=
+ =?us-ascii?Q?YygEsIc46Lw97uUpwOxtrguax37a1o2FuZgr7cy843DqV0t+qerhrC6rOFaa?=
+ =?us-ascii?Q?eLQnjdpCGQYWccLCaTFwWbxDHDQ8PKphXCdZxMJLgS1OBgURNBb2fAyje7LX?=
+ =?us-ascii?Q?LLCPQxmCE7+VF1faz5aQwGdGVb4WZ85UFx8AmrEC8C/bmXuASR9CmO742Xk6?=
+ =?us-ascii?Q?FU00yomGs1VRl0tz9Q3U/AdAKOLgPxKJOkfRMxOMV0GS6m9OS2gsvwEHC9+m?=
+ =?us-ascii?Q?D2BhIVbMaR9T1AfejIKm/vwowm5DrWfiNLH5MR7/6m5YXwCpmu4lAnFDnnzA?=
+ =?us-ascii?Q?fOSKuIpLv8PxrCBPcOwmqtD8WuUlyCXABH9fyEkpfldbEJFFqPXuvUen+7oh?=
+ =?us-ascii?Q?7hjAeub4+88f8f2/fVCLlmQrbO/7zr+xiUN+PdA3xX188HWxd5EGrZ8pp7Ky?=
+ =?us-ascii?Q?bEtDcvHWVlsao3RSqKS6OD6CD/rexKwmPtaBM0y048jPtwNGRNpQZW0ziyNw?=
+ =?us-ascii?Q?lRzKRDmp/txb919WrX4/kSW9jGv0OllRQkFzD/0PAKMY3zJtCIn+Y8wHQ3x5?=
+ =?us-ascii?Q?sU2gUe73FSklBwYQA0NHXOtX18fah/y3/jRuY8le7KSZHBkGx1Rhu72woUPM?=
+ =?us-ascii?Q?ZGGRvbk7y+Z+t6wDCro+t1tTqHyHtLcYevP8OWCgiHoEAoapYRBsdgy43sgg?=
+ =?us-ascii?Q?GuEMazFSSX1HDr+VEgF6DFuij+VzcEE81XNDmV9RcEiKOO9v2dfSGeIx1avw?=
+ =?us-ascii?Q?TgEsKhNzzDYuZZnqVx1oJeOWZKsRyrD0V+r6xtOs1iGCGVGiHAdJOHmuJtp8?=
+ =?us-ascii?Q?f5D1E4y8sNXfsMJ8/kI=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 950a6b8d-78ae-47a9-4a7b-08de0b373d7a
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 15:35:01.6756
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F7IHCDLY4/IPSpA2DMRaR/+jjGjlfccIT/Bi+Bb2QM/pf1EPfi7rCG0C8B1JnFvYDfi15yr9ralEqz2xy2CN9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7720
 
-On 14.10.25 17:12, David Hildenbrand wrote:
-> On 14.10.25 17:01, Lance Yang wrote:
->>
->>
->> On 2025/10/14 22:39, Lorenzo Stoakes wrote:
->>> On Tue, Oct 14, 2025 at 10:26:20PM +0800, Lance Yang wrote:
->>>>
->>>>
->>>> On 2025/10/14 19:08, Lorenzo Stoakes wrote:
->>>>> On Wed, Oct 08, 2025 at 11:26:57AM +0800, Lance Yang wrote:
->>>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>>>>> index abe54f0043c7..bec3e268dc76 100644
->>>>>> --- a/mm/khugepaged.c
->>>>>> +++ b/mm/khugepaged.c
->>>>>> @@ -1020,6 +1020,11 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->>>>>>      		if (!is_swap_pte(vmf.orig_pte))
->>>>>>      			continue;
->>>>>>
->>>>>> +		if (non_swap_entry(pte_to_swp_entry(vmf.orig_pte))) {
->>>>>> +			result = SCAN_PTE_NON_PRESENT;
->>>>>> +			goto out;
->>>>>> +		}
->>>>>
->>>>> OK seems in line with what we were discussing before...
->>>>
->>>> Yep. That's the idea :)
->>>>
->>>>>
->>>>>> +
->>>>>>      		vmf.pte = pte;
->>>>>>      		vmf.ptl = ptl;
->>>>>>      		ret = do_swap_page(&vmf);
->>>>>> @@ -1281,7 +1286,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
->>>>>>      	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
->>>>>>      	     _pte++, addr += PAGE_SIZE) {
->>>>>>      		pte_t pteval = ptep_get(_pte);
->>>>>> -		if (is_swap_pte(pteval)) {
->>>>>> +		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
->>>>>> +			++none_or_zero;
->>>>>> +			if (!userfaultfd_armed(vma) &&
->>>>>> +			    (!cc->is_khugepaged ||
->>>>>> +			     none_or_zero <= khugepaged_max_ptes_none)) {
->>>>>> +				continue;
->>>>>> +			} else {
->>>>>> +				result = SCAN_EXCEED_NONE_PTE;
->>>>>> +				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
->>>>>> +				goto out_unmap;
->>>>>> +			}
->>>>>> +		} else if (!pte_present(pteval)) {
->>>>>> +			if (non_swap_entry(pte_to_swp_entry(pteval))) {
->>>>>
->>>>
->>>> Thanks for pointing that out!
->>>
->>> You've deleted what I've said here and also not indicated whether you'll do what
->>> I asked :)
->>>
->>> Please be clearer...
->>
->> Oh, I didn't delete your comment at all ... It's just below ...
->>
->>>
->>>>>>> Hm but can't this be pte_protnone() at this stage (or something
->> else)? And then <-- Here!
->>>>
->>>> Yeah. The funny thing is, a protnone pte cannot actually get here, IIUC.
->>>>
->>>> ```
->>>> static inline int pte_protnone(pte_t pte)
->>>> {
->>>> 	return (pte_flags(pte) & (_PAGE_PROTNONE | _PAGE_PRESENT))
->>>> 		== _PAGE_PROTNONE;
->>>> }
->>>>
->>>> static inline int pte_present(pte_t a)
->>>> {
->>>> 	return pte_flags(a) & (_PAGE_PRESENT | _PAGE_PROTNONE);
->>>> }
->>>> ```
->>>>
->>>> On x86, pte_present() returns true for a protnone pte. And I'd assume
->>>> other archs behave similarly ...
->>>
->>> This was one example, we may make changes in the future that result in entries
->>> that are non-present but also non-swap.
->>>
->>> I don't see the point in eliminating this check based on an implicit, open-coded
->>> assumption that this can never be the case, this is just asking for trouble.
->>>
->>>>
->>>>> we're just assuming pte_to_swp_entry() is operating on a swap entry when it in
->>>>> fact might not be?
->>>>>
->>>>> Couldn't we end up with false positives here?
->>>>
->>>> Emm, I think we're good here and the code is doing the right thing.
->>>
->>> I mean sorry but just - NO - to doing swap operations based on open-coded checks
->>> that you implicitly feel must imply a swap entry.
->>>
->>> This makes the code a lot more confusing, it opens us up to accidentally
->>> breaking things in future and has little to no benefit, I don't see why we're
->>> doing it.
->>>
->>> I don't think every little 'aha X must imply Y so just eliminate Z' idea need be
->>> implemented, this feels like a sort of 'mathematical reduction of code ignoring
->>> all other factors'.
->>
->> Understood. Changing !pte_present() to is_swap_pte() will resolve all your
->> concerns, right?
->>
->> ```
->> if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
->> [...]
->> } else if (is_swap_pte(pteval)) { <-- Here
->> 	if (non_swap_entry(pte_to_swp_entry(pteval))) {
->> 		[...]
->> 	}
->> [...]}
-> 
-> Can we please take a step back and make sure we are not starting to do
-> stuff differently than elswehere in the kernel, please?
-> 
+On Tue, Oct 14, 2025 at 01:41:07PM +0200, Marek Vasut wrote:
+> Consistently sort bits and bitfields from highest to lowest bits.
+> No functional change.
+>
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 
-For the sake of progress, I assume the compiler will optimize out the 
-additional pte_none() stuff.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-I absolutely, absolutely hate is_swap_pte(). To me, it makes the code 
-more confusing that talking about something that is !present but also 
-!none: there is something that is not an ordinary page table mapping.
-
-The underlying problem is how we hacked in non-swap into swap (and 
-that's exactly where it gets confusing). Well, which this series is all 
-about.
-
-So, I don't care in the end here.
-
--- 
-Cheers
-
-David / dhildenb
-
+> ---
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/gpu/drm/imx/dc/dc-ed.c |  8 ++++----
+>  drivers/gpu/drm/imx/dc/dc-fg.c |  4 ++--
+>  drivers/gpu/drm/imx/dc/dc-fu.c | 10 +++++-----
+>  drivers/gpu/drm/imx/dc/dc-fu.h |  4 ++--
+>  drivers/gpu/drm/imx/dc/dc-lb.c | 28 ++++++++++++++--------------
+>  5 files changed, 27 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/imx/dc/dc-ed.c b/drivers/gpu/drm/imx/dc/dc-ed.c
+> index 86ecc22d0a554..d42f33d6f3fcc 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-ed.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-ed.c
+> @@ -15,12 +15,12 @@
+>  #include "dc-pe.h"
+>
+>  #define PIXENGCFG_STATIC	0x8
+> -#define  POWERDOWN		BIT(4)
+> -#define  SYNC_MODE		BIT(8)
+> -#define  SINGLE			0
+>  #define  DIV_MASK		GENMASK(23, 16)
+>  #define  DIV(x)			FIELD_PREP(DIV_MASK, (x))
+>  #define  DIV_RESET		0x80
+> +#define  SYNC_MODE		BIT(8)
+> +#define  SINGLE			0
+> +#define  POWERDOWN		BIT(4)
+>
+>  #define PIXENGCFG_DYNAMIC	0xc
+>
+> @@ -28,9 +28,9 @@
+>  #define  SYNC_TRIGGER		BIT(0)
+>
+>  #define STATICCONTROL		0x8
+> +#define  PERFCOUNTMODE		BIT(12)
+>  #define  KICK_MODE		BIT(8)
+>  #define  EXTERNAL		BIT(8)
+> -#define  PERFCOUNTMODE		BIT(12)
+>
+>  #define CONTROL			0xc
+>  #define  GAMMAAPPLYENABLE	BIT(0)
+> diff --git a/drivers/gpu/drm/imx/dc/dc-fg.c b/drivers/gpu/drm/imx/dc/dc-fg.c
+> index 7f6c1852bf724..28f372be92472 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-fg.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-fg.c
+> @@ -56,9 +56,9 @@
+>
+>  #define FGINCTRL		0x5c
+>  #define FGINCTRLPANIC		0x60
+> -#define  FGDM_MASK		GENMASK(2, 0)
+> -#define  ENPRIMALPHA		BIT(3)
+>  #define  ENSECALPHA		BIT(4)
+> +#define  ENPRIMALPHA		BIT(3)
+> +#define  FGDM_MASK		GENMASK(2, 0)
+>
+>  #define FGCCR			0x64
+>  #define  CCGREEN(x)		FIELD_PREP(GENMASK(19, 10), (x))
+> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
+> index f94c591c81589..1d8f74babef8a 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-fu.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-fu.c
+> @@ -18,11 +18,11 @@
+>  #define BASEADDRESSAUTOUPDATE(x)	FIELD_PREP(BASEADDRESSAUTOUPDATE_MASK, (x))
+>
+>  /* BURSTBUFFERMANAGEMENT */
+> +#define LINEMODE_MASK			BIT(31)
+>  #define SETBURSTLENGTH_MASK		GENMASK(12, 8)
+>  #define SETBURSTLENGTH(x)		FIELD_PREP(SETBURSTLENGTH_MASK, (x))
+>  #define SETNUMBUFFERS_MASK		GENMASK(7, 0)
+>  #define SETNUMBUFFERS(x)		FIELD_PREP(SETNUMBUFFERS_MASK, (x))
+> -#define LINEMODE_MASK			BIT(31)
+>
+>  /* SOURCEBUFFERATTRIBUTES */
+>  #define BITSPERPIXEL_MASK		GENMASK(21, 16)
+> @@ -31,20 +31,20 @@
+>  #define STRIDE(x)			FIELD_PREP(STRIDE_MASK, (x) - 1)
+>
+>  /* SOURCEBUFFERDIMENSION */
+> -#define LINEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
+>  #define LINECOUNT(x)			FIELD_PREP(GENMASK(29, 16), (x))
+> +#define LINEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
+>
+>  /* LAYEROFFSET */
+> -#define LAYERXOFFSET(x)			FIELD_PREP(GENMASK(14, 0), (x))
+>  #define LAYERYOFFSET(x)			FIELD_PREP(GENMASK(30, 16), (x))
+> +#define LAYERXOFFSET(x)			FIELD_PREP(GENMASK(14, 0), (x))
+>
+>  /* CLIPWINDOWOFFSET */
+> -#define CLIPWINDOWXOFFSET(x)		FIELD_PREP(GENMASK(14, 0), (x))
+>  #define CLIPWINDOWYOFFSET(x)		FIELD_PREP(GENMASK(30, 16), (x))
+> +#define CLIPWINDOWXOFFSET(x)		FIELD_PREP(GENMASK(14, 0), (x))
+>
+>  /* CLIPWINDOWDIMENSIONS */
+> -#define CLIPWINDOWWIDTH(x)		FIELD_PREP(GENMASK(13, 0), (x) - 1)
+>  #define CLIPWINDOWHEIGHT(x)		FIELD_PREP(GENMASK(29, 16), (x) - 1)
+> +#define CLIPWINDOWWIDTH(x)		FIELD_PREP(GENMASK(13, 0), (x) - 1)
+>
+>  enum dc_linemode {
+>  	/*
+> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.h b/drivers/gpu/drm/imx/dc/dc-fu.h
+> index e016e1ea5b4e0..f678de3ca8c0a 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-fu.h
+> +++ b/drivers/gpu/drm/imx/dc/dc-fu.h
+> @@ -33,13 +33,13 @@
+>  #define A_SHIFT(x)			FIELD_PREP_CONST(GENMASK(4, 0), (x))
+>
+>  /* LAYERPROPERTY */
+> +#define SOURCEBUFFERENABLE		BIT(31)
+>  #define YUVCONVERSIONMODE_MASK		GENMASK(18, 17)
+>  #define YUVCONVERSIONMODE(x)		FIELD_PREP(YUVCONVERSIONMODE_MASK, (x))
+> -#define SOURCEBUFFERENABLE		BIT(31)
+>
+>  /* FRAMEDIMENSIONS */
+> -#define FRAMEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
+>  #define FRAMEHEIGHT(x)			FIELD_PREP(GENMASK(29, 16), (x))
+> +#define FRAMEWIDTH(x)			FIELD_PREP(GENMASK(13, 0), (x))
+>
+>  /* CONTROL */
+>  #define INPUTSELECT_MASK		GENMASK(4, 3)
+> diff --git a/drivers/gpu/drm/imx/dc/dc-lb.c b/drivers/gpu/drm/imx/dc/dc-lb.c
+> index 38f966625d382..ca1d714c8d6e6 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-lb.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-lb.c
+> @@ -17,12 +17,12 @@
+>  #include "dc-pe.h"
+>
+>  #define PIXENGCFG_DYNAMIC			0x8
+> -#define  PIXENGCFG_DYNAMIC_PRIM_SEL_MASK	GENMASK(5, 0)
+> -#define  PIXENGCFG_DYNAMIC_PRIM_SEL(x)		\
+> -		FIELD_PREP(PIXENGCFG_DYNAMIC_PRIM_SEL_MASK, (x))
+>  #define  PIXENGCFG_DYNAMIC_SEC_SEL_MASK		GENMASK(13, 8)
+>  #define  PIXENGCFG_DYNAMIC_SEC_SEL(x)		\
+>  		FIELD_PREP(PIXENGCFG_DYNAMIC_SEC_SEL_MASK, (x))
+> +#define  PIXENGCFG_DYNAMIC_PRIM_SEL_MASK	GENMASK(5, 0)
+> +#define  PIXENGCFG_DYNAMIC_PRIM_SEL(x)		\
+> +		FIELD_PREP(PIXENGCFG_DYNAMIC_PRIM_SEL_MASK, (x))
+>
+>  #define STATICCONTROL				0x8
+>  #define  SHDTOKSEL_MASK				GENMASK(4, 3)
+> @@ -37,24 +37,24 @@
+>  #define BLENDCONTROL				0x10
+>  #define  ALPHA_MASK				GENMASK(23, 16)
+>  #define  ALPHA(x)				FIELD_PREP(ALPHA_MASK, (x))
+> -#define  PRIM_C_BLD_FUNC_MASK			GENMASK(2, 0)
+> -#define  PRIM_C_BLD_FUNC(x)			\
+> -		FIELD_PREP(PRIM_C_BLD_FUNC_MASK, (x))
+> -#define  SEC_C_BLD_FUNC_MASK			GENMASK(6, 4)
+> -#define  SEC_C_BLD_FUNC(x)			\
+> -		FIELD_PREP(SEC_C_BLD_FUNC_MASK, (x))
+> -#define  PRIM_A_BLD_FUNC_MASK			GENMASK(10, 8)
+> -#define  PRIM_A_BLD_FUNC(x)			\
+> -		FIELD_PREP(PRIM_A_BLD_FUNC_MASK, (x))
+>  #define  SEC_A_BLD_FUNC_MASK			GENMASK(14, 12)
+>  #define  SEC_A_BLD_FUNC(x)			\
+>  		FIELD_PREP(SEC_A_BLD_FUNC_MASK, (x))
+> +#define  PRIM_A_BLD_FUNC_MASK			GENMASK(10, 8)
+> +#define  PRIM_A_BLD_FUNC(x)			\
+> +		FIELD_PREP(PRIM_A_BLD_FUNC_MASK, (x))
+> +#define  SEC_C_BLD_FUNC_MASK			GENMASK(6, 4)
+> +#define  SEC_C_BLD_FUNC(x)			\
+> +		FIELD_PREP(SEC_C_BLD_FUNC_MASK, (x))
+> +#define  PRIM_C_BLD_FUNC_MASK			GENMASK(2, 0)
+> +#define  PRIM_C_BLD_FUNC(x)			\
+> +		FIELD_PREP(PRIM_C_BLD_FUNC_MASK, (x))
+>
+>  #define POSITION				0x14
+> -#define  XPOS_MASK				GENMASK(15, 0)
+> -#define  XPOS(x)				FIELD_PREP(XPOS_MASK, (x))
+>  #define  YPOS_MASK				GENMASK(31, 16)
+>  #define  YPOS(x)				FIELD_PREP(YPOS_MASK, (x))
+> +#define  XPOS_MASK				GENMASK(15, 0)
+> +#define  XPOS(x)				FIELD_PREP(XPOS_MASK, (x))
+>
+>  enum dc_lb_blend_func {
+>  	DC_LAYERBLEND_BLEND_ZERO,
+> --
+> 2.51.0
+>
 
