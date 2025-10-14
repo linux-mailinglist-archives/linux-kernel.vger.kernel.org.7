@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-853318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826DABDB3F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:29:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4E5BDB40E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D0619A2C11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84684423D2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0E2306B0C;
-	Tue, 14 Oct 2025 20:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EDD306B3C;
+	Tue, 14 Oct 2025 20:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHOPAnEF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5uhr9RM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5601A83F9;
-	Tue, 14 Oct 2025 20:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064611F63F9;
+	Tue, 14 Oct 2025 20:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760473775; cv=none; b=c/uDd9YUMSCbpLC5mO/XGPOnwSs3KXF9yzrhhPiTJhCPT/8cyULo7CPKQMi88ttalnpffAoJVOOEtgqjPWJ3hsXX6Nf9bINsNshH0Yhdx+TF6X95I119UUPrGfPe5x4MMOJ2x8ieuAbqaFKBmxwzhnzbuwO9CvJGc783wN6Ec54=
+	t=1760473988; cv=none; b=iPvy/cYnMzoWda1Jqj09Xx+2NskKCwQn6TOLt7rmzZJ5dcV2Rs08/1IFkdyV0lM/2YGX+43XtIxB1X+w9kvgOfZ2LoWWdJrHKdLoeW+XUQZr9rpgldLcRVkLD4LoxC/12XwQ4VfTqH9RrZk7KIoznPiWrrswSN7lzh3oR4TC4zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760473775; c=relaxed/simple;
-	bh=5jbs4l78BR2lm11sd8NglbRKKTewM4N5bbk9Ox/sn8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIKRZxaTRf8DDkx0TsL+L6Q32s+fydy2Z2P8DFiJO8qnHQLY9A7M4vjhCQgzXstGDhblayu7uAf733GrTTSJZW6EYgpRpL4LrlbFWjk1tSGPfSN8Trkb8IgWW2Uc3pnTmeNX7CCbSOMLmzK/RxLgAHSxgvsaOkb1rvgcRl9aoGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHOPAnEF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47DF2C4CEE7;
-	Tue, 14 Oct 2025 20:29:34 +0000 (UTC)
+	s=arc-20240116; t=1760473988; c=relaxed/simple;
+	bh=1nRszYpt5Y3Bseow/XbxA5gryYD3X4JYP9neIUdw2Z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Z5S3MsdvV3uNO50snaHV9rt++eKKvk4Ka6AbCHpPKnLDTaFCYxZU27iH+7OCZTRYVR1JxbnES5IxYkxcn0WFsVaT/eBG+C4Hzj+b7BG8Xoh96AzB5nm4ZfZV6+8Ul3bWcFUryUrlG9cIHTzwM2rXdwnHUqivJEoRAx+n3R+FtLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5uhr9RM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478C3C4AF0B;
+	Tue, 14 Oct 2025 20:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760473774;
-	bh=5jbs4l78BR2lm11sd8NglbRKKTewM4N5bbk9Ox/sn8A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hHOPAnEFU4fswgBE7tMtjhxZNUNvov3oC1zcwNyQC/jOlXXyoYjnIE3GF1L4CkmSA
-	 KVa8TqraIuIxNyxZclACxc0wXpBN2aKKNhBVDcl7OR20fWmaI0lfTOEaqqA7j64EHA
-	 dYrTjEXkn+1PijuwB+NRsF18TYmrx62GI9U/Ge5M/cUcEoVRSYoqNgoGVaziph5wZ7
-	 LrNdbEOEtjxXI5VgV3bT0h/QLicMvOlnFMST/dKd34YoZ+BxNNTCVnUItoEyfwugDb
-	 hyW2r/wYbNHyN6EbalYsNtg6zl82kN4W7TIfLRDSRdiW7Gad67qRI5dNsJYRyIWOEP
-	 b4tX8saGeY3Cg==
-Date: Tue, 14 Oct 2025 10:29:33 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Phil Auld <pauld@redhat.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.18-fixes] sched_ext: Fix scx_kick_pseqs
- corruption on concurrent scheduler loads
-Message-ID: <aO6yrTkjUqMrq3cH@slm.duckdns.org>
-References: <20251013203634.47362-1-arighi@nvidia.com>
+	s=k20201202; t=1760473986;
+	bh=1nRszYpt5Y3Bseow/XbxA5gryYD3X4JYP9neIUdw2Z4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Y5uhr9RMVaDccJlB2xB6ioigYNTXLv+9+MFOsCf3R76tRW3hWDgvbXkQRPsqzF0eD
+	 CrT2920pCXHs8hFvfZlZAeKIfqGfzBHvgsve3TyWkQfBTTQ+c2Y1aRbLReH9nGKQti
+	 /N6iwhLVD8Bxp5iaRdigczlpdPK5S0CMnjuLplWJ8sX6CpltfzypbOmopatUY/2evM
+	 0yt9EUJkfKeQJ9dLhvOPmZrr59ZNQKUVfX92/pkXGPxgAr5IvG9whpERrpVZxpuVv2
+	 5cvlrQNI0K9g6k7LQyFRs86Vh5Wy6BV+ifMR4OJ/hCuMJ+bubbJTPKm0k7mBryy79B
+	 Fvbpx4jyd9x5Q==
+Date: Tue, 14 Oct 2025 15:33:05 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] i2c: designware: Remove i2c_dw_remove_lock_support()
+Message-ID: <20251014203305.GA904692@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,24 +63,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013203634.47362-1-arighi@nvidia.com>
+In-Reply-To: <20251013-dw_i2c_plat_remove-avoid-objtool-no-cfi-warning-v1-1-8cc4842967bf@kernel.org>
 
-On Mon, Oct 13, 2025 at 10:36:34PM +0200, Andrea Righi wrote:
-> If we load a BPF scheduler while another scheduler is already running,
-> alloc_kick_pseqs() would be called again, overwriting the previously
-> allocated arrays.
+[+cc Mario, author of 440da737cf8d ("i2c: designware: Use PCI PSP
+driver for communication")]
+
+On Mon, Oct 13, 2025 at 06:05:03PM -0700, Nathan Chancellor wrote:
+> When building certain configurations with CONFIG_FINEIBT=y after
+> commit 894af4a1cde6 ("objtool: Validate kCFI calls"), there is a
+> warning due to an indirect call in dw_i2c_plat_remove():
 > 
-> Fix by moving the alloc_kick_pseqs() call after the scx_enable_state()
-> check, ensuring that the arrays are only allocated when a scheduler can
-> actually be loaded.
+>   $ cat allno.config
+>   CONFIG_ACPI=y
+>   CONFIG_CFI=y
+>   CONFIG_COMMON_CLK=y
+>   CONFIG_CPU_MITIGATIONS=y
+>   CONFIG_I2C=y
+>   CONFIG_I2C_DESIGNWARE_BAYTRAIL=y
+>   CONFIG_I2C_DESIGNWARE_CORE=y
+>   CONFIG_I2C_DESIGNWARE_PLATFORM=y
+>   CONFIG_IOSF_MBI=y
+>   CONFIG_MITIGATION_RETPOLINE=y
+>   CONFIG_MODULES=y
+>   CONFIG_PCI=y
+>   CONFIG_X86_KERNEL_IBT=y
 > 
-> Fixes: 14c1da3895a11 ("sched_ext: Allocate scx_kick_cpus_pnt_seqs lazily using kvzalloc()")
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+>   $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 clean allnoconfig vmlinux
+>   vmlinux.o: warning: objtool: dw_i2c_plat_remove+0x3c: no-cfi indirect call!
+> 
+> With this configuration, i2c_dw_semaphore_cb_table has the BAYTRAIL
+> member and the sentinel (i.e., 2 members), both of which have an
+> implicit
+> 
+>   .remove = NULL,
+> 
+> so Clang effectively turns i2c_dw_remove_lock_support(), which is later
+> inlined into dw_i2c_plat_remove(), into:
+> 
+>   static void i2c_dw_remove_lock_support(struct dw_i2c_dev *dev)
+>   {
+>       if (dev->semaphore_idx > 2)
+>           (*NULL)(dev):
+>   }
+> 
+> which is not necessarily problematic from a logic perspective (as the
+> code was not bounds checking semaphore_idx so an out of bounds index
+> could already crash) but objtool's new __nocfi indirect call checking
+> trips over Clang dropping the kCFI setup from a known NULL indirect
+> call.
+> 
+> While it would be possible to fix this by transforming the initial check
+> into
+> 
+>   if (dev->semaphore_idx < 0 || dev->semaphore_idx >= ARRAY_SIZE(i2c_dw_semaphore_cb_table))
+> 
+> the remove member is unused after commit 440da737cf8d ("i2c: designware:
+> Use PCI PSP driver for communication"), so i2c_dw_remove_lock_support()
+> can be removed altogether, as it will never actually do anything.
+> 
+> Closes: https://github.com/ClangBuiltLinux/linux/issues/2133
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-Applied to sched_ext/for-6.18-fixes.
+I'm totally fine with the patch itself, but I think the commit log
+could be trimmed to something like the following with no loss:
 
-Thanks.
+  Remove struct i2c_dw_semaphore_callbacks.remove() and
+  i2c_dw_remove_lock_support().
 
--- 
-tejun
+  440da737cf8d ("i2c: designware: Use PCI PSP driver for
+  communication") removed the last place that set
+  i2c_dw_semaphore_callbacks.remove(), which made
+  i2c_dw_remove_lock_support() a no-op.
+
+  This has the side effect of avoiding this kCFI warning (see Link):
+
+    dw_i2c_plat_remove+0x3c: no-cfi indirect call!
+
+  Link: https://lore.kernel.org/r/20251013-dw_i2c_plat_remove-avoid-objtool-no-cfi-warning-v1-1-8cc4842967bf@kernel.org
+
+FWIW,
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com> 
+
+> ---
+>  drivers/i2c/busses/i2c-designware-core.h    |  1 -
+>  drivers/i2c/busses/i2c-designware-platdrv.c | 11 -----------
+>  2 files changed, 12 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+> index 347843b4f5dd..d50664377c6b 100644
+> --- a/drivers/i2c/busses/i2c-designware-core.h
+> +++ b/drivers/i2c/busses/i2c-designware-core.h
+> @@ -330,7 +330,6 @@ struct dw_i2c_dev {
+>  
+>  struct i2c_dw_semaphore_callbacks {
+>  	int	(*probe)(struct dw_i2c_dev *dev);
+> -	void	(*remove)(struct dw_i2c_dev *dev);
+>  };
+>  
+>  int i2c_dw_init_regmap(struct dw_i2c_dev *dev);
+> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+> index 34d881572351..cff7e03dea7b 100644
+> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
+> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+> @@ -197,15 +197,6 @@ static int i2c_dw_probe_lock_support(struct dw_i2c_dev *dev)
+>  	return 0;
+>  }
+>  
+> -static void i2c_dw_remove_lock_support(struct dw_i2c_dev *dev)
+> -{
+> -	if (dev->semaphore_idx < 0)
+> -		return;
+> -
+> -	if (i2c_dw_semaphore_cb_table[dev->semaphore_idx].remove)
+> -		i2c_dw_semaphore_cb_table[dev->semaphore_idx].remove(dev);
+> -}
+> -
+>  static int dw_i2c_plat_probe(struct platform_device *pdev)
+>  {
+>  	u32 flags = (uintptr_t)device_get_match_data(&pdev->dev);
+> @@ -339,8 +330,6 @@ static void dw_i2c_plat_remove(struct platform_device *pdev)
+>  
+>  	i2c_dw_prepare_clk(dev, false);
+>  
+> -	i2c_dw_remove_lock_support(dev);
+> -
+>  	reset_control_assert(dev->rst);
+>  }
+>  
+> 
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251013-dw_i2c_plat_remove-avoid-objtool-no-cfi-warning-5f2040eaadc2
+> 
+> Best regards,
+> --  
+> Nathan Chancellor <nathan@kernel.org>
+> 
 
