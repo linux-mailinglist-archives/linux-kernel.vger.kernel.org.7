@@ -1,161 +1,203 @@
-Return-Path: <linux-kernel+bounces-853177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A17BDADBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55383BDADC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 394AF4EEFDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:54:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE6E74EFF5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB667305064;
-	Tue, 14 Oct 2025 17:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC01304BD5;
+	Tue, 14 Oct 2025 17:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGPwcq7v"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eVKalihs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cBQpJMsk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eVKalihs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cBQpJMsk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A9024DCE6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5636F24DCE6
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464462; cv=none; b=TRerIgsxQx/tkmUOZTXIzUWMka757VSpHCeXtCvaKSrm1tmfHajElZG9BAZJg3kSzL8deh0JOpUWPld8k8+4KqFnNpAOaNS/wx/Mf29kNtek9zS5e5Gat9wcZIqnjUi8x6jNBFZUh27gieFGVUmJ1Tubiz2HmN5VVBGu9hfvTps=
+	t=1760464472; cv=none; b=CzXp/962tT54vyr0HtqORlRkmS8x0dXrn4O4GbQUbc7TYvxKilPY4nh/wb3gCZAdxHUkGJTGILp1CvtGBYb0Iht8jt4KiSydHp8C87uwI0LUXqShafeUwVDPMRGCmcA6qgHN6TUpne0O39fA9sNaocmBlf8j5LRi4SXkk3JhLsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464462; c=relaxed/simple;
-	bh=M0ijwDZ3MwE/VJEfiOycDb/wmja5XxYrLbL3ZABStD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q3GIWOWNIK4AWuai7jNPG1EY/yajz/aBoTvCDzUAzh6ITXKv1e8JzC4G7M0npLWZ8zYZri5Uv2xnBnDV/mJrq27pIbEzZFlwdWi4VnUQc/TaUByBrsJjm9M7DrfUKf0n7jz+sgWQDRW3Rs5jIZyTtUOkKaDWXostsO7SdRJCgnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGPwcq7v; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5797c8612b4so6891998e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760464459; x=1761069259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L34c2igKzAl+y7faUaRQQ6fgbb6gd8h/e7yU5YjEm5c=;
-        b=YGPwcq7vqzwmxRtsw5LhfA/DEOi/SaAE9rRwiYulyjpgtOhqA45ASkqLo9ub50zPbS
-         LH2Qw+i+dG1ngEWASHqwQpc0qixvh2kpGTJ6pZDqwbdDlMwujI8/uTq0uP9Iz8Pext6r
-         2PTelnajsEO2MSHHiLeaIzLtZSSe1rgfqtJgKINjGC431hO4ux1CR+5vN2xRX8fwGKQg
-         cXcLfiCF0Wl0ScByJdUuydSx9STXdKY93Ti/7pMu9UUiFdUxrNWmCyuPjhIN05ASORdr
-         BOYB39r6FpLn/cMljreaZMsUETF7INda2Uat8ckOAYY3k+OXN7Ljc9iq2Q0Ieei/bMcV
-         R2xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760464459; x=1761069259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L34c2igKzAl+y7faUaRQQ6fgbb6gd8h/e7yU5YjEm5c=;
-        b=HA0VAt9EXbcB7a6huR9buCzJf0gsY/fqcSQTiKSMVU9a+SywBnP9wxOmuWSOckQJVn
-         UMfOXXyin+gKEp6uhLbn2Jo8nLd43bBZn0CHuHBW6j5bqRckurTaIPFjAB6pF4/n4qhz
-         62BRe9/Dq4ee2z7wzW6Sfqu2twt0On3ez+i3hH+VfGYQ/9bBUh5tQqDtu5gwZC+zQIBC
-         P/EaZnr0eFdDj6HLbarZFQ0pKq8wbPFGnrrLemiGNU32hKS4g8cHPh6U1vpDo/VL4kzX
-         oS7DD3LF+iUHLlfn0l2/GUQYJqTFY6f7yWjFpr4Q5vqkkNQpuLEW+jGF82DAY98srbdR
-         bK/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXk6qZkrqFbQt5XwFzvIRSI89GbAW/CIavQa0Wz3PzTAk/OBNg3F3MneFVCENQ/ub83eABzpErsocTfRPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK/vNL1BiqvpO2TcDQSsOcxb5SIsZ6lhABH+oU4z+Nclr2ehBH
-	djmOVbL/NGzf7IBIN3HBoMInRSgRV7dUrwsEA5QI/BO/ETUseuPPMYY0nFQ16hXRSoUN9fFgcUf
-	veajdALyzkEtcv392bWC353Wo+26kv5s=
-X-Gm-Gg: ASbGnctFdUlVf+yQIVV4fSxqGK6nyJ8dDTdJSmjRDWiane64sHMnMVKuYACFELF9FuZ
-	Q/ewaGAM5tpQUKfn52I5LDt5omucJ1e2YQDYSU7NWmvESz5UZu90VgZHNSjKpMXEB3OCd1ldmKU
-	foqdpGpiXXxNudfG/JntQ56GnsBswkG1+1M3DKUeW7r+QnqZg0cj6hD/C7x8NI+TtXgyyCX/I1T
-	B1pviehfdn0AuEpb0v+9n/hpRoBlP49oW1A
-X-Google-Smtp-Source: AGHT+IF9+8vhtrxqH7QnmXwbacZFNb3DZNzy7OnXFeJzxvLDNzi7O/QJeqOMolpXCiVF+ZPs25ZX5GVlP4y2ObIM8ds=
-X-Received: by 2002:a05:6512:3b96:b0:58b:114:b7e2 with SMTP id
- 2adb3069b0e04-5906dae5ef0mr7670933e87.32.1760464458427; Tue, 14 Oct 2025
- 10:54:18 -0700 (PDT)
+	s=arc-20240116; t=1760464472; c=relaxed/simple;
+	bh=uWlbPhtT2PWTd9dWGcFWqzobk6p+ypvS9Pbig5b0AKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TpjgpyRLnxEUmWHJqh9NkJCamoCqMgXGWYJaG3zAX44M0WkoFmeQCsMIrMUHBJtdlrU0HlARPTi0b6dFodyZPdrVPngGAr2tAGHIQdMPXfC/FTvZkXt5go9h1hGIeoxVJhuX6zTpTzKepE7ihJDkE92ugeZzDkOSTN2ZeO87eOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eVKalihs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cBQpJMsk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eVKalihs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cBQpJMsk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 78F8A211E0;
+	Tue, 14 Oct 2025 17:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760464468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QiBAGQLyoWW3oeRVkn6HlA7gLuJxSljEXYQ/53OV4P8=;
+	b=eVKalihsRfR0MBrM2iETQ0c2yVTPSkoLMHPQzqjjTY/khP4UhA1qElxsj1pbkD+yuc0ucg
+	VNZRZ195OORXkj/KQDZJJnPDN9pFs5PMNetAuub4fOPs1z2YwJSD/5Pk0I8wlZ9wgIKSX8
+	jgoLyPthdofGT7sN+gy3+G2mrtnqRgA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760464468;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QiBAGQLyoWW3oeRVkn6HlA7gLuJxSljEXYQ/53OV4P8=;
+	b=cBQpJMskKBQA1SRPwwUAHHXCBvwRjgV64eRZqpWk2DeQ4fC9E5xzsuerIP9lHxTkUwB1F+
+	/P28iVKuAjYtolDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760464468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QiBAGQLyoWW3oeRVkn6HlA7gLuJxSljEXYQ/53OV4P8=;
+	b=eVKalihsRfR0MBrM2iETQ0c2yVTPSkoLMHPQzqjjTY/khP4UhA1qElxsj1pbkD+yuc0ucg
+	VNZRZ195OORXkj/KQDZJJnPDN9pFs5PMNetAuub4fOPs1z2YwJSD/5Pk0I8wlZ9wgIKSX8
+	jgoLyPthdofGT7sN+gy3+G2mrtnqRgA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760464468;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QiBAGQLyoWW3oeRVkn6HlA7gLuJxSljEXYQ/53OV4P8=;
+	b=cBQpJMskKBQA1SRPwwUAHHXCBvwRjgV64eRZqpWk2DeQ4fC9E5xzsuerIP9lHxTkUwB1F+
+	/P28iVKuAjYtolDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F506139B0;
+	Tue, 14 Oct 2025 17:54:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZxYGE1SO7mghQwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 14 Oct 2025 17:54:28 +0000
+Message-ID: <6d62386c-242a-4735-add3-fee9c6e0ba96@suse.cz>
+Date: Tue, 14 Oct 2025 19:54:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com>
- <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
- <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com>
- <CACRpkdb46OwzNQuSp0+QQVjy2LojMyhdE7XrNwdsyqGi5okASw@mail.gmail.com>
- <CALHNRZ_+Oh2AGZTvJ66EjBEKEf7PdQsMM_BTNNnjENJpbOKiog@mail.gmail.com> <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
-In-Reply-To: <czukh3b6lb7x3uwn2khcgzrkccyveokdpksxban7arhod6ygh3@uukoulmn5gil>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 14 Oct 2025 12:54:06 -0500
-X-Gm-Features: AS18NWD7TZf0Odmt-TAH5heuCe6IG8XyPr57Ljb0DD_wuWQD_jZFSXnz2IurYx8
-Message-ID: <CALHNRZ9J2VFLm39wm7+8Le8rt2HpfeHgDOm6mc-s7_Ya8aXe1g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] mm/page_alloc: Batch callers of free_pcppages_bulk
+Content-Language: en-US
+To: Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Chris Mason <clm@fb.com>, Kiryl Shutsemau <kirill@shutemov.name>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Brendan Jackman <jackmanb@google.com>, David Hildenbrand <david@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko
+ <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com
+References: <20251014145011.3427205-1-joshua.hahnjy@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <20251014145011.3427205-1-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-On Thu, Sep 4, 2025 at 8:09=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Wed, Sep 03, 2025 at 12:58:06PM -0500, Aaron Kling wrote:
-> > On Wed, Sep 3, 2025 at 1:55=E2=80=AFAM Linus Walleij <linus.walleij@lin=
-aro.org> wrote:
-> > >
-> > > On Wed, Sep 3, 2025 at 6:54=E2=80=AFAM Aaron Kling <webgeek1234@gmail=
-.com> wrote:
-> > > > On Tue, Aug 19, 2025 at 6:30=E2=80=AFAM Linus Walleij <linus.wallei=
-j@linaro.org> wrote:
-> > > > >
-> > > > > On Tue, Aug 12, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
-> > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > >
-> > > > > > This series adds support for Tegra186 pin control, based on a d=
-ownstream
-> > > > > > driver, updated to match the existing Tegra194 driver.
-> > > > > >
-> > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > > (...)
-> > > > > > Aaron Kling (3):
-> > > > > >       dt-bindings: pinctrl: Document Tegra186 pin controllers
-> > > > > >       pinctrl: tegra: Add Tegra186 pinmux driver
-> > > > >
-> > > > > These two applied to the pin control git tree.
-> > > >
-> > > > On patch 3, Mikko noted that I accidentally amended the formatting
-> > > > changes intended for patch 2 into patch 3. Linus, since you've alre=
-ady
-> > > > picked this up to your tree, is it too late to fix this properly in=
- a
-> > > > new revision? It doesn't appear to have made it to the main tree ye=
-t.
-> > > > Or do I need to send in a fixup?
-> > >
-> > > It's one of the first drivers I merged with plenty of other stuff on =
-top
-> > > so I can't amend it, just send a fixup based on my "devel" branch
-> > > (or linux-next, it should work too).
-> >
-> > I am highly confused now. When I went to make the fixup series, the
-> > fixup didn't apply. Looking at next-20250903 [0], pinctrl-tegra186.c
-> > looks like I wanted it to, the base commit has all the format fixes.
-> > Which doesn't match the commit on this series. Which leads me to a
-> > couple questions:
-> >
-> > 1) Does anyone know what happened? I'm not particularly a fan of not
-> > knowing why something happened, even if it's beneficial at the time.
->
-> Maybe auto-formatting or something else that Linus did?
->
-> > 2) What should I do with the dt commit now? Ask the Tegra subsystem
-> > maintainer to do a manual fixup when pulling? Even without a manual
-> > fixup, the bad part of the commit would fall out when getting applied
-> > on top of next.
->
-> I can drop the extra hunks when applying, no need to do anything.
+On 10/14/25 16:50, Joshua Hahn wrote:
+> Changelog
+> =========
+> v4 --> v5:
+> - Wordsmithing
+> - Patches 1/3 and 2/3 were left untouched.
+> - Patch 3/3 no longer checks for the to_free == 0 case. It also now checks
+>   for pcp->count > 0 as the condition inside the while loop, and the early
+>   break checks for the opposite condition. Note that both to_free and
+>   pcp->count can become negative due to high-order pages that are freed, so
+>   we must check for (to_free <= 0 || pcp->count <= 0), instead of just
+>   checking for == 0.
 
-Reminder about this series. Patches 1 and 2 are in v6.18-rc1. Patch 3
-is not. And I have seen no indication that it has been picked up or
-will be picked up within the 6.18 cycle.
+I don't see how that's possible?
+- to_free is decremented by to_free_batched = min(to_free, batch); so it
+can't go negative.
+- pcp->count indeed decrements by nr_pages but it should be exactly zero
+once pcp becomes empty. It's true that internally in free_pcppages_bulk()
+the count parameter (where we pass to_free_batched) can go negative, but
+that doesn't affect to_free_batched in the caller free_frozen_page_commit().
+So testing for <= is unnecessary and only looks weird?
 
-Aaron
 
