@@ -1,238 +1,158 @@
-Return-Path: <linux-kernel+bounces-852800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C8ABD9F70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:21:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7A1BD9F40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09273BD908
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC011926D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B8A263F22;
-	Tue, 14 Oct 2025 14:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5512263F22;
+	Tue, 14 Oct 2025 14:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="IH+6utQW"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g5FGoCuL"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC22253B58
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8225A25BEE5;
+	Tue, 14 Oct 2025 14:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760451324; cv=none; b=pWIbbWhb8DNZ7K7TbtDfqwU7CXbvfsY5Mw9H2M405P8FZt+fBcH+4vabJhT9YUoj/9MSiQx3M71oJK08HASFiXZl2/+2Dk37/UoaUNEYi60lKO9RM7NtgX55o9rw+Msh/CBm6iqaR/UBPP5j3gJwEEe7twbqrNyf+PocLU+1q8Q=
+	t=1760451508; cv=none; b=FMxXUbUUL2xtOPPeIZvif8yPVjbdYtJ9gBdKslDwIsfktaO/tO2qDbT6K5ZH5Sl6pnFl35TQxAwrGMw5TCLzJWplCNZCJ/pwqukaw+kAtQkUMhweRpXYV4OV3iKHnsGYAckoff59x0JONv0Zs5QiWmy96Wub5HOxjqujuuEm3LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760451324; c=relaxed/simple;
-	bh=D9X+ge4+42e6vJ+QfBJ0jPFw5DsFCP2/hhp9A662sYQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Blh+N2jEaqmaptJMXcgMsN1BcDh5a77xQ3VQYSPz/+87qAH+MYaTjU5ksuDGzUVLbvDQlwohL/QIK6ibSRQNvF/mBmMpUPdGMYe3fVqSBB7///z1zDNw3+UkypFlsmsk8aGtN7TyPglSujpdcl9h/mXw8RZbVts2HeFLtYY+ohA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=IH+6utQW; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 122B6240029
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:15:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760451320; bh=D9X+ge4+42e6vJ+QfBJ0jPFw5DsFCP2/hhp9A662sYQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
-	b=IH+6utQWvsJxdPEKhOnwn/SYlOwL7x4uXeqPA4QM/sSaG+olNFm0DfSpD5KTV4Gx6
-	 LvuecWqbPHMIpTu2RKlzA0jPIzTHjjT88nwfJjw+TfWV8GQkvCfA37ONw4IJHcJ3Ke
-	 CI1HeMVK3FZsoUPJrWsvUnPl6X579zhlfcJ+9spyVPpfoDrP5DNwamWraS13UwlphC
-	 YLKQP5Ee7H/MfZTAWV+K1eR++SwmOekftKrTvOSQFsMvct4zNn2+pEo1H+kUTs23fO
-	 WYPvcmwgAd00p+v36PgOnYoBBwevdeNyWiLwzzx4z/yDS1BjGCFr/1E03WpRvUa6jx
-	 cA4bS8CsYBEhg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cmGT11Nr8z9rxB;
-	Tue, 14 Oct 2025 16:15:17 +0200 (CEST)
-Message-ID: <4297a3f3028bd463ed5de38568e87d8ccf82aaa6.camel@posteo.de>
-Subject: Re: [PATCH v4 1/2] rust: add basic Pin<Vec<T, A>> abstractions
-From: Markus Probst <markus.probst@posteo.de>
-To: Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Lee
- Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka	
- <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau
- Rezki	 <urezki@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, 	bjorn3_gh@protonmail.com, Andreas Hindborg
- <a.hindborg@kernel.org>, Alice Ryhl	 <aliceryhl@google.com>, Trevor Gross
- <tmgross@umich.edu>, 	rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-leds@vger.kernel.org
-Date: Tue, 14 Oct 2025 14:15:19 +0000
-In-Reply-To: <DDH9YJEJVF3V.I1SQK1WZ775R@kernel.org>
-References: <20251012145221.172116-1-markus.probst@posteo.de>
-	 <20251012145221.172116-2-markus.probst@posteo.de>
-	 <DDGHGF4XOJQG.2MVGBMPK0KUQE@kernel.org>
-	 <e550b0862e9ea87e50688d1ec8f623638d170a3a.camel@posteo.de>
-	 <DDGNXV9KS3RS.2WHS4OOYM6DOP@kernel.org>
-	 <2a31fcd045582382987c8c1da7c4b7d58a1dff61.camel@posteo.de>
-	 <DDH1DE35H7L0.1Z2R655P701HR@kernel.org>
-	 <4bfba51907578cc0f4f25368240720f4148a2736.camel@posteo.de>
-	 <DDH9YJEJVF3V.I1SQK1WZ775R@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760451508; c=relaxed/simple;
+	bh=C6uXU8IHXxoZXH1bAxIf/BeNm0rAdsdg75UMFU/czVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IjAD6B95dNuKb7/b5wrrdu5tUs28p8GNYqGE5+6t/koG5obw8D6dswBFwqM/lJPyfb5Uwqp1NVE0xYMIpsXMszhuLIuhkr4BLPpNSI2XFNyoDhNhR4yacdWlDYuPNuFgMEyJNPszBvRPXve+jRZkcOJfjV3vAXLMJt20WNae528=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g5FGoCuL; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iioJ+H5BgqY5puHAxyGpj4x0tQd8UQglUZLFQMVFr44=; b=g5FGoCuL0zimjyfsecg0GRPO3s
+	f2hG87ySsnZH7QcTJb8TQCsEySz2dFP4keEkjH5kzFbd/KkjPxKdkXKEqEgtiGQ/Te5cxe+Y2+U6q
+	/kOztLe5ogwbAvF91sF91iGZ2+mhRuA9BvvcmGjV8tMX09UwRpVdrMRetqlORBFBDfwu6ARcRLyKB
+	scfsGWlt02Rr+PxFo2fszdISCCzl85Uycsc6IGprodh3E6yMvAGJ7AnRqpu3mc4Ac7qB6Rzo7mKqX
+	bpAxQFCB24P7lkEa7Xa8AlRgLQUB5A8ksAjQoI0GntfG9rsTpx7akpNBe1/RxrfDxJ89jH/XEW23m
+	N8TRJhfA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8fqF-00000005ErK-3Loc;
+	Tue, 14 Oct 2025 14:17:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C2CF4300212; Tue, 14 Oct 2025 16:17:30 +0200 (CEST)
+Date: Tue, 14 Oct 2025 16:17:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
+ MC scheduling bits
+Message-ID: <20251014141730.GZ3245006@noisy.programming.kicks-ass.net>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
+ <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
+ <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+ <CAMuHMdWMkKFLEZ34j=JV0Ls+o80UfC6s3yD5x-9G2K8ZV-Y-9w@mail.gmail.com>
+ <20251014094210.GQ3245006@noisy.programming.kicks-ass.net>
+ <CAMuHMdUD8RZqPL5ZYyJrwJB+XL_Tkn-rsLx7WvUmn6y5M_tAtw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUD8RZqPL5ZYyJrwJB+XL_Tkn-rsLx7WvUmn6y5M_tAtw@mail.gmail.com>
 
-T24gTW9uLCAyMDI1LTEwLTEzIGF0IDE2OjQ3ICswMjAwLCBCZW5ubyBMb3NzaW4gd3JvdGU6Cj4g
-T24gTW9uIE9jdCAxMywgMjAyNSBhdCAzOjQzIFBNIENFU1QsIE1hcmt1cyBQcm9ic3Qgd3JvdGU6
-Cj4gPiBPbiBNb24sIDIwMjUtMTAtMTMgYXQgMTA6MDMgKzAyMDAsIEJlbm5vIExvc3NpbiB3cm90
-ZToKPiA+ID4gT24gTW9uIE9jdCAxMywgMjAyNSBhdCAxMjoxMSBBTSBDRVNULCBNYXJrdXMgUHJv
-YnN0IHdyb3RlOgo+ID4gPiA+IE9uIFN1biwgMjAyNS0xMC0xMiBhdCAyMzozMSArMDIwMCwgQmVu
-bm8gTG9zc2luIHdyb3RlOgo+ID4gPiA+ID4gT24gU3VuIE9jdCAxMiwgMjAyNSBhdCA2OjU3IFBN
-IENFU1QsIE1hcmt1cyBQcm9ic3Qgd3JvdGU6Cj4gPiA+ID4gPiA+IEZyb20gd2hhdCBJIGNhbiB0
-ZWxsLCB0aGVyZSBpcyBubyB3YXkgdG8gZ2V0IGEgYFBpbjwmbXV0Cj4gPiA+ID4gPiA+IFZlYzxU
-LAo+ID4gPiA+ID4gPiBBPj5gCj4gPiA+ID4gPiA+IGZyb20gYSBgJm11dCBQaW48VmVjPFQsIEE+
-PmAuIFdlIGNhbiBvbmx5IGdldCBgUGluPCZtdXQKPiA+ID4gPiA+ID4gW1RdPmAKPiA+ID4gPiA+
-ID4gd2hpY2gKPiA+ID4gPiA+ID4gaXMKPiA+ID4gPiA+ID4gbm90IHVzYWJsZSBpbiBvdXIgY2Fz
-ZS4KPiA+ID4gPiA+IAo+ID4gPiA+ID4gSG1tIHllYWggdGhhdCdzIHRydWUuCj4gPiA+ID4gPiAK
-PiA+ID4gPiA+ID4gSWYgdGhlcmUgaXMgd2F5LCB3aXRob3V0IHRoZSBleHRlbnNpb24gdHJhaXQg
-b3IgYW4gZXh0cmEKPiA+ID4gPiA+ID4gc3RydWN0LCBJCj4gPiA+ID4gPiA+IHdvdWxkIGJlIGhh
-cHB5IHRvIGltcGxlbWVudCBpdC4KPiA+ID4gPiA+IAo+ID4gPiA+ID4gU28gSSB0cmllZCB0byBs
-b29rIGZvciB0aGUgdXNhZ2Ugc2l0ZSBvZiB0aGlzIGFuZCBJIGZvdW5kCj4gPiA+ID4gPiB0aGlz
-Cj4gPiA+ID4gPiB1c2FnZQo+ID4gPiA+ID4gaW4KPiA+ID4gPiA+IHlvdXIgdjE6Cj4gPiA+ID4g
-PiAKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqAgbGV0IG11dCBsZWRzID0gS1Bpbm5l
-ZFZlYzo6d2l0aF9jYXBhY2l0eSgKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBBdG1lZ2ExNjA4TGVkQWRkcmVzczo6VkFMVUVTLmxlbigpICoKPiA+ID4gPiA+IEF0bWVn
-YTE2MDhMZWRJZDo6VkFMVUVTLmxlbigpLAo+ID4gPiA+ID4gwqDCoMKgICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIEdGUF9LRVJORUwsCj4gPiA+ID4gPiDCoMKgwqAgK8KgwqDCoMKgwqDCoMKgICk/
-Owo+ID4gPiA+ID4gwqDCoMKgICsKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqAgbGV0
-IG11dCBpID0gMDsKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqAgZm9yIGFkZHIgaW4g
-QXRtZWdhMTYwOExlZEFkZHJlc3M6OlZBTFVFUyB7Cj4gPiA+ID4gPiDCoMKgwqAgK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgbGV0IG1vZGVfbG9jayA9Cj4gPiA+ID4gPiBBcmM6OnBpbl9pbml0KG5l
-d19tdXRleCEoKCkpLAo+ID4gPiA+ID4gR0ZQX0tFUk5FTCk/Owo+ID4gPiA+ID4gwqDCoMKgICsK
-PiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmb3IgaWQgaW4gQXRtZWdh
-MTYwOExlZElkOjpWQUxVRVMgewo+ID4gPiA+ID4gwqDCoMKgICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgbGV0IFNvbWUoY2hpbGQpID0KPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAKPiA+ID4gPiA+IGZ3bm9kZS5nZXRfY2hpbGRf
-YnlfbmFtZSgmQ1N0cmluZzo6dHJ5X2Zyb21fZm10KGZtdCEoImxlZEB7aX0KPiA+ID4gPiA+ICIp
-KT8KPiA+ID4gPiA+ICkKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIGVsc2Ugewo+ID4gPiA+ID4gwqDCoMKgICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBjb250aW51ZTsKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ID4gPiDCoMKgwqAgKwo+ID4gPiA+ID4gwqDCoMKgICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbGV0IGNsaWVudCA9IEFSZWY6OmNsb25lKCZj
-bGllbnQpOwo+ID4gPiA+ID4gwqDCoMKgICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-bGV0IG1vZGVfbG9jayA9IEFyYzo6Y2xvbmUoJm1vZGVfbG9jayk7Cj4gPiA+ID4gPiDCoMKgwqAg
-Kwo+ID4gPiA+ID4gwqDCoMKgICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbGVkcy5w
-dXNoX3Bpbl9pbml0KExlZENsYXNzRGV2OjpuZXcoCj4gPiA+ID4gPiDCoMKgwqAgK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFNvbWUoaWRldiksCj4gPiA+ID4gPiDCoMKg
-wqAgK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIE5vbmUsCj4gPiA+ID4g
-PiDCoMKgwqAgK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIExlZEluaXRE
-YXRhOjpuZXcoKS5md25vZGUoJmNoaWxkKSwKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgQXRtZWdhMTYwOExlZCB7Cj4gPiA+ID4gPiDCoMKg
-wqAgK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYWRkciwK
-PiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBpZCwKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBjbGllbnQsCj4gPiA+ID4gPiDCoMKgwqAgKwo+ID4gPiA+ID4g
-wqDCoMKgICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1v
-ZGVfbG9jaywKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgfSwKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgICkpPzsKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGkgKz0gMTsKPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4gPiA+
-ID4gPiDCoMKgwqAgK8KgwqDCoMKgwqDCoMKgIH0KPiA+ID4gPiA+IMKgwqDCoCArwqDCoMKgwqDC
-oMKgwqAgT2soS0JveDo6bmV3KFNlbGYgeyBjbGllbnQsIGxlZHMgfSwKPiA+ID4gPiA+IEdGUF9L
-RVJORUwpPy5pbnRvKCkpCj4gPiA+ID4gPiAKPiA+ID4gPiA+IEFuZCBJIHRoaW5rIHVzaW5nIGBW
-ZWNgIGZvciB0aGlzIGlzIGp1c3Qgd3JvbmcuIGBWZWNgIGlzIGEKPiA+ID4gPiA+IGRhdGEKPiA+
-ID4gPiA+IHN0cnVjdHVyZSB0aGF0IHN1cHBvcnRzIGdyb3dpbmcgYW5kIHNocmlua2luZyB0aGUg
-YWxsb2NhdGlvbi4KPiA+ID4gPiA+IEJ1dAo+ID4gPiA+ID4geW91Cj4gPiA+ID4gPiBqdXN0IG5l
-ZWQgYSBmaXhlZCBzaXplIGJ1ZmZlciB0aGF0IGhvbGRzIGFsbCB5b3VyIGRhdGEuIERvCj4gPiA+
-ID4gPiB5b3UKPiA+ID4gPiA+IHRoaW5rCj4gPiA+ID4gPiB0aGF0IGBQaW48Qm94PFtMZWRDbGFz
-c0Rldl0+PmAgd291bGQgc3VmZmljZSBpZiBpdCBoYWQgcHJvcGVyCj4gPiA+ID4gPiBzdXBwb3J0
-Cj4gPiA+ID4gPiBmcm9tIHBpbi1pbml0Pwo+ID4gPiA+IEFzIHlvdSBjYW4gc2VlIGluIHYxLCB0
-aGUgbnVtYmVyIG9mIGxlZHMgKG9yIHZlYyBlbnRyaWVzKQo+ID4gPiA+IGRlcGVuZHMKPiA+ID4g
-PiBvbgo+ID4gPiA+IHRoZSBmd25vZGUgKHNlZSB0aGUgY29udGludWUgc3RhdGVtZW50IHRoZXJl
-KS4gSSBkb24ndCB0aGluawo+ID4gPiA+IHRoYXQKPiA+ID4gPiBjb3VudHMgYXMgZml4ZWQgc2l6
-ZS4gYFBpbjxLQm94PFtPcHRpb248TGVkQ2xhc3NEZXY+XT4+YCBjb3VsZAo+ID4gPiA+IHBvdGVu
-dGlhbGx5IGJlIHVzZWQgaW5zdGVhZCBvZiBgUGluPEtWZWM8TGVkQ2xhc3NEZXY+PmAgaW4gbXkK
-PiA+ID4gPiBzY2VuYXJpbywKPiA+ID4gPiBidXQgdGhhdCB3b3VsZCByZXF1aXJlIGFuIGV4dHJh
-IGJ5dGUgb2YgYWxsb2NhdGlvbiBmb3IgdGhlIG1heAo+ID4gPiA+IGxlZHMKPiA+ID4gPiBvZgo+
-ID4gPiA+IDI0IGVhY2ggYW5kIHRoZSBjb2RlIHdvdWxkIGxvb2sgbW9yZSB1Z2x5LiBBdCB0aGUg
-cG9pbnQgSSB1c2UKPiA+ID4gPiBPcHRpb24gaW4KPiA+ID4gPiB0aGUgc2xpY2UsIGl0cyBiYXNp
-Y2FsbHkgYW4gdW5vcHRpbWl6ZWQgVmVjIChpbnN0ZWFkIG9mIHN0b3JpbmcKPiA+ID4gPiB0aGUK
-PiA+ID4gPiBsZW5ndGgsIGl0IHN0b3JlcyBpZiBhbiBpdGVtIGluIHRoZSBidWZmZXIgaXMgcHJl
-c2VudCBvciBub3QpLgo+ID4gPiAKPiA+ID4gWW91IGNhbiBqdXN0IG1ha2UgdGhlIGxlbmd0aCBv
-ZiB0aGUgc2xpY2UgYmUgdGhlIGRlc2lyZWQgbGVuZ3RoPwo+ID4gVGhhdCB3b3VsZCB3b3JrLCBi
-dXQgY3JlYXRlcyBhbm90aGVyIGFsbG9jYXRpb24gb24gdGhlIGhlYXAKPiA+IChWZWM8ST4pCj4g
-PiB0aGF0IGNvdWxkIGhhdmUgYmVlbiBhdm9pZGVkLiBJIGRvbid0IHRoaW5rIGl0IHdvdWxkIG1h
-a2UKPiA+IGBQaW48VmVjPFQsCj4gPiBBPj5gIG9ic29sZXRlLgo+ID4gCj4gPiBPciB3b3VsZCB5
-b3UgcmF0aGVyIHNheSwgc3VjaCBhbGxvY2F0aW9ucyBkb24ndCBtYXR0ZXI/Cj4gCj4gTm8sIGJ1
-dCB5b3UncmUgYWxyZWFkeSBhbGxvY2F0aW5nIG9uY2UgcGVyIGlubmVyIGxvb3AgaW52b2NhdGlv
-biwgdGhlCj4gYENTdHJpbmc6OnRyeV9mcm9tX2ZtdGAgZnVuY3Rpb24gYWxsb2NhdGVzIDopCj4g
-Cj4gSSBkb24ndCBrbm93IHRoZSBraW5kIG9mIGFwcGxpY2F0aW9uIHRoYXQgeW91J3JlIHdyaXRp
-bmcsIGRvZXMKPiBwZXJmb3JtYW5jZSBtYXR0ZXI/IElmIHllcywgdGhlbiBqdXN0IHJ1biB5b3Vy
-IGJlbmNobWFyayBzdWl0ZSBvbgo+IGJvdGgKPiB2ZXJzaW9ucyBhbmQgbG9vayBhdCB0aGUgZGlm
-ZmVyZW5jZS4gSWYgeW91IGRvbid0IGhhdmUgYSBiZW5jaG1hcmsKPiBzdWl0ZSwgdGhlbiBwZXJm
-IHByb2JhYmx5IGlzbid0IGltcG9ydGFudCBlbm91Z2guClRoZXJlIGlzIG5vIG1vZGVsIHRoYXQg
-d291bGQgYmUgYWJsZSB0byBtYWtlIHVzZSBvZiB0aGlzIGRyaXZlciB1bmRlciA0CkdCIG9mIFJB
-TSwgYnV0IEkgYXNzdW1lZCBjb2RlIHNob3VsZCBiZSBhcyBvcHRpbWl6ZWQgYXMgcG9zc2libGUg
-aW4gdGhlCmxpbnV4IGtlcm5lbC4gSXRzIG9ubHkgcnVuIG9uY2UgYXQgZHJpdmVyIGluaXRpYWxp
-emF0aW9uLCBzbyBpdCBkb2Vzbid0Cm1hdHRlciBmb3IgbWUgYXQgbGVhc3QuCj4gCj4gQWxzbyBp
-ZiB5b3UgcmVhbGx5IHdhbnQgdG8gYXZvaWQgdGhlIGFsbG9jYXRpb24sIHRoZW4geW91IHByb2Jh
-Ymx5Cj4gY291bGQKPiBmaXJzdCBxdWVyeSB0aGUgbGVuZ3RoIGFuZCBzdG9yZSBvbmx5IHRoYXQg
-aW4gYSBsb2NhbCB2YXIgYW5kIHRoZW4KPiBjcmVhdGUgdGhlIGluaXRpYWxpemVycyBvbi1kZW1h
-bmQuIEJ1dCB0aGVuIGFnYWluIHRvIHF1ZXJ5IHRoYXQKPiB5b3UncmUKPiBjcmVhdGluZyBhIHN0
-cmluZyBldmVyeSBsb29wIGl0ZXJhdGlvbiwgd2hpY2ggYWxsb2NhdGVzIDopCj4gCj4gPiA+IChh
-bHNvLAo+ID4gPiBgaWAgaXMgbmV2ZXIgaW5jcmVtZW50ZWQgaW4gdGhlIGBjb250aW51ZWAgY2Fz
-ZSwgc28gaXQgd2lsbCBhY3QKPiA+ID4gbGlrZQo+ID4gPiBhCj4gPiA+IGBicmVha2A/KQo+ID4g
-WW91IGp1c3QgZm91bmQgYSBidWcgaW4gdjEuCj4gCj4gOikKPiAKPiA+IFRoYW5rcwo+ID4gLSBN
-YXJrdXMgUHJvYnN0Cj4gPiAKPiA+IFsxXQo+ID4gaHR0cHM6Ly9kb2NzLnJzL2FycmF5dmVjL2xh
-dGVzdC9hcnJheXZlYy9zdHJ1Y3QuQXJyYXlTdHJpbmcuaHRtbAo+IAo+IERpZCB5b3UgZm9yZ2V0
-IHRvIHB1dCBhIHJlZmVyZW5jZSB0byB0aGlzPwpJIGRpZCBhbHNvIG5vdGljZSB0aGUgYENTdHJp
-bmc6OnRyeV9mcm9tX2ZtdGAgd2hpbGUgd3JpdGluZyB0aGUgZW1haWwuClRoZXJlIHdhcyBvbmNl
-IGEgcGFydCBpbiB0aGUgZW1haWwgd2hpY2ggSSByZW1vdmVkIChJIHdvdWxkIGhhdmUgZGVhbHQK
-d2l0aCBpdCBsYXRlciksIGluIHdoaWNoIEkgd291bGQgaGF2ZSBhc2tlZCBpZiBpdCB3b3VsZCBh
-bHNvIG1ha2Ugc2Vuc2UKdG8gYWRkIGFuIGFic3RyYWN0aW9uIGZvciBmaXhlZC1hbGxvY2F0ZWQg
-YyBzdHJpbmdzIG9uIHRoZSBzdGFjayAoYXMgaXQKY3VycmVudGx5IHdvdWxkIGFsc28gaGF2ZSBi
-ZWVuIGFuIHVubmVjZXNzYXJ5IGFsbG9jYXRpb24pLiBUaGUgbGluayB3YXMKbWVhbnQgYXMgcmVm
-ZXJlbmNlIHRvIGFuIGV4aXN0aW5nIGltcGxlbWVudGF0aW9uICh3aGljaCBJIGZvcmdvdCB0bwpy
-ZW1vdmUpLgoKVGhhbmtzCi0gTWFya3VzIFByb2JzdAoKPiAKPiAtLS0KPiBDaGVlcnMsCj4gQmVu
-bm8K
+On Tue, Oct 14, 2025 at 02:37:11PM +0200, Geert Uytterhoeven wrote:
 
+> > > > +       help
+> > > > +         Improves the CPU scheduler's decision making when dealing with
+> > > > +         MultiThreading at a cost of slightly increased overhead in some
+> > > > +         places. If unsure say N here.
+> > >
+> > > So it should default to n?
+> >
+> > That's just help text that got carried around. Many of the architectures
+> > that had default y still had this text on. I suppose we can change it if
+> > someone cares.
+> 
+> Please do so.
+
+How about we remove the recommendation like so? There are many help
+things that do not have a recommendation. Mostly these options add a
+little code and the most expensive bits tend to be gated by
+static_branch() so it really shouldn't be that bit of a burden.
+
+CONFIG_SMP was the big one for the scheduler, and Ingo recently removed
+that (he did an effective unifdef CONFIG_SMP=y on the scheduler code).
+
+---
+diff --git a/arch/Kconfig b/arch/Kconfig
+index ebe08b9186ad..3d8e2025a4ac 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -57,7 +57,7 @@ config SCHED_SMT
+ 	help
+ 	  Improves the CPU scheduler's decision making when dealing with
+ 	  MultiThreading at a cost of slightly increased overhead in some
+-	  places. If unsure say N here.
++	  places.
+ 
+ config SCHED_CLUSTER
+ 	bool "Cluster scheduler support"
+@@ -77,7 +77,7 @@ config SCHED_MC
+ 	help
+ 	  Multi-core scheduler support improves the CPU scheduler's decision
+ 	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
++	  increased overhead in some places.
+ 
+ # Selected by HOTPLUG_CORE_SYNC_DEAD or HOTPLUG_CORE_SYNC_FULL
+ config HOTPLUG_CORE_SYNC
 
