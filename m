@@ -1,175 +1,186 @@
-Return-Path: <linux-kernel+bounces-851804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DD3BD74E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:47:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5164BD753B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F3094F07F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31CBA18A7545
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6C630CDA3;
-	Tue, 14 Oct 2025 04:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1381830CDAB;
+	Tue, 14 Oct 2025 04:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bligJCtf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aznXbLcg"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272E830BF52;
-	Tue, 14 Oct 2025 04:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A884930CD8D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760417250; cv=none; b=HU99giPK5nbhGqZS6VON4NSJ1dRNe62hDpfzP4vJMd7QQbE3OUsevas7WfJdIMH7SY07qAGP+zpW27OhSY6qbpfx2+/TKrQkAGvsx4gyv5zK9g8B1JoqNBRHFQw+oQtcBrs8t0uwKKDbfQYrZUzngUX5CMnKjjT+7k3PInAFQ9Y=
+	t=1760417634; cv=none; b=GmnNnMPVkII+g4FziV7IpWc96Sx9G9/k0YA921HAvn9/BSD8Sr1ypo+RIcwVx2GWj8l6GuR8CV3L8KosU3opLUfSNBCDYH3zk5JqhVK0lQg9t9qT6RLFP3d7lK1A2HJ4O9JTO67bKQVgkWz41bQTbYlJokczhYDbITFEJi94qe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760417250; c=relaxed/simple;
-	bh=5DQI0Fe06+ZJbvuBOZfkOypz087y12M4OqIjdRJ3LNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6uuvcc98JZyoXKoQ0DvVu5flVd6v7gHWG0EXHgAWmHKqp8aBAHkKoE9OR0EPVZrmwAVnrxYW97GjwFOWCzjlFgymv4qyQXoWpiUO167moMK08Pt1uh3CG+s59B+ibkR2wEfKWbhlnEeSCfpmneatM2BUsh+ZP2/R6v9tfFlj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bligJCtf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4826CC4CEE7;
-	Tue, 14 Oct 2025 04:47:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760417249;
-	bh=5DQI0Fe06+ZJbvuBOZfkOypz087y12M4OqIjdRJ3LNo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bligJCtfsWIdOWU2vyKm0g4YM+3BZC2A1CXGh/0y1zL4395pIpmIgvRTh+x/aiZyT
-	 QkrcpYwlD64emuQulDtewS6u99WgC4RTEyqTPQxqs7GxOHXAWEiHg5K9pmLH/eVppA
-	 hkLVvrls8XxJbUiRE8hUpZBCI9bTI2YB3EZZ5hDGgmW7DKeVtvB9Czf7KnkweALz07
-	 tdMJforhXrEMkopQvxI6ww80g/eFfOlG/1zerdEBY5Qe3YYc3y8HsIj7lqshUe9Wg5
-	 jCyTObQvBYYAaUbSZ8SECn6HKtLsZ2YVAU7DicVDjm7g5gfS6BZcO4nRdFeH4kmjfh
-	 hQo/e1/R0j56w==
-Message-ID: <40af8d13-1bee-49f7-946e-043b920d83fe@kernel.org>
-Date: Tue, 14 Oct 2025 06:47:21 +0200
+	s=arc-20240116; t=1760417634; c=relaxed/simple;
+	bh=a4xoUFMwYk684k5JYg2VpNN7CFXbHuQ0VdyeOTINjuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EnnrHxNOeKMdx2z525yH2UQCGkPgcBOrWQ1/aNy4v2WH+jfqzlka0rwN7+H+CoVLsNafXQL/hn0aJPvZmOSQog2xI4877+CbzfTSBLSf3OrzAGEonIaW8BuFafzheljfMBVeLhAq0JgeK8x0KcYaLaSbuGlGn5MTv4bkcZV2hR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aznXbLcg; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so9684105a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760417631; x=1761022431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KfQyCyE+XPfPYrrByTwKDtcCs6GmIeb9aW4FmXsJ1IU=;
+        b=aznXbLcgXjHxPtXEW5ecJk+ZyMPLyVdCJoBMWGzWXF+AJO0LGO96KOWl9mM/ok2sbT
+         bgxldsiqlSyJmSLIxYvBhzbsWxeqvyZ/nqZtHl/cOCgpwIMJzz4G5jlFv6cRaV/nIrGS
+         Xmf2WL4PcetmZcLtNSgnF2T0TkJhmnsVVITrOrpeNk0BQUHomytLzTPE/eO4VG4/7gr2
+         R6HTScfgjjstN2R4/tc0gEjE1r3MII0ab5XJg5rhB8/JJdOiWUyvl4Uqbj7D44JGJHYm
+         6Xs7bYWkHqigveaGGr/jQMX9VF4967cf1nW9DkNc18ZgnBARtjAqd8uyA5v3MNhvycCN
+         7SAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760417631; x=1761022431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KfQyCyE+XPfPYrrByTwKDtcCs6GmIeb9aW4FmXsJ1IU=;
+        b=CdiBe2kAtQeLWKC6Qf43gdqJ1an7G1YNOY6bWx7+FpJQDZj+gHKW/JeSaGrRvpl0My
+         EnJEgtzfQVNwtZnW8iH9hlx0KDkEu2JmtPVYAkpiroPR9ilAeS5ZqqeAGwSkinHaKveD
+         Aq7FEYw1Qy9VndntinGw2XZxIGUQoeUMLpBc3pNNXILIM9gYI3pXvFV1bnoKPsej1cnF
+         JftVcO+I/0S2dBmvAR2mg/YD9BR+9Jw60WMhuj7G4+gv6m11uxMiF59UcKydBGCwFHPt
+         wcUlkzKniLAgwvw9rtX2tKTAMT09GtUUGZJBjptmFKRJSD2h8JAShjKBILBd76k+97O/
+         m/xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOpMdYeeMbaPCSelSDthrKD8Aeu8Vh82D7HreG/g7BLHlk9HuiqhDADKm0xrBBQFF1NeJHTKlm81pPHNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFpuV/KRPVtaeu2MQhwUp9Z+rlcilhC96Tqrh+G3F4qvfzlvvq
+	XMEJu1XVeQgTDti0sM2jUkZ/Mq3eu6Li6GsfrFP5iOX0g1VBfl6NmMg09QGSKG7GUhNle6rYdVK
+	kSUbyQqN8t8xLyhFiNq5UgyBYgh3cuaRTX3ynYqw=
+X-Gm-Gg: ASbGncsLkRb6wQHA/MiZ/2WCPbgJqGKQj5i0l9Dk7YwdhVO3a8coX5Qa7uXfCDuqvLz
+	TS1W3XevjsTKHTj4yjSp68375nFZNg/2O+mdacVcwExxU1Tt+c75iFxM50pQwB6nbT+K8IN8Dov
+	eu8fzkQRRbbNN0X32ChED15GJdZvMDpzu2Scy3UKRV9Y8jXi5AqH0s9ZTmxM7Fbejwz+aNH4hDn
+	Se3d8LPDxa2y/fZmldcZpqFDcEUCD6nXUnNFA==
+X-Google-Smtp-Source: AGHT+IHycdhxq/9uyp9yKAAL3r9oERFUtH+HAFOLwQI4pevZSkF66rxnEvWd1Bw49lAHp9HOueRaVLiXkkjNr0qGtHc=
+X-Received: by 2002:a05:6402:2744:b0:637:dfb1:33a8 with SMTP id
+ 4fb4d7f45d1cf-639d5b64901mr22616488a12.3.1760417630759; Mon, 13 Oct 2025
+ 21:53:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] dt-bindings: remoteproc: qcom,pas: Document pas for
- Kaanapali SoCCP
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
- <20250924-knp-remoteproc-v1-4-611bf7be8329@oss.qualcomm.com>
- <a8796335-bec3-4c1f-afea-b5b7909d8ba3@kernel.org>
- <e9813a47-c40b-475a-8faf-de0811c9066e@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e9813a47-c40b-475a-8faf-de0811c9066e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
+ <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
+ <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
+ <CAEf4BzaZ=UC9Hx_8gUPmJm-TuYOouK7M9i=5nTxA_3+=H5nEiQ@mail.gmail.com>
+ <CAADnVQLC22-RQmjH3F+m3bQKcbEH_i_ukRULnu_dWvtN+2=E-Q@mail.gmail.com>
+ <CAErzpmtCxPvWU03fn1+1abeCXf8KfGA+=O+7ZkMpQd-RtpM6UA@mail.gmail.com> <CAADnVQ+2JSxb7Uca4hOm7UQjfP48RDTXf=g1a4syLpRjWRx9qg@mail.gmail.com>
+In-Reply-To: <CAADnVQ+2JSxb7Uca4hOm7UQjfP48RDTXf=g1a4syLpRjWRx9qg@mail.gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Tue, 14 Oct 2025 12:53:39 +0800
+X-Gm-Features: AS18NWBzhlnxQ9UDKq0PMeKLqmLwp_jZVc21fUyToJv8XAqRPenRlWCmVKYbt5s
+Message-ID: <CAErzpmu0Zjo0+_r-iBWoAOUiqbC9=sJmJDtLtAANVRU9P-pytg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
+ btf_find_by_name_kind lookup
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/10/2025 06:28, Jingyi Wang wrote:
-> 
-> 
-> On 10/9/2025 6:27 PM, Krzysztof Kozlowski wrote:
->> On 25/09/2025 08:37, Jingyi Wang wrote:
->>> +
->>> +  glink-edge:
->>> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
->>> +    unevaluatedProperties: false
->>> +    description: |
->>
->> Drop |
->>
->>
-> 
-> Will fix
-> 
->>> +      Qualcomm G-Link subnode which represents communication edge, channels
->>> +      and devices related to the Remoteproc.
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - memory-region
->>> +  - clocks
->>> +  - clock-names
->>> +  - interrupts
->>> +  - interrupt-names
->>> +  - qcom,smem-states
->>> +  - qcom,smem-state-names
->>> +
->>> +unevaluatedProperties: false
->>
->> That's wrong in this context. But if you add missing (and corrected
->> pas-common) then it would make sense.
->>
-> 
-> Sorry I didn't get this point, could you make it more clear?
-> 
-> The property for Kaanapali SoCCP doesn't follow qcom,pas-common.yaml
-> (the interrupts are different) so it was not included here, like
-> "qcom,qcs404-cdsp-pil.yaml"
+On Tue, Oct 14, 2025 at 10:48=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Oct 13, 2025 at 6:54=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.=
+com> wrote:
+> >
+> > On Tue, Oct 14, 2025 at 8:22=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Mon, Oct 13, 2025 at 5:15=E2=80=AFPM Andrii Nakryiko
+> > > <andrii.nakryiko@gmail.com> wrote:
+> > > >
+> > > > On Mon, Oct 13, 2025 at 4:53=E2=80=AFPM Alexei Starovoitov
+> > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > >
+> > > > > On Mon, Oct 13, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
+> > > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > >
+> > > > > > Just a few observations (if we decide to do the sorting of BTF =
+by name
+> > > > > > in the kernel):
+> > > > >
+> > > > > iirc we discussed it in the past and decided to do sorting in pah=
+ole
+> > > > > and let the kernel verify whether it's sorted or not.
+> > > > > Then no extra memory is needed.
+> > > > > Or was that idea discarded for some reason?
+> > > >
+> > > > Don't really remember at this point, tbh. Pre-sorting should work
+> > > > (though I'd argue that then we should only sort by name to make thi=
+s
+> > > > sorting universally useful, doing linear search over kinds is fast,
+> > > > IMO). Pre-sorting won't work for program BTFs, don't know how
+> > > > important that is. This indexing on demand approach would be
+> > > > universal. =C2=AF\_(=E3=83=84)_/=C2=AF
+> > > >
+> > > > Overall, paying 300KB for sorted index for vmlinux BTF for cases wh=
+ere
+> > > > we repeatedly need this seems ok to me, tbh.
+> > >
+> > > If pahole sorting works I don't see why consuming even 300k is ok.
+> > > kallsyms are sorted during the build too.
+> >
+> > Thanks. We did discuss pre-sorting in pahole in the threads:
+> >
+> > https://lore.kernel.org/all/CAADnVQLMHUNE95eBXdy6=3D+gHoFHRsihmQ75GZvGy=
+-hSuHoaT5A@mail.gmail.com/
+> > https://lore.kernel.org/all/CAEf4BzaXHrjoEWmEcvK62bqKuT3de__+juvGctR3=
+=3De8avRWpMQ@mail.gmail.com/
+> >
+> > However, since that approach depends on newer pahole features and
+> > btf_find_by_name_kind is already being called quite frequently, I sugge=
+st
+> > we first implement sorting within the kernel, and subsequently add pre-=
+sorting
+> > support in pahole.
+>
+> and then what? Remove it from the kernel when pahole is newer?
+> I'd rather not do this churn in the first place.
 
+Apologies for the formatting issues in my previous email=E2=80=94sending th=
+is again
+ for clarity.
 
-It should follow. We want the common properties to be common. You cannot
-have new binding not using common properties, because you duplicate
-property definition.
+Thank you for your feedback. Your concerns are completely valid.
 
-> 
-> So I think just adding the missing "power-domains","power-domain-names"
-> under "required" will be okay?
+I=E2=80=99d like to suggest a dual-mechanism approach:
+1. If BTF is generated by a newer pahole (with pre-sorting support), the
+    kernel would use the pre-sorted data directly.
+2. For BTF from older pahole versions, the kernel would handle sorting
+    at load time or later.
 
+This would provide performance benefits immediately while preserving
+ backward compatibility. The kernel-side sorting would remain intact
+moving forward, avoiding future churn.
 
-You need to adjust pas-common.yaml, all other bindings and this binding
-so there is a common part.
+>
+> Since you revived that thread from 2024 and did not
+> follow up with pahole changes since then, I don't believe that
+> you will do them if we land kernel changes first.
 
-Best regards,
-Krzysztof
+Regarding the pahole changes: this is now my highest priority. I=E2=80=99ve
+already incorporated it into my development plan and will begin
+working on the patches shortly.
+
+What do you think about this approach? Would this be acceptable?
 
