@@ -1,80 +1,105 @@
-Return-Path: <linux-kernel+bounces-851987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBE1BD7DF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E982BD7E09
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75944423923
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 220B24239D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E8730E0EC;
-	Tue, 14 Oct 2025 07:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF0E30E0DB;
+	Tue, 14 Oct 2025 07:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jFPB8zw/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RMo/1SDz"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B6C30E825;
-	Tue, 14 Oct 2025 07:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF5230DECC
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760426697; cv=none; b=qmaXRUAQPR0tN7zwH9zhlUC17beNaZH94dLi+7IuyGFKCbcU2sLcTj2YPuC/K/P+FArvdLKBcXLdFW+ny3D2rl87Z/08jfL3E9x4uGxXOaYi3Zje10ssW5jeFAirw2giZnk0nuZnhtD8wz6EO1JOBuFoEHnIMLqYN7mqwxYmxEg=
+	t=1760426816; cv=none; b=ciJaufy7aL/XqkRbifSv6cOLUYe3r0Og6oz4tMovj+L/JrFKZEtNR5io6jFwg7Fk9pW/2XKIwA1DuYHF+SfVlycw0qc9pBm9/I83IDOfjGHAz6muqAqC+crP7KFyI/6FdDTkf66h89+6mptIkJ64DmpXNI+JOPAklE7Kb+k4ZvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760426697; c=relaxed/simple;
-	bh=CZp0lbQNhLiQFl87ZwYMZVvAm4voMmM69OP6B4llGtg=;
+	s=arc-20240116; t=1760426816; c=relaxed/simple;
+	bh=69j+nJDGYxV0SqldgYPw5p2967aw/hJq9L3JovCxY0o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDVdt0ABN29zSA0zsHLnjuzIw5QUuqo9HHIh3orLt2K+HNB7Mzz2E6upQAsIjg7/hwIN6ghwGy94W1NlWJL47vnChH1agPKDzZd/2DY9TfCGRR/rnBRHYLrf1hBpS8/OOJioZenGM79O2Z2IwU4b7fHV5Yyy6wrWOBzGN9Fmrb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jFPB8zw/; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760426694; x=1791962694;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CZp0lbQNhLiQFl87ZwYMZVvAm4voMmM69OP6B4llGtg=;
-  b=jFPB8zw/wTrGG3FAS6mK8qP2EEaS3ljm6jN2WMLIdPfQ7guguRplPRT6
-   N8RFL67LGm0gDYxSp3q95u5Wfrj/swzOXv//ktr9MtIgzVImTSqJ4V6D4
-   3P3jg+Cp3nQSOf/MKKCd9gor+Tra3Qt8BNqpJhwHmb3hdxdDM6B575yko
-   GLf4y8g2ZhNsfvJfs8is+V0xtp39X5E7XrkOCJAS4C3EcoT4NIP5gNNc6
-   N47Z0qh3trsMC9LfZsshQxcAKIXWBb55LMYaX97ekyGfecfzzgn5SN+Mm
-   H4HQgnUBXi9mtrMAu8UlE6jHC8MdGp8T+Vtj9JqlcCG4AdT0F9NOQsYEE
-   w==;
-X-CSE-ConnectionGUID: sInZHrKYQRG600vd5/jiiw==
-X-CSE-MsgGUID: pE5xQIaVSiKKMklAPGpCzw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62675651"
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="62675651"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 00:24:52 -0700
-X-CSE-ConnectionGUID: Q3qE+95qS+ilJ3jJ2tTHUQ==
-X-CSE-MsgGUID: kkSzHRp2TByN1oWW0oOGvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="205506982"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2025 00:24:49 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8ZOo-0002Vb-38;
-	Tue, 14 Oct 2025 07:24:46 +0000
-Date: Tue, 14 Oct 2025 15:24:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brendan Jackman <jackmanb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH] KVM: x86: Unify L1TF flushing under per-CPU variable
-Message-ID: <202510141438.OMSBOz6R-lkp@intel.com>
-References: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gn2uEP1PTZLi5Ec3ZmL/j/BwP+uyMMTLUo4hPaXo0525eb/B5azNZOB9uVHrM3PSHRLyloD0C/kxRP+wEE6G98QzX2dmEsRq8C5sIuJzFB9DdWghpkeWKOqQFz3RTzEDR0ohiri98jCh5MADB7xxLEuqrpdV6UYRLi4g0LgVuXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RMo/1SDz; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso4166030f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760426810; x=1761031610; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1p4OZlxOY+NxPP/FLfk1SUzbR8cdY55J35+/tdhphko=;
+        b=RMo/1SDzLvQCfVz1ubtkj+ohMe7hxvHOkxQK6nAyb6COgPjkD+YNqx9dM03dUwjTkU
+         yx28ueUbmimBbnQvk8WrrQlIOA5Xqyyf2+A864An/mwCHN5ZLcSpw5BEbQQi9Czyd5gf
+         1Tk3vzIdIswd+R4zM+EWeQnGpw92IXFZs0qgyWF6ypEAJYTTAB8zdOGffBYFEPgKhmvV
+         LTlcAM7Mc1IHjS6uwMUd64V6H06feAgvT6mmqdoU9paF++Ue3FGdgZdTPayi9dR7GHrk
+         7YJlVSxmDx+MQT7N8UA1ArcoSCqtljlRoEr9WURCfpvb1d0LSmoXdryjqeyNjhrE4nUx
+         sxaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760426810; x=1761031610;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1p4OZlxOY+NxPP/FLfk1SUzbR8cdY55J35+/tdhphko=;
+        b=wz2C8GdxqPqeEL0KlrBSBLjjf3UnCVx6JtEYOcIG7g8avHigN+sUljZaar8Y58O+kS
+         NGpKdjDRbHAfQsFwlJp1j4QFn1cmnBA1Ah9DCdRF4tGyKOEyphWvsfCURP0jsSCOi92t
+         6sGIJJ5+a8MkKCgny+5aNxftMl5fuCtniU/8BtFdbpDbS1sH/ZoD24WGHwCuR16JSu6A
+         U9Ao1Y427fNSV7Wks+RSONrXgfy+CZkQy9noZbZnzaZEMBGD+cEWvM/6Pd17JLIhEiUe
+         sxyiojj6PvKctjVdIlylAEwNF0HhVqwF3G242qMp3l/zk/MZ4V1FXgAc7BESNTxMSlmT
+         7oTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMmR0y6EAzzebl3JqCYwok/J6Lmr8eF5tLpV9PXIB84k60nHglj8YpfvUlvY5n5YvunVlPmH/AqRjQQmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD8vQ+UPWp6R+7JIPxB+odlcOjgC92ekLlq2aF7/VekLJZs3U/
+	gzQZi2wDAWep1OoqmFB5cZzjirGIefONAWTLw+Rkf3xxh6xCa64+kRAYqLT1YoHH1UQ=
+X-Gm-Gg: ASbGnctZ+SFF/zcFwGr1lMKV2Zhm9k6WPee9Iro8Af4U+cngWXamNRAulaWyAqs48bX
+	lKp4JptYcK9f7ufeaA7WwrKlR8q2B0ySCeUy2hF0jrvJEpS7t5I9yl1n/Uajgm9cqUnpwscnrZV
+	vZgc/w3H9lpXksAGHm7fn1L/V1N/38kt1XxN/6FOIModBryCh6y2zE3Ofk3ek5+vJyKROhS8VJg
+	bTy/1MrQ17YSWHq9MHz2CkEvJrQquzmjYkIuaNGpW8fG5XTpX9pJUKtRvTk/XDnbCRNLasUSURo
+	uiYscezOMxskuItvEuoRzT/ggY7E+mr3zp9Vy0nhoZ2f32876CCUUrBtr+zy0BYxtHEXGppOYQr
+	vJztDMkj4gCVM3jEa4dhB2atgwbNZNTFCIMFLjnCCuAtkXn5nYPblq4D7rYjHdbwLYFuj4EyrvA
+	==
+X-Google-Smtp-Source: AGHT+IG56u1B06cKrDgh7gziHnjqzu34szt4cpp5w6eBKrKwAL5+ACYASwYe1mymtdVAayUoB54vVg==
+X-Received: by 2002:a05:6000:288f:b0:425:58d0:483a with SMTP id ffacd0b85a97d-425829a5a12mr19773929f8f.3.1760426810474;
+        Tue, 14 Oct 2025 00:26:50 -0700 (PDT)
+Received: from localhost (109-81-16-57.rct.o2.cz. [109.81.16.57])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb55ac08dsm217399135e9.13.2025.10.14.00.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 00:26:50 -0700 (PDT)
+Date: Tue, 14 Oct 2025 09:26:49 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Barry Song <21cnbao@gmail.com>, netdev@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	Huacai Zhou <zhouhuacai@oppo.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network
+ buffer allocation
+Message-ID: <aO37Od0VxOGmWCjm@tiehlicka>
+References: <20251013101636.69220-1-21cnbao@gmail.com>
+ <927bcdf7-1283-4ddd-bd5e-d2e399b26f7d@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,66 +108,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
+In-Reply-To: <927bcdf7-1283-4ddd-bd5e-d2e399b26f7d@suse.cz>
 
-Hi Brendan,
+On Mon 13-10-25 20:30:13, Vlastimil Babka wrote:
+> On 10/13/25 12:16, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+[...]
+> I wonder if we should either:
+> 
+> 1) sacrifice a new __GFP flag specifically for "!allow_spin" case to
+> determine it precisely.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 6b36119b94d0b2bb8cea9d512017efafd461d6ac]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Brendan-Jackman/KVM-x86-Unify-L1TF-flushing-under-per-CPU-variable/20251013-235118
-base:   6b36119b94d0b2bb8cea9d512017efafd461d6ac
-patch link:    https://lore.kernel.org/r/20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a%40google.com
-patch subject: [PATCH] KVM: x86: Unify L1TF flushing under per-CPU variable
-config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20251014/202510141438.OMSBOz6R-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251014/202510141438.OMSBOz6R-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510141438.OMSBOz6R-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> arch/x86/coco/tdx/tdx.c:471:12: error: conflicting types for 'read_msr'; have 'int(struct pt_regs *, struct ve_info *)'
-     471 | static int read_msr(struct pt_regs *regs, struct ve_info *ve)
-         |            ^~~~~~~~
-   In file included from arch/x86/include/asm/idtentry.h:15,
-                    from arch/x86/include/asm/traps.h:9,
-                    from arch/x86/coco/tdx/tdx.c:20:
-   arch/x86/include/asm/kvm_host.h:2320:29: note: previous definition of 'read_msr' with type 'long unsigned int(long unsigned int)'
-    2320 | static inline unsigned long read_msr(unsigned long msr)
-         |                             ^~~~~~~~
-
-
-vim +471 arch/x86/coco/tdx/tdx.c
-
-9f98a4f4e7216d Vishal Annapurve   2025-02-28  470  
-cdd85786f4b3b9 Kirill A. Shutemov 2022-06-14 @471  static int read_msr(struct pt_regs *regs, struct ve_info *ve)
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  472  {
-8a8544bde858e5 Kai Huang          2023-08-15  473  	struct tdx_module_args args = {
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  474  		.r10 = TDX_HYPERCALL_STANDARD,
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  475  		.r11 = hcall_func(EXIT_REASON_MSR_READ),
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  476  		.r12 = regs->cx,
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  477  	};
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  478  
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  479  	/*
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  480  	 * Emulate the MSR read via hypercall. More info about ABI
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  481  	 * can be found in TDX Guest-Host-Communication Interface
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  482  	 * (GHCI), section titled "TDG.VP.VMCALL<Instruction.RDMSR>".
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  483  	 */
-c641cfb5c157b6 Kai Huang          2023-08-15  484  	if (__tdx_hypercall(&args))
-cdd85786f4b3b9 Kirill A. Shutemov 2022-06-14  485  		return -EIO;
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  486  
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  487  	regs->ax = lower_32_bits(args.r11);
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  488  	regs->dx = upper_32_bits(args.r11);
-cdd85786f4b3b9 Kirill A. Shutemov 2022-06-14  489  	return ve_instr_len(ve);
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  490  }
-ae87f609cd5282 Kirill A. Shutemov 2022-04-06  491  
-
+As said in other reply I do not think this is a good fit for this
+specific case as it is all or nothing approach. Soon enough we discover
+that "no effort to reclaim/compact" hurts other usecases. So I do not
+think we need a dedicated flag for this specific case. We need a way to
+tell kswapd/kcompactd how much to try instead.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Michal Hocko
+SUSE Labs
 
