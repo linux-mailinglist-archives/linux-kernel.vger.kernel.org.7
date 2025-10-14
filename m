@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-852143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72905BD8440
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:48:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60953BD8453
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9940F34F650
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1CD425242
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166452DE701;
-	Tue, 14 Oct 2025 08:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9652DC79B;
+	Tue, 14 Oct 2025 08:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="FHkL6imt"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Vj1j9JNp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80E82C158D;
-	Tue, 14 Oct 2025 08:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1DD27FD52;
+	Tue, 14 Oct 2025 08:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431689; cv=none; b=FecLbBKx37+5PnmQeHbWy1mHCwYsMJng6JBtvnYpvQmH/nokFCfvTJVw/cI6AukPkZWFxzmN+o0ox5VGsA+4TTqKC3zt38Yi6Zgd/sucIjz+1/kKb72haywNXxapR/EGRtVr6T+YiJXfGRUUZsrof6m03p834ZL6rjKY2uuaXcM=
+	t=1760431715; cv=none; b=qsTz6Hw/voCQIIrzCQVmsvi8m1ofabUrT9vZ95Ut9FtrcBH+jc/iNigJbtp52cTQ7Vnw0+WcXJ3y3tbPoXILN9r0C15Y6Uz8IK3o1xXvPjwnwvDfTrIvXxeH6H3vpVs2DCk5pZX6LSLZVjM4meN4+AGxq3kXRyItnfgmoatZ0IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431689; c=relaxed/simple;
-	bh=nYsXDRdxj0c1WMqKmKH0FNz8fDlx3p7hepYEZ7vtY6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b51kgdfvcqZsPYmhEN3ZSgCMBAQi3v/s+B5ZQJsO87gILtVl64VOV3+E0G5EHEZjCmH442YXubFUIoEZ/dkv6rckAwuwX/9/IvxrWhbGqZiI/HaQilUGlsFWrUOJTbG99DmK+LwzE3hycsXMz8tZEo5fvlthVRDB1KDYmy1KKmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=FHkL6imt; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E3C5101DB834;
-	Tue, 14 Oct 2025 10:48:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1760431684; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Q4BuPd1yhKAkEiVAkuMZoftvxCi2W8Cy/+W4jG4Cnhw=;
-	b=FHkL6imtX1qtmcNDDhfPo+DFrbTs5x3/KhI/b3C9GzItOd30OOxXdQ92jBPWb3htEHMf9c
-	I7pt1/JMwWdxlaKyXW3EHoHM2zpjWVweS1N+9ENzXex1EGlFmSzfaqwtmV/Q1+syzNTwrI
-	fWhyAN3QJG4GdghrNxfywtU4OaF91NP4js2va+loZ54HcLnhEOdroM00ecXhIj/ltEZ1Qn
-	A4m11WHYRjrAsBiduT4LTb8gF82Lc/OB9nM+b4qzQcCcjkXVvi6Q7EH7p+nO5Hr8bO1Tq0
-	qP+23m2kiUaPorYa/Fx1KFn8hI334miFbR/IAdqtE0FUeYAxCumO7A6GZoJdDw==
-Date: Tue, 14 Oct 2025 10:48:00 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 6.6 000/196] 6.6.112-rc1 review
-Message-ID: <aO4OQKYYFVuhbtdG@duo.ucw.cz>
-References: <20251013144315.184275491@linuxfoundation.org>
+	s=arc-20240116; t=1760431715; c=relaxed/simple;
+	bh=mIaAPYFEkpI1yvIArr5qTyEaUT7//BfrWmPLlYvp4r4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FESQwWjs0y421BGaeBQu/3rRShg4NoQ6Mq2oXh0sjyYU+GT49KT4m3sa6AubJEap27LM7shfPTbOM5IoFswPVYuk5HfcuDVxeKaTk0UqLzjzWRGb9ChG4Ww3HkiPgdzhoh1TwpMw5uYmUIrdDvfA9Z8tuVaZ2u9M+gE2Sa6RgO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Vj1j9JNp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760431703;
+	bh=mIaAPYFEkpI1yvIArr5qTyEaUT7//BfrWmPLlYvp4r4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Vj1j9JNpTxxO46m6970rElMZnLlpk9he6pzYIdVadrEFF977YTWsWG4aDt6W+mtTX
+	 R4uIJr7eFSad+cCz5Oc0pcZIEAHrP8GonT2uwzHR4JSeSrOlZr+q4nx3PPj6ONUbk+
+	 bSqnJbYqtAyDgxEVgAT1O6ZaztHibjTPNZiTCkzcsysjorjkGdwd9omJAOHeyyIHLg
+	 QnKbhCDfRL5ynK75HUgaUFz6cJaOfqKjTKeEvreYTTmXlqUqEmKOKAyteHdbpfIjyn
+	 Dm7jYED+AwxegeUlt4ZKstcgMF2IDhcmWr8YMEYgjACZcYr9vB2ORNLsGC64NVODyi
+	 evcY/CQt1cqNQ==
+Received: from localhost.localdomain (20014C4E279D1F00313432113AAAAFDB.dsl.pool.telekom.hu [IPv6:2001:4c4e:279d:1f00:3134:3211:3aaa:afdb])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: valentine)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 25C7117E055D;
+	Tue, 14 Oct 2025 10:48:23 +0200 (CEST)
+From: Valentine Burley <valentine.burley@collabora.com>
+To: linux-arm-msm@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dmitry.baryshkov@oss.qualcomm.com
+Subject: [PATCH 1/1] arm64: dts: qcom: apq8096-db820c: Specify zap shader location
+Date: Tue, 14 Oct 2025 10:48:07 +0200
+Message-ID: <20251014084808.112097-1-valentine.burley@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5O6Ajf792dUZmI8L"
-Content-Disposition: inline
-In-Reply-To: <20251013144315.184275491@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+The zap shader was previously loaded from "qcom/a530_zap.mdt", which is a
+symlink to "qcom/apq8096/a530_zap.mbn". Update the DTS to reference the
+actual firmware file in linux-firmware directly.
 
---5O6Ajf792dUZmI8L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This avoids relying on the symlink and ensures a more robust firmware load
+path.
 
-Hi!
+Signed-off-by: Valentine Burley <valentine.burley@collabora.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> This is the start of the stable review cycle for the 6.6.112 release.
-> There are 196 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index e74c9fb8f559..c79704fdb31e 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -201,6 +201,10 @@ &camss {
+ 
+ &gpu {
+ 	status = "okay";
++
++	zap-shader {
++		firmware-name = "qcom/apq8096/a530_zap.mbn";
++	};
+ };
+ 
+ &hsusb_phy1 {
+-- 
+2.48.1
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---5O6Ajf792dUZmI8L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaO4OQAAKCRAw5/Bqldv6
-8keMAJ9fG+1kEa3E/gkF0BmxElpVr3zEUgCgpbR98IcCmgyzV2WLZyrz7vZX34c=
-=LIoD
------END PGP SIGNATURE-----
-
---5O6Ajf792dUZmI8L--
 
