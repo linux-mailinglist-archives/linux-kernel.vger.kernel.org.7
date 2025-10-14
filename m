@@ -1,177 +1,107 @@
-Return-Path: <linux-kernel+bounces-852062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E0ABD810E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:04:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F25BD811D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376871922A8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3E83BDFA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397CF3101AD;
-	Tue, 14 Oct 2025 08:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D1230F817;
+	Tue, 14 Oct 2025 08:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KOq5kxys"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S5sYnA0x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0B30FC34;
-	Tue, 14 Oct 2025 08:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889281D5AC6;
+	Tue, 14 Oct 2025 08:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760428893; cv=none; b=qpw6CF+LDlg2awd0OhlBRGNaeUds+AIbl+4DiOn+32vXTbNMOJ+xBqu/vlFMjpqEdU+ZXdp+nWsnMlWQPHRWohSNvdEbmd/p5Rlt/1G9wrjJ+HRc15kqQpcXy5eC029HgBjUg8PQKZOof7XWQQUSCKC78EeKwgO4Uu02fh+xgYM=
+	t=1760428964; cv=none; b=glxOQMfccU/BNvziK3azQaajJsP6V53Vu3eHy1t3aFOcZ4LgyOB2Ek3DARhusRxr5nQkfO1tJsnPk2SnejwiFPYLo7os+dSdfbHHeTAYFZVNfOqfLV/+M9T71rASJgg0gkcJWuVgoIX2+qbggc6+qG3LpVjBCWGYmEimYIw6u8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760428893; c=relaxed/simple;
-	bh=6nIA8PMBxNyMFZpIPqZNTn55txgmaas6G6JxqTpnEHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V8xwNDnBQ/dyPCLOvabNaWR70uE+vNg9DQGOnF4y0fibyDsiH96x8u3XLaVjiav80uQg15PvAJRqc9OpYioHHkB8/5YZH3zOIw+nEUhdEER9O+cI7Xqsm0Lc9fi3lGE9aON1LD1gzYAwiPaoJfmqbb3aYktCOiDRcXaadcjmH2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KOq5kxys; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.182] (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 214F711DD;
-	Tue, 14 Oct 2025 09:59:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1760428778;
-	bh=6nIA8PMBxNyMFZpIPqZNTn55txgmaas6G6JxqTpnEHo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KOq5kxys/GQVjZaTmVcPbI7GlewLn7ndBht/nkIoU/Pp9XZpzmb6zeqwvlPtTP0c2
-	 x2x2x500os0ib8eIcMQX8Jgw7GeoD0QDW895QAfUaAh8gotqvC4ExvPiWsixN27Iiu
-	 y4tKDd3lBfsmaueDRK+tGmKyLovK1Y8dQ9OVE+uQ=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Tue, 14 Oct 2025 10:01:00 +0200
-Subject: [PATCH v7 8/8] media: Documentation: kapi: Add v4l2 generic ISP
- support
+	s=arc-20240116; t=1760428964; c=relaxed/simple;
+	bh=dGBxSxLw0RN6Zij1QQZIpEgNum+sah9NeStZCIuXt5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbFlmnSdtd0EgYiuExD1QtwYA+rgx+MuermYT77u8Pmcjaobz1dhYd+uK6Vp+y+JVE/n6elUQckR/Ll4A0eZkJm8RHBcEuc/uv634azBOpobyA/1QSloOUWOLFF0FN62lEAk4EixLGQBbrkXU1aKDlvN30GaeBE7mrTsCwF/TfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S5sYnA0x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9AD5C4CEE7;
+	Tue, 14 Oct 2025 08:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760428964;
+	bh=dGBxSxLw0RN6Zij1QQZIpEgNum+sah9NeStZCIuXt5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S5sYnA0xKvEFRdaB05kNJp6g26WnjSak25gaLqR5seEdSU5H+eecEVlfCBI8A5XzG
+	 f2NyGsgJ0asYF0AQ1tcltxc2QgKHxZZ/T3G04XW50dtoHtPYZAFF1KId/SuRioqGO3
+	 o0NTHfsb6WxYcNYIxEa9UXa/j7AFIq2pezB+b5z0=
+Date: Tue, 14 Oct 2025 10:02:41 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
+Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
+ information" causes regressions
+Message-ID: <2025101421-citrus-barley-9061@gregkh>
+References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
+ <2025101451-unlinked-strongly-2fb3@gregkh>
+ <zfmoe4i3tpz3w4wrduhyxtyxtsdvgydtff3a235owqpzuzjug7@ulxspaydpvgi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251014-extensible-parameters-validation-v7-8-6628bed5ca98@ideasonboard.com>
-References: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
-In-Reply-To: <20251014-extensible-parameters-validation-v7-0-6628bed5ca98@ideasonboard.com>
-To: Dafna Hirschfeld <dafna@fastmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Antoine Bouyer <antoine.bouyer@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4037;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=6nIA8PMBxNyMFZpIPqZNTn55txgmaas6G6JxqTpnEHo=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBo7gNHjvfYwLqh8xguj4uruLNRXZauUpFikLfZE
- 0nOZoHG6R2JAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaO4DRwAKCRByNAaPFqFW
- PAEcD/9+utt/ZXzF0biLyHM02WwO32AyOewfdWDaVTIeh8P+7PWTZGaoESXUtbB9ms+ZrnY80cd
- RsSwZlxkVwah7tnGqiEtgTnVi5uhuhVL09w0ueV7EOXYcwEmI/GlcW1ri4cZLrKPj2oP/d2+gOu
- cK1qizym1P0R8+O4MUrVWTRiyqZiRdXUZYcHkxojLiSWRmg7Rd+nwf1BkwgvJiNuSi9oQuTHejJ
- tYuE06/EAfAtu6L69lxbt/hpbXHOh8wtQnsK/EzbU1qmMj4QdnrczmxEQlWH5PrRGJZ11sCaChd
- Op8akjgIzC/BnV754MalKFo/+DKyIOf6jbD3aMSaWTfKvvw9iD8v3kd1Z0eWZXfXEkWTnz2LVmz
- K/BVuGlI5a5VRpc0CY64HmNQh6j+qQDR1EWNsN7vNY2h+1f3Cpyxau2FVvrxHCpMDFLFybVIioh
- FIyWQc1jnCiGMdxcwv8wdI1MGK/kiMsdCYXXovIFLmll3qrKnuE4J7QBDLIy6lTSYyU4PTY6kx/
- iRa3a6NNqxlK4d+z+9ZFc5uA1OprvNT+baMKKS1ywW4zSf0KDuAYyeKLdC7I0ZSPClZdEYKMYYI
- 2J2jh5qkIf0J1D2RgDG3hrT4wkERipEQE4vLfi2sLd5W+AMCqYifM5M85oeVn9nYz9exyi2+EZ+
- 3xUs9y3ZEtl56YA==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <zfmoe4i3tpz3w4wrduhyxtyxtsdvgydtff3a235owqpzuzjug7@ulxspaydpvgi>
 
-Add to the driver-api documentation the v4l2-isp.h types and
-helpers documentation.
+On Tue, Oct 14, 2025 at 04:54:45PM +0900, Sergey Senozhatsky wrote:
+> On (25/10/14 09:47), Greg Kroah-Hartman wrote:
+> > On Tue, Oct 14, 2025 at 04:43:43PM +0900, Sergey Senozhatsky wrote:
+> > > Hello,
+> > > 
+> > > We are observing performance regressions (cpu usage, power
+> > > consumption, dropped frames in video playback test, etc.)
+> > > after updating to recent stable kernels.  We tracked it down
+> > > to commit 3cd2aa93674e in linux-6.1.y and commit 3cd2aa93674
+> > > in linux-6.6.y ("cpuidle: menu: Avoid discarding useful information",
+> > > upstream commit 85975daeaa4).
+> > > 
+> > > Upstream fixup fa3fa55de0d ("cpuidle: governors: menu: Avoid using
+> > > invalid recent intervals data") doesn't address the problems we are
+> > > observing.  Revert seems to be bringing performance metrics back to
+> > > pre-regression levels.
+> > > 
+> > 
+> > For some reason that commit was not added to the 6.1 releases, sorry
+> > about that.  Can you submit a working/tested backport so we can queue it
+> > up after the next round of releases in a few days?
+> 
+> Sorry for the confusion, the commit in question presents both in
+> stable 6.1 and in 6.6 and appears to be causing regressions on our
+> tests.  I copy-pasted wrong commit id for 6.1: it should be a9edb700846
+> for 6.1 (and 3cd2aa93674 for 6.6).
+> 
 
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- Documentation/driver-api/media/v4l2-core.rst |  1 +
- Documentation/driver-api/media/v4l2-isp.rst  | 49 ++++++++++++++++++++++++++++
- MAINTAINERS                                  |  1 +
- 3 files changed, 51 insertions(+)
+The point is still the same, commit fa3fa55de0d6 ("cpuidle: governors:
+menu: Avoid using invalid recent intervals data"), is not backported to
+6.1.y, it is however in the following released kernels:
+	5.10.241 5.15.190 6.6.103 6.12.43 6.15.11 6.16.2 6.17
+so something got lost in our trees and it needs to be backported.
 
-diff --git a/Documentation/driver-api/media/v4l2-core.rst b/Documentation/driver-api/media/v4l2-core.rst
-index ad987c34ad2a8460bb95e97adc4d850d624e0b81..a5f5102c64cca57b57b54ab95882b26286fb27de 100644
---- a/Documentation/driver-api/media/v4l2-core.rst
-+++ b/Documentation/driver-api/media/v4l2-core.rst
-@@ -27,3 +27,4 @@ Video4Linux devices
-     v4l2-common
-     v4l2-tveeprom
-     v4l2-jpeg
-+    v4l2-isp
-diff --git a/Documentation/driver-api/media/v4l2-isp.rst b/Documentation/driver-api/media/v4l2-isp.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..42c2550602979609e92a09e3cd1fe3dcbafd6416
---- /dev/null
-+++ b/Documentation/driver-api/media/v4l2-isp.rst
-@@ -0,0 +1,49 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+V4L2 generic ISP parameters and statistics support
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+Design rationale
-+================
-+
-+ISP configuration parameters and statistics are processed and collected by
-+drivers and exchanged with userspace through data types that usually
-+reflect the ISP peripheral registers layout.
-+
-+Each ISP driver defines its own metadata capture format for parameters and
-+a metadata output format for statistics. The buffer layout is realized by a
-+set of C structures that reflects the registers layout. The number and types
-+of C structures is fixed by the format definition and becomes part of the Linux
-+kernel uAPI/uABI interface.
-+
-+Because of the hard requirement of backward compatibility when extending the
-+user API/ABI interface, modifying an ISP driver capture or output metadata
-+format after it has been accepted by mainline is very hard if not impossible.
-+
-+It generally happens, in facts, that after the first accepted revision of an
-+ISP driver the buffer layout need to be modified, either to support new hardware
-+blocks, fix bugs found later on or support different revisions of the same IP.
-+
-+Each of these situation would require defining a new metadata format, making it
-+really hard to maintain and extend drivers and requiring userspace to use a
-+the correct format depending on the kernel revision in use.
-+
-+V4L2 ISP configuration parameters
-+=================================
-+
-+For these reasons, Video4Linux2 defines generic types for ISP configuration
-+parameters and statistics. Drivers are still expected to define their own
-+formats for their metadata output and capture nodes, but the buffer layout can
-+be defined using the extensible and versioned types defined by
-+include/uapi/linux/media/v4l2-isp.h.
-+
-+Drivers are expected to provide the definitions of their supported ISP blocks,
-+the control flags and the expected maximum size of a buffer.
-+
-+For driver developers a set of helper functions to assist them with validation
-+of the buffer received from userspace is available in the form of helper
-+functions in drivers/media/v4l2-core/v4l2-isp.c
-+
-+V4L2 ISP support driver documentation
-+=====================================
-+.. kernel-doc:: include/media/v4l2-isp.h
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 59ab4a34f72c0430a8d7966942acb2242ad923ca..3cc24092995bcb01051cc301ca212c32938cf745 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26857,6 +26857,7 @@ V4L2 GENERIC ISP PARAMETERS AND STATISTIC FORMATS
- M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/driver-api/media/v4l2-isp.rst
- F:	Documentation/userspace-api/media/v4l/v4l2-isp.rst
- F:	drivers/media/v4l2-core/v4l2-isp.c
- F:	include/media/v4l2-isp.h
+I need to knock up a "what patches are missing" script again and sweep
+the trees to catch these types of things.  It's been a year or so since
+I last did that.
 
--- 
-2.51.0
+thanks,
 
+greg k-h
 
