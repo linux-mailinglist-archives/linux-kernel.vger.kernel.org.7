@@ -1,179 +1,137 @@
-Return-Path: <linux-kernel+bounces-852316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1F8BD8A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCC4BD8A76
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E58B4E6D50
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:05:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 530674E5302
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8F630F949;
-	Tue, 14 Oct 2025 10:04:23 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CBC2F9DAE;
+	Tue, 14 Oct 2025 10:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gcTK4bOi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8273093C1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE6C2E7178
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436262; cv=none; b=BpU5o8AUQYrios+s3AxLZ6TxY5cKwYdo/axsU9KmDIHXjx6C+Qf00WvDQAWIjXAC8KW4hGL50lLZnD+JKo4XfPH2yLApPFXa8OWdwQ1PCL0XKHfx32SJTC1h/krgp6tYIeoFDcY5CQ/44UsIokXNZUa2JVhrNuf4XBXv/y5Z0uk=
+	t=1760436314; cv=none; b=icAVREgWxdUKmkrGG6vW60TFbfmwV0i4fFJuAOPFhPqX56JtfJY9pzCOrnLsBTIxZp3IrdblZ5n+IIVdqDYCAf7EJiATafRbzK1fl5v3dg4UPsmtUCKp+Z+nfGldxg7IYa73UPc57iJm3F6z4dqIIYmEPKEdXUf2xRzYZy8FuTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436262; c=relaxed/simple;
-	bh=Ktrzl3+rFB0DYSw+mzf8Wr5le2N//JG3Jmezq490Eng=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=TnJ1v2LAjT6cdbnmcaUD4EiJOsjSYqgUCHmwjKdeE2zoN2pGndZoq0FpLX1KrAEJobn3jgsSjv4+nsqILKBsxoJJfPz4/PoR/VNpIqK4XRA76U1NAViBGDI/M62oB6kq79VbpJdEVQlSihRxoP/ryb9XGfguALN4PA350sKmkSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430929af37bso25671295ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:04:20 -0700 (PDT)
+	s=arc-20240116; t=1760436314; c=relaxed/simple;
+	bh=jFqIpHIf9xHyc6QUUUdRIzHOrrBWcJWi21R164nqFTU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y5LfNBxpDwQNXmdX1/1C4SDDbuTiJAgwlyQv+FaFhVBBkT32lFRL14qt/wfoziBZOA9bZf2WcUl+B57qP1AlCJUbSGpNonltRoYMmIr4zLI3S+GS6pfN/mRg8w+VLqyLI2rW+M1aDzk6xks7IyxR4fI5QoZ4YHxrkdGQz/dCNDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gcTK4bOi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760436311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jFqIpHIf9xHyc6QUUUdRIzHOrrBWcJWi21R164nqFTU=;
+	b=gcTK4bOiEt+EKSPO44Qswq8fFKoNPEpQBv2A9JQZ6dSHh9uMqv/96Tvg62oeoDnyAVwPin
+	XeIQEEe2YeJAEUVpfeyCfj5qmOh8OAYj/Rs40E8KXocPeeH8uGkphzyS2QdLviu+qx8+dF
+	OliY8JZcIreMnJxkcucRaBipgC0R0+0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-60-TEJe9Pd1OVWreFBS1uEiqg-1; Tue, 14 Oct 2025 06:05:09 -0400
+X-MC-Unique: TEJe9Pd1OVWreFBS1uEiqg-1
+X-Mimecast-MFC-AGG-ID: TEJe9Pd1OVWreFBS1uEiqg_1760436308
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee10a24246so4514938f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:05:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760436260; x=1761041060;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GH+KMJg65TPnbgWnuocNKVgpnsMrWf8epTMXXTaDAq0=;
-        b=IR3GVZDMAElezsRWDtAa6UBHl//MX6AiFdLc+RsZynQAgSSRi9MstYoRv6yNUp4HLl
-         tYvcvqiMUw5wxJ2i/rvplc4NBdEoEgZEv3CH6vajV8R0CATw1ycbB2El89dfIDiEJn5/
-         cp1n0otJi3YAFGGkpaepT+G9crpCM+LsMDFqPbzj64nuylxHOMXVwknJzL6dvZjZoAZi
-         +luMTMJ+xPu7GDiwH+B6U9OiMb3klHltpE0r8LS8e6u8B2dL/GkLF9SXWTWKYMaaiADw
-         3P74ZBUV8LQ6Em34CH0nK/4YtfM9V6FFc/aemv6/3A8wCJ/YmS6k19+MS9FItTB5zosi
-         INdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlYGUuPYsPxSmImKeRszGzxgQWKphJj+Dy13ya29XacJnu1xICM0tvIG86A65sq5cClaVQgvM7FRnXVyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM0hxIi0E5JSCRWQeIregrL0DULHnRuuYinsGVOF/xtTNo2L4H
-	gGComEpYrH5qt2dFmFxMlba1kau/CeyLCgEznftCxu/FtQhOHADoaOw9KgHg9roSiL9q8NPHDlB
-	9OV+FQEaW4XBgFxhuzrkFkhU82c68cEeYMX1lZG4FjWO483eA7SmJ425olzg=
-X-Google-Smtp-Source: AGHT+IGz2nDs6O23O9XvrI8+go74XaGnVI0mw9uQ08Gv7HrjA7t3Y0/hk3lcuiAO7H/cMIk375ht76/469QuZmsy6j1NehDau3rk
+        d=1e100.net; s=20230601; t=1760436308; x=1761041108;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jFqIpHIf9xHyc6QUUUdRIzHOrrBWcJWi21R164nqFTU=;
+        b=iPuzb2C/VXmykDQUzJTVTmWJmgFjMciR0BiD3XrYX3xgoZccV3bBDq8fc8JpXARVru
+         KjXeVM5+cgXW1ljjJSKJjfKpXZtj1zelTbtvx3/Du1Tx+YSd0eZwNFp3XHufbkHRkzPv
+         uG7juQgzEJw+RnsiA6mRc27GFVzhGa4P9796Gz7J3618ztW6ctT73fYIHEFRRqgXjKO2
+         0KID+1jo3pg8rgBK6g6wsod6Ls0jtZ27zGkCoMfSrnS9VjhwOWwGja81ZuLquH3+E2gh
+         EIvirb3olkP2vncBDOzd/9ziZEZMv7sa+AL8oYU0Q2hbeyKt/VUwFnIMSQ1UEIBJ1UHu
+         j15Q==
+X-Gm-Message-State: AOJu0YxrNMtCtmu5xnNOG3VkAyUjWYt9dLX81z39u/v/uV2MIgdI9UTQ
+	aVNCrrmyN6gOIN6oRs+aRThVgwmgeQvXMxPxg0J93S0QCUKA60/PfgpTuzZaNvC20FZVQsF71pY
+	89mxufl/eKCUOYbcVQZxaUYcqIo/CMG4UTd4nN4V2L2sAg+k7eBDsclpGY8sJam79Ug==
+X-Gm-Gg: ASbGnctkXHMxTW8zQStEL14JnqCudTlPP1MOma8gPUOvY050aTqe8wjnLMVhkFCJWIg
+	TD8UPOfsW6s+n4IQrV3s9SSvalL6BS6kvpKmS+tuYMN/GfVDhKvqH3u/NLMEQ7K1zMCz67Z+L6M
+	Kp8kxKHZaHiCW9KDeUC+bwqF+2kN6DiK9coCxnaHT+FiyeCxXUWUh5yWi4hUuq6IsUep1Mc1wnz
+	ZCXBj5NyhBPMFUXlxS/+PSX1inje7+1gtcegFTcXvBl1ccuTpwJxgafGWLCA0Abm6N6jOeCk9Dc
+	1N/J9fDqzkfkKtEY5jWrA+W+oasngPiGKybnQwVlwTA5i9xXcHgyROFd81uf9285LQ==
+X-Received: by 2002:a05:6000:25eb:b0:426:dbee:3d06 with SMTP id ffacd0b85a97d-426dbee3d1bmr6115192f8f.22.1760436308321;
+        Tue, 14 Oct 2025 03:05:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3fQYnVJctdU0i4pCVctTbsJ4A3V4pG6cBhL/BemxgLMwhlGKRwltXCGzLJcibpPDFlhTJpw==
+X-Received: by 2002:a05:6000:25eb:b0:426:dbee:3d06 with SMTP id ffacd0b85a97d-426dbee3d1bmr6115173f8f.22.1760436307944;
+        Tue, 14 Oct 2025 03:05:07 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce589a21sm23378939f8f.23.2025.10.14.03.05.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:05:07 -0700 (PDT)
+Message-ID: <a0ccf27f5e12a11d2e9dc951ceaf7f9d103f67f6.camel@redhat.com>
+Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
+ expired deadline
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, Ingo
+ Molnar <mingo@redhat.com>, Clark Williams <williams@redhat.com>
+Date: Tue, 14 Oct 2025 12:05:06 +0200
+In-Reply-To: <20251014095407.GM4067720@noisy.programming.kicks-ass.net>
+References: <20251007122904.31611-1-gmonaco@redhat.com>
+	 <20251014095407.GM4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c02:b0:42f:a4d7:ebac with SMTP id
- e9e14a558f8ab-42fa4d7f0acmr152220895ab.4.1760436260071; Tue, 14 Oct 2025
- 03:04:20 -0700 (PDT)
-Date: Tue, 14 Oct 2025 03:04:20 -0700
-In-Reply-To: <20251014051825.1084403-2-wilfred.opensource@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee2024.050a0220.ac43.00ef.GAE@google.com>
-Subject: [syzbot ci] Re: net/tls: support setting the maximum payload size
-From: syzbot ci <syzbot+cidd78f5a1c7478a8a@syzkaller.appspotmail.com>
-To: corbet@lwn.net, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	john.fastabend@gmail.com, kuba@kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, sd@queasysnail.net, 
-	shuah@kernel.org, wilfred.mallawa@wdc.com, wilfred.opensource@gmail.com
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot ci has tested the following series
+On Tue, 2025-10-14 at 11:54 +0200, Peter Zijlstra wrote:
+> On Tue, Oct 07, 2025 at 02:29:04PM +0200, Gabriele Monaco wrote:
+> > Recent changes to the deadline server leave it running when the system
+> > is idle. If the system is idle for longer than the dl_server period and
+> > the first scheduling occurs after a fair task wakes up, the algorithm
+> > picks the server as the earliest deadline (in the past) and that boosts
+> > the fair task that just woke up while:
+> > =C2=A0* the deadline is in the past
+> > =C2=A0* the server consumed all its runtime (in background)
+> > =C2=A0* there is no starvation (idle for about a period)
+> >=20
+> > Prevent the server from boosting a task when the deadline is in the
+> > past. Instead, replenish a new period and start the server as deferred.
+>=20
+> I'm a bit confused, should not enqueue ensure deadline is in the future?
+> And if it doesn't shouldn't we fix the enqueue path somewhere?
 
-[v5] net/tls: support setting the maximum payload size
-https://lore.kernel.org/all/20251014051825.1084403-2-wilfred.opensource@gmail.com
-* [PATCH net-next v5 1/2] net/tls: support setting the maximum payload size
-* [PATCH net-next v5 2/2] selftests: tls: add tls record_size_limit test
+Enqueue of a deadline task should handle the case, here the CPU is idle and=
+ the
+deadline server did not stop yet (and won't until the next schedule, if I'm=
+ not
+mistaken).
+The following enqueue of a fair task triggers a schedule where the server (=
+no
+longer deferred) boosts the task straight away.
 
-and found the following issue:
-general protection fault in tls_setsockopt
+Now the only check for deadline is in pick_next_dl_entity, where the earlie=
+st
+one is chosen, despite being in the past.
 
-Full report is available here:
-https://ci.syzbot.org/series/210c88bf-945a-460c-9fe3-c55bd1958b5d
+Do you mean to check for deadline when enqueueing the fair task too? I beli=
+eve
+again nothing happens here because the server is still up.
 
-***
+Does it make sense or am I missing something?
 
-general protection fault in tls_setsockopt
-
-tree:      net-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
-base:      18a7e218cfcdca6666e1f7356533e4c988780b57
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/ae03b3d4-e809-4b0e-bd4a-76b4ae8e9d74/config
-C repro:   https://ci.syzbot.org/findings/d0b97737-6ea7-4c05-b10b-71dc834c9393/c_repro
-syz repro: https://ci.syzbot.org/findings/d0b97737-6ea7-4c05-b10b-71dc834c9393/syz_repro
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000023: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000118-0x000000000000011f]
-CPU: 1 UID: 0 PID: 5970 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:do_tls_setsockopt_tx_payload_len net/tls/tls_main.c:847 [inline]
-RIP: 0010:do_tls_setsockopt net/tls/tls_main.c:887 [inline]
-RIP: 0010:tls_setsockopt+0x189/0x1590 net/tls/tls_main.c:906
-Code: ff df 80 3c 08 00 74 08 4c 89 ff e8 51 67 3c f8 41 bc 18 01 00 00 4d 03 27 4c 89 e0 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 80 3c 38 00 74 08 4c 89 e7 e8 28 67 3c f8 49 83 3c 24 00 0f 84
-RSP: 0018:ffffc90003e57cc0 EFLAGS: 00010202
-RAX: 0000000000000023 RBX: ffff88816adfcc00 RCX: dffffc0000000000
-RDX: 0000000000000006 RSI: ffffffff8d7e872a RDI: ffffffff8bc074e0
-RBP: ffffc90003e57e38 R08: ffffffff8f9e0f77 R09: 1ffffffff1f3c1ee
-R10: dffffc0000000000 R11: fffffbfff1f3c1ef R12: 0000000000000118
-R13: 1ffff920007cafa4 R14: ffff88816b33bde8 R15: dffffc0000000000
-FS:  00005555585b2500(0000) GS:ffff8882a9d0f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000180 CR3: 000000010739e000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- do_sock_setsockopt+0x17c/0x1b0 net/socket.c:2360
- __sys_setsockopt net/socket.c:2385 [inline]
- __do_sys_setsockopt net/socket.c:2391 [inline]
- __se_sys_setsockopt net/socket.c:2388 [inline]
- __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2388
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f499fb8eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffecf309e88 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f499fde5fa0 RCX: 00007f499fb8eec9
-RDX: 0000000000000005 RSI: 000000000000011a RDI: 0000000000000003
-RBP: 00007f499fc11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f499fde5fa0 R14: 00007f499fde5fa0 R15: 0000000000000005
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:do_tls_setsockopt_tx_payload_len net/tls/tls_main.c:847 [inline]
-RIP: 0010:do_tls_setsockopt net/tls/tls_main.c:887 [inline]
-RIP: 0010:tls_setsockopt+0x189/0x1590 net/tls/tls_main.c:906
-Code: ff df 80 3c 08 00 74 08 4c 89 ff e8 51 67 3c f8 41 bc 18 01 00 00 4d 03 27 4c 89 e0 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 80 3c 38 00 74 08 4c 89 e7 e8 28 67 3c f8 49 83 3c 24 00 0f 84
-RSP: 0018:ffffc90003e57cc0 EFLAGS: 00010202
-RAX: 0000000000000023 RBX: ffff88816adfcc00 RCX: dffffc0000000000
-RDX: 0000000000000006 RSI: ffffffff8d7e872a RDI: ffffffff8bc074e0
-RBP: ffffc90003e57e38 R08: ffffffff8f9e0f77 R09: 1ffffffff1f3c1ee
-R10: dffffc0000000000 R11: fffffbfff1f3c1ef R12: 0000000000000118
-R13: 1ffff920007cafa4 R14: ffff88816b33bde8 R15: dffffc0000000000
-FS:  00005555585b2500(0000) GS:ffff8882a9d0f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000180 CR3: 000000010739e000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	df 80 3c 08 00 74    	filds  0x7400083c(%rax)
-   6:	08 4c 89 ff          	or     %cl,-0x1(%rcx,%rcx,4)
-   a:	e8 51 67 3c f8       	call   0xf83c6760
-   f:	41 bc 18 01 00 00    	mov    $0x118,%r12d
-  15:	4d 03 27             	add    (%r15),%r12
-  18:	4c 89 e0             	mov    %r12,%rax
-  1b:	48 c1 e8 03          	shr    $0x3,%rax
-  1f:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
-  26:	fc ff df
-* 29:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	4c 89 e7             	mov    %r12,%rdi
-  33:	e8 28 67 3c f8       	call   0xf83c6760
-  38:	49 83 3c 24 00       	cmpq   $0x0,(%r12)
-  3d:	0f                   	.byte 0xf
-  3e:	84                   	.byte 0x84
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
