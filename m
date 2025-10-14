@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-852759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DDBBD9D34
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:56:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A77BD9D3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D313B3408
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426F73B4531
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755C426A1B6;
-	Tue, 14 Oct 2025 13:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29389313E37;
+	Tue, 14 Oct 2025 13:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jO2zU59t"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="RvJH0BSw"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3732EAB76
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1960D30C36C;
+	Tue, 14 Oct 2025 13:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450199; cv=none; b=L2QweDU6XPzsHg7J4JpD7HHrX+qhK9pFPPdE1fw5xxRRyCBFIqcIswqtEVEia1zIUlaVoar7Bl6gZtESOJkvbQwPAHmvAIxY3ZUReE9Qc5l48fb6GEzTcoJftTv2f1wEPrnWUtnbywqGc3dX5JdP/uUmqcDQoeSosRhJQIeXDHw=
+	t=1760450216; cv=none; b=Dbrn781Ya/FmanHT7JbuRpcqQDE46AH1EuPj3IJz8bdxOv9xeBgzmjL3nblab1xRI6YX++GuHndJrcvQvgD7eyu6RTUE+0yCi2yZYHN+jQattLMVcNqJGMUmyiJ+1wFQNLcNoIEz4CyjdM1soTsYcGb1AmWP9NXu+NnhRiIUKD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450199; c=relaxed/simple;
-	bh=Q4/GoNBIxcfJU4OvgQlSaRNFKEqeX55zgRostC9LIc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/4hzvGh0zElPy9Q9GT1U1Xch90oSI8Lm45SeSt5H9QGgDKR9NfOFlVZH98EMEla+vnxLqRmynH33ggtX/fHOUmStzmo1a1IIvGCDw2m0GGoG+L+EBkXOk+DXzplk1Rg3QyyhcQIDYxri2BX1Iq8BX8ZdOw8lYuuJUSsmEdZDrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jO2zU59t; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2897522a1dfso50038435ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:56:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760450198; x=1761054998; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L2JBdlCNVHbh6ekaYzoo4Q2V4kVXYeSiuY6W4L0bPjk=;
-        b=jO2zU59tqfHuc+A02ATtPo8yjwx7p1qrnbVxxxT6uo0AZRJrbVxudNjIZFZPqoU3nD
-         cARo0HNOrY/YSSuitp+Zua8/28PZ8QS/xfVJoxBd/SdGc/dN1LX/uTTln2S3TZELMZJd
-         H3Vi2J2fbFt7gi3Z4t+jYpY+/AiTLL+RVPecM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760450198; x=1761054998;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L2JBdlCNVHbh6ekaYzoo4Q2V4kVXYeSiuY6W4L0bPjk=;
-        b=S3SDaPFf5T1m04hBnw4OKwBfHxM+UeBHr6J45Y9l8qNJAej45ykVSgRB7Sx2waLlwy
-         Rh8F843nQfOiHggMfi2Z9djONK5RJekL637PyNnlowkAb2XuLlfsfugSKUhfRTgVW0Il
-         g8eemuYRArfgdpPXGpqnrl2aEtwzlUQMYudTaBX13ulz2rGyDhjXMT+Hc36RoorGI7xo
-         ixc65mj5nSFVVDzMb4ZJgX4JybZBhjk8GWUWKmRigYmH0Y9ZKJDGpt2noPEq8xHxTdFq
-         7xgsC8VFIau2h6kTvptFXAoW7HaHAS+ncCLHM1r2P3G6X0lvE3umsnwriXZEownwU3p9
-         G6Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZJNsP3Upj7WUbEhLJHNbwqXfsPw/2M9QjwFomtMC+1cHJbNJtHB3jLDL2lJHb6GZ0k1xMKGrUc0+g59c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEHZCEbUW5DHC16uiscXb2GtVPspji4UoE62HH7IUhqRXsafnL
-	ZPGrbwaS9xdrl2SXTZNgbCLPm5rfLHDwCr1O1D/ptkpBT2H8qBK2B/5ptRLwi70vTw==
-X-Gm-Gg: ASbGncuJIQvdKv+zmDI8rdcrZRGuyqQrY12KBfdDu6quOMms69qcq8n7BgbDz8kj8rl
-	u4SB8XniSqwPDk7LrpcJs/1csuhQvifurgmvbpfiaoXd2KmEgyDbdU+cEBSe/p9+seIAnQVR0MH
-	OGUlWq3SlZYttflBVArZLuFsdTjGzalC40y8VKWyLQ59QIQrt5GJ626m3g0fGfKr45qjVKjWw0x
-	lhBGcYtaTGPcmgwR8CXKcFK6ptpKu/cefffO9AmPzvcbBwrmWC8q7IFKmBjQRQgBpGZA8n4faFb
-	U6jFDrPiRkp7VRchMDC0iEFZbJGMyj1YICgyddhSRb88qCm8KBg5mpUAqTwLQVYHPH0J0KrCCgp
-	e9uESvU1IEYeJH7qgGbqBqrwFqyLaUGyY3X1YWiLobMaOOyoeRbvXKw==
-X-Google-Smtp-Source: AGHT+IFom6gnN5okXgH4ljiWIYO99mKWEOVLNkApX62i3COUI3Ge2cjYBTcSk6VjeaaXYz+cDhldKg==
-X-Received: by 2002:a17:903:1b4b:b0:271:479d:3dcb with SMTP id d9443c01a7336-29027213537mr324664955ad.6.1760450197603;
-        Tue, 14 Oct 2025 06:56:37 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:f7c9:39b0:1a9:7d97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de658bsm166127145ad.22.2025.10.14.06.56.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 06:56:37 -0700 (PDT)
-Date: Tue, 14 Oct 2025 22:56:32 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Sasha Levin <sashal@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, 
-	stable@vger.kernel.org
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-Message-ID: <ns2dglxkdqiidj445xal2w4onk56njkzllgoads377oaix7wuh@afvq7yinhpl7>
-References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
- <08529809-5ca1-4495-8160-15d8e85ad640@arm.com>
- <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
- <CAJZ5v0h-=MU2uwC0+TZy0WpyyMpFibW58=t68+NPqE0W9WxWtQ@mail.gmail.com>
+	s=arc-20240116; t=1760450216; c=relaxed/simple;
+	bh=PRqYDMj3V0mpjuoGt3aazHK0eVFqNNCONPDyZsC7524=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EFE4HwSFeS9jENkdI68KoAKsb9kfLyVuaa6hmQSxPSoG/DRS8OUDh03Eg+uqxEntdDy5ovP1s2+zMYyTNUhtAt05juFd4rx5QkILrHZSZs4pa+4Mymt1UWSbYPjy+7dpD23bX195v07Zl45LU4D5scpp+vjqVPztOrUV9FGZGHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=RvJH0BSw; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DF8A540B21
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1760450214; bh=PRqYDMj3V0mpjuoGt3aazHK0eVFqNNCONPDyZsC7524=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=RvJH0BSwjh/wtqfhQDf0P8XDljS+zuNCsbBIC5CyawwUqzRAbAGVOd7QUlaLqPvDt
+	 Oq1Z4K276ZiVoMIbhMHvNt9SXjPQm9X+tS3Q0SsmxDowuoDiRUbqt5+ui8a6wtsaZk
+	 KrnFjtyGAe9gtG55X8EeGkUAJc6wwT6iTFPF3OpWP0XpCuzawcJAbGM7qSR/7tcOER
+	 YR6PviAGMl9tYt6OthIITDZnIoSxEK3kcy8Fy7LFhrg/QNxAEqnaNb8ozO2HjeXWaD
+	 9jT3T5rLrZtaJ1ctR+4HRBqZtisbD/YvGpn0prCNWsEeVrgmLRNEKjjGbtpDvnXTf1
+	 0MN8S3y4G4Arw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id DF8A540B21;
+	Tue, 14 Oct 2025 13:56:53 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Linux EFI <linux-efi@vger.kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Hugo Osvaldo
+ Barrera <hugo@whynothugo.nl>
+Subject: Re: [PATCH v3] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
+In-Reply-To: <20251013085718.27085-1-bagasdotme@gmail.com>
+References: <20251013085718.27085-1-bagasdotme@gmail.com>
+Date: Tue, 14 Oct 2025 07:56:53 -0600
+Message-ID: <87jz0xd1sq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0h-=MU2uwC0+TZy0WpyyMpFibW58=t68+NPqE0W9WxWtQ@mail.gmail.com>
+Content-Type: text/plain
 
-On (25/10/14 15:47), Rafael J. Wysocki wrote:
-> On Tue, Oct 14, 2025 at 12:23 PM Sergey Senozhatsky
-> <senozhatsky@chromium.org> wrote:
-> >
-> > > Any details would be much appreciated.
-> > > How do the idle state usages differ with and without
-> > > "cpuidle: menu: Avoid discarding useful information"?
-> > > What do the idle states look like in your platform?
-> >
-> > Sure, I can run tests.
-> 
-> Would it be possible to check if the mainline has this issue?  That
-> is, compare the benchmark results on unmodified 6.17 (say) and on 6.17
-> with commit 85975daeaa4 reverted?
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-I don't think mainline kernel can run on those devices (due to
-a bunch of downstream patches).  Best bet is 6.12, I guess.
+> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+>
+> Since the Handover Protocol was deprecated, the recommended approach is
+> to provide an initrd using a UEFI boot service with the
+> LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
+> approach has been no more than an admonition with a link to an existing
+> implementation.
+>
+> Provide a short explanation of this functionality, to ease future
+> implementations without having to reverse engineer existing ones.
+>
+> Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+> Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
+> [Bagas: Don't use :ref: link to EFI stub documentation and refer to
+> OVMF/edk2 implementation]
+> Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+> No changes since v2 [1].
+
+Applied, thanks.
+
+jon
 
