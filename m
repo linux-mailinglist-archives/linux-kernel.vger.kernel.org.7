@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-853225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FFDBDAF66
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:39:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C11BDAF69
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F553352CBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA5A3BACC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7372BD5B9;
-	Tue, 14 Oct 2025 18:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D312BDC09;
+	Tue, 14 Oct 2025 18:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qrIdm/nd"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCsOpA6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6669D2BD033;
-	Tue, 14 Oct 2025 18:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8929284880;
+	Tue, 14 Oct 2025 18:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760467171; cv=none; b=d/4IJBLMaR+WAmG+03AJsKSnk6rkuu6W1EX706AQjxem4VVinT0BWy5SDYld2CJVMiBEbhEcWZ6MC2PInQn59//cDVMaswaiKIPfolzdP1dLBQX6ancC397oBah9X0XlZCoMO4SAiHlSgQ7gdOp4s6YUNHw9IET0yj235m5OGCI=
+	t=1760467239; cv=none; b=nZoPZY9EhNHBm1oJOhwATIL1DjmGJLE5HOr4p4yx1lcPYhUUABGQQ8SPSjsHWy/k67FKZCgryzOb1QVNeFMplMcqSmvaAu5MiJyzAKT79QFv9gZkp5ssVIYOvIjCSgFlF4DUb28/8Z8On4kcX3Be+lf+r3AYn9S1R0rI7N/IKBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760467171; c=relaxed/simple;
-	bh=Xh2eBKYYOAudGr9RMkzmILNtpywqr0tJTsvy9GaBpt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V1UYd3CDTzXjZqb7MXq3Ze8ydPfFyD0aUqlgN1KXsR9QslnKVZWb/EVQmO0mdeY6jILckNfPt8sHRtWrDzj25uYOXunk/KgbZAS2jYMUBolMDymhtV3rZRTwAMaSGjmlo7wsAdVnUfNftkY28m950pH95fsolfoZdizItHP24nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qrIdm/nd; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=B/m/yNeA/Z2UE3cQi8e6b5O7/HPsSJCGOd9Cvkn1tDo=; b=qrIdm/ndYl+dfsGuG/f0c5ECjM
-	9+o0yosj/2lGow+ujb4omCSXDvQeTdzgx4ogHUBvCPZK+cCT7EcpGiKEOcPqq+3/RJ7BSY0uc8AmH
-	9oPHwjKaDW05cGxCYVO6TgXn2Qp9pZ3T0QxMsr7gEwbzWC7c3W+9QGl7LLXqtGqP4DJko1OoRpqfY
-	wRvMDxvm9MPl71IopkE0FzqSyyWn+i8CCHnGVmO3mrKHS+5lr14bDyIhSsL1qjycaXiWVQx5WnKL4
-	hf0d0hWzI4kFBs+NfSWhFr1oKLI9vqIQs8P6IkPGQRNkNL3v3ERGE2MFq7JVvVoniC8EuufhMiQEn
-	N1d5Ye0g==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8jvi-0000000HCEC-1CVf;
-	Tue, 14 Oct 2025 18:39:26 +0000
-Message-ID: <b55bf24c-4b45-4a6b-ae5b-7ded5bfcb25f@infradead.org>
-Date: Tue, 14 Oct 2025 11:39:25 -0700
+	s=arc-20240116; t=1760467239; c=relaxed/simple;
+	bh=xsXUITWBZ2cXFzhwdGcCUewaft7HR7reV3UnOiMU37M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SSbxuaClJokiEzdp7WfTSaCNjOiyoSsq8OqVl1jLYngL1/e6QaeMpQqK4AKEPTMPU9hxEYcRfer3unzUCQOfyz4CH6jNSu7zMoe/yOylTfu/YHpejR5Vr7/xIDb91mxnNzvCOjM1DtIGSzaNOp7BS+4tQLnpnV5abH0FC6YU/sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCsOpA6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9991CC4CEE7;
+	Tue, 14 Oct 2025 18:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760467238;
+	bh=xsXUITWBZ2cXFzhwdGcCUewaft7HR7reV3UnOiMU37M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gCsOpA6X+yvJcDfk9RQGozVaIrLjPbIWBOgSWp/S4ZSOg08UU0UjCNPLtndrPLju5
+	 Y0fCngp2NEikVjrp4cEOXfj5WZZ8tRty9Q/4hMagFjBh8JcPon8fYa5RovIu8d7VFI
+	 0uW/gVcVwNChXQ7aTxCy8c6Y6auHWEbWuKZE/puC+Ah8Kk05jRmjcpfXRBah8en1Wm
+	 ul7/YnTUskFVsGeA8sJT94k+3uH1I04tojh/QvW8RpeUIg4s4nwerNKImp611Ys46v
+	 MM2cu16/p+yMRzKM5lmGZB75aVBHCzNcQJY9Phyxx4h0/4M0DMACXYg9jCBRpsXsNV
+	 vgmIxRUCSWhdA==
+Date: Tue, 14 Oct 2025 15:40:33 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] perf annotate: Skip annotating data types to lea
+ instructions
+Message-ID: <aO6ZIQ2WwTPGWATX@x1>
+References: <20251013181607.2745653-1-zecheng@google.com>
+ <20251013181607.2745653-2-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: admin-guide: Correct spelling of
- "userspace"
-To: Jonathan Corbet <corbet@lwn.net>, Akiyoshi Kurita <weibu@redadmin.org>,
- linux-doc@vger.kernel.org
-Cc: Dave Jiang <dave.jiang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Shannon Nelson <sln@onemain.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-kernel@vger.kernel.org
-References: <20250926190019.41788-1-weibu@redadmin.org>
- <87seflbken.fsf@trenco.lwn.net>
- <431ee7b1-3296-4230-a9d8-47445e664e36@infradead.org>
- <87v7kh9wdu.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <87v7kh9wdu.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013181607.2745653-2-zecheng@google.com>
 
-
-
-On 10/14/25 11:22 AM, Jonathan Corbet wrote:
-> Randy Dunlap <rdunlap@infradead.org> writes:
+On Mon, Oct 13, 2025 at 06:15:58PM +0000, Zecheng Li wrote:
+> Introduce a helper function is_address_gen_insn() to check
+> arch-dependent address generation instructions like lea in x86. Remove
+> type annotation on these instructions since they are not accessing
+> memory. It should be counted as `no_mem_ops`.
 > 
->> On 10/14/25 7:57 AM, Jonathan Corbet wrote:
->>> Akiyoshi Kurita <weibu@redadmin.org> writes:
->>>
->>>> The term "userspace" should be a single word. Fix the typo
->>>> "userpace" accordingly.
->>>>
->>>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
->>>> ---
->>>>  Documentation/admin-guide/tainted-kernels.rst | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
->>>> index a0cc017e4424..ed1f8f1e86c5 100644
->>>> --- a/Documentation/admin-guide/tainted-kernels.rst
->>>> +++ b/Documentation/admin-guide/tainted-kernels.rst
->>>> @@ -186,6 +186,6 @@ More detailed explanation for tainting
->>>>  
->>>>   18) ``N`` if an in-kernel test, such as a KUnit test, has been run.
->>>>  
->>>> - 19) ``J`` if userpace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
->>>> + 19) ``J`` if userspace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
->>>>       to use the devices debugging features. Device debugging features could
->>>>       cause the device to malfunction in undefined ways.
->>>
->>> Applied, thanks.
->>
->> Comparing to the "MSDOS" spelling patch:
->>
->> did you check/count "userspace" vs. "user space" vs. "user-space"
->> in the kernel source tree?
+> Signed-off-by: Zecheng Li <zecheng@google.com>
+> ---
+>  tools/perf/util/annotate.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
-> No, but this patch was fixing "userpace", which is overtly wrong.  It
-> turns out that there's a surprising number of those, too, but still far
-> fewer.
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index a2e34f149a07..fb60467fa877 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -2698,6 +2698,20 @@ static bool is_stack_canary(struct arch *arch, struct annotated_op_loc *loc)
+>  	return false;
+>  }
+>  
+> +/**
+> + * Returns true if the instruction has a memory operand without
+> + * performing a load/store
+> + */
+> +static bool is_address_gen_insn(struct arch *arch, struct disasm_line *dl)
+> +{
+> +	if (arch__is(arch, "x86")) {
+> +		if (!strncmp(dl->ins.name, "lea", 3))
+> +			return true;
+> +	}
 
-oops, my bad.
+Can't we turn this into:
 
--- 
-~Randy
+tatic bool disasm_line__is_address_gen_insn(const struct disasm_line *dl)
+{
+		return dl->ins.address_gen;
+}
 
+I.e. at some initial step when setting dl->ins, cache this series of
+string operations and then use it s result?
+
+- Arnaldo
+
+> +
+>  static struct disasm_line *
+>  annotation__prev_asm_line(struct annotation *notes, struct disasm_line *curr)
+>  {
+> @@ -2806,6 +2820,12 @@ __hist_entry__get_data_type(struct hist_entry *he, struct arch *arch,
+>  		return &stackop_type;
+>  	}
+>  
+> +	if (is_address_gen_insn(arch, dl)) {
+> +		istat->bad++;
+> +		ann_data_stat.no_mem_ops++;
+> +		return NO_TYPE;
+> +	}
+> +
+>  	for_each_insn_op_loc(&loc, i, op_loc) {
+>  		struct data_loc_info dloc = {
+>  			.arch = arch,
+> -- 
+> 2.51.0.788.g6d19910ace-goog
 
