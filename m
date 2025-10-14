@@ -1,310 +1,150 @@
-Return-Path: <linux-kernel+bounces-853012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D317BDA70C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:40:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B7CBDA7E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45CA19276C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:41:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA4E354497E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF113002CA;
-	Tue, 14 Oct 2025 15:40:34 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002DD3002DD;
+	Tue, 14 Oct 2025 15:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J8GU3MLF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A55F2DECD4;
-	Tue, 14 Oct 2025 15:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7308B2D9ED9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760456434; cv=none; b=i3h5/xY0cyoulake8AfJGGMxEXAOtDWC5aWRuplPeoJli+VpvdmbzaxVX8Ctb9QnO8/etJvlODDyv+qoxcw4K8I24Uotq0V6hoO53BP+WepfuoUJ6PfrileXfqbxapA+RJ6dLXShlY/hn86n8T5spJLdgDTMswvm/8xQ0fsE2SQ=
+	t=1760456478; cv=none; b=OdaqOr0Mtm0l0NBcgghe5Ilfam7sc/GDWLYjy5cOHquIUuzpkqiJWFtQRNsM7IlcjRRpFn/7DD6irV6b+eRwcQXx2oyxsNn+xABMWaw2IwE7t5CiDCqrg2tb3cvGz6uuNmJR+3rhwiJImfPilBsoU1eGVMlarUZcW4MRZWrLGK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760456434; c=relaxed/simple;
-	bh=BN0cRurDhQvRoxeXN8Mz3Cz2hPp/sBOtgKJbjhSJQyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hpjS7bjarvodVR9GmsLXMGHelLbgJeyTXszjXMUQwt3m+FNyIoDj7BO/vRkIV/eqywSzRcXjHAcZnB4WNGag5XBruHNzws+yFH6VkXkbQtyV10L2/Yv0nwerobLl3ySaUTBtaHpWrZ2pV7hiyKNhcBIsiftr0xrHGYbWshLbnLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 4CF23BC054;
-	Tue, 14 Oct 2025 15:40:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 0187020030;
-	Tue, 14 Oct 2025 15:40:23 +0000 (UTC)
-Date: Tue, 14 Oct 2025 11:40:29 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
- ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
- Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
- bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
- anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
- tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v12 1/3] PCI: trace: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <20251014114029.4c59bb1a@gandalf.local.home>
-In-Reply-To: <20251014123159.57764-2-xueshuai@linux.alibaba.com>
-References: <20251014123159.57764-1-xueshuai@linux.alibaba.com>
-	<20251014123159.57764-2-xueshuai@linux.alibaba.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760456478; c=relaxed/simple;
+	bh=pOuuayWNExUaEjiREKno3GIORZyip1/rQdst2hzkbMQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jOuSI/S/pylKXZNZDVc5QSRpIqoEethsyGkSh4SkYjNHNUWZshxFvudCYSmYXdtALCFJsNs2sqHPBxhg1lTaNjiN4QgR8IAKf1l4yMjMtEkPGgKTyx6RcGPBFIqT+Ik7dkooskCj3s9RtlRraGwLxmBYtTYkIphibcF2kQYVMng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J8GU3MLF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760456475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xN6Ef1sp8hGiQor4Puf+nhx4w4uum6cowYv1M66MvxU=;
+	b=J8GU3MLFRlxcPt2V20bcZQRmasGhg4jdJK+k7H/QNTV2KRgq/0yJ7M+MiDFc7Dc/Ser7Yn
+	wOp7ExGeSj3d9xaMY7s4x+DLbNOPtz5nh4l46V0yrjbc5vtLCBIX4yAHSimdy5XB3C6Ufj
+	gPGRajXeGcwbnagKCLaXzStVuyPBo8k=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-3cV0MFsZPuyaHnTmHgjW7Q-1; Tue, 14 Oct 2025 11:41:14 -0400
+X-MC-Unique: 3cV0MFsZPuyaHnTmHgjW7Q-1
+X-Mimecast-MFC-AGG-ID: 3cV0MFsZPuyaHnTmHgjW7Q_1760456473
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b2d1072a9c4so487017066b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:41:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760456473; x=1761061273;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xN6Ef1sp8hGiQor4Puf+nhx4w4uum6cowYv1M66MvxU=;
+        b=ai+AtcnIYhf2SHHkBY1sWjKEK9TWARmp85gfEVyCIbMxXEZGwUdhxsLMUKb3FMxDhV
+         vJDpCNJL89IxgnxjURuzkxW+u8XdNFSToTe1P82n0zB2p98TlqB3Hz2w8ZxD5UBfr9AK
+         Y3XVqBsoubr+OyrcdG4TYwtLDrfv2DNvdzuCCyFeUTZG1TQRC67dmNDSRVlpsVGdoagy
+         JqA0wCPuM+dcAT/OPr531uiwDstrGDip9zquTd0B7QiQe1wUUf5QDUsuVhyv10hTLqAS
+         +oGFVTQk7r0lJw2gckpOhqQQopdf48z+ZEq6gf8NxuXwh4V0uXSARl4nHvl9tEMa6pqf
+         l+uw==
+X-Gm-Message-State: AOJu0YwhsG+oVdMbDuAegDWuFLHgS1jPddnp5Zaqo2RvId1YtE9hHDuA
+	kNRoLYFL+451kTMZ7N4vVsSizL/F8lk2e7469vl4Uc5jeIhezeiiFWF9jkjuWug86Re6/WaX8sf
+	UlV1czRSFw/bNfzQ+doxNYUHZbZdIJ4k6PUPTye/ET3GZnUtA6ZfAezIBoCpWCsPNZNlNlwMxhC
+	GHbml6qIRMAq0rz7ku1RVDYQ3jTQm6vN9lC8Eyjvtsfh4DNaq0duHTqnQ=
+X-Gm-Gg: ASbGnctonN7QQmPQqHl0re0rh/XH2MnOrQWTTtAQ8ZGB1nlDEqEfTBHkKBDfLVTlirF
+	HV+VV8gl9kH1r/nuV6mDnfH9wnvJCXM4hl7NEgnRxti/DKJWGZ370g9FJ6pLN3iy8IosInYILSJ
+	nDNPzdIXy2kA8a/5MvzUQpmaTOlOQHAFcqdev6JKLtasno+rKnApWjk+kPP3n/LRoWshpmFANAH
+	armtcizQAOLK4WUGuTJ9TsCV9FSlfrEs7qAgfcyxpMBzG24SzV4AaXUqkADuMndlOVP41POt0R9
+	atRlRoZf8BEMk5luBFWwoBepQDUctUDcKU5Q/xBLZYnC2Arx1w==
+X-Received: by 2002:a17:906:ee85:b0:b4e:f7cc:6346 with SMTP id a640c23a62f3a-b50aa08f852mr2493216466b.15.1760456472726;
+        Tue, 14 Oct 2025 08:41:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7MKAgrKXHfanZDhLxk8qbmij1H4ExOUqyMqzBv4euyBsK4QKZM6PUBQShnN55eCek+WQ0jw==
+X-Received: by 2002:a17:906:ee85:b0:b4e:f7cc:6346 with SMTP id a640c23a62f3a-b50aa08f852mr2493212866b.15.1760456472247;
+        Tue, 14 Oct 2025 08:41:12 -0700 (PDT)
+Received: from holism.lzampier.com ([148.252.9.235])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cba45b3cbsm7897866b.40.2025.10.14.08.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 08:41:11 -0700 (PDT)
+From: Lucas Zampieri <lzampier@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <dramforever@live.com>,
+	Charles Mirabile <cmirabil@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v3 0/3] Add UltraRISC DP1000 PLIC support
+Date: Tue, 14 Oct 2025 16:40:54 +0100
+Message-ID: <20251014154100.168236-1-lzampier@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: g3a8azz8jeckjuqkykwgg67ktcyoid1c
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 0187020030
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+56UC/0yh7pDLxktD4Ww/pF2GM3+ZNLaY=
-X-HE-Tag: 1760456423-588206
-X-HE-Meta: U2FsdGVkX1/qBhVcJ0onmnLBSHa++eubqrKZF2PFjqVPlCldnstYoRazugdO+YWZkIVcctGko81qhZCSs8vnLdIor1zt9/1uGNdHamW1GucCqsNS50hC3lm49cCPUBOGVx/ByTkRSapWnN5TjHsp12Wfb4Zde4RXLUdZV7uykreXujlih7Fu9V/LsRfteDpdnZkjCNUvb//ck/JjlEHNiVAledrwMO6KqBYlEpzsSCsACHSNF0AzlaWasCLCTd9EvxfIgYit2PnmZqrA9Ihp2fyHXnlvezc+TiaOljB8xpXBmIS9KJkV4ckYzuDG4DxUfmJP6AyeP+fPbKxsFRrJwH7cCH0wc94JRYrcrDPffY3o3Yad6s35a43fT5oAJPlh15LfGROEie02vnDv53MspU1+x4PcBJRiHruntzAOZDw=
+Content-Transfer-Encoding: 8bit
 
-On Tue, 14 Oct 2025 20:31:57 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+This series adds support for the PLIC implementation in the UltraRISC
+DP1000 SoC. The UR-CP100 cores used in the DP1000 have a hardware bug in
+their PLIC claim register where reading it while multiple interrupts are
+pending can return the wrong interrupt ID. The workaround temporarily
+disables all interrupts except the first pending one before reading the
+claim register, then restores the previous state.
 
-> Hotplug events are critical indicators for analyzing hardware health,
-> and surprise link downs can significantly impact system performance and
-> reliability.
-> 
-> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
-> for hotplug event to help health checks. Add enum pci_hotplug_event in
-> include/uapi/linux/pci.h so applications like rasdaemon can register
-> tracepoint event handlers for it.
-> 
-> The following output is generated when a device is hotplugged:
-> 
-> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-> $ cat /sys/kernel/debug/tracing/trace_pipe
->    irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_PRESENT
-> 
->    irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_UP
-> 
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/pci/Makefile              |  3 ++
->  drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
->  drivers/pci/trace.c               | 11 ++++++
->  include/trace/events/pci.h        | 63 +++++++++++++++++++++++++++++++
->  include/uapi/linux/pci.h          |  7 ++++
->  5 files changed, 109 insertions(+), 6 deletions(-)
->  create mode 100644 drivers/pci/trace.c
->  create mode 100644 include/trace/events/pci.h
-> 
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index 67647f1880fb..58a4e4ea76b0 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -45,3 +45,6 @@ obj-y				+= controller/
->  obj-y				+= switch/
->  
->  subdir-ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
-> +
-> +CFLAGS_trace.o := -I$(src)
-> +obj-$(CONFIG_TRACING)		+= trace.o
-> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-> index bcc938d4420f..7805f697a02c 100644
-> --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> @@ -19,6 +19,7 @@
->  #include <linux/types.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/pci.h>
-> +#include <trace/events/pci.h>
->  
->  #include "../pci.h"
->  #include "pciehp.h"
-> @@ -244,12 +245,20 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->  	case ON_STATE:
->  		ctrl->state = POWEROFF_STATE;
->  		mutex_unlock(&ctrl->state_lock);
-> -		if (events & PCI_EXP_SLTSTA_DLLSC)
-> +		if (events & PCI_EXP_SLTSTA_DLLSC) {
->  			ctrl_info(ctrl, "Slot(%s): Link Down\n",
->  				  slot_name(ctrl));
-> -		if (events & PCI_EXP_SLTSTA_PDC)
-> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-> +					   slot_name(ctrl),
-> +					   PCI_HOTPLUG_LINK_DOWN);
+The driver matches on "ultrarisc,cp100-plic" (CPU core compatible), allowing
+the quirk to apply to all SoCs using UR-CP100 cores (currently DP1000,
+potentially future SoCs).
 
-I know this is v12 and I don't remember if I suggested this before and you
-gave me a reason already, but why not simply pass in "ctrl" and have the
-TRACE_EVENT() denote the names?
+Charles Mirabile (2):
+  dt-bindings: interrupt-controller: add UltraRISC DP1000 PLIC
+  irqchip/plic: add support for UltraRISC DP1000 PLIC
 
-> +		}
-> +		if (events & PCI_EXP_SLTSTA_PDC) {
->  			ctrl_info(ctrl, "Slot(%s): Card not present\n",
->  				  slot_name(ctrl));
-> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-> +					   slot_name(ctrl),
-> +					   PCI_HOTPLUG_CARD_NOT_PRESENT);
-> +		}
->  		pciehp_disable_slot(ctrl, SURPRISE_REMOVAL);
->  		break;
->  	default:
-> @@ -269,6 +278,9 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->  					      INDICATOR_NOOP);
->  			ctrl_info(ctrl, "Slot(%s): Card not present\n",
->  				  slot_name(ctrl));
-> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-> +					   slot_name(ctrl),
-> +					   PCI_HOTPLUG_CARD_NOT_PRESENT);
->  		}
->  		mutex_unlock(&ctrl->state_lock);
->  		return;
-> @@ -281,12 +293,19 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->  	case OFF_STATE:
->  		ctrl->state = POWERON_STATE;
->  		mutex_unlock(&ctrl->state_lock);
-> -		if (present)
-> +		if (present) {
->  			ctrl_info(ctrl, "Slot(%s): Card present\n",
->  				  slot_name(ctrl));
-> -		if (link_active)
-> -			ctrl_info(ctrl, "Slot(%s): Link Up\n",
-> -				  slot_name(ctrl));
-> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-> +					   slot_name(ctrl),
-> +					   PCI_HOTPLUG_CARD_PRESENT);
-> +		}
-> +		if (link_active) {
-> +			ctrl_info(ctrl, "Slot(%s): Link Up\n", slot_name(ctrl));
-> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-> +					   slot_name(ctrl),
-> +					   PCI_HOTPLUG_LINK_UP);
-> +		}
->  		ctrl->request_result = pciehp_enable_slot(ctrl);
->  		break;
->  	default:
-> diff --git a/drivers/pci/trace.c b/drivers/pci/trace.c
-> new file mode 100644
-> index 000000000000..cf11abca8602
-> --- /dev/null
-> +++ b/drivers/pci/trace.c
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Tracepoints for PCI system
-> + *
-> + * Copyright (C) 2025 Alibaba Corporation
-> + */
-> +
-> +#include <linux/pci.h>
-> +
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/pci.h>
-> diff --git a/include/trace/events/pci.h b/include/trace/events/pci.h
-> new file mode 100644
-> index 000000000000..208609492c06
-> --- /dev/null
-> +++ b/include/trace/events/pci.h
-> @@ -0,0 +1,63 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM pci
-> +
-> +#if !defined(_TRACE_HW_EVENT_PCI_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_HW_EVENT_PCI_H
-> +
-> +#include <linux/tracepoint.h>
-> +
-> +#define PCI_HOTPLUG_EVENT						\
-> +	EM(PCI_HOTPLUG_LINK_UP,			"LINK_UP")		\
-> +	EM(PCI_HOTPLUG_LINK_DOWN,		"LINK_DOWN")		\
-> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"CARD_PRESENT")		\
-> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"CARD_NOT_PRESENT")
-> +
-> +/* Enums require being exported to userspace, for user tool parsing */
-> +#undef EM
-> +#undef EMe
-> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
-> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
-> +
-> +PCI_HOTPLUG_EVENT
-> +
-> +/*
-> + * Now redefine the EM() and EMe() macros to map the enums to the strings
-> + * that will be printed in the output.
-> + */
-> +#undef EM
-> +#undef EMe
-> +#define EM(a, b)	{a, b},
-> +#define EMe(a, b)	{a, b}
-> +
-> +TRACE_EVENT(pci_hp_event,
-> +
-> +	TP_PROTO(const char *port_name,
-> +		 const char *slot,
-> +		 const int event),
-> +
-> +	TP_ARGS(port_name, slot, event),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(	port_name,	port_name	)
-> +		__string(	slot,		slot		)
-> +		__field(	int,		event	)
-> +	),
+Lucas Zampieri (1):
+  dt-bindings: vendor-prefixes: add UltraRISC
 
-	TP_PROTO(struct controller *ctrl, int event),
+Changes in v3:
+- 0002: Updated commit message to clarify that DP1000 is an SoC and CP100
+  is a core (feedback from Conor Dooley)
+- 0003: Renamed dp1000_* functions to cp100_* and updated commit message to
+  clarify the hardware bug is in the UR-CP100 core implementation, not
+  specific to the DP1000 SoC
+- 0003: Moved quirk check out of hot interrupt path by creating separate
+  plic_handle_irq_cp100() function and selecting handler at probe time
+- 0003: Use existing handler->enable_save[] array instead of stack allocation
+- 0003: Use readl_relaxed()/writel_relaxed() for better performance
 
-	TP_ARGS(ctrl, event),
+Changes in v2:
+- 0002: Changed compatible string pattern to SoC+core: ultrarisc,dp1000-plic
+  with ultrarisc,cp100-plic fallback (suggested by Krzysztof and Vivian)
+- 0003: Driver now matches on ultrarisc,cp100-plic (core) instead of dp1000 (SoC)
+- All patches: Added submitter Signed-off-by to complete DCO chain
 
-	TP_STRUCT__entry(
-		__string(	port_name,	pci_name(ctrl->pcie->port)	)
-		__string(	slot,		slot_name(ctrl)			)
-		__field(	int,		event				)
-	),
+ .../sifive,plic-1.0.0.yaml                    |  3 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+ drivers/irqchip/irq-sifive-plic.c             | 94 ++++++++++++++++++-
+ 3 files changed, 98 insertions(+), 1 deletion(-)
 
-It would move the work out of the calling path.
-
--- Steve
-
-
-> +
-> +	TP_fast_assign(
-> +		__assign_str(port_name);
-> +		__assign_str(slot);
-> +		__entry->event = event;
-> +	),
-> +
-> +	TP_printk("%s slot:%s, event:%s\n",
-> +		__get_str(port_name),
-> +		__get_str(slot),
-> +		__print_symbolic(__entry->event, PCI_HOTPLUG_EVENT)
-> +	)
-> +);
-> +
-> +#endif /* _TRACE_HW_EVENT_PCI_H */
-> +
-> +/* This part must be outside protection */
-> +#include <trace/define_trace.h>
-> diff --git a/include/uapi/linux/pci.h b/include/uapi/linux/pci.h
-> index a769eefc5139..4f150028965d 100644
-> --- a/include/uapi/linux/pci.h
-> +++ b/include/uapi/linux/pci.h
-> @@ -39,4 +39,11 @@
->  #define PCIIOC_MMAP_IS_MEM	(PCIIOC_BASE | 0x02)	/* Set mmap state to MEM space. */
->  #define PCIIOC_WRITE_COMBINE	(PCIIOC_BASE | 0x03)	/* Enable/disable write-combining. */
->  
-> +enum pci_hotplug_event {
-> +	PCI_HOTPLUG_LINK_UP,
-> +	PCI_HOTPLUG_LINK_DOWN,
-> +	PCI_HOTPLUG_CARD_PRESENT,
-> +	PCI_HOTPLUG_CARD_NOT_PRESENT,
-> +};
-> +
->  #endif /* _UAPILINUX_PCI_H */
+--
+2.51.0
 
 
