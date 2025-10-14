@@ -1,217 +1,181 @@
-Return-Path: <linux-kernel+bounces-851881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B103BD7840
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:05:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0750CBD783D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CAEA18A5F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:05:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E212E407085
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E63830B504;
-	Tue, 14 Oct 2025 06:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAAF30CDAE;
+	Tue, 14 Oct 2025 06:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aHQhrPiB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWdPOu/Z"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEBA30B518
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCC930BF52
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760421883; cv=none; b=uIIaHQUvj2dCZAZRjhbi+I4GxrdOMpe+TIRQEVgImC00LxSg/AvUCGlLmTx/C7o+edvXeFQzoiWNp9vzR6t89FjTdeK66sioqT+ArzvXeyqIcTKj/uojdyAa29gFCQZWVzWTwdRrgbwz0Ec0FZ1ZbGZa0AfvsjR2HOVhfSB7TyE=
+	t=1760421876; cv=none; b=sAlnPTuByBYS4mtum4V5ETfos7VerpTI6Yu58yb3acmNxKSn8WZpQR+KyobXwHjcSUuuOHFfNxNptHLLqWqfdGrqFacDZ/WInTDCHXu6o95rtMBz+Kqr40mJ2nS/9asmCE9c2JtyV5B2V/R1j9X9uNu0FSkmyzoDUL3m7Qwv6oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760421883; c=relaxed/simple;
-	bh=+ic5AihcIegAradhwux+QLsSKjrjS2y32uAShcvRa2Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RVFhWO5m/5S8Lvt90fa/+PaxZhM9tDMdwnESTOj+Vw87jf1bfenTytvghwu+KAbWk49dico1jPrGNzGUibEkK2MxN9c4TnOyZa/B08AJ6dKuPGd3BgbfR+K9cteRKXWlila0VR5sWbGucIgrLmCvKJ6JZzOdzopd/HysFeq94fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aHQhrPiB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DHD9t4005642
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=tDnjiEFQvmj
-	6QEflrGl3a0N01kBNbGPHWb9PIOiOQ2s=; b=aHQhrPiBSlcPJpMDCb4S8oq9H/z
-	6vWvsWxknKCM8gFKElfXxKcq/bfHGw59tTu7aIEkwSEogNk5CirdKkLsX5PjFF/8
-	HAuKQznIwur65GcbOoTuYIds5EoGvQ1ruinDQcR2RXQXdgJaB1iIWGof1Ucxkcg1
-	VpgR2z+XvGKGXxnlfpT4pRCKR9upQA4IFHvcsWL1gLMASm6foLb81i9UHOMjEEs/
-	kU1iJauzGDcKnw6BH/v3goWxEje4ZKEFq384jrHXsTBSr54y50G9AoUoozO8oLyN
-	MxZnlYScquc67hvDonlkRCGlhj6xfc6x0FFXeDj3TUp+YEBMwS05MjV1tKA==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfa87bdr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:40 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b62cdd71290so8473278a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:04:40 -0700 (PDT)
+	s=arc-20240116; t=1760421876; c=relaxed/simple;
+	bh=tv0xd/ZLUTxahGhqv/v6XY8qJ/8QWSM/jWNbbSekNAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JVlVNdZysYZ4gKXN1oMSxaE+DqjRPNtY3Ym4gpS0ybgw07H9aCAsY5BneLJnM0AUW0vA3ggAOA2exGaZr/tzF/LuZ2SNLZxcHrD+IHiLcaLT0AvKwuWFDCAdAgOY1rFDen8LCeCIJtpFWb3/vcAdbz9q3sLyGtpE+3GcQRnKFCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWdPOu/Z; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3306eb96da1so3881304a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760421874; x=1761026674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzZuo7NJ/DlD6SoTWD70pPuh+8rHqp2AyadzZH5QNao=;
+        b=lWdPOu/ZNgdIRmt3s1GU8nzMUufS5orl0aFEZDpsNrFFxMZ1aktwrktG9Mm0gNqVJS
+         ZsH5P2gOaZTSUASdOcgNppZQ16uvad+PgYoEl1W38BSVi+DjmW0D2VKZV3jxx+RC7hdp
+         UNhz84Wp9th9+so84DBjujtRhssnAQ5E06h4LWVuVnwjttbNr8lEIhO61yMHf6zUy/q9
+         DRneuFReD5qgvX1aCrrSMoWfoJ7+hXff3DPUp0LnDMSgBo0xOpKvD00Tzb0PujvsAspj
+         c7+UvUSE4OB8EWvHjcfs7w/qvUdawh8cDViXP/oJypuwmcIujhlDhFQcWjcSjUl55+lG
+         Np1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760421879; x=1761026679;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760421874; x=1761026674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tDnjiEFQvmj6QEflrGl3a0N01kBNbGPHWb9PIOiOQ2s=;
-        b=BKYRqGefbHlGIj7KdLC161FXvu7IqHi7A9tN3TXHQxWxMDevs2Ez/W6ZX1xtgRZugy
-         22a5mvUBJxJFoGkYJ7h/E4wUxoZHAZsH19Il+qjnNmuaAZKoqPgtT3sGWLNXJKgRy9V7
-         47IqTopYgGhH5gepFv2YOpcUjHqtvQBzT/8jMbiH1r9u4H8cTftWe6R8/J8R3APSct6W
-         cAuT4AIlZvLRpo0Hj8w0Qf6h/WoQU29GTepZ42U0ewZkuZ08Oig2vWiFc/s7ZEGikc5c
-         +oEcCfCc4d0tqOZtMkt8Wk+tuJHcMXSo9b4zLZvcxgsRWQA2JQ9qgYhvGcILu9R+/WtW
-         +WAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqFDNVbhkhbcbZIC2jyAraUBuhR3px0IxzweWFUVF/GqGiD1mH+zn461dL29rrzVRNtqCo46kUfHUeIJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQEaFiCjYO5s/bz/erstE28qrDPgXm022XYjRdDi5rXXcxCos/
-	+N8cuTQbl3WmH0xgiNx3LLj/W7Qz1Z7LkwQL4TcC0JTnObPaIiQAl0OG2gb7rptM/YqxTkRekq0
-	sRqVcj7c02gHsuib/pe/l2e7JBNS/pG7OlhB+Y+/Vx1z3Gl4RK9H1X3hg3qWmyjO6IzA=
-X-Gm-Gg: ASbGncsqlK+IHLqaRNcElVs0wLYxY5swDC2iErTmAZ2HTgYSl28ZLoQ+xT6gKJldCdK
-	lZCLJiTeoOSKbnsivRN8VsQlcugEfBK9lT/1XGc7uM5xzh5vsWKiUiuIvSRB+09bJk04fENnllm
-	X21IZN+6Mygh4L67eeBqD5KwdBCjm31I91VZG5Hsj0HQVDc7RJmiyOf9AXbg4/veT4Kn48r/Mv4
-	szsLVXqIQLe+aQxDadsreaIq3/nkEMBNLsfjk+mmQhExpcXtH4zk5CLfQgqq0ZZZj9DMSNAAKCH
-	zXSJdVnLhSdaR48Pi4Jjh17jfDuZrjIykFHcNZ6gY1+0YXLR/4lxHZjltArRG3wnM/Yq4ruN
-X-Received: by 2002:a05:6a20:a128:b0:32d:95f2:1fe with SMTP id adf61e73a8af0-32da8df32d3mr30176136637.2.1760421878963;
-        Mon, 13 Oct 2025 23:04:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYbnXuM+iOSZX3hz/0dhkllzDFS6YwugLjRnZ5256l5aV2JKlrgvuY1ArMl3v0AvxE39tuXQ==
-X-Received: by 2002:a05:6a20:a128:b0:32d:95f2:1fe with SMTP id adf61e73a8af0-32da8df32d3mr30176096637.2.1760421878470;
-        Mon, 13 Oct 2025 23:04:38 -0700 (PDT)
-Received: from hu-pkambar-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b0604cfsm13946024b3a.9.2025.10.13.23.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 23:04:38 -0700 (PDT)
-From: palash.kambar@oss.qualcomm.com
-To: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-        bvanassche@acm.org, peter.griffin@linaro.org, krzk@kernel.org,
-        peter.wang@mediatek.com, beanhuo@micron.com, quic_nguyenb@quicinc.com,
-        adrian.hunter@intel.com, ebiggers@kernel.org,
-        neil.armstrong@linaro.org, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
-        quic_nitirawa@quicinc.com,
-        Palash Kambar <palash.kambar@oss.qualcomm.com>
-Subject: [PATCH V1 2/2] ufs: ufs-qcom: Disable AHIT before SQ tail update to prevent race in MCQ mode
-Date: Tue, 14 Oct 2025 11:34:06 +0530
-Message-Id: <20251014060406.1420475-3-palash.kambar@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251014060406.1420475-1-palash.kambar@oss.qualcomm.com>
-References: <20251014060406.1420475-1-palash.kambar@oss.qualcomm.com>
+        bh=tzZuo7NJ/DlD6SoTWD70pPuh+8rHqp2AyadzZH5QNao=;
+        b=hx4SjAqPdzESj657C4vTglPidQRv8iODUlU7YdfxYbYY7KGuC+1FqUV08LV5tO4WNj
+         1FJiJO1HwIDbaCGVeUHZf1Os5vflwmj9hgYC6iwDd+TrAHmgcAd+5FuUuhuJSGRezlp4
+         1loQ5qUSs1PuurzK6jI6pW6HxBeKrb0PRFROqis9qCT7rkLXrGmS/dDJDnuROtNWF7B/
+         Rk16JBW3/1saJDII2NXMgs9KIAc8jzxZ7/nbNhzdn5CouMJruqvYILMtY3RECBAkRDA5
+         1+Z9/sA9t40hAyODX8xPM7mN3V9PLioFaVIkKAT5XVMaghn3u36n/mMBqlbRZUij7GZs
+         7rog==
+X-Forwarded-Encrypted: i=1; AJvYcCWSRi00+hSeoy/c4lMpTtMh4M+C3RFsb7WTSwmb2hII1XevmJg+2gJIqpvRpjXGd8BKX/8a6rn88do+WjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJrgzaBB1Py8tGdSK6EtPC735qwB49Pg4edMVpTUTzr2KJ5hsz
+	N1zLLwWl5TWLe83/r0vFFWQpYJnCcSL1rw+gr3tYoLIK03UL0hfTpwMJT8qIKYwR7z+owvqYtZz
+	su7tgOgmDU+M6IMP/waqRy1mHwGCOOfM=
+X-Gm-Gg: ASbGnctZsRPf6mmVv8PNiP40bgG3LbWPaAvOZluKur4RUElaLtbeElEkNXFguPvWOAz
+	Qai7/3j5akrd96qw+Mq2NYhV+LFZqL6wkgULzERltVOehEB+nr4U8piPhJ3xcU+3dNmmnLEwn8u
+	hUw1LGVMG4L7iEmuzmyk6F75JVF4u3zZVYu2uw4DfjVXByjasAdUm0DZiniOJ5QD98WP2NKE25x
+	dwMwIr9WCV7J8cvn3nU6u9LvRcLyKM3TUH+
+X-Google-Smtp-Source: AGHT+IHgo+WYjqQU4SsdvUGTS8UzFNwqRmcAAWsiHyknSHfsOn4aG616ucEJLt9ZJx34ZiYRNEWMbDb0/kmXi44bPmU=
+X-Received: by 2002:a17:90b:1d06:b0:32e:2c90:99a with SMTP id
+ 98e67ed59e1d1-33b513b4b51mr35056966a91.35.1760421874366; Mon, 13 Oct 2025
+ 23:04:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: oJkmI452E_YA3QKDMbq8MFO7XvY1QM8B
-X-Proofpoint-ORIG-GUID: oJkmI452E_YA3QKDMbq8MFO7XvY1QM8B
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX3xZ3n+6dzOZT
- fb9tdjDm746r1x5ZLXvV82ILAmFaA9nCCyqik1Zhp/ztWkVH8efMX7fpfZM7QSjgZ/EaBObBnEk
- syY4EX+zm07+fC4xzetWH6qzEi7UZLYDk0r6TIkI/k7y++Jwm6+xm5XRjE4tGdSdidi+xrcJsrr
- dYp9TYbS8RG1dgavdrB3G9eH/iy7TnBchtCnw+qAXDFx03MKfJAogsds+k69Jcn8T7WelPlW8ea
- sV2WXSSu2gRIA52syeOFj3lV/xbQmNcRwnIIEuT4zkWW2BI8t4KBq6YdyZupdK6ZqZJa+E1yOQ0
- mydrHjZ6rCh+fJB9hmb4oDAse23Jp5gb3xOmMzzFDD0FE7TF29WFE9n3+q3S/ZjWfW3F5PiLROS
- Rwlwo4I3t5QraBuJpv6RpCjIzuP/EQ==
-X-Authority-Analysis: v=2.4 cv=JLw2csKb c=1 sm=1 tr=0 ts=68ede7f8 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=qjqbbBDWswgaW-2ywKgA:9 a=_Vgx9l1VpLgwpw_dHYaR:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110017
+References: <20251013134708.1270704-1-aha310510@gmail.com> <20251013164625.nphymwx25fde5eyk@pali>
+ <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
+In-Reply-To: <CAKYAXd8bhyHrf=fMRrv2oWeWf8gshGdHd2zb=C40vD632Lgm_g@mail.gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Tue, 14 Oct 2025 15:04:23 +0900
+X-Gm-Features: AS18NWCJ1qNnENzazf89-ZHRk0M4-ND7Pc4CWd_uJJpk98z55XLeWA5G4CpXXIk
+Message-ID: <CAO9qdTHLEEDPWpZeWBq5Awn_wrcpfcYFK4Hhr=AohOhWpQDRcA@mail.gmail.com>
+Subject: Re: [PATCH v3] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Ethan Ferguson <ethan.ferguson@zetier.com>, Sungjong Seo <sj1557.seo@samsung.com>, 
+	Yuezhang Mo <yuezhang.mo@sony.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Can Guo <quic_cang@quicinc.com>
+Hi Namjae,
 
-In MCQ mode, a race condition can occur on QCOM UFSHC V6 when the
-Auto-Hibernate Idle Timer (AHIT) is close to expiring. If a data
-command and a hibernate command are issued simultaneously to the
-UniPro layer, the data command may be dropped.
+Namjae Jeon <linkinjeon@kernel.org> wrote:
+>
+> On Tue, Oct 14, 2025 at 1:46=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org>=
+ wrote:
+> >
+> > On Monday 13 October 2025 22:47:08 Jeongjun Park wrote:
+> > > Since the len argument value passed to exfat_ioctl_set_volume_label()
+> > > from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds rea=
+d
+> > > occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
+> > >
+> > > And because of the NLS_NAME_OVERLEN macro, another error occurs when
+> > > creating a file with a period at the end using utf8 and other iochars=
+ets,
+> > > so the NLS_NAME_OVERLEN macro should be removed and the len argument =
+value
+> > > should be passed as FSLABEL_MAX - 1.
+> > >
+> > > Cc: <stable@vger.kernel.org>
+> > > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d=
+4
+> > > Fixes: 370e812b3ec1 ("exfat: add nls operations")
+> >
+> > Fixes: line is for sure wrong as the affected
+> > exfat_ioctl_set_volume_label function is not available in the mentioned
+> > commit.
+> >
+> > I guess it should be commit d01579d590f72d2d91405b708e96f6169f24775a.
+> >
+> > Now I have looked at that commit and I think I finally understood what
+> > was the issue. exfat_nls_to_utf16() function is written in a way that
+> > it expects null-term string and its strlen as 3rd argument.
+> >
+> > This was achieved for all code paths except the new one introduced in
+> > that commit. "label" is declared as char label[FSLABEL_MAX]; so the
+> > FSLABEL_MAX argument in exfat_nls_to_utf16() is effectively
+> > sizeof(label). And here comes the problem, it should have been
+> > strlen(label) (or rather strnlen(label, sizeof(label)-1) in case
+> > userspace pass non-nul term string).
+> >
+> > So the change below to FSLABEL_MAX - 1 effectively fix the overflow
+> > problem. But not the usage of exfat_nls_to_utf16.
+> >
+> > API of FS_IOC_SETFSLABEL is defined to always take nul-term string:
+> > https://man7.org/linux/man-pages/man2/fs_ioc_setfslabel.2const.html
+> >
+> > And size of buffer is not the length of nul-term string. We should
+> > discard anything after nul-term byte.
+> >
+> > So in my opinion exfat_ioctl_set_volume_label() should be fixed in a wa=
+y
+> > it would call exfat_nls_to_utf16() with 3rd argument passed as:
+> >
+> >   strnlen(label, sizeof(label) - 1)
+> >
+> > or
+> >
+> >   strnlen(label, FSLABEL_MAX - 1)
+> >
+> > Or personally I prefer to store this length into new variable (e.g.
+> > label_len) and then passing it to exfat_nls_to_utf16() function.
+> > For example:
+> >
+> >   ret =3D exfat_nls_to_utf16(sb, label, label_len, &uniname, &lossy);
+> Right, I agree.
+> >
+> > Adding Ethan to CC as author of the mentioned commit.
+> >
+> >
+> > And about NLS_NAME_OVERLEN, it is being used by the
+> > __exfat_resolve_path() function. So removal of the "setting" of
+> > NLS_NAME_OVERLEN bit but still checking if the NLS_NAME_OVERLEN bit is
+> > set is quite wrong.
+> Right, The use of NLS_NAME_OVERLEN in __exfat_resolve_path() and
+> in the header should also be removed.
 
-To prevent this, AHIT is disabled by reprogramming it to 0 before
-updating the SQ tail pointer. Once there are no active commands in
-the UFS host controller, the timer is re-enabled.
+I'll write a patch that reflects this analysis and send it to you right
+away.
 
-This change ensures reliable command delivery in MCQ mode by
-avoiding timing conflicts between data and hibernate operations.
+However, if do this, NLS_NAME_OVERLEN macro is no longer used anywhere
+in exfat, so does that mean should also remove the macro define itself?
 
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
-Co-developed-by: Palash Kambar <palash.kambar@oss.qualcomm.com>
-Signed-off-by: Palash Kambar <palash.kambar@oss.qualcomm.com>
----
- drivers/ufs/host/ufs-qcom.c | 35 +++++++++++++++++++++++++++++++++++
- drivers/ufs/host/ufs-qcom.h |  1 +
- 2 files changed, 36 insertions(+)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 89a3328a7a75..f31239f4fc50 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1286,6 +1286,39 @@ static int ufs_qcom_icc_init(struct ufs_qcom_host *host)
- 	return 0;
- }
- 
-+static void ufs_qcom_send_command(struct ufs_hba *hba,
-+				  struct ufshcd_lrb *lrbp)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	unsigned long flags;
-+
-+	if ((host->hw_ver.major == 6 && host->hw_ver.minor == 0 &&
-+	     host->hw_ver.step == 0) && hba->mcq_enabled) {
-+		spin_lock_irqsave(hba->host->host_lock, flags);
-+		if ((++host->active_cmds) == 1)
-+			/* Stop the auto-hiberate idle timer */
-+			ufshcd_writel(hba, 0, REG_AUTO_HIBERNATE_IDLE_TIMER);
-+		spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	}
-+}
-+
-+static void ufs_qcom_compl_command(struct ufs_hba *hba,
-+				   struct ufshcd_lrb *lrbp)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	unsigned long flags;
-+
-+	if ((host->hw_ver.major == 6 && host->hw_ver.minor == 0 &&
-+	     host->hw_ver.step == 0) && hba->mcq_enabled) {
-+		spin_lock_irqsave(hba->host->host_lock, flags);
-+		if ((--host->active_cmds) == 0)
-+			/* Activate the auto-hiberate idle timer */
-+			ufshcd_writel(hba, hba->ahit,
-+				      REG_AUTO_HIBERNATE_IDLE_TIMER);
-+		spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	}
-+}
-+
- /**
-  * ufs_qcom_init - bind phy with controller
-  * @hba: host controller instance
-@@ -2194,6 +2227,8 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
- 	.get_ufs_hci_version	= ufs_qcom_get_ufs_hci_version,
- 	.clk_scale_notify	= ufs_qcom_clk_scale_notify,
- 	.setup_clocks           = ufs_qcom_setup_clocks,
-+	.setup_xfer_req         = ufs_qcom_send_command,
-+	.compl_command          = ufs_qcom_compl_command,
- 	.hce_enable_notify      = ufs_qcom_hce_enable_notify,
- 	.link_startup_notify    = ufs_qcom_link_startup_notify,
- 	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index 380d02333d38..a97da99361a8 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -308,6 +308,7 @@ struct ufs_qcom_host {
- 	u32 phy_gear;
- 
- 	bool esi_enabled;
-+	unsigned long active_cmds;
- };
- 
- struct ufs_qcom_drvdata {
--- 
-2.34.1
-
+Regards,
+Jeongjun Park
 
