@@ -1,188 +1,234 @@
-Return-Path: <linux-kernel+bounces-851873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4519ABD77FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:53:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28C6BD7800
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DDF40402A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:53:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C34A401E70
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D15C2BE7B1;
-	Tue, 14 Oct 2025 05:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFEE3054DF;
+	Tue, 14 Oct 2025 05:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R0E+Cf9A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AhxK+pVr";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R0E+Cf9A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AhxK+pVr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AoNNOTWj"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3657221FCB
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55562305077
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760421227; cv=none; b=ow/VkhQ7Kwk8Wx3MGswxwnSCJxoXxjNU0YB40p8EcXRD3l+/GUepFsncwJhqB/ZUjG1RK/JnoriQqzwd6gMiLMcab4l210jlA8Lfo7+wq+vP1crnUnj7xt0CfLxF33Qy5EaXfQ4hwI1o80huM3jdw/8xhEBc/hxbRIDsTZ806Ok=
+	t=1760421294; cv=none; b=ZGJo0uoD1+N9bKDw93TyGkJf8q406cPL/Rf/KjWostRHd0Txb7h4teEAuCZBjsvyvohQnQNppU5+AK7jvG04it4qCCRqq2O5gKG8Y8jIOr6AMMhFXUBek+wrsnz+MND7Sh7dMFTl/tdVI34g+ODzyNpaODavM7mhJM3GkdVc3r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760421227; c=relaxed/simple;
-	bh=XHx1MIp0y8MtCK2xU6VtPEz/8ULYtO+sr3Ur3vSAbNE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u67MaAg2wAIjuXBIqhz2z49YImO+2brth0eUDsQnxVTQJTJxi4XQ3e8KnvuWXe/5d5lrwiL+IZ70L/N5rzvInNbghOXsyJv4rSm99LwFxwnOth6247/64QqNg0Rg2GyJ4NlUcggVYlywJ12dCt1a8VknUXtnZwpEWo/kzK943Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R0E+Cf9A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AhxK+pVr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R0E+Cf9A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AhxK+pVr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5407F1F74C;
-	Tue, 14 Oct 2025 05:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760421214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qvLoKULPX2FQHcB605LWH8Pa4QC+lLB7zqDLvuxGH0I=;
-	b=R0E+Cf9ApMMWDYJtCqGjAeiGf4EK3Jo6q0uiqbj8s5enDUYYgJdDwh3gzuAyUpyADtQeZR
-	ebHt9w+scbH+stRb+zUrZIFw4Ss/Z0mNY82iM/oLKVchXpkwEMJtHBy+u33k5oHHRWy7gC
-	iowwjktmdxH0tQOgpxaQ4SKqDXBd+8g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760421214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qvLoKULPX2FQHcB605LWH8Pa4QC+lLB7zqDLvuxGH0I=;
-	b=AhxK+pVr1UPT9KxqmJBIJ+TxK1PtLbdTKr/5MDRbwrkUVQ3ju/3y7sAtFom/rG/5smNKOb
-	HU0QCU7wUapP0WBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=R0E+Cf9A;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AhxK+pVr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1760421214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qvLoKULPX2FQHcB605LWH8Pa4QC+lLB7zqDLvuxGH0I=;
-	b=R0E+Cf9ApMMWDYJtCqGjAeiGf4EK3Jo6q0uiqbj8s5enDUYYgJdDwh3gzuAyUpyADtQeZR
-	ebHt9w+scbH+stRb+zUrZIFw4Ss/Z0mNY82iM/oLKVchXpkwEMJtHBy+u33k5oHHRWy7gC
-	iowwjktmdxH0tQOgpxaQ4SKqDXBd+8g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1760421214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qvLoKULPX2FQHcB605LWH8Pa4QC+lLB7zqDLvuxGH0I=;
-	b=AhxK+pVr1UPT9KxqmJBIJ+TxK1PtLbdTKr/5MDRbwrkUVQ3ju/3y7sAtFom/rG/5smNKOb
-	HU0QCU7wUapP0WBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 07A6713675;
-	Tue, 14 Oct 2025 05:53:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hJ+BAF7l7WhIegAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 14 Oct 2025 05:53:34 +0000
-Date: Tue, 14 Oct 2025 07:53:33 +0200
-Message-ID: <877bwy81wi.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jiaming Zhang <r772577952@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	broonie@kernel.org,
-	cryolitia@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	pierre-louis.bossart@linux.dev,
-	quic_wcheng@quicinc.com,
-	syzkaller@googlegroups.com,
-	tiwai@suse.com
-Subject: Re: [PATCH] ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
-In-Reply-To: <2025101453-backboned-shine-17b8@gregkh>
-References: <2025101225-lisp-monkhood-af34@gregkh>
-	<20251014040149.1031348-1-r772577952@gmail.com>
-	<2025101453-backboned-shine-17b8@gregkh>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1760421294; c=relaxed/simple;
+	bh=uhpQJtFLv1rBxsAcfck67pJR/8AGuXyPU5pS3+P1YE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=WaQSqccRev6w0leiiVR2pUoMt+vOS+owsx5l0DS0wVn9c0xsUF1jhhOZi27TtuQcykGQ1wC3DLtwYz4o5chbPSiv6iGuIze653qKcTIP4wcphQ+cFsgzt27IsoT6SjJZVLuygauG7qQiNClypHAcu1y04V54PiEE5Vxp6NnPlQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AoNNOTWj; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251014055448euoutp015b45dc5826d54bff4d85e5529927ab9e~uRdWm4i_x2554225542euoutp01j
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:54:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251014055448euoutp015b45dc5826d54bff4d85e5529927ab9e~uRdWm4i_x2554225542euoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760421288;
+	bh=KgrxKYIuyb4cf8d6Kw/QEO1mOl+rpOs8+2xF6zyBwbI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=AoNNOTWje9UdiRcES1n/LO/FyiHUuq1ECbVfCOGTMRHeZXTpTmmp/T7vb67c16J3t
+	 16KE+6qpFaZmrohQBoB+huJWKp/mL8GyGTv4CTg41h0kifueBNE4xskov1w8se4bgv
+	 zokyMswSZwnNg1dJsquVCFisW/OKNdh+y/K1vNxs=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251014055447eucas1p2c67687acd32add33c7bb253f94c46e0d~uRdWPkuq42592925929eucas1p2r;
+	Tue, 14 Oct 2025 05:54:47 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251014055447eusmtip230ff3a2be12cab6c9753d94c32e4dd37~uRdVarDXi1545615456eusmtip2D;
+	Tue, 14 Oct 2025 05:54:46 +0000 (GMT)
+Message-ID: <f3fba346-6fdd-4b0e-9414-087a12772a6a@samsung.com>
+Date: Tue, 14 Oct 2025 07:54:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 5407F1F74C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 0/3] dma_mapping: Add auto cleanup support
+To: Frank Li <Frank.Li@nxp.com>, Robin Murphy <robin.murphy@arm.com>, Dong
+	Aisheng <aisheng.dong@nxp.com>, Andi Shyti <andi.shyti@kernel.org>, Shawn
+	Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Peter Zijlstra <peterz@infradead.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251010-dmamap_cleanup-v1-0-ec5bc14e82c4@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251014055447eucas1p2c67687acd32add33c7bb253f94c46e0d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251010185046eucas1p26868b540b74a96e36943066216525bed
+X-EPHeader: CA
+X-CMS-RootMailID: 20251010185046eucas1p26868b540b74a96e36943066216525bed
+References: <CGME20251010185046eucas1p26868b540b74a96e36943066216525bed@eucas1p2.samsung.com>
+	<20251010-dmamap_cleanup-v1-0-ec5bc14e82c4@nxp.com>
 
-On Tue, 14 Oct 2025 07:26:41 +0200,
-Greg KH wrote:
-> 
-> On Tue, Oct 14, 2025 at 12:01:49PM +0800, Jiaming Zhang wrote:
-> > Hi Greg,
-> > 
-> > Thanks for the guidance. You're right, the root cause of this issue is
-> > that a USB audio device is created without a proper interface.
-> > 
-> > To fix this issue, I added a check for the NULL return value in
-> > try_to_register_card() before calling usb_interface_claimed().
-> > I have tested patch with the reproducer on the latest version (v6.18-rc1),
-> > the issue was not triggered again.
-> > 
-> > Please let me know if any changes are needed.
-> > 
-> > Best regards,
-> > Jiaming Zhang
-> 
-> Can you resend this without this text above the changelog comment?
-> 
-> > ---
-> > 
-> > In try_to_register_card(), the return value of usb_ifnum_to_if() is
-> > passed directly to usb_interface_claimed() without a NULL check, which
-> > will lead to a NULL pointer dereference when creating an invalid
-> > USB audio device. Fix this by adding a check to ensure the interface
-> > pointer is valid before passing it to usb_interface_claimed().
-> > 
-> > Reported-by: Jiaming Zhang <r772577952@gmail.com>
-> > Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
-> 
-> And as you authored this, no need for "Reported-by:" :)
+Hi
 
-Also try to point to a breaker commit via Fixes tag.
-And, pointing to the bug report thread via Closes tag would be nicer,
-too.
+On 10.10.2025 20:50, Frank Li wrote:
+> There are many below pattern
+>
+> 	fun()
+> 	{
+> 		...
+> 		dma_map_single();
+> 		if (dma_mapping_error)
+> 			goto err1;
+>
+> 		dmaengine_prep_slave_single()
+> 		if (...)
+> 			goto err2
+>
+> 		dmaengine_submit()
+> 		if (...)
+> 			goto err3
+>
+> 		wait_for_completion_timeout()
+> 		if (...)
+> 			goto err4
+>
+> 	err4:
+> 	err3:
+> 	err2:
+> 		dma_umap_single();
+> 	err1:
+> 	}
+>
+> Use cleanup can simple error handle like guard(), such as guard(mutex).
+> or __free(kfree) = kmalloc.
+>
+> But dma_umap_single() need more argurements. So situation below complex.
+>
+> It need pack argurments list into structure.
+>
+> 	#define __DEFINE_GUARD_CLASS(_name, _return_type, _list_class_fields)   \
+> 	typedef struct {                                                \
+> 	       	 _return_type ret;                                       \
+> 	        bool    okay;                                           \
+> 	        struct  {                                               \
+> 	                __REMOVE(_list_class_fields);                   \
+> 	        } args;                                                 \
+> 	} class_##_name##_t;
+>
+> So save all arugments to it.
+>
+> __DEFINE_GUARD_CLASS(dma_map_single, dma_addr_t, (struct device *dev; void *ptr; size_t size; enum dma_data_direction dir)
+> will expand to
+>
+> 	struct {
+> 		dma_addr_t ret;
+> 		bool	okay;
+> 		struct {
+> 			struct device *dev;
+> 			void *ptr;
+> 			size_t size;
+> 			enum dma_data_direction dir;
+> 		}
+> 	}
+>
+> So cleanup function can use saved argurement.
+>
+> The above fun will be
+>
+> 	fun()
+> 	{
+> 		CLASS(dma_map_single, dma)(dev, ...);
+>
+> 		...
+> 		if (...)
+> 			return err;
+> 	}
+>
+> if funtion return, which need keep map,
+>
+> 	submit()
+> 	{
+> 		dma_map_single();
+> 		...
+> 		dmaengine_submit();
+> 		if (...)
+> 			goto err1
+> 		return;
+>
+> 	goto err1:
+> 		dma_umap_single();
+> 	}
+>
+> Macro retain_and_empty() will clean varible to avoid unmap.
+>
+>          ({                                  \
+>                  __auto_type __ptr = &(t); typeof(t) empty= {};   \
+>                  __auto_type __val = *__ptr; \
+>                  __ptr->okay = 0;        \
+>                  __val.ret;              \
+>          })
+>
+> So
+>
+> 	submit()
+> 	{
+>         		CLASS(dma_map_single, dma)(dev,...;
+>
+> 	        ...
+> 	        dmaengine_submit();
+> 		if (...)
+> 			return err;
+>
+> 		//before return;
+>
+> 		retain_and_empty(dma)
+> 	}
+>
+> This series just show how to hanndle many agurement at resource alloc/free
+> functions. Only show dma_map_single. If the over all method is acceptable.
+> I will more define for dma mapping functions.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-The code change itself looks good, so only those cosmetic things.
+This looks fine from the DMA-mapping API perspective. I think we should 
+also get some feedback from Peter, who authored most of the __cleanup() 
+based infrastructure, so I've added him to the recipients list.
 
 
-thanks,
+> ---
+> Frank Li (3):
+>        cleanup: Add DEFINE_GUARD_ARGS_CLASS macro for resource alloc/free functions with multiple arguments
+>        dma-mapping: Add auto cleanup support dma_map_single()
+>        i2c: lpi2c: Use auto cleanup for dma_map_single()
+>
+>   drivers/i2c/busses/i2c-imx-lpi2c.c | 13 ++++---
+>   include/linux/cleanup.h            | 73 ++++++++++++++++++++++++++++++++++++++
+>   include/linux/dma-mapping.h        |  8 +++++
+>   3 files changed, 87 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 7c3ba4249a3604477ea9c077e10089ba7ddcaa03
+> change-id: 20251008-dmamap_cleanup-d0a7f0525a3d
+>
+> Best regards,
+> --
+> Frank Li <Frank.Li@nxp.com>
+>
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Takashi
 
