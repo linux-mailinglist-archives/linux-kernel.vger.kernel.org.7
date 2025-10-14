@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-852262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A492BD88CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:48:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C853BD88D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D561834ADF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:48:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820B41923D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E0C3090E0;
-	Tue, 14 Oct 2025 09:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEF82EB5B7;
+	Tue, 14 Oct 2025 09:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U3sU7j5T"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a+8SDUCQ"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E343101B4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87E22F49E4
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760435207; cv=none; b=A07D5mtd8vRYxsvU/o8MqizvNp/qnQ2kLuSifQ2+G+Uc0PAyI7udPX8spz0JjHC78CW7VHQXdhgcmyRkrpMvdUmBDpmahNQWzYPfYVtMxsoZMYYmNzvlnHvf3DrngFivM356QoUqrPirVrlS3qQ0XiCZqUsnVZuLjyk9PZhHsWg=
+	t=1760435224; cv=none; b=czljbvQ6HaJBRCg/XzUEXfYAaG2pxy4PhOq4ZGRnKTqzEBWVOit1bRk+NGbXh3XT0yf9G/1vKsc37ny6u7G+ow5K8fka6yh1/bcf1IWDApSL/dnLbbvnCtzZfDfCKKvyVzU8+EDZROVB0R1J9ehbvcY/AMf1RIaomQwkEkw1ES0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760435207; c=relaxed/simple;
-	bh=sF62NY/hXkORD2Eeq/8O3ZO4kcfZFnZ0z6Kg9mSuvEk=;
+	s=arc-20240116; t=1760435224; c=relaxed/simple;
+	bh=Q/EwNmJrqKRytUbxXSXQ4BbFzz+9P0jzmJ2FM9kdtTo=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MwaXkCYVUGp5TjLUQVffFLkr9Y6nb/bRvCrvubEwMv150SaV45rHKkAzhMSmeCGsCtSUiZkJZHh/PLCYZTyOHKkXydv3B3ZoQcQQbT7NNO+MSU8jyGig0n6pkesY5yb6k4GV99i49TmKpw8CzUazixQ4FOBPIM5VpZKOEIGgOR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U3sU7j5T; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=ZWnASqEGs06aX0KugTuOTw8p4c3wRqBkWYMUka/UGmCXaF6Hzs+B6IEPUQy5AHUQimvmKeBfD1l5zklf8J3t2yQMKEcZrcYcVvGg7WgxqLwMtGFmepvIAXms771HxN5hD1kZaxqOMZJSEbPsfcgwLE27ArdVmFmZdC4gWJGI0FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a+8SDUCQ; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59E9k4Pd1118566;
-	Tue, 14 Oct 2025 04:46:04 -0500
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59E9kBxo1562834;
+	Tue, 14 Oct 2025 04:46:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760435164;
-	bh=G2eY2o4OEo6VtywjaA2qCwEaXYWT6r4fqOW+c1QiJww=;
+	s=ti-com-17Q1; t=1760435171;
+	bh=5KAvQrV9PYUXZ+05NgzPPqjv+gxB7wjjkKy2Tu4HNjM=;
 	h=From:To:Subject:Date:In-Reply-To:References;
-	b=U3sU7j5TGiQ4ob0UCO+la6ysCFOB9tg+WHlDwKNHLju0TORrbiHZCCcWI+qwvVA/I
-	 Zm620KfT8ONMMDq2aM35xGjgRETYKBKdK9N5Wb2r1Jmx21mZaS+8O28TwA7o5o9fZq
-	 zEuyfy3dMn2+0bO35cnofaax/PKRnCM1Pj1kzwVw=
+	b=a+8SDUCQSXf/ErHFtzETVeSh4xkM2ATneE7z2oP7/hoPetKJlZJIPG4FPOurgXJ6X
+	 X7wOona7PlnroVVKHJ6ed2iSk97566BfXGpATgc9VuIbaxpwccGFmbQAVWki/u8kba
+	 coD/OpzyWoqTPuzwYYbtW27nW2LEJPunRdpRmkvM=
 Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59E9k4M8350837
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59E9kBm7968164
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 14 Oct 2025 04:46:04 -0500
+	Tue, 14 Oct 2025 04:46:11 -0500
 Received: from DLEE213.ent.ti.com (157.170.170.116) by DLEE100.ent.ti.com
  (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 14
- Oct 2025 04:46:03 -0500
+ Oct 2025 04:46:10 -0500
 Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
  (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 14 Oct 2025 04:46:03 -0500
+ Transport; Tue, 14 Oct 2025 04:46:10 -0500
 Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59E9jSjW3359281;
-	Tue, 14 Oct 2025 04:45:56 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59E9jSjX3359281;
+	Tue, 14 Oct 2025 04:46:03 -0500
 From: Harikrishna Shenoy <h-shenoy@ti.com>
 To: <Laurent.pinchart@ideasonboard.com>, <airlied@gmail.com>,
         <andrzej.hajda@intel.com>, <andy.yan@rock-chips.com>,
@@ -67,9 +67,9 @@ To: <Laurent.pinchart@ideasonboard.com>, <airlied@gmail.com>,
         <mripard@kernel.org>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
         <s-jain1@ti.com>, <simona@ffwll.ch>, <tomi.valkeinen@ideasonboard.com>,
         <tzimmermann@suse.de>, <u-kumar1@ti.com>
-Subject: [PATCH v8 4/6] drm/bridge: cadence: cdns-mhdp8546*: Change drm_connector from structure to pointer
-Date: Tue, 14 Oct 2025 15:15:25 +0530
-Message-ID: <20251014094527.3916421-5-h-shenoy@ti.com>
+Subject: [PATCH v8 5/6] drm/bridge: cadence: cdns-mhdp8546-core: Reduce log level for DPCD read/write
+Date: Tue, 14 Oct 2025 15:15:26 +0530
+Message-ID: <20251014094527.3916421-6-h-shenoy@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251014094527.3916421-1-h-shenoy@ti.com>
 References: <20251014094527.3916421-1-h-shenoy@ti.com>
@@ -85,121 +85,44 @@ X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 From: Jayesh Choudhary <j-choudhary@ti.com>
 
-After adding DBANC framework, mhdp->connector is not initialised during
-bridge_attach(). The connector is however required in few driver calls
-like cdns_mhdp_hdcp_enable() and cdns_mhdp_modeset_retry_fn().
-Now that we have dropped the legacy code which became redundant
-with introduction of DBNAC usecase in driver, we can cleanly switch
-to drm_connector pointer instead of structure.
+Reduce the log level for cdns_mhdp_dpcd_read and cdns_mhdp_dpcd_write
+errors in cdns_mhdp_transfer function as in case of failure, there is
+flooding of these prints along with other indicators like EDID failure
+logs which are fairly intuitive in themselves rendering these error logs
+useless.
+Also, the caller functions for the cdns_mhdp_transfer in drm_dp_helper.c
+(which calls it 32 times), has debug log level in case transfer fails.
+So having a superseding log level in cdns_mhdp_transfer seems bad.
 
-Set it in bridge_enable() and clear it in bridge_disable(),
-and make appropriate changes.
-
-This allows us to dynamically set the reference in bridge_enable() when
-the connector becomes available and clear it in bridge_disable().
-This change is necessary to properly integrate with the DBANC framework
-while maintaining all connector-dependent functionality in the driver.
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 ++++++------
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h |  3 +--
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c |  8 ++++----
- 3 files changed, 11 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 31256ad69602..fe2da567ec66 100644
+index fe2da567ec66..06ac5c2ee78f 100644
 --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
 +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -1765,12 +1765,12 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
+@@ -778,7 +778,7 @@ static ssize_t cdns_mhdp_transfer(struct drm_dp_aux *aux,
+ 			if (!ret)
+ 				continue;
  
- 	mutex_lock(&mhdp->link_mutex);
+-			dev_err(mhdp->dev,
++			dev_dbg(mhdp->dev,
+ 				"Failed to write DPCD addr %u\n",
+ 				msg->address + i);
  
--	mhdp->connector_ptr = drm_atomic_get_new_connector_for_encoder(state,
--								       bridge->encoder);
--	if (WARN_ON(!mhdp->connector_ptr))
-+	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
-+								   bridge->encoder);
-+	if (WARN_ON(!mhdp->connector))
- 		goto out;
+@@ -788,7 +788,7 @@ static ssize_t cdns_mhdp_transfer(struct drm_dp_aux *aux,
+ 		ret = cdns_mhdp_dpcd_read(mhdp, msg->address,
+ 					  msg->buffer, msg->size);
+ 		if (ret) {
+-			dev_err(mhdp->dev,
++			dev_dbg(mhdp->dev,
+ 				"Failed to read DPCD addr %u\n",
+ 				msg->address);
  
--	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector_ptr);
-+	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
- 	if (WARN_ON(!conn_state))
- 		goto out;
- 
-@@ -1869,7 +1869,7 @@ static void cdns_mhdp_atomic_disable(struct drm_bridge *bridge,
- 	if (mhdp->info && mhdp->info->ops && mhdp->info->ops->disable)
- 		mhdp->info->ops->disable(mhdp);
- 
--	mhdp->connector_ptr = NULL;
-+	mhdp->connector = NULL;
- 	mutex_unlock(&mhdp->link_mutex);
- }
- 
-@@ -2156,7 +2156,7 @@ static void cdns_mhdp_modeset_retry_fn(struct work_struct *work)
- 
- 	mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
- 
--	conn = mhdp->connector_ptr;
-+	conn = mhdp->connector;
- 
- 	/* Grab the locks before changing connector property */
- 	mutex_lock(&conn->dev->mode_config.mutex);
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-index a76775c76895..b297db53ba28 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-@@ -375,8 +375,7 @@ struct cdns_mhdp_device {
- 	 */
- 	struct mutex link_mutex;
- 
--	struct drm_connector connector;
--	struct drm_connector *connector_ptr;
-+	struct drm_connector *connector;
- 	struct drm_bridge bridge;
- 
- 	struct cdns_mhdp_link link;
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-index 42248f179b69..59f18c3281ef 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-@@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct cdns_mhdp_device *mhdp)
- 	int ret;
- 
- 	dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
--		mhdp->connector.name, mhdp->connector.base.id);
-+		mhdp->connector->name, mhdp->connector->base.id);
- 
- 	ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
- 
-@@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct cdns_mhdp_device *mhdp)
- 
- 	dev_err(mhdp->dev,
- 		"[%s:%d] HDCP link failed, retrying authentication\n",
--		mhdp->connector.name, mhdp->connector.base.id);
-+		mhdp->connector->name, mhdp->connector->base.id);
- 
- 	ret = _cdns_mhdp_hdcp_disable(mhdp);
- 	if (ret) {
-@@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct work_struct *work)
- 	struct cdns_mhdp_device *mhdp = container_of(hdcp,
- 						     struct cdns_mhdp_device,
- 						     hdcp);
--	struct drm_device *dev = mhdp->connector.dev;
-+	struct drm_device *dev = mhdp->connector->dev;
- 	struct drm_connector_state *state;
- 
- 	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
- 	mutex_lock(&mhdp->hdcp.mutex);
- 	if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
--		state = mhdp->connector.state;
-+		state = mhdp->connector->state;
- 		state->content_protection = mhdp->hdcp.value;
- 	}
- 	mutex_unlock(&mhdp->hdcp.mutex);
 -- 
 2.34.1
 
