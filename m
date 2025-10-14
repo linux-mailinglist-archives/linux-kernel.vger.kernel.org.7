@@ -1,240 +1,194 @@
-Return-Path: <linux-kernel+bounces-853038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1951ABDA848
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:57:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F7DBDA86F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29F1C4E5BFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576E0540E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE07303A03;
-	Tue, 14 Oct 2025 15:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABC6308F1D;
+	Tue, 14 Oct 2025 15:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+nzT4Et"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Bjyi2Qfr"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013055.outbound.protection.outlook.com [40.107.162.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C03A302CA3
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760457271; cv=none; b=UwQ7utdqanTM2b2VjBofhBRhER7iC/ToVdLQ8nFnmfcZa1hW8hN/mrMuBM9aZC/goLeHM69BO5/W2IyXgEhmj+zdxLE1QztpmqRMn0OceJq0s87bTCbAB6/45tRH+zM2AHmlk7dR/5FsWC6Gkb3wZWzT8mpMsXfD7ct5bfjo8Kc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760457271; c=relaxed/simple;
-	bh=rsZ3BaDupSqS8qeP47Vi26VGfO+VXssPsBRIxY84eVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qi+q0UtjX4ghk/PTyoXLHaVJrswyGjxprC1Q84jbmkbFAp1nt4HiuJKW2kgYFEFHewDPfpRyBZuoRb5rMck2ugIABmHcmes3/6OVnLpgkxrYZ9Ll1Ed89bhpAbUaIe9FQAf+rFoulXBGKUiQN5hX8eLvFnJKNW//WvurIZbWTPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+nzT4Et; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF07AC113D0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760457270;
-	bh=rsZ3BaDupSqS8qeP47Vi26VGfO+VXssPsBRIxY84eVs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O+nzT4EtRupx0wOoKypN0YO8zzIMRQYErAcRkAdb9jBgNQ51c6s3rkhGvUMihLrLj
-	 Ohg/IF23UUQR5JQsV/t7VkTxwTIfZCoVteT7xINW6AF4eNW7fHJ3y9tXieWfVGD8Gg
-	 o/kHlHuuqbo2daQewgFWZhZAAG2wYoax4Mi12QkXDJyOnQn+aLM5rJmbVRpJ2yDGDZ
-	 pl0mNfFGEW/Kv/vffXB2jxhqnVRYP+7x3YDFcG20TzijYAmaaTEO4CT3zM2UWArDOq
-	 y5BAPe8dfV3kWJLLQbBNxMZ7VsU8A4BFjUXg9Rr7juMZy3ycnG1UvC1RJF3H5Gg3j/
-	 lFUGCfL3BcaxQ==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-64c7c78369aso2942742eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:54:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEWVAHKUxMFXdIMtRA+VHsZQy81GF1QpH5lMm25m3Ml3+NE6QFvpdZU6XzGR1TyqPFt1RdZHRTTExYSxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoU5tqRN+9W+Yhze9bwzHNfP3qGNBjbs2GsvN+CLl+gX7FiNlP
-	F+7dzjjmKyqe7rHMgDI3MQ1a+jR3s/H39fXt+NefmWB4pFMf/H7Jj7iyQ6M4aoiQfiwftNPj+H0
-	9kkzxuKmekpSXuoBSMUcvicZivcoeCU4=
-X-Google-Smtp-Source: AGHT+IHF2NDlkSbOEFkhgIxTV+2pfbPIavGMBPl+ZxHrdWz0+VRE//WMkSLvbFlqn/CWFM8NAerN1gBNmKRcgn2v5lM=
-X-Received: by 2002:a05:6808:30a6:b0:441:8f74:f26 with SMTP id
- 5614622812f47-4418f741dc9mr9287921b6e.64.1760457270166; Tue, 14 Oct 2025
- 08:54:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C2D301487
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760457313; cv=fail; b=t4WOKaJq88w8IhoEkvhQTyQBu0t1ZUOXAX+rlAxasrqTfAI2dD1pu9FCp/bXrsGvelKqKQQf98YpD3atq08bbJZxSoNRYEg63C3/C6X3ne5IFBm2JQqYbKqc0r4sRHGve+XUa3CrC/Ep5W5o0u3hIke5+EYOCY5w5JgNDq8LCEY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760457313; c=relaxed/simple;
+	bh=ZF2TAYCFT15VyvOUDpCPPhipXLsWdfYhI6oOrq8+gGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KTrVQv75BPPXGAKV2LsA7/BVYxoQVwN7Zr7xkftKreHSE09B3OQfCZVFcojhy+FfN94qhxy5c4MsSIAYKUvtUbRCRyTBIT09sXXBNSVoKxtsjybQNN3vyEI6Iwkpdmt8/vD1djlemiQgenuqCzgGCrGzHqda2iFBxJrM++jE2+c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Bjyi2Qfr; arc=fail smtp.client-ip=40.107.162.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xqNIXvOf48tNz00wpKON6KjeLJoHMLDLNhbG17Ktie/EGFqZJhEAAzVMRrQ+3id7Dlc5nbBpIUeDpVT+SoXI007YB3+rcvRZMPI8AZtZ0Lcb6NhZjlqak8HCi7g1U8ZXbu+18IIvYWgn/ERPYT6R57Gc1BHEdm+uPs049hpDSKe9m9k/Kb/IXmQFsw8wMV7/TeW7Ldzux42FJz/w8j1yhp4v8TkodfUk2jMP/Y6VjFEJ60SynI+sibhnqbjDeazpNWbotbDA6aiSVMctUDAGEJlgpmIOio7mhVyODt+EKkhgx4ETRuv3908ZbKSEDqT4EFtY38/4tzECOLFU+NJlvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oJ6wjSLN2KstU/hkQl+wJzako+/OOxsBsLTvnuEy41Q=;
+ b=nADypHAEu93nhKtlgRCVmxbj7Ev6rSx08lD9Mv8GM4ntICyIZt597kVcmLy4KKSh85ugqfLQaHGLpG4H31zN/amydjsPeHBahLkbcFSi9m8G2Td5QbLqZ4BwP3eM8bxPZGqf6GnseSnV83pabb7BIvGJiB1pg7RqE9DkYb6EJMZ74ge8CEd6TBgVjUAl8fd+jNJ+HhnQ5V0sA/S453bf0n/7frYphWld7Gjd2iq+AmzbhrcD8CmW60z4u5V0yUV40eFT01C7QylrRV1MmoTcwBQF6F24L0lP9weUW2YJfhqNMsa5jTZnyWo5FXDd1DbABxPNqyTm/ZtsQsZ+J0JYGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oJ6wjSLN2KstU/hkQl+wJzako+/OOxsBsLTvnuEy41Q=;
+ b=Bjyi2QfrLitLbaViS1yMWCmNYTpNePFuO5IH6ZzF/PVV70zBdsOUzHCbvOF5WTJfI/Mu8fABZ1rNeYPDK2tgaOaXAv9l/a351IsJ6Lnj8gnNpaWnWRAmtGCDe5+H65cb0sW2pr2BijSatAtN2J/zYhhZYMNVWx5lIyeM0FFgietSqLZT0otxoywWUe1a0Qch4A0ICbOFDqVPrHBlZA0twjO/zngGB+ZkXn2gFt58nEhy+GlZRGGTx/79kgOHa81lZO3jSITDnMfylIfAiNitEjUeOUJlFpku4us9LaM5iv69oFMfh1d+I230NqExVqu5ONKH88/qN22T7TeXx4LLwA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AM8PR04MB7266.eurprd04.prod.outlook.com (2603:10a6:20b:1d6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 15:54:45 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 15:54:44 +0000
+Date: Tue, 14 Oct 2025 11:54:36 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] firmware: imx: scu-irq: Free mailbox client on
+ failure
+Message-ID: <aO5yPLL9HKdM6yuB@lizhi-Precision-Tower-5810>
+References: <20251014-imx-firmware-v1-0-ba00220613ca@nxp.com>
+ <20251014-imx-firmware-v1-2-ba00220613ca@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-imx-firmware-v1-2-ba00220613ca@nxp.com>
+X-ClientProxiedBy: BY1P220CA0016.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:5c3::13) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
- <08529809-5ca1-4495-8160-15d8e85ad640@arm.com> <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
- <8da42386-282e-4f97-af93-4715ae206361@arm.com> <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi>
- <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com>
-In-Reply-To: <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 14 Oct 2025 17:54:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
-X-Gm-Features: AS18NWChJvr-GMb6g3ashFlNGeFNEltmJaQ_ewPgLPRRRWz5LjKbsRahtrKNCrE
-Message-ID: <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-To: Christian Loehle <christian.loehle@arm.com>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Sasha Levin <sashal@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM8PR04MB7266:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d2d7988-1ebc-4a52-8053-08de0b39febb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5uyqa32vuiIWDfnUOWEZ/soXfjRVoUk/OCW/LvRiYZa0Aj/VtkhUUb8u6TkD?=
+ =?us-ascii?Q?V+ETw2P6+5+qtCZb8qzQiVL0vNk3NHw846sOAx7zCPJCp8PHVx87ZaTxdlyF?=
+ =?us-ascii?Q?cCjEdvHfMwkOnhjtrfmXdUDA7oTaWkHIZNNzAmKOMDZRHIb1PGYoKa4Grkiv?=
+ =?us-ascii?Q?TVMg+RVTMNvnmUoWwJR2B7tvmh5cIHcxED+zpCfTOZMK6s4E6ZGvaOFdx6CG?=
+ =?us-ascii?Q?VRw4KS1uJyDYuAFbdczcS/+1TtEIN1kGRQXbK8qmFwb89OoKAftC+S0rZqr5?=
+ =?us-ascii?Q?kfVDPrkQQ7HHw3bDJ6ztKCYcBdcz5s14g0nGNE8HHWC5uoYE8cuw9wlqsx8K?=
+ =?us-ascii?Q?hH9Ud2f7D8001+Q5f7CReEjFS5J3zFpB9WBS6MvBkOkTqheuJAg/5+IQ0cpw?=
+ =?us-ascii?Q?//zlxPjAXyxjmF99pD90t+hJieZvO2mGE9MNRf4Lr7gU79NUz4bdxjJM4Hei?=
+ =?us-ascii?Q?7G5k7IxW1cCLAkd0p7ye9TggsZ1q4G4wPs80B8FlT5GrMy7GqAtduN3Gx8Ml?=
+ =?us-ascii?Q?Ey6zPX04qgUU7hfp77awnubeaYfaEW3G05PGTUxlrpnC1SDMOIJA853l2CQY?=
+ =?us-ascii?Q?5xCLZiqZhLz01DhcqTelQ8dhqKSHYWTbdaUO5xFFHE8r/uEQF4dj0ytfWeF5?=
+ =?us-ascii?Q?bbr+qAvlFODC0ZI5DixU4t7p0NU1zJJ8JCe09DDTqvPmp7JFlzjtAWl355Ug?=
+ =?us-ascii?Q?t0el+BKiipz/jj+ETs08aiUsoClZnJ2vfyaQMLyF7Z5qBx4qvA9ZN/OYpjfS?=
+ =?us-ascii?Q?WX0HGeP2IhbHW/5AokmeVr94tQj6IUQcUVWIfVgiGFVHvnsZbyWre9iBquab?=
+ =?us-ascii?Q?3NOdMi46fxA821+jnYAl1rOlhnYDE5D/eLvhvyb3WjQFWp26NAbnt0tkZBgS?=
+ =?us-ascii?Q?PEhsEQKm3zk9YqAIbAUqjLynvDySSs82aiZguh2ohSAnq7cueZt5RlRiGVHm?=
+ =?us-ascii?Q?PhcJbhXLWBT6pewyAy51+LjB610A+aCnxHZBtVLECU/za/3X8J33+Hu9EYW0?=
+ =?us-ascii?Q?0bjjRn8fJppaJaM9A9WKco+0tPbIlEZei4zYqpyJRud0CvTGJ7j/U15g4Pps?=
+ =?us-ascii?Q?TIZ0CBgkgzXq0wrgqWpBT/nfjhjwXtRx1aCIBSnzJ2y0r/dUfoN+vQb6heb6?=
+ =?us-ascii?Q?6vDDXqp09PcxkhCdoHuXAyagYgPl9FThybR7XOu6q3fpXBOOxIboQUlQsN2d?=
+ =?us-ascii?Q?t3XkTO3CZHE9z8yO7is1qFQSZQjWzhZ4OiuIicr0sVxZ9qkFdmArmNbd2gp4?=
+ =?us-ascii?Q?Oo6IWTlCdHfuHaOfs3fWbl+UEgOx0IlDBWIUAi1jBlnvucTqpVBcJ4248urw?=
+ =?us-ascii?Q?WuISMV+qr0fz8zshTQDRzdLWNr2191ePwZfYGpk3G3PSt/0sZM7G9LHl2d3B?=
+ =?us-ascii?Q?0Oy9DpUkVpzknuGoQ9DX3/Gs/WYxmojtZgbwye5m2TZl0vORR2tEQA2ChGHC?=
+ =?us-ascii?Q?riBwiZ5Y10G9AfgyQuCXQ+yUG2VkOrZVR5eiQndSTmEwovY2ikU3h8Gq6RhL?=
+ =?us-ascii?Q?YkMzNoXwdzr219GI48sWIT4kXy05Pxp78r3f?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ssrii8nlAHLahwRiVBrXEIIL6oCDAPgqVzw9rOgJki0HHye5A8XETRNp56lg?=
+ =?us-ascii?Q?8r2j47/rP4XuqQZ9WeUYIxHxRWUR2YUV4paAs9CrI5MmiWkDVsvoMceyTeea?=
+ =?us-ascii?Q?Qn2LK8g6pW31XN2noCF/WWZNFOFdbeDNhNFuYU02F0GvY+i5/396zGPN0/6N?=
+ =?us-ascii?Q?f4yJwsnXBNds6akG89khqX1iH9vNGy1CYMBpK8zkyneA9PEx1sPQB9Y3JaV4?=
+ =?us-ascii?Q?LiT32a/wOzvltfQKEYbwzqDaW39+Tvq3dhHxB1xWFPcMtMLzUU6lwZOY9Mu/?=
+ =?us-ascii?Q?AiPHJQjye0PlcVqA7cdVIPSIFFKihT7AxnH+hH4j1ESEokiV1AU8d5vJOLmP?=
+ =?us-ascii?Q?+g1hovaHWuFSXAgmHdKVFvsYzs2ZIo93IpuAR5khZbVeRyzMMbIgwwlscvli?=
+ =?us-ascii?Q?K2KsyHAhpUCGHKLxQmWNF1huZkMR4d0ENLV8IGCl0NV8S4b23Lw1p0rn+aYK?=
+ =?us-ascii?Q?S5tgqDHlk/ogcs1nwjPRmI5cJVlr22QFmeTPQOZPcFYnyCd+KNWWMJa6ILNN?=
+ =?us-ascii?Q?bqD8Pew5YJgz1TJ0acxAD8zUsIZI+2SmjGdBASbNFqTez+WiAutziKCoEZja?=
+ =?us-ascii?Q?sKdlKEpWPEBydHIpuXPMS+TiQQQYFZSq42pkmwrcJ48L5INuYQDZ4l8cqm2q?=
+ =?us-ascii?Q?fjBxy0p5Er2l+gHNawLE7DTsyjRrYDnANZJSVsWyD6gPKokovHntPxtFgcZ5?=
+ =?us-ascii?Q?H6Lg7VByx4AZges20e5tYh4JUKCp/IcJL2I+AIxRY7pAATwQm1/80nHolKiw?=
+ =?us-ascii?Q?9nSx05akzMq+42hFKQsn9R91kUtlqOk7qynY0n/i8AkqGm3vrXsXrw1aY1qi?=
+ =?us-ascii?Q?0+cKxV75oFsW8Oz2n5JYYHu3s20FbOqO9dwAlR2AYHU2ha7V71k7AKxqOKf1?=
+ =?us-ascii?Q?gD7n3Oeyu9M64Bsd2jWCKhOe8Cwh6mUxR8nU7F17O4+93QGFFVeeu1uVIfxr?=
+ =?us-ascii?Q?nMbjjD56zW+aeURikoU2W+KK70OvjJ0jFrDCp3LYlIkbn/iQuHWg02P93bAl?=
+ =?us-ascii?Q?o8eFal2TkmH0zs7191mF77znRVcm+2SCB2/P8sVkUa9HbWk2yshyQrRxcAK0?=
+ =?us-ascii?Q?IsYR+Aua/azYYtp03mSRG/qP9g/3k6NS1fRrmEUDuLg2vZVYZOrVCGMSa82y?=
+ =?us-ascii?Q?1IirShVi3GlzSfRbiFyUZ3Q4xXB0Zn8KGasduJeLN31oCT/TZbsgitSoWIFu?=
+ =?us-ascii?Q?sSa4ijJIEz/pfCIU14KlBo/94I/SJZFob6zuOKKP94sbEN7CQMNck+W6pktj?=
+ =?us-ascii?Q?AhtadOGumXSX4AjmjWuRsLU6gpFouwylnjhTPtXuWvQQCSDpwOVOraikLbVk?=
+ =?us-ascii?Q?bWUo7iQxGUq1MtqlOITcy11qZIGVZY7NGOibTk6YsNMDmrgkCJgtaBJysUDl?=
+ =?us-ascii?Q?copmjDsKKJpAeWEArUme+lCKj5hgK5Qnr0si2s3s4eFCKYx9auEADSHlVLKc?=
+ =?us-ascii?Q?HKFe3kq2KlU581hTw6T36sVgyqQo/e4OqZeYtraj/RyWOhJi3r8gkn1r0Mxz?=
+ =?us-ascii?Q?cg9Zi1pblhjulTBnnSYCtIB6jE3WXZOJRC67qJf9o2NyhNXwlS+hbCcwbLp6?=
+ =?us-ascii?Q?LNX5Ca6Jxg1/V0ilAfZKmXMoPdOdqidHSRi3EcTC?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d2d7988-1ebc-4a52-8053-08de0b39febb
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 15:54:44.8791
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0DxifKVyriZc0vXxbWG0qM1jQZedH77Ff3QU085wlL+Fz4j1/LVTMvV/yq4TRGYdsa4ISxCxeU2ZWKGf28TS5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7266
 
-On Tue, Oct 14, 2025 at 5:11=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
+On Tue, Oct 14, 2025 at 12:54:39PM +0800, Peng Fan wrote:
+> With mailbox channel freed, it is pointless to keep mailbox client.
+> So free the mailbox client in err path.
 >
-> On 10/14/25 12:55, Sergey Senozhatsky wrote:
-> > On (25/10/14 11:25), Christian Loehle wrote:
-> >> On 10/14/25 11:23, Sergey Senozhatsky wrote:
-> >>> On (25/10/14 10:50), Christian Loehle wrote:
-> >>>>> Upstream fixup fa3fa55de0d ("cpuidle: governors: menu: Avoid using
-> >>>>> invalid recent intervals data") doesn't address the problems we are
-> >>>>> observing.  Revert seems to be bringing performance metrics back to
-> >>>>> pre-regression levels.
-> >>>>
-> >>>> Any details would be much appreciated.
-> >>>> How do the idle state usages differ with and without
-> >>>> "cpuidle: menu: Avoid discarding useful information"?
-> >>>> What do the idle states look like in your platform?
-> >>>
-> >>> Sure, I can run tests.  How do I get the numbers/stats
-> >>> that you are asking for?
-> >>
-> >> Ideally just dump
-> >> cat /sys/devices/system/cpu/cpu*/cpuidle/state*/*
-> >> before and after the test.
-> >
-> > OK, got some data for you.  The terminology being used here is as follo=
-ws:
-> >
-> > - 6.1-base
-> >   is 6.1 stable with a9edb700846 "cpuidle: menu: Avoid discarding usefu=
-l information"
-> >
-> > - 6.1-base-fixup
-> >   is 6.1 stable with a9edb700846 and fa3fa55de0d6 "cpuidle: governors:
-> >   menu: Avoid using invalid recent intervals data" cherry-pick
-> >
-> > - 6.1-revert
-> >   is 6.1 stable with a9edb700846 reverted (and no fixup commit, obvious=
-ly)
-> >
-> > Just to show the scale of regression, results of some of the benchmarks=
-:
-> >
-> >   6.1-base:           84.5
-> >   6.1-base-fixup:     76.5
-> >   6.1-revert:         59.5
-> >
-> >   (lower is better, 6.1-revert has the same results as previous stable
-> >   kernels).
-> This immediately threw me off.
-> The fixup was written for a specific system which had completely broken
-> cpuidle. It shouldn't affect any sane system significantly.
-> I double checked the numbers and your system looks fine, in fact none of
-> the tests had any rejected cpuidle occurrences. So functionally base and
-> base-fixup are identical for you. The cpuidle numbers are also reasonably
-> 'in the noise', so just for the future some stats would be helpful on tho=
-se
-> scores.
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/firmware/imx/imx-scu-irq.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> I can see a huge difference between base and revert in terms of cpuidle,
-> so that's enough for me to take a look, I'll do that now.
-> (6.1-revert has more C3_ACPI in favor of C1_ACPI.)
+> diff --git a/drivers/firmware/imx/imx-scu-irq.c b/drivers/firmware/imx/imx-scu-irq.c
+> index f2b902e95b738fae90af9cbe54da4f488219906f..1fbe4c3de5c1592bfcf2334a83776c25d5ca7a3f 100644
+> --- a/drivers/firmware/imx/imx-scu-irq.c
+> +++ b/drivers/firmware/imx/imx-scu-irq.c
+> @@ -255,6 +255,7 @@ int imx_scu_enable_general_irq_channel(struct device *dev)
 >
-> (Also I can't send this email without at least recommending teo instead o=
-f menu
-> for your platform / use-cases, if you deemed it unfit I'd love to know wh=
-at
-> didn't work for you!)
+>  free_ch:
+>  	mbox_free_channel(ch);
+> +	devm_kfree(dev, cl);
 
-Well, yeah.
 
-So I've already done some analysis.
+you use devm_kmalloc(), when return failure, framework will auto free cl.
 
-There are 4 C-states, POLL, C1, C6 and C10 (at least that's what the
-MWAIT hints tell me).
+Avoid mixing manual free and management free code.
 
-This is how many times each of them was requested during the workload
-run on base 6.1.y:
+So I think this patch is not neccesary.
 
-POLL: 21445
-C1: 2993722
-C6: 767029
-C10: 736854
-
-and in percentage of the total idle state requests:
-
-POLL: 0,47%
-C1: 66,25%
-C6: 16,97%
-C10: 16,31%
-
-With the problematic commit reverted, this became
-
-POLL: 16092
-C1: 2452591
-C6: 750933
-C10: 1150259
-
-and (again) in percentage of the total:
-
-POLL: 0,37%
-C1: 56,12%
-C6: 17,18%
-C10: 26,32%
-
-Overall, POLL is negligible and the revet had no effect on the number
-of times C6 was requested.  The difference is for C1 and C10 and it's
-10% in both cases, but going in opposite directions so to speak: C1
-was requested 10% less and C10 was requested 10% more after the
-revert.
-
-Let's see how this corresponds to the residency numbers.
-
-For base 6.1.y there was
-
-POLL: 599883
-C1: 732303748
-C6: 576785253
-C10: 2020491489
-
-and in percentage of the total
-
-POLL: 0,02%
-C1: 21,99%
-C6: 17,32%
-C10: 60,67%
-
-After the revert it became
-
-POLL: 469451
-C1: 517623465
-C6: 508945687
-C10: 2567701673
-
-and in percentage of the total
-
-POLL: 0,01%
-C1: 14,40%
-C6: 14,16%
-C10: 71,43%
-
-so with the revert the CPUs spend around 7% more time in deep idle
-states (C6 and C10 combined).
-
-I have to say that this is consistent with the intent of the
-problematic commit, which is to reduce the number of times the deepest
-idle state is requested although it is likely to be too deep.
-
-However, on the system in question this somehow causes performance to
-drop significantly (even though shallow idle states are used more
-often which should result in lower average idle state exit latency and
-better performance).
-
-One possible explanation is that this somehow affects turbo
-frequencies.  That is, requesting shallower idle states on idle CPUs
-prevents the other CPUs from getting sufficiently high turbo.
-
-Sergey, can you please run the workload under turbostat on the base
-6.1.y and on 6.1.y with the problematic commit reverted and send the
-turbostat output from both runs (note: turbostat needs to be run as
-root)?
+Frank
+>
+>  	return ret;
+>  }
+>
+> --
+> 2.37.1
+>
 
