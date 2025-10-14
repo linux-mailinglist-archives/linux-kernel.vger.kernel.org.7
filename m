@@ -1,89 +1,135 @@
-Return-Path: <linux-kernel+bounces-853164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10383BDAD4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:44:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0467BDAD51
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F4219A4673
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:44:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9014D546A1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BC03043A5;
-	Tue, 14 Oct 2025 17:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B94303CBD;
+	Tue, 14 Oct 2025 17:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBu/yDl9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvL3sS4O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8824221555;
-	Tue, 14 Oct 2025 17:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C913026B971;
+	Tue, 14 Oct 2025 17:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760463832; cv=none; b=dJSRtNs9ne62ucmtR8xvJhUqwPk1v6X5SHQWuKosRKKobc9yB7JB3OqkPbBObZbeU9SI2J+otmJ4gTlCCFQyRzsLBuxhSDZ5hGewTHZ6aX5ZpLIwDcBQ297xOSM35h+wyK96hkGl193hgLb7xTa5jZZ/YOeebO+V9VoEesgunHY=
+	t=1760463881; cv=none; b=fuf5cFjIAkjS6f48tnA7zTCDPbQ+qndKDRfz/rEg2okGX/RNaiYkzAehxT0Qbe27yXZMIMQWy/HiabV/8DFr3h+xb2x8ZQjjtpddzZfVThK05MyWXKk/yheD6GPKnxrCobqhUFT4qubHKdZZJ4MqDoJhQMgvJfvmUxigtmGgXb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760463832; c=relaxed/simple;
-	bh=Qj9F9oPwsMZi//F1Yf1CYFenbsd0elLCIUlVgkFyfuU=;
+	s=arc-20240116; t=1760463881; c=relaxed/simple;
+	bh=PND3tMFcHSXQbftmY3sVLMvaNBKZSZ0hGpr0vDTs9sE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8blVqX/2vLeltycB7SoMcXPac5JabzWvocDCx/TbEoAbYm1KAM1IF7veozot70aKtJGaAqiJAn5otd48j/ZgBYMfyodwR6b2+AXfOtTpU2FnUL8TQFSvIk5Q2pSB6QKAKy6WTbOFNwXoATMA3DRxyXTM0isdToOwX5oTYdPjYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBu/yDl9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E376CC4CEE7;
-	Tue, 14 Oct 2025 17:43:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfxeGfpyEIkE7PqBA9zNCZvt4u79Z+JOnVjh6JG3+fe1YMbpEehF6acTF3TY1lGtcSwQNsbsbU/DCE7sroYubIa6twb08ErRUzrd5UBb2bV7yzs08bUo9djlAHITj3F3OR6IEjXBdqPBrUsy0v0Wp7F6jHWoAR3ZPMcVQNkTjjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvL3sS4O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B73C4CEE7;
+	Tue, 14 Oct 2025 17:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760463832;
-	bh=Qj9F9oPwsMZi//F1Yf1CYFenbsd0elLCIUlVgkFyfuU=;
+	s=k20201202; t=1760463881;
+	bh=PND3tMFcHSXQbftmY3sVLMvaNBKZSZ0hGpr0vDTs9sE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HBu/yDl9xonPjSRqKRS4NHzJ2UKIC3XLtPhtWAerjwGGjfdkipHLL5cvHxz8WgV8L
-	 F/mjBQ5QcGzewZXo9dQ5z48LX107YQfUuxHWaNFvYwcNB9pgoA55ulxiG5r5BgdsF0
-	 1nARnJ5CsYiDdbrMQSv6DVorY4QFC7K5DZMldFPCkauojwWwPFLRSEfGjXzSkKxLkW
-	 YaanZ+PJsxq+I2ecUi/httb651Omst2R0jx0GMpsfxsxomiQukw1v5I3gtGRb0eMGQ
-	 IppErgD/9c7puBkt/6zJkNfe506aMoqeIudm8L57N1So2fViqt7KFnLXgO0sEAoe9x
-	 7fdAB1FoKYyCA==
-Date: Tue, 14 Oct 2025 10:43:45 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel test robot <lkp@intel.com>,
-	Kees Cook <kees@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH] PCI: rcar-host: Avoid objtool no-cfi warning in
- rcar_pcie_probe()
-Message-ID: <20251014174345.GA3062995@ax162>
-References: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
- <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
- <20251014083209.GA2696801@ax162>
- <uebexl7d5gfjopb26gstftahu2ouab3ekonw4dzgegw3on5cwr@vqc2zmxiluvt>
+	b=hvL3sS4O0/9Rp25fZny11LsDbx8NYa863vhybCfL5A96ugwuGYbS5uKASWQbsO200
+	 XT3CeYL63+CYtUITLF0WuMgsTYwHiAApLc3S3MmF+BQXZTv8hwTu3kqyddnK1nYZg8
+	 0NXQZD1JNENF/DcAfg8vSUlyuT0aiqfqk9F34lU3rEUBQQBVEdxyBpWxejZGZ6QzF3
+	 eD9HP7P1Nv9iCxnEFYKrat/ahxk3u0SsEjezu4HfXs/iRmW4AEwmeLi8a5jorS8npe
+	 d7E3UqwiFejKguvpLz1t90LebXig7Fgkys2bK915snVhBqj41dUvFK1k3e3sZ37A3J
+	 Vke1bYn3IQVJQ==
+Date: Tue, 14 Oct 2025 18:44:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Lucas Zampieri <lzampier@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Charles Mirabile <cmirabil@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <dramforever@live.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: interrupt-controller: add UltraRISC
+ DP1000 PLIC
+Message-ID: <20251014-petted-papyrus-435129236562@spud>
+References: <20251014154100.168236-1-lzampier@redhat.com>
+ <20251014154100.168236-3-lzampier@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SBMBPhePSwNwsQCs"
+Content-Disposition: inline
+In-Reply-To: <20251014154100.168236-3-lzampier@redhat.com>
+
+
+--SBMBPhePSwNwsQCs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <uebexl7d5gfjopb26gstftahu2ouab3ekonw4dzgegw3on5cwr@vqc2zmxiluvt>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 06:32:59PM +0530, Manivannan Sadhasivam wrote:
-> TBH, I hate both of these CONFIG_OF checks as most of the controller drivers
-> are just OF drivers. If we were to sprinkle CONFIG_OF check, then it has to be
-> done in almost all controller drivers (except VMD, Hyper-V).
-> 
-> If compiler is getting smart enough to detect these NULL invocations, then it
-> may start to trigger the same issue for other OF APIs as well. So I'd prefer to
-> have the OF dependency in Kconfig, sacrificing COMPILE_TEST on non-OF configs.
+On Tue, Oct 14, 2025 at 04:40:56PM +0100, Lucas Zampieri wrote:
+> From: Charles Mirabile <cmirabil@redhat.com>
+>=20
+> Add compatible strings for the PLIC found in UltraRISC DP1000 SoC.
+>=20
+> The PLIC is part of the UR-CP100 core and has a hardware bug requiring
+> a workaround, so the driver will match on the more generic core-specific
+> compatible (ultrarisc,cp100-plic) to apply the quirk across all SoCs
+> using UR-CP100 cores.
 
-Alright, fair enough. I will send a v2 soon just adding the dependency
-on OF.
+The exact driver behaviour itself is not really appropriate here, all
+you need to do is say that the core has the bug!
+With the prescriptive bit about driver matching behaviour removed,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: changes-requested
 
-Cheers,
-Nathan
+>=20
+> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
+> ---
+>  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml       | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifiv=
+e,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
+sifive,plic-1.0.0.yaml
+> index 5b827bc24301..34591d64cca3 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
+1.0.0.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-=
+1.0.0.yaml
+> @@ -74,6 +74,9 @@ properties:
+>                - sophgo,sg2044-plic
+>                - thead,th1520-plic
+>            - const: thead,c900-plic
+> +      - items:
+> +          - const: ultrarisc,dp1000-plic
+> +          - const: ultrarisc,cp100-plic
+>        - items:
+>            - const: sifive,plic-1.0.0
+>            - const: riscv,plic0
+> --
+> 2.51.0
+>=20
+
+--SBMBPhePSwNwsQCs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6MAwAKCRB4tDGHoIJi
+0gnNAP9TKWqhJhzUUp3cCJPe5+VCmmPgdq2b1gK6o5qQaZNGSQEAvjL2WCBzA58u
+c8FoKcIciUJjkEw/LooNWCUxOKL2Ywk=
+=cYxS
+-----END PGP SIGNATURE-----
+
+--SBMBPhePSwNwsQCs--
 
