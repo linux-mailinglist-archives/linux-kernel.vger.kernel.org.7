@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-852957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5BDBDA534
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:24:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24781BDA579
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 383695080A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5F8584388
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D1C2FD7D2;
-	Tue, 14 Oct 2025 15:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9086A301001;
+	Tue, 14 Oct 2025 15:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HvPyWdV1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsdQu+M0"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A172C0F8E
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9314F301000
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760454927; cv=none; b=cu/vF7+FbUfVOLkbx3KMDCSJPWI7geLANGkqTVsw8zWbtq88WlHJ3DmWHIcWuwn9ahNq/srCcpLMUXph7PyeTfRcM5oFv3uz5hXez+Z2VAuLH1GQLlrEQGP9pbqo2oiFM/A2nhRy1LvkmkL7KYjgSCi8rnLce3y2fW1PfjDxvlU=
+	t=1760454931; cv=none; b=bwyz02QicOkePtJs45kOe6Ljg054x9YzROEWVkiWBMYpd2U0g4fCpSobeX1G4wMa4N84ffSSWpIeLft25iO49onlPOSmFWQr1pFEPiUYlmz1nbtmIE/fjormg68foY+ezpoAmoTZgtFGwMrFRkBKLweawgQUqCN53E2ecIpriKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760454927; c=relaxed/simple;
-	bh=Gc9gPNIGe4cVGaM7/VR1c6hckG2H84TGLOzGhxUKmtc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a3kydMC1jzqFhKt6CFg2tr3bvHBMOVh6d5cRhx09b3E0ubTYHjbP74tRRbBVz3fzbX3URd1FJOW3rOy89217ycOMuu8nbJ1f7P367Gjez8RL2dkidbq+W9aSa5Uy/NSmH0Y8dRDPI1oEpn/ipDfW2jkDTHe9U5bjKXOcA2Fqsfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HvPyWdV1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760454922;
-	bh=Gc9gPNIGe4cVGaM7/VR1c6hckG2H84TGLOzGhxUKmtc=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=HvPyWdV1wxFBvZyKYK3CZn8nC/VkI2tIysn96BCFz5XzMqZhqLF+EJYt7bYehfEYF
-	 yoK6MX1lb1DKoZuGGqne34tIlvIzbxtWvWg7ZgmL/EjLEDMr4uH4ByWdnp1fG6D+kL
-	 SkqJl7/hrQVERBOne8VnHDTO/rJ60WLoqN4s4xRmW9GKRS6lDrlEPTt2R3VOFhi7RT
-	 /MjiGfjUPQcPqxuiAE2GaL1wMQdU/7Q12PEJO2+BKIQCrbyHKgcv18UOk8cYCNgWK1
-	 OC0djV0mm7rNaUwhdSSmq+Ucvrwkyl9b42aA0bjK8m1zowDBSVA/WzCVsmqbORV0Fo
-	 F+pDy1WCE3STg==
-Received: from [192.168.1.90] (unknown [82.79.138.145])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C878F17E1292;
-	Tue, 14 Oct 2025 17:15:21 +0200 (CEST)
-Message-ID: <37c99206-4bd2-40e5-95f6-71c109bd031c@collabora.com>
-Date: Tue, 14 Oct 2025 18:15:21 +0300
+	s=arc-20240116; t=1760454931; c=relaxed/simple;
+	bh=O4un/WoNhEAplHVosH+Aiv2Xzjf927LVhRMRZoUS6hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eItAyVyAcyCL95n+2WGhzh+jaCZH+vpSU7MXRgdwp+qYpuD6wTobxLpfVJub89WCc/vxM+9PTPY/z9DodxzICF1YlKwmI3Ft/+dnu4BnukGaw8PGGZhHa6zz+8biI3R8WaAPuWP2ICHrrORzE8eYLxMEO0iOlYoEmOiiunTEvBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsdQu+M0; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7800ff158d5so5144327b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760454929; x=1761059729; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eiOXvz3p0iDVrGhzRlMs5DQgf7JeJiwBe95U5RWF0Dg=;
+        b=CsdQu+M0CwjN9qg8/L8I08lcBBnKJc2FbbwgpePadFlqLBYwt83q2SnX0tHN7lKxYO
+         AMW0C/Z3pagC5lmoaB+8qzE9rDx7UkaviSFrNN9iXnY1y955QRx++aQmGlzf9GQJGbAy
+         tq7fgi/hKLB7jprkanLbGLe1oKS1yTmR26eYzcx8M6hXtLWbhzTl2rt3mq+BZBxaeDgU
+         55fZ77ipyqYRTIm4gjtLa/sgE1MmcGXS79LGKfQ5ajhqF6nf04jtKBMDFYNdtK3TTTS6
+         iKipjHwIzqPuqmWhiX6tqrNN1W3wn2FEod8+TrKbU5dTwYkuCB2t4X2hVJCcJrvpJ8co
+         QjJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760454929; x=1761059729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eiOXvz3p0iDVrGhzRlMs5DQgf7JeJiwBe95U5RWF0Dg=;
+        b=oB0GvisiA1Mu6abdFwyAvr0u456Zbke+oFzmQHpHdiG40pOxsKzEZafL/VbeaKSFOp
+         wLv1kDFnSF2lou5qnhyFjsDTwasCgnAtV4Pr0agpV87hZIEnhu6BqmQneNtAeE4r+j+/
+         n5TCjV/BOV5nir+/3za4aD8PwtMrRQknbpmgnTSGTBIATT70V5T7iFf9eCtoCq1Fu529
+         4d5HEF6GBnd7b/lC0u1Zv0iol0MCtoCCc/8QYPEvZrgJ06TvCWaJNyaL3PwoOKcAUjD+
+         mebseh14FY633ix9kM+iCQqmkmtsgWEhOsqiXU9eNLDnKiT4f/euBWGHOhARWnshfehg
+         sqxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHZl6pGo7BEXq60pdKBTwwXnoY0EqAPkFBefodiMci3WOVrB/0QaRl1Hc+3v7o5+z4cmRPeNIllI/vQyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS7HlNqAHNe69SzE0nz533vBvgPTqvOedFtvtUGZr8jiU8YtRh
+	/wWYeg120tutWDPWQSuviIJSPnMkGX6T7F6bZjrkjp9mFdcVLjVmotmX
+X-Gm-Gg: ASbGncuNeFx7BkuBoL/i65ebTeNJw5hpIC6c01s/+mxpsmDCmOWltiuKhy7KJ5N/52n
+	OTZ1rsf+b/jyg7FPSb5Fz5LrlzMbrH7FIlE54eBnFwO2oWMPmijIxbuI0tj0JVx6CvJcpphHT+q
+	s5xhJ6KH52+GWXuIajw1cfsQlcbXP5iGBJmoxovsjtAooYJYQPLwXN9bElLYGF31uxINTS6/JOl
+	mfNdii+QSM3g7xgFJm0PcfqfUknMT3RxbBbGDA58Y9ARz+P6RAfEtUzeBCCuj1elLNb0D9Yq2bU
+	tyvX4qDmwPn17yuxt2bw+xC9ecpPLbF9KpX+R8Vlh/NHDAncEun8YjntIDJZXSoRl90cUxbzCno
+	vhHke4P4d2TsIOtBxBZAcJI9Rr5ZZI7Dd4pZBMeCnmmmoV65DOY9XEop9YNeMSJch
+X-Google-Smtp-Source: AGHT+IEI0BVlTm9byP6/HRgTG7Oom2uwO7sMtrezChPyLSYd7pcFGMnXeS6UjCq7pllo5lsSGFSN9A==
+X-Received: by 2002:a05:6a20:7351:b0:251:c33d:2783 with SMTP id adf61e73a8af0-32da813ce42mr33664357637.23.1760454928710;
+        Tue, 14 Oct 2025 08:15:28 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b7411fcf0sm10258315a91.4.2025.10.14.08.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 08:15:28 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 14 Oct 2025 08:15:27 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: hwmon: Convert apm,xgene-slimpro-hwmon to
+ DT schema
+Message-ID: <afaddcb5-09dd-4a34-85b0-3c9ea8dacdc8@roeck-us.net>
+References: <20251013213127.692373-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
- SoCs
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
- Derek Foreman <derek.foreman@collabora.com>,
- Daniel Stone <daniels@collabora.com>
-References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
- <e030bed8-58d5-4a19-b81c-45193cb900d8@collabora.com>
-Content-Language: en-US
-In-Reply-To: <e030bed8-58d5-4a19-b81c-45193cb900d8@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013213127.692373-1-robh@kernel.org>
 
-Hi,
-
-On 9/3/25 10:52 PM, Cristian Ciocaltea wrote:
-> Hello Heiko,
+On Mon, Oct 13, 2025 at 04:31:26PM -0500, Rob Herring (Arm) wrote:
+> Convert APM X-Gene slimpro-hwmon binding to DT schema format. It's a
+> straight-forward conversion.
 > 
-> On 9/3/25 9:50 PM, Cristian Ciocaltea wrote:
->> The first patch in the series implements the CEC capability of the
->> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
->> This is based on the downstream code, but rewritten on top of the CEC
->> helpers added recently to the DRM HDMI connector framework.
->>
->> The second patch is needed for RK3576 in order to fixup the timer base
->> setup according to the actual reference clock rate, which differs
->> slightly from RK3588.
->>
->> The following three patches setup platform data with the new information
->> expected by the HDMI QP transmitter library, while improving the error
->> handling in the probe path.
->>
->> Please note the CEC helpers were affected by a resource deallocation
->> issue which could crash the kernel and freeze the system under certain
->> test conditions.  This has been already fixed in v6.17-rc1 via commit
->> 19920ab98e17 ("drm/display: hdmi-cec-helper: Fix adapter
->> unregistration").
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->> Changes in v4:
->> - Fixed the bisect-related issues reported by Daniel by implementing
->>   the following operations in dw_hdmi_qp_bind():
->>   * Disable CEC support when the related IRQ is not available
->>   * Set ref_clk_rate to vendor default in case it was not provided by
->>     the platform driver
->>   * In both scenarios, also print a warning message to highlight the
->>     need for fixing the platform driver
->> - Simplified dw_hdmi_qp_cec_init() a bit
->>   * Removed the now obsolete cec->irq validation test
->>   * Removed the superfluous error checking and logging around
->>     devm_request_threaded_irq() call (it already handles all that)
->> - Collected R-b tags from Daniel
->> - Rebased series onto next-20250903
-> 
-> I forgot to mention that luckily there are no conflicts with the patches
-> introducing the hw-specific bitfield operations in next-20250903, which this
-> revision is based on.
-> 
-> I verified the series still applies cleanly onto drm-misc-next, while commit
-> ad24f6e10a5f ("drm/rockchip: dw_hdmi_qp: switch to FIELD_PREP_WM16 macro")
-> responsible for the macro conversion can be further cherry-picked without
-> issues on top of all that.  The resulting file content of
-> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c is identical to what's
-> expected after applying this patch set onto next-20250903.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Could we get this merged, please? This would unblock some other patchsets
-conflicting with it.
-
-I've just checked and it applies cleanly on top of v6.18-rc1. Also seems to work
-fine, at least I haven't noticed any regressions so far.
+Applied.
 
 Thanks,
-Cristian
-
+Guenter
 
