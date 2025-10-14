@@ -1,283 +1,243 @@
-Return-Path: <linux-kernel+bounces-853439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894D1BDBAAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986AABDBADE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34A81891A5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5194546424
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2272C2D8764;
-	Tue, 14 Oct 2025 22:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55D330EF74;
+	Tue, 14 Oct 2025 22:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="i6D/lyue"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKWFy3Hn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F76A259CA5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFAC2E7F22;
+	Tue, 14 Oct 2025 22:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760481706; cv=none; b=SPciRSjf/tlevX7bXKvMy9odQSZShi8vGQh4vUbILg98LIrkrFV+LVg1n+3OFg2nydC+0okn/GhjFVMHgnl8nIJ5Ze3dC1nN+/DgpmcNFTZE//9yYJe4MEtYFREoqNl0niU5bU4V1XWKI4a2otswUETRGIEkNQV+NSCE7GmIzNs=
+	t=1760481814; cv=none; b=H0JnihCrOEwsAHK3MRCCnu3PwS97OgwcuTVApaIZATwemepY0Ac7CCot1KVyNWU3kNKE+fH4RoFhL5IlisHGqPCGN9Uom6l47r3tklbGulZMO59DFNTjeneaKV6AyfTGax5pKCEpojDc4GcrBcA1YLuslTifZoOoy80TsXWKbTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760481706; c=relaxed/simple;
-	bh=MbRQFribj+5STwgaWMFF3WBwk/TcGInw+Ndx6s4fwT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qb+cDpjBwkHvxogJnJlE/WLOIYdnc/oyrlIccic9q33CPCLecE3/eSHXpHcZtoZuH7AFp1Zg4+m3CmGke2boNKIPBo3cH03lIuSuK7yZTDvCY4ltkpBnS06MQJ+/qvgrXLUA8VXWxhnXCUGvNwFL2NDqo7PVshOoVVf3fUdYTWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=i6D/lyue; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id 8m7pv0jdLaPqL8niBvpduw; Tue, 14 Oct 2025 22:41:43 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 8ni9vOOA225G78niAva65P; Tue, 14 Oct 2025 22:41:42 +0000
-X-Authority-Analysis: v=2.4 cv=LuqSymdc c=1 sm=1 tr=0 ts=68eed1a6
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=HaFmDPmJAAAA:8
- a=vM3gs7XVnYeaolmWJR8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1h7AsFu1o7hpH/VvaWjvJ1mc5DROWm0EZY2CZM9c6zk=; b=i6D/lyueiejs9mWI6IaG7hUb+J
-	2faXEfA4RxC6kvu0ivMYfsr+3oxGVfXG6GQ5bGQF0CgA7ui0oiT1DI+Ufd5vshTByeRDqiliatBq5
-	/YcaiOoilHu0W9qKrpui1ePxqTNdKFkxF3tG6Ker2Nwo2EwbSRrBKAmrKNCWdx5eiafV7y4ebuSgW
-	hAULpIqQIa65mKFINvYwVR8HpIiDZHPO+cv/ehYAp0JbUaDRTe9Hei3zu8FqSPWEO/gS42GYANZQO
-	NA4srgXt2rmNCNKdq/rei3UnBCf9KtLzrF+LY5OXZLXugyP1SKoPTx52MfM6ESp0ZGp8ruY9lRtPd
-	IeWNzTag==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:53688 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <re@w6rz.net>)
-	id 1v8ni9-00000000nz7-3GFL;
-	Tue, 14 Oct 2025 16:41:41 -0600
-Message-ID: <18ef2c73-fb10-47b3-838f-bc9d3fd2dbc2@w6rz.net>
-Date: Tue, 14 Oct 2025 15:41:39 -0700
+	s=arc-20240116; t=1760481814; c=relaxed/simple;
+	bh=6J7jMaWSktm0Exujgt4294K+p6lq0OLmTk8omdfZlYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eAnRjCg3uHKkAi7d6C8tgFsrXJNodW5p6RZ4rpZtno+WnQmsJcpxX2pgKKthowWvTXsVLwL5E4mVh015Wky29YucVCWIy9HxI4oPfGXzs7n+hUDow07CYEi8YeezEG6JJX2t0hzjVkuRWRKCwQFLgh/nXAYgYH9tzh68Mr9wdlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKWFy3Hn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 767C6C4CEF9;
+	Tue, 14 Oct 2025 22:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760481814;
+	bh=6J7jMaWSktm0Exujgt4294K+p6lq0OLmTk8omdfZlYw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JKWFy3HnF5NmTPkhEWnaatPh7ukJHliv4zIzT6qaBK3DZ61pY6f8Agfi3HN2fzv8R
+	 29+mdRmT8zC3OkTqnvIwzkj3R//eNdsrvISsrwcVcYK2w8IOf5Lq3zi16029Y+QQlG
+	 optofRgkONFUKUFSo5r0ss2TI5n/PZI050XP2hWol/HaWBk5uGgq40F4ZhUIV/UAjq
+	 MFzXd1AvaS5kvTRVLaQGPOEtE8Q4bHDYhprPxij+KLbl7CwWx75Qtk3Y+p5zDC1VnO
+	 mBfFcQrSeqTrbvPtw674iv5/WZ/HHgu8ZPDtjjXypky5kQV2mhh+yPVzApCgfCBi8N
+	 CgnHdBJ4XeyCA==
+From: Kees Cook <kees@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2 00/10] net: Introduce struct sockaddr_unspec
+Date: Tue, 14 Oct 2025 15:43:22 -0700
+Message-Id: <20251014223349.it.173-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Bjorn Helgaas <helgaas@kernel.org>, Conor Dooley <conor@kernel.org>,
- bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>,
- Paul Walmsley <pjw@kernel.org>, Greentime Hu <greentime.hu@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>, regressions@lists.linux.dev
-References: <20251013212801.GA865570@bhelgaas>
- <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
- <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
- <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
- <b203ba27-7033-41d9-9b43-aa4a7eb75f23@w6rz.net>
- <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <yxdwo4hppd7c7lrv5pybjtu22aqh3lbk34qxdxmkubgwukvgwq@i4i45fdgm6sw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9004; i=kees@kernel.org; h=from:subject:message-id; bh=6J7jMaWSktm0Exujgt4294K+p6lq0OLmTk8omdfZlYw=; b=owGbwMvMwCVmps19z/KJym7G02pJDBnvLvFfvK6bdOfvIqNw9gMfjTwP/jP+0pRlIu703WWPj iArg3RSRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwEQ+3WD4n+Tn+OLEqkdJK9U2 +cSHrg5p/c2wNXHRj327VW8FcK3jLmT4K1TkqHC/YcGhhcVZ7MYl05KrM+KUfPmFr7y9W82611i eAwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v8ni9-00000000nz7-3GFL
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:53688
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 6
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFyG2dX94J7cDLsTuX+Tqk13+k/0QfFFUGs3l9slBXFSjjs5TkLV+Rp1Or3FMeywPkkxz37Lmp/qaFJuysjUID7HVMXFOv2nTr8ebcOoz7mt69Owl0Nt
- FMFlucMj2WoJWFSZfSDEYzp/blnHDUddM6DxWH2B47jC2fgE0rxqeKt/eAOI9KwXTwfwwHUOg4Pg2sPS0XNB798UM/NVfnYs9GI=
 
-On 10/14/25 09:25, Manivannan Sadhasivam wrote:
-> On Mon, Oct 13, 2025 at 10:52:48PM -0700, Ron Economos wrote:
->> On 10/13/25 22:36, Krishna Chaitanya Chundru wrote:
->>>
->>> On 10/14/2025 10:56 AM, Ron Economos wrote:
->>>> On 10/13/25 22:20, Krishna Chaitanya Chundru wrote:
->>>>>
->>>>> On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
->>>>>> [+cc FU740 driver folks, Conor, regressions]
->>>>>>
->>>>>> On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
->>>>>>> The SiFive FU740 PCI driver fails on the HiFive
->>>>>>> Unmatched board with Linux
->>>>>>> 6.18-rc1. The error message is:
->>>>>>>
->>>>>>> [    3.166624] fu740-pcie e00000000.pcie: host bridge
->>>>>>> /soc/pcie@e00000000
->>>>>>> ranges:
->>>>>>> [    3.166706] fu740-pcie e00000000.pcie:       IO
->>>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>>>>> [    3.166767] fu740-pcie e00000000.pcie:      MEM
->>>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>>>>> [    3.166805] fu740-pcie e00000000.pcie:      MEM
->>>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>>>>> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
->>>>>>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
->>>>>>> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
->>>>>>> [    3.579552] fu740-pcie e00000000.pcie: Failed to
->>>>>>> configure iATU in ECAM
->>>>>>> mode
->>>>>>> [    3.579655] fu740-pcie e00000000.pcie: probe with
->>>>>>> driver fu740-pcie
->>>>>>> failed with error -22
->>>>>>>
->>>>>>> The normal message (on Linux 6.17.2) is:
->>>>>>>
->>>>>>> [    3.381487] fu740-pcie e00000000.pcie: host bridge
->>>>>>> /soc/pcie@e00000000
->>>>>>> ranges:
->>>>>>> [    3.381584] fu740-pcie e00000000.pcie:       IO
->>>>>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>>>>> [    3.381682] fu740-pcie e00000000.pcie:      MEM
->>>>>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>>>>> [    3.381724] fu740-pcie e00000000.pcie:      MEM
->>>>>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>>>>> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll
->>>>>>> T, 8 ob, 8 ib, align
->>>>>>> 4K, limit 4096G
->>>>>>> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
->>>>>>> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->>>>>>> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->>>>>>> [    3.988164] fu740-pcie e00000000.pcie: PCI host
->>>>>>> bridge to bus 0000:00
->>>>>>>
->>>>>>> Reverting the following commits solves the issue.
->>>>>>>
->>>>>>> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc:
->>>>>>> Support ECAM mechanism by
->>>>>>> enabling iATU 'CFG Shift Feature'
->>>>>>>
->>>>>>> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom:
->>>>>>> Prepare for the DWC ECAM
->>>>>>> enablement
->>>>>>>
->>>>>>> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc:
->>>>>>> Prepare the driver for
->>>>>>> enabling ECAM mechanism using iATU 'CFG Shift Feature'
->>>>>> As Conor pointed out, we can't fix a code regression with a DT change.
->>>>>>
->>>>>> #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the
->>>>>> driver for enabling ECAM mechanism using iATU 'CFG Shift
->>>>>> Feature'")
->>>>> Hi Conor,
->>>>>
->>>>> Can you try with this patch and see if it is fixing the issue.
->>>>> diff --git a/drivers/pci/controller/dwc/pcie-fu740.c
->>>>> b/drivers/pci/controller/dwc/pcie-fu740.c
->>>>> index 66367252032b..b5e0f016a580 100644
->>>>> --- a/drivers/pci/controller/dwc/pcie-fu740.c
->>>>> +++ b/drivers/pci/controller/dwc/pcie-fu740.c
->>>>> @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct
->>>>> platform_device *pdev)
->>>>>
->>>>>          platform_set_drvdata(pdev, afp);
->>>>>
->>>>> +       pci->pp.native_ecam = true;
->>>>> +
->>>>>          return dw_pcie_host_init(&pci->pp);
->>>>>   }
->>>>>
->>>>> - Krishna Chaitanya.
->>>>>
->>>> I've already tried it. It doesn't work. Same error message as before.
->>> Can you share us dmesg logs for this change.
->>>
->>> - Krishna Chaitanya.
->> [    3.159763] fu740-pcie e00000000.pcie: host bridge /soc/pcie@e00000000
->> ranges:
->> [    3.159853] fu740-pcie e00000000.pcie:       IO
->> 0x0060080000..0x006008ffff -> 0x0060080000
->> [    3.159916] fu740-pcie e00000000.pcie:      MEM
->> 0x0060090000..0x007fffffff -> 0x0060090000
->> [    3.159953] fu740-pcie e00000000.pcie:      MEM
->> 0x2000000000..0x3fffffffff -> 0x2000000000
->> [    3.160039] fu740-pcie e00000000.pcie: ECAM at [mem
->> 0xdf0000000-0xdffffffff] for [bus 00-ff]
->> [    3.571421] fu740-pcie e00000000.pcie: No iATU regions found
->> [    3.571472] fu740-pcie e00000000.pcie: Failed to configure iATU in ECAM
->> mode
->> [    3.571529] fu740-pcie e00000000.pcie: probe with driver fu740-pcie
->> failed with error -22
->>
->> Same as before the change. The entire log is here:
->>
->> https://www.w6rz.net/dmesg.txt
->>
-> Weird that the driver still creates ECAM even after skipping it using the flag.
-> The flag is not meant for that purpose, but it should've worked anyway.
->
-> Can you try this diff and share the dmesg log?
->
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 20c9333bcb1c..58080928df9f 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -523,8 +523,12 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->          pp->cfg0_size = resource_size(res);
->          pp->cfg0_base = res->start;
->
-> +       dev_info(dev, "%s: %d native_ecam: %d", __func__, __LINE__,
-> +pp->native_ecam);
-> +
->          pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res);
->          if (pp->ecam_enabled) {
-> +               dev_info(dev, "%s: %d ECAM ENABLED", __func__, __LINE__);
->                  ret = dw_pcie_create_ecam_window(pp, res);
->                  if (ret)
->                          return ret;
-> @@ -533,6 +537,7 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->                  pp->bridge->sysdata = pp->cfg;
->                  pp->cfg->priv = pp;
->          } else {
-> +               dev_info(dev, "%s: %d ECAM DISABLED", __func__, __LINE__);
->                  pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
->                  if (IS_ERR(pp->va_cfg0_base))
->                          return PTR_ERR(pp->va_cfg0_base);
->
-> - Mani
->
-After testing with this patch, I must have transferred the wrong image 
-to the target when testing before. The "pci->pp.native_ecam = true;" 
-patch to pcie-fu740.c does work. Here's the message with the debug prints:
+Hi,
 
-[    3.227746] fu740-pcie e00000000.pcie: host bridge 
-/soc/pcie@e00000000 ranges:
-[    3.227833] fu740-pcie e00000000.pcie:       IO 
-0x0060080000..0x006008ffff -> 0x0060080000
-[    3.227896] fu740-pcie e00000000.pcie:      MEM 
-0x0060090000..0x007fffffff -> 0x0060090000
-[    3.227934] fu740-pcie e00000000.pcie:      MEM 
-0x2000000000..0x3fffffffff -> 0x2000000000
-[    3.227993] fu740-pcie e00000000.pcie: dw_pcie_host_get_resources: 
-526 native_ecam: 1
-[    3.228019] fu740-pcie e00000000.pcie: dw_pcie_host_get_resources: 
-539 ECAM DISABLED
-[    3.331449] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 ib, 
-align 4K, limit 4096G
-[    3.531131] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
-[    3.731132] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-[    3.835131] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
-[    3.835465] fu740-pcie e00000000.pcie: PCI host bridge to bus 0000:00
+The historically fixed-size struct sockaddr is part of UAPI and embedded
+in many existing structures. The kernel uses struct sockaddr extensively
+within the kernel to represent arbitrarily sized sockaddr structures,
+which caused problems with the compiler's ability to determine object
+sizes correctly. The "temporary" solution was to make sockaddr explicitly
+use a flexible array, but this causes problems for embedding struct
+sockaddr in structures, where once again the compiler has to guess about
+the size of such objects, and causes thousands of warnings under the
+coming -Wflex-array-member-not-at-end.
+
+Switching to sockaddr_storage internally everywhere wastes a lot of memory,
+so we are left with needing two changes:
+- introduction of an explicitly arbitrarily sized sockaddr struct
+- switch struct sockaddr back to being fixed size
+
+Doing the latter step requires all "arbitrarily sized" uses of struct
+sockaddr to be replaced with the new struct from the first step.
+
+So, introduce the new struct and do enough conversions that we can
+switch sockaddr back to a fixed-size sa_data.
+
+Thanks!
+
+-Kees
+
+ v2:
+  - Include BPF casts
+  - Move sockaddr_unspec out of UAPI
+ v1: https://lore.kernel.org/all/20250723230354.work.571-kees@kernel.org/
+
+Kees Cook (10):
+  net: Add struct sockaddr_unspec for sockaddr of unknown length
+  net/l2tp: Add missing sa_family validation in
+    pppol2tp_sockaddr_get_info
+  net: Convert proto_ops bind() callbacks to use sockaddr_unspec
+  net: Convert proto_ops connect() callbacks to use sockaddr_unspec
+  net: Remove struct sockaddr from net.h
+  net: Convert proto callbacks from sockaddr to sockaddr_unspec
+  bpf: Convert cgroup sockaddr filters to use sockaddr_unspec
+    consistently
+  bpf: Convert bpf_sock_addr_kern "uaddr" to sockaddr_unspec
+  bpf: Add size validation to bpf_sock_addr_set_sun_path()
+  net: Convert struct sockaddr to fixed-size "sa_data[14]"
+
+ include/linux/bpf-cgroup.h                    | 17 ++++++++------
+ include/linux/filter.h                        |  2 +-
+ include/linux/net.h                           |  9 ++++----
+ include/linux/socket.h                        | 23 +++++++++++++++----
+ include/net/inet_common.h                     | 13 +++++------
+ include/net/ip.h                              |  4 ++--
+ include/net/ipv6.h                            | 10 ++++----
+ include/net/ipv6_stubs.h                      |  2 +-
+ include/net/ping.h                            |  2 +-
+ include/net/sctp/sctp.h                       |  2 +-
+ include/net/sock.h                            | 14 +++++------
+ include/net/tcp.h                             |  2 +-
+ include/net/udp.h                             |  2 +-
+ include/net/vsock_addr.h                      |  2 +-
+ net/rds/rds.h                                 |  2 +-
+ net/smc/smc.h                                 |  4 ++--
+ .../perf/trace/beauty/include/linux/socket.h  |  5 +---
+ crypto/af_alg.c                               |  2 +-
+ drivers/block/drbd/drbd_receiver.c            |  6 ++---
+ drivers/infiniband/hw/erdma/erdma_cm.c        |  6 ++---
+ drivers/infiniband/sw/siw/siw_cm.c            |  8 +++----
+ drivers/isdn/mISDN/l1oip_core.c               |  2 +-
+ drivers/isdn/mISDN/socket.c                   |  4 ++--
+ drivers/net/ppp/pppoe.c                       |  4 ++--
+ drivers/net/ppp/pptp.c                        |  8 +++----
+ drivers/net/wireless/ath/ath10k/qmi.c         |  2 +-
+ drivers/net/wireless/ath/ath11k/qmi.c         |  2 +-
+ drivers/net/wireless/ath/ath12k/qmi.c         |  2 +-
+ drivers/nvme/host/tcp.c                       |  4 ++--
+ drivers/nvme/target/tcp.c                     |  2 +-
+ drivers/slimbus/qcom-ngd-ctrl.c               |  2 +-
+ drivers/target/iscsi/iscsi_target_login.c     |  2 +-
+ drivers/xen/pvcalls-back.c                    |  4 ++--
+ fs/afs/rxrpc.c                                |  6 ++---
+ fs/coredump.c                                 |  2 +-
+ fs/dlm/lowcomms.c                             |  8 +++----
+ fs/ocfs2/cluster/tcp.c                        |  6 ++---
+ fs/smb/client/connect.c                       |  4 ++--
+ fs/smb/server/transport_tcp.c                 |  4 ++--
+ kernel/bpf/cgroup.c                           |  8 +++----
+ net/9p/trans_fd.c                             |  8 +++----
+ net/appletalk/ddp.c                           |  4 ++--
+ net/atm/pvc.c                                 |  4 ++--
+ net/atm/svc.c                                 |  4 ++--
+ net/ax25/af_ax25.c                            |  4 ++--
+ net/bluetooth/hci_sock.c                      |  2 +-
+ net/bluetooth/iso.c                           |  6 ++---
+ net/bluetooth/l2cap_sock.c                    |  4 ++--
+ net/bluetooth/rfcomm/core.c                   |  6 ++---
+ net/bluetooth/rfcomm/sock.c                   |  5 ++--
+ net/bluetooth/sco.c                           |  4 ++--
+ net/caif/caif_socket.c                        |  2 +-
+ net/can/bcm.c                                 |  2 +-
+ net/can/isotp.c                               |  2 +-
+ net/can/j1939/socket.c                        |  4 ++--
+ net/can/raw.c                                 |  2 +-
+ net/ceph/messenger.c                          |  2 +-
+ net/core/dev.c                                |  2 +-
+ net/core/dev_ioctl.c                          |  2 +-
+ net/core/filter.c                             | 13 ++++++++---
+ net/core/sock.c                               |  6 ++---
+ net/ieee802154/socket.c                       | 12 +++++-----
+ net/ipv4/af_inet.c                            | 16 ++++++-------
+ net/ipv4/arp.c                                |  2 +-
+ net/ipv4/datagram.c                           |  4 ++--
+ net/ipv4/ping.c                               |  8 +++----
+ net/ipv4/raw.c                                |  3 ++-
+ net/ipv4/tcp.c                                |  2 +-
+ net/ipv4/tcp_ipv4.c                           |  4 ++--
+ net/ipv4/udp.c                                |  6 +++--
+ net/ipv4/udp_tunnel_core.c                    |  4 ++--
+ net/ipv6/af_inet6.c                           |  6 ++---
+ net/ipv6/datagram.c                           |  8 +++----
+ net/ipv6/ip6_udp_tunnel.c                     |  4 ++--
+ net/ipv6/ping.c                               |  2 +-
+ net/ipv6/raw.c                                |  3 ++-
+ net/ipv6/tcp_ipv6.c                           |  6 ++---
+ net/ipv6/udp.c                                |  5 ++--
+ net/iucv/af_iucv.c                            |  6 ++---
+ net/l2tp/l2tp_core.c                          |  8 +++----
+ net/l2tp/l2tp_ip.c                            |  6 +++--
+ net/l2tp/l2tp_ip6.c                           |  5 ++--
+ net/l2tp/l2tp_ppp.c                           |  9 +++++++-
+ net/llc/af_llc.c                              |  4 ++--
+ net/mctp/af_mctp.c                            |  4 ++--
+ net/mctp/test/route-test.c                    |  2 +-
+ net/mctp/test/utils.c                         |  5 ++--
+ net/mptcp/pm_kernel.c                         |  4 ++--
+ net/mptcp/protocol.c                          |  5 ++--
+ net/mptcp/subflow.c                           |  4 ++--
+ net/netfilter/ipvs/ip_vs_sync.c               |  6 ++---
+ net/netlink/af_netlink.c                      |  4 ++--
+ net/netrom/af_netrom.c                        |  6 ++---
+ net/nfc/llcp_sock.c                           |  6 ++---
+ net/nfc/rawsock.c                             |  2 +-
+ net/packet/af_packet.c                        | 15 ++++++------
+ net/phonet/pep.c                              |  3 ++-
+ net/phonet/socket.c                           | 10 ++++----
+ net/qrtr/af_qrtr.c                            |  4 ++--
+ net/qrtr/ns.c                                 |  2 +-
+ net/rds/af_rds.c                              |  2 +-
+ net/rds/bind.c                                |  2 +-
+ net/rds/tcp_connect.c                         |  4 ++--
+ net/rds/tcp_listen.c                          |  2 +-
+ net/rose/af_rose.c                            |  4 ++--
+ net/rxrpc/af_rxrpc.c                          |  4 ++--
+ net/rxrpc/rxperf.c                            |  2 +-
+ net/sctp/socket.c                             | 13 ++++++-----
+ net/smc/af_smc.c                              |  6 ++---
+ net/socket.c                                  | 14 +++++------
+ net/sunrpc/clnt.c                             |  6 ++---
+ net/sunrpc/svcsock.c                          |  2 +-
+ net/sunrpc/xprtsock.c                         |  9 ++++----
+ net/tipc/socket.c                             |  6 ++---
+ net/unix/af_unix.c                            | 12 +++++-----
+ net/vmw_vsock/af_vsock.c                      |  6 ++---
+ net/vmw_vsock/vsock_addr.c                    |  2 +-
+ net/x25/af_x25.c                              |  4 ++--
+ net/xdp/xsk.c                                 |  2 +-
+ 119 files changed, 330 insertions(+), 288 deletions(-)
+
+-- 
+2.34.1
 
 
