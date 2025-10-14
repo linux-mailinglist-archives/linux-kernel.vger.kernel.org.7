@@ -1,55 +1,49 @@
-Return-Path: <linux-kernel+bounces-853347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBABBDB591
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:59:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D04BDB597
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFFFD18A7DA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B9618A83FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8923530AD14;
-	Tue, 14 Oct 2025 20:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0F030BB99;
+	Tue, 14 Oct 2025 21:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l20NnhA7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITc1ZMID"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB50308F19;
-	Tue, 14 Oct 2025 20:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C631F03C5;
+	Tue, 14 Oct 2025 21:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760475591; cv=none; b=uBd4YJIKKgktyfzLGe44fxqqOgdCORB5XloC/lFMw9Ph6xodsVvXtPEyhaajH0ooxOCckTRxbdWn1mAn31fHPSM/+Mmx/oDNGN+twGviDU9MwqZb7IZoXhmUk0TgRXJEAK2KU4MxiVK9D2xqmrO/x8ghjamh9P5QcU/giCyif/w=
+	t=1760475623; cv=none; b=o3eKkKBKsF/C6TUYrMYLa8PHZ2a1NtzLZ//raxMWuYDZvmTkAF8IzYvou/J8AFU5imvT6SDQBpqZ1oAPMW/6JaS+48fmDsZrCo/IVL/+dmogBy+hyxWwtZimUTAoEFfvWACLn8l6z8twGjgmPazFksaqq7Vs66vBKoov8D4GnFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760475591; c=relaxed/simple;
-	bh=CwCpWIEbjznOcuvaN31S0BbRxv1BAYgTlvJi+4awgk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AWS4aKUK1qlhQlQwiSgosoLnsoFegcsCjkBTOuGDdCVdhi0p3wwKqCkSVNYIqb0wwnMRoCYsZWBB+aCq7Qxb2d4utsJTATnU+/do91sKV10q1Q4guJ8u/k8aQ+u5u5R4tcw+L+VIaAjz+n5XyWBMlEkKvZSdGQw74IJy2hewYbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l20NnhA7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F46BC4CEE7;
-	Tue, 14 Oct 2025 20:59:50 +0000 (UTC)
+	s=arc-20240116; t=1760475623; c=relaxed/simple;
+	bh=LJfH2b1oAzBe6ROcyf6DI1EgazSfvh6S52X7jHMiAP4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=lftCpOs0xi6Wm5T04mKmrwvCh2AKO5AHi8Zq16zEaoJlaf959l9sKwa7WCmyupKbO0IzYZkHKEHAijMFDzOpABkd2drT0U+ui5DYKTg237eL1V7KOEPC8EVuEowly4OrpvD4EySReYHGEleZBzQVdIuDeJH6Xzb1o6HQA6UuHs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITc1ZMID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C1F3C4CEE7;
+	Tue, 14 Oct 2025 21:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760475590;
-	bh=CwCpWIEbjznOcuvaN31S0BbRxv1BAYgTlvJi+4awgk0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=l20NnhA76N7s1JSZeE4HhkKM+jYSydazTLNhwgoJedy5N4CCAltIeitOYzgB97nb4
-	 yJSSA9ISOIGcN2F9dO+VCT1VLFrvp54XNbUrWUdkDP2FiTUs/ZDkDeRWtmzY/FhZ7+
-	 Ag9wxqiH2XLDqbC9Ggh/zHwDP6RlKazJnmRgHiV2FJAyV/4/EQIRApzSRJoDFpR/D2
-	 G0WEYRuObwpMkxOXM9nuIjaVqQyPF++e+Nhf/APPitSe86Ru9BXWjh/pmchadrsuWT
-	 3t5rjmLa779clCBhePxGVHmeqGxEMLEm3mMkhZ7cPhhZloWcJIWfjfJzO+QjzwkjjY
-	 tRLtLdypBkohw==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"# 6 . 17 . x" <stable@vger.kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] mm/damon/core: fix list_add_tail() call on damon_call()
-Date: Tue, 14 Oct 2025 13:59:36 -0700
-Message-ID: <20251014205939.1206-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	s=k20201202; t=1760475621;
+	bh=LJfH2b1oAzBe6ROcyf6DI1EgazSfvh6S52X7jHMiAP4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ITc1ZMIDy8AKBRYsoow2aTVwflsvRWGwk71N5D1kxni9ttAFaBq2xY78d9OK4u/rH
+	 Q1QiJnGwzesHgQJUjSDJG3G7uqmjTy3TWR5gTC0QQp4DjXEoezu7EFAoZq9jvz5xmY
+	 kALKbHWg8XMHb6mkAkYxsvuHQCLOoO2js+5RfWwRCL50dNF5B4ziGIoWjf2Is8e8yJ
+	 YwlUVNdjSv1LsRFb9tOHI1LurWnjyn6UggIr7kPhxmFT/qmkCxKKBoGLd5iGVPklrc
+	 v6h3Yja3KfvQwV+LO9jTq/HH58Rj0Cj2SEsnZ5yXKeREmxiOhVEPZussiIywtxR2HO
+	 cBaQonIdQBXnw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE6C8380AAF2;
+	Tue, 14 Oct 2025 21:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,61 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] MAINTAINERS: add myself as maintainer for b53
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176047560651.96118.16712658555383570328.git-patchwork-notify@kernel.org>
+Date: Tue, 14 Oct 2025 21:00:06 +0000
+References: <20251013180347.133246-1-jonas.gorski@gmail.com>
+In-Reply-To: <20251013180347.133246-1-jonas.gorski@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: florian.fainelli@broadcom.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-Each damon_ctx maintains callback requests using a linked list
-(damon_ctx->call_controls).  When a new callback request is received via
-damon_call(), the new request should be added to the list.  However, the
-function is making a mistake at list_add_tail() invocation: putting the
-new item to add and the list head to add it before, in the opposite
-order.  Because of the linked list manipulation implementation, the new
-request can still be reached from the context's list head.  But the list
-items that were added before the new request are dropped from the list.
+Hello:
 
-As a result, the callbacks are unexpectedly not invocated.  Worse yet,
-if the dropped callback requests were dynamically allocated, the memory
-is leaked.  Actually DAMON sysfs interface is using a dynamically
-allocated repeat-mode callback request for automatic essential stats
-update.  And because the online DAMON parameters commit is using
-a non-repeat-mode callback request, the issue can easily be reproduced,
-like below.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-    # damo start --damos_action stat --refresh_stat 1s
-    # damo tune --damos_action stat --refresh_stat 1s
+On Mon, 13 Oct 2025 20:03:47 +0200 you wrote:
+> I wrote the original OpenWrt driver that Florian used as the base for
+> the dsa driver, I might as well take responsibility for it.
+> 
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> [...]
 
-The first command dynamically allocates the repeat-mode callback request
-for automatic essential stat update.  Users can see the essential stats
-are automatically updated for every second, using the sysfs interface.
+Here is the summary with links:
+  - [net] MAINTAINERS: add myself as maintainer for b53
+    https://git.kernel.org/netdev/net/c/df5a1f4aeb6f
 
-The second command calls damon_commit() with a new callback request that
-was made for the commit.  As a result, the previously added repeat-mode
-callback request is dropped from the list.  The automatic stats refresh
-stops working, and the memory for the repeat-mode callback request is
-leaked.  It can be confirmed using kmemleak.
-
-Fix the mistake on the list_add_tail() call.
-
-Fixes: 004ded6bee11 ("mm/damon: accept parallel damon_call() requests")
-Cc: <stable@vger.kernel.org> # 6.17.x
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 417f33a7868e..109b050c795a 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -1453,7 +1453,7 @@ int damon_call(struct damon_ctx *ctx, struct damon_call_control *control)
- 	INIT_LIST_HEAD(&control->list);
- 
- 	mutex_lock(&ctx->call_controls_lock);
--	list_add_tail(&ctx->call_controls, &control->list);
-+	list_add_tail(&control->list, &ctx->call_controls);
- 	mutex_unlock(&ctx->call_controls_lock);
- 	if (!damon_is_running(ctx))
- 		return -EINVAL;
-
-base-commit: 49926cfb24ad064c8c26f8652e8a61bbcde37701
+You are awesome, thank you!
 -- 
-2.47.3
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
