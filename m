@@ -1,129 +1,183 @@
-Return-Path: <linux-kernel+bounces-852541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F74BD949C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD0BBD94B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648CF3A8F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12962423318
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1115312814;
-	Tue, 14 Oct 2025 12:14:10 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F87B31352E;
+	Tue, 14 Oct 2025 12:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xGNHH9X4"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012046.outbound.protection.outlook.com [40.107.200.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869F429DB88
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760444049; cv=none; b=lMy4m8s1AE0P3uZBkxz9kEJsyNJTbJ+fGuE7XlhvAMfJGQGPisbQgyX4tAfwB72/9qqjQb1xYAu/xu3869Y67S+E5liEcJCVLnlAp4EEhzxaiclY2FcnQMIQIEBlXN6nvIEoIJM4BGSTITU3kUf/cggBF5Nu2O/1zHwovd5NEWc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760444049; c=relaxed/simple;
-	bh=2sSzVoEej2jW/r3/sRECPAdU09GWnha+jUjMSPgGpZc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=J4YgU6DND4t/wr9OMVm0/Wb9S0iLlDuIC6v1ntEw/KwpJDtF4qwDXjueA5V8EQot1R88nowzQZMcINxH9EjVXFU13nmPDD4zbD6ehOnOR05CLFqroJOzAkhh+KNRkdjQDqHtZfGsIHT7VxWe95ufYfMH99lriCIXICHJ93o1XYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430a442092eso10847455ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760444045; x=1761048845;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VoFDoaL6Dny4O13nxDAFTs6LxNfFNcAJkU1AQIBFb4M=;
-        b=lXPur97zVA9PZzuuG0/PVX2SbBsFzZ/gDxMwCqOxhBabcT2F3sRUzux1+zs2gnKAmk
-         RvpgSlqAYzBL6Oty4mMCtuGaPxRiJ/Pp/ip2hGNc5w8V2EsxoHy1a2opjnsMC3Aw7eec
-         cL6nvmRF0a1Y6H+tE72kSqgB2sjQ6x6eTHQ1/BFKKDhmBYhcN5ZuRDc9pXyLQf685jOY
-         tfmxfVE2052nSkFUvPvsA6as44nk0VHe7At6nQDCmI1lKkkt3zlanBJn/OZJeVn+/MmO
-         RkSgWKFJ73zatQFsn/+oN8VSXs9xX6zFZAQBzsiW4K3kMzLrTkWMAR4tmZ9yBHi/eW1o
-         /0Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/sV9tnvNlGHeHf+2lHJKLQj4Ot/Ko3TP3c1SuhdjwZXtPVb9ovXIv27BPdNF/pTKdNailxFBc2lkieY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywff/tMa4nZWasaNBhkgmIzgevAewPoY7NCURR8FHMdl2RvR198
-	UfFjp/hmyhnzlyq5YdupWwOAUubBSAZ1ePSzXK1FqK/9/gmxn5tncQoLl0+L/DirRdbR3rz1eYs
-	ound9u65tnPTVkzI6Cg4al3S9ooqNf0N4/+fK+pPHUGdGHXGcdvQORsqlH3g=
-X-Google-Smtp-Source: AGHT+IHzZ0ogkTIwD0h60rNR8VkQBVClhXt8Laj15gUpzClb6v6lVi5STVmyvQHeTGoIJ4rS3fsa/WRf/7GuSI64r95czHxJNKPM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAE72C21F4;
+	Tue, 14 Oct 2025 12:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760444212; cv=fail; b=ZU8N2oAUqKy/R6U7DySxLQIenvPYGM1uxAaAQwoOe2lb2G8MqxDuN10PDnR1Wgc7Tc+6y1o3BViyp7kw2JDZpc8xveFLiGMCgP4XsY2+60JrcLt3UjuXP/zk8gf6YJCoqtyGIy5VcfRB6CSO4m//vhZN5yVqQE1rW38c617VVDk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760444212; c=relaxed/simple;
+	bh=yiRrxcdkcs9wJ2YZWLjIEPROYtfxLzIE2oJyzHnO+kM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pqOV29r5tHOJZp0jUDOLE4f9cJ4VwEUc+QHSDoLQULD3R37NGMTBbIpLP4wVVnPjNm9DPEvXMApiMpKMUVvzOIyRA2ApQnXSBWMJk4lbpZUPXOxppKjSH8PMcyySFpo8c0xwbUTVeg/PQmEBzIISOWKR8GRku2Ktv41KDHkeWoI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xGNHH9X4; arc=fail smtp.client-ip=40.107.200.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I9/N0zAHIa5K9sBMnSGNjjDWUPHU5yAmrQm8OkyCVgACCLPHEOWxxxhivKN+0oe6odUyn0yI079QKS/Hyp0cVSLrFpCTIsPMVI4ZQLBBw01NFIqMQ21R0Cx29ExS2ucCfqWg0uETvwRQ/HJ3kizxxAyZSyFvKiVw4h7bSR4koi/l92nu2v5j5oQOpYRoQ44bhrT0M/w2YPlaj5Jtl3iE6EdkIWtrcC3CYhzrCtTFRpGkIrVGutif7puZHCR4tZaCSnYpY3M/A+e9GTRmpzqIE6j8lW02gv4qqX6rjz+t/AZJchHm1acDN0IB215J5sa40SnmMKLJpFk8GajpjvuD1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MbFm7EzxpDYTMPchtWmB1N4NZWywMoPUMB3TCIzOULA=;
+ b=PH3YPR1s9ln+CueVpFAV/wt7X6lgUujPvsnOd8TMKXFXLVxfedB9NnY8HKiytm4fZ3RMdDJnGJb5plBcvC2lSPVostxpzxmEbRDL6SvbZZqtOs60DykiotfuVcfLLNywFiNJ3eK2sSozZcxlBi4UxvXbZHbL8bj3f6faWOoDtg4qWP2B3Y57rwz8BN/8mwiClqNFn7GhEved7MBmZiji+CM+JwRZq8338HSxApLKPae59moHuPIgs71wZVx59AJ2wVs+PGMUnnOqgCpZfv0b/MzhdtP5bWbXX27itNq0t7fcPRbX9JXjD606tiUC0ZcPkLkZek4FWyY5rlRLFHKuHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MbFm7EzxpDYTMPchtWmB1N4NZWywMoPUMB3TCIzOULA=;
+ b=xGNHH9X4Fe7dorQt0XVA3w/UXXO5ve9AcK9fyxOCAlw+jvcPWYYyNS/FBuy/lEP6CplVk78lJZq++euWTiHvUaWqoyOEbb4Il6cljRdmLKix6aMwFwiuvEsnVkeJ0oVoqUySp7W4C1DyGljlat1Us7LoUqrynHX/H1FcHTqWAOY=
+Received: from SJ0PR03CA0002.namprd03.prod.outlook.com (2603:10b6:a03:33a::7)
+ by LV8PR12MB9334.namprd12.prod.outlook.com (2603:10b6:408:20b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Tue, 14 Oct
+ 2025 12:16:44 +0000
+Received: from CO1PEPF000066E7.namprd05.prod.outlook.com
+ (2603:10b6:a03:33a:cafe::83) by SJ0PR03CA0002.outlook.office365.com
+ (2603:10b6:a03:33a::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.9 via Frontend Transport; Tue,
+ 14 Oct 2025 12:16:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CO1PEPF000066E7.mail.protection.outlook.com (10.167.249.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 12:16:44 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 14 Oct
+ 2025 05:16:43 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 14 Oct
+ 2025 07:16:43 -0500
+Received: from xhdapps-pcie2.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 14 Oct 2025 05:16:40 -0700
+From: Devendra K Verma <devendra.verma@amd.com>
+To: <bhelgaas@google.com>, <mani@kernel.org>, <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<devendra.verma@amd.com>
+Subject: [PATCH RESEND v4 0/2] Add AMD MDB Endpoint and non-LL mode Support
+Date: Tue, 14 Oct 2025 17:46:32 +0530
+Message-ID: <20251014121635.47914-1-devendra.verma@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4910:b0:430:a65c:a833 with SMTP id
- e9e14a558f8ab-430a65ccde8mr10076475ab.31.1760444045096; Tue, 14 Oct 2025
- 05:14:05 -0700 (PDT)
-Date: Tue, 14 Oct 2025 05:14:05 -0700
-In-Reply-To: <20251014114858.637382-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee3e8d.050a0220.91a22.020a.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in ntfs_setattr
-From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: devendra.verma@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E7:EE_|LV8PR12MB9334:EE_
+X-MS-Office365-Filtering-Correlation-Id: 409da0e0-e0d0-4525-c281-08de0b1b8a12
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Qqvz1wks7Mgir8BrRzgBgoN0GFC1ZqYGehifmouLV7KiGVPnFrActKvxD4pS?=
+ =?us-ascii?Q?z8FARW60K4UqkM+YbJW5+fUEDWSVj04xCv95k76nOSaZZLBtghYdq55VJEtV?=
+ =?us-ascii?Q?JJ2gDAK1X/SpkWU2mQbvJHQqTHAeveu5h3mI5pvfWIuW6dOH5LLcwlpLmqz0?=
+ =?us-ascii?Q?eAFyirkXx8hkNZT17+YJ0ixdBwEMifjz6jQNNmx9rMMimu+tpCYimWzfwxG3?=
+ =?us-ascii?Q?A6o9KW5YSmhyAftYHPWIsLH73+k40eMntO8YSG+QGuvZ42vcMdtFmTLS5EQq?=
+ =?us-ascii?Q?lFKw7vkTxsfhD3dRYu1ZjXDxSqHspo7mo1KBURbSBC6qQKZA3hF9xHzPeTwO?=
+ =?us-ascii?Q?HF+hSGR1DpHNryUytKNFkTEwvECmxSp5Rwz/kvd1CJlQAvPmdaXy8yWKgAi0?=
+ =?us-ascii?Q?pBls1/cGE2mkDPRGHiiAn4VN0gfebiVT3VwnPIas+Lj9q0RbWUU3c62DoXzZ?=
+ =?us-ascii?Q?0RDbwjG+O7t92KYyITJlzkG7i0NcrOIIKRbGGrI5FOTRiKijxVLjnhhPNl9w?=
+ =?us-ascii?Q?d4PB2x8/jWLpo+Coo6pwME98MUr3q2K+FStjVif5AEr5L0iZqVE0YEKvShKW?=
+ =?us-ascii?Q?VAg416/YPrgDy8lU3bA4kjtlE7l7RZC3vC97JalCqHAbIkRQqyoP0DGLEyR6?=
+ =?us-ascii?Q?bjQPtgU6+oEEjV6HezMGrTohycNEgsd6qzESsZPI0Fu63aY/knB5tbQxpjWE?=
+ =?us-ascii?Q?wJ9BtyIFepS0P501Ugia8nw9ButXCqMHHOc2tKvYXUEm0UOYB/gXFuuB6yLz?=
+ =?us-ascii?Q?7mvujm49ThDds1lr34s0ZIPzTWDj0WJzf/tN4T0DBhP4/zC2vPwdCpfWNhAg?=
+ =?us-ascii?Q?CMFH6M1uLBX6B3V/EgvJQ2ITR3Xn7VX3oReGz/nuNlUaAElfpVwB7b+F9L4O?=
+ =?us-ascii?Q?uYhZs3OxHCsB6DH9hnR+jH2wPN/Qp+Jcz1n/kpNFAd/8yZeDt7vXns4L6dij?=
+ =?us-ascii?Q?woZrdgDdXjagM13idfidE3U180S9jGEri+l2vUahobvi88QBjdfjIzhW+vQ8?=
+ =?us-ascii?Q?WsWrSnNKgrAe8iEL3W8JsidO7IjyPU8oDraRPmeUS/Wq/VdjHOopDny1/JKV?=
+ =?us-ascii?Q?IW/NznM6DCXia48DJb5AK8uPKfMu9CUZL20/yOBvzrZu7UFodjHFsxdqzqGF?=
+ =?us-ascii?Q?sWhC5pauLUTVybFVTFwuoJdQUQu/ZiaQPXumJV+/vRpevA+d82yOzaiVhWP0?=
+ =?us-ascii?Q?dHPLJlmX9Rb7lc7NNKv+sN1qqp02Er2f0qSRmUPwo2V4j/W4iaUFbN7SFbVL?=
+ =?us-ascii?Q?KKlL61U1dw8xUsFY7kjwZyXUc75E7ymIlcu+3JyogaqkM/kK6YTm9f2pOoN2?=
+ =?us-ascii?Q?G/Osu2WB9q9mVyV+WwSW7uv24xBT7TXfsxgoA39jQHN6scSI4QKgHd8rT/gF?=
+ =?us-ascii?Q?ceDnGgVZg7w1nNY1Rq5rPgH2lBmXIgOcX7GAGKr/s54mYdtbZ5JV0ZFm5o1Q?=
+ =?us-ascii?Q?z6Ieb6J71LxR/Mm/gxG0s9o6UhjT700ZOB0rA3E8BDUAzoctSSgLq2oST685?=
+ =?us-ascii?Q?bMN/0/jdfJDCYG0fc09Zqb2joNm08GSq4c+N4WysCI+sJruQnmy+OS6N5i8N?=
+ =?us-ascii?Q?YdeTnUppswnBsvLatjQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 12:16:44.0349
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 409da0e0-e0d0-4525-c281-08de0b1b8a12
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9334
 
-Hello,
+This series of patch support the following:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: trying to register non-static key in ntfs_setattr
+ - AMD MDB Endpoint Support, as part of this patch following are
+   added:
+   o AMD supported device ID and vendor ID (Xilinx)
+   o AMD MDB specific driver data
+   o AMD specific VSEC capabilities to retrieve the base of
+     phys address of MDB side DDR
+   o Logic to assign the offsets to LL and data blocks if
+     more number of channels are enabled than configured
+     in the given pci_data struct.
 
-DEEPANSHU: ntfs_read_mft ENTERED for inode 25
-DEEPANSHU: inode 25 reached end_enum, mode=00
-DEEPANSHU: inode 25 is EXTEND record
-DEEPANSHU: inode 25 - SUCCESS, about to unlock_new_inode
-DEEPANSHU: ntfs_iget5 START for inode 25
-DEEPANSHU: After iget5_locked for inode 25, I_NEW=0, i_state=0x0
-DEEPANSHU: inode 25 found in CACHE, skipping ntfs_read_mft!
-ntfs_setattr: testing by deepanshu 
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 1 UID: 0 PID: 6686 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- assign_lock_key+0x133/0x150 kernel/locking/lockdep.c:984
- register_lock_class+0x105/0x320 kernel/locking/lockdep.c:1299
- __lock_acquire+0x99/0xd20 kernel/locking/lockdep.c:5112
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- down_write+0x3a/0x50 kernel/locking/rwsem.c:1590
- ntfs_truncate fs/ntfs3/file.c:483 [inline]
- ntfs_setattr+0x71a/0xbf0 fs/ntfs3/file.c:807
- notify_change+0xc18/0xf60 fs/attr.c:546
- do_truncate+0x1a4/0x220 fs/open.c:68
- vfs_truncate+0x493/0x520 fs/open.c:118
- do_sys_truncate+0xdb/0x190 fs/open.c:141
- __do_sys_truncate fs/open.c:153 [inline]
- __se_sys_truncate fs/open.c:151 [inline]
- __x64_sys_truncate+0x5b/0x70 fs/open.c:151
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faadec4eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faade2be038 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
-RAX: ffffffffffffffda RBX: 00007faadeea5fa0 RCX: 00007faadec4eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000013c0
-RBP: 00007faadecd1f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007faadeea6038 R14: 00007faadeea5fa0 R15: 00007ffe8c5e50a8
- </TASK>
+ - Addition of non-LL mode
+   o The IP supported non-LL mode functions
+   o Flexibility to choose non-LL mode via dma_slave_config
+     param peripheral_config, by the client
+   o Allow IP utilization if LL mode is not available
 
+Devendra K Verma (2):
+  dmaengine: dw-edma: Add AMD MDB Endpoint Support
+  dmaengine: dw-edma: Add non-LL mode
 
-Tested on:
+Devendra K Verma (2):
+  dmaengine: dw-edma: Add AMD MDB Endpoint Support
+  dmaengine: dw-edma: Add non-LL mode
 
-commit:         3a866087 Linux 6.18-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=133915e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e58a7dc1a8c00243999
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16bb467c580000
+ drivers/dma/dw-edma/dw-edma-core.c    |  38 ++++++--
+ drivers/dma/dw-edma/dw-edma-core.h    |   1 +
+ drivers/dma/dw-edma/dw-edma-pcie.c    | 160 ++++++++++++++++++++++++++++++++--
+ drivers/dma/dw-edma/dw-hdma-v0-core.c |  62 ++++++++++++-
+ include/linux/dma/edma.h              |   1 +
+ 5 files changed, 248 insertions(+), 14 deletions(-)
+
+-- 
+1.8.3.1
 
 
