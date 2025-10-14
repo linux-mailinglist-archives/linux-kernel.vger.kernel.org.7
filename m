@@ -1,154 +1,100 @@
-Return-Path: <linux-kernel+bounces-851579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6987BD6D1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:01:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFDCBD6D26
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E95C4F53F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:01:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62DFA4EF65E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11C71D6AA;
-	Tue, 14 Oct 2025 00:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NFSvjMUq"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943B927453;
+	Tue, 14 Oct 2025 00:01:59 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19341862
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D671D6AA;
+	Tue, 14 Oct 2025 00:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760400099; cv=none; b=LOJss8Mq5z9x1AzAvcLYWY9ntYDexXGg1SMmfaw7wI2t012sooMw3BNYIUxpkSvW0L8hUXRsPLYrBRPtD4tTzSlDAjP4vG1r09JBus5IX9nZ1BO4DKhqkA4Ys6XRR6TugPvE/9eBNwOKoRb3HNd5j/BCPp3Ash2d1Mwjebon+Mk=
+	t=1760400119; cv=none; b=H7g18SsZLDQCFj3fjKEwcRLf8OML0L+3uzzUA1BxrnflVcE36eGN2Fn6HdFjvHgNPp8sQ8dITaALMvzUMgGZzi5bsqmlz5FX4M4ac75aRaWhc260sO0WBTTU1sMF7yXQTWD74iwcmCUzb3bcu90xhbuf+cSf3hRcZV3E1ASEvYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760400099; c=relaxed/simple;
-	bh=30EZppTfWymzd62I2Q/lqosIjvmCAwH24sBiTejyFlw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oFy17a2MIS7UbUD2nSa0up1o/Ed5+oSVdQr23ykehYAXFiqz1Iatt9E9FSACKSvf87G+z5ZbDNNJ5ypsR7NNM7fllJXgw3EQoKQETepQpJFpjEEFsve+pGz8UM2tVzLF3cWxVEv3h5fFDbm52bwgs3m5Whteij7wogHLCEw6gP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NFSvjMUq; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-336b646768eso11232272a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:01:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760400096; x=1761004896; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=60W7dGApFCGXHKlXBRGDaLpu3YLgl4WyK3JcN6QaedU=;
-        b=NFSvjMUq2klOBCTmti7DH4DcdNC7CMOJwlSo1RjpkXxF3R9H69Ct/dTvIZwFVQR2Xf
-         Whf+5fsmbl0P/2Ko+cWUas9w/xZNychL9Ym3NMchbnNtiycj3rh23wYzvURitxbU+DvA
-         1rcm65Iu341qU2bQ+gPG1BqmbbCyWc+a2/bn8LPA6JeVxRLWCJdwSBTJbK8qluUXjCk0
-         jh5r1YJEpu4ReFUtYHiaKdrkxvn2ppxU6Ws5tRRmX58ukcrReJ3NbCa04Wegu45U+1GP
-         0ZXRnOtkDweU4ipy7pGneBjobiANtQ8wLPP0ls3FmwPm2tQ8af0nE4dqKEhXCIPoUzTN
-         YOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760400096; x=1761004896;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=60W7dGApFCGXHKlXBRGDaLpu3YLgl4WyK3JcN6QaedU=;
-        b=m1Wti/IQMbzZkJEw66EJV72T0ZesK9gTE+St2wBoV/L6r/vt0OPdvbSDTyBC1+Xlc1
-         siS4W4rlYRI+J/rZPGcgIOlCKMts+ic05335px6uJ6MJxIV7IRW5T3aNaRUClcR7vb47
-         7KJM4ve7ZJ13YQEc1YcMiB1yr07pSn/FljvAoxoNTe+hCQtls/ig2OeSUfobMgg230sh
-         3/YHZvnTHBFeZ3Ts/HKEE28uuF+CT5pC5ZayX7bIuyxutI4tKr6OH8dACti4+bmO4GK/
-         9XfNEmkCkgpq4iBhq96Myao5uHMQ75McDYn3tAcItQJS7pDpSDsx1IDA0n0uu6rG72Yu
-         5GZA==
-X-Gm-Message-State: AOJu0Yz6M6iSg5LAQldNPYkfpHN+rON49f79HUoTREUWZusBrgdA6ZiQ
-	1e68aOJwPGb8KUMK5yDwv6wxDMbAp8Vwx64qStdDRVmrLBxbwYObn9Xvk/CTuvz4ZoSj8QVW82C
-	bOpgpXA==
-X-Google-Smtp-Source: AGHT+IHFYfnmFjxjbFQp7BMqqD83h/lwfyE6WGt5bwyArJ6H0ox9P/tbWn8NIGRGgabEk9PVFSZMkd4SLvs=
-X-Received: from pjbbk16.prod.google.com ([2002:a17:90b:810:b0:339:dc19:ae5d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38d2:b0:335:2eee:19dc
- with SMTP id 98e67ed59e1d1-33b5138401amr31287086a91.28.1760400096074; Mon, 13
- Oct 2025 17:01:36 -0700 (PDT)
-Date: Mon, 13 Oct 2025 17:01:34 -0700
-In-Reply-To: <20251010153839.151763-20-vschneid@redhat.com>
+	s=arc-20240116; t=1760400119; c=relaxed/simple;
+	bh=+vUFipcYIXgXpqA9AhKG0GuuSmvhuP8nc/YpFn8bR3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jq71+xaa2/ECtPd66JHjLCOr1B7XBYCOqosGyuvtGt83velJfTMYo5/2o41alXd1tsEYZbTrSfqF6T2Nu1uCmuajluqU0dpO0D9HqPbPE0QuoLvE0SiDwpOFqLpjcoSFfzxQsfkAYiBTMlY3r3ZbXQIzry70XBsrEYuplhq4Swc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from ofsar (unknown [116.232.147.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 10150340E58;
+	Tue, 14 Oct 2025 00:01:50 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Alex Elder <elder@riscstar.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	mat.jonczyk@o2.pl,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux.amoon@gmail.com,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v13 0/7] spacemit: introduce P1 PMIC support
+Date: Tue, 14 Oct 2025 08:01:45 +0800
+Message-ID: <176040002491.864314.9564488018549093381.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250825172057.163883-1-elder@riscstar.com>
+References: <20250825172057.163883-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251010153839.151763-1-vschneid@redhat.com> <20251010153839.151763-20-vschneid@redhat.com>
-Message-ID: <aO2S3oZwOW_UgAci@google.com>
-Subject: Re: [PATCH v6 19/29] KVM: VMX: Mark vmx_l1d_should flush and
- vmx_l1d_flush_cond keys as allowed in .noinstr
-From: Sean Christopherson <seanjc@google.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org, 
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>, Jann Horn <jannh@google.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Clark Williams <williams@redhat.com>, 
-	Yair Podemsky <ypodemsk@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, 
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 10, 2025, Valentin Schneider wrote:
-> Later commits will cause objtool to warn about static keys being used in
-> .noinstr sections in order to safely defer instruction patching IPIs
-> targeted at NOHZ_FULL CPUs.
+
+On Mon, 25 Aug 2025 12:20:49 -0500, Alex Elder wrote:
+> The SpacemiT P1 is an I2C-controlled PMIC that implements 6 buck
+> converters and 12 LDOs.  It contains a load switch, ADC channels,
+> GPIOs, a real-time clock, and a watchdog timer.
 > 
-> These keys are used in .noinstr code, and can be modified at runtime
-> (/proc/kernel/vmx* write). However it is not expected that they will be
-> flipped during latency-sensitive operations, and thus shouldn't be a source
-> of interference wrt the text patching IPI.
->
-> Mark it to let objtool know not to warn about it.
-
-Can you elaborate in the changelog on what will happen if the key is toggle?
-IIUC, smp_text_poke_batch_finish() will force IPIs if noinstr code is being
-patched.  Even just a small footnote like this:
-
-  Note, smp_text_poke_batch_finish() never defers IPIs if noinstr code is
-  being patched, i.e. this is purely about silencing objtool warnings.
-
-to make it clear that there's no bug/race being introduced.
-
-> Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> This series introduces a multifunction driver for the P1 PMIC as
+> well as drivers for its regulators and RTC.
 > 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index aa157fe5b7b31..dce2bd7375ec8 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -204,8 +204,15 @@ module_param(pt_mode, int, S_IRUGO);
->  
->  struct x86_pmu_lbr __ro_after_init vmx_lbr_caps;
->  
-> -static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
-> -static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_cond);
-> +/*
-> + * Both of these static keys end up being used in .noinstr sections, however
-> + * they are only modified:
-> + * - at init
-> + * - from a /proc/kernel/vmx* write
-> + * thus during latency-sensitive operations they should remain stable.
-> + */
-> +static DEFINE_STATIC_KEY_FALSE_NOINSTR(vmx_l1d_should_flush);
-> +static DEFINE_STATIC_KEY_FALSE_NOINSTR(vmx_l1d_flush_cond);
->  static DEFINE_MUTEX(vmx_l1d_flush_mutex);
->  
->  /* Storage for pre module init parameter parsing */
-> -- 
-> 2.51.0
-> 
+> [...]
+
+Applied, thanks!
+
+[5/7] riscv: dts: spacemit: enable the i2c8 adapter
+      https://github.com/spacemit-com/linux/commit/3e8d7309e6260b1d066e733bf3e2e1b6a0d3f82b
+[6/7] riscv: dts: spacemit: define fixed regulators
+      https://github.com/spacemit-com/linux/commit/1df07a40453fd652132051419140950d47941fe9
+[7/7] riscv: dts: spacemit: define regulator constraints
+      https://github.com/spacemit-com/linux/commit/09a412d397484e76588707d85ccc37f71e491091
+
+Best regards,
+-- 
+Yixun Lan
+
 
