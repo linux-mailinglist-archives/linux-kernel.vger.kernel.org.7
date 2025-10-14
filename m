@@ -1,197 +1,148 @@
-Return-Path: <linux-kernel+bounces-852721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A3ABD9B45
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78E2BD9BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 53C9D355ABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF06188BB81
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E94635979;
-	Tue, 14 Oct 2025 13:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5A93148D8;
+	Tue, 14 Oct 2025 13:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="lZJgHsSY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h27YKG2a"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R0subUQT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F2A304BC5;
-	Tue, 14 Oct 2025 13:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467313148A2;
+	Tue, 14 Oct 2025 13:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760448422; cv=none; b=bT7EGw6SVaAmZyBmXy8gH8l0HeL5+G+Rddpl0qdqNdpxw7nwth4bH/Q5LcSce0usMhaYGc/2ioVMXKGAT8Y8UJDABl1hMgzvEaB4cltmNHp44oVD3AZEjCmCj3jl8ezHNzYYhFjidk22mtWBeA4ao/8kCFF0gYiz/qcXjXScp0s=
+	t=1760448430; cv=none; b=ChbnQ4tffTzr47a+M/y6jO99t81kjU/GBU5ICga5xu6jTOvRlxEL3xCsYPZz7QnwgJzM9ScjbY4s17GQw1VRcNHKFJBZsKGXb+u88X6ppx4AXgjL+JjDM/VyUDkt7tM29JpyuwCvpRkQodDEIZrpyg5ifIsM1Z0wMlpujMlkH+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760448422; c=relaxed/simple;
-	bh=hXCKJ+hMZ0N9v4f87T51ieYkJGSHaAvjzaKvcg0maRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asHK7UGlAZ+sXFD3+Veine4DQUv9rgOIP7JP+WkaihmRUWaKvitefJ44P6YoNHMgMOMmdgZ9tat92nlxl425Vdw60ukg/ravO0gCoIDXKt8zJMVkLA9pnwcZGpwd8+CjD3amNzW3SvErJmbmu6kwyqKbpjaJUL3HVMq70Qv40zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=lZJgHsSY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=h27YKG2a; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id E2472EC008A;
-	Tue, 14 Oct 2025 09:26:57 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Tue, 14 Oct 2025 09:26:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1760448417; x=
-	1760534817; bh=m5oecF8M1+NO9SuhOhdXOIQPyb6XjVKIe3cMgm6wXPw=; b=l
-	ZJgHsSYNUUOdD3gCn5G0mgPutCQlL4Jw0iuggyAiSLrJVmjMN5KcMNVx5Zm/UaME
-	OigTo8o+hS3KbumVNjjlqqe8r0qXc6jDF8TrRL50p4ictGPK5KCwbHOD0m+SNQeZ
-	mcw4Nf4OsHcZX7NTHoZUsf1wJEUWe5p3qwP6nAbekrYNCwsD4G1iy/9THFpMxJx5
-	AiR5Ug4EVsb1hwxUGzRDMOriKrb03HGW7BrqhiH5XyYdXs1ALqzUa44VtuHja0/v
-	JrLTTD2tSMLrq81wYis9d+VWHzivUPcUEx74nv8WInJvIqK3JN/NKoBf7v0ro723
-	Yt9ztXwYSXKc4e+W0f9tw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760448417; x=1760534817; bh=m5oecF8M1+NO9SuhOhdXOIQPyb6XjVKIe3c
-	Mgm6wXPw=; b=h27YKG2a5yS3RiC/aJP5yMleC3YbsQtJvOx/b/2tAcj/uiGzQ6u
-	41Gur5mEvoSTZX1r4PsJAPXoW/P5KFdwtl7b4h6AjzUV/7lhE7GrXgqZKXLgWpA/
-	YhwLXC+WLzW2/asf4uYfk6oOGPRP9jk/6uyewPywvVbQbo7GB2MTUWrY2p4RIuQi
-	7z4IbgfYDtJc1YYbQ1UKU8gGp/tADrntsfE+QKS86c4l7zi9INioxyI/Qa7fdtl4
-	+patKMYMgxr11e7vidYYWDJB0ZC9OTKUzWKdxSbNWZmLPcAuoY1Es7ArQsbxlKog
-	Oablzb+64i7xAC5V61OH/r9qpdTuwNxBcYg==
-X-ME-Sender: <xms:n0_uaL24_Qct1SvUuU0N0bs0wDSXhKUVohPGTFBpH0v1uWfJVtef1Q>
-    <xme:n0_uaLqz68FxBUeJiOq80-5XDL835Bd92jxi5VgA0CJmLZ7FLqRRLw-ZsgI8XTzJX
-    YeV4ArXJ7EmWMJTm7RbHvSrU3bPaGeZLP-sF9Eiaclo3jjiF9R8ZyU>
-X-ME-Received: <xmr:n0_uaLI415aMZi1a135jk2RrBgJDDhZZVqwyrv1CPGLuykYI8JnC3zHHIiTA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucgoufhushhpvggtthffohhmrghinhculdegledmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtjeenucfhrhhomhepufgrsghrihhn
-    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
-    grthhtvghrnhepveekhffgtddvveejvedvgffffeeftedtfefhtdfgueetgeevuefftdff
-    hfduhedvnecuffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmpd
-    hgohhoghhlvggrphhishdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtg
-    hpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvfhhfvghn
-    rdhklhgrshhsvghrthesshgvtghunhgvthdrtghomhdprhgtphhtthhopehshiiisghoth
-    dohegtugeivdellegvuggvgegugehfjedtleekjegssehshiiikhgrlhhlvghrrdgrphhp
-    shhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfth
-    drnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghp
-    thhtohephhgvrhgsvghrthesghhonhguohhrrdgrphgrnhgrrdhorhhgrdgruhdprhgtph
-    htthhopehhohhrmhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:oE_uaHThqWF7BiSWWGf_NPyrCmap1kHXMuI5nXVzobcD0X75jNRBzQ>
-    <xmx:oE_uaDNEbG5QYVMJJeBwTaTle6yykwd-pGtFmVG7zyX8PEIKtRJKHQ>
-    <xmx:oE_uaEVazbSNgRUt0VaOtIo0jc2RI6HwP8c6IHLNhpE5mzwSzrTzWg>
-    <xmx:oE_uaOiOFQWrb2XgHBahkaB4JpZjGl5yhUcxqSPpRZfAVambMAZXbQ>
-    <xmx:oU_uaGCDPEkTsUiuupAWXzyWpQC0kGa0mthzZMrN53JJNrwxWc1TiYrf>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 09:26:55 -0400 (EDT)
-Date: Tue, 14 Oct 2025 15:26:53 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: steffen.klassert@secunet.com,
-	syzbot <syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au,
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_migrate (2)
-Message-ID: <aO5PnU4dhUuzM34e@krikkit>
-References: <68e2ad62.a00a0220.2ba410.0018.GAE@google.com>
+	s=arc-20240116; t=1760448430; c=relaxed/simple;
+	bh=URTgDDEhtyvhh20SZd95qIetjf6RT09dnrFHc1mT5yY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gFmtdvL5douRLmcp6QyIsvfnivQVi1BGz5t3JqjsvOuq8vP7ILWGhoFp2d3y19uBU+wiEbBOhv0OVmkYmm6Z+A9cTUBDH2ey3CBv2PJupw16IX+LNZrHHIbykpoYyxCVfAY/Vt2wp0kuIvCB97sokGW4p6aeVY8wyP7R6L2/tIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R0subUQT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760448426;
+	bh=URTgDDEhtyvhh20SZd95qIetjf6RT09dnrFHc1mT5yY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R0subUQTKkUjsYFUrp4t9i7bjvtPMdoSjRRftGhYs4pDdiLtrzSdydUFADaj6iRQg
+	 Jx5aGaobFBEk5a82pwyyfUmMAxeVKGZk1zFj06FxkpTTGYbxTtqy+LTS3VIv26DYe5
+	 UNrP4QKwD96LFbyrljtNX+kSoP3LESCK5qCaY3D/8r3SPRvrZfakj+5gvh3/vpBMsZ
+	 nyX2JSvj5t1uPF+OssXbdwtZ6DA1aivsWC+SbimzN06wKhA7ltbGe4b+xUxSBvcsB0
+	 VFzifRvqTsLzpZ4NMoDLOG/qE6rLi1nvGh9ePTh6oVrz5HR6NWIDrgSq36StT1LFqk
+	 J3o3rNaBxnXZQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3230017E129E;
+	Tue, 14 Oct 2025 15:27:06 +0200 (CEST)
+Message-ID: <b20a1c7d-0da5-433b-987c-f55a5a229bed@collabora.com>
+Date: Tue, 14 Oct 2025 15:27:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <68e2ad62.a00a0220.2ba410.0018.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8188-geralt: Enable first SCP
+ core
+To: Chen-Yu Tsai <wenst@chromium.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Fei Shao <fshao@chromium.org>
+References: <20250814092510.211672-1-wenst@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250814092510.211672-1-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-2025-10-05, 10:39:46 -0700, syzbot wrote:
-> Hello,
+Il 14/08/25 11:25, Chen-Yu Tsai ha scritto:
+> The first SCP core is used to drive the video decoder and encoders.
 > 
-> syzbot found the following issue on:
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Changes since v1:
+> - Added SCP vreq pin
+> ---
+>   .../boot/dts/mediatek/mt8188-geralt.dtsi      | 25 +++++++++++++++++++
+>   1 file changed, 25 insertions(+)
 > 
-> HEAD commit:    4b946f6bb7d6 selftests/bpf: Fix realloc size in bpf_get_ad..
-> git tree:       bpf
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13be46e2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5cd6299ede4d4f70987b
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f0ef71bdead6/disk-4b946f6b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0c8251d5df12/vmlinux-4b946f6b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/29bad3cdad16/bzImage-4b946f6b.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 __xfrm_state_destroy net/xfrm/xfrm_state.c:800 [inline]
-> WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_put include/net/xfrm.h:928 [inline]
-> WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_migrate+0x13bc/0x1b10 net/xfrm/xfrm_state.c:2165
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi b/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
+> index c5254ae0bb99..7fedbacdac44 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
+> @@ -164,6 +164,12 @@ reserved_memory: reserved-memory {
+>   		#size-cells = <2>;
+>   		ranges;
+>   
+> +		scp_mem_reserved: memory@50000000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0 0x50000000 0 0x800000>;
+> +			no-map;
+> +		};
+> +
+>   		apu_mem: memory@55000000 {
+>   			compatible = "shared-dma-pool";
+>   			reg = <0 0x55000000 0 0x1400000>;
+> @@ -1077,6 +1083,13 @@ pins-bus {
+>   		};
+>   	};
+>   
+> +	scp_pins: scp-pins {
+> +		pins-scp-vreq {
+> +			pinmux = <PINMUX_GPIO98__FUNC_O_SCP_VREQ_VAO>;
+> +			bias-disable;
+> +		};
+> +	};
+> +
+>   	spi0_pins: spi0-pins {
+>   		pins-bus {
+>   			pinmux = <PINMUX_GPIO69__FUNC_O_SPIM0_CSB>,
+> @@ -1146,6 +1159,18 @@ &postmask0_out {
+>   	remote-endpoint = <&dither0_in>;
+>   };
+>   
+> +&scp_cluster {
+> +	status = "okay";
+> +};
+> +
+> +&scp_c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&scp_pins>;
+> +	firmware-name = "mediatek/mt8188/scp.img";
 
-Steffen, this looks like we simply forgot to set XFRM_STATE_DEAD
-before the final put() in the error path of xfrm_state_migrate (and
-xfrm_state_clone_and_setup):
+After a (very brief) discussion with Arnd last time, turns out we decided to avoid
+using the firmware-name property, including for mtk-scp.
 
+Please resend without firmware-name.
 
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 9ea1d45b79e3..7ae10fac7b31 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2074,6 +2074,7 @@ static struct xfrm_state *xfrm_state_clone_and_setup(struct xfrm_state *orig,
- 	return x;
- 
-  error:
-+	x->km.state = XFRM_STATE_DEAD;
- 	xfrm_state_put(x);
- out:
- 	return NULL;
-@@ -2163,6 +2164,7 @@ struct xfrm_state *xfrm_state_migrate(struct xfrm_state *x,
- 
- 	return xc;
- error:
-+	xc->km.state = XFRM_STATE_DEAD;
- 	xfrm_state_put(xc);
- 	return NULL;
- }
+P.S.: there's a patch to construct the firmware name from compatible...
+https://lore.kernel.org/r/20250911140043.190801-1-angelogioacchino.delregno@collabora.com
 
+Cheers,
+Angelo
 
-Does that look reasonable? The state was never add()/insert()'ed, so
-it goes through put()/destroy() without delete() first that would set
-XFRM_STATE_DEAD.
-
-
-It also looks like we're missing a xfrm_dev_state_delete if
-xfrm_state_migrate -> xfrm_state_add fails, since
-xfrm_dev_state_delete gets called during __xfrm_state_delete, and this
-new state will only see xfrm_state_put/__xfrm_state_destroy:
-
-@@ -2159,10 +2159,13 @@ struct xfrm_state *xfrm_state_migrate(struct xfrm_state *x,
- 		xfrm_state_insert(xc);
- 	} else {
- 		if (xfrm_state_add(xc) < 0)
--			goto error;
-+			goto error_add;
- 	}
- 
- 	return xc;
-+error_add:
-+	if (xuo)
-+		xfrm_dev_state_delete(xc);
- error:
- 	xc->km.state = XFRM_STATE_DEAD;
- 	xfrm_state_put(xc);
+> +	memory-region = <&scp_mem_reserved>;
+> +	status = "okay";
+> +};
+> +
+>   &sound {
+>   	pinctrl-names = "aud_etdm_hp_on", "aud_etdm_hp_off",
+>   			"aud_etdm_spk_on", "aud_etdm_spk_off",
 
 
--- 
-Sabrina
 
