@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-853350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EF5BDB5AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:05:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2C6BDB5AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601DF3A8B14
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:05:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 960AC4EB511
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9A930BBAA;
-	Tue, 14 Oct 2025 21:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401F730BBBF;
+	Tue, 14 Oct 2025 21:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gP/7VGQL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoCGmm7F"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50CB2C032E;
-	Tue, 14 Oct 2025 21:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317DE2D0625
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760475925; cv=none; b=J8i+xDhAiJ2Rjk9lfRuhHvU3x6zpTRyTxhS9i8u212x48Sx25U5mOzhyBieKNQ1AVPVVXjw+XJ8SohwhTcKVfxbMzB3Lew4CpUX5hhVXweyKtoYGharu3oIbFhxm6MhXZ4Fzvh+TncUROm0W8e9J1baUQ5RudTNN8Dh4bxwFHDY=
+	t=1760476048; cv=none; b=bwa6ohQ6AFpoxRiNuwO4c55aJh8Mo+Coxt7/R3YjOYAwzMWK8YtXJqbTKdpOU3kALEw4tNHoL8c9foQQk3ps4DOfI2Ii6d1hEWBupw6Wy7fIofxhBnxZO/AE3Wd2FPEcUUfQi+a9/t+P8UibS7K8T1Aq9u/F0cQkqj9UhFKfMjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760475925; c=relaxed/simple;
-	bh=8+KxBOQ8xuRqgM2zKfjlIAyWuuEvuXK+qO4NiFdJHYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/X/+r/tlE33NH+g+sjEZ6nkBEpzBsnw8xrkf3VDSI3ULQvr8uit2EKu5WyrJnTK7brWV6t9hiXFjElOn9ZVBD9hJbHQ5hyUTuOtIVJqgFAzZ2HfzomqUZFeXEB0mdvl5WfxU+vH2eHxaJdW9f7B10F5cMGt+qZLDK9WzlGufzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gP/7VGQL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A951C4CEE7;
-	Tue, 14 Oct 2025 21:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760475925;
-	bh=8+KxBOQ8xuRqgM2zKfjlIAyWuuEvuXK+qO4NiFdJHYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gP/7VGQLK+HC67poyGXCfjxEFHUjaAp/R8egRkknS+UJwJ1PctTMqqKI3VMPQCF3j
-	 3g0rQHYdRZXysWYwzk8ySoutn6sLhP3Yvo3O24CZHu7AmRAvnTdJYtBdXVMPz1+jHp
-	 i5EiDfENIIFVlLHMJEROdlXSf7kz7MIQT9TrcPNB/1nkpjo9ztuffAQEr91PdXQOa1
-	 dSjAFKLDz2HN4lKfOJA3IlJ8hdhmTW9lnUNIFpSFpZ44Ndx4XyBnvXG018IP1jXJNj
-	 3n4Qs56UAJBtVSXeOUQOBeheVIcpeUPModGwTTMbxxEowiJvhtAlgq3cLXFADsatlk
-	 9xxAeArg3iJlQ==
-Date: Tue, 14 Oct 2025 14:05:24 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: XFS_ONLINE_SCRUB_STATS should depend on DEBUG_FS
-Message-ID: <20251014210524.GE6188@frogsfrogsfrogs>
-References: <69104b397a62ea3149c932bd3a9ed6fc7e4e91a0.1760345180.git.geert@linux-m68k.org>
- <20251013163211.GL6188@frogsfrogsfrogs>
- <CAMuHMdURm_mpK3Pnr=XtUqe2RsqJY_hVR-R797hRSSc0U_0DKg@mail.gmail.com>
+	s=arc-20240116; t=1760476048; c=relaxed/simple;
+	bh=GNwjrlMf4NgMt1O+flBZOgiRb0audvb5vOfI78Nxxik=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=rC8+aj3ST3NkcvZnSeDhOpvOPiasd5IXWf/6vrW6ZdjTt9sf1oR94kQe8g87QEFaxJkNNe4mKgbB0VJrsK2LZp0NvpNIuH5TmWlMLL+LotOeoiyee0QssZBBE793fpUoNtcuWWlSZTZe0XPYWSBZpyik+ntEX5pNudCfbAZyW3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoCGmm7F; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-42f9f5a9992so39008055ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760476045; x=1761080845; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wEnJ2EbDgmTA6kuvnOcLzd06zHMf9mvUsxdzD6saYmQ=;
+        b=NoCGmm7FrGliYyvM70+m/zelKOfLgfWxAYem9H5deGuCnHHS7XKPqA+j6Qhatwhce7
+         krUhJa44QMysoYveygD06MtL/NbZwQYepKNNj18TRmI8zP/W8ppB9IX5jJUxMCjZq4B2
+         6E1DpkfVB+W6W4uT17bK5m512EYRstaiYlYPmncSdfZm6TGxQ9d679VQhW4pIXs1JlnF
+         LI4990yjH+fKbdm/EvTRzIDycw0oXoGC7It9UwzJ33FR1ccCmhP7uID2Woo9ml0XaLoa
+         pD852Eew6UlHgeeMIEyGvNwa0sSoHbnTkz4siHgKynXCCFH7KbaIEva76zMroZnR/lyP
+         f3yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760476045; x=1761080845;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEnJ2EbDgmTA6kuvnOcLzd06zHMf9mvUsxdzD6saYmQ=;
+        b=dO7WpkXRKId1K6l0Bqm/5tqNcka9y/3emAOBeM1OWT/ACQqZBT3rLMIUqEHb7Gx6Vq
+         Hmua3eG8DxC/0grp/DcwZbAs08t22/cn30jRlgnxfHs6YS6oFz9lio8zcokYjeM5TGn+
+         OK+sqVL8NoCH996fWVzgU+gMUHJxkIzeMSvGiCXXQxRnNvywPYpAjG24kefA4pVn+3ej
+         6wqlPdll5pJ0lOHuwMdcmlcxxWZ5/ZqOU5Ghwyc1pd2HpISZStOLH37Rzt5GtlkGosj1
+         oEKzg+R3iuqhAZ48LKNRBXqywbQlGaDpf/WoqkP/9NOMnl6qV7GRdEUwsbn2M+p1tsJe
+         wwWw==
+X-Gm-Message-State: AOJu0Yxp0nfsNbp73dywSOVqdMtDqXg5uvUnTzE7jnEP8FRUFKwgBNwS
+	erPRL5pr2FjMmWqCj9pVfE4cFZCVBs81kjBEvS3AXTJzV52+aSmqzLudmN6kOYXt99Qoq+lWSHm
+	qXQidtE4pflUoU7ZB2Wr/NGGlNy81kulDrBb3AZQ84g==
+X-Gm-Gg: ASbGncsDBu4B5+zV2S1EoYoLGgVcUaHWhOG5ofX335/29HVnxDNlPRL5QQ4zkfCQtYk
+	cb699PblX8pTTVSCQAEJMUX9Rt41gXv5sXB1fDcpwJ+xSGrE2AwCL4mzhZjG8a5RLLuJAdxx6FK
+	GtFv0dqCI9nbQE+tRP5/s83n6lE7Xy9A5H1w/VEwkvermcrZL+kw3EzaSWmxuQBOsJzQJ9aga2B
+	YJIjxKfw6CCirOQgs6vgXSaApQpzTyTmk5W
+X-Google-Smtp-Source: AGHT+IEgFuLu9zqN2LYrHGofT4Wf3efzz6Ce3y/VGpCDMAZgTN07xEoX2qzOMw8qrmQOKzYAkkY2sbG7EjEcZtRqc1g=
+X-Received: by 2002:a05:6e02:1a88:b0:42d:86cc:1bd2 with SMTP id
+ e9e14a558f8ab-42f87410bd5mr285250055ab.32.1760476045278; Tue, 14 Oct 2025
+ 14:07:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdURm_mpK3Pnr=XtUqe2RsqJY_hVR-R797hRSSc0U_0DKg@mail.gmail.com>
+Reply-To: ludloff@gmail.com
+From: Christian Ludloff <ludloff@gmail.com>
+Date: Tue, 14 Oct 2025 23:07:14 +0200
+X-Gm-Features: AS18NWD5H9hq0FhmQy7Up5AJ6dLTrgCkCjjLIlkhXqvyXvYneZiPwNdVTnw2WZo
+Message-ID: <CAKSQd8WQDfSax83Fyja0Y_aF-jq+7qfOpDo3GU5bz-8wEVUA1A@mail.gmail.com>
+Subject: x86 opcode/CPUID/MSR allocations
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 09:10:03AM +0200, Geert Uytterhoeven wrote:
-> Hi Darrick,
-> 
-> On Mon, 13 Oct 2025 at 18:32, Darrick J. Wong <djwong@kernel.org> wrote:
-> > On Mon, Oct 13, 2025 at 10:48:46AM +0200, Geert Uytterhoeven wrote:
-> > > Currently, XFS_ONLINE_SCRUB_STATS selects DEBUG_FS.  However, DEBUG_FS
-> > > is meant for debugging, and people may want to disable it on production
-> > > systems.  Since commit 0ff51a1fd786f47b ("xfs: enable online fsck by
-> > > default in Kconfig")), XFS_ONLINE_SCRUB_STATS is enabled by default,
-> > > forcing DEBUG_FS enabled too.
-> > >
-> > > Fix this by replacing the selection of DEBUG_FS by a dependency on
-> > > DEBUG_FS, which is what most other options controlling the gathering and
-> > > exposing of statistics do.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > ---
-> > >  fs/xfs/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
-> > > index 8930d5254e1da61d..402cf7aad5ca93ab 100644
-> > > --- a/fs/xfs/Kconfig
-> > > +++ b/fs/xfs/Kconfig
-> > > @@ -156,7 +156,7 @@ config XFS_ONLINE_SCRUB_STATS
-> > >       bool "XFS online metadata check usage data collection"
-> > >       default y
-> > >       depends on XFS_ONLINE_SCRUB
-> > > -     select DEBUG_FS
-> > > +     depends on DEBUG_FS
-> >
-> > Looks ok to me, though I wonder why there are so many "select DEBUG_FS"
-> > in the kernel?
-> 
-> I think select is OK for pure debug functionality, which is not enabled
-> unless really wanted; depends on is better for optional features like
-> statistics, especially if they default to y.
-> 
-> Alternatively, the "default y" could be dropped from
-> XFS_ONLINE_SCRUB_STATS?
+If x86 opcode/CPUID/MSR allocations are not
+of your concern, then you can stop reading.
 
-Well it /would/ be helpful for support to be able to gather usage stats
-on this still rather n{ew,ovel} feature. :)
+-------------------- 8< -------------------
 
---D
+I was asked to relay this to binutils/LKML.
 
-> > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> 
-> Thanks!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+As of 2025, the following are in active use
+by a corporate entity other than Intel/AMD.
+
+Any collisions with them should be avoided.
+
+- opcode 0Eh in PM64 - x86 PUSH CS that got
+  removed by x86-64 in 2002; not used since
+
+- opcode 0Fh,36h and opcode 0Fh,3Eh - there
+  is a historic collision with Cyrix RDSHR,
+  but that is not considered to be an issue
+
+- opcode 0Fh,3Ah,E0h...EFh in classic, VEX,
+  EVEX, Map3, and Map7 encodings, without a
+  prefix, or CS/SS/DS/ES/FS/GS, LOCK, REPE/
+  REPNE, or ASIZE/OSIZE/REX (but not REX2!)
+  prefixes - a historic collision with K10M
+  VCVTFXPNTPD2DQ (at MVEX opcode E6h prefix
+  F2) exists but is not considered an issue
+
+- opcode 0Fh,1Eh,/0 - a "hinting NOP" group
+
+- CPUID range E000_xxxxh - unspecified leaf
+  return values at this particular time
+
+- MSR range E000_xxxxh - unspecified values
+  after RESET - unchanged values after INIT
+
+I have documented them at www.sandpile.org.
+
+-------------------- 8< -------------------
+
+--
+C.
 
