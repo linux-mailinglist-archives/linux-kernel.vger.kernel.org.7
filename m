@@ -1,181 +1,255 @@
-Return-Path: <linux-kernel+bounces-852232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAB6BD880E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:43:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6247FBD87FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7844426DF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DC0426B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37CD2EBBAD;
-	Tue, 14 Oct 2025 09:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0710C2ED14E;
+	Tue, 14 Oct 2025 09:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lT3Jtn7W"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuKryvOe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7702E2E5D2A;
-	Tue, 14 Oct 2025 09:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF352EAB89;
+	Tue, 14 Oct 2025 09:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434982; cv=none; b=RKM/PbwmZwMWC5be/b5f4K6B8KYEQAfCZLF1cvVgiaMI9ssqybVWM7EUhkX+ydDL42Iwpo82dyXcDPAoUYo8gmKlPFMIKCMaosqzB5eAzt5d0GeG/Qnh4lZC40jnrqPkNtTirW+MTCSz1ydlyxtPIhuU9BiIiD0iu0t3WGea1Qc=
+	t=1760434948; cv=none; b=s+NPy8gsfEEP2YOEE9rKM07geBbQlvLKk+gV0wcHPEvT30r6nHgTMRi/qA7NSJ6o4wfsBdlDknYfWDC0fjddDkXlzecwzze7An19QhAokuJ0jLaMnDz17iGg/1ygBLQ2BQrsDbsld6jqrR1hOM0Zbp0wfZYst57Ts5ybbWj5WwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434982; c=relaxed/simple;
-	bh=GGtR/7/cDoa0TG0sWm6pd9jcmCj8RTee3ZIi+3U/44g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTid79wdnQsTmlSpFIhVCM5KVKAHL+Umtq32k8hJ1nxOdrs4BODdxWha5tDiOCezGZGs0X0b4qJFUkVBVtyfcx9y08DmQ4vDFjtIIXvlyV/Yvik0dzQVvOIa6ChJ4G5kZ5A8bng1zS6yZpqFUyJ57oShvUxv3Tc2iS0GO6IrKI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lT3Jtn7W; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EyinUIp7/RYhTp5epJi+n1GQX1sFo+xbZTFlP4HGzjw=; b=lT3Jtn7WLusiNPynl/CNMZA26A
-	dizGjfWpPThsB+CPPP+VBT1d7Yf8GvtmvImfJ5+mjXuMrZyWFCNkkwd373BEiHxSOaFObuL9EQIov
-	GPM/cBO/PaHIaEYTL88sqqp43WQwYYrZFQBfoJLo/Fnb4kbSc9QbTG6Qjx6sNaLiTdpV+MMtbbvvb
-	iOesMlrclvhPCdz5jldRsMPxRjQXTHw/9ea3nqaBi3wGtR9L7ebhkJYkTHAZ7DXywiz1qAHTCDFnW
-	60UaLrTlPRzJ3mqXymx7ccZb7K2ZiRhlVHh/HXYWNy40YZCh97z5RnAFy42g98Gdjc0Xqe5t4Ivzg
-	fWOjpouw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8bXl-00000007xSU-20Gz;
-	Tue, 14 Oct 2025 09:42:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 185FB300212; Tue, 14 Oct 2025 11:42:10 +0200 (CEST)
-Date: Tue, 14 Oct 2025 11:42:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
-	Tobias Huschle <huschle@linux.ibm.com>,
-	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
- MC scheduling bits
-Message-ID: <20251014094210.GQ3245006@noisy.programming.kicks-ass.net>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-5-kprateek.nayak@amd.com>
- <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
- <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
- <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
- <CAMuHMdWMkKFLEZ34j=JV0Ls+o80UfC6s3yD5x-9G2K8ZV-Y-9w@mail.gmail.com>
+	s=arc-20240116; t=1760434948; c=relaxed/simple;
+	bh=qlk6IO+Am0rSTjQJnNqVnM7JkK4GCrfWbhpX35/fj1A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OF0ggAWqaIw8Y8phx+zMRVZ0+WuRhhcpS1HISouyswAQ4xsv/4sM1TQwx4rKtf2co144yjD5Yr6I9383TXJ/EtXK+SFkZfLZAFahK9ZKb+wm5gh/3QctuA/NbRF5xmGOfuiwVntz0rB1nN+XCvWX6V6MkFHyRsafdHlbDfbPb2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuKryvOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9AD2EC116C6;
+	Tue, 14 Oct 2025 09:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760434947;
+	bh=qlk6IO+Am0rSTjQJnNqVnM7JkK4GCrfWbhpX35/fj1A=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=PuKryvOe9hGq52VZpqPA1ljSFQ5kRvxqtf9Tsh1jsCZ8PCw0bXxdtmQyg6L8iIhBU
+	 aL5E2GwOVCEijUkd51Gmq7URbPpL0oAH35zIJTefwKpMcB1qBXLe5bf0N/X/MJJ2AE
+	 V7R8YXE4JAqHhnxQLSVgC+n6y6L4oNg0us8pehSPE14QoolLcHDUnuHvjE+qry9HfD
+	 DnslmhDIWPnOzBiMxHooqVS/rfTCUyZmVLT4TMy5r49RgDuBXotl4Rv5I+LH1oPWem
+	 Va8smp+uS8GYpOXUyBvljfbwLW+wGUj6DihVYJ0gmCHPFNyNFeCIRXSLhsxua7gCDz
+	 xhkxaZGErHTvg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9EFCCD18E;
+	Tue, 14 Oct 2025 09:42:27 +0000 (UTC)
+From: Xiangxu Yin via B4 Relay <devnull+xiangxu.yin.oss.qualcomm.com@kernel.org>
+Date: Tue, 14 Oct 2025 17:42:11 +0800
+Subject: [PATCH v2 2/3] arm64: dts: qcom: Add DisplayPort and QMP USB3DP
+ PHY for SM6150
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWMkKFLEZ34j=JV0Ls+o80UfC6s3yD5x-9G2K8ZV-Y-9w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251014-add-displayport-support-to-qcs615-devicetree-v2-2-1209df74d410@oss.qualcomm.com>
+References: <20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com>
+In-Reply-To: <20251014-add-displayport-support-to-qcs615-devicetree-v2-0-1209df74d410@oss.qualcomm.com>
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, fange.zhang@oss.qualcomm.com, 
+ yongxing.mou@oss.qualcomm.com, li.liu@oss.qualcomm.com, 
+ Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760434946; l=4500;
+ i=xiangxu.yin@oss.qualcomm.com; s=20241125; h=from:subject:message-id;
+ bh=jrRR9YL4HK6SbTmfepwLOlAbKElAZs5deEPV5yxtLa8=;
+ b=Zhq0a6dozr1oeX/VMgGTSJwUvAp5Wi3ayuBKW4shLLbHXiBNfLTq0h5RqN3Zoeu39bI8Sn4H9
+ DMjEKuvZ+KXBUWG71ROPVttxZbYBjPv0UFEtIXYKVCOJfuT/lDPx80u
+X-Developer-Key: i=xiangxu.yin@oss.qualcomm.com; a=ed25519;
+ pk=F1TwipJzpywfbt3n/RPi4l/A4AVF+QC89XzCHgZYaOc=
+X-Endpoint-Received: by B4 Relay for xiangxu.yin@oss.qualcomm.com/20241125
+ with auth_id=542
+X-Original-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Reply-To: xiangxu.yin@oss.qualcomm.com
 
-On Tue, Oct 14, 2025 at 11:25:53AM +0200, Geert Uytterhoeven wrote:
-> Hoi Peter,
-> 
-> On Thu, 28 Aug 2025 at 14:57, Peter Zijlstra <peterz@infradead.org> wrote:
-> > Now, when I look at unifying those config options (there's a metric ton
-> > of crap that's duplicated in the arch/*/Kconfig), I end up with something
-> > like the below.
-> >
-> > And while that isn't exact, it is the closest I could make it without
-> > making a giant mess of things.
-> >
-> > WDYT?
-> 
-> Thanks for your patch, which is now commit 7bd291abe2da09f5 ("sched:
-> Unify the SCHED_{SMT,CLUSTER,MC} Kconfig") in v6.18-rc1.
-> 
-> > --- a/arch/Kconfig
-> > +++ b/arch/Kconfig
-> > @@ -41,6 +41,44 @@ config HOTPLUG_SMT
-> >  config SMT_NUM_THREADS_DYNAMIC
-> >         bool
-> >
-> > +config ARCH_SUPPORTS_SCHED_SMT
-> > +       bool
-> > +
-> > +config ARCH_SUPPORTS_SCHED_CLUSTER
-> > +       bool
-> > +
-> > +config ARCH_SUPPORTS_SCHED_MC
-> > +       bool
-> > +
-> > +config SCHED_SMT
-> > +       bool "SMT (Hyperthreading) scheduler support"
-> > +       depends on ARCH_SUPPORTS_SCHED_SMT
-> > +       default y
-> 
-> This is now enabled by default everywhere, while it was disabled by
-> default on most architectures before...
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
 
-I'm not sure ARCH_SUPPORTS_SCHED_SMT counts as everywhere, but yes.
-A fair deal of the architectures had all this default yes, and I had to
-pick something. Can't make an omelette without breaking an egg and all
-that :/
+Introduce DisplayPort controller node and associated QMP USB3-DP PHY
+for SM6150 SoC. Update clock and endpoint connections to enable DP
+integration.
 
-> > +       help
-> > +         Improves the CPU scheduler's decision making when dealing with
-> > +         MultiThreading at a cost of slightly increased overhead in some
-> > +         places. If unsure say N here.
-> 
-> So it should default to n?
+Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/sm6150.dtsi | 110 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 108 insertions(+), 2 deletions(-)
 
-That's just help text that got carried around. Many of the architectures
-that had default y still had this text on. I suppose we can change it if
-someone cares.
+diff --git a/arch/arm64/boot/dts/qcom/sm6150.dtsi b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+index 6128d8c48f9c0807ac488ddac3b2377678e8f8c3..cdf53d74c778c652080b0288278353e20c317379 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+@@ -17,6 +17,7 @@
+ #include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/power/qcom,rpmhpd.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
++#include <dt-bindings/phy/phy-qcom-qmp.h>
+ 
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -3717,6 +3718,7 @@ port@0 {
+ 						reg = <0>;
+ 
+ 						dpu_intf0_out: endpoint {
++							remote-endpoint = <&mdss_dp0_in>;
+ 						};
+ 					};
+ 
+@@ -3749,6 +3751,84 @@ opp-307200000 {
+ 				};
+ 			};
+ 
++			mdss_dp0: displayport-controller@ae90000 {
++				compatible = "qcom,sm6150-dp", "qcom,sm8150-dp", "qcom,sm8350-dp";
++
++				reg = <0x0 0x0ae90000 0x0 0x200>,
++				      <0x0 0x0ae90200 0x0 0x200>,
++				      <0x0 0x0ae90400 0x0 0x600>,
++				      <0x0 0x0ae90a00 0x0 0x600>,
++				      <0x0 0x0ae91000 0x0 0x600>;
++
++				interrupt-parent = <&mdss>;
++				interrupts = <12>;
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
++					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
++					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
++					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
++					 <&dispcc DISP_CC_MDSS_DP_PIXEL1_CLK>;
++				clock-names = "core_iface",
++					      "core_aux",
++					      "ctrl_link",
++					      "ctrl_link_iface",
++					      "stream_pixel",
++					      "stream_1_pixel";
++
++				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
++						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
++				assigned-clock-parents = <&usb_qmpphy_2 QMP_USB43DP_DP_LINK_CLK>,
++							 <&usb_qmpphy_2 QMP_USB43DP_DP_VCO_DIV_CLK>;
++
++				phys = <&usb_qmpphy_2 QMP_USB43DP_DP_PHY>;
++				phy-names = "dp";
++
++				operating-points-v2 = <&dp_opp_table>;
++				power-domains = <&rpmhpd RPMHPD_CX>;
++
++				#sound-dai-cells = <0>;
++
++				status = "disabled";
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						mdss_dp0_in: endpoint {
++							remote-endpoint = <&dpu_intf0_out>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++						mdss_dp0_out: endpoint {
++						};
++					};
++				};
++
++				dp_opp_table: opp-table {
++					compatible = "operating-points-v2";
++
++					opp-160000000 {
++						opp-hz = /bits/ 64 <160000000>;
++						required-opps = <&rpmhpd_opp_low_svs>;
++					};
++
++					opp-270000000 {
++						opp-hz = /bits/ 64 <270000000>;
++						required-opps = <&rpmhpd_opp_svs>;
++					};
++
++					opp-540000000 {
++						opp-hz = /bits/ 64 <540000000>;
++						required-opps = <&rpmhpd_opp_svs_l1>;
++					};
++				};
++			};
++
+ 			mdss_dsi0: dsi@ae94000 {
+ 				compatible = "qcom,sm6150-dsi-ctrl", "qcom,mdss-dsi-ctrl";
+ 				reg = <0x0 0x0ae94000 0x0 0x400>;
+@@ -3844,8 +3924,8 @@ dispcc: clock-controller@af00000 {
+ 				 <&mdss_dsi0_phy DSI_BYTE_PLL_CLK>,
+ 				 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>,
+ 				 <0>,
+-				 <0>,
+-				 <0>;
++				 <&usb_qmpphy_2 QMP_USB43DP_DP_LINK_CLK>,
++				 <&usb_qmpphy_2 QMP_USB43DP_DP_VCO_DIV_CLK>;
+ 
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+@@ -4214,6 +4294,32 @@ usb_qmpphy: phy@88e6000 {
+ 			status = "disabled";
+ 		};
+ 
++		usb_qmpphy_2: phy@88e8000 {
++			compatible = "qcom,qcs615-qmp-usb3-dp-phy";
++			reg = <0x0 0x088e8000 0x0 0x2000>;
++
++			clocks = <&gcc GCC_USB2_SEC_PHY_AUX_CLK>,
++				 <&gcc GCC_USB3_SEC_CLKREF_CLK>,
++				 <&gcc GCC_AHB2PHY_WEST_CLK>,
++				 <&gcc GCC_USB2_SEC_PHY_PIPE_CLK>;
++			clock-names = "aux",
++				      "ref",
++				      "cfg_ahb",
++				      "pipe";
++
++			resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR >,
++				 <&gcc GCC_USB3_DP_PHY_SEC_BCR>;
++			reset-names = "phy_phy",
++				      "dp_phy";
++
++			#clock-cells = <1>;
++			#phy-cells = <1>;
++
++			qcom,tcsr-reg = <&tcsr 0xbff0 0xb24c>;
++
++			status = "disabled";
++		};
++
+ 		usb_1: usb@a6f8800 {
+ 			compatible = "qcom,qcs615-dwc3", "qcom,dwc3";
+ 			reg = <0x0 0x0a6f8800 0x0 0x400>;
 
-> If it is really needed on some architectures or platforms, I guess
-> they can still select it explicitly?
+-- 
+2.34.1
 
-There were 4 cases:
 
- - arch doesn't support SMT
- - arch supports SMT and lets user pick, default Y
- - arch supports SMT and lets user pick, default N
- - arch mandates SMT
-
-Of those 3 are still possible, the one we lost is the default N case.
-
-Old configs that have =N will continue to have N. New configs might end
-up with Y.
-
-Why is this a problem?
 
