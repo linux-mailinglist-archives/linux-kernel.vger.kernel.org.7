@@ -1,192 +1,95 @@
-Return-Path: <linux-kernel+bounces-853190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52107BDAE24
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:04:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939F4BDAE2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 751084F56B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:04:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C8514F56B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBCE30274D;
-	Tue, 14 Oct 2025 18:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2507A3054E1;
+	Tue, 14 Oct 2025 18:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JQ+bdyts"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCPVz/w2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4C77083C;
-	Tue, 14 Oct 2025 18:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2D127F01E;
+	Tue, 14 Oct 2025 18:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760465070; cv=none; b=Srf3hfNLBFd5iGPsksQtlsGwPEiZFGGeFzGak6rzFrxMS7NCcV1rOURQLFCpRKQUdcckxqOW09kKXKszfY8GtHkbQKEOhzPrjWGhypS/ypaS7v+FZfNmXbpHFc2XKEc7nOaK99vHBV8UR2PxOuVk5T9nL4EsNpJcSzn+fo8hums=
+	t=1760465081; cv=none; b=EX1P4fD8DXML11AFTUZGJCkk+oiMUYePeLJhb9nUZcNix+iagi3z8l2nBnlTS1ZKEnNqIE32Ifzvv/G4uoksVNtcCiGcyuVoPL89gvSazMTlTtJWh5BSDYsdYJ7UY+0TqccRHNJdcDi7y/RXHBg3+WERZiwTjS/IICUYw+R04+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760465070; c=relaxed/simple;
-	bh=n2FCB5tt5tMyA+B5nwTcqy+mEYLw/yBWRjGp55xPFHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oM4XKyXf+GIfgNWeIgAdmKVAu2Ju9lDy6n7+pKTx9uCQ/Asj1xJ/Ekx85hYn7y1giCzJMDL1Z858USqOnZw6jjiEguRlJT2nzPjB9jFk9Mg6CUCb16lqpwisPnjS6SVaaRlZxHEQm1MM/4WfKngIv7o7F7kxn1+trNQKIH+wzhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JQ+bdyts; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EDPVQj006319;
-	Tue, 14 Oct 2025 18:04:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DacPw1
-	CbKLF2YCyDjHDBfMd5Vp0p0mGeiySJXxtK8zE=; b=JQ+bdytsz7N+XWm/Ydo2pa
-	224Jun3b5wgpo50zRxB+TFUVJPJ1j3PmZoA4zXYanaYcusO6x/pqnvkqPd1v/q5C
-	6YaAFiETqKTiIg+TBzozzeJtDyX4+1xP9Zvwku0mww/joZD944d1B99pvBAMBHg2
-	PhcArbQnlG9HoWXgFaclep0p/+3H6OcW7dUwIq2EzC0N97ZD2M8LtdqDh6rK70fV
-	nZRTQzO4TnTEOFhTI5B4jAWfM1VtjUVotaFZETZgaojvHGKe6pBWjyTvWkoopbzk
-	BkxtYNt7w/3v0utvu88RwnA2PrQ515s8JAp/2uqra1gO53QQ6iM94M2RfXtvcQTQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qdnpfub0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 18:04:08 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59EHBWGp015219;
-	Tue, 14 Oct 2025 18:04:07 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r1js4j5g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 Oct 2025 18:04:07 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59EI471x4850650
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 18:04:07 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3EBC058057;
-	Tue, 14 Oct 2025 18:04:07 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1C28B58061;
-	Tue, 14 Oct 2025 18:04:04 +0000 (GMT)
-Received: from [9.61.43.11] (unknown [9.61.43.11])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 14 Oct 2025 18:04:03 +0000 (GMT)
-Message-ID: <fd66fda2-8dd9-4009-9c4b-7cebaac64c05@linux.ibm.com>
-Date: Tue, 14 Oct 2025 23:34:02 +0530
+	s=arc-20240116; t=1760465081; c=relaxed/simple;
+	bh=IqiskO3RSo2eB9VA4X4UEsFaK4m8tJb02yIF7nYMwQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=c2Jx3ihVHN736WSufWGC4KeFVyCJqMmyE1BjM1fjdrHfzWSdpQAqW6rXG5lIxxPbl8iw/jRK3gJjhVi9ev0cqet1MN9jjslz7SI+Tuiu9Fey5B5YyNLAboaAbXqIh6hSvFfu1ffTNKZCui3ahlsFzMT26dKbT32Yryo3yWIOcdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCPVz/w2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABA1C4CEE7;
+	Tue, 14 Oct 2025 18:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760465080;
+	bh=IqiskO3RSo2eB9VA4X4UEsFaK4m8tJb02yIF7nYMwQs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RCPVz/w2h2kokkBxtR3H0LIbtAmqXHwB2m1032o3TGXdQ5DweVTNbxkqW8mRfmZz1
+	 KV4rW4V3M4lcnsC+yXHo3DGL3WqAxMaK+oB+s6VaR664EFVKW+uSfXnqKWARKkqLv4
+	 ZzSwczE1tcOWHSF/OrzBfbHN6t2LN81YjXIO7y4mTjcyOEQBOQatb2icL/DDG8IXg1
+	 Qslh97sdDFZMDdu6lcll9FxDlr/5ejFk2Cr5fc4YQB7cnGZDI4a7gOrI8p10pQR8iH
+	 Y0MUR+5+PbdsfOyJQ5iCM88ORa/BaKbjWuwEn9Ftor1bfsVk+pFdp3+3hin1Qv7OpT
+	 sKxErrDHTvi/A==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.6 000/196] 6.6.112-rc1 review
+Date: Tue, 14 Oct 2025 20:04:31 +0200
+Message-ID: <20251014180431.1256580-1-ojeda@kernel.org>
+In-Reply-To: <20251013144315.184275491@linuxfoundation.org>
+References: <20251013144315.184275491@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 for-6.18/block 05/10] blk-mq: cleanup shared tags case
- in blk_mq_update_nr_requests()
-To: Chris Mason <clm@meta.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-        yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20251014130507.4187235-2-clm@meta.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20251014130507.4187235-2-clm@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAwNSBTYWx0ZWRfXzVjZz0cd/wV7
- VqYXxl1kAM4SjdUmlWx3Yey0aon3u44fkHtSLlkLxaINNosKh3O/E62XFWpLzvoGHB2XB2NAeuk
- nse2WuDKxDmWgYhI5chMhMObRH1cptlfqYx3gwvheMrmPNvzgVBeOZpu4d2ierk3PSPBvaHQdJr
- 7MyQOOPzG4QZaT4ayJOw39CUUW88izbfZhtAR6sAtuBb11daUaZp+MGkYB42VV6dRz7wcZLhKM6
- PyxWaTVSspDI4JGeLGPw4bqR6iCqEnPTsIsLy6PFJzpHOkW0Vuiwj2DuP9hDHw/0vh5vdo2vF65
- 6t1jYdgsY5bqM0ZiqsDpR6WoyRANcVtkApkrburnEA5jvTC6bJWLjWjReXtQ8vMwaWmoMwWG5gT
- z/oVSflyTbsquBcJzAYTxBDVr6MfXQ==
-X-Proofpoint-ORIG-GUID: XzKbISpeDbXNuHQQVU5viZkuYy8GjKpV
-X-Proofpoint-GUID: XzKbISpeDbXNuHQQVU5viZkuYy8GjKpV
-X-Authority-Analysis: v=2.4 cv=MoxfKmae c=1 sm=1 tr=0 ts=68ee9098 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=AiHppB-aAAAA:8 a=i0EeH86SAAAA:8 a=6GnhMWMtFsEvWEXV5ikA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 clxscore=1011 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110005
+Content-Transfer-Encoding: 8bit
 
+On Mon, 13 Oct 2025 16:43:11 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.112 release.
+> There are 196 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
+> Anything received after that time might be too late.
 
+Boot-tested under QEMU for Rust x86_64:
 
-On 10/14/25 6:35 PM, Chris Mason wrote:
-> Hi everyone,
-> 
-> My review automation flagged this one in linux-next, and it looks like a
-> valid bug to me:
-> 
-> On Wed, 10 Sep 2025 16:04:40 +0800 Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> For shared tags case, all hctx->sched_tags/tags are the same, it doesn't
->> make sense to call into blk_mq_tag_update_depth() multiple times for the
->> same tags.
->>
-> 
-> [ ... ]
-> 
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 9b97f2f3f2c9..80c20700bce8 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -4935,34 +4935,35 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
->>
->>  	blk_mq_quiesce_queue(q);
->>
->> -	queue_for_each_hw_ctx(q, hctx, i) {
->> -		if (!hctx->tags)
->> -			continue;
->> -		/*
->> -		 * If we're using an MQ scheduler, just update the scheduler
->> -		 * queue depth. This is similar to what the old code would do.
->> -		 */
->> -		if (hctx->sched_tags) {
->> -			ret = blk_mq_tag_update_depth(hctx, &hctx->sched_tags,
->> -						      nr);
->> -		} else {
->> -			ret = blk_mq_tag_update_depth(hctx, &hctx->tags, nr);
->> -		}
->> -		if (ret)
->> -			goto out;
->> -	}
->> -
->> -	q->nr_requests = nr;
->> -	if (q->elevator && q->elevator->type->ops.depth_updated)
->> -		q->elevator->type->ops.depth_updated(q);
->> -
->>  	if (blk_mq_is_shared_tags(set->flags)) {
->>  		if (q->elevator)
->>  			blk_mq_tag_update_sched_shared_tags(q);
->                         ^^^^
-> 
-> Does blk_mq_tag_update_sched_shared_tags() use the wrong value here?
-> 
-> In the old code, q->nr_requests was updated to nr before calling
-> blk_mq_tag_update_sched_shared_tags(). But in the new code, this
-> function is called while q->nr_requests still contains the old value.
-> 
-> Looking at blk_mq_tag_update_sched_shared_tags():
-> 
->     void blk_mq_tag_update_sched_shared_tags(struct request_queue *q)
->     {
->         sbitmap_queue_resize(&q->sched_shared_tags->bitmap_tags,
->                              q->nr_requests - q->tag_set->reserved_tags);
->     }
-> 
-> It reads q->nr_requests to calculate the new sbitmap size. With the
-> reordering, this will resize the sbitmap to the old depth instead of
-> the new depth passed in nr.
-> 
-Good catch! Yes, I think this needs to be fixed...
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-Thanks,
---Nilay
+Thanks!
 
-
+Cheers,
+Miguel
 
