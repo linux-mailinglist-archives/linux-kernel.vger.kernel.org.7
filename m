@@ -1,214 +1,151 @@
-Return-Path: <linux-kernel+bounces-851582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBC9BD6D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C916BD6D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B18F4E1BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79EE9404487
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C81DA95E;
-	Tue, 14 Oct 2025 00:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087CC27453;
+	Tue, 14 Oct 2025 00:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xgNn19aJ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUvbjhcC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C231C01
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435CD34BA5B;
+	Tue, 14 Oct 2025 00:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760400355; cv=none; b=LHfbu0h0R/obCUBeAb08eZ3T5sg5wJf7pqjd6u1bVlVQn8UjGuNmIFSpXmb//Ocr/9GVIW5oFAcBI/qlWa1JCy4wbTM/FJK03Q7+O+DbEq0rjVm9go0+Ql5FUtb6Cyq5v01VXkTDAC737qKv9z5jkPDfkhv8PprVTubDXzZf4gg=
+	t=1760400414; cv=none; b=En7aP5q3EzE7M4EQq0uFuTz0WBzjEACXAM+0xMaDRZIt6PbSB75Cyq9Oezooc7xAkWi6zlOxXfK+xP2/6F/17XwnatSEA4LWsEyK5ex3o4hp+OdIlKtWV4EWHh/I7ZFUmDyi2jIqF1+OOHEoIDiDzDSJUn+0EnN+9H+WIWxpQS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760400355; c=relaxed/simple;
-	bh=ZW0TjO8mF1FHzw0/oTa62CuEXz+cYh0vTI3Dl5rRkNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bhCN/GmcGXUYTnHTnPGA8kJrJaU3S/kkzqw8hCRCTesFLkKP6osbRJ89xFIoV0RJFivilzMVBJSSkeJPay5BWd0tOtEY5XXKmAsvWShXqBe9tBalK5hFFC/Q3RzgJsWnBF6mqud8fh+PPmQ1iDrEM05ddjkXHXaJ67Hc9FeW+IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xgNn19aJ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e2b7eee0dso135935e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 17:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760400352; x=1761005152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w7P6bmZmynaNeCh8SGWSoQQA9un1Bs0HvNnViceNuL0=;
-        b=xgNn19aJ95Ji7aLr2bC681aqgzYSyijS707mmdX/nLcyUxDhs0OsleT7nn3JKsXKPa
-         HEbrwqVt+lMrcQ1sKTdJ40LQfj4VX5/misXiwHIfwpCVUP6vz4W7t2ufWpXeRRn7lCN9
-         BUWU98WwzXTt13HP0XacuyVP1cOqLcgb3RqoSSHbhFm858qDpDTq+CcTY3/MRdnoLnJY
-         7hyfMcIj9xwfdqpbFsjBOVb5U1vomShjhWNlSAfWjw401V4PGeRpVqcAq3Xre6WVZUyf
-         FLSRwG5xSszG9QJe0wmnSDuWoK1HazAT4cqqJ82ucAyNiApkgYh8WweowueT5tpsWLA5
-         t1Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760400352; x=1761005152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w7P6bmZmynaNeCh8SGWSoQQA9un1Bs0HvNnViceNuL0=;
-        b=IBJmZRtPdiFg2Xa+D2cqbeGNS0Bgtvm6eceZlWDlLdqPjWca28osCw5YCrvFKy62yg
-         LSrtFJgU7h3Td6sqIi8c00wqEiK0sY9hKcxhCOuBAJ5DA9Cb0HQ/kgpyJn5/RMcvtNo7
-         9aBqtb2xpm5I4JsQ42xYShY7IF3hjGdVdnXiFIl3wNZeowE44rJBaW6DvnSomMb6ppjJ
-         KqFa1UkxL4TNHE+TW4KGl7PqDemsYA8CaTK+S0eyqPvQ28Fxjc1jXzDmcA4wjfX3mFUB
-         TFPxloVfCtmrvZorQMlYN3cxVYC1KTnksaOLoKSAS2Gm1bdgfX+06dfzmJwtsF+fEbHu
-         Wqjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMn1EltnXLqRWpc7MKC79RFJWO/vFedC4i+QzHQyO+XwKkpfHiStzInD7RMjAEJ+4zZHcu7GyoSvjTQg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqorYmJ0+JIzB3xYhsoSslyeVJt2fP5GBrwg+q+FpvPEkmc2VZ
-	H3W8ibRzbt7eizANFkMYBrZJqYRifiV3VGX8tJ9ZgGa1TNCOYlV+oTPoBzZ8MZNpVvpYLNjpjCx
-	vw+Sb4e3njuo8cDULYafEUIZFgYHCc72ZqjMwuQis6llPCPLf1vB4hg73gVk=
-X-Gm-Gg: ASbGncuX+WMJLvqqMl6g/zSY+wlTL/EfOloSPq/H7+jFvKZMysR2tkWU4shq+TVfiHj
-	9kt30qu7UJVqPb1TVnAPmzt+p5Fei3qW9V0Izejaj0BpJV0lbykXXSBbkYT9vEKEgqomYznX58x
-	5yf3W4+t//gemzvXKvnr7b4ho6j0IhcBKvoDkkIDQjAM3NxEESLRUAW950jexqFHcMmJePo0Pj9
-	qVzf+c8ZOHPFnwzY5oWJ5HNMCX9vu/teRXTOXKdanl9Q4qgD2CsIiH0o+Q1muBnmQ==
-X-Google-Smtp-Source: AGHT+IESz2Nfr1qQ6O3uWGKLV0SssE6FbG3HaJH4beHMdfTaOg2FXCV3YUDF/ccarAoxg2eEGJgZSJNtSdkPd1kPSgo=
-X-Received: by 2002:a05:600d:426e:b0:45f:2949:7aa9 with SMTP id
- 5b1f17b1804b1-46fa9b33c8cmr11599015e9.6.1760400352114; Mon, 13 Oct 2025
- 17:05:52 -0700 (PDT)
+	s=arc-20240116; t=1760400414; c=relaxed/simple;
+	bh=XXYR+wR+uPbI+Ltuoy2z2Qb88tw6ivM08Razh0yrfy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IIof+cUF2gwQf/JV2IzABUVmRf1Pb2uTywYemeiKjNDE55/yudGRvJV5KiQ2DFiN48OkvTqk+DJO0V1tPz0UUnJN9pufF6nX3voT0WGSjboyv7JU8g5wuqnZmiHEsgH8oywaKifRXN7AU80WVEsylBLLIaNDvci2u5QVFoRjURg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUvbjhcC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA2EC4CEE7;
+	Tue, 14 Oct 2025 00:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760400413;
+	bh=XXYR+wR+uPbI+Ltuoy2z2Qb88tw6ivM08Razh0yrfy0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YUvbjhcCNjfWrgQoROeSZuaPdG6xDJiSqNHw+Jdqx/kHIkoMx4Uy7SBunIhqHsteZ
+	 sNMhwLWFBSFNK+s/bQ02BmDbKHwKDc1Yc8CyKV42ERj8KxsntWMv8/JC2E2q4YRoJW
+	 MutfQk+oFNnLM0dshAWuBlvrAS2tJjdYrW35E6ncVHyhtVh7ne+b14kR6kD8dg9abI
+	 o7eQJMVouNE0CNXClzGLyBal6g26YTicuqLCiFCSnttPoS+wvyTYwZmSe8EsbP+SPH
+	 ZcO/Hit5Gik4pn1PmkgxP/MMT8UjjCUfXMyL6B55OWkraSC3aLbDCn3PcUECX48XWb
+	 N0f/4aaMMp3VA==
+Message-ID: <cb753c72-70ca-44b9-a33c-af2b1c7e69c8@kernel.org>
+Date: Tue, 14 Oct 2025 02:06:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013-usbcore-tracing-v1-0-b885a3121b09@google.com>
- <20251013-usbcore-tracing-v1-2-b885a3121b09@google.com> <66a98159-b75c-41f0-8b4d-0ce9b1c8e4ec@rowland.harvard.edu>
-In-Reply-To: <66a98159-b75c-41f0-8b4d-0ce9b1c8e4ec@rowland.harvard.edu>
-From: Kuen-Han Tsai <khtsai@google.com>
-Date: Tue, 14 Oct 2025 08:05:25 +0800
-X-Gm-Features: AS18NWA6HfDM9IzVCaX-8K42nTN8r-fCH8vlTlXN-a7nDQhpjsEsC3RNo-g0l8I
-Message-ID: <CAKzKK0pzfSFJ15esnGB9gY_HMrgubZ1QtSkLOUo2FvsNGtCi6g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] usb: core: Add tracepoints for device allocation and
- state changes
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Mathias Nyman <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] dt-bindings: mmc: Add dll-presets values for HS400
+ and HS200 modes
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com, quic_pragalla@quicinc.com,
+ quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+ quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
+ Sachin Gupta <quic_sachgupt@quicinc.com>
+References: <20251013145316.1087274-1-quic_rampraka@quicinc.com>
+ <20251013145316.1087274-2-quic_rampraka@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251013145316.1087274-2-quic_rampraka@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alan,
+On 13/10/2025 16:53, Ram Prakash Gupta wrote:
+> From: Sachin Gupta <quic_sachgupt@quicinc.com>
+> 
+> Document the 'dll-presets' property for MMC device tree bindings.
+> The 'dll-presets' property defines the DLL configurations for HS400
+> and HS200 modes.
+> 
+> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
+> different tuning.
+> 
+> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> index 594bd174ff21..f7b3b1ced3ce 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> @@ -138,6 +138,11 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description: platform specific settings for DLL_CONFIG reg.
+>  
+> +  qcom,dll-presets:
+> +    maxItems: 10
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: platform specific settings for DLL registers.
 
-On Mon, Oct 13, 2025 at 9:20=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
-du> wrote:
->
-> On Mon, Oct 13, 2025 at 10:01:23AM +0800, Kuen-Han Tsai wrote:
-> > Introduce new tracepoints to the USB core to improve debuggability of
-> > USB device lifecycle events.
-> >
-> > The following tracepoints are added:
-> >
-> > - usb_alloc_dev: Triggered when a new USB device structure is allocated=
-,
-> > providing insights into early device setup.
-> > - usb_set_device_state: Triggered when the USB device state changes,
-> > allowing observation of the device's state transitions.
-> >
-> > These tracepoints capture detailed information about the USB device,
-> > including its name, speed, state, bus current value, and authorized
-> > flag. This will aid developers in diagnosing issues related to device
-> > enumeration within the USB subsystem.
-> >
-> > Examples:
-> >  usb_alloc_dev: usb 1-1 speed 0 state 1 0mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 0 state 2 0mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 2 state 5 500mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 2 state 5 500mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 2 state 6 500mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 2 state 7 500mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 2 state 8 500mA [authorized]
-> >  usb_set_device_state: usb 1-1 speed 2 state 0 500mA [authorized]
-> >
-> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> > ---
->
-> > diff --git a/drivers/usb/core/Makefile b/drivers/usb/core/Makefile
-> > index 766000b4939ef937a04848aa9cc45d8bb8860fe5..11647942ff3ae6c688dac04=
-3218f7d886a3e2f88 100644
-> > --- a/drivers/usb/core/Makefile
-> > +++ b/drivers/usb/core/Makefile
-> > @@ -3,10 +3,14 @@
-> >  # Makefile for USB Core files and filesystem
-> >  #
-> >
-> > +# define_trace.h needs to know how to find our header
-> > +CFLAGS_trace.o                  :=3D -I$(src)
-> > +
-> >  usbcore-y :=3D usb.o hub.o hcd.o urb.o message.o driver.o
-> >  usbcore-y +=3D config.o file.o buffer.o sysfs.o endpoint.o
-> >  usbcore-y +=3D devio.o notify.o generic.o quirks.o devices.o
-> >  usbcore-y +=3D phy.o port.o
-> > +usbcore-y +=3D trace.o
->
-> This looks a little odd.  Why not put trace.o at the end of the
-> preceding line?
->
+One of my questions, never answered in original submission and in your
+versions, was to see the DTS user of it. I still do not see the DTS user.
 
-Thanks for the review. I will move trace.o to the preceding line.
-
-> > diff --git a/drivers/usb/core/trace.h b/drivers/usb/core/trace.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..db6edf570640e7af0598ccf=
-2c7bd71b187605a42
-> > --- /dev/null
-> > +++ b/drivers/usb/core/trace.h
-> > @@ -0,0 +1,61 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2025 Google LLC
-> > + */
-> > +#undef TRACE_SYSTEM
-> > +#define TRACE_SYSTEM usbcore
-> > +
-> > +#if !defined(_USB_CORE_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-> > +#define _USB_CORE_TRACE_H
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/tracepoint.h>
-> > +#include <linux/usb.h>
-> > +
-> > +DECLARE_EVENT_CLASS(usb_core_log_usb_device,
-> > +     TP_PROTO(struct usb_device *udev),
-> > +     TP_ARGS(udev),
-> > +     TP_STRUCT__entry(
-> > +             __string(name, dev_name(&udev->dev))
-> > +             __field(enum usb_device_speed, speed)
-> > +             __field(enum usb_device_state, state)
-> > +             __field(unsigned short, bus_mA)
-> > +             __field(unsigned, authorized)
-> > +     ),
-> > +     TP_fast_assign(
-> > +             __assign_str(name);
-> > +             __entry->speed =3D udev->speed;
-> > +             __entry->state =3D udev->state;
-> > +             __entry->bus_mA =3D udev->bus_mA;
-> > +             __entry->authorized =3D udev->authorized;
-> > +     ),
-> > +     TP_printk("usb %s speed %d state %d %dmA [%s]",
-> > +             __get_str(name),
-> > +             __entry->speed,
-> > +             __entry->state,
->
-> Suggestion: Rather than printing the meaningless numerical value of
-> __entry->state, print the string value returned by
-> usb_state_string(__entry->state).
-
-I kept it consistent with the udc_log_gadget tracepoint, which also
-uses the numerical value for the USB state.
-
-If we change the state to a string, should we convert the speed field
-to a string using usb_speed_string()?
-
-I lean toward keeping both as numerical values, but I am happy to
-switch both to strings if you prefer. Please let me know what you
-think is best.
-
-Regards,
-Kuen-Han
-
->
-> Alan Stern
+Best regards,
+Krzysztof
 
