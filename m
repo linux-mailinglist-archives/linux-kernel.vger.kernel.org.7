@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-852960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D539BDA4D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:20:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B0BBDA576
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7352189A58F
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21AAD50256C
 	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D11B2C027A;
-	Tue, 14 Oct 2025 15:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0E72BF009;
+	Tue, 14 Oct 2025 15:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sgl1/vzL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KcL8iZDq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A40821ABD0;
-	Tue, 14 Oct 2025 15:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1332773F7
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455061; cv=none; b=YB/fjnO+TYjEPk1/E6sC871KocxzwSrL8eEkFk/lbB59rh/iADiezafLYpm5R3PbYTOsNuAgx4jUGwHLwiHGCZx1ASObLtY+LVwECUZLigQKz9yKQqUWMHCqciIJDoVk+wTvIc+FOg/98pQlm7WOzLiLuFp/1iNQgfmBBmqJ4d8=
+	t=1760455084; cv=none; b=LnC1MXOFSurXqVQCkdWxd3rETiOfGfjpWe6drcIy9sZ3+KzOfAuFQQz7ZVhnyO4dQPbjrGBUGWfpCpvF/bfIMVT658Ak7J2bZcqArK0rMBDSXn1Qs4umn5ZqjDISpLnW/JPhe3fQrBLGj/F1dO7cgkha9Yrfsxx0Eyvj7Xu5QEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455061; c=relaxed/simple;
-	bh=e/+3S+ElEy16pfzh6ZG7xSFnFeIBpdkAnFAVrQb10CE=;
+	s=arc-20240116; t=1760455084; c=relaxed/simple;
+	bh=2qslDTOkNHTx5U1EAPc0LcinIVRSAoRDmbEkzn5ZsKY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FKe7nwZGTBqrArZrf5Y+2xBzlhuUwZKBwgOuWYNT4IkCHV9BNFguWJ7ZpwzoG+y+e6q3WFaQcR1t0QcbZyUlrYEdj13TGmJuUTj/2gSxP0ORbAw2ccP2PKvQVPkkSM8twXU1P3i0/HSK2jSq+D2Gu94nmNlhEzVDZyJko0BTGcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sgl1/vzL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF1AC4CEE7;
-	Tue, 14 Oct 2025 15:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760455060;
-	bh=e/+3S+ElEy16pfzh6ZG7xSFnFeIBpdkAnFAVrQb10CE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sgl1/vzLeGTwl4CXmEeHBqb8Ux0YflbgFdQnGcvcTEycf00De2309mrbvf+gKF9M0
-	 p9RWld1M3dKyVwfxoZjD3wMNV7Bah7Hhv+de4T7EKtAVVwCeuoPieRv04vJEdhjtm8
-	 Pi0P1SpbGPSD2Tv/g7E+zvJiB6e47ZXyP3LL9pnLZYfFrDJFumaI5utgVFnDKAf5Va
-	 HSbvDkw5YjUOy6JQCw+la+RIY1Q4AQ88dSU+B5+ia+wJ0153NGROuLvpoGiqsUNTGt
-	 wCH7HIgp94OJRg3EJZ4rm9oeRc4u9ysKrlKCbPLiH3ZX+bQ0/F+tcQrCE/+qn0ymM8
-	 EGG4qk5447kvA==
-Message-ID: <d88696c7-4ea9-445b-82ac-f5379f952bd8@kernel.org>
-Date: Tue, 14 Oct 2025 09:17:39 -0600
+	 In-Reply-To:Content-Type; b=dEcb16cZVB8WSOqwdaJ034FsoCLIPqgT9UvvDY3j6q9VoFtVmmI+aEcA5SpzG3TA6CG5Nvu2c17zfGLbf7VgCyzkodN+Fb71ewsoHfajnx0nW9FOVN0bz0Zq+Aefd9Sjc2Qv/qiS4laBKgBD1Gk48iO/zmglxaNwN5Z09f32mAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KcL8iZDq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EF7QZE001553
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:18:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2qslDTOkNHTx5U1EAPc0LcinIVRSAoRDmbEkzn5ZsKY=; b=KcL8iZDqF7OHLSib
+	ydzB5l/Xf5tpGyxwXbUYnRMX109gyO841tfYcWnKI2WViW3SQeIRmY3l059daoOQ
+	H6DPaH9JVeuiI02nhy8QNwKMW86WcGe3HC4MqeyYdop72nWDfiTVAeV0wc4NA37d
+	lmH/MXUYtpqIPrSFCZOsS9ydcRATamSgjcWXWcPck3BjF2PuDODb5WEPJXTrWRXj
+	LqtsN84hPxSL2RMuVejsILYfjUsspygAqytbegF7jxdShUtOr9I3T+12QizoAutT
+	zodYoGAG32u0qMHHDsJCs/SiX+KSDrOFTra4LAFyjF9um9gTPKvDh3WBrZALdFfW
+	I9kpWA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdk8xx7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:18:00 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8643fb24cafso230289985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:18:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760455080; x=1761059880;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2qslDTOkNHTx5U1EAPc0LcinIVRSAoRDmbEkzn5ZsKY=;
+        b=cFAZT3itJnM8MOFnjQmE6Sa//35ya707WlOVPfv4YR25xIxluOxi68GxQUOqlRJGPN
+         8ijemmNKTz4FVb1NYyMHw5gNJPqdY3fZ/UfmZ82Y4HUq1yNOnve2IrQC79G5zbC166I9
+         2PHzYLSDliBYT7oHNUOOMRY/szuUcgL+ya6oUzutdqxMTtSvATYSO1yznr2P7kX8hgjv
+         BV5mIY7PbUvO07zZyFM1wyp6BWUZ5nBiEimXnHu1mSaxnSopaoiOIFrIl9MrNAjN1Bu5
+         IFBJalP0HhpmzwzUf+qdmWM/Ii1U4SwIYprwwZDCkT16l6DL5eHq1tM0BHy6AsbZoIyu
+         jrjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+iBCQKrRIj+8UDxxDnlRVTy32FETMeVJLEDi2AzJahXF3MedWA/YCkbsjCdMv+j8ugWGQGAw64En1q70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH5JsyDK5Hvtn+kfWfKnwLPvFQt7TB0kikgtCSJS4DFmXbEuOr
+	u/CJWlMChIsPvLqq1Kf5L6RgsFvYKwQ8thZyC3xKE3kPsJCu37oCL5DIdBrtkMBjRTnnN1ZCTHP
+	Buzu4ue8GZ8vU+iQ2AN2y/hB8tE4vZCq5lEXyTX4tVkWmkyH1SequRfCcYqJejih/mQ4=
+X-Gm-Gg: ASbGnctgEVEYzBdvy8uTXDDFv1WYgsVRVmpDGRnnXGU742POpJRuWI1Ma9Exfl047dm
+	HzXLC273iH64NKtmvvHTca7PHnjYAARapPrEzQIH9+Ca51utn41YJFnjQsmRZXBFnA8snwhZwhh
+	JQvrk4HO0voP2elCT6F79MiaYRo6pFaAa6SK1h13+O/ardnypJN5TVszqubqaiRl4fai4k+i3Ln
+	7cTDZPbmI3CByflQI+HRnb5PuZW8i5wugDXJwFqhVNkJoRj/tsXAn+NkJUhjdqX74MS4ZnUWv5J
+	BIX43FBT8oEPaCUd2w1T3jjo/ZXzG3Fzz7HJCQQAnlE6t0Z/PqxelKkm8Ky/BvSTd/cK8/TkxJj
+	o60ozxqpLpa7OuM9pO/T69w==
+X-Received: by 2002:a05:620a:290e:b0:7e8:c4f:614b with SMTP id af79cd13be357-88350c6dc10mr2342971085a.7.1760455079974;
+        Tue, 14 Oct 2025 08:17:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5WpyshMmM85giLMhcoK99ytmz5Lh13t9+32hYBwMSqBtMDGYaB1ldRbtBW8hSXyfDZaJ+Wg==
+X-Received: by 2002:a05:620a:290e:b0:7e8:c4f:614b with SMTP id af79cd13be357-88350c6dc10mr2342964585a.7.1760455079021;
+        Tue, 14 Oct 2025 08:17:59 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccccaaba9sm2866166b.55.2025.10.14.08.17.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 08:17:58 -0700 (PDT)
+Message-ID: <d06a254f-bf54-4bdf-bd09-3ee5e5b31bad@oss.qualcomm.com>
+Date: Tue, 14 Oct 2025 17:17:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,194 +89,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] lib/xz: remove dead IA-64 (Itanium) support code
-To: Ankan Biswas <spyjetfayed@gmail.com>, akpm@linux-foundation.org
-Cc: lasse.collin@tukaani.org, visitorckw@gmail.com,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-References: <20251014052738.31185-1-spyjetfayed@gmail.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: r0q: add touchscreen support
+To: Ghatto <ghatto404@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251014044135.177210-1-ghatto404@gmail.com>
+ <20251014044135.177210-4-ghatto404@gmail.com>
+ <e114504e-4bdd-46b9-b708-8eebc3075163@oss.qualcomm.com>
+ <CAMQHOhfjsi1L+3j3TrcjEjPp3xkn94KOdsrVZvJCyUDFBBSeqg@mail.gmail.com>
 Content-Language: en-US
-From: Khalid Aziz <khalid@kernel.org>
-In-Reply-To: <20251014052738.31185-1-spyjetfayed@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CAMQHOhfjsi1L+3j3TrcjEjPp3xkn94KOdsrVZvJCyUDFBBSeqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 9_fBO4TBInKtjvnr_6lM55M6BgjFJTC1
+X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68ee69a9 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=Kc_O4qD3dURwiZ8RncUA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: 9_fBO4TBInKtjvnr_6lM55M6BgjFJTC1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX7HRNu+WRI+Co
+ /P6P9W2T1Yd8WR/QzdFmVLYuBpdrdnY/t1koXZWJwWtxFC8PG6dFnZAWnyFRO4r3uBN9Xba38Y+
+ 3SD/j7bw2vNdrtP8bSO9rklAfsAYQ7tJcJwcL8Fy+pLE/ETaBsW1Kv4BMn5sy0bxgPYgm17Kauq
+ g7OGbB9T9N4bHY+XaW2DcCEK5TqxBB75sKy2f7OfwW51baUNSPpzkfmbgF6fJDL5BpWPL/nrEdx
+ yPcvpeNW4+egZXISlRkbNXlJBKb6qQqzEZHirzXjVqw0i2sZ3qIiD1TGqbmqT9w8CGJdwRuXPaL
+ VewwRbNRTMo8uoySj3ukAEsEQvrBy80MLb0lXGMExkIF5sXBnIjVSBYD4FcrcOoQsU2zLHoUfL3
+ SyDL5J/WSI0CMVfO5gdzYnsETq5lOQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-On 10/13/25 11:24 PM, Ankan Biswas wrote:
-> Support for the IA-64 (Itanium) architecture was removed in
-> commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture").
-> 
-> This patch drops the IA-64 specific decompression code from
-> lib/xz, which was conditionally compiled with the now-obsolete
-> CONFIG_XZ_DEC_IA64 option.
-> 
-> Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
-> Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Acked-by: Lasse Collin <lasse.collin@tukaani.org>
-> ---
-> Changes in v3:
-> - Removed log about IA-64 support in upstream
-> 
-> Changes in v2:
-> - Added second hunk to diff of xz_private.h
-> 
->   lib/xz/xz_dec_bcj.c | 95 ---------------------------------------------
->   lib/xz/xz_private.h |  4 --
->   2 files changed, 99 deletions(-)
-> 
-> diff --git a/lib/xz/xz_dec_bcj.c b/lib/xz/xz_dec_bcj.c
-> index 8237db17eee3..610d58d947ab 100644
-> --- a/lib/xz/xz_dec_bcj.c
-> +++ b/lib/xz/xz_dec_bcj.c
-> @@ -20,7 +20,6 @@ struct xz_dec_bcj {
->   	enum {
->   		BCJ_X86 = 4,        /* x86 or x86-64 */
->   		BCJ_POWERPC = 5,    /* Big endian only */
-> -		BCJ_IA64 = 6,       /* Big or little endian */
->   		BCJ_ARM = 7,        /* Little endian only */
->   		BCJ_ARMTHUMB = 8,   /* Little endian only */
->   		BCJ_SPARC = 9,      /* Big or little endian */
-> @@ -180,92 +179,6 @@ static size_t bcj_powerpc(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
->   }
->   #endif
->   
-> -#ifdef XZ_DEC_IA64
-> -static size_t bcj_ia64(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
-> -{
-> -	static const uint8_t branch_table[32] = {
-> -		0, 0, 0, 0, 0, 0, 0, 0,
-> -		0, 0, 0, 0, 0, 0, 0, 0,
-> -		4, 4, 6, 6, 0, 0, 7, 7,
-> -		4, 4, 0, 0, 4, 4, 0, 0
-> -	};
-> -
-> -	/*
-> -	 * The local variables take a little bit stack space, but it's less
-> -	 * than what LZMA2 decoder takes, so it doesn't make sense to reduce
-> -	 * stack usage here without doing that for the LZMA2 decoder too.
-> -	 */
-> -
-> -	/* Loop counters */
-> -	size_t i;
-> -	size_t j;
-> -
-> -	/* Instruction slot (0, 1, or 2) in the 128-bit instruction word */
-> -	uint32_t slot;
-> -
-> -	/* Bitwise offset of the instruction indicated by slot */
-> -	uint32_t bit_pos;
-> -
-> -	/* bit_pos split into byte and bit parts */
-> -	uint32_t byte_pos;
-> -	uint32_t bit_res;
-> -
-> -	/* Address part of an instruction */
-> -	uint32_t addr;
-> -
-> -	/* Mask used to detect which instructions to convert */
-> -	uint32_t mask;
-> -
-> -	/* 41-bit instruction stored somewhere in the lowest 48 bits */
-> -	uint64_t instr;
-> -
-> -	/* Instruction normalized with bit_res for easier manipulation */
-> -	uint64_t norm;
-> -
-> -	size &= ~(size_t)15;
-> -
-> -	for (i = 0; i < size; i += 16) {
-> -		mask = branch_table[buf[i] & 0x1F];
-> -		for (slot = 0, bit_pos = 5; slot < 3; ++slot, bit_pos += 41) {
-> -			if (((mask >> slot) & 1) == 0)
-> -				continue;
-> -
-> -			byte_pos = bit_pos >> 3;
-> -			bit_res = bit_pos & 7;
-> -			instr = 0;
-> -			for (j = 0; j < 6; ++j)
-> -				instr |= (uint64_t)(buf[i + j + byte_pos])
-> -						<< (8 * j);
-> -
-> -			norm = instr >> bit_res;
-> -
-> -			if (((norm >> 37) & 0x0F) == 0x05
-> -					&& ((norm >> 9) & 0x07) == 0) {
-> -				addr = (norm >> 13) & 0x0FFFFF;
-> -				addr |= ((uint32_t)(norm >> 36) & 1) << 20;
-> -				addr <<= 4;
-> -				addr -= s->pos + (uint32_t)i;
-> -				addr >>= 4;
-> -
-> -				norm &= ~((uint64_t)0x8FFFFF << 13);
-> -				norm |= (uint64_t)(addr & 0x0FFFFF) << 13;
-> -				norm |= (uint64_t)(addr & 0x100000)
-> -						<< (36 - 20);
-> -
-> -				instr &= (1 << bit_res) - 1;
-> -				instr |= norm << bit_res;
-> -
-> -				for (j = 0; j < 6; j++)
-> -					buf[i + j + byte_pos]
-> -						= (uint8_t)(instr >> (8 * j));
-> -			}
-> -		}
-> -	}
-> -
-> -	return i;
-> -}
-> -#endif
-> -
->   #ifdef XZ_DEC_ARM
->   static size_t bcj_arm(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
->   {
-> @@ -509,11 +422,6 @@ static void bcj_apply(struct xz_dec_bcj *s,
->   		filtered = bcj_powerpc(s, buf, size);
->   		break;
->   #endif
-> -#ifdef XZ_DEC_IA64
-> -	case BCJ_IA64:
-> -		filtered = bcj_ia64(s, buf, size);
-> -		break;
-> -#endif
->   #ifdef XZ_DEC_ARM
->   	case BCJ_ARM:
->   		filtered = bcj_arm(s, buf, size);
-> @@ -699,9 +607,6 @@ enum xz_ret xz_dec_bcj_reset(struct xz_dec_bcj *s, uint8_t id)
->   #ifdef XZ_DEC_POWERPC
->   	case BCJ_POWERPC:
->   #endif
-> -#ifdef XZ_DEC_IA64
-> -	case BCJ_IA64:
-> -#endif
->   #ifdef XZ_DEC_ARM
->   	case BCJ_ARM:
->   #endif
-> diff --git a/lib/xz/xz_private.h b/lib/xz/xz_private.h
-> index 8409784b1639..6775078f3cce 100644
-> --- a/lib/xz/xz_private.h
-> +++ b/lib/xz/xz_private.h
-> @@ -24,9 +24,6 @@
->   #		ifdef CONFIG_XZ_DEC_POWERPC
->   #			define XZ_DEC_POWERPC
->   #		endif
-> -#		ifdef CONFIG_XZ_DEC_IA64
-> -#			define XZ_DEC_IA64
-> -#		endif
->   #		ifdef CONFIG_XZ_DEC_ARM
->   #			define XZ_DEC_ARM
->   #		endif
-> @@ -103,7 +100,6 @@
->    */
->   #ifndef XZ_DEC_BCJ
->   #	if defined(XZ_DEC_X86) || defined(XZ_DEC_POWERPC) \
-> -			|| defined(XZ_DEC_IA64) \
->   			|| defined(XZ_DEC_ARM) || defined(XZ_DEC_ARMTHUMB) \
->   			|| defined(XZ_DEC_SPARC) || defined(XZ_DEC_ARM64) \
->   			|| defined(XZ_DEC_RISCV)
+On 10/14/25 5:10 PM, Ghatto wrote:
+> On Tue, Oct 14, 2025 at 7:01 AM Konrad Dybcio
+> <konrad.dybcio@oss.qualcomm.com> wrote:
+>>
+>> On 10/14/25 6:41 AM, Eric Gonçalves wrote:
+>>> Enable the ST-Microelectronics FTS2BA61Y touchscreen. This patch
+>>> depends on "Input: add support for the STM FTS2BA61Y touchscreen".
+>>
+>> The second sentence doesn't really make sense to be included in
+>> the git log
+> I'll keep it to the cover letter then
+>>
+>>> The device has an issue where SPI 8 (the bus which the touchscreen is
+>>> connected to) is not working properly right now, so
+>>> spi-gpio is used instead.
+>>
+>> Some Samsung devices used to use spi/i2c-gpio intentionally, also
+>> on downstream. I'm assuming this isn't the case for r0q.
+> It isn't, the device uses fts2ba61y on the spi8 bus - I hosted the
+> DT at https://github.com/ghatt-o/ss_experiments/blob/main/r0q.dts if you
+> want to take a look.
+>>
+>> Did you enable gpi_dma1, qupv3_id_1 before spi8, when testing
+> The driver probes, but it fails to recognize the touchscreen device
 
-Looks good.
+Could you post a complete dmesg and the precise DT diff you used?
 
-Reviewed-by: Khalid Aziz <khalid@kernel.org>
-
---
-Khalid
+Konrad
 
