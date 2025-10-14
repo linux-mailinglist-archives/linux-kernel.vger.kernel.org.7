@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-851972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB99CBD7D8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACCBBD7D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A93FF4F9866
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:20:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B65423368
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0116E30ACF6;
-	Tue, 14 Oct 2025 07:20:42 +0000 (UTC)
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B0623B62B;
+	Tue, 14 Oct 2025 07:17:16 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C6A30AADC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE14F2D781E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760426441; cv=none; b=S+Stkgz6aU5ze9jK7E1fth8r6YgV1K3yyxF3rGce+F7sOmAy3YkHegE2MvL/Y16+mSNgf+7yC0zZO1bX1cxbpgXc2uMe9vMESUXAI1+PT8Lbhje4zCVgWyl/91KkysW8eOEpY6oz7JEHaeeMYe5W7RczSb9EdX8lurBQNz9nAeE=
+	t=1760426235; cv=none; b=upvgecm9TP/g8MPJODj7Fq+3FV1GjJUOh+TX/DEb25KSqTqNzdeF3M1qNYwh14ECeIaC0U9o9c+962eDo6XMGjyfPMyQykgF7/1TtzVH5m2/nVvqgG4y+dZ5bO3vVSfmEvW0uW9Yj0cwDLyyoJBeFAuQpXzKzhTFXVNrqLBwgWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760426441; c=relaxed/simple;
-	bh=ese1AL4Mbt9Qfou8zsa4/1NpQHkJN9OTenytTIEZe5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JjHNeyO3RoXbeO1/cSvVNUBpZb26PgT2PL/GFdKh/enQiB849/0eIKS38nXPPFNvPsJzCQOZkedzn8q9hOs7y5MSoZZpaHOAhX/rG5O93nROPCoWkOmW5Uh2m7kYdGqQiu25QYK/rICCW8e9dhH9SKt3jj9WNZ2lW6tCCTXUojo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+	s=arc-20240116; t=1760426235; c=relaxed/simple;
+	bh=qcHTUS0wo1f43VFStYszqJZcg60j4r28QkB5kGixAXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PrXr2rgue7YtDfQM2N451YNW5VUCb7meBtCzmWG/kNoVApTSBEEMsLRZImxzB5qw5rxBZ54SiFrOP50aPa0LFjEfOE8e3p0jIgW8FtrjdQR6bbprAvsN1nRv2UZuP+nfsSMNycARfXQ6IHFp+p+F6lshokUiRBHUwCm7d5F2yXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-78af743c232so4513431b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:20:39 -0700 (PDT)
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-8e3eaa30c71so3549679241.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:17:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760426439; x=1761031239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wX/I9Icx0RS+yCcmomPEu0g/6wZ9SyCmq3ksJTG9NiY=;
-        b=sdtWTPtAjV3OzVSXlv9KzYNY5BriAr9q2Fi5qhnpYXes85cHiRlXUGBOheOqnmqvcq
-         ksENvuK59gN37B0yM5vMSm1xAi/Mthw/H9ineAmEMaC9Far1FSPb2Ywe1WKr68pE5wGp
-         xN5KE+HyKzcA7jaT2DWxQyokqTzXnAFb5Ae7yPYU1jLoQGnAh4a+uDi4wxFuTNhDG2aw
-         AYoCJLuCSlTWVdYHa0ZPf9QHqyRCtI68YtMguWVnV0SHBjlkfJH0DxSLEcr1DjbObb/+
-         vVJE1RO/bnmmXzEQFr6iBmLhncO+ox52tmUuYuCKoMf63+VedbM63Fpa/sxPrtSKLtVY
-         K8Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIReaIaZHupAmcY7bqLCjWcR8AipWJY9WzYCoBqbkO0h501cmwBuFnTAjzDiUAmrmcgLaVEaBQk4bGeR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP6QqEm3+EbCeD3CeXcfVBTpxSmTOWnRcShyYp+TvvwmQ5/Sm3
-	HEgXmt1VNN6iXS6n2j4dUcVXeDp/uxuW6M9GjJouJJhRAJVwjqlB+88i
-X-Gm-Gg: ASbGncvDVzXVIEjFsu7BFBmpTWZ1dLqUot6Qp9wBLjwkd/OuDpRdSfe/u2RUjE3AdZ+
-	icWlkU2veCmVmwnBJVy0k3zbw6U5Dvvmk/9N9OCvYg5Qm4G0a7Kzh1kv3RMXFVrm411XPvUofUE
-	vt3hF/C8V267doXOWSpRl1bWmensyuYA8P/HyqAYjFnHgib4SZQ/U+InJOG4GGGwJ/QOXJkSiyA
-	6chT6RU0jZsMgnVUpUU4H7FnF1+5Wjt4wumAyPRc28SrqSFiGS+n7uwSA5zHQhx/H9N7T9lls5K
-	9JDzExAJmqDlDZm69J1jdoVvOQlRidWhDsYdJsQ9e/MXtkOpViLqi2aMfpGa8oZDmejQAf/4UCz
-	HW+pM1JD5AzJkFz1s1MoSFvhiOR8NPsp0+3QPP3KhBcuHxxypgFZw3hfaTwkGlmBoT0k9LsWrhQ
-	I=
-X-Google-Smtp-Source: AGHT+IEF/aCTeVvSBrO05FwR6QofuqxkKDZvPY8nTM2m7UVq5+hTdMYW/LkSoT6imz0KOJoiVM2kVA==
-X-Received: by 2002:a05:6a20:728a:b0:2b5:9c2:c579 with SMTP id adf61e73a8af0-32da84ea53amr32225959637.54.1760426439338;
-        Tue, 14 Oct 2025 00:20:39 -0700 (PDT)
-Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678de09cb3sm11937092a12.18.2025.10.14.00.20.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 00:20:39 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@kernel.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH v4 2/2] PM: hibernate: make compression threads configurable
-Date: Tue, 14 Oct 2025 15:14:18 +0800
-Message-ID: <9f15307fcf22784a82fc1957133dfc2296930c33.1760423687.git.luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1760423687.git.luoxueqin@kylinos.cn>
-References: <cover.1760423687.git.luoxueqin@kylinos.cn>
+        d=1e100.net; s=20230601; t=1760426231; x=1761031031;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1LJPJfcpv0pJD66G650kRDT3CGUnlnJtrjGpdse2lj8=;
+        b=R+XJayy4fMuc403QA1nw4n5AacQCIBdYTZEuHMHUcLzeMQNzXOXFtWqFTmLyPR5Be3
+         B7DkFFQbimhH3jkYNG8iSVsdjY6Pm3oi6waM4WqXcd2pDlfdB9j4apHIwxxFiTonH38F
+         tCNz+zxVD0o0ObkX7h1QC1sBAwOvPUz6xCfeWRJERgrg3/eUq0lKcF4u7n5fM9QJfbUG
+         fATYs5Qg4EGJQqeJt4S1HtPYKQjhv5DlhX2FX27bVXijxOg/REx2q3fqaPyj/BrmSTrh
+         Wg0MrxKVLFB2Ap/oCLgVFjS/oupdGSD3i3Rgv7ByHRLWEvPHdxN5JPFheTVsKfUsC4IH
+         HBkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnV0Pq14KxZMcwd1kDnKghJet2aA1V13dm4vERiWP7c5uiDnSxks8LqT9TQ80DDniVUU8QZIS+rV7WtxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxfRCbohqk3gtfA6X+Bsmf88mGEwH7RYIn750/SU3HyBjN4VxP
+	AbxYnFru1iPbKnjhzXEtUArzedhi6V0coCgpY5fOh6Vj+c0Qv4N4nWYQiIVOUq4K
+X-Gm-Gg: ASbGncvc1Ad1QXEih/M4rjvQe38HX092leTCyAgUVu6knQafVFaD4fc+AiiU1XyMeYE
+	cU+vvf8J0lBGS99YUYq+EC+NLhlAx520Ug9nB15pX91XMryiYqfu7THGiWFKt3weYvqhDu8ksDV
+	lslGRXHtBh/9igNt9DhNwfWO7ZqRpffhjsoL6bBjK4KXtos0sWHbhPDYILpMfPq12t6sV1/4aCK
+	QSbVs/4ZLiwh352joGaL3S9l2UYAEeqUNwEM1/EhEdoW+I+166yiZ6nvjQloPDK/WBB9REO0H5r
+	RBDvNt/NX46jriqrHS9Nkv6P1SpLAnUWO2O26ZNbvCFby7OTkCmDdFBjBp1MhMeUjBHi5dYQDJe
+	nNxFiwTVYhTWtKk1zuYoh5bkMik1xjT722DxM761/Z7oz3ckd0BmJjAG7ayw2G4gFt1QVBDIbcK
+	KzKMtmTvVuZOxccA==
+X-Google-Smtp-Source: AGHT+IH64efgxQia0DsBe6hjQLcR1CpwCc3YhgR5rDql+nN+UWKoE5D6vhOSaMEjXTyftR0obygIAA==
+X-Received: by 2002:a05:6102:2ac3:b0:5d5:d1e1:73e8 with SMTP id ada2fe7eead31-5d5e2204172mr9547290137.13.1760426231163;
+        Tue, 14 Oct 2025 00:17:11 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-930bf76cdc0sm3395088241.9.2025.10.14.00.17.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 00:17:10 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5d28f9b4c8cso4270676137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:17:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqgRgvE4ZC6tyjBNFwzugxaFAUJERFnjNTNhQgL0aHaUUuufVt9xWf8sgL/10IAWX4SWE7RapOElj8nJs=@vger.kernel.org
+X-Received: by 2002:a05:6102:3c8e:b0:4fa:25a2:5804 with SMTP id
+ ada2fe7eead31-5d5e220420bmr8840762137.10.1760426229660; Tue, 14 Oct 2025
+ 00:17:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
+In-Reply-To: <20251013-rcar_pcie_probe-avoid-nocfi-objtool-warning-v1-1-552876b94f04@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Oct 2025 09:16:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
+X-Gm-Features: AS18NWBECJtooFXj8wIhcLw2_n3BPi6xXTVAMYxpuf1MNXW6QPz_d-TTeadxeIw
+Message-ID: <CAMuHMdXZvoTyWcgRp6TnkybnKY4ekfO9aB33iumPVaR7wvEXkw@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar-host: Avoid objtool no-cfi warning in rcar_pcie_probe()
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	kernel test robot <lkp@intel.com>, Kees Cook <kees@kernel.org>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The number of compression/decompression threads has a direct impact on
-hibernate image generation and resume latency. Using more threads can
-reduce overall resume time, but on systems with fewer CPU cores it may
-also introduce contention and reduce efficiency.
+Hi Nathan,
 
-Performance was evaluated on an 8-core ARM system, averaged over 10 runs:
+On Mon, 13 Oct 2025 at 20:26, Nathan Chancellor <nathan@kernel.org> wrote:
+> After commit 894af4a1cde6 ("objtool: Validate kCFI calls"), compile
+> testing pcie-rcar-host.c with CONFIG_FINEIBT=y and CONFIG_OF=n results
+> in a no-cfi objtool warning in rcar_pcie_probe():
+>
+>   $ cat allno.config
+>   CONFIG_CFI=y
+>   CONFIG_COMPILE_TEST=y
+>   CONFIG_CPU_MITIGATIONS=y
+>   CONFIG_GENERIC_PHY=y
+>   CONFIG_MITIGATION_RETPOLINE=y
+>   CONFIG_MODULES=y
+>   CONFIG_PCI=y
+>   CONFIG_PCI_MSI=y
+>   CONFIG_PCIE_RCAR_HOST=y
+>   CONFIG_X86_KERNEL_IBT=y
+>
+>   $ make -skj"$(nproc)" ARCH=x86_64 KCONFIG_ALLCONFIG=1 LLVM=1 clean allnoconfig vmlinux
+>   vmlinux.o: warning: objtool: rcar_pcie_probe+0x191: no-cfi indirect call!
+>
+> When CONFIG_OF is unset, of_device_get_match_data() returns NULL, so
+> LLVM knows this indirect call has no valid destination and drops the
+> kCFI setup before the call, triggering the objtool check that makes sure
+> all indirect calls have kCFI setup.
+>
+> Check that host->phy_init_fn is not NULL before calling it to avoid the
+> warning.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.O2IX0Jek-lkp@intel.com/
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-    cmp_threads   hibernate time (s)   resume time (s)
-    --------------------------------------------------
-          3             12.14              18.86
-          4             12.28              17.48
-          5             11.09              16.77
-          6             11.08              16.44
+Thanks for your patch!
 
-With 5–6 threads, resume latency improves by approximately 12% compared
-to the default 3-thread configuration, with negligible impact on
-hibernate time.
+> ---
+> Another alternative is to make this driver depend on CONFIG_OF since it
+> clearly requires it but that would restrict compile testing so I went
+> with this first.
+> ---
+>  drivers/pci/controller/pcie-rcar-host.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+> index 213028052aa5..15514c9c1927 100644
+> --- a/drivers/pci/controller/pcie-rcar-host.c
+> +++ b/drivers/pci/controller/pcie-rcar-host.c
+> @@ -981,7 +981,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>                 goto err_clk_disable;
+>
+>         host->phy_init_fn = of_device_get_match_data(dev);
+> -       err = host->phy_init_fn(host);
+> +       err = host->phy_init_fn ? host->phy_init_fn(host) : -ENODEV;
+>         if (err) {
+>                 dev_err(dev, "failed to init PCIe PHY\n");
+>                 goto err_clk_disable;
 
-Introduce a new kernel parameter `cmp_threads=` that allows users and
-integrators to tune the number of compression/decompression threads at
-boot. This provides a way to balance performance and CPU utilization
-across a wide range of hardware without recompiling the kernel.
+I am afraid you're playing a big game of whack-a-mole, since we tend
+to remove these checks, as they can never happen in practice (driver
+is probed from DT only, and all entries in rcar_pcie_of_match[] have
+a non-NULL .data member)...
 
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/swap.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index f8c13f5672ec..540cf902498c 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -519,8 +519,8 @@ static int swap_writer_finish(struct swap_map_handle *handle,
- 				CMP_HEADER, PAGE_SIZE)
- #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
- 
--/* Maximum number of threads for compression/decompression. */
--#define CMP_THREADS	3
-+/* Default number of threads for compression/decompression. */
-+static int cmp_threads = 3;
- 
- /* Minimum/maximum number of pages for read buffering. */
- #define CMP_MIN_RD_PAGES	1024
-@@ -741,7 +741,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
- 	if (!page) {
-@@ -1257,7 +1257,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = vmalloc_array(CMP_MAX_RD_PAGES, sizeof(*page));
- 	if (!page) {
-@@ -1697,3 +1697,19 @@ static int __init swsusp_header_init(void)
- }
- 
- core_initcall(swsusp_header_init);
-+
-+static int __init cmp_threads_setup(char *str)
-+{
-+	int rc = kstrtouint(str, 0, &cmp_threads);
-+
-+	if (rc)
-+		return rc;
-+
-+	if (cmp_threads < 1)
-+		cmp_threads = 3;
-+
-+	return 1;
-+
-+}
-+
-+__setup("cmp_threads=", cmp_threads_setup);
+                        Geert
+
 -- 
-2.43.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
