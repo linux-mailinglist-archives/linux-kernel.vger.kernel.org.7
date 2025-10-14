@@ -1,117 +1,157 @@
-Return-Path: <linux-kernel+bounces-852389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444B1BD8D89
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:57:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99671BD8D3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25967189B155
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:58:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B08844F5071
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812C5306499;
-	Tue, 14 Oct 2025 10:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89C82FCBED;
+	Tue, 14 Oct 2025 10:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NViuIYzE"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KF+3Q3LS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EC52FDC55;
-	Tue, 14 Oct 2025 10:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862C72FB99A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760439430; cv=none; b=jfMEp58p1b7UgtJVeGNFXUDijae5VJr1NPvgfV7dEdX17WHAC1fYz1vTAQuufZiHz/PgIt0jCvVtvmzI0HiNx3l6jt45LzFT9hTFFombNE6ISeEx22cxkt5haUqV18m9WvvS8NcLo7MNpcD4ESD/mWKkv42ZVPA0gLP5ceIE+KI=
+	t=1760439387; cv=none; b=PD75ummbvJ/E8Vj08+7CHQqskquheKNJz7b7bgamzZ8shQ0bnkKj9xslzVwrPRiLGoW3hb6L40z1tLPrZLdONJruOkL/AxVJNmBXqe07WvzIMXfYOnzaX8zYUZTGS11mJDNflWggrgPJccrMOzFvplc+eoxiELHUKl4FqihqeMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760439430; c=relaxed/simple;
-	bh=SgLT88p73unqoGLgqgewCnupBfsN2oHsCvUjfZbB+vY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P5dvb/RFDCUpl1Dvofg/Rf0Be8Txghd0LUzku/neomSRS3vU8F7s6Qun+xZ6yybLSkETF331bO32oTDi9+N9+l/ZUDSe1cInYWcgwRPj9dOyKvy4en8LmkYEh/BcLYvpdDeaMRostcGP0PMh6FXPqSvZQ4NhIgpWaxVwFZinpts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NViuIYzE; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59EAubh41487485;
-	Tue, 14 Oct 2025 05:56:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760439397;
-	bh=4I9IeP5+v23+fU9SgOJKXWPke6g0irOYHRWxEeXH2CE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=NViuIYzE9BrqSHlrAbA3dMJVsw67+Yeu0gms3JAyt+E1o/OgoYrZKO0+NxCjsstWk
-	 tt3IRql9i9ZtZ+x0f+AImu2TPUlSqh7eWEdJXXcnv//0YxVmzIlnhX7t2fmbBq8D1Z
-	 UGWqUMqZx2agTUmc5VlIT2iKxyHbKuxP+UqxFHTI=
-Received: from DFLE215.ent.ti.com (dfle215.ent.ti.com [10.64.6.73])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59EAub39387009
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 14 Oct 2025 05:56:37 -0500
-Received: from DFLE212.ent.ti.com (10.64.6.70) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Oct
- 2025 05:56:36 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE212.ent.ti.com
- (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 14 Oct 2025 05:56:36 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59EAuaHE3439828;
-	Tue, 14 Oct 2025 05:56:36 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 59EAuZQR010693;
-	Tue, 14 Oct 2025 05:56:36 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <horms@kernel.org>, <namcao@linutronix.de>, <jacob.e.keller@intel.com>,
-        <m-malladi@ti.com>, <christian.koenig@amd.com>,
-        <sumit.semwal@linaro.org>, <sdf@fomichev.me>,
-        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
-        <ast@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <linaro-mm-sig@lists.linaro.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-media@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net-next v3 6/6] net: ti: icssg-prueth: Enable zero copy in XDP features
-Date: Tue, 14 Oct 2025 16:26:12 +0530
-Message-ID: <20251014105613.2808674-7-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251014105613.2808674-1-m-malladi@ti.com>
-References: <20251014105613.2808674-1-m-malladi@ti.com>
+	s=arc-20240116; t=1760439387; c=relaxed/simple;
+	bh=51BmkPIFua1qYmhOko2LXrdbTTvz26PGdxLSjKB1ReU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=rWPxnPJdXYkCjpC1osuMeOaBd5Az9ghHHjS+6tdKCGZwMdvQwUuGt9LiuJjwYmBry8ZSVULjVfkU+Q042w0A+rFnHhl5OzvKAW8A+AmSvmhvvILQ1T328Kc/+0D+9Vt7UEUnYhlZkHfdOqgxyNt3gvSqmOrSdBP/eu53W8Pax5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KF+3Q3LS; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760439386; x=1791975386;
+  h=date:from:to:cc:subject:message-id;
+  bh=51BmkPIFua1qYmhOko2LXrdbTTvz26PGdxLSjKB1ReU=;
+  b=KF+3Q3LSG/y8BQ0psY//D2ffgsqFa0lnQ18cnptSN0Sy7KTbFFI26SlR
+   dM2irUNJ9McE3t1ioo09oNrYt4rlrHTSK4xB3GUUnXt73n5p1oguzEjRB
+   0tvn+P41cpjnGyJQT5TjZxCuJjuLxxkyBZGUElY3Y1+iiq2x23cfYpgUA
+   NzgouhOQmPA/zOFYMfmJnNsE2T3jia7GzOs5/tLjLjxB/DvR8m6b740gz
+   hZLVkYJWTWbBlQcHmj4thd/zDjDcvhU6KlllM7qwjHoyX0mV9O8F2LsMF
+   ocMIXBC3mbgJz5h2KRUztyVGPYD0U+Yi3dIwUMLcFnGdvR9ioYSa+9z4I
+   A==;
+X-CSE-ConnectionGUID: NxHbw4ENQ4ODZBeJVOhgKA==
+X-CSE-MsgGUID: Bj+9WhXBQdCrNLOHKPcwEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66252633"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="66252633"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 03:56:24 -0700
+X-CSE-ConnectionGUID: /q02BPWBTOKDak9sEDYSJQ==
+X-CSE-MsgGUID: y3jng3/RQTyeygh02aXzpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="186272813"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 14 Oct 2025 03:56:22 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8chX-0002fz-38;
+	Tue, 14 Oct 2025 10:56:19 +0000
+Date: Tue, 14 Oct 2025 18:56:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 83b0177a6c4889b3a6e865da5e21b2c9d97d0551
+Message-ID: <202510141812.f8FK6DaX-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Enable the zero copy feature flag in xdp_set_features_flag()
-for a given ndev to get the AF-XDP zero copy support running
-for both Tx and Rx.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 83b0177a6c4889b3a6e865da5e21b2c9d97d0551  x86/mm: Fix SMP ordering in switch_mm_irqs_off()
 
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+elapsed time: 821m
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 92f2c33affda..9894f1f30b58 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1545,7 +1545,8 @@ static int prueth_netdev_init(struct prueth *prueth,
- 	xdp_set_features_flag(ndev,
- 			      NETDEV_XDP_ACT_BASIC |
- 			      NETDEV_XDP_ACT_REDIRECT |
--			      NETDEV_XDP_ACT_NDO_XMIT);
-+			      NETDEV_XDP_ACT_NDO_XMIT |
-+			      NETDEV_XDP_ACT_XSK_ZEROCOPY);
- 
- 	netif_napi_add(ndev, &emac->napi_rx, icssg_napi_rx_poll);
- 	hrtimer_setup(&emac->rx_hrtimer, &emac_rx_timer_callback, CLOCK_MONOTONIC,
--- 
-2.43.0
+configs tested: 65
+configs skipped: 119
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                          allyesconfig    clang-19
+arc                 randconfig-001-20251014    clang-16
+arc                 randconfig-002-20251014    clang-16
+arm                 randconfig-001-20251014    clang-16
+arm                 randconfig-002-20251014    clang-16
+arm                 randconfig-003-20251014    clang-16
+arm                 randconfig-004-20251014    clang-16
+arm64               randconfig-001-20251014    clang-16
+arm64               randconfig-002-20251014    clang-16
+arm64               randconfig-003-20251014    clang-16
+arm64               randconfig-004-20251014    clang-16
+hexagon                        allmodconfig    clang-19
+hexagon                        allyesconfig    clang-19
+i386                           allmodconfig    clang-20
+i386                            allnoconfig    clang-20
+i386                           allyesconfig    clang-20
+i386      buildonly-randconfig-001-20251014    gcc-14
+i386      buildonly-randconfig-002-20251014    clang-20
+i386      buildonly-randconfig-002-20251014    gcc-14
+i386      buildonly-randconfig-003-20251014    clang-20
+i386      buildonly-randconfig-003-20251014    gcc-14
+i386      buildonly-randconfig-004-20251014    gcc-14
+i386      buildonly-randconfig-005-20251014    gcc-14
+i386      buildonly-randconfig-006-20251014    clang-20
+i386      buildonly-randconfig-006-20251014    gcc-14
+i386                              defconfig    clang-20
+i386                randconfig-001-20251014    clang-20
+i386                randconfig-002-20251014    clang-20
+i386                randconfig-003-20251014    clang-20
+i386                randconfig-004-20251014    clang-20
+i386                randconfig-005-20251014    clang-20
+i386                randconfig-006-20251014    clang-20
+i386                randconfig-007-20251014    clang-20
+i386                randconfig-011-20251014    gcc-14
+i386                randconfig-012-20251014    gcc-14
+i386                randconfig-013-20251014    gcc-14
+i386                randconfig-014-20251014    gcc-14
+i386                randconfig-015-20251014    gcc-14
+i386                randconfig-016-20251014    gcc-14
+i386                randconfig-017-20251014    gcc-14
+openrisc                        allnoconfig    clang-22
+parisc                          allnoconfig    clang-22
+powerpc                         allnoconfig    clang-22
+riscv                           allnoconfig    clang-22
+s390                            allnoconfig    clang-22
+um                             allmodconfig    clang-19
+um                              allnoconfig    clang-22
+um                             allyesconfig    clang-19
+x86_64                          allnoconfig    clang-20
+x86_64                         allyesconfig    clang-20
+x86_64    buildonly-randconfig-001-20251014    gcc-14
+x86_64    buildonly-randconfig-002-20251014    clang-20
+x86_64    buildonly-randconfig-003-20251014    gcc-14
+x86_64    buildonly-randconfig-004-20251014    clang-20
+x86_64    buildonly-randconfig-005-20251014    clang-20
+x86_64    buildonly-randconfig-006-20251014    gcc-14
+x86_64                            defconfig    clang-20
+x86_64                                kexec    clang-20
+x86_64                             rhel-9.4    clang-20
+x86_64                         rhel-9.4-bpf    gcc-14
+x86_64                        rhel-9.4-func    clang-20
+x86_64                  rhel-9.4-kselftests    clang-20
+x86_64                       rhel-9.4-kunit    gcc-14
+x86_64                         rhel-9.4-ltp    gcc-14
+x86_64                        rhel-9.4-rust    clang-20
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
