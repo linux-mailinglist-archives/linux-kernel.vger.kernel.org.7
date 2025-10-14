@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-852719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BE9BD9B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23914BD9B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F383818999EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:25:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540563E6FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174EF28751B;
-	Tue, 14 Oct 2025 13:25:15 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB72304BC5;
+	Tue, 14 Oct 2025 13:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TQs4iuy+"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F45DF49
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C251C6FE5;
+	Tue, 14 Oct 2025 13:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760448314; cv=none; b=JDT5f1NsjOEpeD2XtulPSN2zkFh6Pl1MzoDj3I9YxLQ2Tp1n8gQs7TAhdrnuTLh84rslHbyu5iDEVIillg9oDXxQy4Vb/mv8TP8fohjB3Is1dxBne1IlgaDsv2dE7seLHa9geRiBzqhYuA0S0lfqw8ZdzUjIU+FptlouXYtEx0E=
+	t=1760448368; cv=none; b=RlhwTDVnUMW+w6mUZ7cvm6bwbyula+WLPqkj46rHxF35cFw50g/zhDBAldN/ZhEXARDwK0WPmhEiuTu6MHqxbRhZMilNG272o/TEpVpx4LKX7xjioQZVQelWTFxMfxufvGvWUOGxPcSuh7nLI1qvw6aIdM82WWGNiLGGg+DkhUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760448314; c=relaxed/simple;
-	bh=a579V2bO0+BZ1IMWxFTxLqjn0Eukhv7mzcdFfiBKkJU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iNtzm6Qa3nxLMQlFooBN0gu6Pzk5JJXJ8lsCCVEDKuje+hFhU65zt6iS48gfFbsyth/VoFkF5GR2ag/gGpxjihZjZdztcSdyqxqykYHFr09Ron5GZivWx81qGVKmhyy7184bAcSmuKphiq2JUmRGEusKeXCgr4WxMAzpYCcTUk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-91fbba9a0f7so1083063239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:25:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760448312; x=1761053112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9bPB4o/ifG8gaq8dCuVVRnkyTImwnAVmIhKP9lLsdAY=;
-        b=Bqm3xrqioR+ZhXoQ1+anH8wCzSTQJTV3ZooYGddpL8m1OLcI0gZvTAd1E+TFQUf59F
-         kALuLeJtHlt3O43wOFdKXO7HI6yvrIGT2YpLJJlxEvIcByPiIul1a4qRQsFKOgSdSCkz
-         6OlKkGbwzeKKFwHLIB9ni2sHxzsB+PwBG69gzzDeXQfpwU0+VcjrLXVHPYF+ofm298OY
-         RVGlXIOX8osYQUzB0+N7fNrcAw5LnhlAEur0oHQsla3S++aA6BIPanYKM5HmV0EuRxvV
-         cGhm1nXJVnlwpJQlU2cG0NLuAVGnmLz2tWITiQ0KekKlyI0uyKRWcFh8Y7VTVWxG0l7h
-         FViQ==
-X-Gm-Message-State: AOJu0Yzhiw4fMesE/2A+fJ0l2Cfwm9ZIYErQoY6nBcEGqAPQF37KhBDA
-	N+FBZpB5YkjCSGyr4NyvPLmIBW7miyA+L3JKZQF6WvoABsF00ZLmpFGqbnM7Q+Spcwki+aTcYlC
-	cKTzgUlUXIwcXDu46p6YmmUvXuL0rSpiMrOX3iW01uHvqyWFuZhHnaH4z5TY=
-X-Google-Smtp-Source: AGHT+IHMK8cawIuhYGNrYM6hl3D1GwfxRyMZe7F095LePIlxKxSR5O6bNvL7Vs+i+2GwqFYG/iSCN8NaOhT6G+GVIRYXDpLZ7L0X
+	s=arc-20240116; t=1760448368; c=relaxed/simple;
+	bh=HdoCn4GOazTS+zRp5uQLC2XnPHX0Mm2v2xht0ldSgvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvdDsb/r2bIxJSmbxOVYokvcJj0NGwcMYduWpEfcO6U7Zrsc3vqNsmGgP0dFFf3u6WyacUfvU1KdMuELwebcoh0Db3OcF+3Mpw8plBVZSqu8Clhl/hw2bx/Y4hDz+VSKd1gS8pYSYeEidJaJupJD7CihnO54+WmumWkQx0XOCjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TQs4iuy+; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B228F40E019B;
+	Tue, 14 Oct 2025 13:25:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Um6Qob17WE9I; Tue, 14 Oct 2025 13:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1760448354; bh=p9mlxWCEY3N8VBccjtQKF4D4mfvLrnFkADy7v4KgqSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TQs4iuy+YypQargymdG4Hirwx6p90B/ZgXmeUyTZk+5iv2F4Cthy9HtH7tJYgmwit
+	 YSdz9vx+brmQQnFjkR9MhwWH/IjRnhk9aBoRuq2MHINMGHTK8GP3y42I3S713pHixZ
+	 Cf5Ii3XOO6/g2KoAxeNfMCetu27xXEO25HS8qmdl1OJTBUkphenmx/QKwhuWtYvQ8F
+	 bUCJ7+C1n9+llIo/UPkvPtU9Zn2W7UqMQPqBgA5CawD/+I279Ocx0LN2m1VKv260QY
+	 Dw96/ATdN2XAzLTHlyC0+ClEN0NrEEjLbVnQBVNZnk73CH3l3jjxbQwqTdCUgFiSCE
+	 /eHa7iS3QAP0yIhSppZKH5pz1hNiOHu2Vcdf5tIaACaMMysTioTz7qu6OCJ+bF22zU
+	 +QuO1jktUi46wmnukaWOmUKPbFDnH031eVFhIrWXs2ICowuKvbIhEGtjpKsH0BTfRc
+	 9DE3oinKmHcZ6qn9nNEmylBzSmhoqRn7mgb7EBCtw+09FpYKcj8ANgLRPg+1k1DZ7O
+	 XCQs2gMFdXc+fuSISe25wI1FlrtCykR8/wmwMeR5ngNiAU8d3ReFFAk7YTqIEdfrkv
+	 biJfUS/GQO85qH8+KuLMXT9o/HcozEWlLR3xBIrZoF/oACpqKrsJC37BkAouqrnTNb
+	 rTNTKAR+s5/4EYCbQDLXi920=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C645440E016D;
+	Tue, 14 Oct 2025 13:25:49 +0000 (UTC)
+Date: Tue, 14 Oct 2025 15:25:44 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Subject: Re: [tip: x86/core] x86/alternative: Patch a single alternative
+ location only once
+Message-ID: <20251014132544.GBaO5PWEbKfbQFCXdB@fat_crate.local>
+References: <20250929112947.27267-4-jgross@suse.com>
+ <176043135449.709179.18067035380831847643.tip-bot2@tip-bot2>
+ <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3a04:b0:424:8b66:fbdc with SMTP id
- e9e14a558f8ab-42f873fb8a8mr240201585ab.28.1760448312260; Tue, 14 Oct 2025
- 06:25:12 -0700 (PDT)
-Date: Tue, 14 Oct 2025 06:25:12 -0700
-In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ee4f38.050a0220.ac43.0105.GAE@google.com>
-Subject: Forwarded: [PATCH] ntfs3: prevent operations on NTFS system files
-From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251014125909.GAaO5JHU_cgsPgstc_@fat_crate.local>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Oct 14, 2025 at 02:59:09PM +0200, Borislav Petkov wrote:
+> And frankly, the justification for this patch is also meh: an interrupt might
+> use the location?!? If this is a real issue then we better disable IRQs around
+> it. But not make the code yucky.
 
-***
+And this patch is not doing what it is claiming is doing:
 
-Subject: [PATCH] ntfs3: prevent operations on NTFS system files
-Author: kartikey406@gmail.com
+Here's an incarnation of XSTATE_XSAVE which is a 3-way alternative:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+At location ffffffff81283cd3, it replaces the default XSAVE with XSAVEOPT.
 
-Commit 4e8011ffec79 ("ntfs3: pretend $Extend records as regular files")
-set the mode for $Extend records to S_IFREG to satisfy VFS requirements.
-This made system metadata files appear as regular files, allowing
-operations like truncate to be attempted on them.
+[    2.456696] SMP alternatives: feat: 10*32+0, old: (save_fpregs_to_fpstate+0x43/0xa0 (ffffffff81283cd3) len: 6), repl: (ffffffff89c1e6d9, len: 6) flags: 0x0
+[    2.459317] SMP alternatives: ffffffff81283cd3:   old_insn: 49 0f ae 64 24 40	xsave64 0x40(%r12)
+[    2.460806] SMP alternatives: ffffffff89c1e6d9:   rpl_insn: 49 0f ae 74 24 40	xsaveopt64 0x40(%r12)
+[    2.463316] SMP alternatives: ffffffff81283cd3: final_insn: 49 0f ae 74 24 40
 
-NTFS system files (inode numbers below MFT_REC_FREE) should not have
-their size modified by userspace as this can corrupt the filesystem.
-Additionally, the run_lock was not initialized for $Extend records,
-causing lockdep warnings when such operations were attempted.
+and then that exact same location:
 
-Fix both issues by:
-1. Initializing run_lock for $Extend records to prevent crashes
-2. Blocking size-change operations on all NTFS system files to prevent
-   filesystem corruption
+[    2.464757] SMP alternatives: feat: 10*32+1, old: (save_fpregs_to_fpstate+0x43/0xa0 (ffffffff81283cd3) len: 6), repl: (ffffffff89c1e6df, len: 6) flags: 0x0
+[    2.467317] SMP alternatives: ffffffff81283cd3:   old_insn: 49 0f ae 64 24 40
+[    2.468746] SMP alternatives: ffffffff89c1e6df:   rpl_insn: 49 0f c7 64 24 40	xsaves64 0x40(%r12)
+[    2.470167] SMP alternatives: ffffffff81283cd3: final_insn: 49 0f c7 64 24 40
 
-Reported-by: syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com
-Fixes: 4e8011ffec79 ("ntfs3: pretend $Extend records as regular files")
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ntfs3/file.c  | 6 +++++-
- fs/ntfs3/inode.c | 1 +
- 2 files changed, 6 insertions(+), 1 deletion(-)
+gets XSAVES.
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 4c90ec2fa2ea..c5b2bddb0cee 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -792,7 +792,11 @@ int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 	if (ia_valid & ATTR_SIZE) {
- 		loff_t newsize, oldsize;
--
-+		/* Prevent size changes on NTFS system files */
-+		if (ni->mi.rno < MFT_REC_FREE) {
-+			err = -EPERM;
-+			goto out;
-+		}
- 		if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
- 			/* Should never be here, see ntfs_file_open(). */
- 			err = -EOPNOTSUPP;
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 3959f23c487a..180cd984339b 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -472,6 +472,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
- 		/* Records in $Extend are not a files or general directories. */
- 		inode->i_op = &ntfs_file_inode_operations;
- 		mode = S_IFREG;
-+		init_rwsem(&ni->file.run_lock);
- 	} else {
- 		err = -EINVAL;
- 		goto out;
+So, long story short, this needs more thought:
+
+1. check whether patching is needed
+
+2. a helper function evaluates all instances and figures out the final insn
+   bytes which need to be patched along with the proper padding
+
+3. the proper bytes are copied into the target location and all good
+
+But not like this - the idea is somewhat ok but it needs to be executed in
+a cleaner manner.
+
+I'd say.
+
+Thx.
+
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
