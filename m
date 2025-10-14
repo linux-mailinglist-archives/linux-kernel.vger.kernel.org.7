@@ -1,55 +1,39 @@
-Return-Path: <linux-kernel+bounces-852430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D2EBD8F82
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:18:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6850BD8EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A3124EAE11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:18:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A592C425C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CC2302759;
-	Tue, 14 Oct 2025 11:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-teism.eu header.i=@bit-teism.eu header.b="YgRUIhal"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E1A3090D0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED612FE04A;
+	Tue, 14 Oct 2025 11:10:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AE525487B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760440692; cv=none; b=WdzZv8CQZqvtOtZT5WKN4EwxpnPkmAhAPYrrGch2EP8Vn/pqn3iyLBHx7dhwX1dU3Zh2+jTOZ1/aSgMwRQsmxRpr1Bj6J9x/dmG/FiSdVqhAoadxBpD2vTtfmVCCh+jstQpesA2c9oSV415tiYOWA1wOITqhLfcIaCFFv/vLmSI=
+	t=1760440203; cv=none; b=cpF8pMepP51DGfvOp1acrXdLPrULPTeb7P4V6253tiBs9bl7SFIfDqVIaBUbYwktGFxn5ALYpt2CkQrHiQDr+Y663R2cix6kBuR2vCD0dEqVKCgXYjraBoMe22aHsD77uLvB/ss1i9320uFbnnIY/gZe4TVP1TgXE7YNaxw+kpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760440692; c=relaxed/simple;
-	bh=Os9XzOaNHUFrlOo+HyQ0RyjGmoRzjK2tnqLhyCZaTvM=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=nCLV7WYPZB6E05xTC12FcCy8w9xJuLrFIPG6mV4tMYBqb8HFsJM5N8elhQC7IEdf2xMZFSPNgKc18Gh9CpI8n+OGv/ZODtf46qiiws7f2t2JrblMZWVIM8Kg8DeZZ0DLRvrp8t/foJcsFDJzf3QbtEwra9OJfQyzhlCezWru2Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-teism.eu; spf=pass smtp.mailfrom=bit-teism.eu; dkim=pass (2048-bit key) header.d=bit-teism.eu header.i=@bit-teism.eu header.b=YgRUIhal; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-teism.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-teism.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=bit-teism.eu; s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:
-	From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PTn/YbEkANztox+RBOWdGm9P0uuiVqL2+pLsLQ23ZDk=; b=YgRUIhalzf0LzhANsdqC9Qyqxa
-	aAGnctsHZ44QHGVd1yHOmrEUsV5Sp32Jkf81lzkwLQo3abZ9XqwnqDBtO5LMbNg9IQi6ImzwodMRE
-	PPi37sI8kjprSG5XzaW+WilfifikkMM5uahSeyqiUGvea61nK1kE2FTbuZVUL6Qr0dQ2CMkpS+0xo
-	poUU1jOCuqeGHGknQTaHkYb33Vz3luTQNoO0btG/X+Ttcxq/2PbNjmopFflM9gdgGKoOjd1QPlBSd
-	/BLRfJUzvVYAm8gdMwJYqFCZHb25Oh1CiB9DwqwJHeVlcSamL/pbllz+avxtBFTgZhkipmyvJmjyF
-	zlANP96Q==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1v8cu5-002FhW-4P
-	for linux-kernel@vger.kernel.org;
-	Tue, 14 Oct 2025 13:09:17 +0200
-Message-ID: <0f74210b-c614-4b24-8065-dcd5f69d8e16@bit-teism.eu>
-Date: Tue, 14 Oct 2025 13:09:16 +0200
+	s=arc-20240116; t=1760440203; c=relaxed/simple;
+	bh=/1TPc1mlJpP4iYstRwjFHfKmzRYt3oEaYLWUQHJEybw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YW5LykuCzgaLXCY2mkQTCpUorYu3sGSsqWAvDOjmyBLxaKZIFImp0NJtzzThPH/a4NUEy3TPNErmsZno3a3SIrt8eHnd5523Yuch5YyDe9oXGIa8NPhNTAxkU09KY1G+FqHSzb1G3aEgLCYa0tADoiguMDrMCM5ydC/1edbfhOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FFC01A9A;
+	Tue, 14 Oct 2025 04:09:53 -0700 (PDT)
+Received: from [10.57.7.84] (unknown [10.57.7.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AC723F66E;
+	Tue, 14 Oct 2025 04:09:59 -0700 (PDT)
+Message-ID: <526186fa-d17a-4b79-b51d-83492b19c941@arm.com>
+Date: Tue, 14 Oct 2025 12:09:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,38 +41,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-teism.eu>
-Subject: Bit Tao (was low jitter, fair pay politics, unification in Bitstreams
- System)
+Subject: Re: [PATCH v5 1/4] iommu/io-pgtable-arm: Simplify error prints for
+ selftests
+To: Mostafa Saleh <smostafa@google.com>, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, praan@google.com,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <20250929155001.3287719-1-smostafa@google.com>
+ <20250929155001.3287719-2-smostafa@google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250929155001.3287719-2-smostafa@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Yes, I have reached perfection in translation of Islam. I have updated 
-the general project name to Bit Tao.
+On 2025-09-29 4:49 pm, Mostafa Saleh wrote:
+> At the moment, if the self test fails it prints a lot of information
+> about the page table (size, levels...) this requires access to many
+> internals, which has to be exposed in the next patch moving the
+> tests out.
+> 
+> Instead, we can simplify the print, using ias, oas, pgsize_bitmap
+> and fmt is enough to identify the failed case, and the rest can
+> be deduced from the code.
 
-It really also reflects the want of Bit Kernel potential branchoff, to 
-have Lightweight Kernel Threads only (instead of legacy kernel threads). 
-This is fair pay compliant. (And other stuff I said, should all be 
-reflected in Bit Tao now).
+That is the same cfg information already logged at the start of the 
+test, so if it's not useful to dump the actual internal details of the 
+ops then just remove the whole function and make life even simpler. 
+(Otherwise export it or turn it into a callback.)
 
-Fair Pay compliance also includes potential Isa CPU and language, as 
-indicated by Bit Tao. This way typical involved are with right concepts 
-for this. Test what Bit Tao indicates for you, if you wonder.
-
-I also suggest Bit Wavelet (fair pay compliant constant-q filter, 
-compression and more.) And Soundhacker, versions have been part of the 
-culture for a while. And SinAI Game Genie, for easy game creation with 
-Open Source background. (Some of it is already looking better than the 
-manual stuff!)
-
-With full fluent translation of Islam, as Teistic background: 
-https://bit-teism.eu/
-
-Light Be With You.
-Ywe Cærlyn
-Budi,
-Bitstreams System.
-
+Thanks,
+Robin.
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Pranjal Shrivastava <praan@google.com>
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> ---
+>   drivers/iommu/io-pgtable-arm.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index 7e8e2216c294..00218af5d5f7 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -1299,14 +1299,10 @@ static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
+>   
+>   static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
+>   {
+> -	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
+> -	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+> +	struct io_pgtable_cfg *cfg = &io_pgtable_ops_to_pgtable(ops)->cfg;
+>   
+> -	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
+> -		cfg->pgsize_bitmap, cfg->ias);
+> -	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
+> -		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
+> -		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
+> +	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit oas %u-bit\n",
+> +		cfg->pgsize_bitmap, cfg->ias, cfg->oas);
+>   }
+>   
+>   #define __FAIL(ops, i)	({						\
 
 
