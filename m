@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-852729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA28ABD9B9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7A7BD9B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DF604EB029
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:31:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47065423520
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4479D314B61;
-	Tue, 14 Oct 2025 13:30:22 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C37D313539;
+	Tue, 14 Oct 2025 13:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9DFYFoD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238DE314D0B;
-	Tue, 14 Oct 2025 13:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713B51D7E4A;
+	Tue, 14 Oct 2025 13:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760448621; cv=none; b=NFJFnxivUbRAb9oUfdqA0fINE53ErkRM3WR+mgi9gC/HgUWrMcqad3OTpk+H7f8M8SCbr8tR6pWvW00KMQJyFim9TUXPMAJRuRKJ2BVGpcW/hOuU4Ln9Wk3gOb1AsmiZ2irNMYHaIMSYh/doTr+2VxPRRC9JyBMR3bNVahMvILw=
+	t=1760448674; cv=none; b=k8X2orvpbCMJOPJsjDTiYyJ0RSULj4rVIwX1uEG96kEGss3U2rXvLKyYqoo/rDT9lNVKfJONO+mtVvA9b5k777MFg4O/0lKV094nU5Le1O6pXayd94XfisOQvFB/hkTflEBcFVMVjTIqQgu5Ppu4e+j5w/hlRiLiezCu3N6W53g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760448621; c=relaxed/simple;
-	bh=oL4nTb9H9q0OWx0ZruoXgxTlyoCespe25xJ9ZzTsNKw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=rOIThMBUpBnEGGDK+JKU2LqMvq0fnROYv0NybbmyKgLFkpgeciHBeKx6kR7w82Y58ejbpPxliEKgMGfRrG45zoFzRLv/NasFP2CPHKEhjpTNpf/dAry9lAAyoImT/m52sh3+lq3kPK0UFlGu7BorUCYvVXTzDcoIdbevIkjS1yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59EDU6ol086633;
-	Tue, 14 Oct 2025 22:30:06 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59EDU5Vq086630
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 14 Oct 2025 22:30:06 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d74eef30-fed4-46a8-801e-c86e8ed2632f@I-love.SAKURA.ne.jp>
-Date: Tue, 14 Oct 2025 22:30:05 +0900
+	s=arc-20240116; t=1760448674; c=relaxed/simple;
+	bh=Pd+RXTNXqwtTl0Ps6q82IpRn8j9zy3XBl+4lbBTNB7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A8Tpuqy4FVCTCD/PT6/ESAj+BfjegSySWLaLE0OJbencUWZGE5GUL8hMAXEy0u0asvGGH6s9881zDrpNRGK/M6Bw8IcCXE2srZsCaeiNbYSOUGOPNkRuXyKvdAvAmguh1AlewIdhF59S2xjgetE/SEB9po6kJsJIDafdWdfvkCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9DFYFoD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911A2C4CEE7;
+	Tue, 14 Oct 2025 13:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760448674;
+	bh=Pd+RXTNXqwtTl0Ps6q82IpRn8j9zy3XBl+4lbBTNB7s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O9DFYFoDzF00egIpQI7+sSk2FaOh6iFX2u4d1w81THKSYCDMlTInjn5WZTb3aCldv
+	 7arr+/E7J4eX7Uu8AWbwM0nxyXOgkJevOsTJKiWCZ+V7OIOcLwu5RgECoaguW8LiAG
+	 +RlLGfZuXpk4E78YsTJNjo7bAg7CID27fVCXRUgEDiiKFwa3HVKTHNyEemp8bDB9Zu
+	 oIj89hbDlH4kQvgw27eUqmRJyWO1my7H/j+Aw7wJ/IFtu2+8iLfcq6yWb1LB1kRBUR
+	 lnfkuPsQBy4CS6xUQzz7TopKQKX9H0dsoyavdt18wZF2C1rCU17hoeEC4FGAER2+jJ
+	 otPCpEeNcK/XA==
+Message-ID: <ed5bcdca-9a6d-4144-acd7-1c1feeaadb0f@kernel.org>
+Date: Tue, 14 Oct 2025 07:31:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,79 +49,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH] hpfs: make check=none mount option excludable
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: linux-kernel@vger.kernel.org,
-        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-        Antoni Pokusinski <apokusinski01@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <68794b99.a70a0220.693ce.0052.GAE@google.com>
- <8a2fc775-e4f7-406d-b6dd-8b1f3cd851a3@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
+ pxamci_probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Rakuram Eswaran <rakuram.e96@gmail.com>, chenhuacai@kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, lkp@intel.com,
+ skhan@linuxfoundation.org, ulf.hansson@linaro.org, zhoubinbin@loongson.cn
+References: <xxtrhbv5qm2crtvc5ejpgu5caadsmms3rfulmosjwq7lumrko3@5mlcpk24hymm>
+ <20251012183804.15171-1-rakuram.e96@gmail.com>
+ <6j7ix5yof7qmrp6cgxhqver7yimvmgj7dujqu4l7cnzbpjksfd@5sp7am47gigw>
+ <8afff048-4fe1-440a-9739-e5a5ea43d6eb@kernel.org>
+ <aO5BnwkNNyv_GOGS@stanley.mountain>
 Content-Language: en-US
-In-Reply-To: <8a2fc775-e4f7-406d-b6dd-8b1f3cd851a3@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
+From: Khalid Aziz <khalid@kernel.org>
+In-Reply-To: <aO5BnwkNNyv_GOGS@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
 
-syzbot is reporting use-after-free read problem when a crafted HPFS image
-was mounted with "check=none" option.
+On 10/14/25 6:27 AM, Dan Carpenter wrote:
+> On Mon, Oct 13, 2025 at 04:54:13PM -0600, Khalid Aziz wrote:
+>>> @@ -703,20 +705,15 @@ static int pxamci_probe(struct platform_device *pdev)
+>>>    	platform_set_drvdata(pdev, mmc);
+>>> -	host->dma_chan_rx = dma_request_chan(dev, "rx");
+>>> -	if (IS_ERR(host->dma_chan_rx)) {
+>>> -		host->dma_chan_rx = NULL;
+>>> +	host->dma_chan_rx = devm_dma_request_chan(dev, "rx");
+>>> +	if (IS_ERR(host->dma_chan_rx))
+>>>    		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
+>>>    				     "unable to request rx dma channel\n");
+>>> -	}
+>>> -	host->dma_chan_tx = dma_request_chan(dev, "tx");
+>>> -	if (IS_ERR(host->dma_chan_tx)) {
+>>> -		dev_err(dev, "unable to request tx dma channel\n");
+>>> -		ret = PTR_ERR(host->dma_chan_tx);
+>>> -		host->dma_chan_tx = NULL;
+>>> -		goto out;
+>>> -	}
+>>> +	host->dma_chan_tx = devm_dma_request_chan(dev, "tx");
+>>> +	if (IS_ERR(host->dma_chan_tx))
+>>> +		return dev_err_probe(dev, PTR_ERR(host->dma_chan_tx),
+>>> +				     "unable to request tx dma channel\n");
+>>
+>> We should still release DMA rx channel before returning here.
+>>
+>>>    	if (host->pdata) {
+>>>    		host->detect_delay_ms = host->pdata->detect_delay_ms;
+>>> @@ -724,25 +721,21 @@ static int pxamci_probe(struct platform_device *pdev)
+>>>    		host->power = devm_gpiod_get_optional(dev, "power", GPIOD_OUT_LOW);
+>>>    		if (IS_ERR(host->power)) {
+>>>    			ret = PTR_ERR(host->power);
+>>> -			dev_err(dev, "Failed requesting gpio_power\n");
+>>> -			goto out;
+>>> +			return dev_err_probe(dev, ret, "Failed requesting gpio_power\n");
+>>
+>> Don't we need to release DMA Rx and Tx channels before we return from here?
+>>
+>>>    		}
+>>>    		/* FIXME: should we pass detection delay to debounce? */
+>>>    		ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0);
+>>> -		if (ret && ret != -ENOENT) {
+>>> -			dev_err(dev, "Failed requesting gpio_cd\n");
+>>> -			goto out;
+>>> -		}
+>>> +		if (ret && ret != -ENOENT)
+>>> +			return dev_err_probe(dev, ret, "Failed requesting gpio_cd\n");
+>>
+>> Same here
+>>
+>>>    		if (!host->pdata->gpio_card_ro_invert)
+>>>    			mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
+>>>    		ret = mmc_gpiod_request_ro(mmc, "wp", 0, 0);
+>>> -		if (ret && ret != -ENOENT) {
+>>> -			dev_err(dev, "Failed requesting gpio_ro\n");
+>>> -			goto out;
+>>> -		}
+>>> +		if (ret && ret != -ENOENT)
+>>> +			return dev_err_probe(dev, ret, "Failed requesting gpio_ro\n");
+>>
+>> and here.
+>>
+>> Looking at Documentation/driver-api/driver-model/devres.rst,
+>> dma_request_chan() is not devres managed interface and thus will not be
+>> released automatically. Do you agree?
+>>
+> 
+> The patch changes dma_request_chan() to devm_dma_request_chan().
+> 
 
-The "check=none" option is intended for only users who want maximum speed
-and use the filesystem only on trusted input. But fuzzers are for using
-the filesystem on untrusted input.
+Ah, yes. It does. That works then.
 
-Mikulas Patocka (the HPFS maintainer) thinks that there is no need to add
-some middle ground where "check=none" would check some structures and won't
-check others. Therefore, to make sure that fuzzers and careful users do not
-by error specify "check=none" at runtime, make "check=none" being
-excludable at build time.
+Thanks,
+Khalid
 
-Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-Link: https://lkml.kernel.org/r/9ca81125-1c7b-ddaf-09ea-638bc5712632@redhat.com
-Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/hpfs/Kconfig | 11 +++++++++++
- fs/hpfs/super.c |  2 ++
- 2 files changed, 13 insertions(+)
-
-diff --git a/fs/hpfs/Kconfig b/fs/hpfs/Kconfig
-index ac1e9318e65a..d3dfbe76be8a 100644
---- a/fs/hpfs/Kconfig
-+++ b/fs/hpfs/Kconfig
-@@ -15,3 +15,14 @@ config HPFS_FS
- 
- 	  To compile this file system support as a module, choose M here: the
- 	  module will be called hpfs.  If unsure, say N.
-+
-+config HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
-+	bool "Allow no-error-check mode for maximum speed"
-+	depends on HPFS_FS
-+	default n
-+	help
-+	  This option enables check=none mount option. If check=none is
-+	  specified, users can expect maximum speed at the cost of minimum
-+	  robustness. Sane users should not specify check=none option, for e.g.
-+	  use-after-free bug will happen when the filesystem is corrupted or
-+	  crafted.
-diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-index 8ab85e7ac91e..656b1ae01812 100644
---- a/fs/hpfs/super.c
-+++ b/fs/hpfs/super.c
-@@ -285,7 +285,9 @@ static const struct constant_table hpfs_param_case[] = {
- };
- 
- static const struct constant_table hpfs_param_check[] = {
-+#ifdef CONFIG_HPFS_FS_ALLOW_NO_ERROR_CHECK_MODE
- 	{"none",	0},
-+#endif
- 	{"normal",	1},
- 	{"strict",	2},
- 	{}
--- 
-2.47.3
-
+> regards,
+> dan carpenter
+> 
 
 
