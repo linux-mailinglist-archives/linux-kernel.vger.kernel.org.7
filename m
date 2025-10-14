@@ -1,383 +1,171 @@
-Return-Path: <linux-kernel+bounces-852606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FF0BD9709
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:47:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081D1BD96F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25213AB3DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:47:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BE0C5019F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B4B1DB54C;
-	Tue, 14 Oct 2025 12:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A06313E3D;
+	Tue, 14 Oct 2025 12:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6WbZG9e"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIOhET1l"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845841DDA24
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7246304BC5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446026; cv=none; b=MyoHIX5BGQJjNyKxVrjids53Sc5KlRGG/mRcpczY8SPch9/mc2waxxCvq0CwUpWv0rhJWDDAVHB6QT+5d0M5EkQfU9SnB6OUGcoY9om8GuyJX1Z4ag1ZlZy0JsxE7WP9BvoOkH5o5rIY34hTp+48Q1U01x4B+xMMqCc0hJhteR4=
+	t=1760445945; cv=none; b=XVddlScF4XHPkn+wclS1K+h4dSZoDbFjiJghrxjOdl6T6kSJ0ZrXrRZHxPhZbauxP+qbGropKsqiXjkwQuDJWchwOfIzUlHfTLHTTJ0OfqJ2cUAq31ioOpffBI9yAayuCR0sugsQJWmd2UOqnwKw12Hi6Byn00bDtme/5N9T7mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446026; c=relaxed/simple;
-	bh=pbQbG7JWWmgoGx67yM8S/CxoR8U1Pilw6U7sRm4EKR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HoFezkLsHS0CBFlnNNZhLsI4WzBupfC5F0sgFrsMmIgdDebfLmIFMWu1b+mF+gTn4rMHwudPPgIXPa5xim8pDIUI83ZL6Y4t3I87RWi4f7Kdzb87LyTj7v45yPH4R/j7oWngbzGukSlOxFyaKS7AcpzMlbb0B6qXsNsyEfmJUJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6WbZG9e; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1760445945; c=relaxed/simple;
+	bh=4xAZty85ZHdvBE6Q6Ju6E8/SyfTuwcvhqmJQ6fWLs54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MML+WKkH9DF/h8FasccFhmzSIp5NwBwnK14GrampOYYbRhrFMLMBMN4hnnXbfstpzopAPQg4b2qQtHT1L3e/bfV1w030MmtEey+D0DrxBnrAWMzVCIRftYeshsGY3B4pUfPh2lKnWAoJcIjyzfD5bkv8AIoZWr8OB8eXCjuW9qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIOhET1l; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57a8b00108fso999646e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:47:04 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e48d6b95fso46530215e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:45:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760446023; x=1761050823; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOYDAUUrPF9BNX7d43RB9kvFca4sRiuUrwceAzjG9h0=;
-        b=P6WbZG9eKZFKKx2NPxrhIDc0n88Jr0OsMnY1XsciFMQK//cMp76+fMq0MnDuUMQBMw
-         iQvMAtKpWMm/0hefb552lPLb+YgmrIMNtJhcD1762wFoDhZlYJOMvrTSqLQ3/Zv3eZbi
-         M19CijDVBv3Tq6+ysSnkRzbePnQA7gc9u96A0qbxdD476efIQhQV9H28ZB6/v7Z/sNed
-         5R2TWsHABKlUo+P9hw7UsXXEaUgpaEyhAWG5zOBSKEBqyb8+sIUNyRVnOKf5iWLpx3Rh
-         m4X3vwZpNLBmAKaNbIJutyVNOUIJZGXY4l3xn99LowXRXW1DL54DsuZ2G/QJZ/iFntLi
-         BXgA==
+        d=gmail.com; s=20230601; t=1760445942; x=1761050742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t+s+MnUCBJ5Abbhdfz+BBRkABbDhDMVmHDHwHoH2l6Q=;
+        b=SIOhET1lP1CVEl97faPGO0VQp8rByWy78RyyTQJ62a5gycXaEFN4W95RDO+019HH7D
+         U9fSHg0ptn4JjIuGHDt23ae5jN9cs6Lf4wx02pqBFc1PEyn24REtWb36TUcLn4KLvq2X
+         ZCSuti7V+4r+5smtVUQHuN0GQLO46+F5ChOtFDmbXMkbT7VPE0X73lfqU3zN7rVsPOS2
+         JTMoQpeedNZkxx8ITPlZzzAOqv3vZS5No6nZsD6PpJ0/vwdIqyMYTB+dZvKgXvNa4KYE
+         54rfafm2j6aUCD/0SeLxGBXweMg3Wbq3nqEmP9cry2nfD9U4Rb7UAilPHO43+3utCJsz
+         mV7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760446023; x=1761050823;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOYDAUUrPF9BNX7d43RB9kvFca4sRiuUrwceAzjG9h0=;
-        b=wyiE4q6WJyc4GnniT/X1D1DR7CERjna4Vt4ojk8s80ID2NvQxGzFuGJr8wONcLMbQp
-         x6vHmJCYB5AZCdzfB7XucHXzfU/ooxQYkF6anbhWpry3D80SdhXET43sfGoCrx1Kj8gV
-         1rODGuKH5mrT63XPl+fkm5v0jLdE5fA2G5TKyoCA3+2mJpdgugJK0ZT7fXEiIdmS7GhW
-         tjgJ+b5jQ/T7SMnMeljgkTOY9PhDz4Y9N9WLl/9NpvP6JD+mOq82tlmRm2Ukxxho1jGW
-         F1dWgKJcAG7AD4UGTdi3G+13MbldP9PzraKpQfvPefPZZh7GvXho4oc4jgdtu95T7Tj/
-         yLTg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9nlOI2MrHEYbAi6PV+qmB6Aql0m5LYM7qV5F/+Wv3Wo+2kXTfDF3t1DXNEH+CgSy5A1i1ksSiL520cGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5CJlTa4bYCbzZBdvZGnuH3HoSGK34UqtBst9nBVfi2YIsH6oW
-	0UYw016RuYyrJzuRfhC6ZMR3tja9b8N1F5H7A/ILDw/FkDVa3d1LUyjYv/7BvJ2kqtn3xcY86oh
-	SfmHbvDXZewlAEwVpurUlfs04Dt4mmOc=
-X-Gm-Gg: ASbGncvMn73CLJzPQ6wYzBI9g1DKMq4QC8ycEt8IYGNgYJ4HdgnJRIoDf2KB/XggFZk
-	HNUZHTvusOCgZ4fdZXpEeOllAtSUoUigRxKsZ/KNr0CW8YZlJWkPOXfyrwkBaFvjqE3JADq3kG4
-	1WnWXFPPP/ZN1lw8auijBekTcdRYhWmPHxHCdlUjzIUKcUCWoiyj4O8g2QKJM9ZieQpgI+vAWwT
-	hBDgX0MlxwZ74KJCTgAgNSTsCc=
-X-Google-Smtp-Source: AGHT+IFlO5uSigu5dtEPUFsiPorGQT8JHKN9gDGfcyR2bXSQJaHthPRim/dru6Buj5TcNFP99XIzDYgEUyJNtMVBif8=
-X-Received: by 2002:a2e:beab:0:b0:36b:d9d2:7352 with SMTP id
- 38308e7fff4ca-37609cebacdmr36943081fa.1.1760446022264; Tue, 14 Oct 2025
- 05:47:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760445942; x=1761050742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t+s+MnUCBJ5Abbhdfz+BBRkABbDhDMVmHDHwHoH2l6Q=;
+        b=gLObx8Pa+hmWzL9BBuVar2m0UaHhob8KB9vcEP5AnV5jdUK7KHA29J/VgvbjgYy/p+
+         yM5mmCUdzbOiAMuJ0DprtUa7X4wRngeU63YV5YWCy6pQMS4vNIdRzqprketggnIO6uwY
+         kM9/duY/2QLawPSqTM4HaOjKV53c+XgJe/WB07uaLhK3F2dhIIywNEJUB6dMtXhwJekc
+         k3jEFoxlHWuuOfrgWwEMPSoOh7+nMBUnBonRCGsGHFneU14m8JOu9YvKZOi8HOFjDnoL
+         i3nuMXrRngkCj4q+NJKh+9NBH4g2sy0va61XEpAwMNCLv+aWqN+yLV3sunojfLInoZer
+         hMcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr2Rs/3LqJ4tgy2h+yQldyIHZorkjdt9vQm5THPI9wEa9UnIzdOfqN+82aR/mYM+ac9e3pDdY8BRIKXAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwZC5hsPSlu+xp0TFh9SD4t73uxML/qfoo64wVR9OmIjyW/YMa
+	Nj3f4qtNmKSXdiC3/uwp4bSGWQdAAJrS1f/NF2AwrOVaBAQeLReDwCM0
+X-Gm-Gg: ASbGncsZkPraGPq/MucYtGPdW9Pfwk8WOPrJmbdvfEca9WLauypnPBcRaIfHHMuzXg9
+	SL7InX8YMMKLQRmFYLWzeNgStReuCJAAxqtqEDWYYvFe0Vc1TtWGR3gWvcILiltEZKhrDHeD8cz
+	k69kAlMd9smFsEeZtzRMZDPBuBf0Awcol6AlfPlq2Ep2nilvSjZlfBEZ5XP/RNeJwh1OX0YvB8d
+	cculJhOiLrY+HZQqgfeF31HRnqS864RBHKTD9WAvCGeEQnEa+/NOopPxqji8fkS8tLUwlVac0Nc
+	fturIk03WqOs1lZCbSfwGXaxFfUc1GFMLHqeiW0STBwrFiWbw28E1gtLE3XBtDSC1erzPZtC/HC
+	ZKRGHKToDg55ogfqQnDC58VkGeZTb3pUMh4r6pVyRmtgslKl0Z3bM3+Nf/kh2oKZHsj96Kl3yNO
+	3a41QxZOnG
+X-Google-Smtp-Source: AGHT+IG37XYlLrmKRzsVTbT8x4wG0Ta4s90KjMR3qbRk2A+e9jHNkHgI8r+1AkdRhNxcKymiD3ZRzw==
+X-Received: by 2002:a05:600c:c162:b0:46e:47cc:a17e with SMTP id 5b1f17b1804b1-46fa9a8f4c8mr165749265e9.1.1760445941678;
+        Tue, 14 Oct 2025 05:45:41 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:7ec0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb55ac08dsm232559785e9.13.2025.10.14.05.45.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 05:45:40 -0700 (PDT)
+Message-ID: <0ef2009e-2593-4b15-a96b-512c1dd30151@gmail.com>
+Date: Tue, 14 Oct 2025 13:46:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
- <20251014083230.1181072-2-zhaoyang.huang@unisoc.com> <20251014114124.145165bc@mordecai.tesarici.cz>
-In-Reply-To: <20251014114124.145165bc@mordecai.tesarici.cz>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Tue, 14 Oct 2025 20:46:48 +0800
-X-Gm-Features: AS18NWCZqvwBFj414D2SlPbku69nYjWV6cLatwbTi_BHqfCcVjP0WhD8gi8qGCk
-Message-ID: <CAGWkznEPqsORQCiGqpjSp6XTvtHov76EGw830hxXmrUxd2U_4w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: call back alloc_pages_bulk_list since it is useful
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Mel Gorman <mgorman@techsingularity.net>, Vlastimil Babka <vbabka@suse.cz>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
+ buffer providers
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>,
+ Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Joshua Washington
+ <joshwash@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Jian Shen <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Jijie Shao <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
+ <sbhatta@marvell.com>, hariprasad <hkelam@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Alexander Duyck <alexanderduyck@fb.com>,
+ kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Joe Damato <joe@dama.to>, David Wei <dw@davidwei.uk>,
+ Willem de Bruijn <willemb@google.com>, Mina Almasry
+ <almasrymina@google.com>, Breno Leitao <leitao@debian.org>,
+ Dragos Tatulea <dtatulea@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, io-uring <io-uring@vger.kernel.org>
+References: <cover.1760364551.git.asml.silence@gmail.com>
+ <20251013105446.3efcb1b3@kernel.org>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20251013105446.3efcb1b3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 5:41=E2=80=AFPM Petr Tesarik <ptesarik@suse.com> wr=
-ote:
->
-> On Tue, 14 Oct 2025 16:32:29 +0800
-> "zhaoyang.huang" <zhaoyang.huang@unisoc.com> wrote:
->
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> > commit c8b979530f27 ("mm: alloc_pages_bulk_noprof: drop page_list
-> > argument") drops alloc_pages_bulk_list. This commit would like to call =
-back
-> > it since it is proved to be helpful to the drivers which allocate a bul=
-k of
-> > pages(see patch of 2 in this series ).
-> > I do notice that Matthew's comment of the time cost of iterating a list=
-.
-> > However, I also observed in our test that the extra page_array's alloca=
-tion
-> > could be more expensive than cpu iteration when direct reclaiming happe=
-ns
-> > when ram is low[1]. IMHO, could we leave the API here to have the users
-> > choose between the array or list according to their scenarios.
->
-> OK, so this is more or less a revert of commit c8b979530f27 ("mm:
-> alloc_pages_bulk_noprof: drop page_list argument")...
->
-> I cannot comment on the performance gains, but I dislike the fact that
-> the patch re-introduces alloc_pages_bulk_noprof() as a function with two
-> signatures (either page_list is used, or page_array is used).
->
-> If we can agree that allocations onto a linked list are useful, then I
-> suggest to split the existing function so that the common bits end up
-> in helper functions, called by both variants (one function using a
-> list, one using an array).
-Yes. That is also what I wanted to do in the beginning. I will
-implement if dma-buf would like to take the change
->
-> Petr T
->
-> > [1]
-> > android.hardwar-728     [002] .....   334.573875: system_heap_do_alloca=
-te: Execution time: order 0 1 us
-> > android.hardwar-728     [002] .....   334.573879: system_heap_do_alloca=
-te: Execution time: order 0 2 us
-> > android.hardwar-728     [002] .....   334.574239: system_heap_do_alloca=
-te: Execution time: order 0 354 us
-> > android.hardwar-728     [002] .....   334.574247: system_heap_do_alloca=
-te: Execution time: order 0 4 us
-> > android.hardwar-728     [002] .....   334.574250: system_heap_do_alloca=
-te: Execution time: order 0 2 us
-> >
-> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > ---
-> >  include/linux/gfp.h |  9 +++++++--
-> >  mm/mempolicy.c      | 14 +++++++-------
-> >  mm/page_alloc.c     | 39 +++++++++++++++++++++++++++------------
-> >  3 files changed, 41 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> > index 5ebf26fcdcfa..f1540c9fcd87 100644
-> > --- a/include/linux/gfp.h
-> > +++ b/include/linux/gfp.h
-> > @@ -231,6 +231,7 @@ struct folio *__folio_alloc_noprof(gfp_t gfp, unsig=
-ned int order, int preferred_
-> >
-> >  unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
-> >                               nodemask_t *nodemask, int nr_pages,
-> > +                             struct list_head *page_list,
-> >                               struct page **page_array);
-> >  #define __alloc_pages_bulk(...)                      alloc_hooks(alloc=
-_pages_bulk_noprof(__VA_ARGS__))
-> >
-> > @@ -242,7 +243,11 @@ unsigned long alloc_pages_bulk_mempolicy_noprof(gf=
-p_t gfp,
-> >
-> >  /* Bulk allocate order-0 pages */
-> >  #define alloc_pages_bulk(_gfp, _nr_pages, _page_array)               \
-> > -     __alloc_pages_bulk(_gfp, numa_mem_id(), NULL, _nr_pages, _page_ar=
-ray)
-> > +     __alloc_pages_bulk(_gfp, numa_mem_id(), NULL, _nr_pages, NULL, _p=
-age_array)
-> > +
-> > +#define alloc_pages_bulk_list(_gfp, _nr_pages, _list)                 =
-       \
-> > +     __alloc_pages_bulk(_gfp, numa_mem_id(), NULL, _nr_pages, _list, N=
-ULL)
-> > +
-> >
-> >  static inline unsigned long
-> >  alloc_pages_bulk_node_noprof(gfp_t gfp, int nid, unsigned long nr_page=
-s,
-> > @@ -251,7 +256,7 @@ alloc_pages_bulk_node_noprof(gfp_t gfp, int nid, un=
-signed long nr_pages,
-> >       if (nid =3D=3D NUMA_NO_NODE)
-> >               nid =3D numa_mem_id();
-> >
-> > -     return alloc_pages_bulk_noprof(gfp, nid, NULL, nr_pages, page_arr=
-ay);
-> > +     return alloc_pages_bulk_noprof(gfp, nid, NULL, nr_pages, NULL, pa=
-ge_array);
-> >  }
-> >
-> >  #define alloc_pages_bulk_node(...)                           \
-> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> > index eb83cff7db8c..26274302ee01 100644
-> > --- a/mm/mempolicy.c
-> > +++ b/mm/mempolicy.c
-> > @@ -2537,13 +2537,13 @@ static unsigned long alloc_pages_bulk_interleav=
-e(gfp_t gfp,
-> >               if (delta) {
-> >                       nr_allocated =3D alloc_pages_bulk_noprof(gfp,
-> >                                       interleave_nodes(pol), NULL,
-> > -                                     nr_pages_per_node + 1,
-> > +                                     nr_pages_per_node + 1, NULL,
-> >                                       page_array);
-> >                       delta--;
-> >               } else {
-> >                       nr_allocated =3D alloc_pages_bulk_noprof(gfp,
-> >                                       interleave_nodes(pol), NULL,
-> > -                                     nr_pages_per_node, page_array);
-> > +                                     nr_pages_per_node, NULL, page_arr=
-ay);
-> >               }
-> >
-> >               page_array +=3D nr_allocated;
-> > @@ -2593,7 +2593,7 @@ static unsigned long alloc_pages_bulk_weighted_in=
-terleave(gfp_t gfp,
-> >       if (weight && node_isset(node, nodes)) {
-> >               node_pages =3D min(rem_pages, weight);
-> >               nr_allocated =3D __alloc_pages_bulk(gfp, node, NULL, node=
-_pages,
-> > -                                               page_array);
-> > +                                               NULL, page_array);
-> >               page_array +=3D nr_allocated;
-> >               total_allocated +=3D nr_allocated;
-> >               /* if that's all the pages, no need to interleave */
-> > @@ -2658,7 +2658,7 @@ static unsigned long alloc_pages_bulk_weighted_in=
-terleave(gfp_t gfp,
-> >               if (!node_pages)
-> >                       break;
-> >               nr_allocated =3D __alloc_pages_bulk(gfp, node, NULL, node=
-_pages,
-> > -                                               page_array);
-> > +                                               NULL, page_array);
-> >               page_array +=3D nr_allocated;
-> >               total_allocated +=3D nr_allocated;
-> >               if (total_allocated =3D=3D nr_pages)
-> > @@ -2682,11 +2682,11 @@ static unsigned long alloc_pages_bulk_preferred=
-_many(gfp_t gfp, int nid,
-> >       preferred_gfp &=3D ~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL);
-> >
-> >       nr_allocated  =3D alloc_pages_bulk_noprof(preferred_gfp, nid, &po=
-l->nodes,
-> > -                                        nr_pages, page_array);
-> > +                                        nr_pages, NULL, page_array);
-> >
-> >       if (nr_allocated < nr_pages)
-> >               nr_allocated +=3D alloc_pages_bulk_noprof(gfp, numa_node_=
-id(), NULL,
-> > -                             nr_pages - nr_allocated,
-> > +                             nr_pages - nr_allocated, NULL,
-> >                               page_array + nr_allocated);
-> >       return nr_allocated;
-> >  }
-> > @@ -2722,7 +2722,7 @@ unsigned long alloc_pages_bulk_mempolicy_noprof(g=
-fp_t gfp,
-> >       nid =3D numa_node_id();
-> >       nodemask =3D policy_nodemask(gfp, pol, NO_INTERLEAVE_INDEX, &nid)=
-;
-> >       return alloc_pages_bulk_noprof(gfp, nid, nodemask,
-> > -                                    nr_pages, page_array);
-> > +                                    nr_pages, NULL, page_array);
-> >  }
-> >
-> >  int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *=
-dst)
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index d1d037f97c5f..a95bdd8cbf5b 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -4940,23 +4940,28 @@ static inline bool prepare_alloc_pages(gfp_t gf=
-p_mask, unsigned int order,
-> >  }
-> >
-> >  /*
-> > - * __alloc_pages_bulk - Allocate a number of order-0 pages to an array
-> > + * __alloc_pages_bulk - Allocate a number of order-0 pages to a list o=
-r array
-> >   * @gfp: GFP flags for the allocation
-> >   * @preferred_nid: The preferred NUMA node ID to allocate from
-> >   * @nodemask: Set of nodes to allocate from, may be NULL
-> > - * @nr_pages: The number of pages desired in the array
-> > - * @page_array: Array to store the pages
-> > + * @nr_pages: The number of pages desired on the list or array
-> > + * @page_list: Optional list to store the allocated pages
-> > + * @page_array: Optional array to store the pages
-> >   *
-> >   * This is a batched version of the page allocator that attempts to
-> > - * allocate nr_pages quickly. Pages are added to the page_array.
-> > + * allocate nr_pages quickly. Pages are added to page_list if page_lis=
-t
-> > + * is not NULL, otherwise it is assumed that the page_array is valid.
-> >   *
-> > - * Note that only NULL elements are populated with pages and nr_pages
-> > + * For lists, nr_pages is the number of pages that should be allocated=
-.
-> > + *
-> > + * For arrays, only NULL elements are populated with pages and nr_page=
-s
-> >   * is the maximum number of pages that will be stored in the array.
-> >   *
-> > - * Returns the number of pages in the array.
-> > + * Returns the number of pages on the list or array.
-> >   */
-> >  unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
-> >                       nodemask_t *nodemask, int nr_pages,
-> > +                     struct list_head *page_list,
-> >                       struct page **page_array)
-> >  {
-> >       struct page *page;
-> > @@ -4974,7 +4979,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, =
-int preferred_nid,
-> >        * Skip populated array elements to determine if any pages need
-> >        * to be allocated before disabling IRQs.
-> >        */
-> > -     while (nr_populated < nr_pages && page_array[nr_populated])
-> > +     while (page_array && nr_populated < nr_pages && page_array[nr_pop=
-ulated])
-> >               nr_populated++;
-> >
-> >       /* No pages requested? */
-> > @@ -4982,7 +4987,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, =
-int preferred_nid,
-> >               goto out;
-> >
-> >       /* Already populated array? */
-> > -     if (unlikely(nr_pages - nr_populated =3D=3D 0))
-> > +     if (unlikely(page_array && nr_pages - nr_populated =3D=3D 0))
-> >               goto out;
-> >
-> >       /* Bulk allocator does not support memcg accounting. */
-> > @@ -5064,7 +5069,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, =
-int preferred_nid,
-> >       while (nr_populated < nr_pages) {
-> >
-> >               /* Skip existing pages */
-> > -             if (page_array[nr_populated]) {
-> > +             if (page_array && page_array[nr_populated]) {
-> >                       nr_populated++;
-> >                       continue;
-> >               }
-> > @@ -5083,7 +5088,11 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp,=
- int preferred_nid,
-> >
-> >               prep_new_page(page, 0, gfp, 0);
-> >               set_page_refcounted(page);
-> > -             page_array[nr_populated++] =3D page;
-> > +             if (page_list)
-> > +                     list_add(&page->lru, page_list);
-> > +             else
-> > +                     page_array[nr_populated] =3D page;
-> > +             nr_populated++;
-> >       }
-> >
-> >       pcp_spin_unlock(pcp);
-> > @@ -5100,8 +5109,14 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp,=
- int preferred_nid,
-> >
-> >  failed:
-> >       page =3D __alloc_pages_noprof(gfp, 0, preferred_nid, nodemask);
-> > -     if (page)
-> > -             page_array[nr_populated++] =3D page;
-> > +     if (page) {
-> > +             if (page_list)
-> > +                     list_add(&page->lru, page_list);
-> > +             else
-> > +                     page_array[nr_populated] =3D page;
-> > +             nr_populated++;
-> > +     }
-> > +
-> >       goto out;
-> >  }
-> >  EXPORT_SYMBOL_GPL(alloc_pages_bulk_noprof);
->
+On 10/13/25 18:54, Jakub Kicinski wrote:
+> On Mon, 13 Oct 2025 15:54:02 +0100 Pavel Begunkov wrote:
+>> Jakub Kicinski (20):
+>>    docs: ethtool: document that rx_buf_len must control payload lengths
+>>    net: ethtool: report max value for rx-buf-len
+>>    net: use zero value to restore rx_buf_len to default
+>>    net: clarify the meaning of netdev_config members
+>>    net: add rx_buf_len to netdev config
+>>    eth: bnxt: read the page size from the adapter struct
+>>    eth: bnxt: set page pool page order based on rx_page_size
+>>    eth: bnxt: support setting size of agg buffers via ethtool
+>>    net: move netdev_config manipulation to dedicated helpers
+>>    net: reduce indent of struct netdev_queue_mgmt_ops members
+>>    net: allocate per-queue config structs and pass them thru the queue
+>>      API
+>>    net: pass extack to netdev_rx_queue_restart()
+>>    net: add queue config validation callback
+>>    eth: bnxt: always set the queue mgmt ops
+>>    eth: bnxt: store the rx buf size per queue
+>>    eth: bnxt: adjust the fill level of agg queues with larger buffers
+>>    netdev: add support for setting rx-buf-len per queue
+>>    net: wipe the setting of deactived queues
+>>    eth: bnxt: use queue op config validate
+>>    eth: bnxt: support per queue configuration of rx-buf-len
+> 
+> I'd like to rework these a little bit.
+> On reflection I don't like the single size control.
+> Please hold off.
+
+I think that would be quite unproductive considering that this series
+has been around for 3 months already with no forward progress, and the
+API was posted 6 months ago. I have a better idea, I'll shrink it down
+by removing all unnecessary parts, that makes it much much simpler and
+should detangle the effort from ethtool bits like Stan once suggested.
+I've also been bothered for some time by it growing to 24 patches, it'll
+help with that as well. And it'll be a good base to put all the netlink
+configuration bits on top if necessary.
+
+> Also what's the resolution for the maintainers entry / cross posting?
+
+I'm pretty much interested as well :) I've been CC'ing netdev as a
+gesture of goodwill, that's despite you blocking an unrelated series
+because of a rule you made up and retrospectively applied and belittling
+my work after. It doesn't seem that you content with it either,
+evidently from you blocking it again. I'm very curious what's that all
+about? And since you're unwilling to deal with the series, maybe you'll
+let other maintainers to handle it?
+
+-- 
+Pavel Begunkov
+
 
