@@ -1,201 +1,174 @@
-Return-Path: <linux-kernel+bounces-853298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6820ABDB281
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:07:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6647BDB284
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6BF3E49BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:07:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D76F4E7BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1587A305968;
-	Tue, 14 Oct 2025 20:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534E0305962;
+	Tue, 14 Oct 2025 20:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMjLXFmV"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="o6nhI27z";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="d9ONREMb"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA31130595A
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 20:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760472466; cv=none; b=JS/3FeypRI+ayjL1XveMZ47bDU2G+qr4oXvEuH9Wz3CecrAtgrTmv2a7nYnghs++iHJgoEnIJaMbtPLi2UZTsvPuE8X4rz9q5SvCIVMXS94RRvu5LfPsBwwceRclE1fVYXlZC87OXMIn7pvaT32uY7ZHZWFChXQarHXEGYysk/U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760472466; c=relaxed/simple;
-	bh=11G9qWo3AalZFB6Fko0IXrFFm6wbNdqaAFoKRnYqgaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXz2a6kZpUCE3fnSwhwNudWRJTpGh3F+Nd47dSPzQwQGlGUZcwENS/bx5yn01EUAoeA2rPKlO+eJiUpnf67TDtfEHMzlBewGpCTfv9VMW0sXDEkRdBNKoD8uQd4J8lHU/HUKxu/CQgr4C6vRw6HB0qVo/32LWNA0kjrAhlCd9AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMjLXFmV; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2907ba47f71so12091305ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760472464; x=1761077264; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUJFv7ESp/8mj4VXSk9djpKF9F8nqTF7GCFJU4tlJik=;
-        b=jMjLXFmVMNkL9Vj5udx7xL+UmIAtcHNK86B7v89gWxyKyFsNmX4HGQcijpNHc6Tf9u
-         fNAGta2scILFpzXAZfO/SGk9wBelWMz8CWwWa/FW72IoYCvof12GOeFh0ljmmV3rMKJw
-         ce4SH9VpMCmZ97iyphJw2OyXDvMKnRrj8G5Rgz46vkQ4ASdifrQ3DifBgj/EFMltIqd6
-         asmJWa/1X5H4q4qscPhCZUWDxch6Aj0kHXZDAcUMex9Oo6I17AwFBCyIzjDsk9LEF43q
-         1W9P7i1oMYnuM082f+LuQrNPlNjhByJJ+8COXdtP5/xb2MXJGw/njvhqrSr0+mRTsRzh
-         tZ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760472464; x=1761077264;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EUJFv7ESp/8mj4VXSk9djpKF9F8nqTF7GCFJU4tlJik=;
-        b=Qd3aesbBaKxoRIhR4hPCKj56TPyqi0oLAskuDfblvre6ymR1baDMBLTfWu2iklbdOV
-         EQ3ZuRWioj/LCgeXxyAxXXZME4B9uelNmYs6h+hQTCp6Sj/VxZ+5M87rbZU9hjsE06Kc
-         ugmDkzEoPtbtb7gp+tqYYteHBormeWFFTT1X+PAF3Vv4OFUMqIEASx3quhU/uNwMEzz4
-         9E2jw2u5Xrla+wrFYthnVuvJ258yEbUUZcNgl6Wd2ZJWPsb5/cT9lWD1j/0QDC9/Drh1
-         wJqFs+J2z/UpnHzuIh0YK4Ejph6pc7Ca5qL3cN3KvdQiDCAyINlCvNSfMDt6ALEc1cak
-         w3SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeo/TwVHdtQNybCsAb7GUBGKDvOWivfsi1l34xSAX5SRmymyC2TocDosXeFDiclFoT2V4WBIfnZcOMaa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm4jWuQC1RLNULFI7penE/Jgg8RZ3pRogK63tf/rUKyqHypWIS
-	BvYvMsh8niER6kLkAE42FZY/mlvXUpKIbIq4whXTrVVkA4uHoo+n1GUH8GGy/OGT2XrfKg==
-X-Gm-Gg: ASbGnctE3p+pwMHEAcv/97I7H/tVSkPJrNPkyFARwOolUxIkhgpTqhSEEu4atgWP45O
-	IcDU/RI1EWhLgfmrht43JRjypmCEW/urHm+gYPems14gjMx8CaeTKuu/a2MhJbZ765x8vyJQLCm
-	VvCunnfVVou18CGpzCx/lucCeoCXsG2llyg7BzBGrUldFHmL8YvcwsSe6oYfPUjb7XmnUkwOHL6
-	bzzFppj3+b6NC85Key9TOZd4fK6MzjktBq5HEUM28sqD3sIlgzJjRU/b4cXDHi3c/SttrNrmZiN
-	aYTAeroQluD1W11EBJrz4rbGEdOUdhn/ZLqFmpTva4Um0atCCS3i6su+s35Cz0kLvvoYUNbnqjw
-	cba4HMaZn7ChwU8W8nlzpblIlBT8hEhdmagcB2Sb6qR10
-X-Google-Smtp-Source: AGHT+IFFKeB1Mvjp4X6Fnn/pnWiCLBzUt9+3u52VJg1yNRK0ffmaoQzkUVGVa1S5Cm0s2yvoXega6A==
-X-Received: by 2002:a17:902:cecb:b0:268:baa6:94ba with SMTP id d9443c01a7336-290272ff553mr380301905ad.53.1760472463985;
-        Tue, 14 Oct 2025 13:07:43 -0700 (PDT)
-Received: from archlinux ([2a09:bac5:3e67:a82::10c:4a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e205a6sm172580365ad.35.2025.10.14.13.07.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 13:07:43 -0700 (PDT)
-From: Fokaz Chakma <fokazmchakma4427@gmail.com>
-To: dpenkler@gmail.com
-Cc: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Fokaz Chakma <fokazmchakma4427@gmail.com>
-Subject: [PATCH] staging: gpib/pc2: convert explanatory comments to /* ... */ style
-Date: Wed, 15 Oct 2025 01:37:27 +0530
-Message-ID: <20251014200727.206103-1-fokazmchakma4427@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32518289811
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 20:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760472519; cv=pass; b=OZKPVuEh/ipHmgYJD3fwZRGCl/Q+XRmpbObzKrOirO/FwGxDUsIxdsz5slacfNyeEGZQ3dPpTNJm9KR1mjCm8VeMHIpb888TAnzxWTMWjMSKcJWUs3JSIcdm4CP0J2mZSR8OFEkfFC83au8J1a206yHP78BVZtOXPr7v48mIjMc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760472519; c=relaxed/simple;
+	bh=wqPHiJhR6p7x9nFQSEE5+mrpd2a3R2rTv1YQaUqHyUA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nmeHO4s4TWkAQXAzXX/FV1xpC6cP5S54risAsm+YpO/3IlCd3tnAMyqWZgwAz63DPkb5we9qzI+yQ3MbZuocdQJs1KFYu9vtOqd5bHJtChLe2zrnUri728o+Ru9nLB0VEaI/9a9xMmXC2KkpRASlxRgbFIQPek/NQX8A+Jn4w4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=o6nhI27z; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=d9ONREMb; arc=pass smtp.client-ip=185.56.87.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-77p9.prod.antispam.mailspamprotection.com; s=arckey; t=1760472517;
+	 b=fzv1kbkGvoA0jtA4W+PVIKLueY+uxzehbo7Jf94+QtkTNhNr+Dihr0qVw9I2Z4Akhc/aPlilhg
+	  jLalflqW3u9QHqDEPBM5HLagFbtcFydp/uWAVYupFrlChPdZzmKgtOFKnoeShH0aPkTerFVLlb
+	  3B7z72FV8iHeECQbZ92orVVy3iI50lDGO9yhXaS8sCG+66qWgoQio+jJQ83AuKwkSElCrk7cnI
+	  Ke/1ZEqYg46mqWV66LyQsjhZE3c0XRwCju1cMdoWTaREP1ExIdqz88lN8MEVFFEun96oQZXn/W
+	  8VkoYGgXhv9VcHqfnMRUQG6xnAuHTYkBc5NVKrSCZCGhDg==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-77p9.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-77p9.prod.antispam.mailspamprotection.com; s=arckey; t=1760472517;
+	bh=wqPHiJhR6p7x9nFQSEE5+mrpd2a3R2rTv1YQaUqHyUA=;
+	h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
+	  Subject:From:DKIM-Signature:DKIM-Signature;
+	b=F9DN8onx4jWiPcF2T8iRaMnt4oNU8DdQDDbwRclhmmhpxEWWCVL+Hpkb9CVuWG8td1hMs+688P
+	  JOxXcBCqgSbOlO/qtW7sWlI2+tt/xp0RJVXZZDOR7+g3zw39sRSS+3rYgYrlDdyuyDSXlmxB5K
+	  paHKaQC08z4i/QcIPhr5F0IqlhDTrzZkp16xhUu3a/wK/XNKGhVNFLfPgBWT9VrjR3HvV1Gy87
+	  u5qiQo7Js3QxJ7m3+IqPae1GQehr2bhXvg0tGCeNDaA5YaSEiEl4CUbdMb58UyAqFCpAb14dZK
+	  zZ7hwNWaERxqlJETNa83cpxlcmdJQJkXo6CocT8sugxf6w==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date:
+	Subject:From:Reply-To:List-Unsubscribe;
+	bh=JTxuc9xqEIIWcfhoNtl0F+NmY63FucuPml9QbGzMvxs=; b=o6nhI27zdPizq++a442pOX2ouz
+	dQxprgasFvb/63lKYcP0TLZKmOXXx87sEtasyWTwhvtWxbXFGjxa9+2qXUxhECobtgnboELM1OJga
+	levMdj5WOmegX0giEthI34+C9FYSGx8QfBLSIA+WhVfd2YVUPsAyPw+56UrxulUeQ5Sk=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-77p9.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1v8lJw-00000000iKR-15W1
+	for linux-kernel@vger.kernel.org;
+	Tue, 14 Oct 2025 20:08:34 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Cc:To:Date:Subject:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=JTxuc9xqEIIWcfhoNtl0F+NmY63FucuPml9QbGzMvxs=; b=d9ONREMbyDM4DunZUIbgMEEZhA
+	h3ElDn4xVE8R4w7trzFIm7ofUr1Tka7w2TlqtDMxNSjL24wU52xzN0q7VBiPP0W9aER/dUG/i5fkk
+	VHMLMeTDjpUirAjO/5Ex2HL3ZZZ1EOOkL+3g2rLO40FCy17pSFtaFIrFBftA+JzIwYV4=;
+Received: from [87.16.13.60] (port=64127 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1v8lJp-00000000E00-2hH6;
+	Tue, 14 Oct 2025 20:08:25 +0000
+From: Francesco Valla <francesco@valla.it>
+Subject: [PATCH v2 0/3] drm/draw: add check API to avoid spurious WARN
+Date: Tue, 14 Oct 2025 22:08:11 +0200
+Message-Id: <20251014-drm_draw_conv_check-v2-0-05bef3eb06fb@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKut7mgC/23NQQ7CIBCF4as0sxYDVKp15T1MQxCmdmKlBhrUN
+ NxdbOLO5f+S+WaBiIEwwrFaIGCiSJMvITcV2MH4KzJypUFyqQTnNXPhrl0wT20nn7Qd0N5Ya23
+ NFceLU3sol4+APb1W9dyVHijOU3ivT5L4rj9P/fWSYLygB7Fzbd3IvjklM45mSzN0OecP8/2NL
+ rUAAAA=
+X-Change-ID: 20251003-drm_draw_conv_check-9cc3050ebd57
+To: Jocelyn Falempe <jfalempe@redhat.com>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Francesco Valla <francesco@valla.it>
+X-Mailer: b4 0.14.2
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: cffb2e68098e46dd1325c6efd4a3c4d2
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1v8lJw-00000000iKR-15W1-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-77p9.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-Converted single-line // comments that explain data or logic
-to kernel-style /* ... */ comments, per
-Documentation/process/coding-style.rst.
+When using the DRM draw support, the only way to check if a color can be
+converted from XRGB8888 to a target format is currently to attempt an
+actual conversion using drm_draw_color_from_xrgb8888(). This function
+however will print a WARN the first time a conversion cannot be
+performed, leading to two potential issues:
 
-// XXX notes are left unchanged.
+ - a WARN is emitted without a real reason if the caller is only
+   attempting a conversion to check if a format can be supported (which
+   is the case for two of the current user of this API);
+ - a failing call following the first one is not emitting a WARN, but a
+   "valid" color value (0x00000000) is returned nevertheless.
 
-Signed-off-by: Fokaz Chakma <fokazmchakma4427@gmail.com>
+The first issue was observed while using drm_log on a Beagleplay, which
+lists AR12 as the first format for its HDMI modesets.
+
+The target of this patch set is to improve this situation; the first
+patch introduces a new API devoted only to check if a conversion from
+XRGB8888 to the specified format can be performed, while the other two
+substitute drm_draw_color_from_xrgb8888() with this new API in the
+current users (drm_panic and drm_log) where relevant.
+
+Signed-off-by: Francesco Valla <francesco@valla.it>
 ---
- drivers/staging/gpib/pc2/pc2_gpib.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+Changes in v2:
+- Moved to dedicated switch cases in separate functions instead of
+  single one inside common function.
+- Fix copy-paste error in commit message.
 
-diff --git a/drivers/staging/gpib/pc2/pc2_gpib.c b/drivers/staging/gpib/pc2/pc2_gpib.c
-index 9f3943d1d..c9c2b3ed8 100644
---- a/drivers/staging/gpib/pc2/pc2_gpib.c
-+++ b/drivers/staging/gpib/pc2/pc2_gpib.c
-@@ -19,30 +19,30 @@
- #include "nec7210.h"
- #include "gpibP.h"
- 
--// struct which defines private_data for pc2 driver
-+/* struct which defines private_data for pc2 driver */
- struct pc2_priv {
- 	struct nec7210_priv nec7210_priv;
- 	unsigned int irq;
--	// io address that clears interrupt for pc2a (0x2f0 + irq)
-+	/* io address that clears interrupt for pc2a (0x2f0 + irq) */
- 	unsigned int clear_intr_addr;
- };
- 
--// pc2 uses 8 consecutive io addresses
-+/* pc2 uses 8 consecutive io addresses */
- static const int pc2_iosize = 8;
- static const int pc2a_iosize = 8;
- static const int pc2_2a_iosize = 16;
- 
--// offset between io addresses of successive nec7210 registers
-+/* offset between io addresses of successive nec7210 registers */
- static const int pc2a_reg_offset = 0x400;
- static const int pc2_reg_offset = 1;
- 
--// interrupt service routine
-+/* interrupt service routine */
- static irqreturn_t pc2_interrupt(int irq, void *arg);
- static irqreturn_t pc2a_interrupt(int irq, void *arg);
- 
--// pc2 specific registers and bits
-+/* pc2 specific registers and bits */
- 
--// interrupt clear register address
-+/* interrupt clear register address */
- static const int pc2a_clear_intr_iobase = 0x2f0;
- static inline unsigned int CLEAR_INTR_REG(unsigned int irq)
- {
-@@ -78,7 +78,7 @@ irqreturn_t pc2a_interrupt(int irq, void *arg)
- 	irqreturn_t retval;
- 
- 	spin_lock_irqsave(&board->spinlock, flags);
--	// read interrupt status (also clears status)
-+	/* read interrupt status (also clears status) */
- 	status1 = read_byte(&priv->nec7210_priv, ISR1);
- 	status2 = read_byte(&priv->nec7210_priv, ISR2);
- 	/* clear interrupt circuit */
-@@ -89,7 +89,7 @@ irqreturn_t pc2a_interrupt(int irq, void *arg)
- 	return retval;
- }
- 
--// wrappers for interface functions
-+/* wrappers for interface functions */
- static int pc2_read(struct gpib_board *board, u8 *buffer, size_t length, int *end,
- 		    size_t *bytes_read)
- {
-@@ -273,7 +273,7 @@ static int pc2_generic_attach(struct gpib_board *board, const struct gpib_board_
- 	 * is adapted to use isa_register_driver.
- 	 */
- 	if (config->ibdma)
--	// driver needs to be adapted to use isa_register_driver to get a struct device*
-+	/* driver needs to be adapted to use isa_register_driver to get a struct device */
- 		dev_err(board->gpib_dev, "DMA disabled for pc2 gpib");
- #else
- 	if (config->ibdma) {
-@@ -284,7 +284,7 @@ static int pc2_generic_attach(struct gpib_board *board, const struct gpib_board_
- 		if (!nec_priv->dma_buffer)
- 			return -ENOMEM;
- 
--		// request isa dma channel
-+		/* request isa dma channel */
- 		if (request_dma(config->ibdma, "pc2")) {
- 			dev_err(board->gpib_dev, "can't request DMA %d\n", config->ibdma);
- 			return -1;
-@@ -319,7 +319,7 @@ static int pc2_attach(struct gpib_board *board, const struct gpib_board_config *
- 
- 	nec7210_board_reset(nec_priv, board);
- 
--	// install interrupt handler
-+	/* install interrupt handler */
- 	if (config->ibirq) {
- 		if (request_irq(config->ibirq, pc2_interrupt, isr_flags, "pc2", board))	{
- 			dev_err(board->gpib_dev, "can't request IRQ %d\n", config->ibirq);
-@@ -447,7 +447,7 @@ static int pc2a_common_attach(struct gpib_board *board, const struct gpib_board_
- 		return -1;
- 	}
- 
--	// make sure interrupt is clear
-+	/* make sure interrupt is clear */
- 	if (pc2_priv->irq)
- 		outb(0xff, CLEAR_INTR_REG(pc2_priv->irq));
- 
+Link to v1: https://lore.kernel.org/r/20251005-drm_draw_conv_check-v1-0-9c814d9362f6@valla.it
+
+---
+Francesco Valla (3):
+      drm/draw: add drm_draw_can_convert_from_xrgb8888
+      drm/log: avoid WARN when searching for usable format
+      drm/panic: avoid WARN when checking format support
+
+ drivers/gpu/drm/clients/drm_log.c   |  2 +-
+ drivers/gpu/drm/drm_draw.c          | 29 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_draw_internal.h |  2 ++
+ drivers/gpu/drm/drm_panic.c         |  2 +-
+ 4 files changed, 33 insertions(+), 2 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251003-drm_draw_conv_check-9cc3050ebd57
+
+Best regards,
 -- 
-2.51.0
+Francesco Valla <francesco@valla.it>
 
 
