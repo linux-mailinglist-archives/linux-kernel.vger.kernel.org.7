@@ -1,127 +1,242 @@
-Return-Path: <linux-kernel+bounces-852071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16E1BD8192
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D815BD81BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D783A8C07
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341EF189AFD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA9D30F558;
-	Tue, 14 Oct 2025 08:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ABF30F54D;
+	Tue, 14 Oct 2025 08:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OBAiggUH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1egXWzn"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCD230F532
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB9230DEB6
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429236; cv=none; b=Oc5xF2gCxQyYtPVehJoge/645THoDtPvpAwNNxXS77q7EIcUD9DUVl0BiEvldSCpyczNgscXIPdNe/Y+9RL/c634FBeDIl+2yyzjxWT9Lvrgj+Ltmlk8IGb/I9CetWfnWu7iyXeZvUfzydcx5RFkdIU7Gc6qc3SVHGJGpFzp32s=
+	t=1760429307; cv=none; b=g8/3WtUACRgatI0bYC696WcME19ufiEUMvRNOdPW361/hXoOwQoer08cZLaDM/nK7weLZxEWGOxL85K/EyBSO5tle/yf26BOMhZtm26t68iFI/YdSzwVPxFDmvpgQkbZ+FCKpp2TzhClmFw/KXkxGReX/06X4fKJU7TdHVSNrhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429236; c=relaxed/simple;
-	bh=W/8qUuXfRe1sI3GhG5HJ/sXq7n9SBQbq5yaCU3/GG28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S83qjK4lobhYlTV5j3++oZl/l8pqT5BBOqtnZwcRnArHEN51kpBgJFX4wCxx7aqBTwAMLRQaZMWT6brnoEeC5ng+itKKbi+4g0toqoj+mBtrv5gDqGvxwXvmX4SZdpF0uOEhkAIxzaA9NCZJjH4FtxGUDPq2MK6gTk7Ft64X0Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OBAiggUH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760429234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tTrkuFKTla2K+L8YNXA54XVUf+zQx19gGP/m/Y+qRUc=;
-	b=OBAiggUHksT83LnEPnBI1ZljBT054SuPps+6FC5Mz6+KHkS/C1Z1ms7362FkarnylUrpFk
-	Azfm3JP+SA87pBUquCk/iIZ59QgGY1F/yIZK8uZy4vvomozEDufS/WzRmJkQDFSgs5Lmdd
-	xXJvDnxjgCE/zxT8mLsNiYXwF3r4wEA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-XofPY518O7e8QPEJScQ0TQ-1; Tue,
- 14 Oct 2025 04:07:10 -0400
-X-MC-Unique: XofPY518O7e8QPEJScQ0TQ-1
-X-Mimecast-MFC-AGG-ID: XofPY518O7e8QPEJScQ0TQ_1760429228
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF95D180045C;
-	Tue, 14 Oct 2025 08:07:06 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.30])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D33F19560B8;
-	Tue, 14 Oct 2025 08:06:58 +0000 (UTC)
-Date: Tue, 14 Oct 2025 16:06:54 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai3@huawei.com>
-Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
-	axboe@kernel.dk, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: Re: [PATCH 1/4] blk-mq-debugfs: warn about possible deadlock
-Message-ID: <aO4EniFy63IlWM_-@fedora>
-References: <20251014022149.947800-1-yukuai3@huawei.com>
- <20251014022149.947800-2-yukuai3@huawei.com>
+	s=arc-20240116; t=1760429307; c=relaxed/simple;
+	bh=iX8ybayOoB+zfG3Kr8ZxGBnoJV6Y9ikxx5cuxcSDcqo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XcIR6DD2/N9dXbOW73z2Od++YIojOUnPDyIeM/2RksObQZniMN8EVk7pERK4yYKc7taQIZOpkupQsq2salVkMmRpeJJA1mi8lHa9f1tp4TCFIxssfme3JOMeGLHHpR9qvK43K6CpfUxpVIglDdyOmndaVxWsWocTVaanY7qG3EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1egXWzn; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-28832ad6f64so56537595ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760429305; x=1761034105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lNULsJSShi9Qv044L8BUWXwBT0WWB+xiPbW9Mna22LI=;
+        b=D1egXWzn9qKfGDk05loyj0KG1RHa+0j34FhjHtEvxf1y10PZv2ZJE8zZZT5BvGFrLs
+         GawQZxlmjdYZFGFWufVxmz/CdIEPScQBsdmPJk+xzHrpP13PaMUQYje1B1svKRMjK+pa
+         XVsSZMeT5fjFY8Ib/Zio3cP0DhqQz+Tb7RC7h4njR9mgi7Vby80J4zhxZN5G3B01X+kB
+         JBqO5eyB0BODhzzVFZcl+8Jbw6FQUbkvFsDg+DfZeyWoHQGQBHm9Hd1b+ei2EXORnmof
+         wWRJi3S5CnsXZNxuq4E6bz6QcL4iycEInp8cmws2Uszm4ralrVbk/8wou79zOBubg7wi
+         1E6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760429305; x=1761034105;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lNULsJSShi9Qv044L8BUWXwBT0WWB+xiPbW9Mna22LI=;
+        b=BXRLzXxszRgtLHIhgAeA3TpUmqWz/exRtkCeivTwe6QqSz2oQCIxF++hCdVwJSYgO1
+         +KY3vfhslAwmOO8nVubIrZqw/bxIBOjkS49KQ22ntM13rTxMKXT1nd3Txt/Orf8lucmP
+         SIJTV1g0vcEL11ixETocsn6Y4MKjEFCczQUx986qropAfnNEHzr6X+4OualVwUyVIHFl
+         u0PtJmC2NpugL8qcqcFSfHIksbggXv+41zeg5mm40365DB/Mue0xp6wD+qqhJJ82r9pX
+         AMaf1I4TTS5qWX7UR7bT7TmGLPDpGI+mHJeiCx4yGoDVBhn3EuG6O1dLqoeWkUKhJ7p+
+         S0vg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjuEYJw1KXzn800kJYJV7ND/gVxMHscikl2Zd5lGiSaQO1n10lMF1zUT4kCUXycKikWfs4le8Qv/VWDZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM+M6TczlrR8PGan93aYnipXbVMDgvKCbWlUrtHC8hThuzdicw
+	6kNdPOxCuDze/3WqdmnjbbEYxU8dzXS81tSXjYQaw9bxV0kr0+6cDOyn
+X-Gm-Gg: ASbGncs3RrGYYIchPt8D/qEgw+SpzhIZdpVbsvKeqg0SmA/KOydI91V9ypByaUOSgqT
+	IbK1D32EEFTvfPhjskWem3ISEg/DAYkZo4EmsSyu3gCIT7pm5Lua1EVN+N9SoTlVW6H1mTKNBbC
+	clEO4q3EK2hZBM4yGlxiXDg89fX0ihR9QlZPqO828nIcXFaToR0D3Sqe/0Rejyh3jAg+BJUcoOy
+	NkDUiRPpzp2KhzN2Ly9SdyUaxwweiESoDZFEtofjy/cQrKQXQqMOEksAF6pLqoThSfGmvpv/mFv
+	iblvK0w8wUJODw8Xe3nDVWwwuakNa2rb78ZZXrKXeTCKO7I5tAfznTf7go3oydJ23iNyk1ueWhd
+	WGdyQLt+4BARvfd3eEaiA0L2UcnpgP4INRm4l85dAi3tRZ/lLECgro/YpwJ0fRwBnKK6wnpB87v
+	eucGa9xMxPiq9pVg==
+X-Google-Smtp-Source: AGHT+IEgCv4Yi86mKXuSGOsGI+y5z9FGwzXobVA9uILnehkakJ1dqhotPD42azyffPNXp0Nf9zpNBg==
+X-Received: by 2002:a17:902:d58e:b0:28e:8c3a:fb02 with SMTP id d9443c01a7336-2902723eeb6mr285920325ad.14.1760429305163;
+        Tue, 14 Oct 2025 01:08:25 -0700 (PDT)
+Received: from Barrys-MBP.hub ([47.72.128.212])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08912sm155263155ad.78.2025.10.14.01.08.15
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 14 Oct 2025 01:08:24 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: mhocko@suse.com
+Cc: 21cnbao@gmail.com,
+	alexei.starovoitov@gmail.com,
+	corbet@lwn.net,
+	davem@davemloft.net,
+	david@redhat.com,
+	edumazet@google.com,
+	hannes@cmpxchg.org,
+	harry.yoo@oracle.com,
+	horms@kernel.org,
+	jackmanb@google.com,
+	kuba@kernel.org,
+	kuniyu@google.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linyunsheng@huawei.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	roman.gushchin@linux.dev,
+	surenb@google.com,
+	v-songbaohua@oppo.com,
+	vbabka@suse.cz,
+	willemb@google.com,
+	willy@infradead.org,
+	zhouhuacai@oppo.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
+Date: Tue, 14 Oct 2025 16:08:12 +0800
+Message-Id: <20251014080812.2985-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <aO37Od0VxOGmWCjm@tiehlicka>
+References: <aO37Od0VxOGmWCjm@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014022149.947800-2-yukuai3@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 10:21:46AM +0800, Yu Kuai wrote:
-> Creating new debugfs entries can trigger fs reclaim, hence we can't do
-> this with queue freezed, meanwhile, other locks that can be held while
-> queue is freezed should not be held as well.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/blk-mq-debugfs.c | 31 ++++++++++++++++++++++++-------
->  1 file changed, 24 insertions(+), 7 deletions(-)
-> 
-> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-> index 4896525b1c05..66864ed0b77f 100644
-> --- a/block/blk-mq-debugfs.c
-> +++ b/block/blk-mq-debugfs.c
-> @@ -608,9 +608,23 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
->  	{},
->  };
->  
-> -static void debugfs_create_files(struct dentry *parent, void *data,
-> +static void debugfs_create_files(struct request_queue *q, struct dentry *parent,
-> +				 void *data,
->  				 const struct blk_mq_debugfs_attr *attr)
->  {
-> +	/*
-> +	 * Creating new debugfs entries with queue freezed has the rist of
-> +	 * deadlock.
-> +	 */
-> +	WARN_ON_ONCE(q->mq_freeze_depth != 0);
-> +	/*
-> +	 * debugfs_mutex should not be nested under other locks that can be
-> +	 * grabbed while queue is freezed.
-> +	 */
-> +	lockdep_assert_not_held(&q->elevator_lock);
-> +	lockdep_assert_not_held(&q->rq_qos_mutex);
+On Tue, Oct 14, 2025 at 3:26 PM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Mon 13-10-25 20:30:13, Vlastimil Babka wrote:
+> > On 10/13/25 12:16, Barry Song wrote:
+> > > From: Barry Song <v-songbaohua@oppo.com>
+> [...]
+> > I wonder if we should either:
+> >
+> > 1) sacrifice a new __GFP flag specifically for "!allow_spin" case to
+> > determine it precisely.
+>
+> As said in other reply I do not think this is a good fit for this
+> specific case as it is all or nothing approach. Soon enough we discover
+> that "no effort to reclaim/compact" hurts other usecases. So I do not
+> think we need a dedicated flag for this specific case. We need a way to
+> tell kswapd/kcompactd how much to try instead.
 
-->rq_qos_mutex use looks one real mess, in blk-cgroup.c, it is grabbed after
-queue is frozen. However, inside block/blk-rq-qos.c, the two are re-ordered,
-maybe we need to fix order between queue freeze and q->rq_qos_mutex first?
-Or move on by removing the above line?
++Baolin, who may have observed the same issue.
 
-Otherwise, this patch looks good.
+An issue with vmscan is that kcompactd is woken up very late, only after
+reclaiming a large number of order-0 pages to satisfy an order-3
+application.
+
+static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+{
+
+...
+                balanced = pgdat_balanced(pgdat, sc.order, highest_zoneidx);
+                if (!balanced && nr_boost_reclaim) {
+                        nr_boost_reclaim = 0;
+                        goto restart;
+                }
+
+                /*
+                 * If boosting is not active then only reclaim if there are no
+                 * eligible zones. Note that sc.reclaim_idx is not used as
+                 * buffer_heads_over_limit may have adjusted it.
+                 */
+                if (!nr_boost_reclaim && balanced)
+                        goto out;
+...
+                if (kswapd_shrink_node(pgdat, &sc))
+                        raise_priority = false;
+...
+
+out:
+
+                ...
+                /*
+                 * As there is now likely space, wakeup kcompact to defragment
+                 * pageblocks.
+                 */
+                wakeup_kcompactd(pgdat, pageblock_order, highest_zoneidx);
+}
+
+As pgdat_balanced() needs at least one 3-order pages to return true:
+
+bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
+                         int highest_zoneidx, unsigned int alloc_flags,
+                         long free_pages)
+{
+        ...  
+        if (free_pages <= min + z->lowmem_reserve[highest_zoneidx])
+                return false;
+
+        /* If this is an order-0 request then the watermark is fine */
+        if (!order)
+                return true;
+
+        /* For a high-order request, check at least one suitable page is free */
+        for (o = order; o < NR_PAGE_ORDERS; o++) {
+                struct free_area *area = &z->free_area[o];
+                int mt;
+
+                if (!area->nr_free)
+                        continue;
+
+                for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
+                        if (!free_area_empty(area, mt)) 
+                                return true;
+                }    
+
+#ifdef CONFIG_CMA
+                if ((alloc_flags & ALLOC_CMA) &&
+                    !free_area_empty(area, MIGRATE_CMA)) {
+                        return true;
+                }    
+#endif
+                if ((alloc_flags & (ALLOC_HIGHATOMIC|ALLOC_OOM)) &&
+                    !free_area_empty(area, MIGRATE_HIGHATOMIC)) {
+                        return true;
+                }
+
+}
+
+This appears to be incorrect and will always lead to over-reclamation in order0
+to satisfy high-order applications.
+
+I wonder if we should "goto out" earlier to wake up kcompactd when there
+is plenty of memory available, even if no order-3 pages exist.
+
+Conceptually, what I mean is:
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c80fcae7f2a1..d0e03066bbaa 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -7057,9 +7057,8 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+                 * eligible zones. Note that sc.reclaim_idx is not used as
+                 * buffer_heads_over_limit may have adjusted it.
+                 */
+-               if (!nr_boost_reclaim && balanced)
++               if (!nr_boost_reclaim && (balanced || we_have_plenty_memory_to_compact()))
+                        goto out;
+
+                /* Limit the priority of boosting to avoid reclaim writeback */
+                if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
+                        raise_priority = false;
 
 
-Thanks,
-Ming
-
+Thanks
+Barry
 
