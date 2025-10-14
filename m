@@ -1,188 +1,118 @@
-Return-Path: <linux-kernel+bounces-852021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50011BD7F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2562BD7F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41BA94F85DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D95A3A58D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D130E823;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7616A30E0D0;
 	Tue, 14 Oct 2025 07:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NeETP5mB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aqYgx6DC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7672BF00A;
-	Tue, 14 Oct 2025 07:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9242D12E7
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760427364; cv=none; b=F016hsHEAQe12eSvtvTbL2TTKiaodVenJ7lAPglAtelxBwIgfFH1lQnBXiNzeO00DCOEeu9dgQFY2tifs/NYGPIjkwnFoCYoId2i8FhN/T+0+kg3j2HW/eBQtbwtuNqF68KEtgVJ4XvjGH/D5pQ+6+xYBcgvVMfeLffnAe6hCg8=
+	t=1760427363; cv=none; b=dFqJ9MkIiI2PHsS3eWA8Z5WAVm4WuqwoXolol8yL9p3XrJhDf7H/56x8PrU8F39iZgWYAEVvv0fFzaeUtyTo++OFtW7psymDXAQXanSiokrLWx+N+xABU4A3YAAaKSQxjnttb96r3k7fodGYHN21venbc2pGVytCBFjqeVMRiF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760427364; c=relaxed/simple;
-	bh=2284CvY5KmX5EI9TFoaFTarD8eR3jMtTJMBg6GQjNRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJGJQABz+Td97f456XwXr2PrN4snGeNRJEpF5kiXWiX7Py4qTtEEqvBRBVPLpI3dJZq/CCq3yI3w/yWvnVZtzApyqhGw0DSjzl25nY01+m5U5oSbXKDgSCGj+nNcKaz1bIvumVkt6/bIyPFe848iwSssq3zR5M2FGxTMwsPi14k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NeETP5mB; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760427362; x=1791963362;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2284CvY5KmX5EI9TFoaFTarD8eR3jMtTJMBg6GQjNRU=;
-  b=NeETP5mBo5TBVX8A2D1tqSu8bWV8LrJXJLMLl7rZ6tx563C2NLy6rObi
-   8MEorqkaUXb/y1VdbyEDwZPkDDl2bC10hXfqwcPPgD4tQlLbzHx8nZ1Er
-   mtwNC6IExHoAumaQIYe/XHUrPp9rp63bhbPikqpuBSea971Dzh11/F3dG
-   bCxuSiTEF0NaD1kr4Ot8dygByRmtZAjt97wrjrbW05fObZiGZuy6VxMaC
-   nrmjXqEIQCBb+GARrTQCFWdPnC7aoSSnjs2vX69SaWNvJ5b/kWqWJAQ2y
-   0x+eZXu7CcRpno+xK+MPrmVuPswaMuQoQp1ckQxALP6itU228qn+X0B76
-   A==;
-X-CSE-ConnectionGUID: CqGbbvIHQ2ik6kFTQ94w+A==
-X-CSE-MsgGUID: 5Q0DaljVRxCmMznHi+4lAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62676435"
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="62676435"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 00:36:01 -0700
-X-CSE-ConnectionGUID: gTATWPGlTfSS0LfoG70TaA==
-X-CSE-MsgGUID: mhAv5gGKRSmK6SgdH2mMkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="205508506"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 14 Oct 2025 00:35:58 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8ZZT-0002Vz-2H;
-	Tue, 14 Oct 2025 07:35:49 +0000
-Date: Tue, 14 Oct 2025 15:34:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Siddharth Nayyar <sidnayyar@google.com>, petr.pavlu@suse.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, arnd@arndb.de,
-	linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
-	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com,
-	gprocida@google.com
-Subject: Re: [PATCH v2 10/10] module loader: enforce symbol import protection
-Message-ID: <202510141538.VZqnRzHh-lkp@intel.com>
-References: <20251013153918.2206045-11-sidnayyar@google.com>
+	s=arc-20240116; t=1760427363; c=relaxed/simple;
+	bh=XfX2nsV/d+yZ3Hk6qajB1hKvZGTfh/kspXwGH+T7Yv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WIWXJiuXBk6akhL8uuxE2iDSCxcmPv6f/ZQex2NG2cGyDwyAuTw8G6rpdqcAfwnSaKgeXpJj+Sy0E+nuzh8QKFGSVIxQGsv9JgVGEeYDjNHL22Vo97jXUDhmq2Iqlf9Qnbp9yxzD7KkietKU445iUR026ftXRHyXXlm8CYSAEmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aqYgx6DC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760427361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rp2yi8Bcjq1dxm5BHjQD+Bw0UYm59cbcglHsDw8XOKA=;
+	b=aqYgx6DCDAcNonMQd1UK7RYR/eAMr7Ah7I8GzNEqTjwsCnC4Wp+JMlcXL8BMAxhQkeFXYt
+	aUETWkOfpq3O+CNN5iZVtDJX5qfsJS7vOn7/f/6DiC9go1dl6Cht4xdR3CJ3yTSlznTvh+
+	WjOQaA3vn/p5jDacDtM+WEcdIfUYrwo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-160-SFG3Ahl-OKCpvQfBquKrXA-1; Tue, 14 Oct 2025 03:35:59 -0400
+X-MC-Unique: SFG3Ahl-OKCpvQfBquKrXA-1
+X-Mimecast-MFC-AGG-ID: SFG3Ahl-OKCpvQfBquKrXA_1760427358
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e25f5ed85so42160305e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:35:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760427358; x=1761032158;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rp2yi8Bcjq1dxm5BHjQD+Bw0UYm59cbcglHsDw8XOKA=;
+        b=ghg/Q152Bb7YLDz6gyabOb3i30Y5mOz3Ax/TeKBm5j82SYjZvQv11fVOjxysqXhjqv
+         oYNgWOjI7EpKIpeEft/+Ommd2D8YYRLdkJ/XVJURLO8QdRoZmvHdQ3G+TDB6yKp62XDT
+         XSErN9mf2VeIsIZ/x00XtYhsTTHk77X4mv99RfSbO4R9MSvpVaXpOYRMSfAOW278QXDj
+         b5XnpYpoN4EjKiyHJIZsPLooNbk38RvshYz3kUAOaqf8fbcIE3YFOK3+xrctTLJM/8kl
+         SPvJpBjmGpaNXjxQZeE17EcwGG7dhAd2qxckckIU0A++7BtKzIvK6DgMLqpcrc0aXKKI
+         rqkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqQCwwSB429lowHmIelaCM6bOtvzXKmkfrW/LCymoiYJSYbtmblvq/frsBruhyBdqyZRyNKeJQERYZBvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHXqSAHRaEcRaBAJ98fgdoATesP3jVAyJORAJHtCeFFhm9iP9b
+	fgMaY8dImeiHFvXv+BmsJmqLepjHxK64j/FQd8AMbjve4gjrkBssnad/Bi62ruWevlLwPu0Z3qM
+	JTMskW5u5H08ZkhDwziKgKQhs64VOigI6T59/ZoKG9XQeuMkXaLvLbYdiD84J2aTMEQ==
+X-Gm-Gg: ASbGnctS9Fl0xdXq+iuiyoqUCkDOm4vbUfTRTn4R3UnENrK8e91BzgkRPeq0MSE23ag
+	79jK3BqFUTzRcgiWhjI67tnCgRanqF/tnMn8bmDBMQkLAUQzB3Q1KgPC2ubJ8S4atd81PtEhBeA
+	qRLXball6mVgDbTe3/aOPxqR37k9gpLlLQp0VXQLJq/Oknn8oysXEhQ0GA/wRMIgqUkAFKb0JLI
+	hI1i64kBkjvGehXVen73ZyWvN4w7xB81WQkaTVuTcbAepUqZa7Dza8VLP01+v5xMFz1+NMR9Hb8
+	kav8rUEGPaIn2O3STMiYmdfEcYpVYKqJTvUv+FtZo9HGnFsDkT7Rd3McC86Scog85J/fPuCmzjZ
+	4XKiJm+8d3Q3WeceF83XwNRw=
+X-Received: by 2002:a05:600c:198f:b0:46e:38cc:d3e2 with SMTP id 5b1f17b1804b1-46fa9af3125mr171576555e9.22.1760427358272;
+        Tue, 14 Oct 2025 00:35:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWYlHv6WiUrgd9vj3CbYtPVGZ9RfLX5CoNkDJzKegevpgk8U/J3XAJpcTsFc+GvZf4Vvir4A==
+X-Received: by 2002:a05:600c:198f:b0:46e:38cc:d3e2 with SMTP id 5b1f17b1804b1-46fa9af3125mr171576295e9.22.1760427357923;
+        Tue, 14 Oct 2025 00:35:57 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb479c171sm224366945e9.0.2025.10.14.00.35.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 00:35:57 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jocelyn Falempe <jfalempe@redhat.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH 4/6] drm/panic: Fix kmsg text drawing rectangle
+In-Reply-To: <20251009122955.562888-5-jfalempe@redhat.com>
+References: <20251009122955.562888-1-jfalempe@redhat.com>
+ <20251009122955.562888-5-jfalempe@redhat.com>
+Date: Tue, 14 Oct 2025 09:35:56 +0200
+Message-ID: <87a51uq6jn.fsf@ocarina.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013153918.2206045-11-sidnayyar@google.com>
+Content-Type: text/plain
 
-Hi Siddharth,
+Jocelyn Falempe <jfalempe@redhat.com> writes:
 
-kernel test robot noticed the following build errors:
+> The rectangle height was larger than the screen size. This has no
+> real impact.
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
 
-[auto build test ERROR on arnd-asm-generic/master]
-[also build test ERROR on soc/for-next linus/master v6.18-rc1 next-20251013]
-[cannot apply to mcgrof/modules-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Nayyar/define-kernel-symbol-flags/20251014-005305
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20251013153918.2206045-11-sidnayyar%40google.com
-patch subject: [PATCH v2 10/10] module loader: enforce symbol import protection
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20251014/202510141538.VZqnRzHh-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251014/202510141538.VZqnRzHh-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510141538.VZqnRzHh-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> kernel/module/main.c:1271:32: error: no member named 'sig_ok' in 'struct module'
-    1271 |         if (fsa.is_protected && !mod->sig_ok) {
-         |                                  ~~~  ^
-   1 error generated.
-
-
-vim +1271 kernel/module/main.c
-
-  1228	
-  1229	/* Resolve a symbol for this module.  I.e. if we find one, record usage. */
-  1230	static const struct kernel_symbol *resolve_symbol(struct module *mod,
-  1231							  const struct load_info *info,
-  1232							  const char *name,
-  1233							  char ownername[])
-  1234	{
-  1235		struct find_symbol_arg fsa = {
-  1236			.name	= name,
-  1237			.gplok	= !(mod->taints & (1 << TAINT_PROPRIETARY_MODULE)),
-  1238			.warn	= true,
-  1239		};
-  1240		int err;
-  1241	
-  1242		/*
-  1243		 * The module_mutex should not be a heavily contended lock;
-  1244		 * if we get the occasional sleep here, we'll go an extra iteration
-  1245		 * in the wait_event_interruptible(), which is harmless.
-  1246		 */
-  1247		sched_annotate_sleep();
-  1248		mutex_lock(&module_mutex);
-  1249		if (!find_symbol(&fsa))
-  1250			goto unlock;
-  1251	
-  1252		if (fsa.license == GPL_ONLY)
-  1253			mod->using_gplonly_symbols = true;
-  1254	
-  1255		if (!inherit_taint(mod, fsa.owner, name)) {
-  1256			fsa.sym = NULL;
-  1257			goto getname;
-  1258		}
-  1259	
-  1260		if (!check_version(info, name, mod, fsa.crc)) {
-  1261			fsa.sym = ERR_PTR(-EINVAL);
-  1262			goto getname;
-  1263		}
-  1264	
-  1265		err = verify_namespace_is_imported(info, fsa.sym, mod);
-  1266		if (err) {
-  1267			fsa.sym = ERR_PTR(err);
-  1268			goto getname;
-  1269		}
-  1270	
-> 1271		if (fsa.is_protected && !mod->sig_ok) {
-  1272			pr_warn("%s: Cannot use protected symbol %s\n",
-  1273				mod->name, name);
-  1274			fsa.sym = ERR_PTR(-EACCES);
-  1275			goto getname;
-  1276		}
-  1277	
-  1278		err = ref_module(mod, fsa.owner);
-  1279		if (err) {
-  1280			fsa.sym = ERR_PTR(err);
-  1281			goto getname;
-  1282		}
-  1283	
-  1284	getname:
-  1285		/* We must make copy under the lock if we failed to get ref. */
-  1286		strscpy(ownername, module_name(fsa.owner), MODULE_NAME_LEN);
-  1287	unlock:
-  1288		mutex_unlock(&module_mutex);
-  1289		return fsa.sym;
-  1290	}
-  1291	
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
