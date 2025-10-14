@@ -1,477 +1,280 @@
-Return-Path: <linux-kernel+bounces-852115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9A0BD8347
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:36:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD76BD8353
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA0944FB45D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:36:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A62B423CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F98F30F934;
-	Tue, 14 Oct 2025 08:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DA82BE64F;
+	Tue, 14 Oct 2025 08:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j/+nHpKc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="a9yqRzVX"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42CF3093CA;
-	Tue, 14 Oct 2025 08:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760430956; cv=fail; b=ptpk5XmGeB4mMP1PZJj1/bs6AYTLKix8Z55ci1MMcKun7hSvQZQ8i1KXR7HvrNuDI1z7WbsIYo5ZdDb053pl7ObB6v3kauKGvsf5HUnmwbYEJFTIqxo1Ehp+qFyoKt+plAb4PkLr3kULNz0ZDtMuQyECIrPpVRK1boLPyOXTFMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760430956; c=relaxed/simple;
-	bh=iCeHtWpvvVt0Buwia36b8PhYJYP8R0A1JdIXQFS3zqg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GfdQhB5MSKeq8PE3y5xuzZlxor1vNSD8FyVqxHS7/fx3llKVuxTIK1ZkqwUqX2eUJ6RR59yl89mS1WnYLgn85gXrgn5Q7F8Jh03TfjdnSr8G030wMQHLrEXxGBcKD5MKdsZB6YOtoXzcS/7zBavw4W/dMiFyoxIHFWQ7K3mV9hs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j/+nHpKc; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760430955; x=1791966955;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=iCeHtWpvvVt0Buwia36b8PhYJYP8R0A1JdIXQFS3zqg=;
-  b=j/+nHpKceDJbOTNOhyU3SV2uA3+jlx9rLIKrcZHPhYPy7lL+M64K3nIW
-   QQQv+otsYfRAtpkZ4wdrXtBJJhEbQsldibqmovdm/j6bdQu/tYdX2R39g
-   YAq4iU8Y0KCgGWrQjs/zAXDDRkankkyy2msgC/SoI/WIEdjsUn1QiuGPL
-   jj4qPk/OkykyUzJNe59SPin2ZHW+xxVcJGq9fBjO2Vsfz/+TIM6voPvmH
-   /SsGSn8noVitfPToX/Wth1WANtndaZBVXCm7aA+snst2ta6pPgyTGtQzw
-   ZLNJtvB71OlOrC8yQf3+n6ptVavMGjeDE4HaEgWiokWj5X5V5qHwNOwg+
-   A==;
-X-CSE-ConnectionGUID: 3RwGLe4UTRKzKKCZhDnDbg==
-X-CSE-MsgGUID: kg9a3n8cRIGdT9rJoRLAqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66438427"
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="66438427"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 01:35:54 -0700
-X-CSE-ConnectionGUID: bk2c6rX2SwapUV0PgR4LIw==
-X-CSE-MsgGUID: 2TMT3f+HS5WUAksSBbgHgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; 
-   d="scan'208";a="186080564"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 01:35:53 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 14 Oct 2025 01:35:52 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 14 Oct 2025 01:35:52 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.2) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 14 Oct 2025 01:35:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Glmfwey1lIUDCYSuxBFkuXUk0Lqt/vJEw1pBAiFnFIIKs+GyphcajJafxKa39QDgByhMC9EwgIOggJEBrRsnr9hdnUWge7oqv+VXU0PwQxuPg3x1sRiwf8stOUV39rxnqN3SqxT14HVEIzRcoybFZFtjIr4YE/Ailm8PfQIfhlnQ8Wk+/SyaDvqvU7CszYws2va96Iiomuk7sZv+EJDwxrRgeqBROkClSW/9SFGCkJA3Wk2zTvPvuw75483GPpHXnYtziTVNCnFBWFGcUmflRPWTw6eGg15bAF7af5x+c8yXrf47XXgwB4NL0qClAKx7R9GRzMCJmTpe6V/Y+3Hkkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YyiapA3pCdnPBwyJ1uDz2PdxOnuVIrPQPadhGIW9DNY=;
- b=xJiFLrXuR32JrDvjmKxEfhOKMn25YtXoFJXPNMxNZDYgk8KWuG0sM+igmnOGpCNTexqYGk1AkwERTQexudFeJI5hXI0PzfZtQDsXXU7VMtM0O0jfpecNFCtbWPWsS0nZFxlpUov4nuurATokihTNeePJB0Nfj/XjxRzVAvufr/mCCAzdIicEpfpTS0dK34CZ9pHPaRxoz+fUl+s+3eLYwcijA9PaLqOG/bqGzDX+15tTjIMzZOLj87mWUEVrDxBk2nsLF2wZlUBIi5aJVxi5YWkMNQSmEaT0sPITPu+z4SrZxtCmdYuTRMi5Xck9ch4wMELAIWGc7cGp+K93oDPmQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by PH8PR11MB7024.namprd11.prod.outlook.com (2603:10b6:510:220::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Tue, 14 Oct
- 2025 08:35:45 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::fdc2:40ba:101d:40bf]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::fdc2:40ba:101d:40bf%7]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 08:35:45 +0000
-Date: Tue, 14 Oct 2025 16:35:33 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, Kai Huang <kai.huang@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dan J Williams
-	<dan.j.williams@intel.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
-	<linux-coco@lists.linux.dev>, "xin@zytor.com" <xin@zytor.com>
-Subject: Re: [RFC PATCH 3/4] KVM: x86/tdx: Do VMXON and TDX-Module
- initialization during tdx_init()
-Message-ID: <aO4LVTvnsvt/UA+4@intel.com>
-References: <20251010220403.987927-1-seanjc@google.com>
- <20251010220403.987927-4-seanjc@google.com>
- <ffc9e29aa6b9175bde23a522409a731d5de5f169.camel@intel.com>
- <aO1oKWbjeswQ-wZO@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aO1oKWbjeswQ-wZO@google.com>
-X-ClientProxiedBy: KU2P306CA0066.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:39::17) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7087A30F954
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760430993; cv=none; b=oeAV8YH2/vecStaP7lFdX8B0FaUWI51mGpU8yob46Tuw0E7aH1PyhFprLVHPAn6SSc/hsSQyEGND0S1rUQEyfls7MsbGpR1ZWBUmSolPKO/rOJDnpDlHBXOfmIoT7+6Ur3JcpN923l5l+7RZwwaJB9KawmBbMMO739Yl/I6KLrg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760430993; c=relaxed/simple;
+	bh=Xh/kUK5T9kJ6Cbz+nFC0i46j/3AHrwV0ngZ1Qyt0Mu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cnLO+OsYSlalojphvA+6f5IwlcRKKciUAELPxPFno3xUdYBkx1PEuarKJJk3vCwNEi3qMtaA9GfusuOvBweeVMzZt5SLFFnaqDHd2Bhq95c5Jm2bqiQVIC9atXQteLxnpnAYnWDjF/ais0g7jqUqY1qNMKK6XQ2teOtXz/idBnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=a9yqRzVX; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso30264315e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1760430990; x=1761035790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PlCr4KtCOqjtwAQHsCr8GzfdPPkJghN91drUl4fH4VI=;
+        b=a9yqRzVXzWLMhpedTvZDh/wEfCw9hTp5ECBFkZSIxmZesE9Tdmk6K2edhD3Du6RkVn
+         1uU1kqpXn7qNuPYB7xdzIDL+Rv3El6ABCjI+nhaE0r355LOyty6g1opG5mnQQZnJsvvW
+         GsnZE7DMyOQEbGzgW56Gd1KE1qNxPZ+mYd+ZsWOm4tXCuKh8WWSfuX3WRan1c1enbIwk
+         U25HqTWNb6KxOFglPw86JNBEC/Xs+YGrvb3LIY/v4gB8/8wGJvY7zo39LtYtkVg7Exxm
+         imvh36G3hRBdYqjDTPhr114NUxxR74pKSsNS89Rq2bC1csTcpW40EpZ8X8ct2ZGUf/Ha
+         mx0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760430990; x=1761035790;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PlCr4KtCOqjtwAQHsCr8GzfdPPkJghN91drUl4fH4VI=;
+        b=ijTEMxjGsHUIqLIN1SDN/gYFTLnEzWbqO++o4QG8CVN8RduNxdlfwBsBiBY9OLjt28
+         9RV/oUjqWxkEijt58Y05iQ45s0f8/1j46Q5xOzxiR2ftUxQi+9fVDy9vtY8EaWupAua+
+         MiDLMBLbGHEbvpieuwfEVTsGn29Jw88uTLmMRQeeg3K9Cs3vG863NjelvErsZs2ZTHJz
+         cTX/OuWRJ//PBAUbwlh4Fff6w+08966hwb1E+KTw1Hn4R+RvEnaLwaYHRkVlvAC1/DzN
+         piVfEw4OfvlR0Bf/YUSAVn5lcJY1ulUx+5b1BtlX2/k6aC3eOot1i0aZ8Tg/lyGOKalv
+         Qfdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWispQc3sZGYQEFeZ815IxOteqzWykbzeZPTenja0wbKOKjZpr5IWSFVj8jXdcMtczUwYvhqpCY1azM7r0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3cxHxZeNdZmCmSlSaVFPQsmDTI7EVJItCEGZL8LbzC0ZU92s/
+	MmL/l6nVey/BrzG5Q5cq9ZA6V3HzlrBu1Je+f27FUHNdOOdc/24xgaiyoc2WcrIBORg=
+X-Gm-Gg: ASbGncvK2gau650PuD0ywa4Izacos++EeYX7HvsfK25oFFSLfYA17wZn/BmZUgv1JpG
+	Z5adhEUjYWRRuOcQ3YBY2qREcayXfOmUCGy6kJEr7O2sUXOpM1nplEhoOLOJhS1eYpQj1NXr2V8
+	JTpPv2mjznfoqxj6FeNC/E8CnDmS04gYxbUEkkvIAQ3a6+mY0uHoMF3aJkLA1sv3qEuhhtUeRkG
+	b2T1iWhRXId+o6YR5s1Kytj48BXTWy1lhwHnJeZX9dj8Fx9faFjP1G71+6iDrLqWHas7TK89GFX
+	hMu3Oc3NIui8SqlsVTgETTPUWBwUJJLGFtW+g4S/GDcVptec9OLoajIFcNPbBgss1qSDnS7aTJv
+	ZeU+fEKz2cDbEJA9OFl2spalUneIunEd/8YLDRXDyQh+06NrNdu/b55V1wYM=
+X-Google-Smtp-Source: AGHT+IHvca3H/eoAiSfXW7AaqB6vZ9CVuxlAXPqbLcEH7dPAWw/TAns0mWyDT3g0uw99AA+D6AEn0w==
+X-Received: by 2002:a05:600c:8206:b0:46e:19f8:88d3 with SMTP id 5b1f17b1804b1-46fa9af313bmr162991485e9.22.1760430989453;
+        Tue, 14 Oct 2025 01:36:29 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e8b31sm22554601f8f.54.2025.10.14.01.36.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 01:36:28 -0700 (PDT)
+Message-ID: <77678dd6-071b-4911-a5c5-f1519c92e91a@tuxon.dev>
+Date: Tue, 14 Oct 2025 11:36:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH8PR11MB7024:EE_
-X-MS-Office365-Filtering-Correlation-Id: b249ecf6-bd42-4b70-4137-08de0afcab22
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?cGBnAojAlsf2QA8l1XKI3jdWYLj2BA+XaDo6zcOXJmTX9vuHLQnFy+kUsgP1?=
- =?us-ascii?Q?eaVwGZn4DSdX9TPC318Z4BQdwYrbaHmGSqYLgDwk90qhLX9vSbjg1m/y0I6p?=
- =?us-ascii?Q?UPCKs+Z+3B2YPdvmKdgo3M2txqM6suOYLXp+JGybuiwWzUnWy3tk5EZxbbzF?=
- =?us-ascii?Q?A32xmXkO910kCGftgq8eHpJ0YQNjCRwdfe59nXblXSwEUQFu2SmUBensnaME?=
- =?us-ascii?Q?H0zV69hYYF027N/mt8FrNL1Ppae9OEkP9WIvG2tqAsJA0idQ8GaKor8+QHX+?=
- =?us-ascii?Q?VdAJ8pH65uCHYE86+V3v3CoBZuVVu/172YAuzfhNPsDExvwXCsELRp3bzfQt?=
- =?us-ascii?Q?59TSSZcMSLD7sSEUcVfSUNj9GzsefKjP4LDpi5bywQa+hSrqIqVHQcRJsNZa?=
- =?us-ascii?Q?jDYpMbm5xUO3xZa6VbXauP7N547XJlzAI+XQyl2P6LkwKSUjn3+R+xxM+k2T?=
- =?us-ascii?Q?n+6CB1SgRIjemlV76En7Hi9cTCM18l1Dp6kCmIOuOPla/luAjUTpydJwyuEP?=
- =?us-ascii?Q?2muxk5zcQO94rI5jGfdIzwf4i7NvUj8j1iN4PfiARI0zqeLc2rE2AZG917oc?=
- =?us-ascii?Q?2pZCSEAy1bbEWbbPwnCB/QaXC3mV3kV9vr/U8HWBlsrhn+iG/JQX1F00Cq6g?=
- =?us-ascii?Q?WRX6GPwElElBEJzl8sx5SMY/kCukfettwg0hVTkoPF6S5COxaGnTe2LCwCZa?=
- =?us-ascii?Q?nNH2VHNqMHK8SVUoikWDierBSOKZqCxfGzT1OBDBOAs9OBXomlSE2yD2Hh8D?=
- =?us-ascii?Q?R7wvjUg8YVDQNBwii1d81OhoRyvSNjkIWxDOqu/JYPjE/pnMK+41fpsMlNs8?=
- =?us-ascii?Q?HgDb9DFnKdG+TjpSmohr8W6LYrPV57u42Cre6Gf2uLfS+pIFxhceanhS/eKS?=
- =?us-ascii?Q?8lJ2v+FORb8APh8IfLW5cUU+yINpV2Ve2br8MykJw7ceSWXaVCSSHfcJlEVC?=
- =?us-ascii?Q?WEp5Lzlx42TPPjnRBEj5zsIrwu/RZnwqq/h1/x2+caNB/4p1CJZbjn5+am/a?=
- =?us-ascii?Q?z6AfcTuv5pmX4atqlMPkH2Keh9LY0nlp8adLu1DGqPzWNoj2USMgL5enW9Fm?=
- =?us-ascii?Q?E0Xa79lRbI4+7PnNRRqR+rbWdtBE9XA5NmGTMl6pQxqxRspNZYayJ3n45kwE?=
- =?us-ascii?Q?7u9cywHFGWU0QJ8yLBdCgUNSZOwNuTcAgwpxll/x1frqBVaAF71sBMmJJilY?=
- =?us-ascii?Q?DhtvXcLjRPjBrzYJPXH2nmbhON3cM5CqCNs4Y15Cbi922HBfkqtUn9UISym8?=
- =?us-ascii?Q?gVxDjUlsomVawko+LWF/YT/A9ohri9+IYjhMpfrgpeEIhDrm4Ve3JI2ABA/r?=
- =?us-ascii?Q?/DSoxBN6xbomK4N0+1cO7ZqvD4+BQLmnPmZBOByY2lRsJZBVCxyQwPKRnp6R?=
- =?us-ascii?Q?Zk2ytekB7OvCeEd2KhOscQK+fAJE0Om3gYZI86Y8WoZZNlDUcZf3z0k32J6a?=
- =?us-ascii?Q?gjMRf08KFJ0vVbC7GgLMYDPrsCQSDX2g?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XnP+l0hnBIBPVgBa04Ajt+4K6gId+2XzDNy9t0PPGNmMKWYB/u/nq28I4kJ7?=
- =?us-ascii?Q?s02h2jKHT2PW0EqdJC0mr/kt1Zag0M6AzASyQqSNP351sj9x5IkMyU8RcKBD?=
- =?us-ascii?Q?AtR2ogSpiacImcKSK8XifbF4KrE14EimVvpUw9dIuq7lHK7ZLNEoIVg0ag2v?=
- =?us-ascii?Q?IU/cOB91y2udHAnJEka5xI8wWc5KWoMK+HNzWy8FKaULm7VXgfFpk6Q+67T/?=
- =?us-ascii?Q?HDVwbsiyeIuJ/lFOYABOgfNwYbw0hVA6PQpC3bhLr75d0EvQoZt/PvzU3gMf?=
- =?us-ascii?Q?DbcgOxBoixF0g1Ozt8sjr0C3824UCRHLdb4l2P3fnQJrR+cmrYVThkPlUUjn?=
- =?us-ascii?Q?b203g4d/O0aT/2likZRqKJJXexuFVKjR+Hu+8E2XUtz2ZMyUAiZ9byi82MFa?=
- =?us-ascii?Q?ESipRi+AfI/5IAjd4JWCLAqtGR5zhW2IRzr8LK9/uX8wyUS6utNGeQ8kdNeU?=
- =?us-ascii?Q?hsV17IwvbVwoo74ztAjPcYQfGsO1ZoaYT9lYsOlEhZznMLQTtxsOR4zM43a5?=
- =?us-ascii?Q?3umHfSGQGeCL/AJCLVzM120QFxT5Ey4b83kmdV4ny53yKAhSLUC9oywTYqUT?=
- =?us-ascii?Q?X8vIFDD8VvYY92XgRbOpobfDqC5IIMLitCJORBxPdlOq6vhe2MVbnvsPMhfG?=
- =?us-ascii?Q?pNoVOKVCVURPXN9QqIQNiFyMVrRBshFUguDRDOi4R3xv8HDufTF2DkTL164J?=
- =?us-ascii?Q?U5nB+TLHAAsD1pGfSH2VVPitV/hts+fhK+WX7ZgXtL1UodMsRp1umh6cEiPa?=
- =?us-ascii?Q?uPnyZXxurHd9Sjd7NjZ90Gu+ywFeZx+bHPOq9LJsfKWLi1Vizx/cZ/519sTa?=
- =?us-ascii?Q?uywjSni5N8LZYCJY0h3L7SUIpoFYBCF/bDWXHm9RP2I6uz40MKzl8NFgXtkD?=
- =?us-ascii?Q?u87EpP5u3afdrUGkuIX8e3sE33fHgG2I5uB5Xtnsbu8kBjCzKmiPYhc1lbWN?=
- =?us-ascii?Q?3MqNxbhfmuMsDltf/BfG1s1nBRfqQ91vVn7rXcvDfbfOjMqkBzyxNm19LdXC?=
- =?us-ascii?Q?qtVnMFBzQq9T+d+Bav+F+bSUET3vEQ1/QOWwx+Efd4RVdtGQId7Vg9/GkEgN?=
- =?us-ascii?Q?qG04AS9obcIJSEot9iNuavmuwaZl4HQk/bogs/cRNoz88dboo9JJEvYZsSad?=
- =?us-ascii?Q?mW6KEcBlg5hyuc8/rOZQlL6Yx7+AkZjIxE3t4JJUdEpt2pa4yP7pm6pZF7Uu?=
- =?us-ascii?Q?+krUZX3HLuoDe2zkbs+IEczKggIrCUOM6lbJuSr6XtJxzjLigUGNrrHA2sEv?=
- =?us-ascii?Q?Ig8kXFiJSyCxqcWxEIcvKeFUnBwl+Aae9rHJ+kgnmkvDhj+FsQfHUQLIeefJ?=
- =?us-ascii?Q?ZnaDsI9y6NUvK2GT04IPeQJ15G+uPzrnB41DBBOku8efIaNnQw4t4Qmg2HQ8?=
- =?us-ascii?Q?rEA5aC8rjdgzPQOETasr5u/tYoOeFS3tkvGrQfS0qasdqq8r8/VqMz6OMIV5?=
- =?us-ascii?Q?bMTKldL/IILG/dJNOL+w/g5ksQomj9QLKEKBJs2modUztO/C0PI2Qkrc4GP/?=
- =?us-ascii?Q?Qk79eqi39TSu14sTAa0ka9LcfkrGj3hhinm56GxJjUF3PaEVqwtmXwmP8/1a?=
- =?us-ascii?Q?4cKOatwdSVruU9+wZq7TZCaulUSKzb1dphE2dhFl?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b249ecf6-bd42-4b70-4137-08de0afcab22
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 08:35:45.4557
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8SteGGTwUBAAr3TYvfTbfm85Ag3u+DTPS6EHhL8mKOFK0b/2VQmQzrzi7iRVHxIHIU+H+EztJddFR/x9ki/Bxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7024
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+To: Philipp Zabel <p.zabel@pengutronix.de>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+ <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+ <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+ <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+ <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
+ <6d4bc69c-1571-4d98-b0d4-214c68be118e@tuxon.dev>
+ <c1099a8e422abbc5d12bf3f325cb9f2140c8c006.camel@pengutronix.de>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <c1099a8e422abbc5d12bf3f325cb9f2140c8c006.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 13, 2025 at 01:59:21PM -0700, Sean Christopherson wrote:
->On Mon, Oct 13, 2025, Rick P Edgecombe wrote:
->> On Fri, 2025-10-10 at 15:04 -0700, Sean Christopherson wrote:
->> > @@ -3524,34 +3453,31 @@ static int __init __tdx_bringup(void)
->> >  	if (td_conf->max_vcpus_per_td < num_present_cpus()) {
->> >  		pr_err("Disable TDX: MAX_VCPU_PER_TD (%u) smaller than number of logical CPUs (%u).\n",
->> >  				td_conf->max_vcpus_per_td, num_present_cpus());
->> > -		goto get_sysinfo_err;
->> > +		return -EINVAL;
->> >  	}
->> >  
->> >  	if (misc_cg_set_capacity(MISC_CG_RES_TDX, tdx_get_nr_guest_keyids()))
->> > -		goto get_sysinfo_err;
->> > +		return -EINVAL;
->> >  
->> >  	/*
->> > -	 * Leave hardware virtualization enabled after TDX is enabled
->> > -	 * successfully.  TDX CPU hotplug depends on this.
->> > +	 * TDX-specific cpuhp callback to disallow offlining the last CPU in a
->> > +	 * packing while KVM is running one or more TDs.  Reclaiming HKIDs
->> > +	 * requires doing PAGE.WBINVD on every package, i.e. offlining all CPUs
->> > +	 * of a package would prevent reclaiming the HKID.
->> >  	 */
->> > +	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "kvm/cpu/tdx:online",
->> > +			      tdx_online_cpu, tdx_offline_cpu);
->> 
->> Could pass NULL instead of tdx_online_cpu() and delete this version of
->> tdx_online_cpu().
->
->Oh, nice, I didn't realize (or forgot) the startup call is optional.
+Hi, Philipp,
+
+On 10/13/25 17:57, Philipp Zabel wrote:
+> Hi Claudiu,
 > 
->> Also could remove the error handling too.
->
->No.  Partly on prinicple, but also because CPUHP_AP_ONLINE_DYN can fail if the
->kernel runs out of dynamic entries (currently limited to 40).  The kernel WARNs
->if it runs out of entries, but KVM should still do the right thing.
->
->> Also, can we name the two tdx_offline_cpu()'s differently? This one is all about
->> keyid's being in use. tdx_hkid_offline_cpu()?
->
->Ya.  And change the description to "kvm/cpu/tdx:hkid_packages"?  Or something
->like that.
->
+> On Fr, 2025-10-10 at 14:26 +0300, Claudiu Beznea wrote:
+>> Hi, Philipp,
+>>
+>> On 10/8/25 15:16, Claudiu Beznea wrote:
+>>> Hi, Philipp,
+>>>
+>>> On 10/8/25 13:23, Philipp Zabel wrote:
+>>>> Hi Claudiu,
+>>>>
+>>>> On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
+>>>>> Hi, Philipp,
+>>>>>
+>>>>> On 10/8/25 11:34, Philipp Zabel wrote:
+>>>>>> Hi Claudiu,
+>>>>>>
+>>>>>> On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
+>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>
+>>>>>>> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
+>>>>>>> PWRRDY. This signal is managed by the system controller and must be
+>>>>>>> de-asserted after powering on the area where USB PHY resides and asserted
+>>>>>>> before powering it off.
+>>>>>>>
+>>>>>>> On power-on the USB PWRRDY signal need to be de-asserted before enabling
+>>>>>>> clock and switching the module to normal state (through MSTOP support). The
+>>>>>>> power-on configuration sequence
+>>>>>> The wording makes me wonder, have you considered implementing this as a
+>>>>>> power sequencing driver?
+>>>>> No, haven't tried as power sequencing. At the moment this was started I
+>>>>> think the power sequencing support wasn't merged.
+>>>>>
+>>>>> The approaches considered were:
+>>>>> a/ power domain
+>>>> Letting a power domain control a corresponding power ready signal would
+>>>> have been my first instinct as well.
+>>>>
+>>>>> b/ regulator
+>>>>> c/ as a reference counted bit done through regmap read/writes APIs
+>>>>>
+>>>>> a and b failed as a result of discussions in the previous posted versions.
+>>>> Could you point me to the discussion related to a?
+>>> It's this one
+>>> https://lore.kernel.org/all/
+>>> CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com/
+> 
+> Thank you! From this discussion it still isn't clear to me whether
+> Ulf's suggestion of using genpd on/off notifiers was considered and why
 
-Is it a good idea to consolidate the two tdx_offline_cpu() functions, i.e.,
-integrate KVM's version into x86 core?
+The genpd on/off notifier suggestion wasn't tried, but only the
+implementation of PWRRDY handling through the power domain (what Ulf
+suggested though "Move the entire reset handling into the PM domain
+provider, as it obviously knows when the domain is getting turned on/off"
+in
+https://lore.kernel.org/all/fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev/).
+Sorry if I mislead you.
 
-From 97165f9933f48d588f5390e2d543d9880c03532d Mon Sep 17 00:00:00 2001
-From: Chao Gao <chao.gao@intel.com>
-Date: Tue, 14 Oct 2025 01:00:06 -0700
-Subject: [PATCH] x86/virt/tdx: Consolidate TDX CPU hotplug handling
+Ulf suggested then here
+https://lore.kernel.org/all/CAPDyKFpLnREr4C=wZ7o8Lb-CZbQa4Nr2VTuYdZHZ26Rcb1Masg@mail.gmail.com/
+that he is not agreeing anymore with having it as power domain due to the
+discussion in thread
+https://lore.kernel.org/all/TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com/
+(I can't remember what made him taking back is ack on this solution and I
+can't find something in the thread either).
 
-The core kernel registers a CPU hotplug callback to do VMX and TDX init
-and deinit while KVM registers a separate CPU offline callback to block
-offlining the last online CPU in a socket.
+If I'm not wrong, with the information that we have at the moment, the best
+for the notifier would have to register it (before runtime resume) and
+implement it in this driver (reset-rzg2l-usbphy-ctrl) so that, when the
+pm_runtime_resume_and_get()/pm_runtime_put() in
+rzg2l_usbphy_ctrl_probe()/rzg2l_usbphy_ctrl_remove() will be called (or
+suspend/resume) the notifier will be called and set the PWRRDY bit. Please
+let me know if you see it otherwise.
 
-Splitting TDX-related CPU hotplug handling across two components is odd
-and adds unnecessary complexity.
+> it was dismissed.
 
-Consolidate TDX-related CPU hotplug handling by integrating KVM's
-tdx_offline_cpu() to the one in the core kernel.
+The power domain approach was dismissed as a result of discussion from this
+thread:
+https://lore.kernel.org/all/TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com/
 
-Also move nr_configured_hkid to the core kernel because tdx_offline_cpu()
-references it. Since HKID allocation and free are handled in the core
-kernel, it's more natural to track used HKIDs there.
+I don't remember exactly what triggered it and can't find it as well, sorry.
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- arch/x86/kvm/vmx/tdx.c      | 67 +------------------------------------
- arch/x86/virt/vmx/tdx/tdx.c | 49 +++++++++++++++++++++++++--
- 2 files changed, 47 insertions(+), 69 deletions(-)
+> 
+> From the DT patches it looks like there is no actual separate power
+> domain for USB, just the single always-on CPG power domain (in rzg2l-
+> cpg.c). Is that correct?
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index d89382971076..beac8ab4cbc1 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -46,8 +46,6 @@ module_param_named(tdx, enable_tdx, bool, 0444);
- #define TDX_SHARED_BIT_PWL_5 gpa_to_gfn(BIT_ULL(51))
- #define TDX_SHARED_BIT_PWL_4 gpa_to_gfn(BIT_ULL(47))
- 
--static enum cpuhp_state tdx_cpuhp_state __ro_after_init;
--
- static const struct tdx_sys_info *tdx_sysinfo;
- 
- void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err)
-@@ -206,8 +204,6 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
-  */
- static DEFINE_MUTEX(tdx_lock);
- 
--static atomic_t nr_configured_hkid;
--
- static bool tdx_operand_busy(u64 err)
- {
-	return (err & TDX_SEAMCALL_STATUS_MASK) == TDX_OPERAND_BUSY;
-@@ -255,7 +251,6 @@ static inline void tdx_hkid_free(struct kvm_tdx *kvm_tdx)
- {
-	tdx_guest_keyid_free(kvm_tdx->hkid);
-	kvm_tdx->hkid = -1;
--	atomic_dec(&nr_configured_hkid);
-	misc_cg_uncharge(MISC_CG_RES_TDX, kvm_tdx->misc_cg, 1);
-	put_misc_cg(kvm_tdx->misc_cg);
-	kvm_tdx->misc_cg = NULL;
-@@ -2487,8 +2482,6 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 
-	ret = -ENOMEM;
- 
--	atomic_inc(&nr_configured_hkid);
--
-	tdr_page = alloc_page(GFP_KERNEL);
-	if (!tdr_page)
-		goto free_hkid;
-@@ -3343,51 +3336,10 @@ int tdx_gmem_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn, bool is_private)
-	return PG_LEVEL_4K;
- }
- 
--static int tdx_online_cpu(unsigned int cpu)
--{
--	return 0;
--}
--
--static int tdx_offline_cpu(unsigned int cpu)
--{
--	int i;
--
--	/* No TD is running.  Allow any cpu to be offline. */
--	if (!atomic_read(&nr_configured_hkid))
--		return 0;
--
--	/*
--	 * In order to reclaim TDX HKID, (i.e. when deleting guest TD), need to
--	 * call TDH.PHYMEM.PAGE.WBINVD on all packages to program all memory
--	 * controller with pconfig.  If we have active TDX HKID, refuse to
--	 * offline the last online cpu.
--	 */
--	for_each_online_cpu(i) {
--		/*
--		 * Found another online cpu on the same package.
--		 * Allow to offline.
--		 */
--		if (i != cpu && topology_physical_package_id(i) ==
--				topology_physical_package_id(cpu))
--			return 0;
--	}
--
--	/*
--	 * This is the last cpu of this package.  Don't offline it.
--	 *
--	 * Because it's hard for human operator to understand the
--	 * reason, warn it.
--	 */
--#define MSG_ALLPKG_ONLINE \
--	"TDX requires all packages to have an online CPU. Delete all TDs in order to offline all CPUs of a package.\n"
--	pr_warn_ratelimited(MSG_ALLPKG_ONLINE);
--	return -EBUSY;
--}
--
- static int __init __tdx_bringup(void)
- {
-	const struct tdx_sys_info_td_conf *td_conf;
--	int r, i;
-+	int i;
- 
-	for (i = 0; i < ARRAY_SIZE(tdx_uret_msrs); i++) {
-		/*
-@@ -3459,23 +3411,7 @@ static int __init __tdx_bringup(void)
-	if (misc_cg_set_capacity(MISC_CG_RES_TDX, tdx_get_nr_guest_keyids()))
-		return -EINVAL;
- 
--	/*
--	 * TDX-specific cpuhp callback to disallow offlining the last CPU in a
--	 * packing while KVM is running one or more TDs.  Reclaiming HKIDs
--	 * requires doing PAGE.WBINVD on every package, i.e. offlining all CPUs
--	 * of a package would prevent reclaiming the HKID.
--	 */
--	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "kvm/cpu/tdx:online",
--			      tdx_online_cpu, tdx_offline_cpu);
--	if (r < 0)
--		goto err_cpuhup;
--
--	tdx_cpuhp_state = r;
-	return 0;
--
--err_cpuhup:
--	misc_cg_set_capacity(MISC_CG_RES_TDX, 0);
--	return r;
- }
- 
- int __init tdx_bringup(void)
-@@ -3531,7 +3467,6 @@ void tdx_cleanup(void)
-		return;
- 
-	misc_cg_set_capacity(MISC_CG_RES_TDX, 0);
--	cpuhp_remove_state(tdx_cpuhp_state);
- }
- 
- void __init tdx_hardware_setup(void)
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index bf1c1cdd9690..201ecb4ad20d 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -58,6 +58,8 @@ static LIST_HEAD(tdx_memlist);
- static struct tdx_sys_info tdx_sysinfo __ro_after_init;
- static bool tdx_module_initialized __ro_after_init;
- 
-+static atomic_t nr_configured_hkid;
-+
- typedef void (*sc_err_func_t)(u64 fn, u64 err, struct tdx_module_args *args);
- 
- static inline void seamcall_err(u64 fn, u64 err, struct tdx_module_args *args)
-@@ -190,6 +192,40 @@ static int tdx_online_cpu(unsigned int cpu)
- 
- static int tdx_offline_cpu(unsigned int cpu)
- {
-+	int i;
-+
-+	/* No TD is running.  Allow any cpu to be offline. */
-+	if (!atomic_read(&nr_configured_hkid))
-+		goto done;
-+
-+	/*
-+	 * In order to reclaim TDX HKID, (i.e. when deleting guest TD), need to
-+	 * call TDH.PHYMEM.PAGE.WBINVD on all packages to program all memory
-+	 * controller with pconfig.  If we have active TDX HKID, refuse to
-+	 * offline the last online cpu.
-+	 */
-+	for_each_online_cpu(i) {
-+		/*
-+		 * Found another online cpu on the same package.
-+		 * Allow to offline.
-+		 */
-+		if (i != cpu && topology_physical_package_id(i) ==
-+				topology_physical_package_id(cpu))
-+			goto done;
-+	}
-+
-+	/*
-+	 * This is the last cpu of this package.  Don't offline it.
-+	 *
-+	 * Because it's hard for human operator to understand the
-+	 * reason, warn it.
-+	 */
-+#define MSG_ALLPKG_ONLINE \
-+	"TDX requires all packages to have an online CPU. Delete all TDs in order to offline all CPUs of a package.\n"
-+	pr_warn_ratelimited(MSG_ALLPKG_ONLINE);
-+	return -EBUSY;
-+
-+done:
-	x86_virt_put_cpu(X86_FEATURE_VMX);
-	return 0;
- }
-@@ -1505,15 +1541,22 @@ EXPORT_SYMBOL_GPL(tdx_get_nr_guest_keyids);
- 
- int tdx_guest_keyid_alloc(void)
- {
--	return ida_alloc_range(&tdx_guest_keyid_pool, tdx_guest_keyid_start,
--			       tdx_guest_keyid_start + tdx_nr_guest_keyids - 1,
--			       GFP_KERNEL);
-+	int ret;
-+
-+	ret = ida_alloc_range(&tdx_guest_keyid_pool, tdx_guest_keyid_start,
-+			      tdx_guest_keyid_start + tdx_nr_guest_keyids - 1,
-+			      GFP_KERNEL);
-+	if (ret >= 0)
-+		atomic_inc(&nr_configured_hkid);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(tdx_guest_keyid_alloc);
- 
- void tdx_guest_keyid_free(unsigned int keyid)
- {
-	ida_free(&tdx_guest_keyid_pool, keyid);
-+	atomic_dec(&nr_configured_hkid);
- }
- EXPORT_SYMBOL_GPL(tdx_guest_keyid_free);
- 
--- 
-2.47.3
+That is correct, the CPG is a clock power domain. All the clocks that CPG
+can be provided (including USB clocks) are part of CPG clock power domain.
 
+> In the thread it sounded like there were
+> multiple domains.
 
+You probably refer to this:
+https://lore.kernel.org/all/fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev/
+
+In there, I was trying to present to Ulf how I did implement (locally,
+nothing posted) the handling of PWRRDY though power domains. In that case
+the SYSC (System Controller), where the PWRRDY resides, was modeled as a
+power domain, I passed to the reset-rzg2l-usbphy-ctrl DT node the phandle
+to sysc USB power domain as:
+
+power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc R9A08G045_SYSC_PD_USB>;
+
+along with the cpg, and handled it in the reset-rzg2l-usbphy-ctrl probe().
+
+> 
+> Is the issue that you need the PWRRDY signal to be (de)asserted
+> independently from the CPG power domain enable/disable?
+
+Yes. I need to de-assert it before clocks, MSTOP on probe/resume and assert
+it back after clocks, MSTOP, on remove/suspend.
+
+> (Why?)
+
+Due to hardware constraints. This is how Renesas HW team recommended.
+
+> 
+> Why can't the power domain provider (cpg) have the renesas,sysc-pwrrdy
+> property and set the signal together with the power domain?
+
+That can be done but, passing a SYSC phandle to the CPG DT node will not be
+valid from the HW description point of view.
+
+> 
+>>>> I see v2 and v3 tried to control the bit from the PHY drivers, and in
+>>>> v4 we were are already back to the reset driver.
+>>> v2 passed the system controller (SYSC) phandle to the USB PHYs only (though
+>>> renesas,sysc-signals DT property) where the PWRRDY bit was set. The PWRRDY
+>>> bit was referenced counted in the SYSC driver though regmap APIs.
+>>>
+>>> v3 used the approach from v2 but passed the renesas,sysc-signals to all the
+>>> USB related drivers.
+>>>
+>>> Then, in v4, the PWRRDY refcounting was dropped and passed
+>>> renesas,sysc-signals only to the USB PHY CTRL DT node in the idea that this
+>>> is the node that will always be probed first as all the other USB blocks
+>>> need it and request resets from it.
+>>>
+>>> v5 and v6 kept the approach from v4 and only addressed misc comments or
+>>> things that I noticed.
+>>
+>> Could you please let me know if you are OK with the approach proposed in
+>> v7, so that I can start preparing a new version addressing your comments?
+> 
+> If the PWRRDY signal is an input to the USB2PHY control block, and not
+> only to the PHY blocks, I have no issue with this being handled in the
+> usb2phy reset driver -
+
+Yes, this is how the Renesas HW team confirmed they are related.
+
+> iff it is not sensible to just control the
+> signal from the power domain driver.
+
+As mentioned above, that can be done as well but, passing a SYSC phandle to
+the CPG DT node will not be valid from the HW description point of view.
+
+> 
+> If we have to handle it in the reset driver, I'd prefer to see this
+> controlled with a dev_pm_genpd_add_notifier(). If that is not possible,
+> I'd like to understand why.
+
+From the code inspection I did, that can be done. From what I can tell at
+the moment, I'll have to register a gepnd notifier from
+reset-rzg2l-usbphy-ctrl, before runtime resuming the device and control the
+SYSC PWRRDY from it.
+
+Thank you,
+Claudiu
 
