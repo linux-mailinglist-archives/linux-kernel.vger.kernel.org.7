@@ -1,65 +1,49 @@
-Return-Path: <linux-kernel+bounces-851627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352CFBD6EE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1588FBD6EC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32299408395
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8F9407F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D192580DE;
-	Tue, 14 Oct 2025 01:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E37F23A994;
+	Tue, 14 Oct 2025 01:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="b5eYmufe"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfNfPOua"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18942C0293;
-	Tue, 14 Oct 2025 01:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D61C22ACF3;
+	Tue, 14 Oct 2025 01:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760404258; cv=none; b=ujAohBOsgqrCDjkJ0bFIvuXOnTOUPOXZwXKDgMb75fxdRZdPzFE3nWFLMA9XkHi6ILfOyveu/Qj9KZCLUtA4curqmxKcM7VEjfrhkmk1QEy6EmR27XQf41JzI/3IcF9PGShQsmdlq3lPT51XGRVGY523niLQXB/dRWxCSlJZeEQ=
+	t=1760404250; cv=none; b=S2k649fkpGcJIFAj/KLdEApLrPkxkTCvUxolh1M5x9p0cd3oiKnlTfdW1ADqZfZ7nzJXxr2FBsGlaCMwlzdw1xDVKezzYpFq1YHaJ56cyUhy8TXKD9QUoa+f0niGVRVnVzU3eDxVYNvHDnz2hNXe0Skc6j3nTlRNIEgrsc+VovY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760404258; c=relaxed/simple;
-	bh=Pm45zGaYPyq5l4l7efesn2scxVs7fyqBRFKo4aRrHf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FP27tSSDYIz1ti6RVygRYaTSw+nB9taBCu3A38JjgxhquJJ8NxMHBKQWyPI7ivKCh/KnCAMGvr4s2sL/B6jvXWU292GubmO8SJf5x0mBWSM//iGhwk5Khovebhh2Ec7FiOJ7aXrBAkeKwP5zYvm1fKszB2MpWxIW/5jDCKRyaUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=b5eYmufe; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59E19p1i1568441
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 13 Oct 2025 18:10:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59E19p1i1568441
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025092201; t=1760404215;
-	bh=kz8coyzoOOO7TNq5vADJk9RNm1dpop3qleyprSd53Kw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b5eYmufeeUiR1I+tUrJ9uz6bCxbXo1rjWiJRnNcJY5pqG3Hy/EcotGhhditJYV2kS
-	 BKZUcaigqiTpyfWZu+nZVqG7C05Lb0FyVTVN71467zOVw8QSsRZwr/KFtU5LqRflK/
-	 CpWRyNk+NXWwApTjkys6VfYu4cxonn2bqfWDmoPqBVqSuhaexyjCDFCrlOchKPSjPq
-	 QShpQ3Xej9udd9qq6JcpkJ59cC8Ao9B5zjJOM+IxAZd5/VrA37LRe5QQaBaw7KtXIs
-	 7owc0+OPlX/jtUTfNfmGzLxPLUe8A3p+A126bj7dxiWerCEpdmz6+GgDucK79Tbudu
-	 nCuX4humh0iQQ==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, xin@zytor.com, luto@kernel.org,
-        peterz@infradead.org, andrew.cooper3@citrix.com, chao.gao@intel.com,
-        hch@infradead.org
-Subject: [PATCH v8 21/21] KVM: nVMX: Allow VMX FRED controls
-Date: Mon, 13 Oct 2025 18:09:50 -0700
-Message-ID: <20251014010950.1568389-22-xin@zytor.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251014010950.1568389-1-xin@zytor.com>
-References: <20251014010950.1568389-1-xin@zytor.com>
+	s=arc-20240116; t=1760404250; c=relaxed/simple;
+	bh=UlXz9SPqWN5GDVnFExB0oh6QNhIDQhd3TElVGi7zvhg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=PUn5AgKUzynDOigKJ8cX9j9P1k+OgtbJ4gEq5RQoLdDiQ6JTDT/gsaYF3rhOMD5QLsTb3qZc1PBmaR02nZO4es0sOLDxJzeUQlIqwuZc9prJitkKs6XGmz4LXldjLUoS3S4rFpGxKYRURhOAPzon+jeqhfh9sT+H7fetkZNJcXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfNfPOua; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261FBC113D0;
+	Tue, 14 Oct 2025 01:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760404250;
+	bh=UlXz9SPqWN5GDVnFExB0oh6QNhIDQhd3TElVGi7zvhg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EfNfPOuatkzswozxFgDSQQBdTWRLfqqarbr9q7X8shTPkkBtLpE6iJtdvh3HehQV/
+	 Ji2oNodQ/uETWpBWECBAreFuzBeVIv4VpK+A5FKn10uMeEdnSnpPR+5GABvDv2y3LP
+	 VNqgpRN/oYBnWi4vHQhOa89E5dbqUu4F8EWYeNu6SBD7xMX+aire+3o2MpQTifSu1x
+	 nEc+uMldBAVF8A+Y7IwU+JTtDzCHbZhmwJhuzecQ8S3DBSDyszmEsiS/hNfFGZUaHb
+	 fzS9PTZ1AVB0OrPxbftsSJkhkfVHz4qwt72wA/8Kug4K/xly6dEJY3yQMggCgwANRq
+	 x2Zsvba7a12xw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0F2380A962;
+	Tue, 14 Oct 2025 01:10:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,60 +51,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3 0/6] Intel Wired LAN Driver Updates 2025-10-01
+ (idpf, ixgbe, ixgbevf)
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176040423576.3390136.9978557000620458920.git-patchwork-notify@kernel.org>
+Date: Tue, 14 Oct 2025 01:10:35 +0000
+References: <20251009-jk-iwl-net-2025-10-01-v3-0-ef32a425b92a@intel.com>
+In-Reply-To: <20251009-jk-iwl-net-2025-10-01-v3-0-ef32a425b92a@intel.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ emil.s.tantilov@intel.com, aleksander.lobakin@intel.com, willemb@google.com,
+ sridhar.samudrala@intel.com, phani.r.burra@intel.com,
+ piotr.kwapulinski@intel.com, horms@kernel.org, radoslawx.tyl@intel.com,
+ jedrzej.jagielski@intel.com, konstantin.ilichev@intel.com,
+ milena.olech@intel.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aleksandr.loktionov@intel.com, Samuel.salin@intel.com,
+ stable@vger.kernel.org, rafal.romanowski@intel.com, den@valinux.co.jp,
+ sx.rinitha@intel.com, pmenzel@molgen.mpg.de
 
-From: Xin Li <xin3.li@intel.com>
+Hello:
 
-Allow nVMX FRED controls as nested FRED support is in place.
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Xin Li <xin3.li@intel.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Tested-by: Shan Kang <shan.kang@intel.com>
-Tested-by: Xuelian Guo <xuelian.guo@intel.com>
----
+On Thu, 09 Oct 2025 17:03:45 -0700 you wrote:
+> For idpf:
+> Milena fixes a memory leak in the idpf reset logic when the driver resets
+> with an outstanding Tx timestamp.
+> 
+> For ixgbe and ixgbevf:
+> Jedrzej fixes an issue with reporting link speed on E610 VFs.
+> 
+> [...]
 
-Change in v5:
-* Add TB from Xuelian Guo.
----
- arch/x86/kvm/vmx/nested.c | 5 +++--
- arch/x86/kvm/vmx/vmx.c    | 1 +
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Here is the summary with links:
+  - [net,v3,1/6] idpf: cleanup remaining SKBs in PTP flows
+    https://git.kernel.org/netdev/net/c/a3f8c0a27312
+  - [net,v3,2/6] ixgbevf: fix getting link speed data for E610 devices
+    (no matching commit)
+  - [net,v3,3/6] ixgbe: handle IXGBE_VF_GET_PF_LINK_STATE mailbox operation
+    https://git.kernel.org/netdev/net/c/f7f97cbc03a4
+  - [net,v3,4/6] ixgbevf: fix mailbox API compatibility by negotiating supported features
+    https://git.kernel.org/netdev/net/c/a7075f501bd3
+  - [net,v3,5/6] ixgbe: handle IXGBE_VF_FEATURES_NEGOTIATE mbox cmd
+    https://git.kernel.org/netdev/net/c/823be089f9c8
+  - [net,v3,6/6] ixgbe: fix too early devlink_free() in ixgbe_remove()
+    https://git.kernel.org/netdev/net/c/5feef67b646d
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 0867c1f09999..c8edbe9c7e00 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -7443,7 +7443,8 @@ static void nested_vmx_setup_exit_ctls(struct vmcs_config *vmcs_conf,
- 		 * advertise any feature in it to nVMX until its nVMX support
- 		 * is ready.
- 		 */
--		msrs->secondary_exit_ctls &= 0;
-+		msrs->secondary_exit_ctls &= SECONDARY_VM_EXIT_SAVE_IA32_FRED |
-+					     SECONDARY_VM_EXIT_LOAD_IA32_FRED;
- 	}
- }
- 
-@@ -7459,7 +7460,7 @@ static void nested_vmx_setup_entry_ctls(struct vmcs_config *vmcs_conf,
- 		VM_ENTRY_IA32E_MODE |
- #endif
- 		VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS |
--		VM_ENTRY_LOAD_CET_STATE;
-+		VM_ENTRY_LOAD_CET_STATE | VM_ENTRY_LOAD_IA32_FRED;
- 	msrs->entry_ctls_high |=
- 		(VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR | VM_ENTRY_LOAD_IA32_EFER |
- 		 VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b92fc81af5c4..c1a6547bc0aa 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7975,6 +7975,7 @@ static void nested_vmx_cr_fixed1_bits_update(struct kvm_vcpu *vcpu)
- 
- 	entry = kvm_find_cpuid_entry_index(vcpu, 0x7, 1);
- 	cr4_fixed1_update(X86_CR4_LAM_SUP,    eax, feature_bit(LAM));
-+	cr4_fixed1_update(X86_CR4_FRED,       eax, feature_bit(FRED));
- 
- #undef cr4_fixed1_update
- }
+You are awesome, thank you!
 -- 
-2.51.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
