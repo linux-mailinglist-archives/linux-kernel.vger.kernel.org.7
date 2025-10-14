@@ -1,128 +1,129 @@
-Return-Path: <linux-kernel+bounces-853001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62894BDA68E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:34:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3AABDA691
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C614D18834D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:34:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 16E9A353823
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B773009D3;
-	Tue, 14 Oct 2025 15:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3091D301487;
+	Tue, 14 Oct 2025 15:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PcJ/1pL8"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cy7RYE11"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436CF2E7F39
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FFF2C0F64
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455976; cv=none; b=At/y2rvDSZZTLI3uoYLy5/w9JcBHRMQJZyT7A8COJ9yiF30zwVRlGSsYrmu8AwTo8fOlX9MHmTSMGH0IP+gF2Je3fKxtc86RAuctfHRpWm9Ns5cOcDbkiuOfMpygwH1qo3WdVEK6bnR5t2QS6xDKWalT2h/mRfcs0PVgWWcy3zs=
+	t=1760456006; cv=none; b=P+fvbWgCskZNTvp0t1ps9tVHyOV06q8b7lTpp0KOZN+lbbaVjhyVdNtBGBe63tZarA9cjsLy/EnDZ9PcI5fzKtkvYrsZwkvWBc6xzlPaqMx4x5X8c2KzVv3KtmQcxd8n8lB97Lm822WUyLZ4BWKDZ4FvYjnrdZBG8z4DA4e0XBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455976; c=relaxed/simple;
-	bh=ffMm7Yz/8R6++TIbdHHyZXzHcqpQpJ572eW2FXJszR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hz8zbHonYosgcKUqyEaTiAiCcVG1nlHpG5TKgUTbfOqPTkk/gECogJB4PuqzQEoCJKxTuHGpk3b6pGRJ6Af+f7f4w5oWpAW7ScI0+Riwg7M5FLFM9jPi8rlWwwN11/+7h6XpeZ9yKTAZ9WeDopxiIEtVyYMqUMaxqFE8UEAoThk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PcJ/1pL8; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27d67abd215so700445ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:32:54 -0700 (PDT)
+	s=arc-20240116; t=1760456006; c=relaxed/simple;
+	bh=bC1GV6kIreezKVVT4Oj9oFgXpMI9X56TUHGj+xw7qV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kLNHXf6M6otwZ/isiJipVfidpSG9R0W6qUBBloIfBig0LE6bq5Jxaca21NB/YnmANUoj+Ilosz7WwSGaYI8CbMXtxz1l4yhTDclQlXhT+/j46bI41719FPL++L2GN8uog9dCXzX62Gji+cB45UuuMr9frdtZSQQ2M1i4Q7wyvDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cy7RYE11; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-28832ad6f64so61556505ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760455974; x=1761060774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ffMm7Yz/8R6++TIbdHHyZXzHcqpQpJ572eW2FXJszR8=;
-        b=PcJ/1pL8zTXfk3aTpvgu0mrwCv2yCcwb6wEI8GP0fvjaAYq5lKK0GaMJuB1aIzlS0Y
-         PAgMXJP/qYmmBXwM3XzTHwPiNuQsRm3YZhp2JiNB9ZCUL8STxtwsUveMjKpP6nwIQAHz
-         J1wtdm+tFT3H1LVs6X3qBdjQDaxDTeIIdav+3FX670d5FsmdKqkELy9UArfRzEDR/Ltr
-         yTwkCsQ1b9xEpCZSYBVXeOkGiRjrM1L2pXQYQ6rh/CTdwh1er+p7jTsaBiKq9/uzonfD
-         ZaPUqfgsWk4BpX91o4wt9q6qbySBxvr62lUk/m0C4NePCs40jeLngffrZheFZl+kXVI2
-         TZJA==
+        d=gmail.com; s=20230601; t=1760456004; x=1761060804; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NOTwbs4p+L2U1fW4J3vWVmcZdnxexOHlXg5+8IeB40E=;
+        b=Cy7RYE11xqevbUkst+jpjJ+H+fH+gYdUvBUn5JA5wrNx3wzbIe7uEVC4pNUd4o4eEF
+         2KdKw03AzluaUcE64JHg20ZsOZhM3y7vS8dvqqX5TtF8n+UQ4YKQY7THbnOOVw+rFGXb
+         a5MoS3J3Ik/uiFJkzXW3C6kz+Cbpu5n6Mkz5xes4gHQ2gsPO80XIhfQGORpeuzrZBnlp
+         kgwLF3nbSY5sa23vvDk6GwBYDbkBtn64Iz2K8Tyq6dPgSzGP4vgBg6uVx+NIIQJZYI77
+         gAug+Kr5NtEaAWf57oEyX35uGbVLQ4q2q9Vid6A0hzpyw32p+r7L2gqHhgQe8pkT9Wv/
+         xsDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760455974; x=1761060774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ffMm7Yz/8R6++TIbdHHyZXzHcqpQpJ572eW2FXJszR8=;
-        b=hUuA6VTJjIjJMs8Se7YDkHfUmdMG8XkC+B64htg8r39jRUoJFSCQaMIYdQ7Usi/Tu3
-         HA92XOBKEv3T7C3viExHsgwgjQYXpZFgVfiaabQKQhC1/PEYLWhlvZG4zcWNLF83gtr3
-         oN3dqcPsbmbQ0VBteArU1PYEwyXYeGz/BBaoyd/2Hl1IY/0zMzYvO/znBDUlkjXeWKpI
-         7yXUMq6Z2eqkAclMJqbHpX8WRvB9GCzQwqPZJPdH76DeSaVXGwDh4keO7J8uB2sZzTCU
-         VXH51/w7izZBuxOv5j73N/beB3eqdFV0utQxmtvfnMCt/fVll/y1N7AWvEfD8BUSuiGY
-         2xeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtZo6/nU3ceGHEqtq4bGvF/zCERoOLwMXpLm5aEy9LyxbVVbCITrL9HjFMtPSg8VHfKGP/Lba3I3tu4TI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1fuqXI0E1TjjjwaaCsRZ9KQx3JE57J/b9tTxitZrqBv1J2rOT
-	0fwbZrEv6UI7xR0TfV0C9tI9X+kAtwQ3JgX4m8N8EGwUAA9iSrbqUKT94U1zWlJFb4MCSmt5P+k
-	ITfYT3iqE5YIGeAzwrJy/c7H/VcnyNitqq6Rq9Ptk
-X-Gm-Gg: ASbGncuHBlLcC8iAuzh8hZQla4529ascqR+g/7oBL5Cv4Uy4fk1oMEd2/sifEsWAkY4
-	VntLKNO6UnXOLAh9NyfnVtqL8Klcl02Ik8Pz8Mjggfwsta8OmZua70V6ouiRPLPwtwFA7/4I4xW
-	/5m66cg9iWoecGf7yIrDZ6tzRB2XZ643tMhQCM7MrEmeDj2axO/LA6jXFTzrSduhTd4DCrlt8ta
-	TJrnMRI3Pddd9B6j2XYQ7U6uZKq8gJ6r3KfRf90RA2JvGTCGWEELU63Gxo6JoK1jg==
-X-Google-Smtp-Source: AGHT+IEAXjuXRHNCvILZZPPXn4sZcsg04QiZ30ePy7vGF1dqT989ZMiDUdgA08TDD1m+Fpg7VX5rBjRBfRSp65lsydc=
-X-Received: by 2002:a17:903:38cf:b0:248:7b22:dfb4 with SMTP id
- d9443c01a7336-290276dfef2mr26574225ad.16.1760455973795; Tue, 14 Oct 2025
- 08:32:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760456004; x=1761060804;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NOTwbs4p+L2U1fW4J3vWVmcZdnxexOHlXg5+8IeB40E=;
+        b=iTodtkDCD3cFx3mIcsw9n7UQHoxMKcuZZL2ILrin0hAksi/DYv17nlkpZ/kYw2Gf32
+         wd2Xhsm76jjo0ppXGIkM6Ojs4Wa/ikOLfbBCqoV8+bv5/YHs7TF3FKcJVgOKdXdNhdor
+         cx6z1QLQn6hXGCXfyjDuXLA5qXYokObEPknKsFGMJRNZDUXq/LTtbqLf4nLA3tfrSk6L
+         7usvM6Q+V/sjL6IDwWhqRkrKOFWM8GHl0kweKHB6xRiu94XtT6R/hbrbnM0PbRsyfKqS
+         +41fbIXx16LnUm8CkzuFm5GF+zNoh8edQ9Lt1qeRjhHhQLxgVONCMW/SXkmWgPqcQxr4
+         4Bow==
+X-Forwarded-Encrypted: i=1; AJvYcCXK+mG/INkBGV3vuRnzG9oQuTkw4Elh7PpDoM/2ig9kN3QC7RuFuMSZWsCoIKgh3QjVbgMzk8mMTynSiYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziD4TfMljeDpqfYx8AV86cpV7gCzGTG/humu1dJd6ESU8Hju1Y
+	lafRz4MK9YYW66U+w5rY7bz9kIirCyxBdHTtM+52ayn7K5rjXDD5sU3lyStD4Q==
+X-Gm-Gg: ASbGncsCfMso9ar81HXuR2E2e1EFI97stqK7dx9fAihIRckSHZZ/d/BAEcs6/8ESXgy
+	2Dpavh9678zwuvRCjZsfb15cmyLE5t1PKsH9+oz4B9rBO8dnW8SjvZszot+UBmRSots+FKrEHnf
+	lCzxvun04codmRjRzWTKQK6wD2W1HRHD/pyAavyKvkW9fyhBQl1NpEzaPG9oAp+1kONW2Tvz31z
+	sqH97XbbkqURx4sstjZwqf6sm6cry0yriBju6ZuqO+PwjSiyIyQtA7rXKp462lPw0uFeIMO7DP5
+	JIX5eqZRdwFGLSxF1zOts2foAk0S5RSmm/pJigJFBooaMZo73bQ64KtSosK+BC+KqceRBdIem86
+	MYSUYiq7kJSoGNJT9zR7X8euD2WHyL0qhemikJLr7z5jMC+cNHpu9keMOpImkLQtgekvFlulBaA
+	==
+X-Google-Smtp-Source: AGHT+IELj7XESXcNTKFyydH9ysU3D3yEIHHtBESIIuXVyNUNifJ3Hkcupco+7VjAtxuCHL7uYEOCqg==
+X-Received: by 2002:a17:902:ef09:b0:27f:1c1a:ee43 with SMTP id d9443c01a7336-290272c2564mr325594625ad.29.1760456004106;
+        Tue, 14 Oct 2025 08:33:24 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c07:6d70:c338:e681:47e3:e797])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f36cb1sm166927545ad.100.2025.10.14.08.33.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 08:33:23 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: rzt2h-n2h-evk: Add VCC supply for EEPROM
+Date: Tue, 14 Oct 2025 16:33:14 +0100
+Message-ID: <20251014153314.177300-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001025442.427697-1-chao.gao@intel.com>
-In-Reply-To: <20251001025442.427697-1-chao.gao@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Tue, 14 Oct 2025 08:32:41 -0700
-X-Gm-Features: AS18NWAyr_emv0Wn0qKZu1kQ6rVRMX-wPuzsEhtIUlCqjC0fqdcjdn3Vc6NfpwE
-Message-ID: <CAGtprH_FzXjnC0Rbctpvm2_kqAAnUOfnaT4885fBiAi7s0jcXw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	reinette.chatre@intel.com, ira.weiny@intel.com, kai.huang@intel.com, 
-	dan.j.williams@intel.com, yilun.xu@linux.intel.com, sagis@google.com, 
-	paulmck@kernel.org, nik.borisov@suse.com, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 7:54=E2=80=AFPM Chao Gao <chao.gao@intel.com> wrote=
-:
->
-> =3D=3D=3D TDX Module Distribution Model =3D=3D=3D
->
-> At a high level, Intel publishes all TDX Modules on the github [2], along
-> with a mapping_file.json which documents the compatibility information
-> about each TDX Module and a userspace tool to install the TDX Module. OS
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[2] mentions about a limitation of doing runtime TDX module update:
+The R1EX24016 EEPROM on the RZ/T2H-N2H Evaluation Kit is powered from
+the 3.3V rail. Add the regulator phandle for the VCC supply to reflect
+this in the device tree and avoid the fallback to the dummy regulator:
 
-"Performing TD Preserving during a TD Build operation might result in
-a corrupted TD hash in the TD attestation report. Until fixed in a
-future Intel TDX module update, a host VMM can avoid the problem by
-not conducting a TD Preserving Update while TD Build operation is in
-progress."
+    at24 0-0050: supply vcc not found, using dummy regulator
 
-Do you know if this issue is fixed already? If so, what version of TDX
-module fixes this issue?
+Fixes: 0176c9e82e10 ("arm64: dts: renesas: rzt2h-n2h-evk-common: Enable EEPROM on I2C0")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> vendors can package these modules and distribute them. Administrators
-> install the package and use the tool to select the appropriate TDX Module
-> and install it via the interfaces exposed by this series.
->
-> [1]: https://cdrdv2.intel.com/v1/dl/getContent/733584
-> [2]: https://github.com/intel/tdx-module-binaries
-> [3]: https://lore.kernel.org/all/665c5ae0-4b7c-4852-8995-255adf7b3a2f@ama=
-zon.com/
-> [4]: https://lore.kernel.org/all/5d1da767-491b-4077-b472-2cc3d73246d6@ama=
-zon.com/
-> [5]: https://lore.kernel.org/all/94d6047e-3b7c-4bc1-819c-85c16ff85abf@int=
-el.com/
->
+diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+index ceecf0c30072..a19b2e289aad 100644
+--- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
+@@ -160,6 +160,7 @@ eeprom: eeprom@50 {
+ 		compatible = "renesas,r1ex24016", "atmel,24c16";
+ 		reg = <0x50>;
+ 		pagesize = <16>;
++		vcc-supply = <&reg_3p3v>;
+ 	};
+ };
+ 
+-- 
+2.43.0
+
 
