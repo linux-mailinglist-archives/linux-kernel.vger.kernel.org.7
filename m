@@ -1,145 +1,229 @@
-Return-Path: <linux-kernel+bounces-852170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B919BD857E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AADF2BD8587
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0DBE4E60FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:03:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 501904F7DD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D322E36F3;
-	Tue, 14 Oct 2025 09:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZ3DE7CE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421682E62C4;
+	Tue, 14 Oct 2025 09:03:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CA21D5CD4;
-	Tue, 14 Oct 2025 09:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274F12E718F;
+	Tue, 14 Oct 2025 09:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760432610; cv=none; b=q9qLkMDBAAkZ7JyK5LuiKhCyOMhFT3seOcGOYnoxYE/gFTiQOcSPADcOC4BcwrkEtB/7nG5YNJDbwMax2bpTY4PnMvgI9ZoxX7V34fmjuDUNs+sBvRbn9JK/1riGIoVFlik47nk3gEhv1B13D9uoDytf/9AQmnhY1NlaFqBM9h0=
+	t=1760432618; cv=none; b=oCjlrPy+JAKGWqRD5RDUjiVH7OEjN6F9KVWjMKpvb7LAul4XieTykpj3iRA1mEfXbf1nRBc4ZtJF8ozYeHZrcPlQVr0rbVRf2T2IaP0wVPhckkygK6lJzJdFN/79n76Ret5lVyk4oVYikZbqLjamaa6O/78YvgmYVodI5BFUHV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760432610; c=relaxed/simple;
-	bh=fkXihXerukmBr4Cr39uGoHGVGXk0EGVBsQV7Qzs68W8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=ewA2k7TlQzTYodZYdodyxNkSniAV4tsumLhu5YQNrmOBrc0+KSpq/ayLGdYXMLh3Yzkdp8yL84XxelXUPWwymyTqrn3IMaywbFuGJqhPBSPJYmJ5BvH3dvbnAdHtZqwqBgnh6QskZI0HM0IyBib5M5gGK1ckOlXgLtrRD1oZ4H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZ3DE7CE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83870C4CEE7;
-	Tue, 14 Oct 2025 09:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760432609;
-	bh=fkXihXerukmBr4Cr39uGoHGVGXk0EGVBsQV7Qzs68W8=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=jZ3DE7CEh/8lQAJgQwP3XloJ2njFpnmpJZlJlG0hKwbJRsZHmjifeIeY1Xe6ViC1O
-	 ftemccZYBJl7B9knHaP4e8bvcyVTUFcY+VCzOcbviQD+PI8z3T35ZIpTe7BiGlD8on
-	 YQDLpMYg6i5lJjXtoixU02GifWcUTL7NyIEgwfgmOlndeq3jjyB03BFWYvEN9SXMeH
-	 u6JmSFlpadp38nN0COYSlqaf5M+Au6ABzDZfsgYvLkLUzzMEMuJDiIuKvaiqNyCqOF
-	 9onXGxs6yIpr2sFvNjO+lAgBSWPnaHplKkXZIwY5OVSeiyZ4Pd4Vlbc9fU7yxXslVC
-	 xD40gB2WVWh3Q==
+	s=arc-20240116; t=1760432618; c=relaxed/simple;
+	bh=qzpSQytulsfACI87Oo+DwR/UtZR57CtnwM47JSBMiz4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CVwM+6hjh/pAyZtbvsww/Phj+02/73MzlNx1yOl/FluR3gmfYX/Vl6cyhLwi8MXbmdowqPhJNkJbk9Z3/k2VhhS8JldXWYD9ToETW5NXp3gg72iotYbwELmmNJWY91LUo3vJ/9wqg8hOB50h52z9sBJUsO4wZvVdDdIP4yr+b2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cm7Xb6BWrzKHMhK;
+	Tue, 14 Oct 2025 17:02:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id D6FED1A1491;
+	Tue, 14 Oct 2025 17:03:31 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP2 (Coremail) with SMTP id Syh0CgCH3UXhEe5oH8xPAQ--.28714S3;
+	Tue, 14 Oct 2025 17:03:31 +0800 (CST)
+Subject: Re: [PATCH 3/4] blk-rq-qos: fix possible deadlock
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+ axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-4-yukuai3@huawei.com> <aO4GPKKpLbj7kMoz@fedora>
+ <f0ab9c95-990b-a41d-477e-c1b20b392985@huaweicloud.com>
+ <aO4L2THnLFM-_Fb8@fedora>
+ <0351f07e-4ac4-a1e2-b4ee-08e49e7d0b6e@huaweicloud.com>
+ <aO4P08Sw2YYjOYtu@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <d216f913-d484-ed6c-78f8-5d53a4b1301d@huaweicloud.com>
+Date: Tue, 14 Oct 2025 17:03:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=cb76824c9f0c47a22e6de9cb32dc6f95d72ef0b186cf187189b9989a28aa;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 14 Oct 2025 11:03:25 +0200
-Message-Id: <DDHX9YA0ZMKO.C1MA3CHLT4ZZ@kernel.org>
-Cc: <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
- <andriy.shevchenko@linux.intel.com>, <broonie@kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Ioana
- Ciornei" <ioana.ciornei@nxp.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "William Breathitt Gray" <wbg@kernel.org>, "Mark Cave-Ayland"
- <mark.caveayland@nutanix.com>
-Subject: Re: gpio: gpio-pci-idio-16 regression after LTS upgrade
-X-Mailer: aerc 0.20.0
-References: <df4857cb-daae-4428-bd93-5878564624c5@nutanix.com>
- <20251009094905.223456-1-wbg@kernel.org>
-In-Reply-To: <20251009094905.223456-1-wbg@kernel.org>
-
---cb76824c9f0c47a22e6de9cb32dc6f95d72ef0b186cf187189b9989a28aa
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+In-Reply-To: <aO4P08Sw2YYjOYtu@fedora>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCH3UXhEe5oH8xPAQ--.28714S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ww4DJFWDZFy8GF43AFW5Wrg_yoW7Aw4kpa
+	y8KF45Aw4qqr1DX34j9w43Wrn7t3yFgr4UZrWrGr1avryqkF1IvF1UtFWUGFy0vry7Cr40
+	qr1UXr4SkFy5KrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 Hi,
 
-On Thu Oct 9, 2025 at 11:49 AM CEST, William Breathitt Gray wrote:
-> On Thu, Oct 09, 2025 at 10:05:58AM +0100, Mark Cave-Ayland wrote:
->> On 07/10/2025 09:16, William Breathitt Gray wrote:
->> > So the intention I had with gpio-idio-16 was to provide reg_dat_base a=
-nd
->> > reg_set_base to define the input and output bases, and then
->> > reg_mask_xlate would do the translation between input and outputs. I
->> > think this design is allowed by gpio-regmap, is it not Michael?
->> >
->> > In theory, gpio_regmap_get_direction should call gpio->reg_mask_xlate(=
-)
->> > which is mapped to idio_16_reg_mask_xlate(), and thus set reg and mask
->> > which then is evaluated at the end of gpio_regmap_get_direction() to
->> > determine which direction to return.
->> >
->> > Is it possible idio_16_reg_mask_xlate() is returning the wrong values
->> > for reg and mask?
->> >
->> > William Breathitt Gray
->>=20
->> The only logic around .reg_dat_base and .reg_set_base in
->> gpio_regmap_get_direction() is this:
->>=20
->> 	if (gpio->reg_dat_base && !gpio->reg_set_base)
->> 		return GPIO_LINE_DIRECTION_IN;
->> 	if (gpio->reg_set_base && !gpio->reg_dat_base)
->> 		return GPIO_LINE_DIRECTION_OUT;
->>=20
->> Otherwise it attempts to use .reg_dir_out_base and .reg_dir_in_base
->> which are not set for gpio-idio-16 because the GPIO directions are fixed
->> and not controlled via a data-direction register. And as these are not
->> set, gpio_regmap_get_direction() returns -ENOTSUPP.
->>=20
->> Were you thinking that gpio_regmap_get_direction() should have some
->> additional direction logic if both .reg_dat_base and .reg_set_base are
->> set, based upon their comparative values?
->
-> Ah you're right, I misunderstood the logic in gpio_regmap_get_direction.
-> So essentially the problem is that gpio-idio-16 has no way of indicating
-> the direction of its I/O because it's mixed.
->
-> The IDIO-16 series lacks a direction setting register, so I think the
-> proper solution is as you suggest: add support for a get_direction
-> callback to struct gpio_regmap_config in the same vein as the existing
-> reg_mask_xlate callback. Then in gpio_regmap_register you can set
-> gpio->get_direction =3D config->get_direction in the same way
-> config->reg_mask_xlate is handled.
+在 2025/10/14 16:55, Ming Lei 写道:
+> On Tue, Oct 14, 2025 at 04:42:30PM +0800, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/10/14 16:37, Ming Lei 写道:
+>>> On Tue, Oct 14, 2025 at 04:24:23PM +0800, Yu Kuai wrote:
+>>>> Hi,
+>>>>
+>>>> 在 2025/10/14 16:13, Ming Lei 写道:
+>>>>> On Tue, Oct 14, 2025 at 10:21:48AM +0800, Yu Kuai wrote:
+>>>>>> Currently rq-qos debugfs entries is created from rq_qos_add(), while
+>>>>>> rq_qos_add() requires queue to be freezed. This can deadlock because
+>>>>>> creating new entries can trigger fs reclaim.
+>>>>>>
+>>>>>> Fix this problem by delaying creating rq-qos debugfs entries until
+>>>>>> it's initialization is complete.
+>>>>>>
+>>>>>> - For wbt, it can be initialized by default of by blk-sysfs, fix it by
+>>>>>>      calling blk_mq_debugfs_register_rq_qos() after wbt_init;
+>>>>>> - For other policies, they can only be initialized by blkg configuration,
+>>>>>>      fix it by calling blk_mq_debugfs_register_rq_qos() from
+>>>>>>      blkg_conf_end();
+>>>>>>
+>>>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>>>>> ---
+>>>>>>     block/blk-cgroup.c | 6 ++++++
+>>>>>>     block/blk-rq-qos.c | 7 -------
+>>>>>>     block/blk-sysfs.c  | 4 ++++
+>>>>>>     block/blk-wbt.c    | 7 ++++++-
+>>>>>>     4 files changed, 16 insertions(+), 8 deletions(-)
+>>>>>>
+>>>>>> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+>>>>>> index d93654334854..e4ccabf132c0 100644
+>>>>>> --- a/block/blk-cgroup.c
+>>>>>> +++ b/block/blk-cgroup.c
+>>>>>> @@ -33,6 +33,7 @@
+>>>>>>     #include "blk-cgroup.h"
+>>>>>>     #include "blk-ioprio.h"
+>>>>>>     #include "blk-throttle.h"
+>>>>>> +#include "blk-mq-debugfs.h"
+>>>>>>     static void __blkcg_rstat_flush(struct blkcg *blkcg, int cpu);
+>>>>>> @@ -746,6 +747,11 @@ void blkg_conf_end(struct blkg_conf_ctx *ctx)
+>>>>>>     	mutex_unlock(&q->elevator_lock);
+>>>>>>     	blk_mq_unfreeze_queue(q, ctx->memflags);
+>>>>>>     	blkdev_put_no_open(ctx->bdev);
+>>>>>> +
+>>>>>> +	mutex_lock(&q->debugfs_mutex);
+>>>>>> +	blk_mq_debugfs_register_rq_qos(q);
+>>>>>> +	mutex_unlock(&q->debugfs_mutex);
+>>>>>> +
+>>>>>>     }
+>>>>>>     EXPORT_SYMBOL_GPL(blkg_conf_end);
+>>>>>> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+>>>>>> index 654478dfbc20..d7ce99ce2e80 100644
+>>>>>> --- a/block/blk-rq-qos.c
+>>>>>> +++ b/block/blk-rq-qos.c
+>>>>>> @@ -347,13 +347,6 @@ int rq_qos_add(struct rq_qos *rqos, struct gendisk *disk, enum rq_qos_id id,
+>>>>>>     	blk_queue_flag_set(QUEUE_FLAG_QOS_ENABLED, q);
+>>>>>>     	blk_mq_unfreeze_queue(q, memflags);
+>>>>>> -
+>>>>>> -	if (rqos->ops->debugfs_attrs) {
+>>>>>> -		mutex_lock(&q->debugfs_mutex);
+>>>>>> -		blk_mq_debugfs_register_rqos(rqos);
+>>>>>> -		mutex_unlock(&q->debugfs_mutex);
+>>>>>> -	}
+>>>>>> -
+>>>>>>     	return 0;
+>>>>>>     ebusy:
+>>>>>>     	blk_mq_unfreeze_queue(q, memflags);
+>>>>>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>>>>>> index 76c47fe9b8d6..52bb4db25cf5 100644
+>>>>>> --- a/block/blk-sysfs.c
+>>>>>> +++ b/block/blk-sysfs.c
+>>>>>> @@ -688,6 +688,10 @@ static ssize_t queue_wb_lat_store(struct gendisk *disk, const char *page,
+>>>>>>     	mutex_unlock(&disk->rqos_state_mutex);
+>>>>>>     	blk_mq_unquiesce_queue(q);
+>>>>>> +
+>>>>>> +	mutex_lock(&q->debugfs_mutex);
+>>>>>> +	blk_mq_debugfs_register_rq_qos(q);
+>>>>>> +	mutex_unlock(&q->debugfs_mutex);
+>>>>>>     out:
+>>>>>>     	blk_mq_unfreeze_queue(q, memflags);
+>>>>>> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+>>>>>> index eb8037bae0bd..a120b5ba54db 100644
+>>>>>> --- a/block/blk-wbt.c
+>>>>>> +++ b/block/blk-wbt.c
+>>>>>> @@ -724,8 +724,13 @@ void wbt_enable_default(struct gendisk *disk)
+>>>>>>     	if (!blk_queue_registered(q))
+>>>>>>     		return;
+>>>>>> -	if (queue_is_mq(q) && enable)
+>>>>>> +	if (queue_is_mq(q) && enable) {
+>>>>>>     		wbt_init(disk);
+>>>>>> +
+>>>>>> +		mutex_lock(&q->debugfs_mutex);
+>>>>>> +		blk_mq_debugfs_register_rq_qos(q);
+>>>>>> +		mutex_unlock(&q->debugfs_mutex);
+>>>>>> +	}
+>>>>>
+>>>>> ->debugfs_mutex only may be not enough, because blk_mq_debugfs_register_rq_qos()
+>>>>> has to traverse rq_qos single list list, you may have to grab q->rq_qos_mutex
+>>>>> for protect the list.
+>>>>>
+>>>>
+>>>> I think we can't grab rq_qos_mutex to create debugfs entries, right?
+>>>
+>>> It depends on the finalized order between rq_qos_mutex and freezing queue.
+>>>
+>>>> With the respect of this, perhaps we can grab debugfs_mutex to protect
+>>>> insering rq_qos list instead?
+>>>
+>>> No, debugfs_mutex shouldn't protect rq_qos list, and rq_qos_mutex is
+>>> supposed to do the job at least from naming viewpoint.
+>>
+>> Ok, then we'll have to make sure the order is rq_qos_mutex before
+>> freezing queue, I was thinking the inverse order because of the helper
+>> blkg_conf_open_bdev_frozen().
+>>
+>> I'll check first if this is possible.
+> 
+> You may misunderstand my point, I meant `debugfs_mutex` can't be used for
+> protecting rq_qos list because of its name. But order between rq_qos_mutex
+> and freeze queue might be fine in either way, just it has to be fixed.
+> Not look into it yet.
 
-IIUC the chip has fixed input and outputs. In that case this should
-help:
-https://lore.kernel.org/all/20250922142427.3310221-8-ioana.ciornei@nxp.com/
+No misunderstood :) I mean if we want to fix this by delaying creating
+debugfs entries after queue is unfreezed, and we have to hold
+rq_qos_mutex for ierating rqos, then rq_qos_mutex have to be hold before
+freeing queue.
 
-I guess Ioana will resubmit the series for this cycle. To fix the
-regression, I guess the patch can then be picked up by the stable
-team along with the driver patch which will set the
-.fixed_direction_output config field.
+A quick look I feel it's ok, I'll try a new version.
 
--michael
+Thanks,
+Kuai
 
---cb76824c9f0c47a22e6de9cb32dc6f95d72ef0b186cf187189b9989a28aa
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaO4R3RIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hzUwF+PpnUOQg6vTdN3rz6ofqVnWvR7WNpH6wt
-6rS4Eh5Zs9sio7sQkBOk7yBB2ZekLs55AYDcUCxWBrQJdAQRRbs+Wr6TWWcGC1Wv
-TzF6aObgGYFmFHOKlenw0x545SnB8vcYTA0=
-=DL4w
------END PGP SIGNATURE-----
-
---cb76824c9f0c47a22e6de9cb32dc6f95d72ef0b186cf187189b9989a28aa--
 
