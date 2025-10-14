@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-852621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BA8BD979F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:56:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5822ABD97A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1384E1927D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88051888AF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA88B313E34;
-	Tue, 14 Oct 2025 12:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7662313556;
+	Tue, 14 Oct 2025 12:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z0uuohsq"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbPNRZGi"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23C619F135
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9066619F135
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760446574; cv=none; b=G6oSqJ3z0tvNzUa4B0epzSuT/cIYawJeC4aVy+vn8piFVDCQT2BjBzq6Ax1mIGyQQbohSnSItk3VAlyC/z9yqImwXMV8zHA3VgJ/frlX7jQb1KbY+2cC8+Q7fOL4otzzVYok+gVSCk2zLV1Xv7Ab3LDp4aI7CpRHk7uUSplPrEw=
+	t=1760446616; cv=none; b=j7WNCD2E9AJiFp6m7wK/d7IxfsLqHGbQM+6QxY/HVLekBBVZcaCS4SsC3B95AGmkkiBJNpTKnXD9qYaPlGZL/2B2UQMzIU8BqS7fPIDhVrzks5NP7y/HBlynyYGsjXYxSSds7G5laaq0l9YlL4vGnqdAoKaqWNjagHW1IvmJoCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760446574; c=relaxed/simple;
-	bh=oOoMCg4/1vDsD6BLsoeV5wac8hSuGH2pzXavQmet+DA=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=AgYM4GhX5C4bpPMv6mmksGeB2J63PPDESzTA8n4g0Jo3fLzb60PG1rEEQGdJi/MFi5Yv/wgEx2jS/nj8hOoGnteugSWnwrAsdEydA/di3iGL8y1PXJZBfFuTBHsHsVRL4fsRdSLAyj758TbYolypDAlV1OwAIn3FWOtAeBqpNIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z0uuohsq; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1760446616; c=relaxed/simple;
+	bh=LZnaDE/S/cnLfsiCdgYQZBmm8CJyduVyYwPzdW3joA4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eHCiAg+LiTpzeTD4eAks4kv5JPZnflZ2yWCDZHCtRMx87N8qCQluS2WZMGZBQuwzoHZV52qeAqzDvtVVFxBFLC6Uf9CWUK98pKdGDEqHqKwiJ9AvARRJEKgop0rCdqASVAA79PCDlnuHpV/FBoToRIi+Fla3VzuifCSqtp8gzFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FbPNRZGi; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-28e7cd34047so41349425ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760446614; x=1761051414; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o38gmX36PyqmjEq1ZTvcb122z3x4XvhpJiBBsGOOwy4=;
+        b=FbPNRZGiLlkHEVjPtMDE/f1z5U1yIEiU035iCpunTyU/ld5oATJ8lClY5OqD105BzS
+         eI7QvYUm9gH+2MKQ6WykSrwaoEgBhK91CY4PqBy6Uz23qRyomKKk8Oc9s2u+eyvB0rZX
+         CJxDLylDF32QwYdxip7h4nVmW7FdUvsK3iqmCJNy0xK7WkG01cRVP8UUxvk2ZWgevegy
+         PNzPtYHlnxkbl5CEHdqNU6XP7fQ5VBAt6+EIlJr+BjvC3zeQts6WDRo6/itAyCWtWlg9
+         b0vUsuxYmOSQN3XxuorxKcYXI5DMWvZH482thHvcV780xzQfQewDXohLBNS8mgsGt7kJ
+         6jAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760446614; x=1761051414;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o38gmX36PyqmjEq1ZTvcb122z3x4XvhpJiBBsGOOwy4=;
+        b=XuIOoPtg4pJP/tTzma2eAe/UhPjpfFO/81coFiXQQ8NX47S7aa48GHp8XOOF40XE4r
+         zlyLcpfOCQF/+f/WuSkvlammPA8H8pW1ig22gU84QumyOG7aL/SM61ObLmwbZVmzZxH8
+         Vir2N1lKj67G/OYcEQmsrqGBdy83k/BFnC2YLDSugLL8JTBPxpZsVoRZqLg74fkAAi05
+         DcpsxbxPcDGvo06h0mWCdX2ZkthrVTRrfEzLdkT5Bf/ZXaYsc8Yu6doypm+SUg+0Nw7b
+         kO/FcydqNaM7itPS5yz0E0SqfWpoc+0iRZ9B5QxZ0DstUCFGApAFMmULtCLgl6+EMInn
+         X0JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3VlSe7uEF+i+hF+fxrcAa6jBStSkDk/1o9lMIwiTLOhRDWs6F3GFzS4mwxtVLu4CNvbgkYY4l68zJXbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVd62r+nEIaLom/9+10QlmYl5nxE/Nb4B/q5s8NaEEzj2VIVEv
+	CUgbS7ojRpzHs0ZO71HDvyk7zho0j+ISOBsPHu/6886bh/XYRIQFwRTn
+X-Gm-Gg: ASbGnctGEnb4H8YszToRxzgffIbxpt4Ch25HCB4Uh4z1vKlXauTF4FuZ7LSrCu6U5vZ
+	93ECHLYmBY5b/wbFokUH4mjnWiKjjxj/X36/BZ0z30E4tlJ365iSgsdCbgm5rYc6dndYFbQXXmI
+	Pc1iVDH9t3lX1yTzh+5dI7F/HuQvV308dje6KSHPpO1Qchk4OXzv0u4cSjzBq4VTSlQN1FruShS
+	csAJqQIY5jifbk2UQTGlHhz+YGuLfKLg3dt0AK0rnzHKhm5k6pY4RS8OcS4NXnZ9nfyKWUvVQXg
+	pPZqXNkE6C9YXgIlcZbAVzLBBjR3x9X57V6O3Sc0m3/L4lj8sZt6pXa5TSj+i0+s1pQwRg+DuDg
+	Ka3XgFujaFAV5XVl8GNQU4Z2bs8yLe4pmSSeDxk2N/0wytD4brQveOKd/Sm1D3fFmBIqONHizS6
+	k=
+X-Google-Smtp-Source: AGHT+IFFPt+m448T/uVhH/uFa4IYkTCQ7dJj+PBX8yKsxeuPCGTRZrXD06eMiOSktRMiwnrCyjS6iw==
+X-Received: by 2002:a17:903:2351:b0:269:a23e:9fd7 with SMTP id d9443c01a7336-29027262689mr366784675ad.26.1760446613904;
+        Tue, 14 Oct 2025 05:56:53 -0700 (PDT)
+Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f3ab2fsm163919985ad.105.2025.10.14.05.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 05:56:53 -0700 (PDT)
+From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+Date: Tue, 14 Oct 2025 09:56:43 -0300
+Subject: [PATCH v1] arm64: dts: imx8-ss-img: Avoid gpio0_mipi_csi GPIOs
+ being deferred
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760446568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d80O38LxInO3RE5E1ZtL0vaLg4kbXe5845oQ64nU2Mk=;
-	b=Z0uuohsqURAnC3fKaPtMPA0vpiJv2cHrLOxynTW3IZoeUJyY+B+AodkQaQnfoTUgyr+N7u
-	2ixWgc8HImPK1lufV2uAGEHawfoiL9fEZnhqclg1HxQZzdarnXIMJaIgqv5eWRPxjk9KtE
-	vpbNivyB2EgkuZ9ENyUF223yRwONiFE=
-Date: Tue, 14 Oct 2025 12:56:06 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <a6cd4eb712f3b9f8898e9a2e511b397e8dc397fc@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v1] mm/vmscan: Add retry logic for cgroups with
- memory.low in kswapd
-To: "Michal Hocko" <mhocko@suse.com>
-Cc: linux-mm@kvack.org, "Andrew Morton" <akpm@linux-foundation.org>, "Axel
- Rasmussen" <axelrasmussen@google.com>, "Yuanchu Xie"
- <yuanchu@google.com>, "Wei Xu" <weixugc@google.com>, "Johannes Weiner"
- <hannes@cmpxchg.org>, "David Hildenbrand" <david@redhat.com>, "Qi Zheng"
- <zhengqi.arch@bytedance.com>, "Shakeel Butt" <shakeel.butt@linux.dev>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- linux-kernel@vger.kernel.org
-In-Reply-To: <aO4Y35l12Cav-xr4@tiehlicka>
-References: <20251014081850.65379-1-jiayuan.chen@linux.dev>
- <aO4Y35l12Cav-xr4@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251014-imx8-gpio-csi-deferred-probe-v1-1-62dd1b949731@toradex.com>
+X-B4-Tracking: v=1; b=H4sIAIpI7mgC/x3MQQrDIBAF0KuEWXdAUwxNr1K6sPpNZtEoIwQh5
+ O6RLN/mHVShgkrv4SDFLlXy1mEfA4XVbwtYYjeNZnTWmJnl3168FMkcqnBEgioiF80/MJCm4Cb
+ /dN5TL4oiSbv7D+2Wvud5AVmyznRyAAAA
+X-Change-ID: 20251009-imx8-gpio-csi-deferred-probe-eef6c56a35aa
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
+X-Mailer: b4 0.14.2
 
-October 14, 2025 at 17:33, "Michal Hocko" <mhocko@suse.com mailto:mhocko@=
-suse.com?to=3D%22Michal%20Hocko%22%20%3Cmhocko%40suse.com%3E > wrote:
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
+The gpio0_mipi_csi DT nodes are enabled by default, but they are
+dependent on the irqsteer_csi nodes, which are not enabled. This causes
+the gpio0_mipi_csi GPIOs to be probe deferred. Since these GPIOs can be
+used independently of the CSI controller, enable irqsteer_csi by default
+too to prevent them from being deferred and to ensure they work out of
+the box.
 
->=20
->=20On Tue 14-10-25 16:18:49, Jiayuan Chen wrote:
->=20
->=20>=20
->=20> We can set memory.low for cgroups as a soft protection limit. When =
-the
-> >  kernel cannot reclaim any pages from other cgroups, it retries recla=
-im
-> >  while ignoring the memory.low protection of the skipped cgroups.
-> >=20=20
->=20>  Currently, this retry logic only works in direct reclaim path, but=
- is
-> >  missing in the kswapd asynchronous reclaim. Typically, a cgroup may
-> >  contain some cold pages that could be reclaimed even when memory.low=
- is
-> >  set.
-> >=20=20
->=20>  This change adds retry logic to kswapd: if the first reclaim attem=
-pt fails
-> >  to reclaim any pages and some cgroups were skipped due to memory.low
-> >  protection, kswapd will perform a second reclaim pass ignoring memor=
-y.low
-> >  restrictions.
-> >=20=20
->=20>  This ensures more consistent reclaim behavior between direct recla=
-im and
-> >  kswapd. By allowing kswapd to reclaim more proactively from protecte=
-d
-> >  cgroups under global memory pressure, this optimization can help red=
-uce
-> >  the occurrence of direct reclaim, which is more disruptive to applic=
-ation
-> >  performance.
-> >=20
->=20Could you describe the problem you are trying to address in more deta=
-ils
-> please? Because your patch is significantly changing the behavior of th=
-e
-> low limit. I would even go as far as say it breaks its expecations
-> because low limit should provide a certain level of protection and
-> your patch would allow kswapd to reclaim from those cgroups much sooner
-> now. If this is really needed then we need much more detailed
-> justification and also evaluation how that influences existing users.
->=20
+Fixes: 2217f8243714 ("arm64: dts: imx8: add capture controller for i.MX8's img subsystem")
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+---
+ arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
+index 2cf0f7208350a416d77b11140279d2f66f41498f..a72b2f1c4a1b2ef26196c810b33ecfdebdbc1675 100644
+--- a/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
+@@ -67,7 +67,6 @@ irqsteer_csi0: irqsteer@58220000 {
+ 		power-domains = <&pd IMX_SC_R_CSI_0>;
+ 		fsl,channel = <0>;
+ 		fsl,num-irqs = <32>;
+-		status = "disabled";
+ 	};
+ 
+ 	gpio0_mipi_csi0: gpio@58222000 {
+@@ -144,7 +143,6 @@ irqsteer_csi1: irqsteer@58240000 {
+ 		power-domains = <&pd IMX_SC_R_CSI_1>;
+ 		fsl,channel = <0>;
+ 		fsl,num-irqs = <32>;
+-		status = "disabled";
+ 	};
+ 
+ 	gpio0_mipi_csi1: gpio@58242000 {
 
-Thanks=20Michal, let me explain the issue I encountered:
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251009-imx8-gpio-csi-deferred-probe-eef6c56a35aa
 
-1. When kswapd is triggered and there's no reclaimable memory (sc.nr_recl=
-aimed =3D=3D 0),
-this causes kswapd_failures counter to continuously accumulate until it r=
-eaches
-MAX_RECLAIM_RETRIES. This makes the kswapd thread stop running until a di=
-rect memory
-reclaim is triggered.
+Best regards,
+-- 
+João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-2. We observed a phenomenon where kswapd is triggered by watermark_boost =
-rather
-than by actual memory watermarks being insufficient. For boost-triggered
-reclamation, the maximum priority can only be DEF_PRIORITY - 2, making me=
-mory
-reclamation more difficult compared to when priority is 1.
-
-3. When we find that kswapd has no reclaimable memory, I think we could t=
-ry to
-reclaim some memory from pods protected by memory.low, similar to how dir=
-ect memory
-reclaim also has logic to reclaim memory protected by memory.low.
 
