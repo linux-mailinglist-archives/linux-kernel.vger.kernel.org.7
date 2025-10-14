@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-852070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DB7BD81A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:09:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16E1BD8192
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE711922037
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D783A8C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4B130F532;
-	Tue, 14 Oct 2025 08:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA9D30F558;
+	Tue, 14 Oct 2025 08:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="rc1kw4HY"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OBAiggUH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A642FD1B2
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCD230F532
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429224; cv=none; b=RYuuk2p1rGYqjQNWQm145g7rXV+EsmpjeYTGeMf5NJI84mE4l/UyJ6aLNkbmMX8cwhsxixGqM8i0rwsVLxkxeo1G7E/DpExoEaNkiW2d9snvQi2vY+icI56UYU+ON1vqcyoEeo9KFje8HjSmrsivlpeaOIG+0cPL205Q1Se6bs0=
+	t=1760429236; cv=none; b=Oc5xF2gCxQyYtPVehJoge/645THoDtPvpAwNNxXS77q7EIcUD9DUVl0BiEvldSCpyczNgscXIPdNe/Y+9RL/c634FBeDIl+2yyzjxWT9Lvrgj+Ltmlk8IGb/I9CetWfnWu7iyXeZvUfzydcx5RFkdIU7Gc6qc3SVHGJGpFzp32s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429224; c=relaxed/simple;
-	bh=gaSrNFnxGmoWet5IGMWfVxdar8Dax24kjJ0xtMz88wY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YyWONDs8GUyQHn1K8abZcdcvfUQoFxpqD1lih15Qz0BAto4lWis+ArXnwEKjDLlTlFFIc+air70d4BY0xz5I4acly6seceAthzum/SzW9stoQOihagEtLD31B0PJHJjyWTIcq3Y1l0cmuyHgemMzqWZUrWf47JgriBtCb+3zC0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=rc1kw4HY; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-863fa984ef5so837290885a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:07:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1760429221; x=1761034021; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaSrNFnxGmoWet5IGMWfVxdar8Dax24kjJ0xtMz88wY=;
-        b=rc1kw4HYUwr0J+7VjLspfU3d24nD+7iHjbbFHa4aJJMEPazlubRP3eBm1wfICIWAtE
-         zB19VarqawbMtY4QCSQa2TX8nxHGoGnBWvWswkA3X2ZuQ8ItOY527qDJ1m2kE4GGhh8L
-         Fhmoqs55xEDQnMA3i2UcCoiDeTF9QT3qYo4Pc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760429221; x=1761034021;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gaSrNFnxGmoWet5IGMWfVxdar8Dax24kjJ0xtMz88wY=;
-        b=UbbxOf2NpijRghIUGDcA5cdKZvs4SrVQxvGjVJJg63TL0yGUD4C1kGj5z9SCBkIC/+
-         tquVg9IrKhtoTGy3SN7LyMdrQCqrwsFkAGIMUG7wP3dp/r+MEx9mDtlNpH3nohPPDKHV
-         3btyKT3jiOh/OHp/TTUR6OJhGo54Ie3yt7JRh4f3+DJ6pofDrQ/TtNyF4+Bm8fyR4wdA
-         DYox123LBHlLeU+Tlg8Jk3rNzZOIPFJ5eQGkDxpkXrRft0jnajhKie3GvRtL8yQOpvM/
-         aHEMBZa/0QCKxksb8LSK26s31SHo7zLudOqI6NOJcW3IZEQnebPIfjbYSJ5oWXBAZC1c
-         ha+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVKnfNniLE8SGj6GG9KJL8f0DxBjCfsdpsnDKT7hRl/89nmsFaNbDtgZG1ORXUEAAO+r0u24cnMhmz2oo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8tODhuoEftksObgxH1eu9miRNLquUt423prOCCeRtFm6yeYD8
-	GJ2N9Q5/M+PCpWWXArRQzOQ6/oP6YSw8c2r3OoR4d2sGYAPT2WmQrYpfEtMTLAQz3eJLptUTZ3G
-	PDhlPLRMwnGo2ekajEMCgIGgqo2JZ0C9u/6g/xvf9PA==
-X-Gm-Gg: ASbGncswgOaVh9/3zU85MysMWPiV1PfiERszVrK5Yv5ClBVQus+fyQm/shxaVGwrSu/
-	EYAGLKI6bYOXvjp4kdlb8GfbYtuKX96pWvch5hE3Oaheq+ionpotq0l0PVKRX6v+Fi12+yEGTTS
-	KZhT3FTnT6mcU6VsWBsznmYtRxOTdifO3WALMretm9U9yHGzHHIJHLfoTX2WV+bFDbAbfIhMmJM
-	RRHuSuoNwl9Dgp7BNDld1ZMhSqjPe8fLqz1P/qsBi3uiFHLunODlvoaPJketPPEuy5XRQ==
-X-Google-Smtp-Source: AGHT+IGZ+aeN0K7J2mOJHMpdF50iEHtXyXs8Vs6iTcWHhQxhE8sH0fNPoY2WKEuKSaxfOotYWPF0p7oQCdN5qZUhbrM=
-X-Received: by 2002:ac8:5d05:0:b0:4b7:8d26:5068 with SMTP id
- d75a77b69052e-4e6eaccbd0dmr317846191cf.17.1760429221421; Tue, 14 Oct 2025
- 01:07:01 -0700 (PDT)
+	s=arc-20240116; t=1760429236; c=relaxed/simple;
+	bh=W/8qUuXfRe1sI3GhG5HJ/sXq7n9SBQbq5yaCU3/GG28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S83qjK4lobhYlTV5j3++oZl/l8pqT5BBOqtnZwcRnArHEN51kpBgJFX4wCxx7aqBTwAMLRQaZMWT6brnoEeC5ng+itKKbi+4g0toqoj+mBtrv5gDqGvxwXvmX4SZdpF0uOEhkAIxzaA9NCZJjH4FtxGUDPq2MK6gTk7Ft64X0Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OBAiggUH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760429234;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tTrkuFKTla2K+L8YNXA54XVUf+zQx19gGP/m/Y+qRUc=;
+	b=OBAiggUHksT83LnEPnBI1ZljBT054SuPps+6FC5Mz6+KHkS/C1Z1ms7362FkarnylUrpFk
+	Azfm3JP+SA87pBUquCk/iIZ59QgGY1F/yIZK8uZy4vvomozEDufS/WzRmJkQDFSgs5Lmdd
+	xXJvDnxjgCE/zxT8mLsNiYXwF3r4wEA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-XofPY518O7e8QPEJScQ0TQ-1; Tue,
+ 14 Oct 2025 04:07:10 -0400
+X-MC-Unique: XofPY518O7e8QPEJScQ0TQ-1
+X-Mimecast-MFC-AGG-ID: XofPY518O7e8QPEJScQ0TQ_1760429228
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF95D180045C;
+	Tue, 14 Oct 2025 08:07:06 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D33F19560B8;
+	Tue, 14 Oct 2025 08:06:58 +0000 (UTC)
+Date: Tue, 14 Oct 2025 16:06:54 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai3@huawei.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+	axboe@kernel.dk, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: Re: [PATCH 1/4] blk-mq-debugfs: warn about possible deadlock
+Message-ID: <aO4EniFy63IlWM_-@fedora>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-2-yukuai3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
- <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
- <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
- <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
- <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
- <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com> <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
-In-Reply-To: <d82f3860-6964-4ad2-a917-97148782a76a@bsbernd.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 14 Oct 2025 10:06:49 +0200
-X-Gm-Features: AS18NWCR1GKck-Wej2NUo535YcBBaKeSQhVsfQwZGBEEsJgxvdNEg-fGJr-c27I
-Message-ID: <CAJfpegt7WvXZr4D4kqGujD=MXEQa7oRH3gvk90+D7Pha0MJJBg@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Brian Foster <bfoster@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014022149.947800-2-yukuai3@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, 13 Oct 2025 at 22:16, Bernd Schubert <bernd@bsbernd.com> wrote:
+On Tue, Oct 14, 2025 at 10:21:46AM +0800, Yu Kuai wrote:
+> Creating new debugfs entries can trigger fs reclaim, hence we can't do
+> this with queue freezed, meanwhile, other locks that can be held while
+> queue is freezed should not be held as well.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-mq-debugfs.c | 31 ++++++++++++++++++++++++-------
+>  1 file changed, 24 insertions(+), 7 deletions(-)
+> 
+> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+> index 4896525b1c05..66864ed0b77f 100644
+> --- a/block/blk-mq-debugfs.c
+> +++ b/block/blk-mq-debugfs.c
+> @@ -608,9 +608,23 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
+>  	{},
+>  };
+>  
+> -static void debugfs_create_files(struct dentry *parent, void *data,
+> +static void debugfs_create_files(struct request_queue *q, struct dentry *parent,
+> +				 void *data,
+>  				 const struct blk_mq_debugfs_attr *attr)
+>  {
+> +	/*
+> +	 * Creating new debugfs entries with queue freezed has the rist of
+> +	 * deadlock.
+> +	 */
+> +	WARN_ON_ONCE(q->mq_freeze_depth != 0);
+> +	/*
+> +	 * debugfs_mutex should not be nested under other locks that can be
+> +	 * grabbed while queue is freezed.
+> +	 */
+> +	lockdep_assert_not_held(&q->elevator_lock);
+> +	lockdep_assert_not_held(&q->rq_qos_mutex);
 
-> For an intelligent server maybe, but let's say one uses
-> <libfuse>/example/passthrough*, in combination with some external writes
-> to the underlying file system outside of fuse. How would passthrough*
-> know about external changes?
+->rq_qos_mutex use looks one real mess, in blk-cgroup.c, it is grabbed after
+queue is frozen. However, inside block/blk-rq-qos.c, the two are re-ordered,
+maybe we need to fix order between queue freeze and q->rq_qos_mutex first?
+Or move on by removing the above line?
 
-It could use fanotify or leases for example to check for external modification
+Otherwise, this patch looks good.
+
 
 Thanks,
-Miklos
+Ming
+
 
