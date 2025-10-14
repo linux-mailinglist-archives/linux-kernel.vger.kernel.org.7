@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-853376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28459BDB6EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E521CBDB707
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 786CD4FA52B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:43:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 077FE4FBF44
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292D62D4B4B;
-	Tue, 14 Oct 2025 21:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0252A2EA17A;
+	Tue, 14 Oct 2025 21:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmd80W/Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTthmD62"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871ED29A301
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FE21FC3;
+	Tue, 14 Oct 2025 21:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760478188; cv=none; b=XdmwEestKOlwoZcrC8nnsFVZTp2w7+EeDZwDvpvoLwwJ7TLCgY0ZOVfpag/KnMoIO5WXItRM7CcuM0uqeTpl3VB3z7HG4UmEAEV6hg2cJPZjkK0tPMU6ix8EDXcEfnMQ29B00IRdJBfdSJnNNkOl6OrGMqnYxL/hoJKpTQSWEQA=
+	t=1760478382; cv=none; b=WBXqsxV98f48NWjWX8ejCx4vKwrjv3fTjpMMc5ESvgcu8p9bv3DTi7rhGUSRHOymzb9ffQy9Xepg1xQoHJ3w5tiCevdlzbK/PLVwWowUc6UhcQUqMubs9YJ54ttWNAMMj7MgKP0kEHazy5RQQaPKWaIo6NBON1IiH3jFuOV3Fmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760478188; c=relaxed/simple;
-	bh=LRljLPxaEQbTwtDrQiCyNR63yfM2iVls8Na9Cwrj4uM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SHQ3Ew1yqZVlP0BVqZrn6vYfcAKIRiHCVAeVz8DBVYq2LZi2A28xY3cCQaor1jJAxJlMhp7OLDG/6S2v+Win+2sPPo7ZptcbPpcN3Giw0lh4jMyMG83RQ8DIJwPuFt0XuBZ5r6l9D4PQy8m370PaRaHDYU3+9XjZl9OY+jz/NDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmd80W/Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2523FC4CEE7;
-	Tue, 14 Oct 2025 21:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760478186;
-	bh=LRljLPxaEQbTwtDrQiCyNR63yfM2iVls8Na9Cwrj4uM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jmd80W/YRIcA4dQNGPY5FgKHmtjcXYldtMaf70v1N8zwqbvI9jR2MTDv58nrnu3Bv
-	 yumduFDeZnKiRACxkP3iMCvBIwrGhbadzQAOvDL+VavMaQdjomOzeboANqOg6YvZB3
-	 UCzmgbgza/wSuKMIML7yz8ci2h65hurCSA6vbkpVAkRonXeKzejp/8CmZ670mTUDGr
-	 N1Zy20w7k1Pz7b+niSJfKKrrJR9CVqwXNRVAuklWDkpGvf9+YxInyoVcH+NYeo7fdX
-	 G2yFzBxoxnUUMAvLhrYiQgY9FHpLtbNWo3/QR2eJnDsMbLC48XtGyf5C4Q3I0sK7Bb
-	 PdqRpxSF9NTQQ==
-Date: Tue, 14 Oct 2025 22:43:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Atish Patra <atish.patra@linux.dev>,
-	Anup Patel <anup@brainfault.org>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RISC-V: Don't print details of CPUs disabled in DT
-Message-ID: <20251014-voicing-zoology-7873581cc192@spud>
-References: <20251014163009.182381-1-apatel@ventanamicro.com>
- <20251014-5305a0b88ee761d57e3f29bb@orel>
+	s=arc-20240116; t=1760478382; c=relaxed/simple;
+	bh=AHlYYVa0PMPbNm5l5VSaMdqIRIUjjT7JizLHywZe0bM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ZsYD5tBcLnDt441p46uy6fi6zF4jFDqYkQ5H2fe00Y9ylUno4kCmmETBcCL19NO+8eKnGHTcmroLHUiHcPyCWZHy/PPK4A9TFTNHY84Tei0a0od1rgnpzBtSIYbR8AJ0T7N0/sVvQv8CfU1LpQx/PwpZNy3ttSU5yGmTWNSm5cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTthmD62; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760478380; x=1792014380;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AHlYYVa0PMPbNm5l5VSaMdqIRIUjjT7JizLHywZe0bM=;
+  b=MTthmD62Ap7iQ+jBWnZJhD5XNjFJUeQR7elFZb/FfRSxd6xWfyV2MVjR
+   V/bRE5dKTNjsNVPStPiAJ7osUnTbL6mPbGQ5fzOjqesz9UDDHGSVl9879
+   03zsPHepVDoFjr2eCgDSnHlFDO/ZqlKflziPKpExmdEgF+wyw1Y6j82z+
+   dI8MZigfrZrgkiuZBkF7bFsLWunVA3e1ywemMr8+wJm25dJkzH9EQdeTk
+   4Cyb1m9bfrvK+6PWUiEwsFMp8SbQEs3mp2Gds9bl/BKGOqrqEa6L6AUOM
+   Nxmr4TTmXpbgQrTBbLEPX4d6jf5DQ1aiS49LIe883sFuY+/RZFB7T4GPO
+   Q==;
+X-CSE-ConnectionGUID: bJXuC0WzSRWTgpqn+Loitg==
+X-CSE-MsgGUID: NzlGMQLBRgKdNeAm3ZH9sw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62682436"
+X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
+   d="scan'208";a="62682436"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 14:46:20 -0700
+X-CSE-ConnectionGUID: TXjJl8f3QcycRJhLETeo+g==
+X-CSE-MsgGUID: UjJTXJ/TTUeVridYWt63uQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
+   d="scan'208";a="187300315"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO xpardee-desk.intel.com) ([10.125.111.190])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 14:46:19 -0700
+From: Xi Pardee <xi.pardee@linux.intel.com>
+To: xi.pardee@linux.intel.com,
+	irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH 0/6] Update Arrow Lake telemetry GUID
+Date: Tue, 14 Oct 2025 14:45:28 -0700
+Message-ID: <20251014214548.629023-1-xi.pardee@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KWNSzEgGgBuTmFqL"
-Content-Disposition: inline
-In-Reply-To: <20251014-5305a0b88ee761d57e3f29bb@orel>
+Content-Transfer-Encoding: 8bit
 
+This patch series updates the Arrow Lake DMU telemetry GUID and enhances
+the infrastructure for managing lpm_req_guid. Additionally, it includes
+two patches that improve the intel_pmc_core driver.
 
---KWNSzEgGgBuTmFqL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first three patches update the Arrow Lake DMU telemetry GUID and add
+support for multiple possible GUIDs. The fourth patch standardizes the
+naming convention for PMC variable indices. The fifth patch enhances
+lpm_req_guid management. The final patch removes an unnecessary variable. 
 
-On Tue, Oct 14, 2025 at 12:50:11PM -0500, Andrew Jones wrote:
-> On Tue, Oct 14, 2025 at 10:00:09PM +0530, Anup Patel wrote:
-> > Early boot stages may disable CPU DT nodes for unavailable
-> > CPUs based on SKU, pinstraps, eFuse, etc. Currently, the
-> > riscv_early_of_processor_hartid() prints details of a CPU
-> > if it is disabled in DT which has no value and gives a
-> > false impression to the users that there some issue with
-> > the CPU.
-> >=20
-> > Fixes: e3d794d555cd ("riscv: treat cpu devicetree nodes without status =
-as enabled")
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > ---
-> >  arch/riscv/kernel/cpu.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >=20
-> > diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-> > index f6b13e9f5e6c..3dbc8cc557dd 100644
-> > --- a/arch/riscv/kernel/cpu.c
-> > +++ b/arch/riscv/kernel/cpu.c
-> > @@ -62,10 +62,8 @@ int __init riscv_early_of_processor_hartid(struct de=
-vice_node *node, unsigned lo
-> >  		return -ENODEV;
-> >  	}
-> > =20
-> > -	if (!of_device_is_available(node)) {
-> > -		pr_info("CPU with hartid=3D%lu is not available\n", *hart);
-> > +	if (!of_device_is_available(node))
-> >  		return -ENODEV;
-> > -	}
-> > =20
-> >  	if (of_property_read_string(node, "riscv,isa-base", &isa))
-> >  		goto old_interface;
-> > --=20
-> > 2.43.0
-> >
->=20
-> Maybe we should keep the message as a pr_debug()?
+Xi Pardee (6):
+  platform/x86:intel/pmc: Update Arrow Lake telemetry GUID
+  platform/x86:intel/pmc: Add support for multiple DMU GUIDs
+  platform/x86:intel/pmc: Add DMU GUID to Arrow Lake U/H
+  platform/x86:intel/pmc: Rename PMC index variable to pmc_idx
+  platform/x86:intel/pmc: Relocate lpm_req_guid to pmc_reg_map
+  platform/x86:intel/pmc: Remove redundant has_die_c6 variable
 
-I don't even know if that really has any value, there's plenty of places
-in userspace to get access to what CPUs are enabled and having no CPUs
-triggers a BUG().
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+ drivers/platform/x86/intel/pmc/arl.c  |  12 +--
+ drivers/platform/x86/intel/pmc/core.c | 150 +++++++++++++-------------
+ drivers/platform/x86/intel/pmc/core.h |  14 +--
+ drivers/platform/x86/intel/pmc/lnl.c  |   2 +-
+ drivers/platform/x86/intel/pmc/mtl.c  |   9 +-
+ drivers/platform/x86/intel/pmc/ptl.c  |   3 +-
+ 6 files changed, 97 insertions(+), 93 deletions(-)
 
->=20
-> Otherwise,
->=20
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+-- 
+2.43.0
 
---KWNSzEgGgBuTmFqL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO7D5gAKCRB4tDGHoIJi
-0kHFAQDVxoesuzHdEbDDnzDbWdzCv+ITIcqRHGyNWkXnKoO6QAEA/Qa6YcmgxX/J
-ZePPxLUzqlVZ+/tdFlC+ibydJ7VqbgQ=
-=jt3k
------END PGP SIGNATURE-----
-
---KWNSzEgGgBuTmFqL--
 
