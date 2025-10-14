@@ -1,318 +1,268 @@
-Return-Path: <linux-kernel+bounces-851838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313BFBD768C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:24:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E6EBD76BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC0218A1AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9305F3AD488
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD7D2877EE;
-	Tue, 14 Oct 2025 05:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9629ACEE;
+	Tue, 14 Oct 2025 05:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p8leib+/"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrE5TzHW"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BF86342
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A16026F291
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760419456; cv=none; b=fw7DEEkjV4bH2Y/qQ8pHUSL7teI8PfINElWuWe6eOUTEaB96nNsMtlmSQPKbXxiLIfbmH32Wznsg0Mz/NfpjG5N23PgqdNLg35r3WSDDLys1FOVza/oKrbR5HG+Epx3fzcaFf9R8ZSHn7XW+eoa07FEegggSvjiQPnDu9bDXUv4=
+	t=1760419690; cv=none; b=COdSZRqGYJVHau5ppBZhKVrXtoU29PlOSrTEbtjvvUUjOekFDd7cPysiG64EYGg0ueyR3bGKnDOtuAgbo4UaQ716lNekBXTY/tFQOiwB2Kjvi1eQK9webFm/JvTg48SFFOaELtTFP+v2iLkYMcxL1VZ24xj07MZXrregMxjvyTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760419456; c=relaxed/simple;
-	bh=BGq6gtuVw1ZkzpsV6xc9p1v0Lm/eZZH90GULnLK4vPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=nCenb3p+XWVSaaoSVvIj7G5VbbsZmnqKkgkvmB5mF7SZ36YyFg/GxYkXD2SzbuTqP0AZYOfrZpXqjqMLLU3DQIaXIQAOFeshNzO9Y4J3CyBwN2Tau8b/Wkgfd/2j5J9Iin7+FbwTZVr9wz7vdSX+Vs5OcdazcKSuQ/QhlON+jQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p8leib+/; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760419449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpX3fKP+qE+Cx5wSUCGxJKl073ySrCz333lfcH4KD3U=;
-	b=p8leib+/+Uzn8bRajg1xnIwVcJSrt3m0lLnVFEIkwQAkMvKJQmbU9EGJUvpUGsXfHbBKMz
-	ViA1mGiVwlTmDegFHZtPQpjF1hQMZ/LGvEipWPUwAW24TAK7NbpWInZInaEKhsMcGnXez2
-	/yS+HTRDNOUcLHOMcRQGei7svVjH4HY=
-Date: Tue, 14 Oct 2025 13:23:58 +0800
+	s=arc-20240116; t=1760419690; c=relaxed/simple;
+	bh=A+O8Mu5AVJjST6AGpK6YcqU7dC0vCZc73yf6uJmZfJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lQ89dE8iFMfsTgj0KwyWb5hSUQowAoWIvWae9d3qHDLAw9JPpqxFuIWDT0ebJC4MVYI9H1uRzSihBHRdJcLEoSaoA1SwmNtlkH9VG1q1TEcD84alxQXqB4jAvB2Pp2Ar0GpoM+krN5JGW0FyDn4CPs4KkJBsGssC8Vgtil461nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrE5TzHW; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3322e63602eso6591510a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760419688; x=1761024488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUVXFTv/D7jLsv5kpoyfzsqtL+REv8AzIuYw8UUsFXE=;
+        b=DrE5TzHWCH1bPz3/OF4mMSK7TCWKN00N/JaIrXWBIuDesv3U0iKnq5yma/UWBZXojX
+         oTayz6e+XSAz/B+4J6YWwTjyGr/TstuOG51Lx5SkaISGA8HlSMm0xYwUXmIdVEXvtq6+
+         yG56Z6zy49ypCDHP2JGhFYPOER4SyFTWFlmdag2i/c+VoYdxJZLsiof7wRvqG58ZBcF/
+         QNNzxnCErV+lfNEsKiJTqn7xFp4TE61iNwsqa2fynTlYt2p89Yi7Pqq6u5Sq8IqshVKS
+         MQ+uUUoIFU9e0pu65gjc4mU0MNs82T714/qAqqwSTZDmU58z9FIMPJo3sauCOwFvLpsb
+         kOaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760419688; x=1761024488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tUVXFTv/D7jLsv5kpoyfzsqtL+REv8AzIuYw8UUsFXE=;
+        b=g6iVAFyEAxfuun+13SQE0GwxAAjNW3sgfwav2a9Ta45SJ7RLt8bo9nGoFYXop1Rsmt
+         GNQEodQ8ITlEBdhTs8q98RcH3Q/DDuDQkyagikTuKtBvjmflbDtC7M/OJl8JSTIEre1E
+         +dzceLns93rpcsHrNps/05VvA8JPcjWfb+3FkYmruGUsT63Lc+EQ7FMHc5ndyh5cUbwQ
+         fUx81Wzb9jb3dUWhznLfHngyx9z5DhMBiZIPK/wmWUrJN1rStNnr+nCGEfsPLWsAyS4M
+         LRDckelpV0NdZO5x7hPxariSReo7F/urY3RbW9mSPptmS5tlIrm70l3evgs7AKdCIRwG
+         rlWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWr2M9j1S/US9acensKID0aKfRlN8a7x2B5Mo/Er9Z4BpZYT7YcRbD5HQ5LbDugu0WEzUGr695yXRzbacA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWQS1hVNPkD9+Ns1sUGrJd/Qqv8NtrQYBRI3A9p53ABLnoFQ7l
+	X9fpevFP3Hgookob8JK8FXfuXb8lEbeiZi9TH5+zbuTcIGrNYSbP9pLz
+X-Gm-Gg: ASbGncusAg2Y9hJotBlYoM0kBVhVtXz0mYMJPHjTYL0mXl6h8JqIMb4+a583k2mcH7n
+	V/cE0ACflS4ulxjDDIm2PBPnBpLScHKExLIITqiCk650ryeoo7cbbQ+0gqvJPBSOdB9Cxg1GwRh
+	OdmMeZzv4nAKP1rH3czjeieSluQUMmft256lga17PaZbap/y/wMUmoxk9SNiTq/A0mDkhRvp0eL
+	xxXxzjLU+e52F8AYLG9QyfSyPYiVojQQS7/+V/nzT33QMy81e+A6YsmM3JfF/oor/qh+fBLFgLr
+	J1Mc5u548Z0kOvoQ33bUcmOeNhHNwX6J2JOHVwiXLp2MfHHCXK/6NOnuxDD1oVe/+LNOGf2Tw9O
+	OZDw39l67HwejtIeJ0lUTQckH2tWm2QIwIYl2etvhgBpj5zhwOW/EUW85Kg==
+X-Google-Smtp-Source: AGHT+IFntzP8OzdgNYYMHaqHvOwHUMeMx9OXTNUQCyie+jB5pd3spy6Sdf+LQFvsZ9kueWYMJS9Rbg==
+X-Received: by 2002:a17:90b:38d1:b0:32e:8c1e:1301 with SMTP id 98e67ed59e1d1-33b513eac36mr31775077a91.34.1760419687520;
+        Mon, 13 Oct 2025 22:28:07 -0700 (PDT)
+Received: from tixy.nay.do ([2405:201:8000:a149:4670:c55c:fe13:754d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b6192995asm14510106a91.0.2025.10.13.22.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 22:28:07 -0700 (PDT)
+From: Ankan Biswas <spyjetfayed@gmail.com>
+To: akpm@linux-foundation.org
+Cc: lasse.collin@tukaani.org,
+	visitorckw@gmail.com,
+	skhan@linuxfoundation.org,
+	khalid@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Ankan Biswas <spyjetfayed@gmail.com>
+Subject: [PATCH v3] lib/xz: remove dead IA-64 (Itanium) support code
+Date: Tue, 14 Oct 2025 10:54:36 +0530
+Message-ID: <20251014052738.31185-1-spyjetfayed@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH][v3] hung_task: Panic after fixed number of hung tasks
-Content-Language: en-US
-To: lirongqing <lirongqing@baidu.com>
-References: <20251012115035.2169-1-lirongqing@baidu.com>
-Cc: wireguard@lists.zx2c4.com, linux-arm-kernel@lists.infradead.org,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-doc@vger.kernel.org,
- David Hildenbrand <david@redhat.com>, Randy Dunlap <rdunlap@infradead.org>,
- Stanislav Fomichev <sdf@fomichev.me>, linux-aspeed@lists.ozlabs.org,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- Russell King <linux@armlinux.org.uk>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
- Petr Mladek <pmladek@suse.com>, Joel Granados <joel.granados@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Phil Auld <pauld@redhat.com>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Simon Horman <horms@kernel.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
- Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- "Paul E . McKenney" <paulmck@kernel.org>,
- Feng Tang <feng.tang@linux.alibaba.com>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20251012115035.2169-1-lirongqing@baidu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Thanks for the patch!
+Support for the IA-64 (Itanium) architecture was removed in
+commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture").
 
-I noticed the implementation panics only when N tasks are detected
-within a single scan, because total_hung_task is reset for each
-check_hung_uninterruptible_tasks() run.
+This patch drops the IA-64 specific decompression code from
+lib/xz, which was conditionally compiled with the now-obsolete
+CONFIG_XZ_DEC_IA64 option.
 
-So some suggestions to align the documentation with the code's
-behavior below :)
+Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Acked-by: Lasse Collin <lasse.collin@tukaani.org>
+---
+Changes in v3:
+- Removed log about IA-64 support in upstream
 
-On 2025/10/12 19:50, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
-> 
-> Currently, when 'hung_task_panic' is enabled, the kernel panics
-> immediately upon detecting the first hung task. However, some hung
-> tasks are transient and the system can recover, while others are
-> persistent and may accumulate progressively.
-> 
-> This patch extends the 'hung_task_panic' sysctl to allow specifying
-> the number of hung tasks that must be detected before triggering
-> a kernel panic. This provides finer control for environments where
-> transient hangs may occur but persistent hangs should still be fatal.
-> 
-> The sysctl can be set to:
-> - 0: disabled (never panic)
-> - 1: original behavior (panic on first hung task)
-> - N: panic when N hung tasks are detected
-> 
-> This maintains backward compatibility while providing more flexibility
-> for handling different hang scenarios.
-> 
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
-> Diff with v2: not add new sysctl, extend hung_task_panic
-> 
->   Documentation/admin-guide/kernel-parameters.txt      | 20 +++++++++++++-------
->   Documentation/admin-guide/sysctl/kernel.rst          |  3 ++-
->   arch/arm/configs/aspeed_g5_defconfig                 |  2 +-
->   kernel/configs/debug.config                          |  2 +-
->   kernel/hung_task.c                                   | 16 +++++++++++-----
->   lib/Kconfig.debug                                    | 10 ++++++----
->   tools/testing/selftests/wireguard/qemu/kernel.config |  2 +-
->   7 files changed, 35 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a51ab46..7d9a8ee 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1992,14 +1992,20 @@
->   			the added memory block itself do not be affected.
->   
->   	hung_task_panic=
-> -			[KNL] Should the hung task detector generate panics.
-> -			Format: 0 | 1
-> +			[KNL] Number of hung tasks to trigger kernel panic.
-> +			Format: <int>
-> +
-> +			Set this to the number of hung tasks that must be
-> +			detected before triggering a kernel panic.
-> +
-> +			0: don't panic
-> +			1: panic immediately on first hung task
-> +			N: panic after N hung tasks are detect
+Changes in v2:
+- Added second hunk to diff of xz_private.h
 
-The description should be more specific :)
+ lib/xz/xz_dec_bcj.c | 95 ---------------------------------------------
+ lib/xz/xz_private.h |  4 --
+ 2 files changed, 99 deletions(-)
 
-N: panic after N hung tasks are detected in a single scan
-
-Would it be better and cleaner?
-
->   
-> -			A value of 1 instructs the kernel to panic when a
-> -			hung task is detected. The default value is controlled
-> -			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
-> -			option. The value selected by this boot parameter can
-> -			be changed later by the kernel.hung_task_panic sysctl.
-> +			The default value is controlled by the
-> +			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value
-> +			selected by this boot parameter can be changed later by the
-> +			kernel.hung_task_panic sysctl.
->   
->   	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
->   				terminal devices. Valid values: 0..8
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index f3ee807..0a8dfab 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -397,7 +397,8 @@ a hung task is detected.
->   hung_task_panic
->   ===============
->   
-> -Controls the kernel's behavior when a hung task is detected.
-> +When set to a non-zero value, a kernel panic will be triggered if the
-> +number of detected hung tasks reaches this value
-
-Hmm... that is also ambiguous ...
-
-+When set to a non-zero value, a kernel panic will be triggered if the
-+number of hung tasks found during a single scan reaches this value.
-
->   This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
->   
->   = =================================================
-> diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
-> index 61cee1e..c3b0d5f 100644
-> --- a/arch/arm/configs/aspeed_g5_defconfig
-> +++ b/arch/arm/configs/aspeed_g5_defconfig
-> @@ -308,7 +308,7 @@ CONFIG_PANIC_ON_OOPS=y
->   CONFIG_PANIC_TIMEOUT=-1
->   CONFIG_SOFTLOCKUP_DETECTOR=y
->   CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
-> -CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
-> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
->   CONFIG_WQ_WATCHDOG=y
->   # CONFIG_SCHED_DEBUG is not set
->   CONFIG_FUNCTION_TRACER=y
-> diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
-> index e81327d..9f6ab7d 100644
-> --- a/kernel/configs/debug.config
-> +++ b/kernel/configs/debug.config
-> @@ -83,7 +83,7 @@ CONFIG_SLUB_DEBUG_ON=y
->   #
->   # Debug Oops, Lockups and Hangs
->   #
-> -# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC=0
->   # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
->   CONFIG_DEBUG_ATOMIC_SLEEP=y
->   CONFIG_DETECT_HUNG_TASK=y
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index b2c1f14..3929ed9 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -81,7 +81,7 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
->    * hung task is detected:
->    */
->   static unsigned int __read_mostly sysctl_hung_task_panic =
-> -	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
-> +	CONFIG_BOOTPARAM_HUNG_TASK_PANIC;
->   
->   static int
->   hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
-> @@ -218,8 +218,11 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
->   }
->   #endif
->   
-> -static void check_hung_task(struct task_struct *t, unsigned long timeout)
-> +static void check_hung_task(struct task_struct *t, unsigned long timeout,
-> +		unsigned long prev_detect_count)
->   {
-> +	unsigned long total_hung_task;
-> +
->   	if (!task_is_hung(t, timeout))
->   		return;
->   
-> @@ -229,9 +232,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
->   	 */
->   	sysctl_hung_task_detect_count++;
->   
-> +	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
->   	trace_sched_process_hang(t);
->   
-> -	if (sysctl_hung_task_panic) {
-> +	if (sysctl_hung_task_panic &&
-> +			(total_hung_task >= sysctl_hung_task_panic)) {
->   		console_verbose();
->   		hung_task_show_lock = true;
->   		hung_task_call_panic = true;
-> @@ -300,6 +305,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->   	int max_count = sysctl_hung_task_check_count;
->   	unsigned long last_break = jiffies;
->   	struct task_struct *g, *t;
-> +	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
->   
->   	/*
->   	 * If the system crashed already then all bets are off,
-> @@ -320,7 +326,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->   			last_break = jiffies;
->   		}
->   
-> -		check_hung_task(t, timeout);
-> +		check_hung_task(t, timeout, prev_detect_count);
->   	}
->    unlock:
->   	rcu_read_unlock();
-> @@ -389,7 +395,7 @@ static const struct ctl_table hung_task_sysctls[] = {
->   		.mode		= 0644,
->   		.proc_handler	= proc_dointvec_minmax,
->   		.extra1		= SYSCTL_ZERO,
-> -		.extra2		= SYSCTL_ONE,
-> +		.extra2		= SYSCTL_INT_MAX,
->   	},
->   	{
->   		.procname	= "hung_task_check_count",
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 3034e294..077b9e4 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1258,12 +1258,14 @@ config DEFAULT_HUNG_TASK_TIMEOUT
->   	  Keeping the default should be fine in most cases.
->   
->   config BOOTPARAM_HUNG_TASK_PANIC
-> -	bool "Panic (Reboot) On Hung Tasks"
-> +	int "Number of hung tasks to trigger kernel panic"
->   	depends on DETECT_HUNG_TASK
-> +	default 0
->   	help
-> -	  Say Y here to enable the kernel to panic on "hung tasks",
-> -	  which are bugs that cause the kernel to leave a task stuck
-> -	  in uninterruptible "D" state.
-> +	  The number of hung tasks must be detected to trigger kernel panic.
-> +
-> +	  - 0: Don't trigger panic
-> +	  - N: Panic when N hung tasks are detected
-
-+	  - N: Panic when N hung tasks are detected in a single scan
-
-With these documentation changes, this patch would accurately describe 
-its behavior, IMHO.
-
->   
->   	  The panic can be used in combination with panic_timeout,
->   	  to cause the system to reboot automatically after a
-> diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
-> index 936b18b..0504c11 100644
-> --- a/tools/testing/selftests/wireguard/qemu/kernel.config
-> +++ b/tools/testing/selftests/wireguard/qemu/kernel.config
-> @@ -81,7 +81,7 @@ CONFIG_WQ_WATCHDOG=y
->   CONFIG_DETECT_HUNG_TASK=y
->   CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
->   CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
-> -CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
-> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
->   CONFIG_PANIC_TIMEOUT=-1
->   CONFIG_STACKTRACE=y
->   CONFIG_EARLY_PRINTK=y
+diff --git a/lib/xz/xz_dec_bcj.c b/lib/xz/xz_dec_bcj.c
+index 8237db17eee3..610d58d947ab 100644
+--- a/lib/xz/xz_dec_bcj.c
++++ b/lib/xz/xz_dec_bcj.c
+@@ -20,7 +20,6 @@ struct xz_dec_bcj {
+ 	enum {
+ 		BCJ_X86 = 4,        /* x86 or x86-64 */
+ 		BCJ_POWERPC = 5,    /* Big endian only */
+-		BCJ_IA64 = 6,       /* Big or little endian */
+ 		BCJ_ARM = 7,        /* Little endian only */
+ 		BCJ_ARMTHUMB = 8,   /* Little endian only */
+ 		BCJ_SPARC = 9,      /* Big or little endian */
+@@ -180,92 +179,6 @@ static size_t bcj_powerpc(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
+ }
+ #endif
+ 
+-#ifdef XZ_DEC_IA64
+-static size_t bcj_ia64(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
+-{
+-	static const uint8_t branch_table[32] = {
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0,
+-		4, 4, 6, 6, 0, 0, 7, 7,
+-		4, 4, 0, 0, 4, 4, 0, 0
+-	};
+-
+-	/*
+-	 * The local variables take a little bit stack space, but it's less
+-	 * than what LZMA2 decoder takes, so it doesn't make sense to reduce
+-	 * stack usage here without doing that for the LZMA2 decoder too.
+-	 */
+-
+-	/* Loop counters */
+-	size_t i;
+-	size_t j;
+-
+-	/* Instruction slot (0, 1, or 2) in the 128-bit instruction word */
+-	uint32_t slot;
+-
+-	/* Bitwise offset of the instruction indicated by slot */
+-	uint32_t bit_pos;
+-
+-	/* bit_pos split into byte and bit parts */
+-	uint32_t byte_pos;
+-	uint32_t bit_res;
+-
+-	/* Address part of an instruction */
+-	uint32_t addr;
+-
+-	/* Mask used to detect which instructions to convert */
+-	uint32_t mask;
+-
+-	/* 41-bit instruction stored somewhere in the lowest 48 bits */
+-	uint64_t instr;
+-
+-	/* Instruction normalized with bit_res for easier manipulation */
+-	uint64_t norm;
+-
+-	size &= ~(size_t)15;
+-
+-	for (i = 0; i < size; i += 16) {
+-		mask = branch_table[buf[i] & 0x1F];
+-		for (slot = 0, bit_pos = 5; slot < 3; ++slot, bit_pos += 41) {
+-			if (((mask >> slot) & 1) == 0)
+-				continue;
+-
+-			byte_pos = bit_pos >> 3;
+-			bit_res = bit_pos & 7;
+-			instr = 0;
+-			for (j = 0; j < 6; ++j)
+-				instr |= (uint64_t)(buf[i + j + byte_pos])
+-						<< (8 * j);
+-
+-			norm = instr >> bit_res;
+-
+-			if (((norm >> 37) & 0x0F) == 0x05
+-					&& ((norm >> 9) & 0x07) == 0) {
+-				addr = (norm >> 13) & 0x0FFFFF;
+-				addr |= ((uint32_t)(norm >> 36) & 1) << 20;
+-				addr <<= 4;
+-				addr -= s->pos + (uint32_t)i;
+-				addr >>= 4;
+-
+-				norm &= ~((uint64_t)0x8FFFFF << 13);
+-				norm |= (uint64_t)(addr & 0x0FFFFF) << 13;
+-				norm |= (uint64_t)(addr & 0x100000)
+-						<< (36 - 20);
+-
+-				instr &= (1 << bit_res) - 1;
+-				instr |= norm << bit_res;
+-
+-				for (j = 0; j < 6; j++)
+-					buf[i + j + byte_pos]
+-						= (uint8_t)(instr >> (8 * j));
+-			}
+-		}
+-	}
+-
+-	return i;
+-}
+-#endif
+-
+ #ifdef XZ_DEC_ARM
+ static size_t bcj_arm(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
+ {
+@@ -509,11 +422,6 @@ static void bcj_apply(struct xz_dec_bcj *s,
+ 		filtered = bcj_powerpc(s, buf, size);
+ 		break;
+ #endif
+-#ifdef XZ_DEC_IA64
+-	case BCJ_IA64:
+-		filtered = bcj_ia64(s, buf, size);
+-		break;
+-#endif
+ #ifdef XZ_DEC_ARM
+ 	case BCJ_ARM:
+ 		filtered = bcj_arm(s, buf, size);
+@@ -699,9 +607,6 @@ enum xz_ret xz_dec_bcj_reset(struct xz_dec_bcj *s, uint8_t id)
+ #ifdef XZ_DEC_POWERPC
+ 	case BCJ_POWERPC:
+ #endif
+-#ifdef XZ_DEC_IA64
+-	case BCJ_IA64:
+-#endif
+ #ifdef XZ_DEC_ARM
+ 	case BCJ_ARM:
+ #endif
+diff --git a/lib/xz/xz_private.h b/lib/xz/xz_private.h
+index 8409784b1639..6775078f3cce 100644
+--- a/lib/xz/xz_private.h
++++ b/lib/xz/xz_private.h
+@@ -24,9 +24,6 @@
+ #		ifdef CONFIG_XZ_DEC_POWERPC
+ #			define XZ_DEC_POWERPC
+ #		endif
+-#		ifdef CONFIG_XZ_DEC_IA64
+-#			define XZ_DEC_IA64
+-#		endif
+ #		ifdef CONFIG_XZ_DEC_ARM
+ #			define XZ_DEC_ARM
+ #		endif
+@@ -103,7 +100,6 @@
+  */
+ #ifndef XZ_DEC_BCJ
+ #	if defined(XZ_DEC_X86) || defined(XZ_DEC_POWERPC) \
+-			|| defined(XZ_DEC_IA64) \
+ 			|| defined(XZ_DEC_ARM) || defined(XZ_DEC_ARMTHUMB) \
+ 			|| defined(XZ_DEC_SPARC) || defined(XZ_DEC_ARM64) \
+ 			|| defined(XZ_DEC_RISCV)
+-- 
+2.51.0
 
 
