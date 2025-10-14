@@ -1,135 +1,199 @@
-Return-Path: <linux-kernel+bounces-852703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE966BD9A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8CEBD9A82
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9CB41355559
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:19:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C721E355509
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7E03191A6;
-	Tue, 14 Oct 2025 13:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993D42E1F03;
+	Tue, 14 Oct 2025 13:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXa2jQeq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPE4y6Ja"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4346F318130
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318CC2D8DB5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760447555; cv=none; b=px8Pa5w71EMYox6Wx60VIW/MP8V6ajPtAMhcSUleJLlJAnj7ttfiqgCAJRwHeBmAgf8TfYF2CnXwQE1MhjdXX3da06125RnKu5cJxmXZKhx1+6KICOJGy0iKV9VzH4jkcXDcrNTg2kzZuCNC6zg8BPW531ZScHP18cOtrSQx5Lw=
+	t=1760447732; cv=none; b=QodIvZsYKZc5EVczMgcDaK9QCoBhCpSefOWgH4kiism6hDRV14v3zfpFX7JJGkQnmYFg52l9zHkrA45Kx7HiVQmjnbeMY5mhpt451rl0VAkA5px1hvS7xDIMBJvMMElczAOfWzT9XFpLGirExJcGewa/WGAboZqw6L7twSL4XWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760447555; c=relaxed/simple;
-	bh=QFnSQNVnmbppzXkC2XRA91NiJLnNXVI8rLsVd5m1GNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pAT6ovRSZbkQdXBwhvzfv5u2CtiRvDfyJxVZ15xExRsn9YxFnEm0oXxvVYO9kSIB/hphPxpqQD/bdfQ389F5ziVNCVuL3u5HAofGBjhS9BShy5kcasBeCEr54Ye7Y6yqoc4CJoP3b36G9ws5OlROf54yfNgGGdWklFzwddGAA98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXa2jQeq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6488C116D0
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760447554;
-	bh=QFnSQNVnmbppzXkC2XRA91NiJLnNXVI8rLsVd5m1GNg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hXa2jQeqElzUsrt2eTJCLcktwtJCG1zeWTRX/aaYZs2jZbvJCUAsKlmQlQpqEp/nl
-	 s11/j/bFgGjTGdJzIgGnKfqqiFdjzkkNQx4Iw1tM0SXMPdkupY8grHwSr6kD4ohalI
-	 bqDHlwsnTJGOrJZxEF06UpdeGlCrnG5oInlihx1PRPj6bRYIy8iOTPRw7BjelLHo5E
-	 eke77XK7DeqO0dKaPrXmp6ffgDYC4zB49t4kNGgoq4U+VRE1c8T943wHfu7RVDeEMK
-	 gaeKSsxhXpH89IRrnKS+b1mpa9aY2YYmgw+yS1GH1errhD0lDaozWTgbXa7VwG0j3F
-	 +UVwY1shTctiQ==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63b6dfd85d4so6275834a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:12:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQe2JbtjoDJrOkIfQv7c6+v+onQPvqp8RchUZXH2Fp9zRzPOZtoy92atY2K35ky05rYRstVRCCpocNjjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6F6AabqOD850wm7sGZaiUSwqTrjoH2lKPapns5wd4bMiXWeOL
-	LAymSDDalglrQPG9mACDSAwfk3BikXh5NgbhmfkgNrfOzaGHquZat7POIPdMWAD4UOv5DMpqMjK
-	nRTp5WuCEbGer/QD4ijRk3KNmY+JYCA==
-X-Google-Smtp-Source: AGHT+IGsJ5mlS/YVwM+vM4vUNcis/Lpeibt66VkyU1cojP+XjSHkLgdQNSY7YIrDO2Y257jUQZ5G/ZZfC/6hKlv/M2A=
-X-Received: by 2002:a17:907:86a6:b0:b41:b5df:89bd with SMTP id
- a640c23a62f3a-b50a9d59b0amr2304467666b.6.1760447553398; Tue, 14 Oct 2025
- 06:12:33 -0700 (PDT)
+	s=arc-20240116; t=1760447732; c=relaxed/simple;
+	bh=iMlcpqMusfhWhhclO35Xz0jVpejNOc9L4BnLsFBcWlU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=acqtMkYYH2kUrlFGylX2n3PqhmY2PHTUHZTKXlhtaXvT0xI/GVQNLw3/rgBUMEZRz2vQZyk0vabKDP303U0xY8OREs9L+0sq+UnyGC49CwFhjnhuuX/p13JnlFwOsZJrrTcxoToBJfn87eMjIO7tVNya+61OMYc3APtTPbPfHSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPE4y6Ja; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-781421f5be6so18029127b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760447730; x=1761052530; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yDuVlQoM0GKjXHqLFZaHd1hl5+Amiaz43y1oJczL34k=;
+        b=mPE4y6Ja7F9pETjeMy91DqRLyYeX1FSFwOuXKW0O0sVMheqUsfS5bOTJTWoC6wtJLo
+         SAqSwVl9Wikgt3CJS8cr5Y5n5F9VCFKIM7RQFQEM+k75njme2GkayxJe7pFFo7e16FOP
+         xBLRpdxJZNMtJgO3hK4Qvr7ds4TXo+H0YMcG7CElYXMRlAIJ90P8VtSKO5z3E0X0JLbd
+         YYM0t0I5/Yebo6iN9CTqjwxL6UtVz+GSrdq1UnMSHuNTIQArsK329ypQ1cj2TBWwUhvl
+         sqSIM9y0Ezl1Qrx07r/ESfXiLj80x2kobyI/AWbMxMAOviUWGpIqXcylvDWM72YMLK/5
+         iPsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760447730; x=1761052530;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yDuVlQoM0GKjXHqLFZaHd1hl5+Amiaz43y1oJczL34k=;
+        b=VrN1VvNZpqNWPznNJCdd8IxxS9NmXeVanPzjTnY5DC/KCvslyKHWGmgqV61x+wVIaz
+         DGCPOHnD+sQFB+ebHmrGuVm4l7Alfd7fAMsUbuBmbsAhJI9i4BKHfdgAWWYjt3Gq+gti
+         Xr2zwOonmsxiwW0EH+MnLlj7xJ4lokPi2JmS/KMboYdy/Pkfm1jcE77dNTzXKBektTcQ
+         FSpo5eSLw/9l0UFd39Ugh25Lpg8jkE5AEmsNDjJHmvNXoyMlLGSqCHE+4toGzM24pMFZ
+         t/M1hPAWMzQRHeOysAJlOfq7aO5+pjFsHw9kkI/UEjLsQ7ZhZ2zsYYp7soHtARO9VEK/
+         3XvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpJE2mq3zulUB8CJHpr6lpic4vGEHOkCFxKNrpqmVAld2gbiuqEuDJ5LuOx1YIvoqDEzAPdkTL25dt7E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh4pEh5xtSbWBQJiB6J7+VrKpFgXqlgAPqnlgVZKtL9N4WjogR
+	DlB2qi7+IBG6aaM23D04qbqj0b6M+krXXQRlZqpkwfAjWKlvoBZfE16f/3mRaw==
+X-Gm-Gg: ASbGncsc3GTNbATBdbApiH95EgULZdlDgMr9DUjhn6unCVjrInmX+BXjQ6nKy11u26P
+	jiighFFSTc7WSCUhDZ86pqnLfWYW3ynYfTZ+ppZ6WDVsma1z8ooev5xFhEAeYZTtQ5o2yO+ZOSX
+	227leY7IbVDi2SzvA7h9mN3XMuc9oEhYArHaEfxzH/PZhL6Ma37M5rMSGBv/TXZUEHpzctHv/IV
+	TLb+ML5wlxY+bODeSYQlVE30EqbKbJRF3X8/vwJiJyHK0NzPe4pGndGgDOUHorE6MY0OdzvLimd
+	ukDFW9MzC7447W9YCIubjznWy2bChIJqhhVUWQYJt6ve3vPkcC/A1uSB9M+Zhm3myA0DU9qc7av
+	6XpipdG+shAFDTM5U3QDubUZBZBCQbUWtNrV4UTNR7+FliZclJjo3RP5M4956T2zdkKYNwyBm8f
+	/IHrREZf00
+X-Google-Smtp-Source: AGHT+IGsvcYYsClEsFTY4tHK/30S2COTBACDT7BSIyOjc1D+rhzPyWmHlUmxYc4FgFdDi9X48dV+ew==
+X-Received: by 2002:a05:690e:1599:10b0:63c:dadd:6b8e with SMTP id 956f58d0204a3-63cdadd7d33mr15517240d50.2.1760447729783;
+        Tue, 14 Oct 2025 06:15:29 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:48::])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63cdec375bcsm4392139d50.17.2025.10.14.06.15.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 06:15:29 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Chris Mason <clm@fb.com>,
+	Kiryl Shutsemau <kirill@shutemov.name>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v4 3/3] mm/page_alloc: Batch page freeing in free_frozen_page_commit
+Date: Tue, 14 Oct 2025 06:15:27 -0700
+Message-ID: <20251014131527.2682236-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <428ec528-5471-4152-bcb6-d36dd32c3311@suse.cz>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014073403.32134-1-andrea.porta@suse.com>
-In-Reply-To: <20251014073403.32134-1-andrea.porta@suse.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 14 Oct 2025 08:12:19 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+CugQrswhOWntK5RiRBSKkWRNUoB0pB8HoKPmym2e65w@mail.gmail.com>
-X-Gm-Features: AS18NWBxSlE1MIFfxKZocAw0TW5odVLSrIWfdH6uZsYqXyXxkwsnQLdsG7pb7xo
-Message-ID: <CAL_Jsq+CugQrswhOWntK5RiRBSKkWRNUoB0pB8HoKPmym2e65w@mail.gmail.com>
-Subject: Re: [PATCH] of: reserved_mem: Add heuristic to validate reserved
- memory regions
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iivanov@suse.de, svarbanov@suse.de, 
-	mbrugger@suse.com, Phil Elwell <phil@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 2:32=E2=80=AFAM Andrea della Porta
-<andrea.porta@suse.com> wrote:
->
-> When parsing static reserved-memory DT nodes, any node with a reg propert=
-y
-> length that is not perfectly conformant is discarded.
-> Specifically, any reg property whose length is not a multiple of the pare=
-nt's
-> (#address-cells + #size-cells) is dropped.
->
-> Relax this condition (while still treating perfect multiples as having hi=
-gher
-> precedence) by allowing regions that are subsets of the parent's addressa=
-ble
-> space to be considered for inclusion.
-> For example, in the following scenario:
->
-> / {
->         #address-cells =3D <0x02>;
->         #size-cells =3D <0x02>;
->         ...
->
->         reserved-memory {
->                 #address-cells =3D <0x02>;
->                 #size-cells =3D <0x02>;
->                 ...
->
->                 nvram {
->                         reg =3D <0x00 0x3fd16d00 0x37>;
->                         ...
->                 };
->         };
-> };
->
-> Even though the reg property of the nvram node is not well-formed from a =
-DT
-> syntax perspective, it still references a perfectly valid memory region o=
-f
-> 0x37 bytes that should be reserved.
+On Tue, 14 Oct 2025 11:38:00 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
-No it isn't. I could just as easily argue that the reserved size
-should be 0x37_00000000 because it's BE data. I have little interest
-in supporting incorrect DTs especially generically where we have no
-clue what platform needs it and whether we still have to carry the
-code. There's enough of that crap with ancient PPC and Sparc systems.
+> On 10/13/25 21:08, Joshua Hahn wrote:
+> > Before returning, free_frozen_page_commit calls free_pcppages_bulk using
+> > nr_pcp_free to determine how many pages can appropritately be freed,
+> > based on the tunable parameters stored in pcp. While this number is an
+> > accurate representation of how many pages should be freed in total, it
+> > is not an appropriate number of pages to free at once using
+> > free_pcppages_bulk, since we have seen the value consistently go above
+> > 2000 in the Meta fleet on larger machines.
+> > 
+> > As such, perform batched page freeing in free_pcppages_bulk by using
+> > pcp->batch member. In order to ensure that other processes are not
+> > starved of the zone lock, free both the zone lock and pcp lock to yield to
+> > other threads.
+> > 
+> > Note that because free_frozen_page_commit now performs a spinlock inside the
+> > function (and can fail), the function may now return with a freed pcp.
+> > To handle this, return true if the pcp is locked on exit and false otherwise.
+> > 
+> > In addition, since free_frozen_page_commit must now be aware of what UP
+> > flags were stored at the time of the spin lock, and because we must be
+> > able to report new UP flags to the callers, add a new unsigned long*
+> > parameter UP_flags to keep track of this.
 
-Furthermore, this looks like an abuse of /reserved-memory which should
-*only* be holes in what /memory node(s) define. I don't think we
-enforce that and I imagine there is lots of abuse.
+[...snip...]
 
-> This has at least one real-world equivalent on the Raspberry Pi 5, for ex=
-ample,
-> on which the firmware incorrectly overwrites the nvram node's reg propert=
-y
-> without taking into account the actual value of the parent's #size-cells.
+> > @@ -2861,15 +2871,47 @@ static void free_frozen_page_commit(struct zone *zone,
+> >  		 * Do not attempt to take a zone lock. Let pcp->count get
+> >  		 * over high mark temporarily.
+> >  		 */
+> > -		return;
+> > +		return true;
+> >  	}
+> >  
+> >  	high = nr_pcp_high(pcp, zone, batch, free_high);
+> >  	if (pcp->count < high)
+> > -		return;
+> > +		return true;
+> > +
+> > +	to_free = nr_pcp_free(pcp, batch, high, free_high);
+> > +	if (to_free == 0)
+> > +		return true;
 
-If we have to support this broken firmware, the kernel should fixup
-the entry to be correct.
+Hello Vlastimil, thank you for your patience and review on this iteration!
 
-Rob
+> I think this is an unnecessary shortcut. The while() condition covers this
+> and it's likely rare enough that we don't gain anything (if the goal was to
+> skip the ZONE_BELOW_HIGH check below).
+
+Agreed.
+
+> > +
+> > +	while (to_free > 0 && pcp->count >= high) {
+> 
+> The "&& pcp->count >= high" is AFAICS still changing how much we free
+> compared to before the patch. I.e. we might terminate as soon as freeing
+> "to_free_batched" in some iteration gets us below "high", while previously
+> we would free the whole "to_free" and get way further below the "high".
+
+This is true, and I also see now what you had meant in your feedback on the
+previous iteration. 
+
+> It should be changed to "&& pcp->count > 0" intended only to prevent useless
+> iterations that decrement to_free by to_free_batched while
+> free_pcppages_bulk() does nothing.
+
+This makes sense. Sorry, I think I missed your point in the previous version,
+but I think now I see what you were trying to say about the count. Previously
+when we were re-calculating high every iteration, I thought it made some sense
+to make the check again, since we might want to terminate early. But I do
+agree that it doesn't really make sense to do this; we want to preserve the
+behavior of the original code. I do have one comment below as well:
+
+> > +		to_free_batched = min(to_free, batch);
+> > +		free_pcppages_bulk(zone, to_free_batched, pcp, pindex);
+> > +		to_free -= to_free_batched;
+> > +		if (pcp->count >= high) {
+
+Here, I think I should change this in the next version to also just check
+for the same condition in the while loop (i.e. to_free > 0 && pcp->count > 0)
+
+The idea is that if we have another iteration, we will re-lock. Otherwise, we
+can just ignore the case inside the if statement. I think if it is left as
+a check for pcp->count >= high, then there will be a weird case for when
+0 < pcp->count <= high, where we continue to call free_pcppages_bulk but
+do not re-lock.
+
+So unfortunately, I will have to check for the same condition of the
+while loop in the if statement : -( I'll send a new version with the changes;
+I don't expect there to be a drastic performance change, since I think the
+early termination case would have only applied if there was a race condition
+that freed the pcp remotely.
+
+Thank you as always, Vlastimil. I hope you have a great day!
+Joshua
 
