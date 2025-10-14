@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-852327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C122BD8B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:15:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E5EBD8AE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CBA3AA616
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4791921646
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4392F5322;
-	Tue, 14 Oct 2025 10:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTLg9y4E"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294042F1FDF;
+	Tue, 14 Oct 2025 10:12:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF7B2F5479
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4653E16F265
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 10:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760436733; cv=none; b=bAr8lzzGnyio2wyuxvp0Kl1HFgb7NEcnjdiNIp07NHC6/ylY9Ib3bjtgcGgTgo7ACpDBVDLUd2kCDuHcwHAjLLyo/vh3754Hu1IfUjNjm7rPRc9k1aYyMNsDINRw08W0m13fhUCTCe4spNJW1TID6LiDbNArOHQzbEV1OPJuHZk=
+	t=1760436724; cv=none; b=WfsLUmnWvue2BAWYejqvRtdVHgQtfb2Vw5sOK59dVVM2cgD0BRFjQrZYgU45HP0Loba2IUZ53KVZ8Q3+1oIIjQTbx1nLap+SxKbTBE1zIK0ilJuODgn2qG6FQpPX3dhHtfOG4GG+lI/WuV4WUeryOhpMl3pGFNJRMbV16VTNlBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760436733; c=relaxed/simple;
-	bh=tDZJGyjyFwsEnGU/+BhSU4pXv/ZOaODbT4E16jUaFWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sD6CNtBfSv9sYtmnCz+cia0yZRNSaf5mFRohWRaynCqnU7QAcdtAWUthWNK/N9d34afNlF7kZM/IYc2NJS6yDYSqrffqnjUW1fKGfyczvR//pOuzOgzFtzl7C1NXJG7zqSm4vLpFq1tlWFEe+zNACf14DxHlpV6nVPc7GgRXeR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTLg9y4E; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so36969025e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760436729; x=1761041529; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TmcOUYE96CwkIuciWDdS0GQ43f2j/gyLBNOKfTnV8UA=;
-        b=LTLg9y4EVZoqTgyp1AaPC9AqwrucU1M63waRZYt3HGKu2WtfChtCRhtH4uemKEypHI
-         HnNynq4uI3hRdXxdJDFhYvotEZ1hNkN6AsmNLmZeb8YpXAsYs3k+D+mixG88kB/BK+UB
-         IwzV7JqTS3vmSOJc6cYrnopyF9093sj6rG7FXryweAEJ88ua1PprSEFnFLDolL5cBv0e
-         r0Oq8Rw8kGU6yB8oLavQ6pD+zcqlkNZJyrlOlTbrwlQOkurDD8fkSyjJa/ncXLWpvVnL
-         l1qGVN5TAV+z5RA/MUAegQUG8f20DEgs86NZrDZzjyUb0fFT6bvIS3A9hdELUWpTnjvn
-         1lyA==
+	s=arc-20240116; t=1760436724; c=relaxed/simple;
+	bh=x61QW4kzmftxBHmAc6TdG6TS9yjRvO05UBAv0qm3sOs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FnTA+dRDpZDZOh48uGZXEZclUR4mStjqyAZUl9hWB31lrTj7vALSGhXVmKUFjrls27/Jtqv3s6oSsgASJanmQTG+e+UBRb7fKQyNHj19TCNtLD5X6gf58K1q6S+ZWGZo2Ha3BboC2w2EKFXuJ+SywXQE/DhMLiNEoigqWqijoG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4256ef4eea3so136387585ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:12:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760436729; x=1761041529;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TmcOUYE96CwkIuciWDdS0GQ43f2j/gyLBNOKfTnV8UA=;
-        b=jHVOmpeq3GKtzQC/mBGS8C8Yk7e79OQHsD0lcNAwZNjNCQLFKJ2O9NhF5uqnwim4pm
-         j7RZduGOI/exPrG5l/onSux/URTxB/gaGZ+NgTp7SwpmckC9C3VuhkXxW5j/Uns2/r15
-         q2OIcmdd7jEe9jc6gfv0idzrI5gt22z4AttvXd1NhBKFf/yxnIOezoAI1jTXLbF+N38F
-         o+kkEayYK4nD7wMDd1KVVCCOq7kuH2F4BtG6hxVElQ67MSFjH1+gh5MY7axtTncddRib
-         F15QsGXWwyZARuPwGeXzjtNeP1tem5JOlZ9x4qDPHTPDYuEEMbfd7jQrnnX/cL1JZ5k9
-         /f1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVodg2c0f39lUz0fHJCw6orcu7xALj/IXJfNT0EPNyA1bUJCg+/gGcGP41GPoPiDi7FiyqZwyi2olYQKSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv1MLOMHrwj4Pqvxib60pUnrhmnrlxSnh0JX/WMdQMvlJ2MdnR
-	9OLCNIo5cV2XLEGH077gPaq6KUJT+jr/vYPRik215KP8pG706LwpI50k
-X-Gm-Gg: ASbGncuERAQpIerA3xVOFUGXkvIvfp8l32WkK2LmL9F0NvSw6zJvHMpphPoVqrNJiDB
-	EaJQGn6yGbMZoXEwjxEUoRPGRvCo1EZWcrHPZOzXxEyXW7myG5db/p16p1mqChIsS8s7HpnQdkf
-	c8NIPcILJuJ3ZAekotIA7mJiCwWPOg7TtFWgIeoCxIPI5XmAe0pKRJ6mYRQBf1qR5kSmP4j5Y5g
-	AVHIMvfHTSLscn5ms5/M8suHBjrHczwW4W0ySa8fh7cJliUe5CVo7T4zbTri1mTmKZv/bjwyq5W
-	KEOYfJnxTAJZbYSa6NhJRp4Aj/3JsOdIQ64AWcXRV8BpWn3l0sHMV01qZIH38HmmH5o5JosDbbw
-	6YDTQGgchnaSrkR6qrNnKVyOfJ4T5dpXhzNiECJnq1xqdOYHyTKds2yP9n9At59dfOCKUl/46SN
-	sHAvKH8Xg=
-X-Google-Smtp-Source: AGHT+IF6ne/xuQ/Yzz4Zzb7wpstPRXQSA86ePFiRmshMRn4gI9s18XitfechdzacRqFT+6sY8lXeJg==
-X-Received: by 2002:a05:600c:3b1f:b0:46e:4340:adf7 with SMTP id 5b1f17b1804b1-46fa9a8b3c0mr176129525e9.8.1760436729180;
-        Tue, 14 Oct 2025 03:12:09 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb4982b30sm230224825e9.6.2025.10.14.03.12.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 03:12:08 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:11:25 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Lance Yang
- <lance.yang@linux.dev>, Eero Tamminen <oak@helsinkinet.fi>, Kent Overstreet
- <kent.overstreet@linux.dev>, amaindex@outlook.com,
- anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com,
- joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com,
- mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org, Finn Thain
- <fthain@linux-m68k.org>, senozhatsky@chromium.org, tfiga@chromium.org,
- will@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-Message-ID: <20251014111125.731ab016@pumpkin>
-In-Reply-To: <CAMuHMdV5o0mA50yeEfG9cH-YUZspEd-OVSDJP-q+H+bxbqm-KQ@mail.gmail.com>
-References: <20250909145243.17119-1-lance.yang@linux.dev>
-	<yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
-	<99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
-	<CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
-	<inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
-	<20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
-	<b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
-	<56784853-b653-4587-b850-b03359306366@linux.dev>
-	<693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
-	<23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
-	<2bd2c4a8-456e-426a-aece-6d21afe80643@linux.dev>
-	<ba00388c-1d5b-4d95-054d-a6f09af41e7b@linux-m68k.org>
-	<3fa8182f-0195-43ee-b163-f908a9e2cba3@linux.dev>
-	<ad7cb710-0d5a-93b1-fa4d-efb236760495@linux-m68k.org>
-	<3e0b7551-698f-4ef6-919b-ff4cbe3aa11c@linux.dev>
-	<20251008210453.71ba81a635fc99ce9262be7e@linux-foundation.org>
-	<CAMuHMdV5o0mA50yeEfG9cH-YUZspEd-OVSDJP-q+H+bxbqm-KQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        d=1e100.net; s=20230601; t=1760436722; x=1761041522;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+qAupZMIqHmt08Kkm4jQVLtpL8YEkNSn+2yelvzKqg=;
+        b=ojfZeOY8DpNKdlzhmO8GqP6b5v68MXf4xI+5e46rD/mmCfjdKS1ajYuOS6SxNlLCx1
+         aeDtDnskxw5/urfcAYldDSE4mB8ETbUdjHAQHc+twzg/9i1gF3TQfaAM8RyXLlxTFu6l
+         jnLUkwuemQ822lFYtAxJz+zVFa/pEKGlEcnOjQbv/BiW9DERnndiuG/icZXfH0+BNwnO
+         RlmXEkKaecC2JhLTvRhFpvpAfpu2v2LEWB+YfvAAkHGYZjotRdJNiz0bjtPsWYLHENU3
+         zrXbCWfDUPxDUlHj42m51EnA32oC+6Zc+05eOwU+b+0yXnWIfhXKpTF740DOQPfB8njo
+         RUvg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5I/6g0AWMrMgLmWyYa6yRgurAfowq3LFvUW32M9wJh3w3WX2Iv2SSRAKCf1O7Zhl/xtbweLlf8woW34o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2L35i7ulcvuyi56PS8HLLwv10ekJwTtLGcoo1/TElpayyR6Dc
+	R+GYdBb+06Xd6aL3AnuqzAWs9KhEDw6SfYO+HFWnxTqq8SwJoECC9QVSt0YIGhvoTyfRmz7LBSO
+	15fS7DH7SezIhd81XTk+cVWFBYRrcx2x3wO7fvuucv5blNPi+N44bNoXgndg=
+X-Google-Smtp-Source: AGHT+IG/r8b+nU4EVrwP64HnbS/kpRxkeFCltahAWnKjQDxZ6kYv8aH8eKEK99rtjDNN8qGu1IUtLEHl8ec9mS1ytT0bB4cWyKR7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a8e:b0:42f:9e92:a448 with SMTP id
+ e9e14a558f8ab-42f9e92bb89mr141617255ab.7.1760436722398; Tue, 14 Oct 2025
+ 03:12:02 -0700 (PDT)
+Date: Tue, 14 Oct 2025 03:12:02 -0700
+In-Reply-To: <20251014094307.630590-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee21f2.050a0220.91a22.0204.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] INFO: trying to register non-static key in ntfs_setattr
+From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 9 Oct 2025 09:11:06 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hello,
 
-> Hi Andrew,
-> 
-> On Thu, 9 Oct 2025 at 06:04, Andrew Morton <akpm@linux-foundation.org> wrote:
-> > On Thu, 9 Oct 2025 10:01:18 +0800 Lance Yang <lance.yang@linux.dev> wrote:  
-> > > I think we fundamentally disagree on whether this fix for known
-> > > false-positive warnings is needed for -stable.  
-> >
-> > Having the kernel send scary warnings to our users is really bad
-> > behavior.  And if we don't fix it, people will keep reporting it.  
-> 
-> As the issue is present in v6.16 and v6.17, I think that warrants -stable.
-> 
-> > And removing a WARN_ON is a perfectly good way of fixing it.  The
-> > kernel has 19,000 WARNs, probably seven of which are useful :(  
-> 
-> Right. And there is panic_on_warn...
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: trying to register non-static key in ntfs_setattr
 
-Which, like panic_on_oops, panics before syslogd has a chance to write
-the error message to /var/log/kernel.
-Both are set in some environments.
+ntfs3(loop0): DEBUG: deepanshu  Read inode 2, S_ISREG=1, run_lock_init=1
+ntfs3(loop0): DEBUG: deepanshu  Read inode 6, S_ISREG=1, run_lock_init=1
+ntfs3(loop0): DEBUG: deepanshu  Read inode 8, S_ISREG=1, run_lock_init=1
+ntfs3(loop0): DEBUG: deepanshu  Read inode 4, S_ISREG=1, run_lock_init=1
+ntfs3(loop0): DEBUG: deepanshu  Read inode 10, S_ISREG=1, run_lock_init=1
+ntfs3(loop0): DEBUG: deepanshu  Read inode 9, S_ISREG=1, run_lock_init=1
+ntfs_setattr: testing by deepanshu 
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 1 UID: 0 PID: 6558 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ assign_lock_key+0x133/0x150 kernel/locking/lockdep.c:984
+ register_lock_class+0x105/0x320 kernel/locking/lockdep.c:1299
+ __lock_acquire+0x99/0xd20 kernel/locking/lockdep.c:5112
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_write+0x3a/0x50 kernel/locking/rwsem.c:1590
+ ntfs_truncate fs/ntfs3/file.c:483 [inline]
+ ntfs_setattr+0x71a/0xbf0 fs/ntfs3/file.c:807
+ notify_change+0xc18/0xf60 fs/attr.c:546
+ do_truncate+0x1a4/0x220 fs/open.c:68
+ vfs_truncate+0x493/0x520 fs/open.c:118
+ do_sys_truncate+0xdb/0x190 fs/open.c:141
+ __do_sys_truncate fs/open.c:153 [inline]
+ __se_sys_truncate fs/open.c:151 [inline]
+ __x64_sys_truncate+0x5b/0x70 fs/open.c:151
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8c2e81eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8c2de86038 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
+RAX: ffffffffffffffda RBX: 00007f8c2ea75fa0 RCX: 00007f8c2e81eec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000013c0
+RBP: 00007f8c2e8a1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f8c2ea76038 R14: 00007f8c2ea75fa0 R15: 00007fff37c0d8a8
+ </TASK>
 
-Tracking down those crashes is a right PITA.
 
-	David
+Tested on:
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+commit:         3a866087 Linux 6.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10785542580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af9170887d81dea1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e58a7dc1a8c00243999
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d905e2580000
 
 
