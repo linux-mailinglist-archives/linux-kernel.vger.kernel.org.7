@@ -1,98 +1,92 @@
-Return-Path: <linux-kernel+bounces-852078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E15BD81E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:13:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD81BD81E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF17C3E2B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:13:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8BC64F6317
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8332A30F801;
-	Tue, 14 Oct 2025 08:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB430F815;
+	Tue, 14 Oct 2025 08:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="doLUHXZu"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7J+v9Al"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D5930F928
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF01430F808
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429603; cv=none; b=PyhENbu2xwXRqAOhe9au8loaiNi2rvbWAF0+hyCh14cF9o3/ueRZGBFSXYrQw5Ow2ahd3b6UVz3JYhLw/pqD9nMh7ey8pZ6GFFvlgrd3SM6E+s1BhfTBqqsAkFPjfanb/LE6jEj+emG9rhawl+CH6+7+lsaiiZ+7EZx7+RaxjLo=
+	t=1760429618; cv=none; b=iaCgnB2X1WUikofe1bFgrEhUtHwp35aIE71bfrq2NBgXun1EK05zj7Fe/8On4E4FhIVkk6Wtt9NHT2gpEB3NMzqoB8vjf1h6yjLURhSdSQUZlXjJmsJmWlMrPAWVy+ib2YtDpUPeXa9MNPfIn461ztmsZ3Lr31KFNc3TwLXpyL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429603; c=relaxed/simple;
-	bh=Qjf5s9p3okVSF/8iwSV6tY3wMOMvdfYVeDRDYwN+sNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpfW1OqxxqRbYO/ItDgI2oiWcRi3OXsdRXI9MYrsGVJdUasHTlpjQkYUrwCDkXA6OnstcM4yK/ei8WpJ8zoUFwxaCgUHzrLqNcz7lfHada02Sgtp+hXR6oXimBE44mrdZzAcu4qicGujk6iziUNwXm0qZvKTwu7Kq3p3L8aKXIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=doLUHXZu; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e5980471eso26900415e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:13:20 -0700 (PDT)
+	s=arc-20240116; t=1760429618; c=relaxed/simple;
+	bh=+2LmzIVa9DmNGLrlYbtdQtzdJ1I1DZNXxMZgk2QxwOw=;
+	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=n6lbKcNFh4x9FL9rxVvHao/1Wqo23KDCCgN0PFFKBH5gQKm22pRKaqbf8x7JGzvUaqbHu/FETvhDFt3sK5Gvoi0xrrswZAe2+aYEgH7tUDpscsZ2Th6iL3M7NwBRUhot438ew6DOvOAojXLBL6EhU7MmyqIdAV8a71DnW1mTX+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7J+v9Al; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2e363118so42566235e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760429599; x=1761034399; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=77ONa64qN0g6cheWy5Vrvof/4mmnbDRUL6LLOyJY7B4=;
-        b=doLUHXZu3judS3oaLBhy4XJmeVmfP7nCAhSaUxdP+39fLYRcDGswKLkThmvppzErej
-         uN06Zxw8Q5eXyBC4H7RqFFn3xXQCYvWZ3whC+WArZ9moN34cQFXMuqQnLPNkF/PUUbuZ
-         gLEAOcaiSDfqMIBh1aZL8estrXdq6KgwmzHyuXgTzHolaNFLNj48VnDHX18Q/MzC06m4
-         e3pshSCYSp/jmpvZJMmnfZeD/swnMmoENxRHBCPLcEQPv4yxol0wRbdLuhuVHHzIeDU9
-         reloLlypAVss18H6wPSoAciB9+0UL7yiLl/HsXUMhCiGoN0EGuvYyDNjq7rWNQC1VEWK
-         Ceuw==
+        d=gmail.com; s=20230601; t=1760429614; x=1761034414; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xhf78mDj7L6zLhIAA4NyhL+vPp3/tw4ip9YZY4CJYUQ=;
+        b=B7J+v9AlWbhVAKfWfPfKYDadG9kT/Z51UvUYwKAb7TboPwAcAMk2ZdO8B8RkJ39/7N
+         vRy9JDojfvVKi38l322Aw8OReN9crk3h3r843gW1kGI1GLMfc62WPHvEqoGSe2H4b3IA
+         xf2WM88sAuNa+Kk0OvtgIuK4cqRkKqP0DQv0flpWaS7J3dQjlbU/+2qaZDGYl0ypoTQO
+         xrJJLl2jicLv+VFqRDoId8I4rN51gLURRZ9Gs3ASCPomR+/aIcN42s92+1ILCvIE7v3E
+         3GMNqy8kz11jFHobZSR/Iz7ZKwyRnGQBTkGZ3nl54o6u99lfUy4lpcQQOFyFfz37WPSJ
+         r9Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760429599; x=1761034399;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=77ONa64qN0g6cheWy5Vrvof/4mmnbDRUL6LLOyJY7B4=;
-        b=ET+bhjPsXWqtznSPnFrt6yVH12ievI55fALRigOZKMdPKlqD0HAln+b0mxQxp+SQMg
-         R8hw/8xA21kwQ0aPHwqThZAKg5w/Rq0VbgrjxXl4p/YbNtpt+AWUyMfjf3TKjqh05k0i
-         rYX9CPx8F7/59jKaQHsnP5qM0vsdI/9V0I/LZuMczdOa4X4GI4OQv9CQ/4TxYHXAz+Ns
-         bAWOfTMAwDvDrgh6B1WavtmrmxkJg0/hz0436NVuAeH+mJWkjGysLnR90GnayUQGWZcf
-         xTbz7s/0U0R6xGiUkSnMK1d+wKljZ514EbPdJYz3Vdd2nVpxxOVwQoaKZZw1Au1EUpub
-         AWTA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4XUvwHqRDZ8r7yvxCoAI86DRXB1wwPbUvNnAAy6QhmL7fYbh9O21q4LBBpoVr5WLEP7Gs6pf1H/nKAhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOTOp9srsZyDSLx2yvf/RomY0tBn/so8YVgZ/vywdutS/vCT7W
-	AztJmFhr5b45L4dgXzaNXIbZTiK111z//bwyuMLtKFFVUxHCCO0BHPGT+9m1F5aypk4=
-X-Gm-Gg: ASbGncsWoi3qp9BBJdkcBKNV0jhwRXCTxtnSKj10PXneAMYEEoINV2VOuHSX5ee5I6y
-	j/x/qCoY/YNr0KJrIdsNxD2Oo48HgS73XCqMctDO6ipt4PffJ/zvTeiMVWuq1dMbne5y3G9Uq6B
-	kOIckfrIif+QnoKGoX32qcACZISyIdfCFZTa2KTjHEY5WfzJt0o1gU63C5dpYlSYGFNFgsC7VMl
-	FpvOSjwLFzq3rhyt7aljQVsMFD8rlvfJwQCnIXjwQil415ZMwZmJPFdqZ8c1mTeVfo2k606WF+S
-	Rc0/x6rgZvPJanqrNCh+ghihSUPzZFpNXMMG2ZK+sklLCy940yXB3N9BBLZ/xH7pkxaihD6CmbO
-	4raNBPTRH3Kb4b1e6FbAOi50tCSuhDGjtpVdH2mhQdgB1/waiqAPxZyG54SNC1Q==
-X-Google-Smtp-Source: AGHT+IFbab0I6IbunJxw9DMnNGmlNTMAcT5O1ylJxmLdoG5nQ5JswxZUKVkCCcAgGghuYeWd5vIj3w==
-X-Received: by 2002:a05:600c:46d1:b0:46e:45fd:946e with SMTP id 5b1f17b1804b1-46fa9b078e2mr170662745e9.31.1760429599330;
-        Tue, 14 Oct 2025 01:13:19 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb49c3eeasm225967545e9.14.2025.10.14.01.13.18
+        d=1e100.net; s=20230601; t=1760429614; x=1761034414;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhf78mDj7L6zLhIAA4NyhL+vPp3/tw4ip9YZY4CJYUQ=;
+        b=qgISfoziUgWIIstuaFWA/skqtI60Te2CUoWByIpFaFwQ2sE+AywYZq7ls6pj8IaUgg
+         iCDB6cshIE0ZaxVNXsvOFGWpZie39dyO1mibCQqPyiruFU2UhpW3QWzTX9++EFajoDXL
+         Tn4KuQgDXkvqxGdChN0dSios/d9G/u59eODLFR5xCHW7rSoonj5BaKVd5vVxP6/kDQwO
+         FSo0F4ntyMCKF0fk/+UALQucL3PDLF7C+9jmmUkGmjZucfw6+HCmH6o6ieX9k8QbFrh1
+         rbsLBMAdMJcJA2YWTRAXSh0cC/iwuJJLSwaei+ijiKi+xSwytCGJGgFUOR/IqwsYOqVA
+         oA6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAAjztZqLKX33U1Miv162fKvHIMVKpclkpMt7pjS93cZcp9a/fJEPePigplR0Op9X3DxkVqf3JlXrCH3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzLnlRhi9XRycp1M49tiuh2dvljo2oIad1w46z9AoiamQBKppJ
+	i/etbuT9HJFkrPqan6R/gJqo5E6r4cAc1ckwwUIlojhKbYyF9P/Smmxj
+X-Gm-Gg: ASbGncvXo6cyxIGeabVYYwOUWedjEjiAOQgSO81iHCVwkBAlo5GtTLbUdjUyD9DUqOj
+	zUMZKNHWVeFiKz7iY5ZevIEeoWQa+U20jcYpNw4kG6xLIVnkZmXUnpRp747WXVeBPKMo6usOdTR
+	1MdbsS4xaU+pD7U6ZpITnJzteL2MA0Pve39423T/U//quAq6Deduve25mBeZDwp4nWWw5g7joCX
+	97ntVaG9y7XJOmzttdN82PobjTKshDFYbm1Wvfg02Wwo5yntbIORYvbiNb8tTgaomHWm+5Q8R97
+	5GjxXTCTlGQJ4megZR63z8gWiSjZtUaM+uPD0CiwZfMKoQcsttuEDr9JV/FIPZC45IMK+McW4AM
+	N7Be4DILvxsyRuHz1wqCsHwbpRcxqX2OHn/YRj80nS15cp8CIue1yTRjrKpCoSfOxJtiW7A5fTJ
+	S4kuTwS+uTOIP4b/XCUy+iUdOGi/UBt4PZJumRRw9qVib/3xqp7vvplo0=
+X-Google-Smtp-Source: AGHT+IE/yvvNi7f9ywz4oKxH3zGAx/TZVEsNIIjjDV3XuFHg8dmmWzqobqnhmfB1Aan5xjCCgtdy/A==
+X-Received: by 2002:a05:600c:314b:b0:46c:adf8:c845 with SMTP id 5b1f17b1804b1-46fa9a98f32mr174482375e9.16.1760429613749;
+        Tue, 14 Oct 2025 01:13:33 -0700 (PDT)
+Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb49c3eeasm225979145e9.14.2025.10.14.01.13.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 01:13:18 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:13:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/bridge: synopsys: Fix an error return in
- dw_dp_video_need_vsc_sdp()
-Message-ID: <aO4GGyJLCZEwFYL4@stanley.mountain>
-References: <aLaPyJrFsSFuqC1R@stanley.mountain>
- <5f9e8942.7fec.1990997b4de.Coremail.andyshrk@163.com>
+        Tue, 14 Oct 2025 01:13:33 -0700 (PDT)
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+X-Google-Original-From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+Date: Tue, 14 Oct 2025 10:13:31 +0200
+To: Anusha Srivatsa <asrivats@redhat.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	regressions@lists.linux.dev
+Subject: [REGRESSION] drm/panel/panel-simple v6.17 WARNING regression
+Message-ID: <hlf4wdopapxnh4rekl5s3kvoi6egaga3lrjfbx6r223ar3txri@3ik53xw5idyh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,46 +95,161 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5f9e8942.7fec.1990997b4de.Coremail.andyshrk@163.com>
 
-On Tue, Sep 02, 2025 at 04:42:41PM +0800, Andy Yan wrote:
-> 
-> Hello Dan,
-> 
-> At 2025-09-02 14:33:44, "Dan Carpenter" <dan.carpenter@linaro.org> wrote:
-> >This dw_dp_video_need_vsc_sdp() function is type bool so returning
-> >-EINVAL means returning true.  Return false instead.
-> >
-> >Fixes: 86eecc3a9c2e ("drm/bridge: synopsys: Add DW DPTX Controller support library")
-> >Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> 
-> Reviewed-by: Andy Yan <andyshrk@163.com>
-> 
+Hello everyone,
 
-Ping?
+Commit 94d50c1a2ca3 ("drm/bridge: get/put the bridge reference in drm_bridge_attach/detach()")
+introduced a regression with the below warning dure probe with panel
+dpi described in the device tree.
 
-regards,
-dan carpenter
+[    9.160074] ------------[ cut here ]------------
+[    9.160092] WARNING: CPU: 0 PID: 66 at /usr/src/kernel/lib/refcount.c:25 drm_bridge_attach+0x2c/0x1dc
+[    9.160138] refcount_t: addition on 0; use-after-free.
+[    9.160147] Modules linked in: coda_vpu(+) snd_soc_fsl_asrc snd_compress v4l2_jpeg pwm_imx27 imx_vdoa spi_imx imx6_media(C) imx_media_common(C) videobuf2_dma_contig etnaviv snd_soc_fsl_ssi v4l2_mem2mem imx_pcm_dma panel_simple gpio_keys gpu_sched pwm_bl loop fuse ipv6 autofs4
+[    9.160423] CPU: 0 UID: 0 PID: 66 Comm: kworker/u10:2 Tainted: G         C          6.17.0-rc5-0.0.0-devel #1 PREEMPT 
+[    9.160459] Tainted: [C]=CRAP
+[    9.160476] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[    9.160497] Workqueue: events_unbound deferred_probe_work_func
+[    9.160535] Call trace: 
+[    9.160546]  unwind_backtrace from show_stack+0x10/0x14
+[    9.160603]  show_stack from dump_stack_lvl+0x54/0x68
+[    9.160637]  dump_stack_lvl from __warn+0x7c/0xd4
+[    9.160672]  __warn from warn_slowpath_fmt+0x130/0x1c4
+[    9.160726]  warn_slowpath_fmt from drm_bridge_attach+0x2c/0x1dc
+[    9.160780]  drm_bridge_attach from imx_pd_bind+0x74/0xa0
+[    9.160836]  imx_pd_bind from component_bind_all+0xfc/0x254
+[    9.160881]  component_bind_all from imx_drm_bind+0xa8/0x154
+[    9.160903]  imx_drm_bind from try_to_bring_up_aggregate_device+0x1f8/0x2b0
+[    9.160959]  try_to_bring_up_aggregate_device from __component_add+0x9c/0x160
+[    9.161003]  __component_add from imx_pd_probe+0xa8/0x160
+[    9.161042]  imx_pd_probe from platform_probe+0x5c/0x90
+[    9.161066]  platform_probe from really_probe+0xd0/0x3a4
+[    9.161093]  really_probe from __driver_probe_device+0x8c/0x1d4
+[    9.161144]  __driver_probe_device from driver_probe_device+0x34/0xd0
+[    9.161195]  driver_probe_device from __device_attach_driver+0xa4/0x134
+[    9.161248]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
+[    9.161299]  bus_for_each_drv from __device_attach+0xa4/0x1cc
+[    9.161328]  __device_attach from bus_probe_device+0x84/0x88
+[    9.161354]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
+[    9.161395]  deferred_probe_work_func from process_one_work+0x158/0x2e0
+[    9.161434]  process_one_work from worker_thread+0x254/0x3fc
+[    9.161449]  worker_thread from kthread+0x128/0x24c
+[    9.161473]  kthread from ret_from_fork+0x14/0x28
+[    9.161494] Exception stack(0xe0aa1fb0 to 0xe0aa1ff8)
+[    9.161505] 1fa0:                                     00000000 00000000 00000000 00000000
+[    9.161517] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    9.161529] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    9.161539] ---[ end trace 0000000000000000 ]---
 
-> 
-> >---
-> > drivers/gpu/drm/bridge/synopsys/dw-dp.c | 2 +-
-> > 1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> >diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-> >index 9bbfe8da3de0..33be4eae2b20 100644
-> >--- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-> >+++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-> >@@ -1149,7 +1149,7 @@ static bool dw_dp_video_need_vsc_sdp(struct dw_dp *dp)
-> > 
-> > 	state = dw_dp_get_bridge_state(dp);
-> > 	if (!state)
-> >-		return -EINVAL;
-> >+		return false;
-> > 
-> > 	if (!link->vsc_sdp_supported)
-> > 		return false;
-> >-- 
-> >2.47.2
+Note that this commit was added to branch 'drm-next-2025-07-30',
+which did not contain an already mainlined fix for another regression [1].
+Without that fix [2], this new regression is masked.
+
+Reverting 94d50c1a2ca3 on top of
+commit 260f6f4fda93 ("Merge tag 'drm-next-2025-07-30' of https://gitlab.freedesktop.org/drm/kernel")
+fixes the issue. At that point, [1] was fixed in mainline, and the new
+regression reported here was merged in. v6.17-rc1 to v6.17-rc7 are in
+this state.
+
+However, later on, another regression seems to be introduced by
+commit 8fa5909400f3 ("drm/bridge: get the bridge returned by drm_bridge_chain_get_first_bridge()")
+so reverting 94d50c1a2ca3 on top of drm-misc-next does not solve
+everything. This was tested by rebasing drm-misc-next onto (260f6f4fda93
+plus the revert of 94d50c1a2ca3) and then bisecting.
+
+So in v6.18-rc1, both regressions are present.
+
+There, I get the following additional warnings:
+
+[    9.732278] ------------[ cut here ]------------
+[    9.732336] WARNING: CPU: 0 PID: 38 at lib/refcount.c:22 drm_bridge_get+0x10/0x18
+[    9.744608] refcount_t: saturated; leaking memory.
+[    9.749634] Modules linked in: nvmem_snvs_lpgpr phy_mxs_usb coda_vpu v4l2_jpeg spi_imx imx_vdoa imx6_media(C) pwm_imx27 snd_soc_fsl_asrc snd_soc_fsl_ssi snd_compress 4
+[    9.776972] CPU: 0 UID: 0 PID: 38 Comm: kworker/u8:3 Tainted: G        WC          6.18.0-rc1-00214-g1226cd7c7686 #138 PREEMPT 
+[    9.788476] Tainted: [W]=WARN, [C]=CRAP
+[    9.792320] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[    9.798858] Workqueue: events_unbound deferred_probe_work_func
+[    9.804729] Call trace: 
+[    9.804744]  unwind_backtrace from show_stack+0x10/0x14
+[    9.812532]  show_stack from dump_stack_lvl+0x68/0x74
+[    9.817614]  dump_stack_lvl from __warn+0x7c/0xe0
+[    9.822355]  __warn from warn_slowpath_fmt+0x130/0x1c0
+[    9.827526]  warn_slowpath_fmt from drm_bridge_get+0x10/0x18
+[    9.833218]  drm_bridge_get from drm_bridge_connector_init+0xc8/0x72c
+[    9.839685]  drm_bridge_connector_init from imx_pd_bind+0x80/0xa0
+[    9.845809]  imx_pd_bind from component_bind_all+0xf4/0x254
+[    9.851422]  component_bind_all from imx_drm_bind+0x98/0x128
+[    9.857109]  imx_drm_bind from try_to_bring_up_aggregate_device+0x1d0/0x29c
+[    9.864097]  try_to_bring_up_aggregate_device from __component_add+0xa0/0x164
+[    9.871263]  __component_add from imx_pd_probe+0xa8/0x164
+[    9.876690]  imx_pd_probe from platform_probe+0x5c/0x90
+[    9.881940]  platform_probe from really_probe+0xd0/0x3a4
+[    9.887280]  really_probe from __driver_probe_device+0x8c/0x1d4
+[    9.893227]  __driver_probe_device from driver_probe_device+0x30/0xc0
+[    9.899694]  driver_probe_device from __device_attach_driver+0x98/0x10c
+[    9.906337]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
+[    9.912634]  bus_for_each_drv from __device_attach+0xa8/0x1c8
+[    9.918409]  __device_attach from bus_probe_device+0x88/0x8c
+[    9.924097]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
+[    9.930563]  deferred_probe_work_func from process_one_work+0x154/0x2dc
+[    9.937205]  process_one_work from worker_thread+0x250/0x3f0
+[    9.942883]  worker_thread from kthread+0x12c/0x24c
+[    9.947787]  kthread from ret_from_fork+0x14/0x28
+[    9.952513] Exception stack(0xe0961fb0 to 0xe0961ff8)
+[    9.957575] 1fa0:                                     00000000 00000000 00000000 00000000
+[    9.965762] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    9.973948] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    9.981052] ---[ end trace 0000000000000000 ]---
+
+[    9.985782] ------------[ cut here ]------------
+[    9.985835] WARNING: CPU: 0 PID: 38 at lib/refcount.c:28 drm_bridge_connector_init+0x328/0x72c
+[    9.999210] refcount_t: underflow; use-after-free.
+[   10.004119] Modules linked in: mux_core error nvmem_snvs_lpgpr phy_mxs_usb coda_vpu v4l2_jpeg spi_imx imx_vdoa imx6_media(C) pwm_imx27 snd_soc_fsl_asrc snd_soc_fsl_ss4
+[   10.032757] CPU: 0 UID: 0 PID: 38 Comm: kworker/u8:3 Tainted: G        WC          6.18.0-rc1-00214-g1226cd7c7686 #138 PREEMPT 
+[   10.044260] Tainted: [W]=WARN, [C]=CRAP
+[   10.048104] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[   10.054642] Workqueue: events_unbound deferred_probe_work_func
+[   10.060511] Call trace: 
+[   10.060523]  unwind_backtrace from show_stack+0x10/0x14
+[   10.068309]  show_stack from dump_stack_lvl+0x68/0x74
+[   10.073390]  dump_stack_lvl from __warn+0x7c/0xe0
+[   10.078127]  __warn from warn_slowpath_fmt+0x130/0x1c0
+[   10.083296]  warn_slowpath_fmt from drm_bridge_connector_init+0x328/0x72c
+[   10.090115]  drm_bridge_connector_init from imx_pd_bind+0x80/0xa0
+[   10.096238]  imx_pd_bind from component_bind_all+0xf4/0x254
+[   10.101843]  component_bind_all from imx_drm_bind+0x98/0x128
+[   10.107525]  imx_drm_bind from try_to_bring_up_aggregate_device+0x1d0/0x29c
+[   10.114512]  try_to_bring_up_aggregate_device from __component_add+0xa0/0x164
+[   10.121676]  __component_add from imx_pd_probe+0xa8/0x164
+[   10.127101]  imx_pd_probe from platform_probe+0x5c/0x90
+[   10.132348]  platform_probe from really_probe+0xd0/0x3a4
+[   10.137683]  really_probe from __driver_probe_device+0x8c/0x1d4
+[   10.143632]  __driver_probe_device from driver_probe_device+0x30/0xc0
+[   10.150099]  driver_probe_device from __device_attach_driver+0x98/0x10c
+[   10.156742]  __device_attach_driver from bus_for_each_drv+0x90/0xe4
+[   10.163035]  bus_for_each_drv from __device_attach+0xa8/0x1c8
+[   10.168804]  __device_attach from bus_probe_device+0x88/0x8c
+[   10.174490]  bus_probe_device from deferred_probe_work_func+0x8c/0xcc
+[   10.180955]  deferred_probe_work_func from process_one_work+0x154/0x2dc
+[   10.187595]  process_one_work from worker_thread+0x250/0x3f0
+[   10.193270]  worker_thread from kthread+0x12c/0x24c
+[   10.198172]  kthread from ret_from_fork+0x14/0x28
+[   10.202895] Exception stack(0xe0961fb0 to 0xe0961ff8)
+[   10.207956] 1fa0:                                     00000000 00000000 00000000 00000000
+[   10.216145] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[   10.224330] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[   10.231448] ---[ end trace 0000000000000000 ]---
+
+
+[1]: https://lore.kernel.org/all/20250612081834.GA248237@francesco-nb/
+[2]: https://lore.kernel.org/all/20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org/
+
+#regzbot ^introduced: 94d50c1a2ca31d80f12d9c2bdbc41437751e320c
+#regzbot ^introduced: 8fa5909400f377351836419223c33f1131f0f7d3
+
+Does this ring a bell for anyone?
+
+Kind regards,
+Ernest
+
 
