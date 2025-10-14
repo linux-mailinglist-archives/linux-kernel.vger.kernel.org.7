@@ -1,205 +1,114 @@
-Return-Path: <linux-kernel+bounces-853461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD1BDBB9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:11:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAB8BDBBAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DF814F3162
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E0B3AA8B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCD82DF71C;
-	Tue, 14 Oct 2025 23:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917302E2DCD;
+	Tue, 14 Oct 2025 23:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XS2fOYUf"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="D+m1psg/"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185692D9EDF
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9657D2C1599
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760483447; cv=none; b=qoAeJ6a7KOjULpwSUYQsuEEGr9MyqfCzqrmcUYe2FB++4dO0i+2gAXhsAlXgxMdLR2YKo/gvNDwM73Lx3AXbu+2u3CUzc1FOunICWMpJ+MTCgSdn7A8CBXaQy5AYjjKpuRu3IQU2UFwxieoSzakj68tZFfmxaaAGDrgDJynxZ/Y=
+	t=1760483563; cv=none; b=BCc4gzOPrlSDj7KpKEzyav3Sb9KKo67LxW0OabRzlxTsDwoBdkg6SYsbKwzFg8+W13YlZ2Q6gdG1uvaJiefU7K19S0CENfCySIGYQ0gHGSO+4fmgLT6Q+W4yW2BHb/EhDN31OtfwD56AQjUA7Ld1HCFKGtN0enZxK9cgJ5FHJF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760483447; c=relaxed/simple;
-	bh=VmNnAQhGgs9/uF3C65hkP1+an2UA+tXJAocLIm5KRmE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=UH+0Tl/LzAbkhihaH43HHQi4FgitgvUfLAzhNNbcrcPhBXB+yiYaR4WOIF2B/UA947TbSXnx7CtN0EeHv23vYjWZzu8vs/Sm7fLqybsy/xoFsT+ooyx8up+0uCyH8itc6ZA56HJPfmCjk8DSCBB8xJ75bAeoGOV/Qhg0ulF99kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XS2fOYUf; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec2211659so9747600a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:10:45 -0700 (PDT)
+	s=arc-20240116; t=1760483563; c=relaxed/simple;
+	bh=jP7eKKlEemoHr9cH5h7XSAsqHsL7E6l+1k/CdljmEEA=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=aOqZxFu8lEGvUOMdqclc7tgFXYRj37m1edBI/SaAqLyYk88LSklgIPkUJtD8BjIW2gZ7hEb+nJZslFRp5PcCoL7OQiDkqpgNvf19W1Dp78Oi5uIcJwqlu/xUMYdtKbM8r2gI1ZpRNQhw34OFB0E1XJOeLx4tMQ4N0T/raJuVjc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=D+m1psg/; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-883902b96c3so498916585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:12:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760483445; x=1761088245; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:reply-to:from:to:cc:subject:date:message-id
+        d=paul-moore.com; s=google; t=1760483560; x=1761088360; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Cack2dhxyf/zhiOzirzdf+5oJRildZDVoGUbS9moZIs=;
-        b=XS2fOYUfk51TgPrNBgDnceYUJnMUEJLl7cWrrjiG/I8UkKwm/smAl5D5lBCx9sb0Aw
-         hFeX6HZDqbHfJqM3495NTfRjc4tVd4MLDGAIS/iGpzgt3P+QSAb7sGoDfiPTmCNYVctt
-         roH9IUeubVZKqBTAT05yH1gMsFtd2WnT1U+tQNtd+8gfDiJVygXiZgaDGanBosM8DJu9
-         lEQdVWiQcLxKouA91mXU9ai933gdEfoYrKv7mr040JaaIai9UarH5CU/wlHRHN2z41ZV
-         nZJd65vOvbxrDyIPFF7zcmLQHi2mxOwoM5dvxVkKchO5eEn5Pc5tZAMUP+ZStZw0ckOI
-         C0Ug==
+        bh=WLBpXGvn84P1YsJATB/vo2Be6tu4bfzDW/H1Hf/uJzg=;
+        b=D+m1psg/0sPA5QUhpnBP97dPq4bd8CQkg3Pfjl/zaOpk19TkocwXe328GVOZCPcJdf
+         bdwF7+IjhxslyctHtjf5J4Bbm11EuFY5VAPTLLChUPFzez8fN2e0Zod9GjCK2ix3WHH9
+         L4p9WOhLc3SBVfIMcAbMWc5R65PsdBM8o0rCUAzH1o9DlvaM8ILu56S2mFUBcCqELEJ8
+         pDfbFHDNvlEsAJWlOKgythNnBcgEbGR1MPesiNfqKBVCLji0Ez0A3Pou+wzUD6cwyqgt
+         uJVfBOP67LMupZW2bPSuaWPfy5Yx7m5WjsYovsIzuOkpfH8RqvJfmiQu1R6qvp6wuHg4
+         8ToQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760483445; x=1761088245;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:reply-to:x-gm-message-state:from:to:cc:subject
+        d=1e100.net; s=20230601; t=1760483560; x=1761088360;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Cack2dhxyf/zhiOzirzdf+5oJRildZDVoGUbS9moZIs=;
-        b=EvOIfzU/7jiaq3rA1SiPkEnfpdOly/P0OsYU4Qsr027IGtsWrlO/E37pCw7+sZgeHg
-         6fyUtqAqgYGJqidf4xE934KpA4cz34zSWZITRlX2NcbzvIB7QvQx0Om60XToNOE8eW7U
-         vU7jPL7LruVTpLjt57epMuVl7lIkHA3RoYkgbQhjB2e5D20H9HS2sI3cmdyuFM++N3wc
-         8+ifQqBCItasn7juceuYa9pwRfWoIK8SEsH77cygJdLrWA1iNMrxITEC8/Bh601rPIHn
-         fi80V+Fpg1+Lo2eubWbuB0OCeX5EkX0MSqwiuiHKQPF9FZH0UGT2o5W3kPcpyn0jGzsV
-         4wfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVT332U2LcsfQpsf0bPVbxL8CyOWhpfleSHgxx76S6iAuMU8jpBCvGaavLDpm8QsXZ0vUnr7HRuxsGUARE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4dKNNSZHjQaRZ/I6TShBQrQ8EAIXZLAA0KYRuodwdpY9UdIqI
-	CIe97e+b1WqiS4tNfsYudOTU1a+DVsGeReaGn1OObWpoaqLTjyS39Qe3Rc7lA+yMX1YsTeeZf7Y
-	XHgU5tw==
-X-Google-Smtp-Source: AGHT+IElxkSTvmF/luuohnJ0KSryNYvrS0+9ZbjPJHn7oKx3M4MnEXpmR9L9s6yrQb7rQTbfhtC+vCVwgAI=
-X-Received: from pjbst8.prod.google.com ([2002:a17:90b:1fc8:b0:330:523b:2b23])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38cc:b0:32e:f1c:e778
- with SMTP id 98e67ed59e1d1-33b51105f5dmr35482130a91.3.1760483445375; Tue, 14
- Oct 2025 16:10:45 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 14 Oct 2025 16:10:42 -0700
+        bh=WLBpXGvn84P1YsJATB/vo2Be6tu4bfzDW/H1Hf/uJzg=;
+        b=aXClsAriMyVYwB9Zzch2CF0vV1FfJ0pjbTy1ddrwmwQbncJo+PoJSxsV1qAvBwUBdB
+         yFV6VC0/c686A0WuvNCtHKHwUpizLPLeScIHiWBq8Deqmbdalyjth2SuyWrbMxiJ3GKN
+         wkUf12YXpFVUcZP4iCqSY2p9zym3FCScPrl+nJwEsimEVYzuAL4vWDODglpXqu/CxIhj
+         Xzx+e49DtCHToF5eh42kA7KA9wm1zfMBRhmAZhxO5Exl5TX39YJOUZ4QayJyknJq+s8z
+         Z3y31/xZShoUjdlCAGzetrgdUNoxN5Shx5bES9sllB95NlnRFy7HF9lgjnvhqoPC1C3O
+         yzUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXX4e5yaCqUeJ8UPUCpMW9Vee2bCzFiuwHvV8gRfiQs1YpqHNrTrfYHSPgweQTZM0L4ca7sax9Cx9hOqoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcs44ggpyziaPmIEUK2I0UyIpr2MlWLrGLi3Bj2NS7EWc/isqu
+	INwnQvwrFTtBsNlicV4bwFYEzuH+o46YuYTLKPHWIkX4+rxJFGPP2OWbp3MExjn40w==
+X-Gm-Gg: ASbGncuiZYkPUkaantwxmm3YK/DCWe2oYTnCulkUgmaG+Sna5Yiq2M1j6cUUxZM3hbW
+	8IRO3CB728TucEYDiqKGNWm8U0JcfOnN8B4IDIvhiwcfsO2SMqcl83eTe3O4UAgbfr1pzGCXjtQ
+	QOjnF5y9/0QqhcyF/F6gPbCjltTn6b1QpeEpyhfLUaoL5VqpPqMoiiinG7aBzZ3mXJ7EGyaeTno
+	Z9oNqI98+VE2fXe0cfmTj2rnQHMygqIfeBocW6c5BhlujvjJvQG8+264jZ8/XgUWq+q6B6u6DMF
+	a/QeQJ0IqhJdv+fLt38pjDZI+nBDrPPz9herpKyUlH7SfXs4AuuIrUs9/rQX4j3qmOTrGfKezba
+	UXf3yuoNGpUvIZmwxeybhtn2VE01l7HG5n9Cc26M533Ac2EcM2xsWVtSq51gzBEx+js2QUzWrTf
+	aCXugx6NXBSl0=
+X-Google-Smtp-Source: AGHT+IHHcLVZiMgSbPLG7eY76yfCqa2vB+jpgcP40CTtOHs38xnmpRUGPmtafOl88Gxs8UC/0Ltr+w==
+X-Received: by 2002:a05:620a:254b:b0:88e:1671:2e4f with SMTP id af79cd13be357-88e16712febmr95763785a.78.1760483560211;
+        Tue, 14 Oct 2025 16:12:40 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-88e1d60aecfsm23093585a.34.2025.10.14.16.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 16:12:38 -0700 (PDT)
+Date: Tue, 14 Oct 2025 19:12:37 -0400
+Message-ID: <846555fc86ec02df31f55935e747a71f@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <20251014231042.1399849-1-seanjc@google.com>
-Subject: [PATCH] KVM: VMX: Inject #UD if guest tries to execute SEAMCALL or TDCALL
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20251014_1821/pstg-lib:20251014_1132/pstg-pwork:20251014_1821
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH RFC 1/15] Audit: Create audit_stamp structure
+References: <20250621171851.5869-2-casey@schaufler-ca.com>
+In-Reply-To: <20250621171851.5869-2-casey@schaufler-ca.com>
 
-Add VMX exit handlers for SEAMCALL and TDCALL, and a SEAMCALL handler for
-TDX, to inject a #UD if a non-TD guest attempts to execute SEAMCALL or
-TDCALL, or if a TD guest attempst to execute SEAMCALL.  Neither SEAMCALL
-nor TDCALL is gated by any software enablement other than VMXON, and so
-will generate a VM-Exit instead of e.g. a native #UD when executed from
-the guest kernel.
+On Jun 21, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Replace the timestamp and serial number pair used in audit records
+> with a structure containing the two elements.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  kernel/audit.c   | 17 +++++++++--------
+>  kernel/audit.h   | 13 +++++++++----
+>  kernel/auditsc.c | 22 +++++++++-------------
+>  3 files changed, 27 insertions(+), 25 deletions(-)
 
-Note!  No unprivilege DoS of the L1 kernel is possible as TDCALL and
-SEAMCALL #GP at CPL > 0, and the CPL check is performed prior to the VMX
-non-root (VM-Exit) check, i.e. userspace can't crash the VM. And for a
-nested guest, KVM forwards unknown exits to L1, i.e. an L2 kernel can
-crash itself, but not L1.
+Dropped as this patch was merged into Linus' tree during the v6.18
+merge window via another patchset.  To be clear, I generally don't have
+a problem with multiple patchsets including a few common patches, it
+helps prevent cross-dependencies between patchsets which is a good
+thing.
 
-Note #2!  The Intel=C2=AE Trust Domain CPU Architectural Extensions spec's
-pseudocode shows the CPL > 0 check for SEAMCALL coming _after_ the VM-Exit,
-but that appears to be a documentation bug (likely because the CPL > 0
-check was incorrectly bundled with other lower-priority #GP checks).
-Testing on SPR and EMR shows that the CPL > 0 check is performed before
-the VMX non-root check, i.e. SEAMCALL #GPs when executed in usermode.
-
-Note #3!  The aforementioned Trust Domain spec uses confusing pseudocde
-that says that SEAMCALL will #UD if executed "inSEAM", but "inSEAM"
-specifically means in SEAM Root Mode, i.e. in the TDX-Module.  The long-
-form description explicitly states that SEAMCALL generates an exit when
-executed in "SEAM VMX non-root operation".
-
-Cc: stable@vger.kernel.org
-Cc: Kai Huang <kai.huang@intel.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/uapi/asm/vmx.h | 1 +
- arch/x86/kvm/vmx/nested.c       | 8 ++++++++
- arch/x86/kvm/vmx/tdx.c          | 3 +++
- arch/x86/kvm/vmx/vmx.c          | 8 ++++++++
- 4 files changed, 20 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vm=
-x.h
-index 9792e329343e..1baa86dfe029 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -93,6 +93,7 @@
- #define EXIT_REASON_TPAUSE              68
- #define EXIT_REASON_BUS_LOCK            74
- #define EXIT_REASON_NOTIFY              75
-+#define EXIT_REASON_SEAMCALL            76
- #define EXIT_REASON_TDCALL              77
- #define EXIT_REASON_MSR_READ_IMM        84
- #define EXIT_REASON_MSR_WRITE_IMM       85
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 76271962cb70..f64a1eb241b6 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -6728,6 +6728,14 @@ static bool nested_vmx_l1_wants_exit(struct kvm_vcpu=
- *vcpu,
- 	case EXIT_REASON_NOTIFY:
- 		/* Notify VM exit is not exposed to L1 */
- 		return false;
-+	case EXIT_REASON_SEAMCALL:
-+	case EXIT_REASON_TDCALL:
-+		/*
-+		 * SEAMCALL and TDCALL unconditionally VM-Exit, but aren't
-+		 * virtualized by KVM for L1 hypervisors, i.e. L1 should
-+		 * never want or expect such an exit.
-+		 */
-+		return true;
- 	default:
- 		return true;
- 	}
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 097304bf1e1d..7326c68f9909 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -2127,6 +2127,9 @@ int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t=
- fastpath)
- 		return tdx_emulate_mmio(vcpu);
- 	case EXIT_REASON_EPT_VIOLATION:
- 		return tdx_handle_ept_violation(vcpu);
-+	case EXIT_REASON_SEAMCALL:
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+		return 1;
- 	case EXIT_REASON_OTHER_SMI:
- 		/*
- 		 * Unlike VMX, SMI in SEAM non-root mode (i.e. when
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 546272a5d34d..d1b34b7ca4a3 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6033,6 +6033,12 @@ static int handle_vmx_instruction(struct kvm_vcpu *v=
-cpu)
- 	return 1;
- }
-=20
-+static int handle_tdx_instruction(struct kvm_vcpu *vcpu)
-+{
-+	kvm_queue_exception(vcpu, UD_VECTOR);
-+	return 1;
-+}
-+
- #ifndef CONFIG_X86_SGX_KVM
- static int handle_encls(struct kvm_vcpu *vcpu)
- {
-@@ -6158,6 +6164,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu=
- *vcpu) =3D {
- 	[EXIT_REASON_ENCLS]		      =3D handle_encls,
- 	[EXIT_REASON_BUS_LOCK]                =3D handle_bus_lock_vmexit,
- 	[EXIT_REASON_NOTIFY]		      =3D handle_notify,
-+	[EXIT_REASON_SEAMCALL]		      =3D handle_tdx_instruction,
-+	[EXIT_REASON_TDCALL]		      =3D handle_tdx_instruction,
- 	[EXIT_REASON_MSR_READ_IMM]            =3D handle_rdmsr_imm,
- 	[EXIT_REASON_MSR_WRITE_IMM]           =3D handle_wrmsr_imm,
- };
-
-base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
---=20
-2.51.0.788.g6d19910ace-goog
-
+--
+paul-moore.com
 
