@@ -1,110 +1,163 @@
-Return-Path: <linux-kernel+bounces-853322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36044BDB459
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C266BDB49E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 22:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900AE19A351F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F9419A2E40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE585306B21;
-	Tue, 14 Oct 2025 20:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17828306B20;
+	Tue, 14 Oct 2025 20:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIDKKyFZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U59UeFU0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF322D877C;
-	Tue, 14 Oct 2025 20:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B39C3002B4;
+	Tue, 14 Oct 2025 20:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760474138; cv=none; b=YjejYp0B0EHXZWZD8EcD9iqvGTNhIzFFXSsG8TSbAetRLYFkvUq6xiwhaVDz4+zbL4S2BGg6Pnk794IEdBinpN6wOnQzvWM1HPqvIt/6sD8IG+nRf2kX96ffq2/mzRgMxMyjxSOmOdoc28MnNq+UjKvPCUjcUnTfH7xpUEzkGYQ=
+	t=1760474348; cv=none; b=kY6R8bLrWDhy3Jjqkl/6U0FopyPmh246M0fRVbyLYuvy3ZnTH4L1rVpg58Q8UZBilbXbimjUZvbzPwez6DFafGEQK2PK5gqeBkHzpe7b4CCdjvQapWN1G0O9bzXfO9FkxBgGkTaTOUxnDvRFifspBxs3gwS4kdShY69BAA45+kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760474138; c=relaxed/simple;
-	bh=dKSUwooapqfKnnp+tXFsmmogWc+n8vHaAutUZmOnCSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maYKtgSpi2+G126VEUGxdLC0mthyP3mQ9mv8P0s9WA2tF0ImrUdfwZZkU+yZghaEQARXwgl4Zke6Xa4G7H352D0bgyEBNAeZ5oqvQvJb0OUBM62REXQdsc9eu8Mhy7uFkKXqk09LzHWXv8awdmNPcTn2f+RhTSAkTPm77X2RSOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIDKKyFZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69A56C4CEE7;
-	Tue, 14 Oct 2025 20:35:37 +0000 (UTC)
+	s=arc-20240116; t=1760474348; c=relaxed/simple;
+	bh=gNKKSJedCDq4VTrEXDr+D3GoIVnPW42kIPJJkae+yU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=J3JAB0GCEUoRHrDtYJMvDDpg/rVsFlKpbQkMhyweBTSUv7495RhhGPRtR/MT4eYEehNxHDcBXvKNz+EOasWnksziTxjAfVROVWxpRpJZubYiYn1etsnubYsmorjVdQyXYT+d+IVYxTTMEPeJrgnzcw6LaY6tBuWmd9pPqsMyTdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U59UeFU0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA41BC4CEE7;
+	Tue, 14 Oct 2025 20:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760474137;
-	bh=dKSUwooapqfKnnp+tXFsmmogWc+n8vHaAutUZmOnCSk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIDKKyFZDqxvv9siup0KTO3d3EzU4BklF9FCmghKKfKrZrD546jULUFg0+vFVcHy0
-	 TRKzwdaBFIuQ6DFggz9HhQwJtbdRFrnG0nNJQmLetnvQvtZs76c0ggMokH/rS5J+va
-	 UI3iDUmKYv+zfB9n2T4VjDdQi6DnZs0oJSwf2S0uOMQr8TIOTx7wXwjezRcHba204z
-	 ULwiuvRlC4hDWxcVnusEpSt7hj15FBbnWnj2qG9/4z0+p6zFf84CZ+Y2zTpEaQ5y7z
-	 ThU3wcn4NPmwPim1s8Gs+WpCArRfMgde8I5Z0CY+F3hNR/cDvMDjl8bOQQlzWmfXRE
-	 /PfblxDQuiKYg==
-Date: Tue, 14 Oct 2025 13:35:35 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: John Stultz <jstultz@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Arnd Bergmann <arnd@kernel.org>, Tyler Hicks <code@tyhicks.com>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ecryptfs is unmaintained and untested
-Message-ID: <20251014203535.GA1916@quark>
-References: <20241028141955.639633-1-arnd@kernel.org>
- <Zx-ndBo7wpYSHWPK@casper.infradead.org>
- <ef98d985-6153-416d-9d5e-9a8a8595461a@app.fastmail.com>
- <20241029043328.GB3213@mit.edu>
- <CANDhNCpsoPcotnrjH6y0yEBf43652DRasSsEnAyEbrKN=tjEfQ@mail.gmail.com>
- <20251014143916.GA569133@mit.edu>
+	s=k20201202; t=1760474348;
+	bh=gNKKSJedCDq4VTrEXDr+D3GoIVnPW42kIPJJkae+yU0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=U59UeFU0TkYuuZ4zmJIHAkrDJ6ps0t8x9ef21SJpvXmgCVQ1htm2ACHffb+NGPnWZ
+	 29MNS/kPB70U7X8c7e+o6c+7tyzrKsIHlSY5k3Gjz5/HNkHgUbsr26SWHJWTTopwTN
+	 kJR5clRQld7iA+j6ymsz8MNgvZGSMdzs6dGKrgp09cl+WwNDEXqAZqsqnbcLbOk9N0
+	 WckHl0XECmQjJpf7hD10a7AFBuvV0ompyUcYXbJBujKX1yviq03V0Nnk54pF2dJoBZ
+	 HrQ5RzRgTsDUk5JG+WsthUkK+y1sXFVSz/4p7T+tlCqFgavO+XGGWa1lIU68zMtRPi
+	 iec994y/FaTwg==
+Date: Tue, 14 Oct 2025 15:39:06 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Val Packett <val@packett.cool>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH for-linus 1/1] PCI: Revert early bridge resource set up
+Message-ID: <20251014203906.GA905971@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251014143916.GA569133@mit.edu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251014163602.17138-1-ilpo.jarvinen@linux.intel.com>
 
-On Tue, Oct 14, 2025 at 10:39:16AM -0400, Theodore Ts'o wrote:
-> On Mon, Oct 13, 2025 at 11:07:56PM -0700, John Stultz wrote:
-> > 
-> > Yeah. Sadly I'm one, as I needed something to migrate off of when
-> > encfs was deprecated.
-> > 
-> > Is there another soon-to-be-deprecated filesystem to encrypt
-> > directories I should move to? :)
+On Tue, Oct 14, 2025 at 07:36:02PM +0300, Ilpo Järvinen wrote:
+> The commit a43ac325c7cb ("PCI: Set up bridge resources earlier") moved
+> bridge window resources set up earlier than before. The change was
+> necessary to support another change that got pulled on the last minute
+> due to breaking s390 and other systems.
 > 
-> Well, the closest way of encrypting directories is fscrypt.  The good
-> news is that it works on top of btrfs, ext4, f2fs, and ubifs, and it's
-> not likely to be deprecated given that it is used by chromeos and
-> android.  The bad news is that the integration with traditional Linux
-> desktop setups (e.g., login, etc.) was never completed.
+> The presence of valid bridge window resources earlier than before
+> allows pci_assign_unassigned_root_bus_resources() call from
+> pci_host_probe() assign the bridge windows. Some host bridges, however,
+> have to wait first for the link up event before they can enumerate
+> successfully (see e.g. qcom_pcie_global_irq_thread()) and thus the bus
+> has not been enumerated yet while calling pci_host_probe().
+> 
+> Calling pci_assign_unassigned_root_bus_resources() without results from
+> enumeration can result in sizing bridge windows with too small sizes
+> which cannot be later corrected after the enumeration has completed
+> because bridge windows have become pinned in place by the other
+> resources.
+> 
+> Interestingly, it seems pci_read_bridge_bases() is not called at all in
+> the problematic case and the bridge window resource type setup is done
+> by pci_bridge_check_ranges() and sizing by the usual resource fitting
+> logic.
+> 
+> The root problem behind all this looks pretty generic. If resource
+> fitting is called too early, the hotplug reservation and old size lower
+> bounding cause the bridge windows to be assigned without children but
+> with non-zero size, which leads to these pinning problems. As such,
+> this can likely be solved on the general level but the solution does
+> not look trivial.
+> 
+> As the commit a43ac325c7cb ("PCI: Set up bridge resources earlier") was
+> prequisite for other change that did not end up into kernel yet, revert
+> it to resolve the resource assignment failures and give time to code
+> and test a generic solution.
+> 
+> Reported-by: Val Packett <val@packett.cool>
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Fixes: a43ac325c7cb ("PCI: Set up bridge resources earlier")
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-The current set of filesystems that support fscrypt is ext4, f2fs,
-ubifs, cephfs, and (out-of-tree) Lustre.  btrfs's support for fscrypt is
-still under development, I'm afraid.  I'm told it's starting to be
-worked on again.
+Applied to pci/for-linus for v6.18, thanks!
 
-While the main user of the fscrypt kernel feature is Android which has
-its own userspace, there's also a userspace tool for general-purpose
-Linux distros, also called fscrypt.  See
-https://github.com/google/fscrypt and
-https://wiki.archlinux.org/title/Fscrypt
-
-I've been maintaining the 'fscrypt' userspace tool, and in the past I've
-done quite a bit of work to improve it.  I also use it to encrypt the
-home directory on my personal desktop.
-
-It's true that it really could use some love, though.  It's not
-something that I've been prioritizing recently, and no one else has
-stepped up either.  (Compare to eCryptfs where Ubuntu adopted it, and
-Canonical stepped up to develop and maintain ecryptfs-tools.  That's
-just not something that's happened for fscrypt.)
-
-There are other userspace programs that use the fscrypt kernel feature
-too, such as systemd-homed and a new one called dirlock:
-https://lwn.net/Articles/1038859/
-
-- Eric
+> ---
+> 
+> This revert should go to for-linus.
+> 
+> 
+> I'm not sure whether Guenter's case is exactly the same problem as
+> described in the commit message, I only know for sure his bisection
+> landed on the same commit.
+> 
+> My plan is to retry these changes with more supporting changes. It
+> looks PCI core could delay assigning the bridge window resources if
+> there are no child resource to put into the bridge windows. Or
+> alternatively the resource fitting algorithm could release empty bridge
+> windows as the first step. But that is too complicated change to make
+> now and would benefit from time spent in -next.
+> 
+> ---
+>  drivers/pci/probe.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index c83e75a0ec12..0ce98e18b5a8 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -538,14 +538,10 @@ static void pci_read_bridge_windows(struct pci_dev *bridge)
+>  	}
+>  	if (io) {
+>  		bridge->io_window = 1;
+> -		pci_read_bridge_io(bridge,
+> -				   pci_resource_n(bridge, PCI_BRIDGE_IO_WINDOW),
+> -				   true);
+> +		pci_read_bridge_io(bridge, &res, true);
+>  	}
+>  
+> -	pci_read_bridge_mmio(bridge,
+> -			     pci_resource_n(bridge, PCI_BRIDGE_MEM_WINDOW),
+> -			     true);
+> +	pci_read_bridge_mmio(bridge, &res, true);
+>  
+>  	/*
+>  	 * DECchip 21050 pass 2 errata: the bridge may miss an address
+> @@ -583,10 +579,7 @@ static void pci_read_bridge_windows(struct pci_dev *bridge)
+>  			bridge->pref_64_window = 1;
+>  	}
+>  
+> -	pci_read_bridge_mmio_pref(bridge,
+> -				  pci_resource_n(bridge,
+> -						 PCI_BRIDGE_PREF_MEM_WINDOW),
+> -				  true);
+> +	pci_read_bridge_mmio_pref(bridge, &res, true);
+>  }
+>  
+>  void pci_read_bridge_bases(struct pci_bus *child)
+> 
+> base-commit: 2f2c7254931f41b5736e3ba12aaa9ac1bbeeeb92
+> -- 
+> 2.39.5
+> 
 
