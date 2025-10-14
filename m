@@ -1,229 +1,179 @@
-Return-Path: <linux-kernel+bounces-851853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01052BD7728
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:36:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4022DBD7731
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 903214E742C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:36:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E13A834EFBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AC1286890;
-	Tue, 14 Oct 2025 05:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FC029293D;
+	Tue, 14 Oct 2025 05:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Bm8YKhch"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YP4UjDll"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84063299948
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CB7273D77;
+	Tue, 14 Oct 2025 05:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760420176; cv=none; b=lVAmA6TCizdAtOuUwyBwzdk3vA/sDpJfHuPLGMtsW3WqcPW6ucrpWsaAIXGWxCpztSOz71XrgZotNlajSwRLGS0CoAxd34kx4bJoY/QqNLGWkUkg2ER2VZHAkjAcPC/4SOYgZaAYVq0n5ChPW5Dq6MLzlYdfw0l1fOe2BLjm1/g=
+	t=1760420190; cv=none; b=BYaJ21MRhfnTwDONQKosrbCqd3pXJ6pCDgUgztVaOvsBTpSA8sLoEp5sProOsUhU9Ce2wQcHqnUUUNowd2gDFwP/QJ9L9HpRyWPmUW2W9kUDP6dwTam9CTPp6914oBV5YhFG+nKbaamRKKQuGBmxFY3t94pYIp7TOGmZMi6jOkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760420176; c=relaxed/simple;
-	bh=5RlDZIH/oxFVBlQHiYFsX5wFXeqeq6URgoE2IqTx2jI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dqmwENts1sakDy6pjkiP4pdUU0JL4k3vz/bp77yxQXQ0EKareIeFWwdVRgys6mrQFILMK4lGgf6bLyKh/L33nrExJq7x7MEMGAPVWJVh9atA0PNzdAo4uV1Sb/PCBBqvaxlv7A8IOJFksoBaQ9b4n3+slb0d3zl9zV/IdomM/fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Bm8YKhch; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DHDAK7002445
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:36:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nGQ1HH2B6A4U5Y0vYjvst9AOWsJbygVsidDBRZJFqLM=; b=Bm8YKhchNTQWmJjN
-	jUjOdXQyZYANctX0THA3f25h2SlmblfVPHtvC+rES8PaCmr5/PpLcBxwYPSDgps7
-	w5CYFGhsYFU+t9PYf/Mt7OEOl8/EFMFyfTxgQtpw/ocxd6TGhUqkcR6hiVpzq/P5
-	fMKLqP4V9voGH47iKRrSbSsAdJ4OKWL9xttEBmaKnSoIWKK1yZvxYOWEP7ONhvIg
-	0nQ3iGZK7elNFtouFjZNv9X4X+sbkLlsdYHaH6P1xFVeXrPd4Ejp0P1rkN/fTPHO
-	JWid4pHEtPwG9HECFsrfYTm6eOct58r2vYVIRRXQ4C7Lx1htJU6nyUYcu2plrFP1
-	nZpDyQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfdk77ns-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:36:13 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-78117fbda6eso7689444b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:36:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760420172; x=1761024972;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGQ1HH2B6A4U5Y0vYjvst9AOWsJbygVsidDBRZJFqLM=;
-        b=AS+t8CuQDsBlTXLvTTvzCeis7GIoHqyEIw620xZwt8Z+kx0JiZD5yErLiBoddw49xw
-         +CGp38kOOvE1ZzIHduTXci63LlYBa52IZMLUfqlH5E4rkRyfpkGJw2XTiWV2jifawYg0
-         /U4pYn3S/1AtH9WzC9bzngjZ/h/CE0/iKqzvFwriDjsV2Y09bcI8p7lK7jRQp3ElrqV5
-         z9A0DxcwIJjn/aUcQWStlpjuaOqHMDd0OD3pC0Kk9cmDmNE9AHLNf3NL3bpxALzR7k0w
-         7PYIJXE1IKt9h3bUajaVijMYc/I0FrnK1JEvlqzF1ZYXW1N4MUeKhLB8qbWQEqZNMdWw
-         yApA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWzThdD4Tfs1XPhT+BgwrkEUEBn7oUAT83q7YCNg7LUZG80J98rNoGzl2+A2CJmJhPweBFvlnA6hZnzVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywQu/zPteKmATjPmHxZ98Zjf+Y6eybINxzJ79RXEPNO/AR/Twe
-	yhfQI3D6s5SLtJKvgahp+GMUzCxAQZObcgXRU54TZH54f49DjN2FIIsmlgtrsXcMw2Xf6TQyAaS
-	PBDwYjgg9ugo2XueQtD4IXXB6CeGjAfrx2JxB/90xwbbQN+I6XWRAm+R0Fx67pJsbwek=
-X-Gm-Gg: ASbGncsuU43qNz4XqcSEwT8hRq7Hy9GxdJOzo0zOFrPMnuO7hjDsX4hjfxHcNLFs4ka
-	XWdutRzRlkS9ymrXsJLBBqJDjh1XB+hfv02zGc0pd/H6Y7Fg4rsrmPmz4vZOrrsbOVshCybKVtG
-	VFgFIevzoho1Z1M46VBW3sQz/QMDzNHpNdYFh9Nt8CBcqWTe0vzSCQRRzcU//J4lk1xF8SBkLUM
-	tmAjnZBGtDe7Wn1NvvHw6bUmNC8kdwoiBHuV98yB14VReE2KnehlML6g6aiOlrOzTZfjIEsR00s
-	VRkTxuMyrTMOvIaRatvDDx0BZVQVw0MqnvdWCyAJR1jNLAbJwNjFW4pJAvT86H1AZefQWsEAyQ=
-	=
-X-Received: by 2002:a05:6a20:9188:b0:32b:83bf:2cdb with SMTP id adf61e73a8af0-32da8206da3mr31448318637.15.1760420171889;
-        Mon, 13 Oct 2025 22:36:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSlhc1mcSl8tmhuzaLaI+INs35wZ1CSXhcN7zcbL3S2avPe4DXFk5/GWDyliZFU2mc1MPfpg==
-X-Received: by 2002:a05:6a20:9188:b0:32b:83bf:2cdb with SMTP id adf61e73a8af0-32da8206da3mr31448282637.15.1760420171401;
-        Mon, 13 Oct 2025 22:36:11 -0700 (PDT)
-Received: from [10.218.42.132] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df4c40esm10506658a12.33.2025.10.13.22.36.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 22:36:11 -0700 (PDT)
-Message-ID: <759e429c-b160-46ff-923e-000415c749ee@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 11:06:06 +0530
+	s=arc-20240116; t=1760420190; c=relaxed/simple;
+	bh=dZyO5AYkdCnAgw3zHe29BHULyuRscIXqSL4WQ9OiMqE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snzYK3UDtFOF9CUrOG+pahzPVLYxcSdogsgEC6LE11Z9FIMU0JDxLvP77FA1tF+Zb4S0Gn2ccAIV8AY0S9BPraBwjX/zLEv2KF9sA723SYo5xp1UXQAldAYj9jvwDJj2+Z9WShl4qbhqRp1+mmn7BNbRjBhR8kQcZmBS4mq1whs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YP4UjDll; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59E5aAnm1427772;
+	Tue, 14 Oct 2025 00:36:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760420170;
+	bh=+BnS+zjoHibuRNFFkUP4V+Q1q9TD2gqlW/L3pZgLjBc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=YP4UjDlltxFOMRTzX7smUSH82BtShjxkb+SnjZL6rvOjWoPV5NZKiwN0uyVaiXM81
+	 8eEpIfA5x3JbwBOvdWSOpVzMb0j4ROW1hCS5j+3Gw+8svx+nTGJymcg96QL0gfO6jb
+	 WcFhWLtPraMEq0bgDHAueE0FmGFg/GioJIXWnUZg=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59E5a9Sv3569395
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 14 Oct 2025 00:36:10 -0500
+Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 14
+ Oct 2025 00:36:09 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE200.ent.ti.com
+ (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 00:36:09 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59E5a83T3047771;
+	Tue, 14 Oct 2025 00:36:09 -0500
+Date: Tue, 14 Oct 2025 11:06:08 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Malaya Kumar Rout <mrout@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <lyude@redhat.com>,
+        <malayarout91@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown
+	<lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] PM: console: Fix memory allocation error handling in
+ pm_vt_switch_required()
+Message-ID: <20251014053608.pwlnexeh7mwjrvsc@lcpd911>
+References: <20251013193028.89570-1-mrout@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: SiFive FU740 PCI driver fails on 6.18-rc1
-To: Ron Economos <re@w6rz.net>, Bjorn Helgaas <helgaas@kernel.org>,
-        Conor Dooley <conor@kernel.org>
-Cc: bhelgaas@google.com, mani@kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Paul Walmsley <pjw@kernel.org>, Greentime Hu <greentime.hu@sifive.com>,
-        Samuel Holland <samuel.holland@sifive.com>,
-        regressions@lists.linux.dev
-References: <20251013212801.GA865570@bhelgaas>
- <bc7deb1a-5f93-4a36-bd6a-b0600b150d48@oss.qualcomm.com>
- <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <95a0f2a4-3ddd-4dec-a67e-27f774edb5fd@w6rz.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: fvFQfGMC7ikTuEROp1VtWdUyMfmddR0L
-X-Authority-Analysis: v=2.4 cv=MrNfKmae c=1 sm=1 tr=0 ts=68ede14d cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=JizxZ_2zm4TzMdWxA80A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: fvFQfGMC7ikTuEROp1VtWdUyMfmddR0L
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX9SZTu8Dj+lyW
- FAjMkQoMmeOMzXbuViasI9hoFG7F8+LHBvIz3aOlIzO8+I6XjHdj2gkc+ecW2IbKQVHjTA42XwR
- X7mFyuEz7HjF5DXniRWBRQJxnfrNMUXF/GfeKm1P7D9pn0QGb+kvqz/okftfUTgUL2YLnv7rhYa
- dvuZhS2C3uRMbEoG2kQf/V5ZmJPQSuHuHU2DF4P/sAmMPC2Y5Nssy939e+IHBUcstNWbJfBa/Zh
- sC4cJ439zj8C7aF8i7UVjBpNloBwqVsepO50cUp2LFbQwLdml4Fe6zxzVQ5keG6N9JuhGd/VV8j
- UakJ1G5PvBomfBbXyNI2RV7uXsnQ8kQAmghZfBo7HKwxtHxnEI+4KZIMNwl02BDs6D+1Tzryuig
- 1wKW/EBpwo9R7jyGQUc2N5md+2biFQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-13_09,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 clxscore=1015 adultscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251013193028.89570-1-mrout@redhat.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-
-On 10/14/2025 10:56 AM, Ron Economos wrote:
-> On 10/13/25 22:20, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 10/14/2025 2:58 AM, Bjorn Helgaas wrote:
->>> [+cc FU740 driver folks, Conor, regressions]
->>>
->>> On Mon, Oct 13, 2025 at 12:14:54AM -0700, Ron Economos wrote:
->>>> The SiFive FU740 PCI driver fails on the HiFive Unmatched board with 
->>>> Linux
->>>> 6.18-rc1. The error message is:
->>>>
->>>> [    3.166624] fu740-pcie e00000000.pcie: host bridge 
->>>> /soc/pcie@e00000000
->>>> ranges:
->>>> [    3.166706] fu740-pcie e00000000.pcie:       IO
->>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>> [    3.166767] fu740-pcie e00000000.pcie:      MEM
->>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>> [    3.166805] fu740-pcie e00000000.pcie:      MEM
->>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>> [    3.166950] fu740-pcie e00000000.pcie: ECAM at [mem
->>>> 0xdf0000000-0xdffffffff] for [bus 00-ff]
->>>> [    3.579500] fu740-pcie e00000000.pcie: No iATU regions found
->>>> [    3.579552] fu740-pcie e00000000.pcie: Failed to configure iATU 
->>>> in ECAM
->>>> mode
->>>> [    3.579655] fu740-pcie e00000000.pcie: probe with driver fu740-pcie
->>>> failed with error -22
->>>>
->>>> The normal message (on Linux 6.17.2) is:
->>>>
->>>> [    3.381487] fu740-pcie e00000000.pcie: host bridge 
->>>> /soc/pcie@e00000000
->>>> ranges:
->>>> [    3.381584] fu740-pcie e00000000.pcie:       IO
->>>> 0x0060080000..0x006008ffff -> 0x0060080000
->>>> [    3.381682] fu740-pcie e00000000.pcie:      MEM
->>>> 0x0060090000..0x007fffffff -> 0x0060090000
->>>> [    3.381724] fu740-pcie e00000000.pcie:      MEM
->>>> 0x2000000000..0x3fffffffff -> 0x2000000000
->>>> [    3.484809] fu740-pcie e00000000.pcie: iATU: unroll T, 8 ob, 8 
->>>> ib, align
->>>> 4K, limit 4096G
->>>> [    3.683678] fu740-pcie e00000000.pcie: PCIe Gen.1 x8 link up
->>>> [    3.883674] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->>>> [    3.987678] fu740-pcie e00000000.pcie: PCIe Gen.3 x8 link up
->>>> [    3.988164] fu740-pcie e00000000.pcie: PCI host bridge to bus 
->>>> 0000:00
->>>>
->>>> Reverting the following commits solves the issue.
->>>>
->>>> 0da48c5b2fa731b21bc523c82d927399a1e508b0 PCI: dwc: Support ECAM 
->>>> mechanism by
->>>> enabling iATU 'CFG Shift Feature'
->>>>
->>>> 4660e50cf81800f82eeecf743ad1e3e97ab72190 PCI: qcom: Prepare for the 
->>>> DWC ECAM
->>>> enablement
->>>>
->>>> f6fd357f7afbeb34a633e5688a23b9d7eb49d558 PCI: dwc: Prepare the 
->>>> driver for
->>>> enabling ECAM mechanism using iATU 'CFG Shift Feature'
->>>
->>> As Conor pointed out, we can't fix a code regression with a DT change.
->>>
->>> #regzbot introduced: f6fd357f7afb ("PCI: dwc: Prepare the driver for 
->>> enabling ECAM mechanism using iATU 'CFG Shift Feature'")
->> Hi Conor,
->>
->> Can you try with this patch and see if it is fixing the issue.
->> diff --git a/drivers/pci/controller/dwc/pcie-fu740.c 
->> b/drivers/pci/controller/dwc/pcie-fu740.c
->> index 66367252032b..b5e0f016a580 100644
->> --- a/drivers/pci/controller/dwc/pcie-fu740.c
->> +++ b/drivers/pci/controller/dwc/pcie-fu740.c
->> @@ -328,6 +328,8 @@ static int fu740_pcie_probe(struct platform_device 
->> *pdev)
->>
->>         platform_set_drvdata(pdev, afp);
->>
->> +       pci->pp.native_ecam = true;
->> +
->>         return dw_pcie_host_init(&pci->pp);
->>  }
->>
->> - Krishna Chaitanya.
->>
->>>
-> I've already tried it. It doesn't work. Same error message as before.
-Can you share us dmesg logs for this change.
-
-- Krishna Chaitanya.
+On Oct 14, 2025 at 01:00:27 +0530, Malaya Kumar Rout wrote:
+>   The pm_vt_switch_required() function fails silently when memory
+>   allocation fails, offering no indication to callers that the operation
+>   was unsuccessful. This behavior prevents drivers from handling allocation
+>   errors correctly or implementing retry mechanisms. By ensuring that
+>   failures are reported back to the caller, drivers can make informed
+>   decisions, improve robustness, and avoid unexpected behavior during
+>   critical power management operations.
 > 
+>   Change the function signature to return an integer error code and modify
+>   the implementation to return -ENOMEM when kmalloc() fails. Update both
+>   the function declaration and the inline stub in include/linux/pm.h to
+>   maintain consistency across CONFIG_VT_CONSOLE_SLEEP configurations.
+> 
+>   The function now returns:
+>   - 0 on success (including when updating existing entries)
+>   - -ENOMEM when memory allocation fails
+> 
+>   This change improves error reporting without breaking existing callers,
+>   as the current callers in drivers/video/fbdev/core/fbmem.c already
+>   ignore the return value, making this a backward-compatible improvement.
+
+Not sure why this commit message has been indented, but it's not
+a big deal.
+
+> 
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+
+Btw you can't include a R-by tag in the very first revision of the
+patch. This needs to come from Lyude on a public mailing list and only
+then can it be picked up.
+
+> Signed-off-by: Malaya Kumar Rout <mrout@redhat.com>
+> ---
+>  include/linux/pm.h     | 5 +++--
+>  kernel/power/console.c | 8 ++++++--
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index cc7b2dc28574..a72e42eec130 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -25,11 +25,12 @@ extern void (*pm_power_off)(void);
+>  
+>  struct device; /* we have a circular dep with device.h */
+>  #ifdef CONFIG_VT_CONSOLE_SLEEP
+> -extern void pm_vt_switch_required(struct device *dev, bool required);
+> +extern int pm_vt_switch_required(struct device *dev, bool required);
+>  extern void pm_vt_switch_unregister(struct device *dev);
+>  #else
+> -static inline void pm_vt_switch_required(struct device *dev, bool required)
+> +static inline int pm_vt_switch_required(struct device *dev, bool required)
+>  {
+> +	return 0;
+>  }
+>  static inline void pm_vt_switch_unregister(struct device *dev)
+>  {
+> diff --git a/kernel/power/console.c b/kernel/power/console.c
+> index 19c48aa5355d..a906a0ac0f9b 100644
+> --- a/kernel/power/console.c
+> +++ b/kernel/power/console.c
+> @@ -44,9 +44,10 @@ static LIST_HEAD(pm_vt_switch_list);
+>   * no_console_suspend argument has been passed on the command line, VT
+>   * switches will occur.
+>   */
+> -void pm_vt_switch_required(struct device *dev, bool required)
+> +int pm_vt_switch_required(struct device *dev, bool required)
+>  {
+>  	struct pm_vt_switch *entry, *tmp;
+> +	int ret = 0;
+>  
+>  	mutex_lock(&vt_switch_mutex);
+>  	list_for_each_entry(tmp, &pm_vt_switch_list, head) {
+> @@ -58,8 +59,10 @@ void pm_vt_switch_required(struct device *dev, bool required)
+>  	}
+>  
+>  	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
+> -	if (!entry)
+> +	if (!entry) {
+> +		ret = -ENOMEM;
+>  		goto out;
+> +		}
+>  
+>  	entry->required = required;
+>  	entry->dev = dev;
+> @@ -67,6 +70,7 @@ void pm_vt_switch_required(struct device *dev, bool required)
+>  	list_add(&entry->head, &pm_vt_switch_list);
+>  out:
+>  	mutex_unlock(&vt_switch_mutex);
+> +	return ret;
+
+I am fine with the overall improved error handling,
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
