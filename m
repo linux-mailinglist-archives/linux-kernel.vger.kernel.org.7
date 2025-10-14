@@ -1,117 +1,235 @@
-Return-Path: <linux-kernel+bounces-853259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6822DBDB0D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:24:56 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA34BDB0E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D33E64F8BDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:24:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00550356922
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 19:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A242C0F7F;
-	Tue, 14 Oct 2025 19:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDDA2C032E;
+	Tue, 14 Oct 2025 19:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1hFUaec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0SAQDtC"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B5D235072;
-	Tue, 14 Oct 2025 19:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70198235072
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760469884; cv=none; b=M2OCaSmYDhAe3dc6fztLUgGoIUZ9p2wADgn0K5nO+Bf7Xaic2Z+u4EOZtp3lC+lICre9aFCKfhbBxmOVYMHVA7Pj4N5aN8TeXSukbnhY6nG847zzZQ9Y61+cciaCFsY3J9eU4VMqFwN5D0dsyyvlFZj8c4PX1KX/ItOY5qXX+XI=
+	t=1760469991; cv=none; b=PpOQU9ESSnHXu0x810vrdlndiw07xV7TqsCAw2vxEFoeq9RC6qIIpHFGafsPaM4a05kWPC1MyIXsCJcMkN4ip/6duVBEXR2CZzOh3MFErvpwDNSk69fujftDbA+mLqg1J3L2nsrQKI/1P8imO1PXVD86lMS/lOTu8bPYu+yIVwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760469884; c=relaxed/simple;
-	bh=QGe+pGQFHQbcVEStq8maDcz98J92lr2mU5ZxO9m81Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JA0JcWin9QyTEOEi6hTCOIwCsatFStGiCmQwmpM9cafwUaxzWniR6Xo2KdFBsncsb6N3691zMSg7cYhdmTYYeRZ8ZFlYBFpevmJO0Wt4pNKTPh5ScgkrPRSy8M4AEg8ZCilTDCH7x9Su1AtjrSxM/M5JfbGskHEeJKFD2ioKZ6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1hFUaec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FA8C4CEE7;
-	Tue, 14 Oct 2025 19:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760469883;
-	bh=QGe+pGQFHQbcVEStq8maDcz98J92lr2mU5ZxO9m81Ic=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c1hFUaecXpGdRIVnyNf6AJezyzSHTo+5Ej+80A7exJEqoYR364SYaCcz7LnJ+QSk1
-	 F9WDSbc4bmJ+MQ+TFd4enzMBwZSi5517S/NSoGsDgAR57IIoXBqzHsIN+yDl1LBt5/
-	 jpm7gsg7M1sTw4UyMjEpl/MrcEfbHdgFKMYCm6hT4q9JY2XmPGHJwm3kDpZS4cRCGd
-	 9YKGVEHdWOQOctFV9BMWUUOk93VtoyppcLex8yls5DBzRBEDx26Q/gOW2NR6CHV/SY
-	 pVDHjgmPgo2r/upnopBU2sDSLn23RYrMOg30dm25/WiQY4nUBlmBN8Xo48Vg39AZ+I
-	 Q9oh3urG2S0FQ==
-Date: Tue, 14 Oct 2025 12:24:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov
- <ast@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Arkadiusz Kubalewski
- <arkadiusz.kubalewski@intel.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Daniel Zahka <daniel.zahka@gmail.com>, Donald Hunter
- <donald.hunter@gmail.com>, Jacob Keller <jacob.e.keller@intel.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Jiri Pirko <jiri@resnulli.us>, Joe
- Damato <jdamato@fastly.com>, John Fastabend <john.fastabend@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Simon Horman <horms@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdl?=
- =?UTF-8?B?bnNlbg==?= <toke@redhat.com>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Willem de Bruijn <willemb@google.com>,
- bpf@vger.kernel.org, netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/6] tools: ynl-gen: bitshift the flag values
- in the generated code
-Message-ID: <20251014122441.27e2d267@kernel.org>
-In-Reply-To: <d3f1427f-e8bc-4ab0-bf15-171b701325b9@fiberby.net>
-References: <20251013165005.83659-1-ast@fiberby.net>
-	<20251013165005.83659-2-ast@fiberby.net>
-	<20251013175331.281ec43e@kernel.org>
-	<d3f1427f-e8bc-4ab0-bf15-171b701325b9@fiberby.net>
+	s=arc-20240116; t=1760469991; c=relaxed/simple;
+	bh=fZ2lmAplBig7Ej+JsrNEWrTslwMnZPM3WtSgacCl74E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bU6yf07NeArfjm0FM3ApHwUiiZ7z996vkR6JdagrMS9/Fhh15/i/KWvFd2gtCyr3N9Z/iPlXEszFAdCnSoTZH7LFXagv1hI2wHAhOxD/trHC0krsL5wL7rgfajT2CrRYCkcPjy04tsm8GBm978RyERNSvw6G/nIqRVORdwIeH00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0SAQDtC; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-650304a822aso688314eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760469988; x=1761074788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eHj2o7EikP5ncHLSx75L5WIqeqxqTpkWVTbaajhRFdY=;
+        b=W0SAQDtC9M3BZY8w+Pbd7q2ATF4w7N95TPTPMtjhMJq4BAmLS38CheFeAjpbbtjVol
+         fcgODTgb9QRgHiRlZ6QP83689oAAA1LuZgCBwCHsCBLNtlfTMli+YgwSBYSzquw++8fY
+         uO+Nt6s5gaH2HjbZOBxJiVm6POGxwC6VSiUt67qcQeXhyAZPRYz3N2Aie6c/kHdfSB9D
+         H0cIEOtsGcA7EURGRqJIiQeXL4smh6JRMf9UpkzW7giDMwqmWjPG28bXL863/C4dAh2+
+         1YSK/cFRzqsyHXkbnIGpOuqEm3JaNTN1tKpFentWEv4Ca0iW/ya0qvf12Mcc/bJOVm9d
+         5+4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760469988; x=1761074788;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eHj2o7EikP5ncHLSx75L5WIqeqxqTpkWVTbaajhRFdY=;
+        b=IMdqk0P0pwdvSr2j+8iJQgYw/HkmUxsMbwBNolNmhjoXT0mO5qf7RLn8a0Hsc/uQkc
+         sM3C8w9OBt5aaKm7M6otClFfsOHglLlw6swfchDZsdLlRlkmXrX1W86zVHatyAt+5Y03
+         jJS8gRTLPotApSfqpi+tqtW5oiHrDbyLk3d2dXwjW1tAG3Emu/aBFpuGip6wcy9fmKXQ
+         U5mC5MNDEBlwO5/3XXt96uUdh5zNjBQ6bxi6C/bCnxfQ+1MtRbpSLX+cclmHwzIxyYbG
+         pKKm1y66GqengN4FA/1jIpHtbgkkDH8ufvszxGRos6Yyy3JsCQR6GqY+Y1+OrH4kH1HT
+         iMhg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ey1ayxCInLQCVhgxjj2TA+tMLsLspov/6AQczieNFO0K+kfJUqEJV3PD1wtX7HZD76TYZNSTMgaJGtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDZ5ODLcFNHAc3ZYleylW8CLDUgB9weBgKGZpH37/XN9gHiT6K
+	GYBzrrAmf9ynyVne1XhyHZ9O3jv8D21fuN7wjYbPOeBVQD+AuBnfjQUC
+X-Gm-Gg: ASbGncvkVCVKQcyFw7jbxODImfNLnBLJ1sG+HuXrntRRd9xNdl2nbg9DpEvJyXibE9L
+	dHAs9pmscvMj/C1QJMP2hzXi06OQJZblXhBPbMEwEbuCGKB579VbBGUzODQMwQ8eC1+bWfmGVXC
+	UV86+OXyubt9SqQrEIr5g4AO6NqVGuuDvvF2dSo6PwHeTSwp8GFUjuowcvUL9UjhBXcdKNlaula
+	5IOpY1THKY8WtsdfxKvmquaPniuKWkQWlQjUAb+xzwKQO83xTqz440ZNI/aVu/1jmBcPn5Kw9p4
+	MO/SuH9TXwoh88bwejYt7H0rRqp3TQ7jZ1H1BenLJCHC4B6Hl3JJI3ZZktP7Ll4xBMOk62QdOll
+	Cbs/acBTuQ7lssqrJHa5UmX0nrbf9ffOIaqFYukdlYqyHEEKmxkm45fwfDUJ3Kd90a1XW8uCy16
+	hDqLfiQZuhix3YJtBTqu7JjHXH1yHBAPrgoHd9ncMHtxiZATVmAROqG9zszcJkkxTAMbJqhKc+Y
+	5C1sQ==
+X-Google-Smtp-Source: AGHT+IGpw9Z0DqqqaYc7jrfIT4qzqxvoATfSl2lPXdgh0jkAvhk0Wy0FALGUWrAmivzsiW51YvVpGw==
+X-Received: by 2002:a05:6820:4dc7:b0:650:4db7:22ed with SMTP id 006d021491bc7-6504db725b3mr87792eaf.0.1760469988343;
+        Tue, 14 Oct 2025 12:26:28 -0700 (PDT)
+Received: from uacde259c55d655.ant.amazon.com (amazon.com.bear2.houston1.level3.net. [4.1.110.174])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-65018200f2csm3597157eaf.18.2025.10.14.12.26.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 12:26:27 -0700 (PDT)
+From: jayxu1990@gmail.com
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	avnerkhan@utexas.edu,
+	rdlee.upstream@gmail.com,
+	Jay Xu <jayxu1990@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] mtd: core: Add nand_id sysfs attribute for NAND devices
+Date: Wed, 15 Oct 2025 03:24:55 +0800
+Message-Id: <20251014192455.4007534-1-jayxu1990@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251007224049.2798233-1-jayxu1990@gmail.com>
+References: <20251007224049.2798233-1-jayxu1990@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 14 Oct 2025 16:49:22 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> On 10/14/25 12:53 AM, Jakub Kicinski wrote:
-> > On Mon, 13 Oct 2025 16:49:58 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wro=
-te: =20
-> >> Instead of pre-computing the flag values within the code generator,
-> >> then move the bitshift operation into the generated code.
-> >>
-> >> This IMHO makes the generated code read more like handwritten code. =20
-> >=20
-> > I like it the way it is. The values are irrelevant. =20
->=20
-> Bit-shifting seams like the preferred way across the uAPI headers.
->=20
-> Would you be open to hexadecimal notation, if not bit-shifting?
->=20
-> Currently NLA_POLICY_MASK() is generated with a hexadecimal mask, and
-> with these patches, if render-max is not set. If using literal values
-> then we should properly consistently generate them as either decimal
-> or hexadecimal. I prefer hexadecimal over decimal.
+From: Jay Xu <jayxu1990@gmail.com>
 
-Hm, hex could do. For the bit/1 << x i really don't like that the values
-are not aligned to columns, so they visually mix in with the names.=20
-But aligning them would be more LoC than it's worth.
+[Problem]
+Currently, NAND devices do not expose their NAND ID through sysfs,
+making it difficult for userspace applications to identify the specific
+NAND flash chip in use. For supply management reasons, electronics
+products are typically manufactured with multiple storage device
+suppliers, creating a need to identify which storage device is used
+on a particular product. The NAND ID is a semi-unique identifier that can
+be used to determine chip-specific characteristics such as maximum P/E
+cycles, which is essential for NAND health monitoring and wear leveling
+algorithms.
 
-hex could be a reasonable compromise, but I make no promise that I will
-like it once I see the result :)
+[Solution]
+This patch adds a new 'nand_id' sysfs attribute that:
 
-> > And returning a string from user_value() is quite ugly. =20
-> It only returns a string, when as_c is set, I am happy to duplicate
-> some code instead, and add a dedicated method always returning a string,
-> but can we please agree on the generated output, before implementation?
+1. Exposes the full NAND ID (typically 5-8 bytes) in hexadecimal format
+2. Only appears on physical NAND devices (MTD_NANDFLASH/MTD_MLCNANDFLASH)
+3. Is hidden on virtual MTD devices
+4. Reads from the master device to ensure consistent ID across partitions
+5. Handles on-demand ID reading if not already populated during probe
 
-nlspec.py was supposed to be a library that abstracts away things like
-default values not being present, and simplifies indexing. So having a
-"give me a format for C as result" arg is not great for layering.
-That kind of logic belongs in the caller.=20
+The implementation uses a separate attribute group with visibility control
+to avoid affecting existing MTD sysfs attributes. All NAND partitions
+from the same physical chip will show the same ID, as expected.
 
-Regarding LoC - great code is concise, but that doesn't mean that
-making code shorter always makes it better.
+The NAND-specific code is conditionally compiled with CONFIG_MTD_RAW_NAND
+to ensure clean builds when raw NAND support is not enabled.
+
+This enables userspace tools to reliably identify NAND chips for
+health monitoring, bad block management, and device-specific
+optimizations.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510120356.STGKDkA5-lkp@intel.com/
+Signed-off-by: Jay Xu <jayxu1990@gmail.com>
+---
+ drivers/mtd/mtdcore.c | 66 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 5ba9a741f5ac..215e316194b4 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -34,6 +34,9 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
++#ifdef CONFIG_MTD_RAW_NAND
++#include <linux/mtd/rawnand.h>
++#endif
+ 
+ #include "mtdcore.h"
+ 
+@@ -339,6 +342,56 @@ static ssize_t mtd_bbt_blocks_show(struct device *dev,
+ }
+ MTD_DEVICE_ATTR_RO(bbt_blocks);
+ 
++#ifdef CONFIG_MTD_RAW_NAND
++static ssize_t mtd_nand_id_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct mtd_info *mtd = dev_get_drvdata(dev);
++	struct mtd_info *master = mtd_get_master(mtd);
++	struct nand_chip *chip;
++	int ret;
++
++	/* Ensure this is actually a NAND device */
++	if (master->type != MTD_NANDFLASH && master->type != MTD_MLCNANDFLASH)
++		return -ENODEV;
++
++	chip = mtd_to_nand(master);
++
++	/* If ID not populated, try to read it now */
++	if (!chip->id.len) {
++		ret = nand_readid_op(chip, 0, chip->id.data, NAND_MAX_ID_LEN);
++		if (ret)
++			return sysfs_emit(buf, "read-error\n");
++		chip->id.len = strnlen(chip->id.data, NAND_MAX_ID_LEN);
++	}
++
++	return sysfs_emit(buf, "%*phN\n", chip->id.len, chip->id.data);
++}
++MTD_DEVICE_ATTR_RO(nand_id);
++
++static umode_t mtd_nand_id_visible(struct kobject *kobj, struct attribute *attr, int n)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct mtd_info *mtd = dev_get_drvdata(dev);
++
++	/* Only show on NAND devices (excludes UBI volumes which have type 'ubi') */
++	if (mtd->type != MTD_NANDFLASH && mtd->type != MTD_MLCNANDFLASH)
++		return 0;
++
++	return attr->mode;
++}
++
++static struct attribute *mtd_nand_attrs[] = {
++	&dev_attr_nand_id.attr,
++	NULL,
++};
++
++static const struct attribute_group mtd_nand_group = {
++	.attrs = mtd_nand_attrs,
++	.is_visible = mtd_nand_id_visible,
++};
++#endif /* CONFIG_MTD_RAW_NAND */
++
+ static struct attribute *mtd_attrs[] = {
+ 	&dev_attr_type.attr,
+ 	&dev_attr_flags.attr,
+@@ -359,7 +412,18 @@ static struct attribute *mtd_attrs[] = {
+ 	&dev_attr_bitflip_threshold.attr,
+ 	NULL,
+ };
+-ATTRIBUTE_GROUPS(mtd);
++
++static const struct attribute_group mtd_group = {
++	.attrs = mtd_attrs,
++};
++
++static const struct attribute_group *mtd_groups[] = {
++	&mtd_group,
++#ifdef CONFIG_MTD_RAW_NAND
++	&mtd_nand_group,
++#endif
++	NULL,
++};
+ 
+ static const struct device_type mtd_devtype = {
+ 	.name		= "mtd",
+-- 
+2.47.3
+
 
