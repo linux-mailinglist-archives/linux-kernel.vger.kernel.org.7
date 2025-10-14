@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-853194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE99BDAE48
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:06:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7947BDAE64
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2DA3BEA52
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FAC4011CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD813074B2;
-	Tue, 14 Oct 2025 18:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73C530BBB5;
+	Tue, 14 Oct 2025 18:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSz3Di7b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="vHauQUbQ"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EC0273811;
-	Tue, 14 Oct 2025 18:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8820B307AFB;
+	Tue, 14 Oct 2025 18:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760465165; cv=none; b=eWS8EQi7jPa11rtHswUE4uSk+qXUR+V4scJILmTGt1PQ4sFb+IDrziw9IrIcUiOPtpEt99m9AAlC5IFTEbTgne3/ODoONRS/wyI7i14SqWXhvNn/iGyRTwm1592Hpv0OBTwN7ZeDDqlOWYDRIPmZNxjZRfipzmlUZ+QhGDMiolk=
+	t=1760465220; cv=none; b=r6BM9Y3mZeT/s2lesA6pVhmWaav47XkLSlNgbnSfuUXchN3N8RZf9JGtTkWeLJPxwLgg65Lz4H7NG1S3ma1hFn1Vc2ogI3DLuwzDLT/dfNlxDBwkqp4kboLDkcDL0dZYbBQDR5rqUrw41tdkrxrns8869GM/c2PocfoL8RSDJas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760465165; c=relaxed/simple;
-	bh=JfNs7dFvmbLt53h9POVLQpvwOzXq+QveaKQx6rXQNw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4QnQogEm3tz9D29iJnrbIJn6BZ6qfEFQ7GLYbgIx3J+LHLny3hrmW+sjdcyiAyrfHndttV2WZdmWDTpFLIKQatWHpUJW6FAMy/dIjoaJWpyP1RGKKQb/9LkHR6SUgnBN64EI43sS2q3GqqeXSEMbQFGGicvVwg27fbEbKlG5Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSz3Di7b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CCFFC4CEE7;
-	Tue, 14 Oct 2025 18:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760465163;
-	bh=JfNs7dFvmbLt53h9POVLQpvwOzXq+QveaKQx6rXQNw8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eSz3Di7btbUQi85if9iBM+pXDgRpQCPe5IPR1EH1XLn9FLC4I/xBB8bZPvvlBU4BV
-	 mZ8811SvF95JAtHe/62tJCBxFIVM+5oDa7aXK74sgg9+1SyqcjJTMezUuqnEIlfH6o
-	 dNMM+nDzu/i9dF4oKj/YF+tJ6q3FRPDmMCTZ1qM5dhD0M2lNgwG4VbWA2xnng1+SDh
-	 eU9Iz4jvrZCPaw1dcKQ6FmAJvytohB24hnLItwHnCASx2feiXgjpmYQglbUrSCjzc3
-	 2/Zpb3i9MsczskqAk7ppoRMcJKP1g8YdNN9pR9OiBBZrRDV3azr5VgPk8MbVXgMNN7
-	 vPx5mB2cYHvDQ==
-Date: Tue, 14 Oct 2025 19:05:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1760465220; c=relaxed/simple;
+	bh=MxlDFvaIPrqx2sW/iUtcyFfQxZJQ0KowjWlefyaTGvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=saSSDa2ONi7vnyPEg71TOl/UZh4knW66C9OvjjfqV13WrDpt7L5vZWGQ4gSgoo2DK+8GZi2rlQkNjj5UISbvp037WIv0ENVkpS7gxVgs2UaWfF2hVznkahUpOz4aIm650b8W6JobmkEjF8E8P8MFlJP4DnJwbSoFIzG6j6LsOdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=vHauQUbQ; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=gaZVoYZh/DeywsMdRAGvKGBBjxuFtSLH97k3RMBvBnw=; b=vHauQUbQQaphdvNiOk1IoaB9P+
+	83Q2gMIGw2vLjQMIj/Mj6PYxeP3CbcoPAJYlNkEa1yRF6hE3BORFsUzPKp6sKm5f3IAV+k0d0Lw6u
+	zJYw2oyM98Fbo0YZ8eUfwPsn47BOAIGtmWdcA278NBr8LG6N3R2IyIR2jTpMYVBIj/gyIZLUaGKGT
+	6GFehC6zmjj1rB8CGffFmiasATUCLKu8D59nrlWpSTUD/CToe5ZaREE8GPpaFtksCQnzqK6wcYiHx
+	gg4hPc9e+Ncol2m2s7AOxLOsCzfSJybaX3s4jAbJaYQqI0nnV6e30sMIaDITBy5ytNCcfJL7+YUUo
+	3Rz9kdhg==;
+Received: from i53875b75.versanet.de ([83.135.91.117] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v8jQ8-0001Gj-C7; Tue, 14 Oct 2025 20:06:48 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Liang Chen <cl@rock-chips.com>,
+	Alexey Charkov <alchark@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Valentin Caron <valentin.caron@foss.st.com>
-Subject: Re: [PATCH v3 08/10] dt-bindings: pinctrl: stm32: Use properties
- from pincfg-node.yaml
-Message-ID: <20251014-privatize-unnerving-bb26a0626276@spud>
-References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
- <20251014140451.1009969-9-antonio.borneo@foss.st.com>
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Remove non-functioning CPU OPPs from RK3576
+Date: Tue, 14 Oct 2025 20:06:30 +0200
+Message-ID: <176046473174.1662867.8203194428926902068.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251009-rk3576_opp-v1-1-67f073a7323f@gmail.com>
+References: <20251009-rk3576_opp-v1-1-67f073a7323f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wigSmc8rrZJKQMu+"
-Content-Disposition: inline
-In-Reply-To: <20251014140451.1009969-9-antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---wigSmc8rrZJKQMu+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, 09 Oct 2025 16:34:01 +0400, Alexey Charkov wrote:
+> Drop the top-frequency OPPs from both the LITTLE and big CPU clusters on
+> RK3576, as neither the opensource TF-A [1] nor the recent (after v1.08)
+> binary BL31 images provided by Rockchip expose those.
+> 
+> This fixes the problem [2] when the cpufreq governor tries to jump
+> directly to the highest-frequency OPP, which results in a failed SCMI call
+> leaving the system stuck at the previous OPP before the attempted change.
+> 
+> [...]
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Applied, thanks!
 
---wigSmc8rrZJKQMu+
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/1] arm64: dts: rockchip: Remove non-functioning CPU OPPs from RK3576
+      commit: 05b80cd1f37db042e074ecc7ee0d39869fed2f52
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6RBgAKCRB4tDGHoIJi
-0hVaAQDs2t7Df4kI4kyx6xytw0ZMIEL3EaLx1elCU0OeibxfpwD/UIGUJYpE++Jz
-HbbMxb2Nhx7TeJ4NiLJbGkxps5OpZAA=
-=vh6W
------END PGP SIGNATURE-----
-
---wigSmc8rrZJKQMu+--
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
