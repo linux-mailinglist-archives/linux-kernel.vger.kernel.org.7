@@ -1,148 +1,211 @@
-Return-Path: <linux-kernel+bounces-851663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D20BD703A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018ACBD7046
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 11E944E9201
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB621880665
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 01:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B420C26B765;
-	Tue, 14 Oct 2025 01:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FDB27056D;
+	Tue, 14 Oct 2025 01:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1PZbMMs"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="lDaXZY7X"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5856425D1FC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760406881; cv=none; b=Zc2qlYLjdvR1zMwzfGR/pohM0Cv2Xf1tB17A94Eb0spwCZwa4GoP4F09UG7sGTW4Z17eSa42wu1oRuJFbz3T1tGwjQUvP9VsDFWO7gUwtNldxAwr3t5P/G0usgF9AF7RupChlxUCKojig28sOsqF3JVTMJu9L+o1aCjBmyi/K0I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760406881; c=relaxed/simple;
-	bh=SD0MrHq1ssWxCyKebPiwLK+lpyfYUSbLpahxboz5UU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9vPvguKAW4ebJpR6c1EcnF5m6m5X48gZsHrWnT//fTkUen6O1dlQ3QFE384ei/+xv20MCryhPNnF85S2/ld9v2RReKYmrDazMbF280TCVuCv+855MBT02eyhAFA/6EgHc9bGoUTeSyD1sF2FuX1VCw9EaQMToVLM65lJnFC1wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1PZbMMs; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63b9da76e42so3461265a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 18:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760406878; x=1761011678; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SD0MrHq1ssWxCyKebPiwLK+lpyfYUSbLpahxboz5UU0=;
-        b=g1PZbMMs4454TNCD5zmwgDkfo8ROUwYLVatelqK4DoYSMIe3ALdvdHvHUclUxSOIIo
-         fGi1elbRruEwt8ukeQBi141pMExvTTqYorYAUZbnN6YJ+y3S7lqC2Pq+N4Am8N4y6IWN
-         l9aCKDKj60/zbLaxQNYztNZK8BOddFknYDLT0klUa7kXw2PLxwEHENFCnwBblIPDrMwm
-         Hm7NaTeDyBR/zb/8jt+UQ+GzvVzSm1RTP5KyA7aoEUmhVrO+BXqWhIgYWuYk5qYOj7yk
-         6D1+pTcByPsoETAqbwELasX4WMFzctSjmdTRskcfmrwjkDSdZWDZy0p0gq0SUZ45W1fU
-         LsgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760406878; x=1761011678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SD0MrHq1ssWxCyKebPiwLK+lpyfYUSbLpahxboz5UU0=;
-        b=YNpMOFAUza2/egxTGCsgNb1n4dELxRoNDbKuX4sEIbNAG7eJ938EltYq+AQLd2Om/t
-         a1PSJIFW2fMsYu+dyV18qU5aSQsVqou5ywSpZ7wyzC2YCLwZqNmbxaEsJGf1ZmJ8ZSZD
-         hlk2rji3XFe+sehLeSrEMZT4ybsan5VIycwi7wVfc1E98vGttBZNCrd8GM7fW4i6V61r
-         KNh+GSWzxG/SaAmsR0+XG8/F5EasCgop8EePBW3bOKDor0yJuXZYBSKHZ+xITDJc8Hz6
-         I0Y/lQTyhBTCVfV4yo+g/oLaM2JbN9g/eC3qfeKE/4anE3rVazI+uyxm0eghCpjnMT1e
-         CsjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXJXpck9lXRAEpsvijts9scy1Z5x1cjU4zGYpdOd5zFbtGhn8zw+EJ+vFYLP2XACB40So/nxiaK81xayc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTMoq8JlgIUzTqIoNlXEuKo1dXM4BQolJ+5e42pw0m8peUnwLp
-	o3NYxLs8x4oyHkFlFNadV2ofSBv/cqJjLW632CGT44BtNM0yIysWl9sMR6qCQqDqmwcJYkCYCbG
-	YJ+QOK0qVjQsp4clO2E9JNAjv0RRg35g=
-X-Gm-Gg: ASbGncvVQnYZ/lqLKZAxpQyeGxCFT3OGhj3DvV+eG+FPV+GFn8WpPcOZYY2fcDNWmOt
-	m5N881fonLOGWWFcfcrfc3eTeSvNcQGbd1j5kQupsPBWuvlZrRAdJ+z8FSSf0Y/2N1oswbgfr9N
-	+iOE3bt+h0CpqliLl0AJGLs2Rj5XDqRxMGCUrYQPdUPMpQZOqykXQ3bjXndepvTw4rDZk1BFbs5
-	tJjpdseLmPAG9UFZ0pMeMMYEHY=
-X-Google-Smtp-Source: AGHT+IFLyxaSkOEOsooMOy2EVh9b/r6FfxU6eF7+7y498s306bG3kLVif9WpacsPupFTNoocWy6y1TRJXeS5SduTWfI=
-X-Received: by 2002:a05:6402:34d6:b0:639:fbc8:d38b with SMTP id
- 4fb4d7f45d1cf-639fbc8d644mr15052860a12.11.1760406877642; Mon, 13 Oct 2025
- 18:54:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99793239E9A
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760406961; cv=pass; b=Z+hVzyWP7CT3RpMbqKyek5ZncitUNIybgr9v9FyydeYDhXDjoeZjW8l3xXDEDzetbUEqh+y6vBrC3TCAfrYQSuc9idDvw8jxwk9vmFSOTd/Hk4U8zs1sKxVHLewilfVed3FXDH45TNxaLSI4zMMYwcEMVXCYxDPBf9K/EFDbxqs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760406961; c=relaxed/simple;
+	bh=aY1wVyIBu+P/Agy6EzxeV0N9FDZmNyKBt3V+RY8feUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PYO1WUGpN1bdLCvXI767v+aF6GACun12uag+dwaRFuIocdSOERN2k+ZENbib/8SVNT/+HNoeSK8si10rTHze1PcDVSEIOq/64cV27toRvqLIHMi/68GAV0FvDh9cnm7cG+qSI1U8TPC1RWKy6sD1neYT05zhw5HXGzfP1sPU7ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=lDaXZY7X; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from osx.local (ecs-119-8-240-30.compute.hwclouds-dns.com [119.8.240.30])
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 59E1tWbH3266543
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 09:55:39 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1760406940; cv=none;
+	b=TG2eDPngy1F+FYyMTrlX6x9XY1uQqFwbkPSCOlvTF/Ifjud9UMkFGMME2umX0DLmHDYOT/pJlKrribTS8cuftD+BNHJyxtKdbRMolyE3Brer19UOlur91nn+IBmP9bQuAylgnsiHcJn61XN0E0EHXXffD8rlBrSFZTWm3I0PDPg=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1760406940; c=relaxed/relaxed;
+	bh=G++JBLc5OONg4P4tABuFONmwLMMGyA7zCS68NMAH4tE=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=xuDtpo1OE0ISqB+jWu8ylzK7bTAOXc+Rxp/6SiKCQ2aogR6L5Wh1ET4QZY56N6vHjiQj3jW88HfGulGLtvdw5hESfFugKEEmmS08BFVo8eSF/6+zxVBYIIsKgfB4I3+5LmnFTO/7AEtffJYH4J62BVDw9a0Sha2DkTj7wEHCy2I=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1760406940;
+	bh=G++JBLc5OONg4P4tABuFONmwLMMGyA7zCS68NMAH4tE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lDaXZY7XrO+vLBk8Z77JHj8UzAyV9y4RKBSEJecsFCCaacVjyj6Zg6G1i8Mj6d2tt
+	 zZKdkfrVWxXyWE7IAW5il+8AE8HqzDKdyRvvqAW0EAqapN1J1Td0vAyQ11tzBz9WlA
+	 uVKCKR51ouC8TPV7jzC6W4IyoBUBnp+4hDENL7FI=
+Date: Tue, 14 Oct 2025 09:55:26 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: fix refcount inconsistency in i3c_master_register
+Message-ID: <aO2tjp_FsV_WohPG@osx.local>
+References: <aOYSTX5EA_nRoIY_@osx.local>
+ <aOfgB6UpBha+pvqa@lizhi-Precision-Tower-5810>
+ <aOio4HtjjfXclSW1@osx.local>
+ <aO1etATnPSklqdua@lizhi-Precision-Tower-5810>
+ <20251013210953.GA2124@DESKTOP-2SPVBES.localdomain>
+ <aO12r9v4xaJKHUQs@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
- <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
- <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
- <CAEf4BzaZ=UC9Hx_8gUPmJm-TuYOouK7M9i=5nTxA_3+=H5nEiQ@mail.gmail.com> <CAADnVQLC22-RQmjH3F+m3bQKcbEH_i_ukRULnu_dWvtN+2=E-Q@mail.gmail.com>
-In-Reply-To: <CAADnVQLC22-RQmjH3F+m3bQKcbEH_i_ukRULnu_dWvtN+2=E-Q@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Tue, 14 Oct 2025 09:54:24 +0800
-X-Gm-Features: AS18NWBcWVoXtEhIyQDN7IDKtMQW7Sq_qJyx9nFb6aduVYEfQL76vjSRcYH8nz8
-Message-ID: <CAErzpmtCxPvWU03fn1+1abeCXf8KfGA+=O+7ZkMpQd-RtpM6UA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
- btf_find_by_name_kind lookup
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO12r9v4xaJKHUQs@lizhi-Precision-Tower-5810>
+X-Env-From: sfual
 
-On Tue, Oct 14, 2025 at 8:22=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Oct 13, 2025 at 5:15=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Mon, Oct 13, 2025 at 4:53=E2=80=AFPM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Mon, Oct 13, 2025 at 4:40=E2=80=AFPM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
+On Mon, Oct 13, 2025 at 06:01:19PM -0400, Frank Li wrote:
+> On Tue, Oct 14, 2025 at 05:09:53AM +0800, Shuhao Fu wrote:
+> > On Mon, Oct 13, 2025 at 04:19:00PM -0400, Frank Li wrote:
+> > > On Fri, Oct 10, 2025 at 02:34:08PM +0800, Shuhao Fu wrote:
+> > > > On Thu, Oct 09, 2025 at 12:17:11PM -0400, Frank Li wrote:
+> > > > > On Wed, Oct 08, 2025 at 03:27:09PM +0800, Shuhao Fu wrote:
+> > > > > > In `i3c_master_register`, a possible refcount inconsistency has been
+> > > > > > identified, causing possible resource leak.
+> > > > > >
+> > > > > > Function `of_node_get` increases the refcount of `parent->of_node`. If
+> > > > > > function `i3c_bus_init` fails, the function returns immediately without
+> > > > > > a corresponding decrease, resulting in an inconsistent refcounter.
+> > > > > >
+> > > > > > In this patch, an extra goto label is added to ensure the balance of
+> > > > > > refcount when `i3c_bus_init` fails.
+> > > > > >
+> > > > > > Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+> > > > > > Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+> > > > > > ---
+> > > > > >  drivers/i3c/master.c | 5 ++++-
+> > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> > > > > > index d946db75d..9f4fe98d2 100644
+> > > > > > --- a/drivers/i3c/master.c
+> > > > > > +++ b/drivers/i3c/master.c
+> > > > > > @@ -2885,7 +2885,7 @@ int i3c_master_register(struct i3c_master_controller *master,
+> > > > > >
+> > > > > >  	ret = i3c_bus_init(i3cbus, master->dev.of_node);
+> > > > > >  	if (ret)
+> > > > > > -		return ret;
+> > > > > > +		goto err_put_of_node;
+> > > > >
+> > > > > I think it'd better to set release function for master dev to release
+> > > > > of_node because of_node_put() also missed at i3c_master_unregister()
+> > > > >
+> > > > > you can refer drivers/base/platform.c
+> > > > >
+> > > > > Frank
 > > > >
-> > > > Just a few observations (if we decide to do the sorting of BTF by n=
-ame
-> > > > in the kernel):
+> > > > Do you mean that we should do `of_node_release` in
+> > > > `platform_device_release`, instead of respecting the refcounting via
+> > > > `of_node_put`?
 > > >
-> > > iirc we discussed it in the past and decided to do sorting in pahole
-> > > and let the kernel verify whether it's sorted or not.
-> > > Then no extra memory is needed.
-> > > Or was that idea discarded for some reason?
+> > > Sorry, I checked code again.
+> > >
+> > > static void i3c_masterdev_release(struct device *dev)
+> > > {
+> > >         ...
+> > >         of_node_put(dev->of_node);
+> > > }
+> > >
+> > > i3c_master_register()
+> > > {
+> > > 	...
+> > > 	master->dev.release = i3c_masterdev_release;
+> > > 	...
+> > > };
+> > >
+> > > Suppose of_node_put() will be auto called when put_device(&master->dev);
+> > >
+> > > Do you really meet the problem or just static anaysis?
+> > >
+> > > Frank
 > >
-> > Don't really remember at this point, tbh. Pre-sorting should work
-> > (though I'd argue that then we should only sort by name to make this
-> > sorting universally useful, doing linear search over kinds is fast,
-> > IMO). Pre-sorting won't work for program BTFs, don't know how
-> > important that is. This indexing on demand approach would be
-> > universal. =C2=AF\_(=E3=83=84)_/=C2=AF
+> > Honestly, it's from static analysis.
 > >
-> > Overall, paying 300KB for sorted index for vmlinux BTF for cases where
-> > we repeatedly need this seems ok to me, tbh.
->
-> If pahole sorting works I don't see why consuming even 300k is ok.
-> kallsyms are sorted during the build too.
+> > My apologies for overlooking the release handle. I checked the code once
+> > again. It still looks suspicious as it would not call `put_device` if it
+> > fails. I also checked call sites related to `i3c_master_register` and
+> > they dont seem to do the clean-up if register fails.
+> 
+> 
+> @@ -2814,10 +2816,6 @@ int i3c_master_register(struct i3c_master_controller *master,
+>         INIT_LIST_HEAD(&master->boardinfo.i2c);
+>         INIT_LIST_HEAD(&master->boardinfo.i3c);
+> 
+> -       ret = i3c_bus_init(i3cbus, master->dev.of_node);
+> -       if (ret)
+> -               return ret;
+> -
+>         device_initialize(&master->dev);
+>         dev_set_name(&master->dev, "i3c-%d", i3cbus->id);
+> 
+> @@ -2825,6 +2823,10 @@ int i3c_master_register(struct i3c_master_controller *master,
+>         master->dev.coherent_dma_mask = parent->coherent_dma_mask;
+>         master->dev.dma_parms = parent->dma_parms;
+> 
+> +       ret = i3c_bus_init(i3cbus, master->dev.of_node);
+> +        if (ret)
+> +                goto err_put_dev;
+> +
+> 
+> I inject at error at i3c_bus_init(), above code can trigger i3c_masterdev_release,
+> which call of_node_put().
+> 
+> Frank
+> 
 
-Thanks. We did discuss pre-sorting in pahole in the threads:
+Thank you for fixing the refcounting issue. May I kindly ask for a
+reported-by tag for this fix "Reported-by: Shuhao Fu <sfual@cse.ust.hk>"?
 
-https://lore.kernel.org/all/CAADnVQLMHUNE95eBXdy6=3D+gHoFHRsihmQ75GZvGy-hSu=
-HoaT5A@mail.gmail.com/
-https://lore.kernel.org/all/CAEf4BzaXHrjoEWmEcvK62bqKuT3de__+juvGctR3=3De8a=
-vRWpMQ@mail.gmail.com/
+Thanks,
+Shuhao
 
-However, since that approach depends on newer pahole features and
-btf_find_by_name_kind is already being called quite frequently, I suggest
-we first implement sorting within the kernel, and subsequently add pre-sort=
-ing
-support in pahole.
-
->
-> In the other thread we discuss adding LOCSEC for ~6M. That thing should
-> be pahole-sorted too.
+> >
+> > Shuhao
+> > > >
+> > > > >
+> > > > > >
+> > > > > >  	device_initialize(&master->dev);
+> > > > > >  	dev_set_name(&master->dev, "i3c-%d", i3cbus->id);
+> > > > > > @@ -2973,6 +2973,9 @@ int i3c_master_register(struct i3c_master_controller *master,
+> > > > > >  err_put_dev:
+> > > > > >  	put_device(&master->dev);
+> > > > > >
+> > > > > > +err_put_of_node:
+> > > > > > +	of_node_put(master->dev.of_node);
+> > > > > > +
+> > > > > >  	return ret;
+> > > > > >  }
+> > > > > >  EXPORT_SYMBOL_GPL(i3c_master_register);
+> > > > > > --
+> > > > > > 2.39.5 (Apple Git-154)
+> > > > > >
+> > > > > >
+> > > > > > --
+> > > > > > linux-i3c mailing list
+> > > > > > linux-i3c@lists.infradead.org
+> > > > > > https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-i3c&data=05%7C02%7Csfual%40connect.ust.hk%7Cdbe4f1ecc0c84f304fca08de0aa414ff%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638959897018898845%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=%2BmCDBh4d6Se%2BuO5xJgSDVupMRir7ZFH7f8RtzGUucoE%3D&reserved=0
+> > > >
+> > > > --
+> > > > linux-i3c mailing list
+> > > > linux-i3c@lists.infradead.org
+> > > > https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-i3c&data=05%7C02%7Csfual%40connect.ust.hk%7Cdbe4f1ecc0c84f304fca08de0aa414ff%7C6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638959897018922222%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=MdqJwKEKImd8UAQ0hyHjWyZx8vX1YSxU%2FqKDgpF0JPA%3D&reserved=0
 
