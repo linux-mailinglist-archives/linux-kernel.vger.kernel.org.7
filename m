@@ -1,190 +1,219 @@
-Return-Path: <linux-kernel+bounces-852883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120BCBDA279
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BE3BDA27C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50E92188BC58
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3961A188C7E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64D12FFF8D;
-	Tue, 14 Oct 2025 14:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gLwzzgGj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9512FFDC0;
+	Tue, 14 Oct 2025 14:50:40 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468942FFF87
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA062FF653
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453425; cv=none; b=u1K+F2kxh+1bPVa2ZWMUIOlW0+bzfcAoaibtnLUVF580IA8Qp5KVDUuv0ADiFuujuaZtUwNNhcIV5SXoIzNOvB57IvC26YGtc8tQHxMete1bReeXgMlK4DKTYGfXhpwx5uTPEN4Qnn2GoAg8zk/Uk1R1IJO0QdCbf85vcYTDhjE=
+	t=1760453439; cv=none; b=OVsuMJt/QeMfDI4LA6YMiefBDwYIyIQABuZtgnmwFPU0MYLcqpA0hUFBbfpBinXe+vmo0lpYrn0X/aRTvpPwWnDJEXXuaVKGBAc45afKq4kvUd5YiyrMdkJ+ecolf3nymkIfcDgCWplqVKYGQSfp38CIdQPOnfkzrNAHpoNXQgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453425; c=relaxed/simple;
-	bh=fVcMhfwaRjdAcBAcAaGiUIuafT9v6J+i1zbK+jCrO9E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hzqTQugz7EXhUnq64itC4AQS3RSttsHuE4jQSSJfz7WTPydZfCppwLKAOKAIbGDV7bOCzL5qcOx+Zvqg1p6q+nC5ABnuKy/8XWAU0JX7emABK03H690c92EHzyhU8enAs0AdaT3GLi2X1GvSKbVd7CN5anng5/dN/MHDf+O3VUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gLwzzgGj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760453422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fVcMhfwaRjdAcBAcAaGiUIuafT9v6J+i1zbK+jCrO9E=;
-	b=gLwzzgGj5Kz4MpuahYHA4RMwOVZ+UgNiQ+6OE/j/Nady4f90SVPRVw+Wo4AfMXSig4xC4+
-	9WNXN9f7KjuYdOuYLy0Kx7w+eRgUBmgrjkAO44ekr4xISEka+XeE9k/lsjXgCSLylgxzn+
-	Vkye7FWWQ3P68PjN4I1nt740B+3cMTI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-440-O0c4pBiPPqCyik1LjEWpHg-1; Tue, 14 Oct 2025 10:50:21 -0400
-X-MC-Unique: O0c4pBiPPqCyik1LjEWpHg-1
-X-Mimecast-MFC-AGG-ID: O0c4pBiPPqCyik1LjEWpHg_1760453420
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e38957979so30121445e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:50:20 -0700 (PDT)
+	s=arc-20240116; t=1760453439; c=relaxed/simple;
+	bh=WBIdf1PaikHecpubelq05cegP0L27isbRJGMXaU/Dk0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lZ+vchaD1rhTD/HAM9W9IiWpCZlfhOFValw+lLruQbo1X7f/NG4Xx94U7plZYxtEhn7PkENWggji/hFtRFfnWqajH9rRRZMupA1ioIgWG5n0D/MXiVdBR3XsSD7LrZ+00I7V4BDaR2gduQbIVWFZMltT5aZdE1y33U/4W2roPDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42f989e2030so117647495ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:50:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760453420; x=1761058220;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fVcMhfwaRjdAcBAcAaGiUIuafT9v6J+i1zbK+jCrO9E=;
-        b=QRRUVM1atsxsLtvyFkt4cU9sghqxTORxqg2crIX9SG1UevtCqnCDTENmFM7LVpCvwg
-         4B6Bd009Q5kMFdJvmHWml0R59qUXs+m4dbBwlEajX1eVXVr3gcFDyESTR0LucJgn6afu
-         wu0dpdO5zBZDpSCiuKHUOUAlPEAVhuQMTD3kiYmw4LUdW9gRFVXyRNVBnBJH8bkGa1jN
-         RUYmO1UXfIIwc36/iZ7NxlyJXhUJrBR7AJU+M9+ns6uXQKiM/D1c5mge18HVEUEFTknH
-         c6MWaVo/m8GoHoz7888rtw1h4XXjGDwPryNLHi4hvwOEKIhmxQ7IykxMBEBcRX5GWNds
-         SU6w==
-X-Forwarded-Encrypted: i=1; AJvYcCX78Z5s1/E6PPZKPz2v7bVWe9siB7Nea6Yn8EKqwoT2s+aoQMKf7xEWh+MiuKjBvb3Zz9okc/8zxaWnLeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypLTyDfI7Ew3bgfbm3Hrel2nmMRh2BhmBOwE127Hrg/Y4Fq12d
-	Yd1Speq4LtYi84kEYRlyfKYtRAC4SzHRUoof/sWDkKwnG9phatCxH1pqZxyCKMfW/glch1GGK+C
-	adkPSEUvBC4+vJ8UMKn79I8nfP6yCkq0G9XUz9y6RWX93eEaKbCkt/gBbkvQNxITdrw==
-X-Gm-Gg: ASbGncsXskaBdwxAR9Y39pKFJ7HGSwpFz222V4ZiqAdXV1xWY5O8az5WjiwVd0BrtHs
-	LT/MCAk+qwVD+fj6nlP/6FknOhptjU6doQ3qP/lRgZJHAk+4R2A3TlSay7rGyw7LGAH/opYI/Um
-	Lng+5iMNdnjTUOf3ztL7vjib6xuyRMLIbAaGa4U4dYXGoTtvHX4zwmt/mRckEEJQnjwwh/5NXOp
-	O9tSpDbNVyAGoO5aiJ6xEaNbd3/+OeGVi+OPRaKweqnz8Yu8HQLKR9/BBgF8+To31nwfguTuCoR
-	+QZxNyq9mJ9i1dLbOOdZRH11XB/C37mbOc++llWIf845dphBShS+ms3W09LxM/X5P/mN
-X-Received: by 2002:a05:600c:1d11:b0:46e:3d50:360e with SMTP id 5b1f17b1804b1-46fa9aeff01mr183085605e9.18.1760453419710;
-        Tue, 14 Oct 2025 07:50:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlq9Rm8u6vlO/er2whrOgRGrlMCaR+wVXWhesQuVdZWlwOKvWLJBdCOyRtJ2yhfX6qVIv0uQ==
-X-Received: by 2002:a05:600c:1d11:b0:46e:3d50:360e with SMTP id 5b1f17b1804b1-46fa9aeff01mr183085345e9.18.1760453419304;
-        Tue, 14 Oct 2025 07:50:19 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.168.96.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe69sm24542899f8f.32.2025.10.14.07.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 07:50:18 -0700 (PDT)
-Message-ID: <1014118845296ead20fc1f8ae64c4fa610d06bc0.camel@redhat.com>
-Subject: Re: [PATCH 3/3] rv: Add explicit lockdep context for reactors
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
- Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 14 Oct 2025 16:50:18 +0200
-In-Reply-To: <20251014160719-f5a075fa-7cdf-4367-8551-05cf7715a3e7@linutronix.de>
-References: <20251014-rv-lockdep-v1-0-0b9e51919ea8@linutronix.de>
-	 <20251014-rv-lockdep-v1-3-0b9e51919ea8@linutronix.de>
-	 <87qzv6szku.fsf@yellow.woof>
-	 <20251014094206-80eb5d6c-e4dd-4704-a40a-e2d0461c2185@linutronix.de>
-	 <4d0467cf03f4b818a40344b6ec8142582c26a876.camel@redhat.com>
-	 <20251014140813-692b312f-67d8-4f11-99f9-73d5d8d34c87@linutronix.de>
-	 <ef1503b097e6113cec24f2c20684635fe1337260.camel@redhat.com>
-	 <20251014160719-f5a075fa-7cdf-4367-8551-05cf7715a3e7@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
- cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
- T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
- eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
- 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        d=1e100.net; s=20230601; t=1760453437; x=1761058237;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z8PtWzect3QXv79Fy+/g+zWxxtYKh2X3YZ2rtikGVGg=;
+        b=dV65KdNwUzFKxKlSwdL1+A6ZOoPTFQqH2jOPvt+kQVHvHKIj/28HOPJ9dwCTQXLZsP
+         cJ5fPmqylbOpRhWjk6/qqHyeYPxAU3XurqI1AUcuaHIdNATU9RAaOkdih40m5QWb94F5
+         VC8DIADDK4BCfvwhoeie1mIgYQDLK1JIxwU40+OEYqMSLDahL1ghDpPdv3EKJkzDPelP
+         NCzlFWzstTaxlY0eKOCLb3Mp8ovY38kfpPB0RWcqb9avGdFuiQLlSg9JoiY88vBBmB3z
+         pnFLgRJI3YJac/loAjLsr+XypdUowJ6UM7NTasQq8xEdGAHOQHs6IA0Q9Fg/229SQEs2
+         niQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvMGkx2eW2ufwUSH7l48ZPNYnt5msoU5iz/0RK9neX4gzRv0MK+JgzC0fd8bfU/P8puJCCV95PBeAQkrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRMbVud44XtIzoNT4lqAEF7J+S02FZsyn8KhPX8VMOEyfxY8I9
+	N7DTOknJPpXqEz8pzuqYGVpc9TX/UHsMQPBhngvgx97xpxhL5jR662ODNkE2feewD1UUP2rauCM
+	KOkrn7eQHLWxj18SHrSPUsaDTniaxA0Q7gdYev9IeMHsvz/XwIM0Ju8xdGOo=
+X-Google-Smtp-Source: AGHT+IF2wEZJR1y/MWn185G0kFP/ky/VeNQhv6GND9ix7rMYc8ScAwUgiVo1GUD7YVemWjNoghs2OMHskRick/iqhhIzQX7akfGJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1544:b0:42f:9e92:a434 with SMTP id
+ e9e14a558f8ab-42f9e92bb45mr140891015ab.21.1760453436724; Tue, 14 Oct 2025
+ 07:50:36 -0700 (PDT)
+Date: Tue, 14 Oct 2025 07:50:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee633c.050a0220.1186a4.002a.GAE@google.com>
+Subject: [syzbot] [crypto?] KMSAN: uninit-value in fscrypt_crypt_data_unit
+From: syzbot <syzbot+7add5c56bc2a14145d20@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-10-14 at 16:18 +0200, Thomas Wei=C3=9Fschuh wrote:
-> On Tue, Oct 14, 2025 at 03:45:39PM +0200, Gabriele Monaco wrote:
-> > On Tue, 2025-10-14 at 14:51 +0200, Thomas Wei=C3=9Fschuh wrote:
-> > > I can't follow here. lockdep can indicate problems, but it should not
-> > > introduce
-> > > problems on its own. So preventing the usage together with lockdep wo=
-uld
-> > > be
-> > > the
-> > > proverbial head in the sand. If the tracepoints called by lockdep are=
- an
-> > > issue
-> > > then we would just not call into lockdep in the first place. lockdep
-> > > triggering
-> > > these tracepoints should not be an issue in practice. I don't see a
-> > > bulletproof
-> > > way to prevent a tracepoint handler from calling another tracepoint,
-> > > except
-> > > maybe extending lockdep to also track that.
-> >=20
-> > Forget about it, you're right. This leads to not using lockdep inside
-> > reactors
-> > in the first place. We could even have notrace versions of the lockdep =
-calls
-> > (I'm not sure lockdep itself needs them), but that's getting horrid.
->=20
-> I still don't understand why the tracepoints called from lockdep are wors=
-e
-> then
-> the ones called from the reactors themselves? Any solution should also ap=
-ply
-> to
-> those. Especially as even the simplest printk reactor runs into the same
-> issue.
+Hello,
 
-They aren't in fact, so yes, we already had this problem without knowing ab=
-out
-it.
+syzbot found the following issue on:
 
-> > Leaving for a moment concurrency quirks aside, a monitor that is reacti=
-ng
-> > should be done for a while and can be marked as not monitoring before
-> > reacting, instead of after.
-> > Trace handlers triggered in the same tracepoints should, in principle, =
-be
-> > able to tell they are not supposed to run. This at least stands for DA
-> > monitors, but the same idea could work on LTL as well.
-> >=20
-> > Of course this gets more complicated in practice, but perhaps suspendin=
-g
-> > monitors during reaction can be enough to allow these lockdep calls wit=
-hout
-> > risking infinite loops.
->=20
-> What would it mean to suspend a monitor? In my opinion we shouldn't sacri=
-fice
-> the accuracy of the monitors or the reliability of the reactors while try=
-ing
-> to mitigate a theoretical problem.
+HEAD commit:    3a8660878839 Linux 6.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13d25dcd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=7add5c56bc2a14145d20
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-I don't mean to really sacrifice accuracy, DA monitors are disabled after a
-reaction. This comes from the assumption that the model becomes invalid, so
-whatever comes after might be meaningless. Monitors restart as soon as we a=
-re
-sure we reached the initial state.
-In this case, it already doesn't make sense to monitor events triggered by
-reactors.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-LTL is a bit more complex, so it might make sense to continue monitoring ju=
-st
-after a reaction, but I'm not sure how useful that is.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d996feb56093/disk-3a866087.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fa6f6bc3b02a/vmlinux-3a866087.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7571083a68d6/bzImage-3a866087.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7add5c56bc2a14145d20@syzkaller.appspotmail.com
+
+EXT4-fs (loop5): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: writeback.
+=====================================================
+BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:150 [inline]
+BUG: KMSAN: uninit-value in aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
+ subshift lib/crypto/aes.c:150 [inline]
+ aes_encrypt+0x1239/0x1960 lib/crypto/aes.c:283
+ aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
+ crypto_ecb_crypt crypto/ecb.c:23 [inline]
+ crypto_ecb_encrypt2+0x142/0x300 crypto/ecb.c:40
+ crypto_lskcipher_crypt_sg+0x3ac/0x930 crypto/lskcipher.c:188
+ crypto_lskcipher_encrypt_sg+0x8b/0xc0 crypto/lskcipher.c:207
+ crypto_skcipher_encrypt+0x111/0x1e0 crypto/skcipher.c:194
+ xts_encrypt+0x2e1/0x570 crypto/xts.c:269
+ crypto_skcipher_encrypt+0x18a/0x1e0 crypto/skcipher.c:195
+ fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
+ fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
+ ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
+ mpage_submit_folio fs/ext4/inode.c:2080 [inline]
+ mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
+ mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
+ ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
+ ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
+ do_writepages+0x3f2/0x860 mm/page-writeback.c:2604
+ filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+ file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
+ generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
+ ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+ ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
+ vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
+ generic_write_sync include/linux/fs.h:3046 [inline]
+ ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
+ ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0xbe2/0x15d0 fs/read_write.c:686
+ ksys_pwrite64 fs/read_write.c:793 [inline]
+ __do_sys_pwrite64 fs/read_write.c:801 [inline]
+ __se_sys_pwrite64 fs/read_write.c:798 [inline]
+ __x64_sys_pwrite64+0x2ab/0x3b0 fs/read_write.c:798
+ x64_sys_call+0xe77/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:19
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ le128_xor include/crypto/b128ops.h:69 [inline]
+ xts_xor_tweak+0x566/0xbd0 crypto/xts.c:123
+ xts_xor_tweak_pre crypto/xts.c:135 [inline]
+ xts_encrypt+0x278/0x570 crypto/xts.c:268
+ crypto_skcipher_encrypt+0x18a/0x1e0 crypto/skcipher.c:195
+ fscrypt_crypt_data_unit+0x38e/0x590 fs/crypto/crypto.c:139
+ fscrypt_encrypt_pagecache_blocks+0x430/0x900 fs/crypto/crypto.c:197
+ ext4_bio_write_folio+0x1383/0x30d0 fs/ext4/page-io.c:552
+ mpage_submit_folio fs/ext4/inode.c:2080 [inline]
+ mpage_process_page_bufs+0xf1b/0x13e0 fs/ext4/inode.c:2191
+ mpage_prepare_extent_to_map+0x1792/0x2a10 fs/ext4/inode.c:2736
+ ext4_do_writepages+0x11b6/0x8020 fs/ext4/inode.c:2877
+ ext4_writepages+0x338/0x870 fs/ext4/inode.c:3025
+ do_writepages+0x3f2/0x860 mm/page-writeback.c:2604
+ filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+ file_write_and_wait_range+0x6f0/0x7d0 mm/filemap.c:797
+ generic_buffers_fsync_noflush+0x79/0x3c0 fs/buffer.c:609
+ ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
+ ext4_sync_file+0x587/0x12f0 fs/ext4/fsync.c:147
+ vfs_fsync_range+0x1a1/0x240 fs/sync.c:187
+ generic_write_sync include/linux/fs.h:3046 [inline]
+ ext4_buffered_write_iter+0xae9/0xce0 fs/ext4/file.c:305
+ ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0xbe2/0x15d0 fs/read_write.c:686
+ ksys_pwrite64 fs/read_write.c:793 [inline]
+ __do_sys_pwrite64 fs/read_write.c:801 [inline]
+ __se_sys_pwrite64 fs/read_write.c:798 [inline]
+ __x64_sys_pwrite64+0x2ab/0x3b0 fs/read_write.c:798
+ x64_sys_call+0xe77/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:19
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:5206
+ alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2416
+ alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
+ alloc_pages_noprof mm/mempolicy.c:2507 [inline]
+ folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2517
+ filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1020
+ __filemap_get_folio+0xb45/0x1930 mm/filemap.c:2012
+ write_begin_get_folio include/linux/pagemap.h:784 [inline]
+ ext4_write_begin+0x6d9/0x2d70 fs/ext4/inode.c:1318
+ generic_perform_write+0x365/0x1050 mm/filemap.c:4242
+ ext4_buffered_write_iter+0x61a/0xce0 fs/ext4/file.c:299
+ ext4_file_write_iter+0x2a2/0x3d90 fs/ext4/file.c:-1
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0xbe2/0x15d0 fs/read_write.c:686
+ ksys_pwrite64 fs/read_write.c:793 [inline]
+ __do_sys_pwrite64 fs/read_write.c:801 [inline]
+ __se_sys_pwrite64 fs/read_write.c:798 [inline]
+ __x64_sys_pwrite64+0x2ab/0x3b0 fs/read_write.c:798
+ x64_sys_call+0xe77/0x3e30 arch/x86/include/generated/asm/syscalls_64.h:19
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5879 Comm: syz.5.3882 Tainted: G        W           syzkaller #0 PREEMPT(none) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
