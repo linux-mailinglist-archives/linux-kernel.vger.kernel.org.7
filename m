@@ -1,489 +1,308 @@
-Return-Path: <linux-kernel+bounces-852547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3555BD94CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DABCBD94D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2B41925619
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441BB4254EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8470E313E0C;
-	Tue, 14 Oct 2025 12:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEB6313525;
+	Tue, 14 Oct 2025 12:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="t3eRaE5C"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010071.outbound.protection.outlook.com [52.101.85.71])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ig9DBYhR";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZgldTl1w"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09F8313E00;
-	Tue, 14 Oct 2025 12:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA32831353E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760444220; cv=fail; b=fFIy/4VSF6uXer/hikcyGJXQZJjkxdyYh0iHXozGlcRYkE+lC4wzZ+bHNFrzQ8C9b/LZD744e3wfNnvGlsoLZODShokYm5axyqytktA1IYtVeLmZShK6QgHS1yd6rX7IX1UIXB5dZeAjulK7HhpE414OUHdGAzcbA907UKok6Os=
+	t=1760444248; cv=fail; b=S3o5ZH6Doea1jBckKe4UkC40CrCWuV6lmtM8SM3DFhgQqZ/nKYmrpb4wj6PHgq2HveaDGbRebLrFOY3KeyBsQEGYKwooe7kFL4zeskC4xtDTbIlryW2JcOSjdtybyOfucXWN9flA1tGDoaKS50BtpImJ489iL4BPH8iJF2NZMsY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760444220; c=relaxed/simple;
-	bh=/j7OaynRFqAVdbDwXC2E86noZAvl6pTbhxLlbqJAHgI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XH5tULLx/HfuX/uTPmjMzjHbAe1a3AdOXSHnB/1/H9JZ/dhDM/Q/emhiNFNXpYb1fZ3A/mrNmCFq5gjJBWeAIpruoH9AQ2qKyr1wz5U2vZHVh9cYhQQ75rt7QU3DFMU0tiNQIOphnDBciaYV41kdtXn8sB7QP5M/+7+cTtVI6Mo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=t3eRaE5C; arc=fail smtp.client-ip=52.101.85.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1760444248; c=relaxed/simple;
+	bh=4EWIq6SanjaL8y43KaY1fO2RKhRFdjC+YCCqInKu66A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SCciMDDA1u3+vKFA6/kfMaDYuvbFdpw0WOGTJCLlduJ9noPcac8/+IS4z+6ElQlYPlcpqPXtPuZFxjylcJ0p1IB15g3zRfsLgvTwwF4PMzVhNjhXLc25iRoC/lORGpkK7egcfQsQNNPqY5MOOIM6kuSpCZKE0fUpEP36hOATzZQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ig9DBYhR; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZgldTl1w; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EB9fhT003604;
+	Tue, 14 Oct 2025 12:17:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=wCDUQREtzSu+2tSkGu
+	OWYlHdkidtlnHtby7KZjcKsug=; b=ig9DBYhRFWhOIc1oZiTS6juTFEk3WYb2a4
+	bbyPpc5AjNU6C1Mp6byVcQTLsT1kpqWY8JZQfnT6VwauSe6cMFLpYu18In3tw8+U
+	yaWFLBdMuSn5t5scqydA98C0UHw0KVFgeBDGzo1KMmcAlhYbWgjRwoks+QbmapTV
+	F6VtQ/xBVXIqUyYovteYhEp4zPVrnZygenebsdkmR6g2rQ+6y0M/BNIEriFG0iGI
+	+CArRq4aNwdGoGlD9RG9jeMxOkcRV8De9hwU5eTP0re0ayn8oVDYL7SmiZ0zd8Vw
+	umv6KVjFbN+CsEt9eGoKX5UK87qHEq4tZbkVHLmdO1zJHp05NP4w==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qeusv57f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 12:17:07 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59EA1X6I026157;
+	Tue, 14 Oct 2025 12:17:06 GMT
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011046.outbound.protection.outlook.com [52.101.62.46])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp8kv9e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 12:17:06 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yS9F0iW+C4do9RxuVrSzGBc6LHG9V5twL64DBKIWalzwbJ44ui3h5Ly+9qGnvzDJNtu16fKSpxMFxvpSVJgrGjv+Wk/APthhYsHxihFIODqKSMfM+lX9wA7NBF5/VPSxp+HrolyJG71ySqAXpqaujKqfOgqaU3aebQpkwOfiOwXF52i52Kw/UEtFzVh3hG3Bmvla+Zx5u91N0MEYdlovfVSqDXjm+xFUuoeCQaWMQ8O8x/gG+aHEOuqI4vWiBTahQg7RyNYXun8TOJOXWovkFbapouy26A56qIGk4+fwnO5D3fgEl+SE/0iP5l8g6ELGqqR5AHpOnsygVdDqCE8A5g==
+ b=sJlAn0y8dvCG+PrODpBYJBv7MifKBrl4osOO1BCBOf6fm5LvVXY3j3mUQLXNUJ1KynuVCFBwvVSpUts8u3MrIqA3h4nucqWkVcFZy+4bzSpeWK324UbBVfHvNGURyx1peX0igmrGyFltmG8skfyvBDqnlhXPmmuJK9Pp95Xakw6ncRaWoPtopYQTGXnFKZcPiEDaAyiRb/kbuNZ3aptWVDS8Tkn92GQcpQUeTg5PnVtBx5cHarE6btK4whzr7fPZk3iHcoYuCVwOJ0w3pL1P+L9AwnFyScmoU3I/wAsznzsHFgQgH9D93rNXnihkpAt/ElrLWrPVNSqDbsj5tEvpNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SClNhkE/THrTlcdVrlnGlJdQiRn2NqkZJl9uFRZYl1E=;
- b=QDqONb3uZviYRI9pwhi4k0xxr58js2j/RokL36dhbYmU5bfnT2dgRYdDdRCYLF5gvvvbumkJd2TbkhrHJldui/vV3tVK9zAt4kqJlkjOOJSwMkQQZ2mtlMJOXRsc2EoavsQUJ9B+v2G/zuwZx2J/msmW6nAYh/6YVTCSpvswNuHIWjt/2StW6+212RfXwCNwwuezrvYNJToGw8Qpg4RjmOSFmgC8bWmJ7R+v6cNIMti4AoDXxHdsl/SYkDFXfFcg+JVJkvTv6n/pjgXrd/YdGUIeqxXrxdBKaeHg1sBq9hN8FtFhcgcdDeDSZfTLHg7yH3xBf9TzNULnV5UjLQW6qQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=wCDUQREtzSu+2tSkGuOWYlHdkidtlnHtby7KZjcKsug=;
+ b=aKjQGci8gTnb8mVwp9vsYiNNPi4RCautrU4ZEXgnSj2F5Aon2a5oho2kUyWcJ1RvNs+vYS0iGDhtuF5j77qxoeKq9HRWcoRAg1jiVRarLnzqIflXCFOoyFpM1AI00491QcuGxKAvPcnMRsvTQcDOqqw/sXgVJyHFZT3llsYHcvLX1R5eROrpzwuKNuM/aO7rqNXatrjc9ZqP/eZyXLmczC0rn2yK20eEMAmzzepVCcfElvAEgIaPsVTm8cC5dMtHXhWDoPLTmygXiLf7iZLUFXpNf1ASmhL9V1bOHaXLpciJF4tpmO7JTg/XKzrBtyoWh30FoV/SmWdpFu6H0GNWvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SClNhkE/THrTlcdVrlnGlJdQiRn2NqkZJl9uFRZYl1E=;
- b=t3eRaE5CzQTaOjA5b7Bm9VppTbBesp1DOiPiRGGCIkC45wXexulzFHd13HM+nVp9jG90xhUVNb16QbOBgOjuNP9AuWV8l5qmuQ50iEU+2tQy7YIOMj+35wBmlvWPP5ovZGMq51ynUrbAnboPnJZuQCRmnpKwucS/oB5LyeQNEjk=
-Received: from MW3PR06CA0029.namprd06.prod.outlook.com (2603:10b6:303:2a::34)
- by PH7PR12MB6539.namprd12.prod.outlook.com (2603:10b6:510:1f0::14) with
+ bh=wCDUQREtzSu+2tSkGuOWYlHdkidtlnHtby7KZjcKsug=;
+ b=ZgldTl1wGw6dwPN+QevIt3f696MgNPFNL0DvACBOhFtLhAEJO0Y82D/ssatek0GHiVv44JDXZ8KNV0hdkw+ShDufM+Cw8X5mQat/wRiqoE6v5XyqGwSSCpeL34XeCMfHBZixrDIc7FaP68tCbYBr9ryEpX/ujT0CVyyf9/07Zzo=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by LV3PR10MB7795.namprd10.prod.outlook.com (2603:10b6:408:1b6::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Tue, 14 Oct
- 2025 12:16:50 +0000
-Received: from SJ1PEPF00002323.namprd03.prod.outlook.com
- (2603:10b6:303:2a:cafe::41) by MW3PR06CA0029.outlook.office365.com
- (2603:10b6:303:2a::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Tue,
- 14 Oct 2025 12:16:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ1PEPF00002323.mail.protection.outlook.com (10.167.242.85) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Tue, 14 Oct 2025 12:16:49 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 14 Oct
- 2025 05:16:48 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 14 Oct
- 2025 05:16:48 -0700
-Received: from xhdapps-pcie2.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 14 Oct 2025 05:16:46 -0700
-From: Devendra K Verma <devendra.verma@amd.com>
-To: <bhelgaas@google.com>, <mani@kernel.org>, <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
-	<devendra.verma@amd.com>
-Subject: [PATCH RESEND v4 2/2] dmaengine: dw-edma: Add non-LL mode
-Date: Tue, 14 Oct 2025 17:46:34 +0530
-Message-ID: <20251014121635.47914-3-devendra.verma@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251014121635.47914-1-devendra.verma@amd.com>
-References: <20251014121635.47914-1-devendra.verma@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 12:17:03 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 12:17:03 +0000
+Date: Tue, 14 Oct 2025 13:17:01 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
+        baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+        baohua@kernel.org, ioworker0@gmail.com, richard.weiyang@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH mm-new v3 1/3] mm/khugepaged: optimize PTE scanning with
+ if-else-if-else-if chain
+Message-ID: <3982686f-908f-4f92-b3ae-e6f141e617ef@lucifer.local>
+References: <20251008043748.45554-1-lance.yang@linux.dev>
+ <20251008043748.45554-2-lance.yang@linux.dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008043748.45554-2-lance.yang@linux.dev>
+X-ClientProxiedBy: LO2P265CA0506.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13b::13) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002323:EE_|PH7PR12MB6539:EE_
-X-MS-Office365-Filtering-Correlation-Id: ccecda2d-cb9f-4843-6f9e-08de0b1b8d64
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV3PR10MB7795:EE_
+X-MS-Office365-Filtering-Correlation-Id: bde6aa3d-c0a2-4096-e0bc-08de0b1b9558
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pnPfo7Xg2YuQYQB/bPMhp00wJDJsi5ANbrLJtiz+y26vIEqlVkM+uB+9tLoO?=
- =?us-ascii?Q?MtETBBB00drabinNYBUOnHXittk2+jEqiTcCB2fRgqPBXABYA2QeHH1VzUY8?=
- =?us-ascii?Q?b4TC2QSzGNEFI8nDTOBVByF2mcIObtdrHA9XioAsLbNyVyiVaHui7RbxOVj7?=
- =?us-ascii?Q?vwIk+urcu0Ryl/MImheZu93uay/Zko5Wc8NBk8x/dtgDV43RCMYN3BSF+ugR?=
- =?us-ascii?Q?4JMpS6OjATLSDoS05oxgpMvSkhM17k5IUH/fZYKmzVcN9t4X5YL4XiiWG7dp?=
- =?us-ascii?Q?SJ+T4AbevFOe51EGI30DWI70foxxsxaCUENuIv6c41aMZ04JRbhJR0fW8IEN?=
- =?us-ascii?Q?2NB4d3PPbYuUQ73NQyo2+ZYA+0QDI2U9GEkrKrHoCn/oVQEV5odzge2HxzbU?=
- =?us-ascii?Q?CpczxgU9QWxqECv5jjHPMrTqzEUdzM84dono7v3OO/hf1g41TXZc23TL9OZw?=
- =?us-ascii?Q?WIHR5VBFGpo8QCzSRAKfRyPu0GHJ+5r7t5npT5kaA6e4wpZrA700YiFiwgnN?=
- =?us-ascii?Q?a9kpRyCa6VSrt/c3Vw69XiP97CdBUDP7ypLwLOKiiMexmIl04gHlIAigE6av?=
- =?us-ascii?Q?1aqClSMj8zn4alDwfFG0ttiPDFDmv+lwAf48yrbED7fp9qeMG62GGJ+Jew9T?=
- =?us-ascii?Q?MlFMjOQCXAxRNPCsdYGyCeaoVow1J9vLZ8UjZGykSsWa4IACBjr/51pgzgmo?=
- =?us-ascii?Q?LvvwY2K5G/SMWxO4IhActyRLPT5RXSo5gio4eFYxYZtbA+1o7qIWX9ECm661?=
- =?us-ascii?Q?uLOH3V3wbB6TfQfGqmChoKxlcRdZbeV43JbDEISrf3CkVe4Tm89zQ2HnBSCy?=
- =?us-ascii?Q?K9kIxe2IgUnC2ArsYUOK9vbV5mZPR6zBpZyEHEnJqPznbYyR+CdLGSgGTCoI?=
- =?us-ascii?Q?EsjUumnEfW1NqSbKP9FDxGbmsMcVa+yl49tZvYxPdeV8AGDqDhCAuYpmpCcA?=
- =?us-ascii?Q?An81i/+x710gQfPZwIO8TyaU+gz4KHNBuYL8w/Bug5rECH6a8jh4FvRWka9n?=
- =?us-ascii?Q?OUjtG0fBDLJdcFKMAZx5+xQ02KsyLBt+5Fnm3eXBe5jefuJUQfr4LZfGsYem?=
- =?us-ascii?Q?PZgxcb1KuJ4KS2latPdXyVIbYGb7pZQDuq1yPwYX0+R2jXiq9Lu/6gHNZ5XT?=
- =?us-ascii?Q?KQ9qxqufylnn7IWQ2/p5NXySUFYizBxOCn80XzmqQzGgn18Rrpvj0PZxEmik?=
- =?us-ascii?Q?cgaWdq4ZJ02JuzvLbEYqbtCTnjC76ADdgt5xcVuZQHhk5wDv7beWXvQbfPeW?=
- =?us-ascii?Q?Ntg3b2WWj8d0eHZGXMLi2fLzrPDPwp4rXDqjzCb+we8wFHY+hhNsTfBDTK67?=
- =?us-ascii?Q?e5lM/z5rHLWX+tadhEfT9xmK+DT9meGj7bkDMMNGaWPEeK3m4WaTyZB8GpGV?=
- =?us-ascii?Q?dlx/S+2MRMV7BH3bZgawtIC7G6aVUv3Y1cQ7t+sEfBiAndenYoUu3ni24XxA?=
- =?us-ascii?Q?v5d1K5FDng0rSpqIN2qNlWrwoiBM6hiX5pXTxT9OzsUgyZWj9PFwSA52WGhH?=
- =?us-ascii?Q?DMv+vAvt1EoK/j5OrctwDSIaeAX6Sp2qohl4f1AIm1Hhda+x5nSz5Pepa9zs?=
- =?us-ascii?Q?KvI18N4Hrl5+N2avSd8=3D?=
+	=?us-ascii?Q?1RgPjlFiHuoz/e3xWuv+n8sTUC0SzuHsM7SbRigvV+3RZkQevcGV1uDpDN2g?=
+ =?us-ascii?Q?YeKdyw4YwoNeO4FSzUYY7N4cm54c1LvglAYoS+Xzuz3iGtoOWRAl9wf2mSn/?=
+ =?us-ascii?Q?jQbri1rX4/g30j2fl3Fp6LF0Jdx0A2jvc3s3ugUIF78jlei+Lm6nWYkLqYiW?=
+ =?us-ascii?Q?uH8QAGFkDix7bN2ZbONmbnUJpBw+z1D58kGoYaHtb754F6AGxqnlQ8xBSm/E?=
+ =?us-ascii?Q?JLNwTCPJsKOdbIimOSUU9o+We9ob9rR+XNWtAg/tRyURmKuR1ACspU9RyARI?=
+ =?us-ascii?Q?Cnh5wGqnAvhdDmMDYorpne+l5SI8xVgDFpkiuPUDwO8QhJy9lGvBb45B5yo4?=
+ =?us-ascii?Q?z6Uj11fT8+E9QBGEmo0P9inOGOfA5Ss3bgbtf44AJoENuZr+VFHGj0JK87fu?=
+ =?us-ascii?Q?+7kTysHXpSH3Ee/YopdL6x9A2GVWCZ+2ZO+YfcMcETX9ryy0tx6/gbSrHGVE?=
+ =?us-ascii?Q?VBFIx+wBLjIv/fwXoGXkG1FQ+YysEczGYgj8QOKUBbXRMxcjzNzGiRherFp2?=
+ =?us-ascii?Q?RL+6DtT1xqwR98gXnKBEY5pEYdmaCdrgqMYMRJi0jUH3vQ4wigNseOwZmI9T?=
+ =?us-ascii?Q?qkc8Ij5cSV1u2QK62/4j6vuTFogDeLh1huDQ+LP+gQS2r+BEbnFEpSnxzEbL?=
+ =?us-ascii?Q?D9AKEE8ZmafVz/X9s6zqlKPaCbO7zTOH5EtUfPAGfhdXI8NaUPm008fVjb6z?=
+ =?us-ascii?Q?BKNzGocI0pp2NYJk7D94z2HpqdQ5Ac/bPUCiDjLalnLDGB7nISBvIBXIMokX?=
+ =?us-ascii?Q?hOOIBP2TOvKBsW+BABPXkgLJIboREr2CkCYvOSsxXRucEsgN74BcxipLgxre?=
+ =?us-ascii?Q?Vl6ClPoOuoIqVXimhIcaQTnch81YEe7+PgKi6HZtF9L7qM7eq9bSqbx6NoVD?=
+ =?us-ascii?Q?U3RdlLqLAcCs3Et8sDGHhZmJetNOnP7RWNZrsrqH2ZF9LTpq2Yx39oqkhhDs?=
+ =?us-ascii?Q?uCkDc8KJNvFcKlWeHVn6KXxbjQtXbk00XiWkaKTkSRqYQ/bTMwJ3qpen2ul4?=
+ =?us-ascii?Q?FCuaxy24LZtwl6qLLatCUlYg371rxf1Rhc4gCUxjt7zU+T9Em0McBmJyW7Xs?=
+ =?us-ascii?Q?pr45w859HXKKW6jbs9asEhprmk0w9f7ADxxvTd9Lkm1oXVTJRPlWzHwh4khA?=
+ =?us-ascii?Q?8VLb2iF6jUCHvE0h2KKEmwM1eo3/rPMASxwVlHYCwKNInVnJLvRfcfUGFtCE?=
+ =?us-ascii?Q?MeffrgOuDh8s2g+PgT+xTxgd7CIOhlVNzhLHFspRaln0FM3G7/Mr+oTMsfeV?=
+ =?us-ascii?Q?riwFiv1utHGb0lWmgvwgSqu22ogzLdZQvpcm+J3RH4eYzXNAqfYwj+o+9vNo?=
+ =?us-ascii?Q?alEr9zuYCeR031/9hv98iNmnkjpW4ZjrwKUIS3RHqkKp5c1P0jlAd+Wx+yun?=
+ =?us-ascii?Q?MwkPKu2ugb03AC8K4IPmep+ucAti5Y4nAT7aOQMe/fnns4GY0rPZx2/oXxft?=
+ =?us-ascii?Q?TitMFypY0mx3dNWIuitUUyAzFGRv0JQ6?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 12:16:49.6038
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MsDAkrZvhY591tE4OkMRtA0dB19Sgk+gA4ATSFXiFqnEiIkp8oslNbzM7J/b?=
+ =?us-ascii?Q?efxGZlmsm3RdmhGbJer+9yLQF0qhdySCVT3qXRSdkrDkl6BGljvb5dcScKB4?=
+ =?us-ascii?Q?u1IWNe2J3Q5l7DPRN04Aol5ZNW4Ky1B1iGbFED5+OPsyn6ef3O2dMsH13lvH?=
+ =?us-ascii?Q?DSs5mEdZnEpkvq2mAy4iRaXayrFRmv9Afcw9shNDSGhZ6EgKRVFbgnWSwaKP?=
+ =?us-ascii?Q?nkDeGWZgTd97n/BRsrN2axzmbGIUDYyW3hj8ZcCXlgziCenU0dUxyVqQCis2?=
+ =?us-ascii?Q?8bDV1/0Fk7Jort7csxs3rkJArI0NPB+xhp42PFUSrWJ1ydhUqa4uy68BiyiG?=
+ =?us-ascii?Q?UuHXYS3kSnNclgvmadHndF7r3Iynx0+7sDPuttTpkECa2afdFUI2RpPPGvjM?=
+ =?us-ascii?Q?Fc+wkUlyWA3VEUDkfPUY6/wF5AKTM8+5oQA03WtFI665rvjh/x+WC4MbagrA?=
+ =?us-ascii?Q?AUTLMMfytYoUwTe2EcVZulKKaUUqNBUE7/Rnu/4mXkq63BvqDlythPXNWCqT?=
+ =?us-ascii?Q?OILGnbo3kohNrhjmrGGAbfs4Cjre4Cg3BluDlh8HcWfckfi7nfq59K0janbp?=
+ =?us-ascii?Q?z14wdVFA4oJidRE+WNaMehygdXKVIrGAetqCRGsCphfgooUko+xiPr6KEAC3?=
+ =?us-ascii?Q?nQVwMsGdF2fdela6CkImQGFRWej80T4IwBnaw2qTuezylvt+4rHSz//zN9v6?=
+ =?us-ascii?Q?xU6qGNzIV0EL6uPxo5/F0xBlH03j0wmjOUIGMyGz43C0qc6jSF3B5KvCEBOS?=
+ =?us-ascii?Q?Joi7fHMtSwt3O4mzU5J/5zHubgAE4ZYyEgfNBHB9FYJ0Ef14tzD7wDW1SNEp?=
+ =?us-ascii?Q?KU4vCJASUPPQ5+jzlFYLOZViLVaLnAWXUAnQv7mGLx7++P/ukGXnv1wVeHFs?=
+ =?us-ascii?Q?oSK6GRqB95TKcFmwgf3OCBO+dvtGSF/5qp8WLOiQTrdkrzzMc83qdFc+l0SR?=
+ =?us-ascii?Q?94nFR6w7aAM/OgRjDfyTJgEsngCJ1hI1uebko6XsmYru94gX2cegdRBaGrj2?=
+ =?us-ascii?Q?P+cdZy7jlnr9I4IHkQWl4AKYPRTlHHSh+WU5veE7kqXElPnI8nDeXYltsv23?=
+ =?us-ascii?Q?AElygdZPfZmUBwXKkcrifvQwdbkLoevGSDQbAdMGRqO3T26/l2R/0Yw31C/1?=
+ =?us-ascii?Q?Zxiqlm/dmmWYSqkQ94aywSgSD2XZPc+p565ZTVGdFiMBfAVeEOLgjZtocSqJ?=
+ =?us-ascii?Q?mlPW6dmrnnakWtoReipKKH9OKG5Q0QvL5T9HUuxVv0p+hXVjOWkLTHTOm4oq?=
+ =?us-ascii?Q?sjTvyJhc3Ie23uxUYDYI8P7RqX58ALJBTrDfE9mgOv1hNIr29/ruxrp6a2su?=
+ =?us-ascii?Q?Cj+PHAX8Q4ajcn49RI6cEMmbYA1zq0Mj6pKOGti/W/BYCRb7qm+8UkdnbBWt?=
+ =?us-ascii?Q?LAcOopdZE++zuPbBSdChYBKzigp35S4u30t0Y+LYgCtlWsY6x9X1yIQxOdxM?=
+ =?us-ascii?Q?m9KXKwdjHdKJ3ZXMQFnmjJQXOs7aCKZUeYDMyVKk1vYKjmQ+qLwmahu7fG7a?=
+ =?us-ascii?Q?If3bm5Rrlf7IGBXzNQVVinNTR/wMOVRaL8G3LrHM1HpYsZdcbuxjHJBX9gLQ?=
+ =?us-ascii?Q?QC6B7D3xH3hCstDqQxL78lJNTH5rzinKrRjrDKNqHtre+d+fekGzXNLNcXBk?=
+ =?us-ascii?Q?YQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	yd9HNt/++bNmOapgpmHBqGf4qbo/R+Ho/XvLemw3naUQWP03Gj+/inGYjWHw3Tn9FlQqIJPDGdctEKjMIe4/K5APM+MWqCPknKqwGroEMNSs8v7DdZIytuX9pbrureMkolzOkrDHBHxAm5GZ+HhxwNs3mXn/O8AgnyStQ9qfwn2PQzziuVyaWXhfyA4rqCCpEcCTvlI2CAbMqOrFz9RL78y6eotiuHmHEP7spk2j9uOQyW4qPat6i/9XQ0teq6uKDVgr2qRLtPv1f+yV0wFFcvPZ2SCqQcJ0QH/yl9QOTqmAkv758LgnVjhQL39oPp6zt9CUPtEQD518XNfSNmjPDny8IJ2pjKoMUXWj1RceBDtdqP/r5jBhNiczsijyc3SQfEJ89sEdWm2GPbTOpPzLKm/wVvAdJEha9FXCpF0pLb8bler1ljEfTzs2eT6bpkOA+YhEwkLJIDOAU41wZMP7xTTjaEKyS6DTKfkWBh9P2o0iOznZBMe0LHrmMC6G9QiczMGjFiWBcNSmALjkZzS0OwqoNIfmT0bDcRKLck2HGAY3HBUO6/Ut/3J2RK2hMBSAczhGfe/wp345kAFfejsdMBMfq8JqgifF08t5nnKmKdc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bde6aa3d-c0a2-4096-e0bc-08de0b1b9558
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 12:17:03.2510
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccecda2d-cb9f-4843-6f9e-08de0b1b8d64
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002323.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6539
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Veccuk+YaZfU5aSoFbhXbiotnwaOxvLOy4KyNyVU5IWfNHO8MzTv+Cuq8DkIVdSxYcuomcaETGwRQ8TzYtcgGzK9JwoYB1AMM7IauiLJ8G4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB7795
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
+ phishscore=0 mlxlogscore=609 spamscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510140095
+X-Proofpoint-ORIG-GUID: Lc4PlaSPxkSRZVMpw8Y5LVPecl512FO-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfXyxMPYR7TqNrh
+ 5+rl+H3TlH52dUg8TA0V0ItwaxZfdCqveByCb0Uozc8iBR8/Fp9oIi9hYz0KEdHAuBkl7OqtTfc
+ rO9OuPrcf9mFbUmXUSBsUHfr0vUpHG31NMwH01XDTmdWJf6WaOpd4lXKekz9Fjv70ySKg845yKG
+ Pdj4trw2nVb7BdoSEGUhJT7UqEwtNwaWXuEEjWLAMH9s8BeaJJXPc7+ZdxZL0W/ujvDeEWiw7PV
+ oxecxwf+NzZq+IcAx1597FmR8x22Og0u1L9FXkLii4I1KwUG5vFXUbJGWRT4et89kf7qYY839a7
+ dQOaPmIF4CdnQTiZMRp8/Q84ENqmk4estTdG5vd7QOhWvCtQJyC8quJYrYuDivcqOp9kRThcDTV
+ L31jVvcUMkzMLf0Kn53VhvDhXS7nJL/I7tCIlqAUeIy//qu/3r4=
+X-Authority-Analysis: v=2.4 cv=E7TAZKdl c=1 sm=1 tr=0 ts=68ee3f43 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pGLkceISAAAA:8 a=7CQSdrXTAAAA:8 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8
+ a=5WXMs9Q07sKjwNZqsikA:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf
+ awl=host:13624
+X-Proofpoint-GUID: Lc4PlaSPxkSRZVMpw8Y5LVPecl512FO-
 
-AMD MDB IP supports Linked List (LL) mode as well as non-LL mode.
-The current code does not have the mechanisms to enable the
-DMA transactions using the non-LL mode. The following two cases
-are added with this patch:
-- When a valid physical base address is not configured via the
-  Xilinx VSEC capability then the IP can still be used in non-LL
-  mode. The default mode for all the DMA transactions and for all
-  the DMA channels then is non-LL mode.
-- When a valid physical base address is configured but the client
-  wants to use the non-LL mode for DMA transactions then also the
-  flexibility is provided via the peripheral_config struct member of
-  dma_slave_config. In this case the channels can be individually
-  configured in non-LL mode. This use case is desirable for single
-  DMA transfer of a chunk, this saves the effort of preparing the
-  Link List.
+On Wed, Oct 08, 2025 at 12:37:46PM +0800, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
+>
+> As pointed out by Dev, the PTE checks for disjoint conditions in the
+> scanning loops can be optimized. is_swap_pte, (pte_none && is_zero_pfn),
+> and pte_uffd_wp are mutually exclusive.
 
-Signed-off-by: Devendra K Verma <devendra.verma@amd.com>
----
-Changes in v4
-  No change
+But you're not using is_swap_pte anywhere :) This comes back to my review
+quesiotn on the series this is dependent upon.
 
-Changes in v3
-  No change
+>
+> This patch refactors the loops in both __collapse_huge_page_isolate() and
+> hpage_collapse_scan_pmd() to use a continuous if-else-if-else-if chain
+> instead of separate if blocks. While at it, the redundant pte_present()
+> check before is_zero_pfn() is also removed.
 
-Changes in v2
-  Reverted the function return type to u64 for
-  dw_edma_get_phys_addr().
+I mean see review below, I don't see why you're doing this and I am
+unconvinced by how redundant that check is.
 
-Changes in v1
-  Changed the function return type for dw_edma_get_phys_addr().
-  Corrected the typo raised in review.
----
- drivers/dma/dw-edma/dw-edma-core.c    | 38 ++++++++++++++++++---
- drivers/dma/dw-edma/dw-edma-core.h    |  1 +
- drivers/dma/dw-edma/dw-edma-pcie.c    | 44 +++++++++++++++++--------
- drivers/dma/dw-edma/dw-hdma-v0-core.c | 62 ++++++++++++++++++++++++++++++++++-
- include/linux/dma/edma.h              |  1 +
- 5 files changed, 127 insertions(+), 19 deletions(-)
+Also this just feels like it should be part of the series where you change
+these? I'm not sure why this is separate?
 
-diff --git a/drivers/dma/dw-edma/dw-edma-core.c b/drivers/dma/dw-edma/dw-edma-core.c
-index b43255f..3283ac5 100644
---- a/drivers/dma/dw-edma/dw-edma-core.c
-+++ b/drivers/dma/dw-edma/dw-edma-core.c
-@@ -223,8 +223,28 @@ static int dw_edma_device_config(struct dma_chan *dchan,
- 				 struct dma_slave_config *config)
- {
- 	struct dw_edma_chan *chan = dchan2dw_edma_chan(dchan);
-+	int nollp = 0;
-+
-+	if (WARN_ON(config->peripheral_config &&
-+		    config->peripheral_size != sizeof(int)))
-+		return -EINVAL;
- 
- 	memcpy(&chan->config, config, sizeof(*config));
-+
-+	/*
-+	 * When there is no valid LLP base address available
-+	 * then the default DMA ops will use the non-LL mode.
-+	 * Cases where LL mode is enabled and client wants
-+	 * to use the non-LL mode then also client can do
-+	 * so via providing the peripheral_config param.
-+	 */
-+	if (config->peripheral_config)
-+		nollp = *(int *)config->peripheral_config;
-+
-+	chan->nollp = false;
-+	if (chan->dw->chip->nollp || (!chan->dw->chip->nollp && nollp))
-+		chan->nollp = true;
-+
- 	chan->configured = true;
- 
- 	return 0;
-@@ -353,7 +373,7 @@ static void dw_edma_device_issue_pending(struct dma_chan *dchan)
- 	struct dw_edma_chan *chan = dchan2dw_edma_chan(xfer->dchan);
- 	enum dma_transfer_direction dir = xfer->direction;
- 	struct scatterlist *sg = NULL;
--	struct dw_edma_chunk *chunk;
-+	struct dw_edma_chunk *chunk = NULL;
- 	struct dw_edma_burst *burst;
- 	struct dw_edma_desc *desc;
- 	u64 src_addr, dst_addr;
-@@ -419,9 +439,11 @@ static void dw_edma_device_issue_pending(struct dma_chan *dchan)
- 	if (unlikely(!desc))
- 		goto err_alloc;
- 
--	chunk = dw_edma_alloc_chunk(desc);
--	if (unlikely(!chunk))
--		goto err_alloc;
-+	if (!chan->nollp) {
-+		chunk = dw_edma_alloc_chunk(desc);
-+		if (unlikely(!chunk))
-+			goto err_alloc;
-+	}
- 
- 	if (xfer->type == EDMA_XFER_INTERLEAVED) {
- 		src_addr = xfer->xfer.il->src_start;
-@@ -450,7 +472,13 @@ static void dw_edma_device_issue_pending(struct dma_chan *dchan)
- 		if (xfer->type == EDMA_XFER_SCATTER_GATHER && !sg)
- 			break;
- 
--		if (chunk->bursts_alloc == chan->ll_max) {
-+		/*
-+		 * For non-LL mode, only a single burst can be handled
-+		 * in a single chunk unlike LL mode where multiple bursts
-+		 * can be configured in a single chunk.
-+		 */
-+		if ((chunk && chunk->bursts_alloc == chan->ll_max) ||
-+		    chan->nollp) {
- 			chunk = dw_edma_alloc_chunk(desc);
- 			if (unlikely(!chunk))
- 				goto err_alloc;
-diff --git a/drivers/dma/dw-edma/dw-edma-core.h b/drivers/dma/dw-edma/dw-edma-core.h
-index 71894b9..2a4ad45 100644
---- a/drivers/dma/dw-edma/dw-edma-core.h
-+++ b/drivers/dma/dw-edma/dw-edma-core.h
-@@ -86,6 +86,7 @@ struct dw_edma_chan {
- 	u8				configured;
- 
- 	struct dma_slave_config		config;
-+	bool				nollp;
- };
- 
- struct dw_edma_irq {
-diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
-index b26a55e..1c4d10c 100644
---- a/drivers/dma/dw-edma/dw-edma-pcie.c
-+++ b/drivers/dma/dw-edma/dw-edma-pcie.c
-@@ -260,6 +260,15 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
- 	pdata->devmem_phys_off = off;
- }
- 
-+static u64 dw_edma_get_phys_addr(struct pci_dev *pdev,
-+				 struct dw_edma_pcie_data *pdata,
-+				 enum pci_barno bar)
-+{
-+	if (pdev->vendor == PCI_VENDOR_ID_XILINX)
-+		return pdata->devmem_phys_off;
-+	return pci_bus_address(pdev, bar);
-+}
-+
- static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 			      const struct pci_device_id *pid)
- {
-@@ -269,6 +278,7 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 	struct dw_edma_chip *chip;
- 	int err, nr_irqs;
- 	int i, mask;
-+	bool nollp = false;
- 
- 	vsec_data = kmalloc(sizeof(*vsec_data), GFP_KERNEL);
- 	if (!vsec_data)
-@@ -293,21 +303,24 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 	if (pdev->vendor == PCI_VENDOR_ID_XILINX) {
- 		/*
- 		 * There is no valid address found for the LL memory
--		 * space on the device side.
-+		 * space on the device side. In the absence of LL base
-+		 * address use the non-LL mode or simple mode supported by
-+		 * the HDMA IP.
- 		 */
- 		if (vsec_data->devmem_phys_off == DW_PCIE_AMD_MDB_INVALID_ADDR)
--			return -EINVAL;
-+			nollp = true;
- 
- 		/*
- 		 * Configure the channel LL and data blocks if number of
- 		 * channels enabled in VSEC capability are more than the
- 		 * channels configured in amd_mdb_data.
- 		 */
--		dw_edma_set_chan_region_offset(vsec_data, BAR_2, 0,
--					       DW_PCIE_XILINX_LL_OFF_GAP,
--					       DW_PCIE_XILINX_LL_SIZE,
--					       DW_PCIE_XILINX_DT_OFF_GAP,
--					       DW_PCIE_XILINX_DT_SIZE);
-+		if (!nollp)
-+			dw_edma_set_chan_region_offset(vsec_data, BAR_2, 0,
-+						       DW_PCIE_XILINX_LL_OFF_GAP,
-+						       DW_PCIE_XILINX_LL_SIZE,
-+						       DW_PCIE_XILINX_DT_OFF_GAP,
-+						       DW_PCIE_XILINX_DT_SIZE);
- 	}
- 
- 	/* Mapping PCI BAR regions */
-@@ -355,6 +368,7 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 	chip->mf = vsec_data->mf;
- 	chip->nr_irqs = nr_irqs;
- 	chip->ops = &dw_edma_pcie_plat_ops;
-+	chip->nollp = nollp;
- 
- 	chip->ll_wr_cnt = vsec_data->wr_ch_cnt;
- 	chip->ll_rd_cnt = vsec_data->rd_ch_cnt;
-@@ -363,7 +377,7 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 	if (!chip->reg_base)
- 		return -ENOMEM;
- 
--	for (i = 0; i < chip->ll_wr_cnt; i++) {
-+	for (i = 0; i < chip->ll_wr_cnt && !nollp; i++) {
- 		struct dw_edma_region *ll_region = &chip->ll_region_wr[i];
- 		struct dw_edma_region *dt_region = &chip->dt_region_wr[i];
- 		struct dw_edma_block *ll_block = &vsec_data->ll_wr[i];
-@@ -374,7 +388,8 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 			return -ENOMEM;
- 
- 		ll_region->vaddr.io += ll_block->off;
--		ll_region->paddr = pci_bus_address(pdev, ll_block->bar);
-+		ll_region->paddr = dw_edma_get_phys_addr(pdev, vsec_data,
-+							 ll_block->bar);
- 		ll_region->paddr += ll_block->off;
- 		ll_region->sz = ll_block->sz;
- 
-@@ -383,12 +398,13 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 			return -ENOMEM;
- 
- 		dt_region->vaddr.io += dt_block->off;
--		dt_region->paddr = pci_bus_address(pdev, dt_block->bar);
-+		dt_region->paddr = dw_edma_get_phys_addr(pdev, vsec_data,
-+							 dt_block->bar);
- 		dt_region->paddr += dt_block->off;
- 		dt_region->sz = dt_block->sz;
- 	}
- 
--	for (i = 0; i < chip->ll_rd_cnt; i++) {
-+	for (i = 0; i < chip->ll_rd_cnt && !nollp; i++) {
- 		struct dw_edma_region *ll_region = &chip->ll_region_rd[i];
- 		struct dw_edma_region *dt_region = &chip->dt_region_rd[i];
- 		struct dw_edma_block *ll_block = &vsec_data->ll_rd[i];
-@@ -399,7 +415,8 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 			return -ENOMEM;
- 
- 		ll_region->vaddr.io += ll_block->off;
--		ll_region->paddr = pci_bus_address(pdev, ll_block->bar);
-+		ll_region->paddr = dw_edma_get_phys_addr(pdev, vsec_data,
-+							 ll_block->bar);
- 		ll_region->paddr += ll_block->off;
- 		ll_region->sz = ll_block->sz;
- 
-@@ -408,7 +425,8 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
- 			return -ENOMEM;
- 
- 		dt_region->vaddr.io += dt_block->off;
--		dt_region->paddr = pci_bus_address(pdev, dt_block->bar);
-+		dt_region->paddr = dw_edma_get_phys_addr(pdev, vsec_data,
-+							 dt_block->bar);
- 		dt_region->paddr += dt_block->off;
- 		dt_region->sz = dt_block->sz;
- 	}
-diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-index e3f8db4..befb9e0 100644
---- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-@@ -225,7 +225,7 @@ static void dw_hdma_v0_sync_ll_data(struct dw_edma_chunk *chunk)
- 		readl(chunk->ll_region.vaddr.io);
- }
- 
--static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
-+static void dw_hdma_v0_core_ll_start(struct dw_edma_chunk *chunk, bool first)
- {
- 	struct dw_edma_chan *chan = chunk->chan;
- 	struct dw_edma *dw = chan->dw;
-@@ -263,6 +263,66 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- 	SET_CH_32(dw, chan->dir, chan->id, doorbell, HDMA_V0_DOORBELL_START);
- }
- 
-+static void dw_hdma_v0_core_non_ll_start(struct dw_edma_chunk *chunk)
-+{
-+	struct dw_edma_chan *chan = chunk->chan;
-+	struct dw_edma *dw = chan->dw;
-+	struct dw_edma_burst *child;
-+	u32 val;
-+
-+	list_for_each_entry(child, &chunk->burst->list, list) {
-+		SET_CH_32(dw, chan->dir, chan->id, ch_en, BIT(0));
-+
-+		/* Source address */
-+		SET_CH_32(dw, chan->dir, chan->id, sar.lsb,
-+			  lower_32_bits(child->sar));
-+		SET_CH_32(dw, chan->dir, chan->id, sar.msb,
-+			  upper_32_bits(child->sar));
-+
-+		/* Destination address */
-+		SET_CH_32(dw, chan->dir, chan->id, dar.lsb,
-+			  lower_32_bits(child->dar));
-+		SET_CH_32(dw, chan->dir, chan->id, dar.msb,
-+			  upper_32_bits(child->dar));
-+
-+		/* Transfer size */
-+		SET_CH_32(dw, chan->dir, chan->id, transfer_size, child->sz);
-+
-+		/* Interrupt setup */
-+		val = GET_CH_32(dw, chan->dir, chan->id, int_setup) |
-+				HDMA_V0_STOP_INT_MASK |
-+				HDMA_V0_ABORT_INT_MASK |
-+				HDMA_V0_LOCAL_STOP_INT_EN |
-+				HDMA_V0_LOCAL_ABORT_INT_EN;
-+
-+		if (!(dw->chip->flags & DW_EDMA_CHIP_LOCAL)) {
-+			val |= HDMA_V0_REMOTE_STOP_INT_EN |
-+			       HDMA_V0_REMOTE_ABORT_INT_EN;
-+		}
-+
-+		SET_CH_32(dw, chan->dir, chan->id, int_setup, val);
-+
-+		/* Channel control setup */
-+		val = GET_CH_32(dw, chan->dir, chan->id, control1);
-+		val &= ~HDMA_V0_LINKLIST_EN;
-+		SET_CH_32(dw, chan->dir, chan->id, control1, val);
-+
-+		/* Ring the doorbell */
-+		SET_CH_32(dw, chan->dir, chan->id, doorbell,
-+			  HDMA_V0_DOORBELL_START);
-+	}
-+}
-+
-+static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
-+{
-+	struct dw_edma_chan *chan = chunk->chan;
-+
-+	if (!chan->nollp)
-+		dw_hdma_v0_core_ll_start(chunk, first);
-+	else
-+		dw_hdma_v0_core_non_ll_start(chunk);
-+}
-+
- static void dw_hdma_v0_core_ch_config(struct dw_edma_chan *chan)
- {
- 	struct dw_edma *dw = chan->dw;
-diff --git a/include/linux/dma/edma.h b/include/linux/dma/edma.h
-index 3080747..e14e16f 100644
---- a/include/linux/dma/edma.h
-+++ b/include/linux/dma/edma.h
-@@ -99,6 +99,7 @@ struct dw_edma_chip {
- 	enum dw_edma_map_format	mf;
- 
- 	struct dw_edma		*dw;
-+	bool			nollp;
- };
- 
- /* Export to the platform drivers */
--- 
-1.8.3.1
+>
+> Also, this is a preparatory step to make it easier to merge the
+> almost-duplicated scanning logic in these two functions, as suggested
+> by David.
+>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> Reviewed-by: Dev Jain <dev.jain@arm.com>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Suggested-by: Dev Jain <dev.jain@arm.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+>  mm/khugepaged.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index bec3e268dc76..e3e27223137a 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -548,8 +548,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>  	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
+>  	     _pte++, addr += PAGE_SIZE) {
+>  		pte_t pteval = ptep_get(_pte);
+> -		if (pte_none(pteval) || (pte_present(pteval) &&
+> -				is_zero_pfn(pte_pfn(pteval)))) {
+> +		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
 
+You can have non-pte_none() non-present entries no? Isn't pte_present() a
+prerequisite for pfe_pfn() to be valid? If it's a swap entry couldn't you
+end up accidentally (unlikely but still) hitting this?
+
+Seems like this is required isn't it? I may be missing something here...
+
+>  			++none_or_zero;
+>  			if (!userfaultfd_armed(vma) &&
+>  			    (!cc->is_khugepaged ||
+> @@ -560,12 +559,10 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>  				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>  				goto out;
+>  			}
+> -		}
+> -		if (!pte_present(pteval)) {
+> +		} else if (!pte_present(pteval)) {
+
+This seems pointless, since either the above logic will continue or goto
+out right?
+
+>  			result = SCAN_PTE_NON_PRESENT;
+>  			goto out;
+> -		}
+> -		if (pte_uffd_wp(pteval)) {
+> +		} else if (pte_uffd_wp(pteval)) {
+
+Again, what is the point of an else when the if() branch unconditionally
+->out?
+
+>  			result = SCAN_PTE_UFFD_WP;
+>  			goto out;
+>  		}
+> @@ -1321,8 +1318,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>  				count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+>  				goto out_unmap;
+>  			}
+> -		}
+> -		if (pte_uffd_wp(pteval)) {
+> +		} else if (pte_uffd_wp(pteval)) {
+
+Same comment as above, I'm really confused about the purpose of this logic?
+
+
+>  			/*
+>  			 * Don't collapse the page if any of the small
+>  			 * PTEs are armed with uffd write protection.
+> --
+> 2.49.0
+>
 
