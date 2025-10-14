@@ -1,296 +1,150 @@
-Return-Path: <linux-kernel+bounces-851882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B523BD785B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D236CBD7825
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0EB5834CEB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:05:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C774061A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACCD30CDB9;
-	Tue, 14 Oct 2025 06:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C5C30BB86;
+	Tue, 14 Oct 2025 06:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="feuEu4GR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LMmTDW13"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OWZMcuVG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C3B30CDAB;
-	Tue, 14 Oct 2025 06:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A804502F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760421897; cv=none; b=OkiEv8+ktHZDGzhravyd/r6qy28b+reRDiexcz3iVdYWsW/blocqZRcGVI0OavFyU5jk08yhGHYOwZkfUc7Q+Tw115US+jU9zmz9U5qPRD9ofy+3B7sWY1Ko45cm4WDqWSZ53ZSPFPYBSgoexSsMftKPVC6LfaULXdC66HboHms=
+	t=1760421863; cv=none; b=tC7IioTbnMwvCDU9tReeBCm98Z5eUA/IpeehvGkSYnhfHnfzlfuh2HV26VP23v4CrxmV6iwtXIVRoL15NxsGfaZfYIqICi/x18b0hTG7bgMBB+aLnPGsu5yhi3VhjImsLI00UYn4sj3koC+9coHITPmuqoeyBppeBORNbafa8x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760421897; c=relaxed/simple;
-	bh=v2JPSGhSphxT4CRQrxJsBzP2zNqZpcixsb06q7URYzs=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=VU/kFYtaUTW8F+DZGeUYVMHHJtAdauFvyYSFYdIGKYkSy4YygMrdxjogYWrgwCOZ6qPIt9uh7Ub2NQJV2k1EaNqId3dPUg4YJJAEiGPLQdtMFKSgNrQwieRkdzNaTzc55LgFuVzNnKWUV2e1aJPHBCdSc1f1p8T3STov6ONRGaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=feuEu4GR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LMmTDW13; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailflow.phl.internal (Postfix) with ESMTP id 62E6C13802DE;
-	Tue, 14 Oct 2025 02:04:54 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Tue, 14 Oct 2025 02:04:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1760421894; x=1760429094; bh=E4Iph9Kl8wZz1HAHn20rKGPeYlZdEw1yUQf
-	1mGdkCUQ=; b=feuEu4GRf6dcErALPk+2jItHSg4i5KWiC9i417b4FIhcTbE2y2T
-	+Bt4amVdnCGAM1tUKaufU8N3iC3xA2wxgMF91QjmRsfDtS8TkU58KsBcsHLC3Qe9
-	9uGqg12zMyyNWlr0tHrmSZMAjHsrqR6wDDn9puU8TZhvuKVCpBBV0N4hnJN5njSM
-	BHj+IqFdfGfwsjivQNzH5S2eCArfr2wTYNfe0VVD6mjQGTf1nZkL/z9FmU6wkxeC
-	XP7HcSdYhv3lxXdbaxFn3pGRdVj5H/ibkL+9weFKyTuxGadyOlFat4dNTrwfckpc
-	EQEtGwZGFoj2V5Cu3Q3Qg7NpyQpILU9t7YQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760421894; x=
-	1760429094; bh=E4Iph9Kl8wZz1HAHn20rKGPeYlZdEw1yUQf1mGdkCUQ=; b=L
-	MmTDW13ZQy/vvnXJJHqO2e4Nwp/4f0wIhr5NAnj31qKE+wHoQadph71IrqSc5Ib0
-	lhC6eeRCRQGeEFwXVh03+zoKg7JvrvXHWp4EZblBZwrgx5uc1e3QbyqDIz2/xuRM
-	x58UYYm8Gs2/BlOkdLgAp+C2Ud0eKKK7HOOKvovGP+SYaw8MNisjOrZV9Q+WOQVr
-	FACIlwg4aSWFz83NZUIVVjDgZX3yrjk6q9Sx+4ahYsr/hpjT7Or3pU7QIuTtJpqV
-	mwz8Vk/OvGuxNfinjrygxj11QA1kr2UinaJmSCRd7/tXGKs1xZ9lzd3VsMgSyHLG
-	tetmXGjlWtEDy8ZH9tV3g==
-X-ME-Sender: <xms:_eftaCHyqV6o3FVefhsjNT8IhmMyfFHwk8jZHMhbo-HUFu5X_n6urg>
-    <xme:_eftaEnN6jBrfj20h2AuPNDCuOMyqF6Plg83kg-Wm7c0-k_CfdsL7XEtnlxZx9Zc4
-    vdnWYhYYsNNXJvyiFNgoRvI7Kazc6WaYj_Vgo60bnGRd5AR>
-X-ME-Received: <xmr:_eftaD6dxLXuqheOCQURHeHPfO7bW-CXtJ1AseJtZXeLq0oSGG1WRKKPAy8NkEw4I49DhwHKvB2Po8CEgxiioKrKzekCRYBLjrQ5r26_DkV4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudeljeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudegledpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhopehlih
-    hnkhesvhhivhhordgtohhmpdhrtghpthhtoheprhgtuhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqmhhoughulhgvshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqihguvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:_eftaCbgmYlvEUe7c8diYxkm08sFcYy0h1FLId3hRvl3Wygr1PpoUA>
-    <xmx:_eftaO0MJ_hLSTek3S8a6e-GF_TCbTx0v6w4rpkXwlvonZGXG2N4kw>
-    <xmx:_eftaNhIc-WZoUYTLfzJpLzI2fsWLLjvzv3kaEG6CxTMcM2aAlX2EQ>
-    <xmx:_eftaFhY4IYteGvByEUJUmCKSZRYVweFZ66sE_nYkeHRJBJf5cUvxA>
-    <xmx:BujtaI-jqBpV57I5Iv3W1WU6_3vCyGvF2hAPelzIt6ARNYBJwHSB75rK>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 02:04:01 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1760421863; c=relaxed/simple;
+	bh=SETPzXBTnAMaQ1frJwUjp06dh5JmQoMduT94d5pFWU8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=takDKr1cW1AUKMDUvf36GdO77/6S5Mu/HyZW+w1nRfmkBO/VF0jcqFX5cms8kypbJQmvney8E/EbzTYIzE93KIifZNafF9NfQIWlTIdm/fEAqQdASa9g+dA1leh1dUIFBvN4ECRdaZmh5ftj7fAglTyAlKIvdMX8UGkxh2mwkrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OWZMcuVG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59DHD9A1002516
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=XpaNi5zmsS21XsRleV8eLPwHkBN0I4IbPH8
+	sMXSuuhU=; b=OWZMcuVG5EuU+Ec32Zi9AvoBchnwyDhI/2DmAlRFOKIWUIMNjhm
+	J/EjtaDAhwGgFMChQs0Rz2m6rKrPOnXXiD0Ss1syc12Hd6s1xrJA0iD8JzGaoAdf
+	XH5WCGQ23w7yxffc1zXgLQbGNuaU3zVMquAjhmFzz3+p3DDIbRJ2N+DqKrovz7BI
+	vI38dN3rwPX7x7km/EDlBOc4U9OtY6s6/vKSucyKW9+dafQ97YIKe0+zGasXg4p3
+	BQryZJiakCGg6WypVjpEzPfVXL93MZ512JMzKS9TDpOn5wJ2dXnxq1PMypqOMZNk
+	/6c88rMFK7Aib22EvhbuOhJN/iKDuXwxfJw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfbhyavg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:04:20 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-780f914b5a4so7360948b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:04:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760421859; x=1761026659;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XpaNi5zmsS21XsRleV8eLPwHkBN0I4IbPH8sMXSuuhU=;
+        b=IMt+hXubjzjshTt+Z/KDaQ38bQ66jU8G0ssMd+EQhapFbRZdF8IFoRr2+8z4dgoutB
+         Z3gNExiNHFmT0MW0PCBNtpZvVim+SMpgElAQt96kaIN9sbneR3tpN7mfzJDlJRaqctL+
+         QuEbpy0tUQWb/DRxKPKeLfm1wwy9pd59ZzCafMe5kgjkrjEdBXN21byLDEVjtIEoD7Ph
+         ov3jlpcZO6WhkMHL3swye68jjatDQQ81iYdeqEcXgZruD9t5L7rEo92Cun22p6OOofku
+         VZjU1DxJsO00z5YoJxblxLI6QOmSTbjCvjCWxtDOIiSkgU4qe0AEIjESFIUtN36xbk7B
+         2xuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDo2dR3I1AOuY/GBPrJ78LTL/RWZYqEV3DGL8emSCoDlXluwN/c7rf6cCN0ZbMIe9PUG48Y+ZbTbjEMZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBsPhLqsoM6zDbT/cBVEPYoIyQ6c/Ri6XDKdAyjWj9bPxENZbT
+	D343u81gKW9/nJTLvfVL5ykuPsmhH7xr74DpSVf0QYIgt8IAbpAxB2V7DLhvkFxw0aTcXucs01K
+	FYZEE2+6B7ChRZoCOWTpqQXy6fwDgwL7egbeJQnWzSO7NpqSnzIvr3QU+4JBgYg+8LjI=
+X-Gm-Gg: ASbGncsYzNRHs90ljpP98DPtTx6yJFrgON2P+uxqHfTrLCOUoHpzxLhtbLrhTeE2k9o
+	U67pvBKf8QoSQFRGkIZsF9puFOatEUWGeuMeX3b8D6wys6aCkmiJEeow2jupYMpWaelPj7ATgrH
+	v0kpn8wSsSRsZTp17MRfnRdxeSNMmd341eVT5gHNQp/EHE2HFefgqdzqHBpINIBR6UHN7UAFCGE
+	MxRWowvMeXPpTaRwhvClOwbDWp0v797YQcGnhf8lPl7y683ymH33Oekhy7YQOuq9b1owoOBbW1p
+	b5btuZ8P1MKWk35VVN3eCdc0vo4eagU/FmFgHgRh/DDh3I8Mo97e2b8Yvcw93//oWj/t3pOE
+X-Received: by 2002:a05:6a00:92a2:b0:781:17ba:ad76 with SMTP id d2e1a72fcca58-79387c17394mr28610026b3a.24.1760421859513;
+        Mon, 13 Oct 2025 23:04:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFC6tNUKNUKSOjotjmKZx/9exMqkN4NekwtaO/BhywRYMP7gUY3U0B74E+0I+cPrGa37Hy3ng==
+X-Received: by 2002:a05:6a00:92a2:b0:781:17ba:ad76 with SMTP id d2e1a72fcca58-79387c17394mr28610003b3a.24.1760421859081;
+        Mon, 13 Oct 2025 23:04:19 -0700 (PDT)
+Received: from hu-pkambar-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b0604cfsm13946024b3a.9.2025.10.13.23.04.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Oct 2025 23:04:18 -0700 (PDT)
+From: palash.kambar@oss.qualcomm.com
+To: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+        bvanassche@acm.org, peter.griffin@linaro.org, krzk@kernel.org,
+        peter.wang@mediatek.com, beanhuo@micron.com, quic_nguyenb@quicinc.com,
+        adrian.hunter@intel.com, ebiggers@kernel.org,
+        neil.armstrong@linaro.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
+        quic_nitirawa@quicinc.com,
+        Palash Kambar <palash.kambar@oss.qualcomm.com>
+Subject: [PATCH V1 0/2] Address race condition in MCQ mode and enhance
+Date: Tue, 14 Oct 2025 11:34:04 +0530
+Message-Id: <20251014060406.1420475-1-palash.kambar@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Byungchul Park" <byungchul@sk.com>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
- linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
- linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
- will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
- joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
- duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
- tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
- amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
- linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
- minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
- sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
- penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
- ngupta@vflare.org, linux-block@vger.kernel.org, josef@toxicpanda.com,
- linux-fsdevel@vger.kernel.org, jack@suse.cz, jlayton@kernel.org,
- dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
- dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
- melissa.srw@gmail.com, hamohammed.sa@gmail.com, harry.yoo@oracle.com,
- chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
- max.byungchul.park@gmail.com, boqun.feng@gmail.com, longman@redhat.com,
- yunseong.kim@ericsson.com, ysk@kzalloc.com, yeoreum.yun@arm.com,
- netdev@vger.kernel.org, matthew.brost@intel.com, her0gyugyu@gmail.com,
- corbet@lwn.net, catalin.marinas@arm.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- luto@kernel.org, sumit.semwal@linaro.org, gustavo@padovan.org,
- christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mcgrof@kernel.org, petr.pavlu@suse.com,
- da.gomez@kernel.org, samitolvanen@google.com, paulmck@kernel.org,
- frederic@kernel.org, neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com,
- josh@joshtriplett.org, urezki@gmail.com, mathieu.desnoyers@efficios.com,
- jiangshanlai@gmail.com, qiang.zhang@linux.dev, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, chuck.lever@oracle.com,
- okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
- trondmy@kernel.org, anna@kernel.org, kees@kernel.org,
- bigeasy@linutronix.de, clrkwllms@kernel.org, mark.rutland@arm.com,
- ada.coupriediaz@arm.com, kristina.martsenko@arm.com,
- wangkefeng.wang@huawei.com, broonie@kernel.org, kevin.brodsky@arm.com,
- dwmw@amazon.co.uk, shakeel.butt@linux.dev, ast@kernel.org,
- ziy@nvidia.com, yuzhao@google.com, baolin.wang@linux.alibaba.com,
- usamaarif642@gmail.com, joel.granados@kernel.org,
- richard.weiyang@gmail.com, geert+renesas@glider.be,
- tim.c.chen@linux.intel.com, linux@treblig.org,
- alexander.shishkin@linux.intel.com, lillian@star-ark.net,
- chenhuacai@kernel.org, francesco@valla.it, guoweikang.kernel@gmail.com,
- link@vivo.com, jpoimboe@kernel.org, masahiroy@kernel.org,
- brauner@kernel.org, thomas.weissschuh@linutronix.de, oleg@redhat.com,
- mjguzik@gmail.com, andrii@kernel.org, wangfushuai@baidu.com,
- linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- linux-i2c@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-modules@vger.kernel.org, rcu@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 28/47] dept: add documentation for dept
-In-reply-to: <20251013052354.GA75512@system.software.com>
-References: <20251002081247.51255-1-byungchul@sk.com>,
- <20251002081247.51255-29-byungchul@sk.com>,
- <175947451487.247319.6809470356431942803@noble.neil.brown.name>,
- <20251013052354.GA75512@system.software.com>
-Date: Tue, 14 Oct 2025 17:03:58 +1100
-Message-id: <176042183810.1793333.13639772065939276568@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX9YhfIR+oG/1d
+ YYJIOF2YjBoim9AzBMaG1EYqv0dOCg5cvmpLDP/+AcxAEEiv8myp+fus+wr6mcXznr8nZV3KILW
+ EgeQtBf59NB8NrUCoDRiXTVa/g9FDDYgLCvhRef291BDJQ9KcKLkPXy/sBEW7kpDnlxEg0ehFNK
+ 69/V/++PTBm6IYD/Xss0KKzeXeDfpXCA/i0q4ZCtQf/cysMz7JbSIexyJtv79nxnFpDoMpQ4F8H
+ UxVvmLXQEDGg0SAq3iqbe4ZDdDfmkTUj671/iSTeQHPTKZx2ii54hARWcJXfffQfsxd1E7/FJ/5
+ 5OSq9NhXOULmqXQ9yx1D7N6fI4jcFTwScJ82t4unQPxOVQcCFLDdVkPCxLdPEYczLgsFdlDsAa3
+ dovT9xGbRXaVstpGJQik3ed/03+NTg==
+X-Proofpoint-ORIG-GUID: yEPlbzr-vElK2jQOTYK7Nx8xkp-JyCpo
+X-Authority-Analysis: v=2.4 cv=bodBxUai c=1 sm=1 tr=0 ts=68ede7e4 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=AlCj3w5ouSWVjIIyBF0A:9 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: yEPlbzr-vElK2jQOTYK7Nx8xkp-JyCpo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1011 malwarescore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
 
-On Mon, 13 Oct 2025, Byungchul Park wrote:
-> On Fri, Oct 03, 2025 at 04:55:14PM +1000, NeilBrown wrote:
-> > On Thu, 02 Oct 2025, Byungchul Park wrote:
-> > > This document describes the concept and APIs of dept.
-> > >
-> > 
-> > Thanks for the documentation.  I've been trying to understand it.
-> 
-> You're welcome.  Feel free to ask me if you have any questions.
-> 
-> > > +How DEPT works
-> > > +--------------
-> > > +
-> > > +Let's take a look how DEPT works with the 1st example in the section
-> > > +'Limitation of lockdep'.
-> > > +
-> > > +   context X    context Y       context Z
-> > > +
-> > > +                mutex_lock A
-> > > +   folio_lock B
-> > > +                folio_lock B <- DEADLOCK
-> > > +                                mutex_lock A <- DEADLOCK
-> > > +                                folio_unlock B
-> > > +                folio_unlock B
-> > > +                mutex_unlock A
-> > > +                                mutex_unlock A
-> > > +
-> > > +Adding comments to describe DEPT's view in terms of wait and event:
-> > > +
-> > > +   context X    context Y       context Z
-> > > +
-> > > +                mutex_lock A
-> > > +                /* wait for A */
-> > > +   folio_lock B
-> > > +   /* wait for A */
-> > > +   /* start event A context */
-> > > +
-> > > +                folio_lock B
-> > > +                /* wait for B */ <- DEADLOCK
-> > > +                /* start event B context */
-> > > +
-> > > +                                mutex_lock A
-> > > +                                /* wait for A */ <- DEADLOCK
-> > > +                                /* start event A context */
-> > > +
-> > > +                                folio_unlock B
-> > > +                                /* event B */
-> > > +                folio_unlock B
-> > > +                /* event B */
-> > > +
-> > > +                mutex_unlock A
-> > > +                /* event A */
-> > > +                                mutex_unlock A
-> > > +                                /* event A */
-> > > +
-> > 
-> > I can't see the value of the above section.
-> > The first section with no comments is useful as it is easy to see the
-> > deadlock being investigate.  The section below is useful as it add
-> > comments to explain how DEPT sees the situation.  But the above section,
-> > with some but not all of the comments, does seem (to me) to add anything
-> > useful.
-> 
-> I just wanted to convert 'locking terms' to 'wait and event terms' by
-> one step.  However, I can remove the section you pointed out that you
-> thought was useless.
+From: Palash Kambar <palash.kambar@oss.qualcomm.com>
 
-But it seems you did it in two steps???
+This patch series addresses a race condition in MCQ mode of the QCOM 
+UFS host controller for hardware version 6.
 
-If you think the middle section with some but not all of the comments
-adds value (And maybe it does - maybe I just haven't seen it yet), the
-please explain what value is being added at each step.
+The second patch integrates the logic into the UFS core layer by
+invoking appropriate vops.
 
-It is currently documented as:
+Can Guo (1):
+  ufs: ufs-qcom: Disable AHIT before SQ tail update to prevent race in
+    MCQ mode
 
- +Adding comments to describe DEPT's view in terms of wait and event:
+Palash Kambar (1):
+  ufs: core:Add vendor-specific callbacks and update setup_xfer_req
+    interface
 
-then
+ drivers/ufs/core/ufshcd.c     |  6 ++++--
+ drivers/ufs/host/ufs-exynos.c |  6 +++++-
+ drivers/ufs/host/ufs-qcom.c   | 35 +++++++++++++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.h   |  1 +
+ include/ufs/ufshcd.h          |  5 +++--
+ 5 files changed, 48 insertions(+), 5 deletions(-)
 
- +Adding more supplementary comments to describe DEPT's view in detail:
+-- 
+2.34.1
 
-Maybe if you said more DEPT's view so at this point so that when we see
-the supplementary comments, we can understand how they relate to DEPT's
-view.
-
-
-> 
-> > > +
-> > > +   context X    context Y       context Z
-> > > +
-> > > +                mutex_lock A
-> > > +                /* might wait for A */
-> > > +                /* start to take into account event A's context */
-> > 
-> > What do you mean precisely by "context".
-> 
-> That means one of task context, irq context, wq worker context (even
-> though it can also be considered as task context), or something.
-
-OK, that makes sense.  If you provide this definition for "context"
-before you use the term, I think that will help the reader.
-
-
-> > If the examples that follow It seems that the "context" for event A
-> > starts at "mutex lock A" when it (possibly) waits for a mutex and ends
-> > at "mutex unlock A" - which are both in the same process.  Clearly
-> > various other events that happen between these two points in the same
-> > process could be seen as the "context" for event A.
-> > 
-> > However event B starts in "context X" with "folio_lock B" and ends in
-> > "context Z" or "context Y" with "folio_unlock B".  Is that right?
-> 
-> Right.
-> 
-> > My question then is: how do you decide which, of all the event in all
-> > the processes in all the system, between the start[S] and the end[E] are
-> > considered to be part of the "context" of event A.
-> 
-> DEPT can identify the "context" of event A only *once* the event A is
-> actually executed, and builds dependencies between the event and the
-> recorded waits in the "context" of event A since [S].
-
-So a dependency is an ordered set of pairs of "context" and "wait" or
-"context" and "event".  "wait"s and "event"s are linked by some abstract
-identifier for the event (like lockdep's lock classes).
-How are the contexts abstracted. Is it just "same" or "different"
-
-I'll try reading the document again and see how much further I get.
-
-Thanks,
-NeilBrown
 
