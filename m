@@ -1,159 +1,150 @@
-Return-Path: <linux-kernel+bounces-852233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA56BD8817
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:44:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830DDBD8811
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A4342720B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9556F4FBC33
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09762ED844;
-	Tue, 14 Oct 2025 09:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jsy4B3Gh"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D292F3600;
+	Tue, 14 Oct 2025 09:43:18 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1702ECE97
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A583F2ECE89
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434994; cv=none; b=pRf/ibpcugEV52d1X/0JD4+bLtnePvjfS6EC8pihyg1QvfA3jTYjUmi6DadrrC9563hTUFITDb7x5KXvo1h3YLtLQGgBgxPKqEMK6hrui7Q+RRetolzsQ1IwxiL+qSioglokZX4vLwTyhskll+lMgRgK5OxvUBHjWQzcuGELAr8=
+	t=1760434998; cv=none; b=p183/NDpg5BQW5r0JXZcj29NABlez+fyGRlG5ypnO2YOcfPwyQOsazP+NvVBjSqihKhgoiOdhQxDfvZI9fm1bEqLhcRAZJhXMsk3dknde9PWWN9oZBcz3/8YtXHRoU0Kx1jMcptXQaPh4cCknAPyMkxirfg3K9vEUoh9Annq7JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434994; c=relaxed/simple;
-	bh=6nTVpzL+pnnzT1najm9SzeZ30GY62APu0L74wo8Irus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nAylhioCENvtf1P0i7Ni9wXyAfwMSmeULWkh+4Jlq8f+aNjjE1jOT6nZbqCQhzZvbg+CbHw04DwKldPliIPEQonPRvB9dHul1f47BCmQHH74dhUbK2OPa+zI3MRkAH1w916rHx57DJBhhknsovfA61jt+1iJ8hcetu1ouVCIBYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jsy4B3Gh; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f6rZC2r3D+QmTRPrD47lvKiuUx1xMTBsNLxjfTus9P4=; b=jsy4B3GhB0gYf51EGuu/8i6S+0
-	heXsjkNFFtH9a9kUp0Djlgmm6XN13WbvIC4iCBSfcF94jLyTDOCjE/OCul4atiGZgLjMN0SfYtseQ
-	uTJwU4vNVH21N/bEivr3OSFYVfxEDswHm8sBn4AmxyKu2nZt5SSH9UkbQwb/zlaP6WWsJIOacmqiA
-	jYGy/Wn1Wdo7tQQ6TIBJcKznISkuqawoeVG70ouXf1D6tqCAIrpRaIHIvVj1sp1BpvccwfegFaXV/
-	IpgvOawS050tqWWxoPCiOjPrk0h91U9RYHYF4QtTFSvJPofVm4xig9RvWv1P7GYLidaTyq9zpaMd2
-	I3QJtHUQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8bYa-000000054WD-2a47;
-	Tue, 14 Oct 2025 09:43:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 505A9300399; Tue, 14 Oct 2025 11:42:59 +0200 (CEST)
-Date: Tue, 14 Oct 2025 11:42:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Chen Yu <yu.c.chen@intel.com>, Doug Nelson <doug.nelson@intel.com>,
-	Mohini Narkhede <mohini.narkhede@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
- when balance is not due
-Message-ID: <20251014094259.GR3245006@noisy.programming.kicks-ass.net>
-References: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
- <20251013142638.GM3245006@noisy.programming.kicks-ass.net>
- <aa3d20e6d451e0d0b812fe16e9d403c1033feeaa.camel@linux.intel.com>
- <20251014092436.GK4067720@noisy.programming.kicks-ass.net>
- <e84de5a9-b498-4152-846a-c72e1ac66109@linux.ibm.com>
+	s=arc-20240116; t=1760434998; c=relaxed/simple;
+	bh=Oh2doJr/fJMs/OiBy7EfblDXV9fbk6YKmWtlI9yBdYI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=I9RnsXnM962jtDEm2ieaEuULzgFCuRT3qFt7zax3Ex2K/NUeYwWhbnJ2V474FxKRU0WhgghJujoqQUatgx2CE4PCeRv8o4LY+p2GqUo/1WEnmBbZYIaqjp7XJErovVz+lOw2sIzPmGtfI8x4pQvCcO98Apu7Njriyj/1/SmDz6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-9143e8a4c5eso2685157039f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:43:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760434996; x=1761039796;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iSkD+2BbvQuCp7JdNYB5V4RMP+gYI8XNuoU9a0pEALA=;
+        b=BDsxiOMk+B9m7vbLxxmV6jKKOlshuCW/HUkJU8HO77zYG6VvpwOYE5+isWTVh9AI17
+         3LzqilixFbQV5avRL3CIFSpfB1YiqRldRFpBUTJs4q4ZkocuDifpAmsYh/Nc1/MR7lWe
+         jVzpNfaBf/x91Ogu6waFFBd1D/98bV5aBqVQ/3THkC0Uu5VFRi+QRtFeyp+V7N3+NVUl
+         v/atOhdQaTW9tSfiRda70J9zFT+1E1rTK85Qh5jXwJppZ160MRr3BCeIHXt1xWe9eZ0s
+         IxyHsADWkRYfvzzBDXtNmhOSficF2jyN5vQLoX61RLRhenq6bwlYWb3+kmq8lSj/3Ckf
+         AYRw==
+X-Gm-Message-State: AOJu0YzylNHPcNswGITqu6LE66FRLmBFsn0JykU3FNVAlvcDfB89qulb
+	6e7Fd3k6NPUeF0PBkbVlapSroYUzabVx8dJ3O1tOcaw93s9Dnw5vtrXAZwmBeqrffMbh7iA20rk
+	RjY6QWFptwoH2j3EhApGphhzOkjGji70kNhEw4KJTVzkEWG5BirZ3BdIR75c=
+X-Google-Smtp-Source: AGHT+IF3cy/m8EZkr4pNFfAT9xEKwFH441utcoEDIZIt4Pph99Jry+FLr43yvhkydmEE7YI21X2buxeem8+efszEs7YfIE4m8nU9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e84de5a9-b498-4152-846a-c72e1ac66109@linux.ibm.com>
+X-Received: by 2002:a05:6e02:1446:b0:42f:9560:f733 with SMTP id
+ e9e14a558f8ab-42f95610242mr236007095ab.13.1760434995826; Tue, 14 Oct 2025
+ 02:43:15 -0700 (PDT)
+Date: Tue, 14 Oct 2025 02:43:15 -0700
+In-Reply-To: <68ed7606.a70a0220.b3ac9.001f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ee1b33.050a0220.91a22.0203.GAE@google.com>
+Subject: Forwarded: [PATCH] ntfs3: add debug warnings for run_lock initialization
+From: syzbot <syzbot+3e58a7dc1a8c00243999@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 03:03:41PM +0530, Shrikanth Hegde wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> > @@ -11758,6 +11775,12 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
-> >   		goto out_balanced;
-> >   	}
-> > +	if (idle != CPU_NEWLY_IDLE && (sd->flags & SD_SERIALIZE)) {
-> > +		if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
-> > +			goto out_balanced;
-> 
-> Maybe goto out instead of out_balanced ?
+***
 
-That would be inconsistent with the !should_we_balance() goto
-out_balanced right above this, no?
+Subject: [PATCH] ntfs3: add debug warnings for run_lock initialization
+Author: kartikey406@gmail.com
 
-> > +		need_unlock = true;
-> > +	}
-> > +
-> >   	group = sched_balance_find_src_group(&env);
-> >   	if (!group) {
-> >   		schedstat_inc(sd->lb_nobusyg[idle]);
-> > @@ -11998,6 +12021,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
-> >   	    sd->balance_interval < sd->max_interval)
-> >   		sd->balance_interval *= 2;
-> >   out:
-> > +	if (need_unlock)
-> > +		atomic_set_release(&sched_balance_running, 0);
-> > +
-> >   	return ld_moved;
-> >   }
-> > @@ -12122,21 +12148,6 @@ static int active_load_balance_cpu_stop(void *data)
-> >   	return 0;
-> >   }
-> > -/*
-> > - * This flag serializes load-balancing passes over large domains
-> > - * (above the NODE topology level) - only one load-balancing instance
-> > - * may run at a time, to reduce overhead on very large systems with
-> > - * lots of CPUs and large NUMA distances.
-> > - *
-> > - * - Note that load-balancing passes triggered while another one
-> > - *   is executing are skipped and not re-tried.
-> > - *
-> > - * - Also note that this does not serialize rebalance_domains()
-> > - *   execution, as non-SD_SERIALIZE domains will still be
-> > - *   load-balanced in parallel.
-> > - */
-> > -static atomic_t sched_balance_running = ATOMIC_INIT(0);
-> > -
-> >   /*
-> >    * Scale the max sched_balance_rq interval with the number of CPUs in the system.
-> >    * This trades load-balance latency on larger machines for less cross talk.
-> > @@ -12192,7 +12203,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
-> >   	/* Earliest time when we have to do rebalance again */
-> >   	unsigned long next_balance = jiffies + 60*HZ;
-> >   	int update_next_balance = 0;
-> > -	int need_serialize, need_decay = 0;
-> > +	int need_decay = 0;
-> >   	u64 max_cost = 0;
-> >   	rcu_read_lock();
-> > @@ -12216,13 +12227,6 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
-> >   		}
-> >   		interval = get_sd_balance_interval(sd, busy);
-> > -
-> > -		need_serialize = sd->flags & SD_SERIALIZE;
-> > -		if (need_serialize) {
-> > -			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
-> > -				goto out;
-> > -		}
-> > -
-> >   		if (time_after_eq(jiffies, sd->last_balance + interval)) {
-> >   			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
-> >   				/*
-> > @@ -12236,9 +12240,7 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
-> >   			sd->last_balance = jiffies;
-> >   			interval = get_sd_balance_interval(sd, busy);
-> >   		}
-> > -		if (need_serialize)
-> > -			atomic_set_release(&sched_balance_running, 0);
-> > -out:
-> > +
-> >   		if (time_after(next_balance, sd->last_balance + interval)) {
-> >   			next_balance = sd->last_balance + interval;
-> >   			update_next_balance = 1;
-> 
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+Add debug messages to track when run_lock is initialized for regular
+files to help diagnose lockdep warnings.
+
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ntfs3/file.c  |  1 +
+ fs/ntfs3/inode.c | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 4c90ec2fa2ea..0eb218a2b999 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -773,6 +773,7 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
+ int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 struct iattr *attr)
+ {
++	printk(KERN_WARNING "ntfs_setattr: testing by deepanshu \n");
+ 	struct inode *inode = d_inode(dentry);
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 	u32 ia_valid = attr->ia_valid;
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 3959f23c487a..6efd2cfe8aa4 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++// Created regular file inode// SPDX-License-Identifier: GPL-2.0
+ /*
+  *
+  * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
+@@ -462,7 +462,11 @@ static struct inode *ntfs_read_mft(struct inode *inode,
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		if (ino != MFT_REC_MFT)
++		{
++			ntfs_warn(sb, "DEBUG: deepanshu  Read inode %lu, S_ISREG=%d, run_lock_init=%d",
++          ino, S_ISREG(mode), (ino != MFT_REC_MFT));
+ 			init_rwsem(&ni->file.run_lock);
++		}
+ 	} else if (S_ISCHR(mode) || S_ISBLK(mode) || S_ISFIFO(mode) ||
+ 		   S_ISSOCK(mode)) {
+ 		inode->i_op = &ntfs_special_inode_operations;
+@@ -1180,6 +1184,8 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		      umode_t mode, dev_t dev, const char *symname, u32 size,
+ 		      struct ntfs_fnd *fnd)
+ {
++	printk(KERN_WARNING "GET THE MESSAGE deepanshu \n");
++	//ntfs_warn(sb, "DEBUG: In inodde function");
+ 	int err;
+ 	struct super_block *sb = dir->i_sb;
+ 	struct ntfs_sb_info *sbi = sb->s_fs_info;
+@@ -1597,6 +1603,7 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		inode->i_size = size;
+ 		inode_nohighmem(inode);
+ 	} else if (S_ISREG(mode)) {
++		ntfs_warn(dir->i_sb, "DEBUG: Setting up regular file inode %lu", inode->i_ino);
+ 		inode->i_op = &ntfs_file_inode_operations;
+ 		inode->i_fop = unlikely(is_legacy_ntfs(sb)) ?
+ 				       &ntfs_legacy_file_operations :
+@@ -1604,6 +1611,8 @@ int ntfs_create_inode(struct mnt_idmap *idmap, struct inode *dir,
+ 		inode->i_mapping->a_ops = is_compressed(ni) ? &ntfs_aops_cmpr :
+ 							      &ntfs_aops;
+ 		init_rwsem(&ni->file.run_lock);
++		ntfs_warn(sb, "DEBUG: Created regular file inode %lu, run_lock initialized", 
++              inode->i_ino);
+ 	} else {
+ 		inode->i_op = &ntfs_special_inode_operations;
+ 		init_special_inode(inode, mode, dev);
+-- 
+2.43.0
+
 
