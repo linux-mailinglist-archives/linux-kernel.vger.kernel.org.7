@@ -1,142 +1,201 @@
-Return-Path: <linux-kernel+bounces-852120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D5BBD8380
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:39:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3964BBD838C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE006425770
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:39:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC8884F8BA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3940330FC2B;
-	Tue, 14 Oct 2025 08:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2C42BE64F;
+	Tue, 14 Oct 2025 08:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bakM4bGw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKiWRSTq"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DB2236454
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BFC30F53D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431160; cv=none; b=DWF/1PonSDzujwbobwvD5cusOYlBT4pj8+9PBRE2TA7rdpjbQTqoTKJhSuc62n0x9ODvufzG1MpEcxs2vZTklmpi1jksrFv+tBjPnBzvFMrCo5g8IRwmlP9G8bvT5RyLWhPgTyknOkpitbUnt8NjITDEt1j8kyrTxH8aw2pbTBA=
+	t=1760431189; cv=none; b=So7RGP3/9kDDwY82nL6vOyn3DyzDovsV2UlJua/zqnLc7UOLkqJ+0LlFBrrafUBnBT3DiqMdaFPW56bGUXwQ5yv8KaFq6DswAbbE6NMtlav+ooQY4xThp4Q5ykBqEBBoVtpV2qA644djcDoD5ZEuVNnscPu4DnmhPfrveHbcBfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431160; c=relaxed/simple;
-	bh=XCLyhDQZH9fCvO15f/wprIbY+hAgLM+n2p+mk0luutE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ReZgEdaiFFts2UGU6ODVzJvzf/48oXolQ5tYBdl1zRmHwXW/vEtCsXyTP9/NDfjetVmX2f0+WVH+BUdYcCSXH4h1llKDk783e7Z4Nm4Ox93Cc6ONwxRQFuTrzlQfDmhr/oe90aL1sGHp9qhtMEIOkd9j7KrTs/fuavLwoLv2zOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bakM4bGw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87WgK009288
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:39:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XCLyhDQZH9fCvO15f/wprIbY+hAgLM+n2p+mk0luutE=; b=bakM4bGwnhqE56ni
-	FeuOlkgxdcpvxOGbaFe63Y5/ik2ItK/rsC/iZ9asTZGV2WxDhaG7a7b2VfrA5091
-	bagqKQRFOLGW3+IOFPsaL+OTO+rE50qtGFjCcB6cgsv+EMyOWhvuczuWZtjO15lM
-	l+3sy6oZm/TdpcOrKqn+XQlS3iZ17VK2jb21pGb1L8SJgAdDLzYsCfYwwKYFAL1S
-	ur14r8oGo5y+S+8j4r2W3myl0h3YHM/bj65Sx7d9Phj8vhRoQVrIfyJ0eRUh//5p
-	L0b+7NkRbjCkLvrpsxOBnt3v7pM7TXti6TdvfM1gIL+6jop+15On8LVheq9W5USh
-	PWI9PA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rtrt4k73-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:39:17 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-860fe46b4easo287433585a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:39:17 -0700 (PDT)
+	s=arc-20240116; t=1760431189; c=relaxed/simple;
+	bh=hoQgCpk0WoxOoFSs/WuXrmbPtqn324Nd1OaXF4bX8iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=mECtvJ6LyYaqrOiyV4OuXLhAYVjsfCqzoPRrgvxt7LGhltUUX6XekL3xI3i95izP9tine0PCUwb4qgJRJKo7ouXk4rEzmSOHKrTXIy0BcBJFD1DpnHCsmNFdhlsID09bjqSBNYkT1/0RiabD0QzXvcctxsKD/c8ZMpHHtPX69KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKiWRSTq; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3658479f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760431186; x=1761035986; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFWOuvnUfMwybXOtMoOd4svMVvGqzTx63g0iMz9e+aA=;
+        b=SKiWRSTq7uaM8DykeikPzuVJd68LbyzZVKqyB1S3hWokRr/lSUzFBapG2OCVdy2jfv
+         487LmatTnJVEw8P4xOm5mHknSy0z5Ay6Pr6jmo3sG1wv/UD70iUhuctAE8ZY/U60M4AE
+         dTnwDh1gSogKBKQYrVB0yD2FFDbshsr+6Uj3m5Jnlwq0QEGCOD2gM2fFW2w51Mi8f145
+         y3IoXACjQu+Et5shll3mPOtAI/AX1ZL1GXys2/alU/xAd+hu6xFTWgXa5K/2G1sKiqhN
+         pYX333D0nNggtfRY05b4rutdjkFRbtSprIL3ognbfokMXCgpS31GFYtwBOAWzGvjDgOj
+         EA3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760431157; x=1761035957;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XCLyhDQZH9fCvO15f/wprIbY+hAgLM+n2p+mk0luutE=;
-        b=urNfts7Pi4h8k6CUuJ4+eJAEwTYQ2eUx5B9dHJEj1FQGSOv9wCMRDD0k6ji2MQFhlp
-         YDRW1B3TmfcXXkXPqX4xF6qM/QoL3X552LDEs6fttnl64/RJwmRF39pF9UTthFcAcrPD
-         7Dgp6Xlhnw+/HTIgfqb+B1p2fKBmO2srq7c7BzpEUknUdFsGeitEJMQ5Pysun42Yzka0
-         4mkW9zdRPqytZb0jei5z/9UzkUIXeFBJKGKdr0rpqeTtr6mYF49h9AXxvD5Vj+VXTTAB
-         MEdDFEpxiH1AvJt98OrTbSabatOz4NCiIOQIU4c4v6rQgzvd65eIf7uRyfIFVx8hH279
-         IHyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5JsURcXi0qPkxn9h0TaWTKmHiQIYZO34TrSLXjT0ehkQC/mR1rSEoPGBDcEjup4IHfL0vsaY7xBgDqNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpVoQGzttfDc/PdGLZS7KnXmbBSWAds3dSp/j6A3mvx8YUaP1v
-	oEzcGqE2xrhiy3aR2WGSEqQuRssNIkNuCVF/Ji0yAQLw90vWWE8fQ9lHKMgqAOZenVTOIHnL6TH
-	fh2vkRtcktRresSBQ8y+FAV9fr86XymGKbeVvChqSonQeuYaariigYugVgfzZryDLtis=
-X-Gm-Gg: ASbGnctoOGbpVhZ0qsi9/61MK/gF8zF2OT7YwFQBh+wnyXPgE6Lp0WTshiembz/HHBn
-	x2TetLhG1dEEi6y5GFJUCj7kUFzRgBNwgmy412Y0tA/0EecJcNL16++Y5YM0gGrpZyammSw73A7
-	oPJg1gie+tXtJrNCTWkhBvQEZFwr0EyDIvj0ejg2+j/ZPvsSAHda3bHQNGcGDS6IvEAoL6Tz19s
-	sDpW+e9/iBFeLuw91R6IlIJus5XJnkbHujRPibQucNSB55y/Q/JauRJzYxO0UrXV1Z1WP5Qbuzo
-	bbpcZOYkqZCarYCOCvZZDPab52zvGmxUvn1pFcUpJlBykOpZJ/cRca072vk9OAVdKxvIS5d0Hw9
-	VxNCSE299PJ6z4Y1T2WMubQ==
-X-Received: by 2002:a05:620a:4609:b0:86a:3188:bb40 with SMTP id af79cd13be357-88353e1de97mr2150252285a.8.1760431157067;
-        Tue, 14 Oct 2025 01:39:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGs03gxOTucfJD318MQusKqI0i9M8ELYP0sgEDzUnWm+A3z95z7XK1SLROs1Q3XvpkX0P8Z4g==
-X-Received: by 2002:a05:620a:4609:b0:86a:3188:bb40 with SMTP id af79cd13be357-88353e1de97mr2150250785a.8.1760431156638;
-        Tue, 14 Oct 2025 01:39:16 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cacbeesm1065879766b.15.2025.10.14.01.39.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 01:39:16 -0700 (PDT)
-Message-ID: <78b438ca-93b0-4213-8e42-60d13fbb310f@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 10:39:14 +0200
+        d=1e100.net; s=20230601; t=1760431186; x=1761035986;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YFWOuvnUfMwybXOtMoOd4svMVvGqzTx63g0iMz9e+aA=;
+        b=Tk6Uet3CS80gnPZkG8n5yNBVMTP9J/0zxZFXVvX4xpPTKyjC6ekG1p6+kxdb9KTZye
+         kOBme29Ox2DyI/jo0GcA1t9oHD++OCk3bE7pnUwEGbN7mlESsMHcbhYGMnjC0UID2Pzh
+         gxkrTEtOk1HL3/kifkx/icvPvsLLT6n+33AD+5SPdQ1hTNEF0iKPoUV60cuPSF+TDsGq
+         fewcL1rjb2IWhacu5cARcqP9PqYpQHFrp6qqxt00jPWw16s17MYQiwih5+QzcWhYIlQD
+         7ZGF6G1Lf8Zh8VHLYQbTa1mwQwv7Jnu/yz310p/kjaV8lLycqd7FHBZQjKEFVzMzWDY6
+         Iqdw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0KEzZE3KY6aUBD/Qrw8wZnIoqQiqDgp7vcfbGlTmuC4XY4tOI/QUaHEU0Nn5tOfShA2M4sJgSgpTBq/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaA7b5LDHC40yv9+oOhS4Od9RbNjdFupaGuWpQuCtOGa++j0pB
+	m7m1S+5Afm2lSaOMguGKiEdzjSFEtu3e0FfipOefeBi1YrkrCU7Hi3uIsE4lJyd22Mo=
+X-Gm-Gg: ASbGnctHYzgGPja+xZnhfibZlo8x7IxnMpDQgsR9AnsMIelyLE8xNE2qcE0cYMZ73Is
+	jt1hc+8Pa67/0eq9l9Bjysy32fY7pJMAR7XdOe3Fy+7lfFrsFAFR5qBa702hLXxxZpyb8sZkjYw
+	30wpEUGx37J9DQ2elNGLvTufJnBuV8KWiB6a8Da8SKbfdB4/AkgHelpCM9eBcmTd7FbQU2uCzbw
+	BOyIQrWgI34TLY3/KVmUPfppPLfTI/8+0isHb7wSwvYfkS9lWTEWj80r9MySdFModKULSCuOgZ4
+	8Pg0fJi/XXFWPWftCxm5UtEZnVloOn3Eoz2dSNv6k4uuJ7tiFU/f2p5fePkTReOFGVarlwNqJIk
+	DB0qX3vGp5sp13KimmF/cOxT6ny4FCqU2mgApQIQgXlzi6Q1MooMuSsd5Dq6IlQ==
+X-Google-Smtp-Source: AGHT+IFDjuNxGsj9w5KIK44evH4nW82BXa1kd591GncY0F3Cb/1CX97GoQ+hu6emUu0ZcgJJ0c1fpA==
+X-Received: by 2002:a05:6000:40da:b0:3f8:8aa7:465d with SMTP id ffacd0b85a97d-4266e7d4580mr13949163f8f.30.1760431185690;
+        Tue, 14 Oct 2025 01:39:45 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce5e8a06sm22476317f8f.55.2025.10.14.01.39.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 01:39:45 -0700 (PDT)
+Date: Tue, 14 Oct 2025 11:39:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Andrew Davis <afd@ti.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to
+ simplify lock handling
+Message-ID: <202510121908.7aduLIkw-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] media: iris: enable support for SC7280 platform
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251013-iris-sc7280-v3-0-f3bceb77a250@oss.qualcomm.com>
- <20251013-iris-sc7280-v3-8-f3bceb77a250@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251013-iris-sc7280-v3-8-f3bceb77a250@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: EE1JGlWdKnMQAajfEhqZTg0CbazmTwxu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyMiBTYWx0ZWRfX1m21o4GMrtwu
- /5HBCyM2Fu3pMuxbpuno3iEzx9Aw4ckmw/1yyFDNInIgwPDtP/IuOEqWXh81LD/dAD/lBGsPOqq
- i3N7DJ8GPqzZhxVMazN7iWGmZxh3/GZpaXkcyxE7GV3OF0W+zOHqA91StD07JSF3N/CetcE2p0/
- WGprItod7A/Ylz235OsEXFWqqEuE53EkZ4YbJjex3aA0292VKddJMrF2WjYS9fwWeFnrldTXl2r
- dm1B3Stm66qIoli2kdEg72aEmsobsK2aS3BZVnc+fwEi3ri05Fe2iVQ0ftKLtqcbP20AdLfM5DQ
- WdmcHrtdKHh+BTZPiQlBjhtrLo19DP5nywlge+ZgEOBx42dt5b4XZG0H+7LL2KaHvW2K3BN19sO
- itUqxOz+BJ2jQ9GhZvbLcOVwDel8fA==
-X-Authority-Analysis: v=2.4 cv=SfD6t/Ru c=1 sm=1 tr=0 ts=68ee0c35 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=fr3eplbp6RILtt3BeFwA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: EE1JGlWdKnMQAajfEhqZTg0CbazmTwxu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
 
-On 10/13/25 4:09 AM, Dmitry Baryshkov wrote:
-> As a part of migrating code from the old Venus driver to the new Iris
-> one, add support for the SC7280 platform. It is very similar to SM8250,
-> but it (currently) uses no reset controls (there is an optional
-> GCC-generated reset, it will be added later) and no AON registers
-> region. Extend the VPU ops to support optional clocks and skip the AON
-> shutdown for this platform.
+Hi Peng,
 
-The last part is a little sneaky.. But I think it looks good overall
-now
+kernel test robot noticed the following build warnings:
 
-Konrad
+url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/remoteproc-core-Drop-redundant-initialization-of-ret-in-rproc_shutdown/20251010-202737
+base:   3b9b1f8df454caa453c7fb07689064edb2eda90a
+patch link:    https://lore.kernel.org/r/20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c%40nxp.com
+patch subject: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to simplify lock handling
+config: i386-randconfig-141-20251012 (https://download.01.org/0day-ci/archive/20251012/202510121908.7aduLIkw-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202510121908.7aduLIkw-lkp@intel.com/
+
+smatch warnings:
+drivers/remoteproc/remoteproc_core.c:1841 rproc_trigger_recovery() warn: missing error code? 'ret'
+drivers/remoteproc/remoteproc_core.c:1993 rproc_shutdown() warn: missing error code? 'ret'
+
+vim +/ret +1841 drivers/remoteproc/remoteproc_core.c
+
+70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1829  int rproc_trigger_recovery(struct rproc *rproc)
+70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1830  {
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1831  	struct device *dev = &rproc->dev;
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1832  	int ret;
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1833  
+c42baf6f84c7694 Peng Fan             2025-10-10  1834  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+c42baf6f84c7694 Peng Fan             2025-10-10  1835  	ret = ACQUIRE_ERR(mutex_intr, &lock);
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1836  	if (ret)
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1837  		return ret;
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1838  
+0b145574b6cd2b3 Alex Elder           2020-02-28  1839  	/* State could have changed before we got the mutex */
+0b145574b6cd2b3 Alex Elder           2020-02-28  1840  	if (rproc->state != RPROC_CRASHED)
+c42baf6f84c7694 Peng Fan             2025-10-10 @1841  		return ret;
+
+Please change this to either "return 0;" or "return -ERRORCODE;"
+
+0b145574b6cd2b3 Alex Elder           2020-02-28  1842  
+0b145574b6cd2b3 Alex Elder           2020-02-28  1843  	dev_err(dev, "recovering %s\n", rproc->name);
+0b145574b6cd2b3 Alex Elder           2020-02-28  1844  
+ba194232edc032b Peng Fan             2022-09-28  1845  	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+ba194232edc032b Peng Fan             2022-09-28  1846  		ret = rproc_attach_recovery(rproc);
+ba194232edc032b Peng Fan             2022-09-28  1847  	else
+ba194232edc032b Peng Fan             2022-09-28  1848  		ret = rproc_boot_recovery(rproc);
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1849  
+7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1850  	return ret;
+70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1851  }
+
+[ snip ]
+
+c13b780c4597e1e Suman Anna           2022-02-13  1976  int rproc_shutdown(struct rproc *rproc)
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1977  {
+b5ab5e24e960b9f Ohad Ben-Cohen       2012-05-30  1978  	struct device *dev = &rproc->dev;
+ee3d85da617a065 Peng Fan             2025-10-10  1979  	int ret;
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1980  
+c42baf6f84c7694 Peng Fan             2025-10-10  1981  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+c42baf6f84c7694 Peng Fan             2025-10-10  1982  	ret = ACQUIRE_ERR(mutex_intr, &lock);
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1983  	if (ret) {
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1984  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+c13b780c4597e1e Suman Anna           2022-02-13  1985  		return ret;
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1986  	}
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1987  
+c42baf6f84c7694 Peng Fan             2025-10-10  1988  	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
+c42baf6f84c7694 Peng Fan             2025-10-10  1989  		return -EINVAL;
+5e6a0e05270e3a4 Shengjiu Wang        2022-03-28  1990  
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1991  	/* if the remote proc is still needed, bail out */
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1992  	if (!atomic_dec_and_test(&rproc->power))
+c42baf6f84c7694 Peng Fan             2025-10-10 @1993  		return ret;
+
+Same.
+
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1994  
+fcd58037f28bf70 Arnaud Pouliquen     2018-04-10  1995  	ret = rproc_stop(rproc, false);
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1996  	if (ret) {
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1997  		atomic_inc(&rproc->power);
+c42baf6f84c7694 Peng Fan             2025-10-10  1998  		return ret;
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1999  	}
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2000  
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2001  	/* clean up all acquired resources */
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2002  	rproc_resource_cleanup(rproc);
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2003  
+33467ac3c8dc805 Loic Pallardy        2020-04-16  2004  	/* release HW resources if needed */
+33467ac3c8dc805 Loic Pallardy        2020-04-16  2005  	rproc_unprepare_device(rproc);
+33467ac3c8dc805 Loic Pallardy        2020-04-16  2006  
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2007  	rproc_disable_iommu(rproc);
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2008  
+988d204cdaf604c Bjorn Andersson      2016-08-11  2009  	/* Free the copy of the resource table */
+a0c10687ec9506b Bjorn Andersson      2016-12-30  2010  	kfree(rproc->cached_table);
+a0c10687ec9506b Bjorn Andersson      2016-12-30  2011  	rproc->cached_table = NULL;
+988d204cdaf604c Bjorn Andersson      2016-08-11  2012  	rproc->table_ptr = NULL;
+c42baf6f84c7694 Peng Fan             2025-10-10  2013  
+c13b780c4597e1e Suman Anna           2022-02-13  2014  	return ret;
+400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2015  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
