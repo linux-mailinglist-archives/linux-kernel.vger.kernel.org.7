@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-853090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA7EBDA9CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F5BBDA9D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E02719A5140
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91BCA19A51BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7090E30170B;
-	Tue, 14 Oct 2025 16:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7B52FF652;
+	Tue, 14 Oct 2025 16:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RA9XHRSU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RGJ8Oey3"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C6E2D876F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDBE5CDF1
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760459368; cv=none; b=tzf5ohAjLwLdeR5+aZqknpPpun5EC63a0CiVc4XM+gyrCLAAgTyiXb0fLD0phdBCiS760a/+rPyHgv49CP3FAKvznn/QgCAcd/izqLgDalAXQen4cjOmCoZAqTteftplPrvFsDvkt3j1tT2Ko2pPPKq7BtBSDRww2PXmuB5UOqM=
+	t=1760459421; cv=none; b=gFg/zFkNxOvCHYrOYPqBnYLdPh0CFuMgzabxG5Erk1nd1QYaPdz0p9SdNp80ov2yIkyO2hDzU1NvjEC6LJgnUEDWktVDEVEI778lzmhgx+y1VITXvLeVb2Bmtr0WEaSwkRNQldwd6Myf4FIpQvYjxaqzzWgxQtIZCiXqfdiynvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760459368; c=relaxed/simple;
-	bh=DcwVZ9Y30OVqHvzjglvQ8qpXSreYZR6McFtNUSOOpnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WSpG9pQasNgSht9leksq1NsST/pn0FxpTHHqijdbqbJI5kwYF+JVn0dtUhKamNAShQ6PIodXHz/RwO8Q8zUXsOe+UtD5qHBmYA5Q7Cn8AnHRwqLT3XBvd6CLHRmluq+OZUm8F7SurrA3zUWU5SSE8v662q6U2pIYCoJTC4BRYgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RA9XHRSU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7EEC4CEE7;
-	Tue, 14 Oct 2025 16:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760459368;
-	bh=DcwVZ9Y30OVqHvzjglvQ8qpXSreYZR6McFtNUSOOpnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RA9XHRSUcnZPOm9BRd1kEay+sD9PYexWFMzXGPWj74YO3uvMvr0hQcF/PaKM0L694
-	 O6JNKlD0XUjvtYZI/kPNSdTPGNqeTT1g/+udehSRBcuLz+S6jjmmzQpKL7CMrJ8DoQ
-	 rhf569WLTUZtK8cKPxy+qH6xSaecifH+dBcx4/NjA4DU7VJG3kMt/8BDdPhRwLk3Bb
-	 AFK6KGyvCee7ZWQmqYKOuWwT5Wd/aeXesUZhWe/bZNZDwDGzE+dbPlz3LpZzGRpY69
-	 YzSu4x03XOKKow0bMbJWRLWePjMcsfeePeghNBnUfNJx9YS2dzMw6GLZSlvmVzyIkF
-	 GLXTRcyzePZVw==
-Date: Tue, 14 Oct 2025 09:29:25 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/56] Dynamic mitigations
-Message-ID: <bjgjmijirueqwwmuen5dr6v7yqdcivk6kwa6gbukn3rodfcwko@fb5yxyqycena>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
+	s=arc-20240116; t=1760459421; c=relaxed/simple;
+	bh=0tPZXo1qc1HtONmBrYC8xG2rw836SmDAATV06I5QW4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fIsI40/J8Xmd7L2+K6otfHINO5wOMiXKWjFaaewTXJjrntzR8l/v2nXzj3lbk016XkCccie9vXT9qM0wFnMaLFoKID/vHyd0ToiEzgp8TyJTm81zKlPISK7yImn/SVQOqUmjccMOPi/Y0SJX42J+NpBDMx6wF1WaPdZM2GI+1AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RGJ8Oey3; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-77f343231fcso3473803b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1760459419; x=1761064219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQ9acaklz/P/nDwFY2BTOYnQh+KBD3+sU3KKAjNaoes=;
+        b=RGJ8Oey3st9bP8l2/bNBvLm1euypGpTJwh8Ipv70JmxAzzjwKSjtsVA+YctRIhHlV0
+         HOQhooj/nH7bjQn9NIfCwLcjyJa7Pc61N+/9J0JtErHJgsMwOEr2mnCgoFyae42CRDOO
+         sj9rnOi3oKoGLCdWCFxoDcGEK1umdRNVnl81T5tBm+IA2d7cRXlLn1/lh06DEgyKBqdJ
+         W+HE9heB+9nM0b5cCljmFIzTf4dTgWd+AuBD0UvvfDynLZZ0JOsXjNBFKnOI9W6IFlA7
+         q99qO6UgSJ+fPTOUtEh3VMYk1ctBpsuhMOdENBLQd/V5zQCpIEyW8fpH2/XqlXqBM8GZ
+         1Zxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760459419; x=1761064219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PQ9acaklz/P/nDwFY2BTOYnQh+KBD3+sU3KKAjNaoes=;
+        b=f56p9GH9eq41fPqn5+MnWlxNx25AxgsO5R4pdhKRTAeiSQzp8h1QPmL2YyRvq3+LTX
+         /xQrEYnk0+itI3ZG/zLqx2Mx6q35Hfq7fy5Oiiuu8ZVHtWz+sBFVeuc05PyoUlsW92cq
+         fYMz2vkewELNaNMhHNtEu2x3Pa0IM7AVJKDF+pOclnBATx4b/ZmVGj3Lx4nKaZ81UuS9
+         bnx7BNMTr/oC3mBF37JDrAn5EzePtm23AUM0vScdO8oIflamM4xS0qPriKMIoGJA/L7r
+         e/W66OSf9yvlzAb0ingh3gU73MFXOV7RBFO1jjckxI+f19Z+63lvECivdQ7C4nkBVRtJ
+         EY2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZBEpFqXwuCjAMgC7nLzQQIG9GBhwDS0UWtF+FhSmb0mxKv4X5UAtA7B0IDd/KKGqZtZAkQxaCCPsV+I4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5bO+sO46QF3J+8XrVjqtt5/tyC95+2btkgBra0gvS4maPl2d
+	uEOo4DZ83R6ZlN4R85HEIwTRlLy1rFZzm8Tec4Zl99pcadP3Vy72686wC1GhAjUWdHhgh3TjTQL
+	PjgFzNgg=
+X-Gm-Gg: ASbGncsTzGuo4JwYBMa6gVHosRTGPMYX0nsF/Z4jWSZZcmiOzruqdajvk1tOmZ13n3e
+	ZzI2cuyS8tV8afWtC8R+1nR3Bpy+luucN3oKy2xI8q6JznReypg8zunfNdtRPlC408tIcXKXmW3
+	HQrejkV7aCkyUFKOGymMe+Ku5R8wmTYzpushvAdCWWwVBPoGNh8YzzJKntdx+5mMljzBA/Q/ujE
+	SuxpWuy4qzhqLR9VkXF7ruivCjMsyT2XY7ReR0bga5EXql2XlFpUj2DhrL1OK4zMqlIRJkmlvDP
+	17KNv7bHXAxFEimvLRydCN5rUqpkA+5Ux17Exbej1e5N1k/92A1pY/U0TIHHgpTD5JOI1OFO2Bg
+	LL7FAFSRZj+639virB5j/i1On0efUK03/oFIc92nWrAlKKwR7NH/56NLNw9cTElz5k/5PrDdEYj
+	G7KvfJM0E=
+X-Google-Smtp-Source: AGHT+IFKg+SoNpQ1p12OLoDHgMiJt2EKpjAPfsJVFpHN4o0hhnAyI7lP0r7N7cT4Fd8nYtzrUA8B2Q==
+X-Received: by 2002:a05:6a20:3c8f:b0:2f0:91c0:1886 with SMTP id adf61e73a8af0-32da85090a1mr33776727637.59.1760459418636;
+        Tue, 14 Oct 2025 09:30:18 -0700 (PDT)
+Received: from localhost.localdomain ([122.171.20.65])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678dcbf919sm12478096a12.9.2025.10.14.09.30.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 09:30:18 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH] RISC-V: Don't print details of CPUs disabled in DT
+Date: Tue, 14 Oct 2025 22:00:09 +0530
+Message-ID: <20251014163009.182381-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 09:33:48AM -0500, David Kaplan wrote:
-> Dynamic mitigations enables changing the kernel CPU security mitigations at
-> runtime without a reboot/kexec.
-> 
-> Previously, mitigation choices had to be made on the kernel cmdline.  With
-> this feature an administrator can select new mitigation choices by writing
-> a sysfs file, after which the kernel will re-patch itself based on the new
-> mitigations.
-> 
-> As the performance cost of CPU mitigations can be significant, selecting
-> the right set of mitigations is important to achieve the correct balance of
-> performance/security.
-> 
-> Use
-> ---
-> As described in the supplied documentation file, new mitigations are
-> selected by writing cmdline options to a new sysfs file.  Only cmdline
-> options related to mitigations are recognized via this interface.  All
-> previous mitigation-related cmdline options are ignored and selections are
-> done based on the new options.
-> 
-> Examples:
->    echo "mitigations=off" > /sys/devices/system/cpu/mitigations
->    echo "spectre_v2=retpoline tsa=off" > /sys/devices/system/cpu/mitigations
-> 
-> 
-> There are several use cases that will benefit from dynamic mitigations:
-> 
-> Use Cases
-> ---------
-> 1. Runtime Policy
-> 
-> Some workflows rely on booting a generic kernel before customizing the system.
-> cloud-init is a popular example of this where a VM is started typically with
-> default settings and then is customized based on a customer-provided
-> configuration file.
+Early boot stages may disable CPU DT nodes for unavailable
+CPUs based on SKU, pinstraps, eFuse, etc. Currently, the
+riscv_early_of_processor_hartid() prints details of a CPU
+if it is disabled in DT which has no value and gives a
+false impression to the users that there some issue with
+the CPU.
 
-I'm not really a fan of this.  It adds complexity to some areas that are
-already struggling with too much complexity.
+Fixes: e3d794d555cd ("riscv: treat cpu devicetree nodes without status as enabled")
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+---
+ arch/riscv/kernel/cpu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-IMO this would need some REALLY strong justification, more than just
-"hey, this makes things more convenient."
-
-The mitigations should be a "set it and forget it" thing.  I don't see
-anything here which justifies the considerable maintenance burden this
-would add for all existing and future mitigations.
-
+diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+index f6b13e9f5e6c..3dbc8cc557dd 100644
+--- a/arch/riscv/kernel/cpu.c
++++ b/arch/riscv/kernel/cpu.c
+@@ -62,10 +62,8 @@ int __init riscv_early_of_processor_hartid(struct device_node *node, unsigned lo
+ 		return -ENODEV;
+ 	}
+ 
+-	if (!of_device_is_available(node)) {
+-		pr_info("CPU with hartid=%lu is not available\n", *hart);
++	if (!of_device_is_available(node))
+ 		return -ENODEV;
+-	}
+ 
+ 	if (of_property_read_string(node, "riscv,isa-base", &isa))
+ 		goto old_interface;
 -- 
-Josh
+2.43.0
+
 
