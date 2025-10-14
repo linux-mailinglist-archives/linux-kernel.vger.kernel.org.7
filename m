@@ -1,167 +1,129 @@
-Return-Path: <linux-kernel+bounces-852249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1F5BD886B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:46:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFD9BD8883
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10753352096
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02205188F5D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EDF3081C7;
-	Tue, 14 Oct 2025 09:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC502FB97F;
+	Tue, 14 Oct 2025 09:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XDV77NON"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b="J/rwQA1O"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAAE30595C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25172F0690;
+	Tue, 14 Oct 2025 09:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760435111; cv=none; b=VzMNiJiiZ0Weys8YeA+5TGdymXuxN6N2Hu+visS1GKVmeQeoa1P2ClPkItq4j0WHMSeHNqkGkAh1nz161+UeQrkM4w/7oGyD0jabSi2DV2haSbErqIx8zJ9uV3tMDsHy2ynO9lK8NArYjtk6oCF3FMDOEnJ0PGm8SVBzxUBXmyY=
+	t=1760435129; cv=none; b=gAv82kbiYhevrOTKBF/z8YJsRUNbT5GdXD4nhTimkMnPk95znzyNbbrks62h+c5J3wKtVKaLgk+jOpRFpSFQ4YFUA/hd1c61uX9id5/T+Sigm9AX7WnnZ5D3QJhmygXjheZ2VoNwhTFNxmDb2ZduBAt3dD4DUexlxZkUdOymzSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760435111; c=relaxed/simple;
-	bh=9+jzJmhp4NDYlmVAzrpZPo68lQ6Jij+VLE6Up3JnboA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5dJJTJ8BegW7XflxiVsqrEjYxyq5Y9OghCKUJEPvASKbTkrmo9swlfN+lIkKZF17ClxwSCtZ2U3MYIZYRGW/RoehInQicBtqKnUQK1plSd7a0+GqwLm3iY2Cs/sKD8ArGUPoljGe5pkN71sj+94q4zvX7Ngr2Dnrlf/wBqa+zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XDV77NON; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e2826d5c6so30601415e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760435108; x=1761039908; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R75CvrIgcbILYeZyEie2SvMudL4DW8xIUI8yCH+RsPE=;
-        b=XDV77NONhb6aE+xpGklpzVTPYklSS5txSxipRmfV54Mbn08SCU/o8mWQddE3WtE8Sl
-         gXJYwCIf9nQCIWLFmIIDwKH5tskqCGjOZnmb8DLrKlYO3BHBVq82H/3l6WdI3dRxkJwh
-         TLmut742gMNO3teiW8MPJ/aeDjaZWHLf/93D1stKQ3bHi0p7HwyJ9zLceSnAMqUECGvx
-         49IRbGIa9zjSZLaeTNnVd7+uc8eRC7BTqVguORDDmNVXZypPxP0VyiuxjAaIXDP230zk
-         Jee9KvOcUqzAFW7wjCAVhS4eLPLEGds2OUIepeCFn+13Br1QwjDsBisnKBG82f8oWLla
-         YhYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760435108; x=1761039908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R75CvrIgcbILYeZyEie2SvMudL4DW8xIUI8yCH+RsPE=;
-        b=LYBBOUNeCL3YqCCHxzB3tc/fqMjkXwqSD8kE63aQRPF9GoUnlhvf6sYx43+7be8/kD
-         Jn5ZSi4e+7ZqiGtH2apz+r7gGxfIhjw9yH+DSnSd+YePrgyHW1XnYQTvx2cLLrqDHfBD
-         p28Fxkd0XP1ODH6HGieoY4xewq0gUbgy0j5zdPfoeC5uwXQMvopI2mmG6ZRua/zXu/T1
-         sJCx2Aj63Xrfe/YTj58+gKy1nK8EBoxq7r2TiKA0bz1UHz7x0McoNid/2eiWS6DXbL7m
-         EtCjLYh3J5wZGl3syInnxfZtTbZIRwnLHrgQk6neerVHFNlUGygCWldmUArCTnWzACCW
-         kjEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSWmLJvtaQk0p4JRfdVOO7hvDous3IMhZDiGLq6Vzsa/Bj7HK9hnnHX4bISpyKalUpDrzDoCJhlsK60Cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqsOcLk4VbEEeMxzT1nXAujh44qy3uJoLJOmr8CICqd6C8VtFE
-	ofBULIti6X2vbImtKk1Z/c1GVcez/sNDOrtXmLw7zlLNK8vg4Wq75UXYHUO5Xz0+sB8=
-X-Gm-Gg: ASbGncsii++UL6fr53Rs3XEVbK46D6b8nqEdizsE/TsSCfDn72cBMT3V5nLwfqxZK3Z
-	e0kwVUYdYwTUMxTzvx1JsFauecSRFjB8RREjv/lXEVguRBCUmtQxEtmKl3STy72CFSTuMWhIf3C
-	WuwRDwSisYtY1Qzxh6/gGJe+VPk11Jn/zmC7nZ5EnTiOZqABQWlKXyRnS+MZyd45MUdSsvdPXNT
-	OJYQ16Rk+o1zgDTaqar5eceZYgkuFji/dgilkMDX4dx9CC0FEygyWyqaSiq0t9nhoGLYmrgC86d
-	tvzAkw4MyjBf23ncG1zgXwIYYptzS3lLwHYxbJg36AlaMxx0zP0i8xgWS2LxVmXKjye3mC2zSgC
-	XGIG3hkUbFWm6DX11V6ijA/8I22BYp48UEtH7hXG69R9cfQAHtZaWJPWswL+1rLwYnMRsNQ==
-X-Google-Smtp-Source: AGHT+IFLMF/oRlSecQb1AgZUj9ViudEM8BAiQCOLkhiN8cHZAWDwJ7zBbTzbicn8TdmEii38ZLu7Sw==
-X-Received: by 2002:a05:600c:890d:b0:46e:32f7:98fc with SMTP id 5b1f17b1804b1-46fa9af3656mr132535685e9.21.1760435107774;
-        Tue, 14 Oct 2025 02:45:07 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489ad27sm230711415e9.15.2025.10.14.02.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 02:45:07 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:45:05 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: lirongqing <lirongqing@baidu.com>, wireguard@lists.zx2c4.com,
-	linux-arm-kernel@lists.infradead.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	linux-doc@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, linux-aspeed@lists.ozlabs.org,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>, Russell King <linux@armlinux.org.uk>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Joel Granados <joel.granados@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Phil Auld <pauld@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Feng Tang <feng.tang@linux.alibaba.com>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH][v3] hung_task: Panic after fixed number of hung tasks
-Message-ID: <aO4boXFaIb0_Wiif@pathway.suse.cz>
-References: <20251012115035.2169-1-lirongqing@baidu.com>
- <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
+	s=arc-20240116; t=1760435129; c=relaxed/simple;
+	bh=eh4ANO2d3smDKZZwIDnxm/MQXjsXiFsIqghETlox01s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LZ83S4/IUOTSXOlQWxhkuUsBRgjH5Kd+1M1Z2fH/51rdb/s+2TN/1Yj6BlYoV/pdaSkJMpx7+OywSFsZs2ubFSgQl64XxtFtWNyatmnFT/P3li4zZQ2rIWcyglkzYaXpbgu+2fWoVsHPd64JUqoZj3BcmSgKZ3d+rZDxMSMCzkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io; spf=pass smtp.mailfrom=gtucker.io; dkim=pass (2048-bit key) header.d=gtucker.io header.i=@gtucker.io header.b=J/rwQA1O; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtucker.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gtucker.io
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0FC321F745;
+	Tue, 14 Oct 2025 09:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gtucker.io; s=gm1;
+	t=1760435118;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vSi4m7GHZ1XhKbCHDk6/gXFjTYG4yzDfHQT53TiQIyI=;
+	b=J/rwQA1O6X/jO0+uRiWzutma2o99jVSY7lRhRdo3jBJc0LIZOPEY/8ra0n7s+g2mg3NRSv
+	h6MOE/HsbTJjJ6Cyj3QxtiNepOJ8Eyzs4iDe9i+UBrx0IznNASZPLfLfK0EdSq23chGNST
+	cmh5eRZ12iQGl9TxAQtLI4KyMHQDOM6J5/DUvWpNPgfo4NQeKmPsZ5deb6eLJjKROEubKu
+	9648ElaWCgGJDIYM7uV8KQ91G8JaDKs9+R5Q7RxrLXpFKDsiJV029Y/7Xn3/O8pm+Egown
+	oa6f+Zvdw2pHaZnFMVVgrGIyQrr/pDBbfXfKlBdjLzM7hkwEAUMZLt8G9rfzzw==
+From: Guillaume Tucker <gtucker@gtucker.io>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Guillaume Tucker <gtucker@gtucker.io>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	automated-testing@lists.yoctoproject.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	workflows@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [RFC PATCH 0/1] kbuild: introduce containerized builds
+Date: Tue, 14 Oct 2025 11:45:10 +0200
+Message-ID: <20251014094511.627258-1-gtucker@gtucker.io>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: gtucker@gtucker.io
 
-On Tue 2025-10-14 13:23:58, Lance Yang wrote:
-> Thanks for the patch!
-> 
-> I noticed the implementation panics only when N tasks are detected
-> within a single scan, because total_hung_task is reset for each
-> check_hung_uninterruptible_tasks() run.
+This proposal emerged from an email discussion and a talk at Plumbers
+last year:
 
-Great catch!
+    https://lore.kernel.org/all/affb7aff-dc9b-4263-bbd4-a7965c19ac4e@gtucker.io/
 
-Does it make sense?
-Is is the intended behavior, please?
+The aim is to facilitate reproducing builds for CI bots as well as
+developers using containers.  It's achieved by providing a wrapper
+around `make` in a separate Makefile.  Here's an illustrative example
+with a kernel.org toolchain in a Docker image from tuxmake:
 
-> So some suggestions to align the documentation with the code's
-> behavior below :)
+    $ make -f scripts/Makefile.container CONTAINER=tuxmake/korg-clang-21 LLVM=1 defconfig
+    Running in docker tuxmake/korg-clang-21
+      HOSTCC  scripts/basic/fixdep
+      HOSTCC  scripts/kconfig/conf.o
+    [...]
+      HOSTCC  scripts/kconfig/util.o
+      HOSTLD  scripts/kconfig/conf
+    *** Default configuration is based on 'x86_64_defconfig'
+    #
+    # configuration written to .config
+    #
 
-> On 2025/10/12 19:50, lirongqing wrote:
-> > From: Li RongQing <lirongqing@baidu.com>
-> > 
-> > Currently, when 'hung_task_panic' is enabled, the kernel panics
-> > immediately upon detecting the first hung task. However, some hung
-> > tasks are transient and the system can recover, while others are
-> > persistent and may accumulate progressively.
+    $ make -f scripts/Makefile.container CONTAINER=tuxmake/korg-clang-21 LLVM=1 -j8
+    Running in docker tuxmake/korg-clang-21
+    make: warning: -j8 forced in submake: resetting jobserver mode.
+      SYNC    include/config/auto.conf
+      GEN     arch/x86/include/generated/asm/orc_hash.h
+      WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+      WRAP    arch/x86/include/generated/uapi/asm/errno.h
+    [...]
+      LD      arch/x86/boot/setup.elf
+      OBJCOPY arch/x86/boot/setup.bin
+      BUILD   arch/x86/boot/bzImage
+    Kernel: arch/x86/boot/bzImage is ready  (#1)
 
-My understanding is that this patch wanted to do:
+The initial idea was to add an if-else block for when $(CONTAINER)
+was defined directly in the top-level Makefile but this seemed too
+intrusive, hence the approach here with a separate file.  It's easy
+enough to create an alias for development purposes if needed.
 
-   + report even temporary stalls
-   + panic only when the stall was much longer and likely persistent
+While the example above uses a tuxmake image, I've also started
+preparing reference container images with kernel.org toolchains and
+no third-party dependencies other than the base Debian distro:
 
-Which might make some sense. But the code does something else.
+    https://gitlab.com/gtucker/korg-containers
 
-> > --- a/kernel/hung_task.c
-> > +++ b/kernel/hung_task.c
-> > @@ -229,9 +232,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-> >   	 */
-> >   	sysctl_hung_task_detect_count++;
-> > +	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
-> >   	trace_sched_process_hang(t);
-> > -	if (sysctl_hung_task_panic) {
-> > +	if (sysctl_hung_task_panic &&
-> > +			(total_hung_task >= sysctl_hung_task_panic)) {
-> >   		console_verbose();
-> >   		hung_task_show_lock = true;
-> >   		hung_task_call_panic = true;
+These are convenient for exercising this feature but any arbitrary
+image may be used of course.
 
-I would expect that this patch added another counter, similar to
-sysctl_hung_task_detect_count. It would be incremented only
-once per check when a hung task was detected. And it would
-be cleared (reset) when no hung task was found.
+Guillaume Tucker (1):
+  kbuild: add Makefile.container with CONTAINER option
 
-Best Regards,
-Petr
+ scripts/Makefile.container | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 scripts/Makefile.container
+
+-- 
+2.47.3
+
 
