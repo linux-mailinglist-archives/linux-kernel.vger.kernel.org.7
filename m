@@ -1,49 +1,48 @@
-Return-Path: <linux-kernel+bounces-851733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCC6BD7285
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:13:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA35BD728B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A4A421747
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B0F19A0B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B7C30B52C;
-	Tue, 14 Oct 2025 03:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AED30BB8C;
+	Tue, 14 Oct 2025 03:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vf300Fh8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmmWUMji"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50082309EE1;
-	Tue, 14 Oct 2025 03:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2A030B536;
+	Tue, 14 Oct 2025 03:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760411546; cv=none; b=Wzknr8asyVY4IRYVxEGlqfjwVLVLHxh9RpEUfODqaEsM24n9cctnno3ocjz4DPaI4x6WE8yT1UtbaM98ORjb4ETVUn3B3wpfIHe28qvGYhRIYfTdzoONWJ6DLBdf88/XSOL0GCKq5mfCx8M4k2BclLnchHE4MDcgmKM1QE+g60M=
+	t=1760411547; cv=none; b=ieKzMvA1v68Hz41xQrj4lDeOQvSRsuh9S/OMYiB9h52MG1Z63CrpezLtlSwPtSkOq0XidjK0C9Gmz6QuvhlSPLBz71gjJM12vvsV7AZ/M5K26WFKhzJRdlAI/TUvGdbbnlAbx9IkPCBqPrK5fatDg2ss5+bgQYYJE6JN/irKG3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760411546; c=relaxed/simple;
-	bh=DyOTgkiOX+xxSODVH7p8ZivJ8z1IhKgwy7RRwUpzEkc=;
+	s=arc-20240116; t=1760411547; c=relaxed/simple;
+	bh=nV2p0fpU6/3+kXwweayj2niuZrElPFfqUNZw9N2j1qE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f9ICeDGKDxdY4SF+0DM4VRlZhhP0EOrcUzOlmTWk4q8IGiHlPzBKPBCdbfT08HE+zhO0KlB9wtZNXP7RzR01ahdnN86xWXAP4DMxSCBh/MwQro+hIZ/Ciyjf2TQoOLnigFmYhsoh2qvv1Lg7gsj0Av3bNsRHDhlgocfZbo/geos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vf300Fh8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DF7C116D0;
-	Tue, 14 Oct 2025 03:12:24 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=mpYL2OJ8kmZgJkCiSzZ8A8r0eOk4PZVkxh5Gx0Qv2PEiwQCc2cz05WjV9kSC5nZtpbMuDOXsI8+4b0tbzbW0BS6cJ5Re+KM6Z41OTa4FJTnDzvIc7sbui1Ih445VrG4YRq2CFdZwuzRE6A7CVw6NX0c+SSrXpwfR/WSw/xJzuNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmmWUMji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CE0C16AAE;
+	Tue, 14 Oct 2025 03:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760411545;
-	bh=DyOTgkiOX+xxSODVH7p8ZivJ8z1IhKgwy7RRwUpzEkc=;
+	s=k20201202; t=1760411546;
+	bh=nV2p0fpU6/3+kXwweayj2niuZrElPFfqUNZw9N2j1qE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Vf300Fh8Gn1gX/9ACvdev9mO+38QsC94iA1HEP84CSvee+tQyudUfnsNbfBbenv9C
-	 1bBYfGvfjzTf5MnMm0VRlOFlo7cYYlXiDF6NDYPT8nbQbY4Ri6eeggwMy6bMrScu6N
-	 FQdVVZopLsOHcqzy6sgj2RS+Jlk8eLUxrlO9ZpToTi3mpTnmKo+H8pIEReuap/Fv9a
-	 w3lZ7xS5lrf7G2lyfs++8TwcZBevpd+xDL1KzS/gE0REcARrHvysZPyKqnwhbiquvD
-	 auQxq2nkKkZTv12298dkDtkuGh0NIVnxzw3V54yZ21bzlSOW7XsQflg1nOPVCAV3S3
-	 gK4qKbdm7rNdQ==
+	b=SmmWUMjip7JnHtECL30mUNkNSEPLXytoEw6OHD0CEvRv23fyoCvpnXII/A2iP8hz6
+	 IREn4A9AtbohAZNmgxsQvGuP094lqjGk0R5lNp2YHIE2DQ2mAOFxEkuoeC9/5qDMPR
+	 MP7aP765yWUoukTnBPIXoIgIVq0kUn1tOV3Bys+XPCGuEJ4tIoS2uxPE8PwyY1Wf4C
+	 8oC04Rh76lhEBEzQLAc7hn1utiQJNujz92q88OGZci438EsEUsbbP0ketq9zJuoLNn
+	 X3ssHKefSS1k6AkDR1QHbeRGr414zrE6LnByAKCZJT/RLSyOjXAtcewPK0GGFfXH5Q
+	 YrJxb5+6kjVBQ==
 From: Drew Fustini <fustini@kernel.org>
-Date: Mon, 13 Oct 2025 20:11:59 -0700
-Subject: [PATCH v3 7/8] riscv: Kconfig.socs: Add ARCH_TENSTORRENT for
- Tenstorrent SoCs
+Date: Mon, 13 Oct 2025 20:12:00 -0700
+Subject: [PATCH v3 8/8] riscv: defconfig: Enable Tenstorrent SoCs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-tt-bh-dts-v3-7-9f058d4bbbda@oss.tenstorrent.com>
+Message-Id: <20251013-tt-bh-dts-v3-8-9f058d4bbbda@oss.tenstorrent.com>
 References: <20251013-tt-bh-dts-v3-0-9f058d4bbbda@oss.tenstorrent.com>
 In-Reply-To: <20251013-tt-bh-dts-v3-0-9f058d4bbbda@oss.tenstorrent.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>, 
@@ -76,34 +75,26 @@ X-Mailer: b4 0.14.2
 
 From: Drew Fustini <dfustini@oss.tenstorrent.com>
 
-Add Kconfig option ARCH_TENSTORRENT to enable support for SoCs like the
-Blackhole.
+Enable support for Tenstorrent SoCs in the default configuration.
 
 Reviewed-by: Joel Stanley <jms@oss.tenstorrent.com>
 Signed-off-by: Drew Fustini <dfustini@oss.tenstorrent.com>
 ---
- arch/riscv/Kconfig.socs | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/riscv/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 848e7149e4435ad3ca138b62bc3b3c8efb594a18..0b4d408aebfa5dc441abfb8e78153acc149951f0 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -63,6 +63,14 @@ config ARCH_SUNXI
- 	  This enables support for Allwinner sun20i platform hardware,
- 	  including boards based on the D1 and D1s SoCs.
- 
-+config ARCH_TENSTORRENT
-+	bool "Tenstorrent SoCs"
-+	help
-+	  This enables support for Tenstorrent SoC platforms.
-+	  Current support is for Blackhole P100 and P150 PCIe cards.
-+	  The Blackhole SoC contains four RISC-V CPU tiles each
-+	  consisting of 4x SiFive X280 cores.
-+
- config ARCH_THEAD
- 	bool "T-HEAD RISC-V SoCs"
- 	depends on MMU && !XIP_KERNEL
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index fc2725cbca1879c181d179a3d59ac3a0ce206061..95d5230c00274893df0502174037fec348d700c7 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -29,6 +29,7 @@ CONFIG_ARCH_SOPHGO=y
+ CONFIG_ARCH_SPACEMIT=y
+ CONFIG_SOC_STARFIVE=y
+ CONFIG_ARCH_SUNXI=y
++CONFIG_ARCH_TENSTORRENT=y
+ CONFIG_ARCH_THEAD=y
+ CONFIG_ARCH_VIRT=y
+ CONFIG_ARCH_CANAAN=y
 
 -- 
 2.34.1
