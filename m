@@ -1,213 +1,235 @@
-Return-Path: <linux-kernel+bounces-853023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D0CBDA74C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:43:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D979BDA7FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73110541198
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:43:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F9EE502690
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672DF30146C;
-	Tue, 14 Oct 2025 15:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7B230100E;
+	Tue, 14 Oct 2025 15:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtPjpuH6"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e4KQI2kf"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A08C2D9ED9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A67726FD84
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760456583; cv=none; b=GXBh1yOxbJIlfTLWaOQFY7flI46lIPDgoEEabQ+EyQUWEpxHr8nfNt4NtPp5TRO6SoUqQmn7lTcP+6optHexVeuDs8+f74iFXewLcOu7F8wsry3+QWgvxsgpFt8MwIMr8Rf415KWgNnVq/2207U30kxOCnbU6+BVAsQxPK3yhAg=
+	t=1760456748; cv=none; b=vA/LEWaHcaX4TyuFEQvmKdDCWliLuvkRV7obVn/Ic+fIarEBfEKAlb3cMcjVIpar+jI09oiJkA42PST9+aR9quL5k1mnY234PjEEmaccgiD6sb9VZSrFlRkS2SV1tlTXCQ1RNyZWb3TvYH9AeXoIgGdKMJQoDYboL+wS3UQKn+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760456583; c=relaxed/simple;
-	bh=IOXA3e/PDxwKtBuHJSVeF2wtx7tvydH9ilKWTo1uicY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=upeEd6djoZ0y1tyDuno0YhSxZUpqj0vr4sKCAzeq5nGww2kgPAMWQXoWUQEwbS2ob3HYU4IlRPZdUh0YYZ8eZ/XPb3ujS9Ic8dBacaafMrH+1XRAXaPTK2Ji43iVVXtO4NctvRAfbhWxIX52MM490V+uzyxj1nxS2nFc5Rckh3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtPjpuH6; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1760456748; c=relaxed/simple;
+	bh=OPz3JuKsyfEcF7SC28N8BYvQpMOG9+ol+aHvjOGIupM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bbzSNFMdyNAOx050BQCUeOL0vmiQ8GL6wLuyV/7Yp815Ljyu6jUkCp+hrWdNo1n7W74VVwEKtXdO9lgFJil9iR4d/I/PRJKCunwg5T/GUCDquiiT3l+Dveu9l4mGZYPId3mToN3kS56Gr6nUaX80iU+7bLRYYWp+zjHbSa+MLbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e4KQI2kf; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-339a7744495so641981a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:43:00 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso20648f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:45:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760456580; x=1761061380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yYGjzSlUY1ujV4XJxs44Nj4rVMv7fyzJ9xw4OWViBdY=;
-        b=VtPjpuH6F17RQ/tK+T8F//BEn5Imv4KUJUaWz72zAxqpL7wEzbhicIc3eG3HXovILA
-         u6LImFLvSQ18eqe8MOmRVAi4TpZ8JPdobdY8Mg2VbeKseSVFcHGcGSQTBYJCsI0QG0Hl
-         AjNtjXW9vlU6a0w9wSIii/vXjBWGH5JkF5jrLpkPXePE7/5WzKH8x5gz8+nYUekzyZ3P
-         KE1/ApP0+e12A8xSlDmVUv1nK92gIpvcPoSHSN2k/TfwYHrRCvjIfOq5c4WCHNo5wXi8
-         pjnzF/k9XzeuFFbOyT0MnBPZNdKWmzl942bhV9k9+ua0AwBovkJSm1G0eRbncBfZPut+
-         Xxow==
+        d=gmail.com; s=20230601; t=1760456744; x=1761061544; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EuF1h8YvamKDXiEUG/ydx08kAUyXwsN7QyehT348oZQ=;
+        b=e4KQI2kfRTFKK2gbKkqkfd2oV/6shil0yLFLNenJOMxMOupKifG9x8qDOYSVEDgs16
+         COdLDfVzvXugntASKg1lambfzpmb9GL7KtdHpa7bIinzBFuO1Xb1NwV5gfyYHXS0C+0G
+         Bd+h3mqQJRv69JwJcalxQNgRtYlxo06QeiySLvShb2nQ6uSfjGd++oZCiAqWv2c6YH9j
+         J6FUP5mfxa1i86WKwUtnQ5wZu/80P1/Ydo+petAAT0WGagwAi/crhGkfYekuZeQdXAK4
+         BDzUJkX4kwOkue4iEwuTNvKcKsayp+P4169VprDBVNya2PyMzz6jo5uvG45nVu2ftw7i
+         NeNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760456580; x=1761061380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yYGjzSlUY1ujV4XJxs44Nj4rVMv7fyzJ9xw4OWViBdY=;
-        b=G4fufFfDOQ1YrNsv135rqrNAhT+ac6pkLwNUm0F6HjxXJAFHehzPdytH/YWvmBeq6Q
-         sbUi90AYZCZikUnqJY+qYv1bcQ1VimHLrhXMUtUq6xPHG2oehhb5DdZJO2ITP4GI8ln1
-         bhYnjjEGs413IVk1pfMsGnIARUYyARMSWmZcOuI5+7G7zu2A8sS2iIfQkHAh6YvWvE0B
-         fi544VHejwGzGeRyNeiE4ppj6d1WscAXFKVV61mecadf/BY+ijfcwu6FiQZ1DN5MrgdX
-         EA1SWzQ31J17dRVf5Ai8i/ho9o9w+SEnOyoWvegHUKxzY2kqB3qzeP+PSPNHS2zBGt5c
-         U81w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0/O+h+X6e1wSEY0Cb5fH/RDg1epiIj7r0Ie6pcI/Q+FQBB/IW9TaBHHADC+wq8ZHM8IRL5r+cFWwiP2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzaKeIDYVcy01kZlD2WRctxCMcW32vFavfSu6XZ+6aoNnvlDS1
-	RTOrVfzxNQ6Oe0ZI+JaSuIH6kZsoZ8PISIWzv2MsrMAofmMdjpssMPb0PBOJvr4HgA8sGGh7d94
-	l5cNya0ZTofnZw631EphbgcOLZN8/i3A=
-X-Gm-Gg: ASbGncuQj9EowA3jomUpItcBy5blkV1c3eExTUq4uzt0sfGpXc+OrGHbltWXIymLG1L
-	UOPtW8pxYkKW9yxiAvpr/KfcIWelkmymAEviPTOEu98en418mmxoqlk8k56gdv+TQPCyQ7TexeQ
-	tnN4at6/zMiyETdtzpb4eWALSedqO3kUJaWvluqFqXRuag/0/cu2JKHYUuofjFbQ9/u4Y+5NTAf
-	PyRpB3XB9/l6Z6HBHVongepwAMF/97TcBwRRWwreuaIfsotrRA17o1bhFsVSVgSuVozgAo8ngSg
-	CxfRFj3moJuqSmloD0kX8zfDSaQHD0MGTb0yj3CblkdHyAN4IWmJw30=
-X-Google-Smtp-Source: AGHT+IHdmYpg3wJ6be58RKxCOo6in3Fuo+5g91PKk58rXhf3xgTcwnJDb2Ds8EFLQGYTf/b7850DkE7uVldiW6rM2ew=
-X-Received: by 2002:a17:903:18b:b0:27d:6f24:ceb9 with SMTP id
- d9443c01a7336-290273e17b2mr176408215ad.3.1760456580016; Tue, 14 Oct 2025
- 08:43:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760456744; x=1761061544;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EuF1h8YvamKDXiEUG/ydx08kAUyXwsN7QyehT348oZQ=;
+        b=IayF2TustX91j3B4a6vvAZ+rmhu/RkvlnCy7gPU5+EXevbqsE9qSGFpDCVkdQSFNA+
+         dJmLqVOaOeBEk4S8QlqBaJe9iKM4wXBajXSFF4uoze8JUUgdI7gxGCk7fEuZSqEa+vF8
+         tZQEUQemIieDogiQ6Bpf5LwKmwjdYKWmjv6iGw4zHO2gGvCuAkTEDo8KD1LtG0B/4wJA
+         29EFR2cTbjMvzF0pU82nPg6MMIScYQbFwmxYRbBbGCWjKDlW7y5lHjdPRSZ7rkSyCYaP
+         OzKZZMFUZqqcQO+D0FGB9JpdrHGbqAZFmNWBAxPelcu6B7oUo477796XAJDCUEz4Boep
+         1r6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXZxFE31tBkJY2t2/utLCpCypLj8z22OOZDz63wXy/dP0unnDuaIgDOkYbwInKHqZK+40iX1/CIHKMkH+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ESxG623jDRjl2vWvKW/6ANoHN1SAMgHzDc9h/9m5RXHhbQlX
+	ytvkPhzJpxAja96efnsirjUEve6/2CWr9ZeutmbUUWKynh8q4OANLs0w
+X-Gm-Gg: ASbGncv7H/56i97tdJhvuyT8LhvR3UwXdQp6O8DanPh83N7SrnYXkM+O9YXZVKYe4Xx
+	O9/c2Pc8He9mOp+6E4mx3jk1BuRWyYi2QfFj3oibOG+j/4iM8yLiJhPrb4QScqfdxvTHLjvW/3S
+	EB73ts7VBpez7973jXiQXBtCHg6c0G/OeBryKR19Mfk4oerTkHIlSBJJrdKi8V+JmJ6W2QZQoaE
+	sjFDQasaJeuECgLGq9DQUDqVjg4GSdk3t6Gtj5o76XLelKvtSL4+m1UeB0SQh83/5X4KePo3MmP
+	PlawsxecT3gYMCGPqEgO+loB9N3fRlGv5ExXVTkvnK5LtMiHK9d7t0QacaSjIAeqpfC986C9nFI
+	tgrEER2r5IGeX7vQV9C1sprzbEUiZrYAJlCpqHKIYHsMGkJ6pO0z89IMqedw3
+X-Google-Smtp-Source: AGHT+IGge3yzZz+zKCw2B+VbIVIqsMB8NMcC/S2UhLzXj3IfB0k9KNiL94NqaGNP36Y5hV6zVPOKPA==
+X-Received: by 2002:a05:6000:4028:b0:414:c2e8:a739 with SMTP id ffacd0b85a97d-4266e7d64a6mr18739753f8f.31.1760456744191;
+        Tue, 14 Oct 2025 08:45:44 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d3desm24341014f8f.7.2025.10.14.08.45.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 08:45:43 -0700 (PDT)
+Message-ID: <51dab5dee00b95018c8bc6b7ef56b9b722d618f3.camel@gmail.com>
+Subject: Re: [PATCH] pwm: Declare waveform stubs for when PWM is not
+ reachable
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, linux-pwm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	jic23@kernel.org, kernel test robot
+ <lkp@intel.com>, Trevor Gamblin	 <tgamblin@baylibre.com>, Axel Haslam
+ <ahaslam@baylibre.com>, 	dlechner@baylibre.com
+Date: Tue, 14 Oct 2025 16:46:16 +0100
+In-Reply-To: <aOluoP01oaDzaseV@debian-BULLSEYE-live-builder-AMD64>
+References: 
+	<1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
+	 <6v4hny7hxjsdf6zvinhpagtbhluxbd6psq7wpx5ls6zdbnjtym@lnygnkav4ewk>
+	 <2e82eaf275b5c8df768c8b842167c3562991e50c.camel@gmail.com>
+	 <aOlYDyLzVGbCh5mE@debian-BULLSEYE-live-builder-AMD64>
+	 <04eb5b1ccc0268ff7e9b88835203771886c5ee25.camel@gmail.com>
+	 <aOluoP01oaDzaseV@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014094511.627258-1-gtucker@gtucker.io> <20251014094511.627258-2-gtucker@gtucker.io>
- <CANiq72nVxPY8xB9xEnkZ=zNFh0EfQvaMAPH4ygRr-yEwpK=OWg@mail.gmail.com> <fe53ad80-6eeb-495a-a870-9c42b71f9887@gtucker.io>
-In-Reply-To: <fe53ad80-6eeb-495a-a870-9c42b71f9887@gtucker.io>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 14 Oct 2025 17:42:45 +0200
-X-Gm-Features: AS18NWCSQqZ2k7klTl6uHaYshU7c7i07coesJc6h6yK0Ke4SUtcLPlKDjwbeVfg
-Message-ID: <CANiq72m1EKmNM4QQ_A08vC2w-4QbHhO5UEG4F68tRGKEgZ9p6g@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] kbuild: add Makefile.container with CONTAINER option
-To: Guillaume Tucker <gtucker@gtucker.io>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	automated-testing@lists.yoctoproject.org, Arnd Bergmann <arnd@arndb.de>, 
-	workflows@vger.kernel.org, llvm@lists.linux.dev, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 4:31=E2=80=AFPM Guillaume Tucker <gtucker@gtucker.i=
-o> wrote:
->
-> This is what the CONTAINER_COMMAND variable is for.  You can easily
-> set it in the environment e.g. `export CONTAINER_COMMAND=3Dpodman` or
-> anything and be done with it.  The default is set to `docker`.
+On Fri, 2025-10-10 at 17:37 -0300, Marcelo Schmitt wrote:
+> ...
+> > > >=20
+> > > > I did not tested but I also wonder if 'imply SPI_OFFLOAD_TRIGGER_PW=
+M' is
+> > > > not
+> > > > similar to the above.
+> > >=20
+> > > It works, and I'll update the IIO patch to have
+> > > 	select SPI_OFFLOAD
+> > > 	imply PWM
+> > > 	imply SPI_OFFLOAD_TRIGGER_PWM
+> > > in Kconfig. The PWM imply is because I think SPI offload support meet=
+s the
+> > > "highly desirable feature" criterion mentioned by kbuild doc [1].
+> >=20
+> > With imply we then need to take care either using stubs (which seems no=
+t to
+> > be an
+> > option) or with preprocessor conditions in your driver. As discussed in=
+ the
+> > other
+> > thread I would just select SPI_OFFLOAD. Basically I would:
+> >=20
+> > 	select SPI_OFFLOAD
+> > 	select SPI_OFFLOAD_TRIGGER_PWM
+> > 	depends on PWM
+>=20
+> Yeah, depending on PWM is what I was trying to avoid because the ADC can =
+be
+> used
+> without PWM. Doing the above is the easiest solution - depend on everythi=
+ng,
+> select everything. Though, I guess I'm technically not keeping backwards
+> compatibility if I add a new dependency to the driver.
+>=20
+> IIO_BUFFER_DMA and IIO_BUFFER_DMAENGINE are part of IIO subsystem so okay=
+ to
+> select them? Otherwise, yeah, they should be optional too (would either i=
+mply
+> them or select if SPI_OFFLOAD).
+>=20
+> I'm currently leaning towards
+> =C2=A0	imply PWM
+> =C2=A0	imply SPI_OFFLOAD_TRIGGER_PWM //(SPI_OFFLOAD_TRIGGER_PWM depends o=
+n
+> SPI_OFFLOAD)
+> but not really sure.
+>=20
+> It's sort of a feature bundle we want to enable to provide SPI offloading=
+.
+>=20
+> if SPI_OFFLOAD && PWM
+> 	select SPI_OFFLOAD_TRIGGER_PWM
+> 	select IIO_BUFFER_DMA
+> 	select IIO_BUFFER_DMAENGINE
+>=20
+> we can have
+> 	imply IIO_BUFFER_DMA
+> 	imply IIO_BUFFER_DMAENGINE
+> =C2=A0	imply PWM
+> =C2=A0	imply SPI_OFFLOAD_TRIGGER_PWM
+>=20
+> but we could then have IIO_BUFFER_DMA=3Dy and PWM=3Dn and still be unable=
+ to SPI
+> offload?
+>=20
+> Maybe
+> 	imply IIO_BUFFER_DMA if (SPI_OFFLOAD && PWM)
+> 	imply IIO_BUFFER_DMAENGINE if (SPI_OFFLOAD && PWM)
+> =C2=A0	imply PWM
+> =C2=A0	imply SPI_OFFLOAD_TRIGGER_PWM if (SPI_OFFLOAD && PWM)
+> ?
+>=20
 
-Yeah, that is what I mean, i.e. you have to more variables to make it
-do what you want.
+With imply I don't think you need those if (...). However, the key point is=
+ that
+with it, I believe you'll need the stubs (so you need some convincing) beca=
+use
+those configs can be disabled which means your driver should not compile. W=
+hile
+I feel sympathetic with that "depend on optional code", the above does not =
+look
+pretty :). For the IIO_BUFFER* stuff I would likely not care about it and f=
+or
+PWM and SPI_OFFLOAD either depend on we need the stubs.
 
-At that point, a user could also equally set up an alias or a quick
-one liner script to call the real command with whatever setup they
-need. That would be more flexible too with essentially the same
-complexity on their side.
+But if you really feel strong about this, one possible solution would be to=
+ try
+and factor out all of the spi_offload related code into an extra source fil=
+e
+like ad4030-offload.c (that would have it's own kconfig knob) and that woul=
+d
+need to depend on PWM and then you would also be "free" to have the ad4030-=
+*
+stubs in your header file so that it does not fail to compile in case PWM=
+=3Dn.
 
-> As
-> far as I know, there's no need for anything else than the container
-> command and image name.  So it's not more hard-coded than say, the
-> default $(CC) executable.
+- Nuno S=C3=A1
 
-There is the `src` path there, no? e.g. I use upstream distro images
-to test some builds.
-
-> Then I was only suggesting using a minimalist alias e.g.:
->
->      alias kmake=3D'make -f scripts/Makefile.container'
-
-Yeah, what I was trying to say is that, at that point, you can just
-have an alias (or a one liner script etc.) for the real command.
-
-The user still needs to know how to use Docker/Podman/... anyway, i.e.
-I would see the benefit if somehow this was the only command they
-would need or if this handled some extra logic.
-
-> hand with a volume and then run make inside.  It reduces the scope
-> for differences and makes builds more reproducible, for example you
-> can just share your command line and others will be using the exact
-> same toolchain and build environment as you.  This is also to enable
-> developers to easily reproduce builds from CI bots.  It's been one of
-> the driving principles behind tuxmake except I'm looking at it from a
-> neutral point of view here.  In other words, it's a step towards
-> increasing quality control upstream.
-
-Definitely, I am not saying containers are a bad idea (I use them
-myself), i.e. I am only talking about what is the best way to provide
-this (e.g. documentation, a script, this new file, directly in the
-main `Makefile`...).
-
-> A related topic which was covered at Plumbers is to have first-party
-> container images, with Containerfiles maintained upstream to
-> facilitate using the kernel.org toolchains.  It's not a requirement
-> for this patch but both ideas enhance each other.
-
-kernel.org images would be nice, indeed.
-
-> Yes, I did think of writing a documentation page alongside this patch
-> but eventually made the RFC with a cover letter instead to keep it
-> more as an open discussion.  Any solution to run containerized builds
-> would need to be documented, even if they're trivial to use.  I think
-> the Makefile approach is the most elegant one but if others aren't
-> convinced by it then starting with just some documentation might help
-> getting to the bottom of this and decide what to do next.
-
-Yeah, docs would be nice regardless of the way of wrapping it.
-
-> Right but then I think we would have to deal with the variables
-> handled by `make` which can be passed either via the environment or
-> on the command line, so that's similar to the issues with an alias.
-
-The script may be more involved, i.e. similar to the KUnit one, but
-then you also gain the ability to provide more functionality/logic.
-
-Say, for instance, the ability to test with a set of container images
-that you define in the config file, to run certain things with the
-built kernel (possibly in another container), and so on and so forth.
-
-> We could do something like with Android builds (build/envsetup.sh)
-> with a file to source:
->
->      . scripts/containerize
->      m CONTAINER=3Dkorg-clang:21 defconfig
->
-> where `m` is just an arbitrary alias name obviously :)
-
-Personally, for a new script, I would use a normal `--flags` like
-interface, and leave the Make-like one if one wants to pass the actual
-Make ones. I would also allow the user to define a default image too
-in their config file too, and things like that.
-
-In other words, the idea is that you can actually easily use it
-without typing a lot, e.g.
-
-    scripts/container b defconfig
-
-(Possibly aliasing `scripts/container` itself to something shorter locally)
-
-Or even more high-level operations like the "build with my set of
-toolchain images", "build patch by patch this range of commits inside
-the container", etc.
-
-But I know this may be way out of scope :) After all, it gets into the
-realm of essentially a lot of the custom tooling/scripts that
-different subsystems build for themselves over time.
-
-In fact, another possibility to think about is generalizing the
-existing KUnit one to support containers.
-
-> Thank you for your feedback.  I can spend some time investigating
-> alternative approaches if they seem worthwhile.  I'd be interested to
-> know what others think of this too.
-
-You're welcome! I hope that helped at least.
-
-Cc'ing David/Rae/Shuah as well for the KUnit bits.
-
-Cheers,
-Miguel
+> Forgot to add David to CC list on previous reply so doing it now.
+>=20
+> >=20
+> > - Nuno S=C3=A1
+> > =09
+> > >=20
+> > > [1]:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/Documentation/kbuild/kconfig-language.rst?h=3Dv6.17#n197
+> > >=20
+> > > One alternative to this patch is to have `#if IS_REACHABLE(CONFIG_PWM=
+)` in
+> > > the
+> > > ADC driver as David suggested in the other thread. I'll probably do t=
+hat
+> > > and
+> > > drop the changes to PWM.
+> > >=20
+> > > I first thought of using `#ifdef CONFIG_PWM`, but couldn't convince m=
+yself
+> > > about
+> > > that from the relatively small number of ifdef use-cases in IIO.
+> > >=20
+> > > Thanks,
+> > > Marcelo
+> > >=20
+> > > >=20
+> > > > - Nuno S=C3=A1
+> > > >=20
+> > > > > Best regards
+> > > > > Uwe
 
