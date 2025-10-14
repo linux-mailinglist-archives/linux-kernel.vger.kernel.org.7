@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-851798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99B7BD74B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C44B4BD74B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5C1E3E8D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319093E8B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7FA30DD14;
-	Tue, 14 Oct 2025 04:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A69B30BF54;
+	Tue, 14 Oct 2025 04:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lg236G2g"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9iH2FVz"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC4130BF52
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB24030DD21
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760416961; cv=none; b=omG5sAqPFmj++LsX3KiNzEG3d7LbR61PWAljBk8m2mN9BiZ5GqPcKGX7Y6oZeZKNng6liouChi74C9wA3IaDPbDnzvF/6+WtbNS+oBDDxDcAd/LXJNrGy7zA+fPsDLlxmuXo8NJoTJRP9bhC6vq01FaOpaVu+RGJrqyAyYCO9K4=
+	t=1760416966; cv=none; b=oVvojL9gvn1PPl1RnQjtkro2GuJn2MkKmmTB+adjpRwf5MO9HP6YjAyVdtEacPrfBh3e7QBlOsPvlbqWiq7lBxBObb7SWOOMIwF2gAhiMjilBb8pkv+jUwi7OZnM+Dc09F586OxXsw2/Ewy4021t3eAgJtTx/oXk5xF5wSSGWp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760416961; c=relaxed/simple;
-	bh=LlD5sufEhyxr4hiE2SiwlBEWbdTnSj4NpL35wgOf1+E=;
+	s=arc-20240116; t=1760416966; c=relaxed/simple;
+	bh=EIlDG9uZbx4t+BVau/hnM39jO/kAdgreuvfIbFSsmHQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YvtGH18P7fjKE5KOwvSoKS/8z7o84ZpBD5fjp1ZtJH2x1g2LHOykBPMTdyU7wEVR0Hcj4aN1lzDA1pf71tEwaGFCwQHD/KIM9aSRpiuiNUvD7SUHhPn0WUOfHAe96UAVViQBX+htUchgqFyjGo3NFfhV4otyjTI48Ibv19WSN/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lg236G2g; arc=none smtp.client-ip=209.85.210.174
+	 MIME-Version:Content-Type; b=Snt+5JkCgTjXUNulTltN6IRX9XnrUJuOmlbX1O7N/lYE4E4c/QUGAtu4MTtMR/eL4Z2Ezysj1J6NuPv4teoH9GokSrJQf3tg82W5jaQtpBPv22/SZD9dezHc99rtMVNfz8+6piIJLS53VAXh4eD+HCv9mbVOs5cmD4r+FKNJv2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9iH2FVz; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-793021f348fso4453868b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:42:40 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso4671653b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 21:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760416959; x=1761021759; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760416963; x=1761021763; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NMLkMMr3UMj3Te9j9S9X0vH8qBE/08K7A/XwbJpo+ow=;
-        b=lg236G2gDklfAaFfcTHr63fFCctum4RespVD2LYXjrqG/H/cwk5zyY7T/hPeBlgLv5
-         55VFoYXMQMbHYkgsc92coyHmVtmIw9jtsNj1Me5oJou5DwSS+Iy4Q2L6uRjh0QL47Ueo
-         nt+rQGj/Uv58AgUpjQlIXaE+xI7fV5HlbW3t9KL2ub21zEpLelXMgrzw4C38GlxK4BGK
-         Dvo72nN4//U3qPCI+yzVklChn0aiXRsFs9dUJJtMuVG3cYCSFNH9X2Wze81/Zu3Y3C9n
-         NCm52mPe+Q9JeHMxbzWzs/6Zz1mONVigGvNQytZ3XqGi1nkcPR9lTxlG6j4WHFkCrXdD
-         6b+Q==
+        bh=1KQfsBMFSGfoXUyfXP7e35VKlrSpIH4j7QZbI3mzBmA=;
+        b=m9iH2FVzg8CtLUzuq/x9y+i/YUZsG1Qz38nL/YicS3guXrUhm/pYoEyzx6bNSN7BBp
+         dhlqud8fBNpDzO0kPEmjFJpu6Kr9ILmAIZC1CcDWmAzdG5J/iU1Lfya6jg9klwatT9za
+         ADawmjYr3D8Bc5e+BmCcQWwsNEtNx+J9kj0wULUt2iBv8koKGmKvXshR2h2KteQAokwq
+         O9vhEcSbcTBCyn/amQdINDN+7Td3hJytZLmdz5JL5Iy1miUurmbfKPDVArRK6FS/Tpu2
+         n1qyp69pmGpcO91FibKPOtiGbpO7UMhwJz/AxxIV/mXetCgC/7zoEDtDcJ5T42Cz3EUi
+         Zhfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760416959; x=1761021759;
+        d=1e100.net; s=20230601; t=1760416963; x=1761021763;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NMLkMMr3UMj3Te9j9S9X0vH8qBE/08K7A/XwbJpo+ow=;
-        b=jBPfGp/tihmXeB8z/ijh4AP2VQuxpHQHoKTTNQXR4kcIuZRu1PxBEfEgIRvat/y3uL
-         Mz/PMEZ9y5oTb+H72/Q5G1o55KP2OCIaOj6AIfd4OmXIG7Pbd9ondPZJsFhcPQZGC9XC
-         c6zBOad2bFPryuIUqVtEd7pkjorIyHdkVd5YJ1tojYZkXFmikgxCS0L1MPUoDWg90ezT
-         pmnzofJJRp9jEMy0/gf5cMsIcuBeroHY1iAfvW4C9JAg+KWt13axGE4z/O88z0S/lrot
-         VajpUPn01VxcsLrfaBMfLw0EMIKT8x1NPod1lgVWpYNsCj/2g4+7cuzom2aMaN/e7V4F
-         m7Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmZUUGCfTkJYYv4CbGA7n2MWJsVH/JkDsULAQoVFz2oYDivKclg/nQbdFDwtw8kpH1eTxkFsfKS95h888=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuye8fGAjZcY2fc3kow2ml63yR/qYqOqwV8grrsn1y4vtoxJQK
-	Bs6EoFc+i+/UeL7lR5IucOTwR0jF+hj2RZMx1WQsY5xj8hN5Y8VABwLG
-X-Gm-Gg: ASbGncv0renLvnawxRtFE4W/5G8iuVYBBTzRMi0HyRJpwGFzODgcGARVoFyXqDxzG09
-	YbfBtagH8SWFAeUaEzAEnF6ggXQGHP2jeR45WQ18BIzKie4r0bepNJP2oBtAj6yCHQZ0dE+hnOc
-	fnNyn/tTtze8tWp9znTbMnWwuQ0VlzOE7But0v57PpTAXaA6ISti6c7McKZGNf1fjK3o3lm7Shz
-	tjXNgHWr7YTvkS1qPP3tZstUP/S1WcfBARchOojqMeFEFDTE/oZDisZb1TXxAMc1wdv8qgD0vIO
-	6P22sUmMCuyX/y2Z1fYDZpFWVleQw7lrQS8GOUnSjqIZW956sfT7mJ90h6AolbJUjNvNUJ+7Y5v
-	hFbdD3xwfIdGyQ+UspsCt/OquILVmYVW87C1N
-X-Google-Smtp-Source: AGHT+IF0dSCedgYL8Yw1vWwLQ85LNjU0mjT4cKI4EmBUbpEqlOKPPRO4D/udioZQ3fsYcVx9s0eR9A==
-X-Received: by 2002:a05:6a20:7347:b0:2f6:9592:9065 with SMTP id adf61e73a8af0-32da83e39aemr31193354637.30.1760416959465;
-        Mon, 13 Oct 2025 21:42:39 -0700 (PDT)
+        bh=1KQfsBMFSGfoXUyfXP7e35VKlrSpIH4j7QZbI3mzBmA=;
+        b=A6OTE3u/y/X9RhN3K/7NzJJ2/rfJsmSBKF0N0U8W5pa2rHPsEquYU5hjmZahOxhJZQ
+         Zg1GXyTSAlDMt3BDJBIqJpNu5afBnKTCsUrdawPjPx94alY5LWOHnujm397L3Sef+QFj
+         AI6Uh9lWFKpZDhOdZ+4z63jt5IuMTzpIYTk2iprDrtQenzP/SkWtfoGW7Tu82idOre9q
+         S7RkqAabA3UdwLE7jv+FOMXQuTY7Jjw0mpZnoY2PVUROHa3mvey8hM99qQOKw/n4Pylu
+         0akfuIV99DIjCEu9Dkq8sEDepbmhkLZmloD+TmIANqmuGNQ8DdM+P6FqB6P+lfiikANV
+         W+EA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtC1RgcKpwm28+xdgyehBYLwdjAtN+HdZF/P4P7ilZp8qw7vbnNHHpMZHTeS140JBrA40OC4ucxwWyR1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd2GYIV73VLK/j6ZYzqLsMCdQbQZviJHPb2mZDuUaAXB9Ak/Xn
+	nDKPqIodwQg05F+AOoyTARNSI8rC8lkUNNr8EHBYVb4/09gD9rkMU7Oh
+X-Gm-Gg: ASbGncvw0rveJ+7jgXVQGqKT6ceNk4LBiyqAwODG7liboEC+XlDBefNbz/HPBxAzsSZ
+	TaHkzLG2bIw0OtOe2FpMfQgQ3qL25xdrt4jOk85k9MeZReCLKrB5Rws2QY+ifp0uLxRp6dhCHWc
+	o0WLZxUFwk/sHpIfQJjKAVREstp1rDz5SoOmRsKW0OXezMCIsroDTTo6zYT3TKj2dLDUt6/LkcF
+	vHM8sbUEOcMDTIB95ZyZkyvw6qYTJB9i9WTrTq3lRsXpl/vrrejDTYa0W1T8rF/OyrdNXSB/SOb
+	MgqdvXTv2juoEBYRTG3eUOMM+tSzYN/UkwA20e3sm4L0wRkGFhtiWJYF1UYkFujg2DcJhvQ1A6h
+	kbCFtCRdLEVLOJoxIpPLsvqH36ZIANMObwQfMt/UKB4s9UeI=
+X-Google-Smtp-Source: AGHT+IE7bkRAk8ugk735/7nQSzoaqtGZLAqU0QGh/8o+Ft0Bhm7O+ywlZ+lPoOEl8NUhH2Op/ri2Mw==
+X-Received: by 2002:a05:6a00:1706:b0:77f:50df:df31 with SMTP id d2e1a72fcca58-793870523b6mr23769529b3a.20.1760416962739;
+        Mon, 13 Oct 2025 21:42:42 -0700 (PDT)
 Received: from archlinux ([177.9.216.59])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-79b65528a51sm8440684b3a.85.2025.10.13.21.42.36
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-79b65528a51sm8440684b3a.85.2025.10.13.21.42.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 21:42:39 -0700 (PDT)
+        Mon, 13 Oct 2025 21:42:42 -0700 (PDT)
 From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Bjorn Andersson <andersson@kernel.org>,
@@ -81,9 +81,9 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/6] arm64: dts: qcom: r0q: enable max77705 fuelgauge
-Date: Tue, 14 Oct 2025 00:41:33 -0400
-Message-ID: <20251014044135.177210-5-ghatto404@gmail.com>
+Subject: [PATCH v2 5/6] arm64: dts: qcom: r0q: enable ufs storage
+Date: Tue, 14 Oct 2025 00:41:34 -0400
+Message-ID: <20251014044135.177210-6-ghatto404@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251014044135.177210-1-ghatto404@gmail.com>
 References: <20251014044135.177210-1-ghatto404@gmail.com>
@@ -96,71 +96,73 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The Samsung Galaxy S22 uses max77705 for its charger and fuelgauge,
-enable them.
+Enable UFS internal storage of the Samsung Galaxy S22.
 
 Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
 ---
- .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-index 96a8a0e69681..244fed27a4cc 100644
+index 244fed27a4cc..a3b81403d180 100644
 --- a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
 +++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-@@ -15,6 +15,16 @@ / {
- 	compatible = "samsung,r0q", "qcom,sm8450";
- 	chassis-type = "handset";
+@@ -155,6 +155,27 @@ vreg_l5b_0p88: ldo5 {
+ 			regulator-max-microvolt = <888000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
++
++		vreg_l6b_1p2: ldo6 {
++			regulator-name = "vreg_l6b_1p2";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l7b_2p5: ldo7 {
++			regulator-name = "vreg_l7b_2p5";
++			regulator-min-microvolt = <2504000>;
++			regulator-max-microvolt = <2504000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
++
++		vreg_l9b_1p2: ldo9 {
++			regulator-name = "vreg_l9b_1p2";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++		};
+ 	};
  
-+	battery: battery {
-+		compatible = "simple-battery";
-+
-+		constant-charge-current-max-microamp = <2150000>;
-+		charge-full-design-microamp-hours = <3700000>;
-+		over-voltage-threshold-microvolt = <4500000>;
-+		voltage-min-design-microvolt = <3400000>;
-+		voltage-max-design-microvolt = <4350000>;
-+	};
-+
- 	chosen {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -199,6 +209,24 @@ vreg_l11c_3p0: ldo11 {
+ 	regulators-1 {
+@@ -330,6 +351,27 @@ tsp_int_sleep: tsp-int-sleep-state {
  	};
  };
  
-+&i2c5 {
-+	status = "okay";
++&ufs_mem_hc {
++	reset-gpios = <&tlmm 210 GPIO_ACTIVE_LOW>;
 +
-+	max77705_charger: charger@69 {
-+		compatible = "maxim,max77705-charger";
-+		reg = <0x69>;
-+		monitored-battery = <&battery>;
-+		interrupts-extended = <&tlmm 5 IRQ_TYPE_LEVEL_LOW>;
-+	};
++	vcc-supply = <&vreg_l7b_2p5>;
++	vcc-max-microamp = <1100000>;
++	vccq-supply = <&vreg_l9b_1p2>;
++	vccq-max-microamp = <1200000>;
++	vccq2-supply = <&vreg_l9b_1p2>;
++	vccq2-max-microamp = <1200000>;
++	vdd-hba-supply = <&vreg_l9b_1p2>;
 +
-+	fuel-gauge@36 {
-+		reg = <0x36>;
-+		compatible = "maxim,max77705-battery";
-+		power-supplies = <&max77705_charger>;
-+		interrupts-extended = <&tlmm 5 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &pm8350_gpios {
- 	vol_up_n: vol-up-n-state {
- 		pins = "gpio6";
-@@ -218,6 +246,10 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&qupv3_id_0 {
 +	status = "okay";
 +};
 +
- &tlmm {
- 	gpio-reserved-ranges = <36 4>; /* SPI (Unused) */
- 
++&ufs_mem_phy {
++	vdda-phy-supply = <&vreg_l5b_0p88>;
++	vdda-pll-supply = <&vreg_l6b_1p2>;
++
++	status = "okay";
++};
++
+ &usb_1 {
+ 	/* Keep USB 2.0 only for now */
+ 	qcom,select-utmi-as-pipe-clk;
 -- 
 2.51.0
 
