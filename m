@@ -1,137 +1,142 @@
-Return-Path: <linux-kernel+bounces-853364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BB3BDB652
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79657BDB65E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 23:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98D894FC870
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:18:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C77134FD582
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 21:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0823009E2;
-	Tue, 14 Oct 2025 21:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491602BE621;
+	Tue, 14 Oct 2025 21:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IGW0indR"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLENNlmf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF752D9EF4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23BD2C1590;
+	Tue, 14 Oct 2025 21:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760476689; cv=none; b=WydyUEKcL/EGPfmL4xZGIjstEFaTUxc/aSkQIa7GgeHCv04GVzb6pnLNOW0mqu1ZNnUhVrfwQd+fLjANlwM1a1kZLZmRXPvlEgCQtYR9e0eOmRbec6+mm6PKfHRV08iXnXLuSXFWiSZsxAi4whiP0OCUGl9HYxfjKt7EdzDjcXY=
+	t=1760476705; cv=none; b=dFXXD9xCIyFFvhEjXI1BdnD3T4/at1Hsbe7MLsIHq8UM7T6p1XjOeb3dRHPBCfHG2eBojp5GB0qvp7g+I6w+LhSnc3I3ptza0ygMDxEPZTW1EMnf2aApFXDCbgFaHgsyY33JQvRjHqgf7zriNJTqrFyNCCUaqFh6fu2VdEEGPpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760476689; c=relaxed/simple;
-	bh=083L7UlHy8ud/VqJtkDbCBYK1zS9wxPzWweMPNlHCyI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YCti3DuIae2xmOFs1Uy23NpFKnSBGPdvidE3QQRh5m/S/pp42jEpNutoMiqfE3zF2AvHIWjMuB66YQHK1bUcb41ZSKVBSEtwKbvHizgf3limtK+0hRWl8XDx3zo+TAp+zzYKO+qVFnvFPEM1qjT4SdU9jOL64iZQhP7V0plWBn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IGW0indR; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso15561716a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:18:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760476687; x=1761081487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xlGERNRII+tZZoUKxhAJ0CmSBU5xgDfYRhroLSEtCOk=;
-        b=IGW0indR4f3Qtw5L73AEnHa/FhaBkltc1vUX2NAxcXIr0NZ9tBpgraEukx7T9NmwpL
-         dbIDvi/jBRWLLcHLmT2e3X4+Km7XaJnK5Z4nqj+cLKEqYFbsOJfDwGSbC3UY0b7/Yuz6
-         ce36WcqPEaNkvAP2KvbQgc4BMk+N8SyhvKHBLNu6w3PH64g+b3QN2Jp+cn0ALEDr6fYp
-         G+lkukgPXvX7KighXHofh3PHR3Hy96oSA7rCBWTrWzllaTSBWw70FzoHsN1j8RX9TPC2
-         HTT5irU+hmj4eoLFaD/ucZi05se2+EkdHhIW1Dm2kg71/AQA6P5Wjh11YX6qpQlsvaxL
-         UDIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760476687; x=1761081487;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xlGERNRII+tZZoUKxhAJ0CmSBU5xgDfYRhroLSEtCOk=;
-        b=eEGq7Pkp3wxbnrw9jnchTusOmVwxZzHTHeQwrnNUC7gBwzS6ZMo4rA+vmAJLy486Ey
-         QNHPv1h5TJvOeEuCNzZBmAQ9DHeuqQCVHg2dYfidyA20btkBRcA3pI1YrZlVSo79OwL6
-         JgkHnDzZBO0j/noQ5oqJr0alJBT10VvPvt811iBAdzZh3F6H0hIeP34cjXVWRRTuYfO4
-         B2El/x6F1xEdfLZkapYt2nzREKxtTQlmiPuFwRRoE4sIX8Gny+pamIrQSc9TTRbJhVAq
-         IsK0jOwYr/BBnXSXk6zdm/i6iPa/KsGaodhCeg82fu6NG7sh9E9CTJnMw0ycAjF+CA89
-         W0jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPBe5FT3On2hRdIF65zhBTw14A3089LXReA6kDNivrVs6z/7vMif2BH/rRjoDeJqfQsdeDLxMbLqcjJBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHoKlftRryiWW0iZyCH6F0N0sNJEwsERIjeDsCP1iDdIaQw9i9
-	iJWacDyDYr22YuWYbSOl1gy2eQ3f/zxvJgl6+fcvR0eQuLo5ifbbJvt/pmFMSjh22/lPlg7onZc
-	3E5WEIQ==
-X-Google-Smtp-Source: AGHT+IG6simq09V8B6BXq9E78i3o3CteT1MHIiPYy9wgcsZhby+xY9JMcssCZN/dmYOd+rSpeAMu3Sumo7w=
-X-Received: from pjuf1.prod.google.com ([2002:a17:90a:ce01:b0:327:50fa:eff9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4fcc:b0:33b:6612:67ee
- with SMTP id 98e67ed59e1d1-33b6612716fmr21028640a91.26.1760476687057; Tue, 14
- Oct 2025 14:18:07 -0700 (PDT)
-Date: Tue, 14 Oct 2025 14:18:01 -0700
-In-Reply-To: <CALMp9eRQZuDy8-H3b8tbdZVQSznUK9=yhuBV9vBFAQz3UP+iRg@mail.gmail.com>
+	s=arc-20240116; t=1760476705; c=relaxed/simple;
+	bh=k9VLhEH66l0BqEGhD0Vjo1mGSRb3mjuRpsgnYAD5Zww=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QIqe0ns63KsAMxHdYevkZ8jH1ixzL2wImLAJGxCH5eq/aSG98sQaB+WOHLDswFBCapiy7eXkkKlpmoesYV4DIkqxgeukXo0etuGvH24HKFREi2Mwd316RwidsYWKHDlxk06FHYdIquh3/sh8QPtWEiHygF+IgjRS6czijSemfoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLENNlmf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE72C4CEF9;
+	Tue, 14 Oct 2025 21:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760476705;
+	bh=k9VLhEH66l0BqEGhD0Vjo1mGSRb3mjuRpsgnYAD5Zww=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=vLENNlmfx+OiRdnI/YKOfKboL0Ji4hnfJ0whbjh5rEfh//U8FdlmwB+QotFfXnJNo
+	 ZAeHhDdvBNu70mA4OsHspXV24b0dk9OtZWZwx9E3ALnSeptyewaBnObSj2ABTelSac
+	 SwNaVbi+JYzPVcXnPZj0HO15LDENRByTXxnAm65jR0puoM3SXVhsy4SPL/TD4lCy8L
+	 rLdZ9NjjbbYox34/dF32Zm2YrYUIRPq12XHUBcHOZNC3XHfBTX0SAkfdtjoavSCLpw
+	 nDPOjEf+ukivM+Qsq5g2aK+EryW/v5UWTvxq40bVHwBEDyCxLuMUPYyPxAiekyG+QT
+	 An0SJMkFHxyCg==
+Date: Tue, 14 Oct 2025 16:18:24 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kenneth Crudup <kenny@panix.com>, Genes Lists <lists@sapience.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH] PCI: vmd: override irq_startup()/irq_shutdown() in
+ vmd_init_dev_msi_info()
+Message-ID: <20251014211824.GA908020@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251009223153.3344555-1-jmattson@google.com> <20251009223153.3344555-3-jmattson@google.com>
- <aO1-IV-R6XX7RIlv@google.com> <CALMp9eRQZuDy8-H3b8tbdZVQSznUK9=yhuBV9vBFAQz3UP+iRg@mail.gmail.com>
-Message-ID: <aO6-CbTRPp1ZNIWq@google.com>
-Subject: Re: [PATCH v2 2/2] KVM: SVM: Don't set GIF when clearing EFER.SVME
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014014607.612586-1-inochiama@gmail.com>
 
-On Tue, Oct 14, 2025, Jim Mattson wrote:
-> On Mon, Oct 13, 2025 at 3:33=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Thu, Oct 09, 2025, Jim Mattson wrote:
-> > > Clearing EFER.SVME is not architected to set GIF.
-> >
-> > But it's also not architected to leave GIF set when the guest is runnin=
-g, which
-> > was the basic gist of the Fixes commit.  I suspect that forcing GIF=3D1=
- was
-> > intentional, e.g. so that the guest doesn't end up with GIF=3D0 after s=
-tuffing the
-> > vCPU into SMM mode, which might actually be invalid.
-> >
-> > I think what we actually want is to to set GIF when force-leaving neste=
-d.  The
-> > only path where it's not obvious that's "safe" is toggling SMM in
-> > kvm_vcpu_ioctl_x86_set_vcpu_events().  In every other path, setting GIF=
- is either
-> > correct/desirable, or irrelevant because the caller immediately and unc=
-onditionally
-> > sets/clears GIF.
-> >
-> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > index a6443feab252..3392c7e22cae 100644
-> > --- a/arch/x86/kvm/svm/nested.c
-> > +++ b/arch/x86/kvm/svm/nested.c
-> > @@ -1367,6 +1367,8 @@ void svm_leave_nested(struct kvm_vcpu *vcpu)
-> >                 nested_svm_uninit_mmu_context(vcpu);
-> >                 vmcb_mark_all_dirty(svm->vmcb);
-> >
-> > +               svm_set_gif(svm, true);
-> > +
-> >                 if (kvm_apicv_activated(vcpu->kvm))
-> >                         kvm_make_request(KVM_REQ_APICV_UPDATE, vcpu);
-> >         }
-> >
->=20
-> This seems dangerously close to KVM making up "hardware" behavior, but
-> I'm okay with that if you are.
+On Tue, Oct 14, 2025 at 09:46:07AM +0800, Inochi Amaoto wrote:
+> Since commit 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per
+> device domains") set callback irq_startup() and irq_shutdown() of
+> the struct pci_msi[x]_template, __irq_startup() will always invokes
+> irq_startup() callback instead of irq_enable() callback overridden
+> in vmd_init_dev_msi_info(). This will not start the irq correctly.
+> 
+> Also override irq_startup()/irq_shutdown() in vmd_init_dev_msi_info(),
+> so the irq_startup() can invoke the real logic.
+> 
+> Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
+> Reported-by: Kenneth Crudup <kenny@panix.com>
+> Closes: https://lore.kernel.org/all/8a923590-5b3a-406f-a324-7bd1cf894d8f@panix.com/
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Tested-by: Kenneth R. Crudup <kenny@panix.com>
 
-Regardless of what KVM does, we're defining hardware behavior, i.e. keeping=
- GIF
-unchanged defines behavior just as much as setting GIF.  The only way to tr=
-uly
-avoid defining behavior would be to terminate the VM and completely prevent
-userspace from accessing its state.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Thomas, I'm happy to take this via PCI you prefer.  I acked it
+because you merged 54f45a30c0d0.
+
+If you take it, I wouldn't mind if you capitalized "Override" in the
+subject to match the history.
+
+Obviously this is v6.18 material since 54f45a30c0d0 is a v6.18-rc1
+regression.
+
+> ---
+>  drivers/pci/controller/vmd.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index 1bd5bf4a6097..b4b62b9ccc45 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -192,6 +192,12 @@ static void vmd_pci_msi_enable(struct irq_data *data)
+>  	data->chip->irq_unmask(data);
+>  }
+> 
+> +static unsigned int vmd_pci_msi_startup(struct irq_data *data)
+> +{
+> +	vmd_pci_msi_enable(data);
+> +	return 0;
+> +}
+> +
+>  static void vmd_irq_disable(struct irq_data *data)
+>  {
+>  	struct vmd_irq *vmdirq = data->chip_data;
+> @@ -210,6 +216,11 @@ static void vmd_pci_msi_disable(struct irq_data *data)
+>  	vmd_irq_disable(data->parent_data);
+>  }
+> 
+> +static void vmd_pci_msi_shutdown(struct irq_data *data)
+> +{
+> +	vmd_pci_msi_disable(data);
+> +}
+> +
+>  static struct irq_chip vmd_msi_controller = {
+>  	.name			= "VMD-MSI",
+>  	.irq_compose_msi_msg	= vmd_compose_msi_msg,
+> @@ -309,6 +320,8 @@ static bool vmd_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+>  	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
+>  		return false;
+> 
+> +	info->chip->irq_startup		= vmd_pci_msi_startup;
+> +	info->chip->irq_shutdown	= vmd_pci_msi_shutdown;
+>  	info->chip->irq_enable		= vmd_pci_msi_enable;
+>  	info->chip->irq_disable		= vmd_pci_msi_disable;
+>  	return true;
+> --
+> 2.51.0
+> 
 
