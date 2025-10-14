@@ -1,192 +1,137 @@
-Return-Path: <linux-kernel+bounces-852522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA54BD935E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0197FBD9364
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE44421D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C1518A70B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623C031062D;
-	Tue, 14 Oct 2025 12:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QVdqzKoa"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010000.outbound.protection.outlook.com [52.101.56.0])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152743112CB;
+	Tue, 14 Oct 2025 12:04:32 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19F23101D1;
-	Tue, 14 Oct 2025 12:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760443434; cv=fail; b=eAo2tvBm6vaQGLd8OaiXfdAWk+DHsvkJEKQMwaJI+scaReWGss1nu7858lw+87MEuapJAb8Kp4qgswsASVt90Aa7+5huuJtqrSxLwkn9mBz1Wfmedj7FR5KRW5VUaP0G3b4JDzqelXAnzAAgusb0+ch2oXeADwB+jUUT81ivyD4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760443434; c=relaxed/simple;
-	bh=JvwPi051iINLqZDWWhfxbXLp5Z+l9Bu1pEpBjgF26w8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QNu5GTgUXWEi/RbC9MnZgVz1MfBdjWO4Nr6sK57PCX7f/PeDks+vZkNpR4xdUESwqMj1JBoyC162QgS/HoKeq86CEdH1DlKdDTViluhIop5cLe84nEO1PZoZTCXoc9nFRs6FpjHxFnWlZyU4G5+Azbt4Jw8bR6dmhQvyASZHM/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QVdqzKoa; arc=fail smtp.client-ip=52.101.56.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jOmpsn4DrJwF2wYSU+iHEqHY8F2GIoLHuVBSmb+fQ+Z7wqhAa3oL3r3G3zdC7LtV4aa2RIYm0v0zWueNQcp/aDXbpu46BIVbpliaGdYhdnL7cKj2rfMDpZUehd5xZLNDkXGkDX7JJTuD2Y3GGTu8D2itQ1NVAB853iMoLWv9c/ySstDi9JwW/pjEMAd4XYJG4CTlNgpy8esjQi+07gGiVT8vlONCNC2Hs2eToDHYIJxUz1SsKbhAEnU65u2yfop1YgxjgMotU12GIL+X53bMNzymz2A4faAqeUMjVJDrfGBIGSBdEJvps3Hv/qAOb6o4MHoDBXfSUelFzMmzhjakjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v2QQekI+cIa1BjDoRhzTD/URMxrjczUa9RT/uiL+WG8=;
- b=IyDenbN3EmfgIKaAUCrDhZTqx8XqcANWXM6JU9wrwxXueBZLy5Gg2d3HoxprVjpbXX1hJdSeLVmHRBxEDVrEzV1yVTrmp8H4my6K90HoQFI/lZVpCuhATY+SjLOmwhXB+hXQ0XuY3YaFK1zi9Caz3o3Cmu8gwj9vYojD02NeVKM7lAE6yhKILiWSjzU2quCYw1J6GdVEdPywXmj7AeGu5W+lwxa6EKRkPuzaLscvcD9RVXg/ynxTwhvJrMnmUqutrBzMxmRYkbyrS10ZkNXloNw7YtjUGaqdQX3GtML3cE6RXnBYvv6EpniDLXl+4Gxt1rWdbsC9FF6xTcNHEjGxAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v2QQekI+cIa1BjDoRhzTD/URMxrjczUa9RT/uiL+WG8=;
- b=QVdqzKoa3NGIQ9+AJ3KQkytgxdqCaVv3Cv7giNjKG3kJGYll4musbU/16dYN2KosFCnSls1CepJ9BtEmFtqQh7HC/jRtX0hjMtriGyAykD6tZACm5Tu6Tx4s3rDgDbv7GggHE5vSUCr/up/7CTGzTlWcEAbuHWCzZ54Bm4vMDjftk+TJoMBLXqVOsVlzL2275lZnjHxGQtu7hRSV/HWNaRIDPJ5F3JpYgI824brM4xPQfWgscZlM5LxuMhBhPFc5k1K5ueRuwD9Fj33rqwwNCwrFnAt8lDEmxFxoY2uaFgi+C/e/PyOoP6c+ggvUVxAPBtKoEHAPW9s+PV8KFvA3Pg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8294.namprd12.prod.outlook.com (2603:10b6:8:f4::16) by
- DM4PR12MB7719.namprd12.prod.outlook.com (2603:10b6:8:101::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.13; Tue, 14 Oct 2025 12:03:46 +0000
-Received: from DS0PR12MB8294.namprd12.prod.outlook.com
- ([fe80::d6a9:5e83:27dc:a968]) by DS0PR12MB8294.namprd12.prod.outlook.com
- ([fe80::d6a9:5e83:27dc:a968%7]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 12:03:46 +0000
-From: Colin Ian King <coking@nvidia.com>
-To: Zhu Yanjun <zyjzyj2000@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/rxe: remove redundant assignment to variable page_offset
-Date: Tue, 14 Oct 2025 13:03:43 +0100
-Message-ID: <20251014120343.2528608-1-coking@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LNXP123CA0022.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:d2::34) To DS0PR12MB8294.namprd12.prod.outlook.com
- (2603:10b6:8:f4::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DB923AB8D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760443471; cv=none; b=eJQ/8ZV97tw5D8vQKL6ZNN1eeddz7asNJAS9FjM2apRaS0+tp9FNk5iytNFudPsgym4deoNttYs07H9rPxSjmRCHtfo4UfWK21JPeDd0JI/wIur5B/k0Q92Fuys/2jDs0oK65Vvz8fBwNGZeKHQTUteofREDWUSoRORlrxCTswE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760443471; c=relaxed/simple;
+	bh=7mYHfYJGnJ8LQn5syQJYgViWI5ELtPzT8LnE/+d1KVs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nqaWG0KuCA7xQcqOD87vghUeJgQYK/v7SVTED+zgiilwN1VQkwrwCSryXvSvOsCEnTlAlBk4qv1tKDdO6bx5eHcZ9wwTB+m2ITS8KK2Lxvjgv+jOk0wcNVg9rkBe5EJVg+Yni1RrsFPCfv2C8Ht1hIP57YppIiu7+CDrz7j4aIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 59EC3ueQ060852
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 Oct 2025 20:03:56 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Tue, 14 Oct 2025
+ 20:03:56 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
+        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
+        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+        <ben717@andestech.com>, <inochiama@gmail.com>,
+        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
+        <shradha.t@samsung.com>, <pjw@kernel.org>, <randolph.sklin@gmail.com>,
+        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
+Subject: [PATCH v8 0/5] Add support for Andes Qilai SoC PCIe controller
+Date: Tue, 14 Oct 2025 20:03:44 +0800
+Message-ID: <20251014120349.656553-1-randolph@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8294:EE_|DM4PR12MB7719:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91c80fe7-618a-4898-34fb-08de0b19ba1c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xl7zgTB/iUXFbsqttqXsJbV1XxKfjxOC0jbFMsS+dv5g8RX4FQes1qFyy9On?=
- =?us-ascii?Q?jxKGPYyaXWasx/IzP2RTEgxft+qQs79PDXLvpmLdaVBOsNT5y6eI7x5Ff/Q6?=
- =?us-ascii?Q?dYESTAyiNNe2AEfBY4htxF3/H5J0gpeZ0Y9AOong9c9olEz9JZyEVG3jIBXA?=
- =?us-ascii?Q?dOPVM9oEJregOZRr4trKLZBr161NWjBu/e/zBEnpbarq4MXk3nKegIgJRPmr?=
- =?us-ascii?Q?vlHDEXZhcg6j+JDRQLFMhl7EDqviPCuSssEb1hmg0gbwogL40WNQYvnBsySG?=
- =?us-ascii?Q?TQqNpvH3DWoku4w6E0LS4WgpSo+8qeXJE4lM0GSBkem4zztQ/xw69tp2t/eM?=
- =?us-ascii?Q?Id8zxLIp8TnCslegMicK8jJ1HcwJv7cCpeeNE7JLP5j8X0Cm0UABvQK05ZC4?=
- =?us-ascii?Q?KKwIZhZ9PAyO3YG9Vr7gxOKEVTxillgJZ+Mn4xjZllE64ziI14UCNzoy55fX?=
- =?us-ascii?Q?JF0gGV8xpf2fMh/JcHbQU6PLNdiQi0gStSAhuBgMYEZtVTbFV2zVtR2l87Bq?=
- =?us-ascii?Q?tY3chuITIUR71yZK72Zdy68DTuwnrkyK45eQHKfbydv//kdlwqz8h+gtsqLm?=
- =?us-ascii?Q?1Avk2ZNg0xvm4csfHw4gpBEReZl6hntxzUAKIx7/yT90w3rNu7dnnI65VbzL?=
- =?us-ascii?Q?nvbvWLZEEhsKvDRzh9AvzqHO+spDE7TBYj/L47N9LyL18CH+7mTXYtWm4PLY?=
- =?us-ascii?Q?9EG9q5Od83LuDxV0Y5kTyfVmTaYYW8VNKf+UFUmDS8KHv9QdWBJRrV2Y/rMM?=
- =?us-ascii?Q?VPIS8zkgHLjmuQ2UbyPceYxI4j3G6DMLXGvTbFr/wR0Ca03BTs6VeTA8VJuD?=
- =?us-ascii?Q?DXcI4+kAzFL8ZFtgJN5LgxTDkg7MlvGjsRghc5cssg9QTd7ni2BzZiPrbRXN?=
- =?us-ascii?Q?5uorZ/UMXEJ6BGGhvxvd8Rkqewel6DRHvenHThhnFCJhhgmVyygrB7id1lOD?=
- =?us-ascii?Q?Edrj73sOK6elFLdmfQdhuW/xo84GInXmtmvPJRT/es8LX97c/GYhefkxex9R?=
- =?us-ascii?Q?ASIPEoxveC7gDP0dAu0aU7h8Z5GovVUnKA/uLaN/fWELVWF2PfXJkLsbkXHP?=
- =?us-ascii?Q?yFKKFAijOIUrwvnOtkD91TzxrtoQlJmtMz7QzZUQz6yHFvy125fLw7LmAVr1?=
- =?us-ascii?Q?0zfgE64OjJ6eKbcsawKa9dkKpHlYqrCPwYdsQWJlzKnaphvtLCCBx3vF7NGg?=
- =?us-ascii?Q?gWDVRF5bFsaI/kTYEm86yUh99PAHhBgBeTBsN3oIxoSx1xRxd741bpeFw/Jc?=
- =?us-ascii?Q?fbypIiX30Lf4Sfj2LyZ2HWeRgg+deOxAQZxCIjM47fWeggDxBa43PAZM1Okh?=
- =?us-ascii?Q?DXiVncMRctcpB3ogTem0YGjnFUPcBqXV27f+kI6ezGDu4GWwP2DqgNfkG4Cj?=
- =?us-ascii?Q?fb/saR6JhDF563j73Sk538XjxuT+Vd8SzD8fGb8+7QtP7BHzs2CrcEJe4ZSX?=
- =?us-ascii?Q?r6ZGq9SDpK2KfTzz4Ofiy72PCLjbDTUG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8294.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RUi/Nek5IuMD2XTumzxcJBsR8mg63kIv8Mo9HrE6nbqpaDGuWnaNwb5+BuJR?=
- =?us-ascii?Q?WjE1TsV+Icyro52k8wqYK4IQwDghfPbxrAfYKzEomLz5K2AEkN9JOkv6fbli?=
- =?us-ascii?Q?Ku0rxU8FfBoXkGElNK0vvkg6kDN3IJdKit9DgHdOslzYJgEbTk6WOz0o/DJk?=
- =?us-ascii?Q?L56lSy/cHmDnyI5vrJzjtuBtMi9EIbhiwLEue7HPShe08RoqDcF+gF21PhvE?=
- =?us-ascii?Q?cdvjGk34mRi1U4OJZ/NFdikyb8+4NifnhxdAmZIiSH/WYMoyiGC9dUt7G2pO?=
- =?us-ascii?Q?Y/A7aQ9QglQK8WHtykHzss7vSEplmIzG2U8v8xnVN7TCbh0BCTj4pL6ji110?=
- =?us-ascii?Q?jWCajMclQVfqvIeUnGQtzqaGNCE09S7DlhUQk2fd+HkvSG+9B4KBZfKhge6e?=
- =?us-ascii?Q?xTx+v/Wg/7nKfRsvWjkvcEeM9b39GVLV3WlQj+WnRzVnPzjyLebVCcMA6nWX?=
- =?us-ascii?Q?gaGfi+onQo+lOrRk8a/esbcONYEVZX7anRWuWDPp6G3wGiy1WX06r4B84Jry?=
- =?us-ascii?Q?ebKMPA8SMNribK0TIe4asrzQD/61I/ok2jR63tN2KGZiqPrR+wi6kCSxzDV5?=
- =?us-ascii?Q?aRvRpTVEsFmaV/bHEErqTYF682r3h9OfwUEvkkl08O07OTxoEnBH3SkYyClE?=
- =?us-ascii?Q?cOE88DoRoCVAvFAoBN0rfw2KGg0DffvHBZX6Qojbsl4XxWDxN0yR8qPumpZd?=
- =?us-ascii?Q?W/b3Avkbzk3ol1apBHHgzGj9XLD/NO3gTNIwP/kS/+wcXF79hAI5wtKeaeyV?=
- =?us-ascii?Q?wCxRe3xkEJwq/tP31DGKrSy0MqaQ9MBBk2d2D8J8KW/PqFxjQVffCXsOUW5E?=
- =?us-ascii?Q?S3Q6Oy3JqOjfCETi2BRpcvX/S29vygePlRbf3e7dkbbsS94CwtyHEw/3BpB7?=
- =?us-ascii?Q?L5mWr7hyJzXnekxnNhoYm4ZMffpODLNRrLqR1nZh2Yvulx+r+ajK/u7wnoXZ?=
- =?us-ascii?Q?rP1JZT681tsQdXftpAZ3DbEfiYDVM/9HESwx7fq5GS2rUlhCYw4QILM2oPPb?=
- =?us-ascii?Q?NMiI9ZMw2T6byYTwMc7OEMJBfByWf8ONvNaAkav+DiA247bvzfL8ym7BYtSh?=
- =?us-ascii?Q?osvxeBBQBkG0QogwzUinKMsF4EHhuzOA9YiOkxNFoVN6KiMF3f/yw6XKf+Pm?=
- =?us-ascii?Q?wm55WKaSZ66Op0qvEpUWOM7IvXLkE22QtSPQXXegJ6pfbLfZB2JRq5ZTJ9Ud?=
- =?us-ascii?Q?6WkEErz10eDH1EN6AEXJKemcQZdjl+lCN59hmPRJ4PIJOlY0yT5Ee8pDDcCn?=
- =?us-ascii?Q?/7ycYncV70LxgcjVeDGdIwQ8ifgtr3gr7msa+jxIDQqiSGV09YTw+CYvkQSC?=
- =?us-ascii?Q?zp9+ZE7smrWcmGSiJnMvtFlN9g6FZ22QFqFru9Jn2JS8oF5BHG6kmwmsq+QA?=
- =?us-ascii?Q?7j6tuO550Q1wHcdPWa6e29dzoTEo/FoePTkgh1GnPM25gS3BDfRWtbePizJ4?=
- =?us-ascii?Q?6xOOWVh/2gCkdVrhhgvWt/Cn8Z4qIwIDKN4LWoOsNJz+NTDWHQeV7yxJrRYa?=
- =?us-ascii?Q?XVQA+YuZodgZDGT0C5G0r95WYBeaHs4Wq+OlwsTbyXT1dY/N/pQpRbzNZWf+?=
- =?us-ascii?Q?JY0mv/qK5ZFWsk3L8mdGoA53yPM1HUOD0pip9bzW?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91c80fe7-618a-4898-34fb-08de0b19ba1c
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8294.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 12:03:46.0607
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jRRI4monmAL59qbj1LKeoW9Y7zuDT6GMTKITJqrz7DE2cfeT/bedV264DdMf7reUDxZ9aGh+gxmK30+yNi9AzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7719
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59EC3ueQ060852
 
-The variable page_offset is being assigned a value at the start of
-a loop and being redundantly zero'd at the end of the loop, there
-is no code that reads the zero'd value. The assignment is redundant
-and can be removed.
+Add support for Andes Qilai SoC PCIe controller
 
-Signed-off-by: Colin Ian King <coking@nvidia.com>
+These patches introduce driver support for the PCIe controller on the
+Andes Qilai SoC.
+
+Signed-off-by: Randolph Lin <randolph@andestech.com>
+
 ---
- drivers/infiniband/sw/rxe/rxe_mr.c  | 1 -
- drivers/infiniband/sw/rxe/rxe_odp.c | 1 -
- 2 files changed, 2 deletions(-)
+Changes in v8:
+- Fix the compile error reported by the kernel test robot.
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
-index bcb97b3ea58a..b1df05238848 100644
---- a/drivers/infiniband/sw/rxe/rxe_mr.c
-+++ b/drivers/infiniband/sw/rxe/rxe_mr.c
-@@ -452,7 +452,6 @@ static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned int leng
- 
- 		length -= bytes;
- 		iova += bytes;
--		page_offset = 0;
- 	}
- 
- 	return 0;
-diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-index f58e3ec6252f..ae71812bea82 100644
---- a/drivers/infiniband/sw/rxe/rxe_odp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-@@ -358,7 +358,6 @@ int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
- 
- 		length -= bytes;
- 		iova += bytes;
--		page_offset = 0;
- 	}
- 
- 	mutex_unlock(&umem_odp->umem_mutex);
+---
+Changes in v7:
+- Remove unnecessary nodes and property in DTS bindings
+
+---
+Changes in v6:
+- Fix typo in the logic for adjusting the number of OB/IB windows
+
+---
+Changes in v5:
+- Add support to adjust the number of OB/IB windows in the glue driver.
+- Fix the number of OB windows in the Qilai PCIe driver.
+- Remove meaningless properties from the device tree.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v4:
+- Add .post_init callback for enabling IOCP cache.  
+- Sort by vender name in Kconfig 
+- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v3:
+- Remove outbound ATU address range validation callback and logic.
+- Add logic to skip failed outbound iATU configuration and continue.
+- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v2:
+- Remove the patch that adds the dma-ranges property to the SoC node.
+- Add dma-ranges to the PCIe parent node bus node.
+- Refactor and rename outbound ATU address range validation callback and logic.
+- Use parent_bus_offset instead of cpu_addr_fixup().
+- Using PROBE_DEFAULT_STRATEGY as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+Randolph Lin (5):
+  PCI: dwc: Allow adjusting the number of ob/ib windows in glue driver
+  dt-bindings: PCI: Add Andes QiLai PCIe support
+  riscv: dts: andes: Add PCIe node into the QiLai SoC
+  PCI: andes: Add Andes QiLai SoC PCIe host driver support
+  MAINTAINERS: Add maintainers for Andes QiLai PCIe driver
+
+ .../bindings/pci/andestech,qilai-pcie.yaml    |  84 ++++++
+ MAINTAINERS                                   |   7 +
+ arch/riscv/boot/dts/andes/qilai.dtsi          | 106 ++++++++
+ drivers/pci/controller/dwc/Kconfig            |  13 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-andes-qilai.c | 240 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.c  |  12 +-
+ 7 files changed, 461 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-andes-qilai.c
+
 -- 
-2.51.0
+2.34.1
 
 
