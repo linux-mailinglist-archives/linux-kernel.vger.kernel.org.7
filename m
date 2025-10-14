@@ -1,630 +1,202 @@
-Return-Path: <linux-kernel+bounces-852582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7177BD960E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ED4BD9605
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910A23AFA15
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD8A3ADCED
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDB030C371;
-	Tue, 14 Oct 2025 12:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36743090FF;
+	Tue, 14 Oct 2025 12:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EcFC5a/k";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="f6DPeDZR"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ekj1lzXf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE98F313537
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445446; cv=fail; b=kn8+o1z+4xTNlOHLXkL/dAGq8BkAVAOaKX/qGpj2fur4fJV/bRmrokoYbOrr6ekmCoC/udSvc8STV0i2SOWebJ0Flt0Qcs0qiv691lD7AOpx5XPbtjOmOpe1tgBcioIpyzf2X5qZysHOSyvgtRb/PfV2ciyGG/0Ch3Tgg1IUBHQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445446; c=relaxed/simple;
-	bh=0jNe/86eCH6ONZXHb0SIC4gbHnxfd0O2JEV4xu4o5O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HF+tprkE2yXxhPbN7XrZFiFFdOtoHT1waoWWU5qpvLXaDBswRNcG8qpejMs/Tqe0fgN+xFr7x+ZAgh64A/l1YyMzF+wtXSxQ/d7XIQyLO0kuNmPNqVR/StRjETLeQnBXJyw8qPyRMIYQBcmcCrd4Y48+enKY8bal330o4RKMhAE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EcFC5a/k; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=f6DPeDZR; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EB9sCH019624;
-	Tue, 14 Oct 2025 12:36:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=IHYG40Ckah0+cYq7f4
-	4uC8Rr0W/5WWDLF47V5VmL5b8=; b=EcFC5a/kUzKzB5dBxdg6P+MeareiXPMkUk
-	1pwFe1lxa4hB6EcposGxLGp2/ClqI71zkQS1BPjG7fHgVDm5Q8YGqqXVgcrXf6pU
-	dHVuZwlY8pZ4mM7rldcndS9vLZs6WjYub40EzF7+CTIP3uTvMKXOQPgINJ20A1qY
-	Gek15o0M+uLxCAJDjTy6oEATzFD+hIcwhN+agcjOPAap/FaDU0CMEt9TYxvkczAj
-	cAtj1Y+JFRjNhS0bFWTKY1By2cWfKmwWND7B9P2d7mhvRw1D6Q2inNTh9mOKOZ91
-	CVvnJhyOcw3TMUCNCiRYDY9mxSnq9NPrto7MHFeSzYRkA08VkpFQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qfsrv68r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 12:36:54 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59EC08fN037213;
-	Tue, 14 Oct 2025 12:36:54 GMT
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012042.outbound.protection.outlook.com [52.101.43.42])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp8w0qu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 12:36:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o0FgOXFgpm4xeH96Bk++NkgR48vkXVMFY+jpj/i3R8EkMYimi7wRIawU5paupuex7UCEzenkWzssFmSBXFV8+xjIKJehegmiVDMiUKuM1er8jWhVGzqD7UEeuyycw4+HOs3k+qTUQQz1O+nXh5PaD6tYbdquwiDPYsAT0PE5E/wkLulbQauOsdOBXn1YgTy7vbbeHEgWzZGGOFQh1uMGuNKgduaD4BKRvpuZEZGHiqFMXgYCDsrAAraSC4ouwRd8zsUojjltlprHESAEdV/dmwWgp+N5DVBUaYo0mNw83+PUMY3QrCBlg0js1+L4P+vPTwPGHPzSmznYQZdQxZS8Eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IHYG40Ckah0+cYq7f44uC8Rr0W/5WWDLF47V5VmL5b8=;
- b=RayZyLnVjJ1bcN0uJCvpYU0ypCTBczFKiWjOfJB4srrYZAVzVN2lPtRCawF300wzwVbtcty8O1Wfqdy0xRstAz3o5h2CKDJeeNVzDM9RwypbVene4QLkfXPLYOY8eA57qvgve0lBVMRaR9QbOj1P+UP61UzmILaHAniqShtAWiFoilWKPQx7SMf+6ZF43y1gfCd+1yxWTTS/EqQl5l8vAd+Z0n2ITtC9TpMDSyg6ZOovLjKW/fkuKlXVWLnGQkLG/RZtqQk6lEVXdDHO1JJKQcr6Tnt8+rvafV82Cp13vaDy3zDccYaqY6S8AvcQjYpizDL81c/0hcIxJpGL2wrMkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IHYG40Ckah0+cYq7f44uC8Rr0W/5WWDLF47V5VmL5b8=;
- b=f6DPeDZRr3T29J+osI9xDoi802REtxLE57Zkc3v7xADRhJ4w6ix/7aG8SjXZJaH0n7gucxfN0qqv9KaEMnjy6pj8hdhD+sxBS+NmhYSUHrg71SL6FokqLJ2Gp9eLLQ3Wzz6gp7IwBkyUtnh1WBlsBKtGxXU5KFGIeYMX6+RJM5w=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB5632.namprd10.prod.outlook.com (2603:10b6:a03:3df::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 12:36:49 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 12:36:49 +0000
-Date: Tue, 14 Oct 2025 13:36:46 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
-        baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        baohua@kernel.org, ioworker0@gmail.com, richard.weiyang@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH mm-new v3 3/3] mm/khugepaged: merge PTE scanning logic
- into a new helper
-Message-ID: <80341f56-6f8f-4e41-8f80-f1863256c662@lucifer.local>
-References: <20251008043748.45554-1-lance.yang@linux.dev>
- <20251008043748.45554-4-lance.yang@linux.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008043748.45554-4-lance.yang@linux.dev>
-X-ClientProxiedBy: LO6P265CA0001.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:339::9) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3BB312802
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760445429; cv=none; b=G3dKO0MynM8B/uAxXV3mnpvdKnG47SH8bS1zs2UxB+8LrPqjD77ouoiv5cXMkPf1D5/P2U7lQtBAJmIdGuedakVUiOswNMt7DI2BDK91SOvweLHM+YUqJ9wI/dsaQGZx83NfsdD0XyAvnTUrIxjgE9JqynX3m4OSkHDhy21gCj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760445429; c=relaxed/simple;
+	bh=2i/9DWpcFPS1pMn2FEUvaWf0SzvJmHWgtMuwoZMXL64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FL3qwuOLeDSlTCS+PHCk7RMvAdbW3a73CB0yxyONIzZo4yeSWsWUetZ1J85U0IyQX6ilvfml8Cu7JGRYR3DcW1NGQMx3XcAkWqN4BBK2xeNsA4qNdSOer/QQtau9OjksCw2SnJ7oukXCfKPxq25ycQWzhs6URS1E3bJRhZFTckI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ekj1lzXf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87ag9017040
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zIxMrSYPKSOc36A7DVe+LtuzT/Ctad9aI8MUfRjtCvg=; b=Ekj1lzXfFgBk4YVL
+	lNfuRCuaQineXFoBYsyaDZd03eozU/9Xll4e2xiRe7Kh/NlOljIPCunGd6x0FFRQ
+	Rh1RfKTJK+Zlyr8/tKrwJnevetPTvne9nlnMcrrTyQ6OdKkoUmgSeDhODRtMpC+b
+	KkkMvHxI/6+iOCeGP8B741fOsjknu0hW8INSEJkY1XMR2HLb/xLslKBl07ZdmBX8
+	3r64MtqhvBTjhLYDgdq2YiUkXz/p07w43my18rjQfyrf+av/oywRxNkueYKzim04
+	Mep5FNuTS0ziqYY2pASlLHtHMUGDQwH1BTNIZfW0g9Djrguz2s2fugCWLgGrt0na
+	79uJdg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd90js5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:06 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b650a3e0efcso9401523a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:37:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760445426; x=1761050226;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIxMrSYPKSOc36A7DVe+LtuzT/Ctad9aI8MUfRjtCvg=;
+        b=S7PLNyZLc39bupz2FZRM/fPbwARHc3h/YvezW4w/3ihumP1p9duii6jF5+gvEO7oYW
+         JpBGYSxG3+UxH5vmnGgUwP4egdQsrJcYJe9IdFtPpMAu0GK/NM08VSRI+TcNGmk4v3Ks
+         BPf2v2jHgGI3pvwofFg0litWwOO+mgSMxdatloQtHGWwXP4kKmX7BGQ9atdDx4LbgBUD
+         Sigk546ouQLibYxKzSVgs0MzbutAR9ir7WcrHW6u7f/4QFz3OxVQ0DESrj7HPft5UY5Q
+         8S4LpSqA88roUUAqaJzWfOMCyfFRlYQ4wPY4TzsKv3etsJXzbjQQoP79AiQ1kTrFWjxr
+         aCJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAY9LdVNIxjFVRDU0/iB/ClWjo2Pgs68/sSDp7pXhADq/DbCfr4cl7U7j9YF2VGZTjEvoAs0ouB0pDGvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSh4TV9BEqSV45CJw7gQ0cpeFeiqQqUanetpZ96npyyz6bm8qP
+	Hl/j+ktrpA4zN/8l8aCKVJsvtQIG+16ZZesTAtcAHlhz5l9TJoqhui5h/9RJj1eisBAUjv+wryF
+	MsU2PZwv9MXvrBFiueQfgtWBagiuKxSY1ACmKUfdovCVFO6OXuVUmVwkkb/IooyFiXOw=
+X-Gm-Gg: ASbGncswcVj3G2R8O8CMvi3FMnA1ehYXFw1VU6MDLOCZp6oCqF03NddD9ODp5iCnd31
+	NStTJ7g6LLI1sDRfOsKHtwbfs1A4XXli4i7tZ2SAGeMXAccNn93Jiyl1Ik4LLgHLXOfNU5CMCcY
+	bt462jzT9yBIsZDShe9+e98jYIMTysAINJwyIC0MHqIs3S8buS7WHrTux96t6hBUKYXRVKf6UBt
+	RjfSpyIuRlQ2/EnVRBp3srV+nIz6bRqAmZVa75BwKJ5gJqK0vCDN2PWxVUf3tI5YsaGjCnKmtxO
+	ytBPhruNecMXpNS+YEhA3vslQDQG7WOu+HimpQNMQQqskX99XN/riitCgkaEpUp7hWUK2a2roMH
+	vkUcOZRTv3XADzXXYDOSFzCwCGg==
+X-Received: by 2002:a05:6a20:9183:b0:32b:83af:11ff with SMTP id adf61e73a8af0-32da8139347mr32608555637.2.1760445425699;
+        Tue, 14 Oct 2025 05:37:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFj9gLDhN3zLw56SIwWQu9Ntr/nll9EvL8/XTaZlSlmUqmVQq4OR90HEiYkP4sd+g4UWAci6w==
+X-Received: by 2002:a05:6a20:9183:b0:32b:83af:11ff with SMTP id adf61e73a8af0-32da8139347mr32608529637.2.1760445425209;
+        Tue, 14 Oct 2025 05:37:05 -0700 (PDT)
+Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bc12a8asm14946105b3a.34.2025.10.14.05.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 05:37:04 -0700 (PDT)
+Date: Tue, 14 Oct 2025 18:06:58 +0530
+From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/24] arm64: dts: qcom: glymur-crd: Avoid RTC probe
+ failure
+Message-ID: <20251014123658.sobt6ab6gnbafyme@hu-kamalw-hyd.qualcomm.com>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-17-24b601bbecc0@oss.qualcomm.com>
+ <CAJKOXPdi0+c_FqinVA0gzoyqG6FVFp0jq5WSLsWWKiT12VVs3Q@mail.gmail.com>
+ <CADhhZXaB310hVo_w8_CoJLQ3j9dy1eeTwbmk0q=vUV2ga1PAYA@mail.gmail.com>
+ <8f81289d-7672-42e6-b841-6514607cdb38@oss.qualcomm.com>
+ <20251013110407.dqpjdrdaw4gzpcy4@hu-kamalw-hyd.qualcomm.com>
+ <49004d3e-7914-48ee-8705-ee86d1944166@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB5632:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7037cdea-ff5d-4e8d-1633-08de0b1e587a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E/owhrNOQFBu8hJgXKsOBP4nwb1LPcPvV2B1oYXcsu1vMvm1pnmVIUp9lTQT?=
- =?us-ascii?Q?dPDzu2R3lsxylwzUcdlWMw0+D2sT2kZ4/RyzZOog8zat8qFlhZ/m2OfdRv+A?=
- =?us-ascii?Q?8oHZR9ETK8Cq9Ide6IFTVbqFeoalyZviefLfKh7gwMH2m8r7koh7KBIZLnOA?=
- =?us-ascii?Q?0rlIFJDrvgQG79RiMHQbwZRQAYxqYneJhYJ7gKghDpMUsP26iEFNGlZpZ9Ir?=
- =?us-ascii?Q?KbVPDXCUaaKoX3zPq+3Rncmy/43ZuhfMBeuhrCvFxiOh8w0w1ueJumnOgFR6?=
- =?us-ascii?Q?CbxtcGh8oLdMXyge3AQhgCoqjPiKpLWSzh7RdGzzLqujJC5twbqkGt1w/gKy?=
- =?us-ascii?Q?0fxFmOGd4bVeYW6gvRhTjUEoxPMk/1YZPs8neuDF9lpsLYE0mB3WzI17KqVp?=
- =?us-ascii?Q?tD2xqhmMmfc5Em2XPG6ifr78Wtdnzf2TxNlFoD3xIhLyU4aewbi7/oUzpm6Z?=
- =?us-ascii?Q?1Xik9CtnmMYje5fVWBgYy3GPTP5AmbpvY82HppW4uQyBqr2ljQxYKV5xltna?=
- =?us-ascii?Q?lMTskYDyeevRQoCV3WPE7SPtdttQBjCIIOVmrNH4soPeKfk0U7MwA+BgKsVm?=
- =?us-ascii?Q?NbwCWmbFgywIwtc26jND/caoZ3ZMWW4hRraSJaMpqgHg71BGRS4I4xaHGrWc?=
- =?us-ascii?Q?POeJA/ckUNreaPFJD9+kV2aKNc+KjmM8OuacW5OYDPRFBKUJMDXFYoYT2KRZ?=
- =?us-ascii?Q?ew5sPNEWkQ/YZkilXhYsc047kKUj5OtaRsWHsKjGp5B58Y+gLW0KiaDGj1bB?=
- =?us-ascii?Q?ts5rNyfMnCLsHHzEMm22roUt5pGrM/zXswwEYGvgTQrUpOXW0VP7H+fmsfwt?=
- =?us-ascii?Q?WVGrywc4Cmc0UtbNqbaa9IMj7Hqk52GIThuK2GwzHXM8J7xQrU8gaFxI3zpY?=
- =?us-ascii?Q?erC/4L7Zjn/AWawg2gtdnsm2SqjMWlNMRwOk+AQgCuKwIuUjvcAYHcA6i3GZ?=
- =?us-ascii?Q?A3eSi4nXL1kQ//TQdhFTep7osuG/zmJRXsK9Uj8NQCn3w5xY8NB4len992VH?=
- =?us-ascii?Q?+LZ6ZMkmxzLhEw9ST7QPzvxUZfYOw7iMb0rNobqod9IpoNaHqQSWHjb2svxH?=
- =?us-ascii?Q?sBWQxKQKkp2YdlNTGmkJvAutI0cpIgvrAP3iAsVFt7jIW83v5vDTNnqGqsDr?=
- =?us-ascii?Q?uJhqbCKNxenIP/OmKF3vLhwWv5eoKHTSUYEf+wrThzrhEgpYzooP4m/E4K3p?=
- =?us-ascii?Q?NAiAMa0yAEJvrO1hzgrGkNggQNV0aLqClX6sFEWbJrhb69vOL4SaMBxzLtqH?=
- =?us-ascii?Q?t+AEGemPUlQPVfrSHkCnarEWYl0vslPUCExNyEKGW86XiUtElOtarH87IRRw?=
- =?us-ascii?Q?nDkFZwfaBGSasEaxdMpQR7gCfrl2/Gn0GFQyed74Yw3Qsk/oruGeL5FGlVOO?=
- =?us-ascii?Q?k7w2qMrNZP/4cee/x2hkc1ifZtf2w0867WGHEVF7se1dKupprg849fJF18jZ?=
- =?us-ascii?Q?W4SWqEXYx5oWB8xvBfD+wqvZ25WwDKlb?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fd+5UzGWXD21A8wArt9pfRUfudjiUiyJKuCtKjsk7yqsSM2YinD4WMoQS6GJ?=
- =?us-ascii?Q?KpD3StRH4248MahkJmzL+N+A7DA0MkbBXt/lQHyy6iF9YTB8a1qLmjX01oV5?=
- =?us-ascii?Q?MpYtitVMjZHKIsP942JjiW7XB2NQ9KU42QWPh4PdhnbMA+ERz3RNt13FLOo+?=
- =?us-ascii?Q?t/BA+V0zQEUqMGIpm0kxhOtyGlP6a6O372cZ8Pjm27LiHJxQjS6FbPc5yA9b?=
- =?us-ascii?Q?yrSM+yzC5/1YhPIF0zJRKazw6B70qBrLDhSaknVK58J6d2qcVnBzsPMwZGet?=
- =?us-ascii?Q?mnlLAHBfA+XkrPXA1+sJK6hA36fktxuZniBsJwC5eFEWUFIXmn9gclLAN8Xf?=
- =?us-ascii?Q?wF39eKXzQwSdJbDGoniBZcNMfK1vTyMHA/6y60f8BJ7u4kBDYoYLGYcR/Gd5?=
- =?us-ascii?Q?lkW7hskI2cSTJrHamKki+Lrj987w+urejmQUCS/tJsWnZXoesDMvmzRT4fVC?=
- =?us-ascii?Q?DzFM63ak3kAguJNbT5nO4SmwtBqu/n092tuiVHylGlKEy+KoxhjVqvFxRB06?=
- =?us-ascii?Q?u6/l4kxHFqk0mAeRFDoITfazVG1pxBzYYXoEdME+uzNYzL5gxqrG0w5RBHa5?=
- =?us-ascii?Q?PKO0yJMJBpRemom+xlO3MGdulMpZSmGKz/lT1zrq3ixQueggH9m6fWqqPb4V?=
- =?us-ascii?Q?4iO9JwyOZGCbk8vzo3QvQ17VdNOZ8ssylqp/dxTOle1b1zk50iZJHx5dddv3?=
- =?us-ascii?Q?o8L/xNpUiTkxDrgHljD6HrgASSPAudyuJQabjlY18Y8vjYwT+CNgfOFhRmiC?=
- =?us-ascii?Q?gEmX0HL81WQUl1xqOHaWso4EM5yQPWb1h3gBiI+KgOiNU70rvAvGfToQAwFh?=
- =?us-ascii?Q?ykI00zo3F+LRgmdwlT1SdYKEtxkOUUAZpBdbqXcMux+kg6exGkRb3uCF1r6c?=
- =?us-ascii?Q?WXuleM0/dUWtKzOxVly4RtTr0AbXLCCxjctznAkfUqVoWVYPiFI1iRrL67eC?=
- =?us-ascii?Q?YEIFxf2e7Teq3Ur/L07e5TY4mERKsk2qYobGx80hNWvB4R1kjb6QsLFB6I1f?=
- =?us-ascii?Q?bHYka8kl0Rpm5m09AtdzfHybQrpCKipIV9WvTS9IhSCRwbvXYrhwEPY3t68q?=
- =?us-ascii?Q?FzeYBu/tF8S+syZnf070chU1bBMzNnq44hJBq4RIVeLVTAx7JUdNG8x3hDgh?=
- =?us-ascii?Q?SxMvAcI0FmR69Uf18jBl+hHgAz93G5uO6l8Vvwy56h2AENghzOA8zDeIbP/s?=
- =?us-ascii?Q?TBtLobLwnoQoYidVNDGn+eTdZm/ONqQqTWFpPrzriIl3CpSTYan8qqLYw8j7?=
- =?us-ascii?Q?CHygn9GMpof+XrruUs+jC78ZH9lIC6Ew1s0b6qge9q9n5R9ypv9Yx5cwuNz0?=
- =?us-ascii?Q?BlsUtVfNZzPtoallDPI7c0eOvrFtbOgEOAnzpv1Ylxj5PQdMKJ/h63Or3hmK?=
- =?us-ascii?Q?gu4h2vCl5v6+xC2fMqDnbWvOOyTQd5e6wNA9m56RPJqAVET5FF6g+vh71rlF?=
- =?us-ascii?Q?rbdjETu/QsNsy3ftht9jNTdwETuG6tmdhgvypEA/fKmeTTEMc1xc+pS548Gx?=
- =?us-ascii?Q?vXg66jXbI3L7bkULG9MSd/t269B8x+vxLMbc/dQakXSiNuofbkIa28Un1qxD?=
- =?us-ascii?Q?jjx4yZF5Bnj7lrOLb1ea9HwnJ7y7lYTLJpE9RgmTXkSzmVAcwnKLcduTuCK9?=
- =?us-ascii?Q?/w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	4BdMi/NZuqB0PYDQwv/u9pAhLIVADRFl1bwtrmodqpAmtnvVbeGQy259I6Pj1Dax2MqXE3IIPHwhj3YQFN/F4YqGWi9raGJrQkWmltYjmjtHrJ5B6KpTnYhjLhoMWlszV35sKJ6Cn328hcGBCQH5vxDcf1S7/coa5y0kuqV5lC5AxO0iGuYwKwOpiAz9WaP98Hu8zlWLE1CisLYeong5xKH2+jrNh4WE0kiruo1xEdVr3S7kneWVWDcJ7+1C6SFoiXXMKB1a/igK9Qqfy8NH40zVX1IQmA2cukl1cbkKzueSKdQmSO4wvHs/Sc5hdxtRSyrZLFHeRl3/zp3X5+DELEpMRX7XROxLSEbKeaQI7AUG+GRTaUeb34806zadv65pDxr+N7ec9WVRtLfIBw/4pFo9v488e0WHmJm5DAXwtDmOWACJ9F/BN4OpHLlyUc8Oiqd1ni4D0824NWrRy0ElUlJInJ8BQbDDOZAzBwyxmjQl736rfWvm8pwLT6pCHArBZnn2GvhgHAn240yRHPui4RWmoHlIPPK457/YgIAPA0qUEfPTgv+I5WOJFNLiPtZrqHp6EWJXAKV1jOzeOBOaFQCBu8OCuvG/4POrsBbLwUs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7037cdea-ff5d-4e8d-1633-08de0b1e587a
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 12:36:49.6199
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w2lY9XyGGiwjXRa9SPtcnMNX4ksOwfEsGLcMkZKihJCuSABkC7RZD4+/QCztS7PNXY4r8SPsGLWqyagP0PVnvWq7HzCWCA/vxagrJ5v8sOU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5632
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <49004d3e-7914-48ee-8705-ee86d1944166@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: 6JqMJK7ziuAxBaoH2ND3RPYa1h-lthzG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX1SB50WuBUFrV
+ BY6xLKVxiFI3h3nwc759AKe3KG4E+o6gynoa80JVXAhFsynmR3Yg+PhBaDShXgCndle4Ymfo8Hc
+ s2p11kmRbKHrkhDVOTwBnsbqSHTYEWBzjfLGNvieOHJpf+kuKJIalD5IxSPFlPU/qMVkReg7R1w
+ R01ZvC9dG6Y4qHtUkZQZOWVtEaV+6Ndt82ia8YjsxsdId9On3wc+OoroBiT41U+c/p6ylIg/NnY
+ jOp2idktbPJFuTzaFJrPjVRhvfqLwBT9qKbDKEGB2nwEGiSHOisrHgsQ+JPaW8vc9kL0V0sdB9i
+ aO20RDpPmM/KuqsasXDDuYNZCyBdUfoprzbwG3vfsor/x1Db1DWuYfsEut2mGikH9csTx3FT1tT
+ gIuSYTq4YQKi+sVRqxjA11JQE36IbA==
+X-Proofpoint-GUID: 6JqMJK7ziuAxBaoH2ND3RPYa1h-lthzG
+X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68ee43f2 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=dw0t6H4-AAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gWmXDqEIHeUc13t17I8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+ a=wVJa4CU9-Z26yuRAZDil:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510140098
-X-Proofpoint-GUID: 8Rjm-ve5QghEH4mEPuWDACwCisfv7BUj
-X-Authority-Analysis: v=2.4 cv=APfYzRIR c=1 sm=1 tr=0 ts=68ee43e6 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=20KFwNOVAAAA:8 a=7CQSdrXTAAAA:8 a=vFDKSenX45RvfEaX7TwA:9 a=CjuIK1q_8ugA:10
- a=a-qgeE7W1pNrGK8U0ZQC:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMSBTYWx0ZWRfXw5WIusSTTuKM
- yo7m54pz5ldrSlMMa0NI0pdW7ODZjoGvlAqvliQQ8gNsoutsox14Ex8zyuvFL4atC4sqcVEiLZ4
- MWFszaeOmnzVglBufMtFdaiEXlPyXQyEPa1f9kkPzkOqzCE9SmSTOWL6Vw5HkGjggyAgHw/LmAf
- iDNWk2KbcsmMPo6NAI4xSERTRONHyZcxeTPafj/Wu1dUF1Lf78E42F476OksHwKOF8wGf1CVViW
- n2oBMTYOrSXm66hIlGdTYjgUgBS9hDBCrvRTqBUViostrLKMJBbDOl+o72LyTxziWcPtxZn5RRj
- WEpsx5VcD9Dlnlxtzp+TLvnUeqfzd9K9/odsCSC1eC8VOJeOm6fYxteW1bbJWiL+L4ygLnh9F3F
- XAvr7YHzsSviWJ5H3HydhB5592fnpw==
-X-Proofpoint-ORIG-GUID: 8Rjm-ve5QghEH4mEPuWDACwCisfv7BUj
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-On Wed, Oct 08, 2025 at 12:37:48PM +0800, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
->
-> As David suggested, the PTE scanning logic in hpage_collapse_scan_pmd()
-> and __collapse_huge_page_isolate() was almost duplicated.
->
-> This patch cleans things up by moving all the common PTE checking logic
-> into a new shared helper, thp_collapse_check_pte(). While at it, we use
-> vm_normal_folio() instead of vm_normal_page().
->
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Dev Jain <dev.jain@arm.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+Hi Konrad, 
 
-In general I like the idea, the implementation needs work though.
+On Tue, Oct 14, 2025 at 12:23:23PM +0200, Konrad Dybcio wrote:
+> On 10/13/25 1:04 PM, Kamal Wadhwa wrote:
+> > On Mon, Oct 06, 2025 at 04:28:59PM +0200, Konrad Dybcio wrote:
+> >> On 10/1/25 2:23 PM, Kamal Wadhwa wrote:
+> >>> Hi Krzysztof,
+> >>>
+> >>> On Thu, Sep 25, 2025 at 1:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>>>
+> >>>> On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
+> >>>> <pankaj.patil@oss.qualcomm.com> wrote:
+> >>>>>
+> >>>>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> >>>>>
+> >>>>> On Glymur boards, the RTC alarm interrupts are routed to SOCCP
+> >>>>> subsystems and are not available to APPS. This can cause the
+> >>>>> RTC probe failure as the RTC IRQ registration will fail in
+> >>>>> probe.
+> >>>>>
+> >>>>> Fix this issue by adding `no-alarm` property in the RTC DT
+> >>>>> node. This will skip the RTC alarm irq registration and
+> >>>>> the RTC probe will return success.
+> >>>>
+> >>>>
+> >>>> This is ridiculous. You just added glymur CRD and you claim now that
+> >>>> it's broken and you need to fix it. So just fix that commit!
+> >>>
+> >>> I'm afraid, but this is an actual limitation we have for Glymur
+> >>> (compared to Kaanapali).
+> >>> The RTC is part of the pmk8850.dtsi that is common between Kaanapali and
+> >>> Glymur. On Glymur (unlike Kaanapali) the APPS processor does *not* have the RTC
+> >>> IRQ permission for the RTC peripheral.
+> >>
+> >> This is interesting.. is that a physical limitation, or some sort of
+> >> a software security policy?
+> > 
+> > This is mostly a limitation for all compute targets(like Glymur). On compute
+> > targets we need to support ACPI TAD feature[1] this feature uses the RTC alarm.
+> > In a nutshell, this feature implements 2 times - AC ( adaptor power) and
+> > DC (battery power) timers, and based on active power source(AC or DC?) at the
+> > time of timer expiry device will either go for a full bootup or stay in power
+> > down.
+> > 
+> > This feature is implemented on a different subsystem (SoCCP subsystem), and
+> > since the SPMI `IRQ` permissions can only be assigned to only one subsystem,
+> > so we can't use the alarms on APPS. This is why we use no-alarms DT to register
+> > RTC device without alarm-irq support.
+> > 
+> > [1] TAD specification - https://uefi.org/sites/default/files/resources/ACPI_5.pdf
+> > section 9.18
+> 
+> Hm, is there maybe some sort of an interface to talk to the SoCCP
+> and set the RTC as we wish, from the OS?
 
-Will check in more detail on respin
+Yes, the developement is almost done and we have done some testing as well, but
+that kernel driver needs some more cleanup and testing before posting to
+upstream. This will be added in future.
 
-> ---
->  mm/khugepaged.c | 243 ++++++++++++++++++++++++++----------------------
->  1 file changed, 130 insertions(+), 113 deletions(-)
->
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index b5c0295c3414..7116caae1fa4 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -61,6 +61,12 @@ enum scan_result {
->  	SCAN_PAGE_FILLED,
->  };
->
-> +enum pte_check_result {
-> +	PTE_CHECK_SUCCEED,
-> +	PTE_CHECK_CONTINUE,
+> 
+> Konrad
 
-Don't love this logic - this feels like we're essentially abstracting
-control flow, I mean what does 'continue' mean here? Other than you're in a
-loop and please continue, which is relying a little too much on what the
-caller does.
-
-if we retain this logic something like PTE_CHECK_SKIP would make more sense.
-
-
-> +	PTE_CHECK_FAIL,
-> +};
-> +
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/huge_memory.h>
->
-> @@ -533,62 +539,139 @@ static void release_pte_pages(pte_t *pte, pte_t *_pte,
->  	}
->  }
->
-> +/*
-> + * thp_collapse_check_pte - Check if a PTE is suitable for THP collapse
-> + * @pte:           The PTE to check
-> + * @vma:           The VMA the PTE belongs to
-> + * @addr:          The virtual address corresponding to this PTE
-> + * @foliop:        On success, used to return a pointer to the folio
-> + *                 Must be non-NULL
-> + * @none_or_zero:  Counter for none/zero PTEs. Must be non-NULL
-> + * @unmapped:      Counter for swap PTEs. Can be NULL if not scanning swaps
-> + * @shared:        Counter for shared pages. Must be non-NULL
-> + * @scan_result:   Used to return the failure reason (SCAN_*) on a
-> + *                 PTE_CHECK_FAIL return. Must be non-NULL
-> + * @cc:            Collapse control settings
-
-Do we really need this many parameters? THis is hard to follow.
-
-Of course it being me, I'd immediately prefer a helper struct :)
-
-> + *
-> + * Returns:
-> + *   PTE_CHECK_SUCCEED  - PTE is suitable, proceed with further checks
-> + *   PTE_CHECK_CONTINUE - Skip this PTE and continue scanning
-> + *   PTE_CHECK_FAIL     - Abort collapse scan
-> + */
-> +static inline int thp_collapse_check_pte(pte_t pte, struct vm_area_struct *vma,
-
-There's no need for inline in an internal static function in a file.
-
-> +		unsigned long addr, struct folio **foliop, int *none_or_zero,
-> +		int *unmapped, int *shared, int *scan_result,
-> +		struct collapse_control *cc)
-> +{
-> +	struct folio *folio = NULL;
-> +
-> +	if (pte_none(pte) || is_zero_pfn(pte_pfn(pte))) {
-> +		(*none_or_zero)++;
-> +		if (!userfaultfd_armed(vma) &&
-> +		    (!cc->is_khugepaged ||
-> +		     *none_or_zero <= khugepaged_max_ptes_none)) {
-> +			return PTE_CHECK_CONTINUE;
-> +		} else {
-> +			*scan_result = SCAN_EXCEED_NONE_PTE;
-> +			count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> +			return PTE_CHECK_FAIL;
-> +		}
-> +	} else if (!pte_present(pte)) {
-
-You're now making the if-else issues with previous patches worse by
-returning which gets even checkpatch to warn you.
-
-	if (pte_none(pte) || is_zero_pfn(pte_pfn(pte))) {
-
-(of course note that I am not convinced you can drop the pte_present()
-check here)
-
-		(*none_or_zero)++;
-		if (!userfaultfd_armed(vma) &&
-		    (!cc->is_khugepaged ||
-		     *none_or_zero <= khugepaged_max_ptes_none))
-			return PTE_CHECK_CONTINUE;
-
-		*scan_result = SCAN_EXCEED_NONE_PTE;
-		count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-		return PTE_CHECK_FAIL;
-	}
-
-	if (!pte_present(pte)) {
-		...
-	}
-
-But even that really needs seriously more refactoring - that condition
-above is horrible for instance so, e.g.:
-
-	if (pte_none(pte) || is_zero_pfn(pte_pfn(pte))) {
-		(*none_or_zero)++;
-
-		/* Cases where this is acceptable. */
-		if (!userfaultfd_armed(vma))
-			return PTE_CHECK_SKIP;
-		if (!cc->is_khugepaged)
-			return PTE_CHECK_SKIP;
-		if (*none_or_zero <= khugepaged_max_ptes_none)
-			return PTE_CHECK_SKIP;
-
-		/* Otherwise, we must abort the scan. */
-		*scan_result = SCAN_EXCEED_NONE_PTE;
-		count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-		return PTE_CHECK_FAIL;
-	}
-
-	if (!pte_present(pte)) {
-		...
-	}
-
-Improves things a lot.
-
-I do however _hate_ this (*blah)++; thing. A helper struct would help :)
-
-
-
-> +		if (!unmapped) {
-> +			*scan_result = SCAN_PTE_NON_PRESENT;
-> +			return PTE_CHECK_FAIL;
-
-Can't we have a helper that sets the result, e.g.:
-
-	return pte_check_fail(scan_result, SCAN_PTE_NON_PRESENT);
-
-static enum pte_check_result pte_check_fail(int *scan_result,
-		enum pte_check_result result)
-{
-	*scan_result = result;
-	return PTE_CHECK_FAIL;
-}
-
-And same for success/skip
-
-Then all of these horrible if (blah) { *foo = bar; return baz; } can be
-made into
-
-	if (blah)
-		return pte_check_xxx(..., SCAN_PTE_...);
-
-> +		}
-> +
-> +		if (non_swap_entry(pte_to_swp_entry(pte))) {
-> +			*scan_result = SCAN_PTE_NON_PRESENT;
-> +			return PTE_CHECK_FAIL;
-> +		}
-> +
-> +		(*unmapped)++;
-> +		if (!cc->is_khugepaged ||
-> +		    *unmapped <= khugepaged_max_ptes_swap) {
-> +			/*
-> +			 * Always be strict with uffd-wp enabled swap
-> +			 * entries. Please see comment below for
-> +			 * pte_uffd_wp().
-> +			 */
-> +			if (pte_swp_uffd_wp(pte)) {
-> +				*scan_result = SCAN_PTE_UFFD_WP;
-> +				return PTE_CHECK_FAIL;
-> +			}
-> +			return PTE_CHECK_CONTINUE;
-> +		} else {
-> +			*scan_result = SCAN_EXCEED_SWAP_PTE;
-> +			count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
-> +			return PTE_CHECK_FAIL;
-> +		}
-> +	} else if (pte_uffd_wp(pte)) {
-> +		/*
-> +		 * Don't collapse the page if any of the small PTEs are
-> +		 * armed with uffd write protection. Here we can also mark
-> +		 * the new huge pmd as write protected if any of the small
-> +		 * ones is marked but that could bring unknown userfault
-> +		 * messages that falls outside of the registered range.
-> +		 * So, just be simple.
-> +		 */
-> +		*scan_result = SCAN_PTE_UFFD_WP;
-> +		return PTE_CHECK_FAIL;
-> +	}
-> +
-
-Again as all of the comments for previous series still apply here so
-obviously I don't like this as-is :)
-
-And as Andrew has pointed out, now checkpatch is finding the 'pointless
-else' issue (as mentioned above also).
-
-> +	folio = vm_normal_folio(vma, addr, pte);
-> +	if (unlikely(!folio) || unlikely(folio_is_zone_device(folio))) {
-> +		*scan_result = SCAN_PAGE_NULL;
-> +		return PTE_CHECK_FAIL;
-> +	}
-> +
-> +	if (!folio_test_anon(folio)) {
-> +		VM_WARN_ON_FOLIO(true, folio);
-> +		*scan_result = SCAN_PAGE_ANON;
-> +		return PTE_CHECK_FAIL;
-> +	}
-> +
-> +	/*
-> +	 * We treat a single page as shared if any part of the THP
-> +	 * is shared.
-> +	 */
-> +	if (folio_maybe_mapped_shared(folio)) {
-> +		(*shared)++;
-> +		if (cc->is_khugepaged && *shared > khugepaged_max_ptes_shared) {
-> +			*scan_result = SCAN_EXCEED_SHARED_PTE;
-> +			count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
-> +			return PTE_CHECK_FAIL;
-> +		}
-> +	}
-> +
-> +	*foliop = folio;
-> +
-> +	return PTE_CHECK_SUCCEED;
-> +}
-> +
->  static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
->  					unsigned long start_addr,
->  					pte_t *pte,
->  					struct collapse_control *cc,
->  					struct list_head *compound_pagelist)
->  {
-> -	struct page *page = NULL;
->  	struct folio *folio = NULL;
->  	unsigned long addr = start_addr;
->  	pte_t *_pte;
->  	int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
-> +	int pte_check_res;
->
->  	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
->  	     _pte++, addr += PAGE_SIZE) {
->  		pte_t pteval = ptep_get(_pte);
-> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> -			++none_or_zero;
-> -			if (!userfaultfd_armed(vma) &&
-> -			    (!cc->is_khugepaged ||
-> -			     none_or_zero <= khugepaged_max_ptes_none)) {
-> -				continue;
-> -			} else {
-> -				result = SCAN_EXCEED_NONE_PTE;
-> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> -				goto out;
-> -			}
-> -		} else if (!pte_present(pteval)) {
-> -			result = SCAN_PTE_NON_PRESENT;
-> -			goto out;
-> -		} else if (pte_uffd_wp(pteval)) {
-> -			result = SCAN_PTE_UFFD_WP;
-> -			goto out;
-> -		}
-> -		page = vm_normal_page(vma, addr, pteval);
-> -		if (unlikely(!page) || unlikely(is_zone_device_page(page))) {
-> -			result = SCAN_PAGE_NULL;
-> -			goto out;
-> -		}
->
-> -		folio = page_folio(page);
-> -		if (!folio_test_anon(folio)) {
-> -			VM_WARN_ON_FOLIO(true, folio);
-> -			result = SCAN_PAGE_ANON;
-> -			goto out;
-> -		}
-> +		pte_check_res = thp_collapse_check_pte(pteval, vma, addr,
-> +					&folio, &none_or_zero, NULL, &shared,
-> +					&result, cc);
->
-> -		/* See hpage_collapse_scan_pmd(). */
-> -		if (folio_maybe_mapped_shared(folio)) {
-> -			++shared;
-> -			if (cc->is_khugepaged &&
-> -			    shared > khugepaged_max_ptes_shared) {
-> -				result = SCAN_EXCEED_SHARED_PTE;
-> -				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
-> -				goto out;
-> -			}
-> -		}
-> +		if (pte_check_res == PTE_CHECK_CONTINUE)
-> +			continue;
-> +		else if (pte_check_res == PTE_CHECK_FAIL)
-> +			goto out;
->
->  		if (folio_test_large(folio)) {
->  			struct folio *f;
-> @@ -1264,11 +1347,11 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
->  	pte_t *pte, *_pte;
->  	int result = SCAN_FAIL, referenced = 0;
->  	int none_or_zero = 0, shared = 0;
-> -	struct page *page = NULL;
->  	struct folio *folio = NULL;
->  	unsigned long addr;
->  	spinlock_t *ptl;
->  	int node = NUMA_NO_NODE, unmapped = 0;
-> +	int pte_check_res;
->
->  	VM_BUG_ON(start_addr & ~HPAGE_PMD_MASK);
->
-> @@ -1287,81 +1370,15 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
->  	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
->  	     _pte++, addr += PAGE_SIZE) {
->  		pte_t pteval = ptep_get(_pte);
-> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> -			++none_or_zero;
-> -			if (!userfaultfd_armed(vma) &&
-> -			    (!cc->is_khugepaged ||
-> -			     none_or_zero <= khugepaged_max_ptes_none)) {
-> -				continue;
-> -			} else {
-> -				result = SCAN_EXCEED_NONE_PTE;
-> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> -				goto out_unmap;
-> -			}
-> -		} else if (!pte_present(pteval)) {
-> -			if (non_swap_entry(pte_to_swp_entry(pteval))) {
-> -				result = SCAN_PTE_NON_PRESENT;
-> -				goto out_unmap;
-> -			}
->
-> -			++unmapped;
-> -			if (!cc->is_khugepaged ||
-> -			    unmapped <= khugepaged_max_ptes_swap) {
-> -				/*
-> -				 * Always be strict with uffd-wp
-> -				 * enabled swap entries.  Please see
-> -				 * comment below for pte_uffd_wp().
-> -				 */
-> -				if (pte_swp_uffd_wp(pteval)) {
-> -					result = SCAN_PTE_UFFD_WP;
-> -					goto out_unmap;
-> -				}
-> -				continue;
-> -			} else {
-> -				result = SCAN_EXCEED_SWAP_PTE;
-> -				count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
-> -				goto out_unmap;
-> -			}
-> -		} else if (pte_uffd_wp(pteval)) {
-> -			/*
-> -			 * Don't collapse the page if any of the small
-> -			 * PTEs are armed with uffd write protection.
-> -			 * Here we can also mark the new huge pmd as
-> -			 * write protected if any of the small ones is
-> -			 * marked but that could bring unknown
-> -			 * userfault messages that falls outside of
-> -			 * the registered range.  So, just be simple.
-> -			 */
-> -			result = SCAN_PTE_UFFD_WP;
-> -			goto out_unmap;
-> -		}
-> +		pte_check_res = thp_collapse_check_pte(pteval, vma, addr,
-> +					&folio, &none_or_zero, &unmapped,
-> +					&shared, &result, cc);
->
-> -		page = vm_normal_page(vma, addr, pteval);
-> -		if (unlikely(!page) || unlikely(is_zone_device_page(page))) {
-> -			result = SCAN_PAGE_NULL;
-> -			goto out_unmap;
-> -		}
-> -		folio = page_folio(page);
-> -
-> -		if (!folio_test_anon(folio)) {
-> -			VM_WARN_ON_FOLIO(true, folio);
-> -			result = SCAN_PAGE_ANON;
-> +		if (pte_check_res == PTE_CHECK_CONTINUE)
-> +			continue;
-> +		else if (pte_check_res == PTE_CHECK_FAIL)
->  			goto out_unmap;
-> -		}
-> -
-> -		/*
-> -		 * We treat a single page as shared if any part of the THP
-> -		 * is shared.
-> -		 */
-> -		if (folio_maybe_mapped_shared(folio)) {
-> -			++shared;
-> -			if (cc->is_khugepaged &&
-> -			    shared > khugepaged_max_ptes_shared) {
-> -				result = SCAN_EXCEED_SHARED_PTE;
-> -				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
-> -				goto out_unmap;
-> -			}
-> -		}
->
->  		/*
->  		 * Record which node the original page is from and save this
-> --
-> 2.49.0
->
+Regards,
+Kamal
 
