@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-852899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185C4BDA2FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896D8BDA306
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89BE34FFB78
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B894A18A372A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EE82FFDE0;
-	Tue, 14 Oct 2025 14:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FB3002AE;
+	Tue, 14 Oct 2025 14:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ck6A73zk"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cuwboClK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EEE2F5339;
-	Tue, 14 Oct 2025 14:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F38D2FFFB9;
+	Tue, 14 Oct 2025 14:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760453947; cv=none; b=ZtU9en8re0BkhPGpFJWN+hBYMsR1yRpI4OedBcCs4wYTefgdwASAvwjLopjlmmSM/OQuiTRCB+3nWyGSOwxhhuCPP11KYFrpH2KpzOWMYCIRtUG4f0BLMnbfI8lWBb+hHx8uW8QxHzqWNxYcI7fRlJFtnkDGLSXpu0+E4J9zCg0=
+	t=1760453957; cv=none; b=nSHFsuV7gX6DsvY/FGdtBgH3OHR7FT+V4cPsH8mI+FFtd5xSe/vheDcgnVR3AzI4+Q1whPSuKPXc80Jk5uMWtm4Z1TGvmP7gjmaM4iXdeSBK4Ro2Rz5hWMufd++ESuU+uHpkv2I3bHgaDbJh6wIJbj0R9h6G9RO8U948VVMqTTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760453947; c=relaxed/simple;
-	bh=lTpixwap7pMwPWpUbxJaULnTGt3DY5OsC+tHMRhEmFY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WTDMLMtrQzZWVqX0qZt+ghe2Qgb2KJRxDJfCDMqGRSOui2GuVysPUOtR2X+e/v967PdmCgCy8uuHrSmOfDv9cIkkWrmZLWWo7gkSH7+O9nZTZMHC9C6/7Q9DgRuLEXt8rNInAPUqPJqhyffr5AvYUprBynTssJ2EqQThGFjTx0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ck6A73zk; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E08B040B1E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1760453945; bh=yClp+s/hQ2rC4D75oi+tnkKw/aw3tj99GBVJki7e0nA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Ck6A73zkVgs43jbq7vL3OOrTSKSWoLEPCPShlau3DpnvNA1JMnEv5mNKFpqY4l+o9
-	 OE3v+sZBpFPeS5ZkNy11CMpN4awmufXzTw0imQdvwhWU3e1ah9saugr7zN7QSngcWi
-	 JgP5jBhMjjR0RxXe+YDhEONias/1VPctz/NCdYdkNaYUq+FaaK93T9eRq5oJPuojr5
-	 F4nt//39qZT5HZ2ZFZwFig65nUTpnuBOZqHxvu0YXzryOEPYqHzLaajsRvwI+kx7r5
-	 +FoyTt46t+OnwfhmJMnvb4l+cHpDMBskh5d8yH5yu9WClda/8P/0KrTiElJSG96MS1
-	 XIiSIgaZtjcrw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E08B040B1E;
-	Tue, 14 Oct 2025 14:59:04 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Akiyoshi Kurita <weibu@redadmin.org>, Kees Cook <kees@kernel.org>,
- linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, linux-kernel@vger.kernel.org, Akiyoshi Kurita
- <weibu@redadmin.org>
-Subject: Re: [PATCH] Documentation: admin-guide: Correct styling of MS-DOS
-In-Reply-To: <20250926184824.40270-1-weibu@redadmin.org>
-References: <20250926184824.40270-1-weibu@redadmin.org>
-Date: Tue, 14 Oct 2025 08:59:04 -0600
-Message-ID: <87o6q9bkcn.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1760453957; c=relaxed/simple;
+	bh=vUTHM+SWkI/RV5I02QaaIF2/tUM7KgdwTICyd2lXCaI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qEdfqUBT/akwgt+68SEay+nUTWcla/Y32+nHMBqepc6lqj0Sd+6aOXfLpeqq4PTb0aCk70n3U17mh+Ntb3YT3z5Ylp86d39RB/3XyjJs2Z6Aa/ZKvQXDHxGqU6hvhp/c505pqIvrSX6eTk+7x4vs/0Upc6euVncE//fy6CYxI/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cuwboClK; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760453955; x=1791989955;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vUTHM+SWkI/RV5I02QaaIF2/tUM7KgdwTICyd2lXCaI=;
+  b=cuwboClKzOvf06beVeeg42gXXLyZ39jjO0RGaDUf1PmF730MIeJ4lVuq
+   q8VkNEGHYudYEpJH22+9xhXq3KBzxJJF072H2qxzoVTk+dFbzU/i7R93x
+   HwgIEm5TQfB+VW7rzrbadEq9j3jA8ZzUXLLwmEAg6CziSGhrLx+8SHf9N
+   AprvP1IESwApNn++6pjtdX2HYCZauScRPqaNNoyG1ghwQT10NmzLmPrgI
+   E40AAC+LNtrDQkGbilCEy07mFgkTVLAsHtvXJzIjjEwgWFvP1rCfaZMYf
+   EWS6uYaL/w2OBwrrrFB9aGyws0ZRlnquyQLsiJpf8wkch11ElVCNTM9x3
+   w==;
+X-CSE-ConnectionGUID: ZdyG4dAsTdegMZstqUV9qA==
+X-CSE-MsgGUID: tRVP7JR1TKGmzWhiz7T6JA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="66473195"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="66473195"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:59:14 -0700
+X-CSE-ConnectionGUID: gCXVd/D9QH6QXFLAtnwRYg==
+X-CSE-MsgGUID: 9ZKEbwLcR5GDfuCSuWUNOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
+   d="scan'208";a="182344421"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.195])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:59:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-iio@vger.kernel.org,
+	William Breathitt Gray <wbg@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: [PATCH v2 1/1] MAINTAINERS: Update Intel Quadrature Encoder Peripheral maintainer
+Date: Tue, 14 Oct 2025 17:59:05 +0300
+Message-Id: <20251014145905.4862-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Akiyoshi Kurita <weibu@redadmin.org> writes:
+Jarkko's address is going to bounce soon and I agreed to be the new
+maintainer.
 
-> "MS-DOS" with a hyphen is the official styling. Change the
-> less common "MSDOS" to "MS-DOS" for correctness and consistency.
->
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
-> ---
->  Documentation/admin-guide/pstore-blk.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/pstore-blk.rst b/Documentation/admin-guide/pstore-blk.rst
-> index 1bb2a1c292aa..1e2abb2ef500 100644
-> --- a/Documentation/admin-guide/pstore-blk.rst
-> +++ b/Documentation/admin-guide/pstore-blk.rst
-> @@ -59,7 +59,7 @@ When pstore/blk is built into the kernel, "blkdev" accepts the following variant
->     with no leading 0x, for example b302.
->  #. PARTUUID=00112233-4455-6677-8899-AABBCCDDEEFF represents the unique id of
->     a partition if the partition table provides it. The UUID may be either an
-> -   EFI/GPT UUID, or refer to an MSDOS partition using the format SSSSSSSS-PP,
-> +   EFI/GPT UUID, or refer to an MS-DOS partition using the format SSSSSSSS-PP,
->     where SSSSSSSS is a zero-filled hex representation of the 32-bit
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
 
-A quick grep shows a lot of occurrences of "MSDOS" in the kernel source.
-I don't think the churn of fixing all of those is worth it...?
+v2: Add S: Supported
 
-Thanks,
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-jon
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 46126ce2f968..393a475fbd1e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12822,8 +12822,9 @@ S:	Orphan
+ F:	drivers/ptp/ptp_dfl_tod.c
+ 
+ INTEL QUADRATURE ENCODER PERIPHERAL DRIVER
+-M:	Jarkko Nikula <jarkko.nikula@linux.intel.com>
++M:	Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+ L:	linux-iio@vger.kernel.org
++S:	Supported
+ F:	drivers/counter/intel-qep.c
+ 
+ INTEL SCU DRIVERS
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.39.5
+
 
