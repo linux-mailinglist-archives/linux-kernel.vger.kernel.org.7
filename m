@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-852484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5713BD917D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:47:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58F4BD919B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D8E541BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:46:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0FBE54FE7BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8222F6583;
-	Tue, 14 Oct 2025 11:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698E3101AE;
+	Tue, 14 Oct 2025 11:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="30Askam3"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="loH605AG"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719073101A6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE451F4CB7
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760442391; cv=none; b=OOfkCJiED5BKTpk63fUNq+oop8ss2nk8evca9H4FFE47BMDzrp/jJ0rv852kbA024LBWWiCwi9/OvALAJOmpSefEq8I3db8lg8MlYTeKhUkZpGRcXMwYL0ERrtKQFjScNocYYAM82KTbYBQFfeOsapqfP/V4reeAFAPeOmHMMTE=
+	t=1760442474; cv=none; b=kTJlh4Jt0Ytcn66uYYqm/nyCrLPuKULCq/voZAUWRxrEECr8RAWt2wAPc3UXbRK2qjjAH96SWKZOa1b9HYmBEZTpdqi1b8QxJltoqSjc7kkcAC7PJ+zCgsXTt362qHDSghvnP8dT8sOMmbaOtHdvsJhWkvT7fAejpb5PQ5BmrC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760442391; c=relaxed/simple;
-	bh=V97HSBuyCddwPX2eWiNiWvy6SrgdwsdzX5FKBWhIi1E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N2G0NCu+olxzE+dXuKcxXoUAJ/gdxAyw/623QtZ/cvzephSt1jtMsKMMrPUGWWSgpalvBV+V0Cq/gXCIBTWW6I0HlYXnwLXkpmQtvhgBsIJg5NKZYlYfTT+E5zwNw3ZRbvPGwElscAt35HuPdqrCeKhBr4h+lAY/alccDVFVcgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=30Askam3; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e38bd6680so28929295e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:46:29 -0700 (PDT)
+	s=arc-20240116; t=1760442474; c=relaxed/simple;
+	bh=Co7cFHJGgPG9rCr6E7oygAs+aPpLYgTiSC9rPlo2r3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NwDIxLWlsgpkvaB/rc+FR0nJkf9Fr1uPZijLtw+vp9Q5Cguvkv8z2kGgYJAA2QVnpBKPTVDu+rqWCQ5+eGgZkZIO5XZLvXgciFhMRKHwE9nu2yO52GQCuXw9eEMQ1yPM5dh90JjHp8YXpNb/22jWPJxNcJfVrOzfP/Ch/+TNrsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=loH605AG; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-781206cce18so5406236b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760442388; x=1761047188; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V97HSBuyCddwPX2eWiNiWvy6SrgdwsdzX5FKBWhIi1E=;
-        b=30Askam3Ga+tfeeKGLLEnQxEqudbDOIE7P1ThVxYyUIAWhECRgCmzTSmLWwszzk5ST
-         W0nl/qulIDAYkF1qptf71ztJBfMUklPUwBZncj1KXJDkh0mysr1bimLosRiRPUH7ket1
-         85uBlF/NeInHG7bfSpcw5w8eAWmO7i99xHPVRFmiBdyWNV8PJWmCo3NnJxDXm0BXTJdN
-         LytbEXOJ/ppKBGYtY6oSjMvb4dh80hfiumjZHK/rCjK1OOcqM/STlXcWTHhAnvI9vM4L
-         ocSeGeKo1ywO0WqoyyDk8zYiB8I6CZ92w+XMvHVsMORkJTAwMbK4Qsx/KFrjn3y/zb6H
-         TOBg==
+        d=bytedance.com; s=google; t=1760442470; x=1761047270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mPcMZxR0+lz33DfIEWTqyg43P9pNhyUOM9QOLXBPj9I=;
+        b=loH605AGC78aBr2tgfalp7w0kMaMcdfPdH3TL8/xnTwVpuKpKJi4y0Doso2hwOSoWc
+         zh5uP2AwQMjAFxCNrSfEWCOOeB3hUKqyb0xB6D6DKl7lyTAYkQCNhU6BU8bAbhwT8ZC9
+         fze0SHgk6TMaHJj2LsjO68qy+Upv9/WKRl2wNji1/+5xl4cvWhIPUUV8sULytENwtBBg
+         7nuZjVmVa1eVG6bLipcJ0RbdJvy1Uoq5Va53Ivu6EeLVM/yKOjS2tkl5FoV3iZJUcPLZ
+         TLeb/qHVYZfjbotdQ0oChRqIqpZhSHOmDrIL+nyiiEgF8xEOHR24pct99OQIIgph0Lk+
+         hGzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760442388; x=1761047188;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V97HSBuyCddwPX2eWiNiWvy6SrgdwsdzX5FKBWhIi1E=;
-        b=lFed5Nx8JFj+O//dyutkwkS5zSsauCEg0tw9Znvzjoz02pwItPZrYfnxCy+ikwbgsM
-         cKHQ6EXBKIvvzt0JaPTYFzqOAZzQQxDScr8RW1PV/sDExBMJ5+3sDuyEExjUKQCnY8cj
-         BkBQm6AXJjUkkiIjFY/YkiWaIOvbVKN7mftQaF4wPdKrsa7qmJSvLcgDSLpeNxwC7DoH
-         +W3OeCLUww6vCm0PasIv43txMMjErJzS+3UEpOMmw4fuyUHi3Twd5qSP5ibi3fGz9FIu
-         //+aVD+nUjLU9Fukml6t/Uu8mGoXaKIgT4pG3AvWdCrMez8AYttKllQJfRdwcR+fnTQT
-         Vs7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqH+Q1wwKKOXNHVfrfLQcYgAOm1HNEJLrVGPaDF21RMO7KOUh5eHZNBB2euMBIi7aQ5e5R6ovRbRbZGLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ23B6xNSloVedQZUofkYqKLblTy6J8QgI8jUR5R72VsQ0ozr/
-	0WD4mAlLKTMCdrD1CHyCvY/+RIGJVTpL3zQNpTfMg318e/Fbdq7ChXBT2TIZXUjF+jsPqMj3gx1
-	eGpznvy7IOB9aDQ==
-X-Google-Smtp-Source: AGHT+IGOyIRofYjYdpZa5szgrk6yrVf55DI0nc+jrKz4dMBV/l2/6mxV2A4AekmoWWzzSKpimbmwyKo7J/9+QQ==
-X-Received: from wmnp21.prod.google.com ([2002:a05:600c:2e95:b0:46e:5bd7:fc8])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1987:b0:46e:4a2b:d351 with SMTP id 5b1f17b1804b1-46fa9b0792cmr172082275e9.28.1760442387950;
- Tue, 14 Oct 2025 04:46:27 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:46:27 +0000
-In-Reply-To: <DDHX5G54GS7D.1YC8514SPRGQF@google.com>
+        d=1e100.net; s=20230601; t=1760442470; x=1761047270;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mPcMZxR0+lz33DfIEWTqyg43P9pNhyUOM9QOLXBPj9I=;
+        b=aMfGGR7LrUiE0rPftLCEAVumJKSBbqJmM7oi0/AFPuYNIxAL8lF+zlUf40Ce2NFJMy
+         uSbCjEpetP5eMtRFnKQoLuwFCiFjwZO1LoX0OlNQufgxNutDl3L/O3Pg5fJKSdFMb7C7
+         rZotmfai3RqXMiiFPksISEVN9bqGfoxVZkjaY2arE9I8ZKkeKM5FZRC5TXKEehrAPTe0
+         a+356ZAFuwJ5Hn/RaTvHuFpxRwCbKwJ/0Qsk0+txFBZbaSRXK/eKCiBd9Cr1VZAeBteQ
+         GOakBLdlwWNp3kPoaZMuoG//V79y4/EeRz9cjA5mNRecrbuS+AzEvATGSn5+4KiN/BJV
+         BUfg==
+X-Gm-Message-State: AOJu0YyYpMbxr5e8zOUNL75tEhZfbwGoenUWUkpVZ/D7ZNfuhVgLZYhR
+	1+BUfVboUN0/zR2Glx//U47PDv0p/kP+wClNyztLeU9CLxuNt9hw6FyJNxj9UA3T0vc=
+X-Gm-Gg: ASbGncuVVsJVfuSAAhYNFy7p2XwFLA8vysg1QrlNHPqPyfoxMiTIujPykJemM/0zrsk
+	5Q7GjOLj2w/mEk6u7xpu0ut1uETFkfxrqnERTE8mHKdvJ8zIwXLJAoe7Djj6k1rHbWo2QZ9Kk9J
+	yIFy5bsNtpxlUgw+2YqVBV/cLix5UDt2n0ASAmMLGJlYny6mMOZCIpPUHABBR9NNaLcz4/Hmd2+
+	hqQfEU68F6oK50UazPhletYsa3zyB8Gy9eCKtN0dg8MMi1fZKsO4CWwMv4KXTiWGFNnWAxyXpIB
+	MXOXNgRQ4r7a+6EVsXnvlNFwogziMPc8xUVnZnotJgmeFzmOWtV6NNA1q2aPM1b2zhkwFTj56FR
+	MujwoO2/VmGgjhSpcmY1kzgy3kkNvhKVbDUk5m7G/p3anWlnnXACLcmL2weutwNuOMXGSq05Joi
+	1fmL7AM5M1aMWgXWXzkO9N
+X-Google-Smtp-Source: AGHT+IEJ/Z4BcFcaDskM94Iyrqcu0UCwbiA+isEXzRBD9KhGU4ru+KvJ4hlRRGy82ez5z6OPxuufAg==
+X-Received: by 2002:a05:6a21:999d:b0:2cf:afc1:cc3c with SMTP id adf61e73a8af0-32da8f7b6c4mr30979496637.16.1760442470439;
+        Tue, 14 Oct 2025 04:47:50 -0700 (PDT)
+Received: from GL4FX4PXWL.bytedance.net ([203.208.167.150])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0966d7sm14808111b3a.40.2025.10.14.04.47.47
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 14 Oct 2025 04:47:50 -0700 (PDT)
+From: Peng Zhang <zhangpeng.00@bytedance.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	songmuchun@bytedance.com,
+	Peng Zhang <zhangpeng.00@bytedance.com>
+Subject: [PATCH] serial: 8250: always disable IRQ during THRE test
+Date: Tue, 14 Oct 2025 19:47:27 +0800
+Message-Id: <20251014114727.1186-1-zhangpeng.00@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com>
- <68edea17.050a0220.91a22.01fd.GAE@google.com> <DDHX5G54GS7D.1YC8514SPRGQF@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDI0QRWVTMQT.3BA2T46YJLIII@google.com>
-Subject: Re: [syzbot ci] Re: KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Brendan Jackman <jackmanb@google.com>
-To: Brendan Jackman <jackmanb@google.com>, 
-	syzbot ci <syzbot+ci693402a94575bcb2@syzkaller.appspotmail.com>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <kvm@vger.kernel.org>, 
-	<linux-kernel@vger.kernel.org>, <mingo@redhat.com>, <pbonzini@redhat.com>, 
-	<seanjc@google.com>, <tglx@linutronix.de>, <x86@kernel.org>
-Cc: <syzbot@lists.linux.dev>, <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Oct 14, 2025 at 8:57 AM UTC, Brendan Jackman wrote:
-> On Tue Oct 14, 2025 at 6:13 AM UTC, syzbot ci wrote:
->> BUG: using __this_cpu_write() in preemptible code in x86_emulate_instruction
->
-> Ah. And now I realise I never booted my debug config on an actual
-> Skylake host, I'd better do that, presumably running the KVM selftests
-> with DEBUG_PREEMPT etc would have been enough to catch this earlier.
->
-> Anyway, I guest we just want to use vcpu->arch.last_vmentry_cpu instead
-> of smp_processor_id()?
+commit 039d4926379b ("serial: 8250: Toggle IER bits on only after irq
+has been set up") moved IRQ setup before the THRE test, so the interrupt
+handler can run during the test and race with its IIR reads. This can
+produce wrong THRE test results and cause spurious registration of the
+serial8250_backup_timeout timer. Unconditionally disable the IRQ for the
+short duration of the test and re-enable it afterwards to avoid the race.
 
-Just went to code it up and changed my mind about this. If the vCPU is
-being migrated, it doesn't really matter which CPU stuff like
-x86_emulate_instruction() sets the bit on since it's vcpu_load()'s job to
-make sure it's set on the CPU that actually needs it. So I think instead
-we just want raw_cpu_write() here, then there's no pointless remote
-updates. The bit might get set on a CPU that doesn't end up needing it
-for the current vCPU, but it was gonna get the bit set before it ran the
-next vCPU anyway.
+Fixes: 039d4926379b ("serial: 8250: Toggle IER bits on only after irq has been set up")
+Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+---
+ drivers/tty/serial/8250/8250_port.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index 719faf92aa8a..addeef7a0d59 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -2147,8 +2147,7 @@ static void serial8250_THRE_test(struct uart_port *port)
+ 	if (up->port.flags & UPF_NO_THRE_TEST)
+ 		return;
+ 
+-	if (port->irqflags & IRQF_SHARED)
+-		disable_irq_nosync(port->irq);
++	disable_irq_nosync(port->irq);
+ 
+ 	/*
+ 	 * Test for UARTs that do not reassert THRE when the transmitter is idle and the interrupt
+@@ -2170,8 +2169,7 @@ static void serial8250_THRE_test(struct uart_port *port)
+ 		serial_port_out(port, UART_IER, 0);
+ 	}
+ 
+-	if (port->irqflags & IRQF_SHARED)
+-		enable_irq(port->irq);
++	enable_irq(port->irq);
+ 
+ 	/*
+ 	 * If the interrupt is not reasserted, or we otherwise don't trust the iir, setup a timer to
+-- 
+2.20.1
+
 
