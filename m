@@ -1,165 +1,188 @@
-Return-Path: <linux-kernel+bounces-852986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4767BDA67F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:33:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DEABDA703
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6175D3AEE85
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:30:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D87250333C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C564314B74;
-	Tue, 14 Oct 2025 15:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC5E3019CA;
+	Tue, 14 Oct 2025 15:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RweqxQ+V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNgSryB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9228331282F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3F2FBDE9;
+	Tue, 14 Oct 2025 15:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455574; cv=none; b=G+1/bahNMRTeKceSq5EIs4MzSxFfaN4bJ7SS6CS1Nej4xJn1UMPOD0DBWIhee9ccLw2yWwnB0s4E4I4Pkmey7xRXCHnHF39SNbxARoWLby79SJY5NghnBPEOv+0gDXKsVTQNmUdhxVq97TqrgEi1lMYf3lDPS0NiiTYIRV9vepY=
+	t=1760455667; cv=none; b=oZL2i22CowHsgSxrUmIU8GBizHYcKYAi2yqBAUmY/eZy5VJ8+7DQd1D1axrkt+sse3WmKsSyN8NuJ3C3JCnd3yrgCQYFttls4Gj+VPW22s03M//ej5V9mNJExtlId2KA6dks0nWU5lJByPLNDFEBVEkfjQwzKRqEVZa3BqWDAAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455574; c=relaxed/simple;
-	bh=zb6o9BBzMA6ybYP4rPtrVGFRzAZAk6RHKlRdzBd4wb0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lOi9D9Gor1kmJbRmuu9CoijbpJGK8ZQyoYvuT7/ATk3mmnTEu8mhI9pi3/trAQx7xdpc4zN/RQln11lVoJAyWyYCFnAX/NCTiA0SHQhOwrme3pSgJ020P5Ony1LDuo93VmKPAgic0GKGFbnFN7pv5AhlaYZGPwxE44csSiRaplc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RweqxQ+V; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760455571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BPklb6K1+lkU1jV8UO4c/obMd20v1vJ9fV4tt0H1zPw=;
-	b=RweqxQ+V0ktjKiFe9JID4OkFsr51HG2RWDe52/tDj9HfpOdbUz2ReLjxtBgQmlrHm7XOKE
-	5FfuReY2J/QsCpjPv0x9ETfBZD5qoUHuXUnZb9Vpa1Br2DxIo8Mj3rEa1yeTDXT3Rrrwqn
-	P4DJQZcRlFkROtdwiEiAlI/AObZHZT0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-aZGKrlz2MHe9eUB6BX47oQ-1; Tue, 14 Oct 2025 11:26:08 -0400
-X-MC-Unique: aZGKrlz2MHe9eUB6BX47oQ-1
-X-Mimecast-MFC-AGG-ID: aZGKrlz2MHe9eUB6BX47oQ_1760455567
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e4cb3e4deso21106795e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:26:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760455567; x=1761060367;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BPklb6K1+lkU1jV8UO4c/obMd20v1vJ9fV4tt0H1zPw=;
-        b=E9ec/lcLm1KeytDC+uGORDBwKitEAHGe6KpxgJWl9AuWLDn0umE6icvcrdo06Hsx6p
-         OzeijQMpMhg0FaXiQXAovwRkEqgeELV+bPw3UQGB028Lks5XrMEu9RWJ5kP91EiyIr4N
-         j61bxBJVzOkUvyedkK3PGEy57YIa98xFmPF7669Of+lOoB6xn1dzsvyU8x/IgDehcJi8
-         ROZkwQrHY2nlFKK+sSBGKZo4A/jF3eL/168i/lgzXWybKMjeTLDxwSvR/GU4HUhBURP6
-         qoB2GBb9wZuzQSegJHhq763s0Cgqa1mzXSQ2om80ofs0ZBo4IKVv35NkIBBwy6qbBBQI
-         uo6w==
-X-Gm-Message-State: AOJu0YzJzDSp3bWsfgONuQoDG9KPGb5Jv87+Qu7fzn6uxgZuisZFrpbS
-	Qh6FF1CEoUd4WGA/o0OFyMjX5BDS6lMtiiBo0NtLdczU8ithRyKy1l6E9r5yGVocs2NseJccAie
-	tvpb48rU8GFgkPYh9r5g7EVNazq4VN2MrB6NvE4fzkea7imGhuQVpBtypcp/laadZSw==
-X-Gm-Gg: ASbGnctXv/Ki10YLpq+F0ClPphgzUD/qGd9T3CvAQggY5PqRHPOM4d8sHXQeVOILhTe
-	1fBPUVHskqYMtSXkDyah+JVEijphM00Pnav22pYDhpLqQWT/P1FnuslSRaFB7eIsz0wIT42UVt/
-	U//hgMobVxEjCEzPs/RWcOiJzT61RSA9j9NQPvqWj/dMy3snSbv5Yp+K8EAzh7C2buHplNepn1+
-	vQAJ5wC/76+8UnYAmlzJkPtHtbnEnrYfeGF/Q59J5KDn3RUtrMrDzYZwhKv8nMGscfWqttvYwvu
-	NRona1+kKHnMhCQKqBK6D8Yiwtzs4X9XZceal4Ptcis72+kllciAgE5mOkVOymPoHKlvCFx9pon
-	/R0I95Zd993cqbtT2ewjiOQcvyQ==
-X-Received: by 2002:a05:600c:8115:b0:46e:711c:efe9 with SMTP id 5b1f17b1804b1-46fa9ec7556mr181899115e9.13.1760455566808;
-        Tue, 14 Oct 2025 08:26:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHW593XOgtaLpqw6H4D31qH5lmbNbujonLfE4h+J4hQ9AwSFy0g3uK3ztnKvCXj4YJKI0uSVg==
-X-Received: by 2002:a05:600c:8115:b0:46e:711c:efe9 with SMTP id 5b1f17b1804b1-46fa9ec7556mr181898575e9.13.1760455566403;
-        Tue, 14 Oct 2025 08:26:06 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d3b9sm24483884f8f.11.2025.10.14.08.26.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 08:26:05 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Paolo Bonzini
- <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason
- Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard
- Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- "David S. Miller" <davem@davemloft.net>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, Josh
- Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, Andrew
- Morton <akpm@linux-foundation.org>, Masahiro Yamada
- <masahiroy@kernel.org>, Han Shen <shenhan@google.com>, Rik van Riel
- <riel@surriel.com>, Jann Horn <jannh@google.com>, Dan Carpenter
- <dan.carpenter@linaro.org>, Oleg Nesterov <oleg@redhat.com>, Clark
- Williams <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>,
- Marcelo Tosatti <mtosatti@redhat.com>, Daniel Wagner <dwagner@suse.de>,
- Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [PATCH v6 00/29] context_tracking,x86: Defer some IPIs until a
- user->kernel transition
-In-Reply-To: <aO5I2WGtXqSPYFmH@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <aO5I2WGtXqSPYFmH@jlelli-thinkpadt14gen4.remote.csb>
-Date: Tue, 14 Oct 2025 17:26:04 +0200
-Message-ID: <xhsmhzf9tld2r.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1760455667; c=relaxed/simple;
+	bh=rcbQ/4zVKPt71QNu9FJMs9RnxpPz+SCqZaHgRW8i6xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nNwWdP38uuejwvEmHYAxwPBTph2BDpcrJnTBbjoa26HfqcYQGzdULa+oQmD6UWsaEAhmTtHUffgCKOtdp+WTcGDhocl4juRdbx6ntyidsMJgMjPuQLdnBuKgS3GV9JvyYwXE2j+XbixN3lKmUFDrhY4DBUYuKf3G7LqhDxf31GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNgSryB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E376C4CEE7;
+	Tue, 14 Oct 2025 15:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760455667;
+	bh=rcbQ/4zVKPt71QNu9FJMs9RnxpPz+SCqZaHgRW8i6xw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cNgSryB+BZuqNdIe8HWdP29pEuHcFy+pTb7q0EsxHOIKC1M6hctcZ3JfySAzPW7gv
+	 yq9ea8HY+WFyN9Oi98YXBp0KVGTZW6D+mUU6BHHnUobvgZp+3YlFNfukqendjM9A+m
+	 4ZbR2e4Eu4INVDKLAj1Xg7BX4HuuWI0HwRdMAG+d9eQmvAFSg4SLUhKQDG0DgKuoAC
+	 BATlcMW2YW8xmJy5cBIfgN5irj6eWgttXzmvlyPnPa9fozv1ZVEHIoLFsFMVyFb0MN
+	 JAyWg9fSI09X8+pM7YNyPYqFPJ5FdKFW7yfNjdWxM7ZXppDypjc0IIYmYcKJGs5hMI
+	 wgDUlgv8hkx5Q==
+Message-ID: <f046fdda-3bad-4f7f-8587-dca30d183f82@kernel.org>
+Date: Tue, 14 Oct 2025 17:27:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next v1] mptcp: fix incorrect IPv4/IPv6 check
+Content-Language: en-GB, fr-BE
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Davide Caratti <dcaratti@redhat.com>,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251014122619.316463-1-jiayuan.chen@linux.dev>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20251014122619.316463-1-jiayuan.chen@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 14/10/25 14:58, Juri Lelli wrote:
->> Noise
->> +++++
->>
->> Xeon E5-2699 system with SMToff, NOHZ_FULL, isolated CPUs.
->> RHEL10 userspace.
->>
->> Workload is using rteval (kernel compilation + hackbench) on housekeeping CPUs
->> and a dummy stay-in-userspace loop on the isolated CPUs. The main invocation is:
->>
->> $ trace-cmd record -e "ipi_send_cpumask" -f "cpumask & CPUS{$ISOL_CPUS}" \
->>                 -e "ipi_send_cpu"     -f "cpu & CPUS{$ISOL_CPUS}" \
->>                 rteval --onlyload --loads-cpulist=$HK_CPUS \
->>                 --hackbench-runlowmem=True --duration=$DURATION
->>
->> This only records IPIs sent to isolated CPUs, so any event there is interference
->> (with a bit of fuzz at the start/end of the workload when spawning the
->> processes). All tests were done with a duration of 6 hours.
->>
->> v6.17
->> o ~5400 IPIs received, so about ~200 interfering IPI per isolated CPU
->> o About one interfering IPI just shy of every 2 minutes
->>
->> v6.17 + patches
->> o Zilch!
->
-> Nice. :)
->
-> About performance, can we assume housekeeping CPUs are not affected by
-> the change (they don't seem to use the trick anyway) or do we want/need
-> to collect some numbers on them as well just in case (maybe more
-> throughput oriented)?
->
+Hi Jiayuan,
 
-So for the text_poke IPI yes, because this is all done through
-context_tracking which doesn't imply housekeeping CPUs.
+Thank you for sharing this patch!
 
-For the TLB flush faff the HK CPUs get two extra writes per kernel entry
-cycle (one at entry and one at exit, for that stupid signal) which I expect
-to be noticeable but small-ish. I can definitely go and measure that.
+On 14/10/2025 14:26, Jiayuan Chen wrote:
+> When MPTCP falls back to normal TCP, it needs to reset proto_ops. However,
+> for sockmap and TLS, they have their own custom proto_ops, so simply
+> checking sk->sk_prot is insufficient.
+> 
+> For example, an IPv6 request might incorrectly follow the IPv4 code path,
+> leading to kernel panic.
 
-> Thanks,
-> Juri
+Did you experiment issues, or is it a supposition? If yes, do you have
+traces containing such panics (or just a WARN()?), and ideally the
+userspace code that was leading to this?
+
+What is unclear to me is how you got an MPTCP + TLS + sockmap socket.
+And if yes, can we set sk_socket->ops to inet(6)_stream_ops and nothing
+else without having any other issues?
+
+And do we maybe have to update some code in subflow.c also looking at
+sk->sk_prot? I guess no because there, the socket is created by MPTCP,
+and it should be set to tcp(v6)_prot. Except if there is some BPF code
+that can change that?
+
+> Note that Golang has enabled MPTCP by default [1]
+> 
+> [1] https://go-review.googlesource.com/c/go/+/607715
+> 
+> Fixes: 8e2b8a9fa512 ("mptcp: don't overwrite sock_ops in mptcp_is_tcpsk()")
+If I understand the issue correctly, was it not present from the
+beginning, before the mentioned commit?
+
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> ---
+>  net/mptcp/protocol.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> index 0292162a14ee..efcdaeff91f8 100644
+> --- a/net/mptcp/protocol.c
+> +++ b/net/mptcp/protocol.c
+> @@ -62,10 +62,10 @@ static u64 mptcp_wnd_end(const struct mptcp_sock *msk)
+>  static const struct proto_ops *mptcp_fallback_tcp_ops(const struct sock *sk)
+>  {
+>  #if IS_ENABLED(CONFIG_MPTCP_IPV6)
+> -	if (sk->sk_prot == &tcpv6_prot)
+> +	if (sk->sk_family == AF_INET6)
+
+sk_prot was proving it was a TCP + IPv4/6 socket, and then that's OK to
+set inet(6)_stream_ops. I guess we could only check the family, but, can
+we always return inet(6)_stream_ops no matter what sk->sk_prot is?
+
+If the protocol has been modified, the stream one has maybe been
+modified too, no?
+
+>  		return &inet6_stream_ops;
+>  #endif
+> -	WARN_ON_ONCE(sk->sk_prot != &tcp_prot);
+> +	WARN_ON(sk->sk_family != AF_INET);
+
+Please keep the WARN_ON_ONCE().
+
+Maybe we should not return inet_stream_ops in case the previous
+condition was wrong, and not change sk_socket->ops.
+
+>  	return &inet_stream_ops;
+>  }
+
+Note about the subject: if it is a fix for an older commit, it should
+target 'net', not 'net-next' (+ cc stable). Can you also have a clearer
+subject mentioning 'proto' and 'fallback' please?
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
