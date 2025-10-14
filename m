@@ -1,192 +1,213 @@
-Return-Path: <linux-kernel+bounces-851718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7BBBD720D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FF4BD721F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7EB94E0EEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793E93A4F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 03:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA493054D1;
-	Tue, 14 Oct 2025 02:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676B82FFF89;
+	Tue, 14 Oct 2025 03:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ5Vzk6p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TMEZi4kB"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AFF4C6E
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E901F239B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 03:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760410477; cv=none; b=Y3stzWQ1BhJa9kqacxDvZxg03eQpXAu//jhrmgPyl4dC7FwBYhh7FDcypqcjzrikLF7sSKN/T0onvoXjhtRV79mKycT2UKukLrEhXMhu1HEGC3L5SseSWihgY4w7dtUwJjIKfSDU6/r3+XuoZXYXVUEJozXQd52wCPSbpJWUnBg=
+	t=1760410835; cv=none; b=LCu/MLOq2cShvXe6BTZ2qL+nPHq9B7NzOKBjUfJDpUjt2oR2qh2bAqwTr7/wAy1nHk3T8MdNNuKiPhhPLabYUrICgzdva+hgUMNA1jF4ThVBjnMmPCWYwOp6S7CMt11z0r5YCfW8Mrxv3UDl44b6Z8HwOGL8RxHrL/EX/T+C82w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760410477; c=relaxed/simple;
-	bh=rN1/JT8Vi4aFfkerDExWo+sW0UZtHdXnofYs4/tmwlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I/5KuT0hbPyUiKVaS8sXHi5IlOc58/z66X0JU9Kgm0BhH6iyBjmJvU2oNnGjTLn9MK5NPvq9PxV0FGNEZx4LtYbOYPoAEOTfpdeHD8NwJnacgPspZL2Q8XTWlOKxJWdVHSSeqyAGWCc9Kbj3Z9fimGdctB3wSv9FIGB4A2mAvaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZ5Vzk6p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B15C116C6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760410477;
-	bh=rN1/JT8Vi4aFfkerDExWo+sW0UZtHdXnofYs4/tmwlM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QZ5Vzk6p2MTP8SCkciTYMggN/6CyeSrKIPBjuysJ1w5nkg3Ts+53V/Xdso9KjDrdS
-	 TJ/TKe5YIK0H+E+BLBvlkj5aXEEIx3v7S6ZPTrAWIEhrYp12kJjZev016A/suGVDID
-	 Mv2+MujU7AsxiRr0Dho8XEkCWmDD5XWzXFzJdQWqqmUCtAhqREzQoyGqqQHi0f7gPD
-	 Mkl76+twKlUYOVkyQPDYspoCdvFxCu0oWOCoTbT8bDpvdP75jvYdixo9nNEROe8IIQ
-	 9QBOI5HfCnxGQiAYSIx8hRSOSHlxH6HBwHeNsnGPX+5PsINUsyfhKDq2mmcIoVIx9K
-	 6Aq7UCUeUXiPQ==
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so3408109f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 19:54:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXcYukiJUA9b2GthZZU/YCgE8xZD0QGNiNVxme73kp1CW3882oD0pcE5UaxIKzX0QPlaTKmszFsWnfreKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTdLxPLp/Sjr5ZRre0MBUfiIMvoGYbus6zIACG/diGyQjMZsoQ
-	aJ4+qIh3QkBO8WsjmZoXaxloY/H+bPocm+I3mfykFuZ6msNPU+a+F6OKIaCt0T3Og+kAH52bq8+
-	+A/5lIcPUG4RcwHWKUPicf2t0CZZE8ls=
-X-Google-Smtp-Source: AGHT+IFeCe0m2jQpeupyU3ik9Z7IXPpZmM0qDJEXluDW3n2mFBlDM9cW5/QwsDQICNKkTsG8UM84eaA7ty8HCW1R4W4=
-X-Received: by 2002:a5d:588b:0:b0:3ee:1368:a8e9 with SMTP id
- ffacd0b85a97d-4266e7befe4mr15259028f8f.17.1760410475815; Mon, 13 Oct 2025
- 19:54:35 -0700 (PDT)
+	s=arc-20240116; t=1760410835; c=relaxed/simple;
+	bh=gN7Y64XPH1v6BbvQx6OuSvY1gJnDjmQQzG6JZjFDn34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eOLtpQjMcGg1EaDVt6m6cxf9u6bJuMgPz5coeucU6D9KP4y1YlY3C9rIch2wpiWrCKaoY/YMsSNs7B7MHWr6kzckHlWjK7cik10Hsyz3w11f+iaSSlX+fNQ0C0cBWPY+gxXth7g/i0qd++Jj9buVS9qJRJuNj5Chd75PVpDCOgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TMEZi4kB; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:MIME-Version
+	:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=p5zB5BlzE1gYfG5UC1xZutrWrB4UFAYVHYExZLV5Cdw=; b=TMEZi4kBu03EYm3HiAKEYYwo8U
+	PhTyfzKoVJAD57X2l/sihpDgYuksZKKDtSEFp+4keGSTzfFDYMBBtRgeI3gJBcR41N7qJylR/KISw
+	VnHqncYHTPLkLn6gDB2UYjV18wrKqEjTQ4SZD4XqzBuwsUqhAa4Aqbsk4+SyQ89Dv0iwaqEEcfKuv
+	rjWHdlSt3uoOxZ/GOSiUmtjLp8RdWx3pbocpgk/zoGU3gQ5tegMKUL6XVOEfGKm14RQpxNXpMMYT7
+	+mKUsD+gHg/mXskbDcfMyZIxDXJJXrum8to1gamRR1Hv7mT73Dj0Zc1Y+V5dnlSM35xDw+tveYuHr
+	Tt73bFGw==;
+Received: from [50.53.43.113] (helo=smtpauth.infradead.org)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v8VH4-00000004sCd-1X7F;
+	Tue, 14 Oct 2025 03:00:31 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Vaibhav Gupta <vaibhavgupta40@gmail.com>,
+	Jens Taprogge <jens.taprogge@taprogge.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	industrypack-devel@lists.sourceforge.net
+Subject: [PATCH] ipack: fix ipack.h kernel-doc warnings
+Date: Mon, 13 Oct 2025 20:00:26 -0700
+Message-ID: <20251014030026.759198-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911124448.1771-1-cp0613@linux.alibaba.com> <CAK9=C2VEKAy-pS8gy02E2AFifxBOmNPpgTodC+pyuU53Ts_0VA@mail.gmail.com>
-In-Reply-To: <CAK9=C2VEKAy-pS8gy02E2AFifxBOmNPpgTodC+pyuU53Ts_0VA@mail.gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 14 Oct 2025 10:54:23 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQNdRbB0JgAU8p1+13UEFKPF0BNfwzGavHz8DmzFJPF-A@mail.gmail.com>
-X-Gm-Features: AS18NWAzR9RYh2nljzQvD39lmWOwh-HTD5q8TNwK0Yt5xzls94DHmtPOTGj-s18
-Message-ID: <CAJF2gTQNdRbB0JgAU8p1+13UEFKPF0BNfwzGavHz8DmzFJPF-A@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] riscv: tarce: Implement riscv trace pmu driver
- and perf support
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	cp0613@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025 at 12:22=E2=80=AFPM Anup Patel <apatel@ventanamicro.co=
-m> wrote:
->
-> Hi Guo,
->
-> On Thu, Sep 11, 2025 at 6:15=E2=80=AFPM <cp0613@linux.alibaba.com> wrote:
-> >
-> > From: Chen Pei <cp0613@linux.alibaba.com>
-> >
-> > The RISC-V Trace Specification defines a standardized framework for
-> > capturing and analyzing the execution of RISC-V processors. Its main
-> > uses include: instruction and data tracing, real-time debugging, etc.
-> > Similar to Intel-PT and ARM-CoreSight.
-> >
-> > According to the RISC-V Trace Control Interface specification [1].
-> > There are two standard RISC-V trace protocols which will utilize
-> > this RISC-V Trace Control Interface:
-> > - RISC-V N-Trace (Nexus-based Trace) Specification
-> > - Efficient Trace for RISC-V Specification
-> > So, this is a complete guideline for any standard RISC-V trace
-> > implementation.
-> >
-> > This series of patches is mainly used to start related work and
-> > communication. It completes the following tasks:
-> > 1. dt-bindings completes the basic definition of riscv trace
-> >    component properties, but is still incomplete.
-> > 2. Implemented the basic RISC-V Trace PMU driver, including
-> >    support for the aux buffer.
-> > 3. Implemented basic support for AUXTRACE integration with perf
-> >    tools.
-> >
-> > There's still more work to be done, such as:
-> > 1. Complete RISC-V Trace PMU implementation.
-> > 2. The perf.data generation and parsing including AUXTRACE events.
-> > 3. Taking RISC-V N-Trace as an example, implement the parsing of
-> >    Nexus Trace data format, including support for perf report and
-> >    perf script commands.
-> > We are still sorting out.
-> >
-> > Any comments or suggestions are welcome.
-> >
-> > [1] https://github.com/riscv-non-isa/tg-nexus-trace.git
-> >
-> > Chen Pei (4):
-> >   dt-bindings: riscv: Add trace components description
-> >   riscv: event: Initial riscv trace driver support
-> >   tools: perf: Support perf record with aux buffer for riscv trace
-> >   riscv: trace: Support sink using dma buffer
-> >
-> >  .../riscv/trace/riscv,trace,encoder.yaml      |  41 +++
-> >  .../riscv/trace/riscv,trace,funnel.yaml       |  46 ++++
-> >  .../riscv/trace/riscv,trace,sink.yaml         |  37 +++
-> >  arch/riscv/Kbuild                             |   1 +
-> >  arch/riscv/Kconfig                            |   2 +
-> >  arch/riscv/events/Kconfig                     |  11 +
-> >  arch/riscv/events/Makefile                    |   3 +
-> >  arch/riscv/events/riscv_trace.c               | 253 ++++++++++++++++++
-> >  arch/riscv/events/riscv_trace.h               | 133 +++++++++
-> >  arch/riscv/events/riscv_trace_encoder.c       | 109 ++++++++
-> >  arch/riscv/events/riscv_trace_funnel.c        | 160 +++++++++++
-> >  arch/riscv/events/riscv_trace_sink.c          | 100 +++++++
-> >  tools/perf/arch/riscv/util/Build              |   3 +
-> >  tools/perf/arch/riscv/util/auxtrace.c         |  33 +++
-> >  tools/perf/arch/riscv/util/pmu.c              |  18 ++
-> >  tools/perf/arch/riscv/util/riscv-trace.c      | 183 +++++++++++++
-> >  tools/perf/arch/riscv/util/tsc.c              |  15 ++
-> >  tools/perf/util/Build                         |   1 +
-> >  tools/perf/util/auxtrace.c                    |   4 +
-> >  tools/perf/util/auxtrace.h                    |   1 +
-> >  tools/perf/util/riscv-trace.c                 | 162 +++++++++++
-> >  tools/perf/util/riscv-trace.h                 |  18 ++
-> >  22 files changed, 1334 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv=
-,trace,encoder.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv=
-,trace,funnel.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv=
-,trace,sink.yaml
-> >  create mode 100644 arch/riscv/events/Kconfig
-> >  create mode 100644 arch/riscv/events/Makefile
-> >  create mode 100644 arch/riscv/events/riscv_trace.c
-> >  create mode 100644 arch/riscv/events/riscv_trace.h
-> >  create mode 100644 arch/riscv/events/riscv_trace_encoder.c
-> >  create mode 100644 arch/riscv/events/riscv_trace_funnel.c
-> >  create mode 100644 arch/riscv/events/riscv_trace_sink.c
-> >  create mode 100644 tools/perf/arch/riscv/util/auxtrace.c
-> >  create mode 100644 tools/perf/arch/riscv/util/pmu.c
-> >  create mode 100644 tools/perf/arch/riscv/util/riscv-trace.c
-> >  create mode 100644 tools/perf/arch/riscv/util/tsc.c
-> >  create mode 100644 tools/perf/util/riscv-trace.c
-> >  create mode 100644 tools/perf/util/riscv-trace.h
-> >
-> > --
->
-> Few months back we (Ventana) had informed everyone
-> within RVI (particularly self-hosted trace TG) that we are
-> working on Linux trace framework and drivers for the RISC-V
-> community [1]. There are also publicly accessible RISE
-> project pages already available for the trace efforts [2].\
-Thx for reminding, I would reply on [1].
+Fix various kernel-doc warnings in ipack.h:
 
->
-> This is yet another instance where ongoing efforts were
-> totally ignored.
->
-> --
-> Anup
->
-> [1] https://lists.riscv.org/g/sig-hypervisors/message/648
-> [2] https://lf-rise.atlassian.net/wiki/spaces/HOME/pages/8591251/2025+-+K=
-ernel+and+Virtualization+Priorities
+Remove an empty kernel-doc comment.
+Add 2 missing struct short descriptions.
+Fix a typo in a description.
+Add a missing struct field description.
+Add some missing Return descriptions.
+Clarify one function short description.
 
+Warning: ../include/linux/ipack.h:73 Cannot find identifier on line:
+ */
+Warning: ../include/linux/ipack.h:74 Cannot find identifier on line:
+struct ipack_region {
+Warning: ../include/linux/ipack.h:75 Cannot find identifier on line:
+        phys_addr_t start;
+Warning: ../include/linux/ipack.h:76 Cannot find identifier on line:
+        size_t      size;
+Warning: ../include/linux/ipack.h:77 Cannot find identifier on line:
+};
+Warning: ../include/linux/ipack.h:78 Cannot find identifier on line:
 
+Warning: ../include/linux/ipack.h:79 Cannot find identifier on line:
+/**
+Warning: ipack.h:80 missing initial short description on line:
+ *      struct ipack_device
+Warning: ipack.h:163 missing initial short description on line:
+ *      struct ipack_bus_device
+Warning: ipack.h:130 struct member 'id_table' not described in 'ipack_driver'
+Warning: ipack.h:189 No description found for return value of 'ipack_bus_register'
+Warning: ipack.h:194 No description found for return value of 'ipack_bus_unregister' ***
+Warning: ipack.h:202 No description found for return value of 'ipack_driver_register'
+Warning: ipack.h:221 No description found for return value of 'ipack_device_init'
+Warning: ipack.h:236 No description found for return value of 'ipack_device_add'
+Warning: ipack.h:271 No description found for return value of 'ipack_get_carrier'
 
---=20
-Best Regards
- Guo Ren
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Cc: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Cc: Jens Taprogge <jens.taprogge@taprogge.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: industrypack-devel@lists.sourceforge.net
+---
+ include/linux/ipack.h |   23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+
+--- linux-next-20251013.orig/include/linux/ipack.h
++++ linux-next-20251013/include/linux/ipack.h
+@@ -70,15 +70,13 @@ enum ipack_space {
+ 	IPACK_SPACE_COUNT,
+ };
+ 
+-/**
+- */
+ struct ipack_region {
+ 	phys_addr_t start;
+ 	size_t      size;
+ };
+ 
+ /**
+- *	struct ipack_device
++ *	struct ipack_device - subsystem representation of an IPack device
+  *
+  *	@slot: Slot where the device is plugged in the carrier board
+  *	@bus: ipack_bus_device where the device is plugged to.
+@@ -89,7 +87,7 @@ struct ipack_region {
+  *
+  * Warning: Direct access to mapped memory is possible but the endianness
+  * is not the same with PCI carrier or VME carrier. The endianness is managed
+- * by the carrier board throught bus->ops.
++ * by the carrier board through bus->ops.
+  */
+ struct ipack_device {
+ 	unsigned int slot;
+@@ -124,6 +122,7 @@ struct ipack_driver_ops {
+  * struct ipack_driver -- Specific data to each ipack device driver
+  *
+  * @driver: Device driver kernel representation
++ * @id_table: Device ID table for this driver
+  * @ops:    Callbacks provided by the IPack device driver
+  */
+ struct ipack_driver {
+@@ -161,7 +160,7 @@ struct ipack_bus_ops {
+ };
+ 
+ /**
+- *	struct ipack_bus_device
++ *	struct ipack_bus_device - IPack bus representation
+  *
+  *	@dev: pointer to carrier device
+  *	@slots: number of slots available
+@@ -185,6 +184,8 @@ struct ipack_bus_device {
+  *
+  * The carrier board device should call this function to register itself as
+  * available bus device in ipack.
++ *
++ * Return: %NULL on error or &struct ipack_bus_device on success
+  */
+ struct ipack_bus_device *ipack_bus_register(struct device *parent, int slots,
+ 					    const struct ipack_bus_ops *ops,
+@@ -192,6 +193,8 @@ struct ipack_bus_device *ipack_bus_regis
+ 
+ /**
+  *	ipack_bus_unregister -- unregister an ipack bus
++ *
++ *	Return: %0
+  */
+ int ipack_bus_unregister(struct ipack_bus_device *bus);
+ 
+@@ -200,6 +203,8 @@ int ipack_bus_unregister(struct ipack_bu
+  *
+  * Called by a ipack driver to register itself as a driver
+  * that can manage ipack devices.
++ *
++ * Return: zero on success or error code on failure.
+  */
+ int ipack_driver_register(struct ipack_driver *edrv, struct module *owner,
+ 			  const char *name);
+@@ -215,7 +220,7 @@ void ipack_driver_unregister(struct ipac
+  * function.  The rest of the fields will be allocated and populated
+  * during initalization.
+  *
+- * Return zero on success or error code on failure.
++ * Return: zero on success or error code on failure.
+  *
+  * NOTE: _Never_ directly free @dev after calling this function, even
+  * if it returned an error! Always use ipack_put_device() to give up the
+@@ -230,7 +235,7 @@ int ipack_device_init(struct ipack_devic
+  * Add a new IPack device. The call is done by the carrier driver
+  * after calling ipack_device_init().
+  *
+- * Return zero on success or error code on failure.
++ * Return: zero on success or error code on failure.
+  *
+  * NOTE: _Never_ directly free @dev after calling this function, even
+  * if it returned an error! Always use ipack_put_device() to give up the
+@@ -266,9 +271,11 @@ void ipack_put_device(struct ipack_devic
+ 	 .device = (dev)
+ 
+ /**
+- * ipack_get_carrier - it increase the carrier ref. counter of
++ * ipack_get_carrier - try to increase the carrier ref. counter of
+  *                     the carrier module
+  * @dev: mezzanine device which wants to get the carrier
++ *
++ * Return: true on success.
+  */
+ static inline int ipack_get_carrier(struct ipack_device *dev)
+ {
 
