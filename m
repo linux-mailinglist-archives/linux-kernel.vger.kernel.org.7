@@ -1,132 +1,144 @@
-Return-Path: <linux-kernel+bounces-852766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED45BD9D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:01:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2970BBD9D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2413BA213
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818A918A4F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619DE30CD9E;
-	Tue, 14 Oct 2025 14:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB923148C4;
+	Tue, 14 Oct 2025 13:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0MbkMKT"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+V1pvA6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4814A2E2F09
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D515F313E3F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450501; cv=none; b=rkqGwH8/auPmaGrGawtrXfTFR6ZUIQ07GvYpomiv6tV1HC5uEnc2UFbgNpIUIb1FPmkedJQqw0j8+T4ibKDbrVPWMkiQ6HHaqP7pEcjQj522P33FbC9ZQGRmO+prKFz8FptvNpPMaYai4BHMPNyMlatdWo5VzE8wquG3V9DPpkQ=
+	t=1760450254; cv=none; b=PPOvoJVVc3L7COlUSqHk2w/NZ6gSmZs5O8g/ivM7kxuNNnNJWwWBbVBMZiP6MDf8MxWN4VivZ/Bl+HHnFZi8OMPvJhSxfbZ79YPwrucmIsQiZm7yFakAOa5rE/R3HCX8KZU+StKeWizINDKNZrHYa1C4QynFntR6VTtAAQYukEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450501; c=relaxed/simple;
-	bh=ORkyXfUlrCWsmh6RANOw0pZZxMqtCdH/gG/DbxBBa40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ya4hp3IxcgdHrIyzJ9qrGx0mIZxlzeZl1aAsexNDd0ZOh8Ojq9v52+f35omjgVyO3tuuu6ELhl0FHLJ+jLL7YA12sf7KlOzwAYmlRjLlBvWzAu75t/HytQeHu8871nvhAcZKhKGRR9A2jIMRV2DlL24CWKQqBpXBx4K83Y/bumw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0MbkMKT; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-87bf3d1e7faso20123086d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:01:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760450499; x=1761055299; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LS/tbUNJsSKY6ZBKj3q4etRpyWDlKJg9S7gh6A/LQgo=;
-        b=L0MbkMKTdkUFEd10cDZu8mG+7eaqSz9iE5HgOOX2sgcD2dA991d4OX8szIm4Ue6Erk
-         dYe3JsUVx3xfWSpyUStkRHEWRml3EFbna7dQbFbCBJncXvgMfl8ziHETcSpt5cBEPY30
-         2KfbMp18oqAtub7pAqHXzeqSCHpJHYTLa/zUyfpkFoljWQYgj7pfI0NWM2fEUVIjEfM3
-         F33KNfiAEW1Yt1Ygwzy5wg/U+0U0E6WHebJc21n0VF1kG2nbNKm6wHYMmuzjetgVL9+C
-         Ub+F3fDSvTTyGrzVnRvQC6xJ4+NnxrpcilO5AJZiu1ZBs6cUYJVNZx6abmQHzU1qVwIn
-         Y6YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760450499; x=1761055299;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LS/tbUNJsSKY6ZBKj3q4etRpyWDlKJg9S7gh6A/LQgo=;
-        b=RAtmMpALZp+mTuawA0NIt+O0MtBYdlu0k6bNl3JaZ2YXfsNZ54iIOfHwV2lIDKs6Qs
-         8njrtNGz5lYE2BEfiCd46czQy3GEoQllxYy1iRLs2014QIVZzMgHYpHb02TVsEPzUQh6
-         w2qFvMw/s72p5yrrCECEwdc7ZtWdhIz/DhLoLcQVFqcseXRAp2OT4TFAi8fmjo2W16gG
-         Bnqf6l3j4Ow1+0Qp+WCEcvw0wbfTU4yzjhRAJbfpX9hM/CS0cy8Lw/pH7lQCosJA62SV
-         +xv8i9SyD8V/+u3cRTJY3MYfAk1Cbr9oAq9e2dJGnv/bv99k25FZGM6fm72Ae6WNLFiu
-         zMfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXS9IW40zLIK+661n71zVi6suWiMbR/uCY9sq3rhShIxS1YFoOWKsbIuZpytdfZTD8Y95yA6THrZmB97ZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8SS0Uto6dmF2fbqdg9vGdreyqV1LmyGfM6BFwlhfimbpFgEJF
-	IQSdoU9xFUfrjbKIFSSxVYnfadgz0ZWha6UaEnRINeQT4AyFRbkVvEfs
-X-Gm-Gg: ASbGncu6UsKMEVq2ps/RDK6DxZVcR8zSy/wJ9pGqT0dBqbB0ptyUPO88yoxKOvT/xhh
-	HVHSoxjac8ba5y73/ygbhq1HuCHq37edx14Y0OxVx7rDq0xSSpwGN50NwHtzGWyeeq57COtJsS/
-	qyMuKc1OUaN0EVPp8ZCtWmqsuWaBXJdf2nfv0A7wgo1NVdPTFvzAAVmPY3qMOVDH3siRUMOr91E
-	UcOBwb0LlZE7laARv7XKPyDYzuMU3rZzH5NdhX/r159Kq72kmeiXBjBmpVwPedkOlRc90m5l9Q0
-	uXLwh3qXWEE80BuA8Q3OD1TkCpxqjLRXml5Rj7PqJ7lL73d9NFh+sFCmPz7Tn87/lZ3SwAqKFq/
-	YYnwJrdbyC03oJU7eM+1k9Z6UiTcv9E9pwI+OGpD4nFfurrfLKWXiWb+MEEPWzwNembi3eJ3My0
-	LpLxI=
-X-Google-Smtp-Source: AGHT+IFLWmAN9G07TTGLUzgifyDJgAAk5U/8bI9uGvO0YQEdEpRvVcRB55hOrODs3UAIlksFawlP9Q==
-X-Received: by 2002:a05:6214:1c0c:b0:802:3d9c:4450 with SMTP id 6a1803df08f44-87b21032734mr363621256d6.19.1760450498747;
-        Tue, 14 Oct 2025 07:01:38 -0700 (PDT)
-Received: from [192.168.0.155] ([170.10.253.128])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87bc35ad1b7sm92609116d6.58.2025.10.14.07.01.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 07:01:30 -0700 (PDT)
-Message-ID: <8918310c-d0aa-4e02-b9d4-9aac98b0a48f@gmail.com>
-Date: Tue, 14 Oct 2025 10:01:28 -0400
+	s=arc-20240116; t=1760450254; c=relaxed/simple;
+	bh=9Bp8AJ/WQRQ295sdmc7ICQoc1WRNJmV+9KA7IvNc/no=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZtnTSbQ/8BnYw+v4xeYzzPTGJMpPxQtN+Ggxa02CCWhcYEY1/lpfXsPZgK65i1N9yNWBrmqIVysXlSnJYqBCg2p5lzABXXdh/BhJ8lC2GjBGN+LaKKFP8Fp9DjcZkemddt+pyo29bo+Yn3kmpvqauBy8dbh2KhM4DHFrovAALE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+V1pvA6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760450250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CLqZvZmZP+WAmkYpFaM0w/WfiPIL+h8tjIzXNrAJ52Q=;
+	b=J+V1pvA6OhVsdOrQdwqCIGyq0hzVPRIhareMdsDUTpezDc0fc1KcNtE84np+Tx9gGnUMsj
+	aKfVaF+86hoobA9louXMa0fXqnzskt3PmCCiC+4MdI0A4xliESFVyMhsfFyL+rTDGV0TMr
+	agaGjdfJgGk2B84ehGDG76q6BlsN1VI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-WLClpadGMXi7wIzoT8PDug-1; Tue,
+ 14 Oct 2025 09:57:27 -0400
+X-MC-Unique: WLClpadGMXi7wIzoT8PDug-1
+X-Mimecast-MFC-AGG-ID: WLClpadGMXi7wIzoT8PDug_1760450246
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC9C1180034D;
+	Tue, 14 Oct 2025 13:57:25 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.119])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 98AEF1801AD7;
+	Tue, 14 Oct 2025 13:57:24 +0000 (UTC)
+Date: Tue, 14 Oct 2025 10:01:33 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: lu gu <giveme.gulu@gmail.com>, Joanne Koong <joannelkoong@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bernd Schubert <bernd@bsbernd.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+Message-ID: <aO5XvcuhEpw6BmiV@bfoster>
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster>
+ <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster>
+ <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: greybus: documentation: replace strncpy() with
- strscpy_pad()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gregkh@linuxfoundation.org, johan@kernel.org, elder@kernel.org,
- schopin@ubuntu.com, me@abhy.me, greybus-dev@lists.linaro.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251014134148.2597178-1-vivek.balachandhar@gmail.com>
- <aO5VvrKTswmfO-n9@stanley.mountain>
-Content-Language: en-CA
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-In-Reply-To: <aO5VvrKTswmfO-n9@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Yes, Dan. Nice catch. Building it with below sample change:
+On Tue, Oct 14, 2025 at 09:48:34AM +0200, Miklos Szeredi wrote:
+> On Mon, 13 Oct 2025 at 20:49, Brian Foster <bfoster@redhat.com> wrote:
+> 
+> > Hrm Ok. But even if we did miss remote changes, whose to say we can even
+> > resolve that correctly from the kernel anyways..?
+> 
+> No, I'm worrying about the case of
+> 
+> - range1 cached locally,
+> - range1 changed remotely (mtime changed)
+> - range2 changed locally (mtime changed, cached mtime invalidated)
+> - range1 read locally
+> 
+> That last one will update mtime in cache, see that old cached mtime is
+> stale and happily read the stale data.
+> 
+> What we currently have is more correct in the sense that it will
+> invalidate data on any mtime change, be it of local or remote origin.
+> 
 
-memset(&intf_load.firmware_tag, 0, GB_FIRMWARE_U_TAG_MAX_SIZE);
-strncpy((char *)&intf_load.firmware_tag, firmware_tag,
-         GB_FIRMWARE_U_TAG_MAX_SIZE - 1);
+Yeah, I guess. IMO if you made it policy that this sort of thing is
+userspace responsibility, then something like the above is not
+necessarily incorrect in fuse, it's more a failure of userspace.
 
-If it works, will send another patch.
+I'd guess the challenge is more how to manage the change in behavior.
+Maybe that would need an opt-in flag or something for userspace to
+signify it understands it is responsible for external changes, and then
+have a notify call or whatever that can tie into cache truncation
+(where'd you'd explicitly punch out cache even if dirty).
 
-Best, Vivek.
+But TBH, if the writeback thing or something similarly simple works for
+resolving the immediate bug, I wouldnt worry too much about it
+until/unless there are userspace fs' explicitly looking for that sort of
+behavior. Just my .02.
 
+Brian
 
-On 2025-10-14 9:53 a.m., Dan Carpenter wrote:
-> On Tue, Oct 14, 2025 at 01:41:48PM +0000, Vivek BalachandharTN wrote:
->> strncpy() does not guarantee NUL-termination and is deprecated for
->> NUL-terminated strings. Replace it with strscpy_pad(), which guarantees
->> NUL-termination and zero-pads the remaining bytes, matching the fixed-size
->> firmware tag semantics.
->>
->> Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
->> ---
->>   .../greybus/Documentation/firmware/firmware.c        | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/staging/greybus/Documentation/firmware/firmware.c b/drivers/staging/greybus/Documentation/firmware/firmware.c
->> index 3b35ef6d4adb..deac8584841b 100644
->> --- a/drivers/staging/greybus/Documentation/firmware/firmware.c
->> +++ b/drivers/staging/greybus/Documentation/firmware/firmware.c
-> This is sample user space code so the strscpy_pad() isn't available.  It
-> will break the compile.
->
-> regards,
-> dan carpenter
->
+> > > Yes, reproducer has auto_inval_data turned on (libfuse turns it on by default).
+> > >
+> >
+> > I was more wondering if the problem goes away if it were disabled..
+> 
+> I haven't tried, @guangming?
+> 
+> > Ah, yeah that makes sense. Though invalidate waits on writeback. Any
+> > reason this path couldn't skip the dirty state but mark the pages as
+> > under writeback across the op?
+> 
+> Maybe that'd work.  It *is* under writeback after all.
+> 
+> Maybe the solution is to change the write-through to regular cached
+> write + fsync range?  That could even be a complexity reduction.
+> 
+> Thanks,
+> Miklos
+> 
+
 
