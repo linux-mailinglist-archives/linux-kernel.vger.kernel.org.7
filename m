@@ -1,202 +1,206 @@
-Return-Path: <linux-kernel+bounces-852581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76ED4BD9605
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:37:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D657EBD96D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD8A3ADCED
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:37:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964C31927DAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36743090FF;
-	Tue, 14 Oct 2025 12:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ekj1lzXf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70333148B4;
+	Tue, 14 Oct 2025 12:43:50 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3BB312802
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1368C313E27
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760445429; cv=none; b=G3dKO0MynM8B/uAxXV3mnpvdKnG47SH8bS1zs2UxB+8LrPqjD77ouoiv5cXMkPf1D5/P2U7lQtBAJmIdGuedakVUiOswNMt7DI2BDK91SOvweLHM+YUqJ9wI/dsaQGZx83NfsdD0XyAvnTUrIxjgE9JqynX3m4OSkHDhy21gCj8=
+	t=1760445830; cv=none; b=pvm48v7aG7bosDoZDVNa3hA6A6G1icw5Ev+PAd+IKm12TBB5g2XU6jJ3bRH1Rw+L5GqNbta6Lb6Iwo1fhlTwSAtq5oxBNfTGn80vz/qqgkpdR3jg5y4WpTQIfCnOO4ww/0Jvf91oyolO7uFcZ9YmN3cDv2ykTE1eJsxfRRBSrYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760445429; c=relaxed/simple;
-	bh=2i/9DWpcFPS1pMn2FEUvaWf0SzvJmHWgtMuwoZMXL64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FL3qwuOLeDSlTCS+PHCk7RMvAdbW3a73CB0yxyONIzZo4yeSWsWUetZ1J85U0IyQX6ilvfml8Cu7JGRYR3DcW1NGQMx3XcAkWqN4BBK2xeNsA4qNdSOer/QQtau9OjksCw2SnJ7oukXCfKPxq25ycQWzhs6URS1E3bJRhZFTckI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ekj1lzXf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87ag9017040
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zIxMrSYPKSOc36A7DVe+LtuzT/Ctad9aI8MUfRjtCvg=; b=Ekj1lzXfFgBk4YVL
-	lNfuRCuaQineXFoBYsyaDZd03eozU/9Xll4e2xiRe7Kh/NlOljIPCunGd6x0FFRQ
-	Rh1RfKTJK+Zlyr8/tKrwJnevetPTvne9nlnMcrrTyQ6OdKkoUmgSeDhODRtMpC+b
-	KkkMvHxI/6+iOCeGP8B741fOsjknu0hW8INSEJkY1XMR2HLb/xLslKBl07ZdmBX8
-	3r64MtqhvBTjhLYDgdq2YiUkXz/p07w43my18rjQfyrf+av/oywRxNkueYKzim04
-	Mep5FNuTS0ziqYY2pASlLHtHMUGDQwH1BTNIZfW0g9Djrguz2s2fugCWLgGrt0na
-	79uJdg==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd90js5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:37:06 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b650a3e0efcso9401523a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:37:06 -0700 (PDT)
+	s=arc-20240116; t=1760445830; c=relaxed/simple;
+	bh=RIfWvbV5qR2Jc9YKaUmr9BCFgP/FhvLoQholBe4TpL8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RQJcCh/+7W9plQ2dyeD28ZZTAcSX5MwFlYw4geCk0QI/qWC3ZUspH5vmgrMSCue8VoaykY0CLzYpvSjmSZUgNuvuwg8b+r+8Q/Z1hfwPA7XAi8apwuHF8HpTBDQBwgxRBvG3s+NvVB/81PmR8WVB5Z6780L56coq+DdKvXa3eiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-554f1c13bcaso1892981e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:43:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760445426; x=1761050226;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIxMrSYPKSOc36A7DVe+LtuzT/Ctad9aI8MUfRjtCvg=;
-        b=S7PLNyZLc39bupz2FZRM/fPbwARHc3h/YvezW4w/3ihumP1p9duii6jF5+gvEO7oYW
-         JpBGYSxG3+UxH5vmnGgUwP4egdQsrJcYJe9IdFtPpMAu0GK/NM08VSRI+TcNGmk4v3Ks
-         BPf2v2jHgGI3pvwofFg0litWwOO+mgSMxdatloQtHGWwXP4kKmX7BGQ9atdDx4LbgBUD
-         Sigk546ouQLibYxKzSVgs0MzbutAR9ir7WcrHW6u7f/4QFz3OxVQ0DESrj7HPft5UY5Q
-         8S4LpSqA88roUUAqaJzWfOMCyfFRlYQ4wPY4TzsKv3etsJXzbjQQoP79AiQ1kTrFWjxr
-         aCJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAY9LdVNIxjFVRDU0/iB/ClWjo2Pgs68/sSDp7pXhADq/DbCfr4cl7U7j9YF2VGZTjEvoAs0ouB0pDGvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSh4TV9BEqSV45CJw7gQ0cpeFeiqQqUanetpZ96npyyz6bm8qP
-	Hl/j+ktrpA4zN/8l8aCKVJsvtQIG+16ZZesTAtcAHlhz5l9TJoqhui5h/9RJj1eisBAUjv+wryF
-	MsU2PZwv9MXvrBFiueQfgtWBagiuKxSY1ACmKUfdovCVFO6OXuVUmVwkkb/IooyFiXOw=
-X-Gm-Gg: ASbGncswcVj3G2R8O8CMvi3FMnA1ehYXFw1VU6MDLOCZp6oCqF03NddD9ODp5iCnd31
-	NStTJ7g6LLI1sDRfOsKHtwbfs1A4XXli4i7tZ2SAGeMXAccNn93Jiyl1Ik4LLgHLXOfNU5CMCcY
-	bt462jzT9yBIsZDShe9+e98jYIMTysAINJwyIC0MHqIs3S8buS7WHrTux96t6hBUKYXRVKf6UBt
-	RjfSpyIuRlQ2/EnVRBp3srV+nIz6bRqAmZVa75BwKJ5gJqK0vCDN2PWxVUf3tI5YsaGjCnKmtxO
-	ytBPhruNecMXpNS+YEhA3vslQDQG7WOu+HimpQNMQQqskX99XN/riitCgkaEpUp7hWUK2a2roMH
-	vkUcOZRTv3XADzXXYDOSFzCwCGg==
-X-Received: by 2002:a05:6a20:9183:b0:32b:83af:11ff with SMTP id adf61e73a8af0-32da8139347mr32608555637.2.1760445425699;
-        Tue, 14 Oct 2025 05:37:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFj9gLDhN3zLw56SIwWQu9Ntr/nll9EvL8/XTaZlSlmUqmVQq4OR90HEiYkP4sd+g4UWAci6w==
-X-Received: by 2002:a05:6a20:9183:b0:32b:83af:11ff with SMTP id adf61e73a8af0-32da8139347mr32608529637.2.1760445425209;
-        Tue, 14 Oct 2025 05:37:05 -0700 (PDT)
-Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bc12a8asm14946105b3a.34.2025.10.14.05.37.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 05:37:04 -0700 (PDT)
-Date: Tue, 14 Oct 2025 18:06:58 +0530
-From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 17/24] arm64: dts: qcom: glymur-crd: Avoid RTC probe
- failure
-Message-ID: <20251014123658.sobt6ab6gnbafyme@hu-kamalw-hyd.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-17-24b601bbecc0@oss.qualcomm.com>
- <CAJKOXPdi0+c_FqinVA0gzoyqG6FVFp0jq5WSLsWWKiT12VVs3Q@mail.gmail.com>
- <CADhhZXaB310hVo_w8_CoJLQ3j9dy1eeTwbmk0q=vUV2ga1PAYA@mail.gmail.com>
- <8f81289d-7672-42e6-b841-6514607cdb38@oss.qualcomm.com>
- <20251013110407.dqpjdrdaw4gzpcy4@hu-kamalw-hyd.qualcomm.com>
- <49004d3e-7914-48ee-8705-ee86d1944166@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1760445825; x=1761050625;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sNxEU7KyfBYhfmf3Lx2LLvPMpGLQ7HkB7d0pkrjoK9E=;
+        b=oTbbCTBY1lxK6D0YMotN9Id2jXRcdk4exdhIhjRbJRVT3T8Ats2WkD1SzrZejtUyrv
+         a5jcMQhmaSMsBxGO4qGwsuUcLzT0piWQEgwdtqwsEmKDclUSxmm3dr/jCZjzWIc00XMR
+         SND2fo8NcaI0QaxHH/RFWhyyo9oKHeKzqgluTyPYuNgq/lZLtZBZYPSNNx4o7SYjp6Lw
+         zhOEbO/1/hOYZfSnNFkS919l9Z0xGEMs2HPo5tD9fmWjpd5BwaxJ3CuR2oZj1/S7FoNN
+         pXFiKMTHU01r+eiWOTVJyb/nedmPUWAbtQFPRL98c5qzcpDNu/Fo4gV85kxF/QCYPBpm
+         T7wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmVuDnUalhGsMPfLh8GUx4E6Dw7U45gsnmM0otqTXRNOoQkFU0c6KTzccxUXGQTdf+47ttajZub9zHt28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSKVO4lzGI1h5dNYh2fi2Ge4get/A0P7HTN2mAw+zLCyNpyToF
+	1dZnAeY4e+KmyKm9s4LYH0eQxFNqLSXSpocxMEmWtZCoyYI9w+TcP7mN3ahM2NnJ
+X-Gm-Gg: ASbGncuN4583v8DmwYVv51QaNSkipmvlrRegNavVMN2Vf7/3o97222jeazzw4+AiiL6
+	5qlAeI0KjkAGdjZw7lfw8JVBSMzBQ3Ly3tvj9cOZKe/gfW54gpvxlKJ0ZVJ5Use80gjf5gdiwCt
+	4+iYARLq+w+olUKd0fQIw3J31FNEbv8QgiSXKwxgspO+kl0AwlEqmPXnbzlXpVCYI9rMWb4LzP1
+	3ap2Hc9BeyJm6BFc+t7Wak690f543XnVgXMt9A0QqYw79djTmSRLdi4c+7LzbAiaxScVtyQc+Jn
+	kdU/rrNoLcnCcbnZR58oy8wOSyDU9+bxUQAlefxRSY3j/GfjnYe4h/kXoAx4GRikbDOEVVDMlIS
+	i/K6dM+OGLQPleAiKuW3iBMehB6Patrt71QWQvh6hAF+HQoPXLSVT/e2cWEak3bOEhS4oWOZVY8
+	aFGbEYP8s=
+X-Google-Smtp-Source: AGHT+IEXX+dVcXisbURR7uedMO/VKMFKGHAKDTVIk0ljD7vL8t2WOaHsZCapuoW+Rnnii6/mWsD+eg==
+X-Received: by 2002:a05:6122:2225:b0:544:7d55:78d6 with SMTP id 71dfb90a1353d-554b8a7f802mr9186085e0c.2.1760445825234;
+        Tue, 14 Oct 2025 05:43:45 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d7f02499sm3946505e0c.6.2025.10.14.05.43.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Oct 2025 05:43:44 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5aa6b7c085aso5888491137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:43:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgrehNhUnHgufnnBvRf/bLZSUHr+g/OOJ2Kb+Vy8r41tpNvz/4X2x5VeC0PWQWZwjM7DlQ2wgZ5maU2Ko=@vger.kernel.org
+X-Received: by 2002:a05:6102:a51:b0:5d6:3554:2dbb with SMTP id
+ ada2fe7eead31-5d635542e5dmr527665137.16.1760445443647; Tue, 14 Oct 2025
+ 05:37:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <49004d3e-7914-48ee-8705-ee86d1944166@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 6JqMJK7ziuAxBaoH2ND3RPYa1h-lthzG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX1SB50WuBUFrV
- BY6xLKVxiFI3h3nwc759AKe3KG4E+o6gynoa80JVXAhFsynmR3Yg+PhBaDShXgCndle4Ymfo8Hc
- s2p11kmRbKHrkhDVOTwBnsbqSHTYEWBzjfLGNvieOHJpf+kuKJIalD5IxSPFlPU/qMVkReg7R1w
- R01ZvC9dG6Y4qHtUkZQZOWVtEaV+6Ndt82ia8YjsxsdId9On3wc+OoroBiT41U+c/p6ylIg/NnY
- jOp2idktbPJFuTzaFJrPjVRhvfqLwBT9qKbDKEGB2nwEGiSHOisrHgsQ+JPaW8vc9kL0V0sdB9i
- aO20RDpPmM/KuqsasXDDuYNZCyBdUfoprzbwG3vfsor/x1Db1DWuYfsEut2mGikH9csTx3FT1tT
- gIuSYTq4YQKi+sVRqxjA11JQE36IbA==
-X-Proofpoint-GUID: 6JqMJK7ziuAxBaoH2ND3RPYa1h-lthzG
-X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68ee43f2 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=dw0t6H4-AAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gWmXDqEIHeUc13t17I8A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
- a=wVJa4CU9-Z26yuRAZDil:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110018
+References: <20250826041319.1284-1-kprateek.nayak@amd.com> <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu> <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
+ <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+ <CAMuHMdWMkKFLEZ34j=JV0Ls+o80UfC6s3yD5x-9G2K8ZV-Y-9w@mail.gmail.com> <20251014094210.GQ3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251014094210.GQ3245006@noisy.programming.kicks-ass.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Oct 2025 14:37:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUD8RZqPL5ZYyJrwJB+XL_Tkn-rsLx7WvUmn6y5M_tAtw@mail.gmail.com>
+X-Gm-Features: AS18NWC3_aMtxy2dnl_M3on8VhWCTedTTMBJW4khUhDoS9xyzcvkRTZ1BETpTHo
+Message-ID: <CAMuHMdUD8RZqPL5ZYyJrwJB+XL_Tkn-rsLx7WvUmn6y5M_tAtw@mail.gmail.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC
+ scheduling bits
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, thomas.weissschuh@linutronix.de, 
+	Li Chen <chenl311@chinatelecom.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Mete Durlu <meted@linux.ibm.com>, Tobias Huschle <huschle@linux.ibm.com>, 
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>, 
+	Guo Weikang <guoweikang.kernel@gmail.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Brian Gerst <brgerst@gmail.com>, 
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Andrea Righi <arighi@nvidia.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Tim Chen <tim.c.chen@linux.intel.com>, 
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Konrad, 
+Hoi Peter,
 
-On Tue, Oct 14, 2025 at 12:23:23PM +0200, Konrad Dybcio wrote:
-> On 10/13/25 1:04 PM, Kamal Wadhwa wrote:
-> > On Mon, Oct 06, 2025 at 04:28:59PM +0200, Konrad Dybcio wrote:
-> >> On 10/1/25 2:23 PM, Kamal Wadhwa wrote:
-> >>> Hi Krzysztof,
-> >>>
-> >>> On Thu, Sep 25, 2025 at 1:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >>>>
-> >>>> On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
-> >>>> <pankaj.patil@oss.qualcomm.com> wrote:
-> >>>>>
-> >>>>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> >>>>>
-> >>>>> On Glymur boards, the RTC alarm interrupts are routed to SOCCP
-> >>>>> subsystems and are not available to APPS. This can cause the
-> >>>>> RTC probe failure as the RTC IRQ registration will fail in
-> >>>>> probe.
-> >>>>>
-> >>>>> Fix this issue by adding `no-alarm` property in the RTC DT
-> >>>>> node. This will skip the RTC alarm irq registration and
-> >>>>> the RTC probe will return success.
-> >>>>
-> >>>>
-> >>>> This is ridiculous. You just added glymur CRD and you claim now that
-> >>>> it's broken and you need to fix it. So just fix that commit!
-> >>>
-> >>> I'm afraid, but this is an actual limitation we have for Glymur
-> >>> (compared to Kaanapali).
-> >>> The RTC is part of the pmk8850.dtsi that is common between Kaanapali and
-> >>> Glymur. On Glymur (unlike Kaanapali) the APPS processor does *not* have the RTC
-> >>> IRQ permission for the RTC peripheral.
-> >>
-> >> This is interesting.. is that a physical limitation, or some sort of
-> >> a software security policy?
-> > 
-> > This is mostly a limitation for all compute targets(like Glymur). On compute
-> > targets we need to support ACPI TAD feature[1] this feature uses the RTC alarm.
-> > In a nutshell, this feature implements 2 times - AC ( adaptor power) and
-> > DC (battery power) timers, and based on active power source(AC or DC?) at the
-> > time of timer expiry device will either go for a full bootup or stay in power
-> > down.
-> > 
-> > This feature is implemented on a different subsystem (SoCCP subsystem), and
-> > since the SPMI `IRQ` permissions can only be assigned to only one subsystem,
-> > so we can't use the alarms on APPS. This is why we use no-alarms DT to register
-> > RTC device without alarm-irq support.
-> > 
-> > [1] TAD specification - https://uefi.org/sites/default/files/resources/ACPI_5.pdf
-> > section 9.18
-> 
-> Hm, is there maybe some sort of an interface to talk to the SoCCP
-> and set the RTC as we wish, from the OS?
+On Tue, 14 Oct 2025 at 11:42, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Oct 14, 2025 at 11:25:53AM +0200, Geert Uytterhoeven wrote:
+> > On Thu, 28 Aug 2025 at 14:57, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > Now, when I look at unifying those config options (there's a metric ton
+> > > of crap that's duplicated in the arch/*/Kconfig), I end up with something
+> > > like the below.
+> > >
+> > > And while that isn't exact, it is the closest I could make it without
+> > > making a giant mess of things.
+> > >
+> > > WDYT?
+> >
+> > Thanks for your patch, which is now commit 7bd291abe2da09f5 ("sched:
+> > Unify the SCHED_{SMT,CLUSTER,MC} Kconfig") in v6.18-rc1.
+> >
+> > > --- a/arch/Kconfig
+> > > +++ b/arch/Kconfig
+> > > @@ -41,6 +41,44 @@ config HOTPLUG_SMT
+> > >  config SMT_NUM_THREADS_DYNAMIC
+> > >         bool
+> > >
+> > > +config ARCH_SUPPORTS_SCHED_SMT
+> > > +       bool
+> > > +
+> > > +config ARCH_SUPPORTS_SCHED_CLUSTER
+> > > +       bool
+> > > +
+> > > +config ARCH_SUPPORTS_SCHED_MC
+> > > +       bool
+> > > +
+> > > +config SCHED_SMT
+> > > +       bool "SMT (Hyperthreading) scheduler support"
+> > > +       depends on ARCH_SUPPORTS_SCHED_SMT
+> > > +       default y
+> >
+> > This is now enabled by default everywhere, while it was disabled by
+> > default on most architectures before...
+>
+> I'm not sure ARCH_SUPPORTS_SCHED_SMT counts as everywhere, but yes.
+> A fair deal of the architectures had all this default yes, and I had to
+> pick something. Can't make an omelette without breaking an egg and all
+> that :/
 
-Yes, the developement is almost done and we have done some testing as well, but
-that kernel driver needs some more cleanup and testing before posting to
-upstream. This will be added in future.
+OK.
 
-> 
-> Konrad
+> > > +       help
+> > > +         Improves the CPU scheduler's decision making when dealing with
+> > > +         MultiThreading at a cost of slightly increased overhead in some
+> > > +         places. If unsure say N here.
+> >
+> > So it should default to n?
+>
+> That's just help text that got carried around. Many of the architectures
+> that had default y still had this text on. I suppose we can change it if
+> someone cares.
 
-Regards,
-Kamal
+Please do so.
+
+> > If it is really needed on some architectures or platforms, I guess
+> > they can still select it explicitly?
+>
+> There were 4 cases:
+>
+>  - arch doesn't support SMT
+>  - arch supports SMT and lets user pick, default Y
+>  - arch supports SMT and lets user pick, default N
+>  - arch mandates SMT
+>
+> Of those 3 are still possible, the one we lost is the default N case.
+>
+> Old configs that have =N will continue to have N. New configs might end
+> up with Y.
+>
+> Why is this a problem?
+
+While old .config files will see no changes, old defconfig files do
+need updates.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
