@@ -1,210 +1,143 @@
-Return-Path: <linux-kernel+bounces-852863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD400BDA204
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D06BDA20D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A6F3A5A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49EC0581F06
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE663016E8;
-	Tue, 14 Oct 2025 14:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F2430170C;
+	Tue, 14 Oct 2025 14:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ERhq6RRI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wcBR3W7A"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E024E30147F;
-	Tue, 14 Oct 2025 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4DF2FF164
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 14:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760452870; cv=none; b=fSUlQGvd7gbnW1Rw9RSUNeTUgkbnim9p5pqSW5JuRvHsgCOLT+LUkZDZTPRonfTAm1AAa3r91j17DyGCPidzjawlajAh09vPsAaR+DSzBK4kGj80nghTqElfCAoF7g+WmRAoV98ftIlN+zg6ihuOGoyo6783i717qIFua6hyETo=
+	t=1760452895; cv=none; b=mcW9idiQ0UqFdasmGd2Ubqg4DRyPXGjvlrB9saJol1vtJ/Pvyj6StKugMwXy8l0Sm6sfO6VGxhwDfKWJ09yQbjBz6f9m3cP2AJFiPW+/aOWYeuj+FQMqC22sbIdA/FcgepHfc1dyKp1jiCj4rz0egp623kLiV2in7W4fra9A5fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760452870; c=relaxed/simple;
-	bh=bzXzVGoX6Soh/go+uDrQi2kQPxtg+NUe8G2AQ2W5LuA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Wv4I0NcO0EZfsbC5SWW5Y03mFckry1rHI2fpMRjnsVDeZtsRoMJeqQDmySiniVqzAC56EZ95Ll8LR/ZGcIqcKGX2U5dGjailCsNH/m+O8qlozhyNGbwkVtHaiU5QNydlHDlvQH5D3jUuQVVdv8wqRKHtriH2SYO48w6vZNRrSFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ERhq6RRI; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760452868; x=1791988868;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=bzXzVGoX6Soh/go+uDrQi2kQPxtg+NUe8G2AQ2W5LuA=;
-  b=ERhq6RRIgr4CCaB9QL3xKKMrR91sRxR8Spx/nXTNzIZ/AoVrhV+I6CUd
-   tySlr1w9KJX2DVwfbmNILpqodVRNJHufJW5wSN4Z6dpqKQOUwrWNcZ3sy
-   jVqg/tlFvf/gjl9ifbp/ry9ne0CI2Nx2whlP6TG4oDlA8XEaxbrsVSSAJ
-   m5uJ2YcNZclpoM48xFrFsi6UhNwGm5d3TxNWnhZi2XMRDFi8JykHyKcL6
-   4n0nYQPAPQQmZ4AXeA1cq7VfdiLjJFADdTcVbnUepa44JLWB2c0PMlXGa
-   6bDt0ll+pP0h6G8qGw5qREHlEUWsOg7S1vc9Sy7hVss5dfGsypC9uNIQF
-   Q==;
-X-CSE-ConnectionGUID: QSc3pEGPR2yStoe8rHCUOw==
-X-CSE-MsgGUID: 7wAnVZLLQZWgxwcKYi5R2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62319485"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="62319485"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:41:07 -0700
-X-CSE-ConnectionGUID: 3ulb3REWRsyEgBFO1He+uA==
-X-CSE-MsgGUID: LKZYOFdXSha35f1JqLHp7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; 
-   d="scan'208";a="187205148"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.195])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 07:40:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 14 Oct 2025 17:40:56 +0300 (EEST)
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com, 
-    bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, 
-    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com, 
-    naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com, 
-    mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v12 3/3] Documentation: tracing: Add documentation about
- PCI tracepoints
-In-Reply-To: <20251014123159.57764-4-xueshuai@linux.alibaba.com>
-Message-ID: <cf4d3079-2d1b-dfa4-aa5f-e018962131bd@linux.intel.com>
-References: <20251014123159.57764-1-xueshuai@linux.alibaba.com> <20251014123159.57764-4-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1760452895; c=relaxed/simple;
+	bh=EnFd3hKLw7xglwwAfM0zsnf/4D4i4YLszNYTMx7pwrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wvc5eYLHNfUPGXcMdlg7PT9tDLiDYnoZNKddych+cpg2kN5NKf+ZqMP1GNJroxodJSiZXGMzsmtHgbUnOwZI3IpqZIEfI6xDZQ3ChZ4+VPjut1VbXv6mp6eJuNTKFOdJas9yufqYW5VpmUm4Ctr55AwSfNgaWNrabbxoxXkCGV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wcBR3W7A; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c9f46ef5-b7fe-4592-b458-ecb91652d2ed@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760452880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CYEZcyD6SgizdudERHV1+QQWcWpelGTwNBq9Zz7nboU=;
+	b=wcBR3W7A1MLjmuD0laWyZl/i3lVq1YSI3HECA4D2THldQYOuCm4+vWkIYMAGRIUiODD2sx
+	ht7jOzaToTsV1Qh7H/vEAnMHu5gYDS5D67TalwIuwTBLiwnY65frzmmUliYJUpMW04/QOl
+	Pl8jMP7IM0kCl+qOHXDAtwWxcylNYCw=
+Date: Tue, 14 Oct 2025 07:41:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-19756653-1760452856=:925"
+Subject: Re: [PATCH] RDMA/rxe: remove redundant assignment to variable
+ page_offset
+To: Colin Ian King <coking@nvidia.com>, Zhu Yanjun <zyjzyj2000@gmail.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251014120343.2528608-1-coking@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20251014120343.2528608-1-coking@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-19756653-1760452856=:925
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Tue, 14 Oct 2025, Shuai Xue wrote:
-
-> The PCI tracing system provides tracepoints to monitor critical hardware
-> events that can impact system performance and reliability. Add
-> documentation about it.
->=20
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+在 2025/10/14 5:03, Colin Ian King 写道:
+> The variable page_offset is being assigned a value at the start of
+> a loop and being redundantly zero'd at the end of the loop, there
+> is no code that reads the zero'd value. The assignment is redundant
+> and can be removed.
+> 
+> Signed-off-by: Colin Ian King <coking@nvidia.com>
 > ---
->  Documentation/trace/events-pci.rst | 74 ++++++++++++++++++++++++++++++
->  1 file changed, 74 insertions(+)
->  create mode 100644 Documentation/trace/events-pci.rst
->=20
-> diff --git a/Documentation/trace/events-pci.rst b/Documentation/trace/eve=
-nts-pci.rst
-> new file mode 100644
-> index 000000000000..500b27713224
-> --- /dev/null
-> +++ b/Documentation/trace/events-pci.rst
-> @@ -0,0 +1,74 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> +Subsystem Trace Points: PCI
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> +
-> +Overview
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +The PCI tracing system provides tracepoints to monitor critical hardware=
- events
-> +that can impact system performance and reliability. These events normall=
-y show
-> +up here:
-> +
-> +=09/sys/kernel/tracing/events/pci
-> +
-> +Cf. include/trace/events/pci.h for the events definitions.
-> +
-> +Available Tracepoints
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +pci_hp_event
-> +------------
-> +
-> +Monitors PCI hotplug events including card insertion/removal and link
-> +state changes.
-> +::
-> +
-> +    pci_hp_event  "%s slot:%s, event:%s\n"
-> +
-> +**Event Types**:
-> +
-> +* ``LINK_UP`` - PCIe link established
-> +* ``LINK_DOWN`` - PCIe link lost
-> +* ``CARD_PRESENT`` - Card detected in slot
-> +* ``CARD_NOT_PRESENT`` - Card removed from slot
-> +
-> +**Example Usage**:
-> +
-> +    # Enable the tracepoint
-> +    echo 1> /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-> +
-> +    # Monitor events (the following output is generated when a device is=
- hotplugged)
-> +    cat /sys/kernel/debug/tracing/trace_pipe
-> +       irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 000=
-0:00:02.0 slot:10, event:CARD_PRESENT
-> +
-> +       irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 000=
-0:00:02.0 slot:10, event:LINK_UP
-> +
-> +pcie_link_event
-> +---------------
-> +
-> +Monitors PCIe link speed changes and provides detailed link status infor=
-mation.
-> +::
-> +
-> +    pcie_link_event  "%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_s=
-peed:%s, width:%u, flit_mode:%u, status:%s\n"
-> +
-> +**Parameters**:
-> +
-> +* ``type`` - PCIe device type (4=3DRoot Port, etc.)
-> +* ``reason`` - Reason for link change:
-> +
-> +  - ``0`` - Link retrain
-> +  - ``1`` - Bus enumeration
-> +  - ``2`` - Bandwidth controller enable
-> +  - ``3`` - Bandwidth controller IRQ
+>   drivers/infiniband/sw/rxe/rxe_mr.c  | 1 -
+>   drivers/infiniband/sw/rxe/rxe_odp.c | 1 -
+>   2 files changed, 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
+> index bcb97b3ea58a..b1df05238848 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_mr.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_mr.c
+> @@ -452,7 +452,6 @@ static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned int leng
+>   
+>   		length -= bytes;
+>   		iova += bytes;
+> -		page_offset = 0;
+>   	}
+static int rxe_mr_flush_pmem_iova(struct rxe_mr *mr, u64 iova, unsigned 
+int length)
+{
+	unsigned int page_offset;
+	...
+	while (length > 0) {
+		index = rxe_mr_iova_to_index(mr, iova);
+		page = xa_load(&mr->page_list, index);
+		page_offset = rxe_mr_iova_to_page_offset(mr, iova);
+	...
+		page_offset = 0;
+	}
 
-Maybe these two should be called "Bandwidth notification" as that's the=20
-name of the underlying mechanism.
+	return 0;
+}>
+>   	return 0;
+> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
+> index f58e3ec6252f..ae71812bea82 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
+> @@ -358,7 +358,6 @@ int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
+>   
+>   		length -= bytes;
+>   		iova += bytes;
+> -		page_offset = 0;
+>   	}
+int rxe_odp_flush_pmem_iova(struct rxe_mr *mr, u64 iova,
+			    unsigned int length)
+{
+	unsigned int page_offset;
+...
+	while (length > 0) {
+		index = rxe_odp_iova_to_index(umem_odp, iova);
+		page_offset = rxe_odp_iova_to_page_offset(umem_odp, iova);
+...
+		page_offset = 0;
+	}
 
-For the entire series,
+	mutex_unlock(&umem_odp->umem_mutex);
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+	return 0;
+}
+ From the above, in the functions rxe_mr_flush_pmem_iova and 
+rxe_odp_flush_pmem_iova, within the while loop, the variable page_offset 
+is assigned a value. At the end of the loop, page_offset is set to 0. 
+However, this assignment at the end of the loop is actually unnecessary.
 
-> +  - ``4`` - Hotplug event
-> +
-> +
-> +**Example Usage**:
-> +
-> +    # Enable the tracepoint
-> +    echo1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
-> +
-> +    # Monitor events (the following output is generated when a device is=
- hotplugged)
-> +    cat /sys/kernel/debug/tracing/trace_pipe
-> +       irq/51-pciehp-88      [001] .....   381.545386: pcie_link_event: =
-0000:00:02.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:1=
-6.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
->=20
+Thanks,
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 
---=20
- i.
+Zhu Yanjun
 
---8323328-19756653-1760452856=:925--
+>   
+>   	mutex_unlock(&umem_odp->umem_mutex);
+
+
 
