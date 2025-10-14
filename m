@@ -1,175 +1,135 @@
-Return-Path: <linux-kernel+bounces-853073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5558BDA957
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AA5BDA960
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A026352E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B482189028F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 16:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007643019CA;
-	Tue, 14 Oct 2025 16:13:26 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A336A2F6169;
+	Tue, 14 Oct 2025 16:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gf51G+rn"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D526B2C17B3
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C914B96E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 16:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760458405; cv=none; b=hpxq7e8fMM01FYBiLtN6CvNd7nMv6s2g2gHxgBw2yMiEPZ0MatqpWXtN2nM5dKTAcOC9Pjk6xtDLEDKnw+NQRWzNTvGzt5/jJTUBqa2IIlMaBhSh5Nr8B0Cfr3KAQTMt63UYGfChGtPOW0Ugy8zFWx9VDvkuvRk0MTcmWuoBLUQ=
+	t=1760458541; cv=none; b=IhUtDbXO2Gnh6fSB9pHCn1TKrPBZqrxv5JlcT4/tcyeWuoBV5iguFg0Erx3qXbwiz1OYLyzOcMRgEqvpiPYzMU47/YZ3K7dWFuZ++koQcEicHdmA3qgsoPJeB5zMaBKF2mSmlEV3w3bRAuYKJtvFnDPgChw/YGBQ3nKAmorsvFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760458405; c=relaxed/simple;
-	bh=IpYLzozxxWXdKbnKBRbJDIidyOlsjMCeODX5hcLA5wk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcYZPKOqZqJgJCO1Fn4vy17ZUDgMlKl8NMfmZ5MRPAwc+x/Y7wozwhN4p1t6tn366dnJy1YLeFjGR8N0izxY/FiFIZo5tqE0yQm2z+R/4t5zZbbIj8XaibWA8Mmy/R+tkR82pPpiH4F83CURLqMz8cZc4p6+Uyi1uo0xrYI8AIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63be5c739cdso656648a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:13:22 -0700 (PDT)
+	s=arc-20240116; t=1760458541; c=relaxed/simple;
+	bh=cKgxk6jiTeHyylnHogBfYDP2fUmT+YdxuibvKyiaGXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pj6fkIWB+fuW4aqTw+D1pZLBqYZW0jmSHXwT4pBVJO+wW2kh1rE7ElaZgaJeEkV7S6Zv7vG5t2K5sdx4mgXeMFpuUzwaNZjTuTbgeRH/vFGJUWSxLd9tXnDF3xhwWWeDKaFbE51NDaxMtIR0ay9xXj18wKM2lACcRL2fhV787+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gf51G+rn; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-87a0801ba1aso11623185a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1760458538; x=1761063338; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewrwrknKHXB/uAbS3LbH0U+4arscjhN9e2UHVe6cDww=;
+        b=gf51G+rnc9IGAw5NyFtZkvpY3109qyAD3BqWt83Crd7p49RXe9dSmhnAzki74AEEEF
+         JboGnzkHho4Gekt3u2XlT/QIU0kGWodn5ER2hWMI1SrC1T7YjO0h/6bB0rpOUIAPcTfY
+         rbOZRD/sXT2XUl74M41o2xVTPZmVlqfLiv8Og=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760458401; x=1761063201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=//02jhzybzRTsAQwMmWpsv3xhS89bxRH7c2a1Fq5ApA=;
-        b=R4biXl3A+6x4x3RQ2jy0It64RAXT1GKi4AW5KN9hZ9omUuSPbOVfKhrh2UKrxa/sF3
-         y5imJGKBWogyO1iRbzmxisVW9e7mycgbuPYona6Qwqkf+P3XE5pE2VirxYvo3q/v3f0B
-         Iw95Xkb7MqnDH7OdvVEKdNiCanVSX618qv15aphcDyNe57jv6CQ9VezNRrRQsoomxQSK
-         1W+vbpj71sO7OngFEJsJ43Y5OP9oaG1/yP6PWLRgaKK/5qvuoPkbUvCWAFLSmQErIGN3
-         AidvYk6eBRyUQeLK2LApDNd8oANHiM275NvmOdsnTVszBimXQo5Yxfa5XsSQEr1bBQ7f
-         07cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgvr9b1qOjJ0gDL1TQx37PR/LUU9mEn77ZsiRhnXs0r4eBMEJzVPZvXxl9/HG64yT1zNRscB2aXoJXzCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp4UpwUFuFeyZwEM/ujRVr7ytNpf0kjZkAb0PTz3as78Kl3WXV
-	55MEdR8/KPt7VDkkycJZStIQcTy5BfpF6cggUZmZ3F80debfKmetv5RH
-X-Gm-Gg: ASbGncs5q9RjxhVusjcO9gBDJlXvntTz7MkZnWRHuBncNKHaFKVdS8FbQDXIvi/Xhhx
-	8bdhSr5no92qH5nh2tzuvpqxA+VP0pfGA+nI4HIkURZFg0gTI/ljt68pLfpk81pdwvOezUiuvfb
-	SLR0np6toe6DHBSKRCJOxMnTgyhPuJibMPS1WlZQtzdzZibbNrASyqeWwydrhbPD7fBdTi7LLlL
-	bI7CHz2JXK0gjnhuDmJklGXC3/sYXwJ2WhDidGw0cAKnpF4M4+qRecRX4Y2leVhFM14xaXorMNS
-	tVhKaqf5KbgszF/Tc0re2QXLhx1RB0WRaB57EpGvjWPx0fDQumwUOQIAFlmlogA500mi5v11JTE
-	udd4E0DeHmBJ6iRv10ZLFLDoISsHBUuL1QWc=
-X-Google-Smtp-Source: AGHT+IGhu0gykfSr0z1wu2B7v62jrwI1vVub/7qRRjCr3AoBJQe1ZVnEw6PtLOxEN5FHwzaoj867DQ==
-X-Received: by 2002:a05:6402:278b:b0:63b:dc7d:72f2 with SMTP id 4fb4d7f45d1cf-63bdc7d7e38mr1695096a12.19.1760458401023;
-        Tue, 14 Oct 2025 09:13:21 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:3::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a52b0f39esm11314435a12.11.2025.10.14.09.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 09:13:20 -0700 (PDT)
-Date: Tue, 14 Oct 2025 09:13:18 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	usamaarif642@gmail.com, riel@surriel.com, kernel-team@meta.com
-Subject: Re: [PATCH net v2] netpoll: Fix deadlock in memory allocation under
- spinlock
-Message-ID: <53jkbptcchxc2sxho56rrj7bcwizpd536bsox45hw75uk2fydg@k33edbzrjdvr>
-References: <20251014-fix_netpoll_aa-v2-1-dafa6a378649@debian.org>
- <aO5aJ9dN5xIIdmNE@horms.kernel.org>
+        d=1e100.net; s=20230601; t=1760458538; x=1761063338;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ewrwrknKHXB/uAbS3LbH0U+4arscjhN9e2UHVe6cDww=;
+        b=thBEv1BspSqXrnPQLN8/Do3QZeHkbw4/Jx8h0ufPvdBXpVvlrHCFll0N/YEFx4sfGR
+         Yvx2NJMi6Kxs8q+Y1wbaYGIZUBQa4DHZ5sLB3+pkgeOnsQ1RCrixLN48bWzOTQt7RJJ5
+         slqlNH9NbbBMYBAJttCcu/v/5PoqXMRXb6U9C74lE7FABc/Zh1ZuMOfWyhQ+MgoVqiAI
+         9RfsAy7kUduF/nmnWkg18NDgIfgp2ATA29wJ46cZEYRRz13gmO4rje+cOwfqRjjRPhCM
+         lUm3OERsAW1myC6TTn6uaJhRZl//kEF0RvMtRjmfZ//St0twlkTbBYx1eLJcJenND9w/
+         1yRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjxhNSF4ZdkjMkCCpbbijj8E4IauXwOmxajQh/NRfoi6a+0HBJDZ77zrSIYMhyKzAEYcjuSn6K838dh9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeF5DxCH6moXByPxfHPKuwPLA1CGta+5MJhIau4mcqVeGscCQl
+	rh3Cp+wnPlw5YBtt5caRrlPFcoePNhOBjqeJS26cq4sUeFzrW/2DihKvBGUk+6DKO3IyOQB2r9o
+	H+kSOdDr4mnUG9Vq9JQVnlSKZkIzQ+7xuReP4k728NVl4vLi6zJsUhAM=
+X-Gm-Gg: ASbGncvgFzT84hA8CgJwJjziudsSw9GThWOmpkRA5yo3UqaWwKVdGYH0mDeCmdUrPFm
+	B2jx7X4LZnHNlZ5a6a1N8O0l0U9SWinTGd3kcAnw2OhyK7CU5byftjIkOzNWeI93V/NQVszE16G
+	NRBwEW+Y874i325YRlSppjphTBMqhw1ZvhBnUM7VdmHdgtwB3XGxh2k02msgUOkKkrUYrMpZWZ4
+	bmc8H6LenASsq+jF6tf4ssi+/XIunP8IsWtqkqUPoACXs3wdHhzL8iQlf7R2V/wLbDZCQ==
+X-Google-Smtp-Source: AGHT+IEojfPMQQk3wmAM9Q1dVYdLKmiUUYjXxV3T3mSLdv84y61D1MV9lsjnph7DcvmRn+shS0c8cY2yVTET3hV8Bg4=
+X-Received: by 2002:ac8:7d4e:0:b0:4c3:a0ef:9060 with SMTP id
+ d75a77b69052e-4e6eacf3e4cmr310503061cf.26.1760458538020; Tue, 14 Oct 2025
+ 09:15:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO5aJ9dN5xIIdmNE@horms.kernel.org>
+References: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+ <CAJnrk1aZ4==a3-uoRhH=qDKA36-FE6GoaKDZB7HX3o9pKdibYA@mail.gmail.com>
+ <CAFS-8+VcZn7WZgjV9pHz4c8DYHRdP0on6-er5fm9TZF9RAO0xQ@mail.gmail.com>
+ <CAFS-8+V1QU8kCWV1eF3-SZtpQwWAuiSuKzCOwKKnEAjmz+rrmw@mail.gmail.com>
+ <CAJfpegsFCsEgG74bMUH2rb=9-72rMGrHhFjWik2fV4335U0sCw@mail.gmail.com>
+ <CAJfpegs85DzZjzyCNQ+Lh8R2cLDBG=GcMbEfr5PGSS531hxAeA@mail.gmail.com>
+ <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+In-Reply-To: <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 14 Oct 2025 18:15:26 +0200
+X-Gm-Features: AS18NWD3DKKeraOhbOarAGzkUEqZ7zC_nG_AO-Oe_1HPhN0h50C60DqtXglynJA
+Message-ID: <CAJfpeguCe9-hbK8-XDGhaVHT1TD8oGH6E+vXRyY3cRs1rYYJ=A@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: lu gu <giveme.gulu@gmail.com>
+Cc: Brian Foster <bfoster@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bernd Schubert <bernd@bsbernd.com>
+Content-Type: multipart/mixed; boundary="000000000000cdb243064120b1b7"
 
-On Tue, Oct 14, 2025 at 03:11:51PM +0100, Simon Horman wrote:
-> On Tue, Oct 14, 2025 at 03:10:51AM -0700, Breno Leitao wrote:
-> > Fix a AA deadlock in refill_skbs() where memory allocation while holding
-> > skb_pool->lock can trigger a recursive lock acquisition attempt.
-> > 
-> > The deadlock scenario occurs when the system is under severe memory
-> > pressure:
-> > 
-> > 1. refill_skbs() acquires skb_pool->lock (spinlock)
-> > 2. alloc_skb() is called while holding the lock
-> > 3. Memory allocator fails and calls slab_out_of_memory()
-> > 4. This triggers printk() for the OOM warning
-> > 5. The console output path calls netpoll_send_udp()
-> > 6. netpoll_send_udp() attempts to acquire the same skb_pool->lock
-> > 7. Deadlock: the lock is already held by the same CPU
-> > 
-> > Call stack:
-> >   refill_skbs()
-> >     spin_lock_irqsave(&skb_pool->lock)    <- lock acquired
-> >     __alloc_skb()
-> >       kmem_cache_alloc_node_noprof()
-> >         slab_out_of_memory()
-> >           printk()
-> >             console_flush_all()
-> >               netpoll_send_udp()
-> >                 skb_dequeue()
-> >                   spin_lock_irqsave(&skb_pool->lock)     <- deadlock attempt
-> > 
-> > This bug was exposed by commit 248f6571fd4c51 ("netpoll: Optimize skb
-> > refilling on critical path") which removed refill_skbs() from the
-> > critical path (where nested printk was being deferred), letting nested
-> > printk being calld form inside refill_skbs()
-> > 
-> > Refactor refill_skbs() to never allocate memory while holding
-> > the spinlock.
-> > 
-> > Another possible solution to fix this problem is protecting the
-> > refill_skbs() from nested printks, basically calling
-> > printk_deferred_{enter,exit}() in refill_skbs(), then, any nested
-> > pr_warn() would be deferred.
-> > 
-> > I prefer tthis approach, given I _think_ it might be a good idea to move
-> > the alloc_skb() from GFP_ATOMIC to GFP_KERNEL in the future, so, having
-> > the alloc_skb() outside of the lock will be necessary step.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Fixes: 248f6571fd4c51 ("netpoll: Optimize skb refilling on critical path")
-> > ---
-> > Changes in v2:
-> > - Added a return after the successful path (Rik van Riel)
-> > - Changed the Fixes tag to point to the commit that exposed the problem.
-> > - Link to v1: https://lore.kernel.org/r/20251013-fix_netpoll_aa-v1-1-94a1091f92f0@debian.org
-> > ---
-> >  net/core/netpoll.c | 20 +++++++++++++++++---
-> >  1 file changed, 17 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-> > index 60a05d3b7c249..c19dada9283ce 100644
-> > --- a/net/core/netpoll.c
-> > +++ b/net/core/netpoll.c
-> > @@ -232,14 +232,28 @@ static void refill_skbs(struct netpoll *np)
-> >  
-> >  	skb_pool = &np->skb_pool;
-> >  
-> > -	spin_lock_irqsave(&skb_pool->lock, flags);
-> > -	while (skb_pool->qlen < MAX_SKBS) {
-> > +	while (1) {
-> > +		spin_lock_irqsave(&skb_pool->lock, flags);
-> > +		if (skb_pool->qlen >= MAX_SKBS)
-> > +			goto unlock;
-> > +		spin_unlock_irqrestore(&skb_pool->lock, flags);
-> > +
-> >  		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
-> >  		if (!skb)
-> > -			break;
-> > +			return;
-> >  
-> > +		spin_lock_irqsave(&skb_pool->lock, flags);
-> > +		if (skb_pool->qlen >= MAX_SKBS)
-> > +			/* Discard if len got increased (TOCTOU) */
-> > +			goto discard;
-> >  		__skb_queue_tail(skb_pool, skb);
-> > +		spin_unlock_irqrestore(&skb_pool->lock, flags);
-> >  	}
-> > +
-> > +	return;
-> 
-> Maybe it is worth leaving alone for clarity.
-> And certainly it does no harm.
-> But the line above is never reached.
+--000000000000cdb243064120b1b7
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks for the catch. I will remove it since it is useless and respin.
+On Tue, 14 Oct 2025 at 14:43, Miklos Szeredi <miklos@szeredi.hu> wrote:
+
+> Will try the idea of marking folios writeback for the duration of the write.
+
+Attaching a test patch, minimally tested.
+
+Guangming, can you please test if this fixes the cache corruption?
+
+Thanks,
+Miklos
+
+--000000000000cdb243064120b1b7
+Content-Type: text/x-patch; charset="US-ASCII"; name="fuse-write-through-set-writeback.patch"
+Content-Disposition: attachment; 
+	filename="fuse-write-through-set-writeback.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mgqrj1m00>
+X-Attachment-Id: f_mgqrj1m00
+
+ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZmlsZS5jIGIvZnMvZnVzZS9maWxlLmMKaW5kZXggOTA1NzI2
+YWMzYTdhLi4yZjEyYTUwMWRmOWQgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZmlsZS5jCisrKyBiL2Zz
+L2Z1c2UvZmlsZS5jCkBAIC0xMTIxLDkgKzExMjEsNiBAQCBzdGF0aWMgc3NpemVfdCBmdXNlX3Nl
+bmRfd3JpdGVfcGFnZXMoc3RydWN0IGZ1c2VfaW9fYXJncyAqaWEsCiAJYm9vbCBzaG9ydF93cml0
+ZTsKIAlpbnQgZXJyOwogCi0JZm9yIChpID0gMDsgaSA8IGFwLT5udW1fZm9saW9zOyBpKyspCi0J
+CWZvbGlvX3dhaXRfd3JpdGViYWNrKGFwLT5mb2xpb3NbaV0pOwotCiAJZnVzZV93cml0ZV9hcmdz
+X2ZpbGwoaWEsIGZmLCBwb3MsIGNvdW50KTsKIAlpYS0+d3JpdGUuaW4uZmxhZ3MgPSBmdXNlX3dy
+aXRlX2ZsYWdzKGlvY2IpOwogCWlmIChmbS0+ZmMtPmhhbmRsZV9raWxscHJpdl92MiAmJiAhY2Fw
+YWJsZShDQVBfRlNFVElEKSkKQEAgLTExNTMsNiArMTE1MCw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1
+c2Vfc2VuZF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVzZV9pb19hcmdzICppYSwKIAkJfQogCQlpZiAo
+aWEtPndyaXRlLmZvbGlvX2xvY2tlZCAmJiAoaSA9PSBhcC0+bnVtX2ZvbGlvcyAtIDEpKQogCQkJ
+Zm9saW9fdW5sb2NrKGZvbGlvKTsKKwkJZWxzZQorCQkJZm9saW9fZW5kX3dyaXRlYmFja19ub19k
+cm9wYmVoaW5kKGZvbGlvKTsKIAkJZm9saW9fcHV0KGZvbGlvKTsKIAl9CiAKQEAgLTEyMzIsNiAr
+MTIzMSw4IEBAIHN0YXRpYyBzc2l6ZV90IGZ1c2VfZmlsbF93cml0ZV9wYWdlcyhzdHJ1Y3QgZnVz
+ZV9pb19hcmdzICppYSwKIAkJCWZvbGlvX21hcmtfdXB0b2RhdGUoZm9saW8pOwogCiAJCWlmIChm
+b2xpb190ZXN0X3VwdG9kYXRlKGZvbGlvKSkgeworCQkJZm9saW9fd2FpdF93cml0ZWJhY2soZm9s
+aW8pOworCQkJZm9saW9fc3RhcnRfd3JpdGViYWNrKGZvbGlvKTsKIAkJCWZvbGlvX3VubG9jayhm
+b2xpbyk7CiAJCX0gZWxzZSB7CiAJCQlpYS0+d3JpdGUuZm9saW9fbG9ja2VkID0gdHJ1ZTsK
+--000000000000cdb243064120b1b7--
 
