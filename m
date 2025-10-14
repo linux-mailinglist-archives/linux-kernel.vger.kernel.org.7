@@ -1,83 +1,51 @@
-Return-Path: <linux-kernel+bounces-851781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD632BD73D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:25:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D42BD73DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73CEE4E779B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:25:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23153BCF4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF60D30ACF6;
-	Tue, 14 Oct 2025 04:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD4B30AD1D;
+	Tue, 14 Oct 2025 04:26:57 +0000 (UTC)
 Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413E930AAC8;
-	Tue, 14 Oct 2025 04:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8717630AD0D;
+	Tue, 14 Oct 2025 04:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760415898; cv=none; b=dE6NsryDXIM3K6XMWXWQcrqPiIRtcXYUnwaveLuM/RpJWozuC+MRVE0rr3fE90KIQag12k+fxDMwUvFhBcoZoPMOHo5IwqqB2y7rfB65mdUTbv4hTpdMnnV95I1CqKsan0gWlOudHyA+qsz/Wo7wi+oHGUCE1aMsdCQXu0kVA7o=
+	t=1760416017; cv=none; b=Md1HJyM11zU4ZGUYfMXiUTxlEHY+yCeks5Z8sYM7S493weGLbzwA2sS0DaTLPTLGTqvoABaBLhMgJKlAxgnmemioEhkHQq1WlHOoAuW417OTF39ha/I8wOWKRHd8ryFz2sYAYP2h4ACvlj3qmv5ZLm8hiG4gFgnB+ewunyMsfv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760415898; c=relaxed/simple;
-	bh=NkEIvHvSMBdftwCCgim71nKU1aLS5jLHCWC9aM4TShQ=;
+	s=arc-20240116; t=1760416017; c=relaxed/simple;
+	bh=I0W2jFcD54qH7MWQyl3pPNsj40Rx2hEOEXY4YMj1QPI=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KfujT17SU1ghYIEVNdTGfm3YfXDJmdD8n6OV+ijf5Duzmbw6ih1iknFUDxyX+p9zkUMUViof3QjxzgP2dUpWqM4nvllV9NY2DbkoNN9GdSqac8DWw0Ab8xqTpiAVbhMZdbkGgAO0cNYsb4OxQiKif4ai8gSpvgjlgtYqDwJj6os=
+	 MIME-Version:Content-Type; b=tV4TBljvMlvwB56xKtiidgxVF9gupfheDbl1p05ykir/TAu83UBrTlADHO43jYLWZCHo5nsUYTIOWa779LjvGethM8p5o1WPbsfkDTfzNCXJF4qiotEGhw9thnNksM5Ty8BZHOLPKvLdnZUySH35x+9RMPXVIJ2PqNntTNMSofI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
 Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id 13FA2C3EEAC9;
-	Tue, 14 Oct 2025 06:24:44 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 13FA2C3EEAC9
+	by ni.piap.pl (Postfix) with ESMTPS id BA53BC3EEACD;
+	Tue, 14 Oct 2025 06:26:52 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl BA53BC3EEACD
 From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,  Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,  Mauro Carvalho Chehab <mchehab@kernel.org>,
-  Hans Verkuil <hverkuil@kernel.org>,  Sakari Ailus
- <sakari.ailus@linux.intel.com>,  Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>,  Leon Luo <leonl@leopardimaging.com>,
-  Kieran Bingham <kieran.bingham@ideasonboard.com>,  Jacopo Mondi
- <jacopo+renesas@jmondi.org>,  Kieran Bingham
- <kieran.bingham+renesas@ideasonboard.com>,  Laurent Pinchart
- <laurent.pinchart+renesas@ideasonboard.com>,  Niklas =?utf-8?Q?S=C3=B6der?=
- =?utf-8?Q?lund?=
- <niklas.soderlund+renesas@ragnatech.se>,  Julien Massot
- <julien.massot@collabora.com>,  Jacopo Mondi <jacopo@jmondi.org>,  Daniel
- Scally <djrscally@gmail.com>,  Dave Stevenson
- <dave.stevenson@raspberrypi.com>,  Benjamin Mugnier
- <benjamin.mugnier@foss.st.com>,  Sylvain Petinot
- <sylvain.petinot@foss.st.com>,  Yong Zhi <yong.zhi@intel.com>,  Bingbu Cao
- <bingbu.cao@intel.com>,  Tianshu Qiu <tian.shu.qiu@intel.com>,  Tiffany
- Lin <tiffany.lin@mediatek.com>,  Andrew-CT Chen
- <andrew-ct.chen@mediatek.com>,  Yunfei Dong <yunfei.dong@mediatek.com>,
-  Matthias Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Rui Miguel Silva
- <rmfrfs@gmail.com>,  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-  Martin Kepplinger <martink@posteo.de>,  Purism Kernel Team
- <kernel@puri.sm>,  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer
- <s.hauer@pengutronix.de>,  Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,  Dafna
- Hirschfeld <dafna@fastmail.com>,  Heiko Stuebner <heiko@sntech.de>,
-  Sylwester Nawrocki <s.nawrocki@samsung.com>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>,  Yemike
- Abhilash Chandra <y-abhilashchandra@ti.com>,  Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  linux-input@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-media@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,
-  linux-mediatek@lists.infradead.org,  imx@lists.linux.dev,
-  linux-renesas-soc@vger.kernel.org,  linux-rockchip@lists.infradead.org,
-  linux-samsung-soc@vger.kernel.org,  linux-staging@lists.linux.dev
-Subject: Re: [PATCH 05/32] media: ar0521: Use %pe format specifier
-In-Reply-To: <20251013-ptr_err-v1-5-2c5efbd82952@chromium.org> (Ricardo
-	Ribalda's message of "Mon, 13 Oct 2025 14:14:45 +0000")
-References: <20251013-ptr_err-v1-0-2c5efbd82952@chromium.org>
-	<20251013-ptr_err-v1-5-2c5efbd82952@chromium.org>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: khc@pm.waw.pl,  andrew+netdev@lunn.ch,  davem@davemloft.net,
+  edumazet@google.com,  kuba@kernel.org,  pabeni@redhat.com,
+  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  skhan@linuxfoundation.org,  david.hunter.linux@gmail.com
+Subject: Re: [PATCH net-next v3] hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+In-Reply-To: <20251013014319.1608706-1-kriish.sharma2006@gmail.com> (Kriish
+	Sharma's message of "Mon, 13 Oct 2025 01:43:19 +0000")
+References: <20251013014319.1608706-1-kriish.sharma2006@gmail.com>
 Sender: khalasa@piap.pl
-Date: Tue, 14 Oct 2025 06:24:43 +0200
-Message-ID: <m3ldlertys.fsf@t19.piap.pl>
+Date: Tue, 14 Oct 2025 06:26:52 +0200
+Message-ID: <m3h5w2rtv7.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,35 +55,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Ricardo Ribalda <ribalda@chromium.org> writes:
+Kriish Sharma <kriish.sharma2006@gmail.com> writes:
 
-> The %pe format specifier is designed to print error pointers. It prints
-> a symbolic error name (eg. -EINVAL) and it makes the code simpler by
-> omitting PTR_ERR()
+> Update proto_name() to return "LCP" by default instead of NULL.
+> This change silences the compiler without changing existing behavior
+> and removes the need for the local 'pname' variable in ppp_cp_event.
 >
-> This patch fixes this cocci report:
-> ./i2c/ar0521.c:1113:31-38: WARNING: Consider using %pe to print PTR_ERR()
->
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Suggested-by: Krzysztof Ha=C5=82asa <khalasa@piap.pl>
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
 
-Thanks,
+Thanks, and
 Acked-by: Krzysztof Ha=C5=82asa <khalasa@piap.pl>
 
-> --- a/drivers/media/i2c/ar0521.c
-> +++ b/drivers/media/i2c/ar0521.c
-> @@ -1109,8 +1109,8 @@ static int ar0521_probe(struct i2c_client *client)
->                                                 ar0521_supply_names[cnt]);
+> --- a/drivers/net/wan/hdlc_ppp.c
+> +++ b/drivers/net/wan/hdlc_ppp.c
+> @@ -126,14 +126,12 @@ static inline struct proto *get_proto(struct net_de=
+vice *dev, u16 pid)
+>  static inline const char *proto_name(u16 pid)
+>  {
+>         switch (pid) {
+> -       case PID_LCP:
+> -               return "LCP";
+>         case PID_IPCP:
+>                 return "IPCP";
+>         case PID_IPV6CP:
+>                 return "IPV6CP";
+>         default:
+> -               return NULL;
+> +               return "LCP";
+>         }
+>  }
 >
->                 if (IS_ERR(supply)) {
-> -                       dev_info(dev, "no %s regulator found: %li\n",
-> -                                ar0521_supply_names[cnt], PTR_ERR(supply=
-));
-> +                       dev_info(dev, "no %s regulator found: %pe\n",
-> +                                ar0521_supply_names[cnt], supply);
->                         return PTR_ERR(supply);
->                 }
->                 sensor->supplies[cnt] =3D supply;
-
 --=20
 Krzysztof "Chris" Ha=C5=82asa
 
