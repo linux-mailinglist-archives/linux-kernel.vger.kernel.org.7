@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-851610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580EABD6E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3133BBD6E1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 02:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8CC13A73B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F1918A4374
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 00:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668A01DB54C;
-	Tue, 14 Oct 2025 00:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C1B1C84AB;
+	Tue, 14 Oct 2025 00:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YR2fKaES"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGx9KtxI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A15E72627;
-	Tue, 14 Oct 2025 00:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C40E1A9FAA;
+	Tue, 14 Oct 2025 00:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760402147; cv=none; b=kB/bk1TKcZHsGj0FKI14eXJiQ2BQkJXJWtpzpQlrEsVBaS3PIIDf9C17b2dxti3lVt7ThsfHYmu/ps1k8YnuzDWxVcSGhQbX1dqM+T8gTjDgQ/ZACr4gUJMmjGeltz0JkOHy+SehMHGAsBmyqPgKsftOUW4jFkP4txwqprlBZSU=
+	t=1760401975; cv=none; b=YcJEeu906DEhM7mDPucsj4aLwGDvolpZrdr+SXziiCFQJ/FtSZg9wr3yN3kUw2TOr7k4OgLbDilfdxz9S7U50lkCxz2M2+axkfcM+azk2tws2Ts2T3S8sOTjqoByIwi6J/GMtChWhHyvaejwhg+NSQkR/fQPD5bQTn1xaSIlXFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760402147; c=relaxed/simple;
-	bh=WbqyGpKb/zLKbH7fHA4aAvojTSwpNDo8iN+Qgagm4oI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=RIsik9+rfFHs9T9PjA/1/gS47R4FOeiXnvGo0TED+KlnP5R7mCyBrOgl+X3iGTbPqDD3dTbxt4OM3ggqkt+2F7nL6mgRk1GOqYHS93VdHgZwSBn8hBYA5vKSo8UsoSW3giN+y7cPl7VJN1wrGXg56LKQQByX85i0QLpI4fBUc0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YR2fKaES; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1760401833; bh=HvGgaFWBTdNE6Bay2kvJlLwmy4Dyj/uwmy1sSo7Y4D4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YR2fKaESW35SsSADdb3oYr5p72d3MkYzULJ1sRqz1G50/K6FRwVXTUAuwAfxjBAxV
-	 do4wyh3JcnVfXvIgXGmZwh4bvagsaxuHak2DjQnHTrlPxKae+IZFBlOld9PjyZiW0S
-	 7unhCrQ6ELtdIMHFnjFBxkhK2gE5Pit02InI+qgo=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 79F01285; Tue, 14 Oct 2025 08:30:31 +0800
-X-QQ-mid: xmsmtpt1760401831tv6k674kl
-Message-ID: <tencent_A5374A4B00744776B566CC3DD936EC960A09@qq.com>
-X-QQ-XMAILINFO: NmRjDopJZVxOIDYKzhLIqywTpTLqV8h8kOzVqIJHfaEQbkB/pTKdGXcNqA8b/V
-	 OHr0n+qT+aEdUDyIsrxlCBDmn8DrRv/aYdF9cvl0h8B//moQeVy9qz9n4rZsZlZmXSuvjAzVSC9k
-	 KRbO0/iye3A993GEh/Vx9J9BREjzVDixQCW2vO+PaRYR+C9PBRZtjuzhoksLkdCcpKvNMJarwCEs
-	 o7SqNQr6X78FMiwlC9N0FFcy5TRi7sJ4D2dPeQLFyaZfGZoy1HohMEJNswYyXzIzCN5CVmMkwkuR
-	 q3DGcZiRdnz3iqSGPFCnGm4Yxolbltov4eYjhAINRXpi7Dp1Vme/HcrJL0ssVXldjjWKuRq65o3E
-	 IjX9jNpuXtl24MdE2NMDCLRPIFyNj/B+X4AT3x6ued6+f127DoDILhqz/1Pjq6C2PjezQZHuNqeX
-	 aE4Oo/oXzUjmKmzVHBUOUatwDyzOtI5MODe8EhMj5SPbHsDuKMNCj6NIMbb9i8dCzUO1uVGIP355
-	 sam367rsr8GwmtUnMJQimPL8lymRlMdao/xRjb7tX4NfFO3EJ00ezPLhH7J8lHtSX6BJdizz8U5k
-	 jlDnnfdBiKEsrmkpm3xDdRAXWQ1UbbYimeWH0c5Z9xuba492ea2PJ3ZH5LiXTHEAeHnpJerlcbnB
-	 9XwgurDCMkxDBiC4Ier+Nv6aaj7g8sVxmQd1cn7cyNe/He7Wf8/1tTOAFE6GjebMq/l7nnJy9ZdQ
-	 hbXD0oKgezGlAM1hQ3oLaJTrlbWAY/Bc5JOC22BqD2DWq96JVLaMSaHOeMb+cz/yTwzAgzGrnBK1
-	 q7FX5Pl2WaEv6rBKK70Lj+HTahfNRxFlpk99v/mA2qrq9YtE0RsBIoREkI7l5nzkeebtvwMZIk58
-	 m977fYaYzegO2OgdsLbgVUHxAVQ3v/pXdcjtyhcFtPz+Ykm/lHEVOq1KVyeOs9RId8ly0Zh71w/B
-	 MQEQhrW+2bY10bU0inYcfHKVspayh+zZYKeRBw1egQlYGixflafH4hkhe0yDRIDRE2LQ967SNAiP
-	 efKKCrNqd4ZgWd4u0O
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: eadavis@qq.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] media: dvb-usb: Optimizing err() output
-Date: Tue, 14 Oct 2025 08:30:31 +0800
-X-OQ-MSGID: <20251014003031.3996942-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <tencent_303296E836864A7674D377A966003C7D3709@qq.com>
-References: <tencent_303296E836864A7674D377A966003C7D3709@qq.com>
+	s=arc-20240116; t=1760401975; c=relaxed/simple;
+	bh=l3hcgd7zQfZciXGoXSE+hgsm6c75qLFFS4okpW8o84A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wodmv6tytl6qScQ1Qh3cTbYAxsw15hgCe9H5Ki9WNL+WIwcooKvh82rp6se2dnLUDvqSfqCjmB/qzb4JWai1B10S9jcL6e2ldL6H9AHu4ose5nL+DvEe3O+ZoZvIxio+1e87KUEVUsUL/Vs/468p6+TFSqvIkoxLR/oaDDksxoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGx9KtxI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73A6C4CEE7;
+	Tue, 14 Oct 2025 00:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760401975;
+	bh=l3hcgd7zQfZciXGoXSE+hgsm6c75qLFFS4okpW8o84A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XGx9KtxIl5KDM3DaJs6JHWEB3A06cw0l1xdrBAM8S2os7M1CedLNq+uEe8AJgTi3u
+	 O0f82vW4FD64St5f5osxEd3cuueDZXeVrLE4wKs82GbWhFuDnatR45LWihBM9CCWMb
+	 raf4AYfVHda8FtOsSA6x8Js2C0ZVFBhHCp2CZUGcOgDu+0PWayuwEDxeAfCDooMzWX
+	 gIzO//xGDnGFeG1lLlR+G+5PNBNakV3dgyJhcZkpcdYTLA5YOLj90W9oSco1QNBaEH
+	 R/QGhvCPrg2I1omRj0qRf1un58xFJSRntsMLX+MD/ZczuWn7bzt38VoiAA2YT2NPE8
+	 GBdkAG4ba5KWA==
+Date: Mon, 13 Oct 2025 17:31:23 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH 0/8] VAES+AVX2 optimized implementation of AES-GCM
+Message-ID: <20251014003123.GA2763@sol>
+References: <20251002023117.37504-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002023117.37504-1-ebiggers@kernel.org>
 
-syzbot reported a uninit-value in pctv452e_i2c_msg. [1]
+On Wed, Oct 01, 2025 at 07:31:09PM -0700, Eric Biggers wrote:
+> This patchset replaces the 256-bit vector implementation of AES-GCM for
+> x86_64 with one that requires AVX2 rather than AVX512.  This greatly
+> improves AES-GCM performance on CPUs that have VAES but not AVX512, for
+> example by up to 74% on AMD Zen 3.  For more details, see patch 1.
+> 
+> This patchset also renames the 512-bit vector implementation of AES-GCM
+> for x86_64 to be named after AVX512 rather than AVX10/512, then adds
+> some additional optimizations to it.
+> 
+> This patchset applies to next-20250929 and is targeting 6.19.  Herbert,
+> I'd prefer to just apply this myself.  But let me know if you'd prefer
+> to take it instead (considering that AES-GCM hasn't been librarified
+> yet).  Either way, there's no hurry, since this is targeting 6.19.
+> 
+> Eric Biggers (8):
+>   crypto: x86/aes-gcm - add VAES+AVX2 optimized code
+>   crypto: x86/aes-gcm - remove VAES+AVX10/256 optimized code
+>   crypto: x86/aes-gcm - rename avx10 and avx10_512 to avx512
+>   crypto: x86/aes-gcm - clean up AVX512 code to assume 512-bit vectors
+>   crypto: x86/aes-gcm - reorder AVX512 precompute and aad_update
+>     functions
+>   crypto: x86/aes-gcm - revise some comments in AVX512 code
+>   crypto: x86/aes-gcm - optimize AVX512 precomputation of H^2 from H^1
+>   crypto: x86/aes-gcm - optimize long AAD processing with AVX512
+> 
+>  arch/x86/crypto/Makefile                      |    5 +-
+>  arch/x86/crypto/aes-gcm-aesni-x86_64.S        |   12 +-
+>  arch/x86/crypto/aes-gcm-vaes-avx2.S           | 1150 +++++++++++++++++
+>  ...m-avx10-x86_64.S => aes-gcm-vaes-avx512.S} |  722 +++++------
+>  arch/x86/crypto/aesni-intel_glue.c            |  264 ++--
+>  5 files changed, 1667 insertions(+), 486 deletions(-)
+>  create mode 100644 arch/x86/crypto/aes-gcm-vaes-avx2.S
+>  rename arch/x86/crypto/{aes-gcm-avx10-x86_64.S => aes-gcm-vaes-avx512.S} (69%)
+> 
+> base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
 
-When the snd_len or rcv_len check fails and jumps to failed, buf is
-uninitialized, triggering the uninit-value issue.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
 
-Setting the err() output buf byte count to 0 before jumping to failed
-before initializing buf and setting it to 7 after initializing buf avoids
-this warning.
-
-[1]
-BUG: KMSAN: uninit-value in hex_string+0x681/0x740 lib/vsprintf.c:1220
- pctv452e_i2c_msg+0x82a/0x8f0 drivers/media/usb/dvb-usb/pctv452e.c:467
- pctv452e_i2c_xfer+0x2e6/0x4c0 drivers/media/usb/dvb-usb/pctv452e.c:502
-
-Reported-by: syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=480edd2cadb85ddb4bbe
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: subject typos
-
- drivers/media/usb/dvb-usb/pctv452e.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
-index 5094de9a312e..3b6e86a8e9ff 100644
---- a/drivers/media/usb/dvb-usb/pctv452e.c
-+++ b/drivers/media/usb/dvb-usb/pctv452e.c
-@@ -420,7 +420,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
- 	struct pctv452e_state *state = d->priv;
- 	u8 *buf;
- 	u8 id;
--	int ret;
-+	int ret, plen = 0;
- 
- 	buf = kmalloc(64, GFP_KERNEL);
- 	if (!buf)
-@@ -432,6 +432,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
- 	if (snd_len > 64 - 7 || rcv_len > 64 - 7)
- 		goto failed;
- 
-+	plen = 7;
- 	buf[0] = SYNC_BYTE_OUT;
- 	buf[1] = id;
- 	buf[2] = PCTV_CMD_I2C;
-@@ -466,7 +467,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
- failed:
- 	err("I2C error %d; %02X %02X  %02X %02X %02X -> %*ph",
- 	     ret, SYNC_BYTE_OUT, id, addr << 1, snd_len, rcv_len,
--	     7, buf);
-+	     plen, buf);
- 
- 	kfree(buf);
- 	return ret;
--- 
-2.43.0
-
+- Eric
 
