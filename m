@@ -1,268 +1,220 @@
-Return-Path: <linux-kernel+bounces-851843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E6EBD76BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423B2BD769B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9305F3AD488
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E283AB80C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 05:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9629ACEE;
-	Tue, 14 Oct 2025 05:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A842951A7;
+	Tue, 14 Oct 2025 05:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrE5TzHW"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TMa9tT67"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A16026F291
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC57486342
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 05:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760419690; cv=none; b=COdSZRqGYJVHau5ppBZhKVrXtoU29PlOSrTEbtjvvUUjOekFDd7cPysiG64EYGg0ueyR3bGKnDOtuAgbo4UaQ716lNekBXTY/tFQOiwB2Kjvi1eQK9webFm/JvTg48SFFOaELtTFP+v2iLkYMcxL1VZ24xj07MZXrregMxjvyTM=
+	t=1760419571; cv=none; b=cM88VQ8Li2qXh5V8V4GKPvgW1ojSnoAyeYYaa6/57uj3Q5RZDDNx2KNViHzDmqc8I0Kkx51866nZr82Hv42RshdOzn13Z3wznucxOm9XqcgCV2cFgAsGTqMMz3IbVz/TCCYF6pSxFNftnSoXzDRVQ+muZ6r0sZ2txtJ2GEciW74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760419690; c=relaxed/simple;
-	bh=A+O8Mu5AVJjST6AGpK6YcqU7dC0vCZc73yf6uJmZfJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lQ89dE8iFMfsTgj0KwyWb5hSUQowAoWIvWae9d3qHDLAw9JPpqxFuIWDT0ebJC4MVYI9H1uRzSihBHRdJcLEoSaoA1SwmNtlkH9VG1q1TEcD84alxQXqB4jAvB2Pp2Ar0GpoM+krN5JGW0FyDn4CPs4KkJBsGssC8Vgtil461nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrE5TzHW; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3322e63602eso6591510a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:28:08 -0700 (PDT)
+	s=arc-20240116; t=1760419571; c=relaxed/simple;
+	bh=RzZ2rpgYX4TU7MT3Xglqz4bP41cT5Oh6ggAKNbiU4Qg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WdNV9RJmwWV7V2+7NacCZGOtiT8Z3JCV/4YJiq5qNav3egg+jMagtZGECy0G2xORzkkGOL4xTkNL5hBoRs9AR2agcipqml9+qh8cfxIwEV449LlL4jbGTLhe6OflNWDS6lrkiStrtyCSYNLItFwGyZ27BjZhqs114o3353YDcd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TMa9tT67; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ee1381b835so3043932f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 22:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760419688; x=1761024488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tUVXFTv/D7jLsv5kpoyfzsqtL+REv8AzIuYw8UUsFXE=;
-        b=DrE5TzHWCH1bPz3/OF4mMSK7TCWKN00N/JaIrXWBIuDesv3U0iKnq5yma/UWBZXojX
-         oTayz6e+XSAz/B+4J6YWwTjyGr/TstuOG51Lx5SkaISGA8HlSMm0xYwUXmIdVEXvtq6+
-         yG56Z6zy49ypCDHP2JGhFYPOER4SyFTWFlmdag2i/c+VoYdxJZLsiof7wRvqG58ZBcF/
-         QNNzxnCErV+lfNEsKiJTqn7xFp4TE61iNwsqa2fynTlYt2p89Yi7Pqq6u5Sq8IqshVKS
-         MQ+uUUoIFU9e0pu65gjc4mU0MNs82T714/qAqqwSTZDmU58z9FIMPJo3sauCOwFvLpsb
-         kOaw==
+        d=suse.com; s=google; t=1760419568; x=1761024368; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PJeA08PmXO0Rt+J6zqTRksSe9Q2LhvStVnJgFH8knlE=;
+        b=TMa9tT67BZUz1dqoyEp7c7boJbzouJq/CFRT9LOK/U9xCWA5vMvOBkUMWgn1smAdp2
+         Brts+rKceBUpEtfxGyevkKllE57ptajVK/Eu+A8iHkucCdATPSb7WIDXOtz6HOW+wi8c
+         b1G1G1SGA/0IJoBMYoH4XBtKaYKWhWcsl9aYGRNKlerxCDvmJYHTMEreFgZEsBR8Pczy
+         DqEx2WUacQh4R5Seu9dNoTTBFl7ELoBSytZUQrIisqCRVSA365p2yHsi0zsaQBMQuVbb
+         E3kJOKe+LmCfVnqJnKd7m34sLRZxcDWH0bJ10MP4uqwq0ZluEixXFBM1cuY/BJQNMCc+
+         o85g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760419688; x=1761024488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tUVXFTv/D7jLsv5kpoyfzsqtL+REv8AzIuYw8UUsFXE=;
-        b=g6iVAFyEAxfuun+13SQE0GwxAAjNW3sgfwav2a9Ta45SJ7RLt8bo9nGoFYXop1Rsmt
-         GNQEodQ8ITlEBdhTs8q98RcH3Q/DDuDQkyagikTuKtBvjmflbDtC7M/OJl8JSTIEre1E
-         +dzceLns93rpcsHrNps/05VvA8JPcjWfb+3FkYmruGUsT63Lc+EQ7FMHc5ndyh5cUbwQ
-         fUx81Wzb9jb3dUWhznLfHngyx9z5DhMBiZIPK/wmWUrJN1rStNnr+nCGEfsPLWsAyS4M
-         LRDckelpV0NdZO5x7hPxariSReo7F/urY3RbW9mSPptmS5tlIrm70l3evgs7AKdCIRwG
-         rlWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWr2M9j1S/US9acensKID0aKfRlN8a7x2B5Mo/Er9Z4BpZYT7YcRbD5HQ5LbDugu0WEzUGr695yXRzbacA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWQS1hVNPkD9+Ns1sUGrJd/Qqv8NtrQYBRI3A9p53ABLnoFQ7l
-	X9fpevFP3Hgookob8JK8FXfuXb8lEbeiZi9TH5+zbuTcIGrNYSbP9pLz
-X-Gm-Gg: ASbGncusAg2Y9hJotBlYoM0kBVhVtXz0mYMJPHjTYL0mXl6h8JqIMb4+a583k2mcH7n
-	V/cE0ACflS4ulxjDDIm2PBPnBpLScHKExLIITqiCk650ryeoo7cbbQ+0gqvJPBSOdB9Cxg1GwRh
-	OdmMeZzv4nAKP1rH3czjeieSluQUMmft256lga17PaZbap/y/wMUmoxk9SNiTq/A0mDkhRvp0eL
-	xxXxzjLU+e52F8AYLG9QyfSyPYiVojQQS7/+V/nzT33QMy81e+A6YsmM3JfF/oor/qh+fBLFgLr
-	J1Mc5u548Z0kOvoQ33bUcmOeNhHNwX6J2JOHVwiXLp2MfHHCXK/6NOnuxDD1oVe/+LNOGf2Tw9O
-	OZDw39l67HwejtIeJ0lUTQckH2tWm2QIwIYl2etvhgBpj5zhwOW/EUW85Kg==
-X-Google-Smtp-Source: AGHT+IFntzP8OzdgNYYMHaqHvOwHUMeMx9OXTNUQCyie+jB5pd3spy6Sdf+LQFvsZ9kueWYMJS9Rbg==
-X-Received: by 2002:a17:90b:38d1:b0:32e:8c1e:1301 with SMTP id 98e67ed59e1d1-33b513eac36mr31775077a91.34.1760419687520;
-        Mon, 13 Oct 2025 22:28:07 -0700 (PDT)
-Received: from tixy.nay.do ([2405:201:8000:a149:4670:c55c:fe13:754d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b6192995asm14510106a91.0.2025.10.13.22.28.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 22:28:07 -0700 (PDT)
-From: Ankan Biswas <spyjetfayed@gmail.com>
-To: akpm@linux-foundation.org
-Cc: lasse.collin@tukaani.org,
-	visitorckw@gmail.com,
-	skhan@linuxfoundation.org,
-	khalid@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Ankan Biswas <spyjetfayed@gmail.com>
-Subject: [PATCH v3] lib/xz: remove dead IA-64 (Itanium) support code
-Date: Tue, 14 Oct 2025 10:54:36 +0530
-Message-ID: <20251014052738.31185-1-spyjetfayed@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1760419568; x=1761024368;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PJeA08PmXO0Rt+J6zqTRksSe9Q2LhvStVnJgFH8knlE=;
+        b=RYEeWPbMztnA5jP+gaBxAK7+8o+WKh6mb6K0xs13APy83m/qmtTn8ls8Rf5zaDZEjS
+         Gmyb0CFkqVeVLNenJm0mw4/Yq+JUoobsHFG08IUQKeAslRanrRyy9TSX8HA03b4qYA7b
+         xDt+DJ7G/aEFBLu8WVf9FXYwP+/m4XqXpqLN3TgBHq+Q0Xo3mSW0hn94DSEB2QoVdxUt
+         3HwfYxje9+i1w2/rkpb0jhrVW3rJpNvptexHatWf6XyuoqAtaMiHaPNhwySWDiLsVWJg
+         /F11YVo+PzCUfzljhcU5Vfzo/cPq8OfsQt+8LWr0DRZdSJkEhxbvHZGtwIQuW3cZswSw
+         5n7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUP/CJp75Jen6M0JjnWvjXHdUkPuqcqng4WXTMSOEufFv6JfBh2ZrJr8fF3UPW4EF9kEH3p/afettYHovA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzri1GKfGvkqCCmRUa2bX8oigL2kquhiEPXDq3cxa5qAyErn+js
+	Ne04C2F0v0WKwi4Jwpkl8jTIeEA50bUKzYSqvSZ6budMDt89crm7z/HC/TsYXDut4VQ=
+X-Gm-Gg: ASbGncsWy7QUgYVIleuNZMCc9msAb0+8x7TpTLuvfs2vRFOR/iz+2f0iK5No7bROZWI
+	PqvrQXEdnW725E95fLlnwfpCunPht+c9sDA4M4xRICgMOUABtHnR+qTRFOC39BGT+YyK2RHMEY9
+	VTFqAdQ5rdXZXRPQa1XJhLYpKQ6QAyMpuAqFO9HfxXX2yY9WB+pGj1sGBiT1A15vXn01N1IDkOa
+	5R1I55IAGwUBn3XRt/lLJJdLpjmpol/Sid9uwouI6k8/dqdylL1dkq5E3plC6DNLVfGp97N+dg3
+	CzclREXQP5QMwAtvMlmatXcsNHPANLnbe5pA86a/3ijs6zZnLX83JhRH8cnMJ+Kp6N1KcBIHkZL
+	vV+ajWNT/4HOWUQfIP5fNFOr2UCf2/O+KiIjcgI8wdf5/oL1kIO6NqSVTCHFii0qB09ciKJY3KO
+	gMr5ua
+X-Google-Smtp-Source: AGHT+IGrGpGhcI95c5DMP672QlHISusRMmNdSZjfnjcUd//Uku5n9Mpyuwa8gnooQRqjnAoP2rIKaA==
+X-Received: by 2002:a05:6000:2505:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-42672425b82mr14532469f8f.47.1760419567943;
+        Mon, 13 Oct 2025 22:26:07 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de6c14sm151516595ad.6.2025.10.13.22.26.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 22:26:07 -0700 (PDT)
+Message-ID: <f6d30bb5-8e0e-4351-a11f-4a78f7a541e7@suse.com>
+Date: Tue, 14 Oct 2025 15:56:00 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
+ index=on
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
+ Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>
+References: <20251014015707.129013-1-andrealmeid@igalia.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <20251014015707.129013-1-andrealmeid@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Support for the IA-64 (Itanium) architecture was removed in
-commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture").
 
-This patch drops the IA-64 specific decompression code from
-lib/xz, which was conditionally compiled with the now-obsolete
-CONFIG_XZ_DEC_IA64 option.
 
-Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Acked-by: Lasse Collin <lasse.collin@tukaani.org>
----
-Changes in v3:
-- Removed log about IA-64 support in upstream
+在 2025/10/14 12:27, André Almeida 写道:
+> Hi everyone,
+> 
+> When using overlayfs with the mount option index=on, the first time a directory is
+> used as upper dir, overlayfs stores in a xattr "overlay.origin" the UUID of the
+> filesystem being used in the layers. If the upper dir is reused, overlayfs
+> refuses to mount for a different filesystem, by comparing the UUID with what's
+> stored at overlay.origin, and it fails with "failed to verify upper root origin"
+> on dmesg. Remounting with the very same fs is supported and works fine.
+> 
+> However, btrfs mounts may have volatiles UUIDs. When mounting the exact same
+> disk image with btrfs, a random UUID is assigned for the following disks each
+> time they are mounted, stored at temp_fsid and used across the kernel as the
+> disk UUID. `btrfs filesystem show` presents that. Calling statfs() however shows
+> the original (and duplicated) UUID for all disks.
 
-Changes in v2:
-- Added second hunk to diff of xz_private.h
+Yep, that's the btrfs' hack to allowing mounting cloned devices (as long 
+as they are all single-device only btrfs)
 
- lib/xz/xz_dec_bcj.c | 95 ---------------------------------------------
- lib/xz/xz_private.h |  4 --
- 2 files changed, 99 deletions(-)
+Although I'm not a huge fan for that, without that you can not even 
+mount any cloned btrfs in the first place.
 
-diff --git a/lib/xz/xz_dec_bcj.c b/lib/xz/xz_dec_bcj.c
-index 8237db17eee3..610d58d947ab 100644
---- a/lib/xz/xz_dec_bcj.c
-+++ b/lib/xz/xz_dec_bcj.c
-@@ -20,7 +20,6 @@ struct xz_dec_bcj {
- 	enum {
- 		BCJ_X86 = 4,        /* x86 or x86-64 */
- 		BCJ_POWERPC = 5,    /* Big endian only */
--		BCJ_IA64 = 6,       /* Big or little endian */
- 		BCJ_ARM = 7,        /* Little endian only */
- 		BCJ_ARMTHUMB = 8,   /* Little endian only */
- 		BCJ_SPARC = 9,      /* Big or little endian */
-@@ -180,92 +179,6 @@ static size_t bcj_powerpc(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
- }
- #endif
- 
--#ifdef XZ_DEC_IA64
--static size_t bcj_ia64(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
--{
--	static const uint8_t branch_table[32] = {
--		0, 0, 0, 0, 0, 0, 0, 0,
--		0, 0, 0, 0, 0, 0, 0, 0,
--		4, 4, 6, 6, 0, 0, 7, 7,
--		4, 4, 0, 0, 4, 4, 0, 0
--	};
--
--	/*
--	 * The local variables take a little bit stack space, but it's less
--	 * than what LZMA2 decoder takes, so it doesn't make sense to reduce
--	 * stack usage here without doing that for the LZMA2 decoder too.
--	 */
--
--	/* Loop counters */
--	size_t i;
--	size_t j;
--
--	/* Instruction slot (0, 1, or 2) in the 128-bit instruction word */
--	uint32_t slot;
--
--	/* Bitwise offset of the instruction indicated by slot */
--	uint32_t bit_pos;
--
--	/* bit_pos split into byte and bit parts */
--	uint32_t byte_pos;
--	uint32_t bit_res;
--
--	/* Address part of an instruction */
--	uint32_t addr;
--
--	/* Mask used to detect which instructions to convert */
--	uint32_t mask;
--
--	/* 41-bit instruction stored somewhere in the lowest 48 bits */
--	uint64_t instr;
--
--	/* Instruction normalized with bit_res for easier manipulation */
--	uint64_t norm;
--
--	size &= ~(size_t)15;
--
--	for (i = 0; i < size; i += 16) {
--		mask = branch_table[buf[i] & 0x1F];
--		for (slot = 0, bit_pos = 5; slot < 3; ++slot, bit_pos += 41) {
--			if (((mask >> slot) & 1) == 0)
--				continue;
--
--			byte_pos = bit_pos >> 3;
--			bit_res = bit_pos & 7;
--			instr = 0;
--			for (j = 0; j < 6; ++j)
--				instr |= (uint64_t)(buf[i + j + byte_pos])
--						<< (8 * j);
--
--			norm = instr >> bit_res;
--
--			if (((norm >> 37) & 0x0F) == 0x05
--					&& ((norm >> 9) & 0x07) == 0) {
--				addr = (norm >> 13) & 0x0FFFFF;
--				addr |= ((uint32_t)(norm >> 36) & 1) << 20;
--				addr <<= 4;
--				addr -= s->pos + (uint32_t)i;
--				addr >>= 4;
--
--				norm &= ~((uint64_t)0x8FFFFF << 13);
--				norm |= (uint64_t)(addr & 0x0FFFFF) << 13;
--				norm |= (uint64_t)(addr & 0x100000)
--						<< (36 - 20);
--
--				instr &= (1 << bit_res) - 1;
--				instr |= norm << bit_res;
--
--				for (j = 0; j < 6; j++)
--					buf[i + j + byte_pos]
--						= (uint8_t)(instr >> (8 * j));
--			}
--		}
--	}
--
--	return i;
--}
--#endif
--
- #ifdef XZ_DEC_ARM
- static size_t bcj_arm(struct xz_dec_bcj *s, uint8_t *buf, size_t size)
- {
-@@ -509,11 +422,6 @@ static void bcj_apply(struct xz_dec_bcj *s,
- 		filtered = bcj_powerpc(s, buf, size);
- 		break;
- #endif
--#ifdef XZ_DEC_IA64
--	case BCJ_IA64:
--		filtered = bcj_ia64(s, buf, size);
--		break;
--#endif
- #ifdef XZ_DEC_ARM
- 	case BCJ_ARM:
- 		filtered = bcj_arm(s, buf, size);
-@@ -699,9 +607,6 @@ enum xz_ret xz_dec_bcj_reset(struct xz_dec_bcj *s, uint8_t id)
- #ifdef XZ_DEC_POWERPC
- 	case BCJ_POWERPC:
- #endif
--#ifdef XZ_DEC_IA64
--	case BCJ_IA64:
--#endif
- #ifdef XZ_DEC_ARM
- 	case BCJ_ARM:
- #endif
-diff --git a/lib/xz/xz_private.h b/lib/xz/xz_private.h
-index 8409784b1639..6775078f3cce 100644
---- a/lib/xz/xz_private.h
-+++ b/lib/xz/xz_private.h
-@@ -24,9 +24,6 @@
- #		ifdef CONFIG_XZ_DEC_POWERPC
- #			define XZ_DEC_POWERPC
- #		endif
--#		ifdef CONFIG_XZ_DEC_IA64
--#			define XZ_DEC_IA64
--#		endif
- #		ifdef CONFIG_XZ_DEC_ARM
- #			define XZ_DEC_ARM
- #		endif
-@@ -103,7 +100,6 @@
-  */
- #ifndef XZ_DEC_BCJ
- #	if defined(XZ_DEC_X86) || defined(XZ_DEC_POWERPC) \
--			|| defined(XZ_DEC_IA64) \
- 			|| defined(XZ_DEC_ARM) || defined(XZ_DEC_ARMTHUMB) \
- 			|| defined(XZ_DEC_SPARC) || defined(XZ_DEC_ARM64) \
- 			|| defined(XZ_DEC_RISCV)
--- 
-2.51.0
+> 
+> This feature doesn't work well with overlayfs with index=on, as when the image
+> is mounted a second time, will get a different UUID and ovl will refuse to
+> mount, breaking the user expectation that using the same image should work. A
+> small script can be find in the end of this cover letter that illustrates this.
+> 
+>  From this, I can think of some options:
+> 
+> - Use statfs() internally to always get the fsid, that is persistent. The patch
+> here illustrates that approach, but doesn't fully implement it.
+> - Create a new sb op, called get_uuid() so the filesystem returns what's
+> appropriated.
+> - Have a workaround in ovl for btrfs.
+> - Document this as unsupported, and userland needs to erase overlay.origin each
+> time it wants to remount.
+> - If ovl detects that temp_fsid and index are being used at the same time,
+> refuses to mount.
+
+Or, let btrfs to reject the cloned device in the first place.
+
+> 
+> I'm not sure which one would be better here, so I would like to hear some ideas
+> on this.
+> 
+> Thanks!
+> 	André
+> 
+> ---
+> 
+> To reproduce:
+> 
+> mkdir -p dir1 dir2
+> 
+> fallocate -l 300m ./disk1.img
+> mkfs.btrfs -q -f ./disk1.img
+> 
+> # cloning the disks
+> cp disk1.img disk2.img
+
+If you really want to use the same copied fs, at least you can use
+`btrfstune -m disk2.img` to change it to a new metadata uuid (without 
+re-writing all metadata).
+
+Then everything should work.
+
+Thanks,
+Qu
+> sudo mount -o loop ./disk1.img dir1
+> sudo mount -o loop ./disk2.img dir2
+> 
+> mkdir -p dir2/lower aux/upper aux/work
+> 
+> # this works
+> sudo mount -t overlay -o lowerdir=dir2/lower,upperdir=aux/upper,workdir=aux/work,userxattr none dir2/lower
+> 
+> sudo umount dir2/lower
+> sudo umount dir2
+> 
+> sudo mount -o loop ./disk2.img dir2
+> 
+> # this doesn't works
+> sudo mount -t overlay -o lowerdir=dir2/lower,upperdir=aux/upper,workdir=aux/work,userxattr none dir2/lower
+> 
+> André Almeida (1):
+>    ovl: Use fsid as unique identifier for trusted origin
+> 
+>   fs/overlayfs/copy_up.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
 
 
