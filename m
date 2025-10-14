@@ -1,98 +1,153 @@
-Return-Path: <linux-kernel+bounces-852529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0995BD936D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:05:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA84BD9377
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 14:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 588B5353078
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30DC19227E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 12:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EEA310762;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC3F311966;
 	Tue, 14 Oct 2025 12:04:48 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8+i6X1w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484FD3112A4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 12:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF3F25D546;
+	Tue, 14 Oct 2025 12:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760443487; cv=none; b=pmlzSylWTbAC/URaMt/sid3kr08B+dBsDoV4P8lde0xRw7reHMr6j2cGhynQ5bccvShdiOvEoAqjCgXoOARIQkhvkxxrGLmxy8RF1POOai/8iiPpHMqJxUpOy3AO5+08Gu/7o0lQxxEX2xc+US7M0EG1XOGybhrcudQCOcJqmWs=
+	t=1760443488; cv=none; b=ANyVOlSeHwcNxVnqsrKFbgOwMm0bniRyvhME9gMj5umR0Noi1g3d7YJC5QAS7vA45ruzDKJEAnRB1Mzdw2juoMGPkmrpQD30iYha6IdrkWJwTKQ/HwN5wG3On2dACteW49ke9Qa0T6SiEsydNY0sfSmr3yFN7pJv7bvv0fQy41U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760443487; c=relaxed/simple;
-	bh=PFEDycbRaijIci20ekKISrVNvnLOrNTzvCwXyn1qXec=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ByyggycuDPiXhVuegfAvm9w6Ekg3M5MZi2X/PHxdZipiJw0hnt9X7m8S7P6JOadQCjpt/W8m0clnBodWWEg9nwVDBcPb4DFApUfPrHh9mQzWTtsAjdbVPdOC6dFbx+wJ0Ry0YtSE9FXIzyIH+/6b2p5ZSI+zaVApn5IvWgNkPO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 59EC3wu5060889
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 20:03:58 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
- (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Tue, 14 Oct 2025
- 20:03:58 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
-        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
-        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
-        <ben717@andestech.com>, <inochiama@gmail.com>,
-        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
-        <shradha.t@samsung.com>, <pjw@kernel.org>, <randolph.sklin@gmail.com>,
-        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
-Subject: [PATCH v8 5/5] MAINTAINERS: Add maintainers for Andes QiLai PCIe driver
-Date: Tue, 14 Oct 2025 20:03:49 +0800
-Message-ID: <20251014120349.656553-6-randolph@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251014120349.656553-1-randolph@andestech.com>
-References: <20251014120349.656553-1-randolph@andestech.com>
+	s=arc-20240116; t=1760443488; c=relaxed/simple;
+	bh=AvGMwLIFy7bHs/LBUU5JB/2hWcYVDmOQDHh4rrEYpgs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UsCxDd7cv2/3q7XcN12A3YcCYK7tx2mIqafWpbNsUe7pa0S2xd56rDv9GOPwmT9OCtnheS7eqZ09o5KEebd30Q58VfYft0ABd2EMgBa34mHy2pW4fKHdW7M9UBuL3VTurwwolCbv8/m/416NDeZJIP3qdZ9O2OcsWPZCXeriME4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8+i6X1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A171EC4CEE7;
+	Tue, 14 Oct 2025 12:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760443487;
+	bh=AvGMwLIFy7bHs/LBUU5JB/2hWcYVDmOQDHh4rrEYpgs=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=d8+i6X1w/nv+jKX8ZNR1Kxkw0aMHsq+O4lnFUyUvRGPJkw/LKl7u/klYGHL0GsnLZ
+	 pghOhCLQA57sV/7alhdQ0spte20L8VcCrmXJWv6AtEd7VbJ5zrSu1TTM8uOBjHPfHm
+	 M+/QeE3CcCkPlKKSDdrSPPV7mviuP5OOBugZb40BCojYFp08nRe/fYaaFJc+nsGhVF
+	 cqddW8KWUJZo+gCb1grb6f7w4EcjWHNHoDgdXJxogl3i95Hr4jzE7ajxUTworSikD0
+	 V/+lXt0lTvp1S20nLX8JVgTKyU88MFE/6eDXbyoVShdew33Y+dCtCjkWHVMMicDoXa
+	 95sobLSItFtew==
+Message-ID: <0c11f4b3-a49c-47a5-8d76-98331281488c@kernel.org>
+Date: Tue, 14 Oct 2025 14:04:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 59EC3wu5060889
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2] media: i2c: imx214: Exit early on control init errors
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Ricardo Ribalda <ribalda@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251014-imx214-smatch-v2-1-04218043086d@chromium.org>
+ <37ceef4f-4ed6-4554-9baf-3cddf3e36bd7@kernel.org>
+ <CANiDSCvwKsQcCurmgUR=44z2fVF9NDQLHdHF4v-V+_4Z5jN9=g@mail.gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <CANiDSCvwKsQcCurmgUR=44z2fVF9NDQLHdHF4v-V+_4Z5jN9=g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Here add maintainer information for Andes QiLai PCIe driver.
+On 14/10/2025 13:54, Ricardo Ribalda wrote:
+> On Tue, 14 Oct 2025 at 13:52, Hans Verkuil <hverkuil+cisco@kernel.org> wrote:
+>>
+>> On 14/10/2025 13:00, Ricardo Ribalda wrote:
+>>> Now we try to initialize all the controls and at the very end check
+>>> ctrl_hdlr->error to check if one of them has failed.
+>>>
+>>> This confuses smatch, who do not know how to track the state of
+>>> imx214->link_freq.
+>>>
+>>> drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
+>>>
+>>> Fix this by exiting early on control initialization errors.
+>>>
+>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>>> ---
+>>> Right now we are handling this with a quirk in media-ci, if Dan cannot
+>>> fix smatch in a kernel cycle we should merge this patch.
+>>
+>> OK, will you keep track of this? This patch is delegated to me, so if you tell me when
+>> it should be merged, then I can do that. And if it is fixed in smatch, then you can just
+>> drop this patch in patchwork, of course.
+> 
+> Which is the latest rc that you will feel comfortable merging this? rc5? rc6?
 
-Signed-off-by: Randolph Lin <randolph@andestech.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Late rc5.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46126ce2f968..fb1d4daafe44 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19591,6 +19591,13 @@ S:	Supported
- F:	Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
- F:	drivers/pci/controller/pcie-altera.c
- 
-+PCI DRIVER FOR ANDES QILAI PCIE
-+M:	Randolph Lin <randolph@andestech.com>
-+L:	linux-pci@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-+F:	drivers/pci/controller/dwc/pcie-andes-qilai.c
-+
- PCI DRIVER FOR APPLIEDMICRO XGENE
- M:	Toan Le <toan@os.amperecomputing.com>
- L:	linux-pci@vger.kernel.org
--- 
-2.34.1
+Regards,
+
+	Hans
+
+> 
+> I can ping you then if smatch is not ready by then.
+> 
+> 
+> Thanks :)
+> 
+>>
+>> Until then it just stays in my TODO list.
+>>
+>> Regards,
+>>
+>>         Hans
+>>
+>>> ---
+>>> Changes in v2:
+>>> - Fix typo in commit message commit
+>>> - Move error tag where it belongs (Thanks Hans!)
+>>> - Link to v1: https://lore.kernel.org/r/20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org
+>>> ---
+>>>  drivers/media/i2c/imx214.c | 7 +++++--
+>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+>>> index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..c66f0e18726c3fc15df91c37888a797bcea82134 100644
+>>> --- a/drivers/media/i2c/imx214.c
+>>> +++ b/drivers/media/i2c/imx214.c
+>>> @@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>>>                                                  V4L2_CID_LINK_FREQ,
+>>>                                                  imx214->bus_cfg.nr_of_link_frequencies - 1,
+>>>                                                  0, imx214->bus_cfg.link_frequencies);
+>>> -     if (imx214->link_freq)
+>>> -             imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+>>> +     if (!imx214->link_freq)
+>>> +             goto err_init_ctrl;
+>>> +
+>>> +     imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+>>>
+>>>       /*
+>>>        * WARNING!
+>>> @@ -1099,6 +1101,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>>>
+>>>       v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx214_ctrl_ops, &props);
+>>>
+>>> +err_init_ctrl:
+>>>       ret = ctrl_hdlr->error;
+>>>       if (ret) {
+>>>               v4l2_ctrl_handler_free(ctrl_hdlr);
+>>>
+>>> ---
+>>> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+>>> change-id: 20250829-imx214-smatch-c4d4d47428d5
+>>>
+>>> Best regards,
+>>
+> 
+> 
 
 
