@@ -1,129 +1,185 @@
-Return-Path: <linux-kernel+bounces-852755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985FFBD9D02
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:52:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D839BD9D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AF514E3E1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:52:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C88E84E83BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4C52D248E;
-	Tue, 14 Oct 2025 13:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67162DBF48;
+	Tue, 14 Oct 2025 13:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="hCLfVjke"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="00k9dX7n"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010069.outbound.protection.outlook.com [52.101.85.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FF2749C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 13:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760449927; cv=none; b=hMsNuv29CTmrDba7CoNtQsXdD5yAF+s6wuqGtDEdhnoHfHzdkNLFLQr9ealb6oNcFuzB23L9p7JIwtonkgISJeSuta3r5p7MUuVxubR7QtgltiC5z5AY86RcePTYKTLIX7bDDnHPjDV0B5ttoZCxQd6mT/ELg+nkbkjboMGofRQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760449927; c=relaxed/simple;
-	bh=nskP0eqzPM3FOd7xn+E9e/Vv+U70RRfZHhzrNk11I/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dFbkzYGnb0xS92ZQmutj9JEpTJMgV468rgewmtC6JEP5S2tatgLW+UXQwBD8O9P+hIOiPPXeupFL/q9oLuWCZvRZZKqZGqkayYRw86f1yTBi4Ve4lSKz2UtnjI5jNYUqRKFd/1GUqh8C8Me+5stL/xtcWsUNgyPImj5BCidp7E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=hCLfVjke; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5004b.ext.cloudfilter.net ([10.0.29.208])
-	by cmsmtp with ESMTPS
-	id 8aQ1vwscSaPqL8fRXvjUq7; Tue, 14 Oct 2025 13:51:59 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 8fRWvw9QVBc9y8fRWvFZG3; Tue, 14 Oct 2025 13:51:58 +0000
-X-Authority-Analysis: v=2.4 cv=ZcMdNtVA c=1 sm=1 tr=0 ts=68ee557e
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=7mImUwZGDDb17UAjreoA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cD7Tb49ErmVJbMd2cXxUa/ewmY8h9WSczri/nvNIydo=; b=hCLfVjkeC/B51l4uVyTcIb1rId
-	pvtVzkAhKmLb2+tPliNn0oELZgWncrw7dPgqoICWOYDjB85vq8ngqb9kQ4Mev4Uu02MFR2SPQS4m4
-	ZzlJ8D4QcJxspyccBc5cUWqRMHzmokJzUI48fscZfcM3Y8rYlJR/loFCTJZH9PL0r/BSN1R6C/5r5
-	pIXilyHfKfrIFFQ5oLbCJv91+5vvum+x4TDp4G8JVUrzFRpfORapxVdOduoF5HRSJJVceomIrbxgb
-	e0cJxB1HZqTpIMgi3FNolJxlbLZmj5NFjGC9UMTnDJzLlddZLAN5ZJmKhCmgRQ9Qnklo91SpuyhHy
-	IAMBLy5g==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:36628 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <re@w6rz.net>)
-	id 1v8fRV-00000001iHZ-43sO;
-	Tue, 14 Oct 2025 07:51:57 -0600
-Message-ID: <8ca3a16b-2eef-4e9c-9ff2-f13819829cf6@w6rz.net>
-Date: Tue, 14 Oct 2025 06:51:55 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DDE13C8EA;
+	Tue, 14 Oct 2025 13:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760449941; cv=fail; b=U6H/qgPs6fEAVNf1vxSzZGYNVCJVDgxZ3sPfs6h+9gk4Z18vjubA8nGMAVISQuaeEpVW1WwmGcDccMnAAN6EGUXMhaJCOqPZhibhovpv8DwoZFmpSKaVPF87b54ps2MlBkUUUy8Gwb/pPgDbMrI3eJxulWGmNpfbWstzTX3o2s8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760449941; c=relaxed/simple;
+	bh=i781QsCRGNfAW3wLU9x674bNsrXcOdQeq/WbzJgKkKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=l6beEj/dqeRlGqY19qTK0NL5eeCempW2X9UX3dPfhK3kwR8+6R+rmPOnhvzpKko9bAPuHGnjQ4RnCVdFmX3tQb+5PHPehSyn0WA/kfUak8EhbJ1knUzUnoAkdkhLcBg7osMgPzCGKiRY2V23dE+lXZEEvkKeZaSb/neYkN79Go8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=00k9dX7n; arc=fail smtp.client-ip=52.101.85.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PHgaxVQLD9zbAImabaAaO9tR1gigH/20B2MyTTC8N87/762bzjPNq8Pw/Anr+RNRUuBi7hR3LzSRNHIG/ngrLrNLMeP66Tl+8vQlwypRVSzGIDOS148ceuaJVDjRviVbKCF1gNPVPtc4tncr/3BNm1pNnnXjXp4Tf4gCB5tmj+2NvzSpU8L38BnksIZ/DPXTT6f26apiNrCRVuhDafx37bHVtHKnFAOJuqk3z06zsSrbrv2M3ThcaB2tkakx0+bXHKrEwid8K6zcPvshJddsR9QSBM3Or4lK98fNj86PHnEsznbgxz3MEJFRswJ/ylRI7LsXh1RUTz21FLiznJUCsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yZPZzPlJVczumAXNYd7EB9NrUe7/FbJTqXOzo+/VwJY=;
+ b=lTqkY2wVdPDba7fa94VOf2DbKHceD5BZasKQC1T1+Wr+VAAzfOjbD6R+ilbekTKm/v56l74QQ1WjVj8bOVYhetJvrZzPJP/C/w2BXjAXAPgwbwOwfOw9ku2reVASyTxPtA+YdAq6InUPnYs1iw/MaYr7HLmcN9IhB03tZKMtpJV5Ghqbm86Vu8iWfXBOneaQRmDEHPfv745qn1o2Gi1JDRygrvgMNLUyL2xsJC9HInL+kqGLpLefZeNNVyH2uiqsmPFCsOhUwdoRLSjXwEa79LsDNFg1B53zFU5p5snK2s0cBiAQwWNWpML5la+bHBfeOPOOwaokCIfKYnOUhfYPeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yZPZzPlJVczumAXNYd7EB9NrUe7/FbJTqXOzo+/VwJY=;
+ b=00k9dX7nh3ENbBJMMzmdXjfvAqtkriLzGZ4jr2+6d0L0CffMczcJtmay6LGdxjLNbmzfUl5Dei5av+tdd4Q+clTIpVQFAFHwq7SW44KIzPEBBRK5db1LP61KDR45XdwDB2u5DoHjAvUnBXS2R02GQ8aEXIu14vWV4wykzt/xE4E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ DM4PR12MB6568.namprd12.prod.outlook.com (2603:10b6:8:8f::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.13; Tue, 14 Oct 2025 13:52:16 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 13:52:16 +0000
+Date: Tue, 14 Oct 2025 09:52:06 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
+	john.allen@amd.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Incorporate DRAM address in EDAC messages
+Message-ID: <20251014135206.GA361227@yaz-khff2.amd.com>
+References: <20251013193726.2221539-1-avadhut.naik@amd.com>
+ <20251013220019.GFaO12cwSvbedQwGr6@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013220019.GFaO12cwSvbedQwGr6@fat_crate.local>
+X-ClientProxiedBy: BN9PR03CA0489.namprd03.prod.outlook.com
+ (2603:10b6:408:130::14) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/262] 6.12.53-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251013144326.116493600@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20251013144326.116493600@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1v8fRV-00000001iHZ-43sO
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:36628
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 16
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBstJSCymvkS7TN7f/NIL2VVHblfiUkoC1LXOwvHJXYmWM1hJZBbdG4EWCNsr7zYmA8Z7vIR8gky1wZZr20E49J9YM1q685tVNVw5+VSAZCYjSvHhqdr
- 3CN/iuBr/GRaKzOV+L5Av1h8wtb5aF3RrTvYEt8wvd6HYItV6FaIswR4+xacvFMNxqRYA5fCdLfgdnwHpYisg8WRcBeNyxIdclg=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DM4PR12MB6568:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00ffa0c1-e34e-4447-dcd0-08de0b28e278
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7d/xrl2GDIbrOPFvdxa4cI3DqcIM/DhhzXE+KinnLgoSrv+zkhuoy1vit8kE?=
+ =?us-ascii?Q?MkW9b8QJltZI1wQ0JXTHH0tvOk/jCLutkJpEaFUW0F+AA4diiQ/XqvKmvliE?=
+ =?us-ascii?Q?wXlwM3OTdoehrj615TjjhAPuLeasZGrEpymLSsx1NhIH/pXoIfZw0lXR+5IN?=
+ =?us-ascii?Q?9dXwMaNnxskNBRZ7bAb8ewn5e2LYBJzJRhZFDr1OAQSwbcgMQZRFerrj6gIM?=
+ =?us-ascii?Q?+uHu7yQkTvgakhJo2ofxdlcNdd+bhQ8XH5lrwNErf/QrWoeUZCiO218u5TlX?=
+ =?us-ascii?Q?nfOqB7z75YGSQECgIYPj3cou/VrkQ0PczaswOY6/NFjghXP2n3MKzlzo3Ccz?=
+ =?us-ascii?Q?es2Jm6y55CLAkuEesn79aBvIft8w3W9L8DZ0cdTAer1Fuz6csOvgOq+ERDmt?=
+ =?us-ascii?Q?bKVLWSmV4QiQNSrzzVCaUK0cZ9oKo17yBsUvYUWybFQMzGFiBKxu1+9wtlr+?=
+ =?us-ascii?Q?HwU8prweMh5/YMwIhF4HcXFn7ruosnTH1ScUMB7brETYNk11pMJelgrsHxpC?=
+ =?us-ascii?Q?7caam86nGJO8U2wBkCqTZaBvJxx2r+zOXYKqKbdIdcXwiYKK4vejLq3w2gNE?=
+ =?us-ascii?Q?hnf1Vh8izz7fA6iGGQMYkII8hkDx3uEKg4aG148JDGfCSdYPj90sZ53LhgZI?=
+ =?us-ascii?Q?bLwwcnPJlkqMWo3S61qA+kRKqF2lovx3qkj3fQ3BrU44FrSJuXuCxP+G2WvH?=
+ =?us-ascii?Q?9T1MnzTCrXI0PuzTVjA5yopi3uY7lkHDAXL8g5m8c1FWGUKuvTL12kftqr9+?=
+ =?us-ascii?Q?ubEyrHfzdc/T8mL7sgIWBPS3IlRlsJT02CXfiiFCpBprcGeNFOfyiW9XSwt6?=
+ =?us-ascii?Q?RduOcDK3QbNP+6n2/ZZ0Kj1qRZ3A4PQQFdHGHgQ3oxj8B20n+V2kUZD1gsMi?=
+ =?us-ascii?Q?DXcwjGrouNFLFmrzPZcVxNTfXSv6IsN8xdTlQ6Suvgnkl4fYmgdSTHKi6e09?=
+ =?us-ascii?Q?qEiPrYIP2Yyb3kjjFZu6p7jySOFInBZAGKPlMmXNWsiwX19UCoS2MmDgLvg8?=
+ =?us-ascii?Q?6a511MxiCp9SwD9isFFAKzmst4j5PIXs5DpW+SzTyLl1nzk2Q1Tr8TSHFKxy?=
+ =?us-ascii?Q?KMRNvGnIbmy26fNim86+5OSnKonTRIMfYnFxwBjMgWbEz868Rms2UUtXNk0Z?=
+ =?us-ascii?Q?WyJl+3nzzoOicLIOasRryy9ATX9Qma4uJiiO9Nt+HlmHykdujCqo6D+RmQry?=
+ =?us-ascii?Q?2kLB1jMyI2bZIwzPwLXMiJhAYHclzbOxJQwFfif9QsemsDModJ2JMPlTVn9W?=
+ =?us-ascii?Q?GWGdPqMZv5cFLrQTsM5+277W5yDTDK5gfnmmFEZGt/7azCx/C04XFca/B1NC?=
+ =?us-ascii?Q?Ebd5zsQFnlKkkNJBQYwzLhVJBGV5+Fv5I4SmUwf6y/jNS447v99CfqYQUhyo?=
+ =?us-ascii?Q?y2Y41x4NZundb1nvD159LiJ8zhy9qvgy9CIw9eB6Ybbi0EssCaNqut5BT4xD?=
+ =?us-ascii?Q?E0MlTFF626XDTYZLX9VSqVkLe83yrpi1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CBw6OIyL2o4QD9iycpNX2uGmoTBCpCFeYaqB6tH+6iuhSPqkSgl0GCGjMonf?=
+ =?us-ascii?Q?7za1bXDz3d8hVS3eqtJmn5brIXvHX3V/I3nVkB8JOMzmGpsRawn/h6GzChUU?=
+ =?us-ascii?Q?g77DcVvmaMLIkOtBPijWvBADl4outSEn4JJta1Af+xEmMDSdKslT8ET5oewv?=
+ =?us-ascii?Q?YVfm37QMbolqSeWSt/x+D2txeTU7D4T7RZKflZTeWlJUkKWFj8T3tW+5K4Bi?=
+ =?us-ascii?Q?D/0vm54EJC2GkRHExHlCGYIW+uCq+fi9G8llupSAR3mtQoXHMcVBCKLj+FxC?=
+ =?us-ascii?Q?ZU6LUbtwa+fZiodNDJSrKT1E+kv8dygKTdinCfkNQP+C5Hl/LPJuZn9A9/eW?=
+ =?us-ascii?Q?JBvzLSop3qkAfzxXapcl84qN1IvjXSbiBJeSWVgvIbkNaLyfxJF41Ah1rZrV?=
+ =?us-ascii?Q?oF07bjAEB9fiS9Bw0IVC8e5duZivYscvLUMH2ikSjLEWAdX69QLiTwVwIGow?=
+ =?us-ascii?Q?bPkuaUVCnFNfnhQgaVxDrO9w16ko3cYcz6HM2XtKtwiE24mQmsZ5oVQc0cSR?=
+ =?us-ascii?Q?krPnbUqLALAa1CKLfrWmH059c2GNMkSVSdwEOeE5DidbFlzVMsK6OC3utxMI?=
+ =?us-ascii?Q?FoJNJ8QhYnD9s73iwZ6nyu8pWESt2NUUj9t71VIcM/klkm0Wl52Z8VTQ4Hlz?=
+ =?us-ascii?Q?nBu+5/vAvi++drIaPZwcAb4vM9aM1nBxiXgGQQGn0mCbdUvuXa+MtNaJHUv/?=
+ =?us-ascii?Q?VKFs3KRt/kUHj0dXWF5eTmzIPlC1tVnol9E3hGdx4Mu1Uq0Yy8zkb7g/5ck0?=
+ =?us-ascii?Q?V2Xssg5umIzi7vyurKGxYBaZz0p7yVSmSG3wdzgj5ZtEJ4fko79tIxMRzL9b?=
+ =?us-ascii?Q?kMfgv8jOsPAQJZk1HmMP1Z7ogL83jiS6YMCanDtgyOZaysc6MvyXUAGLVdLx?=
+ =?us-ascii?Q?SD9AXFm5pG+kNGzl/FhF8UUzVRQMLxxrtNlIsJpDtmhSTYEeJMoctkG8BY0B?=
+ =?us-ascii?Q?rvpf6nm6p+47y2g2GITEPTLfQ1RvWQ0Em90JsVKRGoyTRAQ83faCI4OAyoGS?=
+ =?us-ascii?Q?EQnSZeq6Vk+QpsGVTSfus6P8g3UYfVhWHQdSKRLd52zpwsvyBfF9De03/erN?=
+ =?us-ascii?Q?OwHTxpp/hpwaapGW6hnAAq6DvJ9G7MXWQbUQ1J4lia4zm78hjVIUeU3vxM16?=
+ =?us-ascii?Q?OLqYk2crcrSEyK55SYK4duf8hfMICQ9SvEZhHKnkQW2dttpzWre3HeyS7e+P?=
+ =?us-ascii?Q?o6E5ld+vuihScqNuWyNUt8Nkvjgk+UeaQfCtwMBhlMOHHlus5oFIuPhAAOBi?=
+ =?us-ascii?Q?QTA8h+KfrF/OXoBnzsLNdKwJycsufBvzZ5OrTaBUItSr9jt/DWOqZwkSgcbk?=
+ =?us-ascii?Q?kvYxYhXrDz1JD9OUr+GWkRun44Md7x1gGDyHNHeDY94g1sdG8p+U0IMBSqow?=
+ =?us-ascii?Q?TjRMEEc7m5XpIovm4ZV/a6CmdiY6PbBV53z+JcZJmVJTE+O9aLdzR8ehoLl2?=
+ =?us-ascii?Q?a8qCPlq3Q+xPxgX7B765gMBiJlxsI9+3J4jG2XJV6bwHv83F0fADuZE8OF6I?=
+ =?us-ascii?Q?jphTc4OYFRbTdWEQWgr+l9kerRWD5C59AK2HnZo1VBILPHgQuyPqiYws3cCR?=
+ =?us-ascii?Q?8zpZAEDvy1Ef9CzC7uxfolBb3B20YIvvpJn53cXK?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00ffa0c1-e34e-4447-dcd0-08de0b28e278
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 13:52:16.1977
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3KtBZ6NvMdTr3TCjjYwsxqGp6Li9X4ejvFX0VKhx1tXN2WjqewWPIKS2JHhQnwlolJR4otYD0hi7r6cLxbuNEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6568
 
-On 10/13/25 07:42, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.53 release.
-> There are 262 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 15 Oct 2025 14:42:41 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.53-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Oct 14, 2025 at 12:00:19AM +0200, Borislav Petkov wrote:
+> On Mon, Oct 13, 2025 at 07:34:47PM +0000, Avadhut Naik wrote:
+> > Currently, the amd64_edac module only provides UMC normalized and system
+> > physical address when a DRAM ECC error occurs. DRAM Address is neither
+> > logged nor exported through tracepoint.
+> > 
+> > Modern AMD SOCs provide UEFI PRM module that implements various address
+> > translation PRM handlers. These PRM handlers can be leveraged to convert
+> > UMC normalized address into DRAM address at runtime on occurrence of a
+> > DRAM ECC error. This translated DRAM address can then be logged and
+> > exported through tracepoints.
+> 
+> And?
+> 
+> I read all three commit messages to figure out *why* those DRAM addresses want
+> to be logged. But it seems they don't want to be logged. Because there's not
+> a single reason why they should be, AFAICT. Without a proper justification,
+> this looks like a bunch of unnecessary code to me...
+> 
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Good point. I overlooked this myself.
 
-Tested-by: Ron Economos <re@w6rz.net>
+The "DRAM address" helps memory vendors analyze failures. System
+builders want to collect this data and pass it along to the memory
+vendors. The DRAM address is not contained in architectural data like
+MCA info, and getting the address from MCA requires using additional
+system-specific hardware info. It's much more reliable to get the DRAM
+address from the system with the error rather than try to post-process
+it later.
 
+Thanks,
+Yazen
 
