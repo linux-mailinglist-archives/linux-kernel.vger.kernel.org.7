@@ -1,174 +1,97 @@
-Return-Path: <linux-kernel+bounces-852162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C05BD8545
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:59:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3345BD8548
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFDD3A8D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:59:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D33254F5BF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF33F2E2296;
-	Tue, 14 Oct 2025 08:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDA42E5B13;
+	Tue, 14 Oct 2025 08:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtXN8YGD"
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQWL7HV5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D4B26E706
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E552DE6E1;
+	Tue, 14 Oct 2025 08:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760432337; cv=none; b=bFDuJwCmFTX84cyxdQaJ+m6cMTgPLE64r/UGCcSftAPHSTH5j54fX7i83rN7sO3LhOci+cXeCdbn0YGG4Q1i2RqX5M6KQ++QZJN5eoj/BR+0gcAsxlclLOa2URpJDx+rL4S2gOLCRG0VGcLHyccT8SxX3TACP5PL9ChsswtDtk8=
+	t=1760432341; cv=none; b=nKrOHTW9Mj4CelBhJDeqj1zWH+4X9GwFhZFlDLQK4TzqaTNhPWiH3ew13+8bd/B2qUDP9ntcRzwXXSKkFveNEFXXYBSY9xeLwLN9Mw1MMRgztyuTtj5UQw0Pa7BGujAiEhlrrHEsZIF0lUFDTHP9vdQsdrYRKNLylJ3uSiX2mmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760432337; c=relaxed/simple;
-	bh=k7HmEga+OGGjtgmIR/2QroLQNi9uv52kHnYxNBFHLV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMO/lvyuOHX4OP4pUdvo2AlEdroiPi5n2QB/JY3H+VvmMBuAzFo1KzT8Lk66XFW9zheuUdZV/y8dSO5l3UDUW9HbgApuNmSDjLuwbYhsuMeYVzj6in22i7c4iw0g5QG0P+903etPvPMokNNuKbPpUmElnM7Ox/ExfBmmws/yS9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtXN8YGD; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-930c3c772daso2421696241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 01:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760432335; x=1761037135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gLYcGa961yhxxYkbsF/rLk6YVjYontQ0KHKihOwI8T4=;
-        b=mtXN8YGDM0aISxB1DFvAzepVL1SlQTXIBH/eXYSynkkF62flVL0bcfSFF4YgFvOE2Z
-         VDZ+HZjn6sMYNJus6FjEkZ3JKqpk577g14t6Ap5QU2EZzHfn7PbH8tuL1/+8Bxpe8a1W
-         mfeQvTRWaXHGTsMcUE4KHla8XG6jkqEDdvmiyP8sYQyOtJUrKYVUfMxcqsGDP7l6eXU7
-         jgrAztgdpiFtHXrQd1eDz0dCaeAAEpaOq9mPhm1fEbbtOosJeiKm8U27IyoQ4NFA47YZ
-         DEj2P1BxTsuQsxF5hwByvDFU5D5Y2Bz+jB5vvMCT3wj2fRo5rv/jn0chWIYmoNifgLNS
-         9Xgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760432335; x=1761037135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gLYcGa961yhxxYkbsF/rLk6YVjYontQ0KHKihOwI8T4=;
-        b=gmi5YSC4SEVSox5eeOqt8Uqk6EH53dc00fZbItakvJb4bwPo9fn133NrRxlttsoH9F
-         TnbCHyUlSjIWl4JsXUK2hCg3nCaOf+qm5FZlNQV3zYpmcRbsafeNhPWharKSfFcP73wk
-         l3g6uCRNq1pRBoIYg+OsX4o9lC4xha/H2KXvG9ktxjRMgwaX/6cNJF2hzZe+/2qEmfI+
-         rTFZoLWm7P2fDUMFK6qm+aBBInBdoePLDDJ4ikW9QfDv8zI2xEANbvKPQW1h7avmCsLk
-         BVdAvzqwKdiEvbXiWbPFAJaNlZrtdyDSgu+7LhlMMzFulKHPtNbc9sBPdsv7Is7jicqx
-         LRhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWhzybKNCsY0NeM8c3gtTqk0QaY4fKmQhD3O04ayAVUtx5ChNVzEPtSN039UTfwmd+y6xOauosMJZnspg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTxWW93piyx59I9he8L1Pe9bqkU305pFGttDvDhyI79zbbs5XQ
-	CMGl9PhGvoZ0IQbcmA8IsnTuZWt7GNzTyq5b0Im0o1Ge+kqy+CZyTiSlN3NHoxRwNkt14uVR25e
-	FjysDjJs9dBIXd3hUP3X3KWipgC5Vhxs=
-X-Gm-Gg: ASbGncslrlgJqhGWx0qwkVIGrnwV0ADcJucFaKpvV/wXoacqkWBqJ4VySPTUl6hvKF3
-	B6JkemWxj8cdktHY0cVASCZ2eatZFa31CS32XFNKyOZODFJFwrzzYD89R+FE3OMjZ7PaohHgjrF
-	i2DWVc4cjgcrzGlEA0fpFMVMZaSv0f/KlaKF7cFeR4Lk2+sz2UGVFvPUGq4NpPvMu0a8BdO9ADc
-	wb2Jssj6ub0QkLOlYTQ1q0/17FiNzK8BZ8Fq2O3OwA40za2/zj0n+OL9A==
-X-Google-Smtp-Source: AGHT+IGX4PksrMyWa5G15wFPdlRrAfYAlpyBh8eq+zBl1laEShj5dhtzQCGqBWE2Cgx+teji5G7o41ixrF4TOb83K1Q=
-X-Received: by 2002:a05:6102:3e14:b0:529:e9a5:c216 with SMTP id
- ada2fe7eead31-5d5e22127b3mr9320305137.4.1760432334547; Tue, 14 Oct 2025
- 01:58:54 -0700 (PDT)
+	s=arc-20240116; t=1760432341; c=relaxed/simple;
+	bh=gSmv+sj9NLcmMjhB9pOTGPUI+c554NtegDKIVrvQseE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnFEhdiuXmnDLcyNbN2eFwIyDuFB7KIDlXUSe6oj62dHPACR24TDmA+XJALCUyg7PcE3S7DynFbSNIB00d4ncvUVBjiAwx85zn1p92QPWG+xco2VK+2n2/kfVqks1brR1SQaIPhfwJKMGQcSQFDJzePhDISlxqhP7vJcpqOf/Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQWL7HV5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8AEBC4CEF9;
+	Tue, 14 Oct 2025 08:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760432341;
+	bh=gSmv+sj9NLcmMjhB9pOTGPUI+c554NtegDKIVrvQseE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mQWL7HV56BC5zWW6WUHiKG3ofUaCJRFuv3vIO4g0wh7DgFwRCImEPRRUwQClPRoUU
+	 S6a8zE0W8LBTJ8sYxeb3OOlTk/GvahqCpD5v0C5QlTPcgATcJXMt/95oDrcnL6DCeN
+	 JOdUHJ7Cen1puMfCxoDzVnYyJZw7ClponPpkY2M6va8IRkljLCr2stqOL4PxlVCMdA
+	 6nuQ12iYPQxG4cjJ9o6KkrG3q/EovJPuy4Jd1idmq5ynuTjRhrwEv6as17+5wd6gNs
+	 ocHPF/L7Gj92mk/Y+sSeRUWwo9sU8xgu+tiqakiX8lzDrVeDhFlzbOJzCN65VlaKr9
+	 eiueD1IdanEcQ==
+Date: Tue, 14 Oct 2025 09:58:56 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	kernel@pengutronix.de,
+	Dent Project <dentproject@linuxfoundation.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 3/3] net: pse-pd: pd692x0: Preserve PSE
+ configuration across reboots
+Message-ID: <aO4Q0HIZ_72fwRI2@horms.kernel.org>
+References: <20251013-feature_pd692x0_reboot_keep_conf-v2-0-68ab082a93dd@bootlin.com>
+ <20251013-feature_pd692x0_reboot_keep_conf-v2-3-68ab082a93dd@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013101636.69220-1-21cnbao@gmail.com> <aO11jqD6jgNs5h8K@casper.infradead.org>
- <CAGsJ_4x9=Be2Prbjia8-p97zAsoqjsPHkZOfXwz74Z_T=RjKAA@mail.gmail.com> <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
-In-Reply-To: <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 14 Oct 2025 16:58:43 +0800
-X-Gm-Features: AS18NWBgpajHqeXyjq2SfshUK90UReXA3HYugsOOoYy5fZXYwfWha3ufAj0-PzY
-Message-ID: <CAGsJ_4xGSrfori6RvC9qYEgRhVe3bJKYfgUM6fZ0bX3cjfe74Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-To: Eric Dumazet <edumazet@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Huacai Zhou <zhouhuacai@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-feature_pd692x0_reboot_keep_conf-v2-3-68ab082a93dd@bootlin.com>
 
-On Tue, Oct 14, 2025 at 1:04=E2=80=AFPM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Mon, Oct 13, 2025 at 9:09=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
-ote:
-> >
-> > On Tue, Oct 14, 2025 at 5:56=E2=80=AFAM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > >
-> > > On Mon, Oct 13, 2025 at 06:16:36PM +0800, Barry Song wrote:
-> > > > On phones, we have observed significant phone heating when running =
-apps
-> > > > with high network bandwidth. This is caused by the network stack fr=
-equently
-> > > > waking kswapd for order-3 allocations. As a result, memory reclamat=
-ion becomes
-> > > > constantly active, even though plenty of memory is still available =
-for network
-> > > > allocations which can fall back to order-0.
-> > >
-> > > I think we need to understand what's going on here a whole lot more t=
-han
-> > > this!
-> > >
-> > > So, we try to do an order-3 allocation.  kswapd runs and ... succeeds=
- in
-> > > creating order-3 pages?  Or fails to?
-> > >
-> >
-> > Our team observed that most of the time we successfully obtain order-3
-> > memory, but the cost is excessive memory reclamation, since we end up
-> > over-reclaiming order-0 pages that could have remained in memory.
-> >
-> > > If it fails, that's something we need to sort out.
-> > >
-> > > If it succeeds, now we have several order-3 pages, great.  But where =
-do
-> > > they all go that we need to run kswapd again?
-> >
-> > The network app keeps running and continues to issue new order-3 alloca=
-tion
-> > requests, so those few order-3 pages won=E2=80=99t be enough to satisfy=
- the
-> > continuous demand.
->
-> These pages are freed as order-3 pages, and should replenish the buddy
-> as if nothing happened.
+On Mon, Oct 13, 2025 at 04:05:33PM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> Detect when PSE hardware is already configured (user byte == 42) and
+> skip hardware initialization to prevent power interruption to connected
+> devices during system reboots.
+> 
+> Previously, the driver would always reconfigure the PSE hardware on
+> probe, causing a port matrix reflash that resulted in temporary power
+> loss to all connected devices. This change maintains power continuity
+> by preserving existing configuration when the PSE has been previously
+> initialized.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Ideally, that would be the case if the workload were simple. However, the
-system may have many other processes and kernel drivers running
-simultaneously, also consuming memory from the buddy allocator and possibly
-taking the replenished pages. As a result, we can still observe multiple
-kswapd wakeups and instances of over-reclamation caused by the network
-stack=E2=80=99s high-order allocations.
+Hi Kory,
 
->
-> I think you are missing something to control how much memory  can be
-> pushed on each TCP socket ?
->
-> What is tcp_wmem on your phones ? What about tcp_mem ?
->
-> Have you looked at /proc/sys/net/ipv4/tcp_notsent_lowat
+Perhaps I'm over thinking things here. But I'm wondering
+what provision there is for a situation whereby:
 
-# cat /proc/sys/net/ipv4/tcp_wmem
-524288  1048576 6710886
+1. The driver configures the device
+2. A reboot occurs
+2. The (updated) driver wants to (re)configure the device
+   with a different configuration, say because it turns
+   out there was a bug in or enhancement to the procedure at 1.
 
-# cat /proc/sys/net/ipv4/tcp_mem
-131220  174961  262440
-
-# cat /proc/sys/net/ipv4/tcp_notsent_lowat
-4294967295
-
-Any thoughts on these settings?
-
-Thanks
-Barry
+...
 
