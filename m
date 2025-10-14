@@ -1,139 +1,257 @@
-Return-Path: <linux-kernel+bounces-852453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB4BBD9057
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:28:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EF2BD9078
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 13:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64A83AF431
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:28:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B71E54FFD2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81583112B4;
-	Tue, 14 Oct 2025 11:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1219B9475;
+	Tue, 14 Oct 2025 11:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZm/6l8e"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="ECeb8yJL"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E397C30F959
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 11:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E31130C35B;
+	Tue, 14 Oct 2025 11:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760441237; cv=none; b=C9Z6DMLILL/GJaYMSB5JRm8E1qEEj1QPZJSeK6yvoLaueaV3ohBeKq0xoChW2otay9s4qGgx6aunnap84453cqIqLo4q/zmOI7WGKyMoKclajIm0PttyqKxEeCq20FCRyBD2AX4CHiXDuFg2C0J4Z0OA0buFRQWRtqLfdJRi3jc=
+	t=1760441282; cv=none; b=Bjp7MoBqgONSbYOjK0/DV/blxjPK/X1OR//ue1u6lKCsO7Km/pCdPAkoK3PBqS7Kxddh4qEdYYbcRs/ZSZ4gJ6O7d4IMZI2pbRil/PynhXDANbK74eWMMiTWtzK7CL1mvoxnvlHuFJKj1zw31d1u0ot1FAjdSyk/vdmZLpyWJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760441237; c=relaxed/simple;
-	bh=Rx/YhkNxvLHTn1Rxzb2qa4X0/4hclpnv8IPkM9Xg0Oc=;
+	s=arc-20240116; t=1760441282; c=relaxed/simple;
+	bh=Aqknw9cvz1a5UVydHXHDG8HHJbPwIFs1dlI9sCw4JAU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XngAyPjnBOke2PM/L2cfmjuD9EWD1nkJj/YIYUfwYSifM9nB9gkaUyu3qEjnmstjyfUPIMHMfxqHOjuIowTilV89Cs8dvRMWIHc6oSusQHEdRM+qZLxokw8yRf+73ZXtY8fAxl9ddmY7UaKRE1wc+ORIqGOQ+8uXRjyoxmBjjw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZm/6l8e; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-b5515eaefceso4505185a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760441235; x=1761046035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iE4VzJhkO405E1xXiO2HovH6fVbTOd8AlZfv3OpV7tQ=;
-        b=fZm/6l8etXCz+IX9EaYFXrINr+/EC5xO/KA/D/goPOt31MUJzDyet/ZxEgiA2sXwqP
-         eo9ah2BfbtNGmFHVYg6leGsD6dSKaazLJBV8X5eJ8dZe6pJO8R+b9KzERmuoszWzy7xq
-         EWKsaO9BpT57wDBvCdvLbDyqbaCk3dClrxpI/cuqgoIbEj8Z0Ame/e0gD1oBB/g1/rXA
-         AGTSaU3PHg/qhnP93TsNC0VyiNpcmZKig5aOxq/I77v3nPd47l6Ec69LwUnTdATpGx1h
-         URjqRZnr7Xh1ZPF+sUgVbVsvnhgUon5CCsQYhMKZGoylwSUVSOPJMa45YV1uV+9MHn0n
-         Oq/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760441235; x=1761046035;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iE4VzJhkO405E1xXiO2HovH6fVbTOd8AlZfv3OpV7tQ=;
-        b=P3NC60bTC8TRL+pAsTITxRsvy0Tb/ZX5GdbCioky5kjxfpgnb52PNQ80czKZQUk5AZ
-         86LE2sEAdfJT7ccbYiTSl2LaqA54gF/T08m7hYDFWzEfhdhv5yl0UCOxBD2AmO84fFA1
-         fv27bFtmJkJPcAe24W2Kt+gptePeIH6C2RGoVMvMX+BSIctlml8dQ4gobTxB6q0IhEzf
-         zrqY5400W1tH2TlgBkREi+efjjz9hYYS7fnXzuWeXXTY6/2h/vQexaYZZbcqllXXNiK0
-         d+csK2n1hbl62BqaNQ1oXfjvEfmfiY+ax14cbDEUqz8z4mNnfx4n7ScqwD/ieQUtWHpk
-         dgKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDuP0J5dJQ4FuWEVvyMv8QxttVPEOIumAWRXpRIZ3fOE35iI0MT/kYnJ6IgNggpGIaUq8bS0cvddYtc64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXfSXSNbgXKzzlc/VQjEF6rhUBzPKsieWXneHYomnNxoAcBods
-	YzHg/W2t9ro01WRlQM4dj9jfRoD05AlbQvPGpOJx9/2iAPBvX9Odm6TM
-X-Gm-Gg: ASbGncvB7bILPkmrU+fk/ndopDjdopvTxDAw25XziKkxKgKgYFySZO260GYpAMZe1s5
-	DHB2MegIZY9nbBpzXJA09sBi36dKN5Xc92/3oQChSGpaD3PKDt5vFMd6DntHf2h7SKTvipKQ5X9
-	SR0GBqrrb0Bcc6LXX4F4xGA1lM11dyAaWEgSV8rTO2k5QP5BuqHiBW6MiB+c1nicorrHkd9NJyN
-	TAcCOjCrmSETObVV264GaeKD41XQQw7cXNn/+m0SkPMmGyvbvfAEh6+r46CzqkLwVxoCouOjqCc
-	BKqCwDTn6OPdd0Dk3Xxgwbbz1PN18omiKmjXdifjOjH61OT0zJrWCvRvvDbF2RRcULNrW+lKSxr
-	UKOsISkQMMP7t7baH3H8/l+Ru8cCaSpJNyp/ivArId7IC4jmc
-X-Google-Smtp-Source: AGHT+IFYag3HNohwuOOUkgMrRymk2W/3k72l93HvciN+it3ayDICZ/f/o7hlITPi8oCOkannkiormQ==
-X-Received: by 2002:a17:903:246:b0:24c:9309:5883 with SMTP id d9443c01a7336-290273ecb35mr316032095ad.28.1760441235366;
-        Tue, 14 Oct 2025 04:27:15 -0700 (PDT)
-Received: from 7950hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e2062fsm161807285ad.48.2025.10.14.04.27.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:27:15 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: ast@kernel.org,
-	paulmck@kernel.org
-Cc: daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	jakub@cloudflare.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	jiang.biao@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH bpf-next 4/4] bpf: use bpf_prog_run_pin_on_cpu_rcu() in bpf_prog_run_clear_cb
-Date: Tue, 14 Oct 2025 19:26:40 +0800
-Message-ID: <20251014112640.261770-5-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251014112640.261770-1-dongml2@chinatelecom.cn>
-References: <20251014112640.261770-1-dongml2@chinatelecom.cn>
+	 MIME-Version:Content-Type; b=PJmlP7584y4usfCAqAOOJSdbyOxODYkVbqO30MnVeCxKQrSiLsFkxjcUgWryNzF6DrHfWKqKIATC28VadCM4qKS3Oyg9Y+C0WkcsrbNfG3cLiVnvbkQmDAgi023R85rIbUMUvBgyiPPoRs/N4gRv8AZM+zVsDKZmjwuLDK/QqFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=ECeb8yJL; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id E5699635B045;
+	Tue, 14 Oct 2025 13:27:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1760441276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/EMfT5aBiBHDf6vkd/myeAKoiQKREcvgcSsPCDJBELw=;
+	b=ECeb8yJL+ffmqQ81Mob0aT6ZiQKT3W/6LJa/WF/uUfmj+eEVhk1+uQDIac+FqOYY0lWZnk
+	9LtFZKc5fbuPj7mImMGPRdoSLFXnj6pFhwPP/f4oS0ZS/RoEX8LyJeIzRHvlxVq6bt30Mw
+	OLUs3gTAxOUqT7qpqdXC9cScnERriNk=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Carlos Maiolino <cem@kernel.org>, Pavel Reichl <preichl@redhat.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH 1/2] xfs: quietly ignore deprecated mount options
+Date: Tue, 14 Oct 2025 13:27:40 +0200
+Message-ID: <2800646.mvXUDI8C0e@natalenko.name>
+In-Reply-To: <20251013233229.GR6188@frogsfrogsfrogs>
+References: <20251013233229.GR6188@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart12758673.O9o76ZdvQC";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-All the calling of bpf_prog_run_clear_cb() is protected with
-rcu_read_lock, so we can replace bpf_prog_run_pin_on_cpu() with
-bpf_prog_run_pin_on_cpu_rcu() for it.
+--nextPart12758673.O9o76ZdvQC
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH 1/2] xfs: quietly ignore deprecated mount options
+Date: Tue, 14 Oct 2025 13:27:40 +0200
+Message-ID: <2800646.mvXUDI8C0e@natalenko.name>
+In-Reply-To: <20251013233229.GR6188@frogsfrogsfrogs>
+References: <20251013233229.GR6188@frogsfrogsfrogs>
+MIME-Version: 1.0
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- include/linux/filter.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello.
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 48eb42358543..5ec5b16538f4 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -995,7 +995,7 @@ static inline u32 bpf_prog_run_clear_cb(const struct bpf_prog *prog,
- 	if (unlikely(prog->cb_access))
- 		memset(cb_data, 0, BPF_SKB_CB_LEN);
- 
--	res = bpf_prog_run_pin_on_cpu(prog, skb);
-+	res = bpf_prog_run_pin_on_cpu_rcu(prog, skb);
- 	return res;
- }
- 
--- 
-2.51.0
+On =C3=BAter=C3=BD 14. =C5=99=C3=ADjna 2025 1:32:29, st=C5=99edoevropsk=C3=
+=BD letn=C3=AD =C4=8Das Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+>=20
+> Apparently we can never deprecate mount options in this project, because
+> it will invariably turn out that some foolish userspace depends on some
+> behavior and break.  From Oleksandr Natalenko:
+>=20
+> > In v6.18, the attr2 XFS mount option is removed. This may silently
+> > break system boot if the attr2 option is still present in /etc/fstab
+> > for rootfs.
+> >
+> > Consider Arch Linux that is being set up from scratch with / being
+> > formatted as XFS. The genfstab command that is used to generate
+> > /etc/fstab produces something like this by default:
+> >
+> > /dev/sda2 on / type xfs (rw,relatime,attr2,discard,inode64,logbufs=3D8,=
+logbsize=3D32k,noquota)
+> >
+> > Once the system is set up and rebooted, there's no deprecation warning
+> > seen in the kernel log:
+> >
+> > # cat /proc/cmdline
+> > root=3DUUID=3D77b42de2-397e-47ee-a1ef-4dfd430e47e9 rootflags=3Ddiscard =
+rd.luks.options=3Ddiscard quiet
+> >
+> > # dmesg | grep -i xfs
+> > [    2.409818] SGI XFS with ACLs, security attributes, realtime, scrub,=
+ repair, quota, no debug enabled
+> > [    2.415341] XFS (sda2): Mounting V5 Filesystem 77b42de2-397e-47ee-a1=
+ef-4dfd430e47e9
+> > [    2.442546] XFS (sda2): Ending clean mount
+> >
+> > Although as per the deprecation intention, it should be there.
+> >
+> > Vlastimil (in Cc) suggests this is because xfs_fs_warn_deprecated()
+> > doesn't produce any warning by design if the XFS FS is set to be
+> > rootfs and gets remounted read-write during boot. This imposes two
+> > problems:
+> >
+> > 1) a user doesn't see the deprecation warning; and
+> > 2) with v6.18 kernel, the read-write remount fails because of unknown
+> >    attr2 option rendering system unusable:
+> >
+> > systemd[1]: Switching root.
+> > systemd-remount-fs[225]: /usr/bin/mount for / exited with exit status 3=
+2.
+> >
+> > # mount -o rw /
+> > mount: /: fsconfig() failed: xfs: Unknown parameter 'attr2'.
+> >
+> > Thorsten (in Cc) suggested reporting this as a user-visible regression.
+> >
+> > From my PoV, although the deprecation is in place for 5 years already,
+> > it may not be visible enough as the warning is not emitted for rootfs.
+> > Considering the amount of systems set up with XFS on /, this may
+> > impose a mass problem for users.
+> >
+> > Vlastimil suggested making attr2 option a complete noop instead of
+> > removing it.
+>=20
+> IOWs, the initrd mounts the root fs with (I assume) no mount options,
+> and mount -a remounts with whatever options are in fstab.  However,
+> XFS doesn't complain about deprecated mount options during a remount, so
+> technically speaking we were not warning all users in all combinations
+> that they were heading for a cliff.
+>=20
+> Gotcha!!
+>=20
+> Now, how did 'attr2' get slurped up on so many systems?  The old code
+> would put that in /proc/mounts if the filesystem happened to be in attr2
+> mode, even if user hadn't mounted with any such option.  IOWs, this is
+> because someone thought it would be a good idea to advertise system
+> state via /proc/mounts.
+>=20
+> The easy way to fix this is to reintroduce the four mount options but
+> map them to a no-op option that ignores them, and hope that nobody's
+> depending on attr2 to appear in /proc/mounts.  (Hint: use the fsgeometry
+> ioctl).
+>=20
+> Lessons learned:
+>=20
+>  1. Don't expose system state via /proc/mounts; the only strings that
+>     ought to be there are options *explicitly* provided by the user.
+>  2. Never tidy, it's not worth the stress and irritation.
+>=20
+> Reported-by: oleksandr@natalenko.name
+> Reported-by: vbabka@suse.cz
+> Cc: <stable@vger.kernel.org> # v6.18-rc1
+> Fixes: b9a176e54162f8 ("xfs: remove deprecated mount options")
+> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> ---
+>  fs/xfs/xfs_super.c |   13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index e85a156dc17d16..e1df41991fccc3 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -102,7 +102,7 @@ static const struct constant_table dax_param_enums[] =
+=3D {
+>   * Table driven mount option parser.
+>   */
+>  enum {
+> -	Opt_logbufs, Opt_logbsize, Opt_logdev, Opt_rtdev,
+> +	Opt_quietlyignore, Opt_logbufs, Opt_logbsize, Opt_logdev, Opt_rtdev,
+>  	Opt_wsync, Opt_noalign, Opt_swalloc, Opt_sunit, Opt_swidth, Opt_nouuid,
+>  	Opt_grpid, Opt_nogrpid, Opt_bsdgroups, Opt_sysvgroups,
+>  	Opt_allocsize, Opt_norecovery, Opt_inode64, Opt_inode32,
+> @@ -115,6 +115,14 @@ enum {
+>  };
+> =20
+>  static const struct fs_parameter_spec xfs_fs_parameters[] =3D {
+> +	/*
+> +	 * These mount options were advertised in /proc/mounts even if the
+> +	 * filesystem had not been mounted with that option.  Quietly ignore
+> +	 * them to avoid breaking scripts that captured /proc/mounts.
+> +	 */
+> +	fsparam_flag("attr",		Opt_quietlyignore),
+
+Should have been "attr2" here I suppose.
+
+Thanks.
+
+> +	fsparam_flag("noattr2",		Opt_quietlyignore),
+> +
+>  	fsparam_u32("logbufs",		Opt_logbufs),
+>  	fsparam_string("logbsize",	Opt_logbsize),
+>  	fsparam_string("logdev",	Opt_logdev),
+> @@ -1408,6 +1416,8 @@ xfs_fs_parse_param(
+>  		return opt;
+> =20
+>  	switch (opt) {
+> +	case Opt_quietlyignore:
+> +		return 0;
+>  	case Opt_logbufs:
+>  		parsing_mp->m_logbufs =3D result.uint_32;
+>  		return 0;
+> @@ -1528,7 +1538,6 @@ xfs_fs_parse_param(
+>  		xfs_mount_set_dax_mode(parsing_mp, result.uint_32);
+>  		return 0;
+>  #endif
+> -	/* Following mount options will be removed in September 2025 */
+>  	case Opt_max_open_zones:
+>  		parsing_mp->m_max_open_zones =3D result.uint_32;
+>  		return 0;
+>=20
+
+=2D-=20
+Oleksandr Natalenko, MSE
+--nextPart12758673.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmjuM60ACgkQil/iNcg8
+M0vfURAA60mh8W8inA79KQ3Z2IR/dIhqKNQ/I28xR83zU9Xh6cViJa8rekWYSZLR
+HkS2Y5F2Gvxf0KFQN5QbUhWbyVyHL0LbAb7l7dPfFAC/pI/A/WTt9v7LKHIC1JnS
+60FL6zaGZLgX6REKdu99jFZl0jtTSEsJlo6fcPtudGNNz+kwyHWp1fSeT0vQd7xT
+QhmrRGIFQjvrxiYIM2IgoSmTETRDt9tqWMVyuCVH5aK6kY3T+h6VwbNn97bVqLTH
+iWQsNBtKs2LLyiE9HGLaXg/zdG7L0E2qllXMR6+Tot2PSH5kOUUy6bDajXD7Eflb
+kYnUofJMY4KE9it8ZI1rZqdLoH1a16yao4zLSk1zM+DP9mjkWEsXah0O/dOegT0y
+24bjxjLZK/aGwZh5CX9FMgVQjdzURTey/sTIfZmz8Avv5tpzMnum2aF3wA7FviLt
+03u4Hz7lUx1z0eGDPbloASbu4IVHOrw6fCOzgR8vqgsTfYiCQWwAHiwJ14mOv+tC
+kNHDo2edZaFymQkKsGZkcROp6CmdePcxQCA5haUScUGbi1Z8tNrw8s917FVFxLw1
+sA13utFJ9PifS7su7B6UijbLk4ou61RHI81FVz3oEZwMpWR2nf7b8azXzNKLEG0c
+sparWTTJgPHgJvQ/62aLQXqquPtom1BKikD5I/T1vgUfjMqL91w=
+=rPP4
+-----END PGP SIGNATURE-----
+
+--nextPart12758673.O9o76ZdvQC--
+
+
 
 
