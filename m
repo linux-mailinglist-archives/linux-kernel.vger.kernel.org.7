@@ -1,222 +1,213 @@
-Return-Path: <linux-kernel+bounces-853022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3853BDA7DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D0CBDA74C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 17:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC845506E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73110541198
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 15:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BD928C5D9;
-	Tue, 14 Oct 2025 15:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672DF30146C;
+	Tue, 14 Oct 2025 15:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a5N6Mc60";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HB1QcSo1"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtPjpuH6"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037692FFFB6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760456539; cv=fail; b=GSXGtLzSbazHEnfpsQI2PFEVR5KzcuiLfbEeh+OOQ85oNzwH46e7DRxckdETjBuBvOYeFgSgijI/6YV2vU5j/ibcjRjqx4hyEzAMdDUHVpVTQaWuIw+FIwByv2+ev0K2Fjgk3qAF4HtfFr9un064rw0ooNvUeU6ZdGJ2M3Kj2ps=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760456539; c=relaxed/simple;
-	bh=jzYWxAcf8HMViCn+hRysCCF7dZmmW3SSxuQbpyRTKOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XBJknWjaVfY0eZcaRSzITAm61StRdfrJuawLOxze++8Q2Niinxey4gb6HzlSfXnm+93/AdISw/ztjoZPJCG5yRw81GAVZy01Eno/PDkIBdyU5i8aXkuWmAzV07Kb5+ZmhEceRxhsrKsu7b+ZeUrNRe0DhAF7/vtWs+crVaAKY2Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=a5N6Mc60; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HB1QcSo1; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EEf6Fu014385;
-	Tue, 14 Oct 2025 15:41:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=jzYWxAcf8HMViCn+hR
-	ysCCF7dZmmW3SSxuQbpyRTKOo=; b=a5N6Mc60NVfFYRX/4V3O+tOOTLtLZgLMUs
-	vy+0Jylxurtx74Dmrv2TAogCKkE2GpPfAZW2gWCIuGUUpj/aM0khmRAEycajMrl1
-	/QDazdTgok8uxqJnj4lpia7fHp8Jz3a2FAUn8fbGAk4fDz4XMlUqP1H/BqNnBKXN
-	DkANtzFvM3NIBQm436cRFDHNQWRN1L7NCVETLN8U3bk/iFsu7lzUP0eHFjkPys90
-	l3/+Tls7ozyjBnLAZjOAvbk5Fj2meAfGF8QxtJzgN9FSu9oCFXTtiu3b8lgtXzaO
-	zQh9hdoM0yRvod/wiBaudAfavY8keVDjJFgJlzJzxxG1tqlhMvGA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49ra1qbrxu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 15:41:49 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59EF74cb037163;
-	Tue, 14 Oct 2025 15:41:48 GMT
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010017.outbound.protection.outlook.com [52.101.46.17])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp9478a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 Oct 2025 15:41:48 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EzgWC03Hu0lxiATjSLVzo+XqypleBWwnyw5Kp8igj6Z7W+qPqY+gasQVQE73gA/ss2AWEmSi9ReGWTSCGF389Zu6C/I3xhksGWvhY5z5pQLCLPgt9wBBv2Uf3ePfBukIyDK7m/VbTlSmfiaJUPgqJL2e/FBH/5ZhxNEePZTI8C5kw9iofoxJGjYGODpcDmp8ygY40jD7IfUV24if2sMWSM9yBBQxkOwCqBK5+dBjBzoMiC7r1uC80fffsMGRd8696+ilorTZ7EAWk8ImFppMA2zNJ/DtuLrzh1B2pnJlJLRyZDnOhxbli6VhJHZpYehhtdm3XTPpeXSNh2lRIUQd4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jzYWxAcf8HMViCn+hRysCCF7dZmmW3SSxuQbpyRTKOo=;
- b=UspilxpJgcfyw+Yys/nxb4y8kRNjw+1MdzKKO0Jmt8xutcpcQx+XDcK1Nqee8oMfKsW7iFcz4ezvlj1gtzdI1sQS3HkXIX6FBR9AuzqhDqX7gDk0EjE6YxXDWxZO27vkhB9w7bBVFqsFQMwi7tTuXbe17iiu+pZNfWK04vmsqDmigEVoG7K16O2zpF3of2qy9DHTBPHIcxgMbkC5pY3ZMJFZAbvx74J7CtQJLjIdIYyAXvuWHZYemuBP2FLsSMfP5FxWbZkdidi8M33rNMsF+9BtNLOVQrCn8wrs0JdrJjKJ+b/PBL++aKMsC3ejT4WSO17l+XVcm4wt7m5Odkumug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A08C2D9ED9
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 15:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760456583; cv=none; b=GXBh1yOxbJIlfTLWaOQFY7flI46lIPDgoEEabQ+EyQUWEpxHr8nfNt4NtPp5TRO6SoUqQmn7lTcP+6optHexVeuDs8+f74iFXewLcOu7F8wsry3+QWgvxsgpFt8MwIMr8Rf415KWgNnVq/2207U30kxOCnbU6+BVAsQxPK3yhAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760456583; c=relaxed/simple;
+	bh=IOXA3e/PDxwKtBuHJSVeF2wtx7tvydH9ilKWTo1uicY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=upeEd6djoZ0y1tyDuno0YhSxZUpqj0vr4sKCAzeq5nGww2kgPAMWQXoWUQEwbS2ob3HYU4IlRPZdUh0YYZ8eZ/XPb3ujS9Ic8dBacaafMrH+1XRAXaPTK2Ji43iVVXtO4NctvRAfbhWxIX52MM490V+uzyxj1nxS2nFc5Rckh3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtPjpuH6; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-339a7744495so641981a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 08:43:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jzYWxAcf8HMViCn+hRysCCF7dZmmW3SSxuQbpyRTKOo=;
- b=HB1QcSo13Hb0+2Rry98E7p70qHVXbB3N0Z5Dg4SUCAjbPPJ+TQdhmlf4BGVS1ig4BbfeIH4a2eCfM7Kh+JY1SAFRTQuaZgGQY0UFX8uHcFIJX3FJ3bGRDNt0l91a/uh2YSPhiw+3iDlslp5NBOfr3OuDmW6KzdUBuNgcT/6et4k=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB6223.namprd10.prod.outlook.com (2603:10b6:8:d3::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Tue, 14 Oct
- 2025 15:41:43 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
- 15:41:43 +0000
-Date: Tue, 14 Oct 2025 16:41:40 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
-        Liam.Howlett@oracle.com, baohua@kernel.org,
-        baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
-        ioworker0@gmail.com, kirill@shutemov.name,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mpenttil@redhat.com,
-        npache@redhat.com, ryan.roberts@arm.com, ziy@nvidia.com,
-        richard.weiyang@gmail.com
-Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
- non-swap entries
-Message-ID: <b35b649d-5566-4467-8222-e358439b4f84@lucifer.local>
-References: <20251008032657.72406-1-lance.yang@linux.dev>
- <f33735d3-b38d-4b6a-aeba-b415e6b24ea2@lucifer.local>
- <0bfdbccd-9d4a-409f-ae43-b44bb7347d70@linux.dev>
- <f7392f43-b8f1-4e6a-b9c8-25ad8a47f82c@lucifer.local>
- <d2e5b099-94bd-444d-9946-182807443539@linux.dev>
- <c44e198d-7d46-491e-adc1-86cc306c27db@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c44e198d-7d46-491e-adc1-86cc306c27db@redhat.com>
-X-ClientProxiedBy: LO4P302CA0005.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c2::13) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1760456580; x=1761061380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yYGjzSlUY1ujV4XJxs44Nj4rVMv7fyzJ9xw4OWViBdY=;
+        b=VtPjpuH6F17RQ/tK+T8F//BEn5Imv4KUJUaWz72zAxqpL7wEzbhicIc3eG3HXovILA
+         u6LImFLvSQ18eqe8MOmRVAi4TpZ8JPdobdY8Mg2VbeKseSVFcHGcGSQTBYJCsI0QG0Hl
+         AjNtjXW9vlU6a0w9wSIii/vXjBWGH5JkF5jrLpkPXePE7/5WzKH8x5gz8+nYUekzyZ3P
+         KE1/ApP0+e12A8xSlDmVUv1nK92gIpvcPoSHSN2k/TfwYHrRCvjIfOq5c4WCHNo5wXi8
+         pjnzF/k9XzeuFFbOyT0MnBPZNdKWmzl942bhV9k9+ua0AwBovkJSm1G0eRbncBfZPut+
+         Xxow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760456580; x=1761061380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yYGjzSlUY1ujV4XJxs44Nj4rVMv7fyzJ9xw4OWViBdY=;
+        b=G4fufFfDOQ1YrNsv135rqrNAhT+ac6pkLwNUm0F6HjxXJAFHehzPdytH/YWvmBeq6Q
+         sbUi90AYZCZikUnqJY+qYv1bcQ1VimHLrhXMUtUq6xPHG2oehhb5DdZJO2ITP4GI8ln1
+         bhYnjjEGs413IVk1pfMsGnIARUYyARMSWmZcOuI5+7G7zu2A8sS2iIfQkHAh6YvWvE0B
+         fi544VHejwGzGeRyNeiE4ppj6d1WscAXFKVV61mecadf/BY+ijfcwu6FiQZ1DN5MrgdX
+         EA1SWzQ31J17dRVf5Ai8i/ho9o9w+SEnOyoWvegHUKxzY2kqB3qzeP+PSPNHS2zBGt5c
+         U81w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0/O+h+X6e1wSEY0Cb5fH/RDg1epiIj7r0Ie6pcI/Q+FQBB/IW9TaBHHADC+wq8ZHM8IRL5r+cFWwiP2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzaKeIDYVcy01kZlD2WRctxCMcW32vFavfSu6XZ+6aoNnvlDS1
+	RTOrVfzxNQ6Oe0ZI+JaSuIH6kZsoZ8PISIWzv2MsrMAofmMdjpssMPb0PBOJvr4HgA8sGGh7d94
+	l5cNya0ZTofnZw631EphbgcOLZN8/i3A=
+X-Gm-Gg: ASbGncuQj9EowA3jomUpItcBy5blkV1c3eExTUq4uzt0sfGpXc+OrGHbltWXIymLG1L
+	UOPtW8pxYkKW9yxiAvpr/KfcIWelkmymAEviPTOEu98en418mmxoqlk8k56gdv+TQPCyQ7TexeQ
+	tnN4at6/zMiyETdtzpb4eWALSedqO3kUJaWvluqFqXRuag/0/cu2JKHYUuofjFbQ9/u4Y+5NTAf
+	PyRpB3XB9/l6Z6HBHVongepwAMF/97TcBwRRWwreuaIfsotrRA17o1bhFsVSVgSuVozgAo8ngSg
+	CxfRFj3moJuqSmloD0kX8zfDSaQHD0MGTb0yj3CblkdHyAN4IWmJw30=
+X-Google-Smtp-Source: AGHT+IHdmYpg3wJ6be58RKxCOo6in3Fuo+5g91PKk58rXhf3xgTcwnJDb2Ds8EFLQGYTf/b7850DkE7uVldiW6rM2ew=
+X-Received: by 2002:a17:903:18b:b0:27d:6f24:ceb9 with SMTP id
+ d9443c01a7336-290273e17b2mr176408215ad.3.1760456580016; Tue, 14 Oct 2025
+ 08:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB6223:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf97ae56-f5c5-43cc-0b47-08de0b382d05
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FtkDX0TW1kpyJV7SMpEmw0jJAwkddSU/AVjXC+nqzeoGpcQe7Pt79jyxKzia?=
- =?us-ascii?Q?AaFFIO4RStpw7DQsvKHPJf8z73eLAJO5Bqbz4B3OHCk7n4v4FMHrtV9NG7rr?=
- =?us-ascii?Q?xSW1zVaIKeaoJR4ZdL6PzbhSgqrOyVFz3eoBtj+sYMMPiUko6gVyU0nIU/5C?=
- =?us-ascii?Q?j6880R0PVzC8362+HxA6k7CNUH1RMAI3Nj9oUGZ1SmAXxj9kVuUbXodHqjet?=
- =?us-ascii?Q?1DkbuWh9aF6RQ1AvlU+xepBApAJR5jyusCmaA65yhWXXfbm1pgiGdo3aeMFQ?=
- =?us-ascii?Q?Q4YP9FB50Pymlr9cmCSdpzBcdK60/JtKbTJ8mgZ3+DvnVoY3JKN/FiipJOMQ?=
- =?us-ascii?Q?SCYWdqYq3GKhOKKw4BDEZ6JJV9td1r0P+ZcrwCHv3X3F/TNeFPInjR7L3Smb?=
- =?us-ascii?Q?/sk/U4n5w98eAr83X9hciFeMrQqsb2bGixhXaDfWJ63LLqIZcKVOc2zQ+K2Y?=
- =?us-ascii?Q?6yypkLPRTaPSaxtPcjUEZc5TdZbxRe8rALivEhsjf8Zy5IEb3eqF0WNcu62s?=
- =?us-ascii?Q?1H6dC+B6t4Fm5GaLzQXN4yhwgQ3ji+7Er1dvP2QHKfsb6SFbiuVbYgt84zdv?=
- =?us-ascii?Q?NQ1kGAW8W6Z5INU24IXrhaY5Gkrwrn5boBs4oHo8/ZpGAYNptr0mXC6FaqXK?=
- =?us-ascii?Q?WzTdL8/umVRJlfxKbA+sgxrP8MXj0ag2jEG8Vci9I/IHjd4Z6oV6AMSzHsNG?=
- =?us-ascii?Q?+rQbh7zqbojOkxGEcfM44cJ26iWyId8aX9mk85oN/zsrEpmjeLEMlqjQZsq9?=
- =?us-ascii?Q?lFo+L4ciesQjJSh7r3DSo454kPmdpCS4maYEIdYbRpGsNJFLMHBgHjbEJeYS?=
- =?us-ascii?Q?dmQOwogTdxdWbkUOgtgk+pLqhukOmbTpYtuzGxOrCHwdaXEbvMBzaiuGiT3n?=
- =?us-ascii?Q?3eK/LrWvSxMvW5TtotayYU4JF1AWJ5GavEnK1UEvETdRbxxRuBZ6Kt5iDAJe?=
- =?us-ascii?Q?LHwWIuPZ8oGTbawNO1P1zEuyd74vtbnLkezg/u5YsuDApVdJXKKnOPDXK/3k?=
- =?us-ascii?Q?AjdMi7YULkwpVGULJ42WVhgXzVJGgkHwU26zEJYkDGs9Iw8AzGsHzQB6wxJh?=
- =?us-ascii?Q?avc2jfWfb7BI2UhjYymnXMR8QkWUtyTLyxozOqwNUeKosbJrbRlKLTUEcFhJ?=
- =?us-ascii?Q?SjQmuNlO3ENVwCtRQnR/nx2Cbz1T0/j9MGVkd88+PSC0FXhSYA5TOAYfViZO?=
- =?us-ascii?Q?as4yyn8V7J8QZ1MtNAvrDC3TjGEvaMsEI+162Jj9UenByIZVw4bOyJWRTGrZ?=
- =?us-ascii?Q?Xd2n8XBKmv/McqsUQgeNrelvRPGtjfxnjksywExONI35gDeXm17gGmwxjNM6?=
- =?us-ascii?Q?l4DuRDmGTBlocdAeh/5gbYdEaXMO5GbAwXV0AYSFdnVcFORy9QoNrN9GtzMl?=
- =?us-ascii?Q?2cUTv2rMNmyb9hUc1dj7g0Eb+UvrxKMk40dKRcIPtshgoqdHT8NQh9bkT1hm?=
- =?us-ascii?Q?lu1nTOQgz5vUJX/tYBenYazT8aEjeQvK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nu7aMblL8mnoJPCOKtgpsScfsfre9w2SjRw4tydqg+0wd5cetWc7ghitkph/?=
- =?us-ascii?Q?nvixZqj27jIBo12cOVZtwp8fHzsD7EmXNFMpjtO/wksX/2mhtkKYAuUCVzkq?=
- =?us-ascii?Q?qAFp5U/GndjP/ww8k6yAKHLHBHgd3QTHW3HoQh9tVMmAREFTFoG9V3vnESst?=
- =?us-ascii?Q?htscyJidkFwoyeWk6Z49sUjfM1SamfLYvdFQH2+i2/22S29ZuFB3VBfNL7Er?=
- =?us-ascii?Q?+EqodINGnhB/+Z8pBiPUphyFE8Yf92AW4bXlPjqvvHMf9Q1T+AcKQOmrPLK8?=
- =?us-ascii?Q?lEoRARQiIiWsboRTTFI5+jZprad5N4FoS5Qs5j5Gk6m0Ntsjw/LEoUPuG0/W?=
- =?us-ascii?Q?JD1CEkI8fuJSPlEyOP6FZ2jTpG9fKQ0uxuVvxjwz5o65RfEemFuG/rKbyqXl?=
- =?us-ascii?Q?RXIPAlSmGk3R5RpZ6YMTzBFe3Cz+x/HU96Hf7bp7uUUZV+gq53QCBFuzcocG?=
- =?us-ascii?Q?e17onuo2BKiFaV80ru84C4g6XM03HUX6hyX7q7hp7Q3x4fD0LUh9SOI9KhGj?=
- =?us-ascii?Q?eAJd60ib/vvYEb0mQTH9CJVw+tN5rNtlhIgHs72hLfAR/tIjbP1E/RMQpgsX?=
- =?us-ascii?Q?dTOeQGrIXDpWzm9uv/a+OqVdHBbJcbh0TDU2mKTEFfSMCRMErk3EhaDxc2aQ?=
- =?us-ascii?Q?1NkNJOPzSA/MwStR+xokETvqD3JuLMSWA4Q7FfUE1rretTqqJk5c7FLHHqav?=
- =?us-ascii?Q?hizHA+VvLw+6bD6lYf1cALzci/R8MW3sWC481Lq3bjpJnxJ1HyCqT63G+x1C?=
- =?us-ascii?Q?kt6ZsaDR7ZmGNPyCMX+sQm2rvVeTWudq9W2KzLooOKYsSYLkuuoPS/QPzcNX?=
- =?us-ascii?Q?alJ4ARuqbQHf9M4dFuOscYx7tnwVzAf55E9UzV22EWJWD+q98HkSJgXGI3XX?=
- =?us-ascii?Q?Y9jILXASQgk8nuZgBRsp0uqiQOrHHkEiGbBTgqHvvt/+Z47ndb6H1oeLo9i2?=
- =?us-ascii?Q?y7vVj18SyrCf9fwW8R6Cece1a4tXV7z5OunnRi51SxxdoC6p1jZ+afmNskCt?=
- =?us-ascii?Q?Iqi1sh9jGhut4nl2toLMHKItasTiGGr7xxODDQGekIdm8aqlu874nxNn43a9?=
- =?us-ascii?Q?qoU3364m2TQjeBWi2sSOtgd2U4E2AzIMxYu816UlqMlvxRzu0kMbRn0XAFCA?=
- =?us-ascii?Q?4r5pnRs0NthOFaREKXaEy+IYenYq4I6Xdw+ByfWKL6A60Cnn9vnrGdiSPZO1?=
- =?us-ascii?Q?tXKSYvYq+qTIBXJpAMZCgwlaRrzPXi6GJWFA5GCaptd2+vvHoj+aeDKNcsj5?=
- =?us-ascii?Q?f0x/rZ97EMSnWc97L/a60bifBaLHhXKgywIo9C9LlF9fBt6hIgMaR98SVNlU?=
- =?us-ascii?Q?lt/Y/+mHtgBC6ImSJ7N0GtaHWpeZJRm0x8kDEorszW4bb5CuvTooME3czEDX?=
- =?us-ascii?Q?Dgi5iISm1KFJLjAVv/DT+fCho2Z9rM5lzCYNPlxmhDo50cHjnP3/q2NXky6Y?=
- =?us-ascii?Q?meXWr36dJi/u1i8aIrvagryvCYyKzb5JumQ/lnqr/iOQTVb6PY8RwA9BS80s?=
- =?us-ascii?Q?16uoQ1FHUQ9hTMeU5LetJUxFS4TcRgfWfmoa5FjQmt0T6VE9ZztmxDgqguhW?=
- =?us-ascii?Q?FC1UW+Ob5WaKPJ2lYn4PCx/FmNh8EMj6JwyP1xbfKzJ6rcX4TFOiFBL2Ksyp?=
- =?us-ascii?Q?1Q=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	dj9Cb9Rld1T8TS0mtU0WtcvYFD4NG1GpmQCCu0ac0mScPsKWZoElpaSbGff2i7Nw7I8NAo0QMXMlX8qdyLojruxEBg2HcfvPuUpObACPbgPLccxVN0iFVaCjNHg7arUQFEEQMwVGp0q6dnvts8Rm7U/k5yavS/34TH3vgj9kvscEQIsgDu9Ae457jNGMgSgkbF2Jf7CQWTxgeo3sDo3eBXnCOkdhGmXL+eqF+nG6A9+IXhw60TveVZMRsrhhQHWhR+hYF8LyTfTEKNi8XlW5EuV/JWaTe0dctx+pGbZ+TaKLi4BMFUeHdBpdRVcAh865UF/Ci84WY8Kxbt6TlqCjA0hpyDUzfZnkfPzNNOdHarQaPpYcKoTEZwSqoytpuQVfEvXSs/DFTGFRruh3ypYC7WTrEYUixsgPXxi3p5/Wo0ml292fYnNsAw6oUmGLdUoAUPXaThAXl13tqhMqZ6vReLy9eyYFPP1dasmANoM3KEC9Pe0iZ00znpjSf2B65QKW2JDP0vJ5hQkSdA2FpZ8nh0LerudcbPjyFIgmMKP2yw/lAC66ZTyARmWJCjjlOR9f07MmIB9FCrKAF/X9MvVoytytd0foV0WjeRyhvgFx5YI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf97ae56-f5c5-43cc-0b47-08de0b382d05
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 15:41:43.5170
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VNVzr7MK6tFUnzYeq2mE/HU1orQYB+S4BVq5xeXNnJnHJqi6S8AtGWjfGIZOFdTKe+hao4bv6hqZK9uOUyXTHi4Xx2s3tgNNTxtb8T5ydIs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6223
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=603 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510140118
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDA1MSBTYWx0ZWRfX/aNPw4/Omhi8
- oNA+jNKpw3xP7bbvWFyJ++/CSTtu2BP6yKLR99bDEDSSV7tZGUBYXu8eD7nPQo8ln2C2pdZQXvL
- BiP1W6o27zcjnZ5OWJ2O87GhIcn27IE9aaGe8yEPO6V59rQoAhh6SZB/ZR51Dx5pMfUnVuEYCsc
- JuJXcUsYVOal2HoVpyRxfZJG+g8LSTG85qPcITHaeORg2EgIu9PQJAqB/y4iQi1GBgNE+WdqorN
- JR+u+RhbyZrMWYxkXAlfucYfsTbbHw0xztu8RsiM4bJXe69isZ2FKJmT+ge04Z5VFeCOFAKh2gv
- msy0BLLFk9yz+KFl/75H3r3QPl0QRyotHI3pHx1Q+dyXevdX85Fzg5x228BaCjvjFPgbhy54s2x
- bG5SNTVEAmNjO/vZWxFdeFS0Je0RFA==
-X-Proofpoint-GUID: vn8u5nMr3Jr0M9AWQ9CpfY8FeGd_34kc
-X-Proofpoint-ORIG-GUID: vn8u5nMr3Jr0M9AWQ9CpfY8FeGd_34kc
-X-Authority-Analysis: v=2.4 cv=GL0F0+NK c=1 sm=1 tr=0 ts=68ee6f3d cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=_zfPccOjOWhN6ilodd8A:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+References: <20251014094511.627258-1-gtucker@gtucker.io> <20251014094511.627258-2-gtucker@gtucker.io>
+ <CANiq72nVxPY8xB9xEnkZ=zNFh0EfQvaMAPH4ygRr-yEwpK=OWg@mail.gmail.com> <fe53ad80-6eeb-495a-a870-9c42b71f9887@gtucker.io>
+In-Reply-To: <fe53ad80-6eeb-495a-a870-9c42b71f9887@gtucker.io>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 14 Oct 2025 17:42:45 +0200
+X-Gm-Features: AS18NWCSQqZ2k7klTl6uHaYshU7c7i07coesJc6h6yK0Ke4SUtcLPlKDjwbeVfg
+Message-ID: <CANiq72m1EKmNM4QQ_A08vC2w-4QbHhO5UEG4F68tRGKEgZ9p6g@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] kbuild: add Makefile.container with CONTAINER option
+To: Guillaume Tucker <gtucker@gtucker.io>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	automated-testing@lists.yoctoproject.org, Arnd Bergmann <arnd@arndb.de>, 
+	workflows@vger.kernel.org, llvm@lists.linux.dev, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 05:12:18PM +0200, David Hildenbrand wrote:
-> Can we please take a step back and make sure we are not starting to do stuff
-> differently than elswehere in the kernel, please?
+On Tue, Oct 14, 2025 at 4:31=E2=80=AFPM Guillaume Tucker <gtucker@gtucker.i=
+o> wrote:
+>
+> This is what the CONTAINER_COMMAND variable is for.  You can easily
+> set it in the environment e.g. `export CONTAINER_COMMAND=3Dpodman` or
+> anything and be done with it.  The default is set to `docker`.
 
-The code already had the is_swap_pte() check in it, so this is not changing
-anything, it's just avoiding confusion.
+Yeah, that is what I mean, i.e. you have to more variables to make it
+do what you want.
 
-Even if this pattern exists elsewhere, I don't think propagating 'just have
-to happen to know X, Y, Z' to understand it is a good idea.
+At that point, a user could also equally set up an alias or a quick
+one liner script to call the real command with whatever setup they
+need. That would be more flexible too with essentially the same
+complexity on their side.
+
+> As
+> far as I know, there's no need for anything else than the container
+> command and image name.  So it's not more hard-coded than say, the
+> default $(CC) executable.
+
+There is the `src` path there, no? e.g. I use upstream distro images
+to test some builds.
+
+> Then I was only suggesting using a minimalist alias e.g.:
+>
+>      alias kmake=3D'make -f scripts/Makefile.container'
+
+Yeah, what I was trying to say is that, at that point, you can just
+have an alias (or a one liner script etc.) for the real command.
+
+The user still needs to know how to use Docker/Podman/... anyway, i.e.
+I would see the benefit if somehow this was the only command they
+would need or if this handled some extra logic.
+
+> hand with a volume and then run make inside.  It reduces the scope
+> for differences and makes builds more reproducible, for example you
+> can just share your command line and others will be using the exact
+> same toolchain and build environment as you.  This is also to enable
+> developers to easily reproduce builds from CI bots.  It's been one of
+> the driving principles behind tuxmake except I'm looking at it from a
+> neutral point of view here.  In other words, it's a step towards
+> increasing quality control upstream.
+
+Definitely, I am not saying containers are a bad idea (I use them
+myself), i.e. I am only talking about what is the best way to provide
+this (e.g. documentation, a script, this new file, directly in the
+main `Makefile`...).
+
+> A related topic which was covered at Plumbers is to have first-party
+> container images, with Containerfiles maintained upstream to
+> facilitate using the kernel.org toolchains.  It's not a requirement
+> for this patch but both ideas enhance each other.
+
+kernel.org images would be nice, indeed.
+
+> Yes, I did think of writing a documentation page alongside this patch
+> but eventually made the RFC with a cover letter instead to keep it
+> more as an open discussion.  Any solution to run containerized builds
+> would need to be documented, even if they're trivial to use.  I think
+> the Makefile approach is the most elegant one but if others aren't
+> convinced by it then starting with just some documentation might help
+> getting to the bottom of this and decide what to do next.
+
+Yeah, docs would be nice regardless of the way of wrapping it.
+
+> Right but then I think we would have to deal with the variables
+> handled by `make` which can be passed either via the environment or
+> on the command line, so that's similar to the issues with an alias.
+
+The script may be more involved, i.e. similar to the KUnit one, but
+then you also gain the ability to provide more functionality/logic.
+
+Say, for instance, the ability to test with a set of container images
+that you define in the config file, to run certain things with the
+built kernel (possibly in another container), and so on and so forth.
+
+> We could do something like with Android builds (build/envsetup.sh)
+> with a file to source:
+>
+>      . scripts/containerize
+>      m CONTAINER=3Dkorg-clang:21 defconfig
+>
+> where `m` is just an arbitrary alias name obviously :)
+
+Personally, for a new script, I would use a normal `--flags` like
+interface, and leave the Make-like one if one wants to pass the actual
+Make ones. I would also allow the user to define a default image too
+in their config file too, and things like that.
+
+In other words, the idea is that you can actually easily use it
+without typing a lot, e.g.
+
+    scripts/container b defconfig
+
+(Possibly aliasing `scripts/container` itself to something shorter locally)
+
+Or even more high-level operations like the "build with my set of
+toolchain images", "build patch by patch this range of commits inside
+the container", etc.
+
+But I know this may be way out of scope :) After all, it gets into the
+realm of essentially a lot of the custom tooling/scripts that
+different subsystems build for themselves over time.
+
+In fact, another possibility to think about is generalizing the
+existing KUnit one to support containers.
+
+> Thank you for your feedback.  I can spend some time investigating
+> alternative approaches if they seem worthwhile.  I'd be interested to
+> know what others think of this too.
+
+You're welcome! I hope that helped at least.
+
+Cc'ing David/Rae/Shuah as well for the KUnit bits.
+
+Cheers,
+Miguel
 
