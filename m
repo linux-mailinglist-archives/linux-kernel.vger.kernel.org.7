@@ -1,199 +1,156 @@
-Return-Path: <linux-kernel+bounces-852089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C99BD822F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:19:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 716C3BD823B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 10:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 770644F9238
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:19:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C61284ECF4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E492430F93D;
-	Tue, 14 Oct 2025 08:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pT0lO+KV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7956330F812;
+	Tue, 14 Oct 2025 08:21:38 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9B930F81D;
-	Tue, 14 Oct 2025 08:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A3E2DF6F9;
+	Tue, 14 Oct 2025 08:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760429952; cv=none; b=aTBF8qucIk6qdo0+1sZhghf+sWZfEaHdaBuuDZsfgXdNjjSnoUEFzqe0UbMG1FOy9/f+eInoROOJDpkiHUe3OXktkcZRODf6fTbGQ6usyEPD5u86fjd2BeYI7+Lh0Ewy+19FaNbaNWhaUPJ3gCbdaxyyNd6FijzgAc/0Mejx0Gk=
+	t=1760430098; cv=none; b=ocwxVipgsoPka/xBfcbVOZhCDZdJmfTEKFNPBp7DuAa4mwIMJjebsz0hqhBkXjMumP091QysCCCoyVUJ+limM1lbDYUkgAraQSjbXAL0fPWiLPd4AvMIpDLu6L8J3RRfzOWCsHYjRBifmvjOkisq/th27q4zaRL3v/WBcInOQ8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760429952; c=relaxed/simple;
-	bh=ZrB24db1zOJCMRMbowUUI3RqQgi8OeEP8pKOKUWPygc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pkCb/Ju0IT5ICUfa/jiGS+1krdn0YCvAE4cyhFvQSg5/7WkP1k1Hy1/8DjTsiu7FMkdCLv1ze8Vch/C0t1v8ft86NpgucE+TnFFJ97dYhJ/XUUjJW6Vpl6Bblkkt68RRj19O5yttLx4hk/ub8VTot6n/e6f5SliHAhHjb+HSyVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pT0lO+KV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C84C4CEF9;
-	Tue, 14 Oct 2025 08:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760429951;
-	bh=ZrB24db1zOJCMRMbowUUI3RqQgi8OeEP8pKOKUWPygc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pT0lO+KVK1/+QwgtMgImp8vu72Nby9B5YnrbkCGEJqpPV9bv98aZsaHQdHoMEo8Ql
-	 MRqnfgf4XuaU1EaLaNEUFOZN16uOrkQ5bnl/Dl5IJJVHXWwx/Lecwe5otRVIGQdvol
-	 5dgb3dH8Unzt1BYvuFloZQrkQXlBSKSClztz8xJTpci/MOZen/CSjkILmghf7m6YVa
-	 KzXV9KtKslNWfOUPPadtgSw5ll44wCQPmjAe5mHDrAEM1Zpe41s8pV3sBBfTEYohEf
-	 rJ3B5pWGExs8K+6gDdvqTgHY5nUO8BYsjHEOiQiiQrokhx0hGwRfYJPNC9zqclRkRc
-	 iS65sivVhdKLA==
-Message-ID: <c44a56bd-955a-4e4a-af3c-7ba754659f69@kernel.org>
-Date: Tue, 14 Oct 2025 10:19:05 +0200
+	s=arc-20240116; t=1760430098; c=relaxed/simple;
+	bh=473X0j9Ino9F9/5cmJpbLGotA7lNWkRoIJnwi/7Sn0o=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pxZR1+RheJn02pfJSsXEhHcowQBT+cn2bWwlgvsSHwF0eevj0/2aTsyPFoqVn1MM/IyoHaTYcIyGBxQFMk8jhO/1m6YUio7wVmdc1+45mYE8MwYID2lrfNMgPqAjs9D23ZRbV4dYRXv0VbnIh6ozrnXtA0156mLpZ27qwTteHvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cm6c405WVzYQtxM;
+	Tue, 14 Oct 2025 16:20:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id B53C51A141B;
+	Tue, 14 Oct 2025 16:21:32 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP2 (Coremail) with SMTP id Syh0CgDnPUYKCO5oHndMAQ--.28256S3;
+	Tue, 14 Oct 2025 16:21:32 +0800 (CST)
+Subject: Re: [PATCH 1/4] blk-mq-debugfs: warn about possible deadlock
+To: Ming Lei <ming.lei@redhat.com>
+Cc: nilay@linux.ibm.com, tj@kernel.org, josef@toxicpanda.com,
+ axboe@kernel.dk, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20251014022149.947800-1-yukuai3@huawei.com>
+ <20251014022149.947800-2-yukuai3@huawei.com> <aO4EniFy63IlWM_-@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <33c009e6-0cc3-bfc3-f7e5-8227cb467696@huaweicloud.com>
+Date: Tue, 14 Oct 2025 16:21:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: leds: Add YAML bindings for Virtual
- Color LED Group driver
-To: Jonathan Brophy <professor_jonny@hotmail.com>,
- Jonathan Brophy <professorjonny98@gmail.com>, lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
-References: <20251013120955.227572-1-professorjonny98@gmail.com>
- <20251013120955.227572-2-professorjonny98@gmail.com>
- <8c3796eb-63d0-4650-b296-60894461a806@kernel.org>
- <DS0PR84MB374636FF53989F5D94D821D49FEBA@DS0PR84MB3746.NAMPRD84.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DS0PR84MB374636FF53989F5D94D821D49FEBA@DS0PR84MB3746.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <aO4EniFy63IlWM_-@fedora>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDnPUYKCO5oHndMAQ--.28256S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyDZw15KF4DJF1fKF4rKrg_yoW8Kr1kpa
+	yDGF15Gr40vrsxXasxZa17Jwnag3yvgF43CrWIkw4rArnxG3W3XF10vFWjkF93Zry8Gr40
+	qr45trykCryUKa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 14/10/2025 05:08, Jonathan Brophy wrote:
->> Few minor things follow up, but considering missing reasoning I did not perform full review.
+Hi,
+
+ÔÚ 2025/10/14 16:06, Ming Lei Ð´µÀ:
+> On Tue, Oct 14, 2025 at 10:21:46AM +0800, Yu Kuai wrote:
+>> Creating new debugfs entries can trigger fs reclaim, hence we can't do
+>> this with queue freezed, meanwhile, other locks that can be held while
+>> queue is freezed should not be held as well.
 >>
->> A nit, subject: drop second/last, redundant "YAML bindings for". The "dt-bindings" prefix is already stating that these are bindings.
->> See also:
->> https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   block/blk-mq-debugfs.c | 31 ++++++++++++++++++++++++-------
+>>   1 file changed, 24 insertions(+), 7 deletions(-)
 >>
->> ... and driver. Again - explain the hardware. Bindings are not for driver.
+>> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+>> index 4896525b1c05..66864ed0b77f 100644
+>> --- a/block/blk-mq-debugfs.c
+>> +++ b/block/blk-mq-debugfs.c
+>> @@ -608,9 +608,23 @@ static const struct blk_mq_debugfs_attr blk_mq_debugfs_ctx_attrs[] = {
+>>   	{},
+>>   };
+>>   
+>> -static void debugfs_create_files(struct dentry *parent, void *data,
+>> +static void debugfs_create_files(struct request_queue *q, struct dentry *parent,
+>> +				 void *data,
+>>   				 const struct blk_mq_debugfs_attr *attr)
+>>   {
+>> +	/*
+>> +	 * Creating new debugfs entries with queue freezed has the rist of
+>> +	 * deadlock.
+>> +	 */
+>> +	WARN_ON_ONCE(q->mq_freeze_depth != 0);
+>> +	/*
+>> +	 * debugfs_mutex should not be nested under other locks that can be
+>> +	 * grabbed while queue is freezed.
+>> +	 */
+>> +	lockdep_assert_not_held(&q->elevator_lock);
+>> +	lockdep_assert_not_held(&q->rq_qos_mutex);
 > 
-> I'm kind a little bit confused what you mean by this statement.
-> 
-> I'm guessing I should omit hardware info in the class yaml and move it to a group yaml like the multicolor ones as below?
+> ->rq_qos_mutex use looks one real mess, in blk-cgroup.c, it is grabbed after
+> queue is frozen. However, inside block/blk-rq-qos.c, the two are re-ordered,
+> maybe we need to fix order between queue freeze and q->rq_qos_mutex first?
+> Or move on by removing the above line?
+
+Yeah, I see this reoder as well, and I tried to fix this in the other
+thread for blkg configuration.
+
+- queue is freezed by new helper blkg_conf_start(), and unfreezed after
+   blkg_conf_end(), rq_qos_add() is now called between them.
+
+And for wbt, there are two cases:
+  - for blk-sysfs, queue is alredy freezed before rq_qos_add() as well;
+  - for wbt_enable_default(), this looks still problemaic, we should fix
+    the reorder seperatly.
+
+Perhaps, should I fix this simple problem first, and then rebase the
+thread to convert queue_lock to blkcg_mtuex?
+
+Thanks,
+Kuai
 
 
-I speak about the subject.
+Thanks,
+Kuai
+> 
+> Otherwise, this patch looks good.
+> 
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
 
-> If so that is just a mistake on my part not knowing the file structure well.
-> 
-> https://www.kernel.org/doc/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-> https://elixir.bootlin.com/linux/v6.17.1/source/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-> 
->>>
->>> +description: |
->>> +  Bindings to show how to achieve logically grouped virtual LEDs.
->>> +  The nodes and properties defined in this document are unique to the
->>> +  virtualcolor LED class.
->>
->> That's completely redundant statement.
-> 
-> Ok fair enough, but I basically cloned this comment from the leds-group-multicolor as they have something simular.
-> 
->>> +  Common LED nodes and properties are inherited from the common.yaml  
->>> + within this documentation directory
->>
->> As well drop. Your description is pretty obvious and does not help at all.
-> 
-> Ok thanks
-> 
->>> +    properties:
->>> +      reg:
->>> +        maxItems: 1
->>> +        description: Virtual LED number
->>> +
->>> +      leds:
->>> +        $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +        description: List of phandles to the monochromatic LEDs to 
->>> + group
->>> +
->>> +      function:
->>> +        description: |
->>> +          For virtualcolor LEDs this property should be defined as
->>> +          LED_FUNCTION_VIRTUAL_STATUS as outlined in:
->>> +          include/dt-bindings/leds/common.h.
->>> +
->>> +      priority:
->>> +        $ref: /schemas/types.yaml#/definitions/uint32
->>> +        description: Priority level for LED activation
->>> +          (higher value means higher priority)
->>> +
->>> +      blink-delay-on:
->>> +        $ref: /schemas/types.yaml#/definitions/uint32
->>> +        description: Time in milliseconds the LED is on during blink
->>> +
->>> +      blink-delay-off:
->>> +        $ref: /schemas/types.yaml#/definitions/uint32
->>> +        description: Time in milliseconds the LED is off during blink
->>> +        note: Setting just one of the blink delays to a valid value while
->>> +          setting the other to null will cause the LED to operate with a one-shot
->>> +          on or off delay instead of a repeat cycle.
->>
->>
->> And drop all above, except reg and leds. If these are new properties, then you need to use proper unit suffixes.
->>
->> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-> 
-> Thanks for pointing this out I guessed there was a definition's somewhere,
-
-
-You reference common LED bindings, so no need to duplicate properties
-from there.
-
-
-Best regards,
-Krzysztof
 
