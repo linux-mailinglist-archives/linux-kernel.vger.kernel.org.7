@@ -1,168 +1,340 @@
-Return-Path: <linux-kernel+bounces-851956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BADBD7C97
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:00:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0550DBD7C7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 08:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45A11896E21
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:58:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7EB913467BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEA830DEA3;
-	Tue, 14 Oct 2025 06:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2F2D47E2;
+	Tue, 14 Oct 2025 06:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HXUJKe1w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TFCbfH2n"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CCB30DD3B
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 06:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A25F30DEBA;
+	Tue, 14 Oct 2025 06:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760424952; cv=none; b=gjwPDXRFyC0TRhptzQitx7Cy3GXBIlITd0aAcbi8uwUuCjoMxsfrjzy+aqSGjjDg1MplSMQpdxBf/PQLkUtb7v7NdYun23HQP03WpXa7VKyP40cAJaRUOgeER6qLC0YGY4CvkvSCPyI3q9CNsenZOgptH8h0kDmW/+3Fvqu4hx4=
+	t=1760424991; cv=none; b=bCK1EiNHunyQudO8HdGVOA0KlnMXr4kTABjxkk+hFLOgsKG5eYLMDfxwKvIbuDpRbeQZZ1JZpcRG6PX2MrEuyNnl/w8hiCUO1aUQiiq6at7TUVY5/H+gbfaOOyLEEcXCnPKMKdhuyQWQkMzl9mSQMj24WS4T+YNt4Y4henGNUac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760424952; c=relaxed/simple;
-	bh=/H1EjdkWH2nxhcKPrBFzjxh3PQeM2OIVOscEY1gusfs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XHqHkSKpIPf4pSvaimS9BQfozCJ90UV42628row1HHWVpZ3gW3pqsM+VrzhAKp/2m/QjhdBaUhs3SamNM827moJ3zaVsi2Khf1HGQOavLbuDIol15rWsb+DNf9PqcOkgsi7m7zJR1RGdmeVXuVsQAayfQ8foZvLPyeYX5s59iWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HXUJKe1w; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760424948;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PJiiSCVG4H+MF2iq6yuseKw1PPLKK214MGsS71Xr3io=;
-	b=HXUJKe1w/qmLwg6MISm3jhmWGIHbh8oXymPkTLz6SbVkAigjVKWiNpIsgvYshFggn/ZdT5
-	AVB8mJL+M7SqiFCMAV5amj5oDwuFPIwJ8qmFS0n1OKFzDo0/D/Gi7Jg21cdq9awSgMSgSn
-	KfAupeWOt7o9HYTgXwV0wsdHfMbA/Z0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-o5ePZeeXM2GLpr-8vlXm2w-1; Tue, 14 Oct 2025 02:55:47 -0400
-X-MC-Unique: o5ePZeeXM2GLpr-8vlXm2w-1
-X-Mimecast-MFC-AGG-ID: o5ePZeeXM2GLpr-8vlXm2w_1760424946
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e3dcb36a1so38611555e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Oct 2025 23:55:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760424946; x=1761029746;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PJiiSCVG4H+MF2iq6yuseKw1PPLKK214MGsS71Xr3io=;
-        b=F0ey8b4EBecjiAkKN9F08pplnFEHhgSZ9aIHdJZZ6iXsa88nDg5L02YVcChMjqSga2
-         dfUPGdMsBEMzYR5OLH/k/IGjKlGAloVr5l3KScNhcBT2c+PjtH5KVO0ka21EZVVG8ehO
-         gvkXsw377Uc9s+0Y2NowB93esz42TQNf6nRdq1dF/AtlnG2JFIv37bTF5jApJTysg1vh
-         gNwp9VGeiBPiMqJo+3EPDaPoJOeaYEUVVHj9CkLxpHkN5RoHiP0ZbQF8Up6xrQXevUFd
-         bAHD5mkT4KIf1+lv+iJR2sd2P5zCga8iOkL4v1eRPgv69cjsmv1urnQ56GjL/7EPFOXb
-         D17g==
-X-Forwarded-Encrypted: i=1; AJvYcCVcK7fUk3F6ywGfHLMgdPEvXfC05QvbNSsv6CKLpkdgCq1ZU0Sr3ifUmgdGkO+li/kWlfp9Uw35dpf/Ezk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUkxtJlgqfO+nMvaKURBNihzv8qB8iADcVyo3uEW3L5PLxKL+2
-	cJUgSNaBmgow//7hdi/YnumQ8bVwc9Azyf48re2b1Xni8y1Gz5jRmIsQadc5t39VJ/mbd2NxLFo
-	J7mtXCtqu+yz3ZSozk+IeHIXfh/C7HXKiLchkAxjw1/0I/vIzvti4jWw7tXdS7YAfWw==
-X-Gm-Gg: ASbGncsO5VRRAdpbDON96RuTxl++F61pXyNKYhxKt85rGFVT+lvPBXcyeNh0NI3T+HQ
-	VpiCFrhB15+Ja/rpYA2EXS0lnoi2Mt6KLk7J6DMyEan90T9n/zRJ7T2u2/8K2oYDguZQUwXqgp3
-	hlIxrRtJX52ojPx6WpMDkmVp2S9ZG1RvVTXeSREyPJXuzQ2iRKumrVdi68Bqr6cnKT7+azs4An3
-	Ubqxzzgdmi39+4rMUQJVLylO5k2p6CU8FJWWNcU+uoSzDhfJtTM58MzRXViuPUJGtFoo4nI5eo8
-	8RYboh4JWSbNAXfwoYLlnjpcqOq1UTpfU0YfRlCGuL+VzoaYPyAuiYhoonwlZN73Pw==
-X-Received: by 2002:a05:600c:8b6a:b0:46f:b42e:ed88 with SMTP id 5b1f17b1804b1-46fb42eee4fmr122418915e9.41.1760424946175;
-        Mon, 13 Oct 2025 23:55:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFlbUjRO9R/NpxxXldayXIglwjuXec+Uez9hxiwOvKHT+csT8ueG+UPjaUZgLVeIy5qL+RIQ==
-X-Received: by 2002:a05:600c:8b6a:b0:46f:b42e:ed88 with SMTP id 5b1f17b1804b1-46fb42eee4fmr122418765e9.41.1760424945788;
-        Mon, 13 Oct 2025 23:55:45 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab4e22d8sm142757855e9.5.2025.10.13.23.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 23:55:45 -0700 (PDT)
-Message-ID: <1a0d9a427b36d4bcff992dfb8694436cd24d6af3.camel@redhat.com>
-Subject: Re: [PATCH 3/3] rv: Add explicit lockdep context for reactors
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers	 <mathieu.desnoyers@efficios.com>,
- Nam Cao <namcao@linutronix.de>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 14 Oct 2025 08:55:44 +0200
-In-Reply-To: <20251014-rv-lockdep-v1-3-0b9e51919ea8@linutronix.de>
-References: <20251014-rv-lockdep-v1-0-0b9e51919ea8@linutronix.de>
-	 <20251014-rv-lockdep-v1-3-0b9e51919ea8@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760424991; c=relaxed/simple;
+	bh=rDxXSV9HGGXsg1lyE/jKnHr7AmQYtfeI8K16fi9zqo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TPxXNidr0ofdLZWrM9ZU8GXuusYJ4FwhFXcE7E7gMLVOyLQD/cLxBAILPC7P3H+S/plnNrbYe0x04MRU4L3vUZ5DkOFqegqDVgOBtzQc/7ejRxs3gaJageDZI4MYkRgMwO/dbejappe7XmKeKw9sEnxpaJnZxz6FFLa8k5Rxgv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TFCbfH2n; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E69ckt020713;
+	Tue, 14 Oct 2025 06:56:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Dr3srPZ3j5kHKrbvSdZx8aVJjt/inIcjzWACaGIZMPc=; b=TFCbfH2n2JgKGyyP
+	ThK7ojLg5OP/LG4nAYTsbuIXAlKZ9bOY9dXTbr81IS7t6C59n7j5c7KUfDTimGMU
+	VMitecUxBujeJpXjy6Q5K8mvnuy9aYn3DNmyXn7QEq9OM6HHoBI88BgnQ975SMMe
+	xBpnsnoMcPREhFVVJwh71RZ/cvEFds6DpmXBVh55Zfckas0AwTx2aLrJGWCz4HMa
+	jmGh8zoEH2624fxw8js9MHbOAiH9SKMHO3xr152FBK8Dyzg5nBba25aOZ7y2uhs8
+	0Lc/Fg8sBXHlkCewdN8ES+Q70VDUHKRudDUpFGLH0AO6KWLA753yt7LUY7B4mKHa
+	GUovbA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd8yhkc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 06:56:23 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59E6uNfq022876
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 06:56:23 GMT
+Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 13 Oct
+ 2025 23:56:20 -0700
+Message-ID: <39230635-184e-c897-4b32-e258567d1270@quicinc.com>
+Date: Tue, 14 Oct 2025 12:26:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
+ devices
+To: Adrian Hunter <adrian.hunter@intel.com>, <quic_asutoshd@quicinc.com>,
+        <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_varada@quicinc.com>
+References: <20251008110758.718944-1-quic_mdalam@quicinc.com>
+ <f4363815-a5bc-4f5a-80a1-7d4a17ad539b@intel.com>
+ <9567ae91-c15c-8677-de78-af7ecd792970@quicinc.com>
+ <2b9c6ef7-16ee-4174-a87f-63c611657872@intel.com>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <2b9c6ef7-16ee-4174-a87f-63c611657872@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: LYBNtfExZ1dc0jKK9Y9_jToy7ZEsaxsh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX9GUivqWGjCCl
+ cpAJduAJ/KCqmdqKaj9lOlMS0FncqmIjAYDGh5fSjE053ZGnlpPZkIxdQxtOMHVa/KGJDS0pZbl
+ XFSnRWcrQTyLd9Wwk0IEelSvcmC96T/NGnpOd0tFRf5KdPwjhIG2tkwtJqfS/Dw6XJ+nl2N+DoF
+ WpUxbNTSud2DVrEkl0OrapoxhSGuJDrFeeVdwSjjrbOn9prpHD4KSz+sl3aFbfKskC1xwze9IGc
+ UaM8z+gTnaWf8V99NRqPIlR80Nk+nXyeFqfhdacQ/Uyu8R300Q28KZvjN4zGly+L/lP3HR7teDw
+ 2qE5daIxajdxcaXkJ/vSxbRepNf3vHOMOA8eVCOlLUR8qfaZpu9YtABEGl5mPGTOEpTWlW+/gX+
+ XFW0vIT8Qc76XwxL2jEH1oaWugondQ==
+X-Proofpoint-GUID: LYBNtfExZ1dc0jKK9Y9_jToy7ZEsaxsh
+X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68edf417 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=tlwrbhwh4rvmcJHJCUsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=HhbK4dLum7pmb74im6QT:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=pHzHmUro8NiASowvMSCR:22
+ a=Ew2E2A-JSTLzCXPT_086:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-On Tue, 2025-10-14 at 07:51 +0200, Thomas Wei=C3=9Fschuh wrote:
-> Reactors can be called from any context through tracepoints.
-> When developing reactors care needs to be taken to only call APIs which
-> are safe. As the tracepoints used during testing may not actually be
-> called from restrictive contexts lockdep may not be helpful.
->=20
-> Add explicit overrides to help lockdep find invalid code patterns.
->=20
-> The usage of LD_WAIT_FREE will trigger lockdep warnings in the panic
-> reactor. These are indeed valid warnings but they are out of scope for
-> RV and will instead be fixed by the printk subsystem.
 
-Looks like a nice addition!
-If I get it correctly, this patch does trigger a lockdep warning with the
-current state of the kernel. Is there a plan of fixing the warning in print=
-k?
-I assume this series would need to wait for that or did you have other idea=
-s?
+
+On 10/13/2025 4:23 PM, Adrian Hunter wrote:
+> On 13/10/2025 12:09, Md Sadre Alam wrote:
+>> Hi,
+>>
+>> On 10/9/2025 5:59 PM, Adrian Hunter wrote:
+>>> On 08/10/2025 14:07, Md Sadre Alam wrote:
+>>>> Enable Inline Crypto Engine (ICE) support for eMMC devices that don't
+>>>> use command queuing (CQE). This allows hardware-accelerated encryption
+>>>> and decryption for standard eMMC operations without command queuing.
+>>>>
+>>>> The changes include:
+>>>> - Add non-cmdq crypto register definitions
+>>>> - Implement crypto configuration callback for non-cmdq operations
+>>>> - Initialize ICE hardware during host setup for non-cmdq devices
+>>>> - Integrate crypto configuration into the main request path
+>>>>
+>>>> This enables non-cmdq eMMC devices to benefit from hardware crypto
+>>>> acceleration, improving performance for encrypted storage operations
+>>>> while maintaining compatibility with existing cmdq crypto support.
+>>>>
+>>>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>>> ---
+>>>>    drivers/mmc/host/cqhci.h     |  4 ++
+>>>>    drivers/mmc/host/sdhci-msm.c | 74 +++++++++++++++++++++++++++++++++++-
+>>>>    drivers/mmc/host/sdhci.c     | 20 ++++++++++
+>>>>    drivers/mmc/host/sdhci.h     |  2 +
+>>>>    4 files changed, 99 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
+>>>> index ce189a1866b9..9bf236e27675 100644
+>>>> --- a/drivers/mmc/host/cqhci.h
+>>>> +++ b/drivers/mmc/host/cqhci.h
+>>>> @@ -119,6 +119,10 @@
+>>>>    /* command response argument */
+>>>>    #define CQHCI_CRA            0x5C
+>>>>    +/* non command queue crypto enable register*/
+>>>> +#define NONCQ_CRYPTO_PARM        0x70
+>>>> +#define NONCQ_CRYPTO_DUN        0x74
+>>>
+>>> Since cqhci is not using these, they might be better in sdhci-msm.c
+>> Ok
+>>>
+>>>> +
+>>>>    /* crypto capabilities */
+>>>>    #define CQHCI_CCAP            0x100
+>>>>    #define CQHCI_CRYPTOCAP            0x104
+>>>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+>>>> index 4e5edbf2fc9b..2204c6abb3fe 100644
+>>>> --- a/drivers/mmc/host/sdhci-msm.c
+>>>> +++ b/drivers/mmc/host/sdhci-msm.c
+>>>> @@ -157,6 +157,23 @@
+>>>>    #define CQHCI_VENDOR_CFG1    0xA00
+>>>>    #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN    (0x3 << 13)
+>>>>    +#define DISABLE_CRYPTO            BIT(15)
+>>>> +#define CRYPTO_GENERAL_ENABLE        BIT(1)
+>>>> +#define HC_VENDOR_SPECIFIC_FUNC4    0x260
+>>>> +#define ICE_HCI_SUPPORT            BIT(28)
+>>>> +
+>>>> +/* SDHCI MSM ICE CTRL Info register offset */
+>>>> +enum {
+>>>> +    OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CCI    = 0,
+>>>> +    OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CE    = 8,
+>>>> +};
+>>>> +
+>>>> +/* SDHCI MSM ICE CTRL Info register masks */
+>>>> +enum {
+>>>> +    MASK_SDHCI_MSM_ICE_HCI_PARAM_CE        = 0x1,
+>>>> +    MASK_SDHCI_MSM_ICE_HCI_PARAM_CCI    = 0xff
+>>>> +};
+>>>
+>>> Preferably use GENMASK() and FIELD_PREP()
+>> Ok
+>>>
+>>>> +
+>>>>    struct sdhci_msm_offset {
+>>>>        u32 core_hc_mode;
+>>>>        u32 core_mci_data_cnt;
+>>>> @@ -1882,9 +1899,47 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>>>>     * Inline Crypto Engine (ICE) support                                        *
+>>>>     *                                                                           *
+>>>>    \*****************************************************************************/
+>>>> -
+>>>
+>>> Unnecessary to delete this line
+>> Ok
+>>>
+>>>>    #ifdef CONFIG_MMC_CRYPTO
+>>>>    +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq,
+>>>> +                 u32 slot)
+>>>> +{
+>>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> +    struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>>>> +    struct mmc_host *mmc = msm_host->mmc;
+>>>> +    struct cqhci_host *cq_host = mmc->cqe_private;
+>>>> +    unsigned int crypto_params = 0;
+>>>> +    int key_index = 0;
+>>>> +    bool bypass = true;
+>>>> +    u64 dun = 0;
+>>>> +
+>>>> +    if (!mrq || !cq_host)
+>>>> +        return -EINVAL;
+>>>
+>>> It should not be possible to get here if (!mrq || !cq_host)
+>> Ok, will remove it in next revision.
+>>>
+>>>> +
+>>>> +    if (mrq->crypto_ctx) {
+>>>> +        dun = mrq->crypto_ctx->bc_dun[0];
+>>>> +        bypass = false;
+>>>> +        key_index = mrq->crypto_key_slot;
+>>>> +    }
+>>>> +
+>>>> +    /* Configure ICE bypass mode */
+>>>> +    crypto_params |= ((!bypass) & MASK_SDHCI_MSM_ICE_HCI_PARAM_CE)
+>>>> +             << OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CE;
+>>>> +    /* Configure Crypto Configure Index (CCI) */
+>>>> +    crypto_params |= (key_index & MASK_SDHCI_MSM_ICE_HCI_PARAM_CCI)
+>>>> +             << OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CCI;
+>>>> +
+>>>> +    cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
+>>>> +
+>>>> +    if (mrq->crypto_ctx)
+>>>> +        cqhci_writel(cq_host, lower_32_bits(dun), NONCQ_CRYPTO_DUN);
+>>>> +
+>>>> +    /* Ensure crypto configuration is written before proceeding */
+>>>> +    wmb();
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>>    static const struct blk_crypto_ll_ops sdhci_msm_crypto_ops; /* forward decl */
+>>>>      static int sdhci_msm_ice_init(struct sdhci_msm_host *msm_host,
+>>>> @@ -2131,6 +2186,8 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>>>>        struct cqhci_host *cq_host;
+>>>>        bool dma64;
+>>>>        u32 cqcfg;
+>>>> +    u32 config;
+>>>> +    u32 ice_cap;
+>>>>        int ret;
+>>>>          /*
+>>>> @@ -2185,6 +2242,18 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>>>>        if (ret)
+>>>>            goto cleanup;
+>>>>    +    /* Initialize ICE for non-CMDQ eMMC devices */
+>>>> +    config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
+>>>> +    config &= ~DISABLE_CRYPTO;
+>>>> +    sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
+>>>> +    ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
+>>>> +    if (ice_cap & ICE_HCI_SUPPORT) {
+>>>> +        config = cqhci_readl(cq_host, CQHCI_CFG);
+>>>> +        config |= CRYPTO_GENERAL_ENABLE;
+>>>> +        cqhci_writel(cq_host, config, CQHCI_CFG);
+>>>> +    }
+>>>> +    sdhci_msm_ice_enable(msm_host);
+>>>> +
+>>>>        dev_info(&pdev->dev, "%s: CQE init: success\n",
+>>>>                mmc_hostname(host->mmc));
+>>>>        return ret;
+>>>> @@ -2450,6 +2519,9 @@ static const struct of_device_id sdhci_msm_dt_match[] = {
+>>>>    MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
+>>>>      static const struct sdhci_ops sdhci_msm_ops = {
+>>>> +#ifdef CONFIG_MMC_CRYPTO
+>>>> +    .crypto_engine_cfg = sdhci_msm_ice_cfg,
+>>>> +#endif
+>>>>        .reset = sdhci_and_cqhci_reset,
+>>>>        .set_clock = sdhci_msm_set_clock,
+>>>>        .get_min_clock = sdhci_msm_get_min_clock,
+>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>> index ac7e11f37af7..2d636a8ee452 100644
+>>>> --- a/drivers/mmc/host/sdhci.c
+>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>> @@ -2202,6 +2202,21 @@ void sdhci_set_power_and_bus_voltage(struct sdhci_host *host,
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(sdhci_set_power_and_bus_voltage);
+>>>>    +static int sdhci_crypto_cfg(struct sdhci_host *host, struct mmc_request *mrq,
+>>>> +                u32 slot)
+>>>> +{
+>>>> +    int err = 0;
+>>>> +
+>>>> +    if (host->ops->crypto_engine_cfg) {
+>>>> +        err = host->ops->crypto_engine_cfg(host, mrq, slot);
+>>>> +        if (err)
+>>>> +            pr_err("%s: failed to configure crypto: %d\n",
+>>>> +                   mmc_hostname(host->mmc), err);
+>>>> +    }
+>>>> +
+>>>> +    return err;
+>>>> +}
+>>>> +
+>>>>    /*****************************************************************************\
+>>>>     *                                                                           *
+>>>>     * MMC callbacks                                                             *
+>>>> @@ -2227,6 +2242,11 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>>>          cmd = sdhci_manual_cmd23(host, mrq) ? mrq->sbc : mrq->cmd;
+>>>>    +    if (mmc->caps2 & MMC_CAP2_CRYPTO) {
+>>>> +        if (sdhci_crypto_cfg(host, mrq, 0))
+>>>> +            goto out_finish;
+>>>> +    }
+>>>
+>>> It would be preferable to hook the >request() callback e.g.
+>>>
+>>>      host->mmc_host_ops.request = sdhci_msm_request;
+>>>
+>>> void sdhci_msm_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>> {
+>>>      if (mmc->caps2 & MMC_CAP2_CRYPTO) {
+>>>          etc
+>>>      }
+>>>
+>>>      sdhci_request(mmc, mrq);
+>>> }
+>> Thanks for the suggestion. I Will update the patch to override the mmc_host_ops.request callback in sdhci-msm.c via a platform-specific wrapper (sdhci_msm_request). Since mmc->ops is a const pointer, I Will clone the existing ops into a local copy
+> 
+> Can just update the sdhci ops directly:
+> 
+> 	host->mmc_host_ops.request = sdhci_msm_request;
+> 
+> (msm_mmc_ops) and replaced only the request field. This preserves all platform-specific callbacks like enable_sdio_irq and avoids probe failures. The change in probe function.
+Thanks for the suggestion. Updating host->mmc_host_ops.request directly 
+to sdhci_msm_request does indeed retain the platform-specific callbacks. 
+I’ll incorporate this change in the next revision.
 
 Thanks,
-Gabriele
-
->=20
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> ---
-> =C2=A0kernel/trace/rv/rv_reactors.c | 4 ++++
-> =C2=A01 file changed, 4 insertions(+)
->=20
-> diff --git a/kernel/trace/rv/rv_reactors.c b/kernel/trace/rv/rv_reactors.=
-c
-> index
-> 8c02426bc3bd944265f809e431283d1a20d56a8c..d9d335ae9badaa320f1d35dd159a033=
-c3a30
-> eb1a 100644
-> --- a/kernel/trace/rv/rv_reactors.c
-> +++ b/kernel/trace/rv/rv_reactors.c
-> @@ -61,6 +61,7 @@
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printk
-> =C2=A0 */
-> =C2=A0
-> +#include <linux/lockdep.h>
-> =C2=A0#include <linux/slab.h>
-> =C2=A0
-> =C2=A0#include "rv.h"
-> @@ -480,6 +481,7 @@ int init_rv_reactors(struct dentry *root_dir)
-> =C2=A0
-> =C2=A0void rv_react(struct rv_monitor *monitor, const char *msg, ...)
-> =C2=A0{
-> +	static DEFINE_WAIT_OVERRIDE_MAP(rv_react_map, LD_WAIT_FREE);
-> =C2=A0	va_list args;
-> =C2=A0
-> =C2=A0	if (!rv_reacting_on() || !monitor->react)
-> @@ -487,7 +489,9 @@ void rv_react(struct rv_monitor *monitor, const char =
-*msg,
-> ...)
-> =C2=A0
-> =C2=A0	va_start(args, msg);
-> =C2=A0
-> +	lock_map_acquire_try(&rv_react_map);
-> =C2=A0	monitor->react(msg, args);
-> +	lock_map_release(&rv_react_map);
-> =C2=A0
-> =C2=A0	va_end(args);
-> =C2=A0}
+Alam.
 
 
