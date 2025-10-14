@@ -1,145 +1,200 @@
-Return-Path: <linux-kernel+bounces-852208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-852212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF73BD8706
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:31:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C500BD8715
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 11:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 88B9E351D4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:31:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61C92351E51
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2DC2E3B03;
-	Tue, 14 Oct 2025 09:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583DB2DE6E1;
+	Tue, 14 Oct 2025 09:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PBTLhYiX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lb/N2nbn"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BD4222587
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8882EA170
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760434267; cv=none; b=SmpEECIj7U3QoDIPgMLQnMvtI9lh1ltrJMANqde5jWEpwl6hyx8wYB3Vv70+nzDTUTh6FomL9QNCOcclH3L8cWj8oQVqzaYfvO39PvkY9Zot9HrpAKz1iNKWDhqVu4cbIq93Mp/qhwD+XMUtwukR9GgAHAXFIjaitUoISUXgDkQ=
+	t=1760434342; cv=none; b=cVh0xfyu3MW1D3ovlvbiZkSwxVPhSlxARs45EPAmIIN9uzx9CYVtjF7UQzIjNOnVsvY2JjSqGrm35ukVITALzW6a33VZp8EW2JTZydrNAWPH0ya/Vu24NSCmuKyPJ5gFnw9edQrMbrBofuZxQ//urVDiFEWxXGcixfnoNyj2CNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760434267; c=relaxed/simple;
-	bh=vEcNDQBWVve4pED0SSI+pK4Wz6MIFUxUaJOPOR2Js7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M7Q7D+KCP/h/2Qk7AUZ2eMgAzAH87/RePJXEd3llQETjfKqMJzfoddEd3h/7p0mp69YnYrYhOFTKl7Nd1m5QlSBnksPnwN7mbAQf4LWJIOk7hNKUJN/pNAFDx3toZD38nO13Ru4sFi9sp03hgT5sjbNW3vSFczJXPa4uoEgM9ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PBTLhYiX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87H4n005372
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:31:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gwVihZd/2iWoLKh+aG/GWvUZ17cfyK3TQmRX3H96tos=; b=PBTLhYiXWAM6/TVS
-	2c7pLVWvFwQdQFLJc4npJYRm+ilzD0axObBksB7cENkqOf1CQPhGpWtDlZiI5X2t
-	t90RcLSLl1hdLYbYOkZKGn4VPUhv7Ia/z5ejs14M8ICqSKx1b6jrR7BU16fEvtQx
-	Oyv0RHV9DcMiILuIs9WOwbLpIo/0RVkPW6SgQY90vv2ZP5vPCoj9dg5xfyeGWrut
-	1d2TV+eDVa9movwvsvbFbOt0oPPiwHEH5jQA04/wEWyh++QObHNBKVZelazAO/qg
-	t7OdrWyac0D2SCSL4xRzXZxNg2M96sKpbvkP008xbF2u/kZ4LokajIgEZ3qYVs0H
-	/LFnfg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfbhywuk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 09:31:02 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8747323272dso27791216d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 02:31:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760434262; x=1761039062;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwVihZd/2iWoLKh+aG/GWvUZ17cfyK3TQmRX3H96tos=;
-        b=J55cbrC0JifOOWN+4Usq/XxFVKn9IuMxFU+DxCZgt3s3oq77Mn1emj7pMLFIwnpESj
-         rIjmEPRKQ/wkuOrX9k4qrvbslzopuROhsB8PcItHKPaQOIGk/Lkj5Cjq5CUhEm2YZklg
-         blxphzeNoLw+flsQ71pD2wK96H1KxBEP+cXO4ukDhc54Mce6inRsYOLuC7pI9f6PWhFL
-         X3iOUZkRn+0Yvb641YRiMTBeiCf491dz+s3qf7Ai+WA8I4SWc4MlwE2IM2/oapoed7bU
-         NcAKrhjMOnYU3HY/N0/vYMqM/RmLwGJ5rgBZpHCSa9jp8cZ6ZyCTEuFPajrPRBe50ahC
-         /4Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuIwu2viHGBjKpL5xxYeTlGEFwbajmBP2Hlb5OWrRHK36t5afT+2GczaU0an/2J3EESRXh3SXftjqX5bE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaKYtiBm6KOvuYYyYbQcXND85WfgmmT5cWzWdokeScBMkLU/BT
-	8EJgAooQTPrza1hwcnhBoGFauw+Nh2HJGk152TvGSBQqaWmhyk1zVgph79fm8glxj8LiCeKi5nY
-	cIOM+LK4mPUdXqWoLgyZ09/XOp7uIFkVwRi5RdSWyydZOcRNr8sEb8VBz0rhy32e+LQs=
-X-Gm-Gg: ASbGncsJ2vP444Hpekm0D5ezJFlTu/YYCzA4WBmPdZxR9QIcox9L5KaPPzdjB7Ku0MF
-	1lGSwSxLgS/mv7W3qby84bCpyk4JcDpZRMvt8N+QJn/4suWtH94eVqEdcKlC9cNPYQzxymySmv/
-	AIiZcIiFfSzXyiLe1UFs5Uu9PKx6VuuHiwFQkxQAsAEk9eF5f8eFqbDjOBnKYmU7WZxwwgAD34J
-	upM4AnwCAPFhRbGA6ppZ5s+WXMFmBtcwB5yQXs6bOtzlDOndyN9YGkCq8qYKcrV3vuSj96GEwVR
-	mVp0pfDfdxs0QFj/sbq97LmIHy8l9KPDjjPzO91FGmXetckN4tVNOIVWaEDAjC6yKB0gvtG+0kH
-	LilKa7RhgXjkM0tg1ZvDtTw==
-X-Received: by 2002:a05:6214:4102:b0:773:84c1:396 with SMTP id 6a1803df08f44-87b20ff9b56mr227829096d6.1.1760434261603;
-        Tue, 14 Oct 2025 02:31:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHl3KAIznNTpy4D/RymiqPy5IHzi3DP+VRMfli8rFMYCBBw3Vk/qI+qF6NtAwDHFqtlwZaUqQ==
-X-Received: by 2002:a05:6214:4102:b0:773:84c1:396 with SMTP id 6a1803df08f44-87b20ff9b56mr227828876d6.1.1760434261162;
-        Tue, 14 Oct 2025 02:31:01 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63bdfec82ebsm136980a12.24.2025.10.14.02.30.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 02:31:00 -0700 (PDT)
-Message-ID: <2af5b96f-eb24-4a37-8f5d-a6911e256a9a@oss.qualcomm.com>
-Date: Tue, 14 Oct 2025 11:30:58 +0200
+	s=arc-20240116; t=1760434342; c=relaxed/simple;
+	bh=eZ5+eDsok7kjQpukFmOgRglwegLra2gCSAMl2Fx7fN0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nMuFUmBMjhwpdk9H5vCWSqOHhbiiAkXPPQzh2vrkt5ZRsqaTGlABm4PFaW+4DMdYOI5JgdrUBr11MQrpK+lnOGvOMNI2ClFWqC1BGtsOKe96GzPn2aqmBcXmzZw6YaxQZnuWQLDtJCcMpgPMriI9mHyBx/Fe5B7VjDQdX1w3wEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lb/N2nbn; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760434335;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MaJVArJT5DSA2aQdi42cvv24ZzgEQA46Llp+u4DFk7o=;
+	b=Lb/N2nbnUC+KtEZA5YdCQPpps9Cv3ryweXrraIB3a+qMPeI+DdRaj9d5dnTVQDFqYbd4/6
+	KO5FDqdZjAZeg+Yx8O+pttul2MOUXReq/nweJtW6skE52EkkWAoot8WsJkwQG95hqYkBap
+	WDVhc31X/+SlJdB8eeDHTQJeLJ27Uxg=
+From: Hao Ge <hao.ge@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] slab: Introduce __SECOND_OBJEXT_FLAG for objext_flags
+Date: Tue, 14 Oct 2025 17:31:24 +0800
+Message-Id: <20251014093124.300012-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] soc: qcom: pd-mapper: Add Kaanapali compatible
-To: prasad.kumpatla@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-References: <20251014-knp-pdmapper-v2-v2-1-ba44422ac503@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251014-knp-pdmapper-v2-v2-1-ba44422ac503@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfX8ywbzcZfyxFr
- vNPi73EcIrknl+mpvXhZ1hcH2L8iqp13rHDZrQaoFae14SAqKCduGKf28yCWuwB73N+ElXWxegO
- 5Z0Zk7h/trcfZLOgCo2nhAFqENrt57yPL27slCa+Qd17AAaPLO+4XkSn32xoXsRcl98eLaMwU+3
- YYzRKlj3GVovh6n8C5xXTJNYO+Kcb5u2nrF+xIVWDMwF3fU/HY0sE4OLAnltvv8FA1fIEI8Yb9r
- HtA3nQgyl9BbTiYeAp7zQBeo73dYHvFDTg3i+nhtamTS9LPWjHy0z5godlSDrV5ADch+ASapHCV
- GBIkYReAp8u5h67T6F5wkCdWprebxKSflj919vooyvlHzXy1u/MGD2NSVmkbYY9ul4lNPpH5JEy
- q73rHXVXrTIIQp6Bqbn5sxH92BoMeg==
-X-Proofpoint-ORIG-GUID: h6_iTzpQQm_De_zVehxsisF-uV6y8ux-
-X-Authority-Analysis: v=2.4 cv=bodBxUai c=1 sm=1 tr=0 ts=68ee1856 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=5CMVg1e2JDiE4ByGS8wA:9 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: h6_iTzpQQm_De_zVehxsisF-uV6y8ux-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-14_02,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110018
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/14/25 11:27 AM, Prasad Kumpatla via B4 Relay wrote:
-> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> 
-> Add support for the Qualcomm Kaanapali SoC to the protection
-> domain mapper. Kaanapali shares the same protection domain
-> configuration as SM8550, except charger_pd as it move to SoCCP.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Add separate pd domain data for Kaanapali SoC.
-> - Link to v1: https://lore.kernel.org/r/20250924-knp-pdmapper-v1-1-fcf44bae377a@oss.qualcomm.com
-> ---
+From: Hao Ge <gehao@kylinos.cn>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+We should not reuse the first bit for OBJEXTS_ALLOC_FAIL.
+This is because the following scenarios may be encountered:
 
-Konrad
+Under heavy system load, certain sequences of events can trigger the
+VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio) check:
+
+1. High system pressure may cause objext allocation failure for a slab.
+2. When objext allocation fails, slab->obj_exts is set to
+   OBJEXTS_ALLOC_FAIL (value 1).
+3. Later, this slab may enter the release process.
+4. During release of the associated folio, the existing
+   VM_BUG_ON_FOLIO check validates folio->memcg_data.
+   If the MEMCG_DATA_OBJEXTS bit is unexpectedly
+   set here, the bug check gets triggered.
+
+We have obtained the following logs:
+[ 7108.343437] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff0002deb97600 pfn:0x31eb96
+[ 7108.343482] head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[ 7108.343500] memcg:1
+[ 7108.343507] flags: 0x17ffff800000040(head|node=0|zone=2|lastcpupid=0xfffff)
+[ 7108.343523] raw: 017ffff800000040 ffff0000c000cac0 dead000000000100 0000000000000000
+[ 7108.343528] raw: ffff0002deb97600 0000000000240000 00000000ffffffff 0000000000000001
+[ 7108.343534] head: 017ffff800000040 ffff0000c000cac0 dead000000000100 0000000000000000
+[ 7108.343539] head: ffff0002deb97600 0000000000240000 00000000ffffffff 0000000000000001
+[ 7108.343562] head: 017ffff800000001 fffffdffcb7ae581 00000000ffffffff 00000000ffffffff
+[ 7108.343569] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
+[ 7108.343574] page dumped because: VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS)
+[ 7108.343601] ------------[ cut here ]------------
+[ 7108.343607] kernel BUG at ./include/linux/memcontrol.h:537!
+[ 7108.343617] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+[ 7108.345751] Modules linked in: squashfs isofs vhost_vsock vhost_net vmw_vsock_virtio_transport_common vfio_iommu_type1 vhost vfio vsock vhost_iotlb iommufd tap binfmt_misc nfsv3 nfs_acl nfs lockd grace netfs tls rds dns_resolver tun brd overlay ntfs3 exfat btrfs blake2b_generic xor xor_neon raid6_pq loop sctp ip6_udp_tunnel udp_tunnel nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables rfkill ip_set sunrpc vfat fat joydev sg sch_fq_codel nfnetlink virtio_gpu drm_client_lib virtio_dma_buf drm_shmem_helper sr_mod drm_kms_helper cdrom drm ghash_ce virtio_net virtio_scsi backlight virtio_console virtio_blk net_failover failover virtio_mmio dm_mirror dm_region_hash dm_log dm_multipath dm_mod fuse i2c_dev virtio_pci virtio_pci_legacy_dev virtio_pci_modern_dev virtio virtio_ring autofs4 aes_neon_bs aes_ce_blk [last unloaded: hwpoison_inject]
+[ 7108.355662] CPU: 7 UID: 0 PID: 4470 Comm: kylin-process-m Kdump: loaded Not tainted 6.18.0-rc1-dirty #54 PREEMPT(voluntary)
+[ 7108.356864] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
+[ 7108.357621] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 7108.358981] pc : __free_frozen_pages+0xf18/0x18e8
+[ 7108.359834] lr : __free_frozen_pages+0xf18/0x18e8
+[ 7108.360379] sp : ffff8000a2bb7580
+[ 7108.360786] x29: ffff8000a2bb7580 x28: fffffdffcb7ae580 x27: fffffdffcb7ae580
+[ 7108.362013] x26: fffffdffcb7ae588 x25: 1fffffbff96f5cb1 x24: 1fffffbff96f5cb0
+[ 7108.362804] x23: ffff8000839d6ba0 x22: ffff8000839d6000 x21: 0000000000000000
+[ 7108.363596] x20: 0000000000000000 x19: 0000000000000001 x18: 0000000000000000
+[ 7108.364393] x17: 445f47434d454d20 x16: 2620617461645f67 x15: 636d656d3e2d6f69
+[ 7108.365498] x14: 6c6f66284f494c4f x13: 0000000000000001 x12: ffff600063fece93
+[ 7108.366317] x11: 1fffe00063fece92 x10: ffff600063fece92 x9 : dfff800000000000
+[ 7108.367610] x8 : 00009fff9c01316e x7 : ffff00031ff67493 x6 : 0000000000000001
+[ 7108.368455] x5 : ffff00031ff67490 x4 : ffff600063fece93 x3 : 0000000000000000
+[ 7108.369276] x2 : 0000000000000000 x1 : ffff000103fe5d40 x0 : 000000000000004c
+[ 7108.370140] Call trace:
+[ 7108.370463]  __free_frozen_pages+0xf18/0x18e8 (P)
+[ 7108.371011]  free_frozen_pages+0x1c/0x30
+[ 7108.372040]  __free_slab+0xd0/0x250
+[ 7108.372471]  free_slab+0x38/0x118
+[ 7108.372882]  free_to_partial_list+0x1d4/0x340
+[ 7108.373813]  __slab_free+0x24c/0x348
+[ 7108.374253]  ___cache_free+0xf0/0x110
+[ 7108.374699]  qlist_free_all+0x78/0x130
+[ 7108.375156]  kasan_quarantine_reduce+0x114/0x148
+[ 7108.375695]  __kasan_slab_alloc+0x7c/0xb0
+[ 7108.376668]  kmem_cache_alloc_noprof+0x164/0x5c8
+[ 7108.377206]  __alloc_object+0x44/0x1f8
+[ 7108.377659]  __create_object+0x34/0xc8
+[ 7108.378196]  kmemleak_alloc+0xb8/0xd8
+[ 7108.378644]  kmem_cache_alloc_noprof+0x368/0x5c8
+[ 7108.379224]  getname_flags.part.0+0xa4/0x610
+[ 7108.379733]  getname_flags+0x80/0xd8
+[ 7108.380169]  do_sys_openat2+0xb4/0x178
+[ 7108.380921]  __arm64_sys_openat+0x134/0x1d0
+[ 7108.381952]  invoke_syscall+0xd4/0x258
+[ 7108.382408]  el0_svc_common.constprop.0+0xb4/0x240
+[ 7108.382965]  do_el0_svc+0x48/0x68
+[ 7108.383375]  el0_svc+0x40/0xe0
+[ 7108.383757]  el0t_64_sync_handler+0xa0/0xe8
+[ 7108.384465]  el0t_64_sync+0x1ac/0x1b0
+[ 7108.385284] Code: 91398021 aa1b03e0 91138021 97fd35e3 (d4210000)
+[ 7108.386553] SMP: stopping secondary CPUs
+[ 7108.389714] Starting crashdump kernel...
+[ 7108.390190] Bye!
+
+So, introduce __SECOND_OBJEXT_FLAG for objext_flags, adjust
+the corresponding order accordingly, and ensure that OBJEXTS_ALLOC_FAIL
+is no longer reused.
+
+Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+ include/linux/memcontrol.h | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 873e510d6f8d..8ea023944fac 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -341,27 +341,23 @@ enum page_memcg_data_flags {
+ 	__NR_MEMCG_DATA_FLAGS  = (1UL << 2),
+ };
+ 
+-#define __OBJEXTS_ALLOC_FAIL	MEMCG_DATA_OBJEXTS
+ #define __FIRST_OBJEXT_FLAG	__NR_MEMCG_DATA_FLAGS
++#define __SECOND_OBJEXT_FLAG    (__FIRST_OBJEXT_FLAG << 1)
+ 
+ #else /* CONFIG_MEMCG */
+ 
+-#define __OBJEXTS_ALLOC_FAIL	(1UL << 0)
+ #define __FIRST_OBJEXT_FLAG	(1UL << 0)
++#define __SECOND_OBJEXT_FLAG	(1UL << 0)
+ 
+ #endif /* CONFIG_MEMCG */
+ 
+ enum objext_flags {
+-	/*
+-	 * Use bit 0 with zero other bits to signal that slabobj_ext vector
+-	 * failed to allocate. The same bit 0 with valid upper bits means
+-	 * MEMCG_DATA_OBJEXTS.
+-	 */
+-	OBJEXTS_ALLOC_FAIL = __OBJEXTS_ALLOC_FAIL,
++	/* slabobj_ext vector failed to allocate */
++	OBJEXTS_ALLOC_FAIL = __FIRST_OBJEXT_FLAG,
+ 	/* slabobj_ext vector allocated with kmalloc_nolock() */
+-	OBJEXTS_NOSPIN_ALLOC = __FIRST_OBJEXT_FLAG,
++	OBJEXTS_NOSPIN_ALLOC = __SECOND_OBJEXT_FLAG,
+ 	/* the next bit after the last actual flag */
+-	__NR_OBJEXTS_FLAGS  = (__FIRST_OBJEXT_FLAG << 1),
++	__NR_OBJEXTS_FLAGS  = (__SECOND_OBJEXT_FLAG << 1),
+ };
+ 
+ #define OBJEXTS_FLAGS_MASK (__NR_OBJEXTS_FLAGS - 1)
+-- 
+2.25.1
+
 
