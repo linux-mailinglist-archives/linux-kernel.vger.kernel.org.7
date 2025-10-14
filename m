@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-853197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7947BDAE64
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:07:24 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C63BDAE7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 20:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FAC4011CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:07:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14CC2343917
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 18:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73C530BBB5;
-	Tue, 14 Oct 2025 18:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9143730E824;
+	Tue, 14 Oct 2025 18:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="vHauQUbQ"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="S0qvk2R2"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8820B307AFB;
-	Tue, 14 Oct 2025 18:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B67230DD0C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760465220; cv=none; b=r6BM9Y3mZeT/s2lesA6pVhmWaav47XkLSlNgbnSfuUXchN3N8RZf9JGtTkWeLJPxwLgg65Lz4H7NG1S3ma1hFn1Vc2ogI3DLuwzDLT/dfNlxDBwkqp4kboLDkcDL0dZYbBQDR5rqUrw41tdkrxrns8869GM/c2PocfoL8RSDJas=
+	t=1760465230; cv=none; b=c80FoOdjjWVXoXzEu1WwanArI62ETG6e9WrcnAhQpBl9uK2SmVCz3iDBNKLi4V3dmARdtHmbLHo18TuP+xQjFFRIIqdqQ5ZBypo654DCCIJnT+EPA/pigxaORKtfJQXFYjWvtvLcwHojLEsJ8J6j6SrygDXNo4XPUyCcPtdjgaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760465220; c=relaxed/simple;
-	bh=MxlDFvaIPrqx2sW/iUtcyFfQxZJQ0KowjWlefyaTGvc=;
+	s=arc-20240116; t=1760465230; c=relaxed/simple;
+	bh=EljfEEnOJssFopcsr1sZpomrtqIfOCKfb54XGc4G5b0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=saSSDa2ONi7vnyPEg71TOl/UZh4knW66C9OvjjfqV13WrDpt7L5vZWGQ4gSgoo2DK+8GZi2rlQkNjj5UISbvp037WIv0ENVkpS7gxVgs2UaWfF2hVznkahUpOz4aIm650b8W6JobmkEjF8E8P8MFlJP4DnJwbSoFIzG6j6LsOdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=vHauQUbQ; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=dyovkKkl4wLJbVK7jqBnpSyFN4Q2z4qfXLCSfmJQJxAqbdaIItBco58bxdnfZ88o9fkmiTKipwexfzqgJ1Uy5W3Yj/4O8ds5f6JMYNMt+EIUwv5jHMVhJLWUd++cB5l8FXBdmcdNHcnKPg4Fi9jsED13qI58Vk4hcWsjY1XrR7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=S0qvk2R2; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=gaZVoYZh/DeywsMdRAGvKGBBjxuFtSLH97k3RMBvBnw=; b=vHauQUbQQaphdvNiOk1IoaB9P+
-	83Q2gMIGw2vLjQMIj/Mj6PYxeP3CbcoPAJYlNkEa1yRF6hE3BORFsUzPKp6sKm5f3IAV+k0d0Lw6u
-	zJYw2oyM98Fbo0YZ8eUfwPsn47BOAIGtmWdcA278NBr8LG6N3R2IyIR2jTpMYVBIj/gyIZLUaGKGT
-	6GFehC6zmjj1rB8CGffFmiasATUCLKu8D59nrlWpSTUD/CToe5ZaREE8GPpaFtksCQnzqK6wcYiHx
-	gg4hPc9e+Ncol2m2s7AOxLOsCzfSJybaX3s4jAbJaYQqI0nnV6e30sMIaDITBy5ytNCcfJL7+YUUo
-	3Rz9kdhg==;
+	bh=DgS+NBRZ5meprDicmbCbMq8Y1cdxTX/xG2+nCSlVa7Q=; b=S0qvk2R2u1KZkuHrcvuzi4k3N7
+	hOi/qvW4YSP6FTZrfLLPexxOvNW6npYimuZ0gXjzaCzXvzdhKc1/yP9DS9KkVodHIIdMzvvzmmmWx
+	SHMhRrguSkM28KL1bLp/BXCx1PabyLlcaJ4KoAiHMUvi3TE7D1+cjBHv5PR+1AAFlFLvLVGAiIFTu
+	uuABaFUhh9dGXzM+5lzaUbl38mSCbBgmmD0BMPoqpoBpkfUX3NL7rdCV133WjwEJQ7tf7rXMJqUdU
+	1itUs1sWZxxgZtHFaFghwM/13uwwXfGbJhNXWa8VhMlYzJ++Jh3dSyIL3SPuapIMqhTlbEFv2Zjmp
+	mt/uUS2w==;
 Received: from i53875b75.versanet.de ([83.135.91.117] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1v8jQ8-0001Gj-C7; Tue, 14 Oct 2025 20:06:48 +0200
+	id 1v8jQ9-0001Gj-BO; Tue, 14 Oct 2025 20:06:49 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Liang Chen <cl@rock-chips.com>,
-	Alexey Charkov <alchark@gmail.com>
+To: Andy Yan <andyshrk@163.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	arnd@arndb.de,
+	bjorn.andersson@oss.qualcomm.com,
+	ebiggers@kernel.org,
+	geert+renesas@glider.be,
+	krzysztof.kozlowski@linaro.org,
+	kuninori.morimoto.gx@renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	nm@ti.com,
+	nfraprado@collabora.com,
+	quic_tdas@quicinc.com,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Remove non-functioning CPU OPPs from RK3576
-Date: Tue, 14 Oct 2025 20:06:30 +0200
-Message-ID: <176046473174.1662867.8203194428926902068.b4-ty@sntech.de>
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] arm64: defconfig: Enable Rockchip extensions for Synopsys DW DP
+Date: Tue, 14 Oct 2025 20:06:32 +0200
+Message-ID: <176046473171.1662867.17938708004609069998.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251009-rk3576_opp-v1-1-67f073a7323f@gmail.com>
-References: <20251009-rk3576_opp-v1-1-67f073a7323f@gmail.com>
+In-Reply-To: <20251013090955.48832-1-andyshrk@163.com>
+References: <20251013090955.48832-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,21 +75,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 09 Oct 2025 16:34:01 +0400, Alexey Charkov wrote:
-> Drop the top-frequency OPPs from both the LITTLE and big CPU clusters on
-> RK3576, as neither the opensource TF-A [1] nor the recent (after v1.08)
-> binary BL31 images provided by Rockchip expose those.
+On Mon, 13 Oct 2025 17:09:33 +0800, Andy Yan wrote:
+> Enable Rockchip specific extensions for Synopsys DesignWare DisplayPort
+> driver. This is used to provide DisplayPort output support for many boards
+> based on RK3588 SoC.
 > 
-> This fixes the problem [2] when the cpufreq governor tries to jump
-> directly to the highest-frequency OPP, which results in a failed SCMI call
-> leaving the system stuck at the previous OPP before the attempted change.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: rockchip: Remove non-functioning CPU OPPs from RK3576
-      commit: 05b80cd1f37db042e074ecc7ee0d39869fed2f52
+[1/1] arm64: defconfig: Enable Rockchip extensions for Synopsys DW DP
+      commit: 642f2879816801ce3e9b00e90c5ee8ec6265c0a2
 
 Best regards,
 -- 
