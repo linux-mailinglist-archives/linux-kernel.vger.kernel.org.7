@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-851959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D30BD7CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:01:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30145BD7CC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 09:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A457A402900
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:01:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 267734F9569
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 07:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F367E2DC760;
-	Tue, 14 Oct 2025 07:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0sIc7ovI"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBD92D0C7D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C962D5C9E;
+	Tue, 14 Oct 2025 07:02:46 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F763043C0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 07:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760425281; cv=none; b=RqT8NFFdTWJ0/qwlXKfzLZ+YEsBdv1pXxUu61EqzK7bATArez7pZ7u4gBO+Q8MWVgrQTdurXpMuAUswC7YvcAAk2uUqJWM2iEQSZsQ/S9FHTWV76c+beRQyHkOwR8RzNqkAvtCT25K8+1QresEr74EcusAQcNosaq56FNgpmbqI=
+	t=1760425365; cv=none; b=k5UkzWLP0u/BW+iR3c6pdtlykkXscPla0WOPsklSsroUsRZF3PgeD9ahtFoNKIXQpTFDskMNNh1lN3TRZ17ekEwrmcKW3svhPeviuo+BgjpPX46cZ95TRzBNk6rb7DpWsJmoEggkeArCTz3NQKprUeGX90RZg4UphIwXUkSACrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760425281; c=relaxed/simple;
-	bh=Wbwb1dO1WLDgacw7LIxGfSzHAltEaTQcEfo+u2xdiR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=umUbjlGU3FlXtbdMC0EAFbGcPB1IKSiZu8v6YqMBvJx13i9agf3CCMN7/maXeg5UiC6EYJiJiTHyNHgDFMFkyEnzmJOKl5XC+QaoJiRCjGRbV6T4g3hQDfRwTm0ESP9keT+J8MwNMIGTG9qm2KhiAGoi2uXKt5b/FVjieyT/6aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0sIc7ovI; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-87bf3d1e7faso12923336d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 00:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760425279; x=1761030079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jsQ1m/aFutWkld5ryO0dQSkVhTvtxn9NWV5ydHxepQA=;
-        b=0sIc7ovItMrk1SHyQCqtJaecI9B6M/fPQD2dqAWlweqGfnCV0W25jnvh62vHahej52
-         o4pbavcfvPG2YWbMcDMXAkA5q0yG6fdQjD1nXUWF1sfYpzwXfyggV4hjOMZbrO0+sbZQ
-         IwV5l05rpg9qucMBJ/jHK/LCg3pd2fn7D/suhl75R49OuqQlZ19/jirWnFMPglzorO0F
-         x8KndrjQLfiSwa4ACT62AydDvd8RRV6wnQHphd4aJSq/iwS0dktmcwPi0jKAmismuJ+z
-         Afbw/GcSwH8cWUWbsqVcKRw9xszxKgUdYeiGhA3Go6k+8lMiz0+/uCcLNsDh0agjG/Ay
-         kmxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760425279; x=1761030079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jsQ1m/aFutWkld5ryO0dQSkVhTvtxn9NWV5ydHxepQA=;
-        b=bzZpyNIamz1pW2Zsk9irIhWP7M2uyR43Y8sW71BLLJCDBUqY/ZT5tpXW48dLccucTU
-         vGauqXXR++7fxLfbB/QuY+FgaeW0oilgpZDiHOuAEjuiqgcpbkWOeeuIyEWFZnZSjFMe
-         cmzfO+Vn8zpQJnJfveuYB1Va3Hifo99cJ+RZXPZzzwTYRdDhFoUTVx7a+gRhB1A2nUp4
-         4BZS9J8yz4GRWShU0FM0ewYmFO+AfAyQnrjPN3mVRvqYRJRgn5KRx+LX8JfAm2P9jDNJ
-         fwrt5qs6zD+Mk6Lzp/+ICYqHeHGKLH34bOIRQXOSF5M0VP4Ic8z9XVhkVZkBAsvmUW81
-         HF1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUdWesYHMx/pU9roeF0UqBJdRH0ZpW6/mg9SD22FJMfYtHmMjPiOlVafWBYvZU3NSxaFd1ompUFK5xIwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmc75RKIRCUBhY7lo/Em7qVMdxXIK7rngF1hT8Ol7tRC+OF9es
-	oYHTqrnOB1PQ7HVWkQ/4FCkNGW9865TL5QCjenk7XnsYclCvkwN8TLYYEIorfVWWtEAxYQmfYTy
-	p+DDiUq70FwzbiHRSCLTotbP+5HSN7EaDKtK4idsk
-X-Gm-Gg: ASbGncvb1LN/lNc/5987bYx+L0otOBztzDl1uG/Gj0vlcR5NikUklA32ISJpxD36SuV
-	u2mZ9JVpIOPWnIzS5q6SmSJHZW+XWykxOe5KRIRheOVFyh89onHc3jiDrxuG1KbXVtjW7azvOci
-	KBJNfXnR04OCrptPX1HLAcTwmQyyvRVqZIL/W6RXV7Ytr4+ktvf8QLMgTkJzm+kEo6uxVU3ZEpu
-	lwrvdxOrF7iQvMSATRJjadxkpayPjNOPP7CEHyVGxA=
-X-Google-Smtp-Source: AGHT+IHR7KeqfX1q4j3neFi7CD60ffHHvOgtSgSkxcg1JbCbIReg3SIb3TKWDF50WzB6YocPrnOGpWynAn63FWdOqTE=
-X-Received: by 2002:a05:6214:2622:b0:820:a83:ead3 with SMTP id
- 6a1803df08f44-87b21032994mr371828316d6.23.1760425278145; Tue, 14 Oct 2025
- 00:01:18 -0700 (PDT)
+	s=arc-20240116; t=1760425365; c=relaxed/simple;
+	bh=y9Y6O8hfCDzT76c4seGWeaubHai+VPjb8cx8iSnw+6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qH05dNw2xwWzQO/tCdpx02aH+U04LeYY+IxkIoBVAxQzw0RAbxQu0ycjd85BPTt0YdzQuYRK7RBCvK06Qx0SiPTkhKgTOPxqIBVOL3WofFp4ywECk85W8NLIgXtkf0QShRBud8nEz+We1Fwlk2mMuvLo4o/HcvZki0gkgvRO77M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Cx5tCG9e1oQOgVAA--.46962S3;
+	Tue, 14 Oct 2025 15:02:30 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJAxfcGD9e1odRLhAA--.49445S2;
+	Tue, 14 Oct 2025 15:02:28 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] LoongArch: Refine init_hw_perf_events()
+Date: Tue, 14 Oct 2025 15:02:27 +0800
+Message-ID: <20251014070227.22396-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89i+wikOQQrGFXu=L3nKPG62rsBmWer5WpLg5wmBN+RdMqA@mail.gmail.com>
- <20251014035846.1519-1-21cnbao@gmail.com> <CANn89iKCZyYi+J=5t2sdmvtERnknkwXrGi4QRzM9btYUywkDfw@mail.gmail.com>
- <CAGsJ_4ySSn6B+x+4zE0Ld1+AM4q-WnS0LfxzWw22oXr7n5NZ=g@mail.gmail.com>
-In-Reply-To: <CAGsJ_4ySSn6B+x+4zE0Ld1+AM4q-WnS0LfxzWw22oXr7n5NZ=g@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 14 Oct 2025 00:01:07 -0700
-X-Gm-Features: AS18NWD5ciaHerlqKb1LSkLizTAcEH7y8M_BZABcYRSz9LQQyJTFiKiNPr9pVjc
-Message-ID: <CANn89i+j_CZM9Q=xTkSq-7cjeRkt29JikD3WqvmPihDrUHBQEQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-To: Barry Song <21cnbao@gmail.com>
-Cc: corbet@lwn.net, davem@davemloft.net, hannes@cmpxchg.org, horms@kernel.org, 
-	jackmanb@google.com, kuba@kernel.org, kuniyu@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linyunsheng@huawei.com, mhocko@suse.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, surenb@google.com, v-songbaohua@oppo.com, vbabka@suse.cz, 
-	willemb@google.com, zhouhuacai@oppo.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxfcGD9e1odRLhAA--.49445S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxAr4xtF15Zr13Ar48Gw1xZwc_yoW5Wr18pr
+	ZFvrsYgr40grn2yw1Dt345WryUJrn7uFWagFnxt3yxCFs8XrW5X3WkG3s8XF1rKw48CFyI
+	qan5Wa43Xa47ZabCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j0FALUUUUU=
 
-On Mon, Oct 13, 2025 at 11:43=E2=80=AFPM Barry Song <21cnbao@gmail.com> wro=
-te:
->
-> > >
-> > > A problem with the existing sysctl is that it only covers the TX path=
-;
-> > > for the RX path, we also observe that kswapd consumes significant pow=
-er.
-> > > I could add the patch below to make it support the RX path, but it fe=
-els
-> > > like a bit of a layer violation, since the RX path code resides in mm
-> > > and is intended to serve generic users rather than networking, even
-> > > though the current callers are primarily network-related.
-> >
-> > You might have a buggy driver.
->
-> We are observing the RX path as follows:
->
-> do_softirq
->     taskset_hi_action
->        kalPacketAlloc
->            __netdev_alloc_skb
->                page_frag_alloc_align
->                    __page_frag_cache_refill
->
-> This appears to be a fairly common stack.
->
-> So it is a buggy driver?
+(1) Use the existing CPUCFG6_PMNUM_SHIFT macro definition instead of
+the magic value 4 to get the PMU number.
 
-No idea, kalPacketAlloc is not in upstream trees.
+(2) Detect the value of PMU bits via CPUCFG instruction according to
+the ISA manual instead of hard-coded as 64, because the value may be
+different for various microarchitectures.
 
-It apparently needs high order allocations. It will fail at some point.
+(3) Rename the PMU name without the postfix 64 due to it is redundant
+and may be inaccurate.
 
->
-> >
-> > High performance drivers use order-0 allocations only.
-> >
->
-> Do you have an example of high-performance drivers that use only order-0 =
-memory?
+Link: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#_cpucfg
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/include/asm/loongarch.h | 1 +
+ arch/loongarch/kernel/perf_event.c     | 8 +++++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-About all drivers using XDP, and/or using napi_get_frags()
+diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+index 09dfd7eb406e..89343b1a526f 100644
+--- a/arch/loongarch/include/asm/loongarch.h
++++ b/arch/loongarch/include/asm/loongarch.h
+@@ -128,6 +128,7 @@
+ #define  CPUCFG6_PMNUM			GENMASK(7, 4)
+ #define  CPUCFG6_PMNUM_SHIFT		4
+ #define  CPUCFG6_PMBITS			GENMASK(13, 8)
++#define  CPUCFG6_PMBITS_SHIFT		8
+ #define  CPUCFG6_UPM			BIT(14)
+ 
+ #define LOONGARCH_CPUCFG16		0x10
+diff --git a/arch/loongarch/kernel/perf_event.c b/arch/loongarch/kernel/perf_event.c
+index 8ad098703488..ee5404d28423 100644
+--- a/arch/loongarch/kernel/perf_event.c
++++ b/arch/loongarch/kernel/perf_event.c
+@@ -846,18 +846,20 @@ static const struct loongarch_perf_event *loongarch_pmu_map_raw_event(u64 config
+ static int __init init_hw_perf_events(void)
+ {
+ 	int counters;
++	int bits;
+ 
+ 	if (!cpu_has_pmp)
+ 		return -ENODEV;
+ 
+ 	pr_info("Performance counters: ");
+-	counters = ((read_cpucfg(LOONGARCH_CPUCFG6) & CPUCFG6_PMNUM) >> 4) + 1;
++	counters = ((read_cpucfg(LOONGARCH_CPUCFG6) & CPUCFG6_PMNUM) >> CPUCFG6_PMNUM_SHIFT) + 1;
++	bits = ((read_cpucfg(LOONGARCH_CPUCFG6) & CPUCFG6_PMBITS) >> CPUCFG6_PMBITS_SHIFT) + 1;
+ 
+ 	loongarch_pmu.num_counters = counters;
+ 	loongarch_pmu.max_period = (1ULL << 63) - 1;
+ 	loongarch_pmu.valid_count = (1ULL << 63) - 1;
+ 	loongarch_pmu.overflow = 1ULL << 63;
+-	loongarch_pmu.name = "loongarch/loongson64";
++	loongarch_pmu.name = "loongarch/loongson";
+ 	loongarch_pmu.read_counter = loongarch_pmu_read_counter;
+ 	loongarch_pmu.write_counter = loongarch_pmu_write_counter;
+ 	loongarch_pmu.map_raw_event = loongarch_pmu_map_raw_event;
+@@ -867,7 +869,7 @@ static int __init init_hw_perf_events(void)
+ 	on_each_cpu(reset_counters, NULL, 1);
+ 
+ 	pr_cont("%s PMU enabled, %d %d-bit counters available to each CPU.\n",
+-			loongarch_pmu.name, counters, 64);
++			loongarch_pmu.name, counters, bits);
+ 
+ 	perf_pmu_register(&pmu, "cpu", PERF_TYPE_RAW);
+ 
+-- 
+2.42.0
 
-XDP has been using order-0 pages from the very beginning.
 
