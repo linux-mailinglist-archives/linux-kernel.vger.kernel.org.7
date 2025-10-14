@@ -1,81 +1,128 @@
-Return-Path: <linux-kernel+bounces-851791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-851792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094CCBD7460
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:39:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C312BD746F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 06:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AED854E9672
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38DC18A6580
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Oct 2025 04:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C130B51C;
-	Tue, 14 Oct 2025 04:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94C630BB87;
+	Tue, 14 Oct 2025 04:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f0jihNJe"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RquUvabK"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D6127874F;
-	Tue, 14 Oct 2025 04:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6124030B52F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760416754; cv=none; b=Ns0jx0dEait9GKq3JnEhwTuYcP4/UJB0XR3tqYEZXhV6j0m3wvbE4WJS2mYtEUgKe+RK4h6UirT1zjFDuB7i0EbrYeKFS0Pi8EsHQL/LsCmUoTPVCLM1Dp0pxT0Y8F9Qe+Diccva4+/9WqVCyHvMOv0jVjtr9JsTDrt2moy2tQA=
+	t=1760416857; cv=none; b=WhRe/PH7O6GQcPvCkL8eTYAGOXhFYTT5Y8ldMTMa+y5VRsdU9UgZvTd2lpX6RMHHJ1PtLk/zCWEeTtJnEaB9Kzgp85xXtxKps50I8o9BrVKWtRHx6i4KKFTclyDm7KZOsodzwoa1XT34CwtGcCIHd/HWvD2gGGPMLil+khC5488=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760416754; c=relaxed/simple;
-	bh=fapzwgcGjG+V5CkiDbjIlIxMFTYSi6qZfdyKFA970Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8hKBRlEv1Z43Aryat/m6v3hDCsE/Q+f+Ba/xrBSYJjWbE2EDSQCvsCPWXsEAt3u+atzZbG7QV/OMjYXupGpa9IPt26iywyGexkPqBv9DfT7Jik+5K1soUlDudhMQsu/4BCH/4p5tmYyEh1mzHz8bjmBiTM0sHS5JtA/zDi/its=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f0jihNJe; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=fapzwgcGjG+V5CkiDbjIlIxMFTYSi6qZfdyKFA970Vk=; b=f0jihNJeMOPpCafMBwGEgooIWq
-	af9jdd1cIYl2z03GpGTgXKsowGa0hMjGw+QH6pQPN7WDAoyMQHI6vCp/9eKgM+E1WEXOTpPI0A9dw
-	xgr3dgdogn+oxzacmVl1o/uyrq+VgjYsi92JaBaMenzrRFUVc+KC2PLnkLJNPz73/1FynTtn8L5yR
-	+ALzfUtxSBSXEVb19MFYqCuJ9lWXzg365QrOyk9Kl1P5AV+NxbQfTDPd9NzuC6WUBgZ+Xbod5T+Th
-	WfR7+3KH3xhgQt9gUg7N7jmr9Id+LEZGxArNRWGhlkEtZnK3h+bFGeL2ZLOFvHmVuShytXk51y4RU
-	qnuro2Wg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8Woa-0000000F7cu-17Ns;
-	Tue, 14 Oct 2025 04:39:12 +0000
-Date: Mon, 13 Oct 2025 21:39:12 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>
-Subject: Re: [RFC PATCH 1/1] ovl: Use fsid as unique identifier for trusted
- origin
-Message-ID: <aO3T8BGM6djYFyrz@infradead.org>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014015707.129013-2-andrealmeid@igalia.com>
+	s=arc-20240116; t=1760416857; c=relaxed/simple;
+	bh=KUxW6iAxc6H7/nCAR7ECOt0zB4dKihg1Q3xgWUAUT/k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=VEjF6TG3Xxup1+3CfQbZKagFHWGQEMwyNbyw7KOb9WlD5Z7QYD9TBziyLhOM6iEvt2IWGOV9qMKvo66AUTeF5/vfSmYq6E+YFGr1rUAE8G0qAAY6Zon0FLpA3SDZmgnSDnen3UAfLS+kPtpX4AExCahgxhZ1i3LU2w5uampP67w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RquUvabK; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251014044052epoutp0498630faf9d1d0d273fcfff258abd6ec5~uQczW1voU1469314693epoutp04k
+	for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 04:40:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251014044052epoutp0498630faf9d1d0d273fcfff258abd6ec5~uQczW1voU1469314693epoutp04k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760416852;
+	bh=2MR/8dxpB2IhRZ4n8hezSuVVh7SAOSL0lQTXjlIHnzU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=RquUvabK+S/WspXtm8tteotYeAGETa8flAGUQQcsC4IlQYwaFZNGCqBQq2GIxdA4u
+	 QwYH/homRXjmnXI5sED6YLMe0IsNp1yYmNHT8lY7QrevXk2LHIjZ9Zdg9a334wBMAu
+	 akz1IXknOmApvfNmssuXkdNfmt26i0QUdDAzFWds=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251014044051epcas1p2ab96c914b58ada43ae851f3f55d28b09~uQcyxqMx31110611106epcas1p2r;
+	Tue, 14 Oct 2025 04:40:51 +0000 (GMT)
+Received: from epcas1p4.samsung.com (unknown [182.195.38.190]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cm1kC3gGZz3hhTL; Tue, 14 Oct
+	2025 04:40:51 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca~uQcyDY-t-3052130521epcas1p3d;
+	Tue, 14 Oct 2025 04:40:50 +0000 (GMT)
+Received: from wkk-400TFA-400SFA.. (unknown [10.253.99.106]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251014044050epsmtip2be8db9a228e5b9f38031acaf1a521548~uQcx_hsCo2356223562epsmtip2U;
+	Tue, 14 Oct 2025 04:40:50 +0000 (GMT)
+From: Wonkon Kim <wkon.kim@samsung.com>
+To: bvanassche@acm.org, James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com, peter.wang@mediatek.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: wkon.kim@samsung.com
+Subject: [PATCH v2] ufs: core: Initialize a value of an attribute as
+ returned by uic cmd
+Date: Tue, 14 Oct 2025 13:40:46 +0900
+Message-Id: <20251014044046.84046-1-wkon.kim@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014015707.129013-2-andrealmeid@igalia.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-CMS-MailID: 20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca
+References: <CGME20251014044050epcas1p3589b404dec77da9fb9f0f79035c149ca@epcas1p3.samsung.com>
 
-On Mon, Oct 13, 2025 at 10:57:07PM -0300, André Almeida wrote:
-> Some filesystem have non-persistent UUIDs, that can change between
-> mounting, even if the filesystem is not modified. To prevent
-> false-positives when mounting overlayfs with index enabled, use the fsid
-> reported from statfs that is persistent across mounts.
+From: wkon-kim <wkon.kim@samsung.com>
 
-Please fix btrfs to not change uuids, as that completely defeats the
-point of uuids.
+If ufshcd_send_cmd() fails, *mib_val has a garbage value.
+A value of an attribute can have an unintended result.
+ufshcd_dme_get_attr() always initializes *mib_val.
+
+Signed-off-by: Wonkon Kim <wkon.kim@samsung.com>
+---
+v2:
+It is better to check ufshcd_dme_get() return rather than
+to initialize argument.
+And ufshcd_dme_get_attr() always initializes *mib_val.
+
+ drivers/ufs/core/ufshcd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 9a43102b2b21..6858f005cc8b 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -4273,8 +4273,8 @@ int ufshcd_dme_get_attr(struct ufs_hba *hba, u32 attr_sel,
+ 			get, UIC_GET_ATTR_ID(attr_sel),
+ 			UFS_UIC_COMMAND_RETRIES - retries);
+ 
+-	if (mib_val && !ret)
+-		*mib_val = uic_cmd.argument3;
++	if (mib_val)
++		*mib_val = ret == 0 ? uic_cmd.argument3 : 0;
+ 
+ 	if (peer && (hba->quirks & UFSHCD_QUIRK_DME_PEER_ACCESS_AUTO_MODE)
+ 	    && pwr_mode_change)
+@@ -4990,7 +4990,7 @@ EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
+ 
+ static int ufshcd_disable_tx_lcc(struct ufs_hba *hba, bool peer)
+ {
+-	int tx_lanes = 0, i, err = 0;
++	int tx_lanes, i, err = 0;
+ 
+ 	if (!peer)
+ 		ufshcd_dme_get(hba, UIC_ARG_MIB(PA_CONNECTEDTXDATALANES),
+-- 
+2.34.1
 
 
