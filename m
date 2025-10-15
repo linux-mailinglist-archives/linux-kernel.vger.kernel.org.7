@@ -1,368 +1,238 @@
-Return-Path: <linux-kernel+bounces-854008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC5FBDD530
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:12:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EFABDD4F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8223F4F0E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013C51924D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2583043BA;
-	Wed, 15 Oct 2025 08:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D782D23AD;
+	Wed, 15 Oct 2025 08:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="VWItG6M8"
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eJrbBh2H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X0FIiQqI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eJrbBh2H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X0FIiQqI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C612E7BCC;
-	Wed, 15 Oct 2025 08:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBE92D060C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760515871; cv=none; b=QQljLDrt0bFsCWgi2YdikU/Nq3k9jZQZM75A7O4JMM7eJfnCV82N3X1ePEUUhE8h/2jP7Ui2IS4DHCj7t9h0/2uqZAICWr9Kl85l86ZO54G7by0mW3PzmDPBfXMSvRvnbQu9MEU6yVthT3lx6J2tARnZ2xknYbXs4NytZJDpFM0=
+	t=1760515679; cv=none; b=uq/aBP6h3B1vAM9We6vvEC2eo3VApzbQWVIFWBSK3FA6ccL9OjE4h2kSY3jQc4btb4pSSmzXRJxKhQmGV4AU+QwF8FIB6065tkFJuEHresiyRsBBDdO4o9hQudu9lw1KaTjVZIoHo7tjJzHdC44x+k6V+JddxMXEGef4/qhdKu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760515871; c=relaxed/simple;
-	bh=/LGMdztWoa17Vqe5AoTEVhDwUUyLIMaYtHLKh8I7CLY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uEq5VBTZTKaTqpKoKM1OSv+lNpLCqzpKFYstCL3++buLY7AtDoAilGpVMfVNLz0UUKVX5EN44HgYtn9Rjv98/B7ZsWfS7MzOzkMIJKYz6SbdruZr0x0gV/tNlWqkdw/dsVqphIleX6dkbWbTb4sIaqU4UFZ+O2dSlDajUCbFXk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=VWItG6M8; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=9n+b4aM/uItV0XOqZ5uzP6RIUzOvcI+uo7IjHtZRtqU=;
-	b=VWItG6M8QoNKjXSNB5nfIkjS6KwRFkgSpOveX+TF82PsUbcs1u1ByLm4OZCbGem2fpMt0OIvK
-	RgEqAkuK9pg5xD68mJR+FYpygxTWhk2IXWRJ9WqPuHcU8UF+3Y32Ay5fWxEfBcR9EZMklO9i5nv
-	WxzP6klK6UqFVoNbs54KUNw=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cmkKr38X6zRhXD;
-	Wed, 15 Oct 2025 16:10:40 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id DABB8180485;
-	Wed, 15 Oct 2025 16:11:00 +0800 (CST)
-Received: from kwepemn500011.china.huawei.com (7.202.194.152) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 15 Oct 2025 16:11:00 +0800
-Received: from huawei.com (10.50.87.129) by kwepemn500011.china.huawei.com
- (7.202.194.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 15 Oct
- 2025 16:10:59 +0800
-From: <linan122@huawei.com>
-To: <corbet@lwn.net>, <song@kernel.org>, <yukuai3@huawei.com>,
-	<linan122@huawei.com>, <xni@redhat.com>, <hare@suse.de>
-CC: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-raid@vger.kernel.org>, <martin.petersen@oracle.com>,
-	<linan666@huaweicloud.com>, <yangerkun@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH -next v7 4/4] md: allow configuring logical block size
-Date: Wed, 15 Oct 2025 16:03:54 +0800
-Message-ID: <20251015080354.3398457-5-linan122@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20251015080354.3398457-1-linan122@huawei.com>
-References: <20251015080354.3398457-1-linan122@huawei.com>
+	s=arc-20240116; t=1760515679; c=relaxed/simple;
+	bh=UyEW64rmyhcIN6ILFqJXD42gT8cl32Dar8Ge+cZOgM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M5j4W/5sJk1OoB/rhDzjjUxu4d+ohqUmZDzwidmCaaMQTmiwvnodbrX7XwuKueQOUSgWWGqHfck5M9pwmUXvlHLTegF6ZdP9y/nmQ7YtRy4NYDs+tkom2kK8YGUBIeTgI2cLQSDjMgloclBGHTV3O5ekK2lWbuxlEDvqeov0iJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eJrbBh2H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X0FIiQqI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eJrbBh2H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X0FIiQqI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4BCA921029;
+	Wed, 15 Oct 2025 08:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760515675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K4PW6pYXBs8I8F7rqr6v7rZZDo1MTao7+FQeliy/AWE=;
+	b=eJrbBh2HPuZcvuXU1HpvZv8BZrMInDparc0ck2opYzizddkzQgigL55matN2vWgZcKPu/H
+	88UPdErz9A4Rk0gI7Z7XiOqKZgp9z8to8tP6OAaN1Nm05KWJ5kRqnux8HrcWFsSSmTlvTb
+	5xpJnHB9oFfiJ/T7q7m+S2mpL8hBqGg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760515675;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K4PW6pYXBs8I8F7rqr6v7rZZDo1MTao7+FQeliy/AWE=;
+	b=X0FIiQqIvLaJfaNxLNMkqL6kUl/owGYWSATJjrDYO6Z+zOYwhLc4z5b+xf7MDHwBLR7RwN
+	wiFDCiGyXXeRhbCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eJrbBh2H;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=X0FIiQqI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760515675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K4PW6pYXBs8I8F7rqr6v7rZZDo1MTao7+FQeliy/AWE=;
+	b=eJrbBh2HPuZcvuXU1HpvZv8BZrMInDparc0ck2opYzizddkzQgigL55matN2vWgZcKPu/H
+	88UPdErz9A4Rk0gI7Z7XiOqKZgp9z8to8tP6OAaN1Nm05KWJ5kRqnux8HrcWFsSSmTlvTb
+	5xpJnHB9oFfiJ/T7q7m+S2mpL8hBqGg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760515675;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K4PW6pYXBs8I8F7rqr6v7rZZDo1MTao7+FQeliy/AWE=;
+	b=X0FIiQqIvLaJfaNxLNMkqL6kUl/owGYWSATJjrDYO6Z+zOYwhLc4z5b+xf7MDHwBLR7RwN
+	wiFDCiGyXXeRhbCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B09313A42;
+	Wed, 15 Oct 2025 08:07:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rIUaDltW72gbYAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 08:07:55 +0000
+Message-ID: <93c2e9a0-f374-4211-b4a0-06c716e7d950@suse.cz>
+Date: Wed, 15 Oct 2025 10:07:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemn500011.china.huawei.com (7.202.194.152)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] xfs: quietly ignore deprecated mount options
+To: "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Oleksandr Natalenko <oleksandr@natalenko.name>,
+ Pavel Reichl <preichl@redhat.com>, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20251015050133.GV6188@frogsfrogsfrogs>
+ <20251015050431.GX6188@frogsfrogsfrogs>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251015050431.GX6188@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 4BCA921029
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.51
 
-From: Li Nan <linan122@huawei.com>
+On 10/15/25 07:04, Darrick J. Wong wrote:
+>  static const struct fs_parameter_spec xfs_fs_parameters[] = {
+> +	/*
+> +	 * These mount options were supposed to be deprecated in September 2025
+> +	 * but the deprecation warning was buggy, so not all users were
+> +	 * notified.  The deprecation is now obnoxiously loud and postponed to
+> +	 * September 2030.
+> +	 */
 
-Previously, raid array used the maximum logical block size (LBS)
-of all member disks. Adding a larger LBS disk at runtime could
-unexpectedly increase RAID's LBS, risking corruption of existing
-partitions. This can be reproduced by:
+FWIW, this seems at odds with the subject "quietly ignore" ;)
+"loudly ignore"? ;)
+"warn about but otherwise ignore"?
 
-```
-  # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
-  mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+Also there's maybe a difference of ignoring "attr2" because it's enabled
+anyway, and ignoring "noattr2" because it's going to be enabled regardless.
+AFAIK prior to b9a176e54162f8 "noattr2" still prevented the enabling? But
+maybe it's not important. (I don't know how (no)ikeep works.)
 
-  # LBS is 512
-  cat /sys/block/md0/queue/logical_block_size
+Hypothetically someone might complaing after taking a disk out of very old
+system without attr2, booting it on 6.18 that will enable attr2, and not
+being able to use it again in the old system. (Funnily enough similar issue
+recently happened to me with btrfs from Turris 1.0 router's microSD). But
+maybe there are other things besides attr2 that can cause it anyway.
 
-  # create partition md0p1
-  parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
-  lsblk | grep md0p1
+Anyway I think even in 2030 it will be the best to just keep warning instead
+of refusing to mount.
 
-  # LBS becomes 4096 after adding sdf
-  mdadm --add -q /dev/md0 /dev/sdf
-  cat /sys/block/md0/queue/logical_block_size
-
-  # partition lost
-  partprobe /dev/md0
-  lsblk | grep md0p1
-```
-
-Simply restricting larger-LBS disks is inflexible. In some scenarios,
-only disks with 512 bytes LBS are available currently, but later, disks
-with 4KB LBS may be added to the array.
-
-Making LBS configurable is the best way to solve this scenario.
-After this patch, the raid will:
-  - store LBS in disk metadata
-  - add a read-write sysfs 'mdX/logical_block_size'
-
-Future mdadm should support setting LBS via metadata field during RAID
-creation and the new sysfs. Though the kernel allows runtime LBS changes,
-users should avoid modifying it after creating partitions or filesystems
-to prevent compatibility issues.
-
-Only 1.x metadata supports configurable LBS. 0.90 metadata inits all
-fields to default values at auto-detect. Supporting 0.90 would require
-more extensive changes and no such use case has been observed.
-
-Note that many RAID paths rely on PAGE_SIZE alignment, including for
-metadata I/O. A larger LBS than PAGE_SIZE will result in metadata
-read/write failures. So this config should be prevented.
-
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- Documentation/admin-guide/md.rst |  7 +++
- drivers/md/md.h                  |  1 +
- include/uapi/linux/raid/md_p.h   |  3 +-
- drivers/md/md-linear.c           |  1 +
- drivers/md/md.c                  | 76 ++++++++++++++++++++++++++++++++
- drivers/md/raid0.c               |  1 +
- drivers/md/raid1.c               |  1 +
- drivers/md/raid10.c              |  1 +
- drivers/md/raid5.c               |  1 +
- 9 files changed, 91 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide/md.rst
-index 1c2eacc94758..0f143acd2db7 100644
---- a/Documentation/admin-guide/md.rst
-+++ b/Documentation/admin-guide/md.rst
-@@ -238,6 +238,13 @@ All md devices contain:
-      the number of devices in a raid4/5/6, or to support external
-      metadata formats which mandate such clipping.
- 
-+  logical_block_size
-+     Configure the array's logical block size in bytes. This attribute
-+     is only supported for 1.x meta. The value should be written before
-+     starting the array. The final array LBS will use the max value
-+     between this configuration and all combined device's LBS. Note that
-+     LBS cannot exceed PAGE_SIZE before RAID supports folio.
-+
-   reshape_position
-      This is either ``none`` or a sector number within the devices of
-      the array where ``reshape`` is up to.  If this is set, the three
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index afb25f727409..b0147b98c8d3 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -432,6 +432,7 @@ struct mddev {
- 	sector_t			array_sectors; /* exported array size */
- 	int				external_size; /* size managed
- 							* externally */
-+	unsigned int			logical_block_size;
- 	__u64				events;
- 	/* If the last 'event' was simply a clean->dirty transition, and
- 	 * we didn't write it to the spares, then it is safe and simple
-diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
-index ac74133a4768..310068bb2a1d 100644
---- a/include/uapi/linux/raid/md_p.h
-+++ b/include/uapi/linux/raid/md_p.h
-@@ -291,7 +291,8 @@ struct mdp_superblock_1 {
- 	__le64	resync_offset;	/* data before this offset (from data_offset) known to be in sync */
- 	__le32	sb_csum;	/* checksum up to devs[max_dev] */
- 	__le32	max_dev;	/* size of devs[] array to consider */
--	__u8	pad3[64-32];	/* set to 0 when writing */
-+	__le32  logical_block_size;	/* same as q->limits->logical_block_size */
-+	__u8	pad3[64-36];	/* set to 0 when writing */
- 
- 	/* device state information. Indexed by dev_number.
- 	 * 2 bytes per device
-diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
-index e80774fe94fc..e06c4dd537de 100644
---- a/drivers/md/md-linear.c
-+++ b/drivers/md/md-linear.c
-@@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
- 
- 	md_init_stacking_limits(&lim);
- 	lim.max_hw_sectors = mddev->chunk_sectors;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.features |= BLK_FEAT_ATOMIC_WRITES;
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index d0aa8e6339f2..f7fab9d067e6 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1996,6 +1996,7 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *freshest, struc
- 		mddev->layout = le32_to_cpu(sb->layout);
- 		mddev->raid_disks = le32_to_cpu(sb->raid_disks);
- 		mddev->dev_sectors = le64_to_cpu(sb->size);
-+		mddev->logical_block_size = le32_to_cpu(sb->logical_block_size);
- 		mddev->events = ev1;
- 		mddev->bitmap_info.offset = 0;
- 		mddev->bitmap_info.space = 0;
-@@ -2205,6 +2206,7 @@ static void super_1_sync(struct mddev *mddev, struct md_rdev *rdev)
- 	sb->chunksize = cpu_to_le32(mddev->chunk_sectors);
- 	sb->level = cpu_to_le32(mddev->level);
- 	sb->layout = cpu_to_le32(mddev->layout);
-+	sb->logical_block_size = cpu_to_le32(mddev->logical_block_size);
- 	if (test_bit(FailFast, &rdev->flags))
- 		sb->devflags |= FailFast1;
- 	else
-@@ -5933,6 +5935,67 @@ static struct md_sysfs_entry md_serialize_policy =
- __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
-        serialize_policy_store);
- 
-+static int mddev_set_logical_block_size(struct mddev *mddev,
-+				unsigned int lbs)
-+{
-+	int err = 0;
-+	struct queue_limits lim;
-+
-+	if (queue_logical_block_size(mddev->gendisk->queue) >= lbs) {
-+		pr_err("%s: Cannot set LBS smaller than mddev LBS %u\n",
-+		       mdname(mddev), lbs);
-+		return -EINVAL;
-+	}
-+
-+	lim = queue_limits_start_update(mddev->gendisk->queue);
-+	lim.logical_block_size = lbs;
-+	pr_info("%s: logical_block_size is changed, data may be lost\n",
-+		mdname(mddev));
-+	err = queue_limits_commit_update(mddev->gendisk->queue, &lim);
-+	if (err)
-+		return err;
-+
-+	mddev->logical_block_size = lbs;
-+	md_update_sb(mddev, 1);
-+	return 0;
-+}
-+
-+static ssize_t
-+lbs_show(struct mddev *mddev, char *page)
-+{
-+	return sprintf(page, "%u\n", mddev->logical_block_size);
-+}
-+
-+static ssize_t
-+lbs_store(struct mddev *mddev, const char *buf, size_t len)
-+{
-+	unsigned int lbs;
-+	int err = -EBUSY;
-+
-+	/* Only 1.x meta supports configurable LBS */
-+	if (mddev->major_version == 0)
-+		return -EINVAL;
-+
-+	if (mddev->pers)
-+		return -EBUSY;
-+
-+	err = kstrtouint(buf, 10, &lbs);
-+	if (err < 0)
-+		return -EINVAL;
-+
-+	err = mddev_lock(mddev);
-+	if (err)
-+		goto unlock;
-+
-+	err = mddev_set_logical_block_size(mddev, lbs);
-+
-+unlock:
-+	mddev_unlock(mddev);
-+	return err ?: len;
-+}
-+
-+static struct md_sysfs_entry md_logical_block_size =
-+__ATTR(logical_block_size, 0644, lbs_show, lbs_store);
- 
- static struct attribute *md_default_attrs[] = {
- 	&md_level.attr,
-@@ -5955,6 +6018,7 @@ static struct attribute *md_default_attrs[] = {
- 	&md_consistency_policy.attr,
- 	&md_fail_last_dev.attr,
- 	&md_serialize_policy.attr,
-+	&md_logical_block_size.attr,
- 	NULL,
- };
- 
-@@ -6085,6 +6149,17 @@ int mddev_stack_rdev_limits(struct mddev *mddev, struct queue_limits *lim,
- 			return -EINVAL;
- 	}
- 
-+	/*
-+	 * Before RAID adding folio support, the logical_block_size
-+	 * should be smaller than the page size.
-+	 */
-+	if (lim->logical_block_size > PAGE_SIZE) {
-+		pr_err("%s: logical_block_size must not larger than PAGE_SIZE\n",
-+			mdname(mddev));
-+		return -EINVAL;
-+	}
-+	mddev->logical_block_size = lim->logical_block_size;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
-@@ -6696,6 +6771,7 @@ static void md_clean(struct mddev *mddev)
- 	mddev->chunk_sectors = 0;
- 	mddev->ctime = mddev->utime = 0;
- 	mddev->layout = 0;
-+	mddev->logical_block_size = 0;
- 	mddev->max_disks = 0;
- 	mddev->events = 0;
- 	mddev->can_decrease_events = 0;
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index 5bff8b4ded41..844131fc7247 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -382,6 +382,7 @@ static int raid0_set_limits(struct mddev *mddev)
- 	md_init_stacking_limits(&lim);
- 	lim.max_hw_sectors = mddev->chunk_sectors;
- 	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.io_opt = lim.io_min * mddev->raid_disks;
- 	lim.chunk_sectors = mddev->chunk_sectors;
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index ad2083b67ca4..e0b268383ab3 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3211,6 +3211,7 @@ static int raid1_set_limits(struct mddev *mddev)
- 
- 	md_init_stacking_limits(&lim);
- 	lim.max_write_zeroes_sectors = 0;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.features |= BLK_FEAT_ATOMIC_WRITES;
- 	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
- 	if (err)
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 8c9201b7406d..71377d4a15d5 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3999,6 +3999,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
- 
- 	md_init_stacking_limits(&lim);
- 	lim.max_write_zeroes_sectors = 0;
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.chunk_sectors = mddev->chunk_sectors;
- 	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index d64eca485c43..fafcee8bb143 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7747,6 +7747,7 @@ static int raid5_set_limits(struct mddev *mddev)
- 	stripe = roundup_pow_of_two(data_disks * (mddev->chunk_sectors << 9));
- 
- 	md_init_stacking_limits(&lim);
-+	lim.logical_block_size = mddev->logical_block_size;
- 	lim.io_min = mddev->chunk_sectors << 9;
- 	lim.io_opt = lim.io_min * (conf->raid_disks - conf->max_degraded);
- 	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
--- 
-2.39.2
+> +	fsparam_dead("attr2"),
+> +	fsparam_dead("noattr2"),
+> +	fsparam_dead("ikeep"),
+> +	fsparam_dead("noikeep"),
+> +
+>  	fsparam_u32("logbufs",		Opt_logbufs),
+>  	fsparam_string("logbsize",	Opt_logbsize),
+>  	fsparam_string("logdev",	Opt_logdev),
+> @@ -1417,6 +1431,9 @@ xfs_fs_parse_param(
+>  		return opt;
+>  
+>  	switch (opt) {
+> +	case Op_deprecated:
+> +		xfs_fs_warn_deprecated(fc, param);
+> +		return 0;
+>  	case Opt_logbufs:
+>  		parsing_mp->m_logbufs = result.uint_32;
+>  		return 0;
+> @@ -1537,7 +1554,6 @@ xfs_fs_parse_param(
+>  		xfs_mount_set_dax_mode(parsing_mp, result.uint_32);
+>  		return 0;
+>  #endif
+> -	/* Following mount options will be removed in September 2025 */
+>  	case Opt_max_open_zones:
+>  		parsing_mp->m_max_open_zones = result.uint_32;
+>  		return 0;
 
 
