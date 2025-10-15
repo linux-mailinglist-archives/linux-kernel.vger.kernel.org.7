@@ -1,157 +1,166 @@
-Return-Path: <linux-kernel+bounces-853969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5BABDD2E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:43:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37961BDD33C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCD3D503527
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 232543BEABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952BB248F57;
-	Wed, 15 Oct 2025 07:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025F13148BB;
+	Wed, 15 Oct 2025 07:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ggOhvzE/"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="AP6FJBPR"
+Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A667F2153E7;
-	Wed, 15 Oct 2025 07:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DADF313E39;
+	Wed, 15 Oct 2025 07:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760514050; cv=none; b=YcnDswQM4czpSsI0e2xABtj22QyKVED7z4z43qHRCblYUmuTjPxdd1it4rNGgCqPKXxNc/I5jxMgnYZyGacHOLoyIpwUK0i47wQQIFMxSGHlwK+DLrhQn7po/kHeVPPkCC3dpMeJpeaphGNRqe4SDei7MZhqXQ5lctnhRoXfDgw=
+	t=1760514656; cv=none; b=RBTzFyOzPgR1t1JUu1ozGVtpFzRNL0ew/JoWUZPk5xQ6V8a/2FtOPQmWxgcKAq6h9m/t5MeGUjvxCVISrK3iRNRmISN4uq1wzTKtocliHUNh5AZ2hrqtHH3k0eCN3LYflYLnes5GRdRr5W8WUX+j59iOjdBDEssFRtcv9U8vNfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760514050; c=relaxed/simple;
-	bh=dt30EklpSZi/7lhcJZNz9S2gIHGZWvqZN5FUmUz3/jw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=K5XVLJFP4ofYGscBtc1KXg9E30fapWbIoWRBAce+C5QDIrboektgOpLoaUAhDHcOr2UNDkN29/h6gjOHTUf8qR2TvQM13uG8L7FNmnRjdsOyIBb4wtrU9JO33BR60mlVHs0koeiERtC4qtXJFfkw7W9/1X2/NFVtsmyObx6RReU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ggOhvzE/; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id 84E1D1D001A0;
-	Wed, 15 Oct 2025 03:40:47 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 15 Oct 2025 03:40:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1760514047; x=1760600447; bh=Hjz+mqNYfvzjq/YJEYihb4TnZiLmD1Lj/yX
-	vDrOsq5A=; b=ggOhvzE/7YVP9rUtx9NtsXRkOsnCUJ/qt2NFNUpu3oXu6ci9usU
-	9FwZHtgU8LRnAIO5s/IJdmxbLYqCd4rJ7HVVWQFb8CiHDKnWZ/dtofEKyw8Ol9Rp
-	r7X5qfX/MWWAvOgwFDggReiRiF0ATQnyLtA0A0YVo/2x9znfosycZ3+Gk1rhOvld
-	1KqZ2UdWKYLrWL5DiEvSQOC3NMr0jriN3wtE6sQpLaQxyNdm+ge1G4M0ecc6S0m4
-	R4p27Nf9FgXyAf4dmTSc68BrRw2zSneIax+fd1n7ed9PGcFwPWkO58mv3Fn76KjZ
-	ZWlZ1Q14tRmXqjvTdJ9BeA1KlGsQfp6Sokw==
-X-ME-Sender: <xms:_k_vaFvQ6j6nUU9Bz9OmIrnvm1b43RCX6IjtYMrvOQCRcb7LZSuGCQ>
-    <xme:_k_vaCJs1lzijUQR7-Bpe29tzk0vmejTwk-v6rAZ6-0k_oDo6yoSkfSiPzXp3-FAT
-    N_PV6kOM9MmxreuEIjdWXogP-WCvC-aAmg5xjE-xlVBahfIdqt8JQ>
-X-ME-Received: <xmr:_k_vaBbkQR-x7xV9LEBBoGKY9rkzilWsr14DSBEIvCzTDxOG02osw2ak1iaUkq3vm2wEBmsHRhIj8-35Ve35BrXtXM-IFGmjB-Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddvkeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedufedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuh
-    igsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    grkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsgho
-    qhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfi
-    hnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhr
-    tghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:_k_vaNkowgqRDxU0NrAP6HZs27XEnrfVUnwK4cWX2Ev_9_WkFonUbQ>
-    <xmx:_k_vaHXi1PoUukZyiT8j65TiGM3flKikc39SU7PKTnoemtd_VuXg6w>
-    <xmx:_k_vaPLIE-igCSJb_mDiNimE5GR9xSzZNvdI_UIPlDwllRy0ikDQDg>
-    <xmx:_k_vaHuOiZS341r5sWdGZlxWEwoLz_Q9W5uXweooNJh2ZLbBDZfUeQ>
-    <xmx:_0_vaETJOQMYxuBxhK-52T5aaFOLCH365KBvspjjxybBzPmgyHp2i3km>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 03:40:43 -0400 (EDT)
-Date: Wed, 15 Oct 2025 18:40:39 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: David Laight <david.laight.linux@gmail.com>
-cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-    linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
-    linux-doc@vger.kernel.org
-Subject: Re: [RFC v3 1/5] documentation: Discourage alignment assumptions
-In-Reply-To: <20251014112359.451d8058@pumpkin>
-Message-ID: <f5f939ae-f966-37ba-369d-be147c0642a3@linux-m68k.org>
-References: <cover.1759875560.git.fthain@linux-m68k.org> <76571a0e5ed7716701650ec80b7a0cd1cf07fde6.1759875560.git.fthain@linux-m68k.org> <20251014112359.451d8058@pumpkin>
+	s=arc-20240116; t=1760514656; c=relaxed/simple;
+	bh=ZNR/1vZHBuEZZ1lROgCkXjOzslv+2Dewz4AC5zPfhIE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtX0gaRWoagYYfhv8HmpW20z4qjfa6dTmyUnammo7SHKtg/K95cAGmxJ+elsKrK5BGyfEdErdqZ6CFI3gkZYkx6U599oYmI0ZlSWGlU0k0vDWyyeuVQ1a5L2bFbz9TqfJ4MyNaKm0pRDoh1GFbM9d3XUrAPkXqGhNfHg2UFKi1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=AP6FJBPR; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by mx1.secunet.com (Postfix) with ESMTP id 80EF0207B2;
+	Wed, 15 Oct 2025 09:43:14 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from mx1.secunet.com ([127.0.0.1])
+ by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id lxxDAAhui_Ho; Wed, 15 Oct 2025 09:43:13 +0200 (CEST)
+Received: from EXCH-01.secunet.de (unknown [10.32.0.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.secunet.com (Postfix) with ESMTPS id 771D1205E3;
+	Wed, 15 Oct 2025 09:43:13 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com 771D1205E3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1760514193;
+	bh=8DAGPi9RRU3NyqKZzw7sWRwKSj7xVgafKgfGA9J4HSE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=AP6FJBPRR+t6JvtgYIFR2wVHWR/TZdm6ikQu4S9x9hcttmwYZpG5GQqs5Azp2MNDj
+	 Cpj5cPBfQe3bpnKeCk1v61JIobXQpjiTSfFzNvforlegqaIVQfMLsYpljQPwV9fNh6
+	 ku6Towru4ywx42HJY8H29CBvc5eENPa2m9lSP6wZ9h6nvMvn+9OC1erHYPtZdBEHSF
+	 +KpRPK8nlTnz/IxH4tQ3kArTzohXM84CTWKag6XuTbcPVtgMDKztZkdJ0PzC/pBiAM
+	 WIqBpdfyIMXG5o1tiGY8jG75U5M1A/cltnYolDoZ3xJA1WCvs7mIwlhH4kx2EI4kA/
+	 ea91ltf89aN2w==
+Received: from secunet.com (10.182.7.193) by EXCH-01.secunet.de (10.32.0.171)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 15 Oct
+ 2025 09:43:12 +0200
+Received: (nullmailer pid 3606862 invoked by uid 1000);
+	Wed, 15 Oct 2025 07:43:12 -0000
+Date: Wed, 15 Oct 2025 09:43:12 +0200
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Sabrina Dubroca <sd@queasysnail.net>
+CC: syzbot <syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <herbert@gondor.apana.org.au>,
+	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] WARNING in xfrm_state_migrate (2)
+Message-ID: <aO9QkNNkZ1JLnnIl@secunet.com>
+References: <68e2ad62.a00a0220.2ba410.0018.GAE@google.com>
+ <aO5PnU4dhUuzM34e@krikkit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aO5PnU4dhUuzM34e@krikkit>
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ EXCH-01.secunet.de (10.32.0.171)
 
-
-On Tue, 14 Oct 2025, David Laight wrote:
-
-> On Wed, 08 Oct 2025 09:19:20 +1100
-> Finn Thain <fthain@linux-m68k.org> wrote:
-> 
-> > Discourage assumptions that simply don't hold for all Linux ABIs.
-> > Exceptions to the natural alignment rule for scalar types include
-> > long long on i386 and sh.
-> > ---
-> >  Documentation/core-api/unaligned-memory-access.rst | 7 -------
-> >  1 file changed, 7 deletions(-)
+On Tue, Oct 14, 2025 at 03:26:53PM +0200, Sabrina Dubroca wrote:
+> 2025-10-05, 10:39:46 -0700, syzbot wrote:
+> > Hello,
 > > 
-> > diff --git a/Documentation/core-api/unaligned-memory-access.rst b/Documentation/core-api/unaligned-memory-access.rst
-> > index 5ceeb80eb539..1390ce2b7291 100644
-> > --- a/Documentation/core-api/unaligned-memory-access.rst
-> > +++ b/Documentation/core-api/unaligned-memory-access.rst
-> > @@ -40,9 +40,6 @@ The rule mentioned above forms what we refer to as natural alignment:
-> >  When accessing N bytes of memory, the base memory address must be evenly
-> >  divisible by N, i.e. addr % N == 0.
-> >  
-> > -When writing code, assume the target architecture has natural alignment
-> > -requirements.
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    4b946f6bb7d6 selftests/bpf: Fix realloc size in bpf_get_ad..
+> > git tree:       bpf
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=13be46e2580000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=5cd6299ede4d4f70987b
+> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> > 
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> > 
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/f0ef71bdead6/disk-4b946f6b.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/0c8251d5df12/vmlinux-4b946f6b.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/29bad3cdad16/bzImage-4b946f6b.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+5cd6299ede4d4f70987b@syzkaller.appspotmail.com
+> > 
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 __xfrm_state_destroy net/xfrm/xfrm_state.c:800 [inline]
+> > WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_put include/net/xfrm.h:928 [inline]
+> > WARNING: CPU: 0 PID: 30386 at net/xfrm/xfrm_state.c:800 xfrm_state_migrate+0x13bc/0x1b10 net/xfrm/xfrm_state.c:2165
 > 
-> I think I'd be more explicit, perhaps:
-> Note that not all architectures align 64bit items on 8 byte boundaries or
-> even 32bit items on 4 byte boundaries.
-> 
-
-That's what the next para is alluding to...
-
-> > In reality, only a few architectures require natural alignment on all sizes
-> > of memory access. However, we must consider ALL supported architectures; 
-> > writing code that satisfies natural alignment requirements is the easiest way 
-> > to achieve full portability.
-
-How about this?
-
-"In reality, only a few architectures require natural alignment for all 
-sizes of memory access. That is, not all architectures need 64-bit values 
-to be aligned on 8-byte boundaries and 32-bit values on 4-byte boundaries. 
-However, when writing code intended to achieve full portability, we must 
-consider all supported architectures."
-
-> > @@ -103,10 +100,6 @@ Therefore, for standard structure types you can always rely on the compiler
-> >  to pad structures so that accesses to fields are suitably aligned (assuming
-> >  you do not cast the field to a type of different length).
-> >  
-> > -Similarly, you can also rely on the compiler to align variables and function
-> > -parameters to a naturally aligned scheme, based on the size of the type of
-> > -the variable.
-> > -
-> >  At this point, it should be clear that accessing a single byte (u8 or char)
-> >  will never cause an unaligned access, because all memory addresses are evenly
-> >  divisible by one.
+> Steffen, this looks like we simply forgot to set XFRM_STATE_DEAD
+> before the final put() in the error path of xfrm_state_migrate (and
+> xfrm_state_clone_and_setup):
 > 
 > 
+> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+> index 9ea1d45b79e3..7ae10fac7b31 100644
+> --- a/net/xfrm/xfrm_state.c
+> +++ b/net/xfrm/xfrm_state.c
+> @@ -2074,6 +2074,7 @@ static struct xfrm_state *xfrm_state_clone_and_setup(struct xfrm_state *orig,
+>  	return x;
+>  
+>   error:
+> +	x->km.state = XFRM_STATE_DEAD;
+>  	xfrm_state_put(x);
+>  out:
+>  	return NULL;
+> @@ -2163,6 +2164,7 @@ struct xfrm_state *xfrm_state_migrate(struct xfrm_state *x,
+>  
+>  	return xc;
+>  error:
+> +	xc->km.state = XFRM_STATE_DEAD;
+>  	xfrm_state_put(xc);
+>  	return NULL;
+>  }
+> 
+> 
+> Does that look reasonable? The state was never add()/insert()'ed, so
+> it goes through put()/destroy() without delete() first that would set
+> XFRM_STATE_DEAD.
+
+Right. Looks like this is broken since the migrate API exists.
+
+> It also looks like we're missing a xfrm_dev_state_delete if
+> xfrm_state_migrate -> xfrm_state_add fails, since
+> xfrm_dev_state_delete gets called during __xfrm_state_delete, and this
+> new state will only see xfrm_state_put/__xfrm_state_destroy:
+> 
+> @@ -2159,10 +2159,13 @@ struct xfrm_state *xfrm_state_migrate(struct xfrm_state *x,
+>  		xfrm_state_insert(xc);
+>  	} else {
+>  		if (xfrm_state_add(xc) < 0)
+> -			goto error;
+> +			goto error_add;
+>  	}
+>  
+>  	return xc;
+> +error_add:
+> +	if (xuo)
+> +		xfrm_dev_state_delete(xc);
+
+This is correct as well. Thanks for catching these!
 
