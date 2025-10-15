@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-854226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F055FBDDDCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA4EFBDDDD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A1D64EE0AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CC0B3A7EFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CECA31BC9F;
-	Wed, 15 Oct 2025 09:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A07E31C567;
+	Wed, 15 Oct 2025 09:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfPNMN2A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1Jx6O4o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988BA31B83A;
-	Wed, 15 Oct 2025 09:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DD331B133;
+	Wed, 15 Oct 2025 09:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521795; cv=none; b=bCnM+nhTqw1omdLx4W4Yc7yS8Tgi8WWo7alcrUWOPD7sdgNkYSm8R9qSuQdWypLWmReJD98PPhP8ZZoomZ/LUSs5LW+b0+f2lebWqs50557JSGArn6ZIIQ2KVavevbzXPAGUAW4oSp7rXdrvIqLDjOpfQ2aPSvEw5dcXYInFRyg=
+	t=1760521799; cv=none; b=IaSUMKnrWDoOFqoGGvOw+ZzfwcDjNvcOP8hxkR7w2Gz1uNGUSy/2ETdaV/cTCduBUCA/VmSX2xXHp6WOVZebJco83bqoKTTh2tKuNZalnr8Kd26AXVX+LZh1kdsYCcH0LY5RXlHHM24CjNmUOIRMArzh5J42q9P4iYHF5ExC5+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521795; c=relaxed/simple;
-	bh=OYMROCoZHnaqO33sOfdV6rng2d1cxkIwSoOiiT3CysM=;
+	s=arc-20240116; t=1760521799; c=relaxed/simple;
+	bh=M61CuQSh2IqQfl/E7LQgk8UCEqyJxBhl3XXYHKg/4w8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lS90GSMdQaeH+uVsiv3uhWYrweYp/HaOW/RbmZGbzg/gwpIxiv/SUY0li919ObD43lQ3MZMIXvj9XGNhpxSy9G1VrHoxFaLhBjE9Pv7Of04BPo1RJAlxjLCXNA5EMzRSAnW3SWMmIzXI958S9qfzNkW8TwlMJMYr1x0h52w7PVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfPNMN2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD430C116C6;
-	Wed, 15 Oct 2025 09:49:53 +0000 (UTC)
+	 MIME-Version:Content-Type; b=R2VOjU7+SMWpNtz0nB4Yo3taBo4HiE/0QHUt+pTb5j5zF7/mvhbpYvHIjd7en2NlesUPOp6WPZ6iGbAl1Y/uhHbjVgphzLOVq2w7KFRGiZYFoVh+z3m5+lVLjDK7XjrxNaAUW0M+E+eBey8qY2HSyO6EyjRvEF0Jp2W7f7kX2KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1Jx6O4o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45A9C4CEFE;
+	Wed, 15 Oct 2025 09:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760521795;
-	bh=OYMROCoZHnaqO33sOfdV6rng2d1cxkIwSoOiiT3CysM=;
+	s=k20201202; t=1760521799;
+	bh=M61CuQSh2IqQfl/E7LQgk8UCEqyJxBhl3XXYHKg/4w8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=TfPNMN2A+laHEU3k6WAoHxQo9wZwhS7RHBFZZSf8NF0VGd9wWGEX2CyVkHAlOu0ri
-	 HU9Ztb20QWjGKYc34aYl24/saulMqeRE5GUv2pql5lv+1NLP24aV/kxS8HfsVHulHg
-	 R06yqKS9FSpBqDqiiB9C9QvkiM13tFXmPt9xkPGjzHD+QhkcfHteDHT4fb1LS3x1xg
-	 qKGy6JeBt7CR+sLlzSwfabVXxOhLL2SuCHSQ5T6UFasXjfdCGvCzJgM2uVNC+S2SQ2
-	 NxzmwQJvHeRd8vObMh/8yGFY/MzBStJ570C/1whki6rqOX+tavErZwGZyxY1expNvR
-	 ieqVIdwy00qRA==
+	b=D1Jx6O4oZqW0l4V5NpbyQXGPy9T1UE9qAODVUeD1tVp++GQgC9OigGWviTD1z6ZRy
+	 LT0lVwHeuwobTlFc8dDWJHKNftvPihwMKw9bq/ZJ17aD5Pf2mj2CSCp7fkbmoykGHP
+	 bVq7v819cp15f6WjbFXAsUlWjpvjoMkJQlvF5lvanzCKb9Na0kGI/S4di90uvA/WxH
+	 DWh3dOmMUblYMIb23hk5i1WiuefC+uCVfshDqkW/xVoou+bnbTSlCaK1+FX63Mmkef
+	 L+m+V4PEWXOjymU3FXPk2tXQmdeG7nU5H6xydqNZ1RSQN6kZrB6W7VSMdxfyFxBpEp
+	 k+B6jEYohatVQ==
 From: Mark Brown <broonie@kernel.org>
-To: srini@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- TangBin <tangbin@cmss.chinamobile.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
-References: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: codecs: Fix the error of excessive semicolons
-Message-Id: <176052179341.20166.15683915200114042850.b4-ty@kernel.org>
-Date: Wed, 15 Oct 2025 10:49:53 +0100
+To: tiwai@suse.de, Baojun Xu <baojun.xu@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, 13916275206@139.com, 
+ shenghao-ding@ti.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, lgirdwood@gmail.com, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ k-yi@ti.com, henry.lo@ti.com, robinchen@ti.com, jesse-ji@ti.com, 
+ will-wang@ti.com, jim.shil@goertek.com, toastcheng@google.com, 
+ chinkaiting@google.com
+In-Reply-To: <20251008045500.44477-1-baojun.xu@ti.com>
+References: <20251008045500.44477-1-baojun.xu@ti.com>
+Subject: Re: [PATCH v5 1/2] ASoC: tas2781: Support more newly-released
+ amplifiers tas58xx in the driver
+Message-Id: <176052179545.20166.14128164480099821391.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 10:49:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,9 +65,8 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-96507
 
-On Tue, 30 Sep 2025 17:41:03 +0800, TangBin wrote:
-> Remove unnecessary semicolons in the function
-> pm4125_codec_enable_adc and pm4125_micbias_control.
+On Wed, 08 Oct 2025 12:54:58 +0800, Baojun Xu wrote:
+> TAS5802/TAS5815/TAS5828 has on-chip DSP without current/voltage feedback.
 > 
 > 
 
@@ -72,8 +76,10 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: Fix the error of excessive semicolons
-      commit: 5e537031f322d55315cd384398b726a9a0748d47
+[1/2] ASoC: tas2781: Support more newly-released amplifiers tas58xx in the driver
+      commit: 53a3c6e222836a23e8e0693395584aefc456dca6
+[2/2] ASoC: dt-bindings: ti,tas2781: Add TAS58XX
+      (no commit info)
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
