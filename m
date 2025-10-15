@@ -1,335 +1,185 @@
-Return-Path: <linux-kernel+bounces-854070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E88BDD794
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:43:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB2BBDD79A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6FC92352B12
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587DA19C110A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7854A31326E;
-	Wed, 15 Oct 2025 08:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8C9315D25;
+	Wed, 15 Oct 2025 08:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jF5VVwGB"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4SA0pay"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A39430F803
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C98930F803
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760517810; cv=none; b=OKdRdaqfb5UqKDRSTNJHAdZbclSNl2EcwEHLFa4xHEQn6Ta04T/lsHDEhoR+RhYC+zcf3AN/nbrOt2c9uLUXqKiJZ86y+7NO5AucvHQ6Cy/jeeG83AjSmAq0dqiHdKvK8oFx35iODEedmPOyYByOmdsn2lt/3M1jMiYkplZyBKE=
+	t=1760517817; cv=none; b=cqH+C1HlwTP78034bdr2zVZ6iJfkI6taasushhbtnaW+bMXmpV49ZfcjmJuLZyR0fuZn5CK5ws01bhWSQ5rNFCoKjA4xjIpTg15vNPKsv3BiVYwNcS7emRHPwQXHgcpxz5pFuMeQ/gtlm2XnqKgN112foEsk+AUqUnj0zZez6lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760517810; c=relaxed/simple;
-	bh=Wg5hDUk0CbxSRc7Anx7IVCAQhfRcaRTSkuHr8r3CfXI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YANJUX+g2wrASFqeI+gLQjo1SVlNjs1+J2SkZFvt8QGRL+a/H5RQ3hFz7RbciYYryhnrM93+sVAv/YgtGc3jDXETeOX+SgTV3VFlHy7MeMTA108l672IjWYxWBiZ/p8suLSHc14Y1LjR2Enp1bVodinY6mwxh4ZlILWUoUtHyBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jF5VVwGB; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760517798; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=vN1LEfAFOswtHugzu9XIYq8P3c19bQGK8wW45PsaC+4=;
-	b=jF5VVwGBZSa+7aFnjbNhR71v09VL1UO4UmZfyQIkB2kmvJaGh+xbzpd07MzEZy9DNPzNJURDkQzKemvsORFC94VMjQy2dlDLs5N946DP3ARyPyPx01bnGdylAscbAkd+Zycf/uPJFkZ7HMwHinJc7r6+IRW3EyH5cT0w8+/zNTw=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WqFjWUn_1760517795 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 15 Oct 2025 16:43:16 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,  David Hildenbrand
- <david@redhat.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Vlastimil
- Babka <vbabka@suse.cz>,  Zi Yan <ziy@nvidia.com>,  Baolin Wang
- <baolin.wang@linux.alibaba.com>,  Ryan Roberts <ryan.roberts@arm.com>,
-  Yang Shi <yang@os.amperecomputing.com>,  "Christoph Lameter (Ampere)"
- <cl@gentwo.org>,  Dev Jain <dev.jain@arm.com>,  Barry Song
- <baohua@kernel.org>,  Anshuman Khandual <anshuman.khandual@arm.com>,
-  Yicong Yang <yangyicong@hisilicon.com>,  Kefeng Wang
- <wangkefeng.wang@huawei.com>,  Kevin Brodsky <kevin.brodsky@arm.com>,  Yin
- Fengwei <fengwei_yin@linux.alibaba.com>,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org
-Subject: Re: [PATCH -v2 1/2] mm: add spurious fault fixing support for huge pmd
-In-Reply-To: <4c453dcc-2837-4f1a-905b-3462270f5e31@lucifer.local> (Lorenzo
-	Stoakes's message of "Tue, 14 Oct 2025 15:21:33 +0100")
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
-	<20251013092038.6963-2-ying.huang@linux.alibaba.com>
-	<4c453dcc-2837-4f1a-905b-3462270f5e31@lucifer.local>
-Date: Wed, 15 Oct 2025 16:43:14 +0800
-Message-ID: <87ldlcpnbx.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760517817; c=relaxed/simple;
+	bh=lYSR5jLdMYtmxb5k1Xke197I3phnNIjnW5MizFZ0tWc=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TeWTbFP3SfnmtHgesYySsk9mTz9kvg4mw1R18yGd6ZyoaKzOWLr4FGM8X5LaFK3XX5g57bk6gPoGC22DJrylAPtWLh+QTv4f41o47Vf5Kna4AA2POyfOuj9iMYeffvsMvEcofvm0oTI9DWnaeqzNTnk0mT3a2SOLxmGRdSCcBcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4SA0pay; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6504ca65496so376413eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760517815; x=1761122615; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:msip_labels:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cxf53tuYiU+Dv+DHgj1lSI5Z/XUbb+V/oDZLK5mtN/g=;
+        b=Z4SA0payohni1ootUfeTHVzlUhR9ML05sXVVb4yaS7itBEA+yddgICzdCBRoe9cJQc
+         j22Tomtm2FqoqfDKO7CgORKGeKdMNVjWukJIaHaGDFaxa9SM4l2PZyrwEeqC282FBBHO
+         3FzQy8rZPR5CCuV+jc12w9+1zrReoGVX9ZI8O5t069jLsaSyo3zuESYKo61NNde8w2xn
+         1TE1Cqu88EzoPWO7m3nA3kKyzvJncS4NtLX6Ca0opGjP9ZCS37KWZRkRouSUrS5r0SRH
+         +xwbGvM4iMoBPQNgNfDqQ6WBqr7wNiOP41/gvNmTIhzIvsmCHfWSIk3U48EHJ2FDkh0a
+         ftCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760517815; x=1761122615;
+        h=mime-version:content-transfer-encoding:msip_labels:content-language
+         :accept-language:message-id:date:thread-index:thread-topic:subject
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cxf53tuYiU+Dv+DHgj1lSI5Z/XUbb+V/oDZLK5mtN/g=;
+        b=ULd1c2eavtfbqVg8lklZPBBayL41m6znjsM+wViY/jAHGcINBriZdMv9t+3ImWFDAr
+         qi3HmeTuOR+Cd8tSnRqk96NRJ9ujHNS2GS/YHNtCawUIJoSGxnaoUTseXKHx8dA/HVRQ
+         pG6+GrmSKSZqfwKCgFuP8acQAWMLxsNCoxN/siVBknqlqZVjRmazYvQCWKmpnpKSqTnE
+         fMSr42S598UEiuzmX1C9PScrtvDcWX6ZmOV7qHqg1DHbqnLajBl8xLUSF0hwnuSXLrPq
+         2NVYkwqSW3Sv4fsCKuOebqHP6rCGlgtJp7KOubtP45Bm9e7GEHY2tT8d6W1MBZn4Ajr8
+         B4SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQC7uK2SSZOatc49oR8cN6eUQ0BW5XLIkXI0ALE89wUVptX0JFFvYU5mWTAgBix2t7H/TEZJuX2RgeFjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdUlaahafeuMZeycRM1qb/d0Uk51pROg5bx5uJ6VgVK/W4UiU4
+	cyoJxHua776hhVY9fejOkPpkGdkMZBpGCr1orCZ1JvPcwsmMU+qSm/h2
+X-Gm-Gg: ASbGncte6ckoxBhJd6Nep6MWkVu/HB4Vs5/8rC/CbRBFJZPUsOXzE6TJKGYjnEmvKE1
+	TmON4KaCd1IW9p/RyNpJ7/rjak+AsFmufFP3LgaamYYfh/zPGgVQkPnc/A/qO+m8WuFDKcwEKTS
+	SaWybHTw9rU8su/X5UvW1uzr+UjqUZDTIKEY9NRiWA5hELMlwu2oZLGfF1RjIQTi2tCWT/6fYCY
+	nX2L7TBEXxFEqliJu2C/v4e5TU/F+F9cmDh9Sam+buIXHH996GP0VriNxkie0p97Pc/j9zZiXdX
+	HJJqoLORAUzoYaXbAD90hheNRLdVMkvAs3uSy2FKdkrWE5SND7DnVHXCqxMXxQRT7EOFzWingZm
+	su14gURaOceFCsuDEWZxe5mQqwh56UGeJ5XhpP6JhA+3CY0mXazTmMhQIe4cXZrVz3JPikoB8Tt
+	A5lp2vSNNX0gOXsaTBx1ZXLWPN7RGO9c/9ga5U
+X-Google-Smtp-Source: AGHT+IEW6YfwO2Hw5oVjmZcWhTT2ZwRVCeYlsQeMytKJhVKsXPe7o8q2gMr9wQUGjacZjGQXxV3gTg==
+X-Received: by 2002:a05:6870:d8d4:b0:315:663f:4056 with SMTP id 586e51a60fabf-3c0f5d13930mr13019224fac.4.1760517815138;
+        Wed, 15 Oct 2025 01:43:35 -0700 (PDT)
+Received: from SN6PR04MB4048.namprd04.prod.outlook.com ([2603:1036:805:3e::5])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3c8c8ae8f91sm5234410fac.2.2025.10.15.01.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 01:43:34 -0700 (PDT)
+From: Itamar Dalal <dalalitamar@gmail.com>
+To: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com"
+	<david@redhat.com>, "lorenzo.stoakes@oracle.com"
+	<lorenzo.stoakes@oracle.com>, "riel@surriel.com" <riel@surriel.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, "harry.yoo@oracle.com" <harry.yoo@oracle.com>,
+	"jannh@google.com" <jannh@google.com>, "rppt@kernel.org" <rppt@kernel.org>,
+	"surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>,
+	"shuah@kernel.org" <shuah@kernel.org>
+Subject: selftests/mm/rmap: verify correct RMAP handling of COW pages after
+ fork()
+Thread-Topic: selftests/mm/rmap: verify correct RMAP handling of COW pages
+ after fork()
+Thread-Index: AQHcPa+FfLpoUZg/p0aSBo0MKrxelg==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date: Wed, 15 Oct 2025 08:43:33 +0000
+Message-ID:
+	<SN6PR04MB4048CF9A242A640B29A588EDFEE8A@SN6PR04MB4048.namprd04.prod.outlook.com>
+Accept-Language: en-US, he-IL
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator:
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels:
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
 
-Hi, Lorenzo,
-
-Thanks for comments!
-
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
-
-> On Mon, Oct 13, 2025 at 05:20:37PM +0800, Huang Ying wrote:
->> In the current kernel, there is spurious fault fixing support for pte,
->> but not for huge pmd because no architectures need it. But in the
->> next patch in the series, we will change the write protection fault
->> handling logic on arm64, so that some stale huge pmd entries may
->> remain in the TLB. These entries need to be flushed via the huge pmd
->> spurious fault fixing mechanism.
->>
->> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
->
-> Right now the PTE level spurious fault handling is dealt with in
-> handle_pte_fault() when ptep_set_access_flags() returns false.
->
-> Now you're updating touch_pmd() which is invoked by follow_huge_pmd() and
-> huge_pmd_set_accessed().
->
-> 1 - Why are you not adding handling to GUP?
->
-> 2 - Is this the correct level of abstraction? It's really not obvious but
->     huge_pmd_set_accessed() is invoked by __handle_mm_fault() on a non-WP,
->     non-NUMA hint huge page fault where a page table entry already exists
->     but we are faulting anyway (e.g. non-present or read-only writable).
->
-> You don't mention any of this in the commit message, which you need to do
-> and really need to explain how spurious faults can arise, why you can only
-> do this at the point of abstraction you do (if you are unable to put it in
-> actual fault handing-code), and you need to add a bunch more comments to
-> explain this.
-
-This patch adds the spurious PMD page fault fixing based on the spurious
-PTE page fault fixing.  So, I assumed that the spurious page fault
-fixing has been documented already.  But you are right, nothing prevents
-us from improving it further.  Let's try to do that.
-
-The page faults may be spurious because of the racy access to the page
-table.  For example, a non-populated virtual page is accessed on 2 CPUs
-simultaneously, thus the page faults are triggered on both CPUs.
-However, it's possible that one CPU (say CPU A) cannot find the reason
-for the page fault if the other CPU (say CPU B) has changed the page
-table before the PTE is checked on CPU A.  Most of the time, the
-spurious page faults can be ignored safely.  However, if the page fault
-is for the write access, it's possible that a stale read-only TLB entry
-exists in the local CPU and needs to be flushed on some architectures.
-This is called the spurious page fault fixing.
-
-The spurious page fault fixing only makes sense during page fault
-handling, so we don't need to do it for GUP.  In fact, I plan to avoid
-it in all GUP paths in another followup patch.
-
-As for where to put the spurious PMD page fault fixing code, because
-it's THP related code, I thought that we should put it in huge_memory.c,
-so I implemented it in huge_pmd_set_accessed().  If we follow the design
-of the spurious PTE page fault fixing, we can call the unified
-implementation in __handle_mm_fault() after huge_pmd_set_accessed()
-reports nothing has been changed.
-
-> Otherwise this just ends up being a lot of open-coded + confusing 'you have
-> to go look it up/just know' type stuff that we have too much of in mm :)
->
-> So please update commit message/comments, confirm whether this is the
-> correct level of abstraction, and address other comments below, thanks!
->
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Yang Shi <yang@os.amperecomputing.com>
->> Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
->> Cc: Yicong Yang <yangyicong@hisilicon.com>
->> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
->> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
->> Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> ---
->>  include/linux/pgtable.h |  4 ++++
->>  mm/huge_memory.c        | 22 +++++++++++++++++-----
->>  mm/internal.h           |  4 ++--
->>  3 files changed, 23 insertions(+), 7 deletions(-)
->>
->> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->> index 32e8457ad535..341622ec80e4 100644
->> --- a/include/linux/pgtable.h
->> +++ b/include/linux/pgtable.h
->> @@ -1232,6 +1232,10 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
->>  #define flush_tlb_fix_spurious_fault(vma, address, ptep) flush_tlb_page(vma, address)
->>  #endif
->>
->> +#ifndef flush_tlb_fix_spurious_fault_pmd
->> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, ptep) do { } while (0)
->> +#endif
->
-> flush_tlb_fix_spurious_fault(), when the arch doesn't declare it, defaults to
-> flush_tlb_page() - why do we just do nothing in this case here?
-
-Because all architectures do nothing for the spurious PMD page fault
-fixing until the [2/2] of this series.  Where, we make it necessary to
-flush the local TLB for spurious PMD page fault fixing on arm64
-architecture.
-
-If we follow the design of flush_tlb_fix_spurious_fault(), we need to
-change all architecture implementation to do nothing in this patch to
-keep the current behavior.  I don't think that it's a good idea.  Do
-you agree?
-
->> +
->>  /*
->>   * When walking page tables, get the address of the next boundary,
->>   * or the end address of the range if that comes earlier.  Although no
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 1b81680b4225..8533457c52b7 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1641,17 +1641,22 @@ vm_fault_t vmf_insert_folio_pud(struct vm_fault *vmf, struct folio *folio,
->>  EXPORT_SYMBOL_GPL(vmf_insert_folio_pud);
->>  #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
->>
->> -void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->> -	       pmd_t *pmd, bool write)
->> +/* Returns whether the PMD entry is changed */
->
-> Could we have a kernel doc description here?
-
-Sure.
-
->> +int touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->
-> It's 2025 can we use bool please :)
-
-Sure.
-
->> +	      pmd_t *pmd, bool write)
->>  {
->> +	int changed;
->>  	pmd_t _pmd;
->
-> While we're here can we rename this horrible parameter name to e.g. entry? We're
-> significantly altering this function anyway so it isn't much more
-
-Sure.
-
->>
->>  	_pmd = pmd_mkyoung(*pmd);
->>  	if (write)
->>  		_pmd = pmd_mkdirty(_pmd);
->> -	if (pmdp_set_access_flags(vma, addr & HPAGE_PMD_MASK,
->> -				  pmd, _pmd, write))
->> +	changed = pmdp_set_access_flags(vma, addr & HPAGE_PMD_MASK,
->> +					pmd, _pmd, write);
->> +	if (changed)
->>  		update_mmu_cache_pmd(vma, addr, pmd);
->
-> We can make this simpler, e.g.:
->
-> 	if (pmdp_set_access_flags(vma, addr & HPAGE_PMD_MASK,
-> 				  pmd, entry, write)) {
-> 		update_mmu_cache_pmd(vma, addr, pmd);
-> 		return true;
-> 	}
->
-> 	return false;
-
-No problem.  As long as David is OK with this.
-
->> +
->> +	return changed;
->>  }
->>
->>  int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->> @@ -1849,7 +1854,14 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
->>  	if (unlikely(!pmd_same(*vmf->pmd, vmf->orig_pmd)))
->>  		goto unlock;
->>
->> -	touch_pmd(vmf->vma, vmf->address, vmf->pmd, write);
->> +	if (!touch_pmd(vmf->vma, vmf->address, vmf->pmd, write)) {
->> +		/* See corresponding comments in handle_pte_fault(). */
->
-> What are the 'corresponding' comments? How can a reader of this code know what
-> they are? This isn't a very helpful comment. Also those comments might be
-> moved in future...
->
-> Presumably it's:
->
-> 		/* Skip spurious TLB flush for retried page fault */
-> 		if (vmf->flags & FAULT_FLAG_TRIED)
-> 			goto unlock;
-> 		/*
-> 		 * This is needed only for protection faults but the arch code
-> 		 * is not yet telling us if this is a protection fault or not.
-> 		 * This still avoids useless tlb flushes for .text page faults
-> 		 * with threads.
-> 		 */
-> 		if (vmf->flags & FAULT_FLAG_WRITE)
-> 			flush_tlb_fix_spurious_fault(vmf->vma, vmf->address,
-> 						     vmf->pte);
->
->
-> So I don't see why it's so egregious to have the equivalent here, or actually
-> ideally to abstract the code entirely.
->
-> In commit b22cc9a9c7ff ("mm/rmap: convert "enum rmap_level" to "enum
-> pgtable_level"") David introduced:
->
-> 	enum pgtable_level {
-> 		PGTABLE_LEVEL_PTE = 0,
-> 		PGTABLE_LEVEL_PMD,
-> 		PGTABLE_LEVEL_PUD,
-> 		PGTABLE_LEVEL_P4D,
-> 		PGTABLE_LEVEL_PGD,
-> 	};
->
-> Which allows for sensible abstraction.
-
-Sure.  Based on your discussion with David on this, I will add a
-function to do the spurious page fault fixing for the PTE and PMD fault.
-
->> +		if (vmf->flags & FAULT_FLAG_TRIED)
->> +			goto unlock;
->> +		if (vmf->flags & FAULT_FLAG_WRITE)
->> +			flush_tlb_fix_spurious_fault_pmd(vmf->vma, vmf->address,
->> +							 vmf->pmd);
->> +	}
->>
->>  unlock:
->>  	spin_unlock(vmf->ptl);
->> diff --git a/mm/internal.h b/mm/internal.h
->> index 1561fc2ff5b8..8b58ab00a7cd 100644
->> --- a/mm/internal.h
->> +++ b/mm/internal.h
->> @@ -1402,8 +1402,8 @@ int __must_check try_grab_folio(struct folio *folio, int refs,
->>   */
->>  void touch_pud(struct vm_area_struct *vma, unsigned long addr,
->>  	       pud_t *pud, bool write);
->> -void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->> -	       pmd_t *pmd, bool write);
->> +int touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->> +	      pmd_t *pmd, bool write);
->>
->>  /*
->>   * Parses a string with mem suffixes into its order. Useful to parse kernel
->> --
->> 2.39.5
->>
-
----
-Best Regards,
-Huang, Ying
+Add a new test `migrate.cow_after_fork` that verifies correct RMAP handling=
+=0A=
+of Copy-On-Write (COW) pages after fork().=0A=
+=0A=
+Before a write, the parent and child share the same PFN. After a write, the=
+=0A=
+child=92s PFN differs. This confirms that proper COW duplication occurred a=
+nd=0A=
+that RMAP correctly tracks page ownership transitions during COW events.=0A=
+=0A=
+Signed-off-by: Itamar-Dalal <dalalitamar@gmail.com>=0A=
+---=0A=
+ tools/testing/selftests/mm/rmap.c | 45 ++++++++++++++++++++++++++++++-=0A=
+ 1 file changed, 44 insertions(+), 1 deletion(-)=0A=
+=0A=
+diff --git a/tools/testing/selftests/mm/rmap.c b/tools/testing/selftests/mm=
+/rmap.c=0A=
+index 13f7bccfd0a9..2ba3361fecf0 100644=0A=
+--- a/tools/testing/selftests/mm/rmap.c=0A=
++++ b/tools/testing/selftests/mm/rmap.c=0A=
+@@ -430,4 +430,47 @@ TEST_F(migrate, ksm)=0A=
+        propagate_children(_metadata, data);=0A=
+ }=0A=
+=0A=
+-TEST_HARNESS_MAIN=0A=
++TEST_F(migrate, cow_after_fork)=0A=
++{=0A=
++       struct global_data *data =3D &self->data;=0A=
++       int status;=0A=
++       pid_t pid;=0A=
++       unsigned long parent_pfn, child_pfn;=0A=
++       int pagemap_fd;=0A=
++       char *region;=0A=
++=0A=
++       /* Map private anonymous memory and fault it in */=0A=
++       region =3D mmap(NULL, data->mapsize, PROT_READ | PROT_WRITE,=0A=
++               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);=0A=
++       ASSERT_NE(region, MAP_FAILED);=0A=
++       memset(region, 0xaa, data->mapsize);=0A=
++=0A=
++       pagemap_fd =3D open("/proc/self/pagemap", O_RDONLY);=0A=
++       ASSERT_NE(pagemap_fd, -1);=0A=
++       parent_pfn =3D pagemap_get_pfn(pagemap_fd, region);=0A=
++       close(pagemap_fd);=0A=
++=0A=
++       pid =3D fork();=0A=
++       ASSERT_NE(pid, -1);=0A=
++=0A=
++       if (pid =3D=3D 0) {=0A=
++               /* Child: write to trigger COW */=0A=
++               region[0] =3D 0xbb;=0A=
++=0A=
++               pagemap_fd =3D open("/proc/self/pagemap", O_RDONLY);=0A=
++               ASSERT_NE(pagemap_fd, -1);=0A=
++               child_pfn =3D pagemap_get_pfn(pagemap_fd, region);=0A=
++               close(pagemap_fd);=0A=
++=0A=
++               /* Expect PFN to differ after write (COW happened) */=0A=
++               if (child_pfn =3D=3D parent_pfn)=0A=
++                       _exit(FAIL_ON_CHECK);=0A=
++               _exit(0);=0A=
++       }=0A=
++=0A=
++       waitpid(pid, &status, 0);=0A=
++       ASSERT_EQ(WEXITSTATUS(status), 0);=0A=
++       munmap(region, data->mapsize);=0A=
++}=0A=
++=0A=
++TEST_HARNESS_MAIN=0A=
+\ No newline at end of file=0A=
+--=0A=
+2.34.1=
 
