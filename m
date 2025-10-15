@@ -1,139 +1,156 @@
-Return-Path: <linux-kernel+bounces-854419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75433BDE52B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:47:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1284CBDE537
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B6F4274CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2966C4274F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03CD322C66;
-	Wed, 15 Oct 2025 11:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1360B322DB8;
+	Wed, 15 Oct 2025 11:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUWjeze+"
-Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="24QDWAP1"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66EB322A3D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B1322DAA;
+	Wed, 15 Oct 2025 11:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760528841; cv=none; b=V6dUbchJwlaybdtrbHbLCvZMS+91WGlnE8WKKAfC/b/mpOYIpWVLJ0nAxneXh1KsuRgyEQAxtX0B8Wf+V5rH4B++RXSfM/8FNeSwqEdGoEY7Zjl2tZaYkn7jHRgMq1ceP4SHTITRFZKc7F1qJgGF31H4VF5fiZOzo5B4kffR6ZA=
+	t=1760528938; cv=none; b=nmUHTFMUlV8+D1nHH+K5QGlzEDjLHJuih0rEmzo5LjvPivTJ7ZdK2eKEe9Lclp01VIPXdDm7Iehcm7+8fDxt5pHjXzuMBJCcin0zyWV5vtTUkJMO3j9AAKsa4/b56uo4xnQmL26yuLz2u3ilpDZtigwXveeRMeRVtF3S4zjD+WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760528841; c=relaxed/simple;
-	bh=K8Ef9394U0xGAO1FYDn+Orh4zfOf8Xw0fy6jgoX6rKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pIc8kBhseawq3oYl//oALZprM7zKKJwf3JEzW2uiWDtAJNR2E80/mzqosEcd0igYCH4QU8tN6dHZAAUz0vAzI4dDlIUzqVun51HNx/UmwZJaqZ1Sp5I5owZ7XyxN9FpxN3eu17GOANjSWmXMlnuI2IwuFuDrjlZWupkfP/4QaQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUWjeze+; arc=none smtp.client-ip=209.85.208.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-368348d30e0so55435651fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760528838; x=1761133638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7kjD7nlR2YEzkS0lnkW+YD90/WFAnc1y24O/rAXSwJ4=;
-        b=cUWjeze+0jn+DyGKQDUKmZdDgaBIws4sKGEIUXggyi/qc3KSaJoLEBP99bUv8PrDRR
-         7MyVQNPi+gJgBdaoj2KA2oPPW1ch+MZvnlx9y7brtgTdAWKhsW0FgNaB6KH37seNTae7
-         AFh98HJJhw1ggckArc0L+Q1jJ45leg3eLCUAILo9kEYOCslYJoo0T0y1/abdUZFA6PpQ
-         6hwe2snxGdmPfxwPpJD6zQCJDdQTtO7X201LIw5tHvSX5VI3HChhGRZZY3kHstgll7hp
-         +K+viBLvmK6oEg7PJGBAdA/Gd2EVA/OzHJGLhCt4i5R5CDdaoR6nTDdz/z31Gc38R5wf
-         P0Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760528838; x=1761133638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7kjD7nlR2YEzkS0lnkW+YD90/WFAnc1y24O/rAXSwJ4=;
-        b=o8+z4PKzr2o6mmLrnjWAYwV9rYxjkbRkhRKQj5hyrdOI50/nOGCXRRY2bEUnYIqUQm
-         Y7JQBb7zlsAPB0LY4sEvQEtPXwauwjqqxUXYicTK7UW8LAoC26GTcMhBpuY302Ha8U4R
-         B5bWHqo9D5iE241BtAP9b1dp5rxDzeVvz6xJkaZiZhX/Nz8WT/2WQ8/IjzBE5uRsphFD
-         kB0tkHWeMwClKC1jh4B+wiYx7SmaJz49yo5tq9v+bdy2yG8RSy7wP2toJIbYT2+8EWcV
-         OcHfoD7RtseGcovruXgaeW9PMBprwyH26vb/RxqksCBrYN2pGHoiaxgMyo39FmmzZKqS
-         oSlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn9TNLVKm+oMQ/MgFHBOj0RdTYJ37bQJARTdzbkfbuZ1N3KNqixblGoVAgpjB+J3Vtfj8qoG0YnSp3dSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEkJu2J0nCtZ7ww5tLUyzvItgV24Lop6va9G1LFVsxLPg7aBS9
-	zN+Yq5+j6+mhqjEVR7B6PVKQhYmMqHcPS4vqLzZIusT+U5rBltlBFTcxY7Tfb1FKVMyAxBGWbDY
-	SDK4HQjUlgPNLvL74TdmUfqNCIgGw7/U=
-X-Gm-Gg: ASbGnctRFyXIHhF8ws/MD/jbx84GCdBjpR/rtSuBpMeEoJJ5nHWcsePbstsVKmULWOs
-	SrZdqD1eBnrzb6CtZhz8Uylisb3fLmlo5Za9R3rQCmpF0rgFkOMwjzCdI0u8/Nn+5NlKiUby7mC
-	h86TO/6+JFB3CTsAyRujiqKKO6jZtutylo50lIzD2M9cLNE5Nx/jOEsnTZUOJEDH3hf2XX9odxV
-	A6J5mwHfccrTnosLUJDKlmUVFeYXArTXFQUAw==
-X-Google-Smtp-Source: AGHT+IHB7Q6zZZMGHVTDzzBJ7VX3uS6ZTaxkupI5fWKfSKIZBSRc8BqdSXDaczSqzz1xMTR2k41s6xuNNoZwhsfFZGo=
-X-Received: by 2002:a05:651c:1543:b0:36d:54b3:9f71 with SMTP id
- 38308e7fff4ca-37609cea713mr76878821fa.1.1760528837594; Wed, 15 Oct 2025
- 04:47:17 -0700 (PDT)
+	s=arc-20240116; t=1760528938; c=relaxed/simple;
+	bh=5xkKQaCJcLNKjjAggEjnjUaHxOikgF03tyhL/q4hdLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A3etAgBusAPb4ZVh+lF1pwhYnYG3NeubwpY7EMqvNXM/lj0c80CF93JDLgvva60DX7LzJB/KKuWmPsYkXOUbc4Hg42uOd98zjbcN+hTIPUVYr4WcNDirSmHVvl2YYGBoB2hnmkSddpfDpL/8pDjK5Do9rYnGlQa2QzItMfcGsP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=24QDWAP1; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CB4881A13CD;
+	Wed, 15 Oct 2025 11:48:52 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9CEBF606F9;
+	Wed, 15 Oct 2025 11:48:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C41D9102F22B7;
+	Wed, 15 Oct 2025 13:48:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760528931; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=q2qoYp02/jZuYlfxVRjrpV1dQgL3PSlbw/Em+FLVpf4=;
+	b=24QDWAP1A1lGjyfEDs5xwM2YU5G0VB4komtmvS3SROem458VxFSnTBkz+AvZagMZPyRtXC
+	9LvHXjBfv4OObeqmp1YJE3F4s2KP37uSiS38soVDWNvSTdKTRhgE9SIrupD+qN2OBfQSa4
+	QBGFhNoFPddsTVuOXTSIsiyMANfhnimB9QuoeQBa5g+DOvLd0pnRBn5Nt0N0v1Rc1/E20K
+	sHpcXdaZ0MXrCxGp4P8t1/N3XJeiVJzlDU3wdAf8HKOFoIPqb+TR3Z06oiaMiaPQmn7wwC
+	clBVZ8Cy+gqzeKpb968crH5T7hTYRnVckcKNJ9J5UDGY2npS57KLruSRv80mLQ==
+Date: Wed, 15 Oct 2025 13:48:39 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
+ Eberhard <pascal.eberhard@se.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <20251015134839.1b71fe28@bootlin.com>
+In-Reply-To: <aNQ7UOniYss92EIS@ninjato>
+References: <20250922152640.154092-1-herve.codina@bootlin.com>
+	<20250922152640.154092-8-herve.codina@bootlin.com>
+	<aNQ7UOniYss92EIS@ninjato>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013080609.2070555-1-hupu.gm@gmail.com> <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
- <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
- <20251013161429.GE77665@e132581.arm.com> <CADHxFxQg2ZKwLEOa6wic_KP49PRBp=hF=cY16aVmR0O0pa8ZkA@mail.gmail.com>
- <20251015093037.GA109737@e132581.arm.com>
-In-Reply-To: <20251015093037.GA109737@e132581.arm.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Wed, 15 Oct 2025 19:47:04 +0800
-X-Gm-Features: AS18NWAkVWEMyCdv0-Y1CwBUX6NfnUpUNHXCsHsXsJw9gljovloSmphazhBJKPc
-Message-ID: <CADHxFxQyOBurB0LB9qRdc3DEDNU+vatqOybNdcizPnWZngiPZg@mail.gmail.com>
-Subject: Re: [RFC] perf build: Allow passing extra Clang flags via EXTRA_CLANG_FLAGS
-To: Leo Yan <leo.yan@arm.com>
-Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com, 
-	justinstitt@google.com, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Leo,
-Thank you for your reply.
+Hi Wolfram,
 
-On Wed, Oct 15, 2025 at 5:30=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> Have you installed the GCC cross packages ?
->
->  $ sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
->  $ sudo apt-get install libc6-dev-aarch64-cross linux-libc-dev-aarch64-cr=
-oss
->  $ sudo apt-get install libc6-dev-arm64-cross linux-libc-dev-arm64-cross
->
-> My understanding is arm64 cross compilation tries to find headers in the
-> path /usr/aarch64-linux-gnu/include/ (I confirmed this on Ubuntu/Debian
-> distros).  After install GCC cross packages, the headers should appear
-> in the folder.
->
+On Wed, 24 Sep 2025 20:41:20 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-I hadn=E2=80=99t installed the packages you mentioned earlier, but after
-running the installation commands you provided, I was indeed able to
-successfully build perf.
+> Hi Herve,
+> 
+> On Mon, Sep 22, 2025 at 05:26:38PM +0200, Herve Codina (Schneider Electric) wrote:
+> > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> > interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
+> > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+> > 
+> > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> > IRQ lines out of the 96 available to wire them to the GIC input lines.
+> > 
+> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>  
+> 
+> Thanks for improving the driver and removing the requirement of a fixed
+> ordering!
+> 
+> > +static u32 rzn1_irqmux_output_lines[] = {  
+> 
+> const?
 
-In fact, I=E2=80=99m currently working on creating an SDK package, which
-includes a cross-toolchain that I built myself using crosstool-NG. My
-initial idea was to install certain third-party libraries (such as the
-packages you mentioned) into the cross-toolchain=E2=80=99s sysroot director=
-y.
-With this approach, even when developing on different host machines,
-we could simply specify the header search path (pointing to the
-cross-toolchain=E2=80=99s sysroot directory) during compilation, and the bu=
-ild
-should succeed without requiring any additional package installation
-on the system.
+Yes, will be added in the next iteration.
 
-Based on this, I think allowing users to extend some options via
-EXTRA_CLANG_FLAGS could be a flexible way to handle such cases.
-However, this is just my personal thought and might not be entirely
-correct, so I=E2=80=99d like to hear your advice.
+> 
+> > +	103, 104, 105, 106, 107, 108, 109, 110
+> > +};  
+> 
+> ...
+> 
+> > +	for (i = 0; i < ARRAY_SIZE(rzn1_irqmux_output_lines); i++) {
+> > +		if (parent_args->args[1] == rzn1_irqmux_output_lines[i])
+> > +			return i;
+> > +	}  
+> 
+> Do we want a check here if the index has already been used in cases of
+> an improper 'interrupt-map'? I'd think it would be nice to have but I
+> would also not really require it.
 
+Agree, it will be a good improvement.
 
-Thanks=EF=BC=8C
-hupu
+I will add this check in the next iteration.
+
+> 
+> ...
+> 
+> > +	ret = rzn1_irqmux_setup(dev, np, regs);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to setup mux\n");
+> > +
+> > +	return 0;  
+> 
+> Maybe just
+> 
+> 	return rzn1_irqmux_setup(dev, np, regs);
+> 
+> The driver core will report a failed probe already.
+
+Yes
+
+> 
+> It still works, so:
+> 
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+With update planned (new check for already been used indexes), a
+re-test will be probably needed.
+
+Best regards,
+Hervé
 
