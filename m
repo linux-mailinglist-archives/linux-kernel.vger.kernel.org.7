@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-854206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB48DBDDD1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:39:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBAFBDDD19
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4676919A308D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:40:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E623B4F632A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3835B3168E2;
-	Wed, 15 Oct 2025 09:39:49 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC7F31A078;
+	Wed, 15 Oct 2025 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vq3Eic35"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDF53176EF;
-	Wed, 15 Oct 2025 09:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FE331A80D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521185; cv=none; b=FeCX3KC4BwRE2MuszTjE+nkp8yjNmsHSoYl4BMVhepiScCfoRvMbf9YdaFkA9gt8bIFHlAptCr6iw8Z0Dvso05Ll5ortm01+nb0YC4yaGgv0ryrdPGaz3hbVcbV7qj2sCUnC2gnxMinvQUOHp2Yj6a1dQBpt5L1cowIuFNXRctg=
+	t=1760521167; cv=none; b=OcUIgpN6/P1sfRrINhY5122D1Km287glVOxKxDMxfj3dIhud2HgZnU3nivvCULXWoLWMUjL2iFqVwWcvLcOhjMqMG4qBM+tTHU7FA60UB2xYeJrbPGj4D+dMMI9WxyPvO2M6OVcmqb78CxfgMVPV0zn3hdXxjEiXjuLoykKYPu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521185; c=relaxed/simple;
-	bh=qEi9fDQcS/rkwScoxKyo0yfqMU+XvDYKJbufVzcqJws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/voiVCLSenDxvZxh+uuDlhBMDM9l3EaB+ZQ+GZV+J4F904GzcZdMjZP6szNlvMJUqMDc8jKg1+4xMbz0FIwMOoWcXvOnVxajfD4YHqhIjOuAHlBri4Ws8ywB8Hd+iYS7XeF3+8MiqG64VIHwhGo0eLMfUQPHmrS/spfEhV4wKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.212] (p57bd968e.dip0.t-ipconnect.de [87.189.150.142])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3E56760213B36;
-	Wed, 15 Oct 2025 11:39:00 +0200 (CEST)
-Message-ID: <bf36b4ed-e35f-4943-93ea-b24b27a48ad3@molgen.mpg.de>
-Date: Wed, 15 Oct 2025 11:38:59 +0200
+	s=arc-20240116; t=1760521167; c=relaxed/simple;
+	bh=u1eJKOWwZghNRxJv0zHXChCsSqbn7vM9VucZ50DOiNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AogwfCXmGIZxMrJ1bj4OOzI/+b51ZnN1iahqTwwi7t742Oxrc1L1MB2NPcKBryroolL/beeFpIpO8uardTWMxrZK1ZQqXuszTHa2wfs49rEmIu3zg9KF704es6sfYMv/9dmkuSPDFwQjzGKiW4mV3Ik/zduvUaXgXm0BV003qzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vq3Eic35; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7930132f59aso8466066b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760521163; x=1761125963; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1eJKOWwZghNRxJv0zHXChCsSqbn7vM9VucZ50DOiNI=;
+        b=Vq3Eic35swbvt2ENzbXRVyv1LJm3HT1Q6CIPfG6OhGknsJqgFtyB/Nm0AJjW9+2ol7
+         1yg9WGpzjeNIyl0VnFs/Qs9eg+GOB5UCWGQeXshJgu5GHrPg/79lO2hdqRC+QOczPtc4
+         SMxxBq2KroDP+DEBeaLJDMwcbv1WaGz0HvptQrQz6jF7WyHO1xOf6hpa6EVzIwo8VPca
+         8CfJpfM0QtgLAh1cKAaH6HefVDzW/SqZw68Vcc8bBtmD64BIOMmwDMRv9MPZHIhOomhQ
+         s1mkc3v0qUiVLcN4H4PuxkCpN9xDw1VsyattjVd1FjG40LR68Ln6nFua6dXuyx2gz4rL
+         nVDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760521163; x=1761125963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1eJKOWwZghNRxJv0zHXChCsSqbn7vM9VucZ50DOiNI=;
+        b=GJuXVxt9btpWgWRLFmCJCGl24DG0FkRJQvmnKBiZHAlCcjVXHcLvso6rHwUODRQkvb
+         F+I6WqXWUfAoh3Aa6Xiu7RpLOy1ItiKDxY1x8Hn+9NMmSGK4ZbNo7TnBL/8vWkICt88o
+         nUBRa10QcweyJPw0LU3TDmtuMLBxNy0ptEs0kEG9C64XC3sgyIknKhr3rigCvaqhXgS7
+         VDvEa3fD7ielaNx0+i7MOFaI9MYrspxf+s4OF5jMLc3iBSbj/3QbCComI8E2GeI1T7KC
+         /m9KDxBQw/Dzb0ZGm3q8yN/9cnwN8rdD54Nc9zhdPD8UiLG46SIaieD7oqiqozcwLvQx
+         oA4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXsbJ7IIYt/OJmXoqRV0NfMxvBvK/H6FXRFBS5XExLgP57O/mLAp9L/cBXkouG96rcT/ap9VfIIMcUrKpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlCvFa93rh8axFG8tBRIH6dCGfq2i6KUt9jHg3SEUsksrbvCBM
+	feABKwUi7MEme5saF1rJXW9y8tbbPFcveDvwRsn5bj6/6CVA6Aw+YHgO
+X-Gm-Gg: ASbGncuAQh5B/lYxTlNRCYmZhmegVxxUDaOCgPbg2HKRWEJswWBWbCL7v/G9A+QRGbo
+	3M0nAe6AvF3TV5CqhwSgIiazgAQJMOJ4ds7NMGgcZR8f/AAYMroan3azl7WQiWid5P4b1djvv1V
+	HMbhf/lK4eDQmnyFzgQnnHbMONadmYA0txkUweC461ha+f9kTQk9xifobykqdnp/PGrqSXMG5+e
+	k/bMTvOlI8Ii1DC120OSs4qI8zvJIq0f5Fu1HV6OQVOfhSp0nKuwfPqW+JTyzluvrm1Qtfe8I4n
+	gw3LWR/E70mvoTmIIqCINeLq0d5C88GmOQO4HVcxJ0EaqQ/i4qievGQcenS86YD6Xj834imWYE5
+	aH4WqvWruzJh28+i3hPPeWU2c2O80Urd+mT2OEWdCfj/zMqFdT5RX/1M=
+X-Google-Smtp-Source: AGHT+IElgVwNPxXRA/tImitB//ntptdYiVe7d9RWZ80dKHs5si0bLCs+yLDawiIS/352iKLuIDMl8A==
+X-Received: by 2002:a05:6a00:4fd4:b0:78a:f784:e8cf with SMTP id d2e1a72fcca58-79387829619mr30080478b3a.27.1760521163332;
+        Wed, 15 Oct 2025 02:39:23 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060962sm18269938b3a.1.2025.10.15.02.39.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 02:39:22 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 6907D452891F; Wed, 15 Oct 2025 16:39:20 +0700 (WIB)
+Date: Wed, 15 Oct 2025 16:39:20 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Jiri Slaby <jirislaby@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Serial <linux-serial@vger.kernel.org>
+Cc: Cengiz Can <cengiz@kernel.wtf>,
+	Tomas Mudrunka <tomas.mudrunka@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Anselm =?utf-8?Q?Sch=C3=BCler?= <mail@anselmschueler.com>
+Subject: Re: [PATCH] Documentation: sysrq: Remove contradicting sentence on
+ extra /proc/sysrq-trigger characters
+Message-ID: <aO9ryPohDdkoFykR@archie.me>
+References: <20251008112409.33622-1-bagasdotme@gmail.com>
+ <87wm4xbkim.fsf@trenco.lwn.net>
+ <d6cd375c-dad6-4047-9574-bac7dfc24315@infradead.org>
+ <aO7mnXCajeIdUYON@archie.me>
+ <0cc09ea7-d4f7-4e1c-9cd0-bf310faba217@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net-next v2] ixgbe: Add 10G-BX support
-To: Birger Koblitz <mail@birger-koblitz.de>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251014-10gbx-v2-1-980c524111e7@birger-koblitz.de>
- <21a53fe4-7cad-4717-87db-2f433659e174@molgen.mpg.de>
- <0d2b88ac-d23d-43a5-813d-2a8c4edaa3eb@birger-koblitz.de>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <0d2b88ac-d23d-43a5-813d-2a8c4edaa3eb@birger-koblitz.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Dear Birger,
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fSCHwCyZlDgbl+8D"
+Content-Disposition: inline
+In-Reply-To: <0cc09ea7-d4f7-4e1c-9cd0-bf310faba217@kernel.org>
 
 
-Thank you for your prompt reply.
+--fSCHwCyZlDgbl+8D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Am 15.10.25 um 11:16 schrieb Birger Koblitz:
+On Wed, Oct 15, 2025 at 08:18:44AM +0200, Jiri Slaby wrote:
+> On 15. 10. 25, 2:11, Bagas Sanjaya wrote:
+> > I guess the whole "On all" description can be rewritten like:
+> >=20
+> > Write a single character to /proc/sysrq-trigger, e.g.::
+> >=20
+> > <snipped>...
+> >=20
+> > If a string (multiple characters) is written instead, only the first ch=
+aracter
+> > is processed unless the string is prepended by an underscore, like::
+> >=20
+> > <snipped>...
+>=20
+> Some kind of, yes. So Either:
+> * you write no underscore and a character -- the rest is ignored and you
+> should not write more than one.
+> * you prepend underscore and write more of them -- all are processed.
+>=20
 
-> On 15/10/2025 9:59 am, Paul Menzel wrote:
->> Am 14.10.25 um 06:18 schrieb Birger Koblitz:
->>> Adds support for 10G-BX modules, i.e. 10GBit Ethernet over a single strand
->>> Single-Mode fiber
->>
->> I’d use imperative mood, and add a dot/period at the end.
-> I will put this into the next patch-version.
-> 
->>> @@ -1678,6 +1680,31 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
->>>               else
->>>                   hw->phy.sfp_type =
->>>                       ixgbe_sfp_type_1g_bx_core1;
->>> +        /* Support Ethernet 10G-BX, checking the Bit Rate
->>> +         * Nominal Value as per SFF-8472 to be 12.5 Gb/s (67h) and
->>> +         * Single Mode fibre with at least 1km link length
->>> +         */
->>> +        } else if ((!comp_codes_10g) && (bitrate_nominal == 0x67) &&
->>> +               (!(cable_tech & IXGBE_SFF_DA_PASSIVE_CABLE)) &&
->>> +               (!(cable_tech & IXGBE_SFF_DA_ACTIVE_CABLE))) {
->>> +            status = hw->phy.ops.read_i2c_eeprom(hw,
->>> +                        IXGBE_SFF_SM_LENGTH_KM,
->>> +                        &sm_length_km);
->>> +            if (status != 0)
->>> +                goto err_read_i2c_eeprom;
->>
->> Should an error be logged?
->>
-> This needs to be read in the context of the rest of the SFP 
-> identification function. Several bytes of the EEPROM have already been 
-> read for module identification by the existing code before reaching this 
-> point, and failure is handled everywhere by the same goto. What will 
-> happen if EEPROM reading fails is that an error message will be logged 
-> that the Module is not supported. This is because the type is not filled 
-> in and the module therefore considered unsupported. The actual error 
-> (ret_val = -ENOENT) is ignored e.g. in ixgbe_52599/ 
-> ixgbe_init_phy_ops_82599(). The error logged is probably good enough: 
-> the module cannot be positively identified and is not enabled. I say 
-> good enough, because this is actually what is the case: the EEPROM is 
-> broken and ther
-> 
->>> +            status = hw->phy.ops.read_i2c_eeprom(hw,
->>> +                        IXGBE_SFF_SM_LENGTH_100M,
->>> +                        &sm_length_100m);
->>> +            if (status != 0)
->>> +                goto err_read_i2c_eeprom;
->>
->> Should an error be logged?
-> Same here.
-> 
->>
->>> +            if (sm_length_km > 0 || sm_length_100m >= 10) {
->>> +                if (hw->bus.lan_id == 0)
->>> +                    hw->phy.sfp_type =
->>> +                        ixgbe_sfp_type_10g_bx_core0;
->>> +                else
->>> +                    hw->phy.sfp_type =
->>> +                        ixgbe_sfp_type_10g_bx_core1;
->>
->> I’d prefer the ternary operator, if only the same variable is assigned 
->> in both branches.
-> Me, too. But this is merely code that can be found verbosely the same in 
-> several places before in this identification function, for each type of 
-> module identified basically once. If the same code would be written 
-> differently in this place, it would probably confuse readers who would 
-> wonder what is different.
+OK, thanks!
 
-You are right in all accounts. Thank you for the explanations.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+--fSCHwCyZlDgbl+8D
+Content-Type: application/pgp-signature; name=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
 
-Kind regards,
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaO9ryAAKCRD2uYlJVVFO
+o9OUAP9UtfDuga5xwT18A5agR7OavUEpIPgMB3t54ZaS3LQLdAD9FOa3EizTUaQP
+UG9Pgb7JUNguv5lAowSSyRLyW2sECQk=
+=+4Vu
+-----END PGP SIGNATURE-----
 
-Paul
+--fSCHwCyZlDgbl+8D--
 
