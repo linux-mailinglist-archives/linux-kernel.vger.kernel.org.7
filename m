@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-853828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD3ABDCB1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:21:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04A6BDCB34
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BE11891EED
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BD73E1030
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBDD30FC01;
-	Wed, 15 Oct 2025 06:21:17 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550AB3101C5;
+	Wed, 15 Oct 2025 06:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W9wD8I0S"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398B630F954
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378830F921
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509274; cv=none; b=Kx+SJc7CRyB/2Av9rufpqBK0nIyDqpZRjyegEQnj84w6dvNW1fNpzLKayHlcYGnvBYcxHC6+Qdc7SuvjIX01HNqCvNH/rCjjfC0LWvNeNdtrYAQGxJoUNK4HVXq+U9fGdWFbBzRpEw7zPUnNV+xYDiBGBLU3sURK1N/3y+KmzNQ=
+	t=1760509291; cv=none; b=L3NGXsK8ANlWE+KimNvRe3iY0QWbaZTUEwT06VIBZchHI9eMqYGaB4dS1A8y7g1ts7wmxH+lVXWZ/rNwmOuJycLsoAWQZiXcIWbsMDdv8C2EFwHdmrDzIu9m/jLZM3C/faF9kWIttnHX0XtPg8agmdFb5y54UD5rU19hZthAyrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509274; c=relaxed/simple;
-	bh=WiPc2gPeCXPdFmn+cFIiMCzPa5COfTwkUbjfQDDgDoU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bCPWYG231aRDxMsFYz0BYu2tWnwmeQ5LbEsT+hDPG3EFwQUC8r7uKtTleC8nB47CzFCtwzf9AQ4oUEiVKTi1nsv8RVhI4Z0QvqPUDzCEA1zKOOSOF9Dz0hXyIL4L8WUkKDKeRUR5oTG99awHSDDwFlq5mXLEcyrLpcicHgn2jCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430afceae09so416745ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:21:08 -0700 (PDT)
+	s=arc-20240116; t=1760509291; c=relaxed/simple;
+	bh=K+PHF4WAM2ycA1aZTNdIhMu/j5k4OgimgvuS0a4OP2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvlOEKOGYiMZg+GFJc3glZ9RuNohxSV7QGNRgv7Swmnb+j7ngRzYE2zArgNGRLJaDuShuOfv1FKq8pZY80bfwQTs8qLkBTk7W46O4OZSYGYvamdFO5IUyBSrC3ank74eaCWueLIUzZGw4NBLABNB8CjVZwqwuN4qKapmuTh5GwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W9wD8I0S; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-46e52279279so43761685e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1760509283; x=1761114083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3PV9C1telyfCjlpsA7EV6fPruE8tbKt63BPSU3FM4M=;
+        b=W9wD8I0SB6umE7UJDUWbEUUD7Yxa3gqCMXWiL0S2Mj2ES9vqkPGuvoMmbGbdntAAVQ
+         9glktcDA1lkVhA/ZtjKipFsLFHpPNnWPoqON/3Hu5GPl5ayHt6Zx8Mg5tOQSY/CcVOhL
+         JDfogEU+cXq411rjuEDJxyOmu1C6FPlKMuxG7Y1F+fdIBAo/6H1LJjiR0MJ562KvTCsS
+         W9MNNIZM6iR2M+AvAfSiZWnowwzhOpXvfbsQFwv78P/r3gmY+ig5QO69ZWV7CkW0kkpN
+         dHoMNr5Fom2lZyJBzyYI3hN8GAyERHl98i30SAfbbM2rCeeNrU58slSsKO2+sQhcXpGC
+         OTSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760509266; x=1761114066;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hIuA3jNEzmgIK/9ByJPWv7YVQALs/uR/+CmaD+VkEl8=;
-        b=KfJL8Le6YN6rcF6iotomsGhRgbc2gq2lMJ7Y7rrlMBEWVo9zvmg0RH/QcxdB+eYoIz
-         E+K0Q24EVs3VU/d+nrkO8tM6PxrqB32GYJxBE8UDQ3/ZwJxnAATTN4qK0V4IhdzmVYwn
-         1V2hbaWD2FrpFS6CALpD0pqazk7RbtdZRR5l6m8cBiyqwtiaoUE5+GY/x+/68mN1XqRG
-         RGPdR6CfwysXCf2Voi5w8VA7r9gaNWrGktafQvwsMFI924th7k4AogLQjJx/1lEhda2R
-         dAia+WLmaoon404fYG/EAHNoxu+Uc7pIRB/0IFc3pNBzt71fATNRXBGmBEH+X5MBbh85
-         vWGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCJNG44h5zGt1lzInUWAt5gcz0YTYeGSA9ckMdYZm62RnlI1xGpf2Hfg5MWsexBqni2OqpveWN3qzS8Y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEzb6ujeYj2SB7pSOrgKJtD33L9fG+h7b43r5sLE6ZGqUBs4VH
-	d271m7sl0X6l7fRwMZN7/mb1ISLhTeN13N/Kg74n3F0AJG8FxJfu/I2eqcchnKCCKUJ+LcN6GAz
-	Yy2eItVQokrFWelJj1TfSCvfrftBbV6gwNiMfXQcT8qNFK0r7hu2XSakjhe8=
-X-Google-Smtp-Source: AGHT+IGjppDH94P7Zy2xDjnXF6uKeEAXGb3T0QamCL/YxqN09H4uMRpH7qJX1tTj9e0sBMnwSyEoY8wU8KW9b8w+xSEiOLdcHSh8
+        d=1e100.net; s=20230601; t=1760509283; x=1761114083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L3PV9C1telyfCjlpsA7EV6fPruE8tbKt63BPSU3FM4M=;
+        b=NhWqNeX5eLLFDD7uk/DWZ4Uu2QHC2di+q2M0TeAOePu3sr388+Fr90eatjGUsoC0Z/
+         5y7d7CLlDSip5Ghr/FnxcNMfPnfRIwSwOBZzek9jpQO7dRF7Vylba60VS92D2nHexZbu
+         d11LgS9Lk7cg58ZqKjdSo7FKI9iTaayH485SPobjU5NrPx8qPF5qjSByE4s8v5n3ZdEp
+         lUOz177tHpiY1x3UNiD/2/Dm6Z8uYBtOBo0BGLlLN/xgyeyj/djLJQFTZpgAmz/420HS
+         L8Mrlnf3f922hetR6Ljy+wJpOjBBwvVR+QzIPdobYq3G7LzCETutY7zJBePVZlYMpeYD
+         I2hg==
+X-Forwarded-Encrypted: i=1; AJvYcCX48lO2qNCQMLffTbvJnU9v5Pld8RkteZ529jz+KWUjpgOnwwytu5IuguZ/MEbHAif5tEesSSDY/PXNnI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOPB2HT0sbC+rdj95wNBPwSxwINw3+MSz+XidOJXTUjfB8vp4k
+	EkBQ5y68n1PBiLJDvmZhW4s9O4S8aJGwbyVjbBl+0pSJsP8bcvKNNKB2QuRGOA80+2o=
+X-Gm-Gg: ASbGncspoNRnwYPdR5Ri1L07ZanJ3W/LZNavY0UD4x/W8F8c2LlUEZ/abir9wjCURAc
+	5YzzQFI2BsUcJpxg1Qpg6UWVQSkPeKct4jp3sPGErnRJlYgwFYxxQzkQEEds/n5XJW6FsP06XIr
+	tZmdPmauJ0EvKWsBt59eAkx/dhdNpCo0q9Z12l45FKSvyI2hWivpsiQAiIW8g9SNmIzygfBsm1o
+	b7L9fNB/71wgh4kTXaHKKN6YTS/iNThuG5zdO9Q0eakGIbmtWly5cyejMgPm778XMVNLBZrjmlO
+	UOJD79HiOWrOPW4A948+tJygblPcYsFDa0WU1HYbhsLigQFDROtuIxHnfCWkJcIMaDM3inf8cYL
+	7yAwqhZmWc/j/1hyUGT69AfBMk81kCxayL2CkPQTn+lvKZRIza4AF/AWqJZp1IvQ=
+X-Google-Smtp-Source: AGHT+IGxun/Yco6mevgEGwKjaOT0R/pW6Puo6dQ1aSXUtNSS99XdqPVFdMPH7X0OcIpuodI7EV7NzQ==
+X-Received: by 2002:a05:600c:6383:b0:45d:d353:a491 with SMTP id 5b1f17b1804b1-46fa9a8c425mr178418635e9.1.1760509282825;
+        Tue, 14 Oct 2025 23:21:22 -0700 (PDT)
+Received: from localhost (109-81-16-57.rct.o2.cz. [109.81.16.57])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426e50ef821sm12670523f8f.38.2025.10.14.23.21.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 23:21:22 -0700 (PDT)
+Date: Wed, 15 Oct 2025 08:21:21 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Barry Song <21cnbao@gmail.com>,
+	netdev@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	Huacai Zhou <zhouhuacai@oppo.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network
+ buffer allocation
+Message-ID: <aO89YYhEJ-GDPWFg@tiehlicka>
+References: <20251013101636.69220-1-21cnbao@gmail.com>
+ <927bcdf7-1283-4ddd-bd5e-d2e399b26f7d@suse.cz>
+ <aO37Od0VxOGmWCjm@tiehlicka>
+ <qztimgoebp5ecdmvvgro6sdsng6r7t3pnddg7ddlxagaom73ge@a5wta5ym7enu>
+ <aO5o548uQAuBcw0P@tiehlicka>
+ <itljl2e4rwbblmnhe2vucmsvxzbu42x5foszf4y5b63evbitpj@qsxj3amwhts3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c242:0:b0:430:aca2:53d5 with SMTP id
- e9e14a558f8ab-430aca2548cmr15345785ab.1.1760509266635; Tue, 14 Oct 2025
- 23:21:06 -0700 (PDT)
-Date: Tue, 14 Oct 2025 23:21:06 -0700
-In-Reply-To: <d8a13302-3be4-4ad7-a1f0-263bb9dc1ba4@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ef3d52.050a0220.91a22.0230.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
-From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <itljl2e4rwbblmnhe2vucmsvxzbu42x5foszf4y5b63evbitpj@qsxj3amwhts3>
 
-Hello,
+On Tue 14-10-25 10:22:03, Shakeel Butt wrote:
+> On Tue, Oct 14, 2025 at 05:14:47PM +0200, Michal Hocko wrote:
+> > On Tue 14-10-25 07:27:06, Shakeel Butt wrote:
+> > > On Tue, Oct 14, 2025 at 09:26:49AM +0200, Michal Hocko wrote:
+> > > > On Mon 13-10-25 20:30:13, Vlastimil Babka wrote:
+> > > > > On 10/13/25 12:16, Barry Song wrote:
+> > > > > > From: Barry Song <v-songbaohua@oppo.com>
+> > > > [...]
+> > > > > I wonder if we should either:
+> > > > > 
+> > > > > 1) sacrifice a new __GFP flag specifically for "!allow_spin" case to
+> > > > > determine it precisely.
+> > > > 
+> > > > As said in other reply I do not think this is a good fit for this
+> > > > specific case as it is all or nothing approach. Soon enough we discover
+> > > > that "no effort to reclaim/compact" hurts other usecases. So I do not
+> > > > think we need a dedicated flag for this specific case. We need a way to
+> > > > tell kswapd/kcompactd how much to try instead.
+> > > 
+> > > To me this new floag is to decouple two orthogonal requests i.e. no lock
+> > > semantic and don't wakeup kswapd. At the moment the lack of kswapd gfp
+> > > flag convey the semantics of no lock. This can lead to unintended usage
+> > > of no lock semantics by users which for whatever reason don't want to
+> > > wakeup kswapd.
+> > 
+> > I would argue that callers should have no business into saying whether
+> > the MM should wake up kswapd or not. The flag name currently suggests
+> > that but that is mostly for historic reasons. A random page allocator
+> > user shouldn't really care about this low level detail, really.
+> 
+> I agree but unless we somehow enforce/warn for such cases, there will be
+> users doing this. A simple grep shows kmsan is doing this. I worry there
+> might be users who are manually setting up gfp flags for their
+> allocations and not providing kswapd flag explicitly. Finding such cases
+> with grep is not easy.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+You are right but this is inherent problem of our gfp interface. It is
+too late to have a defensive interface I am afraid.
 
-Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
-Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         13863a59 Add linux-next specific files for 20251014
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=151d85e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=76790fe131481879
-dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1304d542580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Michal Hocko
+SUSE Labs
 
