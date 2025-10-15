@@ -1,127 +1,193 @@
-Return-Path: <linux-kernel+bounces-855123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E736BE04CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:02:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1270BE04E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4020507C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C6D8426B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97D8303A10;
-	Wed, 15 Oct 2025 19:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC6303A1A;
+	Wed, 15 Oct 2025 19:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aI/ITcpL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcA/iRLp"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B571DDC07;
-	Wed, 15 Oct 2025 19:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7247D29BDAD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760554895; cv=none; b=Ewcij13ju1I5VwtEuJFFulREJjHEbFPcamJbcbpqeMTJFnMEu/8mBNNAW/471uj16ChhBfksk2GrZnVtE5PLt8sIRjb2+zZ9csFeMtaZmPdWeJ6/Tg7CA7B/k97oyoa396L2gZJWudbtSLfpQAzRSJgooGELmmIDGfO2dljwLzI=
+	t=1760555317; cv=none; b=LvX5x7Bz8XDKicm+bdwomH+QhVNBSzqlMifTLOdXvm/mE8hFCtIh2vdE/4OH/DBveNzJWPUXwP83VrlNgk8zn99wwlA9GgNf9fHsOhEANkX1zucVIPh8DQowqvEodlc/lRt+IoJ8RFkrljeVTta10YrW/sGTbgnuomo/2AF16MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760554895; c=relaxed/simple;
-	bh=teOjTco003Dl7Ikn7APvto+WenjQ/oNmG4X5yaZV9qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ArrYPoUo8bcRdqSLSL+HKp3d00MD35J6fC27MzidhR91n72OANPfe0OdRZbUN41Jj+S31HNnodMbFxhCFbNOccO1E+Gr3JkIA8dR0mTt25JJVLQEk96/ToL2V+Lzr7k835iaUlXdshFOqc0RzGCRPuLYWWBBqZko6+kwjaJS1tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aI/ITcpL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28274C4CEFB;
-	Wed, 15 Oct 2025 19:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760554894;
-	bh=teOjTco003Dl7Ikn7APvto+WenjQ/oNmG4X5yaZV9qo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aI/ITcpLndwAXbTohr7cv02xQXDQkizM+q8bZBPcjcb8GjH09H8SCIxYs3xNCNgyB
-	 GDFjUsmenKpbrBG84IA10L6Gzq4yEW4F8Mtg7qoSwemJP2d5ZIJvrtQhJM0gz2wMwo
-	 7XPruqc4rer/Po4TIAS7lHCICnXT109W+0Hp7wOTRh6BuoUIQhr1bEKglmkuuTiMOi
-	 s4qk1sWR5EXjUIqaR5PU8MNd2kPYlM9tz1SXUE4G1w5fngOPbHzHn9T8kPe3oJRaL8
-	 puLKS6blUXsTu1xJIqCIpSM3WNPAIsokHjbaNdmo2fd2PhixjPVFzDflkvhkWXWKso
-	 /u48Y27xbFfVQ==
-Message-ID: <22bed3ca-fb18-424f-82db-3e25fc49e3f8@kernel.org>
-Date: Wed, 15 Oct 2025 13:01:33 -0600
+	s=arc-20240116; t=1760555317; c=relaxed/simple;
+	bh=EMZKqTSnOfnBuvdExLH/0/j3qYB9lnczgf7ubSdND4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VqAn2orp8yjxDD31CtLGuQfgVnadiXoGWrO6G9nqmlf8yuBz7FywzMKb50uU+VFnjvigppNDvhIdjDQzqJsqCv5FTC1g6XRXAjKT6/ZmZZi6RAkWRfYd7+IeGrI+kPau+mYrXzS4D6h+XHluIbmR1LoB6SvxNNzEawu8u5lQEOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcA/iRLp; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-782bfd0a977so5817889b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760555315; x=1761160115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QmSbXI2ApsZqfklDnKMr9/VcpSy3bad84AJw3uoOIms=;
+        b=bcA/iRLpY9K8P/XezsHMElhfPCNILJ5H/Z45fIm/C4CjcYUfQBREAGqs95rUyQCFg7
+         RnWVGvwRM/j5p/JQgFgiqAsfbZSNtiVOjMcGKqOdIsdXIAEEUAdYGrOrNjDDVNYInJL9
+         8y2pKY+ZZ2xO+XDTc/14F3s1K/PG0CkbD4Gt2O1erNlfUGubleO0WB4TMgMUwCnHpalm
+         +Gk5luKxbLFPEepiqUtiZmqCdx4AYHvOrOTkTV7z19UJAyfWBrUDexHxwhsm6iqkGdTU
+         DzdvWyXv8yFZA5vm4WVkuBPFJaoaXiRTcS0C0RLV60+W86HIJy31+EpfPdFVfoRj+9+C
+         e64w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760555315; x=1761160115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QmSbXI2ApsZqfklDnKMr9/VcpSy3bad84AJw3uoOIms=;
+        b=htDBZmGOYHG8n2363HEJLjdmQ12iHsCjGDKr+RT/EqRn6yO2ucqqg/LD0a2CNmyIIl
+         TGeL6MkalbPAIf7J3yaCihXpYN0eUyL+dhnfuTaDu7xg7dFxf5BRuOF4yYWtJz2ScCSw
+         SHAo4I2K61UaQx8pfO6/cGHhzO4fNOWeGnvTNjTFGDyZGV0Oe+k3mL9vSbH7l//XhyOU
+         d9SS5Bu+hcm+IRbSa6g7wtqEITJ6mkNngTjeXgL5vsCzHd75AWazDqNnfE6/8XnH1JYP
+         pOuzX/fEmW14gkOwDHl2m/eCE/jBX24oOoGZwOHWgoOAzuseB8nXwzWEy/h5CdFxteFd
+         ulyQ==
+X-Gm-Message-State: AOJu0YzABpq5lKlqD/0xUDOuf6rcSfo/ZPpRRL1kEDhQmIHW3HHzJvic
+	wbsqq14TcXQw38kxQAdiWdZwoINuZq+owliz/pEkro2nZVhWFKovPdde
+X-Gm-Gg: ASbGncsTvFKyXRTgZnAefOaFsVIRqDH6KHu6Mw1uSsKkriQpO5GDClBZU/7IC9Zhdb0
+	ibkg8Ex6wyALPSpBDNU9OPel4hBLQa0T+GsPNhqnk2gpKqgTjaQ5oCEyOvsAByVMlYy+T3194r6
+	A/27Tm8HMxCfDdFpNqQ+fUxYy9pN42D/yTMhZ7NOocsRSbhHbOGIffyNN9KAdtD6Yp12Kt50Wnj
+	k70GHzBPPLKAX5m/4eJS5yB76FecKSsvSswKw1eJfR59rx7+MdEIybB9hVrsr2rkmjYVP9e0auE
+	8V+yex1aJQYhmQcrd4Rb7vV6dDXdBOWxfPzwTLeAzwHTU699aA57KtbFvEEN08i+HvUOWEWpCI1
+	vfktBO7SjFWQ9t08M08PqU2TOZp89BvcEymbJ9MCEXeFhQCCMGSe449mBkMuDgljS8fN8MQ==
+X-Google-Smtp-Source: AGHT+IHMSB7YdnX8tgv3hAnoptITEW+v5c6/QGjesZK24TcZjCmiCjAy3xCUPKMz1WHLBr4gr+e/lA==
+X-Received: by 2002:a05:6a00:1884:b0:77f:416e:de8e with SMTP id d2e1a72fcca58-79387efb06cmr33823101b3a.26.1760555314450;
+        Wed, 15 Oct 2025 12:08:34 -0700 (PDT)
+Received: from jpkobryn-fedora-PF5CFKNC.thefacebook.com ([2620:10d:c090:500::7:1069])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d5b8672sm19483106b3a.69.2025.10.15.12.08.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 12:08:33 -0700 (PDT)
+From: JP Kobryn <inwardvessel@gmail.com>
+To: shakeel.butt@linux.dev,
+	andrii@kernel.org,
+	ast@kernel.org,
+	mkoutny@suse.com,
+	yosryahmed@google.com,
+	hannes@cmpxchg.org,
+	tj@kernel.org,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH v2 0/2] memcg: reading memcg stats more efficiently
+Date: Wed, 15 Oct 2025 12:08:11 -0700
+Message-ID: <20251015190813.80163-1-inwardvessel@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: usb: lan78xx: fix use of improperly
- initialized dev->chipid in lan78xx_reset
-To: I Viswanath <viswanathiyyappan@gmail.com>, Thangaraj.S@microchip.com,
- Rengarajan.S@microchip.com, UNGLinuxDriver@microchip.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com
-References: <20251013181648.35153-1-viswanathiyyappan@gmail.com>
-Content-Language: en-US
-From: Khalid Aziz <khalid@kernel.org>
-In-Reply-To: <20251013181648.35153-1-viswanathiyyappan@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/13/25 12:16 PM, I Viswanath wrote:
-> dev->chipid is used in lan78xx_init_mac_address before it's initialized:
-> 
-> lan78xx_reset() {
->      lan78xx_init_mac_address()
->          lan78xx_read_eeprom()
->              lan78xx_read_raw_eeprom() <- dev->chipid is used here
-> 
->      dev->chipid = ... <- dev->chipid is initialized correctly here
-> }
-> 
-> Reorder initialization so that dev->chipid is set before calling
-> lan78xx_init_mac_address().
-> 
-> Fixes: a0db7d10b76e ("lan78xx: Add to handle mux control per chip id")
-> Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
-> ---
-> v1:
-> Link: https://lore.kernel.org/netdev/20251001131409.155650-1-viswanathiyyappan@gmail.com/
-> 
-> v2:
-> - Add Fixes tag
-> 
->   drivers/net/usb/lan78xx.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> index 42d35cc6b421..b4b086f86ed8 100644
-> --- a/drivers/net/usb/lan78xx.c
-> +++ b/drivers/net/usb/lan78xx.c
-> @@ -3247,10 +3247,6 @@ static int lan78xx_reset(struct lan78xx_net *dev)
->   		}
->   	} while (buf & HW_CFG_LRST_);
->   
-> -	ret = lan78xx_init_mac_address(dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
->   	/* save DEVID for later usage */
->   	ret = lan78xx_read_reg(dev, ID_REV, &buf);
->   	if (ret < 0)
-> @@ -3259,6 +3255,10 @@ static int lan78xx_reset(struct lan78xx_net *dev)
->   	dev->chipid = (buf & ID_REV_CHIP_ID_MASK_) >> 16;
->   	dev->chiprev = buf & ID_REV_CHIP_REV_MASK_;
->   
-> +	ret = lan78xx_init_mac_address(dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
->   	/* Respond to the IN token with a NAK */
->   	ret = lan78xx_read_reg(dev, USB_CFG0, &buf);
->   	if (ret < 0)
+When reading cgroup memory.stat files there is significant kernel overhead
+in the formatting and encoding of numeric data into a string buffer. Beyond
+that, the given user mode program must decode this data and possibly
+perform filtering to obtain the desired stats. This process can be
+expensive for programs that periodically sample this data over a large
+enough fleet.
 
-Looks good to me.
+As an alternative to reading memory.stat, introduce new kfuncs that allow
+fetching specific memcg stats from within cgroup iterator based bpf
+programs. This approach allows for numeric values to be transferred
+directly from the kernel to user mode via the mapped memory of the bpf
+program's elf data section. Reading stats this way effectively eliminates
+the numeric conversion work needed to be performed in both kernel and user
+mode. It also eliminates the need for filtering in a user mode program.
+i.e. where reading memory.stat returns all stats, this new approach allows
+returning only select stats.
 
-Reviewed-by: Khalid Aziz <khalid@kernel.org>
+An experiment was setup to compare the performance of a program using these
+new kfuncs vs a program that uses the traditional method of reading
+memory.stat. On the experimental side, a libbpf based program was written
+which sets up a link to the bpf program once in advance and then reuses
+this link to create and read from a bpf iterator program for 1M iterations.
+Meanwhile on the control side, a program was written to open the root
+memory.stat file and repeatedly read 1M times from the associated file
+descriptor (while seeking back to zero before each subsequent read). Note
+that the program does not bother to decode or filter any data in user mode.
+The reason for this is because the experimental program completely removes
+the need for this work.
 
---
-Khalid
+The results showed a significant perf benefit on the experimental side,
+outperforming the control side by a margin of 80% elapsed time in kernel
+mode. The kernel overhead of numeric conversion on the control side is
+eliminated on the experimental side since the values are read directly
+through mapped memory of the bpf program. The experiment data is shown
+here:
+
+control: elapsed time
+real    0m13.062s
+user    0m0.147s
+sys     0m12.876s
+
+experiment: elapsed time
+real    0m2.717s
+user    0m0.175s
+sys     0m2.451s
+
+control: perf data
+22.23% a.out [kernel.kallsyms] [k] vsnprintf
+18.83% a.out [kernel.kallsyms] [k] format_decode
+12.05% a.out [kernel.kallsyms] [k] string
+11.56% a.out [kernel.kallsyms] [k] number
+ 7.71% a.out [kernel.kallsyms] [k] strlen
+ 4.80% a.out [kernel.kallsyms] [k] memcpy_orig
+ 4.67% a.out [kernel.kallsyms] [k] memory_stat_format
+ 4.63% a.out [kernel.kallsyms] [k] seq_buf_printf
+ 2.22% a.out [kernel.kallsyms] [k] widen_string
+ 1.65% a.out [kernel.kallsyms] [k] put_dec_trunc8
+ 0.95% a.out [kernel.kallsyms] [k] put_dec_full8
+ 0.69% a.out [kernel.kallsyms] [k] put_dec
+ 0.69% a.out [kernel.kallsyms] [k] memcpy
+
+experiment: perf data
+10.04% memcgstat bpf_prog_.._query [k] bpf_prog_527781c811d5b45c_query
+ 7.85% memcgstat [kernel.kallsyms] [k] memcg_node_stat_fetch
+ 4.03% memcgstat [kernel.kallsyms] [k] __memcg_slab_post_alloc_hook
+ 3.47% memcgstat [kernel.kallsyms] [k] _raw_spin_lock
+ 2.58% memcgstat [kernel.kallsyms] [k] memcg_vm_event_fetch
+ 2.58% memcgstat [kernel.kallsyms] [k] entry_SYSRETQ_unsafe_stack
+ 2.32% memcgstat [kernel.kallsyms] [k] kmem_cache_free
+ 2.19% memcgstat [kernel.kallsyms] [k] __memcg_slab_free_hook
+ 2.13% memcgstat [kernel.kallsyms] [k] mutex_lock
+ 2.12% memcgstat [kernel.kallsyms] [k] get_page_from_freelist
+
+Aside from the perf gain, the kfunc/bpf approach provides flexibility in
+how memcg data can be delivered to a user mode program. As seen in the
+second patch which contains the selftests, it is possible to use a struct
+with select memory stat fields. But it is completely up to the programmer
+on how to lay out the data.
+
+JP Kobryn (2):
+  memcg: introduce kfuncs for fetching memcg stats
+  memcg: selftests for memcg stat kfuncs
+
+ mm/memcontrol.c                               |  67 ++++
+ .../testing/selftests/bpf/cgroup_iter_memcg.h |  18 ++
+ .../bpf/prog_tests/cgroup_iter_memcg.c        | 294 ++++++++++++++++++
+ .../selftests/bpf/progs/cgroup_iter_memcg.c   |  61 ++++
+ 4 files changed, 440 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/cgroup_iter_memcg.h
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c
+ create mode 100644 tools/testing/selftests/bpf/progs/cgroup_iter_memcg.c
+
+-- 
+2.47.3
+
 
