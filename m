@@ -1,334 +1,255 @@
-Return-Path: <linux-kernel+bounces-854950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE854BDFD20
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:14:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD9DBDFD23
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1234E19C3D12
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9927B485B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CF632E74F;
-	Wed, 15 Oct 2025 17:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DBE33A01C;
+	Wed, 15 Oct 2025 17:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XBN4M+l9"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YWzWa9J3"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3487A2E8E04
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A2338F3D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760548433; cv=none; b=d93Cfmu+DMjNa7AdKlcimdELPz1rYXczOzH6weypOQsIMa5dZD2KXZR+yVNa5B8muz17Hkfra/MkkLK4JUr0WHqwnOr89rnmgKwhilJziOwnosDRE8CdtKJZcEkg0WkKuoCbZ3kyGGHrQi7TxbktgaYzHR2TEQMThrfNhxE5NMk=
+	t=1760548446; cv=none; b=GsSJ+rFTOjwmfxrbqmIMhLBVTBE9osY3D1zxZV4HUdMzlm9tQqoaqnroHjkIVm9b3J8XFHA6nRaTIiz4Pv/n5rmpfYTH3M0BLT4JaBqDwGuaQOk96N+U4742gXM3sAx5xfcoB/w3tHrkz8xD8hg/o5lq67GWlijyunC7OkQm56k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760548433; c=relaxed/simple;
-	bh=RuwwVGH6iji/5MFR99uLIc4nUmvenw/jgigS717qaCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mFx5nat/o6/VeyUxJa3uoUNs8vq+IllrweO4HuNrwnwS0jFgt+nlQLKPBVg/BQNvSGAh4+2Br7EIWr6lq4p1OXVng3M0s9RnYll5rDpNQAe0scJDf864XTjVF109CShU06tCkeU/oVF/m00OAeVuEIDTLHi761P6U2HhdUOXdMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XBN4M+l9; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1760548446; c=relaxed/simple;
+	bh=Hab7fHDfDjE0Y/wHSkX4u0aYBvabsid/PwoR0nxnWmc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qcXZX6TVTEMxhj3ylmo9+paE+HFqGDuOoVfraBDZSeoB5Qk21wRQYbWEt2Oe51hB8YuP0Z8W6SivTtamBLwFKhVA1rrRfvl/SP9s0rvH1yAjggdv94srPkCBSRXVcHW8TP4n0Hv5jAiKofmQtwOvBFLeGT/AIxtTFXfTkggb7eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YWzWa9J3; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b6a225b7e9eso93542a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:13:50 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3ee1365964cso6994774f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760548430; x=1761153230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTmCve7ow8KUe86m2S+D+TMV8DrrT745aVc8Mr0EBG4=;
-        b=XBN4M+l9zAHG5a/Ihj79peQVyAZSRsuzWwMdF2tmdlwAACQpCikspfoW073uKLG71M
-         kN0z6haR7u4k1oPAA/R92FS5PZM3qK6zfwBE1qMsOfSfgnn1MT1ZQudaAy8mz6sIsfBM
-         xHrM1vmCgLhK1gOLGO0b0uR7RMWXC2UeEheIIn5OPsE3Sq/a6mfmHybUx1xixkGw5KjL
-         iKvYGAh63fFkd0DKpimr8IBVQfTtnjgvQkXwUri3GHa4yg3kvLUl/qYqD3qQTwKJ639I
-         gc1zlr3qUJCxK2GNweXYO7P6P7A3AEwVgdTeiot8ny9Ltp3+FX2ktL6YD10VMYOFWQf5
-         E2iQ==
+        d=google.com; s=20230601; t=1760548443; x=1761153243; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BUc6JEVovpC/n0lisIRRlrZC5viDRiRLArSH+3NnX+g=;
+        b=YWzWa9J3/c5HJNrC+m5dJ6IT7IQpPkb3TFFlhFe7lrV9NjMXFS49/wCGY/O4vo/M7A
+         43/ftYcFBJCB/aIVa/U000pH06QV5i9RTv0nQ8RkEHO2g4l1cNklv3Sh/6jap1US2ajD
+         mYWFMmlgoLVotyGZvPKC+t1nMirDbyF5Dw+iEoNXgAsod1IHobww/XCC+wQN362lZiEv
+         DQcandmIoAvNtxXuDDv4R/3JzLFCgsJwE+qq+2qbG46jIzfEs/ambt3GtKkxUNZaRbWa
+         Sd61TG0fS+lp2zGu2P73CX8IJ0DvzOZng6/bEBbhGBpvmXmbPPyoPex3xOXtn+GzT71v
+         VeXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760548430; x=1761153230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTmCve7ow8KUe86m2S+D+TMV8DrrT745aVc8Mr0EBG4=;
-        b=RkFAK6eY8yquV2xId1eYPvhxQRedQ/EOOictOKfAbN1ImnT18z396S6sAhAecrWAbV
-         WpAK9sVmyWxT0EQOHLe9u2VHbbjUwok6+nnR7yTNxZYkYzlYgflA0nV7ZGfuar59P3n6
-         V15vT5bJ7+GF2cdK/RvoOfoactsPLGPicIgwMyd37eFVZ9uF2orX1PqMARYRK45EiOjq
-         /CXQ7fxr+Up7HGJoAUXYWl1cKj4rRVUeulYX5zYbR8kSagdswtP8ODh+OH0CNsvkE1Jd
-         VDLgoGqtlEYfdPVE5pueLxQWcHAy4ZkRXOWUAtp858Ihm6ZCYKA5FEK+toUu1pCnz0sB
-         UFZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+W4VQt5SCGj/SgPhTqblhLb5Yt7aD4xTa/oobkkzdhNUkltA0K86qhnUz1N5ypfHAkTmdmDjGhF3RbAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoaDkbhB5mBeedN1KurZYmqImKnjzI4jVbSEE1WIJ69K15beEw
-	EIqYQOTkusKNEo/3Pt/NG6YkEkYVxmhfP0qnkMirnYSMzYs4uZIxdCfmFw/HdVgZIbxp86Tk118
-	J3vX/mOWH5zbO3S+HWSIKIay5FKO17W/6ZMDNYqgj
-X-Gm-Gg: ASbGncsdmrgNKAAZmVnanEVRm6NR3Ert1s+PM8d+J7eUPVhipJH7saWYQ43l3cubKPy
-	kjvithBie2F8XBqPm6EKcwNQDlR9CQr1l3UzRshY7gxZQ4hts8qY1Ixwvv48pFM5CVZnq4u+pAX
-	CP1iLlvV/yQP5FQnh2QNUK7f3wZ0I94jZ40NWjOK3fQRIySxLjYFkcOO1tFG4TrclQXsvorTwY3
-	/t8yo8YGet9/iwziW1Ehn8yToQ4Y9QZNjIrLV2RB0m1lkM5JP0v94NIiBu2IgdCIKdUR35a4L0V
-X-Google-Smtp-Source: AGHT+IG7xm/DEDbS/nNDrpe7ReteweNLIKFfyokAzWV7zMp350kRJ3eICS85Rhzn8PDxA9SglM5C/lh1HX9E/pJg4Bg=
-X-Received: by 2002:a17:902:f650:b0:276:305b:14a7 with SMTP id
- d9443c01a7336-290273ef0ebmr363338475ad.33.1760548429863; Wed, 15 Oct 2025
- 10:13:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760548443; x=1761153243;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BUc6JEVovpC/n0lisIRRlrZC5viDRiRLArSH+3NnX+g=;
+        b=cy+yXMbHoqlivgAUXPl31gyzn876AwblBIqAveyHIeX9VufVff6GkSicSWNFsD/0Oc
+         8IMoESxmC/iCEfOPUikCCyR3kzJ2ixL6kfLa2CeLTiDft09fU23Bbcu8yH7zYr/GLWr2
+         bUKbkS9NcvF7Tn3uQERopKPrbzhM/FcRBXtNHJM1e51bRLR0xjTNrnyKGi/ZGGPrgNKz
+         hfami7lnm4ugtAhFbUqhmFgA6eaI3xAkLSYbbp+kT4TSAvwz4rF0vL30DLI8LIDGoXeG
+         GnArGIg//TrmNk/p9UHQKNQOjjT1CHNSlKmNuiKMQF7ut2YRtzDDp3LF3LUnSBdMNiMl
+         FqdA==
+X-Gm-Message-State: AOJu0YxUHj4ha17Q5C0h79dAtJ2l0CLHef8mAZXKzD9wqf/qvzRpo60b
+	Fsu1komLN0XdJ8T1ejH9NyKfQfti2sL7Fcjo1lMY2lOLK9kzlenOaU9qPItyns8IJLzuA9oGiMF
+	VZvfHG7pTLyazrw==
+X-Google-Smtp-Source: AGHT+IHBr6W0XUlE5qvroBz9EmQK5wN/7aWoshMW5hIgeTFZ2bOcdfRnDTjCDcamT99WzGXInPIRcaoc1n1zgw==
+X-Received: from wruk18.prod.google.com ([2002:a5d:6292:0:b0:424:21b0:f156])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:26cc:b0:425:8134:706 with SMTP id ffacd0b85a97d-42667177f6emr20491027f8f.16.1760548443016;
+ Wed, 15 Oct 2025 10:14:03 -0700 (PDT)
+Date: Wed, 15 Oct 2025 17:13:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251010201607.1190967-1-royluo@google.com> <20251010201607.1190967-2-royluo@google.com>
- <066a9598-ad30-4327-be68-87299bba6fda@kernel.org> <CA+zupgwc7b51pNRLWRy2CX=n4=FTm=AP7J0dRP2RLjyK5LxGtw@mail.gmail.com>
- <b7b3de64-c656-4a84-8ba4-2d5c7eda9783@kernel.org> <CA+zupgzo9zRO2GHR2Np0Tm4M5_h8y0GF2JGGqE_S0BxSR_ZbqQ@mail.gmail.com>
- <20251015-backlash-overtime-4c636f12b165@spud>
-In-Reply-To: <20251015-backlash-overtime-4c636f12b165@spud>
-From: Roy Luo <royluo@google.com>
-Date: Wed, 15 Oct 2025 10:13:13 -0700
-X-Gm-Features: AS18NWCEm2YS-Sip7tv4iMJuDS6bNEhHmOhmHYieVj8y_mcbM2tH_CjtqCUTPM4
-Message-ID: <CA+zupgyKsnp5D9kW-AeoAsweODXx4BXLr7fVnB+J9tzYRbM_fg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAFLW72gC/3XMQQ6CMBCF4auQWTuGAYqVlfcwLGqZQhOkpMVGQ
+ 3p3K3uX/0vet0NgbzlAV+zgOdpg3ZKjOhWgJ7WMjHbIDVVZCSqpxkeDM20GV/Z6feHlWpMko4S UDeTT6tnY9wHe+9yTDZvzn8OP9Fv/UpGQcGiFFnXbsiJ1G50bZz5r94Q+pfQFZY3yBK0AAAA=
+X-Change-Id: 20251013-b4-l1tf-percpu-793181fa5884
+X-Mailer: b4 0.14.2
+Message-ID: <20251015-b4-l1tf-percpu-v2-1-6d7a8d3d40e9@google.com>
+Subject: [PATCH v2] KVM: x86: Unify L1TF flushing under per-CPU variable
+From: Brendan Jackman <jackmanb@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 15, 2025 at 1:59=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Oct 14, 2025 at 05:50:17PM -0700, Roy Luo wrote:
-> > On Tue, Oct 14, 2025 at 1:22=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> > >
-> > > On 14/10/2025 03:40, Roy Luo wrote:
-> > > > On Fri, Oct 10, 2025 at 5:09=E2=80=AFPM Krzysztof Kozlowski <krzk@k=
-ernel.org> wrote:
-> > > >>
-> > > >> On 10/10/2025 22:16, Roy Luo wrote:
-> > > >>> Document the device tree bindings for the DWC3 USB controller fou=
-nd in
-> > > >>> Google Tensor SoCs, starting with the G5 generation.
-> > > >>>
-> > > >>> The Tensor G5 silicon represents a complete architectural departu=
-re from
-> > > >>> previous generations (like gs101), including entirely new clock/r=
-eset
-> > > >>> schemes, top-level wrapper and register interface. Consequently,
-> > > >>> existing Samsung/Exynos DWC3 USB bindings are incompatible, neces=
-sitating
-> > > >>> this new device tree binding.
-> > > >>>
-> > > >>> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and =
-features
-> > > >>> Dual-Role Device single port with hibernation support.
-> > > >>
-> > > >> You still mix, completely unnecessarily, subsystems. For Greg this=
- is
-> > > >> actually even undesired, but regardless don't do this for any case=
-s
-> > > >> because it just makes everything slower or more difficult to apply=
-.
-> > > >>
-> > > >> Really, think how maintainers should deal with your patches.
-> > > >>
-> > > >
-> > > > Understood, I will separate the patches into two distinct series: o=
-ne for
-> > > > the controller and one for the PHY.
-> > > > Appreciate the feedback and the explanation.
-> > > >
-> > > >>>
-> > > >>> Signed-off-by: Roy Luo <royluo@google.com>
-> > > >>> ---
-> > > >>>  .../bindings/usb/google,gs5-dwc3.yaml         | 141 ++++++++++++=
-++++++
-> > > >>>  1 file changed, 141 insertions(+)
-> > > >>>  create mode 100644 Documentation/devicetree/bindings/usb/google,=
-gs5-dwc3.yaml
-> > > >>>
-> > > >>> diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc=
-3.yaml b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> > > >>> new file mode 100644
-> > > >>> index 000000000000..6fadea7f41e8
-> > > >>> --- /dev/null
-> > > >>> +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> > > >>> @@ -0,0 +1,141 @@
-> > > >>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > >>> +# Copyright (c) 2025, Google LLC
-> > > >>> +%YAML 1.2
-> > > >>> +---
-> > > >>> +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
-> > > >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > >>> +
-> > > >>> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> > > >>> +
-> > > >>> +maintainers:
-> > > >>> +  - Roy Luo <royluo@google.com>
-> > > >>> +
-> > > >>> +description:
-> > > >>> +  Describes the DWC3 USB controller block implemented on Google =
-Tensor SoCs,
-> > > >>> +  starting with the G5 generation. Based on Synopsys DWC3 IP, th=
-e controller
-> > > >>> +  features Dual-Role Device single port with hibernation add-on.
-> > > >>> +
-> > > >>> +properties:
-> > > >>> +  compatible:
-> > > >>> +    const: google,gs5-dwc3
-> > > >>> +
-> > > >>> +  reg:
-> > > >>> +    items:
-> > > >>> +      - description: Core DWC3 IP registers.
-> > > >>> +      - description: USB host controller configuration registers=
-.
-> > > >>> +      - description: USB custom interrrupts control registers.
-> > > >>> +
-> > > >>> +  reg-names:
-> > > >>> +    items:
-> > > >>> +      - const: dwc3_core
-> > > >>> +      - const: host_cfg
-> > > >>> +      - const: usbint_cfg
-> > > >>> +
-> > > >>> +  interrupts:
-> > > >>> +    items:
-> > > >>> +      - description: Core DWC3 interrupt.
-> > > >>> +      - description: High speed power management event for remot=
-e wakeup from hibernation.
-> > > >>> +      - description: Super speed power management event for remo=
-te wakeup from hibernation.
-> > > >>
-> > > >> Wrap at 80 (see coding style) or just shorten these.
-> > > >
-> > > > Ack, will fix it in the next patch.
-> > > >
-> > > >>
-> > > >>> +
-> > > >>> +  interrupt-names:
-> > > >>> +    items:
-> > > >>> +      - const: dwc_usb3
-> > > >>
-> > > >> So just "core"?
-> > > >
-> > > > I'd prefer to stick to "dwc_usb3" as that's
-> > > > 1. more expressive by referring to the underlying IP name,
-> > >
-> > >
-> > > But that's completely redundant name.
-> > >
-> > > > 2. consistent with established dwc3 bindings such as
-> > > >     Documentation/devicetree/bindings/usb/snps,dwc3.yaml,
-> > >
-> > > If you use only one interrupt. You don't use one interrupt here.
-> >
-> > After looking into it further, I found that the interrupt name "dwc_usb=
-3"
-> > must be used here to adhere to the interrupt naming defined in
-> > "snps,dwc3.yaml".
->
-> Did you just chose to not read what Krzysztof said here? It must be used
-> only when that's the sole interrupt, which he stated is not the case for
-> your platform.
->
-> > This requirement stems from the device's corresponding glue driver
-> > utilizing a so-called "flattened" model (see [1] for context). This mod=
-el
-> > causes the glue driver to probe an underlying "snps,dwc3" device.
-> > Consequently, the core DWC3 interrupt defined here is consumed by
-> > the driver handling the "snps,dwc3" device, making it mandatory to
-> > follow the interrupt naming established in "snps,dwc3.yaml".
->
-> I look at the binding and noticed that interrupt-names isn't even a
-> required property by snps,dwc3.yaml, and this comment about driver
-> behaviour likely isn't accurate given that the code in for host mode
-> (and the others are identical) is written so that it will grab the first
-> interrupt if the specific names it looks for are absent:
-> | static int dwc3_host_get_irq(struct dwc3 *dwc)
-> | {
-> |       struct platform_device  *dwc3_pdev =3D to_platform_device(dwc->de=
-v);
-> |       int irq;
-> |
-> |       irq =3D platform_get_irq_byname_optional(dwc3_pdev, "host");
-> |       if (irq > 0) {
-> |               dwc3_host_fill_xhci_irq_res(dwc, irq, "host");
-> |               goto out;
-> |       }
-> |
-> |       if (irq =3D=3D -EPROBE_DEFER)
-> |               goto out;
-> |
-> |       irq =3D platform_get_irq_byname_optional(dwc3_pdev, "dwc_usb3");
-> |       if (irq > 0) {
-> |               dwc3_host_fill_xhci_irq_res(dwc, irq, "dwc_usb3");
-> |               goto out;
-> |       }
-> |
-> |       if (irq =3D=3D -EPROBE_DEFER)
-> |               goto out;
-> |
-> |       irq =3D platform_get_irq(dwc3_pdev, 0);
-> |       if (irq > 0)
-> |               dwc3_host_fill_xhci_irq_res(dwc, irq, NULL);
-> |
-> | out:
-> |       return irq;
-> | }
->
-> Since it grabs the first interrupt, as a fallback, in order to support
-> not having the interrupt-names property, the name of the first interrupt
-> ultimately doesn't matter at all to this driver (and likely any other
-> driver written in compliance with the bindings for the dwc3 core).
->
-> I'm not here to argue about what the name for the single interrupt
-> should be (keeping consistency with other devices might actually be
-> good), but ignoring what a maintainer says and the seemingly providing
-> an incorrect analysis is annoying. Did you perform the analysis on this
-> yourself, or did it perhaps come from Gemini?
->
-> Thanks,
-> Conor.
+Currently the tracking of the need to flush L1D for L1TF is tracked by
+two bits: one per-CPU and one per-vCPU.
 
-Hi Conor,
+The per-vCPU bit is always set when the vCPU shows up on a core, so
+there is no interesting state that's truly per-vCPU. Indeed, this is a
+requirement, since L1D is a part of the physical CPU.
 
-My apologies for the incorrect analysis. I misinterpreted the code,
-which was a big mistake. I can assure you that I do value your
-feedback and take every comment seriously.
-Thanks for pointing out the error and raising your concern.
-This won't happen again.
+So simplify this by combining the two bits.
 
-Thanks,
-Roy Luo
+The vCPU bit was being written from preemption-enabled regions. For
+those cases, use raw_cpu_write() (via a variant of the setter function)
+to avoid DEBUG_PREEMPT failures. If the vCPU is getting migrated, the
+CPU that gets its bit set in these paths is not important; vcpu_load()
+must always set it on the destination CPU before the guest is resumed.
 
->
-> > Essentially, the interrupts defined here are a mix of vendor specific
-> > implementation (like "hs_pme", "ss_pme") and the DWC3 core in
-> > "snps,dwc3.yaml" ("dwc_usb3").
-> >
-> > I don't know if there's a better way to express this implicit dependenc=
-y
-> > of the core DWC3 interrupt except for documenting it in the binding
-> > description. Any advice would be welcome.
-> >
-> > [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722=
-d@oss.qualcomm.com/
-> >
-> > Thanks,
-> > Roy Luo
-> >
-> > >
-> > > >     Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml,
-> > > > unless you have a strong preference for the alternative naming.
-> > >
-> > > Such namings are discouraged, because they tell absolutely nothing.
-> > > Also, schematics or datasheets usually do not use them, either.
-> > >
-> > >
-> > > Best regards,
-> > > Krzysztof
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+Changes in v2:
+- Moved the bit back to irq_stat
+- Fixed DEBUG_PREEMPT issues by adding a _raw variant
+- Link to v1: https://lore.kernel.org/r/20251013-b4-l1tf-percpu-v1-1-d65c5366ea1a@google.com
+---
+ arch/x86/include/asm/hardirq.h  |  6 ++++++
+ arch/x86/include/asm/kvm_host.h |  3 ---
+ arch/x86/kvm/mmu/mmu.c          |  2 +-
+ arch/x86/kvm/vmx/nested.c       |  2 +-
+ arch/x86/kvm/vmx/vmx.c          | 20 +++++---------------
+ arch/x86/kvm/x86.c              |  6 +++---
+ 6 files changed, 16 insertions(+), 23 deletions(-)
+
+diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
+index f00c09ffe6a95f07342bb0c6cea3769d71eecfa9..8a5c5deadb5912cc9ae080740c8a7372e6ef7577 100644
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -2,6 +2,7 @@
+ #ifndef _ASM_X86_HARDIRQ_H
+ #define _ASM_X86_HARDIRQ_H
+ 
++#include <linux/percpu.h>
+ #include <linux/threads.h>
+ 
+ typedef struct {
+@@ -78,6 +79,11 @@ static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
+ 	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
+ }
+ 
++static __always_inline void kvm_set_cpu_l1tf_flush_l1d_raw(void)
++{
++	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
++}
++
+ static __always_inline void kvm_clear_cpu_l1tf_flush_l1d(void)
+ {
+ 	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 0);
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 48598d017d6f3f07263a2ffffe670be2658eb9cb..fcdc65ab13d8383018577aacf19e832e6c4ceb0b 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1055,9 +1055,6 @@ struct kvm_vcpu_arch {
+ 	/* be preempted when it's in kernel-mode(cpl=0) */
+ 	bool preempted_in_kernel;
+ 
+-	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
+-	bool l1tf_flush_l1d;
+-
+ 	/* Host CPU on which VM-entry was most recently attempted */
+ 	int last_vmentry_cpu;
+ 
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 667d66cf76d5e52c22f9517914307244ae868eea..8c0dce401a42d977756ca82d249bb33c858b9c9f 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4859,7 +4859,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+ 	 */
+ 	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
+ 
+-	vcpu->arch.l1tf_flush_l1d = true;
++	kvm_set_cpu_l1tf_flush_l1d();
+ 	if (!flags) {
+ 		trace_kvm_page_fault(vcpu, fault_address, error_code);
+ 
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 76271962cb7083b475de6d7d24bf9cb918050650..1d376b4e6aa4abc475c1aac2ee937dbedb834cb1 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -3880,7 +3880,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 		goto vmentry_failed;
+ 
+ 	/* Hide L1D cache contents from the nested guest.  */
+-	vmx->vcpu.arch.l1tf_flush_l1d = true;
++	kvm_set_cpu_l1tf_flush_l1d_raw();
+ 
+ 	/*
+ 	 * Must happen outside of nested_vmx_enter_non_root_mode() as it will
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 546272a5d34da301710df1d89414f41fc9b24a1f..6515beefa1fc8da042c0b66c207250ccf79c888e 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6673,26 +6673,16 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+ 	 * 'always'
+ 	 */
+ 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
+-		bool flush_l1d;
+-
+ 		/*
+-		 * Clear the per-vcpu flush bit, it gets set again if the vCPU
++		 * Clear the per-cpu flush bit, it gets set again if the vCPU
+ 		 * is reloaded, i.e. if the vCPU is scheduled out or if KVM
+ 		 * exits to userspace, or if KVM reaches one of the unsafe
+-		 * VMEXIT handlers, e.g. if KVM calls into the emulator.
++		 * VMEXIT handlers, e.g. if KVM calls into the emulator,
++		 * or from the interrupt handlers.
+ 		 */
+-		flush_l1d = vcpu->arch.l1tf_flush_l1d;
+-		vcpu->arch.l1tf_flush_l1d = false;
+-
+-		/*
+-		 * Clear the per-cpu flush bit, it gets set again from
+-		 * the interrupt handlers.
+-		 */
+-		flush_l1d |= kvm_get_cpu_l1tf_flush_l1d();
+-		kvm_clear_cpu_l1tf_flush_l1d();
+-
+-		if (!flush_l1d)
++		if (!kvm_get_cpu_l1tf_flush_l1d())
+ 			return;
++		kvm_clear_cpu_l1tf_flush_l1d();
+ 	}
+ 
+ 	vcpu->stat.l1d_flush++;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 4b8138bd48572fd161eda73d2dbdc1dcd0bcbcac..dc886c4b9b1fe3d63a4c255ed4fc533d20fd1962 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5190,7 +5190,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ {
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+ 
+-	vcpu->arch.l1tf_flush_l1d = true;
++	kvm_set_cpu_l1tf_flush_l1d();
+ 
+ 	if (vcpu->scheduled_out && pmu->version && pmu->event_count) {
+ 		pmu->need_cleanup = true;
+@@ -8000,7 +8000,7 @@ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
+ 				unsigned int bytes, struct x86_exception *exception)
+ {
+ 	/* kvm_write_guest_virt_system can pull in tons of pages. */
+-	vcpu->arch.l1tf_flush_l1d = true;
++	kvm_set_cpu_l1tf_flush_l1d_raw();
+ 
+ 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
+ 					   PFERR_WRITE_MASK, exception);
+@@ -9396,7 +9396,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 		return handle_emulation_failure(vcpu, emulation_type);
+ 	}
+ 
+-	vcpu->arch.l1tf_flush_l1d = true;
++	kvm_set_cpu_l1tf_flush_l1d_raw();
+ 
+ 	if (!(emulation_type & EMULTYPE_NO_DECODE)) {
+ 		kvm_clear_exception_queue(vcpu);
+
+---
+base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
+change-id: 20251013-b4-l1tf-percpu-793181fa5884
+
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
+
 
