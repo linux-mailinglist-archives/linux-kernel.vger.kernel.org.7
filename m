@@ -1,166 +1,171 @@
-Return-Path: <linux-kernel+bounces-854703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC20BDF2AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:52:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEE8BDF2BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E84EE4EFFDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:51:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73B4A4F56FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13832D5950;
-	Wed, 15 Oct 2025 14:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803072D5948;
+	Wed, 15 Oct 2025 14:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8u2RfSE"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riF91sar"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E472D24A9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32832D239A;
+	Wed, 15 Oct 2025 14:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760539907; cv=none; b=oFdL7UMlMUDDG8carZJF1zgOQPZ+c1KHDDKNTT7ZWJvO2zNJ2JYLO9kXQc9Xkme2RZQ88a/cRiyBMVlh3K0ct05j9x4wQvTpXYjupvyqcnMpgV493DiNmEEntqzofmaU4kq0F1PlQTDY13CDosaQ+h1LWzL5eCN+wF16Y035M48=
+	t=1760539939; cv=none; b=ZcG/DeiGBXDpKnx3Qvhpz2db4CB0yHGvjDofSOCJDw66G0S0e0XtrsQZc1NYzzqCxYpDa0rmf7QmZdszO1HWsuN1SVCzKIZj6E6Yp1cMhdeZk7ijd4dIYTbAUlMtSzjlSxoUYtZgFqzxHnn9DVWggE1w9l+634gj0LHCfBhZrBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760539907; c=relaxed/simple;
-	bh=sInZE0DYoIggQMIMtdFf4wFHGPW53+nzyYune9eDHHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rT+nQ8ncuhnT78wa5QMhNDukDUV5hLWBCwl/2q42SSxl2l/JbvtsC+Vac54DswAyz39k1Txb1cC4DFXvAH9TKXWcnh3OLWtWIKeZvV+M3ra06B5dx5YgQ2nxg0uzC4UZqtQCx+x/hASco55E4ZK8nnBeTOpG8nYfq422+zjPD2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k8u2RfSE; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7501c24a731so80029707b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760539905; x=1761144705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NyLoltljIFIHQvuHJEe7loF3nTJT00G7D3T168aMfDU=;
-        b=k8u2RfSEaNr8RoGeo9HYEPQpIJFBnMpG3kqp3wbpoF1ou6XOSagtAWS3iST/x8pM9u
-         6XJO9ck/ahDaagGlvhfHocSTIxsePCjX8thg4dqV4MMphvmeCGsDD1bGrKiNRTRadz8F
-         Q875/eDcIjROAqJY121ywPGLDmvmneyyleiGJHttyRDJZo8CK4p/DmufJWMcXX3cj/V2
-         W8nwN8CjLjv8dnwst01+cOtKv5hoQzOhBw852lDjmt5TjQKAGv2vy5MXT+8Bu1Z4uK6I
-         U/ytaJfc7zNg5cMjr6EXkzlvCIr7FYM0BFxkNTMNa4dRC7TioI1dnBeNE5rjgoF/Uo3r
-         OD8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760539905; x=1761144705;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NyLoltljIFIHQvuHJEe7loF3nTJT00G7D3T168aMfDU=;
-        b=fNsbCVtg/G4u/Lz5HERwfFEmJl29EXgqpg+I3gJs0M7lVTJocbIa3/5vjJinCmAWzJ
-         W+17V3atjA/xy5c3awHKFV3Bn+0WAn/Aq1cgTljgTgOSpEQN+2tMFyOKrY0JvN80BjfQ
-         MPmF2ZKJuBpgTAl/+3f0t78eYEl0H0v1oOU5mXunhtqAWuaoQYbfWM5ow2HGeFL5v0VK
-         pWf0lg32UV0cnLOqWbAnY6J6UN81qzEtRy8Hp2HOBT3CohkfbIlDNC8ma5I/GIx6J9D4
-         9IuW9YdoK6EIt/iTgZHtieWGiHmQcOkoG16IHOsk5dF9q5WAuaJ1gWPDd2Cc9hZUQF8c
-         LuMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbmdU24e+HfkUIGGy4ITdUwheTnjQCwubanfEWkzcn+vaNOS17XD7kMZbd0odpmB2IX0ehZIcG6FeggUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzib05vQICNgJCEWHdSMLhxxUNQOEEZd2q3T4q71zFqtE1fJRuQ
-	8tWDySU7Coo/SRV7FsRGAq/mKRs1pQeUpWH+9quEzsSCpWgjAIM7pd3m
-X-Gm-Gg: ASbGnctT1Yts10qsU3S5p6SkmeS6/Us9vuB4/6EXVj67qZUUArbLlYM0jLZi7vrxj8j
-	+fc+plCiDBb8i3N7hvgNzxYCjmGHjUbh1RPwMkWKf6AtCUjeKe+6X/+YX2lgVa7mv/W3krG7/yz
-	TpQTvqPH/pG+IVhnPpg8Ml+qs7ugs34mKRxmzeYSzRk+OTe3upTwf3Rl6JmfOcb4bdNzD+bPu5+
-	2gSA82Uq9mnpOPZxp9G9RgX++PSU8DtEd1tQOxIrR1irSLWGfbvZHU7erps3LVeApHmOTFZCvau
-	PYMhnArl8AUbhrpun2UVYOyV9RF3npHDS42pfvsBiSmi5Wlk8QCrDQem5OeCW+EEjkrMW37cJKp
-	O1WJ2HNRDziuzEkL9zzJsNHqge3JTO/BCRrukHLMxc7OS+MrvweXRJpQNfSNFTjfztaL/2hKQka
-	iAGyotbnAP
-X-Google-Smtp-Source: AGHT+IFdqdeTyqiUO3M8Jt3admfj16X+6I9SKPrlqNLZA1JhYvTo5CcWbZOMzfxfyhV/tM6hbT9L/A==
-X-Received: by 2002:a05:690c:360b:b0:735:4c38:34 with SMTP id 00721157ae682-780e153baabmr270617987b3.27.1760539905211;
-        Wed, 15 Oct 2025 07:51:45 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:40::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78106dbbac6sm42931667b3.3.2025.10.15.07.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 07:51:44 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1760539939; c=relaxed/simple;
+	bh=ADw0XbUINFXw+99thMlJyEEKMXz1G33Y6Fyz/udOs7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bLXBmkdJXF9iOrPDJMs2OMQGpnUMRdhLEL00+chcw/Us7xg22t2Q+B8KR8AUtRV9B7RdzKXO1kwIOk3x/DXxo4N8Exavw8I9pPRL6vZf8CVPMZtYL6VN3FLS9emcdCCgb/9VSe56+b45O69WEkey6rf2TvW1eJzK8XGOWzPfE3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riF91sar; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F48AC4CEF8;
+	Wed, 15 Oct 2025 14:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760539939;
+	bh=ADw0XbUINFXw+99thMlJyEEKMXz1G33Y6Fyz/udOs7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=riF91sarHuoK7t4am2+p5dxxUbrgULuYBx2SVwAhxTpeD1NYtB46wNTalCGGwGWtq
+	 iHehp0VZnF2Ufr7jLAGIAUtAvlIFvJJa/4tuGo91bGJW4oYsm3B2uy8XWD+244DvCH
+	 k0ST8OCUPYfPGyFRe5boeRN1qFELPWzIXSWbsA+dRgf5o3t/9hB635UTAwt2RbPioF
+	 yZXJqHqdBaB4x2KSdwbzTH21133KVuVRbeGdsKpqMDdF4RO+5OJZgSzFl2+CZthuXX
+	 Caal7DGqDslWIEWXwJSuXV+kntKZi8z5IYayeXfNHvp6JjWA/6kA9jvXUqY7qVvzsN
+	 iFttDi/Vu7gGA==
+Date: Wed, 15 Oct 2025 09:52:17 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org,
+	guodong@riscstar.com, pjw@kernel.org, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+	christian.bruel@foss.st.com, shradha.t@samsung.com,
+	krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
+	namcao@linutronix.de, thippeswamy.havalige@amd.com,
+	inochiama@gmail.com, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: simplify and cleanup pcp locking
-Date: Wed, 15 Oct 2025 07:51:42 -0700
-Message-ID: <20251015145143.3001503-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251015-b4-pcp-lock-cleanup-v1-1-878e0e7dcfb2@suse.cz>
-References: 
+Subject: Re: [PATCH v2 1/7] dt-bindings: phy: spacemit: add SpacemiT
+ PCIe/combo PHY
+Message-ID: <20251015145217.GA3554740-robh@kernel.org>
+References: <20251013153526.2276556-1-elder@riscstar.com>
+ <20251013153526.2276556-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013153526.2276556-2-elder@riscstar.com>
 
-On Wed, 15 Oct 2025 11:36:09 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-
-> The pcp locking relies on pcp_spin_trylock() which has to be used
-> together with pcp_trylock_prepare()/pcp_trylock_finish() to work
-> properly on !SMP !RT configs. This is tedious and error-prone.
+On Mon, Oct 13, 2025 at 10:35:18AM -0500, Alex Elder wrote:
+> Add the Device Tree binding for the PCIe/USB 3.0 combo PHY found in
+> the SpacemiT K1 SoC.  This is one of three PCIe PHYs, and is unusual
+> in that only the combo PHY can perform a calibration step needed to
+> determine settings used by the other two PCIe PHYs.
 > 
-> We can remove pcp_spin_lock() and underlying pcpu_spin_lock() because we
-> don't use it. Afterwards pcpu_spin_unlock() is only used together with
-> pcp_spin_trylock(). Therefore we can add the UP_flags parameter to them
-> and handle pcp_trylock_prepare()/finish() within them.
+> Calibration must be done with the combo PHY in PCIe mode, and to allow
+> this to occur independent of the eventual use for the PHY (PCIe or USB)
+> some PCIe-related properties must be supplied: clocks; resets; and a
+> syscon phandle.
 > 
-> Additionally for the configs where pcp_trylock_prepare() is a no-op (SMP
-> || RT) make it pass &UP_flags to a no-op inline function. This ensures
-> typechecking and makes the local variable "used" so we can remove the
-> __maybe_unused attributes.
-> 
-> In my compile testing, bloat-o-meter reported no change on SMP config,
-> so the compiler is capable of optimizing away the no-ops same as before,
-> and we have simplified the code using pcp_spin_trylock().
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-
-Hello Vlastimil, I hope you are doing well!
-
-Thank you for this patch. This is a pattern that I found quite cumbersome,
-so this patch really makes the code so much easier to understand and read.
-
+> Signed-off-by: Alex Elder <elder@riscstar.com>
 > ---
-> based on mm-new
-> ---
->  mm/page_alloc.c | 99 +++++++++++++++++++++++----------------------------------
->  1 file changed, 40 insertions(+), 59 deletions(-)
+> v2: - Added '>' to the description, and reworded it a bit
+>     - Added an external oscillator clock, "refclk"
+>     - Renamed the "global" reset to be "phy"
+>     - Renamed a phandle property to be "spacemit,apmu"
+>     - Dropped the label and status property from the example
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 0155a66d7367..2bf707f92d83 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -99,9 +99,12 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
->  /*
->   * On SMP, spin_trylock is sufficient protection.
->   * On PREEMPT_RT, spin_trylock is equivalent on both SMP and UP.
-> + * Pass flags to a no-op inline function to typecheck and silence the unused
-> + * variable warning.
->   */
-> -#define pcp_trylock_prepare(flags)	do { } while (0)
-> -#define pcp_trylock_finish(flag)	do { } while (0)
-> +static inline void __pcp_trylock_prepare(unsigned long *flags) { }
-> +#define pcp_trylock_prepare(flags) __pcp_trylock_prepare(&(flags))
-> +#define pcp_trylock_finish(flags)	do { } while (0)
->  #else
+>  .../bindings/phy/spacemit,k1-combo-phy.yaml   | 114 ++++++++++++++++++
+>  1 file changed, 114 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+> new file mode 100644
+> index 0000000000000..6e2f401b0ac27
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+> @@ -0,0 +1,114 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/spacemit,k1-combo-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SpacemiT K1 PCIe/USB3 Combo PHY
+> +
+> +maintainers:
+> +  - Alex Elder <elder@riscstar.com>
+> +
+> +description: >
+> +  Of the three PHYs on the SpacemiT K1 SoC capable of being used for
+> +  PCIe, one is a combo PHY that can also be configured for use by a
+> +  USB 3 controller.  Using PCIe or USB 3 is a board design decision.
+> +
+> +  The combo PHY is also the only PCIe PHY that is able to determine
+> +  PCIe calibration values to use, and this must be determined before
+> +  the other two PCIe PHYs can be used.  This calibration must be
+> +  performed with the combo PHY in PCIe mode, and is this is done
+> +  when the combo PHY is probed.
+> +
+> +  The combo PHY uses an external oscillator as a reference clock.
+> +  During normal operation, the PCIe or USB port driver is responsible
+> +  for ensuring all other clocks needed by a PHY are enabled, and all
+> +  resets affecting the PHY are deasserted.  However, for the combo
+> +  PHY to perform calibration independent of whether it's later used
+> +  for PCIe or USB, all PCIe mode clocks and resets must be defined.
+> +
+> +properties:
+> +  compatible:
+> +    const: spacemit,k1-combo-phy
+> +
+> +  reg:
+> +    items:
+> +      - description: PHY control registers
+> +
+> +  clocks:
+> +    items:
+> +      - description: External oscillator used by the PHY PLL
+> +      - description: DWC PCIe Data Bus Interface (DBI) clock
+> +      - description: DWC PCIe application AXI-bus Master interface clock
+> +      - description: DWC PCIe application AXI-bus slave interface clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: refclk
+> +      - const: dbi
+> +      - const: mstr
+> +      - const: slv
+> +
+> +  resets:
+> +    items:
+> +      - description: DWC PCIe Data Bus Interface (DBI) reset
+> +      - description: DWC PCIe application AXI-bus Master interface reset
+> +      - description: DWC PCIe application AXI-bus slave interface reset
+> +      - description: PHY reset; must be deasserted for PHY to function
+> +
+> +  reset-names:
+> +    items:
+> +      - const: dbi
+> +      - const: mstr
+> +      - const: slv
+> +      - const: phy
 
-I have one question here. I was a bit unsure why we do the typechecking and
-silencing for the unused variable warning for only pcp_trylock_prepare, but
-not for pcp_trylock_finish. Is it because pcp_trylock_finish will always
-be called after pcp_trylock_prepare, so the flag will have been used at
-that point? 
+I think phy should be first as that's the main one to the phy and the 
+others are somewhat questionable. Otherwise,
 
-I was concerned that there would have been some area where only
-pcp_trylock_finish would have been used, but compiling with W=1 seems to show
-no errors on my end : -) So it looks good to me! Feel free to add:
-
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-
-Thank you! I hope you have a great day!
-Joshua
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
