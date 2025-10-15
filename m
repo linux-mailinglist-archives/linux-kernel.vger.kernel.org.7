@@ -1,147 +1,203 @@
-Return-Path: <linux-kernel+bounces-854877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372B3BDFA82
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188CFBDFA94
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E1521889376
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089D218854E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E099D3376BC;
-	Wed, 15 Oct 2025 16:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EF6338F26;
+	Wed, 15 Oct 2025 16:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FHruKKaT"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGi+HTAA"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351E7337693
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E583376A2
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760545771; cv=none; b=EMFoW/PslPDcrHDY1iAFVnwcNuVfYGsYEWa409+BVQCAldJYfDHfkfpWCe12avPM7JFD7I42mYmJL3DA48U6+RMsbLKBVGo4g0144tNX7tSww/+D2MQLLHBm96ioX7kInQ6SdGWn2dqqkQ2BQSfRjfSmc9mBg3Rd+YgR9YX8TaA=
+	t=1760545803; cv=none; b=OQcWayRtXGx88C/vukn0yDxaCAOaFgSAMDbqLv80vy+is58k4OLTFA9n6ZhEdQOL2MsqsLqkLhEcNI0IbVfUV/3SyHQfSNEmz5Jgag9WH3rV6BN4ZRaBYeIeYcnnXadJyesS2SBPtVR+B/X0yb4T56L3V1GQNLYrhGUI3OowlW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760545771; c=relaxed/simple;
-	bh=c9DRtgxqBjR6FiucDGOUiESyKrgNeSaMO5VAfOIoETQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qDGHiJpaQ8q4bcup7fIwqlBuMBnIrDh1tXUoFED5T5oB77irlwMEKIKPdTghZ7xfyYoW50Hj9o9xFehBRDG7pXjhS5j7rCVjXLLtS96Sy1YGcJ0ZzvubtzTHVOE8uISUHkpK3UHcreoUa14fzzaK9KRKdda6CltOG3asGspsC5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FHruKKaT; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-61bd4e002afso1830103eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:29:28 -0700 (PDT)
+	s=arc-20240116; t=1760545803; c=relaxed/simple;
+	bh=Q6rKlCtixSuiwjIXlFbpaB8zSeZrFlDJ0Zg9RlK//Y8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tqvlh4m2MT/FxP75ewt7w6ZUuzvGPHq/0CNjmNWmd+OouBdCF1/diTs5lmxHWFmx9eUlHVQYs7rKztq/i6rg8sN6OkR5NdILDnJrjUAAAVXZEXrM6oTC96yuph0Bf2VEnR/JEvz50zaZ0r/Q52IthtQfUh21sC3+6J4GYCKTNqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGi+HTAA; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7960d69f14bso54117456d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760545768; x=1761150568; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0IEFETDXO+bjt4XRF9cGd360VMY2ffLoA1X5D7REdqI=;
-        b=FHruKKaTe52nmQ4G4l2uekHbzSAu7GrvHbxeuiVOMqqu89gEJBxz+EmLF1580OOrS6
-         6JXbLlsdBpqxhvpQbeNz8ylCyEItkACEzkBEXeAIGmc6Ra7MNWNtOiBxekFi+2xfYCf4
-         dr7QyH9GxXE9vY6P+3VJ+k6tFhVJ3KIX7Oa69CQb6Pz18lCB+J2K86XN+Q3ttVaYNHyp
-         lc+F60ZrhSW3UXCR4TzWkt9caIOUoqA0SMwGD2OW6d61b6N8hLFiW4JLySkM5TBNDuOZ
-         gPCBkNw1xdqa4+Vrj3VALh0hQ2bLpscLep18CE8XZD67YF8eGFDgq6uZYnzkDtQZj19D
-         OSPw==
+        d=gmail.com; s=20230601; t=1760545800; x=1761150600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/8GDrJ1rQnlamUx9lojh4fPxJBAOk9fRwuDS8zKFOtw=;
+        b=AGi+HTAAYaeKmvdeCKFuFD3QorPfDOYS7yk5MGVHuKv3umIZVNqXDwA5/ijzxO/efT
+         7F4nDO+rsjuSoS4TyT8ye8fIohqfptvhHwmCrcfd3ckBhXYNEejJu6a32R0V5Owi6CqC
+         A1S8wOr3J4YLOYZ70niUVNgI6cGddCT4kNxDQXfEZ5Lc4+v1EAtnNDmd7bB+6MGrMvvX
+         UT7e5DwC+C5RpxbEV49HYuRgR/CI/hMcCg6I8I7aJ+BkF1dNPRQbEVwFD0tkJspQD+6+
+         f61slewSLbmHqN5dT8qrKpWW4Z8g3OatwaqvTY7ThbN+hUPzo1dUTox7Oed+zpbcnYGd
+         2Hlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760545768; x=1761150568;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0IEFETDXO+bjt4XRF9cGd360VMY2ffLoA1X5D7REdqI=;
-        b=B7Q6CU4n9aWW5gqoxf49hsObax0UfC4mnid4wGsC7QT3R36OXQyRKsV9cIhz4Ss05K
-         23DZkAl7Cmcxiy5/N6KfGfY0sOLQr+23UaWxUofgV7CkTGkK/U0uaYjpXM9NraR9j2q8
-         BEixbueV4vmtwyy+gD5fsjwz4z6i5h5AJ5lbdQRl/UFyUEPkg9kohcazS3KKimuxt+6S
-         bY+GF/1M+lGbtg1tJQuZRIhXMdG+0nHOitp2DsAvM6Ig8RkDl7JqlKZSGvWs8LNtQAxY
-         3pOL9GYyE+kBXrk0tCrvX0IJss+KXWUwG8qvMTA0jmGr40mlLtk+EvDc9AZora2tzQV6
-         K7Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrqRqm05DDBsu0rDDtpXkDDZZNSxWb+YijI5YQ73m1qV8en/CKL333mFgKXgSJy/bIbg6kQmP0JRKGq7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqdHzVS+hsl5oZO4nIapkd7dhbZ9Fh7kK/auVHMr636M0NU39Z
-	AowtxaLB4rf93LaKmhxb2hrxBiwE0BlqOYZ7F3u/3VY6+lXEGcOdgR4V02MXuoFPSGA=
-X-Gm-Gg: ASbGncvoUlsf4hsRm3c+7fWJyjCSi6V/agDSgM61f844qII8320TNUq9XBxxeB+5vUY
-	m5FwEKUFFL3ua1kCEkT2hXrqCuNT4QM4VfkrqqwNjoQWIAa+tppcBOP79S23teqsDxA+sk2SKZI
-	PkpLg4/QIzUGa/x066smxLtIMlLYBMf6zUlOGM4IUoyOE5mS1ZOYs1008jObwwsuDK//Q3w/Hpt
-	gLsoqZrEA6I54XikHe1OXn7I0cKoT46jbQehknOnsujpF12Fo3wsj7S74CnELr+Tel9WgLo+bA7
-	2cPWI7MWVAMAOLSFCQrb5Nigor4Q5YKb3CqyKb9c+9AaeRzHboCf77pPZMvqkoAbJBmmk7LjRi6
-	BQ3lVV2Dp3PwtW4BTtfwVdGIEkY6uANZA88S59VDW6UYBgV98xO5JH8w2zYCNmpGlPrlXdylxNK
-	BQ39zNHyZEDvlUCMjkL92XDEQVpaPPvwEoiPoH
-X-Google-Smtp-Source: AGHT+IF+cLJe80ed4cj3kfbQheauCbstntwHjsgvv5HQx7cBnV+AHE/HMRPi8SW58d1ZXb7hcVX00w==
-X-Received: by 2002:a05:6808:14c1:b0:439:ad1e:8485 with SMTP id 5614622812f47-4417b38c9e3mr13965693b6e.24.1760545768107;
-        Wed, 15 Oct 2025 09:29:28 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:c482:1912:c2de:367e? ([2600:8803:e7e4:500:c482:1912:c2de:367e])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-650181ff660sm4189888eaf.17.2025.10.15.09.29.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 09:29:27 -0700 (PDT)
-Message-ID: <348b0d94-4b3a-454d-be67-47563808ec76@baylibre.com>
-Date: Wed, 15 Oct 2025 11:29:25 -0500
+        d=1e100.net; s=20230601; t=1760545800; x=1761150600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/8GDrJ1rQnlamUx9lojh4fPxJBAOk9fRwuDS8zKFOtw=;
+        b=KTSooQeZZfwkxpCi+X1w5K4iay9UO9+f+IwJDAci1WSyMxYKAUZl7JJTOGaoJjN9cC
+         BfPE+ek/IGHiyqI6LgYaMzBHGx+9oOv+F3OtiV56rXRNyF6w9vETubTa/r/7XStEE9+V
+         GKHlR3N7jEv8m79Td7jjImZDbK2qmVEjjMFalSnd3g3U4PSTczsqABwus/vkaSVWF4Pe
+         PAOQX+eP/5sutY5cioomU5ZI/fC95iVaBbMCFtmrFW6dOW5YAjSHlKQL11LF42Quxq3Q
+         QQy2/qTzoFZrlWohKifUa/Czs4ZBD0Re0U8gh+Rct+faXg5CdBEVM8dbttRrMXSINP7g
+         5DGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRUoynHyZPdPMBdq5M1MV9mZUD0V/u+8sSyBq+QEXZFdHhyvRAd86yG4JEvisq5hae4VhslW4w1gr5eKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPxU2smuk7bqDIQ+FK2EqroQqueJNPVoqtCm5gK35Tt2UdHqGx
+	3yCzrjXVMOh12PxcfxazuXjZ+NpTVpHG2rH4I4I3IEKvxJJ2XXgHPAHy54S7vZquVwGZQHTEeLc
+	l+9YIq48nD7TNfTKm1X4YnqZ9VXOTRAs=
+X-Gm-Gg: ASbGncvEPG2e32rAYCTwoJL+URiT21E2iKFsspmYWI9i2vsaIBLptGwdtFvMHUeGr1v
+	dnGHZnwhk2181QXmbm9HJ4niHByq29DmB+I/zc82rIdyDz8k/0ciMEHvTWEDJxr9IOX9NlQIkGD
+	nfagK9wnkWQW7cNVfcFJUJSm6MAqrKAXgRIEeMzinpDoRz7BM9cS+k/97jOlbq3koDlZ20UCkmr
+	p1guabiq5Eovrri5KXAoZt/I1tuCwinkrRqaUxcs/llnGQDj3AqME0pn4l+RCNJShVZcYRKjZZO
+	H0+yXdM9xLxb4Gcb85rxxOnWe4DLt48tTmP3bCA6Z/KD/2bz369q2DBvLILjWx6E+etbeUNTIhI
+	AOwxn/eTD8KJVHWiAongHhS3iA5YnxM+mFizblQ==
+X-Google-Smtp-Source: AGHT+IGVISVKSMZGXKvoUfC3pFbB5+MNCgPpT6oFP0VzuN6FflZ2A58qUHZ/QKyXQmRk6Yh4FFnGDxift44mJ0jL8XA=
+X-Received: by 2002:a05:6214:6215:b0:87b:cc00:5de7 with SMTP id
+ 6a1803df08f44-87bcc005e4fmr188945256d6.18.1760545800119; Wed, 15 Oct 2025
+ 09:30:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] spi: axi-spi-engine: support
- SPI_MULTI_BUS_MODE_STRIPE
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>
-Cc: Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-4-2098c12d6f5f@baylibre.com>
- <3180475bd51e1e057d6aa7e1b62f564cb57a117e.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <3180475bd51e1e057d6aa7e1b62f564cb57a117e.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <aOzRF9JB9VkBKapw@osx.local> <6599bf31-1099-426d-a8e5-902c3d98e032@web.de>
+ <aO/DLq/OtAjvkgcY@chcpu18>
+In-Reply-To: <aO/DLq/OtAjvkgcY@chcpu18>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 15 Oct 2025 11:29:46 -0500
+X-Gm-Features: AS18NWCziKfp_DI39cJxX3YKcNnedwhMB2N5vzWIwfO4Ia5b8m3SwzD1D2OHnU0
+Message-ID: <CAH2r5msK3SDhAM0_monUcNTrf5JCwydD+AJgARaiVziUUo0WmQ@mail.gmail.com>
+Subject: Re: [PATCH] smb: Fix refcount leak for cifs_sb_tlink
+To: Shuhao Fu <sfual@cse.ust.hk>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, Bharath SM <bharathsm@microsoft.com>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/15/25 5:30 AM, Nuno Sá wrote:
-> On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
->> Add support for SPI_MULTI_BUS_MODE_STRIPE to the AXI SPI engine driver.
->>
+I don't think the title needs to be changed, it seems clear enough.
+The other changes are minor (changing goto label) and also probably
+not needed but ok if you have to update it for other reasons.
 
-...
+On Wed, Oct 15, 2025 at 10:52=E2=80=AFAM Shuhao Fu <sfual@cse.ust.hk> wrote=
+:
+>
+> On Wed, Oct 15, 2025 at 04:52:23PM +0200, Markus Elfring wrote:
+> > > This patch fixes =E2=80=A6
+> >
+> > * Will another imperative wording approach become more helpful for an i=
+mproved
+> >   change description?
+> >   https://apc01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fg=
+it.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Ft=
+ree%2FDocumentation%2Fprocess%2Fsubmitting-patches.rst%3Fh%3Dv6.17%23n94&da=
+ta=3D05%7C02%7Csfual%40connect.ust.hk%7Caffcb410915f4b4bc8f308de0bfa853c%7C=
+6c1d415239d044ca88d9b8d6ddca0708%7C1%7C0%7C638961367775911255%7CUnknown%7CT=
+WFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFO=
+IjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DbThHSbvjokcDU6hNpnYxt4%2B=
+lVyzlyxHl1JopGmCLY%2FQ%3D&reserved=3D0
+> >
+> > * Would it be more helpful to use the label =E2=80=9Cput_tlink=E2=80=9D=
+ instead of =E2=80=9Cout=E2=80=9D?
+> >
+> > * Can a subject like =E2=80=9Csmb: client: Complete reference counting =
+in three functions=E2=80=9D
+> >   be nicer?
+> >
+> >
+> > Regards,
+> > Markus
+>
+> Hi,
+>
+> Thanks for the suggestions. My apologies for the inapproriate wording.
+> Here's my updates. Please do let me know if it still needs improvement.
+> I will definitely address these issues in patch v2.
+>
+> 1. An improved patch description
+>
+> Fix three refcount inconsistency issues related to `cifs_sb_tlink`.
+>
+> Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be
+> called after successful calls to `cifs_sb_tlink`. Three callsites fail
+> to update refcount accordingly, leading to possible resource leaks.
+>
+> Fixes: 8ceb98437946 ("CIFS: Move rename to ops struct")
+> Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getac=
+l functions")
+> Fixes: 366ed846df60 ("cifs: Use smb 2 - 3 and cifsacl mount options setac=
+l function")
+> Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+>
+> 2. New subject: [PATCH v2] smb: client: Complete reference counting in th=
+ree functions
+>
+> 3. Labels are changed accordingly
+>
+> @@ -3212,8 +3212,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+>         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
+>         if (!utf16_path) {
+>                 rc =3D -ENOMEM;
+> -               free_xid(xid);
+> -               return ERR_PTR(rc);
+> +               goto put_tlink;
+>         }
+>
+>         oparms =3D (struct cifs_open_parms) {
+> @@ -3245,6 +3244,7 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
+>                 SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fi=
+d);
+>         }
+>
+> +put_tlink:
+>         cifs_put_tlink(tlink);
+>         free_xid(xid);
+>
+> @@ -3285,8 +3285,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
+>         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
+>         if (!utf16_path) {
+>                 rc =3D -ENOMEM;
+> -               free_xid(xid);
+> -               return rc;
+> +               goto put_tlink;
+>         }
+>
+>         oparms =3D (struct cifs_open_parms) {
+> @@ -3307,6 +3306,7 @@ set_smb2_acl(struct smb_ntsd *pnntsd, __u32 acllen,
+>                 SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fi=
+d);
+>         }
+>
+> +put_tlink:
+>         cifs_put_tlink(tlink);
+>         free_xid(xid);
+>         return rc;
+>
+> Thanks,
+> Shuhao
 
->> +
->> +		if (xfer->rx_buf || xfer->offload_flags &
->> SPI_OFFLOAD_XFER_RX_STREAM ||
->> +		    xfer->tx_buf || xfer->offload_flags &
->> SPI_OFFLOAD_XFER_TX_STREAM) {
-> 
-> I'm a bit confused by this condition. It looks like setting priv->multi_bus_mode
-> (and the other fields) only matters for msg->offload but the above will be true
-> for regular rx/tx messages, right? Or am i missing something?
 
-You are correct.
 
-> 
-> If so, I wonder why doing this for all transfers if we only care about
-> multi_bus_mode for offload messages. I guess you want to validate
-> xfer->multi_bus_mode?
+--=20
+Thanks,
 
-Yes, this is important to validate it since we don't support all possible modes.
-The mode still applies to the individual xfer even when not using SPI offloading.
-
-> I would then just take the switch() out of the condition
-> (I mean trying to setup a no data xfer with an invalid bus_mode should also be
-> seen as invalid IMO) and then use the offload conditions (or maybe simply msg-
->> offload?) for the multi_bus_mode handling. To me, it makes the intent more
-> clear.
-
-It the validation only matters for xfers that send or receive data. I guess
-it doesn't hurt to check the mode in non-data xfers (e.g. ones with just a delay)
-but since we needed the condition anyway for the accumulator, it made sense to
-me to put it inside the conditional.
-
-I might have put an additional if (msg->offload) around the accumulator part
-since it only matters when using SPI offloading, but the indent was already
-getting quite deep.
+Steve
 
