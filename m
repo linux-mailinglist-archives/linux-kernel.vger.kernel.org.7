@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-855350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D618BE0FBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:56:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54EABE0FCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A63F18806A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161665480D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368D2315D25;
-	Wed, 15 Oct 2025 22:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E673164B6;
+	Wed, 15 Oct 2025 22:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="YaNXGesi"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="fUy67HWt"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD8726C3A7
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760568968; cv=none; b=c8sc5zLImq2L3Ytq6qgSw6hxd7PaQmIIEgjbzFoz7miULcCy5C6tWQy36KFKbMAVSxDuWCRuUvoi6EOXRXYQhYkD05zr5NnMPv4pCs0DeEywV3HC0NZ1X+6vrjPQJYYlANTNgS26xOBtTtJyI6he0VIlMhyCc3T/XiDhjaIeaHM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760568968; c=relaxed/simple;
-	bh=cts1aGgjOO17rVlhWjCHbi/gwIe/Yqk749HXlpHcY4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LWQn8njtcOieQQGgMuzPMmQ6V2lg8L3N343GpUblVI8H5G/KYCR9hrQd0Pdd3Yu7lOrgzR5EU+KFLK0GPzpzVOG3M191vQbbc78EOAyKG8IZX8uOEhdEemdJW/26Fs5/XzRaTHcWFHBzuVitHmGmiNlWJcWen8b65zy8mIDAvW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=YaNXGesi; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so144268a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1760568965; x=1761173765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFmd6Gbc/aLFm7anjGNLJMoxHRshjAtp5OcPtG6yYWY=;
-        b=YaNXGesiDKBqw9yCJUCMchEqvOMWmECcJ7MLdXqCtD6aHljxz+NOxbVYFzBHvThBL1
-         fYHes47Tb6a3TQWXjTK3tFG02IAySjyPbfW/oB8TZB8+7kxHK+Qk+5m1fULQXqK4weGt
-         X5IGhBg8s1ZDFZ7rW2u5oNpa2tQv2vUm1VruYZpfB5TvW4Q2sqgFEz2TJPKUq8RBTdEs
-         o/VgGTXcyQRLoTKq9QxPVnayUzwISC7pN93/vWvxSjkbjO+4mbqqo4xTc6WmpvzBYRhl
-         ygQME69/8DMzb5Ksqid5kjRUTN1LiCdjIAsjP59c8+84yrgeXjtzqMPuavWtgwl3FZRk
-         4SFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760568965; x=1761173765;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VFmd6Gbc/aLFm7anjGNLJMoxHRshjAtp5OcPtG6yYWY=;
-        b=sToVkamOG+KACE/g+1KCD229Eb56NZzk3ToIRvexVJ1mm+U5kx/iFEkGHYw+tWkLHR
-         GAV8JlOV6UdBnY6gmR+bE/LgG60pDuEso8dMnfYhLMFWKDv5q8Uvo06wBhOvtKSEGMbC
-         0yuBYqooJM8rpCwgP9kNJPjuau5GZ1i70P1mEJ6USgOKOugHSAMdasbYCzIBSdfL/NzV
-         8A/6+kGdkLtMkgER2bOa5B9tEWQAP7IxKxGvyuKmLmbeiGKlAjeXUE+x1S+SFg6NfuSB
-         8GoaNmU7n+RNeGTdtCN+E4/ve2UTwctt2Cz6pI6uiMR2I78Ivlfpt9Tx8hjoAmwUTJ4W
-         3yfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCCigZr9w1tCVNPDA4kND+rwXitnIVtuDlTmCcyKQ+KrTR2QNRIJXixjCdJp6LVDXv0+X0AmtdnGqjaDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4h37bBNCgBUSEHduBa8/m1Nt8e1j+yCf9qjxgpLrKrfXwKYM2
-	hcbTYaXhTuID/+mlwtk2IeTDKBHccC84iwE4dZEr8AWgGocEaDlwkbbQiuuFwnqw3MY=
-X-Gm-Gg: ASbGnctD2B7L9GVclLAUZvzhB00ixPoLMwUZPuUq/VphF+A5WKajQAsukwJtQDuKtRJ
-	77HzaU1kPdQJl8vmftBR0jf6+/r1f8MCSjuRcM8Hl0O7KO3OlCgARPkPnbkUc+4yNyY52Qxpwa+
-	VBozR5XiyadnLB8iks4nUVzME64QBar6ipbFZmI4+GZKMf6xivjFcvbSf9DGS8X2z7kmcRQ/RXo
-	0bmdsvak46LDy/sVGcVky3HDCpbrfAI6x0ZYLkuXLX4uIGO7uzCMzLY2m6k/EjgKMsbdIbVM1IJ
-	seY9cQWOPS9aJx4b/YCvIeHWf0iBZwSmo/ByJnVMndCzZkEBV8qB+gQ4xF90/FzSVbSJH2LK77M
-	4hwStvB44wRYT4Eyu6Ks9JQflc00a6mdUCtiqZx3q6EvuxiUGMB8OYSUunO0Jx6QGdkPk5fEnC2
-	yDtLwygCMLS6u5B+/amejUT0Lg6OvqwH3S
-X-Google-Smtp-Source: AGHT+IGMDc40TRec5CNPCGntnVAlaUyey/p2L74uxLAtYHLpIqRuuwj9pmkS0fKnBmRsmWayiBsKhQ==
-X-Received: by 2002:a17:90b:3e8d:b0:32c:38b0:593e with SMTP id 98e67ed59e1d1-33b5114d3d4mr39059251a91.5.1760568965288;
-        Wed, 15 Oct 2025 15:56:05 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33ba927394csm243597a91.0.2025.10.15.15.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 15:56:04 -0700 (PDT)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <pjw@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>,
-	Thomas Huth <thuth@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: Remove the PER_CPU_OFFSET_SHIFT macro
-Date: Wed, 15 Oct 2025 15:56:00 -0700
-Message-ID: <20251015225604.3860409-1-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D5B3161B9;
+	Wed, 15 Oct 2025 22:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760569072; cv=pass; b=std6lnq68zCKwo10Ib5VpWN24EuBvcxXGtjEh8uZAZMY4o89jjILf7rHbMV8LiOat8jl0jIs0h9xXZCqNrGswOES6Haa3YFIvopJNH6J2GIf7ow2CDok2w2Rj+C5rVaQnoSHCTHGol7zB7yUHKyoJq/KjGeMOPO9frMZTMeQNcs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760569072; c=relaxed/simple;
+	bh=WlJ9M21iJkXj8rRFkUa8SPz9wuFl8vn2L9ckrDhUHxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvxV3/sgA+7NKkuXxtqqJUoiwa9HgvSRywPNk/nrkZXJLmna9TstQsgzHQ6ojUQw8IIk/FXKuadZpEDDj/3itn0kkXu+fqQDV8rQMeF53X/Pqx1BsG/gfLZIXY46sGKiCMs9XFXD4F9rGQB14I5t8y2jXd3Xzz/Z2262ps/R75w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=fUy67HWt; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760569050; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GUB2FVD69r/C01TsJxSij78wbWAgk4fStSZLc+yMKt9QZnxEXzfsrQiBxTuHERQstCf7itkNtro0ijH0FFENa1LcaIJnw/RQ8gvh3tM4nklpRji2BI2uCQsvNSQKCCEWidgthRQ/xMJAfYgBj0bctYil9ihVt1X8zjc5YwY2el8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760569050; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8hp4rymi/w615rS86fSx8eu95VzsthQfrxaFKltfQSA=; 
+	b=F6efgJMTyhdEKP5OOmHpd08VBn461J90YfwLnoLuDMI80vhNMk2/pQ8WzwPubMXgvyS9nNMi7IW2JeXo8t11OpYVcwLnxxaeS/own8po3F/+ozBfzJco3u9qNBM0EwuK6cdqgiIoXQPnhmozdSH9ANVI4Hw/jwvv2gk3XrCnTR0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760569050;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=8hp4rymi/w615rS86fSx8eu95VzsthQfrxaFKltfQSA=;
+	b=fUy67HWtPlTYQoadjcOVmkQ3gCyUYgPxPJzhOm7QiXAQbNxwAdcmRwaaLmK6aCSS
+	UrHsTOYABL5QjHW7JHcHCgUDJDfdvz+mmvRScevB3Kl4cMBL1owRCSrAmJa5At6YvnG
+	IN+P4Pe7l0Oh8dx296uW7EtAATDDPldJhrVTEs00=
+Received: by mx.zohomail.com with SMTPS id 1760569047390251.2858506578142;
+	Wed, 15 Oct 2025 15:57:27 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 7A320184DBC; Thu, 16 Oct 2025 00:57:15 +0200 (CEST)
+Date: Thu, 16 Oct 2025 00:57:15 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: Quentin Schulz <quentin.schulz@cherry.de>, mturquette@baylibre.com, 
+	sboyd@kernel.org, zhangqing@rock-chips.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH] clk: rockchip: rk3588: Don't change PLL rates when
+ setting dclk_vop2_src
+Message-ID: <eumxn7lvp34si2gik33hcavcrsstqqoxixiznjbertxars7zcx@xsycorjhj3id>
+References: <20251008133135.3745785-1-heiko@sntech.de>
+ <6677ebf9-50bd-4df0-806c-9698f2256a8d@cherry.de>
+ <2749454.BddDVKsqQX@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fwgcdh6ni2fyyeru"
+Content-Disposition: inline
+In-Reply-To: <2749454.BddDVKsqQX@diego>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/260.518.91
+X-ZohoMailClient: External
 
-__per_cpu_offset is an array of unsigned long, so we can reuse the
-existing RISCV_LGPTR macro.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+--fwgcdh6ni2fyyeru
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: rockchip: rk3588: Don't change PLL rates when
+ setting dclk_vop2_src
+MIME-Version: 1.0
 
- arch/riscv/include/asm/asm.h | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Hi,
 
-diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-index 8bd2a11382a3..ac28066bb564 100644
---- a/arch/riscv/include/asm/asm.h
-+++ b/arch/riscv/include/asm/asm.h
-@@ -84,15 +84,9 @@
- .endm
- 
- #ifdef CONFIG_SMP
--#ifdef CONFIG_32BIT
--#define PER_CPU_OFFSET_SHIFT 2
--#else
--#define PER_CPU_OFFSET_SHIFT 3
--#endif
--
- .macro asm_per_cpu dst sym tmp
- 	lw    \tmp, TASK_TI_CPU_NUM(tp)
--	slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
-+	slli  \tmp, \tmp, RISCV_LGPTR
- 	la    \dst, __per_cpu_offset
- 	add   \dst, \dst, \tmp
- 	REG_L \tmp, 0(\dst)
--- 
-2.47.2
+On Wed, Oct 15, 2025 at 03:27:12PM +0200, Heiko St=FCbner wrote:
+> Am Mittwoch, 15. Oktober 2025, 14:58:46 Mitteleurop=E4ische Sommerzeit sc=
+hrieb Quentin Schulz:
+> > Hi Heiko,
+> >=20
+> > On 10/8/25 3:31 PM, Heiko Stuebner wrote:
+> > > dclk_vop2_src currently has CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REP=
+ARENT
+> > > flags set, which is vastly different than dclk_vop0_src or dclk_vop1_=
+src,
+> > > which have none of those.
+> > >=20
+> > > With these flags in dclk_vop2_src, actually setting the clock then re=
+sults
+> > > in a lot of other peripherals breaking, because setting the rate resu=
+lts
+> > > in the PLL source getting changed:
+> > >=20
+> > > [   14.898718] clk_core_set_rate_nolock: setting rate for dclk_vop2 t=
+o 152840000
+> > > [   15.155017] clk_change_rate: setting rate for pll_gpll to 16800000=
+00
+> > > [ clk adjusting every gpll user ]
+> > >=20
+> > > This includes possibly the other vops, i2s, spdif and even the uarts.
+> > > Among other possible things, this breaks the uart console on a board
+> > > I use. Sometimes it recovers later on, but there will be a big block
+> >=20
+> > I can reproduce on the same board as yours and this fixes the issue=20
+> > indeed (note I can only reproduce for now when display the modetest=20
+> > pattern, otherwise after boot the console seems fine to me).
+>=20
+> I boot into a Debian rootfs with fbcon on my system, and the serial
+> console produces garbled output when the vop adjusts the clock
+>=20
+> Sometimes it recovers after a bit, but other times it doesn't
+>=20
+> > Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+> > Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # RK3588 Tiger w/D=
+P carrierboard
 
-base-commit: 5a6f65d1502551f84c158789e5d89299c78907c7
-branch: up/percpu-shift
+I'm pretty sure I've seen this while playing with USB-C DP AltMode
+on Rock 5B. So far I had no time to investigate further.
+
+What I'm missing in the commit message is the impact on VOP. Also
+it might be a good idea to have Andy in Cc, so I've added him.
+
+Greetings,
+
+-- Sebastian
+
+--fwgcdh6ni2fyyeru
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjwJsgACgkQ2O7X88g7
++pq1kg//XaEftjAulYritpGVJ9ktfx9Y37CPdTrs+MBY0C3e9t9e0jf9WPWkREY3
+Dc/cX8SmQzSsVqvEfS06mxZwZ1d8Gz/4Q/XrqwKZZusoFz/gvKzOSMqd6knBBMKc
+9U2zLzjgXmzg4BSH/mVhp1gDEk++djQzknyzb6giTwft4Mgdo7q6Ft1OUoxtfOuc
+q5X+gS/QHLkehiu4eQMc02QQqa+abOYZhcZsRmH1rxDmYLoCfuADqWrTrS1RbtwG
+Ln8n9/0XCxzQZG8a28IndGwkm5jVr74TldJdT16Z2UKaIT3c96sSL7ot7dE7pd5t
+WP05P6HqQCiEpqKmlOEpGBsmwUmpThN3QmNVzKSsjUuyXwkcZNHp2MT6RzmiDUzn
+HGuXTIl84Bj/fO7/67VEbvstO6sUDC74Wkri34I6QRoXBmlWRE9aijsB6arOqgC5
+i106vm3KrV5auXKX4qRylzW+v8BIvxCFd2rXLCnUOZXSw4MXFyFwxlq0R8bPPVNj
+GmpsIBC4QA60H4SPr7v2G1tua7TWurLa+lPiyZW0zqImbqZopzzNG3+/HgfnoXg7
+SvNI3LYzN1hnY64brkZeLpc41ckQEg9nxRHrr6uP16N7HI65n8Bw6Bt478p1NFMs
+zcgTuKGwzO2xSvNRMT2N+iflMikysLHQ8zqssgGFtbMur0vgPvM=
+=+w2d
+-----END PGP SIGNATURE-----
+
+--fwgcdh6ni2fyyeru--
 
