@@ -1,195 +1,242 @@
-Return-Path: <linux-kernel+bounces-854638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D799BDEF2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:12:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20F6BDEF3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF2F189BE90
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:13:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37FC3AA8D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4297725BEE7;
-	Wed, 15 Oct 2025 14:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE2A1EDA03;
+	Wed, 15 Oct 2025 14:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bGlp81zB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwjaxyGJ"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE1D3594B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF62748F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760537550; cv=none; b=iNpUbnwRYe042ky38Slg5YTTd3pYrIrfLQNp7qwmHIXDDCCDs+7gf6y/vtjINZ4V8LYOfxWA/IWK324HreD7xd5Lhu6+Q93Z8Y6QbFlMg2D8RwWNt2I11qKDfPcFHbyz9ZzPMtj8uLitHGSITYl3uVWkvgPYDLxrYG5C7D3nZvg=
+	t=1760537736; cv=none; b=XOLZJ15bwu0NpanRhwHxy7WmWMMOP+0BQv1I9Vtzh2Q2ITJuTyR4ulyRAC/CPoYkoOGSTGWxLNLdWHXqhBi9V0JI9GglsJFyXFq2lZqM+gHz7DAHIy3WJWK27KdihHWyccFDxsXoER63fkPh2sF/uTcKCtSygO+z0YcEiPK4x2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760537550; c=relaxed/simple;
-	bh=0/Nkjxawte1xSGWBAeAz4zNlicLOOiHatyq2kN/fkSw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=clDwW40hHj56HAVXGDUVOkUVcgTHG2VnRqTx4egb7guFs3wBLs1aYkkJiaXhoDx+KTyRWGBxjzsSYT0Mii5uIUuZNj7RoOQbIkDVoHgK8P02ONKoMAHKTOyXug2S5YDWiaAvfDebYt4xlFPIDBjvCK/ZZBhgxTjnx5R3xrUuh9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bGlp81zB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAptrG005327
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:12:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4wHo8Vra1vzjyqc4KdZsz2I/6mrjzzqutTDTJTdctpY=; b=bGlp81zB3/kC2eot
-	K4nsU9MxuIjed8SJ9zqWT6ieOCVdE/XPJQvJJbm40hs2/N53lU5JKl8EWJVBaHc0
-	cLz8jE4DFKcrnpKdvIymQz/3pwKl8rkGVMp6SLxlMcxseiiem57JtO+MvG+/sFLd
-	l+5x24nBoiamMx6DDqLjUVPzXEf+6vuyZC/QDMvKnWS86tjdMfRG5wKU/Hhqp0XK
-	uprIPQYD2wY8gu+BYF/Maskebbc7ImLW0lD15BQ3LXXfrJlFXMWm7HDIjFECxxbk
-	Tz9AfW9BesxLbxqyLe13HJkukWjywcTcbn5q3GFtAS+tAGZrkHZ22B9J3KQxcrhb
-	m8J4vw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1agy48-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:12:28 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78106e63bc9so8800417b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:12:28 -0700 (PDT)
+	s=arc-20240116; t=1760537736; c=relaxed/simple;
+	bh=2NH42ngz5BjrOXep0+T+NJ9fLWNf0+qyZb1AnIDUWaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mIvbl1uA5Niic3CG9sZGs7SuMhSS6qEhsg0+vtv/lXajYhH8hlWFRT7N9WlVTbVMlOgq36bjVUKFxBvS5OPMhToYOjnOIJtpnTkswH3zmwwyPynk/aaV1qPHcRrwJgoMSMHqRGHqgGbEkWX1fKoBmu5qc8UJX+gA4P/XIxH9PxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwjaxyGJ; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781db5068b8so5275536b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760537734; x=1761142534; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jsBPhxeyDo7XubBbSOL5sXpSroAunmb7PEWnljn0cZg=;
+        b=lwjaxyGJNAo4B/ZvOptaRcy9ejbCS7ZnbK7Wb7HisT/2u9VrWLqqg0vABafnX0idgC
+         JyRjF5iafEq/w3Sp9Yx0McHm3QtBhUsQhtOghZobvxRckbSX8NJQ6z1xM9pX4d8wkdbl
+         S9EfpPDBTgxORdG6X/0XrPOileyrDWNK51vqdGqT+dF66lm73UZeVdzI1Zujvseru3sk
+         53G0FByg0lMGPYcEg2/FCmjfS877HTb90xjtFsTYCXTawnC4PiogNm1geJMsXZf2f4Az
+         aIlEP2h2jrT4AJADauczWH6ZyLhk8g97KJx+P02o3lvb+FiqEsWhKj+b3eowVZQMmtQb
+         uUgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760537547; x=1761142347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wHo8Vra1vzjyqc4KdZsz2I/6mrjzzqutTDTJTdctpY=;
-        b=eqQmBnTri++3KLdqheVITYLZcvbZGy+TyLE+GVtzwwqWqaNc2SUtZroItpmUIpQ4NS
-         bCXOB/sJwg+xkfULKw23zfeLvd8dI7vwftoNpQ5Elh8kyIiDnr2Ytiil88hnq3dGgyez
-         0SKjgIG6iqxqeI8f0n971MMupDLUI31xZODdstnh+SeUPkozYjZx8/UVlK1O6PgknC/t
-         FKL/FDcG0I3+0r05+7tR7fWN66slD5csro20/5/Md7QY7pMmTcB6hdXvaq2kVoEpeGZt
-         N/S+cZIMroj8PKfvAPtkw7An+NEUY0QHBXx+IPEMlWsOJfohBy5mNusZxZVYzNI5dNkX
-         /B4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVqDi+LQLYm3zQdYLhMR49b3UcFniD9sv9IK6hxEIRAjqQpJarb70ZjpBFwQuwiQe0p2mgCyUdX6XvakqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsK+96tJ/RdzlwmVA3WDJr0tvwkpxLTVCtQnkMFm7G9vCwiDA5
-	+qSwLZP75PEX3cfAbaU4FiUsTcdOkKi/Nt9pr6KvWK11o57+D/JdaYFIe8RFNcNuBc7K9gHUrrY
-	N6it5joYZPzXrYy1hZzksDum1cJEpJkQyDczGmg0aHrZH1cqyUZjHNU33+GMDTUoCbMM=
-X-Gm-Gg: ASbGnctg+aQs2J4yDTqsvAXCudcYkpIilVsQHMOXzRjn9nZb8gvNGVRVt6bBqur84UP
-	JNihFeR8lcw87Sl+M5CRqprGxY1ROlXqff6A7/uh6wqQJrLUvdHH73h5LBMfiPiqbaGWQ9Xro8B
-	DmoFNYLlBafNA5q06yjZSUHyVsjN9Mv7nGd1c0Tfo3X5+0vsN8GnDnkzDDDMu9/0Vu8GMh4rhMt
-	MYQYl9q4JXU+mXPzePWQxdG36xT48MvY/K/xnjwtNEBvQNuKWWMOpw8Krm5EcaLat0uCum/8qm8
-	MHtG70dhWLQ02xCzl+1f8MDqaRRDbe2lp95fsuks4jJKfRb/+rq9NaUazTHa/dcsMuubIig=
-X-Received: by 2002:a05:6a00:3e27:b0:77f:2899:d443 with SMTP id d2e1a72fcca58-79385ce7d1emr33730442b3a.10.1760537547289;
-        Wed, 15 Oct 2025 07:12:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9O/0dJRMlLmSW2AYZVzbX7T6xJcZVwENkY02XFT5vDOdiAN4Kwxk2zeM2DZtd/QPojIZL9Q==
-X-Received: by 2002:a05:6a00:3e27:b0:77f:2899:d443 with SMTP id d2e1a72fcca58-79385ce7d1emr33730391b3a.10.1760537546628;
-        Wed, 15 Oct 2025 07:12:26 -0700 (PDT)
-Received: from [10.218.44.34] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09f407sm19119352b3a.43.2025.10.15.07.12.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 07:12:26 -0700 (PDT)
-Message-ID: <6b6a6cd1-faf7-4ef5-ab24-171a59c99085@oss.qualcomm.com>
-Date: Wed, 15 Oct 2025 19:42:21 +0530
+        d=1e100.net; s=20230601; t=1760537734; x=1761142534;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jsBPhxeyDo7XubBbSOL5sXpSroAunmb7PEWnljn0cZg=;
+        b=TZp5fC54Ie5VRmPRBMisXAoecDB5I9DwHH0pCfTWoUs58/YX4Qzs4SLuzTUzabY2Pp
+         4gN8JxaB3emfnKBUqBvuzjLGKHYZfge6UJubpeA69tgi7Q5bkfgxI006Q78aGNTRndUI
+         bJhdfHu4GUuyzG5RF+rvBYlE1bItcUbD+3rs4XWefPH5QA9Uu1wmjvFUr+1ms+SoBT7J
+         ZvlXa/XcsHRbuwSlvZ+BfhjoEUFewzUh5doS5wFfoiE3DZJl2ED/InbByPc+gtyWuHOa
+         J21XFomkUToED+lb1ZAUeDk9a4qJt71OyMvHijU6jAjS2jdEgQPXUhHFk7u2f/CcSbxL
+         +dhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs+emlQI34T1wtT4L5NnviYfzJnEBZfZBEc5qfBik1JI4duYrW0vsMuq8hGEDr4rmEsYzH2zE8eCtAqjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRhJ7psftt6A89KsG8kmGE4+lJXiA862Kw/eppRieM/OADkNEK
+	8lvfX9yrz8T/kfRQ8OpqhqujHmgfLNYhIWEF3vx4VNaWytL0H8Dc0aNb
+X-Gm-Gg: ASbGncssNuPy+6Wq2k/mmyIXm8DHjxuFzkQGS/auXR9NHtkJYaqRjaL0H/HY2gEcwr6
+	yhDozitiK/XpI/bBIM1Cr7wiA1L1NhlturMgvWJr/yWozqEfZvlTjd2wdiho48OR/DeYAzhBWs0
+	FlQ//1hylrepK9cyoIgjP0FysRtu/BSjpVAoAHqMjYBB8KaI/nJC9+39IptGyuaD0CaYKwGgT1Z
+	ZVWb99YhnG+jJhntDizm7gIjCvex613hZnfTrk3vqZec6dGWDwJe/j5AM1XIe7qRvQ4UdBYCspI
+	3zbX7P5gN/t0RaV75s4q5gvv6K1UXbQkyhgV+F0oiDFW6BznulJuL4cS8kN5Wz7ZyDjyZVMeg33
+	IV8VIT6QCnFYs0RWHhaBvqHA6bt+TEcI8i8mM6ectWoHyAjAgrTR5vsHwAby3crEuoUL96mWfW0
+	s9k0JiP5qwjVpzhp+VEtfu0E0RHuAjQjx8xyhNzINM3rq0PM0paMQbzaJFjPbb
+X-Google-Smtp-Source: AGHT+IHDPZTz5uXFv1v6brQ0zwT6bPhuD1aOTwH/T80neFH6VufpAVd7st231F+cgFdFXYzM34i+JQ==
+X-Received: by 2002:a05:6a21:6d9f:b0:252:2bfe:b65a with SMTP id adf61e73a8af0-32da80bbc79mr35587318637.7.1760537733666;
+        Wed, 15 Oct 2025 07:15:33 -0700 (PDT)
+Received: from AHUANG12-3ZHH9X.lenovo.com (61-221-208-111.hinet-ip.hinet.net. [61.221.208.111])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b0606fesm19172051b3a.12.2025.10.15.07.15.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 07:15:33 -0700 (PDT)
+From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Gabriele Monaco <gmonaco@redhat.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	athieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Nam Cao <namcao@linutronix.de>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ahuang12@lenovo.com,
+	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+Subject: [PATCH 1/1] rv: Fix the invalid address access when reading enabled_monitors
+Date: Wed, 15 Oct 2025 22:14:45 +0800
+Message-Id: <20251015141445.969-1-adrianhuang0701@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/24] arm64: dts: qcom: glymur: Add QUPv3 configuration
- for serial engines
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-4-24b601bbecc0@oss.qualcomm.com>
- <8828946b-3979-4e7b-a11c-740d8a6253ce@oss.qualcomm.com>
- <235cf6b7-e758-4d16-b5a1-182cc869b2e4@oss.qualcomm.com>
- <bngdsqmcxtlolmwr4it3wy7rldikzffgwwuyj443dc3v3ilaju@eiveujsf4up4>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-In-Reply-To: <bngdsqmcxtlolmwr4it3wy7rldikzffgwwuyj443dc3v3ilaju@eiveujsf4up4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68efabcc cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=b3unEIaTcIFgp9XBJ8sA:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-GUID: lPGUDsTezn56z1BhUbKnNhsfQn3hBRgA
-X-Proofpoint-ORIG-GUID: lPGUDsTezn56z1BhUbKnNhsfQn3hBRgA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfX/bZEYRm9hbFz
- 2v6HPUq4B6fqFHgdj4Fzbt4lRXqjdPK0UEdXzixC0DK2x+vIaXmvUp4fOzPJr++m8GbuTxsrNPm
- P15pwJ+4ax03e2wqm9/SPRYjafIvBkpXYRcqkkdA6kbFKcHcr8g1+iHIDywpSH1WLl9Cz7U5p6l
- ZG5lQivLoVpL23PqmKTrjZTfsI80updHrRorlMrHSjFSCH7lG1uPNP56DUexog0bjyYdrrHa3nf
- 1DvmCmQzOaaaT++qdCw+Eax7DnItMCnwRudGrB+4KDHskEmd6ANRpRU3rNDmJmeojrvb4pSz//z
- mlljUY5gXD/bZliqdvxgZ151r3B0uqIO3S6jMUwNHNzpPQ02c6DMe7GZUKUULQJvwzBA0Q/6WwX
- Hqx61JOE0vEZLJELSrpRzL+P/y8ksg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- adultscore=0 clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+When executing the following command (reproducible 100%), a kernel oops
+occurs:
 
+  # cat /sys/kernel/debug/tracing/rv/enabled_monitors
 
-On 10/15/2025 7:03 PM, Dmitry Baryshkov wrote:
-> On Wed, Oct 15, 2025 at 03:58:31PM +0530, Jyothi Kumar Seerapu wrote:
->>
->>
->> On 9/25/2025 3:48 PM, Konrad Dybcio wrote:
->>> On 9/25/25 8:32 AM, Pankaj Patil wrote:
->>>> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->>>>
->>>> Add device tree support for QUPv3 serial engine protocols on Glymur.
->>>> Glymur has 24 QUP serial engines across 3 QUP wrappers, each with
->>>> support of GPI DMA engines.
->>>>
->>>> Signed-off-by: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->>>> ---
->>>
->>> [...]
->>>
->>>> +		gpi_dma2: dma-controller@800000 {
->>>> +			compatible = "qcom,glymur-gpi-dma", "qcom,sm6350-gpi-dma";
->>>> +			reg = <0 0x00800000 0 0x60000>;
->>>> +			interrupts = <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 589 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 590 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 591 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 592 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 593 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 594 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 595 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 596 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 599 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_ESPI 129 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_ESPI 130 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_ESPI 131 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_ESPI 132 IRQ_TYPE_LEVEL_HIGH>;
->>>> +			dma-channels = <16>;
->>>> +			dma-channel-mask = <0x3f>;
->>>> +			#dma-cells = <3>;
->>>> +			iommus = <&apps_smmu 0xd76 0x0>;
->>>> +			status = "ok";
->>>
->>> this is implied by default, drop
->>
->> Hi Konard,
->>
->> Do you mean we should remove the status property for all QUPs and GPI_DMAs
->> from the common device tree (SOC) and enable them only in the board-specific
->> device tree files?
-> 
-> Could you please check how it is done for all other platforms?
-In other platforms, the status is set to 'disabled' in the SoC device 
-tree file and enabled in the board-specific device tree files.
-I believe it's fine to make the same change here.
-> 
-> 
+  [dmesg]
+  BUG: unable to handle page fault for address: ffffffffffffffd0
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 3ddf828067 P4D 3ddf829067 PUD 3ddf82b067 PMD 0
+  Oops: Oops: 0000 [#1] SMP NOPTI
+  CPU: 479 UID: 0 PID: 15237 Comm: cat Kdump: loaded Not tainted 6.18.0-rc1 #25 PREEMPT(voluntary)
+  Hardware name: Lenovo ThinkSystem SR645 V3 MB,Genoa,DDR5,Oahu,1U/SB27B31174, BIOS KAE139B-5.70 06/11/2025
+  RIP: 0010:enabled_monitors_next+0x41/0x60
+  Code: c0 66 a6 bb 75 24 eb 2d 66 66 2e 0f 1f 84 00 00 00 00 00 66 0f 1f 44 00 00 48 8b 50 40 48 8d 42 c0 48 81 fa c0 66 a6 bb 74 0b <80> 78 10 00 74 e9 c3 cc cc cc cc 31 c0 c3 cc cc cc cc 66 66 2e 0f
+  RSP: 0018:ff565a8b1e653d38 EFLAGS: 00010203
+  RAX: ffffffffffffffc0 RBX: ff41e057260eabb8 RCX: 0000000000000001
+  RDX: 0000000000000000 RSI: ffffffffbba66640 RDI: ff41e057260eabb8
+  RBP: 0000000000000000 R08: ffffffffbb313406 R09: 0000000000000034
+  R10: 0000000000000000 R11: 0000000000000004 R12: ff565a8b1e653dd0
+  R13: ff565a8b1e653da8 R14: ffffffffbba66640 R15: 0000000000000000
+  FS:  00007f8da78a4740(0000) GS:ff41e076cde6e000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: ffffffffffffffd0 CR3: 00000001b6b26005 CR4: 0000000000f71ef0
+  PKRU: 55555554
+  Call Trace:
+   <TASK>
+   seq_read_iter+0x2ed/0x480
+   seq_read+0x12e/0x160
+   vfs_read+0xc1/0x370
+   ? count_memcg_events+0xb6/0x170
+   ksys_read+0x6b/0xe0
+   do_syscall_64+0x89/0x810
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  RIP: 0033:0x7f8da79a0321
+
+[Root Cause]
+enabled_monitors_start() calls enabled_monitors_next() and passes the
+address of a struct rv_monitor instead of the address of its embedded
+list_head.
+
+Commit de090d1ccae1 ("rv: Fix wrong type cast in enabled_monitors_next()")
+assumes that the argument p refers to a list_head (the embedded list
+anchor). This leads to the miscalculated address for the corresponding
+struct rv_monitor object.
+
+Here’s what happens in detail:
+
+  1. Address of rv_monitors_list = 0xffffffffbba666c0
+     crash> p &rv_monitors_list
+     $1 = (struct list_head *) 0xffffffffbba666c0 <rv_monitors_list>
+
+  2. offset of rv_monitor.list = 0x40
+     crash> rv_monitor.list -x
+     struct rv_monitor {
+       [0x40] struct list_head list;
+     }
+
+  3. In enabled_monitors_start(): The local variable mon is assigned
+     using list_entry(), resulting in:
+         mon = &rv_monitors_list - 0x40 = 0xffffffffbba66680
+
+  4. In enabled_monitors_next(): The argument p becomes
+     &rv_monitors_list - 0x40. However, container_of() subtracts the
+     offset of rv_monitor.list again, making mon equal to
+     &rv_monitors_list - 0x80. This double subtraction results in an
+     invalid address and triggers the page fault.
+
+Fix the issue by returning the address of the list_head from both
+enabled_monitors_start() and enabled_monitors_next() instead of the
+address of struct rv_monitor.
+
+The following verifications make sure the issue is fixed:
+1. Without enabling any monitors
+   # cat /sys/kernel/debug/tracing/rv/enabled_monitors
+   <No output; no kernel oops.>
+
+2. Enable monitor and reading enabled_monitors: Test #1
+   # echo 1 > /sys/kernel/debug/tracing/rv/monitors/wwnr/enable
+   # echo 1 > /sys/kernel/debug/tracing/rv/monitors/rtapp/sleep/enable
+   # cat /sys/kernel/debug/tracing/rv/enabled_monitors
+   wwnr
+   rtapp:sleep
+
+3. Enable monitor and reading enabled_monitors: Test #2
+   # echo 0 > /sys/kernel/debug/tracing/rv/monitors/wwnr/enable
+   # echo 1 > /sys/kernel/debug/tracing/rv/monitors/rtapp/sleep/enable
+   # echo 1 > /sys/kernel/debug/tracing/rv/monitors/rtapp/pagefault/enable
+   # echo 1 > /sys/kernel/debug/tracing/rv/monitors/rtapp/enable 
+   # cat /sys/kernel/debug/tracing/rv/enabled_monitors
+   rtapp
+   rtapp:sleep
+   rtapp:pagefault
+   
+Fixes: de090d1ccae1 ("rv: Fix wrong type cast in enabled_monitors_next()")
+Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
+---
+ kernel/trace/rv/rv.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+index 48338520376f..021cc9bc57ab 100644
+--- a/kernel/trace/rv/rv.c
++++ b/kernel/trace/rv/rv.c
+@@ -501,7 +501,7 @@ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+ 
+ 	list_for_each_entry_continue(mon, &rv_monitors_list, list) {
+ 		if (mon->enabled)
+-			return mon;
++			return &mon->list;
+ 	}
+ 
+ 	return NULL;
+@@ -509,23 +509,21 @@ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+ 
+ static void *enabled_monitors_start(struct seq_file *m, loff_t *pos)
+ {
+-	struct rv_monitor *mon;
++	struct list_head *lh = &rv_monitors_list;
+ 	loff_t l;
+ 
+ 	mutex_lock(&rv_interface_lock);
+ 
+-	if (list_empty(&rv_monitors_list))
++	if (list_empty(lh))
+ 		return NULL;
+ 
+-	mon = list_entry(&rv_monitors_list, struct rv_monitor, list);
+-
+ 	for (l = 0; l <= *pos; ) {
+-		mon = enabled_monitors_next(m, mon, &l);
+-		if (!mon)
++		lh = enabled_monitors_next(m, lh, &l);
++		if (!lh)
+ 			break;
+ 	}
+ 
+-	return mon;
++	return lh;
+ }
+ 
+ /*
+-- 
+2.43.0
 
 
