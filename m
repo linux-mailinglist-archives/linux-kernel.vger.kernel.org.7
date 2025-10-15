@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-854229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF40BBDDDDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CF1BDDDE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBA9E4FCBEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DDAF3B7B87
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A9131B81E;
-	Wed, 15 Oct 2025 09:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A1631BCA4;
+	Wed, 15 Oct 2025 09:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fpsm98x7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a32v3isP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608A431AF21;
-	Wed, 15 Oct 2025 09:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E4731A804;
+	Wed, 15 Oct 2025 09:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521814; cv=none; b=p5nPgZ1QrWllkZ0cF7M8XMkpFZrEiHJyIoOf3HHQuWRMV2+ua3jAbD4qQCbSzc6NH+3YE55d9zSm88+gZjxtt1zRj9ZVVmeUiHe65CQeJY8FvKsFo3pBPnwcNAf2D6o63Zf3Kx3be4qeWywgmiWnQXjO9k+J1vYmjIFQjJqjf3U=
+	t=1760521830; cv=none; b=I5x4Si56PwIMMY+UCEDpfKrlA83j0nmqBNprE7z3SXKXX/aSYSKcTe9BWniZzR+yS4AtlTloctbW85GHl9clsQMnTJ17FSyNQqrEjb1Exrh7twP+tfi0pnoh92kLkzY+IPCUOB7S00DLPycDDuG42iZjdbixAdMpG0oPen6VQqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521814; c=relaxed/simple;
-	bh=A8PnYNnjOxYGLcpodzQbDf2XY+QgzNNYgoiEfHUlOa4=;
+	s=arc-20240116; t=1760521830; c=relaxed/simple;
+	bh=DAQ97XxkDaOBHjNynMId/gOsAuupI3l3Tc49SMZfcaY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gc9GYgfEX6kgXAPOZJhYbZG/TB1a4n7lY2xkmL2yk6/axoGQfdf0TG3n+riEawH0wHwCsUb/AxbqkW927Fy1vOiNk752J5abOg9u0KxDH+FvXrBkFKM7eJSfgWeMW+tmmNTTxq/ShvqmAzQMcovcJhgeKxOb0FB1A8DkzIvAT5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fpsm98x7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B84C4CEF8;
-	Wed, 15 Oct 2025 09:50:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jXezrzD14sz69KNCX3rUTROLtfu/Cvb9TgX9Q6ge5Td1M+oXM0pPlZyKrwLXBmioisNdUkCtG1JHLKWHDQfjd1KQiXsnxIdeHOFaBAt1FOX40acwqcoJUrZqRsi5QdRy5/GGUruty2Ip6pLcs17lNpTgeM42++UjBZs2XX+xATc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a32v3isP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1504EC4CEF8;
+	Wed, 15 Oct 2025 09:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760521813;
-	bh=A8PnYNnjOxYGLcpodzQbDf2XY+QgzNNYgoiEfHUlOa4=;
+	s=k20201202; t=1760521830;
+	bh=DAQ97XxkDaOBHjNynMId/gOsAuupI3l3Tc49SMZfcaY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Fpsm98x7e2NbvjVVNVBF/xkK+t9RhdQn4+bpOXyY8Voz8+yEhTAzQtqJS7jOtNPBD
-	 DVDjCQSwrALxpb5oBqApFC0MWI0nkGNMXS/z+DbjJvLjjEoYwnVDd4nstxTVNykgDS
-	 en6m8t4Ws096QL9ai1wkMOef8+wF/NqmY8kFCtB/3a/Clmg+ILDW1vEaaJU43DyBs/
-	 P3pKhJjGzCEuF1hV9OMv9+M7NLi9YTzaqH1WRdvdHZBt5GNdLrRNvc8BmZmFypfzBQ
-	 nCA7XVnTAS6USTCc8LTvsWnk8jzmnhzRo4lmkwkTD2odUs0SdoQdurKqvM1PJ/6FLb
-	 4+DPMTHrR0ueA==
+	b=a32v3isPJ1uRLrGg7wRW5KoB/X11+APeu4LxPqFyijyED4caYHtlWUGCNBgbK/ux4
+	 Kon+P5NcE5oyqaIdH5o1yFgIMuVuHAa3hAAm4VQDbf0Kur1mOHuRt5DL2GD+64TVvX
+	 TEbH7zMhdnoMNDC+HpEK4ifnaeVk+ukcprVWgxcKt1lD2Jwd9lj5EL/zchNvVMcrEQ
+	 8zSTRErAW/aY9bvTw/K8/uu1eC737Q9n2Zb2b3r7HlnRoX306ijdcT2sB1Y7/VG6yi
+	 Wbr9lruIl9ffAiO/vfsxCBVclpF5xk6HX5AuNar1uFQMMaT18UewL+RTL47FbHheBG
+	 DCWlj8aJd1+5w==
 From: Mark Brown <broonie@kernel.org>
-To: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, 
- krzk+dt@kernel.org, lgirdwood@gmail.com, robh@kernel.org, 
- support.opensource@diasemi.com, 
- Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: devicetree@vger.kernel.org, kernel@collabora.com, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251001183648.83379-1-ariel.dalessandro@collabora.com>
-References: <20251001183648.83379-1-ariel.dalessandro@collabora.com>
-Subject: Re: [PATCH v3] dt-bindings: regulator: Convert Dialog DA9211
- Regulators to DT schema
-Message-Id: <176052181177.20825.9765115621999860948.b4-ty@kernel.org>
-Date: Wed, 15 Oct 2025 10:50:11 +0100
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ andersson@kernel.org, konradybcio@kernel.org, vkoul@kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dmaengine@vger.kernel.org, Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: quic_varada@quicinc.com
+In-Reply-To: <20251008090413.458791-1-quic_mdalam@quicinc.com>
+References: <20251008090413.458791-1-quic_mdalam@quicinc.com>
+Subject: Re: (subset) [PATCH v2 0/9] Add QPIC SPI NAND support for IPQ5424
+ and IPQ5332 platforms
+Message-Id: <176052182781.20973.15827273241958819780.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 10:50:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,21 +63,31 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-96507
 
-On Wed, 01 Oct 2025 15:36:48 -0300, Ariel D'Alessandro wrote:
-> Convert the existing text-based DT bindings for Dialog Semiconductor DA9211
-> Voltage Regulators family to a DT schema. Examples are simplified, as these
-> are all equal.
+On Wed, 08 Oct 2025 14:34:04 +0530, Md Sadre Alam wrote:
+> v2:
+>  * Added Reviewed-by tag
+>  * Added Acked-by tag
+>  * Updated board name in commit message header
+>  * Added \n before status
 > 
+> v1:
+>  * Added support for spi nand for IPQ5424 and IPQ5332
+>  * Updated bam_prep_ce_le32() to set the mask field conditionally based
+>    on command
+>  * Removed eMMC node for IPQ5424 and IPQ5332
 > 
+> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] dt-bindings: regulator: Convert Dialog DA9211 Regulators to DT schema
-      commit: 6277a486a7faaa6c87f4bf1d59a2de233a093248
+[1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424 compatible
+      commit: 454cd43a283f7697297c52981c7a499a16725656
+[2/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5332 compatible
+      commit: 4412ab501677606436e5c49e41151a1e6eac7ac0
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
