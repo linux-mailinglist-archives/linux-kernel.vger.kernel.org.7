@@ -1,187 +1,114 @@
-Return-Path: <linux-kernel+bounces-855122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58714BE04C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0025ABE04C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C1A546BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AECE3BB942
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EC030C341;
-	Wed, 15 Oct 2025 19:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AB1306D3E;
+	Wed, 15 Oct 2025 19:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nOQlqytK"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgBFlW5N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15FC306D40
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA575302CAB;
+	Wed, 15 Oct 2025 19:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760554856; cv=none; b=u5T0cB98/mbt/xp+b3CTYes5lAiic7Vf0M/1YQmO9Rg5TZGuwVgJ4aXUfDsOJ2BrNvSXFwWHrLeQzHHSqa1dtPpjOJjamcwrjbjvvkHX+5VYSDA9QY/kZi3OA8MSM3Tyg1eS5S/oB22j+jpytnFCmyMI97A+khGdGBNx5kcj+yE=
+	t=1760554854; cv=none; b=RafCs1NzsPNwUGH2EH2nxJ4E6kD/AhEU7X7Mi+eGQMRcDtXYOkl7SSSYQ6AfA+gj52xBBD9WOeS9sOjxCDmxBTLVGbH2+UTh97GXnJIFfMFePpsTZiJPRlC14Vznvbx0eATE0opbbo8AmHfOw4z11d6J2Uv8csLznRLw0wSTl9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760554856; c=relaxed/simple;
-	bh=1H/TAjStyaI6entLwQUNBGgnkdgglmJ5EvafY9K9xl4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CsnZVVWSVZ0cvTkLK2q41Dov3wdj2cUvVaEWxGv8lld8x4oDtyzTALDxMX1mAEXS1nZlFzVfjt5YLKaO0Uxqe3D5vNSjplYTRKzo92KSwm+OD0TKAeXH9pW9tKAuxiA7mHrNkkCI6VWiWcaNVsOkW09z/I8WC6KMEdLFHQFbRW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nOQlqytK; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eddb7e714so9529655a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760554854; x=1761159654; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/50hzPJcz2Tgtv5Q95r1Wz9trycmcqvXu8eukDbYxw=;
-        b=nOQlqytKfKqDbqgekUBKQYaPTWU8+8mhtxzQsEGATxZ3zCnoGIaMyt+sYGA5mpF6RC
-         qCU8KFQAf/7UQG81ghuhznRYNrkudy3BxZa6r9UaqSfUxDQUDdKWyvOaAKxqqWFnksk7
-         rDAut6Xc84/nibvyW3MBn6u9rI/yqMf783XMw4/DiCd4Q8cjassSvoTLz2sIzJ3AAPwA
-         OPPQ3CIL3qH6W0F3fzpVCwV2LlAVQh4NFACQo49cX092tXHOc0vn7zcArEb7d6QJtMLB
-         7MHgNlDvl8NAF33OdjL/n635sxf4bz54ojwl0yZyM0kwJSnvXqxrJxLJ3APbnrGMmvmn
-         qTKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760554854; x=1761159654;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/50hzPJcz2Tgtv5Q95r1Wz9trycmcqvXu8eukDbYxw=;
-        b=EoaLw6mBGX3bLwMdmVXo9+Z4muJ8zQkvdY6RzFCPRREa5bBGoBHjwq/LEZaj0T1Cbq
-         pc/whuKjhZaI0LxoINTfABN8ru2xE3C03MBNrxbonlT2Xd90GcrM+V5j6oje4jbV2JeX
-         pWuJEavbkvV7hAh0x4Jq9L9OVPyMVlRln70XcT2vM0CcxL6oxcqgkyc6LUTm7Pfs+B7z
-         MtalBhn0eggcVuwkaCrISfuaLOQphOovNAxBH+lw0Za89QJZgE+/M4oglVK21s+sbpUi
-         VJ5ET4s0Q3ttjBIter6nMepbtmc2iBGqP9ruvJqYbpu8c2aY1lJuE2bAotG/GWiJEqaw
-         xiPg==
-X-Forwarded-Encrypted: i=1; AJvYcCULkxLiw/SsSkndQM1MYueURdPi2CGtkrzk24ep4HEMv5rCaBWxgpsAffNj+D05lXO8Sd1qwhcoMJfXU3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ+AeYLMZLCPGLo8vYAh82ynYeYJ0zfQUlKTwd4ws/PC1HcYVk
-	cMeE10L3eboSAPdyosMjRxCWZqH4JYCNGA8z3ZK94gP+7u0n0D3fIi4RWGLND98rXyJLyd0SJ8E
-	j3/wV6A==
-X-Google-Smtp-Source: AGHT+IF0aq3dEuFrF7ECI0NlSr0qYUf7fzC5xMEvWlZqMU7mOZwkC2btj1VQ3xgFa8CghlVjLKHevu9vhKE=
-X-Received: from pjbfs17.prod.google.com ([2002:a17:90a:f291:b0:32e:bcc3:ea8e])
- (user=wyihan job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b81:b0:33b:6ef4:c904
- with SMTP id 98e67ed59e1d1-33b6ef4cbbcmr19120239a91.20.1760554853833; Wed, 15
- Oct 2025 12:00:53 -0700 (PDT)
-Date: Wed, 15 Oct 2025 18:58:57 +0000
-In-Reply-To: <cover.1760551864.git.wyihan@google.com>
+	s=arc-20240116; t=1760554854; c=relaxed/simple;
+	bh=U1O5JJjDwfsLfdO35GX3nUek30Grms+9GVEVpNFCLUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ixj0sTMwktCtWkc/zxV3QggfAv11Jsq4t0iW6zgPkMiBPUS16eU511/+yNksZbLVO7mZbb/U6ms5D4ubD2PLMPFLDJJACcKMzprPQs8rre24KGSqsczGr5lq6HU+kdCAHTe86J6UpnQ83KW/LJR/dTNka+4VfD3ZpVw9mpoJMrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgBFlW5N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FADDC113D0;
+	Wed, 15 Oct 2025 19:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760554853;
+	bh=U1O5JJjDwfsLfdO35GX3nUek30Grms+9GVEVpNFCLUU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BgBFlW5NsWOtmAhzyadk7XleOyG2zwnk2bAhFHIHHFUFkgpOCBhE1uTpFzClsHmKU
+	 3hhsQsksjGAeomuL1twLTBYfiGivSv1RJcF2Uwn5aNcsLwHR8mvrFOF5CqEPLUMf6G
+	 zwftn98cbaXtvZ4NMA2jAYkx3tSdIfqSuz42ddfjLJgRQnUR2obncd5gxZ50i0wcu2
+	 GRUOjz/Gyi1xKhkld7IVvK+a3HIvGt6yADpEa0v8zpiJ6x47u4DQKWECYM7FiBJ7To
+	 tXXURm0Uw61CkJhTmYNSNt5u/hd3hEEUsthhGIn+KYfcVEFSTxDYFRy6M8cHbbpRX4
+	 8NkCiv0SiP1Qg==
+Message-ID: <578cc11f-654d-44fb-829a-ae6421863d50@kernel.org>
+Date: Wed, 15 Oct 2025 13:00:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760551864.git.wyihan@google.com>
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <0ec7349858142439ed0a250e6c04edf84cb0f488.1760551864.git.wyihan@google.com>
-Subject: [RFC PATCH RESEND 3/3] KVM: selftests: Test guest_memfd behavior with
- respect to stage 2 page tables
-From: Lisa Wang <wyihan@google.com>
-To: linmiaohe@huawei.com, nao.horiguchi@gmail.com, akpm@linux-foundation.org, 
-	pbonzini@redhat.com, shuah@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: david@redhat.com, rientjes@google.com, seanjc@google.com, 
-	ackerleytng@google.com, vannapurve@google.com, michael.roth@amd.com, 
-	jiaqiyan@google.com, tabba@google.com, dave.hansen@linux.intel.com, 
-	Lisa Wang <wyihan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net: usb: lan78xx: fix use of improperly
+ initialized dev->chipid in lan78xx_reset
+To: I Viswanath <viswanathiyyappan@gmail.com>
+Cc: Thangaraj.S@microchip.com, Rengarajan.S@microchip.com,
+ UNGLinuxDriver@microchip.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com
+References: <20251013181648.35153-1-viswanathiyyappan@gmail.com>
+ <1adfe818-c74f-4eb1-b9f4-1271c6451786@kernel.org>
+ <CAPrAcgPs48t731neW4iLq3d+HXEQAezHj5Ad9KR8EK+TNu5wbg@mail.gmail.com>
+Content-Language: en-US
+From: Khalid Aziz <khalid@kernel.org>
+In-Reply-To: <CAPrAcgPs48t731neW4iLq3d+HXEQAezHj5Ad9KR8EK+TNu5wbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Test that
-+ memory failure handling results in unmapping of bad memory from stage
-  2 page tables, hence requiring faulting on next guest access
-+ when the guest tries to fault a poisoned page from guest_memfd, the
-  userspace VMM informed with EHWPOISON
+On 10/15/25 10:51 AM, I Viswanath wrote:
+> On Wed, 15 Oct 2025 at 21:25, Khalid Aziz <khalid@kernel.org> wrote:
+> 
+>> How did you determine this is the commit that introduced this bug?
+>>
+>>   From what I can see, commit a0db7d10b76e does not touch lan78xx_reset()
+>> function. This bug was introduced when devid was replaced by chipid
+>> (commit 87177ba6e47e "lan78xx: replace devid to chipid & chiprev") or
+>> even earlier when the order of calls to lan78xx_init_mac_address() and
+>> lan78xx_read_reg() was introduced in lan78xx_reset() depending upon if
+>> lan78xx_init_mac_address() at that time used devid in its call sequence
+>> at the time.
+> 
+> The commit a0db7d10b76e introduced the dependency on devid to
+> lan78xx_read_raw_eeprom() and
+> lan78xx_read_eeprom() and ultimately lan78xx_init_mac_address() and
+> lan78xx_reset()
+> 
+> In lan78xx_init_mac_address()
+> 
+> Only lan78xx_read_eeprom() depends on devid as
+> 
+> lan78xx_read_reg() and lan78xx_write_reg() do not use devid
+> 
+> lan78xx_read_otp() depends on lan78xx_read_raw_otp() which depends
+> only on lan78xx_write_reg() and lan78xx_read_reg()
+> and hence doesn't use devid either
+> 
+> is_valid_ether_addr(), random_ether_addr() and ether_addr_copy() are
+> net core functions and do not care about driver specific data
+> 
+> The devid read exists in this commit (was added in ce85e13ad6ef4)
+> 
+> a0db7d10b76e was supposed to move the devid read before the
+> lan78xx_init_mac_address() because of the newly added
+> dependency but it was a tricky detail that the author failed to see
+> 
+> Thanks,
+> I Viswanath
 
-Co-developed-by: Ackerley Tng <ackerleytng@google.com>
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-Signed-off-by: Lisa Wang <wyihan@google.com>
----
- .../testing/selftests/kvm/guest_memfd_test.c  | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Ah, I see. That makes sense.
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 7bcf8d2d5d4d..dc3398e22edd 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -539,6 +539,70 @@ static void test_guest_memfd_guest(void)
- 	kvm_vm_free(vm);
- }
- 
-+static void __guest_code_read(uint8_t *mem)
-+{
-+	READ_ONCE(*mem);
-+	GUEST_DONE();
-+}
-+
-+static void guest_read(struct kvm_vcpu *vcpu, uint64_t gpa, int expected_errno)
-+{
-+	vcpu_arch_set_entry_point(vcpu, __guest_code_read);
-+	vcpu_args_set(vcpu, 1, gpa);
-+
-+	if (expected_errno) {
-+		TEST_ASSERT_EQ(_vcpu_run(vcpu), -1);
-+		TEST_ASSERT_EQ(errno, expected_errno);
-+	} else {
-+		vcpu_run(vcpu);
-+		TEST_ASSERT_EQ(get_ucall(vcpu, NULL), UCALL_DONE);
-+	}
-+}
-+
-+static void test_memory_failure_guest(void)
-+{
-+	const uint64_t gpa = SZ_4G;
-+	const int slot = 1;
-+
-+	unsigned long memory_failure_pfn;
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	uint8_t *mem;
-+	size_t size;
-+	int fd;
-+
-+	if (!kvm_has_cap(KVM_CAP_GUEST_MEMFD_FLAGS))
-+		return;
-+
-+	vm = __vm_create_shape_with_one_vcpu(VM_SHAPE_DEFAULT, &vcpu, 1, __guest_code_read);
-+
-+	size = vm->page_size;
-+	fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_INIT_SHARED);
-+	vm_set_user_memory_region2(vm, slot, KVM_MEM_GUEST_MEMFD, gpa, size, NULL, fd, 0);
-+
-+	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT(mem != MAP_FAILED, "mmap() for guest_memfd should succeed.");
-+	virt_pg_map(vm, gpa, gpa);
-+
-+	/* Fault in page to read pfn, then unmap page for testing. */
-+	READ_ONCE(*mem);
-+	memory_failure_pfn = addr_to_pfn(mem);
-+	munmap(mem, size);
-+
-+	/* Fault page into stage2 page tables. */
-+	guest_read(vcpu, gpa, 0);
-+
-+	mark_memory_failure(memory_failure_pfn, 0);
-+
-+	guest_read(vcpu, gpa, EHWPOISON);
-+	munmap(mem, size);
-+
-+	close(fd);
-+	kvm_vm_free(vm);
-+
-+	unmark_memory_failure(memory_failure_pfn, 0);
-+}
-+
- int main(int argc, char *argv[])
- {
- 	unsigned long vm_types, vm_type;
-@@ -559,4 +623,5 @@ int main(int argc, char *argv[])
- 		test_guest_memfd(vm_type);
- 
- 	test_guest_memfd_guest();
-+	test_memory_failure_guest();
- }
--- 
-2.51.0.788.g6d19910ace-goog
-
+--
+Khalid
 
