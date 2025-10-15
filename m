@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-853528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0FBBDBE74
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC77BDBE7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39AD34E30FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6789518A4569
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C9819E819;
-	Wed, 15 Oct 2025 00:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3EA1B040B;
+	Wed, 15 Oct 2025 00:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCOKHgTQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoEDLvVM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BB917DFE7;
-	Wed, 15 Oct 2025 00:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B282C17DFE7;
+	Wed, 15 Oct 2025 00:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760487566; cv=none; b=AikKAsNxoLf/EuKiwOOW6hc6WpENusO7X3/cWEnrOVU+OTgE6LC2fBVuZHpf/kQh2DJ3WDJVyUGhfaVGXyNuJqYHvUazVqtCJJMOOoIsGcbLlD5yAsj3JEwAP3khOH0alWi6aVpEXa3lD0e9S/b8CAanLEAyS7ZBY6xyuJIIo0o=
+	t=1760487718; cv=none; b=tsrKmj/o0CuiTgnR/p+dyJqqLez+lg2nnLX5kyyeLLAdem+W5frfhXSjuS4tkyxMeinJVLK37xnShO/u3xxdbpZRLQruQIPx1XTyLW0Jf7GoyK/i88Us81IzDLYhJ8uRucjjex6FqhqlFs+pFUVL/8dKALQq/qP2uliG9lYOTbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760487566; c=relaxed/simple;
-	bh=TdMskMSuLOET5fMzcxW1joo+a/RQRaL7BYkMv9POxOM=;
+	s=arc-20240116; t=1760487718; c=relaxed/simple;
+	bh=oLFIibXnPFOJz0MzV3NAkJL/mBUsPSV9HGDX9rhCWkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQu30LNvXLLm4ii2rG7a/J2QMWrwgnvX4CjAyRDJV9FxHgZNRiRQ9zlTgNJCZhfViFKNv5i6QLdizeapl6hBtTN9kktWYr6vILpAw7IqDT251hOzm8wJawBNQi9eGbVrxOiBRElRdzKWF1dpE1PuHwaRif4/8OcMuVX8div7hV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCOKHgTQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4009EC4CEE7;
-	Wed, 15 Oct 2025 00:19:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ub9+91PACcPO5M9I1YOx5uFk0Wu13S6ERqe9OOKaiNX2UquGPuRA7fbsNu/kV019PhXzj1SJTqViESpeK5oGqUwhdLe/G7iCbdEd1YwpQJIPqYuN0xRCwayB/ebc9xyMAPMHpJDVrBda4irGogbkJn4a5uaH381nEf/YKx4XUEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoEDLvVM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A30DC4CEE7;
+	Wed, 15 Oct 2025 00:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760487565;
-	bh=TdMskMSuLOET5fMzcxW1joo+a/RQRaL7BYkMv9POxOM=;
+	s=k20201202; t=1760487718;
+	bh=oLFIibXnPFOJz0MzV3NAkJL/mBUsPSV9HGDX9rhCWkM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VCOKHgTQyz5OqtohvgNbdIzjiINb0ww0dsbFUXIsBjbTgHHH2NwSHD3zQPwdKshSG
-	 ZsLprc3ZGMUkCXR68VgmghItKdoXwej1sitrFkEtQCwqNfG8rrdoG1dWbyY0ZRk34C
-	 cAT1kN6pJs9VI+IHOb1OpAOQ9NlcX6wZIWYGJ/ny1Y1o7whVce1pEHEDuewrrx0mXJ
-	 K/3I/UDVNWlHXMcNx32ZZuJ4WXddrzxqGbY/dVhNqR+dNz8BPU72tSIs5t2rtYRtFr
-	 veieaNgJm2uK9sFuiCrR+w9yBSTWgKk544R+6WCA2eU7SHihPnRWnOJmLhRiUpf+t6
-	 wNtadfndF1IHA==
-Date: Tue, 14 Oct 2025 17:19:21 -0700
+	b=uoEDLvVMBYvbxbaqRExO4mBuOXW8xK+xBsM3YpN8BU1lvBX4p3ZAdfzt2L3+iF0GN
+	 WG1/B5BcjO6G5oQtvfsi/xChcW18K/a54r1fdPVQsmPwbbPFnAXEa4+7w5bzq4flhf
+	 6VHS/tdoIl0wngQjxhoS3nTFA8kCFfDp3DcveH/+FyeZcZo2KjS0k+8Ypk97Xtmuun
+	 8K2iC6fX/3DXfiRfPJuvJbT3N1ZJXjBgUU19rx60Zsxgh/AO9zi2sWjzPrju9lComF
+	 gSaIX68xorVOyC+xLeGk3YYnNWC6eRkJurprqsPEMD5vPVxi8cCVp0VHEmEfLgQjp+
+	 O1BtSRYMnbkCg==
+Date: Tue, 14 Oct 2025 17:21:54 -0700
 From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: uapi: reuse KBUILD_USERCFLAGS
-Message-ID: <20251015001921.GA2263607@ax162>
-References: <20251014-kbuild-uapi-usercflags-v1-1-c162f9059c47@linutronix.de>
+To: Vishal Chourasia <vishalc@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, maddy@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	clang-built-linux@googlegroups.com,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: Re: [PATCH] arch/powerpc: Remove .interp section in vmlinux
+Message-ID: <20251015002154.GA2300901@ax162>
+References: <eeaf8fd6628a75d19872ab31cf7e7179e2baef5e.1751366959.git.christophe.leroy@csgroup.eu>
+ <20251013040148.560439-1-vishalc@linux.ibm.com>
+ <2b4a3215-1620-40c9-a00c-ca833ebbb7b6@csgroup.eu>
+ <aOypxKMzsLR5tAtv@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014-kbuild-uapi-usercflags-v1-1-c162f9059c47@linutronix.de>
+In-Reply-To: <aOypxKMzsLR5tAtv@linux.ibm.com>
 
-On Tue, Oct 14, 2025 at 07:55:32AM +0200, Thomas Weiﬂschuh wrote:
-> The toplevel Makefile already provides the compiler flags necessary to
-> build userspace applications for the target.
-> 
-> Make use of them instead of duplicating the logic.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> ---
+Hi Vishal,
 
-Seems reasonable to me.
+On Mon, Oct 13, 2025 at 12:57:00PM +0530, Vishal Chourasia wrote:
+> On Mon, Oct 13, 2025 at 08:46:48AM +0200, Christophe Leroy wrote:
+> > +CLANG ppl
+> > 
+> > Hi,
+> > 
+> > Le 13/10/2025 √† 06:01, Vishal Chourasia a √©crit¬†:
+> > > While debugging a ppc64le QEMU guest on an x86_64 host, I observed GDB crashes
+> > > when attempting to attach to the remote target:
+> > > 
+> > > (gdb) target remote :1234
+> > > 
+> > > Investigation revealed that cross-compiling the Linux kernel for ppc64le on an
+> > > x86_64 host using Clang produces a vmlinux binary containing an empty .interp
+> > > section. This empty .interp section is responsible for the GDB crashes.
+> > 
+> > Which version of CLANG is it ?
+> (i) ‚ùØ clang --version
+> clang version 21.0.0git (https://github.com/llvm/llvm-project.git a80bccc6847be104948f46d313f03ac6b9ccb292)
+> 
+> > 
+> > > 
+> > > This issue does not occur when:
+> > > - Building for ppc64le target using GCC on x86_64 host
+> > > - Building for ppc64le target using Clang on ppc64le host
+> > 
+> > Is it the same CLANG version ?
+> # clang --version
+> clang version 22.0.0git (https://github.com/llvm/llvm-project.git 2f755c543ab357bd83235592fcee37fa391cdd9d)
+> 
+> > 
+> > > - Building for ppc64le target using GCC on ppc64le host
+> > > 
+> > > For details refer [1]
+> > > 
+> > > [1] https://sourceware.org/bugzilla/show_bug.cgi?id=33481
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+In this bug report, you mention using LLVM=1. Does the issue happen if
+you use GNU ld (ld.bfd) via LD (i.e., LD=powerpc64le-linux-gnu-ld or
+equivalent) over ld.lld from LLVM=1? This sounds more likely to be a
+linker difference rather than a compiler difference.
 
->  usr/include/Makefile | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/usr/include/Makefile b/usr/include/Makefile
-> index 61a7dd4fc05f004d785c64c0019ad846c84719d5..d8a508042fed315401ed689e0839af249c4b31c8 100644
-> --- a/usr/include/Makefile
-> +++ b/usr/include/Makefile
-> @@ -6,16 +6,9 @@
->  #
->  # -std=c90 (equivalent to -ansi) catches the violation of those.
->  # We cannot go as far as adding -Wpedantic since it emits too many warnings.
-> -UAPI_CFLAGS := -std=c90 -Wall -Werror=implicit-function-declaration
-> +UAPI_CFLAGS := -std=c90 -Werror=implicit-function-declaration
->  
-> -# In theory, we do not care -m32 or -m64 for header compile tests.
-> -# It is here just because CONFIG_CC_CAN_LINK is tested with -m32 or -m64.
-> -UAPI_CFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
-> -
-> -# USERCFLAGS might contain sysroot location for CC.
-> -UAPI_CFLAGS += $(USERCFLAGS)
-> -
-> -override c_flags = $(UAPI_CFLAGS) -Wp,-MMD,$(depfile) -I $(obj) -I $(srctree)/usr/dummy-include
-> +override c_flags = $(KBUILD_USERCFLAGS) $(UAPI_CFLAGS) -Wp,-MMD,$(depfile) -I $(obj) -I $(srctree)/usr/dummy-include
->  
->  # The following are excluded for now because they fail to build.
->  #
-> 
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251013-kbuild-uapi-usercflags-affb222af087
-> 
-> Best regards,
-> -- 
-> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> 
+Cheers,
+Nathan
 
