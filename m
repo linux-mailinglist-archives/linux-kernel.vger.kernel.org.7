@@ -1,101 +1,78 @@
-Return-Path: <linux-kernel+bounces-854896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5874BDFB51
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDECBDFB48
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9419D505C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762D33BEBD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0D933A02A;
-	Wed, 15 Oct 2025 16:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFD02FB098;
+	Wed, 15 Oct 2025 16:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfC89rgC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zq8/8mmE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48DD338F52;
-	Wed, 15 Oct 2025 16:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA562253F14
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546369; cv=none; b=doWjuTDT5NjJwT1NuVy32q/g3LW+hY20RClzOOeicgSYdLOERni5GxqOtc+Up49MVthseSWs3cMrAe6xa/azuEUQG8qAOz8WZQGmGby2IImn/ImJfmuvy5wxORHTOINjLlfKfqtXZfGtUM7wGFO7c5u+Dd2OW/L3EuxVYOiqZWM=
+	t=1760546406; cv=none; b=ATDr8M3EgP3DnMQ0hm4VU4yJyEAD8eyeRNa+elnuXCi5Z1Ew9Y2MBKekCTOwOlkznglyhEinY0PtoK/5HlgOyezQJY46WWdtqULi6wntTgtfoJyVKYiLaUmzKUtuVVEIYAHo3JA8rGILA36XAjMpdCqWO8Qu+d56HTFEQdJH7KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546369; c=relaxed/simple;
-	bh=HV9NwvWL4EDdRVNM9YXPzSHAC0plgc4YGZuCjbhJgxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUv/mQKTwx/1V++sLN1HXwbtpf/KjO5QtN/9mWNJoL8c8+m/VtQKEXNIdbcWNlcjiBdDmu/AeezNl4SGk5ruogsFULDaGe25Os8XJdgFBOkFOto/kZZYaipN7vcwSs6hGflLT8AYzgcRVEh5yerdgBDgOHu8P9Lq6zAO6eOB86k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfC89rgC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F220C4CEF8;
-	Wed, 15 Oct 2025 16:39:26 +0000 (UTC)
+	s=arc-20240116; t=1760546406; c=relaxed/simple;
+	bh=RGrLB4M6JbBT3ph1NWp3S9rTfWUqtEHjK409g4SkFMQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gt5eroVSDjj52N/MZu3+HVcN7WtlvzIx/vybAPO/A5KVC3APX11PKDMBmi37H6EaE4BH5jFy3UUk/aplSpjbEQny7WaYpF1aq+IGhpL/qOm+gQxNoBjqshC+jY8YfxwFUOmCl5eIQAphsnr6Q7lULXQzXmT2hi/AOsdT9IJJqoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zq8/8mmE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48107C4CEF8;
+	Wed, 15 Oct 2025 16:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760546369;
-	bh=HV9NwvWL4EDdRVNM9YXPzSHAC0plgc4YGZuCjbhJgxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IfC89rgC4v1JRG79tdR6L3gI7okRx4RDp/49z5LEXfvgWkFk9TWnmV9eCKxndFfG7
-	 ZuXsC8nUeu1NC1/1R4xFuwjNJia8o1bJ/PTLXq08mF/EYM8ZGYKOhuVOsIOGRbwBLs
-	 n87CpXHVG2OU2c10ge/BwoLKRnRq+novYgbXyxvWZBke+OxqvLX8dqoSK7jGPlPe7F
-	 dYIlzCUrAnYYnw7V3LxeZG/pixK5HL2fimiuAoNe4AglR/dofQf2mn0T2DbhLxyIZY
-	 JOHd3+aYjUpU3dmvvTAbSt09EhHAwiyVasKe93xOyne1pBYGYHpUgduoOoyYQNFhkF
-	 kmlNr46/r8j2Q==
-Date: Wed, 15 Oct 2025 17:39:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Vasudev Kamath <vasudev@copyninja.info>,
-	Krishna Kumar <krikku@gmail.com>
-Subject: Re: [PATCH net] Documentation: net: net_failover: Separate
- cloud-ifupdown-helper and reattach-vf.sh code blocks marker
-Message-ID: <aO_OPBukiAjmO43g@horms.kernel.org>
-References: <20251015094502.35854-2-bagasdotme@gmail.com>
+	s=k20201202; t=1760546405;
+	bh=RGrLB4M6JbBT3ph1NWp3S9rTfWUqtEHjK409g4SkFMQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Zq8/8mmE+HoDSXLQOyOK7VUL+LfH/OJ293bBPjXyCC3YWLq/P50kgEsjQyWbmJD7W
+	 5iCAAC9/Du2ZBC+K8zbh1jMvha1M3cw8eBpZxvT4LSdEvlQ6FzkYWuij0NKQPMkkLe
+	 zQvNzFcEx9Y0k8V8CZ+Kse69CuX7SBfBlxStmg1LFKmML8jCkINQF+WKZ0b5cIF80d
+	 GX/78QXlZr/gRwZctLN/BnAAg2YVIdw72t25KkgEPoSajigG+LtlDX+zr8ur3FUFkW
+	 jkHJ6G2cUKqudvhskU5DgAIb4SRayjRQZYm7RUTWgP7NavBOD22MU4tMai1lDCO1PP
+	 /FZUx92i92abw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34322380DBCA;
+	Wed, 15 Oct 2025 16:39:51 +0000 (UTC)
+Subject: Re: [GIT PULL] bitmap for 6.18-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aO_AAQBzqMkrGiry@yury>
+References: <aO_AAQBzqMkrGiry@yury>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aO_AAQBzqMkrGiry@yury>
+X-PR-Tracked-Remote: https://github.com/norov/linux.git tags/bitmap-for-v6.18-rc2
+X-PR-Tracked-Commit-Id: 7e85ac9da1acc591bd5269f2b890ed1994c42e96
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5a6f65d1502551f84c158789e5d89299c78907c7
+Message-Id: <176054638969.953032.16371572077824438146.pr-tracker-bot@kernel.org>
+Date: Wed, 15 Oct 2025 16:39:49 +0000
+To: yury.norov@gmail.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Yury Norov <yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015094502.35854-2-bagasdotme@gmail.com>
 
-On Wed, Oct 15, 2025 at 04:45:03PM +0700, Bagas Sanjaya wrote:
-> cloud-ifupdown-helper patch and reattach-vf.sh script are rendered in
-> htmldocs output as normal paragraphs instead of literal code blocks
-> due to missing separator from respective code block marker. Add it.
-> 
-> Fixes: 738baea4970b ("Documentation: networking: net_failover: Fix documentation")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/networking/net_failover.rst | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/networking/net_failover.rst b/Documentation/networking/net_failover.rst
-> index f4e1b4e07adc8d..51de30597fbe40 100644
-> --- a/Documentation/networking/net_failover.rst
-> +++ b/Documentation/networking/net_failover.rst
-> @@ -99,6 +99,7 @@ Below is the patch snippet used with 'cloud-ifupdown-helper' script found on
->  Debian cloud images:
->  
->  ::
-> +
->    @@ -27,6 +27,8 @@ do_setup() {
->         local working="$cfgdir/.$INTERFACE"
->         local final="$cfgdir/$INTERFACE"
+The pull request you sent on Wed, 15 Oct 2025 11:38:41 -0400:
 
-Hi Bagas,
+> https://github.com/norov/linux.git tags/bitmap-for-v6.18-rc2
 
-For the above maybe this is more succinct and intuitive:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5a6f65d1502551f84c158789e5d89299c78907c7
 
-Debian cloud images::
+Thank you!
 
-...
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
