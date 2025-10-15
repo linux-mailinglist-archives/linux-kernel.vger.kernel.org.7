@@ -1,124 +1,222 @@
-Return-Path: <linux-kernel+bounces-854574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E07FBDEC45
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:30:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB859BDEC59
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84D234F4DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 179113C14E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF741225408;
-	Wed, 15 Oct 2025 13:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6ci1stX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB85224234;
+	Wed, 15 Oct 2025 13:32:46 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15886221DB6;
-	Wed, 15 Oct 2025 13:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909E118FDBD;
+	Wed, 15 Oct 2025 13:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760535023; cv=none; b=CJp39Kv9ff/4ZIq7/g3XJ23kWwR1GmjUU6fdGqFbyGMWG+UMa85sRznuemzDujFM4kh1z7SVEca91/NA5V8nQV1G1bHqhx8umTjN5AGevOMpfcj17rPe4V8FDPsDtf5LQiTX8xOsVsovoniF0S7ibPMEcmonlvia/emBn9R4Jo8=
+	t=1760535165; cv=none; b=aqyJC4iLgSDtY0Y3lEijC6/8lhMipdLnH1dDqhnVYPYqiY8jkDPrvAq9YOiv0JTh3wd+UtjpMZLaggDg9jxIDiQ1mVbjD2xIsF6qweKbVzg+6Bft+Pl/t14WYUqRVJEZ/pqx2vZ59pJWRDiRFBUdyTvkY8D5T/2FVJN+2lq7dng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760535023; c=relaxed/simple;
-	bh=A4j7EyyUEQAH/++sFjjOscr7TYVqFzYtv6RZBE5pQNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cP1a2R9THZC3ASwBTIfBZy1coV9hF2YcmzHOYdtW5KX57kclrWm+96qDC4xkF8cbFn1HSlI04rGq2gKZlYW7vjt3/xH07RfZMkRcNGePaNBMMYz2s4d6mf7MTQjHIGl0qbe7KUaniIqhxt3uRCSXzKk+CR/+VAlKVtH9lgqTsEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6ci1stX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B283CC4CEFE;
-	Wed, 15 Oct 2025 13:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760535022;
-	bh=A4j7EyyUEQAH/++sFjjOscr7TYVqFzYtv6RZBE5pQNE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b6ci1stXqNKhV16bQZUz2RKyXZlZu/XYFYpCzaE+LYx/QRiRt9Jy59YuGmxqUoF/i
-	 sZQjJcJaIvwIy+xtYGruCM2hrR7Yzju5OJqzfVb/Q62yi6S5kJXs2GmmxDsPicrq80
-	 z78Vm4Ikoezi+QIy4EMXK/VXJxVqC/p8oDMGG6sdPBDrbS8AEelVtc8aPNJoNgEy5x
-	 srfEllTzNfWkG8OB/UFi7ZlQwxeoD+KdQUhR/rDUMaIBvEZhRfYKbEH6G/DWBmMl+w
-	 SO98xbxHlaLZk4RMMSiNRAoHeYExrixS5LTfTnnMvizdwz6Qa9nAaMBFTz1VKDXMbv
-	 fEhG9pPWVdb1g==
-Message-ID: <9adec627-e3f5-4664-881c-9e93f029e189@kernel.org>
-Date: Wed, 15 Oct 2025 14:30:16 +0100
+	s=arc-20240116; t=1760535165; c=relaxed/simple;
+	bh=1BsLPLiMHPjgSqzewUxFT8Vz1eESX/i1E7QgjO2YW6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uBPmp/J7Nis+jPDvT4Rnr6GXH5bTRlSioDRE4ZwPg9thKRZTe/14PKf+i9carAW/T5lnXckGFjelvlPICHRg2bTEBYUjH42Y78ZHscLDvfKKeg3wkVl7CSY3vCkflpYCwdJGVVIxWUnJDwe0A6OqxyWMA68T3t5psxh4vl/OyfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
+	id 2ECBD60186; Wed, 15 Oct 2025 15:32:40 +0200 (CEST)
+Date: Wed, 15 Oct 2025 15:32:39 +0200
+From: Florian Westphal <fw@strlen.de>
+To: avimalin@gmail.com
+Cc: vimal.agrawal@sophos.com, linux-kernel@vger.kernel.org,
+	pablo@netfilter.org, netfilter-devel@vger.kernel.org,
+	anirudh.gupta@sophos.com
+Subject: Re: [PATCH v3] nf_conntrack: sysctl: expose gc worker scan interval
+ via sysctl
+Message-ID: <aO-id5W6Tr7frdHN@strlen.de>
+References: <20250430071140.GA29525@breakpoint.cc>
+ <20250430072810.63169-1-vimal.agrawal@sophos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: media: qcom,qcs8300-camss: Add
- missing power supplies
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-References: <20251015130130.2790829-1-quic_vikramsa@quicinc.com>
- <20251015130130.2790829-2-quic_vikramsa@quicinc.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251015130130.2790829-2-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430072810.63169-1-vimal.agrawal@sophos.com>
 
-On 15/10/2025 14:01, Vikram Sharma wrote:
-> Add support for vdda-phy-supply and vdda-pll-supply in the QCS8300
-> CAMSS binding to reflect camera sensor hardware requirements.
-> 
-> Co-developed-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-> Signed-off-by: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   .../bindings/media/qcom,qcs8300-camss.yaml          | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml b/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
-> index 80a4540a22dc..dce0a1fcb10c 100644
-> --- a/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
-> +++ b/Documentation/devicetree/bindings/media/qcom,qcs8300-camss.yaml
-> @@ -120,6 +120,14 @@ properties:
->       items:
->         - const: top
->   
-> +  vdda-phy-supply:
-> +    description:
-> +      Phandle to a regulator supply to PHY core block.
-> +
-> +  vdda-pll-supply:
-> +    description:
-> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
-> +
->     ports:
->       $ref: /schemas/graph.yaml#/properties/ports
->   
-> @@ -160,6 +168,8 @@ required:
->     - power-domains
->     - power-domain-names
->     - ports
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
->   
->   additionalProperties: false
->   
-> @@ -328,6 +338,9 @@ examples:
->               power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
->               power-domain-names = "top";
->   
-> +            vdda-phy-supply = <&vreg_l4a_0p88>;
-> +            vdda-pll-supply = <&vreg_l1c_1p2>;
-> +
->               ports {
->                   #address-cells = <1>;
->                   #size-cells = <0>;
+avimalin@gmail.com <avimalin@gmail.com> wrote:
+> Default initial gc scan interval of 60 secs is too long for system
+> with low number of conntracks causing delay in conntrack deletion.
+> It is affecting userspace which are replying on timely arrival of
+> conntrack destroy event. So it is better that this is controlled
+> through sysctl
 
-This needs a Fixes: tag
+Patch is fine.  I do wonder however if there are alternatives.
+Rather than expose the gc interval (gc worker is internal implementation
+detail, e.g. we could move back to per-ct timers theoretically).
 
----
-bod
+What about something like this (untested):
+
+[RFC] netfilter: conntrack: expedite evictions when userspace is subscribed to destroy events
+
+Track number of soon-to-expire conntracks.
+If enough entries are likely to expire within 1/2/4/8/16/32 second buckets,
+then reschedule earlier than what the normal next value would be.
+
+Do this only when userspace is listening to destroy event notifcations
+via ctnetlink, otherwise its not relevant when a conntrack entry is
+released.
+
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index 210792a2275d..22274193b093 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -52,6 +52,8 @@
+ #include <net/netns/hash.h>
+ #include <net/ip.h>
+ 
++#include <uapi/linux/netfilter/nfnetlink.h>
++
+ #include "nf_internals.h"
+ 
+ __cacheline_aligned_in_smp spinlock_t nf_conntrack_locks[CONNTRACK_LOCKS];
+@@ -63,12 +65,15 @@ EXPORT_SYMBOL_GPL(nf_conntrack_expect_lock);
+ struct hlist_nulls_head *nf_conntrack_hash __read_mostly;
+ EXPORT_SYMBOL_GPL(nf_conntrack_hash);
+ 
++#define GC_HORIZON_BUCKETS	6
++
+ struct conntrack_gc_work {
+ 	struct delayed_work	dwork;
+ 	u32			next_bucket;
+ 	u32			avg_timeout;
+ 	u32			count;
+ 	u32			start_time;
++	u8			horizon_count[GC_HORIZON_BUCKETS];
+ 	bool			exiting;
+ 	bool			early_drop;
+ };
+@@ -96,6 +101,10 @@ static DEFINE_MUTEX(nf_conntrack_mutex);
+ #define GC_SCAN_MAX_DURATION	msecs_to_jiffies(10)
+ #define GC_SCAN_EXPIRED_MAX	(64000u / HZ)
+ 
++/* schedule worker earlier if this many entries are about to expire
++ * in the near future */
++#define GC_SCAN_EXPEDITED	min(255, (GC_HORIZON_BUCKETS * GC_SCAN_EXPIRED_MAX))
++
+ #define MIN_CHAINLEN	50u
+ #define MAX_CHAINLEN	(80u - MIN_CHAINLEN)
+ 
+@@ -1508,6 +1517,71 @@ static bool gc_worker_can_early_drop(const struct nf_conn *ct)
+ 	return false;
+ }
+ 
++static unsigned int gc_horizon_max(unsigned int i)
++{
++	return (1 << i) * HZ;
++}
++
++static void gc_horizon_account(struct conntrack_gc_work *gc, unsigned long expires)
++{
++	int i = ARRAY_SIZE(gc->horizon_count);
++
++	BUILD_BUG_ON(GC_SCAN_EXPEDITED > 255);
++
++	for (i = 0; i < ARRAY_SIZE(gc->horizon_count); i++) {
++		unsigned int max = gc_horizon_max(i);
++
++		if (gc->horizon_count[i] >= GC_SCAN_EXPEDITED)
++			return;
++
++		if (expires <= max) {
++			gc->horizon_count[i]++;
++			return;
++		}
++	}
++}
++
++static bool nf_ctnetlink_has_listeners(void)
++{
++	u8 v = READ_ONCE(nf_ctnetlink_has_listener);
++
++	return v & (1 << NFNLGRP_CONNTRACK_DESTROY);
++}
++
++/* schedule worker early if we have ctnetlink listeners that subscribed
++ * to CONNTRACK_DESTROY events so they receive more timely notifications.
++ *
++ * ->horizon_count[] contains the number of conntrack entries that are
++ *  about the expire in 1, 2, 4, 8, 16 and 32 seconds.
++ */
++static noinline unsigned long
++gc_horizon_next_run(const struct conntrack_gc_work *gc_work,
++		    unsigned long next_run, unsigned long delta_time)
++{
++	unsigned int count = 0;
++	unsigned int i;
++
++	if (next_run <= (unsigned long)delta_time)
++		return 1;
++
++	next_run -= delta_time;
++
++	if (!nf_ctnetlink_has_listeners())
++		return next_run;
++
++	for (i = 0; i < ARRAY_SIZE(gc_work->horizon_count); i++) {
++		count += gc_work->horizon_count[i];
++
++		if (count >= GC_SCAN_EXPEDITED) {
++			unsigned long new_next_run = gc_horizon_max(i);
++
++			return min(new_next_run, next_run);
++		}
++	}
++
++	return next_run;
++}
++
+ static void gc_worker(struct work_struct *work)
+ {
+ 	unsigned int i, hashsz;
+@@ -1526,6 +1600,7 @@ static void gc_worker(struct work_struct *work)
+ 		gc_work->avg_timeout = GC_SCAN_INTERVAL_INIT;
+ 		gc_work->count = GC_SCAN_INITIAL_COUNT;
+ 		gc_work->start_time = start_time;
++		memset(gc_work->horizon_count, 0, sizeof(gc_work->horizon_count));
+ 	}
+ 
+ 	next_run = gc_work->avg_timeout;
+@@ -1575,7 +1650,11 @@ static void gc_worker(struct work_struct *work)
+ 				continue;
+ 			}
+ 
+-			expires = clamp(nf_ct_expires(tmp), GC_SCAN_INTERVAL_MIN, GC_SCAN_INTERVAL_CLAMP);
++			expires = nf_ct_expires(tmp);
++
++			gc_horizon_account(gc_work, expires);
++
++			expires = clamp(expires, GC_SCAN_INTERVAL_MIN, GC_SCAN_INTERVAL_CLAMP);
+ 			expires = (expires - (long)next_run) / ++count;
+ 			next_run += expires;
+ 			net = nf_ct_net(tmp);
+@@ -1633,10 +1712,7 @@ static void gc_worker(struct work_struct *work)
+ 	next_run = clamp(next_run, GC_SCAN_INTERVAL_MIN, GC_SCAN_INTERVAL_MAX);
+ 
+ 	delta_time = max_t(s32, nfct_time_stamp - gc_work->start_time, 1);
+-	if (next_run > (unsigned long)delta_time)
+-		next_run -= delta_time;
+-	else
+-		next_run = 1;
++	next_run = gc_horizon_next_run(gc_work, next_run, delta_time);
+ 
+ early_exit:
+ 	if (gc_work->exiting)
 
