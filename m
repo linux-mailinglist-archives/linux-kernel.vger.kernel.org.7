@@ -1,162 +1,197 @@
-Return-Path: <linux-kernel+bounces-855276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B77CBE0B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:52:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C3DBE0B61
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E06B427CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:52:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C40743535E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E192D542A;
-	Wed, 15 Oct 2025 20:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FDA2D47EA;
+	Wed, 15 Oct 2025 20:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aAkJY6bp"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="sQ8hNMNP"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD59273800
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7319F2046BA;
+	Wed, 15 Oct 2025 20:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760561542; cv=none; b=CV7wGfJQJ/EnjR6ay95oJDHMe1GPBx8LdJHjW58CLNJw6ETYqFiPxgr9BJkgxT3FEL/CMetY9TuAIBmhIDZFS/RmOCRmqkdqvR5TWW7wK+QLXtrnociJPrYP28QZJY06QCm7qG5JHdefcGIuI6d8M8ZmzIpTY7fbwd6hQouwqVw=
+	t=1760561687; cv=none; b=F+MUf6Q3wLekWD3/0VQww2bDYydy/ZMBcM5xiNgv5VCk0uLyhFd6OyWAb1Ih0ibGxeraeF7q6djqqWyuoFH3Icp7LMrtd9gSSK8vprsBzFya1rekaera4N0d/fXW7KP9AKurPqvbp7vMKmOhc7D452UjXAnuYeVeqVMV1cufCzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760561542; c=relaxed/simple;
-	bh=hsD+aslz1OkQOnpQ7vD/eAIL2an/1I+2GU4RtlCHgkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnGjLUPq5vE1qlqNdJk9wziFrTk3TpOjIzXVakD/d9d+QK3cWi9PSSLJkPCxNzqioYqr7UTDCF9IEIxl6RzkTQUtnrIQJi1DgeqPgpYLBugbwfLViJ9Pd2IuMZEBIIAr8xle0qCjhPVnEyR68HSR24XjZv4sZe7faxMJYNgk2DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aAkJY6bp; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-330b0bb4507so51543a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760561540; x=1761166340; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Q3l3wXZP1srYTWBx6D17j0OpQl3qJmuJ/CIapeLh80=;
-        b=aAkJY6bpYgLrhjydCSaF0WEz401VhyQpHjxyiS1q5/0W1/vaZ+X9DuAjUczWx0RZSH
-         06V9jGc7zHjJj+3wP77haSL3AoQtwd1cSbRajrXKLNXbkha3bm608AYK7pnP2MIVK09R
-         ACysIjOAmj/BktLKnlzgm/HHpOrxg9blGOK1x36imA3HCfEdbRxcOlzg1a6BfYf2hC0g
-         h5zSWPPHR1LfNOQE8RO1FvkLdB/cKO0yo+X41oab3LBDt7h4wogSl9ZvQtb9RQTGYmhK
-         gPMl4MqOQXxLp6QzKQhNee6QoTvdI5wasLLRZht7VOVrD02FJPBU0qdJOMeZrMvomY9Y
-         Mc0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760561540; x=1761166340;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Q3l3wXZP1srYTWBx6D17j0OpQl3qJmuJ/CIapeLh80=;
-        b=c39uX7zLPUeiwN6UvDeGjr1MeT10C03dT678PFgbavJ+wJxoaccwZxscvtNJQb1oed
-         e4S2x2uJUhwcuNNSgbJkjO/ZZkbZjwm1UAwk2UDDu3TQaO0yPfoQGcMNFnlW32JfZlhz
-         nVukykh+T7bVhd9b5Xd1yW9LVOeaRIH88x4jBVh35lXsU82AwXqKUBFYlgUcBuN9pE3s
-         zQ6hW35T+dJFvRf1mnWo0usGuHqNyd7u38EwrFrjVyv4vxBcmOhkxFLGTCiPQ6chP7lx
-         DcsFymdFnmvzCRE8z8t2dvOTigY2M/H2VLXbNdRz7l10p6qWXFryoKiRcE/VFmvgV2zJ
-         WhNw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6prX0TkivOcgFpDBFulq9s4jaj+JZZKBnHuTKHSRWgKTfD0mYxGERD1DkAXGydw3B0rTQBJsr8aIXr88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYfKerQPSgn0V5UokCwd6f+t1P8+4YFtxwuelQZnNEeKcjHDl3
-	Xy9v5byGttI/x+7IkZMbkqpc8O+AcbiYhYQC29UGCs/Syz6amFvwmKhH
-X-Gm-Gg: ASbGncsITYZMQptJRfdOsvdMsgDHOpRcinrbvusljsugmHGtxA/o+Ghv6hYRJQPRHY9
-	0HB/6TRN1sn2Djeh05LqwdXQEKECFkNYYAvKU+9KW75iXMmJfJNGAiaMS1IGZUlORurkjvPr+vi
-	sGTcewyXErYOnC6aHa3IpMYZQeDdrCEtM5novu4yCQImFkuzz+kaBPjsnLkFOABByXJ8N/TRooW
-	RC32K0THf05XBIfVSYD7vGwzZfwXwi/ZNCXm9wdA3Z/64sMF/1LFzAjkU+E2HNWELFDwQLcUlZj
-	2i8wBlO4c7MFmnwNOi5vrnMxmkmiHPVL8WAViVXn5Oq9qhjzG3zcAuIuxjcy4ikckpttn+Ay1cL
-	qP25ZEdhoYRgTJhZC6a1rzx71prK2dd1x4dMyOqfCF2LnO5khqcktSQAY3h+OddBUsDZ20mc5kh
-	TCHTb/SflcUQ==
-X-Google-Smtp-Source: AGHT+IHSyWgfprtuMBAJxkjGFH7PXnZ2eurong9CmDGzEOpx+NucIlNRXvqcw5rqha+z6ylJLfGOQg==
-X-Received: by 2002:a17:90b:17c2:b0:32b:baaa:21b0 with SMTP id 98e67ed59e1d1-33b510ff5dfmr43287001a91.6.1760561539548;
-        Wed, 15 Oct 2025 13:52:19 -0700 (PDT)
-Received: from localhost ([2804:30c:402b:1a00:ec78:db53:a246:207a])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b6a22b7a625sm514092a12.24.2025.10.15.13.52.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 13:52:18 -0700 (PDT)
-Date: Wed, 15 Oct 2025 17:53:22 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 4/6] spi: axi-spi-engine: support
- SPI_MULTI_BUS_MODE_STRIPE
-Message-ID: <aPAJwqdFY7ldtt-F@debian-BULLSEYE-live-builder-AMD64>
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-4-2098c12d6f5f@baylibre.com>
+	s=arc-20240116; t=1760561687; c=relaxed/simple;
+	bh=1ncFKWGpcvPLXTYm6YbBeaW1i3SAczsj9LiCky/G6r8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rvvi0qVHsN/+tOnE0nwhLnlu3lIs/ZLUQOiVtt4ZUKRGwSb3M8kvs2tEd8dSlwztRM1muJK2hCSyLV3sXLmNyV/vvT+OxVhjs/Tg7stktWE9T6HCoTo/aoWDFk6vWUl4y/zp9Wn09BN7TS7nSo6M62BOXADPD84KSWYkinFvu7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=sQ8hNMNP; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cn3HL00L4zm16kl;
+	Wed, 15 Oct 2025 20:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1760561672; x=1763153673; bh=grQqE8NOnFu1cP4MJIe5OHb3
+	urYLhp2K5hoWpXpbxRs=; b=sQ8hNMNPbdsMRXfTQLyJAyaiXkXs3pnqatvfed6E
+	w7XaIkYPX2/y/gBD+ATyJK+jCK1SQTTHEgT7B1rTwxC/+ZrTTuliEoYnoDQo972X
+	ZsrnK2oDXXTrcyC/32a+ICv6nEsTInE1fu702LJTUWp+3ijjL+9p3kcJHSc64KUo
+	Ho0nghFJGGrzVE69o5uUzNdC1VA9N45GGowx3EclnRm98/KiBkkAweQRwG+xyi5N
+	uVmuGAmSz8+F9wFrhCF+qY3/+xZE5cQIfMaZZiSQpmemnoQXdZ9g/RCYWwZSL3xc
+	/NKCgz/kNKxjZ6M6JYDHgbrvgzduhUWCLd7BGxml47H5wQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id WtySCtqgW_Gc; Wed, 15 Oct 2025 20:54:32 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cn3Gl5xhNzm16kk;
+	Wed, 15 Oct 2025 20:54:06 +0000 (UTC)
+Message-ID: <7a98eb42-bc54-4f22-bc85-0f6d41f39fc7@acm.org>
+Date: Wed, 15 Oct 2025 13:54:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014-spi-add-multi-bus-support-v1-4-2098c12d6f5f@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 05/17] irq & spin_lock: Add counted interrupt
+ disabling/enabling
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>,
+ linux-kernel@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Woodhouse <dwmw@amazon.co.uk>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Ryo Takakura <ryotkkr98@gmail.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>
+References: <20251013155205.2004838-1-lyude@redhat.com>
+ <20251013155205.2004838-6-lyude@redhat.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251013155205.2004838-6-lyude@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/14, David Lechner wrote:
-> Add support for SPI_MULTI_BUS_MODE_STRIPE to the AXI SPI engine driver.
+On 10/13/25 8:48 AM, Lyude Paul wrote:
+> Currently the nested interrupt disabling and enabling is present by
+> _irqsave() and _irqrestore() APIs, which are relatively unsafe, for
+> example:
 > 
-> The v2.0.0 version of the AXI SPI Engine IP core supports multiple
-> buses. This can be used with SPI_MULTI_BUS_MODE_STRIPE to support
-> reading from simultaneous sampling ADCs that have a separate SDO line
-> for each analog channel. This allows reading all channels at the same
-> time to increase throughput.
+> 	<interrupts are enabled as beginning>
+> 	spin_lock_irqsave(l1, flag1);
+> 	spin_lock_irqsave(l2, flag2);
+> 	spin_unlock_irqrestore(l1, flags1);
+> 	<l2 is still held but interrupts are enabled>
+> 	// accesses to interrupt-disable protect data will cause races.
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->  drivers/spi/spi-axi-spi-engine.c | 128 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 124 insertions(+), 4 deletions(-)
+> This is even easier to triggered with guard facilities:
 > 
-> diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-> index e06f412190fd243161a0b3df992f26157531f6a1..707e5108efec41f7eff608a09fcebd9d28fa2d70 100644
-> --- a/drivers/spi/spi-axi-spi-engine.c
-> +++ b/drivers/spi/spi-axi-spi-engine.c
-> @@ -23,6 +23,9 @@
->  #include <linux/spi/spi.h>
->  #include <trace/events/spi.h>
->  
-> +#define SPI_ENGINE_REG_DATA_WIDTH		0x0C
-> +#define   SPI_ENGINE_REG_DATA_WIDTH_NUM_OF_SDIO_MASK	GENMASK(24, 16)
-would it be 8-bit mask?
-#define   SPI_ENGINE_REG_DATA_WIDTH_NUM_OF_SDIO_MASK   GENMASK(23, 16)
+> 	unsigned long flag2;
+> 
+> 	scoped_guard(spin_lock_irqsave, l1) {
+> 		spin_lock_irqsave(l2, flag2);
+> 	}
+> 	// l2 locked but interrupts are enabled.
+> 	spin_unlock_irqrestore(l2, flag2);
+> 
+> (Hand-to-hand locking critical sections are not uncommon for a
+> fine-grained lock design)
+> 
+> And because this unsafety, Rust cannot easily wrap the
+> interrupt-disabling locks in a safe API, which complicates the design.
+> 
+> To resolve this, introduce a new set of interrupt disabling APIs:
+> 
+> *	local_interrupt_disable();
+> *	local_interrupt_enable();
+> 
+> They work like local_irq_save() and local_irq_restore() except that 1)
+> the outermost local_interrupt_disable() call save the interrupt state
+> into a percpu variable, so that the outermost local_interrupt_enable()
+> can restore the state, and 2) a percpu counter is added to record the
+> nest level of these calls, so that interrupts are not accidentally
+> enabled inside the outermost critical section.
+> 
+> Also add the corresponding spin_lock primitives: spin_lock_irq_disable()
+> and spin_unlock_irq_enable(), as a result, code as follow:
+> 
+> 	spin_lock_irq_disable(l1);
+> 	spin_lock_irq_disable(l2);
+> 	spin_unlock_irq_enable(l1);
+> 	// Interrupts are still disabled.
+> 	spin_unlock_irq_enable(l2);
+> 
+> doesn't have the issue that interrupts are accidentally enabled.
+> 
+> This also makes the wrapper of interrupt-disabling locks on Rust easier
+> to design.
 
-> +#define   SPI_ENGINE_REG_DATA_WIDTH_MASK		GENMASK(15, 0)
->  #define SPI_ENGINE_REG_OFFLOAD_MEM_ADDR_WIDTH	0x10
->  #define SPI_ENGINE_REG_RESET			0x40
->  
-...
->  
-> +	data_width_reg_val = readl(spi_engine->base + SPI_ENGINE_REG_DATA_WIDTH);
-> +
->  	if (adi_axi_pcore_ver_gteq(version, 1, 1)) {
->  		unsigned int sizes = readl(spi_engine->base +
->  				SPI_ENGINE_REG_OFFLOAD_MEM_ADDR_WIDTH);
-> @@ -1097,6 +1214,9 @@ static int spi_engine_probe(struct platform_device *pdev)
->  	}
->  	if (adi_axi_pcore_ver_gteq(version, 1, 3))
->  		host->mode_bits |= SPI_MOSI_IDLE_LOW | SPI_MOSI_IDLE_HIGH;
-> +	if (adi_axi_pcore_ver_gteq(version, 2, 0))
-> +		host->num_data_bus = FIELD_GET(SPI_ENGINE_REG_DATA_WIDTH_NUM_OF_SDIO_MASK,
-> +					       data_width_reg_val);
->  
-Not sure I'm following the use of DATA_WIDTH and NUM_OF_SDIO.
-HDL doc [1] states NUM_OF_SDIO 'is equal with the maximum supported SDI lines in
-bits'. And the code sets that to be the number of buses. That should work for
-AD7380 because each AD7380 SDO bus has only one line. But, it won't support
-AD4630 (or even AD4030) because each AD4630 rx bus has 4 data lines. I can't
-find it in HDL, but I'd expect to also have something like NUM_OF_SDIO_PER_BUS.
-Or DATA_WIDTH is the number of lines per bus and HDL doc is unclear to me?
-Well, it would be nice if we can have host->num_data_bus set in a way that
-minimizes diff when multiple lines per bus gets implemented (if that's not
-currently supported).
+Is a new counter really required to fix the issues that exist in the
+above examples? Has it been considered to remove the spin_lock_irqsave()
+and spin_lock_irqrestore() definitions, to introduce a macro that saves
+the interrupt state in a local variable and restores the interrupt state
+from the same local variable? With this new macro, the first two examples
+above would be changed into the following (this code has not been tested
+in any way):
 
-[1]: https://github.com/analogdevicesinc/hdl/pull/1808/files#diff-d1274cfe2e206aa66a0ecd3da04b3e62fc5fad9e12029b34b226c6f91454d34dR77
+scoped_irq_disable {
+   spin_lock(l1);
+   spin_lock(l2);
+   ...
+   spin_unlock(l1);
+   spin_unlock(l2);
+}
+
+scoped_irq_disable {
+   scoped_irq_disable {
+     scoped_guard(spin_lock, l1) {
+       spin_lock(l2);
+     }
+   }
+   spin_unlock(l2);
+}
+
+scoped_irq_disable could be defined as follows:
+
+static inline void __local_irq_restore(void *flags)
+{
+	local_irq_restore(*(unsigned long *)flags);
+}
+
+#define scoped_irq_disable \
+	__scoped_irq_disable(__UNIQUE_ID(flags), __UNIQUE_ID(label))
+
+#define __scoped_irq_disable(_flags, _label)                          \
+	for (unsigned long _flags __cleanup(__local_irq_restore);     \
+	     ({ local_irq_save(_flags); }), true; ({ goto _label; })) \
+		if (0) {                                              \
+_label:                                                               \
+			break;                                        \
+		} else
+
+
+Thanks,
+
+Bart.
 
