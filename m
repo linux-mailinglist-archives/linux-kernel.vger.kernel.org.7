@@ -1,84 +1,127 @@
-Return-Path: <linux-kernel+bounces-854627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D0EBDEEC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:07:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A037BDEEE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FA9481F69
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:04:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F2A3A8A19
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64220292B4B;
-	Wed, 15 Oct 2025 14:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A3125B1DC;
+	Wed, 15 Oct 2025 14:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="mNpSdK7Q"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXR3H5aD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0BB76026;
-	Wed, 15 Oct 2025 14:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A791DF748;
+	Wed, 15 Oct 2025 14:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760536946; cv=none; b=MY8pDFQblWEDIwz8LRpb4bImqzQuLGZrIqBGFlQhE2oPLYgcSF/XwxLFX4HIf6IWCcZtzNh4fUNZ+dDGbV+gxZ2r4aQ5caZ3932Wvw5fnfZFDXTnNVhKSzk3g0KNgLDOG1fMwuwWT/hDnvq01rGp8tgnhtbOtSZ6tQhmqLKriWY=
+	t=1760537123; cv=none; b=Pm1Zg655t+N54YyZvLzAqXuac/D565Bk2ph2uttaTnf4iaZ7eNpluWKnjb03LHzlFsykIBF02d2JTsrEJ/dkRpH/NFpQ7xQ6iqnKtv/TNqj8ujp3tEMkKt3LR0/twyzZLWecot3u8euNOSEhRMLtlkcCZJjBBosk8G31/Zu6yDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760536946; c=relaxed/simple;
-	bh=6nvpRL+w3yMGwSCxrLlHi6Jp9XUA2RlHNIJiHeRHwsQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbvFOhD4sVgPAADn4PjWCGcTPqoBs3YSrfh0SOaM3JGpQV9T/mkG0A0EOM7uFhOlZ7ddec7/cjoak/7XPDF1MghuRWOchpEcAN+Yxjgdo2F8jm3VussImtyh7mgML+Sg7uM1hnpBAVeYH2L1QG49Y5Rfp+PMzwYyQRPKUEJ8c0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=mNpSdK7Q; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 8E925A0D06;
-	Wed, 15 Oct 2025 16:02:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:content-type:content-type:date:from:from:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=mail;
-	 bh=6nvpRL+w3yMGwSCxrLlHi6Jp9XUA2RlHNIJiHeRHwsQ=; b=mNpSdK7QZuNc
-	k/Wymn9abrPlG/o8jt1BE6i36xozmG0hgxwwbSFA5PzA5DCr79idbsORw+7m8BIU
-	3HB4yTVOlzR/5/HX4gtPBNIHGmbDGHc3yl09T07IhqdzFdlk2T9T5NHy2ukL896a
-	25KCxxCx2dOZQUCZ7Sk2gEaGc2iRIHYEgdOuZbGRLTsRzAKcUn80s9cGV0+jmOR/
-	BH0oG4w1TnenlAzKXjG6PiO/F25M8oJ6A0YCVn8bypoKZqHESpyFOIRK4tvzAQCB
-	g5ugfzcsjSmLwI9G40xKzVGOXOJutfExw0ufspu3XJGpi69q3XUY68fPIXkXHLqo
-	isNMC8P2heHm7/kwYFsHI3AR91XIxI0JUdoIfoxrbFw/Wu/yO0uDRBn2IStk/B11
-	9LiIP8sYQ+o7bC51svWH7iVtCGJ+Z3ZZTZjCjyi62UlN0Gt/fAq8NQDgQYdBHYbV
-	2WXXvZGBAz9CbFnJfggAWq82uU+jrY7diXBKGm1/qw11F/CqP3LLv30SQ/0xFWjB
-	q1kx5IQFLd0qn9HBdYJsUYDjeFDFimd5vxtTy+bWs0YLsJAR36wXX7jRl7A787RF
-	8M+HTat2Zafze9tEUxnKZAmMERfZPKUeblpX0yIk18UwY8g+YD0oW7BMtbPSdcze
-	hubWQw9wOFtfLtVb1+n6upoGKyXVpfo=
-Date: Wed, 15 Oct 2025 16:02:21 +0200
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] net: mdio: common handling of phy reset properties
-Message-ID: <aO-pbUEzbNGFwNHT@debianbuilder>
-References: <20251015134503.107925-1-buday.csaba@prolan.hu>
+	s=arc-20240116; t=1760537123; c=relaxed/simple;
+	bh=5Ojmj4sxlrJnfMaPuiqa45Z5k6CAnRPeizijVc+oRQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ATcpqTmB61sng1kA6mXXpNT9Du8q6+s+dfq29UGZPwGo0weGZMMiv9OWeGH3wdp9hAcBe2rrt3jKVZmoAm0hJ/TMzEdfpSXPKsqiPW/4gcZPpjlforGEshTQybewQdpM39AF7jooP+AVtX4kfV3DI8ntzmQJlod/wyMexhFarOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXR3H5aD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD79C4CEF8;
+	Wed, 15 Oct 2025 14:05:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760537121;
+	bh=5Ojmj4sxlrJnfMaPuiqa45Z5k6CAnRPeizijVc+oRQs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OXR3H5aDW8cLKRyPvDoxWkXwZC0Pszr/y3LH/8YjeJvTxmUrKXtUgXVT1USQLW8aY
+	 dTgdpC0c9vkCVldu0f6bAcoBDgE75N2Yr5guJSQkPy4VII7Iv6IyC5zGPsYh6M71NZ
+	 p016Auuk/DXa7vXf4xAfpcttY70eSePUBfOgIptzKwtbDMn0CrPO+Zi84tvFWCUZME
+	 ewPBtIe+y8if5AeZZI2s9kRFu/oH4fIZZKtW5jik0jk950M/b0cGU9AU4PK//fUgLD
+	 PwjVnyi6nMXi0YwRYSJJ75b9/hy7ieEcObIWuBd92ayHF7YJ4pAm276i8LQ8IIqi42
+	 alu5pn8gsY+tw==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
+ Dhruva Gole <d-gole@ti.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+Subject:
+ [PATCH v1 2/3] ACPI: TAD: Rearrange runtime PM operations in
+ acpi_tad_remove()
+Date: Wed, 15 Oct 2025 16:03:25 +0200
+Message-ID: <1857660.VLH7GnMWUR@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <3925484.kQq0lBPeGt@rafael.j.wysocki>
+References: <3925484.kQq0lBPeGt@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251015134503.107925-1-buday.csaba@prolan.hu>
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1760536941;VERSION=8000;MC=3282358105;ID=541937;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515F64756A
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-This is the refined v2 patchset of my previous patches, addressing the
-issues found in them.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-See the previous thread here:
-https://lore.kernel.org/lkml/20251015134503.107925-1-buday.csaba@prolan.hu/
+It is not necessary to resume the device upfront in acpi_tad_remove()
+because both acpi_tad_disable_timer() and acpi_tad_clear_status()
+attempt to resume it, but it is better to prevent it from suspending
+between these calls by incrementing its runtime PM usage counter.
+
+Accordingly, replace the pm_runtime_get_sync() call in acpi_tad_remove()
+with a pm_runtime_get_noresume() one and put the latter right before the
+first invocation of acpi_tad_disable_timer().
+
+In addition, use pm_runtime_put_noidle() to drop the device's runtime
+PM usage counter after using pm_runtime_get_noresume() to bump it up
+to follow a common pattern and use pm_runtime_suspend() for suspending
+the device afterward.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/acpi_tad.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+--- a/drivers/acpi/acpi_tad.c
++++ b/drivers/acpi/acpi_tad.c
+@@ -563,8 +563,6 @@ static void acpi_tad_remove(struct platf
+ 
+ 	device_init_wakeup(dev, false);
+ 
+-	pm_runtime_get_sync(dev);
+-
+ 	if (dd->capabilities & ACPI_TAD_RT)
+ 		sysfs_remove_group(&dev->kobj, &acpi_tad_time_attr_group);
+ 
+@@ -573,6 +571,8 @@ static void acpi_tad_remove(struct platf
+ 
+ 	sysfs_remove_group(&dev->kobj, &acpi_tad_attr_group);
+ 
++	pm_runtime_get_noresume(dev);
++
+ 	acpi_tad_disable_timer(dev, ACPI_TAD_AC_TIMER);
+ 	acpi_tad_clear_status(dev, ACPI_TAD_AC_TIMER);
+ 	if (dd->capabilities & ACPI_TAD_DC_WAKE) {
+@@ -580,7 +580,8 @@ static void acpi_tad_remove(struct platf
+ 		acpi_tad_clear_status(dev, ACPI_TAD_DC_TIMER);
+ 	}
+ 
+-	pm_runtime_put_sync(dev);
++	pm_runtime_put_noidle(dev);
++	pm_runtime_suspend(dev);
+ 	pm_runtime_disable(dev);
+ 	acpi_remove_cmos_rtc_space_handler(handle);
+ }
+
+
 
 
