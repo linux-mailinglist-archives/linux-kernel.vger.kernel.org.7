@@ -1,169 +1,113 @@
-Return-Path: <linux-kernel+bounces-855178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2543FBE0789
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FE4BE071D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EAF93A6E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F891A234C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780A931196D;
-	Wed, 15 Oct 2025 19:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF1F30FC3D;
+	Wed, 15 Oct 2025 19:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCCV0La8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BGZH6309"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F5C30BB99;
-	Wed, 15 Oct 2025 19:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2526430F936
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760556805; cv=none; b=pVjlfzyhSttIFY/WjUo19+BvxkVgv3gcKfdWwWhO/r3Q/xRibBtecKStbeFaZpzBaHk6JsaWTQ/0ae0aMtyrGaigtDYQ9l7mqb4jkxwwrV8nHLCDTiQxk4Z1s/KIxnwuo6qphWD3zCae4mI+Z5GyBs5iL+QOup/z4qHfkexPKDA=
+	t=1760556722; cv=none; b=fCYggRhtwa71e//OthlNC37IfITPX1oSP2PzwGICp1aWo1Q9mSQ8nnLrdvEl2NH7KVkYqEn7Q6/OXU+pRuig9KoAmPH9QXqUikO6p5QkMf0EAtdSL8OVjQh2HmZU4N1WDNG8Qvr3Nwcs3bu2p6gC8HyCBNVQh8DOa5HStRIMqmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760556805; c=relaxed/simple;
-	bh=1S8oGspI95G1x09C/Ign9dmKxuBXrkyXu1Cqhf8xqF0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O72CyT673Cepy583k9SgYRE9s8C2BRKpuKx+RM+AcQ3Hx0a0AaNKmmL8G4j31Z+62eQE5le7G4As5VArzKNLWIVTW0K8bAFagBz/0dFNpFfJntzetVfbVYWBs3Q08Xu/xxkPZ6hdcYXoYsyzwIYHXaiIWQekKb2OiNvdfhXn+jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCCV0La8; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760556796; x=1792092796;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=1S8oGspI95G1x09C/Ign9dmKxuBXrkyXu1Cqhf8xqF0=;
-  b=GCCV0La8R9XjrCqbm+8VLSLtVQl+HzCYylvwKr6lk8H/vKOiSZh+vIyX
-   vN6NKeKWQMbUJpckEhPYiVZY5gxXOwlKxxqmmgYLVOT0H4opX3KBYB4FE
-   GReXtDuiBEt0PYG8GPsGjT/etO22Hq/tkUslvv2BGv7IehnB/2agG2fKn
-   rzpVBNCnIK0A/im2qAGaHAFhapKv8ve+/2Xeu20meiPpTg9MQPdrUYqkf
-   rvMSBwyXYrr9I7M44d3ptTEbLM0lakgVFqxKunQNoLrbAaath5lJhbY76
-   LxqOK8f7QwEf7gkX3q6s+9mPfVLB+IaMuBp60aXxiMv0TVoENpsqVk2A/
-   w==;
-X-CSE-ConnectionGUID: 8gI+vLygQwq7FXTzXlLscg==
-X-CSE-MsgGUID: rCKD5ZjkSoOZsMEtR59lAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="74083469"
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="74083469"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 12:33:14 -0700
-X-CSE-ConnectionGUID: UxfR9vNFRIaHU5X/XIkqMw==
-X-CSE-MsgGUID: +ZVJgb6TT0+52HXewe/iuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="182044869"
-Received: from orcnseosdtjek.jf.intel.com (HELO [10.166.28.70]) ([10.166.28.70])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 12:33:13 -0700
-From: Jacob Keller <jacob.e.keller@intel.com>
-Date: Wed, 15 Oct 2025 12:31:57 -0700
-Subject: [PATCH net-next 01/14] devlink: Add new "max_mac_per_vf" generic
- device param
+	s=arc-20240116; t=1760556722; c=relaxed/simple;
+	bh=vFQ57qEPFFK4a1P47Xt/5YF6jxl+QY81g9//5V0r9E0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jpIUO6pkLLxD5FdeWU5TSHwYtdrFCg3KmMOauh4SdG5pezoJMUgtg1q8lm9li8t5WdztAHPy6xWoBz7KBroVgtx8FVfP6ss3YMD3resIqPfjSvqyDOeX4w9mABhbYSlEkziDL6qE6c/s6iW8wBmwBkJQPTTVxaWvmGiCjJvc9AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BGZH6309; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e509374dcso30896675e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:31:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760556718; x=1761161518; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/gjm1LijoOvaR4UmxrMCJ1ivWAHmFdej62IpC3mzcB4=;
+        b=BGZH6309bU6Mbs+3J4LnwjlKP1TsCRa6yES/tI0VhKD0BHpaB3l9FbZn/UiCGA6H0t
+         yMSuoidfrDnDN03lgz3vU6xT41uflImWK255l4gKelA07Z81mnhd4wQ+ZyiyXwtJ7gvm
+         K3CDcCMmL9Tb415htIo0hUQAfWC1u+bFWq5gvcAjMylvCPyIYKJoMuYJTq+gIWc1oEqM
+         sjg1Z0NuJEH7E88Dagc06vJhQJ7QpPtiNJjX1UCfwV774xHHQBCFOJIARrw4s/RYMrTc
+         aYh8x0Oh4eZuINjdmnyD+/PRkjVu004xGouOsPRGvh3VI68Rt6uo/QIK9y8emDK8CUky
+         mB9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760556718; x=1761161518;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/gjm1LijoOvaR4UmxrMCJ1ivWAHmFdej62IpC3mzcB4=;
+        b=SK93UFgl1hgWGjGKyBgnW2lV4WUi8dDJh82LILJs5qH5wJiKChjSUDWa2xqrtgm2nV
+         jVchSZPPm1KdR/elXpL+ry7Ur0bY5e+t0g09fynwp2NggKWUFYuzjgmfDJpKuDeTJXIU
+         xmoTJFvpUO/6xoc9eNGAAx1Pk4ECsHqNT9RtYnjvC2UD9Ys3HzaNH+mOlgOdrUvTlHWJ
+         yJ4uz9BFiNURNYNhDuEFByjyiuvaHWZK5o+2NcU+W/giICfvp9Nw5Pkqk9SjIya1woaS
+         saND00P3oz/lmEBgmkPUQKZ7f3fXobBbRuCAPsJ0jCOc57DbjBbDpTrg3DoSCT4WoaXH
+         E2uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGcN3s4y9whjJzrbwisEtDmRVYtdKZvuLs7hjMmPoFjWWdKcp40Hv9W3zADpAsGx2cSPvYI5YdcRD4m6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNQ+f1mjO/kIdBrkoVGiurTGCW3btZQlGpEMEuWeh12sEmb4w1
+	kUJgo8xR9whH9F+eqqi7OBFfnuAwNd0rUMp3l4gIP4GXrsNiUgLBjxPwYWxCldyaO8jdK+3LADu
+	LY5Hoa4YeSnsDkpflAQ==
+X-Google-Smtp-Source: AGHT+IEL/VHOLFHuIoVUiV/D6Bqe6tW62TJ5aBz6rcqOw3p0/Xw8HWgUhNCxtEkFwsrO9XapAOq1uGfyLXGMMfk=
+X-Received: from wmbd3.prod.google.com ([2002:a05:600c:58c3:b0:46f:aa50:d6ff])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:138a:b0:46d:7fa2:7579 with SMTP id 5b1f17b1804b1-46fa9a96521mr194128565e9.9.1760556718448;
+ Wed, 15 Oct 2025 12:31:58 -0700 (PDT)
+Date: Wed, 15 Oct 2025 19:31:57 +0000
+In-Reply-To: <20251015-cstr-core-v17-6-dc5e7aec870d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com> <20251015-cstr-core-v17-6-dc5e7aec870d@gmail.com>
+Message-ID: <aO_2rb29XrSn0qo3@google.com>
+Subject: Re: [PATCH v17 06/11] rust: alloc: use `kernel::fmt`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251015-jk-iwl-next-2025-10-15-v1-1-79c70b9ddab8@intel.com>
-References: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
-In-Reply-To: <20251015-jk-iwl-next-2025-10-15-v1-0-79c70b9ddab8@intel.com>
-To: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>, 
- Mohammad Heib <mheib@redhat.com>
-X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2790;
- i=jacob.e.keller@intel.com; h=from:subject:message-id;
- bh=zAPsi0PcTqjXPt4eBr5ahPf0TWS+g8Ij/TLDr5ZJ5aQ=;
- b=owGbwMvMwCWWNS3WLp9f4wXjabUkhoz3377Gd33fHprD9KtvRuuHl3feOd81OnCa896/yE2Hb
- aSnvZgT0lHKwiDGxSArpsii4BCy8rrxhDCtN85yMHNYmUCGMHBxCsBEok8z/LOYJ3KMbbZA3+as
- uzLB4YYCD3ay3/ox8c7/nW91rQzSP69n+O8x+XCF0Vcj7fdiDxSZWTgSN/hOZkg/vWDtpeP+E6p
- V2xgA
-X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
- fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
 
-From: Mohammad Heib <mheib@redhat.com>
+On Wed, Oct 15, 2025 at 03:24:36PM -0400, Tamir Duberstein wrote:
+> Reduce coupling to implementation details of the formatting machinery by
+> avoiding direct use for `core`'s formatting traits and macros.
+> 
+> This backslid in commit 9def0d0a2a1c ("rust: alloc: add
+> Vec::push_within_capacity").
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Add a new device generic parameter to controls the maximum
-number of MAC filters allowed per VF.
-
-For example, to limit a VF to 3 MAC addresses:
- $ devlink dev param set pci/0000:3b:00.0 name max_mac_per_vf \
-        value 3 \
-        cmode runtime
-
-Signed-off-by: Mohammad Heib <mheib@redhat.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
----
- include/net/devlink.h                               | 4 ++++
- net/devlink/param.c                                 | 5 +++++
- Documentation/networking/devlink/devlink-params.rst | 4 ++++
- 3 files changed, 13 insertions(+)
-
-diff --git a/include/net/devlink.h b/include/net/devlink.h
-index 9e824f61e40f..d01046ef0577 100644
---- a/include/net/devlink.h
-+++ b/include/net/devlink.h
-@@ -532,6 +532,7 @@ enum devlink_param_generic_id {
- 	DEVLINK_PARAM_GENERIC_ID_CLOCK_ID,
- 	DEVLINK_PARAM_GENERIC_ID_TOTAL_VFS,
- 	DEVLINK_PARAM_GENERIC_ID_NUM_DOORBELLS,
-+	DEVLINK_PARAM_GENERIC_ID_MAX_MAC_PER_VF,
- 
- 	/* add new param generic ids above here*/
- 	__DEVLINK_PARAM_GENERIC_ID_MAX,
-@@ -602,6 +603,9 @@ enum devlink_param_generic_id {
- #define DEVLINK_PARAM_GENERIC_NUM_DOORBELLS_NAME "num_doorbells"
- #define DEVLINK_PARAM_GENERIC_NUM_DOORBELLS_TYPE DEVLINK_PARAM_TYPE_U32
- 
-+#define DEVLINK_PARAM_GENERIC_MAX_MAC_PER_VF_NAME "max_mac_per_vf"
-+#define DEVLINK_PARAM_GENERIC_MAX_MAC_PER_VF_TYPE DEVLINK_PARAM_TYPE_U32
-+
- #define DEVLINK_PARAM_GENERIC(_id, _cmodes, _get, _set, _validate)	\
- {									\
- 	.id = DEVLINK_PARAM_GENERIC_ID_##_id,				\
-diff --git a/net/devlink/param.c b/net/devlink/param.c
-index 70e69523412c..6b233b13b69a 100644
---- a/net/devlink/param.c
-+++ b/net/devlink/param.c
-@@ -112,6 +112,11 @@ static const struct devlink_param devlink_param_generic[] = {
- 		.name = DEVLINK_PARAM_GENERIC_NUM_DOORBELLS_NAME,
- 		.type = DEVLINK_PARAM_GENERIC_NUM_DOORBELLS_TYPE,
- 	},
-+	{
-+		.id = DEVLINK_PARAM_GENERIC_ID_MAX_MAC_PER_VF,
-+		.name = DEVLINK_PARAM_GENERIC_MAX_MAC_PER_VF_NAME,
-+		.type = DEVLINK_PARAM_GENERIC_MAX_MAC_PER_VF_TYPE,
-+	},
- };
- 
- static int devlink_param_generic_verify(const struct devlink_param *param)
-diff --git a/Documentation/networking/devlink/devlink-params.rst b/Documentation/networking/devlink/devlink-params.rst
-index 0a9c20d70122..c0597d456641 100644
---- a/Documentation/networking/devlink/devlink-params.rst
-+++ b/Documentation/networking/devlink/devlink-params.rst
-@@ -151,3 +151,7 @@ own name.
-    * - ``num_doorbells``
-      - u32
-      - Controls the number of doorbells used by the device.
-+   * - ``max_mac_per_vf``
-+     - u32
-+     - Controls the maximum number of MAC address filters that can be assigned
-+       to a Virtual Function (VF).
-
--- 
-2.51.0.rc1.197.g6d975e95c9d7
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
 
