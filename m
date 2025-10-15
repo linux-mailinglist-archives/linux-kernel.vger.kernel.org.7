@@ -1,181 +1,211 @@
-Return-Path: <linux-kernel+bounces-853816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D4EBDCA9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:13:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F98BDCA86
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2BFC3C8530
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:13:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A3D14E2CFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B083054DB;
-	Wed, 15 Oct 2025 06:12:59 +0000 (UTC)
-Received: from out28-99.mail.aliyun.com (out28-99.mail.aliyun.com [115.124.28.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F36302CAB;
+	Wed, 15 Oct 2025 06:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSfr6Fsk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58B913C8EA;
-	Wed, 15 Oct 2025 06:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690072FB0B6
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760508778; cv=none; b=eeP0N14tKqcUwnZ6AfLkszOnP5NI3xKDg1pzyTSk+AFTJ6pC0jw+Ja9dySTaqZ/pz7l/DGtL/2NKysnImih8rdX8CEZLde8Vje0F32HqdsefMbx/7UdYWQ/fzuj8sbOvikN21XIfGdnx7jNIcddozCE6eBkj3iALfpcNp/a8SnY=
+	t=1760508489; cv=none; b=l64njEhzVcSHfKY2ufmK9fxr+JRRCAWGXgdA02JiaYw74NUUfVeKfdjiYoJHOpGmiX3YP+cpc/yeso/WqfnfdjmuXk2/f6lrKuXQwTwU854GEn2RZ6lgbk0NU+mQOE+8TVVO9fsKWy4FLgTEihX5HipRXcBg5Y48cUDvXycZg24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760508778; c=relaxed/simple;
-	bh=7AxJLTHuNLufjyzhwhMdz+Egc9IfsztB8kWgCDonfck=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GknEdJ/iizjypM6Qz45iDadIpgRvzmqqokSMCV7LbwUFQFPsLmk0i5nlPWDbBVr/0GjzVt2H6Cxh8bRW9ngiAtpN6qyk/cmpFpLkqsdOAq/FIFKsHXZ28Qp07K3Oya/XjC9hhCkAmVqnrtRAlR+kw7DIrT5zbGVG+0mXY4aJmTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com; spf=pass smtp.mailfrom=allwinnertech.com; arc=none smtp.client-ip=115.124.28.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allwinnertech.com
-Received: from SunxiBot.allwinnertech.com(mailfrom:michael@allwinnertech.com fp:SMTPD_---.f-yOgmV_1760508437 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Wed, 15 Oct 2025 14:07:22 +0800
-From: Michael Wu <michael@allwinnertech.com>
-To: ulf.hansson@linaro.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	adrian.hunter@intel.com,
-	avri.altman@wdc.com,
-	wsa+renesas@sang-engineering.com,
-	victor.shih@genesyslogic.com.tw,
-	andy-ld.lu@mediatek.com
-Cc: jason.lai@genesyslogic.com.tw,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [RESEND] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
-Date: Wed, 15 Oct 2025 14:07:14 +0800
-Message-Id: <20251015060714.67558-1-michael@allwinnertech.com>
-X-Mailer: git-send-email 2.29.0
+	s=arc-20240116; t=1760508489; c=relaxed/simple;
+	bh=NJiRt76dTbkJ4xrmV7ry3jBdOkRCmOO9abjget4+0ZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BNLcU4D7/ifBzhftOzSlfovhn9fw7Jt+HI6x/Or3rdNTcKt/EbHhf1ghkhfTiIOiIQHxD+m5ZmXfFDox/E4l+o14FHNrPgFZ4hGXX9w/TONeLlVVTEM8baQr3KHmp3dfYkekepY72VhH4hEu5zp8i8gkxiUAZ3XyDhyMbrtfOaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSfr6Fsk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760508486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIFmfXL90OL8IaHK+O7WfgGi7yW4MSc3y23FO0z51Bw=;
+	b=MSfr6FskXBSRvxtGHcc4o9rFAEw2rJi5JspOXs3q1k+tFEU10ddZpPGMIgQCFDflF6+Yzu
+	DugiHxn49QuUdQiuuAO3EtkILl41biNHTPlsA6kv5R7RcS2r/ax1ij3BrAhzL43IgwYZFV
+	r2RfiQLxBGABIZ8DyO6Z614CurymMqI=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-QGLIHILAPXm3jGvs4wvSiA-1; Wed, 15 Oct 2025 02:08:02 -0400
+X-MC-Unique: QGLIHILAPXm3jGvs4wvSiA-1
+X-Mimecast-MFC-AGG-ID: QGLIHILAPXm3jGvs4wvSiA_1760508481
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-426ce339084so4479375f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:08:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760508481; x=1761113281;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MIFmfXL90OL8IaHK+O7WfgGi7yW4MSc3y23FO0z51Bw=;
+        b=MY34pB4XbE++Ej0lg0QSRsZMQPttScCk1IFsoT0lGgq/H3UZvo7f9zaCWoHOKztwfD
+         9bWlYaCxJbIfbUSZ+iSZOEcMEfmXC+WOwLUI7gYcLgKNxHVxyRE2e6gAljJt65QgveH5
+         1BDgIQB2JZsSheOr/0hU4NXDh6LbHQLnnxyROFt/SdZqJVWKkj1se0elYuc3K+gXwCxZ
+         bkIn+Ic+roYV3Kv48tbprlNwSUjM8DmACNQQcJ8MQRKo7ZqR/2JBie9trRla+uVarLzU
+         wRVeZKIz/PApQrUvGuVysZC1E1fpdaeGiBUzJw/TdPveX6luvqGrRMxZQcJc7E9x0VFE
+         TZjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEU9CmOyRgY7VUyTvPGiHMU1kkzNOAtKtCMQ5V7odoTFPr7IS9uKMGd50kTr4qyTbivPzcDOdiZSra2pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkGylLwMFOPP6W6EBnW2fMMG5xCGRI5orfEVISRQeGnIiojKWa
+	RsXCvzUXZcR1WCyLEFUNdQ7JC+JfMrKypLC2pJ5/g3wLrsFLWKiZgm2FzGcsyPnXPgZGKs9+dhd
+	/76ZyPx+ZsPx/3xRARQ1j34fk1IZbTQiNpeit4xdIrEDFgP2zhKApkmKuGLNh8kpdKA==
+X-Gm-Gg: ASbGnctLhmuzX1eWYitZ9ay8xH+Un1nSWNxDwpku5H76inzq1wONV2uNsFdN1xz3ZRX
+	DPwYqviozunQ4WJPFvUDCIo3YYXkw9t6rKcbrksvjdgSb6flpHQ7s45YeiFLF/HtZCpd4WNgMOr
+	edw+95MUSxgqnI6aqA3Kd5+dSF1ASV/T9+TXUL/dTQ+Q4oVGe5gaVjRqrHvmt/X6et00hJB7lsj
+	r9LWA4Hi5s/nuD+dKTmnKFCPm45bNiqzzjRCRY1+etBBUKsO9sf17ahEk+IFlER2T9YEBupOBd/
+	3oQz/Azg92u4eyOd0/PDDTBcq9kS2txJuQ==
+X-Received: by 2002:a05:6000:4205:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-4266f752fb9mr16997286f8f.43.1760508481220;
+        Tue, 14 Oct 2025 23:08:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHo4zy/2ZSFghJwm9U3Fa/LOQMyZhQqIGJ9fyNuM2dBeXBWUD0UpUGr6S550pkPgJhtuk1XzQ==
+X-Received: by 2002:a05:6000:4205:b0:3f7:b7ac:f3d2 with SMTP id ffacd0b85a97d-4266f752fb9mr16997267f8f.43.1760508480741;
+        Tue, 14 Oct 2025 23:08:00 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582a9csm27152693f8f.12.2025.10.14.23.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 23:08:00 -0700 (PDT)
+Date: Wed, 15 Oct 2025 02:07:57 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Maxime Coquelin <mcoqueli@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Yongji Xie <xieyongji@bytedance.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Dragos Tatulea DE <dtatulea@nvidia.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+Message-ID: <20251015020717-mutt-send-email-mst@kernel.org>
+References: <20251007130622.144762-1-eperezma@redhat.com>
+ <20251007130622.144762-2-eperezma@redhat.com>
+ <20251014042459-mutt-send-email-mst@kernel.org>
+ <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
+ <20251014051537-mutt-send-email-mst@kernel.org>
+ <CAO55cswTyMBsKdpn7becsY4Ry+ZUoEfgP+2Q+DkhZ090VK_-2A@mail.gmail.com>
+ <CACGkMEsqD1qAgt8qfV=fwj1OeBeXzoOF1wXdqzJaWYR2A=C+UA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEsqD1qAgt8qfV=fwj1OeBeXzoOF1wXdqzJaWYR2A=C+UA@mail.gmail.com>
 
-During system shutdown, mmc_bus_shutdown() calls __mmc_stop_host() which
-uses cancel_delayed_work_sync(). This can block indefinitely if the work
-queue is stuck, causing the system to hang during shutdown.
+On Wed, Oct 15, 2025 at 12:44:47PM +0800, Jason Wang wrote:
+> On Tue, Oct 14, 2025 at 6:21 PM Maxime Coquelin <mcoqueli@redhat.com> wrote:
+> >
+> > On Tue, Oct 14, 2025 at 11:25 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > >
+> > > On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
+> > > > On Tue, Oct 14, 2025 at 10:29 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > > >
+> > > > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio Pérez wrote:
+> > > > > > An userland device implemented through VDUSE could take rtnl forever if
+> > > > > > the virtio-net driver is running on top of virtio_vdpa.  Let's break the
+> > > > > > device if it does not return the buffer in a longer-than-assumible
+> > > > > > timeout.
+> > > > >
+> > > > > So now I can't debug qemu with gdb because guest dies :(
+> > > > > Let's not break valid use-cases please.
+> > > > >
+> > > > >
+> > > > > Instead, solve it in vduse, probably by handling cvq within
+> > > > > kernel.
+> > > >
+> > > > Would a shadow control virtqueue implementation in the VDUSE driver work?
+> > > > It would ack systematically messages sent by the Virtio-net driver,
+> > > > and so assume the userspace application will Ack them.
+> > > >
+> > > > When the userspace application handles the message, if the handling fails,
+> > > > it somehow marks the device as broken?
+> > > >
+> > > > Thanks,
+> > > > Maxime
+> > >
+> > > Yes but it's a bit more convoluted  than just acking them.
+> > > Once you use the buffer you can get another one and so on
+> > > with no limit.
+> > > One fix is to actually maintain device state in the
+> > > kernel, update it, and then notify userspace.
+> >
+> > I agree, this is the way to go.
+> >
+> > Thanks for your insights,
+> > Maxime
+> 
+> A timeout still needs to be considered in this case. Or I may miss something?
+> 
+> Thanks
 
-This patch introduces a new function __mmc_stop_host_no_sync() that skips
-the synchronous work cancellation, preventing potential shutdown hangs.
-The function is used in mmc_bus_shutdown() where blocking is not
-acceptable during system shutdown.
+Not as such, kernel can use buffers (semi) predictably.
 
-Changes:
-- Add __mmc_stop_host_no_sync() function that avoids cancel_delayed_work_sync()
-- Update mmc_bus_shutdown() to use the new non-blocking function
-- Keep the original __mmc_stop_host() unchanged for normal operation
-
-This ensures graceful system shutdown while maintaining existing
-functionality for regular MMC host operations.
-
-stack information when an error occurs:
-INFO: task init:1 blocked for more than 720 seconds.
-      Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:init            state:D stack:    0 pid:    1 ppid:     0 flags:0x04000008
-Call trace:
- __switch_to+0x234/0x470
- __schedule+0x694/0xb8c
- schedule+0x150/0x254
- schedule_timeout+0x48/0x138
- wait_for_common+0x144/0x308
- __flush_work+0x3d8/0x508
- __cancel_work_timer+0x120/0x2e8
- mmc_bus_shutdown+0x90/0x158
- device_shutdown+0x204/0x434
- kernel_restart+0x54/0x220
- kernel_restart+0x0/0x220
- invoke_syscall+0x60/0x150
- el0_svc_common+0xb8/0xf8
- do_el0_svc+0x28/0x98
- el0_svc+0x24/0x84
- el0t_64_sync_handler+0x88/0xec
- el0t_64_sync+0x1b8/0x1bc
-INFO: task kworker/1:1:73 blocked for more than 721 seconds.
-      Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:1     state:D stack:    0 pid:   73 ppid:     2 flags:0x00000008
-Workqueue: events_freezable mmc_rescan.cfi_jt
-Call trace:
- __switch_to+0x234/0x470
- __schedule+0x694/0xb8c
- schedule+0x150/0x254
- schedule_preempt_disabled+0x2c/0x4c
- __mutex_lock+0x360/0xb00
- __mutex_lock_slowpath+0x18/0x28
- mutex_lock+0x48/0x12c
- device_del+0x48/0x8d0
- mmc_remove_card+0x128/0x158
- mmc_sdio_remove+0x190/0x1ac
- mmc_sdio_detect+0x7c/0x118
- mmc_rescan+0xe8/0x42c
- process_one_work+0x248/0x55c
- worker_thread+0x3b0/0x740
- kthread+0x168/0x1dc
- ret_from_fork+0x10/0x20
-
-Signed-off-by: Michael Wu <michael@allwinnertech.com>
----
- drivers/mmc/core/bus.c  |  2 +-
- drivers/mmc/core/core.c | 14 ++++++++++++++
- drivers/mmc/core/core.h |  1 +
- 3 files changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-index 1cf64e0952fbe..6ff6fcb4c6f27 100644
---- a/drivers/mmc/core/bus.c
-+++ b/drivers/mmc/core/bus.c
-@@ -149,7 +149,7 @@ static void mmc_bus_shutdown(struct device *dev)
- 	if (dev->driver && drv->shutdown)
- 		drv->shutdown(card);
- 
--	__mmc_stop_host(host);
-+	__mmc_stop_host_no_sync(host);
- 
- 	if (host->bus_ops->shutdown) {
- 		ret = host->bus_ops->shutdown(host);
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index a0e2dce704343..2d75ad26f84a9 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2336,6 +2336,20 @@ void __mmc_stop_host(struct mmc_host *host)
- 	cancel_delayed_work_sync(&host->detect);
- }
- 
-+void __mmc_stop_host_no_sync(struct mmc_host *host)
-+{
-+	if (host->rescan_disable)
-+		return;
-+
-+	if (host->slot.cd_irq >= 0) {
-+		mmc_gpio_set_cd_wake(host, false);
-+		disable_irq(host->slot.cd_irq);
-+	}
-+
-+	host->rescan_disable = 1;
-+	/* Skip cancel_delayed_work_sync to avoid potential blocking */
-+}
-+
- void mmc_stop_host(struct mmc_host *host)
- {
- 	__mmc_stop_host(host);
-diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
-index 622085cd766f9..eb59a61717357 100644
---- a/drivers/mmc/core/core.h
-+++ b/drivers/mmc/core/core.h
-@@ -71,6 +71,7 @@ static inline void mmc_delay(unsigned int ms)
- void mmc_rescan(struct work_struct *work);
- void mmc_start_host(struct mmc_host *host);
- void __mmc_stop_host(struct mmc_host *host);
-+void __mmc_stop_host_no_sync(struct mmc_host *host);
- void mmc_stop_host(struct mmc_host *host);
- 
- void _mmc_detect_change(struct mmc_host *host, unsigned long delay,
--- 
-2.29.0
+> >
+> > >
+> > >
+> > > > >
+> > > > > > A less agressive path can be taken to recover the device, like only
+> > > > > > resetting the control virtqueue.  However, the state of the device after
+> > > > > > this action is taken races, as the vq could be reset after the device
+> > > > > > writes the OK.  Leaving TODO anyway.
+> > > > > >
+> > > > > > Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+> > > > > > ---
+> > > > > >  drivers/net/virtio_net.c | 10 ++++++++++
+> > > > > >  1 file changed, 10 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > > > > index 31bd32bdecaf..ed68ad69a019 100644
+> > > > > > --- a/drivers/net/virtio_net.c
+> > > > > > +++ b/drivers/net/virtio_net.c
+> > > > > > @@ -3576,6 +3576,7 @@ static bool virtnet_send_command_reply(struct virtnet_info *vi, u8 class, u8 cmd
+> > > > > >  {
+> > > > > >       struct scatterlist *sgs[5], hdr, stat;
+> > > > > >       u32 out_num = 0, tmp, in_num = 0;
+> > > > > > +     unsigned long end_time;
+> > > > > >       bool ok;
+> > > > > >       int ret;
+> > > > > >
+> > > > > > @@ -3614,11 +3615,20 @@ static bool virtnet_send_command_reply(struct virtnet_info *vi, u8 class, u8 cmd
+> > > > > >
+> > > > > >       /* Spin for a response, the kick causes an ioport write, trapping
+> > > > > >        * into the hypervisor, so the request should be handled immediately.
+> > > > > > +      *
+> > > > > > +      * Long timeout so a malicious device is not able to lock rtnl forever.
+> > > > > >        */
+> > > > > > +     end_time = jiffies + 30 * HZ;
+> > > > > >       while (!virtqueue_get_buf(vi->cvq, &tmp) &&
+> > > > > >              !virtqueue_is_broken(vi->cvq)) {
+> > > > > >               cond_resched();
+> > > > > >               cpu_relax();
+> > > > > > +
+> > > > > > +             if (time_after(end_time, jiffies)) {
+> > > > > > +                     /* TODO Reset vq if possible? */
+> > > > > > +                     virtio_break_device(vi->vdev);
+> > > > > > +                     break;
+> > > > > > +             }
+> > > > > >       }
+> > > > > >
+> > > > > >  unlock:
+> > > > > > --
+> > > > > > 2.51.0
+> > > > >
+> > >
+> >
 
 
