@@ -1,226 +1,160 @@
-Return-Path: <linux-kernel+bounces-855318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020A1BE0E02
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF04BE0E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB5724E051E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:53:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA1F74F0AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4157F3043B3;
-	Wed, 15 Oct 2025 21:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783053043D8;
+	Wed, 15 Oct 2025 21:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVuZZ5E3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTvrSye8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0BE226863;
-	Wed, 15 Oct 2025 21:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0B3303CBD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760565226; cv=none; b=nk28H2LGeqOTwiEY3PqVfrgz0I4914iz7fFUA8/hnm40LiPq0UtL7wX2WocG27BGdyBur2rjW+XrcsWMh8UxKsbJhrC0bGPfeWf7UjvkMYMlR2dLYYFIhg6wZ7lKCLZfbG/lZADoBezxnPxC3jncu37i6sdSXyKaRKoW4eP1Vg4=
+	t=1760565347; cv=none; b=WG5l8hepb3/MvsOX7f8A6BpNkSxHqK2IQwjD29TfIXeJG4vHSMeFbEIY8EKBfEP33ZLcKBabmBYUv9yfHpCLQZflNub9+JbLNI3tgz/CeA6TgFnD4JS6/oVI8ScD3AB/8x4cp7cD/niYow11FY2BlMR6vLEt6SWhts0PII7vbsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760565226; c=relaxed/simple;
-	bh=TUP3G+3YBjuKMU90+gsh+SHhAT+Wrly3xy+ikFDxeNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIt4Nx5jEcPL+Ohc6ba6WQ5TnDSLGNS1l/Fplxip5fOlOzi1SXUrTUYqfG8oW+CSFTDlRjpGbRiVpGKU30jQM3eaqRfKsbztKDIEw2+o4zZk9TOtNseCuT7sUG+uwOgyP7FJNJk11CXpN/OMCHYsUqVXRTRxRLzBoO8cEuDn+j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVuZZ5E3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F03C4CEF8;
-	Wed, 15 Oct 2025 21:53:43 +0000 (UTC)
+	s=arc-20240116; t=1760565347; c=relaxed/simple;
+	bh=OFUZEAn0tJfrAUbL/6gUV+/vHKjKd4aU7a2bK6qndOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hMz0dfj1nACnEASdWYVCQAKC/jUEy22bolKgBLzDp1UbxGq9e2Y97cIQPvE0IPhNrPt/35JrYrOY8sLoVWaOmNIZpQsj2XVrITi2jVL7K/RUNA5ieACJbuhgK5xhaaMxhqPmb0UITQr/rDzfFslsyU9coZn7NAY4op6ToDkXDL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTvrSye8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73BC1C116D0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760565225;
-	bh=TUP3G+3YBjuKMU90+gsh+SHhAT+Wrly3xy+ikFDxeNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hVuZZ5E37mL2DdQWd0Wsg/fpBLcG2a1zeHEBf/8MjqmRSSbJrBVxYwDCdDwaxIKMK
-	 rDSvDMUH4M+/8klTwgRcZ7+r2L5wZ/5MgJGmS65oLwTCxWEY0+VL/Y0hcE67A9lRdP
-	 /FF6d5Q3bh0sWrYJmLjkOJWZpOo1YnxvWzbt33qSKtmtCBxsBBTdDHX6Al2TJOaWXf
-	 cFolv/MEhXR4BtFRovn0LqmV9KOQHVfPPIaxYeXKiEdX7dauePRK7lq8M4KtY7I2dc
-	 VkxSb1JAu3sv2YnzBR9/xNGsSysHKQAvd41YJxeZFonB7TgGawGL8QG1zoQXasIPUf
-	 q4Ct0FpE7Xhlw==
-Date: Wed, 15 Oct 2025 23:53:41 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 5/5] man/man3/pthread_cond_init.3: Add a note
- regarding real-time usage
-Message-ID: <e2i2tn3a7i4ehzoeglv4n52q657hn4l3vauial2xyaqyrjyvcm@vagxk3mquxfw>
-References: <20250915141305.906440-1-bigeasy@linutronix.de>
- <20250915141305.906440-6-bigeasy@linutronix.de>
+	s=k20201202; t=1760565347;
+	bh=OFUZEAn0tJfrAUbL/6gUV+/vHKjKd4aU7a2bK6qndOU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XTvrSye8LFx8I2EDZvSsssU9YDxQRmbmqRHNq8mr4JGiVimliYi1AnVP7b4fPYwBk
+	 +RXItK/h6ga30VZfNUIUCRqViNq/TEoBTBBAT/qyoYGyhA5uZ71K0K39dyO4M1+dIE
+	 3n2kFV9I4hTnwqSsp32+okXPWp35yrE4hKJey33ew9IbxD+Dc29TJ/w917qC4+cIBZ
+	 UDCCsIJGA+X2/B/dH1KQYLXYuliBREwLhSyHzMGlP+2PjtPVPlile8xwTNCb2Rko7z
+	 yjqZK/MR+tLdUGxeuk2yGm+H0a4+wskRo83Xd8EJKyXOQkG9Gs4Gz/sI/PMLaJJhBI
+	 210BLmVi4phPQ==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b4aed12cea3so8285366b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:55:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX3V2G3neUt1lzzxKrk6CQgB5wd2oeDAZIrCzv8BPxd7T8k5A+9E21V4+5U6mI78/8azET3p/PDOUeCalk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbYyJdEXKf/kh6ntvcK82+O2P2quQbD/guUbYOBDj7MEBzc31V
+	P+dFUmw/dNNSeO62p0FbKNDUatxfLpzi2wN6NKSdPRLTOhpBD9ayIC5HHQSq1Qrefdv52qi3GZd
+	Ai/O7lHhIY00Is0xhaOUx6eFKZavjpQ==
+X-Google-Smtp-Source: AGHT+IFHESWupx/CTqIl66Cowsu3EvMAI/+jJbfasG4ZKwZXkzIfC23I0vb6ITIupl3h7wZ6qWU0Vk2BmLWIuje8Wec=
+X-Received: by 2002:a17:906:ee89:b0:b3b:679d:7f4a with SMTP id
+ a640c23a62f3a-b50aa387331mr3022927066b.5.1760565346012; Wed, 15 Oct 2025
+ 14:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gsvjs2qzdyde7s4d"
-Content-Disposition: inline
-In-Reply-To: <20250915141305.906440-6-bigeasy@linutronix.de>
-
-
---gsvjs2qzdyde7s4d
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
+ <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com> <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
+ <8d88cd9d-16e8-43f9-8eb3-89862da1d0c1@arm.com> <hOs24ZavnUyKYyNwBWwRpYnrsefzBfp95yuy9zyp1ByxR9_3VacGX1Yntt8pCE4w3gllPwvevs1AZqghmwKoFg==@protonmail.internalid>
+ <zcgn4xw2xghyna2eysavujbzbiydyki7p7upzzv7one5mdyjy6@sj7f75kc4vwu>
+ <fb767586-a376-48eb-97b4-bf33061642b9@kernel.org> <a4WDx80rJP1GnGNEK0OOD5lh-m-MiAvireXdpiM9ETLKZ084sBJ2UthU_QqRbU_nwD4XtsdiyEqQ0AhxguzJ6g==@protonmail.internalid>
+ <6gx74wxie4wcabq27wo5y7v36uuurez4jxlzanroepqazdlgtw@sdtv2ld47d3q>
+ <fa3c1732-328d-46a2-8514-2e7f9ca6c63f@kernel.org> <aE5RMDRfrr2wxUAqjjsBMcodNQxLsUT_Soi_LXMJXYcfmmeBSHnPM3e5JUPOb89tSfeI1jQbt9LfLCOXFBZFSA==@protonmail.internalid>
+ <mwthowuei7pcqp2b4hg5c45n47iakclkioumc6diyznhnldfv5@wloeoys224bg> <796770d1-024e-4967-a96a-b7f32b28ca64@kernel.org>
+In-Reply-To: <796770d1-024e-4967-a96a-b7f32b28ca64@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 15 Oct 2025 16:55:34 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKNS9meBRxhMQvEym+yOK2r9ddpn4Q-FKb1efSm9sT3Bw@mail.gmail.com>
+X-Gm-Features: AS18NWAIHJjzHLZj2uLa3SUxLobahI_sXDbl6LjepNIuAadyImOTozg2xUTbUqI
+Message-ID: <CAL_JsqKNS9meBRxhMQvEym+yOK2r9ddpn4Q-FKb1efSm9sT3Bw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+To: "Bryan O'Donoghue" <bod@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org, will@kernel.org, 
+	saravanak@google.com, conor+dt@kernel.org, mchehab@kernel.org, 
+	krzk+dt@kernel.org, abhinav.kumar@linux.dev, vikash.garodia@oss.qualcomm.com, 
+	dikshita.agarwal@oss.qualcomm.com, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 5/5] man/man3/pthread_cond_init.3: Add a note
- regarding real-time usage
-Message-ID: <e2i2tn3a7i4ehzoeglv4n52q657hn4l3vauial2xyaqyrjyvcm@vagxk3mquxfw>
-References: <20250915141305.906440-1-bigeasy@linutronix.de>
- <20250915141305.906440-6-bigeasy@linutronix.de>
-MIME-Version: 1.0
-In-Reply-To: <20250915141305.906440-6-bigeasy@linutronix.de>
 
-Hi Sebastian,
+On Wed, Oct 15, 2025 at 3:53=E2=80=AFAM Bryan O'Donoghue <bod@kernel.org> w=
+rote:
+>
+> On 14/10/2025 23:18, Dmitry Baryshkov wrote:
+> > On Tue, Oct 14, 2025 at 09:49:17PM +0100, Bryan O'Donoghue wrote:
+> >> On 14/10/2025 19:35, Dmitry Baryshkov wrote:
+> >>>> Each function id can be associated with a device and a compat string
+> >>>> associated with it.
+> >>> So, which part of the hardware is described by the -cb device? What d=
+oes
+> >>> it mean_here_?
+> >>
+> >> The non-pixel path video encoder, the tz video encoder...
+> >>
+> >> What's not clear about that ?
+> >
+> > Where do you have pixel encoders in the fastrpc device node?
+> >
+> > --
+> > With best wishes
+> > Dmitry
+>
+> Haha, no sorry I didn't mean to suggest that at all.
+>
+> I mean do something _like_ that, for these FUNCION_IDs.
+>
+> We could replicate that for a new iris add for say Glymur or Kanaapali.
+>
+> Sub-nodes of the main iris device. They have a real purpose in that the
+> 'device' requirement is full range IOVA for the SID and implicit
+> identification of the FUNCTION_ID with the compat string
+>
+> iris-video@0xdeadbeef {
+>         video@0 {
+>                 reg =3D <0>;  /* FUNCTION_ID HLOS could also go here */
+>                 compat =3D "qcom,glymur-iris";
+>
+>                 iommus =3D <&apps_smmu 0x1940 0x0000>;
+>         };
+>
+>         video@1 {
+>                 reg =3D <1>;
+>                 compat =3D "qcom,glymur-iris-non-pixel";
+>                 iommus =3D <&apps_smmu 0x1947 0x0000>;
+>         };
+> };
+>
+> The reg property could also be the function_id
+>
+> video@FUNC_ID_HLOS {
+>         reg =3D <FUNC_ID_HLOS>;
+>         ...
+> };
+>
+> There's no need for a new iommu specific property to help us fixup
+> sm8550 iommu definition.
+>
+> As I say if that error wasn't already in sm8550, we wouldn't be trying
+> to solve the problem this way.
+>
+> So lets solve the problem for Glymur and Kanaapali and then backport
+> upstream if we can or downstream if we can't.
+>
+> What we need are new devices what we will do with the data in
+> iommu-map-masked is make new devices. We are mapping data - iommu SID to
+> device and implicit FUNCTION_ID to a device.
+>
+> So we should be declaring devices, instead of burying the data in a new
+> property that is not obvious what it does or why it exists.
 
-On Mon, Sep 15, 2025 at 04:13:05PM +0200, Sebastian Andrzej Siewior wrote:
-> The "old" implementation led to priority inversion and was more or less
-> easy to trigger. It seems that after the rewrite the issue disappeared
-> especially since the old workaround does not apply anymore.
->=20
-> Add a note mentioning the old problem and why the issue is not gone
-> since the rewrite in glibc 2.25 but harder to trigger.
->=20
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+No, these aren't separate devices. Please stop going down this route.
 
-Thanks!  I've applied the patch, with the following amendments:
-
-	diff --git i/man/man3/pthread_cond_init.3 w/man/man3/pthread_cond_init.3
-	index 779f6de6d..9c151dd8c 100644
-	--- i/man/man3/pthread_cond_init.3
-	+++ w/man/man3/pthread_cond_init.3
-	@@ -115,7 +115,7 @@ .SH DESCRIPTION
-	 this guarantees that the condition cannot be signaled (and thus ignored)
-	 between the time a thread locks the mutex
-	 and the time it waits on the condition variable.
-	-See NOTES below.
-	+See CAVEATS below.
-	 .P
-	 .BR pthread_cond_timedwait ()
-	 atomically unlocks
-	@@ -241,13 +241,14 @@ .SH "SEE ALSO"
-	 .BR gettimeofday (2),
-	 .BR nanosleep (2).
-	 .
-	-.SH NOTES
-	+.SH CAVEATS
-	 The implementation of the provided functions until
-	 glibc 2.25 used an internal data lock.
-	 This lock did not support priority-inheritance and
-	 was subject to unbounded priority inversion,
-	 visible on a real-time system.
-	-After the rewrite of the implementation in 2.25
-	+.P
-	+After the rewrite of the implementation in glibc 2.25
-	 the usage of internal lock changed.
-	 The internal lock is always acquired by
-	 the signaling functions
-	@@ -256,10 +257,11 @@ .SH NOTES
-	 .BR pthread_cond_broadcast ().
-	 The waiting function acquires the lock
-	 if the waiting process was interrupted.
-	-The interruption can be caused for instance by a specified timeout
-	+The interruption can be caused for instance by a specified timeout,
-	 and denoted by the error value
-	-.B ETIMEDOUT
-	-or a received signal which is denoted by the error value
-	+.BR ETIMEDOUTA ,
-	+or by a received signal,
-	+which is denoted by the error value
-	 .BR EINTR .
-	 .
-	 .SH EXAMPLE
-
-
-Cheers,
-Alex
-
-> ---
->  man/man3/pthread_cond_init.3 | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->=20
-> diff --git a/man/man3/pthread_cond_init.3 b/man/man3/pthread_cond_init.3
-> index 0045e7ecee075..779f6de6d064b 100644
-> --- a/man/man3/pthread_cond_init.3
-> +++ b/man/man3/pthread_cond_init.3
-> @@ -115,6 +115,7 @@ if all threads always acquire the mutex before signal=
-ing the condition,
->  this guarantees that the condition cannot be signaled (and thus ignored)
->  between the time a thread locks the mutex
->  and the time it waits on the condition variable.
-> +See NOTES below.
->  .P
->  .BR pthread_cond_timedwait ()
->  atomically unlocks
-> @@ -240,6 +241,26 @@ Some threads are currently waiting on
->  .BR gettimeofday (2),
->  .BR nanosleep (2).
->  .
-> +.SH NOTES
-> +The implementation of the provided functions until
-> +glibc 2.25 used an internal data lock.
-> +This lock did not support priority-inheritance and
-> +was subject to unbounded priority inversion,
-> +visible on a real-time system.
-> +After the rewrite of the implementation in 2.25
-> +the usage of internal lock changed.
-> +The internal lock is always acquired by
-> +the signaling functions
-> +.BR pthread_cond_signal ()
-> +and
-> +.BR pthread_cond_broadcast ().
-> +The waiting function acquires the lock
-> +if the waiting process was interrupted.
-> +The interruption can be caused for instance by a specified timeout
-> +and denoted by the error value
-> +.B ETIMEDOUT
-> +or a received signal which is denoted by the error value
-> +.BR EINTR .
->  .
->  .SH EXAMPLE
->  Consider two shared variables
-> --=20
-> 2.51.0
->=20
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---gsvjs2qzdyde7s4d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjwF+QACgkQ64mZXMKQ
-wqm2cw//YqWq53J159zcl52qzbL4qJlktdZYuMfFM+igA8cl5GmEOObRglXMEFt6
-4HciWEkSHQhEAR+leyKA6JJ7fQxCEeNKvKPQpsh87dQW+kNZFxDeA7iaZMqJfnw+
-Fkz4ghHO31G0hmjAfQ5qlNz9Al1gE12j+dOmHBgb3IaBr8+zLKQsawcp88LWPxdn
-TqUDlF+/y78ImVAbqCmVXUyuwvQiQjlzrUUzm5fUK9UROw0quRt8Yvv4QdhjUO+w
-djaYCMahRerp2QfyEM8Mqn8yjKGpVs4EA0tyeMOs48uNL4lGS4Ry+RUOVyB6ddFr
-sjoWKufqZPy/XpiKWaRxTJl5Wr/TX0UKy+dyVUv+tV+YZiClfI2dwURyp+c+DYME
-xW3q4drckn+W+KtAmKApd5o+Xb62c4b2OMCupkPUpb16B2Xx2axszmNbrTk9lPif
-90TM2Fts29uDqENgBd+DeAz/kszeRD/QJect+hDqmWBl7hUim1AXqMjFmk7hnkM4
-deF6sQAhKWsdKcNrX9ulkU6UKLV8UPfLtkIRCWvMknSG5WCrd2QH0tRoo8Db6Law
-j6dVMMYRyJGA/uglK1F5yXj1WYDSGFh267U/4yFXPpvbIQ3ueIK4pJtp7JZa6ou8
-sy3cn6yYmitG7muC0WwB0mz7mKyRGEMs9WRomyJTNQAEFf03IUU=
-=+mw2
------END PGP SIGNATURE-----
-
---gsvjs2qzdyde7s4d--
+Rob
 
