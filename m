@@ -1,140 +1,248 @@
-Return-Path: <linux-kernel+bounces-853734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81800BDC760
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D954BDC775
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06DB3E089C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537533E090E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927372F7459;
-	Wed, 15 Oct 2025 04:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756822F60D5;
+	Wed, 15 Oct 2025 04:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qyr8CwjN"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P8vboY39"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EBE2F3C31
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1086635898
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760502530; cv=none; b=FOBmdtnEgAcltklIZi46yk/ECnD8Dtz/MubJ21TVZ5yROCuKhEFaLkrB3Y/am3VoLtAQD2X8h9MYKQ2Qa6fEbU76xL9Sd4b1jH/5FOn1EoL1svPN+Q6zbNvl/XBuJQGek/B7oZJASQQFGf50NBlOjmm1xK4QkbcwQiUoVcx4Bkw=
+	t=1760502622; cv=none; b=bRVANjV6zABBem3wxAx8uRJ1cmNwQXaAH1ylOtUBj6AOaAismuc1qf2INAREmL4yHiz6OPg/iK3dj6cy8Koaujc0AnKmIsNTpth3l9tyY4/vwY9iYCM01QBNqNWhdby3y56wOp51L+n1ZpnPb/xxL+MqwaDKMHM76rXUFf6MQ+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760502530; c=relaxed/simple;
-	bh=7wfAMnESvRVrcUxGm70UpqypFTY1iKeOAV6XurtA0Xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OWiBPjATGUm/6cRU/uYnkMZM990d1rQy7EbmhHtQ9OwK1hr8dQpG1KeLUUUtgbi59opWN9OvmXDQD50kmA4E13AGgfdoY0bLZKjz8UdI0mSGpx0a4PdYcWX/f96Rrn4itWTEoeL7M8DGUrZqd/R0hWAKIE/IJ5SgQu50OCVhR8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qyr8CwjN; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-330a4d4359bso4986763a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:28:48 -0700 (PDT)
+	s=arc-20240116; t=1760502622; c=relaxed/simple;
+	bh=tI6xu8FNuNdQiwVzMsVnkzJ+aBpDpp8EFG9ToW77OBw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C4wlKzy345L2pVuMaMaDXjuEZWZEPaizGigWMlrKVKsPblLYtjteBDemSCGnI6cQU7RrEWu3QV2zNtzLmivuOXetjkdvHHGRsExvYcSQa7/ZacmN1jLZilKObD7l39kmfNVHy6PziodVjXyKUIKkqz7bt7G97VZSzm2e7VmKxWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P8vboY39; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f64c5cf62so7259821b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760502528; x=1761107328; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wlH0cGjIB/p6Xp9aiuKUvkG4AK7l2RitPxC5XPops8s=;
-        b=Qyr8CwjN3MWAP2TbGkPi/kxVritlsj2ORvjmauQFX2nWZrncOY2n+PWiSTaHaWWTUU
-         98SLlvMwLMWe4Yvh0gQ8RHyYSKIiiPtwz4MdSZJohRSBEVFkAsOOyhIyR+R6enXTFxJk
-         vCg5cZdwJpIjLeS/BDn+VfiXs613a5qqaLckCfajcrQN7s54t6tEWM1ZIHj1gocIbjy5
-         4fitLYBKIP8fY+YgBr7B3jiShHe9xuColP+9+wN64eXWacS+HXV4BogEsbf+5gimtsVV
-         7vuzKeK5c2HvEGeGfpDztTpkFPrGPRTecP6t1uDt3pDw80zohq4RScPVd/VWzQBnD7xi
-         2wHA==
+        d=google.com; s=20230601; t=1760502620; x=1761107420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yXIS3j5RCM6hVOr2uUyAFDWEwpmVgDpaa3qdMiGXfzc=;
+        b=P8vboY39CGR1wBuXwAUB6icKTjBN/E5CN6KuzovcTdbXQ2Uu/QLzItQfWbt7Axy9dc
+         ESGO11vCg65kttMh9MppNMuLJt0lOQzmeXDYqwu+hlitrVoNxlKVAzaia000+ZWirWgc
+         Gvd+NHNi1MSKEy9B5dbO692mXfXbqqiLLXirDEdKrVJTgS2rqwTxz0rU0nW/DFCKIQHe
+         y976MCEQqcK9UhXuFy0noNNW5fg89RKDSonawbENDUoNz8CPRBR4Z3Km7vD2c3as2hmF
+         wiEJSeEeUPI+sWcaCVj7PUHRy0mvCXZ480bGK7AvSlqN7yDsDFZcv9n3gCH0BOAtVkFZ
+         4ZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760502528; x=1761107328;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wlH0cGjIB/p6Xp9aiuKUvkG4AK7l2RitPxC5XPops8s=;
-        b=ZkePEpGVLuJ4cKWsupgt9A4YAfaFw/+XZ1tUpt+Y9elMmSLR5My3cFsrpu0u3ku964
-         P/PcWFQETZJcH8sXnGjYEKxZVCrLzY0urowsD9dYruRH2yxmMO+IKAdfebWh+6TvLWNu
-         4f/m7F6GQIu6kvO1ZvZG7Z8Dar1fq/UQPnYuLWTb/CV49mG+zTHBV0leYG9zx+MdH+uC
-         NVyDdj4/6TvmPiWoby1PYbFFZlcajoAC6XEggHOy8XRZIiHfOVI64rmGRPUQDecSTHzs
-         i57tBkTc5yDpYHiE8b+Ce7YJ0h/LFiaMhcBbrnx61L1PUa8ceWayDh/CIg/9JOrYQApM
-         o58g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZmBu09ZCMN7W2TRQEWPpPurJOysJ37mBFACKgaBgR4IHSFLQmPyqoMoEVQfCu1GggbAasOfpKY9y53x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0fslF2X2q23ixmGds6Lps2qJc4Cbl6zozPXmG1tu4vVrvXF9i
-	WdaJb45QP7YZk6u139C3B4hVMkKI5U4MvEMmoG/unKZSnr6gXzTge3e/
-X-Gm-Gg: ASbGncvkQQ5kYvYkLutRupW86SygxwxHQVRsX/96O5S0oPyaAv1BhFvQ3LDCzpRXV0e
-	ZH6yQlZn8Ny8ep3JszrSe61EHVOFqu0IImQaVjCvml7nhnsXDHe1WMlduvYjhJLtGX29c0CAHuP
-	tSfHoLTp5koGvFuqi2hgedGqoqBjWtesmcnUpB3CJZHKQPSxCAdmlLQ15Fzn3QJb7iR3/GbMU1M
-	5eWS0XxRIkYHzFuSywCMil8HArm2LZAp7u99IkGFCvoxogjup73AFrUZ0W5i2IohNSRmk5n9oGQ
-	Nhna4TI9th/5zUEWOMsTurD2pD2mGQQaej6Jw0VL7WL9gVGm93Mb9Cm9gNW1uE1zfAcNQcUmm2p
-	8vz60NDazj7VHORok+lyMwCdR0J1kkxQMa7z/ykV8Na2rIKts4RWdAYFWEbVemJf/GutNau83dA
-	Y7ueWJwg==
-X-Google-Smtp-Source: AGHT+IE+Deb2FV+DtdpOThkIj5o2+mjtlGjIWhQkTWNRouhVEAGo+cWfvB8mD05/8Zm7cLUB7Rvd4Q==
-X-Received: by 2002:a17:90b:4ac9:b0:32b:9774:d340 with SMTP id 98e67ed59e1d1-33b513ea07emr39765138a91.33.1760502527651;
-        Tue, 14 Oct 2025 21:28:47 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:729e:7380:f286:50df])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b9786f659sm680988a91.13.2025.10.14.21.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 21:28:47 -0700 (PDT)
-Date: Tue, 14 Oct 2025 21:28:44 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>, kenalba@google.com, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] HID: hid-input: only ignore 0 battery events for
- digitizers
-Message-ID: <c5b52grvciabpcgavhjqximqqq6fczowgvmckke6aflq72mzyv@gzzkyt25xygc>
+        d=1e100.net; s=20230601; t=1760502620; x=1761107420;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yXIS3j5RCM6hVOr2uUyAFDWEwpmVgDpaa3qdMiGXfzc=;
+        b=MsdHJnIUmsFEZ7oxJcibTS/owehE3+F3DyoYEdYn+T7rn9zt6cjuVCZNa5v131DteN
+         AX1rdbZijw9UUT9MP8lrg5lwROwPTZ2P7VxOXsMW+RymPczS23D3GyhFz7SLD7fuTOa1
+         6HGSHOyW/KU6M6sPigdUlQDeTWf/CwfxfmXaClWWxH3gGOpSQUsUi3/lzpwvyGoRN7Nf
+         Eu4e5NC0OGSEWXU2XLRXJzQLWLmXXag5hoioI2i3UD23rJbdHHX7XWaK+1sDxqqCHpVz
+         6ugF13fROVNg9ZfV0XjivRHXDrR9agpEml8W61CGSkODCR37HlxvDt/TqpW9x/Ee3gwA
+         YYcg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Pg+zOryuo1BVwDC40OqN0H0uRtBa0s1PERYdkqNPkoFzzerlfKrzv4OCv2IggXqseHjex/Bx/th8axs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweJDf9Abt63yYv2Pj7wxfAebnEltVlFqFyCUb0lELG4ObsEf1v
+	IoOvpJ4QKaTQLXC4+kV7mgVtLgzjirzjpzBn042ZjK3m8Xac07A826IlIRh60vfCNm/ogvd+2/m
+	j8tXr1g==
+X-Google-Smtp-Source: AGHT+IGaZTXT0vciEx7KbYADGeZKTtU68kLvCRG8tGLPmqjhQRCZK5Ay8LX5GjcyaqfAjeV5ynjINN8aGkE=
+X-Received: from pgbcs7.prod.google.com ([2002:a05:6a02:4187:b0:b62:e03a:896c])
+ (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7589:b0:32d:b97f:6483
+ with SMTP id adf61e73a8af0-32db97f6505mr22015042637.22.1760502620374; Tue, 14
+ Oct 2025 21:30:20 -0700 (PDT)
+Date: Wed, 15 Oct 2025 04:30:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
+Message-ID: <20251015043017.3382908-1-badhri@google.com>
+Subject: [PATCH v2 1/2] tcpm: Parse and log AVS APDO
+From: Badhri Jagan Sridharan <badhri@google.com>
+To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
+	badhri@google.com
+Cc: amitsd@google.com, kyletso@google.com, rdbabiera@google.com, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 581c4484769e ("HID: input: map digitizer battery usage") added
-handling of battery events for digitizers (typically for batteries
-presented in stylii). Digitizers typically report correct battery levels
-only when stylus is actively touching the surface, and in other cases
-they may report battery level of 0. To avoid confusing consumers of the
-battery information the code was added to filer out reports with 0
-battery levels.
+The USB PD specification introduced new Adjustable Voltage Supply (AVS)
+types for both Standard Power Range (SPR) and Extended Power Range (EPR)
+sources.
 
-However there exist other kinds of devices that may legitimately report
-0 battery levels. Fix this by filtering out 0-level reports only for
-digitizer usages, and continue reporting them for other kinds of devices
-(Smart Batteries, etc).
+Add definitions to correctly parse and handle the new AVS APDO. Use
+bitfield macros to add inline helper functions to extract voltage,
+current, power, and peak current fields to parse and log the details
+of the new EPR AVS and SPR AVS APDO.
 
-Reported-by: 卢国宏 <luguohong@xiaomi.com>
-Fixes: 581c4484769e ("HID: input: map digitizer battery usage")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+Reviewed-by: Amit Sunil Dhamne <amitsd@google.com>
+Reviewed-by: Kyle Tso <kyletso@google.com>
+Reviewed-by: RD Babiera <rdbabiera@google.com>
 ---
+Changes since v1:
+* Fixed incorrrect squash.
+---
+ drivers/usb/typec/tcpm/tcpm.c | 15 +++++++-
+ include/linux/usb/pd.h        | 69 ++++++++++++++++++++++++++++++++++-
+ 2 files changed, 82 insertions(+), 2 deletions(-)
 
-v2: rebased on top of linux-next, dropped Tested-by: tag
-
- drivers/hid/hid-input.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 5d7532d79d21..e56e7de53279 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -635,7 +635,10 @@ static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
- 		return;
- 	}
- 
--	if (value == 0 || value < dev->battery_min || value > dev->battery_max)
-+	if ((usage & HID_USAGE_PAGE) == HID_UP_DIGITIZER && value == 0)
-+		return;
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index b2a568a5bc9b..c65aa8104950 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -823,10 +823,23 @@ static void tcpm_log_source_caps(struct tcpm_port *po=
+rt)
+ 		case PDO_TYPE_APDO:
+ 			if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_PPS)
+ 				scnprintf(msg, sizeof(msg),
+-					  "%u-%u mV, %u mA",
++					  "PPS %u-%u mV, %u mA",
+ 					  pdo_pps_apdo_min_voltage(pdo),
+ 					  pdo_pps_apdo_max_voltage(pdo),
+ 					  pdo_pps_apdo_max_current(pdo));
++			else if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_EPR_AVS)
++				scnprintf(msg, sizeof(msg),
++					  "EPR AVS %u-%u mV %u W peak_current: %u",
++					  pdo_epr_avs_apdo_min_voltage_mv(pdo),
++					  pdo_epr_avs_apdo_max_voltage_mv(pdo),
++					  pdo_epr_avs_apdo_pdp_w(pdo),
++					  pdo_epr_avs_apdo_src_peak_current(pdo));
++			else if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_SPR_AVS)
++				scnprintf(msg, sizeof(msg),
++					  "SPR AVS 9-15 V: %u mA 15-20 V: %u mA peak_current: %u",
++					  pdo_spr_avs_apdo_9v_to_15v_max_current_ma(pdo),
++					  pdo_spr_avs_apdo_15v_to_20v_max_current_ma(pdo),
++					  pdo_spr_avs_apdo_src_peak_current(pdo));
+ 			else
+ 				strcpy(msg, "undefined APDO");
+ 			break;
+diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
+index 3068c3084eb6..6ccd1b2af993 100644
+--- a/include/linux/usb/pd.h
++++ b/include/linux/usb/pd.h
+@@ -6,6 +6,7 @@
+ #ifndef __LINUX_USB_PD_H
+ #define __LINUX_USB_PD_H
+=20
++#include <linux/bitfield.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/usb/typec.h>
+@@ -271,9 +272,11 @@ enum pd_pdo_type {
+=20
+ enum pd_apdo_type {
+ 	APDO_TYPE_PPS =3D 0,
++	APDO_TYPE_EPR_AVS =3D 1,
++	APDO_TYPE_SPR_AVS =3D 2,
+ };
+=20
+-#define PDO_APDO_TYPE_SHIFT	28	/* Only valid value currently is 0x0 - PPS =
+*/
++#define PDO_APDO_TYPE_SHIFT	28
+ #define PDO_APDO_TYPE_MASK	0x3
+=20
+ #define PDO_APDO_TYPE(t)	((t) << PDO_APDO_TYPE_SHIFT)
+@@ -297,6 +300,35 @@ enum pd_apdo_type {
+ 	PDO_PPS_APDO_MIN_VOLT(min_mv) | PDO_PPS_APDO_MAX_VOLT(max_mv) |	\
+ 	PDO_PPS_APDO_MAX_CURR(max_ma))
+=20
++/*
++ * Applicable only to EPR AVS APDO source cap as per
++ * Table 6.15 EPR Adjustable Voltage Supply APDO =E2=80=93 Source
++ */
++#define PDO_EPR_AVS_APDO_PEAK_CURRENT	GENMASK(27, 26)
 +
-+	if (value < dev->battery_min || value > dev->battery_max)
- 		return;
- 
- 	capacity = hidinput_scale_battery_capacity(dev, value);
--- 
++/*
++ * Applicable to both EPR AVS APDO source and sink cap as per
++ * Table 6.15 EPR Adjustable Voltage Supply APDO =E2=80=93 Source
++ * Table 6.22 EPR Adjustable Voltage Supply APDO =E2=80=93 Sink
++ */
++#define PDO_EPR_AVS_APDO_MAX_VOLT	GENMASK(25, 17)	/* 100mV unit */
++#define PDO_EPR_AVS_APDO_MIN_VOLT	GENMASK(15, 8)	/* 100mV unit */
++#define PDO_EPR_AVS_APDO_PDP		GENMASK(7, 0) /* 1W unit */
++
++/*
++ * Applicable only SPR AVS APDO source cap as per
++ * Table 6.14 SPR Adjustable Voltage Supply APDO =E2=80=93 Source
++ */
++#define PDO_SPR_AVS_APDO_PEAK_CURRENT		GENMASK(27, 26)
++
++/*
++ * Applicable to both SPR AVS APDO source and sink cap as per
++ * Table 6.14 SPR Adjustable Voltage Supply APDO =E2=80=93 Source
++ * Table 6.21 SPR Adjustable Voltage Supply APDO =E2=80=93 Sink
++ */
++#define PDO_SPR_AVS_APDO_9V_TO_15V_MAX_CURR	GENMASK(19, 10)	/* 10mA unit *=
+/
++#define PDO_SPR_AVS_APDO_15V_TO_20V_MAX_CURR	GENMASK(9, 0)	/* 10mA unit */
++
+ static inline enum pd_pdo_type pdo_type(u32 pdo)
+ {
+ 	return (pdo >> PDO_TYPE_SHIFT) & PDO_TYPE_MASK;
+@@ -350,6 +382,41 @@ static inline unsigned int pdo_pps_apdo_max_current(u3=
+2 pdo)
+ 		PDO_PPS_APDO_CURR_MASK) * 50;
+ }
+=20
++static inline unsigned int pdo_epr_avs_apdo_src_peak_current(u32 pdo)
++{
++	return FIELD_GET(PDO_EPR_AVS_APDO_PEAK_CURRENT, pdo);
++}
++
++static inline unsigned int pdo_epr_avs_apdo_min_voltage_mv(u32 pdo)
++{
++	return FIELD_GET(PDO_EPR_AVS_APDO_MIN_VOLT, pdo) * 100;
++}
++
++static inline unsigned int pdo_epr_avs_apdo_max_voltage_mv(u32 pdo)
++{
++	return FIELD_GET(PDO_EPR_AVS_APDO_MIN_VOLT, pdo) * 100;
++}
++
++static inline unsigned int pdo_epr_avs_apdo_pdp_w(u32 pdo)
++{
++	return FIELD_GET(PDO_EPR_AVS_APDO_PDP, pdo);
++}
++
++static inline unsigned int pdo_spr_avs_apdo_src_peak_current(u32 pdo)
++{
++	return FIELD_GET(PDO_SPR_AVS_APDO_PEAK_CURRENT, pdo);
++}
++
++static inline unsigned int pdo_spr_avs_apdo_9v_to_15v_max_current_ma(u32 p=
+do)
++{
++	return FIELD_GET(PDO_SPR_AVS_APDO_9V_TO_15V_MAX_CURR, pdo) * 10;
++}
++
++static inline unsigned int pdo_spr_avs_apdo_15v_to_20v_max_current_ma(u32 =
+pdo)
++{
++	return FIELD_GET(PDO_SPR_AVS_APDO_15V_TO_20V_MAX_CURR, pdo) * 10;
++}
++
+ /* RDO: Request Data Object */
+ #define RDO_OBJ_POS_SHIFT	28
+ #define RDO_OBJ_POS_MASK	0x7
+
+base-commit: 877c80dfbf788e57a3338627899033b7007037ee
+--=20
 2.51.0.858.gf9c4a03a3a-goog
 
-
--- 
-Dmitry
 
