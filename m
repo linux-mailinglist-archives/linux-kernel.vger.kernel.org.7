@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-855286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C433ABE0BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:01:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6C2BE0BDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8121D4030D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC2406A1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034ED2FF64A;
-	Wed, 15 Oct 2025 21:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E3F3016F9;
+	Wed, 15 Oct 2025 21:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LeXLlNlp"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TvReFQcv"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D9E2D5930
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEC12E7BB6
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760562068; cv=none; b=uW/xF3TLkjoLbwNOddrVowMQxRNL5srndURuZcFjDbT9gC1FSCHEbVAyZbped+GvSalaZ1JrkaLqST/pwW0/wr/aCzojgORMRaIMbpx1y0luboL5WcPcY5ZgVBlTL1iaPEGw+sYVNSYl10lUJW5PE8tDC5BO6VJYANMflCNY5T0=
+	t=1760562069; cv=none; b=AAd5Rp8v7QLitzxyN4RJxEY1hRHsugTNet5y4D9WweoCh9IQeuso4D0oe6dwcBXW6HOzVqt94GVqwEODsrs5+UP1QNwLIeDz7lhBI6Vu+mSw6T9U53pvQ/yza0IgiRf3S8xq9N3ObQuvJQcqBTwFMFm3+MMnO6KOPyj7EjmSHgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760562068; c=relaxed/simple;
-	bh=OKkz72icLYW14imSSGsnJwZQIz4ZrV8RIoFMrz/DOHo=;
+	s=arc-20240116; t=1760562069; c=relaxed/simple;
+	bh=plTDTpax7UhabJ3R97rpcaBJybZ/LXy6TKvHDYaOW40=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H/6tSdiFYUOOENy56rIchA5jJMBOgx71ImYHZBh3HYotIlpPQGSu1G8XzyQAdAePFw7W4aXw61QkL8RZey84ch8nUD8iwfaunHGJMq9aCQQT2jGmaBB3pF/8aH2sT+8OsgTmZ8Y3JBju7AvmIuwJgz7Ge+c0ehpclFW4iHiD9cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LeXLlNlp; arc=none smtp.client-ip=209.85.218.74
+	 To:Cc:Content-Type; b=ciXhrv1RJSnLtrs58rY2H/RRu0gHtOCrG5KRIYCDA8SOgnQH9nn2xk5VT0XIg+gXYWmbxwVcd4DuVntHAG9oMqtCbKM3Ak5vx+q7V2m3Qf5h3vXAkXS5ZAiRwxyE4oYTjqp1C7GAxdg1fiEefdRvfavnDpIEniArjQjOzlX7AP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TvReFQcv; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b5c4d76589aso2791866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:01:06 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3fba0d9eb87so27284f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:01:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760562065; x=1761166865; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760562066; x=1761166866; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dl7DSFNXrvgC8fPiu6fPIF6OEEmMKscydyxcv7oyMcM=;
-        b=LeXLlNlp4b5CawJnjlxgzI2sM0o6Rkxo2gmwphjX5/HO63aVLI8971cXQmnLgago7o
-         5YJ8/N0Vw4pgM00+Q4oFJPkhL1tfYSwjo8H/d456arLYjxGPWFp3I8yyz1dCyVWXazjc
-         N0NnzvA8WXFadgLQfVxv2TsXr3swEZfhtMzX5jhK7ilgWCcv5zo01p6jcrM7yIDrgacM
-         bp+N3n8PO0tRh8GN545EDJS5y3zAXUV2TiV3sNXqYYKrq+I6Rix8hyPGG9Yrx7kBldEj
-         HYZPVjG2BX+Ewi3Gl3e6Tl6cSOM1OBh37dgNJqKaOVnFC/2ZK4RM7istHOaVyVkU0q23
-         1gWg==
+        bh=19SuM8BkFU86AdrsVL9he5wmDJI8XYP735e24p7BzJE=;
+        b=TvReFQcv9UcVKJ/bi0wglPCLAysT/jYaBlHwhTAsOzCC5Eq24laULjnH1nnhzfHmEi
+         3/xyMBNmBnwWaC7p7zqb//0iUaYBZvIhT6bNHCPhDNIzvN131dHx8lLEirnZ8/mFn/AW
+         V0wJzCex3YdTCMtcMNY4bm+2ZVrMLV5iwyAMkAjPalCDEwOqrZanJP+/MexLEFF8Khf9
+         jr53L8a9bheX7/LOMMP7M4ua7I7mxP9w45xyi9BVJXITfxXrxplwem+Oy8MKKJBVm0ph
+         w6/Yu4gSopLjGxJ9DWUJ4FR5OMOcWCutmERTw/Yri+MEPuCR/LQBEc8koN+d1mxfcv2G
+         S2Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760562065; x=1761166865;
+        d=1e100.net; s=20230601; t=1760562066; x=1761166866;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dl7DSFNXrvgC8fPiu6fPIF6OEEmMKscydyxcv7oyMcM=;
-        b=lvfOXtCbSYDSHOcFLhiZGWi/z1UUINWTVrqtMmnyn124+PuHtFUHprENiUMVuzYeix
-         x3RPsU9m443OaZ2zLfvZU4oZ5sOLki44N7dG3mv1GzbgXB0tZFDi89yNZiGPOmZbiZyh
-         nddv4CG9AVKYZo9wdZTTo+3XZm+ZCbRRojCJFCT3Nl+M9Awy5VT0qYysp+MIGGx0e/1+
-         ZDC5MBVO1y1R5BjbjW1OsVwq4cFYZyuskvlPbnKQMFbskh2BWM/Sr9EhyldHQfSXPE/i
-         4Iql+wBGgCoPdjTZaTswaiG8MtEPJ01RxOCxmTqNtm90ics5KZyNea7lHsZC3xm8vT7b
-         V69w==
-X-Gm-Message-State: AOJu0YznkUZs4yx3IiN3lNf701T91IUmXzbh91jQVDFH7A8GrwE4u7/o
-	v4+vMtNKCHuhZ2Mwn6JgCnIFv2OPRcDuWiK0hGNWDqxMbfFnE9osJ6/fE7fj/vcxrIImJDA3RQ=
+        bh=19SuM8BkFU86AdrsVL9he5wmDJI8XYP735e24p7BzJE=;
+        b=Mmq0hNc9y36CxjI9S7eAMQTCeLh+ragqoyVNmCghhfw9ARvLdCDAHoel/B3yqKnaAO
+         vD/RApKn3um3xrEa1ilA8WFgUWkrExiIQo8bT0CgjGUNOCiUVjcd6yD5DZZrqcXokzjK
+         MS28nbdAFXGcOvFr3HWA4vKbhXLOfSVXqIPwUaOEPlYt83r39DAdyDahcUHemihbKzMe
+         LLPf0HrCVvdNcdXxQ9+zdv0OBEv2LD+rGC6ya5P3sNEYtvhfx7L3UwvOUBHvy/svG2AH
+         NBCUfXipfWU8iD28Scb7irrmlglp6Ywrx3RDFIs+DLPiYztR7OCkIy1Xhj//b+Kpku8J
+         62hw==
+X-Gm-Message-State: AOJu0Yyv51l8vjlIrIFpjVIp/HG1PbwXNUrxUgX8sJRSHkcHqdQ4i+sO
+	rM+w8eTlN+tIbzoF0Pb9oBGeBlCMSspJxAf8qHbqJ+S35LT5dA4ayLFybxlydVHAGcjJ35D51g=
 	=
-X-Google-Smtp-Source: AGHT+IFbnpDjbsGYz+B5RZXbbX+lQAERWey19YRdHXPDBHHjm8WsWQOtc3beJ3/VDPI6WGbFnSNWq6W+
-X-Received: from ejkf21.prod.google.com ([2002:a17:906:60d5:b0:b3e:d65b:d781])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:980f:b0:b42:9840:eac5
- with SMTP id a640c23a62f3a-b50acb0e645mr3264235166b.61.1760562064831; Wed, 15
- Oct 2025 14:01:04 -0700 (PDT)
-Date: Wed, 15 Oct 2025 22:56:38 +0200
+X-Google-Smtp-Source: AGHT+IFQpVg2U3+T4NvaCVGg+3jjnpHjurMn96RVhjpcDm7JJIbQd5n2ckQZklYZZG14FZbDn1HXPBda
+X-Received: from wmbjn22.prod.google.com ([2002:a05:600c:6b16:b0:46f:aa50:d718])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:1a8b:b0:425:8bd1:fbb4
+ with SMTP id ffacd0b85a97d-4266e7df95cmr20229304f8f.50.1760562065972; Wed, 15
+ Oct 2025 14:01:05 -0700 (PDT)
+Date: Wed, 15 Oct 2025 22:56:39 +0200
 In-Reply-To: <20251015205634.3820870-9-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,15 +72,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251015205634.3820870-9-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=901; i=ardb@kernel.org;
- h=from:subject; bh=3k3eAeRzb5JtIy3mWW+ubq7svhGC8mUZQWnX3o9AW0Q=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeMDV/tegTVS5dfXu18UWPjk1eM+1663m/bMeRC4e7bqM
- +23r1njOkpZGMS4GGTFFFkEZv99t/P0RKla51myMHNYmUCGMHBxCsBEmOwZ/oqnmq6ITeacf2jG
- mnnzLl0RqJGM0Df8/FlHNOxjasSsf5MZ/qc/KH/84UNLpdyBY1qtf2/cjU7fssu6aWcD8x4784P vOjkB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3253; i=ardb@kernel.org;
+ h=from:subject; bh=FjAcGhb6VYi+vJfe2JpmxvHhAqT8SyzVHt/xzyd0TNw=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeMDV8ejrsz6he2dwTNnrNr5LD+tP1yqof/ebabW69esX
+ 2+PX2/SUcrCIMbFICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACaSYsHw369KU8vDXsfq9TfP
+ xX7nJbPk247V5Kkv/vbC8eOWHEUvJUaGa8++1bypTZXk3J6btGcxy4fcT2o31pZyl61w259wpsW RBwA=
 X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
-Message-ID: <20251015205634.3820870-12-ardb+git@google.com>
-Subject: [PATCH v4 resend 3/7] arm64/fpsimd: Don't warn when EFI execution
- context is preemptible
+Message-ID: <20251015205634.3820870-13-ardb+git@google.com>
+Subject: [PATCH v4 resend 4/7] arm64/fpsimd: Permit kernel mode NEON with IRQs off
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-efi@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -92,34 +91,92 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Kernel mode FP/SIMD no longer requires preemption to be disabled, so
-only warn on uses of FP/SIMD from preemptible context if the fallback
-path is taken for cases where kernel mode NEON would not be allowed
-otherwise.
+Currently, may_use_simd() will return false when called from a context
+where IRQs are disabled. One notable case where this happens is when
+calling the ResetSystem() EFI runtime service from the reboot/poweroff
+code path. For this case alone, there is a substantial amount of FP/SIMD
+support code to handle the corner case where a EFI runtime service is
+invoked with IRQs disabled.
 
+The only reason kernel mode SIMD is not allowed when IRQs are disabled
+is that re-enabling softirqs in this case produces a noisy diagnostic
+when lockdep is enabled. The warning is valid, in the sense that
+delivering pending softirqs over the back of the call to
+local_bh_enable() is problematic when IRQs are disabled.
+
+While the API lacks a facility to simply mask and unmask softirqs
+without triggering their delivery, disabling softirqs is not needed to
+begin with when IRQs are disabled, given that softirqs are only every
+taken asynchronously over the back of a hard IRQ.
+
+So dis/enable softirq processing conditionally, based on whether IRQs
+are enabled, and relax the check in may_use_simd().
+
+Acked-by: Will Deacon <will@kernel.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/kernel/fpsimd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/simd.h |  2 +-
+ arch/arm64/kernel/fpsimd.c    | 25 +++++++++++++++-----
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
+diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+index 8e86c9e70e48..abd642c92f86 100644
+--- a/arch/arm64/include/asm/simd.h
++++ b/arch/arm64/include/asm/simd.h
+@@ -29,7 +29,7 @@ static __must_check inline bool may_use_simd(void)
+ 	 */
+ 	return !WARN_ON(!system_capabilities_finalized()) &&
+ 	       system_supports_fpsimd() &&
+-	       !in_hardirq() && !irqs_disabled() && !in_nmi();
++	       !in_hardirq() && !in_nmi();
+ }
+ 
+ #else /* ! CONFIG_KERNEL_MODE_NEON */
 diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index e3f8f51748bc..3d848c89604e 100644
+index 3d848c89604e..6d956ed23bd2 100644
 --- a/arch/arm64/kernel/fpsimd.c
 +++ b/arch/arm64/kernel/fpsimd.c
-@@ -1934,11 +1934,11 @@ void __efi_fpsimd_begin(void)
- 	if (!system_supports_fpsimd())
- 		return;
+@@ -225,10 +225,21 @@ static void fpsimd_bind_task_to_cpu(void);
+  */
+ static void get_cpu_fpsimd_context(void)
+ {
+-	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
+-		local_bh_disable();
+-	else
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
++		/*
++		 * The softirq subsystem lacks a true unmask/mask API, and
++		 * re-enabling softirq processing using local_bh_enable() will
++		 * not only unmask softirqs, it will also result in immediate
++		 * delivery of any pending softirqs.
++		 * This is undesirable when running with IRQs disabled, but in
++		 * that case, there is no need to mask softirqs in the first
++		 * place, so only bother doing so when IRQs are enabled.
++		 */
++		if (!irqs_disabled())
++			local_bh_disable();
++	} else {
+ 		preempt_disable();
++	}
+ }
  
--	WARN_ON(preemptible());
--
- 	if (may_use_simd()) {
- 		kernel_neon_begin();
- 	} else {
-+		WARN_ON(preemptible());
-+
- 		/*
- 		 * If !efi_sve_state, SVE can't be in use yet and doesn't need
- 		 * preserving:
+ /*
+@@ -240,10 +251,12 @@ static void get_cpu_fpsimd_context(void)
+  */
+ static void put_cpu_fpsimd_context(void)
+ {
+-	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
+-		local_bh_enable();
+-	else
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
++		if (!irqs_disabled())
++			local_bh_enable();
++	} else {
+ 		preempt_enable();
++	}
+ }
+ 
+ unsigned int task_get_vl(const struct task_struct *task, enum vec_type type)
 -- 
 2.51.0.869.ge66316f041-goog
 
