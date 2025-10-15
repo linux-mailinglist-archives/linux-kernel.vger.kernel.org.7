@@ -1,134 +1,152 @@
-Return-Path: <linux-kernel+bounces-854103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E983BDD8C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:54:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C96ABDD8B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B515446C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:54:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7004D3AA5B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDAA3064B1;
-	Wed, 15 Oct 2025 08:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F153191B0;
+	Wed, 15 Oct 2025 08:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WPcsC4v/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZ6KrkpD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F143191DA;
-	Wed, 15 Oct 2025 08:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966862C029C;
+	Wed, 15 Oct 2025 08:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518458; cv=none; b=fpgQivo+krzAj74tNQoH4HNZxv46rRCcQUMSCcbzaSJPFtrFV/BkOkmgiyDwMsfm4cYqXqTNKJWsWkx81fToJUER4x+xui5+ta3hpXM3rydAP7ZSOD/kie/sVtgRuNjSww8Wyq+NJ4z0NrpcU5u9aGzdJbzZBxRlmtLYveZO6EI=
+	t=1760518433; cv=none; b=QTL0QSNtcwmPCMpa4mEacIoKeGwwNuMhFBQAh9uo+aBclywxja3pr12hpSs7EdDnXOPH0+winnjNdMF5KNBRoj+9rH2CzQzbQ4Rfxr9E2wTOyAvPNxhQDUrUf1b0FCFyANQ57XdcrUSxYiqnYv9WBmyEwwLimrLBhuMobdq/aDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518458; c=relaxed/simple;
-	bh=+BB5rvJB9mUeya+4DU9TUHtTCg+zs/03Q0ZHCN0cD80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0Xcu8wBTTKEGBsGohAYYIQMc7gnJcT9a+5QNImKAcwYkXQFtHqSorurHGjKcqjJ5LFiytLWYasDN9HUIN//e1wQCHoPmnP6K4hOjzCgFnGt494ndgucxb4tj3zGZzf49B+48Z0oLhk1jBCXqMVYlyshGmULq9g0ZNuzJLs0gp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WPcsC4v/; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760518456; x=1792054456;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+BB5rvJB9mUeya+4DU9TUHtTCg+zs/03Q0ZHCN0cD80=;
-  b=WPcsC4v/wegg97rWI6CL8SZMCnh4RAqTBNddGaGQUxsB3vmYcW08EbzD
-   DO2T/eKgePq9Yj+qRz6ZVFPqPPLq+r0Ms6qSU3C+NN2A+uK4hYMVAziW9
-   AX1oR3xASbcaYpisGg0bVlXAi6F5ywEnYHl9cSW238a+t9lOohjmzmR62
-   +QqXOI2GnnjJ56FzhLk8CFshpAL976ukZneFAzVEnAm3hX6xNoB77MPvJ
-   x9qDPJ9qq4WJQ2AdtxT/PlNZ1qC9Opz1l+bP21v/EJrVbuAksYpvqPQPn
-   XPuT8pDLxl302xY9Qm7Di5O04UOLJI0MeVNtVdza4mGll0Xb8xKIcDZwg
-   A==;
-X-CSE-ConnectionGUID: +j5ceC0LSViK4YVnblzb5Q==
-X-CSE-MsgGUID: n1Q1Aq/bQcOeEQcpOqj0eA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="50253063"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="50253063"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 01:54:15 -0700
-X-CSE-ConnectionGUID: 9G14ytpfQl2dHZh/4Qmtzg==
-X-CSE-MsgGUID: zzuIIelBSnefzwE8pAWIJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="213062822"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 15 Oct 2025 01:54:10 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8xGq-0003eZ-0P;
-	Wed, 15 Oct 2025 08:54:08 +0000
-Date: Wed, 15 Oct 2025 16:53:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, linux-hyperv@vger.kernel.org,
-	virtualization@lists.linux.dev, kvm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Juergen Gross <jgross@suse.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v3 21/21] x86/pvlocks: Move paravirt spinlock functions
- into own header
-Message-ID: <202510151611.uYXVunzo-lkp@intel.com>
-References: <20251006074606.1266-22-jgross@suse.com>
+	s=arc-20240116; t=1760518433; c=relaxed/simple;
+	bh=T4kD6tOFtFdY6vlKgJ1miqQqOPCztWGCphZnD5Xj3ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TXoWEorT2Sg7Pl65DylRfUvqhbnr3UCJqjkVrWO7WjZe8dzjFFbYxqRR8TXn+Lmj9dz7SR4rZPx8BZodr27yOsD35lzSkmfs0yer+ZLVmX1VOywDqoWzgiCGn8K9fK3VaKNmLJghgkpWlmqQaOxM2j3hngmbrAKIWA1H454WWLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZ6KrkpD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89070C4CEF8;
+	Wed, 15 Oct 2025 08:53:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760518433;
+	bh=T4kD6tOFtFdY6vlKgJ1miqQqOPCztWGCphZnD5Xj3ow=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AZ6KrkpDMBgPbjRDGNgoWUTTG1BoLKc76qXKWn/FocVqmjQ0bhJt80Up760+Ye9T9
+	 Yaz2VvMeR5g/w/Zse7FczGCo6yIpN18TM6rIlC3WesfcMXGcFXuA6tp4rokA7sgh7M
+	 rhz2orCXrs9/Tc2iF/arMhhQMqRHsnxshKzjLeuUOILGRYfxfb5acNBrNzXL2f/k7C
+	 eoVCt1qHxP4JHWHKf7JC089Qnp+qDjcKW/cb0gvpRrXZqK2R2PBXn6sbSIfq5MZiMN
+	 ji0ombktQcZdWekTYW+JvX0h/EHpcBN2mOABLViOR7sc9amMu6v8iDU4Wl7rgeg3gl
+	 XKs80yi5H8xEg==
+Message-ID: <796770d1-024e-4967-a96a-b7f32b28ca64@kernel.org>
+Date: Wed, 15 Oct 2025 09:53:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006074606.1266-22-jgross@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+ Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org,
+ will@kernel.org, saravanak@google.com, conor+dt@kernel.org, robh@kernel.org,
+ mchehab@kernel.org, krzk+dt@kernel.org, abhinav.kumar@linux.dev,
+ vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ bjorn.andersson@oss.qualcomm.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
+ <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com>
+ <fhb4woejzh3r6v5dxvdiopnsbuwstucfuuzbiymxg4wrxrjc7t@dt3z3utq6lwd>
+ <8d88cd9d-16e8-43f9-8eb3-89862da1d0c1@arm.com>
+ <hOs24ZavnUyKYyNwBWwRpYnrsefzBfp95yuy9zyp1ByxR9_3VacGX1Yntt8pCE4w3gllPwvevs1AZqghmwKoFg==@protonmail.internalid>
+ <zcgn4xw2xghyna2eysavujbzbiydyki7p7upzzv7one5mdyjy6@sj7f75kc4vwu>
+ <fb767586-a376-48eb-97b4-bf33061642b9@kernel.org>
+ <a4WDx80rJP1GnGNEK0OOD5lh-m-MiAvireXdpiM9ETLKZ084sBJ2UthU_QqRbU_nwD4XtsdiyEqQ0AhxguzJ6g==@protonmail.internalid>
+ <6gx74wxie4wcabq27wo5y7v36uuurez4jxlzanroepqazdlgtw@sdtv2ld47d3q>
+ <fa3c1732-328d-46a2-8514-2e7f9ca6c63f@kernel.org>
+ <aE5RMDRfrr2wxUAqjjsBMcodNQxLsUT_Soi_LXMJXYcfmmeBSHnPM3e5JUPOb89tSfeI1jQbt9LfLCOXFBZFSA==@protonmail.internalid>
+ <mwthowuei7pcqp2b4hg5c45n47iakclkioumc6diyznhnldfv5@wloeoys224bg>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <mwthowuei7pcqp2b4hg5c45n47iakclkioumc6diyznhnldfv5@wloeoys224bg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Juergen,
+On 14/10/2025 23:18, Dmitry Baryshkov wrote:
+> On Tue, Oct 14, 2025 at 09:49:17PM +0100, Bryan O'Donoghue wrote:
+>> On 14/10/2025 19:35, Dmitry Baryshkov wrote:
+>>>> Each function id can be associated with a device and a compat string
+>>>> associated with it.
+>>> So, which part of the hardware is described by the -cb device? What does
+>>> it mean_here_?
+>>
+>> The non-pixel path video encoder, the tz video encoder...
+>>
+>> What's not clear about that ?
+> 
+> Where do you have pixel encoders in the fastrpc device node?
+> 
+> --
+> With best wishes
+> Dmitry
 
-kernel test robot noticed the following build errors:
+Haha, no sorry I didn't mean to suggest that at all.
 
-[auto build test ERROR on tip/sched/core]
-[also build test ERROR on kvm/queue kvm/next linus/master v6.18-rc1 next-20251014]
-[cannot apply to tip/x86/core kvm/linux-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I mean do something _like_ that, for these FUNCION_IDs.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Juergen-Gross/x86-paravirt-Remove-not-needed-includes-of-paravirt-h/20251010-094850
-base:   tip/sched/core
-patch link:    https://lore.kernel.org/r/20251006074606.1266-22-jgross%40suse.com
-patch subject: [PATCH v3 21/21] x86/pvlocks: Move paravirt spinlock functions into own header
-config: x86_64-randconfig-001-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151611.uYXVunzo-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151611.uYXVunzo-lkp@intel.com/reproduce)
+We could replicate that for a new iris add for say Glymur or Kanaapali.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510151611.uYXVunzo-lkp@intel.com/
+Sub-nodes of the main iris device. They have a real purpose in that the 
+'device' requirement is full range IOVA for the SID and implicit 
+identification of the FUNCTION_ID with the compat string
 
-All errors (new ones prefixed by >>):
+iris-video@0xdeadbeef {
+	video@0 {
+		reg = <0>;  /* FUNCTION_ID HLOS could also go here */
+		compat = "qcom,glymur-iris";
 
-   ld: vmlinux.o: in function `kvm_guest_init':
-   arch/x86/kernel/kvm.c:828:(.init.text+0x440f4): undefined reference to `pv_ops_lock'
->> ld: arch/x86/kernel/kvm.c:828:(.init.text+0x4410e): undefined reference to `pv_ops_lock'
-   ld: arch/x86/kernel/kvm.c:828:(.init.text+0x4411a): undefined reference to `pv_ops_lock'
+		iommus = <&apps_smmu 0x1940 0x0000>;
+	};
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	video@1 {
+		reg = <1>;
+		compat = "qcom,glymur-iris-non-pixel";
+		iommus = <&apps_smmu 0x1947 0x0000>;
+	};
+};
+
+The reg property could also be the function_id
+
+video@FUNC_ID_HLOS {
+	reg = <FUNC_ID_HLOS>;
+	...
+};
+
+There's no need for a new iommu specific property to help us fixup 
+sm8550 iommu definition.
+
+As I say if that error wasn't already in sm8550, we wouldn't be trying 
+to solve the problem this way.
+
+So lets solve the problem for Glymur and Kanaapali and then backport 
+upstream if we can or downstream if we can't.
+
+What we need are new devices what we will do with the data in 
+iommu-map-masked is make new devices. We are mapping data - iommu SID to 
+device and implicit FUNCTION_ID to a device.
+
+So we should be declaring devices, instead of burying the data in a new 
+property that is not obvious what it does or why it exists.
+
+Robin has suggested devices, we have two real bits of hardware data to 
+go with those devices...
+
+---
+bod
 
