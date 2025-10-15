@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-854765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEABBDF537
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:22:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24903BDF54C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F3A3C147E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:22:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEAFD3464F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEAD2FB0B7;
-	Wed, 15 Oct 2025 15:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D31E21ABC9;
+	Wed, 15 Oct 2025 15:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANeh3y9v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m56r7RMK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EF221ABC9;
-	Wed, 15 Oct 2025 15:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A112FBE1A;
+	Wed, 15 Oct 2025 15:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541739; cv=none; b=dEyj+QWaRhGGOJGPpcr0tSH60viGAKZM62kKSlfaPYekCuDjcU1XGZ8cKvS7wiSk9M/MM5ea+LMBTkG5HMeJZpEGJPRdt3Lsh6sM4nyzX9tlorUr4D1/wx/FZfwVNNeWdhc5Sq1CuAhfB6CKvtiUxqXtMrej7sK17PYpKntrcxg=
+	t=1760541809; cv=none; b=MO814qEK871Y6SaPhFp8FHrGhSODuqCPBxafzQaXLb9VcNQLgzNB0jma8REcVjaUFEwyK/CIiSTYeoofZEeibzQZkdYHZAAOfjlp8dKORqG0TT97TgQFfQZP1+wRQtrn0I8hEQJLcWySCevMXm07K/IiLHt6tqAeSobLeZh0ZsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541739; c=relaxed/simple;
-	bh=WgWGXsmDkQY2RWyxMpc6dWAkpVwA7f8xiHPLh/Bejds=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uPMH7SksFpjVk4RtMqow5ne7iOL9Mmc7JHcO3TjxkkLLQD8bQCxm7Sp0fQtRhc9XsMLH0XI58jzvBe4693esg5EIf8fbk/qi/eM5tLoSOb2AhBDQVLnNlTXc8td8yBPmOGlCCgzxBdJG8UTBj0KbZMeHxqFV/lDzObrWd1gr0X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANeh3y9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFACC4CEF8;
-	Wed, 15 Oct 2025 15:22:16 +0000 (UTC)
+	s=arc-20240116; t=1760541809; c=relaxed/simple;
+	bh=l6kPATXhIfK9tJGsY5Si9o4/LJ8jrOYvZVE72ylEkQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oj3Kw32+Cw/7EnJrIiHGq38KjkVYF+gI5FQZltgVEr9gvx1Tt6uTxW/HigDnkEUD+xAu0r07blHrTrs7kXI8b7ByUcctQijeEJbi2kxs3fT6x7uviEDJQ/qOnS/Q0OH1LfG9Mvb8dbfDQsEapo5eW9NfyXYMkxA7np9Uy9XUf+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m56r7RMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA51C4CEF8;
+	Wed, 15 Oct 2025 15:23:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760541738;
-	bh=WgWGXsmDkQY2RWyxMpc6dWAkpVwA7f8xiHPLh/Bejds=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ANeh3y9vOpdxsgMxjm9J0x7hrm/WlWNAzKMkGt+OWegmtfglWX7fx7z6IbQwIkBmX
-	 EtrSCdq4jZVRRUCKhYP6aOQ3QZm7RsIYrUsGiZjxqVjmaijbBM4ITJTRTXCiDadz7j
-	 BtiMTgdl20h34+EidWiYqtD1vqcz5x0hDK61SkCET7lPqDHgnoOe+d4b55UewiXsJA
-	 ryFXxQqu56wpPdlOABpDmgTPPPpL+aIlOo8Oe9fS4bHuf+DC/XLL1FACmbCXMg0EQq
-	 BnNmitKMrwp3nlHCypj9cA3WymGn69pVKvzvNhaaE6354wSPJGVn9QsJFmXre0ci8j
-	 XVXVDSpGztjeQ==
-From: Mark Brown <broonie@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- Marco Crivellari <marco.crivellari@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-In-Reply-To: <20250929155053.400342-1-marco.crivellari@suse.com>
-References: <20250929155053.400342-1-marco.crivellari@suse.com>
-Subject: Re: [PATCH v2 0/1] ASoC: change system_wq with system_dfl_wq
-Message-Id: <176054173655.179445.8487996832699914920.b4-ty@kernel.org>
-Date: Wed, 15 Oct 2025 16:22:16 +0100
+	s=k20201202; t=1760541808;
+	bh=l6kPATXhIfK9tJGsY5Si9o4/LJ8jrOYvZVE72ylEkQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m56r7RMKJqSqhNWNldofgC9LBpvSoO9uy0ccsWg+V9BC3NJhuu5N5FVlHjHi02vl9
+	 Q5O4dn1PUTlgoJnAecjyynFt18RZenLAQ2F7bD3F3+M8lNYItYO1HUd19ZGZvFMBFd
+	 NfAuH8olcN61gpWJJtHkNB3/hgCPuYMHDXC5f0KJuoVsHjPFKAB1E9STJg08bkiggE
+	 /KBhLX6YoJGe8EgODNQm8rtxNndVVYLUJrkvN/GQt9X+yzunFmfzPf+18jliilGcgK
+	 AN8YKNhxnYZ34QJFDaECcPJ5MCNMwagbbYW56rcau3UGCLGmVpEVj+2ML23MhbDB2q
+	 w31CY1wFk0vQw==
+Date: Wed, 15 Oct 2025 17:23:21 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	manivannan.sadhasivam@oss.qualcomm.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev,
+	FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <aO-8aeJdvApesEqi@ryzen>
+References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
+ <20251014184905.GA896847@bhelgaas>
+ <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
+ <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+ <7ugvxl3g5szxhc5ebxnlfllp46lhprjvcg5xp75mobsa44c6jv@h2j3dvm5a4lq>
+ <a9ca7843-b780-45aa-9f62-3f443ae06eee@rock-chips.com>
+ <aO9tWjgHnkATroNa@ryzen>
+ <ud72uxkobylkwy5q5gtgoyzf24ewm7mveszfxr3o7tortwrvw5@kc3pfjr3dtaj>
+ <aO-Q3QsxPBXbFieG@ryzen>
+ <7df0bf91-8ab1-4e76-83fa-841a4059c634@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-2a268
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7df0bf91-8ab1-4e76-83fa-841a4059c634@rock-chips.com>
 
-On Mon, 29 Sep 2025 17:50:52 +0200, Marco Crivellari wrote:
-> Below is a summary of a discussion about the Workqueue API and cpu isolation
-> considerations. Details and more information are available here:
-> 
->         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
->         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
-> 
-> === Current situation: problems ===
-> 
-> [...]
+On Wed, Oct 15, 2025 at 09:00:41PM +0800, Shawn Lin wrote:
+> For now, this is a acceptable option if default ASPM policy enable L1ss
+> w/o checking if the HW could supports it... But how about adding
+> supports-clkreq stuff to upstream host driver directly? That would help
+> folks enable L1ss if the HW is ready and they just need adding property
+> to the DT.
 
-Applied to
+I like your idea, if you have time, please send a patch.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+However, adding (working) support for L1 substates (via 'supports-clkreq')
+is new code, and should thus be queued for next release instead of v6.18.
 
-Thanks!
+For now, pcie-dw-rockchip.c is broken for a lot of PCIe devices, so the
+fix should be minimal and target v6.18, i.e. something like:
+https://lore.kernel.org/linux-pci/20251015123142.392274-2-cassel@kernel.org/
 
-[1/1] ASoC: replace use of system_wq with system_dfl_wq
-      commit: 0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4
+Support for L1 substates via 'supports-clkreq' can be added on top of that
+patch (while targeting v6.19).
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Kind regards,
+Niklas
 
