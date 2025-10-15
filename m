@@ -1,107 +1,167 @@
-Return-Path: <linux-kernel+bounces-854547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7008DBDEAF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:13:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA04BBDEACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 030F1501278
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8273A61CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2837326D6F;
-	Wed, 15 Oct 2025 13:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8F73233EE;
+	Wed, 15 Oct 2025 13:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JOI0xuUD"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bj3kAtTv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6540A31BC94
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87675322C67;
+	Wed, 15 Oct 2025 13:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760533894; cv=none; b=kekWbNSUkdYtjZYcF4zpuawm+kpaBGGVmmWrlMMla1qvdlln+mnKxdvhLdrYLFbIE5RPEONXFP+Gp6QNKy+GuHf+3DgzFF+C/08NaLemaB0Ob22ExA9Vp4Y4QvCLIQ8gi9sPeK//EtNZyo++IR5d53N/qbqynSfe7pH9MBP4dlA=
+	t=1760533905; cv=none; b=nhU8BvnPWsR9m/9hJVemTQLIw4M1hibSHf7S9sr5ZDheU03zGqXSzZH/4EmLLZ8hKyKmvxhfmHnFffKMZzHhHEYk6kGJ5Z4NHp3qdNvY0bSxCGtNDdNMYbWxAEOd1FwY5/4iUa0ZZdqVktUMqUY5vxOB8qb5NjooKKJcKDBj9cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760533894; c=relaxed/simple;
-	bh=TNN71mayoTkmy8rd0PDSJ9nlu4EsONjvOe6eFy+t5ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bogu55LgZRk+zV3V6YiHsb3RR0xAeN46MklabWETh57Fmtp9ikcT+m6+jfA5SlcLQUC9GIAcj2AuPkkmuljlZwkYUV6Gzv1cY2WP1m40KyRPrlwgiTjJiF+EI7+nn6oly1x3mcep2G+3d2LAxKHzXx91jBQowPvaakCjlGPg03Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JOI0xuUD; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-471066cfc2aso3788665e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760533891; x=1761138691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSEXKmipGPjNX9UpQ1OcPNXCLJIBowGxqHQC/E69W1E=;
-        b=JOI0xuUD0xScKu7yRljROe3KNMgEatUh2Robg4Dg2gAddZtwlzJaa96bdV/ZCZkVap
-         oR5ie552WvYnBhRPG7LhHZm2gPgSYCKcWvPQH8A5SuRFJ5y6DsG66LRxDhuH8XwsHZSv
-         u5E462/5bE/CQ9evoUxaMrLZ9K5hCv9WRGwnbqK4/d6/bRT9zGiiwpFJTUvlEzH00HuY
-         b8fGUVl37gftDO5FlKsv2SHq/ZTNKcHC/md7rQkXk6O/8FlGUKNq5RtP8aHk641ymllu
-         0qYjEU5dSMA1xBei7tOHn4FLEdxMK8TdZ0a/tW/xZK3WxIQVdeNwY+YFk4hWt5QSMg61
-         kpHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760533891; x=1761138691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KSEXKmipGPjNX9UpQ1OcPNXCLJIBowGxqHQC/E69W1E=;
-        b=SgXx5OPzrO9tD/AnbGS6nTVpbCZLhpqmnjoPGa9r+NzFcgXlIaMVfF43pyp+CCBlz6
-         nrPxUQ01asbkS3uL4Pq4FcVXVMAQegLZDuW7AqV3LRN5SbBqPzovZ8gPDlTk75Qami+z
-         fiWSrlRJBA9McuitTl+s3GA7/FFq/0EtiCgKvqGXhw6j201W/9jm1ABaEy4gIDyezcBa
-         4iksEjfpzrieNTOj8dD/KQQB13ciiEqYRzWglhQON4Dq3g5+jfzWSOupBZxIEKGZtXm8
-         /v4I5GQ2rIPTHD+wA2OJw2HUhY+W5T9yQjiv2dZNOW+FTagiS7XkJ4Dc3zIc21inIVr+
-         kpOg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+No4DxdVA7NM+lzzA92CL3xM57oxELd+A96Iiu5b70j3MUNeCBgjgYxU2/FyafBABPH5Oj7TL0WlshJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZQsktsbpuOjdpts1dRh4tT7gns4SEmLt3lhNIfpdpgG4FeowI
-	ujYM9xwTYK+qXaQlYBsjCaPFwrWreLItym8jRQfhpQVzbhxn1plhEN4oQsaWUXso3qc=
-X-Gm-Gg: ASbGnctHBJkhjdGjr0SCVj7cElQpC2nYyDDDjjDxKyCNEddcS34ECgXaR7VqOEPgBUf
-	5haO5+iYSTHUdxuxJOJ57zW4uhWRNQ2ADFK34Lta0isUjYf2t5HbhsQNy/ss0zM35ZlCYS/Vd9p
-	Qt/MvtTUSm34yFzpPtZMzJzNqJDV0OW1IJ7GkNuO0ejidovPEheRFgRT49sybNOZWd3dfOCa+cl
-	YwMmFoUmDGyVxo7Vm4Dlboqh1/wV1TDQbR0keCFhZbrxkCKwKLnrR34t1M+f6nokfhx9zYOhEzX
-	QiBANLoFm5VUv4+SHD8HSOy6Mfxnz42t2ay1J0bCPh8rKuaUqwjZG5mzbPHTrtCK9DG3SjOqPJ0
-	UiMSautgpflcCKlvMARxwWpaKexU9+k8/Lb6OAjMrm0hN1l6fBHDS6q8=
-X-Google-Smtp-Source: AGHT+IHb7yqFd13CCRX2ZsPulLnmXAv3Os19z37S0V2UZLXAtIujA1Vyw8h33iB673wyOzI9vd+ODQ==
-X-Received: by 2002:a05:600c:a309:b0:46f:b42e:e39e with SMTP id 5b1f17b1804b1-46fb42ee4femr110401385e9.39.1760533890656;
-        Wed, 15 Oct 2025 06:11:30 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482ba41sm294145175e9.4.2025.10.15.06.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 06:11:30 -0700 (PDT)
-Date: Wed, 15 Oct 2025 15:11:28 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
-	joe.lawrence@redhat.com, shuah@kernel.org,
-	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: livepatch: use canonical ftrace path
-Message-ID: <aO-dgBgwnkplkZtL@pathway.suse.cz>
-References: <20251010120727.20631-1-wangfushuai@baidu.com>
+	s=arc-20240116; t=1760533905; c=relaxed/simple;
+	bh=omexcsvQOP6L3u6VXqhGkYJUOCWIegna1Gz630OIFyA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uxlxJ4GcLgaqwBVRDTrzafXfC6efcAsEEN4sx0CJMoocMUHZPmvfwseZq8/yattjG1i3wwjxjiPE8fQEtThZur9MQ5MUn7f69eZyDTTkvxLVP1kRkMVtE2HkOO7HFjtypDEkAk08gceaxbqvoPpCGjzkIpNMpWN5KOApdx6pr5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bj3kAtTv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D96DC4CEF8;
+	Wed, 15 Oct 2025 13:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760533905;
+	bh=omexcsvQOP6L3u6VXqhGkYJUOCWIegna1Gz630OIFyA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bj3kAtTvuMH0wrdZEdcvWcUEePwq0ISRRyCNWlhSpLuB6WQVpbV0vTd0PuT52xlAS
+	 w7KFR5RXN7/WBOhy+YS726di7J4JaoI0d4fan+f4IiCJjqlVJlAD6MHu/578kiA4xV
+	 A7MpgIXtEEOQ9yi9IE0weQsmeyVwMca2PpXfMUgC5LiwVYlWewTC95p0Ly4cPNO73I
+	 ee2bIlA/rLBudcBVPP1aqtm+RtpYrRb21GqaDgDvR67Eavpg7HBO7oE3YZV4ydK+kr
+	 qXsz8moSzdIAmz4widHWgoPA0mJBioHsEaAlz0wePPBt+CHyNvMboHoe7gy/H8nOV8
+	 I60zSTotKp7SQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  akpm@linux-foundation.org,
+  brauner@kernel.org,  corbet@lwn.net,  graf@amazon.com,  jgg@ziepe.ca,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  linux-mm@kvack.org,  masahiroy@kernel.org,  ojeda@kernel.org,
+  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
+  jasonmiu@google.com,  dmatlack@google.com,  skhawaja@google.com
+Subject: Re: [PATCH 1/2] liveupdate: kho: warn and fail on metadata or
+ preserved memory in scratch area
+In-Reply-To: <CA+CK2bD4z_j_jMhMtrvvQ5nOMEFT6yrRHk9rk7BEiQPSPCHiqA@mail.gmail.com>
+	(Pasha Tatashin's message of "Wed, 15 Oct 2025 08:40:26 -0400")
+References: <20251015053121.3978358-1-pasha.tatashin@soleen.com>
+	<20251015053121.3978358-2-pasha.tatashin@soleen.com>
+	<mafs0zf9sjrgc.fsf@kernel.org>
+	<CA+CK2bD4z_j_jMhMtrvvQ5nOMEFT6yrRHk9rk7BEiQPSPCHiqA@mail.gmail.com>
+Date: Wed, 15 Oct 2025 15:11:41 +0200
+Message-ID: <mafs0qzv4jomq.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010120727.20631-1-wangfushuai@baidu.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 2025-10-10 20:07:27, Fushuai Wang wrote:
-> Since v4.1 kernel, a new interface for ftrace called "tracefs" was
-> introduced, which is usually mounted in /sys/kernel/tracing. Therefore,
-> tracing files can now be accessed via either the legacy path
-> /sys/kernel/debug/tracing or the newer path /sys/kernel/tracing.
-> 
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+On Wed, Oct 15 2025, Pasha Tatashin wrote:
 
-JFYI, the patch has been comitted into livepatching.git,
-branch for-6.19/trivial.
+> On Wed, Oct 15, 2025 at 8:10=E2=80=AFAM Pratyush Yadav <pratyush@kernel.o=
+rg> wrote:
+>>
+>> On Wed, Oct 15 2025, Pasha Tatashin wrote:
+>>
+>> > It is invalid for KHO metadata or preserved memory regions to be locat=
+ed
+>> > within the KHO scratch area, as this area is overwritten when the next
+>> > kernel is loaded, and used early in boot by the next kernel. This can
+>> > lead to memory corruption.
+>> >
+>> > Adds checks to kho_preserve_* and KHO's internal metadata allocators
+>> > (xa_load_or_alloc, new_chunk) to verify that the physical address of t=
+he
+>> > memory does not overlap with any defined scratch region. If an overlap
+>> > is detected, the operation will fail and a WARN_ON is triggered. To
+>> > avoid performance overhead in production kernels, these checks are
+>> > enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
+>> >
+>> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>> > ---
+>> >  kernel/liveupdate/Kconfig                   | 15 ++++++++++
+>> >  kernel/liveupdate/kexec_handover.c          | 32 ++++++++++++++++++---
+>> >  kernel/liveupdate/kexec_handover_debug.c    | 18 ++++++++++++
+>> >  kernel/liveupdate/kexec_handover_internal.h |  9 ++++++
+>> >  4 files changed, 70 insertions(+), 4 deletions(-)
+>> >
+>> > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
+>> > index 522b9f74d605..d119f4f3f4b1 100644
+>> > --- a/kernel/liveupdate/Kconfig
+>> > +++ b/kernel/liveupdate/Kconfig
+>> > @@ -27,4 +27,19 @@ config KEXEC_HANDOVER_DEBUGFS
+>> >         Also, enables inspecting the KHO fdt trees with the debugfs bi=
+nary
+>> >         blobs.
+>> >
+>> > +config KEXEC_HANDOVER_DEBUG
+>> > +     bool "Enable Kexec Handover debug checks"
+>> > +     depends on KEXEC_HANDOVER_DEBUGFS
+>>
+>> Why the dependency on debugfs? Why can't the debug checks be enabled
+>> independently?
+>
+> Because there is one kexec_handover_debug.c file, that I thought would
+> make sense to use for both, but now thinking about this, perhaps we
+> should split the code: KEXEC_HANDOVER_DEBUGFS and
+> KEXEC_HANDOVER_DEBUG, and add two files:
+> kexec_handover_debugfs.c and kexec_handover_debug.c, this would avoid
+> ifdefs in .c.
 
-Best Regards,
-Petr
+Sounds good.
+
+>
+>>
+>> > +     help
+>> > +       This option enables extra sanity checks for the Kexec Handover
+>> > +       subsystem.
+>> > +
+>> > +       These checks verify that neither preserved memory regions nor =
+KHO's
+>> > +       internal metadata are allocated from within a KHO scratch area.
+>> > +       An overlap can lead to memory corruption during a subsequent k=
+exec
+>> > +       operation.
+>>
+>> I don't think the checks that are done should be listed here since as
+>> soon as another check is added this list will become out of date.
+>
+> I thought it could be expanded when new features are added, but I can
+> remove this description.
+
+Yes, but it is easy to forget to do so.
+
+>
+>>
+>> > +
+>> > +       If an overlap is detected, the kernel will print a warning and=
+ the
+>> > +       offending operation will fail. This should only be enabled for
+>>
+>> This also describes the behaviour of the checks, which might change
+>> later. Maybe for some checks the operation won't fail? I suppose just
+>> leave it at "the kernel will print a warning"?
+>
+> If it changes, and Kconfig should be updated as well.
+>
+>>
+>> > +       debugging purposes due to runtime overhead.
+>> >  endmenu
+[...]
+
+--=20
+Regards,
+Pratyush Yadav
 
