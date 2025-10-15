@@ -1,93 +1,122 @@
-Return-Path: <linux-kernel+bounces-854220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5826EBDDD8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:47:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3585CBDDDAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23B419A5FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:48:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B85FE4E8F2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B187231A55F;
-	Wed, 15 Oct 2025 09:47:50 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9913A2C2359
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D943E31B810;
+	Wed, 15 Oct 2025 09:48:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B37F2836B5;
+	Wed, 15 Oct 2025 09:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521670; cv=none; b=tg7AAGibgp4E3C64g8kCaQbisdOIBUhqy0FR3Tgt4lKjyRAIxsw9Y1esSURXkwu8wdOis6yFGPiJBV6asB1WCTLigb3Fks6rYPtJIMhv81RFb+6hCubw1/cypI0IlYxpevldGSoy2kSQae69cF4TZce23Uv79UpBm3kXEGLZ1tk=
+	t=1760521716; cv=none; b=N3kcOPGsgGQgcrGkCwEuzNZxE7HXXs7A2EPhVdORPWI+bJjtdh4wL3/uS+g1pMqYgSPFjy2hkTKGUmXidzNUmdcGxcw5y3wle5UbAOweZI/7GiVTaDlh6VA16rlQqQ10TUs1stx5UqcMryaENsTkqfIdG63ABFqUn4QwHT2U7XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521670; c=relaxed/simple;
-	bh=EEluPFafr9qjOFSk1hahKMUHbpZJudJk/Ct7YIPlxy0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=NMyKMv26wFR8mmJS8PEocAmcc9y+HwGE8ggD4OLWWqEEYxctrsk4813C37lTS/PgQ/b1OLJS82mOQ5AlAn1dn0pY1TQE9NF34fq5tg4TeZ+9vNiBtLcAiiw5LZJLZZ3xJNVp8VJ1G/hpQSSiq+PiG1rROlqfPSNkSBsSUbyUQbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxxtC+be9okWAWAA--.47214S3;
-	Wed, 15 Oct 2025 17:47:42 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxE+S6be9olnjlAA--.49274S3;
-	Wed, 15 Oct 2025 17:47:39 +0800 (CST)
-Subject: Re: [PATCH v1] objtool: Fix typo "teh" to "the"
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org
-References: <20251015090106.4037-1-yangtiezhu@loongson.cn>
- <20251015091758.GA3419281@noisy.programming.kicks-ass.net>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <d489fffe-d201-6213-a59f-2e217c5ab880@loongson.cn>
-Date: Wed, 15 Oct 2025 17:47:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1760521716; c=relaxed/simple;
+	bh=ci2GAK96GpSlDOtokEvI17IcFg1bYDVpieRXum3v43o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUcXMcXgvPMpoelyg7UOsruivrPpKxJT7VK+je1Y2xCxoAlPhJ2LOW1ehAYmDa7fjVH0h2Ea25pEOF5alIcCTgXWFSe2RaWjw/bhbr+QQ8Ip8HodJ1uzgvDJD0ZLyPUuFXsVvsiqz2gLV4l6EiVjCSVxH7uJJqBz56l71FxeHtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B69C4CEF8;
+	Wed, 15 Oct 2025 09:48:24 +0000 (UTC)
+Date: Wed, 15 Oct 2025 10:48:21 +0100
+From: Mark Brown <broonie@debian.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	netdev@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 19/19] rust: regulator: replace `kernel::c_str!` with
+ C-Strings
+Message-ID: <a6d606c0-716f-49b5-81cf-362b325b7872@sirena.org.uk>
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+ <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251015091758.GA3419281@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+S6be9olnjlAA--.49274S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU25Ef
-	UUUUU
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qu2IBVFvaIEaH/yu"
+Content-Disposition: inline
+In-Reply-To: <20250925-core-cstr-cstrings-v2-19-78e0aaace1cd@gmail.com>
+X-Cookie: Sentient plasmoids are a gas.
 
-On 2025/10/15 下午5:17, Peter Zijlstra wrote:
-> On Wed, Oct 15, 2025 at 05:01:06PM +0800, Tiezhu Yang wrote:
->> Obviously, it should be "the end" rather than "teh end".
-> 
-> Was not in fact type but interweb slang:
-> 
->    https://www.urbandictionary.com/define.php?term=teh
 
-I can not open the above link, I read the info from
-https://www.definitions.net/definition/TEH
+--qu2IBVFvaIEaH/yu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What should to do in the next step?
+On Thu, Sep 25, 2025 at 09:54:07AM -0400, Tamir Duberstein wrote:
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
 
-(1) Do nothing, just keep it as is.
-(2) Change it to "the", but adjust the patch subject and
-commit message.
+This doesn't apply against current code, please check and resend.
 
-Thanks,
-Tiezhu
+--qu2IBVFvaIEaH/yu
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjvbeQACgkQJNaLcl1U
+h9Dt8Af/TLwPaPEPyJKhHTg8cZeHf70d+vVL0moyk8tdCcvNggPRPd8mXg0NT9mO
+qmJvoWmet4bQC3McxDEI2hDArwrV6orbVM8LsRyd78hdChnLNP1058/WMu4IMsm9
+2BDs6OT5Nma+7YMa+KS6S7fkuUmt9AG/CkBR9NAGDX0K6kGd/GQ1E9I11cf8Cdqs
+YFLT67SrYyxGv3ZGtK5IkUOmqn8vSKPTtrQiuzfeSkwR6iBWmy5jq1VR/Qh2Kycq
+c/7pMyRZK1HaRL+RnAGvZaPuru3c9bRia03t2TS0BaJJYl8QMaNG2TqmOxxHBHNP
+0Dagzm72apYtzPFYbdE9flnTkc2o/Q==
+=ofuh
+-----END PGP SIGNATURE-----
+
+--qu2IBVFvaIEaH/yu--
 
