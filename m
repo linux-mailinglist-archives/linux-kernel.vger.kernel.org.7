@@ -1,319 +1,120 @@
-Return-Path: <linux-kernel+bounces-853839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8573BDCBB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:29:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EA7BDCBC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A123C8213
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170DC192212F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB5E30FF00;
-	Wed, 15 Oct 2025 06:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB67311949;
+	Wed, 15 Oct 2025 06:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A0mQOTUw"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nAANDeCJ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F78326FD84;
-	Wed, 15 Oct 2025 06:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35083311C09
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509762; cv=none; b=qyXtu7osgs3CoZu2OtzhkS1aM3b4IB3IbVtfTH9mzvsV74hD31tOqpTqOWo/Fhn/Tq2y9F3A0X7J3JNheyibHzCpfRTq0b93Ix4ehpRTaCnlyaWcU54nfJ0UfkbMzbbvusRn4youbycnTVZKm3MiQN37AnRs2lG6498Aa+r8sMM=
+	t=1760509829; cv=none; b=GNtLVivMCs2eHioCTnMubTJqmxoPpRLhJRfC6fLUD+WdR3/bDtpOtBE2Gd2KedeqLNeVDdzIqHBCLLsZ1XQaDhOZfNBmLhCB9kCJ2uXewUTI60LN0ubR3GTBp65E/u6VZ1xP6S37QykBkF8nQBzApOJhAhaqsIxXpyewFtESKlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509762; c=relaxed/simple;
-	bh=iezWRS8yvUvdTBT7iwBhic4M/CXdCiQL0UFtWijk8LM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QfTSSCIgp3tq/yy3Lsz9yiKFm2MMpWt/TqDiomaEJmzB/jMY/XsJn1Zc2himZIN4awogEw0ruhdC+UIzB8BLOyqoiNZ0wNieFlOOKKYpdAoCc2tFWdy9O42LTBAkHUIU+CeJw1/bXg6nxV1m673LnsfQ9LTmzIiZ596TW3JWvfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A0mQOTUw; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760509750; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=bbP6wfltIs9nIK3nD5iSabINDJ6NIt6iMczHxBUfYUU=;
-	b=A0mQOTUwa+qs9fLoqAZllb5fY5OEsoEPkaSOzLN/xv43TH7G8795Dq/uYNPDUPK+cPL3OaF4fRm441FYRH96G5M55c5u+qVOFDUo6xKayXvAtXE2h7MWCHeeFN2zv8L79Pu1baEwao7hKZoWcxrRB2T7ZdJpqgmEeoqTDxlCHiI=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqF7sLp_1760509747 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 15 Oct 2025 14:29:08 +0800
-Message-ID: <b6353617-048a-4e12-a1d4-6d1484619927@linux.alibaba.com>
-Date: Wed, 15 Oct 2025 14:29:07 +0800
+	s=arc-20240116; t=1760509829; c=relaxed/simple;
+	bh=U+QJpInAQJD/UO7rXl6XPQY0ZAlove8LjuD2791XvXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P/V0VghDs47aOopSlYYeEKJ7SYBc9LMPSA4CJhSrUQmCYHlmMkSK41JEt15dJR0lRf/aIQP5KuYhVBj8yWn2c1dQSuNEImCY9NVYyOCXUwfWneubAWFbRTRQn7h6z68Uuy/xjOMLHHWpm/3OBZDYdpAXwyq/+W6PiTWVYEdBq4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nAANDeCJ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-375eff817a3so60826991fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760509825; x=1761114625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U+QJpInAQJD/UO7rXl6XPQY0ZAlove8LjuD2791XvXw=;
+        b=nAANDeCJQmapJM4yQy1/KPiB3mk3XqoNeCV8WlFFqb6MowF4ixgB/z5JXPfpNsooke
+         XnL+g6aBlj3aixjQga6x7w7287CwMjp6jffyK3MXTAMrnlMgS9cR1rwQT0vHWdqdCmNo
+         4DrNor8mkAIq5MJ2X5gjKj6tMcWta9qrDJAZnBAnZn6dO+JVEQOWUocalA5usOVnsPF9
+         B7kElg4sZriJ7AitutCLZfxA+UKMGK/5C90hGCKhb5ePSpp9FC680yixxCEV5kjgQEQ0
+         2ycg9egUPeMHz+8gln/LpOdd3WexEsz8JDltWl+vif8ESv1D2HEKXkQd+cXrh+PteE3A
+         l2ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760509825; x=1761114625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U+QJpInAQJD/UO7rXl6XPQY0ZAlove8LjuD2791XvXw=;
+        b=TKKo77DUgO7D+a3Cg+n35fpeWLpYaZwMwc8mZfGkyl83x54/LRRaX8/D4sdAR13WFz
+         9Mr1OiUYlUdFTYgXV9sgGSMj1l+OtTW2g+qXy6vJCJWaXQAgWPQo7GNfQKyxqjMrSwwH
+         WmIHct5rDuvTalw/Dy54EEFqBVMMiNNgGgpGDTVWXF4uUpBtOOoYS4hapWYLMjihfwFs
+         pI8HX4KuNiab9GWJT8tr5TyGsEOeKxWU+WCSKGSd88PTKI3xzZSgjmDd2JowNr7m6MeU
+         0Gg7qHbWsvnJem4BoqQXQD6zaMoRVHXO0GcNn5SHAH0AYSFtIJ8HZrZ70WVXALlbwCQJ
+         CBtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjZgUnoQESRM2syuTCt6nULTVvk1CeouuESHXrr4Mf8vgsVUFdQ3PFpKIKgIT0rNBSX7EPrtdziSVYz8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZkCrxncJvLDkkaP0512ATJY6SnT73uoXMTJDsqz99k/rQW2Yf
+	BTKcPb7E/OpzCV2TlBJKuQrBMKC0R9J25KxR5tS85Gqg/U9ufXmG49jdR5MC1u67mkr5jNH5yKz
+	fdecbLuERkhERUFh/3cl/++Rof7i3OLcGQzrPxt92gs7pkwJol5d+
+X-Gm-Gg: ASbGncsTj5LtjPcAe5J7RQ1iTOYzXLXWgOBv/Jw78ckbJ/Z1oHH8QZBSzWeB9AOybI2
+	ag1RXXXfyVRtUgzimk30HBFZ6hSU+OBEaYycK/nK4J60mJGdrZ/gkThE7s4iNVW9tFuTtayzixC
+	y6e65kHbKKPBz3kV6lV8VDhxGddLQn+7nLeBxdLFuqDUQ7vCTJ9jqXuW3R+oP1ugUMcBIeXoyz9
+	EDtSSZTGH5OhhQDMWL/41+hLYA9xMgdR7ifV3ydDCAXT+O7KGU=
+X-Google-Smtp-Source: AGHT+IGUsgryfaHD0rnj3LtJX0svvEnMtTCvHCuJxwMxVB7v78te9kwRaSVyuTsq1gSb0ZAbdHX3z/ggHAOfux8GoC4=
+X-Received: by 2002:a2e:b88e:0:b0:36d:a459:f0c6 with SMTP id
+ 38308e7fff4ca-37609cf2a61mr74137741fa.12.1760509824851; Tue, 14 Oct 2025
+ 23:30:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 1/3] PCI: trace: Add a generic RAS tracepoint for
- hotplug event
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: lukas@wunner.de, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- helgaas@kernel.org, ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
- Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
- bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
- anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
- tianruidong@linux.alibaba.com
-References: <20251014123159.57764-1-xueshuai@linux.alibaba.com>
- <20251014123159.57764-2-xueshuai@linux.alibaba.com>
- <20251014114029.4c59bb1a@gandalf.local.home>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20251014114029.4c59bb1a@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251015060714.67558-1-michael@allwinnertech.com>
+In-Reply-To: <20251015060714.67558-1-michael@allwinnertech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 15 Oct 2025 08:30:13 +0200
+X-Gm-Features: AS18NWAUhU_Vsd9dzfVXxTibpqYvM8QTjr1kGOPoZF-KY0GMkTVsXhlFFcZV4bU
+Message-ID: <CACRpkdbQH2+AoCVAZf_apQ=uhkbinkHtk60ssB0ODpBZY-gATw@mail.gmail.com>
+Subject: Re: [RESEND] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
+To: Michael Wu <michael@allwinnertech.com>
+Cc: ulf.hansson@linaro.org, brgl@bgdev.pl, adrian.hunter@intel.com, 
+	avri.altman@wdc.com, wsa+renesas@sang-engineering.com, 
+	victor.shih@genesyslogic.com.tw, andy-ld.lu@mediatek.com, 
+	jason.lai@genesyslogic.com.tw, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Michael,
 
+thanks for your patch!
 
-在 2025/10/14 23:40, Steven Rostedt 写道:
-> On Tue, 14 Oct 2025 20:31:57 +0800
-> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-> 
->> Hotplug events are critical indicators for analyzing hardware health,
->> and surprise link downs can significantly impact system performance and
->> reliability.
->>
->> Define a new TRACING_SYSTEM named "pci", add a generic RAS tracepoint
->> for hotplug event to help health checks. Add enum pci_hotplug_event in
->> include/uapi/linux/pci.h so applications like rasdaemon can register
->> tracepoint event handlers for it.
->>
->> The following output is generated when a device is hotplugged:
->>
->> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
->> $ cat /sys/kernel/debug/tracing/trace_pipe
->>     irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_PRESENT
->>
->>     irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_UP
->>
->> Suggested-by: Lukas Wunner <lukas@wunner.de>
->> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Lukas Wunner <lukas@wunner.de>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> ---
->>   drivers/pci/Makefile              |  3 ++
->>   drivers/pci/hotplug/pciehp_ctrl.c | 31 ++++++++++++---
->>   drivers/pci/trace.c               | 11 ++++++
->>   include/trace/events/pci.h        | 63 +++++++++++++++++++++++++++++++
->>   include/uapi/linux/pci.h          |  7 ++++
->>   5 files changed, 109 insertions(+), 6 deletions(-)
->>   create mode 100644 drivers/pci/trace.c
->>   create mode 100644 include/trace/events/pci.h
->>
->> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
->> index 67647f1880fb..58a4e4ea76b0 100644
->> --- a/drivers/pci/Makefile
->> +++ b/drivers/pci/Makefile
->> @@ -45,3 +45,6 @@ obj-y				+= controller/
->>   obj-y				+= switch/
->>   
->>   subdir-ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
->> +
->> +CFLAGS_trace.o := -I$(src)
->> +obj-$(CONFIG_TRACING)		+= trace.o
->> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
->> index bcc938d4420f..7805f697a02c 100644
->> --- a/drivers/pci/hotplug/pciehp_ctrl.c
->> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
->> @@ -19,6 +19,7 @@
->>   #include <linux/types.h>
->>   #include <linux/pm_runtime.h>
->>   #include <linux/pci.h>
->> +#include <trace/events/pci.h>
->>   
->>   #include "../pci.h"
->>   #include "pciehp.h"
->> @@ -244,12 +245,20 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->>   	case ON_STATE:
->>   		ctrl->state = POWEROFF_STATE;
->>   		mutex_unlock(&ctrl->state_lock);
->> -		if (events & PCI_EXP_SLTSTA_DLLSC)
->> +		if (events & PCI_EXP_SLTSTA_DLLSC) {
->>   			ctrl_info(ctrl, "Slot(%s): Link Down\n",
->>   				  slot_name(ctrl));
->> -		if (events & PCI_EXP_SLTSTA_PDC)
->> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
->> +					   slot_name(ctrl),
->> +					   PCI_HOTPLUG_LINK_DOWN);
-> 
-> I know this is v12 and I don't remember if I suggested this before and you
-> gave me a reason already, but why not simply pass in "ctrl" and have the
-> TRACE_EVENT() denote the names?
-> 
->> +		}
->> +		if (events & PCI_EXP_SLTSTA_PDC) {
->>   			ctrl_info(ctrl, "Slot(%s): Card not present\n",
->>   				  slot_name(ctrl));
->> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
->> +					   slot_name(ctrl),
->> +					   PCI_HOTPLUG_CARD_NOT_PRESENT);
->> +		}
->>   		pciehp_disable_slot(ctrl, SURPRISE_REMOVAL);
->>   		break;
->>   	default:
->> @@ -269,6 +278,9 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->>   					      INDICATOR_NOOP);
->>   			ctrl_info(ctrl, "Slot(%s): Card not present\n",
->>   				  slot_name(ctrl));
->> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
->> +					   slot_name(ctrl),
->> +					   PCI_HOTPLUG_CARD_NOT_PRESENT);
->>   		}
->>   		mutex_unlock(&ctrl->state_lock);
->>   		return;
->> @@ -281,12 +293,19 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->>   	case OFF_STATE:
->>   		ctrl->state = POWERON_STATE;
->>   		mutex_unlock(&ctrl->state_lock);
->> -		if (present)
->> +		if (present) {
->>   			ctrl_info(ctrl, "Slot(%s): Card present\n",
->>   				  slot_name(ctrl));
->> -		if (link_active)
->> -			ctrl_info(ctrl, "Slot(%s): Link Up\n",
->> -				  slot_name(ctrl));
->> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
->> +					   slot_name(ctrl),
->> +					   PCI_HOTPLUG_CARD_PRESENT);
->> +		}
->> +		if (link_active) {
->> +			ctrl_info(ctrl, "Slot(%s): Link Up\n", slot_name(ctrl));
->> +			trace_pci_hp_event(pci_name(ctrl->pcie->port),
->> +					   slot_name(ctrl),
->> +					   PCI_HOTPLUG_LINK_UP);
->> +		}
->>   		ctrl->request_result = pciehp_enable_slot(ctrl);
->>   		break;
->>   	default:
->> diff --git a/drivers/pci/trace.c b/drivers/pci/trace.c
->> new file mode 100644
->> index 000000000000..cf11abca8602
->> --- /dev/null
->> +++ b/drivers/pci/trace.c
->> @@ -0,0 +1,11 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Tracepoints for PCI system
->> + *
->> + * Copyright (C) 2025 Alibaba Corporation
->> + */
->> +
->> +#include <linux/pci.h>
->> +
->> +#define CREATE_TRACE_POINTS
->> +#include <trace/events/pci.h>
->> diff --git a/include/trace/events/pci.h b/include/trace/events/pci.h
->> new file mode 100644
->> index 000000000000..208609492c06
->> --- /dev/null
->> +++ b/include/trace/events/pci.h
->> @@ -0,0 +1,63 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#undef TRACE_SYSTEM
->> +#define TRACE_SYSTEM pci
->> +
->> +#if !defined(_TRACE_HW_EVENT_PCI_H) || defined(TRACE_HEADER_MULTI_READ)
->> +#define _TRACE_HW_EVENT_PCI_H
->> +
->> +#include <linux/tracepoint.h>
->> +
->> +#define PCI_HOTPLUG_EVENT						\
->> +	EM(PCI_HOTPLUG_LINK_UP,			"LINK_UP")		\
->> +	EM(PCI_HOTPLUG_LINK_DOWN,		"LINK_DOWN")		\
->> +	EM(PCI_HOTPLUG_CARD_PRESENT,		"CARD_PRESENT")		\
->> +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"CARD_NOT_PRESENT")
->> +
->> +/* Enums require being exported to userspace, for user tool parsing */
->> +#undef EM
->> +#undef EMe
->> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
->> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
->> +
->> +PCI_HOTPLUG_EVENT
->> +
->> +/*
->> + * Now redefine the EM() and EMe() macros to map the enums to the strings
->> + * that will be printed in the output.
->> + */
->> +#undef EM
->> +#undef EMe
->> +#define EM(a, b)	{a, b},
->> +#define EMe(a, b)	{a, b}
->> +
->> +TRACE_EVENT(pci_hp_event,
->> +
->> +	TP_PROTO(const char *port_name,
->> +		 const char *slot,
->> +		 const int event),
->> +
->> +	TP_ARGS(port_name, slot, event),
->> +
->> +	TP_STRUCT__entry(
->> +		__string(	port_name,	port_name	)
->> +		__string(	slot,		slot		)
->> +		__field(	int,		event	)
->> +	),
-> 
-> 	TP_PROTO(struct controller *ctrl, int event),
-> 
-> 	TP_ARGS(ctrl, event),
-> 
-> 	TP_STRUCT__entry(
-> 		__string(	port_name,	pci_name(ctrl->pcie->port)	)
-> 		__string(	slot,		slot_name(ctrl)			)
-> 		__field(	int,		event				)
-> 	),
-> 
-> It would move the work out of the calling path.
-> 
-> -- Steve
-> 
+On Wed, Oct 15, 2025 at 8:07=E2=80=AFAM Michael Wu <michael@allwinnertech.c=
+om> wrote:
 
-Hi, Steve,
+> During system shutdown, mmc_bus_shutdown() calls __mmc_stop_host() which
+> uses cancel_delayed_work_sync(). This can block indefinitely if the work
+> queue is stuck, causing the system to hang during shutdown.
+>
+> This patch introduces a new function __mmc_stop_host_no_sync() that skips
+> the synchronous work cancellation, preventing potential shutdown hangs.
+> The function is used in mmc_bus_shutdown() where blocking is not
+> acceptable during system shutdown.
+>
+> Changes:
+> - Add __mmc_stop_host_no_sync() function that avoids cancel_delayed_work_=
+sync()
 
-Thank you for your suggestion about passing the controller directly to
-the trace event. I investigated this approach, but unfortunately we
-cannot implement it due to structural limitations in the PCI hotplug
-subsystem.
+Why is this function prefixed with __two underscores? The
+__mmc_stop_host is named like that because there is another
+function with the same name, but here is no mmc_stop_host_no_sync()
+so just name it without underscores.
 
-The issue is that `struct controller` is not standardized across
-different PCI hotplug drivers. Each driver defines its own version:
-
-- pciehp has its own struct controller
-- cpqphp has a different struct controller
-- ibmphp and shpchp also have their own variants
-
-This leads to naming conflicts. For example, both pciehp and cpqphp
-define a slot_name() function, but with different signatures:
-
-// In pciehp:
-static inline const char *slot_name(struct controller *ctrl)
-{
-     return hotplug_slot_name(&ctrl->hotplug_slot);
-}
-
-// In cpqphp:
-static inline const char *slot_name(struct slot *slot)
-
-Additionally, `struct hotplug_slot` is not a common field across all
-controller variants, making it impossible to have a unified way to
-extract the slot name from a generic controller pointer in the trace
-event.
-
-Since we want these trace events to be generic and usable across all PCI
-hotplug drivers (not just pciehp), we need to pass the already-resolved
-strings rather than driver-specific structures. This ensures
-compatibility and avoids the complexity of handling multiple controller
-types within the trace infrastructure.
-
-I understand this means doing the name resolution in the calling path,
-but it's necessary to maintain a generic interface that works across all
-PCI hotplug implementations.
-
-Best Regards,
-Shuai
+Yours,
+Linus Walleij
 
