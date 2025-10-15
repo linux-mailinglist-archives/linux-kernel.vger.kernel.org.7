@@ -1,96 +1,114 @@
-Return-Path: <linux-kernel+bounces-855326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BC5BE0EB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6964BE0EBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C172D4F81B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:16:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4260319A7251
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E857305E2C;
-	Wed, 15 Oct 2025 22:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iMl5GZ+/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43B121CC5A;
-	Wed, 15 Oct 2025 22:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE822306B3F;
+	Wed, 15 Oct 2025 22:22:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4452F2566E2;
+	Wed, 15 Oct 2025 22:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760566595; cv=none; b=iIwlQR7hTe/UgKzoVvsmVn95H4Ub/A5H2Nlk+YAR/jZQ+6hkyFm0i0R24quvZXQnVMHL7lYjDDGrBxro/KcbyZpIfFx6Y8QhGUC5A8lpkxt7DeBoDPWEOk/U2vA5GMAQGzvpI1Za+x3OQ0rir9fPivaiUHInCpMc9SmjVy/u++c=
+	t=1760566977; cv=none; b=KL6NOswBoTYfEqbL+Tp3+vfm4cOULC6uAbQEw/8rE8RCM74mdOcVTYf6mr8lo0uBzy+sPtC8sUFnitmWPNc4/hpWSOEqVvCYSMUowm2/8wB9uyEyAsvElilBbKvoDPXqm28X5ddQTRr8ifZOArcvFLwdlRYidggxCut2G74BUWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760566595; c=relaxed/simple;
-	bh=4gNyEzA3FdSDTCsOBZf1sUFnJB64w4jlNHOvXf5+aik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sE/SmkiTP/HQ1JSr+aQJNea6X1/ETvtGhoZuO4kt4qhGJ2mV3UAREZvwb8avf8sERxnwjRvvgzRtIwxr4RPfWy+gY3XTtNqDPWJMap9sti38vkjHo94z8CSZQdCux5l4v2pheZBMqc7J5oTqj96vbXU/XmDapSVFPmcOyzFGgIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iMl5GZ+/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=vlOy9twU0YWU7C0lqkL3UADuASRw5amgKmYNLe4gCP4=; b=iMl5GZ+/ddc1yhMVjkoxuQim8T
-	KO4gpA3le2sd3F9P2hGWyOC5LhYXxHkkDLxu80N7cvIGTr2EpWx8LQQnp9I/C/CWcBFh5PJRdKZ1H
-	3KNKg6NjjrKfvkX/ClmbJ3V2H4aCdAMPvHzb8q3mzgq8RvWm3fwlS9mi3kl4GXT2c01NaXahUREAz
-	2SuH8yIwtk4raaI/T0OoIteGbpsCGXSyeY8cdxeLdpw6JI+eRCxXv9ycuQIgvrkIHGejr86wsi/ym
-	h77zwNZRJVTxCuP2iP9T9rvHYNr/idXzlQDc+BNSWAzH9lrzsYjNwJLQ422t+dz0n6WItBh56IIEt
-	hmRcLn0A==;
-Received: from [50.53.43.113] (helo=smtpauth.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v99nI-00000007lgC-3kO8;
-	Wed, 15 Oct 2025 22:16:30 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Gow <davidgow@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org
-Subject: [PATCH] taint: add reminder about updating docs and scripts
-Date: Wed, 15 Oct 2025 15:16:26 -0700
-Message-ID: <20251015221626.1126156-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760566977; c=relaxed/simple;
+	bh=8gNyCx9yucUM9flUQkm0mtcfMi1xLck9D5c3+GpLY9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oYxnz2049Lg8addhd/9gaHUEjKjTi6DGCVQiNFnvoyDAAQgsOdbxd8KV5cfRJhNXnRzW9fjj2wDxb5lhwu1MogGt5FWJwNFVt+qbn5GczqxsGyC20oIA9bs5iKYfquwqnUSjgFi2K7wrP6Akx7f++pGwCbRzWXXaSwcwaMCGtGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BD191688;
+	Wed, 15 Oct 2025 15:22:46 -0700 (PDT)
+Received: from [10.122.3.61] (unknown [10.122.3.61])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E90A33F738;
+	Wed, 15 Oct 2025 15:22:53 -0700 (PDT)
+Message-ID: <91d8e71a-7013-43d7-9d04-9a191fed50e9@arm.com>
+Date: Wed, 15 Oct 2025 17:22:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tpm_crb: Add idle support for the Arm FF-A start method
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+ sudeep.holla@arm.com, Prachotan.Bathi@arm.com, linux-kernel@vger.kernel.org
+References: <20250825205943.1225599-1-stuart.yoder@arm.com>
+ <aKzcaaXGQyLfDPrf@kernel.org> <9227d35b-40d6-4faf-910d-ee7de9bbc094@arm.com>
+ <aKzoaWeJOh5W0M6J@kernel.org>
+Content-Language: en-US
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <aKzoaWeJOh5W0M6J@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sometimes people update taint-related pieces of the kernel without
-updating the supporting documentation or scripts. Add a reminder
-to do this.
 
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Gow <davidgow@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
----
- kernel/panic.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- linux-next-20251014.orig/kernel/panic.c
-+++ linux-next-20251014/kernel/panic.c
-@@ -638,6 +638,12 @@ EXPORT_SYMBOL(panic);
- /*
-  * TAINT_FORCED_RMMOD could be a per-module flag but the module
-  * is being removed anyway.
-+ *
-+ * NOTE: if you modify the taint_flags or TAINT_FLAGS_COUNT,
-+ * please also modify tools/debugging/kernel-chktaint and
-+ * Documentation/admin-guide/tainted-kernels.rst, including its
-+ * small shell script that prints the TAINT_FLAGS_COUNT bits of
-+ * /proc/sys/kernel/tainted.
-  */
- const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- 	TAINT_FLAG(PROPRIETARY_MODULE,		'P', 'G', true),
+On 8/25/25 5:49 PM, Jarkko Sakkinen wrote:
+> On Mon, Aug 25, 2025 at 05:19:34PM -0500, Stuart Yoder wrote:
+>>
+>>
+>> On 8/25/25 4:58 PM, Jarkko Sakkinen wrote:
+>>> On Mon, Aug 25, 2025 at 03:59:43PM -0500, Stuart Yoder wrote:
+>>>> According to the CRB over FF-A specification [1], a TPM that implements
+>>>> the ABI must comply with the TCG PTP specification. This requires support
+>>>> for the Idle and Ready states.
+>>>>
+>>>> This patch implements CRB control area requests for goIdle and
+>>>> cmdReady on FF-A based TPMs.
+>>>>
+>>>> The FF-A message used to notify the TPM of CRB updates includes a
+>>>> locality parameter, which provides a hint to the TPM about which
+>>>> locality modified the CRB.  This patch adds a locality parameter
+>>>> to __crb_go_idle() and __crb_cmd_ready() to support this.
+>>>>
+>>>> [1] https://developer.arm.com/documentation/den0138/latest/
+>>>>
+>>>> Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+>>>
+>>> Perhaps a dummy question but is this "QEMU testable"? I know how
+>>> to bind swtpm to QEMU and make it appear as CRB device on x86-64.
+>>>
+>>> I don't see much testing happening with these ARM CRB patches,
+>>> and if that works in the first palce  I could probably add
+>>> a new board target to my BR2_EXTERNAL [1].
+>>>
+>>> I can of course do "negative testing' i.e. that these don't
+>>> break x86 ;-)
+>>
+>> Unfortunately this is not currently testable on QEMU.  We are using
+>> the Arm FVP [1], which is also a machine emulator, with the firmware
+>> stack and an fTPM running in TrustZone.  The firmware, fTPM, etc are
+>> not all publicly available yet, but everything is based on open
+>> source projects and the intent is that all the components needed do
+>> test this on FVP will be available at some point.
+>>
+>> There is nothing fundamental that would prevent this from running
+>> on QEMU, but just a fair amount of integration and possibly firmware
+>> work.
+> 
+> OK, it's cool and the patch looks totally fine and I can
+> "hallucinate it" so:
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+Hi Jarkko,
+
+It looks like this patch did not make it into 6.18.  I wanted to make
+sure it didn't get lost.  Will it be queued up for 6.19?
+
+Thanks,
+Stuart
 
