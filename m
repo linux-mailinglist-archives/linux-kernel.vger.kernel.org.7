@@ -1,207 +1,292 @@
-Return-Path: <linux-kernel+bounces-854408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B2BBDE4B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:39:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15155BDE4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 431905023ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:38:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59BBA19C4425
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2DB322527;
-	Wed, 15 Oct 2025 11:38:48 +0000 (UTC)
-Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658C33218C3;
-	Wed, 15 Oct 2025 11:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760528324; cv=none; b=gxYfLDDVMkZSMVkBvLAZgNBr7IB8jfwMratvpMCWxsVyy6X8TGPuIY3oR9oAsL/s1kbCHdlVemlZkNqwu2aJn3VJUAeCCSCQj0QhdCEWjvxTOp6PSfU7zSjzJbJ9f+BVl8SpKvp337JWUGRiso4lOPpuhwGMTPYHgiqtAqjoSA4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760528324; c=relaxed/simple;
-	bh=lErbwYj5ee1pzJRsvUD9ax3R1cr+LldWhx71p1/ER2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cIRRcmTGE7oNh8bRTgqZuEnNV/UPaMaVwVbIYywvbLvYQV7uZYug7+Bf78o/OPZhg1PXtiyrZ+bQgxn36hQ3DvPLIMXt5N+VWy2Qmha6/CmK+BQRwXruP+9bB+2+DFZ6ziVBXfzqeS0eywU+NJIKjV+5RpGtgGSygBDhIXqK6KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=165.227.155.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
-	by app1 (Coremail) with SMTP id TAJkCgAHHg+Sh+9oXyELAQ--.26792S2;
-	Wed, 15 Oct 2025 19:37:57 +0800 (CST)
-From: weishangjuan@eswincomputing.com
-To: devicetree@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	rmk+kernel@armlinux.org.uk,
-	yong.liang.choong@linux.intel.com,
-	vladimir.oltean@nxp.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	weishangjuan@eswincomputing.com,
-	jan.petrous@oss.nxp.com,
-	inochiama@gmail.com,
-	jszhang@kernel.org,
-	0x1207@gmail.com,
-	boon.khai.ng@altera.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: [PATCH v8 0/2] Add driver support for Eswin eic7700 SoC ethernet controller
-Date: Wed, 15 Oct 2025 19:37:51 +0800
-Message-Id: <20251015113751.1114-1-weishangjuan@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B45A3218D6;
+	Wed, 15 Oct 2025 11:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dmtD6A3U";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NVO504XQ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94043218B3;
+	Wed, 15 Oct 2025 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760528310; cv=fail; b=TORJZ2vqjX3ZvYjm67+Q70jfkk7Gn1Rnh2sXcYLbpolZMgr7Mokm8T+V71rkBY6OOyRXD9zPlq815BJ6MSlDrAKOMQOztKMgmIhrdug7feZ6kacRR2sEm2XY2GKYOTUO1FwV2bc/DL9yN7HPZdCjmLX1GuNjHJmf1oA56YPpAOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760528310; c=relaxed/simple;
+	bh=5UVpkX/EyA0lTNqGzfCiaWXiQatQ6os7S8R/6w/Goxg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VCT9QBURNV+NW/TqMFIuW5cRE7QtSjVwSiGccW0KAChz4w7Gnac9SF/eYLor9koIg9Com+xj6wDE1SrJWc+bMKvycUIo9RatH7PIalkqh4d8rABmzXIDPuOxAooWlwVMDEqnIjkOiBmrbua6lKCdduhTGIwJ+sENs25ol8l+fiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dmtD6A3U; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NVO504XQ; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F9nlx3026440;
+	Wed, 15 Oct 2025 11:38:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=5UVpkX/EyA0lTNqGzfCiaWXiQatQ6os7S8R/6w/Goxg=; b=
+	dmtD6A3Ul3czcduaCTGyBvMfS5J7G/5FhOG15boFMMiCwCreFGjBK7w+1G6N/Rp4
+	bM+MbT8EPSR21i2GvuBV4LOMglmdOfIp8T/Asx02e8CifXGCPFWSZhk9N7+Cz+4v
+	ULAhG5l9c6w3e5Nsd9bLx6ubrdmWlsrQXvkkYK+e1YjwgQV5esdwlcTovwCN+u/9
+	leZ9367QQJxEEXP1XtHO6/1mZIlJPCgSHUwvUhaUrFHzoje9V/uy3y72/+/fqlkJ
+	Z7lWinuujtGrFjksnkVwgUDf720ZtS6ODo+HvefrpiTDK4Mdgg+f2V9iXKbC8OUG
+	NI+bhY8S4D8yURy6aO+Bsg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qf9bxgfa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 11:38:15 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59F9NbTG025655;
+	Wed, 15 Oct 2025 11:38:14 GMT
+Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013008.outbound.protection.outlook.com [40.93.196.8])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49qdp9yypp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 11:38:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GyrjOIMZKQrXy28gjdifFaDkTcKchjoGqWscG5j9NuPzLp5GkMgixUiYQyy/vNIHQdW5g7/KU57FBM0WP6FsAk3j0jntjTdEQ/ehtEriYdHZUyE63nMJWr1xC7UEI4b2qjtEXQsb0qYs7oITTVJu+JfvlM6EGBdLCSzSwP+qGL0k61GYPuvsrQCQFtNIE/j5Z9Z8FQuW8GUoqkfmHfroe4tiO4l6uw2mu1LiWef5midsV4kJDKKGeAU3V3yTHFDlkiRqnP/peOFDOuF/Am4OQNKbWuhc24TvvrbW24mErIiMN3oDGlsLkF1f6BKOB6JIlzuAbWrTcB6AoV7huUxpfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5UVpkX/EyA0lTNqGzfCiaWXiQatQ6os7S8R/6w/Goxg=;
+ b=I19/0L1rPR8vHZi1SRCQoGNiztBcoXW+meGq0oTiryT/Ryb48lxwqPwlGutgVkjqOzn05f4lRsCkghbrAWHxpkqxcHgzsbf20GgH5CFbNX39my8n9Y2DR574rwqCXk8dmQROoq+Pp3Gi8l3k6reW0wQL6WSzzkKZxVgwwY3nUkfvggEB3IhmMmC2xHBvIRbG2wceMmAiVkXToTVdrRbBCJiZhohIDiQyUNo4gD1vKeXiWohCcQ9i5P8tfGnnxCL+PRX1jjdKwTzK+/aHgm/+wMed0wrtShyFuvQEsntI98o3V3FWLc/nh9HCnV90iyrl1sz6m0tLZDg7ksYe4zv7Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5UVpkX/EyA0lTNqGzfCiaWXiQatQ6os7S8R/6w/Goxg=;
+ b=NVO504XQWimqASktD9NWgQyy27DMnutk3hj83GcSn7M9SxPKzwzW54o+CQMazL/ryF/fXVitmKQcgrFSYrT+0uMbdLqXyXuIOjezMmuCz5PmKJspSrEM7Knon3ACSiew/OjrX0gVfEESa3zUP54KqnP0r+A0KXIb6tjXhlXTub0=
+Received: from CY8PR10MB6826.namprd10.prod.outlook.com (2603:10b6:930:9d::13)
+ by SJ5PPF8DB18B996.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7b8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Wed, 15 Oct
+ 2025 11:38:11 +0000
+Received: from CY8PR10MB6826.namprd10.prod.outlook.com
+ ([fe80::f9d3:19ef:4ce8:4d63]) by CY8PR10MB6826.namprd10.prod.outlook.com
+ ([fe80::f9d3:19ef:4ce8:4d63%4]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
+ 11:38:11 +0000
+From: Haakon Bugge <haakon.bugge@oracle.com>
+To: Jacob Moroni <jmoroni@google.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Sean
+ Hefty <shefty@nvidia.com>,
+        Vlad Dumitrescu <vdumitrescu@nvidia.com>,
+        Or
+ Har-Toov <ohartoov@nvidia.com>,
+        Manjunath Patil
+	<manjunath.b.patil@oracle.com>,
+        OFED mailing list
+	<linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH for-next] RDMA/cm: Rate limit destroy CM ID timeout error
+ message
+Thread-Topic: [PATCH for-next] RDMA/cm: Rate limit destroy CM ID timeout error
+ message
+Thread-Index: AQHcI8zHdy1KL4KXCkyexoudDHS8M7SV4d4AgAAFLICADfC2AIAcdSOAgAL71AA=
+Date: Wed, 15 Oct 2025 11:38:10 +0000
+Message-ID: <07DE3BC6-827E-4311-B68B-695074000CA3@oracle.com>
+References: <20250912100525.531102-1-haakon.bugge@oracle.com>
+ <20250916141812.GP882933@ziepe.ca>
+ <CAHYDg1Rd=meRaF=AJAXJ+5_hDaJckaZs7DJUtXAY_D2z_a6wsw@mail.gmail.com>
+ <D2E28412-CC9F-497E-BF81-2DB4A8BC1C5E@oracle.com>
+ <ABD64250-0CA0-4F4F-94D3-9AA4497E3518@oracle.com>
+In-Reply-To: <ABD64250-0CA0-4F4F-94D3-9AA4497E3518@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3826.700.81)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR10MB6826:EE_|SJ5PPF8DB18B996:EE_
+x-ms-office365-filtering-correlation-id: c9d6a863-bf45-4d7f-9785-08de0bdf517b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MVh0YjlKaWdWNm5EV1NHRG1SaTFNZHJWUlBldU1HQXpKakxVRVpiR2NzdDhG?=
+ =?utf-8?B?ZUlES0xRNVNtdHptWGdQMjl3cm8rOTlzem9qdW1xNGJFVmJMb0RCS0ZqSC9p?=
+ =?utf-8?B?RmJOdDJsbGJMV3Z4Z3g3MTVnT3E3Y0RlcVk2VnJUd0RkWTNCRWtmR21oV0Rl?=
+ =?utf-8?B?UGxreXF0ZjhVWk9JNlRlMCtwYWdYTVFWcEdPUFlmNS9hSzVoS0ZtT2lUK3kz?=
+ =?utf-8?B?dERXeGhQZWR3Tk50Y0IwWUVsYWU1b1B2Tll4ZlZ1SHduVFF4NXlKUEhZSlg2?=
+ =?utf-8?B?NGIxZDJoeTZDKzgvaXFMb3JwNlZpNjA3NmZBZTdLQjNsTWR0anJlWnR3ckdi?=
+ =?utf-8?B?YzN2VVJTWU9DOUNWbnB4K1dKUTZSQ0J3MzI0alFpNjkrNzVxRG9INlp0NnhU?=
+ =?utf-8?B?VE1KcEttTDVSYlBYd05XOHUwZGdJK2hFdFUzV0l0KzJOYis3LzZqZFkycDhz?=
+ =?utf-8?B?Zkg5QzJhMytqMDZXWXZBOFhXV0ZlajlLYmVTSUxJRENOTS85YWRzQWxzeFNM?=
+ =?utf-8?B?V3hYMXFKYm5tVWVSWnFoWDRGa1BJTGZWK1FSY1k5RGpRU2tCVDZVc1RPTzZl?=
+ =?utf-8?B?VTNEYUNqVnVKbGRZNFpYNUpMRk53Y0dUeDczUWplWjhwdTNkcWo5SVJidW11?=
+ =?utf-8?B?S1N6b2ZXS0E0QlJwY3pNeFdOc1hZT1E2ZGlDcWFkSzlibWp5dFJFME5Ja2xG?=
+ =?utf-8?B?VDVZMEl2SmVWS1AzM0NvVzhONXY3cEVPVGZOZDRxUEwvK1doVVd1R0NENnVH?=
+ =?utf-8?B?TU9taFI2eTJLcEtZY0NOK216UmliUVZwYVluWEtZNHEzeEdpb3BkY2dRV0Q1?=
+ =?utf-8?B?aVJ3cnRXYVhhaEFRbkN6NWp4bW1Vc2hnZkFMbnU0aXpkMFdKNXoyRjh0ajlh?=
+ =?utf-8?B?SWlmVzJMU29hckI5U1dnQlVWbjEydHZ5WGNteGs0MVNuU3M0UDJhbFV0MVVJ?=
+ =?utf-8?B?ekM5TU1hRWJyTEsxdmdXbkNSSnBlMmUyRGdhc010NFFkY0lVMjRxdG1NejAy?=
+ =?utf-8?B?ZkNIc2hyN01vZ3R3VWZQRFJTUnRobW9uNFJBKzJIdStnYjdoZlN3NVQyVGs0?=
+ =?utf-8?B?MlNiQjRYQ1hpZjJscUNjSzJwVHRCUzhVNFVNeVlPT2taOWlxV3RBUVdWMmda?=
+ =?utf-8?B?SkdhZWd4Z0ZMUDZTU0xZc1laR21PTFU2enpTVFh0Ym5icnhYayttVHd1SE1N?=
+ =?utf-8?B?MGFvKzZGRThjMWUvUFk5Z3Y4U095OWt0TEYyZ2Q2L1hUVUFueHdPd2diRm5s?=
+ =?utf-8?B?eDJFa3RmVkNnT090bHRiNXVFKytUVVBtZzZNMXBZMTJDZUYvcUJOejZ4REgr?=
+ =?utf-8?B?WXNTY0p6b29NN2RYZ25icS9MSVhWT1pBaUJGNmdKZzlLNzFkNUJPaUVVQVZQ?=
+ =?utf-8?B?NExMdE1QYXFFcjBBNmx4RDJHR1MrUWF6NlczR3ZZTENOZHFsZk5HMnM4dXpv?=
+ =?utf-8?B?M0FaVDRaam9CUHNhUDBVNC9pUG5qWjFUMVZXb3FlRS9NdW1vRHYram5iVURy?=
+ =?utf-8?B?L281TEYybXcwU25JOVpMNmluYlRLeVhrc2pYM0cycUI5RXVra0dvZFF1c2Jy?=
+ =?utf-8?B?cmlDNVRKQ1Q3SEZUOFcrbUFvRjVRYmVvallYeU9mUXYxNWtjMExTbW9SalVZ?=
+ =?utf-8?B?K3RKR0pFbWIxVzlGL0VNVnJPa0VVSUZtNkZIelpoQUFYcnU5UEFwR3dIQlZD?=
+ =?utf-8?B?R3pXV1lIQTV5UzRSRXU4MnhTTkU1aURDQW5LTDBQQ3dNS2E5eTRNdVJUMTd1?=
+ =?utf-8?B?SXFtWEo0WXZLdVQveGZ2RzhERmpzU3NmQTF2blZ6cGE0WlorWVVqdml4ekk0?=
+ =?utf-8?B?OWsyZzdGMUhaYlhRM1FObnVzK2lyNThpUUhuenpMa01FU0ZzNW90ZENaV0lo?=
+ =?utf-8?B?ZGdLSURXZ1RuWnhlNlpjRDBYcSsvWEhDbU1rT3NMUmtnd3dNSm5lM1hZaUF6?=
+ =?utf-8?B?QlhibFJtRDVGSGRtUkFHZUZ5TSs1elhFbVF6NmVKQ3NQMHI5dmNLdVQzSkNs?=
+ =?utf-8?B?TmlCdGJWbkpROXo2QXJzVVMvRVNzaU53ZEdxdWZPNnpUNFBXYm5qVmNYZlpC?=
+ =?utf-8?Q?3Vci0k?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB6826.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MkZoc2oxNVc1bnRFZ1AzL1FDYS9mblNoUFp6bnphcGZtdFBxT1NZbEFUclZ3?=
+ =?utf-8?B?WTBjaHZWcW1uUTlKL3l5QUlodFJqOWJiVGdBYkZzeVFmQVhqbEJlUExlWnlT?=
+ =?utf-8?B?NTA4MUduanJFRkRSdy9vTmlGTW5SQTg1K2pNN2IrQkxZK3dKZ010dHJ5c2ZJ?=
+ =?utf-8?B?UnNkQkZ1QXBtUHV2RERueGVreWZhVzI3RlpiYVJwZEJwcEJXSGRaOUdNZGJy?=
+ =?utf-8?B?UzFzbW1kZmRMQnN1d3drV2lKTHRHK3dleHFpSmpvd3BLZmlnem5MQXd2SE5L?=
+ =?utf-8?B?b1ZEYm1MZDNVRU40S0QzaHVXUkZ4ZE1zZTNUeTRZOWtJTUJ4bUsranNJaWVJ?=
+ =?utf-8?B?N0RxNVBEb3VFOE1IY1IzeC9OU1JMblZpLy83SWtrVjBmZmNrQXpPSk55dklx?=
+ =?utf-8?B?ekt6VEh3RHRMbTMzc0tCc0o3ZUhUc2QvWDc2dXpoM05kRDhzb0p1dE9kVnBV?=
+ =?utf-8?B?SnZiUTlpcWo5bUpUUytMVVNIU0MrZTArSGlYaTJtOHpGcUNmNE11dFl3azV2?=
+ =?utf-8?B?SGdpZEoybUt6bmxUZXppVWRLZ2FqVDJEYUNRNjV6ejVnL2xHTXlreEE4VTYz?=
+ =?utf-8?B?RndETm56VzVPeEhnYkt1RFpEcnE5dWw2VWdzaW5MNkMvQzNINWU1Q1NMT2l4?=
+ =?utf-8?B?MWIyTytSTjlVYmJhOSswS3lIdmw0QnZmSzFxZGcxWjdMZWRYdzF1YzU4aHAv?=
+ =?utf-8?B?cCtTaVhtTVFaZnVpQU1NUVNVVElKZmJxNy9KbGpIekFNeGtoNFlxR204MXI4?=
+ =?utf-8?B?MFhRSGQxdlE2Snd1NnlGZVZ6djc3NGg1cXdaY0FwNTllWnhEenVTWlMzY2wr?=
+ =?utf-8?B?emFZaCtTVHF1YnI5bDBtK3dUaVpPWWh0ODhsZDNBSnpUV2p0WFlpcWN6S0hu?=
+ =?utf-8?B?UmtXSFBMeXBFeE51cnNHZ1Y3MHV1RTVDS0dGcktjTGp4bkxFWkJ1Q0oxUVNO?=
+ =?utf-8?B?TXZiZnFUVEFxS2trcU9Neng3cDE4ZC9WNVhRaE83VUFpc2JEWTZON0JNdlhI?=
+ =?utf-8?B?MFYxZk9sL2E1Y2tFYTBMbzVEWHgyN1hPUmptM08vbkZBa2ZhZHdPeEliR2xq?=
+ =?utf-8?B?cGNrZWM0MmNtWVlhcldaSVhGOFppSGsrMGY5aEZBVlZEcHhqNWE1QlhMUHNK?=
+ =?utf-8?B?ZmF0MXBkcnZoRTNPSjl1cjh2dXFPbmxPL3RRaHN4MkNlV3haSXh1T2pXaGRU?=
+ =?utf-8?B?RWtNT2pVTFZvdnlJQUhLMDlSSVFDb01sTkN4ZzVtbGVIcnFidUIvQlZNSk1j?=
+ =?utf-8?B?Uk8vUzZySXl6NHdTdU1jQ1YyNHRZSHV6VitYNWZEcW96MG5sTjBHUXNaSXFq?=
+ =?utf-8?B?MktoTENodkt2cm0wZDEvVTg3VW9jUTYwdEF0b1hvNnNhZWdqdGVQWkloeGNs?=
+ =?utf-8?B?OGxNckd2ZWFFQUtJbVIrc3Zlc0NOWWV0Z241SklyamRQdGlQWFJ5U2JLaTlk?=
+ =?utf-8?B?TzdycGIveGpCZmlYZ3JIWEt2bGJhRjFSUDVFRTluQnJCL0NGdWxsOVljWHF3?=
+ =?utf-8?B?WC9HL2ljM3VxeXk2RDlqUXRTNW8rZGlnQ0wwREZJTlB2a2lJY0RTWmZCQjlm?=
+ =?utf-8?B?eUdJS1R6bFF0N25uV3hJTUVvSzArbjZERUVXZ21URG1VK1FrbnJXcThaNlc2?=
+ =?utf-8?B?ck1WZXQ2S1RWRlVWSUxuVzljaW9hWDFTa1ZYYWtZQjRsVGdxeklGRVEzTHhP?=
+ =?utf-8?B?MVRQVTd2TjF1UHVnV1loWDR0L1dlcG9vRTY0T3VIeWtGbmxoUDhKVERsa2Qr?=
+ =?utf-8?B?djVGdWdybTAxODZvSWdMTmd6U053VzlQeTRFNDFWY2h4QmtyV2RIUEJuK0xk?=
+ =?utf-8?B?YStmd3JoblpnNlM5UXpTc01BZ09HSXBwb29YaUVFR3d0Uy9wZDYxN0J1NFZm?=
+ =?utf-8?B?UnE4dW0vY3doUFBXTGVoL0JXNnA0dE1RbFg5NkVGRU93YXhvLzU2U1NPdy9I?=
+ =?utf-8?B?eUcrVytRalBGRHBEVUYyRmFSZTZ3ZjJSZnpxdHp6cUlXSlIyUnBYaWd3em9X?=
+ =?utf-8?B?Y1cxelJwVXlYZ1A0WlNOYm5ZNnNtNTRMNnhRblJFUk1uSndzb3dwY3JkUXhp?=
+ =?utf-8?B?cWFKUFZxWU5kS3RxN2lYa3ZUOTZWekM0VWJzK3Z1a0I5RHVEcEUzU3J2OUtL?=
+ =?utf-8?B?ZVBxeFUxMlN5cEo4Z0RIODhtd3FWMG1iOVFlQzl1N0ZpY0YveExQZVUxWVlO?=
+ =?utf-8?B?VEE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <74315050B3FA74479BF62AD0D9A89604@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgAHHg+Sh+9oXyELAQ--.26792S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ary3XF4xur17AFyxJF4fXwb_yoW7Ar1rpF
-	WkCry5W3Z0yryxX3yIy3W0kFyfJan3XF1akr1Iqw13Xa1qvas0vrWSk3W5CasrAr4DZ3s0
-	9ay3Zay7Aa4Yy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRkwIhUUUUU=
-X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	DHVdidVoLdvq+PzX9A+VHnQDIGVkwTjFYTcs7ts019S/g7FR9jpe8qS8L+3d4dTtjeLzHdcb4dyhbs53Fjx2QI/FO3vXfXeeA6msIrstugOzmwq1IaUErbSP6k8cWVPD6gG1C38pP1d1Q1MFsEduDeb0Nc7dHIUwUbGMVfPJWl7puMXLZqUJvlKU0vrca3UNN5jcD0uSLc4IRdKutGc9jrFoXKnNnVNwuqpZFJ/06qrUuDkjxa5oUXz5GU+Huo9gj15vjiIc6bAaJmrJaK7hN8ZeBQ3BJApU5niKjYwx6P7brbu50gE+8xbbgIS0Skq79HZHSVbPYZZW6CL/khRjyQ9cVLXWFB88DddXasco6FXOxhO4vERh+O3pJIpPRVNXMD1tK4j5lN5xR2AsCDI0rqxjmhsNfzPTDTbteolZcyt2LCDBmpddd0NgmQMWlWjRxuzDM584gM3ZxTdtOTnvWZnuLqPcARJnkynR6LPrIo1jEqcvvrOtHla5stmYtyh0cJGwHSRad2H/f6k7uPSkP5PetNQ9MyXf17Yh58KjFb+qIkckNkvO+gJMLRF/O28PkqVIkRyo0M8XPNcDThbJTHNuOP5plaz1/BagcQVhXBg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB6826.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9d6a863-bf45-4d7f-9785-08de0bdf517b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2025 11:38:10.5449
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XAJ9RSKhWY3vZKjvx6CAEIEXWwvDHXb9rZDBWJHxlo3IuZ3LIgTmaol3lHUuB+fn79Ps2/eVakZ7Qwvycj1V6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8DB18B996
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510150090
+X-Proofpoint-GUID: CTEU0WMOrkmUZqBf8qKGYneqpHf7FEEz
+X-Proofpoint-ORIG-GUID: CTEU0WMOrkmUZqBf8qKGYneqpHf7FEEz
+X-Authority-Analysis: v=2.4 cv=QfNrf8bv c=1 sm=1 tr=0 ts=68ef87a7 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8 a=tlVQLQ5pGouDxNmWQbAA:9
+ a=QEXdDO2ut3YA:10 cc=ntf awl=host:13624
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNyBTYWx0ZWRfX2cJHkOEBPc/q
+ HCxG7J76pGZKgS0lcnnSytb4NBGP0H2kQ96rZh8kxct61wwsOa+YETZOMtoehLo32V/J0xRPU5S
+ onfCXTxvPBVXB1aOg6r/7rwRK5USvUfvrUomf9dryy1Y4mHxlI+uuGzybNqGuA/ZMbEhJfuYbfg
+ B249A57uctt8ToC82Lu85hf/ewu+3r7WpeBVZXG4YOKlelY7mHIZA+X/WuUczzvhiG/gQYItDSE
+ E6ZQmrtB7vRjr2D+YDrn1j9pnUA5p1oDQElIvcv/XkFuERZvjwqROagGzLh9Y7LvW4A6j/x1FhT
+ 33kY16aqW6w8GKcEBrf/f2sMXwnz3HFHpMskvrzQVgSt4VmhsAYvegpVefI+NBiA1B6d5R6Biu7
+ GoMEdKNSZ7d0u/7Qo9c44vjH/VsVhBAYT+VJ09DexO7uKkcWCZQ=
 
-From: Shangjuan Wei <weishangjuan@eswincomputing.com>
-
-Updates:
-
-  Changes in v8:
-  - Removed config option patch dependency from cover letter, because the patch
-    was applied.
-  - Modify the theme style of patch 2.
-  - Remove unnecessary dependencies, such as CRC32 and MII
-  - Add "Reviewed-by" tag of "Andrew Lunn" for Patch 2.
-  - Update eswin,eic7700-eth.yaml
-    - Add new line character at the end of file
-  - Update dwmac-eic7700.c
-    - Provide callbacks for plat_dat->init/exit and plat_dat->suspend/resume
-      to optimize clock processing
-    - Use devm_stmmac_pltfr_probe() instead of stmmac_dvr_probe() in probe
-    - Remove eic7700_dwmac_remove()
-  - Link to v7: https://lore.kernel.org/all/20250918085612.3176-1-weishangjuan@eswincomputing.com/
-
-  Changes in v7:
-  - Add "Reviewed-by" tag of "Krzysztof Kozlowski" for Patch 1.
-  - Update dwmac-eic7700.c
-    - Align the processing logic of required attributes in binding
-  - Link to v6: https://lore.kernel.org/all/20250912055352.2832-1-weishangjuan@eswincomputing.com/
-
-  Changes in v6:
-  - Update driver patch's commit message
-  - Update eswin,eic7700-eth.yaml
-    - Modify the description content
-  - Update dwmac-eic7700.c
-    - Move three variables from priv to local scope
-    - Inline eic7700_apply_delay logic directly into the probe function
-  - Link to v5: https://lore.kernel.org/all/20250904085913.2494-1-weishangjuan@eswincomputing.com/
-
-  Changes in v5:
-  - Updated eswin,eic7700-eth.yaml
-    - Use "items" instead "enum" for clock-names
-    - Arrange clocks description in correct order
-    - Delete redundant descriptions for eswin,hsp-sp-csr property
-  - Updated dwmac-eic7700.c
-    - Optimize the implementation of eic7700_ appy_delay
-    - Update comments and remove reg checking
-    - Use FIELD_PREP in eic7700_apply_delay function
-    - Use clk_bulk related APIs to manage clks
-  - Link to v4: https://lore.kernel.org/all/20250827081135.2243-1-weishangjuan@eswincomputing.com/
-
-  Changes in v4:
-  - Updated eswin,eic7700-eth.yaml
-    - Modify reg:minItems:1 to reg:maxItems: 1
-    - Delete minItems and maxItems of clock and clock-names
-    - Delete phy-mode and phy-handle properties
-    - Add description for clock
-    - Add types of clock-names
-    - Delete descriptions for rx-internal-delay-ps and tx-internal-delay-ps
-    - Add enum value for rx-internal-delay-ps and tx-internal-delay-ps
-    - Modify description for eswin,hsp-sp-csr property
-    - Delete eswin,syscrg-csr and eswin,dly-hsp-reg properties
-    - Modify phy-mode="rgmii" to phy-mode="rgmii-id"
-  - Updated dwmac-eic7700.c
-    - Remove fix_mac_speed and configure different delays for different rates
-    - Merge the offset of the dly register into the eswin, hsp sp csr attributes
-      for unified management
-    - Add missing Author and optimize the number of characters per
-      line to within 80
-    - Support default delay configuration and add the handling of vendor delay
-      configuration
-    - Add clks_config for pm_runtime
-    - Modify the attribute format, such as eswin,hsp_sp_csr to eswin,hsp-sp-csr
-  - Link to v3: https://lore.kernel.org/all/20250703091808.1092-1-weishangjuan@eswincomputing.com/
-
-  Changes in v3:
-  - Updated eswin,eic7700-eth.yaml
-    - Modify snps,dwmac to snps,dwmac-5.20
-    - Remove the description of reg
-    - Modify the value of clock minItems and maxItems
-    - Modify the value of clock-names minItems and maxItems
-    - Add descriptions of snps,write-questions, snps,read-questions
-    - Add rx-internal-delay-ps and tx-internal-delay-ps properties
-    - Modify descriptions for custom properties, such as eswin,hsp-sp-csr
-    - Delete snps,axi-config property
-    - Add snps,fixed-burst snps,aal snps,tso properties
-    - Delete snps,lpi_en property
-    - Modify format of custom properties
-  - Updated dwmac-eic7700.c
-    - Simplify drivers and remove unnecessary API and DTS attribute configurations
-    - Increase the mapping from tx/rx_delay_ps to private dly
-  - Link to v2: https://lore.kernel.org/all/aDad+8YHEFdOIs38@mev-dev.igk.intel.com/
-
-  Changes in v2:
-  - Updated eswin,eic7700-eth.yaml
-    - Add snps,dwmac in binding file
-    - Modify the description of reg
-    - Modify the number of clock-names
-    - Changed the names of reset-names and phy-mode
-    - Add description for custom properties, such as eswin,hsp_sp_csr
-    - Delete snps,blen snps,rd_osr_lmt snps,wr_osr_lmt properties
-  - Updated dwmac-eic7700.c
-    - Remove the code related to PHY LED configuration from the MAC driver
-    - Adjust the code format and driver interfaces, such as replacing kzalloc
-      with devm_kzalloc, etc.
-    - Use phylib instead of the GPIO API in the driver to implement the PHY
-      reset function
-  - Link to v1: https://lore.kernel.org/all/20250516010849.784-1-weishangjuan@eswincomputing.com/
-
-Shangjuan Wei (2):
-  dt-bindings: ethernet: eswin: Document for EIC7700 SoC
-  net: stmmac: add Eswin EIC7700 glue driver
-
- .../bindings/net/eswin,eic7700-eth.yaml       | 127 ++++++++++
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |   9 +
- drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
- .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 235 ++++++++++++++++++
- 4 files changed, 372 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
-
---
-2.17.1
-
+SGkgSmFzb24gYW5kIEpha2UsDQoNCj4gT24gMTMgT2N0IDIwMjUsIGF0IDE2OjA0LCBIYWFrb24g
+QnVnZ2UgPGhhYWtvbi5idWdnZUBvcmFjbGUuY29tPiB3cm90ZToNCg0KW3NuaXBdDQoNCj4gTXkg
+dGFrZSBpcyB0aGF0IHRoZSBWRiBpbiBxdWVzdGlvbiBoZXJlIGdldHMgd2hhY2tlZCBhbmQgdGhh
+dCB0aGUgTUFEIHRpbWVvdXQgaGFuZGxpbmcgZG9lcyBub3QgcmVzb25hdGUgd2VsbCB3aXRoIGhv
+dyBDTUEgaGFuZGxlcyB0aGVtLg0KDQpJIHdhcyBhYmxlIHRvIHNpbXVsYXRlIGEgd2hhY2tlZCBW
+RiBieSBzZXR0aW5nIHRoZSBDTUEgbWF4IHJldHJpZXMgdG8gb25lIGFuZCBvbmNlIGluIGEgd2hp
+bGUsIHNraXAgc2VuZGluZyBvZiB0aGUgTUFEOg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5p
+YmFuZC9jb3JlL2NtYS5jIGIvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvY21hLmMNCmluZGV4IDli
+NDcxNTQ4ZTdhZTEuLjQzZWZmNTQxNTE4MzAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2luZmluaWJh
+bmQvY29yZS9jbWEuYw0KKysrIGIvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvY21hLmMNCkBAIC00
+NSw3ICs0NSw3IEBAIE1PRFVMRV9ERVNDUklQVElPTigiR2VuZXJpYyBSRE1BIENNIEFnZW50Iik7
+DQogTU9EVUxFX0xJQ0VOU0UoIkR1YWwgQlNEL0dQTCIpOw0KICAgI2RlZmluZSBDTUFfQ01fUkVT
+UE9OU0VfVElNRU9VVCAyMA0KLSNkZWZpbmUgQ01BX01BWF9DTV9SRVRSSUVTIDE1DQorI2RlZmlu
+ZSBDTUFfTUFYX0NNX1JFVFJJRVMgMQ0KICNkZWZpbmUgQ01BX0lCT0VfUEFDS0VUX0xJRkVUSU1F
+IDE2DQogI2RlZmluZSBDTUFfUFJFRkVSUkVEX1JPQ0VfR0lEX1RZUEUgSUJfR0lEX1RZUEVfUk9D
+RV9VRFBfRU5DQVANCiAgZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9jb3JlL21hZC5j
+IGIvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvbWFkLmMNCmluZGV4IDIxYzg2NjlkZDEzNzEuLjlj
+MTkzMzNhNTA3ZDggMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2luZmluaWJhbmQvY29yZS9tYWQuYw0K
+KysrIGIvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvbWFkLmMNCkBAIC0xMDU3LDkgKzEwNTcsMTMg
+QEAgaW50IGliX3NlbmRfbWFkKHN0cnVjdCBpYl9tYWRfc2VuZF93cl9wcml2YXRlICptYWRfc2Vu
+ZF93cikNCiAgICAgICAgICBzcGluX2xvY2tfaXJxc2F2ZSgmcXBfaW5mby0+c2VuZF9xdWV1ZS5s
+b2NrLCBmbGFncyk7DQogICAgICAgIGlmIChxcF9pbmZvLT5zZW5kX3F1ZXVlLmNvdW50IDwgcXBf
+aW5mby0+c2VuZF9xdWV1ZS5tYXhfYWN0aXZlKSB7DQotICAgICAgICAgICAgICAgdHJhY2VfaWJf
+bWFkX2liX3NlbmRfbWFkKG1hZF9zZW5kX3dyLCBxcF9pbmZvKTsNCi0gICAgICAgICAgICAgICBy
+ZXQgPSBpYl9wb3N0X3NlbmQobWFkX2FnZW50LT5xcCwgJm1hZF9zZW5kX3dyLT5zZW5kX3dyLndy
+LA0KLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBOVUxMKTsNCisgICAgICAgICAg
+ICAgICBpZiAoIShqaWZmaWVzICUgMTAwMDApKSB7DQorICAgICAgICAgICAgICAgICAgICAgICBw
+cl9lcnIoIlNraXBwaW5nIGliX3Bvc3Rfc2VuZFxuIik7DQorICAgICAgICAgICAgICAgfSBlbHNl
+IHsNCisgICAgICAgICAgICAgICAgICAgICAgIHRyYWNlX2liX21hZF9pYl9zZW5kX21hZChtYWRf
+c2VuZF93ciwgcXBfaW5mbyk7DQorICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBpYl9wb3N0
+X3NlbmQobWFkX2FnZW50LT5xcCwgJm1hZF9zZW5kX3dyLT5zZW5kX3dyLndyLA0KKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE5VTEwpOw0KKyAgICAgICAgICAgICAg
+IH0NCiAgICAgICAgICAgICAgICBsaXN0ID0gJnFwX2luZm8tPnNlbmRfcXVldWUubGlzdDsNCiAg
+ICAgICAgfSBlbHNlIHsNCiAgICAgICAgICAgICAgICByZXQgPSAwOw0KDQoNCldpdGggdGhpcyBo
+YWNrLCBydW5uaW5nIGNtdGltZSB3aXRoIDEwLjAwMCBjb25uZWN0aW9ucyBpbiBsb29wYmFjaywg
+dGhlICJjbV9kZXN0cm95X2lkX3dhaXRfdGltZW91dDogY21faWQ9MDAwMDAwMDA3Y2U0NGFjZSB0
+aW1lZCBvdXQuIHN0YXRlIDYgLT4gMCwgcmVmY250PTEiIG1lc3NhZ2VzIGFyZSBpbmRlZWQgcHJv
+ZHVjZWQuIEhhZCB0byBraWxsIGNtdGltZSBiZWNhdXNlIGl0IHdhcyBoYW5naW5nLCBhbmQgdGhl
+biBpdCBnb3QgZGVmdW5jdCB3aXRoIHRoZSBmb2xsb3dpbmcgc3RhY2s6DQoNCiMgY2F0IC9wcm9j
+Lzc5NzcvdGFzay83OTc4L3N0YWNrIA0KWzwwPl0gY21fZGVzdHJveV9pZCsweDIzYS8weDY4MCBb
+aWJfY21dDQpbPDA+XSBfZGVzdHJveV9pZCsweGNmLzB4MzMwIFtyZG1hX2NtXQ0KWzwwPl0gdWNt
+YV9kZXN0cm95X3ByaXZhdGVfY3R4KzB4Mzc5LzB4MzkwIFtyZG1hX3VjbV0NCls8MD5dIHVjbWFf
+Y2xvc2UrMHg3OC8weGIwIFtyZG1hX3VjbV0NCls8MD5dIF9fZnB1dCsweGUzLzB4MmEwDQpbPDA+
+XSB0YXNrX3dvcmtfcnVuKzB4NWMvMHg5MA0KWzwwPl0gZG9fZXhpdCsweDFlMy8weDQ0Nw0KWzww
+Pl0gZG9fZ3JvdXBfZXhpdCsweDMwLzB4ODANCls8MD5dIGdldF9zaWduYWwrMHg4OGQvMHg4OGQN
+Cls8MD5dIGFyY2hfZG9fc2lnbmFsX29yX3Jlc3RhcnQrMHgzNC8weDExMA0KWzwwPl0gZXhpdF90
+b191c2VyX21vZGVfbG9vcCsweDRhLzB4MTYwDQpbPDA+XSBkb19zeXNjYWxsXzY0KzB4MWI4LzB4
+OTQwDQpbPDA+XSBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ni8weDdlDQoNCg0K
+DQpUaHhzLCBIw6Vrb24NCg0KDQo=
 
