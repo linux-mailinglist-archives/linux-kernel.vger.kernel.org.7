@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-853829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBCCBDCB2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:21:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD3ABDCB1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 434614ECF39
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BE11891EED
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FCB26E16E;
-	Wed, 15 Oct 2025 06:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rePeuf/p"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBDD30FC01;
+	Wed, 15 Oct 2025 06:21:17 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AE82FFDE4;
-	Wed, 15 Oct 2025 06:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398B630F954
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509287; cv=none; b=JF9HBzTCnwnaNSQFQt7CnC9pa92uyfDfqqCGRRRIvtpWhgO8hVN8XNw+yNZPtiN0MI1POTLXkP1lydWObdQ8HKyYlodkObBWddiw7+B3S6QQd6w4KEAlMBsozZ97HQC+YUIUgdyJBcERAoN6jgZ0rgEPhsKhfLhmvRistayU2UM=
+	t=1760509274; cv=none; b=Kx+SJc7CRyB/2Av9rufpqBK0nIyDqpZRjyegEQnj84w6dvNW1fNpzLKayHlcYGnvBYcxHC6+Qdc7SuvjIX01HNqCvNH/rCjjfC0LWvNeNdtrYAQGxJoUNK4HVXq+U9fGdWFbBzRpEw7zPUnNV+xYDiBGBLU3sURK1N/3y+KmzNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509287; c=relaxed/simple;
-	bh=DicfJkkTsiij02qIVcRFiHOl97sEIvQS0/C6n7EV7gQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IUnycfbf6pamI/ttAHo9LEhB0JO9KD3FDYbILyaZj658evq5V3CY7D15s510AtbR4ZsN9JRTX4HmSXg1eeTF8RwM238HCeBUgZEJsiBs+ZhFlJrD8/rK+12B3oTtorLkNvGE4CobIxgUpNjH9vWwBNG+7SBo/9XLvNwrZ9hDk0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rePeuf/p; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E0CF7C09FA6;
-	Wed, 15 Oct 2025 06:20:59 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E634B606F9;
-	Wed, 15 Oct 2025 06:21:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 59C5E102F22AA;
-	Wed, 15 Oct 2025 08:21:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760509277; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=fJomQq7OE3Maiesqwu9sZQP6LCVhewRSpZqk8JBWs78=;
-	b=rePeuf/p5urYuOHJ7Zc4gd2xvA5MR+RBRetK2TQGnYv3G82ImEFQQA1N5ktsEIh14SeIAx
-	9bH4ohXrP0yiFVsi1Qu/mYchA8TM5xuzpWGlDOGT3254tDREKHcnCfElp6LIG2GhcdidM/
-	8TN5kaMTuf3zdluXLUBnzuAYmqEHEMkUQ20/z7ZgBv8/qHHoTfW9IwradnDyX8jG5pS3m1
-	6FKTWFrbIlhVRROiQg6Y54Tc4YLJrMGHCN0V6wLTskGZgeAWH504REFi/k43+yOMVWkaSt
-	wgerD0FWa8rOO2YZWyDQtXlqOxoMSpy++EaoxBNiR/sg9QRdOFQsPXA5/83H5A==
-Date: Wed, 15 Oct 2025 08:21:03 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
- <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan
- <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
- Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <20251015082103.7907e019@bootlin.com>
-In-Reply-To: <CACRpkdacJCp8aCCrCAzD5F=_K3g25t_8kZGzaEoXMBnhY8hkzA@mail.gmail.com>
-References: <20250922152640.154092-1-herve.codina@bootlin.com>
-	<20250922152640.154092-8-herve.codina@bootlin.com>
-	<CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
-	<20251001174205.71a08017@bootlin.com>
-	<CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
-	<aO5ekPxeg7tdFlHi@shikoro>
-	<CACRpkdacJCp8aCCrCAzD5F=_K3g25t_8kZGzaEoXMBnhY8hkzA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760509274; c=relaxed/simple;
+	bh=WiPc2gPeCXPdFmn+cFIiMCzPa5COfTwkUbjfQDDgDoU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bCPWYG231aRDxMsFYz0BYu2tWnwmeQ5LbEsT+hDPG3EFwQUC8r7uKtTleC8nB47CzFCtwzf9AQ4oUEiVKTi1nsv8RVhI4Z0QvqPUDzCEA1zKOOSOF9Dz0hXyIL4L8WUkKDKeRUR5oTG99awHSDDwFlq5mXLEcyrLpcicHgn2jCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430afceae09so416745ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:21:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760509266; x=1761114066;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hIuA3jNEzmgIK/9ByJPWv7YVQALs/uR/+CmaD+VkEl8=;
+        b=KfJL8Le6YN6rcF6iotomsGhRgbc2gq2lMJ7Y7rrlMBEWVo9zvmg0RH/QcxdB+eYoIz
+         E+K0Q24EVs3VU/d+nrkO8tM6PxrqB32GYJxBE8UDQ3/ZwJxnAATTN4qK0V4IhdzmVYwn
+         1V2hbaWD2FrpFS6CALpD0pqazk7RbtdZRR5l6m8cBiyqwtiaoUE5+GY/x+/68mN1XqRG
+         RGPdR6CfwysXCf2Voi5w8VA7r9gaNWrGktafQvwsMFI924th7k4AogLQjJx/1lEhda2R
+         dAia+WLmaoon404fYG/EAHNoxu+Uc7pIRB/0IFc3pNBzt71fATNRXBGmBEH+X5MBbh85
+         vWGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCJNG44h5zGt1lzInUWAt5gcz0YTYeGSA9ckMdYZm62RnlI1xGpf2Hfg5MWsexBqni2OqpveWN3qzS8Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEzb6ujeYj2SB7pSOrgKJtD33L9fG+h7b43r5sLE6ZGqUBs4VH
+	d271m7sl0X6l7fRwMZN7/mb1ISLhTeN13N/Kg74n3F0AJG8FxJfu/I2eqcchnKCCKUJ+LcN6GAz
+	Yy2eItVQokrFWelJj1TfSCvfrftBbV6gwNiMfXQcT8qNFK0r7hu2XSakjhe8=
+X-Google-Smtp-Source: AGHT+IGjppDH94P7Zy2xDjnXF6uKeEAXGb3T0QamCL/YxqN09H4uMRpH7qJX1tTj9e0sBMnwSyEoY8wU8KW9b8w+xSEiOLdcHSh8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a92:c242:0:b0:430:aca2:53d5 with SMTP id
+ e9e14a558f8ab-430aca2548cmr15345785ab.1.1760509266635; Tue, 14 Oct 2025
+ 23:21:06 -0700 (PDT)
+Date: Tue, 14 Oct 2025 23:21:06 -0700
+In-Reply-To: <d8a13302-3be4-4ad7-a1f0-263bb9dc1ba4@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ef3d52.050a0220.91a22.0230.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus, Wolfram,
+Hello,
 
-On Tue, 14 Oct 2025 22:13:50 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> On Tue, Oct 14, 2025 at 4:30 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> 
-> > Because the HW design kind of suggests it, I'd think. The GPIO
-> > controller is a standard Synopsis one ("snps,dw-apb-gpio") without any
-> > extras. The GPIOMUX (which is extra) is according to the docs part of
-> > the system controller with a dedicated set of registers. Luckily,
-> > self-contained and not mangled with other functionality.  
-> 
-> Aha I see. If this is so tightly coupled with the Synopsis
-> designware GPIO then it should be mentioned in the commit
-> I guess. Also:
-> 
-> config RZN1_IRQMUX
->        bool "Renesas RZ/N1 GPIO IRQ multiplexer support" if COMPILE_TEST
-> 
-> +      depends on GPIO_DWAPB || COMPILE_TEST
-> 
-> ?
-> 
-> I understand that it is convenient to make this a separate driver.
-> 
-> I'm not sure it is the right thing to do, but it's no a hill I want to
-> die on so if everyone else thinks I'm wrong, I can just shut up
-> about it, it's not like this driver is a big obstacle or anything.
-> 
-> Yours,
-> Linus Walleij
+Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
 
-I don't think the mux should depends on GPIO_DWAPB (the gpio controller).
+Tested on:
 
-Also, several gpio controller instances are connected to the mux.
+commit:         13863a59 Add linux-next specific files for 20251014
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=151d85e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76790fe131481879
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1304d542580000
 
-The 96 GPIOs connected to the mux come from 3 GPIO controller instances (32
-gpios per instance). I don't think it makes sense to have the mux handled by
-the gpio driver itself. It could have make sense if 3 muxes were available,
-one per gpio controller but this is not the case.
-
-As Wolfram said, the mux is an hardware component really outside of the
-GPIO controller IPs.
-
-Best regards,
-Hervé
+Note: testing is done by a robot and is best-effort only.
 
