@@ -1,283 +1,108 @@
-Return-Path: <linux-kernel+bounces-854304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E82BDE0C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:38:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77ACBDE0E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AA5C4FF92B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543D0427E7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929CD31960B;
-	Wed, 15 Oct 2025 10:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF132E283E;
+	Wed, 15 Oct 2025 10:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXdNDnef";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXdNDnef"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1kbWUUT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99233081B0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5742F2BD029;
+	Wed, 15 Oct 2025 10:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760524713; cv=none; b=Ptg8OHiE9jYk4ZVs326snBjN0LA90IyuD5NfDU3rqIXG0/RAz8zir6bpeUdkp88JxH5G3X9v0sjSF/0PVrgovq8j0EBRAMrFI0KQsNRpyvWGrxgaY/xg8UqqAZK+QR+xsxtrXDXDUfRAsDSfvGS1DU6gwNAD+7JTvnjPJv4Lx3Q=
+	t=1760524750; cv=none; b=G+9KAHNYVDZeUyv4wBOKN+VkVh8fXqOrVC1uc5vss/m0kEEscl6xnXKmf9SA6t/F7xywPWtpa5+VSFBPdAsrVuTv8NuFFMzhOObbECAYtbtyoI7AC2uNxN8awyBl/v4oL6QvQqOWw8qmIUghv8F8NV+W5kPvcoytTwsR77/PpA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760524713; c=relaxed/simple;
-	bh=ed1Tj5xOMkxcDdi/sTr2l56P6/ks2p7tQlRX5Ja2RL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GVtmKTbxvi+l1fjzuVtavMaJSw6MkLFgnI+1K9dvTwFp3yu1w3fAdMI1Xr0phlGZRx13iDOlW1lJHDf1t8SpHL+4ja+RDAmUBdHMHBNsK7QnXe9xhfwT0Ld1650QAdeL+cnJfykTxy5KkhL/P22e3pkAuGiPdjWz/KwyPRsH+7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXdNDnef; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXdNDnef; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B0AE5211D4;
-	Wed, 15 Oct 2025 10:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1760524709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ed1Tj5xOMkxcDdi/sTr2l56P6/ks2p7tQlRX5Ja2RL8=;
-	b=uXdNDnefuyL0bQUpRv/PYyvmJLod1pwchR3Y0KxziSmrB72XQJj4ltZqKcTubUio7L2QhW
-	nU1UWnllASp5VlaEp1IYUHe6y4/0a0Vb2wgLxBTQzv6OjJ3rPTEZOcrlPiz7gHHT0iK3YE
-	T5X/oz6S8EhpnZb8SRqE1vywXq7sB9w=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=uXdNDnef
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1760524709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ed1Tj5xOMkxcDdi/sTr2l56P6/ks2p7tQlRX5Ja2RL8=;
-	b=uXdNDnefuyL0bQUpRv/PYyvmJLod1pwchR3Y0KxziSmrB72XQJj4ltZqKcTubUio7L2QhW
-	nU1UWnllASp5VlaEp1IYUHe6y4/0a0Vb2wgLxBTQzv6OjJ3rPTEZOcrlPiz7gHHT0iK3YE
-	T5X/oz6S8EhpnZb8SRqE1vywXq7sB9w=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36E0513A29;
-	Wed, 15 Oct 2025 10:38:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id b5mxC6V572jKHwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Wed, 15 Oct 2025 10:38:29 +0000
-Message-ID: <d897be07-ed59-4538-aceb-53c6512aeccf@suse.com>
-Date: Wed, 15 Oct 2025 12:38:28 +0200
+	s=arc-20240116; t=1760524750; c=relaxed/simple;
+	bh=fkV88xzNOBxhiJYAzo+vp0/1S65ulX6h08+Utw4UAHY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=CTiVJ8o401Yqf4V8qanpoh0vpATiWPpeft2gJzUAm5i9TxvkuN8BVeaXx75eVev6WfLccus9NEic2WsHCj8e96pZq/7pSN6BRqnVzQWe8pMOBlSIiNOGrfjLEhzk9iZQ4LAtwjxi2Bk8/cpfT8wGE5oSimfOan1aLOadaklgPgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1kbWUUT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D136AC4CEF8;
+	Wed, 15 Oct 2025 10:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760524750;
+	bh=fkV88xzNOBxhiJYAzo+vp0/1S65ulX6h08+Utw4UAHY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=r1kbWUUTOfxyTdTPwOXpt39Rpr8e7g1k8pMwRkH/8bBKDHa484BEmKPOB9VengnP3
+	 NeS4SFddmrPG/QoJT+QgM7+3MeA+MkssTYBKum/xlh86P4T8kPaFkvqLu57S5BrA7/
+	 TNNcd6rXOIPuj6tvTXizxjjtkmH6XNyA3PtSBfp66sQkcY+WowJMWwA2Z2AAwnqu7q
+	 ZKqsKyLrj+tG/Vni9KON3tR0GmyvuAp7PPn7lFRhEkqDTlMNxSq7noeisouuPY1CVJ
+	 jIAXSEDUUM8Pta6qec8WdaUs5TZIOs/jzhoK7itDGZqd0f6WxHJxTiYAu7X05u/pRz
+	 pfEloxPhWVd6A==
+Date: Wed, 15 Oct 2025 05:39:08 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 34/56] x86/alternative: Save old bytes for
- alternatives
-To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
-Cc: Alexander Graf <graf@amazon.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-35-david.kaplan@amd.com>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20251013143444.3999-35-david.kaplan@amd.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------0JRY2LMFWg0KCMfMIUyRufB5"
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: B0AE5211D4
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.41 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	MIME_BASE64_TEXT(0.10)[];
-	MX_GOOD(-0.01)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	HAS_ATTACHMENT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid]
-X-Spam-Score: -5.41
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: huangtao@rock-chips.com, mturquette@baylibre.com, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, heiko@sntech.de, linux-kernel@vger.kernel.org, 
+ sboyd@kernel.org, linux-rockchip@lists.infradead.org, 
+ sugar.zhang@rock-chips.com, krzysztof.kozlowski+dt@linaro.org, 
+ conor+dt@kernel.org
+To: Elaine Zhang <zhangqing@rock-chips.com>
+In-Reply-To: <20251015091325.71333-5-zhangqing@rock-chips.com>
+References: <20251015091325.71333-1-zhangqing@rock-chips.com>
+ <20251015091325.71333-5-zhangqing@rock-chips.com>
+Message-Id: <176052474812.2747948.16094630687510808403.robh@kernel.org>
+Subject: Re: [PATCH v1 4/5] dt-bindings: clock: Add support for rockchip
+ pvtpll
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------0JRY2LMFWg0KCMfMIUyRufB5
-Content-Type: multipart/mixed; boundary="------------Buzr47q6zZZzUd3WYeBnF0UZ";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
-Cc: Alexander Graf <graf@amazon.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
-Message-ID: <d897be07-ed59-4538-aceb-53c6512aeccf@suse.com>
-Subject: Re: [RFC PATCH 34/56] x86/alternative: Save old bytes for
- alternatives
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-35-david.kaplan@amd.com>
-In-Reply-To: <20251013143444.3999-35-david.kaplan@amd.com>
 
---------------Buzr47q6zZZzUd3WYeBnF0UZ
-Content-Type: multipart/mixed; boundary="------------iY2s1Una2oR3MfhFA7S8sMm7"
+On Wed, 15 Oct 2025 17:13:24 +0800, Elaine Zhang wrote:
+> Add pvtpll documentation for rockchip.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> 
 
---------------iY2s1Una2oR3MfhFA7S8sMm7
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+My bot found errors running 'make dt_binding_check' on your patch:
 
-T24gMTMuMTAuMjUgMTY6MzQsIERhdmlkIEthcGxhbiB3cm90ZToNCj4gU2F2ZSB0aGUgZXhp
-c3RpbmcgaW5zdHJ1Y3Rpb24gYnl0ZXMgYXQgZWFjaCBhbHRlcm5hdGl2ZSBzaXRlIHdoZW4g
-cGF0Y2hpbmcuDQo+IFRoaXMgaXMgb25seSBkb25lIHRoZSBmaXJzdCB0aW1lLCBhbmQgdGhl
-c2Ugd2lsbCBiZSB1c2VkIGxhdGVyIHRvIGhlbHANCj4gcmVzdG9yZSB0aGUgY29kZSBiYWNr
-IHRvIGl0cyBvcmlnaW5hbCBmb3JtLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRGF2aWQgS2Fw
-bGFuIDxkYXZpZC5rYXBsYW5AYW1kLmNvbT4NCg0KSW5zdGVhZCBvZiBzYXZpbmcgdGhlIG9y
-aWdpbmFsIGluc3RydWN0aW9ucyBhdCBydW50aW1lLCB3aHkgZG9uJ3QgeW91DQpleHBhbmQg
-c3RydWN0IGFsdF9pbnN0ciB0byBoYXZlIGFuIGFkZGl0aW9uYWwgb2Zmc2V0IHRvIGEgc2F2
-ZWQgY29weQ0Kb2YgdGhlIG9yaWdpbmFsIGluc3RydWN0aW9uLCBsb2NhdGVkIGluIC5hbHRp
-bnN0cl9yZXBsYWNlbWVudD8NCg0KVGhlIG5ldyBmaWVsZCBzaG91bGQgYmUgZ3VhcmRlZCB3
-aXRoICNpZmRlZiBDT05GSUdfRFlOQU1JQ19NSVRJR0FUSU9OUywNCm9mIGNvdXJzZSwgbGlr
-ZSB0aGUgYWRkZWQgaGFuZGxpbmcgaW4gdGhlIEFMVEVSTkFUSVZFKCkgbWFjcm9zLg0KDQoN
-Ckp1ZXJnZW4NCg==
---------------iY2s1Una2oR3MfhFA7S8sMm7
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+yamllint warnings/errors:
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+dtschema/dtc warnings/errors:
+Lexical error: Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dts:21.26-32 Unexpected 'ARMCLK'
+Lexical error: Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dts:117.26-35 Unexpected 'ACLK_RKNN'
+FATAL ERROR: Syntax error parsing input tree
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+doc reference errors (make refcheckdocs):
 
---------------iY2s1Una2oR3MfhFA7S8sMm7--
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251015091325.71333-5-zhangqing@rock-chips.com
 
---------------Buzr47q6zZZzUd3WYeBnF0UZ--
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
---------------0JRY2LMFWg0KCMfMIUyRufB5
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
------BEGIN PGP SIGNATURE-----
+pip3 install dtschema --upgrade
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjveaQFAwAAAAAACgkQsN6d1ii/Ey+I
-mAf/S6foeD70VVi3S9K63WW+KPsjDw2RaYMZ9NspnXtGRvJKdVhp72Hgc/JI7gSawlKFIAs/by/9
-H1zuA3dhTcTDuzRrQck1ocwDmdCsOsS7IOuyDooHBj4H5czT4emxNzz/mnDN2PeaLs/iOxX0yEsf
-P5rINv3UJCKJJVlphq8WBFfvzrsKBdx3XR5mPKm70lFLyGjjpU8+Kx4IJ2NA9b9awZQG7lT/BlAO
-bhT/JfoiVqZoErXqTaGO82W56Db7uobVfDLO1CMKA5G6iuJ4CALOrHEKVOrMqkUVDXPe9/UNtPNj
-yf9TmcvrTE/nugxjdb5YzNZw0TieLCJLUgJZ2n3lSw==
-=0N+M
------END PGP SIGNATURE-----
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
---------------0JRY2LMFWg0KCMfMIUyRufB5--
 
