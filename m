@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-854264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9947BDDF26
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31867BDDF35
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C47764FB8FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:20:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAF444FF5CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DC831B83A;
-	Wed, 15 Oct 2025 10:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB84F31BC8C;
+	Wed, 15 Oct 2025 10:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IlDyGl8S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffPhRrF8"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F9C3081D8;
-	Wed, 15 Oct 2025 10:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD62B31B827
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760523605; cv=none; b=J9YBHNfB+1hY/ct1nRf0IxJzmjIy5BILlmRj5xyDZs52U/eG5YuiB3YaE9Ek+T7b7L+zTl2WJSTZlP6PK0UJfR3dA9eiHCKfM6zZ1r1VA2mXE/DL3M6RmlFszc6wnNQJUndSfEF0eYmgBUwlPkmuqoouf8HntYsMFeYERGWbFCM=
+	t=1760523640; cv=none; b=s86kDbRibxIHCMP5bvmcFkGTCn4SWplp660H3okNVCkI1wDT/uYK2AscBMehGnoAFVp8tsAx4amnfW3kagFvMcVTYy7V4n1Kgd4Jpfcj1ra+IhaqAV/wzGm9yIL+7hYowDwxS355cu6HOl2tFo7d9yWVOjHuUfWEUMdLPvfNoQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760523605; c=relaxed/simple;
-	bh=bs7/thg5Z5VOfFwZjE7aM1gTUyMEXNvJwxigOV1AyVg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RlV1DZB8xDWz7ID5P7GzZip/tkaSmXXjsqxDJULK4ueL+MpNm836X5JQkVP4O7MQTg6DHspTfcF3DNHp2MYbFEhsR97zb1s68AxICsq7mwT+kfaMIGkualRMiD7ju7UWOkFeYmG7L8h8foPAg8JVcN33sOpyIqydAe027fiAiAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IlDyGl8S; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760523604; x=1792059604;
-  h=from:to:in-reply-to:references:subject:message-id:date:
-   mime-version:content-transfer-encoding;
-  bh=bs7/thg5Z5VOfFwZjE7aM1gTUyMEXNvJwxigOV1AyVg=;
-  b=IlDyGl8SvkXrVtGaMC873/7KvTeKTDj6WN5OgXYevESIP6DRrZz+Ziq1
-   X2VJUnPr16xqW4MJOfpkIXbFGK3Uh8veAjpR1vivFA310rwwa5UEH3BvQ
-   6skJpE6vjMaT7iednKUGXV4XhWhn5WTCBKWt73YOV28fBen5UGDcMH3vt
-   P4Y31Y0v36jdaJoRCgPPKVHDOauaFRh3fNMIlNqaDaliCfwB1gNUZuIzJ
-   szZxGX6pdMI9VR5/UHDz2s7ejrWfGY9xFp2K/IFhU9p1QSa5qnmoW8p4p
-   t+bh3lYiY9M7OxEnjDjSCf4U4MA1EruOZhOFKGRO8QUkxtFVKizZV7QC1
-   Q==;
-X-CSE-ConnectionGUID: Nv4qCbErQSmg3J5YHOraoQ==
-X-CSE-MsgGUID: L/1282+CRC2O3FMz5riWSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="73373162"
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="73373162"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 03:20:02 -0700
-X-CSE-ConnectionGUID: Pb6wy7Q2TDOmjZgJCWe77w==
-X-CSE-MsgGUID: xXx2JB3URkK4h7rHYVukQA==
-X-ExtLoop1: 1
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 03:19:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
- Xi Pardee <xi.pardee@linux.intel.com>
-In-Reply-To: <20251014214548.629023-1-xi.pardee@linux.intel.com>
-References: <20251014214548.629023-1-xi.pardee@linux.intel.com>
-Subject: Re: [PATCH 0/6] Update Arrow Lake telemetry GUID
-Message-Id: <176052359484.21241.13282551469499297780.b4-ty@linux.intel.com>
-Date: Wed, 15 Oct 2025 13:19:54 +0300
+	s=arc-20240116; t=1760523640; c=relaxed/simple;
+	bh=syYNPVw3n/GpSLvcv0QAJA46VNrVDvZJVpL7ER+csm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rc+4YOQ3tp27ucrZBQN9NmUf8dRNQ1FYQf7WTew0j4FkG3Fg/fQvdRLEmBL/W9yZY1VklUJc8gahO6zcPX/vlvxWHlMN+gctH6CW/aoOnhXEu02Oa6hgplFKy6u0oIZgLSOexOyMt71/ImnEOCm1zdwdjb7jmXkXkGTSzUzdUDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffPhRrF8; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-28d18e933a9so12313985ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760523638; x=1761128438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=syYNPVw3n/GpSLvcv0QAJA46VNrVDvZJVpL7ER+csm0=;
+        b=ffPhRrF8dz1vnrtvM1Mf5GlCLZEwKlIXh1m7o8X1EM56P/4UEJBo2+EeJWmE1XVEDu
+         7nNdRfgE4ylIYqDfcA/t950lNeyhLUMj1AQCbN34DQrtMGsKqFJIaQOLG6ydPwMMqVcT
+         cb/QvdTmSrer0Qcdv5cc3elm7Cm+wG9JzvPDhWbct25UDAj7h7ShDBACC1fd05FVppQH
+         CLW40zOV3smiYRfLIpJNYsGsxKAYWxdMKJq00EM0N2CUF25duw5SFAASShEScSksFeo3
+         WgXKistovQHqvNnS9Zbfy0g/1HsT9nmy9mpienHkJGGF0NlUPFYJlnXg5Ap1vyIvK/vX
+         +HmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760523638; x=1761128438;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=syYNPVw3n/GpSLvcv0QAJA46VNrVDvZJVpL7ER+csm0=;
+        b=es+PKLAcdZpE+ku5giGK3Mhg06CnMf6XnrO6XRd7NV7+TA3xJQL3h6MOaPiQ/aQHXc
+         TiEbaOwIeAQu8OTC8RoSS0mbL0ja+yLToC6E6GDjrILZGjQxd33dFyugiVipjsRTkJ/g
+         G6sj+XfgsjHBwNjJ22meWbl8CBTNJBEHNUZZcQIecS3Vlpwavjbwyb6XoNOioR4A2PSj
+         eZhNV/Cw+jNtMaChd1mm0A0f06hfrp4sYhL1vRV7bNl2+4m/vdhJy+bkG2KPhKNS6H3R
+         EDEkMekq4W6cEiMOmHYfqs88O37OkHUao4SXC47FYuepwHeNZQSi1kmWP5x2gRNXM4Sq
+         tdCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUQS33zxhUw1TtFXC9dqwmpQAdPFNelr06yk/Swp4gjpBUjJaUHQ9GuQdkqE3VBaGhF1U3TOuzq7tWhvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLY02Qao/1wuHP2D0IpIcWe5ePXUc1RdGnF6mPUDS9OjBPVbpz
+	h5OvwyulAQPViJ7wUbh0r/XlfH5iDirhHKqE7A3BKpafEmBx56zcTzFtWcWzICgaIBaV4uNObWn
+	ci4Pw8w1iK/j06EE5P2m2HtMaNm0J2tY=
+X-Gm-Gg: ASbGncvkN3a03o1wHzK8Y3MOXRMVQHplv7UuEHoB6OHLxomJKhNCjY+bYKeRDpNLbo3
+	6kp4giWNSZ+Kr8jcJOahzNmZd8Y+x2gj14lLMImZlshk1w9Eo53tfjHR2ssbIs3UiJY5jlTh5Hw
+	HTeT8TmR9uUgL+XgLydXAePNZYtCxPNfWky+AtEVdm35OurNy/XxFWiw0OuFVBB8XPDCJuzKrtO
+	3WIK8HZhBx6PlmlDdoZig8opO3QId/EhBT7Am2ZNjF7lBUu4sfXigeUuHtXVMMPtJ1eCZMHLcuT
+	9lbDm9n0dPwUT2gIC9UPb86rogxjXhEqAarj3XmI5tGQHX4ftRgRXsqc2z7mxnvD8+8qyVCSjzT
+	G98rTAO+oSIpnYA==
+X-Google-Smtp-Source: AGHT+IEuA+7KQXjMigiCtp80sJMmgdGJdPwk4cX3Jo5f+x0gzm6yiVWTi0fYh0LQRKdjtlu+kVhR87VUjMTsN2L8qLE=
+X-Received: by 2002:a17:902:d2c6:b0:27e:eb9b:b80f with SMTP id
+ d9443c01a7336-29027215f8bmr182642905ad.2.1760523637786; Wed, 15 Oct 2025
+ 03:20:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+References: <20251015022037.14535-2-xry111@xry111.site>
+In-Reply-To: <20251015022037.14535-2-xry111@xry111.site>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 15 Oct 2025 12:20:24 +0200
+X-Gm-Features: AS18NWCGIGHAWk8P2w_fEJ0NHY0-lJvrQGuVtdn-YvHXyfUVHV1SbvXdcT-w3hE
+Message-ID: <CANiq72mvZy+X2ko_sxVCn-2cnsR29boAzPDrYn=S-Tp0xSvvHw@mail.gmail.com>
+Subject: Re: [PATCH] rust: Add -fno-isolate-erroneous-paths-dereference to bindgen_skip_c_flags
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 Oct 2025 14:45:28 -0700, Xi Pardee wrote:
+On Wed, Oct 15, 2025 at 4:21=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> It's used to work around an objtool issue since commit abb2a5572264
+> ("LoongArch: Add cflag -fno-isolate-erroneous-paths-dereference"), but
+> it's then passed to bindgen and cause an error because Clang does not
+> have this option.
+>
+> Fixes: abb2a5572264 ("LoongArch: Add cflag -fno-isolate-erroneous-paths-d=
+ereference")
+> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
 
-> This patch series updates the Arrow Lake DMU telemetry GUID and enhances
-> the infrastructure for managing lpm_req_guid. Additionally, it includes
-> two patches that improve the intel_pmc_core driver.
-> 
-> The first three patches update the Arrow Lake DMU telemetry GUID and add
-> support for multiple possible GUIDs. The fourth patch standardizes the
-> naming convention for PMC variable indices. The fifth patch enhances
-> lpm_req_guid management. The final patch removes an unnecessary variable.
-> 
-> [...]
+Seems OK -- if you are taking it through LoongArch:
 
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
+Thanks!
 
-The list of commits applied:
-[1/6] platform/x86:intel/pmc: Update Arrow Lake telemetry GUID
-      commit: 644ab3bc98ee386f178d5209ae8170b3fac591aa
-[2/6] platform/x86:intel/pmc: Add support for multiple DMU GUIDs
-      commit: 3b603955f2423cf668ebd5ba670019a5b4960cc5
-[3/6] platform/x86:intel/pmc: Add DMU GUID to Arrow Lake U/H
-      commit: a32f7d76e3cd7c4170db44d109661d657cfa5e21
-[4/6] platform/x86:intel/pmc: Rename PMC index variable to pmc_idx
-      commit: 7848154c3a11fb3ffbffd150f2185f97b5a6595a
-[5/6] platform/x86:intel/pmc: Relocate lpm_req_guid to pmc_reg_map
-      commit: c2bc11f1f204ef916ec96e45cf329e42873b37d6
-[6/6] platform/x86:intel/pmc: Remove redundant has_die_c6 variable
-      commit: 1c72d9c3e0c61468de878d906a65d4cc845718fb
-
---
- i.
-
+Cheers,
+Miguel
 
