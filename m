@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-853950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475D0BDD1FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCA9BDD191
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D260189078D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DAAB3C3731
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BD9314B8E;
-	Wed, 15 Oct 2025 07:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE05331328A;
+	Wed, 15 Oct 2025 07:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="fEikvD+Z"
-Received: from mail-m19731114.qiye.163.com (mail-m19731114.qiye.163.com [220.197.31.114])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="avjmYPc9"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE5531354D;
-	Wed, 15 Oct 2025 07:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431ED22156A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760513384; cv=none; b=pWrf86C+NZqfbbx1s0HuB1LGUhI04gFeotyza+Dg14an4a7xgJ6glplMssbEQ7hTpp/61PoeGcM/pzb2YNDYLTwRRgBmSjb30qPZvkUi+T47cM+rpgs9+bqnmVKNFCVF32xii+hjIO22ERqedeccslgXCv9Bbn31+n0JD0K+6tk=
+	t=1760513140; cv=none; b=j0Wj4pOYM61CzHNAsVMMfuuSb7NeheZyihXc88k8JSyNYxQTl7gUES/7XPs7yjpJ1XK8jofVh2G2LtKRV8EcSfzDVwVLvHtqwSzsA6HkqyYij63qBnZKjq+Xn6cpV925my22jFJ1PCFEOoPfT4xZDN/DAPM+3kPjKxumM/6zy88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760513384; c=relaxed/simple;
-	bh=/263++/m7q9+2Q4gmmg4rihQBpm9tLducJOnOvMNLP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cv7v01qkALPgDFF2idFpcA9R9PFbL0dfdbFB092+3v0DYkHTPXf8MDBA8RwaZ8/31FgWa2s4seGbt2vmM6FnvJkaR0xBXwHmU7Rsmg+54Kh74MbSV+5/EHWTgnP592vL9xo5gVnEw5fLc/NEAnq5e8ORgahD9Tv+BPl2aNLAuvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=fEikvD+Z; arc=none smtp.client-ip=220.197.31.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
-Received: from localhost.lan (unknown [1.193.59.83])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 25f9932f6;
-	Wed, 15 Oct 2025 15:24:23 +0800 (GMT+08:00)
-From: Dewei Meng <mengdewei@cqsoftware.com.cn>
-To: clm@fb.com,
-	dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	josef@toxicpanda.com,
-	Dewei Meng <mengdewei@cqsoftware.com.cn>
-Subject: [PATCH] btrfs: Fix NULL pointer access in btrfs_check_leaked_roots()
-Date: Wed, 15 Oct 2025 15:24:21 +0800
-Message-ID: <20251015072421.4538-1-mengdewei@cqsoftware.com.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1760513140; c=relaxed/simple;
+	bh=BYd06zXNWJAWVsC42sA7TNqo7aIoHecPhYgrtsCvFDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ozIwyZ0Wc6FS9XJLoA8L8c6mOU9NDb3g+LjmxiK/cT7Efgn63I2WCHZSRVLI62exg9G6HVF72l4Z0fMXFZ4W+xw8Nz1+Pr61HJexehKWuF8M3v1yzvXtdIldM03GdaJp3SKZ7pB6GY3EWPTW2CdBdt3rOReVJaqMjNdtA8+6Erw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=avjmYPc9; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760513126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qRsEDmLBtMEKaQR4y6sp1pKVNHv635qhRHMthSlRzFQ=;
+	b=avjmYPc9E7j9ny8g+ObpSyXGMAeIAcYXqbTZfumaf4q9CbesrR8jIlqrtVK0uO2rhEq3mU
+	lLs4d3kzKgLppX9K4s2beo4X0UDTx6l3nwpBcUcsGEPC9v1X8OeNxUxnGzJ0Y20QZPEv4W
+	OMbfa7KIThlEeaIVOuT8ov8ffna5qcw=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Menglong Dong <menglong8.dong@gmail.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com, jiang.biao@linux.dev,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tracing: fprobe: optimization for entry only case
+Date: Wed, 15 Oct 2025 15:25:18 +0800
+Message-ID: <5930027.DvuYhMxLoT@7950hx>
+In-Reply-To: <20251014235159.fdfc2444582ea15de822c0b4@kernel.org>
+References:
+ <20251010033847.31008-1-dongml2@chinatelecom.cn>
+ <20251010033847.31008-2-dongml2@chinatelecom.cn>
+ <20251014235159.fdfc2444582ea15de822c0b4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99e6c17a9703abkunm885e09de2db98f
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTElJVhgeQ01DSx5ISR8dTVYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKVUpCSFVOQlVDSFlXWRYaDxIVHRRZQVlPS0hVSktJT09PSFVKS0tVSk
-	JLS1kG
-DKIM-Signature: a=rsa-sha256;
-	b=fEikvD+ZUQeLO0+c5EpxJKy0kIqbPlUoKEIzCfA439e0NKsBEJ6na21npdR6Bulv0ajwgEy2v88z9FaIl60SLcPxD0XDbPTNo06+ZfJbmdZuyAUlE2o/nzczj9HEhO3B87eA8aQhPjoKToPqCmCbGKDiDPpLKj5zAWm3YgQCM54=; s=default; c=relaxed/relaxed; d=cqsoftware.com.cn; v=1;
-	bh=ddstwpdehikxIME2JcPzaNnl8dY86rx7p4W6Psa9aeE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-If fs_info->super_copy or fs_info->super_for_commit is NULL in
-btrfs_get_tree_subvol(), the btrfs_check_leaked_roots() will get the
-btrfs_root list entry using the fs_info->allocated_roots->next
-which is NULL.
+On 2025/10/14 22:51, Masami Hiramatsu wrote:
+> Hi Menglong,
+> 
+> I remember why I haven't implement this.
+> 
+> On Fri, 10 Oct 2025 11:38:46 +0800
+> Menglong Dong <menglong8.dong@gmail.com> wrote:
+> 
+> > +
+> > +static struct ftrace_ops fprobe_ftrace_ops = {
+> > +	.func	= fprobe_ftrace_entry,
+> > +	.flags	= FTRACE_OPS_FL_SAVE_REGS,
+> 
+> Actually, this flag is the problem. This can fail fprobe on architecture
+> which does not support CONFIG_DYNAMIC_FTRACE_WITH_REGS (e.g. arm64, riscv)
+> 
+>  * SAVE_REGS - The ftrace_ops wants regs saved at each function called
+>  *            and passed to the callback. If this flag is set, but the
+>  *            architecture does not support passing regs
+>  *            (CONFIG_DYNAMIC_FTRACE_WITH_REGS is not defined), then the
+>  *            ftrace_ops will fail to register, unless the next flag
+>  *            is set.
+> 
+> fgraph has a special entry code for saving ftrace_regs.
+> So at least we need to fail back to fgraph if arch does not
+> support CONFIG_DYNAMIC_FTRACE_WITH_REGS.
 
-syzkaller reported the following information:
-  ------------[ cut here ]------------
-  BUG: unable to handle page fault for address: fffffffffffffbb0
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 64c9067 P4D 64c9067 PUD 64cb067 PMD 0
-  Oops: Oops: 0000 [#1] SMP KASAN PTI
-  CPU: 0 UID: 0 PID: 1402 Comm: syz.1.35 Not tainted 6.15.8 #4 PREEMPT(lazy)
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), (...)
-  RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-  RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-  RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-  RIP: 0010:refcount_read include/linux/refcount.h:170 [inline]
-  RIP: 0010:btrfs_check_leaked_roots+0x18f/0x2c0 fs/btrfs/disk-io.c:1230
-  [...]
-  Call Trace:
-   <TASK>
-   btrfs_free_fs_info+0x310/0x410 fs/btrfs/disk-io.c:1280
-   btrfs_get_tree_subvol+0x592/0x6b0 fs/btrfs/super.c:2029
-   btrfs_get_tree+0x63/0x80 fs/btrfs/super.c:2097
-   vfs_get_tree+0x98/0x320 fs/super.c:1759
-   do_new_mount+0x357/0x660 fs/namespace.c:3899
-   path_mount+0x716/0x19c0 fs/namespace.c:4226
-   do_mount fs/namespace.c:4239 [inline]
-   __do_sys_mount fs/namespace.c:4450 [inline]
-   __se_sys_mount fs/namespace.c:4427 [inline]
-   __x64_sys_mount+0x28c/0x310 fs/namespace.c:4427
-   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-   do_syscall_64+0x92/0x180 arch/x86/entry/syscall_64.c:94
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  RIP: 0033:0x7f032eaffa8d
-  [...]
+Ah, I have be working on x86_64 and didn't notice it. You are
+right, we do need fallback if CONFIG_DYNAMIC_FTRACE_WITH_REGS
+not supported. I'll send a V4 later.
 
-This should check if the fs_info->allocated_roots->next is NULL before
-accessing it.
+BTW, is the FTRACE_OPS_FL_SAVE_REGS necessary here? I guess
+not all architectures save the function argument regs in
+fentry_caller() like x86_64, that's why we need it here :/
 
-Fixes: 3bb17a25bcb0 ("btrfs: add get_tree callback for new mount API")
-Signed-off-by: Dewei Meng <mengdewei@cqsoftware.com.cn>
----
- fs/btrfs/disk-io.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks!
+Menglong Dong
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 0aa7e5d1b05f..76db7f98187a 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1213,6 +1213,9 @@ void btrfs_check_leaked_roots(const struct btrfs_fs_info *fs_info)
- #ifdef CONFIG_BTRFS_DEBUG
- 	struct btrfs_root *root;
- 
-+	if (!fs_info->allocated_roots.next)
-+		return;
-+
- 	while (!list_empty(&fs_info->allocated_roots)) {
- 		char buf[BTRFS_ROOT_NAME_BUF_LEN];
- 
--- 
-2.43.5
+> 
+> Thank you,
+> 
+> 
+
+
+
 
 
