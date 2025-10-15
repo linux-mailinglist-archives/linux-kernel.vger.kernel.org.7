@@ -1,123 +1,201 @@
-Return-Path: <linux-kernel+bounces-855020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9456BDFF26
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C29EBDFF32
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B0A5462C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ABA619C76FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6178130101E;
-	Wed, 15 Oct 2025 17:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86713009E8;
+	Wed, 15 Oct 2025 17:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNsxRpdy"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mkEfclLh"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD82FFDD5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E8D3009D9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760550720; cv=none; b=oiZNJgtaT6r2DJxpZURjT7pMPBPO+mfut1gcglh4284HfmA/X95N20qF1miWLedZwFkXGVzPcVL6+k6uEVK5prJddcbS4jJVVN+n1WD24klk2+mLxAuOzCHY8LHaRAEPBj1VBOmR/4sS35tLUfEIPDfd767SbVoFVT/tIjiya0I=
+	t=1760550747; cv=none; b=dXQmdi/yAlxIgNeJReRGslPciZqNpLEzjgBI5o/urfgCFYqwZSQuz4KREfTE5NJL7FNn2mQysXmZCtgcWYjFBZJ/zrA1dezwxBcVVlTPRteNGXrVvZ8XCuQuagXsOvwzBNyzyWB6dpioEFuSFJk78uuZaFYLcgAWN844WisB6+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760550720; c=relaxed/simple;
-	bh=o8PqTXOgJWd/s/ikGi+5sDegbwwIZbEWqoF+5kl66v8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f9ywWx2///m7ivPcNcAK7Vs9ltGTR/EzD54OXvodmjLnAvecM27Q1/gtR08kPxB+QLNotEzapwSJ9pd1nw477VKEKvNg+0/qqKCBuZMOEMmkJa9tynKdvHiZSuQbkcIuwGkfTtxv3RYlVqKJ6YqXKsNE4DW0YgwYFcgAQn59uDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNsxRpdy; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-93b9022d037so284481739f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:51:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760550718; x=1761155518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ei8wrQpcijHhyCQBFmPmC4ESXYvigXWE+9ruQpjaX0I=;
-        b=GNsxRpdyV2GKQNIJUWDRLqbxEyaRAN4VVe/fD7fe7aqS0RpdWuPyXDHxNlhddj6KZJ
-         lOhD4F3tMaN70mE80+9ctrtQp9c8iDLpdQiqdRZ0OS22gUscBaZynpV9pmbp4Gf1Tsay
-         C67LTaWbIuZAqy/m5qwezCnkOAw3rM4yKgvO1SNJso8BQgOvVB/6UgNeDPQZpRT/sGfi
-         5XnVtrV77+xfk34Yr1UBNwTMrx4cbYIjkfc+CtehSPszZOTHxXqRxwqMuP3qz/b7/a6D
-         DLuf4uTI3Tw529HmCyjDdgEbYcD6WunCPZZMT0OlAOr/Qr7icMoJa5w+DgrlMnciNO6R
-         7wdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760550718; x=1761155518;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ei8wrQpcijHhyCQBFmPmC4ESXYvigXWE+9ruQpjaX0I=;
-        b=BgebZEe1VDcl2mPADPovD1/9qVwuuvUrRWON+Bh/HDagfyKi8jsuJxP6xVGjpzx68r
-         D/gxnXUPTPJC9BKWvoUigHLP6XEiR2A1NXqEiTfgD5PBF7giIln68saX/F7golUr3KQr
-         tuQCLBRkDPDqsCqhEsze6iUfo87o7aRW0DKYoozNx0yQote7HsVZV8/aezKHhMBeJnIa
-         2pzF1ktZH/D6OGWcodfKqpHOQvlq5TeJfGk6bcC/k+kKQ21u/FdeaxUyIK0nijf7x8kr
-         U2w5ld74DO3LXVcwQK+CBj9ygNVXGt3LDH1xNeyxosbIcYqhqWqnVUchwqUMmK2EStXZ
-         G77Q==
-X-Gm-Message-State: AOJu0YwlUJe3/C4mpnGBGG1L/trDZPmzvjjDSVTv83eDfgKodGhwfHx4
-	PWfGRH0Q771TxLJp+2EE636hqFcGzRcnXXxD1z4J6XaMw4NL13kVQzU1Rkh7kA==
-X-Gm-Gg: ASbGncvc4/cROflNl3vqagPYMoBhItfh2HVBrdjg/a6IDwdXpNXmeZv3geKoLtSpHb+
-	jiGudqF8HqLOh5oBVCUTeCiVf0O8bqVFUI4wXv4YR6eNgug5knGletpU9ClVKsqZr4HgcxOSTp/
-	udtDCo5miwQW7tuuTk6YJNyKz995uQQ0L/qN28aRPO/hfNILu9AnDeqas03cTSo1kM+DfnrKOOg
-	uzmEFc2qxD3LTRLvWJbUvccMl7NgXCUTCiHlPu94+OojZbpLF33HZH6RdwhBZnNu3qr4JSbY0CT
-	qXu5uoMRGjrGORAqaZZypAqBrD+WEzP5gpCoFiVzubMbJesTIMKnsu/gC2Um37m5kaWCLMX7Nwz
-	8iCDm4j697CAP6+gEYrnCkvReJ35GQTuWgtZe/QfWZOG6jhxnKhMxJ0eNHY6GjNImWdYLyfUmfe
-	wOPZuIUJdShy5vZr8QaA9Udw==
-X-Google-Smtp-Source: AGHT+IHHfB1pctNQwkeMCTwIAO2gi3XQr+rEka4h1CVVNHJM0Gat2jBZVlxrA3gyDHn/33vFGw4znA==
-X-Received: by 2002:a05:6e02:2513:b0:42f:91ac:bd5 with SMTP id e9e14a558f8ab-42f91ac0ca9mr246872325ab.19.1760550717804;
-        Wed, 15 Oct 2025 10:51:57 -0700 (PDT)
-Received: from godzilla.raven-morpho.ts.net (c-98-38-17-99.hsd1.co.comcast.net. [98.38.17.99])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-430b50b692csm1194115ab.5.2025.10.15.10.51.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 10:51:57 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jim Cromie <jim.cromie@gmail.com>
-Subject: [RFC PATCH 2/2] checkpatch: cosmetic-style tweak
-Date: Wed, 15 Oct 2025 11:51:37 -0600
-Message-ID: <20251015175137.2178263-3-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251015175137.2178263-1-jim.cromie@gmail.com>
-References: <20251015175137.2178263-1-jim.cromie@gmail.com>
+	s=arc-20240116; t=1760550747; c=relaxed/simple;
+	bh=J+g3YSL0i4xb+MJMmSStI2HhtGo/O8qWkdvFY6zvo3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=YNzk2Tt/b1uYwNggfk1X32tvYjMeMV2K/n5zwOqGV9j5O1uuVMjoq7PNMkdn0Qx1iKzF1VjT36WiE0OLPq8ITfbBDGn/X6M+WFrrEZNZYMqzatNocPCnOxyMEiihsFBnb69bAYgZUFWa0n9N1azcw27+RKI1BD6KfkUHqm0OExg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mkEfclLh; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251015175217euoutp012ee7d0553cfdc40850dec17ac41f6758~uu5Fp3fOv1940619406euoutp01Q
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:52:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251015175217euoutp012ee7d0553cfdc40850dec17ac41f6758~uu5Fp3fOv1940619406euoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760550737;
+	bh=6jaEB+5YbVnEIOkSVtaCWc+rluHmQnP0qmqJ49YNg7M=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=mkEfclLh4qkq9JqiPJ+ikjlMZ3zMtbmENHzIUw4g5zjHDx25Mzf2u0T7bM+9KIfUE
+	 3QTAs/+7MqqGAkTcXD6tmA45+GJCKDo5Q8S2OBSaxWDrF0F9RieTLZuXuzzMKraMOU
+	 vWpRGgGjmp1SAgFDUOHaO/Vo2F7ezJC49w1UUSI4=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251015175216eucas1p1f80c6213d42a5c41b346ae04d0ca3edc~uu5ErUozk2581125811eucas1p1q;
+	Wed, 15 Oct 2025 17:52:16 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251015175214eusmtip15861a84e9ecea100785f9d589f38661e~uu5DP5xvd0425704257eusmtip1v;
+	Wed, 15 Oct 2025 17:52:14 +0000 (GMT)
+Message-ID: <99a41538-ce1a-4130-a093-d0c600e63d16@samsung.com>
+Date: Wed, 15 Oct 2025 19:52:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
+	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>, Daniel Almeida
+	<daniel.almeida@collabora.com>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, Elle Rhumsaa
+	<elle@weathered-steel.dev>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <ayuqnx7fjfe3zwicvdbdr3qsgb4w6s2gwjt7r3m5ikzrylmium@hsrxazwelnvp>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251015175216eucas1p1f80c6213d42a5c41b346ae04d0ca3edc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d
+X-EPHeader: CA
+X-CMS-RootMailID: 20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d
+References: <CGME20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d@eucas1p2.samsung.com>
+	<20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
+	<ayuqnx7fjfe3zwicvdbdr3qsgb4w6s2gwjt7r3m5ikzrylmium@hsrxazwelnvp>
 
-no functional change, slightly narrower on-screen, maybe clearer ?
 
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- scripts/checkpatch.pl | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 27299f326804..4449e809ef6f 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -4019,11 +4019,13 @@ sub process {
- 				if ($newindent ne $goodtabindent &&
- 				    $newindent ne $goodspaceindent) {
- 
--					if (CHK("PARENTHESIS_ALIGNMENT",
--						"Alignment should match open parenthesis\n" . $hereprev) &&
--					    $fix && $line =~ /^\+/) {
-+					CHK("PARENTHESIS_ALIGNMENT",
-+					    "Alignment should match open parenthesis\n" . $hereprev)
-+					and do {
-+					    if ($fix && $line =~ /^\+/) {
- 						$fixed[$fixlinenr] =~
- 						    s/^\+[ \t]*/\+$goodtabindent/;
-+					    }
- 					}
- 				}
- 			}
+On 10/13/25 18:48, Uwe Kleine-König wrote:
+> Hello,
+> 
+> my diff on top of your changes looks as follows:
+> 
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index dd6db01832ee..e7f770ecfe84 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -812,9 +812,8 @@ config PWM_XILINX
+>  	  will be called pwm-xilinx.
+>  
+>   config RUST_PWM_ABSTRACTIONS
+> -	bool "Rust PWM abstractions support"
+> +	bool
+>  	depends on RUST
+> -	depends on PWM=y
+>  	help
+>  	  This option enables the safe Rust abstraction layer for the PWM
+>  	  subsystem. It provides idiomatic wrappers and traits necessary for
+> 
+> i.e. make RUST_PWM_ABSTRACTIONS invisible, it is only supposed to be
+> selected and there is little (or even no?) use to enable it without a
+> selector.
+> 
+> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+> index c9fd1d8d17bc..a5666052b7ce 100644
+> --- a/drivers/pwm/pwm_th1520.rs
+> +++ b/drivers/pwm/pwm_th1520.rs
+> @@ -121,6 +121,7 @@ fn round_waveform_tohw(
+>          wf: &pwm::Waveform,
+>      ) -> Result<pwm::RoundedWaveform<Self::WfHw>> {
+>          let data = chip.drvdata();
+> +        let status = 0;
+>  
+>          if wf.period_length_ns == 0 {
+>              dev_dbg!(chip.device(), "Requested period is 0, disabling PWM.\n");
+> @@ -141,18 +142,13 @@ fn round_waveform_tohw(
+>          if period_cycles == 0 {
+>              dev_dbg!(
+>                  chip.device(),
+> -                "Requested period {} ns is too small for clock rate {} Hz, disabling PWM.\n",
+> +                "Requested period {} ns is too small for clock rate {} Hz, rounding up.\n",
+>                  wf.period_length_ns,
+>                  rate_hz
+>              );
+>  
+> -            return Ok(pwm::RoundedWaveform {
+> -                status: 0,
+> -                hardware_waveform: Th1520WfHw {
+> -                    enabled: false,
+> -                    ..Default::default()
+> -                },
+> -            });
+> +            period_cycles = 1;
+> +            status = 1;
+>          }
+>  
+>          let mut duty_cycles = ns_to_cycles(wf.duty_length_ns, rate_hz).min(u64::from(u32::MAX));
+> 
+> i.e. round up for too small period requests ...
+> 
+> @@ -189,7 +185,7 @@ fn round_waveform_tohw(
+>          );
+>  
+>          Ok(pwm::RoundedWaveform {
+> -            status: 0,
+> +            status: status,
+>              hardware_waveform: wfhw,
+>          })
+>      }
+> 
+> ... and return 1 then
+> 
+> @@ -355,7 +351,7 @@ fn probe(
+>                  "Clock rate {} Hz is too high, not supported.\n",
+>                  rate_hz
+>              );
+> -            return Err(ERANGE);
+> +            return Err(EINVAL);
+>          }
+>  
+>          let chip = pwm::Chip::new(
+> 
+> at least pwm-stm32 uses EINVAL. Having said that, I wonder if this check
+> is sensible here at all. pwm-stm32 does it to ensure that
+> mul_u64_u64_div_u64() does the right thing, but this exact issue doesn't
+> exist here.
+
+I think your changes are correct. For the existence of check I think it
+is helpful as it fails early with a helpful message, but isn't strictly
+necessary.
+
+I will incorporate these changes and send another revision.
+
+> 
+> Otherwise looks fine I think.
+> 
+> Best regards
+> Uwe
+
+Best regards,
 -- 
-2.51.0
-
+Michal Wilczynski <m.wilczynski@samsung.com>
 
