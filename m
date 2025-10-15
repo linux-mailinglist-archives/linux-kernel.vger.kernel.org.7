@@ -1,182 +1,183 @@
-Return-Path: <linux-kernel+bounces-855250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748F8BE09E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 271F0BE0A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F94D4E8744
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:20:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECEF64EE17E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300D12BE7B0;
-	Wed, 15 Oct 2025 20:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440AA2FABF2;
+	Wed, 15 Oct 2025 20:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0USLYG7"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igerKaBd"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5462BE652
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C9B223DEA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760559625; cv=none; b=X8L1TlyL4Lph5bRxN6yM/RHfDWKKPNDW0ylXT1K8OvMj1zQ6Kpwd3eWt64V+LEAb4k2h1yFjE48z/P8REhBdUTgY5NtPkjZo7cFYG/N8/f5dZPJ4VvE42DdoAx3Ayabo6QW7Kc22JTNG1DDT6eNh2lo2Kw3K+gEjm/cxNFfuLuU=
+	t=1760560133; cv=none; b=Uz4TlBKo/RVxBH6jhw6N3/bRcHnbmUM+tlhWhP/JQV/1b4g41+9OAyZd4eFQ/eBMhh/I9srAIpG7kOIDfyne4F5340T9e4YF2DSflig1sqB9Hk8TQqym9EimbBKtBRy+I/ekBoyCl7sSftH1q3dBam87tdk7pAMCwbFCEyJnwZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760559625; c=relaxed/simple;
-	bh=W5lL+7clCIuimE2JZ8XP6AYfpvpiK8gFacYRPIHJLgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkhYR4nPrPQhKrH1HhkdO9GlyUKtt9aF/L4V+x049xM0wA2MGmKH55jnxXH24L6VA6+IQlbXNHbMGvDxVSI6ocUp8p9nILAIq4BjNLU0C6mNhj7PURHheeB7DGVH47ZDW8x+PYxtHx3mZavHlKpp38A+1qkZVXfMEweMILHIj2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0USLYG7; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1760560133; c=relaxed/simple;
+	bh=GfW7nLyntXDYIXKIQ+YtakbDrhIW2xPxJZieBsO6EQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mRQWfRmm1VcmPbWx/f7WqvfDuMtU6gkRkTRQFGAWgIuI+Q48Ue8uHXFcTRmOLLrlxF6oPeMt8mwlkiEf2xu7R2+dC8FIHKM3mMA34LMWYRuZM8I80EuWowT+GE4Uk6g0wWPRwRK6Vixnai5HaYgCy2bVa6YtmyJEibp8ds7lleU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igerKaBd; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so31746b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:20:23 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7957e2f6ba8so412186d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760559623; x=1761164423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=95gcM031oDoREK3NrLaeDpeIxgdfvAPsa65KxdRg+ks=;
-        b=M0USLYG7rUyAgUurL2h04e/V1EqNNSdzSyAhWbOIWIUzbwrgQwFk7gInAPhBx5bV87
-         O5kHGaOVCHfcp/qc9YKMpHQ5WQtkzrg4pBRAC2pMjcOzN63hTYmWzuNYpWtXoQ2zy+x+
-         atk+kv8u0l55hq2ycBKbEChrSlNb6has74FBUMhcX05gM91i/e25Vhj9cJewKB/GleIo
-         mnSq17a/61qKK4/q/PMJ6IPE3JGJj3FfnXKzRXq2e3vEf/+B60IDSX4KBVJcjd+LGJbM
-         GdAmZRrL5LA+eK5RDPqGPtAipr52YRKMV8rgYbqb8plXn36YXcMUBBCAzrL1GdbH3q1p
-         0LTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760559623; x=1761164423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760560131; x=1761164931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=95gcM031oDoREK3NrLaeDpeIxgdfvAPsa65KxdRg+ks=;
-        b=MHZ3vOWM6iCqFZmVJApdv/yiQa3SPRNaZPWclowYDpEpEeNdhfOHJvmglSMCSlk9xH
-         fVN4zSgTTBgFh4nJmr+lLppbpJMNrtr6sqgmOuCoH7pzZBwQlghfjfydaLOKn6w436zQ
-         kAyZTdOMokA7LNT0maRShB+fK1a6W25hypUBAtG+r9mv/Vib1yMARu75mmyW4hkANaen
-         8Mca8tBdU0YqtPJcgbZ8PF/ZSdHQ6Qkhqnh+srLuBRXicrVp3MJkyS2Xfs1quupy1foT
-         UY+ECMNE2FYJG6A7++5GujNd1qBnkLsYg0ONwvCr5nVReAUvFeBDUvsb/tYJEjQQROBL
-         m2fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBHAPJQGfAslefe+w4flne7gncASC1Hzf7NKLXi5ULrut/HUV660cxOqz3TZHJuWjUGmkDO/QZ4eP2ngc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQrRwTE1CaMFWTz8OZacucaKbdWhzEhH+ZHOwJNVTkdoloaGpb
-	eU4zvfvXPfJIWNC6QnveZKzbeYqrlma3h5AJtG4QbkNVoBctbebcvr6o
-X-Gm-Gg: ASbGncvnX6UBwycviyBe5oG8uAq4V6HIMwZVNw5XfzPyN7Iu28WyRNMm4qb3fK7Oj2u
-	Y/hTLAiV3O7h4hqJqEbWYbdMmiIQKoznYp4MoiiGS3uUS91sJz1SgmH89dmKEbmTEnRH5yp3oTh
-	0/6WGvNlWjzwX4EQ1uCPkP7NoTnTRZvq7me70N5Ck9PX8p9tqdb8MErr2nkvi1LBqykns7s8DSp
-	VB/8CxJBxROe2BVpe1TU9bMx0RrwG9LT1yhitzBMBBeEMU3NAtz8zqLjAVR9ekUrMcRc1A9kYwF
-	kvOE1K/iyKIaPg6tbUfoOXwTAHi7XmUYis1a/JtJ8b/6GSqZMQ3J+4Q+/W+hsVUTYnWAurt0xsy
-	lpC67q28GhU89GauA9po7K6hD+MOE+J1CR8hQVEWD75vMJsxJ430BqBYX3x8lsUz2lhTfVob0mO
-	pI9Yfy1DPuRXeZ1Y398mi5UjBK2HjTqrA=
-X-Google-Smtp-Source: AGHT+IF0EKTCjT3naae1xA/PAZLLqfv/YtCN9ndqoHWsu9/x7DQfDR8VhO2uGork8o9ktOC/MruXJA==
-X-Received: by 2002:a05:6a00:2d8f:b0:781:2538:bfb4 with SMTP id d2e1a72fcca58-79385ce2724mr34350286b3a.10.1760559623239;
-        Wed, 15 Oct 2025 13:20:23 -0700 (PDT)
-Received: from localhost ([2804:30c:402b:1a00:ec78:db53:a246:207a])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-79cf0a052b8sm11363661b3a.67.2025.10.15.13.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 13:20:22 -0700 (PDT)
-Date: Wed, 15 Oct 2025 17:21:26 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
-Message-ID: <aPACRllAorjG47L7@debian-BULLSEYE-live-builder-AMD64>
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
+        bh=UCtklihtbOhFVtWrXC87SZH/yrccGP2P2vSXXm4fCXM=;
+        b=igerKaBdmzGtmODBpCySu/CGD3dt9wc/VUwWa1RoFFVzQf3bNRXh4jwQ03sNSICFq1
+         B6TX/GQdKChZJIEpA2aM7jqE+Xjlx2SU3WDuZZR9HR15QNIPQGygRKsCJ/mi2i/B1x6Z
+         npVMA2PyXrCH5B8AJsgICxN5FD+yZqyb0m7Ef7cVP8K75CWn5QnATCJSLUtV4rIvBvEq
+         YWrbON0Bfb8U6LDxZhtoJ8DAUP2TnvTHzyV0/00HU9WqFirRJQ6ygyQzs53yWH2teQVD
+         Rhmiw1NoGfwF0Bq2q8j64GSZu5XbfXDmEXwpfYlIplZtXgs/hoQTqkfsTHwXJaqJ3yAn
+         5L6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760560131; x=1761164931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UCtklihtbOhFVtWrXC87SZH/yrccGP2P2vSXXm4fCXM=;
+        b=pJvAIWSLYOpKe8MhKocC+ObpAlomaRdh+/4UYewLPDiAepa6xeSzTw3iPPNQasi70x
+         qa4meokqPV6xmVHqjU+Dxri/B8+6VewpGDIPK8xpowGeM6nU5+kc39ukZ0QXq0LwKF4g
+         q9wkCyMOI/9IJ/ZxKYmIo33kd6MpaDsCERIyfmgu2EhGOTvYQGBOEONat4CqI8R7Qjoj
+         76OpUlqVilHhKgkIu8XDsvt8bAKal9B2D85IsKEsimd5d9dTLdat5q0OVBx95HNTCG1D
+         f0j9hmKZ7bREoUONY3uLutZGOcCVoSJ5awce1noyI7EsTowb48axQFoEvscB4OUkFKGV
+         b1CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZdVqvZkuaa2TJjXVEHNOWDvwA1cwVdPhn2tna1IYfxMQ9ZDb9QoT5nb2F/vnbXHWjGmAsSeDIQcEFZ+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr+jD7a0aluJdV7UKeZNpT67AsH0ePvy0clWN2/SM2o8OBP8+c
+	nLQe1jYKMWOKqDvr2/FycruTbghRo3AXJFfPPHyGW3+Q3yb3OHC1CoeYAE43CoZud70BpIfSa3l
+	Soj7Zp4jzObgNpwJg82R9HY159M0n2XEzFCNv
+X-Gm-Gg: ASbGncsSuHHy2DDRbOGiYC0lgW+2hi+m+Oi1KzVPhVjuYRpvAMMg/WEtwxoc1VJgBjh
+	Bi9nCxnachCYz9cGMVAYUJTZSIuheglZPEryvxR11HNOi8esk5SSTOjiZCy9TiPMV9wDVoKBbmK
+	B6EUzqRT/ivbLD6At0S7+9r9h49XkOSJQST/IL8FnjNyi9vpmczNaCsYLDJpxZ1dn4yEOtP+GYM
+	L7An4Qb5rlXT6VBKguu6Ock5kvR2OhzZ7jHCWDWIfgbo7PUg41q8U49pgoArACLkkEXzMBV1tKP
+	hSA3Zxx8O6EEh0LA
+X-Google-Smtp-Source: AGHT+IFCn7H/zNcXBxMpbrNmnQeoIxLu56FopThW4xhIHn56Aba+VqVESsjEtwVMcEHmuG8hzRQAx2vIJIxHR6DsZYo=
+X-Received: by 2002:a05:622a:995:b0:4b4:9489:8ca9 with SMTP id
+ d75a77b69052e-4e6ead5afc4mr367197571cf.54.1760560130795; Wed, 15 Oct 2025
+ 13:28:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
+References: <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
+ <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
+ <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
+ <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
+ <aO6N-g-y6VbSItzZ@bfoster> <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
+ <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
+ <CAJnrk1b=UMb9GrU0oiah986of_dgwLiRsZKvodwBoO1PSUaP7w@mail.gmail.com> <aO_6g9cG1IVvp--D@bfoster>
+In-Reply-To: <aO_6g9cG1IVvp--D@bfoster>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 15 Oct 2025 13:28:39 -0700
+X-Gm-Features: AS18NWBUad1fkce9hs92YgRf8HsxWvhoWh_6BAI1le74rtdPJ69SePpQwXy3Svs
+Message-ID: <CAJnrk1Y+rdH11k_n947Z2rofu39=9=C5CRK5USi7Z1CnEG7fcg@mail.gmail.com>
+Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+To: Brian Foster <bfoster@redhat.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bernd Schubert <bernd@bsbernd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/14, David Lechner wrote:
-> Add a new multi_bus_mode field to struct spi_transfer to allow
-> peripherals that support multiple SPI buses to be used with a single
-> SPI controller.
-> 
-> This requires both the peripheral and the controller to have multiple
-> serializers connected to separate data buses. It could also be used with
-> a single controller and multiple peripherals that are functioning as a
-> single logical device (similar to parallel memories).
-> 
-> The possible values for this field have the following semantics:
-> 
-> - SPI_MULTI_BUS_MODE_SINGLE: Only use the first bus. This means that it
->     it is operating just like a conventional SPI bus. It is the default
->     value so that existing drivers do not need to be modified.
-> 
->     Example:
->         tx_buf[0] = 0x88;
-> 
->         struct spi_transfer xfer = {
->             .tx_buf = tx_buf,
->             .len = 1,
->         };
-> 
->         spi_sync_transfer(spi, &xfer, 1);
-> 
->         controller    > data bits >     peripheral
->         ----------   ----------------   ----------
->             SDO 0    0-0-0-1-0-0-0-1    SDI 0
-> 
-> - SPI_MULTI_BUS_MODE_MIRROR: Send a single data word over all of the
->     buses at the same time. This only makes sense for writes and not
->     for reads.
-> 
->     Example:
->         tx_buf[0] = 0x88;
-> 
->         struct spi_transfer xfer = {
->             .tx_buf = tx_buf,
->             .len = 1,
->             .multi_bus_mode = SPI_MULTI_BUS_MODE_MIRROR,
->         };
-> 
->         spi_sync_transfer(spi, &xfer, 1);
-> 
->         controller    > data bits >     peripheral
->         ----------   ----------------   ----------
->             SDO 0    0-0-0-1-0-0-0-1    SDI 0
->             SDO 1    0-0-0-1-0-0-0-1    SDI 1
-> 
-> - SPI_MULTI_BUS_MODE_STRIPE: Send or receive two different data words at
->     the same time, one on each bus.
-> 
->     Example:
->         struct spi_transfer xfer = {
->             .rx_buf = rx_buf,
->             .len = 2, /* must be multiple of number of buses */
->             .multi_bus_mode = SPI_MULTI_BUS_MODE_STRIPE,
->         };
-> 
->         spi_sync_transfer(spi, &xfer, 1);
-> 
->         controller    < data bits <     peripheral
->         ----------   ----------------   ----------
->             SDI 0    0-0-0-1-0-0-0-1    SDO 0
->             SDI 1    1-0-0-0-1-0-0-0    SDO 1
-> 
->         After the transfer, rx_buf[0] == 0x11 (word from SDO 0) and
->         rx_buf[1] == 0x88 (word from SDO 1). If the transfer was longer,
->         the data would continue in an alternating fashion.
-> 
-Can the above explanation be added to the documentation?
-Maybe spi-summary.rst or a new file?
+On Wed, Oct 15, 2025 at 12:44=E2=80=AFPM Brian Foster <bfoster@redhat.com> =
+wrote:
+>
+> On Wed, Oct 15, 2025 at 10:19:15AM -0700, Joanne Koong wrote:
+> > On Wed, Oct 15, 2025 at 7:09=E2=80=AFAM Miklos Szeredi <miklos@szeredi.=
+hu> wrote:
+> > >
+> > > On Wed, 15 Oct 2025 at 06:00, lu gu <giveme.gulu@gmail.com> wrote:
+> > > >
+> > > > >  Attaching a test patch, minimally tested.
+> > > > Since I only have a test environment for kernel 5.15, I ported this
+> > > > patch to the FUSE module in 5.15. I ran the previous LTP test cases
+> > > > more than ten times, and the data inconsistency issue did not reocc=
+ur.
+> > > > However, a deadlock occur. Below is the specific stack trace.
+> > >
+> > > This is does not reproduce for me on 6.17 even after running the test
+> > > for hours.  Without seeing your backport it is difficult to say
+> > > anything about the reason for the deadlock.
+> > >
+> > > Attaching an updated patch that takes care of i_wb initialization on
+> > > CONFIG_CGROUP_WRITEBACK=3Dy.
+> >
+> > I think now we'll also need to always set
+> > mapping_set_writeback_may_deadlock_on_reclaim(), eg
+> >
+> > @@ -3125,8 +3128,7 @@ void fuse_init_file_inode(struct inode *inode,
+> > unsigned int flags)
+> >
+> >         inode->i_fop =3D &fuse_file_operations;
+> >         inode->i_data.a_ops =3D &fuse_file_aops;
+> > -       if (fc->writeback_cache)
+> > -               mapping_set_writeback_may_deadlock_on_reclaim(&inode->i=
+_data);
+> > +       mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
+> >
+> >
+> > Does this completely get rid of the race? There's a fair chance I'm
+> > wrong here but doesn't the race still happen if the read invalidation
+> > happens before the write grabs the folio lock? This is the scenario
+> > I'm thinking of:
+> >
+> > Thread A (read):
+> > read, w/ auto inval and a outdated mtime triggers invalidate_inode_page=
+s2()
+> > generic_file_read_iter() is called, which calls filemap_read() ->
+> > filemap_get_pages() -> triggers read_folio/readahead
+> > read_folio/readahead fetches data (stale) from the server, unlocks foli=
+os
+> >
+> > Thread B (writethrough write):
+> > fuse_perform_write() -> fuse_fill_write_pages():
+> > grabs the folio lock and copies new write data to page cache, sets
+> > writeback flag and unlocks folio, sends request to server
+> >
+> > Thread A (read):
+> > the read data that was fetched from the server gets copied to the page
+> > cache in filemap_read()
+> > overwrites the write data in the page cache with the stale data
+> >
+> > Am i misanalyzing something in this sequence?
+> >
+>
+> Maybe I misread the description, but I think folios are locked across
+> read I/O, so I don't follow how we could race with readahead in this
+> way. Hm?
 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+Ah I see where my analysis went wrong - the "copy_folio_to_iter()"
+call in filemap_read() copies the data into the client's user buffer,
+not the data into the page cache. The data gets copied to the page
+cache in the fuse code in fuse_copy_out_args() (through
+fuse_dev_do_write()), which has to be under the folio lock. Yeah
+you're right, there's no race condition here then. Thanks for clearing
+this up.
 
-Nevertheless,
-Acked-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+>
+> Brian
+>
+> > Thanks,
+> > Joanne
+> > >
+> > > Thanks,
+> > > Miklos
+> >
+>
 
