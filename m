@@ -1,71 +1,63 @@
-Return-Path: <linux-kernel+bounces-853834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30C3BDCB46
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 898C0BDCACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A70794F39CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:23:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E7E94E66A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633AE3101BC;
-	Wed, 15 Oct 2025 06:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yJ57L2gO"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4A6302750;
+	Wed, 15 Oct 2025 06:18:29 +0000 (UTC)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C344F30F93D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D058523AB95
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509401; cv=none; b=aEeNrJKECsd4Hr2M/Fu9zH09FJJz8iO2GLzkw2Au/egB4g0h+V8IOs1cn/oHLTP7MzGM+5Gcl5/n+60hhU8nFyPLx9V3EuKP8p+rr7HJM3IxueAYg4qDI27NqRJ4DE5qUbj01U8z6e0tqBPX73AbpeBmaQFV4WomYoSSMDPe7us=
+	t=1760509109; cv=none; b=mTRrz0GLcyBAtYsy7VV2Gw2ovRIk3qy7rQDrAlBGSVbOAnSHG7WcSgfGLUqdIYOkwjw5n/IXcNJwwi6DeBHXmHypuB2pezmUCNvM7HA5TZNelRpp6YsrZYWtHghpJ/h/D5oICNd6FMo7WUwO8b+ZEj3ndRmtHfPVNfSNEQ0s5qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509401; c=relaxed/simple;
-	bh=3TbXyEjbB5x4IoiU+lyj/IH290GMBCHYGGlmj4kiUZI=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=R3rvR1MDUATYtPMf281YInxbdbbQ/hvL4TtPreY/0m/YDCTlgdX0iuR+Ol3fQsGyTiOVzkhZNnp4++OCxuX4Sao93QbUhR/ct8hdjYUniz2lp4kiPN0C8cBwaNnP7U0tq0eQy8x/P46nlY+N60Qboz9J814kM0sb8ACrNBIfEiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yJ57L2gO; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1760509084; bh=uTmxsU4FCYCxUxnqtxzx1iTBk4dc74XIANCYzN6ezh4=;
-	h=From:To:Cc:Subject:Date;
-	b=yJ57L2gOkJJ3EQbnmOgskVK0ZwRW9a0RZBCAwp7zK+86PTvOOIrv3xXjoT2LFjYK0
-	 P//ogs5Xem5SuzA877f9TbvyMa29xAGA3FjNQv89umB6V9MYepgm3PaMFC8CnN2Qqt
-	 mVtebu9HxI90nN9xKYRVPGiGfc7P+MN/C01z3fYk=
-Received: from localhost.localdomain ([116.128.244.171])
-	by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
-	id 4822B211; Wed, 15 Oct 2025 14:18:02 +0800
-X-QQ-mid: xmsmtpt1760509082tmod51s2c
-Message-ID: <tencent_2376993D9FC06A3616A4F981B3DE1C599607@qq.com>
-X-QQ-XMAILINFO: M1rD3f8svNznB6TulpLGANsC5apCVrnCYoz7eHxXOi3H4mBnnewlVjXxDLPhF6
-	 /xENGm+3hwSHpS4m7mRwS8s3GPhV4lkc6SOp3xPGedvyv3dtQQTbB22wKnQ35zUyRe3LPiGZWqQU
-	 0ccxZjz354Lfb+Qh+rTz0xQBYsIxGmoIXKHOGGTKR580ahDTwDMZlnP4lowScQHdoumRfEUHUGXx
-	 td1f+2fl/WhI9u+UsJ1GlJ4wd8qHjLuUrXhPqqyPZ3ybbFbGoWO0JFlAkuJ415ZXe29/toJNZdF9
-	 SADPOMiGgw13xGoEmpFc1tUmk0vDKP2aH+Jhb+0ZkNiQ4nJnVBFaztc6iKsJckj5wRIa3vzdTFyY
-	 CmRJT6lXuM6Judn3nvCehYbIa+W9nCFCcZqStkK6+vv2J0YrlgVWWwv0eFAaNlKCduYZuKeLFOXf
-	 mf7ugPAvu3Bz9CezHse0WeQMzOgW6xW4rGBKQMgcET02FfjrAwevS8gte3Kn97dnArGwxYjqKc6N
-	 akjTYe8ulUbLElxzoCgwiQmRajDsgiJJXhTpZKlJfYsejEXBqbcfbCCT49eKbT3+FbRCvZfMBLR7
-	 BliQMZ+5nue2C/xpSVAAL/EAFn2XbURwSoq1/BA6Cq+Eg2IFWUdR7Msg248aFH6w4hWZNnqqgAJ7
-	 lbdMXlJHLJnOlEteF5sWHs8tpLr3l5yMR4yrXgD2c3Jre5GEovxaNvlqObx0C70YO9qi7Art8wH+
-	 IGmRGTtqF6WW63LKzh7U+e3+GnfV0hiIBSx4U+nzyJBv6wFYblXwDr91TkmUzwdeIisj4mBcud8s
-	 VKf9d/3/WmwWPQywLODBFMX7GpEbrTjqmQm0RsDlK5lvMZ3Gnqh9+go0A7msaCt358xL6sDxb1EJ
-	 CjlgTOYmmL49UsvCqx8K/Khaxt2IGpinnjKYLF39+JZQ19UC5b+P8NIOYemPvmvHClwacif77SFa
-	 0S0r6VLz6kn6LEKod1F2pVcPZBfnVCTcT5s3R8iqVKdwNSyhjL1Av+7aigDPM+zx0mR0IKWEIwRp
-	 cass4Mac2RMIgrXkF/qc5Zv++6NtBzgDglQlNguxGIfERWkI2i61PqOYKslTM=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Haofeng Li <920484857@qq.com>
-To: John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Haofeng Li <13266079573@163.com>,
-	Haofeng Li <lihaofeng@kylinos.cn>
-Subject: [PATCH] time: fix aux clocks sysfs initialization loop bound
-Date: Wed, 15 Oct 2025 14:17:53 +0800
-X-OQ-MSGID: <20251015061753.2006741-1-920484857@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1760509109; c=relaxed/simple;
+	bh=705FMne12sNVVpkKOQNwNhUxtOYw4Hwl9fBY8WkD2NA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hIRquW1QzGcvTizXg0blmmh7VxzCgbbUNtMBRtiu/cWLa/SfjlJYkNuV39+evN4U/m1RacyVHPxrQvVDzK2gV98raDd2ajOQOokAENTuI0rvtYqzb1qgE4+XmeUwsQiROoWU/JuGWqfMu+/PBPq3I2ubq9lrypNpxx8IL35ccNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
+X-QQ-mid: esmtpsz20t1760509100tc191fae6
+X-QQ-Originating-IP: AGYyXmsCBRc5yqg5sROqL2InOJpb5Xugb1zpPXUPvFI=
+Received: from GPU-Server-A6000.. ( [202.201.1.132])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 15 Oct 2025 14:18:17 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 715155269882244565
+EX-QQ-RecipientCnt: 14
+From: Yuan Tan <tanyuan@tinylab.org>
+To: arnd@arndb.de,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	palmer@dabbelt.com,
+	linux-kbuild@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	i@maskray.me,
+	tanyuan@tinylab.org,
+	falcon@tinylab.org,
+	ronbogo@outlook.com,
+	z1652074432@gmail.com,
+	lx24@stu.ynu.edu.cn
+Subject: [PATCH v2 3/8] scripts/Makefile.asm-headers: pass USED_SYSCALLS to syscalltbl.sh
+Date: Wed, 15 Oct 2025 14:18:08 +0800
+Message-ID: <C997B2D86EB526D5+4bc4efa1739f38c14463918474e8bfb3d8071041.1760463245.git.tanyuan@tinylab.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
+References: <cover.1760463245.git.tanyuan@tinylab.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,40 +65,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: MN7J+qOXnZ1LpZYwKidf3Gnb83k4SfJRp4UnTaf4xQKBqQ843xSjSHx4
+	fbgQ0wzdK3EpKTf3GtIMU5Wr/HNkvioktxPY7ciWGEUM2IMje3AFOBB4tjR4iWQXtljZOSK
+	Kl8l8OYMUDH9KfGD+SBwM2bboN3QcfuMIL7FRa2FaHsd9o6W7ezlwk+KFhaLR9zPxf3JimC
+	2grKf+klY/i0n/BZ96ZcI6K938tqjrNJ0EJmvqvOxg6sTY3fM8tR6490SFce6LQoDGEUhCq
+	hQ9GFjba6dl0Ar6+yNHzFyN5GbkF9ufBt3qdcyneLWL9x2N+yHews7lvv0+JNnot4yVBs26
+	UOd2V9iGylIv92DsMsddNJvlqNta6KDMIQj0vghl2SCy1sqLIOVfCrl5OaCZhqTUbRai4Me
+	SmNk1MnQ714ZjKQ+aiP2E3kA7E2inECn9XA9JxMFDAVrk+ceQBq0j8KERYxm95QP7Iu/I4X
+	rVV9fKXVUf49AmH7FWbuxK7oj8Jmt1cAE/6vktjjPwaJcp+Y5nCjoMz8Wj/JpX9K+VkHvis
+	pWkwqShvGRPwFM3+aH2rDwTVHJD8VSc+/CnGPuRmG6p9jj3gpD2iQPQCXcYT+Hv6VQOCj/l
+	KDK63HG0508JRtpR3xYpQB51ZkFHrUgSaILuXqqvJGrHSzPId9RiDUeFCEGgtVdiiaDPIc+
+	/ckVEnXDDe9bLD2RuRSAnFyIah2dxCyRLGigjDUlwTZjKoYHKMZPDO1Ou67j0phgxhVFa5U
+	uHZe7JShwmEMWkWGigbajEiGXQTNmOsexp/kPNCmNUWWrzs4r3JL/jSFFBjMKlLVHU8TMKx
+	nvQPhvlxsPtboTo0iXscEPx614EHc2/A39CWmu/4G0NjbFZsltyjItmF2IKSt+rw+bh054l
+	u7LE/fbOBwTKVKVCgiYi9doQkmC6u6k24UX4yLfna/4dw5b859Bg0k3Hav13h44vBkKKmsy
+	zlKhGrG4FnQjN/rlr0tRhzV3LgaAaBLlXVAgi7qvnTCRvcDqf4SDcdk0906ZMQwZB/mLoz3
+	o1l4Ys9NE3aRScZYPnyU02N+P84ZnaHkG9Utz8iA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-From: Haofeng Li <lihaofeng@kylinos.cn>
+From: Yuhang Zheng <z1652074432@gmail.com>
 
-The loop in tk_aux_sysfs_init() uses `i <= MAX_AUX_CLOCKS` as the
-termination condition, which results in 9 iterations (i=0 to 8)
-when MAX_AUX_CLOCKS is defined as 8. However, the kernel is designed
-to support only up to 8 auxiliary clocks.
+Include auto.conf in asm-headers and pass CONFIG_USED_SYSCALLS to
+syscalltbl.sh when CONFIG_TRIM_UNUSED_SYSCALLS is enabled.
 
-This off-by-one error causes the creation of a 9th sysfs entry
-that exceeds the intended auxiliary clock range.
-
-Fix the loop bound to use `i < MAX_AUX_CLOCKS` to ensure exactly
-8 auxiliary clock entries are created, matching the design
-specification.
-
-Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+Signed-off-by: Yuhang Zheng <z1652074432@gmail.com>
+Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
+Signed-off-by: Zhangjin Wu <falcon@tinylab.org>
 ---
- kernel/time/timekeeping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/Makefile.asm-headers | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index b6974fce800c..3a4d3b2e3f74 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -3070,7 +3070,7 @@ static int __init tk_aux_sysfs_init(void)
- 		return -ENOMEM;
- 	}
+diff --git a/scripts/Makefile.asm-headers b/scripts/Makefile.asm-headers
+index 8a4856e74180..0ae82c6a2a15 100644
+--- a/scripts/Makefile.asm-headers
++++ b/scripts/Makefile.asm-headers
+@@ -13,6 +13,8 @@
+ PHONY := all
+ all:
  
--	for (int i = 0; i <= MAX_AUX_CLOCKS; i++) {
-+	for (int i = 0; i < MAX_AUX_CLOCKS; i++) {
- 		char id[2] = { [0] = '0' + i, };
- 		struct kobject *clk = kobject_create_and_add(id, auxo);
++include $(objtree)/include/config/auto.conf
++
+ src := $(srctree)/$(subst /generated,,$(obj))
  
+ syscall_abis_32  += common,32
+@@ -68,6 +70,8 @@ quiet_cmd_systbl = SYSTBL  $@
+       cmd_systbl = $(CONFIG_SHELL) $(systbl) \
+ 		   $(if $(systbl-args-$*),$(systbl-args-$*),$(systbl-args)) \
+ 		   --abis $(subst $(space),$(comma),$(strip $(syscall_abis_$*))) \
++		   $(if $(CONFIG_TRIM_UNUSED_SYSCALLS), \
++		   --used-syscalls=$(subst $(space),$(comma),$(strip $(CONFIG_USED_SYSCALLS)))) \
+ 		   $< $@
+ 
+ all: $(generic-y) $(syscall-y)
 -- 
-2.25.1
+2.43.0
 
 
