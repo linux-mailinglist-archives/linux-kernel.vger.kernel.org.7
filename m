@@ -1,138 +1,98 @@
-Return-Path: <linux-kernel+bounces-855040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB06BE0034
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:11:01 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D4EBE02CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24B0188AF0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:11:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B608D355B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB42301472;
-	Wed, 15 Oct 2025 18:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FF53254B0;
+	Wed, 15 Oct 2025 18:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6iYrQ72"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="UM5C3ChP"
+Received: from e3i86.smtp2go.com (e3i86.smtp2go.com [158.120.84.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EBC21B1BC
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3523254A9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551853; cv=none; b=NzggV66q6aE5tunWd/sIpXZnzDBVw9a8rrarLYU8qPoPSYXEzjNDjlFPC9vU/ePqrA1+Af1ugFFnjziy5XA/b6f1eTTf1zAZTBzYwtMOHGyPZsne2QGpNLm6m2VnK8wbBdxowb+B/1wYBAbaa3CaIt4uDyEyx4ZPJxHYwOFHCkM=
+	t=1760552904; cv=none; b=BKi2c9EbS1azlyIGjM7UwAGSHh+4qNfthI9ZWOJk2PE8KF8qSXdRlOsmPrDr1ncIl9CxJ2Hfs/ixaPBVY8dwuIjZxH+SEy3R4drqT5+0nJhIgMoXmRR7eHDGvQstAoohUvvHuXX7T0CEorW3xOyhc6nkIjHxqDz+/CCFk6qzso8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551853; c=relaxed/simple;
-	bh=A1Yp6U35cANnY8G27X9QHKs7ZC1uiK/VGWHHtWeVu8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EctuNJ9P2+NDIsMWtwEwyY3P2FWrtTxW/luSm7CaAXKavoaQ4mbmsLRtVlUnwhcRzDy7e139tOptuk4cUBmGVK3fxyCDYImMHHOltTIgBBXdZOUR8UMbOho+JN4XsUoecYuwwOdEBfisE5ghcAHYv/uwJ3CGIGLxkOhoRN90bW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6iYrQ72; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-78e4056623fso93144306d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760551850; x=1761156650; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nqA7k4UVVoz1WmvKpqEl1VWC0k/EIByv+fhLJjtIG9s=;
-        b=A6iYrQ72i70wKcH+lwKdRv0LQ53a3isLZ679z7DbNBds4diWJX4Zpkh5ySfsfOLhMY
-         lNT2EJBpGU2OGNi0mW4xqbmIv8NqfYwRVokPd1MF0b5RayS2rgo+jZEYoS8DzT62rZQs
-         lwj38Iu1WNRlNUUYRzorQdphahmLEOPXXBiNcMj17PBpvlBHMk1se4q/WaZbrfVEq6li
-         R/Vfg571qRjD3e+aQlMJgyTfRREOHmvcUimk6QZShneN59a8J88SkYTIgKNEurDPhaP1
-         DzS+ySXUycFjNafnHGDbQU/BWWzV+/Jo8LKbxnvvFO/oAXCkVhBtm8QMpAmqWM7SgEIP
-         h3zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551850; x=1761156650;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nqA7k4UVVoz1WmvKpqEl1VWC0k/EIByv+fhLJjtIG9s=;
-        b=vmXiBtWG8un5FDTb7otPPrwMpc01fu9vO0pFHNbMDBMBEJ1fsHaxjJojgpxJiF3daY
-         qFFMYvMVhhNpe7cQfF7JW7RHLFgMRg7KrpbINVS4sOAoSxcGGUU3zx2SuJCgDmbhStI+
-         BiMCD1tTWgJ6fi2O70akwA8znOLZ2oidvCANuEUjyKR6glCpDeObG7fAxgsa88jZOq1f
-         4aQlS8seLnSfqvuAOGTYYTY+VdDD0oXycMArIak6aV9ankI/tEFCVs/gVAkiuzBi5gcZ
-         hHRf2u8hGUvnYHtxBEYbW5U1b5eq5gpOHVOA6lMKqeoZ0gmqko7kYll62q8vIn+Jewj/
-         FG+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVpShh1kqFeveoVCBPMLMRMnT/09dQaFTBumylxUD2FItfRbEqfXNyrq7B7Bw3XxRq6ojLwBvUN0UQb/98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZS4XNJKGXiBBpJfshZ8Kx/536M2sIeqDELkf999AcJwlOjbWV
-	Q0QbBM58TYxMac5PUBK61o2p88S7wE5WS2rsy9VHLOyFyPLW7wZnnS0HdJ4AM7s8EN9U3VYhUDC
-	GTdyHcS784f1LPUiI2trtxQWdFzMqbv8=
-X-Gm-Gg: ASbGnct8EWXK28Ge17VajxKNft7T5CHXGuvMkse9xce2ggjGFRg0yioPq8BkNO9B5zl
-	NyqT2w+4A9l3gNb48M5jGCxboHPWZsc3d5aoKJcDHgvefTDlmOqfGw3W9IHe1FaWiGQ1ZIVCeCa
-	SmUi4m6ixdI3ze+2tU8Hjx0ft3MWv6i1il1FGP3NtL7UjaVSqtZ2DObDBW3NwnwG6Mhz9IepkC1
-	TNhGuU/TANZPc56paAkSKI1F6M0izp3eGozIakDMhXVrfTyA2xKc+y9rHdwY+AHGaoYMx5O5zWZ
-	IxlkRulcoifHREVA6Sfzj+91mnSGdh3hPcSbzW9yPrvrMK3fHC2bFXeSPcogYVd8l43U/TO9ezO
-	cGsptgXvQEiF8SVmDOrFb1YASL2Q226JWFoZ5Z+cR
-X-Google-Smtp-Source: AGHT+IHninkPESQS8dHVL1fQL53uOsfSc1mur/cEdxDh3bmiIBfWuhMXmHWs7FOB1Mg5kel/vGkCWetRJzQIDq/GUh0=
-X-Received: by 2002:ad4:5945:0:b0:78e:c8a6:e891 with SMTP id
- 6a1803df08f44-87b2103f5c0mr366857086d6.24.1760551850329; Wed, 15 Oct 2025
- 11:10:50 -0700 (PDT)
+	s=arc-20240116; t=1760552904; c=relaxed/simple;
+	bh=ffOfwsHr+yAGHRJuSai5LUwd6+m1hseyRwIcKaquC2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rMWzU263+O3HtC+KvC+V/kbjjmHf6Cz9iFAwVfdGug2WLHO0xCvbisLMQgWNQT/+CStVaJZWucZtAmlzHqj8kvn30LWOyJaeGRr9yZh+fQQFJOd+8ogebzlcPkf4OC+ZrzA1v/SriIvspzypoeg0yCDgowsuwKpvRfZ0znALaQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=UM5C3ChP; arc=none smtp.client-ip=158.120.84.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1760551992; h=from : subject :
+ to : message-id : date;
+ bh=anCQPHVE/XUDRso2Re9zB1kDzN+VIwg3s3BKvkkml14=;
+ b=UM5C3ChPp+SWFm06mOj0nlrLw0MIuFWoql5JdUS4LroSwX/FGK23FyjNYkHTxNrFk04nx
+ /ib0WzN1gfnqMLDz3Cg0KWadhA5V132cTBdO0zapsz2avDV2HTOjeGXNuL+6qzL4cw+w5wW
+ B38a96sd71tv1oj1mqTF5808lE0JurlzbRZ76VO80Tas/Q3Tr1WWZ2wKQPrS5Rdq99feAkp
+ 6HfCeEoGN7/zxH1q4r/ZXoucVSDCXr9B8dZf1KeiajHQ6jdBvId5hZu/780I9WgXiokHFiL
+ x46BtPWV2I1XnnZGYOefQim1TuTmf4k5fMZeWJtovvU9JtXJWo5VcElEBZQA==
+Received: from [10.152.250.198] (helo=vilez)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1v95zl-4o5NDgrjPI1-gXZW;
+	Wed, 15 Oct 2025 18:13:05 +0000
+From: edip@medip.dev
+To: ilpo.jarvinen@linux.intel.com,
+	hansg@kernel.org,
+	kuba@kernel.org
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Edip Hazuri <edip@medip.dev>
+Subject: [PATCH] platform/x86: hp-wmi: mark Victus 16-r0 and 16-s0 for victus_s fan and thermal profile support
+Date: Wed, 15 Oct 2025 21:10:44 +0300
+Message-ID: <20251015181042.23961-3-edip@medip.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aOzRF9JB9VkBKapw@osx.local> <6599bf31-1099-426d-a8e5-902c3d98e032@web.de>
- <aO/DLq/OtAjvkgcY@chcpu18> <6eeec2b6-ef28-4280-a854-cc22d2df55ed@web.de>
-In-Reply-To: <6eeec2b6-ef28-4280-a854-cc22d2df55ed@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 15 Oct 2025 13:10:38 -0500
-X-Gm-Features: AS18NWBfaSIxv2RDHlnpAQo8uwRpyrQ2N8ndjpwz_0K_rEufX1VnmPESyUOVHfY
-Message-ID: <CAH2r5mvg2Ask8SXOQArDLnKOjHHSPKGwuHkYp9NuuzEqYcZNEQ@mail.gmail.com>
-Subject: Re: [PATCH] smb: Fix refcount leak for cifs_sb_tlink
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Shuhao Fu <sfual@cse.ust.hk>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, Bharath SM <bharathsm@microsoft.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854sY5Hk5a1oa
+X-smtpcorp-track: VPeCEv3IStAU.qAG_3ltyX70z.5k4jegF-qKv
 
-I agree that "callsites" is incorrect, it should be "calls" e.g. but
-the others are very minor and I think the existing wording is fine for
-the others
+From: Edip Hazuri <edip@medip.dev>
 
-On Wed, Oct 15, 2025 at 11:25=E2=80=AFAM Markus Elfring <Markus.Elfring@web=
-.de> wrote:
->
-> > Fix three refcount inconsistency issues related to `cifs_sb_tlink`.
->
-> I suggest to omit this introduction.
->
->
-> > Comments for `cifs_sb_tlink` state that `cifs_put_tlink()` needs to be
->
->                              ()?
->
->
-> > called after successful calls to `cifs_sb_tlink`. Three callsites fail
->
->                                                           call sites?
->
->
-> > to update refcount accordingly, leading to possible resource leaks.
->
-> * Do we prefer the term =E2=80=9Creference count=E2=80=9D?
->
-> * Is the word =E2=80=9Cpossible=E2=80=9D really relevant here?
->   (Would you find corresponding case distinctions more helpful?)
->
-> * How do you think about to increase the application of scope-based resou=
-rce management?
->
->
-> Regards,
-> Markus
+This patch adds Victus 16-r0 (8bbe) and Victus 16-s0(8bd4, 8bd5) laptop
+DMI board name into existing list
 
+Signed-off-by: Edip Hazuri <edip@medip.dev>
+---
+ drivers/platform/x86/hp/hp-wmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+index 8b3533d6ba0..a84343bf96b 100644
+--- a/drivers/platform/x86/hp/hp-wmi.c
++++ b/drivers/platform/x86/hp/hp-wmi.c
+@@ -92,9 +92,9 @@ static const char * const victus_thermal_profile_boards[] = {
+ 	"8A25"
+ };
+ 
+-/* DMI Board names of Victus 16-r1000 and Victus 16-s1000 laptops */
++/* DMI Board names of Victus 16-r and Victus 16-s laptops */
+ static const char * const victus_s_thermal_profile_boards[] = {
+-	"8C99", "8C9C"
++	"8BBE", "8BD4", "8BD5", "8C99", "8C9C"
+ };
+ 
+ enum hp_wmi_radio {
+-- 
+2.51.0
 
---=20
-Thanks,
-
-Steve
 
