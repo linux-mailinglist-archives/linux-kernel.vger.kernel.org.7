@@ -1,120 +1,134 @@
-Return-Path: <linux-kernel+bounces-854385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9865CBDE3D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A674BDE3DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8DF419C352F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783D519C39BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609731D398;
-	Wed, 15 Oct 2025 11:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A836031D362;
+	Wed, 15 Oct 2025 11:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UoDvdrNE"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZuhVO1z"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C18E213E6D;
-	Wed, 15 Oct 2025 11:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38FA31A576
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760527002; cv=none; b=XNEfAAsKT9mpur1SYybVNHu3rZ+/NKi1fTSYv4sig+1CmGPMO0/ph8TTTsqOlHqQsspdz8Bv37xLMg9lmdNuH4i0RyOUeSNvUKuWHUQ2fmJzKl6kbQdcmCIXum3AWZuVKbT1Lrl5wgq7dwYW03fdJ9Sh+vC2zhy7yQl+jgHPDVo=
+	t=1760527137; cv=none; b=mNNVITlhjTz4wx4LKE6/b3sCDi8lRgwLsC2mH8eW24ibkgFG5Joi1FxQMV1mIVmjLDqJJX9RhaEy2io6MX/Kp5930MUr3aH8E6GRg96eeidid2kTTG3397L78nXhk3AfwtzjAR1cOb7a712odFf4ZUXJ7J8D+d0ivPu2HURkERA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760527002; c=relaxed/simple;
-	bh=Bis6a1wlF8kYaFqIpcDHDYpUVxg0GoC2tnUOAX6rrV8=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=haNBasZTAAWKQgmFFAG53VHOsHDyFol9qJJocM4RweUP9hs7Ejd1yJ5ybLVSSH7OiO+J5wJEbbchS7AWjuuFOu/jrwdVm6xxM680CxSAns/xIM9iLfiJsn5zMwBGRKOAolyDbH6Cy9eCla172c2DeMQpovBiamzA5iplh8FRcQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UoDvdrNE; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59FBGXeH1740850;
-	Wed, 15 Oct 2025 06:16:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760526993;
-	bh=Bis6a1wlF8kYaFqIpcDHDYpUVxg0GoC2tnUOAX6rrV8=;
-	h=Subject:From:To:CC:Date:In-Reply-To:References;
-	b=UoDvdrNEXNBiVaAnqEefl7YcpzHKMHjAEoqNksiEgnRsyyd8OtBcFi7ZlBnGTtMc5
-	 ESkd+x/bhid6WFpm1aPLvlaTgZKHX+WxIWJ7ga3+eRWzX8ub2DEXemYQ+U7wJiyKJZ
-	 TJ18MXo39HAj0+s7vXlWyP7xq9VqOthwLQj1vgi0=
-Received: from DFLE202.ent.ti.com (dfle202.ent.ti.com [10.64.6.60])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59FBGXx31181400
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 15 Oct 2025 06:16:33 -0500
-Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
- 2025 06:16:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 15 Oct 2025 06:16:33 -0500
-Received: from [10.24.73.74] (uda0492258.dhcp.ti.com [10.24.73.74])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59FBGTHc1811397;
-	Wed, 15 Oct 2025 06:16:30 -0500
-Message-ID: <f815e16805a5a7f7a04dc3158addbbd364447d36.camel@ti.com>
-Subject: Re: [PATCH v3 0/5] TI-K3-DTS: Cleanup CPSW DT Nodes
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Dominik Haller <d.haller@phytec.de>
-CC: "nm@ti.com" <nm@ti.com>, "vigneshr@ti.com" <vigneshr@ti.com>,
-        "kristo@kernel.org" <kristo@kernel.org>,
-        "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "srk@ti.com" <srk@ti.com>, "s-vadapalli@ti.com" <s-vadapalli@ti.com>
-Date: Wed, 15 Oct 2025 16:46:36 +0530
-In-Reply-To: <1b2b23293b01cec8161bc749bb864b18b3d41678.camel@ti.com>
-References: <20251014125349.3408784-1-s-vadapalli@ti.com>
-		 <df6acbfe5d30956ed66e2768fa595c36d2ebe98a.camel@phytec.de>
-	 <1b2b23293b01cec8161bc749bb864b18b3d41678.camel@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1760527137; c=relaxed/simple;
+	bh=SzFxEbyxEcDRigJfL5eL/SkazLCkh76xI9qUKlEw35o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m323aPYS3TlUwAFtZIYrI1aKmHeG1VM56QoelxzfNsoggReplEKVT7LWtFION0eAsmvs8k99U1a6yPm2qJQ8ENX2nYV/C7LJv9xv8BdOdky3Lw15NP4FkEYTT8Blm6L/nToFi82QOtw/P6ceDttF7ug+1Vftb4irJ5Ylzx7vt8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZuhVO1z; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7841da939deso5791525b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760527135; x=1761131935; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2vnTLcw57Y069vTGfiFWbSfImvEmfVAFfbmVAA9rgo=;
+        b=GZuhVO1zEbxLej09hLywXoc8EVElbDJAAOBM+9psIdWfa/TQs5bw1TMcd0nMU7lHxf
+         B4ETqI9UCjtcWL1OVzRdRb0wqXNr0J/tO8/cyd3sgm6LrTvS1+g7V9TQ1VPOcbduMKLs
+         P/ofb6F0+CF+aDjBN69V5iu8Mb+tLZ2KPJ7XU+8jJ477IwLi74yawbHotYSEDXDHzQ2K
+         M1iY5XtvSx+fZ7PSUmBcithJwBEh1JigaAjlbYk4oLhy3VDZ28AFcSClAz8KD2o8AMkm
+         Jxc1Ip8MHOeA/jkPpEm/Ujb1lUujfnXGnV+5KAcXtkCEbPH+ew7BYi4MiSt05waWSLGb
+         Fpuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760527135; x=1761131935;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W2vnTLcw57Y069vTGfiFWbSfImvEmfVAFfbmVAA9rgo=;
+        b=lVFX4qaWwL6SiQMUWFJok3rs32rjc6FQm/i3zPxlDOHJOW9jJbSdiZJoSOJ1547c+D
+         pRoVy0K3SlFFhPvbpEyaSeEYoRCH9Bx6X/FPrwfJPjqzMYePqsYbV93/UZuva75Gjx2t
+         Ep36V/FCvF4WGhbW2aFj/Nb4Pjs3meoy+G+53IpU5Cqr6tXvljhgjdD0G9xm5bTj942S
+         IIw+QRvU3OQpERnDrBseOkKGoqD+I1oZl/h/uTsQ0lUbKMIElT6NvAZ2UO358khxio89
+         YbpeUzseeRdUwPavFliPujsT/jHnnGNRNxm3rJzIIFGu74UYKTXF1Nzv3QxCy/mz1yPc
+         EPqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwsdBONiwZcEeadlUtBwSM/i6lxc8rtgjWmNQsSDSK6yCWLBZqt++oSPgpSqtKki9aHG98xFtDKRHj5A0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSNlraYdCcWxUTB6fTB0VyfQwL7sICvp+N/IcelBnkCJvzTAXm
+	m0pC4EYE65MAsw5QhFVVHGWKc9pO8ANasJ2Gw1eRY+Rp/M1KmafYWcpq
+X-Gm-Gg: ASbGnctaAKJyXhZ1DPEvtenIz16eTCMqVmXHaUg8bLJaIN0O0pfnPX43H42ABRjeatJ
+	JtcMknKF7dhuhEc2c9jA5RPMTH16FXcXsGeIRy1bCxEWrdfT7pMH0NRn7RHbbfogqpXxSTs71OG
+	YuHjgZtofsqOvenn9FvmMVWfppvrrllPwxmA+zMNGBoUJYastgNrBDAYYQ99E9g9kR23Jcg5Rkp
+	ir4wuQeMtf8C6aALDuQhvOAuHrN3MrUUzZk6ApknNUhxQmZdpCrSMO8cUGh0E6BELMSjMquc1lc
+	jAUSMghgTX1/5jnHMquPi/DoJ4A+MhJjgy3Jm9Md9gZhwPQ4tLxTc6e4gLYR7siZtDqTcv44MTC
+	919sNVAIA3lWnvbuGEZpEdQ0Qq6bZOQIX3s5ADlVyjS0/WUe2hj3gYLwdIw==
+X-Google-Smtp-Source: AGHT+IFxanje2UwITyO7JhKP4HwVngGwSfVPKTDvSZY8WDRIMIBK8NNPGmeF09cgQwzpalXD/vgd7A==
+X-Received: by 2002:a05:6a00:4b01:b0:77f:1550:f3c9 with SMTP id d2e1a72fcca58-793859f34b3mr35946413b3a.12.1760527134951;
+        Wed, 15 Oct 2025 04:18:54 -0700 (PDT)
+Received: from tixy.nay.do ([2405:201:8000:a149:4670:c55c:fe13:754d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09aa20sm18322631b3a.39.2025.10.15.04.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 04:18:54 -0700 (PDT)
+From: Ankan Biswas <spyjetfayed@gmail.com>
+To: bbrezillon@kernel.org,
+	himal.prasad.ghimiray@intel.com,
+	dakr@kernel.org,
+	matt.coster@imgtec.com,
+	robin.clark@oss.qualcomm.com,
+	matthew.brost@intel.com,
+	aliceryhl@google.com,
+	thomas.hellstrom@linux.intel.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	simona@ffwll.ch,
+	skhan@linuxfoundation.org,
+	khalid@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	Ankan Biswas <spyjetfayed@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] drm/gpuvm: Fix kernel-doc warning for drm_gpuvm_map_req.map
+Date: Wed, 15 Oct 2025 16:47:08 +0530
+Message-ID: <20251015111828.18944-1-spyjetfayed@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-10-15 at 10:28 +0530, Siddharth Vadapalli wrote:
-> On Tue, 2025-10-14 at 17:07 +0000, Dominik Haller wrote:
-> > On Di, 2025-10-14 at 18:23 +0530, Siddharth Vadapalli wrote:
-> > > Hello,
-> > >=20
-> > > This series cleans up the CPSW Device-tree nodes by updating the SoC
-> > > and
-> > > board files to keep CPSW disabled in the SoC files and enable it only
-> > > in
-> > > the board files.
-> > >=20
-> > > The following is a summary of the SoCs, CPSW instance and the Boards
-> > > that
-> > > this series affects:
-> > Hello Siddharth,
-> >=20
-> > please also enable cpsw3g in our k3-am62-phycore-som.dtsi and mcu_cpsw
-> > in our k3-am68-phyboard-izar.dts.
-> > Unless I'm missing some other patches you're turning off ethernet on
-> > those two both platforms too.
->=20
-> Thank you for pointing it out. I will include them and post the v4 series=
-.
+The kernel-doc for struct drm_gpuvm_map_req.map was added as 'map_ops'
+instead of 'map', leading to this warning during htmldocs build:
 
-I have implemented the feedback and have posted the v4 series at:
-https://lore.kernel.org/r/20251015111344.3639415-1-s-vadapalli@ti.com/
+WARNING: include/drm/drm_gpuvm.h:1083 struct member 'map' not described in 'drm_gpuvm_map_req'
 
-Regards,
-Siddharth.
+Fixes: 000a45dce7ad ("drm/gpuvm: Pass map arguments through a struct")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
+---
+ include/drm/drm_gpuvm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+index 8890ded1d907..476990e761f8 100644
+--- a/include/drm/drm_gpuvm.h
++++ b/include/drm/drm_gpuvm.h
+@@ -1078,7 +1078,7 @@ struct drm_gpuva_ops {
+  */
+ struct drm_gpuvm_map_req {
+ 	/**
+-	 * @op_map: struct drm_gpuva_op_map
++	 * @map: struct drm_gpuva_op_map
+ 	 */
+ 	struct drm_gpuva_op_map map;
+ };
+-- 
+2.51.0
+
 
