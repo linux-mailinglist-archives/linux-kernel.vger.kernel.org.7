@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-855288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEABBE0BE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:02:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31690BE0BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68BFC485651
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:02:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 893F7358353
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFC4303A3A;
-	Wed, 15 Oct 2025 21:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B48304BC3;
+	Wed, 15 Oct 2025 21:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oNW7RfHm"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sdniQ+/A"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D18E2FB619
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA853016EA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760562070; cv=none; b=s1/02ZyExJibiuCD+GJIKJ+E0uIYCrRxR/xUKiqVl//YWNT4H1brSOwRXOn4QROJ4bu/YhRBdfh+ZAjR7J/g88EvGigg16IedOt/gLZe2SR95Ld9+ZEyNT+0nJpuSyaFYaHkwFv2Wy2348O7Wc4lOfku4nyhkS5+wtJBk1hGBxM=
+	t=1760562071; cv=none; b=cFIgbF1HrXEl5AjPgCGSecXpvRLYb0Vdrz3q5Av4WYshEusEKkaBEszXT6mnvUhijbiTWofBNysym1ZbhfdmXo0XAfyaA7BgsPiOaHHABT3Sfv2Wky1kQcF9EOjLwsAOunjXaWN7agytD+z4/dV6ef5PjGVqBXFV74A8eyXd9yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760562070; c=relaxed/simple;
-	bh=bSLBiu0ysu2fpSjU/5Ic3vJljP+H3GdHCmIfG9IdFAw=;
+	s=arc-20240116; t=1760562071; c=relaxed/simple;
+	bh=5L4b1rIUXgU5wl8/jKyJxd4Vt1myFkIrr70lbjcEQg0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rtYi/1a1kl+ze/6/+kN49IRTCHRHfqnsMuXe+5L3NOaDCd40lLCcS6WDCKQ5Z4Hu9uYdTE629DpySncbLkNbuN3KUUetblxK+GEVRZtKEZDhpPynde6vnR7iXMWv0iqw4BPve7jnTTAOJDBkp4W1ZX9CeYqE98FHrH5uajP3BV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oNW7RfHm; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=b/uq9Mlk4kqP5/FalyIHPtFZjXlIpOcxpTfof/KJxYs1onYflu1mg+YN1VpVF6Lu7AJ8uFlUBJyrSTCDwhbhjsVyPwQGQBK3JAH57eK520FYVlnpo9nciewQsfzWve+wUoQUskZ5SQhMDa/CyM9F2kY25nHzf7GA0zxg+Llsy8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sdniQ+/A; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-470fd49f185so197025e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:01:08 -0700 (PDT)
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b5b12e9e02eso567866b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:01:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760562067; x=1761166867; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760562068; x=1761166868; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=moTm52zNGwrt++YsXPE2KY3jx72epI/Bj7ns6GGNFCU=;
-        b=oNW7RfHml7K84ZSq3nmGOcCZWU6o9h0wrhRuN+vZWWdoryoVCrEaXTi6eo4zchcA47
-         zBEHevUmzuxU693aY7fl3rJPSmb0QUDR5S3mS8OuqLFAEp68VNzWeU9Njio2bdSQFKBt
-         GeSqid2XNLako0eAJPnhIXV09vIedLqYQp7271/qBJ6bgdFQYiDcsyusPcNhhzBy+qP4
-         HSrjp8L6Y2gM87aBuz4y/MtXsAmUOL2j3dK11U6A3K+6o3+kpjH9q0dqy3PjR+rOX5wG
-         CCLN6AAYQ/h/HBTKOefkDcgbaiVzuXffEUs+3mbpWAOCc0b0iH6bjyx0+68E7kHHS1T/
-         XSlQ==
+        bh=HtXilHA5AAd1z6GdE3uGsC51Fo0T6TRa6MXgCog/xSk=;
+        b=sdniQ+/AIrpNRxg4X/oiZktkjCV3G90M3L9OyRP2IMnm/D65G7fT2/EgGbPJ4UmtRc
+         qnWBQ3LO6t+KGMvmXxIZk4Np1xVunWDMnfx8pfSbuH1poz8Ac1yMhwgVJKYKszveu42K
+         +J95u90cw4ufhCDW3wNoSh3Q6cAoSGkl72a8W9kj4r4FY+TGsWdTX2LDAzY09DbDt3MM
+         iaJ8o9gPYlcx5bsFT9XcIJxtt4Xxjnp9hJvU2cuzbjad7081FFzd+iXBpvsbucWKOPUU
+         aYMvzyQAJ4FXsF+z2ZgryrjQrLcyGhEaBWZ/Qxzz9aNqZJX0ZFbeABJecbxY8+oqN0sB
+         HMtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760562067; x=1761166867;
+        d=1e100.net; s=20230601; t=1760562068; x=1761166868;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=moTm52zNGwrt++YsXPE2KY3jx72epI/Bj7ns6GGNFCU=;
-        b=veM6oZDbsDJL4RtipvZXohZWGBrqc/OLS3KMILH02ny/myWkPSqNxbeIbvgAwPFDgZ
-         Ora+WDzsqaGGXCVT02K+uiTFon6GlvJcE55elAD2HRVFsFovDvQx/10Tc3lJcHobFETh
-         Dsj9Wh2n8yMmyLVUdJc48W853fpsQN4tRQyMaLqDX0byJ/2GvqhYNRqhDkIkT+ycVIUr
-         37lHS7S+g1fPQ06Dr5zNyX6VF81njzah7ZduUT2vOnJHl2Gsuf6UY88z8CQcriLCp4kF
-         Z15eYWfrd2xNVWyJ+pCruTjQFc1D0IT6k2zdkND7umuz1avi1MsmhLva5OK7yAg3sg4K
-         xp1A==
-X-Gm-Message-State: AOJu0YzQ7fwhXXhe8DvwdBpd4qRqpu3ociXdp8FojQAuInVWLvgRjumg
-	Sz6aLHGTnQY2dLS6QWxwB6B6VnwCZsz8tP/8TvjmOWCsY4JedFh0Yy1HO1XHVIasnJ2YPBgaEg=
+        bh=HtXilHA5AAd1z6GdE3uGsC51Fo0T6TRa6MXgCog/xSk=;
+        b=cOYO78WaRhKhtrgsIErYnVbQtsx1b/yrMmeFfnV7LzDGNZpF/dnVvQ/xVCOjGZSnFy
+         zVOs+1PRF8k5BD6qY417z39pc0/kB66EQUx6kPmJkpJG0cGnfKtnalxhNbTPozHfRFzS
+         ICiac2CEYwRWAlRyOy4lpzmn7FxOiqcxUjbUS8ZTPZjY8L0/wbHl6DersZ8MnzxZ1u0A
+         Aptpru6s9JoZL0uUI1X4zhY8cRWn+qqm6FI+B2nBDSZnrZUtWRDnThhG+KJots3Fdgzs
+         VoYFQQcBdzuSboZVcXvakKXIpRnObXd+TwG0DmA7oPnjKfJu2rTu++BVrqjWuWocBPfT
+         zP+Q==
+X-Gm-Message-State: AOJu0YyINLYhIuXOSqkNfj39BxWe0m3RXp6OnMC2N9bACPqfG5y+WKWM
+	NVUGnlMNSdBI8F1JiedS+uTQURbl6kLs4/fojiVbC+poyNdojhqyXhONuGTtZxQn9vG7h9fSmw=
 	=
-X-Google-Smtp-Source: AGHT+IHH59sy7BRWjY21dGoKX4xtSPPUT5SSUEKeDj8aOzwiGGO++q5eu2jsvFIaGupUZgFYbR/j27IV
-X-Received: from wmbz7.prod.google.com ([2002:a05:600c:c087:b0:45d:d60a:8d7e])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4745:b0:46d:cfc9:1d0f
- with SMTP id 5b1f17b1804b1-46fa9af30e5mr238090085e9.19.1760562066912; Wed, 15
- Oct 2025 14:01:06 -0700 (PDT)
-Date: Wed, 15 Oct 2025 22:56:40 +0200
+X-Google-Smtp-Source: AGHT+IH3ROeCSpPWS9y2jZ7CvrP8/bWnx+s6dPg9rJBua5mdk6FXYUzuc6+UiuwI+/nVZ3rpHBAA+hiX
+X-Received: from ejblo1.prod.google.com ([2002:a17:906:fa01:b0:b47:89a2:8c6c])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:980f:b0:b45:420c:81c0
+ with SMTP id a640c23a62f3a-b50ac0cc34cmr3303674866b.36.1760562068221; Wed, 15
+ Oct 2025 14:01:08 -0700 (PDT)
+Date: Wed, 15 Oct 2025 22:56:41 +0200
 In-Reply-To: <20251015205634.3820870-9-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,15 +72,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251015205634.3820870-9-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1252; i=ardb@kernel.org;
- h=from:subject; bh=oVK+oBrwb79YVKXaSmfzPNI2/YhF6t6CcaRgcjvBZKg=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeMDV1f3/5ul8hNbKh+8Zbsj80cisndue7zrlEc6PtOnT
- QpiddjXUcrCIMbFICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACYit52RYZ4Qs+dJc9XZnP4n
- frR4rXqa5Ma+X6v4iZ38lyaPotjSK4wMX9/J+1/oEZxeKK1ySNHzvbd/MssT0+t819wvfLoxnVW bDwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2657; i=ardb@kernel.org;
+ h=from:subject; bh=997YokF8smvlH2+7Du/063cegE+dHugAIUP6dU3Aa2s=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeMDVzdTg/stWY4eySNf39jeOrDI2WBiyytOz6jjvWbRV
+ x/v0FjRUcrCIMbFICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACaSeZKR4apV4b0pL78sZ598
+ LzA4+I6BwcnoBUdSut9MUZh7iKesm5Phv0fEh9RthhFMgprc7NoZL8o/mqhbhr2MTOZkDl/GnKb KCgA=
 X-Mailer: git-send-email 2.51.0.869.ge66316f041-goog
-Message-ID: <20251015205634.3820870-14-ardb+git@google.com>
-Subject: [PATCH v4 resend 5/7] arm64/efi: Drop efi_rt_lock spinlock from EFI
- arch wrapper
+Message-ID: <20251015205634.3820870-15-ardb+git@google.com>
+Subject: [PATCH v4 resend 6/7] arm64/efi: Move uaccess en/disable out of efi_set_pgd()
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-efi@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -92,44 +91,79 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Since commit
+efi_set_pgd() will no longer be called when invoking EFI runtime
+services via the efi_rts_wq work queue, but the uaccess en/disable are
+still needed when using PAN emulation using TTBR0 switching. So move
+these into the callers.
 
-  5894cf571e14 ("acpi/prmt: Use EFI runtime sandbox to invoke PRM handlers")
-
-all EFI runtime calls on arm64 are routed via the EFI runtime wrappers,
-which are serialized using the efi_runtime_lock semaphore.
-
-This means the efi_rt_lock spinlock in the arm64 arch wrapper code has
-become redundant, and can be dropped. For robustness, replace it with an
-assert that the EFI runtime lock is in fact held by 'current'.
-
+Acked-by: Will Deacon <will@kernel.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/kernel/efi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/include/asm/efi.h | 13 +++----------
+ arch/arm64/kernel/efi.c      | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+), 10 deletions(-)
 
+diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+index bcd5622aa096..aa91165ca140 100644
+--- a/arch/arm64/include/asm/efi.h
++++ b/arch/arm64/include/asm/efi.h
+@@ -126,21 +126,14 @@ static inline void efi_set_pgd(struct mm_struct *mm)
+ 		if (mm != current->active_mm) {
+ 			/*
+ 			 * Update the current thread's saved ttbr0 since it is
+-			 * restored as part of a return from exception. Enable
+-			 * access to the valid TTBR0_EL1 and invoke the errata
+-			 * workaround directly since there is no return from
+-			 * exception when invoking the EFI run-time services.
++			 * restored as part of a return from exception.
+ 			 */
+ 			update_saved_ttbr0(current, mm);
+-			uaccess_ttbr0_enable();
+-			post_ttbr_update_workaround();
+ 		} else {
+ 			/*
+-			 * Defer the switch to the current thread's TTBR0_EL1
+-			 * until uaccess_enable(). Restore the current
+-			 * thread's saved ttbr0 corresponding to its active_mm
++			 * Restore the current thread's saved ttbr0
++			 * corresponding to its active_mm
+ 			 */
+-			uaccess_ttbr0_disable();
+ 			update_saved_ttbr0(current, current->active_mm);
+ 		}
+ 	}
 diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-index 6c371b158b99..0094f5938ba6 100644
+index 0094f5938ba6..85f65d5c863c 100644
 --- a/arch/arm64/kernel/efi.c
 +++ b/arch/arm64/kernel/efi.c
-@@ -165,19 +165,16 @@ asmlinkage efi_status_t efi_handle_corrupted_x18(efi_status_t s, const char *f)
- 	return s;
- }
- 
--static DEFINE_RAW_SPINLOCK(efi_rt_lock);
--
- void arch_efi_call_virt_setup(void)
+@@ -169,12 +169,30 @@ void arch_efi_call_virt_setup(void)
  {
-+	efi_runtime_assert_lock_held();
+ 	efi_runtime_assert_lock_held();
  	efi_virtmap_load();
--	raw_spin_lock(&efi_rt_lock);
++
++	/*
++	 * Enable access to the valid TTBR0_EL1 and invoke the errata
++	 * workaround directly since there is no return from exception when
++	 * invoking the EFI run-time services.
++	 */
++	uaccess_ttbr0_enable();
++	post_ttbr_update_workaround();
++
  	__efi_fpsimd_begin();
  }
  
  void arch_efi_call_virt_teardown(void)
  {
  	__efi_fpsimd_end();
--	raw_spin_unlock(&efi_rt_lock);
++
++	/*
++	 * Defer the switch to the current thread's TTBR0_EL1 until
++	 * uaccess_enable(). Do so before efi_virtmap_unload() updates the
++	 * saved TTBR0 value, so the userland page tables are not activated
++	 * inadvertently over the back of an exception.
++	 */
++	uaccess_ttbr0_disable();
++
  	efi_virtmap_unload();
  }
  
