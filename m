@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-854810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23824BDF73E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:43:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E8CBDF744
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD5EA19C7AE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:43:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39E394FCAEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3140032E753;
-	Wed, 15 Oct 2025 15:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532CD32E73B;
+	Wed, 15 Oct 2025 15:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hCajvFSD"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aWUO9EWi"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1AB32E73E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2651A320CD5;
+	Wed, 15 Oct 2025 15:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542890; cv=none; b=VacbS57N/9nXEu+5q0fSvaSKaQDBTSEFGCtEuu3qY75bgCJgp9q5DokRpAuXQGTB3KvzHjDo+IKYTG6nofZcSOxm6r7HNTyGlW6QYfKoSMlXOap7ywTUhl3HNYgI7/70mpBoEzSa+tlDv+ABC8mn8UC4vY608HP5S8hhBoZ6+Vs=
+	t=1760543011; cv=none; b=jEMhn/jhy7HNxyk5mbbz6FmFGsum08upp755z1SC0N+UcZQpvFoLaGjp0XtZ8WSGQY5kVIy8b11BpOR1Ocwpc1Li5K3AH9Qki4RlGJszfrwU354hPtBdSWrIC8WFoYxZCsWJRFrmFVak65kem44Jk1arr18P/Xcyu1AAEsgaZOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542890; c=relaxed/simple;
-	bh=D6ezY1oWIpf8BqRc7yZfx4KemYO4s7sx6SYcChN90Cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BL3+GcL8hdnWvkIjW3uf2niaEq/FmREe1Cjk+05E7fQuKqqyWva1FdOZQ62w/ZfQly4zI1P2J7SeCcmhfsC068kkDlHk+OD4WVYtvtFKZnB2f7mFqb0fc81oDGgBF30aJyBcKg87nuBMQozyVYB76MqEZv+JOKUVL00etc8cpEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hCajvFSD; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.72.64] ([218.1.208.81])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59FFf4C72525831
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 15 Oct 2025 08:41:07 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59FFf4C72525831
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025092201; t=1760542870;
-	bh=D2DIl1u3eOZCQBBDyCfPopDmePcuHUKoOfEwvRnmPwc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hCajvFSDAUZO1vocFzsYvuz1rbhB77kJC69FiIE53ob57GrDbR3y45nL/6xP7GGP4
-	 v/yYFrTka7cS9LR2ZARiUaqPeg41tcMFabL9z0ZUiJ1AcOjtOxBMwSltrNeyLGP9mM
-	 v6INYPEjQRt737HSb7wkoNcVVHnaWdlfV134PtgMpSDXyutMhmp2gOUzvjyMawX5XV
-	 HjrnJ5wRP22w7LFgPZ+uLlOl8MBOk0nmAaDb8Fl5YSMoUqbR0juSCTpF60Hgkj4r5R
-	 3t/Nz8ZkCr4v5BalaJWdjIhxjprGQ2Su2zkTsoxMqpIkpZRAwDU6l/8891VaQByPYI
-	 KJH7zRWaARHOg==
-Message-ID: <530c3c1a-5fab-4798-830b-1fe0e8522bc9@zytor.com>
-Date: Wed, 15 Oct 2025 23:41:03 +0800
+	s=arc-20240116; t=1760543011; c=relaxed/simple;
+	bh=QZDoFK1NTUD8QdgGwQHs+Dk1cuLqUd4RxSwfnfLWmMw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=lhUUAVPW8e+hdvOVCOp0Dsf5Ae/tgZ4phbfk/+EuXkWWxz/sxihoVJtGDgjII0nAR4xcMJ4KcL9yKkxCYl5+cdYMeiDDXdN/Hp7LSkuegJ7upGqOCS+zKuGRm1yOTX9ivwqDd4XdVz7tfa5L0b15TAtuZ8sygyzX9b+6LCYIF0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aWUO9EWi; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760542982; x=1761147782; i=markus.elfring@web.de;
+	bh=QZDoFK1NTUD8QdgGwQHs+Dk1cuLqUd4RxSwfnfLWmMw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aWUO9EWijy/42Cluu+MwUSm9X4UeasL3OpWLgrCZGZbS/ZSkaM+NwoV1WR491fOV
+	 WuFAhFN0VN4H3NwN6W+ImnZ2vnMt8yESs/NTF9TfxLESOLX3KCSB6+wp595nw750Y
+	 yLQlHjtlRX+d7TIp6ZvU3xlpag8bFhj1mYbCCsjdmi0IoyZlZh7A4b2sGm7/YOfdD
+	 FJ8Pwif9nV8AjgTlGNy8BGFXlohh224hTYQj3xMbXg5FzB4zRtC+dnxthwiz6GEGG
+	 8XwxHdSyIIQMpJWOk+tt2zBThhbhfib7GBjSlxq39xQRBZ+ifd/tp9Z1Wz/hRrX7y
+	 Tobq4txcMUe/+YJU2w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.181]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsJP4-1uFJhk1CyQ-00tz9C; Wed, 15
+ Oct 2025 17:43:02 +0200
+Message-ID: <af3b4b18-ab6d-4d6c-8a1f-1c90c8744ec9@web.de>
+Date: Wed, 15 Oct 2025 17:43:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,108 +56,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpufeatures: Correct LKGS feature flag description
-To: "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@kernel.org>,
-        Xin Li <xin3.li@intel.com>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Borislav Petkov (AMD)" <bp@alien8.de>
-References: <20251015103548.10194-1-bp@kernel.org>
- <2dd4dbee-dc7d-4118-be6d-94bd6d0d5030@zytor.com>
- <329BCA65-5152-4892-AFEA-DF72DCCE80B6@zytor.com>
- <b632fc82-bef4-456b-ba62-939bda5a4361@zytor.com>
- <B72756BE-F15B-46D6-B44E-2FBC79E837C3@zytor.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <B72756BE-F15B-46D6-B44E-2FBC79E837C3@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
+ imx@lists.linux.dev, Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Shuhao Fu <sfual@cse.ust.hk>
+References: <20251014162824.2324333-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/1] i3c: fix refcount inconsistency in
+ i3c_master_register
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251014162824.2324333-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:W/RRhwjCgbZGkqjRQr/xmgwiTQgevNASJJKBC+jVROEgrTsW+y3
+ ZoC/iy05ZPskZcKMW25GuENnIVGdR1oHpUpJITiOpYR7XBDkPiJF/Y02Cs1aOi14t0fgnsR
+ G4XpzDCnYo0RtfBSN0fOqc/S3bQdQDZsQwJEP7zWB9D5Y/MHIb5O/SurIsCnasKse6nzl6F
+ 5WZ632me1kj0Ozv+rwJGw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xUAWHNbcVUM=;tuaagL1GYLq0zCf5qkGgVtMgtiY
+ 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
 
-On 10/15/2025 11:36 PM, H. Peter Anvin wrote:
-> On October 15, 2025 8:34:00 AM PDT, Xin Li <xin@zytor.com> wrote:
->> On 10/15/2025 11:18 PM, H. Peter Anvin wrote:
->>> On October 15, 2025 8:08:17 AM PDT, Xin Li <xin@zytor.com> wrote:
->>>> On 10/15/2025 6:35 PM, Borislav Petkov wrote:
->>>>> From: "Borislav Petkov (AMD)" <bp@alien8.de>
->>>>>
->>>>> Quotation marks in cpufeatures.h comments are special and when the
->>>>> comment begins with a quoted string, that string lands in /proc/cpuinfo,
->>>>> turning it into a user-visible one.
->>>>>
->>>>> The LKGS comment doesn't begin with a quoted string but just in case
->>>>> drop the quoted "kernel" in there to avoid confusion. And while at it,
->>>>> simply change the description into what the LKGS instruction does for
->>>>> more clarity.
->>>>>
->>>>> No functional changes.
->>>>>
->>>>> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
->>>>> ---
->>>>>     arch/x86/include/asm/cpufeatures.h       | 2 +-
->>>>>     tools/arch/x86/include/asm/cpufeatures.h | 2 +-
->>>>>     2 files changed, 2 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
->>>>> index 80b68f4726e7..4fb5e12dbdbf 100644
->>>>> --- a/arch/x86/include/asm/cpufeatures.h
->>>>> +++ b/arch/x86/include/asm/cpufeatures.h
->>>>> @@ -320,7 +320,7 @@
->>>>>     #define X86_FEATURE_FSRS		(12*32+11) /* Fast short REP STOSB */
->>>>>     #define X86_FEATURE_FSRC		(12*32+12) /* Fast short REP {CMPSB,SCASB} */
->>>>>     #define X86_FEATURE_FRED		(12*32+17) /* "fred" Flexible Return and Event Delivery */
->>>>> -#define X86_FEATURE_LKGS		(12*32+18) /* Load "kernel" (userspace) GS */
->>>>> +#define X86_FEATURE_LKGS		(12*32+18) /* MSR_KERNEL_GS_BASE = GS.base */
->>>>
->>>> Yes, the assignment is more clearer to us programmers.
->>>>
->>>> I'm just not sure if "correct" in the shortlog is accurate; it sounds the
->>>> existing one is wrong.  Otherwise,
->>>>
->>>> Reviewed-by: Xin Li (Intel) <xin@zytor.com>
->>>>
->>>
->>> That "assignment" is rather wrong, though; it implies that the two are identical, which they are not; nor does it imply the relationship is fixed (that is provided by FRED, not LKGS). Perhaps just call it "Load user space GS".
->>
->> I see your point, is the following assignment better?
->>
->>     MSR_KERNEL_GS_BASE = gs_sel->base
->>
-> 
-> Except that that is also wrong, because that's not all of what the instruction does. "Load user space GS" is really what it does, despite the initiate historical naming.
-> 
+> In `i3c_master_register`, a possible refcount inconsistency has been
+> identified, causing possible resource leak.
+=E2=80=A6
 
-Do you mean the load of GS attributes by LKGS is still missing?
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+
+Regards,
+Markus
 
