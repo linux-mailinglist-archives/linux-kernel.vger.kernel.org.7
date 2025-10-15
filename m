@@ -1,194 +1,157 @@
-Return-Path: <linux-kernel+bounces-854629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303DABDEEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:06:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E3FBDEEF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14C619C799B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666023B5918
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD92C21D3CC;
-	Wed, 15 Oct 2025 14:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CDA24E4A1;
+	Wed, 15 Oct 2025 14:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psScjpBb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5GY5xju"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA2F21ABC9;
-	Wed, 15 Oct 2025 14:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FB9231A41
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760537118; cv=none; b=XBVcPtLrnCDI6OjWp9PeA1/9wJ7x7QFLC51BWq71FYM/+nOqSGYxy/0cro/20UIiputUPfOgtwJpfgbUYTH4hPBXRnK4+ckFxOGQxPlfNIl06aBUSGioDdoo5017i6pyepPGSIX4h21wsqlYnLdTLzafijD5cp9VtFTTlUO4dro=
+	t=1760537160; cv=none; b=QMrraCU5NV/H3AV/as4ZdtDDTfICwsED+T+99+Cvh2N2PfE1kJJvAOEs5xTT1TeFK3ULk292z4j0fR8DWLOJP0DDhNTQz9ohFvYzewCpw12LFvPxOVNT6dt9SU8j6sPR49lkAdjd85OWvQCOVlCzk6kH1GixwOumBKlHhO+HpDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760537118; c=relaxed/simple;
-	bh=Imiy/d2gYAYXCcTyQuEFVMYa5XWR048yJFog3UE4+H0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a0oIit4QOU/H04p7a6nOZtXUisWIUoxMM8MWmeYjLgOyPFRtFHlol7GlMifRB2kt7uOsrbr6MtLKRSWfvc3XQNCeyO42PInOLblqwcyeOo8yBHtrM/eTHJXDl9a4LjrWPAyT7u61GchGropR5q+gXr9SJbfOulyRg4GDfCHKyqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psScjpBb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78819C4CEF8;
-	Wed, 15 Oct 2025 14:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760537117;
-	bh=Imiy/d2gYAYXCcTyQuEFVMYa5XWR048yJFog3UE4+H0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=psScjpBb3e1kcLI5VrkuiWJV17PKdqUVkH2BY7yFGOlYPK2AgZoyISa+/TzVfYYO3
-	 5+PHeN/sB02bv62v11abXuGEqviummglF8j9iGdgD/sq7EPkXC6/QdkRZunsohCIjS
-	 +AL3DNF1W+ayaDX4RLSqj50ToOSXdH8eIZCPax0+c1pVe5Pms0PB8E3vqvHBAIMgzO
-	 y83rOx6KOlya9DtMyXVRcq7s2DySZMQHBBHF/y4xyqDYSxAzrNVW3wQeIXw7ThtAaL
-	 D/ykNx9CJCb2EwFJJnpURIzkACECJNCFP2u4aELprI6L3llqb7s/1qqfoN6RqaheQp
-	 A0zHxkLTAJ4dA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
- Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Dhruva Gole <d-gole@ti.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Linux ACPI <linux-acpi@vger.kernel.org>
-Subject: [PATCH v1 3/3] ACPI: TAD: Improve runtime PM using guard macros
-Date: Wed, 15 Oct 2025 16:04:39 +0200
-Message-ID: <2057157.usQuhbGJ8B@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <3925484.kQq0lBPeGt@rafael.j.wysocki>
-References: <3925484.kQq0lBPeGt@rafael.j.wysocki>
+	s=arc-20240116; t=1760537160; c=relaxed/simple;
+	bh=LyufV/Oxmd5czwod8MbqOItND5kZumwbyc5sLHjKcZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cw5qE9gxze5UaDfFl4FysVhfqjDQAmnXWpspvOXGZxT3Dg4n/e3YXDF/dAQw0cDopEV91fmlEOB/5+JzeZwapa3JuWRtlTm/S6K6GpQFlHgm0AA7xzYeJOjfQU6RoWT4drdoIEgSFcEdxLYgIFrrc1ecLOs4hFgrmfPfW5Tk8yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5GY5xju; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b60971c17acso5231760a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760537157; x=1761141957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Izxb3W52HRiZqSQiVAIiwV9HWtk23rrXM2SEP63D5wg=;
+        b=D5GY5xjuHksPKlEQTlL7yVjxeTOeBF6mn4W2mb91s/hPJTZ1Msx6HQirEDtRLAy7M+
+         88GU8XaroXIwj0WU0w2IMeeAL9DwI2dxpgsuJKGnD5O91fIERueGFhVgEcdX73bdPDnb
+         0ItNV3guRfwdxwuaQIM5FEGzzfT5T4B//KnisWSSInR2EUiTskEmRAT/ki25cInYXHqt
+         YvKSpQAIL/kEvsif6x4KFVskB2Qj4a0DOzXAZPRNEAvMv9bAj+KAuAYa1he4SfsjFgZt
+         F6HMBlmOgcMyhdpKhAiqrbuhV3t90z6vILbhmWi1beFuDHRBagnT6NetqCl3+PQpHSEY
+         wYlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760537157; x=1761141957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Izxb3W52HRiZqSQiVAIiwV9HWtk23rrXM2SEP63D5wg=;
+        b=uUq+hO+q+0vAH4HlqkrbUfrRDc578++6b/1PdmZ2kZb4uPXlPRBah9lDRFriwY0zW8
+         mbJNcFwAT9ZG8uNOiWPZTjcYyAgIhYpjJ3RKcIRRH2Jr/p+8FKyNhHwXvlbTXPztKqLb
+         a3hlgNvgscF1049zzB8SEPdnFR1KQOyp6SsGatMD5TcW635Y/FKl90INYSJhxzdADXyc
+         xeJEOBN19L5F7fR4CD16h05XWAkOSVixFiaBU77hNyD3nEkbb24OJFlAK0tqFWiIgw2j
+         Pui8jZ3UsNh7ZUd25JjgtPDaJShp7evtH1ZWXmSPPb3UJZErxhrd1P2jMxemfCIscp3b
+         PBQA==
+X-Gm-Message-State: AOJu0YzxSAa11U3hpPhpU6wwH8UImp7+wU+IGhmNr30f5weesq8MkiH6
+	9lKDh7yrGMxUL1O0QUB1wyaamA5zKLgUklzCAWMPJCjhvnl1HGnEhEwGGbYf5rKQYy5loDUTrX1
+	Q6jNEAEFPyMyi9UOMttCdRyGxSjK9gK4=
+X-Gm-Gg: ASbGncthSTSsP0+cNbuXYGqYXEbndUSkv4fKNwp8ayL8My8DRLWGlTYTJ439UTTZ8av
+	9HsJcL/BbZvPcI+Bq1Op67olXeJ6ItmGX6OL9F23auNZwzGWt8CrKYaAa/JknxFL0vF0G4rI2lm
+	EKZEUYWanfujbHortd+1YY8QVaohuspQ6s68MwH2wmtSCVHKSpaM0kCsvHDAxN1GBRcN06jOH6W
+	Eft+NJ1PSnFTZuaW44XnIieb0Mg/MD2flaKk+n2WrEEea0/bZ0szn1j
+X-Google-Smtp-Source: AGHT+IH80BdRo+6CXpDD4C5IS3FGJwcCjZorcKzoOP4xMkMEbleLUevb8W36dulFWLdsi+QxlI8j9qgAZsAP3mY+ua0=
+X-Received: by 2002:a17:903:1b0b:b0:25c:d4b6:f117 with SMTP id
+ d9443c01a7336-290272c1ab0mr388440805ad.35.1760537156603; Wed, 15 Oct 2025
+ 07:05:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20251015015712.3996346-1-rrnewton@gmail.com> <20251015015712.3996346-2-rrnewton@gmail.com>
+ <a469d0fb-62f2-4286-901f-b7a634d3e0c4@arm.com>
+In-Reply-To: <a469d0fb-62f2-4286-901f-b7a634d3e0c4@arm.com>
+Reply-To: rrnewton@gmail.com
+From: Ryan Newton <rrnewton@gmail.com>
+Date: Wed, 15 Oct 2025 10:05:28 -0400
+X-Gm-Features: AS18NWDd9xa7otKnSJo4hIQc7ltt0-qgZkcRUOmzit0PnMit8CE93FLvuAfl8oA
+Message-ID: <CACYs5Aax6X_8hrYtjC4yAMy5K6e3CwxSjEiW3mK8wfePq3oyBg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] sched_ext: Add lockless peek operation for DSQs
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, tj@kernel.org, 
+	arighi@nvidia.com, newton@meta.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Oct 15, 2025 at 5:46=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+> > +/**
+> > + * scx_bpf_dsq_peek - Lockless peek at the first element.
+> > + * @dsq_id: DSQ to examine.
+> > + *
+> > + * Read the first element in the DSQ. This is semantically equivalent =
+to using
+> > + * the DSQ iterator, but is lockfree.
+> > + *
+> > + * Returns the pointer, or NULL indicates an empty queue OR internal e=
+rror.
+> > + */
+> > +__bpf_kfunc struct task_struct *scx_bpf_dsq_peek(u64 dsq_id)
+> > +{
+>
+> Obviously there's no guarantee that scx_bpf_dsq_peek() will return the ta=
+sk you're gonna
+> get when moving a task to another DSQ or a local one. It's pretty obvious=
+ from the kernel
+> perspective, but I wonder if it's worth documenting here too.
 
-Use guard pm_runtime_active_try to simplify runtime PM cleanup and
-implement runtime resume error handling in multiple places.
+Hello Christian, thanks for looking at the patches.
 
-Also use guard pm_runtime_noresume to simplify acpi_tad_remove().
+Absolutely, whenever using a lockless operation you have to watch out
+for TOCTOU bugs. In the schedulers we've experimented with, doing a
+sweep of peeks just gives you a higher chance of getting what you're
+looking for when you subsequently lock the remote DSQ for
+popping/stealing a task. I can add a reminder in the comment on the
+function.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/acpi_tad.c |   45 +++++++++++++--------------------------------
- 1 file changed, 13 insertions(+), 32 deletions(-)
+> > +/*
+> > + * v6.19: Introduce lockless peek API for user DSQs.
+> > + *
+> > + * Preserve the following macro until v6.21.
+> > + */
+> > +static inline struct task_struct *__COMPAT_scx_bpf_dsq_peek(u64 dsq_id=
+)
+> > +{
+> > +     struct task_struct *p =3D NULL;
+> > +     struct bpf_iter_scx_dsq it;
+> > +
+> > +     if (bpf_ksym_exists(scx_bpf_dsq_peek))
+> > +             return scx_bpf_dsq_peek(dsq_id);
+> > +     if (!bpf_iter_scx_dsq_new(&it, dsq_id, 0))
+> > +             p =3D bpf_iter_scx_dsq_next(&it);
+> > +     bpf_iter_scx_dsq_destroy(&it);
+> > +     return p;
+> > +}
+> > +
+> I think there's an argument to be made for this to just return NULL on
+> !bpf_ksym_exists(scx_bpf_dsq_peek), the caller needs to handle that anywa=
+y
+> and at least it's guaranteed to be lockfree then?
+> I don't have a strong leaning either way, probably is fine if documented.
 
---- a/drivers/acpi/acpi_tad.c
-+++ b/drivers/acpi/acpi_tad.c
-@@ -90,12 +90,9 @@ static int acpi_tad_set_real_time(struct
- 	args[0].buffer.pointer = (u8 *)rt;
- 	args[0].buffer.length = sizeof(*rt);
- 
--	pm_runtime_get_sync(dev);
-+	PM_RUNTIME_ACQUIRE_OR_FAIL(dev, -ENXIO);
- 
- 	status = acpi_evaluate_integer(handle, "_SRT", &arg_list, &retval);
--
--	pm_runtime_put_sync(dev);
--
- 	if (ACPI_FAILURE(status) || retval)
- 		return -EIO;
- 
-@@ -111,12 +108,9 @@ static int acpi_tad_get_real_time(struct
- 	acpi_status status;
- 	int ret = -EIO;
- 
--	pm_runtime_get_sync(dev);
-+	PM_RUNTIME_ACQUIRE_OR_FAIL(dev, -ENXIO);
- 
- 	status = acpi_evaluate_object(handle, "_GRT", NULL, &output);
--
--	pm_runtime_put_sync(dev);
--
- 	if (ACPI_FAILURE(status))
- 		goto out_free;
- 
-@@ -266,12 +260,9 @@ static int acpi_tad_wake_set(struct devi
- 	args[0].integer.value = timer_id;
- 	args[1].integer.value = value;
- 
--	pm_runtime_get_sync(dev);
-+	PM_RUNTIME_ACQUIRE_OR_FAIL(dev, -ENXIO);
- 
- 	status = acpi_evaluate_integer(handle, method, &arg_list, &retval);
--
--	pm_runtime_put_sync(dev);
--
- 	if (ACPI_FAILURE(status) || retval)
- 		return -EIO;
- 
-@@ -314,12 +305,9 @@ static ssize_t acpi_tad_wake_read(struct
- 
- 	args[0].integer.value = timer_id;
- 
--	pm_runtime_get_sync(dev);
-+	PM_RUNTIME_ACQUIRE_OR_FAIL(dev, -ENXIO);
- 
- 	status = acpi_evaluate_integer(handle, method, &arg_list, &retval);
--
--	pm_runtime_put_sync(dev);
--
- 	if (ACPI_FAILURE(status))
- 		return -EIO;
- 
-@@ -370,12 +358,9 @@ static int acpi_tad_clear_status(struct
- 
- 	args[0].integer.value = timer_id;
- 
--	pm_runtime_get_sync(dev);
-+	PM_RUNTIME_ACQUIRE_OR_FAIL(dev, -ENXIO);
- 
- 	status = acpi_evaluate_integer(handle, "_CWS", &arg_list, &retval);
--
--	pm_runtime_put_sync(dev);
--
- 	if (ACPI_FAILURE(status) || retval)
- 		return -EIO;
- 
-@@ -411,12 +396,9 @@ static ssize_t acpi_tad_status_read(stru
- 
- 	args[0].integer.value = timer_id;
- 
--	pm_runtime_get_sync(dev);
-+	PM_RUNTIME_ACQUIRE_OR_FAIL(dev, -ENXIO);
- 
- 	status = acpi_evaluate_integer(handle, "_GWS", &arg_list, &retval);
--
--	pm_runtime_put_sync(dev);
--
- 	if (ACPI_FAILURE(status))
- 		return -EIO;
- 
-@@ -571,16 +553,15 @@ static void acpi_tad_remove(struct platf
- 
- 	sysfs_remove_group(&dev->kobj, &acpi_tad_attr_group);
- 
--	pm_runtime_get_noresume(dev);
--
--	acpi_tad_disable_timer(dev, ACPI_TAD_AC_TIMER);
--	acpi_tad_clear_status(dev, ACPI_TAD_AC_TIMER);
--	if (dd->capabilities & ACPI_TAD_DC_WAKE) {
--		acpi_tad_disable_timer(dev, ACPI_TAD_DC_TIMER);
--		acpi_tad_clear_status(dev, ACPI_TAD_DC_TIMER);
-+	scoped_guard(pm_runtime_noresume, dev) {
-+		acpi_tad_disable_timer(dev, ACPI_TAD_AC_TIMER);
-+		acpi_tad_clear_status(dev, ACPI_TAD_AC_TIMER);
-+		if (dd->capabilities & ACPI_TAD_DC_WAKE) {
-+			acpi_tad_disable_timer(dev, ACPI_TAD_DC_TIMER);
-+			acpi_tad_clear_status(dev, ACPI_TAD_DC_TIMER);
-+		}
- 	}
- 
--	pm_runtime_put_noidle(dev);
- 	pm_runtime_suspend(dev);
- 	pm_runtime_disable(dev);
- 	acpi_remove_cmos_rtc_space_handler(handle);
+We went back and forth on this patch a lot, and did explore versions
+where peek is "best effort" and its semantics allow it to return NULL
+for any reason. But that provides much less information to the caller,
+because now NULL is supposed to indicate that the queue was empty at a
+point in time. For that reason we ended up with this version where
+peek provides both positive info (something is/was there) and negative
+(nothing is/was there).
 
-
-
+Best,
+ -Ryan
 
