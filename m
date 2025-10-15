@@ -1,149 +1,230 @@
-Return-Path: <linux-kernel+bounces-853981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02419BDD34E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C41BDCBBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20A074F72F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C703A5299
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C17314B7C;
-	Wed, 15 Oct 2025 07:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="zepJoI7h";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="RGmrBKkv"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635E93148DF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760514731; cv=pass; b=iURx7fTPcToU1nd22F/v7cuHGN0jaEPRaP27IktngU+Ba1XQDdxXL8tuu+opX9DvBnPcOKgvKjp3ng2XhULNnY893ikLzsZ2s7PApaJZCJgjme6gOXuwUO+CL9qlQkjdwVBAOiCx06es3I/UPvZh0TiUpdavmKrhsTIo8m0t43U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760514731; c=relaxed/simple;
-	bh=DRH7iMOTbuY1/iWEix7sZhqd6n/2Tw1ybJZR6DrwRcU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RW4+Ioiwb9/3b5dsEi+9qDAbtLNJn+PjpZmq2c/59zn2JUxgZ9emmyCkLK7PbQgvqh+eNbGmGVcL083/N8z+AOX/Si+bx0W38yQr3ThdSVdjohKgWMsftzDozKCwjOR1nHtq1L2u3dDiDP0abhTnuHZvjkEZpm8N/z7LkBIhnPM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=zepJoI7h; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=RGmrBKkv; arc=pass smtp.client-ip=185.56.87.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-61nr.prod.antispam.mailspamprotection.com; s=arckey; t=1760514729;
-	 b=rFz6m+6P+Hs70SIimoTjffaxK7KkkGY1Wk5cR7mEo1y8DpxR+vGaw1Ul+SPFgjsri0yBY2mZ0I
-	  SaD5vJDWf/TcjrKES3bkfxBT3soQWNeE1iPAkZMnlwVj/gst2/MBp8Qy+T5KERoik8dih9BNWw
-	  sDVEIUTHa67S9gq5BVISy5139/OwCWQ61OZbgaoGxj5f7h2omV3Lap0UW7MOEzTtV5J3U1+SVQ
-	  WZXi8R4fGcJkkPO5EW9N8FTatjf4C+/EzCweLo8yQYs88LI5abrpux95YMYTv0OJr68+1iT/A+
-	  k7Y+I7HRVDLBx4OWo3qlCH0lgrwb5SS9PXrSS5y72Lh5gw==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-61nr.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-61nr.prod.antispam.mailspamprotection.com; s=arckey; t=1760514729;
-	bh=DRH7iMOTbuY1/iWEix7sZhqd6n/2Tw1ybJZR6DrwRcU=;
-	h=Cc:To:In-Reply-To:References:Message-ID:Content-Transfer-Encoding:
-	  Content-Type:MIME-Version:Subject:Date:From:DKIM-Signature:DKIM-Signature;
-	b=hv8IetHalDO3QOAs1GNmuVaVp2nX0XYN+jyxgmlKc6NDjv94AyhZjiBPyTSPQF2VZbqdhopqy4
-	  6qPaDRY7/iMlAxdgvQdxcYH9iMXK/NhmfB5VD6FjTlDl5qP5hDx7kkwomQlLE/rALLAGe/dVdD
-	  oKjCExqnJN2GrtbifRiuy//DIQOqybmqDlRmzntH/BO1fCxH+HMqC15nIjv5MDgAv4PLhsMmdI
-	  mlol2DgqGurEptDjOxinEA3vL53Y6hLkIAQ3YhSKhzOekGqgTYgOlv00SS20DK1/3hQE4bCb/a
-	  EiSNu6S8RhLggA7wkoKshWSDNXg7kq6+tqbpKaBCF83DJg==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject
-	:Date:From:Reply-To:List-Unsubscribe;
-	bh=kdy+0w++K99irbhKozpIsd52YcoplzuImJedZzCCHOA=; b=zepJoI7hQJ2/eINEgF+I4hPbs+
-	H+O2aANqqa2L+fNErdytYU5S13TkJF/Y0+lpAmnh0VifZKfe243GE/5aQLhi6s9SasqUIM/eiWoEv
-	kbf3v5tm+hQZr8u7PcCGo/fTtVeSaP7L5AlER61/GibtlREXmzmabo7D10X6Pgo8lli8=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-61nr.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1v8lJy-00000002yJv-318u
-	for linux-kernel@vger.kernel.org;
-	Tue, 14 Oct 2025 20:08:37 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Cc:To:Subject:Date:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=kdy+0w++K99irbhKozpIsd52YcoplzuImJedZzCCHOA=; b=RGmrBKkvWCWAenzMbjO3HDgGK5
-	CTfPntjK5yx0X/djbDQ2g1/47OESLQiGjrNdjRkeAB+mwd2KvOZbYCPQ/XITegvdvPLVdX73qQVO2
-	ntYr5cUCf89yXjbSwdzTyxkJMyk9NC2YfRaIM/HHdjdFzIMHrPp+OIzwkUkVwrzeHKYw=;
-Received: from [87.16.13.60] (port=64127 helo=fedora.fritz.box)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1v8lJs-00000000E00-22Lx;
-	Tue, 14 Oct 2025 20:08:28 +0000
-From: Francesco Valla <francesco@valla.it>
-Date: Tue, 14 Oct 2025 22:08:14 +0200
-Subject: [PATCH v2 3/3] drm/panic: avoid WARN when checking format support
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4F731195B;
+	Wed, 15 Oct 2025 06:30:24 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B90305976;
+	Wed, 15 Oct 2025 06:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760509824; cv=none; b=sL81StB0ZRc6l1pN4EFZ5f1MtCZJsCbkL4vtx4zfDnRcB1VMwametVuNKXCPpeBh90jNdt6dYsomYTAeqAWAPy15VJ4C+Vjt0unh8bB0EnENAPevGKusDSRFD6FxQkR+LdYw1u4PrbSCvN8b45QOfm3ktztN0aTkNmQ5Xex0uMQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760509824; c=relaxed/simple;
+	bh=ghyH7Mw21tZMDfsCR/q5qBCvDT8hj65ATGvsufe9qvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y/jxS1+SKA7FqbP7IKMrZQKuyN4pGyW5bW64wQ5XPQixeYwVbsZhSYRO3VWgJ9zavQK1tBfvaf8Rrx2+/AoNZ/uXMuSA3Pj/KxRwMAV6zSBf63Hjcvx91bdTq3qVDkEfJ6XaZH7nW6AdrIzcYX2aG43R20H9eQfiT28dpCuye0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.185])
+	by gateway (Coremail) with SMTP id _____8BxF9F4P+9ohE4WAA--.47871S3;
+	Wed, 15 Oct 2025 14:30:16 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.185])
+	by front1 (Coremail) with SMTP id qMiowJDxbMF3P+9ouf3kAA--.57346S2;
+	Wed, 15 Oct 2025 14:30:15 +0800 (CST)
+From: Song Gao <gaosong@loongson.cn>
+To: maobibo@loongson.cn,
+	chenhuacai@kernel.org
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	kernel@xen0n.name,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] LoongArch: KVM: Add AVEC support
+Date: Wed, 15 Oct 2025 14:06:26 +0800
+Message-Id: <20251015060626.3915824-1-gaosong@loongson.cn>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251014-drm_draw_conv_check-v2-3-05bef3eb06fb@valla.it>
-References: <20251014-drm_draw_conv_check-v2-0-05bef3eb06fb@valla.it>
-In-Reply-To: <20251014-drm_draw_conv_check-v2-0-05bef3eb06fb@valla.it>
-To: Jocelyn Falempe <jfalempe@redhat.com>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Francesco Valla <francesco@valla.it>
-X-Mailer: b4 0.14.2
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 58b95179e40f133486e8c7aed2e284b9
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1v8lJy-00000002yJv-318u-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-61nr.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxbMF3P+9ouf3kAA--.57346S2
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Use drm_draw_can_convert_from_xrgb8888() instead of
-drm_draw_color_from_xrgb8888() while checking if a color format is
-usable. This avoids a WARN in case the first format is not usable.
+Add cpu_has_msgint() to check whether the host cpu supported avec,
+and restore/save CSR_MSGIS0-CSR_MSGIS3.
 
-Signed-off-by: Francesco Valla <francesco@valla.it>
+Signed-off-by: Song Gao <gaosong@loongson.cn>
 ---
- drivers/gpu/drm/drm_panic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/loongarch/include/asm/kvm_host.h |  4 ++++
+ arch/loongarch/include/asm/kvm_vcpu.h |  1 +
+ arch/loongarch/include/uapi/asm/kvm.h |  1 +
+ arch/loongarch/kvm/interrupt.c        | 15 +++++++++++++--
+ arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
+ arch/loongarch/kvm/vm.c               |  4 ++++
+ 6 files changed, 40 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 1d6312fa142935fcf763381920ad889ca4cf4b27..4ba961e445e576d03cfb58953eead90d32b40151 100644
---- a/drivers/gpu/drm/drm_panic.c
-+++ b/drivers/gpu/drm/drm_panic.c
-@@ -785,7 +785,7 @@ static bool drm_panic_is_format_supported(const struct drm_format_info *format)
- {
- 	if (format->num_planes != 1)
- 		return false;
--	return drm_draw_color_from_xrgb8888(0xffffff, format->format) != 0;
-+	return drm_draw_can_convert_from_xrgb8888(format->format);
+diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+index 0cecbd038bb3..827e204bdeb3 100644
+--- a/arch/loongarch/include/asm/kvm_host.h
++++ b/arch/loongarch/include/asm/kvm_host.h
+@@ -283,6 +283,10 @@ static inline bool kvm_guest_has_lbt(struct kvm_vcpu_arch *arch)
+ 	return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | CPUCFG2_MIPSBT);
  }
  
- static void draw_panic_dispatch(struct drm_scanout_buffer *sb)
++static inline bool cpu_has_msgint(void)
++{
++	return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
++}
+ static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
+ {
+ 	return arch->cpucfg[6] & CPUCFG6_PMP;
+diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
+index f1efd7cfbc20..3784ab4ccdb5 100644
+--- a/arch/loongarch/include/asm/kvm_vcpu.h
++++ b/arch/loongarch/include/asm/kvm_vcpu.h
+@@ -15,6 +15,7 @@
+ #define CPU_PMU				(_ULCAST_(1) << 10)
+ #define CPU_TIMER			(_ULCAST_(1) << 11)
+ #define CPU_IPI				(_ULCAST_(1) << 12)
++#define CPU_AVEC                        (_ULCAST_(1) << 14)
+ 
+ /* Controlled by 0x52 guest exception VIP aligned to estat bit 5~12 */
+ #define CPU_IP0				(_ULCAST_(1))
+diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+index 57ba1a563bb1..de6c3f18e40a 100644
+--- a/arch/loongarch/include/uapi/asm/kvm.h
++++ b/arch/loongarch/include/uapi/asm/kvm.h
+@@ -104,6 +104,7 @@ struct kvm_fpu {
+ #define  KVM_LOONGARCH_VM_FEAT_PV_IPI		6
+ #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME	7
+ #define  KVM_LOONGARCH_VM_FEAT_PTW		8
++#define  KVM_LOONGARCH_VM_FEAT_MSGINT		9
+ 
+ /* Device Control API on vcpu fd */
+ #define KVM_LOONGARCH_VCPU_CPUCFG	0
+diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrupt.c
+index 8462083f0301..f586f421bc19 100644
+--- a/arch/loongarch/kvm/interrupt.c
++++ b/arch/loongarch/kvm/interrupt.c
+@@ -21,6 +21,7 @@ static unsigned int priority_to_irq[EXCCODE_INT_NUM] = {
+ 	[INT_HWI5]	= CPU_IP5,
+ 	[INT_HWI6]	= CPU_IP6,
+ 	[INT_HWI7]	= CPU_IP7,
++	[INT_AVEC]	= CPU_AVEC,
+ };
+ 
+ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
+@@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
+ 	if (priority < EXCCODE_INT_NUM)
+ 		irq = priority_to_irq[priority];
+ 
++	if (cpu_has_msgint() && (priority == INT_AVEC)) {
++		set_gcsr_estat(irq);
++		return 1;
++	}
++
+ 	switch (priority) {
+ 	case INT_TI:
+ 	case INT_IPI:
+@@ -58,6 +64,11 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, unsigned int priority)
+ 	if (priority < EXCCODE_INT_NUM)
+ 		irq = priority_to_irq[priority];
+ 
++	if (cpu_has_msgint() && (priority == INT_AVEC)) {
++		clear_gcsr_estat(irq);
++		return 1;
++	}
++
+ 	switch (priority) {
+ 	case INT_TI:
+ 	case INT_IPI:
+@@ -83,10 +94,10 @@ void kvm_deliver_intr(struct kvm_vcpu *vcpu)
+ 	unsigned long *pending = &vcpu->arch.irq_pending;
+ 	unsigned long *pending_clr = &vcpu->arch.irq_clear;
+ 
+-	for_each_set_bit(priority, pending_clr, INT_IPI + 1)
++	for_each_set_bit(priority, pending_clr, EXCCODE_INT_NUM)
+ 		kvm_irq_clear(vcpu, priority);
+ 
+-	for_each_set_bit(priority, pending, INT_IPI + 1)
++	for_each_set_bit(priority, pending, EXCCODE_INT_NUM)
+ 		kvm_irq_deliver(vcpu, priority);
+ }
+ 
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index 30e3b089a596..226c735155be 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
+ 		*v = GENMASK(31, 0);
+ 		return 0;
+ 	case LOONGARCH_CPUCFG1:
+-		/* CPUCFG1_MSGINT is not supported by KVM */
+-		*v = GENMASK(25, 0);
++		*v = GENMASK(26, 0);
+ 		return 0;
+ 	case LOONGARCH_CPUCFG2:
+ 		/* CPUCFG2 features unconditionally supported by KVM */
+@@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
+ 		return -EINVAL;
+ 
+ 	switch (id) {
++	case LOONGARCH_CPUCFG1:
++		if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
++			return -EINVAL;
++		return 0;
+ 	case LOONGARCH_CPUCFG2:
+ 		if (!(val & CPUCFG2_LLFTP))
+ 			/* Guests must have a constant timer */
+@@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+ 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
+ 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
++	if (cpu_has_msgint()) {
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
++		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
++	}
+ 
+ 	/* Restore Root.GINTC from unused Guest.GINTC register */
+ 	write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
+@@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu *vcpu, int cpu)
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
++	if (cpu_has_msgint()) {
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
++		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
++	}
+ 
+ 	vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
+ 
+diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+index a49b1c1a3dd1..ec92e6f3cf92 100644
+--- a/arch/loongarch/kvm/vm.c
++++ b/arch/loongarch/kvm/vm.c
+@@ -150,6 +150,10 @@ static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr
+ 		if (cpu_has_ptw)
+ 			return 0;
+ 		return -ENXIO;
++	case KVM_LOONGARCH_VM_FEAT_MSGINT:
++		if (cpu_has_msgint())
++			return 0;
++		return -ENXIO;
+ 	default:
+ 		return -ENXIO;
+ 	}
 
+base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
 -- 
-2.51.0
+2.39.3
 
 
