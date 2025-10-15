@@ -1,63 +1,71 @@
-Return-Path: <linux-kernel+bounces-853822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EECBDCACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:18:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30C3BDCB46
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 999C34E7698
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:18:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A70794F39CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1482FF16B;
-	Wed, 15 Oct 2025 06:18:09 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633AE3101BC;
+	Wed, 15 Oct 2025 06:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yJ57L2gO"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4571623ABA8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C344F30F93D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509088; cv=none; b=DVQiPvc/f1tg6oTTRTA1m/KuYxWHSZalMuhYsVog8gkuPJSMmljcF+ZG3XjFKqItNZsynelc0Kim1zvFT6to2yKtMnL3sw/c6ng9EdIhzgOBBNo254hv9yg6V4r0/D7wThI9L6hXEu6uiibxjmamxClNpsYiR5Srtotauzq7/lk=
+	t=1760509401; cv=none; b=aEeNrJKECsd4Hr2M/Fu9zH09FJJz8iO2GLzkw2Au/egB4g0h+V8IOs1cn/oHLTP7MzGM+5Gcl5/n+60hhU8nFyPLx9V3EuKP8p+rr7HJM3IxueAYg4qDI27NqRJ4DE5qUbj01U8z6e0tqBPX73AbpeBmaQFV4WomYoSSMDPe7us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509088; c=relaxed/simple;
-	bh=00vkzuLktB6wmqLHFAXh0IaPTK1wbG12G/QsgWkAQr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fPeZzydR6B2GMwYxHmBRKEHKbBBvJ2iv0fqGt4lE9D9MgpN3ZVGGd3hbDpCw9Sr0DicTwaGh1GowcZlbcr6EwC01LggrY7v4K+Z9Y17hZr4p+Vzq/xH8PcMxtd2qd9uRfSkjD9GLV+KW4Z2MQn8/qnlvDqm0a9eulN1krmrRyMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
-X-QQ-mid: esmtpgz13t1760509078t710fc538
-X-QQ-Originating-IP: fKuI2SoLTPBzi9ZxhQ0J1CaSp3/phsZPssuIEn3Y994=
-Received: from GPU-Server-A6000.. ( [202.201.1.132])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 15 Oct 2025 14:17:56 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13976680870695852025
-EX-QQ-RecipientCnt: 14
-From: Yuan Tan <tanyuan@tinylab.org>
-To: arnd@arndb.de,
-	masahiroy@kernel.org,
-	nathan@kernel.org,
-	palmer@dabbelt.com,
-	linux-kbuild@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	i@maskray.me,
-	tanyuan@tinylab.org,
-	falcon@tinylab.org,
-	ronbogo@outlook.com,
-	z1652074432@gmail.com,
-	lx24@stu.ynu.edu.cn
-Subject: [PATCH v2 2/8] scripts/syscalltbl.sh: add optional --used-syscalls argument for syscall trimming
-Date: Wed, 15 Oct 2025 14:17:49 +0800
-Message-ID: <B120EFEBD27B9B67+6751ec7c12d04aafe1de79502b984ed65013f6cf.1760463245.git.tanyuan@tinylab.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
-References: <cover.1760463245.git.tanyuan@tinylab.org>
+	s=arc-20240116; t=1760509401; c=relaxed/simple;
+	bh=3TbXyEjbB5x4IoiU+lyj/IH290GMBCHYGGlmj4kiUZI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=R3rvR1MDUATYtPMf281YInxbdbbQ/hvL4TtPreY/0m/YDCTlgdX0iuR+Ol3fQsGyTiOVzkhZNnp4++OCxuX4Sao93QbUhR/ct8hdjYUniz2lp4kiPN0C8cBwaNnP7U0tq0eQy8x/P46nlY+N60Qboz9J814kM0sb8ACrNBIfEiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yJ57L2gO; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1760509084; bh=uTmxsU4FCYCxUxnqtxzx1iTBk4dc74XIANCYzN6ezh4=;
+	h=From:To:Cc:Subject:Date;
+	b=yJ57L2gOkJJ3EQbnmOgskVK0ZwRW9a0RZBCAwp7zK+86PTvOOIrv3xXjoT2LFjYK0
+	 P//ogs5Xem5SuzA877f9TbvyMa29xAGA3FjNQv89umB6V9MYepgm3PaMFC8CnN2Qqt
+	 mVtebu9HxI90nN9xKYRVPGiGfc7P+MN/C01z3fYk=
+Received: from localhost.localdomain ([116.128.244.171])
+	by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
+	id 4822B211; Wed, 15 Oct 2025 14:18:02 +0800
+X-QQ-mid: xmsmtpt1760509082tmod51s2c
+Message-ID: <tencent_2376993D9FC06A3616A4F981B3DE1C599607@qq.com>
+X-QQ-XMAILINFO: M1rD3f8svNznB6TulpLGANsC5apCVrnCYoz7eHxXOi3H4mBnnewlVjXxDLPhF6
+	 /xENGm+3hwSHpS4m7mRwS8s3GPhV4lkc6SOp3xPGedvyv3dtQQTbB22wKnQ35zUyRe3LPiGZWqQU
+	 0ccxZjz354Lfb+Qh+rTz0xQBYsIxGmoIXKHOGGTKR580ahDTwDMZlnP4lowScQHdoumRfEUHUGXx
+	 td1f+2fl/WhI9u+UsJ1GlJ4wd8qHjLuUrXhPqqyPZ3ybbFbGoWO0JFlAkuJ415ZXe29/toJNZdF9
+	 SADPOMiGgw13xGoEmpFc1tUmk0vDKP2aH+Jhb+0ZkNiQ4nJnVBFaztc6iKsJckj5wRIa3vzdTFyY
+	 CmRJT6lXuM6Judn3nvCehYbIa+W9nCFCcZqStkK6+vv2J0YrlgVWWwv0eFAaNlKCduYZuKeLFOXf
+	 mf7ugPAvu3Bz9CezHse0WeQMzOgW6xW4rGBKQMgcET02FfjrAwevS8gte3Kn97dnArGwxYjqKc6N
+	 akjTYe8ulUbLElxzoCgwiQmRajDsgiJJXhTpZKlJfYsejEXBqbcfbCCT49eKbT3+FbRCvZfMBLR7
+	 BliQMZ+5nue2C/xpSVAAL/EAFn2XbURwSoq1/BA6Cq+Eg2IFWUdR7Msg248aFH6w4hWZNnqqgAJ7
+	 lbdMXlJHLJnOlEteF5sWHs8tpLr3l5yMR4yrXgD2c3Jre5GEovxaNvlqObx0C70YO9qi7Art8wH+
+	 IGmRGTtqF6WW63LKzh7U+e3+GnfV0hiIBSx4U+nzyJBv6wFYblXwDr91TkmUzwdeIisj4mBcud8s
+	 VKf9d/3/WmwWPQywLODBFMX7GpEbrTjqmQm0RsDlK5lvMZ3Gnqh9+go0A7msaCt358xL6sDxb1EJ
+	 CjlgTOYmmL49UsvCqx8K/Khaxt2IGpinnjKYLF39+JZQ19UC5b+P8NIOYemPvmvHClwacif77SFa
+	 0S0r6VLz6kn6LEKod1F2pVcPZBfnVCTcT5s3R8iqVKdwNSyhjL1Av+7aigDPM+zx0mR0IKWEIwRp
+	 cass4Mac2RMIgrXkF/qc5Zv++6NtBzgDglQlNguxGIfERWkI2i61PqOYKslTM=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Haofeng Li <920484857@qq.com>
+To: John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Haofeng Li <13266079573@163.com>,
+	Haofeng Li <lihaofeng@kylinos.cn>
+Subject: [PATCH] time: fix aux clocks sysfs initialization loop bound
+Date: Wed, 15 Oct 2025 14:17:53 +0800
+X-OQ-MSGID: <20251015061753.2006741-1-920484857@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,101 +73,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: OdpilHhB3Diujx6EYo5q9GAN9mQcXgCX/4RNI2R8qvLGIdAMNIl4enbk
-	AsHLUmw1w6RnvGHCchSkfkO/OA7KY/Mo0wuW7bIJ3DBTbPKjyE4DhGwpBNuu08792jXdkHr
-	qoyPEEDtFOzO+9T9fJei3xJk97Yj7/3XWD5P/QlOSg6qcOFWqbmttwmffAnSx8isIcgdKxZ
-	64bfzpjO7Ju8t7Ing8YzOThSdmVSiy6J/Au/IMHiJdHWtgBIkTLxHvNC9llG9ZTGBu6D2he
-	OT/C4ZWMG1UQlQAfZa6Wq1y81SOyMBkvHVMpUGVV7PrxP2OYuOAhi+lra+xKJfQUEx9ZIF5
-	2W8/NQBZnxcyqfcvhSzmxzFkm1rrbQ6eWVi/jtyJhl8FVsv7hqTHZ6Wr4p4S4jHG4PIvvyl
-	fl8DZCjFOuuLIKmKHZThDOxhFP1ofqSifYvvRk1dwl+0jG836Xx+TA9g7QfPQECqMLCpFmK
-	n+8cpj4ldP+Lp24aAENDqf088+7AK7vK2j19diR1g+wF1t1RInLhdYGrVc57DwcnuZUAbWB
-	9NnpP1/bK5SoEdBTTVpPKY7RSOwyhEnXJR1sqM5p4IkYlGgxa7vpUMEeuyM/tQJzbQWo2u3
-	u+j4v4u1gHFggadj2LaWYHL5fUXB5t7Qbw71O9gmxqgtll2gLpGnhiDln81i/lVL8GO62fA
-	q/K3xo5Ny+eVOE2Bev5+AxgDq6LkvCFrr2GsJJqDcWpcO15Km2p6yBgbDrxuUbNUfYiHrlG
-	67oEpjBOp8BOlVPPZlCnsZwCeiWhBoJwFJB8X/mVyJq34Vx59+uYFb26wGgyH3hVb1MUm3J
-	0tiCHato75MlnSiIqEx0Wcxeb4e6CuoUCxx9zoBh7kAfJYp3bixGhVw3S0yYubzcebdxwyT
-	wdvVPQ92Bh5wTslbaoVuEz6sanCuQn8x5ZPGvfu7zGZOstNcp4oceEwlQCG1rToO4juEL0o
-	wiDrBoLf6ue1xZFLMU0n6w1fLtF1CMtjr4JTYvatLYZNS/qGKIywSOmX2MRFvN3gD+cQ=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
 
-From: Yuhang Zheng <z1652074432@gmail.com>
+From: Haofeng Li <lihaofeng@kylinos.cn>
 
-Add support for an optional `--used-syscalls` argument to
-scripts/syscalltbl.sh. When provided, the argument takes a comma-separated
-list of syscall names that should remain enabled in the generated syscall
-table. Any syscall not present in the list will be replaced with a
-`__SYSCALL(nr, sys_ni_syscall)` entry.
+The loop in tk_aux_sysfs_init() uses `i <= MAX_AUX_CLOCKS` as the
+termination condition, which results in 9 iterations (i=0 to 8)
+when MAX_AUX_CLOCKS is defined as 8. However, the kernel is designed
+to support only up to 8 auxiliary clocks.
 
-This enables selective system call table generation when
-CONFIG_TRIM_UNUSED_SYSCALLS is set.
+This off-by-one error causes the creation of a 9th sysfs entry
+that exceeds the intended auxiliary clock range.
 
-Signed-off-by: Yuhang Zheng <z1652074432@gmail.com>
-Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
-Signed-off-by: Zhangjin Wu <falcon@tinylab.org>
+Fix the loop bound to use `i < MAX_AUX_CLOCKS` to ensure exactly
+8 auxiliary clock entries are created, matching the design
+specification.
+
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
 ---
- scripts/syscalltbl.sh | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ kernel/time/timekeeping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/syscalltbl.sh b/scripts/syscalltbl.sh
-index 6a903b87a7c2..27d8dfce5748 100755
---- a/scripts/syscalltbl.sh
-+++ b/scripts/syscalltbl.sh
-@@ -22,12 +22,14 @@ usage() {
- 	echo >&2 "  OUTFILE   output header file"
- 	echo >&2
- 	echo >&2 "options:"
--	echo >&2 "  --abis ABIS        ABI(s) to handle (By default, all lines are handled)"
-+	echo >&2 "  --abis ABIS                ABI(s) to handle (By default, all lines are handled)"
-+	echo >&2 "  --used-syscalls SYSCALLS   Keep only the specified syscall; trim others"
- 	exit 1
- }
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index b6974fce800c..3a4d3b2e3f74 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -3070,7 +3070,7 @@ static int __init tk_aux_sysfs_init(void)
+ 		return -ENOMEM;
+ 	}
  
- # default unless specified by options
- abis=
-+used_syscalls=
+-	for (int i = 0; i <= MAX_AUX_CLOCKS; i++) {
++	for (int i = 0; i < MAX_AUX_CLOCKS; i++) {
+ 		char id[2] = { [0] = '0' + i, };
+ 		struct kobject *clk = kobject_create_and_add(id, auxo);
  
- while [ $# -gt 0 ]
- do
-@@ -35,6 +37,14 @@ do
- 	--abis)
- 		abis=$(echo "($2)" | tr ',' '|')
- 		shift 2;;
-+    --used-syscalls=*)
-+        used_syscalls_raw=${1#--used-syscalls=}
-+        if [ -z "$used_syscalls_raw" ]; then
-+            used_syscalls='^$'
-+        else
-+            used_syscalls=$(echo "$used_syscalls_raw" | tr ',' '|')
-+        fi
-+        shift;;
- 	-*)
- 		echo "$1: unknown option" >&2
- 		usage;;
-@@ -52,6 +62,7 @@ outfile="$2"
- 
- nxt=0
- 
-+
- grep -E "^[0-9]+[[:space:]]+$abis" "$infile" | {
- 
- 	while read nr abi name native compat noreturn; do
-@@ -66,6 +77,12 @@ grep -E "^[0-9]+[[:space:]]+$abis" "$infile" | {
- 			nxt=$((nxt + 1))
- 		done
- 
-+		if [ -n "$used_syscalls" ] && ! echo "$name" | grep -qwE "$used_syscalls"; then
-+			echo "__SYSCALL($nr, sys_ni_syscall)"
-+			nxt=$((nr + 1))
-+			continue
-+		fi
-+
- 		if [ "$compat" = "-" ]; then
- 			unset compat
- 		fi
 -- 
-2.43.0
+2.25.1
 
 
