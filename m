@@ -1,163 +1,151 @@
-Return-Path: <linux-kernel+bounces-854823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BF7BDF7A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10094BDF7AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DB6403AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AF819C3B4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0E2335BBA;
-	Wed, 15 Oct 2025 15:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D5C32A3E1;
+	Wed, 15 Oct 2025 15:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttyfpz0d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihYGm1lo"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0010432F771;
-	Wed, 15 Oct 2025 15:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9042FD7DE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760543379; cv=none; b=bLOcYMJwRrrz90uAH8XTYcIYfUYrcI7WN8tIHJ3MIoVu/GjT1EB9i/XHKfYlWuInN49xKBBr8x4fQSTtUAZSMmJCjEuhqJWVzmK8l/p6qWXwU0Be5hEGve3uiNNNIkSkDDCDWF68Ia1d7r4fii24zJjIdqGB+ovIb9fWE95htTM=
+	t=1760543442; cv=none; b=tbM1U9GNJlc530es/w96toMkiCixly+y1jgFMWcEzK4Y4wCGvty0elVe28FgVAcJl2EouoUVPes6IabEPMabkELxLNdGxTFDNCnFmdEHI8qaTHikc1lwsHFnV9bEwbXk20po0ch54OmSDaLTuKlPyJdJ3u59g2YH6jAlKaY+/js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760543379; c=relaxed/simple;
-	bh=SvJQkrxK8S2FzNYqFRInIPoqJAGTOO1/f98SdCFBCtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J/6RZif0+BHyE+MTmB6seGK3Ix5t0pb9BbK8ziSDeQGJyVuECa6KF65VhDwiQL2T6Ykk6tDfIiOvzaAPL7XkJ7TH/doG8j0yK7FWRuIPkKSYz2O1sHEPh1u06yQPu7dGsJu0+tUZwNjhokCHB5MpOCAYXyM0+f4oGQUqIzHvez4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttyfpz0d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39411C4CEF8;
-	Wed, 15 Oct 2025 15:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760543378;
-	bh=SvJQkrxK8S2FzNYqFRInIPoqJAGTOO1/f98SdCFBCtE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ttyfpz0d22MFc/WgqeuQ8VFQn6uGy9JK9dsvqaD3esJ6yrCwGhnD6IIa3LdZu22jE
-	 td5ZqWtRx+nBq30Q5ihELYPpQCO03WatZ+NIQ1Qc/52pOY5ZBMLmMoHrSrRo6Kgoq9
-	 2k82RaLJoAaQSCjdD90QX9GAZfCc12No1us3ylGTCTN3wUupOjY42X2G5PhplZbJ8H
-	 2fmWV860hNDNJjyXp83gNbDV2KcpKmOwSSvtyIA27EuLmxj+hu1KQllN2NcL7pkjDk
-	 Mtpf1ciOvbkJWhVAXrsONBa0hFyn9DYe/1IEybzb6MojkaaedNJZARErJHvS0ykjDs
-	 y4Daadk2JiIlQ==
-Message-ID: <0eb4c357-aafd-42bd-a4fd-687a91831bf4@kernel.org>
-Date: Wed, 15 Oct 2025 17:49:34 +0200
+	s=arc-20240116; t=1760543442; c=relaxed/simple;
+	bh=3MYPajuQ2QWtBRwvH2nbfeYSKwoEPh79fX4y0wqgQoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aIOSxBHnZic+u/ItsvgjLkP3RAn6Sceeq93I5bbYD9G/NjQpIk8Vohz3T96bjzJCTKsqDA5C/GXgvIAkqbkvydD+arOawX8Imif5q+Ej++VuIXXpnrOqLQ6nOaXR3FDo3rKUoc7xGBlJyVaRbziijx1yxxcaqV8ikte0eYA/SzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihYGm1lo; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-911520e43edso298127039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760543440; x=1761148240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPrAKu/IWOXmM5CfcFxeiP+a3NmUz9xQBz3ZjE+QAfY=;
+        b=ihYGm1lopaSk31Bv3cmGnHD0aYNZ6G30zElnfILFCEHksDHugHYLcAx/++z8hNgHlO
+         InsPNWIm2x8GYKYRGCYtskU5K2F9wx3SVuvZ3x6bn4A9U9cerNlJ5SWD1o5gnw0UQk0s
+         WR75E6vBTBYZNxfdwBz7j5Ojs+ZCs5X8JunVDAbCs4+s3/AbI8UmnyBTafnqSNfHIHPt
+         4nlk/2U0qDKjQJNzHBc5Qd40v0I3eGun2QVavkSvBtIkDQpiijG5HQ/jK2nS9K8sP4ha
+         l1iio8T4Vv9djFJVCoDQDzAqReCqX54OQ+KjO9R97pIqMvhFReCrn4n4zA1/tekwtS+i
+         PZ9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760543440; x=1761148240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FPrAKu/IWOXmM5CfcFxeiP+a3NmUz9xQBz3ZjE+QAfY=;
+        b=KVQKJiIW49r4KVYuvWo//3fdp8ztNWA4HQRm3oJUOGGyJZ3dBUVxwOcX0O4+rvrxDc
+         I50KkWQKSl+fzjoKgPGOShGEL6fXrMV3JR0t57ok9hnSpJwSjNceh/bL0ri6MJksPVcI
+         DjpPiPUgkQNaY0INQ31NzgmvHF9PehB3UlUXSYrMu62eHN789I7Z0OhNqRCB/L9sLUSX
+         z9t4LXQ2UNYifiochf+xF1mzJYXQ9UMhQ7nXVSbBhMXUQIBMY/4i+RJtE3x68Y9NKGVX
+         SOcsX3n0xrbPCZBqrpAnkjEiUiq3DpIxBIHreGzsPaGMQ9Dudapkd2YXTSeHSj50s2oE
+         1Gxg==
+X-Gm-Message-State: AOJu0YxnDHuH3127+NM3PbumCgrZOV7JHaKQ9+dJr3GXz2N/pGFrLxkS
+	TQVMEVmr+nL6RQFbFA2TQ2AddsEVHtsAj2c+tLjYvT8xXdcPhcJqKfuPMvK+OCAS
+X-Gm-Gg: ASbGncuRHbIx9Vg5TX1USPbEyPvyG0dMAlK0q0XvytlgEW8CGMHi6KvB5+LtY+FQFuD
+	DQYfVzbqrzTImovUZdNW9DVRZiOywRIMoNHai1Gmzfh1RQaDwprjQsVhzG0b8b8gvL8NrvcgtlA
+	7ZPXGihj39s3E54JcGC1ONemsovkN0ttXWx/9NHjum6eYn/E6Buplty6Cpcn82w3MiGzTwriDdV
+	74h5flamzz/Kl26O2IExYsR0NnVLRzASGIBvN2sk26diDjAMiZh/bxOp0B+CxvR7P1kUZXkanpH
+	Dn+AgWENdfb1HTnf/DOyz1Kc7sNIZyo0DWmdxgZOdF2er8+7oL9vjFCZL6rc90M3rXv6UVM9vbG
+	9RqhKsv1rF+kMkbLQbFNQj5WEOpR40UEPFsL/euns8tnGrf8VE40V+NesPhIl6JuFdSZheKtcOB
+	aqWXs1GwMbvj+vfjizdSlqT/qo7EWiwEl4ZnnESP3KN4G19iSjm+8=
+X-Google-Smtp-Source: AGHT+IF18Fh+dNim3Y+u/hzFLdFyF918bdyCY6/WjkMfV7iZC3Up53vEzOUqWIK53pLRVcDJJ5zPxQ==
+X-Received: by 2002:a05:6602:2b82:b0:927:44ad:739b with SMTP id ca18e2360f4ac-93bd1989d4dmr3828327839f.16.1760543439895;
+        Wed, 15 Oct 2025 08:50:39 -0700 (PDT)
+Received: from newton-fedora-MZ01GC9H (c-68-45-22-229.hsd1.in.comcast.net. [68.45.22.229])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e25a67790sm617361639f.21.2025.10.15.08.50.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 08:50:38 -0700 (PDT)
+From: Ryan Newton <rrnewton@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: sched-ext@lists.linux.dev,
+	tj@kernel.org,
+	arighi@nvidia.com,
+	christian.loehle@arm.com,
+	rrnewton@gmail.com,
+	newton@meta.com
+Subject: [PATCH v5 0/2] sched_ext: lockless peek operation for DSQs
+Date: Wed, 15 Oct 2025 11:50:34 -0400
+Message-ID: <20251015155036.420486-1-rrnewton@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: 8250: always disable IRQ during THRE test
-To: Peng Zhang <zhangpeng.00@bytedance.com>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- songmuchun@bytedance.com, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, buytenh@arista.com,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20251014114727.1186-1-zhangpeng.00@bytedance.com>
- <94d19d6d-5bb5-4156-8499-0be3d227f478@bytedance.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <94d19d6d-5bb5-4156-8499-0be3d227f478@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 14. 10. 25, 14:19, Peng Zhang wrote:
-> 
-> 
-> 在 2025/10/14 19:47, Peng Zhang 写道:
->> commit 039d4926379b ("serial: 8250: Toggle IER bits on only after irq
->> has been set up") moved IRQ setup before the THRE test, so the interrupt
->> handler can run during the test and race with its IIR reads. This can
->> produce wrong THRE test results and cause spurious registration of the
->> serial8250_backup_timeout timer. Unconditionally disable the IRQ for the
->> short duration of the test and re-enable it afterwards to avoid the race.
->>
->> Fixes: 039d4926379b ("serial: 8250: Toggle IER bits on only after irq 
->> has been set up")
->> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
->> ---
->>   drivers/tty/serial/8250/8250_port.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/ 
->> serial/8250/8250_port.c
->> index 719faf92aa8a..addeef7a0d59 100644
->> --- a/drivers/tty/serial/8250/8250_port.c
->> +++ b/drivers/tty/serial/8250/8250_port.c
->> @@ -2147,8 +2147,7 @@ static void serial8250_THRE_test(struct 
->> uart_port *port)
->>       if (up->port.flags & UPF_NO_THRE_TEST)
->>           return;
->> -    if (port->irqflags & IRQF_SHARED)
->> -        disable_irq_nosync(port->irq);
->> +    disable_irq_nosync(port->irq);
-> disable_irq_nosync() may need to be changed to disable_irq() to prevent 
-> interrupts that are currently being handled.
+This allows sched_ext schedulers an inexpensive operation to peek
+at the first element in a queue (DSQ), without creating an iterator 
+and acquiring the lock on that queue.
 
-Make sense to me. Care to Cc the people from 039d4926379b next time, so 
-that they can comment?
+Note that manual testing has thus far included a modified version of the
+example qmap scheduler that exercises peek, as well as a modified
+modified LAVD (from the SCX repo) that exercises peek. The attached test
+passes >1000 stress tests when run in concurrent VMs, and when run
+sequentially on the host kernel. Presently, tested on the below
+workstation and server processors.
+- AMD Ryzen Threadripper PRO 7975WX 32-Cores
+- AMD EPYC 9D64 88-Core Processor
 
->>       /*
->>        * Test for UARTs that do not reassert THRE when the transmitter 
->> is idle and the interrupt
->> @@ -2170,8 +2169,7 @@ static void serial8250_THRE_test(struct 
->> uart_port *port)
->>           serial_port_out(port, UART_IER, 0);
->>       }
->> -    if (port->irqflags & IRQF_SHARED)
->> -        enable_irq(port->irq);
->> +    enable_irq(port->irq);
->>       /*
->>        * If the interrupt is not reasserted, or we otherwise don't 
->> trust the iir, setup a timer to
-> 
+Initial experiments indicate a substantial speedup (on schbench) when
+running an SCX scheduler with per-cpu DSQs and peeking each queue to
+retrieve the task with the minimum vruntime across all the CPUs.
 
+---
+Changes in v5:
+ - minor comment tweak requested in review
+ - add Reviewed-bys christian.loehle@arm.com
+
+Changes in v4:
+ - review comments (from arighi@nvidia.com) addressed, add Reviewed-by
+ - make the test much lighter weight with 4 rather than 100 workers
+ - link: https://lore.kernel.org/lkml/20251015015712.3996346-1-rrnewton@gmail.com/
+
+Changes in v3:
+ - inline helpers and simplify
+ - coding style tweaks
+ - link: https://lore.kernel.org/lkml/20251006170403.3584204-1-rrnewton@gmail.com/
+
+Changes in v2:
+ - make peek() only work for user DSQs and error otherwise
+ - added a stress test component to the selftest that performs many peeks
+ - responded to review comments from tj@kernel.org and arighi@nvidia.com 
+ - link: https://lore.kernel.org/lkml/20251003195408.675527-1-rrnewton@gmail.com/
+ 
+v1 link: https://lore.kernel.org/lkml/20251002025722.3420916-1-rrnewton@gmail.com/
+
+Ryan Newton (2):
+  sched_ext: Add lockless peek operation for DSQs
+  sched_ext: Add a selftest for scx_bpf_dsq_peek
+
+ include/linux/sched/ext.h                     |   1 +
+ kernel/sched/ext.c                            |  58 +++-
+ tools/sched_ext/include/scx/common.bpf.h      |   1 +
+ tools/sched_ext/include/scx/compat.bpf.h      |  18 ++
+ tools/testing/selftests/sched_ext/Makefile    |   1 +
+ .../selftests/sched_ext/peek_dsq.bpf.c        | 251 ++++++++++++++++++
+ tools/testing/selftests/sched_ext/peek_dsq.c  | 224 ++++++++++++++++
+ 7 files changed, 552 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.bpf.c
+ create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.c
 
 -- 
-js
-suse labs
+2.51.0
+
 
