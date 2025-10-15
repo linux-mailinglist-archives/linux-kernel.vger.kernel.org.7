@@ -1,196 +1,136 @@
-Return-Path: <linux-kernel+bounces-853827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0C6BDCAFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:19:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBCCBDCB2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F3719A6508
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:20:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 434614ECF39
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05D530FC0C;
-	Wed, 15 Oct 2025 06:19:47 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FCB26E16E;
+	Wed, 15 Oct 2025 06:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rePeuf/p"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E8630F7E0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AE82FFDE4;
+	Wed, 15 Oct 2025 06:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509183; cv=none; b=kv6PtFuHMAY2gmE31HE014YUeuvpQRBNiLPccCMcIHdOBCIjq6rctkD+6udYAuD/6WQD+ObTE/HsVz+pSdAJoNmgaD5CDuYrF34NT4nVyY5MniElGXL07drVxZj2w6BSMngh15jE0AcmmRJw/DUHul4XTOhnvXRlE9hDXgZm3CI=
+	t=1760509287; cv=none; b=JF9HBzTCnwnaNSQFQt7CnC9pa92uyfDfqqCGRRRIvtpWhgO8hVN8XNw+yNZPtiN0MI1POTLXkP1lydWObdQ8HKyYlodkObBWddiw7+B3S6QQd6w4KEAlMBsozZ97HQC+YUIUgdyJBcERAoN6jgZ0rgEPhsKhfLhmvRistayU2UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509183; c=relaxed/simple;
-	bh=mxpuMiUTRYCSgSeahpphZP0KRUV5gJ7/k69WdZ4eDk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dJPuOUEkTqwjVIhoJvCKXSPOr4hEtYj1MFJalzmFC+SgVxmM29rBcn1DFeyXH2HPAT44npCZpwwEFWqf6q1wbQP1LAb9tj46z88uKTCG/dIRtRdEnYJdiurFoKO9ISCoycJo524VKJOM7We8moXIs+z/oZN7ahNqfhCnB8NC1Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
-X-QQ-mid: zesmtpsz6t1760509173te78262a4
-X-QQ-Originating-IP: u3H1w+MhVp5h6FxUuPEeE01YpOSGlM/XWUOC3g4qmu4=
-Received: from GPU-Server-A6000.. ( [202.201.1.132])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 15 Oct 2025 14:19:29 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16704342638795234820
-EX-QQ-RecipientCnt: 14
-From: Yuan Tan <tanyuan@tinylab.org>
-To: arnd@arndb.de,
-	masahiroy@kernel.org,
-	nathan@kernel.org,
-	palmer@dabbelt.com,
-	linux-kbuild@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	i@maskray.me,
-	tanyuan@tinylab.org,
-	falcon@tinylab.org,
-	ronbogo@outlook.com,
-	z1652074432@gmail.com,
-	lx24@stu.ynu.edu.cn
-Subject: [PATCH v2 6/8] compiler.h: introduce PUSHSECTION macro to establish proper references
-Date: Wed, 15 Oct 2025 14:19:20 +0800
-Message-ID: <40854460DE090346+c30007da67d26ae0e8651732f32a8ede4926db14.1760463245.git.tanyuan@tinylab.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
-References: <cover.1760463245.git.tanyuan@tinylab.org>
+	s=arc-20240116; t=1760509287; c=relaxed/simple;
+	bh=DicfJkkTsiij02qIVcRFiHOl97sEIvQS0/C6n7EV7gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IUnycfbf6pamI/ttAHo9LEhB0JO9KD3FDYbILyaZj658evq5V3CY7D15s510AtbR4ZsN9JRTX4HmSXg1eeTF8RwM238HCeBUgZEJsiBs+ZhFlJrD8/rK+12B3oTtorLkNvGE4CobIxgUpNjH9vWwBNG+7SBo/9XLvNwrZ9hDk0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rePeuf/p; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id E0CF7C09FA6;
+	Wed, 15 Oct 2025 06:20:59 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E634B606F9;
+	Wed, 15 Oct 2025 06:21:18 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 59C5E102F22AA;
+	Wed, 15 Oct 2025 08:21:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760509277; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=fJomQq7OE3Maiesqwu9sZQP6LCVhewRSpZqk8JBWs78=;
+	b=rePeuf/p5urYuOHJ7Zc4gd2xvA5MR+RBRetK2TQGnYv3G82ImEFQQA1N5ktsEIh14SeIAx
+	9bH4ohXrP0yiFVsi1Qu/mYchA8TM5xuzpWGlDOGT3254tDREKHcnCfElp6LIG2GhcdidM/
+	8TN5kaMTuf3zdluXLUBnzuAYmqEHEMkUQ20/z7ZgBv8/qHHoTfW9IwradnDyX8jG5pS3m1
+	6FKTWFrbIlhVRROiQg6Y54Tc4YLJrMGHCN0V6wLTskGZgeAWH504REFi/k43+yOMVWkaSt
+	wgerD0FWa8rOO2YZWyDQtXlqOxoMSpy++EaoxBNiR/sg9QRdOFQsPXA5/83H5A==
+Date: Wed, 15 Oct 2025 08:21:03 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan
+ <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
+ Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Pascal Eberhard
+ <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <20251015082103.7907e019@bootlin.com>
+In-Reply-To: <CACRpkdacJCp8aCCrCAzD5F=_K3g25t_8kZGzaEoXMBnhY8hkzA@mail.gmail.com>
+References: <20250922152640.154092-1-herve.codina@bootlin.com>
+	<20250922152640.154092-8-herve.codina@bootlin.com>
+	<CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
+	<20251001174205.71a08017@bootlin.com>
+	<CACRpkdZ1qg6ecA5DyVEGUHQxLh0SnC=GC5JZdevT99YVWU0ypA@mail.gmail.com>
+	<aO5ekPxeg7tdFlHi@shikoro>
+	<CACRpkdacJCp8aCCrCAzD5F=_K3g25t_8kZGzaEoXMBnhY8hkzA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MIAHdi1iQo+zb/iDccdWUpVB7EbuHr3toOuW65BieR63dUem0CUKS9LM
-	QAkJY+VfeKT72HzXNHbBZuruwtBvgp/Y2ZXHpWkSFcBT8kDJRuZL/hoh3UMdwVKjDc0oL5i
-	aeuXp6FJrRWicNDESHueSz/xwK/lkRBzw0vJm0d9NxHSvM2JHGKOj1qOTRHz1Bq6kidP236
-	J4QKaf1GsOjchGl86QIgk5JUjqXor1UkVbdKuKPaSiwSow6Hsmk1ocAyFtxSsErJnQolT07
-	8ajT/xUARChBkiL3HcaHhDOKr1z0NPXp87VCPmODKI8OmcOqaoyZd8epl90a9G33W2Anbpg
-	FmiTyFO+rJ4qy6gXXqc94EVkNrtv+XoOOIC3wWVVtaQoeBylkRHJuuMJjz6KpTZosgLQ5GS
-	3M53+AkUbvSzFq6sSFlVRAPkc/J0+YmQusZ8X6asSUoRc+4V1/+tJDEZfXhBJUxO+CyqnxR
-	F7QUtPaz/W5X1tZ3eaFMlDhbMZaW5qoQi6bW6SwVhpuO4dZyk8Z5KEtn1P6U/9p5KHVbLnp
-	OPoBCTvF0Eu0Qo9ce6VhDuRYQ3wggDdxuBolc/JZ68RQ8KlxngyPOGLOQO4XpUcoq/UZSy6
-	zeFsLmqulkmTq9SWcvkpDTm9a2LBjSKdFkQUgBYYy35fgYUSgV9clMviPkJ4I7ZQOcreQc9
-	vh22jVPAvpcobp4r68WFvgeP47i4O6qjocOHGOjGdanhD5KH5gAE64cjUrHb6+92J6PicZN
-	hbgVPJL4gvQNDpgxZUAiiUCyOvxrMLsE2iKrtEUB7jN2qYA8rV4ddfTl/qnynf1EeSrnCMe
-	ryeVSgR7932pJZde+irVR47gx0ZOhVEmJWTpb2k/nb4xBBy8yIJ/HG7gaESSieHUt+xbWrM
-	XT5srw9uHmXuzXlWH1hcTr6o292EF/5IaTlRAafSt8hp2371V54IbN9ViqkeO4e6gKmYWyh
-	+3HkCkSXxaXarUg8AmX3OFzq5RWarBpODSTgwRb4lKwXZQpCxrhULr+NJyuNckQp2kObN1E
-	v07y6OSu/F/YooPhWU
-X-QQ-XMRINFO: M8wFrcb6n6Ii4I6kYxweyY8=
-X-QQ-RECHKSPAM: 0
+X-Last-TLS-Session-Version: TLSv1.3
 
-When a section is created by .pushsection in assembly, there is no
-reference between the caller function and the newly created section. As a
-result, --gc-sections may incorrectly discard the newly created section.
+Hi Linus, Wolfram,
 
-To prevent such incorrect garbage collection, kernel code often wraps these
-sections with KEEP() in linker scripts. While this guarantees that the
-sections are retained, it introduces a dependency inversion: unused
-sections are kept unnecessarily, and any sections they reference are also
-forcibly retained. This prevents the linker from eliminating truly unused
-code or data.
+On Tue, 14 Oct 2025 22:13:50 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Introduce a new PUSHSECTION macro in include/linux/compiler.h to create a
-proper reference between the .pushsection caller and the generated section.
-The macro is fully compatible with all existing .pushsection parameters and
-has no side effects, making it safe to replace all current .pushsection
-usages with this version.
+> On Tue, Oct 14, 2025 at 4:30 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> 
+> > Because the HW design kind of suggests it, I'd think. The GPIO
+> > controller is a standard Synopsis one ("snps,dw-apb-gpio") without any
+> > extras. The GPIOMUX (which is extra) is according to the docs part of
+> > the system controller with a dedicated set of registers. Luckily,
+> > self-contained and not mangled with other functionality.  
+> 
+> Aha I see. If this is so tightly coupled with the Synopsis
+> designware GPIO then it should be mentioned in the commit
+> I guess. Also:
+> 
+> config RZN1_IRQMUX
+>        bool "Renesas RZ/N1 GPIO IRQ multiplexer support" if COMPILE_TEST
+> 
+> +      depends on GPIO_DWAPB || COMPILE_TEST
+> 
+> ?
+> 
+> I understand that it is convenient to make this a separate driver.
+> 
+> I'm not sure it is the right thing to do, but it's no a hill I want to
+> die on so if everyone else thinks I'm wrong, I can just shut up
+> about it, it's not like this driver is a big obstacle or anything.
+> 
+> Yours,
+> Linus Walleij
 
-PUSHSECTION works by emitting a unique label inside the new section, and
-adding a relocation from the caller function to that label. This ensures
-the linker recognizes the dependency and keeps both sections alive
-together. So we don't need to wrap the section with KEEP() in linker
-anymore.
+I don't think the mux should depends on GPIO_DWAPB (the gpio controller).
 
-To guarantee uniqueness of the section and label names, both __COUNTER__
-and %= are used:
-Either alone is insufficient:
-  - __COUNTER__ alone fails when the function containing PUSHSECTION is
-    inlined multiple times, causing duplicate labels.
-  - %= alone fails when multiple PUSHSECTION directives appear within a
-    single inline assembly block.
+Also, several gpio controller instances are connected to the mux.
 
-In assembly code, a separate definition is provided because the C macro
-cannot ensure unique section/label names when expanded inside an assembler
-macro (.macro).
+The 96 GPIOs connected to the mux come from 3 GPIO controller instances (32
+gpios per instance). I don't think it makes sense to have the mux handled by
+the gpio driver itself. It could have make sense if 3 muxes were available,
+one per gpio controller but this is not the case.
 
-Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
-Signed-off-by: Zhangjin Wu <falcon@tinylab.org>
-Signed-off-by: Xiao Liu <lx24@stu.ynu.edu.cn>
-Signed-off-by: Peihan Liu <ronbogo@outlook.com>
----
- include/linux/compiler.h | 43 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+As Wolfram said, the mux is an hardware component really outside of the
+GPIO controller IPs.
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 5b45ea7dff3e..bba79cedbe24 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -3,6 +3,7 @@
- #define __LINUX_COMPILER_H
- 
- #include <linux/compiler_types.h>
-+#include <linux/stringify.h>
- 
- #ifndef __ASSEMBLY__
- 
-@@ -267,7 +268,47 @@ static inline void *offset_to_ptr(const int *off)
- 	return (void *)((unsigned long)off + *off);
- }
- 
--#endif /* __ASSEMBLY__ */
-+#ifdef CONFIG_PUSHSECTION_WITH_RELOC
-+#define __PUSHSECTION_RELOC(lbl) ".reloc ., BFD_RELOC_NONE, " lbl "\n\t"
-+#define __PUSHSECTION_HELPER(prefix) __stringify(prefix.%=) "_" __stringify(__COUNTER__)
-+#define __PUSHSECTION_LABEL(lbl) lbl ":\n\t"
-+#else
-+#define __PUSHSECTION_RELOC(lbl)
-+#define __PUSHSECTION_HELPER(prefix) __stringify(prefix)
-+#define __PUSHSECTION_LABEL(lbl)
-+#endif
-+
-+#define _PUSHSECTION(lbl, sec, ...)					\
-+	__PUSHSECTION_RELOC(lbl)					\
-+	".pushsection " sec ", " #__VA_ARGS__ "\n\t" __PUSHSECTION_LABEL(lbl)
-+
-+#define PUSHSECTION(sec, ...)						\
-+	_PUSHSECTION(__PUSHSECTION_HELPER(.Lsec), __PUSHSECTION_HELPER(sec), __VA_ARGS__)
-+
-+#else /* __ASSEMBLY__ */
-+
-+#ifdef CONFIG_PUSHSECTION_WITH_RELOC
-+#define __PUSHSECTION_RELOC .reloc ., BFD_RELOC_NONE, \label
-+#define __PUSHSECTION_HELPER(prefix) prefix\().\@
-+#define __PUSHSECTION_LABEL \label:
-+#else
-+#define __PUSHSECTION_RELOC
-+#define __PUSHSECTION_HELPER(prefix) prefix
-+#define __PUSHSECTION_LABEL
-+#endif
-+
-+.macro  _PUSHSECTION label:req, section:req, args:vararg
-+	__PUSHSECTION_RELOC
-+	.pushsection __PUSHSECTION_HELPER(\section), \args
-+	__PUSHSECTION_LABEL
-+.endm
-+
-+.macro  PUSHSECTION section:req, args:vararg
-+	_PUSHSECTION .Lsec\@, \section, \args
-+.endm
-+
-+#endif /* !__ASSEMBLY__ */
-+
- 
- #ifdef CONFIG_64BIT
- #define ARCH_SEL(a,b) a
--- 
-2.43.0
-
+Best regards,
+Hervé
 
