@@ -1,201 +1,112 @@
-Return-Path: <linux-kernel+bounces-855021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C29EBDFF32
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:52:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8528BDFF3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ABA619C76FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:53:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E81884E3072
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86713009E8;
-	Wed, 15 Oct 2025 17:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667E43002D3;
+	Wed, 15 Oct 2025 17:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mkEfclLh"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3FfehVg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E8D3009D9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2F1547EE;
+	Wed, 15 Oct 2025 17:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760550747; cv=none; b=dXQmdi/yAlxIgNeJReRGslPciZqNpLEzjgBI5o/urfgCFYqwZSQuz4KREfTE5NJL7FNn2mQysXmZCtgcWYjFBZJ/zrA1dezwxBcVVlTPRteNGXrVvZ8XCuQuagXsOvwzBNyzyWB6dpioEFuSFJk78uuZaFYLcgAWN844WisB6+k=
+	t=1760550806; cv=none; b=OzjzbT6/7/UFx0ZjI2Qw6Ml0ACmCB68AHHmcXAr6AbLt3KD4FKy+Kwmx1WrOQp8uv3yj+D0WouAK0+xBu0cnrx/3gvU6sguXumusrFgKh/G8lgJ/CtBCvyb7O6RmxVUj5KxJcLXqqtgRuxw7Gm6I7LV6JsDtpC087i1tvk4MFEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760550747; c=relaxed/simple;
-	bh=J+g3YSL0i4xb+MJMmSStI2HhtGo/O8qWkdvFY6zvo3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=YNzk2Tt/b1uYwNggfk1X32tvYjMeMV2K/n5zwOqGV9j5O1uuVMjoq7PNMkdn0Qx1iKzF1VjT36WiE0OLPq8ITfbBDGn/X6M+WFrrEZNZYMqzatNocPCnOxyMEiihsFBnb69bAYgZUFWa0n9N1azcw27+RKI1BD6KfkUHqm0OExg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mkEfclLh; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251015175217euoutp012ee7d0553cfdc40850dec17ac41f6758~uu5Fp3fOv1940619406euoutp01Q
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:52:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251015175217euoutp012ee7d0553cfdc40850dec17ac41f6758~uu5Fp3fOv1940619406euoutp01Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760550737;
-	bh=6jaEB+5YbVnEIOkSVtaCWc+rluHmQnP0qmqJ49YNg7M=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=mkEfclLh4qkq9JqiPJ+ikjlMZ3zMtbmENHzIUw4g5zjHDx25Mzf2u0T7bM+9KIfUE
-	 3QTAs/+7MqqGAkTcXD6tmA45+GJCKDo5Q8S2OBSaxWDrF0F9RieTLZuXuzzMKraMOU
-	 vWpRGgGjmp1SAgFDUOHaO/Vo2F7ezJC49w1UUSI4=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251015175216eucas1p1f80c6213d42a5c41b346ae04d0ca3edc~uu5ErUozk2581125811eucas1p1q;
-	Wed, 15 Oct 2025 17:52:16 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251015175214eusmtip15861a84e9ecea100785f9d589f38661e~uu5DP5xvd0425704257eusmtip1v;
-	Wed, 15 Oct 2025 17:52:14 +0000 (GMT)
-Message-ID: <99a41538-ce1a-4130-a093-d0c600e63d16@samsung.com>
-Date: Wed, 15 Oct 2025 19:52:14 +0200
+	s=arc-20240116; t=1760550806; c=relaxed/simple;
+	bh=M/aIcBS8J3HmXSplvgK4CDJCr+E7y/oHbQ0Pz0V7Kak=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KU6pqNzJsz6fXc8fFIwmA4GN19J1x7ZQEsM4pOufdPAUn+lSzgamio0DJ0i/cA7xnkPu0GQvZ9BuNs/FonxREzBZfEJI8m7x9caTChBOOJMTCRjCEdDgA+db3a9J8outN0yGxEBlIQ2TfHkbqXzbEy5esqegmJfXmj7Y81r95yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3FfehVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51366C4CEF8;
+	Wed, 15 Oct 2025 17:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760550805;
+	bh=M/aIcBS8J3HmXSplvgK4CDJCr+E7y/oHbQ0Pz0V7Kak=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h3FfehVgvIXCy9L64S2PD2yx6VgZ9hrVhfS2hw56aO8ssaAUL8taYBTIs66VHyAkT
+	 +ObG/yMw1U1bOGNp7JAlMn8T1MaYd1bQvx30Sxmxp74q1tR5k46Vuo7d+W5IWoZpEs
+	 z/Mj9mi25V5Ej/Tc8J3+W24pAXwB1SOhqzPi0Zmn28ZRx131ObA0ox5jZsKeeptgUJ
+	 DvU/MlLA2YsJTQJPG7NRcpIRpP07oB9xZ7wnMf7SRRDZFSRxvBqlznY+f0tRvQ4eVu
+	 NZZPhXFTfWGEzA0PC7YE0OVtnPAioykH4j/3PGl/mrJYGS6LwwFEdQXAZQ/gcjXJx6
+	 kpdVN2WSmKnbA==
+Date: Wed, 15 Oct 2025 10:53:23 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Frank Li <Frank.Li@nxp.com>, Andrew
+ Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "open list:NETWORKING DRIVERS"
+ <netdev@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional
+ clock
+Message-ID: <20251015105323.7342652f@kernel.org>
+In-Reply-To: <CAL_Jsq+wHG_DW1D_=dR6Q_mwyqFAXKGx771PsqjvW+XCRKM3tw@mail.gmail.com>
+References: <20251010183418.2179063-1-Frank.Li@nxp.com>
+	<20251014-flattop-limping-46220a9eda46@spud>
+	<20251014-projector-immovably-59a2a48857cc@spud>
+	<20251014120213.002308f2@kernel.org>
+	<20251014-unclothed-outsource-d0438fbf1b23@spud>
+	<20251014204807.GA1075103-robh@kernel.org>
+	<20251014181302.44537f00@kernel.org>
+	<CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
+	<20251015072547.40c38a2f@kernel.org>
+	<CAL_Jsq+wHG_DW1D_=dR6Q_mwyqFAXKGx771PsqjvW+XCRKM3tw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 0/7] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
-	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
-	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>, Daniel Almeida
-	<daniel.almeida@collabora.com>, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, Elle Rhumsaa
-	<elle@weathered-steel.dev>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <ayuqnx7fjfe3zwicvdbdr3qsgb4w6s2gwjt7r3m5ikzrylmium@hsrxazwelnvp>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251015175216eucas1p1f80c6213d42a5c41b346ae04d0ca3edc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d
-X-EPHeader: CA
-X-CMS-RootMailID: 20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d
-References: <CGME20250930122729eucas1p2c4f1c07a4a504a59ba691b407a39420d@eucas1p2.samsung.com>
-	<20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
-	<ayuqnx7fjfe3zwicvdbdr3qsgb4w6s2gwjt7r3m5ikzrylmium@hsrxazwelnvp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 15 Oct 2025 12:32:14 -0500 Rob Herring wrote:
+> On Wed, Oct 15, 2025 at 9:25=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> =
+wrote:
+> > On Wed, 15 Oct 2025 06:53:01 -0500 Rob Herring wrote: =20
+> > > That's fine. Though it will be optional for you, but not us? We have
+> > > to ignore tags without the project if tags intended for netdev are
+> > > continued without the project. Or does no project mean I want to
+> > > update every project? =20
+> >
+> > Fair :( I imagine your workflow is that patches land in your pw, and
+> > once a DT maintainer reviewed them you don't care about them any more? =
+=20
+>=20
+> Not exactly. Often I don't, but for example sometimes I need to apply
+> the patch (probably should setup a group tree, but it's enough of an
+> exception I haven't.).
+>=20
+> > So perhaps a better bot on your end would be a bot which listens to
+> > Ack/Review tags from DT maintainers. When tag is received the patch
+> > gets dropped from PW as "Handled Elsewhere", and patch id (or whatever
+> > that patch hash thing is called) gets recorded to automatically discard
+> > pure reposts. =20
+>=20
+> I already have that in place too. Well, kind of, it updates my
+> review/ack automatically on subsequent versions, but I currently do a
+> separate pass of what Conor and Krzysztof reviewed. Where the pw-bot
+> tags are useful is when there are changes requested. I suppose I could
+> look for replies from them without acks, but while that usually
+> indicates changes are needed, not always. So the pw-bot tag is useful
+> to say the other DT maintainers don't need to look at this patch at
+> all.
 
-
-On 10/13/25 18:48, Uwe Kleine-König wrote:
-> Hello,
-> 
-> my diff on top of your changes looks as follows:
-> 
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index dd6db01832ee..e7f770ecfe84 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -812,9 +812,8 @@ config PWM_XILINX
->  	  will be called pwm-xilinx.
->  
->   config RUST_PWM_ABSTRACTIONS
-> -	bool "Rust PWM abstractions support"
-> +	bool
->  	depends on RUST
-> -	depends on PWM=y
->  	help
->  	  This option enables the safe Rust abstraction layer for the PWM
->  	  subsystem. It provides idiomatic wrappers and traits necessary for
-> 
-> i.e. make RUST_PWM_ABSTRACTIONS invisible, it is only supposed to be
-> selected and there is little (or even no?) use to enable it without a
-> selector.
-> 
-> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
-> index c9fd1d8d17bc..a5666052b7ce 100644
-> --- a/drivers/pwm/pwm_th1520.rs
-> +++ b/drivers/pwm/pwm_th1520.rs
-> @@ -121,6 +121,7 @@ fn round_waveform_tohw(
->          wf: &pwm::Waveform,
->      ) -> Result<pwm::RoundedWaveform<Self::WfHw>> {
->          let data = chip.drvdata();
-> +        let status = 0;
->  
->          if wf.period_length_ns == 0 {
->              dev_dbg!(chip.device(), "Requested period is 0, disabling PWM.\n");
-> @@ -141,18 +142,13 @@ fn round_waveform_tohw(
->          if period_cycles == 0 {
->              dev_dbg!(
->                  chip.device(),
-> -                "Requested period {} ns is too small for clock rate {} Hz, disabling PWM.\n",
-> +                "Requested period {} ns is too small for clock rate {} Hz, rounding up.\n",
->                  wf.period_length_ns,
->                  rate_hz
->              );
->  
-> -            return Ok(pwm::RoundedWaveform {
-> -                status: 0,
-> -                hardware_waveform: Th1520WfHw {
-> -                    enabled: false,
-> -                    ..Default::default()
-> -                },
-> -            });
-> +            period_cycles = 1;
-> +            status = 1;
->          }
->  
->          let mut duty_cycles = ns_to_cycles(wf.duty_length_ns, rate_hz).min(u64::from(u32::MAX));
-> 
-> i.e. round up for too small period requests ...
-> 
-> @@ -189,7 +185,7 @@ fn round_waveform_tohw(
->          );
->  
->          Ok(pwm::RoundedWaveform {
-> -            status: 0,
-> +            status: status,
->              hardware_waveform: wfhw,
->          })
->      }
-> 
-> ... and return 1 then
-> 
-> @@ -355,7 +351,7 @@ fn probe(
->                  "Clock rate {} Hz is too high, not supported.\n",
->                  rate_hz
->              );
-> -            return Err(ERANGE);
-> +            return Err(EINVAL);
->          }
->  
->          let chip = pwm::Chip::new(
-> 
-> at least pwm-stm32 uses EINVAL. Having said that, I wonder if this check
-> is sensible here at all. pwm-stm32 does it to ensure that
-> mul_u64_u64_div_u64() does the right thing, but this exact issue doesn't
-> exist here.
-
-I think your changes are correct. For the existence of check I think it
-is helpful as it fails early with a helpful message, but isn't strictly
-necessary.
-
-I will incorporate these changes and send another revision.
-
-> 
-> Otherwise looks fine I think.
-> 
-> Best regards
-> Uwe
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+I don't think we need to do anything, then. Changes-requested will=20
+apply across all the patchwork instances. Only not-applicable /
+handled-elsewhere gets tricky with multiple instances.
 
