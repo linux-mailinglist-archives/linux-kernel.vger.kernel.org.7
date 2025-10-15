@@ -1,47 +1,52 @@
-Return-Path: <linux-kernel+bounces-853840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C41BDCBBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D4EBDCA9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C703A5299
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2BFC3C8530
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4F731195B;
-	Wed, 15 Oct 2025 06:30:24 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B90305976;
-	Wed, 15 Oct 2025 06:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B083054DB;
+	Wed, 15 Oct 2025 06:12:59 +0000 (UTC)
+Received: from out28-99.mail.aliyun.com (out28-99.mail.aliyun.com [115.124.28.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58B913C8EA;
+	Wed, 15 Oct 2025 06:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509824; cv=none; b=sL81StB0ZRc6l1pN4EFZ5f1MtCZJsCbkL4vtx4zfDnRcB1VMwametVuNKXCPpeBh90jNdt6dYsomYTAeqAWAPy15VJ4C+Vjt0unh8bB0EnENAPevGKusDSRFD6FxQkR+LdYw1u4PrbSCvN8b45QOfm3ktztN0aTkNmQ5Xex0uMQ=
+	t=1760508778; cv=none; b=eeP0N14tKqcUwnZ6AfLkszOnP5NI3xKDg1pzyTSk+AFTJ6pC0jw+Ja9dySTaqZ/pz7l/DGtL/2NKysnImih8rdX8CEZLde8Vje0F32HqdsefMbx/7UdYWQ/fzuj8sbOvikN21XIfGdnx7jNIcddozCE6eBkj3iALfpcNp/a8SnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509824; c=relaxed/simple;
-	bh=ghyH7Mw21tZMDfsCR/q5qBCvDT8hj65ATGvsufe9qvg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y/jxS1+SKA7FqbP7IKMrZQKuyN4pGyW5bW64wQ5XPQixeYwVbsZhSYRO3VWgJ9zavQK1tBfvaf8Rrx2+/AoNZ/uXMuSA3Pj/KxRwMAV6zSBf63Hjcvx91bdTq3qVDkEfJ6XaZH7nW6AdrIzcYX2aG43R20H9eQfiT28dpCuye0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.185])
-	by gateway (Coremail) with SMTP id _____8BxF9F4P+9ohE4WAA--.47871S3;
-	Wed, 15 Oct 2025 14:30:16 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.185])
-	by front1 (Coremail) with SMTP id qMiowJDxbMF3P+9ouf3kAA--.57346S2;
-	Wed, 15 Oct 2025 14:30:15 +0800 (CST)
-From: Song Gao <gaosong@loongson.cn>
-To: maobibo@loongson.cn,
-	chenhuacai@kernel.org
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	kernel@xen0n.name,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] LoongArch: KVM: Add AVEC support
-Date: Wed, 15 Oct 2025 14:06:26 +0800
-Message-Id: <20251015060626.3915824-1-gaosong@loongson.cn>
-X-Mailer: git-send-email 2.39.1
+	s=arc-20240116; t=1760508778; c=relaxed/simple;
+	bh=7AxJLTHuNLufjyzhwhMdz+Egc9IfsztB8kWgCDonfck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GknEdJ/iizjypM6Qz45iDadIpgRvzmqqokSMCV7LbwUFQFPsLmk0i5nlPWDbBVr/0GjzVt2H6Cxh8bRW9ngiAtpN6qyk/cmpFpLkqsdOAq/FIFKsHXZ28Qp07K3Oya/XjC9hhCkAmVqnrtRAlR+kw7DIrT5zbGVG+0mXY4aJmTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com; spf=pass smtp.mailfrom=allwinnertech.com; arc=none smtp.client-ip=115.124.28.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allwinnertech.com
+Received: from SunxiBot.allwinnertech.com(mailfrom:michael@allwinnertech.com fp:SMTPD_---.f-yOgmV_1760508437 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Wed, 15 Oct 2025 14:07:22 +0800
+From: Michael Wu <michael@allwinnertech.com>
+To: ulf.hansson@linaro.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	adrian.hunter@intel.com,
+	avri.altman@wdc.com,
+	wsa+renesas@sang-engineering.com,
+	victor.shih@genesyslogic.com.tw,
+	andy-ld.lu@mediatek.com
+Cc: jason.lai@genesyslogic.com.tw,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [RESEND] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
+Date: Wed, 15 Oct 2025 14:07:14 +0800
+Message-Id: <20251015060714.67558-1-michael@allwinnertech.com>
+X-Mailer: git-send-email 2.29.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,182 +54,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxbMF3P+9ouf3kAA--.57346S2
-X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Add cpu_has_msgint() to check whether the host cpu supported avec,
-and restore/save CSR_MSGIS0-CSR_MSGIS3.
+During system shutdown, mmc_bus_shutdown() calls __mmc_stop_host() which
+uses cancel_delayed_work_sync(). This can block indefinitely if the work
+queue is stuck, causing the system to hang during shutdown.
 
-Signed-off-by: Song Gao <gaosong@loongson.cn>
+This patch introduces a new function __mmc_stop_host_no_sync() that skips
+the synchronous work cancellation, preventing potential shutdown hangs.
+The function is used in mmc_bus_shutdown() where blocking is not
+acceptable during system shutdown.
+
+Changes:
+- Add __mmc_stop_host_no_sync() function that avoids cancel_delayed_work_sync()
+- Update mmc_bus_shutdown() to use the new non-blocking function
+- Keep the original __mmc_stop_host() unchanged for normal operation
+
+This ensures graceful system shutdown while maintaining existing
+functionality for regular MMC host operations.
+
+stack information when an error occurs:
+INFO: task init:1 blocked for more than 720 seconds.
+      Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:init            state:D stack:    0 pid:    1 ppid:     0 flags:0x04000008
+Call trace:
+ __switch_to+0x234/0x470
+ __schedule+0x694/0xb8c
+ schedule+0x150/0x254
+ schedule_timeout+0x48/0x138
+ wait_for_common+0x144/0x308
+ __flush_work+0x3d8/0x508
+ __cancel_work_timer+0x120/0x2e8
+ mmc_bus_shutdown+0x90/0x158
+ device_shutdown+0x204/0x434
+ kernel_restart+0x54/0x220
+ kernel_restart+0x0/0x220
+ invoke_syscall+0x60/0x150
+ el0_svc_common+0xb8/0xf8
+ do_el0_svc+0x28/0x98
+ el0_svc+0x24/0x84
+ el0t_64_sync_handler+0x88/0xec
+ el0t_64_sync+0x1b8/0x1bc
+INFO: task kworker/1:1:73 blocked for more than 721 seconds.
+      Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:1     state:D stack:    0 pid:   73 ppid:     2 flags:0x00000008
+Workqueue: events_freezable mmc_rescan.cfi_jt
+Call trace:
+ __switch_to+0x234/0x470
+ __schedule+0x694/0xb8c
+ schedule+0x150/0x254
+ schedule_preempt_disabled+0x2c/0x4c
+ __mutex_lock+0x360/0xb00
+ __mutex_lock_slowpath+0x18/0x28
+ mutex_lock+0x48/0x12c
+ device_del+0x48/0x8d0
+ mmc_remove_card+0x128/0x158
+ mmc_sdio_remove+0x190/0x1ac
+ mmc_sdio_detect+0x7c/0x118
+ mmc_rescan+0xe8/0x42c
+ process_one_work+0x248/0x55c
+ worker_thread+0x3b0/0x740
+ kthread+0x168/0x1dc
+ ret_from_fork+0x10/0x20
+
+Signed-off-by: Michael Wu <michael@allwinnertech.com>
 ---
- arch/loongarch/include/asm/kvm_host.h |  4 ++++
- arch/loongarch/include/asm/kvm_vcpu.h |  1 +
- arch/loongarch/include/uapi/asm/kvm.h |  1 +
- arch/loongarch/kvm/interrupt.c        | 15 +++++++++++++--
- arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
- arch/loongarch/kvm/vm.c               |  4 ++++
- 6 files changed, 40 insertions(+), 4 deletions(-)
+ drivers/mmc/core/bus.c  |  2 +-
+ drivers/mmc/core/core.c | 14 ++++++++++++++
+ drivers/mmc/core/core.h |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index 0cecbd038bb3..827e204bdeb3 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -283,6 +283,10 @@ static inline bool kvm_guest_has_lbt(struct kvm_vcpu_arch *arch)
- 	return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | CPUCFG2_MIPSBT);
+diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
+index 1cf64e0952fbe..6ff6fcb4c6f27 100644
+--- a/drivers/mmc/core/bus.c
++++ b/drivers/mmc/core/bus.c
+@@ -149,7 +149,7 @@ static void mmc_bus_shutdown(struct device *dev)
+ 	if (dev->driver && drv->shutdown)
+ 		drv->shutdown(card);
+ 
+-	__mmc_stop_host(host);
++	__mmc_stop_host_no_sync(host);
+ 
+ 	if (host->bus_ops->shutdown) {
+ 		ret = host->bus_ops->shutdown(host);
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index a0e2dce704343..2d75ad26f84a9 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2336,6 +2336,20 @@ void __mmc_stop_host(struct mmc_host *host)
+ 	cancel_delayed_work_sync(&host->detect);
  }
  
-+static inline bool cpu_has_msgint(void)
++void __mmc_stop_host_no_sync(struct mmc_host *host)
 +{
-+	return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
++	if (host->rescan_disable)
++		return;
++
++	if (host->slot.cd_irq >= 0) {
++		mmc_gpio_set_cd_wake(host, false);
++		disable_irq(host->slot.cd_irq);
++	}
++
++	host->rescan_disable = 1;
++	/* Skip cancel_delayed_work_sync to avoid potential blocking */
 +}
- static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
++
+ void mmc_stop_host(struct mmc_host *host)
  {
- 	return arch->cpucfg[6] & CPUCFG6_PMP;
-diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
-index f1efd7cfbc20..3784ab4ccdb5 100644
---- a/arch/loongarch/include/asm/kvm_vcpu.h
-+++ b/arch/loongarch/include/asm/kvm_vcpu.h
-@@ -15,6 +15,7 @@
- #define CPU_PMU				(_ULCAST_(1) << 10)
- #define CPU_TIMER			(_ULCAST_(1) << 11)
- #define CPU_IPI				(_ULCAST_(1) << 12)
-+#define CPU_AVEC                        (_ULCAST_(1) << 14)
+ 	__mmc_stop_host(host);
+diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+index 622085cd766f9..eb59a61717357 100644
+--- a/drivers/mmc/core/core.h
++++ b/drivers/mmc/core/core.h
+@@ -71,6 +71,7 @@ static inline void mmc_delay(unsigned int ms)
+ void mmc_rescan(struct work_struct *work);
+ void mmc_start_host(struct mmc_host *host);
+ void __mmc_stop_host(struct mmc_host *host);
++void __mmc_stop_host_no_sync(struct mmc_host *host);
+ void mmc_stop_host(struct mmc_host *host);
  
- /* Controlled by 0x52 guest exception VIP aligned to estat bit 5~12 */
- #define CPU_IP0				(_ULCAST_(1))
-diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
-index 57ba1a563bb1..de6c3f18e40a 100644
---- a/arch/loongarch/include/uapi/asm/kvm.h
-+++ b/arch/loongarch/include/uapi/asm/kvm.h
-@@ -104,6 +104,7 @@ struct kvm_fpu {
- #define  KVM_LOONGARCH_VM_FEAT_PV_IPI		6
- #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME	7
- #define  KVM_LOONGARCH_VM_FEAT_PTW		8
-+#define  KVM_LOONGARCH_VM_FEAT_MSGINT		9
- 
- /* Device Control API on vcpu fd */
- #define KVM_LOONGARCH_VCPU_CPUCFG	0
-diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrupt.c
-index 8462083f0301..f586f421bc19 100644
---- a/arch/loongarch/kvm/interrupt.c
-+++ b/arch/loongarch/kvm/interrupt.c
-@@ -21,6 +21,7 @@ static unsigned int priority_to_irq[EXCCODE_INT_NUM] = {
- 	[INT_HWI5]	= CPU_IP5,
- 	[INT_HWI6]	= CPU_IP6,
- 	[INT_HWI7]	= CPU_IP7,
-+	[INT_AVEC]	= CPU_AVEC,
- };
- 
- static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
-@@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
- 	if (priority < EXCCODE_INT_NUM)
- 		irq = priority_to_irq[priority];
- 
-+	if (cpu_has_msgint() && (priority == INT_AVEC)) {
-+		set_gcsr_estat(irq);
-+		return 1;
-+	}
-+
- 	switch (priority) {
- 	case INT_TI:
- 	case INT_IPI:
-@@ -58,6 +64,11 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, unsigned int priority)
- 	if (priority < EXCCODE_INT_NUM)
- 		irq = priority_to_irq[priority];
- 
-+	if (cpu_has_msgint() && (priority == INT_AVEC)) {
-+		clear_gcsr_estat(irq);
-+		return 1;
-+	}
-+
- 	switch (priority) {
- 	case INT_TI:
- 	case INT_IPI:
-@@ -83,10 +94,10 @@ void kvm_deliver_intr(struct kvm_vcpu *vcpu)
- 	unsigned long *pending = &vcpu->arch.irq_pending;
- 	unsigned long *pending_clr = &vcpu->arch.irq_clear;
- 
--	for_each_set_bit(priority, pending_clr, INT_IPI + 1)
-+	for_each_set_bit(priority, pending_clr, EXCCODE_INT_NUM)
- 		kvm_irq_clear(vcpu, priority);
- 
--	for_each_set_bit(priority, pending, INT_IPI + 1)
-+	for_each_set_bit(priority, pending, EXCCODE_INT_NUM)
- 		kvm_irq_deliver(vcpu, priority);
- }
- 
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 30e3b089a596..226c735155be 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
- 		*v = GENMASK(31, 0);
- 		return 0;
- 	case LOONGARCH_CPUCFG1:
--		/* CPUCFG1_MSGINT is not supported by KVM */
--		*v = GENMASK(25, 0);
-+		*v = GENMASK(26, 0);
- 		return 0;
- 	case LOONGARCH_CPUCFG2:
- 		/* CPUCFG2 features unconditionally supported by KVM */
-@@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
- 		return -EINVAL;
- 
- 	switch (id) {
-+	case LOONGARCH_CPUCFG1:
-+		if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
-+			return -EINVAL;
-+		return 0;
- 	case LOONGARCH_CPUCFG2:
- 		if (!(val & CPUCFG2_LLFTP))
- 			/* Guests must have a constant timer */
-@@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
- 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
- 	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
-+	if (cpu_has_msgint()) {
-+		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
-+		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
-+		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
-+		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
-+	}
- 
- 	/* Restore Root.GINTC from unused Guest.GINTC register */
- 	write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
-@@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu *vcpu, int cpu)
- 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
- 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
- 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
-+	if (cpu_has_msgint()) {
-+		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
-+		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
-+		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
-+		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
-+	}
- 
- 	vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
- 
-diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-index a49b1c1a3dd1..ec92e6f3cf92 100644
---- a/arch/loongarch/kvm/vm.c
-+++ b/arch/loongarch/kvm/vm.c
-@@ -150,6 +150,10 @@ static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr
- 		if (cpu_has_ptw)
- 			return 0;
- 		return -ENXIO;
-+	case KVM_LOONGARCH_VM_FEAT_MSGINT:
-+		if (cpu_has_msgint())
-+			return 0;
-+		return -ENXIO;
- 	default:
- 		return -ENXIO;
- 	}
-
-base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
+ void _mmc_detect_change(struct mmc_host *host, unsigned long delay,
 -- 
-2.39.3
+2.29.0
 
 
