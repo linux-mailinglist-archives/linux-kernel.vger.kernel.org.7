@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-853846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E53BDCC0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:36:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F8DBDCC13
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1E1C2353C46
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:36:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1ED5E4F8237
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2093126BE;
-	Wed, 15 Oct 2025 06:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFEA3126A6;
+	Wed, 15 Oct 2025 06:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gW1ZJQJZ"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sZxMVdrF"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516EA306D48
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD0B3126C4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510168; cv=none; b=ECom1PqZJaWxBQd4h6c2t3szL1e52Vg2cx0GieuoIt8JC3QybGmSaNp7mCTrBaGAwoNHZtXClxV2pB1Bg7yq8rfSbNlREpIJWo7LUwRvXIpHOXtYfg9S8jdB8uNaXQjkcHo6At8dp+K1N4YqeQaXJKqTkQO73RI7GXx6YslAK98=
+	t=1760510171; cv=none; b=iHPTakY3BjPa9OA8kqMkVBIFconRwnB6FZW3VtPQqGNIQ8gIcNhaWHkLcTnFCZg1o2YfHnGld4BrflJI1Fzyus7NHctscrpXdb/zRxlBsAIwwHrH/TC7+qOYzWzVHy2e6rcVDtLRyMj3uixqFapnEUaqJJyq2edR2/ldvxEbbmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510168; c=relaxed/simple;
-	bh=+rolIgnycTbfH3J5sR3JWWLXD7fBOZGNO3IAA6MdFUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MX/zwCxbid7qCRKcM8PiSRZe67ReA8JDdGnwVUdqWl0ZqH0YzrKVwVY3mA7b4AeufdQHh/e1yaqvUIFERERMw4BcuHQSFhI2wbAt+UULGil4bXddNlUChGCXy3HtlKWVvKHWEIgulkXsyeBuRA9EaerSU/oJZMmEVFdm5Xo6ymc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gW1ZJQJZ; arc=none smtp.client-ip=95.215.58.173
+	s=arc-20240116; t=1760510171; c=relaxed/simple;
+	bh=nvBSqZt0bHIau36FGThs7Jd8leymkIwgutkkf+0QOK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nuK4J/smMFASqKYii84nnbFk3kNv9wkEw3WpgjBLo02rbEZZhrs6RYS2GWkEsKml5yhTpyPl6faR6fR93VmEiQcUCZwoQ3JBHALKAZgzR29CTXfVJTsxuSWhOZQrHZa8nbR/yGX4KKq/alPt54LbanyG34N7PsrEj8xjOkCzpjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sZxMVdrF; arc=none smtp.client-ip=95.215.58.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760510160;
+	t=1760510167;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=chYLFKHOenLcAoAbuxLeK+xLyqa/SWaDhpi/ROUy1lk=;
-	b=gW1ZJQJZl6v8GMrG3KfidtB039hu4hUhUhzri0l/yhaXnna1qQidZc0XD/jGRYbFQtRCzw
-	aB9eQg0iDSgvjDMbpeQuRMWioTMBQ5BV9CMA/jtqZyesZZxFbMU2ohM6tb9oK/z6EPo01b
-	Ac1TrRvDLNTWSmbXBBvR/uyfrrQiODo=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CQXtHg5khcpjKfA9N6hKlz732m3j1ep8SxiJ8w0fvZk=;
+	b=sZxMVdrFhkD87zH9b3Mee+lB9R/FSU8wb9ObVJc8sQoieXdZAQYZvcV9B/4fjpH09EV4Tb
+	IabURBYbRnKXfAnFXx5aIRo7bnIPs/jywS1YV8+p+zBNDLVW5m/r2uuhZNFMi+MID/4qjZ
+	ux7cYSCnmZPPUuL4BXVK6Xk2m73xBuE=
 From: Qi Zheng <qi.zheng@linux.dev>
 To: hannes@cmpxchg.org,
 	hughd@google.com,
@@ -61,10 +63,13 @@ To: hannes@cmpxchg.org,
 Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	cgroups@vger.kernel.org,
+	Muchun Song <songmuchun@bytedance.com>,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v5 0/4] reparent the THP split queue
-Date: Wed, 15 Oct 2025 14:35:29 +0800
-Message-ID: <cover.1760509767.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v5 1/4] mm: thp: replace folio_memcg() with folio_memcg_charged()
+Date: Wed, 15 Oct 2025 14:35:30 +0800
+Message-ID: <bc75f3a5bd0920861e522abd83eef74d402d8b57.1760509767.git.zhengqi.arch@bytedance.com>
+In-Reply-To: <cover.1760509767.git.zhengqi.arch@bytedance.com>
+References: <cover.1760509767.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,80 +79,36 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-From: Qi Zheng <zhengqi.arch@bytedance.com>
+From: Muchun Song <songmuchun@bytedance.com>
 
-Changes in v5:
- - fix the softlockup issue in deferred_split_scan() (Zi Yan)
- - modify the commit message in [PATCH v4 3/4] (Shakeel Butt)
- - move memcg_is_dying() to memcontrol.h (Shakeel Butt)
- - collect Acked-bys and Reviewed-bys
- - rebase onto the next-20251014
+folio_memcg_charged() is intended for use when the user is unconcerned
+about the returned memcg pointer. It is more efficient than folio_memcg().
+Therefore, replace folio_memcg() with folio_memcg_charged().
 
-Changes in v4:
- - add split_queue_lock*() and let folio_split_queue_lock*() to use them.
-   (I have kept everyone's Acked-bys and Reviewed-bys. If you need to discard
-    it, please let me know.)
- - let deferred_split_scan() to use split_queue_lock_irqsave(), which will fix
-   the race problem in [PATCH v3 4/4].
-   (Muchun Song)
- - collect Reviewed-bys
- - rebase onto the next-20251002
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+---
+ mm/huge_memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v3:
- - use css_is_dying() in folio_split_queue_lock*() to check if memcg is dying
-   (David Hildenbrand, Shakeel Butt and Zi Yan)
- - modify the commit message in [PATCH v2 4/4]
-   (Roman Gushchin)
- - fix the build error in [PATCH v2 4/4]
- - collect Acked-bys and Reviewed-bys
- - rebase onto the next-20250926
-
-Changes in v2:
- - fix build errors in [PATCH 2/4] and [PATCH 4/4]
- - some cleanups for [PATCH 3/4] (suggested by David Hildenbrand)
- - collect Acked-bys and Reviewed-bys
- - rebase onto the next-20250922
-
-Hi all,
-
-In the future, we will reparent LRU folios during memcg offline to eliminate
-dying memory cgroups, which requires reparenting the THP split queue to its
-parent memcg.
-
-Similar to list_lru, the split queue is relatively independent and does not need
-to be reparented along with objcg and LRU folios (holding objcg lock and lru
-lock). Therefore, we can apply the same mechanism as list_lru to reparent the
-split queue first when memcg is offine.
-
-The first three patches in this series are separated from the series
-"Eliminate Dying Memory Cgroup" [1], mainly to do some cleanup and preparatory
-work.
-
-The last patch reparents the THP split queue to its parent memcg during memcg
-offline.
-
-Comments and suggestions are welcome!
-
-Thanks,
-Qi
-
-[1]. https://lore.kernel.org/all/20250415024532.26632-1-songmuchun@bytedance.com/
-
-Muchun Song (3):
-  mm: thp: replace folio_memcg() with folio_memcg_charged()
-  mm: thp: introduce folio_split_queue_lock and its variants
-  mm: thp: use folio_batch to handle THP splitting in
-    deferred_split_scan()
-
-Qi Zheng (1):
-  mm: thp: reparent the split queue during memcg offline
-
- include/linux/huge_mm.h    |   4 +
- include/linux/memcontrol.h |  20 +++
- mm/huge_memory.c           | 250 +++++++++++++++++++++++++------------
- mm/memcontrol.c            |   1 +
- 4 files changed, 194 insertions(+), 81 deletions(-)
-
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1d1b74950332e..3c42db542b1b9 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -4014,7 +4014,7 @@ bool __folio_unqueue_deferred_split(struct folio *folio)
+ 	bool unqueued = false;
+ 
+ 	WARN_ON_ONCE(folio_ref_count(folio));
+-	WARN_ON_ONCE(!mem_cgroup_disabled() && !folio_memcg(folio));
++	WARN_ON_ONCE(!mem_cgroup_disabled() && !folio_memcg_charged(folio));
+ 
+ 	ds_queue = get_deferred_split_queue(folio);
+ 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
 -- 
 2.20.1
 
