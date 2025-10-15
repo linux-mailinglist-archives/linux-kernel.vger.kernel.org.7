@@ -1,81 +1,95 @@
-Return-Path: <linux-kernel+bounces-854890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705CCBDFB0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:37:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD6ABDFB09
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB573C6C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:37:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9632E3558F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BAA3376B0;
-	Wed, 15 Oct 2025 16:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E0E3376B0;
+	Wed, 15 Oct 2025 16:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qKChBuF+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3V+MR6Um";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Roig1Q4i";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="u89Q4jB+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z8Mb/VEI"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC5B29BDB9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B21C29BDB9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546244; cv=none; b=Y1HKOboOt9Fozb3vZP5BN6uQmmw5jhniXlKd77r3u8mTUwdmO7q81367AbiGLgPugtzIUsdsveXEh2DspROg3TJBBEGMOEdLTBbTMS2WdsvmflNA38E3d0CBQyTch4hbYSAn5a+FY84rm0HA6PLujCJ3daOcawEYBoC4hHh2+2M=
+	t=1760546235; cv=none; b=bp2gHh+beH9R0TMUidS3fYHehARE1h5p5D4iKOxat6vGWB5rJOLPoYEeu4P+9DmldxFwpJxydm7vcFctLwg3ARlJvkiQEJ9AxnWXVMl1FzWngYp2XgUmhOhoq6NXSw5zxCtyqtO8w7q9CUjHAUd5glGN/5uQRaOkhltDWwPuI/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546244; c=relaxed/simple;
-	bh=Ym3B/0H4USnvVL7IHlJUmg7fUVukV8KmIrHtGsUHGGg=;
+	s=arc-20240116; t=1760546235; c=relaxed/simple;
+	bh=O8GPJexAR7PWOiHZKRL4cEfnMthwio+cDVrJSeNZCFs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nGD7a5aedz6IWy6DMDNbA78aT+c1CWCXMsclh7esV8NOHcFec/pdntNDNu8WRP/lUGKLXbqHhcBgKjXC2cyyQKrAAwMkHzlHF97ehsczLwL/UerAhtmGNkGUCUNg9+thvIoRi5cvwbADJ6OVINJuHqfsQwFh/tVUddG9QziB6LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qKChBuF+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FDhQK0021832;
-	Wed, 15 Oct 2025 16:36:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=BOt3zN
-	h/px6+Lk6ezJYoXvE6qO/ttZQsZh8qIl1wPUg=; b=qKChBuF+BlPsTszV5TjC6Q
-	erV9W9yx7QFHCQY2NYvwcPoqxqiU0qyh61evm96GOwBZzeEgetVvxnnNVCbhsJ1N
-	EcJyFrSo2rehrmmrqOywg0Z9J1HZRxnh80u3na6njiVfyOa2QF2Xvk4HGkppvtaq
-	yEoQQRz091ODP0tlq3S+A36vFtnpRgHl1SKaxe2GAAGsrT7HdfZibXczQCoX3ylj
-	a/aMvwUVreuGxdMRjOpNLRKJrElktQOg6eSpo1LhpikbCrPvpOsxXo3UQ/9DWrmj
-	YiFo5RjcO4NRfIhbpwm58zC5DtHpspBlW0imkgoazOA5/kWJd/cnHwSSJf1Qm1HQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew04usk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 16:36:48 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59FFjCRV028760;
-	Wed, 15 Oct 2025 16:36:48 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qew04usf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 16:36:48 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59FFBIAh015002;
-	Wed, 15 Oct 2025 16:36:47 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49r3sjh4rn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 16:36:46 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59FGajVr36110642
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 Oct 2025 16:36:45 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4F67C200D2;
-	Wed, 15 Oct 2025 16:36:45 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 08ECB200D1;
-	Wed, 15 Oct 2025 16:36:40 +0000 (GMT)
-Received: from [9.124.218.242] (unknown [9.124.218.242])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 Oct 2025 16:36:39 +0000 (GMT)
-Message-ID: <6007f50a-7abd-46c8-8934-f1b09df57479@linux.ibm.com>
-Date: Wed, 15 Oct 2025 22:06:39 +0530
+	 In-Reply-To:Content-Type; b=S9qGDeyhKNSfMXzSYRvof5YR2ucKCKEioVt/97RyN29Kv+TgfzJ0lX/EI3DP2ZGARCWDPOIhDe/dS/NOUEOdylUKgFED9+kJVHglRyO7RO0Vbh/xjiyqUZwJ4Lw9HHq5Q0mdCOpE4uGJU/Hn0WaRHLIq+Fa2DPZPazusI70NzsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3V+MR6Um; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Roig1Q4i; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=u89Q4jB+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z8Mb/VEI; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C4531338D8;
+	Wed, 15 Oct 2025 16:37:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760546232; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rPAcpK/s6GPGz/dK/BEAl7H9IF92YQTxk2EK4TwnJ2I=;
+	b=3V+MR6UmRgVGhVa2MloG89lwpYgG8lkCdbdgeG2FKQOwPYRnBzsflXie97xD0wPVVsjSCx
+	DIPY2umrj+ij2U6eGyIyQhxD//bfwep9HRaDh/rajtjELtT/L6cNvHlHjMDOJTntw+q3zm
+	1+QC84G9R6CPyDPdcAy3uK64fKAmj9I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760546232;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rPAcpK/s6GPGz/dK/BEAl7H9IF92YQTxk2EK4TwnJ2I=;
+	b=Roig1Q4iJYRMQtgkcDZUzWbPkMbCpmFO6DBFTfPa9tNKKfvQWpNGzGH2H49Ol/NSrlIUWM
+	+xx7famPlH7y/xDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=u89Q4jB+;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="z8Mb/VEI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760546231; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rPAcpK/s6GPGz/dK/BEAl7H9IF92YQTxk2EK4TwnJ2I=;
+	b=u89Q4jB+kGYd6UpR7wnOEgwxrqftAKVA5nLITNNFJu3vbQZWvUWpEQ3ufDGKyblJ87cSF/
+	Wr1OEZOSL9FRTSwyFGAsll1BzdFknbGM/WsWRsUcsv+uBnAhHSe6t+m/nsSNXkScLpmkRS
+	y/U6Nc5Xm9R1HVu31GwCsKpCI5Yitqk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760546231;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rPAcpK/s6GPGz/dK/BEAl7H9IF92YQTxk2EK4TwnJ2I=;
+	b=z8Mb/VEITpUtc7AnaKU1qH3GLpIxudpINp2GEHGbg09xBMXv0h4WDOxKehrzsUnNjNRCy4
+	vSp1U0olmgllLHCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5EA113A42;
+	Wed, 15 Oct 2025 16:37:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F+kBJ7fN72hICAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 16:37:11 +0000
+Message-ID: <6728a58d-7849-4eba-bce4-68968dd55afe@suse.cz>
+Date: Wed, 15 Oct 2025 18:37:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,115 +97,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/19] sched/fair: Introduce a static key to enable cache
- aware only for multi LLCs
-To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
- <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
-        "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-        Hillf Danton <hdanton@sina.com>, Jianyong Wu <jianyong.wu@outlook.com>,
-        Yangyu Chen <cyy@cyyself.name>, Tingyin Duan <tingyin.duan@gmail.com>,
-        Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
-        Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
-        Chen Yu <yu.chen.surf@gmail.com>,
-        Adam Li <adamli@os.amperecomputing.com>,
-        Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <ef136e6a6f5a2ef840b1f9571c47411f04705b6a.1760206683.git.tim.c.chen@linux.intel.com>
- <20251015110450.GO3289052@noisy.programming.kicks-ass.net>
- <15b871f2-49b8-4b62-926d-31f93ad49f51@intel.com>
+Subject: Re: [PATCH v5] slab: reset obj_ext when it is not actually valid
+ during freeing
 Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <15b871f2-49b8-4b62-926d-31f93ad49f51@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Suren Baghdasaryan <surenb@google.com>, Hao Ge <hao.ge@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Alexei Starovoitov <ast@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20251015141642.700170-1-hao.ge@linux.dev>
+ <CAJuCfpEpO_HaJuV3ukDtTdw_5zCq9R0MnMexC5PoEwOcKWjuYg@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAJuCfpEpO_HaJuV3ukDtTdw_5zCq9R0MnMexC5PoEwOcKWjuYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: oEoAAacKuOuAvk2q1P9GGsqlbRJhBpKQ
-X-Authority-Analysis: v=2.4 cv=eJkeTXp1 c=1 sm=1 tr=0 ts=68efcda0 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=hyIIqotkGnHO3MzI:21 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8 a=vzhER2c_AAAA:8
- a=Rr0q3t3VzmWdSmMSGToA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=0YTRHmU2iG2pZC6F1fw2:22 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfXzbru1ZRddg5V
- pzyvRF0uYWUzqP+HvQbzIPsrncyWI9joBUaiUaW9l90wzjaNJh12L5g0UsMX6rLqQ2qqrDmHJtW
- GwZPbd7fSyVm0uZmyrQXng84jMfX7RC2dRHxDBHkmJAau7MyU6JkKij5ZDrOrwRu8j2eaOV09Tl
- pit5HY7lswkp5TxzQZ52bpzlb+8aazwJ/nq5gsV/IeUPMjTXECZ9utq9QWAYy1zN7L55fcN08Zs
- j3vDtK8FMZfiiwFdUzy/XKBUnPaXBbNcYlKfNOp0dhDLBNThd4pPQ2oRynjmew8UYt7cFmy6C9Y
- Vlmk7oaen4jfXxaXUdA40XsqyhWaSxWg6ssZojWSbGmm1m6MnDizO4zsP1vezTeUBBO3b1eQyfe
- 1jaMEZv8sSsNSDpvYpOKu5lTefoOCw==
-X-Proofpoint-GUID: -GKxfyfwXuPGca4oKq9HZkuNcv5J7QCS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_06,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 impostorscore=0
- phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110014
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: C4531338D8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-
-
-On 10/15/25 9:55 PM, Chen, Yu C wrote:
-> On 10/15/2025 7:04 PM, Peter Zijlstra wrote:
->> On Sat, Oct 11, 2025 at 11:24:41AM -0700, Tim Chen wrote:
->>> From: Chen Yu <yu.c.chen@intel.com>
->>>
->>> Enable cache-aware load balancing only if at least 1 NUMA node has
->>> more than one LLC.
->>>
->>> Suggested-by: Libo Chen <libo.chen@oracle.com>
->>> Suggested-by: Adam Li <adamli@os.amperecomputing.com>
->>> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
->>> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
->>> ---
->>>   kernel/sched/fair.c     | 15 ++++++++++++---
->>>   kernel/sched/sched.h    |  1 +
->>>   kernel/sched/topology.c | 14 ++++++++++++--
->>>   3 files changed, 25 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index cd080468ddc9..3d643449c48c 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -1208,6 +1208,14 @@ static s64 update_se(struct rq *rq, struct 
->>> sched_entity *se)
->>>   __read_mostly unsigned int llc_overload_pct       = 50;
->>>   __read_mostly unsigned int llc_imb_pct            = 20;
->>> +DEFINE_STATIC_KEY_FALSE(sched_cache_allowed);
->>> +
->>> +static inline bool sched_cache_enabled(void)
->>> +{
->>> +    return sched_feat(SCHED_CACHE) &&
->>> +        static_branch_likely(&sched_cache_allowed);
->>> +}
+On 10/15/25 18:29, Suren Baghdasaryan wrote:
+> On Wed, Oct 15, 2025 at 7:17 AM Hao Ge <hao.ge@linux.dev> wrote:
 >>
->> Urgh; do we really need _2_ static keys stacked for this? I'm thinking
->> one should be well enough.
+>> From: Hao Ge <gehao@kylinos.cn>
+>>
+>> If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
+>> But we did not clear it when freeing the slab. Since OBJEXTS_ALLOC_FAIL and
+>> MEMCG_DATA_OBJEXTS currently share the same bit position, during the
+>> release of the associated folio, a VM_BUG_ON_FOLIO() check in
+>> folio_memcg_kmem() is triggered because it was mistakenly assumed that
+>> a valid folio->memcg_data was not cleared before freeing the folio.
+>>
+>> When freeing a slab, we clear slab->obj_exts and reset it to 0
+>> if the obj_ext array has been successfully allocated.
+>> So let's reset slab->obj_exts to 0 when freeing a slab if
+>> the obj_ext array allocated fail to allow them to be returned
+>> to the buddy system more smoothly.
+>>
+>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>> ---
+>> v5: Adopt the simpler solution proposed by Vlastimil;
+>>     Many thanks to him
+>> ---
+>>  mm/slub.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/slub.c b/mm/slub.c
+>> index b1f15598fbfd..2e4340c75be2 100644
+>> --- a/mm/slub.c
+>> +++ b/mm/slub.c
+>> @@ -2170,8 +2170,16 @@ static inline void free_slab_obj_exts(struct slab *slab)
+>>         struct slabobj_ext *obj_exts;
+>>
+>>         obj_exts = slab_obj_exts(slab);
+>> -       if (!obj_exts)
+>> +       if (!obj_exts) {
+>> +               /*
+>> +                * If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
+>> +                * In this case, we will end up here.
+>> +                * Therefore, we should clear the OBJEXTS_ALLOC_FAIL flag first when freeing a slab.
+>> +                * Then let's set it to 0 as below.
+>> +                */
+>> +               slab->obj_exts = 0;
+>>                 return;
+>> +       }
 > 
-> SCHED_CACHE allows user space to turn on/off the feature at runtime,
-> while sched_cache_allow is a hardware capability. This capability is
+> How about this instead:
+> 
+> static inline void free_slab_obj_exts(struct slab *slab)
+> {
+>         struct slabobj_ext *obj_exts;
+> 
+>         obj_exts = slab_obj_exts(slab);
+> +        /*
+> +         * Reset obj_exts to ensure all bits including OBJEXTS_ALLOC_FAIL
+> +         * are always cleared.
+> +         */
+> +        slab->obj_exts = 0;
+>         if (!obj_exts)
+>                 return;
+> 
+>         /*
+>          * obj_exts was created with __GFP_NO_OBJ_EXT flag, therefore its
+>          * corresponding extension will be NULL. alloc_tag_sub() will throw a
+>          * warning if slab has extensions but the extension of an object is
+>          * NULL, therefore replace NULL with CODETAG_EMPTY to indicate that
+>          * the extension for obj_exts is expected to be NULL.
+>          */
+>         mark_objexts_empty(obj_exts);
+>         kfree(obj_exts);
+> -        slab->obj_exts = 0;
 
-isn't it possible use only static_branch_likely(&sched_cache_allowed) at runtime?
+You have an older base, check current mainline, we evaluate slab->obj_exts
+later in the function
 
-Enable that key only if FEAT is set. Disable when unset.
-That way you could use only one static branch at runtime.
+> }
+> 
+>>
+>>         /*
+>>          * obj_exts was created with __GFP_NO_OBJ_EXT flag, therefore its
+>> --
+>> 2.25.1
+>>
 
-Also, I am not sure if the FEATURE should be true by default. I know it maybe unused but
-IMO it should be true by default only when its proven there are no regression.
-One should be aware of their topology to enable it.
->   disabled if there are no multiple LLCs within one node. I’m not sure
-> if using one key could support the above two scenarios.
->It is possible to have multiple NUMA nodes. One node may have multiple LLC while other
-one may have only 1 LLC. what happens in that case?
-
-I am yet to go through the series(hopefully this week). Maybe its handled already.
 
