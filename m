@@ -1,97 +1,226 @@
-Return-Path: <linux-kernel+bounces-855039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27AD6BE0025
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:10:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA64BDFFDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 186C74EB774
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:10:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9765E548461
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B653734BA42;
-	Wed, 15 Oct 2025 18:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5E630147F;
+	Wed, 15 Oct 2025 18:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DzkIzk+E"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhLX5V4m"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94292FF14D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1862FF66A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551824; cv=none; b=u0wvIHLvbvlysHL0ZvW3zwrQ2R7QXWLB5BRcvzvrPku76ywDp44v5xiKHbllBOH/3D0MHTapFQhYOc9cecgO8sXoCk+5zTqJLiYt7jeA3zLcRO6vKhJiuQdBtXrVb9H9wUcbapFDghA51/24O7lCl7vFu0RfWe0eIlFdQBU5g78=
+	t=1760551567; cv=none; b=TdiJrxxAm60GtAen4sA1+o8FvzdwQVi6zMgLjHXa1hHWrzKKhLTZjDsMYiQUhzpL+4LAhfUNzyFBb5GmruPrNjeoVXgddhJy33faDk/B1HT72vUl/iG3YFfcBSj3jv/l0PAfxEbqNQ+KmD8f9Yuo+SpooxyXR6bkc3A/F+RoBg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551824; c=relaxed/simple;
-	bh=Jq7eXp8fib1FIP6eeCceInS/a/aZXhfZhn0wG7S3u/Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OYZEqMWhf+XVG5teppkTlClTOKp1lW+YpgT+9yiZBV65en2rNBNMcKlLiICSUKKSEnT1mP2bKz0+rXP/ar8lKAS9MaIIzZGmyNS58Y/jYt3Zs09YLt6nyVg/4UVI7p493Y5h8Uf+zhwDHzomYC1vKFIYFd4IUBadLNPZxOOPJVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DzkIzk+E; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec2211659so10642926a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:10:20 -0700 (PDT)
+	s=arc-20240116; t=1760551567; c=relaxed/simple;
+	bh=saXVXN/G1RmY/0tPS6bMXu5JGYHAEvpDgnNRPxaVDqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gs63VREPKscbYXfVLEMej4M8oBYYEW48zC9uYVG5dbIQmmAkbbV5TK73ZxMbkz/Poj8w9n5Qmc4yM9xFSUxDEJJ/vQUeV7+/NK+2WpVh55mAZPR/HS7KyllPi4+11hH5PEH9yF7yPbOsugLROoXNrQ5HHZsomeyRzGMf8cPWKK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhLX5V4m; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88e371e3cbfso158018485a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:06:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760551820; x=1761156620; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7VWrlGpJstNEPnOR+6vF9r6jJA3jjpAi47oFTgwahw=;
-        b=DzkIzk+E9963cOfDLUa44fVKBGTVBctH6SF+qeYVLGEmPuAdU3eS/401I36+32POL1
-         FQIfZpmzBYffluVGnvNCW5nUFoQer3rlUUI5LfDaExkN1pf8qxoEZanjp3EeipqpzOrp
-         EMWh7PzB18WkNElIYVvb9+dRj+uGcdDki1k3a2NAi1/ZFZ1Awvg1V2WjWSX+OfrNlZDc
-         1ZWkPKdN4ainLvBZI9eldvxtsjWKDFdhx1hwe899U7JjLvuTCqXSbeivxjgYB1IZFviK
-         P+dRQeZs/IVfibjDvF/bfBgW0Z4Ry6CPutDRepfg3MFDb9ZKQrzyWRByuSySkcEW0J2Z
-         8w7Q==
+        d=gmail.com; s=20230601; t=1760551563; x=1761156363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O0l6MkKaSifnnXj5OTlg2FyNdCV8jBiow9l/iWjkN4k=;
+        b=DhLX5V4mF40kTqtfKGDpSNaV2ZPxVLUSu/0YL0hTon77xOX8uxuB4gaVguQjBNv7QE
+         y+h2y8uSPuYqjepuYRCoqBgY8J5B5oGXoK5GcbgChC3GatGt56L/ZXjUhJ6L7v/oP2tc
+         Oq2M60AM+rx8ZVthzo8S8UQRp8NwmBlS2TP+4/wTa4CdJ7PN45WE6VRlV3OmnAAy0U9y
+         X5eLAOTfjQdYFHVt3PX52cKMFWBRxcsJhJpFZSy72/9akVuwOWVcJDrBsq9aU/7TKh7T
+         INManWUS9hOb8FQODaRAuWmB5ldcYbbVug7SeN8PqwkajVGakv8WV4Ec3vWQ9hV1pgm9
+         zrHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551820; x=1761156620;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7VWrlGpJstNEPnOR+6vF9r6jJA3jjpAi47oFTgwahw=;
-        b=YSLOgpcUHrlVAUI1XdD/a3hP/hq2gLj2zB/IcUYUVDpuqGBZckvejQrppXojIXRo39
-         XbGy16AYmzmTnkz1DnuE3zF1ANTpx//vcW/5LKzXEUcz/P0lg53mu0o/j0V12VY1hR4A
-         AoVSwEkEW6UdC5uXWGlOBGpIlET0Bh6e3eCexQkNonFwYP1pR3lyebc7YlPyCqDh7aJ9
-         fJKlVs9Bs6Kit/qmXg7bvKg3CNm8Ow+klIbP3YQ7n4LxPDl8VrKmKXoW/sGYG+nSSRlf
-         2lxO9fyHGiIyAlJjwNDcL5KHdmFkWkPeuKDOyo7KseQv7xSX+/2uyZZc45o74tbxfzXa
-         TJ+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlAs8NwxFNLexhU30+U2lqsHsNgoLtnnOGcEPNjpoSbXMih775okxWaj5W/S+aMTJn6bUXXuJOgeGBHxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzls+mwVGMRnAccoDSuwdf1Tn2P27Z1rlqgL4JeqgKN/JvvlpKy
-	17fMh1MJSmDpVBQSKUA8ePmtcnPFlKTo3ifmhTwagfmlBkBdbobAOeiZgleXWMd4U29ZEHf74LG
-	u6wrRhw==
-X-Google-Smtp-Source: AGHT+IFmybnsEOrIWbHshrhKc7Un8LMYT9HibOiZ3oGXQOVv28zVE4H0/7+CB4wu6CGtwBvzjybc6kehs9s=
-X-Received: from pjbse5.prod.google.com ([2002:a17:90b:5185:b0:33b:51fe:1a88])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b81:b0:33b:6ef4:c904
- with SMTP id 98e67ed59e1d1-33b6ef4cbbcmr18963431a91.20.1760551819966; Wed, 15
- Oct 2025 11:10:19 -0700 (PDT)
-Date: Wed, 15 Oct 2025 11:02:58 -0700
-In-Reply-To: <20250924145421.2046822-1-xin@zytor.com>
+        d=1e100.net; s=20230601; t=1760551563; x=1761156363;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O0l6MkKaSifnnXj5OTlg2FyNdCV8jBiow9l/iWjkN4k=;
+        b=oTVF145DTHNvCDCffO2BkdX1kmyq/+nRNu4rw6cGouBDjMZFR8rEKiin5F2UAwEgB2
+         e3sUTCe0+cVtdYUkeaZKP4zpnzkAjNd74Bwioq0c9ceCkyHEx/Bpfvxt9MM1h8tW2Vok
+         YSfRAXnnmxDOYeN513putRHmPD1alneSNAnI86JrlpJwc5CY6ItOHjCfKofgeAjFd4k1
+         FrLMXrhTYXDCAqM9N5KudN5O76W5IQzLUZw/o/A64NY740EcrhFAIBqEd3uS+61DsFHs
+         7XYPcuJfY6WgUXTChZFM8+NpapWvDgCEWr8dvlD/cdbUQur77ITBDH3e1Q27f58a2BGU
+         rPew==
+X-Gm-Message-State: AOJu0YzK8LGPChFVTIXYiUsGYSQCzGWfxpURkeXarNAOHGgev9ty2kGH
+	9z+/LMv31b8Eg/KbG1SSR/t4CE+WKZwBgOZ5nKdcZj9WQffVYJxlIcSk
+X-Gm-Gg: ASbGncvIgfxgXemNC0PEGkPFsmWe3LiOy9s6/NGl6XYOmeuAgTaFjcwKorTFCh15qEg
+	OAUpTJrdp/1fFjtS9KCRNIeGdHUxNmva1dISV0wxGuxzlSDIRexdvm6lTUI3FyWdWzIoLSzsVBj
+	UXFGHkWStiT0BY2leiPiCAnkO2YwubAV0WbgBcsGj+i9+6eq5WjNM2puoSYh9sUsQ2GV7DN472r
+	cJsFDl1EeD50uajgfGfDQbw3H6VdoxgfUau6tB9Jt2fxvqs+TdjYQdCqHgBvK2K6Wkap2yz+sbS
+	xruZq8BiOC+anuyFhi7m0fUlNfSdLA9mN1sQeE8128P+blcjUhs5ju9Ima6a/Iu11FOTi8Z6FaB
+	E0Xz1v1S1CCOYxOAZq8dFYtzPcXbO6QCvU7a6Og==
+X-Google-Smtp-Source: AGHT+IH07pUTWfoILeAURCrXsbdCzX9r9za0TXbpl6sdSzuVgHj1Z35BAP4re0250XF4/DIhG+m8HA==
+X-Received: by 2002:a05:622a:20f:b0:4e8:8ed6:9be2 with SMTP id d75a77b69052e-4e88ed69fb9mr27068601cf.83.1760551562889;
+        Wed, 15 Oct 2025 11:06:02 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e881d294e1sm23265111cf.39.2025.10.15.11.06.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 11:06:01 -0700 (PDT)
+Date: Wed, 15 Oct 2025 14:06:00 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Michael Jeanson <mjeanson@efficios.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	TCMalloc Team <tcmalloc-eng@google.com>
+Subject: Re: [patch 07/19] cpumask: Introduce cpumask_or_weight()
+Message-ID: <aO_iiKKVyKSlXeF2@yury>
+References: <20251015164952.694882104@linutronix.de>
+ <20251015172834.757776587@linutronix.de>
+ <aO_c3lTmvJyzsOdE@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924145421.2046822-1-xin@zytor.com>
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <176055120017.1529012.10789026388840299534.b4-ty@google.com>
-Subject: Re: [PATCH v1] KVM: nVMX: Use vcpu instead of vmx->vcpu when vcpu is available
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	"Xin Li (Intel)" <xin@zytor.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	chao.gao@intel.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO_c3lTmvJyzsOdE@yury>
 
-On Wed, 24 Sep 2025 07:54:21 -0700, Xin Li (Intel) wrote:
-> Prefer using vcpu directly when available, instead of accessing it
-> through vmx->vcpu.
+On Wed, Oct 15, 2025 at 01:41:50PM -0400, Yury Norov wrote:
+> Hi Tomas,
+> 
+> On Wed, Oct 15, 2025 at 07:29:36PM +0200, Thomas Gleixner wrote:
+> > CID management OR's two cpumasks and then calculates the weight on the
+> > result. That's inefficient as that has to walk the same stuff twice. As
+> > this is done with runqueue lock held, there is a real benefit of speeding
+> > this up.
+> > 
+> > Provide cpumask_or_weight() and the corresponding bitmap functions which
+> > return the weight of the OR result right away.
+> > 
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Yury Norov <yury.norov@gmail.com>
+> > ---
+> >  include/linux/bitmap.h  |   15 +++++++++++++++
+> >  include/linux/cpumask.h |   16 ++++++++++++++++
+> >  lib/bitmap.c            |   17 +++++++++++++++++
+> >  3 files changed, 48 insertions(+)
+> > 
+> > --- a/include/linux/bitmap.h
+> > +++ b/include/linux/bitmap.h
+> > @@ -45,6 +45,7 @@ struct device;
+> >   *  bitmap_copy(dst, src, nbits)                *dst = *src
+> >   *  bitmap_and(dst, src1, src2, nbits)          *dst = *src1 & *src2
+> >   *  bitmap_or(dst, src1, src2, nbits)           *dst = *src1 | *src2
+> > + *  bitmap_or_weight(dst, src1, src2, nbits)    *dst = *src1 | *src2. Returns Hamming Weight of dst
+> >   *  bitmap_xor(dst, src1, src2, nbits)          *dst = *src1 ^ *src2
+> >   *  bitmap_andnot(dst, src1, src2, nbits)       *dst = *src1 & ~(*src2)
+> >   *  bitmap_complement(dst, src, nbits)          *dst = ~(*src)
+> > @@ -165,6 +166,8 @@ bool __bitmap_and(unsigned long *dst, co
+> >  		 const unsigned long *bitmap2, unsigned int nbits);
+> >  void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
+> >  		 const unsigned long *bitmap2, unsigned int nbits);
+> > +unsigned int __bitmap_or_weight(unsigned long *dst, const unsigned long *bitmap1,
+> > +				const unsigned long *bitmap2, unsigned int nbits);
+> >  void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
+> >  		  const unsigned long *bitmap2, unsigned int nbits);
+> >  bool __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
+> > @@ -338,6 +341,18 @@ void bitmap_or(unsigned long *dst, const
+> >  }
+> >  
+> >  static __always_inline
+> > +unsigned int bitmap_or_weight(unsigned long *dst, const unsigned long *src1,
+> > +			      const unsigned long *src2, unsigned int nbits)
+> > +{
+> > +	if (small_const_nbits(nbits)) {
+> > +		*dst = *src1 | *src2;
+> > +		return hweight_long(*dst & BITMAP_LAST_WORD_MASK(nbits));
+> > +	} else {
+> > +		return __bitmap_or_weight(dst, src1, src2, nbits);
+> > +	}
+> > +}
+> > +
+> > +static __always_inline
+> >  void bitmap_xor(unsigned long *dst, const unsigned long *src1,
+> >  		const unsigned long *src2, unsigned int nbits)
+> >  {
+> > --- a/include/linux/cpumask.h
+> > +++ b/include/linux/cpumask.h
+> > @@ -729,6 +729,22 @@ void cpumask_or(struct cpumask *dstp, co
+> >  }
+> >  
+> >  /**
+> > + * cpumask_or_weight - *dstp = *src1p | *src2p and return the weight of the result
+> > + * @dstp: the cpumask result
+> > + * @src1p: the first input
+> > + * @src2p: the second input
+> > + *
+> > + * Return: The number of bits set in the resulting cpumask @dstp
+> > + */
+> > +static __always_inline
+> > +unsigned int cpumask_or_weight(struct cpumask *dstp, const struct cpumask *src1p,
+> > +			       const struct cpumask *src2p)
+> > +{
+> > +	return bitmap_or_weight(cpumask_bits(dstp), cpumask_bits(src1p),
+> > +				cpumask_bits(src2p), small_cpumask_bits);
+> > +}
+> > +
+> > +/**
+> >   * cpumask_xor - *dstp = *src1p ^ *src2p
+> >   * @dstp: the cpumask result
+> >   * @src1p: the first input
+> > --- a/lib/bitmap.c
+> > +++ b/lib/bitmap.c
+> > @@ -253,6 +253,23 @@ void __bitmap_or(unsigned long *dst, con
+> >  }
+> >  EXPORT_SYMBOL(__bitmap_or);
+> >  
+> > +unsigned int __bitmap_or_weight(unsigned long *dst, const unsigned long *bitmap1,
+> > +				const unsigned long *bitmap2, unsigned int bits)
+> > +{
+> > +	unsigned int k, w = 0;
+> > +
+> > +	for (k = 0; k < bits / BITS_PER_LONG; k++) {
+> > +		dst[k] = bitmap1[k] | bitmap2[k];
+> > +		w += hweight_long(dst[k]);
+> > +	}
+> > +
+> > +	if (bits % BITS_PER_LONG) {
+> > +		dst[k] = bitmap1[k] | bitmap2[k];
+> > +		w += hweight_long(dst[k] & BITMAP_LAST_WORD_MASK(bits));
+> > +	}
+> > +	return w;
+> > +}
+> 
+> We've got bitmap_weight_and() and bitmap_weight_andnot() already. Can
+> you align naming with the existing scheme: bitmap_weight_or().
+> 
+> Also, for outline implementation, can you employ the BITMAP_WEIGHT()
+> macro?
 
-Applied to kvm-x86 vmx, thanks!
+Ok, I see now. You want to do a regular cpumask_or(), but return the
+hweight() of the result, instead of a boolean.
 
-[1/1] KVM: nVMX: Use vcpu instead of vmx->vcpu when vcpu is available
-      https://github.com/kvm-x86/linux/commit/f505c7b16fbe
+The cpumask_or_weight() may be really confused with cpumask_weight_or().
+Can you try considering a different naming? (I am seemingly can't.)
 
---
-https://github.com/kvm-x86/linux/tree/next
+Can you describe the performance impact you've mentioned in the commit
+message in more details?
+
+Anyways, for the approach:
+
+Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 
