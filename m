@@ -1,69 +1,70 @@
-Return-Path: <linux-kernel+bounces-853548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B9EBDBF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:04:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB03DBDBF37
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35373B5062
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:04:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31EC3A6D3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374E2459E7;
-	Wed, 15 Oct 2025 01:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AB02F1FDB;
+	Wed, 15 Oct 2025 01:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RScvWVMS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbZ7AABF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7811A9F90
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190731A9F90
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760490253; cv=none; b=iT6lfHhBoDXmZF+BHQzK01oXZf4agvvaRNsP29Xp9KMxGAGlwFDRuG/UcwW22S7GsfcVuZUDkhoEjSkj6DRIpL5ggMNxGnf6mVGaAQuPQmr9GndpOY62vVbOhI81uH+AqkwGcYWpquxLmk8n3fGqQXW0Lqgy97um80rZ1OOWhig=
+	t=1760490330; cv=none; b=MmfF3eUHg+OWXIZmgJMmen81FV5TJ6240cseskAiteAur9ofLIZx5+GREaE9lD1wssESNcCbBQX8UMjIDV/jmsDPhRPr4El+4urAWnEjO8bZ65FGesKtSBGUmkH27Nw7/E+GUYebSSVGr2vlUPRquntwG9uIctacnMts3rhjQ7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760490253; c=relaxed/simple;
-	bh=hsP+f9cKGhA88vButIz4+UBSyVEnqSK6E16OcnngsCg=;
+	s=arc-20240116; t=1760490330; c=relaxed/simple;
+	bh=Nl8pscGovLAj7NmAtic2lGwAIFCHL7NDr+q0SFK6BGc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUiACk4ii2KRIFxTpMg8jq0b+FbjgSfHA4Q6D30uwicW0OK9Tl6yyJlatpmnpevOQQvysjI51vBvSV3/olmD29+OhC6PrwejHLDe+GrcszWQEm944YcXKzYaWvAiBnjR127TAWbrgDTOfrzguY/YFE70VGJIOkxrLbJyNObpK6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RScvWVMS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDDFC113D0
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:04:12 +0000 (UTC)
+	 To:Cc:Content-Type; b=KKKkEJYdhKEjW5lEZJQLPHBI+ysxiyJIpshIV9bJiJHOBfJEXDzarLA02BTrbeeYf0IcyPpqvhYiEbHtz0oexrBPMxMzOieD+GGPG9VJPsu3KjdzaDg/7m3kVywWPgHA2wRqH2RuvqDiL+wJYk+D4COkn67Ay9fH4HRxZLEbRZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbZ7AABF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F59C4AF0E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760490252;
-	bh=hsP+f9cKGhA88vButIz4+UBSyVEnqSK6E16OcnngsCg=;
+	s=k20201202; t=1760490329;
+	bh=Nl8pscGovLAj7NmAtic2lGwAIFCHL7NDr+q0SFK6BGc=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RScvWVMSY7LwI4DvLXrvKvCMUx+Pa0fQ9pfHrDJnU7cpom2caBFT6YqNg7BX0vP/r
-	 Kk9QOORPmOp6h9fRkyYMYoGh7NS5bHztTUHtsgF643UwzC/UHSJdPhyMVKcQ6xlnEv
-	 KqN2S5dkh76oSkrBZ4AtHZSjt1OmTOQkFnKTK+snQR7scNbb5VIL/oJSuOoBDZJ3UQ
-	 +grCV5TOyjRx/SfHCIh9YwvHk/46zihKgNtKkRaxve3oQ0sVA549zTEUaiCkOYoz90
-	 /kt8yz2B3Diy/LVSHMonak8PQIvAhvJpnfRP6z7laSuBKAyKz6lSqhE+woynmysvpQ
-	 8pM/Jj9x+BScQ==
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e6674caa5so2241655e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:04:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWbT0N88dKuicezIsr/J33akxTV11x+JlzMpdzZLwWkKBx0kXqVUV+J+XCsQWg2tQZewyr8HrqpDsbqfaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3QDdjF+youl5UyLXto0/iAUQxtrpocK03H+j6dyCfvb6AFykv
-	sDQHmMgL6tIGOVfhmmojTmBsTXN3WYul++wvI7o6JM9uvx0rillYnV3aQTNC6zj2SaaRQnXDrXJ
-	yikW6dcLfCyq4A3ZA47CaF+cpKK0KDNA=
-X-Google-Smtp-Source: AGHT+IFSO4RoH0+0MmecaoWwkdhHUj1tFSX/MI8r9stNS3G36xBF5yBb2moTJwxkgO/lNRID4MrzmosTYGharRKmJds=
-X-Received: by 2002:a7b:cc06:0:b0:46e:7dbf:6cc2 with SMTP id
- 5b1f17b1804b1-46fa296e763mr154188005e9.8.1760490251277; Tue, 14 Oct 2025
- 18:04:11 -0700 (PDT)
+	b=GbZ7AABFi2/FuVPH0InrmEKZkeVK/ai1cwKeLjwKEJyJ3MqFUuqX8Kpn+pS5TppPh
+	 KsVSeiS4Os/r0Z8J9nHm7Twk536Bd5eRIE0IjpGgdH5hzkzJTl8QF4IxNlAlOtnnfS
+	 suybRnV3iMuXuhr9MdxcquDteHpUG45ilIlAyk+/xrDEqIxGOEVP47tgl+dGhWTr5J
+	 xp0OWBZHN66OuEIT90aCOZ1YhtbXsipEkaSvU3C1Gbr4eS/S6vyTJOLXp3t3A3XqeM
+	 YwahQFM6tbjHr3WnqpJ9SYfsmWCpwX2Pv679ezzFZayl+fW7Sq4qbiXZjtZnf//4o6
+	 uAXOjqhfYc0NQ==
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so4918004f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:05:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXdONSqCt4nJimftNpUVjI1r3EkatdkMSp98ZN+LZU98DfZ14m+t3FXwF6t5kfEIL/HOlmrbyDJgU4vrc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgbZpldz1a3hXyKkbjcLZ7ouRzmbm5Wx29Dr8ftS78XkDZnG5a
+	QdGuHx35iqh8i9cfGqViT9uG5jbM354Pv8874bOfnBvS1W8Bp07UiVQOyIAjgcPG58oRt/RXzKo
+	k1fXAEBTVpNSqm0faTUQu2l67STjp8ng=
+X-Google-Smtp-Source: AGHT+IE4xajFQpEKB3dm3mpPCWoeZR9HZXtGrRANyk+CTD/A1yJuftWGloyC/M5RSNH2cEZQcnN8T2rvL7AnMY/CIqk=
+X-Received: by 2002:a05:6000:2901:b0:426:d81f:483c with SMTP id
+ ffacd0b85a97d-426d81f697cmr9557715f8f.33.1760490328183; Tue, 14 Oct 2025
+ 18:05:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014131032.49616-1-ziyao@disroot.org> <20251014131032.49616-4-ziyao@disroot.org>
-In-Reply-To: <20251014131032.49616-4-ziyao@disroot.org>
+References: <20251014131032.49616-1-ziyao@disroot.org> <20251014131032.49616-3-ziyao@disroot.org>
+In-Reply-To: <20251014131032.49616-3-ziyao@disroot.org>
 From: Guo Ren <guoren@kernel.org>
-Date: Wed, 15 Oct 2025 09:03:59 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTdY+dhCH1BVVDaeqZxotxeu6q4NrurBK6Ro4oc3LWwcw@mail.gmail.com>
-X-Gm-Features: AS18NWDLo0_MxIYOl-8Amf-z1eZpjh4scWWAn9vzIu7fB631vLox-a9ZNXNTSA0
-Message-ID: <CAJF2gTTdY+dhCH1BVVDaeqZxotxeu6q4NrurBK6Ro4oc3LWwcw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] reset: th1520: Prepare for supporting multiple controllers
+Date: Wed, 15 Oct 2025 09:05:14 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQfpCig7uBq_shFqL1hc+D_8YPLE-OKbm6-UEg+R_2vJA@mail.gmail.com>
+X-Gm-Features: AS18NWCZ1UM4bFlsoMtHoIHIIAtvxHCvGZ9qCwE5FHkb9l9ZSw8uSo2NS81irPU
+Message-ID: <CAJF2gTQfpCig7uBq_shFqL1hc+D_8YPLE-OKbm6-UEg+R_2vJA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] dt-bindings: reset: thead,th1520-reset: Add
+ controllers for more subsys
 To: Yao Zi <ziyao@disroot.org>
 Cc: Drew Fustini <fustini@kernel.org>, Fu Wei <wefu@redhat.com>, 
 	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
@@ -76,134 +77,279 @@ Cc: Drew Fustini <fustini@kernel.org>, Fu Wei <wefu@redhat.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yao,
-
-On Tue, Oct 14, 2025 at 9:12=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+On Tue, Oct 14, 2025 at 9:11=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
 >
-> TH1520 SoC is divided into several subsystems, shipping distinct reset
-> controllers with similar control logic. Let's make reset signal mapping
-> a data structure specific to one compatible to prepare for introduction
-> of more reset controllers in the future.
-Move th1520_resets to .priv data makes sense, LGTM.
-
-Acked-by: Guo Ren <guoren@kernel.org>
-
+> TH1520 SoC is divided into several subsystems, most of them have
+> distinct reset controllers. Let's document reset controllers other than
+> the one for VO subsystem and IDs for their reset signals.
 >
 > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  drivers/reset/reset-th1520.c | 42 +++++++++++++++++++++++++-----------
->  1 file changed, 30 insertions(+), 12 deletions(-)
+>  .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
+>  .../dt-bindings/reset/thead,th1520-reset.h    | 216 ++++++++++++++++++
+>  2 files changed, 223 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-> index 14d964a9c6b6..2b65a95ed021 100644
-> --- a/drivers/reset/reset-th1520.c
-> +++ b/drivers/reset/reset-th1520.c
-> @@ -29,14 +29,20 @@
->  #define TH1520_HDMI_SW_MAIN_RST                BIT(0)
->  #define TH1520_HDMI_SW_PRST            BIT(1)
+> diff --git a/Documentation/devicetree/bindings/reset/thead,th1520-reset.y=
+aml b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
+> index f2e91d0add7a..7b5053c177fe 100644
+> --- a/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
+> +++ b/Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
+> @@ -16,7 +16,13 @@ maintainers:
+>  properties:
+>    compatible:
+>      enum:
+> -      - thead,th1520-reset
+> +      - thead,th1520-reset # Reset controller for VO subsystem
+> +      - thead,th1520-reset-ao
+> +      - thead,th1520-reset-ap
+> +      - thead,th1520-reset-dsp
+> +      - thead,th1520-reset-misc
+> +      - thead,th1520-reset-vi
+> +      - thead,th1520-reset-vp
 >
-> +struct th1520_reset_map {
-> +       u32 bit;
-> +       u32 reg;
-> +};
+>    reg:
+>      maxItems: 1
+> diff --git a/include/dt-bindings/reset/thead,th1520-reset.h b/include/dt-=
+bindings/reset/thead,th1520-reset.h
+> index e51d6314d131..ba6805b6b12a 100644
+> --- a/include/dt-bindings/reset/thead,th1520-reset.h
+> +++ b/include/dt-bindings/reset/thead,th1520-reset.h
+> @@ -7,6 +7,200 @@
+>  #ifndef _DT_BINDINGS_TH1520_RESET_H
+>  #define _DT_BINDINGS_TH1520_RESET_H
+>
+> +/* AO Subsystem */
+> +#define TH1520_RESET_ID_SYSTEM         0
+> +#define TH1520_RESET_ID_RTC_APB                1
+> +#define TH1520_RESET_ID_RTC_REF                2
+> +#define TH1520_RESET_ID_AOGPIO_DB      3
+> +#define TH1520_RESET_ID_AOGPIO_APB     4
+> +#define TH1520_RESET_ID_AOI2C_APB      5
+> +#define TH1520_RESET_ID_PVT_APB                6
+> +#define TH1520_RESET_ID_E902_CORE      7
+> +#define TH1520_RESET_ID_E902_HAD       8
+> +#define TH1520_RESET_ID_AOTIMER_APB    9
+> +#define TH1520_RESET_ID_AOTIMER_CORE   10
+> +#define TH1520_RESET_ID_AOWDT_APB      11
+> +#define TH1520_RESET_ID_APSYS          12
+> +#define TH1520_RESET_ID_NPUSYS         13
+> +#define TH1520_RESET_ID_DDRSYS         14
+> +#define TH1520_RESET_ID_AXI_AP2CP      15
+> +#define TH1520_RESET_ID_AXI_CP2AP      16
+> +#define TH1520_RESET_ID_AXI_CP2SRAM    17
+> +#define TH1520_RESET_ID_AUDSYS_CORE    18
+> +#define TH1520_RESET_ID_AUDSYS_IOPMP   19
+> +#define TH1520_RESET_ID_AUDSYS         20
+> +#define TH1520_RESET_ID_DSP0           21
+> +#define TH1520_RESET_ID_DSP1           22
+> +#define TH1520_RESET_ID_GPU_MODULE     23
+> +#define TH1520_RESET_ID_VDEC           24
+> +#define TH1520_RESET_ID_VENC           25
+> +#define TH1520_RESET_ID_ADC_APB                26
+> +#define TH1520_RESET_ID_AUDGPIO_DB     27
+> +#define TH1520_RESET_ID_AUDGPIO_APB    28
+> +#define TH1520_RESET_ID_AOUART_IF      29
+> +#define TH1520_RESET_ID_AOUART_APB     30
+> +#define TH1520_RESET_ID_SRAM_AXI_P0    31
+> +#define TH1520_RESET_ID_SRAM_AXI_P1    32
+> +#define TH1520_RESET_ID_SRAM_AXI_P2    33
+> +#define TH1520_RESET_ID_SRAM_AXI_P3    34
+> +#define TH1520_RESET_ID_SRAM_AXI_P4    35
+> +#define TH1520_RESET_ID_SRAM_AXI_CORE  36
+> +#define TH1520_RESET_ID_SE             37
 > +
->  struct th1520_reset_priv {
->         struct reset_controller_dev rcdev;
->         struct regmap *map;
-> +       const struct th1520_reset_map *resets;
->  };
->
-> -struct th1520_reset_map {
-> -       u32 bit;
-> -       u32 reg;
-> +struct th1520_reset_data {
-> +       const struct th1520_reset_map *resets;
-> +       size_t num;
->  };
->
->  static const struct th1520_reset_map th1520_resets[] =3D {
-> @@ -90,7 +96,7 @@ static int th1520_reset_assert(struct reset_controller_=
-dev *rcdev,
->         struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
->         const struct th1520_reset_map *reset;
->
-> -       reset =3D &th1520_resets[id];
-> +       reset =3D &priv->resets[id];
->
->         return regmap_update_bits(priv->map, reset->reg, reset->bit, 0);
->  }
-> @@ -101,7 +107,7 @@ static int th1520_reset_deassert(struct reset_control=
-ler_dev *rcdev,
->         struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
->         const struct th1520_reset_map *reset;
->
-> -       reset =3D &th1520_resets[id];
-> +       reset =3D &priv->resets[id];
->
->         return regmap_update_bits(priv->map, reset->reg, reset->bit,
->                                   reset->bit);
-> @@ -120,11 +126,14 @@ static const struct regmap_config th1520_reset_regm=
-ap_config =3D {
->
->  static int th1520_reset_probe(struct platform_device *pdev)
->  {
-> +       const struct th1520_reset_data *data;
->         struct device *dev =3D &pdev->dev;
->         struct th1520_reset_priv *priv;
->         void __iomem *base;
->         int ret;
->
-> +       data =3D device_get_match_data(dev);
+> +/* AP Subsystem */
+> +#define TH1520_RESET_ID_BROM                   0
+> +#define TH1520_RESET_ID_C910_TOP               1
+> +#define TH1520_RESET_ID_NPU                    2
+> +#define TH1520_RESET_ID_WDT0                   3
+> +#define TH1520_RESET_ID_WDT1                   4
+> +#define TH1520_RESET_ID_C910_C0                        5
+> +#define TH1520_RESET_ID_C910_C1                        6
+> +#define TH1520_RESET_ID_C910_C2                        7
+> +#define TH1520_RESET_ID_C910_C3                        8
+> +#define TH1520_RESET_ID_CHIP_DBG_CORE          9
+> +#define TH1520_RESET_ID_CHIP_DBG_AXI           10
+> +#define TH1520_RESET_ID_AXI4_CPUSYS2_AXI       11
+> +#define TH1520_RESET_ID_AXI4_CPUSYS2_APB       12
+> +#define TH1520_RESET_ID_X2H_CPUSYS             13
+> +#define TH1520_RESET_ID_AHB2_CPUSYS            14
+> +#define TH1520_RESET_ID_APB3_CPUSYS            15
+> +#define TH1520_RESET_ID_MBOX0_APB              16
+> +#define TH1520_RESET_ID_MBOX1_APB              17
+> +#define TH1520_RESET_ID_MBOX2_APB              18
+> +#define TH1520_RESET_ID_MBOX3_APB              19
+> +#define TH1520_RESET_ID_TIMER0_APB             20
+> +#define TH1520_RESET_ID_TIMER0_CORE            21
+> +#define TH1520_RESET_ID_TIMER1_APB             22
+> +#define TH1520_RESET_ID_TIMER1_CORE            23
+> +#define TH1520_RESET_ID_PERISYS_AHB            24
+> +#define TH1520_RESET_ID_PERISYS_APB1           25
+> +#define TH1520_RESET_ID_PERISYS_APB2           26
+> +#define TH1520_RESET_ID_GMAC0_APB              27
+> +#define TH1520_RESET_ID_GMAC0_AHB              28
+> +#define TH1520_RESET_ID_GMAC0_CLKGEN           29
+> +#define TH1520_RESET_ID_GMAC0_AXI              30
+> +#define TH1520_RESET_ID_UART0_APB              31
+> +#define TH1520_RESET_ID_UART0_IF               32
+> +#define TH1520_RESET_ID_UART1_APB              33
+> +#define TH1520_RESET_ID_UART1_IF               34
+> +#define TH1520_RESET_ID_UART2_APB              35
+> +#define TH1520_RESET_ID_UART2_IF               36
+> +#define TH1520_RESET_ID_UART3_APB              37
+> +#define TH1520_RESET_ID_UART3_IF               38
+> +#define TH1520_RESET_ID_UART4_APB              39
+> +#define TH1520_RESET_ID_UART4_IF               40
+> +#define TH1520_RESET_ID_UART5_APB              41
+> +#define TH1520_RESET_ID_UART5_IF               42
+> +#define TH1520_RESET_ID_QSPI0_IF               43
+> +#define TH1520_RESET_ID_QSPI0_APB              44
+> +#define TH1520_RESET_ID_QSPI1_IF               45
+> +#define TH1520_RESET_ID_QSPI1_APB              46
+> +#define TH1520_RESET_ID_SPI_IF                 47
+> +#define TH1520_RESET_ID_SPI_APB                        48
+> +#define TH1520_RESET_ID_I2C0_APB               49
+> +#define TH1520_RESET_ID_I2C0_CORE              50
+> +#define TH1520_RESET_ID_I2C1_APB               51
+> +#define TH1520_RESET_ID_I2C1_CORE              52
+> +#define TH1520_RESET_ID_I2C2_APB               53
+> +#define TH1520_RESET_ID_I2C2_CORE              54
+> +#define TH1520_RESET_ID_I2C3_APB               55
+> +#define TH1520_RESET_ID_I2C3_CORE              56
+> +#define TH1520_RESET_ID_I2C4_APB               57
+> +#define TH1520_RESET_ID_I2C4_CORE              58
+> +#define TH1520_RESET_ID_I2C5_APB               59
+> +#define TH1520_RESET_ID_I2C5_CORE              60
+> +#define TH1520_RESET_ID_GPIO0_DB               61
+> +#define TH1520_RESET_ID_GPIO0_APB              62
+> +#define TH1520_RESET_ID_GPIO1_DB               63
+> +#define TH1520_RESET_ID_GPIO1_APB              64
+> +#define TH1520_RESET_ID_GPIO2_DB               65
+> +#define TH1520_RESET_ID_GPIO2_APB              66
+> +#define TH1520_RESET_ID_PWM_COUNTER            67
+> +#define TH1520_RESET_ID_PWM_APB                        68
+> +#define TH1520_RESET_ID_PADCTRL0_APB           69
+> +#define TH1520_RESET_ID_CPU2PERI_X2H           70
+> +#define TH1520_RESET_ID_CPU2AON_X2H            71
+> +#define TH1520_RESET_ID_AON2CPU_A2X            72
+> +#define TH1520_RESET_ID_NPUSYS_AXI             73
+> +#define TH1520_RESET_ID_NPUSYS_AXI_APB         74
+> +#define TH1520_RESET_ID_CPU2VP_X2P             75
+> +#define TH1520_RESET_ID_CPU2VI_X2H             76
+> +#define TH1520_RESET_ID_BMU_AXI                        77
+> +#define TH1520_RESET_ID_BMU_APB                        78
+> +#define TH1520_RESET_ID_DMAC_CPUSYS_AXI                79
+> +#define TH1520_RESET_ID_DMAC_CPUSYS_AHB                80
+> +#define TH1520_RESET_ID_SPINLOCK               81
+> +#define TH1520_RESET_ID_CFG2TEE                        82
+> +#define TH1520_RESET_ID_DSMART                 83
+> +#define TH1520_RESET_ID_GPIO3_DB               84
+> +#define TH1520_RESET_ID_GPIO3_APB              85
+> +#define TH1520_RESET_ID_PERI_I2S               86
+> +#define TH1520_RESET_ID_PERI_APB3              87
+> +#define TH1520_RESET_ID_PERI2PERI1_APB         88
+> +#define TH1520_RESET_ID_VPSYS_APB              89
+> +#define TH1520_RESET_ID_PERISYS_APB4           90
+> +#define TH1520_RESET_ID_GMAC1_APB              91
+> +#define TH1520_RESET_ID_GMAC1_AHB              92
+> +#define TH1520_RESET_ID_GMAC1_CLKGEN           93
+> +#define TH1520_RESET_ID_GMAC1_AXI              94
+> +#define TH1520_RESET_ID_GMAC_AXI               95
+> +#define TH1520_RESET_ID_GMAC_AXI_APB           96
+> +#define TH1520_RESET_ID_PADCTRL1_APB           97
+> +#define TH1520_RESET_ID_VOSYS_AXI              98
+> +#define TH1520_RESET_ID_VOSYS_AXI_APB          99
+> +#define TH1520_RESET_ID_VOSYS_AXI_X2X          100
+> +#define TH1520_RESET_ID_MISC2VP_X2X            101
+> +#define TH1520_RESET_ID_DSPSYS                 102
+> +#define TH1520_RESET_ID_VISYS                  103
+> +#define TH1520_RESET_ID_VOSYS                  104
+> +#define TH1520_RESET_ID_VPSYS                  105
 > +
->         priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->         if (!priv)
->                 return -ENOMEM;
-> @@ -138,22 +147,31 @@ static int th1520_reset_probe(struct platform_devic=
-e *pdev)
->         if (IS_ERR(priv->map))
->                 return PTR_ERR(priv->map);
->
-> -       /* Initialize GPU resets to asserted state */
-> -       ret =3D regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
-> -                                TH1520_GPU_RST_CFG_MASK, 0);
-> -       if (ret)
-> -               return ret;
-> +       if (of_device_is_compatible(dev->of_node, "thead,th1520-reset")) =
-{
-> +               /* Initialize GPU resets to asserted state */
-> +               ret =3D regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
-> +                                        TH1520_GPU_RST_CFG_MASK, 0);
-> +               if (ret)
-> +                       return ret;
-> +       }
->
->         priv->rcdev.owner =3D THIS_MODULE;
-> -       priv->rcdev.nr_resets =3D ARRAY_SIZE(th1520_resets);
-> +       priv->rcdev.nr_resets =3D data->num;
->         priv->rcdev.ops =3D &th1520_reset_ops;
->         priv->rcdev.of_node =3D dev->of_node;
->
-> +       priv->resets =3D data->resets;
+> +/* DSP Subsystem */
+> +#define TH1520_RESET_ID_X2X_DSP1       0
+> +#define TH1520_RESET_ID_X2X_DSP0       1
+> +#define TH1520_RESET_ID_X2X_SLAVE_DSP1 2
+> +#define TH1520_RESET_ID_X2X_SLAVE_DSP0 3
+> +#define TH1520_RESET_ID_DSP0_CORE      4
+> +#define TH1520_RESET_ID_DSP0_DEBUG     5
+> +#define TH1520_RESET_ID_DSP0_APB       6
+> +#define TH1520_RESET_ID_DSP1_CORE      7
+> +#define TH1520_RESET_ID_DSP1_DEBUG     8
+> +#define TH1520_RESET_ID_DSP1_APB       9
+> +#define TH1520_RESET_ID_DSPSYS_APB     10
+> +#define TH1520_RESET_ID_AXI4_DSPSYS_SLV        11
+> +#define TH1520_RESET_ID_AXI4_DSPSYS    12
+> +#define TH1520_RESET_ID_AXI4_DSP_RS    13
 > +
->         return devm_reset_controller_register(dev, &priv->rcdev);
->  }
->
-> +static const struct th1520_reset_data th1520_reset_data =3D {
-> +       .resets =3D th1520_resets,
-> +       .num =3D ARRAY_SIZE(th1520_resets),
-> +};
+> +/* MISC Subsystem */
+> +#define TH1520_RESET_ID_EMMC_SDIO_CLKGEN       0
+> +#define TH1520_RESET_ID_EMMC                   1
+> +#define TH1520_RESET_ID_MISCSYS_AXI            2
+> +#define TH1520_RESET_ID_MISCSYS_AXI_APB                3
+> +#define TH1520_RESET_ID_SDIO0                  4
+> +#define TH1520_RESET_ID_SDIO1                  5
+> +#define TH1520_RESET_ID_USB3_APB               6
+> +#define TH1520_RESET_ID_USB3_PHY               7
+> +#define TH1520_RESET_ID_USB3_VCC               8
 > +
->  static const struct of_device_id th1520_reset_match[] =3D {
-> -       { .compatible =3D "thead,th1520-reset" },
-> +       { .compatible =3D "thead,th1520-reset", .data =3D &th1520_reset_d=
-ata },
->         { /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, th1520_reset_match);
+> +/* VI Subsystem */
+> +#define TH1520_RESET_ID_ISP0           0
+> +#define TH1520_RESET_ID_ISP1           1
+> +#define TH1520_RESET_ID_CSI0_APB       2
+> +#define TH1520_RESET_ID_CSI1_APB       3
+> +#define TH1520_RESET_ID_CSI2_APB       4
+> +#define TH1520_RESET_ID_MIPI_FIFO      5
+> +#define TH1520_RESET_ID_ISP_VENC_APB   6
+> +#define TH1520_RESET_ID_VIPRE_APB      7
+> +#define TH1520_RESET_ID_VIPRE_AXI      8
+> +#define TH1520_RESET_ID_DW200_APB      9
+> +#define TH1520_RESET_ID_VISYS3_AXI     10
+> +#define TH1520_RESET_ID_VISYS2_AXI     11
+> +#define TH1520_RESET_ID_VISYS1_AXI     12
+> +#define TH1520_RESET_ID_VISYS_AXI      13
+> +#define TH1520_RESET_ID_VISYS_APB      14
+> +#define TH1520_RESET_ID_ISP_VENC_AXI   15
+> +
+> +/* VO Subsystem */
+>  #define TH1520_RESET_ID_GPU            0
+>  #define TH1520_RESET_ID_GPU_CLKGEN     1
+>  #define TH1520_RESET_ID_DPU_AHB                5
+> @@ -16,5 +210,27 @@
+>  #define TH1520_RESET_ID_DSI1_APB       9
+>  #define TH1520_RESET_ID_HDMI           10
+>  #define TH1520_RESET_ID_HDMI_APB       11
+> +#define TH1520_RESET_ID_VOAXI          12
+> +#define TH1520_RESET_ID_VOAXI_APB      13
+> +#define TH1520_RESET_ID_X2H_DPU_AXI    14
+> +#define TH1520_RESET_ID_X2H_DPU_AHB    15
+> +#define TH1520_RESET_ID_X2H_DPU1_AXI   16
+> +#define TH1520_RESET_ID_X2H_DPU1_AHB   17
+> +
+> +/* VP Subsystem */
+> +#define TH1520_RESET_ID_VPSYS_AXI_APB  0
+> +#define TH1520_RESET_ID_VPSYS_AXI      1
+> +#define TH1520_RESET_ID_FCE_APB                2
+> +#define TH1520_RESET_ID_FCE_CORE       3
+> +#define TH1520_RESET_ID_FCE_X2X_MASTER 4
+> +#define TH1520_RESET_ID_FCE_X2X_SLAVE  5
+> +#define TH1520_RESET_ID_G2D_APB                6
+> +#define TH1520_RESET_ID_G2D_ACLK       7
+> +#define TH1520_RESET_ID_G2D_CORE       8
+> +#define TH1520_RESET_ID_VDEC_APB       9
+> +#define TH1520_RESET_ID_VDEC_ACLK      10
+> +#define TH1520_RESET_ID_VDEC_CORE      11
+> +#define TH1520_RESET_ID_VENC_APB       12
+> +#define TH1520_RESET_ID_VENC_CORE      13
+>
+>  #endif /* _DT_BINDINGS_TH1520_RESET_H */
 > --
 > 2.50.1
 >
+Thanks for the work on the RESET module.
 
+Acked-by: Guo Ren <guoren@kernel.org>
 
 --=20
 Best Regards
