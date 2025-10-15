@@ -1,185 +1,144 @@
-Return-Path: <linux-kernel+bounces-854071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB2BBDD79A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:43:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262C9BDD7E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587DA19C110A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFCA41891D90
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8C9315D25;
-	Wed, 15 Oct 2025 08:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C8E3176EE;
+	Wed, 15 Oct 2025 08:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4SA0pay"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="k2hrtOR+"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C98930F803
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4DE3164D0;
+	Wed, 15 Oct 2025 08:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760517817; cv=none; b=cqH+C1HlwTP78034bdr2zVZ6iJfkI6taasushhbtnaW+bMXmpV49ZfcjmJuLZyR0fuZn5CK5ws01bhWSQ5rNFCoKjA4xjIpTg15vNPKsv3BiVYwNcS7emRHPwQXHgcpxz5pFuMeQ/gtlm2XnqKgN112foEsk+AUqUnj0zZez6lI=
+	t=1760518001; cv=none; b=Gkb+9Ue2PRDXOKHkfcf93uGjChJN2vKd18gp3igJ7JjCuJDReTNRYDE80nSzUfQWivKSJNCnUv9MvgHNcvVsOT/gPiDBBUmurJX9oAt7TyOyLhoSmDZYedZtmyNb+LNMukDKe1nWHdqe0NJ7uBXGPBf0C0oq+GOE6bH8p1jv8Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760517817; c=relaxed/simple;
-	bh=lYSR5jLdMYtmxb5k1Xke197I3phnNIjnW5MizFZ0tWc=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TeWTbFP3SfnmtHgesYySsk9mTz9kvg4mw1R18yGd6ZyoaKzOWLr4FGM8X5LaFK3XX5g57bk6gPoGC22DJrylAPtWLh+QTv4f41o47Vf5Kna4AA2POyfOuj9iMYeffvsMvEcofvm0oTI9DWnaeqzNTnk0mT3a2SOLxmGRdSCcBcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4SA0pay; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6504ca65496so376413eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760517815; x=1761122615; darn=vger.kernel.org;
-        h=mime-version:content-transfer-encoding:msip_labels:content-language
-         :accept-language:message-id:date:thread-index:thread-topic:subject
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cxf53tuYiU+Dv+DHgj1lSI5Z/XUbb+V/oDZLK5mtN/g=;
-        b=Z4SA0payohni1ootUfeTHVzlUhR9ML05sXVVb4yaS7itBEA+yddgICzdCBRoe9cJQc
-         j22Tomtm2FqoqfDKO7CgORKGeKdMNVjWukJIaHaGDFaxa9SM4l2PZyrwEeqC282FBBHO
-         3FzQy8rZPR5CCuV+jc12w9+1zrReoGVX9ZI8O5t069jLsaSyo3zuESYKo61NNde8w2xn
-         1TE1Cqu88EzoPWO7m3nA3kKyzvJncS4NtLX6Ca0opGjP9ZCS37KWZRkRouSUrS5r0SRH
-         +xwbGvM4iMoBPQNgNfDqQ6WBqr7wNiOP41/gvNmTIhzIvsmCHfWSIk3U48EHJ2FDkh0a
-         ftCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760517815; x=1761122615;
-        h=mime-version:content-transfer-encoding:msip_labels:content-language
-         :accept-language:message-id:date:thread-index:thread-topic:subject
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cxf53tuYiU+Dv+DHgj1lSI5Z/XUbb+V/oDZLK5mtN/g=;
-        b=ULd1c2eavtfbqVg8lklZPBBayL41m6znjsM+wViY/jAHGcINBriZdMv9t+3ImWFDAr
-         qi3HmeTuOR+Cd8tSnRqk96NRJ9ujHNS2GS/YHNtCawUIJoSGxnaoUTseXKHx8dA/HVRQ
-         pG6+GrmSKSZqfwKCgFuP8acQAWMLxsNCoxN/siVBknqlqZVjRmazYvQCWKmpnpKSqTnE
-         fMSr42S598UEiuzmX1C9PScrtvDcWX6ZmOV7qHqg1DHbqnLajBl8xLUSF0hwnuSXLrPq
-         2NVYkwqSW3Sv4fsCKuOebqHP6rCGlgtJp7KOubtP45Bm9e7GEHY2tT8d6W1MBZn4Ajr8
-         B4SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQC7uK2SSZOatc49oR8cN6eUQ0BW5XLIkXI0ALE89wUVptX0JFFvYU5mWTAgBix2t7H/TEZJuX2RgeFjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdUlaahafeuMZeycRM1qb/d0Uk51pROg5bx5uJ6VgVK/W4UiU4
-	cyoJxHua776hhVY9fejOkPpkGdkMZBpGCr1orCZ1JvPcwsmMU+qSm/h2
-X-Gm-Gg: ASbGncte6ckoxBhJd6Nep6MWkVu/HB4Vs5/8rC/CbRBFJZPUsOXzE6TJKGYjnEmvKE1
-	TmON4KaCd1IW9p/RyNpJ7/rjak+AsFmufFP3LgaamYYfh/zPGgVQkPnc/A/qO+m8WuFDKcwEKTS
-	SaWybHTw9rU8su/X5UvW1uzr+UjqUZDTIKEY9NRiWA5hELMlwu2oZLGfF1RjIQTi2tCWT/6fYCY
-	nX2L7TBEXxFEqliJu2C/v4e5TU/F+F9cmDh9Sam+buIXHH996GP0VriNxkie0p97Pc/j9zZiXdX
-	HJJqoLORAUzoYaXbAD90hheNRLdVMkvAs3uSy2FKdkrWE5SND7DnVHXCqxMXxQRT7EOFzWingZm
-	su14gURaOceFCsuDEWZxe5mQqwh56UGeJ5XhpP6JhA+3CY0mXazTmMhQIe4cXZrVz3JPikoB8Tt
-	A5lp2vSNNX0gOXsaTBx1ZXLWPN7RGO9c/9ga5U
-X-Google-Smtp-Source: AGHT+IEW6YfwO2Hw5oVjmZcWhTT2ZwRVCeYlsQeMytKJhVKsXPe7o8q2gMr9wQUGjacZjGQXxV3gTg==
-X-Received: by 2002:a05:6870:d8d4:b0:315:663f:4056 with SMTP id 586e51a60fabf-3c0f5d13930mr13019224fac.4.1760517815138;
-        Wed, 15 Oct 2025 01:43:35 -0700 (PDT)
-Received: from SN6PR04MB4048.namprd04.prod.outlook.com ([2603:1036:805:3e::5])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3c8c8ae8f91sm5234410fac.2.2025.10.15.01.43.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 01:43:34 -0700 (PDT)
-From: Itamar Dalal <dalalitamar@gmail.com>
-To: "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com"
-	<david@redhat.com>, "lorenzo.stoakes@oracle.com"
-	<lorenzo.stoakes@oracle.com>, "riel@surriel.com" <riel@surriel.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "harry.yoo@oracle.com" <harry.yoo@oracle.com>,
-	"jannh@google.com" <jannh@google.com>, "rppt@kernel.org" <rppt@kernel.org>,
-	"surenb@google.com" <surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>,
-	"shuah@kernel.org" <shuah@kernel.org>
-Subject: selftests/mm/rmap: verify correct RMAP handling of COW pages after
- fork()
-Thread-Topic: selftests/mm/rmap: verify correct RMAP handling of COW pages
- after fork()
-Thread-Index: AQHcPa+FfLpoUZg/p0aSBo0MKrxelg==
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date: Wed, 15 Oct 2025 08:43:33 +0000
-Message-ID:
-	<SN6PR04MB4048CF9A242A640B29A588EDFEE8A@SN6PR04MB4048.namprd04.prod.outlook.com>
-Accept-Language: en-US, he-IL
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator:
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-msip_labels:
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760518001; c=relaxed/simple;
+	bh=+o0GsnWnYYH2rYb7oBqdNplXJeBCnaXsrfz/PIRSmqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=avc3pWubYDpgHl6cQ60Bc5v5DzKrOGO37wxbRhX+qUa1Oy054AxmGUK1b1pCcDqTYGDhrZgzQPoqpC1+WciA0GH7FIn5Mibk6T2LuymuFLQyiY8CLMjuxUqZd8YuCGqO7im6haaJCtQJ5z2WnyMTQnGOYP1ZnoWeAxZoNPlTWuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=k2hrtOR+; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 1320AC572A;
+	Wed, 15 Oct 2025 11:46:30 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 444CAC4F7A;
+	Wed, 15 Oct 2025 11:46:29 +0300 (EEST)
+Received: from antheas-z13 (x5996a8de.customers.hiper-net.dk [89.150.168.222])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 45F74200A81;
+	Wed, 15 Oct 2025 11:46:27 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760517989;
+	bh=jxquyYtL0fSzRfx4rbJSB5tzEASoEkljMua5h0I9tcQ=; h=From:To:Subject;
+	b=k2hrtOR+XeiXptuYzn6V0a933K1f0fldmX3nam6a97Qp8mnlZaA6jahaCVYtotF56
+	 xYnQIv/4zm7djFvbqCi99ZEaO3VEg2cwOJ4jsTiQWg/EdUSL9wA1q+tAPUX0D0jnuc
+	 dEnhqjrIp7kKpglOnrxsB3MnrsrMKXdIypYNjZpcqN29o6lpFK0BEf8SMefQR+vFSU
+	 BbIHNXlUiKyTFqyMiaTHAjynjWmsx6RV+wI7E9CP3QuCJidiktSPp0Kmal7pyZWdTU
+	 MPJI3L/jnSIcyjyynQXsB2WMltYMvTVoFBr4IGOCyVTeEauch5rAlK+gbjfEGJxW8l
+	 LeMJk089GzM+g==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 89.150.168.222) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?q?Joaqu=C3=ADn=20Ignacio=20Aramend=C3=ADa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v2 0/6] platform/x86: ayaneo-ec: Add Ayaneo Embedded
+ Controller platform driver
+Date: Wed, 15 Oct 2025 10:44:08 +0200
+Message-ID: <20251015084414.1391595-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <176051798894.920664.10794098439892525348@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Add a new test `migrate.cow_after_fork` that verifies correct RMAP handling=
-=0A=
-of Copy-On-Write (COW) pages after fork().=0A=
-=0A=
-Before a write, the parent and child share the same PFN. After a write, the=
-=0A=
-child=92s PFN differs. This confirms that proper COW duplication occurred a=
-nd=0A=
-that RMAP correctly tracks page ownership transitions during COW events.=0A=
-=0A=
-Signed-off-by: Itamar-Dalal <dalalitamar@gmail.com>=0A=
----=0A=
- tools/testing/selftests/mm/rmap.c | 45 ++++++++++++++++++++++++++++++-=0A=
- 1 file changed, 44 insertions(+), 1 deletion(-)=0A=
-=0A=
-diff --git a/tools/testing/selftests/mm/rmap.c b/tools/testing/selftests/mm=
-/rmap.c=0A=
-index 13f7bccfd0a9..2ba3361fecf0 100644=0A=
---- a/tools/testing/selftests/mm/rmap.c=0A=
-+++ b/tools/testing/selftests/mm/rmap.c=0A=
-@@ -430,4 +430,47 @@ TEST_F(migrate, ksm)=0A=
-        propagate_children(_metadata, data);=0A=
- }=0A=
-=0A=
--TEST_HARNESS_MAIN=0A=
-+TEST_F(migrate, cow_after_fork)=0A=
-+{=0A=
-+       struct global_data *data =3D &self->data;=0A=
-+       int status;=0A=
-+       pid_t pid;=0A=
-+       unsigned long parent_pfn, child_pfn;=0A=
-+       int pagemap_fd;=0A=
-+       char *region;=0A=
-+=0A=
-+       /* Map private anonymous memory and fault it in */=0A=
-+       region =3D mmap(NULL, data->mapsize, PROT_READ | PROT_WRITE,=0A=
-+               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);=0A=
-+       ASSERT_NE(region, MAP_FAILED);=0A=
-+       memset(region, 0xaa, data->mapsize);=0A=
-+=0A=
-+       pagemap_fd =3D open("/proc/self/pagemap", O_RDONLY);=0A=
-+       ASSERT_NE(pagemap_fd, -1);=0A=
-+       parent_pfn =3D pagemap_get_pfn(pagemap_fd, region);=0A=
-+       close(pagemap_fd);=0A=
-+=0A=
-+       pid =3D fork();=0A=
-+       ASSERT_NE(pid, -1);=0A=
-+=0A=
-+       if (pid =3D=3D 0) {=0A=
-+               /* Child: write to trigger COW */=0A=
-+               region[0] =3D 0xbb;=0A=
-+=0A=
-+               pagemap_fd =3D open("/proc/self/pagemap", O_RDONLY);=0A=
-+               ASSERT_NE(pagemap_fd, -1);=0A=
-+               child_pfn =3D pagemap_get_pfn(pagemap_fd, region);=0A=
-+               close(pagemap_fd);=0A=
-+=0A=
-+               /* Expect PFN to differ after write (COW happened) */=0A=
-+               if (child_pfn =3D=3D parent_pfn)=0A=
-+                       _exit(FAIL_ON_CHECK);=0A=
-+               _exit(0);=0A=
-+       }=0A=
-+=0A=
-+       waitpid(pid, &status, 0);=0A=
-+       ASSERT_EQ(WEXITSTATUS(status), 0);=0A=
-+       munmap(region, data->mapsize);=0A=
-+}=0A=
-+=0A=
-+TEST_HARNESS_MAIN=0A=
-\ No newline at end of file=0A=
---=0A=
-2.34.1=
+This series introduces a platform driver for Ayaneo devices, ayaneo-ec.
+This driver provides hwmon support, power management, and module management
+(for the new Ayaneo 3 device). Module management is done through the new
+firmware attributes sysfs interface.
+
+Luckily, all Ayaneo devices with an ACPI mapped EC use the same registers.
+Older devices also use a memory mapped region for RGB[1], but that is
+replaced by HID in the new Ayaneo 3. Therefore, this allows for a simple
+driver design that provides robust future support. The memory mapped region
+can be upstreamed as a different RGB driver in the future or remain
+out-of-tree[1].
+
+This change also allows cleaning up the oxpec driver, by removing Ayaneo
+devices from it. In parallel, charge limiting is added for these devices.
+
+[1] https://github.com/ShadowBlip/ayaneo-platform
+
+---
+
+V1: https://lore.kernel.org/all/20250820160628.99678-1-lkml@antheas.dev/
+
+Changes since V1:
+  - Use plain sysfs attrs for magic module attributes
+  - Combine quirk for power and modules, so attribute tree is simpler
+  - Use switch statement in hwmon
+  - Add hibernation hook for charge bypass in last patch
+    - Restoring fan speed is a liability so it is omitted, see patch notes
+      Note that for EC managed fan curves, it would be acceptable
+    - Regmap comment: Using regmap is unprecedented for ACPI mapped ECs
+      and overkill for one value (> 100 LOC)
+  - fixp_linear_interpolate() comment: it requires importing an extra header,
+    is not used for static parameters in other modules, and expands to the
+    same equation for parameters used, so it is omitted
+
+Antheas Kapenekakis (6):
+  platform/x86: ayaneo-ec: Add Ayaneo Embedded Controller platform
+    driver
+  platform/x86: ayaneo-ec: Add hwmon support
+  platform/x86: ayaneo-ec: Add charge control support
+  platform/x86: ayaneo-ec: Add controller power and modules attributes
+  platform/x86: ayaneo-ec: Move Ayaneo devices from oxpec to ayaneo-ec
+  platform/x86: ayaneo-ec: Add suspend hook
+
+ .../ABI/testing/sysfs-platform-ayaneo         |  19 +
+ MAINTAINERS                                   |   7 +
+ drivers/platform/x86/Kconfig                  |  17 +-
+ drivers/platform/x86/Makefile                 |   3 +
+ drivers/platform/x86/ayaneo-ec.c              | 541 ++++++++++++++++++
+ drivers/platform/x86/oxpec.c                  | 115 +---
+ 6 files changed, 585 insertions(+), 117 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo
+ create mode 100644 drivers/platform/x86/ayaneo-ec.c
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+-- 
+2.51.0
+
+
 
