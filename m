@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-854600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7A1BDED56
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:49:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827CEBDED5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3941887D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362323A34B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E96227B95;
-	Wed, 15 Oct 2025 13:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51261DE3DF;
+	Wed, 15 Oct 2025 13:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cAJz+po8"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TdYyJNFF"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6921DE3DF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69F423AE87;
+	Wed, 15 Oct 2025 13:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760536145; cv=none; b=DwPMpXpP/tk0FwwEyyINfhzwL6H/CvC0tkXqG+4x3yjeWmo3I1h8rVs2zkIe9eZyepfrfg4M3ybQwTUvcLKKPyeyL1m+yh5unoSB4QjOfXJP4MAWPNevdwOuG7riSoUGWSDztmehQOwCOFTeYwMnlTSSDw04y3GfNCoMHbqo2EQ=
+	t=1760536150; cv=none; b=Gbp4LwCAitYGoH+9OPFveDg1Uo43l4HmKc7RLfhKS2GLDlBaY7ca43LtsS1Tdf83w0w6H5D/ojST5qlJf5iwCniKdaRp4E5O1OslyVQtzTUCjF3us/RxLAuG8CY7XoFJdFce1TXK9lHJ1klOMMf/jBbC8DYj+OnaHbORJ6gtnrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760536145; c=relaxed/simple;
-	bh=HT3gj1u7/nvYJA/61kS1+m+QfDqb7Q7pkezqn8FKGMc=;
+	s=arc-20240116; t=1760536150; c=relaxed/simple;
+	bh=QhDeijH3p8Ah7FVP870DhjFVoOJ+c4VVl9Tj0q4GSts=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SVd9Dy3FD5p3odwAmoLqSG+77b5O0VQXBI/rS9pFRhXEST709vCs4TG7cfxdsNL8LGJwHb/xZwGxJGRC0Ichi3TprgDJSc+6DGRNTmi6oDnVv2SJKiXxkcMtDibdf2v5uYPkYIDyt5qx+OTZkAeQeXuqzWwp09dnHfj99XV3qwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cAJz+po8; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-930cfdfabb3so47706139f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1760536142; x=1761140942; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hMbFwwV83Qg+1jJmG0XLxD4XrkMFEdpohch/EjieyXc=;
-        b=cAJz+po8XfTlLeos8FYrvs7LZMUVhFZIzIxzeCKu4S9lI4/HNbvDix/xtXKXDVcHuI
-         0ijA9DLqcwSrpYZS8102/PlYcbqu5J2wOL3vIBSSFNgLfAtJDhibe6QkuuyouACzUIj9
-         vRu+UNH9iO98OZB/jneHmvZRxLP1ziWatQKru/nD3zxDebplI9StuJMb5YhliqRJYbar
-         xk4JGtKL02P6IEf5yzxBM2xilxZdGonkAUsAMa4T1gMljdFhISPTqGohtfIn2Q2lW+q1
-         TDHUkTjQCnvQpavqTqboV72mUSYeDCrYvurX6KICF2QvvJJaw/A1woP5KgqIW4lDxT21
-         373Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760536142; x=1761140942;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hMbFwwV83Qg+1jJmG0XLxD4XrkMFEdpohch/EjieyXc=;
-        b=fCyq1HZ5jqShrTwYRv0Kl0n3h8qEvrlJoz3My4qTJuyyUUOeVf8p2Rg2WIr8XLWi0e
-         4eDLvJWQsvDBGLyqxsPbm27a5zGH6i4B8vgbnyep1T6t7UFouBd2W+7FkNnYW2lZPgjy
-         N9KzRHWBmKwepaBDLTRCGKRBvvdk92TZ7bqmtes43xSWXPetZzxjN3uSABzodElKplBs
-         Eg0cb7y6Wu9NNFpZPByuJxvM6iA46lLyKZH9/XbSdRObOq4ByFsbgO+Zu4zgj4pTeQ9d
-         qmO4b6JpJCmf6WjdjJpGcQ6pMFSaUYREQnkh/YJyxkE2/DWB96vGg7mS9WNolMV3FBxy
-         BSlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpxvaCTsPfwRB6AJH6tRiTCRxkZQLlq21VDG6v+Vgrjl+ZY5aIccVwQAo10/5yHD5NY+bONHSnTRNHs48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfbTC1qSbM2j4B0LxriVYio01ESi4tgbPSaZs2/6i8oGx8MMO8
-	jk1/hQ5nA6IR/ilVDLoyTjbcRFuRj/YwhbNnrbaOCeuIxv/BBR2JIqbTHDT0EsRHhcA=
-X-Gm-Gg: ASbGnctSpCo2i7v7P7c1FEjVthjgIhuM8gR174ApXqgleXjJbeFNz1AtJicbMgfqdvh
-	ZCoMYUXu3FgG5kO1jmK36965BhIanBheq5XrnDxyrL7t7EqOD5ibjz5upUV2EhNG/zHNY1jFeXW
-	nXayMUtJ0zuQfmwyNReFG1F3wrQLbHcohBgbnXQ0RMC0XAM1FMp9YK2Z5C3uZombsOet20UNVVC
-	WqIPob//9Zqx3+GPPD1ZFEQH6q310IzzIAoUx5cPpIdwdvQnTG30YfPvhN4umViFFnpG1PdbuWz
-	bcmuDBQsOH3oi+4Ee5+Rxz2txWvOP61aF/qOf1JKGsOs7Vwaqig6PvrfulMudB/fpmFKMoeWHeJ
-	NSEyp82amxLymgpsv8sCHafxbbKZoPelVfyCD8OAsRfAfCVGL
-X-Google-Smtp-Source: AGHT+IHa8fNGDE+sM3KP62soMcj2BPqKtw3xT2uQRog4kYeJMrSbUQu6nIccEpfSNol6haFAFkjRNQ==
-X-Received: by 2002:a05:6e02:1fc3:b0:42f:9649:56b4 with SMTP id e9e14a558f8ab-430b437e677mr1896315ab.13.1760536141679;
-        Wed, 15 Oct 2025 06:49:01 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-58f7200b261sm5666738173.34.2025.10.15.06.48.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 06:49:00 -0700 (PDT)
-Message-ID: <9e775775-940f-477b-879f-dd7389f0be31@kernel.dk>
-Date: Wed, 15 Oct 2025 07:48:58 -0600
+	 In-Reply-To:Content-Type; b=qzl4JAqFoKDTgcWjvvZ9c0zhVIFN5IQ+oj/O8yIK+eOURzPr5Iaw6b6rMe3lMMhsXkCVH6DaOrVVuGVAOvlHMBYSBUSUAbLRd13phrto2V6ZTiYJYAWxca3Y23SN7F3yXcOBfYt5TDavUmRQbLdK8JDfuTN+faBauu9tEc8y9Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TdYyJNFF; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760536145;
+	bh=QhDeijH3p8Ah7FVP870DhjFVoOJ+c4VVl9Tj0q4GSts=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TdYyJNFFjn/x9drAuSbqyFlDHb1SjL5QCX0mc6UcUjqPYn7wOW3vhLLHtn8yQ4RNH
+	 MMOg8r6SuxIgKbaH5aBUipced1gOdbStEPjstByIVrFArcjJRrbfUw0rXm4YrFbkG5
+	 5MCKvC6JpWC1cNRT7TTA+fOisATB4PpXXEvrAsK4k/tfQ7zxes0k77u1oz6W8/S0Vd
+	 Y/oXm+OkMQAF0KFTDkb6VMQz7FKj/LREI6oE2e5Ufdz8lzppodc5cveU0ai6zmHIok
+	 oqtFLmNuKU8yoWU4XDhXdHTj3YKHOR3703XuxVfOK79Q6sGQr+/d5Z+WSjgfxQbHti
+	 y8j+QVgnGSv4A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7773E17E0523;
+	Wed, 15 Oct 2025 15:49:05 +0200 (CEST)
+Message-ID: <e9a265af-b6ad-4f7e-9dfb-bf87f4706d57@collabora.com>
+Date: Wed, 15 Oct 2025 15:49:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,31 +56,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] blk-mq: fix stale tag depth for shared sched tags in
- blk_mq_update_nr_requests()
-To: Yu Kuai <yukuai3@huawei.com>, clm@meta.com, nilay@linux.ibm.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai1@huaweicloud.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20251015014827.2997591-1-yukuai3@huawei.com>
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
+ firmware-name not present
+To: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai
+ <wenst@chromium.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
+ <3f23850e-f01f-4a2e-a7dc-82c04ab5926c@app.fastmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20251015014827.2997591-1-yukuai3@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <3f23850e-f01f-4a2e-a7dc-82c04ab5926c@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/14/25 7:48 PM, Yu Kuai wrote:
-> Commit 7f2799c546db ("blk-mq: cleanup shared tags case in
-> blk_mq_update_nr_requests()") moves blk_mq_tag_update_sched_shared_tags()
-> before q->nr_requests is updated, however, it's still using the old
-> q->nr_requests to resize tag depth.
+Il 15/10/25 15:41, Arnd Bergmann ha scritto:
+> On Wed, Oct 15, 2025, at 10:41, AngeloGioacchino Del Regno wrote:
+>> After a reply on the mailing lists [1] it emerged that the DT
+>> property "firmware-name" should not be relied on because of
+>> possible issues with firmware versions.
+>> For MediaTek SCP, there has never been any firmware version vs
+>> driver version desync issue but, regardless, the firmwares are
+>> always using the same name and they're always located in a path
+>> with a specific pattern.
+>>
+>> Instead of unconditionally always relying on the firmware-name
+>> devicetree property to get a path to the SCP FW file, drivers
+>> should construct a name based on what firmware it knows and
+>> what hardware it is running on.
+>>
+>> In order to do that, add a `scp_get_default_fw_path()` function
+>> that constructs the path and filename based on two of the infos
+>> that the driver can get:
+>>   1. The compatible string with the highest priority (so, the
+>>      first one at index 0); and
+>>   2. The type of SCP HW - single-core or multi-core.
+>>
+>> This means that the default firmware path is generated as:
+>>   - Single core SCP: mediatek/(soc_model)/scp.img
+>>     for example:     mediatek/mt8183/scp.img;
+>>
+>>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
+>>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
+>>                      mediatek/mt8188/scp_c1.img for Core 1.
+>>
+>> Note that the generated firmware path is being used only if the
+>> "firmware-name" devicetree property is not present in the SCP
+>> node or in the SCP Core node(s).
+>>
+>> [1 - Reply regarding firmware-name property]
+>> Link:
+>> https://lore.kernel.org/all/7e8718b0-df78-44a6-a102-89529d6abcce@app.fastmail.com/
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > 
-> Fix this problem by passing in expected new tag depth.
+> This looks good to me, thanks for the changes!
+> 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
 
-Fix looks fine, but you really should add a Link to the bug report, and
-also a Reported-by tag. I'll add those.
+Thanks!
 
--- 
-Jens Axboe
+>> +
+>> +	/* If the compatible string starts with "mediatek,mt" assume that it's ok */
+>> +	if (!str_has_prefix(compatible, "mediatek,mt"))
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	if (core_id >= 0)
+>> +		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+>> +	else
+>> +		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+>> +	if (ret <= 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	/* Not using strchr here, as strlen of a const gets optimized by compiler */
+>> +	soc = &compatible[strlen("mediatek,")];
+>> +
+>> +	return devm_kasprintf(dev, GFP_KERNEL, "mediatek/%.*s/%s.img",
+>> +			      (int)strlen("mtXXXX"), soc, scp_fw_file);
+>> +}
+> 
+> This might have to eventually support version numbers, in case
+> there are ever incompatible ABIs where updating the firmware requires
+> a minimum kernel driver version.
+> 
+> Until there is a firmware file that needs it, this code is
+> fine.
+> 
+> I'm not sure if you need to handle the case where there is
+> a "firmware-name" property in DT, but the filesystem only
+> contains the generated filenames, or when the generated
+> firmware name refers to a newer version. It may be best to
+> try both the generated names and the name from the dts
+> file.
 
+No, not really.
+
+All of the platforms using firmware-name for the SCP are following the same
+pattern as path... so this code autogenerates the path based on what it is
+set already in DT as firmware-name where present.
+
+The only exception is MT8188, where the firmware was named scp.img regardless
+of the fact that it is dual-core and supports dual-firmware... that will need
+a rename in linux-firmware. It's necessary evil, but caught just in time ;-)
+
+P.S.: There is no MT8188 DT declaring firmware-name, so the firmware can
+really just carelessly be renamed; doing so, no breakage/regression will
+happen, and we again don't need to check for existance of both.
+
+
+Cheers!
+Angelo
 
