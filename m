@@ -1,392 +1,170 @@
-Return-Path: <linux-kernel+bounces-854586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0B9BDECC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:43:48 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39A0BDECC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176F5482C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:43:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CD100356D97
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03CC23BCEE;
-	Wed, 15 Oct 2025 13:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6AB2475E3;
+	Wed, 15 Oct 2025 13:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxbiH3xN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BQZEOMkg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F392367CF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F3A23314B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760535754; cv=none; b=q7pS3rBeBxGYX96dgodiSZ2Uy9fmj3NE6HeyOenh+wOVk6GZ2AAuL8I/2HqXfhz5rd5eVKWGN8fmVPvXLCEIEpXog6WJw2Ol+tKtyz7zooBGlXu/qVDBe+fS556kKTuxJ0T/DA4AGrngRYZfZ9+eNG7BqAVvA6YpA6ZBDNqtJXc=
+	t=1760535763; cv=none; b=QImWZGZOhMcaavfdhySeTpW0h4l9RgE95y5aFQIfOhtR+lJ94BuDGpYq21+GQqSO4eE/7JOqCa75nLuFFTL3x+YbvSe1vKCpIc83p9yd/meELtfViUZ2w6rP3Q7zdKHTCtckL2XgZNc4LzCLHZdPVGpkDkfj+QnYFmNDsPwLGbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760535754; c=relaxed/simple;
-	bh=wkUxCeKS5tD0TM2Xa5rZwhjOYyIU5mX+q32xBqCtYNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MD47XuAR9Iv8dzYOFFmr+OwvoeIh6ArqwI5h80zmuyGSr5LE5SeC6AhEe1O4isEY/HehUYiQs1hj5A05EBsKroiniQJSZeLKtSp2vla0EKruDFNuOxfj/OZcWDrhK5u8faCbBTssPm7aomVVSL548F06cxZHhUJ3SnL5++OdFYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxbiH3xN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E7CC4CEF8;
-	Wed, 15 Oct 2025 13:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760535754;
-	bh=wkUxCeKS5tD0TM2Xa5rZwhjOYyIU5mX+q32xBqCtYNc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GxbiH3xNbpYXlckAKeEZI2Vy25AQTsCbLGPTjeuIwpiKq9LBuFrZFvvRHWoRKge48
-	 zo7y/NnN6CVk1CGkU1BOxGCEvAOV1hd+hmgyDeik1S9GpudoDZm1YFYuncZQUuG5Aw
-	 l54fqsddOjch6OC2KrjiG4h4EhM3AqU+P417M4W2BcF+pZrSQPkqsp9dOYsbxvAy6k
-	 1MD9e0klNimLpH0iy7CCYij/fTBGzBwUMKO/9lMvV6ziHV4I3P8jx4lqUX7RzbTDek
-	 q9n/EYJJ7W7lr0jyTGsYakgDYpK4eTOx917wxo63rxya76tncX+fXD7l5MlxXAs6A1
-	 Shx3UhTqYGo+A==
-Message-ID: <4e64ba7c-18d6-42e0-8fb1-dc03ae0cfbd7@kernel.org>
-Date: Wed, 15 Oct 2025 08:42:32 -0500
+	s=arc-20240116; t=1760535763; c=relaxed/simple;
+	bh=PBQh2etxK1f1LTUrNCY2I1fGG2Es6sPC/p64HJuEj4s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pcwEORAfUkIKx80t5+0P90ULIpXMJ6rOqUWFbB8JpWlqD0SxMQGmX+ggo8wBhyecMYIbIf+G78XZjB7M7VaO6t5rnlsICm2GoBf1pZFFg2f50qn/Hoq57lmfW+ugK6ZVDcFSgM7E7eE9Dute/kFHnmLFXYoOW4YIF3wyx0sGoqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BQZEOMkg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FArJJH003664
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:42:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=H+F/Zx1E+4LDjkQuE7qBfj
+	1kxTU3KKLrksPW74kFLG8=; b=BQZEOMkgZWQgu1cKzQd97L1i8RxVHw5mVGK5+5
+	9bQFG6NPfJbbad6+yMnw4qSbspov8zubc2EzVR9dTuluEotrb7LX75vqwCGIxxwZ
+	B9LMr752wE/uJP4PKEDQ8BFrnG2LOk4KnABNYJnVh2qDfyVuhKipx5VSglUBXuB5
+	dQ1tjJNgfCto2Q0dKpgkMwIgUHQHqAr7RikNcrD993GrYyxDSZAaoXbBbcc1dg8P
+	K0aHkW3A2sFJTT035ohRX3Zs+/DU49SU5JGT2nSfjHPMX0cnJNNVHOOuCqEnwHJa
+	YqsHIcWA5Hxd4Kqic8YjV/hdJZKIV8Evqo5cI/+dk+pqat9Q==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfd94ms9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:42:40 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b650a3e0efcso10493540a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:42:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760535760; x=1761140560;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H+F/Zx1E+4LDjkQuE7qBfj1kxTU3KKLrksPW74kFLG8=;
+        b=BA9aVsFNnDiI71gfciZ/nvjF6IXEQQMUrv6DjEDrA6SBHemEqFvRPxhASMG/8ZBf9x
+         NtYwu1VFrxhy4UWiuVj7KkxpEYnzKcrApSz0powrGrRjsuVF8wK0STMhhij56DAIUT+c
+         qdycqqhSpflialDDNv2ogmTFhYmOX04oWXuvoThrkyk4WvEGYLklyETjCnDNJP4tATnR
+         +DFsmVJAwwvhHc42iirS12g/Cm4dD2PgoFsdb9rSQ4vZIKmnmzUsFa0/1lW03xTOpPbP
+         qI+GdKqadW2CoxdRqTbt8ETGisP2oeaw17/ZGyAlYtDN5He37tvapLdaAMrHN58Jrp98
+         VBuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHzozCWQSsuiJyg+RlTFpgG7Q1DiYZdfZrJDO5KHezKbLtCMNMmMewUhce+zReDPxSzOF5d14YUZLDuHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXzP34jZY+jd9kBch4/WUlI8ktXkdYY9ZFOMSHYI08fgBgBrBD
+	Wso35E5Fe/JETLiRTuCFIROTQPS6LJqaqWC8JJmTt/Ixd96oVCd7tNojyPy3aNo1r305U9UK/xu
+	n1HPOc2J67bvAhWEL6TjjthlMkO5npTumBTlKLBvo3+BQrwzCshCgnf/tAMyYOUoiqA==
+X-Gm-Gg: ASbGncuHjdOZesmnM+44c+RjQUWx9hQUq6x+Z5dFRORU3OhIYM5/tKn2KLdGxots/Hc
+	W8+sAnoWsmucVkYLrd4YKlVORHt7cMAMHS19zS6xhX4EUBdfxZ7wAxVsKsa79OvUszUZiui6x6E
+	HRxibQX76IPK8QGRIodR/xfq3602atgGoM4DDYweT8043pfO3dQ99Ag6X8LeOwWlNm228AEdyoV
+	CdD0d0bkpyvtFc1/VxeEo8XFReWP704F6iNxOmLyNIPAsUuG66s/0FTw47EZ7Qzd92pHRM0OWLZ
+	igwY4ubMdLaReFtRh73yCCBOeMkfMHBK60SDEBVHbbS/Ciyg9B0pOWR32p17OQU89lRq9w==
+X-Received: by 2002:a05:6a20:a11f:b0:32b:725a:d684 with SMTP id adf61e73a8af0-32da84616efmr38547261637.43.1760535759731;
+        Wed, 15 Oct 2025 06:42:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjUPUFdYaIufIIt8S8dui225qseRVZF4bOTg8Kqh3cjfmBmHA0/by9WGvbGn7zbMYYmRePQA==
+X-Received: by 2002:a05:6a20:a11f:b0:32b:725a:d684 with SMTP id adf61e73a8af0-32da84616efmr38547211637.43.1760535759170;
+        Wed, 15 Oct 2025 06:42:39 -0700 (PDT)
+Received: from hu-kotarake-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bc18c96sm18849417b3a.37.2025.10.15.06.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 06:42:38 -0700 (PDT)
+From: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+Date: Wed, 15 Oct 2025 19:12:34 +0530
+Subject: [PATCH] arm64: dts: qcom: lemans-evk: Add RTC node for PMM8654AU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] accel/amdxdna: Support getting last hardware error
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
-References: <20251014234119.628453-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20251014234119.628453-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251015-add_rtc_node-v1-1-601c9663422b@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAMmk72gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0NT3cSUlPiikuT4vPyUVF1DYxNLgyRzAyMTCzMloJaCotS0zAqwcdG
+ xtbUA7V4Sm14AAAA=
+X-Change-ID: 20251015-add_rtc_node-13490b702486
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760535756; l=1110;
+ i=rakesh.kota@oss.qualcomm.com; s=20250919; h=from:subject:message-id;
+ bh=PBQh2etxK1f1LTUrNCY2I1fGG2Es6sPC/p64HJuEj4s=;
+ b=RlP8WWM4kyq3AY2tzV2Uxdz6tWHlt09Teuf+elIYO08JDrdBX49xY9wb741nXhp54kvu4IJ2Q
+ YksN7jOqQPwBbS9q1X9qFYQx49wpMtWzNXnmHdex2x9Klzvea2l2wwN
+X-Developer-Key: i=rakesh.kota@oss.qualcomm.com; a=ed25519;
+ pk=dFhv9yPC8egZglsSLDMls08cOvZKZkG6QQn1a/ofwNU=
+X-Proofpoint-ORIG-GUID: CeeaD_65Qsk-BgTKR4kOTRfuhvmn2F62
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxOCBTYWx0ZWRfXyJzgfc0993EX
+ N2UkPoreBk1ZpTmNrrGup26OxJO83mHtaAxlsCsOI09NRC3wcn5jCkoigLQOokBjv+5w7bswxa7
+ JegVxR/ZXY+UUsn6dvgDJX3cOzCh0te6buOKWqbHOOtZ4yciYO94012KKPV5PrJ7ehVe0HFZcJa
+ YNYJ35MluRh1zRV5WkiYqg9aP+bfu2T8yYs5fz8FX2HKMeRuqyKe8BFlAFkKjEmz/+fMgT6cmEn
+ 2O3gobqudRLO9132YMQ4Y5Rz+nrwW1Ovp1ufiZSQEP9mASvR+HFgNoCoZJQP0/RU9oSpz7e/XKx
+ btNegcpjQrGa06i0w2nFJE4zkHONrkY+PahVXJF0CRtWhRlkX0wvxhXfFX9MzaqDQG4ZpNWq6vI
+ ZnNcRV/yhrQh4FVBZYItvY+XaXPXPA==
+X-Proofpoint-GUID: CeeaD_65Qsk-BgTKR4kOTRfuhvmn2F62
+X-Authority-Analysis: v=2.4 cv=PdTyRyhd c=1 sm=1 tr=0 ts=68efa4d0 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=-rC6o90vqo3ez8JSJP0A:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510110018
 
-On 10/14/25 6:41 PM, Lizhi Hou wrote:
-> Add new parameter DRM_AMDXDNA_HW_LAST_ASYNC_ERR to get array IOCTL. When
-> hardware reports an error, the driver save the error information and
-> timestamp. This new get array parameter retrieves the last error.
-> 
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Add the RTC peripheral node for the PMM8654AU PMIC,
+which is controlled via the SPMI bus.
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Signed-off-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/lemans-pmics.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> ---
->   drivers/accel/amdxdna/aie2_error.c      | 95 ++++++++++++++++++++-----
->   drivers/accel/amdxdna/aie2_pci.c        |  3 +
->   drivers/accel/amdxdna/aie2_pci.h        |  5 +-
->   drivers/accel/amdxdna/amdxdna_error.h   | 59 +++++++++++++++
->   drivers/accel/amdxdna/amdxdna_pci_drv.c |  3 +-
->   include/uapi/drm/amdxdna_accel.h        | 13 ++++
->   6 files changed, 159 insertions(+), 19 deletions(-)
->   create mode 100644 drivers/accel/amdxdna/amdxdna_error.h
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_error.c b/drivers/accel/amdxdna/aie2_error.c
-> index 5ee905632a39..d452008ec4f4 100644
-> --- a/drivers/accel/amdxdna/aie2_error.c
-> +++ b/drivers/accel/amdxdna/aie2_error.c
-> @@ -13,6 +13,7 @@
->   
->   #include "aie2_msg_priv.h"
->   #include "aie2_pci.h"
-> +#include "amdxdna_error.h"
->   #include "amdxdna_mailbox.h"
->   #include "amdxdna_pci_drv.h"
->   
-> @@ -46,6 +47,7 @@ enum aie_module_type {
->   	AIE_MEM_MOD = 0,
->   	AIE_CORE_MOD,
->   	AIE_PL_MOD,
-> +	AIE_UNKNOWN_MOD,
->   };
->   
->   enum aie_error_category {
-> @@ -143,6 +145,31 @@ static const struct aie_event_category aie_ml_shim_tile_event_cat[] = {
->   	EVENT_CATEGORY(74U, AIE_ERROR_LOCK),
->   };
->   
-> +static const enum amdxdna_error_num aie_cat_err_num_map[] = {
-> +	[AIE_ERROR_SATURATION] = AMDXDNA_ERROR_NUM_AIE_SATURATION,
-> +	[AIE_ERROR_FP] = AMDXDNA_ERROR_NUM_AIE_FP,
-> +	[AIE_ERROR_STREAM] = AMDXDNA_ERROR_NUM_AIE_STREAM,
-> +	[AIE_ERROR_ACCESS] = AMDXDNA_ERROR_NUM_AIE_ACCESS,
-> +	[AIE_ERROR_BUS] = AMDXDNA_ERROR_NUM_AIE_BUS,
-> +	[AIE_ERROR_INSTRUCTION] = AMDXDNA_ERROR_NUM_AIE_INSTRUCTION,
-> +	[AIE_ERROR_ECC] = AMDXDNA_ERROR_NUM_AIE_ECC,
-> +	[AIE_ERROR_LOCK] = AMDXDNA_ERROR_NUM_AIE_LOCK,
-> +	[AIE_ERROR_DMA] = AMDXDNA_ERROR_NUM_AIE_DMA,
-> +	[AIE_ERROR_MEM_PARITY] = AMDXDNA_ERROR_NUM_AIE_MEM_PARITY,
-> +	[AIE_ERROR_UNKNOWN] = AMDXDNA_ERROR_NUM_UNKNOWN,
-> +};
-> +
-> +static_assert(ARRAY_SIZE(aie_cat_err_num_map) == AIE_ERROR_UNKNOWN + 1);
-> +
-> +static const enum amdxdna_error_module aie_err_mod_map[] = {
-> +	[AIE_MEM_MOD] = AMDXDNA_ERROR_MODULE_AIE_MEMORY,
-> +	[AIE_CORE_MOD] = AMDXDNA_ERROR_MODULE_AIE_CORE,
-> +	[AIE_PL_MOD] = AMDXDNA_ERROR_MODULE_AIE_PL,
-> +	[AIE_UNKNOWN_MOD] = AMDXDNA_ERROR_MODULE_UNKNOWN,
-> +};
-> +
-> +static_assert(ARRAY_SIZE(aie_err_mod_map) == AIE_UNKNOWN_MOD + 1);
-> +
->   static enum aie_error_category
->   aie_get_error_category(u8 row, u8 event_id, enum aie_module_type mod_type)
->   {
-> @@ -176,12 +203,40 @@ aie_get_error_category(u8 row, u8 event_id, enum aie_module_type mod_type)
->   		if (event_id != lut[i].event_id)
->   			continue;
->   
-> +		if (lut[i].category > AIE_ERROR_UNKNOWN)
-> +			return AIE_ERROR_UNKNOWN;
-> +
->   		return lut[i].category;
->   	}
->   
->   	return AIE_ERROR_UNKNOWN;
->   }
->   
-> +static void aie2_update_last_async_error(struct amdxdna_dev_hdl *ndev, void *err_info, u32 num_err)
-> +{
-> +	struct aie_error *errs = err_info;
-> +	enum amdxdna_error_module err_mod;
-> +	enum aie_error_category aie_err;
-> +	enum amdxdna_error_num err_num;
-> +	struct aie_error *last_err;
-> +
-> +	last_err = &errs[num_err - 1];
-> +	if (last_err->mod_type >= AIE_UNKNOWN_MOD) {
-> +		err_num = aie_cat_err_num_map[AIE_ERROR_UNKNOWN];
-> +		err_mod = aie_err_mod_map[AIE_UNKNOWN_MOD];
-> +	} else {
-> +		aie_err = aie_get_error_category(last_err->row,
-> +						 last_err->event_id,
-> +						 last_err->mod_type);
-> +		err_num = aie_cat_err_num_map[aie_err];
-> +		err_mod = aie_err_mod_map[last_err->mod_type];
-> +	}
-> +
-> +	ndev->last_async_err.err_code = AMDXDNA_ERROR_ENCODE(err_num, err_mod);
-> +	ndev->last_async_err.ts_us = ktime_to_us(ktime_get_real());
-> +	ndev->last_async_err.ex_err_code = AMDXDNA_EXTRA_ERR_ENCODE(last_err->row, last_err->col);
-> +}
-> +
->   static u32 aie2_error_backtrack(struct amdxdna_dev_hdl *ndev, void *err_info, u32 num_err)
->   {
->   	struct aie_error *errs = err_info;
-> @@ -264,29 +319,14 @@ static void aie2_error_worker(struct work_struct *err_work)
->   	}
->   
->   	mutex_lock(&xdna->dev_lock);
-> +	aie2_update_last_async_error(e->ndev, info->payload, info->err_cnt);
-> +
->   	/* Re-sent this event to firmware */
->   	if (aie2_error_event_send(e))
->   		XDNA_WARN(xdna, "Unable to register async event");
->   	mutex_unlock(&xdna->dev_lock);
->   }
->   
-> -int aie2_error_async_events_send(struct amdxdna_dev_hdl *ndev)
-> -{
-> -	struct amdxdna_dev *xdna = ndev->xdna;
-> -	struct async_event *e;
-> -	int i, ret;
-> -
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	for (i = 0; i < ndev->async_events->event_cnt; i++) {
-> -		e = &ndev->async_events->event[i];
-> -		ret = aie2_error_event_send(e);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->   void aie2_error_async_events_free(struct amdxdna_dev_hdl *ndev)
->   {
->   	struct amdxdna_dev *xdna = ndev->xdna;
-> @@ -341,6 +381,10 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
->   		e->size = ASYNC_BUF_SIZE;
->   		e->resp.status = MAX_AIE2_STATUS_CODE;
->   		INIT_WORK(&e->work, aie2_error_worker);
-> +
-> +		ret = aie2_error_event_send(e);
-> +		if (ret)
-> +			goto free_wq;
->   	}
->   
->   	ndev->async_events = events;
-> @@ -349,6 +393,8 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
->   		 events->event_cnt, events->size);
->   	return 0;
->   
-> +free_wq:
-> +	destroy_workqueue(events->wq);
->   free_buf:
->   	dma_free_noncoherent(xdna->ddev.dev, events->size, events->buf,
->   			     events->addr, DMA_FROM_DEVICE);
-> @@ -356,3 +402,18 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
->   	kfree(events);
->   	return ret;
->   }
-> +
-> +int aie2_get_array_async_error(struct amdxdna_dev_hdl *ndev, struct amdxdna_drm_get_array *args)
-> +{
-> +	struct amdxdna_dev *xdna = ndev->xdna;
-> +
-> +	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> +
-> +	args->num_element = 1;
-> +	args->element_size = sizeof(ndev->last_async_err);
-> +	if (copy_to_user(u64_to_user_ptr(args->buffer),
-> +			 &ndev->last_async_err, args->element_size))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-> index 8a66f276100e..cfca4e456b61 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.c
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -924,6 +924,9 @@ static int aie2_get_array(struct amdxdna_client *client,
->   	case DRM_AMDXDNA_HW_CONTEXT_ALL:
->   		ret = aie2_query_ctx_status_array(client, args);
->   		break;
-> +	case DRM_AMDXDNA_HW_LAST_ASYNC_ERR:
-> +		ret = aie2_get_array_async_error(xdna->dev_handle, args);
-> +		break;
->   	default:
->   		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
->   		ret = -EOPNOTSUPP;
-> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-> index 289a23ecd5f1..34bc35479f42 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.h
-> +++ b/drivers/accel/amdxdna/aie2_pci.h
-> @@ -190,6 +190,8 @@ struct amdxdna_dev_hdl {
->   
->   	enum aie2_dev_status		dev_status;
->   	u32				hwctx_num;
-> +
-> +	struct amdxdna_async_error	last_async_err;
->   };
->   
->   #define DEFINE_BAR_OFFSET(reg_name, bar, reg_addr) \
-> @@ -253,8 +255,9 @@ void aie2_psp_stop(struct psp_device *psp);
->   /* aie2_error.c */
->   int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev);
->   void aie2_error_async_events_free(struct amdxdna_dev_hdl *ndev);
-> -int aie2_error_async_events_send(struct amdxdna_dev_hdl *ndev);
->   int aie2_error_async_msg_thread(void *data);
-> +int aie2_get_array_async_error(struct amdxdna_dev_hdl *ndev,
-> +			       struct amdxdna_drm_get_array *args);
->   
->   /* aie2_message.c */
->   int aie2_suspend_fw(struct amdxdna_dev_hdl *ndev);
-> diff --git a/drivers/accel/amdxdna/amdxdna_error.h b/drivers/accel/amdxdna/amdxdna_error.h
-> new file mode 100644
-> index 000000000000..c51de86ec12b
-> --- /dev/null
-> +++ b/drivers/accel/amdxdna/amdxdna_error.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef _AMDXDNA_ERROR_H_
-> +#define _AMDXDNA_ERROR_H_
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +
-> +#define AMDXDNA_ERR_DRV_AIE		4
-> +#define AMDXDNA_ERR_SEV_CRITICAL	3
-> +#define AMDXDNA_ERR_CLASS_AIE		2
-> +
-> +#define AMDXDNA_ERR_NUM_MASK		GENMASK_U64(15, 0)
-> +#define AMDXDNA_ERR_DRV_MASK		GENMASK_U64(23, 16)
-> +#define AMDXDNA_ERR_SEV_MASK		GENMASK_U64(31, 24)
-> +#define AMDXDNA_ERR_MOD_MASK		GENMASK_U64(39, 32)
-> +#define AMDXDNA_ERR_CLASS_MASK		GENMASK_U64(47, 40)
-> +
-> +enum amdxdna_error_num {
-> +	AMDXDNA_ERROR_NUM_AIE_SATURATION = 3,
-> +	AMDXDNA_ERROR_NUM_AIE_FP,
-> +	AMDXDNA_ERROR_NUM_AIE_STREAM,
-> +	AMDXDNA_ERROR_NUM_AIE_ACCESS,
-> +	AMDXDNA_ERROR_NUM_AIE_BUS,
-> +	AMDXDNA_ERROR_NUM_AIE_INSTRUCTION,
-> +	AMDXDNA_ERROR_NUM_AIE_ECC,
-> +	AMDXDNA_ERROR_NUM_AIE_LOCK,
-> +	AMDXDNA_ERROR_NUM_AIE_DMA,
-> +	AMDXDNA_ERROR_NUM_AIE_MEM_PARITY,
-> +	AMDXDNA_ERROR_NUM_UNKNOWN = 15,
-> +};
-> +
-> +enum amdxdna_error_module {
-> +	AMDXDNA_ERROR_MODULE_AIE_CORE = 3,
-> +	AMDXDNA_ERROR_MODULE_AIE_MEMORY,
-> +	AMDXDNA_ERROR_MODULE_AIE_SHIM,
-> +	AMDXDNA_ERROR_MODULE_AIE_NOC,
-> +	AMDXDNA_ERROR_MODULE_AIE_PL,
-> +	AMDXDNA_ERROR_MODULE_UNKNOWN = 8,
-> +};
-> +
-> +#define AMDXDNA_ERROR_ENCODE(err_num, err_mod)				\
-> +	(FIELD_PREP(AMDXDNA_ERR_NUM_MASK, err_num) |			\
-> +	 FIELD_PREP_CONST(AMDXDNA_ERR_DRV_MASK, AMDXDNA_ERR_DRV_AIE) |	\
-> +	 FIELD_PREP_CONST(AMDXDNA_ERR_SEV_MASK, AMDXDNA_ERR_SEV_CRITICAL) | \
-> +	 FIELD_PREP(AMDXDNA_ERR_MOD_MASK, err_mod) |			\
-> +	 FIELD_PREP_CONST(AMDXDNA_ERR_CLASS_MASK, AMDXDNA_ERR_CLASS_AIE))
-> +
-> +#define AMDXDNA_EXTRA_ERR_COL_MASK	GENMASK_U64(7, 0)
-> +#define AMDXDNA_EXTRA_ERR_ROW_MASK	GENMASK_U64(15, 8)
-> +
-> +#define AMDXDNA_EXTRA_ERR_ENCODE(row, col)				\
-> +	(FIELD_PREP(AMDXDNA_EXTRA_ERR_COL_MASK, col) |			\
-> +	 FIELD_PREP(AMDXDNA_EXTRA_ERR_ROW_MASK, row))
-> +
-> +#endif /* _AMDXDNA_ERROR_H_ */
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> index aa04452310e5..696fdac8ad3c 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> @@ -27,9 +27,10 @@ MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
->   /*
->    * 0.0: Initial version
->    * 0.1: Support getting all hardware contexts by DRM_IOCTL_AMDXDNA_GET_ARRAY
-> + * 0.2: Support getting last error hardware error
->    */
->   #define AMDXDNA_DRIVER_MAJOR		0
-> -#define AMDXDNA_DRIVER_MINOR		1
-> +#define AMDXDNA_DRIVER_MINOR		2
->   
->   /*
->    * Bind the driver base on (vendor_id, device_id) pair and later use the
-> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-> index a1fb9785db77..c7eec9ceb2ae 100644
-> --- a/include/uapi/drm/amdxdna_accel.h
-> +++ b/include/uapi/drm/amdxdna_accel.h
-> @@ -523,7 +523,20 @@ struct amdxdna_drm_hwctx_entry {
->   	__u32 pad;
->   };
->   
-> +/**
-> + * struct amdxdna_async_error - XDNA async error structure
-> + */
-> +struct amdxdna_async_error {
-> +	/** @err_code: Error code. */
-> +	__u64 err_code;
-> +	/** @ts_us: Timestamp. */
-> +	__u64 ts_us;
-> +	/** @ex_err_code: Extra error code */
-> +	__u64 ex_err_code;
-> +};
-> +
->   #define DRM_AMDXDNA_HW_CONTEXT_ALL	0
-> +#define DRM_AMDXDNA_HW_LAST_ASYNC_ERR	2
->   
->   /**
->    * struct amdxdna_drm_get_array - Get information array.
+diff --git a/arch/arm64/boot/dts/qcom/lemans-pmics.dtsi b/arch/arm64/boot/dts/qcom/lemans-pmics.dtsi
+index 1369c3d43f866de9d8cd5cd4985241b99c0a0454..4eda7043b851f363d0bf053587fb1f5edae0c4cd 100644
+--- a/arch/arm64/boot/dts/qcom/lemans-pmics.dtsi
++++ b/arch/arm64/boot/dts/qcom/lemans-pmics.dtsi
+@@ -142,6 +142,13 @@ pmm8654au_0_gpios: gpio@8800 {
+ 			#interrupt-cells = <2>;
+ 		};
+ 
++		pmm8654au_0_rtc: rtc@6100 {
++			compatible = "qcom,pmk8350-rtc";
++			reg = <0x6100>, <0x6200>;
++			reg-names = "rtc", "alarm";
++			interrupts = <0x0 0x62 0x1 IRQ_TYPE_EDGE_RISING>;
++		};
++
+ 		pmm8654au_0_sdam_0: nvram@7100 {
+ 			compatible = "qcom,spmi-sdam";
+ 			reg = <0x7100>;
+
+---
+base-commit: 13863a59e410cab46d26751941980dc8f088b9b3
+change-id: 20251015-add_rtc_node-13490b702486
+
+Best regards,
+-- 
+Rakesh Kota <rakesh.kota@oss.qualcomm.com>
 
 
