@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-854004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADABBBDD507
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E61BDD5AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D4D04EF33B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:09:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F18D64F9EAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC3D248893;
-	Wed, 15 Oct 2025 08:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191322DAFBB;
+	Wed, 15 Oct 2025 08:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKJXzUHh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="ZQFEL+RV"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2312C0296;
-	Wed, 15 Oct 2025 08:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CFC239E7D;
+	Wed, 15 Oct 2025 08:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760515780; cv=none; b=fiMNzk/medM1ea2hHWiZqUTpLThgWtgc/LpOnZPTWl3fo67rRm9ZeBTG/UTMqjE5AQMKA7JG+AdQ5gmMXAk/lK0sbGoSpe9gIWoiy55X5we6I5BJb3hDfE6RCiFGYWAqcxdMc0KbrWciAcYh2qen4pLu5dwRPVtM5K2dB7IGJ4k=
+	t=1760516462; cv=none; b=cSse+qE0LUjYmaNalXqGxo6wTpWyF97WEJvzyGQ/WKqd2sYH8/RQH+E4C3HhfB+70LTQwGf02OYZpoO/tU0goOzT71GMlPElZLTZFjHVVMYxymFqiBwUuxKnKeEzIactqNwF/dH3SkUbUSAbMuNmPMVJ+xylXjG1Jod2LCayofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760515780; c=relaxed/simple;
-	bh=TvFSqbcGd3/w9zlIUZI587yIGf6KC0toARU6q7rKKqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTMzLn3RR7uMenWqsyS6N4UlyqlVET5cutBKf+KZCXNLM2wclrNE3Md2OeAwe3FatCR8PeX+yIME5ZlDQfSpK6izahIOsjLnTf4/2K8dGfHqxMg+kmWr7xAKRZX2r26XhS6SIRxwT30KED1QBLlORFChMkIw89zqj6rmeBvWRnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKJXzUHh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD03C4CEF8;
-	Wed, 15 Oct 2025 08:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760515779;
-	bh=TvFSqbcGd3/w9zlIUZI587yIGf6KC0toARU6q7rKKqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HKJXzUHhRhbwK9P/unoPTYFgotjilicrECi5KClgaJ9t3x963PsSXqd6egSOR5aPa
-	 DbU1AmDfFaF3GpEXN/aZ0PMwYPGPLiKbn74QEqQvq/LWMt3lRieCaLZh6FCvPYgHVx
-	 l7McR6/Kbqsy7hoLdN16s8HUOJ5f45kkWvJX2S8pUQf8Ko/JFsNa/At5SNlxDP0Zy4
-	 UnCRnzeOU2DGn9lZcfeAcVaOJnR/NR4c0IDIkrTtWGb6FUMfaRLqAAFGSFIJ56Wr7/
-	 Nprv5bM1AB+tUHDmOn1zfxIAZKhcSsJ3/k6h7hdeCYx2F8w4aby/P+RS2j0EStPsna
-	 gAw1m4geR47vg==
-Date: Wed, 15 Oct 2025 11:09:32 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org
-Subject: Re: [PATCH v5 6/7] liveupdate: kho: move to kernel/liveupdate
-Message-ID: <aO9WvF_WMkKKqYo5@kernel.org>
-References: <20251007033100.836886-1-pasha.tatashin@soleen.com>
- <20251007033100.836886-7-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1760516462; c=relaxed/simple;
+	bh=6Y9OWvGkDg6udQj9djR1XfdCUChWLBwBawqaHBCUZaU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZRyLCZTnMWshXhjRMPhv5IzNIEyNaKVHZVkmLazRBWvshS2prQIV6MXhUJzMK2nUsF9u80hXdk3pKp7wPTCyp/VzVu8yXrMCmjq5rHGOCLhD6ehE/yYq7Nxuj2N4Pay+QMMKwr6Ig1EZIpHsMjmZzoVxr/MtY3aSujy8F8RpX7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=ZQFEL+RV; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id 95EF310D5E84;
+	Wed, 15 Oct 2025 11:12:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 95EF310D5E84
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1760515940; bh=6Y9OWvGkDg6udQj9djR1XfdCUChWLBwBawqaHBCUZaU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=ZQFEL+RVTDeVYNBc2ZKlpkhCH01BExjbcWXu+SvB/q+dUrhs4OIEtD4JiVSEw+K41
+	 IcooUfzZ5phrf2eisHx0HYNB27wZjJPgh4ia/i/tcWu1gbTQwbxBIqU/v9IwUKVz/7
+	 A9B4fRA3hbpzui70dcV0XMqO9rZqSMLO4wZYV7xM=
+Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 9240E30CD6E5;
+	Wed, 15 Oct 2025 11:12:20 +0300 (MSK)
+From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>, Magnus Karlsson
+	<magnus.karlsson@intel.com>
+CC: Song Yoong Siang <yoong.siang.song@intel.com>, Maciej Fijalkowski
+	<maciej.fijalkowski@intel.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, John Fastabend <john.fastabend@gmail.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>,
+	"Stanislav Fomichev" <sdf@fomichev.me>, Simon Horman <horms@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>, "David S. Miller"
+	<davem@davemloft.net>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: Re: [lvc-project] [PATCH net v2] xsk: Fix overflow in descriptor
+ validation
+Thread-Topic: [lvc-project] [PATCH net v2] xsk: Fix overflow in descriptor
+ validation
+Thread-Index: AQHcN5OdnXCPK8VDDEqW23qLq6U3NbTCtWYA
+Date: Wed, 15 Oct 2025 08:12:20 +0000
+Message-ID: <9e946bb9-2629-485e-ae89-5aa8c4930a4d@infotecs.ru>
+References: <20251007140645.3199133-1-Ilia.Gavrilov@infotecs.ru>
+In-Reply-To: <20251007140645.3199133-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: ru-RU
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A836548593C0764CAC3250F390BF7D56@infotecs.ru>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007033100.836886-7-pasha.tatashin@soleen.com>
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/10/15 07:33:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/10/15 04:14:00 #27914565
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-On Tue, Oct 07, 2025 at 03:30:59AM +0000, Pasha Tatashin wrote:
-> Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
-> core kernel related files to the same place.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-One comment below.
-
-> ---
->  Documentation/core-api/kho/concepts.rst       |  2 +-
->  MAINTAINERS                                   |  2 +-
->  init/Kconfig                                  |  2 ++
->  kernel/Kconfig.kexec                          | 25 ----------------
->  kernel/Makefile                               |  3 +-
->  kernel/liveupdate/Kconfig                     | 30 +++++++++++++++++++
->  kernel/liveupdate/Makefile                    |  4 +++
->  kernel/{ => liveupdate}/kexec_handover.c      |  6 ++--
->  .../{ => liveupdate}/kexec_handover_debug.c   |  0
->  .../kexec_handover_internal.h                 |  0
->  10 files changed, 42 insertions(+), 32 deletions(-)
->  create mode 100644 kernel/liveupdate/Kconfig
->  create mode 100644 kernel/liveupdate/Makefile
->  rename kernel/{ => liveupdate}/kexec_handover.c (99%)
->  rename kernel/{ => liveupdate}/kexec_handover_debug.c (100%)
->  rename kernel/{ => liveupdate}/kexec_handover_internal.h (100%)
-> 
-> diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> new file mode 100644
-> index 000000000000..522b9f74d605
-> --- /dev/null
-> +++ b/kernel/liveupdate/Kconfig
-> @@ -0,0 +1,30 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +menu "Live Update"
-
-KHO can be used without Live Update, let's make this "Kexec HandOver and
-Live Update"
-
-> +
-
--- 
-Sincerely yours,
-Mike.
+T24gMTAvNy8yNSAxNzowNiwgSWxpYSBHYXZyaWxvdiB3cm90ZToNCj4gVGhlIGRlc2MtPmxlbiB2
+YWx1ZSBjYW4gYmUgc2V0IHVwIHRvIFUzMl9NQVguIElmIHVtZW0gdHhfbWV0YWRhdGFfbGVuDQo+
+IG9wdGlvbiBpcyBhbHNvIHNldCwgdGhlIHZhbHVlIG9mIHRoZSBleHByZXNzaW9uDQo+ICdkZXNj
+LT5sZW4gKyBwb29sLT50eF9tZXRhZGF0YV9sZW4nIGNhbiBvdmVyZmxvdyBhbmQgdmFsaWRhdGlv
+bg0KPiBvZiB0aGUgaW5jb3JyZWN0IGRlc2NyaXB0b3Igd2lsbCBiZSBzdWNjZXNzZnVsbHkgcGFz
+c2VkLg0KPiBUaGlzIGNhbiBsZWFkIHRvIGEgc3Vic2VxdWVudCBjaGFpbiBvZiBhcml0aG1ldGlj
+IG92ZXJmbG93cw0KPiBpbiB0aGUgeHNrX2J1aWxkX3NrYigpIGZ1bmN0aW9uIGFuZCBpbmNvcnJl
+Y3Qgc2tfYnVmZiBhbGxvY2F0aW9uLg0KPiANCj4gVG8gcmVwcm9kdWNlIHRoZSBvdmVyZmxvdywg
+dGhpcyBwaWVjZSBvZiB1c2Vyc3BhY2UgY29kZSBjYW4gYmUgdXNlZDoNCj4gICAgICAgIHN0cnVj
+dCB4ZHBfdW1lbV9yZWcgdW1lbV9yZWc7DQo+ICAgICAgICB1bWVtX3JlZy5hZGRyID0gKF9fdTY0
+KSh2b2lkICopdW1lbTsNCj4gICAgICAgIC4uLg0KPiAgICAgICAgdW1lbV9yZWcuY2h1bmtfc2l6
+ZSA9IDQwOTY7DQo+ICAgICAgICB1bWVtX3JlZy50eF9tZXRhZGF0YV9sZW4gPSAxNjsNCj4gICAg
+ICAgIHVtZW1fcmVnLmZsYWdzID0gWERQX1VNRU1fVFhfTUVUQURBVEFfTEVOOw0KPiAgICAgICAg
+c2V0c29ja29wdChzZmQsIFNPTF9YRFAsIFhEUF9VTUVNX1JFRywgJnVtZW1fcmVnLCBzaXplb2Yo
+dW1lbV9yZWcpKTsNCj4gICAgICAgIC4uLg0KPiANCj4gICAgICAgIHhza19yaW5nX3Byb2RfX3Jl
+c2VydmUodHEsIGJhdGNoX3NpemUsICZpZHgpOw0KPiANCj4gICAgICAgIGZvciAoaSA9IDA7IGkg
+PCBucl9wYWNrZXRzOyArK2kpIHsNCj4gICAgICAgICAgICAgICAgc3RydWN0IHhkcF9kZXNjICp0
+eF9kZXNjID0geHNrX3JpbmdfcHJvZF9fdHhfZGVzYyh0cSwgaWR4ICsgaSk7DQo+ICAgICAgICAg
+ICAgICAgIHR4X2Rlc2MtPmFkZHIgPSBwYWNrZXRzW2ldLmFkZHI7DQo+ICAgICAgICAgICAgICAg
+IHR4X2Rlc2MtPmFkZHIgKz0gdW1lbS0+dHhfbWV0YWRhdGFfbGVuOw0KPiAgICAgICAgICAgICAg
+ICB0eF9kZXNjLT5vcHRpb25zID0gWERQX1RYX01FVEFEQVRBOw0KPiAgICAgICAgICAgICAgICB0
+eF9kZXNjLT5sZW4gPSBVSU5UMzJfTUFYOw0KPiAgICAgICAgfQ0KPiANCj4gICAgICAgIHhza19y
+aW5nX3Byb2RfX3N1Ym1pdCh0cSwgbnJfcGFja2V0cyk7DQo+ICAgICAgICAuLi4NCj4gICAgICAg
+IHNlbmR0byhzZmQsIE5VTEwsIDAsIE1TR19ET05UV0FJVCwgTlVMTCwgMCk7DQo+IA0KPiBGb3Vu
+ZCBieSBJbmZvVGVDUyBvbiBiZWhhbGYgb2YgTGludXggVmVyaWZpY2F0aW9uIENlbnRlcg0KPiAo
+bGludXh0ZXN0aW5nLm9yZykgd2l0aCBTVkFDRS4NCj4gDQo+IEZpeGVzOiAzNDFhYzk4MGVhYjkg
+KCJ4c2s6IFN1cHBvcnQgdHhfbWV0YWRhdGFfbGVuIikNCj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5l
+bC5vcmcNCj4gU2lnbmVkLW9mZi1ieTogSWxpYSBHYXZyaWxvdiA8SWxpYS5HYXZyaWxvdkBpbmZv
+dGVjcy5ydT4NCj4gLS0tDQo+IHYyOiBBZGQgYSByZXBybw0KPiAgbmV0L3hkcC94c2tfcXVldWUu
+aCB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
+bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9uZXQveGRwL3hza19xdWV1ZS5oIGIvbmV0L3hkcC94
+c2tfcXVldWUuaA0KPiBpbmRleCBmMTZmMzkwMzcwZGMuLmIyMDZhODgzOWIzOSAxMDA2NDQNCj4g
+LS0tIGEvbmV0L3hkcC94c2tfcXVldWUuaA0KPiArKysgYi9uZXQveGRwL3hza19xdWV1ZS5oDQo+
+IEBAIC0xNDQsNyArMTQ0LDcgQEAgc3RhdGljIGlubGluZSBib29sIHhwX2FsaWduZWRfdmFsaWRh
+dGVfZGVzYyhzdHJ1Y3QgeHNrX2J1ZmZfcG9vbCAqcG9vbCwNCj4gIAkJCQkJICAgIHN0cnVjdCB4
+ZHBfZGVzYyAqZGVzYykNCj4gIHsNCj4gIAl1NjQgYWRkciA9IGRlc2MtPmFkZHIgLSBwb29sLT50
+eF9tZXRhZGF0YV9sZW47DQo+IC0JdTY0IGxlbiA9IGRlc2MtPmxlbiArIHBvb2wtPnR4X21ldGFk
+YXRhX2xlbjsNCj4gKwl1NjQgbGVuID0gKHU2NClkZXNjLT5sZW4gKyBwb29sLT50eF9tZXRhZGF0
+YV9sZW47DQo+ICAJdTY0IG9mZnNldCA9IGFkZHIgJiAocG9vbC0+Y2h1bmtfc2l6ZSAtIDEpOw0K
+PiAgDQo+ICAJaWYgKCFkZXNjLT5sZW4pDQo+IEBAIC0xNjUsNyArMTY1LDcgQEAgc3RhdGljIGlu
+bGluZSBib29sIHhwX3VuYWxpZ25lZF92YWxpZGF0ZV9kZXNjKHN0cnVjdCB4c2tfYnVmZl9wb29s
+ICpwb29sLA0KPiAgCQkJCQkgICAgICBzdHJ1Y3QgeGRwX2Rlc2MgKmRlc2MpDQo+ICB7DQo+ICAJ
+dTY0IGFkZHIgPSB4cF91bmFsaWduZWRfYWRkX29mZnNldF90b19hZGRyKGRlc2MtPmFkZHIpIC0g
+cG9vbC0+dHhfbWV0YWRhdGFfbGVuOw0KPiAtCXU2NCBsZW4gPSBkZXNjLT5sZW4gKyBwb29sLT50
+eF9tZXRhZGF0YV9sZW47DQo+ICsJdTY0IGxlbiA9ICh1NjQpZGVzYy0+bGVuICsgcG9vbC0+dHhf
+bWV0YWRhdGFfbGVuOw0KPiAgDQo+ICAJaWYgKCFkZXNjLT5sZW4pDQo+ICAJCXJldHVybiBmYWxz
+ZTsNCg0KSGksIEFsZXhhbmRlciwgTWFnbnVzIQ0KDQpJJ20gc29ycnkgdG8gYm90aGVyIHlvdS4N
+CldpbGwgdGhpcyBwYXRjaCBiZSBhcHBsaWVkIG9yIHJlamVjdGVkPw0K
 
