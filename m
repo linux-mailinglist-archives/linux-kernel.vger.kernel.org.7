@@ -1,253 +1,135 @@
-Return-Path: <linux-kernel+bounces-854725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C89BDF3C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:02:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA11BDF3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 052AC505DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:00:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CA1350670E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627EB30DD27;
-	Wed, 15 Oct 2025 14:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0652D7DDE;
+	Wed, 15 Oct 2025 14:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSCYSFR5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="GdUyvDOb"
+Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115102DCF50;
-	Wed, 15 Oct 2025 14:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540189; cv=none; b=CPEM0DMBQJRyHbrq98tBw6pR53GniWnOE/xSqj+aki4Po461cMWGIRewN2/FdybTxcUI0wFGgJCi9JIOZxzAoDCjuklTeoknjTR1dX26+1ac6bUR23YWmuhSiFiUBqqcGykoADQlJgX75nhVjkFxg+Bg2XJrH0N6nMfzQZ28iy8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540189; c=relaxed/simple;
-	bh=9TfNZFPxnfGLTRypItsxifDHxO/2W6YQvUidVKuwoLk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rRmM6n0il30ul1kaariJoo8TzzZBD+g+RD0Xu2GyXyJyaohW5DZboOuR1Yfc3UXVI3toZWZ8giBRTgnTGkOO8ikj+P3g5HbZtBXXU6ZTjVdsvucPYnPrh+OPUEd8rTR8hkI45sxN0grSDKWFhMFUyf6LgEqCL9rqbhenT3Q39Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSCYSFR5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C8124C19425;
-	Wed, 15 Oct 2025 14:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760540188;
-	bh=9TfNZFPxnfGLTRypItsxifDHxO/2W6YQvUidVKuwoLk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YSCYSFR5RHWlPtsb0vRBT64WHx14ek9eUxaj7Spfq/VEYRjF349zg7RHMHB3nbdo6
-	 RaYRfpgVDymm7dqk1pDCIxPmOAw5jE7iV00UqoGgCqohtSLaBGATI+Pm0MOohAkwfH
-	 lzEZjW2YAwgUfwLKbORbDAv3fMeU6G+VBzE4tsixQw5KhNfAE9arh9JnD6Ea4YXGsI
-	 rItVSW5UVN8URhbHlf7YHBoJkaYNw34ubhTQo2nhBO7/q4P1FP/Sbr5p/iCR/USx1P
-	 hZDRSZ/kRPzmQuFef/UXvD+vzTOFonOaVBOMWUs2nMIYtQmBdsxK4txbHeQgGgMRUc
-	 mb+uBRSg2WmCA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAA1CCD194;
-	Wed, 15 Oct 2025 14:56:28 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Wed, 15 Oct 2025 16:56:41 +0200
-Subject: [PATCH v13 18/18] arm64: dts: rockchip: add radxa camera 8m on
- rock 3a csi port
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4E22C21EC;
+	Wed, 15 Oct 2025 14:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760540240; cv=pass; b=SYA5voXhBnCnUoj/hQpG5TNLjKknia2HKkn/cKmPCCKF41lUuTEGmOsI3MFCvO4oUYGlZqiyEmS0XM0n1s0hSiC1PxDlOOaUqVZABQ0qaVz8c3bf7zcAXTfCAf16fyVUceXZhsTJude8aiug5qFw+OCC6tXpbd4gIMP88Lx8bYg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760540240; c=relaxed/simple;
+	bh=m56SvGKojCd/FiCDBNV86ncNjpuFwiArIWrdPAwDCQI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=GeEDIaE4+KQD+lnCIzisljx8TXqeEnCPVHvbQodZtR4WCiHdckKXP/5FsvceWu4xGoxBPf4v6r9Cy2d0vfiw8mUQ7aHGAF9KkM/eOosj4tH1OBLS1K4eIa8NzynX0Fc1cwif9Mg1xWkekjmPvDqf1ejORfrV/oRgG1rW3PPTRco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=GdUyvDOb; arc=pass smtp.client-ip=49.212.207.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from www.redadmin.org (bc043154.ppp.asahi-net.or.jp [222.228.43.154])
+	(authenticated bits=0)
+	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59FEvB8L083739
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 15 Oct 2025 23:57:12 +0900 (JST)
+	(envelope-from weibu@redadmin.org)
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 5F52510A0ECFC;
+	Wed, 15 Oct 2025 23:57:11 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 6giJlY_y6ej4; Wed, 15 Oct 2025 23:57:07 +0900 (JST)
+Received: from webmail.redadmin.org (redadmin.org [192.168.11.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: weibu@redadmin.org)
+	by www.redadmin.org (Postfix) with ESMTPSA id 9A29B109D7EE3;
+	Wed, 15 Oct 2025 23:57:07 +0900 (JST)
+DMARC-Filter: OpenDMARC Filter v1.4.2 www.redadmin.org 9A29B109D7EE3
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=192.168.11.50
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1760540227;
+	cv=none; b=u/WI/7K+G49rqDwm+4OQevoZqG470i+JUdyYhkLFfxRP5GE2wYXDhb+Ie+u5fqyL/bLAXoagEvmOQ7dYLuqy1g8oILTPvz97AEge7D+bN3xv1leTvaABlsdx/x+Y5UCm7Av7r82CrAzGdXLd3MkX+ObuWqsYr0s/mHx3GPW80mw=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1760540227; c=relaxed/relaxed;
+	bh=9jqi0qQeN0nBJ0KiS8nuOONUGF+AoS3LBJVNBbwEvcE=;
+	h=DKIM-Filter:DKIM-Signature:MIME-Version:Date:From:To:Cc:Subject:
+	 In-Reply-To:References:Message-ID:X-Sender:Content-Type:
+	 Content-Transfer-Encoding; b=woYv44U3B3aA0rqfb2hCcoQICoVJHc5oukqisYOkogZIn9uCkczt4j2fl/JzURkT+ma0Z93tP5nmP67uTIPoU+CNR9+PPkbdw9IsvKh8euEbWbubAQ7las/AmdNcSH0k/1NQy12bExC1xl06fcnRdKRCvD7kh+NLXDMb7CKQi3s=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 9A29B109D7EE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1760540227;
+	bh=9jqi0qQeN0nBJ0KiS8nuOONUGF+AoS3LBJVNBbwEvcE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GdUyvDObT5ILfk+5jZHdaNbGIm4qSWC7wUEKfY8oSaGf4j3thM9JepVqE2uUxThws
+	 yEFuW1ZjLqoItRpcYW666PSDc18o1PXt4oxMPrwjepLhz614MOh0vH3iVwQreDxRNv
+	 vSkeSY/71HDIZNk2/PvKLLKAoodu80IYi4K/piuo=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240220-rk3568-vicap-v13-18-da164b4918fe@collabora.com>
-References: <20240220-rk3568-vicap-v13-0-da164b4918fe@collabora.com>
-In-Reply-To: <20240220-rk3568-vicap-v13-0-da164b4918fe@collabora.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Gerald Loacker <gerald.loacker@wolfvision.net>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Markus Elfring <Markus.Elfring@web.de>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Collabora Kernel Team <kernel@collabora.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Alexander Shiyan <eagle.alexander923@gmail.com>, 
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Michael Riesch <michael.riesch@collabora.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760540185; l=4380;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=bWQQTyrmHj2T8R0YJb/80IDIFMO0lILMJZpkYBRnj/o=;
- b=76DdHcEdx4dUGs3ZgThl9xjSHh0R+tkTOaCxcMISXgqSkNLL+fURqzNIQOXZV34VbJDS0uN4h
- eqHgjJIPtshCvGOQG2rVp/4Fl9Z4yY04CbUZG2KjmKphx2bpkxJUS8H
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+Date: Wed, 15 Oct 2025 23:57:07 +0900
+From: weibu@redadmin.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, akiyks@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] docs: ja_JP: SubmittingPatches: describe the 'Fixes:'
+ tag
+In-Reply-To: <87jz0xbk6f.fsf@trenco.lwn.net>
+References: <20250909022502.119560-1-weibu@redadmin.org>
+ <20250924192426.2743495-1-weibu@redadmin.org>
+ <87jz0xbk6f.fsf@trenco.lwn.net>
+Message-ID: <11158ff57b6b33b31a2d2fcb78842d25@redadmin.org>
+X-Sender: weibu@redadmin.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Michael Riesch <michael.riesch@collabora.com>
+Thanks, I’ll follow up by moving this under 
+.../translations/ja_JP/process/, converting it to RST, and wiring it 
+into the Sphinx toctree so it’s built.
 
-Add a device tree overlay for the Radxa Camera 8M (featuring the
-Sony IMX219 image sensor) to be connected to the Radxa ROCK 3A CSI
-port.
-
-The image sensor is connected to the RK3568 VICAP MIPI CSI-2
-port, since as at the time of writing this there is no mainline
-support for the RK3568 ISP.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
----
- arch/arm64/boot/dts/rockchip/Makefile              |   5 +
- .../dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso   | 103 +++++++++++++++++++++
- 2 files changed, 108 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index ad684e3831bc..d6b969a0dab9 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -146,6 +146,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-qnap-ts433.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-radxa-e25.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-roc-pc.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a-radxa-cam8m.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3b.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
-@@ -243,6 +244,10 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64-v2-screen.dtb
- rk3399-rockpro64-v2-screen-dtbs := rk3399-rockpro64-v2.dtb \
- 	rk3399-rockpro64-screen.dtbo
- 
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a-radxa-8m-cam.dtb
-+rk3568-rock-3a-radxa-8m-cam-dtbs := rk3568-rock-3a.dtb \
-+	rk3568-rock-3a-radxa-cam8m.dtbo
-+
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-vz-2-uhd.dtb
- rk3568-wolfvision-pf5-vz-2-uhd-dtbs := rk3568-wolfvision-pf5.dtb \
- 	rk3568-wolfvision-pf5-display-vz.dtbo \
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso
-new file mode 100644
-index 000000000000..3aa1ffdc22d8
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device tree overlay for the Radxa Camera 8M attached to the CSI port of
-+ * the Radxa ROCK 3A.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+
-+&{/} {
-+	clk_camera: clock-camera {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "clk_camera";
-+		#clock-cells = <0>;
-+	};
-+
-+	vana_camera: regulator-vana-camera {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-name = "vana_camera";
-+		vin-supply = <&vcc_cam>;
-+	};
-+
-+	vddl_camera: regulator-vddl-camera {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-name = "vddl_camera";
-+		vin-supply = <&vcc_cam>;
-+	};
-+
-+	vdig_camera: regulator-vdig-camera {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-name = "vdig_camera";
-+		vin-supply = <&vcc_cam>;
-+	};
-+};
-+
-+&i2c5 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	imx219: camera-sensor@10 {
-+		compatible = "sony,imx219";
-+		reg = <0x10>;
-+		clocks = <&clk_camera>;
-+		clock-names = "xclk";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&camera_reset>;
-+		reset-gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
-+		VANA-supply = <&vana_camera>;
-+		VDDL-supply = <&vddl_camera>;
-+		VDIG-supply = <&vdig_camera>;
-+
-+		port {
-+			imx219_output: endpoint {
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <456000000>;
-+				remote-endpoint = <&csi_input>;
-+			};
-+		};
-+	};
-+};
-+
-+&pinctrl {
-+	cam {
-+		camera_reset: camera-reset-pinctrl {
-+			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&csi {
-+	status = "okay";
-+};
-+
-+&csi_dphy {
-+	status = "okay";
-+};
-+
-+&csi_in {
-+	csi_input: endpoint {
-+		data-lanes = <1 2>;
-+		link-frequencies = /bits/ 64 <456000000>;
-+		remote-endpoint = <&imx219_output>;
-+	};
-+};
-+
-+&vicap {
-+	status = "okay";
-+};
-+
-+&vicap_mmu {
-+	status = "okay";
-+};
-
--- 
-2.39.5
-
-
+2025-10-15 00:02 に Jonathan Corbet さんは書きました:
+> Akiyoshi Kurita <weibu@redadmin.org> writes:
+> 
+>> Sync the ja_JP translation with the following upstream commits:
+>> 
+>> commit 8401aa1f5997 ("Documentation/SubmittingPatches: describe the 
+>> Fixes: tag")
+>> commit 19c3fe285cba ("docs: Explicitly state that the 'Fixes:' tag 
+>> shouldn't split lines")
+>> commit 5b5bbb8cc51b ("docs: process: Add an example for creating a 
+>> fixes tag")
+>> commit 6356f18f09dc ("Align git commit ID abbreviation guidelines and 
+>> checks")
+>> 
+>> The mix of plain text and reST markup for ``git bisect`` is 
+>> intentional to
+>> align with the eventual reST conversion.
+>> 
+>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+>> ---
+>> v5:
+>>  - whole rewrite
+>> ---
+>>  .../translations/ja_JP/SubmittingPatches      | 28 
+>> ++++++++++++++++++-
+>>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> Applied.
+> 
+> That said ... this is not an RST file, and won't be pulled into the 
+> docs
+> build.  I would *love* to see a patch that moves this file into its
+> proper location under .../process/ and brings it into the build.
+> 
+> Thanks,
+> 
+> jon
 
