@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-854074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9D2BDD7B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412EABDD7C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B057D4F8B73
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36961898834
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C12A3164C7;
-	Wed, 15 Oct 2025 08:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9302A318143;
+	Wed, 15 Oct 2025 08:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Lv2Kd0vb"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GjkGHF67"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5D13164C8;
-	Wed, 15 Oct 2025 08:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9FF2512F5;
+	Wed, 15 Oct 2025 08:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760517955; cv=none; b=VVTSLmeq05tvnQLv59HV+0OZHssWsAJ8yZKdCDb5/FSy6VqO5rWZ90cYIDFD9KM5C/xmO/yHZRTNH+q5Xia0WanxZhYXk821nu+nllnxSzyU+0QCdpBNOjiGQFGLSgciV9EEjGX7vaIJ9nfOf5q+HNXdD337p/5Pu2AZXd0wD1U=
+	t=1760517957; cv=none; b=h0UtkW5Z+D6ZhKNFeYxYGpOe/32kEH83X99lzTogQzdpSgrFjEnL1CkbzhqYnaQwn7Adp58e3vETSUXlqE/dlxM7K9nbUUWx2FNPDQ3uiK2WenzErhJkW1vHk05+QRfYm14rYznSRzaCL9OBO88zz65ir8MtAgWUv7Rz8iUgYlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760517955; c=relaxed/simple;
-	bh=Tu2AHP6luKsiurT9a4lne7CLhn3ugAJtHzpoSPKfhdY=;
+	s=arc-20240116; t=1760517957; c=relaxed/simple;
+	bh=XOGY5weYjz0PiayCterLaiEnlsWjQtw9y9up2bDmOsg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n6qTNyfNS6xxJN1eSIU57EG8UgpsBskQ86R9JP/pyKGMrtsakPQdQP7coBEYPmtt3NGMvCkq9+DMuZAS8ePKsIzjUp39R5kt5lazW5PttP6sv9Lb4D5MLhCiQojAl2EGKj54N+aV7cFqBHqCzKPZ3gTA/CAa5l9Koh5WtBasBXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Lv2Kd0vb; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=SS4jm/hMWEBAQchuTwklpTNLK8JgFS72Y77V5oZ826NJd68WYDOfTZKBqA4q5tqvLm2J6LiRwDFH8pd6kO1mbJ/3xm/o5yMzOpwLL2bm1jBhgGV7G+k0Xzz0LNvc2YdQaQga/1zGHSfZWc2lCuEq8vEgqcmo/xTL/ywxJ7uJMic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GjkGHF67; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760517952;
-	bh=Tu2AHP6luKsiurT9a4lne7CLhn3ugAJtHzpoSPKfhdY=;
+	s=mail; t=1760517953;
+	bh=XOGY5weYjz0PiayCterLaiEnlsWjQtw9y9up2bDmOsg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Lv2Kd0vbfl62sJunmw3iykR/1ljZJmdB/GF+Phrrn4JOMG9LzAsRvx/IFYD2keek+
-	 TSjylyC/je4k3u/A3Eo/S8XOSGnpAh+ON5E80+jeuaR5uBFDPaBS1JbZ3hVforhhET
-	 Y4IfQ0SoKtFzeZ0ZZpZwy9rbxMwpiZzBGbeKEXptqafn2mLdk9EMNK7O0z/96R7my+
-	 4YSdYcCYrOVexFic8NA+5bpfVu2/nZrOfydptSPAB+ORYcLj1XK0vKLAaIDIG2nYBR
-	 DWVoRvxcTZhQkjQOw79WkeXy+lY4VrDOuF3LkERB9WOCBwuAFPGGXZofYv2n1ghcb3
-	 0g7uL4CHIutXg==
+	b=GjkGHF67ScAYrb7IvLKJvMSEUfi0mN2Xa/y5Rcfy4tOIUPekVBfiaLoo9l79yRkQb
+	 hetxLA6ID23ZEsfTHO5dEC6Oz2kJ+MTRfnVAWDPDwLeBpVjs3G6tJuj6B54BoUDkUe
+	 tF8YJZjguG24puC7gXYHH/yDij89WPu6z/TJhv1j1W1IrA+wpLR6XzGMJpCEyjgq3c
+	 A7dgr/Yv2Lf6n/cLaIOd4Fvu5N2E1GhcIvGwXy+QMszSNLJBguBkwUNKXT2P17Ibw/
+	 arrU+qH+5cMN9Nbs5XeVuFs8T4c3h8MBUnnfExI+AauUjTFw7CamhW2jebZaLckFB2
+	 xTjl8zWTjlhtQ==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6078417E0C54;
-	Wed, 15 Oct 2025 10:45:51 +0200 (CEST)
-Message-ID: <cda37b6b-1ad5-48b4-b861-ae49297f72cf@collabora.com>
-Date: Wed, 15 Oct 2025 10:45:50 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DAAD517E1340;
+	Wed, 15 Oct 2025 10:45:52 +0200 (CEST)
+Message-ID: <02c98be4-6baa-42e0-a226-506a817c83e9@collabora.com>
+Date: Wed, 15 Oct 2025 10:45:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,8 +56,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: mediatek: mt8189: Add bindings for MM
- & APU & INFRA IOMMU
+Subject: Re: [PATCH v2 2/5] iommu/mediatek: Add a flag DL_WITH_MULTI_LARB
 To: Zhengnan Chen <zhengnan.chen@mediatek.com>, Yong Wu
  <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
  Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
@@ -66,23 +65,24 @@ To: Zhengnan Chen <zhengnan.chen@mediatek.com>, Yong Wu
 Cc: iommu@lists.linux.dev, linux-mediatek@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- Conor Dooley <conor.dooley@microchip.com>
+ Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20251015032509.5057-1-zhengnan.chen@mediatek.com>
- <20251015032509.5057-2-zhengnan.chen@mediatek.com>
+ <20251015032509.5057-3-zhengnan.chen@mediatek.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20251015032509.5057-2-zhengnan.chen@mediatek.com>
+In-Reply-To: <20251015032509.5057-3-zhengnan.chen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 15/10/25 05:24, Zhengnan Chen ha scritto:
-> There are three iommu in total, namely MM_IOMMU, APU_IOMMU, INFRA_IOMMU,
-> Add bindings for them.
+> Add DL_WITH_MULTI_LARB flag to support the HW which connect with
+> multiple larbs. Prepare for mt8189. In mt8189, the display connect
+> with larb1 and larb2 at the same time. Thus, we should add link
+> between disp-dev with these two larbs.
 > 
 > Signed-off-by: Zhengnan Chen <zhengnan.chen@mediatek.com>
 > Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Yong Wu <yong.wu@mediatek.com>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
