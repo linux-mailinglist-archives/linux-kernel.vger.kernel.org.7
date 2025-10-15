@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-854296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF859BDE04E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:34:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD5EBDE05D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B39119C3AAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:35:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 532DE500BAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA0C2FD1C5;
-	Wed, 15 Oct 2025 10:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEDF31D382;
+	Wed, 15 Oct 2025 10:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mz10zjp4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVmt3Dq9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203D2E8B86;
-	Wed, 15 Oct 2025 10:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B592231D367;
+	Wed, 15 Oct 2025 10:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760524432; cv=none; b=T4gHSTRrhTOt4w7zbPf+nHXF5wvcF1EdDc7un5WHJk6f+s8ll5E6FYzGv99mHh07221BYtQzslDbiuuhfc3cl0o6TGZ0FEnLBt5uSt8GsS8eSpHrCPEsW8ztSiBwo5JSy7Ri2OTvYFW67xqydKXM2n9ZvT4mhJN9WN67Iymu+vE=
+	t=1760524449; cv=none; b=utRvvKUBZfog5kw7wCB+TCaTQedcCxuKEQXaoz4mHRHT48K7Ze4s4ldB7mXnbjxyTfu787Fhh+Z2T9dOw1wl4H/ow4Ln4/3gwEl8whepbBqgK7lYwIhtl/uStBCUY5w5vqtrkYdW1Pz0/xx3TUpsdf1ZDrhGPsIsf8qlNVehla0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760524432; c=relaxed/simple;
-	bh=Ydl4pPrb39e/xb1/s3m4UAS3TNFS3uJ2Pw4AKpH6K1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OzePi/0kpSP14XaaQgPy7SkInCnf12069kx8ANw5pJvoHes/zZSN7Fn7yeimEvvyQieXoOrv5mf/IC/p4eCzEJKCrzaGO84xJ9RSG0YEw7NPE2GNAXX/oRr2vPztjK4xKsgxDgv6IaavuWLsyB5r8DDeUKPNQJQHF3xArEUPYkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mz10zjp4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049A3C4CEF8;
-	Wed, 15 Oct 2025 10:33:49 +0000 (UTC)
+	s=arc-20240116; t=1760524449; c=relaxed/simple;
+	bh=we5XZGH463fQf5FOxBGiKZ2kHsrJYRcfoRoeknDdXek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsjmcHQcvtyI4S82LqDWptPmOjgytfSSxPLDRMshuQFmMAPKMlhhbUhkTO8csYeo7gOJd7yXTE5RsJ2lM8qtM+NtK9e6WY8rKPjvJ3rJ/Ia0jqbD0MyoSIkAapwmAGP/gHD6qmj3O8TX75zXKMuazIxkKnHQ4VnmeGSTHtEJmbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVmt3Dq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 190B7C4CEF8;
+	Wed, 15 Oct 2025 10:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760524431;
-	bh=Ydl4pPrb39e/xb1/s3m4UAS3TNFS3uJ2Pw4AKpH6K1k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Mz10zjp4yxPrQeLtBVUpLhGr1wbAXLOJT9+5pzTx5RqHWjAypW8C4y7gHiUpduL+F
-	 vp3lkzgXYsV6xCq60vZQzNYFzX/JhVAS58bRjzvp6r1NrE9V7x+jI8F5Trg7IRxBS9
-	 cWpG/1p6PjauUiYVWCyEx0b6qkxeeH//EyEDCPwC5CNIUCAE9TL6HnjSQtzhVFfTqj
-	 qOYIC7Z8gb5Gh/xth0fJWKv6aQdqPjt65RmsKwb7z6IPtNOLiJ+n40IVao2Ok+anGb
-	 DjMNQTiWRuT8R1w1FthCsWrlNYoVcySSmlTZ7gM4zXE+vTgp73Pw+/UFzfFfMq26iz
-	 lcauyMMwvUbhA==
-Date: Wed, 15 Oct 2025 11:33:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, Keguang Zhang <keguang.zhang@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: linux-next: manual merge of the ext4 tree with the origin tree
-Message-ID: <aO94i74VYW6Q9S4T@sirena.org.uk>
+	s=k20201202; t=1760524449;
+	bh=we5XZGH463fQf5FOxBGiKZ2kHsrJYRcfoRoeknDdXek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FVmt3Dq9lv0UC6WD3DjEG/aZebzv/6H7E1P/BwkYqM1tsJoM7ByLGWND33B55jtEy
+	 PaM+9XEs8Op4I60AW18JqjYOATwWAQNKx9vISfEdqQH+h8hhjHE0fuaeSTS2+kfTYb
+	 E+UiPH4brjRJUUhANQdz2eagmsh4mnC49fcqAIJnUQi4dDmVaV/n7QWjBkF2knERKj
+	 G187Ua7V4UjcGzMMWTyV1GheA3wWjeBQKSFqYqKSWj7QSbF8eTSr311GS9tD3Dy5L1
+	 BnHypEnUC7EhTMzkVBJdHYzlCvrP30s5FwOmHzIwrs+7HzkXz02E7c/QxV/p7spSfS
+	 QqjgX4z7+Et2w==
+Date: Wed, 15 Oct 2025 16:03:53 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, 
+	Bjorn Helgaas <helgaas@kernel.org>, manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, Dragan Simic <dsimic@manjaro.org>, 
+	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev, FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <ud72uxkobylkwy5q5gtgoyzf24ewm7mveszfxr3o7tortwrvw5@kc3pfjr3dtaj>
+References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
+ <20251014184905.GA896847@bhelgaas>
+ <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
+ <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+ <7ugvxl3g5szxhc5ebxnlfllp46lhprjvcg5xp75mobsa44c6jv@h2j3dvm5a4lq>
+ <a9ca7843-b780-45aa-9f62-3f443ae06eee@rock-chips.com>
+ <aO9tWjgHnkATroNa@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oIE0lsMSGkDP1FOH"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aO9tWjgHnkATroNa@ryzen>
 
+On Wed, Oct 15, 2025 at 11:46:02AM +0200, Niklas Cassel wrote:
+> Hello Shawn,
+> 
+> On Wed, Oct 15, 2025 at 05:11:39PM +0800, Shawn Lin wrote:
+> > > 
+> > > Thanks! Could you please try the below diff with f3ac2ff14834 applied?
+> > > 
+> > > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > > index 214ed060ca1b..0069d06c282d 100644
+> > > --- a/drivers/pci/quirks.c
+> > > +++ b/drivers/pci/quirks.c
+> > > @@ -2525,6 +2525,15 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+> > >    */
+> > >   DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+> > > 
+> > > +
+> > > +static void quirk_disable_aspm_all(struct pci_dev *dev)
+> > > +{
+> > > +       pci_info(dev, "Disabling ASPM\n");
+> > > +       pci_disable_link_state(dev, PCIE_LINK_STATE_ALL);
+> > > +}
+> > > +
+> > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ROCKCHIP, 0x3588, quirk_disable_aspm_all);
+> > 
+> > That's not true from my POV. Rockchip platform supports all ASPM policy
+> > after mass production verification. I also verified current upstream
+> > code this morning with RK3588-EVB and can check L0s/L1/L1ss work fine.
+> > 
+> > The log and lspci output could be found here:
+> > https://pastebin.com/qizeYED7
+> > 
+> > Moreover, I disscussed this issue with FUKAUMI today off-list and his
+> > board seems to work when only disable L1ss by patching:
+> > 
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -813,7 +813,7 @@ static void pcie_aspm_override_default_link_state(struct
+> > pcie_link_state *link)
+> > 
+> >         /* For devicetree platforms, enable all ASPM states by default */
+> >         if (of_have_populated_dt()) {
+> > -               link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> > +               link->aspm_default = PCIE_LINK_STATE_L0S |
+> > PCIE_LINK_STATE_L1;
+> >                 override = link->aspm_default & ~link->aspm_enabled;
+> >                 if (override)
+> >                         pci_info(pdev, "ASPM: DT platform,
+> > 
+> > 
+> > So, is there a proper way to just disable this feature for spec boards
+> > instead of this Soc?
+> 
+> This fix seems do the trick, without needing to patch common code (aspm.c):
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> index 3e2752c7dd09..f5e1aaa97719 100644
+> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> @@ -200,6 +200,19 @@ static bool rockchip_pcie_link_up(struct dw_pcie *pci)
+>  	return FIELD_GET(PCIE_LINKUP_MASK, val) == PCIE_LINKUP;
+>  }
+>  
+> +static void rockchip_pcie_disable_l1sub(struct dw_pcie *pci)
+> +{
+> +	u32 cap, l1subcap;
+> +
+> +	cap = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_L1SS);
+> +	if (cap) {
+> +		l1subcap = dw_pcie_readl_dbi(pci, cap + PCI_L1SS_CAP);
+> +		l1subcap &= ~(PCI_L1SS_CAP_ASPM_L1_1 | PCI_L1SS_CAP_ASPM_L1_2 | PCI_L1SS_CAP_L1_PM_SS);
+> +		dw_pcie_writel_dbi(pci, cap + PCI_L1SS_CAP, l1subcap);
+> +		l1subcap = dw_pcie_readl_dbi(pci, cap + PCI_L1SS_CAP);
+> +	}
+> +}
+> +
+>  static void rockchip_pcie_enable_l0s(struct dw_pcie *pci)
+>  {
+>  	u32 cap, lnkcap;
+> @@ -264,6 +277,7 @@ static int rockchip_pcie_host_init(struct dw_pcie_rp *pp)
+>  	irq_set_chained_handler_and_data(irq, rockchip_pcie_intx_handler,
+>  					rockchip);
+>  
+> +	rockchip_pcie_disable_l1sub(pci);
+>  	rockchip_pcie_enable_l0s(pci);
+>  
+>  	return 0;
+> @@ -301,6 +315,7 @@ static void rockchip_pcie_ep_init(struct dw_pcie_ep *ep)
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	enum pci_barno bar;
+>  
+> +	rockchip_pcie_disable_l1sub(pci);
+>  	rockchip_pcie_enable_l0s(pci);
+>  	rockchip_pcie_ep_hide_broken_ats_cap_rk3588(ep);
+> 
 
---oIE0lsMSGkDP1FOH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But this patch removes the L1SS CAP for all boards, isn't it?
 
-Hi all,
+> 
+> 
+> 
+> In reality, I think that pcie-dw-rockchip.c should check 'supports-clkreq',
+> and only if it doesn't support clkreq, it should disable L1 substates, similar
+> to how the Tegra driver does things:
+> https://github.com/torvalds/linux/blob/v6.18-rc1/drivers/pci/controller/dwc/pcie-tegra194.c#L934-L938
+> https://github.com/torvalds/linux/blob/v6.18-rc1/drivers/pci/controller/dwc/pcie-tegra194.c#L1164-L1165
+> 
+> In fact, that is also how the downstream rockchip drives does things:
+> https://github.com/rockchip-linux/kernel/blob/develop-6.6/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L200-L233
+> https://github.com/rockchip-linux/kernel/blob/develop-6.6/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L725
+> 
+> So I guess we either:
+> 1) Add code to pcie-dw-rockchip.c to unconditionally disable L1 substates, or
+> 2) We add code to:
+> - If have 'supports-clkreq' property, set PCIE_CLIENT_POWER_CON.app_clk_req_n=1
+> - If don't have 'supports-clkreq' property, disable L1 substates.
+> 
+> I think we need to do either 1) or 2), because a user can build the kernel with
+> CONFIG_PCIEASPM_POWER_SUPERSAVE=y
+> and that would break things even on older kernels, that don't have Mani's recent
+> commit.
+> 
+> 
+> 
+> Mani, perhaps common code (aspm.c) should enable L1 substates only if
+> 'supports-clkreq' DT property exists?
+> 
 
-Today's linux-next merge of the ext4 tree got conflicts in:
+Unfortunately, not all DTs define this property even though the platforms
+support CLKREQ#. Right now, only Nvidia defines this property in the binding,
+but not in upstream DTS. But I would expect the platforms to support CLKREQ# if
+the Root Port supports L1SS CAP.
 
-  arch/mips/configs/loongson1_defconfig
-  arch/mips/configs/loongson1c_defconfig
+So removing the L1SS CAP for Root Port in the controller driver makes sense to
+me.
 
-between commit:
+- Mani
 
-  ad79935dbc227 ("MIPS: configs: Consolidate Loongson1 defconfigs")
-
-=66rom the origin tree and commit:
-
-  acf943e9768ec ("ext4: fix checks for orphan inodes")
-
-=66rom the ext4 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/mips/configs/loongson1_defconfig
-index 81acae6f61c8b,a64a394479638..0000000000000
---- a/arch/mips/configs/loongson1_defconfig
-+++ b/arch/mips/configs/loongson1_defconfig
-@@@ -138,20 -86,17 +138,24 @@@ CONFIG_NEW_LEDS=3D
-  CONFIG_LEDS_CLASS=3Dy
-  CONFIG_LEDS_GPIO=3Dy
-  CONFIG_LEDS_TRIGGERS=3Dy
- +CONFIG_LEDS_TRIGGER_MTD=3Dy
-  CONFIG_LEDS_TRIGGER_HEARTBEAT=3Dy
-  CONFIG_RTC_CLASS=3Dy
- -CONFIG_RTC_DRV_LOONGSON1=3Dy
- +# CONFIG_RTC_NVMEM is not set
- +CONFIG_RTC_DRV_LOONGSON=3Dy
- +CONFIG_DMADEVICES=3Dy
- +CONFIG_LOONGSON1_APB_DMA=3Dy
- +# CONFIG_VIRTIO_MENU is not set
- +# CONFIG_VHOST_MENU is not set
- +# CONFIG_MIPS_PLATFORM_DEVICES is not set
-  # CONFIG_IOMMU_SUPPORT is not set
-- # CONFIG_NVMEM is not set
-+ CONFIG_EXT2_FS=3Dy
-+ CONFIG_EXT2_FS_XATTR=3Dy
-+ CONFIG_EXT2_FS_POSIX_ACL=3Dy
-+ CONFIG_EXT2_FS_SECURITY=3Dy
-  CONFIG_EXT4_FS=3Dy
-  CONFIG_EXT4_FS_POSIX_ACL=3Dy
-+ CONFIG_EXT4_FS_SECURITY=3Dy
-  # CONFIG_DNOTIFY is not set
-  CONFIG_VFAT_FS=3Dy
-  CONFIG_PROC_KCORE=3Dy
-
---oIE0lsMSGkDP1FOH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjveIoACgkQJNaLcl1U
-h9C/BwgAhJHx2vHjWgbMtKVy8ujsTmygLVEs9062OZGTcYSXhhiLdzA2tJPxQkPq
-LdTWR5Gc6h66nDG4wj4N6EOS19ljuulMwupmsfdzCzslZlA0HenM3XfPkPkvJpSj
-CbYagvPdiZt00I1gMyXSIf83K9DyQI2FY3vVfdbwf6C+krMiivQqiNIdxu89CDYW
-kaPisOGNe4PhTPxwXBtwDTNKEjaA+KwfejSlq5vlXJ6B6gJsytHna2pB4lo4KLUg
-jS8cDcUEDHC7gygSrMGhftOQeqiPMUNRDPa/Rju0Q4FfRW7kAaPQYuYIW4I3cLIk
-xfM0tdhqQRxh93h+qKEpAewlGTcXJA==
-=r6ii
------END PGP SIGNATURE-----
-
---oIE0lsMSGkDP1FOH--
+-- 
+மணிவண்ணன் சதாசிவம்
 
