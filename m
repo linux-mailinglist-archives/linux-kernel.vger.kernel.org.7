@@ -1,163 +1,305 @@
-Return-Path: <linux-kernel+bounces-854736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9184FBDF452
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:07:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAC4BDF402
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09AEE48844B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422D4188CA44
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F5F2D3ECA;
-	Wed, 15 Oct 2025 15:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4DC2D739D;
+	Wed, 15 Oct 2025 15:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQeY8MLq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="ICrcqYps"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF942C237C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C642AC17
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540599; cv=none; b=LEQrFJoYl+fL1fsJCg8Zdu7NbGeOVnJmFu6LnuWJ1EzVWm0pQBfWOZ0WHwrVrpKVtTFJxWng7YRvyKMbywm2rGpxrCn0sYvBOC7Vu5LfqJpGIRJbyVRvkV7+UzyjX71q9tpsI03OorRCxrgaxYFtX0WhOZmtPqI8xLaBN0+iCnY=
+	t=1760540567; cv=none; b=c/BXvq63zVkfnZUtIfvTEJIDjb38Pix+UikftXrq4bv4EE698mozpI/PC1kwzYa307Sixypgtw9EinGPVbvAkf0LwKP9ucW3fCiiigWxcm4pYAAg5hluN7y553LMERKO9fCOn1NN5RDYFbdgl72A28Wbt4NzVeYzEIc8+CTobJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540599; c=relaxed/simple;
-	bh=KPicisnbEmdhgyqC8EwVVU1rA/2yi/zfZrIe80dzK64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=leCbJGUpk9L25skiEYlYBOQEP3n4lzXnwF19M0+Kv9T7U+OJyYT11PlGiWWaJ1KMuZhDIV/c0gpq6+oX/VMIxj3Dui8cAORU/uMXmMlGYYASOtvRjfHRa/Vnt4hXwEvch2zb7u3kiT4PHDWaOL+AKhP4mKBSfVSOOgTUNZO50Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQeY8MLq; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760540597; x=1792076597;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KPicisnbEmdhgyqC8EwVVU1rA/2yi/zfZrIe80dzK64=;
-  b=GQeY8MLqUmbFHJP3WGUq18AUc1SKLOzKnLSVraGiPjKLz7igpyLFrTrp
-   JO5KUhj+KSKFGHuTGJ3tQEcf53t1um2WnXODDEtQcxOPYS3hE5ICcpFVU
-   QSuWkODih4eBQSKYbRktskLGL5LLPngE+M/DwIZSiJ/wFRXbjixMwPSpO
-   TkttLaNTlFioYT5aILtj5yYsaNSpuGtSJ4rgCE//hoACzAPA6LS//utcN
-   WnZd/3jM2xYfemOa/mebN2bCITQ2y7LuyLtqX+4lyaxXD7FyFwfHDhMtO
-   JEHGpOZla0eLXYnLOMFbuPPDVbH8rLtv06gwJi9XQX6q/gU36afY2/JZF
-   Q==;
-X-CSE-ConnectionGUID: EzC4UQwaS5aFUsJKThXiiQ==
-X-CSE-MsgGUID: ll+6woLZQsGAzNtqfgw41Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="50286122"
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="50286122"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:02:31 -0700
-X-CSE-ConnectionGUID: XDRWVQPRT52lEdEUyVNGUg==
-X-CSE-MsgGUID: ENHk2Ho9SmykEMSH57amxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="181411456"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.111.202]) ([10.125.111.202])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:02:30 -0700
-Message-ID: <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com>
-Date: Wed, 15 Oct 2025 08:02:30 -0700
+	s=arc-20240116; t=1760540567; c=relaxed/simple;
+	bh=hHvO7+pAuANETqlkdKcLeY8V60XOi07rOreJSG/Jdp4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S1n/Du8q4CZA5NeapW1VWRp9Oj2fLqKBR0A4wMfj2EqRroKaphWVxFFFaEGFFoknHIVNOImge/39T2YHWtiP++WmhhgIMCtnP7iWMLLA6Pj30YqoW2AzlMOei75TrUby/Ubb2lOKoMk7dy3Iyf6TaswTlm0M1GyLioJpDPDow+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=ICrcqYps; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 598D4240028
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:02:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760540561; bh=7vRn8VJxRxqVRWolykt9lD+vLVOYMFlK1KobOslfuNw=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=ICrcqYpsQ7GNY5y1C0CaOCKAzodxxE/OYFBqv588qpjnO0qnFlE344Qw/2DGgSZ5a
+	 zO6q+mUGMiVFRbK+6mowhXU69KOi23wyAjkg4904DqzoRddeGWjFsq9OKA5oadqhZ5
+	 UBPmVPCwJo0Hc7AXohBogV4j37FzzgEShV13YhxzgkhQ2yKgY1pTIZzdx1ukVElRF7
+	 idebzus40Tso/yAtldu/3pO3OqPusZXSU04ff3+1Iac6XI/XG1SargBVPpZlIIZs+4
+	 UC0chboiMYuZ+MRKAAbvEKaBKnA+ekARP57dzAettoWm2fG0pPJUfXE6BsXL3zJHuR
+	 hdzqQKv3b/DMA==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cmvTC3NSqz9rxP;
+	Wed, 15 Oct 2025 17:02:39 +0200 (CEST)
+Message-ID: <25f3fd337ce5e58915125c4e2eb85ef4d7af3627.camel@posteo.de>
+Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
+From: Markus Probst <markus.probst@posteo.de>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek
+ <pavel@kernel.org>,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"	
+ <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, Boqun Feng	
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com,  Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Date: Wed, 15 Oct 2025 15:02:40 +0000
+In-Reply-To: <DDIZC4MK2CFW.1DPDIJR4HPKGY@kernel.org>
+References: <20251012145221.172116-1-markus.probst@posteo.de>
+	 <20251012145221.172116-3-markus.probst@posteo.de>
+	 <aO1GM4WXs37Zpm0G@google.com>
+	 <7de58fd25b52dd5195c8ac06ed4df5a1e60e5070.camel@posteo.de>
+	 <DDIZC4MK2CFW.1DPDIJR4HPKGY@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-To: "Reshetova, Elena" <elena.reshetova@intel.com>,
- "Annapurve, Vishal" <vannapurve@google.com>, "Gao, Chao" <chao.gao@intel.com>
-Cc: "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Weiny, Ira" <ira.weiny@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>,
- "sagis@google.com" <sagis@google.com>,
- "paulmck@kernel.org" <paulmck@kernel.org>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20251001025442.427697-1-chao.gao@intel.com>
- <CAGtprH_FzXjnC0Rbctpvm2_kqAAnUOfnaT4885fBiAi7s0jcXw@mail.gmail.com>
- <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On 10/15/25 01:54, Reshetova, Elena wrote:
-...
->> "Performing TD Preserving during a TD Build operation might result in
->> a corrupted TD hash in the TD attestation report. Until fixed in a
->> future Intel TDX module update, a host VMM can avoid the problem by
->> not conducting a TD Preserving Update while TD Build operation is in
->> progress."
->>
->> Do you know if this issue is fixed already? If so, what version of TDX
->> module fixes this issue?
-> 
-> It is not fixed, because the limitation comes from the internal crypto context
-> maintained by the IPP crypto library.
+On Wed, 2025-10-15 at 16:52 +0200, Danilo Krummrich wrote:
+> On Wed Oct 15, 2025 at 3:44 PM CEST, Markus Probst wrote:
+> > On Mon, 2025-10-13 at 18:34 +0000, Alice RyhlV wrote:
+> > > On Sun, Oct 12, 2025 at 02:52:39PM +0000, Markus Probst wrote:
+> > > > Implement the core abstractions needed for led class devices,
+> > > > including:
+> > > >=20
+> > > > * `led::LedOps` - the trait for handling leds, including
+> > > > =C2=A0 `brightness_set`, `brightness_get` and `blink_set`
+> > > >=20
+> > > > * `led::InitData` - data set for the led class device
+> > > >=20
+> > > > * `led::Device` - a safe wrapper around `led_classdev`
+> > > >=20
+> > > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > >=20
+> > > > +pub trait LedOps: Send + 'static + Sized {
+> > > > +=C2=A0=C2=A0=C2=A0 /// If set true, [`LedOps::brightness_set`] and
+> > > > [`LedOps::blink_set`] must not sleep
+> > > > +=C2=A0=C2=A0=C2=A0 /// and perform the operation immediately.
+> > > > +=C2=A0=C2=A0=C2=A0 const BLOCKING: bool;
+> > > > +=C2=A0=C2=A0=C2=A0 /// The max brightness level
+> > > > +=C2=A0=C2=A0=C2=A0 const MAX_BRIGHTNESS: u32;
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0 /// Sets the brightness level.
+> > > > +=C2=A0=C2=A0=C2=A0 ///
+> > > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
+> > > > +=C2=A0=C2=A0=C2=A0 fn brightness_set(&self, brightness: u32) -> Re=
+sult<()>;
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0 /// Gets the current brightness level.
+> > > > +=C2=A0=C2=A0=C2=A0 fn brightness_get(&self) -> u32 {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEF=
+AULT_ERROR)
+> > > > +=C2=A0=C2=A0=C2=A0 }
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0 /// Activates hardware accelerated blinking.
+> > > > +=C2=A0=C2=A0=C2=A0 ///
+> > > > +=C2=A0=C2=A0=C2=A0 /// delays are in milliseconds. If both are zer=
+o, a
+> > > > sensible
+> > > > default should be chosen.
+> > > > +=C2=A0=C2=A0=C2=A0 /// The caller should adjust the timings in tha=
+t case and
+> > > > if
+> > > > it can't match the values
+> > > > +=C2=A0=C2=A0=C2=A0 /// specified exactly. Setting the brightness t=
+o 0 will
+> > > > disable the hardware accelerated
+> > > > +=C2=A0=C2=A0=C2=A0 /// blinking.
+> > > > +=C2=A0=C2=A0=C2=A0 ///
+> > > > +=C2=A0=C2=A0=C2=A0 /// See also [`LedOps::BLOCKING`]
+> > > > +=C2=A0=C2=A0=C2=A0 fn blink_set(&self, _delay_on: &mut usize, _del=
+ay_off:
+> > > > &mut
+> > > > usize) -> Result<()> {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 build_error!(VTABLE_DEF=
+AULT_ERROR)
+> > > > +=C2=A0=C2=A0=C2=A0 }
+> > >=20
+> > > These functions should probably take a &Device<Bound> argument so
+> > > that
+> > > they can use methods that require a bound device (such as IO).
+> > How about instead something like
+> >=20
+> > mod device {
+> >=20
+> > =C2=A0 unsafe trait Container<Ctx: DeviceContext>: AsRef<Device<Ctx>> {
+> > =C2=A0=C2=A0=C2=A0 const Offset: usize;
+> >=20
+> > =C2=A0=C2=A0=C2=A0 unsafe fn from_device(dev: &Device<Ctx>) -> &Self {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <implementation here>
+> > =C2=A0=C2=A0=C2=A0 }
+> > =C2=A0 }
+> >=20
+> > =C2=A0 unsafe impl Device<Ctx> for Container<Ctx> {
+> > =C2=A0=C2=A0=C2=A0 const Offset: usize =3D 0;
+> > =C2=A0 }
+> >=20
+> > }
+> >=20
+> > And instead of passing &Device<Bound> to the functions, we should
+> > add a
+> > type parameter to LedOps, e.g.:
+> >=20
+> > trait LedOps<T: device::Container<device::Bound>> {
+> >=20
+> > =C2=A0 ...
+> >=20
+> > =C2=A0 fn brightness_set(&self, dev: &T, brightness: u32) -> Result<()>=
+;
+> >=20
+> > =C2=A0 ...
+> >=20
+> > }
+> >=20
+> > impl<T: LedOps<E>, E: device::Container<device::Bound>> Device<T> {
+> >=20
+> > =C2=A0 pub fn new<'a>(
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 parent: &'a E,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 init_data: InitData<'a>,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ops: T,
+> > =C2=A0=C2=A0=C2=A0 ) -> impl PinInit<Devres<Self>, Error> + 'a {
+> > =C2=A0=C2=A0=C2=A0=C2=A0 ...
+> > =C2=A0 }
+> >=20
+> > =C2=A0 ...
+> >=20
+> > }
+> >=20
+> > In the example of i2c (or any other container for `struct device`),
+> > we
+> > implement the device::Container trait:
+> >=20
+> > mod i2c {
+> >=20
+> > =C2=A0 unsafe impl device::Container for I2cClient {
+> > =C2=A0=C2=A0=C2=A0 const Offset: usize =3D offset_of!(bindings::i2c_cli=
+ent, dev);
+> > =C2=A0 }
+> >=20
+> > }
+> > This allows the LedOps function to use any functions from the
+> > I2cClient
+> > or any other device container which may be used (removing the need
+> > to
+> > store it inside the LedOps implementations struct). It still allows
+> > Device<Bound> to be used, as it also would implement
+> > device::Container.
+>=20
+> I had a similar idea in the past, but it has some disadvantages:
+>=20
+> =C2=A0 (1) You have to implement the upcast from a generic device to a bu=
+s
+> device for
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 every bus device.
+Not necessarily every, like I said `container::Device` itself also
+would implement `device::Container` (still allowing &Device<Bound>).
 
-Does the TD attestation report contain information about the TDX module?
-Isn't that information in flux during a module update?
+>=20
+> =C2=A0 (2) You have to store a Box<dyn T> in the Rust LED class device;
+> the C struct
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device can't carry the fat pointer.
+Why carry a fat pointer (assuming you mean pointers to unsized types)?
+We already know the address of it with the `struct led_classdev`-
+>`parent` field, we just need to substract the offset from `<T as
+Container>::Offset`, and we have the address of the device container
+(like `struct i2c_client`). No Box needed.
 
-...
-> But the situation can be avoided fully, if TD preserving update is not conducted
-> during the TD build time. 
+Thanks
+- Markus Probst
 
-Sure, and the TDX module itself could guarantee this as well as much as
-the kernel could. It could decline to allow module updates during TD
-builds, or error out the TD build if it collides with an update.
+
+>=20
+> The alternative would be to provide a safe method for bus devices to
+> upgrade to
+> a bound device by presenting its corresponding &Device<Bound> base
+> device, for
+> instance:
+>=20
+> 	impl I2cClient {
+> 	=C2=A0=C2=A0=C2=A0 pub fn into_bound<'a>(&'a self, &'a Device<Bound>) ->
+> Result<&'a I2cClient<Bound>> {
+> 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // Fails if the presented `&D=
+evice<Bound` is not the
+> base device of `self`.
+> 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+> 	=C2=A0=C2=A0=C2=A0 }
+> 	}
+>=20
+> The advantage is that this can easily be implemented with a macro for
+> all bus
+> devices.
+>=20
+> There is a slight downside in ergonomics due to the into_bound() call
+> though:
+>=20
+> 	fn brightness_set(&self, parent: &Device<Bound>, brightness:
+> u32) -> Result {
+> 	=C2=A0=C2=A0=C2=A0 let i2c: &I2cClient<Bound> =3D
+> self.i2c.into_bound(parent)?;
+>=20
+> 	=C2=A0=C2=A0=C2=A0 ...
+> 	}
 
