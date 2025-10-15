@@ -1,212 +1,207 @@
-Return-Path: <linux-kernel+bounces-854307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6935BDE108
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D272CBDE114
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 713524E1A7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE0F3A2D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5362131B803;
-	Wed, 15 Oct 2025 10:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806C631C58F;
+	Wed, 15 Oct 2025 10:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSJYCK/H"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HKZK8+wL"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011062.outbound.protection.outlook.com [40.107.208.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF2B315D59
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760525069; cv=none; b=j9GboZAt2GGpi8Z3B4qWbIg0Dz5pnAsipKrQOxKWsjIR7O/mTAAn9bfNeINRbCRJhS+R+x0CilkIg1zkrx/WLu9HMwmF2zuUT7treyTUXydRmcm/BL0O+XcFUrWBiI2PU28qvXIdPCpjfesU0hHKzAj9T9hStCDtpCZqRNOE/Lk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760525069; c=relaxed/simple;
-	bh=29AU9NtvNm3uovoHHCmvVbVan27+LinWRG50GhzUWos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9ftAiieSMjDo9Ba8G6xaQpgSv9rPW5Df/MZ16+qqOavX8feZsN/ZuC/7lC2tsGseIZcvo1cFJWsXXNP6tWHlzZex9Vh3L+lm2pQ0U8DlvNWCrpbbE4VLLXL6t0VOU9YS7C5C9v1QRK+uhDCQXGtm3iAaLDH6SGP+qixPjrkgnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSJYCK/H; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e4ad36541so66833135e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760525065; x=1761129865; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ja98IX4O3cTLH8elNwZHWRY1chVsyxH3oWvi7WUQjeY=;
-        b=bSJYCK/HJ7r4xGKT4rSu4IoYbn8LPiaIAxd5565Z/ea5TUGcMChfkiuz0sSzIyxPyJ
-         70X/nyUiiiO9AdDOjJslR0JtGonXQ6c4YwmbxkhQOtLO+HCdKqU1H/UhaqFkqXF4y7pl
-         AKY60iuhVbQvHyq+LUzLiuAxy4KqW+ee1G1gWqkYrMDaHkrWwyMAQrVeZb1GsgHrNbdR
-         VOTtn3TQqwES37yWXgexujNDik6nGTQt2xQlPlCNFQLYYNmapreblNSr8+7GbwP19DEP
-         9kiwfJGVZ+ijP7m3rAFAccdYKI2hg9k0HydIF48NXaLr6PgazB1UX2J5QSH0MBOdfdw1
-         ktwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760525065; x=1761129865;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ja98IX4O3cTLH8elNwZHWRY1chVsyxH3oWvi7WUQjeY=;
-        b=ronVOUDOHienT39TAvpbgboQyMJO6WQF6iVJjwsySKcf/K2fUf0LHuBBQtJ2lHBziE
-         6Ip3bn/D2ZowK81rIsr/GSIgN0HKimRc8wM36MCu4ADbIM5OFshH1Zr4hDCtrGZnomwt
-         LWeeL8cXVgV10XzoOxNe4i/HI0713SBcm7P5u7b+g/EiwBhbiHemGnX6aXwRgPknTw6u
-         kEmyiWWzSEnCe/G6GZvWPh7lG0qzTtCko7GBZ7pKQZVoajkeJ49O8FJ7cQJxDzotneE9
-         1mC91t3OED4FSDzorQt+sqMm3Uw3CQeKLE9fkaSRh6s5OKAESiOxNmJz2XOZqFL/lkJw
-         qcew==
-X-Forwarded-Encrypted: i=1; AJvYcCV9b9kp5dBAHYOrhc7bAbuJbdeF5Vj7TjkY0UgBu5vWJVDDoQeHbjaRe8Do9lGCse0FLuIR7NIFBe69aZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Utb4jvQ6cbqaQxo9fdLDR5RNmTqxMjbDdtE81gfhxI8kxNPS
-	cPpgZol7hak20ajGxkJodiVsT1I7NSCSwagRlyzEiJfuWFqiSGAbl0DwVz0j+MwJ
-X-Gm-Gg: ASbGncs7EYp4iM+dlU2LVIQdgT8D7oBpWZ7mmb6ZdqlPNU1r0Z/P/n+CwG4/q30nIMY
-	zfppZtORT64kilhjkVp+IcGzdOTTYoD9hatU24/ovw+MA1ehtrpAW22dyHbc8c2qCO0AeNEaSUo
-	MoDhBGNCShxqPQSy5unbkCyKl8Ge5sgAHtAjjzqokMX7Hkt8ocVtrmUhCRgTnneOfZh7yG2BmTP
-	BKbNulH7GZB7B4/3vTouQSjb/LXhJlmmvTTqO0iN2nOMCceSS94KUTdiJ9DgusE4LHPGau94fKv
-	cGUBZiiezvWRcAhhNHp1674X4XS8i0Oe+rhDZJZN+fE/wy/5YnU92UJyKStC/FeW0KSzVVIjHTC
-	KYibkeySDIgpjm0t03dAnW+YY8WOrPJ/y6iL4FBpP71eA5w==
-X-Google-Smtp-Source: AGHT+IG61k8TsU+nB/wUHMVmWo7EiG1XXr0JninDaZK/tiZZ7l9Az3/JlEMJMgkqkdZo6AaTLocEaA==
-X-Received: by 2002:a05:600c:1907:b0:470:ff87:6c2d with SMTP id 5b1f17b1804b1-470ff8770dcmr13266675e9.29.1760525064699;
-        Wed, 15 Oct 2025 03:44:24 -0700 (PDT)
-Received: from fedora ([31.94.20.38])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab5250ddsm170242205e9.6.2025.10.15.03.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 03:44:24 -0700 (PDT)
-Date: Wed, 15 Oct 2025 03:44:22 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
- allocator
-Message-ID: <aO97BjvNZNh0UV3u@fedora>
-References: <20251014182754.4329-1-vishal.moola@gmail.com>
- <aO9Z90vphRcyFv2n@milan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D06231BC99;
+	Wed, 15 Oct 2025 10:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760525103; cv=fail; b=fbHJYb7IOFo8BCL9RYZkIQZuOwQ5SE46Lr4CrG3ZH2NZkUcAYT7y1fGqb7axqYrVXK2m+Kzu6BXDcj7D2IjoEcP8wCOJ0zt+wF/wGHaGiJjFGaoTw8kvBZMYuOnPaSHlgjv+PCd9TfWOsGYSRSB780XBMF/iRMdTuLNFgqhREw8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760525103; c=relaxed/simple;
+	bh=ostVG3mWM6acjkceQSbQIIXS92J3xZEifhNm29N5qAg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tnPcgjMIiz1AYD3d5OgolQxEHpzVLXpA1PhdgusNIZcr6Wpit1hWdmKUMAYNfKT0ILk1WveqxbLkueVQO2ORGUaBd6YkiRqJUXMsw0weTyPzp+W1REe+G9hcOCPoa2Zv/LcGOZCKZ/+hNQnQBqIruWNjbqXWdD8QdtbZBX26PVg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HKZK8+wL; arc=fail smtp.client-ip=40.107.208.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xE4vR0ybburii54M/gPa/kOVbkNvfHObU5rB7v4IMIN08tSWj0SzMCDhodFoTKPIBbJ+jctshkY0S2UUt8U4ACVSHofZQ7HKLSuXNfL/0ueGRBBIn19Wqr5ewRCAO3KtC7WaInP1Ig7f9pBG2hGbefjEVTBIRuy6EUuIuUpDPZwFcFbcD8osyY1jSpZKCW+/XCSiZa6GNq+6dUrz2qKTo+cKLcBWdNBS7JFoOX7/tXfNZwBbQbRM/2kz0mFlisStx6idSlFT8ovvE6Ru6jOd5mMvdHUoeq22VidQ/MMgvdumI+JlMhk68DgCwYTLEzIHyKOeTQ0o3UdoF3UBqnUgQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h0t/Rm9R7ijQVitmIF5OySBH8C1drjVs7WEwC7qX3yQ=;
+ b=DWKVDiDTN3vckfzxD2l3Y5j9D9iA2L4iDwDO8+M8602wj+SQeIbNQyMxRjU2FGKip9AwbBm4EKxXVQ9kplFjvo7XODNfFMF8OdKP9/k26NqPyv5vkQD0LJzqf1nRhlNRjb6VQ5JdctRqyjAAVij7pkQhWwHjC7n9DE48aXsCAIBJKcHDYlw6ZKBs+Wgdf3GMp98JYiNz4vrCOhkkeX50bgkQs6ZJk9wanv5HYMP6kteQVc6WQV7O5wgxipbpDJYuz00l7flLND8BPkhI5qu1m7Zx2ry1yoruuXgVO5JeDeanGlFPlcxzP6phFKdgEgnk1oV5rUegTfqGvh9xVl2KLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h0t/Rm9R7ijQVitmIF5OySBH8C1drjVs7WEwC7qX3yQ=;
+ b=HKZK8+wLAk1y5uC2mbqUd5QSGjL480M/aVtAUFvZYYSoHcjK1o4ZvmkcJWMql6iR4tKzA8YWv2+/qNatz0MOccm8/ozXy+tDcw3I9bmYYoAZfuejfa6VRWvIh6iLqUrTmqRxHCYn/zFQkuK/RI4gHM896kHnroUtvgs0jHk2Z0+MGkh4CrVpEA/xXUr8HiY/8k0rkCypGsw+RPzYfUABeQbSy7m+BDRm7SbUq1K3DAwGBEwmmEb0MVNQI4r6148AAETOcPkXfYuHl/Nlrg7cxpPoMBxK2bTyBBDGHGG0U1BaD8E/oraMASNLHrHEa9jixjEaNHKeoQWlQ0IlvSqHNw==
+Received: from BYAPR05CA0060.namprd05.prod.outlook.com (2603:10b6:a03:74::37)
+ by LV5PR12MB9777.namprd12.prod.outlook.com (2603:10b6:408:2b7::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Wed, 15 Oct
+ 2025 10:44:57 +0000
+Received: from SJ5PEPF000001EA.namprd05.prod.outlook.com
+ (2603:10b6:a03:74:cafe::27) by BYAPR05CA0060.outlook.office365.com
+ (2603:10b6:a03:74::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.9 via Frontend Transport; Wed,
+ 15 Oct 2025 10:44:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001EA.mail.protection.outlook.com (10.167.242.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 10:44:57 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 15 Oct
+ 2025 03:44:42 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Wed, 15 Oct 2025 03:44:41 -0700
+Received: from inno-thin-client (10.127.8.14) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Oct 2025 03:44:35 -0700
+Date: Wed, 15 Oct 2025 13:44:34 +0300
+From: Zhi Wang <zhiw@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+CC: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+	<kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+	<boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+	<lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+	<tmgross@umich.edu>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <cjia@nvidia.com>, <smitra@nvidia.com>,
+	<ankita@nvidia.com>, <aniketa@nvidia.com>, <kwankhede@nvidia.com>,
+	<targupta@nvidia.com>, <zhiwang@kernel.org>, <acourbot@nvidia.com>,
+	<joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <markus.probst@posteo.de>
+Subject: Re: [RFC 0/6] rust: pci: add config space read/write support
+Message-ID: <20251015134434.041ff777.zhiw@nvidia.com>
+In-Reply-To: <DDHGOCNZJRND.129VXJYMXMCZW@kernel.org>
+References: <20251010080330.183559-1-zhiw@nvidia.com>
+	<DDHB2T3G9BUA.18YWV70J82Z01@kernel.org>
+	<20251013212518.555a19ad.zhiw@nvidia.com>
+	<DDHGOCNZJRND.129VXJYMXMCZW@kernel.org>
+Organization: NVIDIA
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO9Z90vphRcyFv2n@milan>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EA:EE_|LV5PR12MB9777:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebce23a0-40d1-4bbd-0200-08de0bd7e200
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Cde4/xSuyeAR7XBYXE2frsv7xZmlx+WqBmfrkgvswZguUVwysTG52kH50Jjp?=
+ =?us-ascii?Q?y571SSzwjNbraMdFShGqy9mO3QDQKbMhZG5CQ3DaYfFtX3hhRNF7GijIlJyJ?=
+ =?us-ascii?Q?Beo4BB6L4TMYFxrExA6ndy+HeK3PiqFvD6DC+orXwqy8aBfaiHYfoCABs61F?=
+ =?us-ascii?Q?7FC20ZX3aGP2RRWQ1w95yNL88XLGc+Dca0/aRmuhcj086LYZHRq/rCuuawQI?=
+ =?us-ascii?Q?Z8OlGYDt839BBKC0bJww563NZH4MWXB2rt041/WZs0S2x6XJkSWDQkwDJdHo?=
+ =?us-ascii?Q?bvjSPuTH9LkPhpSiAcHcRbpLx2zJpLQhuRtk4X9oH6GyE21ue8dEi6djnoYP?=
+ =?us-ascii?Q?IYoe/Jrw/p5VmuSQRGgENHxdTn3+0M1tqx/JWMP/4GoRSrAxiTwDfhd9lKRf?=
+ =?us-ascii?Q?EeNtOJzHIQX/j4WaYWFzqtHHAMuEqMvFbr67rJNa4CzdjoSjRqHwtd3Q5Aaj?=
+ =?us-ascii?Q?qTQI1+BkIYrjFhzCqqNAHljSNDt0R+Cf9dw9bUNDsmbb5lSEJHiWnB3fmGTS?=
+ =?us-ascii?Q?yRbpoqAV0rPBeI6WuuZLrDXbpbprNGiLg+19IOYaue4hQPhl1OOV9Pfv4wgV?=
+ =?us-ascii?Q?WHeYOJGAnxtg9gm+YX0ykVBmVVM1pYQBYRTa6gJIx6ahmvR1HU/ZNZWEsceu?=
+ =?us-ascii?Q?/HNAzA/Q0BMCxxW++8wvc7HITQiYyOX6WvEl/8IS4zZyeR7sNQUhkqKCvpuv?=
+ =?us-ascii?Q?kp3CIpFvaXsZHnbgBvMG0ForqzWW0UXQnI0nYWEyttjoy2Ei3TRs0Ib++cSg?=
+ =?us-ascii?Q?pyHf9oDjO/5P/9QvMQO3IvF7e62g/EYOmOxeerPhxswrq5gtTV7EwiFKLA7B?=
+ =?us-ascii?Q?7kkIYE/gOmq/7OA/mxWdHQTjlyIS8LAq/FyRTFCHBNblhSv6OMuo3jxjzM2Y?=
+ =?us-ascii?Q?7GYUbRxS1AycO6PFDkQcj02P8+Oz8mrHkaBDf5OM6bzEfh70S6C0o8UxQxsF?=
+ =?us-ascii?Q?yxlXInkIqxBqAJOZAiH3dIUkoggeQBPy+MjylLrWLC8ptyHjQdyTF1PP0LIm?=
+ =?us-ascii?Q?oN3qej0FQsuNPqvWjRbYPLMUbik70wHO4xx3KL0nQPgwPEVvt1qAGan+MaXV?=
+ =?us-ascii?Q?HZDG/b4HZKlcWkOBv5Thsz8mJc31BRtwbEp/60W3KaFgStdh/ZEpTgskc2Vj?=
+ =?us-ascii?Q?DRotEaQkkECH5qhC0FwyrK6twsFnkLiF0OEiwANW+NSlELN1piaGUMYIcwAA?=
+ =?us-ascii?Q?79bRyQGnrCmSy4PphkJNXZVHRsvKByWbMIDeeWUedclc0iRHuHZ5ixFqfWIx?=
+ =?us-ascii?Q?8+yv/OVZP097KPdieD/Klq/nUwi7uigLo+RHF6BXXavXmTc8T3s5CoHb1u4M?=
+ =?us-ascii?Q?SawsZxMBIgLEU+v9U4oalOlleUTtDA+P0tJQprNYXnL32md5nGoKYcVd3unZ?=
+ =?us-ascii?Q?F5xpoq2FNY0xwGEMZ60iNw0nlup6VmbvobGX2+bBqH6pp7qsKuhsfIjwZckw?=
+ =?us-ascii?Q?YOt5FcPSfTxwjJwfkrUoKxMKY4m6iE6dHYK4Fwaj3+8aOJg+FUkUjGpgypOc?=
+ =?us-ascii?Q?NOLEg4MnW9wEqMnesincza40RKOjXnS7vHwyjhjBxhYH71gk/ZbDv6r6CYSh?=
+ =?us-ascii?Q?dnjDLxyxBiqHVldENE0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 10:44:57.0548
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebce23a0-40d1-4bbd-0200-08de0bd7e200
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9777
 
-On Wed, Oct 15, 2025 at 10:23:19AM +0200, Uladzislau Rezki wrote:
-> On Tue, Oct 14, 2025 at 11:27:54AM -0700, Vishal Moola (Oracle) wrote:
-> > Sometimes, vm_area_alloc_pages() will want many pages from the buddy
-> > allocator. Rather than making requests to the buddy allocator for at
-> > most 100 pages at a time, we can eagerly request large order pages a
-> > smaller number of times.
-> > 
-> > We still split the large order pages down to order-0 as the rest of the
-> > vmalloc code (and some callers) depend on it. We still defer to the bulk
-> > allocator and fallback path in case of order-0 pages or failure.
-> > 
-> > Running 1000 iterations of allocations on a small 4GB system finds:
-> > 
-> > 1000 2mb allocations:
-> > 	[Baseline]			[This patch]
-> > 	real    46.310s			real    34.380s
-> > 	user    0.001s			user    0.008s
-> > 	sys     46.058s			sys     34.152s
-> > 
-> > 10000 200kb allocations:
-> > 	[Baseline]			[This patch]
-> > 	real    56.104s			real    43.946s
-> > 	user    0.001s			user    0.003s
-> > 	sys     55.375s			sys     43.259s
-> > 
-> > 10000 20kb allocations:
-> > 	[Baseline]			[This patch]
-> > 	real    0m8.438s		real    0m9.160s
-> > 	user    0m0.001s		user    0m0.002s
-> > 	sys     0m7.936s		sys     0m8.671s
-> > 
-> > This is an RFC, comments and thoughts are welcomed. There is a
-> > clear benefit to be had for large allocations, but there is
-> > some regression for smaller allocations.
-> > 
-> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> > ---
-> >  mm/vmalloc.c | 34 +++++++++++++++++++++++++++++++++-
-> >  1 file changed, 33 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 97cef2cc14d3..0a25e5cf841c 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -3621,6 +3621,38 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
-> >  	unsigned int nr_allocated = 0;
-> >  	struct page *page;
-> >  	int i;
-> > +	gfp_t large_gfp = (gfp & ~__GFP_DIRECT_RECLAIM) | __GFP_NOWARN;
-> > +	unsigned int large_order = ilog2(nr_pages - nr_allocated);
+On Mon, 13 Oct 2025 22:02:55 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
+
+ditto
+
+> > But for the "infallible" part in PCI configuration space, the device
+> > can be disconnected from the PCI bus. E.g. unresponsive device. In
+> > that case, the current PCI core will mark the device as
+> > "disconnected" before they causes more problems and any access to
+> > the configuration space will fail with an error code. This can also
+> > happen on access to "infalliable" part.
 > >
-> If large_order is > MAX_ORDER - 1 then there is no need even try
-> larger_order attempt.
+> > How should we handle this case in "infallible" accessors of PCI
+> > configuration space? Returning Result<> seems doesn't fit the
+> > concept of "infallible", but causing a rust panic seems overkill...
 > 
-> >> unsigned int large_order = ilog2(nr_pages - nr_allocated);
-> I think, it is better to introduce "remaining" variable which
-> is nr_pages - nr_allocated. And on entry "remaining" can be set
-> to just nr_pages because "nr_allocated" is zero.
+> Panics are for the "the machine is unrecoverably dead" case, this
+> clearly isn't one of them. :)
+> 
+> I think we should do the same as with "normal" MMIO and just return
+> the value, i.e. all bits set (PCI_ERROR_RESPONSE).
+> 
+> The window between physical unplug and the driver core unbinds the
+> driver should be pretty small and drivers have to be able to deal
+> with garbage values read from registers anyways.
+> 
 
-I like the idea too.
+Was thinking about this these days. Panic seems overkill. Given the
+current semantics of "infallible" (non-try) and "fallible" (try) is
+decided by the driver, I think we can do the same for PCI configuration
+space with the case of "PCI device could be disconnected".
 
-> Maybe it is worth to drop/warn if __GFP_COMP is set also?
+- We implement both for PCI configuration space.
 
-split_page() has a BUG_ON(PageCompound) within, so we don't need one out
-here for now.
+- The driver decides to use "non-try" or "try" according to the device
+  characteristic. E.g. if the device is simple, hardly to be
+  unresponsive, not supporting hotplug, or the driver is in a context
+  that the device is surely responsive. The driver can be confident
+  to use the "infallible" version and tolerate garbage values in the
+  rare situation. Otherwise the driver can use "faillble" version to
+  capture the error code if it is sure the device can sometimes be
+  unresponsive.
 
-> > +
-> > +	/*
-> > +	 * Initially, attempt to have the page allocator give us large order
-> > +	 * pages. Do not attempt allocating smaller than order chunks since
-> > +	 * __vmap_pages_range() expects physically contigous pages of exactly
-> > +	 * order long chunks.
-> > +	 */
-> > +	while (large_order > order && nr_allocated < nr_pages) {
-> > +		/*
-> > +		 * High-order nofail allocations are really expensive and
-> > +		 * potentially dangerous (pre-mature OOM, disruptive reclaim
-> > +		 * and compaction etc.
-> > +		 */
-> > +		if (gfp & __GFP_NOFAIL)
-> > +			break;
-> > +		if (nid == NUMA_NO_NODE)
-> > +			page = alloc_pages_noprof(large_gfp, large_order);
-> > +		else
-> > +			page = alloc_pages_node_noprof(nid, large_gfp, large_order);
-> > +
-> > +		if (unlikely(!page))
-> > +			break;
-> > +
-> > +		split_page(page, large_order);
-> > +		for (i = 0; i < (1U << large_order); i++)
-> > +			pages[nr_allocated + i] = page + i;
-> > +
-> > +		nr_allocated += 1U << large_order;
-> > +		large_order = ilog2(nr_pages - nr_allocated);
-> > +	}
-> >  
-> So this is a third path for page allocation. The question is should we
-> try all orders? Like already noted by Matthew, if there is no 5-order
-> page but there is 4-order page? Try until we check all orders. For
-> example we can get different order pages to fulfill the request.
->
-> The concern is then if it is a waste of high-order pages. Because we can
-> easily go with a single page allocator. Whereas someone in a system can not.
+> If we really want to handle it, you can only implement the try_*()
+> methods and for the non-try_*() methods throw a compile time error,
+> but I don't see a reason for that.
 
-I feel like if we have high order pages available we'd rather allocate
-those. Since the buddy allocator just coalesces the pages when they're
-freed again, as soon as these allocations free up we are much more
-likely to have large order pages ready to go again.
-
-> Apart of that, maybe we can drop the bulk_path instead of having three paths?
-
-Probably. I'd say that just depends on whether we care about maintaining
-the optimizations for smaller vmallocs() - which I have no strong opinion
-on.
-
-> --
-> Uladzislau Rezki
 
