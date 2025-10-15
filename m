@@ -1,461 +1,105 @@
-Return-Path: <linux-kernel+bounces-854764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF75FBDF51F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEABBDF537
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1231919C704C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:21:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F3A3C147E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BD72FB982;
-	Wed, 15 Oct 2025 15:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEAD2FB0B7;
+	Wed, 15 Oct 2025 15:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc0+yVwG"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANeh3y9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C752FB09C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EF221ABC9;
+	Wed, 15 Oct 2025 15:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541641; cv=none; b=DnoGFTH74ckW1gexEgYZLbxsgkuVYnNe1vJbSWghLSEw9uKamTCPZQk7Tc/F/fu2k7W8FJ0UEN3beVW+WV7offJFSFk6HFXoC1gj0h0PCTM5F35Rm4MTfXlJL6xltsbDTMwowDr1Pf7UKh9ekzFnjGkWHmvB5ZydfzwI6kYS3ME=
+	t=1760541739; cv=none; b=dEyj+QWaRhGGOJGPpcr0tSH60viGAKZM62kKSlfaPYekCuDjcU1XGZ8cKvS7wiSk9M/MM5ea+LMBTkG5HMeJZpEGJPRdt3Lsh6sM4nyzX9tlorUr4D1/wx/FZfwVNNeWdhc5Sq1CuAhfB6CKvtiUxqXtMrej7sK17PYpKntrcxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541641; c=relaxed/simple;
-	bh=HXudYhwB7Kchqn7VL0fSsZv3EQ9xKQiinovj7oP45mY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=a3Ry9MJzYECbq8A+XRJKZOqm4ZfMM/4r8OlO/InP1P7TFDDAJyq9FJl5dGMFDZhrhP63YSLY//lHR+Ys8t9sJItW0h9F2jhFeIdXuSLMEiKwFSxqAQA3LTdLorWwJWHmEDPLQ72EjyZRDypvpjHTUa9xUFfCx2842FYvNH0yUFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc0+yVwG; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47103b6058fso5706105e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760541637; x=1761146437; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=d8h0yoyt0f4ynabpsMipxvZQncX7yds0bex6WGCO/og=;
-        b=Xc0+yVwG4IFKnMsiOAOgbyp5obCAn6OkY4g7qV+TRklnJINxO5X1t4DqrvBv+p/m+e
-         sWLrxeKCX6pkkscVr/mqaDE3WGuUd/lTCFDNzkCnXTTBzGRJ6StDsoZht0Bf4z0NzF5+
-         5Zbr+PGSWH118q1xkXbBexn5gGmHc8rdZnw23K1jB4MbLxZg0aRx3vm3vvyQfu1nsjyB
-         ymSDoOXK/zSQcI9vEwkLAKJWiqYGRNknVKL3O0B6dkwNuNsiBUWMA9RdvmOIfJiUHtI4
-         GqVD19eq+15Lb2nWHz2WBE04Wuc0WupRQuQ+fCDBxRi82ZmBCoc8tx8GFR7kiy7ysPPm
-         a14A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760541637; x=1761146437;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d8h0yoyt0f4ynabpsMipxvZQncX7yds0bex6WGCO/og=;
-        b=ezisvlbqA7SGurcqTEvz5ceJF1f6PosX7rjrvM5w0UnFrgSx7dY/M1ARHU7654El64
-         xYteAx7PpcEBM/p1OpuBoAtCJ96B/IyQTvXIJps94GxGh3B6Mrt1h3j4jZdXUPK/Xz44
-         A+ncuSAdARQHUwCj0FkLr0CO2Ibanb1UUYAIAcq0CiaYqnvc9SK1FAn8lgkE0eI3JLF8
-         +KDUX6F5vM5oxvQ8yLfNWDAt3vmkb+y7COce13qONYO0oGojxETt4MPzvWh/gXNXl5TY
-         sz86lpGm5kp/xBnXjCG11XZ071rFC5LUk/L3MtsyxpQZBqrBdaGCiolq7D9rl5rPwaZ8
-         OTxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUPIf5g3WmR5a2dLIVL69kVaZB0n71kIzA9ZL+GVKhv6qn2esfB0nvJ36jkM17eiTYUqEP7euU2whlP60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3EcVDT7rTuWFFCJvqkrKrExlPYjacsKbBzrT9a3VpwzT/eQwQ
-	c7KiC+/tviUNUPG5K0UzQQg2k8X7sCK94O9pwazieVmvhYN8j2nxAgMa
-X-Gm-Gg: ASbGncv7to7Wvb6OieRtov7RihgBaYEQ9w8LQkpuovAQgCtE1Fhg9ZLVM5Ur7GrPLl0
-	rEcIwY4fT2eL3Ikasuw4in5DwQesvtiEHYSKJ7Xv1DC/KchwwVtNLFOBYgvHIPcIYPEsyLENsI1
-	nKGGvQyBCPIxYjm+6ZrimmefrlX88+bIg15Jm6ChvgbxOFY9WYSMazYf1tioTZgttZBAe0X2Iq4
-	34pG1iU+CbqnFcwKcEpZMjIy/Et/V2oJYNAFlRY3gg1T9bo5sJZyvZ442FfRqqOCVyT34l4iP9R
-	qtWackiv1PUPH3PM3IkGAY76Gy/pf46tj65SqJA1ntzQqRJwpI5JlU6acNULdI00k7zkAESesqg
-	l0R2JixkuU08iHGX0Hw8wWknpLNqvRYoIZvG9jDbd/JuTg1zzdgOAf/oFsccY
-X-Google-Smtp-Source: AGHT+IGJ0ezl39N8NXlH/1sWWPosXzwUuY9Yct7CtS9Wami7Ctv6kENUpgVOrnD0fuCjQXtniwj/VQ==
-X-Received: by 2002:a05:600c:a4f:b0:45d:5c71:769d with SMTP id 5b1f17b1804b1-47109a2cf5cmr4578755e9.8.1760541637224;
-        Wed, 15 Oct 2025 08:20:37 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe69sm30667786f8f.32.2025.10.15.08.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 08:20:36 -0700 (PDT)
-Message-ID: <1e8d7c96cdfaa93bcc0f581103dc0e13dfee17b7.camel@gmail.com>
-Subject: Re: [PATCH 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>,  Wolfram
- Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron
- <jic23@kernel.org>, David Lechner	 <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,  Andy Shevchenko	
- <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven	 <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Liam Girdwood	 <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Pascal Eberhard	
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Date: Wed, 15 Oct 2025 16:21:09 +0100
-In-Reply-To: <20251015142816.1274605-3-herve.codina@bootlin.com>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	 <20251015142816.1274605-3-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	s=arc-20240116; t=1760541739; c=relaxed/simple;
+	bh=WgWGXsmDkQY2RWyxMpc6dWAkpVwA7f8xiHPLh/Bejds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uPMH7SksFpjVk4RtMqow5ne7iOL9Mmc7JHcO3TjxkkLLQD8bQCxm7Sp0fQtRhc9XsMLH0XI58jzvBe4693esg5EIf8fbk/qi/eM5tLoSOb2AhBDQVLnNlTXc8td8yBPmOGlCCgzxBdJG8UTBj0KbZMeHxqFV/lDzObrWd1gr0X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANeh3y9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFACC4CEF8;
+	Wed, 15 Oct 2025 15:22:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760541738;
+	bh=WgWGXsmDkQY2RWyxMpc6dWAkpVwA7f8xiHPLh/Bejds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ANeh3y9vOpdxsgMxjm9J0x7hrm/WlWNAzKMkGt+OWegmtfglWX7fx7z6IbQwIkBmX
+	 EtrSCdq4jZVRRUCKhYP6aOQ3QZm7RsIYrUsGiZjxqVjmaijbBM4ITJTRTXCiDadz7j
+	 BtiMTgdl20h34+EidWiYqtD1vqcz5x0hDK61SkCET7lPqDHgnoOe+d4b55UewiXsJA
+	 ryFXxQqu56wpPdlOABpDmgTPPPpL+aIlOo8Oe9fS4bHuf+DC/XLL1FACmbCXMg0EQq
+	 BnNmitKMrwp3nlHCypj9cA3WymGn69pVKvzvNhaaE6354wSPJGVn9QsJFmXre0ci8j
+	 XVXVDSpGztjeQ==
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ Marco Crivellari <marco.crivellari@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+In-Reply-To: <20250929155053.400342-1-marco.crivellari@suse.com>
+References: <20250929155053.400342-1-marco.crivellari@suse.com>
+Subject: Re: [PATCH v2 0/1] ASoC: change system_wq with system_dfl_wq
+Message-Id: <176054173655.179445.8487996832699914920.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 16:22:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
-On Wed, 2025-10-15 at 16:28 +0200, Herve Codina (Schneider Electric) wrote:
-> The Renesas RZ/N1 ADC controller is the ADC controller available in the
-> Renesas RZ/N1 SoCs family. It can use up to two internal ACD cores (ADC1
-> and ADC2) those internal cores are not directly accessed but are handled
-> through ADC controller virtual channels.
->=20
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
-> ---
-> =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0 |=C2=A0 10 +
-> =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/adc/rzn1-adc.c | 626 ++++++++++++++++++++++++++++++++++=
-+++
-> =C2=A03 files changed, 637 insertions(+)
-> =C2=A0create mode 100644 drivers/iio/adc/rzn1-adc.c
->=20
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 58a14e6833f6..113f6a5c9745 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1403,6 +1403,16 @@ config RZG2L_ADC
-> =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the
-> =C2=A0	=C2=A0 module will be called rzg2l_adc.
-> =C2=A0
-> +config RZN1_ADC
-> +	tristate "Renesas RZ/N1 ADC driver"
-> +	depends on ARCH_RZN1 || COMPILE_TEST
-> +	help
-> +	=C2=A0 Say yes here to build support for the ADC found in Renesas
-> +	=C2=A0 RZ/N1 family.
-> +
-> +	=C2=A0 To compile this driver as a module, choose M here: the
-> +	=C2=A0 module will be called rzn1-adc.
-> +
-> =C2=A0config SC27XX_ADC
-> =C2=A0	tristate "Spreadtrum SC27xx series PMICs ADC"
-> =C2=A0	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index d008f78dc010..ba7a8a63d070 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -123,6 +123,7 @@ obj-$(CONFIG_ROHM_BD79112) +=3D rohm-bd79112.o
-> =C2=A0obj-$(CONFIG_ROHM_BD79124) +=3D rohm-bd79124.o
-> =C2=A0obj-$(CONFIG_ROCKCHIP_SARADC) +=3D rockchip_saradc.o
-> =C2=A0obj-$(CONFIG_RZG2L_ADC) +=3D rzg2l_adc.o
-> +obj-$(CONFIG_RZN1_ADC) +=3D rzn1-adc.o
-> =C2=A0obj-$(CONFIG_SC27XX_ADC) +=3D sc27xx_adc.o
-> =C2=A0obj-$(CONFIG_SD_ADC_MODULATOR) +=3D sd_adc_modulator.o
-> =C2=A0obj-$(CONFIG_SOPHGO_CV1800B_ADC) +=3D sophgo-cv1800b-adc.o
-> diff --git a/drivers/iio/adc/rzn1-adc.c b/drivers/iio/adc/rzn1-adc.c
-> new file mode 100644
-> index 000000000000..f5e16b9cdf17
-> --- /dev/null
-> +++ b/drivers/iio/adc/rzn1-adc.c
-> @@ -0,0 +1,626 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Renesas RZ/N1 ADC driver
-> + *
-> + * Copyright (C) 2025 Schneider-Electric
-> + *
-> + * Author: Herve Codina <herve.codina@bootlin.com>
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mutex.h>
-> +#include <linux/completion.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/machine.h>
-> +#include <linux/iio/driver.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/bits.h>
-> +#include <linux/of.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/pm_runtime.h>
-> +
-> +/*=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ADC1 ADC2
-> + * RZ/N1D, BGA 400=C2=A0=C2=A0 y=C2=A0=C2=A0=C2=A0 y
-> + * RZ/N1D, BGA 324=C2=A0=C2=A0 y=C2=A0=C2=A0=C2=A0 n
-> + * RZ/N1S, BGA 324=C2=A0=C2=A0 y=C2=A0=C2=A0=C2=A0 n
-> + * RZ/N1S, BGA 196=C2=A0=C2=A0 y=C2=A0=C2=A0=C2=A0 n
-> + * RZ/N1L, BGA 196=C2=A0=C2=A0 y=C2=A0=C2=A0=C2=A0 n
-> + */
-> +
-> +#define RZN1_ADC_CONTROL_REG	0x2c
-> +#define RZN1_ADC_CONTROL_ADC_BUSY	BIT(6)
-> +#define RZN1_ADC_FORCE_REG		0x30
-> +#define RZN1_ADC_SET_FORCE_REG		0x34
-> +#define RZN1_ADC_CLEAR_FORCE_REG	0x38
-> +#define RZN1_ADC_FORCE_VC(_n)		BIT(_n)
-> +
-> +#define RZN1_ADC_CONFIG_REG	0x40
-> +#define RZN1_ADC_CONFIG_ADC_POWER_DOWN	BIT(3)
-> +
->=20
+On Mon, 29 Sep 2025 17:50:52 +0200, Marco Crivellari wrote:
+> Below is a summary of a discussion about the Workqueue API and cpu isolation
+> considerations. Details and more information are available here:
+> 
+>         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+>         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
+> 
+> === Current situation: problems ===
+> 
+> [...]
 
-...
+Applied to
 
-> +static int rzn1_adc_enable(struct rzn1_adc *rzn1_adc)
-> +{
-> +	int ret;
-> +
-> +	ret =3D rzn1_adc_core_power_on(&rzn1_adc->adc_core[0]);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D rzn1_adc_core_power_on(&rzn1_adc->adc_core[1]);
-> +	if (ret)
-> +		goto poweroff_adc_core0;
-> +
-> +	ret =3D clk_prepare_enable(rzn1_adc->pclk);
-> +	if (ret)
-> +		goto poweroff_adc_core1;
-> +
-> +	ret =3D clk_prepare_enable(rzn1_adc->adc_clk);
-> +	if (ret)
-> +		goto disable_pclk;
-> +
-> +	ret =3D rzn1_adc_power(rzn1_adc, true);
-> +	if (ret)
-> +		goto disable_adc_clk;
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Can we use devm_actions() on the above to avoid the complex error path plus=
- the
-.remove() callback?
+Thanks!
 
-> +
-> +	return 0;
-> +
-> +disable_adc_clk:
-> +	clk_disable_unprepare(rzn1_adc->adc_clk);
-> +disable_pclk:
-> +	clk_disable_unprepare(rzn1_adc->pclk);
-> +poweroff_adc_core1:
-> +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[1]);
-> +poweroff_adc_core0:
-> +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[0]);
-> +	return ret;
-> +}
-> +
-> +static void rzn1_adc_disable(struct rzn1_adc *rzn1_adc)
-> +{
-> +	rzn1_adc_power(rzn1_adc, false);
-> +
-> +	clk_disable_unprepare(rzn1_adc->adc_clk);
-> +	clk_disable_unprepare(rzn1_adc->pclk);
-> +
-> +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[1]);
-> +	rzn1_adc_core_power_off(&rzn1_adc->adc_core[0]);
-> +}
-> +
-> +static int rzn1_adc_set_iio_dev_channels(struct rzn1_adc *rzn1_adc,
-> +					 struct iio_dev *indio_dev)
-> +{
-> +	int adc_used;
-> +
-> +	adc_used =3D rzn1_adc->adc_core[0].is_used ? 0x01 : 0x00;
-> +	adc_used |=3D rzn1_adc->adc_core[1].is_used ? 0x02 : 0x00;
-> +
-> +	switch (adc_used) {
-> +	case 0x01:
-> +		indio_dev->channels =3D rzn1_adc1_channels;
-> +		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc1_channels);
-> +		return 0;
-> +	case 0x02:
-> +		indio_dev->channels =3D rzn1_adc2_channels;
-> +		indio_dev->num_channels =3D ARRAY_SIZE(rzn1_adc2_channels);
-> +		return 0;
-> +	case 0x03:
-> +		indio_dev->channels =3D rzn1_adc1_adc2_channels;
-> +		indio_dev->num_channels =3D
-> ARRAY_SIZE(rzn1_adc1_adc2_channels);
-> +		return 0;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	dev_err(rzn1_adc->dev, "Failed to set IIO channels, no ADC core
-> used\n");
-> +	return -ENODEV;
+[1/1] ASoC: replace use of system_wq with system_dfl_wq
+      commit: 0b0eb7702a9fa410755e86124b4b7cd36e7d1cb4
 
-dev_err_probe()?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> +}
-> +
-> +static int rzn1_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct rzn1_adc *rzn1_adc;
-> +	int ret;
-> +
-> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*rzn1_adc));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	rzn1_adc =3D iio_priv(indio_dev);
-> +	rzn1_adc->dev =3D dev;
-> +	mutex_init(&rzn1_adc->lock);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-devm_mutex_init()
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> +
-> +	rzn1_adc->regs =3D devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(rzn1_adc->regs))
-> +		return PTR_ERR(rzn1_adc->regs);
-> +
-> +	rzn1_adc->pclk =3D devm_clk_get(dev, "pclk");
-> +	if (IS_ERR(rzn1_adc->pclk))
-> +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk), "Failed to
-> get pclk\n");
-> +
-> +	rzn1_adc->adc_clk =3D devm_clk_get(dev, "adc-clk");
-> +	if (IS_ERR(rzn1_adc->pclk))
-> +		return dev_err_probe(dev, PTR_ERR(rzn1_adc->pclk), "Failed to
-> get adc-clk\n");
-> +
-> +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc->adc_core[0],
-> +					=C2=A0=C2=A0 "adc1-avdd", "adc1-vref");
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D rzn1_adc_core_get_regulators(rzn1_adc, &rzn1_adc->adc_core[1],
-> +					=C2=A0=C2=A0 "adc2-avdd", "adc2-vref");
-> +	if (ret)
-> +		return ret;
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Hmm, is avdd really an optional regulator? I mean can the ADC power up at a=
-ll
-without a supply in AVDD? Even vref seems to be mandatory as we can't prope=
-rly
-scale the sample without it.
-
-Also, can't we have getting and enabling the regulator together? Then, we c=
-ould
-use some of the modern helpers to simplify the code (ok I see you use them =
-in
-the PM callbacks).
-
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-> +
-> +	indio_dev->name =3D dev_name(dev);
-
-dev_name() should not be used for the above. It's typically the part name s=
-o I
-guess in here "rzn1-adc" would be the appropriate one.
-
-> +	indio_dev->info =3D &rzn1_adc_info;
-> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> +	ret =3D rzn1_adc_set_iio_dev_channels(rzn1_adc, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D rzn1_adc_enable(rzn1_adc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, 500);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-
-There's a devm_pm_runtime_enable() API now.
-
-> +
-> +	ret =3D devm_iio_device_register(dev, indio_dev);
-> +	if (ret)
-> +		goto disable;
-> +
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	return 0;
-> +
-> +disable:
-> +	pm_runtime_disable(dev);
-> +	pm_runtime_put_noidle(dev);
-> +	pm_runtime_set_suspended(dev);
-> +	pm_runtime_dont_use_autosuspend(dev);
-> +
-> +	rzn1_adc_disable(rzn1_adc);
-> +	return ret;
-> +}
-> +
-> +static void rzn1_adc_remove(struct platform_device *pdev)
-> +{
-> +	struct iio_dev *indio_dev =3D platform_get_drvdata(pdev);
-> +	struct rzn1_adc *rzn1_adc =3D iio_priv(indio_dev);
-> +
-> +	pm_runtime_disable(rzn1_adc->dev);
-> +	pm_runtime_set_suspended(rzn1_adc->dev);
-> +	pm_runtime_dont_use_autosuspend(rzn1_adc->dev);
-> +
-> +	rzn1_adc_disable(rzn1_adc);
-> +}
-
-I'm fairly confident we can sanely go without .remove().
-=20
-> +
-> +static int rzn1_adc_pm_runtime_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct rzn1_adc *rzn1_adc =3D iio_priv(indio_dev);
-> +
-> +	rzn1_adc_disable(rzn1_adc);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rzn1_adc_pm_runtime_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct rzn1_adc *rzn1_adc =3D iio_priv(indio_dev);
-> +
-> +	return rzn1_adc_enable(rzn1_adc);
-> +}
-> +
-> +static const struct dev_pm_ops rzn1_adc_pm_ops =3D {
-> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> pm_runtime_force_resume)
-> +	SET_RUNTIME_PM_OPS(rzn1_adc_pm_runtime_suspend,
-> rzn1_adc_pm_runtime_resume, NULL)
-> +};
-> +
-> +static const struct of_device_id rzn1_adc_of_match[] =3D {
-> +	{ .compatible =3D "renesas,rzn1-adc" },
-> +	{ /* sentinel */ },
-> +};
-
-We typically don't add the sentinel comment in IIO.
-
-> +
-> +MODULE_DEVICE_TABLE(of, rzn1_adc_of_match);
-> +
-> +static struct platform_driver rzn1_adc_driver =3D {
-> +	.probe =3D rzn1_adc_probe,
-> +	.remove =3D rzn1_adc_remove,
-> +	.driver =3D {
-> +		.name =3D "rzn1-adc",
-> +		.of_match_table =3D of_match_ptr(rzn1_adc_of_match),
-
-Drop of_match_ptr().
-
-- Nuno S=C3=A1
-
+Thanks,
+Mark
 
 
