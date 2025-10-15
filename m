@@ -1,96 +1,99 @@
-Return-Path: <linux-kernel+bounces-854112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC375BDD916
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF50BDD90D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155D11920959
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD5A5450EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EC931984A;
-	Wed, 15 Oct 2025 08:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8214931984A;
+	Wed, 15 Oct 2025 08:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kMBfnr5Q"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RN3nQiyF"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BF02D193B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B4D3064AA;
+	Wed, 15 Oct 2025 08:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518740; cv=none; b=Ah6b+BKe+f/3kgGOzi4+NxzWTCB0Ikigh5cPizlUBc6l6NbL7G8NRbf5+FuRsRu3+08eDT9go2crXs702MPqV0iVri8LiK9ty6iy5EFtcohwC2raKVLTD67ZeC3Cv3emal0tnKjCucGYHudkmD/U8yLXn3+1yqcp2wptzoLR6fk=
+	t=1760518731; cv=none; b=Bs4FmCZURfGnbOTYAFnCIhBf3sq6XDewPWysqXuQxbsmxlh8YbugNts2pQJs/+Kx7i9vkDrppyUiy/nUmNO1Ub3rNuIa8cJNs4AmyO1nRXZo2z4OiP5fvpfJodUfYM6PiG+Cg4y8jUWYXsBBsfSNUfDY7c2nejOKLxi7RtJOS6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518740; c=relaxed/simple;
-	bh=rXqmF5RfVHN9GSb/5QeFBUd7Xwa2BbZ8/4+DXsEm75s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EnsfsOLYCERAyHvj0yv1BsRDzBZBj3xOBemseuDbzf20MUKlVpHRBKftdz3XPS78e6+wWAAKCouVp0knjf0x8VYcpX1DrSNA+F/FB4Pz6w/pXMTeaz0BWvePp4rPCxrWLwNC9of1rpmDNPwDW8T5/U8Bz5HaJ8kSz67PPKfVkiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kMBfnr5Q; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760518735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=z6GEbOuJoC554lGHBLYuF53j0sRi/iooljPh8BTRXkY=;
-	b=kMBfnr5QlX2wURQI43A8aMSWif7BZDWTzOc+5iLw3k+cb/clwblt1cctZqGsG9itxt9xpZ
-	OAo5lmlyi+TQMmCMyKdEAHmgCLjzSwlwGAAh5TtYevD3Klpd+P/dJfnjJSzAIjadQwyGTQ
-	Q6KbMjHuxNFqYbgm8KsWkmwe6gG/Hg8=
-From: Ye Liu <ye.liu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tools/mm: use <stdbool.h> in page_owner_sort.c
-Date: Wed, 15 Oct 2025 16:58:41 +0800
-Message-ID: <20251015085843.104443-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1760518731; c=relaxed/simple;
+	bh=QAdqNSEgBGHVX/qNLhebNe+uGdl6xTXjyZ1RRQvJ4Vw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rbCJXg4tk1pbE4T26nnDrZu5fVI5l2wTwNp7ZYIfxSMKa/YmhRSNPjtIolFMHFd7BO+LOE0cNWz1SLHcSorxUEmNYUX7M4PxVKA7gjZ+sy5W6tyP9Lu56ErzCAPAxVCjoXL5tPHPZvk7VNwokHs4JBGvzrVbMygspCbkGxmF8pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RN3nQiyF; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760518727;
+	bh=QAdqNSEgBGHVX/qNLhebNe+uGdl6xTXjyZ1RRQvJ4Vw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RN3nQiyFJ6buk9Z+jA8ayDgIoLJGBNukuUNUoK0a7r3RUyYMMrgAt6Cg52FzXVqgp
+	 oQfYv2GD7RAdAPwG4zUslrpf1UWlGX4JiJo52kfEbSwd9dEgaohMwQwXn8Y3TzgM5r
+	 xzn0asGUn53DL0yH8oHjE+df1ugQc+r1yJQPmLFA9+Z4Yl2uvpasGH7iNjf+RqFavh
+	 VEERtTiV5pJSuvqenQTHnzD8gIouNIipLbxtR8CT11S6tTn+d8hzwOUJPGbUgYsT7g
+	 U1gjlbxtwF8BTbw0WnLH++6j9gSDVde0PBZM4L0QcH4k0NLvaX9WAfIxduQnJF25h1
+	 cmK2NAS6WaAFA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D285C17E12EB;
+	Wed, 15 Oct 2025 10:58:46 +0200 (CEST)
+Message-ID: <21691007-7622-4c45-9c02-011d44c97f15@collabora.com>
+Date: Wed, 15 Oct 2025 10:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/5] drm/panthor: Use existing OPP table if present
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20251015-mt8196-gpufreq-v7-0-0a6435da2080@collabora.com>
+ <20251015-mt8196-gpufreq-v7-4-0a6435da2080@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251015-mt8196-gpufreq-v7-4-0a6435da2080@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Ye Liu <liuye@kylinos.cn>
+Il 15/10/25 10:50, Nicolas Frattaroli ha scritto:
+> On SoCs where the GPU's power-domain is in charge of setting performance
+> levels, the OPP table of the GPU node will have already been populated
+> during said power-domain's attach_dev operation.
+> 
+> To avoid initialising an OPP table twice, only set the OPP regulator and
+> the OPPs from DT if there's no OPP table present.
+> 
+> Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Use standard <stdbool.h> instead of manually defining bool, true and false.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
----
- tools/mm/page_owner_sort.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/tools/mm/page_owner_sort.c b/tools/mm/page_owner_sort.c
-index 880e36df0c11..cbd195d7b5da 100644
---- a/tools/mm/page_owner_sort.c
-+++ b/tools/mm/page_owner_sort.c
-@@ -13,6 +13,7 @@
- 
- #include <stdio.h>
- #include <stdlib.h>
-+#include <stdbool.h>
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
-@@ -23,9 +24,9 @@
- #include <linux/types.h>
- #include <getopt.h>
- 
--#define bool int
--#define true 1
--#define false 0
-+//#define bool int
-+//#define true 1
-+//#define false 0
- #define TASK_COMM_LEN 16
- 
- struct block_list {
--- 
-2.43.0
 
 
