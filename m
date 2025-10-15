@@ -1,119 +1,176 @@
-Return-Path: <linux-kernel+bounces-853796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CD2BDC9D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A3BBDCA13
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6DD1927202
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1163B8E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6503C303A24;
-	Wed, 15 Oct 2025 05:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49CB2494ED;
+	Wed, 15 Oct 2025 05:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jMd3LNBo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClQKqN/8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0C93009D5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096FA303CA4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760506827; cv=none; b=tgXubXjNNLv6vtwnLElJvOF5g938RpLlRF9jXQJjE+AvmhXmOQyTh/nUxKWqTxoG8/S1rgA/KaDeCat5I6C7p8mkXKo7kPu57fUtyvsczmxfFbdg9ENCMuqljt9KmWnI787uH1bBglM3/czDdvv1qXJJ5CHeWGo9Co8du4UVjAY=
+	t=1760507050; cv=none; b=Flzfi5qR+SdI3ZOQzNIKyI7fsRs6uDWia4uPC4573JNaY0ghhzw3514bPvvKqQe4cqKhcj8u3kThKetZb1srKznoI6vVw9fqL0yo9IlxD20qcBMdZedU+/FPHfLH1lS+B57Cv04K9AA/1nTRN/sQbr+nQYB7/Vq2whp4luxm+WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760506827; c=relaxed/simple;
-	bh=xb4zzcYL2KnFy6e6BD3VgLRhBMY4IIeKppErZf/mM1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZaWVR8LirxoVn8PgWTikFhvgvkaJlC2Su9bAeOtjZ+dr4nnjukqv5G1aY+qWa90rxuI1OcNHoqwrDhA+xkfo7+CgoBpb9DZvtlsT+3XqfigAGhiGqfWY8hkvdGhEdgSC7N4UuhUKGwPHKWvlbVEEC2uzueRo5HtL/JWHYO/4jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jMd3LNBo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760506824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cEoDd74svqlEduKifpwv7cIyLG6I8M9pnEQfVC3PzLs=;
-	b=jMd3LNBoE1Rn0M/Wlxx1L/Ct/RquZhbB7ZFrVBB5U1nRkzq5NHA9qwAeVL0/slZTCRbNKq
-	oQ2ZeFcFX0urtRdNzI+vHzsO9M7XKFJFPR2qKl0Zdv0UGWVO0I98UD8frWat0BCZCeAV4w
-	O/TOzWUyK+7sKpUOz5LFzjZSozQqnOc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-436-5nvo7vaXN-25RtKgbSGwww-1; Wed, 15 Oct 2025 01:40:22 -0400
-X-MC-Unique: 5nvo7vaXN-25RtKgbSGwww-1
-X-Mimecast-MFC-AGG-ID: 5nvo7vaXN-25RtKgbSGwww_1760506822
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-470fd92ad57so4660735e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:40:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760506821; x=1761111621;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cEoDd74svqlEduKifpwv7cIyLG6I8M9pnEQfVC3PzLs=;
-        b=pkYGqXf8zKFRuC87NV6cHwijSOW6Cjy2x9KY0FI0imD5sYHvvQe2Mlg8DIIMlTua2c
-         18nQAvuz7yN05hpdZ7co2dN0abu3371s3P2K6HVrimUhUrFThMnH9Ekz+H7jMA+SwOg0
-         UMAGqUifxbVJQe0lzoEa1DGG25mVG3RxYDK7YnIK4AXYxvyrQXX0F5z37Z+L/8lUuW4D
-         HVGo4BiNNCihvpgz8Vxwvd6kOomPbTY6aVFp4Gl7MTGMkGlYwdWe+N5VgZ8hfedEmrFY
-         5NrgbBLUdgUzMKbLnep+6HrrJAlc+UoE5yDNmEdvGSCATk7zjVNj/ph5N00/dim55PeO
-         HGfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvrtWLJrt2Plc8uNSFXf9swZf05pSHRaYzBYKl1HuZ80iOfb6crA65F/XnKb8yVZGRw7gd0Pcth/01y+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZxcqAtGutwfETeltZGdngq/uy6IqEfxRDy+8ANcLmDuA32mi+
-	Ti9xgdhEJCTOHJ/D5LFVB9izerpoL4ZIz2wRHqzAZBBbdjfzSOVDVDMOjXcyeO1gETu+atzp1ZH
-	ahRRcwCZbA28/YXBBQgCje6NoRMz0oxSetftp4a91SndME2pE4cdL+/PTxyJ3iTrmpw==
-X-Gm-Gg: ASbGncut8BlRYz0UC233sUTZDZWU5+7Kco1MJYZyYObLSgwopuoYWgYh7kgQD/1wiyS
-	6sxpoCT3rInPSb+OoEZKnOJ2BVpqfh/2Y//6pvopI+paeyKqwjtqBNpAY8Md0faXxPq7cJy87yY
-	cxgjuJMWss8vFqSH/R/EDKGRlnGDunEhVlXQ2bQEFEiVNurswNds3IT9zOD5RuR1E7ijqN00XDj
-	SbdmAK/d3mFYljKMR2BGSDeHDzFj68f1fXvYLxxipm+gK+Z7u36SQY47sM/+uG2hKJgReYpq/Yn
-	eTOaioS+/NwKC7+QLkIkgWdRpKAUJq47JRK5ehhaRuQocXJFzR1n9bP5GzwvAgzwPkuufMrr
-X-Received: by 2002:a05:600c:8718:b0:46e:731b:db0f with SMTP id 5b1f17b1804b1-46fa9b08f09mr211939475e9.28.1760506821575;
-        Tue, 14 Oct 2025 22:40:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGU0iWVr5hDy/Wa8txkNZa2TYgKsp6sO3SpxyFja1k/NqHZRr6xoH2B3Ir7cb9LapGPXMLwew==
-X-Received: by 2002:a05:600c:8718:b0:46e:731b:db0f with SMTP id 5b1f17b1804b1-46fa9b08f09mr211939335e9.28.1760506821231;
-        Tue, 14 Oct 2025 22:40:21 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426e6f03a76sm11457634f8f.36.2025.10.14.22.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 22:40:20 -0700 (PDT)
-Date: Wed, 15 Oct 2025 07:40:18 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Clark Williams <williams@redhat.com>
-Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
- expired deadline
-Message-ID: <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb>
-References: <20251007122904.31611-1-gmonaco@redhat.com>
- <20251014095407.GM4067720@noisy.programming.kicks-ass.net>
- <a0ccf27f5e12a11d2e9dc951ceaf7f9d103f67f6.camel@redhat.com>
- <20251014102541.GS3245006@noisy.programming.kicks-ass.net>
- <83a5971ef07226737421737f889795ec57b6fa6c.camel@redhat.com>
- <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb>
- <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1760507050; c=relaxed/simple;
+	bh=GVlZDNYjq1s3cVnBfknhY5bLXf9IalVhWvKScVdciXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fKNmQw7XG7r21dLc1YuMskBRMVRNoaWQ9RYhiLPygS2IHtKImMME4ee6Njr31pr3LCDYGVXVdC1h9t5r+/374e81aCu4gnKeHMtIGIrhtJHU7zv9Vbq4VZ/mduCrKijQ1Hih36w7EHYGfbDeYzepabOAk8uN3IPZs87GUniwu50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClQKqN/8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92111C116B1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:44:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760507049;
+	bh=GVlZDNYjq1s3cVnBfknhY5bLXf9IalVhWvKScVdciXE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ClQKqN/8wPvhKwojSg1BSZM2ZveboyUc97qHFP13hpn9CTXQwUIXJUEtDO5m6eB7t
+	 p3KHcAUyrTkMF1fIJ6DqlKSf5zSIlx3ZEqeijC64GCD5Hs7jkFZELmzhVe0ncCxMXl
+	 lgOtqpL1sEo+tcOV7F+iYBqZORY35oTcoD0c1BjVvxuEegii2k6arUAiIPUxwQdYTM
+	 el+BjvUhSVlknN3bAN4DAkn4su6SV0+IDdS+rQH2EljQrbqJlGk9YxnY5ZsowY3vpy
+	 Y/fMu+9YFpKoXK3q3ZJJglYOb0ZexHmRxpMKkzcx8B6a8MmPsMCIT/3kUbHvVhHYWm
+	 JEaEKosSVccmw==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3ee18913c0so989170166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:44:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7jqLnbXT0yuGC0if0uKrmnUdYAL2EZYv58z6gu5fLefodsruSVS7iPjWmlsYVdS6MKZHQVz53TruizB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDczauTrn8eIPiZmV3Km5Igvyhxi6fEv+YHMv50Wg+4v/tXFf7
+	vKfkbGgoEcX1z2B1PAKrqnmp/pV3sjodVfk8XyGF+xogqhyHi8M5M1kDup/Txl/PYVRiw+3c1G4
+	Bl+JIBv5PvJ3+dxHFuMFSX8cSFsKgDS0=
+X-Google-Smtp-Source: AGHT+IEWvSXZubKOaiM32KLLroSnv9MqhPpdUc/GdRTxP9G0CYD9+vYTI9V7Z2IU7kmAEHMPP2/d8SwlicHiKWS7me4=
+X-Received: by 2002:a17:906:fa0e:b0:b55:a883:63c4 with SMTP id
+ a640c23a62f3a-b55a8841f25mr1872492166b.10.1760507048110; Tue, 14 Oct 2025
+ 22:44:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
+References: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <20251014071917.3004573-1-chenxiaosong.chenxiaosong@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 15 Oct 2025 14:43:56 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9GtfRDe50P2PGPOuy3LEnf5hMVAAfeKXYHN_+XY37ZVA@mail.gmail.com>
+X-Gm-Features: AS18NWA5KrbTsr1Lnqc8dzysiebpRMxsn5PXElwNVmntQ_T2SoEOujIg-9OjHuE
+Message-ID: <CAKYAXd9GtfRDe50P2PGPOuy3LEnf5hMVAAfeKXYHN_+XY37ZVA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/22] smb: fix some bugs, move duplicate definitions
+ to common header file
+To: chenxiaosong.chenxiaosong@linux.dev
+Cc: stfrench@microsoft.com, metze@samba.org, pali@kernel.org, 
+	smfrench@gmail.com, sfrench@samba.org, senozhatsky@chromium.org, 
+	tom@talpey.com, pc@manguebit.org, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, bharathsm@microsoft.com, christophe.jaillet@wanadoo.fr, 
+	zhangguodong@kylinos.cn, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/10/25 21:33, Peter Zijlstra wrote:
-> On Tue, Oct 14, 2025 at 06:01:10PM +0200, Juri Lelli wrote:
-> 
-> > Shouldn't idle time be accounted (subtracted from runtime) as well, though?
-> 
-> Argh, indeed. Then I suppose we should look at bringing some of that
-> 'idle-for-whole-period' logic to try and actually stop the timer at some
-> point if nothing happens.
-
-That was my initial thought. If we get to that replenish after a whole
-idle period elapsed, stop the timer (resetting state), so that we can go
-back at defer mode with the next enqueue from fair.
-
+On Tue, Oct 14, 2025 at 4:20=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
+v> wrote:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> Emails from previous address were often not received (went to the spam
+> folder or other reasons), and the cover letter wasn't linked to the
+> patches. So yesterday I requested chenxiaosong.chenxiaosong@linux.dev
+> account and have now sent v3.
+>
+> Fix some bugs of smb server.
+>
+> In order to maintain the code more easily, move some duplicate definition=
+s
+> to common header file.
+>
+> Add some MS documentation references for macro and struct definitions.
+I have applied 0001, 0002 patches to #ksmbd-for-next-next as they are
+obvious bug fixes.
+I will give you feedback on the remaining patches soon.
+Thanks.
+>
+> v2->v3:
+>   - Update patch #06: use "Suggested-by:" instead of "Reviewed-by:"
+>
+> v1->v2:
+>   - Update patch #06 according to Christophe JAILLET's suggestions: https=
+://lore.kernel.org/all/d03c64d2-46c0-42d8-8f88-28669e921c95@wanadoo.fr/
+>
+> v2:
+>   - cover-letter: https://lore.kernel.org/all/40F04A8E2145E761+2025101216=
+1749.2994033-1-chenxiaosong@chenxiaosong.com/
+>   - patches: https://lore.kernel.org/all/47508024F79AE36C+20251012161749.=
+2994033-2-chenxiaosong@chenxiaosong.com/
+>
+> v1:
+>   - cover-letter: https://lore.kernel.org/all/76A15C078023E21F+2025101215=
+0915.2992220-1-chenxiaosong@chenxiaosong.com/
+>   - patches: https://lore.kernel.org/all/029014EF18C9D322+20251012150915.=
+2992220-2-chenxiaosong@chenxiaosong.com/
+>   - RESEND cover-letter: https://lore.kernel.org/all/37DF3D711BAD3621+202=
+51012152247.2992573-1-chenxiaosong@chenxiaosong.com/
+>   - RESEND patches: https://lore.kernel.org/all/9836A3F274B62345+20251012=
+152247.2992573-2-chenxiaosong@chenxiaosong.com/
+>
+> ZhangGuoDong (10):
+>   smb/server: fix possible memory leak in smb2_read()
+>   smb/server: fix possible refcount leak in smb2_sess_setup()
+>   smb: move some duplicate definitions to common/cifsglob.h
+>   smb: move smb_version_values to common/cifsglob.h
+>   smb: move get_rfc1002_len() to common/cifsglob.h
+>   smb: move SMB1_PROTO_NUMBER to common/cifsglob.h
+>   smb: move some duplicate definitions to common/smb2pdu.h
+>   smb: move smb_sockaddr_in and smb_sockaddr_in6 to common/smb2pdu.h
+>   smb: move copychunk definitions to common/smb2pdu.h
+>   smb: move resume_key_ioctl_rsp to common/smb2pdu.h
+>
+> ChenXiaoSong (12):
+>   smb: move smb2_file_network_open_info to common/smb2pdu.h
+>   smb: move some duplicate definitions to common/cifspdu.h
+>   smb: move file access permission bits definitions to common/cifspdu.h
+>   smb: move SMB frame definitions to common/cifspdu.h
+>   smb: move FILE_SYSTEM_ATTRIBUTE_INFO to common/cifspdu.h
+>   smb: move FILE_SYSTEM_DEVICE_INFO to common/cifspdu.h
+>   smb: move FILE_SYSTEM_INFO to common/cifspdu.h
+>   smb: move FILE_DIRECTORY_INFO to common/cifspdu.h
+>   smb: move FILE_FULL_DIRECTORY_INFO to common/cifspdu.h
+>   smb: move FILE_BOTH_DIRECTORY_INFO to common/cifspdu.h
+>   smb: move SEARCH_ID_FULL_DIR_INFO to common/cifspdu.h
+>   smb: move FILE_SYSTEM_POSIX_INFO to common/cifspdu.h
+>
+>  fs/smb/client/cifsacl.c       |   4 +-
+>  fs/smb/client/cifsglob.h      |  47 +---
+>  fs/smb/client/cifspdu.h       | 436 +-------------------------------
+>  fs/smb/client/cifssmb.c       |  10 +-
+>  fs/smb/client/cifstransport.c |   8 +-
+>  fs/smb/client/connect.c       |   2 +-
+>  fs/smb/client/misc.c          |   2 +-
+>  fs/smb/client/smb2ops.c       |  18 +-
+>  fs/smb/client/smb2pdu.h       |  80 +-----
+>  fs/smb/common/cifsglob.h      |  68 +++++
+>  fs/smb/common/cifspdu.h       | 464 ++++++++++++++++++++++++++++++++++
+>  fs/smb/common/smb2pdu.h       |  98 ++++++-
+>  fs/smb/server/smb2misc.c      |   2 +-
+>  fs/smb/server/smb2ops.c       |  32 +--
+>  fs/smb/server/smb2pdu.c       | 114 +++++----
+>  fs/smb/server/smb2pdu.h       |  67 -----
+>  fs/smb/server/smb_common.c    |  10 +-
+>  fs/smb/server/smb_common.h    | 304 +---------------------
+>  fs/smb/server/smbacl.c        |   2 +-
+>  fs/smb/server/vfs.c           |   2 +-
+>  20 files changed, 735 insertions(+), 1035 deletions(-)
+>  create mode 100644 fs/smb/common/cifsglob.h
+>  create mode 100644 fs/smb/common/cifspdu.h
+>
+> --
+> 2.43.0
+>
 
