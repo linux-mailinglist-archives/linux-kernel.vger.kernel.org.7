@@ -1,244 +1,288 @@
-Return-Path: <linux-kernel+bounces-855308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B85BE0D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCC1BE0D3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BFA407F07
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1B5487BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C5D2E2DF1;
-	Wed, 15 Oct 2025 21:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0032FFFB1;
+	Wed, 15 Oct 2025 21:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFaG+w1z"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="poZwmUOK"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB22B1DC9B1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C74A2FF66A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760563940; cv=none; b=ni++y+uCHSIVzm/oJa/IKq6n3XHxMhchRCJEpmpVksrHT2hjApsFtNxhd9wfFKKat8qse3atY4TJ4Lp7bp92oLPbI0TFlxbSFqhLzPy4mryfCOleKTDt1wQMQ67KEpEs0OWogueqD8CvDD0ax0JhxTcnjbmCCF44hfgiw6oJSvg=
+	t=1760564212; cv=none; b=QRAVo4NRn84uqgiF0S8FnffTtMLfyYqu9AuaigzTQReduGw3slh4kguVfvthvfvIT4Go04KPJ43PMCdvWY4P8uVx138VWb6pcN+4bkEe2FlORZv4Lvezg94ihehRCjjg0jdq3aCObYUdaaVcnqFut/eXGlxrPodrVSr8obIaI6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760563940; c=relaxed/simple;
-	bh=8zVysIIXaYtcWT2JOEzeVWG1yxNu517cXTEwo7Q8FUY=;
+	s=arc-20240116; t=1760564212; c=relaxed/simple;
+	bh=AnTYK0r3Jre07PAvtYHBFqs+L6ZvaH8xIrtTplAWf5g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q8W3lbm7lSyDvzcA2lK3ld9sqrX6P7gF870ejRAvfEnk5H+c8pXg85THGzYAHxOW7dls4ZLhVvjIXj0Zmqe7Oueu3Zftuy/82+F1pqmR2U2jWUncvjsE0kmTqg4dWdWsCnJsccXknT6M55+a8z9q5se2I0I2Fd2r4675uIVs4Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFaG+w1z; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63163a6556bso12974a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:32:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=cewWc7f81bfwVSXWo0+Uohjy+RpmqlgcNlOdQU90aexZ4pYEvdPdsYpMYbavo00X31Lq9tEiUcsg7+2vXjQYIo2vrhGpQld+b1nTqbbSaorCE5W29gew5e+qJG1Q4AQGOnTAvqyj7+l/c625FjIwcSl3qw5MaG+Sz1CeY/6ILoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=poZwmUOK; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7841da939deso76847b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760563937; x=1761168737; darn=vger.kernel.org;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1760564210; x=1761169010; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=an2G/9d47hEEnOP9myHHqMnuHCaBvnAN8tAqBfiHYNY=;
-        b=NFaG+w1zWBaUITqy6ANSkJbjhx3mDovIPeKnsVQO0+q04BFqVFrY+y0R77QHzBRgrN
-         wXPw7Z970ihngnXZxDDQQIFzOijSTsGz5sKux5yD9vHbXP/bMm5Qre67qk/hfqFJlTJQ
-         Rn6GjOXt2lUupc3F1EKitigK7hY0uPZ5WRBXZyJva3lAEEc9tdjyoWqFCO7y7FYMkvQJ
-         9kAfsmdbQvut95/TLvWOeSL6N0RrGlMcD5m3Li5QcXnCZlXB2TOk6ZtrVHVdP7lCjevh
-         O3Evd2Y12moDZ9hoil2zB7ikeOwB2aVGOu03e3ddvs9aMz5xzbGijDiDTzZN6Eq8RfxO
-         z5lQ==
+        bh=CzSvXM+jlguRu/awbYVDNDd3xNqML1B84uavLhBp4Nk=;
+        b=poZwmUOKEa/5777WrObkPsQoOaETpXgRP+B0uDd83HVJKxNzhV79FNsrTu1i57KpuU
+         e5p2yYNKXjiFeScOIiU7f8JGaEQqp4l88QCgKf/7m83gmQeJGTxUYXvU4FI95fx36qgu
+         TKWiqWWF4PDyUX/ErXQgdVn1r/hCInQz6bxYfCsi8AJ7I6YkqSalgEb8dwdoBt/mKMC4
+         bptZOABkHvWeE9snIVWOMAE5ZPOsQ9R46UuWBvId3N6bZMBHkEcDnWNn754kHH/cS2J6
+         PkbNf0DgH6MZP54Q5hz9e08Gc+9ggK/L/79OlSUIfGfqP8iasmUA2a/AIZXCU80gbFoc
+         4abw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760563937; x=1761168737;
+        d=1e100.net; s=20230601; t=1760564210; x=1761169010;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=an2G/9d47hEEnOP9myHHqMnuHCaBvnAN8tAqBfiHYNY=;
-        b=p2UU2/7wPqjiL07MYAS6zZOEWiH1wMRjI/FxN6fcIfniqkghU/8S3ryCCkYze40zPg
-         xI6tZ0BSy3RDL+lSztoYXjXj8qrTvDYmHzqv6sslAXnoH5mZnFEQS8xtAcqF67dTTEaf
-         2oAvvIMffS9Ucq8KyWOqeEkUdQ5UVJT0sX0HD21122S8T5wwg9Oho8Xd88HUE+ljTy9V
-         w1mTIFblQw6POLt2AsJik09uWl295QRur+wkw/H5zXmtu5Cr/V3tFQW3Ag1pI2u0IWHW
-         62DZNe0BZqF64UseQiFSjerisagKTJxLDf66CTobNpyw2lY5xxP9coi+CA4HDuIpMWRV
-         hzDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4WsrsMZdIsW1o/RUkrYgMD5H2ofH+KYUYsGi0DM3jfld4C14qYZBTGKyA7oGHG9LkLzJzUpdr5S7cqR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeNhyk6VifxZWxul/C3SzO5Gc+DcOm2iK2QsSHNhTJUJ9q8BHH
-	kF+vYFgblc0404wrThiUJulTfrXZPmyEQeJdXFuzd71/cJ0Xp2bqA+GiKZpB/GeA3PPyQxxiwV+
-	MIV8hTaypQmrctn4tmwIaDGU9uZ6eNu8=
-X-Gm-Gg: ASbGncsEphKBFiGH4vl3j0uQdGKgMpQpK/gW/Iw9BvGQlcvYNKEl6P1FKy/8dY8Qphg
-	/hVZROJO3cyAqAlYTLKT0xwzNXwOmlrPqCfiJEchv8i6vZ/48Qb+gmxXiEyl/TfDQFOdVh4J3Ea
-	uR60s+xitaoeiGynWRBGUYoBVIlyjSGUsDH4ithcbI5dx0DpGXNn0Z6YTwk7slA2ztSDs47JY5j
-	c82uGPh4iuMX5DVFoPb/Po7lF4oQMp1vg==
-X-Google-Smtp-Source: AGHT+IETKXp4XkWEQ4U32sIWCcsCD1bfRNMB8NWYLayln3kcDdXtKdJRAQEty2d2BGBYtgl6wpMhbm29twcjTOJnDpM=
-X-Received: by 2002:a05:6402:34d1:b0:63c:343:2485 with SMTP id
- 4fb4d7f45d1cf-63c03439d20mr349068a12.3.1760563936779; Wed, 15 Oct 2025
- 14:32:16 -0700 (PDT)
+        bh=CzSvXM+jlguRu/awbYVDNDd3xNqML1B84uavLhBp4Nk=;
+        b=GAg8LwLqBHgWbzS/4FoDHDEJDiRouSSZtYyDl0+pvRpQ9krc87TUXr3GXetXRoehj4
+         Pr4kZCQuxjsdPxpm9ICLuS0Ul/mBXcxlDD/Bm64YK8H/3LEVHOySYOZzOWLMYlNkJ0Ks
+         UdDJhuNtLeQobWTY8phyPfbOkAqMSMvNPdxCmksp6LlvXSw0Fkehc+HQ/RJO5F3P7Bwq
+         oebyRfIPYaIlsqpktoatB6RWaFB2KLZ5DKZ7MWggh5esO32h+H6PxdfW0/3Wo+RV4mls
+         Lx0k/3JuAU/6mKHa3AqXV0zJLIG3il4CISDmfxmHVNFb8MCd0wIABmoEDbqZnbPoE93e
+         NeQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlTtCf2Pz0JlxoC+OOOILLCOhSgwwFC3usbwgotMrhxnz0rxQ94adKvaDej4DjOqFg7iYnwXg5XHrQDl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvJ6nOAolMibmHjDMUgVdo+/q/FN7hFPof+WwMQ+8N3XsUimL1
+	8RY2pTQV4WKijWGMmLdZxEr3dLPcbz+RgB4Qf7oJunikR5RQH6VbxFZVlZv7It4icTNLnQgWzJj
+	j54y36Mprb1pb+pzsUDjMv/faqXSa79uNO0mJUQmO
+X-Gm-Gg: ASbGncuc4BITtK+JGr90uCl16l16UutHEL6E4q0k3oZMqKm6wfM3Gw84Hr3hLFQkKII
+	8dVgF4JbxCApjFAFg2q1xazI3P2vefOCnjCKUoCT96MSsYx4Ej3VOmAtnOdRlN3gndb4KNJaslt
+	3bycE9fMr6NY6Xyul2Gm33V/dd8DFqVf8zQxYDM5dZK+UtbpkyvssQHRPzEFStUBnA+I+uBrr3M
+	0ZnUI/jWbo+k8KvgEtKuViPA2wWZPfyFxbbCgUGObvQ8SOAooiU/Gr6y5lJenAgHc8s71XYr5/U
+	C2PyJ5uv3HQ6ieY9mgN9uNU=
+X-Google-Smtp-Source: AGHT+IELxj5a7h+o5Luu19pXGQ4VkpPt+FUNnaQnoS6dyUNaqIr/GBMJMif+q0MFMpmlTEAbqOQIKJxaU3dB+8Ubrj0=
+X-Received: by 2002:a05:6a20:9392:b0:32b:6f6c:98d4 with SMTP id
+ adf61e73a8af0-32da81541eemr40399081637.20.1760564210403; Wed, 15 Oct 2025
+ 14:36:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007115840.2320557-1-geomatsi@gmail.com> <20251007115840.2320557-5-geomatsi@gmail.com>
- <CAFTtA3MObvXRHxbULghGcT=ThrBDeFDJzUY7LOhgNnarzpYeGg@mail.gmail.com>
-In-Reply-To: <CAFTtA3MObvXRHxbULghGcT=ThrBDeFDJzUY7LOhgNnarzpYeGg@mail.gmail.com>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Wed, 15 Oct 2025 16:32:05 -0500
-X-Gm-Features: AS18NWAGi9Py3C8rtbFuAwojqdEayvWFLUvCpApDZcPh7rosVGDCcfhgBNv2VKo
-Message-ID: <CAFTtA3NoOZEMqYD6+vjP=09T15GiThjVy1LeDX0U8CC-4HMKOA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] riscv: vector: allow to force vector context save
-To: Sergey Matyukevich <geomatsi@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Oleg Nesterov <oleg@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Thomas Huth <thuth@redhat.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Han Gao <rabenda.cn@gmail.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Nam Cao <namcao@linutronix.de>, 
-	Joel Granados <joel.granados@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
+References: <681a1770.050a0220.a19a9.000d.GAE@google.com> <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
+ <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
+ <CAM0EoMnGLqKU7AnsgS00SEgU0eq71f-kiqNniCNyfiyAfNm8og@mail.gmail.com> <87347mmpwp.fsf@intel.com>
+In-Reply-To: <87347mmpwp.fsf@intel.com>
+From: Jamal Hadi Salim <jhs@mojatatu.com>
+Date: Wed, 15 Oct 2025 17:36:39 -0400
+X-Gm-Features: AS18NWDq1L4jsWd86ZGlqYi63dTb-i0V7eW3hYlGtsDWjEV25RTc6xg8okqheEA
+Message-ID: <CAM0EoMnWcsgtN++zkOW9zf5QqUg9uNBGTNgf=2JARqarW31wwQ@mail.gmail.com>
+Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
+ inet_rtm_newaddr (2)
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: Eric Dumazet <edumazet@google.com>, 
+	syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>, davem@davemloft.net, 
+	dsahern@kernel.org, hdanton@sina.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 3:18=E2=80=AFPM Andy Chiu <andybnac@gmail.com> wrot=
-e:
+On Mon, Oct 13, 2025 at 5:51=E2=80=AFPM Vinicius Costa Gomes
+<vinicius.gomes@intel.com> wrote:
 >
-> On Tue, Oct 7, 2025 at 6:58=E2=80=AFAM Sergey Matyukevich <geomatsi@gmail=
-.com> wrote:
-> >
-> > When ptrace updates vector CSR registers for a traced process, the
-> > changes may not be immediately visible to the next ptrace operations
-> > due to vector context switch optimizations.
-> >
-> > The function 'riscv_v_vstate_save' saves context only if mstatus.VS is
-> > 'dirty'. However mstatus.VS of the traced process context may remain
-> > 'clean' between two breakpoints, if no vector instructions were execute=
-d
-> > between those two breakpoints. In this case the vector context will not
-> > be saved at the second breakpoint. As a result, the second ptrace may
-> > read stale vector CSR values.
+> Jamal Hadi Salim <jhs@mojatatu.com> writes:
 >
-> IIUC, the second ptrace should not get the stale vector CSR values.
-> The second riscv_vr_get() should be reading from the context memory
-> (vstate), which is updated from the last riscv_vr_set(). The user's
-> vstate should remain the same since last riscv_vr_set(). Could you
-> explain more on how this bug is observed and why only CSRs are
-> affected but not v-regs as well?
-
-From looking into your test, I can see that you were trying to set an
-invalid configuration to Vetor CSRs and expect vill to be reflected
-upon next read. Yes, this is not happening on the current
-implementation as it was not expecting invalid input from the user,
-which should be taken into consideration. Thanks for spotting the
-case!
-
-According to the spec, "The use of vtype encodings with LMUL <
-SEWMIN/ELEN is reserved, implementations can set vill if they do not
-support these configurations." This mean the implementation may
-actually support this configuration. If that is the case, I think we
-should not allow this to be configured through the vector ptrace
-interface, which is designed to support 1.0 (and 0.7) specs. That
-means, we should not allow this problematic configuration to pass
-through riscv_vr_set(), reach user space, then the forced save.
-
-I would opt for validating all CSR configurations in the first place.
-Could you also help enforce checks on other reserved bits as well?
-
-Thanks,
-Andy
-
+> > On Sat, Oct 11, 2025 at 5:42=E2=80=AFAM Eric Dumazet <edumazet@google.c=
+om> wrote:
+> >>
+> >> On Sat, Oct 11, 2025 at 12:41=E2=80=AFAM syzbot
+> >> <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com> wrote:
+> >> >
+> >> > syzbot has found a reproducer for the following issue on:
+> >> >
+> >> > HEAD commit:    18a7e218cfcd Merge tag 'net-6.18-rc1' of git://git.k=
+ernel...
+> >> > git tree:       net-next
+> >> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12504dcd=
+980000
+> >> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ab7fa7=
+43df0ec1
+> >> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cd74c5df=
+eafd65e488
+> >> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f90=
+9b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> >> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14d2a5=
+42580000
+> >> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D142149e2=
+580000
+> >> >
+> >> > Downloadable assets:
+> >> > disk image: https://storage.googleapis.com/syzbot-assets/7a01e6dce97=
+e/disk-18a7e218.raw.xz
+> >> > vmlinux: https://storage.googleapis.com/syzbot-assets/5e1b7e41427f/v=
+mlinux-18a7e218.xz
+> >> > kernel image: https://storage.googleapis.com/syzbot-assets/69b558601=
+209/bzImage-18a7e218.xz
+> >> >
+> >> > IMPORTANT: if you fix the issue, please add the following tag to the=
+ commit:
+> >> > Reported-by: syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com
+> >> >
+> >> > sched: DL replenish lagged too much
+> >> > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> >> > rcu:    0-...!: (2 GPs behind) idle=3D7754/1/0x4000000000000000 soft=
+irq=3D15464/15465 fqs=3D1
+> >> > rcu:    (detected by 1, t=3D10502 jiffies, g=3D11321, q=3D371 ncpus=
+=3D2)
+> >> > Sending NMI from CPU 1 to CPUs 0:
+> >> > NMI backtrace for cpu 0
+> >> > CPU: 0 UID: 0 PID: 5948 Comm: syz-executor Not tainted syzkaller #0 =
+PREEMPT(full)
+> >> > Hardware name: Google Google Compute Engine/Google Compute Engine, B=
+IOS Google 10/02/2025
+> >> > RIP: 0010:rb_insert_color_cached include/linux/rbtree.h:113 [inline]
+> >> > RIP: 0010:rb_add_cached include/linux/rbtree.h:183 [inline]
+> >> > RIP: 0010:timerqueue_add+0x1a8/0x200 lib/timerqueue.c:40
+> >> > Code: e7 31 f6 e8 6a 0c de f6 42 80 3c 2b 00 74 08 4c 89 f7 e8 7b 0a=
+ de f6 4d 89 26 4d 8d 7e 08 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 <74> 08 4c =
+89 ff e8 5e 0a de f6 4d 89 27 4d 85 e4 40 0f 95 c5 eb 07
+> >> > RSP: 0018:ffffc90000007cf0 EFLAGS: 00000046
+> >> > RAX: 1ffff110170c4f83 RBX: 1ffff110170c4f82 RCX: 0000000000000000
+> >> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88805de72358
+> >> > RBP: 0000000000000000 R08: ffff88805de72357 R09: 0000000000000000
+> >> > R10: ffff88805de72340 R11: ffffed100bbce46b R12: ffff88805de72340
+> >> > R13: dffffc0000000000 R14: ffff8880b8627c10 R15: ffff8880b8627c18
+> >> > FS:  000055557c657500(0000) GS:ffff888125d0f000(0000) knlGS:00000000=
+00000000
+> >> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> > CR2: 0000200000000600 CR3: 000000002ee76000 CR4: 00000000003526f0
+> >> > Call Trace:
+> >> >  <IRQ>
+> >> >  __run_hrtimer kernel/time/hrtimer.c:1794 [inline]
+> >> >  __hrtimer_run_queues+0x656/0xc60 kernel/time/hrtimer.c:1841
+> >> >  hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
+> >> >  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline=
+]
+> >> >  __sysvec_apic_timer_interrupt+0x108/0x410 arch/x86/kernel/apic/apic=
+.c:1058
+> >> >  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 =
+[inline]
+> >> >  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1=
+052
+> >> >  </IRQ>
+> >> >  <TASK>
+> >> >  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idte=
+ntry.h:702
+> >> > RIP: 0010:pv_vcpu_is_preempted arch/x86/include/asm/paravirt.h:579 [=
+inline]
+> >> > RIP: 0010:vcpu_is_preempted arch/x86/include/asm/qspinlock.h:63 [inl=
+ine]
+> >> > RIP: 0010:owner_on_cpu include/linux/sched.h:2282 [inline]
+> >> > RIP: 0010:mutex_spin_on_owner+0x189/0x360 kernel/locking/mutex.c:361
+> >> > Code: b6 04 30 84 c0 0f 85 59 01 00 00 48 8b 44 24 08 8b 18 48 8b 44=
+ 24 48 42 80 3c 30 00 74 0c 48 c7 c7 90 8c fa 8d e8 a7 cd 88 00 <48> 83 3d =
+ff 27 5e 0c 00 0f 84 b9 01 00 00 48 89 df e8 41 e0 d5 ff
+> >> > RSP: 0018:ffffc900034c7428 EFLAGS: 00000246
+> >> > RAX: 1ffffffff1bf5192 RBX: 0000000000000001 RCX: ffffffff819c6588
+> >> > RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff8f4df8a0
+> >> > RBP: 1ffffffff1e9bf14 R08: ffffffff8f4df8a7 R09: 1ffffffff1e9bf14
+> >> > R10: dffffc0000000000 R11: fffffbfff1e9bf15 R12: ffffffff8f4df8a0
+> >> > R13: ffffffff8f4df8f0 R14: dffffc0000000000 R15: ffff8880267a9e40
+> >> >  mutex_optimistic_spin kernel/locking/mutex.c:464 [inline]
+> >> >  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+> >> >  __mutex_lock+0x311/0x1350 kernel/locking/mutex.c:760
+> >> >  rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+> >> >  inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
+> >> >  rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6954
+> >> >  netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
+> >> >  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+> >> >  netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+> >> >  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+> >> >  sock_sendmsg_nosec net/socket.c:727 [inline]
+> >> >  __sock_sendmsg+0x21c/0x270 net/socket.c:742
+> >> >  __sys_sendto+0x3bd/0x520 net/socket.c:2244
+> >> >  __do_sys_sendto net/socket.c:2251 [inline]
+> >> >  __se_sys_sendto net/socket.c:2247 [inline]
+> >> >  __x64_sys_sendto+0xde/0x100 net/socket.c:2247
+> >> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >> >  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+> >> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >> > RIP: 0033:0x7faade790d5c
+> >> > Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28=
+ 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 =
+f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
+> >> > RSP: 002b:00007ffdd2e3b670 EFLAGS: 00000293 ORIG_RAX: 00000000000000=
+2c
+> >> > RAX: ffffffffffffffda RBX: 00007faadf514620 RCX: 00007faade790d5c
+> >> > RDX: 0000000000000028 RSI: 00007faadf514670 RDI: 0000000000000003
+> >> > RBP: 0000000000000000 R08: 00007ffdd2e3b6c4 R09: 000000000000000c
+> >> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+> >> > R13: 0000000000000000 R14: 00007faadf514670 R15: 0000000000000000
+> >> >  </TASK>
+> >> > rcu: rcu_preempt kthread timer wakeup didn't happen for 10499 jiffie=
+s! g11321 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402
+> >> > rcu:    Possible timer handling issue on cpu=3D0 timer-softirq=3D428=
+6
+> >> > rcu: rcu_preempt kthread starved for 10500 jiffies! g11321 f0x0 RCU_=
+GP_WAIT_FQS(5) ->state=3D0x402 ->cpu=3D0
+> >> > rcu:    Unless rcu_preempt kthread gets sufficient CPU time, OOM is =
+now expected behavior.
+> >> > rcu: RCU grace-period kthread stack dump:
+> >> > task:rcu_preempt     state:I stack:27224 pid:16    tgid:16    ppid:2=
+      task_flags:0x208040 flags:0x00080000
+> >> > Call Trace:
+> >> >  <TASK>
+> >> >  context_switch kernel/sched/core.c:5325 [inline]
+> >> >  __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
+> >> >  __schedule_loop kernel/sched/core.c:7011 [inline]
+> >> >  schedule+0x165/0x360 kernel/sched/core.c:7026
+> >> >  schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
+> >> >  rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
+> >> >  rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
+> >> >  kthread+0x711/0x8a0 kernel/kthread.c:463
+> >> >  ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+> >> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> >> >  </TASK>
+> >> >
+> >> >
+> >> > ---
+> >> > If you want syzbot to run the reproducer, reply with:
+> >> > #syz test: git://repo/address.git branch-or-commit-hash
+> >> > If you attach or paste a git patch, syzbot will apply it before test=
+ing.
+> >>
+> >> Yet another taprio report.
+> >>
+> >> If taprio can not be fixed, perhaps we should remove it from the
+> >> kernel, or clearly marked as broken.
+> >> (Then ask syzbot to no longer include it)
+> >
+> > Agreed on the challenge with taprio.
+> > We need the stakeholders input: Vinicius - are you still working in
+> > this space? Vladimir you also seem to have interest (or maybe nxp
+> > does) in this?
 >
-> Thanks,
-> Andy
+> No, I am not working on this space anymore.
 >
-> >
-> > Fix this by introducing a TIF flag that forces vector context save on
-> > the next context switch, regardless of mstatus.VS state. Set this
-> > flag on ptrace oprations that modify vector CSR registers.
-> >
-> > Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
-> > ---
-> >  arch/riscv/include/asm/thread_info.h | 2 ++
-> >  arch/riscv/include/asm/vector.h      | 3 +++
-> >  arch/riscv/kernel/process.c          | 2 ++
-> >  arch/riscv/kernel/ptrace.c           | 5 +++++
-> >  4 files changed, 12 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/=
-asm/thread_info.h
-> > index 836d80dd2921..e05e9aa89c43 100644
-> > --- a/arch/riscv/include/asm/thread_info.h
-> > +++ b/arch/riscv/include/asm/thread_info.h
-> > @@ -118,7 +118,9 @@ int arch_dup_task_struct(struct task_struct *dst, s=
-truct task_struct *src);
-> >
-> >  #define TIF_32BIT                      16      /* compat-mode 32bit pr=
-ocess */
-> >  #define TIF_RISCV_V_DEFER_RESTORE      17      /* restore Vector befor=
-e returing to user */
-> > +#define TIF_RISCV_V_FORCE_SAVE         13      /* force Vector context=
- save */
-> >
-> >  #define _TIF_RISCV_V_DEFER_RESTORE     BIT(TIF_RISCV_V_DEFER_RESTORE)
-> > +#define _TIF_RISCV_V_FORCE_SAVE                BIT(TIF_RISCV_V_FORCE_S=
-AVE)
-> >
-> >  #endif /* _ASM_RISCV_THREAD_INFO_H */
-> > diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/v=
-ector.h
-> > index b61786d43c20..d3770e13da93 100644
-> > --- a/arch/riscv/include/asm/vector.h
-> > +++ b/arch/riscv/include/asm/vector.h
-> > @@ -370,6 +370,9 @@ static inline void __switch_to_vector(struct task_s=
-truct *prev,
-> >  {
-> >         struct pt_regs *regs;
-> >
-> > +       if (test_and_clear_tsk_thread_flag(prev, TIF_RISCV_V_FORCE_SAVE=
-))
-> > +               __riscv_v_vstate_dirty(task_pt_regs(prev));
-> > +
-> >         if (riscv_preempt_v_started(prev)) {
-> >                 if (riscv_v_is_on()) {
-> >                         WARN_ON(prev->thread.riscv_v_flags & RISCV_V_CT=
-X_DEPTH_MASK);
-> > diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-> > index 31a392993cb4..47959c55cefb 100644
-> > --- a/arch/riscv/kernel/process.c
-> > +++ b/arch/riscv/kernel/process.c
-> > @@ -183,6 +183,7 @@ void flush_thread(void)
-> >         kfree(current->thread.vstate.datap);
-> >         memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_=
-state));
-> >         clear_tsk_thread_flag(current, TIF_RISCV_V_DEFER_RESTORE);
-> > +       clear_tsk_thread_flag(current, TIF_RISCV_V_FORCE_SAVE);
-> >  #endif
-> >  #ifdef CONFIG_RISCV_ISA_SUPM
-> >         if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
-> > @@ -205,6 +206,7 @@ int arch_dup_task_struct(struct task_struct *dst, s=
-truct task_struct *src)
-> >         memset(&dst->thread.vstate, 0, sizeof(struct __riscv_v_ext_stat=
-e));
-> >         memset(&dst->thread.kernel_vstate, 0, sizeof(struct __riscv_v_e=
-xt_state));
-> >         clear_tsk_thread_flag(dst, TIF_RISCV_V_DEFER_RESTORE);
-> > +       clear_tsk_thread_flag(dst, TIF_RISCV_V_FORCE_SAVE);
-> >
-> >         return 0;
-> >  }
-> > diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-> > index 906cf1197edc..569f756bef23 100644
-> > --- a/arch/riscv/kernel/ptrace.c
-> > +++ b/arch/riscv/kernel/ptrace.c
-> > @@ -148,6 +148,11 @@ static int riscv_vr_set(struct task_struct *target=
-,
-> >         if (vstate->vlenb !=3D ptrace_vstate.vlenb)
-> >                 return -EINVAL;
-> >
-> > +       if (vstate->vtype !=3D ptrace_vstate.vtype ||
-> > +           vstate->vcsr !=3D ptrace_vstate.vcsr ||
-> > +           vstate->vl !=3D ptrace_vstate.vl)
-> > +               set_tsk_thread_flag(target, TIF_RISCV_V_FORCE_SAVE);
-> > +
-> >         vstate->vstart =3D ptrace_vstate.vstart;
-> >         vstate->vl =3D ptrace_vstate.vl;
-> >         vstate->vtype =3D ptrace_vstate.vtype;
-> > --
-> > 2.51.0
-> >
+> I will talk with other Intel folks (and my manager) and see what we can
+> do.
+
+I assume your customers are still interested in this working? If yes,
+that would be a good pitch to the manager.
+In my (extreme) view, another selling point is that there is an
+ethical obligation to ensure things continue to work as intended.
+Getting patches in is the easy part.
+
+cheers,
+jamal
+
+>But if others that find it useful can help even better.
+>
 
