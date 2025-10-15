@@ -1,172 +1,194 @@
-Return-Path: <linux-kernel+bounces-854601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827CEBDED5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:49:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20781BDED80
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362323A34B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:49:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3D8B4F396D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51261DE3DF;
-	Wed, 15 Oct 2025 13:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ED520E6E1;
+	Wed, 15 Oct 2025 13:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TdYyJNFF"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HaH2cK4Y"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69F423AE87;
-	Wed, 15 Oct 2025 13:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E6A1A26B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760536150; cv=none; b=Gbp4LwCAitYGoH+9OPFveDg1Uo43l4HmKc7RLfhKS2GLDlBaY7ca43LtsS1Tdf83w0w6H5D/ojST5qlJf5iwCniKdaRp4E5O1OslyVQtzTUCjF3us/RxLAuG8CY7XoFJdFce1TXK9lHJ1klOMMf/jBbC8DYj+OnaHbORJ6gtnrA=
+	t=1760536250; cv=none; b=NBGMV8vp5+eLWSNSW0H6mlYWphj7mfV17ZYfjV8EAjJB3hiAq2PN8lQNKxaxPEv2qdSILQF0/NsozKqiWh/iZCMefZTgi8OPvEgVBqIjIK6PnL6ILzWZ2QeApaI3odmqbRm7mTwZPPRTid5syUzm40P8ZpJpkV7EJuOWosvk/jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760536150; c=relaxed/simple;
-	bh=QhDeijH3p8Ah7FVP870DhjFVoOJ+c4VVl9Tj0q4GSts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qzl4JAqFoKDTgcWjvvZ9c0zhVIFN5IQ+oj/O8yIK+eOURzPr5Iaw6b6rMe3lMMhsXkCVH6DaOrVVuGVAOvlHMBYSBUSUAbLRd13phrto2V6ZTiYJYAWxca3Y23SN7F3yXcOBfYt5TDavUmRQbLdK8JDfuTN+faBauu9tEc8y9Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TdYyJNFF; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760536145;
-	bh=QhDeijH3p8Ah7FVP870DhjFVoOJ+c4VVl9Tj0q4GSts=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TdYyJNFFjn/x9drAuSbqyFlDHb1SjL5QCX0mc6UcUjqPYn7wOW3vhLLHtn8yQ4RNH
-	 MMOg8r6SuxIgKbaH5aBUipced1gOdbStEPjstByIVrFArcjJRrbfUw0rXm4YrFbkG5
-	 5MCKvC6JpWC1cNRT7TTA+fOisATB4PpXXEvrAsK4k/tfQ7zxes0k77u1oz6W8/S0Vd
-	 Y/oXm+OkMQAF0KFTDkb6VMQz7FKj/LREI6oE2e5Ufdz8lzppodc5cveU0ai6zmHIok
-	 oqtFLmNuKU8yoWU4XDhXdHTj3YKHOR3703XuxVfOK79Q6sGQr+/d5Z+WSjgfxQbHti
-	 y8j+QVgnGSv4A==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7773E17E0523;
-	Wed, 15 Oct 2025 15:49:05 +0200 (CEST)
-Message-ID: <e9a265af-b6ad-4f7e-9dfb-bf87f4706d57@collabora.com>
-Date: Wed, 15 Oct 2025 15:49:04 +0200
+	s=arc-20240116; t=1760536250; c=relaxed/simple;
+	bh=knT0AgUZx/WJt/TfX3dK506+fZPjXPnwCi0Sfg3XEk0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PnNb/frhXJAhc1oVP+IiD8oBvlYaIwj08+AYSy7MOqzHpNlHTGAlDH5nMWGONGZ+r5Cw1pZfD0/pLOsih6VlGcmljUqQf284JnlQljYcxZqJovOJ7K6c6z6kTMUyzWea/M3j5BZpoXMxV5JfsA3dEEk5TebAM2zIa6wvMZLPg6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HaH2cK4Y; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4256866958bso3799812f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760536247; x=1761141047; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CtQg60jxxHPLg2XrygVfHHTNwesZOmU2O0EczGZvtRc=;
+        b=HaH2cK4Y4jJBti0Sa6EKDsNx78ZZl83PvmH7wIQ/yTafF4FTLexi0PHIwaewfYYOsA
+         Af01Nz+r9fTRddtSGGSvcRo34Ec5nQXILerojePkQlo45cBLObyxdRl0HjFd7YzEhB54
+         hj28xprCWEiuuj8LdydDFKQ2I/rMhjyQfNVSe10pta23StiKjEZXDOCgVAPxZp+EPUW2
+         BiX+8/ZIEBOaf9CT3dazaWDypehzx+uUGzaUK/ct2LZHOh+pKxjyvngfrUlfhueKy1Ga
+         BNyAwnwplGlukfc5O31mJFy8vKtvh2JtND83H097/fDsrKlKEPrCYu/K2nGQk8M9Bbvi
+         fzUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760536247; x=1761141047;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CtQg60jxxHPLg2XrygVfHHTNwesZOmU2O0EczGZvtRc=;
+        b=LsSUxzuR2ooYy6sA1XyeQI5VGJys4ByAsRUktYu0cnuW5nNKJ47OzmLWZ1Rf0wM/Mq
+         Lx21DULXZ9g/kcXdDPKG6dsILW4wW0cCbjRZ19a77Osf9b0/U6Ad5buRLNX6m/M+THmU
+         hsoa3qkxa23439pp6XUNtjRTnaakNzce6uPYwGJ4YtQoGw+JLkAa3NHB04hPXzowN0yQ
+         qn9AvVauysj0YDiWrwwVm8iUp6pvy1Az82kMHS6zxIWKgvxZJp5xERefxvFC9hlw0UMM
+         UwfRPbuQbuJyoNi/V+FAw8ZNP/u5RdM361sx/Rp1v6W1WUs0ZL49FN1qZUQztMkl9R7G
+         Tn6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVGuuq3lSzFcbia4WA6dlMDdkLRZipMQti0QycvEIicvA9hfN1Q6Y+NI8gUuTgWaQQG2fwi3Cxh8h+BEbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1ZUjamBgBnhO21HLbOKHBpu3GKwy/8bQ5CZfuush0SqwqhitS
+	SnC6TCvwnFixQyx9KeIqvvpYQ4vkHtiNwoDwVp6gCMuDBEG/oaDsettb3dWInEbd+w6cTWBeDO9
+	gV33N
+X-Gm-Gg: ASbGnctOMSKZaCfLFjrw/mSzPraz7rKSTD/tRsiTRQzhyjkyZZhD99RwPXth+LGa2PK
+	LL8rcg/a50HHFjKjEy9+OHxKsIIoKxZnYFbwSEbu8euz2T6PhAhOOxit2gbzd2cI0Rtmfoujnpy
+	RP/VEjIPr7MG2nAT2TvcvaFJGbFP5S0pWmM64J3rpLc1XxCR2j5rSzJO9AZgugUjv+QP6aITmEU
+	z04m8LBqLY+aRpDBIqmwUI7+GyxCljFB0cj4DYtsC9hcJXeIAgIRquFi+C9ErgwWR8H/xeM8Ps2
+	AD02Ag/cDBBnRbXq0NAq3HlfgT6XW4ToXwx5NXEeNdEKzKIE3pjMTIU8PkklAGVHAVNDbN1MhTL
+	DKyE8PJ+EH3mYoS4D1cMxB6fEh2leXToMBKc1Qhi5ITc=
+X-Google-Smtp-Source: AGHT+IET9LWb+g7l3Fho2/XpjW/mb5azVvQakw10RTmxd6GzJmRhbSPq+kNx1ap6c+iHxmjFaZ7rig==
+X-Received: by 2002:a05:6000:2085:b0:426:d53a:fbb6 with SMTP id ffacd0b85a97d-426d53afc93mr10252904f8f.31.1760536246782;
+        Wed, 15 Oct 2025 06:50:46 -0700 (PDT)
+Received: from hackbox.lan ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583335sm28882807f8f.18.2025.10.15.06.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 06:50:45 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Wed, 15 Oct 2025 16:50:36 +0300
+Subject: [PATCH RFC] usb: typec: ucsi: Add support for orientation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
- firmware-name not present
-To: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai
- <wenst@chromium.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
- <3f23850e-f01f-4a2e-a7dc-82c04ab5926c@app.fastmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <3f23850e-f01f-4a2e-a7dc-82c04ab5926c@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKum72gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDA0NT3dLiJN2SyoLUZN3S5OJM3Xyg7rySxBKgNl1z09QUg0SjZMu0NGM
+ loAEFRalpmRVgw6OVgtyclWJrawFenFiPcQAAAA==
+X-Change-ID: 20251015-usb-typec-ucsi-orientation-75ed0a2c9ff3
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3082; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=knT0AgUZx/WJt/TfX3dK506+fZPjXPnwCi0Sfg3XEk0=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo76ay07z4bJL+B6GLZdNrrvquXjltLhL58A5m4
+ wdEWin4R7KJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaO+msgAKCRAbX0TJAJUV
+ VmG8D/9pmjnhzSmP3MymHz3QutR+WJPD1tUFHKbtALhaqQteoGSS8oPclvfEO/ipMFJ7U0Y3wF6
+ aVHTTNRnthGOoR7wT4DbWa+mXvNX+Gv1qyf/aYmbPdJ4uzb8ycnYeruf187VZBuJ4b1S8ZbwvZH
+ qZe3dxsgilqQiXVd+NwVaI2n0D1CJdyWUVdU4YKfkELq1DWpUsFgk/kNM20uyXydrOkZUe9J6EX
+ gg4UaadH/p9E3xBAM3NkilUIZbmMDUG/7hIZQQFQpckVjQCsjCbKvl3qr5OZeSgrCUio9gWidbT
+ V1y/uv1P+mRILNgM1fTYLILkNR238mYAB4k0Z6Fz4JXsnEl66WAh1348zNTWUhXtE+wMMVu80z6
+ 1898IzLzGitRIa1IFzO7j2RiLSIFBsL33sXwoF9G7MztpK2f6L5PF5T6sSwN54kK+wrSyyz+OVS
+ C9Kn/73l72fzOHBmLz1f5M3ExXANfnU8Q63VsIQKTgH5zlNaR0ND1I54IW5RoXiPy8OjaQAVZTt
+ scT3LLqaAbVV4hGR0VGhrWURkTJNFzKrZEqZRuAL4nHG+XbczY/1CAVkbJ5JHT1I4sNfvQkylk3
+ eGusO7P5GMAeVcDUdzEXufAQahYutRNJo9+CAviVAn0FHuGh2FfdEwq/qmWN7uoINMBiq6w17cy
+ 6jb1ojWxRRGN9Rw==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Il 15/10/25 15:41, Arnd Bergmann ha scritto:
-> On Wed, Oct 15, 2025, at 10:41, AngeloGioacchino Del Regno wrote:
->> After a reply on the mailing lists [1] it emerged that the DT
->> property "firmware-name" should not be relied on because of
->> possible issues with firmware versions.
->> For MediaTek SCP, there has never been any firmware version vs
->> driver version desync issue but, regardless, the firmwares are
->> always using the same name and they're always located in a path
->> with a specific pattern.
->>
->> Instead of unconditionally always relying on the firmware-name
->> devicetree property to get a path to the SCP FW file, drivers
->> should construct a name based on what firmware it knows and
->> what hardware it is running on.
->>
->> In order to do that, add a `scp_get_default_fw_path()` function
->> that constructs the path and filename based on two of the infos
->> that the driver can get:
->>   1. The compatible string with the highest priority (so, the
->>      first one at index 0); and
->>   2. The type of SCP HW - single-core or multi-core.
->>
->> This means that the default firmware path is generated as:
->>   - Single core SCP: mediatek/(soc_model)/scp.img
->>     for example:     mediatek/mt8183/scp.img;
->>
->>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
->>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
->>                      mediatek/mt8188/scp_c1.img for Core 1.
->>
->> Note that the generated firmware path is being used only if the
->> "firmware-name" devicetree property is not present in the SCP
->> node or in the SCP Core node(s).
->>
->> [1 - Reply regarding firmware-name property]
->> Link:
->> https://lore.kernel.org/all/7e8718b0-df78-44a6-a102-89529d6abcce@app.fastmail.com/
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> This looks good to me, thanks for the changes!
-> 
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> 
+According to UCSI 2.0 specification, the orientation is
+part of the connector status payload. So tie up the port
+orientation.
 
-Thanks!
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/usb/typec/ucsi/ucsi.c | 24 ++++++++++++++++++++++++
+ drivers/usb/typec/ucsi/ucsi.h |  3 +++
+ 2 files changed, 27 insertions(+)
 
->> +
->> +	/* If the compatible string starts with "mediatek,mt" assume that it's ok */
->> +	if (!str_has_prefix(compatible, "mediatek,mt"))
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	if (core_id >= 0)
->> +		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
->> +	else
->> +		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
->> +	if (ret <= 0)
->> +		return ERR_PTR(ret);
->> +
->> +	/* Not using strchr here, as strlen of a const gets optimized by compiler */
->> +	soc = &compatible[strlen("mediatek,")];
->> +
->> +	return devm_kasprintf(dev, GFP_KERNEL, "mediatek/%.*s/%s.img",
->> +			      (int)strlen("mtXXXX"), soc, scp_fw_file);
->> +}
-> 
-> This might have to eventually support version numbers, in case
-> there are ever incompatible ABIs where updating the firmware requires
-> a minimum kernel driver version.
-> 
-> Until there is a firmware file that needs it, this code is
-> fine.
-> 
-> I'm not sure if you need to handle the case where there is
-> a "firmware-name" property in DT, but the filesystem only
-> contains the generated filenames, or when the generated
-> firmware name refers to a newer version. It may be best to
-> try both the generated names and the name from the dts
-> file.
+diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+index 3995483a0aa097b822046e819f994164d6183b0d..17439ec434d41d24e8e4c7a97d7e6117fd07d950 100644
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -1008,6 +1008,28 @@ static int ucsi_check_connector_capability(struct ucsi_connector *con)
+ 	return ret;
+ }
+ 
++static void ucsi_orientation(struct ucsi_connector *con)
++{
++	if (con->ucsi->version < UCSI_VERSION_2_0)
++		return;
++
++	if (!UCSI_CONSTAT(con, CONNECTED)) {
++		typec_set_orientation(con->port, TYPEC_ORIENTATION_NONE);
++		return;
++	}
++
++	switch (UCSI_CONSTAT(con, ORIENTATION)) {
++	case UCSI_CONSTAT_ORIENTATION_NORMAL:
++		typec_set_orientation(con->port, TYPEC_ORIENTATION_NORMAL);
++		break;
++	case UCSI_CONSTAT_ORIENTATION_REVERSE:
++		typec_set_orientation(con->port, TYPEC_ORIENTATION_REVERSE);
++		break;
++	default:
++		break;
++	}
++}
++
+ static void ucsi_pwr_opmode_change(struct ucsi_connector *con)
+ {
+ 	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
+@@ -1258,6 +1280,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
+ 		typec_set_pwr_role(con->port, role);
+ 		ucsi_port_psy_changed(con);
+ 		ucsi_partner_change(con);
++		ucsi_orientation(con);
+ 
+ 		if (UCSI_CONSTAT(con, CONNECTED)) {
+ 			ucsi_register_partner(con);
+@@ -1690,6 +1713,7 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
+ 		typec_set_pwr_role(con->port, UCSI_CONSTAT(con, PWR_DIR));
+ 		ucsi_register_partner(con);
+ 		ucsi_pwr_opmode_change(con);
++		ucsi_orientation(con);
+ 		ucsi_port_psy_changed(con);
+ 		if (con->ucsi->cap.features & UCSI_CAP_GET_PD_MESSAGE)
+ 			ucsi_get_partner_identity(con);
+diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+index e301d9012936fb85eaff7f260a862ff099eb77c5..c85175cd001487fa9d66076e608e098d236f5275 100644
+--- a/drivers/usb/typec/ucsi/ucsi.h
++++ b/drivers/usb/typec/ucsi/ucsi.h
+@@ -360,6 +360,9 @@ struct ucsi_cable_property {
+ #define   UCSI_CONSTAT_BC_SLOW_CHARGING		2
+ #define   UCSI_CONSTAT_BC_TRICKLE_CHARGING	3
+ #define UCSI_CONSTAT_PD_VERSION_V1_2		UCSI_DECLARE_BITFIELD_V1_2(70, 16)
++#define UCSI_CONSTAT_ORIENTATION		UCSI_DECLARE_BITFIELD_V2_0(86, 1)
++#define   UCSI_CONSTAT_ORIENTATION_NORMAL	0
++#define   UCSI_CONSTAT_ORIENTATION_REVERSE	1
+ #define UCSI_CONSTAT_PWR_READING_READY_V2_1	UCSI_DECLARE_BITFIELD_V2_1(89, 1)
+ #define UCSI_CONSTAT_CURRENT_SCALE_V2_1		UCSI_DECLARE_BITFIELD_V2_1(90, 3)
+ #define UCSI_CONSTAT_PEAK_CURRENT_V2_1		UCSI_DECLARE_BITFIELD_V2_1(93, 16)
 
-No, not really.
+---
+base-commit: 13863a59e410cab46d26751941980dc8f088b9b3
+change-id: 20251015-usb-typec-ucsi-orientation-75ed0a2c9ff3
 
-All of the platforms using firmware-name for the SCP are following the same
-pattern as path... so this code autogenerates the path based on what it is
-set already in DT as firmware-name where present.
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
-The only exception is MT8188, where the firmware was named scp.img regardless
-of the fact that it is dual-core and supports dual-firmware... that will need
-a rename in linux-firmware. It's necessary evil, but caught just in time ;-)
-
-P.S.: There is no MT8188 DT declaring firmware-name, so the firmware can
-really just carelessly be renamed; doing so, no breakage/regression will
-happen, and we again don't need to check for existance of both.
-
-
-Cheers!
-Angelo
 
