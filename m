@@ -1,330 +1,224 @@
-Return-Path: <linux-kernel+bounces-854506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6B0BDE8C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DC3BDE8CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2218A4FBF09
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:53:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A46D4E43B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF4B2C3276;
-	Wed, 15 Oct 2025 12:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F57A2264CF;
+	Wed, 15 Oct 2025 12:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Yo5tnzty"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="UpIatez4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PBlbwjV3"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DC6199237;
-	Wed, 15 Oct 2025 12:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760532775; cv=fail; b=Qdd6KGSizu6ncHL8HPVmR180O7Kclqb2b1xRWJiOICLzR2rf8ihs6LEFrkujTz5Enu5y0SpPf/+JXTx0Jdn7HuXRU+Ncd6C0UVUxp/Mswq06MvfdupeFWlLT8T+Sy9ViydY/w6jlyxlOGHPp1tsG6ZEgIypZ1tyzAgmkjUCX2OI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760532775; c=relaxed/simple;
-	bh=Jfc0HHzrAu/WtpZEZsr0n27RDdp6ReB2X1dcNCLm03U=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tLAdNIVVfP18gMp/20RFCp5gzBqGVrsQagyyrhOdbyciZu++3Xg5WGq+Y4qyRdtfI1cNOm6l8anBh2/6m31NCoqX+L5jZS24j/tjncx+XbsrrPnj5MXcmQIpPz0gjyI57J3lLsQz1YP0ppoaZQIOLskN8yH0y1sV5K+aHhQ6gGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Yo5tnzty; arc=fail smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FCNEOY013380;
-	Wed, 15 Oct 2025 14:52:40 +0200
-Received: from am0pr83cu005.outbound.protection.outlook.com (mail-westeuropeazon11010070.outbound.protection.outlook.com [52.101.69.70])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 49r26j7n69-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 14:52:40 +0200 (MEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tNAf5eOAemEAdwwh1Z9GpLWF7/AFSbAq+OsOJUTCdKeOKHi1hnXbPmnoANE2Ha+qRiZ35az/akkfgSaEYb8vxNGEywGAOJdm1cjZND10/bBozosfWqqPwXZjYj3xLc2zv5/V0uwhnNgEkOy/VQbflyGNEoH928czuByK2MfqApUCkLFfyjkkjxNMZbUOCz6o8HSOGdYt9KUGGaEtVNta4dTf6KUVMZ1GdbVckeplTqFC5JD+b0zbvoEVmMA0x3uD7QD2m+qXC4QTEhuvBf70PP0rmfrpEsc1wAUQ1+uaRSagYmT6sDETajrRkREMnCVbYtOqi7iCiCycN481HWYdLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jfc0HHzrAu/WtpZEZsr0n27RDdp6ReB2X1dcNCLm03U=;
- b=kM09Rchn5R3z5wQwFpj+goHGG/oBPrHboQ+9zUWd1NIrWAlEmwA8aZ7YxZiAYatjwsc6252d+V2DxyW/Q8NOqAvlHWfEka2b5Ren9IYaFjLjd0/Y1hMwxIa30Fs0MdkXm7jYbJ2ufILxZynr8G0EXQ2oxYzthPsVE3bwD6elEq6Nz/zOewisHc3KZsggaXWDt2zM0yX6icu79RT0NXDSaGRX6XK9blozY1bRVWoukeiDhtTZ/cZsju47SNHDlzb3oqtnYofTTETNis0WYio5lD01qY18ocL7WV9rma4dkhwb/tZ3i3mn8yVO0evxhHQTWvB2sv8h3SyrW7cdbGLiWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.43) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jfc0HHzrAu/WtpZEZsr0n27RDdp6ReB2X1dcNCLm03U=;
- b=Yo5tnztyGm/07DVM4rCfbUycE6ywWQ0rPRwkeGKpjLqy2I8bGeMkFGP44/wh4LFBtXL6IToeqbzIOa1oAcjokFbmJNVDjoxy5edJ6ydfrFh6cnmkectdiqnzm0EVgpvFL+Xtuzb1zG/u0U0hY2d94K2aRXDxKJoNay18pqawWir76vLQVqZauCd/eOOr93PYO4gY4E4B1pDn6jLoUFuKB/W9zkNHGCjgRiCYb4IpZtEYZVsq7fHflMeVfz+Vx6HvDhMJB0zK48pA8EOi0yd9NXc8+lkCCfUKxi7tKxWJxjKhrfa302nX5aGj2Z3sTuUXyvMk/QM/hJP/YjcC0rZxIQ==
-Received: from CWLP123CA0238.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::19)
- by AS4PR10MB5200.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4b3::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
- 2025 12:52:38 +0000
-Received: from AMS0EPF0000019B.eurprd05.prod.outlook.com
- (2603:10a6:400:19f:cafe::dd) by CWLP123CA0238.outlook.office365.com
- (2603:10a6:400:19f::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.11 via Frontend Transport; Wed,
- 15 Oct 2025 12:52:38 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.43)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.43 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.43; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.43) by
- AMS0EPF0000019B.mail.protection.outlook.com (10.167.16.247) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 12:52:37 +0000
-Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
- (10.250.44.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 15 Oct
- 2025 14:50:15 +0200
-Received: from [192.168.8.15] (10.48.86.11) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 15 Oct
- 2025 14:52:36 +0200
-Message-ID: <7ba7c2f2a6dcfac30f05b35a4f41ef0af2dab575.camel@foss.st.com>
-Subject: Re: [PATCH v3 02/10] dt-bindings: pincfg-node: Add properties
- 'skew-delay-{in,out}put'
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Conor Dooley <conor@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Fabien Dessenne
-	<fabien.dessenne@foss.st.com>,
-        Valentin Caron <valentin.caron@foss.st.com>
-Date: Wed, 15 Oct 2025 14:52:35 +0200
-In-Reply-To: <20251014-water-gown-11558c4eabe7@spud>
-References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
-	 <20251014140451.1009969-3-antonio.borneo@foss.st.com>
-	 <20251014-barbecue-crewman-717fe614daa6@spud>
-	 <CACRpkdZT20cdH+G6Gjw8PopAkir+gGgMtRR4pkjnXFrmDkdfog@mail.gmail.com>
-	 <20251014-water-gown-11558c4eabe7@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7878118E1F;
+	Wed, 15 Oct 2025 12:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760532837; cv=none; b=RZIh2pK1pujEqi+AS2ZzKpCWR2Z5RGZ4s9ZjzXZOFbnnaxZnuP/jfG5ob2JgDv+ucQsgXlwc6gDPfxPnsRdazvQnokIjbUflDoN7MUsPXHa0LJ3IJhpUVKJf4yOjR2GAmf4IRr3rnaWKKeDbRhn7fWA+kzg5c1GUdS0/XosFUWY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760532837; c=relaxed/simple;
+	bh=uJZNOKO/SC/UjBzL5NrjhSpXoFBu1Otmg7C5BAFhkBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHX3gFaCTZ5mVPoQBeD51Stt0DHWlWV76npLtAsn+uU9dHGKXz3ZN+p8H+pddu1Eimhipyoa+r8IfV5cnukjrKOvUfJHtHl4/0fdAdXTYv5U1Z6QUBlos6bKgffDfAFcMGHmW/m/9IdzAJDchPQzdr+9aj/G4k96k87rJY0MC/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=UpIatez4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PBlbwjV3; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 869C27A01B5;
+	Wed, 15 Oct 2025 08:53:53 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 15 Oct 2025 08:53:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760532833;
+	 x=1760619233; bh=qwHU3H2dFBWiHBx0OCGb48HsMp6UrVcE9zk5vRHvjfY=; b=
+	UpIatez4AjmUt1vA23jjnrX0n0tdcaw1QOKpJ8YQ3bgsX36eXCLKORSBRIL/HCke
+	nUT0ffVAJ+W9yKQhvY382xIQ2aAqQ485f9jxF0JaCd5lwXASwZIOqHvKDDauwR+X
+	kNM2BUvdwBpRWLwqpZjPg15j7pVcusZlrrVslb2TJgutxOzFSjEOQJ4SIOPsypv9
+	hiqoiZmRpRNcEKYr+in1La+6Ft4OHFBlbKY/S+/Zm5IS49IcXcaQh7gUjaybEe39
+	HPGKFGN84OY7cMnHCG0Hk6zL849f3eNQZYpYE5yfxWPqO2PR5yhfyx6DwCI6M4VM
+	MTf1dAyPgkIWqPZ0an7l1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760532833; x=
+	1760619233; bh=qwHU3H2dFBWiHBx0OCGb48HsMp6UrVcE9zk5vRHvjfY=; b=P
+	BlbwjV3efQtaVd56NvL8RMdgWA0jcKmEacOpvLYBUafdFiJ2F10Pq/ItCaMvKrEA
+	fBSDD48zCDGo99u3IYPuA6WtvaNrQFD0+H0Ay75uvtq/NQvIzEbbHy4uKSngxZPV
+	U36NZW7A9UjYoYGypKzSrbNW/+KGxycseLgju2S4sHYOnaKMpNpEE2USSywkiX4D
+	Du46meU83048BxdSB5HfoqbQwFYwx98D3tdNsV5ChpalS+t6nRpggCrx4jpjHOIe
+	bMHrXoONNJ2Wiap5EH7ExA0HSu7TajwOSd0yOKIyyEAftgI42V3HPZKe+p1RSEVn
+	fEUvkAyuGynjCgcNClafA==
+X-ME-Sender: <xms:YJnvaIUBwXXW4hf1aveNEuwybe-XL41n-NQYR5iy9_ODnAhZ6vjDbg>
+    <xme:YJnvaOFNyMw73XTl5d_j1OfoYRt-jYspRE-gBwXIxPGAeYomVKZd-LDRVME0viaZU
+    eBp9-OP9E4JHMk0xEvyzg6ZraaRYLuStyxkCZ6SadXoty0Gn70mow>
+X-ME-Received: <xmr:YJnvaMcLw0U6sLReuoB5xHV7dQKpnBzjXmznMjikirgSB_hFJOe9RAjPNzIPZ9IjsrE1m5vlh0-9-lEI82a1ZUj9ABYkWC4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefgeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
+    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeefhfellefhffej
+    gfefudfggeejlefhveehieekhfeulefgtdefueehffdtvdelieenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
+    uhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhope
+    ehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhm
+    ieekkhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrh
+    hordhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:YZnvaHInEWKRVeApQAUXB-JAmwVESqSx6ZTNHlmg_FIXoJ3uOHhDeA>
+    <xmx:YZnvaJF_D7pjHMQ6oOjhjPRL-QYBS9SrZIZjqgVaL1CRIvY10E0Fkw>
+    <xmx:YZnvaCDYUnRV5fzy8nNhr0_B9O2DRqlLuFrC-eSmprWOZOEkhV3arA>
+    <xmx:YZnvaE8gtjtiXcOrsRrQw2VSUxERVk9BMOt8FUdrWMK4y2qceCxcpQ>
+    <xmx:YZnvaMeFWQUrAO3BsheKY-fQ5_TKTcVyDJldxfjxUAtiJcUpaVafrBzV>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 15 Oct 2025 08:53:52 -0400 (EDT)
+Date: Wed, 15 Oct 2025 14:53:50 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [RFC] clocksource/drivers/sh_cmt: Always leave device running
+ after probe
+Message-ID: <20251015125350.GA439570@ragnatech.se>
+References: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdXJfSoU-160BmD-obd7YZRdKT4z-P1YnrvvR1dq7XKaDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|AS4PR10MB5200:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b89f2fb-0219-42a2-7469-08de0be9b84e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGQ2WlJnVFFSV3dWOVc3dXYzZk1adEtxVHpiU3FvUjBZQjJzUjg5RHptaU0z?=
- =?utf-8?B?eHdJM1lEdzUrek9SS3NWQ1k1WENtUzJPQzRNa3NRUFNIWGU5T3djL0dhUHRT?=
- =?utf-8?B?Qmczd202b1YydFNaeVU4N1BpR2F2VEIyYytUSldSUVQ2ZG5GNDEwK3Qrcnc5?=
- =?utf-8?B?MlRlQndCV3l1eG01aG15S1NyaXN2VndBUGF3T3VTY3M1c1lMSXR0MXd2Qi91?=
- =?utf-8?B?RUhCZStrVk5BWjhQZStIRkNseTVoZUlPU3doY1hEbU4rQ29iTDhEaVRJbUFL?=
- =?utf-8?B?V2JwQmIrSlQzbVM2RTk1TVRhblk2UTN2L0c2QnByUm9mWlVzSWRyaWJYOWNh?=
- =?utf-8?B?am5rZHpmaFhqYnJkRjJjeHhCQzNZN2w2Z1BzWXUxbVl6WlYrZGowLzgxaG5F?=
- =?utf-8?B?VnZqSTl4a213bkV6b0ZxL2VOaEpoRFVHTW1kRVNobmNHTzdvdzZhcDFDM28r?=
- =?utf-8?B?VzhWQ1hQR0F4T2lMUmFTWUJ2aTdGYTMvQ1hnaVhYYkdzclpHSmhQaGZQZTQ0?=
- =?utf-8?B?anlRTnpETUh2TE85a1JXL3JSUUt2eDM3dDFMVGk2TWlsUE12Vk5jckpiUXR4?=
- =?utf-8?B?VzlEbXpUclRwVlpyRVBubFFya1VucHVNSE51NkVySDNEd3hGMDBTZTJwcFZo?=
- =?utf-8?B?bm9HeHN3MzdKZmMxOStqajNXWmNxZnByaUc5TW9yb3RHa09wQlA2eThhcWFU?=
- =?utf-8?B?TWhMRnNWK3c2SzdtYjAwZVpJTEVvU1FtSzJ5OXorWk5KcmpiMlp0NCtXR3Fx?=
- =?utf-8?B?N2RvZHVOQTY1MTNrZERvT2pyalphRVBDeUl6TFlDRnNHVXFncXg4V21MQUNw?=
- =?utf-8?B?eUV6c3BrdDZIVHk1ZFJVT05La0IxdThucldpWmtwK2FLY3p6TUp5Y1pSekgv?=
- =?utf-8?B?cllHUE56Vzc3UTA4emhjSGNwMXJ4TlkwQ2g4Z1FsNmpGTWdKSldQL2w4Vm40?=
- =?utf-8?B?d0ZXWFNQbTZGZlJGd0xVQVhHRVJEdWF0QStLOVRJV2RpdFJ4WDloSXhpYng3?=
- =?utf-8?B?N1ZlaERkSFBrYUhLbVRGL2FyT1UrUUplalZabWhsMko5N3l3VGxiUDNoZGw1?=
- =?utf-8?B?alFTbGx4NEQ1cFNTekJsUldYdk5udW42VFViM3c0Q3pXa1BGTTUvT0RLUUtk?=
- =?utf-8?B?Ly9kb2NQTHp3U2VVdFU2bXRUUitlUWZpMnJqSEgyWFhJRHpsWGJxYjVOZUNO?=
- =?utf-8?B?a2JBQmdNMkRHV0Z1bGU1THFaQStRSVgzN2xzdExaSWptejN1M0ZLN0tETEZN?=
- =?utf-8?B?R0pqZW5tTG93c2tHOXAwSXRGTEVsN1pheVRGVndGdCtKSVZyWHFBdHJZWlR2?=
- =?utf-8?B?RkpnVkVsMkE2NUg4UUkrY1JUbmg3Z0FWbzczUlIwY2pxZm9RaGRFTGMrUk9z?=
- =?utf-8?B?NUI0NURTMmhkRmdMa1BleDVTYk5yVm9mR2RnanRZQzVpQzgxRkdXaTN3WHhZ?=
- =?utf-8?B?V281b0MzVExpa1lVM1BsdEp5NWNjNTFIS0RiRWMxdGIrNldPc1FkM0E4WCtC?=
- =?utf-8?B?OTlkcEE3aFIwT0dLVnZyWjJnSDZLYVRUY0pDQk5QSndhRVFUaTYwUnBra3NN?=
- =?utf-8?B?RG8wVXdQMXVLY1YwbkZQRVd2SGtiRzZ1dkhVRG5PbUVYOE9ib0xNWGxOSFJX?=
- =?utf-8?B?M0lGaU1xQW9XbnBUY3JBZmhnSUYyRENrVFg2bEF3TVpRK3Q5SzluRFB0VHo5?=
- =?utf-8?B?TnJrSXZnN3p6blBlNGFtYXFJck9wTzM3cHRFTHNlTGc4UCtxTm5UcEg2VWww?=
- =?utf-8?B?UkVkNFdoVWZYTURGMzZiOG1IUWV1ZHV0YzA1MXZEaGJ5TFNBOEd1YUNKUGpN?=
- =?utf-8?B?Mmc4WGc2QXhLd3M3L0RPOC9kRkhWWUtuczZBTVdrK2pBeHEydFRQcU5Wb3l5?=
- =?utf-8?B?Y3FQYlhaKzNlZGFLT1piU0c2UDVHUkxMaVBPci91Y0VZdnY0TG5XWGtweUN2?=
- =?utf-8?B?bnJYMFRQK3RzeE1BWmtqU1gzZTRSK1c2NUptOEx3bTl4bmNuZlJIejc4RktK?=
- =?utf-8?B?ZVgvUTNnK05mb2VEVEROQmhvRktidFRSQXUvMTk5U3pTckJTNmZMNzFOVzVs?=
- =?utf-8?B?VEJGZDJ3ZjUrdUZmNDlrM2lNL1VJbWcrc05lQ2gvVXR1R3NyVDlsbTVrVXlB?=
- =?utf-8?Q?abDM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.43;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 12:52:37.9542
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b89f2fb-0219-42a2-7469-08de0be9b84e
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.43];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019B.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5200
-X-Proofpoint-ORIG-GUID: DzjhjdYrFB6QAhiEj-KilIyn8FSA5oX3
-X-Proofpoint-GUID: DzjhjdYrFB6QAhiEj-KilIyn8FSA5oX3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDAwMiBTYWx0ZWRfXzez08l3T10P0
- jieETZz4Yl3MmnNT4Js3YC9qDZvYg+X2vINvEYj5iaxsKwJpItyFRRuYXgYAchKOruurtBH1vVG
- U/FcGP5BFFn0Te8t/J0ggHhTfz3tupc0BinTXF32+e71teCrwqrJ//u0MKXV8K3+7va/RJMtxLp
- OsbcfHQlF7sGQTwKqnXNam9XiUSLnXHq711eTQSVJS5y3sa0lb0z/gIWBE9efifTc62jb4oZQoA
- dkcufHWN0bskp75LObG8EwobPHT3RJ5W9WOckJ+bLKU5mbgNkqJLkQW9ZUmKhKWPdB7AkcmGLri
- pGKP5w4hF/fDLIkNQaxVWe+ebCNWjtEBkI1UPm1wEdsoIu8uaK5hzCrWn++nug6SLN4hOqNlwyi
- b70JTXWgWglggFPlPvMYX6zkuDO2BQ==
-X-Authority-Analysis: v=2.4 cv=X5Vf6WTe c=1 sm=1 tr=0 ts=68ef9918 cx=c_pps
- a=j46eMmXtwYkrOlOTjSJKlQ==:117 a=peP7VJn1Wk7OJvVWh4ABVQ==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=y9YUpebZf6kA:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=mK_AVkanAAAA:8
- a=a4Evs6e31utlwK-snYoA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
- a=3gWm3jAn84ENXaBijsEo:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011
- adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
- spamscore=0 phishscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510120002
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXJfSoU-160BmD-obd7YZRdKT4z-P1YnrvvR1dq7XKaDg@mail.gmail.com>
 
-On Tue, 2025-10-14 at 20:39 +0100, Conor Dooley wrote:
-> On Tue, Oct 14, 2025 at 09:33:14PM +0200, Linus Walleij wrote:
-> > On Tue, Oct 14, 2025 at 8:04=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > > On Tue, Oct 14, 2025 at 04:04:43PM +0200, Antonio Borneo wrote:
-> >=20
-> > > > +=C2=A0 skew-delay-input:
-> > > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +=C2=A0=C2=A0=C2=A0 description:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 this affects the expected clock ske=
-w on input pins.
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Typically indicates how many double=
--inverters are used to
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 delay the signal.
-> > >=20
-> > > This property seems to be temporal, I would expect to see a unit of t=
-ime
-> > > mentioned here, otherwise it'll totally inconsistent in use between
-> > > devices, and also a standard unit suffix in the property name.
-> > > pw-bot: changes-requested
-> >=20
-> > Don't blame the messenger, the existing property skew-delay
-> > says:
-> >=20
-> > =C2=A0 skew-delay:
-> > =C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > =C2=A0=C2=A0=C2=A0 description:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 this affects the expected clock skew on =
-input pins
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 and the delay before latching a value to=
- an output
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pin. Typically indicates how many double=
--inverters are
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 used to delay the signal.
-> >=20
-> > This in turn comes from the original
-> > Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > document, which in turn comes from this commit:
-> >=20
-> > commit e0e1e39de490a2d9b8a173363ccf2415ddada871
-> > Author: Linus Walleij <linus.walleij@linaro.org>
-> > Date:=C2=A0=C2=A0 Sat Oct 28 15:37:17 2017 +0200
-> >=20
-> > =C2=A0=C2=A0=C2=A0 pinctrl: Add skew-delay pin config and bindings
-> >=20
-> > =C2=A0=C2=A0=C2=A0 Some pin controllers (such as the Gemini) can contro=
-l the
-> > =C2=A0=C2=A0=C2=A0 expected clock skew and output delay on certain pins=
- with a
-> > =C2=A0=C2=A0=C2=A0 sub-nanosecond granularity. This is typically done b=
-y shunting
-> > =C2=A0=C2=A0=C2=A0 in a number of double inverters in front of or behin=
-d the pin.
-> > =C2=A0=C2=A0=C2=A0 Make it possible to configure this with a generic bi=
-nding.
-> >=20
-> > =C2=A0=C2=A0=C2=A0 Cc: devicetree@vger.kernel.org
-> > =C2=A0=C2=A0=C2=A0 Acked-by: Rob Herring <robh@kernel.org>
-> > =C2=A0=C2=A0=C2=A0 Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com=
->
-> > =C2=A0=C2=A0=C2=A0 Signed-off-by: Linus Walleij <linus.walleij@linaro.o=
-rg>
-> >=20
-> > So by legacy skew-delay is a custom format, usually the number of
-> > (double) inverters.
->=20
-> Yeah, I actually noticed this after sending the mail. But as you say
-> below, the new properties can be done with a unit etc
+Hi Geert,
 
-Quite an interesting discussion, here.
+Thanks for your feedback and test!
 
-This skew delay is "implemented" inside the device through a set of
-unitary delay cells (double inverters), where the value of the delay
-of each cell can heavily depend on silicon process, temperature,
-voltage, ...
+On 2025-10-15 14:43:03 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> Thanks for your patch!
+> 
+> On Sun, 12 Oct 2025 at 11:10, Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > The CMT device can be used as both a clocksource and a clockevent
+> > provider. The driver tries to be smart and power itself on and off, as
+> > well as enabling and disabling its clock when it's not in operation.
+> > This behavior is slightly altered if the CMT is used as an early
+> > platform device in which case the device is left powered on after probe,
+> > but the clock is still enabled and disabled at runtime.
+> >
+> > This have worked for a long time, but recent improvements in PREEMPT_RT
+> 
+> has
+> 
+> > and PROVE_LOCKING have highlighted an issue. As the CMT register itself
+> 
+> registers
+> 
+> > as a clockevent provided, clockevents_register_device(), it needs to use
+> 
+> provider
+> 
+> > raw spinlocks internally as this is the context of which the clockevent
+> > framework interacts with the CMT driver. However in the context of
+> > holding a raw spinlock the CMT driver can't really manage its power
+> > state or clock with calls to pm_runtime_*() and clk_*() as these calls
+> > end up in other platform drivers using regular spinlocks to control
+> > power and clocks.
+> >
+> > This mix of spinlock contexts trips a lockdep warning.
+> >
+> >     =============================
+> >     [ BUG: Invalid wait context ]
+> >     6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 Not tainted
+> >     -----------------------------
+> >     swapper/1/0 is trying to lock:
+> >     ffff00000898d180 (&dev->power.lock){-...}-{3:3}, at: __pm_runtime_resume+0x38/0x88
+> >     ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version 0xAF400001/0xDCC63000, Driver version 5.0
+> >     other info that might help us debug this:
+> >     ccree e6601000.crypto: ARM ccree device initialized
+> >     context-{5:5}
+> >     2 locks held by swapper/1/0:
+> >      #0: ffff80008173c298 (tick_broadcast_lock){-...}-{2:2}, at: __tick_broadcast_oneshot_control+0xa4/0x3a8
+> >      #1: ffff0000089a5858 (&ch->lock){....}-{2:2}
+> >     usbcore: registered new interface driver usbhid
+> >     , at: sh_cmt_start+0x30/0x364
+> >     stack backtrace:
+> >     CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 PREEMPT
+> >     Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
+> >     Call trace:
+> >      show_stack+0x14/0x1c (C)
+> >      dump_stack_lvl+0x6c/0x90
+> >      dump_stack+0x14/0x1c
+> >      __lock_acquire+0x904/0x1584
+> >      lock_acquire+0x220/0x34c
+> >      _raw_spin_lock_irqsave+0x58/0x80
+> >      __pm_runtime_resume+0x38/0x88
+> >      sh_cmt_start+0x54/0x364
+> >      sh_cmt_clock_event_set_oneshot+0x64/0xb8
+> >      clockevents_switch_state+0xfc/0x13c
+> >      tick_broadcast_set_event+0x30/0xa4
+> >      __tick_broadcast_oneshot_control+0x1e0/0x3a8
+> >      tick_broadcast_oneshot_control+0x30/0x40
+> >      cpuidle_enter_state+0x40c/0x680
+> >      cpuidle_enter+0x30/0x40
+> >      do_idle+0x1f4/0x26c
+> >      cpu_startup_entry+0x34/0x40
+> >      secondary_start_kernel+0x11c/0x13c
+> >      __secondary_switched+0x74/0x78
+> >
+> > For non-PREEMPT_RT builds this is not really an issue, but for
+> > PREEMPT_RT builds where normal spinlocks can sleep this might be an
+> > issue. Be cautious and always leave the power and clock running after
+> > probe.
+> >
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Thanks, I gave this a try on various boards, no issues seen.
+> I also force-disabled the TMU on R-Mobile A1, to make sure its known
+> splat is not hiding any other locking problems.
 
-When used to compensate skew "inside" the device, we can assume that
-the skew of the signal to be compensated is also affected by process,
-temperature, voltage, almost as the delay of each delay cell.
-In this case it could be fine reporting the skew-delay as number of
-delay cells because we don't really care about the value of delay in
-time units.
+Once we are happy with the CMT fix I will do something similar for TMU 
+too.
 
-But when used to compensate delay on the board, the value expressed
-as time units is way more appropriate because it's what we get by the
-board design.
-And, this is the main use case in this series.
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->=20
-> >=20
-> > I don't recall the reason for this way of defining things, but one reas=
-on
-> > could be that the skew-delay incurred by two inverters is very
-> > dependent on the production node of the silicon, and can be
-> > nanoseconds or picoseconds, these days mostly picoseconds.
-> > Example: Documentation/devicetree/bindings/net/adi,adin.yaml
-> >=20
-> > Antonio, what do you say? Do you have the actual skew picosecond
-> > values for the different settings so we could define this as
-> >=20
-> > skew-delay-input-ps:
-> > skew-delay-output-ps:
-> >=20
-> > and translate it to the right register values in the driver?
->=20
-> The patch for the specific binding does have values in units of seconds
-> assigned to each register value, so I think this should be doable.
+Thanks!
 
-While in this series I just kept the new properties uniform to
-'skew-delay', I see no issue on using the '*-ps' version.
-I will send a new version of the series.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-What about the existing 'skew-delay'? Should it become deprecated in
-favor of a new 'skew-delay-ps' ?
-
-Thanks for the review!
-Antonio
-
->=20
-> >=20
-> > If we have the proper data this could be a good time to add this
-> > ISO unit to these two props.
-> >=20
-> > Yours,
-> > Linus Walleij
-
+-- 
+Kind Regards,
+Niklas Söderlund
 
