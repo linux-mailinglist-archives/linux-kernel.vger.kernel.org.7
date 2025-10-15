@@ -1,311 +1,102 @@
-Return-Path: <linux-kernel+bounces-853650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A355BDC363
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:55:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B10BDC3F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E01B74E377E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B24163E9C1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7173B25C816;
-	Wed, 15 Oct 2025 02:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D4D30DD3F;
+	Wed, 15 Oct 2025 02:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpNC1ett"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xp1XYJb8"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB7A2571B8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8712A296BDE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760496947; cv=none; b=u5kfETt9Swg8kI7D+gDizb3F2GvsKhaFSaKS1RLyJseqGTrB2iXILLaWOg8HYleJIcTpELEXeKR5W3xoAcQQ2FUaJHEWdsGvQvXRreMR7YR1puGUClTmfcfsSsR9WxRp9pOSlP+SyeKy8qQsIaj4UJAtjatduPq7AZFDOjeA1+w=
+	t=1760496998; cv=none; b=T0Y2EZmnHRN0fNt3tB6Cfaos7vrwIxRYIc6iRUY9nWrlmbeX1vkpEO4AW2hLrECsnSGLTZOHyjoGfI+Rf9mjvJR1CiIrMMx3TFIhfe1EtC/ebDuxK4pXTHmQgHICotaoq8Yodl0ldBqyp+RJkfjUtQWyAnnzim0CgxQQcdORXdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760496947; c=relaxed/simple;
-	bh=ZjQO9YASSQ9YmD0GwnCCMAB05fZ1Be+6EzsqcebEKrk=;
+	s=arc-20240116; t=1760496998; c=relaxed/simple;
+	bh=TE1qHUGtE2qlD/mCekHEiwVSHgeYLYgnt1C5+7OY8Hg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ax5T+pzcznfuUJTRy2xfgtQsomO1F9jYFaztvoSOnI/l0McMiL2cWqk/4cpQm0pKoUY1JG+5R8SXo1RtwyjeaeEFTixwguPr5JIOhH1t7fPjgseiZyO624ZH3Iw5gt58x7eeJkhugVLXmu9iN+s5OY96IpYgaCOYo/vJNN6K/o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpNC1ett; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D129C16AAE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:55:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760496947;
-	bh=ZjQO9YASSQ9YmD0GwnCCMAB05fZ1Be+6EzsqcebEKrk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UpNC1ettMjm/SvzmDFpZrQ+S+KhaEO4c52cVGT9ofEB7FNrQ+7atycqmINH9vnWoZ
-	 /+Q36sGW4S5qp7teuC0/vyBtVfanMIR8+SRf2kEzX0fLVH3dMobDPjKQDNAeW2A5/3
-	 kAqDI3bq2uGwbKqgBVgbLqOV1ShONOS65gEkPBMXxL/WA1Xx3tArPSoX10GrCYyj3p
-	 zB36P97jwO6c2GXM/3FajVDlvtWc6190sl2T0oJyFSYS1jV9ViptUY5CJiMxvnREYX
-	 50S5Azu2hzFcMQCjMCsUc4/Q+cCUGGSXAikNBERmPWxK/xoBMMy3dlGAd7bIC1Qofj
-	 MOu2YXfBRDqXQ==
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-72e565bf2feso63397377b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:55:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVF5pnCaETAlhdozeDxiq0icJkTzIFgmIifcFR4WW8OtDS+ks5vUPmvC8aqIKBl1JI2hOWuMp/FsYGGoOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTxF7HoXQLC7b/mBgpdIVN2z8YKrF76mtvwu9QpLcN1CmVYTjT
-	Ml4lAipuXLAIO0XwfXL6FjTZkyBj3nWGue2y7Rk0oQLqpSHgaP7LwD6tKMoVsg8UvcZVhBaeqnJ
-	/lW69V8LtXOY/ltuV64LNFEJy684PS/jJRaTXn3l6JQ==
-X-Google-Smtp-Source: AGHT+IHDi62Md3RYzlXc9yzK6FT9l8HbXOqO+cwO7cT8WbWgn2KWaPdN44ccSPVpA1vvJXkBCNeSqaMzQyE+2O6Pn88=
-X-Received: by 2002:a53:cb8c:0:b0:63c:f5a7:3e8 with SMTP id
- 956f58d0204a3-63cf5a708bbmr8772028d50.68.1760496946606; Tue, 14 Oct 2025
- 19:55:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=OzVvvXnhTblhuKWgGPimft6A0Yjj7LMqmPmjpzXXU7IkLukfROZQw2iTwGZ8CHuWx743U9w2/EhxHee0JrX3Paw41EXk4i1skRwfyd25jkW0VluxOaCr+BK3pmUdkT0+wnVu0PB/Q/K4K6QVx/qMiIaez7TNGkGla72Opi4phnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xp1XYJb8; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-74435335177so9646557b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:56:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760496995; x=1761101795; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TE1qHUGtE2qlD/mCekHEiwVSHgeYLYgnt1C5+7OY8Hg=;
+        b=Xp1XYJb8IPTrpCM8JgAnFUHYW/+r2whVO2nqOQxAC9oYoOZw0518fQarJrcupDcf5J
+         Zf3KzxU1eIqbgFE0AFX7I9BLlgsgqcqKr/mO56M3DiI+I/m5KVCb9DN3++a8480XclVD
+         iVyl/jrLlyvG9nMPjTRImBWe80LsWgiB49531fOIsyL8XZQgv5hZYWfuP/Ao4KD0vmSj
+         GAA2x2zG+z/XC+ExGb47M89juZE0HkdDCjAX5yT61IObekr94i2acHg8y0T6Ljdvea3H
+         YRvagA82+tz+84Dh3AFZh88XCdCju954XBEKTcxQMtrh7xldkpxAvnejCqF1VDP4ZVIL
+         78KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760496995; x=1761101795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TE1qHUGtE2qlD/mCekHEiwVSHgeYLYgnt1C5+7OY8Hg=;
+        b=kaRPafeMX/zhir2pTwq0YB/kJ7XaVomBtI3lQNoFO7RFMyjar0zru2eA8ZsWNiF59M
+         ciu/HeAp+rM8F47LWgV+9TUy7sr1STC5JE7zI94PModKp0pBhVVoD4jKDkUGDc13X5In
+         xZvzk9P839Ddb2rxoL81WMzyTD6riWleJPqrG0V5X+jiSJK1V6kBT/taghVTwmT7SDhB
+         C3TSmyWpujwPhH2Fcj6n3bLjuO77t7BIUpLmj4B0AhYpXvvzNSDaifexXoYFQeGPRT2v
+         kHikGSOLR8CXLVGr/dXL0D4MxPQQW8QhoMf9EsgAdta3q3ZXFm4sUsJJ5NsAT/dsV3qy
+         lF0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUDrLEOlUaytAPPHGjlnNr/XbOSQ/+iXDTwjrjy4oHpf7synqOB+NVocI0BRdTHIeu3dRm3uOyaKSA8K0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2tAEOh4lwj0VwHfKrSO/e5KX+Xxq7DGCbawWSLCNVdKa6UvY4
+	JExKHbul+iCufZ8oUcaPMCNnE2BSAWPQkQUcUvszaJ4izBssPYBzHlvl/GzPtFoaReYPp4XQEsV
+	u+JhcWA7BgGeRuOwYo+WL9Z1t1qoUv1A=
+X-Gm-Gg: ASbGncsZIYb5MIuxwfLvrqT0J2BZnxWXWOROk7SOyiZRgzz+nhtDY18DgP5eZIh2kUP
+	/LH5D9u18jrmovtTe2McuPXA5sKbU+qudA5bQz3dbyFB3fz9NAWGjrtLGHUpK8Ill594btZ1ziF
+	U/9Kt9voiFFzLGMWIR6YFVrz3hFTfGxIqGRlCi/8W6gj679DATM1lPe5GZhg0MR6Szb2wWQ6D6z
+	D8JREBWwbSkwGDAdq7tO1Ov0rmA7w==
+X-Google-Smtp-Source: AGHT+IG3HRitPb0dlcLGv5LgSdqyT8KuXHdCc4yeCJu3F1DpzIoAorsJ2rfH1BjAA338ijrr0+SbQ3r37duOGjwCMlA=
+X-Received: by 2002:a53:bf83:0:b0:63b:a691:71fa with SMTP id
+ 956f58d0204a3-63cbe06465dmr19731581d50.4.1760496995327; Tue, 14 Oct 2025
+ 19:56:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
- <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
- <CAMgjq7BD6SOgALj2jv2SVtNjWLJpT=1UhuaL=qxvDCMKUy68Hw@mail.gmail.com> <CACePvbVEGgtTqkMPqsf69C7qUD52yVcC56POed8Pdt674Pn68A@mail.gmail.com>
-In-Reply-To: <CACePvbVEGgtTqkMPqsf69C7qUD52yVcC56POed8Pdt674Pn68A@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 14 Oct 2025 19:55:34 -0700
-X-Gmail-Original-Message-ID: <CACePvbWu0P+8Sv-sS7AnG+ESdnJdnFE_teC9NF9Rkn1HegQ9_Q@mail.gmail.com>
-X-Gm-Features: AS18NWCjYxeUpYAxxf-joSuybLzW8FpxJrP_QvpG3PEOz2Qp-sYui7dE4Dpcmfg
-Message-ID: <CACePvbWu0P+8Sv-sS7AnG+ESdnJdnFE_teC9NF9Rkn1HegQ9_Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251009075149.1083040-1-safinaskar@gmail.com> <aOd27ViaWbsdwNDR@levanger>
+In-Reply-To: <aOd27ViaWbsdwNDR@levanger>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Wed, 15 Oct 2025 05:55:59 +0300
+X-Gm-Features: AS18NWBIftPtYmrWrg2OYbA_p_2SzeJFq9_j6ArULRBmZaQNo6Xg6r4qfIVGAdM
+Message-ID: <CAPnZJGDsrSk6GUYVhpofoiTKLS-pVJE4TFU_hA0gttn6Or=q+Q@mail.gmail.com>
+Subject: Re: [REGRESSION][BISECTED] kbuild: CFLAGS=-w no longer works
+To: Nicolas Schier <nsc@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	regressions@lists.linux.dev, nathan@kernel.org, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, sam@gentoo.org, 
+	thomas.weissschuh@linutronix.de, Daniel Xu <dxu@dxuuu.xyz>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 14, 2025 at 2:27=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
->
-> On Sun, Oct 12, 2025 at 9:49=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> > > > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > > > index cb2392ed8e0e..0d1924f6f495 100644
-> > > > --- a/mm/swapfile.c
-> > > > +++ b/mm/swapfile.c
-> > > > @@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entr=
-y(struct swap_info_struct *si, int o
-> > > >                         goto done;
-> > > >         }
-> > > >
-> > > > -       /*
-> > > > -        * We don't have free cluster but have some clusters in dis=
-carding,
-> > > > -        * do discard now and reclaim them.
-> > > > -        */
-> > > > -       if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_dis=
-card(si))
-> > > > -               goto new_cluster;
-> > >
-> > > Assume you follow my suggestion.
-> > > Change this to some function to detect if there is a pending discard
-> > > on this device. Return to the caller indicating that you need a
-> > > discard for this device that has a pending discard.
-> > > Add an output argument to indicate the discard device "discard" if ne=
-eded.
-> >
-> > The problem I just realized is that, if we just bail out here, we are
-> > forbidding order 0 to steal if there is any discarding cluster. We
-> > just return here to let the caller handle the discard outside
-> > the lock.
->
-> Oh, yes, there might be a bit of change in behavior. However I can't
-> see it is such a bad thing if we wait for the pending discard to
-> complete before stealing and fragmenting the existing folio list. We
-> will have less fragments compared to the original result. Again, my
-> point is not that we always keep 100% the old behavior, then there is
-> no room for improvement.
->
-> My point is that, are we doing the best we can in that situation,
-> regardless how unlikely it is.
->
-> >
-> > It may just discard the cluster just fine, then retry from free cluster=
-s.
-> > Then everything is fine, that's the easy part.
->
-> Ack.
->
-> > But it might also fail, and interestingly, in the failure case we need
->
-> Can you spell out the failure case you have in mind? Do you mean the
-> discard did happen but another thread stole "the recently discarded
-> then became free cluster"?
->
-> Anyway, in such a case, the swap allocator should continue and find
-> out we don't have things to discard now, it will continue to the
-> "steal from other order > 0 list".
->
-> > to try again as well. It might fail with a race with another discard,
-> > in that case order 0 steal is still feasible. Or it fail with
-> > get_swap_device_info (we have to release the device to return here),
-> > in that case we should go back to the plist and try other devices.
->
-> When stealing from the other order >0 list failed, we should try
-> another device in the plist.
->
-> >
-> > This is doable but seems kind of fragile, we'll have something like
-> > this in the folio_alloc_swap function:
-> >
-> > local_lock(&percpu_swap_cluster.lock);
-> > if (!swap_alloc_fast(&entry, order))
-> >     swap_alloc_slow(&entry, order, &discard_si);
-> > local_unlock(&percpu_swap_cluster.lock);
-> >
-> > +if (discard_si) {
->
-> I feel the discard logic should be inside the swap_alloc_slow().
-> There is a  plist_for_each_entry_safe(), inside that loop to do the
-> discard and retry().
-> If I previously suggested it change in here, sorry I have changed my
-> mind after reasoning the code a bit more.
+On Thu, Oct 9, 2025 at 11:49=E2=80=AFAM Nicolas Schier <nsc@kernel.org> wro=
+te:
+> If you want to hand-over additional CFLAGS to kbuild you need to use
+> KCFLAGS or other variations, see Documentation/kbuild/kbuild.rst.
 
-Actually now I have given it a bit more thought, one thing I realized
-is that you might need to hold the percpu_swap_cluster lock all the
-time during allocation. That might force you to do the release lock
-and discard in the current position.
+Oops, I'm sorry.
+#regzbot invalid: there is no bug, kbuild works as documented
 
-If that is the case, then just making the small change in your patch
-to allow hold waiting to discard before trying the fragmentation list
-might be good enough.
-
-Chris
-
->
-> The fast path layer should not know about the discard() and also
-> should not retry the fast path if after waiting for the discard to
-> complete.
->
-> The discard should be on the slow path for sure.
->
-> > +    if (get_swap_device_info(discard_si)) {
->
-> Inside the slow path there is get_swap_device_info(si), you should be
-> able to reuse those?
->
-> > +        swap_do_scheduled_discard(discard_si);
-> > +        put_swap_device(discard_si);
-> > +        /*
-> > +         * Ignoring the return value, since we need to try
-> > +         * again even if the discard failed. If failed due to
-> > +         * race with another discard, we should still try
-> > +         * order 0 steal.
-> > +         */
-> > +    } else {
->
-> Shouldn't need the "else", the swap_alloc_slow() can always set
-> dicard_si =3D NULL internally if no device to discard or just set
-> discard =3D NULL regardless.
->
-> > +        discard_si =3D NULL;
-> > +        /*
-> > +         * If raced with swapoff, we should try again too but
-> > +         * not using the discard device anymore.
-> > +         */
-> > +    }
-> > +    goto again;
-> > +}
-> >
-> > And the `again` retry we'll have to always start from free_clusters aga=
-in,
->
-> That is fine, because discard causes clusters to move into free_clusters =
-now.
->
-> > unless we have another parameter just to indicate that we want to skip
-> > everything and jump to stealing, or pass and reuse the discard_si
-> > pointer as return argument to cluster_alloc_swap_entry as well,
-> > as the indicator to jump to stealing directly.
->
-> It is a rare case, we don't have to jump directly to stealing. If the
-> discard happens and that discarded cluster gets stolen by other
-> threads, I think it is fine going through the fragment list before
-> going to the order 0 stealing from another order fragment list.
->
-> > It looks kind of strange. So far swap_do_scheduled_discard can only
-> > fail due to a race with another successful discard, so retrying is
-> > safe and won't run into an endless loop. But it seems easy to break,
-> > e.g. if we may handle bio alloc failure of discard request in the
-> > future. And trying again if get_swap_device_info failed makes no sense
-> > if there is only one device, but has to be done here to cover
-> > multi-device usage, or we have to add more special checks.
->
-> Well, you can have sync wait check check for discard if there is >0
-> number of clusters successfully discarded.
->
-> >
-> > swap_alloc_slow will be a bit longer too if we want to prevent
-> > touching plist again:
-> > +/*
-> > + * Resuming after trying to discard cluster on a swap device,
-> > + * try the discarded device first.
-> > + */
-> > +si =3D *discard_si;
-> > +if (unlikely(si)) {
-> > +    *discard_si =3D NULL;
-> > +    if (get_swap_device_info(si)) {
-> > +        offset =3D cluster_alloc_swap_entry(si, order, SWAP_HAS_CACHE,
-> > &need_discard);
-> > +        put_swap_device(si);
-> > +        if (offset) {
-> > +            *entry =3D swp_entry(si->type, offset);
-> > +            return true;
-> > +        }
-> > +        if (need_discard) {
-> > +            *discard_si =3D si;
->
-> > +            return false;
->
-> I haven't tried it myself. but I feel we should move the sync wait for
-> discard here but with the lock released then re-acquire the lock.
-> That might simplify the logic. The discard should belong to the slow
-> path behavior, definitely not part of the fast path.
->
-> > +        }
-> > +    }
-> > +}
-> >
-> > The logic of the workflow jumping between several functions might also
-> > be kind of hard to follow. Some cleanup can be done later though.
-> >
-> > Considering the discard issue is really rare, I'm not sure if this is
-> > the right way to go? How do you think?
->
-> Let's try moving the discard and retry inside the slow path but
-> release the lock and see how it feels.
-> If you want, I can also give it a try, I just don't want to step on your =
-toes.
->
-> > BTW: The logic of V1 can be optimized a little bit to let discards also
-> > happen with order > 0 cases too. That seems closer to what the current
-> > upstream kernel was doing except: Allocator prefers to try another
-> > device instead of waiting for discard, which seems OK?
->
-> I think we should wait for the discard. Having discard means the
-> device can have maybe (many?) free clusters soon. We can wait. It is a
-> rare case anyway. From the swap.tiers point of view, it would be
-> better to exhaust the current high priority device before consuming
-> the low priority device. Otherwise you will have very minor swap
-> device priority inversion for a few swap entries, those swap entries
-> otherwise can be allocated on the discarded free cluster from high
-> priority swapdevice.
->
-> > And order 0 steal can happen without waiting for discard.
->
-> I am OK to change the behavior to let order 0 wait for the discard as
-> well. It happens so rarely and we have less fragmented clusters
-> compared to the alternatives of stealing from higher order clusters
-> now. I think that is OK. We end up having less fragmented clusters,
-> which is a
-> good thing.
->
-> > Fragmentation under extreme pressure might not be that
-> > serious an issue if we are having really slow SSDs, and
-> > might even be no longer an issue if we have a generic
-> > solution for frags?
->
-> Chris
+--=20
+Askar Safin
 
