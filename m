@@ -1,219 +1,265 @@
-Return-Path: <linux-kernel+bounces-854592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79BDBDECE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:45:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F033BDED05
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2AB9E356FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:45:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 323044EF025
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07521230270;
-	Wed, 15 Oct 2025 13:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB46237180;
+	Wed, 15 Oct 2025 13:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="PluutPOc"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="uVfAl0mJ"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAD021FF55
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6891F2264B1;
+	Wed, 15 Oct 2025 13:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760535895; cv=none; b=b12xp0odTKwcxdNo9E4Ly42aDdgfWmqd7g1iC/CGiyo/M8FnbkTy5DGhLoKmxBO6otY0oSHlVyYPEPYj3PxFE2pjBcAG2v3OnJurAd+lgwwcO1jCLjyw3VfHtgklFcqyLCB2/1DyEMi4SZHzUGszwi8jUhlksCVFQZms684VtMo=
+	t=1760535912; cv=none; b=Jk73fj8Dx5FBm3suioOe+QfwQulb7Z8zwD6f6siRLNGYnlteDatUWLCJ1FEs2Lg7cpKAXO97fj04xuj68eim6BERreV3LHPzBzPwErd6+K9b6uWIRLRKhWtfus2WcuBFsxEux1YpmhS+qp3x3mHq/2z7LQ7DIq4B/9dSTKs2D3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760535895; c=relaxed/simple;
-	bh=lFAGPMOJGo/3aMHHyf3A9h5Mnxa9R2n5KMimlrUhYPI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qu4CyYwln2KnjggSmqzBLT/5lxFeseuXvW+ylQ2CAgmb4feEIjc5KiEp4ERvzMZ5nQdg8NQse1Z3KYcuSXplm/HbamgHiBVahYMFjKshAg5h+Jj2zQlqHFL3oAsqogWYaBmwD3VMNNttIVjleClVC8COzK+oE4XnZtaEEUV6Hgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=PluutPOc; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id DB175240101
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:44:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760535885; bh=lFAGPMOJGo/3aMHHyf3A9h5Mnxa9R2n5KMimlrUhYPI=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
-	b=PluutPOcrYgz4YjlerDAP32oJQbMATqjOs9B1wxgtkG6dOpzCb55CYKCC1PLslUpX
-	 8GxOg/u1xrRRr7ifQ7Ix92usTkBIgOG8cFj6BhAF0h5eSXTiwAXl/ckEsom+SLt7qK
-	 1En4Ju99QMVtxTgCsDFSUDR90QRkZegEl9p8jy9rWj0x+ifyXjwylTUxozh/udTuOm
-	 b4zPG3tL+q8T2J3jsB9JYyiijLaoiQo7TNc5NwqwB2lOxMNv6wDSnn1/ncq7yETg2V
-	 EY72FX5PLqNjjD9j63PAsET6/fWN4yiYY3kl6qH84NbWNa9qi0wogiAxL+wHCcL0BG
-	 DgLLw3AwAsJIQ==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cmslH4V8tz9rxM;
-	Wed, 15 Oct 2025 15:44:43 +0200 (CEST)
-Message-ID: <7de58fd25b52dd5195c8ac06ed4df5a1e60e5070.camel@posteo.de>
-Subject: Re: [PATCH v4 2/2] rust: leds: add basic led classdev abstractions
-From: Markus Probst <markus.probst@posteo.de>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, Pavel
- Machek <pavel@kernel.org>,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"	
- <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, Boqun Feng	
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com,  Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Date: Wed, 15 Oct 2025 13:44:45 +0000
-In-Reply-To: <aO1GM4WXs37Zpm0G@google.com>
-References: <20251012145221.172116-1-markus.probst@posteo.de>
-	 <20251012145221.172116-3-markus.probst@posteo.de>
-	 <aO1GM4WXs37Zpm0G@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1760535912; c=relaxed/simple;
+	bh=tHzPQ914X8TTctWSiJ8ibXYvAhbpT+ZVP3DQyksWNu8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MMdDnVktga2dnGziaXJLoZaDU7LzPU0FvPxEEc25Cnszqnv5v73ooRAqsY1vPbm9A9ffgODqqZBpD7RJhqozCRrPI3tctkYs8HRYk+0du3NDhDRM8RolYp/L+52/h3ZfW7CahYY0FhpJzNY0PxV94XAZyT5phN9nC2b6oDweNgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=uVfAl0mJ; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 0F926A1AA5;
+	Wed, 15 Oct 2025 15:45:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=MXJdM8cTqS9HrIPjdoxajauisYtWpOglBHWBj9fWUgY=; b=
+	uVfAl0mJSJymLIaqRfd6r5ZrcYfN+wIm33oBZ/XJ4PK1Xt+lT0mE16jALlt30GIx
+	j3PBii489uHLQSRCqxXkrnQFN/BohytnWKaGTotoz7dd4nfdiC9dBtupqs34dWql
+	Jd+Cy43Wn/PnSpelW/ke/5XfzCAIPJYxlkqBkLMWwwb1uqSSBDZ2WbA8XX1F+AMj
+	wx2G6AiLjlBnE2mJ5bfwE9fH9ZqzK6JmqZPDCdJk25lPiggK1P3zCfPCgdiaEv93
+	u/P4Ny+sPIZnuV6LosMXuM+20FaYJTf1Yas5e2Aaw09e7LcVpUTJyacpz0zZr1I4
+	B/gR53EQXTk6QzEBLBVr/FxiXgBeTo0ZGg+UrBpxkL4TCtmVGwA3O/wKjFogmT5M
+	wRBx7gkqIcwTuW1YpfvQrHI6kXxBud8bMe5d2pd5hQvt70QaSRrHS21fREmE1xpx
+	nZtYj0GQtYPRIht1Ab4BMHzv2vA7UpG0s32N5WnHOSYlKptQbG+Cj7ucB6rv/wxw
+	gjIdG3xMidKO2xCCatAfT/BRfOqQf5SrTKJpLZe3ryaqhH8JidpJKavsrzlbMyTL
+	bSw1+kIwO6uMcuNTHvZ0xacPjxlQgC61e3QYYVlugdym5c1vnbmUAe9li89ttD8O
+	om36nlHfqX1+N8LhwsqodRC2yHHgBsFKYekgASHluuE=
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Buday Csaba <buday.csaba@prolan.hu>
+Subject: [PATCH v2 1/4] net: mdio: common handling of phy reset properties
+Date: Wed, 15 Oct 2025 15:45:00 +0200
+Message-ID: <20251015134503.107925-1-buday.csaba@prolan.hu>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1760535906;VERSION=8000;MC=1304816191;ID=558032;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155F64756A
 
-T24gTW9uLCAyMDI1LTEwLTEzIGF0IDE4OjM0ICswMDAwLCBBbGljZSBSeWhsIHdyb3RlOgo+IE9u
-IFN1biwgT2N0IDEyLCAyMDI1IGF0IDAyOjUyOjM5UE0gKzAwMDAsIE1hcmt1cyBQcm9ic3Qgd3Jv
-dGU6Cj4gPiBJbXBsZW1lbnQgdGhlIGNvcmUgYWJzdHJhY3Rpb25zIG5lZWRlZCBmb3IgbGVkIGNs
-YXNzIGRldmljZXMsCj4gPiBpbmNsdWRpbmc6Cj4gPiAKPiA+ICogYGxlZDo6TGVkT3BzYCAtIHRo
-ZSB0cmFpdCBmb3IgaGFuZGxpbmcgbGVkcywgaW5jbHVkaW5nCj4gPiDCoCBgYnJpZ2h0bmVzc19z
-ZXRgLCBgYnJpZ2h0bmVzc19nZXRgIGFuZCBgYmxpbmtfc2V0YAo+ID4gCj4gPiAqIGBsZWQ6Oklu
-aXREYXRhYCAtIGRhdGEgc2V0IGZvciB0aGUgbGVkIGNsYXNzIGRldmljZQo+ID4gCj4gPiAqIGBs
-ZWQ6OkRldmljZWAgLSBhIHNhZmUgd3JhcHBlciBhcm91bmQgYGxlZF9jbGFzc2RldmAKPiA+IAo+
-ID4gU2lnbmVkLW9mZi1ieTogTWFya3VzIFByb2JzdCA8bWFya3VzLnByb2JzdEBwb3N0ZW8uZGU+
-Cj4gCj4gPiArcHViIHRyYWl0IExlZE9wczogU2VuZCArICdzdGF0aWMgKyBTaXplZCB7Cj4gPiAr
-wqDCoMKgIC8vLyBJZiBzZXQgdHJ1ZSwgW2BMZWRPcHM6OmJyaWdodG5lc3Nfc2V0YF0gYW5kCj4g
-PiBbYExlZE9wczo6Ymxpbmtfc2V0YF0gbXVzdCBub3Qgc2xlZXAKPiA+ICvCoMKgwqAgLy8vIGFu
-ZCBwZXJmb3JtIHRoZSBvcGVyYXRpb24gaW1tZWRpYXRlbHkuCj4gPiArwqDCoMKgIGNvbnN0IEJM
-T0NLSU5HOiBib29sOwo+ID4gK8KgwqDCoCAvLy8gVGhlIG1heCBicmlnaHRuZXNzIGxldmVsCj4g
-PiArwqDCoMKgIGNvbnN0IE1BWF9CUklHSFRORVNTOiB1MzI7Cj4gPiArCj4gPiArwqDCoMKgIC8v
-LyBTZXRzIHRoZSBicmlnaHRuZXNzIGxldmVsLgo+ID4gK8KgwqDCoCAvLy8KPiA+ICvCoMKgwqAg
-Ly8vIFNlZSBhbHNvIFtgTGVkT3BzOjpCTE9DS0lOR2BdCj4gPiArwqDCoMKgIGZuIGJyaWdodG5l
-c3Nfc2V0KCZzZWxmLCBicmlnaHRuZXNzOiB1MzIpIC0+IFJlc3VsdDwoKT47Cj4gPiArCj4gPiAr
-wqDCoMKgIC8vLyBHZXRzIHRoZSBjdXJyZW50IGJyaWdodG5lc3MgbGV2ZWwuCj4gPiArwqDCoMKg
-IGZuIGJyaWdodG5lc3NfZ2V0KCZzZWxmKSAtPiB1MzIgewo+ID4gK8KgwqDCoMKgwqDCoMKgIGJ1
-aWxkX2Vycm9yIShWVEFCTEVfREVGQVVMVF9FUlJPUikKPiA+ICvCoMKgwqAgfQo+ID4gKwo+ID4g
-K8KgwqDCoCAvLy8gQWN0aXZhdGVzIGhhcmR3YXJlIGFjY2VsZXJhdGVkIGJsaW5raW5nLgo+ID4g
-K8KgwqDCoCAvLy8KPiA+ICvCoMKgwqAgLy8vIGRlbGF5cyBhcmUgaW4gbWlsbGlzZWNvbmRzLiBJ
-ZiBib3RoIGFyZSB6ZXJvLCBhIHNlbnNpYmxlCj4gPiBkZWZhdWx0IHNob3VsZCBiZSBjaG9zZW4u
-Cj4gPiArwqDCoMKgIC8vLyBUaGUgY2FsbGVyIHNob3VsZCBhZGp1c3QgdGhlIHRpbWluZ3MgaW4g
-dGhhdCBjYXNlIGFuZCBpZgo+ID4gaXQgY2FuJ3QgbWF0Y2ggdGhlIHZhbHVlcwo+ID4gK8KgwqDC
-oCAvLy8gc3BlY2lmaWVkIGV4YWN0bHkuIFNldHRpbmcgdGhlIGJyaWdodG5lc3MgdG8gMCB3aWxs
-Cj4gPiBkaXNhYmxlIHRoZSBoYXJkd2FyZSBhY2NlbGVyYXRlZAo+ID4gK8KgwqDCoCAvLy8gYmxp
-bmtpbmcuCj4gPiArwqDCoMKgIC8vLwo+ID4gK8KgwqDCoCAvLy8gU2VlIGFsc28gW2BMZWRPcHM6
-OkJMT0NLSU5HYF0KPiA+ICvCoMKgwqAgZm4gYmxpbmtfc2V0KCZzZWxmLCBfZGVsYXlfb246ICZt
-dXQgdXNpemUsIF9kZWxheV9vZmY6ICZtdXQKPiA+IHVzaXplKSAtPiBSZXN1bHQ8KCk+IHsKPiA+
-ICvCoMKgwqDCoMKgwqDCoCBidWlsZF9lcnJvciEoVlRBQkxFX0RFRkFVTFRfRVJST1IpCj4gPiAr
-wqDCoMKgIH0KPiAKPiBUaGVzZSBmdW5jdGlvbnMgc2hvdWxkIHByb2JhYmx5IHRha2UgYSAmRGV2
-aWNlPEJvdW5kPiBhcmd1bWVudCBzbwo+IHRoYXQKPiB0aGV5IGNhbiB1c2UgbWV0aG9kcyB0aGF0
-IHJlcXVpcmUgYSBib3VuZCBkZXZpY2UgKHN1Y2ggYXMgSU8pLgpIb3cgYWJvdXQgaW5zdGVhZCBz
-b21ldGhpbmcgbGlrZQoKbW9kIGRldmljZSB7CgogIHVuc2FmZSB0cmFpdCBDb250YWluZXI8Q3R4
-OiBEZXZpY2VDb250ZXh0PjogQXNSZWY8RGV2aWNlPEN0eD4+IHsKICAgIGNvbnN0IE9mZnNldDog
-dXNpemU7CgogICAgdW5zYWZlIGZuIGZyb21fZGV2aWNlKGRldjogJkRldmljZTxDdHg+KSAtPiAm
-U2VsZiB7CiAgICAgICA8aW1wbGVtZW50YXRpb24gaGVyZT4KICAgIH0KICB9CgogIHVuc2FmZSBp
-bXBsIERldmljZTxDdHg+IGZvciBDb250YWluZXI8Q3R4PiB7CiAgICBjb25zdCBPZmZzZXQ6IHVz
-aXplID0gMDsKICB9Cgp9CgpBbmQgaW5zdGVhZCBvZiBwYXNzaW5nICZEZXZpY2U8Qm91bmQ+IHRv
-IHRoZSBmdW5jdGlvbnMsIHdlIHNob3VsZCBhZGQgYQp0eXBlIHBhcmFtZXRlciB0byBMZWRPcHMs
-IGUuZy46Cgp0cmFpdCBMZWRPcHM8VDogZGV2aWNlOjpDb250YWluZXI8ZGV2aWNlOjpCb3VuZD4+
-IHsKCiAgLi4uCgogIGZuIGJyaWdodG5lc3Nfc2V0KCZzZWxmLCBkZXY6ICZULCBicmlnaHRuZXNz
-OiB1MzIpIC0+IFJlc3VsdDwoKT47CgogIC4uLgoKfQoKaW1wbDxUOiBMZWRPcHM8RT4sIEU6IGRl
-dmljZTo6Q29udGFpbmVyPGRldmljZTo6Qm91bmQ+PiBEZXZpY2U8VD4gewoKICBwdWIgZm4gbmV3
-PCdhPigKICAgICAgICBwYXJlbnQ6ICYnYSBFLAogICAgICAgIGluaXRfZGF0YTogSW5pdERhdGE8
-J2E+LAogICAgICAgIG9wczogVCwKICAgICkgLT4gaW1wbCBQaW5Jbml0PERldnJlczxTZWxmPiwg
-RXJyb3I+ICsgJ2EgewogICAgIC4uLgogIH0KCiAgLi4uCgp9CgpJbiB0aGUgZXhhbXBsZSBvZiBp
-MmMgKG9yIGFueSBvdGhlciBjb250YWluZXIgZm9yIGBzdHJ1Y3QgZGV2aWNlYCksIHdlCmltcGxl
-bWVudCB0aGUgZGV2aWNlOjpDb250YWluZXIgdHJhaXQ6Cgptb2QgaTJjIHsKCiAgdW5zYWZlIGlt
-cGwgZGV2aWNlOjpDb250YWluZXIgZm9yIEkyY0NsaWVudCB7CiAgICBjb25zdCBPZmZzZXQ6IHVz
-aXplID0gb2Zmc2V0X29mIShiaW5kaW5nczo6aTJjX2NsaWVudCwgZGV2KTsKICB9Cgp9ClRoaXMg
-YWxsb3dzIHRoZSBMZWRPcHMgZnVuY3Rpb24gdG8gdXNlIGFueSBmdW5jdGlvbnMgZnJvbSB0aGUg
-STJjQ2xpZW50Cm9yIGFueSBvdGhlciBkZXZpY2UgY29udGFpbmVyIHdoaWNoIG1heSBiZSB1c2Vk
-IChyZW1vdmluZyB0aGUgbmVlZCB0bwpzdG9yZSBpdCBpbnNpZGUgdGhlIExlZE9wcyBpbXBsZW1l
-bnRhdGlvbnMgc3RydWN0KS4gSXQgc3RpbGwgYWxsb3dzCkRldmljZTxCb3VuZD4gdG8gYmUgdXNl
-ZCwgYXMgaXQgYWxzbyB3b3VsZCBpbXBsZW1lbnQgZGV2aWNlOjpDb250YWluZXIuCgpUaGFua3MK
-LSBNYXJrdXMgUHJvYnN0Cgo+IAo+ID4gK2ltcGw8VDogTGVkT3BzPiBEZXZpY2U8VD4gewo+ID4g
-K8KgwqDCoCAvLy8gUmVnaXN0ZXJzIGEgbmV3IGxlZCBjbGFzc2Rldi4KPiA+ICvCoMKgwqAgLy8v
-Cj4gPiArwqDCoMKgIC8vLyBUaGUgW2BEZXZpY2VgXSB3aWxsIGJlIHVucmVnaXN0ZXJlZCBvbiBk
-cm9wLgo+ID4gK8KgwqDCoCBwdWIgZm4gbmV3PCdhPigKPiA+ICvCoMKgwqDCoMKgwqDCoCBwYXJl
-bnQ6ICYnYSBkZXZpY2U6OkRldmljZTxCb3VuZD4sCj4gPiArwqDCoMKgwqDCoMKgwqAgaW5pdF9k
-YXRhOiBJbml0RGF0YTwnYT4sCj4gPiArwqDCoMKgwqDCoMKgwqAgb3BzOiBULAo+ID4gK8KgwqDC
-oCApIC0+IGltcGwgUGluSW5pdDxEZXZyZXM8U2VsZj4sIEVycm9yPiArICdhIHsKPiA+ICvCoMKg
-wqDCoMKgwqDCoCBEZXZyZXM6Om5ldygKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHBhcmVu
-dCwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHRyeV9waW5faW5pdCEoU2VsZiB7Cj4gPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG9wcywKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgY2xhc3NkZXYgPC0gT3BhcXVlOjp0cnlfZmZpX2luaXQofHB0cjogKm11
-dAo+ID4gYmluZGluZ3M6OmxlZF9jbGFzc2Rldnwgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIC8vIFNBRkVUWTogYHRyeV9mZmlfaW5pdGAgZ3VhcmFudGVlcyB0
-aGF0Cj4gPiBgcHRyYCBpcyB2YWxpZCBmb3Igd3JpdGUuCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgLy8gYGxlZF9jbGFzc2RldmAgZ2V0cyBmdWxseSBpbml0aWFs
-aXplZCBpbi0KPiA+IHBsYWNlIGJ5Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgLy8gYGxlZF9jbGFzc2Rldl9yZWdpc3Rlcl9leHRgIGluY2x1ZGluZwo+ID4gYG11
-dGV4YCBhbmQgYGxpc3RfaGVhZGAuCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgdW5zYWZlIHsgcHRyLndyaXRlKGJpbmRpbmdzOjpsZWRfY2xhc3NkZXYgewo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbWF4X2JyaWdo
-dG5lc3M6IFQ6Ok1BWF9CUklHSFRORVNTLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJpZ2h0bmVzc19zZXQ6IFQ6OkJMT0NLSU5HCj4gPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiAu
-dGhlbl9zb21lKEFkYXB0ZXI6OjxUPjo6YnJpZ2h0bmVzc19zZXRfY2FsbGJhY2spLAo+ID4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJpZ2h0bmVzc19z
-ZXRfYmxvY2tpbmc6ICghVDo6QkxPQ0tJTkcpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gPiAudGhlbl9zb21lKEFkYXB0ZXI6OjxU
-Pjo6YnJpZ2h0bmVzc19zZXRfYmxvY2tpbmdfY2FsbGJhY2spLAo+ID4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJpZ2h0bmVzc19nZXQ6IFQ6OkhBU19C
-UklHSFRORVNTX0dFVAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoAo+ID4gLnRoZW5fc29tZShBZGFwdGVyOjo8VD46OmJyaWdodG5lc3Nf
-Z2V0X2NhbGxiYWNrKSwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIGJsaW5rX3NldDogVDo6SEFTX0JMSU5LX1NFVAo+ID4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+ID4gLnRoZW5fc29tZShB
-ZGFwdGVyOjo8VD46OmJsaW5rX3NldF9jYWxsYmFjayksCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAuLiBiaW5kaW5nczo6bGVkX2NsYXNzZGV2Ojpk
-ZWZhdWx0KCkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9KSB9
-Owo+IAo+IFRoaXMgZG9lc24ndCBsb29rIGxpa2Ugc29tZXRoaW5nIHJ1c3RmbXQgd291bGQgb3V0
-cHV0PyBDb3VsZCB5b3UgcnVuCj4gcnVzdGZtdCBpZiB5b3UgaGF2ZW4ndCBhbHJlYWR5LiBJZiBp
-dCBkb2Vzbid0IGRvIGFueXRoaW5nLCB0aGVuCj4gcGxlYXNlCj4gZm9ybWF0IGl0IG91dHNpZGUg
-b2YgdGhlIG1hY3JvIGFuZCBtb3ZlIGl0IGJhY2sgaW4uCj4gCj4gQWxpY2UK
+Reset properties of an `mdio_device` are initialized in multiple
+source files and multiple functions:
+  - `reset_assert_delay` and `reset_deassert_delay` are in
+    fwnode_mdio.c
+  - `reset_gpio` and `reset_ctrl` are in mdio_bus.c, but handled by
+    different functions
+
+This patch unifies the handling of all these properties into two
+functions.
+mdiobus_register_gpiod() and mdiobus_register_reset() are removed,
+while mdio_device_register_reset() and mdio_device_unregister_reset()
+are introduced instead.
+These functions handle both reset-controllers and reset-gpios, and
+also read the corresponding properties from the device tree.
+These changes should make tracking the reset properties easier.
+
+The reset logic is unaltered, and should work as it did before.
+
+Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+---
+V1 -> V2: the return value of mdio_device_unregister_reset() is made void
+---
+ drivers/net/mdio/fwnode_mdio.c |  5 ----
+ drivers/net/phy/mdio_bus.c     | 39 ++------------------------
+ drivers/net/phy/mdio_device.c  | 50 ++++++++++++++++++++++++++++++++++
+ include/linux/mdio.h           |  2 ++
+ 4 files changed, 54 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdio.c
+index 9b41d4697..ba7091518 100644
+--- a/drivers/net/mdio/fwnode_mdio.c
++++ b/drivers/net/mdio/fwnode_mdio.c
+@@ -92,11 +92,6 @@ int fwnode_mdiobus_phy_device_register(struct mii_bus *mdio,
+ 	if (fwnode_property_read_bool(child, "broken-turn-around"))
+ 		mdio->phy_ignore_ta_mask |= 1 << addr;
+ 
+-	fwnode_property_read_u32(child, "reset-assert-us",
+-				 &phy->mdio.reset_assert_delay);
+-	fwnode_property_read_u32(child, "reset-deassert-us",
+-				 &phy->mdio.reset_deassert_delay);
+-
+ 	/* Associate the fwnode with the device structure so it
+ 	 * can be looked up later
+ 	 */
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index cad6ed3aa..cc3f9cfb1 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -33,33 +33,6 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/mdio.h>
+ 
+-static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
+-{
+-	/* Deassert the optional reset signal */
+-	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
+-						 "reset", GPIOD_OUT_LOW);
+-	if (IS_ERR(mdiodev->reset_gpio))
+-		return PTR_ERR(mdiodev->reset_gpio);
+-
+-	if (mdiodev->reset_gpio)
+-		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
+-
+-	return 0;
+-}
+-
+-static int mdiobus_register_reset(struct mdio_device *mdiodev)
+-{
+-	struct reset_control *reset;
+-
+-	reset = reset_control_get_optional_exclusive(&mdiodev->dev, "phy");
+-	if (IS_ERR(reset))
+-		return PTR_ERR(reset);
+-
+-	mdiodev->reset_ctrl = reset;
+-
+-	return 0;
+-}
+-
+ int mdiobus_register_device(struct mdio_device *mdiodev)
+ {
+ 	int err;
+@@ -68,16 +41,9 @@ int mdiobus_register_device(struct mdio_device *mdiodev)
+ 		return -EBUSY;
+ 
+ 	if (mdiodev->flags & MDIO_DEVICE_FLAG_PHY) {
+-		err = mdiobus_register_gpiod(mdiodev);
++		err = mdio_device_register_reset(mdiodev);
+ 		if (err)
+ 			return err;
+-
+-		err = mdiobus_register_reset(mdiodev);
+-		if (err)
+-			return err;
+-
+-		/* Assert the reset signal */
+-		mdio_device_reset(mdiodev, 1);
+ 	}
+ 
+ 	mdiodev->bus->mdio_map[mdiodev->addr] = mdiodev;
+@@ -91,8 +57,7 @@ int mdiobus_unregister_device(struct mdio_device *mdiodev)
+ 	if (mdiodev->bus->mdio_map[mdiodev->addr] != mdiodev)
+ 		return -EINVAL;
+ 
+-	gpiod_put(mdiodev->reset_gpio);
+-	reset_control_put(mdiodev->reset_ctrl);
++	mdio_device_unregister_reset(mdiodev);
+ 
+ 	mdiodev->bus->mdio_map[mdiodev->addr] = NULL;
+ 
+diff --git a/drivers/net/phy/mdio_device.c b/drivers/net/phy/mdio_device.c
+index f64176e0e..eb8237095 100644
+--- a/drivers/net/phy/mdio_device.c
++++ b/drivers/net/phy/mdio_device.c
+@@ -74,6 +74,56 @@ struct mdio_device *mdio_device_create(struct mii_bus *bus, int addr)
+ }
+ EXPORT_SYMBOL(mdio_device_create);
+ 
++/**
++ * mdio_device_register_reset - Read and initialize the reset properties of
++ *				an mdio device
++ * @mdiodev: mdio_device structure
++ */
++int mdio_device_register_reset(struct mdio_device *mdiodev)
++{
++	struct reset_control *reset;
++
++	/* Read optional firmware properties */
++	fwnode_property_read_u32(dev_fwnode(&mdiodev->dev), "reset-assert-us",
++				 &mdiodev->reset_assert_delay);
++	fwnode_property_read_u32(dev_fwnode(&mdiodev->dev), "reset-deassert-us",
++				 &mdiodev->reset_deassert_delay);
++
++	/* reset-gpio, bring up deasserted */
++	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev, "reset",
++						 GPIOD_OUT_LOW);
++
++	if (IS_ERR(mdiodev->reset_gpio))
++		return PTR_ERR(mdiodev->reset_gpio);
++
++	if (mdiodev->reset_gpio)
++		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
++
++	reset = reset_control_get_optional_exclusive(&mdiodev->dev, "phy");
++	if (IS_ERR(reset))
++		return PTR_ERR(reset);
++
++	mdiodev->reset_ctrl = reset;
++
++	/* Assert the reset signal */
++	mdio_device_reset(mdiodev, 1);
++
++	return 0;
++}
++EXPORT_SYMBOL(mdio_device_register_reset);
++
++/**
++ * mdio_device_unregister_reset - uninitialize the reset properties of
++ *				  an mdio device
++ * @mdiodev: mdio_device structure
++ */
++void mdio_device_unregister_reset(struct mdio_device *mdiodev)
++{
++	gpiod_put(mdiodev->reset_gpio);
++	reset_control_put(mdiodev->reset_ctrl);
++}
++EXPORT_SYMBOL(mdio_device_unregister_reset);
++
+ /**
+  * mdio_device_register - Register the mdio device on the MDIO bus
+  * @mdiodev: mdio_device structure to be added to the MDIO bus
+diff --git a/include/linux/mdio.h b/include/linux/mdio.h
+index c640ba44d..4cedcae08 100644
+--- a/include/linux/mdio.h
++++ b/include/linux/mdio.h
+@@ -90,6 +90,8 @@ static inline void *mdiodev_get_drvdata(struct mdio_device *mdio)
+ 
+ void mdio_device_free(struct mdio_device *mdiodev);
+ struct mdio_device *mdio_device_create(struct mii_bus *bus, int addr);
++int mdio_device_register_reset(struct mdio_device *mdiodev);
++void mdio_device_unregister_reset(struct mdio_device *mdiodev);
+ int mdio_device_register(struct mdio_device *mdiodev);
+ void mdio_device_remove(struct mdio_device *mdiodev);
+ void mdio_device_reset(struct mdio_device *mdiodev, int value);
+-- 
+2.39.5
+
 
 
