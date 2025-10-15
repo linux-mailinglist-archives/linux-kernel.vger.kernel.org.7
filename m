@@ -1,167 +1,228 @@
-Return-Path: <linux-kernel+bounces-854548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA04BBDEACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84263BDEAD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8273A61CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF1C19A0C94
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8F73233EE;
-	Wed, 15 Oct 2025 13:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808F326D51;
+	Wed, 15 Oct 2025 13:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bj3kAtTv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jShSKbgo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87675322C67;
-	Wed, 15 Oct 2025 13:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2DD2F5A01;
+	Wed, 15 Oct 2025 13:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760533905; cv=none; b=nhU8BvnPWsR9m/9hJVemTQLIw4M1hibSHf7S9sr5ZDheU03zGqXSzZH/4EmLLZ8hKyKmvxhfmHnFffKMZzHhHEYk6kGJ5Z4NHp3qdNvY0bSxCGtNDdNMYbWxAEOd1FwY5/4iUa0ZZdqVktUMqUY5vxOB8qb5NjooKKJcKDBj9cU=
+	t=1760533909; cv=none; b=cv/8nwliXqoXvsXX03WEnOJg6kEZc4a77rW/SWJhOo5jivmj6FFzbzpPRpvxt49eWZ0z4hXH3i3EG3nwg4rxnaZ8kuLU8vGb7nPHBjuN7A3Gm4FA9YsIHlr5VTMXnVPHm8PG71y7cDLi2BBcuglEC9BlUgNrgSbjhFSHWdHcW/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760533905; c=relaxed/simple;
-	bh=omexcsvQOP6L3u6VXqhGkYJUOCWIegna1Gz630OIFyA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uxlxJ4GcLgaqwBVRDTrzafXfC6efcAsEEN4sx0CJMoocMUHZPmvfwseZq8/yattjG1i3wwjxjiPE8fQEtThZur9MQ5MUn7f69eZyDTTkvxLVP1kRkMVtE2HkOO7HFjtypDEkAk08gceaxbqvoPpCGjzkIpNMpWN5KOApdx6pr5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bj3kAtTv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D96DC4CEF8;
-	Wed, 15 Oct 2025 13:11:42 +0000 (UTC)
+	s=arc-20240116; t=1760533909; c=relaxed/simple;
+	bh=YMcaKLHJu+qHEbscCu4PYBYwemy0TdAJrZY1GyASnwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p63TI4+8hcBNfmDKOafyxpZDMqFntcbFbelbMlLhba7Z78ANcji9s0v0pt7DOJf4fS/n/E6V6j6Gte3dapkE68svuvbw8Vn9C34zbv4MQQUJtu6mqzE8NPB/xFJpCJg+3T7AoZN9yI7u6kJiGAvCZtm7GWFZL0EarSFmL+HW3xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jShSKbgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77804C4CEF8;
+	Wed, 15 Oct 2025 13:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760533905;
-	bh=omexcsvQOP6L3u6VXqhGkYJUOCWIegna1Gz630OIFyA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=bj3kAtTvuMH0wrdZEdcvWcUEePwq0ISRRyCNWlhSpLuB6WQVpbV0vTd0PuT52xlAS
-	 w7KFR5RXN7/WBOhy+YS726di7J4JaoI0d4fan+f4IiCJjqlVJlAD6MHu/578kiA4xV
-	 A7MpgIXtEEOQ9yi9IE0weQsmeyVwMca2PpXfMUgC5LiwVYlWewTC95p0Ly4cPNO73I
-	 ee2bIlA/rLBudcBVPP1aqtm+RtpYrRb21GqaDgDvR67Eavpg7HBO7oE3YZV4ydK+kr
-	 qXsz8moSzdIAmz4widHWgoPA0mJBioHsEaAlz0wePPBt+CHyNvMboHoe7gy/H8nOV8
-	 I60zSTotKp7SQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  akpm@linux-foundation.org,
-  brauner@kernel.org,  corbet@lwn.net,  graf@amazon.com,  jgg@ziepe.ca,
-  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
-  linux-mm@kvack.org,  masahiroy@kernel.org,  ojeda@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
-  jasonmiu@google.com,  dmatlack@google.com,  skhawaja@google.com
-Subject: Re: [PATCH 1/2] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-In-Reply-To: <CA+CK2bD4z_j_jMhMtrvvQ5nOMEFT6yrRHk9rk7BEiQPSPCHiqA@mail.gmail.com>
-	(Pasha Tatashin's message of "Wed, 15 Oct 2025 08:40:26 -0400")
-References: <20251015053121.3978358-1-pasha.tatashin@soleen.com>
-	<20251015053121.3978358-2-pasha.tatashin@soleen.com>
-	<mafs0zf9sjrgc.fsf@kernel.org>
-	<CA+CK2bD4z_j_jMhMtrvvQ5nOMEFT6yrRHk9rk7BEiQPSPCHiqA@mail.gmail.com>
-Date: Wed, 15 Oct 2025 15:11:41 +0200
-Message-ID: <mafs0qzv4jomq.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1760533907;
+	bh=YMcaKLHJu+qHEbscCu4PYBYwemy0TdAJrZY1GyASnwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jShSKbgo0043mtGtnxIS8E2Kp/UjfwAeEoyAAoepCfZ++Mp7ale1wbbAM1F2Fh+CM
+	 JoL6cZlisKdlsK1vASuWJ9z3NcORVFpHOff0SYfKv/F2+k5XAKNvPRUp+nAyUznn6T
+	 5fJ8UOz88wxZ8N8sABCBxiYjOhBk91JZ8ISblkmLE2duD0qvAmhV6GXXJQx+caVvg2
+	 LIa5M5jfmrSN59GT7/ve3l/yIVg9IusEhu3RgEM5e9/jLLpCPopRAQfbl9jbfGnvNe
+	 W8ruTvVTjYcKqbm0CsZ8juQIE+aTWGabD/QIY8W9H965CVB25e/x7D41Jj3uLoUqZh
+	 373UFz5oreNNQ==
+Date: Wed, 15 Oct 2025 08:11:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Barker <paul.barker@sancloud.com>,
+	Marc Murphy <marc.murphy@sancloud.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] dt-bindings: mmc: ti,omap2430-sdhci: convert to
+ DT schema
+Message-ID: <20251015131145.GA3232873-robh@kernel.org>
+References: <20251011-ti-sdhci-omap-v3-0-9487ef2de559@gmail.com>
+ <20251011-ti-sdhci-omap-v3-2-9487ef2de559@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011-ti-sdhci-omap-v3-2-9487ef2de559@gmail.com>
 
-On Wed, Oct 15 2025, Pasha Tatashin wrote:
+On Sat, Oct 11, 2025 at 08:40:24AM +0000, Charan Pedumuru wrote:
+> Convert TI OMAP SDHCI Controller binding to YAML format.
+> Changes during Conversion:
+> - Define new properties like "clocks", "clock-names",
+>   "ti,needs-special-reset", "ti,needs-special-hs-handling",
+>   "pbias-supply", "cap-mmc-dual-data-rate" and "power-domains" to
+>   resolve dtb_check errors.
+> - Remove "pinctrl-names" and "pinctrl-<n>"
+>   from required as they are not necessary for all DTS files.
+> - Remove "ti,hwmods" property entirely from the YAML as the
+>   DTS doesn't contain this property for the given compatibles and the
+>   text binding is misleading.
+> - Add "clocks", "clock-names", "max-frequency" and "ti,needs-special-reset"
+>   to the required properties based on the compatible and the text binding
+>   doesn't mention these properties as required.
+> - Add missing strings like "default-rev11", "sdr12-rev11", "sdr25-rev11",
+>   "hs-rev11", "sdr25-rev11" and "sleep" to pinctrl-names string array
+>   to resolve errors detected by dtb_check.
+> 
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+> ---
+>  .../devicetree/bindings/mmc/sdhci-omap.txt         |  43 -----
+>  .../devicetree/bindings/mmc/ti,omap2430-sdhci.yaml | 202 +++++++++++++++++++++
+>  2 files changed, 202 insertions(+), 43 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+> deleted file mode 100644
+> index f91e341e6b36c410275e6f993dd08400be3fc1f8..0000000000000000000000000000000000000000
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+> +++ /dev/null
+> @@ -1,43 +0,0 @@
+> -* TI OMAP SDHCI Controller
+> -
+> -Refer to mmc.txt for standard MMC bindings.
+> -
+> -For UHS devices which require tuning, the device tree should have a "cpu_thermal" node which maps to the appropriate thermal zone. This is used to get the temperature of the zone during tuning.
+> -
+> -Required properties:
+> -- compatible: Should be "ti,omap2430-sdhci" for omap2430 controllers
+> -	      Should be "ti,omap3-sdhci" for omap3 controllers
+> -	      Should be "ti,omap4-sdhci" for omap4 and ti81 controllers
+> -	      Should be "ti,omap5-sdhci" for omap5 controllers
+> -	      Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
+> -	      Should be "ti,k2g-sdhci" for K2G
+> -	      Should be "ti,am335-sdhci" for am335x controllers
+> -	      Should be "ti,am437-sdhci" for am437x controllers
+> -- ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
+> -	     (Not required for K2G).
+> -- pinctrl-names: Should be subset of "default", "hs", "sdr12", "sdr25", "sdr50",
+> -		 "ddr50-rev11", "sdr104-rev11", "ddr50", "sdr104",
+> -		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
+> -		 "hs200_1_8v",
+> -- pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
+> -
+> -Optional properties:
+> -- dmas:		List of DMA specifiers with the controller specific format as described
+> -		in the generic DMA client binding. A tx and rx specifier is required.
+> -- dma-names:	List of DMA request names. These strings correspond 1:1 with the
+> -		DMA specifiers listed in dmas. The string naming is to be "tx"
+> -		and "rx" for TX and RX DMA requests, respectively.
+> -
+> -Deprecated properties:
+> -- ti,non-removable: Compatible with the generic non-removable property
+> -
+> -Example:
+> -	mmc1: mmc@4809c000 {
+> -		compatible = "ti,dra7-sdhci";
+> -		reg = <0x4809c000 0x400>;
+> -		ti,hwmods = "mmc1";
+> -		bus-width = <4>;
+> -		vmmc-supply = <&vmmc>; /* phandle to regulator node */
+> -		dmas = <&sdma 61 &sdma 62>;
+> -		dma-names = "tx", "rx";
+> -	};
+> diff --git a/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7683481204b2e222847244b67f9ae2684db93028
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
+> @@ -0,0 +1,202 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/ti,omap2430-sdhci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI OMAP SDHCI Controller
+> +
+> +maintainers:
+> +  - Kishon Vijay Abraham I <kishon@ti.com>
+> +
+> +description:
+> +  For UHS devices which require tuning, the device tree should have a
+> +  cpu_thermal node which maps to the appropriate thermal zone. This
+> +  is used to get the temperature of the zone during tuning.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,omap2430-sdhci
+> +      - ti,omap3-sdhci
+> +      - ti,omap4-sdhci
+> +      - ti,omap5-sdhci
+> +      - ti,dra7-sdhci
+> +      - ti,k2g-sdhci
+> +      - ti,am335-sdhci
+> +      - ti,am437-sdhci
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: fck
+> +      - const: mmchsdb_fck
+> +
+> +  dmas:
+> +    maxItems: 2
+> +
+> +  dma-names:
+> +    items:
+> +      - const: tx
+> +      - const: rx
+> +
+> +  pinctrl-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
 
-> On Wed, Oct 15, 2025 at 8:10=E2=80=AFAM Pratyush Yadav <pratyush@kernel.o=
-rg> wrote:
->>
->> On Wed, Oct 15 2025, Pasha Tatashin wrote:
->>
->> > It is invalid for KHO metadata or preserved memory regions to be locat=
-ed
->> > within the KHO scratch area, as this area is overwritten when the next
->> > kernel is loaded, and used early in boot by the next kernel. This can
->> > lead to memory corruption.
->> >
->> > Adds checks to kho_preserve_* and KHO's internal metadata allocators
->> > (xa_load_or_alloc, new_chunk) to verify that the physical address of t=
-he
->> > memory does not overlap with any defined scratch region. If an overlap
->> > is detected, the operation will fail and a WARN_ON is triggered. To
->> > avoid performance overhead in production kernels, these checks are
->> > enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
->> >
->> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> > ---
->> >  kernel/liveupdate/Kconfig                   | 15 ++++++++++
->> >  kernel/liveupdate/kexec_handover.c          | 32 ++++++++++++++++++---
->> >  kernel/liveupdate/kexec_handover_debug.c    | 18 ++++++++++++
->> >  kernel/liveupdate/kexec_handover_internal.h |  9 ++++++
->> >  4 files changed, 70 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
->> > index 522b9f74d605..d119f4f3f4b1 100644
->> > --- a/kernel/liveupdate/Kconfig
->> > +++ b/kernel/liveupdate/Kconfig
->> > @@ -27,4 +27,19 @@ config KEXEC_HANDOVER_DEBUGFS
->> >         Also, enables inspecting the KHO fdt trees with the debugfs bi=
-nary
->> >         blobs.
->> >
->> > +config KEXEC_HANDOVER_DEBUG
->> > +     bool "Enable Kexec Handover debug checks"
->> > +     depends on KEXEC_HANDOVER_DEBUGFS
->>
->> Why the dependency on debugfs? Why can't the debug checks be enabled
->> independently?
->
-> Because there is one kexec_handover_debug.c file, that I thought would
-> make sense to use for both, but now thinking about this, perhaps we
-> should split the code: KEXEC_HANDOVER_DEBUGFS and
-> KEXEC_HANDOVER_DEBUG, and add two files:
-> kexec_handover_debugfs.c and kexec_handover_debug.c, this would avoid
-> ifdefs in .c.
+Drop. Already has a type.
 
-Sounds good.
-
->
->>
->> > +     help
->> > +       This option enables extra sanity checks for the Kexec Handover
->> > +       subsystem.
->> > +
->> > +       These checks verify that neither preserved memory regions nor =
-KHO's
->> > +       internal metadata are allocated from within a KHO scratch area.
->> > +       An overlap can lead to memory corruption during a subsequent k=
-exec
->> > +       operation.
->>
->> I don't think the checks that are done should be listed here since as
->> soon as another check is added this list will become out of date.
->
-> I thought it could be expanded when new features are added, but I can
-> remove this description.
-
-Yes, but it is easy to forget to do so.
-
->
->>
->> > +
->> > +       If an overlap is detected, the kernel will print a warning and=
- the
->> > +       offending operation will fail. This should only be enabled for
->>
->> This also describes the behaviour of the checks, which might change
->> later. Maybe for some checks the operation won't fail? I suppose just
->> leave it at "the kernel will print a warning"?
->
-> If it changes, and Kconfig should be updated as well.
->
->>
->> > +       debugging purposes due to runtime overhead.
->> >  endmenu
-[...]
-
---=20
-Regards,
-Pratyush Yadav
+> +    minItems: 1
+> +    maxItems: 14
+> +    items:
+> +      enum:
+> +        - default
+> +        - default-rev11
+> +        - hs
+> +        - sdr12
+> +        - sdr12-rev11
+> +        - sdr25
+> +        - sdr25-rev11
+> +        - sdr50
+> +        - ddr50-rev11
+> +        - sdr104-rev11
+> +        - ddr50
+> +        - sdr104
+> +        - ddr_1_8v-rev11
+> +        - ddr_1_8v
+> +        - ddr_3_3v
+> +        - hs-rev11
+> +        - hs200_1_8v-rev11
+> +        - hs200_1_8v
+> +        - sleep
 
