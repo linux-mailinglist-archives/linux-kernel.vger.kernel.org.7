@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-853603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFCEBBDC14C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:55:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71613BDC160
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974BC4231BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:55:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 855D24F5DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C172FD7A3;
-	Wed, 15 Oct 2025 01:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czvnqr0N"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F12302759;
+	Wed, 15 Oct 2025 01:57:24 +0000 (UTC)
+Received: from baidu.com (mx21.baidu.com [220.181.3.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2186E25A2A4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD381F4191;
+	Wed, 15 Oct 2025 01:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.3.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760493296; cv=none; b=DPTluJbcHPFb76NIswrkf2fSEQ12/ByVp9Op4MqYDpdCp7b+fjG7efBbkV9rPHzl5+BQc9T1nj5d58jT199rgIQ0MQlex2Ds9qawfv4ZbjdjeK9UvnrOlQuv9iP+fWAuxi8716sVAQTp6Nemalw6ohuBhkjmUetawS04+P4z5is=
+	t=1760493443; cv=none; b=J6t3MZ6/AXcqWVGX6mZk8Ln0PhgHLwIfJecov/jUPPpudvnlQ4O/R3sUkHcc7rjD9tX3Ra2LMwo5TRb7gDEB1cTRKHzKRy7SIFupaNoZkIdm1XWnr3NTk68gPEk0lYlYU5AkrCKmRhUF34ty8MQNJw1/dKHrM2OGuZAULi9kK4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760493296; c=relaxed/simple;
-	bh=XurOG7TpFv0gfvogsJdszOTmGbj6A3F6k9kfoi2F3GA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWRZuNCnK/T3sOx1ri3Nwq/iftjYY4KiDv7XcdHpY4lGpFRYjtvJ9qyvuabrk4ExZEWpKZtMwm3hxG5XO+T68K7+SEm6CRmLJgSxUP9nPITZ/Q1Gn1GqzIo4nm/sUwByEkIn+l9+KGrU/IXv+ChbGqgjBMI57wfva7GlXFqqwRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czvnqr0N; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e2e363118so50406065e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760493292; x=1761098092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=26KQWOidOOOMncfnnCBb0/0PyMIloM67l5dPnBfFpNI=;
-        b=czvnqr0N+eerJQJje/D9zgReXoCqNulL2VXNWGCfXQVudLbXRhpBBF7YmuXQPPZsX/
-         gwqPz+dRamW8b0IrM7qXvag9sTtTB2Kinrl5LVOlkK0Pd410p1o083PYQyoRp7Hyik5Y
-         6IzUg42K36rOajl5Mo72GBm0excCb2CflRNcpQVCAxGzfeId4zFPyKW9uJG7w5ktjiEl
-         UTBQyVVaNNzheeSZe7o7Z+7c5JNRTT8cT0FEptwWGE/WsANYHPdXXxbuy9IM7NAMw6cX
-         Oy8MR0Snt33xXmbduFw6CcYDhWw5eO2VPXkGnZL0zTdrkDrv6hUWxeXQsmLhBf3RDocf
-         bfrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760493292; x=1761098092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=26KQWOidOOOMncfnnCBb0/0PyMIloM67l5dPnBfFpNI=;
-        b=OYu71plkNJGLaq5ejpjBgh0EaSDHMbnBNYqV6ZkmtFZeOWQi1BC7e6rXKKsb4kZ3zW
-         0MpK7hA/ISMkDBpfbvZyjtJ5HtlHpe0VvVGgnbcBf93k7gtjYWShKawFhWZRq5t7cxiG
-         VeWO1IWBxy/CPhtafIb7NzG2gBc+IE2IO5EHC9Ewas9IN3qtghu40lT+h7zfWB9rCYHp
-         DvolZI6tEvPowQA22krfYKSowvFHDdIdfcS59w8bcTg/MBkbwgex1RcrYSrHhry/wDr5
-         l1jabLI4atHAyVuCg8oss1hjRAAr5Sir98dT5hVIN40RC5uFzS0CP3JMu76RZ6JjKBFd
-         2QNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWI0bdxC8K4cFVPqu0eTE49xEVeHXJz5E1PYaUzQxSl2t9bz1H1KZexm1e1kiNUcwj5qqxlikU0hfVpA8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfP+pDy6iXp5KlDAbjwsx600akqPfL2dJdIvik/hKyk9XySpNC
-	mgt149ae3AWff3WzZUjAJ1ZR9HrdWykb5WlmdqDyaeY6mlFHHrX3fGvWnzcWvDoA8unDlx3eOd1
-	qlAWax/RYG5klkPpRkRRgbDKw71mLfTc=
-X-Gm-Gg: ASbGncuyosWq50CsC8+bUhzoDBFDiApo7htruDLms5sXgf/973P/cs9u4aSsdVncUE5
-	cNeLjsDt5Jj4z1NxFUjHRePldaOTO0JO4OvtA/EZt2dZvUyDtwmQHNtIEHoXvdK+J7hQBsHMXA0
-	jb5ov4DywTdcIwhZwxA0qu1dNrn3rVDLFHw0/MraBVmvSz8q/3OfFd30QKC3Yq69DXcZz2R+9GU
-	j0e0880gJSGfv3M1LVL2zMSI4U3rV0sYsfKQ3ASC6cA51vdGWcem3oH7h3aaFrAAKy+M7T19JsO
-	gX3R
-X-Google-Smtp-Source: AGHT+IFwtktUuLWBY0+rVfzsz1di7iWK0c6AtHOqKHIJNThUvRz/7fvIWwgTANA7fSwebNkxx9UvlZXTBs5LRF3356I=
-X-Received: by 2002:a05:600c:529a:b0:46e:4912:d02a with SMTP id
- 5b1f17b1804b1-46fa9aef4cbmr167355365e9.23.1760493291529; Tue, 14 Oct 2025
- 18:54:51 -0700 (PDT)
+	s=arc-20240116; t=1760493443; c=relaxed/simple;
+	bh=/zC2WZ0f+zEXcM6rYZXPDJMMSq/9n/5kb+d0paxVClg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AMBUiA+xv4BBLm9mpnQ2IeJhqD9sWRTaZE+hXqd5U8D9XKLkpnvRcIn3K8sQ8O6j/e9r6cIlOKMN0P/JPISdIKxPwOW+jzJgZV9DftQSMuEnYR4sSRtSQLF9yHPKXdVljQ5HD3MGYFvq+0CKIJAZTWrGVKCR5wP+RqvdT1JBFVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.3.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Florian Westphal <fw@strlen.de>
+CC: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik
+	<kadlec@netfilter.org>, Phil Sutter <phil@nwl.cc>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, "netfilter-devel@vger.kernel.org"
+	<netfilter-devel@vger.kernel.org>, "coreteam@netfilter.org"
+	<coreteam@netfilter.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [????] Re: [PATCH net-next] netfilter: conntrack: Reduce
+ cond_resched frequency in gc_worker
+Thread-Topic: [????] Re: [PATCH net-next] netfilter: conntrack: Reduce
+ cond_resched frequency in gc_worker
+Thread-Index: AQHcPQDVgdtchoaPFky/o8HNXziejLTBFqYAgAFcacA=
+Date: Wed, 15 Oct 2025 01:56:35 +0000
+Message-ID: <13de94827815469193e10d6fb0c0d45b@baidu.com>
+References: <20251014115103.2678-1-lirongqing@baidu.com>
+ <aO5K4mICGHVNlkHJ@strlen.de>
+In-Reply-To: <aO5K4mICGHVNlkHJ@strlen.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013131537.1927035-1-dolinux.peng@gmail.com>
- <CAEf4BzbABZPNJL6_rtpEhMmHFdO5pNbFTGzL7sXudqb5qkmjpg@mail.gmail.com>
- <CAADnVQJN7TA-HNSOV3LLEtHTHTNeqWyBWb+-Gwnj0+MLeF73TQ@mail.gmail.com>
- <CAEf4BzaZ=UC9Hx_8gUPmJm-TuYOouK7M9i=5nTxA_3+=H5nEiQ@mail.gmail.com>
- <CAADnVQLC22-RQmjH3F+m3bQKcbEH_i_ukRULnu_dWvtN+2=E-Q@mail.gmail.com>
- <CAErzpmtCxPvWU03fn1+1abeCXf8KfGA+=O+7ZkMpQd-RtpM6UA@mail.gmail.com>
- <CAADnVQ+2JSxb7Uca4hOm7UQjfP48RDTXf=g1a4syLpRjWRx9qg@mail.gmail.com> <CAErzpmu0Zjo0+_r-iBWoAOUiqbC9=sJmJDtLtAANVRU9P-pytg@mail.gmail.com>
-In-Reply-To: <CAErzpmu0Zjo0+_r-iBWoAOUiqbC9=sJmJDtLtAANVRU9P-pytg@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 14 Oct 2025 18:54:40 -0700
-X-Gm-Features: AS18NWCKhuwcHSlUElwUIAzX8T7zdY15gvsdXmPJO09MLBADQKHWSXQwuUBXyho
-Message-ID: <CAADnVQLr0iSzV24Cyis0pconxyhZJKAuw-YQVoahxy-AvdNTvQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] btf: Sort BTF types by name and kind to optimize
- btf_find_by_name_kind lookup
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-FEAS-Client-IP: 172.31.50.46
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Mon, Oct 13, 2025 at 9:53=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> I=E2=80=99d like to suggest a dual-mechanism approach:
-> 1. If BTF is generated by a newer pahole (with pre-sorting support), the
->     kernel would use the pre-sorted data directly.
-> 2. For BTF from older pahole versions, the kernel would handle sorting
->     at load time or later.
+> > The current implementation calls cond_resched() in every iteration of
+> > the garbage collection loop. This creates some overhead when
+> > processing large conntrack tables with billions of entries, as each
+> > cond_resched() invocation involves scheduler operations.
+> >
+> > To reduce this overhead, implement a time-based throttling mechanism
+> > that calls cond_resched() at most once per millisecond. This maintains
+> > system responsiveness while minimizing scheduler contention.
+> >
+> > gc_worker() with hashsize=3D10000 shows measurable improvement:
+> >
+> > Before: 7114.274us
+> > After:  5993.518us (15.8% reduction)
+>=20
+> I dislike this, I have never seen this pattern.
+>=20
 
-The problem with 2 is extra memory consumption for narrow
-use case. The "time cat trace" example shows that search
-is in critical path, but I suspect ftrace can do it differently.
-I don't know why it's doing the search so much.
-Everyelse in bpf we don't call it that often.
-So optimizing the search is nice, but not at the expense
-of so much extra memory.
-Hence I don't think 2 is worth doing.
+This patch is similar as=20
 
-> Regarding the pahole changes: this is now my highest priority. I=E2=80=99=
-ve
-> already incorporated it into my development plan and will begin
-> working on the patches shortly.
+commit 271557de7cbfdecb08e89ae1ca74647ceb57224f
+    xfs: reduce the rate of cond_resched calls inside scrub
 
-let's land pahole changes first.
+> Whole point of cond_resched() is to let scheduler decide.
+>=20
+> Maybe it would be better to move gc_worker off to its own work queue
+> (create_workqueue()) instead of reusing system wq so one can tune the
+> priority instead?
+
+I am fine to move gc_worker to its own work queue
+
+Thanks
+
+-Li
 
