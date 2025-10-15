@@ -1,632 +1,229 @@
-Return-Path: <linux-kernel+bounces-854826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C916BDF7BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51818BDF7C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD21B4F98CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9B619C7DD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E9335BC4;
-	Wed, 15 Oct 2025 15:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D67030BF67;
+	Wed, 15 Oct 2025 15:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUwkJJQN"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5Q1aqJgQ"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013004.outbound.protection.outlook.com [40.93.201.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8CB335BA6
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760543447; cv=none; b=PrZ8iMqYvrG3j6xoJCNcfxPdaD428XnQApwAIPIvaXfO4ldCj0zJaEAXCuHcmWoTEmOv22uJp4H6UKdLPl53ov58Zzw1nadxovQJ3X+HzoD6P/P6qCwLFmimEgf7naLZauyVe0ar+4j40Al7mUm3IhkE5mJSja5qDun2woCHeMQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760543447; c=relaxed/simple;
-	bh=AFvzN7HlbZeeG4MK20M8eAuW4Da20TRs/i+EEp1sbAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tcmF6MPWUFmoL3O0Cr5GvBS37kVbD1pr2YEvn9b4EObtinh7GeeA6U/z2zUKITAjFke/tqyTlJ0m70Y/g/rAi/PQKG+Py37X/hJKohymAd8T6hNdXrqgfPOzLwauzHBXU/fsC+kAzrSQJ5EtFFuTHB9oQEP6Na40YY1pJR7cJG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUwkJJQN; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-91fbba9a8f5so576342739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760543444; x=1761148244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gAaWNfCL4OgyY333y3vIsUzib4Fjn1LdXJW4mbycsiY=;
-        b=TUwkJJQNq7N/IA44vyH0702DLydlhk/bmj0WWuvr8oF/6ylEvPvatfXU+r1t3tw3fz
-         2V30tzCERUm4VYq95uNnjikCcmn0hXEF0ftmy0xJq8vmW0xiYc3Juo79g+d7JEzAEcBX
-         D8BMOZPEOzV00Bv5gS0JRiVUWdRo/K6FkMMfen32WAzKcCmUkg4l8yjjEDLtHIsUUcYX
-         0judRGE94Ktfiz5CThUAxx/oEqBWAjgzqVnMQPwsSPbwk8djNhWHBFUvUrYYCZx8HqT6
-         dz3a6VuQ9e988IshOJnt6McLEefZw/Heoh/ulmXRkm2YXLd0Gv39SmLIDVVet7llbtCf
-         79yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760543444; x=1761148244;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gAaWNfCL4OgyY333y3vIsUzib4Fjn1LdXJW4mbycsiY=;
-        b=c4ZPxBAd1Gp2SbpjWZ8JKmrX2WSAnIstQJCgyndkAjrOfDAi7Ov152kK85tqEIofbc
-         r1xGB7UTtZASFC6OHbPgENnjELZ0nqeGLMC7ZJS+/ASLenIETHkaosfsDKzVonHB9+A7
-         DyqSSiTXnF5CViob8jfwNbGGACSx0fHU4Bjdmrs9t7H4aTOj5ihXJOC26bR69IbebcFk
-         JDKNTHt5R3IMj3+2XZPFlZULtFpBv8JqSn+fqC1yFd8TWnCEeBtJJ+2IKOz/WgVGbvjr
-         yqKiNnKLiZd4ahkBlplDT8gKxOukW4by/ZiXfnCjEPGVP/HAeYISX5EMuf+MGVIVwxKV
-         +/uA==
-X-Gm-Message-State: AOJu0Yws5cpmviLgRCzKUa2BAINvtXEGM2m/9xYmWPn00ZEs5tDvV6E6
-	u4JP5u+i6xJ3pKNUsJ1tvy8n8Pn3JOF0cN+yn4bgLICTA7emjM4ugTuj4SZCjUxm
-X-Gm-Gg: ASbGncvgINSZpuR5TpML1sYLHKDvqrUBi//+FNFPcUe5rxmShiwa9b373JzsNs4WYtL
-	ARKEkJKfNT7u3i+8Xt/kt+d9ciqlOZT0Dsm54rLbR1JIpSO0QU+zOI/o9JvNfUKjEe15JuN8UqI
-	m6O9zpAcdqevDbBA16vQ1LsFw2mSQjLIe5pidlIcoGOL5aK8TzCzmldDu/TZDJp/zFWzQVzRk1w
-	DPAR/GxRyxI3UbLFqA99l8CsqfIFT2M9R9jcaLjmySr1KLCHiFOmayGbW3qU5ibMrTC6FiYdSQg
-	pyRH77Y/xm91eq1aCOPxcZInx5UIXSKyTAc68XzZGHcr31teC/tU+qr7ARh4F/8fw8B6VByKE48
-	rZw0yvCs4H556Kh8hvmbjhmEsJxaiRmQcL69ASRZvsUroYO6ltlB+78NuxSQVcaEcd7IL96Or2g
-	1mGYF0QCCuIrFca6Xbc9mC5sZEirWRc/TgSGxSrQ9y
-X-Google-Smtp-Source: AGHT+IHP3CT9WZG/L+PPEYcjOCgz3+jtqRpYk6RqYxbJlTwAAy7gFRTrHaRL1k6ti9yjWOxziFAZjg==
-X-Received: by 2002:a05:6602:6cc9:b0:928:6b27:1d75 with SMTP id ca18e2360f4ac-93bd19b0dacmr4074749739f.19.1760543443663;
-        Wed, 15 Oct 2025 08:50:43 -0700 (PDT)
-Received: from newton-fedora-MZ01GC9H (c-68-45-22-229.hsd1.in.comcast.net. [68.45.22.229])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e25a67790sm617361639f.21.2025.10.15.08.50.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 08:50:42 -0700 (PDT)
-From: Ryan Newton <rrnewton@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: sched-ext@lists.linux.dev,
-	tj@kernel.org,
-	arighi@nvidia.com,
-	christian.loehle@arm.com,
-	rrnewton@gmail.com,
-	newton@meta.com
-Subject: [PATCH v5 2/2] sched_ext: Add a selftest for scx_bpf_dsq_peek
-Date: Wed, 15 Oct 2025 11:50:36 -0400
-Message-ID: <20251015155036.420486-3-rrnewton@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251015155036.420486-1-rrnewton@gmail.com>
-References: <20251015155036.420486-1-rrnewton@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C713093A1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760543467; cv=fail; b=uHlz92HFBq/jVy0eAzGX+0MUFw/1X9C+3dmtI07mgCvcGgBVFjajwgb08HjsudNxV3s49wAknjnIF88/H4tkGQb7vBeAIaz1IgnNWiiceLLP2PFL/zY3mHCq7HNfIur1gzE+xn2qmCHAU06I3cHIV3WsbjRb1NIMY7fLXatieEE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760543467; c=relaxed/simple;
+	bh=4zcErgbSl6aDTnBiSd35FYreuih6Vw0pdTXWlYAM3jU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z4L3j6W0D+MMxI0yzw+iOh7e6CkWoJs01DiYHrTDnAUukgN7+vtjeT8dOUcAN3Po77RWJGucNg2knl/pm1cUNuCTW5OPPtnOVG9jr9tLR/JyimaHNohUE2eEylnHTOrxdAmih6/YcWR9XvVo8m0y8zqsbn/T/bTolsIcgECB3+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5Q1aqJgQ; arc=fail smtp.client-ip=40.93.201.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SRT6y2yImJC9/5pc2V5kx+XuPn5DqwxfFcDN/q1lk6HYRYxa6Rbjt8HbVVeiNkuanxhbprBDBcU05GiMfuXxAvVYBIVVa24otMAs56PVgjJBNtANhxkvr8nEuqN5LFPW1HZQ67rx+F13D+8+X+nn8sbcOz/oIamPNBndduTu9d1Qoc7RuaPtbpLnGQBhJRoYVbS7yvNwCRjzTPceVnPuhuaMbvQOrTVPNZnNs1fx7loQE9fI7JreFZRq199IwBDjQvadNLjLPR9SaBcB5ZLC4FK0y5kr/8JIAQ11C2uAti+vQyUKgdGCLk4e4MTwN7YACWaVGNZun6TGZNzReBPJDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4zcErgbSl6aDTnBiSd35FYreuih6Vw0pdTXWlYAM3jU=;
+ b=kUP1yJl28e9pnm9tFmvKQfzAaukokm1kbTlYnmsSYm2PrBA3hxow8aS5HfHY8zShm8jC7+z/YQI7SRr4lXF1SH75RF+/xq3UgOwlsuKn+qzdTt0uoa0JzuSa4iorCSsBm9HiPg1qb9XN3wRiBgce999+QcHKJXnZrj6eq/lMBDGcRlFtOvXWXFlUX1BkpyhOAw50E3uNNQdqzYDN9I7iou3u+9Y2oMsTdZbmzn6RNvRwV3/NYpnSj4sC+vm+g+PQun7N1mgySX21oLOWax3nZDrflgiP8w+M1Beh1evXMvXJKvcZSxplWCX6MuiZ3zSEaQ47g5R7zSapQJiPjVOdaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4zcErgbSl6aDTnBiSd35FYreuih6Vw0pdTXWlYAM3jU=;
+ b=5Q1aqJgQAdUo7PXdmg2Ab2ttVIHXYQocYzkPooKuoIQJ7zp0pY+SDYrJ75HtOzMmzJLfUcZ2PLRGjcK6TBW3QylGLXeMkEJhXjM0Fa6cVhZzUJ0CWHWKRRSdDxtXQl1e0YthTfB6440cYQ5+oHALtLCRKEVUilSd5zf8tOxjkp8=
+Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
+ by DM3PR12MB9435.namprd12.prod.outlook.com (2603:10b6:0:40::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.12; Wed, 15 Oct 2025 15:51:01 +0000
+Received: from LV3PR12MB9265.namprd12.prod.outlook.com
+ ([fe80::2202:1a7e:2dd:ad1d]) by LV3PR12MB9265.namprd12.prod.outlook.com
+ ([fe80::2202:1a7e:2dd:ad1d%4]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
+ 15:51:01 +0000
+From: "Kaplan, David" <David.Kaplan@amd.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+CC: Aaron Rainbolt <arraybolt3@gmail.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter Zijlstra
+	<peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo
+ Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Graf <graf@amazon.com>, Boris Ostrovsky
+	<boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH 00/56] Dynamic mitigations
+Thread-Topic: [RFC PATCH 00/56] Dynamic mitigations
+Thread-Index: AQHcPYmqb7qd0BZyXkK7jo/Wse1167TDOpgwgAAfIoCAAACCsA==
+Date: Wed, 15 Oct 2025 15:51:01 +0000
+Message-ID:
+ <LV3PR12MB9265837FA51DFD9D2F11474D94E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251014231039.6d23008f@kf-m2g5>
+ <LV3PR12MB926564CC5E88E16CE373185694E8A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <cnwawavsdedrp6yyylt2wqiglekwsgrofimkvh32fknj676xsh@4vyzzoky5hzd>
+In-Reply-To: <cnwawavsdedrp6yyylt2wqiglekwsgrofimkvh32fknj676xsh@4vyzzoky5hzd>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-10-15T15:44:56.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|DM3PR12MB9435:EE_
+x-ms-office365-filtering-correlation-id: 9f47f9e3-45f6-4d48-68d7-08de0c02a3df
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?RGpOR1paMnVnZlM2ckN6UFVWTnEzcE15LzJheHFYdGdjS2FDNjVhbjZFQ3hP?=
+ =?utf-8?B?K3pZVis4Y2xodHlkaGlDN25xYVdrb293YjdQdnRqZmZKWEN5RGJEN3lYL2dD?=
+ =?utf-8?B?V3hTbHB0N3hoNGZyRHY0TW9uTTJ3ZUNFY2Y3SktvZFJiS1BmNEtxT1FiTjNq?=
+ =?utf-8?B?dGlsazEwa2wyVzdzci81bHVNMXhzVTZBM1AyYjY0TlppVytZSnBxdFovamt6?=
+ =?utf-8?B?WFQ2SVlyNi91K3NnRTJ2anY0YytEdVh5Rk9pVjR2dTV5RHNYUloxL20xNEF6?=
+ =?utf-8?B?WDkxTFJvK29vQUE5Z1hVY0FSN1NkcElIc1VNMmN5VzRYSldJQW1EN3lYMUV4?=
+ =?utf-8?B?VU5IRjU1MVN4b0ZXblhWRlBJR2hhY09KT042L0o4SmRESExzMWVYZGE4ak0w?=
+ =?utf-8?B?RXYvS2hQdllvNmR4eGlRYU11eGRwbk8wd1hSNmlOVmF6dkZ0cyt5VVVMa1Zo?=
+ =?utf-8?B?ZkJVekFyaDUwaDArK20rbHdFd0o3eFdoM3QzQ0lyYTBaZDZVM3MramwyWGFu?=
+ =?utf-8?B?S05FdzR6c2M3SmIzSWx6S3hpVGFMMElVdmFYUWRpVm9yZ3pkbFV5Rm02bzRm?=
+ =?utf-8?B?TEtxRXlsVDErVU5rK0o0bjRKZzVGK3VRMmJqeFVTS1JKdFB4NkdEMVZGTldj?=
+ =?utf-8?B?NVZBbk90bmRaaEtFNUU2UGp5ZjM4cEZXeUx4aWp4VklwRmcyNVQvUG1FK1Nz?=
+ =?utf-8?B?KzliOGlkWFpIWDExb29EYlVla3BvZC93ZlVvS2tVOG80Y2NUUW1PbHVJM3Zt?=
+ =?utf-8?B?MGJvWW41ZWVkMTl6NlRhWUtSam5XVXZqbm1DL3R4bjBOU2l1NXJzTDJqbDJD?=
+ =?utf-8?B?aU9rMkpJdDFwdnJjRWxKbXAra1I4S29KV2dHU21RZktPVzl0bnNiRjB2YVkw?=
+ =?utf-8?B?N3FZeDQ4WDRjRjdOUVBKSHp0bTlyMVU4VzRPOENBK0pUNmlzUGlyb2krcXF0?=
+ =?utf-8?B?Skg5c0Y0WUZpWjBKZEZxdXNoUHlVRlNOZ1NaUGRMQUtPeThuVUEvREJaVGJT?=
+ =?utf-8?B?RjNOV1F5WjZHMmpDRG0xZlpKa2xxcmN2RmZmMnVNZEliMStaaWdYYmpVMU9i?=
+ =?utf-8?B?ZmYxKzRWdkcyZVhHR2dFbGxyTGNlWkRzcExRVTFVazF4UkRMRnlIUHlRbjRr?=
+ =?utf-8?B?OTlrRno3RjFvNHBBdG56dWxHaE5IRzlkVVJnTDlvdXpvSkdxaTJadGhlWnJG?=
+ =?utf-8?B?aEZnSG84N1pmb2tKUWlmWTZ5bHdtWkxtVHRBMzZQY0QvZDVIa0wzVTI3ZitG?=
+ =?utf-8?B?Y0dHclU2cTA3cXZmVUMrOXBsWXBCZU0xa3RuT2pybUc2RzdSOWtvZzNLMDM0?=
+ =?utf-8?B?NkdYZm85c0JpV0Z1ejhiYVgwUGVXWGdMY0dsOVZjZEV1OU1jNkx0MHo2WUw0?=
+ =?utf-8?B?ak5udEd4YkdISlRrQTdSd1hmRmttSkpCUUlxMTRRcC9tQzNkbnZyMFp2dUZh?=
+ =?utf-8?B?NzIxRFU4YkdBNjVWTloyYXcyaGQ3N0Zabmk0U0haRkN4Qk9FTHp2eGJZVkNq?=
+ =?utf-8?B?ZUdJRjVhcDRtZTlJUEFLYXVETWF5SXpHOWlaRVQwVlNtTElJcHovb3UvL2U2?=
+ =?utf-8?B?OW1rVWRSNzRJeVNIZHE2SUxXVHRQaGM3alpFR1FkR0F1SjFhYVpLWDBEZXVu?=
+ =?utf-8?B?R1hZWnNjZ0thdEJpY2hBY2JOQUE3ZHR6WWVXcDM4U3llNjZmb0w3K3hCVi9p?=
+ =?utf-8?B?TUxkQUt6L2VCVVZsL3hZVzI0dE9KQWk5SGZEelVlRXVXR1FpeWlMYTBOdVpp?=
+ =?utf-8?B?UDBrSGp2YW54QnhiSGh3VGEvNUd3MGozRFRpdUlGZ2NsNUpiaHVUdFYzQUFn?=
+ =?utf-8?B?M3FLcVFGaXBUSGVObVRXbHlIZHUrUWFNK1EyVzUyK1RWRjhYb00xMzJTbmdZ?=
+ =?utf-8?B?amFmbnFBdUg4dDdGVjNBTk5Benk3V0tPd1ZBR29uaE1wbzBFUFY4ZE43VG1p?=
+ =?utf-8?B?WXA1K2p6dFArQ0hXSCt1QTA4ZnhKMW44OTZzaG81MDVZR2tQMWFXWnlaQkV5?=
+ =?utf-8?B?VE5uN1pYdjdyS2M0aWRnb3NLTVhUUTdJS3A5QXNqbVk5dkZKTjhHTGk3cnd4?=
+ =?utf-8?Q?jUf6i1?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?enMyK1owNzB4Sm85QloxUmYrZWU4alJnRDRXZ1MvYUsrZThrR1BSQ3A5SjNo?=
+ =?utf-8?B?WGdaTnBxMDdtMHhZenh6TDVKZHFpZ0JuRGRWME9RQzNqUmdUWjNOSlNGa3pT?=
+ =?utf-8?B?NTBLZjZFd3NobXNVUjdERVhFZzJ5c0x5U2xXQjdmbjlPUzFQV090ampSQ21C?=
+ =?utf-8?B?WEltK0xBYUtQdkIra20rU3puQ1FFankyYWZ1QjFlclNGZjJxUzUwZjlDQXVN?=
+ =?utf-8?B?RU5OMjg0bEVoakJnNklBZHk2aGZ1VmdSUURycVhVVCtuZis4VVU1aDJsVENw?=
+ =?utf-8?B?Z3NlazZMbCtQMGhKbWNOQkxHM0p4a2E0dFVuOHk1c09XcXdxdmFJNVhJWlpt?=
+ =?utf-8?B?bDdIVTFNNWc2djh4aXZ4M2lxN09TZ0xBTzFQOUp5cCsyK3FJczN4VnAxVlZS?=
+ =?utf-8?B?Q3hpbkNOZkxiS3NseHdtYzNLVVdIMzJabTh0YnEwMUdmQ2FFY2VIcENIRFVj?=
+ =?utf-8?B?Q0pwMWdXRzJsUUgydUxWc0hxeEJxK29pMzNRNElEekpDMU83cXhPU2FpMUdn?=
+ =?utf-8?B?Szh4VTQ3WmJRNllGc1VTWm4vaGYzc3ZzMVdUU1NDeUFWK3UrRXVlTFhMU0Y2?=
+ =?utf-8?B?NVhCZUFVNDV2QVE3dXl1VEt5UmMwUU5DQVJjOE92WE5pZ3ZZTkRuYmxVUTZX?=
+ =?utf-8?B?QjI5ZDQvYWtpR1JpNnRCK1M4YkJGeUNHbDNEeS9ubTJoZDJ4TXVjb3lnajU3?=
+ =?utf-8?B?QVhBUGtXQlpmTStNUG9IbW9CYmxkSURqa0VCT0gvOWQyK0tONlQ5cWg1VGRo?=
+ =?utf-8?B?WHVWMHp1Z2t3UGF6Q1JIL0wrQm5WazJUY2pQc1I1S29YNlR2alpEcG13bW14?=
+ =?utf-8?B?cXdySzVucGFpeFg2T0U2bTFuQWhpcG16NUlsandVajhDQXFvSmpQRDhHTmtC?=
+ =?utf-8?B?R3g3SWtMMS93UWVUcCt3azloM1hoNGxVdXd3eWt0WENQanJFclRMbStqNVhi?=
+ =?utf-8?B?NlZIY1JSbUo0T3ZHSU5NaXltbHJVRS92VkNDcVYxV04vZnJrZC9DUDhaQThH?=
+ =?utf-8?B?VmVUcVJHcE9MNFBQYWQzbDUvVlJsUEVZMmxaa3JqbU9lUVR6RTc2N3dRdHM5?=
+ =?utf-8?B?OUtrZ09aZjk2YVJJaEN5WERpZ1RHaDdNVWJtZHZVaHZlM042Q2xtOWdGdTVr?=
+ =?utf-8?B?d0djMmZ6bHdQVWViTjd1Q0kyVHUyeitvSXZtb1RpRTZnVWZjN1lvc3NVejdr?=
+ =?utf-8?B?angzSjczUG5vaG8xVnp6dzlrUUh4cGI4QWdzYVdyWjdOS1pkZ2tHTnBFdy80?=
+ =?utf-8?B?SjYvNmxLeDVHS1NDS2VaTWUrL0FwYTFzaUQrcGZMd1cyUkw5VW1idVYyQlV6?=
+ =?utf-8?B?RW5LbGJZRC8rUm9salFsbElmS0pUVllNZ0w3aVltbk1ZUEplUHdEaW04Nkp0?=
+ =?utf-8?B?RTloYloxZ3lWMDlBUWVibjhaSVZHN3RJNkpvM1FNYTZUQ0N4cDlVWjZnakF4?=
+ =?utf-8?B?a3pKTUpzYjRuZG1iNEZzMEhYL1NKUzVjOFJwWGM4dnFlM3RGaDBzTDdONGdj?=
+ =?utf-8?B?M2JUN3RQMjVURDFGa09WY2tzN01UWC9aZWFoRi85cC84dWpEUFpLa0ZXRzRB?=
+ =?utf-8?B?cTJIMld3WXloL0MzaTQ5N2ZUWTR6N0FhOVB2NkYxUWVzaEZDSXpNdXhpWDJT?=
+ =?utf-8?B?TnBwQTBzNEZsV0k2OXNFSFR4cUNmVkFPUGlzQWU4TWtWdUpLZUdOcnA4WG9U?=
+ =?utf-8?B?bEtCRExiNmF0VHFUMkl3Rkt4Mlo2Y1NOMVpFUFYraTJ3dmtlUmQyUHBCWWNr?=
+ =?utf-8?B?T0FlajZzaE42NkFwc1VLbENIeUtIdjh6dSs1dGVNNmsra1dWVklDNEVJRE43?=
+ =?utf-8?B?aUJWRWZXT040aXBOemQ5OTdqV05vQkdQaGV2T01YM0EzQkVMYWNFcm5WKzF2?=
+ =?utf-8?B?ZXRwdE5qSW1OTGpTQlA1dnlFZDZvMDYwOFBrTEsxSmNDMEoxK2NHUmhGNXhN?=
+ =?utf-8?B?dVcrZDhjOTI0U0xZM1Vwb3JSek00NTNoMmF2VnJyTUxIa2lWZGNPMmdIcVhl?=
+ =?utf-8?B?Y0lhdUx5aGZDSzBXRGRKc1ByVHcvNmJZMEhmS2wrd254RUhjVG1QN1RpRk5l?=
+ =?utf-8?B?Ny9DdVEwZmNud2NhV0RqUHI2VW9LQ0hzcGxBbFZsNEE3ZnVEZFZGYnE3Sm9t?=
+ =?utf-8?Q?Ja7s=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f47f9e3-45f6-4d48-68d7-08de0c02a3df
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2025 15:51:01.1655
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TmKYqKmvs0asbyoSm/Ye5PcJJ+1iJf/liAR0xysUMQIyO4ND7/gXkY7bd+p6QW7k
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9435
 
-From: Ryan Newton <newton@meta.com>
-
-This commit adds two tests. The first is the most basic unit test:
-make sure an empty queue peeks as empty, and when we put one element
-in the queue, make sure peek returns that element.
-
-However, even this simple test is a little complicated by the different
-behavior of scx_bpf_dsq_insert in different calling contexts:
- - insert is for direct dispatch in enqueue
- - insert is delayed when called from select_cpu
-
-In this case we split the insert and the peek that verifies the
-result between enqueue/dispatch.
-
-Note: An alternative would be to call `scx_bpf_dsq_move_to_local` on an
-empty queue, which in turn calls `flush_dispatch_buf`, in order to flush
-the buffered insert. Unfortunately, this is not viable within the
-enqueue path, as it attempts a voluntary context switch within an RCU
-read-side critical section.
-
-The second test is a stress test that performs many peeks on all DSQs
-and records the observed tasks.
-
-Signed-off-by: Ryan Newton <newton@meta.com>
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
----
- tools/testing/selftests/sched_ext/Makefile    |   1 +
- .../selftests/sched_ext/peek_dsq.bpf.c        | 251 ++++++++++++++++++
- tools/testing/selftests/sched_ext/peek_dsq.c  | 224 ++++++++++++++++
- 3 files changed, 476 insertions(+)
- create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.bpf.c
- create mode 100644 tools/testing/selftests/sched_ext/peek_dsq.c
-
-diff --git a/tools/testing/selftests/sched_ext/Makefile b/tools/testing/selftests/sched_ext/Makefile
-index 9d9d6b4c38b0..5fe45f9c5f8f 100644
---- a/tools/testing/selftests/sched_ext/Makefile
-+++ b/tools/testing/selftests/sched_ext/Makefile
-@@ -174,6 +174,7 @@ auto-test-targets :=			\
- 	minimal				\
- 	numa				\
- 	allowed_cpus			\
-+	peek_dsq			\
- 	prog_run			\
- 	reload_loop			\
- 	select_cpu_dfl			\
-diff --git a/tools/testing/selftests/sched_ext/peek_dsq.bpf.c b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-new file mode 100644
-index 000000000000..a3faf5bb49d6
---- /dev/null
-+++ b/tools/testing/selftests/sched_ext/peek_dsq.bpf.c
-@@ -0,0 +1,251 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * A BPF program for testing DSQ operations and peek in particular.
-+ *
-+ * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
-+ * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
-+ */
-+
-+#include <scx/common.bpf.h>
-+#include <scx/compat.bpf.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+UEI_DEFINE(uei); /* Error handling */
-+
-+#define MAX_SAMPLES 100
-+#define MAX_CPUS 512
-+#define DSQ_POOL_SIZE 8
-+int max_samples = MAX_SAMPLES;
-+int max_cpus = MAX_CPUS;
-+int dsq_pool_size = DSQ_POOL_SIZE;
-+
-+/* Global variables to store test results */
-+int dsq_peek_result1 = -1;
-+long dsq_inserted_pid = -1;
-+int insert_test_cpu = -1; /* Set to the cpu that performs the test */
-+long dsq_peek_result2 = -1;
-+long dsq_peek_result2_pid = -1;
-+long dsq_peek_result2_expected = -1;
-+int test_dsq_id = 1234; /* Use a simple ID like create_dsq example */
-+int real_dsq_id = 1235; /* DSQ for normal operation */
-+int enqueue_count = -1;
-+int dispatch_count = -1;
-+bool debug_ksym_exists;
-+
-+/* DSQ pool for stress testing */
-+int dsq_pool_base_id = 2000;
-+int phase1_complete = -1;
-+long total_peek_attempts = -1;
-+long successful_peeks = -1;
-+
-+/* BPF map for sharing peek results with userspace */
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, MAX_SAMPLES);
-+	__type(key, u32);
-+	__type(value, long);
-+} peek_results SEC(".maps");
-+
-+static int get_random_dsq_id(void)
-+{
-+	u64 time = bpf_ktime_get_ns();
-+
-+	return dsq_pool_base_id + (time % DSQ_POOL_SIZE);
-+}
-+
-+static void record_peek_result(long pid)
-+{
-+	u32 slot_key;
-+	long *slot_pid_ptr;
-+	int ix;
-+
-+	if (pid <= 0)
-+		return;
-+
-+	/* Find an empty slot or one with the same PID */
-+	bpf_for(ix, 0, 10) {
-+		slot_key = (pid + ix) % MAX_SAMPLES;
-+		slot_pid_ptr = bpf_map_lookup_elem(&peek_results, &slot_key);
-+		if (!slot_pid_ptr)
-+			continue;
-+
-+		if (*slot_pid_ptr == -1 || *slot_pid_ptr == pid) {
-+			*slot_pid_ptr = pid;
-+			break;
-+		}
-+	}
-+}
-+
-+/* Scan all DSQs in the pool and try to move a task to local */
-+static int scan_dsq_pool(void)
-+{
-+	struct task_struct *task;
-+	int moved = 0;
-+	int i;
-+
-+	bpf_for(i, 0, DSQ_POOL_SIZE) {
-+		int dsq_id = dsq_pool_base_id + i;
-+
-+		total_peek_attempts++;
-+
-+		task = __COMPAT_scx_bpf_dsq_peek(dsq_id);
-+		if (task) {
-+			successful_peeks++;
-+			record_peek_result(task->pid);
-+
-+			/* Try to move this task to local */
-+			if (!moved && scx_bpf_dsq_move_to_local(dsq_id) == 0) {
-+				moved = 1;
-+				break;
-+			}
-+		}
-+	}
-+	return moved;
-+}
-+
-+/* Struct_ops scheduler for testing DSQ peek operations */
-+void BPF_STRUCT_OPS(peek_dsq_enqueue, struct task_struct *p, u64 enq_flags)
-+{
-+	struct task_struct *peek_result;
-+	int last_insert_test_cpu, cpu;
-+
-+	enqueue_count++;
-+	cpu = bpf_get_smp_processor_id();
-+	last_insert_test_cpu = __sync_val_compare_and_swap(&insert_test_cpu, -1, cpu);
-+
-+	/* Phase 1: Simple insert-then-peek test (only on first task) */
-+	if (last_insert_test_cpu == -1) {
-+		bpf_printk("peek_dsq_enqueue beginning phase 1 peek test on cpu %d", cpu);
-+
-+		/* Test 1: Peek empty DSQ - should return NULL */
-+		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-+		dsq_peek_result1 = (long)peek_result; /* Should be 0 (NULL) */
-+
-+		/* Test 2: Insert task into test DSQ for testing in dispatch callback */
-+		dsq_inserted_pid = p->pid;
-+		scx_bpf_dsq_insert(p, test_dsq_id, 0, enq_flags);
-+		dsq_peek_result2_expected = (long)p; /* Expected the task we just inserted */
-+	} else if (!phase1_complete) {
-+		/* Still in phase 1, use real DSQ */
-+		scx_bpf_dsq_insert(p, real_dsq_id, 0, enq_flags);
-+	} else {
-+		/* Phase 2: Random DSQ insertion for stress testing */
-+		int random_dsq_id = get_random_dsq_id();
-+
-+		scx_bpf_dsq_insert(p, random_dsq_id, 0, enq_flags);
-+	}
-+}
-+
-+void BPF_STRUCT_OPS(peek_dsq_dispatch, s32 cpu, struct task_struct *prev)
-+{
-+	dispatch_count++;
-+
-+	/* Phase 1: Complete the simple peek test if we inserted a task but
-+	 * haven't tested peek yet
-+	 */
-+	if (insert_test_cpu == cpu && dsq_peek_result2 == -1) {
-+		struct task_struct *peek_result;
-+
-+		bpf_printk("peek_dsq_dispatch completing phase 1 peek test on cpu %d", cpu);
-+
-+		/* Test 3: Peek DSQ after insert - should return the task we inserted */
-+		peek_result = __COMPAT_scx_bpf_dsq_peek(test_dsq_id);
-+		/* Store the PID of the peeked task for comparison */
-+		dsq_peek_result2 = (long)peek_result;
-+		dsq_peek_result2_pid = peek_result ? peek_result->pid : -1;
-+
-+		/* Now consume the task since we've peeked at it */
-+		scx_bpf_dsq_move_to_local(test_dsq_id);
-+
-+		/* Mark phase 1 as complete */
-+		phase1_complete = 1;
-+		bpf_printk("Phase 1 complete, starting phase 2 stress testing");
-+	} else if (!phase1_complete) {
-+		/* Still in phase 1, use real DSQ */
-+		scx_bpf_dsq_move_to_local(real_dsq_id);
-+	} else {
-+		/* Phase 2: Scan all DSQs in the pool and try to move a task */
-+		if (!scan_dsq_pool()) {
-+			/* No tasks found in DSQ pool, fall back to real DSQ */
-+			scx_bpf_dsq_move_to_local(real_dsq_id);
-+		}
-+	}
-+}
-+
-+s32 BPF_STRUCT_OPS_SLEEPABLE(peek_dsq_init)
-+{
-+	s32 err;
-+	int i;
-+
-+	/* Always set debug values so we can see which version we're using */
-+	debug_ksym_exists = bpf_ksym_exists(scx_bpf_dsq_peek) ? 1 : 0;
-+
-+	/* Initialize state first */
-+	insert_test_cpu = -1;
-+	enqueue_count = 0;
-+	dispatch_count = 0;
-+	phase1_complete = 0;
-+	total_peek_attempts = 0;
-+	successful_peeks = 0;
-+
-+	/* Create the test and real DSQs */
-+	err = scx_bpf_create_dsq(test_dsq_id, -1);
-+	if (err) {
-+		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
-+		return err;
-+	}
-+	err = scx_bpf_create_dsq(real_dsq_id, -1);
-+	if (err) {
-+		scx_bpf_error("Failed to create DSQ %d: %d", test_dsq_id, err);
-+		return err;
-+	}
-+
-+	/* Create the DSQ pool for stress testing */
-+	bpf_for(i, 0, DSQ_POOL_SIZE) {
-+		int dsq_id = dsq_pool_base_id + i;
-+
-+		err = scx_bpf_create_dsq(dsq_id, -1);
-+		if (err) {
-+			scx_bpf_error("Failed to create DSQ pool entry %d: %d", dsq_id, err);
-+			return err;
-+		}
-+	}
-+
-+	/* Initialize the peek results map */
-+	bpf_for(i, 0, MAX_SAMPLES) {
-+		u32 key = i;
-+		long pid = -1;
-+
-+		bpf_map_update_elem(&peek_results, &key, &pid, BPF_ANY);
-+	}
-+
-+	return 0;
-+}
-+
-+void BPF_STRUCT_OPS(peek_dsq_exit, struct scx_exit_info *ei)
-+{
-+	int i;
-+
-+	/* Destroy the primary DSQs */
-+	scx_bpf_destroy_dsq(test_dsq_id);
-+	scx_bpf_destroy_dsq(real_dsq_id);
-+
-+	/* Destroy the DSQ pool */
-+	bpf_for(i, 0, DSQ_POOL_SIZE) {
-+		int dsq_id = dsq_pool_base_id + i;
-+
-+		scx_bpf_destroy_dsq(dsq_id);
-+	}
-+
-+	UEI_RECORD(uei, ei);
-+}
-+
-+SEC(".struct_ops.link")
-+struct sched_ext_ops peek_dsq_ops = {
-+	.enqueue = (void *)peek_dsq_enqueue,
-+	.dispatch = (void *)peek_dsq_dispatch,
-+	.init = (void *)peek_dsq_init,
-+	.exit = (void *)peek_dsq_exit,
-+	.name = "peek_dsq",
-+};
-diff --git a/tools/testing/selftests/sched_ext/peek_dsq.c b/tools/testing/selftests/sched_ext/peek_dsq.c
-new file mode 100644
-index 000000000000..a717384a3224
---- /dev/null
-+++ b/tools/testing/selftests/sched_ext/peek_dsq.c
-@@ -0,0 +1,224 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test for DSQ operations including create, destroy, and peek operations.
-+ *
-+ * Copyright (c) 2025 Meta Platforms, Inc. and affiliates.
-+ * Copyright (c) 2025 Ryan Newton <ryan.newton@alum.mit.edu>
-+ */
-+#include <bpf/bpf.h>
-+#include <scx/common.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <string.h>
-+#include <sched.h>
-+#include "peek_dsq.bpf.skel.h"
-+#include "scx_test.h"
-+
-+#define NUM_WORKERS 4
-+
-+static bool workload_running = true;
-+static pthread_t workload_threads[NUM_WORKERS];
-+
-+/**
-+ * Background workload thread that sleeps and wakes rapidly to exercise
-+ * the scheduler's enqueue operations and ensure DSQ operations get tested.
-+ */
-+static void *workload_thread_fn(void *arg)
-+{
-+	while (workload_running) {
-+		/* Sleep for a very short time to trigger scheduler activity */
-+		usleep(1000); /* 1ms sleep */
-+		/* Yield to ensure we go through the scheduler */
-+		sched_yield();
-+	}
-+	return NULL;
-+}
-+
-+static enum scx_test_status setup(void **ctx)
-+{
-+	struct peek_dsq *skel;
-+
-+	skel = peek_dsq__open();
-+	SCX_FAIL_IF(!skel, "Failed to open");
-+	SCX_ENUM_INIT(skel);
-+	SCX_FAIL_IF(peek_dsq__load(skel), "Failed to load skel");
-+
-+	*ctx = skel;
-+
-+	return SCX_TEST_PASS;
-+}
-+
-+static int print_observed_pids(struct bpf_map *map, int max_samples, const char *dsq_name)
-+{
-+	long count = 0;
-+
-+	printf("Observed %s DSQ peek pids:\n", dsq_name);
-+	for (int i = 0; i < max_samples; i++) {
-+		long pid;
-+		int err;
-+
-+		err = bpf_map_lookup_elem(bpf_map__fd(map), &i, &pid);
-+		if (err == 0) {
-+			if (pid == 0) {
-+				printf("  Sample %d: NULL peek\n", i);
-+			} else if (pid > 0) {
-+				printf("  Sample %d: pid %ld\n", i, pid);
-+				count++;
-+			}
-+		} else {
-+			printf("  Sample %d: error reading pid (err=%d)\n", i, err);
-+		}
-+	}
-+	printf("Observed ~%ld pids in the %s DSQ(s)\n", count, dsq_name);
-+	return count;
-+}
-+
-+static enum scx_test_status run(void *ctx)
-+{
-+	struct peek_dsq *skel = ctx;
-+	bool failed = false;
-+	int seconds = 3;
-+	int err;
-+
-+	/* Enable the scheduler to test DSQ operations */
-+	printf("Enabling scheduler to test DSQ insert operations...\n");
-+
-+	struct bpf_link *link =
-+		bpf_map__attach_struct_ops(skel->maps.peek_dsq_ops);
-+
-+	if (!link) {
-+		SCX_ERR("Failed to attach struct_ops");
-+		return SCX_TEST_FAIL;
-+	}
-+
-+	printf("Starting %d background workload threads...\n", NUM_WORKERS);
-+	workload_running = true;
-+	for (int i = 0; i < NUM_WORKERS; i++) {
-+		err = pthread_create(&workload_threads[i], NULL, workload_thread_fn, NULL);
-+		if (err) {
-+			SCX_ERR("Failed to create workload thread %d: %s", i, strerror(err));
-+			/* Stop already created threads */
-+			workload_running = false;
-+			for (int j = 0; j < i; j++)
-+				pthread_join(workload_threads[j], NULL);
-+			bpf_link__destroy(link);
-+			return SCX_TEST_FAIL;
-+		}
-+	}
-+
-+	printf("Waiting for enqueue events.\n");
-+	sleep(seconds);
-+	while (skel->data->enqueue_count <= 0) {
-+		printf(".");
-+		fflush(stdout);
-+		sleep(1);
-+		seconds++;
-+		if (seconds >= 30) {
-+			printf("\n\u2717 Timeout waiting for enqueue events\n");
-+			/* Stop workload threads and cleanup */
-+			workload_running = false;
-+			for (int i = 0; i < NUM_WORKERS; i++)
-+				pthread_join(workload_threads[i], NULL);
-+			bpf_link__destroy(link);
-+			return SCX_TEST_FAIL;
-+		}
-+	}
-+
-+	workload_running = false;
-+	for (int i = 0; i < NUM_WORKERS; i++) {
-+		err = pthread_join(workload_threads[i], NULL);
-+		if (err) {
-+			SCX_ERR("Failed to join workload thread %d: %s", i, strerror(err));
-+			bpf_link__destroy(link);
-+			return SCX_TEST_FAIL;
-+		}
-+	}
-+	printf("Background workload threads stopped.\n");
-+
-+	SCX_EQ(skel->data->uei.kind, EXIT_KIND(SCX_EXIT_NONE));
-+
-+	/* Detach the scheduler */
-+	bpf_link__destroy(link);
-+
-+	printf("Enqueue/dispatch count over %d seconds: %d / %d\n", seconds,
-+		skel->data->enqueue_count, skel->data->dispatch_count);
-+	printf("Debug: ksym_exists=%d\n",
-+	       skel->bss->debug_ksym_exists);
-+
-+	/* Check DSQ insert result */
-+	printf("DSQ insert test done on cpu: %d\n", skel->data->insert_test_cpu);
-+	if (skel->data->insert_test_cpu != -1)
-+		printf("\u2713 DSQ insert succeeded !\n");
-+	else {
-+		printf("\u2717 DSQ insert failed or not attempted\n");
-+		failed = true;
-+	}
-+
-+	/* Check DSQ peek results */
-+	printf("  DSQ peek result 1 (before insert): %d\n",
-+	       skel->data->dsq_peek_result1);
-+	if (skel->data->dsq_peek_result1 == 0)
-+		printf("\u2713 DSQ peek verification success: peek returned NULL!\n");
-+	else {
-+		printf("\u2717 DSQ peek verification failed\n");
-+		failed = true;
-+	}
-+
-+	printf("  DSQ peek result 2 (after insert): %ld\n",
-+	       skel->data->dsq_peek_result2);
-+	printf("  DSQ peek result 2, expected: %ld\n",
-+	       skel->data->dsq_peek_result2_expected);
-+	if (skel->data->dsq_peek_result2 ==
-+	    skel->data->dsq_peek_result2_expected)
-+		printf("\u2713 DSQ peek verification success: peek returned the inserted task!\n");
-+	else {
-+		printf("\u2717 DSQ peek verification failed\n");
-+		failed = true;
-+	}
-+
-+	printf("  Inserted test task -> pid: %ld\n", skel->data->dsq_inserted_pid);
-+	printf("  DSQ peek result 2 -> pid: %ld\n", skel->data->dsq_peek_result2_pid);
-+
-+	int pid_count;
-+
-+	pid_count = print_observed_pids(skel->maps.peek_results,
-+					skel->data->max_samples, "DSQ pool");
-+	printf("Total non-null peek observations: %ld out of %ld\n",
-+	       skel->data->successful_peeks, skel->data->total_peek_attempts);
-+
-+	if (skel->bss->debug_ksym_exists && pid_count == 0) {
-+		printf("\u2717 DSQ pool test failed: no successful peeks in native mode\n");
-+		failed = true;
-+	}
-+	if (skel->bss->debug_ksym_exists && pid_count > 0)
-+		printf("\u2713 DSQ pool test success: observed successful peeks in native mode\n");
-+
-+	if (failed)
-+		return SCX_TEST_FAIL;
-+	else
-+		return SCX_TEST_PASS;
-+}
-+
-+static void cleanup(void *ctx)
-+{
-+	struct peek_dsq *skel = ctx;
-+
-+	if (workload_running) {
-+		workload_running = false;
-+		for (int i = 0; i < NUM_WORKERS; i++)
-+			pthread_join(workload_threads[i], NULL);
-+	}
-+
-+	peek_dsq__destroy(skel);
-+}
-+
-+struct scx_test peek_dsq = {
-+	.name = "peek_dsq",
-+	.description =
-+		"Test DSQ create/destroy operations and future peek functionality",
-+	.setup = setup,
-+	.run = run,
-+	.cleanup = cleanup,
-+};
-+REGISTER_SCX_TEST(&peek_dsq)
--- 
-2.51.0
-
+W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
+Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKb3NoIFBvaW1ib2V1ZiA8
+anBvaW1ib2VAa2VybmVsLm9yZz4NCj4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVyIDE1LCAyMDI1
+IDEwOjQzIEFNDQo+IFRvOiBLYXBsYW4sIERhdmlkIDxEYXZpZC5LYXBsYW5AYW1kLmNvbT4NCj4g
+Q2M6IEFhcm9uIFJhaW5ib2x0IDxhcnJheWJvbHQzQGdtYWlsLmNvbT47IFRob21hcyBHbGVpeG5l
+cg0KPiA8dGdseEBsaW51dHJvbml4LmRlPjsgQm9yaXNsYXYgUGV0a292IDxicEBhbGllbjguZGU+
+OyBQZXRlciBaaWpsc3RyYQ0KPiA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+OyBQYXdhbiBHdXB0YSA8
+cGF3YW4ua3VtYXIuZ3VwdGFAbGludXguaW50ZWwuY29tPjsNCj4gSW5nbyBNb2xuYXIgPG1pbmdv
+QHJlZGhhdC5jb20+OyBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tPjsN
+Cj4geDg2QGtlcm5lbC5vcmc7IEggLiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT47IEFsZXhh
+bmRlciBHcmFmDQo+IDxncmFmQGFtYXpvbi5jb20+OyBCb3JpcyBPc3Ryb3Zza3kgPGJvcmlzLm9z
+dHJvdnNreUBvcmFjbGUuY29tPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
+U3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMDAvNTZdIER5bmFtaWMgbWl0aWdhdGlvbnMNCj4NCj4g
+Q2F1dGlvbjogVGhpcyBtZXNzYWdlIG9yaWdpbmF0ZWQgZnJvbSBhbiBFeHRlcm5hbCBTb3VyY2Uu
+IFVzZSBwcm9wZXIgY2F1dGlvbg0KPiB3aGVuIG9wZW5pbmcgYXR0YWNobWVudHMsIGNsaWNraW5n
+IGxpbmtzLCBvciByZXNwb25kaW5nLg0KPg0KPg0KPiBPbiBXZWQsIE9jdCAxNSwgMjAyNSBhdCAw
+MTo1MzozMVBNICswMDAwLCBLYXBsYW4sIERhdmlkIHdyb3RlOg0KPiA+ID4gSWYgYHJvb3RgIGlz
+IGNhcGFibGUgb2Ygc2V0dGluZyBgbWl0aWdhdGlvbnM9b2ZmYCB2aWEgdGhpcyBpbnRlcmZhY2Us
+DQo+ID4gPiBkb2Vzbid0IHRoYXQgc29tZXdoYXQgZGVmZWF0IHRoZSBwdXJwb3NlIG9mIGRlbnlp
+bmcgYC9wcm9jL2tjb3JlYA0KPiA+ID4gYWNjZXNzIGluIGxvY2tkb3duIGNvbmZpZGVudGlhbGl0
+eSBtb2RlPyBBc3N1bWluZyBvbmUgaXMgcnVubmluZyBvbiBhDQo+ID4gPiBDUFUgd2l0aCBzb21l
+IGZvcm0gb2Ygc2lkZS1jaGFubmVsIG1lbW9yeSByZWFkIHZ1bG5lcmFiaWxpdHkgKHdoaWNoIHRo
+ZXkNCj4gPiA+IHZlcnkgbGlrZWx5IGFyZSksIHRoZXkgY2FuIHR1cm4gb2ZmIGFsbCBtaXRpZ2F0
+aW9ucywgdGhlbiByZWFkIGtlcm5lbA0KPiA+ID4gbWVtb3J5IHZpYSBvbmUgb2YgdGhvc2UgZXhw
+bG9pdHMuDQo+ID4gPg0KPiA+ID4gVGhlcmUgc2hvdWxkIGJlIGEgb25lLXdheSBzd2l0Y2ggdG8g
+YWxsb3cgZGVueWluZyBhbGwgZnVydGhlciB3cml0ZXMgdG8NCj4gPiA+IHRoaXMgaW50ZXJmYWNl
+LCBzbyB0aGF0IG9uY2UgdGhlIHN5c3RlbSdzIG1pdGlnYXRpb25zIGFyZSBzZXQgcHJvcGVybHks
+DQo+ID4gPiBhbnkgZnVydGhlciBhdHRlbXB0cyB0byBjaGFuZ2UgdGhlbSB1bnRpbCB0aGUgbmV4
+dCByZWJvb3QgY2FuIGJlDQo+ID4gPiBwcmV2ZW50ZWQuDQo+ID4gPg0KPiA+DQo+ID4gVGhhdCdz
+IGEgZ29vZCBpZGVhLCB0aGVyZSBjb3VsZCBiZSBhIHNlcGFyYXRlIG1pdGlnYXRpb25fbG9jayBm
+aWxlDQo+ID4gcGVyaGFwcyB0aGF0IG9uY2Ugd3JpdHRlbiB0byAxIGRlbmllcyBhbnkgZnVydGhl
+ciBjaGFuZ2VzLg0KPg0KPiBXb3VsZG4ndCB0aGUgZW5hYmxlbWVudCBvZiBsb2NrZG93biBtb2Rl
+IGVmZmVjdGl2ZWx5IGZ1bmN0aW9uIGFzIHRoYXQNCj4gb25lIHdheSBzd2l0Y2g/DQo+DQoNCkkn
+bSBub3QgdG9vIGZhbWlsaWFyIHdpdGggbG9ja2Rvd24gbW9kZSwgYnV0IHRoYXQgZ2V0cyBlbmFi
+bGVkICh3aXRoIHJpZ2h0IGNtZGxpbmUgb3B0aW9ucykgZHVyaW5nIGJvb3QgcmlnaHQ/ICBJIGd1
+ZXNzIHRoZSBxdWVzdGlvbiBpcyB3b3VsZCB3ZSB3YW50IHRvIGFsbG93IGFueSB3aW5kb3cgZm9y
+IHVzZXJzcGFjZSB0byByZWNvbmZpZ3VyZSB0aGluZ3MgYW5kIHRoZW4gbG9jayB0aGluZ3MgZG93
+biwgb3Igc2F5IHRoYXQgaWYgeW91IGVuYWJsZSBsb2NrZG93biB0aGVuIHRoaXMgaW50ZXJmYWNl
+IGlzIGNvbXBsZXRlbHkgZGlzYWJsZWQgYW5kIHlvdSBuZWVkIHRvIHNwZWNpZnkgeW91ciBtaXRp
+Z2F0aW9uIG9wdGlvbnMgb24gdGhlIGNtZGxpbmUgb25seS4NCg0KLS1EYXZpZCBLYXBsYW4NCg==
 
