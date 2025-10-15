@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-854540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7625BDEA7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:09:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A68BDEAA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3B424F6543
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:08:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B1E734E85B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18473321421;
-	Wed, 15 Oct 2025 13:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0fB0jAi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A68731D38C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671CB322A2A;
+	Wed, 15 Oct 2025 13:09:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263F131354D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760533702; cv=none; b=aDjay4mQJ3tChVzCjDUnGuqgoqfqBZOP0+r7QT9c5xAdEYuH9lQKXP8qWFMPaNiaEw1NjVgAfbXv8JrXSLV7bIrw4h/lyk8DUcvddeUaQIMGQTH/dHuq/RPU65ToXNaJib/ygNJqLr3ne2Pa6e6lBBKZRd3zo6+giV+pP69MVRA=
+	t=1760533750; cv=none; b=ZNmYjO4J/j7UpGDLQguxBxCyQOqQUTuhNZyA9DkCvLmD4Bp102+80Ntuh93FDvgpzx8/Nk8UuQ6jXvg9f7RT1FEg25gHBxEuODbB9i9UQbogueZfDhgQkuEY6M2gmZ4/XYcUrPq5owGKWWFZwlvREQC/XJT3mcPN5NNKeTw4f6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760533702; c=relaxed/simple;
-	bh=DPIqXuU+TUQPEPS3arpMl/xCOS9gzIiqANf0KKZ8CkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mhbb31OnZIuvYL/qQLu8WgFJyM6Drn8FntYNR06aMtUNkG1LJGJfiMe7b8A2qEV9hqKK4t87Tm3VDqFaBgcxeww8d0NT52Sn5j7mUsnbIR1B+4GgDco4LaWXzAZ0dX3btSQDBdN2b3YJs3i82i3w1NXsIi5VLFVKkwu5PGrk5xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0fB0jAi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296ACC19424
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:08:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760533702;
-	bh=DPIqXuU+TUQPEPS3arpMl/xCOS9gzIiqANf0KKZ8CkE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O0fB0jAiSbjDp5PnStAPJb1EbssBzgJeN/fBWj/ly3Momuz/KmOLP3DOBJYigMfff
-	 3dFqzaUvfDNqaWk1EMH1ll2j/xBR1PP3MuHrZYvSqQLKUiNA848PZIKuUDkPs4tPQ/
-	 EH5OQDT2makiE0eipiyZaMXxdJ3lFbUQU7GJHK/PjHG33EutldME2e16gHySjsbtBO
-	 oXBFFvLwJHgWqgbwelg2lDYRXW1qaN2pLsu3BOjM7MYYB5GugzLez5sqMdYTgY6mCv
-	 mrAMrUqx9AQOba9UgMjz6HzBqzA8hnAdgl9i4Md1kdOBUGMhHiQaqjGOjKjBqAKWs0
-	 KvupFwwbtTo8w==
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7c0e357ab51so5391079a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:08:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXtysrI6LJUYfTTzWuoBmRw6/7YZy9bdAvS1c1u4CpXPcyLj/+ybKaK1roK3YzTyAfqUXgaPsDmKn1UcRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNrorWCv+HdN1h7LfbQVBtXIw6n96U1zRUI9ATBCHy+j7c/Do6
-	+18p0g59iNHkCqwv5ZXelfk1/cFLedyqxWpbDs5WzVUqPvniHj5oCRl4URDlFpd3LBCNrRmVglc
-	IQYLUNlkWN4DBU9OIKSA6Scoy3QatfuU=
-X-Google-Smtp-Source: AGHT+IGKh4ax/Cdtp0vxgf0Hd9gzc+VZd8UKj7uPZkEqpjf/tHoDqSIY26AOihord/ywhWhe7EGbvrSqXsnUNUNF6To=
-X-Received: by 2002:a05:6808:4f4f:b0:43f:7940:69bf with SMTP id
- 5614622812f47-4417b3acf95mr13195428b6e.26.1760533701351; Wed, 15 Oct 2025
- 06:08:21 -0700 (PDT)
+	s=arc-20240116; t=1760533750; c=relaxed/simple;
+	bh=8vhPaa1475rTiCTPmpDRr/hFN/p6YVRmvBRad1sLs58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RMOKHHZ3OtvmGSs0WCufWmmo2veYOfKED0tLn+vlnyCgWevnXAhbk9DiqNLDyHQSRzHSR1GR16cz0/+6BOVauJtjEBrpwpus+Nhwdj/B9fQR1oGTVAgNeFXEIziWJCe6/z7m/kRdOe9ISosjzqTlreg7O+9R9+pLouvdU26ne+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79CA5106F;
+	Wed, 15 Oct 2025 06:09:00 -0700 (PDT)
+Received: from [10.1.31.33] (e122027.cambridge.arm.com [10.1.31.33])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 022D03F6A8;
+	Wed, 15 Oct 2025 06:09:05 -0700 (PDT)
+Message-ID: <55781116-2c73-40d0-849f-4d8ba21d13f9@arm.com>
+Date: Wed, 15 Oct 2025 14:09:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
- <08529809-5ca1-4495-8160-15d8e85ad640@arm.com> <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
- <CAJZ5v0h-=MU2uwC0+TZy0WpyyMpFibW58=t68+NPqE0W9WxWtQ@mail.gmail.com>
- <ns2dglxkdqiidj445xal2w4onk56njkzllgoads377oaix7wuh@afvq7yinhpl7>
- <a9857ceb-bf3e-4229-9c2f-ecab6eb2e1b0@arm.com> <CAJZ5v0iF0NE07KcK4J2_Pko-1p2wuQXjLSD7iOTBr4QcDCX4vA@mail.gmail.com>
- <wd3rjb7lfwmi2cnx3up3wkfiv4tamoz66vgtv756rfaqmwaiwf@7wapktjpctsj>
-In-Reply-To: <wd3rjb7lfwmi2cnx3up3wkfiv4tamoz66vgtv756rfaqmwaiwf@7wapktjpctsj>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 15 Oct 2025 15:08:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g=HNDEbD=nTGNKtSex1E2m2PJmvz1V4HoEFDbdZ7mN3g@mail.gmail.com>
-X-Gm-Features: AS18NWCNLd4VfOtzdFRcAx-qFOpGR9ib07mNIONMyq7-qTOr4g6Yivy6LKB0oI0
-Message-ID: <CAJZ5v0g=HNDEbD=nTGNKtSex1E2m2PJmvz1V4HoEFDbdZ7mN3g@mail.gmail.com>
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christian Loehle <christian.loehle@arm.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Sasha Levin <sashal@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000e292940641323190"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/12] drm/panfrost: Check sgt to know whether pages
+ are already mapped
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20251015000930.356073-1-adrian.larumbe@collabora.com>
+ <20251015000930.356073-6-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251015000930.356073-6-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---000000000000e292940641323190
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 15/10/2025 01:09, Adrián Larumbe wrote:
+> In the MMU's page fault ISR for a heap object, determine whether the
+> faulting address belongs to a 2MiB block that was already mapped by
+> checking its corresponding sgt in the Panfrost BO.
+> 
+> This is done in preparation for a future commit in which the MMU mapping
+> helper might fail, but the page array is left populated, so this cannot
+> be used as a check for an early bail-out.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-On Wed, Oct 15, 2025 at 3:56=E2=80=AFAM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (25/10/14 16:02), Rafael J. Wysocki wrote:
-> > > >> Would it be possible to check if the mainline has this issue?  Tha=
-t
-> > > >> is, compare the benchmark results on unmodified 6.17 (say) and on =
-6.17
-> > > >> with commit 85975daeaa4 reverted?
-> > > >
-> > > > I don't think mainline kernel can run on those devices (due to
-> > > > a bunch of downstream patches).  Best bet is 6.12, I guess.
-> > >
-> > > Depending on what Rafael is expecting here you might just get
-> > > away with copying menu.c from mainline, the interactions to other
-> > > subsystems are limited fortunately.
-> >
-> > Yeah, that'd be sufficiently close.
->
-> Test results for menu.c from linux-next are within regressed range: 78.5
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-So please check if the attached patch makes any difference.
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index cf272b167feb..ba32d99ed854 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -600,10 +600,12 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
+>  		refcount_set(&bo->base.pages_use_count, 1);
+>  	} else {
+>  		pages = bo->base.pages;
+> -		if (pages[page_offset]) {
+> -			/* Pages are already mapped, bail out. */
+> -			goto out;
+> -		}
+> +	}
+> +
+> +	sgt = &bo->sgts[page_offset / (SZ_2M / PAGE_SIZE)];
+> +	if (sgt->sgl) {
+> +		/* Pages are already mapped, bail out. */
+> +		goto out;
+>  	}
+>  
+>  	mapping = bo->base.base.filp->f_mapping;
+> @@ -625,7 +627,6 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
+>  		}
+>  	}
+>  
+> -	sgt = &bo->sgts[page_offset / (SZ_2M / PAGE_SIZE)];
+>  	ret = sg_alloc_table_from_pages(sgt, pages + page_offset,
+>  					NUM_FAULT_PAGES, 0, SZ_2M, GFP_KERNEL);
+>  	if (ret)
 
---000000000000e292940641323190
-Content-Type: text/x-patch; charset="US-ASCII"; name="cpuidle-menu-max_overall.patch"
-Content-Disposition: attachment; filename="cpuidle-menu-max_overall.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mgs0aeda0>
-X-Attachment-Id: f_mgs0aeda0
-
-LS0tCiBkcml2ZXJzL2NwdWlkbGUvZ292ZXJub3JzL21lbnUuYyB8ICAgIDYgKysrKystCiAxIGZp
-bGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgotLS0gYS9kcml2ZXJz
-L2NwdWlkbGUvZ292ZXJub3JzL21lbnUuYworKysgYi9kcml2ZXJzL2NwdWlkbGUvZ292ZXJub3Jz
-L21lbnUuYwpAQCAtMTE2LDYgKzExNiw3IEBAIHN0YXRpYyB2b2lkIG1lbnVfdXBkYXRlKHN0cnVj
-dCBjcHVpZGxlX2QKIHN0YXRpYyB1bnNpZ25lZCBpbnQgZ2V0X3R5cGljYWxfaW50ZXJ2YWwoc3Ry
-dWN0IG1lbnVfZGV2aWNlICpkYXRhKQogewogCXM2NCB2YWx1ZSwgbWluX3RocmVzaCA9IC0xLCBt
-YXhfdGhyZXNoID0gVUlOVF9NQVg7CisJdW5zaWduZWQgaW50IG1heF9vdmVyYWxsID0gMDsKIAl1
-bnNpZ25lZCBpbnQgbWF4LCBtaW4sIGRpdmlzb3I7CiAJdTY0IGF2ZywgdmFyaWFuY2UsIGF2Z19z
-cTsKIAlpbnQgaTsKQEAgLTE1MSw2ICsxNTIsOSBAQCBhZ2FpbjoKIAlpZiAoIW1heCkKIAkJcmV0
-dXJuIFVJTlRfTUFYOwogCisJaWYgKG1heF9vdmVyYWxsIDwgbWF4KQorCQltYXhfb3ZlcmFsbCA9
-IG1heDsKKwogCWlmIChkaXZpc29yID09IElOVEVSVkFMUykgewogCQlhdmcgPj49IElOVEVSVkFM
-X1NISUZUOwogCQl2YXJpYW5jZSA+Pj0gSU5URVJWQUxfU0hJRlQ7CkBAIC0xOTgsNyArMjAyLDcg
-QEAgYWdhaW46CiAJCSAqIG1heGltdW0sIHNvIHJldHVybiB0aGUgbGF0dGVyIGluIHRoYXQgY2Fz
-ZS4KIAkJICovCiAJCWlmIChkaXZpc29yID49IElOVEVSVkFMUyAvIDIpCi0JCQlyZXR1cm4gbWF4
-OworCQkJcmV0dXJuIG1heF9vdmVyYWxsOwogCiAJCXJldHVybiBVSU5UX01BWDsKIAl9Cg==
---000000000000e292940641323190--
 
