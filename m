@@ -1,74 +1,65 @@
-Return-Path: <linux-kernel+bounces-854625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB21BDEE26
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:00:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB20BDEE2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 093B44EDF2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:00:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A691357A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D75A21CC6A;
-	Wed, 15 Oct 2025 14:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GMeONgcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A332264B1;
+	Wed, 15 Oct 2025 14:02:04 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5432D7263B;
-	Wed, 15 Oct 2025 14:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE691DF748
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760536846; cv=none; b=PnbZjGwETmXE7fbqsndaPqvyUdhPA2C4cIJl30LBmyoz1CUr/eAwuJdOhPjHyYfvKD09dwV0g1pZeDwBiVmQo0NRdNnKlS3uMiruguwoigk40yPrz4igaShuTE7l0T3PugDGmK4r8Uafnvh/QPqtXIDqKysD/0osoQXXoYx56Cg=
+	t=1760536923; cv=none; b=nsNkLm5eL4CsE66C3lEp1L9bFAEFL+l62VA1OHuTDB37+xBtWlyfB/x8Ofm7VARBai40yM/Jg+efRHs0pOv3QNmdRiZyMF7U+SZDFhDwyD05XExSi8/XJMi92PV0moxCX0+gJZV6Ily80q1KKPA7fluBl5oETEVGaOlhBiDV89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760536846; c=relaxed/simple;
-	bh=MDRP8V1iEZmLz15Z2XSYpGm1FBRVJoPP1hu8VeNx7ZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lkj0ar/VITxfaIsXNe8K3sx61YPmTc8Lmcan30SFqKwydGrRA8Sc/FDaF8vYQ401bcI/SyET1GpStRqqGDD78IjnKqJ9INFe+qqHQO49bet6SDTVZKqszg0ZqW6lACBvJawP19VZiGP/J3B3Kz8LnkVJenMA4fiflOy6D9BaC0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GMeONgcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73649C4CEF8;
-	Wed, 15 Oct 2025 14:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760536845;
-	bh=MDRP8V1iEZmLz15Z2XSYpGm1FBRVJoPP1hu8VeNx7ZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GMeONgcyepwm0q8G6yDqZzSVPHJGauZD93Jk2kOU4+j+n7BsdNxgCF796c/70PXeU
-	 sVffMT5gm16KO/lGzAayC4D4WrZHBUrG+uyz9lOqSGt2YD0EcU/AqyY7bWgQAioVj1
-	 cFIk0Ho2pRYO60HO+f+4yQ1XLGbLKztgpf1iFQYQ=
-Date: Wed, 15 Oct 2025 16:00:43 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] usb: typec: ucsi: Add support for orientation
-Message-ID: <2025101530-skeleton-able-6523@gregkh>
-References: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
+	s=arc-20240116; t=1760536923; c=relaxed/simple;
+	bh=+vBzEN3coPCSS7/a0ZO3MBiI3QLDwRnMFrRMVnnOThY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=vA+Q0tOJ4GLVcff1kHkfm+XhECgiqbcs78zGMVHS3GPZnNcvejk0L1jYVufw/IMHm0zslbsceRtMcJkms1Oz1zskiruIEFWOhA+ITjUCUUjbteuuTrUh86JJKKX+SJP+I/q1acVD+alsztbobl+20BsbSt72TYm50kv9StEMBGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59FE1oiO034212;
+	Wed, 15 Oct 2025 23:01:50 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59FE1opK034208
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 15 Oct 2025 23:01:50 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a0610a0c-536f-454e-90ec-ac83ca0c7c28@I-love.SAKURA.ne.jp>
+Date: Wed, 15 Oct 2025 23:01:49 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015-usb-typec-ucsi-orientation-v1-1-18cd109fb0b7@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [hfs?] general protection fault in hfs_find_init
+To: syzbot <syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org
+References: <68bbccf3.a70a0220.7a912.02c1.GAE@google.com>
+ <66114372-5bd8-4f1b-8aea-1f6c4ec91bda@app.fastmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <66114372-5bd8-4f1b-8aea-1f6c4ec91bda@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav302.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Wed, Oct 15, 2025 at 04:50:36PM +0300, Abel Vesa wrote:
-> According to UCSI 2.0 specification, the orientation is
-> part of the connector status payload. So tie up the port
-> orientation.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 24 ++++++++++++++++++++++++
->  drivers/usb/typec/ucsi/ucsi.h |  3 +++
->  2 files changed, 27 insertions(+)
+#syz fix: hfs: fix general protection fault in hfs_find_init()
 
-Why is this a "RFC"?  What is the request?
-
-thanks,
-
-greg k-h
 
