@@ -1,113 +1,241 @@
-Return-Path: <linux-kernel+bounces-854410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3146ABDE4CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:40:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AF8BDE4DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1533AF074
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E721925BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1321F32253E;
-	Wed, 15 Oct 2025 11:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lhSvgptJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83071A23A9;
-	Wed, 15 Oct 2025 11:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB64322555;
+	Wed, 15 Oct 2025 11:41:18 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186AF32252E;
+	Wed, 15 Oct 2025 11:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760528442; cv=none; b=pCRkTM0IG0nldKiQV3uliXLFrsKjTBw2rB99TUL9Za9RvPNRAQsP/ZIMJ6aV9Cfqz8rhd1ZrFFQF7mxiwkZiRqz6a0WsPoVurcrLcXHg+rito6bYeBThGNSIQOyA57KDiCPqq2n9yQ3UcY0kugABBkyoKdNB+GUNnD8NOedjb4A=
+	t=1760528478; cv=none; b=qEFCW0wlligcTTbK1b9chIjv4rLO/VQ/0BxR41m+40cNjxFy4lavd6XaTEmOnyZJ5ls432BFpQ33JFEKtDjnmRK3dzSEQ06bEqOYkNvWTcrUVrqwRcETBxGmZdSKywD0x8TZnxT8mifXo54tI+AxQ50ATHM/lA3mH05o393FnBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760528442; c=relaxed/simple;
-	bh=wDHNh4uY8xD9ebnDG2xoy5T2v6V+iqaappaYjVR+kyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEPRmzt2NdE/+mdBsILyAnGlSTD6HayfUlLxzdbH1UXFFaTPYSPkQOpg5hiiFKxwReEQzUfohO+v0rg/m2j8oy8033z6X+EkBOFJBX1Z3eQEqr7I/2BHw4+ZuT3EM+WHIzgJYBXyTalL44HFPNRfrIWYrlKF8YT1mBXgWkI0xik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lhSvgptJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760528441; x=1792064441;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wDHNh4uY8xD9ebnDG2xoy5T2v6V+iqaappaYjVR+kyw=;
-  b=lhSvgptJaX8FQNTOtwuSmtrYS/Bqq49ggH2RRj2Qy9fLsPbiUCQoyDeY
-   l3oIhhTlxlDYbmyI33YQWfhYPwQqsJr62qth4++oLZvTU/BnWbZnlpEh2
-   /aBkuJchzgh2uG/vVJi9j/rYZIHYmz+t3evBLi1wPaS7YFvkHqE1DLh14
-   fq93yH9K+wvCDPmiXgBMwvES1+ygoKdMASwtb5T9Nm9ap6P3PZboaftvo
-   Bofh4XPJeZnBY6WXzQTPgyN9tWkZ7yvbfkXAAQBFNougFK+0wO/nZR0/e
-   xkV6lN8G4rZm/zZSr4NvQ7nLhEkaC/o80PRdX0vebzIls5e9Dz5KyHBDt
-   g==;
-X-CSE-ConnectionGUID: ZOtJVcTATdKP7ethG+TGMg==
-X-CSE-MsgGUID: XkndfU5nS0Gw3n+co/EoeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="66353838"
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="66353838"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 04:40:40 -0700
-X-CSE-ConnectionGUID: 6d611QceSMCabPeGf4aKYQ==
-X-CSE-MsgGUID: EgvxbpLISJarCc7NEnJ4Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="212757525"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.245.114])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 04:40:34 -0700
-Date: Wed, 15 Oct 2025 13:40:25 +0200
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: michael.riesch@collabora.com
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Gerald Loacker <gerald.loacker@wolfvision.net>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Markus Elfring <Markus.Elfring@web.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Kever Yang <kever.yang@rock-chips.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Collabora Kernel Team <kernel@collabora.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Alexander Shiyan <eagle.alexander923@gmail.com>, Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v12 09/18] media: rockchip: rkcif: add abstraction for
- dma blocks
-Message-ID: <gzh4rpbkrp6vkc3mimhwhgfgxm74iw2bw6zhlzdtqenrbp6yhr@ekjpefq7wege>
-References: <20240220-rk3568-vicap-v12-0-c6dbece6bb98@collabora.com>
- <20240220-rk3568-vicap-v12-9-c6dbece6bb98@collabora.com>
+	s=arc-20240116; t=1760528478; c=relaxed/simple;
+	bh=/TkS6Q3hETgHUpUybCenaYY2LXLMtVuPo5c8I8D39NQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ly2zaLlkFKsLwd9QWk3oV3WXSN8Qm7UCPFPLU8iKhFX59r1E61YvMMlvoeT6unZUnAmF+bM5H/vagfLgBMmUFKfuavEy34t3E/vApEvQ8spUeDcZhp4GhtBbDat9X7zqFsMXSWclmSNj14pOB3DabYu/CzApQAb5phRKsJB9dkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
+	by app2 (Coremail) with SMTP id TQJkCgCXKZM6iO9oKxMLAQ--.63803S2;
+	Wed, 15 Oct 2025 19:40:45 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: devicetree@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	rmk+kernel@armlinux.org.uk,
+	yong.liang.choong@linux.intel.com,
+	vladimir.oltean@nxp.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	weishangjuan@eswincomputing.com,
+	jan.petrous@oss.nxp.com,
+	inochiama@gmail.com,
+	jszhang@kernel.org,
+	0x1207@gmail.com,
+	boon.khai.ng@altera.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v8 1/2] dt-bindings: ethernet: eswin: Document for EIC7700 SoC
+Date: Wed, 15 Oct 2025 19:40:41 +0800
+Message-Id: <20251015114041.1166-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20251015113751.1114-1-weishangjuan@eswincomputing.com>
+References: <20251015113751.1114-1-weishangjuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240220-rk3568-vicap-v12-9-c6dbece6bb98@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgCXKZM6iO9oKxMLAQ--.63803S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1DtF1kCFyrZFyrZFyfXrb_yoWrGFy8pa
+	97CrWDJr4fXr1fXa18tF10kFn3tanrCr1Ykrn7J3Waq390qas0qw1ayFy5Ga43Cr47ZFW5
+	WFWYvay8A3Wjk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRimiiDUUUU
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
-Hi Michael,
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
-Thank you for the patches!
+Add ESWIN EIC7700 Ethernet controller, supporting clock
+configuration, delay adjustment and speed adaptive functions.
 
-On Tue, Oct 14, 2025 at 03:01:55PM +0200, Michael Riesch via B4 Relay wrote:
-> From: Michael Riesch <michael.riesch@collabora.com>
-> 
-> Add an abstraction for the DMA parts and the ping-pong scheme (a
-> double-buffering mechanism) of the different CIF variants. Each
-> stream is represented as V4L2 device whose corresponding media
-> entity has one sink pad. This sink pad is connected to an instance
-> of the INTERFACE/CROP abstraction.
-> 
-> Tested-by: Gerald Loacker <gerald.loacker@wolfvision.net>
-> Reviewed-by: Gerald Loacker <gerald.loacker@wolfvision.net>
-> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/net/eswin,eic7700-eth.yaml       | 127 ++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
 
-Reviewed-by: Mehdi Djait <mehdi.djait@linux.intel.com>
-
+diff --git a/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+new file mode 100644
+index 000000000000..9ddbfe219ae2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+@@ -0,0 +1,127 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SOC Eth Controller
++
++maintainers:
++  - Shuang Liang <liangshuang@eswincomputing.com>
++  - Zhi Li <lizhi2@eswincomputing.com>
++  - Shangjuan Wei <weishangjuan@eswincomputing.com>
++
++description:
++  Platform glue layer implementation for STMMAC Ethernet driver.
++
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - eswin,eic7700-qos-eth
++  required:
++    - compatible
++
++allOf:
++  - $ref: snps,dwmac.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: eswin,eic7700-qos-eth
++      - const: snps,dwmac-5.20
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: macirq
++
++  clocks:
++    items:
++      - description: AXI clock
++      - description: Configuration clock
++      - description: GMAC main clock
++      - description: Tx clock
++
++  clock-names:
++    items:
++      - const: axi
++      - const: cfg
++      - const: stmmaceth
++      - const: tx
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    items:
++      - const: stmmaceth
++
++  rx-internal-delay-ps:
++    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
++
++  tx-internal-delay-ps:
++    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
++
++  eswin,hsp-sp-csr:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - description: Phandle to HSP(High-Speed Peripheral) device
++      - description: Offset of phy control register for internal
++                     or external clock selection
++      - description: Offset of AXI clock controller Low-Power request
++                     register
++      - description: Offset of register controlling TX/RX clock delay
++    description: |
++      High-Speed Peripheral device needed to configure clock selection,
++      clock low-power mode and clock delay.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++  - interrupt-names
++  - phy-mode
++  - resets
++  - reset-names
++  - rx-internal-delay-ps
++  - tx-internal-delay-ps
++  - eswin,hsp-sp-csr
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    ethernet@50400000 {
++        compatible = "eswin,eic7700-qos-eth", "snps,dwmac-5.20";
++        reg = <0x50400000 0x10000>;
++        clocks = <&d0_clock 186>, <&d0_clock 171>, <&d0_clock 40>,
++                <&d0_clock 193>;
++        clock-names = "axi", "cfg", "stmmaceth", "tx";
++        interrupt-parent = <&plic>;
++        interrupts = <61>;
++        interrupt-names = "macirq";
++        phy-mode = "rgmii-id";
++        phy-handle = <&phy0>;
++        resets = <&reset 95>;
++        reset-names = "stmmaceth";
++        rx-internal-delay-ps = <200>;
++        tx-internal-delay-ps = <200>;
++        eswin,hsp-sp-csr = <&hsp_sp_csr 0x100 0x108 0x118>;
++        snps,axi-config = <&stmmac_axi_setup>;
++        snps,aal;
++        snps,fixed-burst;
++        snps,tso;
++        stmmac_axi_setup: stmmac-axi-config {
++            snps,blen = <0 0 0 0 16 8 4>;
++            snps,rd_osr_lmt = <2>;
++            snps,wr_osr_lmt = <2>;
++        };
++    };
 --
-Kind Regards
-Mehdi Djait
+2.17.1
+
 
