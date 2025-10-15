@@ -1,219 +1,130 @@
-Return-Path: <linux-kernel+bounces-854862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3E7BDF9CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB28BDFA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D5674F6CC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24171A21C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBE6337680;
-	Wed, 15 Oct 2025 16:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFCB338F30;
+	Wed, 15 Oct 2025 16:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pk3NH6n2"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wtHq3Gd0"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760732D6E72
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82971337685
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760545144; cv=none; b=ZfzWUaiQ1Q0i1VjqkQRsakHlCvFbqgfiEngQI1VdgLJC1Sq6wzdnfbZxgzxVI4m91O3BoHOnykl6SuGvK7xPmdOKs+Ma/GS+X6w9KfYMaQ1DomhsayTiyEVmoaPgrkc7goJr/38K/m9sM8MZR2WXKfxHvWi4ANzHlOgWJtCFBmA=
+	t=1760545229; cv=none; b=bbd6TpEZ3LTuQ1BTLJ/tUZtCjuRAw3la5PHWjpCU8ptny48K3kwXk456F9aIy2DEJ8wAtg2dmki+ViGvpM8CyxPO7sVPIDDvJRy6Tf3KUIJr5pVEuejImq9kKvAXUy9lkO9MsEMKSK4ZiEjBUUJAilWfrY2v7iNGPLgYEkms28Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760545144; c=relaxed/simple;
-	bh=FpJex7JsXk7MQtcq/KBnp9/x9lu2b3S2dp9cqqH8oVA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gaUDiTD5E04v5EQvJ0IXMoIavP59ji/l+Y8XjwMvZ87qBwHsyVsmdVPGUpnG1PztRnfSzL2vDtxM+Ebumamw/VMizdaosazchG9o8o01D8Lx9Svs06YO/syOdZIMK7ON7rEgHrUtLmz7eKrw4k1NN3bUhFYRXlyulyacX4HdzoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pk3NH6n2; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29085106b99so15719485ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760545142; x=1761149942; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=61E+2rntUa5VSBuKjvznhuCkIiLtgLpYCNWPKi7dZz0=;
-        b=Pk3NH6n2r0h8DbM7P9D99P5YUbTvuY8CXWF+8Bc7r+HR/rlYZItPjNytBtgcxceWBE
-         vhPSIjeADnM9usl7yYDsfYOyv2bqh7j8QTeLIPjNeW7AMC5a1eHDKRDbW7NaGa034Mll
-         llDlZt7a1Ul6abldPHnudj/54v4Zq0kLsHviHFt87HQOcynOusKmPM58Io5MByIo38/T
-         /15kSzkGJSkuubYjxQ4sn97xY74KlYUiAAMbmLJkAU6MIRCEpyncm0R+KmqdanuUMKXA
-         gV1JwbkkdMeehCytZsc3UtSuvuX7Iexd4ofpOtZ/GVc1EKrq5u51f2iXEhBcpPLSAbwC
-         skaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760545142; x=1761149942;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=61E+2rntUa5VSBuKjvznhuCkIiLtgLpYCNWPKi7dZz0=;
-        b=ZuOWojhgjyhGW91G97vXwf10RRC81Vj6aj31BVIuSo0XfR1OD9BAWtT9dxskcX6wP3
-         hBfUpDqocZ0CfTambpVLzwEB0WCWwVS879fat52ap6EioffbPm+Eff3eL8YarL8w7MOC
-         SrdS2Xud/qqe2bKuxdB1mGLsJO8K90bw+x+Cp0zCG4JgVIMnOousM8Bx3uyqxpnOA08x
-         M5UYmdH0fc0yQGzq/ldT622L6z82W6wDxEB6t5fRQgdTWaDB3uhyyux7vX4ui4Xk4E+V
-         llIK/GXX/tLBBJcarbSFlGuQkUbmpa+Zb4JldJzQIS5MjJN0jJM4veCubGjByEILNwzz
-         MzSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnlMojn/k7PvLD11XPEm+XrRg5YiI5wDkJyUwed/DXXfAwueuxAtWRs+bKTxy3lyNV8aljAufsGLlbG0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUZ972cUGQz1YJA20jPhXm8z8H3q8ATbaZ2iTDjyQ4aqRKNuaF
-	zqcSzbcVGBUyyRRj9HSQGNa9R0IQR6nOYDwXQgGpT9c3NUxJq1CI32tZe34yQ+8zJOfPDQb9hfY
-	0p2B5Rg==
-X-Google-Smtp-Source: AGHT+IGzaEkOLCnhkXm/4LJkTkzpidbSGxKaRls9P3+1zsup3JOsPnvZFNR4QAFZN56nthUV+TBwpaVPMQY=
-X-Received: from pjwd6.prod.google.com ([2002:a17:90a:d3c6:b0:32e:e06a:4668])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b4b:b0:271:479d:3dcb
- with SMTP id d9443c01a7336-29027213537mr377287125ad.6.1760545141459; Wed, 15
- Oct 2025 09:19:01 -0700 (PDT)
-Date: Wed, 15 Oct 2025 09:19:00 -0700
-In-Reply-To: <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1760545229; c=relaxed/simple;
+	bh=0bPnnNJxYEoXI1b70YZlgulOQQNFqx0526wcE/urorU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JqjBD9q+0V3bC0WiQKfy8dcKW01VJEJ0F2V3fMhl9grrB3j8kvIEFmLQ9jsEZBAhpitChddpsxvyJibfkqExU0VXT1drP4RUqH53jYfZdnp+XeRlCgYfTAmTKaXGW6HJVRmwpKij56f4IEx8KwJ/Z0/VvflnXiGHWc1i30vCCZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wtHq3Gd0; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 82D1C1A1361;
+	Wed, 15 Oct 2025 16:20:20 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 487D560673;
+	Wed, 15 Oct 2025 16:20:20 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 138CA102F22DF;
+	Wed, 15 Oct 2025 18:20:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760545219; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=JJ6rH+xzmRM4qbGD1O8szCgtSQ2QdUeo9drcU82TAhs=;
+	b=wtHq3Gd0pQyjV6eyAK7fkRd9w/l0K0lC4FEfqkfWEo6k637Nboqx9312H1X9fnaRV/2wfb
+	QaZ6QKn/SgxEG7NppA04nggZ69c6MQyB2QdfPZpPZs7aRKxHJD8eY66Gr283U2WCMTmDak
+	88guPcGFdZVaksfpnPKksUJJnae0T4LLkdX0RllszUHzwp8koW7AkW3d42+ZT82a7iuP7G
+	nDuOFOMUrmu/iMcqebvj3mX2x8m7+8+umoL7QjmNGO4Lxs1r06oZx9uCz+/jpvM07WporL
+	jqoVHJIuWENfI7kHqcyASHjuMNN1yYfK86sc1rke62SvxbTpWJvvR1KIZpJ/0g==
+Message-ID: <27800f8c-eb0d-41c2-9e45-b45cf1767c23@bootlin.com>
+Date: Wed, 15 Oct 2025 18:20:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919214259.1584273-1-seanjc@google.com> <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
- <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com> <aNwFTLM3yt6AGAzd@google.com>
- <aNwGjIoNRGZL3_Qr@google.com> <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
-Message-ID: <aO_JdH3WhfWr2BKr@google.com>
-Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
- skips WRMSR
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Hou Wenlong <houwenlong.hwl@antgroup.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/3] net: stmmac: Move subsecond increment
+ configuration in dedicated helper
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
+ <20251015102725.1297985-2-maxime.chevallier@bootlin.com>
+ <aO-4hnUINpQ0JORE@shell.armlinux.org.uk>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <aO-4hnUINpQ0JORE@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-+Hou, who is trying to clean up the user-return registration code as well:
+Hi Russell,
 
-https://lore.kernel.org/all/15fa59ba7f6f849082fb36735e784071539d5ad2.1758002303.git.houwenlong.hwl@antgroup.com
-
-On Wed, Oct 15, 2025, Yan Zhao wrote:
-> On Tue, Sep 30, 2025 at 09:34:20AM -0700, Sean Christopherson wrote:
-> > Ha!  It's technically a bug fix.  Because a forced shutdown will invoke
-> > kvm_shutdown() without waiting for tasks to exit, and so the on_each_cpu() calls
-> > to kvm_disable_virtualization_cpu() can call kvm_on_user_return() and thus
-> > consume a stale values->curr.
-> Looks consuming stale values->curr could also happen for normal VMs.
+On 15/10/2025 17:06, Russell King (Oracle) wrote:
+> On Wed, Oct 15, 2025 at 12:27:21PM +0200, Maxime Chevallier wrote:
+>> +static void stmmac_update_subsecond_increment(struct stmmac_priv *priv)
+>> +{
+>> +	bool xmac = priv->plat->has_gmac4 || priv->plat->has_xgmac;
 > 
-> vmx_prepare_switch_to_guest
->   |->kvm_set_user_return_msr //for all slots that load_into_hardware is true
->        |->1) wrmsrq_safe(kvm_uret_msrs_list[slot], value);
->        |  2) __kvm_set_user_return_msr(slot, value);
->                |->msrs->values[slot].curr = value;
->                |  kvm_user_return_register_notifier
-> 
-> As vmx_prepare_switch_to_guest() invokes kvm_set_user_return_msr() with local
-> irq enabled, there's a window where kvm_shutdown() may call
-> kvm_disable_virtualization_cpu() between steps 1) and 2). During this window,
-> the hardware contains the shadow guest value while values[slot].curr still holds
-> the host value.
-> 
-> In this scenario, if msrs->registered is true at step 1) (due to updating of a
-> previous slot), kvm_disable_virtualization_cpu() could call kvm_on_user_return()
-> and find "values->host == values->curr", which would leave the hardware value
-> set to the shadow guest value instead of restoring the host value.
-> 
-> Do you think it's a bug?
-> And do we need to fix it by disabling irq in kvm_set_user_return_msr() ? e.g.,
+> Just to say that I have patches that get rid of these has_xxx flags for
+> the cores, and these changes (and the additional platform glue patches
+> that have been posted) will conflict with them.
 
-Ugh.  It's technically "bug" of sorts, but I really, really don't want to fix it
-by disabling IRQs.
+Fair, I was in your position not so long ago :)
 
-Back when commit 1650b4ebc99d ("KVM: Disable irq while unregistering user notifier")
-disabled IRQs in kvm_on_user_return(), KVM blasted IPIs in the _normal_ flow, when
-when the last VM is destroyed (and also when enabling virtualization, which created
-its own problems).
+For this particular series, it should be straightforward to fix the
+conflict, but for the pending new glue divers we'll have to
+find the sweet spot for these changes.
 
-Now that KVM uses the cpuhp framework to enable/disable virtualization, the normal
-case runs in task context, including kvm_suspend() and kvm_resume().  I.e. the only
-path that can toggle virtualization via IPI callback is kvm_shutdown().  And on
-reboot/shutdown, keeping the hook registered is ok as far as MSR state is concerned,
-as the callback will run cleanly and restore host MSRs if the CPU manages to return
-to userspace before the system goes down.
+Maybe send it as an RFC so that people can see what to expect ?
 
-The only wrinkle is that if kvm.ko module unload manages to race with reboot, then
-leaving the notifier registered could lead to use-after-free.  But that's only
-possible on --forced reboot/shutdown, because otherwise userspace tasks would be
-frozen before kvm_shutdown() is called, i.e. the CPU shouldn't return to userspace
-after kvm_shutdown().  Furthermore, on a --forced reboot/shutdown, unregistering
-the user-return hook from IRQ context rather pointless, because KVM could immediately
-re-register the hook, e.g. if the IRQ arrives before kvm_user_return_register_notifier()
-is called.  I.e. the use-after-free isn't fully defended on --forced reboot/shutdown
-anyways.
+> Given the rate of change in stmmac, at some point we're going to have
+> to work out some way of stopping stmmac development to get such an
+> invasive cleanup change merged
 
-Given all of the above, my vote is to eliminate the IRQ disabling crud and simply
-leave the user-return notifier registered on a reboot.  Then to defend against
-a use-after-free due to kvm.ko unload racing against reboot, simply bump the module
-refcount.  Trying to account for a rather absurd case in the normal paths adds a
-ton of noise for almost no gain.
+Agreed.
 
-E.g.
+ - but with my variability and pressures
+> on the time I can spend even submitting patches, I've no idea how that
+> will work... I was going to send them right at the start of this
+> cycle, but various appointments on Monday and Tuesday this week plus
+> work pressures prevented that happening.
 
----
- arch/x86/kvm/x86.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+To give your more visibility, that's the only work I plan to do on
+stmmac for that cycle, the rest is going to be phy_port,
+and probably some netdevsim-phy.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4b8138bd4857..f03f3ae836f8 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -582,18 +582,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
- 	struct kvm_user_return_msrs *msrs
- 		= container_of(urn, struct kvm_user_return_msrs, urn);
- 	struct kvm_user_return_msr_values *values;
--	unsigned long flags;
- 
--	/*
--	 * Disabling irqs at this point since the following code could be
--	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
--	 */
--	local_irq_save(flags);
- 	if (msrs->registered) {
- 		msrs->registered = false;
- 		user_return_notifier_unregister(urn);
- 	}
--	local_irq_restore(flags);
-+
- 	for (slot = 0; slot < kvm_nr_uret_msrs; ++slot) {
- 		values = &msrs->values[slot];
- 		if (values->host != values->curr) {
-@@ -13079,7 +13073,21 @@ int kvm_arch_enable_virtualization_cpu(void)
- void kvm_arch_disable_virtualization_cpu(void)
- {
- 	kvm_x86_call(disable_virtualization_cpu)();
--	drop_user_return_notifiers();
-+
-+	/*
-+	 * Leave the user-return notifiers as-is when disabling virtualization
-+	 * for reboot, i.e. when disabling via IPI function call, and instead
-+	 * pin kvm.ko (if it's a module) to defend against use-after-free (in
-+	 * the *very* unlikely scenario module unload is racing with reboot).
-+	 * On a forced reboot, tasks aren't frozen before shutdown, and so KVM
-+	 * could be actively modifying user-return MSR state when the IPI to
-+	 * disable virtualization arrives.  Handle the extreme edge case here
-+	 * instead of trying to account for it in the normal flows.
-+	 */
-+	if (in_task() || WARN_ON_ONCE(!kvm_rebooting))
-+		drop_user_return_notifiers();
-+	else
-+		__module_get(THIS_MODULE);
- }
- 
- bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
-@@ -14363,6 +14371,11 @@ module_init(kvm_x86_init);
- 
- static void __exit kvm_x86_exit(void)
- {
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
-+
- 	WARN_ON_ONCE(static_branch_unlikely(&kvm_has_noapic_vcpu));
- }
- module_exit(kvm_x86_exit);
+> So, I decided instead to send out the first stmmac PCS series... which
+> means I now need to wait for that to be merged before I can think about
+> sending out anything else stmmac-related. (and there's more PCS patches
+> to come beyond the 14 I sent today.)
 
-base-commit: fe57670bfaba66049529fe7a60a926d5f3397589
---
+Do you plan to send the next round of PCS stuff next, or the cleanups
+for the has_xxx flags you were mentioning ?
+
+In any case, I'll be happy to help testing :)
+
+Maxime
 
