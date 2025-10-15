@@ -1,178 +1,163 @@
-Return-Path: <linux-kernel+bounces-854732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BE9BDF419
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:05:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9184FBDF452
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BF7B4864BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09AEE48844B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2602F3C07;
-	Wed, 15 Oct 2025 15:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F5F2D3ECA;
+	Wed, 15 Oct 2025 15:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2+JimHg"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQeY8MLq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95652EB87B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF942C237C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540459; cv=none; b=jVHrUwF2HAeHRaLSFtQ6Fwgghd+2OgpWSwm6YMcZlBINeUXyYUa/ZKMuhcSr43aYkPkCMgBlXVALvHlqundjSXIJB3ILeNsGpGHWj2ZvCvSiTaxmmBRYMp4ENQW9LJaOxR8gaeSyUpnBSOIVRtwj1G7UHHflVZkTtKMyNtDMu2U=
+	t=1760540599; cv=none; b=LEQrFJoYl+fL1fsJCg8Zdu7NbGeOVnJmFu6LnuWJ1EzVWm0pQBfWOZ0WHwrVrpKVtTFJxWng7YRvyKMbywm2rGpxrCn0sYvBOC7Vu5LfqJpGIRJbyVRvkV7+UzyjX71q9tpsI03OorRCxrgaxYFtX0WhOZmtPqI8xLaBN0+iCnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540459; c=relaxed/simple;
-	bh=60XT5SO34ddHtpkn/CIdJmvGQY2Mb1sF34YxFyRKDfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n1ykkO9fH77g9dNeDJTktA7L6dz78X946srmXo0kND4vKis7twbfNafGBhdZuOeHTgoxxUFRYICthctLroozSYJRVBffuAJveLkCdr4RorlBP+l7JvAtx5X8j/tNorTmzcmmV4GGXZAOHcjGswAV3Ij2vRyTtWqtkIuMw2vfR7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2+JimHg; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b551350adfaso5475438a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760540457; x=1761145257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ifGvImgtMbsz18j1645Ok+33OIuHZ/lnBEplV9+70Ps=;
-        b=K2+JimHgj0OETor0U2PUWLzJe0XalgSCzoHcek+QuqM49FaXClZNjlwZef/myuLBfe
-         hX6BQ4BEp+OSEZbtLXkvK/4uITCr9tVcthgkh3sim5kHYWh0ZGL/Q1bglm3rAFkvUHGd
-         hejdzMeGEw2cbKRocB/DFBC2ywbCjJSr8LrcnO3+jLuwFJADWg0AM6JCO9rL0/7buJJE
-         QNgZOvVyLd6+zL3Y5FhQ1CId7uQlges7VPZVmmPaEiXd2wiRvCdzHBjW1wyjBqe34+a9
-         kFCTLo6b9aocn+fdDZrpIUnP4OXxM8qXWH/mKgY1FDdRqd1i6VYTZgfBaA4Fo0Zb3v4y
-         du0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760540457; x=1761145257;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ifGvImgtMbsz18j1645Ok+33OIuHZ/lnBEplV9+70Ps=;
-        b=mMe5JYbydyZZAWfDxhFo6bYh/z2wmzj0eswJnkdb7SXCkFJ23nah/NflMzLY8em3jr
-         iiivgoGaLbADqxYpkHMxKVgVJBO70LI7TiWB4UG9TTd5VV98c/sEz76k/prdTH7/8ddM
-         NA7DXUmglPtvW37eG6eFTtdo9ax239vitF9G9WsSo+qZmWi421wHDAF1szBo6hUrkARB
-         npTNsB7E0isymNME/35s+FZbsC0mSAnSwnb/hZFbmP03ChraucYM6QaWeDP+j6zcfCnK
-         Y+f6z5JX7Ku/GmvFlbNJqjHZkCiTExXTE9XxkLiseB4Eas4yo/1PbyJ1BH7NMqaLIwJ0
-         5PZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Xwiv/ur9uDxJfV/gBV40aOMCkdxawrH9YG01IaaB81whe5r3ud3brrOd5khdriUnopCSFaGanOUUOzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJJ8jTrU+MPSSKV/M4QPoAQxflGEpBA9QvwR57Ppzk//xbe1xV
-	dWrs+ik+VspaN0MfLJObf+Ctkd3w8osloRpMR2J2NpusipV77RwDLd66
-X-Gm-Gg: ASbGncvsjszBpLwySYIHTLo67l1LhDQ5TOy/VcsWAt0+PalEk9HtKdrNJ4j6QW/C6av
-	m8aZcV57cr9Thh0Ctnv/Djpw38MZd/1nDTIzIO6ZbyoKb4D9GH/AiOdBvQCyfI6bZUOVmlU8sPW
-	pz6ViyUijTDctfXxF0FPFNeVZb5ZZwHWTkR5y4CIdVVvBleeyoVvnnaYTxK31FcCa89VuysFkOz
-	wVoqrLvfi9B/KatXy1Hj5G+jf9Msf1O/K1+p/nZRnBX6ZI9sgHRgdKfLu+YJk1ldwBOcP9VLYpI
-	LfQfeF6oCnbhxEkvu06yc+u48I74M+YZplTc9itLth4ymP7RbVR/XsYZevS2EOfB1kuO9vcp/ZC
-	Xl6xYxp1MJ+/fQ5zun3v+PGusC0t0EnyAhDz5Z4r/P7jiIs7VGYpdTrcYnk8vpo7vJHOUX4mikw
-	==
-X-Google-Smtp-Source: AGHT+IGqxIssqtEE1gKMyZ/xPQWAaQDO4XMp/cQx9E/SYok7KUMOpcA7WPjXYLzfNma9OBCD3O8baQ==
-X-Received: by 2002:a17:903:298c:b0:265:982a:d450 with SMTP id d9443c01a7336-290273ffbf1mr386779325ad.40.1760540456721;
-        Wed, 15 Oct 2025 08:00:56 -0700 (PDT)
-Received: from iku.. ([2401:4900:1c07:c7d3:f449:63fb:7005:808e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f36408sm199642265ad.91.2025.10.15.08.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 08:00:56 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Paul Barker <paul@pbarker.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/3] net: ravb: Enforce descriptor type ordering to prevent early DMA start
-Date: Wed, 15 Oct 2025 16:00:26 +0100
-Message-ID: <20251015150026.117587-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251015150026.117587-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20251015150026.117587-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1760540599; c=relaxed/simple;
+	bh=KPicisnbEmdhgyqC8EwVVU1rA/2yi/zfZrIe80dzK64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=leCbJGUpk9L25skiEYlYBOQEP3n4lzXnwF19M0+Kv9T7U+OJyYT11PlGiWWaJ1KMuZhDIV/c0gpq6+oX/VMIxj3Dui8cAORU/uMXmMlGYYASOtvRjfHRa/Vnt4hXwEvch2zb7u3kiT4PHDWaOL+AKhP4mKBSfVSOOgTUNZO50Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQeY8MLq; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760540597; x=1792076597;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=KPicisnbEmdhgyqC8EwVVU1rA/2yi/zfZrIe80dzK64=;
+  b=GQeY8MLqUmbFHJP3WGUq18AUc1SKLOzKnLSVraGiPjKLz7igpyLFrTrp
+   JO5KUhj+KSKFGHuTGJ3tQEcf53t1um2WnXODDEtQcxOPYS3hE5ICcpFVU
+   QSuWkODih4eBQSKYbRktskLGL5LLPngE+M/DwIZSiJ/wFRXbjixMwPSpO
+   TkttLaNTlFioYT5aILtj5yYsaNSpuGtSJ4rgCE//hoACzAPA6LS//utcN
+   WnZd/3jM2xYfemOa/mebN2bCITQ2y7LuyLtqX+4lyaxXD7FyFwfHDhMtO
+   JEHGpOZla0eLXYnLOMFbuPPDVbH8rLtv06gwJi9XQX6q/gU36afY2/JZF
+   Q==;
+X-CSE-ConnectionGUID: EzC4UQwaS5aFUsJKThXiiQ==
+X-CSE-MsgGUID: ll+6woLZQsGAzNtqfgw41Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="50286122"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="50286122"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:02:31 -0700
+X-CSE-ConnectionGUID: XDRWVQPRT52lEdEUyVNGUg==
+X-CSE-MsgGUID: ENHk2Ho9SmykEMSH57amxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="181411456"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.111.202]) ([10.125.111.202])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:02:30 -0700
+Message-ID: <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com>
+Date: Wed, 15 Oct 2025 08:02:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
+To: "Reshetova, Elena" <elena.reshetova@intel.com>,
+ "Annapurve, Vishal" <vannapurve@google.com>, "Gao, Chao" <chao.gao@intel.com>
+Cc: "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Weiny, Ira" <ira.weiny@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>,
+ "sagis@google.com" <sagis@google.com>,
+ "paulmck@kernel.org" <paulmck@kernel.org>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20251001025442.427697-1-chao.gao@intel.com>
+ <CAGtprH_FzXjnC0Rbctpvm2_kqAAnUOfnaT4885fBiAi7s0jcXw@mail.gmail.com>
+ <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 10/15/25 01:54, Reshetova, Elena wrote:
+...
+>> "Performing TD Preserving during a TD Build operation might result in
+>> a corrupted TD hash in the TD attestation report. Until fixed in a
+>> future Intel TDX module update, a host VMM can avoid the problem by
+>> not conducting a TD Preserving Update while TD Build operation is in
+>> progress."
+>>
+>> Do you know if this issue is fixed already? If so, what version of TDX
+>> module fixes this issue?
+> 
+> It is not fixed, because the limitation comes from the internal crypto context
+> maintained by the IPP crypto library.
 
-Ensure TX descriptor type fields are written in a safe order so the DMA
-engine does not begin processing a chain before all descriptors are
-fully initialised.
+Does the TD attestation report contain information about the TDX module?
+Isn't that information in flux during a module update?
 
-For multi-descriptor transmissions the driver writes DT_FEND into the
-last descriptor and DT_FSTART into the first. The DMA engine starts
-processing when it sees DT_FSTART. If the compiler or CPU reorders the
-writes and publishes DT_FSTART before DT_FEND, the DMA can start early
-and process an incomplete chain, leading to corrupted transmissions or
-DMA errors.
+...
+> But the situation can be avoided fully, if TD preserving update is not conducted
+> during the TD build time. 
 
-Fix this by writing DT_FEND before the dma_wmb() barrier, executing
-dma_wmb() immediately before DT_FSTART (or DT_FSINGLE in the single
-descriptor case), and then adding a wmb() after the type updates to
-ensure CPU-side ordering before ringing the hardware doorbell.
-
-On an RZ/G2L platform running an RT kernel, this reordering hazard was
-observed as TX stalls and timeouts:
-
-  [  372.968431] NETDEV WATCHDOG: end0 (ravb): transmit queue 0 timed out
-  [  372.968494] WARNING: CPU: 0 PID: 10 at net/sched/sch_generic.c:467 dev_watchdog+0x4a4/0x4ac
-  [  373.969291] ravb 11c20000.ethernet end0: transmit timed out, status 00000000, resetting...
-
-This change enforces the required ordering and prevents the DMA engine
-from observing DT_FSTART before the rest of the descriptor chain is
-valid.
-
-Fixes: 2f45d1902acf ("ravb: minimize TX data copying")
-Cc: stable@vger.kernel.org
-Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/net/ethernet/renesas/ravb_main.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index a200e205825a..2a995fa9bfff 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2211,15 +2211,19 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 
- 		skb_tx_timestamp(skb);
- 	}
--	/* Descriptor type must be set after all the above writes */
--	dma_wmb();
-+
-+	/* For multi-descriptors set DT_FEND before calling dma_wmb() */
- 	if (num_tx_desc > 1) {
- 		desc->die_dt = DT_FEND;
- 		desc--;
--		desc->die_dt = DT_FSTART;
--	} else {
--		desc->die_dt = DT_FSINGLE;
- 	}
-+
-+	/* Descriptor type must be set after all the above writes */
-+	dma_wmb();
-+	desc->die_dt = (num_tx_desc > 1) ? DT_FSTART : DT_FSINGLE;
-+
-+	/* Ensure data is written to RAM before initiating DMA transfer */
-+	wmb();
- 	ravb_modify(ndev, TCCR, TCCR_TSRQ0 << q, TCCR_TSRQ0 << q);
- 
- 	priv->cur_tx[q] += num_tx_desc;
--- 
-2.43.0
-
+Sure, and the TDX module itself could guarantee this as well as much as
+the kernel could. It could decline to allow module updates during TD
+builds, or error out the TD build if it collides with an update.
 
