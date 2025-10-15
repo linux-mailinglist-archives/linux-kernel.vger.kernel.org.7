@@ -1,114 +1,327 @@
-Return-Path: <linux-kernel+bounces-854396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74D5BDE446
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4758FBDE44F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E74A4FB4D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB9D3B3941
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BF331AF18;
-	Wed, 15 Oct 2025 11:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B522731E0F9;
+	Wed, 15 Oct 2025 11:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AuYOSJPq"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dIiEm8qh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5C73168FE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C002BCF5D;
+	Wed, 15 Oct 2025 11:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760527787; cv=none; b=VLncYtyPN0nbIq0Jw/isZt/6B8rm6hyH+SIk6bLiZS3FRusuoUPBVkw2CzXO+TL6UHRYy2oCoocYULkRifDDT3x9lFrjUturd9bBv7gs2B1o/rBEuWFrvftaPHtS2lIBOu09NjLhluGR2ShyE7mfaJIDgHFFwhColC5L8RTkxOc=
+	t=1760527821; cv=none; b=PX3E1WNBPfu67Zg8kMTo+M3s3zgv8RZL8z9lxHiYTvyMOBrzD4Lqn98UyozvJtAnv8G3h3y64UISQmjVwnJeN8lc/VVd/ueYaSKeUYShwuMtqZ9SnzLrEn10TCxHhuZziHJ/snx/wZ0fOB+nsYmUFeLqM9LkHPu0mvpowm9apO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760527787; c=relaxed/simple;
-	bh=cvbc4bQsfp6XJXPd4RR86XSedJxcuv8j3+iJpY/Z290=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IEyaPjhTqhso9gw4bg4q2trw3MAJgKgq94c6hJPXAfvH66pRcAMPvZkgYYV5KGJxkthhk4kGDOVlrQZPNEuxNWfXIolh1bNo+P/l5LVtGN3hSaOqMwkVnFuyxAd0CFU4xxOQFqs/T05CUMoyGqLQvANPMey+OTVSoCXbopQrv4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AuYOSJPq; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=M2uLmgje3ebm4+
-	kl1NOOb5d0r1B8OIFraXJQh54wt3Q=; b=AuYOSJPqfGiIXF7sJjp2f8TXTRX6jf
-	kgNKHGGwDxt9EmF6diCEjxTCcM87I9z9g4JLZi3lRcPKZO+T/O9B3dtN25iBartJ
-	s0PU3Pt7Nj+Gb9qgjttju99FljNgtA04xOxZKmLy4+NkAnsWreSIWkW3E0RcXoua
-	1TyTo6Y9OBXjifVAOjN2r5Sx/VAEWmxQP4nfBes1tzb8sz5pHTkza4vwgkzNkftI
-	QJxnZGzrwLu+CLKc1vG5iIo8WGEEd4Xe/SxAUMjPYuWfNjij3t78tFUV8DvZfjWK
-	OSnGJHs9B/Ld8Zk1yq2eEny653T5YyD7+6SCHV5QL+3kDUtVu4R5N1hw==
-Received: (qmail 3376364 invoked from network); 15 Oct 2025 13:29:41 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Oct 2025 13:29:41 +0200
-X-UD-Smtp-Session: l3s3148p1@L5Tt0DBBxLkujnsG
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [RFC PATCH] reset: always bail out on missing RESET_GPIO driver
-Date: Wed, 15 Oct 2025 13:28:59 +0200
-Message-ID: <20251015112921.19535-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1760527821; c=relaxed/simple;
+	bh=RqmRC24mDQdFrjhV8/X6TZziEuELpFoLVN0V5byaQ3E=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=im/ZVgV433iVf1VD9eboMhtNnnARVF2cBCa6kwSJGSEjiYQ/IkRw8eyFcngcZI0WoZgC0+/G1TvnSGjQwW8QozHNTjOncDLbHv7hxk4tgNNWK2nMGfBGhW/aQtXZ9vZ1LtbSpDPDEjy++YhLYjoFtV96l70YHOKRweyDsPdjhTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dIiEm8qh; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760527820; x=1792063820;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=RqmRC24mDQdFrjhV8/X6TZziEuELpFoLVN0V5byaQ3E=;
+  b=dIiEm8qhS2Sxa1J6lEt2IOEv59VUlzgc3XM64l70Uh09HgxSFhHxQiKi
+   /opyUpOn1b2QKBDGSfHhrKAWRO+vWjgBmwPAzrG4oDD31SO2lsFcE1Pxh
+   WFO1Pevx9u/YGtV8sY1zaf4qlohsQ+iSTPEdex/ZRSk3wPLGcUQDnXnQn
+   TecBcuNMstXdLcYH51lKCSaLXwvx0W5SG+rkxnFj3qKKTLdBWODJFZkFt
+   4kveB73fIOrhwklZyCNgD/ZbWJWU5wu0ad2wM6cARmsppaVHghH1lDNYE
+   Hhz4KYn/h2YSxW9PYELXWDgwcwLiBpOBwz1xFjD0RLXJPKeZA9qoeOblp
+   w==;
+X-CSE-ConnectionGUID: Q24W5PLUSTG+92SqSJWaiA==
+X-CSE-MsgGUID: 6gIy9V+4T9qaDWAXYusoWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62596280"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="62596280"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 04:30:19 -0700
+X-CSE-ConnectionGUID: Rc1JZ9N6TcOBYE+H3D1zZA==
+X-CSE-MsgGUID: VIEB4PSuRhetQYzYILY2Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="182100525"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 04:30:15 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 15 Oct 2025 14:30:11 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
+    Denis Benato <benato.denis96@gmail.com>
+Subject: Re: [PATCH v6 1/7] HID: asus: refactor init sequence per spec
+In-Reply-To: <CAGwozwF+LfL1AhR3PLJWLzF1iriohWFJRmRkHC6uwgfTnhZFaw@mail.gmail.com>
+Message-ID: <259f412f-6467-6b83-9751-9cd36b76d37b@linux.intel.com>
+References: <20251013201535.6737-1-lkml@antheas.dev> <20251013201535.6737-2-lkml@antheas.dev> <3d59f42f-2e24-6011-23b5-369be7eb4b3b@linux.intel.com> <CAGwozwF+LfL1AhR3PLJWLzF1iriohWFJRmRkHC6uwgfTnhZFaw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1711069739-1760527811=:957"
 
-Optional GPIOs mean they can be omitted. If they are described, a
-failure in acquiring them still needs to be reported. When the
-RESET_GPIO is not enabled so the reset core cannot provide its assumed
-fallback, the user should be informed about it. So, not only bail out
-but also give a hint how to fix the situation.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Closes: https://lore.kernel.org/r/87a51um1y1.wl-kuninori.morimoto.gx@renesas.com
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--8323328-1711069739-1760527811=:957
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-This happened because of this (in general) nice cleanup patch for the
-pca954x driver (690de2902dca ("i2c: muxes: pca954x: Use reset controller
-only")). Our .config didn't have the RESET_GPIO enabled before, so sound
-regressed on some boards.
+On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
 
-Actually, my preferred solution would be to make the reset-gpio driver
-'obj-y' but I guess its dependency on GPIOLIB makes this a no-go?
+> On Wed, 15 Oct 2025 at 12:53, Ilpo J=C3=A4rvinen
+> <ilpo.jarvinen@linux.intel.com> wrote:
+> >
+> > On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
+> >
+> > > Currently, asus_kbd_init() uses a reverse engineered init sequence
+> > > from Windows, which contains the handshakes from multiple programs.
+> > > Keep the main one, which is 0x5a (meant for brightness drivers).
+> > >
+> > > In addition, perform a get_response and check if the response is the
+> > > same. To avoid regressions, print an error if the response does not
+> > > match instead of rejecting device.
+> >
+> > I'm none the wiser on "why?" question after reading all this. Please
+> > describe the change properly. **Besides, you do many thing changes whic=
+h are
+> > not mentioned here at all.**
+>=20
+> Changes in asus_kbd_register_leds look bigger than they are due to
+> un-indenting and merging the if/else for non-nkey/nkey.
+>
+> I will update the text of the new patch to include the changes which
+> are 1) applying asus_kbd_get_functions to NKEY devices to check for
+> backlight, 2) removing 0x5d/0x5e initialization from NKEY devices
+> (0x5d is for armoury crate/0x5e for an aura matrix creator studio
+> thing), which then means that the if/else blocks are equivalent and
+> can be merged.
 
-On the other hand, the fallback is a really nice feature which could
-remove duplicated code. But if the fallback is not present by default,
-it makes it cumbersome to use IMO.
+Oh, I see it now. It was not at all obvious you wanted to consolidate the=
+=20
+init path because of all the other moving parts, to me it looked like you=
+=20
+just removed the if (<quirk>) check.
 
-Has this been discussed before? I couldn't find any pointers...
+> These two changes should not affect functionality, other than reduce
+> some init commands.
+>=20
+> > And what "spec" is the one you mention in the shortlog?
+> >
+> > > Then, refactor asus_kbd_get_functions() to use the same ID it is call=
+ed
+> > > with, instead of hardcoding it to 0x5a so that it may be used for 0x0=
+d
+> > > in the future.
+> >
+> > Can this be in own patch?
+>=20
+> I will spin this into three patches and reword. One for each paragraph
+> in the current commit body.
 
-Happy hacking, everyone!
+3 patches already sounds much better! They'll surely be easier to review=20
+and understand if somebody has to look at the commits years later from the=
+=20
+commit history.
 
+Thanks.
 
- drivers/reset/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+--
+ i.
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 22f67fc77ae5..8a0f41963f6b 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -1028,8 +1028,10 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
- 	if (ret == -EINVAL)
- 		return ERR_PTR(ret);
- 	if (ret) {
--		if (!IS_ENABLED(CONFIG_RESET_GPIO))
--			return optional ? NULL : ERR_PTR(ret);
-+		if (!IS_ENABLED(CONFIG_RESET_GPIO)) {
-+			pr_warn("%s(): RESET_GPIO driver not enabled, cannot fall back\n", __func__);
-+			return ERR_PTR(ret);
-+		}
- 
- 		/*
- 		 * There can be only one reset-gpio for regular devices, so
--- 
-2.47.2
-
+> Ack on the rest.
+>=20
+> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > ---
+> > >  drivers/hid/hid-asus.c | 91 ++++++++++++++++++++++------------------=
+--
+> > >  1 file changed, 48 insertions(+), 43 deletions(-)
+> > >
+> > > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> > > index a444d41e53b6..d0c783df99bc 100644
+> > > --- a/drivers/hid/hid-asus.c
+> > > +++ b/drivers/hid/hid-asus.c
+> > > @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad"=
+);
+> > >  #define FEATURE_REPORT_ID 0x0d
+> > >  #define INPUT_REPORT_ID 0x5d
+> > >  #define FEATURE_KBD_REPORT_ID 0x5a
+> > > -#define FEATURE_KBD_REPORT_SIZE 16
+> > > +#define FEATURE_KBD_REPORT_SIZE 64
+> > >  #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+> > >  #define FEATURE_KBD_LED_REPORT_ID2 0x5e
+> > >
+> > > @@ -393,14 +393,37 @@ static int asus_kbd_set_report(struct hid_devic=
+e *hdev, const u8 *buf, size_t bu
+> > >
+> > >  static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
+> > >  {
+> > > -     const u8 buf[] =3D { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0=
+x54,
+> > > -                  0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x=
+00 };
+> > > +     /*
+> > > +      * The handshake is first sent as a set_report, then retrieved
+> > > +      * from a get_report. They should be equal.
+> > > +      */
+> > > +     const u8 buf[] =3D { report_id, 0x41, 0x53, 0x55, 0x53, 0x20,
+> > > +             0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0=
+x00 };
+> >
+> > Why was layout of this changed?
+> >
+> > > +     u8 *readbuf;
+> > >       int ret;
+> > >
+> > >       ret =3D asus_kbd_set_report(hdev, buf, sizeof(buf));
+> > > -     if (ret < 0)
+> > > -             hid_err(hdev, "Asus failed to send init command: %d\n",=
+ ret);
+> > > +     if (ret < 0) {
+> > > +             hid_err(hdev, "Asus failed to send handshake: %d\n", re=
+t);
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     readbuf =3D kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
+> > > +     if (!readbuf)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     ret =3D hid_hw_raw_request(hdev, report_id, readbuf,
+> > > +                              FEATURE_KBD_REPORT_SIZE, HID_FEATURE_R=
+EPORT,
+> > > +                              HID_REQ_GET_REPORT);
+> > > +     if (ret < 0) {
+> > > +             hid_err(hdev, "Asus failed to receive handshake ack: %d=
+\n", ret);
+> > > +     } else if (memcmp(readbuf, buf, sizeof(buf)) !=3D 0) {
+> > > +             hid_warn(hdev, "Asus handshake returned invalid respons=
+e: %*ph\n",
+> > > +                     FEATURE_KBD_REPORT_SIZE, readbuf);
+> > > +             // Do not return error if handshake is wrong to avoid r=
+egressions
+> >
+> > This driver so far is using only /* */ comments.
+> >
+> > > +     }
+> > >
+> > > +     kfree(readbuf);
+> > >       return ret;
+> > >  }
+> > >
+> > > @@ -422,7 +445,7 @@ static int asus_kbd_get_functions(struct hid_devi=
+ce *hdev,
+> > >       if (!readbuf)
+> > >               return -ENOMEM;
+> > >
+> > > -     ret =3D hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf=
+,
+> > > +     ret =3D hid_hw_raw_request(hdev, report_id, readbuf,
+> > >                                FEATURE_KBD_REPORT_SIZE, HID_FEATURE_R=
+EPORT,
+> > >                                HID_REQ_GET_REPORT);
+> > >       if (ret < 0) {
+> > > @@ -638,50 +661,32 @@ static int asus_kbd_register_leds(struct hid_de=
+vice *hdev)
+> > >       unsigned char kbd_func;
+> > >       int ret;
+> > >
+> > > -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> > > -             /* Initialize keyboard */
+> > > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> > > -             if (ret < 0)
+> > > -                     return ret;
+> > > -
+> > > -             /* The LED endpoint is initialised in two HID */
+> > > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1)=
+;
+> > > -             if (ret < 0)
+> > > -                     return ret;
+> > > -
+> > > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2)=
+;
+> > > -             if (ret < 0)
+> > > -                     return ret;
+> > > -
+> > > -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> > > -                     ret =3D asus_kbd_disable_oobe(hdev);
+> > > -                     if (ret < 0)
+> > > -                             return ret;
+> > > -             }
+> > > -
+> > > -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> > > -                     intf =3D to_usb_interface(hdev->dev.parent);
+> > > -                     udev =3D interface_to_usbdev(intf);
+> > > -                     validate_mcu_fw_version(hdev,
+> > > -                             le16_to_cpu(udev->descriptor.idProduct)=
+);
+> > > -             }
+> > > +     ret =3D asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > >
+> > > -     } else {
+> > > -             /* Initialize keyboard */
+> > > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> > > -             if (ret < 0)
+> > > -                     return ret;
+> > > +     /* Get keyboard functions */
+> > > +     ret =3D asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REP=
+ORT_ID);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > >
+> > > -             /* Get keyboard functions */
+> > > -             ret =3D asus_kbd_get_functions(hdev, &kbd_func, FEATURE=
+_KBD_REPORT_ID);
+> > > +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> > > +             ret =3D asus_kbd_disable_oobe(hdev);
+> > >               if (ret < 0)
+> > >                       return ret;
+> > > +     }
+> > >
+> > > -             /* Check for backlight support */
+> > > -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> > > -                     return -ENODEV;
+> > > +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> > > +             intf =3D to_usb_interface(hdev->dev.parent);
+> > > +             udev =3D interface_to_usbdev(intf);
+> > > +             validate_mcu_fw_version(
+> > > +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
+> > >       }
+> > >
+> > > +     /* Check for backlight support */
+> > > +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> > > +             return -ENODEV;
+> > > +
+> > >       drvdata->kbd_backlight =3D devm_kzalloc(&hdev->dev,
+> > >                                             sizeof(struct asus_kbd_le=
+ds),
+> > >                                             GFP_KERNEL);
+> > >
+> >
+> > --
+> >  i.
+> >
+> >
+>=20
+--8323328-1711069739-1760527811=:957--
 
