@@ -1,183 +1,118 @@
-Return-Path: <linux-kernel+bounces-855251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271F0BE0A28
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:29:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5E6BE0A38
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECEF64EE17E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E201C19A77C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440AA2FABF2;
-	Wed, 15 Oct 2025 20:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704A2302CBD;
+	Wed, 15 Oct 2025 20:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igerKaBd"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Yfz7vK+9"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C9B223DEA
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B8D41C71
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760560133; cv=none; b=Uz4TlBKo/RVxBH6jhw6N3/bRcHnbmUM+tlhWhP/JQV/1b4g41+9OAyZd4eFQ/eBMhh/I9srAIpG7kOIDfyne4F5340T9e4YF2DSflig1sqB9Hk8TQqym9EimbBKtBRy+I/ekBoyCl7sSftH1q3dBam87tdk7pAMCwbFCEyJnwZY=
+	t=1760560358; cv=none; b=tlk9fy/okFHM8ah5dUZt+Yc652PrJZFuN/kLvtRvhhOyaLfOkPHLb8tC2E6zWVpr5ZZ5bB9/UDRFGSJEyz93GBYUYUdjdZcGXhxblPZrYaSY8Viu33E/dryjHk4kGwshikPrvc0++je/8N3OGvhTJgvR9HI+5iVoan2aMjhMVPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760560133; c=relaxed/simple;
-	bh=GfW7nLyntXDYIXKIQ+YtakbDrhIW2xPxJZieBsO6EQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mRQWfRmm1VcmPbWx/f7WqvfDuMtU6gkRkTRQFGAWgIuI+Q48Ue8uHXFcTRmOLLrlxF6oPeMt8mwlkiEf2xu7R2+dC8FIHKM3mMA34LMWYRuZM8I80EuWowT+GE4Uk6g0wWPRwRK6Vixnai5HaYgCy2bVa6YtmyJEibp8ds7lleU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igerKaBd; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7957e2f6ba8so412186d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760560131; x=1761164931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UCtklihtbOhFVtWrXC87SZH/yrccGP2P2vSXXm4fCXM=;
-        b=igerKaBdmzGtmODBpCySu/CGD3dt9wc/VUwWa1RoFFVzQf3bNRXh4jwQ03sNSICFq1
-         B6TX/GQdKChZJIEpA2aM7jqE+Xjlx2SU3WDuZZR9HR15QNIPQGygRKsCJ/mi2i/B1x6Z
-         npVMA2PyXrCH5B8AJsgICxN5FD+yZqyb0m7Ef7cVP8K75CWn5QnATCJSLUtV4rIvBvEq
-         YWrbON0Bfb8U6LDxZhtoJ8DAUP2TnvTHzyV0/00HU9WqFirRJQ6ygyQzs53yWH2teQVD
-         Rhmiw1NoGfwF0Bq2q8j64GSZu5XbfXDmEXwpfYlIplZtXgs/hoQTqkfsTHwXJaqJ3yAn
-         5L6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760560131; x=1761164931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UCtklihtbOhFVtWrXC87SZH/yrccGP2P2vSXXm4fCXM=;
-        b=pJvAIWSLYOpKe8MhKocC+ObpAlomaRdh+/4UYewLPDiAepa6xeSzTw3iPPNQasi70x
-         qa4meokqPV6xmVHqjU+Dxri/B8+6VewpGDIPK8xpowGeM6nU5+kc39ukZ0QXq0LwKF4g
-         q9wkCyMOI/9IJ/ZxKYmIo33kd6MpaDsCERIyfmgu2EhGOTvYQGBOEONat4CqI8R7Qjoj
-         76OpUlqVilHhKgkIu8XDsvt8bAKal9B2D85IsKEsimd5d9dTLdat5q0OVBx95HNTCG1D
-         f0j9hmKZ7bREoUONY3uLutZGOcCVoSJ5awce1noyI7EsTowb48axQFoEvscB4OUkFKGV
-         b1CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZdVqvZkuaa2TJjXVEHNOWDvwA1cwVdPhn2tna1IYfxMQ9ZDb9QoT5nb2F/vnbXHWjGmAsSeDIQcEFZ+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr+jD7a0aluJdV7UKeZNpT67AsH0ePvy0clWN2/SM2o8OBP8+c
-	nLQe1jYKMWOKqDvr2/FycruTbghRo3AXJFfPPHyGW3+Q3yb3OHC1CoeYAE43CoZud70BpIfSa3l
-	Soj7Zp4jzObgNpwJg82R9HY159M0n2XEzFCNv
-X-Gm-Gg: ASbGncsSuHHy2DDRbOGiYC0lgW+2hi+m+Oi1KzVPhVjuYRpvAMMg/WEtwxoc1VJgBjh
-	Bi9nCxnachCYz9cGMVAYUJTZSIuheglZPEryvxR11HNOi8esk5SSTOjiZCy9TiPMV9wDVoKBbmK
-	B6EUzqRT/ivbLD6At0S7+9r9h49XkOSJQST/IL8FnjNyi9vpmczNaCsYLDJpxZ1dn4yEOtP+GYM
-	L7An4Qb5rlXT6VBKguu6Ock5kvR2OhzZ7jHCWDWIfgbo7PUg41q8U49pgoArACLkkEXzMBV1tKP
-	hSA3Zxx8O6EEh0LA
-X-Google-Smtp-Source: AGHT+IFCn7H/zNcXBxMpbrNmnQeoIxLu56FopThW4xhIHn56Aba+VqVESsjEtwVMcEHmuG8hzRQAx2vIJIxHR6DsZYo=
-X-Received: by 2002:a05:622a:995:b0:4b4:9489:8ca9 with SMTP id
- d75a77b69052e-4e6ead5afc4mr367197571cf.54.1760560130795; Wed, 15 Oct 2025
- 13:28:50 -0700 (PDT)
+	s=arc-20240116; t=1760560358; c=relaxed/simple;
+	bh=MkfoROK3dfKdOkIEAD4mNrDDOXrtTV7V8qhM5BkHtBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kcxSPQk6m5wTuuB047iWdeGr4qs7IGFA8yk8u7ZeSkESaDqcWNmsC7oIwPGgzOtZRlim6CPhVVtaG9tPtSoFR8PZmL9SW1YMtdQm4Cq0HYNduLw+X3AzQ9/pDoOlBwq4wQ5guC2nHNX1pAG65tKDOPljcpQ0SMUat9uEMHz0YCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Yfz7vK+9; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=fLl6q1Y+72vHxOIMF4slDKrUf5187PWqHxWI44dG6yE=; b=Yfz7vK+9g3WW7BmyFBFji3dkMU
+	UevXDzFQ4ydupk++uQA9CA0Kni3han+FwzAvwR1aU2BFfJ6pKsTFz8BXw/B4dY28bnusWTOcilWIq
+	c5tT3UCH41N0TqRuXgZYdT1jnvonWs1mYI7vkq0kQ53SMjy0hakUfxwHDXc6KMNHe2sdPT8guKzGV
+	SLDjaMJm2Ce7EM6fEw9FapvU2XaIlLVoyFSK+kWCiYyyJ1aWdU2lTKwtizn8jxC/H2TXSuQkufMLK
+	JS0q3ff+QkqkfAJCiLHiCrCMGVMhAJ6y5nElRZXCJt86E9KkViyTeu9wmkejJwNgyfRqhE2eDurvE
+	8f/4GNWA==;
+Received: from i53875a40.versanet.de ([83.135.90.64] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v98AD-0002OA-JH; Wed, 15 Oct 2025 22:32:01 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Algea Cao <algea.cao@rock-chips.com>,
+	Derek Foreman <derek.foreman@collabora.com>,
+	Daniel Stone <daniels@collabora.com>
+Subject: Re: (subset) [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576 SoCs
+Date: Wed, 15 Oct 2025 22:31:51 +0200
+Message-ID: <176056029579.2036456.8048983695806935631.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
+References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aO06hoYuvDGiCBc7@bfoster> <CAJfpegs0eeBNstSc-bj3HYjzvH6T-G+sVra7Ln+U1sXCGYC5-Q@mail.gmail.com>
- <aO1Klyk0OWx_UFpz@bfoster> <CAJfpeguoN5m4QVnwHPfyoq7=_BMRkWTBWZmY8iy7jMgF_h3uhA@mail.gmail.com>
- <CAJfpegt-OEGLwiBa=dJJowKM5vMFa+xCMZQZ0dKAWZebQ9iRdA@mail.gmail.com>
- <CAJnrk1Z26+c_xqTavib=t4h=Jb3CFwb7NXP=4DdLhWzUwS-QtQ@mail.gmail.com>
- <aO6N-g-y6VbSItzZ@bfoster> <CAFS-8+Ug-B=vCRYnz5YdEySfJM6fTDS3hRH04Td5+1GyJJGtgA@mail.gmail.com>
- <CAJfpegsiREizDTio4gO=cBjJnaLQQNsmeKOC=tCR0p5fkjQfSg@mail.gmail.com>
- <CAJnrk1b=UMb9GrU0oiah986of_dgwLiRsZKvodwBoO1PSUaP7w@mail.gmail.com> <aO_6g9cG1IVvp--D@bfoster>
-In-Reply-To: <aO_6g9cG1IVvp--D@bfoster>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 15 Oct 2025 13:28:39 -0700
-X-Gm-Features: AS18NWBUad1fkce9hs92YgRf8HsxWvhoWh_6BAI1le74rtdPJ69SePpQwXy3Svs
-Message-ID: <CAJnrk1Y+rdH11k_n947Z2rofu39=9=C5CRK5USi7Z1CnEG7fcg@mail.gmail.com>
-Subject: Re: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-To: Brian Foster <bfoster@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, lu gu <giveme.gulu@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd@bsbernd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 12:44=E2=80=AFPM Brian Foster <bfoster@redhat.com> =
-wrote:
->
-> On Wed, Oct 15, 2025 at 10:19:15AM -0700, Joanne Koong wrote:
-> > On Wed, Oct 15, 2025 at 7:09=E2=80=AFAM Miklos Szeredi <miklos@szeredi.=
-hu> wrote:
-> > >
-> > > On Wed, 15 Oct 2025 at 06:00, lu gu <giveme.gulu@gmail.com> wrote:
-> > > >
-> > > > >  Attaching a test patch, minimally tested.
-> > > > Since I only have a test environment for kernel 5.15, I ported this
-> > > > patch to the FUSE module in 5.15. I ran the previous LTP test cases
-> > > > more than ten times, and the data inconsistency issue did not reocc=
-ur.
-> > > > However, a deadlock occur. Below is the specific stack trace.
-> > >
-> > > This is does not reproduce for me on 6.17 even after running the test
-> > > for hours.  Without seeing your backport it is difficult to say
-> > > anything about the reason for the deadlock.
-> > >
-> > > Attaching an updated patch that takes care of i_wb initialization on
-> > > CONFIG_CGROUP_WRITEBACK=3Dy.
-> >
-> > I think now we'll also need to always set
-> > mapping_set_writeback_may_deadlock_on_reclaim(), eg
-> >
-> > @@ -3125,8 +3128,7 @@ void fuse_init_file_inode(struct inode *inode,
-> > unsigned int flags)
-> >
-> >         inode->i_fop =3D &fuse_file_operations;
-> >         inode->i_data.a_ops =3D &fuse_file_aops;
-> > -       if (fc->writeback_cache)
-> > -               mapping_set_writeback_may_deadlock_on_reclaim(&inode->i=
-_data);
-> > +       mapping_set_writeback_may_deadlock_on_reclaim(&inode->i_data);
-> >
-> >
-> > Does this completely get rid of the race? There's a fair chance I'm
-> > wrong here but doesn't the race still happen if the read invalidation
-> > happens before the write grabs the folio lock? This is the scenario
-> > I'm thinking of:
-> >
-> > Thread A (read):
-> > read, w/ auto inval and a outdated mtime triggers invalidate_inode_page=
-s2()
-> > generic_file_read_iter() is called, which calls filemap_read() ->
-> > filemap_get_pages() -> triggers read_folio/readahead
-> > read_folio/readahead fetches data (stale) from the server, unlocks foli=
-os
-> >
-> > Thread B (writethrough write):
-> > fuse_perform_write() -> fuse_fill_write_pages():
-> > grabs the folio lock and copies new write data to page cache, sets
-> > writeback flag and unlocks folio, sends request to server
-> >
-> > Thread A (read):
-> > the read data that was fetched from the server gets copied to the page
-> > cache in filemap_read()
-> > overwrites the write data in the page cache with the stale data
-> >
-> > Am i misanalyzing something in this sequence?
-> >
->
-> Maybe I misread the description, but I think folios are locked across
-> read I/O, so I don't follow how we could race with readahead in this
-> way. Hm?
 
-Ah I see where my analysis went wrong - the "copy_folio_to_iter()"
-call in filemap_read() copies the data into the client's user buffer,
-not the data into the page cache. The data gets copied to the page
-cache in the fuse code in fuse_copy_out_args() (through
-fuse_dev_do_write()), which has to be under the folio lock. Yeah
-you're right, there's no race condition here then. Thanks for clearing
-this up.
+On Wed, 03 Sep 2025 21:50:58 +0300, Cristian Ciocaltea wrote:
+> The first patch in the series implements the CEC capability of the
+> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
+> This is based on the downstream code, but rewritten on top of the CEC
+> helpers added recently to the DRM HDMI connector framework.
+> 
+> The second patch is needed for RK3576 in order to fixup the timer base
+> setup according to the actual reference clock rate, which differs
+> slightly from RK3588.
+> 
+> [...]
 
->
-> Brian
->
-> > Thanks,
-> > Joanne
-> > >
-> > > Thanks,
-> > > Miklos
-> >
->
+Applied, thanks!
+
+[1/6] drm/bridge: dw-hdmi-qp: Add CEC support
+      commit: e4a2d54a2f1a9c9a1971651832c8f0ad9d3782c4
+[2/6] drm/bridge: dw-hdmi-qp: Fixup timer base setup
+      commit: f7a1de0d86221000dc0699a8b48ad3a848e766d9
+[3/6] drm/rockchip: dw_hdmi_qp: Improve error handling with dev_err_probe()
+      commit: b6736a4ea3fa68524074a18334f344a34a05bee8
+[4/6] drm/rockchip: dw_hdmi_qp: Provide CEC IRQ in dw_hdmi_qp_plat_data
+      commit: 9baa02327adf2b1e919e95af23036102cfd0133f
+[5/6] drm/rockchip: dw_hdmi_qp: Provide ref clock rate in dw_hdmi_qp_plat_data
+      commit: 33ea4d520fbda505e2cfe5b36ebf522de1f3f5e9
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
