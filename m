@@ -1,187 +1,195 @@
-Return-Path: <linux-kernel+bounces-855096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E2CBE0366
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A461BE0375
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDCCC487699
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D03486CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D6E2FF171;
-	Wed, 15 Oct 2025 18:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EEF2D837E;
+	Wed, 15 Oct 2025 18:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vDSc+bur"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gJqaZnRI"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092B43002D3
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA211C860C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760553428; cv=none; b=LkAqb2t68qTxkyRaOC402se6N5FEOE+j/9w+RGbxx8WCc04POh0kMWCRmctWL5FuUKd8dafB/ojXhtM6VrhxqHBV4kuHvuaMUUDpKPvkXPvv86muj0OfG47ioPt3ZCHngYC9jardQDZ4CC/ad6NFiKz7d00q2o5JepPFWUBU2x0=
+	t=1760553534; cv=none; b=Im8EzeIY7pBB4F2YK4CslfxzujlWHUm7eIbIOie6upRZ/CzbwLC7nMOuNYXQafsQa1Nl7BkiGDhU6cYkf34UUk3OSQ6onRgc+ndbNfKJYTFZTiNysHXk5/36w26cDGIm4yDNmjkJyyuevZ9q0xlWKV0QX443708daMDeFkxtcE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760553428; c=relaxed/simple;
-	bh=1H/TAjStyaI6entLwQUNBGgnkdgglmJ5EvafY9K9xl4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LVHy4ab5nKxsfmudLI+ol4rsaqmMAzuKrx1mIJCmy1UMtTQ8/bLrd1LRIvBQhkBhezoUGKNRnwjz0W3XWv+FMlkCq674t3CaYOnB3Ei5nIHBkxzriCjwq1bQv/JAj0tkQ9VmG0YsTUML8DqS9PryBXZ8f6/Gs2WXwniuDgqZEes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vDSc+bur; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b6325a95e44so1155711a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:37:06 -0700 (PDT)
+	s=arc-20240116; t=1760553534; c=relaxed/simple;
+	bh=A6ABvce90CoOKfZJ1YRD55sJ0SyCGKbP1stpO6hQahU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E2H8Put9Hm5sif8sRQZh0Vor5jXHHXRb5U8Ibork4FSnprh7LiRctTcYPM9JjT7RUizUHJwBratLrffjC5ZVCL65rOrtVn+QTGpc221KQT/6kVClvIoT5GVMyCIwL6xG5DoOnNsUHxgyHlv+U2uw0vFMGvIipFbJM5StXcFFric=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gJqaZnRI; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7bdfbc6ba5cso3060295a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:38:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760553426; x=1761158226; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/50hzPJcz2Tgtv5Q95r1Wz9trycmcqvXu8eukDbYxw=;
-        b=vDSc+burVVff7zgcEyAcpSyPTgFBVU+oIVMjEidkDB3m7fBUVM9Su+4+MhP9MGjS6T
-         goS5Njp3SjoQEKqfXKpyDst0mgYblI7fOaR+o0YrTs4GVBcf3ujpOV3qxdSylJKmaih3
-         pELznx9N+Qx7rOal4ykkbi1rJVZqnezfZL9ttF68UKU20zcadl6KMBElZCS0DL12FaR1
-         2mu6R8j8RjDKOcZyJW8plJHz024EXOe3gvdAZY4FMCEJHzlJmMMEpjzGGXaVYP/x+A7V
-         IRwAhylJPuvsV+CSJ+6y6wlUa3zdvz47JRofiHlDDawUYvQONyc6G7vHiOM5iYtAJG7B
-         tkzg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760553532; x=1761158332; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c7Pa/1BHqYMBhXpBmEF4fAbsSTM4OPfXzGQjsT1agWg=;
+        b=gJqaZnRIpydAa/IzHDREMVj5BjSuQEBbP02U5YPr3hlm2gzIik5Xjf1Qfgmqy3Hngb
+         2nUYB43nLix6Hek5MChzxeJ1EGFUw4awYDla/+ex3mXjLmB9LgUyXRgvaIYBgDm2ksj8
+         5guWBE8pkaBWIX5NDYjEZbYpQ2HiooPl+OSgrOq3EEc0qW+Ews6keSypV3OuMRffHJsK
+         bK/ibcpaiAKn8RVFU9NFWeZ4Nqs7JzWI4e2eqA+kY2x0pI1tCK7yGRe/byddy9MI/m8/
+         G6wHBzbkMQJtu+l/SQiqwaF+jkd9afzuNpJoK/AvYUTz47c45HzubofxhCxLHXKXxoYt
+         QZIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760553426; x=1761158226;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r/50hzPJcz2Tgtv5Q95r1Wz9trycmcqvXu8eukDbYxw=;
-        b=mx7SF2h5sWSWN4gbkpEoQ+KVJPz0kBbNmBg0Mcm8oKgqIaBn6GmNHELLcHNonG6HAy
-         78Eh2GtqCu+VNkfHcPl42Y4DBGVLkV0LHxucpJb9KogFxMhLZBRcgJ/Y4JRzRVNg5n6C
-         RblhAOvvd6P7UlwF6xPau9okDNZlnKeVaXA+JxHVgKqnDb1cACiRE3aAKj8akupo722W
-         ij5pt7Fo7rqFo5eS2n7t3fga8fvA8lcQlFGZk9+OO/6f/+w6JBJ3uTcVcyqrEGf0D/u+
-         YlORSNImpcunYaKw0cBcDCtNSM5oP4le/sQJ3QK2JS7HhQTovXLEggCUNG7mHQUyi3xl
-         W/ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWAQ/zVjo+YE2O7+9tTlSX6sfqt27ZCE35Gs14SrrKdoMwh3Vtpk1CFijccuoOQYEhOP9FYShR9Rht8AeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Tt5wULJwvw7RrppEP7RNckbeUe751UppKzpBx5i/W7sJhBGm
-	zGbtO0TDmjLw9q25umY3HtnpOLkwOdk2eEg4LlIE/58hjOFZYOvotHJfwInsckcY8NowkILsiwb
-	GMkUZKQ==
-X-Google-Smtp-Source: AGHT+IH/6fHMrWMV8yp+8Ppnbbm83SfdopptQSAUB91QvYTFNTxXFVFSpf5U8i3i7fNPRxzlbwQGpMJ/fbA=
-X-Received: from pfbei17.prod.google.com ([2002:a05:6a00:80d1:b0:772:3537:d602])
- (user=wyihan job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1593:b0:2f3:3e1b:de66
- with SMTP id adf61e73a8af0-33495d4ea9cmr1351247637.7.1760553426186; Wed, 15
- Oct 2025 11:37:06 -0700 (PDT)
-Date: Wed, 15 Oct 2025 18:35:54 +0000
-In-Reply-To: <cover.1760551864.git.wyihan@google.com>
+        d=1e100.net; s=20230601; t=1760553532; x=1761158332;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c7Pa/1BHqYMBhXpBmEF4fAbsSTM4OPfXzGQjsT1agWg=;
+        b=j8WS8uRy9m9Q+JtS8reG7YZ4CEvNRaNwYrfgJqPApQu4ZC5ZeegM0QOy8F73pLCVDS
+         +NxsyOYmhzG3kM6eOAH32hEbVyuCdtQ/SGURcIt46134AqDUfqTKUt0qLJxgufoibWsE
+         HVndZu9JAw95U3UuW0TZbQM/kwEZzyBXcB0u0gMgydZOycKk5aJkbCvVen27UVAqswRN
+         XGXTkSFYAtdF+H3qHhoD27IhFHzUayrzlnSuLU4x8crQrGTC0J/mRbt64HGsBfNl9vj6
+         nGzCkqsgB3L5B4nGW4JSbkop0DE319JIHbLRGjr1bxpcwomOvHyAIjgOUtnBaEI2COtd
+         qFiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzjDjIflfFBiy5jTA20siZqK4gAY7yHeFxo91JOK/8YuLtshNOMn7dWYqqFErJzpmTXkenue1fbDkbWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydEL/dnmWYaMGe9dLs7JxffL0DTDdtGaFDDsgiLU75h5StQ2vw
+	hx/ttmnGC3xswxsFLvl+E6zmMxcFVdan9tKCP6AeN9wDZWuGdtyKi99ubSzCcxAy83yOJozI4ym
+	RgLlD
+X-Gm-Gg: ASbGncvVzrnItNBgngv/vSMx9+G1C50BnAe+Nww81XcFlOrwhaF642EQBJsAdTGQSkM
+	7ewRv7FaWQTHkkJWqjuAUwXifJebZDsy8evAhB4bwQmLo6lGzIxtvSrTvRNc8XtxUtVHehNdBsm
+	syIdd/9c+MzbpnkyAeuO8EgOzjsc2xtXmF/TFQ7aIZw31+eDQSHjWm8FOL1CA6lcfIe8mey53sL
+	+Dn6VlzbJiHd1YghSr7S7RdL0+d9sepBKw0P1LGG8myvoO9AmZl2yQcNTHuDpfOGsgk2enybg8K
+	7Lo5Dx9qEsN6i9To6t909nqIBIDmoGTr6qvq2d9C3Yeo/e2MnmeVaEKfXzDrsiJ6gt9JKpn4TAa
+	G53P1D2k9QWAj0buJHfmJRq3J2w1/zOH17djNAkzWrxtZ7G9FMVEI/H+lqQaRll1CL4HBt+SgJd
+	Y6ETuW03Wa8GzKx/+Whj9GY/NUWFoLY7VLQvnP
+X-Google-Smtp-Source: AGHT+IFUFKcADmzsj/IXf4M39Ln3t08RBAMcgnpJ1VX0iX7hN5yNIgTZRlo50r/4Kc/y5Zljp8pqkw==
+X-Received: by 2002:a05:6808:50a7:b0:43f:a2eb:861f with SMTP id 5614622812f47-4417b2bbcbfmr13447346b6e.8.1760553532023;
+        Wed, 15 Oct 2025 11:38:52 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:c482:1912:c2de:367e? ([2600:8803:e7e4:500:c482:1912:c2de:367e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f90510a2sm5533725a34.2.2025.10.15.11.38.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 11:38:51 -0700 (PDT)
+Message-ID: <ad929fe5-be03-4628-b95a-5c3523bae0c8@baylibre.com>
+Date: Wed, 15 Oct 2025 13:38:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760551864.git.wyihan@google.com>
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <0ec7349858142439ed0a250e6c04edf84cb0f488.1760551864.git.wyihan@google.com>
-Subject: [RFC PATCH 3/3] KVM: selftests: Test guest_memfd behavior with
- respect to stage 2 page tables
-From: Lisa Wang <wyihan@google.com>
-To: linmiaohe@huawei.com, nao.horiguchi@gmail.com, akpm@linux-foundation.org, 
-	pbonzini@redhat.com, shuah@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.or, 
-	linux-kselftest@vger.kernel.org
-Cc: david@redhat.com, rientjes@google.com, seanjc@google.com, 
-	ackerleytng@google.com, vannapurve@google.com, michael.roth@amd.com, 
-	jiaqiyan@google.com, tabba@google.com, dave.hansen@linux.intel.com, 
-	Lisa Wang <wyihan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
+ <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
+ <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
+ <409ad505-8846-443e-8d71-baca3c9aef21@sirena.org.uk>
+ <12db0930458ceb596010655736b0a67a0ad0ae53.camel@gmail.com>
+ <8c7bf62a-c5dc-4e4d-8059-8abea15ba94e@sirena.org.uk>
+ <d9455d90-31ca-4be7-b17c-2b339e92f8a0@baylibre.com>
+ <9024f05854dcc3cc59345c0a3de900f57c4730d9.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <9024f05854dcc3cc59345c0a3de900f57c4730d9.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Test that
-+ memory failure handling results in unmapping of bad memory from stage
-  2 page tables, hence requiring faulting on next guest access
-+ when the guest tries to fault a poisoned page from guest_memfd, the
-  userspace VMM informed with EHWPOISON
+On 10/15/25 11:43 AM, Nuno Sá wrote:
+> On Wed, 2025-10-15 at 11:15 -0500, David Lechner wrote:
+>> On 10/15/25 10:18 AM, Mark Brown wrote:
+>>> On Wed, Oct 15, 2025 at 03:43:09PM +0100, Nuno Sá wrote:
+>>>> On Wed, 2025-10-15 at 13:01 +0100, Mark Brown wrote:
+>>>>> On Wed, Oct 15, 2025 at 11:16:01AM +0100, Nuno Sá wrote:
+>>>>>> On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
+>>>
+>>>>>>>         controller    < data bits <     peripheral
+>>>>>>>         ----------   ----------------   ----------
+>>>>>>>             SDI 0    0-0-0-1-0-0-0-1    SDO 0
+>>>>>>>             SDI 1    1-0-0-0-1-0-0-0    SDO 1
+>>>
+>>>>>> Out of curiosity, how does this work for devices like AD4030 where the same
+>>>>>> word
+>>
+>> The AD4030 is just one channel, so doesn't do interleaving. But you probably
+>> meant AD4630 when it is wired up with only 1 SDO line. That line has to be shared
+>> by both of the simultaneous converters so it alternates between sending one bit
+>> from each word. This patch series doesn't address that case. But this series will
+>> work for the AD4630 when it has 2 SDO lines wired up.
+>>
+> 
+> Hmm I didn't even remembered that one. But what I meant with interleaved was having
+> the same data word spread through multiple SDO lines (one bit per line) which is what
+> (also) happens with the devices I mentioned. And since you mentioned "...two
+> different data words at the same time, one on each bus...", I raised the question.
 
-Co-developed-by: Ackerley Tng <ackerleytng@google.com>
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-Signed-off-by: Lisa Wang <wyihan@google.com>
----
- .../testing/selftests/kvm/guest_memfd_test.c  | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Ah, yes, I know what you are talking about now. I didn't mention that use case in
+the cover letter because I didn't want to confuse things. But actually the AD4630
+can have 8 SDO lines, 4 per each data bus/ADC channel. The groups of 4 act like a
+quad SPI where 4 bits of one data word are sent at the same time. Those 4 lines are
+considered one "bus" since they are all connected to the same serialzer that combines
+the bits into a single word. We already have support for this sort of thing in Linux.
+And sure, we could mix the two together. So a SPI transfer might look like:
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 7bcf8d2d5d4d..dc3398e22edd 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -539,6 +539,70 @@ static void test_guest_memfd_guest(void)
- 	kvm_vm_free(vm);
- }
- 
-+static void __guest_code_read(uint8_t *mem)
-+{
-+	READ_ONCE(*mem);
-+	GUEST_DONE();
-+}
-+
-+static void guest_read(struct kvm_vcpu *vcpu, uint64_t gpa, int expected_errno)
-+{
-+	vcpu_arch_set_entry_point(vcpu, __guest_code_read);
-+	vcpu_args_set(vcpu, 1, gpa);
-+
-+	if (expected_errno) {
-+		TEST_ASSERT_EQ(_vcpu_run(vcpu), -1);
-+		TEST_ASSERT_EQ(errno, expected_errno);
-+	} else {
-+		vcpu_run(vcpu);
-+		TEST_ASSERT_EQ(get_ucall(vcpu, NULL), UCALL_DONE);
-+	}
-+}
-+
-+static void test_memory_failure_guest(void)
-+{
-+	const uint64_t gpa = SZ_4G;
-+	const int slot = 1;
-+
-+	unsigned long memory_failure_pfn;
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	uint8_t *mem;
-+	size_t size;
-+	int fd;
-+
-+	if (!kvm_has_cap(KVM_CAP_GUEST_MEMFD_FLAGS))
-+		return;
-+
-+	vm = __vm_create_shape_with_one_vcpu(VM_SHAPE_DEFAULT, &vcpu, 1, __guest_code_read);
-+
-+	size = vm->page_size;
-+	fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP | GUEST_MEMFD_FLAG_INIT_SHARED);
-+	vm_set_user_memory_region2(vm, slot, KVM_MEM_GUEST_MEMFD, gpa, size, NULL, fd, 0);
-+
-+	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT(mem != MAP_FAILED, "mmap() for guest_memfd should succeed.");
-+	virt_pg_map(vm, gpa, gpa);
-+
-+	/* Fault in page to read pfn, then unmap page for testing. */
-+	READ_ONCE(*mem);
-+	memory_failure_pfn = addr_to_pfn(mem);
-+	munmap(mem, size);
-+
-+	/* Fault page into stage2 page tables. */
-+	guest_read(vcpu, gpa, 0);
-+
-+	mark_memory_failure(memory_failure_pfn, 0);
-+
-+	guest_read(vcpu, gpa, EHWPOISON);
-+	munmap(mem, size);
-+
-+	close(fd);
-+	kvm_vm_free(vm);
-+
-+	unmark_memory_failure(memory_failure_pfn, 0);
-+}
-+
- int main(int argc, char *argv[])
- {
- 	unsigned long vm_types, vm_type;
-@@ -559,4 +623,5 @@ int main(int argc, char *argv[])
- 		test_guest_memfd(vm_type);
- 
- 	test_guest_memfd_guest();
-+	test_memory_failure_guest();
- }
--- 
-2.51.0.788.g6d19910ace-goog
+struct spi_transfer example = {
+	rx_buf = rx_buf;
+	len = 4; /* 2 x 16-bit words */
+	rx_nbits = 4; /* each bus is quad SPI */
+	multi_bus_mode = SPI_MULTI_BUS_MODE_STRIPE; /* 2 data buses */
+	bits_per_word = 16;
+};
+
+This would result in a transfer that reads two 16-bit words in 4 SCLK cycles.
+
+And the .dts would look like:
+
+spi {
+	adc@0 {
+		compatible = "adi,ad4630-16";
+		reg = <0>;
+		...
+		spi-rx-bus-width = <4>;
+		spi-buses = <2>;
+		...
+	};
+};
+
+The AXI SPI Engine doesn't know how to do the quad SPI part yet though, so
+it isn't something we could implement right now.
+
+If we tried to do it with spi-buses = <8>; then we would end up with the
+"interleaved" bits (or nibbles depending on the wiring) that requires the
+extra IP block to sort out when using SPI offloading. Technically, we could
+make it work, but it would require a bunch of extra hardware description that
+the driver would have to interpret in order to correctly format the struct
+spi_transfer. I was hoping we could avoid that and just teach the SPI Engine
+how to do dual/quad SPI like other SPI controllers.
+
+> 
+> So I guess I kind of misused what interleaved typically means (even though I guess
+> it's not completely off :)) and was thinking more on the parallel concept Mark spoke
+> about.
+> 
+> Anyways, from your reply I see the intent is to also use the stripe mode for this and
+> have some kind of external IP deal with data re-order. I gave a look into the ad4630
+> IP core and indeed there's a data reorder IP block after the offload engine.
+> 
+> - Nuno Sá
+> 
+>>>>>
 
 
