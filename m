@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-854113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294C0BDD925
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:59:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA85CBDD937
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C2364F89A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12CB654574E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6A3319859;
-	Wed, 15 Oct 2025 08:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D63321B9F5;
+	Wed, 15 Oct 2025 08:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rH+F/PFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fiHu5AEM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62A13195FC;
-	Wed, 15 Oct 2025 08:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868BE31A07F;
+	Wed, 15 Oct 2025 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518764; cv=none; b=hAGiWlsw6TLakxlj7M3Yvvs3r7WnqqMTFGZYhrrhdjkjwGLzWCBkTJJP36vDLcOxqe2FMgY/8YzXfPP/MCYCY3iVsq2F0FEXc9u3lHz/6ZDf9ipdQWzRpODsyW3c/9+B2YXwR9cce/mpR+HICZWaxSI8Ky9lQtPUM/mdIx5G9Uk=
+	t=1760518769; cv=none; b=VcwNnOXJ0cy/x03LbdOukgtq3D1z+VZbKFVZQwDhmihzMCs3Fk1Ga/ptbW9nm686ty/tO5b8MWOp7C9qZXVZLh4QaUgTCp1lEwbYEuj9gjqHeYKmlaiEtWrp2pj7l4bVoxoY4nt/vdOnwiUVLMriV7Rn3aDTt9Aro9c0YeI0dME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518764; c=relaxed/simple;
-	bh=EUYhWksXVGZIMju1edC1CGm/fB7mrhfKVvKphQHqdsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGgA3kwyWNpmY1UZYTXa+rTX9GcSFMWxxb180bNudd19DS5BJNSuKCjRAqrnzsAQPY2Bru6HbpPOJdJC66VnZ0D9gG6HB3Cw0CKCXWNYMCCfCtLdgodERg1PNt1ppGigZu9yZ6XrgKZkd2zMLauWFhUSsxiHfeJkxv/SKNHH4yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rH+F/PFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D39BC4CEF8;
-	Wed, 15 Oct 2025 08:59:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760518763;
-	bh=EUYhWksXVGZIMju1edC1CGm/fB7mrhfKVvKphQHqdsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rH+F/PFSbSD5IInXuBF4/jDYiiMZTN23+ow/kLEFM6BYicaDp13195B7+KbDTI4tx
-	 qhl2be3E56oVhlCNoJrZACe3iLiwODwZXbjnhIJVlLPZgQyR6PwHbuWuTT0EQ5qmN0
-	 68o3n3a8sn21DrcdRfN6su9UF0QA8wFe/ESAf4DfVKcN+aET1TFCDWEB43P8BmhHD0
-	 y3zHF6P4eoKJoqI5f3xmaBlmo4z9ivcLLyzynb5Vn8dgMdajJQzJqC662g6RBMyFz2
-	 mRef9MD4sI4guKNrC8BZ8truUf0o5P5kllFhvS5pASuefg47i3npqJx0h2dzZQRDc5
-	 gX11R2L66LkQA==
-Date: Wed, 15 Oct 2025 09:59:18 +0100
-From: Simon Horman <horms@kernel.org>
-To: Lizhe <sensor1010@163.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
-	jonas@kwiboo.se, chaoyi.chen@rock-chips.com,
-	david.wu@rock-chips.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dwmac-rk: No need to check the return
- value of the phy_power_on()
-Message-ID: <aO9iZiMBs3pUnb77@horms.kernel.org>
-References: <20251015040847.6421-1-sensor1010@163.com>
+	s=arc-20240116; t=1760518769; c=relaxed/simple;
+	bh=XCOa6UKMhp1ANTY93PkNLWmuW4ZzjeRtQ3m+yYFujDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pD+0Svu1HFVT9aKxa3rqNmRytfnrkWXqgUAH1K77td4HRLF+Nn7hxLHkQSAwp05wusFosaaWyb2qXKMuXRDwBr/m409pc2DB6/5L7xE0jtkF2JUdu/4JxJXW6yLf8oISAxHgXoi1PSW+g833eXMeWWHz76iRR155hbpjOxjyL94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fiHu5AEM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760518763;
+	bh=XCOa6UKMhp1ANTY93PkNLWmuW4ZzjeRtQ3m+yYFujDQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fiHu5AEM86zk+RnqhjIILNMO66Za6N7CHFpcg1o4H5JZ70pcbus27J6Hk7uv1BV0r
+	 pdK+20Ruz9ynZp9ZviI7augpG2ZJk2avc1+DiwyC2dYrrzHOPlx3VBod5e/NyNhusR
+	 eJJ5DtlBV4KrutK2/E7ckvjnsMMF2U1b/e0vVb4/hSPWUTwGhR03M/S/Tqm7zNB8El
+	 6LQjk/5UswIBswaDAaEZaiO2QflDq36Ibkv6VaSno5ZYSel72NsLp3lwZ/RI/werdw
+	 oPT/D6rGLLskHGoFMOAIkn2FKeZZmyL5WGq7/lUjCCRiKFAdxX47tccjXhiBxxmTSJ
+	 gBXIwzR7Lg2vg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CE5B017E12EB;
+	Wed, 15 Oct 2025 10:59:22 +0200 (CEST)
+Message-ID: <da324c96-2cba-46cf-af69-c9eaf7ea697f@collabora.com>
+Date: Wed, 15 Oct 2025 10:59:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015040847.6421-1-sensor1010@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/5] pmdomain: mediatek: Add support for MFlexGraphics
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Chia-I Wu <olvaffe@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-hardening@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20251015-mt8196-gpufreq-v7-0-0a6435da2080@collabora.com>
+ <20251015-mt8196-gpufreq-v7-5-0a6435da2080@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251015-mt8196-gpufreq-v7-5-0a6435da2080@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 14, 2025 at 09:08:47PM -0700, Lizhe wrote:
-> 'phy_power_on' is a local scope one within the driver, since the return
-> value of the phy_power_on() function is always 0, checking its return
-> value is redundant.
+Il 15/10/25 10:50, Nicolas Frattaroli ha scritto:
+> Various MediaTek SoCs use GPU integration silicon named "MFlexGraphics"
+> by MediaTek. On the MT8196 and MT6991 SoCs, interacting with this
+> integration silicon is required to power on the GPU.
 > 
-> the function name 'phy_power_on()' conflicts with the existing
-> phy_power_on() function in the PHY subsystem. a suitable alternative
-> name would be rk_phy_power_set(), particularly since when the second
-> argument is false, this function actually powers off the PHY
+> This glue silicon is in the form of an embedded microcontroller running
+> special-purpose firmware, which autonomously adjusts clocks and
+> regulators.
 > 
-> Signed-off-by: Lizhe <sensor1010@163.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 17 ++++-------------
->  1 file changed, 4 insertions(+), 13 deletions(-)
+> Implement a driver, modelled as a pmdomain driver with a
+> set_performance_state operation, to support these SoCs.
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> index 51ea0caf16c1..9d296bfab013 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> @@ -1461,23 +1461,18 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
->  	return 0;
->  }
->  
-> -static int phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
-> +static void rk_phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
+> The driver also exposes the actual achieved clock rate, as read back
+> from the MCU, as common clock framework clocks, by acting as a clock
+> provider as well.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Hi Lizhe,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-This introduces a compilation error because phy_power_on()
-is still used on line 1670.
-
-Perhaps the hunk to update that line got lost somewhere.
-
--- 
-pw-bot: changes-requested
-
-...
 
