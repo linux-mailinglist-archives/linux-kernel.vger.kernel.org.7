@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-853647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB31BDC32B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:45:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E852BDC324
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 94B6E34C306
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC49419A1391
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C1A30C37A;
-	Wed, 15 Oct 2025 02:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1629D30C342;
+	Wed, 15 Oct 2025 02:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="W4SAvpiO"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="QhHHVTTC"
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EB330C365
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0114030C34A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760496302; cv=none; b=kJKdtx7x3qSXB2uY9Eki/CXUgsBsfPqneYfxhPvqf54uusIyE32lPdztFbwD1/f+8hknwQF44j2IEtBX3lEauow3Z6gymv3RP/wVuk87iUC6yhk3RkAT8eWFTrg621Po6pl1r1iVlQghFQKtWt0oy6qoCwdDnpsU9zV/qcVDSxw=
+	t=1760496290; cv=none; b=YR54D7C1VzYcv+3cAf/xe+f5Fi2usIakca2BqkjDR/VuECm1s9ipv/TGHcHIl6KPsiwSlQZ+3ZALH0Zw/4FtB5dPTrSYQJPq94nn1FWwqsdKq7nEa4FUvyYFuy8J+v/cXPQVb8pdXsZbItvzWu7PGT3ZoOZGt21OqF90w0d8lKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760496302; c=relaxed/simple;
-	bh=hotXs0HfjrLYtwfElOiQiZVTCjwBl+li5cVHPaaH6iY=;
+	s=arc-20240116; t=1760496290; c=relaxed/simple;
+	bh=gs6Xxgdq5vKc/+FDa3BISnYoT4uHbfxCbX1jm2/R9k4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kYF8Ik8Mz6zfU5/zSMUoZs87JgAShJHodfzCLNeXnCmHy6AgKA9baPCy7Tea4WCByLt0IOpCWCi05rWap4h+ZxrYR+eZcP2yq4ov/cK/mjoijD6duVmU7/vX8CMbI3jGiPWD/mnV42AYu8VSGSJ5PSdzccwBKL2urjtTo2CC3fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=W4SAvpiO; arc=none smtp.client-ip=18.9.28.11
+	 MIME-Version:Content-Type; b=kTj4YVhwHZvmZFRXeYumJCjm++rkZvkqSIKvVF92SSnPD1L8HW0Z2G1g0B92jJ1LOQng44QzqpgXTVbFYA8pKTmHsXFVvZnuJzuBrNkgGUnNfxuB1i9Q5gQGnKYcW8C64KdXcl9VR6V+8g+fvjfuRe8giepa7CDGzj13D+pygdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=QhHHVTTC; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-113-184.bstnma.fios.verizon.net [173.48.113.184])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59F2iJje021701
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 59F2iJxd021706
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Tue, 14 Oct 2025 22:44:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1760496262; bh=HSZUZqUidfGPeZv6bNytBwx9TuCfBssnC7oW+Iqnm/k=;
+	t=1760496261; bh=90VMANy8wywHNISJvnfEyPddEYG5BudxXWSnPN4cEHs=;
 	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=W4SAvpiO3rWMSukCq5t+6JBOFWUkSQUcx/UHkFy480gQScQeMz+D9+Isl4shXme5F
-	 aEJkzB9bkPkHavzpBncCrrQMjTJZIqDT0oZn2CYuOqe9G77hxHOZMXqvsAYFTMK5jG
-	 bMYLUzgya1w2lXRn5/UEGNygJcuJPUcMnlpjXRKqW6W0aWx78QQpjqhe3JEQFKiX61
-	 BLzcoAvpyfUQER0Enzljth6MnKwSjYkZycbXDjbHkTXBUEoGrdPtMs1yfEITSFC1yG
-	 Zm/+KBwlvt6UhlcKI0fse8igrt07AZTmtzDNhXuN3fO921denLQZKdYIjpb021/E/P
-	 VdIut9iUmr4ow==
+	b=QhHHVTTCxxB3UGSl3LhT1IRQjPejaeLz+utulbLeiA0JxO4OLpQWV/CP8CVnVt0BG
+	 Jr+MFB6g2+V4FN7QhXnGnVLaoL9W9cBucjOu1pURjMg1pAgupqKTEL3blc/uxysWEH
+	 FGtY/GwgtZBkvlt1mgoIVYOgniTp4MPR4/nXORzOvTRLKzeNL8twNrqvIzkVUmxyXW
+	 T9t05pU/t4DnxgTZ763z891loAEVTDxxrNeesHZDecRloIYY4aYoNfE1/GkUX6j29V
+	 x+NoBzVva20bFApZoPea7fBggNctUBQDOQTipnoHRIJ9+RvnIEL8xgQaewa0I4S8Cg
+	 nE91NkH3aZEjw==
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 41EA82E00DB; Tue, 14 Oct 2025 22:44:19 -0400 (EDT)
+	id 448F02E00DC; Tue, 14 Oct 2025 22:44:19 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
-        yangerkun@huawei.com, Gao Xiang <xiang@kernel.org>
-Subject: Re: [PATCH 0/2] ext4: fix an data corruption issue in nojournal mode
-Date: Tue, 14 Oct 2025 22:44:14 -0400
-Message-ID: <176049624800.779602.13091975049465790858.b4-ty@mit.edu>
+To: linux-ext4@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Zeno Endemann <zeno.endemann@mailbox.org>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] ext4, doc: fix and improve directory hash tree description
+Date: Tue, 14 Oct 2025 22:44:15 -0400
+Message-ID: <176049624800.779602.3824744552232012410.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
-References: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+In-Reply-To: <20250925152435.22749-1-zeno.endemann@mailbox.org>
+References: <20250925152435.22749-1-zeno.endemann@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,23 +69,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 16 Sep 2025 17:33:35 +0800, Zhang Yi wrote:
-> This series fixes an data corruption issue reported by Gao Xiang in
-> nojournal mode. The problem is happened after a metadata block is freed,
-> it can be immediately reallocated as a data block. However, the metadata
-> on this block may still be in the process of being written back, which
-> means the new data in this block could potentially be overwritten by the
-> stale metadata and trigger a data corruption issue. Please see below
-> discussion with Jan for more details:
+On Thu, 25 Sep 2025 17:24:33 +0200, Zeno Endemann wrote:
+> Some of the details about how directory hash trees work were confusing or
+> outright wrong, this patch should fix those.
+> 
+> A note on dx_tail's dt_reserved member, as far as I can tell the kernel
+> never sets this explicitly, so its content is apparently left-overs from
+> what was there before (for the dx_root I've seen remnants of a
+> ext4_dir_entry_tail struct from when the dir was not yet a hash dir).
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] jbd2: ensure that all ongoing I/O complete before freeing blocks
-      commit: 3c652c3a71de1d30d72dc82c3bead8deb48eb749
-[2/2] ext4: wait for ongoing I/O to complete before freeing blocks
-      commit: 328a782cb138029182e521c08f50eb1587db955d
+[1/1] ext4, doc: fix and improve directory hash tree description
+      commit: 4b471b736ea1ce08113a12bd7dcdaea621b0f65f
 
 Best regards,
 -- 
