@@ -1,286 +1,174 @@
-Return-Path: <linux-kernel+bounces-854777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D634BDF5AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:29:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40BBBDF5C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2CF19C7C17
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E2119C7C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533D42FE07B;
-	Wed, 15 Oct 2025 15:28:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483E2D5C76
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD68D1A9F93;
+	Wed, 15 Oct 2025 15:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UGlk5dxE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F2854262;
+	Wed, 15 Oct 2025 15:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542120; cv=none; b=MT1fbLnO2piuPte2kK6oUJtzQJRd0lwaYSuqi/+Qv18805Dws/tH7SNo8kvIsduH7mBohuSmQbmwZ9+sxQo5Hcf2tq4hpWEW34pMKK9TCMWfRfEpSZwWaRrZ/LXQIJnSIXayXodivvorCj8PgbqoauduKS/2Hd4SHPy2mkJGAOw=
+	t=1760542228; cv=none; b=YbfolDB9NikviAxwhzbW+Q0cedJOtm4uBUxTawXaS0wFbw+DkLTXRwTwEB22yqsPrTUQ157rEW8Wg71QP5F2Xr7Qr/I5Gmc6XcQHqPvkjzUcbnk0yNvpX1vkqjUunLJSVXtzoQVmbBUxs+g42uY2E11GW3kw6pKYJNPJbw/bpaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542120; c=relaxed/simple;
-	bh=R60+fkl699+HhcLaLLBSxH5+7HLRfHuMAZsWw0gzRnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uDLc3uFEK1sAoxt/7WmctsPgKnE792Ubcbr951wwUDKCWFZ3GA3bQnPrj1ZQGvg6H/7NvfPXGOP8OK6A86aicfwHwr5VvB2yBK61sGyH6Sx+UVMh3KYp8AQ5WpAYkqvlwoTDIPNXFqWYGEbSS42oYuFdnbkKkfrMo8p3hDnDWEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0BB01655;
-	Wed, 15 Oct 2025 08:28:28 -0700 (PDT)
-Received: from [10.1.38.178] (XHFQ2J9959.cambridge.arm.com [10.1.38.178])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F7653F738;
-	Wed, 15 Oct 2025 08:28:32 -0700 (PDT)
-Message-ID: <9afcdd88-f8f9-4d2f-94d7-7c41b0a25ddf@arm.com>
-Date: Wed, 15 Oct 2025 16:28:31 +0100
+	s=arc-20240116; t=1760542228; c=relaxed/simple;
+	bh=iAfD1supnmTcutAfLpNBfRXCPSsq6a/c6jvRpYWxSK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q7twnR8aYM2ic73QGDPvT9qoNGP3J+tIW3kMzcT0dLesJAzxyIErVYG1h+XWBASykGfVPDLwjaDnihZtyOTUKENJo44FzyyD2OaNy8BFFwB05ay9ptIXSbz4R2HBL+k9NP2E62+wasbmj/THIPa66ocyzaBmxG3aNn/ZKITt86k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UGlk5dxE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760542223;
+	bh=iAfD1supnmTcutAfLpNBfRXCPSsq6a/c6jvRpYWxSK8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UGlk5dxEuSjLSbtT9NmUo94HkIqMWhZRQe/oeGpEimv/hJEBjdk3BcyV5kSqV1qFa
+	 H/9zyuU8p3Z7piOmEN9VOOJ30qinzDf1k2O9I6nZMNV5XyqcpGh2EQMpjNZzGItgBk
+	 29piFiyIr/XMCDqs3LYAjvVw8RsnBB3LCJfkcf3o1E2kOJWzDUkt5l41LpSccu7HL+
+	 Qzs5CSAVpTtmJhJN50tT3kW2nPJb+Sdhf/90KFqUBCoqeKVrMzBU9Wy3bR3BiXg43I
+	 lFIuS309BpebbEmyj2TCMc0M31FWcyEuCry6RfknT2s1FTCasFcYFaZs8kPxQhtHzO
+	 KLs9wihkZOyWA==
+Received: from debian-rockchip-rock5b-rk3588.. (unknown [IPv6:2a01:e0a:5e3:6100:826d:bc07:e98c:84a])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00C5417E1060;
+	Wed, 15 Oct 2025 17:30:22 +0200 (CEST)
+From: =?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Melissa Wen <mwen@igalia.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?Lo=C3=AFc=20Molinari?= <loic.molinari@collabora.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	=?UTF-8?q?Miko=C5=82aj=20Wasiak?= <mikolaj.wasiak@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Nitin Gote <nitin.r.gote@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Christopher Healy <healych@amazon.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v4 00/13] drm: Reduce page tables overhead with THP
+Date: Wed, 15 Oct 2025 17:30:04 +0200
+Message-ID: <20251015153018.43735-1-loic.molinari@collabora.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-Content-Language: en-GB
-To: Huang Ying <ying.huang@linux.alibaba.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Yin Fengwei <fengwei_yin@linux.alibaba.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
- <20251013092038.6963-3-ying.huang@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251013092038.6963-3-ying.huang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/10/2025 10:20, Huang Ying wrote:
-> A multi-thread customer workload with large memory footprint uses
-> fork()/exec() to run some external programs every tens seconds.  When
-> running the workload on an arm64 server machine, it's observed that
-> quite some CPU cycles are spent in the TLB flushing functions.  While
-> running the workload on the x86_64 server machine, it's not.  This
-> causes the performance on arm64 to be much worse than that on x86_64.
-> 
-> During the workload running, after fork()/exec() write-protects all
-> pages in the parent process, memory writing in the parent process
-> will cause a write protection fault.  Then the page fault handler
-> will make the PTE/PDE writable if the page can be reused, which is
-> almost always true in the workload.  On arm64, to avoid the write
-> protection fault on other CPUs, the page fault handler flushes the TLB
-> globally with TLBI broadcast after changing the PTE/PDE.  However, this
-> isn't always necessary.  Firstly, it's safe to leave some stall
+This series aims to reduce the page tables overhead of DRM drivers for
+builds with CONFIG_TRANSPARENT_HUGEPAGE enabled and either the sysfs
+knob '/sys/kernel/mm/transparent_hugepage/shmem_enabled' appropriately
+set or drivers using a dedicated huge tmpfs mount point.
 
-nit: You keep using the word "stall" here and in the code. I think you mean "stale"?
+It starts by implementing a map_pages handler for GEM objects to map
+pages around a faulty address in a single batch. It also checks in
+both the fault and fault-around handlers whether a faulty address is
+part of a huge page in order to attempt a PMD sized PFN insertion into
+the VMA. It then introduces a dedicated get_unmapped_area file
+operation on the DRM file descriptor for GEM objects to get the best
+virtual address alignment for the underlying shmem buffers.
 
-> read-only TLB entries as long as they will be flushed finally.
-> Secondly, it's quite possible that the original read-only PTE/PDEs
-> aren't cached in remote TLB at all if the memory footprint is large.
-> In fact, on x86_64, the page fault handler doesn't flush the remote
-> TLB in this situation, which benefits the performance a lot.
-> 
-> To improve the performance on arm64, make the write protection fault
-> handler flush the TLB locally instead of globally via TLBI broadcast
-> after making the PTE/PDE writable.  If there are stall read-only TLB
-> entries in the remote CPUs, the page fault handler on these CPUs will
-> regard the page fault as spurious and flush the stall TLB entries.
-> 
-> To test the patchset, make the usemem.c from vm-scalability
-> (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
-> support calling fork()/exec() periodically (merged).  To mimic the
-> behavior of the customer workload, run usemem with 4 threads, access
-> 100GB memory, and call fork()/exec() every 40 seconds.  Test results
-> show that with the patchset the score of usemem improves ~40.6%.  The
-> cycles% of TLB flush functions reduces from ~50.5% to ~0.3% in perf
-> profile.
-> 
-> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Yicong Yang <yangyicong@hisilicon.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-> Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> ---
->  arch/arm64/include/asm/pgtable.h  | 14 +++++---
->  arch/arm64/include/asm/tlbflush.h | 56 +++++++++++++++++++++++++++++++
->  arch/arm64/mm/contpte.c           |  3 +-
->  arch/arm64/mm/fault.c             |  2 +-
->  4 files changed, 67 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index aa89c2e67ebc..35bae2e4bcfe 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -130,12 +130,16 @@ static inline void arch_leave_lazy_mmu_mode(void)
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->  
->  /*
-> - * Outside of a few very special situations (e.g. hibernation), we always
-> - * use broadcast TLB invalidation instructions, therefore a spurious page
-> - * fault on one CPU which has been handled concurrently by another CPU
-> - * does not need to perform additional invalidation.
-> + * We use local TLB invalidation instruction when reusing page in
-> + * write protection fault handler to avoid TLBI broadcast in the hot
-> + * path.  This will cause spurious page faults if stall read-only TLB
-> + * entries exist.
->   */
-> -#define flush_tlb_fix_spurious_fault(vma, address, ptep) do { } while (0)
-> +#define flush_tlb_fix_spurious_fault(vma, address, ptep)	\
-> +	local_flush_tlb_page_nonotify(vma, address)
-> +
-> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp)	\
-> +	local_flush_tlb_page_nonotify(vma, address)
->  
->  /*
->   * ZERO_PAGE is a global shared page that is always zero: used
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 18a5dc0c9a54..651b31fd18bb 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -249,6 +249,18 @@ static inline unsigned long get_trans_granule(void)
->   *		cannot be easily determined, the value TLBI_TTL_UNKNOWN will
->   *		perform a non-hinted invalidation.
->   *
-> + *	local_flush_tlb_page(vma, addr)
-> + *		Local variant of flush_tlb_page().  Stale TLB entries may
-> + *		remain in remote CPUs.
-> + *
-> + *	local_flush_tlb_page_nonotify(vma, addr)
-> + *		Same as local_flush_tlb_page() except MMU notifier will not be
-> + *		called.
-> + *
-> + *	local_flush_tlb_contpte_range(vma, start, end)
-> + *		Invalidate the virtual-address range '[start, end)' mapped with
-> + *		contpte on local CPU for the user address space corresponding
-> + *		to 'vma->mm'.  Stale TLB entries may remain in remote CPUs.
->   *
->   *	Finally, take a look at asm/tlb.h to see how tlb_flush() is implemented
->   *	on top of these routines, since that is our interface to the mmu_gather
-> @@ -282,6 +294,33 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
->  	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
->  }
->  
-> +static inline void __local_flush_tlb_page_nonotify_nosync(
-> +	struct mm_struct *mm, unsigned long uaddr)
-> +{
-> +	unsigned long addr;
-> +
-> +	dsb(nshst);
-> +	addr = __TLBI_VADDR(uaddr, ASID(mm));
-> +	__tlbi(vale1, addr);
-> +	__tlbi_user(vale1, addr);
-> +}
-> +
-> +static inline void local_flush_tlb_page_nonotify(
-> +	struct vm_area_struct *vma, unsigned long uaddr)
-> +{
-> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-> +	dsb(nsh);
-> +}
-> +
-> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
-> +					unsigned long uaddr)
-> +{
-> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
-> +						(uaddr & PAGE_MASK) + PAGE_SIZE);
-> +	dsb(nsh);
-> +}
-> +
->  static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
->  					   unsigned long uaddr)
->  {
-> @@ -472,6 +511,23 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->  	dsb(ish);
->  }
->  
-> +static inline void local_flush_tlb_contpte_range(struct vm_area_struct *vma,
-> +						 unsigned long start, unsigned long end)
+The remaining commits propose shmem helpers to create and release huge
+tmpfs mount points and adapt the i915 and V3D drivers. The helpers are
+then used to optionally enable Transparent Hugepage for Panfrost and
+Panthor.
 
-This would be clearer as an API if it was like this:
+For Panthor on a Rock 5B, this series makes the first memcpy() to an
+entire BO object mapped in userspace about twice as fast with
+Transparent Hugepage enabled.
 
-static inline void local_flush_tlb_contpte(struct vm_area_struct *vma,
-					unsigned long uaddr)
+Loïc Molinari (13):
+  drm/shmem-helper: Simplify page offset calculation in fault handler
+  drm/shmem-helper: Implement map_pages fault-around handler
+  drm/shmem-helper: Map huge pages in fault handlers
+  drm/gem: Introduce drm_gem_get_unmapped_area() fop
+  drm/gem: Add huge tmpfs mount point helper
+  drm/i915: Use huge tmpfs mount point helper
+  drm/v3d: Use huge tmpfs mount point helper
+  drm/v3d: Fix builds with CONFIG_TRANSPARENT_HUGEPAGE=n
+  drm/gem: Get rid of *_with_mnt helpers
+  drm/panthor: Introduce huge tmpfs mount point option
+  drm/panthor: Improve IOMMU map/unmap debugging logs
+  drm/panfrost: Introduce huge tmpfs mount point option
+  Documentation/gpu/drm-mm: Add THP paragraph to GEM mapping section
 
-i.e. the user doesn't set the range - it's implicitly CONT_PTE_SIZE starting at
-round_down(uaddr, PAGE_SIZE).
+ Documentation/gpu/drm-mm.rst                  |  25 ++-
+ drivers/gpu/drm/drm_gem.c                     | 199 +++++++++++++-----
+ drivers/gpu/drm/drm_gem_shmem_helper.c        | 138 ++++++++----
+ drivers/gpu/drm/i915/Makefile                 |   3 +-
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c     |  47 +++--
+ drivers/gpu/drm/i915/gem/i915_gemfs.c         |  69 ------
+ drivers/gpu/drm/i915/gem/i915_gemfs.h         |  14 --
+ .../gpu/drm/i915/gem/selftests/huge_pages.c   |  10 +-
+ drivers/gpu/drm/i915/i915_drv.h               |   5 -
+ drivers/gpu/drm/panfrost/panfrost_device.c    |   3 +
+ drivers/gpu/drm/panfrost/panfrost_drv.c       |   6 +
+ drivers/gpu/drm/panfrost/panfrost_drv.h       |  11 +
+ drivers/gpu/drm/panfrost/panfrost_gem.c       |  19 ++
+ drivers/gpu/drm/panfrost/panfrost_gem.h       |   2 +
+ drivers/gpu/drm/panthor/panthor_device.c      |   3 +
+ drivers/gpu/drm/panthor/panthor_drv.c         |   7 +
+ drivers/gpu/drm/panthor/panthor_drv.h         |  11 +
+ drivers/gpu/drm/panthor/panthor_gem.c         |  19 ++
+ drivers/gpu/drm/panthor/panthor_gem.h         |   2 +
+ drivers/gpu/drm/panthor/panthor_mmu.c         |  19 +-
+ drivers/gpu/drm/v3d/Makefile                  |   3 +-
+ drivers/gpu/drm/v3d/v3d_bo.c                  |   6 +-
+ drivers/gpu/drm/v3d/v3d_drv.c                 |   2 +-
+ drivers/gpu/drm/v3d/v3d_drv.h                 |  13 +-
+ drivers/gpu/drm/v3d/v3d_gem.c                 |  29 ++-
+ drivers/gpu/drm/v3d/v3d_gemfs.c               |  60 ------
+ include/drm/drm_device.h                      |  11 +
+ include/drm/drm_gem.h                         |   8 +-
+ include/drm/drm_gem_shmem_helper.h            |   3 -
+ mm/shmem.c                                    |   1 +
+ 30 files changed, 456 insertions(+), 292 deletions(-)
+ delete mode 100644 drivers/gpu/drm/i915/gem/i915_gemfs.c
+ delete mode 100644 drivers/gpu/drm/i915/gem/i915_gemfs.h
+ create mode 100644 drivers/gpu/drm/panfrost/panfrost_drv.h
+ create mode 100644 drivers/gpu/drm/panthor/panthor_drv.h
+ delete mode 100644 drivers/gpu/drm/v3d/v3d_gemfs.c
 
-Thanks,
-Ryan
-
-> +{
-> +	unsigned long asid, pages;
-> +
-> +	start = round_down(start, PAGE_SIZE);
-> +	end = round_up(end, PAGE_SIZE);
-> +	pages = (end - start) >> PAGE_SHIFT;
-> +
-> +	dsb(nshst);
-> +	asid = ASID(vma->vm_mm);
-> +	__flush_tlb_range_op(vale1, start, pages, PAGE_SIZE, asid,
-> +			     3, true, lpa2_is_enabled());
-> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, start, end);
-> +	dsb(nsh);
-> +}
-> +
->  static inline void flush_tlb_range(struct vm_area_struct *vma,
->  				   unsigned long start, unsigned long end)
->  {
-> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> index c0557945939c..0f9bbb7224dc 100644
-> --- a/arch/arm64/mm/contpte.c
-> +++ b/arch/arm64/mm/contpte.c
-> @@ -622,8 +622,7 @@ int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
->  			__ptep_set_access_flags(vma, addr, ptep, entry, 0);
->  
->  		if (dirty)
-> -			__flush_tlb_range(vma, start_addr, addr,
-> -							PAGE_SIZE, true, 3);
-> +			local_flush_tlb_contpte_range(vma, start_addr, addr);
->  	} else {
->  		__contpte_try_unfold(vma->vm_mm, addr, ptep, orig_pte);
->  		__ptep_set_access_flags(vma, addr, ptep, entry, dirty);
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index d816ff44faff..22f54f5afe3f 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
->  
->  	/* Invalidate a stale read-only entry */
->  	if (dirty)
-> -		flush_tlb_page(vma, address);
-> +		local_flush_tlb_page(vma, address);
->  	return 1;
->  }
->  
+-- 
+2.47.3
 
 
