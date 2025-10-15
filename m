@@ -1,111 +1,137 @@
-Return-Path: <linux-kernel+bounces-854208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECE4BDDD2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:41:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499C6BDDD53
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D2F94E96DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:40:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F98B503CFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017EE31B108;
-	Wed, 15 Oct 2025 09:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92E7239E7D;
+	Wed, 15 Oct 2025 09:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="ay/6kJRV"
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eH1UOKDC"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FECD31A812;
-	Wed, 15 Oct 2025 09:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38731985C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521224; cv=none; b=ekpBgleCK0SQJRTEFSq0L2FrayqYlBvWXlGIvSp5PiXShRtpdJvbCf0UMDkKwojrJaquEU++mgbcl5FdK3/Uqokd7z4JqJ143zoiMSWrPr2RsRYTMjqG4xmTjaDVxVCV4z3O/3wTqgAY6KZuTuFL/xRf0jjAwvsKwi3KLbuxLOU=
+	t=1760521318; cv=none; b=uf6dDgOr/uCqh5vpCRCdPo3dCcJFgLN3p9cacGt17hJvsytywd7ieH4Trk87Kqt3SUGtmGC5DeoEcgmKOgBI2mD9NuNthG6Ce6p1oADgXW+YJ5UUve73wa9h7E2+/zSs5PVfUCXM1eK7G0QHxSBuOJceD7ir480Z61yNobRfy8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521224; c=relaxed/simple;
-	bh=nhTg113RJazH5EQZAAMIMSjHEMha8gXoEsgVXX8RmN0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bjs0aoGT6rt0YoMa0uRrEL4VPe+7L38scCEn3CU3mXQ8E9V3wit2niWA9LeR5lHnyiQKwdGPjRhY0I9S4xEhhH/FmxqgR9VGukj/mw9njfHYPC2pQhrTpnWwugdzvYGYauMyy4ktkimMf5G9zbRF9le09nq5AsuvPOqYJ9A0/Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=ay/6kJRV; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cmmK45JdWzB0Gg;
-	Wed, 15 Oct 2025 11:40:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1760521208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lrhw6J3BmlfJs8eKJNlNHXHbstYWFJvdWpyxma0Iulg=;
-	b=ay/6kJRVRkHZRSDyh1CzJxAIChS4ZDBOGDXHrNNgJ0E4Ku30Uyew2adH8oyFw0a1oKu2zt
-	D/Lw8yorw812MD2Xyq+91Vet+4oq3TnABKE4b6a7bfyOIlyoFORmlmp4ds7OMvJQl8rgT8
-	oBdnqJzeabOYpb/NJYo1gOir6ft2KetKuc52UQJO4A9Rou9RybP6NEek8OiTBpdrqLUi/5
-	XZjdDIDqKYNUQhCXAKYxMeSCPKzIfWJ0lfNPn/RKfAZIM6Mwnna4k5lyJKGjmP2pUI01Pf
-	XvNWYnl04gWKZdYTI7SVdy19HRFHJ8a/IoJ0lBw3YEx5Wm9rBA0kiU5iR4oY7w==
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: miklos@szeredi.hu,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] fs: fuse: use strscpy instead of strcpy
-In-Reply-To: <20250929130246.107478-1-mssola@mssola.com> ("Miquel
- =?utf-8?Q?Sabat=C3=A9=09Sol=C3=A0=22's?= message of "Mon, 29 Sep 2025
- 15:02:44 +0200")
-References: <20250929130246.107478-1-mssola@mssola.com>
-Date: Wed, 15 Oct 2025 11:40:03 +0200
-Message-ID: <87wm4wbj0s.fsf@>
+	s=arc-20240116; t=1760521318; c=relaxed/simple;
+	bh=x/duYL1yTsMhL0k8eWiAzZY9f7fqBH4VJapCdvJb+1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LJwT3NSWzrGzp22H2yYkJkHFS5CSKm8cSvJQfZqmRIec5DaAH/eCZkpG7B02rDf5eK+oxCGZ+fnECv1TFgTQzgz0cCoUMS7e+hz3npxA32pfkjdBXcZW61O15+8K8F/m5lmfm8fi/mk+OwUJgO/5vFmySYrQIYfvIFfLxVUd6jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eH1UOKDC; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-793021f348fso5878289b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760521316; x=1761126116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tG+tl0txZhrAHciW3MyttNmS0q+Bc+HLXAgKcHRdHoI=;
+        b=eH1UOKDC+U2fVO9/zjt9/n+6TVGpfls7/fyHzlJPK6qelo9j3zHV6gI09EgWe8kBgR
+         Yltj+u/5GNe7/CLQL1OcW9s2DHeGtpkdXlFUg0gyhmjES923Aq7qJWEzrlrVCup1SDNA
+         V86xvhIHGyjJ5XIwO5itteis6M6mxiFCQ0Nk5meGoBElyFLJVbQS/U+aIWSajXJT90Mq
+         wG6pCFN+1DG45h8Nrm6AlWbJi0xkjtLzIk6trrTrqEqACeD0cfTljel30jBQdHn64Pcw
+         JVN4C/Ga8QM0dzJzfrL3CkqAYq47vlVSsI3UYiJS56Qb/5Qjc6acTse54IHg2rAujTbr
+         57Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760521316; x=1761126116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tG+tl0txZhrAHciW3MyttNmS0q+Bc+HLXAgKcHRdHoI=;
+        b=oX2N1MQPlJxzPuJmtVt0sePTakTUa5hlzgGdan11iSIDtbG9Fj+GWwqMmFbPBwDqdP
+         ZoDpDDx4D+ZcX1O4d7+hTDi/8uz9j3J+v2CH4k7/bq8jzS/REcn9X6eBtoRv7ikQEQlx
+         Tr6kIBe2EoIH9k8yVCaHEzUN4UPDMnE2oMjgZPsm+A0iu3c55DiyXSib0+lIGx+IteJL
+         dM7Ae2tqboEScNxYnO1SYxWoB1f5Otc6dUMl9hk3ZqeA2x5m75+oyalFe06RVDRO9QkW
+         QraXjUOONPp7UmNu43PLKS/KWS2IRGXgoZ1bRtDB1vfJV+N5uws4WR2NQzSrNvB5GRGJ
+         5hCw==
+X-Gm-Message-State: AOJu0YyvmNIVD1MMz3hg1UjbSyS9q04/bW8ltutd59GXRWo1pxIkrlyl
+	MdwMlutf1sPYqL9oCh4g6oQv9Ow1XLAHrRSUDv94J5BPoPapXMsXVDPS
+X-Gm-Gg: ASbGncuGYjBIFRp1l3zOcQXUTofv5LT25zgH1g3q0vgU9V7pChwUdQ7EUXud0y48Aq/
+	Any/rSXslH1C8iZq3PsVNptIu3510vLPDHw+oz1NVh1tNwYp57oane2InrFxA+EJPjCwq/makjc
+	HsiC34MMHmDbslvbc58qg1Qprp6e1n4SZY2WN+106xPwnqpAFMPQAO8J0l4AxXQvjMZQt0sA798
+	We2NaLY9c2AVjhBUk4ogcvcTocoTOXWoH6Bsrd1P5ITboLks0a72PcB/uXyyqAqvcWQ6pRcyrSc
+	POO7kRXjndKTpl5Bff2PP9PoiRgIym3GwN5vYiGBrieoBmYtVqLHKVhDK2kxXP1oCexv6bAgKeg
+	tDkCqKgFRmzb2O5lgWQjZHnz6LLVgzvVkg8mzyjRptTXPn7OsU4voAANwpxp5okwWXg==
+X-Google-Smtp-Source: AGHT+IEKoQxkgbtF8i/Kt9CagehiZKqlsvVyVFzeIw42nRsVCigEnL0pnAnyRizvdIX9+O7mFeJkZw==
+X-Received: by 2002:a05:6a21:32a4:b0:2da:f4be:c8d9 with SMTP id adf61e73a8af0-32da83e2597mr36570791637.37.1760521315791;
+        Wed, 15 Oct 2025 02:41:55 -0700 (PDT)
+Received: from localhost.localdomain ([165.204.156.251])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df8ea31sm14374155a12.42.2025.10.15.02.41.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 02:41:55 -0700 (PDT)
+From: Rahul Kumar <rk0006818@gmail.com>
+To: dinguyen@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	rk0006818@gmail.com
+Subject: [PATCH] firmware: stratix10-rsu: replace scnprintf() with sysfs_emit() in *_show() functions
+Date: Wed, 15 Oct 2025 15:11:17 +0530
+Message-ID: <20251015094117.535157-1-rk0006818@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Replace scnprintf() with sysfs_emit() in sysfs *_show() functions
+in stratix10-rsu.c to follow the kernel's guidelines from
+Documentation/filesystems/sysfs.rst.
 
-Hello,
+This improves consistency, safety, and makes the code easier to
+maintain and update in the future.
 
-Miquel Sabat=C3=A9 Sol=C3=A0 @ 2025-09-29 15:02 +02:
+Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
+---
+ drivers/firmware/stratix10-rsu.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> Changes in v2:
->   - Add a commit to rename 'namelen' to 'namesize', as suggested by Miklos
->     Szeredi.
->
-> Miquel Sabat=C3=A9 Sol=C3=A0 (2):
->   fs: fuse: Use strscpy instead of strcpy
->   fs: fuse: rename 'namelen' to 'namesize'
->
->  fs/fuse/dir.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/stratix10-rsu.c
+index 1ea39a0a76c7..53c896ceca9a 100644
+--- a/drivers/firmware/stratix10-rsu.c
++++ b/drivers/firmware/stratix10-rsu.c
+@@ -454,8 +454,7 @@ static ssize_t max_retry_show(struct device *dev,
+ 	if (!priv)
+ 		return -ENODEV;
+ 
+-	return scnprintf(buf, sizeof(priv->max_retry),
+-			 "0x%08x\n", priv->max_retry);
++	return sysfs_emit(buf, "0x%08x\n", priv->max_retry);
+ }
+ 
+ static ssize_t dcmf0_show(struct device *dev,
+@@ -632,7 +631,7 @@ static ssize_t spt0_address_show(struct device *dev,
+ 	if (priv->spt0_address == INVALID_SPT_ADDRESS)
+ 		return -EIO;
+ 
+-	return scnprintf(buf, PAGE_SIZE, "0x%08lx\n", priv->spt0_address);
++	return sysfs_emit(buf, "0x%08lx\n", priv->spt0_address);
+ }
+ 
+ static ssize_t spt1_address_show(struct device *dev,
+@@ -646,7 +645,7 @@ static ssize_t spt1_address_show(struct device *dev,
+ 	if (priv->spt1_address == INVALID_SPT_ADDRESS)
+ 		return -EIO;
+ 
+-	return scnprintf(buf, PAGE_SIZE, "0x%08lx\n", priv->spt1_address);
++	return sysfs_emit(buf, "0x%08lx\n", priv->spt1_address);
+ }
+ 
+ static DEVICE_ATTR_RO(current_image);
+-- 
+2.43.0
 
-Gently ping :)
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjva/MbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZdpGD/4uNhw1K/qoS0aMWWW3AYouNZZf0gb3hh4U0WZGr4359TIxaG7omzgp24h5
-USEvR5TWUWcBLD8rSi+aefj3W4hHv6BtkhcwDJ11HxEThtjbJ5Zn/6423poADJFq
-EZKTJ+Qha446B+z8wEjGFpVg+yMi4PLZbkl/s7/IbLMGZptN+W3ARvc79xNPfAeR
-+0IslCogGdS55tLjby4tEdeEko3ZDcAb+NZchWhuW5DRxgOOZQ4dCDlISVZFMjOj
-NySL5SzzWzW2w3Pme+VaA3t5sNnA994jWrataRCNy7IVj4W8sRAkuqVTgUy285h6
-8PfOFmapYr7OQ/FVsnq0TIuYV8Le4KXinSw7cZ/A3Rq+cE2pTYcUu95FXKA/82og
-JoMK6xvgEpAvdf74ui9K6KliZFFNQ23EVPfuf4rcQC2AeMh6NRTgyQlBLCgJT1yN
-X21JS00CmLNZPTTGaLWyvhlbMvkRHTImRfoOYzkPAPmapk7k71SB+JApvmCODv6h
-3YDvhn3t28rD+ycLHbe+j3kB6oINzovUDA1ehKt4NrdySpj47QVtKjnjmPj926fP
-7to8L0WhUO9kjHLinGp/BZfyLH6X4ryQYr2tOiRE5m7V/RE3XjCYIQguv/3np/a9
-DVog9WkkycwBqJup70TA7W357odk6zMDKCtnZdpFNqcujPa/4g==
-=/L/q
------END PGP SIGNATURE-----
---=-=-=--
 
