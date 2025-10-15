@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-853781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053E3BDC964
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F70BDC968
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B40BB3C762C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7453D3C7875
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C52302155;
-	Wed, 15 Oct 2025 05:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E732302CA0;
+	Wed, 15 Oct 2025 05:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJV9/nFd"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kF4nzEMc"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D8E301706
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59839302CAA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505415; cv=none; b=CfbPjH8JlKOugQd9nxdopmNQnSn6DdSuAuWjk+NUdqAd5aI6o1VoWPdkwf6E6kRImKlJCoaR37kPOyX92UPPH9WsstNowE9eX3c4aniiCkViaFzW0dkVTos0quA8rMpEHjnGNt5JjzcfUwbjrA5MhWpcFt/VuhVHXDetmXukRF8=
+	t=1760505419; cv=none; b=daCXcjy05vYPmA6p+FbFfIB4QuucBq1EK4LEIcL+Op8UI/ognPtki8c+njLJ+WyG4XY55wgM9W/ObSyS7nuf3uXZtfCyozWloI5QQv1ViynqOyPfhbkMLLwfd2bAHDzDw8bYfUPW+heuFmFHvV6SxsHlLXOP4SKnJa6tHg6hIvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505415; c=relaxed/simple;
-	bh=ZGjZ/MXVdEJF72fYcarWQaP0NzCcNsyU/SpwECUVcMc=;
+	s=arc-20240116; t=1760505419; c=relaxed/simple;
+	bh=+C4H+zroDethd7br3mfINtGxJHy7JmMXn0wIBxbB1Qs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FkHpL+AajAH2gflj25Jv8uDDw11acJ1pYxAttdwVz/+M6IvF+vnZxZKaTiDaBOTZN1bQ72mNMLK2T9G/eUd//JySNtH0fUVyK7Ol1e/+FuZaMhk34bIxP2J8x7AJ+9l4vLY3ZvU+6onFSaXQd7M1m1nZjl+NwuQdC0PyY1udd+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJV9/nFd; arc=none smtp.client-ip=209.85.210.182
+	 MIME-Version; b=ljftIae4FDibfk4jKDbgRqdv9KXWeOE7TMWSq1NG5VPzjma8q4WAB1HLlnOBvQljPy1dRUYcaHArZN00agDj/9Nw775WEzPdmqYSDaTEtMnfnvaTcn2wg2dRX6JOlFsPkFHspxWlXteBwYO+/WTRK+QAOe3CZw76tUhs4vso8QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kF4nzEMc; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-796f9a8a088so5849322b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:16:53 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-78125ed4052so7099046b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760505413; x=1761110213; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760505417; x=1761110217; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tmdk0eUxok1/vVVsxuT3HWDsufBCi+dhI2wWj0KYVpc=;
-        b=nJV9/nFd1UqbnGsDx83xsaWSnGZjG6vUohEUJvj9trtKqzH3fjC64Jq4Ykl6pdU21J
-         nvZZDaQRD7FiLcYRhyCetTEMfa9p6rdw0BCm5sIeFh7UVQ3O5Et5Susi047j5a4pR+uR
-         X4rRuUgAn6Ds7aaJo3WwDP0lwjb7MUXVTPtZofMiNbNxpXLWGaTZmRlV104989+6sz+v
-         ftcVwN84Z8lfY7X7BLIxyGw9SfysFrEBpNWo69ntfNSxcej0yCmBtaLwOY3Jq3e3etWJ
-         7JPRHOQAdNBWJscQDaejOTodw7kXep2VIJBhkpZDHzs4LQA9MrAXkv7P0Tu579+2RaeX
-         JfJQ==
+        bh=nJNUOJGibzoLiszJdXC8Yo14nanYYKcUy9zsuhUUDYc=;
+        b=kF4nzEMcgf8hvFxIFautPip1iQI594McodQIMfWs/LrDd6rC2bG5v6rXNwovbfurQm
+         Keh9KVi/O10yyd8KU3tj9bkv77UaOwF6IS+HuuU84lx/98nNTPRm8+d0BWs6VPxpSZ73
+         v+HNq5A03+QSDPcTT4Xb4Gcl7P8qyd+fsV/WpWLfxlglvafSfYVha2lhaBcLBU3BNbZP
+         sPL8e2s2G1JvHkp2hdfFrxEDhILbPm67znd5VSw1j6TbpzAozLitYI6ThAgZ1++ShDzM
+         eA74NyBrb7UW8c9tSSPpx+kHfGNb4bepP4o1sJrhcJfqsfvQFIuIpTHc9x3KcEu3E8mc
+         Si2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760505413; x=1761110213;
+        d=1e100.net; s=20230601; t=1760505417; x=1761110217;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tmdk0eUxok1/vVVsxuT3HWDsufBCi+dhI2wWj0KYVpc=;
-        b=K4FbxZ4K7OHXYJs2aA3LJ6nuTehYy0b3CHj1rRqcDU/ZJ0KEEIDxE95ARcRduqKhWI
-         S9DJIZbGTrWfqvXxotQ7oCyNfxwRY80H2dP0Py4fZyqosRsIlRVe6KInzFFQVFXIdi1D
-         OutQ25X6SO/EbUuP9q4zYBK/yGJ0S9n68KQf5OxBh//XkwwUGZbQq7LQSeagC3wfwJnH
-         BIlYsSIZuf5ah5S94dI3SUDH+9erhXFXFPrS5Y6Rj8qGyCD7oc/OS6FBnV2r0IOd32Fe
-         NvtZQDv97ndIFc3Z658kQjRLG+Siz12AHtdLvSVn7eb9c1OEa1WBz8yYeqLlZTPiBX9/
-         5+eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXadN0w1Jgkd3z2TlH8vxhtUPGV6WOmAB9Jm87Epawuk2ttdh5RnKuXXVKurw6huknRp/GH0TvjUHvZzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmwN1hwgS7+nelsmYWDJ7h73XMJC4hiF8UDpvunmEspoaDjIf1
-	QLOdDMyL1TQHTwGhQ+ln9viYwaFztI++ixwRTri+JmbayXGYfJ/mcH37
-X-Gm-Gg: ASbGncvPqzG1ChgdNhYenUQTIre3YQUDfkezHTa9eE9l7AaTTqS9PWdnMTIyfahv1j9
-	ijX8THzwZw1A8Y7VeDjcm7MzgKkiOOjOQDfmgfISliz0zxk22N7pMstps3bAEbi1Xhqt8HhQoeG
-	YCuEnpelSEJW94qjkh4Alpblj0DfQALtMeD1gYC4hmZ+8SwCTxTTJdLcsCVwoiKGH8JK6TAP9Fs
-	L3Tt9wILqqqdzsoDteQG86uL7iqnChthmjgpG+jHdcII90buulu7FUP6vqe/WXe5+0IERGunLBZ
-	auErhao9n/ZY53HP2MxtyRnHBb7rvdUyQgl/4Qo+ciEDCdOV7kIwazUgiyI3i6eHdejRdgud6TK
-	zaM/8fx6DOknKCCdC9FQt4yEm+g7Qgl2vGz1gh4HGKqlTZBQnU5gUVo38Vz8mHGA=
-X-Google-Smtp-Source: AGHT+IFOYftdOIIXBVMZXIT1YClBipwIdLEu1Hwjcj5w8oVhfvDSEoo4/1DrLLJoT2GyhMPacQVVtA==
-X-Received: by 2002:a05:6a00:3ccb:b0:781:1b4c:75fb with SMTP id d2e1a72fcca58-79386e4f82fmr38130945b3a.18.1760505412380;
-        Tue, 14 Oct 2025 22:16:52 -0700 (PDT)
+        bh=nJNUOJGibzoLiszJdXC8Yo14nanYYKcUy9zsuhUUDYc=;
+        b=djAX/vlrs0ruSXyhoR6dYYK5+f74rUDyQmvw3HFn5OFrSBVxxWCCHus5KWwsNypNHl
+         YOKcz4fjg7o4sf88Sh3L2WeyxHs4lR6IkZFnuqV3pL9l7X1E+CBmAnUYIL+YfxxnX1P0
+         RtSHzYr4yAe8jW3LBuj4oXm3q5KiI84lCIuLUsbI4MVirQdI0wKRgg9RfEr8toGziBbs
+         3z/YV5tGFeRtcPIJr9/5/V9oZ8m2NZB7EHTed+ewfrWpVA+mwLHn1hWnWdcw5ykUFani
+         DC4R02tlS+O7h6fD5+YxTqkc3691kjT2tnk/tAzGx4YuWNr+qHnsf50PdfTJ3eyAV4xc
+         hosQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZch1CaC0hRfW/0rCIaW8ulNyALxAOITgWFBi86pocPzb3MFAhOho8gNYQhLppQSCsr0GF1Wv7T6gVRpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcmcwLpPzcrvT1XiFcrqEETIFNWoms1ciYercgbWt18cXY4WKX
+	LPJBbpLXsyu2T7wsu18rq0vyxrOLem+o0fQQ/Y3BgAwXrCFFM4c/2V97
+X-Gm-Gg: ASbGncsT7wDoQHBxLLAqKA5GvhRhKioEFR6aRDTMsgmUrMaVOSoaCThMk0SzmnAULjx
+	kJOYuF0sFKXelhVGlpNDzdq3i01TbpQcEbcL7F1FfBNfLTbG+3mj5n9c6PEMBFbhXxdjxDosue+
+	xffQqT87W/pgO476lfD1MPbMeLvvhNCgwni+b90kWjlpi44jwNwIoSYS5zcELDU4QpzJVapBAi7
+	/TTXnpCo3QwuNbDHHsvKI4WFdR2HcpP7vCsDgeCAhrk7WM65T/JFx1hI0WC4FGJN9D4cZ4hoXrR
+	njHTzFIGN0FxSQsFfIFrvWSIbOXwf5YTQV0XFfCcGMwpjD4Qh8W8nO1eeThctBmvXYFonVXPR9E
+	Vb8DrTW1i1BptUo2MAAQ6bVDuByX/ZGzbDN30pcs3tLXtB0QzdRET
+X-Google-Smtp-Source: AGHT+IGaYSaDctN1UDXrQ/b1IBYPl2mNpwc/vOVwXDn/8RGkSFgqDvehEDR5ZrCFJsldV8ETtDC8WA==
+X-Received: by 2002:a05:6300:218e:b0:32b:810c:2ba5 with SMTP id adf61e73a8af0-32da84ed640mr38525100637.59.1760505417000;
+        Tue, 14 Oct 2025 22:16:57 -0700 (PDT)
 Received: from ustb520lab-MS-7E07.. ([115.25.44.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060a38sm17320137b3a.5.2025.10.14.22.16.48
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060a38sm17320137b3a.5.2025.10.14.22.16.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 22:16:51 -0700 (PDT)
+        Tue, 14 Oct 2025 22:16:56 -0700 (PDT)
 From: Jiaming Zhang <r772577952@gmail.com>
 To: tiwai@suse.de,
 	gregkh@linuxfoundation.org
@@ -85,12 +85,13 @@ Cc: broonie@kernel.org,
 	r772577952@gmail.com,
 	syzkaller@googlegroups.com,
 	tiwai@suse.com
-Subject: [PATCH v2 0/1] ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
-Date: Wed, 15 Oct 2025 13:16:44 +0800
-Message-Id: <20251015051645.519470-1-r772577952@gmail.com>
+Subject: [PATCH v2 1/1] ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
+Date: Wed, 15 Oct 2025 13:16:45 +0800
+Message-Id: <20251015051645.519470-2-r772577952@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <877bwy81wi.wl-tiwai@suse.de>
+In-Reply-To: <20251015051645.519470-1-r772577952@gmail.com>
 References: <877bwy81wi.wl-tiwai@suse.de>
+ <20251015051645.519470-1-r772577952@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,21 +100,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Greg, Takashi,
+In try_to_register_card(), the return value of usb_ifnum_to_if() is
+passed directly to usb_interface_claimed() without a NULL check, which
+will lead to a NULL pointer dereference when creating an invalid
+USB audio device. Fix this by adding a check to ensure the interface
+pointer is valid before passing it to usb_interface_claimed().
 
-Thanks for your suggestions. I have updated the commit message.
-
-Please let me know if any changes are needed.
-
-Best regards,
-Jiaming Zhang
-
-Jiaming Zhang (1):
-  ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
-
+Fixes: 39efc9c ("ALSA: usb-audio: Fix last interface check for registration")
+Closes: https://lore.kernel.org/all/CANypQFYtQxHL5ghREs-BujZG413RPJGnO5TH=xjFBKpPts33tA@mail.gmail.com/
+Signed-off-by: Jiaming Zhang <r772577952@gmail.com>
+---
  sound/usb/card.c | 10 ++++++++--
  1 file changed, 8 insertions(+), 2 deletions(-)
 
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 1d5a65eac933..270dad84d825 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -891,10 +891,16 @@ get_alias_quirk(struct usb_device *dev, unsigned int id)
+  */
+ static int try_to_register_card(struct snd_usb_audio *chip, int ifnum)
+ {
++	struct usb_interface *iface;
++
+ 	if (check_delayed_register_option(chip) == ifnum ||
+-	    chip->last_iface == ifnum ||
+-	    usb_interface_claimed(usb_ifnum_to_if(chip->dev, chip->last_iface)))
++	    chip->last_iface == ifnum)
++		return snd_card_register(chip->card);
++
++	iface = usb_ifnum_to_if(chip->dev, chip->last_iface);
++	if (iface && usb_interface_claimed(iface))
+ 		return snd_card_register(chip->card);
++
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
 
