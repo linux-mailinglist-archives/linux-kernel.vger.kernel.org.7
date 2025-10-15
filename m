@@ -1,169 +1,124 @@
-Return-Path: <linux-kernel+bounces-853633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45200BDC2A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:37:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487D9BDC2A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 203694F05F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:37:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D19314E2915
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62DD30C34C;
-	Wed, 15 Oct 2025 02:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D8727E056;
+	Wed, 15 Oct 2025 02:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JkjaWM6k"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xeEinGP3"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7747F2C859;
-	Wed, 15 Oct 2025 02:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DE615A8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760495816; cv=none; b=CK7rRDtjXzSyaduVBYVVebg0TRsmcQRbmXKS9xd16R/OQ8FMwtr2jFxLhhVARQGdPuZPzZBCJ8PfnPOf/WBePU4D5ZmYomoKhPuXPvz5Feb7ugluyylrXEAQwxUzIsqa/HNMY7sI2nmgxiPAw0eQJP/xwdpNvM9iNshOhCwr/dE=
+	t=1760495915; cv=none; b=O25WHhrTM4hrmBwKKLUule9mNhwBl6nuuyauaHUVve6TxPNO44ppD6bQ40sX9ON/7IAzsMlrjKUwGlN4QzGAJkEp6r+DgBAXEYftAkBxZh81HFsdt0c8RO2QUqAsQUSQeAN0IytdrTlO2NdMQY4ylU/7TbEjH+PLEFYTxKprpkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760495816; c=relaxed/simple;
-	bh=MfJiuQXGEa+ZudRLsqGdnGIMZpZIxG2Ns1QCu4p4hpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DuN2NMR36hQp3qqJBPRfO4eFxZNO6obJsxpeZ0UxGwQmea+V7xkP9CTTyqj9hwTis4KxgrhiNhJdqAwUaOW10W8yM7oM2Uza/E+RCAHShqhTkoAyao2tr+9El6Si2zZIMzXgoFNOViuCnqlVPVb/GdWj0r5Hnvdg7jfeg8tofIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JkjaWM6k; arc=none smtp.client-ip=115.124.30.98
+	s=arc-20240116; t=1760495915; c=relaxed/simple;
+	bh=mp8l5fm+Ox07WGYEuzH2kZeumJ6EmYeGA4lSRQvYREI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u4KIoBZ0TxaGwmgYLlj1J63/RrcQq2ZGqmSHUzrK/ph6nAs2ixMOiBw/KxP8RAOzZuROldtVl65+hFjzIIK5tg1vdxbfOY231iIXUXzly6yb+R0yDo4Ohqgbf5YKH4n/UuyrjsVAuc54873xss64p2T7Z/M7iIaYuPVQQgTnG0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xeEinGP3; arc=none smtp.client-ip=115.124.30.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1760495810; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=vnwhlmL/z9NcPBs6eAHRxmAdfMjUHuo2IL/i6fru8dM=;
-	b=JkjaWM6k/hmT3Ny7dL37Eo8sjgkbY0iO8dSv09IV27ziNj+iZ8DejJ1l+ehiYeR/xQhxbyhqrPh4Z4mCNJqojVOtFnzOrrknmZcEy9QLCZGpv+8rrD3TH2FQD+Cg9x5jnGtrq2u18q0EfEGhCUAvuX+Km+VwxhtcD1pxF3D1M1Q=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqEYAuU_1760495808 cluster:ay36)
+	t=1760495910; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=awK8T53rvm3JtUI0otLj6zux7hpJFSpVbJLW34F+bWs=;
+	b=xeEinGP3R9r73JC97QkaxIl4YG3RqRZdGrBCXphKHbmoKk3gaczmFDmuh/E0BGWYOIKX7vxAIuZwuciwUj3+IzpoeDmnBjOfVLHAvvg813JM6XIG0rx+n6iHE8n3u6DnKpI1PjIIvZVAti7rbjz3oRKNxFKuKjMXPoXoFM+pwQg=
+Received: from localhost.localdomain(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WqEOUxe_1760495898 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 15 Oct 2025 10:36:49 +0800
-Message-ID: <8c8f7c7e-286a-4020-8fdf-ff025e92f19f@linux.alibaba.com>
-Date: Wed, 15 Oct 2025 10:36:47 +0800
+          Wed, 15 Oct 2025 10:38:29 +0800
+From: Huang Ying <ying.huang@linux.alibaba.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Huang Ying <ying.huang@linux.alibaba.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64, mm: avoid always making PTE dirty in pte_mkwrite()
+Date: Wed, 15 Oct 2025 10:37:12 +0800
+Message-Id: <20251015023712.46598-1-ying.huang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/3] Documentation: tracing: Add documentation about
- PCI tracepoints
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>,
- linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com,
- bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20251014123159.57764-1-xueshuai@linux.alibaba.com>
- <20251014123159.57764-4-xueshuai@linux.alibaba.com>
- <cf4d3079-2d1b-dfa4-aa5f-e018962131bd@linux.intel.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <cf4d3079-2d1b-dfa4-aa5f-e018962131bd@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Current pte_mkwrite_novma() makes PTE dirty unconditionally.  This may
+mark some pages that are never written dirty wrongly.  For example,
+do_swap_page() may map the exclusive pages with writable and clean PTEs
+if the VMA is writable and the page fault is for read access.
+However, current pte_mkwrite_novma() implementation always dirties the
+PTE.  This may cause unnecessary disk writing if the pages are
+never written before being reclaimed.
 
+So, change pte_mkwrite_novma() to clear the PTE_RDONLY bit only if the
+PTE_DIRTY bit is set to make it possible to make the PTE writable and
+clean.
 
-在 2025/10/14 22:40, Ilpo Järvinen 写道:
-> On Tue, 14 Oct 2025, Shuai Xue wrote:
-> 
->> The PCI tracing system provides tracepoints to monitor critical hardware
->> events that can impact system performance and reliability. Add
->> documentation about it.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> ---
->>   Documentation/trace/events-pci.rst | 74 ++++++++++++++++++++++++++++++
->>   1 file changed, 74 insertions(+)
->>   create mode 100644 Documentation/trace/events-pci.rst
->>
->> diff --git a/Documentation/trace/events-pci.rst b/Documentation/trace/events-pci.rst
->> new file mode 100644
->> index 000000000000..500b27713224
->> --- /dev/null
->> +++ b/Documentation/trace/events-pci.rst
->> @@ -0,0 +1,74 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +===========================
->> +Subsystem Trace Points: PCI
->> +===========================
->> +
->> +Overview
->> +========
->> +The PCI tracing system provides tracepoints to monitor critical hardware events
->> +that can impact system performance and reliability. These events normally show
->> +up here:
->> +
->> +	/sys/kernel/tracing/events/pci
->> +
->> +Cf. include/trace/events/pci.h for the events definitions.
->> +
->> +Available Tracepoints
->> +=====================
->> +
->> +pci_hp_event
->> +------------
->> +
->> +Monitors PCI hotplug events including card insertion/removal and link
->> +state changes.
->> +::
->> +
->> +    pci_hp_event  "%s slot:%s, event:%s\n"
->> +
->> +**Event Types**:
->> +
->> +* ``LINK_UP`` - PCIe link established
->> +* ``LINK_DOWN`` - PCIe link lost
->> +* ``CARD_PRESENT`` - Card detected in slot
->> +* ``CARD_NOT_PRESENT`` - Card removed from slot
->> +
->> +**Example Usage**:
->> +
->> +    # Enable the tracepoint
->> +    echo 1> /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
->> +
->> +    # Monitor events (the following output is generated when a device is hotplugged)
->> +    cat /sys/kernel/debug/tracing/trace_pipe
->> +       irq/51-pciehp-88      [001] .....  1311.177459: pci_hp_event: 0000:00:02.0 slot:10, event:CARD_PRESENT
->> +
->> +       irq/51-pciehp-88      [001] .....  1311.177566: pci_hp_event: 0000:00:02.0 slot:10, event:LINK_UP
->> +
->> +pcie_link_event
->> +---------------
->> +
->> +Monitors PCIe link speed changes and provides detailed link status information.
->> +::
->> +
->> +    pcie_link_event  "%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_speed:%s, width:%u, flit_mode:%u, status:%s\n"
->> +
->> +**Parameters**:
->> +
->> +* ``type`` - PCIe device type (4=Root Port, etc.)
->> +* ``reason`` - Reason for link change:
->> +
->> +  - ``0`` - Link retrain
->> +  - ``1`` - Bus enumeration
->> +  - ``2`` - Bandwidth controller enable
->> +  - ``3`` - Bandwidth controller IRQ
-> 
-> Maybe these two should be called "Bandwidth notification" as that's the
-> name of the underlying mechanism.
+The current behavior was introduced in commit 73e86cb03cf2 ("arm64:
+Move PTE_RDONLY bit handling out of set_pte_at()").  Before that,
+pte_mkwrite() only sets the PTE_WRITE bit, while set_pte_at() only
+clears the PTE_RDONLY bit if both the PTE_WRITE and the PTE_DIRTY bits
+are set.
 
-Sure, I will rename it.
+To test the performance impact of the patch, on an arm64 server
+machine, run 16 redis-server processes on socket 1 and 16
+memtier_benchmark processes on socket 0 with mostly get
+transactions (that is, redis-server will mostly read memory only).
+The memory footprint of redis-server is larger than the available
+memory, so swap out/in will be triggered.  Test results show that the
+patch can avoid most swapping out because the pages are mostly clean.
+And the benchmark throughput improves ~23.9% in the test.
 
-> 
-> For the entire series,
-> 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Fixes: 73e86cb03cf2 ("arm64: Move PTE_RDONLY bit handling out of set_pte_at()")
+Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Gavin Shan <gshan@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Yicong Yang <yangyicong@hisilicon.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm64/include/asm/pgtable.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks.
-
-Best Regards,
-Shuai
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index aa89c2e67ebc..0944e296dd4a 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -293,7 +293,8 @@ static inline pmd_t set_pmd_bit(pmd_t pmd, pgprot_t prot)
+ static inline pte_t pte_mkwrite_novma(pte_t pte)
+ {
+ 	pte = set_pte_bit(pte, __pgprot(PTE_WRITE));
+-	pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
++	if (pte_sw_dirty(pte))
++		pte = clear_pte_bit(pte, __pgprot(PTE_RDONLY));
+ 	return pte;
+ }
+ 
+-- 
+2.39.5
 
 
