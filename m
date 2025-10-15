@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-853857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFE5BDCC6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:44:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47243BDCC79
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B66554F9824
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:44:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7084E4F6EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026AE313285;
-	Wed, 15 Oct 2025 06:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67AD3128CB;
+	Wed, 15 Oct 2025 06:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEHijYNs"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7qxdPAA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1B313262
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5213D303CA4;
+	Wed, 15 Oct 2025 06:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510659; cv=none; b=jtxakvnVvtnwJiJfyAR41bhik9MO793RZC3Ug9FPckPL0uuAuylUpcBVmX5NXt/Qh47sY/fisY1tJHU4C4FZJ6MLPQ7umuXhPk3Lb8qFOgJFbeoSzXewGF6xyEdV8wU5BNSSdEV5C8IPmpK2NxhpgQICVWRhIrSHtEa4s7iJ8BA=
+	t=1760510776; cv=none; b=aCIq0HwzGDCe+DDqgGRAPZp3OAnvZn/W4amsh9mgNcSbOa9k1tERLrO2k6Gq776MGFe9pG4Dib1mKAhjFk2dQWPSkpLN/pDb/Q2Fj9Ezger4kjKC7CRl0ZVCnW75i6NxGMcGtD8TDBNIxX1EIyPErKChMoDH+3iCzzVt/sYKgzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510659; c=relaxed/simple;
-	bh=oakTPZ4dPHYuPOiBxt5TQsp7X4a/ClthMtVudvoGja8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OAevsXnXMLmKXvrcCZ46xUPhHZj8KI+GQUMgAwQjEduwNQkeMxPmDoMB0wC/b94Seu2utCcFpZ8gymw/S7PGD0YtkN4DRvBNMsgpabQGJ791R2S4FSFf/RzOr8Vsb0rwV1nMlm+Xg2uVAyVnOnpuWYvJ1w5QNS4kd7DQyX41gY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OEHijYNs; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-27ee41e0798so98282285ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760510657; x=1761115457; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1h2ZB5tEfXNExzSYRgqaGZiEFO4eGNTSW8hgQwq0KJE=;
-        b=OEHijYNsVSGWFum5JkFBekOZAm79fv8/zIuWmzqhyKq3wVfLeVFSAqOIU8xpqROdWi
-         JUq5yciJSddytkq8LX+F+gtoLXQk0AfESm9LT8cn/J8VN7P4WRyTib+Azt/lUGEBHfKI
-         iTTegMmKNhINp2rM46Jjrq0d3nw4RgS1qIcCMohBZ2OZbjwbiYzsSSmP29rkdlw10c61
-         XbgPpcdMG8u2pjAkWSpahp4B73RPm4/SHbg/7lyo8Az5iYJuFVd0GfZ2PmDt8/dT2F8h
-         HILCodzXaLr5koBj8ZYSfKJtOwFNHGBFIG2tS6BI8U/EEx0LDIZKxjYc3q9yQPvd8gAw
-         uwUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760510657; x=1761115457;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1h2ZB5tEfXNExzSYRgqaGZiEFO4eGNTSW8hgQwq0KJE=;
-        b=meCQwpT0VmVs9oxSvGEFm0fug48MGXWXzfkh8taRTx4VgmUS9tV5Md2hFSooQbjXSN
-         rf8KovEi/KPvoQ4Q4Ok/tFzqeRmBgGAbUSjs26V+OUqqtaKIzYvGgShxU7h80pkg1FWd
-         K4Wfxv7ib/TGIkR3wMszLul6z1qrsBmOZztkBAfPDTbr1hH3TJFNYNZb/Euq+YdSA2Mm
-         cwnqpJqZjdaRijF2GhawUUJVu68rpmO/pjveGdbp5G9FS3rXjv96PQlzdNi0CPok+PBo
-         tHqVJYiHbCguP/5+2D6JP+7zgkXu4lrxVIK3v1NDPxWBZtOnLJ3boNACZcq9SLZvH1Ih
-         y88g==
-X-Forwarded-Encrypted: i=1; AJvYcCWBkey/Q2PWzKU1dd9oLXnhR0Nh/VBfLuWFsgsGrpIPrkAKVXCs24CU3DS4+4l7YNQXJpWIlqCnsjj+Fok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVVxMecitUtGFn9CNGM6WoIUBXK8LM0/jcqUeAG//+gsCw0k2I
-	BApP3w5jxJS0/HrjwpTdF3IomWmAasPPi//MgDFjUjUC24hWWoLnApCH
-X-Gm-Gg: ASbGnctXpfjrW3YNGSvnd6ypYBiwCLp9z3dH/9dr3NLREagV4x77lNFimZ4DQiUMjDf
-	FXpUVTF2pn1YADsun+P1xOSSMTedKBAWiOjVve7PGoPrLFgOsVufGWITpZAQpuKVr7dG22JmPur
-	FQ2NXygojz7aetPH4l9tg0XTkhJfNI+hlABp+1vUYQKnbwIiU7Shkum1/pSjZRdhgJgez2t4BTq
-	o8qgbfjJE1/QNjZlQE6sU/2yfQz3aud3YGidFDZlBzAPeDiasoDdFquKlQ63YzupGWOaped/NGl
-	SIXTfCPg2cEYRgVwZFtAJX7bQF2aT2aK6G137bzuF3Hv++RB/Lb3iuKr4XOryvPM+AVqy9rvxL7
-	dTPpvdTULimEp7ugIRJJdJuTcM9d6vJr9CAVrKcDCNfuaqkch5cLctj6y9QYrHIpGJNRVnDxIZP
-	HlxuHRCkgfwnaMAYR5oPANdEY3dA==
-X-Google-Smtp-Source: AGHT+IFo4GkQAR4kQ8Q0IeCrlZ57EjWWcL/UzLVqG910m/3rZAgcNeInZAE64rrfXWrRydS69ZNpxw==
-X-Received: by 2002:a17:903:1b64:b0:28b:4ca5:d522 with SMTP id d9443c01a7336-290273ecb07mr350160565ad.39.1760510657134;
-        Tue, 14 Oct 2025 23:44:17 -0700 (PDT)
-Received: from localhost.localdomain ([2409:8900:1896:1396:e40a:cbdc:d4a4:cc3a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e44ef9sm183712015ad.52.2025.10.14.23.43.57
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 14 Oct 2025 23:44:16 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Rik van Riel <riel@redhat.com>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	wang lian <lianux.mm@gmail.com>
-Subject: [PATCH] mm/khugepaged: fix comment for default scan sleep duration
-Date: Wed, 15 Oct 2025 14:43:33 +0800
-Message-ID: <20251015064333.31274-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1760510776; c=relaxed/simple;
+	bh=iwp4PIwHHvVvq/xh0/d6dCqML8i8PNGxZm0jY6Ccb44=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L037A3SL1SpPr+fs5ccA5+ur/9E+IexEMu2cO+xGy5YCUhHq8VkQNTGukC2/GG7ee9W+oPNXkfYTD/vyAsBVH2986maEHoVuITgIgL0DKmp4wp5CDY+v3chHKx48Pd4neS9avZHRekmWy5gsMg1mQVRP5YekerOcOpcp3OwR3O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7qxdPAA; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760510774; x=1792046774;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iwp4PIwHHvVvq/xh0/d6dCqML8i8PNGxZm0jY6Ccb44=;
+  b=U7qxdPAAeJjfPkfYFGN6Kcg6J3Yv6sI6Bu0mPZQvKmjPKE6GQr27lBzD
+   vnCD37ItHtop+eMW6ydApefbRhHgxX3grNFRkOu9rJQY5X981BP/6NHXN
+   X/+39CUQKXtry8l+QO0sIfA2nNodQhpeRQEy1zX+iUCtnfCfw2Dszc44H
+   SWCxquMyeHQNFR9JfA9yNcuqQ8vwZq3DYKIpwu0Ups1WTyu8NT/n5vVeJ
+   H6wmUt7izg6y9kWutLzJ0HGZ2YmVZNNN5V4MDnMpRa9CFhFJXmFetvrcq
+   FTclNUxzNkGUyX4GmLojg8oNe54E0ivz9n1QRkAWL6s51BbVJSo8C219+
+   A==;
+X-CSE-ConnectionGUID: LyEHyyJlQruCKtFqcmwBwg==
+X-CSE-MsgGUID: CJUufqziRAusdG8oE2OHIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="50242437"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="50242437"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 23:46:13 -0700
+X-CSE-ConnectionGUID: EHfnuvhUQ2uEbg3IJqpRJw==
+X-CSE-MsgGUID: 7cKFJrJnTjiEGUn2nFodzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182029856"
+Received: from spr.sh.intel.com ([10.112.229.196])
+  by fmviesa006.fm.intel.com with ESMTP; 14 Oct 2025 23:46:07 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v8 00/12] arch-PEBS enabling for Intel platforms 
+Date: Wed, 15 Oct 2025 14:44:10 +0800
+Message-Id: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,34 +82,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The comment for khugepaged_scan_sleep_millisecs incorrectly states
-the default scan period is 30 seconds. The actual default value in the
-code is 10000ms (10 seconds).
+Changes:
+v7 -> v8:
+  * Fix the warning reported by Kernel test robot (Patch 02/12)
+  * Rebase code to 6.18-rc1.
 
-This patch corrects the comment to match the code, preventing potential
-confusion. The incorrect comment has existed since the feature was
-first introduced.
+v6 -> v7:
+  * Rebase code to last tip perf/core tree.
+  * Opportunistically remove the redundant is_x86_event() prototype.
+    (Patch 01/12)
+  * Fix PEBS handler NULL event access and record loss issue.
+    (Patch 02/12)
+  * Reset MSR_IA32_PEBS_INDEX at the head of_drain_arch_pebs() instead
+    of end. It avoids the processed PEBS records are processed again in
+    some corner cases like event throttling. (Patch 08/12)
 
-Fixes: ba76149f47d8 ("thp: khugepaged")
-Signed-off-by: wang lian <lianux.mm@gmail.com>
----
- mm/khugepaged.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index e947b96e1443..449f983b8891 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -67,7 +67,7 @@ enum scan_result {
- static struct task_struct *khugepaged_thread __read_mostly;
- static DEFINE_MUTEX(khugepaged_mutex);
+v5 -> v6:
+  * Rebase code to last tip perf/core tree + "x86 perf bug fixes and
+    optimization" patchset
  
--/* default scan 8*512 pte (or vmas) every 30 second */
-+/* default scan 8*512 pte (or vmas) every 10 second */
- static unsigned int khugepaged_pages_to_scan __read_mostly;
- static unsigned int khugepaged_pages_collapsed;
- static unsigned int khugepaged_full_scans;
+v4 -> v5:
+  * Rebase code to 6.16-rc3
+  * Allocate/free arch-PEBS buffer in callbacks *prepare_cpu/*dead_cpu
+    (patch 07/10, Peter)
+  * Code and comments refine (patch 09/10, Peter)
+
+
+This patchset introduces architectural PEBS support for Intel platforms
+like Clearwater Forest (CWF) and Panther Lake (PTL). The detailed
+information about arch-PEBS can be found in chapter 11
+"architectural PEBS" of "Intel Architecture Instruction Set Extensions
+and Future Features".
+
+This patch set doesn't include the SSP and SIMD regs (OPMASK/YMM/ZMM)
+sampling support for arch-PEBS to avoid the dependency for the basic
+SIMD regs sampling support patch series[1]. Once the basic SIMD regs
+sampling is supported, the arch-PEBS based SSP and SIMD regs
+(OPMASK/YMM/ZMM) sampling would be supported in a later patch set.
+
+Tests:
+  Run below tests on Clearwater Forest and Pantherlake, no issue is
+  found.
+
+  1. Basic perf counting case.
+    perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+
+  2. Basic PMI based perf sampling case.
+    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+
+  3. Basic PEBS based perf sampling case.
+    perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
+
+  4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
+    perf record -e branches:p -Iax,bx,ip,xmm0 -b -c 10000 sleep 1
+
+  5. User space PEBS sampling case with basic, GPRs and LBR groups
+    perf record -e branches:p --user-regs=ax,bx,ip -b -c 10000 sleep 1
+
+  6. PEBS sampling case with auxiliary (memory info) group
+    perf mem record sleep 1
+
+  7. PEBS sampling case with counter group
+    perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
+
+  8. Perf stat and record test
+    perf test 100; perf test 131
+
+
+History:
+  v7: https://lore.kernel.org/all/20250828013435.1528459-1-dapeng1.mi@linux.intel.com/
+  v6: https://lore.kernel.org/all/20250821035805.159494-1-dapeng1.mi@linux.intel.com/ 
+  v5: https://lore.kernel.org/all/20250623223546.112465-1-dapeng1.mi@linux.intel.com/
+  v4: https://lore.kernel.org/all/20250620103909.1586595-1-dapeng1.mi@linux.intel.com/
+  v3: https://lore.kernel.org/all/20250415114428.341182-1-dapeng1.mi@linux.intel.com/
+  v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
+  v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
+
+Ref:
+  [1]: https://lore.kernel.org/all/20250925061213.178796-1-dapeng1.mi@linux.intel.com/
+
+Dapeng Mi (12):
+  perf/x86: Remove redundant is_x86_event() prototype
+  perf/x86/intel: Fix NULL event access and potential PEBS record loss
+  perf/x86/intel: Replace x86_pmu.drain_pebs calling with static call
+  perf/x86/intel: Correct large PEBS flag check
+  perf/x86/intel: Initialize architectural PEBS
+  perf/x86/intel/ds: Factor out PEBS record processing code to functions
+  perf/x86/intel/ds: Factor out PEBS group processing code to functions
+  perf/x86/intel: Process arch-PEBS records or record fragments
+  perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
+  perf/x86/intel: Update dyn_constranit base on PEBS event precise level
+  perf/x86/intel: Setup PEBS data configuration and enable legacy groups
+  perf/x86/intel: Add counter group support for arch-PEBS
+
+ arch/x86/events/core.c            |  21 +-
+ arch/x86/events/intel/core.c      | 268 ++++++++++++-
+ arch/x86/events/intel/ds.c        | 632 ++++++++++++++++++++++++------
+ arch/x86/events/perf_event.h      |  41 +-
+ arch/x86/include/asm/intel_ds.h   |  10 +-
+ arch/x86/include/asm/msr-index.h  |  20 +
+ arch/x86/include/asm/perf_event.h | 116 +++++-
+ 7 files changed, 963 insertions(+), 145 deletions(-)
+
+
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
 -- 
-2.50.1 (Apple Git-155)
+2.34.1
 
 
