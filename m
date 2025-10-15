@@ -1,150 +1,168 @@
-Return-Path: <linux-kernel+bounces-853692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F90EBDC586
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:32:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC11BDC595
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947151928191
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:32:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EF604F1743
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B83A2D3A7C;
-	Wed, 15 Oct 2025 03:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D4629E11B;
+	Wed, 15 Oct 2025 03:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="IYBwmraB"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AtiLMs48"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48B72741C0;
-	Wed, 15 Oct 2025 03:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFBD271A71
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760499129; cv=none; b=lmLetcTt4TlGK9UTA/IBmXnl9ZANKp+v22pLcdrgmQY6X6BeWBnrO24hbW6Jh1JWce7mzFBKz04h60vVnzHLsNLhHcaohh70mz1aXSuUyoNMtOHDE5RYq2QkBKGWTVJPh5mT8FaHZeCaFJvpp8pMMKX83bzEJstCkKJmF9HJ8SY=
+	t=1760499190; cv=none; b=GkzpPCKLuSiw4DB/ChODiMjCYf0v1KJPuEgQWx1WZdIhqWYuMMG07SnU5lh0uvVs7dxJtjZJkc0YPq12mzbyV3VSup39nwQgcEfNwNPVOmVZbcj/o/V53zgt4nsjhkBxvcq3pwawlTcKHh6TpRDyKbsdyqGpor2v63wcwqSaKaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760499129; c=relaxed/simple;
-	bh=Zy3Chk3IsXVuwitOcu5ShYYmJKwChkzi6v/GovRBypE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l1ay3521HY5iDqyuUXcdRhPeAe3NR6q+9C8LpO6lnOC4sCA9AlFbOoO/ZARsCRnpZT4Y5vwTFNZagF1lyFxGGItXO0z5D5ukd6fsfq+bDUwvBKX5NH/6K+rVEK+rxNVWxUgbuMQrQIHsT2fvAwgtAdUBRIMLa32Nr8kngE5SWU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=IYBwmraB; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 814dcca6a97711f0ae1e63ff8927bad3-20251015
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bPjJVKJWfX/QRF1O7LRg4cKSp0jf6hqcZ2RrU6a4XBs=;
-	b=IYBwmraBP0LT1Er6fGxMuTjlH778JIP6vIdtO7qB7uZvMWJSg/hXkaNXqHjmkRmQAp33A1FDrS0oPs9aLkh7WS9Te6v61Qv8dXJBGZnxkJI92mLf9x+CjwK3QyfZNStwasFV8ZRD66Ay0JMWsy8dlpYqeFMzL9NjLCB1XGEyCDA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:870750c1-a784-4c29-8728-d6c5a9fd5918,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:35336602-eaf8-4c8c-94de-0bc39887e077,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 814dcca6a97711f0ae1e63ff8927bad3-20251015
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 513038153; Wed, 15 Oct 2025 11:31:58 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 15 Oct 2025 11:31:56 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Wed, 15 Oct 2025 11:31:56 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
-	SS Wu <ss.wu@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v2 RESEND 2/2] Bluetooth: btusb: MT7922: Add VID/PID 0489/e170
-Date: Wed, 15 Oct 2025 11:31:50 +0800
-Message-ID: <20251015033150.498866-3-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251015033150.498866-1-chris.lu@mediatek.com>
-References: <20251015033150.498866-1-chris.lu@mediatek.com>
+	s=arc-20240116; t=1760499190; c=relaxed/simple;
+	bh=nh6A6QTW5DFWbqA0LXLmFEnYV+abQ4LqDLTOtaSusmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=K/+c0FhPC0qSwalCQAA2x9PfbEhdejr07mx/hM5FxVAWWkpFWrGypZFrqjBEsEpsTQG/rYn4eqQ+7CTxuZAE4g4V0XYrIEFRSuT//J5oX5PlyEEl5Yr9SoPZtoE2DENimDhDpk2txYlJMUW3UVQOsgWo0fy5I3MApz/a6DWUiZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AtiLMs48; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760499186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sFXia4dAf+nJBlW1l2txxKlIDrP+1ClTxtSsWhIIzPA=;
+	b=AtiLMs48KDKWS1jLrE/DD1cCtBHfcEjb682+6yq3IQeo/5BZ9x4/qj5OZLofORJGc5eFrj
+	x/Y54db7x7ranUDFu33agJrjYGRhk562lruBy5r8neuLl6lMd8wAx3naSY2pf2sj2qJU+8
+	seGqr4t0/nftMzXTyAt3u0Hjg5hJvZk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-n4N2v3_1MnO5Amk7Uvhx6g-1; Tue,
+ 14 Oct 2025 23:33:03 -0400
+X-MC-Unique: n4N2v3_1MnO5Amk7Uvhx6g-1
+X-Mimecast-MFC-AGG-ID: n4N2v3_1MnO5Amk7Uvhx6g_1760499182
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 72D83180035D;
+	Wed, 15 Oct 2025 03:33:01 +0000 (UTC)
+Received: from intellaptop.redhat.com (unknown [10.22.80.16])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2D4BA1800452;
+	Wed, 15 Oct 2025 03:32:59 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH v2 0/3] Fix a lost async pagefault notification when the guest is using SMM
+Date: Tue, 14 Oct 2025 23:32:55 -0400
+Message-ID: <20251015033258.50974-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Add VID 0489 & PID e170 for MediaTek MT7922 USB Bluetooth chip.
-
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
-
-T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e170 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
-
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index a2cde2284163..6834592f3c39 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -687,6 +687,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe153), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe170), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x3804), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x38e4), .driver_info = BTUSB_MEDIATEK |
--- 
-2.45.2
+Recently we debugged a customer case in which the guest VM was showing=0D
+tasks permanently stuck in the kvm_async_pf_task_wait_schedule.=0D
+=0D
+This was traced to the incorrect flushing of the async pagefault queue,=0D
+which was done during the real mode entry by the kvm_post_set_cr0.=0D
+=0D
+This code, the kvm_clear_async_pf_completion_queue does wait for all #APF=0D
+tasks to complete but then it proceeds to wipe the 'done' queue without=0D
+notifying the guest.=0D
+=0D
+Such approach is acceptable if the guest is being rebooted or if=0D
+it decided to disable APF, but it leads to failures if the entry to real=0D
+mode was caused by SMM, because in this case the guest intends to continue=
+=0D
+using APF after returning from the SMM handler.=0D
+=0D
+Amusingly, and on top of this, the SMM entry code doesn't call=0D
+the kvm_set_cr0 (and subsequently neither it calls kvm_post_set_cr0),=0D
+but rather only the SMM mode exit code does.=0D
+=0D
+During SMM entry, the SMM code calls .set_cr0 instead, with an intention=0D
+to bypass various architectural checks that can otherwise fail.=0D
+=0D
+One example of such check is a #GP check on an attempt to disable paging=0D
+while the long mode is active.=0D
+To do this, the user must first exit to the compatibility mode and only the=
+n=0D
+disable paging.=0D
+=0D
+The question of the possiblity of eliminating this bypass, is a side topic=
+=0D
+that is probably worth discussing separately.=0D
+=0D
+Back to the topic, the kvm_set_cr0 is still called during SMM handling,=0D
+more particularly during the exit from SMM, by emulator_leave_smm:=0D
+=0D
+It is called once with CR0.PE =3D=3D off, to setup a baseline real-mode=0D
+environment, and then a second time, with the original CR0 value.=0D
+=0D
+Even more amusingly, usually both mentioned calls result in APF queue being=
+=0D
+flushed, because the code in kvm_post_set_cr0 doesn't distinguish between=0D
+entry and exit from protected mode, and SMM mode usually enables protection=
+=0D
+and paging, and exits itself without bothering first to exit back to=0D
+the real mode.=0D
+=0D
+To fix this problem, I think the best solution is to drop the call to=0D
+kvm_clear_async_pf_completion_queue in kvm_post_set_cr0 code altogether,=0D
+and instead raise the KVM_REQ_APF_READY, when the protected mode=0D
+is re-established.=0D
+=0D
+Existing APF requests should have no problem to complete while the guest is=
+=0D
+in SMM and the APF completion event injection should work too,=0D
+because SMM handler *ought* to not enable interrupts because otherwise=0D
+things would go south very quickly.=0D
+=0D
+This change also brings the logic to be up to date with logic that KVM=0D
+follows when the guest disables APIC.=0D
+KVM also raises KVM_REQ_APF_READY when the APIC is re-enabled.=0D
+=0D
+In addition to this, I also included few fixes for few semi-theortical=0D
+bugs I found while debugging this.=0D
+=0D
+V2: incorporated review feedback from Paolo Bonzini and Sean Christopherson=
+.=0D
+=0D
+Best regards,=0D
+        Maxim Levitsky=0D
+=0D
+Maxim Levitsky (3):=0D
+  KVM: x86: Warn if KVM tries to deliver an #APF completion when APF is=0D
+    not enabled=0D
+  KVM: x86: Fix a semi theoretical bug in=0D
+    kvm_arch_async_page_present_queued=0D
+  KVM: x86: Fix the interaction between SMM and the asynchronous=0D
+    pagefault=0D
+=0D
+ arch/x86/kvm/x86.c | 37 +++++++++++++++++++++++--------------=0D
+ 1 file changed, 23 insertions(+), 14 deletions(-)=0D
+=0D
+-- =0D
+2.49.0=0D
+=0D
 
 
