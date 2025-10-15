@@ -1,267 +1,257 @@
-Return-Path: <linux-kernel+bounces-855343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA919BE0F34
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E0FBE0E6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6041234DB48
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98D01A212BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363BF30EF92;
-	Wed, 15 Oct 2025 22:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25645305E26;
+	Wed, 15 Oct 2025 22:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="xbUyOAdB"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bRv3Iqc9"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F139226D18;
-	Wed, 15 Oct 2025 22:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B7D30505E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760567737; cv=none; b=AagYvL4jypRlHaywwiYTuiS30SEH6ClNC3s3y4+qGxNkdC0ydyw0IcQo1M+zgfUkAKaDLqUgzRS4MnyDBjsSO7NvOYM9WGLV3Blx0n4e1gnLyNZEc4ro4BbcLTPSdz4ZwfDzN83i4fLd6SHHyP03jn25EcoFSHEl3JDVyOOcu3c=
+	t=1760566012; cv=none; b=B4dCxdT+j9G2mB9u4t3AQNEkrS72QymdAcpqCJlxdzCkagj8BQMIrjlm0FPHj4e9gZUHzuyWJP3ryY+3uujaezyrMd3wXVjzz3NV1z5wzohbLWjOALAr5xPDyK1jezyOxK20T+ccE6WETcOfriI99QH+wzWBClE/WJwapIApoGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760567737; c=relaxed/simple;
-	bh=Uy50svceI1+XWgm3Zns9sEedIGjXkuM329JuRdlJIaY=;
+	s=arc-20240116; t=1760566012; c=relaxed/simple;
+	bh=Wdpn2gTjQJBFZWl/cSLc/YQoQqtEHLVGvOPx+0pSDek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZ7NJPC5SnCUDKvt2hHPh6IfBduCHE7Px997hGh8PkLJ9EczalcoE5m6SndARpgs75AIne21a2kYvdcZTEmRk5dTWzIqFWjCrHuS/D+nqmNC8QFUhvMALelTy6yCGK0Qpm0d2GeyCvQe0B4kNp3MZGNffFATak+yrUyUjAASYrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=xbUyOAdB; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=DlM+vgyHxfCOK+MuMNUGW61IU4Xna6U487K0RDUqQe4=; b=xbUyOAdBBo2/nc7toUSs5yUUu7
-	rrywRKq3bwPL5MUpl3nfnqscz+VW2P7YIZw7P87ayXPkqYOdOI0wMeIwqHM9Q3wfgrcfup1KukCVV
-	Di+1/rMvOeV3JtVrnD9rsGLNtDUhJXDqF8l9StRGufgFPXVJPSbHaAHTpPF6G/Kz1VWnblNMoU4DI
-	ni8/PBy/C1boyp49iSxDSakkNc/4wFgeJmCgjBMQlIgH+skWhAQMG6P5Rf2zpcufO56a0FAPV3AV2
-	OGf6igGMKov8tchzG1s9jf1g81OdIgJwqsRJ2SHNeZj7ZnhFdS5EgnosqPol41MrjGy++j4iGYALG
-	fXQ3zGpA==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1v99Oh-0081CU-19;
-	Wed, 15 Oct 2025 23:51:03 +0200
-Date: Wed, 15 Oct 2025 23:51:02 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	mani@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-	dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, christian.bruel@foss.st.com,
-	shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com,
-	qiang.yu@oss.qualcomm.com, namcao@linutronix.de,
-	thippeswamy.havalige@amd.com, inochiama@gmail.com,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Junzhong Pan <panjunzhong@linux.spacemit.com>
-Subject: Re: [PATCH v2 4/7] phy: spacemit: introduce PCIe/combo PHY
-Message-ID: <aPAXRiGA8aTZCNTm@aurel32.net>
-Mail-Followup-To: Alex Elder <elder@riscstar.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org,
-	guodong@riscstar.com, pjw@kernel.org, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
-	christian.bruel@foss.st.com, shradha.t@samsung.com,
-	krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
-	namcao@linutronix.de, thippeswamy.havalige@amd.com,
-	inochiama@gmail.com, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Junzhong Pan <panjunzhong@linux.spacemit.com>
-References: <20251013153526.2276556-1-elder@riscstar.com>
- <20251013153526.2276556-5-elder@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b46cWWkznauZhkMU8QyaxgYLOZhflv8y+TITj/D3Ln4+7XG7zJ9u1nsvUNKzo4ebCqH17PnDnyhI310fcED3yFNkUrPDldreZ9JI4v5gfXVjYMKTjCd0DBY6qr0jI2OdNEvFDjqhUtaViq2LzWhhXZm6/fAAL5I0t3wOdMhMhhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bRv3Iqc9; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33067909400so82025a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1760566010; x=1761170810; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M6eApBBDQQL/Q0ea8jzVs7vVBk+VLf27Z3qhgm/L8eI=;
+        b=bRv3Iqc9FEJ5J2g2UTfE4Tkljw64+G5CFEGGhMGkaDDmAImRVEVmXuW2Zpun6MFr+U
+         zJUerIu31tZ8jIEKVOmIwL3wqI5C6K2+nnNRmcgMLvKglF4gwx322QisWM5aS4dyJygy
+         /JNWrhr4Tlqe/tv85QvhMcTbK+ykeukpVuKVuQILU+wmujb1hN0YuyRRetvmynrzcktu
+         YMpmZtiW4U6ow0dyqdEqVxrZdP/PinkTNWdwRF+nOauKXyCalw+1364F/dazvW62m13m
+         4+HXXzo10FLiRO54cpoCsG2x60E5uYXMqNZa3zltcIjzGlrspz7tv2vGactXkodWeybB
+         KSHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760566010; x=1761170810;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M6eApBBDQQL/Q0ea8jzVs7vVBk+VLf27Z3qhgm/L8eI=;
+        b=n4MjV+2CjKzpd3qo/RXQGb7+Cfu+L07JXTjjuqCtMnpTY3okAaj6UJAx/vGJP8koSm
+         gzZwViwIHyqe+wGToBgmukGCUdEHsvRSdfDaaBam5qjGyTi8Sl6mpOeClcnKaejSXfpR
+         q47XqCWdcIm5uaHYUzm2nZQoPfXcHXllhjl2rdwSdyWPgFDv5URIS4BrvR2otf0o+Klo
+         tN0qDRzpWaismanqofOn6gYW9IDdVwPtl8u3XG+Jo7MPvQg4kTYSdhlqwmFNxWBQNxcd
+         OP66GRPbKVdFBQ8QzKW6ki23n8GN02bFI7wnHfFDhvqKo+HQvPwyQkjlKIFANB/sj0d7
+         rcwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmVNQabKcnem6YrZVAHBlNfkLAU7vr8uNVfniP8TOi6jnurkCKg7PDbB/HxdZ1WdDBo2KYg9aiydqvw1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC6uG6ZvDo8KMB/pBIoJFUIrh1bp06gFh7PxVtqJzkBmKyc3Zl
+	1J5aHWe0U+mSGeTC0vJk8z9cfgX3ABfSgHLrUiNQZZ2ENy7kQJPLpZIc4vmh40wSpfA=
+X-Gm-Gg: ASbGncs3UkoDaMcNcJQPi5xWEqNap7Dha4QUnS40puoKrTbKX4ugHQ4T9lDxFNKw7DM
+	E8b5uNWASc2F1aHOBfJRYAFS2oPzLRHp2taPLV/Gj9k8HIm5LXvAclz+90baq/Hfr9Kz7P7W0Fc
+	n0L1x+VX2Kmm4wTJ3kiP9nehmX54CM/MUyLH+Yfm0mJfPVERMP+qVBONE7gLJYTpq6t8Jj8oHbr
+	SxSIR0gMYJTHP9rA35j7jiF+vHzpYOeFT0BjUWAZPFRVGLwkaprlhNgFTgb8QxVSZqx/VW4in9E
+	pL+SJn4LNo+izFLbtOIDuUJyBfn8c/PvA4upobOUwiAWGoNcMjHSDo2HUB1lHFCA8TXc93HYqMz
+	xoztUUxcSR9s6cF7GHCutsitC7zwFqH4okxfmG+mIeVIQEkHEgCL3SUpB7Wa8Fy6DGa/hoZ2cOD
+	s5II62k17ApN197FJ3ZF3IpJsza8sHITQVSW9wMP/tLsheKryrYpho7fbPSjwZvw==
+X-Google-Smtp-Source: AGHT+IFm6y/lppOf0Edu2tNY3405NaNnHIA0Sq0GymYj/emWFWGXsYmduItLrpe8rLNIyLezcWkacw==
+X-Received: by 2002:a17:90b:1b11:b0:32e:3c57:8a9e with SMTP id 98e67ed59e1d1-33b513a1ffbmr41330010a91.35.1760566009498;
+        Wed, 15 Oct 2025 15:06:49 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33badfe8abdsm71776a91.1.2025.10.15.15.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 15:06:48 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1v99dt-0000000FKma-1fVY;
+	Thu, 16 Oct 2025 09:06:45 +1100
+Date: Thu, 16 Oct 2025 09:06:45 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v7 03/14] fs: provide accessors for ->i_state
+Message-ID: <aPAa9fz-4OG_9pVX@dread.disaster.area>
+References: <20251009075929.1203950-1-mjguzik@gmail.com>
+ <20251009075929.1203950-4-mjguzik@gmail.com>
+ <h2etb4acmmlmcvvfyh2zbwgy7bd4xeuqqyciqjw6k5zd3thmzq@vwhxpsoauli7>
+ <CAGudoHFJxFOj=cbxcjmMtkzXCagg4vgfmexTG1e_Fo1M=QXt-g@mail.gmail.com>
+ <aO7NqqB41VYCw4Bh@dread.disaster.area>
+ <CAGudoHFpoo0Qm=b4Z85tbJJmhh+vmSHuNnm3pVaLaQsmX9mURg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251013153526.2276556-5-elder@riscstar.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHFpoo0Qm=b4Z85tbJJmhh+vmSHuNnm3pVaLaQsmX9mURg@mail.gmail.com>
 
-Hi,
-
-On 2025-10-13 10:35, Alex Elder wrote:
-> Introduce a driver that supports three PHYs found on the SpacemiT
-> K1 SoC.  The first PHY is a combo PHY that can be configured for
-> use for either USB 3 or PCIe.  The other two PHYs support PCIe
-> only.
+On Wed, Oct 15, 2025 at 07:46:39AM +0200, Mateusz Guzik wrote:
+> On Wed, Oct 15, 2025 at 12:24 AM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Fri, Oct 10, 2025 at 05:51:06PM +0200, Mateusz Guzik wrote:
+> > > On Fri, Oct 10, 2025 at 4:44 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Thu 09-10-25 09:59:17, Mateusz Guzik wrote:
+> > > > > +static inline void inode_state_set_raw(struct inode *inode,
+> > > > > +                                    enum inode_state_flags_enum flags)
+> > > > > +{
+> > > > > +     WRITE_ONCE(inode->i_state, inode->i_state | flags);
+> > > > > +}
+> > > >
+> > > > I think this shouldn't really exist as it is dangerous to use and if we
+> > > > deal with XFS, nobody will actually need this function.
+> > > >
+> > >
+> > > That's not strictly true, unless you mean code outside of fs/inode.c
+> > >
+> > > First, something is still needed to clear out the state in
+> > > inode_init_always_gfp().
+> > >
+> > > Afterwards there are few spots which further modify it without the
+> > > spinlock held (for example see insert_inode_locked4()).
+> > >
+> > > My take on the situation is that the current I_NEW et al handling is
+> > > crap and the inode hash api is also crap.
+> >
+> > The inode hash implementation is crap, too. The historically poor
+> > scalability characteristics of the VFS inode cache is the primary
+> > reason we've never considered ever trying to port XFS to use it,
+> > even if we ignore all the inode lifecycle issues that would have to
+> > be solved first...
+> >
 > 
-> All three PHYs must be programmed with an 8 bit receiver termination
-> value, which must be determined dynamically.  Only the combo PHY is
-> able to determine this value.  The combo PHY performs a special
-> calibration step at probe time to discover this, and that value is
-> used to program each PHY that operates in PCIe mode.  The combo
-> PHY must therefore be probed before either of the PCIe-only PHYs
-> will be used.
+> I don't know of anyone defending the inode hash tho. The performance
+> of the thing was already bashed a few times, I did not see anyone
+> dunking on the API ;)
+
+I think it goes without saying that the amount of
+similar-but-slightly-different-and-inconsistently-named functions
+that have simply grown organically as individual fs needs have
+occurred has resulted in a bit of a mess that nobody really wants to
+tackle... :/
+
+> > > For starters freshly allocated inodes should not be starting with 0,
+> > > but with I_NEW.
+> >
+> > Not all inodes are cached filesystem inodes. e.g. anonymous inodes
+> > are initialised to inode->i_state = I_DIRTY.  pipe inodes also start
+> > at I_DIRTY. socket inodes don't touch i_state at init, so they
+> > essentially init i_state = 0....
+> >
+> > IOWs, the initial inode state depends on what the inode is being
+> > used for, and I_NEW is only relevant to inodes that are cached and
+> > can be found before the filesystem has fully initialised the VFS
+> > inode.
+> >
 > 
-> Each PHY has an internal PLL driven from an external oscillator.
-> This PLL started when the PHY is first initialized, and stays
-> on thereafter.
+> Well it is true that currently the I_NEW flag is there to help out
+> entities like the hash inode hash.
 > 
-> During normal operation, the USB or PCIe driver using the PHY must
-> ensure (other) clocks and resets are set up properly.
+> I'm looking to change it into a generic indicator of an uninitialized
+> inode. This is completely harmless for the consumers which currently
+> operate on inodes which never had the flag.
 > 
-> However PCIe mode clocks are enabled and resets are de-asserted
-> temporarily by this driver to perform the calibration step on the
-> combo PHY.
+> Here is one use: I'd like to introduce a mandatory routine to call
+> when the filesystem at hand claims the inode is ready to use.
+
+I like the idea, but I don't think that overloading I_NEW is the
+right thing to do nor is it that simple.
+
+e.g. We added the I_CREATING state years ago as a subset of I_NEW so
+that VFS inodes being instantiated can't be found -at all- by the
+open-by-handle interface doing direct inode hash lookups. However,
+only some of the inode hash APIs add this flag, and only overlay as
+a filesystem adds it in certain circumstances.
+
+IOWs, even during initialisation, different filesystems need to
+behave differently w.r.t. how the core VFS performs various
+operations on the inode during the initialisation stage...
+
+FWIW, XFS has the XFS_INEW state that wraps around the outside of
+the VFS inode initialisation process that prevents it from being
+found via any type of inode cache lookup (internal or external)
+until the inode is fully initialised.
+
+IOWs, features that XFS has
+supported for 25+ years (like open-by-handle) is supported natively
+by the XFS inode cache and the XFS inode life cycle state machine.
+
+In contrast, The way the VFS inode cache handles stuff like this is
+very much a hacked-in "oops we didn't think of that" after-thought
+that doesn't actually cover all the different APIs or filesystems...
+
+> Said routine would have 2 main purposes:
+> - validate the state of the inode (for example that a valid mode is
+> set; this would have caught some of the syzkaller bugs from the get
+> go)
+
+I think that's going to be harder than it sounds (speaking as the
+architect of the comprehensive on-disk metadata validation
+infrastructure in XFS).
+
+> - pre-compute a bunch of stuff, for example see this crapper:
 > 
-> Tested-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
-> Signed-off-by: Alex Elder <elder@riscstar.com>
+>    static inline int do_inode_permission(struct mnt_idmap *idmap,
+>                                         struct inode *inode, int mask)
+>   {
+>           if (unlikely(!(inode->i_opflags & IOP_FASTPERM))) {
+>                   if (likely(inode->i_op->permission))
+>                           return inode->i_op->permission(idmap, inode,
+> mask);
+> 
+>                   /* This gets set once for the inode lifetime */
+>                   spin_lock(&inode->i_lock);
+>                   inode->i_opflags |= IOP_FASTPERM;
+>                   spin_unlock(&inode->i_lock);
+>           }
+>           return generic_permission(idmap, inode, mask);
+>   }
 
-Thanks for this new version. I have tried it on top of v6.18-rc1 + 
-spacemit DTS commits from next on a BPI-F3, and it fails calibrating the 
-PHY with:
+Yup, that would be useful.
 
-[    2.748405] spacemit-k1-pcie-phy c0b10000.phy: error -ENOENT: calibration failed
-[    2.755300] spacemit-k1-pcie-phy c0b10000.phy: error -ENOENT: error probing combo phy
-[    2.763088] spacemit-k1-pcie-phy c0b10000.phy: probe with driver spacemit-k1-pcie-phy failed with error -2
-[   14.309031] platform c0d10000.phy: deferred probe pending: (reason unknown)
-[   14.313426] platform c0c10000.phy: deferred probe pending: (reason unknown)
-[   14.320347] platform ca400000.pcie: deferred probe pending: platform: supplier c0c10000.phy not ready
-[   14.329542] platform ca800000.pcie: deferred probe pending: platform: supplier c0d10000.phy not ready
+> Note unlock_new_inode() and similar are not mandatory to call.
 
-Note that version 1 was working fine on the same board.
+To a point. i.e. if you are using a VFS inode hash implemtation that
+sets I_NEW, then it is definitely mandatory to call
+unlock_new_inode().  Documentation/filesystems/porting.rst even says
+that.
 
-[ snip ]
+However, if you aren't using a VFS inode cache implemenation that
+sets I_NEW, then you've got to set it yourself and clear it
+appropriately so the rest of the VFS functionality does the right
+thing whilst the inode is published but still being initialised.
+e.g. putting an inode still undergoing initialisation on the
+sb->s_inodes list without it being marked as I_NEW is, quite simply,
+a bug.
 
-> diff --git a/drivers/phy/phy-spacemit-k1-pcie.c b/drivers/phy/phy-spacemit-k1-pcie.c
-> new file mode 100644
-> index 0000000000000..81bc05823d080
-> --- /dev/null
-> +++ b/drivers/phy/phy-spacemit-k1-pcie.c
+Hence it may not be mandatory to use unlock_new_inode(), but if you
+are publishing a partially initialised inode on any VFS list or
+cache, you still need to be doing the right thing w.r.t. locking,
+I_NEW, I_CREATING and calling unlock_new_inode() during inode
+initialisation and cache lookups.
 
-[ snip ]
-
-> +static int k1_pcie_combo_phy_calibrate(struct k1_pcie_phy *k1_phy)
-> +{
-> +	struct reset_control_bulk_data resets[] = {
-> +		{ .id = "dbi", },
-> +		{ .id = "mstr", },
-> +		{ .id = "slv", },
-> +	};
-> +	struct clk_bulk_data clocks[] = {
-> +		{ .id = "dbi", },
-> +		{ .id = "mstr", },
-> +		{ .id = "slv", },
-> +	};
-> +	struct device *dev = k1_phy->dev;
-> +	struct reset_control *phy_reset;
-> +	int ret = 0;
-> +	int val;
-> +
-> +	/* Nothing to do if we already set the receiver termination value */
-> +	if (k1_phy_rterm_valid())
-> +		return 0;
-> +
-> +	/* De-assert the PHY (global) reset and leave it that way for USB */
-> +	phy_reset = devm_reset_control_get_exclusive_deasserted(dev, "phy");
-> +	if (IS_ERR(phy_reset))
-> +		return PTR_ERR(phy_reset);
-> +
-> +	/*
-> +	 * We also guarantee the APP_HOLD_PHY_RESET bit is clear.  We can
-> +	 * leave this bit clear even if an error happens below.
-> +	 */
-> +	regmap_assign_bits(k1_phy->pmu, PCIE_CLK_RES_CTRL,
-> +			   PCIE_APP_HOLD_PHY_RST, false);
-> +
-> +	/* If the calibration already completed (e.g. by U-Boot), we're done */
-> +	val = readl(k1_phy->regs + PCIE_RCAL_RESULT);
-> +	if (val & R_TUNE_DONE)
-> +		goto out_tune_done;
-> +
-> +	/* Put the PHY into PCIe mode */
-> +	k1_combo_phy_sel(k1_phy, false);
-> +
-> +	/* Get and enable the PCIe app clocks */
-> +	ret = clk_bulk_get(dev, ARRAY_SIZE(clocks), clocks);
-> +	if (ret <= 0) {
-> +		if (!ret)
-> +			ret = -ENOENT;
-> +		goto out_tune_done;
-> +	}
-
-This part doesn't look correct. The documentation says this function 
-"returns 0 if all clocks specified in clk_bulk_data table are obtained
-successfully, or valid IS_ERR() condition containing errno."
-
-To me, it seems the code should only be:
-
-	ret = clk_bulk_get(dev, ARRAY_SIZE(clocks), clocks);
-	if (ret)
-		goto out_tune_done;
-
-[snip]
-
-> +out_put_clocks:
-> +	clk_bulk_put_all(ARRAY_SIZE(clocks), clocks);
-
-When fixing the above bug, this then crashes with:
-
-[    2.776109] Unable to handle kernel paging request at virtual address ffffffc41a0110c8
-[    2.783958] Current kworker/u36:0 pgtable: 4K pagesize, 39-bit VAs, pgdp=0x00000000022a7000
-[    2.792302] [ffffffc41a0110c8] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
-[    2.800980] Oops [#1]
-[    2.803217] Modules linked in:
-[    2.806261] CPU: 3 UID: 0 PID: 58 Comm: kworker/u36:0 Not tainted 6.18.0-rc1+ #4 PREEMPTLAZY 
-[    2.814763] Hardware name: Banana Pi BPI-F3 (DT)
-[    2.819366] Workqueue: events_unbound deferred_probe_work_func
-[    2.825180] epc : virt_to_folio+0x5e/0xb8
-[    2.829172]  ra : kfree+0x3a/0x528
-[    2.832558] epc : ffffffff8034e12e ra : ffffffff8035557a sp : ffffffc600243980
-[    2.839762]  gp : ffffffff82074258 tp : ffffffd700994d80 t0 : ffffffff80021540
-[    2.846967]  t1 : 0000000000000018 t2 : 2d74696d65636170 s0 : ffffffc600243990
-[    2.854172]  s1 : ffffffc600243ab8 a0 : 03ffffc41a0110c0 a1 : ffffffff82123bd0
-[    2.861377]  a2 : 7c137c69131cec36 a3 : ffffffff816606d8 a4 : 0000000000000000
-[    2.868583]  a5 : ffffffc500000000 a6 : 0000000000000004 a7 : 0000000000000004
-[    2.875787]  s2 : ffffffd700b98410 s3 : ffffffc600243ab8 s4 : 0000000000000000
-[    2.882991]  s5 : ffffffff80828f1c s6 : 0000000000008437 s7 : ffffffd700b98410
-[    2.890197]  s8 : ffffffd700b98410 s9 : ffffffd700900240 s10: ffffffff81fc4100
-[    2.897401]  s11: ffffffd700987400 t3 : 0000000000000004 t4 : 0000000000000001
-[    2.904607]  t5 : 000000000000001f t6 : 0000000000000003
-[    2.909902] status: 0000000200000120 badaddr: ffffffc41a0110c8 cause: 000000000000000d
-[    2.917802] [<ffffffff8034e12e>] virt_to_folio+0x5e/0xb8
-[    2.923097] [<ffffffff8035557a>] kfree+0x3a/0x528
-[    2.927784] [<ffffffff80828f1c>] clk_bulk_put_all+0x64/0x78
-[    2.933340] [<ffffffff807249d6>] k1_pcie_phy_probe+0x4ee/0x618
-[    2.939155] [<ffffffff808e35e6>] platform_probe+0x56/0x98
-[    2.944538] [<ffffffff808e0328>] really_probe+0xa0/0x348
-[    2.949832] [<ffffffff808e064c>] __driver_probe_device+0x7c/0x140
-[    2.955909] [<ffffffff808e07f8>] driver_probe_device+0x38/0xd0
-[    2.961724] [<ffffffff808e0912>] __device_attach_driver+0x82/0xf0
-[    2.967801] [<ffffffff808dde6a>] bus_for_each_drv+0x72/0xd0
-[    2.973356] [<ffffffff808e0cac>] __device_attach+0x94/0x198
-[    2.978912] [<ffffffff808e0fca>] device_initial_probe+0x1a/0x30
-[    2.984815] [<ffffffff808defee>] bus_probe_device+0x96/0xa0
-[    2.990370] [<ffffffff808dff0e>] deferred_probe_work_func+0xa6/0x110
-[    2.996707] [<ffffffff8005cb66>] process_one_work+0x15e/0x340
-[    3.002436] [<ffffffff8005d58c>] worker_thread+0x22c/0x348
-[    3.007905] [<ffffffff80066b7c>] kthread+0x10c/0x208
-[    3.012853] [<ffffffff80014de0>] ret_from_fork_kernel+0x18/0x1c0
-[    3.018843] [<ffffffff80c917d6>] ret_from_fork_kernel_asm+0x16/0x18
-[    3.025098] Code: 7a98 8d19 2717 0131 3703 5fa7 8131 8d19 051a 953e (651c) f713 
-[    3.032497] ---[ end trace 0000000000000000 ]---
-
-It seems that we want clk_bulk_put() and not clk_bulk_put_all(). The 
-latter free the clocks, while they have been allocated on the stack.
-
-Regards,
-Aurelien
-
+-Dave.
 -- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+Dave Chinner
+david@fromorbit.com
 
