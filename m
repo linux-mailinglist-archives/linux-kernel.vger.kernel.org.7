@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-854384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4A9BDE3D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9865CBDE3D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9EF18953B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8DF419C352F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F18831A576;
-	Wed, 15 Oct 2025 11:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609731D398;
+	Wed, 15 Oct 2025 11:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aDY/vFae"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UoDvdrNE"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEB0213E6D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C18E213E6D;
+	Wed, 15 Oct 2025 11:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760526980; cv=none; b=K3+mulf9BNK5yCvop1cyHZA6n+b3QpjkhTeJKaIEkkDqBK5fBLvJjZCromU6fXGqwdaMGYrSRslWYKDYc/0XVAgbIfsBoAxzIlWWOKEYwei5WyY7eJW3GPY/v5z20KS7wgvg1MZNQbXVd7Zv6efCsMkApNbbena2M16ys4x3uSc=
+	t=1760527002; cv=none; b=XNEfAAsKT9mpur1SYybVNHu3rZ+/NKi1fTSYv4sig+1CmGPMO0/ph8TTTsqOlHqQsspdz8Bv37xLMg9lmdNuH4i0RyOUeSNvUKuWHUQ2fmJzKl6kbQdcmCIXum3AWZuVKbT1Lrl5wgq7dwYW03fdJ9Sh+vC2zhy7yQl+jgHPDVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760526980; c=relaxed/simple;
-	bh=0jB1y9zzssyn0/iHmvdVy1f2rouH9wDJMarUi4ghEpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z67eFZtTccVXp54ykaR1WDCajWI5S4TVOetW7W7/0O8WZf+SOgiPR97xflSoQD9FWnRuNHj0Ww5UJ0VT/n1uWwr4BFIAPbLVISbrYy6Zo2pHVh8ucINTFbFnsO3iA+tn0dNZozajWLw9ayGZYSFZ83lc0wjAoWK5ZWmetrfiFw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aDY/vFae; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0jB1y9zzssyn0/iHmvdVy1f2rouH9wDJMarUi4ghEpk=; b=aDY/vFaeNazwpT1+ON0f+9omXy
-	aCpJ3ZnmpwKw0gvvXYlR4fjHF1iT7AYRT4b0o8+Z58fx7zvHQfB2RjrIIACarhP7/NT6aGlu0Ip5x
-	+2gmPkVqw0nHP9pr6xbv4hkoSri1tO1ofmXOHiGVo2eFy8SsQDQfKkB1k29PsRvfHwYo6ynG3RYFq
-	hIas4mYnP3wXGZ4P70m5yzodoNLkCeCM5MY7yXI7wRU1PFKxfqTMvSmqHnCRNINPio2iMLlUMrkb+
-	tH0GHcHwhB6gRG0leIR0bcqd6LUfVY6NKfQJbWkJZduJvl1B93ed9n94DoFtNj6J2B8YejA0FW/Fy
-	PO93/b8w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8zTr-00000005tdx-2i9A;
-	Wed, 15 Oct 2025 11:15:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8D01530023C; Wed, 15 Oct 2025 13:15:42 +0200 (CEST)
-Date: Wed, 15 Oct 2025 13:15:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Vern Hao <vernhao@tencent.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jianyong Wu <jianyong.wu@outlook.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Tingyin Duan <tingyin.duan@gmail.com>,
-	Len Brown <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>,
-	Zhao Liu <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>,
-	Libo Chen <libo.chen@oracle.com>,
-	Adam Li <adamli@os.amperecomputing.com>,
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/19] sched/fair: Assign preferred LLC ID to processes
-Message-ID: <20251015111542.GQ3289052@noisy.programming.kicks-ass.net>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <cfa266cd6ea6fa30cbf7b07573992f18f786955e.1760206683.git.tim.c.chen@linux.intel.com>
- <3df5a8c1-7074-4fcf-adf8-d39137314fd6@intel.com>
+	s=arc-20240116; t=1760527002; c=relaxed/simple;
+	bh=Bis6a1wlF8kYaFqIpcDHDYpUVxg0GoC2tnUOAX6rrV8=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=haNBasZTAAWKQgmFFAG53VHOsHDyFol9qJJocM4RweUP9hs7Ejd1yJ5ybLVSSH7OiO+J5wJEbbchS7AWjuuFOu/jrwdVm6xxM680CxSAns/xIM9iLfiJsn5zMwBGRKOAolyDbH6Cy9eCla172c2DeMQpovBiamzA5iplh8FRcQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UoDvdrNE; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59FBGXeH1740850;
+	Wed, 15 Oct 2025 06:16:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760526993;
+	bh=Bis6a1wlF8kYaFqIpcDHDYpUVxg0GoC2tnUOAX6rrV8=;
+	h=Subject:From:To:CC:Date:In-Reply-To:References;
+	b=UoDvdrNEXNBiVaAnqEefl7YcpzHKMHjAEoqNksiEgnRsyyd8OtBcFi7ZlBnGTtMc5
+	 ESkd+x/bhid6WFpm1aPLvlaTgZKHX+WxIWJ7ga3+eRWzX8ub2DEXemYQ+U7wJiyKJZ
+	 TJ18MXo39HAj0+s7vXlWyP7xq9VqOthwLQj1vgi0=
+Received: from DFLE202.ent.ti.com (dfle202.ent.ti.com [10.64.6.60])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59FBGXx31181400
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 15 Oct 2025 06:16:33 -0500
+Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
+ 2025 06:16:33 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Oct 2025 06:16:33 -0500
+Received: from [10.24.73.74] (uda0492258.dhcp.ti.com [10.24.73.74])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59FBGTHc1811397;
+	Wed, 15 Oct 2025 06:16:30 -0500
+Message-ID: <f815e16805a5a7f7a04dc3158addbbd364447d36.camel@ti.com>
+Subject: Re: [PATCH v3 0/5] TI-K3-DTS: Cleanup CPSW DT Nodes
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Dominik Haller <d.haller@phytec.de>
+CC: "nm@ti.com" <nm@ti.com>, "vigneshr@ti.com" <vigneshr@ti.com>,
+        "kristo@kernel.org" <kristo@kernel.org>,
+        "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "srk@ti.com" <srk@ti.com>, "s-vadapalli@ti.com" <s-vadapalli@ti.com>
+Date: Wed, 15 Oct 2025 16:46:36 +0530
+In-Reply-To: <1b2b23293b01cec8161bc749bb864b18b3d41678.camel@ti.com>
+References: <20251014125349.3408784-1-s-vadapalli@ti.com>
+		 <df6acbfe5d30956ed66e2768fa595c36d2ebe98a.camel@phytec.de>
+	 <1b2b23293b01cec8161bc749bb864b18b3d41678.camel@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3df5a8c1-7074-4fcf-adf8-d39137314fd6@intel.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Oct 14, 2025 at 01:16:16PM +0800, Chen, Yu C wrote:
+On Wed, 2025-10-15 at 10:28 +0530, Siddharth Vadapalli wrote:
+> On Tue, 2025-10-14 at 17:07 +0000, Dominik Haller wrote:
+> > On Di, 2025-10-14 at 18:23 +0530, Siddharth Vadapalli wrote:
+> > > Hello,
+> > >=20
+> > > This series cleans up the CPSW Device-tree nodes by updating the SoC
+> > > and
+> > > board files to keep CPSW disabled in the SoC files and enable it only
+> > > in
+> > > the board files.
+> > >=20
+> > > The following is a summary of the SoCs, CPSW instance and the Boards
+> > > that
+> > > this series affects:
+> > Hello Siddharth,
+> >=20
+> > please also enable cpsw3g in our k3-am62-phycore-som.dtsi and mcu_cpsw
+> > in our k3-am68-phyboard-izar.dts.
+> > Unless I'm missing some other patches you're turning off ethernet on
+> > those two both platforms too.
+>=20
+> Thank you for pointing it out. I will include them and post the v4 series=
+.
 
-> The question becomes: how can we figure out the threads that share
-> data? Can the kernel detect this, or get the hint from user space?
+I have implemented the feedback and have posted the v4 series at:
+https://lore.kernel.org/r/20251015111344.3639415-1-s-vadapalli@ti.com/
 
-This needs the PMU, then you can steer using cache-miss ratios. But then
-people will hate us for using counters.
-
-> Yes, the numa_group in NUMA load balancing indicates
-> that several tasks manipulate the same page, which could be an
-> indicator. Besides, if task A frequently wakes up task B, does it
-> mean A and B have the potential to share data? Furthermore, if
-> task A wakes up B via a pipe, it might also indicate that A has
-> something to share with B. I just wonder if we can introduce a
-> structure to gather this information together.
-
-The wakeup or pipe relation might be small relative to the working set.
-Consider a sharded in memory database, where the query comes in through
-the pipe/socket/wakeup. This query is small, but then it needs to go
-trawl through its memory to find the answer.
-
-Something we *could* look at -- later -- is an interface to create
-thread groups, such that userspace that is clever enough can communicate
-this. But then there is the ago old question, will there be sufficient
-users to justify the maintenance of said interface.
+Regards,
+Siddharth.
 
