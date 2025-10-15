@@ -1,61 +1,74 @@
-Return-Path: <linux-kernel+bounces-853701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79929BDC5D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66224BDC580
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6858F4E40C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:40:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65D93C04EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8312BE7D9;
-	Wed, 15 Oct 2025 03:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4C3288C81;
+	Wed, 15 Oct 2025 03:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="xLbMLvvL"
-Received: from jpms-ob01-os7.noc.sony.co.jp (jpms-ob01-os7.noc.sony.co.jp [211.125.139.71])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="MR1GCliP"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD01DE3A4;
-	Wed, 15 Oct 2025 03:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FF1547EE;
+	Wed, 15 Oct 2025 03:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760499633; cv=none; b=SCP34qcArR4iCiHbo3GNmLEAIKoPqmt/OqzdDvHVNlhZCBqfeAW7vzM6LPaaJJznj1OvyG22taJd582qryMELt5dEs5VY/uqKrnLnY+TXzrNRtUHdMtK1lXo7fJTREBbFnUkIfqizfs3EPMGlK3Ym4aZT9Flu8SpCmtdzdhdq1Y=
+	t=1760499126; cv=none; b=lBnnipdZB6hKPXGgRKcNbOn6T4d71ixoHFToKx8dbt2Wvh0A0+OUnT0cHTAx4wvS5FJutduEj4UIHJOhNZg+pnch8Amf/zUkVxzaWgyBC8/2mbIYb0T6bKXbSf/ecTIFaBbhj7+gMx81kfVOoIrqPKvz35f1nGpGAbCW3TqO8To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760499633; c=relaxed/simple;
-	bh=tF8UVJ7iV9XbY4WtnFX6iDlveE635HSDujJ70qOG/W4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VBJlBGzp0l5KKdsiXVT3R5YdiigstIrEpvmdMth9QV/xjAl/YjDO7r338SqT2jeKsXHXMezpbyurAR2/hAMVpYv9nLy7X7/58fTQoS22Bx6+XJBURU3M6fLGYdq74rnt1SZgAeUpgtp4oN9ZXibE3pFTl54MS0d4Yuk/QOnSyQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=xLbMLvvL; arc=none smtp.client-ip=211.125.139.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1760499630; x=1792035630;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=h+wM+eAwDJ3fdxxHZktrCzap9vXJ+Q0aN8qJ3Pnqwx0=;
-  b=xLbMLvvL5qMZl3kuH5Cf4vmk+SRYsQx8WT4a3ayNU9+GZuIOEB8FNDob
-   hwFlj3h1jz2H2NLrFF8fV+/lwpDpzii6e4p+B2pL/QwR6ts8ROLLm4EGZ
-   5SdCyCqxM4IfkFiagXiMdJDITq3PKmVBfipQWPFs1bLIl3lM60b3+000E
-   1qv4qmtR80fwYObWw/LpNRpxCg1ZkFetOwGHkIeeyQq1/HYlA4624zTSU
-   fwHB5qqmY0Y9aOzZG0zkYSIFow994NwK/+96FoSqyhhM2Ys3mAOaeyQ85
-   fofSwJl/ZndfkpwfNszZB4NQBFIfzyuHD435vsrg9cfX3C0/IFIieAPeu
-   w==;
-Received: from unknown (HELO jpmta-ob01-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::6])
-  by jpms-ob01-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 12:30:21 +0900
-X-IronPort-AV: E=Sophos;i="6.19,227,1754924400"; 
-   d="scan'208";a="45749282"
-Received: from unknown (HELO asagi..) ([43.11.56.84])
-  by jpmta-ob01-os7.noc.sony.co.jp with ESMTP; 15 Oct 2025 12:30:20 +0900
-From: Yohei Kojima <Yohei.Kojima@sony.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Yohei Kojima <Yohei.Kojima@sony.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: admin-guide: Fix a typo in kernel-parameters.txt
-Date: Wed, 15 Oct 2025 12:31:03 +0900
-Message-ID: <edda15e3fcae13265278d3c3bd93ab077345d78f.1760498951.git.Yohei.Kojima@sony.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760499126; c=relaxed/simple;
+	bh=s4/DsDuRlWceiLWQQXEKeREbUD4ZXOV2awEcyKm9yvQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LQjIR45mSD+AQOl/Rgcam35+DdReipISDOdXWq/Xw3xV4MeqcmVLuZVieN1Lg6ZNs2A97goO8dxgBreFrQR8kRI/83+aJZonz0Z4Kb44jvNcc1atwbz/s+sTRbNpsjPVbF2+4zwG1riLsDd6HWJSGW5D3ZlrrLt1E4D+TZcm330=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=MR1GCliP; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 811f7a04a97711f0ae1e63ff8927bad3-20251015
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=cHJINyY/HfM0Bk3CJ11w/F3lW9D9PJ3q9roxipCTsjI=;
+	b=MR1GCliP50jDXy+kU/wJqXNHDQvvdiPeBNfELIpGDpU8CwFk22IhDhlISNB40bbIedP0czFXGhxsTeTN9toEpeCkdDDD367FG+sKP2GaivH41ZDXcVEqZpWMKp9FGekzZVmC2rPNNGFc7mSP81cXzRRwpBFbiA3TUR9Y7WwIFJg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:6fb3e8b5-bd05-4e69-be19-b07096002fb1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:0c336602-eaf8-4c8c-94de-0bc39887e077,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 811f7a04a97711f0ae1e63ff8927bad3-20251015
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 480920460; Wed, 15 Oct 2025 11:31:58 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 15 Oct 2025 11:31:56 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Wed, 15 Oct 2025 11:31:56 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
+	SS Wu <ss.wu@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v2 RESEND 0/2] Add two new ID for MediaTek's Bluetooth
+Date: Wed, 15 Oct 2025 11:31:48 +0800
+Message-ID: <20251015033150.498866-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,28 +76,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Fix a typo in the stacktrace parameter description in kernel-parameters.txt
+In response to the customer's request, add the following two
+VID/PID to the USB driver table so that btusb driver can support
+the corresponding MT7920/MT7922 modules.
 
-Signed-off-by: Yohei Kojima <Yohei.Kojima@sony.com>
+1. VID/PID 0489/e135 for MT7920
+2. VID/PID 0489/e170 for MT7922
+
 ---
- Documentation/admin-guide/kernel-parameters.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1->v2: Change patch title
+---
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 6c42061ca20e..f29ba44b5be2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7150,7 +7150,7 @@
- 			limit. Default value is 8191 pools.
- 
- 	stacktrace	[FTRACE]
--			Enabled the stack tracer on boot up.
-+			Enable the stack tracer on boot up.
- 
- 	stacktrace_filter=[function-list]
- 			[FTRACE] Limit the functions that the stack tracer
+Chris Lu (2):
+  Bluetooth: btusb: MT7920: Add VID/PID 0489/e135
+  Bluetooth: btusb: MT7922: Add VID/PID 0489/e170
+
+ drivers/bluetooth/btusb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
 -- 
-2.43.0
+2.45.2
 
 
