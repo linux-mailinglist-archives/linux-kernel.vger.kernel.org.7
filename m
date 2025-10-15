@@ -1,222 +1,104 @@
-Return-Path: <linux-kernel+bounces-853852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D133BDCC3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:39:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229EFBDCC52
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A183E4F8941
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:39:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8DFE04F8846
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3823021CC5A;
-	Wed, 15 Oct 2025 06:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jE3xKu67"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FD7313263;
+	Wed, 15 Oct 2025 06:40:39 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A661B3128D7
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878A43126CD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510355; cv=none; b=ntL6Mao2u5yjlOgwo1xVl1zAJzQAgZ+sofSZBRXTfBr9Zzk84csmKqhK1qgL++u0vw/n/SnPt1gPdqjHOeCMT6LUgmZUy62TcbYnXW1qVci7X8fgYPzGML0bUjbsPTsWEHdoYRFjyPI6U0/ZIixIHtDjDdGPtcSaySR7t7A2xlQ=
+	t=1760510437; cv=none; b=MYbsTyUhKvwmj9jbfLXgSKwQYISDjC6Mkc0kBSgyeH7WApKQksyP+EPjWep8keK7LmCZPFuuC2M7aIQwK71rrFpxejqy6iyEqzXUVPYpHtyii1kd5moMPa7FGHsTEr1qNcoLBNrtNxtgiktRS4VqCQKpbASNqMrV2/gsvyxbmNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510355; c=relaxed/simple;
-	bh=u8e4JWFCFnh7H9/29cWjqArFxpug4mrQezkIEidS3TE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pm+ZYSjZSDsb6D7CfiE+bjt1qvRNY2vFoGSVnKDeELHMfz+73LJa7UAG3ZpOoUuxx8cM45ltSJXJm7DbzlqYyqEkI7iZZC6ArDwPWGW1WcOpZnxyqtewRW9RsPEofdy6eKxFa0Sxin+nfY+Mj3BqIMoG8EDleYCt0Sr3zkthtxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jE3xKu67; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-87a092251eeso11378506d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 23:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760510351; x=1761115151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bsukMYa0AUCqYEvcLXRhuapsU2hd6Y80454Ux1AAjL4=;
-        b=jE3xKu67I8l7hnrtOK2eT11G8SXY9iP93v+Af2PO/YaQoNBGITcg2MpnpnS+qAKCiq
-         FaDoYj19a8hlUbQZV5mCYIItZ3iMurOoyMww13fC828qFYpJkbGTmsvMNOEGD+d40DLe
-         kUp0hV3ELWOIjDoCScx68YCvV+RCpaM5UyX3dwRehoIeuNpMYjuyV9fcZfYh/O7SyDfY
-         onh6GkjEcjIgLggnzs3optEDl+KorDFecPxh6IEdxV17IXKwqxdLRqzXE7VS5vWQ2P3R
-         J+QEMr2fh9wapgquSvBC1MCWV2qABApfHHtRghy7gf862xTtxK+jnLv8trcS4ys6WaHD
-         xqZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760510351; x=1761115151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bsukMYa0AUCqYEvcLXRhuapsU2hd6Y80454Ux1AAjL4=;
-        b=lf46yDwLK5GPIbB02dIrVmgQRyyVzdJ3rsJqbR1LaSL757EISxDsKzJb9L05ERjoqs
-         qE3m2R98PfJXHACmakM24devp2ORMeE/N3jytcsCYk748oz+bAin4DvJKHLJNp6vy1Sx
-         TKCkGo0zLhvfKRXRSB9jdIkI+7rJCVhs5B/ijs+P5TSoc1AOZ18GwPdC3EBX1uoEaDSF
-         7CaSu6YwLh13zt0hJiKmGwGe8JNT1EkKYDGHm98oS8Xc1rQyfBLA8w0TmEibhV3WF7Rz
-         0qmRN44BhTB6/4qbB0v94T7N1CJIfyGqEL6frro43G6y2pW692O97bsO9JFc5ats5n+1
-         028Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQeGzvoT0fyYKEl12jpW8UcXCMxib5Wtim/fGSU5Itl0jvsFpLzaFbI5w5lxZh10n5uigsaaIHmdtKZok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+7OHCUtOkgsSYPfG4LRvrYvJvYX2kgAyCMpHxKlFAZKyjaiL7
-	sb0jDGjhxDEaNVVOAZyFtBEpzU+3Kj6MolI3CgkOsVS5FIg3rFs8xcIc9dVKO/Nftgy/QqbinZF
-	bzu0rqnqSAOQIJkqm8cv+OQSHT9GfIpvZqrsUm5Ob
-X-Gm-Gg: ASbGnctuIn0xFYdNzIXqD3rN/9K4CsGNLwhwEueQNG7lpkzPJkgcslip75lYeKoVoSS
-	ZpA9VERAhYMNPzHSviXcFxEvcBEDEmuckGKO3xJEL/wymYOj7ony5HxD0VfRBPY2JCB1hcX1J97
-	4GsiAcP/TBt4anT2/+vG+HQ+k6C7RcLBqPMBzPqU0I5bPvFenVXTuRdN+NiECPcEC1wr3xsLPv/
-	1vNLASkcY8YnxpxXSVi4xBc96V++klHVA==
-X-Google-Smtp-Source: AGHT+IFK/RWWMbmryZERBFoMRzd6/kz9EwXNSWCusWT0Lc+3vQtZfacIx3bleY22OD0BqECfDUYhjeSl5kCs+LlgdPM=
-X-Received: by 2002:ac8:4799:0:b0:4d1:212f:6689 with SMTP id
- d75a77b69052e-4e6eb068d71mr314051311cf.41.1760510351122; Tue, 14 Oct 2025
- 23:39:11 -0700 (PDT)
+	s=arc-20240116; t=1760510437; c=relaxed/simple;
+	bh=nqbBFYyoua6QP/k++/sTCrpKYegYQuTv0a1H3Mwpvvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n1OoZoaJ5ccYg2JRipyzxG0PmLxTMKSIHnQKy05n2KHy26dTtmQ4K5GZsuFt+T/GgumDKS9jjdI72K2hyPYXZ/hd5YWqoUiGSdlp5XpSulAEngQl7vSffOLiX2okRj5GfOdETWJHdhGpX7nY0vapqyDK8sbfrnXyeuoo8kKTrW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: d4568ae0a99111f0a38c85956e01ac42-20251015
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:f43cc7cb-a7a8-4980-ba2c-f84f2c05d0f7,IP:0,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:9b716fb79b65c36bdeeb36f4e6d72f51,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: d4568ae0a99111f0a38c85956e01ac42-20251015
+X-User: liqiang01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <liqiang01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1568284983; Wed, 15 Oct 2025 14:40:24 +0800
+From: Li Qiang <liqiang01@kylinos.cn>
+To: gregkh@linuxfoundation.org,
+	alexandru.ardelean@analog.com
+Cc: linux-kernel@vger.kernel.org,
+	Li Qiang <liqiang01@kylinos.cn>
+Subject: [PATCH] uio: uio_fsl_elbc_gpcm:: Add null pointer check to uio_fsl_elbc_gpcm_probe
+Date: Wed, 15 Oct 2025 14:40:20 +0800
+Message-Id: <20251015064020.56589-1-liqiang01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013101636.69220-1-21cnbao@gmail.com> <aO11jqD6jgNs5h8K@casper.infradead.org>
- <CAGsJ_4x9=Be2Prbjia8-p97zAsoqjsPHkZOfXwz74Z_T=RjKAA@mail.gmail.com>
- <CANn89iJpNqZJwA0qKMNB41gKDrWBCaS+CashB9=v1omhJncGBw@mail.gmail.com>
- <CAGsJ_4xGSrfori6RvC9qYEgRhVe3bJKYfgUM6fZ0bX3cjfe74Q@mail.gmail.com>
- <CANn89iKSW-kk-h-B0f1oijwYiCWYOAO0jDrf+Z+fbOfAMJMUbA@mail.gmail.com>
- <CAGsJ_4wJHpD10ECtWJtEWHkEyP67sNxHeivkWoA5k5++BCfccA@mail.gmail.com>
- <CANn89iKC_y6Fae9E5ETOE46y-RCqD6cLHnp=7GynL_=sh3noKg@mail.gmail.com> <CAGsJ_4x5v=M0=jYGOqy1rHL9aVg-76OgiE0qQMdEu70FhZcmUg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4x5v=M0=jYGOqy1rHL9aVg-76OgiE0qQMdEu70FhZcmUg@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 14 Oct 2025 23:39:00 -0700
-X-Gm-Features: AS18NWDMOlh0tBS4TlU64c6PgouY_kRH71v_bFl3FqJI9-6cAzN_kZLryiaCnBA
-Message-ID: <CANn89iJYaNZ+fkKosRVx+8i17HJAB4th645ySMWQEAo6WoCg3w@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: net: disable kswapd for high-order network buffer allocation
-To: Barry Song <21cnbao@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Huacai Zhou <zhouhuacai@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 1:17=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Tue, Oct 14, 2025 at 6:39=E2=80=AFPM Eric Dumazet <edumazet@google.com=
-> wrote:
-> >
-> > On Tue, Oct 14, 2025 at 3:19=E2=80=AFAM Barry Song <21cnbao@gmail.com> =
-wrote:
-> > >
-> > > > >
-> > > > > >
-> > > > > > I think you are missing something to control how much memory  c=
-an be
-> > > > > > pushed on each TCP socket ?
-> > > > > >
-> > > > > > What is tcp_wmem on your phones ? What about tcp_mem ?
-> > > > > >
-> > > > > > Have you looked at /proc/sys/net/ipv4/tcp_notsent_lowat
-> > > > >
-> > > > > # cat /proc/sys/net/ipv4/tcp_wmem
-> > > > > 524288  1048576 6710886
-> > > >
-> > > > Ouch. That is insane tcp_wmem[0] .
-> > > >
-> > > > Please stick to 4096, or risk OOM of various sorts.
-> > > >
-> > > > >
-> > > > > # cat /proc/sys/net/ipv4/tcp_notsent_lowat
-> > > > > 4294967295
-> > > > >
-> > > > > Any thoughts on these settings?
-> > > >
-> > > > Please look at
-> > > > https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
-> > > >
-> > > > tcp_notsent_lowat - UNSIGNED INTEGER
-> > > > A TCP socket can control the amount of unsent bytes in its write qu=
-eue,
-> > > > thanks to TCP_NOTSENT_LOWAT socket option. poll()/select()/epoll()
-> > > > reports POLLOUT events if the amount of unsent bytes is below a per
-> > > > socket value, and if the write queue is not full. sendmsg() will
-> > > > also not add new buffers if the limit is hit.
-> > > >
-> > > > This global variable controls the amount of unsent data for
-> > > > sockets not using TCP_NOTSENT_LOWAT. For these sockets, a change
-> > > > to the global variable has immediate effect.
-> > > >
-> > > >
-> > > > Setting this sysctl to 2MB can effectively reduce the amount of mem=
-ory
-> > > > in TCP write queues by 66 %,
-> > > > or allow you to increase tcp_wmem[2] so that only flows needing big
-> > > > BDP can get it.
-> > >
-> > > We obtained these settings from our hardware vendors.
-> >
-> > Tell them they are wrong.
->
-> Well, we checked Qualcomm and MTK, and it seems both set these values
-> relatively high. In other words, all the AOSP products we examined also
-> use high values for these settings. Nobody is using tcp_wmem[0]=3D4096.
->
+devm_kasprintf() returns a pointer to dynamically allocated memory
+which can be NULL upon failure.
 
-The (fine and safe) default should be PAGE_SIZE.
+Fixes: d57801c45f53e ("uio: uio_fsl_elbc_gpcm: use device-managed allocators")
 
-Perhaps they are dealing with systems with PAGE_SIZE=3D65536, but then
-the skb_page_frag_refill() would be a non issue there, because it would
-only allocate order-0 pages.
+Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+---
+ drivers/uio/uio_fsl_elbc_gpcm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> We=E2=80=99ll need some time to understand why these are configured this =
-way in
-> AOSP hardware.
->
-> >
-> > >
-> > > It might be worth exploring these settings further, but I can=E2=80=
-=99t quite see
-> > > their connection to high-order allocations, since high-order allocati=
-ons are
-> > > kernel macros.
-> > >
-> > > #define SKB_FRAG_PAGE_ORDER     get_order(32768)
-> > > #define PAGE_FRAG_CACHE_MAX_SIZE        __ALIGN_MASK(32768, ~PAGE_MAS=
-K)
-> > > #define PAGE_FRAG_CACHE_MAX_ORDER       get_order(PAGE_FRAG_CACHE_MAX=
-_SIZE)
-> > >
-> > > Is there anything I=E2=80=99m missing?
-> >
-> > What is your question exactly ? You read these macros just fine. What
-> > is your point ?
->
-> My question is whether these settings influence how often high-order
-> allocations occur. In other words, would lowering these values make
-> high-order allocations less frequent? If so, why?
+diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
+index 81454c3e2484..338dd2aaabc8 100644
+--- a/drivers/uio/uio_fsl_elbc_gpcm.c
++++ b/drivers/uio/uio_fsl_elbc_gpcm.c
+@@ -384,6 +384,11 @@ static int uio_fsl_elbc_gpcm_probe(struct platform_device *pdev)
+ 
+ 	/* set all UIO data */
+ 	info->mem[0].name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn", node);
++	if (!info->mem[0].name) {
++		ret = -ENODEV;
++		goto out_err3;
++	}
++
+ 	info->mem[0].addr = res.start;
+ 	info->mem[0].size = resource_size(&res);
+ 	info->mem[0].memtype = UIO_MEM_PHYS;
+@@ -423,6 +428,8 @@ static int uio_fsl_elbc_gpcm_probe(struct platform_device *pdev)
+ out_err2:
+ 	if (priv->shutdown)
+ 		priv->shutdown(info, true);
++
++out_err3:
+ 	iounmap(info->mem[0].internal_addr);
+ 	return ret;
+ }
+-- 
+2.25.1
 
-Because almost all of the buffers stored in TCP write queues are using
-order-3 pages
-on arches with 4K pages.
-
-I am a bit confused because you posted a patch changing skb_page_frag_refil=
-l()
-without realizing its first user is TCP.
-
-Look for sk_page_frag_refill() in tcp_sendmsg_locked()
-
-> I=E2=80=99m not a network expert, apologies if the question sounds naive.
->
-> >
-> > We had in the past something dynamic that we removed
-> >
-> > commit d9b2938aabf757da2d40153489b251d4fc3fdd18
-> > Author: Eric Dumazet <edumazet@google.com>
-> > Date:   Wed Aug 27 20:49:34 2014 -0700
-> >
-> >     net: attempt a single high order allocation
->
-> Thanks
-> Barry
 
