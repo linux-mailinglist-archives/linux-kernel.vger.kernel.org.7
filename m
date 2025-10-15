@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-855234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63545BE091E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4CF0BE0928
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9284D504F83
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:59:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F0574E788D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87A0305E1D;
-	Wed, 15 Oct 2025 19:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E481730149C;
+	Wed, 15 Oct 2025 20:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qjt3Df5d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="C74SUiMa"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5DF2561B9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB7F41C71;
+	Wed, 15 Oct 2025 20:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760558352; cv=none; b=FUs51Syr8heoT1+B1WHUoNAmCntV0p7P06aET/NcLFXUDy/h1YsgUpdu8rsyg6DEr2/mnqV+E1h/Gi1SozzXCTwOSz8Up1mioaZ/8KQ20UDxaV7ApRjFO6KCdt3Yck0OuzczzDjLu+BQuxOm9AvUU0ElUVfjEgh0JjCoeiZB/xc=
+	t=1760558428; cv=none; b=EBhpAikxVLiFfRnWLjz8TMXZhj0XNj7tK/P4yVEm5RbJuYVM0B0FU71BxNqmN7u/qsRegDB+aVbBHU9mCO/pTzqB67Atj87r0SU8TQaSgNiOFE7b/KQXYaLcSLkFB7K9Es5bd/EZp2RIfG5VQGJwZRSu24vYg2LcLqIbW0+nDRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760558352; c=relaxed/simple;
-	bh=qWmg0NtlX9VEzTpgvqIlBglFj3zmXkbFtSVVHicvZOg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=KaMrOIvH1H1mv/f9nxFhHX/sLEjWJlB7fxMxlpGSQ+E7X475QgnUN5woghjUzWgrusqLsT+HTtQjC5KjVs9MGZnmWv8vXk+9FAwYaifXlBTEOqNQRaHkK0AinNPamt52P88VHyvhYVOafttPlQRcc+FQUkkSg4sXpagEkAMxn0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qjt3Df5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A919CC4CEF8;
-	Wed, 15 Oct 2025 19:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760558351;
-	bh=qWmg0NtlX9VEzTpgvqIlBglFj3zmXkbFtSVVHicvZOg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Qjt3Df5dghFnppzxr1Z54A55GDwmn1BhOWImmYBXkhS00UI0huJ55xgj1k80c9ZCu
-	 /mjbrq+At/yTHDeZQp+bSHvshZA9aoGwJ7X+0tUTXv4FG+GvMM8z1DDKrH9VY42TnN
-	 9iHcaDGvEo4uwo2agKjlBrNA6kO1bIAE399RxTyg=
-Date: Wed, 15 Oct 2025 12:59:11 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Dmitry Ilvokhin <d@ilvokhin.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham
- <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song
- <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, Axel Rasmussen
- <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, Wei Xu
- <weixugc@google.com>, Kiryl Shutsemau <kas@kernel.org>, Usama Arif
- <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com, hughd@google.com, yangge1116@126.com,
- david@redhat.com
-Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
-Message-Id: <20251015125911.0f0ebf87b278324667c4dfc5@linux-foundation.org>
-In-Reply-To: <aOaoD0HQk7YPeLkE@shell.ilvokhin.com>
-References: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
-	<ltvv3v4vibvlglpch6urayotenavpzxc7klbcyowjb4wrv3e7z@pzovtvtbmnsp>
-	<aOaoD0HQk7YPeLkE@shell.ilvokhin.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760558428; c=relaxed/simple;
+	bh=RW+BXgyaoyrPiHLnoC9hh3nXlvBz+fvlgT2L7t106jU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZSasY4PThpXcCp5qIh36UBacbdsDTdJc0De+bwJfLliE+EAN9rmKUoI4n87zIBr8e0ibD9ERkup6AoIpg6tBMEURkld9iyCNJZFvGSJlx4a4Qjllx82g/j/c5AGzMZod7b86twtZNXqls8vrkP1emWVxkzXlQayRmRvBOFI+q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=C74SUiMa; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=UyAyBxkXaApDM4KsfpCB8GHoJifPSp90vnbMpVzBWEA=; b=C74SUiMaBsN6Ewv2nuaqrHGEsU
+	c1hiR0wYJ8u5oCxQwvULH0b+wZtnM9GjcGti8ITX0XWijY0Bqbeh76Vkl8YbGLqaZRxTHx33RBuCa
+	djChBbayFMyi70dLEFMeB9fqbF7zbphGAipQYyd77oIzUIp1Mwfz9xRc012+Nh7M+OK+3q/RrDYSX
+	1ba5A17DFmcUFir0f+ojyJ6F0cfaFQ98EJD1Ot95cJEZuOvtr4+NZV4Q2+RPK/zNbD+bY8Un62t4v
+	pJqgJMRA6Ptm/eGXQGB0W/6/y24XgaMM0PV1cnHfT/zDCyuoskFQdW2tuuGhR/7BavrLjCCsCbt2t
+	yH0kUZJA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47970)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v97fV-000000005Mj-2ToV;
+	Wed, 15 Oct 2025 21:00:17 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v97fT-000000002ZM-3Uh3;
+	Wed, 15 Oct 2025 21:00:15 +0100
+Date: Wed, 15 Oct 2025 21:00:15 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/11] ARM: dts: imx6: rename touch-thermal0 to
+ touch-0-thermal
+Message-ID: <aO_9Tw1s7VcHauNh@shell.armlinux.org.uk>
+References: <20251015-imx6_dts_cleanup-v2-0-41a7281b98c6@nxp.com>
+ <20251015-imx6_dts_cleanup-v2-2-41a7281b98c6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015-imx6_dts_cleanup-v2-2-41a7281b98c6@nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, 8 Oct 2025 18:06:07 +0000 Dmitry Ilvokhin <d@ilvokhin.com> wrote:
+On Wed, Oct 15, 2025 at 12:44:27PM -0400, Frank Li wrote:
+> -		touch-thermal0 {
+> +		touch0-thermal {
+...
+> -		touch-thermal1 {
+> +		touch1-thermal {
+...
+> -		touch-thermal0 {
+> +		touch-0-thermal {
+...
+> -		touch-thermal1 {
+> +		touch-1-thermal {
+...
+> -		touch-thermal0 {
+> +		touch-0-thermal {
+...
+> -		touch-thermal1 {
+> +		touch-1-thermal {
 
-> > > +		 * They might be still in mlock_fbatch waiting to be processed
-> > > +		 * and activating it here might interfere with
-> > > +		 * mlock_folio_batch(). __mlock_folio() will fail
-> > > +		 * folio_test_clear_lru() check and give up. It happens because
-> > > +		 * __folio_batch_add_and_move() clears LRU flag, when adding
-> > > +		 * folio to activate batch.
-> > > +		 */
-> > 
-> > This makes sense as activating an mlocked folio should be a noop but I
-> > am wondering why we are seeing this now. By this, I mean mlock()ed
-> > memory being delayed to get to unevictable LRU. Also I remember Hugh
-> > recently [1] removed the difference betwen mlock percpu cache and other
-> > percpu caches of clearing LRU bit on entry. Does you repro work even
-> > with Hugh's changes or without it?
-> >
-> 
-> Thanks Shakeel for mentioning Hugh's patch, I was not aware of it.
-> Indeed, I could not reproduce problem on top of Hugh's patch anymore,
-> which totally make sense, because folio_test_clear_lru() is gone from
-> __folio_batch_add_and_move().
-> 
-> Now I wonder does folio_test_mlocked() check still make sense in the
-> current codebase?
-> 
-> > [1] https://lore.kernel.org/all/05905d7b-ed14-68b1-79d8-bdec30367eba@google.com/
+Is it touch-N-thermal or touchN-thermal?
 
-So I take it that this patch ("mm: skip folio_activate() for mlocked
-folios") is no longer needed?
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
