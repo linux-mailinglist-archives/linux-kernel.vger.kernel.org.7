@@ -1,315 +1,189 @@
-Return-Path: <linux-kernel+bounces-855109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB90BE040E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:49:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F48ABE0429
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D15AF357BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31612188972E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3023019CA;
-	Wed, 15 Oct 2025 18:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1552FF667;
+	Wed, 15 Oct 2025 18:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rHm4hJa6"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IkmAozM0"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA3D29BDAD
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D5630147D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760554169; cv=none; b=hcEzFTOORxeDFUeuDMUJL48x2o5p4PAtXaP3pXiXtkucwTUyPwJzPbUgR2XpYkbqdwGPK2X9RJpaCVInaIKBW3w6+fZLZeXkcITiFJ6AAh5gMXEqJ9y/Wcggr6r7HvSJNxxecOh/8zsSzlAQlalFn5DDlf+0S9b6kA0dPQh1AQg=
+	t=1760554254; cv=none; b=K5IRDtcYGpo6s21lw0cn3ovuDF9+xMLmcNad2FdaVJM7de0o51f28PsOO3fnOXiSOF1xUmPXy7GdgtFZ0GXaJM8SOiBnO7OH9OJZDyFk3SIHGfS9Z+GVTYgE2B59Z3hh5bg7/yXuuCF7Dbk46Oy2yEjX62lRonXmmGAkD7DIa3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760554169; c=relaxed/simple;
-	bh=iaV/nUZLN+zOxAuYBUs0m1sLWC+VUj+7M/cgAxpGApI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qz/IF8J5B5N9HnXasNwrpQLhm0aknlRSy+L1Wqc4/jGVL9LGxqDPjM6gwpZ1IqENKqR0NeyFCq3mjJsc7o0J+JqCZatY5jN8WoMGiyUC0j+YCcL5QgLiAHdioWSRTb0PrMsmRGI6HnVc+/ogexa0ngHSALrBE+Qfb6kaNrkxEfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rHm4hJa6; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-58b037243d5so1212017e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:49:26 -0700 (PDT)
+	s=arc-20240116; t=1760554254; c=relaxed/simple;
+	bh=nza7NoVd37hs/+7qcBuUcq7vkmbwoooaC8RpgvQTYEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jb2FenhyWIdTzNXBuiNlik9ji3FsG7HZv6CAp64BWkSVsA33C3UDdA4O8Rf5yNs0FhBrE3EVim2Agd2C2trgNQjEu5u5IZkgKCLBEHhZKJuRPBVNU9RGZffz0jduI7PBv59DPAxuvRFoj/khyG2clQ5x4TKUfd78vXnona97mRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IkmAozM0; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-42f8e736ecaso97195ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760554165; x=1761158965; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1760554251; x=1761159051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IzWJncyHzn0swQi7I4nmNemTnnfZkUzy+RF1ph+lVak=;
-        b=rHm4hJa6fKotntzmHvP0RwpAEhEhflUbWlcFfcQAQTPRc4p8aw4qoiW1A2hZciYpvQ
-         Yy7Zypkdk5RsmmcTjdaCJoAWR87CDNe95v10p+7SiWLloSIuuXpS7P6FmMB7IsHvey2/
-         r8Kze+3a35UFc6EjvJLLrr6ALcbhtneZYOqz87W9Df3UTL70yq3lJ1X4682CJuAvtQCO
-         9+s2Ws2zgN2SxaRY7P5WGh2UY5J5mNedi8e0FsL3M6BmD011fTk5EptbdvG5xg0i1atq
-         QWfw/pgybFUoAq5jxF5o4523O5ZDTG4Jilh5reEcOak+265+xQj0HxTzZv42PzetVfsM
-         rsFA==
+        bh=RYCQTmcwAOXbAVYyQVpb75US8clqghkkSeMpq0zlPIY=;
+        b=IkmAozM0yqzkzCk0Y60eB9MzxlGe9VIKJXrMYNqR0LFhgCvlxLph6ZC+e5O5oO+DaT
+         T87SVix6nBSpt9XFaOnUu1r2JM1p4XFXGytvq2KYEAGiCj8XtXY0tFopxG3SHY0Nn7rj
+         v7nTMwOGCGuotCBev6UkI2nqk2RWz9FXlU/ADIZQRiLHm2rvfINMCldKn0CGPpzLErZ/
+         E6PkD7aKq0+7ToAB1CldLv3prFDX9ZkGGwBmFxhsGWcPwhJfLBXElmJc3cCIoSpvAZ4G
+         JwgHvr9fcH1JIqTUuLFAC+g4e336fKYfYWDCkYn6ALwtHMd4QJOYPUUoMPGIurZTr9ub
+         Vphg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760554165; x=1761158965;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IzWJncyHzn0swQi7I4nmNemTnnfZkUzy+RF1ph+lVak=;
-        b=RB09TInVp8/YmU9txcXdi68J58ElobNW8zAzfFcqZlimK60nK9qb47df6Eenht+KOi
-         usU81rofyB1mXv01XJ3VU7W6omCzCmSRjoIg01EIV5DZVsryIStTWyjyArT1gadPzWC0
-         mbTa1t3+31ILowmefS/YBqcHi5METqEAyJ6tFd+c9PLPgKB5vvPiLUJ6i1Xt8lTnURuU
-         yQc4qpp/+v+C+iGxgix2TQOegUQSobJHNkVBcNXQXHYrOd06WotwX2BzGxd5fYsPZ0Mo
-         mprwroaxXAmWBr/SMeOTu3ovb0F2l/V/lgrcaCU7nFMIOHzTegIyFyRJYhZeXRRRFA43
-         /BJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVf3Z7wBa4zy/OLyhXp5stH1ft36OPQZCN1UdACSiKPVY1q6JchnJUl7UKoG8ks0mSAA3N5CSNd7hWhKSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEmURJXs1k+IUv+1Z3BNVheoe1reA9f38YfAIkk/iB0x8ZJZoW
-	3otyrlXphc5cfbeNgyh5IpYXdBxF9gLdZiPpiof6Iybakq5TQpsZWhCzblLbQGtXt14=
-X-Gm-Gg: ASbGncszcHiqze3C2+KZvzVrog69yrdzYvlB6f3FrGjXChqlm0yR3+w+1QDlh3Ghlll
-	Hy3S6ZqsbHWxUpG+x9HGa69EBYL7kDsCkY+Ix5JaWKxxItMs2vbKs5MTNKbFJIOIrwhkP/QDPZd
-	yJVLCZnoW2nRU0u9opSqePRNCIjRSB/9m+ZFu8XqbtuIos7mtwT6BQpB/PifS1PaJBUogn4Dx5t
-	vgUxpeXkzT+TIPsnZum18WwDMd+EmZnW5UNkzBVGATFVBnlY9dDnF6oMtVYVZoR07GeDqqL1fHG
-	rA6fxN2KP1qTDyKc6uPYTYQjtEpfsMJmYME9XAfbeiiFf8bYYuDFZhqwu9qXDYrgBrxGpDfgjHV
-	wRWSfOBD9jWhxi94/iGTDv4Rvg+4Wk4MjCrrtYHj7VLKMPvy2e/AGXdOtZ94E9OTz0whlLs3MOd
-	5LJAgVczNQIriUNfNfSo3fYKP3ZgsIEDnaGGihaKPXjpplezAROhIGnOd+EHVoWEpjTTQW70z5W
-	3LtQqXC
-X-Google-Smtp-Source: AGHT+IEZp9j24Q6VxXUOyr7mVBGBzy2hOIza1xmN7Uf+Xn9oo37+2SzKCXeek/w8Yj5QVPavcLsMqA==
-X-Received: by 2002:a05:6512:1054:b0:57f:5f3e:84bd with SMTP id 2adb3069b0e04-5906db0ccfdmr4378907e87.8.1760554164814;
-        Wed, 15 Oct 2025 11:49:24 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591c2bcc26asm1728266e87.46.2025.10.15.11.49.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 11:49:23 -0700 (PDT)
-Message-ID: <b4207e22-8d9c-4223-8b28-272d2650661f@linaro.org>
-Date: Wed, 15 Oct 2025 21:49:21 +0300
+        d=1e100.net; s=20230601; t=1760554252; x=1761159052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RYCQTmcwAOXbAVYyQVpb75US8clqghkkSeMpq0zlPIY=;
+        b=tLfJjh6IqFT+L/5WwlXLm/a4c3CMifD6BM6R8K1m24tnQBkRghfCx+QcnCQcGFiSjA
+         2b0zAY0RArI61gLQVQJGUCdfgDnfZ0cr+NOsgLqSn7mdZLFsiL8k4uOMmWVaLW+oz4OX
+         xGj879mxGJ98wQPGmZ1PKFrXCRK0p3+qFpdFMQZY5hGB0YnU9nyje6FZ+RJ+hxxz654J
+         L/R5BFwFE6qMxsoLtdPY7VpfTS1h9WpmHUGsJvkzKl3kP6DzqIEGPUDIcqtOQXVyBeml
+         RaFjQ+08nkrqXPXocULI30EsRjouPR5CtIrSQpZrle9ldA2jJQ93tonFfKImoRqGqAVc
+         lAQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg+pNFuXs0c0wrokcu5H7IWsjF/3M7ZvDDsvdcgW1iGQQ1Xw4Ly6BpA/kbKKdw08T0qQ8UaANf7kX8W/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeAzIaSlBr2HN6M0RNJJ9ESvHmt0Ai7upc5HU1ODQGXv4ocAkL
+	7Z7FvEf77Nld+Yv63mIi4hyyzHFJdFFCsOIFgDYHdIPbs1OkTqkoqrTTYWPWqB4nLj54GEK0KRp
+	h8VWQl+hvOIQSa3LxSW9sgDeUL4ppDp5gNeogbzdo
+X-Gm-Gg: ASbGnct6/hykCCbMIn2KMk+kOYuNFl80m43Ns8bGWDn8vU4Xj85Z6Zp8v3qNtzGRRR9
+	enpNH1sIYKJ+3y54yYoZykf8j0nlck3vO94qD1EnP+wv9RNWbj6WpVwIsiZgFPl4rKfwXlCZbxz
+	CjFAJXflKUUjbkoAPFVX1y6/5puZ8JDD2Nb0Dnxspy6TRoHygHR9AjiyQigvOzK7muv1xRakiH+
+	7bdvGZPt8QKH6ZnraFGD05Aao5Gb5NF7zDyY9aptMX4Kflu1l4f4EV/ItJ5+Jc=
+X-Google-Smtp-Source: AGHT+IFhtYvLnXNUH8ojZN5pHVMGppEJ3dHRLngpUPsGt/2HbLQnvaa6Up8QbYh+CMCi32sdwQK+DoIp2AwmDxVZeG4=
+X-Received: by 2002:a05:622a:4c05:b0:4b7:94d7:8b4c with SMTP id
+ d75a77b69052e-4e882c9e0e3mr8734281cf.0.1760554250891; Wed, 15 Oct 2025
+ 11:50:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs8300: Add support for camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, bryan.odonoghue@linaro.org
-References: <20251015130130.2790829-1-quic_vikramsa@quicinc.com>
- <20251015130130.2790829-3-quic_vikramsa@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20251015130130.2790829-3-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251015145143.3001503-1-joshua.hahnjy@gmail.com> <421c7c42-bf7d-4277-b364-525c63254205@suse.cz>
+In-Reply-To: <421c7c42-bf7d-4277-b364-525c63254205@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 15 Oct 2025 11:50:38 -0700
+X-Gm-Features: AS18NWCIA6Box0YKS8r3evI7XRw-ZheLidTmF5dXIWqHzjDgYO5Jm_gzVDaEftw
+Message-ID: <CAJuCfpHDr95JnAkK_KzTU+VMLnHAuDVkFjPn4XnG4KpLtqEGLw@mail.gmail.com>
+Subject: Re: [PATCH] mm/page_alloc: simplify and cleanup pcp locking
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/15/25 16:01, Vikram Sharma wrote:
-> Add changes to support the camera subsystem on the QCS8300.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 171 ++++++++++++++++++++++++++
->   1 file changed, 171 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 8d78ccac411e..acd475555115 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -4769,6 +4769,177 @@ videocc: clock-controller@abf0000 {
->   			#power-domain-cells = <1>;
->   		};
->   
-> +		camss: isp@ac78000 {
-> +			compatible = "qcom,qcs8300-camss";
-> +
-> +			reg = <0x0 0xac78000 0x0 0x1000>,
-> +			      <0x0 0xac7a000 0x0 0xf00>,
-> +			      <0x0 0xac7c000 0x0 0xf00>,
-> +			      <0x0 0xac84000 0x0 0xf00>,
-> +			      <0x0 0xac88000 0x0 0xf00>,
-> +			      <0x0 0xac8c000 0x0 0xf00>,
-> +			      <0x0 0xac90000 0x0 0xf00>,
-> +			      <0x0 0xac94000 0x0 0xf00>,
-> +			      <0x0 0xac9c000 0x0 0x2000>,
-> +			      <0x0 0xac9e000 0x0 0x2000>,
-> +			      <0x0 0xaca0000 0x0 0x2000>,
-> +			      <0x0 0xacac000 0x0 0x400>,
-> +			      <0x0 0xacad000 0x0 0x400>,
-> +			      <0x0 0xacae000 0x0 0x400>,
-> +			      <0x0 0xac4d000 0x0 0xf000>,
-> +			      <0x0 0xac60000 0x0 0xf000>,
-> +			      <0x0 0xac85000 0x0 0xd00>,
-> +			      <0x0 0xac89000 0x0 0xd00>,
-> +			      <0x0 0xac8d000 0x0 0xd00>,
-> +			      <0x0 0xac91000 0x0 0xd00>,
-> +			      <0x0 0xac95000 0x0 0xd00>;
-> +			reg-names = "csid_wrapper",
-> +				    "csid0",
+On Wed, Oct 15, 2025 at 9:08=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 10/15/25 16:51, Joshua Hahn wrote:
+> > On Wed, 15 Oct 2025 11:36:09 +0200 Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+> >
+> >> The pcp locking relies on pcp_spin_trylock() which has to be used
+> >> together with pcp_trylock_prepare()/pcp_trylock_finish() to work
+> >> properly on !SMP !RT configs. This is tedious and error-prone.
+> >>
+> >> We can remove pcp_spin_lock() and underlying pcpu_spin_lock() because =
+we
+> >> don't use it. Afterwards pcpu_spin_unlock() is only used together with
+> >> pcp_spin_trylock(). Therefore we can add the UP_flags parameter to the=
+m
+> >> and handle pcp_trylock_prepare()/finish() within them.
+> >>
+> >> Additionally for the configs where pcp_trylock_prepare() is a no-op (S=
+MP
+> >> || RT) make it pass &UP_flags to a no-op inline function. This ensures
+> >> typechecking and makes the local variable "used" so we can remove the
+> >> __maybe_unused attributes.
+> >>
+> >> In my compile testing, bloat-o-meter reported no change on SMP config,
+> >> so the compiler is capable of optimizing away the no-ops same as befor=
+e,
+> >> and we have simplified the code using pcp_spin_trylock().
+> >>
+> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> >
+> > Hello Vlastimil, I hope you are doing well!
+> >
+> > Thank you for this patch. This is a pattern that I found quite cumberso=
+me,
+> > so this patch really makes the code so much easier to understand and re=
+ad.
+>
+> Hi, that's good to hear!
+> >> ---
+> >> based on mm-new
+> >> ---
+> >>  mm/page_alloc.c | 99 +++++++++++++++++++++++-------------------------=
+---------
+> >>  1 file changed, 40 insertions(+), 59 deletions(-)
+> >>
+> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >> index 0155a66d7367..2bf707f92d83 100644
+> >> --- a/mm/page_alloc.c
+> >> +++ b/mm/page_alloc.c
+> >> @@ -99,9 +99,12 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
+> >>  /*
+> >>   * On SMP, spin_trylock is sufficient protection.
+> >>   * On PREEMPT_RT, spin_trylock is equivalent on both SMP and UP.
+> >> + * Pass flags to a no-op inline function to typecheck and silence the=
+ unused
+> >> + * variable warning.
+> >>   */
+> >> -#define pcp_trylock_prepare(flags)  do { } while (0)
+> >> -#define pcp_trylock_finish(flag)    do { } while (0)
+> >> +static inline void __pcp_trylock_prepare(unsigned long *flags) { }
+> >> +#define pcp_trylock_prepare(flags) __pcp_trylock_prepare(&(flags))
+> >> +#define pcp_trylock_finish(flags)   do { } while (0)
+> >>  #else
+> >
+> > I have one question here. I was a bit unsure why we do the typechecking=
+ and
+> > silencing for the unused variable warning for only pcp_trylock_prepare,=
+ but
+> > not for pcp_trylock_finish. Is it because pcp_trylock_finish will alway=
+s
+> > be called after pcp_trylock_prepare, so the flag will have been used at
+> > that point?
+>
+> Exactly.
+>
+> > I was concerned that there would have been some area where only
+> > pcp_trylock_finish would have been used, but compiling with W=3D1 seems=
+ to show
+> > no errors on my end : -) So it looks good to me! Feel free to add:
+>
+> Yeah we can change that if ever we end up with some code that needs it
+> (hopefully not).
+>
+> > Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
-The list of 'reg-names' is not alphanumerically sorted, this is a newly
-introduced sorting order pattern of CAMSS 'reg' property values.
+Very nice!
 
-> +				    "csid1",
-> +				    "csid_lite0",
-> +				    "csid_lite1",
-> +				    "csid_lite2",
-> +				    "csid_lite3",
-> +				    "csid_lite4",
-> +				    "csiphy0",
-> +				    "csiphy1",
-> +				    "csiphy2",
-> +				    "tpg0",
-> +				    "tpg1",
-> +				    "tpg2",
-> +				    "vfe0",
-> +				    "vfe1",
-> +				    "vfe_lite0",
-> +				    "vfe_lite1",
-> +				    "vfe_lite2",
-> +				    "vfe_lite3",
-> +				    "vfe_lite4";
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-> +				 <&camcc CAM_CC_CORE_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_CSID_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
-> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
-> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
-> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-> +				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-> +				 <&gcc GCC_CAMERA_SF_AXI_CLK>,
-> +				 <&camcc CAM_CC_ICP_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-> +			clock-names = "camnoc_axi",
-> +				      "core_ahb",
-> +				      "cpas_ahb",
-> +				      "cpas_fast_ahb_clk",
-> +				      "cpas_vfe_lite",
-> +				      "cpas_vfe0",
-> +				      "cpas_vfe1",
-> +				      "csid",
-> +				      "csiphy0",
-> +				      "csiphy0_timer",
-> +				      "csiphy1",
-> +				      "csiphy1_timer",
-> +				      "csiphy2",
-> +				      "csiphy2_timer",
-> +				      "csiphy_rx",
-> +				      "gcc_axi_hf",
-> +				      "gcc_axi_sf",
-> +				      "icp_ahb",
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-Please remove the ICP clock, it has no users in the driver, and if needed,
-it will be added later on.
-
-> +				      "vfe0",
-> +				      "vfe0_fast_ahb",
-> +				      "vfe1",
-> +				      "vfe1_fast_ahb",
-> +				      "vfe_lite",
-> +				      "vfe_lite_ahb",
-> +				      "vfe_lite_cphy_rx",
-> +				      "vfe_lite_csid";
-> +
-> +			interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "csid0",
-> +					  "csid1",
-> +					  "csid_lite0",
-> +					  "csid_lite1",
-> +					  "csid_lite2",
-> +					  "csid_lite3",
-> +					  "csid_lite4",
-> +					  "csiphy0",
-> +					  "csiphy1",
-> +					  "csiphy2",
-> +					  "tpg0",
-> +					  "tpg1",
-> +					  "tpg2",
-> +					  "vfe0",
-> +					  "vfe1",
-> +					  "vfe_lite0",
-> +					  "vfe_lite1",
-> +					  "vfe_lite2",
-> +					  "vfe_lite3",
-> +					  "vfe_lite4";
-> +
-> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +					<&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "ahb",
-> +					     "hf_0";
-> +
-> +			iommus = <&apps_smmu 0x2400 0x20>;
-> +
-> +			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +			power-domain-names = "top";
-
-'power-domain-names' property is redundant, since there is just one power domain.
-
-> +
-> +			status = "disabled";
-
-There should be no empty lines between proprties.
-
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				port@0 {
-
-There shall be an empty line before a subnode declaration.
-
-> +					reg = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +				};
-> +			};
-> +		};
-> +
->   		camcc: clock-controller@ade0000 {
->   			compatible = "qcom,qcs8300-camcc";
->   			reg = <0x0 0x0ade0000 0x0 0x20000>;
-
--- 
-Best wishes,
-Vladimir
+>
+> Thanks!
+>
+> > Thank you! I hope you have a great day!
+> > Joshua
+>
 
