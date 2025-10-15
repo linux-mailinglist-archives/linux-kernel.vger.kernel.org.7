@@ -1,288 +1,288 @@
-Return-Path: <linux-kernel+bounces-855309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACCC1BE0D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF16BE0D6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1B5487BD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6A43ABAB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0032FFFB1;
-	Wed, 15 Oct 2025 21:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EAC2FFFB1;
+	Wed, 15 Oct 2025 21:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="poZwmUOK"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODmVc6J0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C74A2FF66A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A5B2FF67A;
+	Wed, 15 Oct 2025 21:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760564212; cv=none; b=QRAVo4NRn84uqgiF0S8FnffTtMLfyYqu9AuaigzTQReduGw3slh4kguVfvthvfvIT4Go04KPJ43PMCdvWY4P8uVx138VWb6pcN+4bkEe2FlORZv4Lvezg94ihehRCjjg0jdq3aCObYUdaaVcnqFut/eXGlxrPodrVSr8obIaI6k=
+	t=1760564434; cv=none; b=WqDm/K2jNmcIl25c3LNcRgLpXp7yURbIaAmzE/zvVENOUnRjBqwN153Ysabr5b0niPOAD4AYImAv9ksvrQ9RuCDrJd7FvM/aWHbWpbFr+9Ia9NAODB43VqcNCIXshDXKMOdtSM8wYf5zO+mTfbQfDfReHIk6vacx3a3mKo+ZqdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760564212; c=relaxed/simple;
-	bh=AnTYK0r3Jre07PAvtYHBFqs+L6ZvaH8xIrtTplAWf5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cewWc7f81bfwVSXWo0+Uohjy+RpmqlgcNlOdQU90aexZ4pYEvdPdsYpMYbavo00X31Lq9tEiUcsg7+2vXjQYIo2vrhGpQld+b1nTqbbSaorCE5W29gew5e+qJG1Q4AQGOnTAvqyj7+l/c625FjIwcSl3qw5MaG+Sz1CeY/6ILoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=poZwmUOK; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7841da939deso76847b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1760564210; x=1761169010; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CzSvXM+jlguRu/awbYVDNDd3xNqML1B84uavLhBp4Nk=;
-        b=poZwmUOKEa/5777WrObkPsQoOaETpXgRP+B0uDd83HVJKxNzhV79FNsrTu1i57KpuU
-         e5p2yYNKXjiFeScOIiU7f8JGaEQqp4l88QCgKf/7m83gmQeJGTxUYXvU4FI95fx36qgu
-         TKWiqWWF4PDyUX/ErXQgdVn1r/hCInQz6bxYfCsi8AJ7I6YkqSalgEb8dwdoBt/mKMC4
-         bptZOABkHvWeE9snIVWOMAE5ZPOsQ9R46UuWBvId3N6bZMBHkEcDnWNn754kHH/cS2J6
-         PkbNf0DgH6MZP54Q5hz9e08Gc+9ggK/L/79OlSUIfGfqP8iasmUA2a/AIZXCU80gbFoc
-         4abw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760564210; x=1761169010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CzSvXM+jlguRu/awbYVDNDd3xNqML1B84uavLhBp4Nk=;
-        b=GAg8LwLqBHgWbzS/4FoDHDEJDiRouSSZtYyDl0+pvRpQ9krc87TUXr3GXetXRoehj4
-         Pr4kZCQuxjsdPxpm9ICLuS0Ul/mBXcxlDD/Bm64YK8H/3LEVHOySYOZzOWLMYlNkJ0Ks
-         UdDJhuNtLeQobWTY8phyPfbOkAqMSMvNPdxCmksp6LlvXSw0Fkehc+HQ/RJO5F3P7Bwq
-         oebyRfIPYaIlsqpktoatB6RWaFB2KLZ5DKZ7MWggh5esO32h+H6PxdfW0/3Wo+RV4mls
-         Lx0k/3JuAU/6mKHa3AqXV0zJLIG3il4CISDmfxmHVNFb8MCd0wIABmoEDbqZnbPoE93e
-         NeQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlTtCf2Pz0JlxoC+OOOILLCOhSgwwFC3usbwgotMrhxnz0rxQ94adKvaDej4DjOqFg7iYnwXg5XHrQDl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvJ6nOAolMibmHjDMUgVdo+/q/FN7hFPof+WwMQ+8N3XsUimL1
-	8RY2pTQV4WKijWGMmLdZxEr3dLPcbz+RgB4Qf7oJunikR5RQH6VbxFZVlZv7It4icTNLnQgWzJj
-	j54y36Mprb1pb+pzsUDjMv/faqXSa79uNO0mJUQmO
-X-Gm-Gg: ASbGncuc4BITtK+JGr90uCl16l16UutHEL6E4q0k3oZMqKm6wfM3Gw84Hr3hLFQkKII
-	8dVgF4JbxCApjFAFg2q1xazI3P2vefOCnjCKUoCT96MSsYx4Ej3VOmAtnOdRlN3gndb4KNJaslt
-	3bycE9fMr6NY6Xyul2Gm33V/dd8DFqVf8zQxYDM5dZK+UtbpkyvssQHRPzEFStUBnA+I+uBrr3M
-	0ZnUI/jWbo+k8KvgEtKuViPA2wWZPfyFxbbCgUGObvQ8SOAooiU/Gr6y5lJenAgHc8s71XYr5/U
-	C2PyJ5uv3HQ6ieY9mgN9uNU=
-X-Google-Smtp-Source: AGHT+IELxj5a7h+o5Luu19pXGQ4VkpPt+FUNnaQnoS6dyUNaqIr/GBMJMif+q0MFMpmlTEAbqOQIKJxaU3dB+8Ubrj0=
-X-Received: by 2002:a05:6a20:9392:b0:32b:6f6c:98d4 with SMTP id
- adf61e73a8af0-32da81541eemr40399081637.20.1760564210403; Wed, 15 Oct 2025
- 14:36:50 -0700 (PDT)
+	s=arc-20240116; t=1760564434; c=relaxed/simple;
+	bh=WKfZEPnTf3pc2qBTMBE9UypqrBWAxUjB8feJIBXgGeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6tHKltXbchQ/zFRF3OYbMKZAunkmVcI84Brt1wtiV+TE3p/cv1vE1vcyhnoKhCQwhncR6cBEM5SPjnOh3BunE/m5LaQ9m9JrdKTWLjaEvGrjaZXYpSZSvTUd5FuVrPpZaAlQAZbMF7ncPBvKD352jdT+/aDzZWJzGdctLdM7lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODmVc6J0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A8CC4CEF8;
+	Wed, 15 Oct 2025 21:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760564433;
+	bh=WKfZEPnTf3pc2qBTMBE9UypqrBWAxUjB8feJIBXgGeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ODmVc6J0+MG4S47Jjgn0gLJMBJOOm9s+9Vbp/sIjePjyOFJNEBXbd7w48M/qbwBhZ
+	 +G9neXjMxk91r6YkntUUZxYJ534z+wDvr3t9oop/jK0XrqvZBeJuTO9peU2fh1lWY4
+	 d+oCuKQG+6t6noixJF0AD2azfcBpUEoz7S9HmbkcbGnw7w2EOd6313gIywmvvEle9W
+	 qNq2KXOGEx0fF0O/PMqPULH7IB4fDHTIoUj2sNNEqXMxUThtET1polBywPM8g8hD2J
+	 aTnDAiEuXHLptagC5bjlCu1MZ/ZWchkKtV7cHsz0f082yEkxbBBEI1ttav0I3tpU8V
+	 /OEZUER/l197A==
+Date: Wed, 15 Oct 2025 23:40:29 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2 2/5] man/man7/sched.7: Update the real-time section
+Message-ID: <l3u4eon4paxymk4zxre7trz5jxkrc7vr3ohkdmmvvkw2n6lofl@5m7lz332hyr4>
+References: <20250915141305.906440-1-bigeasy@linutronix.de>
+ <20250915141305.906440-3-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <681a1770.050a0220.a19a9.000d.GAE@google.com> <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
- <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
- <CAM0EoMnGLqKU7AnsgS00SEgU0eq71f-kiqNniCNyfiyAfNm8og@mail.gmail.com> <87347mmpwp.fsf@intel.com>
-In-Reply-To: <87347mmpwp.fsf@intel.com>
-From: Jamal Hadi Salim <jhs@mojatatu.com>
-Date: Wed, 15 Oct 2025 17:36:39 -0400
-X-Gm-Features: AS18NWDq1L4jsWd86ZGlqYi63dTb-i0V7eW3hYlGtsDWjEV25RTc6xg8okqheEA
-Message-ID: <CAM0EoMnWcsgtN++zkOW9zf5QqUg9uNBGTNgf=2JARqarW31wwQ@mail.gmail.com>
-Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
- inet_rtm_newaddr (2)
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: Eric Dumazet <edumazet@google.com>, 
-	syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>, davem@davemloft.net, 
-	dsahern@kernel.org, hdanton@sina.com, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dnyggwyokbftrpyw"
+Content-Disposition: inline
+In-Reply-To: <20250915141305.906440-3-bigeasy@linutronix.de>
+
+
+--dnyggwyokbftrpyw
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2 2/5] man/man7/sched.7: Update the real-time section
+Message-ID: <l3u4eon4paxymk4zxre7trz5jxkrc7vr3ohkdmmvvkw2n6lofl@5m7lz332hyr4>
+References: <20250915141305.906440-1-bigeasy@linutronix.de>
+ <20250915141305.906440-3-bigeasy@linutronix.de>
+MIME-Version: 1.0
+In-Reply-To: <20250915141305.906440-3-bigeasy@linutronix.de>
 
-On Mon, Oct 13, 2025 at 5:51=E2=80=AFPM Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Jamal Hadi Salim <jhs@mojatatu.com> writes:
->
-> > On Sat, Oct 11, 2025 at 5:42=E2=80=AFAM Eric Dumazet <edumazet@google.c=
-om> wrote:
-> >>
-> >> On Sat, Oct 11, 2025 at 12:41=E2=80=AFAM syzbot
-> >> <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com> wrote:
-> >> >
-> >> > syzbot has found a reproducer for the following issue on:
-> >> >
-> >> > HEAD commit:    18a7e218cfcd Merge tag 'net-6.18-rc1' of git://git.k=
-ernel...
-> >> > git tree:       net-next
-> >> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12504dcd=
-980000
-> >> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ab7fa7=
-43df0ec1
-> >> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cd74c5df=
-eafd65e488
-> >> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f90=
-9b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> >> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14d2a5=
-42580000
-> >> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D142149e2=
-580000
-> >> >
-> >> > Downloadable assets:
-> >> > disk image: https://storage.googleapis.com/syzbot-assets/7a01e6dce97=
-e/disk-18a7e218.raw.xz
-> >> > vmlinux: https://storage.googleapis.com/syzbot-assets/5e1b7e41427f/v=
-mlinux-18a7e218.xz
-> >> > kernel image: https://storage.googleapis.com/syzbot-assets/69b558601=
-209/bzImage-18a7e218.xz
-> >> >
-> >> > IMPORTANT: if you fix the issue, please add the following tag to the=
- commit:
-> >> > Reported-by: syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com
-> >> >
-> >> > sched: DL replenish lagged too much
-> >> > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> >> > rcu:    0-...!: (2 GPs behind) idle=3D7754/1/0x4000000000000000 soft=
-irq=3D15464/15465 fqs=3D1
-> >> > rcu:    (detected by 1, t=3D10502 jiffies, g=3D11321, q=3D371 ncpus=
-=3D2)
-> >> > Sending NMI from CPU 1 to CPUs 0:
-> >> > NMI backtrace for cpu 0
-> >> > CPU: 0 UID: 0 PID: 5948 Comm: syz-executor Not tainted syzkaller #0 =
-PREEMPT(full)
-> >> > Hardware name: Google Google Compute Engine/Google Compute Engine, B=
-IOS Google 10/02/2025
-> >> > RIP: 0010:rb_insert_color_cached include/linux/rbtree.h:113 [inline]
-> >> > RIP: 0010:rb_add_cached include/linux/rbtree.h:183 [inline]
-> >> > RIP: 0010:timerqueue_add+0x1a8/0x200 lib/timerqueue.c:40
-> >> > Code: e7 31 f6 e8 6a 0c de f6 42 80 3c 2b 00 74 08 4c 89 f7 e8 7b 0a=
- de f6 4d 89 26 4d 8d 7e 08 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 <74> 08 4c =
-89 ff e8 5e 0a de f6 4d 89 27 4d 85 e4 40 0f 95 c5 eb 07
-> >> > RSP: 0018:ffffc90000007cf0 EFLAGS: 00000046
-> >> > RAX: 1ffff110170c4f83 RBX: 1ffff110170c4f82 RCX: 0000000000000000
-> >> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88805de72358
-> >> > RBP: 0000000000000000 R08: ffff88805de72357 R09: 0000000000000000
-> >> > R10: ffff88805de72340 R11: ffffed100bbce46b R12: ffff88805de72340
-> >> > R13: dffffc0000000000 R14: ffff8880b8627c10 R15: ffff8880b8627c18
-> >> > FS:  000055557c657500(0000) GS:ffff888125d0f000(0000) knlGS:00000000=
-00000000
-> >> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> > CR2: 0000200000000600 CR3: 000000002ee76000 CR4: 00000000003526f0
-> >> > Call Trace:
-> >> >  <IRQ>
-> >> >  __run_hrtimer kernel/time/hrtimer.c:1794 [inline]
-> >> >  __hrtimer_run_queues+0x656/0xc60 kernel/time/hrtimer.c:1841
-> >> >  hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
-> >> >  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline=
-]
-> >> >  __sysvec_apic_timer_interrupt+0x108/0x410 arch/x86/kernel/apic/apic=
-.c:1058
-> >> >  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 =
-[inline]
-> >> >  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1=
-052
-> >> >  </IRQ>
-> >> >  <TASK>
-> >> >  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idte=
-ntry.h:702
-> >> > RIP: 0010:pv_vcpu_is_preempted arch/x86/include/asm/paravirt.h:579 [=
-inline]
-> >> > RIP: 0010:vcpu_is_preempted arch/x86/include/asm/qspinlock.h:63 [inl=
-ine]
-> >> > RIP: 0010:owner_on_cpu include/linux/sched.h:2282 [inline]
-> >> > RIP: 0010:mutex_spin_on_owner+0x189/0x360 kernel/locking/mutex.c:361
-> >> > Code: b6 04 30 84 c0 0f 85 59 01 00 00 48 8b 44 24 08 8b 18 48 8b 44=
- 24 48 42 80 3c 30 00 74 0c 48 c7 c7 90 8c fa 8d e8 a7 cd 88 00 <48> 83 3d =
-ff 27 5e 0c 00 0f 84 b9 01 00 00 48 89 df e8 41 e0 d5 ff
-> >> > RSP: 0018:ffffc900034c7428 EFLAGS: 00000246
-> >> > RAX: 1ffffffff1bf5192 RBX: 0000000000000001 RCX: ffffffff819c6588
-> >> > RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff8f4df8a0
-> >> > RBP: 1ffffffff1e9bf14 R08: ffffffff8f4df8a7 R09: 1ffffffff1e9bf14
-> >> > R10: dffffc0000000000 R11: fffffbfff1e9bf15 R12: ffffffff8f4df8a0
-> >> > R13: ffffffff8f4df8f0 R14: dffffc0000000000 R15: ffff8880267a9e40
-> >> >  mutex_optimistic_spin kernel/locking/mutex.c:464 [inline]
-> >> >  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
-> >> >  __mutex_lock+0x311/0x1350 kernel/locking/mutex.c:760
-> >> >  rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
-> >> >  inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
-> >> >  rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6954
-> >> >  netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
-> >> >  netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
-> >> >  netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
-> >> >  netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
-> >> >  sock_sendmsg_nosec net/socket.c:727 [inline]
-> >> >  __sock_sendmsg+0x21c/0x270 net/socket.c:742
-> >> >  __sys_sendto+0x3bd/0x520 net/socket.c:2244
-> >> >  __do_sys_sendto net/socket.c:2251 [inline]
-> >> >  __se_sys_sendto net/socket.c:2247 [inline]
-> >> >  __x64_sys_sendto+0xde/0x100 net/socket.c:2247
-> >> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >> >  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-> >> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >> > RIP: 0033:0x7faade790d5c
-> >> > Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28=
- 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 =
-f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-> >> > RSP: 002b:00007ffdd2e3b670 EFLAGS: 00000293 ORIG_RAX: 00000000000000=
-2c
-> >> > RAX: ffffffffffffffda RBX: 00007faadf514620 RCX: 00007faade790d5c
-> >> > RDX: 0000000000000028 RSI: 00007faadf514670 RDI: 0000000000000003
-> >> > RBP: 0000000000000000 R08: 00007ffdd2e3b6c4 R09: 000000000000000c
-> >> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-> >> > R13: 0000000000000000 R14: 00007faadf514670 R15: 0000000000000000
-> >> >  </TASK>
-> >> > rcu: rcu_preempt kthread timer wakeup didn't happen for 10499 jiffie=
-s! g11321 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402
-> >> > rcu:    Possible timer handling issue on cpu=3D0 timer-softirq=3D428=
-6
-> >> > rcu: rcu_preempt kthread starved for 10500 jiffies! g11321 f0x0 RCU_=
-GP_WAIT_FQS(5) ->state=3D0x402 ->cpu=3D0
-> >> > rcu:    Unless rcu_preempt kthread gets sufficient CPU time, OOM is =
-now expected behavior.
-> >> > rcu: RCU grace-period kthread stack dump:
-> >> > task:rcu_preempt     state:I stack:27224 pid:16    tgid:16    ppid:2=
-      task_flags:0x208040 flags:0x00080000
-> >> > Call Trace:
-> >> >  <TASK>
-> >> >  context_switch kernel/sched/core.c:5325 [inline]
-> >> >  __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
-> >> >  __schedule_loop kernel/sched/core.c:7011 [inline]
-> >> >  schedule+0x165/0x360 kernel/sched/core.c:7026
-> >> >  schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
-> >> >  rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
-> >> >  rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
-> >> >  kthread+0x711/0x8a0 kernel/kthread.c:463
-> >> >  ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
-> >> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >> >  </TASK>
-> >> >
-> >> >
-> >> > ---
-> >> > If you want syzbot to run the reproducer, reply with:
-> >> > #syz test: git://repo/address.git branch-or-commit-hash
-> >> > If you attach or paste a git patch, syzbot will apply it before test=
-ing.
-> >>
-> >> Yet another taprio report.
-> >>
-> >> If taprio can not be fixed, perhaps we should remove it from the
-> >> kernel, or clearly marked as broken.
-> >> (Then ask syzbot to no longer include it)
-> >
-> > Agreed on the challenge with taprio.
-> > We need the stakeholders input: Vinicius - are you still working in
-> > this space? Vladimir you also seem to have interest (or maybe nxp
-> > does) in this?
->
-> No, I am not working on this space anymore.
->
-> I will talk with other Intel folks (and my manager) and see what we can
-> do.
+Hi Sebastian,
 
-I assume your customers are still interested in this working? If yes,
-that would be a good pitch to the manager.
-In my (extreme) view, another selling point is that there is an
-ethical obligation to ensure things continue to work as intended.
-Getting patches in is the easy part.
+On Mon, Sep 15, 2025 at 04:13:02PM +0200, Sebastian Andrzej Siewior wrote:
+> Update the outdated information:
+> - The PREEMPT_RT patch is merged. The patch continues to exist (as of
+>   now) but is not mandatory.
+> - The patch can be still downloaded but most people use the git tree
+>   these days. Add a reference to it.
+> - CONFIG_PREEMPT_DESKTOP was never thing as far as I remember. It was
+>   always CONFIG_PREEMPT and its description referred to "low latency
+>   desktop".
+> - Within the PREEMPT-RT patch there was a brief window which introduced
+>   PREEMPT_RT_BASE and PREEMPT_RT_FULL. I am going to ignore this.
+> - The introduction of PREEMPT_LAZY in 6.13 moved PREEMPT_RT from a
+>   preemption model to an option.
+> - The mentioned wiki is deprecated. Update the URL to the new one.
+>=20
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-cheers,
-jamal
+Thanks!  I've applied the patch, with the following amendment:
 
->But if others that find it useful can help even better.
->
+	diff --git i/man/man7/sched.7 w/man/man7/sched.7
+	index 51300d611..9622c1824 100644
+	--- i/man/man7/sched.7
+	+++ w/man/man7/sched.7
+	@@ -960,18 +960,18 @@ .SS Real-time features in the mainline Linux kernel
+	 or cloned from a git tree
+	 .UR https://git.kernel.org\:/pub\:/scm\:/linux\:/kernel\:/git\:/rt\:/linu=
+x-stable-rt.git
+	 .UE .
+	-The individual releases are maintained as long as
+	-the matching LTS kernel is maintained.
+	+The individual releases are maintained
+	+as long as the matching LTS kernel is maintained.
+	 .P
+	-Since 6.12 it possible to enable the real-time preemption
+	+Since Linux 6.12 it possible to enable the real-time preemption
+	 without the need for any patches.
+	 The
+	 .I realtime\-patch
+	 continues to exist and contains support
+	-for not yet integrated architectures,
+	-drivers and features that are in development.
+	+for not-yet-integrated architectures,
+	+drivers, and features that are in development.
+	 .P
+	-Since 6.13 real-time becomes an option
+	+Since Linux 6.13 real-time became an option
+	 and not a preemption model.
+	 With this change,
+	 the following preemption models are available:
+	@@ -982,13 +982,13 @@ .SS Real-time features in the mainline Linux kernel
+	 .BR CONFIG_PREEMPT_LAZY .
+	 The real-time capabilities can be enabled with the option
+	 .B CONFIG_PREEMPT_RT
+	-and the preemption model be set to either
+	+and the preemption model can be set to either
+	 .B CONFIG_PREEMPT
+	 or
+	 .BR CONFIG_PREEMPT_LAZY .
+	 The latter model is less eager to preempt
+	 .B SCHED_NORMAL
+	-tasks in an attempt to reduce lock holder preemption.
+	+tasks in an attempt to reduce lock-holder preemption.
+	 It does not affect real-time tasks.
+	 .P
+	 With
+
+
+Cheers,
+Alex
+
+> ---
+>  man/man7/sched.7 | 58 ++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 41 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/man/man7/sched.7 b/man/man7/sched.7
+> index 3299c21dc1ad8..db7753c9e912c 100644
+> --- a/man/man7/sched.7
+> +++ b/man/man7/sched.7
+> @@ -933,16 +933,12 @@ the following to modify the autogroup nice value for
+>  .EE
+>  .in
+>  .SS Real-time features in the mainline Linux kernel
+> -.\" FIXME . Probably this text will need some minor tweaking
+> -.\" ask Carsten Emde about this.
+> +.\" The archaeologist knows about v2.6.9-mm1-V0.1-realtime-preempt
+>  Since Linux 2.6.18, Linux is gradually
+>  becoming equipped with real-time capabilities,
+>  most of which are derived from the former
+>  .I realtime\-preempt
+>  patch set.
+> -Until the patches have been completely merged into the
+> -mainline kernel,
+> -they must be installed to achieve the best real-time performance.
+>  These patches are named:
+>  .P
+>  .in +4n
+> @@ -953,24 +949,52 @@ they must be installed to achieve the best real-tim=
+e performance.
+>  .P
+>  and can be downloaded from
+>  .UR http://www.kernel.org\:/pub\:/linux\:/kernel\:/projects\:/rt/
+> +.UE
+> +or cloned from a git tree
+> +.UR https://git.kernel.org\:/pub\:/scm\:/linux\:/kernel\:/git\:/rt\:/lin=
+ux-stable-rt.git
+>  .UE .
+> +The individual releases are maintained as long as
+> +the matching LTS kernel is maintained.
+>  .P
+> -Without the patches and prior to their full inclusion into the mainline
+> -kernel, the kernel configuration offers only the three preemption classes
+> +Since 6.12 it possible to enable the real-time preemption
+> +without the need for any patches.
+> +The
+> +.I realtime\-patch
+> +continues to exist and contains support
+> +for not yet integrated architectures,
+> +drivers and features that are in development.
+> +.P
+> +Since 6.13 real-time becomes an option
+> +and not a preemption model.
+> +With this change,
+> +the following preemption models are available:
+>  .BR CONFIG_PREEMPT_NONE ,
+>  .BR CONFIG_PREEMPT_VOLUNTARY ,
+> +.BR CONFIG_PREEMPT ,
+>  and
+> -.B CONFIG_PREEMPT_DESKTOP
+> -which respectively provide no, some, and considerable
+> -reduction of the worst-case scheduling latency.
+> -.P
+> -With the patches applied or after their full inclusion into the mainline
+> -kernel, the additional configuration item
+> +.BR CONFIG_PREEMPT_LAZY .
+> +The real-time capabilities can be enabled with the option
+>  .B CONFIG_PREEMPT_RT
+> -becomes available.
+> -If this is selected, Linux is transformed into a regular
+> +and the preemption model be set to either
+> +.B CONFIG_PREEMPT
+> +or
+> +.BR CONFIG_PREEMPT_LAZY .
+> +The latter model is less eager to preempt
+> +.B SCHED_NORMAL
+> +tasks in an attempt to reduce lock holder preemption.
+> +It does not affect real-time tasks.
+> +.P
+> +With
+> +.B CONFIG_PREEMPT_RT
+> +enabled,
+> +Linux is transformed into a regular
+>  real-time operating system.
+> -The FIFO and RR scheduling policies are then used to run a thread
+> +The
+> +.BR SCHED_FIFO ,
+> +.BR SCHED_RR ,
+> +and
+> +.B SCHED_DEADLINE
+> +scheduling policies are then used to run a thread
+>  with true real-time priority and a minimum worst-case scheduling latency.
+>  .SH NOTES
+>  The
+> @@ -1032,5 +1056,5 @@ and
+>  .I \%Documentation/\:scheduler/\:sched\-nice\-design\:.txt
+>  .P
+>  Worth looking at:
+> -.UR http://rt.wiki.kernel.org/\:index.php
+> +.UR https://wiki.linuxfoundation.org/\:realtime/\:start
+>  .UE
+> --=20
+> 2.51.0
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--dnyggwyokbftrpyw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjwFMwACgkQ64mZXMKQ
+wqlapQ//bP8Dpyj9R+yDIN+XJeOIe89LsK565S6JaOPH4emz2do+iL57+sIJ7qOL
+iD5/0SKyVBx2wRL9+ZQiGnKS7LR/US9dv34IuP6R74sloGk0/w2UNSo5IL/jmxtf
+k1uZKunBsWFy6X51fuWQQ+2wch4x0LLzaj9vS+GqTFD0X3SRumW0HN+Ea0vtS4ef
+Qho4QJ5OdEg0SnNyur2miiNAVMn0INXlqEXva4NAulPH5CcH8ecQmox2ZqLo/NIu
+7EbDk/j8ulVZGcjJCRQJEMOgP2Ys+AEuGm9ulyuL1VWjxa5D/EGxj6HsUr2RWYiQ
+rmGtQ6ZPew37L49T6b5Fl1+nMLrGW8YuG8mIcMbVpu9XqCqrv0QpGtLsiPqp0pHq
+ilI4Xyaa31k8Y/Yr9uP3ISagQjpDsGdc5m9lLp+NT9F0D2Y+in2DP3liRGdP6O/a
+9CAGZ/S2eV0eheK9y3kLTic2KGvNpzV7WzWoE6xkEQwEtEBpJhYclMshGAGb3Dhj
+F+5dOhaWf1IL98WlDRQE0BQCpqw81kHwulFZcIZOi5vum/p61PAUz5xPzIXOER52
+IgQAvYERS2iMhUVf6oJk0GZdYsLq9NVWeYeVTh3mYIj4xVLC3wKl1QIkBg/MErJV
+OQu3QnSvQw6h5uUPI+MTSB+LOwE92h4nSlznu/KPpX7ocyUThsg=
+=xX8P
+-----END PGP SIGNATURE-----
+
+--dnyggwyokbftrpyw--
 
