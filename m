@@ -1,273 +1,323 @@
-Return-Path: <linux-kernel+bounces-853895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA167BDCD7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:13:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC438BDCD87
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0004A350DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 700B3189BE9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED6A3115B5;
-	Wed, 15 Oct 2025 07:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sNXX1el/"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF6F3128DD;
+	Wed, 15 Oct 2025 07:14:52 +0000 (UTC)
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.54.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C445A280014
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990A8280014;
+	Wed, 15 Oct 2025 07:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.54.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760512424; cv=none; b=Tz2MGMsw00odbsijZ7RIeqnS3Bfw739ClnJE3Rx7BFDxYH+TfnpWMxegdoNjs3r3qZjUR7SPGCpDxkOhtt/87lruQFzIVEzH+0luIsIHA9yCK/+s86NhfGNhzIEsHnDLnYH29ex4mswncPZoUn8y15mfVv82uDGXMQBr5gEfPSA=
+	t=1760512491; cv=none; b=UHVSOnAEbEm43lUhiXpFWQC6NhrrNor+XuUNOc6JJNb2gfuky7/Rlxa/Luq3PszhbG0ZF0tboGHFxVaYNROLBCjR+ruHXrX7E58ChEXyFvVyzJkrRyUtigfNEXubNO+TaEPeOiPFW1Q1YTLWL3pKy16E2mRn1Li6dJLvJK+kdM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760512424; c=relaxed/simple;
-	bh=erfzgnlcL8vkijZeTOcRH1XhAxVuKuzL2IS74NNgh0Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XTQ6zKu7ou1geQsmc6zZNKwH15TrlHSrIynPn3cDwUcXHjmFK/RpwBf7yFRB/Q8KF7dZQBce5wTfcKmeI/m2Pr/tD1/hkT22cxyxoyWvOJkfSxot4JuBbQgtAzqK7+bU4/VJ2Gkcr64WM5s4/zDgVlWhlbY9GeN6aHeWP/kdfBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sNXX1el/; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760512419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Q5W3plTml2LrXx/+V26o+pAQSf6UvRi+HJfSZMFUt2w=;
-	b=sNXX1el/j7XakQCK55yUWvZmBso+twy+0FuXrccV5J2VIhAypNGnPMphlDPr7nfOLds3QC
-	qnbmD0eeDAxZw1VsK7kqREenh/3tCfSI5a9vKVcpccWLolSEqdF+kXXxIahqM8PoeZm5Ya
-	Qr+oRQMfk1F9EgHh6rBY6gXhjW1GOac=
-From: Ben Collins <ben.collins@linux.dev>
-Date: Wed, 15 Oct 2025 03:13:35 -0400
-Subject: [PATCH] fsl_msi: Translate bitmap to hwirq on fsl,mpic
+	s=arc-20240116; t=1760512491; c=relaxed/simple;
+	bh=klgC8zSc+l0Q/w9Rpn/ccXvkKdPxh+GGaj8qhQbaa44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mfx4Pfb0pWPedMteWaczepOLQzqGRCdlN9U03XWCWj3FV4KfUNoRQXEX3qBNLcKZkXWLG/aKFE1N8pWmTLsOFBFwCCJYzMy2Gwe0UwO3JwYxXCUH9QqvYdyuSsCgEakDEq0y/vuExUMcHTB5ch9YeP8vYR6oYWFLrUIiOLWKpOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=43.154.54.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip4t1760512426t711b209d
+X-QQ-Originating-IP: 6nwnINKAFYIGvRML+7yx9lB3aMBjuHz5zLBDY+C1Tbg=
+Received: from [IPV6:240f:10b:7440:1:f559:f5f: ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 15 Oct 2025 15:13:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17869260487172494319
+Message-ID: <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+Date: Wed, 15 Oct 2025 16:13:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+To: Manivannan Sadhasivam <mani@kernel.org>,
+ Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ "David E. Box" <david.e.box@linux.intel.com>,
+ Kai-Heng Feng <kai.heng.feng@canonical.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Chia-Lin Kao <acelan.kao@canonical.com>, Dragan Simic <dsimic@manjaro.org>,
+ linux-rockchip@lists.infradead.org, regressions@lists.linux.dev
+References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
+ <20251014184905.GA896847@bhelgaas>
+ <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251015-fsl_msi_bitmap_translate-v1-1-c438208b7f80@linux.dev>
-X-B4-Tracking: v=1; b=H4sIAJ5J72gC/x3MTQqAIBBA4avErBNU+qOrRIjWWANl4UgE0d2Tl
- t/ivQcYIyFDXzwQ8SKmI2SosoBptWFBQXM2aKlrJVUtPG9mZzKO0m5Pk6INvNmEQraNcr6aO/Q
- acn5G9HT/62F83w8gX/uhagAAAA==
-X-Change-ID: 20251015-fsl_msi_bitmap_translate-0761bf4d8ef2
-To: Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Ben Collins <bcollins@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MP1WLfctJNZWA8tQkYiXqhIzj2GBzGRUHl9BM2DvVl8moKnsJiBaEncf
+	5ktTniLtmCQQsOQzmiXRihjSaFjNoImXxA9TVnW0gA7nYlm7Im9RYBHTWsHNUr5PkTjhXhD
+	TW1y33+L4666aABFL6O14StJ+16/03wjQg9y+lQX5J054SoLGwRRv81zzBueuW9HtBhvgkX
+	opdMM7uTIO2TyZs00DjPjiOMALC+KuxA/qoALxC6PvuIOPRSyzaEkh824T3apZLoplKcf4O
+	XYnFD+FWdXooQ7wVSLVQnHzRwvo6t6wImnkwwIIz1TvCTE0/NGXkBCv0aa5RP4dmBu20vhM
+	1VKZhs0ygdmb7e7u4zUeB89yGMnHik0eOIE8/9yx6gUL8QAuStm5cNtLv1RN2ASq25bNQXu
+	+oaOG0S6mwZixJpUD++79YxPjhCgwpLQ29VJI7FGdcxh7Wwolq/HPWIiim+Ead7NNI0tad2
+	4useyMQyjxj6AG8VG0GISu8vp6ngCqKU1UXGWG7FkF6TvfH98qG91QXob+/h+Ik5R13+FS7
+	p3JLYzYIs8mcaX3EMpPbsLnQeHxPPTOYdxPYRsdYNRlUz/d5MkMBOANdC9jP7LbZnCswKBS
+	jvNi10FhEWLPT8GqDpf6bOQ0oelMwnINgsvpHAQRt8i1/9papDthVnB9q/DQ9jcfAzifVeY
+	USgD/a9+SeSd5xYuUrBoSBYq9anS8TuzghPfjz9mHeXDRfTO7611tlvYznXcoYsNP0yfu6h
+	FasrJIm6Z3fNRqK6cwA7YJgLMX+EVmL2AlCy3IEHTI7NYeG38ZNp7yNQGPqZ+ZXh7PffBgD
+	0riePYqlJqtdpiNmYb1ztE2UEoYrOVj3onZKFJF6xJDdEptHdWrGzhvGDY/qGe5MPZu0yYg
+	w4J/a2+pJcH5zLCIQE3dPSwv5t0FO/wMdMgWcJ8oaRrhz2iE0qmQlzwgLukHo6qtE0AH37s
+	77G1IfTE+Esuotu2lcBb+o3Gop1az9wkxFooStEoTtpTtdD8vQPsud/09rTaCTwCD5y7bcU
+	6eAqPSMxrATOIlIVA3
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-SPAM: true
+X-QQ-RECHKSPAM: 3
 
-On PPC_32 QorIQ, the hwirq bitmap is done with the cascade being the most
-significant bits and the srs on the cascade being the least. This has the
-effect of filling up one cascade before the next.
+Hi,
 
-Since each cascade has 32 srs and is tied to a single CPU and interrupt,
-this means no load balancing of MSIs.
+On 10/15/25 15:26, Manivannan Sadhasivam wrote:
+> On Tue, Oct 14, 2025 at 01:49:05PM -0500, Bjorn Helgaas wrote:
+>> [+cc regressions]
+>>
+>> On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
+>>> Hi Manivannan Sadhasivam,
+>>>
+>>> I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on the
+>>> Rockchip RK3588(S) SoC.
+>>>
+>>> When running Linux v6.18-rc1 or linux-next since 20250924, the kernel either
+>>> freezes or fails to probe M.2 Wi-Fi modules. This happens with several
+>>> different modules I've tested, including the Realtek RTL8852BE, MediaTek
+>>> MT7921E, and Intel AX210.
+>>>
+>>> I've found that reverting the following commit (i.e., the patch I'm replying
+>>> to) resolves the problem:
+>>> commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
+>>
+>> Thanks for the report, and sorry for the regression.
+>>
+>> Since this affects several devices from different manufacturers and (I
+>> assume) different drivers, it seems likely that there's some issue
+>> with the Rockchip end, since ASPM probably works on these devices in
+>> other systems.  So we should figure out if there's something wrong
+>> with the way we configure ASPM, which we could potentially fix, or if
+>> there's a hardware issue and we need some king of quirk to prevent
+>> usage of ASPM on the affected platforms.
+>>
+> 
+> I believe it is the latter. The Root Port is having trouble with ASPM.
+> 
+> FUKAUMI Naoki, could you please share the 'sudo lspci -vv' output so that we
+> know what kind of Root Port we are dealing with? You can revert the offending
+> patch and share the output.
 
-Rework this case to translate between the bitmap and hwirq so that MSIs
-are allocated across the cascades round-robin to achieve load balancing.
+Here is dmesg/lspci output on ROCK 5A(RK3588S):
+  https://gist.github.com/RadxaNaoki/1355a0b4278b6e51a61d89df7a535a5d
 
-Also, to avoid holes in the bitmap, allocate it for exactly what the
-hardware supports.
+----
 
-Tested on P4080 (which had the problem) and T4240 (which did not, but
-also no regressions).
+I've (likely) noticed another PCIe issue on the ROCK 5B (RK3588).
 
-Signed-off-by: Ben Collins <bcollins@kernel.org>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org
----
-Rework fsl,mpic bitmap translation on PPC_32 so that IRQs cascade across
-CPUs properly.
+Reverting commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961 on top of 
+commit 331b2acbe6123dbbcb5c34698692959abbf5748b definitely gets the M.2 
+Wi-Fi working. However, reverting commit 
+f3ac2ff14834a0aa056ee3ae0e4b8c641c579961 on v6.18-rc1/next-20251014 does 
+not work. (It does work on the ROCK 5A.)
 
-v2:
-- Slight fuzz fixes since patch is 6 months old.
----
- arch/powerpc/sysdev/fsl_msi.c | 70 ++++++++++++++++++++++++++++++++++++-------
- arch/powerpc/sysdev/fsl_msi.h |  7 +++--
- 2 files changed, 63 insertions(+), 14 deletions(-)
-
-diff --git a/arch/powerpc/sysdev/fsl_msi.c b/arch/powerpc/sysdev/fsl_msi.c
-index 2a007bfb038d0167edc7e6143d22ca5b76989947..b07eef18dec3c1f7623527c96b3abf5a589bd443 100644
---- a/arch/powerpc/sysdev/fsl_msi.c
-+++ b/arch/powerpc/sysdev/fsl_msi.c
-@@ -29,17 +29,63 @@
- #include "fsl_pci.h"
- 
- #define MSIIR_OFFSET_MASK	0xfffff
-+
- #define MSIIR_IBS_SHIFT		0
- #define MSIIR_SRS_SHIFT		5
-+#define MSIIR_SRS_MASK		0x7
-+
- #define MSIIR1_IBS_SHIFT	4
- #define MSIIR1_SRS_SHIFT	0
--#define MSI_SRS_MASK		0xf
-+#define MSIIR1_SRS_MASK		0xf
-+
- #define MSI_IBS_MASK		0x1f
- 
--#define msi_hwirq(msi, msir_index, intr_index) \
--		((msir_index) << (msi)->srs_shift | \
-+#define MSI_MPIC_SIZE		0x10
-+#define MSI_IPIC_SIZE		0x04
-+
-+#define msi_to_hwirq(msi, msir_index, intr_index) \
-+		(((msir_index) << (msi)->srs_shift) | \
- 		 ((intr_index) << (msi)->ibs_shift))
- 
-+static inline int msi_to_bit(struct fsl_msi *msi, int msir_index, int intr_index)
-+{
-+	if (!msi->srs_shift)
-+		return msi_to_hwirq(msi, msir_index, intr_index);
-+
-+	return msir_index | (intr_index << hweight32(msi->srs_mask));
-+}
-+
-+static inline int bit_to_hwirq(struct fsl_msi *msi, int bit)
-+{
-+	int hwirq;
-+
-+	if (!msi->srs_shift)
-+		return bit;
-+
-+	hwirq  = (bit & msi->srs_mask) << msi->srs_shift;
-+	hwirq |=  bit >> hweight32(msi->srs_mask);
-+
-+	return hwirq;
-+}
-+
-+static inline int hwirq_to_bit(struct fsl_msi *msi, int hwirq)
-+{
-+	int bit;
-+
-+	if (!msi->srs_shift)
-+		return hwirq;
-+
-+	bit  = (hwirq >> msi->srs_shift) & msi->srs_mask;
-+	bit |= (hwirq & MSI_IBS_MASK) << msi->srs_shift;
-+
-+	return bit;
-+}
-+
-+#define hwirq_to_srs(msi, hwirq) \
-+		(((hwirq) >> (msi)->srs_shift) & (msi)->srs_mask)
-+#define hwirq_to_ibs(msi, hwirq) \
-+		(((hwirq) >> (msi)->ibs_shift) & MSI_IBS_MASK)
-+
- static LIST_HEAD(msi_head);
- 
- struct fsl_msi_feature {
-@@ -72,7 +118,7 @@ static void fsl_msi_print_chip(struct irq_data *irqd, struct seq_file *p)
- 	irq_hw_number_t hwirq = irqd_to_hwirq(irqd);
- 	int cascade_virq, srs;
- 
--	srs = (hwirq >> msi_data->srs_shift) & MSI_SRS_MASK;
-+	srs = hwirq_to_srs(msi_data, hwirq);
- 	cascade_virq = msi_data->cascade_array[srs]->virq;
- 
- 	seq_printf(p, "fsl-msi-%d", cascade_virq);
-@@ -107,8 +153,9 @@ static const struct irq_domain_ops fsl_msi_host_ops = {
- static int fsl_msi_init_allocator(struct fsl_msi *msi_data)
- {
- 	int rc, hwirq;
-+	int num_irqs = msi_data->nr_msi_regs * IRQS_PER_MSI_REG;
- 
--	rc = msi_bitmap_alloc(&msi_data->bitmap, NR_MSI_IRQS_MAX,
-+	rc = msi_bitmap_alloc(&msi_data->bitmap, num_irqs,
- 			      irq_domain_get_of_node(msi_data->irqhost));
- 	if (rc)
- 		return rc;
-@@ -117,7 +164,7 @@ static int fsl_msi_init_allocator(struct fsl_msi *msi_data)
- 	 * Reserve all the hwirqs
- 	 * The available hwirqs will be released in fsl_msi_setup_hwirq()
- 	 */
--	for (hwirq = 0; hwirq < NR_MSI_IRQS_MAX; hwirq++)
-+	for (hwirq = 0; hwirq < num_irqs; hwirq++)
- 		msi_bitmap_reserve_hwirq(&msi_data->bitmap, hwirq);
- 
- 	return 0;
-@@ -172,7 +219,7 @@ static void fsl_compose_msi_msg(struct pci_dev *pdev, int hwirq,
- 		msg->data = hwirq;
- 
- 	pr_debug("%s: allocated srs: %d, ibs: %d\n", __func__,
--		 (hwirq >> msi_data->srs_shift) & MSI_SRS_MASK,
-+		 hwirq_to_srs(msi_data, hwirq),
- 		 (hwirq >> msi_data->ibs_shift) & MSI_IBS_MASK);
- }
- 
-@@ -308,8 +355,8 @@ static irqreturn_t fsl_msi_cascade(int irq, void *data)
- 		intr_index = ffs(msir_value) - 1;
- 
- 		err = generic_handle_domain_irq(msi_data->irqhost,
--				msi_hwirq(msi_data, msir_index,
--					  intr_index + have_shift));
-+				msi_to_hwirq(msi_data, msir_index,
-+					     intr_index + have_shift));
- 		if (!err)
- 			ret = IRQ_HANDLED;
- 
-@@ -384,7 +431,7 @@ static int fsl_msi_setup_hwirq(struct fsl_msi *msi, struct platform_device *dev,
- 	/* Release the hwirqs corresponding to this MSI register */
- 	for (i = 0; i < IRQS_PER_MSI_REG; i++)
- 		msi_bitmap_free_hwirqs(&msi->bitmap,
--				       msi_hwirq(msi, offset, i), 1);
-+				       msi_to_hwirq(msi, offset, i), 1);
- 
- 	return 0;
- }
-@@ -412,7 +459,8 @@ static int fsl_of_msi_probe(struct platform_device *dev)
- 	}
- 	platform_set_drvdata(dev, msi);
- 
--	msi->irqhost = irq_domain_create_linear(dev_fwnode(&dev->dev), NR_MSI_IRQS_MAX,
-+	msi->irqhost = irq_domain_create_linear(dev_fwnode(&dev->dev),
-+						msi->nr_msi_regs * IRQS_PER_MSI_REG,
- 						&fsl_msi_host_ops, msi);
- 	if (msi->irqhost == NULL) {
- 		dev_err(&dev->dev, "No memory for MSI irqhost\n");
-diff --git a/arch/powerpc/sysdev/fsl_msi.h b/arch/powerpc/sysdev/fsl_msi.h
-index e2a1bfc7c23777f72f51486ee02284d92d56e1e2..0515030af9acb965c0b5db68d5655004777f4344 100644
---- a/arch/powerpc/sysdev/fsl_msi.h
-+++ b/arch/powerpc/sysdev/fsl_msi.h
-@@ -15,7 +15,6 @@
- #define NR_MSI_REG_MSIIR1	16 /* MSIIR1 can index 16 MSI registers */
- #define NR_MSI_REG_MAX		NR_MSI_REG_MSIIR1
- #define IRQS_PER_MSI_REG	32
--#define NR_MSI_IRQS_MAX	(NR_MSI_REG_MAX * IRQS_PER_MSI_REG)
- 
- #define FSL_PIC_IP_MASK   0x0000000F
- #define FSL_PIC_IP_MPIC   0x00000001
-@@ -32,11 +31,13 @@ struct fsl_msi {
- 	unsigned long cascade_irq;
- 
- 	u32 msiir_offset; /* Offset of MSIIR, relative to start of CCSR */
--	u32 ibs_shift; /* Shift of interrupt bit select */
--	u32 srs_shift; /* Shift of the shared interrupt register select */
-+	u32 ibs_shift;    /* Shift of interrupt bit select */
-+	u32 srs_mask;     /* Mask of the shared interrupt register select */
-+	u32 srs_shift;    /* Shift for shared interrupt register select */
- 	void __iomem *msi_regs;
- 	u32 feature;
- 	struct fsl_msi_cascade_data *cascade_array[NR_MSI_REG_MAX];
-+	u32 nr_msi_regs;
- 
- 	struct msi_bitmap bitmap;
- 
-
----
-base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
-change-id: 20251015-fsl_msi_bitmap_translate-0761bf4d8ef2
+Commit 331b2acbe6123dbbcb5c34698692959abbf5748b landed between 
+next-20250923 and next-20250924. I'm currently in the process of bisecting.
 
 Best regards,
--- 
-Ben Collins <ben.collins@linux.dev>
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> Then I could supply a patch that you can test out.
+> 
+> - Mani
+> 
+>> Can you collect a complete dmesg log when booting with
+>>
+>>    ignore_loglevel pci=earlydump dyndbg="file drivers/pci/* +p"
+>>
+>> and the output of "sudo lspci -vv"?
+>>
+>> When the kernel freezes, can you give us any information about where,
+>> e.g., a log or screenshot?
+>>
+>> Do you know if any platforms other than Radxa ROCK 5A/5B have this
+>> problem?
+>>
+>> #regzbot introduced: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+>> #regzbot dup-of: https://github.com/chzigotzky/kernels/issues/17
+>>
+>>> On 9/23/25 01:16, Manivannan Sadhasivam via B4 Relay wrote:
+>>>> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+>>>>
+>>>> So far, the PCI subsystem has honored the ASPM and Clock PM states set by
+>>>> the BIOS (through LNKCTL) during device initialization, if it relies on the
+>>>> default state selected using:
+>>>>
+>>>> * Kconfig: CONFIG_PCIEASPM_DEFAULT=y, or
+>>>> * cmdline: "pcie_aspm=off", or
+>>>> * FADT: ACPI_FADT_NO_ASPM
+>>>>
+>>>> This was done conservatively to avoid issues with the buggy devices that
+>>>> advertise ASPM capabilities, but behave erratically if the ASPM states are
+>>>> enabled. So the PCI subsystem ended up trusting the BIOS to enable only the
+>>>> ASPM states that were known to work for the devices.
+>>>>
+>>>> But this turned out to be a problem for devicetree platforms, especially
+>>>> the ARM based devicetree platforms powering Embedded and *some* Compute
+>>>> devices as they tend to run without any standard BIOS. So the ASPM states
+>>>> on these platforms were left disabled during boot and the PCI subsystem
+>>>> never bothered to enable them, unless the user has forcefully enabled the
+>>>> ASPM states through Kconfig, cmdline, and sysfs or the device drivers
+>>>> themselves, enabling the ASPM states through pci_enable_link_state() APIs.
+>>>>
+>>>> This caused runtime power issues on those platforms. So a couple of
+>>>> approaches were tried to mitigate this BIOS dependency without user
+>>>> intervention by enabling the ASPM states in the PCI controller drivers
+>>>> after device enumeration, and overriding the ASPM/Clock PM states
+>>>> by the PCI controller drivers through an API before enumeration.
+>>>>
+>>>> But it has been concluded that none of these mitigations should really be
+>>>> required and the PCI subsystem should enable the ASPM states advertised by
+>>>> the devices without relying on BIOS or the PCI controller drivers. If any
+>>>> device is found to be misbehaving after enabling ASPM states that they
+>>>> advertised, then those devices should be quirked to disable the problematic
+>>>> ASPM/Clock PM states.
+>>>>
+>>>> In an effort to do so, start by overriding the ASPM and Clock PM states set
+>>>> by the BIOS for devicetree platforms first. Separate helper functions are
+>>>> introduced to override the BIOS set states by enabling all of them if
+>>>> of_have_populated_dt() returns true. To aid debugging, print the overridden
+>>>> ASPM and Clock PM states as well.
+>>>>
+>>>> In the future, these helpers could be extended to allow other platforms
+>>>> like VMD, newer ACPI systems with a cutoff year etc... to follow the path.
+>>>>
+>>>> Link: https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
+>>>> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+>>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+>>>> Link: https://patch.msgid.link/20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com
+>>>> ---
+>>>>    drivers/pci/pcie/aspm.c | 42 ++++++++++++++++++++++++++++++++++++++++--
+>>>>    1 file changed, 40 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+>>>> index 919a05b9764791c3cc469c9ada62ba5b2c405118..cda31150aec1b67b6a48b60569222ea3d1c3d41f 100644
+>>>> --- a/drivers/pci/pcie/aspm.c
+>>>> +++ b/drivers/pci/pcie/aspm.c
+>>>> @@ -15,6 +15,7 @@
+>>>>    #include <linux/math.h>
+>>>>    #include <linux/module.h>
+>>>>    #include <linux/moduleparam.h>
+>>>> +#include <linux/of.h>
+>>>>    #include <linux/pci.h>
+>>>>    #include <linux/pci_regs.h>
+>>>>    #include <linux/errno.h>
+>>>> @@ -235,13 +236,15 @@ struct pcie_link_state {
+>>>>    	u32 aspm_support:7;		/* Supported ASPM state */
+>>>>    	u32 aspm_enabled:7;		/* Enabled ASPM state */
+>>>>    	u32 aspm_capable:7;		/* Capable ASPM state with latency */
+>>>> -	u32 aspm_default:7;		/* Default ASPM state by BIOS */
+>>>> +	u32 aspm_default:7;		/* Default ASPM state by BIOS or
+>>>> +					   override */
+>>>>    	u32 aspm_disable:7;		/* Disabled ASPM state */
+>>>>    	/* Clock PM state */
+>>>>    	u32 clkpm_capable:1;		/* Clock PM capable? */
+>>>>    	u32 clkpm_enabled:1;		/* Current Clock PM state */
+>>>> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+>>>> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+>>>> +					   override */
+>>>>    	u32 clkpm_disable:1;		/* Clock PM disabled */
+>>>>    };
+>>>> @@ -373,6 +376,18 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+>>>>    	pcie_set_clkpm_nocheck(link, enable);
+>>>>    }
+>>>> +static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+>>>> +						   int enabled)
+>>>> +{
+>>>> +	struct pci_dev *pdev = link->downstream;
+>>>> +
+>>>> +	/* Override the BIOS disabled Clock PM state for devicetree platforms */
+>>>> +	if (of_have_populated_dt() && !enabled) {
+>>>> +		link->clkpm_default = 1;
+>>>> +		pci_info(pdev, "Clock PM state overridden: ClockPM+\n");
+>>>> +	}
+>>>> +}
+>>>> +
+>>>>    static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>>>>    {
+>>>>    	int capable = 1, enabled = 1;
+>>>> @@ -395,6 +410,7 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>>>>    	}
+>>>>    	link->clkpm_enabled = enabled;
+>>>>    	link->clkpm_default = enabled;
+>>>> +	pcie_clkpm_override_default_link_state(link, enabled);
+>>>>    	link->clkpm_capable = capable;
+>>>>    	link->clkpm_disable = blacklist ? 1 : 0;
+>>>>    }
+>>>> @@ -788,6 +804,26 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
+>>>>    		aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
+>>>>    }
+>>>> +static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+>>>> +{
+>>>> +	struct pci_dev *pdev = link->downstream;
+>>>> +	u32 override;
+>>>> +
+>>>> +	/* Override the BIOS disabled ASPM states for devicetree platforms */
+>>>> +	if (of_have_populated_dt()) {
+>>>> +		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+>>>> +		override = link->aspm_default & ~link->aspm_enabled;
+>>>> +		if (override)
+>>>> +			pci_info(pdev, "ASPM states overridden: %s%s%s%s%s%s\n",
+>>>> +				 (override & PCIE_LINK_STATE_L0S) ? "L0s+, " : "",
+>>>> +				 (override & PCIE_LINK_STATE_L1) ? "L1+, " : "",
+>>>> +				 (override & PCIE_LINK_STATE_L1_1) ? "L1.1+, " : "",
+>>>> +				 (override & PCIE_LINK_STATE_L1_2) ? "L1.2+, " : "",
+>>>> +				 (override & PCIE_LINK_STATE_L1_1_PCIPM) ? "L1.1 PCI-PM+, " : "",
+>>>> +				 (override & PCIE_LINK_STATE_L1_2_PCIPM) ? "L1.2 PCI-PM+" : "");
+>>>> +	}
+>>>> +}
+>>>> +
+>>>>    static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>>>>    {
+>>>>    	struct pci_dev *child = link->downstream, *parent = link->pdev;
+>>>> @@ -868,6 +904,8 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>>>>    	/* Save default state */
+>>>>    	link->aspm_default = link->aspm_enabled;
+>>>> +	pcie_aspm_override_default_link_state(link);
+>>>> +
+>>>>    	/* Setup initial capable state. Will be updated later */
+>>>>    	link->aspm_capable = link->aspm_support;
+>>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> Linux-rockchip mailing list
+>>> Linux-rockchip@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
 
 
