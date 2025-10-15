@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-854488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F918BDE806
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EED8FBDE800
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6B319C3581
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:38:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73D0D18906EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0B82C17A8;
-	Wed, 15 Oct 2025 12:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C6F1AB6F1;
+	Wed, 15 Oct 2025 12:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NSl6vLGO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5zTPNKA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A127125A9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD851E515;
+	Wed, 15 Oct 2025 12:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760531863; cv=none; b=DzhCZFvvo6TpEInu95n+bJI9FQiHuPFEFubYy+8zAXm/VzXTTMXNcg/7W25/eHvFM47fDpgq+Pb/oWZFYWxF8W4K69v52s2OItoN0rEGUBY0FWuS6zH/U0R3luJAmyeALvJ8EGUnXkxHy9qAD3TcvdLPT0U4YwZQaRc/kdJPPIU=
+	t=1760531862; cv=none; b=lklbOxApa+XtimXOdtbKPKz4Nj6VFvZdJEio8SircngKBiL6hPWsTiRw/LIMMig5Rb0tGofFnC3R/55Jkov5EJxqFHA+D7F4istPTNjGC/b3fkxXZ8TfGYkJT0MPOg1O5+OZgLs+HphHSE2ZkNuZyDirdvjhtYMhnmWPq99rG7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760531863; c=relaxed/simple;
-	bh=wzLi0FJqSECunTrBHdO4ZAnbxe+eWKf5Tz55DD63TLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXdUnH9StcNA7OTEm6axGRkjUKPbVzpAdNUmVQCdAvJgowZXqNesrNG/qCHhYjenrhhWk/Ame1jYf+0qTChqd94PCa49YvpVSfKDono7rGxTpsZrXC0oK5X5AyE7xbObaFvw+72ZspNWo68bFi3uUOla4HE5JTbqY1b1M2LIyOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NSl6vLGO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760531861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VYEPsa5iT6GqlmISWxWq/D0+25iox/pbBDZ3lTFGtYM=;
-	b=NSl6vLGORw+OKtsQ1Ohhe175uy1yTEShAOL+nC723lZQeUfxv+nTMy9oBmh8f47oPZGy8/
-	f9upNM5uaNBDxsN2tBNO9a8tOL8GFFkQoEIEzzsE3flX0ythIReEZKrqQnBV/1o3/ajN8Y
-	r/BoVy+vH5Q5U1ZbMKUr49P6jdczQw0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-413-Z1faE2oaNaOEf90ZFPbf6w-1; Wed,
- 15 Oct 2025 08:37:37 -0400
-X-MC-Unique: Z1faE2oaNaOEf90ZFPbf6w-1
-X-Mimecast-MFC-AGG-ID: Z1faE2oaNaOEf90ZFPbf6w_1760531856
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FE3919560AD;
-	Wed, 15 Oct 2025 12:37:36 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.241])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BB2901800446;
-	Wed, 15 Oct 2025 12:37:34 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 15 Oct 2025 14:36:16 +0200 (CEST)
-Date: Wed, 15 Oct 2025 14:36:13 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: gaoxiang17 <gaoxiang17@xiaomi.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] Revert "pid: make __task_pid_nr_ns(ns => NULL) safe for
- zombie callers"
-Message-ID: <20251015123613.GA9456@redhat.com>
-References: <20251015123550.GA9447@redhat.com>
+	s=arc-20240116; t=1760531862; c=relaxed/simple;
+	bh=L2PUHm3lghaAQknIHbz+ddE31Qd8tExMzKPCl40aq+I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=frFTyYjOEGLOmxHaivbrA+dD5f8QIAiwWNepeelwRNr0YuJoh29oQTZIcAw3jSWwHElTT22ghIRFDRRpdGRCnHIGvtR1xN12gfdeWHtTrA/HmVGO7T199abwAEWPwmNnZMu2WupjS57aCsQFnfT6O6j7BHeTI8VRhYFhGw9UynQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5zTPNKA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE56C113D0;
+	Wed, 15 Oct 2025 12:37:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760531861;
+	bh=L2PUHm3lghaAQknIHbz+ddE31Qd8tExMzKPCl40aq+I=;
+	h=From:Subject:Date:To:Cc:From;
+	b=M5zTPNKA62srnuHARXcmPypcoosbC4L0som06SHh4EKdKFQh48OBi13iIXXXHF03R
+	 gLnsrozmPmmUJcQsUKphbep+RUR+1ht0En5NqV1z5R0DAcPRmd7d/f5KBhcDSH1yD7
+	 NaN/IxyrVRg+XodzB46N7lzdd8aq8sXQxlc1yKoXmEBXepCHfGM3gHPQrTxobXa5qX
+	 hSnn6swcsOQMBKQXIlNsY6c9gH9QfMASgdumor8LPM+mwnNM5WwOSXxt1RsljgPLuv
+	 G7CsCeeWDjaiQjJvAPG94++AzWfrjbtcyovHWTdb6fs5m3NcFOkoOzs/PjrhHl/oDz
+	 azYMtdea1uX5w==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v3 0/2] selftests/fchmodat2: Error handling and general
+ cleanups
+Date: Wed, 15 Oct 2025 13:36:24 +0100
+Message-Id: <20251015-selftests-fchmodat2-v3-0-f243fd281439@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015123550.GA9447@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEiV72gC/23OSwqDMBCA4atI1k3JQxt11XuULmwy0VBrSiaEF
+ vHujUIpBZf/wHwzM0EIDpC0xUwCJIfOTznkoSB66KYeqDO5iWCiYopzijDaCBiRWj08vOmioFo
+ yqUot1cnWJG8+A1j32tTLNffgMPrw3o4kvk6/XrnrJU4ZvanSSgBmWKPPdwgTjEcferKCSfyQm
+ ot9RGTEClPJmkGTv/tDlmX5APBdOKn8AAAA
+X-Change-ID: 20250711-selftests-fchmodat2-c30374c376f8
+To: Shuah Khan <shuah@kernel.org>, Alexey Gladkov <legion@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-96507
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1054; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=L2PUHm3lghaAQknIHbz+ddE31Qd8tExMzKPCl40aq+I=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBo75WRzjAi9Nc87zdC9Xbz2XyJbD1HkdhT6Chbd
+ ckFaUUM83KJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaO+VkQAKCRAk1otyXVSH
+ 0AmtB/9trlqdWJ5/oBrDt7/Oy3uvoQgr+BJJT+piXIT4zmxTVKTNe4zJE0XMSaqzAuZhdoNRfs0
+ zh+9mD0dMVxYSZfln2DnqrGDqkxG5/YocP40441kPNXnccPBUdCPznmvTFOAQz/LujBysuecUFP
+ ivQ/ZF7k5pu1/kg3bV0xUKMGKWUnF2OBzREi2XxcMp8AuzjjZiSm8QFRC894bOzJP0IpGObn0X8
+ 6dXgyUkJSHh6l4uWQLie2+L6NSRVyqsTKHIrzMECxwPjKJTCvvSaUYS9Ec7+9mrcPl1epO3k90K
+ M1QNiuGxnkxoclQytG/t8hYbqqVQREnoV5yF9dl/lQ+AzZHN
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-This reverts commit abdfd4948e45c51b19162cf8b3f5003f8f53c9b9.
+I looked at the fchmodat2() tests since I've been experiencing some
+random intermittent segfaults with them in my test systems, while doing
+so I noticed these two issues.  Unfortunately I didn't figure out the
+original yet, unless I managed to fix it unwittingly.
 
-The changelog in this commit explains why it is not easy to avoid ns == NULL
-when the caller is exiting, but pid_vnr() is equally unsafe in this case.
-
-However, commit 006568ab4c5c ("pid: Add a judgment for ns null in pid_nr_ns")
-already added the ns != NULL check in pid_nr_ns(), so we can remove the same
-check from __task_pid_nr_ns().
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- kernel/pid.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes in v3:
+- Rebase onto v6.18-rc1.
+- Link to v2: https://lore.kernel.org/r/20250812-selftests-fchmodat2-v2-0-f2d5380e94c3@kernel.org
 
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 4fffec767a63..be69ae771e3c 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -515,8 +515,7 @@ pid_t __task_pid_nr_ns(struct task_struct *task, enum pid_type type,
- 	rcu_read_lock();
- 	if (!ns)
- 		ns = task_active_pid_ns(current);
--	if (ns)
--		nr = pid_nr_ns(rcu_dereference(*task_pid_ptr(task, type)), ns);
-+	nr = pid_nr_ns(rcu_dereference(*task_pid_ptr(task, type)), ns);
- 	rcu_read_unlock();
- 
- 	return nr;
--- 
-2.25.1.362.g51ebf55
+Changes in v2:
+- Rebase onto v6.17-rc1.
+- Link to v1: https://lore.kernel.org/r/20250714-selftests-fchmodat2-v1-0-b74f3ee0d09c@kernel.org
 
+---
+Mark Brown (2):
+      selftests/fchmodat2: Clean up temporary files and directories
+      selftests/fchmodat2: Use ksft_finished()
+
+ tools/testing/selftests/fchmodat2/fchmodat2_test.c | 166 ++++++++++++++-------
+ 1 file changed, 112 insertions(+), 54 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20250711-selftests-fchmodat2-c30374c376f8
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
