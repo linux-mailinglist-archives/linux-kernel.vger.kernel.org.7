@@ -1,224 +1,139 @@
-Return-Path: <linux-kernel+bounces-854183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F029BDDC7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:29:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655F9BDDC9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AC019C2D4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:29:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E8D7501711
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714DF31A540;
-	Wed, 15 Oct 2025 09:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1820031A57B;
+	Wed, 15 Oct 2025 09:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lw+mKOcT"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H37JO8ck"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B0A30BB9A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145191DE3A4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760520535; cv=none; b=TcAwZiMsMe3uyvZdNm5OzFDz7fSP2EzBL0qmMUMVdHHbnfXLopEHiRkN3oCmZlxQxl6b2H3THaSjn2uKS1pputjaaVVg8kds4eMBRxBzIIL340F8+33dgW3o4pAmymOiA8EZmLIuZIxji3vX8UBDHZfj/49SRWpNksr9+cbPXik=
+	t=1760520643; cv=none; b=YWVZBA/AKHshVNUmaNt/awn5Sv/RDkiyc9kBvXH1v6sWeYEH5I7yHfa5s1/6QuByk4ZTCmvrbYbWsz7Wz28VmEDhJK/j9XbVhC+9rrwjDrrhgjZNNkd0Ax48P96CghXtYnOgjYaTmmP2z4LLez2W0nRq6J4MML5NypiX7zkDGWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760520535; c=relaxed/simple;
-	bh=w9oSLVXl1abaIXQNkcjtI8UuvOw0MoekmgA7+KAt4xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0fPUN+tXV2WySnXcSF4xRv34AolbmqIOEos/lQkJE+UNB9F25otB+zxmjLCQKoHzY8bbEdG10Jeqbekenuak4TuT7vvDeXvoHN/gOjd1jU3SGbm/OwS+X3RC8gCgYYYB/5ZFvxE4Apr4B/sM7bW75NP3p5F/s/4bYc3hh68ZC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lw+mKOcT; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1760520643; c=relaxed/simple;
+	bh=lVOibV+iWGIwrT0uJn7Qm/GWUejLW2DJH+QQTNdRMZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MrD0oWObUSVCL0qbqjYLe3YiyCyw0ve5DG1e6ST0C9+ZjhUbiVVbD45ITsDcFiYjdmAaw43RK8ewX8ombze0212W6V3sRPnUjWe1qoj0yUHAP2qRA4X3JFwoLtTlSQrmdqMqJZ8nWLDe/iHPwFqSV5456oHUoqrzX1sYrjqQqq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H37JO8ck; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46b303f755aso55785555e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:28:53 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2681660d604so68674825ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760520532; x=1761125332; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hp2fYKx0k402gU8wOiSoX7ghMVY2eXtiYBiomEBCu00=;
-        b=Lw+mKOcTUuy5Ri0WVqPg7aYYFXIRFT2HViHCep+Y/g1k/kI6lQVPGKeBcyOYA9pEbi
-         bfYVOEgnlEZDmlyojbxgQa7E40UFgEfpdY06VWvOe7QnuuRwKumO/6eBTskBnsgdoSPs
-         DmNMsJdG2AHYDhK1LzeF9+/0jRZ/NajlmP7VEOHACKbH0Whe74ez6WoRP1rTqDVfXqLm
-         Sg31rLwFPJfBY1weuoQxf/ovXv9UIRd2tWgtvuMaKG0B3zrNs53A7vLtHA7/HTVbu42A
-         tx9uFH/Ho4co+j56JqfJlrWaQrSOAOIlWwUOyBeJfY/PjkvGTrlJFOyzXcbt/mArnUR1
-         MrzQ==
+        d=gmail.com; s=20230601; t=1760520641; x=1761125441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XDtXgZFzYXZK/ibRrp5PX9uMJOOke03pAz5gDdS9N8M=;
+        b=H37JO8ckh0jJua1+x4lRw9G2QWIKjBjZvp1Ky8xqJfZc0u9OcW9ScUmH5zGhSgM4Gs
+         KbUYWwp+V7KztMTi9xoG0rmmyqJ7dalqFTVnIAx/OSfbkCNri2qnDgBGOLkGId4oZY8s
+         EwnV0U9vAFNAjgNwHT4bRcuvnPZMo9UhSRiTmGrWRhtUFrZTpQNV4HA06sLEmJlb4szQ
+         bvg8UEzD9BAG2DfFeDNByWwTX346Ci7ry8XWJuwjXSgkVeOUvSWvVlVhC4YfuhA2Sxax
+         n0OwbMgsBTO64wIrrkwEfcXMDDjxrXZZztG391+D2XzBaPABhwdO4JzGWskg0ueAKeSz
+         yd4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760520532; x=1761125332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hp2fYKx0k402gU8wOiSoX7ghMVY2eXtiYBiomEBCu00=;
-        b=NIQNJo39MGiHK+AdW5NZQI0qkwaKiKH29c+O5gyIBomFwpnfjwXzEKKClvta8Ur5uS
-         tg2mcqkIGpUQdaUYjdbphJx5PvKtGWyZRXtgwbtljEdPqZwD0nV3sXgsZMFpV64BW8Q/
-         qE4ggwOmfwKqM+kn3PY5fp7NwaLVEN0UuKitojsz5r0kQDBSoJ7ep03YklCnwR0tqXM5
-         6X/kD0+ZpbwyBRHvchQrJe+ojDvv+oONeBatEZPcfpFd5QxKTVOg5GidkjA5j0rr4z+a
-         uzGeU7Gs4+xFiJM7g6Rd40UeTdl9kshcTW03uL0ooaBkjVktNLAP25Yj/5tTxie8gCcH
-         mtMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFtKDjefNzHX1PWjY2B+I1AhvXX7yOWojY2Gs8qUULmYCPMwyYMwRaHZUIhk0VXnaO4s0pcHK+78feGSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLXUm9f5SFYOh4Ltms6FJA+JKkw2N1TPHT4Dw23NSM5t4esiAo
-	9KL+l2fcSswCbWL7BdMbkdB8wvWziV13dNqTOwQ6Zw9oObU9+PEzSCvi
-X-Gm-Gg: ASbGncujIsPB1GUxT66Nl9sARKnkkjqSsOfHG0FZDDe0IgwJIEsoH5PYRDdOL+PFoM5
-	yLCtLPp7Ou9qmSGkRo3tJvzoQLHAT4CJXllYkht8X31NqOk/W/f2F7UhGXRP/v00QrPEX15YPzH
-	sQtTykHsAqefMsw5yAUVztzz4jidsIhlQvi3JWgwQiJ6Ta6p/rnQ+Ky9dSBKabaEek35zGW69U+
-	+6FlhEg8WeyNCYUaF83lDZvsZ/P4Nv6JKilOVW8uJ7NOXCECq1E7Treub0TQ6QkimxWz5PUKhva
-	kQd6iwHjbv17HCb5VuRekggJpRqmqTouqACsCI38NCM7XSuM7Hgn8E114iI+4Qo5eYKN3x0ET43
-	QU/88x9VEiHykpn1Mobu+6ktrvU4fhMhT7xk=
-X-Google-Smtp-Source: AGHT+IGhErKOy64d9/b2jMz0wYrCY+Ob/EHUO0qOvgBR2Gdz3Vtc7ebOk0y6bVbTKFpbvvdrluUWvw==
-X-Received: by 2002:a05:6000:1a8f:b0:3ec:db8b:cbf1 with SMTP id ffacd0b85a97d-42666ac7279mr18043977f8f.24.1760520531741;
-        Wed, 15 Oct 2025 02:28:51 -0700 (PDT)
-Received: from fedora ([31.94.20.38])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582a9csm28053606f8f.12.2025.10.15.02.28.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 02:28:51 -0700 (PDT)
-Date: Wed, 15 Oct 2025 02:28:49 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
- allocator
-Message-ID: <aO9pUS3zLHsap81f@fedora>
-References: <20251014182754.4329-1-vishal.moola@gmail.com>
- <aO8behuGn5jVo28K@casper.infradead.org>
+        d=1e100.net; s=20230601; t=1760520641; x=1761125441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XDtXgZFzYXZK/ibRrp5PX9uMJOOke03pAz5gDdS9N8M=;
+        b=jDmJ7LRA+QoqkitCaBaoBOKA0s1O7j9m9SUZ1ph1wYJbGRWfKz4OXdUcJkCOW+VEyh
+         wL+s4/L+5mJdxe7pj8xzD/Lzf5kJmnpETkGnTwiuoouEXcUrK0IHu9bVV2FjC91mc4PY
+         M/LATKN7Brz+XWRFZCVBDAalGVLciz6yVg5unY1YSBaIqsOS0oOn+ECdbe05erkIF3i2
+         B7l2pkQDM2gtqxFXQnQ6cpfv5gmbmc9jP1c1AsYyyfdVEPTLgWss5Il88ArZtvjx1Z6p
+         NxlrEkbM2On5BM4VgVxbEjLlwhFt4HQIrlJS2zTA3L1iDnRcp44DY4lcB067zjiHwDIf
+         HXzg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+WA3s67BDi9MNMPTgZbUVPDBnXRDYWjrjex9AwghORGVPeWh/vqmKlFP3HuSRoAqD8wbWugzX76asfGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/nkGPhmlFibE/Moiph5cIbmHQiO6SJJS4NQhjl1/BvWpti/7S
+	hEJAxyY5RyMYlKRz55omcHpe/wD1LZajXuBpWzjUH6+Bz8+gZLGiZDfU
+X-Gm-Gg: ASbGnctCn+OzYBldqg0fN02KHhRK4MvayYmD3v3BlaQI5cNE52tdt0wJqlY6GGkxphm
+	YLor2SV5pQ8R2/RDNHNt7iyCyGHryRoahh4eANB8CaHM8pLKDtPGFzDF7zJcSs3PeAPfiBbCtty
+	QkIi7LTnTEyWVEg5Mo63EezlFPfSnelZJH6AWzWwsBwURt0HCxmZAv20KU2ZaCmg2gK+cVckqDB
+	1UDAJhwQbfROW4TcObQgW610XMwizi0e/JvgdqdxJ4jG54mHNMLNN0Qke7buvNl07g0vG373202
+	sR4j2tjSAvhsl2GBGvS65NWqTSNZe5DYyCwcSyAxRCJ/OFR1YOvcxZ/jRFVgV1oGvQ3b7EGaKOX
+	7mqi3seBGdeTeO7Wm/W+RAKKPUCXaWblrP+PVHogG9tTg2La1mbgORVtOmOIboLix2KpFBcnJ0A
+	LmtRpDT3cBamMwoA==
+X-Google-Smtp-Source: AGHT+IEK9gGd4ylhL+ohQ0j4ij/MvWMWaktFv9kBT3L4nH8VbW7kaaXONU81DrtfDoVueDQoE/cLTg==
+X-Received: by 2002:a17:903:3c4f:b0:25c:5bda:53a8 with SMTP id d9443c01a7336-290272b5529mr333496115ad.37.1760520641158;
+        Wed, 15 Oct 2025 02:30:41 -0700 (PDT)
+Received: from localhost.localdomain ([2409:8900:1896:1396:9404:1b8d:6e77:8dd])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df2360dsm14730127a12.25.2025.10.15.02.30.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 15 Oct 2025 02:30:40 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Rik van Riel <riel@redhat.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	wang lian <lianux.mm@gmail.com>
+Subject: [PATCH V2] mm/khugepaged: fix comment for default scan sleep duration
+Date: Wed, 15 Oct 2025 17:29:57 +0800
+Message-ID: <20251015092957.37432-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO8behuGn5jVo28K@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 04:56:42AM +0100, Matthew Wilcox wrote:
-> On Tue, Oct 14, 2025 at 11:27:54AM -0700, Vishal Moola (Oracle) wrote:
-> > Running 1000 iterations of allocations on a small 4GB system finds:
-> > 
-> > 1000 2mb allocations:
-> > 	[Baseline]			[This patch]
-> > 	real    46.310s			real    34.380s
-> > 	user    0.001s			user    0.008s
-> > 	sys     46.058s			sys     34.152s
-> > 
-> > 10000 200kb allocations:
-> > 	[Baseline]			[This patch]
-> > 	real    56.104s			real    43.946s
-> > 	user    0.001s			user    0.003s
-> > 	sys     55.375s			sys     43.259s
-> > 
-> > 10000 20kb allocations:
-> > 	[Baseline]			[This patch]
-> > 	real    0m8.438s		real    0m9.160s
-> > 	user    0m0.001s		user    0m0.002s
-> > 	sys     0m7.936s		sys     0m8.671s
-> 
-> I'd be more confident in the 20kB numbers if you'd done 10x more
-> iterations.
+The comment for khugepaged_scan_sleep_millisecs incorrectly states
+the default scan period is 30 seconds. The actual default value in the
+code is 10000ms (10 seconds).
 
-I actually ran my a number of times to mitigate the effects of possibly
-too small sample sizes, so I do have that number for you too:
+This patch corrects the comment to match the code, preventing potential
+confusion. The incorrect comment has existed since the feature was
+first introduced.
 
-[Baseline]			[This patch]
-real    1m28.119s		real    1m32.630s
-user    0m0.012s		user    0m0.011s
-sys     1m23.270s		sys     1m28.529s
+Fixes: ba76149f47d8 ("thp: khugepaged")
 
-> Also, I think 20kB is probably an _interesting_ number, but it's not
-> going to display your change to its best advantage.  A 32kB allocation
-> will look much better, for example.
+Signed-off-by: wang lian <lianux.mm@gmail.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Dev Jain <dev.jain@arm.com>
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+Reviewed-by: Lance Yang <lance.yang@linux.dev>
+---
+ mm/khugepaged.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I provided those particular numbers to showcase the beneficial cases as
-well as the regression case.
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index e947b96e1443..d635d821f611 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -67,7 +67,7 @@ enum scan_result {
+ static struct task_struct *khugepaged_thread __read_mostly;
+ static DEFINE_MUTEX(khugepaged_mutex);
+ 
+-/* default scan 8*512 pte (or vmas) every 30 second */
++/* default scan 8*HPAGE_PMD_NR ptes (or vmas) every 10 second */
+ static unsigned int khugepaged_pages_to_scan __read_mostly;
+ static unsigned int khugepaged_pages_collapsed;
+ static unsigned int khugepaged_full_scans;
+-- 
+2.50.1 (Apple Git-155)
 
-I ended up finding that allocating sizes <=20k had noticeable
-regressions, while [20k, 90k] was approximately the same, and >= 90k had
-improvements (getting more and more noticeable as size grows in
-magnitude).
-
-> Also, can you go into more detail of the test?  Based on our off-list
-> conversation, we were talking about allocating something like 100MB
-> of memory (in these various sizes) then freeing it, just to be sure
-> that we're measuring the performance of the buddy allocator and
-> not the PCP list.
-
-Yup.
-
-What I did to get the numbers above was: call vmalloc() n number of
-times on that particular size, then free all those allocations. Then,
-I did 1000 iterations of that to get a better average.
-
-So none of these allocations were freed until all the allocations were
-done, every single time.
-
-> > This is an RFC, comments and thoughts are welcomed. There is a
-> > clear benefit to be had for large allocations, but there is
-> > some regression for smaller allocations.
-> 
-> Also we think that there's probably a later win to be had by
-> not splitting the page we allocated.
-> 
-> At some point, we should also start allocating frozen pages
-> for vmalloc.  That's going to be interesting for the users which
-> map vmalloc pages to userspace.
-> 
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 97cef2cc14d3..0a25e5cf841c 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -3621,6 +3621,38 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
-> >  	unsigned int nr_allocated = 0;
-> >  	struct page *page;
-> >  	int i;
-> > +	gfp_t large_gfp = (gfp & ~__GFP_DIRECT_RECLAIM) | __GFP_NOWARN;
-> > +	unsigned int large_order = ilog2(nr_pages - nr_allocated);
-> > +
-> > +	/*
-> > +	 * Initially, attempt to have the page allocator give us large order
-> > +	 * pages. Do not attempt allocating smaller than order chunks since
-> > +	 * __vmap_pages_range() expects physically contigous pages of exactly
-> > +	 * order long chunks.
-> > +	 */
-> > +	while (large_order > order && nr_allocated < nr_pages) {
-> > +		/*
-> > +		 * High-order nofail allocations are really expensive and
-> > +		 * potentially dangerous (pre-mature OOM, disruptive reclaim
-> > +		 * and compaction etc.
-> > +		 */
-> > +		if (gfp & __GFP_NOFAIL)
-> > +			break;
-> 
-> sure, but we could just clear NOFAIL from the large_gfp flags instead
-> of giving up on this path so quickly?
-
-Yeah I'll do that.
-
-> > +		if (nid == NUMA_NO_NODE)
-> > +			page = alloc_pages_noprof(large_gfp, large_order);
-> > +		else
-> > +			page = alloc_pages_node_noprof(nid, large_gfp, large_order);
-> > +
-> > +		if (unlikely(!page))
-> > +			break;
-> 
-> I'm not entirely convinced here.  We might want to fall back to the next
-> larger size.  eg if we try to allocate an order-6 page, and there's not
-> one readily available, perhaps we should try to allocate an order-5 page
-> instead of falling back to the bulk allocator?
-
-I'll try that out and see how that affects the numbers.
-
-> > @@ -3665,7 +3697,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
-> >  		}
-> >  	}
-> >  
-> > -	/* High-order pages or fallback path if "bulk" fails. */
-> > +	/* High-order arch pages or fallback path if "bulk" fails. */
-> 
-> I'm not quite clear what this comment change is meant to convey?
-
-Ah that was a comment I had inserted to remind myself that the passed in
-order is tied to the HAVE_ARCH_HUGE_VMALLOC config. I meant to leave
-that out.
 
