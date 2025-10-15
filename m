@@ -1,157 +1,322 @@
-Return-Path: <linux-kernel+bounces-855135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727B4BE05A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81782BE05B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EDCA134FADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:23:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07F83357F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD498303A0B;
-	Wed, 15 Oct 2025 19:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D1930B537;
+	Wed, 15 Oct 2025 19:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UwJGf+Ul"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWTebpWF"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194AC1D90DF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A0B303C9E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760556179; cv=none; b=MJ5LRjpuPfli785YylvA118n35pkVrx0D8RKED14i8oX0Rk7+FY7R0QhH4z/aPc25jPdupTXYqe9IMysM7DQiWzCjSe4tBoan2LjeOy5u+M96f8UU4MEfBVBhzGVDJPnnb+gAx0VSULjuAdhiF90/zLdCT8oy45YQu7/rhmAqM8=
+	t=1760556302; cv=none; b=iMUOThf29KHKe0n+Rs5tkuQ2pMhQ9yuxZkszH8X3s+NgBGb4gQW6dzERClBOffLKzDBjRhoS9i4wwLnll72Y2b+1/eCv+IOcqHAnuMae/a8dri7M0r0di3InnIoqI+Y0jJCEbooaxK8rqUEMMYPez2UNw1R8hnWoX1eU4QKXqK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760556179; c=relaxed/simple;
-	bh=6FJ/R1ITDsF+bIAIpfjW01XbZyF5cdVhQGhS9FNGWBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YWcczmrVxGOecAui4NK1Txr5Bs2UUGQYTBC+V5g+jchlIQ9ciJLi2CDlpgHOTTMoImZWYpL5P+1ncy06nF9TEMXdW4iu4zQBdJePG50pO0g0pyUNJHmIDs+Gq8ccejc/c1zTrgvp6sZag1Us+Boo2wKUjEpiohdkJMNeN39y1DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UwJGf+Ul; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-58b002614d2so985994e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:22:56 -0700 (PDT)
+	s=arc-20240116; t=1760556302; c=relaxed/simple;
+	bh=dsIF3t/nnF2C1bkVy27zCbkLX0XWi/NLecWE562yUuI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ATBcHSMW+1/0QFiK/mAI4L/lo+ZOxXPhEFjwEapYd0LyGIWxRQ9p8kiGYKxDKJ3aCXd+DSZsQnNiW5zxZR3WuNiwYz+fV4/8e+z7bhF8+vom8Oiu1pYrqVFXkAC9fvIeoRlm6pkQALsKPxNeeW5kV63AfwBF1YnoGYxXOkrW1bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWTebpWF; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-854585036e8so1002635585a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760556175; x=1761160975; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D2uKCDGSkRJ1nI5Vl4WxpkpeLM82j5VPKiPiLY2XZbg=;
-        b=UwJGf+UlWJ7t8hswzGU8YK+rxrOuzqHONzuZvAEiwpkAROzMHTpLkkQNhV7o/LEmva
-         jZoNgA+b1QlTvQITTDVjuuuvZKbv1rFcfWcvt1WYbn0PpXPmG3xiWtyEFuphXwHCzzge
-         0iFKQmd07AWa18Jc8VcjsBEbzoaZZj2pFVCE026X7r89Vik8YAKk0Jgg23aOl0rpd5PN
-         rBpBs2+RJCTSiDv1nqCc/36aDGgX8n8tgQCOs9I5xO8Cm8R6XiYcLThitzFuraUTG/qb
-         HUsq+QSuVAvrmIhMl8jxjfRBxrTAP7sepgYisGScurVa6EI6ShCZbU9mRnHUcSLc5p27
-         aAmw==
+        d=gmail.com; s=20230601; t=1760556299; x=1761161099; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qsqkSof1+GgJ3rfKHvxdreoyI9Vm3blU+Mome4LxMgc=;
+        b=gWTebpWFrp3rcVquThrrs1etrVJ8rwd+PKW3qTVHuGh6MxMoyUDvhuKJUgWmr2g2hC
+         NX8cexpo8LwSJO3AvutXBBxD8KXtG3wOaEBGac0T/m+SWRRqmtsCcD5mms8Fkl2NBElc
+         hNUYIppNNqesrN9eqc6ViLmx9/8T28l3NIOkFuL0IuBhGY+zVTN0uITjGzUPOTJDwpQf
+         h3DbbVzvZLLRdS3HCTH4QjkNrSOTCmGwo+F9RVJ4iB247AJ+SI++siZlDaDqSPpnTuH2
+         wh0it7TeXskuyCoPApea4ZXochIOJDO9OEfGqOtixVdN1B2Z2ulP+fXIFpIEarU4dfEp
+         hI5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760556175; x=1761160975;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D2uKCDGSkRJ1nI5Vl4WxpkpeLM82j5VPKiPiLY2XZbg=;
-        b=RspCbsEMAVqTP9rXwlQLQK5iof51GZF6bN+LUPF9Z+Jq5/JSnBL85IOQ2KIXwjYRwL
-         9hqKgMzWOKyyZ9pLexcWTNMmGRvvs5LRb+pl8n7fcQiuxprhuohlUc/ddzF76BcJvVyu
-         g6dh8XROerbHCzoS4QTeH2ANj7q1gjHU+d2zLzAgIhogqi5tPMeQE63WIiEZvG7dz0+Z
-         HmhfazwUY8SO+J67Ms0+lBUMH/B9PcFbSTmLlvN/Xc98t3QdW5SRJjn7oIiOoKgQ2aBU
-         GmahHGxFCeHTuHhmqwxamfKyBov/e5xqnO6DVqF+emHmkxiwF0XSY+NYrY+v7/+qpsAW
-         +OWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgSFDbISLXhrujnTpsTdfErLiX4XWEEpSHC1Zecxsghf5TBJeS0ey37DD/Q7iJCfPMrTmr32Mxi1m1hSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT1ntsqyQJS/z+woJgSOJWCfHk2K3JnTOrNxz5DGU4aGOGUw1K
-	spQdoyTOkIofvPFywE61+TfiTiAvEkISrly6yqfmaQZDChujBWp1tRwE19kTyPCFbqI=
-X-Gm-Gg: ASbGncuE9fzB88FhxxjAVBr/203AWCKne6v9T8HXQcRDNvPSo6iPMXFGmVfP4pYt2Ie
-	Dbh6tzeZLGB7Ydqy+NsegkeCp5alESUDssT5j8VpLFHpw3qP9UGCss5E7HqrNh6cW5ajX5G035s
-	QjZjyBo18ZIARhvIF0a8fPwKUaO23ZPg5bupfe7TC7cORr7612EvLN+6cAeL/F5wdXhUKUpww4F
-	odCPDUwJ71daUDLtKwTGwHrAjfg2nokg2w8Xeuj+1K+JYxFJZqn/xESiozcb6pr+l39QrjK1m1A
-	oFNGDHjY6sCusIejp91wAyodJZV+LFMqfDeDNQ/4OOeUSQ3txV9wINTyvgFoAcXrq8OeOrifkF4
-	3wwcV9xAkuf+xVQMyR4kUnU2PQlxrsnSQbNLR67oFlYsKPyQ/but6I2/0XN/yyK9iO6gFAvSUR9
-	Zmv6bJoWAt6wfE5g5/Bqh9ExmbErcI75gmVnEONzx0vWpbGwWJ46LLPzkuQptrbDVFc9+vkQ==
-X-Google-Smtp-Source: AGHT+IGD/Uw/fgx84AFertLSvfVKmejPqlvypnP8IIzpqbGwR8abvcNYUgIYpDHVV55dLFfVQQ6myg==
-X-Received: by 2002:a05:6512:39c6:b0:58a:fa11:b795 with SMTP id 2adb3069b0e04-5906d87bd8cmr5059024e87.3.1760556174897;
-        Wed, 15 Oct 2025 12:22:54 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59092ed98d9sm5657624e87.24.2025.10.15.12.22.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 12:22:54 -0700 (PDT)
-Message-ID: <62da6efb-24d0-4a6b-9a52-c8f981f09d30@linaro.org>
-Date: Wed, 15 Oct 2025 22:22:53 +0300
+        d=1e100.net; s=20230601; t=1760556299; x=1761161099;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qsqkSof1+GgJ3rfKHvxdreoyI9Vm3blU+Mome4LxMgc=;
+        b=V/GDE2YzWxG6UsG/WTiEyOZP4O7qPBWT0D7DmaDfZwuAKbxdXyzMwnPIjrai+meHbO
+         pxhY+1E8jBXFo7XGOUOQYN7J4TGaRytjszHDsbl3oZ1KZIUHMqvOzmZOvHnSNkkSjZSk
+         hV51a33/7dW8RFy1UEaDp9KHH7ZukcDAXxExbqZKZPdQ6Wh4/rGX80RfgfI7qqr3cCHp
+         guzQb56ZTDZpcL3VnBwD7abw9t3y2MaKabdhdVox/tFouP7wzGj9i3dccZArXq+7SKGT
+         yQqgYlJAM+UrJt+tEdQ8+Vk3L6BwpgXGTCJuSoSlbQI3uD6e5O3NR1bFBZ95OKSEoChj
+         UctA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQyp6tj7NNprogTxYWmfc4BagMSehtpiGoF8FujXpInk6QwXMmt2kixZZj13azvT3fSbzHba7+jLCNUJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ86d0Az10Qa1ADqBE4ojWZpYhZqdo/e17r5UnOsE0CpSPawpc
+	3Jt5nYK40fRV4CJMNOnlCutjolEVw6nVaLRi0pYMBDeWYSTzTf5qXz9O
+X-Gm-Gg: ASbGncvJ6PW2HN8ed91FAJ79yxfqak9O4fCn59BZTsrBu7cia/fNcPH6spvZgjvsh55
+	w5htvOwVHN8cfh7zQuEtTgVrDNHRPtbakrx/QaU9WQycLxMT54yhgTbHld0cU8eU20CVdA4H5z/
+	GlppDZ4Y7rviGQZGgVHZUgC2SFFnCo1mmo5UBHNQcOiwFYrDcgRrxd1mXm2OxBGIVj9eMlF9j+i
+	4fmYVoh+rjRCj15zZQkyumlQGi9XLju9nc3vHqhrMlrbM3PpSXReDOWECzltFILIxxKrv6DMRg4
+	67VhPEY2J7JRGURkQtam12YSOgn7YYLK+cqkMG22n0feRsateCIwzXFooWcekLHWrwvFSd/IWt9
+	pIsN+r/OjpPG2fIGPqEJ3yiSWcXSQ/HF/3LZvTh9gxcMnQPEfik4aeNJMnatdiRNT0oGhF2/1NJ
+	Y7lHr/vyieRsAy3p4i/V/wt/EodRgANIc/LRP2F2pmsiQz4uxI3c8+8vj20LDKD12us0nAfSDvH
+	32ATOsdAm2RPoBc4pouPs5HMEZJ
+X-Google-Smtp-Source: AGHT+IFENDCESZIeyXPxXyt4zOHnX3/g8IbwHOjGHEmNqkJneLQxgjyuuUuUXXHHdjz1c1DMClMpIQ==
+X-Received: by 2002:a05:622a:1b91:b0:4e8:8d97:ccad with SMTP id d75a77b69052e-4e88d97e80bmr30946781cf.78.1760556298953;
+        Wed, 15 Oct 2025 12:24:58 -0700 (PDT)
+Received: from 136.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:8573:f4c5:e7a9:9cd9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c012b165asm24076996d6.59.2025.10.15.12.24.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 12:24:58 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v17 00/11] rust: replace kernel::str::CStr w/
+ core::ffi::CStr
+Date: Wed, 15 Oct 2025 15:24:30 -0400
+Message-Id: <20251015-cstr-core-v17-0-dc5e7aec870d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: qcom: camss: Use a macro to specify the initial
- buffer count
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20251014-use-marco-to-denote-image-buffer-number-v1-1-f782e4cc622d@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20251014-use-marco-to-denote-image-buffer-number-v1-1-f782e4cc622d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO7072gC/3XTzU7kMAwH8FdBPW+Q7XxzmvdAHFInZardmUBaK
+ kZo3p0Ulm071R7T5Of8FbsfzZBKn4bm4e6jKWnqhz6f6wLtr7uGj+H8nEQf64eGgDQQoOBhLIJ
+ zSSKq1rfGIwF3TT3/UlLXv38Ve3yq667kkxiPJYWfCgocetTSaHNPzoEVJKYQc8nT8PtyeCl5z
+ OdT6P/ccz7NJY/9MOZy+Yo3mbnwTxBaBZmMAOGU8RxNJN/Fw/O/InOQyf5X2ipjQFe3CJR0t9K
+ tpVxLVyW3siOTrDPO3Eq/SIl2LX2VGqNh1kSdoVuJsFBNak0RqjUKKXgVfbR6Z3FlJWwszomjZ
+ +CWWw/7e2mxBv3G0vzCwJ5tq7QH2Fm5WLuZkrpVbe2KjTK13obdS6FaWdxmVnPmYBNwcMRun1k
+ v1uGmQahnayVFTyQ7lXZ2NVCe9MbOE6U51gYrC4k3916/Z72k17f6v4x/B/56/QRuXJsJTQMAA
+ A==
+X-Change-ID: 20250201-cstr-core-d4b9b69120cf
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, 
+ Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+ Joel Fernandes <joelagnelf@nvidia.com>, Carlos Llamas <cmllamas@google.com>, 
+ Suren Baghdasaryan <surenb@google.com>, Jens Axboe <axboe@kernel.dk>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Uladzislau Rezki <urezki@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+ linux-block@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1760556294; l=8195;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=dsIF3t/nnF2C1bkVy27zCbkLX0XWi/NLecWE562yUuI=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QLbq7swEl/niXuoW+wz3Le/PnExng+T5Ufr5D9O8K6KvriHyGINmOEmh8dDVyOUfqjk4uommS1e
+ rfnmleVHocgM=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On 10/15/25 05:42, Hangxiang Ma wrote:
-> Replace the hardcoded buffer count value with a macro to enable
-> operating on these buffers elsewhere in the CAMSS driver based on this
-> count. Some of the hardware architectures require deferring the AUP and
-> REG update until after the CSID configuration and this macro is expected
-> to be useful in such scenarios.
-> 
-> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> ---
-> This change use a global macro to specify the initial buffer count. It
-> meets the requirement that some hardware architectures need to defer the
-> AUP and REG update to CSID configuration stage.
+This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+have omitted Co-authored tags, as the end result is quite different.
 
-Both the commit message and the explanation above brings no clarity on
-the necessity of this change at all.
+This series is intended to be taken through rust-next. The final patch
+in the series requires some other subsystems' `Acked-by`s:
+- drivers/android/binder/stats.rs: rust_binder. Alice, could you take a
+  look?
+- rust/kernel/device.rs: driver-core. Already acked by gregkh.
+- rust/kernel/firmware.rs: driver-core. Danilo, could you take a look?
+- rust/kernel/seq_file.rs: vfs. Christian, could you take a look?
+- rust/kernel/sync/*: locking-core. Boqun, could you take a look?
 
-This is a dangling useless commit, if you'd like to connect it to
-something meaningful, please include it into a series.
+Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
+Closes: https://github.com/Rust-for-Linux/linux/issues/1075
 
-> ---
->   drivers/media/platform/qcom/camss/camss-vfe.c | 2 +-
->   drivers/media/platform/qcom/camss/camss.h     | 1 +
->   2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-> index 09b29ba383f1..2753c2bb6c04 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -541,7 +541,7 @@ int vfe_enable_output_v2(struct vfe_line *line)
->   
->   	ops->vfe_wm_start(vfe, output->wm_idx[0], line);
->   
-> -	for (i = 0; i < 2; i++) {
-> +	for (i = 0; i < CAMSS_INIT_BUF_COUNT; i++) {
->   		output->buf[i] = vfe_buf_get_pending(output);
->   		if (!output->buf[i])
->   			break;
-> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-> index a70fbc78ccc3..901f84efaf7d 100644
-> --- a/drivers/media/platform/qcom/camss/camss.h
-> +++ b/drivers/media/platform/qcom/camss/camss.h
-> @@ -41,6 +41,7 @@
->   	(to_camss_index(ptr_module, index)->dev)
->   
->   #define CAMSS_RES_MAX 17
-> +#define CAMSS_INIT_BUF_COUNT 2
->   
->   struct camss_subdev_resources {
->   	char *regulators[CAMSS_RES_MAX];
-> 
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v17:
+- Rebase on rust-next and fix backsliding relative to series 2a and 2b.
+- Link to v16: https://lore.kernel.org/r/20250925-cstr-core-v16-0-5cdcb3470ec2@gmail.com
 
--- 
-Best wishes,
-Vladimir
+Changes in v16:
+- Rebase on rust-next.
+- Link to v15: https://lore.kernel.org/r/20250813-cstr-core-v15-0-c732d9223f4e@gmail.com
+
+Changes in v15:
+- Seal `CStrExt`. (Benno Lossin)
+- Add patch to remove trailing commas from
+  samples/rust/rust_driver_platform.rs.
+- Link to v14: https://lore.kernel.org/r/20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com
+
+Changes in v14:
+- Break the change into multiple series.
+- Move `CStr` reexport to `kernel::ffi`. (Alice Ryhl)
+- `pub use core::fmt::{....}` in `kernel/fmt.rs`. (Benno Lossin)
+- Avoid unnecessary binding to `first_lit` in `fmt!`. (Benno Lossin)
+- Add comment to `identifier`-extracting loop. (Benno Lossin)
+- Change `quote_spanned!` formatting. (Benno Lossin)
+- Link to v13: https://lore.kernel.org/r/20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com
+
+Changes in v13:
+- Rebase on v6.16-rc4.
+- Link to v12: https://lore.kernel.org/r/20250619-cstr-core-v12-0-80c9c7b45900@gmail.com
+
+Changes in v12:
+- Introduce `kernel::fmt::Display` to allow implementations on foreign
+  types.
+- Tidy up doc comment on `str_to_cstr`. (Alice Ryhl).
+- Link to v11: https://lore.kernel.org/r/20250530-cstr-core-v11-0-cd9c0cbcb902@gmail.com
+
+Changes in v11:
+- Use `quote_spanned!` to avoid `use<'a, T>` and generally reduce manual
+  token construction.
+- Add a commit to simplify `quote_spanned!`.
+- Drop first commit in favor of
+  https://lore.kernel.org/rust-for-linux/20240906164448.2268368-1-paddymills@proton.me/.
+  (Miguel Ojeda)
+- Correctly handle expressions such as `pr_info!("{a}", a = a = a)`.
+  (Benno Lossin)
+- Avoid dealing with `}}` escapes, which is not needed. (Benno Lossin)
+- Revert some unnecessary changes. (Benno Lossin)
+- Rename `c_str_avoid_literals!` to `str_to_cstr!`. (Benno Lossin &
+  Alice Ryhl).
+- Link to v10: https://lore.kernel.org/r/20250524-cstr-core-v10-0-6412a94d9d75@gmail.com
+
+Changes in v10:
+- Rebase on cbeaa41dfe26b72639141e87183cb23e00d4b0dd.
+- Implement Alice's suggestion to use a proc macro to work around orphan
+  rules otherwise preventing `core::ffi::CStr` to be directly printed
+  with `{}`.
+- Link to v9: https://lore.kernel.org/r/20250317-cstr-core-v9-0-51d6cc522f62@gmail.com
+
+Changes in v9:
+- Rebase on rust-next.
+- Restore `impl Display for BStr` which exists upstream[1].
+- Link: https://doc.rust-lang.org/nightly/std/bstr/struct.ByteStr.html#impl-Display-for-ByteStr [1]
+- Link to v8: https://lore.kernel.org/r/20250203-cstr-core-v8-0-cb3f26e78686@gmail.com
+
+Changes in v8:
+- Move `{from,as}_char_ptr` back to `CStrExt`. This reduces the diff
+  some.
+- Restore `from_bytes_with_nul_unchecked_mut`, `to_cstring`.
+- Link to v7: https://lore.kernel.org/r/20250202-cstr-core-v7-0-da1802520438@gmail.com
+
+Changes in v7:
+- Rebased on mainline.
+- Restore functionality added in commit a321f3ad0a5d ("rust: str: add
+  {make,to}_{upper,lower}case() to CString").
+- Used `diff.algorithm patience` to improve diff readability.
+- Link to v6: https://lore.kernel.org/r/20250202-cstr-core-v6-0-8469cd6d29fd@gmail.com
+
+Changes in v6:
+- Split the work into several commits for ease of review.
+- Restore `{from,as}_char_ptr` to allow building on ARM (see commit
+  message).
+- Add `CStrExt` to `kernel::prelude`. (Alice Ryhl)
+- Remove `CStrExt::from_bytes_with_nul_unchecked_mut` and restore
+  `DerefMut for CString`. (Alice Ryhl)
+- Rename and hide `kernel::c_str!` to encourage use of C-String
+  literals.
+- Drop implementation and invocation changes in kunit.rs. (Trevor Gross)
+- Drop docs on `Display` impl. (Trevor Gross)
+- Rewrite docs in the style of the standard library.
+- Restore the `test_cstr_debug` unit tests to demonstrate that the
+  implementation has changed.
+
+Changes in v5:
+- Keep the `test_cstr_display*` unit tests.
+
+Changes in v4:
+- Provide the `CStrExt` trait with `display()` method, which returns a
+   `CStrDisplay` wrapper with `Display` implementation. This addresses
+   the lack of `Display` implementation for `core::ffi::CStr`.
+- Provide `from_bytes_with_nul_unchecked_mut()` method in `CStrExt`,
+   which might be useful and is going to prevent manual, unsafe casts.
+- Fix a typo (s/preffered/prefered/).
+
+Changes in v3:
+- Fix the commit message.
+- Remove redundant braces in `use`, when only one item is imported.
+
+Changes in v2:
+- Do not remove `c_str` macro. While it's preferred to use C-string
+   literals, there are two cases where `c_str` is helpful:
+   - When working with macros, which already return a Rust string literal
+     (e.g. `stringify!`).
+   - When building macros, where we want to take a Rust string literal as an
+     argument (for caller's convenience), but still use it as a C-string
+     internally.
+- Use Rust literals as arguments in macros (`new_mutex`, `new_condvar`,
+   `new_mutex`). Use the `c_str` macro to convert these literals to C-string
+   literals.
+- Use `c_str` in kunit.rs for converting the output of `stringify!` to a
+   `CStr`.
+- Remove `DerefMut` implementation for `CString`.
+
+---
+Tamir Duberstein (11):
+      samples: rust: platform: remove trailing commas
+      rust_binder: remove trailing comma
+      rust_binder: use `kernel::fmt`
+      rust_binder: use `core::ffi::CStr` method names
+      rnull: use `kernel::fmt`
+      rust: alloc: use `kernel::fmt`
+      rust: debugfs: use `kernel::fmt`
+      rust: pci: use `kernel::fmt`
+      rust: remove spurious `use core::fmt::Debug`
+      rust: support formatting of foreign types
+      rust: replace `CStr` with `core::ffi::CStr`
+
+ drivers/android/binder/error.rs          |   5 +-
+ drivers/android/binder/process.rs        |   2 +-
+ drivers/android/binder/stats.rs          |   6 +-
+ drivers/block/rnull/configfs.rs          |   9 +-
+ rust/ffi.rs                              |   2 +
+ rust/kernel/alloc/kvec/errors.rs         |  14 +-
+ rust/kernel/debugfs.rs                   |   2 +-
+ rust/kernel/debugfs/callback_adapters.rs |   7 +-
+ rust/kernel/debugfs/file_ops.rs          |   6 +-
+ rust/kernel/debugfs/traits.rs            |  10 +-
+ rust/kernel/device.rs                    |   1 +
+ rust/kernel/error.rs                     |   2 +
+ rust/kernel/firmware.rs                  |   9 +-
+ rust/kernel/fmt.rs                       |  87 ++++++-
+ rust/kernel/pci/id.rs                    |   3 +-
+ rust/kernel/prelude.rs                   |   7 +-
+ rust/kernel/ptr.rs                       |   1 -
+ rust/kernel/seq_file.rs                  |   2 +-
+ rust/kernel/str.rs                       | 395 +++++++------------------------
+ rust/kernel/sync/condvar.rs              |   2 +-
+ rust/kernel/sync/lock.rs                 |   2 +-
+ rust/kernel/sync/lock/global.rs          |   2 +-
+ rust/macros/fmt.rs                       |  94 ++++++++
+ rust/macros/lib.rs                       |  19 ++
+ rust/macros/quote.rs                     |   7 +
+ samples/rust/rust_driver_platform.rs     |   4 +-
+ 26 files changed, 350 insertions(+), 350 deletions(-)
+---
+base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
+change-id: 20250201-cstr-core-d4b9b69120cf
+
+Best regards,
+--  
+Tamir Duberstein <tamird@gmail.com>
+
 
