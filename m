@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-853612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48238BDC17D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:01:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FBDBDC174
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB5054FAFA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572ED3A9C88
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E494F30B522;
-	Wed, 15 Oct 2025 02:00:58 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C6028751D;
+	Wed, 15 Oct 2025 02:00:34 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D803328751D;
-	Wed, 15 Oct 2025 02:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747F91D5ACE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760493658; cv=none; b=Hp5ry/7AcpS0teq6CsvYHVOEOCqgBvEl81ld/nqHnbJAXBGwQSMeYh2GO4K4KKVVvUEI3PdRiJhukQxXr2tsSu1/2TxxrJ0GBVRS/X9HAm3p73h1ETMHw6lsubNU4OpBu6Tbr3PBfXqshyoC6wmWpMdPJcBnz3BpmiJiXkGzLx8=
+	t=1760493634; cv=none; b=hsLg4XJhQNNwhvmUC397nM96vzOhKAIJsxU/Pd46QXbasuOWXY2qJzBbFQvs/aCs840CTvRHmJr4ZvIF+7hShJwJ+DG7DOiQtHl1qh/0OzQCQypoBE01eet5Vs1xamofsiVp+fxWEA1frSrbIKEnhuYiWA8QFy8PtbPFWhVrYgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760493658; c=relaxed/simple;
-	bh=8HlwfC1P14GCBNd9+4iSjgeCTAKOtiW08tjD+3oWpcA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kYUHfMix9KYVQinuLRkNEzdjl3oxDV2D3ogCBEIrFi2q3nq22TiFgQ3RKDpwS98lxfZfxThzfFlRnnwd6Q+WyhQ7uQKmh9wNm+1ClA1YVyAEGXB4hIvdSZE5IzZY1quxax8cv4nhk3CoIXa0WNZogdi3ZJig8n1/AzgPEo7nnX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201613.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202510151000413749;
-        Wed, 15 Oct 2025 10:00:41 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- Jtjnmail201613.home.langchao.com (10.100.2.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 15 Oct 2025 10:00:41 +0800
-Received: from inspur.com (10.100.2.108) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 15 Oct 2025 10:00:41 +0800
-Received: from localhost.localdomain.com (unknown [10.94.16.205])
-	by app4 (Coremail) with SMTP id bAJkCsDwRLVIAO9oJb4JAA--.1703S5;
-	Wed, 15 Oct 2025 10:00:41 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <kwankhede@nvidia.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
-	<chuguangqing@inspur.com>
-Subject: [PATCH v3 1/1] vfio/mtty: Fix spelling typo in samples/vfio-mdev
-Date: Wed, 15 Oct 2025 09:59:54 +0800
-Message-ID: <20251015015954.2363-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20251015015954.2363-1-chuguangqing@inspur.com>
-References: <20251015015954.2363-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1760493634; c=relaxed/simple;
+	bh=A66mSnjX6N6NGNIH6jY477HC/LPTbHEtilVXJHjc/Ps=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KLIX1J0oB5WOtmTRKPDFACDvUZUPA23b0H8K4NXosmP2wvTQyQHLort/rv+OEx2nfvCyfzEqvV9eqt+GWME+mA4ie/gtR4sZEQwv8QYfLhvTbhCBVooduGQfXTMO189gcH2ZW8VMuUiUewqHY6BFSn7Dsmlac3fXxiD3QMicsNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93e4da7a183so236296939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:00:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760493630; x=1761098430;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4fFPe7hyn/AwEN5Z4Q8RKAqq7yvPlsJ4hpwsLWIC0Wc=;
+        b=gxYiN7ljojuo6MQAHnzo61IxAAyxUeshg6EXzmTnFjX910YzRsK2diJflRWFj3v6gr
+         i34VokPBX9HKl44ghODjciQMR/EcltDnBuBD3Zu+Wq8289y3Bj8K8pMwJK+6h9JsAwhQ
+         oSNdueB3scWHBR6oIXRYzsFNdeE1qumjZRiKbWfNJsO46LUNGYezQ9czaTEpxuJ7abc2
+         XThpzzHCwTlkzc7OfbNlnhA6JAVw6naxwkngGhtDZQfqESQCfS8VSqBQ97heVX+UKzXX
+         qTEUatJLTnYl/GCkI0bN7LPSQes3h2IZaPHMYgwavWBgm7FeCmuvwhIQnE3WAIrma1iq
+         LRgw==
+X-Forwarded-Encrypted: i=1; AJvYcCULaqZssWGB8l8LGehJjPmyN8O2iu6Z6SdSHijewY418l4dgztEI8R4XGkS3EOWdi/Y53FWvWxEGoY9gW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYMvZQHYCXhNsl9rXEuKQ03MibFEPlCF/EbgbfD6pmgFfJrkvA
+	SSBk/IUmqS15mRdUgIqqJz4RpLD+exCo/T2h/dECwvnoHnVsF8NPWPczxeyJmJ9YnKycf/EIj9N
+	eChVTXAEB81j1ZkHT/heJii5f0GtK4UsjlHyfqWCHWR5gUjUMZZbL5Qb798c=
+X-Google-Smtp-Source: AGHT+IHghrZiAsK1jI6A++dl3I1som3DuS+rfakA7eQcIlh0JV7bE164v91Z52e3wI/sZwCjdkXLIZXNlT0bZXBf/m2zQG8Y2m/U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: bAJkCsDwRLVIAO9oJb4JAA--.1703S5
-X-Coremail-Antispam: 1UD129KBjvdXoWruw18Ar1rXryDXw1rWw17Wrg_yoW3JFX_Kw
-	40vr4kZ34DJFs2qr9rArWFgwsrt3WrW3Z7KFZIgFy0yF4rAa98urnFqFyDGryUuFW2k3W5
-	Ars8Gry2v3W0kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb-8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-	0Ec7CjxVAFwI0_Jrv_JF4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E
-	0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67
-	AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48I
-	cxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxV
-	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
-	6r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
-	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
-	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UYxBIdaVFxhVjvjDU0xZFpf9x0JUC-eOUUUUU=
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?YoIoAJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KZx0v0U7XsJAfJ83JoMh0xXhmP1DiyZeOIe5ZDWagPqcMm4TJJGdl0nV0olMO4yl5xxS
-	wNVnDUZlPiLKO1VAl18=
-Content-Type: text/plain
-tUid: 202510151000419e40d9317aa52ceeb02458e9441451d7
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-Received: by 2002:a05:6e02:270a:b0:42d:8b1c:5710 with SMTP id
+ e9e14a558f8ab-42f872c59cdmr259625475ab.0.1760493630583; Tue, 14 Oct 2025
+ 19:00:30 -0700 (PDT)
+Date: Tue, 14 Oct 2025 19:00:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ef003e.050a0220.91a22.0229.GAE@google.com>
+Subject: [syzbot] [gfs2?] kernel BUG in do_xmote
+From: syzbot <syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-mtty.c
-The comment incorrectly used "atleast" instead of "at least".
+Hello,
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+syzbot found the following issue on:
+
+HEAD commit:    52ba76324a9d Add linux-next specific files for 20251013
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=159e25e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
+dashboard link: https://syzkaller.appspot.com/bug?extid=353de08f32ce69361b89
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1589f304580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1492bb34580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1729256319ee/disk-52ba7632.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a3152cfcba7c/vmlinux-52ba7632.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4065a3b3d959/bzImage-52ba7632.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/85dc141e7c83/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10dc5542580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com
+
+gfs2: fsid=syz:syz.0: G:  s:EX n:3/2090 f:lyfaqo t:EX d:EX/0 a:0 v:0 r:3 m:20 p:0
+gfs2: fsid=syz:syz.0:  H: s:EX f:nW e:0 p:6072 [syz.0.21] alloc_dinode+0x16a/0x550 fs/gfs2/inode.c:414
+gfs2: fsid=syz:syz.0:  R: n:8336 f:80000000 b:826/826 i:7 q:0 r:0 e:7811
+------------[ cut here ]------------
+kernel BUG at fs/gfs2/glock.c:674!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6064 Comm: kworker/0:2H Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: gfs2-glock/syz:syz glock_work_func
+RIP: 0010:do_xmote+0x706/0x750 fs/gfs2/glock.c:674
+Code: 38 c1 0f 8c a9 fe ff ff 48 89 df e8 64 77 29 fe e9 9c fe ff ff e8 ea cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 1b e9 fe ff 90 <0f> 0b e8 d3 cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 04 e9 fe ff
+RSP: 0018:ffffc90002ff79a0 EFLAGS: 00010246
+RAX: 89b42d9b8aee9500 RBX: ffff8880406efb60 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 00000000ffffffff
+RBP: ffffffff8bb183c0 R08: ffff888075ab0bab R09: 1ffff1100eb56175
+R10: dffffc0000000000 R11: ffffed100eb56176 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000015
+FS:  0000000000000000(0000) GS:ffff888125d08000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f742dc70f98 CR3: 000000007b84a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ glock_work_func+0x2a8/0x580 fs/gfs2/glock.c:1002
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:do_xmote+0x706/0x750 fs/gfs2/glock.c:674
+Code: 38 c1 0f 8c a9 fe ff ff 48 89 df e8 64 77 29 fe e9 9c fe ff ff e8 ea cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 1b e9 fe ff 90 <0f> 0b e8 d3 cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 04 e9 fe ff
+RSP: 0018:ffffc90002ff79a0 EFLAGS: 00010246
+RAX: 89b42d9b8aee9500 RBX: ffff8880406efb60 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 00000000ffffffff
+RBP: ffffffff8bb183c0 R08: ffff888075ab0bab R09: 1ffff1100eb56175
+R10: dffffc0000000000 R11: ffffed100eb56176 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000015
+FS:  0000000000000000(0000) GS:ffff888125d08000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f742dc70f98 CR3: 000000007b84a000 CR4: 00000000003526f0
+
+
 ---
- samples/vfio-mdev/mtty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 59eefe2fed10..6cb3e5974990 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -624,7 +624,7 @@ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
- 		u8 lsr = 0;
- 
- 		mutex_lock(&mdev_state->rxtx_lock);
--		/* atleast one char in FIFO */
-+		/* at least one char in FIFO */
- 		if (mdev_state->s[index].rxtx.head !=
- 				 mdev_state->s[index].rxtx.tail)
- 			lsr |= UART_LSR_DR;
--- 
-2.43.7
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
