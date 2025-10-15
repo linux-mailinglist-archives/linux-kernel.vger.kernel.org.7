@@ -1,134 +1,100 @@
-Return-Path: <linux-kernel+bounces-854622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06946BDEDE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:57:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADD9BDEE13
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E603B9636
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:57:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50F024FF28D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D052E23D7C5;
-	Wed, 15 Oct 2025 13:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E950B244661;
+	Wed, 15 Oct 2025 13:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R8yaAC/M"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9i78eep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2C521323C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446AB23BD1D;
+	Wed, 15 Oct 2025 13:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760536659; cv=none; b=odwjIGrcCqfAmNGcsPg3SRNm/CbYGwoH2UtQOF+NuA983GqwvNwtB1mh+/YLxAg3tDyVn3BlsghP+nyQxwOkOzWRNVaDCDac7wvqjZkkI0F8NhOkZtFWL5Y0EQ+UA/3kk3Lgz3foNPgOrLlBlCkEw6jOqFJEunQIeFDWzaQcELI=
+	t=1760536780; cv=none; b=JgHHmDjDEfcgBZV0YIGBudjY3R3jqrDFy8+ifB4IeifRl9WwdsdRCv1YkP8dSB7SVZ+k+hN2EUli1WiO1M/ybXvdO19mY8emUN7xQQUWf208expl/cXGIq9yXnfKeXHL7N8i/Ew8DsQZk20k0oopP3qzRpG+lnRl4J2A8Ydqz/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760536659; c=relaxed/simple;
-	bh=914YWKhORdAdREtonmghsM3z/MP7Mw+k1IVoaRAXaCI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=i48wF+Bw4G51yeUgwB5jcFBNrOCPYLZd2jEvF1vS0XIMBTvLTwweHVhiEi0rp/dp19RiB5U/0u96sWZU21thsqgzMvprrxY4olGugR7dZmdBBlKq9vTB02z84Zh3uyDfyCNWbxVSyCbmDOndhMSlY6xB46bWipuV23lXMdDwbQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R8yaAC/M; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5a013bc46dso9491731a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760536657; x=1761141457; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qN/u3D1Ic2NfIT6zYQD+vHPHON5q0zRxCVjBfN7LZuE=;
-        b=R8yaAC/MxgTA1fsrfoeliujYAK0ZKCX4Gj1NFFA+J9ApQUuvZrLLoZaBmTc9LWjzrU
-         FjJBdhRrJEuV4yscFAHr+Y4cgevC1/Et4CIOivTd8KP1nZ4orKyHRgEWQZaPKdalwbYi
-         fZph9fOQuo6l9HNr+a/pALcsW3y2yuZlQqTegqIKLM993HJ2m0ul0K36GU1HjgSc4b+R
-         rVNeNRG/Uq5aRBlxLBjfR74ZlEblaDHT3IOSQRtJPR366gnYiGAG+GQuEhWA/kcgjOyD
-         7jLi6Oj8NiiRBuuOU2Wpw1io4lUBTZiE7cFpmhJdrVNE/rC6AaPx1X9cTi//k4SXU3gJ
-         IDng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760536657; x=1761141457;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qN/u3D1Ic2NfIT6zYQD+vHPHON5q0zRxCVjBfN7LZuE=;
-        b=iZPNiGmJD67wNgeAuTlEsLvpVDGYvR2oUa4ILSeYoRLSdAhXde2Mqn77G3Ze6BBb2/
-         +sqpXBt3WEqK+pHrFCXHp7PmKaDNlIQ06ICVbQxPp+XJr7L8Jqg02i6JQzD/kzWIVAnR
-         hPIoIZcHo/R7IrfzEev7OUplQAqXB2Xk/IWSXECgaRXog+YnO+hojpqEq1IJOKOn6T/O
-         PoiCadyipHjPeEs4wfXxGvei/k7f4P1XGGqGzzj7Z0va2dCS5umvXZYIyubt1IKvyjUQ
-         vCTZk19Z+uCuhyymHmIVpqA5I6AlecHZvhQ9+RuzqdiO+ujHCaTmvIGeX5Zih1l4+9te
-         3s1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVy3eSycFhRgH43TTTrikQFzgP8JA6NHd6Gn2rSTeVsQFhoC3bQs79qfZXUPdzaICXvZ8ICgF1Xi1j7LzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOyHV7PYb2bp6S1j7W6wcQ+zeiTRy1nRAyk8IyU5pQjYOaJVdW
-	OeJGy082u8yZaYBM5i6Hspj5JAnOoT8DTpW4zhFM6z6VY0ZRL97Hq44NxDQBirxcrwSoYte5OVL
-	iBL2FhQ==
-X-Google-Smtp-Source: AGHT+IEyIzQLWPhAYYB3gtJgp/BmJ24/oEbEbNVeRBVUNOIF4pnDsqkLncvGwTJJ1+Rn/DPUNhJxMmTiu40=
-X-Received: from pjon8.prod.google.com ([2002:a17:90a:9288:b0:32e:b34b:92e8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b11:b0:330:7f80:bbd9
- with SMTP id 98e67ed59e1d1-33b5139a422mr36589740a91.31.1760536657007; Wed, 15
- Oct 2025 06:57:37 -0700 (PDT)
-Date: Wed, 15 Oct 2025 06:57:35 -0700
-In-Reply-To: <b12f4ba6-bf52-4378-a107-f519eb575281@intel.com>
+	s=arc-20240116; t=1760536780; c=relaxed/simple;
+	bh=DwUHoZqWcYMyz1nussrz3FQ3Rsn+co8/zERGpsHFIEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhBEdfdLdeqoW8gG+zKRh94NgqajiucLvktK8cjmQjJ8Sz18YIs7Oi4rlqMiOmRTsf8T8GIhalVKiGNG9e+SdUrvUOKNqJt6l5rM7CaTjMcwVUDzteQrTZnw4w/Iken2+atkem56Ud7Vlt36uZjyjOkKDkpSsqlaWpmRBW+H7ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9i78eep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F20AC4CEF8;
+	Wed, 15 Oct 2025 13:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760536779;
+	bh=DwUHoZqWcYMyz1nussrz3FQ3Rsn+co8/zERGpsHFIEQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R9i78eep6JNFh+dgLuDlH5N5/XKr7p8sX9bdlHGb5p84TEWW/KHf6y4gPJ/+pSDAG
+	 jX//HgZzYp7+gI4qlRNXZZHMTsK44rlSr6m4/q5mq6s1H86Ifo7126uS/LyyO8apTw
+	 sV5uRoUjUJtIrz/1FdXmRQgBeOZ6w/mvj+ij6SRXuTKfait1Dz0CgjpIYJR033Yy79
+	 B2CfEoZ2ilfxIDuJ5mHK7kW29ZvLTVTWhIJYAm7QvnXpSsr7GVoRXWGidQT2bPOc6X
+	 0d5zfxS3obmsutrDBfpq6hEAsWba+gs+4IorVyAMbFH0XyW+pFGzPsHCx6KIpNNO98
+	 +CQ6h501WN8SA==
+Date: Wed, 15 Oct 2025 08:59:36 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, upstream@airoha.com,
+	linux-pci@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] dt-bindings: PCI: mediatek: Convert to YAML schema
+Message-ID: <176053677610.3299416.10324456171470635844.robh@kernel.org>
+References: <20251012205900.5948-1-ansuelsmth@gmail.com>
+ <20251012205900.5948-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251014231042.1399849-1-seanjc@google.com> <b12f4ba6-bf52-4378-a107-f519eb575281@intel.com>
-Message-ID: <aO-oTw_l9mU1blRo@google.com>
-Subject: Re: [PATCH] KVM: VMX: Inject #UD if guest tries to execute SEAMCALL
- or TDCALL
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kai Huang <kai.huang@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251012205900.5948-3-ansuelsmth@gmail.com>
 
-On Wed, Oct 15, 2025, Xiaoyao Li wrote:
-> On 10/15/2025 7:10 AM, Sean Christopherson wrote:
-> > diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> > index 76271962cb70..f64a1eb241b6 100644
-> > --- a/arch/x86/kvm/vmx/nested.c
-> > +++ b/arch/x86/kvm/vmx/nested.c
-> > @@ -6728,6 +6728,14 @@ static bool nested_vmx_l1_wants_exit(struct kvm_vcpu *vcpu,
-> >   	case EXIT_REASON_NOTIFY:
-> >   		/* Notify VM exit is not exposed to L1 */
-> >   		return false;
-> > +	case EXIT_REASON_SEAMCALL:
-> > +	case EXIT_REASON_TDCALL:
-> > +		/*
-> > +		 * SEAMCALL and TDCALL unconditionally VM-Exit, but aren't
-> > +		 * virtualized by KVM for L1 hypervisors, i.e. L1 should
-> > +		 * never want or expect such an exit.
-> > +		 */
+
+On Sun, 12 Oct 2025 22:56:56 +0200, Christian Marangi wrote:
+> Convert the PCI mediatek Documentation to YAML schema to enable
+> validation of the supported GEN1/2 Mediatek PCIe controller.
 > 
-> The i.e. part is confusing? It is exactly forwarding the EXITs to L1, while
-> it says L1 should never want or expect such an exit.
+> While converting, lots of cleanup were done from the .txt with better
+> specifying what is supported by the various PCIe controller variant and
+> drop of redundant info that are part of the standard PCIe Host Bridge
+> schema.
+> 
+> To reduce schema complexity the .txt is split in 2 YAML, one for
+> mt7623/mt2701 and the other for every other compatible.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/pci/mediatek-pcie-mt7623.yaml    | 164 +++++++++
+>  .../devicetree/bindings/pci/mediatek-pcie.txt | 289 ----------------
+>  .../bindings/pci/mediatek-pcie.yaml           | 318 ++++++++++++++++++
+>  3 files changed, 482 insertions(+), 289 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> 
 
-Gah, the comment is right, the code is wrong.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-/facepalm
-
-I even tried to explicitly test this, but I put the TDCALL and SEAMCALL in L1
-instead of L2.
-
-diff --git a/tools/testing/selftests/kvm/x86/vmx_invalid_nested_guest_state.c b/tools/testing/selftests/kvm/x86/vmx_invalid_nested_guest_state.c
-index a100ee5f0009..1d7ef7d2d381 100644
---- a/tools/testing/selftests/kvm/x86/vmx_invalid_nested_guest_state.c
-+++ b/tools/testing/selftests/kvm/x86/vmx_invalid_nested_guest_state.c
-@@ -23,11 +23,17 @@ static void l2_guest_code(void)
-                     : : [port] "d" (ARBITRARY_IO_PORT) : "rax");
- }
- 
-+#define tdcall         ".byte 0x66,0x0f,0x01,0xcc"
-+#define seamcall       ".byte 0x66,0x0f,0x01,0xcf"
-+
- static void l1_guest_code(struct vmx_pages *vmx_pages)
- {
- #define L2_GUEST_STACK_SIZE 64
-        unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
- 
-+       TEST_ASSERT_EQ(kvm_asm_safe(tdcall), UD_VECTOR);
-+       TEST_ASSERT_EQ(kvm_asm_safe(seamcall), UD_VECTOR);
-+
-        GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
-        GUEST_ASSERT(load_vmcs(vmx_pages));
- 
 
