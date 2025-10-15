@@ -1,125 +1,177 @@
-Return-Path: <linux-kernel+bounces-854104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A8DBDD8D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:56:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3312ABDD8DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17CBC4F0A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E6C544E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E0C318130;
-	Wed, 15 Oct 2025 08:55:59 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93CD31960A;
+	Wed, 15 Oct 2025 08:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbewO6QI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269C83064B1;
-	Wed, 15 Oct 2025 08:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153242D6E44
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518559; cv=none; b=n8cX9FoHHOd40qEtvZfvNN0ewcO/dbYL0BbQzez2BlPeaMEHA48G6d69S2V9KthZ0Ateenn7D4SLgkr4JEBQ3Ju9mJ/T8gltfsu9NVvWJMtflt51jNk7OQHYnKdFnbPhaLRrucBw4qsvdc0A56b2Tq0Dwe7KcWuQW6gs4/j75Ws=
+	t=1760518613; cv=none; b=C004FTyxrlzdur/7Eg5CS7YiMWI7FcwjDq+Lt0DC00ep6BxpcYTtXe+V3FHFKE7xG70vHYxKTPy/mVsQrzZBWp3KR5hrZx4+lKg8EX0mlVwvViBbyMedSWxWnN8MWs4YEzNIauvz0FarbbaRhbh8/WyI8CqotUGAJFMAtEYBSCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518559; c=relaxed/simple;
-	bh=nc+2CydMl68yydJCR5gpu0Jhaqdx/c6bk8d447JO32Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6n2U+rU0SnDydja2twoV03ejUc9VULGRcJAfPRT4FoqQ0LXJSeKKHx3ay6A0paAsHR4VjeoYGvPkIjrj2Vlzn9u+8fr9dJEH+f59dTLjYyumc1Lp6MaGhDlbGyz5uF0zZoJvD6Ry15LlNtctVs71awkI2grFmJXtZZfX1AOkQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b991d332a9a411f0a38c85956e01ac42-20251015
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:dba242d5-6dce-4d11-ac71-27fb9e267eb2,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:359230cc1d789239cbf78763ed5aec16,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: b991d332a9a411f0a38c85956e01ac42-20251015
-X-User: tanze@kylinos.cn
-Received: from [10.42.20.57] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <tanze@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 1046902316; Wed, 15 Oct 2025 16:55:40 +0800
-Message-ID: <5dee24f7-fc92-44f9-9a21-799a8ae20315@kylinos.cn>
-Date: Wed, 15 Oct 2025 16:55:37 +0800
+	s=arc-20240116; t=1760518613; c=relaxed/simple;
+	bh=xwT/Pl6dmG87t57HfPsPPmRDTlhvJ17+rT6ZCP+etKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bj59hJxC8uwezMuuVFSs0lwNg19pBOSeWU6H740EXV/H4KGeuXTQbirsasJa50ggTWa9m4tVUpovJh/45MVsFFwoMTPfAxBuSOago0Rb6emL02sTILTFU54KBPEqqE02F6HeRTGo6D2WF+D3AUenaps420Dv7GHVAx9fm4a87B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbewO6QI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A368FC4CEF9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760518612;
+	bh=xwT/Pl6dmG87t57HfPsPPmRDTlhvJ17+rT6ZCP+etKo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VbewO6QIniE2Tx9chejq2BKNQIOjVp/lN5GVzA7F9zYlqG7nhwHrcn6PuuFiKnqHp
+	 0cJ9ZG85LJoIjPTxBS2WJqhMAFPN15oIvEhMXe65qBWVB0AhSCvZdTuVj7i8qLvtcb
+	 mlZ3Xxn34kCpLanSSFnDlFEKtsZ1fERFYyQ6WtXV3rxen+5gALc+y5Ln+QrIOeWgSk
+	 V/aU0T9YJdRVNzsEcZVxmD+5J3c3VlH9eb6J2NhWEW/OfekEgtBOwD3fXBNNtQezIH
+	 X/AXagmYQ+dawmH1+CAF5JIR5TgBLc12PqDMkb9ilPXYDm4HwySkfOBfEbbwHY7BMv
+	 L4C9yiFHRE6nw==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so10053555a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:56:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1DzUoV8pSq0axWrIRmdSLo4zy8aZVFdB9DlGYBySG1E5Mg4dmj3WdsUBKjEAR/FXZSv110bnT0nv/He0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk1IgicEyeqfs6BVGChDdHDr2gU7mRLC7s+gD4isMKiAdtuWXq
+	2JDa8fdBs17ZdkUcMAero84fKNPsk8izkKaJ/IkZJb8s26zvNiq4IXSerb/X4wWv8+jJLdAXY61
+	w8rkGYAeKy+U8+S2yLY0H9GOqCp8uxFE=
+X-Google-Smtp-Source: AGHT+IGhos5ASvOTvO3s8luelCPPD4ZQQ0H9zyLRWPX1ufk1biBqDkqw0tTY2aaoZoE0U33eOGcVscjK4CvaiK714y8=
+X-Received: by 2002:a17:906:f5a1:b0:b3e:babd:f263 with SMTP id
+ a640c23a62f3a-b50aa491464mr3063198066b.3.1760518611266; Wed, 15 Oct 2025
+ 01:56:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] perf/x86/zhaoxin: Fix instructions error by missing
- fixedctr member
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, peterz@infradead.org,
- kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org
-References: <a6cd3756-5aa7-435f-9ee7-3fde67c29f17@linux.intel.com>
- <20250620023757.1429898-1-tanze@kylinos.cn>
- <c962d1a5-b941-4361-839c-c34e621de5ee@linux.intel.com>
-Content-Language: en-US
-From: tanze <tanze@kylinos.cn>
-In-Reply-To: <c962d1a5-b941-4361-839c-c34e621de5ee@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251015073454.1505099-1-aha310510@gmail.com>
+In-Reply-To: <20251015073454.1505099-1-aha310510@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 15 Oct 2025 17:56:39 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_4AOm2fjyBM5FF=1+aAM2Qj5_34PZzjD+riz3s=SCQQQ@mail.gmail.com>
+X-Gm-Features: AS18NWBQhxF-pqQhdXvw_m4G0fuHX1eU8APZBWNzAEAxIKXbabUYguBBpgzMtO8
+Message-ID: <CAKYAXd_4AOm2fjyBM5FF=1+aAM2Qj5_34PZzjD+riz3s=SCQQQ@mail.gmail.com>
+Subject: Re: [PATCH v4] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: Sungjong Seo <sj1557.seo@samsung.com>, Yuezhang Mo <yuezhang.mo@sony.com>, pali@kernel.org, 
+	Ethan Ferguson <ethan.ferguson@zetier.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dapeng,
-
-在 2025/9/30 10:49, Mi, Dapeng 写道:
-> 
-> On 6/20/2025 10:37 AM, tanze wrote:
->> Perf's instructions event tests on Zhaoxin CPUs may exhibit:
->>
->>    $perf stat -e instructions,cycles ls -l
->>
->>    ......
->>    Performance counter stats for 'ls -l':
->>
->>                   0      instructions                     #    0.00  insn per cycle
->>           9,488,278      cycles
->>
->>         0.004365407 seconds time elapsed
->>
->>         0.003303000 seconds user
->>         0.001099000 seconds sys
->>
->> The absence of the fixedctr member leads to an incorrect hwc->event_base
->> value on Zhaoxin CPUs, causing a discrepancy in the instruction count
->> reported by perf stat. This commit resolves the instruction count issue
->> by properly initializing the fixedctr member.
->>
->> Fixes: 149fd4712bcd ("perf/x86/intel: Support Perfmon MSRs aliasing")
->> Signed-off-by: tanze <tanze@kylinos.cn>
->> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>   arch/x86/events/zhaoxin/core.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/x86/events/zhaoxin/core.c b/arch/x86/events/zhaoxin/core.c
->> index 4bdfcf091200..3fc3f9abece9 100644
->> --- a/arch/x86/events/zhaoxin/core.c
->> +++ b/arch/x86/events/zhaoxin/core.c
->> @@ -467,6 +467,7 @@ static const struct x86_pmu zhaoxin_pmu __initconst = {
->>   	.schedule_events	= x86_schedule_events,
->>   	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
->>   	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
->> +	.fixedctr		= MSR_ARCH_PERFMON_FIXED_CTR0,
->>   	.event_map		= zhaoxin_pmu_event_map,
->>   	.max_events		= ARRAY_SIZE(zx_pmon_event_map),
->>   	.apic			= 1,
-> 
-> LGTM.
-> 
-> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-
-Thank You
-Ze Tan
+On Wed, Oct 15, 2025 at 4:35=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
+ wrote:
+>
+> Since the len argument value passed to exfat_ioctl_set_volume_label()
+> from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds read
+> occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
+>
+> And because of the NLS_NAME_OVERLEN macro, another error occurs when
+> creating a file with a period at the end using utf8 and other iocharsets.
+>
+> So to avoid this, you should remove the code that uses NLS_NAME_OVERLEN
+> macro and make the len argument value be the length of the label string,
+> but with a maximum length of FSLABEL_MAX - 1.
+>
+> Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
+> Fixes: d01579d590f7 ("exfat: Add support for FS_IOC_{GET,SET}FSLABEL")
+> Suggested-by: Pali Roh=C3=A1r <pali@kernel.org>
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  fs/exfat/exfat_fs.h | 1 -
+>  fs/exfat/file.c     | 7 ++++---
+>  fs/exfat/namei.c    | 2 +-
+>  fs/exfat/nls.c      | 3 ---
+>  4 files changed, 5 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> index 329697c89d09..38210fb6901c 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -29,7 +29,6 @@ enum exfat_error_mode {
+>  enum {
+>         NLS_NAME_NO_LOSSY =3D     0,      /* no lossy */
+>         NLS_NAME_LOSSY =3D        1 << 0, /* just detected incorrect file=
+name(s) */
+> -       NLS_NAME_OVERLEN =3D      1 << 1, /* the length is over than its =
+limit */
+>  };
+>
+>  #define EXFAT_HASH_BITS                8
+> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+> index f246cf439588..adc37b4d7fc2 100644
+> --- a/fs/exfat/file.c
+> +++ b/fs/exfat/file.c
+> @@ -509,8 +509,8 @@ static int exfat_ioctl_get_volume_label(struct super_=
+block *sb, unsigned long ar
+>  static int exfat_ioctl_set_volume_label(struct super_block *sb,
+>                                         unsigned long arg)
+>  {
+> -       int ret =3D 0, lossy;
+> -       char label[FSLABEL_MAX];
+> +       int ret =3D 0, lossy, label_len;
+> +       char label[FSLABEL_MAX] =3D {0};
+>         struct exfat_uni_name uniname;
+>
+>         if (!capable(CAP_SYS_ADMIN))
+> @@ -520,8 +520,9 @@ static int exfat_ioctl_set_volume_label(struct super_=
+block *sb,
+>                 return -EFAULT;
+>
+>         memset(&uniname, 0, sizeof(uniname));
+> +       label_len =3D strnlen(label, FSLABEL_MAX - 1);
+>         if (label[0]) {
+> -               ret =3D exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
+> +               ret =3D exfat_nls_to_utf16(sb, label, label_len,
+>                                          &uniname, &lossy);
+>                 if (ret < 0)
+>                         return ret;
+> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+> index 7eb9c67fd35f..a6426a52fd29 100644
+> --- a/fs/exfat/namei.c
+> +++ b/fs/exfat/namei.c
+> @@ -442,7 +442,7 @@ static int __exfat_resolve_path(struct inode *inode, =
+const unsigned char *path,
+>                 return namelen; /* return error value */
+>
+>         if ((lossy && !lookup) || !namelen)
+> -               return (lossy & NLS_NAME_OVERLEN) ? -ENAMETOOLONG : -EINV=
+AL;
+> +               return lossy ? -ENAMETOOLONG : -EINVAL;
++               return -EINVAL;
+I have directly changed it and applied it to #dev.
+Thanks!
+>
+>         return 0;
+>  }
+> diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> index 8243d94ceaf4..57db08a5271c 100644
+> --- a/fs/exfat/nls.c
+> +++ b/fs/exfat/nls.c
+> @@ -616,9 +616,6 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
+>                 unilen++;
+>         }
+>
+> -       if (p_cstring[i] !=3D '\0')
+> -               lossy |=3D NLS_NAME_OVERLEN;
+> -
+>         *uniname =3D '\0';
+>         p_uniname->name_len =3D unilen;
+>         p_uniname->name_hash =3D exfat_calc_chksum16(upname, unilen << 1,=
+ 0,
+> --
 
