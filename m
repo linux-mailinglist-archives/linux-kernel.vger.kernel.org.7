@@ -1,159 +1,192 @@
-Return-Path: <linux-kernel+bounces-854061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF36BDD74C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:40:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1124BDD75B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D5DA4E17A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:40:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 798C54E78FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A1E306B35;
-	Wed, 15 Oct 2025 08:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D935313539;
+	Wed, 15 Oct 2025 08:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DDxOLxeZ"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ERA1fabA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116ED30649F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5425A3064AE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760517617; cv=none; b=SQXFbJrAzmDRuTLEx0yyzgiUHwa7Zdg/Z5QbgwE+4BS62O8IXS3Qwv4nxDUn0G7/0CULYHZgtL9tEU8TlnyJqULAw8rEs/nNfij5qj95xsgqWCeaP2Vy8WnxhD/V4e5qwbsqDDHX4Q+kY+cx+xBQ4L4UFPtnSeeD6bDczZMulZ4=
+	t=1760517632; cv=none; b=UNaKOt5xdynUaXY4yjys2So+etSnXEyMrJ+tNtFn+1FhRq2EN9DCE7kysUtdZVEtLb9Pk94JnrHoy7foiRb97v/wK+LBNKWGh0WigTZTdOgVxr6xDtguhEcARw1BhGkfmywb4eVH6rGkxyoQjqgJy7A28DDd7wu5qP0bpaQqfzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760517617; c=relaxed/simple;
-	bh=atwZOq1j1feOvsNxhiRkgPJgq/K2dricxUqMHWxDuxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cf7A3QVhzTmw8JnAn7xInUPexcTj5Dz5qa7aBEdbD0r7zPSIiL++3+jbsCrqaN8SJfc2StxKM5v2kiQ47AU8pwS7QoU8cN8pzIXQaz/iQl0vRsE1iH/W9o1I+V3ZKACD1avNcj330Vimku4bBnATDfrBlDRY9gxn90+y9GZD2wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DDxOLxeZ; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b3c76f3703cso88321766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760517613; x=1761122413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fDsY2VBapz+UptqvTnMcZt7pORUL703BjZYmcP5YKY0=;
-        b=DDxOLxeZRQ4l2R76x4i/LvUOTJeZnItZVxWXbwoJCnXvUcj+F4TqtD3JBKFQMzoPgt
-         5Vqnkx+8Bdj/o66ae+zetGk0VaVHeZ2qmZU12lDbgNj3dRGga827E8LctAtrMHjtlTcM
-         ZXiGsfl6FNRDI5GN0tuJ2HWNoxwitiLldSCUlP3BxhlBX0d3+1Lx1ARPQCEDAmNnmTf9
-         551L5et4cvT7akw2d4fStZqoZSRvbEJn1f3JJnNrSFMBz9oHWsGPfUGDDoLIouw8A/UL
-         6q95n2OwLal3rV9oZO2XpeuysPweYknFLIBp8PjbNWCktfoAjDwcs2kWWk82kIxxFl97
-         B1Bg==
+	s=arc-20240116; t=1760517632; c=relaxed/simple;
+	bh=B1HU4XzpjvLoGBRdWYfuclPmNkqrtuYSBUbFU9qekvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rTzs9sgVRbJyRsPzsmrISw5prTubgLc8VoDysim5PnohO80HvyZ3H5TAV2hUNTRjxwffajH9OwlhI0Kfcof8ITzf3bX1u9QzZRElymsGBpb3ByqZg7GDRM4qbnG5f6utN1yCxE2Mu1dTnRaZ3kn2p30dHYCgXj+2By4f4W9xMDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ERA1fabA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F2sUE3005327
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:40:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n0NkvLFD9PifIf1hw60K2ieqObK9jLK25z7AF/7XH88=; b=ERA1fabAccWTUBw0
+	x099SJ2xQXSqXMKDkvMnifMmbAtoioyy27Ov1wDm4ZyxD0asULryHzVitYp5emQG
+	thQtmxFXcJQOSDFaXnJflt4svqCkfI4qZxhEN58skIHKpw7ztJtwN4Nhoi6yPtWR
+	dX6rA98Xv7B/wSUe8MRJl+ZlLK3F/YYkCfXWdORVqVl0UOg/zSKzumSpzWT0ntcO
+	s9wQOOqkWwRuqXYDLywE5Iu4FLfwXJOVrPKzCi3f/EjWGwZvMEeY6AxEPoDD8Osu
+	5vrS428dbhoSQP24kRHe+Cx5JC7TsJZ+J9PIebXlpVu/xbQsORGnApQYtxWffTGh
+	RudgCQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rw1ag0h9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:40:30 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7810e5a22f3so18561896b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:40:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760517613; x=1761122413;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fDsY2VBapz+UptqvTnMcZt7pORUL703BjZYmcP5YKY0=;
-        b=lpHp3Ozkbz1aJvafsNJKLaG7pjJKrIIVG4XcnK9ojz77IaaaiU8rXQ5f17ltJOLhVM
-         13ZliMe+AEUDf3c1gqIRs3YmUfQzR8gRnNk75F7nkpx4JRG8yPxAPg8E7Mn7s439HZiQ
-         zyb8uTyCcAwVVukH0Ut82Xia4c2Of3AhYZDrKL9ieSk5bjtt8z2/PTHUoIDWiJaEhURG
-         rYM6suKAkLEj/kWpxg/BUVSvb5RAtXCOkd1hnhPSXKFVU4np6P3vDp6wexhoYSVAP8qy
-         SyMHN+QG3Ux4QHZF6EMx68m5g05v5+8EibVst1w9tsZFKLbLQ4D7f/d4YRjQWo2V7nqg
-         XbWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6acF/Pd3whx48cl1zpU9vD4VqyEL49dM9AMdpvEKwZ9By+aSB9ij9YZrNAEZAnM/I1j5h9rS/gQeutHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp3adEouDAZ9O1glhrJvf2trTBJ9R8lYMTzrsIoKIjAPhCrWF1
-	CcdsWjNA0dC1owZfGXDmO8EzlP0n+1P5KbbbYtcFXsn+2xuELYbn+DffNT8hH3efZ1s=
-X-Gm-Gg: ASbGncvy4WYox4RVxrdsqbs4Gb86mjgs0GbOZgRNUPwMZtWQWLG3+NYcU2AaDVl4ROH
-	pDYZM68YO6Gsbgf5KNAJA0ci/CfGRXXhWtwWUt20idESfQX45LXfiMkPJ//WTI2Cj59oHUw3j7R
-	dMU5Ml+xmwWkkKEt1t91Wh8GDU4d5giD7UUY47E/mnUDUyEWvaJqe+RTlLXf7iV3syePr+R78Mg
-	6RR6A4xlo9TzAwTfexte1HEHgR8VRCPkRoI3DFuRv4WjpufztK/maHkKadIGNUJG1zzAzk6AxbQ
-	zLNT34cuDZxgHVqw3FDhk0mrW/VC3b9hwPJoG9qgSpAR+fveKdd6k8L4Sq4pAC8XRS3iAClzMwW
-	jOLvbs4nR4zOIs9Cmeizs/lqQVb09KXWmENgEjmU2VCRCYIwO2PGgFowne1NVwcXNCE4FH4X0gq
-	jqBva3cl5dlD3gceHMC0HzzWeVdynlr56rOZE9oWVrWaxyyy6qlZQH7ORPFQ==
-X-Google-Smtp-Source: AGHT+IELGd1QIrFF53QcX+I76rx+ZG0TLeQwEgYCUqwVFMJIjoxdZrhJJkMTqEZ8KN0QoxSWe07NSA==
-X-Received: by 2002:a17:907:e8f:b0:b44:fb0c:5c37 with SMTP id a640c23a62f3a-b50ac1c480dmr1491862066b.6.1760517613246;
-        Wed, 15 Oct 2025 01:40:13 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5cba45afc5sm170229166b.37.2025.10.15.01.40.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 01:40:12 -0700 (PDT)
-Date: Wed, 15 Oct 2025 10:40:08 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Suren Baghdasaryan <surenb@google.com>,
- "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton
- <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Mel
- Gorman <mgorman@techsingularity.net>, Vlastimil Babka <vbabka@suse.cz>,
- Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
- John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Subject: Re: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for
- order-0 allocation
-Message-ID: <20251015104008.4bcd99e7@mordecai.tesarici.cz>
-In-Reply-To: <CAGWkznFG2_WGmLRmHnjV-49iTX0mrt9jxQBzZYK=K9U7eKJD0g@mail.gmail.com>
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
-	<20251014083230.1181072-3-zhaoyang.huang@unisoc.com>
-	<87953097-a105-4775-88a5-9b3a676ff139@amd.com>
-	<CAGWkznGN7W-txq_G+xpZ6DtH_1DNorYc=CxqUjebo7qfB4Sxsw@mail.gmail.com>
-	<ecba7133-699c-4f3e-927c-bad5bd4c36a3@amd.com>
-	<20251014171003.57bbfd63@mordecai.tesarici.cz>
-	<97da9924-9489-4d30-a858-8ee5c87bc031@amd.com>
-	<CAGWkznGnmb=8GgcrfDvY2REHdRZYVXZy=F3thXhK0FaSoiK7tw@mail.gmail.com>
-	<aO8TKQN6ifOSMRSC@casper.infradead.org>
-	<CAGWkznFG2_WGmLRmHnjV-49iTX0mrt9jxQBzZYK=K9U7eKJD0g@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+        d=1e100.net; s=20230601; t=1760517629; x=1761122429;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n0NkvLFD9PifIf1hw60K2ieqObK9jLK25z7AF/7XH88=;
+        b=Nw6xqQG+en4g1MSSmPRpyXewYZQFkss9ANXI6hLlvg5mV5iWe2cnygekFeeI/M6ODt
+         4bgL1NVJQWyy/f24J+xMpFl7/0Rxfye5CW6573X4n+f7R6KBPsMfoWKPQvWR0s1FADuX
+         5sbRgt9XAAVLZodPiAf++K94/l0WtO01K7tHB8WsAzDqyds6JktrPzY2NuRshk3VU8nb
+         8eMOhURCExCm1ZzyHUnsmhsFrd2Y0A9lSeexu4dbAPjsKpSoKfrCSQBetkwnlTod71OF
+         c54zO3BA/wrBFdi1V9svsl1sQWYL0GR6YUBi392hoKWEDIPO9le2n0TVQqS0DF1YektE
+         y1Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWf6DQMaAD3qSrRwapbej4r7TOZOTHxRQ0ZCPouFQNkxPOEAfmBxAU9Z78qlSyAPDC08wtpyPBnrnWcY+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO+VtdQJTkLqwAZUnzNdkGE9sSnlNswiBq6wQBPg36m44r6HO6
+	wd27nar0+FxfilrMiEnIXwcxCPGpUVGpotehffjEgvtwbZ8L7908hfXbjwdLBWZIIge8p29dYx3
+	CEQiP3OfsXD7CDZDlbz6HK7WXQMxfRPMeG7FdTbIpZxxhp583uaVEE5enTPq8ZbKk458=
+X-Gm-Gg: ASbGncvmJzm5SAF+u737pfn2ad7Y9iFiXu4cHBY2+6CnNs9yKiG93xAwUVB+hCaaWRW
+	dvZ01XQ2esx2jrnfJFtrctq6K1bZp+/HN57kimQsIueut+HZLuAYwRvHixgG2q8OtrYC4iWvJNa
+	QtCcUdD7yqrUUXtWnFrOjo6a1Kd+JMAPW8SKIlLJAh0rEUmGgiIW3FdpsTMIlmhyRzYeXuwJd57
+	gj3r3B4VWzVT8zKUlhUGB8Ba5uWqCDHFwNSD7C9aEEE39hHrw63PDtVRGOy6br9ySM74lsSoOeO
+	lXRse89TM0grrS8zQODQDieW+GNPXiP9SUp+rPpvTwUVT7kOA33yawYyrNZd16PZln2q00c=
+X-Received: by 2002:a05:6a00:4c11:b0:79a:905a:8956 with SMTP id d2e1a72fcca58-79a905a955bmr19850808b3a.14.1760517629500;
+        Wed, 15 Oct 2025 01:40:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkvRS9mqkw4xAmKHSN24pxFC4rUHTz/FMp8QKwR3Q9/4/dkq/owOCSgKDO0abpL3A0/sRbMw==
+X-Received: by 2002:a05:6a00:4c11:b0:79a:905a:8956 with SMTP id d2e1a72fcca58-79a905a955bmr19850757b3a.14.1760517628915;
+        Wed, 15 Oct 2025 01:40:28 -0700 (PDT)
+Received: from [10.92.210.195] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e198bsm17833032b3a.60.2025.10.15.01.40.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 01:40:28 -0700 (PDT)
+Message-ID: <2bc64bc2-97ac-4a08-9721-7d39c665a95a@oss.qualcomm.com>
+Date: Wed, 15 Oct 2025 14:10:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 03/14] power: reset: reboot-mode: Add support for 64
+ bit magic
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Moritz Fischer <moritz.fischer@ettus.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik
+ <andre.draszik@linaro.org>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Umang Chheda <umang.chheda@oss.qualcomm.com>
+References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
+ <20251015-arm-psci-system_reset2-vendor-reboots-v16-3-b98aedaa23ee@oss.qualcomm.com>
+Content-Language: en-US
+From: Nirmesh Kumar Singh <nirmesh.singh@oss.qualcomm.com>
+In-Reply-To: <20251015-arm-psci-system_reset2-vendor-reboots-v16-3-b98aedaa23ee@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=K88v3iWI c=1 sm=1 tr=0 ts=68ef5dfe cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=xyQZWzCWjP-v2z6xiYIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: m5ZzMUtiY0UlBPv4QoOr2O-Aa_CfsObI
+X-Proofpoint-ORIG-GUID: m5ZzMUtiY0UlBPv4QoOr2O-Aa_CfsObI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAzNSBTYWx0ZWRfXzYqqMePySwFG
+ imQA0iB1f1zRU//qzGiOevBDHiJDIB8oEhPSz9+2B4BoT7ad/pz/rUH3T07t0kVrK24O3hNTdPe
+ uM0Lwno4tVWjHT/kha9XtmAuy4U8lZ8/ZW9snxWbA7xt30xE/QMkZeqTkxB6pIB5r3ZZvQBtjyT
+ lQ2IB5jkW8o78O5hx5ldNT6xo9KKP/N8hEnedwyh5sA7bA3qKGsIp1kAG6x29s1lj4VvACNbTrH
+ HASJt72hOJeIU3HRTi9gcx3RJWVyVeM5pRltGNJbAL1NOBp2FiQU7yKlEGotuPLUuNdZYeYekep
+ vYO5SjiyaY7OaiztFv92yNhx0IK8YWMg6o/dE+5oWB73BpYnXB1OKrNVWJ9QAmv25LqhHP6Zyhm
+ U7lw5cyOYSCSBoJBs3cLIoaTxbBJ/Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130035
 
-On Wed, 15 Oct 2025 13:52:57 +0800
-Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
 
-> On Wed, Oct 15, 2025 at 11:21=E2=80=AFAM Matthew Wilcox <willy@infradead.=
-org> wrote:
-> >
-> > On Wed, Oct 15, 2025 at 09:12:07AM +0800, Zhaoyang Huang wrote: =20
-> > > > Could be that we need to make this behavior conditional, but somebo=
-dy would need to come up with some really good arguments to justify the com=
-plexity. =20
-> > > ok, should we use CONFIG_DMA_BUF_BULK_ALLOCATION or a variable
-> > > controlled by sysfs interface? =20
-> >
-> > No.  Explain what you're trying to solve, because you haven't yet. =20
-> Dma-buf works as a memory allocation backend could loop thousands of
-> times alloc_pages for allocating order-0 pages to fulfill the dozens
-> MB demand, this commit would like to replace the loop by once
-> alloc_pages_bulk. Whereas, alloc_pages_bulk_array perhaps introduces
-> extra memory allocation along with direct-reclaim which could be more
-> expensive than iterating the list. so call back the API
-> alloc_pages_bulk_list as well
+On 10/15/2025 10:08 AM, Shivendra Pratap wrote:
+> Current reboot-mode supports a single 32-bit argument for any
+> supported mode. Some reboot-mode based drivers may require
+> passing two independent 32-bit arguments during a reboot
+> sequence, for uses-cases, where a mode requires an additional
+> argument. Such drivers may not be able to use the reboot-mode
+> driver. For example, ARM PSCI vendor-specific resets, need two
+> arguments for its operation – reset_type and cookie, to complete
+> the reset operation. If a driver wants to implement this
+> firmware-based reset, it cannot use reboot-mode framework.
+>
+> Introduce 64-bit magic values in reboot-mode driver to
+> accommodate dual 32-bit arguments when specified via device tree.
+> In cases, where no second argument is passed from device tree,
+> keep the upper 32-bit of magic un-changed(0) to maintain backward
+> compatibility.
+>
+> Update the current drivers using reboot-mode for a 64-bit magic
+> value.
+>
+> Reviewed-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> ---
+>   drivers/power/reset/nvmem-reboot-mode.c  | 13 +++++++++----
+>   drivers/power/reset/qcom-pon.c           | 11 ++++++++---
+>   drivers/power/reset/reboot-mode.c        | 19 +++++++++++++------
+>   drivers/power/reset/syscon-reboot-mode.c | 11 ++++++++---
+>   include/linux/reboot-mode.h              |  3 ++-
+>   5 files changed, 40 insertions(+), 17 deletions(-)
 
-This does not quite explain it. IIRC you mentioned allocating 18M as an
-example. The ideal outcome in that case is:
+Reviewed-by: Nirmesh Kumar Singh <nirmesh.singh@oss.qualcomm.com>
 
-- 16 order-8 compound pages
-- 32 order-4 compound pages
--> total 48 calls to alloc_pages()
+Thanks,
+Nirmesh
 
-But presumably, that's not what happens, because fragmentation makes
-(some of) those order-8 allocations fail. Since you talk about
-thousands of loop iterations, it looks like even order-4 allocation
-fail in your case. Then I agree there's not much value in trying to
-avoid further fragmentation, and after so many order-0 allocations,
-it's probably also pointless to do memory reclaim.
-
-OTOH I can see why the opposite approach is a bad idea in situations
-where fragmentation can be avoided. To make things even worse,
-alloc_pages_bulk() will rather split pages in the preferred zone than
-try allocating from the next best zone.
-
-To sum it up, Zhaoyang, can you please describe in more detail what
-happens in your scenario and what you believe should happen instead?
-
-Petr T
 
