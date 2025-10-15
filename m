@@ -1,317 +1,228 @@
-Return-Path: <linux-kernel+bounces-854387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE809BDE3E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:19:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28A2BDE405
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F109E19C4259
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14D5619A7985
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEDD31D732;
-	Wed, 15 Oct 2025 11:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3182331D375;
+	Wed, 15 Oct 2025 11:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="A4zoxG8v"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fw2riVTi"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAF831D734
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EF730BBA8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760527141; cv=none; b=oCPiqowforyF5PXqnBzx4iKeItamfFoz1YYMPX3ZhPyd/aR25sqNNna/AEsdkj1rHnIuA8qy7PwtLWDdNASZM2+osFTlnoVuKyRZZ5VK21Cy+8xi/XygPmLltBSKOd3RFIcaWxY+9VbB/vyk+EOU9tXgQxlWw2A3fgGr2VyXijA=
+	t=1760527443; cv=none; b=rJamcyAXvgB05U2nppTUCxL/ubTipLxvLV7nMaU2pF9+lBDmVKRVBlhjodv5wFbUwbrGwLOG3UktqbomxETFhpR106Zs5ab1D7RmOOkKNputbzhjVHx5cxYKSi8iwguIiCYfXihcUCk29nDDgxbFYcwnq1jkcM2WKQeIqMcILTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760527141; c=relaxed/simple;
-	bh=yj5AnPrxT5XFETcS5BhC+/RR39841AKWnwThRBY+xC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SIXt5Lhp3uK9bVMYbXWbVdLx6ApvM43zd2UhvzAlrvlWegKDP/j9Outs8FpUKnO0ZVbxLIVJWtZX4mpinlIbZpUjlo8rf7TlL5utWK0g7JSRCyKrs1wrLUFVduYo+KbJGrzqouePfLRfL/p8X14pT+wi+pZPyYUCZBKeW5Jws6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=A4zoxG8v; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id 7DB17BDBA7
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:18:57 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id B7FBABDCEE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:18:56 +0300 (EEST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 1A5F7200BF8
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:18:56 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760527136;
-	bh=UkiI2ZsGihYBWOkUgXP0CuqOxH7rRFPIOzIv/oYbijg=;
-	h=Received:From:Subject:To;
-	b=A4zoxG8vUj1Ofs8a2xM+70XFpyoaO0j3Rv9t/4qx3hifjgJrEfZcaC0EycG4SLl+a
-	 91Xqr1BHFieqAv1TTKFz4W8vWCaoajff3D+/OWR1GWWsKQLaAAje7eQa4vSKp6wu+/
-	 TLFrT0jgMVUqPS9JVBEZA3X264Xvitb0wYy4XTUsGdwWBf38nJ1Z1Wu0tAt6eIwIln
-	 CcaUlKLThwnRnJxzXXWaE/bdn9iMNpahlyWmH2V1WV/6ylTE9dAxsplzEewOtKd5ps
-	 55/+p4l+o3lQm1GJZUjAw1iLKLFbydc0JMb/T8me1qndY3doa0EIcKnMxCGMS9A0DE
-	 q7Rz0VSqw+Cew==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.167.51) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f51.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lf1-f51.google.com with SMTP id
- 2adb3069b0e04-579363a4602so7681806e87.0
-        for <linux-kernel@vger.kernel.org>;
- Wed, 15 Oct 2025 04:18:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWuIuqV9v+pbdYVCEYgrHNlG2jmf/kgrQVeuzp3kQDaqjXD96GgaFCe+aJv5B+Krj/QiLAaNusBlwQnMJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHTgcrAivowxPBK3z8zMP4yC7R/EIqtZ6bSo1fy8GoTkT/OyhB
-	7qnw+IWuu/eFBkqhkEvlYDiYd6ByQ5EWAUCNBI0hwt/WgD/79qs1i9zaCES5MQh//GKRnylhr3b
-	jslAUrKuExLsRGqITi4tC6zHLEKYSFPM=
-X-Google-Smtp-Source: 
- AGHT+IFmHw+c7yr4ZTmfF0Pk/AgUgsYD/YIc62Sxu0KFfQCvaWmGYjNBpuYEizHHp6K/c15Qi/0o6/rgC5bSzimh1hI=
-X-Received: by 2002:a2e:bc15:0:b0:36b:2bde:a016 with SMTP id
- 38308e7fff4ca-37609cf7ea1mr79014611fa.2.1760527135429; Wed, 15 Oct 2025
- 04:18:55 -0700 (PDT)
+	s=arc-20240116; t=1760527443; c=relaxed/simple;
+	bh=HGc3PIJ9QBWR+uUM0HrnT2SCZ0aori4/i8KigQVlOHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ss4fluKOemdK7AUmvogY3jOPcyy4ALjTKVAFvqlsjkOrdgBc8VK/mC1fi8GaQ5FJcsVPX+Ae5sEuTMxBGZEKLMewIj+6RjpkHibdVZPj0IKqfwBUzX4SQmsoHXd/MrmyrJgs//+W6ezooD2PYlrzdy798nAflOk5gqUbHOCElL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fw2riVTi; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8f161ba2-6d0f-4dbb-85bc-ab4bff04f24a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760527439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IwvFeOSawJO8ToN1vYMfeDPUih6SozsleVrhFjkq2dQ=;
+	b=Fw2riVTiTN8NodX907zI5PJGFL25SWKPdtF7d9Qo0gNzBF6Xo4g0tGzuRY6HQhxF2hV1Ny
+	Vu8jgIE07yH/sMViD71uC8imi8NU+B4S2POM/Kd+ivseb9OUbXKPZeDM14CVQTQw+N0Fm2
+	u2AQf7wk+EWssayU5cjF+TS/W0ngv+Q=
+Date: Wed, 15 Oct 2025 19:22:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <20251013201535.6737-2-lkml@antheas.dev>
- <3d59f42f-2e24-6011-23b5-369be7eb4b3b@linux.intel.com>
-In-Reply-To: <3d59f42f-2e24-6011-23b5-369be7eb4b3b@linux.intel.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Wed, 15 Oct 2025 13:18:44 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwF+LfL1AhR3PLJWLzF1iriohWFJRmRkHC6uwgfTnhZFaw@mail.gmail.com>
-X-Gm-Features: AS18NWD_VWjax_OfWl7-j20ZEZZ8yowjbqG-xMqTB2JCtSjC8bhttFGoOAbsLoI
-Message-ID: 
- <CAGwozwF+LfL1AhR3PLJWLzF1iriohWFJRmRkHC6uwgfTnhZFaw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/7] HID: asus: refactor init sequence per spec
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	Denis Benato <benato.denis96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <176052713631.1578249.8454844983524703616@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Subject: Re: [PATCH v3] slab: Add check for memcg_data != OBJEXTS_ALLOC_FAIL
+ in folio_memcg_kmem
+To: Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20251014152751.499376-1-hao.ge@linux.dev>
+ <CAJuCfpGBxUmvWoe2xv2-bsF+TY4fK-m1-Z_E3OcyTiSYz5KeAA@mail.gmail.com>
+ <aO9okBEZiA4pCNku@hyeyoo> <c07838ca-4e6e-4837-b99f-09fd44c7801c@suse.cz>
+ <aO93GHNR_32-Pmom@hyeyoo> <6194b6ab-6b43-468d-ba78-a95594c48798@suse.cz>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <6194b6ab-6b43-468d-ba78-a95594c48798@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 15 Oct 2025 at 12:53, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
->
-> > Currently, asus_kbd_init() uses a reverse engineered init sequence
-> > from Windows, which contains the handshakes from multiple programs.
-> > Keep the main one, which is 0x5a (meant for brightness drivers).
-> >
-> > In addition, perform a get_response and check if the response is the
-> > same. To avoid regressions, print an error if the response does not
-> > match instead of rejecting device.
->
-> I'm none the wiser on "why?" question after reading all this. Please
-> describe the change properly. **Besides, you do many thing changes which =
-are
-> not mentioned here at all.**
+Hi Vlastimil and Harry
 
-Changes in asus_kbd_register_leds look bigger than they are due to
-un-indenting and merging the if/else for non-nkey/nkey.
 
-I will update the text of the new patch to include the changes which
-are 1) applying asus_kbd_get_functions to NKEY devices to check for
-backlight, 2) removing 0x5d/0x5e initialization from NKEY devices
-(0x5d is for armoury crate/0x5e for an aura matrix creator studio
-thing), which then means that the if/else blocks are equivalent and
-can be merged.
+  Thank you for your professional guidance.
 
-These two changes should not affect functionality, other than reduce
-some init commands.
 
-> And what "spec" is the one you mention in the shortlog?
->
-> > Then, refactor asus_kbd_get_functions() to use the same ID it is called
-> > with, instead of hardcoding it to 0x5a so that it may be used for 0x0d
-> > in the future.
->
-> Can this be in own patch?
+On 2025/10/15 18:37, Vlastimil Babka wrote:
+> On 10/15/25 12:27, Harry Yoo wrote:
+>> On Wed, Oct 15, 2025 at 11:54:18AM +0200, Vlastimil Babka wrote:
+>>> On 10/15/25 11:25, Harry Yoo wrote:
+>>>> On Tue, Oct 14, 2025 at 09:12:43AM -0700, Suren Baghdasaryan wrote:
+>>>>> On Tue, Oct 14, 2025 at 8:28 AM Hao Ge <hao.ge@linux.dev> wrote:
+>>>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>>>
+>>>>>> Since OBJEXTS_ALLOC_FAIL and MEMCG_DATA_OBJEXTS currently share
+>>>>>> the same bit position, we cannot determine whether memcg_data still
+>>>>>> points to the slabobj_ext vector simply by checking
+>>>>>> folio->memcg_data & MEMCG_DATA_OBJEXTS.
+>>>>>>
+>>>>>> If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
+>>>>>> and during the release of the associated folio, the BUG check is triggered
+>>>>>> because it was mistakenly assumed that a valid folio->memcg_data
+>>>>>> was not cleared before freeing the folio.
+>>>> nit: yesterday I was confused that this is sanity checks in buddy complaining
+>>>> folio->memcg_data not being cleared, but it's actually folio_memcg_kmem()
+>>>> complaining that MEMCG_OBJEXTS_DATA flag is set on non-slab folios (in
+>>>> free_pages_prepare(), if PageMemcgKmem(page) -> __memcg_kmem_uncharge_page()))
+>>>> So the paragraph above should be updated?
 
-I will spin this into three patches and reword. One for each paragraph
-in the current commit body.
+Hi Harry
 
-Ack on the rest.
+We don't need to update the paragraph.
 
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/hid/hid-asus.c | 91 ++++++++++++++++++++++--------------------
-> >  1 file changed, 48 insertions(+), 43 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index a444d41e53b6..d0c783df99bc 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> >  #define FEATURE_REPORT_ID 0x0d
-> >  #define INPUT_REPORT_ID 0x5d
-> >  #define FEATURE_KBD_REPORT_ID 0x5a
-> > -#define FEATURE_KBD_REPORT_SIZE 16
-> > +#define FEATURE_KBD_REPORT_SIZE 64
-> >  #define FEATURE_KBD_LED_REPORT_ID1 0x5d
-> >  #define FEATURE_KBD_LED_REPORT_ID2 0x5e
-> >
-> > @@ -393,14 +393,37 @@ static int asus_kbd_set_report(struct hid_device =
-*hdev, const u8 *buf, size_t bu
-> >
-> >  static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
-> >  {
-> > -     const u8 buf[] =3D { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0x5=
-4,
-> > -                  0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00=
- };
-> > +     /*
-> > +      * The handshake is first sent as a set_report, then retrieved
-> > +      * from a get_report. They should be equal.
-> > +      */
-> > +     const u8 buf[] =3D { report_id, 0x41, 0x53, 0x55, 0x53, 0x20,
-> > +             0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x0=
-0 };
->
-> Why was layout of this changed?
->
-> > +     u8 *readbuf;
-> >       int ret;
-> >
-> >       ret =3D asus_kbd_set_report(hdev, buf, sizeof(buf));
-> > -     if (ret < 0)
-> > -             hid_err(hdev, "Asus failed to send init command: %d\n", r=
-et);
-> > +     if (ret < 0) {
-> > +             hid_err(hdev, "Asus failed to send handshake: %d\n", ret)=
-;
-> > +             return ret;
-> > +     }
-> > +
-> > +     readbuf =3D kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
-> > +     if (!readbuf)
-> > +             return -ENOMEM;
-> > +
-> > +     ret =3D hid_hw_raw_request(hdev, report_id, readbuf,
-> > +                              FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REP=
-ORT,
-> > +                              HID_REQ_GET_REPORT);
-> > +     if (ret < 0) {
-> > +             hid_err(hdev, "Asus failed to receive handshake ack: %d\n=
-", ret);
-> > +     } else if (memcmp(readbuf, buf, sizeof(buf)) !=3D 0) {
-> > +             hid_warn(hdev, "Asus handshake returned invalid response:=
- %*ph\n",
-> > +                     FEATURE_KBD_REPORT_SIZE, readbuf);
-> > +             // Do not return error if handshake is wrong to avoid reg=
-ressions
->
-> This driver so far is using only /* */ comments.
->
-> > +     }
-> >
-> > +     kfree(readbuf);
-> >       return ret;
-> >  }
-> >
-> > @@ -422,7 +445,7 @@ static int asus_kbd_get_functions(struct hid_device=
- *hdev,
-> >       if (!readbuf)
-> >               return -ENOMEM;
-> >
-> > -     ret =3D hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf,
-> > +     ret =3D hid_hw_raw_request(hdev, report_id, readbuf,
-> >                                FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REP=
-ORT,
-> >                                HID_REQ_GET_REPORT);
-> >       if (ret < 0) {
-> > @@ -638,50 +661,32 @@ static int asus_kbd_register_leds(struct hid_devi=
-ce *hdev)
-> >       unsigned char kbd_func;
-> >       int ret;
-> >
-> > -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> > -             /* Initialize keyboard */
-> > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > -             if (ret < 0)
-> > -                     return ret;
-> > -
-> > -             /* The LED endpoint is initialised in two HID */
-> > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
-> > -             if (ret < 0)
-> > -                     return ret;
-> > -
-> > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
-> > -             if (ret < 0)
-> > -                     return ret;
-> > -
-> > -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> > -                     ret =3D asus_kbd_disable_oobe(hdev);
-> > -                     if (ret < 0)
-> > -                             return ret;
-> > -             }
-> > -
-> > -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
-> > -                     intf =3D to_usb_interface(hdev->dev.parent);
-> > -                     udev =3D interface_to_usbdev(intf);
-> > -                     validate_mcu_fw_version(hdev,
-> > -                             le16_to_cpu(udev->descriptor.idProduct));
-> > -             }
-> > +     ret =3D asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > +     if (ret < 0)
-> > +             return ret;
-> >
-> > -     } else {
-> > -             /* Initialize keyboard */
-> > -             ret =3D asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > -             if (ret < 0)
-> > -                     return ret;
-> > +     /* Get keyboard functions */
-> > +     ret =3D asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPOR=
-T_ID);
-> > +     if (ret < 0)
-> > +             return ret;
-> >
-> > -             /* Get keyboard functions */
-> > -             ret =3D asus_kbd_get_functions(hdev, &kbd_func, FEATURE_K=
-BD_REPORT_ID);
-> > +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> > +             ret =3D asus_kbd_disable_oobe(hdev);
-> >               if (ret < 0)
-> >                       return ret;
-> > +     }
-> >
-> > -             /* Check for backlight support */
-> > -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> > -                     return -ENODEV;
-> > +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
-> > +             intf =3D to_usb_interface(hdev->dev.parent);
-> > +             udev =3D interface_to_usbdev(intf);
-> > +             validate_mcu_fw_version(
-> > +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
-> >       }
-> >
-> > +     /* Check for backlight support */
-> > +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> > +             return -ENODEV;
-> > +
-> >       drvdata->kbd_backlight =3D devm_kzalloc(&hdev->dev,
-> >                                             sizeof(struct asus_kbd_leds=
-),
-> >                                             GFP_KERNEL);
-> >
->
-> --
->  i.
->
->
+We did have cgroups running at that time, but they had no connection to 
+this page.
 
+The entry  "[ 7108.343500] memcg:1" can also be seen in the v1 logs,
+
+Therefore, the situation at that time was indeed consistent with what I 
+described above.
+
+As discussed below, this only occurs because the OBJEXTS_ALLOC_FAIL flag
+
+was not cleared when the slab was about to be freed.
+
+Or have I missed anything?
+
+
+>>>>
+>>>> And as a side question, we clear slab->obj_exts when freeing obj_ext array,
+>>>> but don't clear OBJEXTS_ALLOC_FAIL when freeing a slab? That's not good.
+>>> Hm great point. We should rather make sure it's cleared always, instead of
+>>> adjusting the debugging check, which shouldn't be then necessary, right?
+>> Yeah folio_memcg_kmem() isn't supposed to be called on slabs anyway
+>> (it's not a slab at the time we free it to buddy), so we don't have to
+>> adjust the debug check.
+> Great. Hao Ge, can you please send v4 that instead of adjusting the
+> VM_BUG_ON modifies free_slab_obj_exts() to always clear slab->obj_exts? Thanks!
+
+
+Okay, I will send v4 as soon as possible.
+
+
+Thanks
+
+Best Regards
+
+Hao
+
+>
+>>>>>> So let's check for memcg_data != OBJEXTS_ALLOC_FAIL in folio_memcg_kmem.
+>>>>>>
+>>>>>> Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
+>>>>>> Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+>>>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>>> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+>>>>>
+>>>>> nit: I think it would be helpful if the changelog explained why we
+>>>>> need the additional check. We can have the same bit set in two
+>>>>> different situations:
+>>>>> 1. object extension vector allocation failure;
+>>>>> 2. memcg_data pointing to a valid mem_cgroup.
+>>>>> To distinguish between them, we need to check not only the bit itself
+>>>>> but also the rest of this field. If the rest is NULL, we have case 1,
+>>>>> otherwise case 2.
+>>>> Agreed.
+>>>>
+>>>> In general LGTM,
+>>>> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+>>>>
+>>>> By the way, maybe it'd be nice to introduce a new helper function that
+>>>> properly checks MEMCG_DATA_OBJEXTS flag.
+>>> I thought so too at first...
+>>>
+>>>>> ~/slab (slab/for-next-fixes)> git grep -n MEMCG_DATA_OBJEXTS
+>>>>> include/linux/memcontrol.h:337:	MEMCG_DATA_OBJEXTS = (1UL << 0),
+>>>>> include/linux/memcontrol.h:344:#define __OBJEXTS_ALLOC_FAIL	MEMCG_DATA_OBJEXTS
+>>>>> include/linux/memcontrol.h:358:	 * MEMCG_DATA_OBJEXTS.
+>>>>> include/linux/memcontrol.h:400:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>>>>> include/linux/memcontrol.h:421:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>>>> these two,
+>>>>
+>>>>> include/linux/memcontrol.h:492:	if (memcg_data & MEMCG_DATA_OBJEXTS)
+>>>> this,
+>>>>
+>>>>> include/linux/memcontrol.h:538:			(folio->memcg_data & MEMCG_DATA_OBJEXTS),
+>>>>> include/linux/memcontrol.h:1491: * if MEMCG_DATA_OBJEXTS is set.
+>>>>> mm/kfence/core.c:624:				 MEMCG_DATA_OBJEXTS;
+>>>>> mm/page_owner.c:513:	if (memcg_data & MEMCG_DATA_OBJEXTS)
+>>>> this,
+>>>>
+>>>>> mm/slab.h:541:	 * MEMCG_DATA_OBJEXTS bit set or be equal to OBJEXTS_ALLOC_FAIL.
+>>>>> mm/slab.h:543:	VM_BUG_ON_PAGE(obj_exts && !(obj_exts & MEMCG_DATA_OBJEXTS) &&
+>>>>> mm/slub.c:2137:	new_exts |= MEMCG_DATA_OBJEXTS;
+>>>>> tools/mm/show_page_info.py:55:        MEMCG_DATA_OBJEXTS = prog.constant("MEMCG_DATA_OBJEXTS").value_()
+>>>>> tools/mm/show_page_info.py:59:        if memcg_data & MEMCG_DATA_OBJEXTS:
+>>>> and this do not look good.
+>>>>
+>>>> I mean technically they are fine since OBJEXTS_ALLOC_FAIL is set on
+>>>> slabs only, but that's just a coincidence.
+>>> And checked the the other debugging checks too. But then thought it's better
+>>> that if these are not expected to see slabs, then they should not be
+>>> adjusted. I don't see it as a coincidence but as intention to keep it slab
+>>> specific. It will be also more future proof for the upcoming separation of
+>>> struct slab from struct page.
+>> Then we're intentionally using (folio->memcg_data & MEMCG_DATA_OBJEXTS) check
+>> as a way to determine whether the folio is a slab (either slabobj_ext array
+>> allocation succeeded or failed).
+>>
+>> That makes sense to me!
+>>
+>>>>>> ---
+>>>>>> v3: Simplify the solution, per Harry's suggestion in the v1 comments
+>>>>>>      Add Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+>>>>>> ---
+>>>>>>   include/linux/memcontrol.h | 4 +++-
+>>>>>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>>>>>> index 873e510d6f8d..7ed15f858dc4 100644
+>>>>>> --- a/include/linux/memcontrol.h
+>>>>>> +++ b/include/linux/memcontrol.h
+>>>>>> @@ -534,7 +534,9 @@ static inline struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *ob
+>>>>>>   static inline bool folio_memcg_kmem(struct folio *folio)
+>>>>>>   {
+>>>>>>          VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
+>>>>>> -       VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>>>>>> +       VM_BUG_ON_FOLIO((folio->memcg_data != OBJEXTS_ALLOC_FAIL) &&
+>>>>>> +                       (folio->memcg_data & MEMCG_DATA_OBJEXTS),
+>>>>>> +                       folio);
+>>>>>>          return folio->memcg_data & MEMCG_DATA_KMEM;
+>>>>>>   }
+>>>>>>
+>>>>>> --
+>>>>>> 2.25.1
 
