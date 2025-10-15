@@ -1,91 +1,219 @@
-Return-Path: <linux-kernel+bounces-854861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86116BDF9B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:18:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3E7BDF9CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15392401331
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:18:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D5674F6CC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000A12D3A7C;
-	Wed, 15 Oct 2025 16:18:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBE6337680;
+	Wed, 15 Oct 2025 16:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pk3NH6n2"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FBD188713
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760732D6E72
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760545085; cv=none; b=Hcmzl+pkTckV6T69L5fM1I03tetiLq6vrbEZxtT7A3tbC+SzKzkgqvmYtNLWWF6vHefqL3j0FC1X/9x/meWTopQH2sqcFBgpeABazTJHOczQAkvQCqPMznGqe9BLmMFqI+PeWdwcWBg0wW9h8LNuv0vcZr3hJQDFLlaPYznGTp0=
+	t=1760545144; cv=none; b=ZfzWUaiQ1Q0i1VjqkQRsakHlCvFbqgfiEngQI1VdgLJC1Sq6wzdnfbZxgzxVI4m91O3BoHOnykl6SuGvK7xPmdOKs+Ma/GS+X6w9KfYMaQ1DomhsayTiyEVmoaPgrkc7goJr/38K/m9sM8MZR2WXKfxHvWi4ANzHlOgWJtCFBmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760545085; c=relaxed/simple;
-	bh=GUcEvdj0FtsgnNgyRGtzZVtOTyXyZbSAOn/LtPkvpao=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Q5otxp1kR5+a9yRupt3dQeEIWmdpf9YgnF/05QWcnXHmZUv4ESZZsF46vTKpqUalBXlagNeKZhsQBHOrRw59Q0kgKXRZnt6DImA7cH5rGfWcHmR1OOKH1SkJa3K9Z7jeBoHUIp9e0dX5+dJDDRWlS96pucbaxFNttptByXmGCMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42a076e4f9eso167075895ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:18:03 -0700 (PDT)
+	s=arc-20240116; t=1760545144; c=relaxed/simple;
+	bh=FpJex7JsXk7MQtcq/KBnp9/x9lu2b3S2dp9cqqH8oVA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gaUDiTD5E04v5EQvJ0IXMoIavP59ji/l+Y8XjwMvZ87qBwHsyVsmdVPGUpnG1PztRnfSzL2vDtxM+Ebumamw/VMizdaosazchG9o8o01D8Lx9Svs06YO/syOdZIMK7ON7rEgHrUtLmz7eKrw4k1NN3bUhFYRXlyulyacX4HdzoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pk3NH6n2; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-29085106b99so15719485ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760545142; x=1761149942; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=61E+2rntUa5VSBuKjvznhuCkIiLtgLpYCNWPKi7dZz0=;
+        b=Pk3NH6n2r0h8DbM7P9D99P5YUbTvuY8CXWF+8Bc7r+HR/rlYZItPjNytBtgcxceWBE
+         vhPSIjeADnM9usl7yYDsfYOyv2bqh7j8QTeLIPjNeW7AMC5a1eHDKRDbW7NaGa034Mll
+         llDlZt7a1Ul6abldPHnudj/54v4Zq0kLsHviHFt87HQOcynOusKmPM58Io5MByIo38/T
+         /15kSzkGJSkuubYjxQ4sn97xY74KlYUiAAMbmLJkAU6MIRCEpyncm0R+KmqdanuUMKXA
+         gV1JwbkkdMeehCytZsc3UtSuvuX7Iexd4ofpOtZ/GVc1EKrq5u51f2iXEhBcpPLSAbwC
+         skaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760545083; x=1761149883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TGJFF0h+Cc2HN5/SXx6z3VkQJkpMRG3pW68rP0Tjkaw=;
-        b=gmUzuarzGh7TLFZAJyzVCGIeyC28jqbF/STt0FwrAYkptAIhbB9XYgzeatSLTSEQIV
-         jP+s6ZKRNCWONzVdAiilCNnMOPImMDLc14tuuVxIOK6dOfRVC8WJ761Y9a1XDF/8hOw4
-         MLi8V95xf4p3bR4p6RdtYgrJlbj5sql45ZRBXczD/YTlOr6v0pG86j6dUfn+7Lq1NwP0
-         yc+B/zp8FKkP1u8ie07Eqyy76nIJogYoucrtH6ft9zH56OYekzRlQcP/l0xVo2efU2Xx
-         qCEBQ5bR+QfMk5XwMG6aoJPjc885zZ95r3QbbPIgj/vtZI7grxMbwERP4SMIURlavw3E
-         JM8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHiCh35wopNSv3mR7Z1Wu6VIKYQBp3mzFQhL3x1MZtVZfzKLsiQByN1naxI/Ls8CIosuD5uDRO1RRklG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyISkNZ4vdh77pBZPOCgVyZaemuGLU00Xcyyc+vniAbFHbiZPDX
-	kEZO/zdp7xBm3kFPPrLylrDMVQjNqUyOwhuiVr8PGARrH5tqo6isfjG3w7HobHeVE6NbZxas0Am
-	+kFkBGiVqmOcMuOi1mfJFPiIwD1PAeNYs1juPXJRe/EeRmi+Vb7ic3LRNEWE=
-X-Google-Smtp-Source: AGHT+IH1gLGVosl7lE82EyJiX3BM2ILCsIPhgICW8ikwAIwvMiF1cWkkZ0fFGtrU0XgZ3ZmpN+W22os4Rc4zhu7kAxaV8JD7deQF
+        d=1e100.net; s=20230601; t=1760545142; x=1761149942;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=61E+2rntUa5VSBuKjvznhuCkIiLtgLpYCNWPKi7dZz0=;
+        b=ZuOWojhgjyhGW91G97vXwf10RRC81Vj6aj31BVIuSo0XfR1OD9BAWtT9dxskcX6wP3
+         hBfUpDqocZ0CfTambpVLzwEB0WCWwVS879fat52ap6EioffbPm+Eff3eL8YarL8w7MOC
+         SrdS2Xud/qqe2bKuxdB1mGLsJO8K90bw+x+Cp0zCG4JgVIMnOousM8Bx3uyqxpnOA08x
+         M5UYmdH0fc0yQGzq/ldT622L6z82W6wDxEB6t5fRQgdTWaDB3uhyyux7vX4ui4Xk4E+V
+         llIK/GXX/tLBBJcarbSFlGuQkUbmpa+Zb4JldJzQIS5MjJN0jJM4veCubGjByEILNwzz
+         MzSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnlMojn/k7PvLD11XPEm+XrRg5YiI5wDkJyUwed/DXXfAwueuxAtWRs+bKTxy3lyNV8aljAufsGLlbG0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUZ972cUGQz1YJA20jPhXm8z8H3q8ATbaZ2iTDjyQ4aqRKNuaF
+	zqcSzbcVGBUyyRRj9HSQGNa9R0IQR6nOYDwXQgGpT9c3NUxJq1CI32tZe34yQ+8zJOfPDQb9hfY
+	0p2B5Rg==
+X-Google-Smtp-Source: AGHT+IGzaEkOLCnhkXm/4LJkTkzpidbSGxKaRls9P3+1zsup3JOsPnvZFNR4QAFZN56nthUV+TBwpaVPMQY=
+X-Received: from pjwd6.prod.google.com ([2002:a17:90a:d3c6:b0:32e:e06a:4668])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b4b:b0:271:479d:3dcb
+ with SMTP id d9443c01a7336-29027213537mr377287125ad.6.1760545141459; Wed, 15
+ Oct 2025 09:19:01 -0700 (PDT)
+Date: Wed, 15 Oct 2025 09:19:00 -0700
+In-Reply-To: <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2785:b0:42f:9eb7:7595 with SMTP id
- e9e14a558f8ab-42f9eb7762amr202453695ab.22.1760545083242; Wed, 15 Oct 2025
- 09:18:03 -0700 (PDT)
-Date: Wed, 15 Oct 2025 09:18:03 -0700
-In-Reply-To: <673d458f.050a0220.363a1b.0003.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68efc93b.050a0220.91a22.02a3.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_release_global_block_rsv (2)
-From: syzbot <syzbot+48ed002119c0f19daf63@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	loemra.dev@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250919214259.1584273-1-seanjc@google.com> <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
+ <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com> <aNwFTLM3yt6AGAzd@google.com>
+ <aNwGjIoNRGZL3_Qr@google.com> <aO7w+GwftVK5yLfy@yzhao56-desk.sh.intel.com>
+Message-ID: <aO_JdH3WhfWr2BKr@google.com>
+Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
+ skips WRMSR
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Hou Wenlong <houwenlong.hwl@antgroup.com>
+Content-Type: text/plain; charset="us-ascii"
 
-syzbot suspects this issue was fixed by commit:
++Hou, who is trying to clean up the user-return registration code as well:
 
-commit cba7c35fec267188a9708deae857e9116c57497b
-Author: Leo Martins <loemra.dev@gmail.com>
-Date:   Tue Aug 12 23:28:27 2025 +0000
+https://lore.kernel.org/all/15fa59ba7f6f849082fb36735e784071539d5ad2.1758002303.git.houwenlong.hwl@antgroup.com
 
-    btrfs: move ref-verify under CONFIG_BTRFS_DEBUG
+On Wed, Oct 15, 2025, Yan Zhao wrote:
+> On Tue, Sep 30, 2025 at 09:34:20AM -0700, Sean Christopherson wrote:
+> > Ha!  It's technically a bug fix.  Because a forced shutdown will invoke
+> > kvm_shutdown() without waiting for tasks to exit, and so the on_each_cpu() calls
+> > to kvm_disable_virtualization_cpu() can call kvm_on_user_return() and thus
+> > consume a stale values->curr.
+> Looks consuming stale values->curr could also happen for normal VMs.
+> 
+> vmx_prepare_switch_to_guest
+>   |->kvm_set_user_return_msr //for all slots that load_into_hardware is true
+>        |->1) wrmsrq_safe(kvm_uret_msrs_list[slot], value);
+>        |  2) __kvm_set_user_return_msr(slot, value);
+>                |->msrs->values[slot].curr = value;
+>                |  kvm_user_return_register_notifier
+> 
+> As vmx_prepare_switch_to_guest() invokes kvm_set_user_return_msr() with local
+> irq enabled, there's a window where kvm_shutdown() may call
+> kvm_disable_virtualization_cpu() between steps 1) and 2). During this window,
+> the hardware contains the shadow guest value while values[slot].curr still holds
+> the host value.
+> 
+> In this scenario, if msrs->registered is true at step 1) (due to updating of a
+> previous slot), kvm_disable_virtualization_cpu() could call kvm_on_user_return()
+> and find "values->host == values->curr", which would leave the hardware value
+> set to the shadow guest value instead of restoring the host value.
+> 
+> Do you think it's a bug?
+> And do we need to fix it by disabling irq in kvm_set_user_return_msr() ? e.g.,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1176267c580000
-start commit:   f868cd251776 Merge tag 'drm-fixes-2024-11-16' of https://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
-dashboard link: https://syzkaller.appspot.com/bug?extid=48ed002119c0f19daf63
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11dfd130580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15dfd130580000
+Ugh.  It's technically "bug" of sorts, but I really, really don't want to fix it
+by disabling IRQs.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Back when commit 1650b4ebc99d ("KVM: Disable irq while unregistering user notifier")
+disabled IRQs in kvm_on_user_return(), KVM blasted IPIs in the _normal_ flow, when
+when the last VM is destroyed (and also when enabling virtualization, which created
+its own problems).
 
-#syz fix: btrfs: move ref-verify under CONFIG_BTRFS_DEBUG
+Now that KVM uses the cpuhp framework to enable/disable virtualization, the normal
+case runs in task context, including kvm_suspend() and kvm_resume().  I.e. the only
+path that can toggle virtualization via IPI callback is kvm_shutdown().  And on
+reboot/shutdown, keeping the hook registered is ok as far as MSR state is concerned,
+as the callback will run cleanly and restore host MSRs if the CPU manages to return
+to userspace before the system goes down.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The only wrinkle is that if kvm.ko module unload manages to race with reboot, then
+leaving the notifier registered could lead to use-after-free.  But that's only
+possible on --forced reboot/shutdown, because otherwise userspace tasks would be
+frozen before kvm_shutdown() is called, i.e. the CPU shouldn't return to userspace
+after kvm_shutdown().  Furthermore, on a --forced reboot/shutdown, unregistering
+the user-return hook from IRQ context rather pointless, because KVM could immediately
+re-register the hook, e.g. if the IRQ arrives before kvm_user_return_register_notifier()
+is called.  I.e. the use-after-free isn't fully defended on --forced reboot/shutdown
+anyways.
+
+Given all of the above, my vote is to eliminate the IRQ disabling crud and simply
+leave the user-return notifier registered on a reboot.  Then to defend against
+a use-after-free due to kvm.ko unload racing against reboot, simply bump the module
+refcount.  Trying to account for a rather absurd case in the normal paths adds a
+ton of noise for almost no gain.
+
+E.g.
+
+---
+ arch/x86/kvm/x86.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 4b8138bd4857..f03f3ae836f8 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -582,18 +582,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
+ 	struct kvm_user_return_msrs *msrs
+ 		= container_of(urn, struct kvm_user_return_msrs, urn);
+ 	struct kvm_user_return_msr_values *values;
+-	unsigned long flags;
+ 
+-	/*
+-	 * Disabling irqs at this point since the following code could be
+-	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
+-	 */
+-	local_irq_save(flags);
+ 	if (msrs->registered) {
+ 		msrs->registered = false;
+ 		user_return_notifier_unregister(urn);
+ 	}
+-	local_irq_restore(flags);
++
+ 	for (slot = 0; slot < kvm_nr_uret_msrs; ++slot) {
+ 		values = &msrs->values[slot];
+ 		if (values->host != values->curr) {
+@@ -13079,7 +13073,21 @@ int kvm_arch_enable_virtualization_cpu(void)
+ void kvm_arch_disable_virtualization_cpu(void)
+ {
+ 	kvm_x86_call(disable_virtualization_cpu)();
+-	drop_user_return_notifiers();
++
++	/*
++	 * Leave the user-return notifiers as-is when disabling virtualization
++	 * for reboot, i.e. when disabling via IPI function call, and instead
++	 * pin kvm.ko (if it's a module) to defend against use-after-free (in
++	 * the *very* unlikely scenario module unload is racing with reboot).
++	 * On a forced reboot, tasks aren't frozen before shutdown, and so KVM
++	 * could be actively modifying user-return MSR state when the IPI to
++	 * disable virtualization arrives.  Handle the extreme edge case here
++	 * instead of trying to account for it in the normal flows.
++	 */
++	if (in_task() || WARN_ON_ONCE(!kvm_rebooting))
++		drop_user_return_notifiers();
++	else
++		__module_get(THIS_MODULE);
+ }
+ 
+ bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
+@@ -14363,6 +14371,11 @@ module_init(kvm_x86_init);
+ 
+ static void __exit kvm_x86_exit(void)
+ {
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		WARN_ON_ONCE(per_cpu_ptr(user_return_msrs, cpu)->registered);
++
+ 	WARN_ON_ONCE(static_branch_unlikely(&kvm_has_noapic_vcpu));
+ }
+ module_exit(kvm_x86_exit);
+
+base-commit: fe57670bfaba66049529fe7a60a926d5f3397589
+--
 
