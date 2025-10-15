@@ -1,157 +1,87 @@
-Return-Path: <linux-kernel+bounces-853893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067BFBDCD51
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:10:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A524DBDCD72
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D073BAF43
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F503E2563
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97ABF30F803;
-	Wed, 15 Oct 2025 07:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="pIMAy7US";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="boCC31Uv"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063C3313271;
+	Wed, 15 Oct 2025 07:12:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113181C862D;
-	Wed, 15 Oct 2025 07:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A49280014
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760512220; cv=none; b=U1hvxH5Lp1D7F1sqP3L7y2P5dpA4hhiaAKMMrj8yfhzrHp/OC6VqJ7WOEcbQtGfEjc538WcMilwyw6Q3P/CmFDn04zncKsvB/K1mz5ynwy3wDMYcRNh8GT2hTdyAOdXtg+p4hs7Wv/f6hR85zWMySVTJHbC/58xvNkSBPEWFHPU=
+	t=1760512324; cv=none; b=VQ7mV/D88xsr9bCuHKFufFcPBtlF0+MWn3WhnMkjeDjCChkyBBP8Fd0sg/luxJ0oEjqiKQkFEHDYMVK6X0Qr4mu9bi9Qqv07rwiH1unoRkyL4IwBT8KEWo3+p/k8cJ/8CujPCsIlPl97mji1FOCd2tvo2/EW4bnT0Z/rHzmtxsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760512220; c=relaxed/simple;
-	bh=xjFb/R64+Mh+Q8MYe3VYKI8MbvFlUcAzZe/59ZCPYTQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=efQRk+1Ml90O81vjZmLDvUh/EIY9eFXCWeUss+HJk+XTXDWdXbk92QpxFuveXizeHSNvwjxFe5J/dH8Z+jEvtlwqG87Mxe5vv0Qq9yW2u8BRponwclC6XFUu0uHKKcSvhc+kN4WLMgSiyq74nwAUHbu2bcYsGauBWBqic8q0/PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=pIMAy7US; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=boCC31Uv; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id DA4AC1D00075;
-	Wed, 15 Oct 2025 03:10:17 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 15 Oct 2025 03:10:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1760512217;
-	 x=1760598617; bh=nFNokHi/WzeVa5PH2mR5LLVWP7WWc0ISJYIPyJ+q7z0=; b=
-	pIMAy7US4Y+ijfMOhbsx399Avwmn7SnDDiT6aVV/r6mYjP8tzg3NdkJMwEGuY+so
-	pd0x58jbpw9NmE9Dw2SC04EGtawy2EETosTalw6hsRrgYPD7bKJ2q9GFIo9lYW2/
-	9Z9+p0Lb0Ke2FOmW57j08A3qri4U9qc/uPjGtDv7nt+e1eaAQdXL3SR4Bv23XJB4
-	jMnGAcz5T2mGgYdBOkMguAEa3ZRDdOJIMYYOXiroiT8CFjMt7NNPCjTA0uXCrWq/
-	q8w6rpiUivxdKDtRj213Xe85ZQgG5F/pGLA626R7ILDnBc0cG52FbrhGrMPM3udC
-	INfye2qmvSC30TcBKm6wmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760512217; x=
-	1760598617; bh=nFNokHi/WzeVa5PH2mR5LLVWP7WWc0ISJYIPyJ+q7z0=; b=b
-	oCC31UvD4+hiXV6BCMdfucTMX+UexoljhaF1+oOh9Mpu6c2p9thql8kxH3hQq89B
-	PUfT4s52vikdUNDrCZiMmLhDCYPHl/OM/2HEIOMda7KiEXDTqyVOfkj9sMFW5Vrn
-	z3aHLUaXsq0dtyc/AI3+li9SY13BoO3uVx5pvQ/YqhoYfi8r4zLWrG5G3ptc6u/b
-	tQNIPyqIamxrJbbg2+PS+xbCEptjfO19b/YkBRp2yfg52nvI6Z/3TSwqY/lbn8Qx
-	tGQpZ5XbpzaAYCvaGrh7OIbPoJa+7488AglxNw2f+J7Up7oaQcoBgATt7/Cn77Mp
-	hkU6tivPW2xEQLlI34PuQ==
-X-ME-Sender: <xms:2UjvaKhVJ_wWhWmKlw7vn-2BM6-8tq5p8DJxqqXXVAozMBk2E7HOIA>
-    <xme:2UjvaF08IzbVUvoH1PNuT6aRcVrZ4VbdJtLmnIU4fDrYh5qNBnJGmfaOMgJqXucs4
-    _XXCG4yNaaD6Oqn0CXqIlCHLEODc-uinVaO3WjjTbMGf4BVpSUwBo3j>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddvjeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehsrhhinhhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrh
-    gvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhi
-    qdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoh
-    eprghiqhhunhdrhihusehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopegv
-    khgrnhhshhdrghhuphhtrgesohhsshdrqhhurghltghomhhmrdgtohhmpdhrtghpthhtoh
-    epjhhinhhghihirdifrghnghesohhsshdrqhhurghltghomhhmrdgtohhmpdhrtghpthht
-    ohepkhhumhgrrhhirdhprghllhgrvhhisehoshhsrdhquhgrlhgtohhmmhdrtghomhdprh
-    gtphhtthhopegrmhgrhhgvshhhsehqthhirdhquhgrlhgtohhmmhdrtghomhdprhgtphht
-    thhopehkphgrlhhlrghvihesqhhtihdrqhhurghltghomhhmrdgtohhm
-X-ME-Proxy: <xmx:2UjvaGECYRhCQlIQVItARlKccnBiUi6GwJAWpxH_k2ULhbGmbKf3kw>
-    <xmx:2UjvaAt1Q6qDPwze8_lD_Oehmr24J3Fvyr26_m4nGWXwUmKRKyC6-g>
-    <xmx:2UjvaIr1A1rQAnLJeuOQs1pGXdP-OKCc-vXewRF8Zn_qjX-P3T-qNQ>
-    <xmx:2UjvaPkFuiWsOB_kZj6S9voPxQ3NsEgo5KWi_PLe403EIN7oNsvP5A>
-    <xmx:2UjvaJ0T39pEdaQwa50OSmwt_b5Wbyb0rpJzxbeOJheFm8bfKEYVORkV>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 57A57700054; Wed, 15 Oct 2025 03:10:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1760512324; c=relaxed/simple;
+	bh=xh2uFZDovD6N/0vH/Ze1fDF8ekV58mQNBBzKuRbRj0U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s4wDu+qPwinxZ/ezUvZskGsy5aj0EaEXzW05GIdUr8k3Hu3H2UaM/b9JD+Y6Ct68vymwd5NNse9A07KkYHhHOLotU0I8tKhukeZIBFJ1NWY6Mhub3Kk64faa6ysTvtFf6UNepKaMKbpB56ETSstF2ffgd7RFlbOVeQqFT/+FZaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42955823202so6626635ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:12:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760512322; x=1761117122;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+zPKTuhm0oAnH95sT6WQbt7cnO42FE6Lr0aOkmMLfMg=;
+        b=PCSXFx/S7k3GtswFNobBDpQ95UV9DcDx3EUazUPXrS/Abj1RIVLx23igmQbXS/KJId
+         7yU2hqx2kDC7IFqJqPz7RTdvab4sTKv7DivJ6RL9zFsrr2OFKVxxDkm2/kzeP5cGZ/uJ
+         EKDO5LtPv9ElNNzbbVilj0ZIytVTibDe6nfM979zdLUQTlXwVb8L+WrxJTTx/qXFeBwj
+         t3RXI4UoceEYW39Dfn0/EMB7gH3R5ncIcW2PbzmSL1WTIPVV4X11dWw9+xhHSOBLTjk/
+         VWU4LXuQH4io7hMI8B5pFYI+kw42K78S/diMnVzBNcp3J2mfyN2Ev4x54RPWtUy87kCl
+         sPpw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2h0bCi1YY1icRo/TMG34dyaO4/SAuqbG5ni8CwAzuFo1yadKSI6BiOdNLFqKvuebChjZLkv/J/2IK1Gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIh9+iiHWsZifTnpNp8W2X/PBwhoAWIjVhXu7Vu51jcZkNz9B2
+	vE7gh3n/YgkYHndyu/RhSuL1L66H22yN3A93sZcqwwn1nZx5NZyxBJl1ICreMkX4g5WbWeE5Gdx
+	HSgWpTxD8euDwp6FZUxXQkXZ1vorryk7qQTaxZsIOPMORJnP0WApzv2m6BXc=
+X-Google-Smtp-Source: AGHT+IEztuYRTyzIFD+npJCaCAAtIFqJbXsdTH1iVpuuxlzvEwKI2rAXfa28A+KzWgt4o+hxDo8YWixOoGdenSSQv4FtA3Q9wmpl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AFtoOdvkewRR
-Date: Wed, 15 Oct 2025 09:09:57 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Kumari Pallavi" <kumari.pallavi@oss.qualcomm.com>,
- kpallavi@qti.qualcomm.com, "Srinivas Kandagatla" <srini@kernel.org>,
- "Amol Maheshwari" <amahesh@qti.qualcomm.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: quic_bkumar@quicinc.com, ekansh.gupta@oss.qualcomm.com,
- linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- "Jingyi Wang" <jingyi.wang@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com,
- ktadakam@qti.qualcomm.com
-Message-Id: <ac42d5cc-1db9-4e81-8613-ca1ac9cff9d2@app.fastmail.com>
-In-Reply-To: <20251015045702.3022060-3-kumari.pallavi@oss.qualcomm.com>
-References: <20251015045702.3022060-1-kumari.pallavi@oss.qualcomm.com>
- <20251015045702.3022060-3-kumari.pallavi@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/3] misc: fastrpc: Add support for new DSP IOVA formatting
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3708:b0:42f:8bdd:6e9c with SMTP id
+ e9e14a558f8ab-42f8bdd7091mr291023375ab.14.1760512322156; Wed, 15 Oct 2025
+ 00:12:02 -0700 (PDT)
+Date: Wed, 15 Oct 2025 00:12:02 -0700
+In-Reply-To: <20251015064502.30763-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ef4942.050a0220.91a22.0233.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 15, 2025, at 06:57, Kumari Pallavi wrote:
+Hello,
 
-> @@ -2291,6 +2319,22 @@ static int fastrpc_rpmsg_probe(struct 
-> rpmsg_device *rpdev)
->  	const char *domain;
->  	bool secure_dsp;
->  	unsigned int vmids[FASTRPC_MAX_VMIDS];
-> +	struct device_node *root;
-> +	const struct of_device_id *match;
-> +	const struct fastrpc_soc_data *soc_data = NULL;
-> +
-> +	root = of_find_node_by_path("/");
-> +	if (!root)
-> +		return -ENODEV;
-> +
-> +	match = of_match_node(qcom_soc_match_table, root);
-> +	of_node_put(root);
-> +	if (!match || !match->data) {
-> +		 soc_data = &default_soc_data;
-> +		 dev_dbg(rdev, "no compatible SoC found at root node\n");
-> +	} else {
-> +		 soc_data = match->data;
-> +	}
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Matching on the type of the root node is not great, as this
-is both a layering violation and does not scale if you need
-to do the same thing for future chip generations.
+Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
 
-Normally this should be matched on the device compatible
-string itself, or possibly based on one of its properties.
+Tested on:
 
-If this fails because there are already dtb files in the
-open that have to keep getting supported and there is no
-identifier in the fastrpc device itself, you can use
-soc_device_match() as a last resort to match on the the
-soc.
+commit:         13863a59 Add linux-next specific files for 20251014
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1590ac58580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76790fe131481879
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=179a7b34580000
 
-    Arnd
+Note: testing is done by a robot and is best-effort only.
 
