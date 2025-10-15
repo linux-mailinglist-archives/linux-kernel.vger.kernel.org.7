@@ -1,115 +1,102 @@
-Return-Path: <linux-kernel+bounces-859346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-859347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF6ABED568
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B754BED56B
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 19:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F33E19A77C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF8D19A7861
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Oct 2025 17:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E0525A659;
-	Sat, 18 Oct 2025 17:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2FA260588;
+	Sat, 18 Oct 2025 17:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oDGhkZ/3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RDM0n6Qh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D55516F288;
-	Sat, 18 Oct 2025 17:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F271260563;
+	Sat, 18 Oct 2025 17:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760808765; cv=none; b=DQCpYqB6gaHm9v/ENgB4qzTGCcWt/0iJCm4c0wE73nnwfLogmqOLrdhI0nsbZcX5k77TqMJ5UJ+EUfnT0KXTEB5SfSpMJQ1pYRxVutxSKu8DlQII6sppV7qNKJQpzFhKRxFBfvz8H+ZALYnJZYnwpc1Dh694hIzupPjyLLUnH24=
+	t=1760808769; cv=none; b=Cc7GOJd1pz9g63yhD5+VrxKqe8AjI9vBMSncJgsANAGMyBTIkXDxivEIUjzC20/oq642oIg4BFxQ78jRRmsLVrYXcrMHkiqIq49rXbyGv+VXRkDfl+0DtphY6niTj7tk+ObtPEgs34WHU2fVuaqg/r05Su0p3Mb25AoXtrrfLdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760808765; c=relaxed/simple;
-	bh=qlpQysAtLjPPuAYZ6sv95mF/8IWgUqrTAOsaiQyTKcA=;
+	s=arc-20240116; t=1760808769; c=relaxed/simple;
+	bh=NxIbPa2fH1pdp+reelXrlh0jLg7Vwo3mY9xsEwoBBQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pancImxg1Vq9ZQXT8kSyJpyzO6BSehrPImlTmJHuJlyJzIIsti5coZIk0iL2dh7lDc8F/62eD8qX4Yk+KzqoYQ2WNeJmOzwu0xyIoZIH8VWBDhdw276Ls3xOR69kjLN2PDOVgtsvyKliXDoHLXohoA25a6B8EARi/5qJnxjJztQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oDGhkZ/3; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttwmqYeA0IHMdOx9stXn+uuIQxCWIv8vfQQ56H0AWWHgv/KJFvSQxgKImQD69PMiSHLqBCL2KONvCJKlnOIe0aZKSpf6PHQuLlv/TM2GLpsGa8lYVEBDzUGWn4vLaEttrjMDvdhJwAV71PeUxgOLSckoPiiaT1Hk9qWBIRDlu8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RDM0n6Qh; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760808763; x=1792344763;
+  t=1760808768; x=1792344768;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=qlpQysAtLjPPuAYZ6sv95mF/8IWgUqrTAOsaiQyTKcA=;
-  b=oDGhkZ/3VLPO+zQg5BZCWS+kpcvh3eOU6SBEdQuW34HdwbfUkioBzhYX
-   6eDjQGhZK7TFwKR3IOab6uvFtYUhqlGNX6O5J6p1PQW9LJI+oqfHIMuwF
-   WMC5+31aZIqToZYdsClZdJgolCPJMB/sgidc51NmmG73gFwrlqPSw1U1r
-   28wIvGEBQztHLk315Wgrtg1TVC/qzyjnXTcawwXeXG5MeoowQdLA8vEkQ
-   fR5IETa4e5TCvQ4Geg87qONTXx7LSI3p56+Luf10fBj4EGKcoXHgyKLoL
-   qvTyIqHA9YDFrk1WJKstLKja/rGI6OZsGPDgjWX2uXF7zyS8Jjqu5cV8d
-   A==;
-X-CSE-ConnectionGUID: fQa55HwCScShkpdTlmL1+g==
-X-CSE-MsgGUID: BbWVGR17SMqnEpZhoY1o8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73670177"
+   mime-version:in-reply-to;
+  bh=NxIbPa2fH1pdp+reelXrlh0jLg7Vwo3mY9xsEwoBBQ0=;
+  b=RDM0n6QhbDdWUjLLu80yc28Fw2UeY5+ZW1I5a5ZaPo64/A3CNxFUj05I
+   qcCLkROrd0EWAJCbFHp65/OmoKJW0ktDMJ0oO5WSTsX4tu6v/lX39BW4a
+   C2oLu95p9Vz5/V8P5wc1PPvZnmR9XupgxNe7mlN2vUw9iSqVZCBdgqu2T
+   MfZtct6avWUJNbj4HR4u6qVYLQ06MrtJgspdNsN5g49XHlkfmPQjzXT7S
+   vK3CIgS5De1T3ZAv2xWxYaRem1q2iSfnMNex12MWO5gJqaVRCNZ+sYc/e
+   2Gt5mswfC74gAA+kxOtvJwll7xkHJH6ZB6Bz47N9/cgS7zYMtPJoIcLxH
+   Q==;
+X-CSE-ConnectionGUID: o6PbxRWzS6OItY4elOAxwQ==
+X-CSE-MsgGUID: R2aSZA21RTOmTakC6eVJCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65614217"
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="73670177"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:42 -0700
-X-CSE-ConnectionGUID: 8aq9F9SlRYu5dgklS0iwnQ==
-X-CSE-MsgGUID: o/yGeldTQnGCOKW0QObD2Q==
+   d="scan'208";a="65614217"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:46 -0700
+X-CSE-ConnectionGUID: nM4SffQDTw2pkVETXRGMIA==
+X-CSE-MsgGUID: puUU3YVuTWyHBZyz6vXh0A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
-   d="scan'208";a="220131692"
+   d="scan'208";a="187413443"
 Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.194])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:41 -0700
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 10:32:45 -0700
 Received: from andy by ashevche-desk with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1v935F-00000000L8i-2abO;
-	Wed, 15 Oct 2025 18:06:33 +0300
-Date: Wed, 15 Oct 2025 18:06:33 +0300
+	id 1v94TZ-00000000Me0-09KN;
+	Wed, 15 Oct 2025 19:35:45 +0300
+Date: Wed, 15 Oct 2025 19:35:44 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: luke@ljones.dev,
-	"Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Denis Benato <benato.denis96@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	platform-driver-x86@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH] MAINTAINERS: add Denis Benato as maintainer for asus
- notebooks
-Message-ID: <aO-4ebdTkIoUgBO8@smile.fi.intel.com>
-References: <20251003184949.1083030-1-benato.denis96@gmail.com>
- <46762a7e-e8cb-45fb-8d62-062915133463@kernel.org>
- <36720829-6ba3-4178-952c-4236622edfa2@kernel.org>
- <ebe38602-1832-391f-b043-cae0c10d7e30@linux.intel.com>
- <E7993E86-3805-4E93-A714-0D4A33FBA759@ljones.dev>
- <7c741d8d-dc07-7316-3999-cd69f2af67a3@linux.intel.com>
+To: Artem Shimko <a.shimko.dev@gmail.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH] serial: 8250_dw: handle reset control deassert error
+Message-ID: <aO_NYGFCKb0J2uqK@smile.fi.intel.com>
+References: <20251009081309.2021600-1-a.shimko.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c741d8d-dc07-7316-3999-cd69f2af67a3@linux.intel.com>
+In-Reply-To: <20251009081309.2021600-1-a.shimko.dev@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Oct 06, 2025 at 12:12:12PM +0300, Ilpo Järvinen wrote:
-> On Mon, 6 Oct 2025, luke@ljones.dev wrote:
+On Thu, Oct 09, 2025 at 11:13:08AM +0300, Artem Shimko wrote:
+> Check the return value of reset_control_deassert() in the probe
+> function to prevent continuing probe when reset deassertion fails.
+> 
+> Previously, reset_control_deassert() was called without checking its
+> return value, which could lead to probe continuing even when the
+> device reset wasn't properly deasserted.
+> 
+> The fix checks the return value and returns an error with dev_err_probe()
+> if reset deassertion fails, providing better error handling and
+> diagnostics.
 
-...
-
-> My opinion is we remove that address, there's little point in keeping 
-> people around when they've stopped communicating years ago. For this 
-> driver it's easy, but that address also appears for samsung-laptop.c
-> which doesn't have another maintainer.
-
-The latter case should also switch to Orphaned or get removed the whole
-MAINTAINERS record for it.
-
-But before doing that have you checked `git log --grep'$First $Last'` (i.e. w/o
-email) to see if there is any new activity? Also any other emails available
-from googling / duckduckgo'ing?
-
+If it's not applied yet, it deserves the Fixes tag, I believe.
 
 -- 
 With Best Regards,
