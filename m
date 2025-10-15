@@ -1,259 +1,128 @@
-Return-Path: <linux-kernel+bounces-854802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467E9BDF6D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:39:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09091BDF6DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BEC048764A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A0C483C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A64D3093CB;
-	Wed, 15 Oct 2025 15:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5D31B13F;
+	Wed, 15 Oct 2025 15:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V1ScEKp9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0WoAqQG"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA2A3074A2;
-	Wed, 15 Oct 2025 15:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BB130CDA5
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542715; cv=none; b=KreI9oAF0Lng3hFzS7y1FYCAr0iSTnFGcePqFhO/du2th5Vrn+ydE8sHbAIYJN7XYnnjWgjEcOkxUOM4p8TRaHp2/YjYRsy2KwMqiDLrg/KzBf+rc8RQqhYmrrhOBMNkjk5LrH46P2QHOsxgjVqwaI1ivjXe7cji507N3YXz72Q=
+	t=1760542734; cv=none; b=pXepbqF71uGOJMccyuexYBLDzIlH4oNtMBdgnmYc5IgxYg40cZWqA93gYrRotDXOTDQwTHoQyUTQUO7Dnc4qDzWznk7XJHudjXY/53MAoZrAYQlggU/t8pI80Pyb2gc1TZYKtOCh3TNIDi1f35qfvefQZuwocknZQxwQKhdR0Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542715; c=relaxed/simple;
-	bh=9pbyUAwwFE/QnPS4ZNdNETNv1vPeXcRmk7+KPeZVauw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rVywi6FtBSNmogF1F4C0iVuCgeb7FjeNCwUad4jvTes04jE463LZs+5Jh7HxC2hdOb+NIaV2Bo0daRkrCmk8qZVwivob1tfNIs9wULM55WDEL1815A9XkUDgFDkSxgtciXHnbsKHZ+SyceBWVnyCWQxelGRQjRa9zyJXQuE3pnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V1ScEKp9; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760542713; x=1792078713;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=9pbyUAwwFE/QnPS4ZNdNETNv1vPeXcRmk7+KPeZVauw=;
-  b=V1ScEKp9q1xlZiUyxhZ36AUuJaf7n6/vNCV9Qe6BTrsr4TYIJq18D9k8
-   kBprkFcyGJAPqsXoALwuj0bz91YM8sGw+2VpYcs3pLtcPbw1Bl0FvWBz/
-   u+QNsAAexW6Q3ngZON8TcnE75CHzawPVhhDeHl18kgTxC+QVGg6cre4iB
-   m9fEHz4srJEZkmGv/DG3/Ua2qQMCBUGbGPqyzxRiR6kpIhMQVcWX5cTlp
-   jtbmudTvNQnxH1lwt+lfo5X2bE6D8IQZUSIkBs6qjAgay916U8P3k2n5r
-   LfgOktLpNTqkrAmfXKXb+zckPaEQ0V5NRLVCOaVXQ4jOjqxkAYcG1tPwG
-   g==;
-X-CSE-ConnectionGUID: bAkE0eRlTP2xFgMafjeGug==
-X-CSE-MsgGUID: timFh+UsQEKL93aQJL5SPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62429048"
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="62429048"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:38:31 -0700
-X-CSE-ConnectionGUID: X/uJpIkAQLGgjChyA5kODQ==
-X-CSE-MsgGUID: 2wH9yJ6jRlCJMstXmDpRCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="181418405"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.221]) ([10.125.111.221])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:38:31 -0700
-Message-ID: <de625425-bc2c-4fe8-850a-2196946ce9d8@intel.com>
-Date: Wed, 15 Oct 2025 08:38:29 -0700
+	s=arc-20240116; t=1760542734; c=relaxed/simple;
+	bh=FSQRDeAYqQ/2VoAUFvlk01F5rvPWoaNjV1C46hVYIzI=;
+	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TyX1ZMUZosa+ZS1MlJItl5uoLvfRga7yOvRtmUfYoHedVssDeNz2etYUf6CkMarX9BAUNkfCekGSWglAb5dC0NgJfls+mONn3gyBtjfe5F8MWY7nsHASGDcjxKHKyBuubBithgQcYGlqoiTmCC8+rBv/wTCNNcLBpoi4nn6QWRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0WoAqQG; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-78e9f48da30so84830136d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:38:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760542723; x=1761147523; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C+F1mH7vqcfyu05p+jyAm8iUdNffr1wFOUdLtFbWtZU=;
+        b=k0WoAqQGMFUrTnXoohgdw4UHCg19+xRqrXJlWp0WlbF82yHcdzL1JiKGoADN7vTey8
+         Y2HJWxt7L+oP8gU8u7RZ2KMgU8gdyOt4hBwO1uERAGC9ohguQVR0w7fR1wG5GY8JkVFW
+         lEZopmN/xDaC/YXlRyrO1apAGUm8jkI4cYQxtCA5R5YzKwurd+fKz6tS7/7SzkwzkJTk
+         646EpjNT5i6w03YZ4yAYBveD/pwz3LFwxIz6dPWS7ystvXbVsACP3tJOEFuETzGzu39+
+         lId2JcbHDD9bk41HkHiFNqKqsN/AWRtkMFFfWm4w3CjiDe+5OMjtiDo98CtqpsKtCvKy
+         YuQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760542723; x=1761147523;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+F1mH7vqcfyu05p+jyAm8iUdNffr1wFOUdLtFbWtZU=;
+        b=TuuN0D8QSp7nPk3ZuTIcwh56YnMsO3o5Y90SDZXwZu9mexngvlVZ/mnYuHjG+84iCO
+         CxhDoq0PD+gtKsm+yFArSzuSs9K5kWbEhIjtR5lOjG1fyiriKT0B3bNIuJxKrexNkvKH
+         C3p6b+bmQTQ7U4Zccvnw8V5gU9Z7KOAyLEjFYKvB74f7FswH1BV6wgdP/NBtSJijhe8a
+         HNyXhK27J7RtiU4nI3k+CaRh9R+SPAobnuSADWJ1To++ZlOwBNJwoZJkgAUbVbhzU/Hs
+         YJ228v0z2qREqfQnrp9yoZPMNB4z8OqMI+TvEv5j5DUIiLtANhrHlINO2PL0FIKRiTDj
+         NWrg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6m1NfMJ9S1lseUJ9PHpi/6wn0xMHbc7l/vzU+EUv58Hlkmyrnx40nVPTUjnZ7oo/TNdRk1R9JKJmgEgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrYlgU18arLRk7TsVRBF7Df+S2woRqyE1GcMQDFII/LIUZFQjY
+	6uRZrzM97POtE9kpxUpy8JalbiUFqgpZg3Ur6VSyQdei0oj+wJKZv3aQ
+X-Gm-Gg: ASbGncsgDmrIfqP9Itw9sIjU87wLtdyBuckZ3aUv6q2lrfDV456m5gpQ5MXKuCXQQz7
+	6mIMt7rKu4bcncAvssXQ06r9er0/4DlXD2Sfl1V5Mk9N1aUPgEOifdUgxErBvO/5Mny2bj3dvIr
+	MWY5jeXDfbRsGknoZRT9kgyY4M+Z+9QgrheA/FjiRqMp/HmfsEsQrifcwdG3hP6dhEjaOl2xAps
+	Rs8M6aO60F2Zo/6XmrbmEXuWh4ld+NMmwlkoGSPiJaBMnYF6QcH+lFO5jcr2+D2CKAlkupeIKuS
+	KeYJpCZtDkhDsPOnwgL1MYxnhEXNq94/YYhK0VRQLSjhLOiGhw0NHSN5QWdW9WDDAe0bHRMvEzO
+	Bxrj6AlZK89a35y+7imibsCasc0aVw/NJTyeep0lWqXgj640h
+X-Google-Smtp-Source: AGHT+IG6rN4LZQ60GHvJUFjr2Ucod9gZKCb0fKHJcDhV38Qj5DzJAmVjTMxF3EseKqcVnSvkkId3pw==
+X-Received: by 2002:ad4:5c62:0:b0:879:eb26:dafc with SMTP id 6a1803df08f44-87b2efdbb1dmr470143536d6.54.1760542723334;
+        Wed, 15 Oct 2025 08:38:43 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e88f3f2f0asm5036741cf.28.2025.10.15.08.38.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 08:38:42 -0700 (PDT)
+From: yury.norov@gmail.com
+Date: Wed, 15 Oct 2025 11:38:41 -0400
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Yury Norov <yury.norov@gmail.com>
+Subject: [GIT PULL] bitmap for 6.18-rc2
+Message-ID: <aO_AAQBzqMkrGiry@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] cxl_test: enable zero sized decoders under hb0
-To: Vishal Aslot <vaslot@nvidia.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "open list:COMPUTE EXPRESS LINK (CXL)" <linux-cxl@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251015024019.1189713-1-vaslot@nvidia.com>
- <20251015024019.1189713-2-vaslot@nvidia.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251015024019.1189713-2-vaslot@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi Linus,
 
+Please pull fixes for 6.18-rc2: "unnecessary `unsafe`" warning fix for
+bitmap/rust, and one leftover patch for FIELD_PREP_WM16() conversion.
 
-On 10/14/25 7:40 PM, Vishal Aslot wrote:
-> The cxl core in linux updated to supported committed
-> decoders of zero size, because this is allowed by
-> the CXL spec.
-> 
-> This patch updates cxl_test to enable decoders 1 and 2
-> in the host-bridge 0 port, in a switch uport under hb0,
-> and the endpoints ports with size zero simulating
-> committed zero sized decoders.
+Thanks,
+Yury
 
-Hi Vishal, first of all, really appreciate you doing this. If there's another rev of the series, let's reorder and the test patch should go after the implementation patch.
+The following changes since commit 9b332cece987ee1790b2ed4c989e28162fa47860:
 
-Can you add a little more in the commit log on how this is tested? i.e. this code is exercised in cxl-topology.sh unit test or something else etc etc.
+  Merge tag 'nfsd-6.18-1' of git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux (2025-10-14 09:28:12 -0700)
 
-> 
-> Signed-off-by: Vishal Aslot <vaslot@nvidia.com>
-> ---
->  tools/testing/cxl/test/cxl.c | 96 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 94 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 2d135ca533d0..cb18ee41a7cf 100644
-> --- a/tools/testing/cxl/test/cxl.c
-> +++ b/tools/testing/cxl/test/cxl.c
-> @@ -719,6 +719,45 @@ static void default_mock_decoder(struct cxl_decoder *cxld)
->  	cxld->reset = mock_decoder_reset;
->  }
->  
-> +static void size_zero_mock_decoder_ep(struct cxl_decoder *cxld, u64 base)
-> +{
-> +	struct cxl_endpoint_decoder *cxled;
-> +
-> +	cxled = to_cxl_endpoint_decoder(&cxld->dev);
-> +	cxld->hpa_range = (struct range){
-> +		.start = base,
-> +		.end = base - 1,  /* Size 0 */
-> +	};
-> +
-> +	cxld->interleave_ways = 2;
-> +	cxld->interleave_granularity = 4096;
-> +	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
-> +	cxld->flags = CXL_DECODER_F_ENABLE;
-> +	cxled->state = CXL_DECODER_STATE_AUTO;
-> +	cxld->commit = mock_decoder_commit;
-> +	cxld->reset = mock_decoder_reset;
-> +}
-> +
-> +static void size_zero_mock_decoder_sw(struct device *dev, u64 base, int i)
-> +{
-> +	struct cxl_switch_decoder *cxlsd;
-> +	struct cxl_decoder *cxld;
-> +
-> +	cxlsd = to_cxl_switch_decoder(dev);
-> +	cxld = &cxlsd->cxld;
-> +	cxld->flags = CXL_DECODER_F_ENABLE;
-> +	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
-> +	if (i == 0)
-> +		cxld->interleave_ways = 2;
-> +	else
-> +		cxld->interleave_ways = 1;
-> +	cxld->interleave_granularity = 4096;
-> +	cxld->hpa_range = (struct range) {
-> +		.start = base,
-> +		.end = base - 1, /* Size 0 */
-> +	};
-> +}
-> +
->  static int first_decoder(struct device *dev, const void *data)
->  {
->  	struct cxl_decoder *cxld;
-> @@ -731,6 +770,30 @@ static int first_decoder(struct device *dev, const void *data)
->  	return 0;
->  }
->  
-> +static int second_decoder(struct device *dev, const void *data)
-> +{
-> +	struct cxl_decoder *cxld;
-> +
-> +	if (!is_switch_decoder(dev))
-> +		return 0;
-> +	cxld = to_cxl_decoder(dev);
-> +	if (cxld->id == 1)
-> +		return 1;
-> +	return 0;
-> +}
-> +
-> +static int third_decoder(struct device *dev, const void *data)
-> +{
-> +	struct cxl_decoder *cxld;
-> +
-> +	if (!is_switch_decoder(dev))
-> +		return 0;
-> +	cxld = to_cxl_decoder(dev);
-> +	if (cxld->id == 2)
-> +		return 1;
-> +	return 0;
-> +}
-> +
->  static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
->  {
->  	struct acpi_cedt_cfmws *window = mock_cfmws[0];
-> @@ -743,7 +806,7 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
->  	struct cxl_dport *dport;
->  	struct device *dev;
->  	bool hb0 = false;
-> -	u64 base;
-> +	u64 base = window->base_hpa;
->  	int i;
->  
->  	if (is_endpoint_decoder(&cxld->dev)) {
-> @@ -767,6 +830,20 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
->  		port = cxled_to_port(cxled);
->  	}
->  
-> +	/*
-> +	 * Decoders 1 and 2 of the endpoint under host bridge 0 should be enabled as zero-sized.
-> +	 * It would be even better to make sure that the parent switch uport decoder was
-> +	 * also enabled before enabling the size zero decoders but there is no harm in doing it
-> +	 * anyway.
-> +	 */
-> +	if (hb0 && (cxld->id == 1 || cxld->id == 2)) {
-> +		port = to_cxl_port(cxld->dev.parent);
-> +		size_zero_mock_decoder_ep(cxld, base);
-> +		/* Commit the zero-sized decoder */
-> +		port->commit_end = cxld->id;
-> +		return;
-> +	}
-> +
->  	/*
->  	 * The first decoder on the first 2 devices on the first switch
->  	 * attached to host-bridge0 mock a fake / static RAM region. All
-> @@ -780,7 +857,6 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
->  		return;
->  	}
->  
-> -	base = window->base_hpa;
->  	cxld->hpa_range = (struct range) {
->  		.start = base,
->  		.end = base + size - 1,
-> @@ -844,6 +920,22 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
->  			.end = base + size - 1,
->  		};
->  		put_device(dev);
-> +
-> +		/* Enable the next two decoders also and make them zero sized */
+are available in the Git repository at:
 
-s/decoders/switch decoders/
+  https://github.com/norov/linux.git tags/bitmap-for-v6.18-rc2
 
-> +		dev = device_find_child(&iter->dev, NULL, second_decoder);
+for you to fetch changes up to 7e85ac9da1acc591bd5269f2b890ed1994c42e96:
 
-Maybe just pass in the index as the data parameter and then you can just use match_decoder_by_index instead of static code second and third.
+  PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16 macro (2025-10-15 10:39:54 -0400)
 
-DJ
+----------------------------------------------------------------
+bitmap-for-6.18-rc2
 
-> +		WARN_ON(!dev);
-> +		if (dev) {
-> +			size_zero_mock_decoder_sw(dev, base, i);
-> +			iter->commit_end = 1;
-> +			put_device(dev);
-> +		}
-> +		dev = device_find_child(&iter->dev, NULL, third_decoder);
-> +		WARN_ON(!dev);
-> +		if (dev) {
-> +			size_zero_mock_decoder_sw(dev, base, i);
-> +			iter->commit_end = 2;
-> +			put_device(dev);
-> +		}
->  	}
->  }
->  
+ - rust: bitmap: clean Rust 1.92.0 `unused_unsafe` warning (Miguel);
+ - FIELD_PREP_WM16() rework leftover (Nicolas).
 
+----------------------------------------------------------------
+Miguel Ojeda (1):
+      rust: bitmap: clean Rust 1.92.0 `unused_unsafe` warning
+
+Nicolas Frattaroli (1):
+      PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16 macro
+
+ drivers/devfreq/event/rockchip-dfi.c | 45 ++++++++++++++++++------------------
+ rust/kernel/bitmap.rs                |  2 ++
+ 2 files changed, 24 insertions(+), 23 deletions(-)
 
