@@ -1,116 +1,72 @@
-Return-Path: <linux-kernel+bounces-854917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71215BDFBDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472D5BDFBED
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA52D507870
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7112404756
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF58B2FB098;
-	Wed, 15 Oct 2025 16:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9592C236F;
+	Wed, 15 Oct 2025 16:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfXji97u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sl2MUZ18"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1261C189B84;
-	Wed, 15 Oct 2025 16:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1B9171C9;
+	Wed, 15 Oct 2025 16:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546809; cv=none; b=UkRUStio8P1Bp5LHRCUcIfWBDodm96tNw8I7ZyzPz//3Lr7huMNsjwEj5sAPdjmQup8UGqrqWIU75oDLTAMmFAzwHBCAUQnm497VCxmtMEsVwjmRQXtlfO8a+Jb5EoDP+Zd46RYh57eRmhGjM2BOPB3JbbcfGZQATczWszUz9JE=
+	t=1760546849; cv=none; b=bkKynDixI7cQ+okHZYcdsL6OoLdPx6zuoqra+WVKDXUw96NknnCM3/pvt7wwL6jCf7ovtJvjsXMFNwrS+P0+TECU0qmDYXk+9DNo1gFYuLS+L0uwgYQijKUNAHyJX/Ut1tvuTIHBLIoJEvr3oazg9Nr5KeSOhGpTJ/5XyBIcVdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546809; c=relaxed/simple;
-	bh=0FFNgUviHoyceqwAxmTDFq28OH826jRwx6eKiDBtnic=;
+	s=arc-20240116; t=1760546849; c=relaxed/simple;
+	bh=U6IgK83O2vNXgtsQ+2eQScVJHl6RZaEymwda1yEGEO4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADzeWmN1MfHoRm0nyJ/ALTrSR7cUUt486qpjwk++4ngICm/8olPkULag3Tu+rj0nAhMleYpvsbwgDvJbKhZ+WxEebmPdrWn5DqYh6tYDVlfbnWZvqLhxVC23XexAzxwYvojaSZ9aE0Apudxm9tZB4VS0NV3wPtGyZVOoRJAqRAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfXji97u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7179AC4CEF8;
-	Wed, 15 Oct 2025 16:46:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBh+H+eyX5Ai3jSEpWTnq3L6DBf1Y28bLm8Ne58O2yp3Sx1pC/lu1COs3LBSy/A0PaeLipc7uRMr25JVpSLQFVyMskWeYej+tCbNOcm1vUvXd+9Wzk9d0k0ShD0f8GZlj9iUt/9//0H9Y3VYSre7gYs/HvKRoGupuEtyxXGt5OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sl2MUZ18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575B1C4CEF8;
+	Wed, 15 Oct 2025 16:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760546807;
-	bh=0FFNgUviHoyceqwAxmTDFq28OH826jRwx6eKiDBtnic=;
+	s=k20201202; t=1760546848;
+	bh=U6IgK83O2vNXgtsQ+2eQScVJHl6RZaEymwda1yEGEO4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OfXji97uoG3XgHw5juL0tZXh1xnYncQ0aojjso9wV/kpxikKg37uBjRkYxztPwIvG
-	 w6CBKKmWmoLzPAFdSqUHwKfZMZ23NaZkkisyHySya5v0041rkqYsS+PUKO72BZjHx+
-	 ytagA9wccAVraEB7lA4/ING+gj3PiUFQ2ubnl7QR64JVYBhYOXZ6ljQDgcxcBS+Gme
-	 l4twauTa+1rsib58oWR8BY7tSGY9eQkfNKo7U7jQpYg9SRgvNNs9KcFf/A9Q5KgpSN
-	 gMPmr11o19K4023AuZ1vcNtZ+BImSAmvzpvW+w54erBx4/HjjZT54jmFqY1eqJHB/T
-	 bk3s91j+CVhvQ==
-Date: Wed, 15 Oct 2025 17:46:40 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Gur Stavi <gur.stavi@huawei.com>, Jakub Kicinski <kuba@kernel.org>,
-	Joe Damato <jdamato@fastly.com>, Lee Trager <lee@trager.us>,
-	luosifu@huawei.com, luoyang82@h-partners.com,
-	Meny Yossefi <meny.yossefi@huawei.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Shen Chenyang <shenchenyang1@hisilicon.com>,
-	Shi Jing <shijing34@huawei.com>, Suman Ghosh <sumang@marvell.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Wu Like <wulike1@huawei.com>, Xin Guo <guoxin09@huawei.com>,
-	Zhou Shuai <zhoushuai28@huawei.com>
-Subject: Re: [PATCH net-next 2/9] hinic3: Add PF management interfaces
-Message-ID: <aO_P8F3CuY4ZvmiY@horms.kernel.org>
-References: <68ddc5e9191fcb12d1adb666a3e451af6404ec76.1760502478.git.zhuyikai1@h-partners.com>
- <b59d625d-18c8-49c9-9e96-bb4e2f509cd7@web.de>
+	b=sl2MUZ18TBMAA73mMttpIBMluujUTeDOuY6XR4KZfVFwXf0xDv0vB+XL0uMFz+JR6
+	 eYEAPzZuOx9t6zYkDTGGU/guwcEBgCVlegnArFbu1xcm/uz1UAh1BDKXY9HwyTfyzf
+	 z+lbGs+fEeYd6H/Vk4CyP7HQFmcFdiUXBSrCOpEqQJFAJkua1UliKWdB//UPnn5QIa
+	 Ko4IVgP0XScVhEzBHwJ9Tur4LDXVhJ4HBDNv5Sn++f9mAOI/6bKPHgp/jaE6010M6+
+	 xQTK3QMSFxYBgwrjh6HJgeYEkhOUVVVLHdhxMB2R31O7ZCzqb+rJwWvQmB8MoN/v9W
+	 +U1T1Ix7t8q9A==
+Date: Wed, 15 Oct 2025 06:47:27 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Ryan Newton <rrnewton@gmail.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev,
+	arighi@nvidia.com, christian.loehle@arm.com, newton@meta.com
+Subject: Re: [PATCH v5 0/2] sched_ext: lockless peek operation for DSQs
+Message-ID: <aO_QHzbw4euzD7T7@slm.duckdns.org>
+References: <20251015155036.420486-1-rrnewton@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b59d625d-18c8-49c9-9e96-bb4e2f509cd7@web.de>
+In-Reply-To: <20251015155036.420486-1-rrnewton@gmail.com>
 
-On Wed, Oct 15, 2025 at 12:00:33PM +0200, Markus Elfring wrote:
-> > To: Fan Gong …
-> 
-> Please reconsider the distribution of recipient information between message fields
-> once more.
-> 
-> 
-> …
-> > +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.c
-> > @@ -3,19 +3,325 @@
-> …
-> > +static void mgmt_resp_msg_handler(struct hinic3_msg_pf_to_mgmt *pf_to_mgmt,
-> > +				  struct hinic3_recv_msg *recv_msg)
-> > +{
-> …
-> > +	spin_lock(&pf_to_mgmt->sync_event_lock);
-> > +	if (recv_msg->msg_id != pf_to_mgmt->sync_msg_id) {
-> …
-> > +	}
-> > +	spin_unlock(&pf_to_mgmt->sync_event_lock);
-> > +}
-> …
-> 
-> Will development interests grow to apply a call like “scoped_guard(spinlock, &pf_to_mgmt->sync_event_lock)”?
-> https://elixir.bootlin.com/linux/v6.17.1/source/include/linux/spinlock.h#L565-L567
+On Wed, Oct 15, 2025 at 11:50:34AM -0400, Ryan Newton wrote:
+> Ryan Newton (2):
+>   sched_ext: Add lockless peek operation for DSQs
+>   sched_ext: Add a selftest for scx_bpf_dsq_peek
 
-Hi Markus, all.
+Applied to sched_ext/for-6.19.
 
-It's up to the developer. But there is a still a weak preference
-for open-coding, as is done above, in Networking code. So in the
-absence of some other motivation (I have not reviewed this code)
-I would suggest leaving this as-is.
+Thanks.
 
-https://docs.kernel.org/process/maintainer-netdev.html#using-device-managed-and-cleanup-h-constructs
+-- 
+tejun
 
