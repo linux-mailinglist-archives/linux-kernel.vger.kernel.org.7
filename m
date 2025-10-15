@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-854428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1502BDE564
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:51:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD2DBDE57F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E7535046DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302F4189AC82
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D900323407;
-	Wed, 15 Oct 2025 11:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC87324B13;
+	Wed, 15 Oct 2025 11:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SRwJoJrN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+tVgvi2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140632C028E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7E53233EC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760529102; cv=none; b=X5r/3k9AMYPskyeHqcLmhqq+LS9e3jcJe01fHwKAMgsyxliNcj95lKoRpQ3FG/IyPGYdaBsCVKqXxd63zHT+IxcJ31DNG5AN/MVs/P35zYDAs/g4/Z3iQ2lZi630AIIjJeEBPKC3nM9EjpGorlO5ku8bhWJNVmU46VVJZnedXKk=
+	t=1760529194; cv=none; b=E4EqYlG6qYSy0x3AcAHGi06tzHjNpyJJIY3w20u0TvGa2Wnz5aDdTbFribElYwP7RAAsHRdl5C86dn2PhcXcGAaQn3sBfMMJoNtZ1chUs+z0E6mJ0sk+SpQNzpzIyqXQohsJd9Ox1yEibfvaELkIU4xD/DkBF2YZlkj8gJMPUd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760529102; c=relaxed/simple;
-	bh=2vcwISJ9LreMt7RXyx8ZfrkJ84upVMOetIH2sQJdlVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiLRsdkfBKJ0trpipZoYv4JHehM3BNP8w4vtOYr45yEvrsewv5gJjJQUxMJ8nvUgQdsDe5SHAqTqzupRlWogb9tGJQARjINMLDXJ05eTdCTityQcmAkZPn44PYv/MOMWYURYT6phurmaufH6lPXjB/oH84S6eHQfJ76mzoTQMWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SRwJoJrN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760529098;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dgjPo3RgYTe44Gp9+99ijo+aH03cLKv/GPAev8R5rYc=;
-	b=SRwJoJrNjuQV7R7mLh1jAEQIxjBi9ICYhEAhBna79QytzgLAxMP0QT2BRhmkgOu1zl2BRE
-	4+onGYD9ng+kPTvq/rqFVMCJVY800SqLZry1v7f2tCrxr16NCgR+L/NFMdfMTc/Art5wFS
-	4dcVcQa8Z9S4t/f1o1ZBNEQ47GHt7to=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-RSoZRf96PfmDVsOJAK1mQQ-1; Wed, 15 Oct 2025 07:51:35 -0400
-X-MC-Unique: RSoZRf96PfmDVsOJAK1mQQ-1
-X-Mimecast-MFC-AGG-ID: RSoZRf96PfmDVsOJAK1mQQ_1760529094
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f42b54d159so6469111f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:51:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760529094; x=1761133894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgjPo3RgYTe44Gp9+99ijo+aH03cLKv/GPAev8R5rYc=;
-        b=ZM88syzynw/6unNGW1CGY419yr+0n8QDOUc/3+OGAl5//Doitj4vfSyfMXLa96l8bA
-         y2HseYJazjYQyiUU4QBCP+SzqpwuU0xWZAGwJWVGPt/o7pB+2JUdwIlbyoRSKLnId4Jc
-         cx7S6dQtgKJ5y+SRUD/NoFXne36OlcZZ8fL2FQy743l0VHAWKlnjtN9YTzPWlzFDlK3p
-         ZCOqgfx+9Z+VeCy7kxTz1egv5iChvidwOEO7u5QP+GdT2vDjA+E9Lmg/nv+SKp7e1Ss1
-         lrfT1JPdfxtP//EIKpgKKCG3dWr4tLL+IWLXEQuOrlqdJik3YBv7kC/m4IgqnRWMmimM
-         J7Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiF2iDZ/fwGcNQlScUCsV7hKg5GjDmZSsVsq4atqf88erZDKJQPP/xErkBMgFoWl0A+SClQo6J50338kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykndVy6wV8cK/eu3ClhLUNPmcyh7SCccyCwQ2F8xolZxbYtUIg
-	wuoD/GcQBoy3ZxeSFlhFEW3FN5SkLNKk/yKSCyoax7sOXkFjQZA7dTXhLJyNr/jRqshBWu5OsNx
-	S7XIJkIPRGyFnGvrhYe8bBcdWM3QllD01EcwvJXTgsuV7jFhXOmFzrlIlloTiSZ6AVg==
-X-Gm-Gg: ASbGnctV3//4KZWQjfUn/JuONLl4WY565m7q+LUsrXBNradNHco70HJ6KrbXT8Qd2wL
-	tG2q/SVSLcU5rzauDHFWzgh3ge8Y7SW4mnrDebmw9+sCE/J+8HxlWbRXtGh6asU2r0QPT0T63Ym
-	VNXFDuv3BF3H+/sXe+fCtr2ZEHBTDaRkPLssKNhYjyZHSpiyFGnJBaJL6+7H0cdT6Q9cj+pLBfc
-	sICVlrjBYMlltZeU49Zv/LiYQOe4U02HDrizbOwJCfS7rrW8B+c/pnoUoyGEVIaWZDysUjTAoRB
-	LwhNmR2LqnhkrvRuU3TLTImTra83FMzk37JnSD8Ct6nAxtbm+MjS6iXnifDvHG4jU+giSbGs
-X-Received: by 2002:a05:6000:608:b0:3ee:1125:fb6d with SMTP id ffacd0b85a97d-4266e7ced08mr14564258f8f.9.1760529093850;
-        Wed, 15 Oct 2025 04:51:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEutVwlzePECt93YmeVvfMvecxD6UICIwRyzw2gXJjm9qCImvJba9O20JkFFLPcti+xCnVRw==
-X-Received: by 2002:a05:6000:608:b0:3ee:1125:fb6d with SMTP id ffacd0b85a97d-4266e7ced08mr14564242f8f.9.1760529093446;
-        Wed, 15 Oct 2025 04:51:33 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e10e8sm28713219f8f.39.2025.10.15.04.51.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 04:51:32 -0700 (PDT)
-Date: Wed, 15 Oct 2025 13:51:31 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH v3 17/24] sched/rt: Remove support for cgroups-v1
-Message-ID: <aO-Kw2BQ24_Pp1Xf@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250929092221.10947-1-yurand2000@gmail.com>
- <20250929092221.10947-18-yurand2000@gmail.com>
+	s=arc-20240116; t=1760529194; c=relaxed/simple;
+	bh=j68Djg9MIPNj1/yW5wQOpBS5ZJ9KqRr2JdVAjj0PjLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DdZYSsrBOrZc7v20zg3H+hF1YlhBsliw+NiDrYEWQwhvmhXwlRVOBuuEUxFlTV0aeSHAZuKUNkriWuaBS6VdUmoUg1ViappX6kosxg9+Bo2P/S4PB73RHI4VZ0qeTzDhpIwzvNzJfeqlHYlBX6vA/0ql5oSCKFJgOQY5YPiiK68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M+tVgvi2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D5DC4CEFE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760529194;
+	bh=j68Djg9MIPNj1/yW5wQOpBS5ZJ9KqRr2JdVAjj0PjLU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=M+tVgvi2vPNEUpRiZD4fZpAU6hFYWkRPhQbrGFcZCZ0rj6U5K3NkppqPdChIy6jw2
+	 thRVFWL46oNpZJO5WI2ygN1d7vawJmGga5Np2nchNCWKm/Jhb1yZcqAjoKQvlAU+MN
+	 IyXrG+RnBJWOkIgLKEppP8vDbS/26E8D//QCqc28UgIU9kw5kn+TiTZjumekG//lcN
+	 dKvQFQz2KeQUy8aSPJi6e4/hH0EQsH+bhpYzjA4FVqmtgcyXkSuGac2s2x4Hj0AueU
+	 cTKpNeAEMwveihom1R/vjbQcWOwQcHaa1ggOYnUo8Be6c4/xzsHkWzV6z04Ct6WnGK
+	 OJ05/2UTKKa2w==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3b27b50090so1194576566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:53:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWeq7e210/FKEsa8FggMaUfnW96i16YosuN7iwysUjA/AT0BsAEDGC/ejFjKUhMEtpzK/zUYU4Z1EfsU9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGdlBDZYfjh5A/uw9XBsOwjqMihezrI38khwJdRMKwm3gdMGte
+	t6GH65uUznKaWcrrqqWqqNytpDsSTEsXvJKPbOzOldrPy1gegyqpRb6jbOGHe0Pt4EoJrRwQeb9
+	EqnJMNu1WNaLDWPDSnVdej2n0TMtR8g==
+X-Google-Smtp-Source: AGHT+IHpBsZoPqy1azuK/vjwTS/jNRB6fTmD0NvYAu3GizHlrEGmyD/1vlyW9f+VRJsbJ7v4OWHL7IrqoHGxFu1lS/8=
+X-Received: by 2002:a17:907:724a:b0:b04:5b0a:5850 with SMTP id
+ a640c23a62f3a-b50ac1c3f18mr3099214366b.40.1760529193310; Wed, 15 Oct 2025
+ 04:53:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929092221.10947-18-yurand2000@gmail.com>
+References: <20251010183418.2179063-1-Frank.Li@nxp.com> <20251014-flattop-limping-46220a9eda46@spud>
+ <20251014-projector-immovably-59a2a48857cc@spud> <20251014120213.002308f2@kernel.org>
+ <20251014-unclothed-outsource-d0438fbf1b23@spud> <20251014204807.GA1075103-robh@kernel.org>
+ <20251014181302.44537f00@kernel.org>
+In-Reply-To: <20251014181302.44537f00@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 15 Oct 2025 06:53:01 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
+X-Gm-Features: AS18NWC_gYw37Br6ewmB14S0Rj55MCQnT2_L9wHXys5hY5S_h2Z178AMbZOAzBw
+Message-ID: <CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional clock
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Frank Li <Frank.Li@nxp.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Oct 14, 2025 at 8:13=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Tue, 14 Oct 2025 15:48:07 -0500 Rob Herring wrote:
+> > On Tue, Oct 14, 2025 at 08:35:04PM +0100, Conor Dooley wrote:
+> > > On Tue, Oct 14, 2025 at 12:02:13PM -0700, Jakub Kicinski wrote:
+> > > > The pw-bot commands are a netdev+bpf thing :) They won't do anythin=
+g
+> > > > to dt patchwork. IOW the pw-bot is a different bot than the one tha=
+t
+> > > > replies when patch is applied.
+> > >
+> > > Rob's recently added it to our patchwork too.
+> >
+> > And the issue is that both PW projects might get updated and both don't
+> > necessarily want the same state (like this case). So we need to
+> > distinguish. Perhaps like one of the following:
+> >
+> > dt-pw-bot: <state>
+> >
+> > or
+> >
+> > pw-bot: <project> <state>
+>
+> We crossed replies, do you mind
+>
+>   pw-bot: xyz [project]
+>
+> ? I like the optional param after required, and the brackets may help
+> us disambiguate between optional params if there are more in the future.
 
-On 29/09/25 11:22, Yuri Andriaccio wrote:
-> Disable control files for cgroups-v1, and allow only cgroups-v2. This should
-> simplify maintaining the code, also because cgroups-v1 are deprecated.
-> 
-> Set the default rt-cgroups runtime to zero, otherwise a cgroup-v1 kernel will
-> not be able to start SCHED_DEADLINE tasks. The bandwidth for rt-cgroups must
-> then be manually assigned after the kernel boots.
-> 
-> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
-> ---
+That's fine. Though it will be optional for you, but not us? We have
+to ignore tags without the project if tags intended for netdev are
+continued without the project. Or does no project mean I want to
+update every project?
 
-The change looks good, but I think this series is currently missing a
-substantial Docs update. admin-guide cgroup section and scheduler needs
-some changes, I believe. Please consider doing so for next revision.
+I also considered looking at who the email is from and restricting it
+to the maintainers. I know the netdev one doesn't do that either
+because I used it a couple of times. :) It does seem like it could be
+abused.
 
-Thanks,
-Juri
-
+Rob
 
