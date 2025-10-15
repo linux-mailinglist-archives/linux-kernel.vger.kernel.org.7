@@ -1,135 +1,90 @@
-Return-Path: <linux-kernel+bounces-854727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA11BDF3EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78456BDF401
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CA1350670E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:01:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B76D507CAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0652D7DDE;
-	Wed, 15 Oct 2025 14:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18DF2D9797;
+	Wed, 15 Oct 2025 14:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="GdUyvDOb"
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jCLw79yg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4E22C21EC;
-	Wed, 15 Oct 2025 14:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540240; cv=pass; b=SYA5voXhBnCnUoj/hQpG5TNLjKknia2HKkn/cKmPCCKF41lUuTEGmOsI3MFCvO4oUYGlZqiyEmS0XM0n1s0hSiC1PxDlOOaUqVZABQ0qaVz8c3bf7zcAXTfCAf16fyVUceXZhsTJude8aiug5qFw+OCC6tXpbd4gIMP88Lx8bYg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540240; c=relaxed/simple;
-	bh=m56SvGKojCd/FiCDBNV86ncNjpuFwiArIWrdPAwDCQI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=GeEDIaE4+KQD+lnCIzisljx8TXqeEnCPVHvbQodZtR4WCiHdckKXP/5FsvceWu4xGoxBPf4v6r9Cy2d0vfiw8mUQ7aHGAF9KkM/eOosj4tH1OBLS1K4eIa8NzynX0Fc1cwif9Mg1xWkekjmPvDqf1ejORfrV/oRgG1rW3PPTRco=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=GdUyvDOb; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from www.redadmin.org (bc043154.ppp.asahi-net.or.jp [222.228.43.154])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 59FEvB8L083739
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 15 Oct 2025 23:57:12 +0900 (JST)
-	(envelope-from weibu@redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id 5F52510A0ECFC;
-	Wed, 15 Oct 2025 23:57:11 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 6giJlY_y6ej4; Wed, 15 Oct 2025 23:57:07 +0900 (JST)
-Received: from webmail.redadmin.org (redadmin.org [192.168.11.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: weibu@redadmin.org)
-	by www.redadmin.org (Postfix) with ESMTPSA id 9A29B109D7EE3;
-	Wed, 15 Oct 2025 23:57:07 +0900 (JST)
-DMARC-Filter: OpenDMARC Filter v1.4.2 www.redadmin.org 9A29B109D7EE3
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=192.168.11.50
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1760540227;
-	cv=none; b=u/WI/7K+G49rqDwm+4OQevoZqG470i+JUdyYhkLFfxRP5GE2wYXDhb+Ie+u5fqyL/bLAXoagEvmOQ7dYLuqy1g8oILTPvz97AEge7D+bN3xv1leTvaABlsdx/x+Y5UCm7Av7r82CrAzGdXLd3MkX+ObuWqsYr0s/mHx3GPW80mw=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1760540227; c=relaxed/relaxed;
-	bh=9jqi0qQeN0nBJ0KiS8nuOONUGF+AoS3LBJVNBbwEvcE=;
-	h=DKIM-Filter:DKIM-Signature:MIME-Version:Date:From:To:Cc:Subject:
-	 In-Reply-To:References:Message-ID:X-Sender:Content-Type:
-	 Content-Transfer-Encoding; b=woYv44U3B3aA0rqfb2hCcoQICoVJHc5oukqisYOkogZIn9uCkczt4j2fl/JzURkT+ma0Z93tP5nmP67uTIPoU+CNR9+PPkbdw9IsvKh8euEbWbubAQ7las/AmdNcSH0k/1NQy12bExC1xl06fcnRdKRCvD7kh+NLXDMb7CKQi3s=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 9A29B109D7EE3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1760540227;
-	bh=9jqi0qQeN0nBJ0KiS8nuOONUGF+AoS3LBJVNBbwEvcE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GdUyvDObT5ILfk+5jZHdaNbGIm4qSWC7wUEKfY8oSaGf4j3thM9JepVqE2uUxThws
-	 yEFuW1ZjLqoItRpcYW666PSDc18o1PXt4oxMPrwjepLhz614MOh0vH3iVwQreDxRNv
-	 vSkeSY/71HDIZNk2/PvKLLKAoodu80IYi4K/piuo=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3202D6E4D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760540319; cv=none; b=GbtRockbYzMxDGTJbJ82dx0Qhd3klCm2TD5Sj0xRqZPf79LZi0ojh8zDn6Lr5g47S3I+mYD2ug7i6fuwte3Ywr1sgzBM5Jv6sbyPFKsi/ssd9a8i31fkl+VZQyBlzPR7l+qMydJ3ktDLIujummZ570l1q/DKpkSi0Z5nWl3Fx+o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760540319; c=relaxed/simple;
+	bh=fDOmNPkc8pzUUHIPZufp/adQkxap2A2ApP7//urC4X8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKhorMwSYa14L7fI04O9bn1Y4b+j9qBD/e9JW2IXAvEwY6E58ga0eoD/WhWegtRPDi1z5APW063Qgw/8sIQ/6L1Rah/D4vBV16o3hxWrVmWih6HB2PcSJUPffppuzCzZj+WraA2l53Ao5/TRWtBoXJOQVijAeYCwLhqbJkl4r+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jCLw79yg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760540314;
+	bh=fDOmNPkc8pzUUHIPZufp/adQkxap2A2ApP7//urC4X8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jCLw79ygkzloTeEZD5dC8uB5ZcSc4KljWGAySBYCDiPK4BM3N8J65Odjs2n4qQS3C
+	 GieJ458Pa6vGj7dM+AE4nHV59H8xb7mUSVndmIbtj4WzQKhshO9YIsx2MK/NkBhLgi
+	 pEoS5cxtbItV7+t3UbIX05yzIqIQqjzwe6gT07bgX7+UmC7Pckw8yOBGDONIxiql/p
+	 hvxBsKIkUDk5/0axuKto//arbq2E7B2QaOznaTiEd2XgFQWQxfBjNFdw5PdXr+VSMm
+	 5XX4ZO45S0Op7fPwfBJxNDk3+ks4faSW2kmafT4CTVOlEC/uCXIlC7xboCvWITYpun
+	 oDorU67v0Frbw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7F61E17E00A3;
+	Wed, 15 Oct 2025 16:58:34 +0200 (CEST)
+Message-ID: <c7a2bf5f-a4e7-4b2b-94c7-b39bd69b78ba@collabora.com>
+Date: Wed, 15 Oct 2025 16:58:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 15 Oct 2025 23:57:07 +0900
-From: weibu@redadmin.org
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, akiyks@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] docs: ja_JP: SubmittingPatches: describe the 'Fixes:'
- tag
-In-Reply-To: <87jz0xbk6f.fsf@trenco.lwn.net>
-References: <20250909022502.119560-1-weibu@redadmin.org>
- <20250924192426.2743495-1-weibu@redadmin.org>
- <87jz0xbk6f.fsf@trenco.lwn.net>
-Message-ID: <11158ff57b6b33b31a2d2fcb78842d25@redadmin.org>
-X-Sender: weibu@redadmin.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: mtk-gpueb: Add missing 'static' to mailbox ops
+ struct
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Chia-I Wu <olvaffe@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com,
+ kernel test robot <lkp@intel.com>
+References: <20251013-mt8196-gpueb-mbox-fix-v1-1-d7de0cb20c36@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251013-mt8196-gpueb-mbox-fix-v1-1-d7de0cb20c36@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thanks, I’ll follow up by moving this under 
-.../translations/ja_JP/process/, converting it to RST, and wiring it 
-into the Sphinx toctree so it’s built.
+Il 13/10/25 10:09, Nicolas Frattaroli ha scritto:
+> mtk_gpueb_mbox_ops should be declared static. However, due to its const
+> nature, this specifier was missed, as it compiled fine without it and
+> with no warning by the compiler.
+> 
+> arc-linux-gcc (GCC) 12.5.0 doesn't seem to like it however, so add the
+> static to fix that.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202510100629.3nGvrhEU-lkp@intel.com/
+> Fixes: dbca0eabb821 ("mailbox: add MediaTek GPUEB IPI mailbox")
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-2025-10-15 00:02 に Jonathan Corbet さんは書きました:
-> Akiyoshi Kurita <weibu@redadmin.org> writes:
-> 
->> Sync the ja_JP translation with the following upstream commits:
->> 
->> commit 8401aa1f5997 ("Documentation/SubmittingPatches: describe the 
->> Fixes: tag")
->> commit 19c3fe285cba ("docs: Explicitly state that the 'Fixes:' tag 
->> shouldn't split lines")
->> commit 5b5bbb8cc51b ("docs: process: Add an example for creating a 
->> fixes tag")
->> commit 6356f18f09dc ("Align git commit ID abbreviation guidelines and 
->> checks")
->> 
->> The mix of plain text and reST markup for ``git bisect`` is 
->> intentional to
->> align with the eventual reST conversion.
->> 
->> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
->> ---
->> v5:
->>  - whole rewrite
->> ---
->>  .../translations/ja_JP/SubmittingPatches      | 28 
->> ++++++++++++++++++-
->>  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
-> Applied.
-> 
-> That said ... this is not an RST file, and won't be pulled into the 
-> docs
-> build.  I would *love* to see a patch that moves this file into its
-> proper location under .../process/ and brings it into the build.
-> 
-> Thanks,
-> 
-> jon
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
 
