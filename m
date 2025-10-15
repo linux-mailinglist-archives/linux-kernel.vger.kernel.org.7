@@ -1,180 +1,282 @@
-Return-Path: <linux-kernel+bounces-854202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E55BDDCFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2CDBDDD01
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C37A4F512E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641A33BB823
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA1731770E;
-	Wed, 15 Oct 2025 09:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AE0318133;
+	Wed, 15 Oct 2025 09:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YnvMr1FH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GRgJZ8GJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097F62C234E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885BF306B12;
+	Wed, 15 Oct 2025 09:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760521107; cv=none; b=mjhWS10ODTp/ArnTcMzt/FRxIj99NXWBqDSkCmr+qtJDJox9L4qRHFLptUJiS0xclLnmRGkezIbV9bfB6RsKtjbn8ElaSPsw9ZPkYYqG6/akXgjXHSMWV+Z7cTguuVEhbvhcpPcnv1KmUBgU2crgWxrpa8pt677gsigUafIq5Uo=
+	t=1760521122; cv=none; b=sJlQDgXQcrqtofv3sKfxTsceKmOTPUiiBrIYLyVQgLvzLmoHqPU/l5nHA0yorLJt/T5N29aS6213bWGA/dCk1CNCqaGktpmXb9sqjlIZ3hnen57q0Zw3jWJYl1O5g6qvXlsoC13jo9X0MXgMjulCbXCxc1grQ11ddm4BI9Qx7K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760521107; c=relaxed/simple;
-	bh=b5IS2l0A28/w+gvwMOGIzQ/leVrv34slltb6V0dNgiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mc54aEC+dMjygwrBFqQ4HmwnqBe/davEE6QbtHFJ9ltqGGBE2ItejyUB0loUbot25MCigqgas87ziMQAdTkb9j1raAqWMwEI7JgDd6uPzQ+3l9VMcUdwKZiZfFmp3cRw5rvRoMR3nmHWrHwgNEChvrpJDpuS3Ld2ARNBqrBEZnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YnvMr1FH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760521105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LSnX3eo6FeCXOk5qdLNLUhr/jZIvyBJy0HqMaf4vWMA=;
-	b=YnvMr1FH1KsPHPrB2Z1YyS7wJMi8P/vCDR6yf/M/WAbGCEs8OjkjEmNu5/2wd/5XZUJ+pP
-	ZArtB6H2er2w6hvp3KRPadAEk0CQGUqt1Rfv5oqW7aK01kCD+mgxFSd/dHByJXnlQK78ZD
-	jW/7jg+j+VM8GIVMmNNKJrDCq+CrG4E=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-qw1aske3M8iDiQa9BjqL6A-1; Wed, 15 Oct 2025 05:38:23 -0400
-X-MC-Unique: qw1aske3M8iDiQa9BjqL6A-1
-X-Mimecast-MFC-AGG-ID: qw1aske3M8iDiQa9BjqL6A_1760521103
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8715f5037beso2625787485a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:38:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760521103; x=1761125903;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LSnX3eo6FeCXOk5qdLNLUhr/jZIvyBJy0HqMaf4vWMA=;
-        b=V0uHtt0NBy69e1t0dDw41ccL8C/yw/Lc2fQlU0hMBnqAzcs+F3L1+9RldjVpY1xyND
-         YKZzrfli/lma77XVwYi7udMXuvdOV5OP7cJXQk7KQRe4g1wmyM5rwhDgMOwmiiIaJRto
-         GYOTftIewh8tRd+4SoRb0I3Y2XIRcnQYhfds6T5I7M3Y1gY0BulCb4CrBBoDMJY7xGmo
-         ra6+G+HawUumIaVxa+xkz6AxUBmQTOOGLoeLB1g5ijrgjju7Sf0RKhJ9jbM2fEZ4S8cs
-         3Bq+DvE56PYCjNuvIoLKw6ytilaiag5T4b64ozGRuOqdrv+0s3aCui2N9rt8CubONY9i
-         2wJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY4fb6iSI+heHn4YJ8/DKq4iw/s+7+dyCQVldg1LruZazW4dJSWhqj5rnvUTL68ZrA/LgZ/rziPAfQEbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Qwueipeye/RORqdXdLN0hpXin82tc3dUzhpXubuI6yROSaJf
-	qj9B7H3ZkGKpNyMfWSnB7YR/BRFq6y1HePUvnmc8f4/M1udjeRc8AaW0Mb5nMAB/+6alJtUz56W
-	E6uPkjlGlUc555AmRfmf4wI3emwDfaqX0mEL68hzoWw/aXIcA1SZkhrvqs84GLyEXpA==
-X-Gm-Gg: ASbGnctI+s8zCCR+JqWVffWz3Tsrt9UFLSPLV/dOIfRKk8aIIwj/5y++xF6SM8zm+ft
-	ch9xPwSIkJ9C7a+ns49hLZtIGPVaaqFOaXpG6r9qnPtj0U5MTE8TCceoxa7YWbv/Nuho5VQ4yuq
-	UjDtDXVPC7w+be0rs+DMAGoLQeTh8h3ashDH+ooeOK/cDvDrs8rouvk4goo2KdCG6Es347RVXTJ
-	nU20dj66L9X9z/lR1T8v4Qf7VwiSnXlt9EmW/WWNCZ1Qk1vLBaUenaMKjku1zNUMRUKj8oSEyxy
-	cuVxS96vaAL3SEldcagK9/dYkXq65kjWonDNv3PjX8VZfJyOjvwZlOatYNfFxD0=
-X-Received: by 2002:a05:620a:bc5:b0:846:1789:c1cd with SMTP id af79cd13be357-8835547babbmr3728921285a.70.1760521103137;
-        Wed, 15 Oct 2025 02:38:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9YggiDFCkRWPoV0rFabAjs5kcH3qOcSU9F7Oo4eJx1pRUhYsQ2aCSSzNGyC7YFs1DlLlE1w==
-X-Received: by 2002:a05:620a:bc5:b0:846:1789:c1cd with SMTP id af79cd13be357-8835547babbmr3728919185a.70.1760521102732;
-        Wed, 15 Oct 2025 02:38:22 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a23693a0sm1357643785a.53.2025.10.15.02.38.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 02:38:22 -0700 (PDT)
-Message-ID: <52c8ac78-7a79-4a92-a371-6fb4520a84d9@redhat.com>
-Date: Wed, 15 Oct 2025 11:38:17 +0200
+	s=arc-20240116; t=1760521122; c=relaxed/simple;
+	bh=9aOuUc8Elr7HguUeIe7NPc6/Jpt6uSIIqq5zLZfxoRI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SGcmYz+xbu4/u2U9U6vFwKplmCZQYZ0KPpVrKa6tkfcFLmyJHcgvPPS1/ClJdsODUCQG2/5NppecIc423DSga28MyartiY/EvXuarCNmxzrBX5w/mmEWx9R8LbHUF+we3+hnYeftOFR05eZfgkgDayBTDA7agYbCD90l0xSpnKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GRgJZ8GJ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760521119; x=1792057119;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=9aOuUc8Elr7HguUeIe7NPc6/Jpt6uSIIqq5zLZfxoRI=;
+  b=GRgJZ8GJlyrQcB/TkQyuX61bf4ij+TEFd5H0vsbBZKuZBqERvk0pjnAk
+   L7Mf8jYe2ieMtL5XlMRwgh/IIHQtFgqas8tybMY+qB+rGYMFZ8j1vDY7w
+   5H4uPPl9jNCiYKsTlFtJaAtnsHBFXHSYC2VjPieDW4DTEcwB/HC7IATgY
+   brt4j65TDeFI6ncT2n/7C59cDtgB8L/JpQZAUOlGZXeAqM6BS7Vl7WNnF
+   og9774sps1KknRnGWvg2yBN0cvJ91A8FX/1uYMH45WRTt0Si1URaf0aN1
+   9noT8rC7z8xlI7PL5oHLejYsRmIJ+aQ/gwkpk/ruhK52BFNvXpzU3FHzh
+   A==;
+X-CSE-ConnectionGUID: gVdH4z51RomxasdAmIoVjA==
+X-CSE-MsgGUID: 0kE5Vv+XQ3+4S8xIWInP1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="66344566"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="66344566"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:38:37 -0700
+X-CSE-ConnectionGUID: pKRgs8eoS8ittlY8zOGtIQ==
+X-CSE-MsgGUID: PL6NaaUHR+yVPzPZ71tQOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182118839"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:38:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 15 Oct 2025 12:38:29 +0300 (EEST)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Denis Benato <benato.denis96@gmail.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    Hans de Goede <hdegoede@redhat.com>, "Luke D . Jones" <luke@ljones.dev>, 
+    Alok Tiwari <alok.a.tiwari@oracle.com>, 
+    Derek John Clark <derekjohn.clark@gmail.com>, 
+    Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
+Subject: Re: [PATCH v14 0/9] platform/x86: Add asus-armoury driver
+In-Reply-To: <0752fcde-6c25-4cde-b35f-2204e24ff0f1@amd.com>
+Message-ID: <8e381c36-3bdf-a1d6-8e51-53243ba8bf4d@linux.intel.com>
+References: <20251015014736.1402045-1-benato.denis96@gmail.com> <0752fcde-6c25-4cde-b35f-2204e24ff0f1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/khugepaged: fix comment for default scan sleep
- duration
-To: wang lian <lianux.mm@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Andrea Arcangeli <aarcange@redhat.com>, Rik van Riel <riel@redhat.com>,
- Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251015092957.37432-1-lianux.mm@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251015092957.37432-1-lianux.mm@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 15.10.25 11:29, wang lian wrote:
-> The comment for khugepaged_scan_sleep_millisecs incorrectly states
-> the default scan period is 30 seconds. The actual default value in the
-> code is 10000ms (10 seconds).
+On Wed, 15 Oct 2025, Mario Limonciello wrote:
+> On 10/14/2025 8:47 PM, Denis Benato wrote:
+> > Hi all,
+> > 
+> > the TL;DR:
+> > 1. Introduce new module to contain bios attributes, using
+> > fw_attributes_class
+> > 2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
+> > 3. Remove those in the next LTS cycle
+> > 
+> > The idea for this originates from a conversation with Mario Limonciello
+> > https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
+> > 
+> > It is without a doubt much cleaner to use, easier to discover, and the
+> > API is well defined as opposed to the random clutter of attributes I had
+> > been placing in the platform sysfs. Given that Derek is also working on a
+> > similar approach to Lenovo in part based on my initial work I'd like to
+> > think
+> > that the overall approach is good and may become standardised for these
+> > types
+> > of things.
+> > 
+> > Regarding PPT: it is intended to add support for "custom" platform profile
+> > soon. If it's a blocker for this patch series being accepted I will drop the
+> > platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
+> > separately to avoid holding the bulk of the series up. Ideally I would like
+> > to get the safe limits in so users don't fully lose functionality or
+> > continue
+> > to be exposed to potential instability from setting too low, or be mislead
+> > in to thinking they can set limits higher than actual limit.
+> > 
+> > The bulk of the PPT patch is data, the actual functional part is relatively
+> > small and similar to the last version.
+> > 
+> > Unfortunately I've been rather busy over the months and may not cover
+> > everything in the v7 changelog but I've tried to be as comprehensive as I
+> > can.
+> > 
+> > Regards,
+> > Luke
 > 
-> This patch corrects the comment to match the code, preventing potential
-> confusion. The incorrect comment has existed since the feature was
-> first introduced.
-
-"While at it, replace the magic value 512 by HPAGE_PMD_NR and use 'ptes'."
-
+> As a general comment that applies to a few patches in the series.
 > 
-> Fixes: ba76149f47d8 ("thp: khugepaged")
+> The S-o-b means that YOU sign off on them, it's like a chain of custody.
+> 
+> Any patches that you're sending need your own S-o-B, even if they're 100% the
+> same as the original from Luke.
 
-I prefer to not have fixes for comments. It tricks people into thinking 
-that this might warrant a backport.
-
-Likely no need to resend and Andrew can fix it up when applying.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
+There's also Co-developed-by tag which may be appropriate in cases where 
+both have touched the patch.
 
 -- 
-Cheers
+ i.
 
-David / dhildenb
-
+> > 
+> > Changelog:
+> > - v1
+> >    - Initial submission
+> > - v2
+> >    - Too many changes to list, but all concerns raised in previous
+> > submission addressed.
+> >    - History:
+> > https://lore.kernel.org/platform-driver-x86/20240716051612.64842-1-luke@ljones.dev/
+> > - v3
+> >    - All concerns addressed.
+> >    - History:
+> > https://lore.kernel.org/platform-driver-x86/20240806020747.365042-1-luke@ljones.dev/
+> > - v4
+> >    - Use EXPORT_SYMBOL_NS_GPL() for the symbols required in this patch
+> > series
+> >    - Add patch for hid-asus due to the use of EXPORT_SYMBOL_NS_GPL()
+> >    - Split the PPT knobs out to a separate patch
+> >    - Split the hd_panel setting out to a new patch
+> >    - Clarify some of APU MEM configuration and convert int to hex
+> >    - Rename deprecated Kconfig option to ASUS_WMI_DEPRECATED_ATTRS
+> >    - Fixup cyclic dependency in Kconfig
+> > - v5
+> >    - deprecate patch: cleanup ``#if`, ``#endif` statements, edit kconfig
+> > detail, edit commit msg
+> >    - cleanup ppt* tuning patch
+> >    - proper error handling in module init, plus pr_err()
+> >    - ppt tunables have a notice if there is no match to get defaults
+> >    - better error handling in cpu core handling
+> >      - don't continue if failure
+> >    - use the mutex to gate WMI writes
+> > - V6
+> >    - correctly cleanup/unwind if module init fails
+> > - V7
+> >    - Remove review tags where the code changed significantly
+> >    - Add auto_screen_brightness WMI attribute support
+> >    - Move PPT patch to end
+> >    - Add support min/max PPT values for 36 laptops (and two handhelds)
+> >    - reword commit for "asus-wmi: export symbols used for read/write WMI"
+> >    - asus-armoury: move existing tunings to asus-armoury
+> >      - Correction to license header
+> >      - Remove the (initial) mutex use (added for core count only in that
+> > patch)
+> >      - Clarify some doc comments (attr_int_store)
+> >      - Cleanup pr_warn in dgpu/egpu/mux functions
+> >      - Restructure logic in asus_fw_attr_add()
+> >      - Check gpu_mux_dev_id and mini_led_dev_id before remove attrs
+> >    - asus-armoury: add core count control:
+> >      - add mutex to prevent possible concurrent write to the core
+> >        count WMI due to separated bit/little attributes
+> >    - asus-armoury: add ppt_* and nv_* tuning knobs:
+> >      - Move to end of series
+> >      - Refactor to use a table of allowed min/max values to
+> >        ensure safe settings
+> >      - General code cleanup
+> >    - Ensure checkpatch.pl returns clean for all
+> > - V8
+> >    - asus-armoury: move existing tunings to asus-armoury module
+> >      - Further cleanup:
+> > https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m72e203f64a5a28c9c21672406b2e9f554a8a8e38
+> >    - asus-armoury: add ppt_* and nv_* tuning knobs
+> >      - Address concerns in
+> > https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m77971b5c1e7f018954c16354e623fc06522c5e41
+> >      - Refactor struct asus_armoury_priv to record both AC and DC settings
+> >      - Tidy macros and functions affected by the above to be clearer as a
+> > result
+> >      - Move repeated strings such as "ppt_pl1_spl" to #defines
+> >      - Split should_create_tunable_attr() in to two functions to better
+> > clarify:
+> >        - is_power_tunable_attr()
+> >        - has_valid_limit()
+> >      - Restructure init_rog_tunables() to initialise AC and DC in a
+> >        way that makes more sense.
+> >      - Ensure that if DC setting table is not available then attributes
+> >        return -ENODEV only if on DC mode.
+> > - V9
+> >    - asus-armoury: move existing tunings to asus-armoury module
+> >      - return -EBUSY when eGPU/dGPU cannot be deactivated
+> >    - asus-armoury: add apu-mem control support
+> >      - discard the WMI presence bit fixing the functionality
+> >    - asus-armoury: add core count control
+> >      - replace mutex lock/unlock with guard
+> >      - move core count alloc for initialization in init_max_cpu_cores()
+> > - v10
+> >    - platform/x86: asus-wmi: export symbols used for read/write WMI
+> >      - fix error with redefinition of asus_wmi_set_devstate
+> >    - asus-armoury: move existing tunings to asus-armoury module
+> >      - hwmon or other -> hwmon or others
+> >      - fix wrong function name in documentation (attr_uint_store)
+> >      - use kstrtouint where appropriate
+> >      - (*) fix unreachable code warning: the fix turned out to be partial
+> >      - improve return values in case of error in
+> > egpu_enable_current_value_store
+> >    - asus-armoury: asus-armoury: add screen auto-brightness toggle
+> >      - actually register screen_auto_brightness attribute
+> > - v11
+> >    - cover-letter:
+> >      - reorganize the changelog of v10
+> >    - asus-armoury: move existing tunings to asus-armoury module
+> >      - move the DMIs list in its own include, fixing (*) for good
+> >    - asus-armoury: add ppt_* and nv_* tuning knobs
+> >      - fix warning about redefinition of ppt_pl2_sppt_def for GV601R
+> > - v12
+> >    - asus-armoury: add ppt_* and nv_* tuning knobs
+> >      - add min/max values for FA608WI and FX507VI
+> > - v13
+> >    - asus-armoury: add ppt_* and nv_* tuning knobs
+> >      - fix a typo in a comment about _def attributes
+> >      - add min/max values for GU605CW and G713PV
+> >    - asus-armoury: add apu-mem control support
+> >      - fix a possible out-of-bounds read in apu_mem_current_value_store
+> > - v14
+> >    - platform/x86: asus-wmi: rename ASUS_WMI_DEVID_PPT_FPPT
+> >      - added patch to rename the symbol for consistency
+> >    - platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+> >      - remove the unchecked usage of dmi_get_system_info while
+> >        also increasing consistency with other messages
+> > 
+> > Denis Benato (1):
+> >    platform/x86: asus-wmi: rename ASUS_WMI_DEVID_PPT_FPPT
+> > 
+> > Luke D. Jones (8):
+> >    platform/x86: asus-wmi: export symbols used for read/write WMI
+> >    platform/x86: asus-armoury: move existing tunings to asus-armoury
+> >      module
+> >    platform/x86: asus-armoury: add panel_hd_mode attribute
+> >    platform/x86: asus-armoury: add apu-mem control support
+> >    platform/x86: asus-armoury: add core count control
+> >    platform/x86: asus-armoury: add screen auto-brightness toggle
+> >    platform/x86: asus-wmi: deprecate bios features
+> >    platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+> > 
+> >   .../ABI/testing/sysfs-platform-asus-wmi       |   17 +
+> >   drivers/hid/hid-asus.c                        |    1 +
+> >   drivers/platform/x86/Kconfig                  |   23 +
+> >   drivers/platform/x86/Makefile                 |    1 +
+> >   drivers/platform/x86/asus-armoury.c           | 1172 ++++++++++++++
+> >   drivers/platform/x86/asus-armoury.h           | 1402 +++++++++++++++++
+> >   drivers/platform/x86/asus-wmi.c               |  170 +-
+> >   .../platform_data/x86/asus-wmi-leds-ids.h     |   50 +
+> >   include/linux/platform_data/x86/asus-wmi.h    |   62 +-
+> >   9 files changed, 2823 insertions(+), 75 deletions(-)
+> >   create mode 100644 drivers/platform/x86/asus-armoury.c
+> >   create mode 100644 drivers/platform/x86/asus-armoury.h
+> >   create mode 100644 include/linux/platform_data/x86/asus-wmi-leds-ids.h
+> > 
+> 
 
