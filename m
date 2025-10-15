@@ -1,192 +1,224 @@
-Return-Path: <linux-kernel+bounces-855347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7105BE0F9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757CFBE0FAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0270B1893343
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9D8189B84D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023143161A8;
-	Wed, 15 Oct 2025 22:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88CD315D52;
+	Wed, 15 Oct 2025 22:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jkh12GVV"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUvJmCsS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9D314D35
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 22:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38C3270542;
+	Wed, 15 Oct 2025 22:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760568522; cv=none; b=TMKTm9CEM0yguMKMliN3/1dcKu2exY3WP+qqOgbLZyx50ZCHUB6HVQxi2foeU7p3pgAT9VcowHqQCEumIbjZDqZPlia20S0bn8U4Ni1o3HsH/d9hJBT3iEztqynNgjz70zXtrbpZ6PqtsazQQBWpQ5+hLimrN6JtItbKl990RmY=
+	t=1760568635; cv=none; b=TeZc/vJ0rtrwwFNWCqPeP1+XHNJeW1RfL/I6zywHP3X16DeHyEkGQ/qrj7sk2UMDmALERMk30ds9cKDcwmN33d4bXA5GG3NWNhIfhxO+SwwGp9Z6PEg5K4cFBQh8NqMAzeNEIWWsIooHaz2nmgNqhtia76SiTgxTFf/bQ6Mp/q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760568522; c=relaxed/simple;
-	bh=Zt/pWqHt/iqQ+2OV/rzrh0fmDpxk2J2y6d2dSCcAMnQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=D0cnFu7qLHz4RNKch/4HQ9bVy5TcBAV93pg/W9wXpT9mmg0LHhYyFjykf+RrmZ8FgZye3F+GBb2H/rxF4cIGfM9I4aaf1FNFtceyxjFr7TfrDwVi1x5ob5GCkq7M3b7WdfhBnkvhP6XvytcBQow28Zu5QXNvgybogoei1wckq/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jkh12GVV; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b60968d52a1so96571a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:48:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760568520; x=1761173320; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VfHhobHRKUrZuY035WUhQS9GUM0Uyoej5h99Za9ASAY=;
-        b=jkh12GVVDciv67h9o1dtfoMkgiOUJERwhdlF5WW0DfKfbPBii8OggGWqbZRHnhgWPe
-         AB6XcScbLiyO2cSib7BCFJIDpFsX1bVfL3KLVyYyxFPzKKSmS5B9BOtiDD/pCMFczU89
-         zJAnZNpg5bPN4Ke4M7GGQZUxPTpqYvrAfT137m69QawpSbia2QD8iaz+sLfpY4U1LITr
-         wsqe473g5ZT9Ua1e5f4PSE+pPNpAjKYj4eE3vpH2q9N2PegoBnC1I7JXAvyLUQ0t36f8
-         sq72oxgiyWPWq8UbXoOe6hZsGznOLdeoYgScyFvy2ET082yX+8+Mt5qsXRuav4V7u6bE
-         Nvpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760568520; x=1761173320;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VfHhobHRKUrZuY035WUhQS9GUM0Uyoej5h99Za9ASAY=;
-        b=AKGG4hJORDdxbj4nl1Sxc7hGz6knuzC8NhkPG1IEFjwnHXL7qXElVXkj9ZRct3SEBn
-         L0qYK0qv8b7DvDYYBaXa92bIzBwhhDoNPPUnoJxdYeXLcePqxKLhhvOB7MwhPUwT61/5
-         y1C5WloRg/qUejwJ+zh0GceRa+lgaA23EuYBX7b96LwLhJwznIkyKuwHKuWmUXx20MEd
-         HbEdIKdJ95QdTfmqucraedA/OxpKG4A56mFqrx5YvVBw4mYsVao9tf8t38WxxX2Wgqom
-         nCOU5qGkA3c6j2ehDtEVQMotQfUTJTAQ8FZ33oVDOZNn23b+WvN3IOHge1J2AobYOE4n
-         fVUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTAAVd6iDPBvlZNISYYwjKPz1apVlzW3FQFpTBkBCy2KWGVE30/j+BfiX3XTK9zjCw0pw614Ha91ggVxc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwghZDWslCyeRSOG27GLAYbgEsKuC6XKO5RZr+cV7vSpDWGu2Up
-	XnxdV4RiVXl9eEmiJPeHrDhQOiy5xQhm779QR/dwkAM2l1Sslp9vqJkWiwvHFnG8Xb1iwqSbx2N
-	bzIdzvA==
-X-Google-Smtp-Source: AGHT+IEyb34/gE6QWzF0uzhcKPL3N9PV8BEpaNWr9b3Rp3K51ypbe1jmOBzkgqmwgOny3WdOfUFKvL+VZBw=
-X-Received: from pjz11.prod.google.com ([2002:a17:90b:56cb:b0:33b:a35b:861])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7351:b0:251:c33d:2783
- with SMTP id adf61e73a8af0-32da813ce42mr40108259637.23.1760568519460; Wed, 15
- Oct 2025 15:48:39 -0700 (PDT)
-Date: Wed, 15 Oct 2025 15:48:38 -0700
-In-Reply-To: <aPAWFQyFLK4EKWVK@gourry-fedora-PF4VCD3F>
+	s=arc-20240116; t=1760568635; c=relaxed/simple;
+	bh=YLBO0n7kCNA2DNr4AULWGXKmK1HQxkDhSaZZFEgXrjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GIyqIQjNbU6MI6a6xawNwmYumaMhEvMpJiP/bNKQ7rn0hA9mSWDIaPBaxu5O16yVMBi019rrxBBwURRn/8r8k/ki4PidBNa0GlaR9kYcdrnPtIWoj1tjWmaR/OrS13W2+04hZKlWtzt+gfFl7dh92SXb0+6h4oke5BkqdbIcrso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUvJmCsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C64CC4CEF8;
+	Wed, 15 Oct 2025 22:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760568634;
+	bh=YLBO0n7kCNA2DNr4AULWGXKmK1HQxkDhSaZZFEgXrjw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=AUvJmCsSG4A8dOgYSfL3n/ufhUIE/Ip9vzQ6rrDJrXcsR7571piThJsUq7u6K65Cd
+	 57tGEB3YaFAQ6OBlhXIhEnEYxnIl3qPqRdaXCDZlUzT36zCH6HHUDOIFC/0l86h4S/
+	 cDKUb8kw3Dgpf2E2jE6lli1G3V4seucF4/bKrhO/NOb0dkP8QLv2JdyPv3IeADCvIU
+	 F/+NJIuDi9qIn9oH407Ws30IHA1spx6HPn1NF0YsxM4gEFas8vJSZex+PFQNOfNjkG
+	 FWnT8PB5YDapki8wyOGfGRhvgXzrNTLYZQA0+XHfqBR4OKbhvYc93OI6pitZp2ABc6
+	 ZM+kxKC/7W54w==
+Date: Wed, 15 Oct 2025 17:50:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Diederik de Haas <diederik@cknow-tech.com>
+Cc: FUKAUMI Naoki <naoki@radxa.com>, manivannan.sadhasivam@oss.qualcomm.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <20251015225033.GA945930@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-9-shivankg@amd.com>
- <aNVQJqYLX17v-fsf@google.com> <aNbrO7A7fSjb4W84@google.com> <aPAWFQyFLK4EKWVK@gourry-fedora-PF4VCD3F>
-Message-ID: <aPAkxp67-R9aQ8oN@google.com>
-Subject: Re: [f2fs-dev] [PATCH kvm-next V11 6/7] KVM: guest_memfd: Enforce
- NUMA mempolicy using shared policy
-From: Sean Christopherson <seanjc@google.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: Shivank Garg <shivankg@amd.com>, jgowans@amazon.com, mhocko@suse.com, jack@suse.cz, 
-	kvm@vger.kernel.org, david@redhat.com, linux-btrfs@vger.kernel.org, 
-	aik@amd.com, papaluri@amd.com, kalyazin@amazon.com, peterx@redhat.com, 
-	linux-mm@kvack.org, clm@fb.com, ddutile@redhat.com, 
-	linux-kselftest@vger.kernel.org, shdhiman@amd.com, gshan@redhat.com, 
-	ying.huang@linux.alibaba.com, shuah@kernel.org, roypat@amazon.co.uk, 
-	matthew.brost@intel.com, linux-coco@lists.linux.dev, zbestahu@gmail.com, 
-	lorenzo.stoakes@oracle.com, linux-bcachefs@vger.kernel.org, 
-	ira.weiny@intel.com, dhavale@google.com, jmorris@namei.org, 
-	willy@infradead.org, hch@infradead.org, chao.gao@intel.com, tabba@google.com, 
-	ziy@nvidia.com, rientjes@google.com, yuzhao@google.com, xiang@kernel.org, 
-	nikunj@amd.com, serge@hallyn.com, amit@infradead.org, thomas.lendacky@amd.com, 
-	ashish.kalra@amd.com, chao.p.peng@intel.com, yan.y.zhao@intel.com, 
-	byungchul@sk.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com, 
-	michael.roth@amd.com, bfoster@redhat.com, bharata@amd.com, 
-	josef@toxicpanda.com, Liam.Howlett@oracle.com, ackerleytng@google.com, 
-	dsterba@suse.com, viro@zeniv.linux.org.uk, jefflexu@linux.alibaba.com, 
-	jaegeuk@kernel.org, dan.j.williams@intel.com, surenb@google.com, 
-	vbabka@suse.cz, paul@paul-moore.com, joshua.hahnjy@gmail.com, 
-	apopple@nvidia.com, brauner@kernel.org, quic_eberman@quicinc.com, 
-	rakie.kim@sk.com, cgzones@googlemail.com, pvorel@suse.cz, 
-	linux-erofs@lists.ozlabs.org, kent.overstreet@linux.dev, 
-	linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	pankaj.gupta@amd.com, linux-security-module@vger.kernel.org, 
-	lihongbo22@huawei.com, linux-fsdevel@vger.kernel.org, pbonzini@redhat.com, 
-	akpm@linux-foundation.org, vannapurve@google.com, suzuki.poulose@arm.com, 
-	rppt@kernel.org, jgg@nvidia.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDIW7ZP5K1VR.2I7VW56B9CZLF@cknow-tech.com>
 
-On Wed, Oct 15, 2025, Gregory Price wrote:
-> On Fri, Sep 26, 2025 at 12:36:27PM -0700, Sean Christopherson via Linux-f2fs-devel wrote:
-> > > 
-> > > static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-> > > 					     unsigned long addr, pgoff_t *pgoff)
-> > > {
-> > > 	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> > > 
-> > > 	return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
-> > 
-> > Argh!!!!!  This breaks the selftest because do_get_mempolicy() very specifically
-> > falls back to the default_policy, NOT to the current task's policy.  That is
-> > *exactly* the type of subtle detail that needs to be commented, because there's
-> > no way some random KVM developer is going to know that returning NULL here is
-> > important with respect to get_mempolicy() ABI.
-> > 
+On Wed, Oct 15, 2025 at 02:26:30PM +0200, Diederik de Haas wrote:
+> On Tue Oct 14, 2025 at 8:49 PM CEST, Bjorn Helgaas wrote:
+> > On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
+> >> I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on the
+> >> Rockchip RK3588(S) SoC.
+> >> 
+> >> When running Linux v6.18-rc1 or linux-next since 20250924, the kernel either
+> >> freezes or fails to probe M.2 Wi-Fi modules. This happens with several
+> >> different modules I've tested, including the Realtek RTL8852BE, MediaTek
+> >> MT7921E, and Intel AX210.
+> >> 
+> >> I've found that reverting the following commit (i.e., the patch I'm replying
+> >> to) resolves the problem:
+> >> commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
+> >
+> > Thanks for the report, and sorry for the regression.
+> >
+> > Since this affects several devices from different manufacturers and (I
+> > assume) different drivers, it seems likely that there's some issue
+> > with the Rockchip end, since ASPM probably works on these devices in
+> > other systems.  So we should figure out if there's something wrong
+> > with the way we configure ASPM, which we could potentially fix, or if
+> > there's a hardware issue and we need some king of quirk to prevent
+> > usage of ASPM on the affected platforms.
+> >
+> > Can you collect a complete dmesg log when booting with
+> >
+> >   ignore_loglevel pci=earlydump dyndbg="file drivers/pci/* +p"
+> >
+> > and the output of "sudo lspci -vv"?
 > 
-> Do_get_mempolicy was designed to be accessed by the syscall, not as an
-> in-kernel ABI.
+> I have a Rock 5B as well, but I don't have a Wi-Fi module, but I do have
+> a NVMe drive connected. That boots fine with 6.17, but I end up in a
+> rescue shell with 6.18-rc1. I haven't verified that it's caused by the
+> same commit, but it does sound plausible.
 
-Ya, by "get_mempolicy() ABI" I meant the uABI for the get_mempolicy syscall.
+FWIW, my expectation is that booting with "pcie_aspm=off" should
+effectively avoid the ASPM enabling and behave similarly to reverting
+f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for
+devicetree platforms").  My hope was that we could boot that way and
+incrementally enable ASPM via sysfs a device at a time for testing.
 
-> get_task_policy also returns the default policy if there's nothing
-> there, because that's what applies.
+If hardware implements ASPM correctly, enabling it should have no
+functional impact at all, so we might be tripping over some kind of
+hardware bug or maybe a generic Linux issue (ASPM has to be enabled in
+a very specific order, and it's conceivable we messed that up).
+
+> On this device, the NVMe isn't strictly needed (I used it to compile my
+> kernels on), so I added 'noauto' to the NVMe line in /etc/fstab ... and
+> that made it boot successfully into 6.18-rc1. Then running the 'mount'
+> command wrt that NVMe drive failed with this message:
 > 
-> I have dangerous questions:
-
-Not dangerous at all, I find them very helpful!
-
-> why is __kvm_gmem_get_policy using
-> 	mpol_shared_policy_lookup()
-> instead of
-> 	get_vma_policy()
-
-With the disclaimer that I haven't followed the gory details of this series super
-closely, my understanding is...
-
-Because the VMA is a means to an end, and we want the policy to persist even if
-the VMA goes away.
-
-With guest_memfd, KVM effectively inverts the standard MMU model.  Instead of mm/
-being the primary MMU and KVM being a secondary MMU, guest_memfd is the primary
-MMU and any VMAs are secondary (mostly; it's probably more like 1a and 1b).  This
-allows KVM to map guest_memfd memory into a guest without a VMA, or with more
-permissions than are granted to host userspace, e.g. guest_memfd memory could be
-writable by the guest, but read-only for userspace.
-
-But we still want to support things like mbind() so that userspace can ensure
-guest_memfd allocations align with the vNUMA topology presented to the guest,
-or are bound to the NUMA node where the VM will run.  We considered adding equivalent
-file-based syscalls, e.g. fbind(), but IIRC the consensus was that doing so was
-unnecessary (and potentially messy?) since we were planning on eventually adding
-mmap() support to guest_memfd anyways.
-
-> get_vma_policy does this all for you
-
-I assume that doesn't work if the intent is for new VMAs to pick up the existing
-policy from guest_memfd?  And more importantly, guest_memfd needs to hook
-->set_policy so that changes through e.g. mbind() persist beyond the lifetime of
-the VMA.
-
-> struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
->                                  unsigned long addr, int order, pgoff_t *ilx)
-> {
->         struct mempolicy *pol;
+>   EXT4-fs (nvme0n1p1): unable to read superblock
 > 
->         pol = __get_vma_policy(vma, addr, ilx);
->         if (!pol)
->                 pol = get_task_policy(current);
->         if (pol->mode == MPOL_INTERLEAVE ||
->             pol->mode == MPOL_WEIGHTED_INTERLEAVE) {
->                 *ilx += vma->vm_pgoff >> order;
->                 *ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
->         }
->         return pol;
-> }
+> The log of my attempts can be found here:
+> https://paste.sr.ht/~diederik/f435eb258dca60676f7ac5154c00ddfdc24ac0b7
 > 
-> Of course you still have the same issue: get_task_policy will return the
-> default, because that's what applies.
+> > When the kernel freezes, can you give us any information about where,
+> > e.g., a log or screenshot?
 > 
-> do_get_mempolicy just seems like the completely incorrect interface to
-> be using here.
+> For me, there is no kernel freeze. I ended up in a rescue shell as it
+> couldn't mount the NVMe drive. As described above, when not letting it
+> auto-mount that drive, the boot completed normally.
+
+Thanks for the log, it's very useful.  This is pieced together from
+the serial console log and the "dmesg --level" output, but I think
+it's all the same boot:
+
+  [    2.872094] rockchip-dw-pcie a40000000.pcie: PCI host bridge to bus 0000:00
+  [    2.885904] pci 0000:00:00.0: [1d87:3588] type 01 class 0x060400 PCIe Root Port
+  [    2.888237] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
+  [    3.143823] pci 0000:01:00.0: [144d:a80a] type 00 class 0x010802 PCIe Endpoint
+  [    3.144646] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
+  [    3.162748] pci 0000:01:00.0: BAR 0 [mem 0xf0200000-0xf0203fff 64bit]: assigned
+  [    3.298198] nvme nvme0: pci function 0000:01:00.0
+  [    3.298901] nvme 0000:01:00.0: enabling device (0000 -> 0002)
+  [    3.316695] nvme nvme0: D3 entry latency set to 10 seconds
+  ...
+  [   18.921811] rockchip-pm-domain fd8d8000.power-management:power-controller: sync_state() pending due to fdad0000.npu
+  [   18.922737] rockchip-pm-domain fd8d8000.power-management:power-controller: sync_state() pending due to fdb50000.video-codec
+  ...
+  [   39.971050] nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS read failed (134)
+  [   39.971945] nvme nvme0: Does your device have a faulty power saving mode enabled?
+  [   39.972609] nvme nvme0: Try "nvme_core.default_ps_max_latency_us=0 pcie_aspm=off pcie_port_pm=off" and report a bug
+  [   42.357637] nvme0n1: I/O Cmd(0x2) @ LBA 0, 8 blocks, I/O Error (sct 0x3 / sc 0x71)
+  [   42.358644] I/O error, dev nvme0n1, sector 0 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 2
+  [   42.391612] nvme 0000:01:00.0: Unable to change power state from D3cold to D0, device inaccessible
+  [   42.443644] nvme nvme0: Disabling device after reset failure: -19
+  [   42.459544] Buffer I/O error on dev nvme0n1, logical block 0, async page read
+  [   42.607749] EXT4-fs (nvme0n1p1): unable to read superblock
+
+The earlydump info shows the 00:00.0 Root Port had I/O+ Mem+
+BusMaster+ (0x0107) and the 01:00.0 NVMe initially had I/O- Mem-
+BusMaster- (0x0000).  We were able to enumerate the NVMe device and
+assign its BAR, and the nvme driver turned on Mem+ (0x002).
+
+  nvme_timeout
+    csts = readl(dev->bar + NVME_REG_CSTS)
+    if (nvme_should_reset(csts))
+      nvme_warn_reset(csts)
+        result = pci_read_config_word(PCI_STATUS)
+        "controller is down; will reset: CSTS=0xffffffff, ... failed (134)"
+    nvme_dev_disable
+
+But I think the NVMe device was powered down to D3cold somewhere
+before 39.971050.  I don't know if the power-controller messages at
+18.921811 have any connection, and I don't know why ASPM would be
+related.
+
+In any event, the NVME_REG_CSTS mem read returned ~0, probably because
+the device didn't respond and the RC fabricated ~0.  The PCI_STATUS
+config read failed with 134 (PCIBIOS_DEVICE_NOT_FOUND).  The config
+read should be this path, which probably failed because the link was
+down, which would happen if NVMe is in D3cold:
+
+  pci_read_config_word
+    if (pci_dev_is_disconnected())
+      return PCIBIOS_DEVICE_NOT_FOUND
+    pci_bus_read_config_word
+      ret = bus->ops->read
+        dw_pcie_rd_other_conf
+          pci_generic_config_read
+            addr = bus->ops->map_bus
+              dw_pcie_other_conf_map_bus
+                if (!dw_pcie_link_up())
+                  return pci->ops->link_up
+                    rockchip_pcie_link_up   # .link_up
+                  return NULL               # link was down
+            if (!addr)                      # .map_bus() failed b/c link down
+              return PCIBIOS_DEVICE_NOT_FOUND
+
+Your lspci shows no response, i.e., config reads to the device
+returned ~0:
+
+  0000:01:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller PM9A1/PM9A3/980PRO (prog-if 02 [NVM Express])
+        Subsystem: Samsung Electronics Co Ltd SSD 980 PRO
+        !!! Unknown header type 7f
+        Interrupt: pin ? routed to IRQ 94
+
+The Root Port shows a Completion Timeout error, which might be a
+consequence of NVMe being powered off:
+
+  0000:00:00.0 PCI bridge: Rockchip Electronics Co., Ltd RK3588 (rev 01) (prog-if 00 [Normal decode])
+        Capabilities: [100 v2] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO+ CmpltAbrt- UnxCmplt- RxOF- MalfTLP-
+
+Bottom line, I don't think I can get any further with this particular
+issue until we confirm that f3ac2ff14834 ("PCI/ASPM: Enable all
+ClockPM and ASPM states for devicetree platforms") is the cause.
+
+Bjorn
 
