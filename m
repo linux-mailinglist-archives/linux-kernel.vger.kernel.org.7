@@ -1,272 +1,319 @@
-Return-Path: <linux-kernel+bounces-854303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C68BDE0AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1EABDE0AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 83C05502FE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961BC18852FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E8931960B;
-	Wed, 15 Oct 2025 10:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499A13081B0;
+	Wed, 15 Oct 2025 10:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="er+nhfbk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MMjwsQZ4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmWsXVhg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MMjwsQZ4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmWsXVhg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FA52DAFA9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7950E2E8B86
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760524649; cv=none; b=S/nsmS787hQjVhH5oKHlDNMo+nW2obYSpfG6fm7fMgjKjSzXg92brnbGwtqX6+4HiHulGKVHyp1GLzl4bdNVzwBXgFZ07n/fYFBT+XQdi7q0Q0Ub0RF/txhjqRbDC4flhE7swjMD3jGXE2/ZtdHvVUU0/sFghKo6jsY9YC5VR/Q=
+	t=1760524638; cv=none; b=rwzTQHfm/J5AHM6PWMxVPwvs7iZhjKcHPGqTz8hdpaUU+JMnMas3Ft/xI4maIHY2ZYF1RMXRl5gL9aWTfAxF9h0T1eMGEMw5bpjiBH5yVqTOopOC/wx0wOIWUn3rh9PADq4r8GA6mGc0qTJcNdcgf2llMjU8Bixrf4bVuJfCib4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760524649; c=relaxed/simple;
-	bh=s2JXUbp0DYNFUksSB7dqNSV0t8IjpdOa3Cgcl2SjNIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VnoBj8CcIvCoI0/L65ReAVecP/PLzta3r8sNyCB4LI5RIoDEBJaboy+ISmI39nV45DGEmK1W2kiOkRlEsQuFY3EtUzGK+QLBKxYbB/CtdeZ+eerMu3WMtzY+dx677mlyQQtSTht1IzHuI6imxgHdXMPCNEvp3l2OyS4eZVQ7KHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=er+nhfbk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760524646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1760524638; c=relaxed/simple;
+	bh=r9u8zd/jXx3UDg62IxPDc1C3CJ10UatMhGkxyEXIvNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BGXz9t39pMrsuuB0wRuipJpSlwrGkRegkg3RHuKWjGyZyRtKbFA6YL8NZZtUcpfS92JPC6LiVx7QJjcCW3j5hLsFGPJUaeapkXvSqJ7oqBhi+YVUvFk5cFd1qj1+CRgLKEH2+ueRebfym8jZ5bj79BOnlAqxpvbkUmOL3s6MOmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MMjwsQZ4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmWsXVhg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MMjwsQZ4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmWsXVhg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9383133856;
+	Wed, 15 Oct 2025 10:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760524634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJ5OI8qXcU6LeUOVXf33r3M+T7rLK5h6AAwB4S0iIqA=;
-	b=er+nhfbkzp+2wF+IALE6RF1jyYAi9/3GM/DXYToRiDhNRcw78wvD4NaGhTCohC7OaxacxS
-	EQRQOeAAFa6CoZIb+oz+1fy+3eQCSOWLoLPcH0kxQLPJFlorDb1Kv29v7OdBvOVSkYtLve
-	6dbWMHSyeEjJoQ2fUfFSXnm+nmmkKjA=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-U1_x1af2MGa7aJjay_7FTA-1; Wed, 15 Oct 2025 06:37:25 -0400
-X-MC-Unique: U1_x1af2MGa7aJjay_7FTA-1
-X-Mimecast-MFC-AGG-ID: U1_x1af2MGa7aJjay_7FTA_1760524645
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-7815a21894aso15062617b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:37:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760524645; x=1761129445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FJ5OI8qXcU6LeUOVXf33r3M+T7rLK5h6AAwB4S0iIqA=;
-        b=GvY1LDdWqgzJFk6aYEJnmg9GxUPGy/kKCyD0xta80o3HVMeHuMWkvvxGex85muQHUB
-         YCv1W5EUv2cnJ8ZZqLsSSu3ZjIdy3/410/2KLSHXrkVKePhvOu59UzKzlEj/mq0BQjhX
-         EJ8NU0iYuNCqLBAY+JCmiEjcGxdSCncvntI11d9S8y7jZaWvQy8OrR7JqJylvdwghSzm
-         +hoxbX+wN8ub65md3jg3Gzt3yWPbzGS/+0r9ZJOb3ptA7N19ifbggz6i5TLwjM3cR8mH
-         7ty0OhXDyxvaf0vJHnFqFcpOTwZIYyh8gUbqUokH60LyB7LdS01WMfxdA9LpYqpPszvc
-         ewFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTZPjG6VnmTY3uhAmhO1FLpv3X7kVZAxLCI832oFZAm0Ok+ezmSMqJutYevyBkdLdWGavJLZt5VqqjqkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNyGd3PCBoOh/wuCK9/0bPN1mw3ZaOzt3eqIRPXpVoW3CzfLAn
-	Kkbr27wOlKQ+CUlrug984GxkkoMsLr4It8kIqJgHXVKyf1h23IJIUUwkS5bm4CWVUx3X1eccFft
-	/vOBlecVT3GHr3/bxjqQ+r+rdMV5CiqFqpoGd8oyfmgoNXf6pU1K+ROKCbCsQho15PjWNG0XAvp
-	7fYOB7ij/F5jXhjRt85IVtoSIvLZEVKqDFNYTNgjdc
-X-Gm-Gg: ASbGncvRq7NS6Tg9YXZtKEPgEqX2yB1hrBkJF/unma0dFBb7e34KtZJ981npndagPFV
-	w6+hXR7GhfOyziseZlG/6Oi17SXWPska4BXZY8gdTc5DomAF0kLMXk5fvTZyNhgPAoEKkTxN7NG
-	pKoOxIyPTV5VPjLyoLpVjLFjbHW2RINPHOY0augWOGlxBtDFJt6Icq7o+dBItreIcptt4DavB3o
-	5VxDVL8
-X-Received: by 2002:a05:690e:2c7:b0:633:abda:fce3 with SMTP id 956f58d0204a3-63ccb903b26mr19292022d50.36.1760524644918;
-        Wed, 15 Oct 2025 03:37:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHloSoTDh8INEPlDtU9jlkdkPn/64A75meFhRp+1C+3McE09pWuT2JMM/iqj80sCG6XNefZ+7vtFqlJL08FI4s=
-X-Received: by 2002:a05:690e:2c7:b0:633:abda:fce3 with SMTP id
- 956f58d0204a3-63ccb903b26mr19292009d50.36.1760524644411; Wed, 15 Oct 2025
- 03:37:24 -0700 (PDT)
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
+	b=MMjwsQZ4KE/nscd/YIHEYI+aLquW+tOE/yF7EF95Kb9Q6z/ZOFJXsz/87T+jLv1XzVN1aH
+	3Vbg/o9OgsQx1hazAejb7UOyQwHlGEo8s4B3VV5R4/COWX0cJdOxw7ZffYy1tFp9BolojM
+	WJnqEeRUblRTso5I3+MkSrwMkv93R/k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760524634;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
+	b=kmWsXVhg7qvQHQQ8zL9EGCoyIcw+R5ppekmtANLqCecRU58mwBHDfvp/hnMMgZnnZFAbCQ
+	WcKelaB7ZKcjTSDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760524634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
+	b=MMjwsQZ4KE/nscd/YIHEYI+aLquW+tOE/yF7EF95Kb9Q6z/ZOFJXsz/87T+jLv1XzVN1aH
+	3Vbg/o9OgsQx1hazAejb7UOyQwHlGEo8s4B3VV5R4/COWX0cJdOxw7ZffYy1tFp9BolojM
+	WJnqEeRUblRTso5I3+MkSrwMkv93R/k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760524634;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
+	b=kmWsXVhg7qvQHQQ8zL9EGCoyIcw+R5ppekmtANLqCecRU58mwBHDfvp/hnMMgZnnZFAbCQ
+	WcKelaB7ZKcjTSDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7483313A29;
+	Wed, 15 Oct 2025 10:37:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id r0ogHFp572jVHgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 10:37:14 +0000
+Message-ID: <6194b6ab-6b43-468d-ba78-a95594c48798@suse.cz>
+Date: Wed, 15 Oct 2025 12:37:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007130622.144762-2-eperezma@redhat.com> <20251014042459-mutt-send-email-mst@kernel.org>
- <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
- <20251014051537-mutt-send-email-mst@kernel.org> <CAJaqyWe-mn4e+1egNCH+R1x4R7DB6U1SZ-mRAXYPTtA27hKCVA@mail.gmail.com>
- <20251015023020-mutt-send-email-mst@kernel.org> <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
- <20251015030313-mutt-send-email-mst@kernel.org> <CAJaqyWfRmhXM8eV+=wMVKgrc8SJ98OTtBCtNDJj8ZRUM5Y9Nmg@mail.gmail.com>
- <CAO55csx2rbjxEZk5K3aKcZ501KY3Zfs8ThEQHFqQ1ZB9RSXECA@mail.gmail.com> <20251015040722-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20251015040722-mutt-send-email-mst@kernel.org>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 15 Oct 2025 12:36:47 +0200
-X-Gm-Features: AS18NWDZxVi03ZJg7QLo3y_kPBWfnIylCoy1tVOlO9_rzeDHCgU5F_37TTxyJKc
-Message-ID: <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
-Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] slab: Add check for memcg_data != OBJEXTS_ALLOC_FAIL
+ in folio_memcg_kmem
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, Hao Ge <hao.ge@linux.dev>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20251014152751.499376-1-hao.ge@linux.dev>
+ <CAJuCfpGBxUmvWoe2xv2-bsF+TY4fK-m1-Z_E3OcyTiSYz5KeAA@mail.gmail.com>
+ <aO9okBEZiA4pCNku@hyeyoo> <c07838ca-4e6e-4837-b99f-09fd44c7801c@suse.cz>
+ <aO93GHNR_32-Pmom@hyeyoo>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aO93GHNR_32-Pmom@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On Wed, Oct 15, 2025 at 10:09=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
->
-> On Wed, Oct 15, 2025 at 10:03:49AM +0200, Maxime Coquelin wrote:
-> > On Wed, Oct 15, 2025 at 9:45=E2=80=AFAM Eugenio Perez Martin
-> > <eperezma@redhat.com> wrote:
-> > >
-> > > On Wed, Oct 15, 2025 at 9:05=E2=80=AFAM Michael S. Tsirkin <mst@redha=
-t.com> wrote:
-> > > >
-> > > > On Wed, Oct 15, 2025 at 08:52:50AM +0200, Eugenio Perez Martin wrot=
-e:
-> > > > > On Wed, Oct 15, 2025 at 8:33=E2=80=AFAM Michael S. Tsirkin <mst@r=
-edhat.com> wrote:
-> > > > > >
-> > > > > > On Wed, Oct 15, 2025 at 08:08:31AM +0200, Eugenio Perez Martin =
-wrote:
-> > > > > > > On Tue, Oct 14, 2025 at 11:25=E2=80=AFAM Michael S. Tsirkin <=
-mst@redhat.com> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin w=
-rote:
-> > > > > > > > > On Tue, Oct 14, 2025 at 10:29=E2=80=AFAM Michael S. Tsirk=
-in <mst@redhat.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio P=C3=
-=A9rez wrote:
-> > > > > > > > > > > An userland device implemented through VDUSE could ta=
-ke rtnl forever if
-> > > > > > > > > > > the virtio-net driver is running on top of virtio_vdp=
-a.  Let's break the
-> > > > > > > > > > > device if it does not return the buffer in a longer-t=
-han-assumible
-> > > > > > > > > > > timeout.
-> > > > > > > > > >
-> > > > > > > > > > So now I can't debug qemu with gdb because guest dies :=
-(
-> > > > > > > > > > Let's not break valid use-cases please.
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > Instead, solve it in vduse, probably by handling cvq wi=
-thin
-> > > > > > > > > > kernel.
-> > > > > > > > >
-> > > > > > > > > Would a shadow control virtqueue implementation in the VD=
-USE driver work?
-> > > > > > > > > It would ack systematically messages sent by the Virtio-n=
-et driver,
-> > > > > > > > > and so assume the userspace application will Ack them.
-> > > > > > > > >
-> > > > > > > > > When the userspace application handles the message, if th=
-e handling fails,
-> > > > > > > > > it somehow marks the device as broken?
-> > > > > > > > >
-> > > > > > > > > Thanks,
-> > > > > > > > > Maxime
-> > > > > > > >
-> > > > > > > > Yes but it's a bit more convoluted  than just acking them.
-> > > > > > > > Once you use the buffer you can get another one and so on
-> > > > > > > > with no limit.
-> > > > > > > > One fix is to actually maintain device state in the
-> > > > > > > > kernel, update it, and then notify userspace.
-> > > > > > > >
-> > > > > > >
-> > > > > > > I thought of implementing this approach at first, but it has =
-two drawbacks.
-> > > > > > >
-> > > > > > > The first one: it's racy. Let's say the driver updates the MA=
-C filter,
-> > > > > > > VDUSE timeout occurs, the guest receives the fail, and then t=
-he device
-> > > > > > > replies with an OK. There is no way for the device or VDUSE t=
-o update
-> > > > > > > the driver.
-> > > > > >
-> > > > > > There's no timeout. Kernel can guarantee executing all requests=
-.
-> > > > > >
-> > > > >
-> > > > > I don't follow this. How should the VDUSE kernel module act if th=
-e
-> > > > > VDUSE userland device does not use the CVQ buffer then?
-> > > >
-> > > > First I am not sure a VQ is the best interface for talking to users=
-pace.
-> > > > But assuming yes - just avoid sending more data, send it later afte=
-r
-> > > > userspace used the buffer.
-> > > >
-> > >
-> > > Let me take a step back, I think I didn't describe the scenario well =
-enough.
-> > >
-> > > We have a VDUSE device, and then the same host is interacting with th=
-e
-> > > device through the virtio_net driver over virtio_vdpa.
-> > >
-> > > Then, the virtio_net driver sends a control command though its CVQ, s=
-o
-> > > it *takes the RTNL*. That command reaches the VDUSE CVQ.
-> > >
-> > > It does not matter if the VDUSE device in the userland processes the
-> > > commands through a CVQ, reading the vduse character device, or anothe=
-r
-> > > system. The question is: what to do if the VDUSE device does not
-> > > process that command in a timely manner? Should we just let the RTNL
-> > > be taken forever?
-> > >
-> >
-> > My understanding is that:
-> > 1. Virtio-net sends a control messages, waits for reply
-> > 2. VDUSE driver dequeues it, adds it to the SCVQ, replies OK to the CVQ
-> > 3. Userspace application dequeues the message from the SCVQ
-> >  a. If handling is successful it replies OK
-> >  b. If handling fails, replies ERROR
+On 10/15/25 12:27, Harry Yoo wrote:
+> On Wed, Oct 15, 2025 at 11:54:18AM +0200, Vlastimil Babka wrote:
+>> On 10/15/25 11:25, Harry Yoo wrote:
+>> > On Tue, Oct 14, 2025 at 09:12:43AM -0700, Suren Baghdasaryan wrote:
+>> >> On Tue, Oct 14, 2025 at 8:28 AM Hao Ge <hao.ge@linux.dev> wrote:
+>> >> >
+>> >> > From: Hao Ge <gehao@kylinos.cn>
+>> >> >
+>> >> > Since OBJEXTS_ALLOC_FAIL and MEMCG_DATA_OBJEXTS currently share
+>> >> > the same bit position, we cannot determine whether memcg_data still
+>> >> > points to the slabobj_ext vector simply by checking
+>> >> > folio->memcg_data & MEMCG_DATA_OBJEXTS.
+>> >> >
+>> >> > If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
+>> >> > and during the release of the associated folio, the BUG check is triggered
+>> >> > because it was mistakenly assumed that a valid folio->memcg_data
+>> >> > was not cleared before freeing the folio.
+>> > 
+>> > nit: yesterday I was confused that this is sanity checks in buddy complaining
+>> > folio->memcg_data not being cleared, but it's actually folio_memcg_kmem()
+>> > complaining that MEMCG_OBJEXTS_DATA flag is set on non-slab folios (in
+>> > free_pages_prepare(), if PageMemcgKmem(page) -> __memcg_kmem_uncharge_page()))
+>> > So the paragraph above should be updated?
+>> > 
+>> > And as a side question, we clear slab->obj_exts when freeing obj_ext array,
+>> > but don't clear OBJEXTS_ALLOC_FAIL when freeing a slab? That's not good.
+>> 
+>> Hm great point. We should rather make sure it's cleared always, instead of
+>> adjusting the debugging check, which shouldn't be then necessary, right?
+> 
+> Yeah folio_memcg_kmem() isn't supposed to be called on slabs anyway
+> (it's not a slab at the time we free it to buddy), so we don't have to
+> adjust the debug check.
 
-If that's the case, everything would be ok now. In both cases, the
-RTNL is held only by that time. The problem is when the VDUSE device
-userland does not reply.
+Great. Hao Ge, can you please send v4 that instead of adjusting the
+VM_BUG_ON modifies free_slab_obj_exts() to always clear slab->obj_exts? Thanks!
 
-> > 4. VDUSE driver reads the reply
-> >  a. if OK, do nothing
-> >  b. if ERROR, mark the device as broken?
-> >
-> > This is simplified as it does not take into account SCVQ overflow if
-> > the application is stuck.
-> > If IIUC, Michael suggests to only enqueue a single message at the time
-> > in the SVQ,
-> > and bufferize the pending messages in the VDUSE driver.
-
-But the RTNL keeps being held in all that process, isn't it?
-
->
-> Not exactly bufferize, record.  E.g. we do not need to send
-> 100 messages to enable/disable promisc mode - together they
-> have no effect.
->
-
-I still don't follow how that unlocks the RTNL. Let me put some workflows:
-
-1) MAC_TABLE_SET, what can we do if:
-The driver sets a set of MAC addresses, (A, B, C). VDUSE device does
-send this set to the VDUSE userland device, as we don't have more
-information. Now, the driver sends a new table with addresses (A, B,
-D), but the device still didn't reply to the VDUSE driver.
-
-VDUSE should track that the new state is (A, B, D), and then wait for
-the previous request to be replied by the device? What should we
-report to the driver? If we wait for the device to reply, we're in the
-same situation regarding the RTNL.
-
-Now we receive a new state (A, B, E). We haven't sent the (A, B, D),
-so it is good to just replace the (A, B, D) with that. and send it
-when (A, B, C) is completed with either success or failure.
-
-2) VQ_PAIRS_SET
-
-The driver starts with 1 vq pair. Now the driver sets 3 vq pairs, and
-the VDUSE CVQ forwards the command. The driver still thinks that it is
-using 1 vq pair. I can store that the driver request was 3, and it is
-still in-flight. Now the timeout occurs, so the VDUSE device returns
-fail to the driver, and the driver frees the vq regions etc. After
-that, the device now replies OK. The memory that was sent as the new
-vqs avail ring and descriptor ring now contains garbage, and it could
-happen that the device start overriding unrelated memory.
-
-Not even VQ_RESET protects against it as there is still a window
-between the CMD set and the VQ reset.
+>> >> > So let's check for memcg_data != OBJEXTS_ALLOC_FAIL in folio_memcg_kmem.
+>> >> >
+>> >> > Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
+>> >> > Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+>> >> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>> >> 
+>> >> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+>> >>
+>> >> nit: I think it would be helpful if the changelog explained why we
+>> >> need the additional check. We can have the same bit set in two
+>> >> different situations:
+>> >> 1. object extension vector allocation failure;
+>> >> 2. memcg_data pointing to a valid mem_cgroup.
+>> >> To distinguish between them, we need to check not only the bit itself
+>> >> but also the rest of this field. If the rest is NULL, we have case 1,
+>> >> otherwise case 2.
+>> > 
+>> > Agreed.
+>> > 
+>> > In general LGTM,
+>> > Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+>> > 
+>> > By the way, maybe it'd be nice to introduce a new helper function that
+>> > properly checks MEMCG_DATA_OBJEXTS flag.
+>> 
+>> I thought so too at first...
+>> 
+>> >> ~/slab (slab/for-next-fixes)> git grep -n MEMCG_DATA_OBJEXTS
+>> >> include/linux/memcontrol.h:337:	MEMCG_DATA_OBJEXTS = (1UL << 0),
+>> >> include/linux/memcontrol.h:344:#define __OBJEXTS_ALLOC_FAIL	MEMCG_DATA_OBJEXTS
+>> >> include/linux/memcontrol.h:358:	 * MEMCG_DATA_OBJEXTS.
+>> > 
+>> >> include/linux/memcontrol.h:400:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>> >> include/linux/memcontrol.h:421:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>> > 
+>> > these two,
+>> > 
+>> >> include/linux/memcontrol.h:492:	if (memcg_data & MEMCG_DATA_OBJEXTS)
+>> > 
+>> > this,
+>> > 
+>> >> include/linux/memcontrol.h:538:			(folio->memcg_data & MEMCG_DATA_OBJEXTS),
+>> >> include/linux/memcontrol.h:1491: * if MEMCG_DATA_OBJEXTS is set.
+>> >> mm/kfence/core.c:624:				 MEMCG_DATA_OBJEXTS;
+>> > 
+>> >> mm/page_owner.c:513:	if (memcg_data & MEMCG_DATA_OBJEXTS)
+>> > 
+>> > this,
+>> > 
+>> >> mm/slab.h:541:	 * MEMCG_DATA_OBJEXTS bit set or be equal to OBJEXTS_ALLOC_FAIL.
+>> >> mm/slab.h:543:	VM_BUG_ON_PAGE(obj_exts && !(obj_exts & MEMCG_DATA_OBJEXTS) &&
+>> >> mm/slub.c:2137:	new_exts |= MEMCG_DATA_OBJEXTS;
+>> >> tools/mm/show_page_info.py:55:        MEMCG_DATA_OBJEXTS = prog.constant("MEMCG_DATA_OBJEXTS").value_()
+>> > 
+>> >> tools/mm/show_page_info.py:59:        if memcg_data & MEMCG_DATA_OBJEXTS:
+>> > 
+>> > and this do not look good.
+>> > 
+>> > I mean technically they are fine since OBJEXTS_ALLOC_FAIL is set on
+>> > slabs only, but that's just a coincidence.
+>> 
+>> And checked the the other debugging checks too. But then thought it's better
+>> that if these are not expected to see slabs, then they should not be
+>> adjusted. I don't see it as a coincidence but as intention to keep it slab
+>> specific. It will be also more future proof for the upcoming separation of
+>> struct slab from struct page.
+> 
+> Then we're intentionally using (folio->memcg_data & MEMCG_DATA_OBJEXTS) check
+> as a way to determine whether the folio is a slab (either slabobj_ext array
+> allocation succeeded or failed).
+> 
+> That makes sense to me!
+> 
+>> >> > ---
+>> >> > v3: Simplify the solution, per Harry's suggestion in the v1 comments
+>> >> >     Add Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+>> >> > ---
+>> >> >  include/linux/memcontrol.h | 4 +++-
+>> >> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >> >
+>> >> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> >> > index 873e510d6f8d..7ed15f858dc4 100644
+>> >> > --- a/include/linux/memcontrol.h
+>> >> > +++ b/include/linux/memcontrol.h
+>> >> > @@ -534,7 +534,9 @@ static inline struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *ob
+>> >> >  static inline bool folio_memcg_kmem(struct folio *folio)
+>> >> >  {
+>> >> >         VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
+>> >> > -       VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>> >> > +       VM_BUG_ON_FOLIO((folio->memcg_data != OBJEXTS_ALLOC_FAIL) &&
+>> >> > +                       (folio->memcg_data & MEMCG_DATA_OBJEXTS),
+>> >> > +                       folio);
+>> >> >         return folio->memcg_data & MEMCG_DATA_KMEM;
+>> >> >  }
+>> >> >
+>> >> > --
+>> >> > 2.25.1
+>> > 
+>> 
+> 
 
 
