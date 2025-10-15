@@ -1,93 +1,141 @@
-Return-Path: <linux-kernel+bounces-853698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001E8BDC5B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:37:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEECBDC5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5744D19A05F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA1D3AF9C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B604D2BD587;
-	Wed, 15 Oct 2025 03:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEC52BD5A7;
+	Wed, 15 Oct 2025 03:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ct/h+jGW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c6R36xCe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB926FBF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38DD2BDC13
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760499472; cv=none; b=fuFa9NIiXvIGJEQpgNfWEDmBfJphhzdA/wSmWnFrcGttBB+z8CW65Tgw98VdZP5QroA6Q5FifJ2lRICVfPl8Nv04Ux8J9GgPS04zyeZXrsXoTWZqXjQG2I4wO3mrVfdrWiCFpRBTjULwDyK18CHqTHHg/FqqcYgZ99496HeVDWE=
+	t=1760499498; cv=none; b=OQ6Kh3pBiLFKETjOA6qUw+tUeErDuHmQbq/9TY7Uu6N15TAcOJ6WGc6qpBfRmgeK3TJSuE+n+3V3IEqvxLuJRHqlVl7IhSTqqydI5hVIF6yWanET1nzvi79lFBF78LwY/dbDgIYAUbOspRlUh+fioha6M4dnXKCGxN7D/SfH2Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760499472; c=relaxed/simple;
-	bh=sWZ++ZKI5PvBaF1zudgHniT7o5gWllCQAH6AAoFLBjU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KXHdh08S0j1LLBYVpjWfViUKCDCNhwpKBFi3JZNMhpYqRTZ6sGpXx+NZ7Ix3xZnPna13Q3UfD6PSMBanOMLFCfvYOiEVL93QNf6yBRab8YX1ojI/y4iSrV2/D0BPUNUepyvfDFrg51ViChhvesKXsbVbuE9gTXBAwiH8w9Jdheg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ct/h+jGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EF7C4CEE7;
-	Wed, 15 Oct 2025 03:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760499471;
-	bh=sWZ++ZKI5PvBaF1zudgHniT7o5gWllCQAH6AAoFLBjU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=ct/h+jGWOlifGQ6fq1o+V+tzON7mkNfRACGz1ohUoU97OMlrm+ylzF/OBWCVpStEj
-	 NW1RhRZRMdN/4K/7uU3+DhiMIDxtpnVbYdPDIAzOf2UlWsdVy6af03Hbee0y8jH+Yq
-	 M2HzDjpZjVsQKFsFaPTmiJnvBXyyksAwHAkjzMwR3zXdeKUt0YLXKVnQy4qT46D0rm
-	 VY5L4inWDW3x1yGp0fghQCxEkv3yRnvZNuSXe50UqVZUVIKVLnJYkIWSlY7aFf6CFP
-	 rSHvcHnjz0ntM6PJNl4N0/anmwNkvCDwjd+Oc8PW7ZLh6Kk0PqfcCxybYCEWgH8k1X
-	 td9zUXy2v4DEg==
-Date: Tue, 14 Oct 2025 21:37:47 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Han Gao <rabenda.cn@gmail.com>, guoren@kernel.org
-cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-    palmer@dabbelt.com, conor@kernel.org, paul.walmsley@sifive.com, 
-    bjorn@rivosinc.com, eobras@redhat.com, corbet@lwn.net, 
-    peterlin@andestech.com, linux-riscv@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, Leonardo Bras <leobras@redhat.com>
-Subject: Re: [PATCH V2 2/2] riscv: errata: Add ERRATA_THEAD_WRITE_ONCE
- fixup
-In-Reply-To: <CAHVXubgrbjHXAPSLjk6uZmUoa52fTYBvutk4q0GFYJPQ0swrGA@mail.gmail.com>
-Message-ID: <6c45ed33-d6f8-d385-8b89-9caf2ec18c77@kernel.org>
-References: <20250713155321.2064856-1-guoren@kernel.org> <20250713155321.2064856-3-guoren@kernel.org> <1cfdf6c1-a384-43ad-9588-284335d073f7@ghiti.fr> <CAAT7Ki9_Vm0+v9RHpa2w-Bg3agJy2Tp4d6+tcPJ=M7XX3GV-7Q@mail.gmail.com>
- <CAHVXubgrbjHXAPSLjk6uZmUoa52fTYBvutk4q0GFYJPQ0swrGA@mail.gmail.com>
+	s=arc-20240116; t=1760499498; c=relaxed/simple;
+	bh=pEonomj0fLSNJmTz+pI0qR2KMrsnM0wkX9R9oldfo04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZSzNQTAHMaG/NZ4DaUvCqaVlOXonVBF82w2MCEOk5A5/XclInCYkqiPRW8xw3T+0m2AszrzJxtF9uXFv2kl7HMzNnZyITF+MuBzrCKjKJFF5ad0uTjh5Zh+f53rroxN3QqoV5NLyeO60by1pnc2YUj3lSkWERxCJ77p1Eln4cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c6R36xCe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59EHlvuK021187;
+	Wed, 15 Oct 2025 03:38:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=JhcohmxMF8CEt4uB5tXm35fRtqDNhH
+	zChbRDG+yKgEA=; b=c6R36xCelyC067BnkUlWO9WUPasN1rRpy0/oXe6OWcShL1
+	7BeHYsikJWfmwSL8AxKl+kkZB0HNO+CoPGOOcLaSFpKIcN2EdCMmY47xhgRCZa7i
+	9bcvRfZWvVMRtKFWnybI78tLiAnuk2R4eLc4F+t0JtWWlkPwhRKX021w2HYpKunC
+	fFGaiJFWtAWRjHLIDZYjrgaen0awSYPJMP6rIlMERyq/Uv0O8zvlSIxl1Hy2Vn7f
+	pzivfhgqNXJsgarfmBTa1WZ4MxP2U37EM9QP5My8OUudr85ZZpdJcGwYa96yfYFB
+	ogV08GNV0fW7Z1QCIRW8RrvAFBz7pT7WHcmMeKgQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49qey8t8j4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 03:38:04 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59EN1jDU018372;
+	Wed, 15 Oct 2025 03:38:03 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49s3rf7vqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 Oct 2025 03:38:03 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59F3c1p553281032
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 03:38:01 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8BC7B200EB;
+	Wed, 15 Oct 2025 03:38:01 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 82CF3200EE;
+	Wed, 15 Oct 2025 03:37:58 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.39.24.169])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 15 Oct 2025 03:37:58 +0000 (GMT)
+Date: Wed, 15 Oct 2025 09:07:54 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, maddy@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        "llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: Re: [PATCH] arch/powerpc: Remove .interp section in vmlinux
+Message-ID: <aO8XEhMdT19UOPlp@linux.ibm.com>
+References: <eeaf8fd6628a75d19872ab31cf7e7179e2baef5e.1751366959.git.christophe.leroy@csgroup.eu>
+ <20251013040148.560439-1-vishalc@linux.ibm.com>
+ <2b4a3215-1620-40c9-a00c-ca833ebbb7b6@csgroup.eu>
+ <aOypxKMzsLR5tAtv@linux.ibm.com>
+ <20251015002154.GA2300901@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-522593608-1760499420=:3130946"
-Content-ID: <8c856d3f-3e68-86e2-9afb-5e258ef191d3@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015002154.GA2300901@ax162>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: UlRR5dnw_0Bhrnv_jkvBzNgkZQJE8_KD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxMSBTYWx0ZWRfXz5JUHGeoVQns
+ a+L09qm1y4zdDG2vGYL7SyGLxbGVhGyTnzE4zf2jYGQCkbIghhj1FxHEdkxiGdoEgIrsSeYyics
+ Yg3ClyE/ZP5nGgpoUKMIKH/JDE2Z0E/MeGQzlYUclF3JkW+i/BvyazUHeTFOvxC98W6pHE8YUmw
+ vZInIZtSVhAyEcQAOIuWsojg7R2Ig1XnF6plPv1Ae9NpmitrBQIIDnS1XddLGew9Y6bK13zE+8n
+ gNN0An5e+8YPvd4dSnhM6jt4K9IgHzy+7Pg/o89Hxqs3ko7oolzKu5Na+309G47MXaR1nXmWBCI
+ YWwh1B5P4wN5nTunzmHTU05kmvIwvLBRvspvhLsPVEe/lNNvN9+y1Imt8q0BEY1ulVy6E8lRs/W
+ di3FzZ2WsUisYWIuuY6xgVPu3zuv9w==
+X-Proofpoint-GUID: UlRR5dnw_0Bhrnv_jkvBzNgkZQJE8_KD
+X-Authority-Analysis: v=2.4 cv=QZ5rf8bv c=1 sm=1 tr=0 ts=68ef171c cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=NEAV23lmAAAA:8 a=nk_3v9Mxg0vDHs7q2dAA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_01,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110011
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello Nathan,
 
---8323329-522593608-1760499420=:3130946
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <dec4a9d7-972e-6220-cb11-4e8c9ec5d42a@kernel.org>
+On Tue, Oct 14, 2025 at 05:21:54PM -0700, Nathan Chancellor wrote:
+> In this bug report, you mention using LLVM=1. Does the issue happen if
+> you use GNU ld (ld.bfd) via LD (i.e., LD=powerpc64le-linux-gnu-ld or
+> equivalent) over ld.lld from LLVM=1? This sounds more likely to be a
+> linker difference rather than a compiler difference.
 
-Hello Han Gao, Guo Ren,
+Thank you for the insight.
 
-Sorry for the delay in responding -
+Yes, when using powerpc64le-linux-gnu-ld linker .interp section is not
+emitted.
 
-On Tue, Oct 7, 2025 at 11:36 PM Han Gao <rabenda.cn@gmail.com> wrote:
+Command:
+$ make LLVM=1 ARCH=powerpc LD=powerpc64le-linux-gnu-ld -j 8 zImage
+$ llvm-readelf -p .comment vmlinux
 
->      This patch is included in the 6.17 merge window but not in the
-> 6.18 merge window.
->      Is it possible that the patch was missed?
+String dump of section '.comment':
+[     0] clang version 22.0.0git (https://github.com/llvm/llvm-project.git 7314565281ec28b745502c3f429fd431e16673eb)
 
-This was almost sent upstream as part of the v6.18 merge window, but given 
-that it adds the ability for architectures to override WRITE_ONCE, I think 
-it needs one more attempt at gathering feedback before we do.  I'll send 
-that out this week.
+$ llvm-readelf -p .interp vmlinux                                                                                    
+llvm-readelf: warning: 'vmlinux': could not find section '.interp'
 
-thanks for your patience,
 
-- Paul
---8323329-522593608-1760499420=:3130946--
+vishalc
 
