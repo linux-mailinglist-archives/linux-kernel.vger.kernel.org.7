@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-853542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08069BDBED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DDBBDBEDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BAACB4E595D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3852418A6C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9BA1E0E08;
-	Wed, 15 Oct 2025 00:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A341E491B;
+	Wed, 15 Oct 2025 00:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="v9QnkIUm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvNpFVhW"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E246934BA41;
-	Wed, 15 Oct 2025 00:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993DF42A99
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760489022; cv=none; b=XIrkFmIa261jQCnh+k/kBGa8fyPnk0h/PBC6yEVDU7EDFwcr0JBrMYtv8zcW4Fy/Nnm8upi/CCSll46p+8h3OoNArQ2rF9TD93k9n17/VEVXbHS8s0EaRDh8LWFADUhox/EW6npbXsM43uu0tWZ/6O3zR+1/rQfhqK51lfSn5Cs=
+	t=1760489148; cv=none; b=I5EiaA70H+My+dOrsNYArqS2d828qYNAALSn2Xb3wWVaUFb+nL3W3cfuoMFuR70X8SmdItbvsTe5N1/9RhQfvxdzfJHvF4LRfzsZsgtAecYk5rXh0s1KmVw02xvLLp9rPCxvYe9hC89CRnDqRbKLlZao/SiKIkSqSj+2zvIUu2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760489022; c=relaxed/simple;
-	bh=KlTltCVjzil8zVBXTbYHXZHdEEBKkgd41/qdQ/Dc+Ms=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=G3GI0EOsYWBugA6+DfEISsTRMHAXYIFuXJMaarNyBC22oYSk01MezfD8eVyWjF7uAp2Am2uNyr7ZWgXtSmanLXkWJWETSqBjgIpdu0ZMfCffr+A93mHnP2pNv0dD9FaPEyIIbkdRhhO2MQe7jJn5Fqgww2ohoop31cWlLOBLEKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=v9QnkIUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F03C4CEE7;
-	Wed, 15 Oct 2025 00:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1760489021;
-	bh=KlTltCVjzil8zVBXTbYHXZHdEEBKkgd41/qdQ/Dc+Ms=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=v9QnkIUm4Z6bwO4R7RVxKZnIh4L+AuvydsQgUMCypyYdq/0R1FL+RIIM99oNJyAcK
-	 6Mz5UDsCYld2vxhsaBOiTiIFgLsE426IcH1omBVfvpHcRoz04HtnsJmgdMsefK11w5
-	 F1D0Ln/JMyOu5c0utKnsEIauL5D5p5udyEj+lvQE=
-Date: Tue, 14 Oct 2025 17:43:39 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>, Jason
- Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>, Vasant Hegde
- <vasant.hegde@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>, Peter
- Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>, Andy Lutomirski
- <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>, David Hildenbrand
- <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Michal Hocko
- <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/7] Fix stale IOTLB entries for kernel address space
-Message-Id: <20251014174339.c7b7d2cfb9f60d225e4fe5ec@linux-foundation.org>
-In-Reply-To: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
-References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1760489148; c=relaxed/simple;
+	bh=QWZy/15xnGTRgPkf5Pka44YljXIi4GDc0D994BUVp4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsVDkFT1fDGuLBUnu8uGOdzwdBJ5knhSb73wA3hy1AjOBrhf7VM023JJNnWb/1ZNJQ7fx/HVVpM/3GmIAyI1H6Qjrny0uUkyvcno/BObAtIZCUIkpHHDLof4k+wgWl8+qWKDtxm1LvsVidZKn+wtif+TT7jtit8n/c8/M2efw8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KvNpFVhW; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so37641405e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760489145; x=1761093945; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JjS2vWmWFupijvTyxg2fppwPWWk6ldlFSBLrc+f8lsk=;
+        b=KvNpFVhWTFELaiAqhGS7x0NZitH5f/OLep4v15djPHyrq2Aw0JK/6IzoelOW6F0GPJ
+         +yRBedJHiUictgIiytF/0wNS0as6BP6LzvOLlexN4eBhOWFCtQLScIXuzOg1SuIAj96M
+         mpnU6tfZXlhDxptdn3GuNYMV+o2z3XF8AFjHHhKh7TK1DEW2Z98vdeOzn4AE9vx+aNmS
+         inVWfnvAl9FbiBnmAxIKq04ZcxhajQAUlE4v+al1Ix9nKCiBujpEtcZ9PQAJQ/tim5Xa
+         A0tAH8udGup9ls+eP4G7sKZ6UTOLuEFmNPu72c+1W/T0AgzqaUvbow9D/b4EbOsfEo/J
+         U/0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760489145; x=1761093945;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JjS2vWmWFupijvTyxg2fppwPWWk6ldlFSBLrc+f8lsk=;
+        b=uAomf/i9cuarjzrpx70doZchtIy1A+T7dWMglS0mZpjk5OT7kw8NYhTic3ZtWSHYUj
+         i3HQbbfzjG34oc+a+mqyWdpJyql3qbBINn9Hd8gCf/TLGDrTGUl3/e5OXnMvdMrbXMOB
+         RHgk19RIPDWyd1H9FpK+oeBWwvsQ+GIYAa83yVYop9nzxFN2wmJIl6m7I9y5lRS1sFUy
+         6CAcLjxnD7dampYPmdo11KiS/7zyZ3/zjK/+rvtW1Fjw2d7VOE8IKB6ZlaJdzM7T+YxP
+         eZ/czAYa/3UMzKY2HMRiYsihesjH6ejge2WaPET/aQ2Xr4JWynso/tKyOESiCvmJaCfy
+         lfSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtuvxQtPybEWHKweumEdjwfNsotAZxqchdpP6Y+jFt2kP2j5JtRkZuXldx26PiHUixDMPDO0Vkdc6OFIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz74oYeYPhUwRD9v3IHApPgkjuix4xo/i5pI9nNmh3LCEdf33c/
+	mKcCzt8h13Hob7ORMp3wH687XIB6CplZiDUm61DcdJlJ100k7zdFQm2i
+X-Gm-Gg: ASbGncsqQ4Pxtt1sATWvJP6yTwGw4f05OQ4c1ebDZvraS4oVGo/u2o6EOZH6C307IhJ
+	WkYqF4I35Z7mODtXJM2EEDptIknQIKolXo8Lm4jU6a/p7X4oYAl1224/eXR+wtv4HfE7g+0X7oa
+	leXyvsOgr9p9hG01vHLbANchEgM6JJU5m3VU4JxDuTVZpyQDWddNvfyGxz+zbiVHnDph8th6Vff
+	9i7wFVhk/+uMHjvBmL7Z17oH1G7GyGHFrEq80DB1DkLLPPPk6ACyfpjxOfzfIM8NL4BjevT8RYD
+	N7zxuD5+LVSrq99vGiCjD2Zzs846yYx93C2tpB/i7hD3YMdINE/HXYQytUpgWowdb/K1tfEh8HF
+	s602/JMWtBLZtTTL4AgmM7w6m1Qm9DYQTEK8PfzGytE0g43vyB9U=
+X-Google-Smtp-Source: AGHT+IEUsuN0HzcjvOiasKjxoAVXbiNobka2YXSRTY/9Up4v1JrTdSmA4WVnfLZUCScJw93cZ5lkow==
+X-Received: by 2002:a05:600d:42f2:b0:46e:4341:7302 with SMTP id 5b1f17b1804b1-46fb15396d6mr133011165e9.34.1760489144718;
+        Tue, 14 Oct 2025 17:45:44 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc155143fsm220567755e9.11.2025.10.14.17.45.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 14 Oct 2025 17:45:44 -0700 (PDT)
+Date: Wed, 15 Oct 2025 00:45:43 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v3 20/20] mm: stop maintaining the per-page mapcount of
+ large folios (CONFIG_NO_PAGE_MAPCOUNT)
+Message-ID: <20251015004543.md5x4cjtkyjzpf4b@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250303163014.1128035-1-david@redhat.com>
+ <20250303163014.1128035-21-david@redhat.com>
+ <20251014122335.dpyk5advbkioojnm@master>
+ <71380b43-c23c-42b5-8aab-f158bb37bc75@redhat.com>
+ <aO5fCT62gZZw9-wQ@casper.infradead.org>
+ <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9d19f72-58f7-4694-ae18-1d944238a3e7@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, 14 Oct 2025 21:04:30 +0800 Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Tue, Oct 14, 2025 at 04:38:38PM +0200, David Hildenbrand wrote:
+>On 14.10.25 16:32, Matthew Wilcox wrote:
+>> On Tue, Oct 14, 2025 at 02:59:30PM +0200, David Hildenbrand wrote:
+>> > > As commit 349994cf61e6 mentioned, we don't support partially mapped PUD-sized
+>> > > folio yet.
+>> > 
+>> > We do support partially mapped PUD-sized folios I think, but not anonymous
+>> > PUD-sized folios.
+>> 
+>> I don't think so?  The only mechanism I know of to allocate PUD-sized
+>> chunks of memory is hugetlb, and that doesn't permit partial mappings.
+>
+>Greetings from the latest DAX rework :)
 
-> This proposes a fix for a security vulnerability related to IOMMU Shared
-> Virtual Addressing (SVA). In an SVA context, an IOMMU can cache kernel
-> page table entries. When a kernel page table page is freed and
-> reallocated for another purpose, the IOMMU might still hold stale,
-> incorrect entries. This can be exploited to cause a use-after-free or
-> write-after-free condition, potentially leading to privilege escalation
-> or data corruption.
+After a re-think, do you think it's better to align the behavior between
+CONFIG_NO_PAGE_MAPCOUNT and CONFIG_PAGE_MAPCOUNT?
 
-Is only x86 affected?
+It looks we treat a PUD-sized folio partially_mapped if CONFIG_NO_PAGE_MAPCOUNT,
+but !partially_mapped if CONFIG_PAGE_MAPCOUNT, if my understanding is correct.
 
-> This solution introduces a deferred freeing mechanism for kernel page
-> table pages, which provides a safe window to notify the IOMMU to
-> invalidate its caches before the page is reused.
+>
+>-- 
+>Cheers
+>
+>David / dhildenb
 
-Thanks for working on this.
-
-Can we expect any performance impact from this?  Have any measurements
-been performed?
-
-Only [7/7] has a cc:stable, even though that patch is not at all
-backportable.  Please give some thought and suggestions regarding
-whether you think we should backport this into earlier kernels.
-
-If "yes" then the size and scope of the series looks problematic.  Is
-it possible to put together something simple and expedient just to plug
-the hole in older kernels?
-
->  arch/x86/Kconfig              |  1 +
->  mm/Kconfig                    |  3 ++
->  include/asm-generic/pgalloc.h | 18 +++++++++
->  include/linux/iommu.h         |  4 ++
->  include/linux/mm.h            | 71 ++++++++++++++++++++++++++++++++---
->  arch/x86/mm/init_64.c         |  2 +-
->  arch/x86/mm/pat/set_memory.c  |  2 +-
->  arch/x86/mm/pgtable.c         | 12 +++---
->  drivers/iommu/iommu-sva.c     | 29 +++++++++++++-
->  mm/pgtable-generic.c          | 39 +++++++++++++++++++
->  10 files changed, 167 insertions(+), 14 deletions(-)
-
-It isn't obvious which tree should carry this.  Were you thinking the
-x86 tree?
+-- 
+Wei Yang
+Help you, Help me
 
