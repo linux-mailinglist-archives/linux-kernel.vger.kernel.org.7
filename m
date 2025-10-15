@@ -1,192 +1,198 @@
-Return-Path: <linux-kernel+bounces-854242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF575BDDE5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:01:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26A8BDDE6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A65135475F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:01:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6254B4E7A0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0F431B817;
-	Wed, 15 Oct 2025 10:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D731B801;
+	Wed, 15 Oct 2025 10:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lVlIUbdV"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRC0hocW"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3F0BE49;
-	Wed, 15 Oct 2025 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D372010EE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760522453; cv=none; b=CDFQ1GEkOebcQRUeg8hu4colZh2+HmXC9fSmWBZTG4ULHugdakzODV4r2/JaLxcGJJe6GSwlIew5YMsVEhjzNMxvVJUwXnFR2JTrdomtD8HDwPv50OeJzivfHA6SqGj7V0UWtp5aFA53ZVIKbtIf/lEOIazZTXnRXIolL0BOY2Y=
+	t=1760522519; cv=none; b=DucKh49sTqDnXC3AbC3O2B9T1g0A4lAuUn/dr56QpywtyI0BscDEBBftMqA9W9/YyhPCWIrMvzKfUuiyAk01uTOm5dgxp9szEM9mvFe949LhGhZk8Hr3tcoIrFunPcjF3J+n1ntpUptPmP2tmzU6mi9ciLFAU/WeiSbwDVm31Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760522453; c=relaxed/simple;
-	bh=ZYZeb++Q7oUU3OeJCz2c/nNPN+HuflD/G0ryZYhjFBs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=pbX7Xfhfn+BO7C5EpMGbKfzVbR4j8Jx2CuXDWgog+/9g2VAjPIBhVPSoCWnfh/PVy7cg1e/+pLsl8xIGPHCj+3CrzlVxzrZfbRIsYBItjjrFEpFPHfNf+gXis13+G9FkmOnf/u/F96PE6rzyTLX/1NpEyVxhDroaX5vG3lqHk8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lVlIUbdV; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760522441; x=1761127241; i=markus.elfring@web.de;
-	bh=HnMcv6iaZ4GQpFvamOdr+OMWZzHdomct536Nj8zJjPM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lVlIUbdV5FWNMKBkNzUI0QDZMl2NZPhvsHh1EvjXsJi0p0arjhE6hxm08eUmZOhp
-	 6WjMQ/Pl6J39AO75O9M+pofhrhg/fFgS9kvq/EubjW5/YwqNDueOB7RXaqa7vm8f8
-	 bgs2ZwwwGwbLT9ikuXgzAmK8JRKVSgtzZsg9phUWdnNjVgnsMTVY/+CQ5Lz3cOVMA
-	 aF93sFXUgf6Gin6W2EVMxNs6KcZBsDwvAPMPB3buy0Cwizkp5okmjE76TAoVDdMRU
-	 +pkbBXOxE8NiQNAYo/hmdbM/kQIECZy7PHE5dM1oSEBEl0qvPei1fPvO91TW/7TO8
-	 K0coHxk+uKGTZ2LAIg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.181]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLRYd-1uqTxC2qZ9-00IASv; Wed, 15
- Oct 2025 12:00:41 +0200
-Message-ID: <b59d625d-18c8-49c9-9e96-bb4e2f509cd7@web.de>
-Date: Wed, 15 Oct 2025 12:00:33 +0200
+	s=arc-20240116; t=1760522519; c=relaxed/simple;
+	bh=EjWyHXy5+AFfe6EBqUpNk7V6ovaOZaq4S3q8E8N3zug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcKgi5941pw6o+YHitMcw7v+wlgWMxTs9YnDPqq64W+MdjoGGi0kpjNyw0TSVIQd7bdPGymxaB/z2wBjScWiI2lZCe7dSHUwP8TsoK560RW1CyqFTzVxiBQH2vZSUmyV+7eso1HcM0r4CzBXjTl5+i7cDmLq7Ei6wgzY2psFbGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRC0hocW; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-269af38418aso73601535ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760522516; x=1761127316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ji3QYXE+o6nnOYdZn4k94bGF503TJ64q3dgtQTNhCcw=;
+        b=GRC0hocW5KsRxfQotLR+++78UaJCtJhZND9lFrILGfmUTXf9Q2bbmZ5IGErBgA5eDD
+         M/yrrbXR7qdPSFNj2FduEKkdPtbzSlIkgoXaVvVf5s9p+2EQNp69yBD5czZjqe0SNnpw
+         3EPiVLfUZckw8HTmqQA++gLsxKPluGUMVN/e5y7QZeJRENPVOYYG+Y0mStSxHKqRWvkT
+         YNpurNuZyvlu7fZl2g8/znuM21+uijbvKF5CfaZI7QJ+kjf7c+e19unJIq22hnirY1ZD
+         02JEYEwGUoKcCOUdbjoCJ7aQc0A2w8zWrxf34+GToqFQc1kHxnDK6RPJIOF2E420/bNw
+         CSZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760522516; x=1761127316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ji3QYXE+o6nnOYdZn4k94bGF503TJ64q3dgtQTNhCcw=;
+        b=jYXxojZbmGI4seLbyu7G8kM+m37h0Zc4A8TzZcu6U8LNMQ2blAnacOSBpZMsS/U26q
+         c+iKIk1ijdvJ54qByUmduJVBSZvP1WD8qcYINLV84A/EmXcnGbmHwA/PzYXQ6bYuSlWo
+         mgNfgMWSMLO2Hm/WVDxHbT2+oOlnKzKEfujr2FQLgkLSoVrmb6eEufcsb0J8/BxFAOgn
+         w3MRpITgWFdiBhs/cCM3TMnX5Att2w00dfeI4ZXslDbkn4Fl8QCjuvrprCvXp6STbvjL
+         HcTnD7NjBQl1IVWoZTqGMchIvqdQn7QOiirdRmKb7iOnxBOXO8iCaErDvFajlYNROWT4
+         1VqQ==
+X-Gm-Message-State: AOJu0YzdET6HBcRUAAP9lx4Tvgs8BeeDRRP3xK5yA8wSP6ua8WzlxNak
+	Vpb+apusYZBILXhl0L7spHV5vjX/jXh3BlUvUNgjOyPnOgbYhrpoVJb9
+X-Gm-Gg: ASbGncuXElzHTjHb8tHe4Tf6Wh0BmrA65+nibIZQ4KR375C7GRiMtjbvgd0de0BF76l
+	ijvJEHedrrc+rPeZeDMGGtZnVzYGcDyu9+rrklQoVK3pI9q+y2E/v94LtGO4fsmJPU+OxCu1VQ3
+	W6Kf4sZyi/JKBp1XtgAvNzoZwGU+3M9cd7OINrIo5mcM/hCh+ewLq6cdlFcYOi3Qf78HxrV7BcC
+	bnkwRgUFl0iRaIdLYYCeRAcRnRMRjfF1/s0bKzzapW2D4+DsjCLwcuGoXdugegEc7BmUVN6B0UT
+	Ldbkul0fF3+0Wzr+cljgrVRknOUHwQlQ03G4W2XXmupcdA5j2ijn0XabyO4/eg20Zv3tiH1EQmI
+	cgLYq588xpcSe3ZiKn3BIEaTKmQ8Ij0pRtcIcChD3S7oeak/GYJvLLh/E2uEB9Eu0
+X-Google-Smtp-Source: AGHT+IHsh+iw7Sm3pxrGuqOCIvTM24vpCcQlsq2cLRgpJFciDOO1FkJaV/AzwQlOPEsvBTYyLAn19Q==
+X-Received: by 2002:a17:902:fc86:b0:273:1516:3ed2 with SMTP id d9443c01a7336-29027403425mr330544905ad.50.1760522516192;
+        Wed, 15 Oct 2025 03:01:56 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f0726asm191287935ad.72.2025.10.15.03.01.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 03:01:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 15 Oct 2025 03:01:54 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Feng Chen <feng.chen@amlogic.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Tao Ren <rentao.bupt@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: Linux 6.18-rc1
+Message-ID: <68841c19-c54e-4837-80bf-d180f2c35499@roeck-us.net>
+References: <CAHk-=whPJTtX5u1m47fPUD2g2Dc=Did_6OqCVj6OQPKFgfKn9g@mail.gmail.com>
+ <f594c621-f9e1-49f2-af31-23fbcb176058@roeck-us.net>
+ <c45a8502-3af2-4d5c-a660-2922b4e040bb@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
- netdev@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Bjorn Helgaas <helgaas@kernel.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Jonathan Corbet <corbet@lwn.net>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Gur Stavi <gur.stavi@huawei.com>,
- Jakub Kicinski <kuba@kernel.org>, Joe Damato <jdamato@fastly.com>,
- Lee Trager <lee@trager.us>, luosifu@huawei.com, luoyang82@h-partners.com,
- Meny Yossefi <meny.yossefi@huawei.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Paolo Abeni <pabeni@redhat.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Shen Chenyang <shenchenyang1@hisilicon.com>, Shi Jing
- <shijing34@huawei.com>, Simon Horman <horms@kernel.org>,
- Suman Ghosh <sumang@marvell.com>, Vadim Fedorenko
- <vadim.fedorenko@linux.dev>, Wu Like <wulike1@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Zhou Shuai <zhoushuai28@huawei.com>
-References: <68ddc5e9191fcb12d1adb666a3e451af6404ec76.1760502478.git.zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next 2/9] hinic3: Add PF management interfaces
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <68ddc5e9191fcb12d1adb666a3e451af6404ec76.1760502478.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qRdSXG4YKq7oJAjeeIgrk+c0kf5VQ4Ho3ZesAQJz+AdtSDiLhpe
- ZpPHqfNpdu50lEfhNZPV1V5e+0cZxspd2huBO80HQj5EK4DnYKICkTAccvvlXzA2FXOr6d8
- KyzohhhTuWVYeAne1PFtM43jkJpOz25zCTuEF63wz/B+V2tMRI6uVdqlqjtCy1sawF85mPP
- +52I1ot7CbhYDuJ6LDvPQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XXaFUKwAvo0=;JnU5QG5r1G/vJMifNjmyMA255wD
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c45a8502-3af2-4d5c-a660-2922b4e040bb@roeck-us.net>
 
-> To: Fan Gong =E2=80=A6
+On Mon, Oct 13, 2025 at 09:46:44PM -0700, Guenter Roeck wrote:
+> On Mon, Oct 13, 2025 at 10:08:26AM -0700, Guenter Roeck wrote:
+> > On Sun, Oct 12, 2025 at 02:04:32PM -0700, Linus Torvalds wrote:
+> > > Two weeks have passed, and 6.18-rc1 has been tagged and pushed out.
+> > > 
+> > > Things look fairly normal: size-wise this is pretty much right in the
+> > > middle of the pack, and nothing particular stands out in the shortlog
+> > > of merges this merge window appended below. About half the diff is
+> > > drivers, with the res being all over: vfs and filesystems, arch
+> > > updates (although much of that is actually devicetree stuff, so it's
+> > > arguably more driver-related), tooling, rust support etc etc.
+> > > 
+> > > This was one of the good merge windows where I didn't end up having to
+> > > bisect any particular problem on nay of the machines I was testing.
+> > > Let's hope that success mostly translates to the bigger picture too.
+> > > 
+> > 
+> > Test results don't look that good, unfortunately.:
+> > 
+> ...
+> > Qemu test results:
+> > 	total: 609 pass: 581 fail: 28
+> > Failed tests:
+...
+> > 	sheb:rts7751r2dplus_defconfig:initrd
+> > 	sheb:rts7751r2dplus_defconfig:ata:ext2
+> > 	sheb:rts7751r2dplus_defconfig:usb:ext2
+> > Unit test results:
+> > 	pass: 655208 fail: 0
+> > 
+> 
 
-Please reconsider the distribution of recipient information between messag=
-e fields
-once more.
+Update on the sheb (SH4 big endian) failures below.
 
+Guenter
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.c
-> @@ -3,19 +3,325 @@
-=E2=80=A6
-> +static void mgmt_resp_msg_handler(struct hinic3_msg_pf_to_mgmt *pf_to_m=
-gmt,
-> +				  struct hinic3_recv_msg *recv_msg)
-> +{
-=E2=80=A6
-> +	spin_lock(&pf_to_mgmt->sync_event_lock);
-> +	if (recv_msg->msg_id !=3D pf_to_mgmt->sync_msg_id) {
-=E2=80=A6
-> +	}
-> +	spin_unlock(&pf_to_mgmt->sync_event_lock);
-> +}
-=E2=80=A6
+---
 
-Will development interests grow to apply a call like =E2=80=9Cscoped_guard=
-(spinlock, &pf_to_mgmt->sync_event_lock)=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.17.1/source/include/linux/spinlock.h#L=
-565-L567
+sheb
+----
 
-Regards,
-Markus
+sheb:rts7751r2dplus_defconfig:initrd
+sheb:rts7751r2dplus_defconfig:ata:ext2
+sheb:rts7751r2dplus_defconfig:usb:ext2
+
+Bisect log:
+
+# bad: [ba9dac987319d4f3969691dcf366ef19c9ed8281] Merge tag 'libnvdimm-for-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
+# good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+git bisect start 'HEAD' 'v6.17'
+# good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
+git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
+# bad: [8804d970fab45726b3c7cd7f240b31122aa94219] Merge tag 'mm-stable-2025-10-01-19-00' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect bad 8804d970fab45726b3c7cd7f240b31122aa94219
+# good: [30c3055f9c0d84a67b8fd723bdec9b1b52b3c695] xsk: wrap generic metadata handling onto separate function
+git bisect good 30c3055f9c0d84a67b8fd723bdec9b1b52b3c695
+# good: [f79e772258df311c2cb21594ca0996318e720d28] Merge tag 'media/v6.18-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+git bisect good f79e772258df311c2cb21594ca0996318e720d28
+# good: [f1455695d2d99894b65db233877acac9a0e120b9] Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+git bisect good f1455695d2d99894b65db233877acac9a0e120b9
+# good: [a16c46c2402026162111ed9fd1fc28d25223443e] dma-remap: drop nth_page() in dma_common_contiguous_remap()
+git bisect good a16c46c2402026162111ed9fd1fc28d25223443e
+# good: [a5883fa94295f1ef2473eadd84cc1e24dab9ae18] selftests/mm: gup_tests: option to GUP all pages in a single call
+git bisect good a5883fa94295f1ef2473eadd84cc1e24dab9ae18
+# good: [08498be43ee676d8a5eefb22278266322578a3e0] mm/ksm: get mm_slot by mm_slot_entry() when slot is !NULL
+git bisect good 08498be43ee676d8a5eefb22278266322578a3e0
+# good: [719a42e563bb087758500e43e67a57b27f303c4c] maple_tree: Convert forking to use the sheaf interface
+git bisect good 719a42e563bb087758500e43e67a57b27f303c4c
+# good: [b9120619246d733a27e5e93c29e86f2e0401cfc5] Merge series "SLUB percpu sheaves"
+git bisect good b9120619246d733a27e5e93c29e86f2e0401cfc5
+# bad: [24d9e8b3c9c8a6f72c8b4c196a703e144928d919] Merge tag 'slab-for-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab
+git bisect bad 24d9e8b3c9c8a6f72c8b4c196a703e144928d919
+# good: [83382af9ddc3cb0ef43f67d049b461720ad785e6] slab: Make slub local_(try)lock more precise for LOCKDEP
+git bisect good 83382af9ddc3cb0ef43f67d049b461720ad785e6
+# good: [af92793e52c3a99b828ed4bdd277fd3e11c18d08] slab: Introduce kmalloc_nolock() and kfree_nolock().
+git bisect good af92793e52c3a99b828ed4bdd277fd3e11c18d08
+# good: [ca74b8cadaad4b179f77f1f4dc3d288be9a580f1] Merge series "slab: Re-entrant kmalloc_nolock()"
+git bisect good ca74b8cadaad4b179f77f1f4dc3d288be9a580f1
+# good: [07fdad3a93756b872da7b53647715c48d0f4a2d0] Merge tag 'net-next-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
+git bisect good 07fdad3a93756b872da7b53647715c48d0f4a2d0
+# first bad commit: [24d9e8b3c9c8a6f72c8b4c196a703e144928d919] Merge tag 'slab-for-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab
+
+I had to revert commit 719a42e563bb ("maple_tree: Convert forking to use
+the sheaf interface") and commit af92793e52c3 ("slab: Introduce
+kmalloc_nolock() and kfree_nolock()") in the 'slab-for-6.18' branch to fix
+the problem. The first patch can not be reverted in mainline since other
+patches depend on it.
+
+There is no console output (earlycon does not work) and qemu exits almost
+immediately with those patches in place. I have no idea how to debug the
+problem further.
+
+Authors:
+	Alexei Starovoitov <ast@kernel.org>
+	Liam R. Howlett <Liam.Howlett@Oracle.com>
 
