@@ -1,250 +1,251 @@
-Return-Path: <linux-kernel+bounces-854027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC95CBDD614
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB5CBDD5ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 730074E8C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:26:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99CE64EF74A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0068A2F5A2C;
-	Wed, 15 Oct 2025 08:25:54 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C9C2C3251;
-	Wed, 15 Oct 2025 08:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5013E2F9D82;
+	Wed, 15 Oct 2025 08:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tPOndvGx"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73DE2DD5F3
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760516753; cv=none; b=cgt25BrAXWaOWxhGoWfDfcWspqdt2faTfdhZSxjIaaXhtEpL8DKVrIX/uVnGlhWZ86pCem92vFrhHCvO5BhOACkjc3UFHU3nBN1p/sOBXAPy/fqo7cIabTx3isOUp+dR2ZAA9vBxYan3kUK/GujFAiBTtQoN+94Pr4syp/ZDo9U=
+	t=1760516636; cv=none; b=rvdo0yTyIsLY92vX/kB8gUcgxy5W+tnMB0Oh8wJm0GPShyVPkN4a//DRroI/t2VtOK0QHy2/rh/oNgQqhr/xwTdDeg0PAPvweSWlw4K36hLxPuB1ybBaDC+2k0fZe3JNHkVo3Z2yCeBNrjCwiShdg7Wx58sW/gNOKCSKQUPD0o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760516753; c=relaxed/simple;
-	bh=OV98e7sU33CKo669HFo0ka/WOogyx2gNF1nWJJAE8qc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Mpky9HFu5tNCitvO5CJFDk3iXPhAVdKzO5PBC+9pHcHzEyVHf6beHpjJgKDlRmR6ln+3swaoWa/Zm9oRfyAUireI1Nj8+eu61f4Gq47GNK5pBY1uQISG4MTqkvyrp6bjHECODntw/e3MAlo8cNBtt73ExA677q2v5ziqir7OQ1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Axjr+FWu9orFcWAA--.46240S3;
-	Wed, 15 Oct 2025 16:25:41 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJCx2sCBWu9o2DLlAA--.24557S3;
-	Wed, 15 Oct 2025 16:25:40 +0800 (CST)
-Subject: Re: [PATCH v3] LoongArch: KVM: Add AVEC support
-To: Song Gao <gaosong@loongson.cn>, chenhuacai@kernel.org
-Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev, kernel@xen0n.name,
- linux-kernel@vger.kernel.org
-References: <20251015060626.3915824-1-gaosong@loongson.cn>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <28fff8cb-d436-78c7-1836-2fc0f71f806b@loongson.cn>
-Date: Wed, 15 Oct 2025 16:23:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1760516636; c=relaxed/simple;
+	bh=L4v+wbz2Zpp087ZFicCGoOduYIcUD7gEgZ+FObJmfG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oeUaprMZlMHQv/OrV8VFLXwYeobNtIqQJsh1zzEyLtimp3g7y8Q1x/kQpCUaaOWZ8XPwvkEB6mSRODQT3H5jEFp5JconCuRcRawXcjE0gcieKjwFZeyQlxG0Gz9otdeXVhzbFWWlaaRYWLpOowkN9p819Z4BFRp5mP3md0zag0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tPOndvGx; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4736e043f9so988105566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760516633; x=1761121433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UxCnKzSY0s+V96p4DaVIhmKltF/rpU8DxvPCKFc7GWY=;
+        b=tPOndvGxk5RqaHiJZ5As/3Sb10NWYC6HFSo9NpaOwcO9Rvr2yWzfSIsorh/RVEP0AA
+         sDaFRQ+hvprUVI/aPjJyI0FzGztGmMc2GqN4KFIjmwDtrKkp6O7yh3zPmD3TbWtWA14n
+         ROmHGcARrXIusHPFMX5KHEIlbJtwp3iQJTtInJZF3cgpRqCN2t5YePs2R77t28oC6/58
+         i4F+iT5hBP2MUX1XmzSMYjBmUIVMPfbtxwodtn5c3+Y4w+QUPLw6V9DG7ESEvMuvQ7Di
+         tsD6DJ1bua0dshFrujD6cj84ic2slrlld144jUAopjtvKK31KZgD7Aa3sc8upFa1qZNL
+         +y5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760516633; x=1761121433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UxCnKzSY0s+V96p4DaVIhmKltF/rpU8DxvPCKFc7GWY=;
+        b=BJU4838n1z3CoXtX2rh1e1rM/Vhr9TqE7J9C9wfg4TG70NUQ7Grql8h0XmummRBncc
+         eGpAyOPSrXDsdwHf6fcbDuMHIpvd0jec+ObAyD1CMfzuY+83HXavvKbqsbkV2VgBw4Lu
+         u1yeXZlDXw5qXRCEgSy4l+FIlwKv7LJz2riY57a5ZCEQuBMt7+snb3KU14LjVsEf1G9c
+         PKcaW4dW25yYHxCMeVJl7vMeGYiTgLuyB+C23asV9LNpVICT9z6X8QR7xxuTigwfZ6AZ
+         xBLcxa2BE/4H0gO95drzbOzgZ+961aNY/OrtZyQOrVX6COHLJswnmo5JUQ4JJzlxXEun
+         TabQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnquaTLzR2gbOkItc+HuRRbJCk7mm+vSOzKnIg5rOxO/WvY1cPlmvsf6Rq0tQVWodA3XrM4QZuFxotGbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmvwFDGjTOgaQxBp3qXM6FJzXCX8/TUWotJjFgKYOz2xMr9GL2
+	BGowH9X3xKwVxrIGPbQMgI9RmA5URKVqCc4McD+pWEsVZJxqNP1aDRSvnsjm0g04y042ImNhpnl
+	vur+l3ZYK+kDSsPPkjYLJBf3cQ0x2aZJIHcdWVnxH/w==
+X-Gm-Gg: ASbGncv7URBXzA9AbzUocUegYzn0zafFbL/n4V7hSy6onhOxASc9GVoLzVb7PxePC7p
+	hcvns2TBTo+fUe8xOxYj8/g9M3SSpMm1uZxQD+/ZJ34St5LGLTdx2yeK71vRbQs2JjjFKdK0WLW
+	NZu87jSs/uFS9cXOYzr+50CdhIFaT4BWMJlcxK5C61ENn2hT5nk9K1czaVwS8almTaA+5OoKv7X
+	gri5SbxdbyFkn3tB/zoU02gs454jyX4QfIAPMqqcvMEsLD+gg/ixR1IjLOuoVHQ
+X-Google-Smtp-Source: AGHT+IF6fAVbXX5F8RGBoYgvm1Rcu+YjAOh+2j+dceV3zwu5sKBKQXJ/9P1xM6qaFTcMjvhyJod16WrMFs6xq1ISgV0=
+X-Received: by 2002:a17:907:3cc9:b0:b2a:5fe5:87c7 with SMTP id
+ a640c23a62f3a-b50aa48d5f8mr3002756066b.12.1760516633022; Wed, 15 Oct 2025
+ 01:23:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251015060626.3915824-1-gaosong@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCx2sCBWu9o2DLlAA--.24557S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Jw1xJr18Xr43trWxtw45XFc_yoWxAFyUpF
-	yDAF4DWFWrKr1xK3W5t3ZI9r13Xrs7K34agry2krW3Kr12qr98Zr4kKr9rAFyrX3yrJFyI
-	9Fn3Cwn5uan0qwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU24SoDUUU
-	U
+References: <20251013-dma-buf-ecc-heap-v8-0-04ce150ea3d9@kernel.org>
+In-Reply-To: <20251013-dma-buf-ecc-heap-v8-0-04ce150ea3d9@kernel.org>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Date: Wed, 15 Oct 2025 13:53:41 +0530
+X-Gm-Features: AS18NWAaxKRo-h7l2MFnUyuTRslFKXoRyt0fRoMbHV7S75RfcyEniVSpQAqfMSo
+Message-ID: <CAO_48GGD8sCoQt_qWKqcbg6v7Cyi5U9QsxsvNOcqfkLRqHS7_w@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
+	Mattijs Korpershoek <mkorpershoek@kernel.org>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Maxime,
+
+On Mon, 13 Oct 2025 at 14:05, Maxime Ripard <mripard@kernel.org> wrote:
+>
+> Hi,
+>
+> Here's another attempt at supporting user-space allocations from a
+> specific carved-out reserved memory region.
 
 
+Thank you for the series - I think it looks pretty decent, and with
+Marek's Acked-by for the cma patch [1], I'm inclined to merge it.
 
-On 2025/10/15 下午2:06, Song Gao wrote:
-> Add cpu_has_msgint() to check whether the host cpu supported avec,
-> and restore/save CSR_MSGIS0-CSR_MSGIS3.
-> 
-> Signed-off-by: Song Gao <gaosong@loongson.cn>
+I'll wait till today evening, in case there are any more comments, and
+then go ahead and merge it.
+
+Best,
+Sumit.
+
+>
+> The initial problem we were discussing was that I'm currently working on
+> a platform which has a memory layout with ECC enabled. However, enabling
+> the ECC has a number of drawbacks on that platform: lower performance,
+> increased memory usage, etc. So for things like framebuffers, the
+> trade-off isn't great and thus there's a memory region with ECC disabled
+> to allocate from for such use cases.
+>
+> After a suggestion from John, I chose to first start using heap
+> allocations flags to allow for userspace to ask for a particular ECC
+> setup. This is then backed by a new heap type that runs from reserved
+> memory chunks flagged as such, and the existing DT properties to specify
+> the ECC properties.
+>
+> After further discussion, it was considered that flags were not the
+> right solution, and relying on the names of the heaps would be enough to
+> let userspace know the kind of buffer it deals with.
+>
+> Thus, even though the uAPI part of it had been dropped in this second
+> version, we still needed a driver to create heaps out of carved-out memor=
+y
+> regions. In addition to the original usecase, a similar driver can be
+> found in BSPs from most vendors, so I believe it would be a useful
+> addition to the kernel.
+>
+> Some extra discussion with Rob Herring [1] came to the conclusion that
+> some specific compatible for this is not great either, and as such an
+> new driver probably isn't called for either.
+>
+> Some other discussions we had with John [2] also dropped some hints that
+> multiple CMA heaps might be a good idea, and some vendors seem to do
+> that too.
+>
+> So here's another attempt that doesn't affect the device tree at all and
+> will just create a heap for every CMA reserved memory region.
+>
+> It also falls nicely into the current plan we have to support cgroups in
+> DRM/KMS and v4l2, which is an additional benefit.
+>
+> Let me know what you think,
+> Maxime
+>
+> 1: https://lore.kernel.org/all/20250707-cobalt-dingo-of-serenity-dbf92c@h=
+ouat/
+> 2: https://lore.kernel.org/all/CANDhNCroe6ZBtN_o=3Dc71kzFFaWK-fF5rCdnr9P5=
+h1sgPOWSGSw@mail.gmail.com/
+>
+> Let me know what you think,
+> Maxime
+>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
->   arch/loongarch/include/asm/kvm_host.h |  4 ++++
->   arch/loongarch/include/asm/kvm_vcpu.h |  1 +
->   arch/loongarch/include/uapi/asm/kvm.h |  1 +
->   arch/loongarch/kvm/interrupt.c        | 15 +++++++++++++--
->   arch/loongarch/kvm/vcpu.c             | 19 +++++++++++++++++--
->   arch/loongarch/kvm/vm.c               |  4 ++++
->   6 files changed, 40 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-> index 0cecbd038bb3..827e204bdeb3 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -283,6 +283,10 @@ static inline bool kvm_guest_has_lbt(struct kvm_vcpu_arch *arch)
->   	return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT | CPUCFG2_MIPSBT);
->   }
->   
-> +static inline bool cpu_has_msgint(void)
-> +{
-> +	return read_cpucfg(LOONGARCH_CPUCFG1) & CPUCFG1_MSGINT;
-> +}
->   static inline bool kvm_guest_has_pmu(struct kvm_vcpu_arch *arch)
->   {
->   	return arch->cpucfg[6] & CPUCFG6_PMP;
-> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
-> index f1efd7cfbc20..3784ab4ccdb5 100644
-> --- a/arch/loongarch/include/asm/kvm_vcpu.h
-> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
-> @@ -15,6 +15,7 @@
->   #define CPU_PMU				(_ULCAST_(1) << 10)
->   #define CPU_TIMER			(_ULCAST_(1) << 11)
->   #define CPU_IPI				(_ULCAST_(1) << 12)
-> +#define CPU_AVEC                        (_ULCAST_(1) << 14)
->   
->   /* Controlled by 0x52 guest exception VIP aligned to estat bit 5~12 */
->   #define CPU_IP0				(_ULCAST_(1))
-> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
-> index 57ba1a563bb1..de6c3f18e40a 100644
-> --- a/arch/loongarch/include/uapi/asm/kvm.h
-> +++ b/arch/loongarch/include/uapi/asm/kvm.h
-> @@ -104,6 +104,7 @@ struct kvm_fpu {
->   #define  KVM_LOONGARCH_VM_FEAT_PV_IPI		6
->   #define  KVM_LOONGARCH_VM_FEAT_PV_STEALTIME	7
->   #define  KVM_LOONGARCH_VM_FEAT_PTW		8
-> +#define  KVM_LOONGARCH_VM_FEAT_MSGINT		9
->   
->   /* Device Control API on vcpu fd */
->   #define KVM_LOONGARCH_VCPU_CPUCFG	0
-> diff --git a/arch/loongarch/kvm/interrupt.c b/arch/loongarch/kvm/interrupt.c
-> index 8462083f0301..f586f421bc19 100644
-> --- a/arch/loongarch/kvm/interrupt.c
-> +++ b/arch/loongarch/kvm/interrupt.c
-> @@ -21,6 +21,7 @@ static unsigned int priority_to_irq[EXCCODE_INT_NUM] = {
->   	[INT_HWI5]	= CPU_IP5,
->   	[INT_HWI6]	= CPU_IP6,
->   	[INT_HWI7]	= CPU_IP7,
-> +	[INT_AVEC]	= CPU_AVEC,
->   };
->   
->   static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
-> @@ -31,6 +32,11 @@ static int kvm_irq_deliver(struct kvm_vcpu *vcpu, unsigned int priority)
->   	if (priority < EXCCODE_INT_NUM)
->   		irq = priority_to_irq[priority];
->   
-> +	if (cpu_has_msgint() && (priority == INT_AVEC)) {
-> +		set_gcsr_estat(irq);
-> +		return 1;
-> +	}
-> +
->   	switch (priority) {
->   	case INT_TI:
->   	case INT_IPI:
-> @@ -58,6 +64,11 @@ static int kvm_irq_clear(struct kvm_vcpu *vcpu, unsigned int priority)
->   	if (priority < EXCCODE_INT_NUM)
->   		irq = priority_to_irq[priority];
->   
-> +	if (cpu_has_msgint() && (priority == INT_AVEC)) {
-> +		clear_gcsr_estat(irq);
-> +		return 1;
-> +	}
-> +
->   	switch (priority) {
->   	case INT_TI:
->   	case INT_IPI:
-> @@ -83,10 +94,10 @@ void kvm_deliver_intr(struct kvm_vcpu *vcpu)
->   	unsigned long *pending = &vcpu->arch.irq_pending;
->   	unsigned long *pending_clr = &vcpu->arch.irq_clear;
->   
-> -	for_each_set_bit(priority, pending_clr, INT_IPI + 1)
-> +	for_each_set_bit(priority, pending_clr, EXCCODE_INT_NUM)
->   		kvm_irq_clear(vcpu, priority);
->   
-> -	for_each_set_bit(priority, pending, INT_IPI + 1)
-> +	for_each_set_bit(priority, pending, EXCCODE_INT_NUM)
->   		kvm_irq_deliver(vcpu, priority);
->   }
->   
-> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-> index 30e3b089a596..226c735155be 100644
-> --- a/arch/loongarch/kvm/vcpu.c
-> +++ b/arch/loongarch/kvm/vcpu.c
-> @@ -657,8 +657,7 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
->   		*v = GENMASK(31, 0);
->   		return 0;
->   	case LOONGARCH_CPUCFG1:
-> -		/* CPUCFG1_MSGINT is not supported by KVM */
-> -		*v = GENMASK(25, 0);
-> +		*v = GENMASK(26, 0);
->   		return 0;
->   	case LOONGARCH_CPUCFG2:
->   		/* CPUCFG2 features unconditionally supported by KVM */
-> @@ -726,6 +725,10 @@ static int kvm_check_cpucfg(int id, u64 val)
->   		return -EINVAL;
->   
->   	switch (id) {
-> +	case LOONGARCH_CPUCFG1:
-> +		if ((val & CPUCFG1_MSGINT) && (!cpu_has_msgint()))
-> +			return -EINVAL;
-> +		return 0;
->   	case LOONGARCH_CPUCFG2:
->   		if (!(val & CPUCFG2_LLFTP))
->   			/* Guests must have a constant timer */
-> @@ -1658,6 +1661,12 @@ static int _kvm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->   	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->   	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
->   	kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_LLBCTL);
-> +	if (cpu_has_msgint()) {
-> +		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
-> +		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
-> +		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
-> +		kvm_restore_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
-> +	}
->   
->   	/* Restore Root.GINTC from unused Guest.GINTC register */
->   	write_csr_gintc(csr->csrs[LOONGARCH_CSR_GINTC]);
-> @@ -1747,6 +1756,12 @@ static int _kvm_vcpu_put(struct kvm_vcpu *vcpu, int cpu)
->   	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN1);
->   	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN2);
->   	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_DMWIN3);
-> +	if (cpu_has_msgint()) {
-> +		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR0);
-> +		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR1);
-> +		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR2);
-> +		kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ISR3);
-> +	}
->   
->   	vcpu->arch.aux_inuse |= KVM_LARCH_SWCSR_LATEST;
->   
-> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-> index a49b1c1a3dd1..ec92e6f3cf92 100644
-> --- a/arch/loongarch/kvm/vm.c
-> +++ b/arch/loongarch/kvm/vm.c
-> @@ -150,6 +150,10 @@ static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr
->   		if (cpu_has_ptw)
->   			return 0;
->   		return -ENXIO;
-> +	case KVM_LOONGARCH_VM_FEAT_MSGINT:
-> +		if (cpu_has_msgint())
-> +			return 0;
-> +		return -ENXIO;
->   	default:
->   		return -ENXIO;
->   	}
-> 
-> base-commit: 9b332cece987ee1790b2ed4c989e28162fa47860
-> 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+> Changes in v8:
+> - Rebased on top of 6.18-rc1
+> - Added TJ R-b
+> - Link to v7: https://lore.kernel.org/r/20250721-dma-buf-ecc-heap-v7-0-03=
+1836e1a942@kernel.org
+>
+> Changes in v7:
+> - Invert the logic and register CMA heap from the reserved memory /
+>   dma contiguous code, instead of iterating over them from the CMA heap.
+> - Link to v6: https://lore.kernel.org/r/20250709-dma-buf-ecc-heap-v6-0-da=
+c9bf80f35d@kernel.org
+>
+> Changes in v6:
+> - Drop the new driver and allocate a CMA heap for each region now
+> - Dropped the binding
+> - Rebased on 6.16-rc5
+> - Link to v5: https://lore.kernel.org/r/20250617-dma-buf-ecc-heap-v5-0-0a=
+bdc5863a4f@kernel.org
+>
+> Changes in v5:
+> - Rebased on 6.16-rc2
+> - Switch from property to dedicated binding
+> - Link to v4: https://lore.kernel.org/r/20250520-dma-buf-ecc-heap-v4-1-bd=
+2e1f1bb42c@kernel.org
+>
+> Changes in v4:
+> - Rebased on 6.15-rc7
+> - Map buffers only when map is actually called, not at allocation time
+> - Deal with restricted-dma-pool and shared-dma-pool
+> - Reword Kconfig options
+> - Properly report dma_map_sgtable failures
+> - Link to v3: https://lore.kernel.org/r/20250407-dma-buf-ecc-heap-v3-0-97=
+cdd36a5f29@kernel.org
+>
+> Changes in v3:
+> - Reworked global variable patch
+> - Link to v2: https://lore.kernel.org/r/20250401-dma-buf-ecc-heap-v2-0-04=
+3fd006a1af@kernel.org
+>
+> Changes in v2:
+> - Add vmap/vunmap operations
+> - Drop ECC flags uapi
+> - Rebase on top of 6.14
+> - Link to v1: https://lore.kernel.org/r/20240515-dma-buf-ecc-heap-v1-0-54=
+cbbd049511@kernel.org
+>
+> ---
+> Maxime Ripard (5):
+>       doc: dma-buf: List the heaps by name
+>       dma-buf: heaps: cma: Register list of CMA regions at boot
+>       dma: contiguous: Register reusable CMA regions at boot
+>       dma: contiguous: Reserve default CMA heap
+>       dma-buf: heaps: cma: Create CMA heap for each CMA reserved region
+>
+>  Documentation/userspace-api/dma-buf-heaps.rst | 24 ++++++++------
+>  MAINTAINERS                                   |  1 +
+>  drivers/dma-buf/heaps/Kconfig                 | 10 ------
+>  drivers/dma-buf/heaps/cma_heap.c              | 47 +++++++++++++++++----=
+------
+>  include/linux/dma-buf/heaps/cma.h             | 16 +++++++++
+>  kernel/dma/contiguous.c                       | 11 +++++++
+>  6 files changed, 72 insertions(+), 37 deletions(-)
+> ---
+> base-commit: 47633099a672fc7bfe604ef454e4f116e2c954b1
+> change-id: 20240515-dma-buf-ecc-heap-28a311d2c94e
+> prerequisite-message-id: <20250610131231.1724627-1-jkangas@redhat.com>
+> prerequisite-patch-id: bc44be5968feb187f2bc1b8074af7209462b18e7
+> prerequisite-patch-id: f02a91b723e5ec01fbfedf3c3905218b43d432da
+> prerequisite-patch-id: e944d0a3e22f2cdf4d3b3906e5603af934696deb
+>
+> Best regards,
+> --
+> Maxime Ripard <mripard@kernel.org>
+>
 
+
+--=20
+Thanks and regards,
+
+Sumit Semwal (he / him)
+Senior Tech Lead - Android, Platforms and Virtualisation
+Linaro.org =E2=94=82 Arm Solutions at Light Speed
 
