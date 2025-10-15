@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-854423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660A3BDE546
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC1BDE549
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C828B19C49A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E6B19C49E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF37322DD6;
-	Wed, 15 Oct 2025 11:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EAD323403;
+	Wed, 15 Oct 2025 11:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPJ41aZj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O4w/yyDX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222A322DD2
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95BE3233E4;
+	Wed, 15 Oct 2025 11:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760529006; cv=none; b=Dppq4YFOmhVU+cAgR/GYybBZ3Ak88IxH3n6oZWri7TRXtPyJlPUPivb00s4MfrailCXLPW7u3dDhiZMyGE7iTlPrn6kUmBgonJ5fNfSHuFu8AYnxGOwrdiMplDbmOQ+qU6jN8hbFi4ETbVyT23yqm6HqoaK+Gz5eYis2I0ts1wY=
+	t=1760529013; cv=none; b=hfPLHRYGrQwBi+DIGOZcx7BqGE+4tiH8AsKfh7qSTLThHfqLQKaxGhmbp0YmiE1M5oo3elDy/acc/XaE8y3X2uMqHTbcoN7ESti2jvpchLPhXkWm0Nqp4MUSagT+mmJoEQIoY3Txev6/n/KBZcPVl5TBqRwkSh26R7Oci7ja1KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760529006; c=relaxed/simple;
-	bh=ooKuFwes3Vhtb88vFNU8Ivf+LQKJ5Zbjhym0lsVJnFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PBanyXgQaxuhXQra8lHQTdjwftLpuZ7K5zIC0zso/F+l4tHUg4e/VujD+CAn3O+BDuokpoBV/d0HLRHXrsNOAexFoF0waQyY4mGXnsMmamQcjBOrFvhVkONQMgQ3oRolLHcGAiOZ/xnwW0cE3DGbKbqo9iJ66CcNNMKgZVOOBpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPJ41aZj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B97C19423
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760529005;
-	bh=ooKuFwes3Vhtb88vFNU8Ivf+LQKJ5Zbjhym0lsVJnFc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pPJ41aZj0fSfWNlsmRArlY/pKEQBLwAbYCJ3Kf/Yt3x6+GMI/bwJGEEbarPL5snAW
-	 QDvQJp56XVMi1HtOewG1p7T/wKe1rzfBT5o/gON0NXNUk6bFSwIILYGquGVzLCM/ar
-	 OZFDNvlYW6WrgOExxd/bSi+1NboatmB481cuUL6ZMIDSVWtJxjK9bamkl57A28kB3L
-	 KDJsCfzeYnRSvbYdQ1E4wfmjR4dVcYfdraE+B3qhfmts00p2Y6tgfofaR6D7cZcK08
-	 OJpVg/24jR3zidWNa3BwcpmP6qOmfXzwYo80KTFlWGq9YbKUIPVn1FH9p9zQ2ilvXZ
-	 IJmLilEizadJQ==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-79f79e37c04so4894828a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:50:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8t+h2sb50vYENIKmT7PJkMtYgJi8190Kn9yq7LF5+mvxGiKajZ2WaASvPfGMvLrHcTaSGcTxkZxdlnco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZc71G6lliqjc3VDOTtbj5s/GNPoRyjVKdLNVQ6Nn6rDHISJ9i
-	g5LcHqnyH9AZ10fE0brcQCER6ZHw58PDJWjrtJmnbYtiZJ/B8hlimqAvTxCkPhmCKIqukd8lU4C
-	NKuU2VCUkT74ku5L9LyC5MLgjP2oN/MI=
-X-Google-Smtp-Source: AGHT+IEcOvtS91b8xBc9x8mFoNEL4oiSYrMPmBf02hvPxuJLVNB/9E+H2gs8poT1029kYj76kZmT5rKMedZ4Ubm3dj0=
-X-Received: by 2002:a05:6808:bd2:b0:441:8f74:fcb with SMTP id
- 5614622812f47-4418f741f0bmr10872569b6e.56.1760529005083; Wed, 15 Oct 2025
- 04:50:05 -0700 (PDT)
+	s=arc-20240116; t=1760529013; c=relaxed/simple;
+	bh=TSwGRKO19D5XKRsLC+m0YijxQmVTUeTgmcZAf31qOyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KbQ3+3951YwkAf3Zm6YuBqmhNyG3UjAeSB21YB62aZXhUfQDPLGU67bcKq8cOoeF0aCcjRBZodnFK8H/D3KJ1d8emSeaIubUOeAWN9VaUrY2Srksqb0mX6Y+9q+qZiklVYTXzVf3sj+RfGazRINJbqN8aIYLmJlRAn9SKl7WfpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O4w/yyDX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Mt0I59thcwaJmpT1dL/1ZLqBuvZvsWajANy7tBk0r08=; b=O4w/yyDXqYZN8yjFLH9VkztTFf
+	0d3ht1xExsNpZ8qvqxLGUng0i5NMsyG3zkEt1hXZJtL8r7Zre6xgbqs1/JO0VT58YbMoCr3Yqb0Aa
+	Yj1UodhDfpH4lLWMLn7nYJ/JrBV9S1mmmwOZAVjF4uyOt0tugV1QSuW6LVcCaIOVVhz13A1AS3iZ+
+	ZYBo41lp8Wk9yKb5mnqNDjzYXPCXnD3ofwiYxs9mI4aU/4/mVfwqJms2OS2ww7LTJzFP5DdTEfmhS
+	ywD/Ij7GqH5N7J9BQYqt2AoHD8/qxJmxjzIR9g4hyHnSQ7NWee11wqoJayrhPsfIAAJNCdhP1FYWT
+	hlTymeUw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v900z-0000000ESV9-0C0C;
+	Wed, 15 Oct 2025 11:49:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E508330043F; Wed, 15 Oct 2025 13:49:56 +0200 (CEST)
+Date: Wed, 15 Oct 2025 13:49:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: "Li,Rongqing" <lirongqing@baidu.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	"netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
+	"coreteam@netfilter.org" <coreteam@netfilter.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH net-next] netfilter: conntrack: Reduce cond_resched
+ frequency in gc_worker
+Message-ID: <20251015114956.GC3419281@noisy.programming.kicks-ass.net>
+References: <20251014115103.2678-1-lirongqing@baidu.com>
+ <aO5K4mICGHVNlkHJ@strlen.de>
+ <13de94827815469193e10d6fb0c0d45b@baidu.com>
+ <aO-ADi4UJhOFz4zr@strlen.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
- <08529809-5ca1-4495-8160-15d8e85ad640@arm.com> <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
- <8da42386-282e-4f97-af93-4715ae206361@arm.com> <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi>
- <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com> <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
- <7ctfmyzpcogc5qug6u3jm2o32vy2ldo3ml5gsoxdm3gyr6l3fc@jo7inkr3otua> <001601dc3d85$933dd540$b9b97fc0$@telus.net>
-In-Reply-To: <001601dc3d85$933dd540$b9b97fc0$@telus.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 15 Oct 2025 13:49:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g7g7-WWTu=ZQwVAA345fodXer1ts422N0N+ZKx+6jXRw@mail.gmail.com>
-X-Gm-Features: AS18NWATo-6k6LvzkPgyIf_Bc1oxboWU9Wp6VAZkaltVlveNh-c1lVAl4_h_8co
-Message-ID: <CAJZ5v0g7g7-WWTu=ZQwVAA345fodXer1ts422N0N+ZKx+6jXRw@mail.gmail.com>
-Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
- information" causes regressions
-To: Doug Smythies <dsmythies@telus.net>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Sasha Levin <sashal@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO-ADi4UJhOFz4zr@strlen.de>
 
-On Wed, Oct 15, 2025 at 5:41=E2=80=AFAM Doug Smythies <dsmythies@telus.net>=
- wrote:
->
-> On 2025.10.14 18:30 Sergey Senozhatsky wrote:
-> > On (25/10/14 17:54), Rafael J. Wysocki wrote:
-> >> Sergey, can you please run the workload under turbostat on the base
-> >> 6.1.y and on 6.1.y with the problematic commit reverted and send the
-> >> turbostat output from both runs (note: turbostat needs to be run as
-> >> root)?
-> >
-> > Please find attached the turbostat logs for both cases.
->
-> The turbostat data suggests that power limit throttling is involved.
+On Wed, Oct 15, 2025 at 01:06:01PM +0200, Florian Westphal wrote:
+> Li,Rongqing <lirongqing@baidu.com> wrote:
+> 
+> [ CC scheduler experts & drop netfilter maintainers ]
+> 
+> Context: proposed patch
+> (https://patchwork.ozlabs.org/project/netfilter-devel/patch/20251014115103.2678-1-lirongqing@baidu.com/)
+> does:
+> 
+> -		cond_resched();
+> +		if (jiffies - resched_time > msecs_to_jiffies(1)) {
+> +			cond_resched();
+> +			resched_time = jiffies;
+> +		}
+> 
+> ... and my knee-jerk reaction was "reject".
+> 
+> But author pointed me at:
+> commit 271557de7cbfdecb08e89ae1ca74647ceb57224f
+> xfs: reduce the rate of cond_resched calls inside scrub
+> 
+> So:
+> 
+> Is calling cond_resched() unconditionally while walking hashtable/tree etc.
+> really discouraged?  I see a truckload of cond_resched() calls in similar
+> walkers all over networking. I find it hard to believe that conntrack is
+> somehow special and should call it only once per ms.
+> 
+> If cond_resched() is really so expensive even just for *checking*
+> (retval 0), then maybe we should only call it for every n-th hash slot?
+> (every L1_CACHE_BYTES?).
+> 
+> But even in that case it would be good to have a comment or documentation
+> entry about recommended usage, or better yet, make a variant of
+> xchk_maybe_relax() available via sched.h...
 
-Why do you think so?
+The plan is to remove cond_resched() and friends entirely and have
+PREEMPT_LAZY fully replace PREEMPT_VOLUNTARY.
+
+But I don't think we currently have anybody actively working on this.
+Ideally distros should be switching to LAZY and report performance vs
+VOLUNTARY such that we can try and address things.
+
+Perhaps the thing to do is to just disable VOLUNTARY and see what
+happens :-)
 
