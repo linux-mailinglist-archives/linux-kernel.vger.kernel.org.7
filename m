@@ -1,87 +1,108 @@
-Return-Path: <linux-kernel+bounces-854446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFE3BDE65B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19D2BDE67C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18DF34835F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4995D19C3350
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F3C326D45;
-	Wed, 15 Oct 2025 12:08:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71E9326D50;
+	Wed, 15 Oct 2025 12:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="14+Nn4BM"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CEC31CA7B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72953233ED;
+	Wed, 15 Oct 2025 12:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530087; cv=none; b=knc++jHr5be3VQfiR2gB9sCek7cTv2utUxBQb+c/pUmQ2jdfYbNTqKmxmVMVZnmM2WtXasMWus5n1jtiToeGENtgY+jvk3PdSyg854MAMramZclCrP89HuQAcrn9Ib3FRT2B2m+aynTWSx0b1upaKWLxvapnKSgBepju1U1mxN8=
+	t=1760530165; cv=none; b=NcJDkUkpCjgsaH/ul1w4UCC1eIFici/1nGXIzzz++NJaz6NkjVHbEp0YqvCgrV9mgJT4fa5/QU2YPI1sRkiEcQY0HjwzXZpeOQ3o4FSA+iRi/DO+13j8sInsXgCcUvn/I+25bngjcxEiH10cznPg04C1BdpVBUiLXXMsrnpInlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530087; c=relaxed/simple;
-	bh=ikafkcyEhGPo6V77pZ1XIeb6FhQLfB2Bg8wg2NG8Juk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XrtbL+SvaVzQ2B1zfvwCRT6Geem0FJDSMgwI+dLpKIBAnCIUREzzPUAvM0FHav/j/m8PrgZorVHC/vuBTc4OYZ+SKnDums5x/GJkUYm+FT6cXUs43m4oawUFPePY6vC8kB/JqMcbWszkfQikeMWaTfiylb5DV3i1yR0+pvefmZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-429278a11f7so134334625ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:08:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760530084; x=1761134884;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FyldEtwp1gai23TscGVppyYlBhxGh7CjaGIutLSt2gM=;
-        b=GnXcwGlgyKitNj3ZW2YXA2hYwPnZdHBBWm2PrdabrP/q9WC9CTafHziwCvIUan6WSg
-         V6QHuGWFB58Vcnk2t8ROoXxZQbCDoUpRbea+3q58iOk092TWw8s2SVryCQcnCneOUSUE
-         YNLZ3NGvnE9qhGbRY4/dhazUYkxp+CG6DTQ2REvu967k6fRCt7Py1AfPq7/4yHNFPePl
-         ik/H0ccb7NbKqtkeQH/PH1gtf6DnoVIjo5YPpq+y+lDk7CrfbqNYnM1mX8rDJlTswa/r
-         wQgDOiqd5KKtxEcZlowkG56tK7vCZKqBEtub2y2Jor4hvSJAi5U6+J3wn/1G4TB7dzSW
-         XgAg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+GMk4x2ZbHjPy7KF6KNllArhZBBk5dKOE1M7z9GXzM/orSBOncDqzAkjtO1j3Vz9V4PVlP4B1O8JuhGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0HS//dWv1UcuF76A3VRtTZfFGy7Yc51hy9DXOmo5zCKGfPUqB
-	S8UoxXJhx2NXcA8U6yirL/YiNhNn5+CihstNHX4TqzDVuojy6TEasQ2nuZpmkNUviUyEKCGQ/Ym
-	FTt/1mj4ZmvejxeFn+avOu7u/lnICFF3k8c5Rj/UuqtxSdIs8uMyyNbxT8TI=
-X-Google-Smtp-Source: AGHT+IFUs2xV61Zf0+jSBMVHmQegBSNxFJn0g3yx0KHfRADZU8QekyoZnHSs5fRMGIG0qh5JXRBnChYI8lOYY3pn9m6HByojSwZR
+	s=arc-20240116; t=1760530165; c=relaxed/simple;
+	bh=byDt9cJNaoV9UerzEQZrWBXDSIWGA1UsTPnBa3lcc2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHYRex9HI4PtsaEBb3f6mfRWyzVzhdUatYuuu4noAQ7uVJRNUuAdDDMBbgHHz/bTJ63C+i1/NtxT9Epf2WvyMBeC2k6tSvw6T08RtyhvZU7qM/o65z3C7PzddfG80dQJ6vcGpan6bQiVVb2sxPq0avLObUc0uFAhOT3Q5Q3Fj/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=14+Nn4BM; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6qLbkEn/jIW40ylFRsyZqZoQ0CK2OjczehoMcmU90RA=; b=14+Nn4BMuFFT7DcJryd1+OKTcx
+	f/hvL2nKX7yIJaFKQ725q52wAYCItNbYGSQqG1OMTfmvmKg+0mon5EyLpCPlXvz/aGMNNB1lpqbhR
+	MViyAdas/OJMpHrQuONAV2TBGp2sP31eQcFolR0P6INNpBiVqcFG/Cx3eZXG4DW5yeXA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v90Jb-00B1Qw-Lg; Wed, 15 Oct 2025 14:09:11 +0200
+Date: Wed, 15 Oct 2025 14:09:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rob Herring <robh@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional
+ clock
+Message-ID: <0d90ce60-a7cd-4fff-9db2-489531e3c944@lunn.ch>
+References: <20251010183418.2179063-1-Frank.Li@nxp.com>
+ <20251014-flattop-limping-46220a9eda46@spud>
+ <20251014-projector-immovably-59a2a48857cc@spud>
+ <20251014120213.002308f2@kernel.org>
+ <20251014-unclothed-outsource-d0438fbf1b23@spud>
+ <20251014204807.GA1075103-robh@kernel.org>
+ <20251014181302.44537f00@kernel.org>
+ <CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214e:b0:430:adcb:b38d with SMTP id
- e9e14a558f8ab-430adcbb787mr18702975ab.24.1760530084431; Wed, 15 Oct 2025
- 05:08:04 -0700 (PDT)
-Date: Wed, 15 Oct 2025 05:08:04 -0700
-In-Reply-To: <f945f2a0-c694-4874-a7b2-59cee4cb76c3@suse.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ef8ea4.050a0220.91a22.024b.GAE@google.com>
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-out-of-bounds Read in
- mcp2221_raw_event (2)
-From: syzbot <syzbot+1018672fe70298606e5f@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, oneukum@suse.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
 
-Hello,
+> I also considered looking at who the email is from and restricting it
+> to the maintainers. I know the netdev one doesn't do that either
+> because I used it a couple of times. :) It does seem like it could be
+> abused.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+The netdev one does have some restrictions.
 
-failed to checkout kernel repo git://repo/address.git on commit 3a8660878839: failed to run ["git" "fetch" "--force" "--tags" "b7cf8f2fbfc36c709a08e0b9c77990e491473738"]: exit status 128
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#updating-patch-status
 
+says:
 
-Tested on:
+  The use of the bot is restricted to authors of the patches (the
+  From: header on patch submission and command must match!),
+  maintainers of the modified code according to the MAINTAINERS file
+  (again, From: must match the MAINTAINERS entry) and a handful of
+  senior reviewers.
 
-commit:         [unknown 
-git tree:       git://repo/address.git 3a8660878839
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f3e7b5a3627a90dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=1018672fe70298606e5f
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13bed542580000
+Here is one example from you:
 
+https://patchwork.kernel.org/project/netdevbpf/patch/20241113225742.1784723-2-robh@kernel.org/
+
+and it was your own patch.
+
+All its actions are logged:
+
+https://netdev.bots.linux.dev/pw-bot.html
+
+so we can keep an eye of out for abuse. Plus, since it is an email to
+patchwork, patchwork itself should have any abuse emails.
+
+	Andrew
 
