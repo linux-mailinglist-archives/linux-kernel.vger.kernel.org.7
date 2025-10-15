@@ -1,58 +1,96 @@
-Return-Path: <linux-kernel+bounces-854761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39FDBDF501
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:19:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FD5BDF4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A1119C7119
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BDA189B183
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4728C14BFA2;
-	Wed, 15 Oct 2025 15:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6676258CCC;
+	Wed, 15 Oct 2025 15:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="udULT81v"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eG9AP6KV"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80BC2FB985
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010AA2F5A01
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541559; cv=none; b=gyuYOjA6CzKRndFrivAWn90fwpLVE0yny8PFZcu0gBwGwaHzrRwhKpqtvHNbGvjCneZYDPlpOZ4Boe5eOF3OeAWyR6vAcBh+GS//nR/isDO6g3qBouCwTLdSyRNQtvn5E0halw+RlRUNxRvK3Po+Nl7N1O3CbhsIT7oGr9uej7I=
+	t=1760541458; cv=none; b=q9jQFDH6e1QBEHClwkef8Xwv1qRv3yAwGdqsU73GpWDpDSGQ83yh3WO6iHY687z/lqYUXtZhOPX2h/w/pfyDCLJS12dFJ4nfXm0ykoYrmyxWL4osNMMSZunC23PmdWeiimKUT1uVgaVwexSVQaWnyLCb1CNn6Ii9FHKF9UbbiLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541559; c=relaxed/simple;
-	bh=a9xKhDk+BGtJ4JiaTrGo1b0mvMJxDoS0zpI5Gu5pD4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u3E/Yj+h2fD1f2CU1/dMDNUts100TpiRjXPeA/r6lmLrplBi1kB8De+H8p0vzt4K+3xUZqMmyWiol/oOYaI+BkRX+5roIR+fVdZJdf+FpJ2I6QjBjmhFSxgBnKgJ+KC/xvv45g+9Swwk1DL7NKkz5nCK3BWpRGZE4o01ECEJryw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=udULT81v; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760541553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FSAoHN+I0q5gvwL07/+w9FpvcidtI68SZ5LkGFNNr6w=;
-	b=udULT81vHIEVtIBF5XvtutmVrlGPzNupoyXCUuAEkSjJ5KIHh+zFjEWykswdr5yVjG9eAv
-	S2y3mltUcBCzV9/DoUrxNsqRQtreuXr4DGXKGSwGIkjWff9qBg0OHS/MKV/rZEW9VL59DF
-	c2ZDhOOd2eIZ1QLTvCqFHicpK3drHjk=
-From: Dawei Li <dawei.li@linux.dev>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
+	s=arc-20240116; t=1760541458; c=relaxed/simple;
+	bh=mtUS9WGjUwEXnaRyTThsRQOBT34zHvfK0KKXPaNYlA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VX2b0myg5WyvZWkQy1323hzG2e7T4HscPp/IZAyVuR+qv16a/pdQ2sXW/Iy9Yr8YEXoql7pQK0WrukAxQ354yopRvQodym/87GUy923/3MPQ/ZQDQrbybzageFafvTlYRH+octTHnp3pCQL2AaRTDZ2NAAx/f3JdqirXZTPZpv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eG9AP6KV; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so42961225e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760541454; x=1761146254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mtUS9WGjUwEXnaRyTThsRQOBT34zHvfK0KKXPaNYlA8=;
+        b=eG9AP6KVy0wVxX184lOrwdDgFoCkFjI7s40bO7qgBa/pkS7OifkpfvA9uJFw/mIbS/
+         uHS0NbwR+Dxk10eDGpO1r+LEfwN4+6ZNswgRpIKrPHfiKWl7ZAObUXSsb1Lcf/mnMXvG
+         f2ZI/uI9yw35tu22dmaNhGbEi4t+VOUH8vSsWZ38rVcGgWujP+D60wIxb/9K0VlguOjI
+         pGSHPTMD369eGJYJnrlEySw0wCcZENOBqrkIMSwvKi1BPsDi4HYpZUEkIVm8QHvjBe1W
+         thVnBN5NlRmHtY7uh1gHyGPieS21130Qo9OUOGf0tLVfrxGte1Jyw7B562Yna98alIu/
+         zKxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760541454; x=1761146254;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mtUS9WGjUwEXnaRyTThsRQOBT34zHvfK0KKXPaNYlA8=;
+        b=E1p+sJvROgq3VXGmp+TTpPJk8Tjkhp8R/c/aBpF4fYO+62lSs+fN0FWM1plnMBMZcP
+         uAfDaBmCO0GNjmolVAgl3kHKz1cRgghec+CKmb/e1rfrq0qXDLtRjuC6mRwZliUvfSyq
+         p1uF5yqqbtj//aHaRtA7e1ercz77ZvGrrcTmB+onoaLOOXyZfPVfktZgSkJFaZkyyZPQ
+         5hrznbDMzsU53h9QGIDJZ5bhxGrJfFshjBTfGa4KuHvzOTTlUKUWOBUIE5v5w3+buey3
+         eNnSOeoCIS6WVdiz3CQ2Xmmz09Fm6taQioeV0ptfKwRznEdC9FFSZTr30zZZIB3yJ8L/
+         QfEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOh5PKcu+SNL4LxeJp8ePYClZ6K586yRVbj8eejZKOqBAxJ7TSBmZc5nlrm5phUlPNtEeVGjS3W7xiMqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzdDIC0plmp3Pxjyp2ouW0aEkDENHfQUsRk8u09+sKjPSkHpHY
+	rP5fU54Gw7hye31jDz6JHjdlhJGa8rwOBwnBUpCwsVo7HqiUqGv2/8GU
+X-Gm-Gg: ASbGncvY7MzZeRmoWKj0hbLNAiWYWpPRHNJra1+na3MwVTF3YFPL9xjLLdO1inxFWL2
+	bvOsCCV8NmtvCt+4s+82FJ2Yt3he+DytWTocSf4O3LN5rdkvUFDUxSQ5azjMdlYTCKoXfjFvvck
+	7ilT97bfmaMae0dMcoDTyNYWgGLUVAQKeny15u8i7bxUULOAstKSqotU9y6pOEPR7nUnevIItUZ
+	UBRHsMiQEX2avqF1UtGf/KpBUlJf21pupVaeYEwcOh1VWt9UAYxfFRsdeBxQvJGVgVLu9w20Nej
+	FHsQjLhUUaj+tPxDjvOkrv5ZzH/wohBNy3XOtuQy5DCNmO2qfsdHasEBOPeM5RhGLlDyhKLef3q
+	aBK0pkieU+TXfyluyHyXUovQ7TUMZbpJg5sShwyloADwkYkeP0JjB0dGw7MK8FA==
+X-Google-Smtp-Source: AGHT+IF+wQ0w6icankgioapxTjYaSjA4++U1svpm0hH8LF2fSddRaHuF8XP0NW/LOO9XQwCj/mpkRg==
+X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr215181675e9.19.1760541453862;
+        Wed, 15 Oct 2025 08:17:33 -0700 (PDT)
+Received: from yuri-laptop.unina.it ([143.225.7.40])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb483c7e0sm301897505e9.7.2025.10.15.08.17.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 08:17:33 -0700 (PDT)
+From: Yuri Andriaccio <yurand2000@gmail.com>
+To: juri.lelli@redhat.com
+Cc: bsegall@google.com,
+	dietmar.eggemann@arm.com,
 	linux-kernel@vger.kernel.org,
-	dawei.li@linux.dev,
-	set_pte_at@outlook.com
-Subject: [PATCH v5 3/3] rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-Date: Wed, 15 Oct 2025 23:17:18 +0800
-Message-Id: <20251015151718.3927-4-dawei.li@linux.dev>
-In-Reply-To: <20251015151718.3927-1-dawei.li@linux.dev>
-References: <20251015151718.3927-1-dawei.li@linux.dev>
+	luca.abeni@santannapisa.it,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com,
+	yuri.andriaccio@santannapisa.it
+Subject: Re: [RFC PATCH v3 00/24] Hierarchical Constant Bandwidth Server
+Date: Wed, 15 Oct 2025 17:17:31 +0200
+Message-ID: <20251015151731.31191-1-yurand2000@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <aO-xNBHYIyu74aQF@jlelli-thinkpadt14gen4.remote.csb>
+References: <aO-xNBHYIyu74aQF@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,130 +98,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Implement RPMSG_CREATE_EPT_FD_IOCTL, new uAPI for rpmsg ctrl, which
-shares most of operations of RPMSG_CREATE_EPT_IOCTL except that it
-returns fd representing eptdev to userspace directly.
+Hi,
 
-Possible calling procedures for userspace are:
-- fd = open("/dev/rpmsg_ctrlX")
-- ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &info);
-- fd_ep = info.fd
-- operations on fd_ep(write, read, poll ioctl)
-- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-- close(fd_ep)
-- close(fd)
+> I provided comments up to the last part of the series that implements
+> migration. I will now stop on purpose and wait for replies/new versions of the
+> patches I reviewed. I believe we could try to leave migration "for later"
+> while we solidify the basics. What do you think?
 
-Signed-off-by: Dawei Li <dawei.li@linux.dev>
----
- drivers/rpmsg/rpmsg_ctrl.c | 35 ++++++++++++++++++++++++++++-------
- include/uapi/linux/rpmsg.h | 27 ++++++++++++++++++++++++++-
- 2 files changed, 54 insertions(+), 8 deletions(-)
+Thanks a lot for your comments. It also makes sense to us to solidify the basics
+before going on to the migration code and later updates. We have sent the
+migration related patches just to show the end goal of this patchset and give
+some intuition of possible use cases and demonstration on the provided
+guarantees. We will work on your comments and submit a v4 patchset soon.
 
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 28f57945ccd9..efb207506e5c 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -75,19 +75,30 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
- 				unsigned long arg)
- {
- 	struct rpmsg_ctrldev *ctrldev = fp->private_data;
-+	struct rpmsg_endpoint_fd_info ept_fd_info;
- 	void __user *argp = (void __user *)arg;
- 	struct rpmsg_endpoint_info eptinfo;
- 	struct rpmsg_channel_info chinfo;
- 	struct rpmsg_device *rpdev;
- 	int ret = 0;
- 
--	if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
--		return -EFAULT;
--
--	memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
--	chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
--	chinfo.src = eptinfo.src;
--	chinfo.dst = eptinfo.dst;
-+	if (cmd == RPMSG_CREATE_EPT_FD_IOCTL) {
-+		if (copy_from_user(&ept_fd_info, argp, sizeof(ept_fd_info)))
-+			return -EFAULT;
-+
-+		memcpy(chinfo.name, ept_fd_info.name, RPMSG_NAME_SIZE);
-+		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-+		chinfo.src = ept_fd_info.src;
-+		chinfo.dst = ept_fd_info.dst;
-+	} else {
-+		if (copy_from_user(&eptinfo, argp, sizeof(eptinfo)))
-+			return -EFAULT;
-+
-+		memcpy(chinfo.name, eptinfo.name, RPMSG_NAME_SIZE);
-+		chinfo.name[RPMSG_NAME_SIZE - 1] = '\0';
-+		chinfo.src = eptinfo.src;
-+		chinfo.dst = eptinfo.dst;
-+	}
- 
- 	mutex_lock(&ctrldev->ctrl_lock);
- 	switch (cmd) {
-@@ -110,6 +121,16 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
- 				chinfo.name, ret);
- 		break;
- 
-+	case RPMSG_CREATE_EPT_FD_IOCTL:
-+		ret = rpmsg_anonymous_eptdev_create(ctrldev->rpdev, &ctrldev->dev, chinfo,
-+						    ept_fd_info.flags, &ept_fd_info.fd);
-+		if (ret)
-+			break;
-+
-+		if (copy_to_user(argp, &ept_fd_info, sizeof(ept_fd_info)))
-+			ret = -EFAULT;
-+		break;
-+
- 	default:
- 		ret = -EINVAL;
- 	}
-diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-index f0c8da2b185b..02befb298f71 100644
---- a/include/uapi/linux/rpmsg.h
-+++ b/include/uapi/linux/rpmsg.h
-@@ -29,7 +29,8 @@ struct rpmsg_endpoint_info {
- #define RPMSG_CREATE_EPT_IOCTL	_IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
- 
- /**
-- * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL.
-+ * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL
-+ * or RPMSG_CREATE_EPT_FD_IOCTL.
-  */
- #define RPMSG_DESTROY_EPT_IOCTL	_IO(0xb5, 0x2)
- 
-@@ -53,4 +54,28 @@ struct rpmsg_endpoint_info {
-  */
- #define RPMSG_SET_INCOMING_FLOWCONTROL _IOR(0xb5, 0x6, int)
- 
-+/**
-+ * struct rpmsg_endpoint_fd_info - endpoint & fd info representation
-+ * @name: name of service
-+ * @src: local address. To set to RPMSG_ADDR_ANY if not used.
-+ * @dst: destination address. To set to RPMSG_ADDR_ANY if not used.
-+ * @flags: file flags of endpoint device, valid flags:
-+ *         O_RDONLY/O_WRONLY/O_RDWR
-+ *         O_NONBLOCK
-+ *         O_CLOEXEC
-+ * @fd: fd returned from driver
-+ */
-+struct rpmsg_endpoint_fd_info {
-+	char name[32];
-+	__u32 src;
-+	__u32 dst;
-+	__u32 flags;
-+	__s32 fd;
-+};
-+
-+/**
-+ * Instantiate a new rmpsg endpoint which is represented by fd
-+ */
-+#define RPMSG_CREATE_EPT_FD_IOCTL _IOWR(0xb5, 0x7, struct rpmsg_endpoint_fd_info)
-+
- #endif
--- 
-2.25.1
-
+Have a nice day,
+Yuri
 
