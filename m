@@ -1,249 +1,421 @@
-Return-Path: <linux-kernel+bounces-855257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EC5BE0A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:36:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBDBBE0A6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA10B4274AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:36:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F214A4E8396
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E918030C363;
-	Wed, 15 Oct 2025 20:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA21A30C63B;
+	Wed, 15 Oct 2025 20:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkMvNiZr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dsuCEzCi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309BA306B33
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F216430498F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760560579; cv=none; b=fjtOZcvL2NTwNcXWSCQIEA4CjrQBkXMh9A8dkjZ2zRubFFMTdb+L5xaUnmUlxFTCDhmcJJyyZtkjxK9hyR19YOZiNx/Xc/M/9F9Bb5OKnD5+S6KjzlgI9C7D+niMGXR/bUXEQQSwGIdrgIvdcQkb1GUkPqy2utLrgdrr97IHT2c=
+	t=1760560604; cv=none; b=ncP6i6zvephcGIgVzCSIX5dmSA+lVbjkCJYz6NoVkgdvmoXNq8rKISObRPA1KcIPirDTey+pX09o6SWxrwp2TzlHrIkNZ19KFiOogTn033UuzMaOLfpTVU5pFrzfNkCUGVz4dbr8KpHAjYgdBzJVOUgNRnramQ2f27Iakhth4xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760560579; c=relaxed/simple;
-	bh=md7oGPOSa0xnbd4TtXfgOqRdp4X3wI06jm34scplTI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pbg56lqhkqOL+HQ0z8CHF3UcCPNFXlvQyRz3UJz7BbQz/c9VIx4AE3EcReNJqHtPDOoI+S7a0GwSgJPI4sDFx2LEh5PYl2TcbcF17owHEnGthshGfIPpiVmgk+TON58d4XLn5RW6rKsnk8Kn64SrphOrv/UG9jB5A4CcxxF3DG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkMvNiZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD391C19423
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760560578;
-	bh=md7oGPOSa0xnbd4TtXfgOqRdp4X3wI06jm34scplTI0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WkMvNiZrqpVASBo6Y1Jdsdj4XC1FXGpozd/+qYto2IZNCal5cyuVHZK7rxHe7TBjx
-	 bL0eH7NaNvXWbV9xasC5BT4SYDAUxQavXIy+kAfX4UZxSKLN2/c5dz3z81a3YbFbb4
-	 1es+lzfqXEthrncO03/AbmGAy5YYkfU8vewOs7XULwsNE3laMBwu3FSerJf9Q36eXS
-	 bcB8NiTsS8ZdPL0KlYuUXXqx3UKCbBJrAo9hi6kCo98o/RG9J5L1ua8IrRVp09bOtL
-	 UePKr5Ep5kGEINjmEAovqNGlr1mEo7Hr93UqhbNB/NpBWCyr0sVxgj66o50AIe58Zh
-	 DJQ79hXoT9RwA==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b50206773adso245399466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:36:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWTEac8JRU+XCQ5/E85ltFoL2OZ8vc6vZZQsrdgctZ0kMLC2/aMA5y/izIg45B+G1UJTJViN1Tsz3frfp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZRj+6qE7aAVd+YYyuUCreUOaEvS4TYoSz2Lz+iFZkW5+ummuC
-	zPr+xUnsWem07ZBzYIU5CWqY8gE3/VOpOtj6HSv3s2nNlJH+ZeE5AjCBhBHo9uLkQ0wOfwJvwDJ
-	F9zoEngAcZU0FkcBSGLxfZwegotBkcg==
-X-Google-Smtp-Source: AGHT+IHanfPp1aQvqSwf2sXxxoYj2/nZjpy0k09q6j9Kw3Drf0RM9sdzWliM8DjGkucRkyyEJ6rYMj8ZjfP4jDx5X8c=
-X-Received: by 2002:a17:907:3e16:b0:b0e:83e7:f6e1 with SMTP id
- a640c23a62f3a-b60530575abmr191496666b.15.1760560577064; Wed, 15 Oct 2025
- 13:36:17 -0700 (PDT)
+	s=arc-20240116; t=1760560604; c=relaxed/simple;
+	bh=wbAor5OhA6ggtXet9zEpN8MfXmdJnHDdAvCECAM9CPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S9YyrEbrYL/85Lu/4amSDxIOjMP1DUtMdDkIuxcVKa/4ocNXtKb5W6IXUknZyT51uh0vZvmSJcYDS3GxKAnuKQlgIxtJfr4aUk2zi2yg3iFTTsHUgL719tbzUmxMGDDGpBaakMVF2iA/jwXBWfpDA4OjJZR3o/GBeGPofXF890U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dsuCEzCi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760560600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9l2SAd4et9FHUQ+j/+m4vgSU0s4WtjrjNQIhvzxYPxM=;
+	b=dsuCEzCirbXHN9G6Nc7C3vKZLvJLCWe+SSJS+a8NTXkgSlYSnStCnTZNCtqyKyF1OAFj2i
+	r/Z+lHnCoOlqim3uEzbIpCQN0Dn7FLUmPiydtGbQebGB/6bcyc4bTXJGN5W+UwNOsLAwJc
+	5s8lxagTnNojAt3vUSuRuahY15DKR5U=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-414-EOzyqO43P7Cv8TAQwel4Kw-1; Wed,
+ 15 Oct 2025 16:36:37 -0400
+X-MC-Unique: EOzyqO43P7Cv8TAQwel4Kw-1
+X-Mimecast-MFC-AGG-ID: EOzyqO43P7Cv8TAQwel4Kw_1760560596
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0F3B718001C6;
+	Wed, 15 Oct 2025 20:36:36 +0000 (UTC)
+Received: from laptop.mht.redhat.com (unknown [10.17.17.210])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F12519560AD;
+	Wed, 15 Oct 2025 20:36:25 +0000 (UTC)
+From: Charles Mirabile <cmirabil@redhat.com>
+To: debug@rivosinc.com
+Cc: Liam.Howlett@oracle.com,
+	a.hindborg@kernel.org,
+	akpm@linux-foundation.org,
+	alex.gaynor@gmail.com,
+	alexghiti@rivosinc.com,
+	aliceryhl@google.com,
+	alistair.francis@wdc.com,
+	andybnac@gmail.com,
+	aou@eecs.berkeley.edu,
+	arnd@arndb.de,
+	atishp@rivosinc.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	bp@alien8.de,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	charlie@rivosinc.com,
+	cleger@rivosinc.com,
+	conor+dt@kernel.org,
+	conor@kernel.org,
+	corbet@lwn.net,
+	dave.hansen@linux.intel.com,
+	devicetree@vger.kernel.org,
+	ebiederm@xmission.com,
+	evan@rivosinc.com,
+	gary@garyguo.net,
+	hpa@zytor.com,
+	jannh@google.com,
+	jim.shu@sifive.com,
+	kees@kernel.org,
+	kito.cheng@sifive.com,
+	krzk+dt@kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org,
+	lorenzo.stoakes@oracle.com,
+	lossin@kernel.org,
+	mingo@redhat.com,
+	ojeda@kernel.org,
+	oleg@redhat.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	peterz@infradead.org,
+	richard.henderson@linaro.org,
+	rick.p.edgecombe@intel.com,
+	robh@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	samitolvanen@google.com,
+	shuah@kernel.org,
+	tglx@linutronix.de,
+	tmgross@umich.edu,
+	vbabka@suse.cz,
+	x86@kernel.org,
+	Charles Mirabile <cmirabil@redhat.com>
+Subject: Re: [PATCH v20 24/28] arch/riscv: dual vdso creation logic and select vdso based on hw
+Date: Wed, 15 Oct 2025 16:36:11 -0400
+Message-ID: <20251015203611.2572538-1-cmirabil@redhat.com>
+In-Reply-To: <20251013-v5_user_cfi_series-v20-24-b9de4be9912e@rivosinc.com>
+References: <20251013-v5_user_cfi_series-v20-24-b9de4be9912e@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015-ethos-v4-0-81025a3dcbf3@kernel.org> <20251015-ethos-v4-2-81025a3dcbf3@kernel.org>
- <aO/4cQ8+eLnwqFSh@lizhi-Precision-Tower-5810>
-In-Reply-To: <aO/4cQ8+eLnwqFSh@lizhi-Precision-Tower-5810>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 15 Oct 2025 15:36:05 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+L2RHgP9FaEpxzzVRybyjeNr84xgEBbU4KEyZtrz63FA@mail.gmail.com>
-X-Gm-Features: AS18NWAQqPDQMMnqBwUDObugcrZ2Q-fcA0YRercJNknG6zrODakK3RAlBsIaPZY
-Message-ID: <CAL_Jsq+L2RHgP9FaEpxzzVRybyjeNr84xgEBbU4KEyZtrz63FA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] accel: Add Arm Ethos-U NPU driver
-To: Frank Li <Frank.li@nxp.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
-	Daniel Stone <daniel@fooishbar.org>, Sui Jingfeng <sui.jingfeng@linux.dev>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Oct 15, 2025 at 2:39=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Wed, Oct 15, 2025 at 12:47:40PM -0500, Rob Herring (Arm) wrote:
-> > Add a driver for Arm Ethos-U65/U85 NPUs. The Ethos-U NPU has a
-> > relatively simple interface with single command stream to describe
-> > buffers, operation settings, and network operations. It supports up to =
-8
-> > memory regions (though no h/w bounds on a region). The Ethos NPUs
-> > are designed to use an SRAM for scratch memory. Region 2 is reserved
-> > for SRAM (like the downstream driver stack and compiler). Userspace
-> > doesn't need access to the SRAM.
-> >
-> > The h/w has no MMU nor external IOMMU and is a DMA engine which can
-> > read and write anywhere in memory without h/w bounds checks. The user
-> > submitted command streams must be validated against the bounds of the
-> > GEM BOs. This is similar to the VC4 design which validates shaders.
-> >
-> > The job submit is based on the rocket driver for the Rockchip NPU
-> > utilizing the GPU scheduler. It is simpler as there's only 1 core rathe=
-r
-> > than 3.
-> >
-> > Tested on i.MX93 platform (U65) and FVP (U85) with WIP Mesa Teflon
-> > support.
-> >
-> > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
->
-> How to test this driver?
+Hi Deepak -
 
-You need to add the DT node to i.MX93 .dts like the example, build the
-mesa ethosu branch, and then run tflite with it pointed to the mesa
-delegate.
+On Mon, Oct 13, 2025 at 02:56:16PM -0700, Deepak Gupta wrote:
+> Shadow stack instructions are taken from zimop (mandated on RVA23).
+> Any hardware prior to RVA23 profile will fault on shado stack instruction.
+> Any userspace with shadow stack instruction in it will fault on such
+> hardware. Thus such userspace can't be brought onto such a hardware.
+> 
+> It's not known how userspace will respond to such binary fragmentation.
+> However in order to keep kernel portable across such different hardware,
+> `arch/riscv/kernel/vdso_cfi` is created which has logic (Makefile) to
+> compile `arch/riscv/kernel/vdso` sources with cfi flags and then changes
+> in `arch/riscv/kernel/vdso.c` for selecting appropriate vdso depending
+> on whether underlying hardware(cpu) implements zimop extension. Offset
+> of vdso symbols will change due to having two different vdso binaries,
+> there is added logic to include new generated vdso offset header and
+> dynamically select offset (like for rt_sigreturn).
 
-I can send an i.MX93 dts patch after this is merged.
+This looks great. As kernel test robot highlighted, the code doesn't build
+when the config is off, but I was able to fix it with the attached patch.
 
-> > v4:
-> > - Use bulk clk API
-> > - Various whitespace fixes mostly due to ethos->ethosu rename
-> > - Drop error check on dma_set_mask_and_coherent()
-> > - Drop unnecessary pm_runtime_mark_last_busy() call
-> > - Move variable declarations out of switch (a riscv/clang build failure=
-)
-> > - Use lowercase hex in all defines
-> > - Drop unused ethosu_device.coherent member
-> > - Add comments on all locks
-> >
-> ...
-> > diff --git a/drivers/accel/ethosu/ethosu_device.h b/drivers/accel/ethos=
-u/ethosu_device.h
-> > new file mode 100644
-> > index 000000000000..69d610c5c2d7
-> > --- /dev/null
-> > +++ b/drivers/accel/ethosu/ethosu_device.h
-> > @@ -0,0 +1,190 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only or MIT */
-> > +/* Copyright 2025 Arm, Ltd. */
-> > +
-> > +#ifndef __ETHOSU_DEVICE_H__
-> > +#define __ETHOSU_DEVICE_H__
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +#include <drm/drm_device.h>
-> > +#include <drm/gpu_scheduler.h>
-> > +
-> > +#include <drm/ethosu_accel.h>
-> > +
-> > +struct clk;
-> > +struct gen_pool;
->
-> Supposed should include clk.h instead declear a struct.
+Assuming that these changes or equivalent are folded in, you have my:
 
-Headers should only use a forward declaration if that's all they need.
-It keeps the struct opaque for starters.
+Acked-by: Charles Mirabile <cmirabil@redhat.com>
 
-> ...
-> > +
-> > +static int ethosu_open(struct drm_device *ddev, struct drm_file *file)
-> > +{
-> > +     int ret =3D 0;
-> > +     struct ethosu_file_priv *priv;
-> > +
-> > +     if (!try_module_get(THIS_MODULE))
-> > +             return -EINVAL;
-> > +
-> > +     priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
-> > +     if (!priv) {
-> > +             ret =3D -ENOMEM;
-> > +             goto err_put_mod;
-> > +     }
-> > +     priv->edev =3D to_ethosu_device(ddev);
-> > +
-> > +     ret =3D ethosu_job_open(priv);
-> > +     if (ret)
-> > +             goto err_free;
-> > +
-> > +     file->driver_priv =3D priv;
->
-> slice simple.
->
-> struct ethosu_file_priv __free(kfree) *priv =3D NULL;
-> ...
-> priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+As merely a user whose previous concerns have been addressed, I am not
+sure what that is worth, but I appreciate your effort on this.
 
-Linus has voiced his opinion that the above should not be done. It
-should be all one line *only*. But now we allow C99 declarations, so
-we can move it down. We can't get rid of the goto for module_put(), so
-it only marginally helps here.
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/Makefile                        |  3 +++
+>  arch/riscv/include/asm/vdso.h              |  7 ++++++-
+>  arch/riscv/kernel/Makefile                 |  1 +
+>  arch/riscv/kernel/vdso.c                   |  7 +++++++
+>  arch/riscv/kernel/vdso/Makefile            | 29 ++++++++++++++++++++---------
+>  arch/riscv/kernel/vdso/gen_vdso_offsets.sh |  4 +++-
+>  arch/riscv/kernel/vdso_cfi/Makefile        | 25 +++++++++++++++++++++++++
+>  arch/riscv/kernel/vdso_cfi/vdso-cfi.S      | 11 +++++++++++
+>  8 files changed, 76 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> index f60c2de0ca08..b74b63da16a7 100644
+> --- a/arch/riscv/Makefile
+> +++ b/arch/riscv/Makefile
+> @@ -176,6 +176,8 @@ ifeq ($(CONFIG_MMU),y)
+>  prepare: vdso_prepare
+>  vdso_prepare: prepare0
+>  	$(Q)$(MAKE) $(build)=arch/riscv/kernel/vdso include/generated/vdso-offsets.h
+> +	$(if $(CONFIG_RISCV_USER_CFI),$(Q)$(MAKE) \
+> +		$(build)=arch/riscv/kernel/vdso_cfi include/generated/vdso-cfi-offsets.h)
+>  	$(if $(CONFIG_COMPAT),$(Q)$(MAKE) \
+>  		$(build)=arch/riscv/kernel/compat_vdso include/generated/compat_vdso-offsets.h)
+>  
+> @@ -183,6 +185,7 @@ endif
+>  endif
+>  
+>  vdso-install-y			+= arch/riscv/kernel/vdso/vdso.so.dbg
+> +vdso-install-$(CONFIG_RISCV_USER_CFI)	+= arch/riscv/kernel/vdso_cfi/vdso-cfi.so.dbg
+>  vdso-install-$(CONFIG_COMPAT)	+= arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg
+>  
+>  BOOT_TARGETS := Image Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst Image.xz loader loader.bin xipImage vmlinuz.efi
+> diff --git a/arch/riscv/include/asm/vdso.h b/arch/riscv/include/asm/vdso.h
+> index f80357fe24d1..3fc8f72b8bfb 100644
+> --- a/arch/riscv/include/asm/vdso.h
+> +++ b/arch/riscv/include/asm/vdso.h
+> @@ -18,9 +18,13 @@
+>  
+>  #ifndef __ASSEMBLER__
+>  #include <generated/vdso-offsets.h>
+> +#include <generated/vdso-cfi-offsets.h>
+>  
+>  #define VDSO_SYMBOL(base, name)							\
+> -	(void __user *)((unsigned long)(base) + __vdso_##name##_offset)
+> +	((IS_ENABLED(CONFIG_RISCV_USER_CFI) &&					\
+> +	  riscv_has_extension_unlikely(RISCV_ISA_EXT_ZIMOP)) ?			\
+> +	  (void __user *)((unsigned long)(base) + __vdso_##name##_cfi_offset) :	\
+> +	  (void __user *)((unsigned long)(base) + __vdso_##name##_offset))
+>  
+>  #ifdef CONFIG_COMPAT
+>  #include <generated/compat_vdso-offsets.h>
+> @@ -33,6 +37,7 @@ extern char compat_vdso_start[], compat_vdso_end[];
+>  #endif /* CONFIG_COMPAT */
+>  
+>  extern char vdso_start[], vdso_end[];
+> +extern char vdso_cfi_start[], vdso_cfi_end[];
+>  
+>  #endif /* !__ASSEMBLER__ */
+>  
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index 2d0e0dcedbd3..9026400cba10 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -72,6 +72,7 @@ obj-y	+= vendor_extensions/
+>  obj-y	+= probes/
+>  obj-y	+= tests/
+>  obj-$(CONFIG_MMU) += vdso.o vdso/
+> +obj-$(CONFIG_RISCV_USER_CFI) += vdso_cfi/
+>  
+>  obj-$(CONFIG_RISCV_MISALIGNED)	+= traps_misaligned.o
+>  obj-$(CONFIG_RISCV_MISALIGNED)	+= unaligned_access_speed.o
+> diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
+> index 3a8e038b10a2..bf080e519101 100644
+> --- a/arch/riscv/kernel/vdso.c
+> +++ b/arch/riscv/kernel/vdso.c
+> @@ -98,6 +98,13 @@ static struct __vdso_info compat_vdso_info __ro_after_init = {
+>  
+>  static int __init vdso_init(void)
+>  {
+> +	/* Hart implements zimop, expose cfi compiled vdso */
+> +	if (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
+> +		riscv_has_extension_unlikely(RISCV_ISA_EXT_ZIMOP)) {
+> +		vdso_info.vdso_code_start = vdso_cfi_start;
+> +		vdso_info.vdso_code_end = vdso_cfi_end;
+> +	}
+> +
+>  	__vdso_init(&vdso_info);
+>  #ifdef CONFIG_COMPAT
+>  	__vdso_init(&compat_vdso_info);
+> diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
+> index 272f1d837a80..a842dc034571 100644
+> --- a/arch/riscv/kernel/vdso/Makefile
+> +++ b/arch/riscv/kernel/vdso/Makefile
+> @@ -20,6 +20,10 @@ endif
+>  ifdef VDSO_CFI_BUILD
+>  CFI_MARCH = _zicfilp_zicfiss
+>  CFI_FULL = -fcf-protection=full
+> +CFI_SUFFIX = -cfi
+> +OFFSET_SUFFIX = _cfi
+> +ccflags-y += -DVDSO_CFI=1
+> +asflags-y += -DVDSO_CFI=1
+>  endif
+>  
+>  # Files to link into the vdso
+> @@ -48,13 +52,20 @@ endif
+>  CFLAGS_hwprobe.o += -fPIC
+>  
+>  # Build rules
+> -targets := $(obj-vdso) vdso.so vdso.so.dbg vdso.lds
+> +vdso_offsets := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),)-offsets.h
+> +vdso_o := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).o
+> +vdso_so := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).so
+> +vdso_so_dbg := vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).so.dbg
+> +vdso_lds := vdso.lds
+> +
+> +targets := $(obj-vdso) $(vdso_so) $(vdso_so_dbg) $(vdso_lds)
+> +
+>  obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
+>  
+> -obj-y += vdso.o
+> -CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
+> +obj-y += vdso$(if $(VDSO_CFI_BUILD),$(CFI_SUFFIX),).o
+> +CPPFLAGS_$(vdso_lds) += -P -C -U$(ARCH)
+>  ifneq ($(filter vgettimeofday, $(vdso-syms)),)
+> -CPPFLAGS_vdso.lds += -DHAS_VGETTIMEOFDAY
+> +CPPFLAGS_$(vdso_lds) += -DHAS_VGETTIMEOFDAY
+>  endif
+>  
+>  # Disable -pg to prevent insert call site
+> @@ -63,12 +74,12 @@ CFLAGS_REMOVE_getrandom.o = $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
+>  CFLAGS_REMOVE_hwprobe.o = $(CC_FLAGS_FTRACE) $(CC_FLAGS_SCS)
+>  
+>  # Force dependency
+> -$(obj)/vdso.o: $(obj)/vdso.so
+> +$(obj)/$(vdso_o): $(obj)/$(vdso_so)
+>  
+>  # link rule for the .so file, .lds has to be first
+> -$(obj)/vdso.so.dbg: $(obj)/vdso.lds $(obj-vdso) FORCE
+> +$(obj)/$(vdso_so_dbg): $(obj)/$(vdso_lds) $(obj-vdso) FORCE
+>  	$(call if_changed,vdsold_and_check)
+> -LDFLAGS_vdso.so.dbg = -shared -soname=linux-vdso.so.1 \
+> +LDFLAGS_$(vdso_so_dbg) = -shared -soname=linux-vdso.so.1 \
+>  	--build-id=sha1 --eh-frame-hdr
+>  
+>  # strip rule for the .so file
+> @@ -79,9 +90,9 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
+>  # Generate VDSO offsets using helper script
+>  gen-vdsosym := $(src)/gen_vdso_offsets.sh
+>  quiet_cmd_vdsosym = VDSOSYM $@
+> -	cmd_vdsosym = $(NM) $< | $(gen-vdsosym) | LC_ALL=C sort > $@
+> +	cmd_vdsosym = $(NM) $< | $(gen-vdsosym) $(OFFSET_SUFFIX) | LC_ALL=C sort > $@
+>  
+> -include/generated/vdso-offsets.h: $(obj)/vdso.so.dbg FORCE
+> +include/generated/$(vdso_offsets): $(obj)/$(vdso_so_dbg) FORCE
+>  	$(call if_changed,vdsosym)
+>  
+>  # actual build commands
+> diff --git a/arch/riscv/kernel/vdso/gen_vdso_offsets.sh b/arch/riscv/kernel/vdso/gen_vdso_offsets.sh
+> index c2e5613f3495..bd5d5afaaa14 100755
+> --- a/arch/riscv/kernel/vdso/gen_vdso_offsets.sh
+> +++ b/arch/riscv/kernel/vdso/gen_vdso_offsets.sh
+> @@ -2,4 +2,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+>  LC_ALL=C
+> -sed -n -e 's/^[0]\+\(0[0-9a-fA-F]*\) . \(__vdso_[a-zA-Z0-9_]*\)$/\#define \2_offset\t0x\1/p'
+> +SUFFIX=${1:-""}
+> +sed -n -e \
+> +'s/^[0]\+\(0[0-9a-fA-F]*\) . \(__vdso_[a-zA-Z0-9_]*\)$/\#define \2'$SUFFIX'_offset\t0x\1/p'
+> diff --git a/arch/riscv/kernel/vdso_cfi/Makefile b/arch/riscv/kernel/vdso_cfi/Makefile
+> new file mode 100644
+> index 000000000000..8ebd190782b0
+> --- /dev/null
+> +++ b/arch/riscv/kernel/vdso_cfi/Makefile
+> @@ -0,0 +1,25 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +# RISC-V VDSO CFI Makefile
+> +# This Makefile builds the VDSO with CFI support when CONFIG_RISCV_USER_CFI is enabled
+> +
+> +# setting VDSO_CFI_BUILD triggers build for vdso differently
+> +VDSO_CFI_BUILD := 1
+> +
+> +# Set the source directory to the main vdso directory
+> +src := $(srctree)/arch/riscv/kernel/vdso
+> +
+> +# Copy all .S and .c files from vdso directory to vdso_cfi object build directory
+> +vdso_c_sources := $(wildcard $(src)/*.c)
+> +vdso_S_sources := $(wildcard $(src)/*.S)
+> +vdso_c_objects := $(addprefix $(obj)/, $(notdir $(vdso_c_sources)))
+> +vdso_S_objects := $(addprefix $(obj)/, $(notdir $(vdso_S_sources)))
+> +
+> +$(vdso_S_objects): $(obj)/%.S: $(src)/%.S
+> +	$(Q)cp $< $@
+> +
+> +$(vdso_c_objects): $(obj)/%.c: $(src)/%.c
+> +	$(Q)cp $< $@
+> +
+> +# Include the main VDSO Makefile which contains all the build rules and sources
+> +# The VDSO_CFI_BUILD variable will be passed to it to enable CFI compilation
+> +include $(src)/Makefile
+> diff --git a/arch/riscv/kernel/vdso_cfi/vdso-cfi.S b/arch/riscv/kernel/vdso_cfi/vdso-cfi.S
+> new file mode 100644
+> index 000000000000..d426f6accb35
+> --- /dev/null
+> +++ b/arch/riscv/kernel/vdso_cfi/vdso-cfi.S
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright 2025 Rivos, Inc
+> + */
+> +
+> +#define	vdso_start	vdso_cfi_start
+> +#define	vdso_end	vdso_cfi_end
+> +
+> +#define __VDSO_PATH "arch/riscv/kernel/vdso_cfi/vdso-cfi.so"
+> +
+> +#include "../vdso/vdso.S"
+> 
+> -- 
+> 2.43.0
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+---
+diff --git a/arch/riscv/include/asm/vdso.h b/arch/riscv/include/asm/vdso.h
+index 3fc8f72b8bfb..9cfbb390270f 100644
+--- a/arch/riscv/include/asm/vdso.h
++++ b/arch/riscv/include/asm/vdso.h
+@@ -18,13 +18,21 @@
+ 
+ #ifndef __ASSEMBLER__
+ #include <generated/vdso-offsets.h>
++#if IS_ENABLED(CONFIG_RISCV_USER_CFI)
++
+ #include <generated/vdso-cfi-offsets.h>
+ 
+ #define VDSO_SYMBOL(base, name)							\
+-	((IS_ENABLED(CONFIG_RISCV_USER_CFI) &&					\
+-	  riscv_has_extension_unlikely(RISCV_ISA_EXT_ZIMOP)) ?			\
+-	  (void __user *)((unsigned long)(base) + __vdso_##name##_cfi_offset) :	\
+-	  (void __user *)((unsigned long)(base) + __vdso_##name##_offset))
++	(riscv_has_extension_unlikely(RISCV_ISA_EXT_ZIMOP)) ?			\
++	 (void __user *)((unsigned long)(base) + __vdso_##name##_cfi_offset) :	\
++	 (void __user *)((unsigned long)(base) + __vdso_##name##_offset)
++
++#else /* !CONFIG_RISCV_USER_CFI */
++
++#define VDSO_SYMBOL(base, name)							\
++	(void __user *)((unsigned long)(base) + __vdso_##name##_offset)
++
++#endif /* CONFIG_RISCV_USER_CFI */
+ 
+ #ifdef CONFIG_COMPAT
+ #include <generated/compat_vdso-offsets.h>
 
-> ...
->
-> file->driver_priv =3D no_free_ptr(priv);
->
->
-> > +     return 0;
-> > +
-> > +err_free:
-> > +     kfree(priv);
-> > +err_put_mod:
-> > +     module_put(THIS_MODULE);
-> > +     return ret;
-> > +}
-> > +
-> ...
-> > +
-> > +
-> > +static int ethosu_init(struct ethosu_device *ethosudev)
-> > +{
-> > +     int ret;
-> > +     u32 id, config;
-> > +
-> > +     ret =3D devm_pm_runtime_enable(ethosudev->base.dev);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D pm_runtime_resume_and_get(ethosudev->base.dev);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     pm_runtime_set_autosuspend_delay(ethosudev->base.dev, 50);
-> > +     pm_runtime_use_autosuspend(ethosudev->base.dev);
-> > +
-> > +     /* If PM is disabled, we need to call ethosu_device_resume() manu=
-ally. */
-> > +     if (!IS_ENABLED(CONFIG_PM)) {
-> > +             ret =3D ethosu_device_resume(ethosudev->base.dev);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
->
-> I think it should call ethosu_device_resume() unconditional before
-> devm_pm_runtime_enable();
->
-> ethosu_device_resume();
-> pm_runtime_set_active();
-> pm_runtime_set_autosuspend_delay(ethosudev->base.dev, 50);
-> devm_pm_runtime_enable();
-
-Why do you think this? Does this do a get?
-
-I don't think it is good to call the resume hook on our own, but we
-have no choice with !CONFIG_PM. With CONFIG_PM, we should only use the
-pm_runtime API.
-
-Rob
 
