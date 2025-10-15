@@ -1,133 +1,149 @@
-Return-Path: <linux-kernel+bounces-854987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB450BDFE05
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:33:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF62BDFE33
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CEEB34BAC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:33:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94EB5502CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6881B2FF66A;
-	Wed, 15 Oct 2025 17:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387332FFFA8;
+	Wed, 15 Oct 2025 17:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgAQLS7S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hhn9g1gL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6210271454
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F96221DAD;
+	Wed, 15 Oct 2025 17:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549547; cv=none; b=MXCqHPgAsxCPiVKKFzY6X1H097VJVZ9HPU/YM3nQSj6J1fI8aO4MgzXEZWV6NHZhzwXGvoAqlw3jCwN2ObjPuWhIv9WlJhFKPB2Lm/05Cy0BY1Sd4HZI112XE077yhbiJ/7hsq0yFPHwh4mwEmWVG69JEa995aXodCd/QoxgUsw=
+	t=1760549740; cv=none; b=eXBw3QZDQI9Lpo+NB7tpBSPLHFT9r+sq+TomqxWmNuYygnS6of9QZUJgEYjiagF5o7MGCAh8fZpujFudMvqw5tX+oTejYjvrBK71FPM2f0GEuKTpVnz6MVabOKsvs2tZopZbSva1oEMu8xzO4ulYS99JAD35JY6yJX2L1Yl1cPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549547; c=relaxed/simple;
-	bh=ypA9Y1XLCJ0JaOsZ9D7arslYmfqek9jmaC0BXfAkFiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fer2SCQjmjNO9ul2spAiY8WXrO+qk0TXUdQxssbCzph2hX48I3odT7uI5dKUyt/18Q2FDb1RswKc7bm264pKeZRPPT9je2UFBCGL3ACMW+33CGzwhKZbBrFcaneHY1HSULv88a+q8y1+1VqA/ladCYQCONATEF2xqSgk13P6WFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgAQLS7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434ADC4CEF9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:32:27 +0000 (UTC)
+	s=arc-20240116; t=1760549740; c=relaxed/simple;
+	bh=qfx41YB9T3o7PD3L98qTAStSf6+JXp7lI57F7Kpmibg=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=r5dl+giZYu1noWHCeqFZ/iRoym30Z43U0cy4ePZQ5WpD/Lbl5wwzE9mHAp+fO53h599Cq/CFb0RUGpsXY3PdeQOQg6I2BJDB2L3Zg76FmkltniaOAZY9HN1bbzjf8L2qP0eYGojccbKqZAo5R5mjTSg5fFsfkHnLK+TGJ6/CUcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hhn9g1gL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC066C4CEFB;
+	Wed, 15 Oct 2025 17:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760549547;
-	bh=ypA9Y1XLCJ0JaOsZ9D7arslYmfqek9jmaC0BXfAkFiE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DgAQLS7SRvSCHOQkA1y37IESNgUB5gXrAR3FEYJwcsQvroASfC4Q9zLmdk4clrFjt
-	 sOdq09PUHXECilbvbfmaD1mBzGdECa3s5cv2kFyZIhUT1QkipXZGxOcoEYcgUOsPF/
-	 X6Q4fk1f1A4spJ+uQnlLZS3p0Uekq+lujVjVWlcdssHEr5FINyx6byQP1r7ACo+Uw0
-	 ScqK3xqpS2VfBYytXmd1MJev7QD7o7C1g26P37JuYPOm4Qsj0gSrxRz6QOxUnAvn1T
-	 Ef5p2WPtI68zahFotMdeFmZpUuRH1wNIfU6lGM8ElB1cAkfL+iKQM1VvUA8UoLZ3JN
-	 1yjd8p85/GTdQ==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63994113841so12825788a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:32:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXbkTGx0j2wF6yxm69wFuGnz9Fd4x6XcX+qottNMAfSAkdTQCgtMSnfze+yRpfKyHFAsbVe7lvRXjNhkLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5qqdbtuNfbgZ1zAsNYaYT3nC+JCrokmabXE97JrsxNaERzo0a
-	zYhD4VXpDLbRtXN39o7L7ILKHughFKvX/UkBgiILWpSoft1CGe05mAx9iV7U6Ei2Bbff94yrsOk
-	fO/7dOcAJgMPR+SYjQF1Yh+ANgrKn6w==
-X-Google-Smtp-Source: AGHT+IG7cYHekwqKp7szJI/bodQqDJQE4T7Y750zy6gYe4uNSyV1ofYKb9OXZ8WAaKzn4fGvZbq+sK2JaM6OSojZBLI=
-X-Received: by 2002:a17:907:9625:b0:b2d:830a:8c01 with SMTP id
- a640c23a62f3a-b50ac4d570emr3206476066b.61.1760549545792; Wed, 15 Oct 2025
- 10:32:25 -0700 (PDT)
+	s=k20201202; t=1760549740;
+	bh=qfx41YB9T3o7PD3L98qTAStSf6+JXp7lI57F7Kpmibg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Hhn9g1gLXr9IeqSAtLbuBAeMEBeMTudsICeSbizLOQQuGMvib/fUiZ1EOEpFx4aOp
+	 AITgxED3uw76yIXZxGateMQHfDElWj9dSod1uONDJEExN1Oc+rJJ6MzKWEx3+FWUDS
+	 vRtCKuU3eWLH2OZyePhZz7Twrm8esI9Xg4JOxicKo3U+hbrrYc8s0M2jL7vr8IZBZB
+	 9yO29WL0I1xDMs9N1+3VT3nT1iMDymWa950rP4chTquxZzA7SNW6is69mhLmuzWPsC
+	 XHBy6bqdCdmNIosTDq64o2mUhJqJ5Zk1iq+gB+8CTasjg1y+UaeSYxoqB5KUDZWpj+
+	 thkqrdofl6SSw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v95Pg-000000011uz-0lVY;
+	Wed, 15 Oct 2025 13:35:48 -0400
+Message-ID: <20251015173214.760495866@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 15 Oct 2025 13:32:14 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Takaya Saeki <takayas@google.com>,
+ Tom Zanussi <zanussi@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ian Rogers <irogers@google.com>,
+ Douglas Raillard <douglas.raillard@arm.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH v3 00/13] tracing: Show contents of syscall trace event user space fields
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251010183418.2179063-1-Frank.Li@nxp.com> <20251014-flattop-limping-46220a9eda46@spud>
- <20251014-projector-immovably-59a2a48857cc@spud> <20251014120213.002308f2@kernel.org>
- <20251014-unclothed-outsource-d0438fbf1b23@spud> <20251014204807.GA1075103-robh@kernel.org>
- <20251014181302.44537f00@kernel.org> <CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
- <20251015072547.40c38a2f@kernel.org>
-In-Reply-To: <20251015072547.40c38a2f@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 15 Oct 2025 12:32:14 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+wHG_DW1D_=dR6Q_mwyqFAXKGx771PsqjvW+XCRKM3tw@mail.gmail.com>
-X-Gm-Features: AS18NWBcn_X0-kfGnOoFGvu-kGdwMnuyg_-qtR_oFRiq_0F3EMcRBbh-LtvesbE
-Message-ID: <CAL_Jsq+wHG_DW1D_=dR6Q_mwyqFAXKGx771PsqjvW+XCRKM3tw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional clock
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Frank Li <Frank.Li@nxp.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	imx@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 9:25=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Wed, 15 Oct 2025 06:53:01 -0500 Rob Herring wrote:
-> > > > And the issue is that both PW projects might get updated and both d=
-on't
-> > > > necessarily want the same state (like this case). So we need to
-> > > > distinguish. Perhaps like one of the following:
-> > > >
-> > > > dt-pw-bot: <state>
-> > > >
-> > > > or
-> > > >
-> > > > pw-bot: <project> <state>
-> > >
-> > > We crossed replies, do you mind
-> > >
-> > >   pw-bot: xyz [project]
-> > >
-> > > ? I like the optional param after required, and the brackets may help
-> > > us disambiguate between optional params if there are more in the futu=
-re.
-> >
-> > That's fine. Though it will be optional for you, but not us? We have
-> > to ignore tags without the project if tags intended for netdev are
-> > continued without the project. Or does no project mean I want to
-> > update every project?
->
-> Fair :( I imagine your workflow is that patches land in your pw, and
-> once a DT maintainer reviewed them you don't care about them any more?
+As of commit 654ced4a1377 ("tracing: Introduce tracepoint_is_faultable()")
+system call trace events allow faulting in user space memory. Have some of
+the system call trace events take advantage of this.
 
-Not exactly. Often I don't, but for example sometimes I need to apply
-the patch (probably should setup a group tree, but it's enough of an
-exception I haven't.).
+Also, commit 64cf7d058a00 ("tracing: Have trace_marker use per-cpu data to
+read user space") added the method to use per CPU buffers to read data from
+user space in critical sections. Instead of recreating that code, make that
+code generic so that the system calls can utilize it as well.
 
-> So perhaps a better bot on your end would be a bot which listens to
-> Ack/Review tags from DT maintainers. When tag is received the patch
-> gets dropped from PW as "Handled Elsewhere", and patch id (or whatever
-> that patch hash thing is called) gets recorded to automatically discard
-> pure reposts.
+Update the system call trace events to read user space for various system
+calls (like openat, execve, etc).
 
-I already have that in place too. Well, kind of, it updates my
-review/ack automatically on subsequent versions, but I currently do a
-separate pass of what Conor and Krzysztof reviewed. Where the pw-bot
-tags are useful is when there are changes requested. I suppose I could
-look for replies from them without acks, but while that usually
-indicates changes are needed, not always. So the pw-bot tag is useful
-to say the other DT maintainers don't need to look at this patch at
-all.
+A new file is created in the tracefs directory (and also per instance) that
+allows the user to shorten the amount copied from user space. It can be
+completely disabled if set to zero (it will only display "" or (, ...)
+but no copying from user space will be performed). The max size to copy is
+hard coded to 165, which should be enough for this purpose. The default
+size is 63 bytes.
 
-Rob
+This allows the output to look like this:
+
+ sys_access(filename: 0x7f8c55368470 "/etc/ld.so.preload", mode: 4)
+ sys_execve(filename: 0x564ebcf5a6b8 "/usr/bin/emacs", argv: 0x7fff357c0300, envp: 0x564ebc4a4820)
+ sys_write(fd: 1, buf: 0x56430f353be0 (2f:72:6f:6f:74:0a) "/root.", count: 6)
+ sys_sethostname(name: 0x5584310eb2a0 "debian", len: 6)
+ sys_renameat2(olddfd: 0xffffff9c, oldname: 0x7ffe02facdff "/tmp/x", newdfd: 0xffffff9c, newname: 0x7ffe02face06 "/tmp/y", flags: 1)
+
+Perf system call logic is also updated to take advantage of this work.
+
+The openat system call was updated to show the flags as well:
+
+  sys_openat(dfd: 18446744073709551516, filename: 140733603151330 "/tmp/x", flags: O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, mode: 0666)
+
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20250923130457.901085554@kernel.org
+
+- Now that trace_marker uses the per CPU read method for reading user
+  space, make that code generic so that the system call logic can
+  use it as well.
+
+- Update perf system calls to read user space as well.
+
+- Make openat() show what the flags are. Instead of a number, use the
+  actual flag names.
+
+- Show printable characters in the data dumps (like the write system call).
+
+- Allow persistent ring buffer to parse system calls appropriately.
+
+Steven Rostedt (13):
+      tracing: Make trace_user_fault_read() exposed to rest of tracing
+      tracing: Have syscall trace events read user space string
+      perf: tracing: Simplify perf_sysenter_enable/disable() with guards
+      perf: tracing: Have perf system calls read user space
+      tracing: Have system call events record user array data
+      tracing: Display some syscall arrays as strings
+      tracing: Allow syscall trace events to read more than one user parameter
+      tracing: Add a config and syscall_user_buf_size file to limit amount written
+      tracing: Show printable characters in syscall arrays
+      tracing: Add trace_seq_pop() and seq_buf_pop()
+      tracing: Add parsing of flags to the sys_enter_openat trace event
+      tracing: Check for printable characters when printing field dyn strings
+      tracing: Have persistent ring buffer print syscalls normally
+
+----
+ Documentation/trace/ftrace.rst |   8 +
+ include/linux/seq_buf.h        |  17 +
+ include/linux/trace_seq.h      |  13 +
+ include/trace/syscall.h        |   8 +-
+ kernel/trace/Kconfig           |  14 +
+ kernel/trace/trace.c           | 312 ++++++++++++---
+ kernel/trace/trace.h           |  20 +
+ kernel/trace/trace_output.c    |  27 +-
+ kernel/trace/trace_syscalls.c  | 886 ++++++++++++++++++++++++++++++++++++++---
+ 9 files changed, 1188 insertions(+), 117 deletions(-)
 
