@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-854560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7DABDEB57
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:18:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC25BDEB8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511F5481629
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29D0F505B8A
 	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F7321FF55;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1036220694;
 	Wed, 15 Oct 2025 13:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SY27D/q7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lVA/PdEc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57941F1537
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A781F418F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760534293; cv=none; b=AwnKHjuDVlgVdLYiZXLYxDg4gw8bwty3tDty/e7MyqzAdRBkuPklTmj2+wBO8nd736YDWZQ7brM0CejfwN7YDuW29+9WSZXIv/0A8PJkm/o2rVYN4EQkoi0Ffd9A0w1wP1mwuxbeRXuYHpvP+KyvjNqcKPgXDD7AifpEAPw6zvg=
+	t=1760534294; cv=none; b=OSQMbMNk3P+5r3xyIIdMCa7PD4+x9qHhbRXmmJ04Bsi77HdWCzn+6lgPG5n39tDQSZKiTSvM/2HhwMGK3nXBzyPJmLYn8dqMCUjkJBEMndrL4NcemPbo+uSQ4yMinSCqx19OgONfTMSEBijipqeNWsiHXKQL19aSuhr8zRGATxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760534293; c=relaxed/simple;
-	bh=vZ/RyRZG/SlbF7P/WnS78eUkc8xlz11H4I4OUiw1Xeo=;
+	s=arc-20240116; t=1760534294; c=relaxed/simple;
+	bh=L098FDafS8pm9ObOLw9+1ZKs3tCLohX1/Ibu253xq/o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nWFu7oxw6/mouSib9+DjL5o45GuefzFSfZy3omljB5WhfDeznECL1IOISRmsUUhezh1n36I/fvBC55K8tXNZ0EIK1OGRtJAlb2+b2Y93OuxraKN93iHydcFB99bi4cBwIm6eizKrXriKTssXjCGnwt0m6snedFXiZ/S+IvcTq5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SY27D/q7; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=aDv7vxoaJcDGd4S/ujt3CXouclFILWbF5Z7rKZzO858w27+jc17mzpALRx9/iqbsIEhkw2EaodIb3XC7FVNd8YMVkvgxAdS/aYzjIOU4RdrE7yNx9bYqgXTbX2jO6L53PBWtCz8cLwyetkiuMM6kcyFxA68c/SuXGgpFvU+gejc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lVA/PdEc; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAKbWP016165
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:18:10 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FAVLt5004003
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:18:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=1cUb4FoZv4E
-	2KpTwpsL1Qi55vPJoClmNMvvhIsU2zWg=; b=SY27D/q7Tkw0/ujcXTJXGzt2sUP
-	FS64aI8m7A42kZZsmUc3IdSSYZyTi7oRojnF6hBXThCJMqvM7grwF6/tsAPo3UmP
-	qzP8/BSMQ7hXACnxsYxoxnX9PXeR2LrqYv0Z9Xeqyv4g1ZCnuzwnOHjU3qsOXyb0
-	Vkqk0Ka7Td7Db2xWKtSZwv2RSaWzYoJru0q1H6u2bdqFOijVbk2EMzrt4CX4s0Ok
-	Tq0PIzlFgwZ/ZitsqPhYvvs33Cl8+r50H/tJABKayCizm1eyL1DpWWc9jq3bdu20
-	zy6W0GZwRK/xIwdjHbFB4grjRipi/JrhoaXKJcKwxqrRQ+SsKHkUCX3vhDA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qfm5mkw6-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=nnMgSGQvZWa
+	892OSdBf3qcySVN9QLFS9/sViBiMJgyA=; b=lVA/PdEcyNkWadMnx9OhqO4b34k
+	jBIKkQ0EmtxqrF02yhgh0lchJncIrev97kamcBArfQlzTTSTa7DyglY4McI+hL9r
+	AHRBKdOTnIrGEdMB9q3vznQtJsH/NJmlx3bBfvyrsFu8RV3Wv/6dGZBnN2QbI6ql
+	Fsmd6ZNaA3Rt2IRrJn3eqam5CZ/vaad/vQDlurKHBU7KzgYwl+M36qaq04Ek9ZQM
+	742QX6cBjfAdtAmAYCDC2dTAr4zwH/Tl7bAk2/Q9ibmlBnTFNWO3GoRHIoIkdkmJ
+	JUyCIt0VLDmvHkAkZzZmLogQyrJFt951G0r2KyvmmPtc+lYOvMcZt4vbMqA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwptcj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:18:10 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8635d47553dso2553955085a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:18:10 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:18:11 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-876ee102b44so32371566d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:18:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760534289; x=1761139089;
+        d=1e100.net; s=20230601; t=1760534290; x=1761139090;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1cUb4FoZv4E2KpTwpsL1Qi55vPJoClmNMvvhIsU2zWg=;
-        b=xHrqRnbiVjzf6tewsrIlouMson7MaZ/Txw6hnol0CsMS2GA6zt+OYFaFlopBpMvUek
-         eKs+Bsa36XUz0tZ1MYBNySRgAlgzDp5PN9V2f6/SdJ9D9m5M7QMqETs0asQwqVeuQedv
-         YhzPHKZnpiQR8Bi0aq6Ku5Dq6fwR6kMG2WDb5gJs32ek7A2i4Fysf4bNG0dp27ADF5ME
-         cDExvTFo1eGEQdnE83fVP4gq2dKsEaFX/j6xSlmTRN9LSEnxEFBYbR6z5K72TFF3ZZnp
-         +3J6IDMMvVr35wkXeu2MIf7W7CAyTEAyK4BytIulaqFpjdHp2h3SU2GD4MOe9uYgFG6r
-         ehBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJPvjxpo1QJZ+I/Gn1zvCrpD3DYGVE3pZkCtGsqcwA9O7mve/8Bi6CiKIiOnqOUwS4ugHWeUJ/DqPnW7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVHndMEpH31JTXBujzBJTULYheaTRMHh8UxYOxKwYNvALl5UDp
-	Bis8GlUDuz9sstUfJarAjiKZm5ys3p9kcOrz9Y7haehY4wLwI8Lkztpu2zoot+r8oppfd///q2N
-	zyOF0mT1nsXotTAexDdFiYbFoWKxCMB8YpmDbzX92qJrTpfHWJ5PZXW5LJYQ1XIojrF0=
-X-Gm-Gg: ASbGnctOy2x6W5naE8cKuXF5YT/D1qYIi4mfWZofuL/ExuvxKmKbJPC9nzs4A34ggZ7
-	OxbAyCAFaMZ8Pifd+3c3lsANAF6NmHYnGNrsjxnNE6QxjwgOIrilhdVxDn8Tq4syeV3qzEGQowm
-	QT5Yh4kOYjFSSMUzXa4iG3612HVGLz5rr0WHEdp5R/f9v2c7s1ECHvLWFwfcmC1UF2w7gSfRfNk
-	QQ0jsqZJ8pSu3yVuHBJkFyNiH20iZJM1RPv72A648abq9BtFXGO3pfilBxCS5Cyamyk01N7QW2Q
-	H39qiZhTYS3IJUlVrb0Y520avfp+A5hadYDBDdqb3cUxGKmEpdZSOQ==
-X-Received: by 2002:a05:622a:4c1b:b0:4b5:e7c3:1dee with SMTP id d75a77b69052e-4e6ead54342mr390090101cf.47.1760534289359;
+        bh=nnMgSGQvZWa892OSdBf3qcySVN9QLFS9/sViBiMJgyA=;
+        b=D0aqU8K/BKX5RX6BBV2WUrvv5O3A3SesfxXhxbJMptY/MXvcZJYIiOunlzksK1fGmi
+         kEvq6SdDXdQPNL3OIpI8F+EIDNYhI+VIDJeRmf4adavqDMGXE/PSTo2E2VFCDrMWxTGH
+         R13PIuqqZKQe1JBZZZDDoDxOF2SxMmi1qSFeiFj1yBuHTkd2phOgzs9Y5wr1JdtexMs/
+         9rxtrydjW5jmCrRSHscFqPi5rS0rFarjFaFsQXEbZ/1jJzR8Q4HBdCVUOv6vOlaBYdji
+         J8mf/FxQAd+hujiXVRDg31QNJOA+eL2MQL8E7XC6kV32Wl1JeKg3LoYiAhGu+4Q98ZYb
+         Q7HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMnOkG6QvddExQRuyZPRlfrhUKGLUs3tZamp4w8r2pxuLZTJk6tSb8FgyASwaBIrTA5+DLY4c7kI4yrQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjnL4sTWgPpFsmnypwWmKCBdbL5J8eWlXsI2NE4mWKuMTPJoP5
+	3+JMvBvMAzrEfhky9qx/Z8Dr+kxaLaxnzuFR7lkWl0No7uVqvrgfGuKsK1izaRN2H8j3EpJ3x1w
+	ybx85BF8WsJC0QFVJFccaUSxXOzz+p4PrwNQ5i6sN8SisQkCYEADJIypevF8pv0JFkDY=
+X-Gm-Gg: ASbGncs7NiLZwv9UxqL1f2x5u2WvPgBav8EKkCQ4DtWVfp1K6s9ApRBWVYDR2a6l9yH
+	6FRb1IuhJ4qxo5OSiU7xnVED4bs7qAYz6+VxWyTV/0z03TRv57UHVC2jzBU3fLBfBYj2w3i2ws5
+	j9NazwH1zIdP78OEnmCIni+Y89JkwXb7F9CGeb+KTtzz/qYkmCYmFVFh8HSOYCiA+cutHm0hVTE
+	VxZr6UQHAynABDLs0oZxrr7hlZQiFX9pIW9Syg3mpLp3RrtnnRIH5VEUOyOo1MVBRdngelB2dSw
+	8teAhX0tk5xe6tf6GboktAi2ivDQc7MFldb4v2Rf4Bo4uAUcGyreHw==
+X-Received: by 2002:ac8:7e89:0:b0:4d0:fbd5:4cd7 with SMTP id d75a77b69052e-4e890df9b42mr974761cf.16.1760534290529;
+        Wed, 15 Oct 2025 06:18:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQPK/8F9/L9WtmiMGFpf77cZuz+9kWatOyQjFPz0hd1jWTnhTVvG4UfIIpB1jflL+E3HXJNw==
+X-Received: by 2002:ac8:7e89:0:b0:4d0:fbd5:4cd7 with SMTP id d75a77b69052e-4e890df9b42mr974021cf.16.1760534289820;
         Wed, 15 Oct 2025 06:18:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6c3G91brdZkpPUjrur01pEn1Xk3q4nJeLRsNBiynm9tkfya6SGJvXyEwQXuksUqgpd7mVMQ==
-X-Received: by 2002:a05:622a:4c1b:b0:4b5:e7c3:1dee with SMTP id d75a77b69052e-4e6ead54342mr390089561cf.47.1760534288837;
-        Wed, 15 Oct 2025 06:18:08 -0700 (PDT)
 Received: from debian ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc155143fsm262081245e9.11.2025.10.15.06.18.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fc155143fsm262081245e9.11.2025.10.15.06.18.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 06:18:08 -0700 (PDT)
+        Wed, 15 Oct 2025 06:18:09 -0700 (PDT)
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 To: broonie@kernel.org
 Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
@@ -85,9 +85,9 @@ Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org, alexey.klimov@linaro.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
         Stable@vger.kernel.org
-Subject: [PATCH 2/9] ASoC: qcom: q6adm: the the copp device only during last instance
-Date: Wed, 15 Oct 2025 14:17:32 +0100
-Message-ID: <20251015131740.340258-3-srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 3/9] ASoC: qcom: qdsp6: q6asm-dai: set 10 ms period and buffer alignment.
+Date: Wed, 15 Oct 2025 14:17:33 +0100
+Message-ID: <20251015131740.340258-4-srinivas.kandagatla@oss.qualcomm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
 References: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
@@ -98,241 +98,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 5hlBIpoVaCyL0KJvtRPsepQ5LpfPreaJ
-X-Proofpoint-ORIG-GUID: 5hlBIpoVaCyL0KJvtRPsepQ5LpfPreaJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMCBTYWx0ZWRfXy5fqG4lYyTtC
- TNvKw6hawBQzMKDxzOvnDVRLEMKZOk2UOWW5QRnPc5z57cRIIk2GjB5hnIp1gvND7IfK+v3hNpz
- iKBVKiBW2xVMIN2IBp/EjxUJK2dIOhDspAM1fKOGP0OCC2a36X+9G3obvG2IzODkaX7REB3dPkj
- kcCZ6I7GKB0IMuppzPVjGvlk7W0SlQy4bIc5oGW53jROoiUhhDjk7AMuZX4n6ZkFAYYv+QAe9WX
- F2MrqxDRHJJDooFfiuhB1iGKNuFtTU/uS9mu3JR5lLCeivutGZVdpLjn01FyFADtfGoISk+q0VX
- ActTXGcW2ObkceV2/omZeDKOdgDWh10PAiLD0C76RYFFJi6kEy0A3ZaWDjutYn+gWg94goUyX9H
- 3ssGtPPmXgh53fT9ZuRJQbOLFPcl2w==
-X-Authority-Analysis: v=2.4 cv=V71wEOni c=1 sm=1 tr=0 ts=68ef9f12 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX602tnYQ/yJzk
+ dix1ZvOJU5qvgEjIJaUSuHSGE1KH7qWSqT10YgLuB1NPUokqek01yfu5j8CRhab8njHsdYuqMSr
+ q7hJF2JeWCOEh4vDIfk078yYXXdJxQytxXsruV1A3qPGforCzPYJo6EIM/fzSa7eMiR/LrLeyy0
+ H+7mugmeMrjziJC8Rlk1JAszJ734nV0cs7MfdW88EhObysqfMhy862LEKk89xV5txqWVvNmIjbk
+ jLy1xG+CNtL6vGDwFpmluy+4dwAwjxnVBoDailXm/ZwcgToyuAS+ylOkRVgOh3AzloV9b75aj4R
+ PlioA24DTIS52vyQ+5/MHbCZlNb7/f420BDOFWp3Mq3ejVcgxfxH30vdsDm4c/a84UHogOawY2W
+ ec8GEvz/6/sPqGSbPd1QiIZKac5e5A==
+X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68ef9f13 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=LQLTnAVHjxzgEifUwDEA:9 a=IoWCM6iH3mJn3m4BftBB:22
+ a=Ubk33e6zxpvlPXQfVdEA:9 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: a4UYvXDnuvV_U3rvioz5ewdEQNrvXuuR
+X-Proofpoint-ORIG-GUID: a4UYvXDnuvV_U3rvioz5ewdEQNrvXuuR
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-15_05,2025-10-13_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 spamscore=0 adultscore=0 suspectscore=0
- impostorscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510110020
+ priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
 
-A matching Common object post processing instance is normally resused
-across multiple streams. However currently we close this on DSP
-eventhough there is a refcount on this copp object, this can result in
-below error.
+DSP expects the periods to be aligned to fragment sizes, currently
+setting up to hw constriants on periods bytes is not going to work
+correctly as we can endup with periods sizes aligned to 32 bytes however
+not aligned to fragment size.
 
-q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: Found Matching Copp 0x0
-qcom-q6adm aprsvc:service:4:8: cmd = 0x10325 return error = 0x2
-q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: DSP returned error[2]
-q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: Found Matching Copp 0x0
-qcom-q6adm aprsvc:service:4:8: cmd = 0x10325 return error = 0x2
-q6routing ab00000.remoteproc:glink-edge:apr:service@8:routing: DSP returned error[2]
-qcom-q6adm aprsvc:service:4:8: cmd = 0x10327 return error = 0x2
-qcom-q6adm aprsvc:service:4:8: DSP returned error[2]
-qcom-q6adm aprsvc:service:4:8: Failed to close copp -22
-qcom-q6adm aprsvc:service:4:8: cmd = 0x10327 return error = 0x2
-qcom-q6adm aprsvc:service:4:8: DSP returned error[2]
-qcom-q6adm aprsvc:service:4:8: Failed to close copp -22
+Update the constriants to use fragment size, and also set at step of
+10ms for period size to accommodate DSP requirements of 10ms latency.
 
-Fix this by addressing moving the adm_close to copp_kref destructor
-callback.
-
-Fixes: 7b20b2be51e1 ("ASoC: qdsp6: q6adm: Add q6adm driver")
+Fixes: 2a9e92d371db ("ASoC: qdsp6: q6asm: Add q6asm dai driver")
 Cc: <Stable@vger.kernel.org>
-Reported-by: Martino Facchin <m.facchin@arduino.cc>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 ---
- sound/soc/qcom/qdsp6/q6adm.c | 146 +++++++++++++++++------------------
- 1 file changed, 71 insertions(+), 75 deletions(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6adm.c b/sound/soc/qcom/qdsp6/q6adm.c
-index 1530e98df165..75a029a696ac 100644
---- a/sound/soc/qcom/qdsp6/q6adm.c
-+++ b/sound/soc/qcom/qdsp6/q6adm.c
-@@ -109,11 +109,75 @@ static struct q6copp *q6adm_find_copp(struct q6adm *adm, int port_idx,
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index b616ce316d2f..e8129510a734 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -403,13 +403,13 @@ static int q6asm_dai_open(struct snd_soc_component *component,
+ 	}
  
- }
- 
-+static int q6adm_apr_send_copp_pkt(struct q6adm *adm, struct q6copp *copp,
-+				   struct apr_pkt *pkt, uint32_t rsp_opcode)
-+{
-+	struct device *dev = adm->dev;
-+	uint32_t opcode = pkt->hdr.opcode;
-+	int ret;
-+
-+	mutex_lock(&adm->lock);
-+	copp->result.opcode = 0;
-+	copp->result.status = 0;
-+	ret = apr_send_pkt(adm->apr, pkt);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to send APR packet\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	/* Wait for the callback with copp id */
-+	if (rsp_opcode)
-+		ret = wait_event_timeout(copp->wait,
-+					 (copp->result.opcode == opcode) ||
-+					 (copp->result.opcode == rsp_opcode),
-+					 msecs_to_jiffies(TIMEOUT_MS));
-+	else
-+		ret = wait_event_timeout(copp->wait,
-+					 (copp->result.opcode == opcode),
-+					 msecs_to_jiffies(TIMEOUT_MS));
-+
-+	if (!ret) {
-+		dev_err(dev, "ADM copp cmd timedout\n");
-+		ret = -ETIMEDOUT;
-+	} else if (copp->result.status > 0) {
-+		dev_err(dev, "DSP returned error[%d]\n",
-+			copp->result.status);
-+		ret = -EINVAL;
-+	}
-+
-+err:
-+	mutex_unlock(&adm->lock);
-+	return ret;
-+}
-+
-+static int q6adm_device_close(struct q6adm *adm, struct q6copp *copp,
-+			      int port_id, int copp_idx)
-+{
-+	struct apr_pkt close;
-+
-+	close.hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
-+					APR_HDR_LEN(APR_HDR_SIZE),
-+					APR_PKT_VER);
-+	close.hdr.pkt_size = sizeof(close);
-+	close.hdr.src_port = port_id;
-+	close.hdr.dest_port = copp->id;
-+	close.hdr.token = port_id << 16 | copp_idx;
-+	close.hdr.opcode = ADM_CMD_DEVICE_CLOSE_V5;
-+
-+	return q6adm_apr_send_copp_pkt(adm, copp, &close, 0);
-+}
-+
- static void q6adm_free_copp(struct kref *ref)
- {
- 	struct q6copp *c = container_of(ref, struct q6copp, refcount);
- 	struct q6adm *adm = c->adm;
- 	unsigned long flags;
-+	int ret;
-+
-+	ret = q6adm_device_close(adm, c, c->afe_port, c->copp_idx);
-+	if (ret < 0)
-+		dev_err(adm->dev, "Failed to close copp %d\n", ret);
- 
- 	spin_lock_irqsave(&adm->copps_list_lock, flags);
- 	clear_bit(c->copp_idx, &adm->copp_bitmap[c->afe_port]);
-@@ -155,13 +219,13 @@ static int q6adm_callback(struct apr_device *adev, struct apr_resp_pkt *data)
- 		switch (result->opcode) {
- 		case ADM_CMD_DEVICE_OPEN_V5:
- 		case ADM_CMD_DEVICE_CLOSE_V5:
--			copp = q6adm_find_copp(adm, port_idx, copp_idx);
--			if (!copp)
--				return 0;
--
--			copp->result = *result;
--			wake_up(&copp->wait);
--			kref_put(&copp->refcount, q6adm_free_copp);
-+			list_for_each_entry(copp, &adm->copps_list, node) {
-+				if ((port_idx == copp->afe_port) && (copp_idx == copp->copp_idx)) {
-+					copp->result = *result;
-+					wake_up(&copp->wait);
-+					break;
-+				}
-+			}
- 			break;
- 		case ADM_CMD_MATRIX_MAP_ROUTINGS_V5:
- 			adm->result = *result;
-@@ -234,65 +298,6 @@ static struct q6copp *q6adm_alloc_copp(struct q6adm *adm, int port_idx)
- 	return c;
- }
- 
--static int q6adm_apr_send_copp_pkt(struct q6adm *adm, struct q6copp *copp,
--				   struct apr_pkt *pkt, uint32_t rsp_opcode)
--{
--	struct device *dev = adm->dev;
--	uint32_t opcode = pkt->hdr.opcode;
--	int ret;
--
--	mutex_lock(&adm->lock);
--	copp->result.opcode = 0;
--	copp->result.status = 0;
--	ret = apr_send_pkt(adm->apr, pkt);
--	if (ret < 0) {
--		dev_err(dev, "Failed to send APR packet\n");
--		ret = -EINVAL;
--		goto err;
--	}
--
--	/* Wait for the callback with copp id */
--	if (rsp_opcode)
--		ret = wait_event_timeout(copp->wait,
--					 (copp->result.opcode == opcode) ||
--					 (copp->result.opcode == rsp_opcode),
--					 msecs_to_jiffies(TIMEOUT_MS));
--	else
--		ret = wait_event_timeout(copp->wait,
--					 (copp->result.opcode == opcode),
--					 msecs_to_jiffies(TIMEOUT_MS));
--
--	if (!ret) {
--		dev_err(dev, "ADM copp cmd timedout\n");
--		ret = -ETIMEDOUT;
--	} else if (copp->result.status > 0) {
--		dev_err(dev, "DSP returned error[%d]\n",
--			copp->result.status);
--		ret = -EINVAL;
--	}
--
--err:
--	mutex_unlock(&adm->lock);
--	return ret;
--}
--
--static int q6adm_device_close(struct q6adm *adm, struct q6copp *copp,
--			      int port_id, int copp_idx)
--{
--	struct apr_pkt close;
--
--	close.hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
--					APR_HDR_LEN(APR_HDR_SIZE),
--					APR_PKT_VER);
--	close.hdr.pkt_size = sizeof(close);
--	close.hdr.src_port = port_id;
--	close.hdr.dest_port = copp->id;
--	close.hdr.token = port_id << 16 | copp_idx;
--	close.hdr.opcode = ADM_CMD_DEVICE_CLOSE_V5;
--
--	return q6adm_apr_send_copp_pkt(adm, copp, &close, 0);
--}
--
- static struct q6copp *q6adm_find_matching_copp(struct q6adm *adm,
- 					       int port_id, int topology,
- 					       int mode, int rate,
-@@ -567,15 +572,6 @@ EXPORT_SYMBOL_GPL(q6adm_matrix_map);
-  */
- int q6adm_close(struct device *dev, struct q6copp *copp)
- {
--	struct q6adm *adm = dev_get_drvdata(dev->parent);
--	int ret = 0;
--
--	ret = q6adm_device_close(adm, copp, copp->afe_port, copp->copp_idx);
--	if (ret < 0) {
--		dev_err(adm->dev, "Failed to close copp %d\n", ret);
--		return ret;
--	}
--
- 	kref_put(&copp->refcount, q6adm_free_copp);
- 
- 	return 0;
+ 	ret = snd_pcm_hw_constraint_step(runtime, 0,
+-		SNDRV_PCM_HW_PARAM_PERIOD_BYTES, 32);
++		SNDRV_PCM_HW_PARAM_PERIOD_SIZE, 480);
+ 	if (ret < 0) {
+ 		dev_err(dev, "constraint for period bytes step ret = %d\n",
+ 								ret);
+ 	}
+ 	ret = snd_pcm_hw_constraint_step(runtime, 0,
+-		SNDRV_PCM_HW_PARAM_BUFFER_BYTES, 32);
++		SNDRV_PCM_HW_PARAM_BUFFER_SIZE, 480);
+ 	if (ret < 0) {
+ 		dev_err(dev, "constraint for buffer bytes step ret = %d\n",
+ 								ret);
 -- 
 2.51.0
 
