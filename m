@@ -1,189 +1,267 @@
-Return-Path: <linux-kernel+bounces-855322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18295BE0E55
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:03:03 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA919BE0F34
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 226754EA7E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:03:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6041234DB48
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA393054FB;
-	Wed, 15 Oct 2025 22:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363BF30EF92;
+	Wed, 15 Oct 2025 22:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="maGviLPj"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010042.outbound.protection.outlook.com [40.93.198.42])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="xbUyOAdB"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4E27262F;
-	Wed, 15 Oct 2025 22:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760565772; cv=fail; b=eur0+SfAdei9juvGzXQ3jzF7GOhXjzEYwmJmldvKAFbE7ZuO6Mhs/H/6O7wngggCVjV0WbeqE//+lQGlLej4512//SARvNppWUQ1TUp+tCPmAnxpe89F/ESTKywoqG+T8/jz+CLDFWp9Bpj+KWZ88E3fIskfS8hPmm1H3Sqta/Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760565772; c=relaxed/simple;
-	bh=BrqOiolYMzctS38ZgCjXclWlSQhG4w55qXi4fBQcKgw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dq2FWf1Qx6Frv0x+Q0Yldrirz70JiJhVQF74YHkrNcrbZFnXAseicur4Mvmjetc9yl0RMS7IXng7wkckhqngWfho0r/zaIPNSIsIf/88crEMU3zqn+TH1+lNV3mZEAoqIWjk4gunaDOdk4NBiaWZT/NSbTSt7unLbIqfW6YdUP0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=maGviLPj; arc=fail smtp.client-ip=40.93.198.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mGsr+VdtLSjMMNDEgCEkujsMAfyuGbFWZ0oT5z7QJ0pq8KpR5gs23fmcWbq5awqQQjUp7oLfQ3WcxejVbFf0M3UXx1ChRA6kU5SXUmKU9hQ6U2twNNJN63y4luN8zQ26wB02bPBtBvZDln5NPdk0VNjCKH1BkLMovNfOJBNR/ExCOUimSnM5chKEVzRjlECrEoyAuMz1IbbrG/E9fjmBtBAnxgYDkzkKjS/mx10Qi/aErAlxEf+dciKh/alaRGGIkMPJUKotFW4K9CUTtBoIbJ3J/qe0/1r+yr9LfgKLSB0/ynah20sQrXT0f1FeJA4WIllu2RqjEddpae5rTnajBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7SGRrPS3HdagIo/c2OYsBv+ocTyBUS7cJdVp/ApU4Ww=;
- b=itv+XtdYBgxoeQBwLYfTsLMX6A5Kmr7PE6m06cSF/XPwPEDSVUQ1eALkgRMH2eIyddZoMIVyXdU5elWqqKvQO7TWeshd/3zmj9KuI2h64O7VjV67PJXK+4HNryP1/NBbElP6aoF/thCEy1/WDzqdJR5hA6GQMVae5QzZhv5W2ySr3sRJqwk0vY2eXyNYfk8Q1Ywr2f/ZQaajQpKr0nH5kDFbjr/RtMGFXKObshU3zSXQ9Q3+2lUNjwV+J19j/cYGB4S+hLjNjrNzoutPgSYIm/05Yx+nT8vF5oEmt8VudWIhFYMvW7MC3D23tjBjcHcfG1Tu/BGl3pxc8ikvFj5FCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=8bytes.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7SGRrPS3HdagIo/c2OYsBv+ocTyBUS7cJdVp/ApU4Ww=;
- b=maGviLPjtdymgUrpwbT7HAu6eSV7myau0SyhSc3EO6EC9+wczrlf4ZB73LqloDZRUHyDMqPz2MwOIZ14il6LeCBjuO4Qf+Xbyyyv8IrHRgZxPRxdwI7PvdsVL9dnMfnpZf3nfJ99oahutHnfkcONyyJkpsPApzYcG4L0rUuMFqNLkgaiBFK5JYpIijn2KTbKPQCDCC6YsMcDw5AfYhtpbfjDXzwv5pgqepo/IHTImgTZ3mO3Sa5NR1TuLT6k33XNpY62zfuD+PGdZvaVSRwskFI3EFnZMuJuM1vqDif+wx5aikjtNRKXlve0JYVGGt2ahCLXBHScM49IExoLmiE5zQ==
-Received: from SJ0PR05CA0152.namprd05.prod.outlook.com (2603:10b6:a03:339::7)
- by CY8PR12MB7586.namprd12.prod.outlook.com (2603:10b6:930:99::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
- 2025 22:02:47 +0000
-Received: from SJ5PEPF000001ED.namprd05.prod.outlook.com
- (2603:10b6:a03:339:cafe::dc) by SJ0PR05CA0152.outlook.office365.com
- (2603:10b6:a03:339::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.4 via Frontend Transport; Wed,
- 15 Oct 2025 22:02:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ5PEPF000001ED.mail.protection.outlook.com (10.167.242.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 22:02:47 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 15 Oct
- 2025 15:02:38 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Wed, 15 Oct 2025 15:02:37 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 15 Oct 2025 15:02:35 -0700
-Date: Wed, 15 Oct 2025 15:02:34 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <joro@8bytes.org>, <jgg@nvidia.com>, <kevin.tian@intel.com>
-CC: <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <sven@kernel.org>, <j@jannau.net>,
-	<jean-philippe@linaro.org>, <robin.clark@oss.qualcomm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <yong.wu@mediatek.com>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<tjeznach@rivosinc.com>, <pjw@kernel.org>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <heiko@sntech.de>, <schnelle@linux.ibm.com>,
-	<mjrosato@linux.ibm.com>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-	<samuel@sholland.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<asahi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-tegra@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v1 15/20] iommu/fsl_pamu_domain: Implement
- fsl_pamu_domain_test_device
-Message-ID: <aPAZ+hknPmn7GSns@Asurada-Nvidia>
-References: <cover.1760312725.git.nicolinc@nvidia.com>
- <a54211182e22db598b2a26f589e8f5f34ad78f98.1760312725.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F139226D18;
+	Wed, 15 Oct 2025 22:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760567737; cv=none; b=AagYvL4jypRlHaywwiYTuiS30SEH6ClNC3s3y4+qGxNkdC0ydyw0IcQo1M+zgfUkAKaDLqUgzRS4MnyDBjsSO7NvOYM9WGLV3Blx0n4e1gnLyNZEc4ro4BbcLTPSdz4ZwfDzN83i4fLd6SHHyP03jn25EcoFSHEl3JDVyOOcu3c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760567737; c=relaxed/simple;
+	bh=Uy50svceI1+XWgm3Zns9sEedIGjXkuM329JuRdlJIaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZ7NJPC5SnCUDKvt2hHPh6IfBduCHE7Px997hGh8PkLJ9EczalcoE5m6SndARpgs75AIne21a2kYvdcZTEmRk5dTWzIqFWjCrHuS/D+nqmNC8QFUhvMALelTy6yCGK0Qpm0d2GeyCvQe0B4kNp3MZGNffFATak+yrUyUjAASYrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=xbUyOAdB; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=DlM+vgyHxfCOK+MuMNUGW61IU4Xna6U487K0RDUqQe4=; b=xbUyOAdBBo2/nc7toUSs5yUUu7
+	rrywRKq3bwPL5MUpl3nfnqscz+VW2P7YIZw7P87ayXPkqYOdOI0wMeIwqHM9Q3wfgrcfup1KukCVV
+	Di+1/rMvOeV3JtVrnD9rsGLNtDUhJXDqF8l9StRGufgFPXVJPSbHaAHTpPF6G/Kz1VWnblNMoU4DI
+	ni8/PBy/C1boyp49iSxDSakkNc/4wFgeJmCgjBMQlIgH+skWhAQMG6P5Rf2zpcufO56a0FAPV3AV2
+	OGf6igGMKov8tchzG1s9jf1g81OdIgJwqsRJ2SHNeZj7ZnhFdS5EgnosqPol41MrjGy++j4iGYALG
+	fXQ3zGpA==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v99Oh-0081CU-19;
+	Wed, 15 Oct 2025 23:51:03 +0200
+Date: Wed, 15 Oct 2025 23:51:02 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+	dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	p.zabel@pengutronix.de, christian.bruel@foss.st.com,
+	shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com,
+	qiang.yu@oss.qualcomm.com, namcao@linutronix.de,
+	thippeswamy.havalige@amd.com, inochiama@gmail.com,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Junzhong Pan <panjunzhong@linux.spacemit.com>
+Subject: Re: [PATCH v2 4/7] phy: spacemit: introduce PCIe/combo PHY
+Message-ID: <aPAXRiGA8aTZCNTm@aurel32.net>
+Mail-Followup-To: Alex Elder <elder@riscstar.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org,
+	guodong@riscstar.com, pjw@kernel.org, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+	christian.bruel@foss.st.com, shradha.t@samsung.com,
+	krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
+	namcao@linutronix.de, thippeswamy.havalige@amd.com,
+	inochiama@gmail.com, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Junzhong Pan <panjunzhong@linux.spacemit.com>
+References: <20251013153526.2276556-1-elder@riscstar.com>
+ <20251013153526.2276556-5-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a54211182e22db598b2a26f589e8f5f34ad78f98.1760312725.git.nicolinc@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001ED:EE_|CY8PR12MB7586:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b86166e-0e94-4460-4e10-08de0c369370
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DEm0E062OZeDr7Kx+MIKv7FX+QtY7de0TPFI30lACvZPV0ZDNM8T3+VAr4OH?=
- =?us-ascii?Q?zCuVB2yM89Q3zz6ga1y1GIwptgqdw9ALXvLpiFZUY3aFcZOnd+khIjfYM4uN?=
- =?us-ascii?Q?2p1qmNH33WE/R7dvVhl7ZPEdITCOzPnRk47hJlXeNZlWa6rpwMyBK+nap7v7?=
- =?us-ascii?Q?HFIqV1RI0o3AIB6OuQi4pQCAcODUGfnrthUXtyBBCeN1AGQwo6JVCNamOygM?=
- =?us-ascii?Q?e9hrWHLuqSWJoRaMMPvYr7OIN+2mTbhX6o/Pj7rhU4sNthpD5Q8eU14dztLk?=
- =?us-ascii?Q?vtzosnkyrUVkvVcMYI3650biT5SeS+sFr08sNpoGCggjt63HzHLU+6h7PSsc?=
- =?us-ascii?Q?gGMF0GqJd4rSL+jXJAZE0aOvj/dVnWQnaNeyWz5kKhJ1eMOfJu7aMMX71rhN?=
- =?us-ascii?Q?mIq8RANuPtLajMyaSPMOyUU/5ckZNQHIptC3PUkAQZY5VR2b8TrMyu7G3jMq?=
- =?us-ascii?Q?hUccut6BEUxsLDlz0mHNrM4EVgxtvUbQe+sVkrjmoawriKs5IXBiIqEOotj5?=
- =?us-ascii?Q?HkC6BfBMTNZRxBkBUjO1HWxyP6p0kcfh2vpKcGmKFz1ylbUlzTIUPZymY7rR?=
- =?us-ascii?Q?hbK7/FTEuWq7egEQWHK8nNMnwgiboeCSwtmB8whWLYTyYT9/ucDbuDMSqQ3H?=
- =?us-ascii?Q?rWXGsjLeBEG5OktuGX2fJydIG8c4IaNDjIbBVHJ7VTQDLwAnG7DiiYp/+GkR?=
- =?us-ascii?Q?P3lUEo6vMO1hQ2E8TEF1IpHiCWac90FXWRG7Uk5TMkoY2OJtXhe/NUhRXqoM?=
- =?us-ascii?Q?NWGhwHMh1SP1SHeZ+L19PJ3ZSwZN8MUx0UUYsnAOepV3msUFl69SpqEYOffn?=
- =?us-ascii?Q?aJu1XFa1dbnt2hIXQZxUc70sI9eOtaMj9052s9lmI469wKM1HZBKArdyPgeP?=
- =?us-ascii?Q?9nPOTEUkgXEY70vbY9bfF9YBR3Rj6HvPBvN+0wXJA7yFWYcDvRR4tQc/g/xb?=
- =?us-ascii?Q?fjCMlEtlijhVqIO7OVS42LrkyjqdGyT4g10l9E7v+q4ryBA+5Qe1QBCV2Mxn?=
- =?us-ascii?Q?qOr0mUUtyu4p8dKM3Xwjmyl2Je8g+onb0BmboltkCPzOpP/bZyREH6vvrIZd?=
- =?us-ascii?Q?Giy7ANM323Cva97iZew9lrlBp23WLEYBj2SPPl/J8tCtGsvffRKjAANOadXN?=
- =?us-ascii?Q?5WgJ0ttHdO1FyMOyDyHq5Fnll/xld5dHUwlkngK8pPgx8j4nG0Wq8v5qX+1L?=
- =?us-ascii?Q?EkIGJmPGL5cHWwUQtBY0CGYcJ40Zg4lHTYVCBIuUSYtnj659zV2q00o6XxEO?=
- =?us-ascii?Q?YoaEocPesTdf5GNbxPkK3mXMvvlSe2BAJYLl/CCtYNCgq1c180eX+WIr9hK5?=
- =?us-ascii?Q?DUOisyNnpZnqVZG0NTzw2iHp2VLFmUbvOsOCsDIH/08knEP8Xs//Q6SIO++x?=
- =?us-ascii?Q?tB/1RiDJZfEm+NnOlq4fJculdL/iuRPfYkIbTg+YBcTEAApQfS/n1d3v4z/o?=
- =?us-ascii?Q?iLTjAdxzrPISKaWBL4RMu0oZjjOJipqD0+4E7poQtB3R7uLAex3QZQO9WbKD?=
- =?us-ascii?Q?BEVlTXGsi42QwDjHQvCzhFE9sTzF6B96LFNjcQnaOjKqnHvOTu1Lds5P2hf8?=
- =?us-ascii?Q?MEdh4WjGsZ1DubHsImA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 22:02:47.4353
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b86166e-0e94-4460-4e10-08de0c369370
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001ED.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7586
+In-Reply-To: <20251013153526.2276556-5-elder@riscstar.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Sun, Oct 12, 2025 at 05:05:12PM -0700, Nicolin Chen wrote:
-> +static int fsl_pamu_domain_test_device(struct iommu_domain *domain,
-> +				       struct device *dev, ioasid_t pasid,
-> +				       struct iommu_domain *old)
+Hi,
+
+On 2025-10-13 10:35, Alex Elder wrote:
+> Introduce a driver that supports three PHYs found on the SpacemiT
+> K1 SoC.  The first PHY is a combo PHY that can be configured for
+> use for either USB 3 or PCIe.  The other two PHYs support PCIe
+> only.
+> 
+> All three PHYs must be programmed with an 8 bit receiver termination
+> value, which must be determined dynamically.  Only the combo PHY is
+> able to determine this value.  The combo PHY performs a special
+> calibration step at probe time to discover this, and that value is
+> used to program each PHY that operates in PCIe mode.  The combo
+> PHY must therefore be probed before either of the PCIe-only PHYs
+> will be used.
+> 
+> Each PHY has an internal PLL driven from an external oscillator.
+> This PLL started when the PHY is first initialized, and stays
+> on thereafter.
+> 
+> During normal operation, the USB or PCIe driver using the PHY must
+> ensure (other) clocks and resets are set up properly.
+> 
+> However PCIe mode clocks are enabled and resets are de-asserted
+> temporarily by this driver to perform the calibration step on the
+> combo PHY.
+> 
+> Tested-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+
+Thanks for this new version. I have tried it on top of v6.18-rc1 + 
+spacemit DTS commits from next on a BPI-F3, and it fails calibrating the 
+PHY with:
+
+[    2.748405] spacemit-k1-pcie-phy c0b10000.phy: error -ENOENT: calibration failed
+[    2.755300] spacemit-k1-pcie-phy c0b10000.phy: error -ENOENT: error probing combo phy
+[    2.763088] spacemit-k1-pcie-phy c0b10000.phy: probe with driver spacemit-k1-pcie-phy failed with error -2
+[   14.309031] platform c0d10000.phy: deferred probe pending: (reason unknown)
+[   14.313426] platform c0c10000.phy: deferred probe pending: (reason unknown)
+[   14.320347] platform ca400000.pcie: deferred probe pending: platform: supplier c0c10000.phy not ready
+[   14.329542] platform ca800000.pcie: deferred probe pending: platform: supplier c0d10000.phy not ready
+
+Note that version 1 was working fine on the same board.
+
+[ snip ]
+
+> diff --git a/drivers/phy/phy-spacemit-k1-pcie.c b/drivers/phy/phy-spacemit-k1-pcie.c
+> new file mode 100644
+> index 0000000000000..81bc05823d080
+> --- /dev/null
+> +++ b/drivers/phy/phy-spacemit-k1-pcie.c
+
+[ snip ]
+
+> +static int k1_pcie_combo_phy_calibrate(struct k1_pcie_phy *k1_phy)
 > +{
-...
-> +	liodn = of_get_property(dev->of_node, "fsl,liodn", &len);
-> +	if (!liodn) {
-> +		pr_debug("missing fsl,liodn property at %pOF\n", dev->of_node);
-> +		return -ENODEV;
-> +	}
+> +	struct reset_control_bulk_data resets[] = {
+> +		{ .id = "dbi", },
+> +		{ .id = "mstr", },
+> +		{ .id = "slv", },
+> +	};
+> +	struct clk_bulk_data clocks[] = {
+> +		{ .id = "dbi", },
+> +		{ .id = "mstr", },
+> +		{ .id = "slv", },
+> +	};
+> +	struct device *dev = k1_phy->dev;
+> +	struct reset_control *phy_reset;
+> +	int ret = 0;
+> +	int val;
 > +
-> +	guard(spin_lock_irqsave)(&dma_domain->domain_lock);
+> +	/* Nothing to do if we already set the receiver termination value */
+> +	if (k1_phy_rterm_valid())
+> +		return 0;
+> +
+> +	/* De-assert the PHY (global) reset and leave it that way for USB */
+> +	phy_reset = devm_reset_control_get_exclusive_deasserted(dev, "phy");
+> +	if (IS_ERR(phy_reset))
+> +		return PTR_ERR(phy_reset);
+> +
+> +	/*
+> +	 * We also guarantee the APP_HOLD_PHY_RESET bit is clear.  We can
+> +	 * leave this bit clear even if an error happens below.
+> +	 */
+> +	regmap_assign_bits(k1_phy->pmu, PCIE_CLK_RES_CTRL,
+> +			   PCIE_APP_HOLD_PHY_RST, false);
+> +
+> +	/* If the calibration already completed (e.g. by U-Boot), we're done */
+> +	val = readl(k1_phy->regs + PCIE_RCAL_RESULT);
+> +	if (val & R_TUNE_DONE)
+> +		goto out_tune_done;
+> +
+> +	/* Put the PHY into PCIe mode */
+> +	k1_combo_phy_sel(k1_phy, false);
+> +
+> +	/* Get and enable the PCIe app clocks */
+> +	ret = clk_bulk_get(dev, ARRAY_SIZE(clocks), clocks);
+> +	if (ret <= 0) {
+> +		if (!ret)
+> +			ret = -ENOENT;
+> +		goto out_tune_done;
+> +	}
 
-Sorry. This should be:
-	guard(spinlock_irqsave)(&dma_domain->domain_lock);
+This part doesn't look correct. The documentation says this function 
+"returns 0 if all clocks specified in clk_bulk_data table are obtained
+successfully, or valid IS_ERR() condition containing errno."
 
-I have fixed this locally, and did the full build tests on all
-impacted arches.
+To me, it seems the code should only be:
 
-I will send a v2 next week while collecting review comments here.
+	ret = clk_bulk_get(dev, ARRAY_SIZE(clocks), clocks);
+	if (ret)
+		goto out_tune_done;
 
-Thanks
-Nicolin
+[snip]
+
+> +out_put_clocks:
+> +	clk_bulk_put_all(ARRAY_SIZE(clocks), clocks);
+
+When fixing the above bug, this then crashes with:
+
+[    2.776109] Unable to handle kernel paging request at virtual address ffffffc41a0110c8
+[    2.783958] Current kworker/u36:0 pgtable: 4K pagesize, 39-bit VAs, pgdp=0x00000000022a7000
+[    2.792302] [ffffffc41a0110c8] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
+[    2.800980] Oops [#1]
+[    2.803217] Modules linked in:
+[    2.806261] CPU: 3 UID: 0 PID: 58 Comm: kworker/u36:0 Not tainted 6.18.0-rc1+ #4 PREEMPTLAZY 
+[    2.814763] Hardware name: Banana Pi BPI-F3 (DT)
+[    2.819366] Workqueue: events_unbound deferred_probe_work_func
+[    2.825180] epc : virt_to_folio+0x5e/0xb8
+[    2.829172]  ra : kfree+0x3a/0x528
+[    2.832558] epc : ffffffff8034e12e ra : ffffffff8035557a sp : ffffffc600243980
+[    2.839762]  gp : ffffffff82074258 tp : ffffffd700994d80 t0 : ffffffff80021540
+[    2.846967]  t1 : 0000000000000018 t2 : 2d74696d65636170 s0 : ffffffc600243990
+[    2.854172]  s1 : ffffffc600243ab8 a0 : 03ffffc41a0110c0 a1 : ffffffff82123bd0
+[    2.861377]  a2 : 7c137c69131cec36 a3 : ffffffff816606d8 a4 : 0000000000000000
+[    2.868583]  a5 : ffffffc500000000 a6 : 0000000000000004 a7 : 0000000000000004
+[    2.875787]  s2 : ffffffd700b98410 s3 : ffffffc600243ab8 s4 : 0000000000000000
+[    2.882991]  s5 : ffffffff80828f1c s6 : 0000000000008437 s7 : ffffffd700b98410
+[    2.890197]  s8 : ffffffd700b98410 s9 : ffffffd700900240 s10: ffffffff81fc4100
+[    2.897401]  s11: ffffffd700987400 t3 : 0000000000000004 t4 : 0000000000000001
+[    2.904607]  t5 : 000000000000001f t6 : 0000000000000003
+[    2.909902] status: 0000000200000120 badaddr: ffffffc41a0110c8 cause: 000000000000000d
+[    2.917802] [<ffffffff8034e12e>] virt_to_folio+0x5e/0xb8
+[    2.923097] [<ffffffff8035557a>] kfree+0x3a/0x528
+[    2.927784] [<ffffffff80828f1c>] clk_bulk_put_all+0x64/0x78
+[    2.933340] [<ffffffff807249d6>] k1_pcie_phy_probe+0x4ee/0x618
+[    2.939155] [<ffffffff808e35e6>] platform_probe+0x56/0x98
+[    2.944538] [<ffffffff808e0328>] really_probe+0xa0/0x348
+[    2.949832] [<ffffffff808e064c>] __driver_probe_device+0x7c/0x140
+[    2.955909] [<ffffffff808e07f8>] driver_probe_device+0x38/0xd0
+[    2.961724] [<ffffffff808e0912>] __device_attach_driver+0x82/0xf0
+[    2.967801] [<ffffffff808dde6a>] bus_for_each_drv+0x72/0xd0
+[    2.973356] [<ffffffff808e0cac>] __device_attach+0x94/0x198
+[    2.978912] [<ffffffff808e0fca>] device_initial_probe+0x1a/0x30
+[    2.984815] [<ffffffff808defee>] bus_probe_device+0x96/0xa0
+[    2.990370] [<ffffffff808dff0e>] deferred_probe_work_func+0xa6/0x110
+[    2.996707] [<ffffffff8005cb66>] process_one_work+0x15e/0x340
+[    3.002436] [<ffffffff8005d58c>] worker_thread+0x22c/0x348
+[    3.007905] [<ffffffff80066b7c>] kthread+0x10c/0x208
+[    3.012853] [<ffffffff80014de0>] ret_from_fork_kernel+0x18/0x1c0
+[    3.018843] [<ffffffff80c917d6>] ret_from_fork_kernel_asm+0x16/0x18
+[    3.025098] Code: 7a98 8d19 2717 0131 3703 5fa7 8131 8d19 051a 953e (651c) f713 
+[    3.032497] ---[ end trace 0000000000000000 ]---
+
+It seems that we want clk_bulk_put() and not clk_bulk_put_all(). The 
+latter free the clocks, while they have been allocated on the stack.
+
+Regards,
+Aurelien
+
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
