@@ -1,254 +1,195 @@
-Return-Path: <linux-kernel+bounces-854122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E049BDD988
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:04:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8B7BDD98E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93DAC3E256D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:04:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5ECD84FB574
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3043090D7;
-	Wed, 15 Oct 2025 09:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C96630648B;
+	Wed, 15 Oct 2025 09:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jcc7Wkw0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0mZj2Iko"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010057.outbound.protection.outlook.com [40.93.198.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E770A30648B;
-	Wed, 15 Oct 2025 09:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519074; cv=none; b=rM5VmNbqdX4l6aRMS6115Qwcp7HXIyiR7/X2hMFaPN9jw3tpvUFQ8KDVrSlKYpdiIPA31rolXDBcwUdP5RYu28s23gQGIzmlgAm460yqLASOwO/nF9u6/FfYI27xYMP6oYHJ5/CQjmPLHztCls+2Hac4/vT8wcsvUz+kSP7ENMw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519074; c=relaxed/simple;
-	bh=d++6MHwAGD+KgVnZhjSK1AbYBSvKbkEvvbW38OEJCxY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=us30QDzPDrKogGcFU+ANsh+xk83RvmQ6brIDpEbefjowgIkp67g/b3rAX9D8nYcb8finBXE4wKkpovHD8xQXjh7JEMWwHnOE/pmHSTQ3NAknNWEYBDMyIXL0YG5XTatmR8uwf1GZ8lpBnTiGxOANhrSJtYDbNTgjUmcZCKKQdVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jcc7Wkw0; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760519073; x=1792055073;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=d++6MHwAGD+KgVnZhjSK1AbYBSvKbkEvvbW38OEJCxY=;
-  b=jcc7Wkw0ZZfA9c/lVR9KrBtkM26kFoptW6Hpz5NwTUWkh0GnIQzRe9jw
-   1ARtSife/NQ4VGaYpnx0tQuQLEjYBd99Hji0O8xBwZmAi4HXFsghba7t6
-   vOgFE4jqAwLX3fhsv8CtIgoQiQy1aFsYvjQ4rn7Y7WsxjWIIIUiinybDh
-   JLc4wMFUnqHk0PSg9R3P6YffgESzHlMI1bD9LBq2qzzXw3NXV1Lcqu/k2
-   gHDuyEQ1bK0pQmcbXtsVGaDGxxkuS6CqUjowDM1CaS/53BCc8xQz290Ck
-   jmM/Bics806AptRXSBCewTH8tRm2FbLXAwcUg1Jh6HJmA9DMIQZZXOIsK
-   Q==;
-X-CSE-ConnectionGUID: /PxpKfeaTUu8jH+1C9iXAg==
-X-CSE-MsgGUID: CfiW6VKjT6CL6sJueI34ZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="65309693"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="65309693"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:04:32 -0700
-X-CSE-ConnectionGUID: Spi6wYbmRB+UM9OD5M+Vwg==
-X-CSE-MsgGUID: 2+FjcwEMT9iDp0o82bIUjw==
-X-ExtLoop1: 1
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:04:28 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 15 Oct 2025 12:04:24 +0300 (EEST)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
-    Derek John Clark <derekjohn.clark@gmail.com>, 
-    =?ISO-8859-15?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>, 
-    Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2 1/6] platform/x86: ayaneo-ec: Add Ayaneo Embedded
- Controller platform driver
-In-Reply-To: <20251015084414.1391595-2-lkml@antheas.dev>
-Message-ID: <d909afef-a47b-83c9-b935-f5b06034fcab@linux.intel.com>
-References: <20251015084414.1391595-1-lkml@antheas.dev> <20251015084414.1391595-2-lkml@antheas.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6306E30B506;
+	Wed, 15 Oct 2025 09:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760519077; cv=fail; b=hwSP7LeD/kKuVJeAyTBjw8AazOL5Vafw2GGSULDnBkmkktEku3BpG5OiFjcRHdY3LjH23TgYbmqoE+I/idLBSEnTtLGpVxHuNgoHPlZ3EIIXi5SmSV+/pfbQdHvursggPKhOJY0UmiCq3UtarYyGhX9cElpC5PCAQNl7rjgH3z8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760519077; c=relaxed/simple;
+	bh=HEXr3WgOIBIwXL9zpYgeehZ1LPmEp5SIbMDBnPd1GMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tsR3l0Kr7bGBYmS6oorJ1+OWNkBHyMTUeN/9tUxpduK5/S4/mCjM94Gld0sPGF6uL3ur7cPwdxIuJAyPwMAiMfUb0y2LmwAEodlWoBjsKd09F6q3D5Bv2/Gg5+y5zklmlU+H/aWJdiveEg+kHKHMrEk0K4G49wFiXSVAG2ajSiQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0mZj2Iko; arc=fail smtp.client-ip=40.93.198.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rKm5g3Lh/x8htim2omvMbSyyby8NVGvRswyvNrJFHTpSqXOr3r1CohPnERLCmETiV8QUiZ72BmKn+0tKDYMhwpkHoajmoAuHgP1gOfsHfJQwHA97+1nbewRo5X6JhQDpeaNHuLRYORdWEN+lkaLUeJGuplT0VfBO7njtnDFp+NirCh/wHEHK69L6B6hv7xklD/SBQPf0BdY/M4lvivRwfu0IAWr1o7h9b4gQhS918wh9vR6MCnXiFS4CAPQzZ+vrsr1qOukECP20HaJ4Q1kF0lmDLBqTe3T0ac/2TrGT/5d/uZZT+hF8h7+5SwJCHPfTo78XhY6Qz5g/N9xXKb9LXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=36X2nJluymi46Q4i/tfYsOvRStIwSxQC4dQqEM5I3TM=;
+ b=ZfR6MpYN7XAGu4lACLUZesxGxiKjgdBnTDGgl9Z272/g3ZEnEWtam2xVyBO4q/BUqVJEiD9r34eeBOAYvTN9k+5VmEhnzy4yR9EAuWXZcZH4WfPVeSYJezTYqpdultkKSqONXHKuIy2GZCuhk04iTiPxcQsPsiUX+4j64DaITawH3hQO8KCVuHRNhRIO6vLL0+c1BMvLOIJO0ZEIWd7+KC0s01bNOWmJLOyx8nd0yoa0SeXFbVtXK/6DY98lhnNGCeWBbj9m56bDTQkDp37Bf8ovgu1ntSNAE3RBZ2kSt+IcPY5xxpnwFv5BV/M7FLwuCBbg4b3NlOclTYvWlsofxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=36X2nJluymi46Q4i/tfYsOvRStIwSxQC4dQqEM5I3TM=;
+ b=0mZj2IkoXIUHJDdFwhOpPTwjec95Y8/ysz7mfozapmrhtH63VIv/Lmcwbfgh6mO5Ji/HT+gK6NyWuaf3Xtwi5QkvVaSaMvqhETz1cwd0UtaTBSwT6EamBtX7XYSMS7o171IggGTPuq44yUX62s+mZfvpJ1jfWgqmDpjuK/yqkrI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ PH7PR12MB5926.namprd12.prod.outlook.com (2603:10b6:510:1d9::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.11; Wed, 15 Oct 2025 09:04:34 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
+ 09:04:34 +0000
+Date: Wed, 15 Oct 2025 14:34:26 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: "Mario Limonciello (AMD)" <superm1@kernel.org>
+Cc: Perry Yuan <perry.yuan@amd.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2 5/6] cpufreq/amd-pstate: Fix some whitespace issues
+Message-ID: <aO9jmtcU5iOA6DtE@BLRRASHENOY1.amd.com>
+References: <20251009161756.2728199-1-superm1@kernel.org>
+ <20251009161756.2728199-6-superm1@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009161756.2728199-6-superm1@kernel.org>
+X-ClientProxiedBy: PN3PR01CA0031.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:97::20) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|PH7PR12MB5926:EE_
+X-MS-Office365-Filtering-Correlation-Id: a687ffaf-c102-4658-8de1-08de0bc9dba4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9ElS8FD5Ap5f+vqorMoeD05cLwv4bAYA1AKP/Oxhv0ofozstwlbRYgjLMK2U?=
+ =?us-ascii?Q?hCZdNkAhobVP2fedw/CMrO3dIqEPI4Hi9GCVS1hLshm0GP9dsMgAJweGTxTj?=
+ =?us-ascii?Q?d6HQyFgUmlWp30BvkO1+jgmaXODBat7fyGy/9lY9hPn35a7LElN8TryOncSZ?=
+ =?us-ascii?Q?vcdhMIbPvLtEzpAi0yCEEfUuxTVEYkF5iZb+BD2AIXdm0r0cHZTBCacSfcD0?=
+ =?us-ascii?Q?141pGdg7sNEDdjEmEuvByw4ifLrsGTUVKuLS/uU3GzZBrOARNTtSEYw8r1UB?=
+ =?us-ascii?Q?3FnTCDrhnPqXKkegqH/WZk3NMKL3UA8d4oecldZH+DE1JZmI27ibwG3BIO3J?=
+ =?us-ascii?Q?YOzr1tPY3rrHl5bRZJcsbCDRMbiZxWr8Pqv3Q5caynUKYsMZ5meqU/1PVMqA?=
+ =?us-ascii?Q?q/bNb7UEtFzznVTOf1o26d6InvFNr2Hr58KJtCpulXZOY2Kr5x5NFHAYPIiO?=
+ =?us-ascii?Q?In0HY5LQf0I52QI8luAA00txt+lQBP3emA9Zr7325Y/uWCKBn3R1lPZAlwWa?=
+ =?us-ascii?Q?MPVh4Zh1z95fzIDCTq0qytb/R/SXhrtRe7UoqsYkaxQZklPt8PAspmf0GYGn?=
+ =?us-ascii?Q?MQ36lqpTh0WGRJqIYa/ucXvexc0BK0mi3vUoIEQSh6M/vouzOnlZH806AOSV?=
+ =?us-ascii?Q?XRFNjmqBH4NOLgdff6u1Wq58+cIUNzx6dPCuN6aKP0GlXs4Metr+dak/jb/d?=
+ =?us-ascii?Q?BACCmdAsdT+8fT+QJBLdZ7nSc4ydrRnq5h/dZ1bEcLPr8f5NDroAy4D9uq5L?=
+ =?us-ascii?Q?D+H1757rVP9U+P007/xJ9aC0PwG6a3vdZWwnGAh21AUomXCciWZiQzU+jJ4s?=
+ =?us-ascii?Q?YSVzAZD8ANxxYxCG4IzJpHTyAprsOexiKPtYYg3bHXkuvp4IXC3WSg180+bM?=
+ =?us-ascii?Q?0SZhDOqf2fFe6p1zZBa8W9aMePblM5ZOzbQLW55TsSHslBNaVvgeEIlmiCGl?=
+ =?us-ascii?Q?pLMlBgtQHGOyXMzKEi/aFz/ZkMbqEJ5G6iR41Ss+F9QJtCicyiMjZ+BJExR5?=
+ =?us-ascii?Q?FIKkwcCCpVnZIyOq+IYRuPpQuvxJCxUYMvBDKaHGi2XxQKCSOIZUxnvwNLIg?=
+ =?us-ascii?Q?dP9mABzcYsmBvmJZEd8H/qfEpY1GEmMcCu07UfamTAdCGLLMTI4WDyv+D9JD?=
+ =?us-ascii?Q?sIQVT6pCy+6jR5onSGTgo9UI0lKtKknxaNOgu+rJ5Baqa7zdeZJEzxBJp5sU?=
+ =?us-ascii?Q?Zaey5teLaaLNWTMceNJP7GewE6QCJt12Tv2uldKNCHL26xGO9R1yvAqxtF2u?=
+ =?us-ascii?Q?L2ze/HVITDGk6Glx+Hew+xNVzvPH0Jo+xRpgdEExTvPz39GBkMl9cqLYlrxn?=
+ =?us-ascii?Q?Z4H/djFQGpavsAblXGLFTiOmprSd0adkhI3RWGzZMgU/H9zl099M5fegCrQI?=
+ =?us-ascii?Q?+r5erbVRtBE0d705pqEnhpDhcjuTqUh18mGq1YNvi0ZPglBs3EKHjgoV7fx3?=
+ =?us-ascii?Q?laqzBYwd0o78nRvzzux2PnQejdQYyD2L?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?311AoLu9XlvocBc7gj0HFiwtdWdfMy861BoYmL2Mx04n4UHTlcz/YVDrCW4m?=
+ =?us-ascii?Q?uahWbGz82qxyC6LCqP9QiwlCTSHrHP2UjkMfSzgnwInQEQg+Hx0ho0rot9Uz?=
+ =?us-ascii?Q?TaceMA00pFsdf0mkt4EuHrwzQ+kPxsir1hBrKdB+7RzXwGGd+eGKQDzHLXjC?=
+ =?us-ascii?Q?I0tSt0Xa+ADBqX3E/0mkbVeh8ZR+Cgn4ftFMVBY1EQJYMcW7et093cMuhsI9?=
+ =?us-ascii?Q?WY7i4gtHzb8nralhvntb6+5xToSq7WhWtiEiMazkSuH8UO6ZU7EQB39PS4az?=
+ =?us-ascii?Q?35wIZzkTZRyPjhETKjAsXElTRkhu9pbge3C0oXbU15/qEfXQLE7fmYsMkkNM?=
+ =?us-ascii?Q?LfoLll3epdlFUGnApnFe+6sqnucA3mZ6mv8ibTyZOn2yKGof6aiFT1zxVgB+?=
+ =?us-ascii?Q?K+NDNZ4VVaT+pDABWJcaSG/x06KTzh9pUUfXDmwHAsjfx2toZIYhe+4uCaKk?=
+ =?us-ascii?Q?MP8KMs+0FhCGmQZE1ctTta8azL+SuxivzeRimyTm4OTdSl/crrQ2F7JR8Zhp?=
+ =?us-ascii?Q?8SPrSrgcT0lhTkhb/BgbN0UhJDZyCKzqskC9Xgumt3ZoRvTwsvBTIvmof9MK?=
+ =?us-ascii?Q?pM6v/mceYs1TqR4sP1JImzoUXJOjghRR0MgB44fQp9ycytdR8m2EaPyTJ5vW?=
+ =?us-ascii?Q?05LwHduIBcEn2BZeViNDwBpCtR/qHHWeEsP0Olo83jijSS+u+9TMD5gTWj7c?=
+ =?us-ascii?Q?+FaT5wL1A7M09UK7gY6nFyTtLck+bNGU1dBrewTd96HCbqp9YlSLFMfHK2Mo?=
+ =?us-ascii?Q?VY/1AzIY1oIgoYaHePgb6V10NuKiiKp5iHTgcIm9Ows/CZg5eRvky3XH887Z?=
+ =?us-ascii?Q?6A1xv1TtjvKDEweTGun/aUZ8FrP4Vftqwa1e69CyRShS/LajJrGxtlERwrwl?=
+ =?us-ascii?Q?1AKLtzrrRZX/X3RO5j7f/lTnJNTClKXG/Egnh0tnkDJp4EC1tZSlhM1l+n15?=
+ =?us-ascii?Q?5MVFzhT1gYxjstaHSUdE46D8oe5oJrwDX6AhYeFLL63NVxxBMNyn+aboArCO?=
+ =?us-ascii?Q?iuNxpt6UvTOMHQs95OljqrE+VnQHby8XM2r09l+rpAMrMsdaDwG4eOsqMJmf?=
+ =?us-ascii?Q?q8KNKpWXgvnxtTvbQvCxR0caAmgoY3FOh8QgMHltypp5IKzEpLUAZVrUZ+RU?=
+ =?us-ascii?Q?N3qx2YlhJ+uNXaxho/w31VJaH5x2h58tAHfwAzV15B+6OsvN9rf+ewMfQ70d?=
+ =?us-ascii?Q?K5xYzocVe9YLCJnVSeYFxgsK3W6eZHC7CJ4TLXyhRs2cf/jC/ZGkslz2Nf/S?=
+ =?us-ascii?Q?4/LxyataGWgYzL3xcS6ScvzE8t1qGYdG6gp7fRMmuK8mSZPiLdyWF0Jw56+Q?=
+ =?us-ascii?Q?1ggFFp1zSCK8hopKRmccZjQXGlZhgsCh3qJRP0n9pnRt0S1IrpNGFeBsk2Ho?=
+ =?us-ascii?Q?D8kYKPCDLtZMBLdRo9fTg+w9B9bgQxM84EInobmKmwt+0fdhbO61UsBzdWBc?=
+ =?us-ascii?Q?oBPYlXJH++6gjmtQet3rwFk5ssTWJ4TMU7J9xp0Uo+aYiWCHLhNLSLMP4Ibc?=
+ =?us-ascii?Q?TGjt2U9pqi+Yo8UR5FPTnhBI0m2PFQpWSPY+vGTRdf7Lmo+P0/zleGSGpe+i?=
+ =?us-ascii?Q?QzUwCcRSiRb9BGMTesAYAqkYb53ZSAWUGHG1X/KH?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a687ffaf-c102-4658-8de1-08de0bc9dba4
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 09:04:33.8661
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +tcQfmcOlySFY1PgZ0upF8r0fPtIAruU/xCf7z/F4525+CUcJccA/5g0A/Sb2Un/dN6LNnfKR3Fd8is7KoPVXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5926
 
-On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
+On Thu, Oct 09, 2025 at 11:17:55AM -0500, Mario Limonciello (AMD) wrote:
+> Add whitespace around the equals and remove leading space.
+>
+Thanks for cleaning this up.
 
-> Recent Ayaneo devices feature an ACPI mapped Embedded Controller (EC)
-> with standard addresses across models that provides access to fan
-> speed, fan control, battery charge limits, and controller power
-> controls. Introduce a new driver stub that will handle these driver
-> features.
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
 > ---
->  MAINTAINERS                      |  6 +++
->  drivers/platform/x86/Kconfig     | 10 ++++
->  drivers/platform/x86/Makefile    |  3 ++
->  drivers/platform/x86/ayaneo-ec.c | 89 ++++++++++++++++++++++++++++++++
->  4 files changed, 108 insertions(+)
->  create mode 100644 drivers/platform/x86/ayaneo-ec.c
+>  drivers/cpufreq/amd-pstate.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 46126ce2f968..8c4d0c26ca77 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4187,6 +4187,12 @@ W:	https://ez.analog.com/linux-software-drivers
->  F:	Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
->  F:	drivers/pwm/pwm-axi-pwmgen.c
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 2d2ef53d12447..a0f21ac1205af 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -126,7 +126,7 @@ static unsigned int epp_values[] = {
+>  	[EPP_INDEX_BALANCE_PERFORMANCE] = AMD_CPPC_EPP_BALANCE_PERFORMANCE,
+>  	[EPP_INDEX_BALANCE_POWERSAVE] = AMD_CPPC_EPP_BALANCE_POWERSAVE,
+>  	[EPP_INDEX_POWERSAVE] = AMD_CPPC_EPP_POWERSAVE,
+> - };
+> +};
 >  
-> +AYANEO PLATFORM EC DRIVER
-> +M:	Antheas Kapenekakis <lkml@antheas.dev>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/platform/x86/ayaneo-ec.c
-> +
->  AZ6007 DVB DRIVER
->  M:	Mauro Carvalho Chehab <mchehab@kernel.org>
->  L:	linux-media@vger.kernel.org
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 46e62feeda3c..ff2678927696 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -316,6 +316,16 @@ config ASUS_TF103C_DOCK
->  	  If you have an Asus TF103C tablet say Y or M here, for a generic x86
->  	  distro config say M here.
+>  typedef int (*cppc_mode_transition_fn)(int);
 >  
-> +config AYANEO_EC
-> +	tristate "Ayaneo EC platform control"
-> +	depends on X86
-> +	help
-> +	  Enables support for the platform EC of Ayaneo devices. This
-> +	  includes fan control, fan speed, charge limit, magic
-> +	  module detection, and controller power control.
-> +
-> +	  If you have an Ayaneo device, say Y or M here.
-> +
->  config MERAKI_MX100
->  	tristate "Cisco Meraki MX100 Platform Driver"
->  	depends on GPIOLIB
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index c7db2a88c11a..274a685eb92d 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -39,6 +39,9 @@ obj-$(CONFIG_ASUS_TF103C_DOCK)	+= asus-tf103c-dock.o
->  obj-$(CONFIG_EEEPC_LAPTOP)	+= eeepc-laptop.o
->  obj-$(CONFIG_EEEPC_WMI)		+= eeepc-wmi.o
+> @@ -182,7 +182,7 @@ static inline int get_mode_idx_from_str(const char *str, size_t size)
+>  {
+>  	int i;
 >  
-> +# Ayaneo
-> +obj-$(CONFIG_AYANEO_EC)		+= ayaneo-ec.o
-> +
->  # Cisco/Meraki
->  obj-$(CONFIG_MERAKI_MX100)	+= meraki-mx100.o
->  
-> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-> new file mode 100644
-> index 000000000000..90b86527ab0d
-> --- /dev/null
-> +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -0,0 +1,89 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Platform driver for the Embedded Controller (EC) of Ayaneo devices. Handles
-> + * hwmon (fan speed, fan control), battery charge limits, and magic module
-> + * control (connected modules, controller disconnection).
-> + *
-> + * Copyright (C) 2025 Antheas Kapenekakis <lkml@antheas.dev>
-> + */
-> +
-> +#include <linux/dmi.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +struct ayaneo_ec_quirk {
-> +};
-> +
-> +struct ayaneo_ec_platform_data {
-> +	struct platform_device *pdev;
-> +	struct ayaneo_ec_quirk *quirks;
-> +};
-> +
-> +static const struct ayaneo_ec_quirk ayaneo3 = {
-> +};
-
-I suggest including quirks in the name.
-
-> +
-> +static const struct dmi_system_id dmi_table[] = {
-> +	{
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
-> +			DMI_EXACT_MATCH(DMI_BOARD_NAME, "AYANEO 3"),
-> +		},
-> +		.driver_data = (void *)&ayaneo3,
-> +	},
-> +	{},
-> +};
-> +
-> +static int ayaneo_ec_probe(struct platform_device *pdev)
-> +{
-> +	const struct dmi_system_id *dmi_entry;
-> +	struct ayaneo_ec_platform_data *data;
-> +
-> +	dmi_entry = dmi_first_match(dmi_table);
-> +	if (!dmi_entry)
-> +		return -ENODEV;
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->pdev = pdev;
-> +	data->quirks = dmi_entry->driver_data;
-> +	platform_set_drvdata(pdev, data);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver ayaneo_platform_driver = {
-> +	.driver = {
-> +		.name = "ayaneo-ec",
-> +	},
-> +	.probe = ayaneo_ec_probe,
-> +};
-> +
-> +static struct platform_device *ayaneo_platform_device;
-> +
-> +static int __init ayaneo_ec_init(void)
-> +{
-> +	ayaneo_platform_device =
-> +		platform_create_bundle(&ayaneo_platform_driver,
-> +				       ayaneo_ec_probe, NULL, 0, NULL, 0);
-> +
-> +	return PTR_ERR_OR_ZERO(ayaneo_platform_device);
-
-Please add include for this.
-
-> +}
-> +
-> +static void __exit ayaneo_ec_exit(void)
-> +{
-> +	platform_device_unregister(ayaneo_platform_device);
-> +	platform_driver_unregister(&ayaneo_platform_driver);
-> +}
-> +
-> +MODULE_DEVICE_TABLE(dmi, dmi_table);
-> +
-> +module_init(ayaneo_ec_init);
-> +module_exit(ayaneo_ec_exit);
-> +
-> +MODULE_AUTHOR("Antheas Kapenekakis <lkml@antheas.dev>");
-> +MODULE_DESCRIPTION("Ayaneo Embedded Controller (EC) platform features");
-> +MODULE_LICENSE("GPL");
+> -	for (i=0; i < AMD_PSTATE_MAX; i++) {
+> +	for (i = 0; i < AMD_PSTATE_MAX; i++) {
+>  		if (!strncmp(str, amd_pstate_mode_string[i], size))
+>  			return i;
+>  	}
+> -- 
+> 2.43.0
 > 
 
 -- 
- i.
-
+Thanks and Regards
+gautham.
 
