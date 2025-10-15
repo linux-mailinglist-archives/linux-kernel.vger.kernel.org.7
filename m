@@ -1,185 +1,253 @@
-Return-Path: <linux-kernel+bounces-854258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008E8BDDEF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:15:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8454DBDDF0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9DC3A3E0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:15:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 038CA4F8C9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A91181CFA;
-	Wed, 15 Oct 2025 10:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D7431A560;
+	Wed, 15 Oct 2025 10:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nrfuj0MS"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ml04TbB3"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010014.outbound.protection.outlook.com [52.101.84.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138718C31
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760523333; cv=none; b=YBdJ3rVqFWACvU04d5WQKDD89b2D1TrhdDVa24pSCNAdUxOgaMxTtGhm9h+gHQLsHKv31NWjduIOlaDCKhYeMCgf6Mvmp0WERfZrFdthpaL9jlvQZhJTcn6VStXDEefDRGN/xAN3BRveqypbkqlAVlxMCCNQa2uQRNlbHBBNQaI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760523333; c=relaxed/simple;
-	bh=m/wcwtb8FLbmT7nb2hxNG0FTRwvyqk4uZgc1P7N8kjw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GrZFGQTMpY9Kt2YU6gpXL318BYg3qZKoThC5dLAfsELlR/hDZIGg6YnpRYvcvmgUm4C7cBIDqDH042iayGKaDMLYR7sCiqfWROvbv67cYfSR3v+0BBc2+vhb9UdwoVk1z2odSWOqAocK1bWgLjcS68VMvRIkMIf9xOTgYGi62jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nrfuj0MS; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-471075c0a18so2323795e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760523329; x=1761128129; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=m/wcwtb8FLbmT7nb2hxNG0FTRwvyqk4uZgc1P7N8kjw=;
-        b=Nrfuj0MS8UCv2jMsfkxWP4Z8JhnH5EYwX3946phjl+W27Szrd9TkfjvATaYOnwvQuL
-         pb8nX2QDaMsGiLyvt37iEalkAoVORSh74YENU7Dl58r26Pgk+rde1OymVIu8A7lhXZEu
-         7pre5CF/fXORxyJr+AMVB/reWsnCIdgqSphsJd+BUL2n7HSOKZjWyZH+zPc3PU3+Hr9o
-         CQKK29DDVtHynNjzHb4pewIcvGRS4ujnNAtbMlC9mJBDozvNDRhYpnTqabQDAgSmMblA
-         j5gESLNPB/Uz0y0n7yfJyHgRncdx+Y5c7MV/66wg+ehX/ARtu6X4yFiUhV9w7nQNeWZD
-         xweg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760523329; x=1761128129;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m/wcwtb8FLbmT7nb2hxNG0FTRwvyqk4uZgc1P7N8kjw=;
-        b=wMCyL8daNEpRJB3pG6KF8R5iBxNKi3mFdQGhdiJL5IbIQN2XpCRm2Tr69Vgz4vGJei
-         Y0tm2HB1Az/GPzF4isOKQii0iY/kwtCt/cAXjYkNFClci8ImgFh1dMy4PkjnIPXDkyVa
-         5Hf7YIFmDR553Zb+QRVF3xOTE0PMOh51kYOrObkw/3MPbC3sxq1G+BO2LiNns6UBRpzb
-         tA0L+NoOB/GR58ZOBYs0J/ueaiDy5VFOZy3OYdai3NOoeL8rpMVzINFCDJ4hP4Pl8Caq
-         ve1zZjWDB+XEspLPV8aeXw8YefzT4GlRRFaWOlg5r8xJp1okOf629+0z1bThcejsOu75
-         Yyyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoNUD9KJgg1isV/F6iQm/DE6YPJ/P09NPktDnWN4n1L/GgDk7rrVf/eM1foTaYPe8PiTYaNGqq/bu7ha4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/JHeK2LKiuTYl2otsOiB00Wc6uubKRZ5qGEPZJ5mkOXYkCW+S
-	5ewZ8bMWA5UQLhFn8zZyahsFckSZG5WwozVq2yHmEVWLvp3xi6OzUf50
-X-Gm-Gg: ASbGncsO6ggFe7J5xedSDiJ2o8HtHZxKci3gMrsovv5xkZh2L8LHV2nts363zzTA5ST
-	Btb/gGL7uD6KoxpBs+k+nhUsP54loAsax4vah8M9U8rgnGiAv/fMwy/QuvHa+6CKu2p9hZTwzgA
-	CTa0fgNGNaw8jQQtT3DHOWu9Gdo7zhnl6OtBk+4ALbUNXONd0OllMhG+sXDLLVSqeLIJd7JQ4EW
-	LELEuhYHnwE7jiIBRjoDlUBQeRVCk8jB8XJ+Da8dEAZ+eCMe1wP1NYXjQg+LljuTzhrva7hTrfR
-	KyPPQUdUc4MzQ2a4u3t+9mON5pYT60v9UOFJQxBraIg65diXji0ytoR6II951l5HQM5ROo677d/
-	5iCRfPqp4vAW7RE5jqxR2jTGthh8wJIBT4wLP/BKRvURz+I92gQ==
-X-Google-Smtp-Source: AGHT+IGlbr6rnLZhnuFfgtsP9rjL+H5wzb0gqjtGnO3gCF1NLUUhKtDH+KPfBCySuv+/43Z7NZFylw==
-X-Received: by 2002:a05:600c:4ec8:b0:46d:27b7:e7e5 with SMTP id 5b1f17b1804b1-46fa9b08d79mr222596995e9.32.1760523328748;
-        Wed, 15 Oct 2025 03:15:28 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47101c03644sm22553675e9.8.2025.10.15.03.15.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 03:15:28 -0700 (PDT)
-Message-ID: <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
-Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Michael Hennerich
- <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=	
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko	
- <andy@kernel.org>
-Cc: Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Wed, 15 Oct 2025 11:16:01 +0100
-In-Reply-To: <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
-References: 
-	<20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
-	 <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.58.0 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9411A5BA2;
+	Wed, 15 Oct 2025 10:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760523514; cv=fail; b=Hg/eu86gYtQdUSUg+lrJVhmBU7budjRcPHQJkjg+t/6+dln39+gAcW6ZozY+EO2gM+S4WXsvPsvcm1gNf98Ocgo404/hNjZN2ZklrkpkuFuaodu4BpUkTxPouVcqFekqSkEmgstRwpvY0ZElfMFGzvk410M3gKylBohMhUahSsw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760523514; c=relaxed/simple;
+	bh=7FkwiS5TPy/vvCFtZtU8tdCM7kpbRrGV7b9W2BulhpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LVclyYgk7O4rssnvgDzQGFBxVufLc+Q+7wcvlOam1rOkIAMCJO1DT8SeKrFyUUFvpjz2uO2T6sri+atGnGWBcm6yOspi3KTrcypt15tyuDCjSmgJ0SssIY+SN80/tpFEXCnjev3+kOx+OfZSrFvohrJi/RKvM8uS6QEgv0g3250=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ml04TbB3; arc=fail smtp.client-ip=52.101.84.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mYCwc/js5KoRKDb1cbYyoWHcOkI0COxOlBPbXgkqE9tSsVm4VkugCzZAQ2am7N9DMjeUuSS9zNahA4oSmuXe0OYj9CRUuC/qdLXLFKoA0ZzxnqfW8GgngcWL2SvU3xI1Np580YphiczSeBu6e+2fRilxfYtetUt8z+D4y/t+62fKrYlK18IL1KTslB8or2LNUeCmFVfZ0/z3Fga1MUt8nqqJe8EezH9a38PotbEds1CCvMDGpphillSaMp57dodDSpBB3Jr1s/gTARJrT86ZHRfUDkEL3FlNAZ340QYLMDvnr5bANlKE/L/PIwFOZYDg6NEvwIw32BeWxWbu/LHcow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MzuD7Qijw5ovRh+dMhLB2zNP8NE4QliEc2Ksf/guP2I=;
+ b=RZCvUaYB0YzWZ5Bkdw6w74kY6F3S8CuW4PzyJi0zqAhURU7FYGjMHo/kK9RdV848g7DdHZ8f1LeZt3pQqcAPeQabE6tHPciFzv+Xa8j/WCPxhdAOxmWfYpBqJ9elRopj+HQH0Y0L2efEZcqx92YjXNZ/qsqmnbUYyQuYl+OivC9gf3JLTp6cbQUzAMxQewmdDruiYLFGUTQB2zhTC0DeNKVIo2pdmw3q5aRg4TgjeIxQmnUUAl9zcb2Gfit8pOaxXOjw40TWkFk4LKbUg4WMXs+7EWdbIaIjPc6hJtx6rCDSqlVyT8wRy4o4HeiTHHB3iqOOMiBjqZDV0FdVgs3sQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MzuD7Qijw5ovRh+dMhLB2zNP8NE4QliEc2Ksf/guP2I=;
+ b=Ml04TbB3cMTLKv7sQ3SIvyyeFeM8NBxRCO2Nj6psH+BJD/tWeoZWUxpMoBOqU2TBxWjr+ys8dEIvYz3x3R7Fz6SWrchR456prAAQglw6WYVEDT/Y/LFQbogNVjZDeqZVhaPftTkmM+bN44akQG8YpxgiOqhVrK3MioQmQoXhUPNvDFCmEpuWCg4qBiE/xxCxkQEcR9dFwt4iPKtjcmrZ/RgQGIw5uUFS9y+2eJ0Vs1AtFk2v1M61ElV6D2IeOuyCs3xi0+n1Ub7XgAeUTmpfxNp/wiRTsGrhOPZwvFfJKEKqeJQVLy+BOEZw+RBDUSA7yW+GxnKEtzeI86b4BR5l0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by GV2PR04MB11328.eurprd04.prod.outlook.com (2603:10a6:150:2a2::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Wed, 15 Oct
+ 2025 10:18:27 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
+ 10:18:25 +0000
+Date: Wed, 15 Oct 2025 13:18:23 +0300
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Mathew McBride <matt@traverse.com.au>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dpaa2-eth: treat skb with exact headroom as
+ scatter/gather frames
+Message-ID: <xl3227oc7kfa6swgaxoew7g2jzgy2ksgnpqo4qvz2nzbuludnh@ti6h25vfp4ft>
+References: <20251015-fix-dpaa2-vhost-net-v1-1-26ea2d33e5c3@traverse.com.au>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015-fix-dpaa2-vhost-net-v1-1-26ea2d33e5c3@traverse.com.au>
+X-ClientProxiedBy: AM0P190CA0019.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:208:190::29) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|GV2PR04MB11328:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94bfaae6-df15-4142-546b-08de0bd42d64
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rX0X9STNO6ULQMyt5SDaeyaIlfOm1fabMIpJ2AugSuyIyanpihj4FMT+l2NQ?=
+ =?us-ascii?Q?bMTRTptTr1nIZ9XdPDAjL8V46M3WLv+ehsNG37/WiLzyMv+9bKHkOcpP5tbs?=
+ =?us-ascii?Q?NTDs1qfe/yffHWFb9QpcScHxnI6OXfnLG//HZY6Yigz9dW7zL7MyjZvNYzwe?=
+ =?us-ascii?Q?RYQ3yL9RpfGZCvi5nwq79T8QpkaEDGNS7W3uX0nzboF7EbKu2GfOWw/3SH1O?=
+ =?us-ascii?Q?Gz7/4YmBXtXmxwnOXU0X383KGaBPVr9RdXG3UAU/etFwHPGFEHigaKAKyEmH?=
+ =?us-ascii?Q?brJB/Br8rJhIowaeJEf+NccDN4gf/qpGRDQ+/o71OLFESPFw6rzpvYcqj3ig?=
+ =?us-ascii?Q?ntjojf0M58kwR5Nrmu2wIkp6MeIJaNeIzQnljBS/29x71d3SuFTTZKLTAaBi?=
+ =?us-ascii?Q?jRXEa8jngHNzPmmht4An8BXCvYgU/JrwA4ye6OVLhN3YwcrlE6S9YoGDbkF+?=
+ =?us-ascii?Q?E39u1SMXjGEBU4tHHuqW+2xHv/WdsP1vFWFW2PoKZEFKnZ6BIZWs3PCVmFyZ?=
+ =?us-ascii?Q?haP3f13PqfXMwHv0VIJEGoRXrXbsm/Fak2PMmnKNuatmkCvVO15GLJHgXDhp?=
+ =?us-ascii?Q?omP/5N/Ppq+J6mCJxooMp0NDWmN9WHOGDDLNGfATYmGIPiczSAfnY07xON1I?=
+ =?us-ascii?Q?lYrpfo3gtCblAw/YbxnyTox0L1GBwB8+UVWPwgN+4nmsG/s4MaPpNubQBsQS?=
+ =?us-ascii?Q?4DIFtOT9/qy00SfKdEif5uRhAnQxVFLqESrd44ZCDCY36vLZ8j1+ZiBi31CW?=
+ =?us-ascii?Q?b4bGw1ZAPtka0w1QSSCE1njWH9DxEllFyUQ9X0TtuOyroVc4L7P5PhYh5xzY?=
+ =?us-ascii?Q?+rdXm1Eykeke1b6gAJa8qxcjCIARJxifDmTzmwiRhyLe+p9fAPa31l1k9SbL?=
+ =?us-ascii?Q?hQV5rB+24FeqlUG2R5GXKNG0UF9yPtfJHU/XNJVxDkMjlPm1BgHoQdMFzeI1?=
+ =?us-ascii?Q?OPbmflkdC2mfJXN/IXHK4T8/1e043K6Yxbt+kFdAtTi4MtrgXD3jWx4HFIvT?=
+ =?us-ascii?Q?LRbRe9phF+ua6LOm7Ib2vbUSLtCAYi6B1ZJ6VIyHFFn+bTWADt3xwZxkuRIO?=
+ =?us-ascii?Q?UmCxak1bVOE9fwBafdxmztRRUyXp2FcWLpBQtLHCl7BBNoKygE1sqLTZHgg0?=
+ =?us-ascii?Q?zsKu1oD64P12t7Daimp9ooLm31Keul96RzSk5sNlEQbzHqmpnIDW8KTGXBLT?=
+ =?us-ascii?Q?JMtI22Aqi7hdm2URzjX5od7P9mYQAG/R8rNd5fFQWWEl/4QqkqbbDu1qCUR+?=
+ =?us-ascii?Q?R3DR+hIDcHIlP5o2dvykX4dNthL4qqa1cT8M9rdV5p5jyY+Ndr1VcRzGuvp3?=
+ =?us-ascii?Q?VjnQ7hFv2cm16ReqnEyYwivyYcVENZVDssXgRoRSUOd32ajwRGqBy8tAINFK?=
+ =?us-ascii?Q?dYOdwj40m4EXAp7j5UehPo3W3P3SRRF9QVxznlPSHmdZLcEU/Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3l/mt693SO5YLcMo//Sn42iaV4KcZu7smrhW1YcbxR7Qekau1+xCg4m8e/Ms?=
+ =?us-ascii?Q?d2/LFrvL9q9u02agTWj06D5V68drGmFxzrgFhIafobxQYS5warEeUhUypzyl?=
+ =?us-ascii?Q?42xU7HYROPvcCD7ILCq5NQsDZjMP9ruGM+gs9VwIMXgsrPwjsiWFogAiMSAH?=
+ =?us-ascii?Q?D7OOamdAzdKhvFF/qEks2NaJmZ0oXjAh/zK+r9zIQQDTaq9kAGtHfUNrK0D4?=
+ =?us-ascii?Q?bWHEwR9WWR+M4df4JiVCa9S0c5pmngR8DM1y1q+Ci66MM+d462taHwVAwftn?=
+ =?us-ascii?Q?oFGTBwaFFb8jazNBT6//TUgWsJfdMxyFu6hZUPLHddc0MzDoRIpncE10qxFN?=
+ =?us-ascii?Q?jvykq10swkTkHaIU2qDWLyxDkI/QxO9VkA/VAHXeyNC/ZssWGGjimDTHAF3w?=
+ =?us-ascii?Q?c1Wk6AatZz1Jed8zv1IbXZxg+KAfRQ+2qDd3puCOeKgaVLvZQg1LDnnEPhYa?=
+ =?us-ascii?Q?0QGo2fEPQh4Jn5nUlvssT3GZFuUvX88BTBNJY1Nu+nikZ5Btjh5tBfrbkpoY?=
+ =?us-ascii?Q?CUiJbDDzZjixqy1nXwfWWuNelPeI7D9I5JjQVpKRSV9PTl7JKQnBEwTXuNjk?=
+ =?us-ascii?Q?Dnnbo3OGpV+XtlJqRQvJhujdQ2xILGjTLmQlIpY0NJNUqk8Whs0oNqmpn99P?=
+ =?us-ascii?Q?GV50x1I/9yyz29KK4+S+urGERgdmANcNEVuw7HdOB9nr8E1gui7O8eBxweXx?=
+ =?us-ascii?Q?dr0cSMMeSUDZzsDcTn6lWcgnEaBaQP74BdMYXEBK+ti7FU7ZsDvWFe5yYWLT?=
+ =?us-ascii?Q?MzfJa4BaBfwQ6y3uDTKqfLJjuaHYKXtPCPGXXMWDNWsCdNzerrCqQj7rXIAH?=
+ =?us-ascii?Q?exSfSyP8owuPiCQBCZrE0dVxTm/VyQSjhn4P7WSJGHlqFBQ1eePqiYsfFL84?=
+ =?us-ascii?Q?9w1Ad4y5IkP0+Yqwc87dMu24vNNQYZZhPShWnw0MXGQ2UzoVcr9e3gwnmk3v?=
+ =?us-ascii?Q?ZULmvE/DogPYZaRq3YWhhoHHHKQW+C+ZZTbFqm4xXqDlIDU8hLJ8JqQpHD2J?=
+ =?us-ascii?Q?qVn3ct/23UP1S7zqL7/4zPYtUTtkj+qBMk2qAPW2K3mbtOQVy0cUC6H25+0N?=
+ =?us-ascii?Q?BE66dp0lvBRy8oGiyqz7+vRHb/OsVX9oZK80fCdaxoKlQwlTMFcS+UdtBoBe?=
+ =?us-ascii?Q?8+hMPnR4Zpl4ne2Ud7Z9rBUpD9j6GxG6Fh+pdyDRhzLp8iNgcO0BamawDX80?=
+ =?us-ascii?Q?pqIJ/CFPbzBwcdc/HuvvsHmzRPD52QRQ/y5xC7S2Ept481x1mCVkHMAmS3l0?=
+ =?us-ascii?Q?OuWzIYunae/oI1h6cwBXwoUwMmkuNsP5UTIedkFTA3uUsp06CzbhTWqSe8iK?=
+ =?us-ascii?Q?6URSKP8qm1cqLn1EhFZEUa74UbV0JEK5WOVY9kQQx8g/Xjjwngg5k8UiOa8V?=
+ =?us-ascii?Q?7ftxqxBET3ear9t9F7svUR88ZQ07iINY0pzgP1eXsYydkfaSXSKrXzk1HC2D?=
+ =?us-ascii?Q?9XpvFVVZ8fNUz4aiHW6AOYWYjxFvG8Zj6dBKzvDM2sxI+yw1zh4wInMMpDfO?=
+ =?us-ascii?Q?zUAuJdyo1CPclUj99RvocOi7qNRWlxyH7eeoNf5cLCkQgMUYr7DT320h/6RT?=
+ =?us-ascii?Q?3+GdyI7irQHlFVM3Zts0l9fd2WZ0/nOucz/HAQeo?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94bfaae6-df15-4142-546b-08de0bd42d64
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 10:18:25.7604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cdYrxOeaC/kPCcozksqfVAWhv3eQ6E+e1Jbfdz9mFZcyQcpYbETXKfEMVdj3NvHYOcVACYVKgXGJrDMEUaH9pQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11328
 
-T24gVHVlLCAyMDI1LTEwLTE0IGF0IDE3OjAyIC0wNTAwLCBEYXZpZCBMZWNobmVyIHdyb3RlOgo+
-IEFkZCBhIG5ldyBtdWx0aV9idXNfbW9kZSBmaWVsZCB0byBzdHJ1Y3Qgc3BpX3RyYW5zZmVyIHRv
-IGFsbG93Cj4gcGVyaXBoZXJhbHMgdGhhdCBzdXBwb3J0IG11bHRpcGxlIFNQSSBidXNlcyB0byBi
-ZSB1c2VkIHdpdGggYSBzaW5nbGUKPiBTUEkgY29udHJvbGxlci4KPiAKPiBUaGlzIHJlcXVpcmVz
-IGJvdGggdGhlIHBlcmlwaGVyYWwgYW5kIHRoZSBjb250cm9sbGVyIHRvIGhhdmUgbXVsdGlwbGUK
-PiBzZXJpYWxpemVycyBjb25uZWN0ZWQgdG8gc2VwYXJhdGUgZGF0YSBidXNlcy4gSXQgY291bGQg
-YWxzbyBiZSB1c2VkIHdpdGgKPiBhIHNpbmdsZSBjb250cm9sbGVyIGFuZCBtdWx0aXBsZSBwZXJp
-cGhlcmFscyB0aGF0IGFyZSBmdW5jdGlvbmluZyBhcyBhCj4gc2luZ2xlIGxvZ2ljYWwgZGV2aWNl
-IChzaW1pbGFyIHRvIHBhcmFsbGVsIG1lbW9yaWVzKS4KPiAKPiBUaGUgcG9zc2libGUgdmFsdWVz
-IGZvciB0aGlzIGZpZWxkIGhhdmUgdGhlIGZvbGxvd2luZyBzZW1hbnRpY3M6Cj4gCj4gLSBTUElf
-TVVMVElfQlVTX01PREVfU0lOR0xFOiBPbmx5IHVzZSB0aGUgZmlyc3QgYnVzLiBUaGlzIG1lYW5z
-IHRoYXQgaXQKPiDCoMKgwqAgaXQgaXMgb3BlcmF0aW5nIGp1c3QgbGlrZSBhIGNvbnZlbnRpb25h
-bCBTUEkgYnVzLiBJdCBpcyB0aGUgZGVmYXVsdAo+IMKgwqDCoCB2YWx1ZSBzbyB0aGF0IGV4aXN0
-aW5nIGRyaXZlcnMgZG8gbm90IG5lZWQgdG8gYmUgbW9kaWZpZWQuCj4gCj4gwqDCoMKgIEV4YW1w
-bGU6Cj4gwqDCoMKgwqDCoMKgwqAgdHhfYnVmWzBdID0gMHg4ODsKPiAKPiDCoMKgwqDCoMKgwqDC
-oCBzdHJ1Y3Qgc3BpX3RyYW5zZmVyIHhmZXIgPSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAu
-dHhfYnVmID0gdHhfYnVmLAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLmxlbiA9IDEsCj4gwqDC
-oMKgwqDCoMKgwqAgfTsKPiAKPiDCoMKgwqDCoMKgwqDCoCBzcGlfc3luY190cmFuc2ZlcihzcGks
-ICZ4ZmVyLCAxKTsKPiAKPiDCoMKgwqDCoMKgwqDCoCBjb250cm9sbGVywqDCoMKgID4gZGF0YSBi
-aXRzID7CoMKgwqDCoCBwZXJpcGhlcmFsCj4gwqDCoMKgwqDCoMKgwqAgLS0tLS0tLS0tLcKgwqAg
-LS0tLS0tLS0tLS0tLS0tLcKgwqAgLS0tLS0tLS0tLQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-U0RPIDDCoMKgwqAgMC0wLTAtMS0wLTAtMC0xwqDCoMKgIFNESSAwCj4gCj4gLSBTUElfTVVMVElf
-QlVTX01PREVfTUlSUk9SOiBTZW5kIGEgc2luZ2xlIGRhdGEgd29yZCBvdmVyIGFsbCBvZiB0aGUK
-PiDCoMKgwqAgYnVzZXMgYXQgdGhlIHNhbWUgdGltZS4gVGhpcyBvbmx5IG1ha2VzIHNlbnNlIGZv
-ciB3cml0ZXMgYW5kIG5vdAo+IMKgwqDCoCBmb3IgcmVhZHMuCj4gCj4gwqDCoMKgIEV4YW1wbGU6
-Cj4gwqDCoMKgwqDCoMKgwqAgdHhfYnVmWzBdID0gMHg4ODsKPiAKPiDCoMKgwqDCoMKgwqDCoCBz
-dHJ1Y3Qgc3BpX3RyYW5zZmVyIHhmZXIgPSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAudHhf
-YnVmID0gdHhfYnVmLAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLmxlbiA9IDEsCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCAubXVsdGlfYnVzX21vZGUgPSBTUElfTVVMVElfQlVTX01PREVfTUlS
-Uk9SLAo+IMKgwqDCoMKgwqDCoMKgIH07Cj4gCj4gwqDCoMKgwqDCoMKgwqAgc3BpX3N5bmNfdHJh
-bnNmZXIoc3BpLCAmeGZlciwgMSk7Cj4gCj4gwqDCoMKgwqDCoMKgwqAgY29udHJvbGxlcsKgwqDC
-oCA+IGRhdGEgYml0cyA+wqDCoMKgwqAgcGVyaXBoZXJhbAo+IMKgwqDCoMKgwqDCoMKgIC0tLS0t
-LS0tLS3CoMKgIC0tLS0tLS0tLS0tLS0tLS3CoMKgIC0tLS0tLS0tLS0KPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIFNETyAwwqDCoMKgIDAtMC0wLTEtMC0wLTAtMcKgwqDCoCBTREkgMAo+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgU0RPIDHCoMKgwqAgMC0wLTAtMS0wLTAtMC0xwqDCoMKgIFNESSAx
-Cj4gCj4gLSBTUElfTVVMVElfQlVTX01PREVfU1RSSVBFOiBTZW5kIG9yIHJlY2VpdmUgdHdvIGRp
-ZmZlcmVudCBkYXRhIHdvcmRzIGF0Cj4gwqDCoMKgIHRoZSBzYW1lIHRpbWUsIG9uZSBvbiBlYWNo
-IGJ1cy4KPiAKPiDCoMKgwqAgRXhhbXBsZToKPiDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3Qgc3BpX3Ry
-YW5zZmVyIHhmZXIgPSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAucnhfYnVmID0gcnhfYnVm
-LAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLmxlbiA9IDIsIC8qIG11c3QgYmUgbXVsdGlwbGUg
-b2YgbnVtYmVyIG9mIGJ1c2VzICovCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAubXVsdGlfYnVz
-X21vZGUgPSBTUElfTVVMVElfQlVTX01PREVfU1RSSVBFLAo+IMKgwqDCoMKgwqDCoMKgIH07Cj4g
-Cj4gwqDCoMKgwqDCoMKgwqAgc3BpX3N5bmNfdHJhbnNmZXIoc3BpLCAmeGZlciwgMSk7Cj4gCj4g
-wqDCoMKgwqDCoMKgwqAgY29udHJvbGxlcsKgwqDCoCA8IGRhdGEgYml0cyA8wqDCoMKgwqAgcGVy
-aXBoZXJhbAo+IMKgwqDCoMKgwqDCoMKgIC0tLS0tLS0tLS3CoMKgIC0tLS0tLS0tLS0tLS0tLS3C
-oMKgIC0tLS0tLS0tLS0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFNESSAwwqDCoMKgIDAtMC0w
-LTEtMC0wLTAtMcKgwqDCoCBTRE8gMAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgU0RJIDHCoMKg
-wqAgMS0wLTAtMC0xLTAtMC0wwqDCoMKgIFNETyAxCgpPdXQgb2YgY3VyaW9zaXR5LCBob3cgZG9l
-cyB0aGlzIHdvcmsgZm9yIGRldmljZXMgbGlrZSBBRDQwMzAgd2hlcmUgdGhlIHNhbWUgd29yZApp
-cyBraW5kIG9mIGludGVybGVhdmVkIGJldHdlZW4gU0RPIGxpbmVzPyBJIGd1ZXNzIGl0IHdvcmtz
-IHRoZSBzYW1lIChpbiB0ZXJtcyBvZgpTVykgYW5kIGlzIHVwIHRvIHNvbWUgSVAgY29yZSAodHlw
-aWNhbGx5IGluIHRoZSBGUEdBKSB0byAicmUtYXNzZW1ibGUiIHRoZSB3b3JkPwoKPiAKPiDCoMKg
-wqDCoMKgwqDCoCBBZnRlciB0aGUgdHJhbnNmZXIsIHJ4X2J1ZlswXSA9PSAweDExICh3b3JkIGZy
-b20gU0RPIDApIGFuZAo+IMKgwqDCoMKgwqDCoMKgIHJ4X2J1ZlsxXSA9PSAweDg4ICh3b3JkIGZy
-b20gU0RPIDEpLiBJZiB0aGUgdHJhbnNmZXIgd2FzIGxvbmdlciwKPiDCoMKgwqDCoMKgwqDCoCB0
-aGUgZGF0YSB3b3VsZCBjb250aW51ZSBpbiBhbiBhbHRlcm5hdGluZyBmYXNoaW9uLgo+IAo+IFNp
-Z25lZC1vZmYtYnk6IERhdmlkIExlY2huZXIgPGRsZWNobmVyQGJheWxpYnJlLmNvbT4KPiAtLS0K
-Ckxvb2tzIGdvb2QgYW55d2F5cywKCkFja2VkLWJ5OiBOdW5vIFPDoSA8bnVuby5zYUBhbmFsb2cu
-Y29tPgoKPiDCoGluY2x1ZGUvbGludXgvc3BpL3NwaS5oIHwgNiArKysrKysKPiDCoDEgZmlsZSBj
-aGFuZ2VkLCA2IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9z
-cGkvc3BpLmggYi9pbmNsdWRlL2xpbnV4L3NwaS9zcGkuaAo+IGluZGV4Cj4gYzMxNDE5NGQ0ZTdl
-MmIzOTY3OTVlY2UxMGUxNDIxMThjYTA1ZjRlYi4uN2QyMmVmNTA3N2QxMjI5Y2FjMjU3NDgzMWY4
-MDA5MmM1OTFiCj4gOTcyZiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xpbnV4L3NwaS9zcGkuaAo+
-ICsrKyBiL2luY2x1ZGUvbGludXgvc3BpL3NwaS5oCj4gQEAgLTk3Niw2ICs5NzYsOCBAQCBzdHJ1
-Y3Qgc3BpX3JlcyB7Cj4gwqAgKsKgwqDCoMKgwqAgKFNQSV9OQklUU19TSU5HTEUpIGlzIHVzZWQu
-Cj4gwqAgKiBAcnhfbmJpdHM6IG51bWJlciBvZiBiaXRzIHVzZWQgZm9yIHJlYWRpbmcuIElmIDAg
-dGhlIGRlZmF1bHQKPiDCoCAqwqDCoMKgwqDCoCAoU1BJX05CSVRTX1NJTkdMRSkgaXMgdXNlZC4K
-PiArICogQG11bHRpX2J1c19tb2RlOiBIb3cgdG8gc2VyaWFsaXplIGRhdGEgb24gbXVsdGlwbGUg
-YnVzZXMuIE9uZSBvZiB0aGUKPiArICrCoMKgwqDCoMKgIFNQSV9NVUxUSV9CVVNfTU9ERV8qIHZh
-bHVlcy4KPiDCoCAqIEBsZW46IHNpemUgb2YgcnggYW5kIHR4IGJ1ZmZlcnMgKGluIGJ5dGVzKQo+
-IMKgICogQHNwZWVkX2h6OiBTZWxlY3QgYSBzcGVlZCBvdGhlciB0aGFuIHRoZSBkZXZpY2UgZGVm
-YXVsdCBmb3IgdGhpcwo+IMKgICrCoMKgwqDCoMKgIHRyYW5zZmVyLiBJZiAwIHRoZSBkZWZhdWx0
-IChmcm9tIEBzcGlfZGV2aWNlKSBpcyB1c2VkLgo+IEBAIC0xMTEyLDYgKzExMTQsMTAgQEAgc3Ry
-dWN0IHNwaV90cmFuc2ZlciB7Cj4gwqAJdW5zaWduZWQJY3NfY2hhbmdlOjE7Cj4gwqAJdW5zaWdu
-ZWQJdHhfbmJpdHM6NDsKPiDCoAl1bnNpZ25lZAlyeF9uYml0czo0Owo+ICsJdW5zaWduZWQJbXVs
-dGlfYnVzX21vZGU6IDI7Cj4gKyNkZWZpbmUgU1BJX01VTFRJX0JVU19NT0RFX1NJTkdMRQkwIC8q
-IG9ubHkgdXNlIHNpbmdsZSBidXMgKi8KPiArI2RlZmluZSBTUElfTVVMVElfQlVTX01PREVfU1RS
-SVBFCTEgLyogb25lIGRhdGEgd29yZCBwZXIgYnVzICovCj4gKyNkZWZpbmUgU1BJX01VTFRJX0JV
-U19NT0RFX01JUlJPUgkyIC8qIHNhbWUgd29yZCBzZW50IG9uIGFsbCBidXNlcyAqLwo+IMKgCXVu
-c2lnbmVkCXRpbWVzdGFtcGVkOjE7Cj4gwqAJYm9vbAkJZHRyX21vZGU7Cj4gwqAjZGVmaW5lCVNQ
-SV9OQklUU19TSU5HTEUJMHgwMSAvKiAxLWJpdCB0cmFuc2ZlciAqLwo=
+On Wed, Oct 15, 2025 at 03:01:24PM +1100, Mathew McBride wrote:
+> In commit f422abe3f23d ("dpaa2-eth: increase the needed headroom to
+> account for alignment"), the required skb headroom of dpaa2-eth was
+> increased to exactly 128 bytes. The headroom increase was to ensure
+> frames on the Tx path were always aligned to 64 bytes.
+> 
+> This caused a regression when vhost-net was used to accelerate virtual
+> machine frames between a KVM guest and a dpaa2-eth interface over a bridge.
+> While the skb passed to the driver had the required headroom (128 bytes),
+> the skb->head pointer did not match the alignment expected by the driver
+> (aligned_start => skb->head in dpaa2_eth_build_single_fd).
+> 
+> Treating outbound skb's where skb_headroom() == net_dev->needed_headroom
+> the same as skb's with inadequate headroom resolves this issue.
+> 
+> Signed-off-by: Mathew McBride <matt@traverse.com.au>
+> Fixes: f422abe3f23d ("dpaa2-eth: increase the needed headroom to account for alignment")
+> Closes: https://lore.kernel.org/netdev/70f0dcd9-1906-4d13-82df-7bbbbe7194c6@app.fastmail.com/T/#u
+> ---
+> A while ago, changes were made to the dpaa2-eth driver to workaround
+> an issue when TX frames were not aligned to 64 bytes.
+> 
+> As part of this change, the required skb headroom in dpaa2-eth
+> was increased to 128 bytes.
+> 
+> When frames originating from a virtual machine over vhost-net
+> were forwarded to the dpaa2-eth driver for transmission,
+> the vhost frames were being dropped as they failed an alignment check.
+> 
+> The skb's originating from vhost-net had exactly the required headroom
+> (128 bytes).
+> 
+> I have tested a fix to the issue which treats frames with the "exact"
+> headroom the same as frames with inadequate headroom. These are
+> transmitted using the scatter/gather (S/G) process.
+> 
+> Network drivers are not my area of expertise so I cannot be 100%
+> confident this is the correct solution, however, I've done extensive
+> reliability testing on this fix to confirm it resolves the regression
+> involving vhost-net without any other side effects.
+> 
+> What I can't answer (yet) is if there are performance or other ramifcations
+> from having all VM-originating frames handled as S/G.
+> 
+> As far as I am aware, the virtual machine / vhost-net workload is the
+> only workload that generates skb's that require the S/G handling in
+> vhost-net. I have not seen any variants of this issue without vhost-net.
+> 
+> My original analysis of the problem can be found in the message below.
+> The diagnosis of the issue is still correct at the time of writing
+> (circa 6.18-rc1)
+> 
+> https://lore.kernel.org/netdev/70f0dcd9-1906-4d13-82df-7bbbbe7194c6@app.fastmail.com/T/#u
 
+Hi Mathew,
+
+First of all, sorry for missing your initial message.
+
+While I was trying to understand how the 'aligned_start >= skb->head'
+check ends up failing while you have the necessary 128bytes of headroom,
+I think I discovered that this is not some kind of off-by-one issue.
+
+The below snippet is from your original message.
+	fsl_dpaa2_eth dpni.9: dpaa2_eth_build_single_fd alignment issue, aligned_start=ffff008002e09140 skb->head=ffff008002e09180
+	fsl_dpaa2_eth dpni.9: dpaa2_eth_build_single_fd data=ffff008002e09200
+	fsl_dpaa2_eth dpni.9: dpaa2_eth_build_single_fd is cloned=0
+	dpaa2_eth_build_single_fdskb len=150 headroom=128 headlen=150 tailroom=42
+
+If my understanding is correct skb->data=ffff008002e09200.
+Following the dpaa2_eth_build_single_fd() logic, this means that
+	buffer_start = 0xffff008002e09200 - 0x80
+	buffer_start = 0xFFFF008002E09180
+
+Now buffer_start is already pointing to the start of the skb's memory
+and I don't think the extra 'buffer_start - DPAA2_ETH_TX_BUF_ALIGN'
+adjustment is correct.
+
+What I think happened is that I did not take into consideration that by
+adding the DPAA2_ETH_TX_BUF_ALIGN inside the dpaa2_eth_needed_headroom()
+function I also need to remove it from the manual adjustment.
+
+Could you please try with the following diff and let me know how it does
+in your setup?
+
+--- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
++++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
+@@ -1077,7 +1077,7 @@ static int dpaa2_eth_build_single_fd(struct dpaa2_eth_priv *priv,
+        dma_addr_t addr;
+
+        buffer_start = skb->data - dpaa2_eth_needed_headroom(skb);
+-       aligned_start = PTR_ALIGN(buffer_start - DPAA2_ETH_TX_BUF_ALIGN,
++       aligned_start = PTR_ALIGN(buffer_start,
+                                  DPAA2_ETH_TX_BUF_ALIGN);
+        if (aligned_start >= skb->head)
+                buffer_start = aligned_start;
+
+Ioana
 
