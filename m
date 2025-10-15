@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-854839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E6FBDF898
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFCCBDF9EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033901A6006D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:04:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102AF402BEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD6A2D5937;
-	Wed, 15 Oct 2025 16:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD58A3375DE;
+	Wed, 15 Oct 2025 16:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0ATErPgd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="LJnpXDO5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF110186E40;
-	Wed, 15 Oct 2025 16:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD2A2D6E72;
+	Wed, 15 Oct 2025 16:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760544242; cv=none; b=OCl8obkNh5yBIXHMAcZn1pt7dP2cPXifD5/mOibnKT2Dw2vo6ebTF2cjFVdQM063dZEVamPxp7GQSN8UNjJsl1aFCJDIeb2wA3p6KjzDd5oHZhemWTfctDZLmw2jSw4WAxl2lZEhKaaCAq1E7oPSjoTBKpcm2TkdkLC4Ip+Bxog=
+	t=1760545217; cv=none; b=EDYupBivLgpPo2HE39RhbbHx41Lsfff2Mwrs6OaxnAzA29iWIhhoozcyOqzCHF0F2QhSdZSylLtPJZSQnMBzL6AGqd6NPxfmmLhLyNp/FZce6k6NSQAsf/lfW2ZjD9tdf1remutJTuRRMxY59/ovrvk6KCWuOSHHAaIwtGfOWpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760544242; c=relaxed/simple;
-	bh=jdf3R31L7KT+QpiMtzdFC5DBhz+RNOn4RjFGLhJ7KDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESuVmrxR2/x0kFiEGVdc7bDU2J/VqOjCHe4qcyWPWeYk5uXpwsBLo+71FtJvPepet9rqhrT1EbNvJWW48I56s7C7R/jlMJJsC8lL+gJl3s0YtwF2L8kMeHzcyp7ijtY1YZLuV8WqQMrXMlEJGYqxImH0inlcn5LelkcO6AcmN74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0ATErPgd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C6EC4CEF8;
-	Wed, 15 Oct 2025 16:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760544241;
-	bh=jdf3R31L7KT+QpiMtzdFC5DBhz+RNOn4RjFGLhJ7KDw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0ATErPgdssjXDrGXWgPL17G/5HOoACiJhSzhMn12uCxiQCiCzH0pHe271ePcMTY3U
-	 Og+CxVYbwmC7EXidz3uICnJp32W3eUtC1BXT9B5Mx6CZ8DKIU86EQcS+39Z32eI6uA
-	 +iy81y1HBbCZe+44EndG+L9aSQbJ+D5vWFfKsUR0=
-Date: Wed, 15 Oct 2025 18:03:58 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-Message-ID: <2025101519-niece-skeptic-9290@gregkh>
-References: <yq5aqzxy9ij1.fsf@kernel.org>
- <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
- <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
- <20251010135922.GC3833649@ziepe.ca>
- <yq5a347kmqzn.fsf@kernel.org>
- <2025101523-evil-dole-66a3@gregkh>
- <20251015115044.GE3938986@ziepe.ca>
- <d5144c99d7c04e4ad09ed9965fa3512c203b5694.camel@HansenPartnership.com>
+	s=arc-20240116; t=1760545217; c=relaxed/simple;
+	bh=QthkGZqNM0IxCOUSCpz51FL5jDeaV6sKU3ulv/hypuU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=AO3/sqQMQZvfRC6iqyzkGS6bTqAUEx7tbRROcw4rbrsBsBrPdkPXvCUDKmQoThPLPiFA3yoOzj/DERjce3L+2hk3atLaWJWJMQwV97UME+ECUwCYN3qKPpzgYXKjZf9wxzgrGPsV6LmKjw3w/YUQ57zgZiktcEUHs0ThDldz/+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=LJnpXDO5; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1760545215; x=1792081215;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=QthkGZqNM0IxCOUSCpz51FL5jDeaV6sKU3ulv/hypuU=;
+  b=LJnpXDO5CTIXvAlbcau9SUFVhsTs1OdXsNKghCV13a7r24bjFGwWkRNh
+   S96hzkIQwKeVfxrq3I78IK1DNMDBE47Bw5sBGPSEYqC5XkqsqARcPwQgF
+   3CukGkljvju6GaUOj8cgCmvLCYReU7JNEU+7lEL2td/7eES4iOLr1zr53
+   dI8kFmj/VGfp4rFlnr3VCu9sfe9s2TnOmOugAm+6WaRtwO5GtBZ3M5tq6
+   262uTMIqZ/Qup1HCr/b+wA2BrX98+xn/hOEHitqDkAJp7hS/OTOy471hV
+   +X8azMWofrNyGRqdcB5IQTEs3YX5j9VsgwA8TZ5PEFvt6vj+zAWNtIXxX
+   Q==;
+X-CSE-ConnectionGUID: M1xrWlSdRa+eGCjzifwSqQ==
+X-CSE-MsgGUID: D642xI84QjCu+HxUVFHzdQ==
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="47204430"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Oct 2025 09:20:08 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 15 Oct 2025 09:19:46 -0700
+Received: from [127.0.1.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 15 Oct 2025 09:19:43 -0700
+From: Ariana Lazar <ariana.lazar@microchip.com>
+Subject: [PATCH 0/2] Adding support for Microchip PAC1711
+Date: Wed, 15 Oct 2025 13:12:14 +0300
+Message-ID: <20251015-pac1711-v1-0-976949e36367@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d5144c99d7c04e4ad09ed9965fa3512c203b5694.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH5z72gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwND3YLEZENzQ0PdFOOkxOSURBMDg7QUJaDqgqLUtMwKsEnRsbW1AHd
+ BgkBZAAAA
+X-Change-ID: 20250901-pac1711-d3bacda400fd
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy
+ Shevchenko" <andy@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Ariana Lazar <ariana.lazar@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760523137; l=1117;
+ i=ariana.lazar@microchip.com; s=20250825; h=from:subject:message-id;
+ bh=QthkGZqNM0IxCOUSCpz51FL5jDeaV6sKU3ulv/hypuU=;
+ b=hR9rVHt27Hvx7WXesPNzRPjiQy1zNoCbwy6MPKTOMK3mqT2eXcaJpJpBq+iZpid2EwRsw5mWh
+ lOJxVJGDylaAIS08ZDPBu9yIRIKa70/izdU57Bf2eo7Y8RfqxVL0Y5y
+X-Developer-Key: i=ariana.lazar@microchip.com; a=ed25519;
+ pk=jmvf1fSxcnzZmXfITM3L94IwutM+wqA1POQHiYyD6Dk=
 
-On Wed, Oct 15, 2025 at 11:19:41AM -0400, James Bottomley wrote:
-> On Wed, 2025-10-15 at 08:50 -0300, Jason Gunthorpe wrote:
-> > On Wed, Oct 15, 2025 at 11:58:25AM +0200, Greg KH wrote:
-> [...]
-> > > The real device that has the resources you wish to share access
-> > > to.  Are there physical resources here you are sharing?  If so,
-> > > that device is the parent.  If there is no such thing, then just
-> > > make a bunch of faux devices and be done with it :)
-> > 
-> > At the very bottom of the stack it looks like the PSCI interface is
-> > discovered first through DT/ACPI. The PSCI interface has RPCs that
-> > are then used to discover if SMC/etc/etc are present and along the
-> > way it makes platform devices to plug in subsystems to it based on
-> > what it can discover.
-> > 
-> > It is just not sharing "resources" in the traditional sense, PSCI has
-> > no registers or interrupts, yet it is a service provided by the
-> > platform firmare.
-> > 
-> > Again faux devices don't serve the need here to load modules and do
-> > driver binding.
-> 
-> This came up for the SVSM as well: we want to expose things that can be
-> virtual devices or other resources that the guest discovers.  Our
-> conclusion was we either needed to share one of the virtual busses
-> (like virtio) or do our own svsm bus.  The agreement was to implement
-> our own bus, but we still haven't got around to it.
+The PAC1711 product is a single-channel power monitor with accumulator.
+The device uses 12-bit resolution for voltage and current measurements and
+24 bits power calculations. The accumulator register (56-bit) could
+accumulate power (energy), current (Coulomb counter) or voltage.
 
-I think it might be time to get around to it and not abuse other busses
-:)
+PAC1711 measures up to 42V Full-Scale Range.
 
-As an example, take the faux bus code as a base if you want a tiny
-example.
+Signed-off-by: Ariana Lazar <ariana.lazar@microchip.com>
+---
+Ariana Lazar (2):
+      dt-bindings: iio: adc: adding support for PAC1711
+      iio: adc: adding support for PAC1711
 
-thanks,
+ .../ABI/testing/sysfs-bus-iio-adc-pac1711          |   57 +
+ .../bindings/iio/adc/microchip,pac1711.yaml        |  195 +++
+ MAINTAINERS                                        |    8 +
+ drivers/iio/adc/Kconfig                            |   10 +
+ drivers/iio/adc/Makefile                           |    1 +
+ drivers/iio/adc/pac1711.c                          | 1448 ++++++++++++++++++++
+ 6 files changed, 1719 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250901-pac1711-d3bacda400fd
 
-greg k-h
+Best regards,
+-- 
+Ariana Lazar <ariana.lazar@microchip.com>
+
 
