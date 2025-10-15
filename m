@@ -1,100 +1,150 @@
-Return-Path: <linux-kernel+bounces-854891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6EEBDFB24
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:39:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBEDBDFB3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D04FF488
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:37:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E11AF504C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368E3338F26;
-	Wed, 15 Oct 2025 16:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1234A3376B0;
+	Wed, 15 Oct 2025 16:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3p/AB+nX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rml6ah5u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D27B2D9EE2;
-	Wed, 15 Oct 2025 16:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634AC27E076;
+	Wed, 15 Oct 2025 16:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546266; cv=none; b=fHR8IwDoILo406ag7ymWl1QRGESHG6pS1h1ipEBtEYSpiwN4SSXf9GASpcjxH1XtL/FrWdHBW/LRThHd9+r9R4BxcBst4w/MEELHgULZJZBF377+ZJ4VAQD0WI+ts1HLD0GMRYfOOGnKe5yCFrTDnTSW9UJEUJAA8TdWKVoJIK8=
+	t=1760546319; cv=none; b=RQ5HlFL89MNiy1lPb3aV5Bh2ei9RP804+PelAZEmgvp5qn+9muxXNRzCj1vixP520ZegEQkJJjaLMJTbfVFXKsT4fhPFCGq9yCtRh0ajVY7vGlb2Kudu/IMQybxhSUILg06xje9cVqUG5euBi7qA0luWeWFHcKuJHQb/mWbnj+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546266; c=relaxed/simple;
-	bh=W491iOp9uGj/rptkEeZN3ds/se5A4eyizGAeBjNEYD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zv+2xCqv/wOvX5yE8w5rL9kcwpdTTqcVVpc8t+gFMWV9Kmf6MkUKqWDawVAm+pkrDl8Sna0RnKbYszSxcNKXCGGIBZ08m20F4tL5ePAqIm8Mi5N+SMoRpYCqPMeaQ2WrwHrZaq7/6flvYrzfBx84TsJX2mQ7vgmyfhURXFaPF84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3p/AB+nX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=EmNyMES08hLl/lZo50ZMyOt0uk2s5aoOzzYmrsTy+X0=; b=3p/AB+nXcfar0/n95hcIl0eb3B
-	sdzT8OKBtQ98To+XFs5Bbtrk+fIwpTM08JgleTkl1NPK6b6w6fZnN6c79KulRIU3jX4kegbCAct57
-	VfTnzyW73zdlmfO1jyJbP3T1oAejXdtoubxWxQpPgm9uFOmnvr7qRN9CgJHbKnhbzwAQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v94VJ-00B3LR-0W; Wed, 15 Oct 2025 18:37:33 +0200
-Date: Wed, 15 Oct 2025 18:37:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor@kernel.org>,
-	Antonio Borneo <antonio.borneo@foss.st.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Valentin Caron <valentin.caron@foss.st.com>
-Subject: Re: [PATCH v3 02/10] dt-bindings: pincfg-node: Add properties
- 'skew-delay-{in,out}put'
-Message-ID: <c2a0f301-ec5e-42d7-9df9-09a852a199ad@lunn.ch>
-References: <20251014140451.1009969-1-antonio.borneo@foss.st.com>
- <20251014140451.1009969-3-antonio.borneo@foss.st.com>
- <20251014-barbecue-crewman-717fe614daa6@spud>
- <CACRpkdZT20cdH+G6Gjw8PopAkir+gGgMtRR4pkjnXFrmDkdfog@mail.gmail.com>
+	s=arc-20240116; t=1760546319; c=relaxed/simple;
+	bh=6kgf7iMD+JZUR24w4JLI+S12D5BlZmm/nKrPBixlFbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PQ/Hamskg/2xNMLEJMnQna3lk1bFWWNy3hAwrTEBZo67jqgoO+9+iQL85dePHAeNwAaIuQ8hDRn1dSbvhbRwy5kIPZZjlFnRUwsvdYQF/l++VI/LZ9r1D5lA9EqhR8i31AyQBJIXYwRxHDvG6ZeyXmd9RZNpigBaDSgKEfkeysc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rml6ah5u; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760546318; x=1792082318;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=6kgf7iMD+JZUR24w4JLI+S12D5BlZmm/nKrPBixlFbE=;
+  b=Rml6ah5uzfnmi5JQXOgDSiT6BLlVuipeVSeSjzusG9t4gwM9ipIGAeCK
+   pkl43T2qcQSspYnrv56JBB/71AWcE+yNsZRwAdCIcfd0qxgdPL6xxILJ3
+   ZvPai7WmIHn+1zXw8kzCdAI3phzIYEA/P1v4KGbeUzvyO27U6StHZ+kDt
+   m47v0vdjNngEy1T1fB9ZVlrpSdUcCDizlrCg1uPuGLDOdP/IfN2qERYTC
+   DoKRX9Z3HBSZAG4dMVMrn9EeA2uFQdgbjJvf0FKKJuVPEvkOOyIKd0T/B
+   Bmgz9VDhLr7xKdf77Y7n/unC9nVSp+btd2Br2zA1gujDL27g7tFgR817e
+   w==;
+X-CSE-ConnectionGUID: tOF9O4s5THWFXxMR4zw/BQ==
+X-CSE-MsgGUID: Z42CQ9K6T7CKmkuVapYydg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62770701"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="62770701"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 09:38:37 -0700
+X-CSE-ConnectionGUID: K/jzDD8DSi2d/0+yQ3Jx+w==
+X-CSE-MsgGUID: rw5bFQbUSEycWPcSDtKW2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="186238127"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.221]) ([10.125.111.221])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 09:38:36 -0700
+Message-ID: <d67e3fc9-ebc8-4538-9135-48a0b02d7af9@intel.com>
+Date: Wed, 15 Oct 2025 09:38:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZT20cdH+G6Gjw8PopAkir+gGgMtRR4pkjnXFrmDkdfog@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] cxl: Allow zero sized HDM decoders
+To: Vishal Aslot <vaslot@nvidia.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
+ "open list:COMPUTE EXPRESS LINK (CXL)" <linux-cxl@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251015024019.1189713-1-vaslot@nvidia.com>
+ <20251015024019.1189713-3-vaslot@nvidia.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251015024019.1189713-3-vaslot@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> I don't recall the reason for this way of defining things, but one reason
-> could be that the skew-delay incurred by two inverters is very
-> dependent on the production node of the silicon, and can be
-> nanoseconds or picoseconds, these days mostly picoseconds.
-> Example: Documentation/devicetree/bindings/net/adi,adin.yaml
 
 
-I'm missing the big picture here, and i don't see an example of these
-properties being used. However, since you reference an old networking
-example, for RGMII delays....
+On 10/14/25 7:40 PM, Vishal Aslot wrote:
+> CXL spec permits committing zero sized decoders.
+> Linux currently considers them as an error.
+> 
+> Zero-sized decoders are helpful when the BIOS
+> is committing them. Often BIOS will also lock
+> them to prevent them being changed due to the
+> TSP requirement. For example, if the type 3
+> device is part of a TCB.
+> 
+> The host bridge, switch, and end-point decoders
+> can all be committed with zero-size. If they are
+> locked along the VH, it is often to prevent
+> hotplugging of a new device that could not be
+> attested post boot and cannot be included in
+> TCB.
+> 
+> The caller leaves the decoder allocated but does
+> not add it. It simply continues to the next decoder.
 
-adi,rx-internal-delay-ps should be deprecated, we now have the generic
-rx-internal-delay-ps. The point about using -ps is however still
-valid.
+I think it should add it as well, just as a locked decoder that's size 0. When we do cxl list of decoders, we should see those decoders as how they are.
 
-However, i would not like to see pinctl DT properties used in place of
-rx-internal-delay-ps. How the Ethernet MAC driver implements
-rx-internal-delay-ps is left open, so calling a pinctl API to set the
-skew is fine by me. And if the real use case has nothing to do with
-networking, then i don't care.
+DJ
 
-	    Andrew
+> 
+> Signed-off-by: Vishal Aslot <vaslot@nvidia.com>
+> ---
+>  drivers/cxl/core/hdm.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index d3a094ca01ad..1c036a485723 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -1036,13 +1036,14 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
+>  			return -ENXIO;
+>  		}
+>  
+> +		port->commit_end = cxld->id;
+> +
+>  		if (size == 0) {
+> -			dev_warn(&port->dev,
+> +			dev_dbg(&port->dev,
+>  				 "decoder%d.%d: Committed with zero size\n",
+>  				 port->id, cxld->id);
+> -			return -ENXIO;
+> +			return -ENOSPC;
+>  		}
+> -		port->commit_end = cxld->id;
+>  	} else {
+>  		if (cxled) {
+>  			struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> @@ -1198,6 +1199,8 @@ static int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
+>  
+>  		rc = init_hdm_decoder(port, cxld, hdm, i, &dpa_base, info);
+>  		if (rc) {
+> +			if (rc == -ENOSPC)
+> +				continue;
+>  			dev_warn(&port->dev,
+>  				 "Failed to initialize decoder%d.%d\n",
+>  				 port->id, i);
+
+
 
