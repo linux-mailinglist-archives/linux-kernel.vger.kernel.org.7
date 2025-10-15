@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-853681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64853BDC53E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:21:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0323BDC544
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168943E1443
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:21:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8E784F59A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F512874FA;
-	Wed, 15 Oct 2025 03:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933D28C006;
+	Wed, 15 Oct 2025 03:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FbGRZ/rx"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QJs4SNlu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF99F42A99;
-	Wed, 15 Oct 2025 03:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CDA2882CF;
+	Wed, 15 Oct 2025 03:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760498496; cv=none; b=o10qhSjK4zf1pyuEpJjxo8uI0EZulGpurLEyYwtPl5tEj8PQIR5IHABkSij7aYovIFUnD4aT8YBgHNYJj999Tcf3GC30SMp6Z+p2BEmJub0pvAsQIqYvjASV9oUkXpvcxpYjQ4q8EaSYkYOF9OP91V4IEZQOZL3CoJ0aZqk876E=
+	t=1760498538; cv=none; b=WhD7D1eOYSAYh7gjZEJ/5fAn9nQo7WJdlldD4FRorXfOMREDlap0jJ7NMYO8VxrmbQ4EXTBm/UPfYLp9VxCBZ+BkE3aukgyU+UKsP1DIrS040X3Q2OnFrbtYZeBJwZEYv2HlvW8EimKNdULI+rfv+LCUf5ruF4pgg2rdRHFCo60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760498496; c=relaxed/simple;
-	bh=k/Ue+sXzXssQXMFzfkx/V926NFipPkDQoDV24dGGwag=;
+	s=arc-20240116; t=1760498538; c=relaxed/simple;
+	bh=CyerrAKbJbPcJwqNpPFbrCr4No6M3gsoVL1gByZEjAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qgw28CV7Ct06RmikxWH4ngAMx4hcM3gAAzmSDJR11Tk+dZyCi/KRuSfRMjWM3vvaZWtR/afWpS7HPK/Art1mfr6WFTJH1UjxIe9DTwihe1MWnfd6vwfl9sUaCGes+9drIGOzFNQOtk+xYtvLQsHOKFLSwOuZ1gSFsBOCGx6opfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FbGRZ/rx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+vZhghVmnJMheRu4WGt6Jm2AnYVQSqZVx2x8NSyWD+o=; b=FbGRZ/rxcOCURqJcLxsSF/pzLo
-	L/v76Zh8y9EcucbcRxZQdiTEwOoRt9atY8AjoeGJovLqc3ZOFKV20A5wK0SYY60r+EKhk9mS2Laj9
-	IK/r3Ed693yH/8skGzY3KRygDDWQr55qBEomc9oUWSYVpD772fJuGMjM0vX3TuVog4L9huuLy7t3u
-	HYWrPYsdTu2zbRQGeh/qIKgySxuFOf5cHPmVD1MrIiad82QeJOoM0muj/rDGKxmA821nM0ABgA4Yc
-	+9D/MgidcOyM5+c9Y3y51X50S26WlC3W73xgXGFsl3Ql9KaRRNlIf4L4Wl+pn2fsQZE822PkVo777
-	Iru8YHkw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8s4g-00000006McQ-0QcF;
-	Wed, 15 Oct 2025 03:21:14 +0000
-Date: Wed, 15 Oct 2025 04:21:13 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Petr Tesarik <ptesarik@suse.com>,
-	"zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Subject: Re: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for
- order-0 allocation
-Message-ID: <aO8TKQN6ifOSMRSC@casper.infradead.org>
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
- <20251014083230.1181072-3-zhaoyang.huang@unisoc.com>
- <87953097-a105-4775-88a5-9b3a676ff139@amd.com>
- <CAGWkznGN7W-txq_G+xpZ6DtH_1DNorYc=CxqUjebo7qfB4Sxsw@mail.gmail.com>
- <ecba7133-699c-4f3e-927c-bad5bd4c36a3@amd.com>
- <20251014171003.57bbfd63@mordecai.tesarici.cz>
- <97da9924-9489-4d30-a858-8ee5c87bc031@amd.com>
- <CAGWkznGnmb=8GgcrfDvY2REHdRZYVXZy=F3thXhK0FaSoiK7tw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQD0oWftqIUwaoazx83dniwONVRCODK301y//PggRTqJVfEyhQfS37Mf5M7BYsWw4GdMG0kLKXS+09PPl86+6u8s1DvTYVYnC9LTapd/PwetXDPHmy5JHl9a0nLRFgB2BfGJ6odSKzB3N8TghqT1cJ+4HaBL4GCzAOB3avMA7C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QJs4SNlu; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760498536; x=1792034536;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CyerrAKbJbPcJwqNpPFbrCr4No6M3gsoVL1gByZEjAw=;
+  b=QJs4SNluhPFIYvbxk22buPkjOX1mxnmoAmCsIIcSKdgaWUsRutUIwXz4
+   bUK8nkWXToVQv41Z1i4/EDVLd/BO8LxBTJcZiRsZJFQaqcIy0tTprNra6
+   uxEXRg313XfH0oEO3+bAmKKSW1w9yFY/Xt1rErYKIZEs1TMrD5CLB2UQp
+   chCe4KnslcDerIDll3OTP2zXhT0wASDcwxSw5BPHuxmGY4yDING5Dq7Yh
+   +pE07E334wOT6iaKLuLJFCGlp2tkN68Gyqc5wD1WG88Q/UXGeIBwV1XTR
+   9zQDmLEOo7M0mMmSf0Fyk1VUMCtHxbuVJiGcPVPgdYQQa+aET26GkpM8O
+   A==;
+X-CSE-ConnectionGUID: l2e4zlzyRHq2aRVSRvNr0g==
+X-CSE-MsgGUID: 3p4btwsETHK8U204z7z9yw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62702946"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="62702946"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 20:22:15 -0700
+X-CSE-ConnectionGUID: RTaeHBOmQlK9Ezi5OxtFIg==
+X-CSE-MsgGUID: fzvbkfvhSom+Iht11GYi8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="181267516"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 14 Oct 2025 20:22:11 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8s5B-0003P9-0T;
+	Wed, 15 Oct 2025 03:21:51 +0000
+Date: Wed, 15 Oct 2025 11:21:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH] iio: test: fixed-point: new kunit test
+Message-ID: <202510151125.QEa3kUJR-lkp@intel.com>
+References: <20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,12 +80,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGWkznGnmb=8GgcrfDvY2REHdRZYVXZy=F3thXhK0FaSoiK7tw@mail.gmail.com>
+In-Reply-To: <20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6@baylibre.com>
 
-On Wed, Oct 15, 2025 at 09:12:07AM +0800, Zhaoyang Huang wrote:
-> > Could be that we need to make this behavior conditional, but somebody would need to come up with some really good arguments to justify the complexity.
-> ok, should we use CONFIG_DMA_BUF_BULK_ALLOCATION or a variable
-> controlled by sysfs interface?
+Hi David,
 
-No.  Explain what you're trying to solve, because you haven't yet.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on a9682f53c2d1678b93a123cdaa260e955430bc5c]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-test-fixed-point-new-kunit-test/20251014-053648
+base:   a9682f53c2d1678b93a123cdaa260e955430bc5c
+patch link:    https://lore.kernel.org/r/20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6%40baylibre.com
+patch subject: [PATCH] iio: test: fixed-point: new kunit test
+config: i386-buildonly-randconfig-001-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151125.QEa3kUJR-lkp@intel.com/config)
+compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151125.QEa3kUJR-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510151125.QEa3kUJR-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/test/iio-test-fixed-point.c:52:23: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+      52 |         .test_cases = iio_fixed_point_test_cases,
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/const +52 drivers/iio/test/iio-test-fixed-point.c
+
+    49	
+    50	static struct kunit_suite iio_fixed_point_test_suite = {
+    51		.name = "iio-fixed-point",
+  > 52		.test_cases = iio_fixed_point_test_cases,
+    53	};
+    54	kunit_test_suite(iio_fixed_point_test_suite);
+    55	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
