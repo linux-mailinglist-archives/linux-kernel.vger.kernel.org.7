@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-855269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDACBE0AC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:42:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D3CBE0ACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EA21A217C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:43:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2C224EAC23
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B34530C62B;
-	Wed, 15 Oct 2025 20:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EEE30C63B;
+	Wed, 15 Oct 2025 20:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X0faGHLq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LgPklKN9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F8E325489
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07781325489
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760560972; cv=none; b=Dl4hvbE7NtOiPbdSq1FV9y7MgbZsIWeR9FABfexO4BaSxRkqr6VADKWTuJ5trphFq/rGRUAiFHvxannFniGk5McwqUC+Ns2IT7iUxmS2ofjdl7pGCSMHZ7QW003fba5DtX2qXI8kGFPVsEGI4if9M3AorLOfyszb6QU+lsPzc2A=
+	t=1760561004; cv=none; b=dAElWrXH7GCpF20eVi2lY0pcvG2ixg3BTVBnBaP4vfCbxUz5D9bOFffw+3+JQFntuqQY7s25eNdAVxfRoQA7q7d+3w4wJgZZ+uKDIJSKTcPpyoRy+EL4ROWg5GGQsyUykCH3eJqn44SvMj5CX12twD4UqKsUZ5DhZhnojOI4GpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760560972; c=relaxed/simple;
-	bh=DMcfSJEPVq5clW8pi9Lymeti7g490BgfKAvf53vb2y8=;
+	s=arc-20240116; t=1760561004; c=relaxed/simple;
+	bh=Vmu3AfBCNHpr9wiAxiAdcO5sz3DLQCpawBJvSPMTTV0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LDpa0gmBDiuW9XP/QCgAP7f6KpVs94m+W+wooNHC26f1OmFVlAyktW4Pad17onrLKbiK4UQJvBARwPzf6aArIFdPo/5aZ4E5gR4XrRQ4FW3umiwcx25q/fNHO1IF5Y6SVJv9DA+P0iIcvv9Tnev0U4zc3hVPakm73TFZOEeb3qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X0faGHLq; arc=none smtp.client-ip=198.175.65.18
+	 Content-Type:MIME-Version; b=Mupmfnp4azCB+K4dMkjGRAJAhEA9q5Gvekf7yzJukcjbElvcspbW8MXHjEVwx2du8w0Z8Mt2rZZ38TY06eugB7O9wI6kp9EBnNgmeCEqPKJMPz2Shw96LKL3oKqhAbX7PYQOGBzPIi9v6VUs4YZWaeaWBuLimiBhNw8Mc0ukPVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LgPklKN9; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760560971; x=1792096971;
+  t=1760561003; x=1792097003;
   h=message-id:subject:from:to:cc:date:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=DMcfSJEPVq5clW8pi9Lymeti7g490BgfKAvf53vb2y8=;
-  b=X0faGHLqlosUnKiaz/yNTY8QXbS3eBbGNa8phANIIdNyFLZbw7Jd9UJ9
-   HHpYdDg61Ep+OZIcarjS4QcdfQw2hq7OOZ3Xo3B7vheDYXgnVLTQc/A8A
-   vHcpKJCBHET7RiBMS1X0gmz0MTlr5d0gyk5HFWmFCdisZewt3nFxT9ucs
-   3IHm1tF/WyCPahwB6Dj9Quq8q7JDD+l7rNBhhO42MmWpLSNt/ayIbm/yL
-   KhESmQzVt3blHonW3l5m6RmIDV1RB2WjRhgGEH/sreza9Fxv+Ey6G7PEb
-   Wn8/5zCpn7TnwxFSt4ef/nIhflgvMF/GPO79hIkgLmHKdwnXJzGhuuV0d
-   w==;
-X-CSE-ConnectionGUID: WfciBMUnT1G4XArUnwmjTw==
-X-CSE-MsgGUID: cz+g1+h7SXGacvP/1bk4LA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62789540"
+  bh=Vmu3AfBCNHpr9wiAxiAdcO5sz3DLQCpawBJvSPMTTV0=;
+  b=LgPklKN9ewKa2i/Jx7SaaGTNYzTuAurucj1ppxUO4NM9sIs1YeJyMXAu
+   B8dTGiTXO5A5p6TvAT8TyXE1C049n0BE1Sfwm9HYJM3dzpIMdFj6CZLfY
+   Z/8zkyzMwOKORJHebXnDqeHeO1e0BBYHq6ym3vx649xUbDzzjMBw9Smff
+   YH1/8LHPBWaZipstWTbl6Bi8IODe+u5PP+YLnFxbgacpD4z3TCh+/762M
+   Aj0DdEAoorAVBOp/pyBclK2LJkKZD24CmZWxBwpM2rPEomm6073BRIsuV
+   doUtBW/EnNgAC09+7znCAbJ/MXL3cQOHrqBJhwtodLeSbpvElFEd8q4+0
+   A==;
+X-CSE-ConnectionGUID: VRnT4t+ARPOAqNqMsuC3tw==
+X-CSE-MsgGUID: R/kGnCizQhqt+FELSsp1SQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62455114"
 X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="62789540"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:42:50 -0700
-X-CSE-ConnectionGUID: sfrKilFlShaJk24+Znnn5w==
-X-CSE-MsgGUID: xHVGpvbgR5CA+gZR1zORJg==
+   d="scan'208";a="62455114"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:43:22 -0700
+X-CSE-ConnectionGUID: yObnk93kR5yxHqgV9Xwf+A==
+X-CSE-MsgGUID: x0U37dCzQTGg7WCLJ4VANw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="182257479"
+   d="scan'208";a="186531479"
 Received: from unknown (HELO [10.241.242.248]) ([10.241.242.248])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:42:49 -0700
-Message-ID: <ddf1e4e377ffbacab6a10ffa2e729a0d5e24ad98.camel@linux.intel.com>
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:43:22 -0700
+Message-ID: <623dcfc049e79f939d0431c07f470dd1ec50cc33.camel@linux.intel.com>
 Subject: Re: [PATCH 09/19] sched/fair: Count tasks prefering each LLC in a
  sched group
 From: Tim Chen <tim.c.chen@linux.intel.com>
@@ -77,11 +77,11 @@ Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
  <yu.c.chen@intel.com>, Libo Chen <libo.chen@oracle.com>, Adam Li	
  <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
 	linux-kernel@vger.kernel.org
-Date: Wed, 15 Oct 2025 13:42:49 -0700
-In-Reply-To: <20251015122243.GV3289052@noisy.programming.kicks-ass.net>
+Date: Wed, 15 Oct 2025 13:43:22 -0700
+In-Reply-To: <20251015122517.GW3289052@noisy.programming.kicks-ass.net>
 References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
 	 <00e5f2cb6eadc3738e33858d3c4563a0775ee1c0.1760206683.git.tim.c.chen@linux.intel.com>
-	 <20251015122243.GV3289052@noisy.programming.kicks-ass.net>
+	 <20251015122517.GW3289052@noisy.programming.kicks-ass.net>
 Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
  keydata=mQENBE6N6zwBCADFoM9QBP6fLqfYine5oPRtaUK2xQavcYT34CBnjTlhbvEVMTPlNNzE5
  v04Kagcvg5wYcGwr3gO8PcEKieftO+XrzAmR1t3PKxlMT1bsQdTOhKeziZxh23N+kmA7sO/jnu/X2
@@ -142,46 +142,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2025-10-15 at 14:22 +0200, Peter Zijlstra wrote:
+On Wed, 2025-10-15 at 14:25 +0200, Peter Zijlstra wrote:
 > On Sat, Oct 11, 2025 at 11:24:46AM -0700, Tim Chen wrote:
-> > During LLC load balancing, tabulate the number of tasks on each runqueu=
-e
-> > that prefer a given destination LLC in a sched group.
-> >=20
-> > For example, consider a system with 4 LLC sched groups (LLC0 to LLC3)
-> > balancing towards LLC3. LLC0 has 3 tasks preferring LLC3, LLC1 has
-> > 2, and LLC2 has 1. LLC0, having the most tasks preferring LLC3, is
-> > selected as the busiest source to pick tasks from.
-> >=20
-> > Within a source LLC, the total number of tasks preferring a destination
-> > LLC is computed by summing counts across all CPUs in that runqueue. For
-> > instance, if LLC0 has CPU0 with 2 tasks and CPU1 with 1 task preferring
-> > LLC3, the total for LLC0 is 3.
-> >=20
-> > These statistics allow the load balancer to choose tasks from source
-> > sched groups that best match their preferred LLCs.
-> >=20
-> > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > ---
-> >  kernel/sched/fair.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >=20
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index b7a68fe7601b..cbd1e97bca4b 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -10399,6 +10399,9 @@ struct sg_lb_stats {
-> >  	unsigned int nr_numa_running;
-> >  	unsigned int nr_preferred_running;
-> >  #endif
-> > +#ifdef CONFIG_SCHED_CACHE
-> > +	unsigned int nr_pref_llc[NR_LLCS];
-> > +#endif
-> >  };
 >=20
-> Hahahaha, no! We have this on-stack, this cannot be.
+> > +#ifdef CONFIG_SCHED_CACHE
+> > +		if (sched_cache_enabled()) {
+> > +			int j;
+> > +
+> > +			for (j =3D 0; j < max_llcs; ++j)
+> > +				sgs->nr_pref_llc[j] +=3D rq->nr_pref_llc[j];
+>=20
+> We live in the year 2025 and have embraced c99, please write as:
+>=20
+> 	for (int j =3D 0; j < max_llcs; j++)
 
-Okay, will allocate it off stack.
+Will do.
 
-Tim
+>=20
+> > +		}
+> > +#endif
 
