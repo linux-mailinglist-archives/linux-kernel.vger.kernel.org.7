@@ -1,272 +1,259 @@
-Return-Path: <linux-kernel+bounces-854801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25732BDF6D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467E9BDF6D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04513421624
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BEC048764A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68723303C8D;
-	Wed, 15 Oct 2025 15:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A64D3093CB;
+	Wed, 15 Oct 2025 15:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="KVoDvSJc"
-Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V1ScEKp9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC042DEA7E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA2A3074A2;
+	Wed, 15 Oct 2025 15:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542709; cv=none; b=dTACzSY7agH+7a/nZsReqQ29+9zTiy3B80o8jgN+wu/KRIb4uRcanuDYrdq2vLlMm3uAWjJTfRPh1DY7rKZZ17A0JM8TMqvViDc4EKkf04W9U2/pirw+izv2eatvezFzzo7DACPzK7aLQdpCVLSiXu6NHlrIKZ4B0vgZpZuQjVU=
+	t=1760542715; cv=none; b=KreI9oAF0Lng3hFzS7y1FYCAr0iSTnFGcePqFhO/du2th5Vrn+ydE8sHbAIYJN7XYnnjWgjEcOkxUOM4p8TRaHp2/YjYRsy2KwMqiDLrg/KzBf+rc8RQqhYmrrhOBMNkjk5LrH46P2QHOsxgjVqwaI1ivjXe7cji507N3YXz72Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542709; c=relaxed/simple;
-	bh=gIezYiTegFyBcP/3Fb+EbVWbtQuVMFl/3rnZU/geUsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KRpMynPdvmBbMI0ctiIzJ1lt51sFSjEbxKvvb6n2wc/z5LyEl/zjqSCEDfSL38LijYu8RggRJD85dlSVpW64YcQZBHzjxLXIyhuoSrmbqrutKvqj4YQyXpiC0h58MHzg3OpqMeqrR+Rm/R3iA9JkXsPiZepr1eGVms/sZKUxj1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=KVoDvSJc; arc=none smtp.client-ip=178.156.171.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay13 (localhost [127.0.0.1])
-	by relay13.grserver.gr (Proxmox) with ESMTP id 7C3DE5E65A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:25 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay13.grserver.gr (Proxmox) with ESMTPS id 90DF85E707
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:23 +0300 (EEST)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 54EDF200762
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:22 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1760542702;
-	bh=mQ7/WGOdGYf6mG7n10jnlLe+eDnokaXF7eAESwWnDQA=;
-	h=Received:From:Subject:To;
-	b=KVoDvSJc9U8TqchdsVXKKoUh/Rcg+be5HelCtE00SIFmFylpfLyX4/I7YnpEpfZ66
-	 otJvKb9nW3OXFRRrX4m61Gq35wzsa05vHs8cRr7t6oZ6xyOAfZAnXlwp4uIwYAvJ/U
-	 Izg1qiCTspbz6hG4pSae27uKZaxeqLXHnTotAbUXRd/yQ5us4COh+tFfEusF12EWiy
-	 FVhjf/uhl1WexDW9ggVnerkRpKXSEd4C/JI1NhKRsVcvO6VtIkcUZ9LjZFVBno2uzs
-	 H6DTgUDak6l6ex3AYaHQsvy+2b00ltYxvEyC7lYy5milTCFLluU/F0hQHIxaYVyJMh
-	 +QnCZyE8inGVA==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.181) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f181.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f181.google.com with SMTP id
- 38308e7fff4ca-37777912161so17633801fa.1
-        for <linux-kernel@vger.kernel.org>;
- Wed, 15 Oct 2025 08:38:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVfRjatw9ljs4NqEERpghhQ+6XwYRtNFLP4Foep1KZQ4JG4I6k+UDEMkQ59W+aRL6nDTSpwq3sldKFHuLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcWxX1VEnr78xZcW8P+nPjlyv9uE0FfzzRz3MCCsWQPOna+cDn
-	Ttq6HCoiF0b5ubgQ1ymxKaPZaZjqDC7M76PLS6Ba7SbzgReatKWy6IgteZfTVOH40t+dsNeQLTD
-	PrHMvo5/dxfDAL4uqf2DJmvv3mOoRzwE=
-X-Google-Smtp-Source: 
- AGHT+IFjqcKyYvGe7pHZIYE2H4S3rda8I4BB4biO+WOCIaCVKhqZUt8ACTiws2IWJ8pMURwHRVEKmxtrfAqtqNdZfcQ=
-X-Received: by 2002:a05:651c:199e:b0:333:b6b1:a151 with SMTP id
- 38308e7fff4ca-37609ce579cmr80632981fa.7.1760542701798; Wed, 15 Oct 2025
- 08:38:21 -0700 (PDT)
+	s=arc-20240116; t=1760542715; c=relaxed/simple;
+	bh=9pbyUAwwFE/QnPS4ZNdNETNv1vPeXcRmk7+KPeZVauw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rVywi6FtBSNmogF1F4C0iVuCgeb7FjeNCwUad4jvTes04jE463LZs+5Jh7HxC2hdOb+NIaV2Bo0daRkrCmk8qZVwivob1tfNIs9wULM55WDEL1815A9XkUDgFDkSxgtciXHnbsKHZ+SyceBWVnyCWQxelGRQjRa9zyJXQuE3pnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V1ScEKp9; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760542713; x=1792078713;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=9pbyUAwwFE/QnPS4ZNdNETNv1vPeXcRmk7+KPeZVauw=;
+  b=V1ScEKp9q1xlZiUyxhZ36AUuJaf7n6/vNCV9Qe6BTrsr4TYIJq18D9k8
+   kBprkFcyGJAPqsXoALwuj0bz91YM8sGw+2VpYcs3pLtcPbw1Bl0FvWBz/
+   u+QNsAAexW6Q3ngZON8TcnE75CHzawPVhhDeHl18kgTxC+QVGg6cre4iB
+   m9fEHz4srJEZkmGv/DG3/Ua2qQMCBUGbGPqyzxRiR6kpIhMQVcWX5cTlp
+   jtbmudTvNQnxH1lwt+lfo5X2bE6D8IQZUSIkBs6qjAgay916U8P3k2n5r
+   LfgOktLpNTqkrAmfXKXb+zckPaEQ0V5NRLVCOaVXQ4jOjqxkAYcG1tPwG
+   g==;
+X-CSE-ConnectionGUID: bAkE0eRlTP2xFgMafjeGug==
+X-CSE-MsgGUID: timFh+UsQEKL93aQJL5SPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62429048"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="62429048"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:38:31 -0700
+X-CSE-ConnectionGUID: X/uJpIkAQLGgjChyA5kODQ==
+X-CSE-MsgGUID: 2wH9yJ6jRlCJMstXmDpRCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
+   d="scan'208";a="181418405"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.221]) ([10.125.111.221])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 08:38:31 -0700
+Message-ID: <de625425-bc2c-4fe8-850a-2196946ce9d8@intel.com>
+Date: Wed, 15 Oct 2025 08:38:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013201535.6737-1-lkml@antheas.dev>
- <20251013201535.6737-7-lkml@antheas.dev>
- <4e4af3e9-26d3-ad03-7868-7fd7dbd541f3@linux.intel.com>
-In-Reply-To: <4e4af3e9-26d3-ad03-7868-7fd7dbd541f3@linux.intel.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Wed, 15 Oct 2025 17:38:10 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwFb9HsT4DCDvASdyxBjO6rJoODbBchXt1GXmRD7gqZ1nA@mail.gmail.com>
-X-Gm-Features: AS18NWDUdsfcgcvuMLIdgA9AW5hQrdjU8rtiJSwIpWPukhUnQInxKfrQt1LW6ig
-Message-ID: 
- <CAGwozwFb9HsT4DCDvASdyxBjO6rJoODbBchXt1GXmRD7gqZ1nA@mail.gmail.com>
-Subject: Re: [PATCH v6 6/7] platform/x86: asus-wmi: add keyboard brightness
- event handler
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	Denis Benato <benato.denis96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <176054270261.2565085.3283049938162023267@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] cxl_test: enable zero sized decoders under hb0
+To: Vishal Aslot <vaslot@nvidia.com>, Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ "open list:COMPUTE EXPRESS LINK (CXL)" <linux-cxl@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251015024019.1189713-1-vaslot@nvidia.com>
+ <20251015024019.1189713-2-vaslot@nvidia.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251015024019.1189713-2-vaslot@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 15 Oct 2025 at 14:19, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
->
-> > Currenlty, the keyboard brightness control of Asus WMI keyboards is
->
-> There's a typo here but preferrably avoid "currently" altogether where
-> possible.
->
-> > handled in the kernel, which leads to the shortcut going from
-> > brightness 0, to 1, to 2, and 3.
-> >
-> > However, for HID keyboards it is exposed as a key and handled by the
-> > user's desktop environment. For the toggle button, this means that
-> > brightness control becomes on/off. In addition, in the absence of a
-> > DE, the keyboard brightness does not work.
-> >
-> > Therefore, expose an event handler for the keyboard brightness control
-> > which can then be used by hid-asus.
-> >
-> > Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> > Tested-by: Luke D. Jones <luke@ljones.dev>
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/platform/x86/asus-wmi.c            | 41 +++++++++++++++++++++-
-> >  include/linux/platform_data/x86/asus-wmi.h | 13 +++++++
-> >  2 files changed, 53 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asu=
-s-wmi.c
-> > index a2a7cd61fd59..58407a3b6d41 100644
-> > --- a/drivers/platform/x86/asus-wmi.c
-> > +++ b/drivers/platform/x86/asus-wmi.c
-> > @@ -1579,6 +1579,45 @@ void asus_hid_unregister_listener(struct asus_hi=
-d_listener *bdev)
-> >  }
-> >  EXPORT_SYMBOL_GPL(asus_hid_unregister_listener);
-> >
-> > +static void do_kbd_led_set(struct led_classdev *led_cdev, int value);
-> > +
-> > +int asus_hid_event(enum asus_hid_event event)
-> > +{
-> > +     unsigned long flags;
-> > +     int brightness;
-> > +
-> > +     spin_lock_irqsave(&asus_ref.lock, flags);
-> > +     if (!asus_ref.asus || !asus_ref.asus->kbd_led_registered) {
->
-> Please add a local variable for asus_ref.asus. Check other
-> patches/functions too if its use is repeated in some function many times,
-> the local var seems to be in order.
->
-> > +             spin_unlock_irqrestore(&asus_ref.lock, flags);
->
-> Use guard() instead.
->
-> > +             return -EBUSY;
-> > +     }
-> > +     brightness =3D asus_ref.asus->kbd_led_wk;
-> > +
-> > +     switch (event) {
-> > +     case ASUS_EV_BRTUP:
-> > +             brightness +=3D 1;
-> > +             break;
-> > +     case ASUS_EV_BRTDOWN:
-> > +             brightness -=3D 1;
-> > +             break;
-> > +     case ASUS_EV_BRTTOGGLE:
-> > +             if (brightness >=3D ASUS_EV_MAX_BRIGHTNESS)
-> > +                     brightness =3D 0;
-> > +             else
-> > +                     brightness +=3D 1;
-> > +             break;
-> > +     }
-> > +
-> > +     do_kbd_led_set(&asus_ref.asus->kbd_led, brightness);
-> > +     led_classdev_notify_brightness_hw_changed(&asus_ref.asus->kbd_led=
-,
-> > +                                               asus_ref.asus->kbd_led_=
-wk);
-> > +
-> > +     spin_unlock_irqrestore(&asus_ref.lock, flags);
-> > +
-> > +     return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(asus_hid_event);
-> > +
-> >  /*
-> >   * These functions actually update the LED's, and are called from a
-> >   * workqueue. By doing this as separate work rather than when the LED
-> > @@ -1878,7 +1917,7 @@ static int asus_wmi_led_init(struct asus_wmi *asu=
-s)
-> >       asus->kbd_led.flags =3D LED_BRIGHT_HW_CHANGED;
-> >       asus->kbd_led.brightness_set =3D kbd_led_set;
-> >       asus->kbd_led.brightness_get =3D kbd_led_get;
-> > -     asus->kbd_led.max_brightness =3D 3;
-> > +     asus->kbd_led.max_brightness =3D ASUS_EV_MAX_BRIGHTNESS;
-> >       asus->kbd_led_avail =3D !kbd_led_read(asus, &led_val, NULL);
-> >
-> >       if (asus->kbd_led_avail)
-> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux=
-/platform_data/x86/asus-wmi.h
-> > index 1f85d76387a8..e78e0fbccede 100644
-> > --- a/include/linux/platform_data/x86/asus-wmi.h
-> > +++ b/include/linux/platform_data/x86/asus-wmi.h
-> > @@ -168,6 +168,14 @@ struct asus_hid_listener {
-> >       void (*brightness_set)(struct asus_hid_listener *listener, int br=
-ightness);
-> >  };
-> >
-> > +enum asus_hid_event {
-> > +     ASUS_EV_BRTUP,
-> > +     ASUS_EV_BRTDOWN,
-> > +     ASUS_EV_BRTTOGGLE,
->
-> Where does "BRT" come from. To me it doesn't associate with brightness
-> (might be due to me being non-native). If there's a good reason why it's
-> that way, fine but otherwise I suggest changing it so that it becomes
-> easier to understand.
->
-> It's not a big problem as is because the context in the code above allows
-> decrypting the meaning but without the other names, I'd have been totally
-> lost what it means.
 
-Comes from e9809c0b9670 ("asus-wmi: add keyboard backlight support")
 
-I matched it to the driver, other alternative is KBDILLUM. I will keep
-it as BRT for now to match the current driver.
+On 10/14/25 7:40 PM, Vishal Aslot wrote:
+> The cxl core in linux updated to supported committed
+> decoders of zero size, because this is allowed by
+> the CXL spec.
+> 
+> This patch updates cxl_test to enable decoders 1 and 2
+> in the host-bridge 0 port, in a switch uport under hb0,
+> and the endpoints ports with size zero simulating
+> committed zero sized decoders.
 
-> > +};
-> > +
-> > +#define ASUS_EV_MAX_BRIGHTNESS 3
-> > +
-> >  #if IS_REACHABLE(CONFIG_ASUS_WMI)
-> >  void set_ally_mcu_hack(enum asus_ally_mcu_hack status);
-> >  void set_ally_mcu_powersave(bool enabled);
-> > @@ -176,6 +184,7 @@ int asus_wmi_evaluate_method(u32 method_id, u32 arg=
-0, u32 arg1, u32 *retval);
-> >
-> >  int asus_hid_register_listener(struct asus_hid_listener *cdev);
-> >  void asus_hid_unregister_listener(struct asus_hid_listener *cdev);
-> > +int asus_hid_event(enum asus_hid_event event);
-> >  #else
-> >  static inline void set_ally_mcu_hack(enum asus_ally_mcu_hack status)
-> >  {
-> > @@ -200,6 +209,10 @@ static inline int asus_hid_register_listener(struc=
-t asus_hid_listener *bdev)
-> >  static inline void asus_hid_unregister_listener(struct asus_hid_listen=
-er *bdev)
-> >  {
-> >  }
-> > +static inline int asus_hid_event(enum asus_hid_event event)
-> > +{
-> > +     return -ENODEV;
-> > +}
-> >  #endif
-> >
-> >  #endif       /* __PLATFORM_DATA_X86_ASUS_WMI_H */
-> >
->
-> --
->  i.
->
->
+Hi Vishal, first of all, really appreciate you doing this. If there's another rev of the series, let's reorder and the test patch should go after the implementation patch.
+
+Can you add a little more in the commit log on how this is tested? i.e. this code is exercised in cxl-topology.sh unit test or something else etc etc.
+
+> 
+> Signed-off-by: Vishal Aslot <vaslot@nvidia.com>
+> ---
+>  tools/testing/cxl/test/cxl.c | 96 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 94 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+> index 2d135ca533d0..cb18ee41a7cf 100644
+> --- a/tools/testing/cxl/test/cxl.c
+> +++ b/tools/testing/cxl/test/cxl.c
+> @@ -719,6 +719,45 @@ static void default_mock_decoder(struct cxl_decoder *cxld)
+>  	cxld->reset = mock_decoder_reset;
+>  }
+>  
+> +static void size_zero_mock_decoder_ep(struct cxl_decoder *cxld, u64 base)
+> +{
+> +	struct cxl_endpoint_decoder *cxled;
+> +
+> +	cxled = to_cxl_endpoint_decoder(&cxld->dev);
+> +	cxld->hpa_range = (struct range){
+> +		.start = base,
+> +		.end = base - 1,  /* Size 0 */
+> +	};
+> +
+> +	cxld->interleave_ways = 2;
+> +	cxld->interleave_granularity = 4096;
+> +	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+> +	cxld->flags = CXL_DECODER_F_ENABLE;
+> +	cxled->state = CXL_DECODER_STATE_AUTO;
+> +	cxld->commit = mock_decoder_commit;
+> +	cxld->reset = mock_decoder_reset;
+> +}
+> +
+> +static void size_zero_mock_decoder_sw(struct device *dev, u64 base, int i)
+> +{
+> +	struct cxl_switch_decoder *cxlsd;
+> +	struct cxl_decoder *cxld;
+> +
+> +	cxlsd = to_cxl_switch_decoder(dev);
+> +	cxld = &cxlsd->cxld;
+> +	cxld->flags = CXL_DECODER_F_ENABLE;
+> +	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+> +	if (i == 0)
+> +		cxld->interleave_ways = 2;
+> +	else
+> +		cxld->interleave_ways = 1;
+> +	cxld->interleave_granularity = 4096;
+> +	cxld->hpa_range = (struct range) {
+> +		.start = base,
+> +		.end = base - 1, /* Size 0 */
+> +	};
+> +}
+> +
+>  static int first_decoder(struct device *dev, const void *data)
+>  {
+>  	struct cxl_decoder *cxld;
+> @@ -731,6 +770,30 @@ static int first_decoder(struct device *dev, const void *data)
+>  	return 0;
+>  }
+>  
+> +static int second_decoder(struct device *dev, const void *data)
+> +{
+> +	struct cxl_decoder *cxld;
+> +
+> +	if (!is_switch_decoder(dev))
+> +		return 0;
+> +	cxld = to_cxl_decoder(dev);
+> +	if (cxld->id == 1)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+> +static int third_decoder(struct device *dev, const void *data)
+> +{
+> +	struct cxl_decoder *cxld;
+> +
+> +	if (!is_switch_decoder(dev))
+> +		return 0;
+> +	cxld = to_cxl_decoder(dev);
+> +	if (cxld->id == 2)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+>  static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
+>  {
+>  	struct acpi_cedt_cfmws *window = mock_cfmws[0];
+> @@ -743,7 +806,7 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
+>  	struct cxl_dport *dport;
+>  	struct device *dev;
+>  	bool hb0 = false;
+> -	u64 base;
+> +	u64 base = window->base_hpa;
+>  	int i;
+>  
+>  	if (is_endpoint_decoder(&cxld->dev)) {
+> @@ -767,6 +830,20 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
+>  		port = cxled_to_port(cxled);
+>  	}
+>  
+> +	/*
+> +	 * Decoders 1 and 2 of the endpoint under host bridge 0 should be enabled as zero-sized.
+> +	 * It would be even better to make sure that the parent switch uport decoder was
+> +	 * also enabled before enabling the size zero decoders but there is no harm in doing it
+> +	 * anyway.
+> +	 */
+> +	if (hb0 && (cxld->id == 1 || cxld->id == 2)) {
+> +		port = to_cxl_port(cxld->dev.parent);
+> +		size_zero_mock_decoder_ep(cxld, base);
+> +		/* Commit the zero-sized decoder */
+> +		port->commit_end = cxld->id;
+> +		return;
+> +	}
+> +
+>  	/*
+>  	 * The first decoder on the first 2 devices on the first switch
+>  	 * attached to host-bridge0 mock a fake / static RAM region. All
+> @@ -780,7 +857,6 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
+>  		return;
+>  	}
+>  
+> -	base = window->base_hpa;
+>  	cxld->hpa_range = (struct range) {
+>  		.start = base,
+>  		.end = base + size - 1,
+> @@ -844,6 +920,22 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
+>  			.end = base + size - 1,
+>  		};
+>  		put_device(dev);
+> +
+> +		/* Enable the next two decoders also and make them zero sized */
+
+s/decoders/switch decoders/
+
+> +		dev = device_find_child(&iter->dev, NULL, second_decoder);
+
+Maybe just pass in the index as the data parameter and then you can just use match_decoder_by_index instead of static code second and third.
+
+DJ
+
+> +		WARN_ON(!dev);
+> +		if (dev) {
+> +			size_zero_mock_decoder_sw(dev, base, i);
+> +			iter->commit_end = 1;
+> +			put_device(dev);
+> +		}
+> +		dev = device_find_child(&iter->dev, NULL, third_decoder);
+> +		WARN_ON(!dev);
+> +		if (dev) {
+> +			size_zero_mock_decoder_sw(dev, base, i);
+> +			iter->commit_end = 2;
+> +			put_device(dev);
+> +		}
+>  	}
+>  }
+>  
 
 
