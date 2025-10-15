@@ -1,309 +1,609 @@
-Return-Path: <linux-kernel+bounces-853774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6573BDC93D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4468BDC94C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98ECB3C83DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E413C840C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9FD2FF663;
-	Wed, 15 Oct 2025 05:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302D42FF170;
+	Wed, 15 Oct 2025 05:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="gGhqXQE7"
-Received: from PUWP216CU001.outbound.protection.outlook.com (mail-koreasouthazon11020088.outbound.protection.outlook.com [52.101.156.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThrKdF8g"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A7C2BDC33;
-	Wed, 15 Oct 2025 05:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.156.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505119; cv=fail; b=m8sGwbB0Bp73Y6Md0HahpWfKTdKl48QJmqBbMipjmINf+2/g7KVBOZAOs0zlz2LK6Z1IpXZff9BonaqCTzEZvXMJ0nswq9PyuuSGOZb3+majucRYnuSNmJIuipl4NoSa9fG1s04V8kbvcMVFj/apzMMbnB2nn6+p9IgqBiSzl80=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505119; c=relaxed/simple;
-	bh=192nuHY7vLj2qt6HrOhRayNqt4tQ7KbxLIh0yrWdfpk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YciqllRDgtFkIfdmocDxprbsqascRKbrauUzRoIc0U+qaSfyctz96TL6U6OhyZLJNLPtrP6LHzDke8kyPPoHpENfDKWsIQLV6CjCCn8O6ZzzT0dhS6WFJAV3YuoFUsuqQ+xBfWT2phKSuBoKPdg/R+hiJexhMA7//AoMysUx8q8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=fail smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=gGhqXQE7; arc=fail smtp.client-ip=52.101.156.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=chipsnmedia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FEeVe/zz0ptYFtBGIZjlEpJ4frwC6jSHorM6HjlTFLiPhDMTTy5kLNDRa1Uh6UIPE8QD8x+fzpjt1XUlPx0oVOat6mRbbSCFhPV6iSbA3f/9d2BySti3VtGqW6fnBX+LyvopdRhUBp6l8K3LlHARao0y+DemtRDSvcx4+f18iZQjeZUKf9G3oK/G8vUXER0Oc9SnJFq2gQcXFwWcs5eSWTEcfSclCtuzVfBiwR4PLcYqFpYI2nvbYages1jY23/ZxYwh5OybrmBwLfKux0RTnPMst+VgDDZiBgJyHo0HsiD6Q1lfz1wOhcz1gKukgvLMTMuwwAsikEc7ddgoGa6Y0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FMPFFuX364hoG2iVPt86boq7DXB/pIsHGkQLUC3R2vg=;
- b=TNvFEhzDa1jwRmUw4MpwWaUV1KKQKBMl0uSMLIDp8BJQsnpwF5JMsRVKhioNaRP5vrQ8KlGRgG/+0gN8qEi6nilPZlcuMw5n5pgMoCLGz0prEEMhUVJGLvlYml4ZtmhI/tJU+27b4oL6iVgmpKGDmd1QIXB7iJwBoRp37x4GUo6GR5/FTSh+vfOpcoDz9IkWUslTv9jJX5twAHJ8bBpihRLDLDEwvHFV70LHzFdpM6ub8CX3vgwoSl330N+mlKrd1EI72rDTjQ9CTd7vhC6Y+KeRYRgiEjAujRM6UuS/197KX7Clnj2fRkIUDu/yAZlbKGx2l4hNtE23Ywishv48LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
- header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FMPFFuX364hoG2iVPt86boq7DXB/pIsHGkQLUC3R2vg=;
- b=gGhqXQE7cZHNc5BwyO3oGCmjIDzxMdPje5m8raDWLV0uUPSMOegFRZftNXtes14ZNb+nSfR2XbO5kYSccMx8abb0VvxqDbYY/UdBsgj3M/Fv2eaThsjiNNRRYs1NpkyHOVkaTNxw9YHPADuKeLg0qnUHG2ExjIFZ3WM+QIPjVU8=
-Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
- SE1P216MB1911.KORP216.PROD.OUTLOOK.COM (2603:1096:101:f6::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.10; Wed, 15 Oct 2025 05:11:51 +0000
-Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
- ([fe80::9e3d:ee20:8cc7:3c07]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
- ([fe80::9e3d:ee20:8cc7:3c07%5]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 05:11:51 +0000
-From: Nas Chung <nas.chung@chipsnmedia.com>
-To: Marek Vasut <marek.vasut@mailbox.org>, Ming Qian <ming.qian@nxp.com>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>, jackson.lee <jackson.lee@chipsnmedia.com>, lafley.kim
-	<lafley.kim@chipsnmedia.com>
-Subject: RE: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec driver
-Thread-Topic: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec
- driver
-Thread-Index:
- AQHbs2lXPGc8hKKJ8U+R1oPOXrRnSrSC0cWAgAEGDICAACOsgIAABgoAgACe0oCAOTQqgIAF4/rg
-Date: Wed, 15 Oct 2025 05:11:51 +0000
-Message-ID:
- <SL2P216MB12469FADA7A4A6872D1C5D05FBE8A@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
-References: <20250422093119.595-1-nas.chung@chipsnmedia.com>
- <f03d0ae0-d28b-4b06-8f63-9d06f15c0522@mailbox.org>
- <fcfa00b5ae102d76b02ce1667d27822e6d2c3c81.camel@ndufresne.ca>
- <472aac3c-9d3e-4892-8d6c-665fa6793464@mailbox.org>
- <59e87d8e346bb16b225382b9a4500e1b16bbf776.camel@ndufresne.ca>
- <PAXPR04MB825499BA447B4000AB8329A6E703A@PAXPR04MB8254.eurprd04.prod.outlook.com>
- <2c431e9a-9e2f-4583-bf03-142b56439a47@mailbox.org>
-In-Reply-To: <2c431e9a-9e2f-4583-bf03-142b56439a47@mailbox.org>
-Accept-Language: en-US, ko-KR
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SL2P216MB1246:EE_|SE1P216MB1911:EE_
-x-ms-office365-filtering-correlation-id: 05620317-c8e0-42f7-7d31-08de0ba95971
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?7lTG4Br8P027UJn45qZEXkiUMsIJrONx2BAxL0HKFnMfDnI7uJxZ2vig22?=
- =?iso-8859-1?Q?AkOT/BkogY3tUyYCGZ+FbxTvHHRmzRBYPE1Uw+wRsyrU3ntLeHT37c2VtN?=
- =?iso-8859-1?Q?Oasd114p05Ujl/kgNc4khYC1kCI8eriY2RKjYrpwB8Gdt5kb4FXMTCXi3J?=
- =?iso-8859-1?Q?y4CL33aK4jPn6PllazSJ6g81b3HcP/Y+g4TU6JZuKR/vOU2jWpGruLCbgZ?=
- =?iso-8859-1?Q?XMMW/qBKJqjGVFO26vGhI2lZLQeihZulxUrclJ4cmEMO1xwxMOIt9mUQzO?=
- =?iso-8859-1?Q?Yr/AorINbtcT0wJykUvEePzqVOSdQp7DR0nfwJTXtg1koGjvTSRgQ90Bld?=
- =?iso-8859-1?Q?br/bMt19cXVqkyGwH1sEQJCzw4NB3IqWlifH/ZpCqZmz2wJHJQ8GQrYeBy?=
- =?iso-8859-1?Q?Da08GjfNQlTTP44Cs+JTP+WBrBhvmvZ7p6ueLx1q5FDfOqSLkaylu5+hEl?=
- =?iso-8859-1?Q?HnEZaemXMcQM0IHqfumujTZPOp4ORIeY/OIvT0D42l16H/Jilst6zU8k8N?=
- =?iso-8859-1?Q?7WUar5vli7U/+ddC4hmHFRVDIi5gJB+984BAG+V+S3cHW9uphpiE7UftcG?=
- =?iso-8859-1?Q?e0WfdOpDPw7iha9DHhkhiFjUkqxhrgiBQBdd/N0id49XcHJJ/re+id8lnv?=
- =?iso-8859-1?Q?9Ng6fnKUTPXkY6Gp2+3qV7X/JVO3aOG7ci/HAmyWKQfVwB5ULS4oY2Js0A?=
- =?iso-8859-1?Q?sriGeRVHoXZIBKQNHPZZz2AlVI5YmsoslgpXUIxuYloKEf2grY5R6BqGNz?=
- =?iso-8859-1?Q?zeJTDeKuBpXSaFq8FOSbojopmnm79vCc4GHi9t3X3/vt5D/zmzQ9Ug5MsQ?=
- =?iso-8859-1?Q?91depeTWqwzrgpqt72mPAwh3X16mRvta9pDFM8rBVlbRjgTxLDURa6UkoI?=
- =?iso-8859-1?Q?KFBN6Z/We+BdTozABIDTpjWyVl439bwnN5OKStyRobk/hzYROSITNeAfZq?=
- =?iso-8859-1?Q?U7Tq5h+uQ2Ys9rSNOjdCRS0poIESNF9VKpcyGkYXhCj623cyH5BugXlpeo?=
- =?iso-8859-1?Q?etbR2FRryZJqUh+G59fpjkSIhyZy4lZUgm0AiFyQUjIS4xEb7yw9Jj2TXi?=
- =?iso-8859-1?Q?0bhW+vCjuG2nUZQr4wg3ZgxuQdOhPSW2EN/HGstIa8UzO+Y2Hzc16oqGmp?=
- =?iso-8859-1?Q?0cgUS9fGf0EJgN/dgNXIHzEwZEuLeNd/RZFWpO4ujUi1aKzLjDA1qmoC0v?=
- =?iso-8859-1?Q?M4YYX7oEmrx0y7G6tiC8O4JHTM/rI72ZEkXNGpv1RT6rm04Mj0GMuS+vJk?=
- =?iso-8859-1?Q?7hUxJAASEzBatuxvSQoS0j/k0s7yoOE+IlHEMqb0Jnx5R1J7SAqWAxwiDp?=
- =?iso-8859-1?Q?+2vuoTxj5liE/hh0G8vZKSksyhZLFtCSW3lsKFCwkokAh5kXveHMWCrA3u?=
- =?iso-8859-1?Q?715Arhqg+30izR/tqu7/V3RG4a4c1gJw7Tdx3+TAckzXSVnqCv5Qg0Hq7V?=
- =?iso-8859-1?Q?FusIk8nPCO8uVeseOG6k/F552IU/tHN9sykVDGb+8vwHbW/opQ42Z05uXc?=
- =?iso-8859-1?Q?ghZA9rqUTaTWKfmVVdv8hgqh4kS2VSFJzdLXSPxmGIhjnuZL6dTY0mQhR3?=
- =?iso-8859-1?Q?2wUX6UC4c0TZAPgAfIUI0Zv3o2Mk?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ko;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?R0p06U9tZ1PlQ7Hux/fWOXINvxi4PPRjixAsgxBIu1wgmpsLbZYisPzWk9?=
- =?iso-8859-1?Q?+UeVXpM9ex5HPPWbUBXPNroOcXliCLMlX73BOXbfzRDeVo4d035aWz2On1?=
- =?iso-8859-1?Q?UgVIpZhOJ61bfvupuV8YfssobAxKLvPe9hXK/gH2Y2JCCp5roEe44X6aI6?=
- =?iso-8859-1?Q?Jcub8cn98lMbxwn3VJl2TtX/KbLXkNPUJNAvj9oEfAtd5F52/2ZpqOXutl?=
- =?iso-8859-1?Q?R9IB+fjdtDmmZi7w87Pf+4O+Y8OJX/NPo4HRZH/bUtqTsNszybosWIOOai?=
- =?iso-8859-1?Q?lGXDWhCeYf9vgY2k3+fv309fMORwe3+PrsUJjKMnhjaIcdUzFVTxo5hU3n?=
- =?iso-8859-1?Q?WjDQEtH44Z8/hXUcn3scEI7MhjoggV7WXkwFmkpF+JKGMqdK9QdNbPWY4f?=
- =?iso-8859-1?Q?e+KUhNWhtjxpXETMMVjNUaFMilGalYNbm24KJm9gmsCaWyKcij5T43HAvU?=
- =?iso-8859-1?Q?emXJ26NUF4FtBwq/J6rcWOANn6deMuXec09Ku3MENzhsrKg3TSYw2d6Ik7?=
- =?iso-8859-1?Q?oOvI4BAeWvHl6csQFNJIaEBs6SZizOCg5ljL6QExb1ZO1+24uoA4pTqbZu?=
- =?iso-8859-1?Q?6JBgZDqyaAz5jKUGEn2eJ6Vi/oNRu9zZETju6npSrsHHE/BgoE1SNE4upA?=
- =?iso-8859-1?Q?4p0a6d8RfuMSANG4nvD44yv8/ahRjtd0WZzQciV0EKBxGKUCyzgv18WtvF?=
- =?iso-8859-1?Q?lCIBKE4bl3IJI+dx2N84WvdHFkFwIui2LsPKdlNXciGtK0li+b06dB9OUs?=
- =?iso-8859-1?Q?H4m3ZO3fu+5u8vPRpsDGsMaeOvBy3kXWg9IeekXBSjBmdRlS3dDHwzS/yr?=
- =?iso-8859-1?Q?j90h30ZOEotqCj6gl54z8hPg2FEasR/IZBjA7ohNJ0E5I8+LIkUzBAZmm7?=
- =?iso-8859-1?Q?UW6OWMG2/f6EzAXD3uIfeNFhH7/EPnfCSLQBYEnI2T+GtuVLS6DsVmZFAt?=
- =?iso-8859-1?Q?uMea+9AVNixcwDvFvrNz1aaibI+s0ntoo5cZmpkYJ8Bs+SPjV0BlL3FC8p?=
- =?iso-8859-1?Q?k9rjNQLLpeE4Uhu8eygkFWXeUd74yJ41rKytrRgIztF7bdPhHfaoSUnm6d?=
- =?iso-8859-1?Q?ogprgeklQ9nnbld/WsY6T+Q1EkZWwWYER2DNkPiJ9JpT4cFWM4PQzAcQCC?=
- =?iso-8859-1?Q?TsLmhZwZx46QTKOHnWBz/iOo3u+ywQqCveqvbqMTKhQ1sFPAmjUT3BYtP9?=
- =?iso-8859-1?Q?p5L2be+Li2L2VCsAIcbphE6vtYylWVyS1dQCPIa1850NI4w6N2IXJbnckR?=
- =?iso-8859-1?Q?Y7bOApKT0JRontGQCSdx8jgumLT78v9c4WIDsPSa24lVBlZSsE7e/OiU8q?=
- =?iso-8859-1?Q?Gz524RekXnfpgtEx6IJH3cTlwhcOn0IJmHtG6CyStVYxvoQ1dkEARJHRJV?=
- =?iso-8859-1?Q?wzchEiQmeix9PUyKMDNIf8TK2jJduZFHyu0Sqzmfejrto1l8xC2RkWhUtZ?=
- =?iso-8859-1?Q?6XtE2HDYQTsbOrRwnLX3nf3nv5+/ydGrrcWzYfmXbIufSs95H513K4L5ij?=
- =?iso-8859-1?Q?GXi0DcYyaggd+k+TcCm/zFZVDT36YyA9xx6SioqRczd3a/FtlcTEc/JpTX?=
- =?iso-8859-1?Q?AlYQCTZQDr3Ui8FVfc7cw6qWMbYDO4DQoEQqVttTt0p9vEM+YFPn+p4Pgl?=
- =?iso-8859-1?Q?Yq5iFCM2f9wArrjg+EXk0fo5Jel6jY+HpQ?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0525C2FBE18
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760505165; cv=none; b=h7ltlKqUFgkRq28fAdbajyl0uADQy33uvQfgc1M5Zzm/unugJXmPs8mNP2bIh65JHndh+INl6GtVhJiGBI3/QLRL7S3tEADmVsTBL0WDSlkCU6uKGrHc9ZnI6TCKMgr7kn9ceDraZNmhdqceKBB6EaXjk9F0RznODzha+fTS47w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760505165; c=relaxed/simple;
+	bh=9ZCXg82wJsw3k/Plz/MQ6fbUZ2GA85JYlNbL/yU/wtY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JiP8VVA9phvM/o7kgkgKyIy3nFbE37t7lxB/+OIcB+s6Z/315tuMQkUrf6FS88v+sLCHhf8/LtS9qci1ypGgGuGT5GxdHtT8p3mGSXKPVEkE5Ic0DQ/I41hXev7lWieDj1syaol7to8yhLy1k8jMXdLTbxoT47KUaVfovlcrPpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ThrKdF8g; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-330b0bb4507so5415600a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760505162; x=1761109962; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d5VbCFsT9dmfzRAee48Cbj9ew1lrNkurqw310Q/XABo=;
+        b=ThrKdF8g50+fW3nnQ/Wfvdsvy97/CaU7QBpp/jg35HZlDnlirx1OL+0bIunLKGJJWU
+         RsKJVeh/8FCE1l3t9ZvRPKIkbwBMycXrgqX3FCdgaL8oRmn5n14wzcbaQp4EphG09lgJ
+         EWsxXDzW3Cq0KYiTMCtdl6fl5u2o2BwQlFSgdqWT+B/xtcF+C1Dz0WqsooG4LWu2VO5A
+         f4ymaZ7uhFoIBYjBIa+xhk8eJ0ia6MeClmihOoTrcgjeKC/VFUCGed69HtBljwAl2Xlz
+         hePMD+28lbJSv3KIAIr4ALOnIkhourTgtEO17y7Kb7uS3JiMrjoz3SNABSZjV2RNeaUw
+         kMcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760505162; x=1761109962;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d5VbCFsT9dmfzRAee48Cbj9ew1lrNkurqw310Q/XABo=;
+        b=Jr+t7xuOSVA0+j4DQ9BojQ9U0f63W5iRiMKdj9i+hoyGd4fm+SS0w6qAOFFPS7gPnm
+         18a2zwXBXDP1kmu/DBsSOVbvpmrghc6OytZVJ2pw+QYplDD3sfBxq8QW2NoQV/tpCeEC
+         dKgo2HG5+jzFaZ7sdAIHpudM7J5HKDZBWsmj2Mh0b3fJI6bLAEmQ+75b4D8GxDukfgnl
+         yQnLMTGAewUAHu7va5/v2cIt/fB/j4tVS5la6US80NIrvAPD+r1Ez0HJEvU+XqyXtlfd
+         HSj4A0HWnA0QXyJAF4lRMg5001oPNYD39PR0FD9ka20T/CJkqRbip2WgJ4MlyaVGTLJ5
+         DrSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmMQX2JtAJ7MdtYVEYd5GDOCTRUVXQo3/Z915ovE5GBdTxwVWLy8SpKwbKX5xjth2/2hkvTZXrZ1aiGG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1iyJEz4ji/EeaVYzCJGoM2s9pL8G1nSoA64WHe3YtldHu4C5M
+	PeuD5FYMkqaAkVJw+uCmdzIkLg+OEZ3KVgYYSBvYCX7ZWCx4nX+0rkB9
+X-Gm-Gg: ASbGncsFCIs5/IvlDN1uq3vvqk51zWBd4/Jhfwi7oQmEldQuA7LwPftbY/7NAYjhJvP
+	OtoYRw5eQnUyXDoBaL5P9tW581LHCtmWVl9IS7oSvz1cPLPVQeqeGpaBrcakgIVpsOTTgiKIFoy
+	L5UZ8rhKKs1jy6CLYPfxNx9ZCax4BjnFJXaP0zhc3HrmyW/zxdBzuGl8c9XBun+2pQ8Mr1SivjV
+	V2SzEE0hKYP1ORy+Q6IwrAllgvAbrO1ND1EUIpFyUiSlCL4cYkPbACEaAel0ceuqr3dIcvJjMY8
+	3ZzAdMYxukdNWCDoc5YtquUzsZFxbWqflXTtSvJPXF2/LfgizecUudpcX6ZRJ+6c2dd8gXJ7Ex9
+	/PmghOihz/9nfnMRrMn86h4TfMnb4uDDHlCAi7wcwxuXOotYJsWAI3jkq7UzQzPqFBDWPLxcYFa
+	waXxIu5FCg2A==
+X-Google-Smtp-Source: AGHT+IEp64Y0msYiZJ016ZCLkH/tw6IF8U6znbISVckS+ZWtlrT4iTuSjRk6Fgl/MHsaWjZ+qzSb/w==
+X-Received: by 2002:a17:90b:3a8a:b0:32e:ddbc:9bd6 with SMTP id 98e67ed59e1d1-33b5138408emr37533177a91.27.1760505162200;
+        Tue, 14 Oct 2025 22:12:42 -0700 (PDT)
+Received: from localhost.localdomain ([2804:7f5:b08b:9826:e291:f414:9cb9:f6e4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6a08c4b7d6sm1116903a12.7.2025.10.14.22.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 22:12:41 -0700 (PDT)
+From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: [PATCH v13 2/2] iio: adc: max14001: New driver
+Date: Wed, 15 Oct 2025 02:12:08 -0300
+Message-Id: <2e0e5fadeb3083a79a31776d9e996b865c1b1f5f.1760502331.git.marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <830368e5bc303faf04f542268acb95e99d0d1cde.1760502331.git.marilene.agarcia@gmail.com>
+References: <830368e5bc303faf04f542268acb95e99d0d1cde.1760502331.git.marilene.agarcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: chipsnmedia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05620317-c8e0-42f7-7d31-08de0ba95971
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2025 05:11:51.1122
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Uol+lZoIQlzkMTVfYib/RF32aXPllGq47TdTQ9vwd03r4Aqp4DfTzPJ7bcrY3NcILUtXjaOvcvMNm7Rk6Y+Ux7IFtexIw3/7kZStFEhWLi4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1P216MB1911
+Content-Transfer-Encoding: 8bit
 
-Hi, Marek.
+The MAX14001/MAX14002 is configurable, isolated 10-bit ADCs for multi-range
+binary inputs. In addition to ADC readings, the MAX14001/MAX14002 offers
+more features, like a binary comparator, a filtered reading that can
+provide the average of the last 2, 4, or 8 ADC readings, and an inrush
+comparator that triggers the inrush current. There is also a fault feature
+that can diagnose seven possible fault conditions. And an option to select
+an external or internal ADC voltage reference.
 
-Thanks for your interest and testing.
+MAX14001/MAX14002 features implemented so far:
+- Raw ADC reading.
+- MV fault disable.
+- Selection of external or internal ADC voltage reference, depending on
+whether it is declared in the device tree.
 
->-----Original Message-----
->From: Marek Vasut <marek.vasut@mailbox.org>
->Sent: Saturday, October 11, 2025 7:56 PM
->To: Ming Qian <ming.qian@nxp.com>; Nicolas Dufresne <nicolas@ndufresne.ca>=
-;
->Nas Chung <nas.chung@chipsnmedia.com>; mchehab@kernel.org;
->hverkuil@xs4all.nl; sebastian.fricke@collabora.com; robh@kernel.org;
->krzk+dt@kernel.org; conor+dt@kernel.org
->Cc: linux-media@vger.kernel.org; devicetree@vger.kernel.org; linux-
->kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; jackson.lee
-><jackson.lee@chipsnmedia.com>; lafley.kim <lafley.kim@chipsnmedia.com>
->Subject: Re: [EXT] Re: [PATCH v2 0/8] Add support for Wave6 video codec
->driver
->
->On 9/5/25 3:22 AM, Ming Qian wrote:
->
->Hello everyone,
->
->>>>> Le mercredi 03 septembre 2025 =E0 23:47 +0200, Marek Vasut a =E9crit=
-=A0:
->>>>>> On 4/22/25 11:31 AM, Nas Chung wrote:
->>>>>>> This patch series introduces support for the Chips&Media Wave6
->>>>>>> video codec IP, a completely different hardware architecture
->compared
->>> to Wave5.
->>>>>>>
->>>>>>> The wave6 driver is a M2M stateful encoder/decoder driver.
->>>>>>> It supports various video formats, including H.264 and H.265,
->>>>>>> for both encoding and decoding.
->>>>>>> While other versions of the Wave6 IP may support VP9 decoding
->>>>>>> and
->>>>>>> AV1 decoding and encoding those formats are not implemented or
->>>>>>> validated in this driver at this time.
->>>>>>>
->>>>>>> On NXP i.MX SoCs, the Wave6 IP functionality is split between two
->>> regions:
->>>>>>> VPU Control region, Manages shared resources such as firmware
->>> memory.
->>>>>>> VPU Core region, Provides encoding and decoding capabilities.
->>>>>>> The VPU core cannot operate independently without the VPU control
->>> region.
->>>>>>>
->>>>>>> This driver has been tested with GStreamer on:
->>>>>>> - NXP i.MX95 board
->>>>>>> - pre-silicon FPGA environment
->>>>>>>
->>>>>>> Test results for decoder fluster:
->>>>>>> - JVT-AVC_V1, Ran 77/135 tests successfully=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0 in
->>>>>>> 35.519 secs
->>>>>>> - JVT-FR-EXT, Ran 25/69 tests successfully=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0 in
->>>>>>> 17.725 secs
->>>>>>> - JCT-VC-HEVC_V1, Ran 132/147 tests successfully=A0=A0=A0=A0=A0=A0=
-=A0=A0 in
->>>>>>> 81.549 secs
->>>>>>> - All failures are due to unsupported hardware features:
->>>>>>> -- 10bit, Resolutions higher than 4K, FMO, MBAFF
->>>>>>> -- Extended profile, Field encoding and High422 sreams.
->>>>>>>
->>>>>>> Test results for v4l2-compliance:
->>>>>>> v4l2-compliance 1.29.0-5359, 64 bits, 64-bit time_t
->>>>>>> v4l2-compliance SHA: 2a91a869eb8a 2025-04-12 11:35:53
->>>>>>>
->>>>>>> Compliance test for wave6-dec device /dev/video0:
->>>>>>>  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 fail:
->>>>>>> ../utils/v4l2-compliance/v4l2-test-controls.cpp(1180):
->>>>>>> !have_source_change || !have_eos
->>>>>>>  =A0=A0=A0=A0=A0=A0=A0=A0=A0 test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVEN=
-T: FAIL Total
->>>>>>> for wave6-dec device /dev/video0: 48, Succeeded: 47, Failed: 1,
->>>>>>> Warnings: 0
->>>>>>>
->>>>>>> Compliance test for wave6-enc device /dev/video1:
->>>>>>>  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 fail:
->>>>>>> ../utils/v4l2-compliance/v4l2-test-controls.cpp(1169):
->>>>>>> node->codec_mask & STATEFUL_ENCODER
->>>>>>>  =A0=A0=A0=A0=A0=A0=A0=A0=A0 test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVEN=
-T: FAIL Total
->>>>>>> for wave6-enc device /dev/video1: 48, Succeeded: 47, Failed: 1,
->>>>>>> Warnings: 0
->>>>>>>
->>>>>>> Note: the failures are all related with the eos event.
->>>>>>
->>>>>> For what its worth, the whole series:
->>>>>>
->>>>>> Tested-by: Marek Vasut <marek.vasut@mailbox.org> # NXP i.MX95 rev.
->>>>>> A0
->>>>>
->>>>> Do you mind sharing what tests you have done ? Are you confirming
->>>>> the same fluster and compliance results, have you done more ? Since
->>>>> this is largely inspired on Wave5, I'd like to see people testing
->>>>> real-world playback, with seeks, dynamic resolution changes, data
->>>>> lost. On Wave5, latest performance patches leads to crash or hangs.
->>>> I did not use fluster this time, I used h264 decode of 1920x1080 60
->>>> FPS stream. The pipeline was very basic, something along the lines of:
->>>>
->>>> gst-launch-1.0 -v filesrc location=3D/test.mp4 ! qtdemux ! h264parse !
->>>> v4l2h264dec ! fpsdisplaysink text-overlay=3Dfalse video-sink=3Dwayland=
-sink
->>>
->>> Thanks for the detail. Since you have a running setup, perhaps consider
->testing
->>> with the following, left/right keyboard arrow will let you jump around
->in the
->>> media.
->>>
->>>   gst-play-1.0 --audiosink=3Dfakeaudiosink --videosink=3Dwaylandsink
->/test.mp4
->>>
->>> That would at least cover seeking use cases. I provided Nas a stream
->that
->>> aggressively do resolution changes to reproduce a Wave5 crash, I would
->expect
->>> him to test and report against Wave6 too. If you'd like to have that
->sample, let
->>> me know, its not very big, and free, but I'd rather not do attachements
->over the
->>> mailing list.
->>
->> Would you please share the stream to me? I want to test this resolution-
->change case too.
->How can we proceed with the wave6 driver upstreaming ?
+Co-developed-by: Kim Seer Paller <kimseer.paller@analog.com>
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Tested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+---
 
-Patch v3 was posted before you replied to v2. I plan to post v4
-shortly and will include your Tested-by tag.
+Hello maintainers,
+Thank you for reviewing v12.
+I believe I have addressed the requested code changes.
 
-Thanks.
-Nas.
+As discussed, I have dropped the averaging feature from this series and I
+am going to add it in a later series. Also, because of that, I am not going
+to send the patch related to the in_voltageY_mean_raw ABI documentation
+change, but I did take notes about your suggestion in my v12 version patch
+related to that, David, thanks.
+
+As I said before, I intend to continue sending patches to implement all the
+features of the device. It will be at a low frequency, but consistently.
+
+Thank you, Marcelo, for the code example and for testing on your end as
+well. In my tests, I also got 0x80 from the FLAGS (0x02) register. I 
+thought it could be because I am using low voltage as power input, as I am
+using the 5V provided by the Raspberry Pi. As soon as I get a proper power
+supply, I am going to investigate that.
+
+Notes:
+I have returned the st->chip_info null check as requested in the v12
+reviews, even though I had dropped it because of a suggestion in v11.
+
+Best regards,
+Marilene Andrade Garcia
+
+
+ MAINTAINERS                |   1 +
+ drivers/iio/adc/Kconfig    |  10 +
+ drivers/iio/adc/Makefile   |   1 +
+ drivers/iio/adc/max14001.c | 391 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 403 insertions(+)
+ create mode 100644 drivers/iio/adc/max14001.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f584196d3260..940889b158eb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15181,6 +15181,7 @@ L:	linux-iio@vger.kernel.org
+ S:	Maintained
+ W:	https://ez.analog.com/linux-software-drivers
+ F:	Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
++F:	drivers/iio/adc/max14001.c
+ 
+ MAX15301 DRIVER
+ M:	Daniel Nilsson <daniel.nilsson@flex.com>
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index b0580fcefef5..31335af6b2f1 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -1020,6 +1020,16 @@ config MAX1363
+ 	  To compile this driver as a module, choose M here: the module will be
+ 	  called max1363.
+ 
++config MAX14001
++	tristate "Analog Devices MAX14001/MAX14002 ADC driver"
++	depends on SPI
++	help
++	  Say yes here to build support for Analog Devices MAX14001/MAX14002
++	  Configurable, Isolated 10-bit ADCs for Multi-Range Binary Inputs.
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called max14001.
++
+ config MAX34408
+ 	tristate "Maxim max34408/max344089 ADC driver"
+ 	depends on I2C
+diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+index ed647a734c51..e5349b01e4d9 100644
+--- a/drivers/iio/adc/Makefile
++++ b/drivers/iio/adc/Makefile
+@@ -89,6 +89,7 @@ obj-$(CONFIG_MAX11205) += max11205.o
+ obj-$(CONFIG_MAX11410) += max11410.o
+ obj-$(CONFIG_MAX1241) += max1241.o
+ obj-$(CONFIG_MAX1363) += max1363.o
++obj-$(CONFIG_MAX14001) += max14001.o
+ obj-$(CONFIG_MAX34408) += max34408.o
+ obj-$(CONFIG_MAX77541_ADC) += max77541-adc.o
+ obj-$(CONFIG_MAX9611) += max9611.o
+diff --git a/drivers/iio/adc/max14001.c b/drivers/iio/adc/max14001.c
+new file mode 100644
+index 000000000000..90ad4cb5868d
+--- /dev/null
++++ b/drivers/iio/adc/max14001.c
+@@ -0,0 +1,391 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Analog Devices MAX14001/MAX14002 ADC driver
++ *
++ * Copyright (C) 2023-2025 Analog Devices Inc.
++ * Copyright (C) 2023 Kim Seer Paller <kimseer.paller@analog.com>
++ * Copyright (c) 2025 Marilene Andrade Garcia <marilene.agarcia@gmail.com>
++ *
++ * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
++ */
++
++#include <linux/array_size.h>
++#include <linux/bitfield.h>
++#include <linux/bitrev.h>
++#include <linux/bits.h>
++#include <linux/cleanup.h>
++#include <linux/device.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
++#include <linux/spi/spi.h>
++#include <linux/types.h>
++#include <linux/units.h>
++#include <asm/byteorder.h>
++
++#include <linux/iio/iio.h>
++#include <linux/iio/types.h>
++
++/* MAX14001 Registers Address */
++#define MAX14001_REG_ADC		0x00
++#define MAX14001_REG_FADC		0x01
++#define MAX14001_REG_FLAGS		0x02
++#define MAX14001_REG_FLTEN		0x03
++#define MAX14001_REG_THL		0x04
++#define MAX14001_REG_THU		0x05
++#define MAX14001_REG_INRR		0x06
++#define MAX14001_REG_INRT		0x07
++#define MAX14001_REG_INRP		0x08
++#define MAX14001_REG_CFG		0x09
++#define MAX14001_REG_ENBL		0x0A
++#define MAX14001_REG_ACT		0x0B
++#define MAX14001_REG_WEN		0x0C
++
++#define MAX14001_REG_VERIFICATION(x)	((x) + 0x10)
++
++#define MAX14001_REG_CFG_BIT_EXRF	BIT(5)
++
++#define MAX14001_REG_WEN_VALUE_WRITE	0x294
++
++#define MAX14001_MASK_ADDR		GENMASK(15, 11)
++#define MAX14001_MASK_WR		BIT(10)
++#define MAX14001_MASK_DATA		GENMASK(9, 0)
++
++struct max14001_state {
++	const struct max14001_chip_info *chip_info;
++	struct spi_device *spi;
++	struct regmap *regmap;
++	int vref_mV;
++	bool spi_hw_has_lsb_first;
++
++	/*
++	 * The following buffers will be bit-reversed during device
++	 * communication, because the device transmits and receives data
++	 * LSB-first.
++	 * DMA (thus cache coherency maintenance) requires the transfer
++	 * buffers to live in their own cache lines.
++	 */
++	union {
++		__be16 be;
++		__le16 le;
++	} spi_tx_buffer __aligned(IIO_DMA_MINALIGN);
++
++	union {
++		__be16 be;
++		__le16 le;
++	} spi_rx_buffer;
++};
++
++struct max14001_chip_info {
++	const char *name;
++};
++
++static int max14001_read(void *context, unsigned int reg, unsigned int *val)
++{
++	struct max14001_state *st = context;
++	struct spi_transfer xfers[] = {
++		{
++			.tx_buf = &st->spi_tx_buffer,
++			.len = sizeof(st->spi_tx_buffer),
++			.cs_change = 1,
++		}, {
++			.rx_buf = &st->spi_rx_buffer,
++			.len = sizeof(st->spi_rx_buffer),
++		},
++	};
++	int ret;
++	unsigned int addr, data;
++
++	/*
++	 * Prepare SPI transmit buffer 16 bit-value and reverse bit order
++	 * to align with the LSB-first input on SDI port in order to meet
++	 * the device communication requirements. If the controller supports
++	 * SPI_LSB_FIRST, this step will be handled by the SPI controller.
++	 */
++	addr = FIELD_PREP(MAX14001_MASK_ADDR, reg);
++
++	if (st->spi_hw_has_lsb_first)
++		st->spi_tx_buffer.le = cpu_to_le16(addr);
++	else
++		st->spi_tx_buffer.be = cpu_to_be16(bitrev16(addr));
++
++	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
++	if (ret)
++		return ret;
++
++	/*
++	 * Convert received 16-bit value to cpu-endian format and reverse
++	 * bit order. If the controller supports SPI_LSB_FIRST, this step
++	 * will be handled by the SPI controller.
++	 */
++	if (st->spi_hw_has_lsb_first)
++		data = le16_to_cpu(st->spi_rx_buffer.le);
++	else
++		data = bitrev16(be16_to_cpu(st->spi_rx_buffer.be));
++
++	*val = FIELD_GET(MAX14001_MASK_DATA, data);
++
++	return 0;
++}
++
++static int max14001_write(struct max14001_state *st, unsigned int reg, unsigned int val)
++{
++	unsigned int addr;
++
++	/*
++	 * Prepare SPI transmit buffer 16 bit-value and reverse bit order
++	 * to align with the LSB-first input on SDI port in order to meet
++	 * the device communication requirements. If the controller supports
++	 * SPI_LSB_FIRST, this step will be handled by the SPI controller.
++	 */
++	addr = FIELD_PREP(MAX14001_MASK_ADDR, reg) |
++	       FIELD_PREP(MAX14001_MASK_WR, 1) |
++	       FIELD_PREP(MAX14001_MASK_DATA, val);
++
++	if (st->spi_hw_has_lsb_first)
++		st->spi_tx_buffer.le = cpu_to_le16(addr);
++	else
++		st->spi_tx_buffer.be = cpu_to_be16(bitrev16(addr));
++
++	return spi_write(st->spi, &st->spi_tx_buffer, sizeof(st->spi_tx_buffer));
++}
++
++static int max14001_write_single_reg(void *context, unsigned int reg, unsigned int val)
++{
++	struct max14001_state *st = context;
++	int ret;
++
++	/* Enable writing to the SPI register. */
++	ret = max14001_write(st, MAX14001_REG_WEN, MAX14001_REG_WEN_VALUE_WRITE);
++	if (ret)
++		return ret;
++
++	/* Writing data into SPI register. */
++	ret = max14001_write(st, reg, val);
++	if (ret)
++		return ret;
++
++	/* Disable writing to the SPI register. */
++	return max14001_write(st, MAX14001_REG_WEN, 0);
++}
++
++static int max14001_write_verification_reg(struct max14001_state *st, unsigned int reg)
++{
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(st->regmap, reg, &val);
++	if (ret)
++		return ret;
++
++	return max14001_write(st, MAX14001_REG_VERIFICATION(reg), val);
++}
++
++static int max14001_disable_mv_fault(struct max14001_state *st)
++{
++	unsigned int reg;
++	int ret;
++
++	/* Enable writing to the SPI registers. */
++	ret = max14001_write(st, MAX14001_REG_WEN, MAX14001_REG_WEN_VALUE_WRITE);
++	if (ret)
++		return ret;
++
++	/*
++	 * Reads all registers and writes the values to their appropriate
++	 * verification registers to clear the Memory Validation fault.
++	 */
++	for (reg = MAX14001_REG_FLTEN; reg <= MAX14001_REG_ENBL; reg++) {
++		ret = max14001_write_verification_reg(st, reg);
++		if (ret)
++			return ret;
++	}
++
++	/* Disable writing to the SPI registers. */
++	return max14001_write(st, MAX14001_REG_WEN, 0);
++}
++
++static int max14001_debugfs_reg_access(struct iio_dev *indio_dev,
++				       unsigned int reg, unsigned int writeval,
++				       unsigned int *readval)
++{
++	struct max14001_state *st = iio_priv(indio_dev);
++
++	if (readval)
++		return regmap_read(st->regmap, reg, readval);
++
++	return regmap_write(st->regmap, reg, writeval);
++}
++
++static int max14001_read_raw(struct iio_dev *indio_dev,
++			     struct iio_chan_spec const *chan,
++			     int *val, int *val2, long mask)
++{
++	struct max14001_state *st = iio_priv(indio_dev);
++	int ret;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		ret = regmap_read(st->regmap, MAX14001_REG_ADC, val);
++		if (ret)
++			return ret;
++
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		*val = st->vref_mV;
++		*val2 = 10;
++
++		return IIO_VAL_FRACTIONAL_LOG2;
++	default:
++		return -EINVAL;
++	}
++}
++
++static const struct regmap_range max14001_regmap_rd_range[] = {
++	regmap_reg_range(MAX14001_REG_ADC, MAX14001_REG_ENBL),
++	regmap_reg_range(MAX14001_REG_WEN, MAX14001_REG_WEN),
++	regmap_reg_range(MAX14001_REG_VERIFICATION(MAX14001_REG_FLTEN),
++			 MAX14001_REG_VERIFICATION(MAX14001_REG_ENBL)),
++};
++
++static const struct regmap_access_table max14001_regmap_rd_table = {
++	.yes_ranges = max14001_regmap_rd_range,
++	.n_yes_ranges = ARRAY_SIZE(max14001_regmap_rd_range),
++};
++
++static const struct regmap_range max14001_regmap_wr_range[] = {
++	regmap_reg_range(MAX14001_REG_FLTEN, MAX14001_REG_WEN),
++	regmap_reg_range(MAX14001_REG_VERIFICATION(MAX14001_REG_FLTEN),
++			 MAX14001_REG_VERIFICATION(MAX14001_REG_ENBL)),
++};
++
++static const struct regmap_access_table max14001_regmap_wr_table = {
++	.yes_ranges = max14001_regmap_wr_range,
++	.n_yes_ranges = ARRAY_SIZE(max14001_regmap_wr_range),
++};
++
++static const struct regmap_config max14001_regmap_config = {
++	.reg_read = max14001_read,
++	.reg_write = max14001_write_single_reg,
++	.max_register = MAX14001_REG_VERIFICATION(MAX14001_REG_ENBL),
++	.rd_table = &max14001_regmap_rd_table,
++	.wr_table = &max14001_regmap_wr_table,
++};
++
++static const struct iio_info max14001_info = {
++	.read_raw = max14001_read_raw,
++	.debugfs_reg_access = max14001_debugfs_reg_access,
++};
++
++static const struct iio_chan_spec max14001_channel[] = {
++	{
++		.type = IIO_VOLTAGE,
++		.indexed = 1,
++		.channel = 0,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++				      BIT(IIO_CHAN_INFO_SCALE),
++	},
++};
++
++static int max14001_probe(struct spi_device *spi)
++{
++	struct device *dev = &spi->dev;
++	struct iio_dev *indio_dev;
++	struct max14001_state *st;
++	int ret;
++	bool use_ext_vrefin = false;
++
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	st = iio_priv(indio_dev);
++	st->spi = spi;
++	st->spi_hw_has_lsb_first = spi->mode & SPI_LSB_FIRST;
++	st->chip_info = spi_get_device_match_data(spi);
++	if (!st->chip_info)
++		return -EINVAL;
++
++	indio_dev->name = st->chip_info->name;
++	indio_dev->info = &max14001_info;
++	indio_dev->channels = max14001_channel;
++	indio_dev->num_channels = ARRAY_SIZE(max14001_channel);
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	st->regmap = devm_regmap_init(dev, NULL, st, &max14001_regmap_config);
++	if (IS_ERR(st->regmap))
++		return dev_err_probe(dev, PTR_ERR(st->regmap), "Failed to initialize regmap\n");
++
++	ret = devm_regulator_get_enable(dev, "vdd");
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to enable Vdd supply\n");
++
++	ret = devm_regulator_get_enable(dev, "vddl");
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to enable Vddl supply\n");
++
++	ret = devm_regulator_get_enable_read_voltage(dev, "refin");
++	if (ret < 0 && ret != -ENODEV)
++		return dev_err_probe(dev, ret, "Failed to get REFIN voltage\n");
++
++	if (ret == -ENODEV)
++		ret = 1250000;
++	else
++		use_ext_vrefin = true;
++	st->vref_mV = ret / (MICRO / MILLI);
++
++	if (use_ext_vrefin) {
++		/*
++		 * Configure the MAX14001/MAX14002 to use an external voltage
++		 * reference source by setting the bit 5 of the configuration register.
++		 */
++		ret = regmap_set_bits(st->regmap, MAX14001_REG_CFG,
++				      MAX14001_REG_CFG_BIT_EXRF);
++		if (ret)
++			return dev_err_probe(dev, ret,
++			       "Failed to set External REFIN in Configuration Register\n");
++	}
++
++	ret = max14001_disable_mv_fault(st);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to disable MV Fault\n");
++
++	return devm_iio_device_register(dev, indio_dev);
++}
++
++static struct max14001_chip_info max14001_chip_info = {
++	.name = "max14001",
++};
++
++static struct max14001_chip_info max14002_chip_info = {
++	.name = "max14002",
++};
++
++static const struct spi_device_id max14001_id_table[] = {
++	{ "max14001", (kernel_ulong_t)&max14001_chip_info },
++	{ "max14002", (kernel_ulong_t)&max14002_chip_info },
++	{ }
++};
++
++static const struct of_device_id max14001_of_match[] = {
++	{ .compatible = "adi,max14001", .data = &max14001_chip_info },
++	{ .compatible = "adi,max14002", .data = &max14002_chip_info },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, max14001_of_match);
++
++static struct spi_driver max14001_driver = {
++	.driver = {
++		.name = "max14001",
++		.of_match_table = max14001_of_match,
++	},
++	.probe = max14001_probe,
++	.id_table = max14001_id_table,
++};
++module_spi_driver(max14001_driver);
++
++MODULE_AUTHOR("Kim Seer Paller <kimseer.paller@analog.com>");
++MODULE_AUTHOR("Marilene Andrade Garcia <marilene.agarcia@gmail.com>");
++MODULE_DESCRIPTION("Analog Devices MAX14001/MAX14002 ADCs driver");
++MODULE_LICENSE("GPL");
+-- 
+2.34.1
+
 
