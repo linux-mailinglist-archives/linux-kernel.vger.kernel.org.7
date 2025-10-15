@@ -1,150 +1,83 @@
-Return-Path: <linux-kernel+bounces-854892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBEDBDFB3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F41BDFB2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E11AF504C3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4861519C71E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1234A3376B0;
-	Wed, 15 Oct 2025 16:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5439E3376B8;
+	Wed, 15 Oct 2025 16:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rml6ah5u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENybR6Bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634AC27E076;
-	Wed, 15 Oct 2025 16:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2DC2F25E8;
+	Wed, 15 Oct 2025 16:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546319; cv=none; b=RQ5HlFL89MNiy1lPb3aV5Bh2ei9RP804+PelAZEmgvp5qn+9muxXNRzCj1vixP520ZegEQkJJjaLMJTbfVFXKsT4fhPFCGq9yCtRh0ajVY7vGlb2Kudu/IMQybxhSUILg06xje9cVqUG5euBi7qA0luWeWFHcKuJHQb/mWbnj+0=
+	t=1760546349; cv=none; b=PGJayApRkzIDf/UGL2rzIIuIdfMYAfn9YqIskJwqfYTLA8XK+hC3joiDTEvjHb+dkqze2knnt0nAnC8wLRrMwdzWt+z7n2aDAmHAQmKdWKD3XyaWHzPiuycnDJdb5RrRYSr0kJx1DNzYe+dV8tpdEaBbzWKbRg3k8LWBfZ2UVWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546319; c=relaxed/simple;
-	bh=6kgf7iMD+JZUR24w4JLI+S12D5BlZmm/nKrPBixlFbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PQ/Hamskg/2xNMLEJMnQna3lk1bFWWNy3hAwrTEBZo67jqgoO+9+iQL85dePHAeNwAaIuQ8hDRn1dSbvhbRwy5kIPZZjlFnRUwsvdYQF/l++VI/LZ9r1D5lA9EqhR8i31AyQBJIXYwRxHDvG6ZeyXmd9RZNpigBaDSgKEfkeysc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rml6ah5u; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760546318; x=1792082318;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=6kgf7iMD+JZUR24w4JLI+S12D5BlZmm/nKrPBixlFbE=;
-  b=Rml6ah5uzfnmi5JQXOgDSiT6BLlVuipeVSeSjzusG9t4gwM9ipIGAeCK
-   pkl43T2qcQSspYnrv56JBB/71AWcE+yNsZRwAdCIcfd0qxgdPL6xxILJ3
-   ZvPai7WmIHn+1zXw8kzCdAI3phzIYEA/P1v4KGbeUzvyO27U6StHZ+kDt
-   m47v0vdjNngEy1T1fB9ZVlrpSdUcCDizlrCg1uPuGLDOdP/IfN2qERYTC
-   DoKRX9Z3HBSZAG4dMVMrn9EeA2uFQdgbjJvf0FKKJuVPEvkOOyIKd0T/B
-   Bmgz9VDhLr7xKdf77Y7n/unC9nVSp+btd2Br2zA1gujDL27g7tFgR817e
-   w==;
-X-CSE-ConnectionGUID: tOF9O4s5THWFXxMR4zw/BQ==
-X-CSE-MsgGUID: Z42CQ9K6T7CKmkuVapYydg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="62770701"
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="62770701"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 09:38:37 -0700
-X-CSE-ConnectionGUID: K/jzDD8DSi2d/0+yQ3Jx+w==
-X-CSE-MsgGUID: rw5bFQbUSEycWPcSDtKW2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; 
-   d="scan'208";a="186238127"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.221]) ([10.125.111.221])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 09:38:36 -0700
-Message-ID: <d67e3fc9-ebc8-4538-9135-48a0b02d7af9@intel.com>
-Date: Wed, 15 Oct 2025 09:38:35 -0700
+	s=arc-20240116; t=1760546349; c=relaxed/simple;
+	bh=uY/ri/R/uptObQp5pFssQiLcxUk4JQh2NMKsHkdSeFg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=XAWmTQupkr/oidLsTFZwyCRevNKUuGFC6fQJeA6DP56uyi2bbvL+MlZuGtewIKM4kBeFBFZLjMeE/68K8Up9mCs0KGNgrY+hpSxusm5SLDu9Im/nlAB5jlgC3hiEAiSOJ5u9ZwdYLXnL/2lDcLC/AB0uXEDGvpEcX9u9B0T1+cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENybR6Bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DFC5C4CEF8;
+	Wed, 15 Oct 2025 16:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760546347;
+	bh=uY/ri/R/uptObQp5pFssQiLcxUk4JQh2NMKsHkdSeFg=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=ENybR6BmBQieuG19sBiCFY7ya2zl+CjQYCLBGehWPGTMdLDjTMUldKXsD2Wt9bQ7G
+	 gQzqWJuRSrzFQgEjQILVAoJ2aliqcx39W/cj/pwdre5P7YSc4H4XvZAP4TBfZVVKCY
+	 OjxM5WAm8r+nj2W0tXwYaYOlFQEqp2FqGeZqHrs18ekBhLGjTQ9y7agXqDX9MWbw35
+	 r7MfVXSY4+9vml8uzn8C/OLgU3ntLvZNbGwmA+4ECVlk0Dgjfb/HV+RXu0Wr2Kg1hK
+	 P6524sTIfQ/hNOyueaqPgNbuPcv7c3tfwiObltpOCMMXQmInVAuRJ63CgV38YVDpCr
+	 W9wohz3gf0vEw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] cxl: Allow zero sized HDM decoders
-To: Vishal Aslot <vaslot@nvidia.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Li Ming <ming.li@zohomail.com>,
- "open list:COMPUTE EXPRESS LINK (CXL)" <linux-cxl@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251015024019.1189713-1-vaslot@nvidia.com>
- <20251015024019.1189713-3-vaslot@nvidia.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251015024019.1189713-3-vaslot@nvidia.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 15 Oct 2025 18:39:01 +0200
+Message-Id: <DDJ1LC1XM765.33V1SPVZAIKP5@kernel.org>
+Subject: Re: [PATCH v3] drm/gpuvm: Fix kernel-doc warning for
+ drm_gpuvm_map_req.map
+Cc: <bbrezillon@kernel.org>, <himal.prasad.ghimiray@intel.com>,
+ <matt.coster@imgtec.com>, <robin.clark@oss.qualcomm.com>,
+ <matthew.brost@intel.com>, <aliceryhl@google.com>,
+ <thomas.hellstrom@linux.intel.com>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <simona@ffwll.ch>,
+ <skhan@linuxfoundation.org>, <khalid@kernel.org>,
+ <david.hunter.linux@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <linux-kernel-mentees@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
+ "Stephen Rothwell" <sfr@canb.auug.org.au>
+To: "Ankan Biswas" <spyjetfayed@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251015152543.24368-1-spyjetfayed@gmail.com>
+In-Reply-To: <20251015152543.24368-1-spyjetfayed@gmail.com>
 
+On Wed Oct 15, 2025 at 5:20 PM CEST, Ankan Biswas wrote:
+> The kernel-doc for struct drm_gpuvm_map_req.map was added as '@op_map'
+> instead of '@map', leading to this warning during htmldocs build:
+>
+> WARNING: include/drm/drm_gpuvm.h:1083 struct member 'map' not described i=
+n 'drm_gpuvm_map_req'
+>
+> Fixes: 000a45dce7ad ("drm/gpuvm: Pass map arguments through a struct")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/all/20250821133539.03aa298e@canb.auug.org=
+.au/
+> Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
 
-
-On 10/14/25 7:40 PM, Vishal Aslot wrote:
-> CXL spec permits committing zero sized decoders.
-> Linux currently considers them as an error.
-> 
-> Zero-sized decoders are helpful when the BIOS
-> is committing them. Often BIOS will also lock
-> them to prevent them being changed due to the
-> TSP requirement. For example, if the type 3
-> device is part of a TCB.
-> 
-> The host bridge, switch, and end-point decoders
-> can all be committed with zero-size. If they are
-> locked along the VH, it is often to prevent
-> hotplugging of a new device that could not be
-> attested post boot and cannot be included in
-> TCB.
-> 
-> The caller leaves the decoder allocated but does
-> not add it. It simply continues to the next decoder.
-
-I think it should add it as well, just as a locked decoder that's size 0. When we do cxl list of decoders, we should see those decoders as how they are.
-
-DJ
-
-> 
-> Signed-off-by: Vishal Aslot <vaslot@nvidia.com>
-> ---
->  drivers/cxl/core/hdm.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index d3a094ca01ad..1c036a485723 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -1036,13 +1036,14 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
->  			return -ENXIO;
->  		}
->  
-> +		port->commit_end = cxld->id;
-> +
->  		if (size == 0) {
-> -			dev_warn(&port->dev,
-> +			dev_dbg(&port->dev,
->  				 "decoder%d.%d: Committed with zero size\n",
->  				 port->id, cxld->id);
-> -			return -ENXIO;
-> +			return -ENOSPC;
->  		}
-> -		port->commit_end = cxld->id;
->  	} else {
->  		if (cxled) {
->  			struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> @@ -1198,6 +1199,8 @@ static int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
->  
->  		rc = init_hdm_decoder(port, cxld, hdm, i, &dpa_base, info);
->  		if (rc) {
-> +			if (rc == -ENOSPC)
-> +				continue;
->  			dev_warn(&port->dev,
->  				 "Failed to initialize decoder%d.%d\n",
->  				 port->id, i);
-
-
+Applied to drm-misc-fixes, thanks!
 
