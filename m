@@ -1,44 +1,79 @@
-Return-Path: <linux-kernel+bounces-854117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD51BDD949
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:01:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6132ABDD94F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C7C3E1ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:01:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DFE02352BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01733074AC;
-	Wed, 15 Oct 2025 09:01:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648322D3755
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9EC3093DF;
+	Wed, 15 Oct 2025 09:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nRQGh9o5"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53832DA743;
+	Wed, 15 Oct 2025 09:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518879; cv=none; b=IJIUgvWpZx5AEQtA1/EjkrPbNccpv04XEGcEwe25eu9acM+jFNoPBk75QIwuQvq9T6zsk9Qq2wx5E5+v7S4E7euXsiLdXXh6N4bXmdbkW5me2z+CeOf4F4EnQ/2lOGlXb37etW8+UgNEo0nX0hKC1HmsKKihZWzu1FjCo+Xl1I4=
+	t=1760518904; cv=none; b=hOq2YHC8ZK/xi95k/py2LOJJ3FN5x/laU9xcAKN/FzxRMUvxEztOFvqvMyW8MGE+uFg3OMBUMC+XqfLWET00XGKvaYhEl6y063KoAw79BLeU3gYtdjgt/vSNpRVFVMmwMEAGinbQ8j0LYsAK88ycnqGD7rA0XmG3+aYihTDjDGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518879; c=relaxed/simple;
-	bh=rIdBXY51ohr4waMkeuDv38j8D725ALvVN8EEzntBMQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQDF6FfLWwdjiAT06puMer3S6+GOq6UgG8sghLJ79KvSbk+fo2F9Q2Lrp6LQUYT0hZgUYSeMdpC1je43+gzDOFAhOGOMLGinnLcCjQOwvSQeUrVFnM3wf4IIlmIuYUGTBl9qVrvbDzCQONmBG/a8ta2+jvQKU/KUn3dIHgr00HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxE9DTYu9oU1sWAA--.47534S3;
-	Wed, 15 Oct 2025 17:01:07 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxpeTSYu9oJ1XlAA--.46286S2;
-	Wed, 15 Oct 2025 17:01:07 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v1] objtool: Fix typo "teh" to "the"
-Date: Wed, 15 Oct 2025 17:01:06 +0800
-Message-ID: <20251015090106.4037-1-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1760518904; c=relaxed/simple;
+	bh=w4rWAc3iXD8cDZPN/ldhEQotUugo1otzTsmf3kWNhPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WCMUusNDdyv89EoEI+1+tQCjUA+WmJ+AXHbTaPLNHOpWddapJIm1zeC5y+6Ft1IXxCjaAPU89rFAl9ZWezjH2ip9WAZ4nbxW1ndMp2oH4GASGpRBwYqBPf6VrLSoackKfg75DSAEfOuQNDd6mWEyhWy0Sybb1TGo1GB/b+Bg1F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nRQGh9o5; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F4uKqd007179;
+	Wed, 15 Oct 2025 09:01:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=YFIMYHPwq6ijwBbbSTE72g22zqrjc
+	DkXohixte73Eiw=; b=nRQGh9o5hmT4FsueYWrv79B1FoB5+amlueG9YmNyblfqR
+	BICpbIhH52L+ADyPZth5VpfakMJki3d9NiVHJK91oy3RsjGZjYr0L6bQJXR84kjb
+	x6aJ07HDObAH4XMy7fVi3SI4HdvejIXyCBDcBsB9cg1fwNJfNyI2skBiYhRuHaqD
+	/nPp0SMPyp8/qTgV/4LbHEd0xWta4F3kdCdbyswGbGZiCCcbXfLZxwC2LAwdlw3S
+	NPfWl/W4fqnHd4D9iUoZJ8uKThNzvdj0q4L1EfF8OnRdKFGVLLQAtGuWBzh2qptd
+	kXc5/wrmL4jo78qI7DiUPjPRbQ0/l/pdXD205T1yg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49qeusx5rf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 09:01:32 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59F7o9Dx037869;
+	Wed, 15 Oct 2025 09:01:31 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49qdpg3q20-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 15 Oct 2025 09:01:31 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59F91Vhk035640;
+	Wed, 15 Oct 2025 09:01:31 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49qdpg3pyg-1;
+	Wed, 15 Oct 2025 09:01:31 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Nithya Mani <nmani@marvell.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH v2] Octeontx2-af: Fix pci_alloc_irq_vectors() return value check
+Date: Wed, 15 Oct 2025 02:01:17 -0700
+Message-ID: <20251015090117.1557870-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,44 +81,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxpeTSYu9oJ1XlAA--.46286S2
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8j-e5UUUUU==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510150068
+X-Proofpoint-ORIG-GUID: fkaYExNKup0ScYqTK8bxt0dSFisfWCxg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAxNCBTYWx0ZWRfX4T7SS0z0j1fu
+ q8OeN/J6XsLPlmhmDZ8Fkek6flkaFcBBVCHWYb0lAgW+GEx/8agM8meyC4z5Ma4xtjnDDv5SLe5
+ MiWy3wKdM0LxbkJ47Y9CNNbJ95oj4BP6U2YCQ20F1Ah+etqHTC/WDUjHCDpLCdlo6/M7oddZToc
+ t+46QP7jIbqPbwUzCFwvOMhmJZc0VePX/qfsOGz7EaV13xLooZcyDtBHFGm0YUrLkASMLZv5UHw
+ mHgRMo0kUkCrmO+FlB78H2CZ5BMgPAUNXwcCH8b/cOkPRkOBI9AovSTxkM7xCqp3ZLfbStBip+e
+ SZ8SPxjrFqbLGuugAfqUnZLbbMpMgzQZ0hivUT+el8RHJ32x7v4QpuhWQbKtwwJ3re9ZyHl0/aS
+ AWtnbJ3673PWg+l+Nx8m2lh+Y3/fn+HY5SQkXYJQtf5F9q8wLFc=
+X-Authority-Analysis: v=2.4 cv=E7TAZKdl c=1 sm=1 tr=0 ts=68ef62ec b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8
+ a=4n8vcYqJx_LAIKf_xDMA:9 cc=ntf awl=host:12091
+X-Proofpoint-GUID: fkaYExNKup0ScYqTK8bxt0dSFisfWCxg
 
-Obviously, it should be "the end" rather than "teh end".
+In cgx_probe() when pci_alloc_irq_vectors() fails the error value will
+be negative and that check is sufficient.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+	err = pci_alloc_irq_vectors(pdev, nvec, nvec, PCI_IRQ_MSIX);
+        if (err < 0 || err != nvec) {
+        	...
+	}
+
+When pci_alloc_irq_vectors() fail to allocate nvec number of vectors,
+-ENOSPC is returned, so it would be safe to remove the check that
+compares err with nvec.
+
+Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- tools/objtool/check.c | 2 +-
+Only compile tested.
+
+v1->v2: Improve the commit message
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index a5770570b106..64c54225f875 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3947,7 +3947,7 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
- 			return 0;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index d374a4454836..f4d5a3c05fa4 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -1993,7 +1993,7 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
- 		if (!next) {
--			WARN_INSN(insn, "teh end!");
-+			WARN_INSN(insn, "the end!");
- 			return 1;
- 		}
- 		insn = next;
+ 	nvec = pci_msix_vec_count(cgx->pdev);
+ 	err = pci_alloc_irq_vectors(pdev, nvec, nvec, PCI_IRQ_MSIX);
+-	if (err < 0 || err != nvec) {
++	if (err < 0) {
+ 		dev_err(dev, "Request for %d msix vectors failed, err %d\n",
+ 			nvec, err);
+ 		goto err_release_regions;
 -- 
-2.42.0
+2.39.3
 
 
