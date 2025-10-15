@@ -1,91 +1,108 @@
-Return-Path: <linux-kernel+bounces-853625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C56BDC255
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0649BDC25B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D40AF4F55BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:25:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39DD53A727D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940DD3054DF;
-	Wed, 15 Oct 2025 02:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWl076AJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBD83090FD;
+	Wed, 15 Oct 2025 02:25:30 +0000 (UTC)
+Received: from mail.fintek.com.tw (mail.fintek.com.tw [59.120.186.242])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA91E1D7E4A;
-	Wed, 15 Oct 2025 02:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DF8224B1F;
+	Wed, 15 Oct 2025 02:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=59.120.186.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760495118; cv=none; b=el70ZAuBGcYHZynNe8tc42mh6Xw9y+6DTOKD90P9aShZfd3dlhRhRrWk4jNr1AqlA+cNBETEvVXEe4pPaVlpDj8omZzPW5taJRQPb4I+qaLYkbShXMciquLslvdEsxClEBTnaWRS4CndIFg0tnReW9aiGsxvMQMpw6h+AcrBF5Y=
+	t=1760495129; cv=none; b=WHTCVe5yDjj+d6ovO/s5ua6Tic0Qpr0kC/y8HGh0PepdhdkG01komPQD6cB726Qb/6W/FV4Zxn1ntg4kDByF3B554bRi3k9xTwm3L3dJAO/kguswNRfEyxhvAx9ZSp8DZBKsIHWHdiqTCxRyqk6wLde27+kP7tH7dWJo0adXgRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760495118; c=relaxed/simple;
-	bh=jqZym1TMaABmKiccCPVlIKepa3RgIHJMjFGuWh0WizY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzXFfsyKH6J1yPc0e7x95kSZ+hxvN6at5Lv6eLstaPtWLLbdrPE2EfMTrNim6x89EHDeMupMm/T8ueZ4huG6XUWdJx5+4BT0Wf9h6nxObjPty2vFKjrjSQn59ptNS4Gx7UCkinl+LiWrcfpDkBZav48AIcJJUWS9Mq9k/32P0Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWl076AJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8F3C4CEE7;
-	Wed, 15 Oct 2025 02:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760495117;
-	bh=jqZym1TMaABmKiccCPVlIKepa3RgIHJMjFGuWh0WizY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BWl076AJVNJfvKFfTKusNsByr2N3z3wo9ovXYw8h5VELpKysM3ZzNeTJZOQFGQ3aY
-	 6bxhoH3jDkQmFZs18O5enai2FSst3E3pqfRwntHjpZTqmPk1KQ0y6xEJgt408wTZXr
-	 g0Gkdn9/CqPrCYxkFDidGeefCHapYZZxtF3MCVH6R68x8LC7M1+4NWN/7SkiTSUCK/
-	 7zoq4ryLY0wd51rDpVUVAtXVDkjDyG67r8HZIcxODDF60Tus8HwDNj1lDaq9Z2tZHo
-	 cOqPJBTz4NVkqizYAeEdXM9TnMuXMfo26TQJ2VXcNWB5+dzr3jeQmHoXuYuW1+NHjn
-	 /wciWv5Mevuzg==
-Date: Tue, 14 Oct 2025 19:23:44 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: John Stultz <jstultz@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Arnd Bergmann <arnd@kernel.org>, Tyler Hicks <code@tyhicks.com>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ecryptfs is unmaintained and untested
-Message-ID: <20251015022344.GA1562@sol>
-References: <20241028141955.639633-1-arnd@kernel.org>
- <Zx-ndBo7wpYSHWPK@casper.infradead.org>
- <ef98d985-6153-416d-9d5e-9a8a8595461a@app.fastmail.com>
- <20241029043328.GB3213@mit.edu>
- <CANDhNCpsoPcotnrjH6y0yEBf43652DRasSsEnAyEbrKN=tjEfQ@mail.gmail.com>
- <20251014143916.GA569133@mit.edu>
- <20251014203535.GA1916@quark>
- <20251015013113.GB721110@mit.edu>
+	s=arc-20240116; t=1760495129; c=relaxed/simple;
+	bh=4N702iAdv7cIlHSjgx/LniNVYXC82B32lyLJT6SIXnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NVxoj3gsQLnFDvvxUdwREJOmEn2nrClBgmo8usm0D6xogTbLQBVvTTzzoeBsZFsC1huBg/0gcCZMNswvvU9uKCuXk0RuVJAZqu1MtZHRiemXNZGK2G4SVAdNfY0kgMZG9mkKbLh9mHhdkrmBFrxs8ZA6ccgXapgrpP+4t7HYsiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintek.com.tw; spf=pass smtp.mailfrom=fintek.com.tw; arc=none smtp.client-ip=59.120.186.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintek.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintek.com.tw
+Received: from vmMailSRV.fintek.com.tw ([192.168.1.1])
+	by mail.fintek.com.tw with ESMTP id 59F2OuB5076593;
+	Wed, 15 Oct 2025 10:24:56 +0800 (+08)
+	(envelope-from peter_hong@fintek.com.tw)
+Received: from [192.168.1.132] (192.168.1.132) by vmMailSRV.fintek.com.tw
+ (192.168.1.1) with Microsoft SMTP Server id 14.3.498.0; Wed, 15 Oct 2025
+ 10:24:55 +0800
+Message-ID: <8af5eb5f-0adb-4ea5-a4d5-554a7e883570@fintek.com.tw>
+Date: Wed, 15 Oct 2025 10:24:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015013113.GB721110@mit.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 1/1] USB: serial: f81232: fix incomplete serial port
+ generation
+To: Johan Hovold <johan@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <tom_tsai@fintek.com.tw>,
+        <yu_chen@fintek.com.tw>, <hpeter+linux_kernel@gmail.com>
+References: <20251008023858.227740-1-peter_hong@fintek.com.tw>
+ <aO5uAUknTLOWdvUY@hovoldconsulting.com>
+Content-Language: en-US
+From: Peter Hong <peter_hong@fintek.com.tw>
+In-Reply-To: <aO5uAUknTLOWdvUY@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-Product-Ver: SMEX-12.5.0.2055-9.0.1002-27556.001
+X-TM-AS-Result: No-9.738500-8.000000-10
+X-TMASE-MatchedRID: zGP2F0O7j/unQM/ZDsbOZvHkpkyUphL9pPMmjQJmXyFKmuk8ocl7z7e/
+	RFw+ZyQEju4W7SRKMeJIUUJ3l9gynuhM+rnwXt6cPPov5T+l6PGUO3k9AyCPTe8n6d5wLKiXGYT
+	YuTvYrD7A+OjLG1jwgBWxTjMgqZh1iAzEt7NPEk4IoUOTWQl7EjFcf92WG8u/23s+ayc5uyBFmB
+	b8AoJ5yj7W3Cw3ke/jmyiLZetSf8kir3kOMJmHTF1j5mhaIsibwrbXMGDYqV/5N/S1zEq4ui+I+
+	AbM3aL70ri+PRVb+Sx0vmnbTp+hk2muODPbmego
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--9.738500-8.000000
+X-TMASE-Version: SMEX-12.5.0.2055-9.0.1002-27556.001
+X-TM-SNTS-SMTP:
+ F4F3A7118C42B8EBCC9426BABBE10E9D6A2AE2222EAAB7E12D822586B5FF47E62000:8
+X-DKIM-Results: [192.168.1.1]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail.fintek.com.tw 59F2OuB5076593
 
-On Tue, Oct 14, 2025 at 09:31:13PM -0400, Theodore Ts'o wrote:
-> On Tue, Oct 14, 2025 at 01:35:35PM -0700, Eric Biggers wrote:
-> > I've been maintaining the 'fscrypt' userspace tool, and in the past I've
-> > done quite a bit of work to improve it.  I also use it to encrypt the
-> > home directory on my personal desktop.
-> 
-> Do you have integration with PAM?  I assume you must if you are
-> encrypting your home directory, since there would need to have some
-> way to insert the key to unlock your home directory as part of
-> single-sign on.  Or are you only encrypting something like the Private
-> directory on your home directory, and entering the password separately
-> fromo the login password.
-> 
-> One of the really nice things of the ecryptfs integration, especialy
-> on Ubuntu (and I don't remember if Tyler was responsible for that
-> work; if so, kudos!) wasthat it was particularly eeamless.
+Hi Johan,
 
-Yes, there's a PAM module called pam_fscrypt.
+Johan Hovold 於 2025/10/14 下午 11:36 寫道:
+> On Wed, Oct 08, 2025 at 10:38:58AM +0800, Ji-Ze Hong (Peter Hong) wrote:
+>> The Fintek F81532A/534A/535/536 family relies on the
+>> F81534A_CTRL_CMD_ENABLE_PORT (116h) register during initialization to
+>> both determine serial port status and control port creation. If the
+>> driver experiences fast load/unload cycles, the device state may becomes
+>> unstable, resulting in the incomplete generation of serial ports.
+> Do I understand correctly that you're only seeing this issue if you're
+> unloading and reloading the module (or rebinding the driver through
+> sysfs)?
 
-- Eric
+Yes, this issue has only been observed and reported during module unload
+and reload operations currently.
+
+>> Performing a dummy read operation on the register prior to the initial
+>> write command resolves the issue. This clears the device's stale internal
+>> state. Subsequent write operations will correctly generate all serial
+>> ports.
+> Does this mean that the retry loop is no longer needed? Can it now be
+> removed in either or both accessor functions perhaps?
+
+OK, we'll test the loop removal in the accessor. If successful, we'll prepare
+and send V2.
+
+
+Thanks,
+
+
 
