@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-853682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0323BDC544
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:22:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE688BDC54D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8E784F59A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE0A3B0C17
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933D28C006;
-	Wed, 15 Oct 2025 03:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE13929B8D9;
+	Wed, 15 Oct 2025 03:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QJs4SNlu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="kBKj8Akn"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CDA2882CF;
-	Wed, 15 Oct 2025 03:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A7218EB1;
+	Wed, 15 Oct 2025 03:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760498538; cv=none; b=WhD7D1eOYSAYh7gjZEJ/5fAn9nQo7WJdlldD4FRorXfOMREDlap0jJ7NMYO8VxrmbQ4EXTBm/UPfYLp9VxCBZ+BkE3aukgyU+UKsP1DIrS040X3Q2OnFrbtYZeBJwZEYv2HlvW8EimKNdULI+rfv+LCUf5ruF4pgg2rdRHFCo60=
+	t=1760498756; cv=none; b=tvkaPKWYNxG58ocouLY+JVEVRXsFof7+kHMQpf0BF63K+3Ic2XftDyQSqTqvr2WbZfWGMhbH3NpECQRCyIRLk6fZFXn2JtCojM2LLeXjyMUzFzSn9kz/xRjR6R4Wk2XzYK+V1Vcq4ZuRQ9U8BiEaq9G2+vuIWzVgUIEyk1TUJcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760498538; c=relaxed/simple;
-	bh=CyerrAKbJbPcJwqNpPFbrCr4No6M3gsoVL1gByZEjAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQD0oWftqIUwaoazx83dniwONVRCODK301y//PggRTqJVfEyhQfS37Mf5M7BYsWw4GdMG0kLKXS+09PPl86+6u8s1DvTYVYnC9LTapd/PwetXDPHmy5JHl9a0nLRFgB2BfGJ6odSKzB3N8TghqT1cJ+4HaBL4GCzAOB3avMA7C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QJs4SNlu; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760498536; x=1792034536;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CyerrAKbJbPcJwqNpPFbrCr4No6M3gsoVL1gByZEjAw=;
-  b=QJs4SNluhPFIYvbxk22buPkjOX1mxnmoAmCsIIcSKdgaWUsRutUIwXz4
-   bUK8nkWXToVQv41Z1i4/EDVLd/BO8LxBTJcZiRsZJFQaqcIy0tTprNra6
-   uxEXRg313XfH0oEO3+bAmKKSW1w9yFY/Xt1rErYKIZEs1TMrD5CLB2UQp
-   chCe4KnslcDerIDll3OTP2zXhT0wASDcwxSw5BPHuxmGY4yDING5Dq7Yh
-   +pE07E334wOT6iaKLuLJFCGlp2tkN68Gyqc5wD1WG88Q/UXGeIBwV1XTR
-   9zQDmLEOo7M0mMmSf0Fyk1VUMCtHxbuVJiGcPVPgdYQQa+aET26GkpM8O
-   A==;
-X-CSE-ConnectionGUID: l2e4zlzyRHq2aRVSRvNr0g==
-X-CSE-MsgGUID: 3p4btwsETHK8U204z7z9yw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62702946"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="62702946"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 20:22:15 -0700
-X-CSE-ConnectionGUID: RTaeHBOmQlK9Ezi5OxtFIg==
-X-CSE-MsgGUID: fzvbkfvhSom+Iht11GYi8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="181267516"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 14 Oct 2025 20:22:11 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v8s5B-0003P9-0T;
-	Wed, 15 Oct 2025 03:21:51 +0000
-Date: Wed, 15 Oct 2025 11:21:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH] iio: test: fixed-point: new kunit test
-Message-ID: <202510151125.QEa3kUJR-lkp@intel.com>
-References: <20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6@baylibre.com>
+	s=arc-20240116; t=1760498756; c=relaxed/simple;
+	bh=0fg+G4xqZWUQX0JBy50u6Zpa7P4Ws31wLGiUAETaSfs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OdWJwXXNk3ksa9CWBBti7wPMWmOgkWLfOedR9sV1D487YjUxEA+6IUy9YVmPPijE/hCqgerrW2v34coMm2HiPNUex6o/CdJpeBcJKDfSRBeoRAZmE9dpWH2Ksvtl/U4GoBZR4EUF1MwEtBFuir1eK4YvOxHW0OmkhRorsCDhgTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=kBKj8Akn; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a3c7c742a97611f0ae1e63ff8927bad3-20251015
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=4+GDlV0/QYZJFrONo0Zw3ttAOMbbQn+Lvzsd9+YHlcA=;
+	b=kBKj8Akn1u+CnN8C9reB+om7oPDKjhQ9Gu/pjZtcpF6KX0LyqAYjxTM4+UjHrjZJBK/X/JlTvmxq0XhqwRNY0qnz/1cFIQYkCuSTyAJiCZ5jtUmKKjTfcsEowMQ1fY7Ah+6KnftjrLZ1O5Fg9gwgWB6l1cpZ2sgNGDU50GUX75o=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:a0b22cf1-afdb-4813-a660-1425ca513d08,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:1c443986-2e17-44e4-a09c-1e463bf6bc47,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:99|1,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI
+	:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: a3c7c742a97611f0ae1e63ff8927bad3-20251015
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <zhengnan.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 971551332; Wed, 15 Oct 2025 11:25:46 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 15 Oct 2025 11:25:44 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Wed, 15 Oct 2025 11:25:44 +0800
+From: Zhengnan Chen <zhengnan.chen@mediatek.com>
+To: Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <iommu@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Zhengnan Chen
+	<zhengnan.chen@mediatek.com>
+Subject: [PATCH v2 0/5] MT8189 IOMMU SUPPORT
+Date: Wed, 15 Oct 2025 11:24:16 +0800
+Message-ID: <20251015032509.5057-1-zhengnan.chen@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6@baylibre.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi David,
+Based on tag: next-20251015, linux-next/master
 
-kernel test robot noticed the following build warnings:
+This patchset adds MT8189 iommu support.
 
-[auto build test WARNING on a9682f53c2d1678b93a123cdaa260e955430bc5c]
+MT8189 have 3 IOMMU HWs. 1 IOMMU HW is for multimedia,
+1 IOMMU HW is for apu(AI processer unit),
+and 2 IOMMU HW is for infra-master, like PCIe/USB.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-test-fixed-point-new-kunit-test/20251014-053648
-base:   a9682f53c2d1678b93a123cdaa260e955430bc5c
-patch link:    https://lore.kernel.org/r/20251013-iio-tests-fixed-point-new-kunit-v1-1-7b52021925e6%40baylibre.com
-patch subject: [PATCH] iio: test: fixed-point: new kunit test
-config: i386-buildonly-randconfig-001-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151125.QEa3kUJR-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151125.QEa3kUJR-lkp@intel.com/reproduce)
+About the INFRA IOMMU, it don't have larbs, the master connects the
+iommu directly. It use a independent pgtable, and these two
+INFRA IOMMU HW share a pgtable.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510151125.QEa3kUJR-lkp@intel.com/
+In mt8189, the display connect with larb1 and larb2 at the same time.
+Thus, we should add link between disp-dev with these two larbs.
 
-All warnings (new ones prefixed by >>):
+The software solutions can be summarized as follows:
+1. Add iommu support for mt8189
+2. Add a flag DL_WITH_MULTI_LARB to support the HW which connect with
+   multiple larbs.
 
->> drivers/iio/test/iio-test-fixed-point.c:52:23: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-      52 |         .test_cases = iio_fixed_point_test_cases,
-         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+---
+Changes in v2:
+- Split mt8189 iommu support patch into three patches, namely APU IOMMU,
+  INFRA IOMMU and MM IOMMU
+- Disable bank 4 of MM IOMMU
+- Link to v1:
+  https://lore.kernel.org/all/20250807095756.11840-1-zhengnan.chen@mediatek.com/
+---
 
+Zhengnan Chen (5):
+  dt-bindings: mediatek: mt8189: Add bindings for MM & APU & INFRA IOMMU
+  iommu/mediatek: Add a flag DL_WITH_MULTI_LARB
+  iommu/mediatek: mt8189: Add APU IOMMUs support
+  iommu/mediatek: mt8189: Add INFRA IOMMUs support
+  iommu/mediatek: mt8189: Add MM IOMMUs support
 
-vim +/const +52 drivers/iio/test/iio-test-fixed-point.c
-
-    49	
-    50	static struct kunit_suite iio_fixed_point_test_suite = {
-    51		.name = "iio-fixed-point",
-  > 52		.test_cases = iio_fixed_point_test_cases,
-    53	};
-    54	kunit_test_suite(iio_fixed_point_test_suite);
-    55	
+ .../bindings/iommu/mediatek,iommu.yaml        |   7 +
+ drivers/iommu/mtk_iommu.c                     | 132 +++++++-
+ .../memory/mediatek,mt8189-memory-port.h      | 283 ++++++++++++++++++
+ 3 files changed, 409 insertions(+), 13 deletions(-)
+ create mode 100644 include/dt-bindings/memory/mediatek,mt8189-memory-port.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
