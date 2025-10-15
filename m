@@ -1,226 +1,435 @@
-Return-Path: <linux-kernel+bounces-854292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B29BDE033
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:33:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5193FBDE02D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8980B4218D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:32:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C995D34981C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EF331D743;
-	Wed, 15 Oct 2025 10:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EF531CA5E;
+	Wed, 15 Oct 2025 10:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F77YPgJu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GfChM3vd"
+Received: from mail-io1-f97.google.com (mail-io1-f97.google.com [209.85.166.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19B031D362
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE231A560
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760524120; cv=none; b=JkDnvsuwnuI5lbSs3k3kCJUBkcULthY29ehDg59REI5ErMOCx96p4uHhB+pzz0U92huq2LmcJbD8GaQtZf5kHUEaj6pYLj3YlrU0gGEG2/icnUTeshaLMFsBq4yCPXw01r5d+A8UV2rqFZ3WvyZCo1/BhfaqV0tSu8Jf8pTd0pk=
+	t=1760524194; cv=none; b=iKEN4saHftfaJhuI5fLHjFJygVkY8LLEoY1xK0UjaP/tFnboUMTzr6+SzVjz/Aw1+el2UrNaIONucTIq4EUDpBNBRMOBAV+M2WIqvnUOwjpf8wAC5mY+lGMM0ct3hqVSOzxwl7E2YpNJSB3pt0qQjXh67BZ4WQQ1PhIEezb84ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760524120; c=relaxed/simple;
-	bh=0tvqjA5g5nXTtWkmeWJomxbNRZvUvJaMshuYYM2spUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hp6341ztZ/G0iwUoRYQsVpp7FPKWQtjDYK/9F+BdvqSrt71oKrHK/J4+goVjHvDIxMtmuooDgrEJ+T2J3jsh7CgZJeLEoTQldC7Q44GzSH/3PnqknUY2guESg/qzvO2uWGWUKaZcICt0NdcBYZVQz3vfLIo6K6NS1PnxcAwuf28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F77YPgJu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F2t4TB005328
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:28:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OtCuBzfMS782vxBLNrbSA6yWo7+oKeRaHTDzQnpUByc=; b=F77YPgJufPc4+VPB
-	aUtGpNZb3u+Dncakf0e5YdtCVESkYOjvfINYg9aELyOuCiVDpJ5pH1msWoAFcyHv
-	Y/X6bs6PBZcefBcZpBnd7F9mO/WjgV00kDq5xn3bc5LA9nHMig7YUi5TKUBd+yVN
-	hf+R3TL6qk0yCfw2iuW4NapYMXl4YD3foUZma4eZKTGuRhlImkgaPq0nhqiHg3XD
-	xQoPvgtNAHYzuaVebEKjOeH7wtVp0cNxbW9V/hF1zWKG3F0zLW40JsINdcxto74X
-	h3xzv5YGfJzg2kayjecLmRgcNrGNwvavhlhtYEQeEIxYnwVGPjwmrfclCslDiaso
-	dunnDA==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49s6mwpbnu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:28:38 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b62f9247dd1so9950698a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:28:38 -0700 (PDT)
+	s=arc-20240116; t=1760524194; c=relaxed/simple;
+	bh=wcgkdeVSto3NF4ROD1o9gUX0UOla7C8owV+HERpAq94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c4+dUifmJ3fsn7nyHQ0cFhFqbOdWq1pb0RkKQsNi8QogZyVp9o8r3k2KscSu15aosJTCECgsKPCWud9HT+PEwUbADbWlseJfkE2pik4i8eCjAsI+xR7loot/wH+shq9W7nTq5Uck0XRov21poeeiJwXyaDGFmR1wVRXy5Z6JXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GfChM3vd; arc=none smtp.client-ip=209.85.166.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-io1-f97.google.com with SMTP id ca18e2360f4ac-88703c873d5so220190439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:29:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760524117; x=1761128917;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OtCuBzfMS782vxBLNrbSA6yWo7+oKeRaHTDzQnpUByc=;
-        b=uvZSGa6ZxQADu0sNWPXU8kLVtKTMHno/dqh1cjHyya1KbIqazMkn7g5aTa79Nw8vPa
-         B/jqoz5G9qhOqaPAr9ndHRSerfg7hmQ/O2Ru/gW2xVBifYI/ExAU2s8+RzpSM1ab6SYw
-         dIgVWrjS+zdOM/EQchfC7TGvd4ehxdxtz4Hu4O3EIzorBiC1upYxzAoE0YuvC1rmD8MC
-         cag51br3qYWc3NehlmLAdGpooQqO5j81DPpHJ84Rni77HEfaGtU2ntxVpkH//7Wq5+kt
-         g69ZPheVqWHvooBB9awsuDSzNDbe3uC1rpJ8CGjEndxZQFBp9JucLdpNzLU+pYKJf7D4
-         8oUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuVymR2HjoPiLlGUyWUQk+ICe+LAiwH14kY/89uBMzU4i2hyLMv/AE3RviiYVxGRJ3CpQv69tvypG7f2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiWobQoVn5fV24LIgOh8An2so0qYK22bx9z5Llas3lKZQZe22o
-	AjOKar93SC7JpDAk8/WaabV4tzUgelMSLCk7BDUg/8Z4G+ofprBqjK9kNBNYETbbcZ48sEvrKgH
-	sXhYszmvRjM/ITxt4zR1Bet1t2JMX+tSe5kevOsuMvbeKHEg76AFBTkIUtfjYTiFjJb4pdtLVjJ
-	w=
-X-Gm-Gg: ASbGncssD8uG/Ov+tJSL9VhdrZrAAw0Ainr4asxkwYVTMbvWqdH23j1ud1meC+CkDC7
-	Tv+HOAf/6T3+OLA6Nn24v4tllJC9osvo6XF3zPgkzWOFU3lWWkrFzwnuzfkRL7r4DLknsykbkMd
-	/JUG9JgyKx1ikirfBT2QE6yKTbfdDCxXtiYJjxGVbIFAvS3OvqhUEoLBbFlVW6uIMZBRVywjdjd
-	TuYDu3XgvYPgCKOar+4Q7awSb8eRDME3+EaTBMzodTDJ/UBPj9c4QyqO5tfSFWUvWkPxY+SyIPH
-	K7zpLQuNIbbYKEvSYtxiiEfSvSe4twq6022ldPvaBs+pnMNwNJcdPgma9iOW6nRtMKT0c5I=
-X-Received: by 2002:a05:6a21:32a3:b0:303:b64b:e44 with SMTP id adf61e73a8af0-32da83e38bemr35878491637.43.1760524117197;
-        Wed, 15 Oct 2025 03:28:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFMeBDWmLwGmtvM1sNbU+BcXtiGukpKU9b6FpL+kUTBWyczFWyDH0DN4wWF25eRGbf5yYZSg==
-X-Received: by 2002:a05:6a21:32a3:b0:303:b64b:e44 with SMTP id adf61e73a8af0-32da83e38bemr35878463637.43.1760524116776;
-        Wed, 15 Oct 2025 03:28:36 -0700 (PDT)
-Received: from [10.218.44.34] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992bb1e50dsm18263043b3a.33.2025.10.15.03.28.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 03:28:36 -0700 (PDT)
-Message-ID: <235cf6b7-e758-4d16-b5a1-182cc869b2e4@oss.qualcomm.com>
-Date: Wed, 15 Oct 2025 15:58:31 +0530
+        d=1e100.net; s=20230601; t=1760524192; x=1761128992;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Vob8406hRx5Tlv6u3EdB1Ym+K4txyoEExWNyQ34T+dQ=;
+        b=lUbDM0+jS6XDmcF4TJVBe2j0lFNfkDiBWZR+sSxEhA3xK+VrprcdZrviewuImJ/rzz
+         fkIheQSydM0FvOFlsf4QJJfbJtDRvR4cE6xJjRGcQZLazZNmoxCUDhGA0f81zS5xRoH6
+         lTcKHLTGTS/E29Kn26zGxFHLyJbYLGEtqTQuA5kLFiN7d1Ffa9TpnhDt77svvsqzoydx
+         TPciej2uoyTqA4awkr4C5scY8NfRmGMuGlTHgrxovyd3bc9epBqYYd0Nvf/EcgLt5piI
+         TDWVT1vTTYlN5gLMZ/4FtAa5O6PIaDCBR6juMBsT75A7CKoyOb5idar0aXAaRCBWAKz+
+         Hejg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbHx3v/0Lm+YEEQtHtes75GRs4CPzrr9zZLAAwpcrBs6EiZ7ik152FbXTWoowEtDNSLCYgycjnFdAqn1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu6+amEdMx2zwqUpqaMiOtDSHHo64LGprCqpEU2GUMOzuWoXOr
+	EL4HEMtMQNscgVw7KVrk8deqrVqXp74ThX96ueQ0lyXa82i8cfeKcOMrd8y6AO0rAuXDI3WjmBc
+	Kisi81bmuHIMx6AtAp2mXu+cXewShvCzTUROKWsXAlwXbusFW3WGig+Sog7q396CJP59DuoXuwz
+	jLpmP+V6BPnUdzqY/vXOwJL5vC3aHrvj35c6sQFHxFGb3XbQ4IcoElHxxhkHGaMDc4BbfSVF/Sg
+	n39ha19g46G0Z5/t+A=
+X-Gm-Gg: ASbGncvxkJyYF+372iewrgGJeU1/bUe6W2uruDkDh+6GCxTxsWbUfLqlyEwLv0bkvEm
+	m1wh0ASMUbRVpHu+85DDp7rOvp6D09SAAvu/0k26kdpA0gH3z+UX0RrEDJDV3Dr8Ed8+OER1Ku4
+	VxK14G/ZHdzfLvm2+/zKONWAZAResqJPb9tSACdc30p567CFlnSGNXMhOV3GqQmP4VOpJa0/Rp7
+	kzHzr3Ur0o+Iwj4AFpam9pG2K49kTLG/KyjjP+gsUtLmp4OVTooAq9jRFLVVM9RfUpp9hDCVwvJ
+	ZdQJiZeBlq/yCNg/eSkL+kpgOqfRv7o4MiJJasGwRMJVOV6w3nrNt2O9BotvuQi+zowa58a1bId
+	ENZwI2+Ev50/hBRUAaeJCHUz+TAIQyjfPKseJ2wIkL2p/aQSfufQP0vOTV7ml3zRiZAOXpO3r36
+	0=
+X-Google-Smtp-Source: AGHT+IGQUjBQKU/x5OM0dtwl1CeVC9cE/IJQT8Oq1xTp5RGWuIHDJgbt0zINkhPwy786NSLVISL6j9aHikMe
+X-Received: by 2002:a05:6e02:1646:b0:42d:7dea:1e04 with SMTP id e9e14a558f8ab-42f873fb8efmr282824575ab.25.1760524191679;
+        Wed, 15 Oct 2025 03:29:51 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-42f9025e4c5sm11370275ab.9.2025.10.15.03.29.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Oct 2025 03:29:51 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-780fb254938so8481741b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1760524190; x=1761128990; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vob8406hRx5Tlv6u3EdB1Ym+K4txyoEExWNyQ34T+dQ=;
+        b=GfChM3vdUxDJsh/wldTJXr6KrZTZw4x4IYffaYci3JZR6KgdaM724HYqttPXtKDRfN
+         BNZChTLVGC8P5LKeBbfdeDmh9KFsdPv3foDQbmyMXBiJ8AGq5DN6FebRD6otxd32qyUg
+         lomEmPL/wTv7JmqXvQ/saiv/kZZDA+YytoqjQ=
+X-Forwarded-Encrypted: i=1; AJvYcCV3bDk73xW+uppJDMNDv4RrsCot38wX0gp1rYmgh0OyDJz59Yxwwcf1qf81NXlKpcc2kZdQQXDykKRFbFw=@vger.kernel.org
+X-Received: by 2002:a05:6a20:2449:b0:306:2a14:d0d4 with SMTP id adf61e73a8af0-32da83e6017mr37874054637.43.1760524189942;
+        Wed, 15 Oct 2025 03:29:49 -0700 (PDT)
+X-Received: by 2002:a05:6a20:2449:b0:306:2a14:d0d4 with SMTP id
+ adf61e73a8af0-32da83e6017mr37874018637.43.1760524189466; Wed, 15 Oct 2025
+ 03:29:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/24] arm64: dts: qcom: glymur: Add QUPv3 configuration
- for serial engines
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-4-24b601bbecc0@oss.qualcomm.com>
- <8828946b-3979-4e7b-a11c-740d8a6253ce@oss.qualcomm.com>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
-In-Reply-To: <8828946b-3979-4e7b-a11c-740d8a6253ce@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDA4MyBTYWx0ZWRfX4+l2u4pG5hKa
- dJG2SJ5pWokyic81BzoSYnMHiBu0OCXTWtFNSEjUMeGQhE+7FN9l1sQViMCwH0qgqOc2wWXXm5N
- D6c0R/FZ8WPdCbwDBxlilZOznarkg470hEqFJ+yq0rAed/c/XH74OCiQbhtmjTijThN+RN7/Ejv
- EDILW0DCGP3ebZ+MuUi9n3MOvEcVRVDkQyECUhZszFro7mukc1fuedLClR8NLEOcBj4vcEXB0/Q
- KyEA+UZAk9EhGUPmurdpHLmF7pDzcSJ9q+NsqdQDXmQzcshuqnIopss70UzgW1LeKI0+UTaNNUr
- PYQlfBkGh02dmQrKFNtDWhUkHL0QpWyq3GV67r8LXQWLRiNkeRGYaew/fLdy8GOZ6WPWIO6PuqE
- KqeZlrah67PHHODj4nLqvzZ3EMD7Cg==
-X-Authority-Analysis: v=2.4 cv=Fr4IPmrq c=1 sm=1 tr=0 ts=68ef7756 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=5RRmG2Rm61FAXBKOsCEA:9 a=QEXdDO2ut3YA:10
- a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-GUID: 1g_4yNCwEZWIc71yDXj5Os62HQzpaAjX
-X-Proofpoint-ORIG-GUID: 1g_4yNCwEZWIc71yDXj5Os62HQzpaAjX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130083
+References: <cover.1760502478.git.zhuyikai1@h-partners.com> <905df406fd870da528361f47c48067802588cfb5.1760502478.git.zhuyikai1@h-partners.com>
+In-Reply-To: <905df406fd870da528361f47c48067802588cfb5.1760502478.git.zhuyikai1@h-partners.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Wed, 15 Oct 2025 15:59:36 +0530
+X-Gm-Features: AS18NWB6wjOop2tYYHm7gUl-Ch7WYa9xLfizjawpwcM4ZcnXv7uj0L9myyZ6qeI
+Message-ID: <CALs4sv28UttVJh2vCbax=foQYu83Qn1NsiUWOGQhKHsKg7ZwqA@mail.gmail.com>
+Subject: Re: [PATCH net-next v01 1/9] hinic3: Add PF framework
+To: Fan Gong <gongfan1@huawei.com>
+Cc: Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>, 
+	Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, 
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, 
+	Shi Jing <shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>, 
+	Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, 
+	Lee Trager <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000fc64c806412ffa9d"
+
+--000000000000fc64c806412ffa9d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 15, 2025 at 12:48=E2=80=AFPM Fan Gong <gongfan1@huawei.com> wro=
+te:
+>
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
+> @@ -314,6 +314,9 @@ int hinic3_func_rx_tx_flush(struct hinic3_hwdev *hwde=
+v)
+>                         ret =3D -EFAULT;
+>         }
+>
+> +       if (HINIC3_FUNC_TYPE(hwdev) !=3D HINIC3_FUNC_TYPE_VF)
+
+Is this check needed? Other places hinic3_set_pf_status() is called
+without checking. I see the function has an internal check for PF.
+
+> +               hinic3_set_pf_status(hwif, HINIC3_PF_STATUS_FLR_START_FLA=
+G);
+> +
+>         clr_res.func_id =3D hwif->attr.func_global_idx;
+>         msg_params.buf_in =3D &clr_res;
+>         msg_params.in_size =3D sizeof(clr_res);
+> @@ -337,6 +340,54 @@ int hinic3_func_rx_tx_flush(struct hinic3_hwdev *hwd=
+ev)
+>         return ret;
+>  }
+>
+> +int hinic3_set_bdf_ctxt(struct hinic3_hwdev *hwdev, u8 bus, u8 device, u=
+8 function)
+
+You could just send *bdf_info as a parameter with values pre-set,
+makes it look better
+
+> +{
+> +       struct comm_cmd_bdf_info bdf_info =3D {};
+> +       struct mgmt_msg_params msg_params =3D {};
+> +       int err;
+> +
+> +       bdf_info.function_idx =3D hinic3_global_func_id(hwdev);
+> +       bdf_info.bus =3D bus;
+> +       bdf_info.device =3D device;
+> +       bdf_info.function =3D function;
+> +
+> +       mgmt_msg_params_init_default(&msg_params, &bdf_info, sizeof(bdf_i=
+nfo));
+> +
+> +       err =3D hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_COMM,
+> +                                      COMM_CMD_SEND_BDF_INFO, &msg_param=
+s);
+> +       if (err || bdf_info.head.status) {
+> +               dev_err(hwdev->dev,
+> +                       "Failed to set bdf info to fw, err: %d, status: 0=
+x%x\n",
+> +                       err, bdf_info.head.status);
+> +               return -EIO;
+> +       }
+> +
+> +       return 0;
+> +}
+
+<-->
+
+> +static void set_ppf(struct hinic3_hwdev *hwdev)
+
+Any particular reason why this function does not have hinic3 prefix?
+
+> +{
+> +       struct hinic3_hwif *hwif =3D hwdev->hwif;
+> +       struct hinic3_func_attr *attr;
+> +       u32 addr, val;
+> +
+> +       if (HINIC3_IS_VF(hwdev))
+> +               return;
+> +
+> +       /* Read Modify Write */
+> +       attr =3D &hwif->attr;
+> +       addr =3D HINIC3_CSR_PPF_ELECTION_ADDR;
+> +       val =3D hinic3_hwif_read_reg(hwif, addr);
+> +       val &=3D ~HINIC3_PPF_ELECTION_IDX_MASK;
+> +       val |=3D HINIC3_PPF_ELECTION_SET(attr->func_global_idx, IDX);
+> +       hinic3_hwif_write_reg(hwif, addr, val);
+> +
+> +       /* Check PPF index */
+> +       val =3D hinic3_hwif_read_reg(hwif, addr);
+> +       attr->ppf_idx =3D HINIC3_PPF_ELECTION_GET(val, IDX);
+> +}
+> +
+
+<-->
+
+> +int hinic3_get_default_mac(struct hinic3_hwdev *hwdev, u8 *mac_addr)
+> +{
+> +       struct l2nic_cmd_set_mac mac_info =3D {};
+> +       struct mgmt_msg_params msg_params =3D {};
+> +       int err;
+> +
+> +       mac_info.func_id =3D hinic3_global_func_id(hwdev);
+> +
+> +       mgmt_msg_params_init_default(&msg_params, &mac_info, sizeof(mac_i=
+nfo));
+> +
+> +       err =3D hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
+> +                                      L2NIC_CMD_GET_MAC,
+> +                                      &msg_params);
+> +
+> +       if (err || mac_info.msg_head.status) {
+> +               dev_err(hwdev->dev,
+> +                       "Failed to get mac, err: %d, status: 0x%x\n",
+> +                       err, mac_info.msg_head.status);
+> +               return -EINVAL;
+
+EINVAL looks odd. I see other places it is -EIO.
 
 
+> +       }
+> +
+> +       ether_addr_copy(mac_addr, mac_info.mac);
+> +
+> +       return 0;
+> +}
+> +
+>  int hinic3_set_mac(struct hinic3_hwdev *hwdev, const u8 *mac_addr, u16 v=
+lan_id,
+>                    u16 func_id)
+>  {
+> @@ -157,9 +189,9 @@ int hinic3_set_mac(struct hinic3_hwdev *hwdev, const =
+u8 *mac_addr, u16 vlan_id,
+>                 return -EIO;
+>         }
+>
+> -       if (mac_info.msg_head.status =3D=3D MGMT_STATUS_PF_SET_VF_ALREADY=
+) {
+> +       if (PF_SET_VF_MAC(hwdev, mac_info.msg_head.status)) {
+>                 dev_warn(hwdev->dev, "PF has already set VF mac, Ignore s=
+et operation\n");
+> -               return 0;
+> +               return HINIC3_PF_SET_VF_ALREADY;
+>         }
+>
+>         if (mac_info.msg_head.status =3D=3D MGMT_STATUS_EXIST) {
+> @@ -191,11 +223,17 @@ int hinic3_del_mac(struct hinic3_hwdev *hwdev, cons=
+t u8 *mac_addr, u16 vlan_id,
+>
+>         err =3D hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
+>                                        L2NIC_CMD_DEL_MAC, &msg_params);
+> -       if (err) {
+> +       if (err || (mac_info.msg_head.status &&
+> +                   !PF_SET_VF_MAC(hwdev, mac_info.msg_head.status))) {
+>                 dev_err(hwdev->dev,
+>                         "Failed to delete MAC, err: %d, status: 0x%x\n",
+>                         err, mac_info.msg_head.status);
+> -               return err;
+> +               return -EIO;
+> +       }
+> +
+> +       if (PF_SET_VF_MAC(hwdev, mac_info.msg_head.status)) {
+> +               dev_warn(hwdev->dev, "PF has already set VF mac, Ignore d=
+elete operation.\n");
+> +               return HINIC3_PF_SET_VF_ALREADY;
+>         }
+>
+>         return 0;
+> @@ -231,6 +269,17 @@ int hinic3_update_mac(struct hinic3_hwdev *hwdev, co=
+nst u8 *old_mac,
+>                 return -EIO;
+>         }
+>
+> +       if (PF_SET_VF_MAC(hwdev, mac_info.msg_head.status)) {
+> +               dev_warn(hwdev->dev, "PF has already set VF MAC. Ignore u=
+pdate operation\n");
+> +               return HINIC3_PF_SET_VF_ALREADY;
+> +       }
+> +
+> +       if (mac_info.msg_head.status =3D=3D HINIC3_MGMT_STATUS_EXIST) {
+> +               dev_warn(hwdev->dev,
+> +                        "MAC is repeated. Ignore update operation\n");
+> +               return 0;
+> +       }
+> +
+>         return 0;
+>  }
+>
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h b/driver=
+s/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
+> index b83b567fa542..08bf14679bf8 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.h
+> @@ -16,6 +16,8 @@ struct hinic3_nic_dev;
+>  #define HINIC3_MAX_JUMBO_FRAME_SIZE  9600
+>
+>  #define HINIC3_VLAN_ID_MASK          0x7FFF
+> +#define HINIC3_PF_SET_VF_ALREADY     0x4
+> +#define HINIC3_MGMT_STATUS_EXIST     0x6
+>
+>  enum hinic3_nic_event_type {
+>         HINIC3_NIC_EVENT_LINK_DOWN =3D 0,
+> @@ -41,6 +43,7 @@ void hinic3_update_nic_feature(struct hinic3_nic_dev *n=
+ic_dev, u64 feature_cap);
+>  int hinic3_init_function_table(struct hinic3_nic_dev *nic_dev);
+>  int hinic3_set_port_mtu(struct net_device *netdev, u16 new_mtu);
+>
+> +int hinic3_get_default_mac(struct hinic3_hwdev *hwdev, u8 *mac_addr);
+>  int hinic3_set_mac(struct hinic3_hwdev *hwdev, const u8 *mac_addr, u16 v=
+lan_id,
+>                    u16 func_id);
+>  int hinic3_del_mac(struct hinic3_hwdev *hwdev, const u8 *mac_addr, u16 v=
+lan_id,
+> --
+> 2.43.0
+>
+>
 
-On 9/25/2025 3:48 PM, Konrad Dybcio wrote:
-> On 9/25/25 8:32 AM, Pankaj Patil wrote:
->> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->>
->> Add device tree support for QUPv3 serial engine protocols on Glymur.
->> Glymur has 24 QUP serial engines across 3 QUP wrappers, each with
->> support of GPI DMA engines.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
->> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->> ---
-> 
-> [...]
-> 
->> +		gpi_dma2: dma-controller@800000 {
->> +			compatible = "qcom,glymur-gpi-dma", "qcom,sm6350-gpi-dma";
->> +			reg = <0 0x00800000 0 0x60000>;
->> +			interrupts = <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 589 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 590 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 591 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 592 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 593 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 594 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 595 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 596 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 599 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_ESPI 129 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_ESPI 130 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_ESPI 131 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_ESPI 132 IRQ_TYPE_LEVEL_HIGH>;
->> +			dma-channels = <16>;
->> +			dma-channel-mask = <0x3f>;
->> +			#dma-cells = <3>;
->> +			iommus = <&apps_smmu 0xd76 0x0>;
->> +			status = "ok";
-> 
-> this is implied by default, drop
+--000000000000fc64c806412ffa9d
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Hi Konard,
-
-Do you mean we should remove the status property for all QUPs and 
-GPI_DMAs from the common device tree (SOC) and enable them only in the 
-board-specific device tree files?
-
-> 
->> +		};
->> +
->>   		qupv3_2: geniqup@8c0000 {
->>   			compatible = "qcom,geni-se-qup";
->>   			reg = <0x0 0x008c0000 0x0 0x3000>;
->> @@ -718,6 +744,339 @@ qupv3_2: geniqup@8c0000 {
->>   			#address-cells = <2>;
->>   			#size-cells = <2>;
->>   			ranges;
->> +			status = "ok";
-> 
-> ditto
-> 
-> (please resolve all occurences)
-> 
-> [...]
-> 
->> +		cnoc_main: interconnect@1500000 {
->> +			compatible = "qcom,glymur-cnoc-main";
->> +			reg = <0x0 0x01500000 0x0 0x17080>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +			#interconnect-cells = <2>;
->> +		};
->> +
->> +		config_noc: interconnect@1600000 {
->> +			compatible = "qcom,glymur-cnoc-cfg";
->> +			reg = <0x0 0x01600000 0x0 0x6600>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +			#interconnect-cells = <2>;
->> +		};
->> +
->> +		system_noc: interconnect@1680000 {
->> +			compatible = "qcom,glymur-system-noc";
->> +			reg = <0x0 0x01680000 0x0 0x1c080>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +			#interconnect-cells = <2>;
->> +		};
-> 
-> This diff becomes unreadable really fast.. please play with git
-> format-patch's --patience option
-> 
-> Konrad
-
+MIIVWQYJKoZIhvcNAQcCoIIVSjCCFUYCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghLGMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
+NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
+26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
+hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
+ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
+pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
+71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
+G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
+Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
+4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
+x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
+ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
+gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
+AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
+1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
+YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
+AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
+bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
+IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
+Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
+dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
+nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
+AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
+mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
+5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
+CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
+F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
+bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
+YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
+bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
+LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
+RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
+xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
+jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
+vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
+TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
+sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
+D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
+DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
+BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
+VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
+zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
+tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
+2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
+phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
+a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
+ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
+07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
+SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
+rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGjzCCBHeg
+AwIBAgIMClwVCDIzIfrgd31IMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
+ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
+MDIzMB4XDTI1MDYyMDEzNTM1MloXDTI3MDYyMTEzNTM1MlowgdcxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
+MDExNzEPMA0GA1UEBBMGQ2hlYmJpMQ4wDAYDVQQqEwVQYXZhbjEWMBQGA1UEChMNQlJPQURDT00g
+SU5DLjEiMCAGA1UEAwwZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTEoMCYGCSqGSIb3DQEJARYZ
+cGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+ANGpTISzTrmZguibdFYqGCCUbwwdtM+YnwrLTw7HCfW+biD/WfxA5JKBJm81QJINtFKEiB/AKz2a
+/HTPxpDrr4vzZL0yoc9XefyCbdiwfyFl99oBekp+1ZxXc5bZsVhRPVyEWFtCys66nqu5cU2GPT3a
+ySQEHOtIKyGGgzMVvitOzO2suQkoMvu/swsftfgCY/PObdlBZhv0BD97+WwR6CQJh/YEuDDEHYCy
+NDeiVtF3/jwT04bHB7lR9n+AiCSLr9wlgBHGdBFIOmT/XMX3K8fuMMGLq9PpGQEMvYa9QTkE9+zc
+MddiNNh1xtCTG0+kC7KIttdXTnffisXKsX44B8ECAwEAAaOCAd0wggHZMA4GA1UdDwEB/wQEAwIF
+oDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDovL3Nl
+Y3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5BggrBgEF
+BQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUGA1Ud
+IAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUFBwIB
+FiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzBBBgNVHR8EOjA4MDagNKAy
+hjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWltZWNhMjAyMy5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNVHQ4EFgQUxJ6fps/yOGneJRYDWUKPuLPk
+miYwDQYJKoZIhvcNAQELBQADggIBAI2j2qBMKYV8SLK1ysjOOS54Lpm3geezjBYrWor/BAKGP7kT
+QN61VWg3QlZqiX21KLNeBWzJH7r+zWiS8ykHApTnBlTjfNGF8ihZz7GkpBTa3xDW5rT/oLfyVQ5k
+Wr2OZ268FfZPyAgHYnrfhmojupPS4c7bT9fQyep3P0sAm6TQxmhLDh/HcsloIn7w1QywGRyesbRw
+CFkRbTnhhTS9Tz3pYs5kHbphHY5oF3HNdKgFPrfpF9ei6dL4LlwvQgNlRB6PhdUBL80CJ0UlY2Oz
+jIAKPusiSluFH+NvwqsI8VuId34ug+B5VOM2dWXR/jY0as0Va5Fpjpn1G+jG2pzr1FQu2OHR5GAh
+6Uw50Yh3H77mYK67fCzQVcHrl0qdOLSZVsz/T3qjRGjAZlIDyFRjewxLNunJl/TGtu1jk1ij7Uzh
+PtF4nfZaVnWJowp/gE+Hr21BXA1nj+wBINHA0eufDHd/Y0/MLK+++i3gPTermGBIfadXUj8NGCGe
+eIj4fd2b29HwMCvfX78QR4JQM9dkDoD1ZFClV17bxRPtxhwEU8DzzcGlLfKJhj8IxkLoww9hqNul
+Md+LwA5kUTLPBBl9irP7Rn3jfftdK1MgrNyomyZUZSI1pisbv0Zn/ru3KD3QZLE17esvHAqCfXAZ
+a2vE+o+ZbomB5XkihtQpb/DYrfjAMYICVzCCAlMCAQEwYjBSMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xvYmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0Eg
+MjAyMwIMClwVCDIzIfrgd31IMA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCDYOdWK
+oniHaOYZhNAUPuWwWMag0R7Qcqdi3YG2RPC0IDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
+CSqGSIb3DQEJBTEPFw0yNTEwMTUxMDI5NTBaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEq
+MAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCG
+SAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBj0z3FRyeJAainWyZB8ge0TgP3T9alVrixuchtvlyq
+2cSV5udlxR6eOM68EUcRLMaqB28S7RBO+HoYfvKakLEAqZtZ7UJHNLFcOZqE4rzHHAgKFPy2VLlA
+foxoSdMScSHv73UOZMfRBH7XHOGcm23row4d5UfWJPV/PlR3s1jgmmG61uB/4urVn7PoLq8aHvQC
+CKNXXw01TxNAtDjt1Bw4TukovChGd4FQZNLlEpI15BXTqFBXtSyxPlsVrqp23MySuAyOz6Cl75nr
+dUxy2ox/4iI401Lagbp62/phOGuGVuu//Ffy75cxmWx3z+wsbR6R2viyym9fhCW318wp3J3v
+--000000000000fc64c806412ffa9d--
 
