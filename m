@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-853949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5BFBDD1D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D1BBDD205
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64D03C57B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B063C7196
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA1E3148DF;
-	Wed, 15 Oct 2025 07:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8AC3191AB;
+	Wed, 15 Oct 2025 07:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rwL1z5EW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="DiCuGLGh"
+Received: from mail-m3275.qiye.163.com (mail-m3275.qiye.163.com [220.197.32.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F50225C711;
-	Wed, 15 Oct 2025 07:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584113191B5;
+	Wed, 15 Oct 2025 07:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760513277; cv=none; b=mKubujvN48Rle1stndgLmDGQ+UHrrfY41pbqYrrVISV4R8SBKQYN/XldauOgZx9Xbmp35D7M5psmC2P7UBt9czbPnV3hK5BU46lTNPIEWzFUNghbAZVrSGHVwEeOrjPElqRdtMV9MGIPtZIsr/rNDWMNAzT3FF2NlmAP2tGyXMk=
+	t=1760513428; cv=none; b=TSeWLsp8vk+wcOAQ7yGNhJCrIm1BMw79tISQqltINkDNUWllraTmSG8RNqUm5HcqHXeAZWfaef+3IJ3qKkXcnQvde/IBlfLLyL0SQA72IoWL/of9mrstTrLQJDQT96NAF+H6ZP+cKdwZ0brCUEOx1uvs+0Do9bTvDE6ri7PtUDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760513277; c=relaxed/simple;
-	bh=Is/mP9CnZEFwJxb1uzYaRcwSHWOY1wuKhM2uP3rRUJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irc2OsUCRwWTNFiSCl5tO4Aw3wYSusghZ5DGbSDHSkMhDhi3WgNL7rf07gGMepu6l3ba8vtc/E81kHkc3gVUwZppq0zZE9T6SjLkmZ8E1smFY8tpO+eBXj8oHXiovs+wbaxQhCAjfOn0TPExNsmA2Tmw+xuddSwJ99cz17cyp3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rwL1z5EW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF8BC4CEF9;
-	Wed, 15 Oct 2025 07:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760513276;
-	bh=Is/mP9CnZEFwJxb1uzYaRcwSHWOY1wuKhM2uP3rRUJQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rwL1z5EW+qSFrYpFZVR1YT3E/vIpsHeoTmt9epBW0hzKMzRbbmnX5rLXGiAMRPrdY
-	 XZbb6zxaiBpFO6Yh5f6rAq6/m4UjoTsJCjeOukI5TtZeFcQeIKUDaaZdrb0lv+JJD4
-	 mSu1qU//c7aMSCNfWaZjEEv1bswPScfLp9xoRNIo=
-Date: Wed, 15 Oct 2025 09:27:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
-	Matt Fleming <matt@readmodwrite.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
+	s=arc-20240116; t=1760513428; c=relaxed/simple;
+	bh=A4qtzS6/f/pecX6GOgrxPGmVThQldDEiFI2T/BUxuSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hnzBps1/k9BhZ4o2xH5SyvERd/egQXKolyeIqxfQzQ4lE5cXx6OCO5+8nJY18we0Bg/eAGBy2AxFmuVsMJnCuUATImBtEGJc7bj/YE5ncwK5CU0zeZ7klfxCfaaonNfjJtwEI84kb+zX2I2wEUnKBj5QlBk/XTg/mjD7sez4+hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=DiCuGLGh; arc=none smtp.client-ip=220.197.32.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
+Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25f9bc543;
+	Wed, 15 Oct 2025 15:30:15 +0800 (GMT+08:00)
+From: Albert Yang <yangzh0906@thundersoft.com>
+To: adrian.hunter@intel.com
+Cc: arnd@arndb.de,
+	bst-upstream@bstai.top,
+	catalin.marinas@arm.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gordon.ge@bst.ai,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	kernel-team@cloudflare.com, Matt Fleming <mfleming@cloudflare.com>,
-	Oleg Nesterov <oleg@redhat.com>, John Stultz <jstultz@google.com>,
-	Chris Arges <carges@cloudflare.com>
-Subject: Re: [PATCH v6.12] sched/fair: Block delayed tasks on throttled
- hierarchy during dequeue
-Message-ID: <2025101506-haven-degree-8073@gregkh>
-References: <CAENh_SRj9pMyMLZAM0WVr3tuD5ogMQySzkPoiHu4SRoGFkmnZw@mail.gmail.com>
- <20251015060359.34722-1-kprateek.nayak@amd.com>
- <2025101516-skeletal-munchkin-0e85@gregkh>
- <fe9320d4-9da0-4de8-8e1e-ec03ecf582a1@amd.com>
+	linux-mmc@vger.kernel.org,
+	robh@kernel.org,
+	soc@lists.linux.dev,
+	ulf.hansson@linaro.org,
+	will@kernel.org,
+	yangzh0906@thundersoft.com
+Subject: Re: [PATCH 9/9] MAINTAINERS: add Black Sesame Technologies (BST) ARM SoC support
+Date: Wed, 15 Oct 2025 15:30:14 +0800
+Message-ID: <20251015073014.1480709-1-yangzh0906@thundersoft.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <57743880-aecb-4300-8386-44d962659921@intel.com>
+References: <57743880-aecb-4300-8386-44d962659921@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe9320d4-9da0-4de8-8e1e-ec03ecf582a1@amd.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99e6c6d7c409cckunme94767a761da4f
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTktMVhpDQhgYHx5CGEkdTlYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSEJVSk
+	tLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=DiCuGLGhn/KPK3GPbkC95HwnBSfdDQSl6wzN48jMYxr4NlDlx1h9TIsyGVqFQu2B6KU5LMb9zWxnuLHsbplmLMloHqzMwPEd43MCvj4YahW/3hpskaFGzLGtta3VEDTY6M1oiDNILtzKjdmVbj1stKUwOG5hChS++4BUT2mfbj0=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=O1qaZkX1700g4dn1D/gzvs0pnDtTldETwvN+nCYzCHU=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, Oct 15, 2025 at 11:57:19AM +0530, K Prateek Nayak wrote:
-> Hello Greg,
-> 
-> On 10/15/2025 11:44 AM, Greg Kroah-Hartman wrote:
-> >> Greg, Sasha,
-> >>
-> >> This fix cleanly applies on top of v6.16.y and v6.17.y stable kernels
-> >> too when cherry-picked from v6.12.y branch (or with 'git am -3'). Let me
-> >> know if you would like me to send a seperate patch for each.
-> >>
-> >> As mentioned above, the upstream fixes this as a part of larger feature
-> >> and we would only like these bits backported. If there are any future
-> >> conflicts in this area during backporting, I would be more than happy to
-> >> help out resolve them.
-> > 
-> > Why not just backport all of the mainline changes instead?  As I say a
-> > lot, whenever we do these "one off" changes, it's almost always wrong
-> > and causes problems over the years going forward as other changes around
-> > the same area can not be backported either.
-> > 
-> > So please, try to just backport the original commits.
-> 
-> Peter was in favor of backporting just the necessary bits in
-> https://lore.kernel.org/all/20250929103836.GK3419281@noisy.programming.kicks-ass.net/
-> 
-> Backporting the whole of per-task throttle feature is lot more heavy
-> handed with the core changes adding:
-> 
->  include/linux/sched.h |   5 +
->  kernel/sched/core.c   |   3 +
->  kernel/sched/fair.c   | 451 ++++++++++++++++++++++++------------------
->  kernel/sched/pelt.h   |   4 +-
->  kernel/sched/sched.h  |   7 +-
->  5 files changed, 274 insertions(+), 196 deletions(-)
+Hi Adrian,
 
-That's very tiny overall in the scheme of what we take for the stable
-trees.
+Thank you for the review and feedback!
 
-> And a few more fixes that will add to the above before v6.18. I'll defer
-> to Peter to decide the best course of action.
+On Mon, Sep 29, 2025 at 04:29:25PM +0300, Adrian Hunter wrote:
+> On 23/09/2025 09:10, Albert Yang wrote:
 
-We'll defer to the maintainers of the subsystem as to what they want
-here.  If they say take this smaller patch, we'll be glad to do so.
+> > +ARM/BST SOC SUPPORT
+> > +M: Ge Gordon <gordon.ge@bst.ai>
+> > +R: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>
+> > +L: linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > +S: Maintained
+>
+> Seems like it is "Supported" rather than "Maintained" ?
+>
+>         S: *Status*, one of the following:
+>            Supported:   Someone is actually paid to look after this.
+>            Maintained:  Someone actually looks after it.
+>            Odd Fixes:   It has a maintainer but they don't have time to do
+>                         much other than throw the odd patch in. See below..
+>            Orphan:      No current maintainer [but maybe you could take the
+>                         role as you write your new code].
+>            Obsolete:    Old code. Something tagged obsolete generally means
+>                         it has been replaced by a better system and you
+>                         should be using that.> The status should likely be "Supported" rather than "Maintained"
+> based on the MAINTAINERS guidelines.
 
-thanks,
+You're absolutely right. "Supported" is more appropriate for this
+vendor-supported hardware. I will update the STATUS field to
+"Supported" in next of the patch series.
 
-greg k-h
+Thanks for pointing this out.
+
+Best regards,
+Albert Yang
 
