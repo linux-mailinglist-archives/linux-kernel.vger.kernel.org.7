@@ -1,193 +1,146 @@
-Return-Path: <linux-kernel+bounces-854426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDC0BDE567
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:51:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2581CBDE561
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F323B2BAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:50:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5158357994
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF773233FD;
-	Wed, 15 Oct 2025 11:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5C232340A;
+	Wed, 15 Oct 2025 11:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="e2c1oMHL"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="jK3Er7r9"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4037323400
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02153233EC
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760529048; cv=none; b=Bh6vqg+ChpD81/YS83+IWCb/k7lp04fMlrwYKWOzkpLhF5n+QepXCupGEAAxhURXTtAO7y2JzC0og2L8hrMWhrySZ/7neJ/Cwdt1zeu94UwMHxvtZaGXnsemqug0KoO0u/dUBJ4eCgGY2JV3qFRGnmUGurH2ghglBfHsPXr8kz0=
+	t=1760529101; cv=none; b=TsmUbbB8OdBpbRtm3ajr5KajSiAyBgEPCKFUvHMgJlrXx/iSWovzONAUZbZg7uv23dWcqlNlOxZf7hhzT/zRcI3jA0J8Fnnx2d6YKo6XNn/XnfkgI8TUnB/VPKZAd17lE9OLtdjW2dDpvr/qvxQdvOrlSBOBJPXwkwkbW9kGjmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760529048; c=relaxed/simple;
-	bh=tmowLdt/N2nbXuZaInudOLZY9PCI7SbE+aZIEDGepoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmDsSvz5xDbo5lO2EF2F+epJBqF7ZoxFA8i+o/a5fL+pHXH9+u4GaTAAZmlWlVZcXtgGe1pK5Hz5p7Ht9iYJE6CAMl35n1/7pdYdEbcJvvGl0Ox2bW0uRdHHr9X2EWkazSlkQUVcyfG7ZY2Bv75gwSgm6B+0ECkJYkoKnb9eKgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=e2c1oMHL; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-441fa0fd4d3so43752b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:50:46 -0700 (PDT)
+	s=arc-20240116; t=1760529101; c=relaxed/simple;
+	bh=J81S+quz2D6SJ+jZJSz2ptY54689YKnXpDm6RHFcwoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=juUK+PRC3cfbFJtuD/jp1bKlunmcGw4nz2EaSV5C82zCvCFsIks/M67t4eXN3mhrT/YXqlSpHuMSbixzVB0JkAcHxrwzWKNrlSYyQk93HTAjKjaDTthJdTpciimbCUB45InTEKbrurWTZ2vT2Bh4befDEe6LVRNraLnXPNj/o4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=jK3Er7r9; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-63bee26c7d2so1014321a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:51:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1760529046; x=1761133846; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vHmKb0ZIzx4zdIs4Lr+2KFKimyOcsEmfGR6+OHZivpc=;
-        b=e2c1oMHLRoMsONACHvkGo89STMQDv1H2DDH7z25YhyiSVBLk6In+ilLNIbmmI6V/rg
-         b+BiXsOnkfG/vQ/99VuKAB5ZkCuguagHNO24qE+6hPDTfRf81lLGQOA0QS77Z/Xd+fRp
-         lOnKwDAFW1wXkIgFKaD8K35yU8WbW2M5PPAfcneZVv3bMkI84YxqTfv4HVInxFQZFkAc
-         6KLFfb9FBBTgzp2f0RI/ZJ+6xYlLry2wsquidfueaiD33ccXHbRjZ2QvBQ1HJI5y6/nD
-         12uFaMuWNJIU9A8eEDakC81AdhcAhzmzBoDbAhyHHdDaOKY8KatZ6L63H1aBfNm0V9R7
-         mo9g==
+        d=soleen.com; s=google; t=1760529097; x=1761133897; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZeT3Illh7u1oVcNtRdXPfMtGGKxc45UajEsrHq4K7Pk=;
+        b=jK3Er7r9G6ILbG3ybxLEW3V9ISVF+c1MF2skz8HCBUCOxrBIqvEL5J7EtdyXUUgkTY
+         m4Y0p55wf9WfVYaxLtBqhG8qmBKBYK8ebLZyEpdHfnaAmkAay4XB9Lm5/EBTCV/vJeZi
+         vWcoNJiLHlHVTqTzhuuZZYixPJBHyzb4mVK6JWy5osIn4KQiowhL3S/t7qFgES0D6CpQ
+         HapU07RYHqx9hcKOjWQxMr5OTg6CLqjo2BNIXi+Bknhe+OwRLZ1PsTSjeySo8p0BLC7N
+         Bd/ndTR1KDdNl5+VszuWnnuFmbCSeoxv2HoepGtie3c+YwzyF+lIn2LMZcQ4nrcd9j9O
+         HCTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760529046; x=1761133846;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHmKb0ZIzx4zdIs4Lr+2KFKimyOcsEmfGR6+OHZivpc=;
-        b=bAwS6UplYLknEQzrcyhWd0vJmXwQItD1nns9t3lAPSAXRcUnYYnXGSbyUBh9aIUjYu
-         p9Vk8Wz6xMp1eJnnEwjvV3XIxf05Xu6sY3TjkKOEYJHMmuC1M+lMTszE52ac7BvW8ROG
-         E45JUJTdaHjWFbBXyie+XKkPUxRpiiHlQkSTFnGR4ta65eUxqYYEboofFG5sfNXCdbwM
-         w9t9YTPwhU6AzWmme5glti0R/xSRMBvq9JAwVf5MRUVSXgb67qrT7ZZyobJpYIowXfaF
-         c6JGL36Q7unvEHyjjzQAfmt5GPKsq8GeGs4Z83vKPKemMNvdWAXfeRa0mRebY45NebUv
-         tS+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPoTkkNfLpefORZWq+h2H7uRTcwwwkDluBUiXcMLFTOeuyMEqRJn8GOqG2hMHpaAO+LY3+Cj9Z73vCC8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWwLYpk1eXbMHngfk+bJ7pS4jRKmE0V+rfXP0qWKeobY3aOZYi
-	mhN4jRDYegIvZ3qMEptckz3qGrTl+QnG0JHqC5nVRPuYc0fG0KCBbLm1oA3q8IzmAIM=
-X-Gm-Gg: ASbGncst13BAudPmvsj8rTKG8wGYsFoYbYrTQJeJESdFrRdQKWjRZh+lQPTXA0dFf9V
-	cQkK+d8laW+/yPlIPBLjRzp5UTfWDvzZV+hb5JsoUsMpKztfzdzTqTQrg/nCRUVGw4fSwsMo20m
-	/TKFoUE0IQhgvdRAry8vh4hJ0nXMGQhcrZ0Pg1BS281+C+hyaGAKEDsrL7QRYQT28ic+wqW5EOY
-	GhJYN1mDltXeNApDt66/8yBqfK7C+Fx8xuF7DUTWxAT2ocqK3QGIhJ7XSYSlY/0ikh7KL05jlXj
-	bFU9DiI/JJs1NzmhplHBZJjDUTD4lkHtd2yHmaEO5lbjvLbjR0PkvpxlxVcZoOeSB+Cr58vkdr6
-	Yiq24Ga8T2X2ujocL9NG+O5JiCA==
-X-Google-Smtp-Source: AGHT+IF06YM32w1B97BvNmrLzOYC8WHnzl3Ay7SwG+FkmHKb9v+2SSicrsaLo8CLc8NQ8NePlRs7aQ==
-X-Received: by 2002:a05:6808:4486:b0:43f:5f5f:370e with SMTP id 5614622812f47-4417b2f0ca9mr13602594b6e.19.1760529045662;
-        Wed, 15 Oct 2025 04:50:45 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-441ca023222sm2814641b6e.11.2025.10.15.04.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 04:50:45 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v901k-0000000HOR5-14cb;
-	Wed, 15 Oct 2025 08:50:44 -0300
-Date: Wed, 15 Oct 2025 08:50:44 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
- device
-Message-ID: <20251015115044.GE3938986@ziepe.ca>
-References: <20250729181045.0000100b@huawei.com>
- <20250729231948.GJ26511@ziepe.ca>
- <yq5aqzxy9ij1.fsf@kernel.org>
- <20250730113827.000032b8@huawei.com>
- <20250730132333.00006fbf@huawei.com>
- <2025073035-bulginess-rematch-b92e@gregkh>
- <b3ec55da-822a-4098-b030-4d76825f358e@arm.com>
- <20251010135922.GC3833649@ziepe.ca>
- <yq5a347kmqzn.fsf@kernel.org>
- <2025101523-evil-dole-66a3@gregkh>
+        d=1e100.net; s=20230601; t=1760529097; x=1761133897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZeT3Illh7u1oVcNtRdXPfMtGGKxc45UajEsrHq4K7Pk=;
+        b=lk/To1ASusu+9/1AKfLVGVJ7nm84X26N5qE2Ydpuofi0fSQ0LAdC8GKRbQZjbEScIY
+         tTeMnksE+7FkozDh53KSSFUbZJnhzsA516nEKC5V1pSxaDnI8PLplGQHBtDC15XOuSnH
+         93QculPcTgt8LuzNdzjIQV4MUIukvOCowWVx2kNUMHFaytFINoyxchwIiUB99vQSsipQ
+         bM03xcsmgWZZNWGgPAo8VlxfOzA1zp4QbSMp4jqkFBf5DAWg0BzezHjtHpKoQ7o/RJfW
+         smUMvIu5EaNkrc1W2+xotqSDr70+GDcllRY1HJY4J2DQ5pZQ3ICL73OOvD4dPfoWdHO6
+         1q2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzJMMuy9TfI2S4PZ/bGO6Zz3KTlq+WDQ8amdVOgO3PRSsFIZ1XO2PTkyVkoOA6DnzzIGPMmlmbkxzv9U0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdG/bbVT4a46I+W/8DWF5OHR1hIOH4vx3ClFMAvBwfdTwlY20r
+	mjvonRc6/lFcKcfhW5Yd8OPfZsrRshdvsufxSvmUogrYhtBpe2TSG6jn2x9gJ6hK60Z83zv4G77
+	jJDctNXdWAhRQ43+ah4kgTffe4KBKk1PAIbgjFnA2SA==
+X-Gm-Gg: ASbGncuAx7Q3n9VWJ/M0Lknqmn/F7XzcYpiVrVH9lz7sQlnRRAbCMaYmGAlG1JOmKt1
+	mrEL98FVgVI5hGVBdM/Kl135Fd473bXa19Zu1pXIXZPIGHSSWBLgLdGKyZz3ol9sS3C6Jslzpqv
+	HvnKL/NX/NNgwTECQDs/BumZ7AoynJaU8qV+y9Zt76+lGQZxae59b25BrnH5P6+oFw5CuQ38bzm
+	dqeN8uInvVDhVXKMvPpn2EH7NyyKbdjeg==
+X-Google-Smtp-Source: AGHT+IG/8dhCCsOd0/KwUpvcxHFj4YxlARVqbw0ANuFg1sGtZK/6OGHoBYZjRNBVqY4UCZqH6zcoIDOBKlsppXGYtBU=
+X-Received: by 2002:a05:6402:22ab:b0:631:6acd:fa3a with SMTP id
+ 4fb4d7f45d1cf-639ba74e058mr23000947a12.4.1760529096051; Wed, 15 Oct 2025
+ 04:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025101523-evil-dole-66a3@gregkh>
+References: <20251007033100.836886-1-pasha.tatashin@soleen.com>
+ <20251007033100.836886-7-pasha.tatashin@soleen.com> <aO9WvF_WMkKKqYo5@kernel.org>
+In-Reply-To: <aO9WvF_WMkKKqYo5@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 15 Oct 2025 07:50:59 -0400
+X-Gm-Features: AS18NWBZnQJDAjctj-jgfCdfyiQeHYUPte3YsSfp-LkOjGf7p4zdP8W9aeP6Pbk
+Message-ID: <CA+CK2bBC57v_CYdpT-Jcu4LX4MxZZ5CyAJBVTZVXdMnCXR-AmA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] liveupdate: kho: move to kernel/liveupdate
+To: Mike Rapoport <rppt@kernel.org>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
+	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
+	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 11:58:25AM +0200, Greg KH wrote:
-> On Wed, Oct 15, 2025 at 03:22:28PM +0530, Aneesh Kumar K.V wrote:
-> > Jason Gunthorpe <jgg@ziepe.ca> writes:
-> > 
-> > > On Fri, Oct 10, 2025 at 07:10:58AM -0500, Jeremy Linton wrote:
-> > >> > Yes, use faux_device if you need/want a struct device to represent
-> > >> > something in the tree and it does NOT have any real platform resources
-> > >> > behind it.  That's explicitly what it was designed for.
-> > >> 
-> > >> Right, but this code is intended to trigger the kmod/userspace module
-> > >> loader.
-> > >
-> > > Faux devices are not intended to be bound, it says so right on the label:
-> > >
-> > >  * A "simple" faux bus that allows devices to be created and added
-> > >  * automatically to it.  This is to be used whenever you need to create a
-> > >  * device that is not associated with any "real" system resources, and do
-> > >  * not want to have to deal with a bus/driver binding logic.  It is
-> > >                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > >  * intended to be very simple, with only a create and a destroy function
-> > >  * available.
-> > >
-> > > auxiliary_device is quite similar to faux except it is intended to be
-> > > bound to drivers, supports module autoloading and so on.
-> > >
-> > > What you have here is the platform firmware provides the ARM SMC
-> > > (Secure Monitor Call Calling Convention) interface which is a generic
-> > > function call multiplexer between the OS and ARM firmware.
-> > >
-> > > Then we have things like the TSM subsystem that want to load a driver
-> > > to use calls over SMC if the underlying platform firmware supports the
-> > > RSI group of SMC APIs. You'd have a TSM subsystem driver that uses the
-> > > RSI call group over SMC that autobinds when the RSI call group is
-> > > detected when the SMC is first discovered.
-> > >
-> > > So you could use auxiliary_device, you'd consider SMC itself to be the
-> > > shared HW block and all the auxiliary drivers are per-subsystem
-> > > aspects of that shared SMC interface. It is not a terrible fit for
-> > > what it was intended for at least.
-> > >
-> > 
-> > IIUC, auxiliary_device needs a parent device, and the documentation
-> > explains that it’s intended for cases where a large driver is split into
-> > multiple dependent smaller ones.
+On Wed, Oct 15, 2025 at 4:09=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Tue, Oct 07, 2025 at 03:30:59AM +0000, Pasha Tatashin wrote:
+> > Move KHO to kernel/liveupdate/ in preparation of placing all Live Updat=
+e
+> > core kernel related files to the same place.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Which is the case here, you have a SMC interface that you want to
-fracture into multiple subsystems.
+Thank you.
 
-> > If we want to use auxiliary_device for this case, what would serve as
-> > the parent device?
+>
+> One comment below.
+>
+> > ---
+> >  Documentation/core-api/kho/concepts.rst       |  2 +-
+> >  MAINTAINERS                                   |  2 +-
+> >  init/Kconfig                                  |  2 ++
+> >  kernel/Kconfig.kexec                          | 25 ----------------
+> >  kernel/Makefile                               |  3 +-
+> >  kernel/liveupdate/Kconfig                     | 30 +++++++++++++++++++
+> >  kernel/liveupdate/Makefile                    |  4 +++
+> >  kernel/{ =3D> liveupdate}/kexec_handover.c      |  6 ++--
+> >  .../{ =3D> liveupdate}/kexec_handover_debug.c   |  0
+> >  .../kexec_handover_internal.h                 |  0
+> >  10 files changed, 42 insertions(+), 32 deletions(-)
+> >  create mode 100644 kernel/liveupdate/Kconfig
+> >  create mode 100644 kernel/liveupdate/Makefile
+> >  rename kernel/{ =3D> liveupdate}/kexec_handover.c (99%)
+> >  rename kernel/{ =3D> liveupdate}/kexec_handover_debug.c (100%)
+> >  rename kernel/{ =3D> liveupdate}/kexec_handover_internal.h (100%)
+> >
+> > diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
+> > new file mode 100644
+> > index 000000000000..522b9f74d605
+> > --- /dev/null
+> > +++ b/kernel/liveupdate/Kconfig
+> > @@ -0,0 +1,30 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +menu "Live Update"
+>
+> KHO can be used without Live Update, let's make this "Kexec HandOver and
+> Live Update"
 
-You probably need to make a platform device for the discovered PSCI
-interface from the firmware. Looks like DT will already have one, ACPI
-could invent one..
- 
-> The real device that has the resources you wish to share access to.  Are
-> there physical resources here you are sharing?  If so, that device is
-> the parent.  If there is no such thing, then just make a bunch of faux
-> devices and be done with it :)
-
-At the very bottom of the stack it looks like the PSCI interface is
-discovered first through DT/ACPI. The PSCI interface has RPCs that are
-then used to discover if SMC/etc/etc are present and along the way it
-makes platform devices to plug in subsystems to it based on what it
-can discover.
-
-It is just not sharing "resources" in the traditional sense, PSCI has
-no registers or interrupts, yet it is a service provided by the
-platform firmare.
-
-Again faux devices don't serve the need here to load modules and do
-driver binding.
-
-Jason
+IMO the current menu name is OK, as it is an option presented only to
+users configuring the kernel, my rational for that thinking is that
+KHO is an independent module, but it should be enabled as a dependency
+by other kernel features that require it.
 
