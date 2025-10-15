@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-853785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847BABDC97A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:23:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DD2BDC980
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F8D19278F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:24:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2209434D064
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CEB30274C;
-	Wed, 15 Oct 2025 05:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF90030277E;
+	Wed, 15 Oct 2025 05:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="deT1h9c0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQMy/0jU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1254438B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27450302742
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760505813; cv=none; b=LenvZ8uYCBAQlq/2wXdn42+eAAI09XPROs2bmKUWBrkpcW7N+V0ODiwoyAOv6haCQKgOa4ug0P/GgbZ/8VUgU4Pq4ETxR5cxyeZATsz+lQCVLbzGbopA2YaqKj+hqAh4Vn7IdIL9rXtLXBRZDKTsYVLbv3JlA3fQ+qqU7wyFgIQ=
+	t=1760505832; cv=none; b=Xs858NyUJiqhe/r19yM0V+BzhXk4Z7vjUFbO7ckO6IiCkXKWElFABNuLJy2YP7manQHylSvjhcbCN/hQBoRFZhO/j69UiSItAHYBgqcgHLlocl5NBL19QGJeibE+w0uCTk02rwB7Ueu5Xq+h7Gr2SUg6L6t5SRF35V9AygPrmCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760505813; c=relaxed/simple;
-	bh=eK0inZ4rNk5w2Qq8gSVATW8wmK6XxymTxfw6OxJSz54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tTa0ity0jYqkCBqVGwtqCNPZe1l1oY0eDW8dPRs01uLvsETVnYaKC2fn3LnbKXWd71WqYDKplwUkPIQZUalUNPzPw9I5lNTOwFD5spXPMVoCPlrgP4wZ/K9XDW2vthPRrEoz4qhwyTAalh2waAKs9TmcbQ8NGZ1b1le6HbT3nBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=deT1h9c0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760505812; x=1792041812;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=eK0inZ4rNk5w2Qq8gSVATW8wmK6XxymTxfw6OxJSz54=;
-  b=deT1h9c0YoNr37UIT34YuMOL5JQMyV5ot1ANLpfQGrSmHq+pzscEiEiA
-   SUgq6nnuOvWoqts2iOv1ge5iazp/Lg7oLTAiiCQBO9shIjc8fQ8j0JBvq
-   WZAtc43ZcX1T/NbkPlyUQ2r1XYpx4iIfR0GEHN8PlJzK8scY2Twebvxvr
-   MMxmEtcN/NkrbAKMDgbj1G/JoC+alZCGgXSeY7fY94qcYNRZlKg1DFdgd
-   d9M7VLxxvUdiI71MUWxvVhpgGcvhwLgGd3jFR3o65XNSnwmvYiHRcZKTX
-   6gn2ikSLrn5klCT4H0Io8/rig5nfLMBZwx2gq0xJR2B452/NKP1LJdPlT
-   Q==;
-X-CSE-ConnectionGUID: ho5+mbh3Ty6RWukiQDjCDQ==
-X-CSE-MsgGUID: vSJ5FJosTVaWKVSAq1mpBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="85290275"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="85290275"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:23:31 -0700
-X-CSE-ConnectionGUID: T0k5dDuKTp6Gt6SVFGKEog==
-X-CSE-MsgGUID: eUacngtfTZetlmPxF9skJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="182018745"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:23:24 -0700
-Message-ID: <bf6ee535-cd5c-41ed-b0a0-f2dc10c1382d@linux.intel.com>
-Date: Wed, 15 Oct 2025 13:19:44 +0800
+	s=arc-20240116; t=1760505832; c=relaxed/simple;
+	bh=Y8W6GMzQJCTy0WdazAXCGfrxQoa7TUygfSxQG7gH54Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=AlBk5vdNRobdZ0896ZA965HRpNB8BONZEKZ35+i8GoMhf/my6j/9cONzUbVEN5wv92WOQQvll/aKBd3984ou+JAGFjuiaPsxDhhQNeMQcKG90okCXJ/IAiXUKiG47nRWjBF5r8WJectU9Z2anlZzybmqNpuX0YHvCWloZYur6yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQMy/0jU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4334C4CEFE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760505831;
+	bh=Y8W6GMzQJCTy0WdazAXCGfrxQoa7TUygfSxQG7gH54Q=;
+	h=From:Date:Subject:To:From;
+	b=pQMy/0jUq03RPNP6Ap4Hr7HszrgXpTj9Pq6kDYmHU/T17j9GygoY/ti4WLmLreNbP
+	 h1tpMJRASCkRPoT6F24sWhCkFnhoY+pOPKi36ES5mJc7adIMXuW1Sl+mb8K9i86UaG
+	 PDCgqtElqyzCANYEQMEK6oGUG0WMN7GwAJIdQLmgYpj4d+qhqffjB33h4W6JjHcPYZ
+	 flY9wGCHE6yX/KqH33lKxZ3n20TMPc6Oe4rhqEpYu0QWv/rkvqJQv4vuwKJ/IrubF7
+	 SZ46nmJymV+gT5vOPuBdZMv46wNYVuys/uqPqBVg8NRM3rm5N2obaiEy0hQSoE+dlG
+	 EQ98L+/SI1IxQ==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso241240566b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:23:51 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yyb1TAjo/mcF97k/+iHJPu+y8WELzPBVzOEaKaEs1yhtKB6poZz
+	ENYD3VdwftZLcAhkyePEIdONtrq0qGSul3tNtEzrm7J9JccJUuPie42Y7u9nMPvw+2LnNeOyVIY
+	9Tf5GnSwTm99QrUFsSUoawMGkbQIDAMg=
+X-Google-Smtp-Source: AGHT+IEUPHiSWgq5faqpmwL8xJofNXM/lE4J2CeNTMOWn1cghhM0lpXSpaWufPEH6LZhD2zU5fD2fAcuJbGez70kiuw=
+X-Received: by 2002:a17:907:7f93:b0:b04:b446:355 with SMTP id
+ a640c23a62f3a-b50aca01315mr2812821166b.59.1760505829916; Tue, 14 Oct 2025
+ 22:23:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] x86/mm: Use 'ptdesc' when freeing PMD pages
-To: Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>,
- Matthew Wilcox <willy@infradead.org>
-Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
- <20251014130437.1090448-4-baolu.lu@linux.intel.com>
- <b6fdba02-cc3e-4d06-b013-fba94209e7a1@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <b6fdba02-cc3e-4d06-b013-fba94209e7a1@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 15 Oct 2025 14:23:38 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8OsoXbJTybYwFTvUe+utUyi9Lw3SMdObgCA82S-b-mQA@mail.gmail.com>
+X-Gm-Features: AS18NWDtNB4XBKJsk9bsIWtu3RKLDyGHNNp0REg0bc-1G4yzVEhvLrBLs_i9XO4
+Message-ID: <CAKYAXd8OsoXbJTybYwFTvUe+utUyi9Lw3SMdObgCA82S-b-mQA@mail.gmail.com>
+Subject: [ANNOUNCE] exfatprogs-1.3.0 version released
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Goldwyn Rodrigues <rgoldwyn@suse.com>, 
+	Nicolas Boos <nicolas.boos@wanadoo.fr>, sedat.dilek@gmail.com, 
+	Hyunchul Lee <hyc.lee@gmail.com>, Luca Stefani <luca.stefani.ge1@gmail.com>, 
+	Matthieu CASTET <castet.matthieu@free.fr>, Sven Hoexter <sven@stormbind.net>, 
+	Ethan Sommer <e5ten.arch@gmail.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>, 
+	Eric Sandeen <sandeen@sandeen.net>, 3394797836@qq.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/15/25 07:19, Dave Hansen wrote:
-> On 10/14/25 06:04, Lu Baolu wrote:
->> -#if defined(CONFIG_SPLIT_PMD_PTLOCKS)
->> -
->> +#if defined(CONFIG_SPLIT_PMD_PTLOCKS) || defined(CONFIG_X86_64)
-> 
-> What's with the #ifdef munging? It's not mentioned in the changelog.
-> 
-> I went looking at this because pmd_free_pte_page() is right in the
-> middle of the action on this reported use after free:
-> 
->> https://lore.kernel.org/all/68eeb99e.050a0220.91a22.0220.GAE@google.com/
-> 
-> so something fishy is going on. It would be great to narrow that report
-> down to a _specific_ patch in the series.
+Hi folks,
 
-Yes. I am trying to reproduce the issue on my local machine and then
-narrow down the reported issue.
+In this release, a new tool, defrag.exfat, has been added to perform
+defragmentation on exFAT volumes, featuring the following command-line options:
 
-Thanks,
-baolu
+  - defrag.exfat    /dev/sdX: Perform defragmentation with "fsck warning"
+  - defrag.exfat -f /dev/sdX: Force defragmentation (skip fsck warning)
+  - defrag.exfat -a /dev/sdX: Assess current fragmentation status
+
+Additionally, the quick format time of mkfs has been significantly improved:
+in the worst-case scenario of a 2TB partition with a 512B cluster size,
+the time was reduced from 3 minutes to just 9 seconds.
+
+Any feedback is welcome!:)
+
+NEW FEATURES :
+ * defrag.exfat: add a tool to defragment an exFAT
+   filesystem or assess its fragmentation status.
+   See a man page.
+
+CHANGES :
+ * mkfs.exfat: minimize zero-out initialization work
+   in quick format mode to reduce I/O time.
+ * fsck.exfat: set the entry after an unused entry as unused.
+
+BUG FIXES :
+ * mkfs.exfat: fix incorrect FAT byte length calculation.
+ * mkfs.exfat: avoid setting physical sector size into sector_size field.
+ * fsck.exfat: fix a memory leaks in an error path.
+
+The git tree is at:
+      https://github.com/exfatprogs/exfatprogs
+
+The tarballs can be found at:
+      https://github.com/exfatprogs/exfatprogs/releases/download/1.3.0/exfatprogs-1.3.0.tar.gz
 
