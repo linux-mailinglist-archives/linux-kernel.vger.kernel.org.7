@@ -1,473 +1,288 @@
-Return-Path: <linux-kernel+bounces-855199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0F4BE080B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:44:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB10BE0819
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92E33506A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:44:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67CE45055A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E7C30F53F;
-	Wed, 15 Oct 2025 19:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2853830DD36;
+	Wed, 15 Oct 2025 19:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pUg/fXP0"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013057.outbound.protection.outlook.com [40.93.201.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BA3MG+xd"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2C3288522
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760557415; cv=fail; b=NEsoZhV4V91rPhjJq1MnrdDObtTjBElfBV9xh2LT2nti/l2SCMutXSTj6iJf958j+IvdztQGMXSuisgG7E+jlrTtrlwfeAKFdSTdcgEp8EF0OrBJ+OLyV+Qk95r1zKHpwNImpSJ0EC+njBlFlUpbCRtk2l/jXD6RUjrtRAkidFY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760557415; c=relaxed/simple;
-	bh=K3KWYFW4HQNszKi/PIz+fo+8nDfmhBIOwXon1GZjcoY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=meKfyJkXIwcr3EuN0G7a9gGZK1RIPXz0HPmgyx3w4iDGx3DVivCMwrglTSoGzk79QhUtxs9t3zgt9rmP2Bqsaf1eBbiVRaVle4poNdrgMyovOPWRTE9F7Sko6y93rdb6EnFp8BKR9tQvwE8L2K8hL3UnEHA6a79Q0wdDcofT4oQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pUg/fXP0; arc=fail smtp.client-ip=40.93.201.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jGGM9asQP3XtcSSD3oi3r9o1hqkSBq0fDSu/xKkaLXTsPMxIIAL5uFK8xInRw/aZySunk0TyZoErXz/ZlBMhdtvLaIIlrRAtfop0JJq7bds9cD3plzf4dl5n+LvkQQ9fJK7tfE9iTJLexaslXjHOKJNkCohL92LzgG1Lwf7JYiHfIiuJc/oPFfDXFVNmyxkAEXsvOKJzYgHZImdV8WdYM6BS3WnKbwFcS9ocyzV5RDnJ+SrtIT8/tYKEyav5ELH3smw6cDY9Rm0TB6K/whXQoiXEidSXfdOmXGLQVwPIv1XKHoFtrhMWTjqBju9aYPHjBXoMDL+7d4gCp+UIptSp6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NSuyuBNHi/gsHKwPCil01AHbQa9KzAvUNOD1JowqBQw=;
- b=UjUA5R8dF6rhBxFeJTDbz6kYdU+FabgPuBqc5QWXkGZmFv51OPs+PmfiewaAiRR1/ww9QuUt5iBSQbiy1d5nibuuU17yYietiiTPd7lJQQcMnXufEdHykZ/nZwr0ndCB84eidpVE+wSG4nF7xPh2JL0spg7ZcfWa0JFhY9R6L+5Psm7HYPIdqoJ4aPlZokFgy0annG4s//05ZHbVpSQ7ubQLency6yCyDCp28rDaMwQnct0A8emdJldpN3J2KZ1+PNU05PxFF+g2j906Du6QI67vrqB4qxm5KgFk4ONTcAK9vMvb09ZoBiMQ2wO4DDWRLfT4BrbgHDuLLS27c/BHxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NSuyuBNHi/gsHKwPCil01AHbQa9KzAvUNOD1JowqBQw=;
- b=pUg/fXP0S0oap8pukZziD1Ltj5f7976OYu8t+rogP1BGb+PIhIYOS+dZ0i5kPkgyxftiyk6fX1MiCirCAZQmirxgFEWUnwmpds2MIiDAiPLlUz+2yo6AKFCc5J8zI+wLqsbFzlQhYuwhVeECUBu2TfrUJVX0k5o17yc5Va0miT6KmG+ISr19dEyR91GiSVmOWZ7ziBqMWf++lerw0AXdyRHVjS2MysTMZoe2qqVytd67SB2WP6eIgMCuGQuuWkzA9HPbrBbQ1uVbEk81iEY6xaq41tITZVTUfXZMf+qD26HixsHRsEZ24IpaX8jF1giRIlTMk02vJNGWhYXFezNIug==
-Received: from CH0P223CA0028.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:116::25)
- by BL3PR12MB6620.namprd12.prod.outlook.com (2603:10b6:208:38f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
- 2025 19:43:27 +0000
-Received: from CH2PEPF0000009B.namprd02.prod.outlook.com
- (2603:10b6:610:116:cafe::91) by CH0P223CA0028.outlook.office365.com
- (2603:10b6:610:116::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.11 via Frontend Transport; Wed,
- 15 Oct 2025 19:43:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF0000009B.mail.protection.outlook.com (10.167.244.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 19:43:27 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Wed, 15 Oct
- 2025 12:43:10 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
- 2025 12:43:09 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Wed, 15 Oct 2025 12:43:08 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>, <jgg@nvidia.com>
-CC: <jean-philippe@linaro.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<balbirs@nvidia.com>, <miko.lenczewski@arm.com>, <peterz@infradead.org>,
-	<kevin.tian@intel.com>, <praan@google.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 7/7] iommu/arm-smmu-v3: Perform per-domain invalidations using arm_smmu_invs
-Date: Wed, 15 Oct 2025 12:42:52 -0700
-Message-ID: <d22a393e332b8588a6264ec1b50dd38cda3f9c79.1760555863.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1760555863.git.nicolinc@nvidia.com>
-References: <cover.1760555863.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52E630749E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760557472; cv=none; b=psRT9eEzAaSkpBVhxEt97BHFwD1nyQugSR6ScyAEeTQc/OCMLhcNEr2M4ZB48D76TM79soeFb5umogeBnfg3407pAU/ObzJbt2kKp3EIwrY59RP0QTQXSG6vcO+uskvKccKvqlc5AefAaqDC83KWVe56ZztUa1YInYm/WsJ7P/o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760557472; c=relaxed/simple;
+	bh=Xnc7RjrZ4OGk/UBEP9EFdudtf64VaimhGq5tlLx1TRc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DgQeicogFCZErCBA5i3r8Cp0lkA+iiEBzIDJ41m+lpmZ9UGAiZl6f9o0shP1fgiEa8OgysvYVCPEhMWV4J8j5gJqteihz8x6gzudMx26aEd4WDzMCilG1Z/EjZTyt9+CK2OZ42GnPxX3YN7WPSPz/998FtXmrjX8ALvZ2KBC8WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BA3MG+xd; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4710c507f47so99585e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760557467; x=1761162267; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AKLczhxWEH5mT9ooXIyTNOx6pr2p4ogmhmAMoWgMHyk=;
+        b=BA3MG+xd2h9X8nF3hvE7x9pD/kPw6PdEFKf5Fyg1vQNIFplHizgz/bZQ9OSxbJTfAR
+         OHdCAgP45SpyMl/WDlELXBmy5vWrztwdA45GE0ewwRpaQrbqDHtRG4Evswz3HcWgPAWR
+         N1PggYcn0kb0Rnfvh84HhUFu9bzayMrTRNpdtSxOzYvmcmtsnFPPP3atF/7po0RHU2hl
+         xDFvGQQySDXz86WzdEWmllzDbDZFJNvhlV16Cw6zfVP0jOrVGLUw7S8mI2iqDk/cJlFT
+         fEoXxtipnkahO3/9YRjpnV0ufyYnQrEiJsENt/OTjf1CZ+PH3OeExlW0SZLjGMujZaBL
+         sKxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760557467; x=1761162267;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AKLczhxWEH5mT9ooXIyTNOx6pr2p4ogmhmAMoWgMHyk=;
+        b=hB3ptse1WMBzDfpiwWUXI+Alm3PrSXqWp+BB6E8/ANtN/FmTnbHfE+YuWRLZFKui29
+         dJeY6uAthqUemkObdICa2YbIsVkvBgUzV8lXOxvGKVcji3qTE6V6TXP6tQsWmW1IW/Bf
+         sPLm/65MgnNzWusvCBf1o7dpc/2FqEx7lQWVtG233eGoXDscIKgpk8yKhXJyPN29wJOs
+         drNLpRuSGRhs7bJNUa7bar0/inQdvqzifuWixZMygsUH2Dqpq0VM8x5p77yHjgVZveaz
+         Hs/J2HwoqETBW2Ra50YHgwwdMASsTpubhnZ/pJgbQRB5iD9tHqi3N+QP/TYDhtZ3CSoO
+         mqPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUrhhTdsk1Y0cqti9jbsRMOOw3HlMaau1OLn7cXEd6sEXlbQW3Y/tdba23QlN5fuz36uAFF7S5W1kzFZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZyFqbjqxkzfRCT4PeA52c5HUtSdVhDdmOaZDOnmyQYuZwfSgI
+	BLebrrFxzg4aTEJhjj9BP9iVVAJnR6BRWGMPiiUnLNJ+09XsRw4ee4L+
+X-Gm-Gg: ASbGncv1/ir7Qh5yy9SPofmctaSwOqFsuJtasgNeK1bASP33Y1amg7jtN4Afz+Bz6Wa
+	NjLepUGBjTrFhUN15YkXJDvMKRlijScS+VJTQyD2li9HK8qO+eiVctaVxU8z6kbp02ifMByZKnd
+	vD6jNDKNpi9iC+SAu3eMngYIykHDBc1JltFYo2Av3DLivoqvIrc90H2YLzUzcb7ylRdIE12lfnX
+	M3lhmzaBVucVP4i6bDurj/pvsb7afsTOUGUVWBIJUNx3ABNeEyM2WTcqrt0cDP+H0yZ/Cpjvv3C
+	2NpfWcs1Kcd8pCZD3TvnKBQCfw/rJWOUsw51BWxw/DXQK0EqqWBRiaTAKva3SoJOl0F2yQIFtj5
+	dJUBoCEoM1vC1jN9+r4pL+0ERXR8pLYn1svphflw8mpwEzXuiHgQ2Cjhm3MzFnXYFdNHnxPwGYB
+	oAstkoxTbAHg2zZZGLYAL8lLrKxlcmIZLUY2YaHKydOoxWe6hGxcngKJlvna4=
+X-Google-Smtp-Source: AGHT+IHGGThgaRMwvpO2Mux+qxuMEnu4UFU41e/Adrds/5VWzkGZBuF/36N4b4hi4sb2JXOlZbNcyQ==
+X-Received: by 2002:a05:600c:1f06:b0:46e:31a1:c07d with SMTP id 5b1f17b1804b1-46fa9a8ea16mr125735955e9.2.1760557466915;
+        Wed, 15 Oct 2025 12:44:26 -0700 (PDT)
+Received: from d25728c254ff.v.cablecom.net (84-74-0-139.dclient.hispeed.ch. [84.74.0.139])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5825aasm30291626f8f.14.2025.10.15.12.44.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 12:44:26 -0700 (PDT)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dinguyen@kernel.org,
+	martin.petersen@oracle.com,
+	pabeni@redhat.com,
+	rostedt@goodmis.org,
+	bhelgaas@google.com,
+	l.rubusch@gmail.com
+Cc: arnd@arndb.de,
+	matthew.gerlach@altera.com,
+	tien.fong.chee@altera.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 00/11] Add Enclustra Arria10 and Cyclone5 SoMs
+Date: Wed, 15 Oct 2025 19:44:05 +0000
+Message-Id: <20251015194416.33502-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009B:EE_|BL3PR12MB6620:EE_
-X-MS-Office365-Filtering-Correlation-Id: 505b05b4-9bc4-46bc-55dc-08de0c231ca3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sAS5afMRve61y0TXBIsN8mLRQAOoDJc8vkwOwq0vW4JeVLLvqHvEBv3get7+?=
- =?us-ascii?Q?qQqvo5wY6R2tWryqn9lSUznSckWbY5egdVxV2Ivm+g3UJ+CARj1fQonSV7fo?=
- =?us-ascii?Q?Uthyw/Nr3ua1+2bXWm5v9AWh9UH/Hd0B1BMgzOhBh3anIFtb2A78RewcKn0D?=
- =?us-ascii?Q?q659aCEtPFCyS3rILNg3bzvw3RxvPWnJbVfFtO9GIlSdTECaEnjPFnTzGqX3?=
- =?us-ascii?Q?ByaVwm+D0ggbXua03n5sPWyndR77Beu0BWdNKGXxb5R3J+LnErBU8wM5YmK/?=
- =?us-ascii?Q?/xnJv6F9QQ+dH8NK6Ob+TMCc0bk+XwpNEbHrHjHJjYwzkh+TFQ5b8UOWjwHf?=
- =?us-ascii?Q?1nnXgukkvYBXDJBn1BW46Ib7WgNJeTSjeBbh1m0F72+Rig3jf/WJwRrji/GF?=
- =?us-ascii?Q?XB+UJQMHM3/4TfKD8WXFlCB5kHQfW5I8+3uKNR8KN/bwF2BkAMfTGX5K+ynh?=
- =?us-ascii?Q?9twGoaq+rVBbxlDm44rDwqKpW2EbxzmVtVpQ1IK329Tfw0qcCQEiCYPsRcBe?=
- =?us-ascii?Q?H8DeGjrf9QixXxD0JlcR10g+XsQpFVtJVlF/b0B1pUkuvyxxHm/CED1+yo7E?=
- =?us-ascii?Q?EtOZGq0t0xMOYztXG1I0MiV22B7lr0CahzVUahFB291a0nwOCL1Q55RiA4S4?=
- =?us-ascii?Q?KiIjmdU6oBPH2n00L2aeZLzra4a6LTwP1wOOSSZRjMBxZLLtbf86b0ZG2rwL?=
- =?us-ascii?Q?tuGhiASxOXvh7WLcnP2Vc6VjZsnS6rQFaz6kFbCmNn+I0W3hbLSINk0Df+Vo?=
- =?us-ascii?Q?qV3Aw/VhWeOSlC2mPJVtYEnknOt5Zom14EN3PXU86MaWKVo5FjM3u9Kfty89?=
- =?us-ascii?Q?39T6IQxG9OTtKsCvD1Hzknaq2DQMTzh5aRFqsYhxAIDBT5BzFE+httnCMkD0?=
- =?us-ascii?Q?oQneMZd1rpXBW4uvM47WKbqcrYKfyKKLHmUoiXhkMb3x5i58mmaFRZntQpj3?=
- =?us-ascii?Q?6quWAgXqC/n1rg+8GUVwk0Kijly5wY6c4LwmWY/ZIXgP+QWo5Q0zE1gNE+BI?=
- =?us-ascii?Q?eklEJe9gOBJ9HM8+4IcADfXF5m7NyvJidJ9yJarA7XcB0Wlv/tDJfc80OGZ0?=
- =?us-ascii?Q?HqEcd32Th7Jlp8o93fCj7otEIvrMuEFkRbpd4ae65s8+6kwE20QrYJUTMZSu?=
- =?us-ascii?Q?YVKw1IzNuMFEBvsLieponH40rkZt3scuw/WbB50BiKNvYDFW1oJCr9XqbhU8?=
- =?us-ascii?Q?T2W3vpVyMMV3YA4yeacEhTKQdTtJg/17rXkKTPeE/4bEB5mSs2ELxL34yHEk?=
- =?us-ascii?Q?6vVPW5hTB1spp+53lmx7ky2Pa1UIg0xLVH2YFVEXZuCLjovZ+HekOkcr99Bl?=
- =?us-ascii?Q?NUv4l/cuOSE5MRpNQvaaizj8fkaT76+RkhVR9JHPSCthElagN8ePphZhmw+f?=
- =?us-ascii?Q?pbJOIslA7gZeiF2K1psTeTq0fZ3nKsTQqpJCaFhKdrr8wB4tPuWrK/OQAc8s?=
- =?us-ascii?Q?WgOhBBTroBp+IQiCvgkHyGt6CrAns3QMFGhK1p/TZjCqYF0pWBG+EMA75YDN?=
- =?us-ascii?Q?OX4xZunQcA8Q2jnD7oMg6driJLi4faeWBqwE2700kZTAQ2W4ZJp/e3ESdsPL?=
- =?us-ascii?Q?MatjUz/SFTGc7FHgV3c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 19:43:27.5542
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 505b05b4-9bc4-46bc-55dc-08de0c231ca3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000009B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6620
 
-Replace the old invalidation functions with arm_smmu_domain_inv_range() in
-all the existing invalidation routines. And deprecate the old functions.
+This series was already presented in November 2024.
+https://lkml.org/lkml/2024/11/16/198
 
-The new arm_smmu_domain_inv_range() handles the CMDQ_MAX_TLBI_OPS as well,
-so drop it in the SVA function.
+Due to the ongoing complex situation with Intel's maintainership,
+the series likely did not progress further at the time. In early
+2025, Tien Fong Chee (in CC) informed me that Altera is expected
+to resume maintainership in late 2025. I was referred to Matthew
+Gerlach (also CC'd), who, as I understand, is taking over at least
+part of the Intel/Altera-related responsibilities.
 
-Since arm_smmu_cmdq_batch_add_range() has only one caller now, and it must
-be given a valid size, add a WARN_ON_ONCE to catch any missed case.
+At this year’s OSS in Amsterdam, I had an encouraging discussion
+with Arnd Bergmann (CC’d), which motivated me to continue pursuing
+this patch series.
 
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Hence, a slightly reworded update goes now again to the mailing lists
+and will drive the binding check bot crazy. While not all Altera
+bindings may be fully resolved yet, this series should not introduce
+any new issues. 
+I’m submitting it based on prior acknowledgments and will wait a few
+weeks to see if a maintainer responds. If it remains orphaned, I’ll
+follow up with you, Arnd, as previously mentioned - this is just a
+heads-up for now.
+
+I hope this approach is acceptable. Please let me know otherwise.
+Thank you for all the support in this so far.
+
+Add device-tree support for the following SoMs:
+- Mercury SA1 (cyclone5)
+- Mercury+ SA2 (cyclone5)
+- Mercury+ AA1 (arria10)
+
+Further add device-tree support for the corresponding carrier boards:
+- Mercury+ PE1
+- Mercury+ PE3
+- Mercury+ ST1
+
+Finally, provide generic support for combinations of the above with
+one of the boot-modes
+- SD
+- eMMC
+- QSPI
+
+All of the above elements can be freely combined, with the combinations
+specified in the provided .dts files. This renders the existing .dts file
+unnecessary. Any additional minor fixes to the dtbs_checks are applied
+separately.
+
+This approach is also necessary for integrating with the corresponding
+bootloader using dts/upstream, which is one of the reasons for the .dtsi
+split.
+
+Note: I used AI tools to help refine the wording of the commit messages.
+
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   7 -
- .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |  29 +--
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 165 +-----------------
- 3 files changed, 11 insertions(+), 190 deletions(-)
+v5 -> v6:
+- update to recent kernel version
+- add Arnd Bergman in CC (refered to OSS / Amsterdam)
+- add Matthew Gerlach in CC
+- add chee tien fong in CC
+- change phy-mode "rgmii" to "rgmii-id", due to binding checks, similar
+  boards in that context and the allowing internal delay (id) or strict
+  no internal delay, seems to make no difference here
+- removal of compatibility "spansion,s25fl512s" due to deprecation of
+  older vendor properties for "jedec,spi-nor"
+- change commit header wording "combinations" to "variants"
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index ab166de50f3e1..2b24e3a9bc8d4 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -1071,13 +1071,6 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
- 		       struct arm_smmu_domain *smmu_domain, ioasid_t pasid,
- 		       struct arm_smmu_cd *cd, struct iommu_domain *old);
- 
--void arm_smmu_tlb_inv_asid(struct arm_smmu_device *smmu, u16 asid);
--void arm_smmu_tlb_inv_range_asid(unsigned long iova, size_t size, int asid,
--				 size_t granule, bool leaf,
--				 struct arm_smmu_domain *smmu_domain);
--int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
--			    unsigned long iova, size_t size);
--
- void arm_smmu_domain_inv_range(struct arm_smmu_domain *smmu_domain,
- 			       unsigned long iova, size_t size,
- 			       unsigned int granule, bool leaf);
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
-index fc601b494e0af..048b53f79b144 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
-@@ -122,15 +122,6 @@ void arm_smmu_make_sva_cd(struct arm_smmu_cd *target,
- }
- EXPORT_SYMBOL_IF_KUNIT(arm_smmu_make_sva_cd);
- 
--/*
-- * Cloned from the MAX_TLBI_OPS in arch/arm64/include/asm/tlbflush.h, this
-- * is used as a threshold to replace per-page TLBI commands to issue in the
-- * command queue with an address-space TLBI command, when SMMU w/o a range
-- * invalidation feature handles too many per-page TLBI commands, which will
-- * otherwise result in a soft lockup.
-- */
--#define CMDQ_MAX_TLBI_OPS		(1 << (PAGE_SHIFT - 3))
--
- static void arm_smmu_mm_arch_invalidate_secondary_tlbs(struct mmu_notifier *mn,
- 						struct mm_struct *mm,
- 						unsigned long start,
-@@ -146,21 +137,8 @@ static void arm_smmu_mm_arch_invalidate_secondary_tlbs(struct mmu_notifier *mn,
- 	 * range. So do a simple translation here by calculating size correctly.
- 	 */
- 	size = end - start;
--	if (!(smmu_domain->smmu->features & ARM_SMMU_FEAT_RANGE_INV)) {
--		if (size >= CMDQ_MAX_TLBI_OPS * PAGE_SIZE)
--			size = 0;
--	} else {
--		if (size == ULONG_MAX)
--			size = 0;
--	}
--
--	if (!size)
--		arm_smmu_tlb_inv_asid(smmu_domain->smmu, smmu_domain->cd.asid);
--	else
--		arm_smmu_tlb_inv_range_asid(start, size, smmu_domain->cd.asid,
--					    PAGE_SIZE, false, smmu_domain);
- 
--	arm_smmu_atc_inv_domain(smmu_domain, start, size);
-+	arm_smmu_domain_inv_range(smmu_domain, start, size, PAGE_SIZE, false);
- }
- 
- static void arm_smmu_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
-@@ -191,8 +169,7 @@ static void arm_smmu_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
- 	}
- 	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
- 
--	arm_smmu_tlb_inv_asid(smmu_domain->smmu, smmu_domain->cd.asid);
--	arm_smmu_atc_inv_domain(smmu_domain, 0, 0);
-+	arm_smmu_domain_inv(smmu_domain);
- }
- 
- static void arm_smmu_mmu_notifier_free(struct mmu_notifier *mn)
-@@ -301,7 +278,7 @@ static void arm_smmu_sva_domain_free(struct iommu_domain *domain)
- 	/*
- 	 * Ensure the ASID is empty in the iommu cache before allowing reuse.
- 	 */
--	arm_smmu_tlb_inv_asid(smmu_domain->smmu, smmu_domain->cd.asid);
-+	arm_smmu_domain_inv(smmu_domain);
- 
- 	/*
- 	 * Notice that the arm_smmu_mm_arch_invalidate_secondary_tlbs op can
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index e74c788c23673..776e1ec88da7a 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -1250,16 +1250,6 @@ struct arm_smmu_invs *arm_smmu_invs_purge(struct arm_smmu_invs *invs,
- EXPORT_SYMBOL_IF_KUNIT(arm_smmu_invs_purge);
- 
- /* Context descriptor manipulation functions */
--void arm_smmu_tlb_inv_asid(struct arm_smmu_device *smmu, u16 asid)
--{
--	struct arm_smmu_cmdq_ent cmd = {
--		.opcode	= smmu->features & ARM_SMMU_FEAT_E2H ?
--			CMDQ_OP_TLBI_EL2_ASID : CMDQ_OP_TLBI_NH_ASID,
--		.tlbi.asid = asid,
--	};
--
--	arm_smmu_cmdq_issue_cmd_with_sync(smmu, &cmd);
--}
- 
- /*
-  * Based on the value of ent report which bits of the STE the HW will access. It
-@@ -2414,74 +2404,10 @@ static int arm_smmu_atc_inv_master(struct arm_smmu_master *master,
- 	return arm_smmu_cmdq_batch_submit(master->smmu, &cmds);
- }
- 
--int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
--			    unsigned long iova, size_t size)
--{
--	struct arm_smmu_master_domain *master_domain;
--	int i;
--	unsigned long flags;
--	struct arm_smmu_cmdq_ent cmd = {
--		.opcode = CMDQ_OP_ATC_INV,
--	};
--	struct arm_smmu_cmdq_batch cmds;
--
--	if (!(smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS))
--		return 0;
--
--	/*
--	 * Ensure that we've completed prior invalidation of the main TLBs
--	 * before we read 'nr_ats_masters' in case of a concurrent call to
--	 * arm_smmu_enable_ats():
--	 *
--	 *	// unmap()			// arm_smmu_enable_ats()
--	 *	TLBI+SYNC			atomic_inc(&nr_ats_masters);
--	 *	smp_mb();			[...]
--	 *	atomic_read(&nr_ats_masters);	pci_enable_ats() // writel()
--	 *
--	 * Ensures that we always see the incremented 'nr_ats_masters' count if
--	 * ATS was enabled at the PCI device before completion of the TLBI.
--	 */
--	smp_mb();
--	if (!atomic_read(&smmu_domain->nr_ats_masters))
--		return 0;
--
--	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds, &cmd);
--
--	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
--	list_for_each_entry(master_domain, &smmu_domain->devices,
--			    devices_elm) {
--		struct arm_smmu_master *master = master_domain->master;
--
--		if (!master->ats_enabled)
--			continue;
--
--		if (master_domain->nested_ats_flush) {
--			/*
--			 * If a S2 used as a nesting parent is changed we have
--			 * no option but to completely flush the ATC.
--			 */
--			arm_smmu_atc_inv_to_cmd(IOMMU_NO_PASID, 0, 0, &cmd);
--		} else {
--			arm_smmu_atc_inv_to_cmd(master_domain->ssid, iova, size,
--						&cmd);
--		}
--
--		for (i = 0; i < master->num_streams; i++) {
--			cmd.atc.sid = master->streams[i].id;
--			arm_smmu_cmdq_batch_add(smmu_domain->smmu, &cmds, &cmd);
--		}
--	}
--	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
--
--	return arm_smmu_cmdq_batch_submit(smmu_domain->smmu, &cmds);
--}
--
- /* IO_PGTABLE API */
- static void arm_smmu_tlb_inv_context(void *cookie)
- {
- 	struct arm_smmu_domain *smmu_domain = cookie;
--	struct arm_smmu_device *smmu = smmu_domain->smmu;
--	struct arm_smmu_cmdq_ent cmd;
- 
- 	/*
- 	 * NOTE: when io-pgtable is in non-strict mode, we may get here with
-@@ -2490,14 +2416,7 @@ static void arm_smmu_tlb_inv_context(void *cookie)
- 	 * insertion to guarantee those are observed before the TLBI. Do be
- 	 * careful, 007.
- 	 */
--	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
--		arm_smmu_tlb_inv_asid(smmu, smmu_domain->cd.asid);
--	} else {
--		cmd.opcode	= CMDQ_OP_TLBI_S12_VMALL;
--		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
--		arm_smmu_cmdq_issue_cmd_with_sync(smmu, &cmd);
--	}
--	arm_smmu_atc_inv_domain(smmu_domain, 0, 0);
-+	arm_smmu_domain_inv(smmu_domain);
- }
- 
- static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
-@@ -2509,7 +2428,7 @@ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
- 	unsigned long end = iova + size, num_pages = 0, tg = pgsize;
- 	size_t inv_range = granule;
- 
--	if (!size)
-+	if (WARN_ON_ONCE(!size))
- 		return;
- 
- 	if (smmu->features & ARM_SMMU_FEAT_RANGE_INV) {
-@@ -2564,76 +2483,6 @@ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
- 	}
- }
- 
--static void __arm_smmu_tlb_inv_range(struct arm_smmu_cmdq_ent *cmd,
--				     unsigned long iova, size_t size,
--				     size_t granule,
--				     struct arm_smmu_domain *smmu_domain)
--{
--	struct arm_smmu_device *smmu = smmu_domain->smmu;
--	struct arm_smmu_cmdq_batch cmds;
--	size_t pgsize;
--
--	/* Get the leaf page size */
--	pgsize = __ffs(smmu_domain->domain.pgsize_bitmap);
--
--	arm_smmu_cmdq_batch_init(smmu, &cmds, cmd);
--	arm_smmu_cmdq_batch_add_range(smmu, &cmds, cmd, iova, size, granule,
--				      pgsize);
--	arm_smmu_cmdq_batch_submit(smmu, &cmds);
--}
--
--static void arm_smmu_tlb_inv_range_domain(unsigned long iova, size_t size,
--					  size_t granule, bool leaf,
--					  struct arm_smmu_domain *smmu_domain)
--{
--	struct arm_smmu_cmdq_ent cmd = {
--		.tlbi = {
--			.leaf	= leaf,
--		},
--	};
--
--	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
--		cmd.opcode	= smmu_domain->smmu->features & ARM_SMMU_FEAT_E2H ?
--				  CMDQ_OP_TLBI_EL2_VA : CMDQ_OP_TLBI_NH_VA;
--		cmd.tlbi.asid	= smmu_domain->cd.asid;
--	} else {
--		cmd.opcode	= CMDQ_OP_TLBI_S2_IPA;
--		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
--	}
--	__arm_smmu_tlb_inv_range(&cmd, iova, size, granule, smmu_domain);
--
--	if (smmu_domain->nest_parent) {
--		/*
--		 * When the S2 domain changes all the nested S1 ASIDs have to be
--		 * flushed too.
--		 */
--		cmd.opcode = CMDQ_OP_TLBI_NH_ALL;
--		arm_smmu_cmdq_issue_cmd_with_sync(smmu_domain->smmu, &cmd);
--	}
--
--	/*
--	 * Unfortunately, this can't be leaf-only since we may have
--	 * zapped an entire table.
--	 */
--	arm_smmu_atc_inv_domain(smmu_domain, iova, size);
--}
--
--void arm_smmu_tlb_inv_range_asid(unsigned long iova, size_t size, int asid,
--				 size_t granule, bool leaf,
--				 struct arm_smmu_domain *smmu_domain)
--{
--	struct arm_smmu_cmdq_ent cmd = {
--		.opcode	= smmu_domain->smmu->features & ARM_SMMU_FEAT_E2H ?
--			  CMDQ_OP_TLBI_EL2_VA : CMDQ_OP_TLBI_NH_VA,
--		.tlbi = {
--			.asid	= asid,
--			.leaf	= leaf,
--		},
--	};
--
--	__arm_smmu_tlb_inv_range(&cmd, iova, size, granule, smmu_domain);
--}
--
- static bool arm_smmu_inv_size_too_big(struct arm_smmu_device *smmu, size_t size,
- 				      size_t granule)
- {
-@@ -2828,7 +2677,9 @@ static void arm_smmu_tlb_inv_page_nosync(struct iommu_iotlb_gather *gather,
- static void arm_smmu_tlb_inv_walk(unsigned long iova, size_t size,
- 				  size_t granule, void *cookie)
- {
--	arm_smmu_tlb_inv_range_domain(iova, size, granule, false, cookie);
-+	struct arm_smmu_domain *smmu_domain = cookie;
-+
-+	arm_smmu_domain_inv_range(smmu_domain, iova, size, granule, false);
- }
- 
- static const struct iommu_flush_ops arm_smmu_flush_ops = {
-@@ -4072,9 +3923,9 @@ static void arm_smmu_iotlb_sync(struct iommu_domain *domain,
- 	if (!gather->pgsize)
- 		return;
- 
--	arm_smmu_tlb_inv_range_domain(gather->start,
--				      gather->end - gather->start + 1,
--				      gather->pgsize, true, smmu_domain);
-+	arm_smmu_domain_inv_range(smmu_domain, gather->start,
-+				  gather->end - gather->start + 1,
-+				  gather->pgsize, true);
- }
- 
- static phys_addr_t
+v4 -> v5:
+- separate generic socfpga dt fixes from this patch set. The focus of this
+  patch set is the dts/dtsi files and related bindings, not additional
+  intel/socfpga refactoring
+
+v3 -> v4:
+- add separate patch to match "snps,dwmac" compatible in corresponding
+  driver, required by binding check
+- replace non-standard node names in .dtsi files by node names recommended
+  by the device tree standard v0.4
+
+v2 -> v3:
+- dropped the patch to add the socfpga clock bindings:
+  Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+  reason: refactoring the "altr,socfpga-" TXT files to .yaml files is a
+  different story involving several other files, thus can be part of a
+  future patch series, not related to the current upstreaming the
+  Enclustra DTS support, so dropped
+- adjust comments on boot mode selection
+- adjust titles to several bindings patches
+
+v1 -> v2:
+- split bindings and DT adjustments/additions
+- add several fixes to the socfpga.dtsi and socfpga_arria10.dtsi where
+  bindings did not match
+- extend existing bindings by properties and nods from arria10 setup
+- implement the clock binding altr,socfpga-a10.yaml based on existing
+  text file, rudimentary datasheet study and requirements of the
+  particular DT setup
+---
+Lothar Rubusch (11):
+  ARM: dts: socfpga: add Enclustra boot-mode dtsi
+  ARM: dts: socfpga: add Enclustra base-board dtsi
+  ARM: dts: socfpga: add Enclustra Mercury SA1
+  dt-bindings: altera: add Enclustra Mercury SA1
+  ARM: dts: socfpga: add Enclustra Mercury+ SA2
+  dt-bindings: altera: add binding for Mercury+ SA2
+  ARM: dts: socfpga: add Mercury AA1 variants
+  dt-bindings: altera: add Mercury AA1 variants
+  ARM: dts: socfpga: removal of generic PE1 dts
+  dt-bindings: altera: removal of generic PE1 dts
+  ARM: dts: socfpga: add Enclustra SoM dts files
+
+ .../devicetree/bindings/arm/altera.yaml       |  24 ++-
+ arch/arm/boot/dts/intel/socfpga/Makefile      |  25 ++-
+ .../socfpga/socfpga_arria10_mercury_aa1.dtsi  | 143 ++++++++++++++---
+ .../socfpga_arria10_mercury_aa1_pe1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_arria10_mercury_pe1.dts   |  55 -------
+ .../socfpga/socfpga_cyclone5_mercury_sa1.dtsi | 143 +++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa1_pe1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa2_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts |  16 ++
+ ...cfpga_enclustra_mercury_bootmode_emmc.dtsi |  12 ++
+ ...cfpga_enclustra_mercury_bootmode_qspi.dtsi |   8 +
+ ...fpga_enclustra_mercury_bootmode_sdmmc.dtsi |   8 +
+ .../socfpga_enclustra_mercury_pe1.dtsi        |  33 ++++
+ .../socfpga_enclustra_mercury_pe3.dtsi        |  55 +++++++
+ .../socfpga_enclustra_mercury_st1.dtsi        |  15 ++
+ 36 files changed, 972 insertions(+), 79 deletions(-)
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
+ delete mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_emmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_qspi.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_sdmmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe3.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_st1.dtsi
+
+
+base-commit: 4b17a60d1e1c2d9d2ccbd58642f6f4ac2fa364ba
 -- 
-2.43.0
+2.39.5
 
 
