@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-855104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B86BE03E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F75BE03F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFCD24E9D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6493F5402C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28E298CC0;
-	Wed, 15 Oct 2025 18:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OZjNTkPq"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7636D2FF66A;
+	Wed, 15 Oct 2025 18:47:20 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B7D26B942
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0592641D8
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760553994; cv=none; b=IWcOpAHrhe5zQasqK/z+Kas6R0pJHYu9URxwmgB7gAWf/CJjClGGWxtPTaM+mfaWHKdaJoPdKhL8IFxzHY3WjBPCE8NRNJwk4Q8wiTi895dSe/xWs1CRBKCgnt9u2FtN5fLRCqpF4Nf3a8ta/5dgDWDXEmkNiPxlH1CUpjum7rs=
+	t=1760554039; cv=none; b=kFXdsLL3pXC8nQEgggcd197lESqP9vNG4U42GL7gckaOgZlJ/NZvsNkP43oMzNuRugB7+HDTqO739B/VwL+wJctYBnAVLgVPaqwrKRJf9T8mkbUHsfb6DiKF/4+iH9EgA/v7S652jh8zES/iGZnuf+yzPAmcktv21lYHO92G2dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760553994; c=relaxed/simple;
-	bh=YvgiZGtPFbCt2IU0u4vPOg9X+YBDn8GnfhZjI9AxjG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J30YVyG8Lnfz91e+i1BAGBsbXQM/ofNbfQzlBmCsM+Mh9xsW7eCd6pPMOnxjAB1vUbvYOD6V53zBuVdn9ERI3UfLjNLeU3kLg+Xurrma0KZPBdRurm/JlzVTWu4SewT2nJn32DLYo4bsN81CQGGD+apZ7D+b0BnN2RoYi7IorgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OZjNTkPq; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7bc626c5467so5174351a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760553990; x=1761158790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q1W1dpMIImxvQoP7g+++7QUy7cb9UdrUIxFQdJbQORk=;
-        b=OZjNTkPqz6clw+zEkoi2JtBkcRSS5faiKVbPkh8zt+IremB1i11rtHe5SwqJDD8OI4
-         ZtVT8D9M4NqvlSRPdHzXyNICvhv62MJ/cgu2R6N1mNyj2GuXDxjWARQo2ZgZawb7YFJs
-         eqG0M2cK8bbxcmLAkIvs/tzucffpGHlE/l36fuZV4BUbU5pc5rlsKr+hsGUe3iubF2hq
-         JvL5FbMHayWuKx9XlCpuFfcRKjqvemqLNq5lS9bZ8eT14FWGuGoS4I4Zhnz8pZrR1XXc
-         fhwIrWiu+V31qK5MZh8vB3i0cr9chgxS/cA0Eptpi8IiPCHNOS0M7oTOXRx/WuQGFKg8
-         09WQ==
+	s=arc-20240116; t=1760554039; c=relaxed/simple;
+	bh=HHX7GSHxmnjGTUsk+R3olZrhoT3lOXEtIKPbaY1UK9k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Abubut3x+y+J7fOjZ6PsJdto5U7VY8/8MuP6zhiXF6s4t7FLV7CDn6aStvxm/KBYx3D2wp53SaazpDxaED1/B/1th2CJdkIGDb5XDtD4czypKsvjk0EpwM7gKIXNv+MAunAFGiPJAVhZ/40h7Fx1tQdnoHeJqPLln6PEhbn9zKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-927f4207211so1851389539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:47:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760553990; x=1761158790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1760554037; x=1761158837;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q1W1dpMIImxvQoP7g+++7QUy7cb9UdrUIxFQdJbQORk=;
-        b=Zgw7eYGoAAizD17qqWJLtO8833nGX20G0vpUJd8CJZzv03SoTZI2eFXgKdCiMDG1nn
-         yzMBdvFf0ifGYp1MGILmDGKDMW1UHbv3kFArm/uyeKaADP82TmsSXPD6VeOJPoHHlnf6
-         jjaRG/lV7bFTNdY6YTDV/FMsi4CTOdSV1L3QxB01J3h1TeU3bNijMO7w01jJcOgUsuD4
-         q2sat+EWncaxU7CopZDLi5XhZGGH8v6jAXaEFCxWu9OsxGF6ELd04afsAUTtpU9SJeY6
-         EGEkVn+OCbABC8MUQvbQKTjnElygRWqech8zt8WjwHWkcCPVdzH2siRQFog0kv6x92jd
-         Xexw==
-X-Forwarded-Encrypted: i=1; AJvYcCWx27HwO6mzhIyT7CeKfnpSJN4O11nyrmJVcXMq3AslNH+vXIybQ/0kJRGiToaUjDmca7qOK4HjYv1DdLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkxfFbNwCBC8vHDbJBoI/mbORmQOByXVRbLZag28eijAfHPnTF
-	UYQ46sxlnqAEQMnJhkLkIEZWeuCHkbNA49D8O/gt0Gicqay1ZjNTBqkuqOU0AsxO2Cs=
-X-Gm-Gg: ASbGncuydJVVOYc8Z5rNFwXqV/lZ5vIoazDYoT8HuWM+jhQh4Jexi2bHwjWWfV/lzwg
-	ZVOVmBVQuuvbIt1YRHG6u7sr/gankzNgXG/Wm9dSpD/2rzbmIX5/zQpZs02XZ43iDP4c/kBbNbl
-	fznD9JlSmT67i5ms3muSK3Ogo12SzJtG1oXyfiOYlkNEvrZVUjCV+TVLHbeqMjyF3yi1xkiaPln
-	YYlRxyod7AyZ4E3SojJ0pTWdrqczrolxRSxuHVOASf+P+rQdtoaU/UEOX6BnVW1gTmx7mzHXhPa
-	wCIx08ep7HpW7p/vuO75Dl8BpXwsRrpRquO+SnL7sJmw4UqaO1PyH9rSNz0WPEoXLzQfzAx9tXg
-	cJ1aDS55IbRlKmlzYX9Ia87R1U5XiqPFpUUhRWviYolCrY5Gkr8WnTRIhd/teFTYb33Ac6VRJoX
-	NRokic0pDueL4TILg=
-X-Google-Smtp-Source: AGHT+IEeWyUK5JU0xMQ0zLXGTri5uRlu04b7SEkveGRRQqga9ddNeRw/aypGJc8FLMQHLk6d2PIOZw==
-X-Received: by 2002:a05:6808:1b13:b0:43f:7e97:397f with SMTP id 5614622812f47-4417b3de534mr14932239b6e.41.1760553990406;
-        Wed, 15 Oct 2025 11:46:30 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:c482:1912:c2de:367e? ([2600:8803:e7e4:500:c482:1912:c2de:367e])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-441c9209c34sm3068700b6e.8.2025.10.15.11.46.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 11:46:29 -0700 (PDT)
-Message-ID: <1d9704c6-1729-4288-973b-3b3596609553@baylibre.com>
-Date: Wed, 15 Oct 2025 13:46:27 -0500
+        bh=tXhwfDe5x5DiOvEHEE1cuwjprX0AALWQhFCn8f5jiQw=;
+        b=t7p9LpacpVOCVlO92XcGPBxmcjgThjSv4pAfwpwJSK+IkNkrxpKvUMx6gJtLLKMlp2
+         DyVUuOia/uw6pk2uFVbPk7wW2kSYbmQTB7ZGMnNMcPudWuF89Szu4I8ewfk/tfCWN0hv
+         ftmEX0Uv15hDGEQxO+SEku4+3ijecimJhtznIsIkR7WCYEtTgHL6xrz3Y1eBJS39v2dF
+         Pj95txv2W5Ocj8ql57LjKEcMH77nNC58J4gDJkomuZJvywZbNUyuwj526NxdjMwNpdgJ
+         aCwNqqyOAyA40FliqRDAgvxkY/385TCSevegtO2W+4S1PzgejgTsSGX7S+9tewcpAFCN
+         kOLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYWbj1erblx3kJR3b1izCHuLQ/Wbde6t86V9GpjFsaToHmUoSd5+Ik0ThhY1ez15ldcKUTpDCUWgHPpf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1DkKAjvUJ6WQUDHJ2gB3gxH+Aj+F6qq6uGDtCrY7MmeCZcbKO
+	fHUcNfiNRZ4pcYDiTR4bcttRq5OVgWasvdGCkpS4vGDdNPbdQOAy+eE6loaX614KaMZSR+NKiAd
+	fVYQrjpU1Am7SDS5S8Xi/1y2M6zW3ZdVzv3oGMCgF3BH4YS2OwVwikKBXXL4=
+X-Google-Smtp-Source: AGHT+IG0/Sg8YvnECSK7GV2NJsTOXSLgXIRXiVuzVAgRUG1C8KfWcQJ5eUQr5G0dAEr10p0umA0y5+yLQeAuCnx18GqAJ1pXvjgJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] iio: adc: ad7380: Add support for multiple SPI buses
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>
-Cc: Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-6-2098c12d6f5f@baylibre.com>
- <ef452c01679bee2c8bdbefe1df4775c432f8b345.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ef452c01679bee2c8bdbefe1df4775c432f8b345.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2197:b0:430:b32d:c197 with SMTP id
+ e9e14a558f8ab-430b32dc94bmr22039435ab.27.1760554037558; Wed, 15 Oct 2025
+ 11:47:17 -0700 (PDT)
+Date: Wed, 15 Oct 2025 11:47:17 -0700
+In-Reply-To: <20251015125945.481950-1-hao.ge@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68efec35.050a0220.91a22.02cb.GAE@google.com>
+Subject: [syzbot ci] Re: slab: clear OBJEXTS_ALLOC_FAIL when freeing a slab
+From: syzbot ci <syzbot+cib7b0db858ede4f18@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, ast@kernel.org, cl@gentwo.org, gehao@kylinos.cn, 
+	hao.ge@linux.dev, harry.yoo@oracle.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, rientjes@google.com, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, surenb@google.com, vbabka@suse.cz
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/15/25 5:36 AM, Nuno Sá wrote:
-> On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
+syzbot ci has tested the following series
 
-...
+[v4] slab: clear OBJEXTS_ALLOC_FAIL when freeing a slab
+https://lore.kernel.org/all/20251015125945.481950-1-hao.ge@linux.dev
+* [PATCH v4] slab: clear OBJEXTS_ALLOC_FAIL when freeing a slab
 
->>  
->>  	if (st->seq) {
->>  		xfer[0].delay.value = xfer[1].delay.value = t_convert;
->> @@ -1124,6 +1118,7 @@ static int ad7380_update_xfers(struct ad7380_state *st,
->>  			AD7380_SPI_BYTES(scan_type) *
->>  			st->chip_info->num_simult_channels;
->>  		xfer[3].rx_buf = xfer[2].rx_buf + xfer[2].len;
->> +		xfer[3].multi_bus_mode = xfer[2].multi_bus_mode;
-> 
-> Why not doing the above once during probe?
-> 
+and found the following issue:
+kernel BUG in __free_slab
 
-There is nothing else in st->seq_xfer[3] that gets set in probe, so
-I didn't really consider it. Seems like it should be fine to do as you
-suggest though.
+Full report is available here:
+https://ci.syzbot.org/series/61ff4fe1-2e84-410d-ad85-42ead772d9c8
 
+***
+
+kernel BUG in __free_slab
+
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      3a8660878839faadb4f1a6dd72c3179c1df56787
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/e5875084-ea86-418c-979d-5b00cded86ca/config
+syz repro: https://ci.syzbot.org/findings/1f8913d8-6d9a-448a-9419-90b758c82c3b/syz_repro
+
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
+ __sys_sendmsg net/socket.c:2716 [inline]
+ __do_sys_sendmsg net/socket.c:2721 [inline]
+ __se_sys_sendmsg net/socket.c:2719 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+------------[ cut here ]------------
+kernel BUG at mm/slab.h:544!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:slab_obj_exts mm/slab.h:543 [inline]
+RIP: 0010:free_slab_obj_exts mm/slub.c:2178 [inline]
+RIP: 0010:unaccount_slab mm/slub.c:3186 [inline]
+RIP: 0010:__free_slab+0x1b8/0x1e0 mm/slub.c:3286
+Code: e8 2d 8a 0c ff 90 0f 0b 48 89 df 48 c7 c6 18 ad 91 8d e8 1b 8a 0c ff 90 0f 0b 48 89 df 48 c7 c6 9d 66 95 8d e8 09 8a 0c ff 90 <0f> 0b 48 89 df 48 c7 c6 18 ad 91 8d e8 f7 89 0c ff 90 0f 0b 48 89
+RSP: 0000:ffffc900001478b0 EFLAGS: 00010246
+RAX: 680205e52e87ff00 RBX: ffffea00044c3c80 RCX: 680205e52e87ff00
+RDX: 0000000000000000 RSI: ffffffff8d7e835a RDI: ffffffff8bc076e0
+RBP: 0000000000000001 R08: ffffffff8f9e1177 R09: 1ffffffff1f3c22e
+R10: dffffc0000000000 R11: fffffbfff1f3c22f R12: ffffffff821b61b0
+R13: ffffffff81a82877 R14: ffff888160415a00 R15: ffffea00044c3c98
+FS:  0000000000000000(0000) GS:ffff88818e70c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fef42bb12f8 CR3: 000000000df38000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+ rcu_core+0xcab/0x1770 kernel/rcu/tree.c:2861
+ handle_softirqs+0x286/0x870 kernel/softirq.c:622
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:1063
+ smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:slab_obj_exts mm/slab.h:543 [inline]
+RIP: 0010:free_slab_obj_exts mm/slub.c:2178 [inline]
+RIP: 0010:unaccount_slab mm/slub.c:3186 [inline]
+RIP: 0010:__free_slab+0x1b8/0x1e0 mm/slub.c:3286
+Code: e8 2d 8a 0c ff 90 0f 0b 48 89 df 48 c7 c6 18 ad 91 8d e8 1b 8a 0c ff 90 0f 0b 48 89 df 48 c7 c6 9d 66 95 8d e8 09 8a 0c ff 90 <0f> 0b 48 89 df 48 c7 c6 18 ad 91 8d e8 f7 89 0c ff 90 0f 0b 48 89
+RSP: 0000:ffffc900001478b0 EFLAGS: 00010246
+RAX: 680205e52e87ff00 RBX: ffffea00044c3c80 RCX: 680205e52e87ff00
+RDX: 0000000000000000 RSI: ffffffff8d7e835a RDI: ffffffff8bc076e0
+RBP: 0000000000000001 R08: ffffffff8f9e1177 R09: 1ffffffff1f3c22e
+R10: dffffc0000000000 R11: fffffbfff1f3c22f R12: ffffffff821b61b0
+R13: ffffffff81a82877 R14: ffff888160415a00 R15: ffffea00044c3c98
+FS:  0000000000000000(0000) GS:ffff88818e70c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fef42bb12f8 CR3: 000000000df38000 CR4: 00000000000006f0
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
