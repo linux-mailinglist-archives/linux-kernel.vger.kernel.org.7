@@ -1,167 +1,132 @@
-Return-Path: <linux-kernel+bounces-855218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3716BBE0882
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:50:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA04BE08C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770531A21FC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:50:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF9A3506901
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB720305044;
-	Wed, 15 Oct 2025 19:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C037304BCD;
+	Wed, 15 Oct 2025 19:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGRCPYyw"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ObYaBkA0"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65171D90DF
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAE920E00B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760557813; cv=none; b=EqALGKGiuE7/4dgQ3vDkkyrdBpklIfslKfDkiJEVgin6GzryTXl7K+tVbG3c7qyEo3YHR+uFeGxNXsLgkMqFPsZHJ8aFGkZh7Bya7dfl4EXK0eSrFZ9oPpUbU6/Lni3duTee4l8e6RSmcPRdOaD9VsqZC1ec5//8Zi+zbeWg47w=
+	t=1760557959; cv=none; b=mW+GEckc9IRgJ3pk1Vu7PlLH4yrvluOSUAVMaSxcL9LIwEbpTGtizvycWlLfU6nt68P9ygcmQl6yC3CIrUq3UMGFy3lLtKtgNbpntXhPvtWHp0jnkJBa/SFY5thnv4kis8do9i2+fK+buHFc4GnXPsKU8GLA6DunYxSBKajC8/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760557813; c=relaxed/simple;
-	bh=qdxdnXO7dfrt8aCwjz8S5Ntf+heP3QOx0qCchHU4vHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtfKvcZPi7S0farwkLAZoAkzdDv9IVtu3YAwZycbrgIuDl0TTtojZyUCYpnonsk7L1E5e629ZjJt9qydd/VUA1nZngGbCLvgrELccIMOW3wlcTWW52uyHIdfd8LI4/K/G8kwi9u2LHrEOZAXK10wriqlXnJnuQCp2du/9vDAaYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGRCPYyw; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33255011eafso4743a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:50:11 -0700 (PDT)
+	s=arc-20240116; t=1760557959; c=relaxed/simple;
+	bh=af8Xe6TRc+JzmwAuvgEbc4JHLFA1oiSBVP44j7jh3EU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jTF6X9Cev3ZrOGKR5uT33qGsLuUv0BKeXYWmI7ILFfVl+rbkU32+OiF/qCGSnsWdf8Ubv0LoujC0vHR557zrCjCDFRwaVeO4luaoKUnvkMtlyAq7+4EupEVGS4bmw0J3aWettG4xS7mj9bq316d9ZUm/vjIrmpTyuEn+eYwyWrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ObYaBkA0; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46b303f7469so48565935e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760557811; x=1761162611; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SSXtDozAsQRt+awsPY1YKTWWimZyw22+7Ej5rwMZxAA=;
-        b=nGRCPYywnL0MHHI1uteOKBetuVuTWyW91iZe7HuxTYY0yFz1+UJFFq1bhhcMkw+spj
-         aIf7XFWRfmkdclIJUzY5NjL6rOStIWg9J91pK+w/uvgltcU0TKOyJrFb1sjwqh3tDm7s
-         faGtBj/cLWvdUAGP1XgUfPBl+yCCuIEM517EnS88Ij6+xnBjn3D8hhGqOwjZmAMgfhb+
-         Dlx0GyfWUqwG7hha4x7dqV8679W8xVDkWMlIfhdQuBshYisNXsOZ+HGlzoBiad3/pUWN
-         +8oDDoN3KyD84NSruPM7A2d6eLnpq+xdCX7ohYPZw6yO+hTRV1vTBdHbsUlEGpETU+ki
-         Mmcw==
+        d=linaro.org; s=google; t=1760557956; x=1761162756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9GS1idVixeI5e2i+7QHqAFbRFPE0KaUN0lsPmnrv+9w=;
+        b=ObYaBkA01lQyxQhQ8kKSQS/RPGNqcvyHVTldqN5eRNylfz7gCGR5SvaQoP/MB4iNVT
+         3DchSRkM+24PNgUiYDUXTMT/dNu9OEwYdp3YbvMvEtQad0m4DRNZ3PZZbl3z//pLOWSw
+         kjfknvKRcAs40ttBipcx0cvgoj1ZQ/0Yd4fPYEn2+XLSettgAgu7H9aagLhvuIavhXb9
+         U+6Uxv9GLmntVcWFMCsZDezMt6fqklBHMw5dEBa6+G6SG7LBEIqh0lrp6qqexrUGLzMY
+         9P7CRhdbq+Q4XA+0KtpcOy5MrztJB//q8ay1nAAPwNgHAuzxeMfAEWchvccMoKrOVQR0
+         h3HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760557811; x=1761162611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SSXtDozAsQRt+awsPY1YKTWWimZyw22+7Ej5rwMZxAA=;
-        b=JASJIkKq/zx7DhPjw0OGvvzFnq3KSdntkDdh8IMYTTGaLUpJAcOXy4ZYUoScPmuQwK
-         ObZkl9SVqp0+pVeq7pfCZztWdthhQxBzH2P3WKjwxkqxkQhlf+1UKu7I/h6FNvrkkoDK
-         p3OK6NJg5AFDNUJAQ4zCD+370rPNR1ahDdyzdZGg5mQQgT09/0HJpA+40rzX1QNWLLVf
-         YqwyPZ7gAm7FQGAsSSAe6NYALU928poM23Iq52slZxax+c+pZO7QOZYQPwdN3LaB4Rdd
-         XqWjny+Dah3BeNRH/kTKr/UX8m5an7bv4ZTRr7x0XDOKY7Kl7g1rZkNEy/VZl4eBuB0U
-         Gc5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJiEWxEighixJPK2/raIVeos79P/SQ11rJNzORmADjnlbWbvQAivDowTqyYiJvpAQI6+i7JH9MN3lZ6Yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy+XsbnSHHSHolJkhs+GAyFihtOJuNHDvcEy78J4O4/c/idoLt
-	L/Nc/Kken/Nu4j+BNY5SIkgnJYKnqY8dpcD/U4UqVPmk5GgiatUpQJAL
-X-Gm-Gg: ASbGncu5TpoOCrzILczEl2ej9eOuGusPtr4CX2fNoH4DRiqnchy+aMJGjxmj4P06AW5
-	MdORcQJgo6IvYrt3As4f2J2/5lfv6cbhMwX9VMDrr/I4ucEznvLlx/jbifExQwN5n+C5PBoljbi
-	U/sf1uCkWOHIOOblf94bwELGweDpoCcafpgbeCDF1IYDekNQ08Cgwp03kFN/5qBcDDEVrAgX0UF
-	CCLti492jOtGoJnnRx41fdLEdVuLQcv8tIcdd6Vy2X27qEvNAWczezmaokeHPMmE6WvGzH+FE+0
-	XaJkYrK4eZxpqcrEbeq/c6mRGAuavFlpX6tXqjJVbhwr4y8Ek8/TlRRn5cFsEz/UMw7K0lK8mB9
-	l92YF6GqYkBxXtt/CahuG/qzSh90QEUHE+494HNQbeAwcKzeeZxIsFUvG3HcSOF9FlWHIA73CXE
-	F8QQsI
-X-Google-Smtp-Source: AGHT+IGyCUeGhHmi0GKV532SbGwCqharBSRZhQLDnQHs6oWMGcINOpBVl4YWDotX3YHZ9W8I+6d1kw==
-X-Received: by 2002:a17:90b:4d11:b0:32e:7270:94a4 with SMTP id 98e67ed59e1d1-33b5116a3c5mr41420491a91.14.1760557810742;
-        Wed, 15 Oct 2025 12:50:10 -0700 (PDT)
-Received: from t14s.localdomain ([2804:29b8:508a:1537:573a:39d:6287:7ddf])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b97853829sm3578251a91.5.2025.10.15.12.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 12:50:10 -0700 (PDT)
-Received: by t14s.localdomain (Postfix, from userid 1000)
-	id C835B11A8199; Wed, 15 Oct 2025 16:50:07 -0300 (-03)
-Date: Wed, 15 Oct 2025 16:50:07 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Alexey Simakov <bigalex934@gmail.com>
-Cc: Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH net] sctp: avoid NULL dereference when chunk data buffer
- is missing
-Message-ID: <aO_67_pJD71FBLmd@t14s.localdomain>
-References: <20251015184510.6547-1-bigalex934@gmail.com>
+        d=1e100.net; s=20230601; t=1760557956; x=1761162756;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9GS1idVixeI5e2i+7QHqAFbRFPE0KaUN0lsPmnrv+9w=;
+        b=aSxVsxpeaD8mhv9bpDDImk/TrT2Dspb8t/uKLACaBSb+H6g85xSU55CX1Rx8mFJKQy
+         5a0FAIetxuj7F/l3LG2huSPt8k3ZFveHaVSbmOadpryHRrM8JAuIPse+W39mGIxgTupF
+         wJHj8OPUPIaHSHIKFqMov6UzUHu2Wvrw4a66twQH3xslgbp2H5qTvUPLAJZi3Fi3aW46
+         NqGyx0vaeyJZltuhPBYJlx8Z0LY/aMz0uAH5tTabyXPpZ5TiQhEDa7M6j84slvOZn2h1
+         0/ArUwVajiXIMnczb1cOLAip+VQqZiMW7ja42TGXj73g+6MhDEGs0CuDOHirByaeJL05
+         pJcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXs8r2BovxYTxTpa05gqD34Y3ocJQGC45m8NGN0xd3yoXzbmZj9wxg0+u6VmHF0xcG3snlVGD+U7UCVyPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXq9S0QcMAxftk+XaIpp4h38ukq327B3WkhXo3uAtUdOYjD1ZY
+	BAhifqB0nizgjZgeoJcMOBY6D31kdioE8HCeS1sYpxPLlxmFkoasoA8c4GlmkFWiBYA=
+X-Gm-Gg: ASbGncteRTcJM6OMEHKIWqiZo0ZaEaIyzSs0UQh/ot2y5LuhSAtEV7Pq4PGakzaq2Xz
+	BIDDsG5G0eBvZlFz0N4PAhm3rkPcehd9D1qV4cNzS+aBCWDq4fuvpdNDj4CW/eSyR/8Mqj0SrlM
+	ugbWkQLvm2f6cyRa6skZp13leO9XQjWD4o2tGQ1Z9C+L3wmVh/6xZf6hayUAsSOmyf+4BqHGSRB
+	QfQyoZVpDAivqlUsueLTJ/KUmlEPlQ/U/7AnCR/yA90zCBEU9CuUjLht1k1REbc6wOtaiqQLIpv
+	TbULOyyxIU8vmzgk6nRuIGt7JpqB+gXEsrmnt/fA3r/xeTjsI+jtAAYUO2BZQnQIWUYpIVInWkA
+	8gBWYvhP16hN/B+HR465ouNs0ANIYS8PevjPlaLS+wy35d43D0gil6oj57/U1k6GRSlse5Lkrvx
+	qtHG7BrqgdwN5KJzmHXBtfDx6bi2MWWOdBbjp+4/OeNztNTVPguSxCIa/gGrzVb4VZeqs=
+X-Google-Smtp-Source: AGHT+IGkZ6+GeFJQTzXCmHptwwr4bo+TRjYBptncrFFbipQ1Aojn7DOqu6C8j1sCaiyxrTrPkDJUeQ==
+X-Received: by 2002:a05:600c:a4a:b0:471:672:3486 with SMTP id 5b1f17b1804b1-471067234b4mr23258485e9.15.1760557956297;
+        Wed, 15 Oct 2025 12:52:36 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47101c2359fsm48647285e9.11.2025.10.15.12.52.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 12:52:35 -0700 (PDT)
+Message-ID: <aae11951-35c2-48f8-b919-e32393279c79@linaro.org>
+Date: Wed, 15 Oct 2025 20:52:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015184510.6547-1-bigalex934@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Use a macro to specify the initial
+ buffer count
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20251014-use-marco-to-denote-image-buffer-number-v1-1-f782e4cc622d@oss.qualcomm.com>
+ <62da6efb-24d0-4a6b-9a52-c8f981f09d30@linaro.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <62da6efb-24d0-4a6b-9a52-c8f981f09d30@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 15, 2025 at 09:45:10PM +0300, Alexey Simakov wrote:
-> chunk->skb pointer is dereferenced in the if-block where it's supposed
-> to be NULL only.
-
-The issue is well spotted. More below.
-
+On 15/10/2025 20:22, Vladimir Zapolskiy wrote:
+> On 10/15/25 05:42, Hangxiang Ma wrote:
+>> Replace the hardcoded buffer count value with a macro to enable
+>> operating on these buffers elsewhere in the CAMSS driver based on this
+>> count. Some of the hardware architectures require deferring the AUP and
+>> REG update until after the CSID configuration and this macro is expected
+>> to be useful in such scenarios.
+>>
+>> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+>> ---
+>> This change use a global macro to specify the initial buffer count. It
+>> meets the requirement that some hardware architectures need to defer the
+>> AUP and REG update to CSID configuration stage.
 > 
-> Use the chunk header instead, which should be available at this point
-> in execution.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 90017accff61 ("sctp: Add GSO support")
-> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
-> ---
->  net/sctp/inqueue.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/sctp/inqueue.c b/net/sctp/inqueue.c
-> index 5c1652181805..f1830c21953f 100644
-> --- a/net/sctp/inqueue.c
-> +++ b/net/sctp/inqueue.c
-> @@ -173,7 +173,8 @@ struct sctp_chunk *sctp_inq_pop(struct sctp_inq *queue)
+> Both the commit message and the explanation above brings no clarity on
+> the necessity of this change at all.
 
-With more context here:
+I don't agree. Removing a hard-coded value for a define is an obviously 
+correct change.
 
-               if ((skb_shinfo(chunk->skb)->gso_type & SKB_GSO_SCTP) == SKB_GSO_SCTP) {
-                       /* GSO-marked skbs but without frags, handle
-                        * them normally
-                        */
+> This is a dangling useless commit, if you'd like to connect it to
+> something meaningful, please include it into a series.
 
-                       if (skb_shinfo(chunk->skb)->frag_list)
-                               chunk->head_skb = chunk->skb;
+No. It is fine as is.
 
-                       /* skbs with "cover letter" */
-                       if (chunk->head_skb && chunk->skb->data_len == chunk->skb->len)
-		           ^^^^^^^^^^^^^^^^^^
-
-chunk->head_skb would also not be guaranteed.
-
->  				chunk->skb = skb_shinfo(chunk->skb)->frag_list;
-
-But chunk->skb can only be NULL if chunk->head_skb is not, then.
-
-Thing is, we cannot replace chunk->skb here then, because otherwise
-when freeing this chunk in sctp_chunk_free below it will not reference
-chunk->head_skb and will cause a leak.
-
-With that, the check below should be done just before replacing
-chunk->skb right above, inside the if() block. We're sure that
-otherwise chunk->skb is non-NULL because of outer if() condition.
-
-Thanks,
-Marcelo
-
->  
->  			if (WARN_ON(!chunk->skb)) {
-> -				__SCTP_INC_STATS(dev_net(chunk->skb->dev), SCTP_MIB_IN_PKT_DISCARDS);
-> +				__SCTP_INC_STATS(dev_net(chunk->head_skb->dev),
-> +						 SCTP_MIB_IN_PKT_DISCARDS);
->  				sctp_chunk_free(chunk);
->  				goto next_chunk;
->  			}
-> -- 
-> 2.34.1
-> 
+---
+bod
 
