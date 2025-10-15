@@ -1,281 +1,117 @@
-Return-Path: <linux-kernel+bounces-854449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD66BDE68B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC42BDE6B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 935A34FF92E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:10:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A0024FE4F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0DA326D4C;
-	Wed, 15 Oct 2025 12:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF9D326D5C;
+	Wed, 15 Oct 2025 12:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sd5Ito2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/X8KPLm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D161E5205;
-	Wed, 15 Oct 2025 12:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CCA29CE1;
+	Wed, 15 Oct 2025 12:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530247; cv=none; b=imnB6vyjVhK9wjPuCDxWAC8YTKGm2mRg5fhoWa2o6yFSFL0JaStyJgQHyGO2Mgfa7Ryt3xmG2XtcDw8eghyryhGbgA6mvWUZYgR5DIlhasI3vJ67Sp4bKkPWoD0H484wFq3+SypHqtvADHj+PZExO/2xs222hlGFEqcyAH6OuUQ=
+	t=1760530446; cv=none; b=iuktIL7v53yI2rwFHdo+JXS7v0kqCDOus4NSz2ovnY2s99r5RH1px9KJ/uC/NAg98r4ky9oQ6qq/YLeYCX+hdWLWA/nXjMjY5uhC+Xq0G8b0n/tFqlV/TwkQRHxcw/lJnInwTcoduJSI4vAkRCB6C7ogf+piIxD/gSD6ncDA8Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530247; c=relaxed/simple;
-	bh=FRp2nP/cabZWIQTDCFbnZuskgerA1RB/tXfMpaKNBeE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HjrngBa+zB5ih52D+LxZpy6VuXQjfI5FFUdNtri189CZJR/L2IZGWgkeRhaA/0ncbQ9CUe+5li5SWanOfCbVqIKK2xAkdw6/PAqBrPNB3R8p8eY7s07J07JphXNz6HBfrOO0DzxHA9R3rj8VZ8ZoBzrsgpgwvTtyBpEQMFhTsSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sd5Ito2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75197C4CEF8;
-	Wed, 15 Oct 2025 12:10:44 +0000 (UTC)
+	s=arc-20240116; t=1760530446; c=relaxed/simple;
+	bh=U0qBfTAoLQ2lXuxhHDpAiZcucUrXqzfYam7mxeAjgzM=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XaejaYF6JHZIKQdh1CMUq/TUC3H0HtNB9RqwmSXwRqtHcECcJtZ1DE1BOQbPGo1arurLMjP0IGd6xsJ4FOHfyYoNy2KeL2u5Aw5DjnTfV61Oxc1g9AVWHKP66fXQrgdiK2Zykaqaiu4HM0C/XjbrOYelP+lGoSCWqqUc6wnVARU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/X8KPLm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F30FBC116B1;
+	Wed, 15 Oct 2025 12:14:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760530246;
-	bh=FRp2nP/cabZWIQTDCFbnZuskgerA1RB/tXfMpaKNBeE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Sd5Ito2zl8yQO/MD6izBpbkQAVgwascCvAqBfIQR3xW8OA7rngdhvt9B6dIBGQnnd
-	 bhQHJQIOObOA3A/qMXGlxL1uE5OhQ6OelV16v1EhWvOFiEnhTIvBdA7rogW4hJJzag
-	 r9Y0enGq8mLUUp52YEJw6qQdUjCMN/LISe8He4d3+Ea30IeQSwxMBXFw0i3lhKeWYH
-	 PPph2OZ2gtJCSO07L4BDV/0R6heC92LTIgWUNnjOHm3jOHxgd2y0bUQbiQnlKCMYes
-	 5ByZB9EfQNHq1KKSeyzRb7pFFa6CxqjpNUSz6W5kUTxdKPfdJnIoncFtSo/9ETOtbp
-	 9PKuHLBk3ADAQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
-  jasonmiu@google.com,  dmatlack@google.com,  skhawaja@google.com
-Subject: Re: [PATCH 1/2] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-In-Reply-To: <20251015053121.3978358-2-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Wed, 15 Oct 2025 01:31:20 -0400")
-References: <20251015053121.3978358-1-pasha.tatashin@soleen.com>
-	<20251015053121.3978358-2-pasha.tatashin@soleen.com>
-Date: Wed, 15 Oct 2025 14:10:43 +0200
-Message-ID: <mafs0zf9sjrgc.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1760530444;
+	bh=U0qBfTAoLQ2lXuxhHDpAiZcucUrXqzfYam7mxeAjgzM=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=o/X8KPLmQwvaZ/4jk3aNbggMUsmUtSiTRQlSMl2XJzeWcdxeAHYCVUEkxd4xyQRUM
+	 lm9j3UxOz9eAQqeEiw4KJtqK6D9JhqFpzt824g1F5aOEiD9IDRQTb4jnryGTQEKfOs
+	 iAlvzz2RFp1CxWICKQO4xi1XyoRewABj3vRnEl7xWHSRMxzN0SpSnDF43LOvksIYR3
+	 ACtYefsh+xgYcs1L5mX2EWAr4I/iNRCtLcWAjJJMe7vdTvlm8DBDul72BwYuelziYo
+	 OjknTg03VXAm8mwyc8gDIxE4bHcrkdHE7kiuKHSn2QefE+Gc9U5X0I+y7ygwupdVFi
+	 /eyOx9e5W702g==
+From: Mark Brown <broonie@kernel.org>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ joel@jms.id.au, andrew@codeconstruct.com.au, clg@kaod.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org, BMC-SW@aspeedtech.com, 
+ Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+In-Reply-To: <20251001112605.1130723-1-chin-ting_kuo@aspeedtech.com>
+References: <20251001112605.1130723-1-chin-ting_kuo@aspeedtech.com>
+Subject: Re: [PATCH 0/6] spi: aspeed: Improve clock, timing and address
+ decoding logic
+Message-Id: <176053044168.105519.1540910122531672579.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 13:14:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-96507
 
-On Wed, Oct 15 2025, Pasha Tatashin wrote:
+On Wed, 01 Oct 2025 19:25:59 +0800, Chin-Ting Kuo wrote:
+> This patch series introduces several improvements to the
+> ASPEED SPI driver, targeting better stability, compatibility
+> and, flexibility across multiple ASPEED platforms.
+> 
+> Key changes include:
+> 
+> * Clock selection strategy update
+>   Improves fallback logic when timing calibration is skipped or
+>   fails, ensuring reliable boot behavior.
+> 
+> [...]
 
-> It is invalid for KHO metadata or preserved memory regions to be located
-> within the KHO scratch area, as this area is overwritten when the next
-> kernel is loaded, and used early in boot by the next kernel. This can
-> lead to memory corruption.
->
-> Adds checks to kho_preserve_* and KHO's internal metadata allocators
-> (xa_load_or_alloc, new_chunk) to verify that the physical address of the
-> memory does not overlap with any defined scratch region. If an overlap
-> is detected, the operation will fail and a WARN_ON is triggered. To
-> avoid performance overhead in production kernels, these checks are
-> enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  kernel/liveupdate/Kconfig                   | 15 ++++++++++
->  kernel/liveupdate/kexec_handover.c          | 32 ++++++++++++++++++---
->  kernel/liveupdate/kexec_handover_debug.c    | 18 ++++++++++++
->  kernel/liveupdate/kexec_handover_internal.h |  9 ++++++
->  4 files changed, 70 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> index 522b9f74d605..d119f4f3f4b1 100644
-> --- a/kernel/liveupdate/Kconfig
-> +++ b/kernel/liveupdate/Kconfig
-> @@ -27,4 +27,19 @@ config KEXEC_HANDOVER_DEBUGFS
->  	  Also, enables inspecting the KHO fdt trees with the debugfs binary
->  	  blobs.
->  
-> +config KEXEC_HANDOVER_DEBUG
-> +	bool "Enable Kexec Handover debug checks"
-> +	depends on KEXEC_HANDOVER_DEBUGFS
+Applied to
 
-Why the dependency on debugfs? Why can't the debug checks be enabled
-independently?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-> +	help
-> +	  This option enables extra sanity checks for the Kexec Handover
-> +	  subsystem.
-> +
-> +	  These checks verify that neither preserved memory regions nor KHO's
-> +	  internal metadata are allocated from within a KHO scratch area.
-> +	  An overlap can lead to memory corruption during a subsequent kexec
-> +	  operation.
+Thanks!
 
-I don't think the checks that are done should be listed here since as
-soon as another check is added this list will become out of date.
+[1/6] spi: aspeed: Update clock selection strategy
+      commit: 31dcc7e1f8a9377d8fd9f967f84c121c5ba8f89c
+[2/6] spi: aspeed: Improve timing calibration algorithm for AST2600 platform
+      commit: efb79de36e947d136517bac14c139d494fcc72fa
+[3/6] spi: aspeed: Force default address decoding range assignment for each CS
+      commit: 630a185fd06109193574d10f38b29812986c21de
+[4/6] spi: aspeed: Centralize address decoding region management
+      commit: b546e0023a203e7edf9377ac8f4f490a6965afd6
+[5/6] spi: aspeed: Add per-platform adjust_window callback for decoding range
+      commit: 0586b53d4a0c7c5a132629f99da934cc674ea4cd
+[6/6] spi: aspeed: Only map necessary address window region
+      commit: 64d87ccfae3326a9561fe41dc6073064a083e0df
 
-> +
-> +	  If an overlap is detected, the kernel will print a warning and the
-> +	  offending operation will fail. This should only be enabled for
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-This also describes the behaviour of the checks, which might change
-later. Maybe for some checks the operation won't fail? I suppose just
-leave it at "the kernel will print a warning"?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> +	  debugging purposes due to runtime overhead.
->  endmenu
-> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> index 5da21f1510cc..ef1e6f7a234b 100644
-> --- a/kernel/liveupdate/kexec_handover.c
-> +++ b/kernel/liveupdate/kexec_handover.c
-> @@ -141,6 +141,11 @@ static void *xa_load_or_alloc(struct xarray *xa, unsigned long index, size_t sz)
->  	if (!elm)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	if (WARN_ON(kho_scratch_overlap(virt_to_phys(elm), sz))) {
-> +		kfree(elm);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
->  	res = xa_cmpxchg(xa, index, NULL, elm, GFP_KERNEL);
->  	if (xa_is_err(res))
->  		res = ERR_PTR(xa_err(res));
-> @@ -354,7 +359,13 @@ static struct khoser_mem_chunk *new_chunk(struct khoser_mem_chunk *cur_chunk,
->  
->  	chunk = kzalloc(PAGE_SIZE, GFP_KERNEL);
->  	if (!chunk)
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	if (WARN_ON(kho_scratch_overlap(virt_to_phys(chunk), PAGE_SIZE))) {
-> +		kfree(chunk);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
->  	chunk->hdr.order = order;
->  	if (cur_chunk)
->  		KHOSER_STORE_PTR(cur_chunk->hdr.next, chunk);
-> @@ -379,14 +390,17 @@ static int kho_mem_serialize(struct kho_out *kho_out)
->  	struct khoser_mem_chunk *chunk = NULL;
->  	struct kho_mem_phys *physxa;
->  	unsigned long order;
-> +	int ret = -ENOMEM;
->  
->  	xa_for_each(&kho_out->track.orders, order, physxa) {
->  		struct kho_mem_phys_bits *bits;
->  		unsigned long phys;
->  
->  		chunk = new_chunk(chunk, order);
-> -		if (!chunk)
-> +		if (IS_ERR(chunk)) {
-> +			ret = PTR_ERR(chunk);
->  			goto err_free;
-> +		}
->  
->  		if (!first_chunk)
->  			first_chunk = chunk;
-> @@ -396,8 +410,10 @@ static int kho_mem_serialize(struct kho_out *kho_out)
->  
->  			if (chunk->hdr.num_elms == ARRAY_SIZE(chunk->bitmaps)) {
->  				chunk = new_chunk(chunk, order);
-> -				if (!chunk)
-> +				if (IS_ERR(chunk)) {
-> +					ret = PTR_ERR(chunk);
->  					goto err_free;
-> +				}
->  			}
->  
->  			elm = &chunk->bitmaps[chunk->hdr.num_elms];
-> @@ -414,7 +430,7 @@ static int kho_mem_serialize(struct kho_out *kho_out)
->  
->  err_free:
->  	kho_mem_ser_free(first_chunk);
-> -	return -ENOMEM;
-> +	return ret;
->  }
->  
->  static void __init deserialize_bitmap(unsigned int order,
-> @@ -737,6 +753,9 @@ int kho_preserve_folio(struct folio *folio)
->  	const unsigned int order = folio_order(folio);
->  	struct kho_mem_track *track = &kho_out.track;
->  
-> +	if (WARN_ON(kho_scratch_overlap(pfn << PAGE_SHIFT, PAGE_SIZE << order)))
-> +		return -EINVAL;
-> +
->  	return __kho_preserve_order(track, pfn, order);
->  }
->  EXPORT_SYMBOL_GPL(kho_preserve_folio);
-> @@ -784,6 +803,11 @@ int kho_preserve_pages(struct page *page, unsigned int nr_pages)
->  	unsigned long failed_pfn = 0;
->  	int err = 0;
->  
-> +	if (WARN_ON(kho_scratch_overlap(start_pfn << PAGE_SHIFT,
-> +					nr_pages << PAGE_SHIFT))) {
-> +		return -EINVAL;
-> +	}
-> +
->  	while (pfn < end_pfn) {
->  		const unsigned int order =
->  			min(count_trailing_zeros(pfn), ilog2(end_pfn - pfn));
-> diff --git a/kernel/liveupdate/kexec_handover_debug.c b/kernel/liveupdate/kexec_handover_debug.c
-> index eb47f000887d..294d1d290142 100644
-> --- a/kernel/liveupdate/kexec_handover_debug.c
-> +++ b/kernel/liveupdate/kexec_handover_debug.c
-> @@ -214,3 +214,21 @@ __init int kho_debugfs_init(void)
->  		return -ENOENT;
->  	return 0;
->  }
-> +
-> +#ifdef CONFIG_KEXEC_HANDOVER_DEBUG
-> +bool kho_scratch_overlap(phys_addr_t phys, size_t size)
-> +{
-> +	phys_addr_t scratch_start, scratch_end;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < kho_scratch_cnt; i++) {
-> +		scratch_start = kho_scratch[i].addr;
-> +		scratch_end = kho_scratch[i].addr + kho_scratch[i].size - 1;
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Nit: wouldn't it be a tad bit simpler to do
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-		scratch_end = kho_scratch[i].addr + kho_scratch[i].size;
+Thanks,
+Mark
 
-> +
-> +		if (phys <= scratch_end && (phys + size) > scratch_start)
-
-and here
-
-		if (phys < scratch_end && (phys + size) > scratch_start)
-
-At least I find it slightly easier to understand, though I don't think
-it makes too much of a difference so either way is fine.
-
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +#endif /* CONFIG_KEXEC_HANDOVER_DEBUG */
-> diff --git a/kernel/liveupdate/kexec_handover_internal.h b/kernel/liveupdate/kexec_handover_internal.h
-> index b3fc1957affa..92798346fa5a 100644
-> --- a/kernel/liveupdate/kexec_handover_internal.h
-> +++ b/kernel/liveupdate/kexec_handover_internal.h
-> @@ -44,4 +44,13 @@ static inline void kho_debugfs_fdt_remove(struct kho_debugfs *dbg,
->  					  void *fdt) { }
->  #endif /* CONFIG_KEXEC_HANDOVER_DEBUGFS */
->  
-> +#ifdef CONFIG_KEXEC_HANDOVER_DEBUG
-> +bool kho_scratch_overlap(phys_addr_t phys, size_t size);
-> +#else
-> +static inline bool kho_scratch_overlap(phys_addr_t phys, size_t size)
-> +{
-> +	return false;
-> +}
-> +#endif /* CONFIG_KEXEC_HANDOVER_DEBUG */
-> +
->  #endif /* LINUX_KEXEC_HANDOVER_INTERNAL_H */
-
--- 
-Regards,
-Pratyush Yadav
 
