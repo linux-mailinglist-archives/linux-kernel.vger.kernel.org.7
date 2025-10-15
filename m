@@ -1,85 +1,154 @@
-Return-Path: <linux-kernel+bounces-855316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101E6BE0DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:48:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EB6BE0DF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80EE05486BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:48:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F9614F3AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C7E303A2E;
-	Wed, 15 Oct 2025 21:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90ADF3043CE;
+	Wed, 15 Oct 2025 21:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gKFX8OVD"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="QE+WS5VA"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559DB2FFDF2;
-	Wed, 15 Oct 2025 21:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A9F3002D3
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760564880; cv=none; b=WzUOvAVoP83q+GphT+5qYhw4T4OozkphMWvb9sUjEP6wp97GTxjukvRo6dVlWPuVNRybCGOsvrUh1ysqOJ4ljK82t8C74KzADqfOlRtPIW823eqhakb2ZK7AnIONFNJr9JxrmVHgVB+EWm3oM/vMfHhhAh0zov96AHXecjXKu+8=
+	t=1760565056; cv=none; b=G16q2oRSqkEfbgO30ekCO/TqLdjOX8X9nsJZ18A9WszAt+yiujaTNaqP8Z6FwYKg8DPbCa97xTDIEqgEFPyRca9lTMfUgFJwD8b8yGkXHeX6QXJbrA8JWpc5RYaZVN7QzLiFJqj2UqtbTFcus68YCE6EKLMdZC3R+vbiw3oXml0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760564880; c=relaxed/simple;
-	bh=XDru9vyLIiZMGzQy3Z/yJzJzIU5Vs6NKWuI08K7VFaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0HC9JOUhgvdOCcN9HxCZ8dXG/Yo3UmqaTMcst6oXILmWY0v9KSdXLIcaz3LpLKbnMQe/FMNRR6NXfzSkydxNF7sG58JzliMqMFaC7yG//coSpPfkRafGcMXUsifWSK8UrwqALsml115sUQVYAbPg20GI6rL3sjGS2GtiNlNqoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gKFX8OVD; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BJKRSA2/UrZpBwMZJMLqiGvnJ9vtCKMc8nR4m+Bp2vo=; b=gKFX8OVD4AxfYUMWpmvDKQgeoP
-	EfGtlIZLIs+J+AeSD5EwIrheoEEWfjMjayaJIE7qp0j+Qs+pJ27VxQCoBuuuaJW6am9znaAYFSH0n
-	BGvFftZl9ZIUyCAqVVF8lYTpQE2Y5NWfFqLV6UpHOJjzd/TdqF9aE5Xj4m/OWzGIVYAw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v99LT-00B548-JQ; Wed, 15 Oct 2025 23:47:43 +0200
-Date: Wed, 15 Oct 2025 23:47:43 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: rentao.bupt@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>, Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH] ARM: dts: aspeed: fuji-data64: Enable mac3 controller
-Message-ID: <b0040541-31e9-4cda-9462-09b4a5622959@lunn.ch>
-References: <20251015204840.80070-1-rentao.bupt@gmail.com>
+	s=arc-20240116; t=1760565056; c=relaxed/simple;
+	bh=iduM9BCUy9A1PPFJTP7NoUXJkN4FJL3UKtirvC6QjRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sIwlYOdHkS9RieBsSk0Uxda91xuOoMpPRGU6JK6ZDuhzlrDlbGK6li+YyMZAFiSo6qCSQwYdWv4IP+Xh7ubqHbSXOa9wg/CYSqFi+5fIdd32XCMLWr7Jc5LtEbz5NPrz2BbyTXs4YHGnj/fOZM1V+NxWVIy2ujMPsAWSCwM5zjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=QE+WS5VA; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-796f9a8a088so101623b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1760565054; x=1761169854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iduM9BCUy9A1PPFJTP7NoUXJkN4FJL3UKtirvC6QjRM=;
+        b=QE+WS5VA0TWfN8btw/Vp76HeZs4mypDhpa/gyTXyDKRq59mTPhWVwpj9gwDtwLMNWc
+         36Ik+ISxb11fTe7AIvf92Qo24MO+sgJrXz7N/p3O5njUhOAuiVa2+mJp1Fy77dQl5zEY
+         RHtjmkBiAmXWuOrSEcfUGXO7Mw3PW7eoG0tEL4/m8nvwJDfi42IFSRV5zvzy8cWErBkU
+         623bk8sFmoF+YsWSfIVVslJf7SiNXRSTU/zcEGx97td4jr1v2ujTOpEw5GH0YgnLLk/I
+         bDQHBZFd6btSKeH2SpQ93FS5dyDYeOaCho4DtcHi3afivDgFKTRMvczRctUOFClI6dpe
+         xZkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760565054; x=1761169854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iduM9BCUy9A1PPFJTP7NoUXJkN4FJL3UKtirvC6QjRM=;
+        b=gENaG6tyGBxhRkzgWaGaZHyfN6WzFmHO3i4vRAGNrDjkLky4qhajOPMX1udVi6a/vK
+         A60hPgLZxd9m5kNq/woP9S6o7tllV4mj68hRj17l5KMfjWyeIUmk1OHWyt5xCDEuwVdX
+         SeNyrnmWQLV108a8r5ua2IhB1aJA/eTWRzDW0oWReuz2GrStQQGoHSuzpYstmpUos/YL
+         iMMoqtu/1nm7rB6qn7hQRbS5Aa9B8itVUKD8GoBBoZnQEsjv7iAY4yia9hdZ5YzpLEbY
+         fW1IP8u4Z3OP+NMMh6YTq4WKOhr+G2xAebZq8FRDYD0sLzRD0Edf6CqfEdGxwmr3sT5l
+         LFHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiBSJ3+JoN3TiKL3j3Ne3FemUkIy1J9/jK6T28OTaNVlttmmCkXtfzrZGJ8rmtt+w7BuSsEgVOSmLdB8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwozbMif8kNfz6Lxu3dkPShS8ajhIHaMJxRDA5dPEBDpJwBMSYT
+	A8JAMrILDmZJR0WB1StX7FgVGgDpvDPpSnBvyTfgrNnEHRNyANkB1+gvxDdqL9fcCFEg+J9Wx81
+	iqNWCvyxV4py2+r8uHAY/kmpH70DgjKaIWLVAFdm6
+X-Gm-Gg: ASbGnctOCh36S6s3/YgEzKHS9jGJd3z6qn6LPEQmJXEDuF5w3kncfRZ/EeqSVyNg60t
+	MW8sgrEowgBlu2rlG++cjzXs3/AJkC3nLTC9PkmmlSR2lfHUH8gZzIwaihuETAxunp5XjAQ2H4A
+	xajYYIHGg+5k8EDIl4dNbOlL2G78obxzAVELk4a9o2rgGmeduQCx1/BJy8KpPROylDcjccxKHFS
+	BpWXkS1ipdtWkkcoBpQQRfAcY6V3ao1hdwHzJX7vOQEkId97Y2IgoQxxQYw0zuzWjwARrR3TQ7c
+	NDDVwkrgY0Q1chFzUkGNKhUbROTGa3kQ9mOl
+X-Google-Smtp-Source: AGHT+IFwZrRh7ZKAhbIlR4D12tk51kY/fRatZwY2OQID0vS3YYNT414SduS1rI4gvIe3Me4Ogb4ysXIQ+xiEjdpPLrE=
+X-Received: by 2002:a05:6a20:3ca7:b0:2e5:c9ee:96fb with SMTP id
+ adf61e73a8af0-32da84ed584mr41211395637.59.1760565053849; Wed, 15 Oct 2025
+ 14:50:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015204840.80070-1-rentao.bupt@gmail.com>
+References: <681a1770.050a0220.a19a9.000d.GAE@google.com> <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
+ <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
+ <CAM0EoMnGLqKU7AnsgS00SEgU0eq71f-kiqNniCNyfiyAfNm8og@mail.gmail.com>
+ <CAM0EoMmK7TJ4w_heeMuD+YmUdMyEz7VWKY+a+qMO2UN4GYZ5jQ@mail.gmail.com> <20251014201149.ckkw7okat3cv55qk@skbuf>
+In-Reply-To: <20251014201149.ckkw7okat3cv55qk@skbuf>
+From: Jamal Hadi Salim <jhs@mojatatu.com>
+Date: Wed, 15 Oct 2025 17:50:41 -0400
+X-Gm-Features: AS18NWBoDDX5v9apL36RaGrCWfEkUt2MPnhglXFLB138k75uT3ov8ARY2TM2AaI
+Message-ID: <CAM0EoM=1swUNW5F2Ha4JCf3VW309m1S0JEpSqiyR5wH7e=YyJw@mail.gmail.com>
+Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
+ inet_rtm_newaddr (2)
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Eric Dumazet <edumazet@google.com>, 
+	syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>, 
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>, davem@davemloft.net, dsahern@kernel.org, 
+	hdanton@sina.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 01:48:37PM -0700, rentao.bupt@gmail.com wrote:
-> From: Tao Ren <rentao.bupt@gmail.com>
-> 
-> "mac3" controller was removed from the initial version of fuji-data64
-> dts because the rgmii setting is incorrect, but dropping mac3 leads to
-> regression in the existing fuji platform, because fuji.dts simply
-> includes fuji-data64.dts.
-> 
-> This patch adds mac3 back to fuji-data64.dts to fix the fuji regression,
-> and rgmii settings need to be fixed later.
-> 
-> Fixes: b0f294fdfc3e ("ARM: dts: aspeed: facebook-fuji: Include facebook-fuji-data64.dts")
-> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+On Tue, Oct 14, 2025 at 4:11=E2=80=AFPM Vladimir Oltean <vladimir.oltean@nx=
+p.com> wrote:
+>
+> Hi Jamal,
+>
+> On Sun, Oct 12, 2025 at 11:52:54AM -0400, Jamal Hadi Salim wrote:
+> > > > Yet another taprio report.
+> > > >
+> > > > If taprio can not be fixed, perhaps we should remove it from the
+> > > > kernel, or clearly marked as broken.
+> > > > (Then ask syzbot to no longer include it)
+> > >
+> > > Agreed on the challenge with taprio.
+> > > We need the stakeholders input: Vinicius - are you still working in
+> > > this space? Vladimir you also seem to have interest (or maybe nxp
+> > > does) in this?
+> >
+> > + Vladmir..
+> >
+> > > At a minimum, we should mark it as broken unless the stakeholders wan=
+t
+> > > to actively fix these issues.
+> > > Would syzbot still look at it if it was marked broken?
+>
+> I still have interest in taprio, but at the moment I can't look at this
+> any sooner than the second half of next week (unless someone else beats
+> me to it). I've added a note not to lose track.
+>
 
-Thanks for adding the comment.
+Thanks!
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> What is the situation with syzbot reports? I don't actively monitor them,
+> only if somebody happens to email me.
 
-    Andrew
+These issues have been lingering forever..
+They do get posted on the list. Here are samples:
+https://lore.kernel.org/netdev/676d25b2.050a0220.2f3838.0464.GAE@google.com=
+/#r
+https://lore.kernel.org/netdev/67d2a576.050a0220.14e108.0030.GAE@google.com=
+/
+https://lore.kernel.org/netdev/67946a0c.050a0220.3ab881.0010.GAE@google.com=
+/
+https://lore.kernel.org/netdev/66e96979.050a0220.252d9a.000a.GAE@google.com=
+/
+https://lore.kernel.org/netdev/6777334a.050a0220.3a8527.0058.GAE@google.com=
+/#t
+
+They all point to the same bisected commit, but am not sure whether
+they are the same issue
+
+To get you on Cc from syzbot - i think we'll have to add you as a
+maintainer for taprio if you'd be okk with that..
+
+cheers,
+jamal
 
