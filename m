@@ -1,203 +1,166 @@
-Return-Path: <linux-kernel+bounces-854702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A7EBDF28D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:51:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC20BDF2AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D98D4F5F0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:51:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E84EE4EFFDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6FA2D2389;
-	Wed, 15 Oct 2025 14:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13832D5950;
+	Wed, 15 Oct 2025 14:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="iZ4ozkgq"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8u2RfSE"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B4E27E074
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E472D24A9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760539884; cv=none; b=PbIFy+X7qpR51uhyQLwSYBYwHNmpFHLb3sCChUHFDDEcnBLY+YMz9o85Ca0iHAsj7ANgeYKNbiC2lhhv8Aj5uEDGJE6q6ywYNv67Ibu5cNLUokzyNH8cFSS3XRzJBoc10hEUWqy8zCB+QSf/eYsNnsQBhEtJ9mcVQZydb6m1u4U=
+	t=1760539907; cv=none; b=oFdL7UMlMUDDG8carZJF1zgOQPZ+c1KHDDKNTT7ZWJvO2zNJ2JYLO9kXQc9Xkme2RZQ88a/cRiyBMVlh3K0ct05j9x4wQvTpXYjupvyqcnMpgV493DiNmEEntqzofmaU4kq0F1PlQTDY13CDosaQ+h1LWzL5eCN+wF16Y035M48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760539884; c=relaxed/simple;
-	bh=hrGvM3Qk7r7tukv0tdWGtDReqUMPUw8ee1FwVTWSb+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7FLwg6HjbsIqp7QyrdZnazXoNxi4KRQSaYoBQdRUK/Iqhh1G7BpIMkgrtaNipq44qBvYD9DElIu/TFEB3o5PjoBAdKhXPq+TrfBY6hhsY7lgfQ4NVlcco5tyH8q3whGBQM1fCsYxNgBr9sY/glnNEx+VQSw4/DkCdlit+TQNUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=iZ4ozkgq; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-879b99b7ca8so102269966d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:51:21 -0700 (PDT)
+	s=arc-20240116; t=1760539907; c=relaxed/simple;
+	bh=sInZE0DYoIggQMIMtdFf4wFHGPW53+nzyYune9eDHHA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rT+nQ8ncuhnT78wa5QMhNDukDUV5hLWBCwl/2q42SSxl2l/JbvtsC+Vac54DswAyz39k1Txb1cC4DFXvAH9TKXWcnh3OLWtWIKeZvV+M3ra06B5dx5YgQ2nxg0uzC4UZqtQCx+x/hASco55E4ZK8nnBeTOpG8nYfq422+zjPD2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k8u2RfSE; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7501c24a731so80029707b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1760539881; x=1761144681; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Adpa7m8fOG05p6QgITi5PnCHwpZCCsUy3a+V0Uam0mo=;
-        b=iZ4ozkgq/bhM4uBCnxREoEX00tSDtzsxVdOVWtE8/uJ1Px1T9ajaw335OwdFsJlAE/
-         FSd5zOux+EHFA5bBcnHEqus/C21Uz4G0rgH5m1xBWSbcE3MT7iPa9/9+nZWYvdZYQmzW
-         eFM9Afg0h6y9tnUa7F3tdcDJS770IJiP8KY+10xmZGZK4fOAj1gitvqXDD0zZGzlFNUO
-         LAU2ZNNNx8WDrQCrKZl7Fl/ta6R0v6T9ZshJSr++Tg+8ZgIAlyXKQ9pbQQFm38lmqEV0
-         CM0qGZWBwd3pbnixm+1cC3R0GgGIPogRfXbf8Sivl5kvjZdTIb3HRPmS6uniUPVyoHqh
-         kqgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760539881; x=1761144681;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760539905; x=1761144705; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Adpa7m8fOG05p6QgITi5PnCHwpZCCsUy3a+V0Uam0mo=;
-        b=qai//pXzMZ0e9QJuwVe2XkMJJqTAXUNYYa6kDj60cRoh0Bqx58SoaJlo8E+RfEmEsc
-         73BfUUy5kRAe3BeLilKrHLN32GliWlOSKpHryy2Y7sJzt0qqAuFfNLdk6sYifb9kLUUs
-         OS+HGMV5qbl8caH6QucHbqO+ntYi2AulDWKCrrE/6/CYMCCUNNoJ+YYvzK6bkaR76L5f
-         RabVDtwIu722NkXU/kwWWhCd/n0UpPGMp7eSRDueyTrzCSQGVZtbvK3/2EULlcVHRoLQ
-         5VbiORzwdTwqQEO2ujUTWwbWfJRH5iyAbgmILi/DGSTHjgauYuc9GMUZNFtRJ6ZbbJsz
-         IbBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjXv/hXdTKE4Ms0xMam3rvOKo8AHNDWlHuTdPrINKg4jzxY1W3apHs+4KsQDzaA66ZLd6c/mezY7AoaQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw59q0ZtgoNQRYlEXx4s70ch1WxcQIx1R95xOwfG2lj3SotnVWw
-	uXTeIJpb8XF2YqUHqqqQx5fXxuInzsIPvceqH9cod+9iUUmxNCTBwvyazWHkHP8SLw==
-X-Gm-Gg: ASbGnctM9sA9wxq/tJR8QM79UJglA8Ao5ZKz6uWoX6YUWz4Qj7GXrpCm7Jl9ZCiBF3W
-	G42VKyS13OXfUjcv/mc4Is3HI7RzDBAT16lQKP5+RjsgbbNSNe4pAPWuiEQlp3ih48m1oxR6Wun
-	Zm4/iWebRDjTci6vgORUpsKgP619xuOOUlS7AmznnJEwCMfP6sNIL7r9AcRGf1x0iSlmuOVQeE+
-	ljCt6ofMWwoD9/YXbcGRdbdI1u/1gg6n41/e+DV7eJwOVBh7ldiVaIwAgvf7Wx3say9N07SXZUk
-	6daw7z/Ql3sBXeVEFw1uyxk2P1gZ9zc+4QLSXY6kZWpyroFTajquUHOBFta5tVT6RRKyEDnPUQL
-	HOg5fLI5lbw2Kff2k0QSLnjqyK71vyCdtUqmH2GOp3fgQSrj3Iow8EtnXdZ2Btl3m4zH/mzea+3
-	D3gg==
-X-Google-Smtp-Source: AGHT+IHgATM+vpR/CxE89ZGkxxcoAPFDIHN26iOy/FjOgPnA6lzy6iUTWGNa3baX21y+yQJqVKxzZg==
-X-Received: by 2002:a05:6214:5083:b0:783:cc80:1770 with SMTP id 6a1803df08f44-87b2106d967mr418771056d6.25.1760539880497;
-        Wed, 15 Oct 2025 07:51:20 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c012a79f9sm19380516d6.53.2025.10.15.07.51.19
+        bh=NyLoltljIFIHQvuHJEe7loF3nTJT00G7D3T168aMfDU=;
+        b=k8u2RfSEaNr8RoGeo9HYEPQpIJFBnMpG3kqp3wbpoF1ou6XOSagtAWS3iST/x8pM9u
+         6XJO9ck/ahDaagGlvhfHocSTIxsePCjX8thg4dqV4MMphvmeCGsDD1bGrKiNRTRadz8F
+         Q875/eDcIjROAqJY121ywPGLDmvmneyyleiGJHttyRDJZo8CK4p/DmufJWMcXX3cj/V2
+         W8nwN8CjLjv8dnwst01+cOtKv5hoQzOhBw852lDjmt5TjQKAGv2vy5MXT+8Bu1Z4uK6I
+         U/ytaJfc7zNg5cMjr6EXkzlvCIr7FYM0BFxkNTMNa4dRC7TioI1dnBeNE5rjgoF/Uo3r
+         OD8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760539905; x=1761144705;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NyLoltljIFIHQvuHJEe7loF3nTJT00G7D3T168aMfDU=;
+        b=fNsbCVtg/G4u/Lz5HERwfFEmJl29EXgqpg+I3gJs0M7lVTJocbIa3/5vjJinCmAWzJ
+         W+17V3atjA/xy5c3awHKFV3Bn+0WAn/Aq1cgTljgTgOSpEQN+2tMFyOKrY0JvN80BjfQ
+         MPmF2ZKJuBpgTAl/+3f0t78eYEl0H0v1oOU5mXunhtqAWuaoQYbfWM5ow2HGeFL5v0VK
+         pWf0lg32UV0cnLOqWbAnY6J6UN81qzEtRy8Hp2HOBT3CohkfbIlDNC8ma5I/GIx6J9D4
+         9IuW9YdoK6EIt/iTgZHtieWGiHmQcOkoG16IHOsk5dF9q5WAuaJ1gWPDd2Cc9hZUQF8c
+         LuMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbmdU24e+HfkUIGGy4ITdUwheTnjQCwubanfEWkzcn+vaNOS17XD7kMZbd0odpmB2IX0ehZIcG6FeggUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzib05vQICNgJCEWHdSMLhxxUNQOEEZd2q3T4q71zFqtE1fJRuQ
+	8tWDySU7Coo/SRV7FsRGAq/mKRs1pQeUpWH+9quEzsSCpWgjAIM7pd3m
+X-Gm-Gg: ASbGnctT1Yts10qsU3S5p6SkmeS6/Us9vuB4/6EXVj67qZUUArbLlYM0jLZi7vrxj8j
+	+fc+plCiDBb8i3N7hvgNzxYCjmGHjUbh1RPwMkWKf6AtCUjeKe+6X/+YX2lgVa7mv/W3krG7/yz
+	TpQTvqPH/pG+IVhnPpg8Ml+qs7ugs34mKRxmzeYSzRk+OTe3upTwf3Rl6JmfOcb4bdNzD+bPu5+
+	2gSA82Uq9mnpOPZxp9G9RgX++PSU8DtEd1tQOxIrR1irSLWGfbvZHU7erps3LVeApHmOTFZCvau
+	PYMhnArl8AUbhrpun2UVYOyV9RF3npHDS42pfvsBiSmi5Wlk8QCrDQem5OeCW+EEjkrMW37cJKp
+	O1WJ2HNRDziuzEkL9zzJsNHqge3JTO/BCRrukHLMxc7OS+MrvweXRJpQNfSNFTjfztaL/2hKQka
+	iAGyotbnAP
+X-Google-Smtp-Source: AGHT+IFdqdeTyqiUO3M8Jt3admfj16X+6I9SKPrlqNLZA1JhYvTo5CcWbZOMzfxfyhV/tM6hbT9L/A==
+X-Received: by 2002:a05:690c:360b:b0:735:4c38:34 with SMTP id 00721157ae682-780e153baabmr270617987b3.27.1760539905211;
+        Wed, 15 Oct 2025 07:51:45 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:40::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78106dbbac6sm42931667b3.3.2025.10.15.07.51.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 07:51:19 -0700 (PDT)
-Date: Wed, 15 Oct 2025 10:51:17 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] usb: uhci: Work around bogus clang shift overflow
- warning from DMA_BIT_MASK(64)
-Message-ID: <a34eeced-c4f0-48de-8f9e-d78b50378101@rowland.harvard.edu>
-References: <20251014-usb-uhci-avoid-bogus-clang-shift-warning-v1-1-826585eed055@kernel.org>
- <c0d1dc65-6f55-40b9-bbfa-09e8639a28e0@rowland.harvard.edu>
- <20251015031952.GA2975353@ax162>
+        Wed, 15 Oct 2025 07:51:44 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: simplify and cleanup pcp locking
+Date: Wed, 15 Oct 2025 07:51:42 -0700
+Message-ID: <20251015145143.3001503-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251015-b4-pcp-lock-cleanup-v1-1-878e0e7dcfb2@suse.cz>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015031952.GA2975353@ax162>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 08:19:52PM -0700, Nathan Chancellor wrote:
-> On Tue, Oct 14, 2025 at 11:07:27PM -0400, Alan Stern wrote:
-> > On Tue, Oct 14, 2025 at 04:38:19PM -0700, Nathan Chancellor wrote:
-> > > After commit 18a9ec886d32 ("usb: uhci: Add Aspeed AST2700 support"),
-> > > clang incorrectly warns:
-> > > 
-> > >   In file included from drivers/usb/host/uhci-hcd.c:855:
-> > >   drivers/usb/host/uhci-platform.c:69:32: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-> > >      69 | static const u64 dma_mask_64 = DMA_BIT_MASK(64);
-> > >         |                                ^~~~~~~~~~~~~~~~
-> > >   include/linux/dma-mapping.h:93:54: note: expanded from macro 'DMA_BIT_MASK'
-> > >      93 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-> > >         |                                                      ^ ~~~
-> > > 
-> > > clang has a long outstanding and complicated problem [1] with generating
-> > > a proper control flow graph at global scope, resulting in it being
-> > > unable to understand that this shift can never happen due to the
-> > > 'n == 64' check.
-> > > 
-> > > Restructure the code to do the DMA_BIT_MASK() assignments within
-> > > uhci_hcd_platform_probe() (i.e., function scope) to avoid this global
-> > > scope issue.
-> > > 
-> > > Closes: https://github.com/ClangBuiltLinux/linux/issues/2136
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/92 [1]
-> > > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > > ---
-> > 
-> > Do you think you could instead copy the approach used in:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?id=274f2232a94f6ca626d60288044e13d9a58c7612
-> > 
-> > IMO it is cleaner, and it also moves the DMA_BIT_MASK() computations 
-> > into a function scope.
-> 
-> Sure, would something like this be what you had in mind?
-> 
-> diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
-> index 37607f985cc0..5e02f2ceafb6 100644
-> --- a/drivers/usb/host/uhci-platform.c
-> +++ b/drivers/usb/host/uhci-platform.c
-> @@ -65,13 +65,10 @@ static const struct hc_driver uhci_platform_hc_driver = {
->  	.hub_control =		uhci_hub_control,
->  };
->  
-> -static const u64 dma_mask_32 = DMA_BIT_MASK(32);
-> -static const u64 dma_mask_64 = DMA_BIT_MASK(64);
-> -
->  static int uhci_hcd_platform_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-> -	const u64 *dma_mask_ptr;
-> +	bool dma_mask_64 = false;
->  	struct usb_hcd *hcd;
->  	struct uhci_hcd	*uhci;
->  	struct resource *res;
-> @@ -85,11 +82,11 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
->  	 * Since shared usb code relies on it, set it here for now.
->  	 * Once we have dma capability bindings this can go away.
->  	 */
-> -	dma_mask_ptr = (u64 *)of_device_get_match_data(&pdev->dev);
-> -	if (!dma_mask_ptr)
-> -		dma_mask_ptr = &dma_mask_32;
-> +	if (of_device_get_match_data(&pdev->dev))
-> +		dma_mask_64 = true;
->  
-> -	ret = dma_coerce_mask_and_coherent(&pdev->dev, *dma_mask_ptr);
-> +	ret = dma_coerce_mask_and_coherent(&pdev->dev,
-> +		dma_mask_64 ? DMA_BIT_MASK(64) : DMA_BIT_MASK(32));
->  	if (ret)
->  		return ret;
->  
-> @@ -200,7 +197,7 @@ static void uhci_hcd_platform_shutdown(struct platform_device *op)
->  static const struct of_device_id platform_uhci_ids[] = {
->  	{ .compatible = "generic-uhci", },
->  	{ .compatible = "platform-uhci", },
-> -	{ .compatible = "aspeed,ast2700-uhci", .data = &dma_mask_64},
-> +	{ .compatible = "aspeed,ast2700-uhci", .data = (void *)1 },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, platform_uhci_ids);
-> 
-> The
-> 
->   const struct of_device_id *match;
-> 
->   match = of_match_device(dev->dev.driver->of_match_table, &dev->dev);
->   if (match && match->data)
-> 
-> part of the change you linked to is equivalent to
-> 
->   if (of_device_get_match_data(&dev->dev))
-> 
-> if someone wanted to do a further clean up.
+On Wed, 15 Oct 2025 11:36:09 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
-That's a small enough matter, we don't need to worry about it.
+> The pcp locking relies on pcp_spin_trylock() which has to be used
+> together with pcp_trylock_prepare()/pcp_trylock_finish() to work
+> properly on !SMP !RT configs. This is tedious and error-prone.
+> 
+> We can remove pcp_spin_lock() and underlying pcpu_spin_lock() because we
+> don't use it. Afterwards pcpu_spin_unlock() is only used together with
+> pcp_spin_trylock(). Therefore we can add the UP_flags parameter to them
+> and handle pcp_trylock_prepare()/finish() within them.
+> 
+> Additionally for the configs where pcp_trylock_prepare() is a no-op (SMP
+> || RT) make it pass &UP_flags to a no-op inline function. This ensures
+> typechecking and makes the local variable "used" so we can remove the
+> __maybe_unused attributes.
+> 
+> In my compile testing, bloat-o-meter reported no change on SMP config,
+> so the compiler is capable of optimizing away the no-ops same as before,
+> and we have simplified the code using pcp_spin_trylock().
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-At any rate, yes, this is what I had in mind, thanks.  When you submit 
-it, you may add:
+Hello Vlastimil, I hope you are doing well!
 
-Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+Thank you for this patch. This is a pattern that I found quite cumbersome,
+so this patch really makes the code so much easier to understand and read.
 
-Alan Stern
+> ---
+> based on mm-new
+> ---
+>  mm/page_alloc.c | 99 +++++++++++++++++++++++----------------------------------
+>  1 file changed, 40 insertions(+), 59 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 0155a66d7367..2bf707f92d83 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -99,9 +99,12 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
+>  /*
+>   * On SMP, spin_trylock is sufficient protection.
+>   * On PREEMPT_RT, spin_trylock is equivalent on both SMP and UP.
+> + * Pass flags to a no-op inline function to typecheck and silence the unused
+> + * variable warning.
+>   */
+> -#define pcp_trylock_prepare(flags)	do { } while (0)
+> -#define pcp_trylock_finish(flag)	do { } while (0)
+> +static inline void __pcp_trylock_prepare(unsigned long *flags) { }
+> +#define pcp_trylock_prepare(flags) __pcp_trylock_prepare(&(flags))
+> +#define pcp_trylock_finish(flags)	do { } while (0)
+>  #else
+
+I have one question here. I was a bit unsure why we do the typechecking and
+silencing for the unused variable warning for only pcp_trylock_prepare, but
+not for pcp_trylock_finish. Is it because pcp_trylock_finish will always
+be called after pcp_trylock_prepare, so the flag will have been used at
+that point? 
+
+I was concerned that there would have been some area where only
+pcp_trylock_finish would have been used, but compiling with W=1 seems to show
+no errors on my end : -) So it looks good to me! Feel free to add:
+
+Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+
+Thank you! I hope you have a great day!
+Joshua
 
