@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-854584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C49BDECAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:42:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0B9BDECC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B52F03561A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176F5482C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E072405E1;
-	Wed, 15 Oct 2025 13:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03CC23BCEE;
+	Wed, 15 Oct 2025 13:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eas/vt6K"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxbiH3xN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E72222A1C5
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F392367CF
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760535742; cv=none; b=mBGxWnblGBOCboeYquzHU6r5gXEqP1SwoYEm6ZMzKtaPTve2GvchY4X0zTt6k4TbohVw4uu8jKD43fV9qw/KMBNe3xbFZ7dOHBnP8RmGIDr1Q6rR6jY9+j70TyXJ7AzwZqyWosMguWog3DFPTQ3CfwmB/FjD3FPd+2qArllGG5I=
+	t=1760535754; cv=none; b=q7pS3rBeBxGYX96dgodiSZ2Uy9fmj3NE6HeyOenh+wOVk6GZ2AAuL8I/2HqXfhz5rd5eVKWGN8fmVPvXLCEIEpXog6WJw2Ol+tKtyz7zooBGlXu/qVDBe+fS556kKTuxJ0T/DA4AGrngRYZfZ9+eNG7BqAVvA6YpA6ZBDNqtJXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760535742; c=relaxed/simple;
-	bh=8ZEjVMazAtWAvqIzRKTRefBLcLx91zYhhGw4XMuX0xc=;
+	s=arc-20240116; t=1760535754; c=relaxed/simple;
+	bh=wkUxCeKS5tD0TM2Xa5rZwhjOYyIU5mX+q32xBqCtYNc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hu+/VYPO1RoLz6MDb/pOoIn1vG/RKOjR1c77Kx53lRIgdu3CXYP2FPnRD5fRAIWQdCNWpEX0k8lieCN0w7X0XpPTcDdv/5M0S/RxXBmqEEZO5P3y/dcZsQYQ6g1MSrhQYKYI5hzseRogwmuYPkTSC2HLJIXMlYr+eRr+DhhZPlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Eas/vt6K; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e52279279so47784755e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760535738; x=1761140538; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hy7Sxq2jeauDwIsq3RFiUz3/9uTUpwLAUFOHgM+Hwug=;
-        b=Eas/vt6K5AVEUAc8QjbYHcLtShNnek0UkPwINwdPX3okqHlzvyTuFgq6Mz5eYVIXZ2
-         qhf9Dj5UoeUqcRo/foGQ9iFXkhVNjOXvu93tjZXWTgOlCJkECsJIdWHoKdNkz/bA4F4G
-         kVVxw1HaXB9qjrWzJb7LyH0lKNw1QxIw1A71R4JmXcBkym/ZQlU3cdB/S5jb1zIgNXcC
-         GgXYFjZ5NRp/EFhFID+ApfdduF9MLcxW5xeHoXFjJyqPbVyPu9K7iHKLt66pIeFk4/xD
-         ghNyp0T1aVJhlf6BBDL2fwuIrRycYGM159km9+fFjbaeoNmXvRdf17iEorGMlfjXdUnE
-         UBgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760535738; x=1761140538;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hy7Sxq2jeauDwIsq3RFiUz3/9uTUpwLAUFOHgM+Hwug=;
-        b=u8HnYF1U3U7RlF9pC2Sjt56WKwKMXSL+vFhBgpZaJ5rfEWZCpnz3TKslODpsWCKdAz
-         AomrT+5kzpXN3Y5ookkNsvibLYfeTxGOoEWJQj+K1Ugfu/hz4nmPAHecoe20pI7IeKY6
-         Bb7jD4YmmNulOijBkFP3IfqnBO2Xch4+iPglFKsGGOhz3/yGp4zXvLFtQ9Cpu6zItiyt
-         Unzik+TUxczq26pa41Ib8gih0ulK+sAEPZdE6G+Q82u5nIBC/HjSHhGn7hQbv7uPKKr3
-         eKTLDxya0ZqBYBEVaJbUi6fbujVhkcIcrJmkMci2X0kCcu8a54+OQgopT1ykXMMmoM5+
-         iFZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0wwzDyRFNXfvm/FMSU4ncwK07rCtqNDy1GXK+Prbyn43wlj98ekkZwXEdzfSZ8mrCG0QTvkaz4id6KIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKoGZmmAxcN+JaeR2EEilNF0n/F0HMQfSzsMBE1MoNPCzSeRu2
-	r6Fn+x0UNtbVDlK5MEKLF05naA+GeprNps7PDsVESmxPNW+vk9bzhfl9L/6eklpoydE=
-X-Gm-Gg: ASbGncvFh7D1A6D6k210IlvZzZH3nRBgPSV+FsT/fslFPcR4v6uR65Q+1PI9zNoiVJj
-	NIgow6JA6itRPRbsVsDQ0VBN2Tc3ScjLqBqtgW6oIICvoMS2BZ25iGqsJasC60KyqmdksBs36ko
-	fydVWxn9kBvej5BwOGaBI0G/yScX6MRYTQ1nrAzmEskQaxWAwaWpVJyULX6lH39VIjYQZUXqiCJ
-	Mw4eW9ziGIis5/qrf52/agt9IUc8tLZVCfyARL+H6a2Pdi3103Titwa6XhtuaubLmYBjk2sh62Q
-	9H8hGMw3EXr9td0mwWOm0yhOhyEYHYr8rePRATeL/lxfrczpkFjdUhLD48KXgXyWxW4IcBoXl5b
-	CXyrlziQdtRr5nlVuVzZvM64D/yqMcS46wK7nnXs1ngKZe14K/hEFZUQCQA6NowgQSbnDL/9zKm
-	4rx3u8ScJs2/w=
-X-Google-Smtp-Source: AGHT+IGNyrbP28TPNxoPwZO9FwODuDXd4rA8MhI1zvCQw4TzwS02DCNbsFRGuJzAypYvXf9n3XAkEA==
-X-Received: by 2002:a05:600c:34c2:b0:46e:21c8:ad37 with SMTP id 5b1f17b1804b1-46fa9b06d3dmr193578825e9.25.1760535738467;
-        Wed, 15 Oct 2025 06:42:18 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583335sm28846561f8f.18.2025.10.15.06.42.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 06:42:18 -0700 (PDT)
-Message-ID: <84f17b74-a3ea-46bd-a6d4-efa79c1cb43a@linaro.org>
-Date: Wed, 15 Oct 2025 14:42:16 +0100
+	 In-Reply-To:Content-Type; b=MD47XuAR9Iv8dzYOFFmr+OwvoeIh6ArqwI5h80zmuyGSr5LE5SeC6AhEe1O4isEY/HehUYiQs1hj5A05EBsKroiniQJSZeLKtSp2vla0EKruDFNuOxfj/OZcWDrhK5u8faCbBTssPm7aomVVSL548F06cxZHhUJ3SnL5++OdFYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxbiH3xN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E7CC4CEF8;
+	Wed, 15 Oct 2025 13:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760535754;
+	bh=wkUxCeKS5tD0TM2Xa5rZwhjOYyIU5mX+q32xBqCtYNc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GxbiH3xNbpYXlckAKeEZI2Vy25AQTsCbLGPTjeuIwpiKq9LBuFrZFvvRHWoRKge48
+	 zo7y/NnN6CVk1CGkU1BOxGCEvAOV1hd+hmgyDeik1S9GpudoDZm1YFYuncZQUuG5Aw
+	 l54fqsddOjch6OC2KrjiG4h4EhM3AqU+P417M4W2BcF+pZrSQPkqsp9dOYsbxvAy6k
+	 1MD9e0klNimLpH0iy7CCYij/fTBGzBwUMKO/9lMvV6ziHV4I3P8jx4lqUX7RzbTDek
+	 q9n/EYJJ7W7lr0jyTGsYakgDYpK4eTOx917wxo63rxya76tncX+fXD7l5MlxXAs6A1
+	 Shx3UhTqYGo+A==
+Message-ID: <4e64ba7c-18d6-42e0-8fb1-dc03ae0cfbd7@kernel.org>
+Date: Wed, 15 Oct 2025 08:42:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,35 +49,344 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] arm64: dts: qcom: qcs8300: Add CCI definitions
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
- quic_nihalkum@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ravi Shankar <quic_rshankar@quicinc.com>,
- Vishal Verma <quic_vishverm@quicinc.com>
-References: <20251015131303.2797800-1-quic_vikramsa@quicinc.com>
- <20251015131303.2797800-3-quic_vikramsa@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH V2] accel/amdxdna: Support getting last hardware error
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
+References: <20251014234119.628453-1-lizhi.hou@amd.com>
 Content-Language: en-US
-In-Reply-To: <20251015131303.2797800-3-quic_vikramsa@quicinc.com>
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20251014234119.628453-1-lizhi.hou@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 15/10/2025 14:13, Vikram Sharma wrote:
-> From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+On 10/14/25 6:41 PM, Lizhi Hou wrote:
+> Add new parameter DRM_AMDXDNA_HW_LAST_ASYNC_ERR to get array IOCTL. When
+> hardware reports an error, the driver save the error information and
+> timestamp. This new get array parameter retrieves the last error.
 > 
-> Qualcomm QCS8300 SoC contains 3 Camera Control Interface (CCI). Compared
-> to lemans, the key difference is in SDA/SCL GPIO assignments and number
-> of CCIs.
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 
-Codename should be "Lemans" and since you need to update the commit log 
-for this it should be "three Camera Control .."
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
-Assuming thats fixed.
+> ---
+>   drivers/accel/amdxdna/aie2_error.c      | 95 ++++++++++++++++++++-----
+>   drivers/accel/amdxdna/aie2_pci.c        |  3 +
+>   drivers/accel/amdxdna/aie2_pci.h        |  5 +-
+>   drivers/accel/amdxdna/amdxdna_error.h   | 59 +++++++++++++++
+>   drivers/accel/amdxdna/amdxdna_pci_drv.c |  3 +-
+>   include/uapi/drm/amdxdna_accel.h        | 13 ++++
+>   6 files changed, 159 insertions(+), 19 deletions(-)
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_error.h
+> 
+> diff --git a/drivers/accel/amdxdna/aie2_error.c b/drivers/accel/amdxdna/aie2_error.c
+> index 5ee905632a39..d452008ec4f4 100644
+> --- a/drivers/accel/amdxdna/aie2_error.c
+> +++ b/drivers/accel/amdxdna/aie2_error.c
+> @@ -13,6 +13,7 @@
+>   
+>   #include "aie2_msg_priv.h"
+>   #include "aie2_pci.h"
+> +#include "amdxdna_error.h"
+>   #include "amdxdna_mailbox.h"
+>   #include "amdxdna_pci_drv.h"
+>   
+> @@ -46,6 +47,7 @@ enum aie_module_type {
+>   	AIE_MEM_MOD = 0,
+>   	AIE_CORE_MOD,
+>   	AIE_PL_MOD,
+> +	AIE_UNKNOWN_MOD,
+>   };
+>   
+>   enum aie_error_category {
+> @@ -143,6 +145,31 @@ static const struct aie_event_category aie_ml_shim_tile_event_cat[] = {
+>   	EVENT_CATEGORY(74U, AIE_ERROR_LOCK),
+>   };
+>   
+> +static const enum amdxdna_error_num aie_cat_err_num_map[] = {
+> +	[AIE_ERROR_SATURATION] = AMDXDNA_ERROR_NUM_AIE_SATURATION,
+> +	[AIE_ERROR_FP] = AMDXDNA_ERROR_NUM_AIE_FP,
+> +	[AIE_ERROR_STREAM] = AMDXDNA_ERROR_NUM_AIE_STREAM,
+> +	[AIE_ERROR_ACCESS] = AMDXDNA_ERROR_NUM_AIE_ACCESS,
+> +	[AIE_ERROR_BUS] = AMDXDNA_ERROR_NUM_AIE_BUS,
+> +	[AIE_ERROR_INSTRUCTION] = AMDXDNA_ERROR_NUM_AIE_INSTRUCTION,
+> +	[AIE_ERROR_ECC] = AMDXDNA_ERROR_NUM_AIE_ECC,
+> +	[AIE_ERROR_LOCK] = AMDXDNA_ERROR_NUM_AIE_LOCK,
+> +	[AIE_ERROR_DMA] = AMDXDNA_ERROR_NUM_AIE_DMA,
+> +	[AIE_ERROR_MEM_PARITY] = AMDXDNA_ERROR_NUM_AIE_MEM_PARITY,
+> +	[AIE_ERROR_UNKNOWN] = AMDXDNA_ERROR_NUM_UNKNOWN,
+> +};
+> +
+> +static_assert(ARRAY_SIZE(aie_cat_err_num_map) == AIE_ERROR_UNKNOWN + 1);
+> +
+> +static const enum amdxdna_error_module aie_err_mod_map[] = {
+> +	[AIE_MEM_MOD] = AMDXDNA_ERROR_MODULE_AIE_MEMORY,
+> +	[AIE_CORE_MOD] = AMDXDNA_ERROR_MODULE_AIE_CORE,
+> +	[AIE_PL_MOD] = AMDXDNA_ERROR_MODULE_AIE_PL,
+> +	[AIE_UNKNOWN_MOD] = AMDXDNA_ERROR_MODULE_UNKNOWN,
+> +};
+> +
+> +static_assert(ARRAY_SIZE(aie_err_mod_map) == AIE_UNKNOWN_MOD + 1);
+> +
+>   static enum aie_error_category
+>   aie_get_error_category(u8 row, u8 event_id, enum aie_module_type mod_type)
+>   {
+> @@ -176,12 +203,40 @@ aie_get_error_category(u8 row, u8 event_id, enum aie_module_type mod_type)
+>   		if (event_id != lut[i].event_id)
+>   			continue;
+>   
+> +		if (lut[i].category > AIE_ERROR_UNKNOWN)
+> +			return AIE_ERROR_UNKNOWN;
+> +
+>   		return lut[i].category;
+>   	}
+>   
+>   	return AIE_ERROR_UNKNOWN;
+>   }
+>   
+> +static void aie2_update_last_async_error(struct amdxdna_dev_hdl *ndev, void *err_info, u32 num_err)
+> +{
+> +	struct aie_error *errs = err_info;
+> +	enum amdxdna_error_module err_mod;
+> +	enum aie_error_category aie_err;
+> +	enum amdxdna_error_num err_num;
+> +	struct aie_error *last_err;
+> +
+> +	last_err = &errs[num_err - 1];
+> +	if (last_err->mod_type >= AIE_UNKNOWN_MOD) {
+> +		err_num = aie_cat_err_num_map[AIE_ERROR_UNKNOWN];
+> +		err_mod = aie_err_mod_map[AIE_UNKNOWN_MOD];
+> +	} else {
+> +		aie_err = aie_get_error_category(last_err->row,
+> +						 last_err->event_id,
+> +						 last_err->mod_type);
+> +		err_num = aie_cat_err_num_map[aie_err];
+> +		err_mod = aie_err_mod_map[last_err->mod_type];
+> +	}
+> +
+> +	ndev->last_async_err.err_code = AMDXDNA_ERROR_ENCODE(err_num, err_mod);
+> +	ndev->last_async_err.ts_us = ktime_to_us(ktime_get_real());
+> +	ndev->last_async_err.ex_err_code = AMDXDNA_EXTRA_ERR_ENCODE(last_err->row, last_err->col);
+> +}
+> +
+>   static u32 aie2_error_backtrack(struct amdxdna_dev_hdl *ndev, void *err_info, u32 num_err)
+>   {
+>   	struct aie_error *errs = err_info;
+> @@ -264,29 +319,14 @@ static void aie2_error_worker(struct work_struct *err_work)
+>   	}
+>   
+>   	mutex_lock(&xdna->dev_lock);
+> +	aie2_update_last_async_error(e->ndev, info->payload, info->err_cnt);
+> +
+>   	/* Re-sent this event to firmware */
+>   	if (aie2_error_event_send(e))
+>   		XDNA_WARN(xdna, "Unable to register async event");
+>   	mutex_unlock(&xdna->dev_lock);
+>   }
+>   
+> -int aie2_error_async_events_send(struct amdxdna_dev_hdl *ndev)
+> -{
+> -	struct amdxdna_dev *xdna = ndev->xdna;
+> -	struct async_event *e;
+> -	int i, ret;
+> -
+> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+> -	for (i = 0; i < ndev->async_events->event_cnt; i++) {
+> -		e = &ndev->async_events->event[i];
+> -		ret = aie2_error_event_send(e);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>   void aie2_error_async_events_free(struct amdxdna_dev_hdl *ndev)
+>   {
+>   	struct amdxdna_dev *xdna = ndev->xdna;
+> @@ -341,6 +381,10 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
+>   		e->size = ASYNC_BUF_SIZE;
+>   		e->resp.status = MAX_AIE2_STATUS_CODE;
+>   		INIT_WORK(&e->work, aie2_error_worker);
+> +
+> +		ret = aie2_error_event_send(e);
+> +		if (ret)
+> +			goto free_wq;
+>   	}
+>   
+>   	ndev->async_events = events;
+> @@ -349,6 +393,8 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
+>   		 events->event_cnt, events->size);
+>   	return 0;
+>   
+> +free_wq:
+> +	destroy_workqueue(events->wq);
+>   free_buf:
+>   	dma_free_noncoherent(xdna->ddev.dev, events->size, events->buf,
+>   			     events->addr, DMA_FROM_DEVICE);
+> @@ -356,3 +402,18 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
+>   	kfree(events);
+>   	return ret;
+>   }
+> +
+> +int aie2_get_array_async_error(struct amdxdna_dev_hdl *ndev, struct amdxdna_drm_get_array *args)
+> +{
+> +	struct amdxdna_dev *xdna = ndev->xdna;
+> +
+> +	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+> +
+> +	args->num_element = 1;
+> +	args->element_size = sizeof(ndev->last_async_err);
+> +	if (copy_to_user(u64_to_user_ptr(args->buffer),
+> +			 &ndev->last_async_err, args->element_size))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
+> index 8a66f276100e..cfca4e456b61 100644
+> --- a/drivers/accel/amdxdna/aie2_pci.c
+> +++ b/drivers/accel/amdxdna/aie2_pci.c
+> @@ -924,6 +924,9 @@ static int aie2_get_array(struct amdxdna_client *client,
+>   	case DRM_AMDXDNA_HW_CONTEXT_ALL:
+>   		ret = aie2_query_ctx_status_array(client, args);
+>   		break;
+> +	case DRM_AMDXDNA_HW_LAST_ASYNC_ERR:
+> +		ret = aie2_get_array_async_error(xdna->dev_handle, args);
+> +		break;
+>   	default:
+>   		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
+>   		ret = -EOPNOTSUPP;
+> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
+> index 289a23ecd5f1..34bc35479f42 100644
+> --- a/drivers/accel/amdxdna/aie2_pci.h
+> +++ b/drivers/accel/amdxdna/aie2_pci.h
+> @@ -190,6 +190,8 @@ struct amdxdna_dev_hdl {
+>   
+>   	enum aie2_dev_status		dev_status;
+>   	u32				hwctx_num;
+> +
+> +	struct amdxdna_async_error	last_async_err;
+>   };
+>   
+>   #define DEFINE_BAR_OFFSET(reg_name, bar, reg_addr) \
+> @@ -253,8 +255,9 @@ void aie2_psp_stop(struct psp_device *psp);
+>   /* aie2_error.c */
+>   int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev);
+>   void aie2_error_async_events_free(struct amdxdna_dev_hdl *ndev);
+> -int aie2_error_async_events_send(struct amdxdna_dev_hdl *ndev);
+>   int aie2_error_async_msg_thread(void *data);
+> +int aie2_get_array_async_error(struct amdxdna_dev_hdl *ndev,
+> +			       struct amdxdna_drm_get_array *args);
+>   
+>   /* aie2_message.c */
+>   int aie2_suspend_fw(struct amdxdna_dev_hdl *ndev);
+> diff --git a/drivers/accel/amdxdna/amdxdna_error.h b/drivers/accel/amdxdna/amdxdna_error.h
+> new file mode 100644
+> index 000000000000..c51de86ec12b
+> --- /dev/null
+> +++ b/drivers/accel/amdxdna/amdxdna_error.h
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
+> + */
+> +
+> +#ifndef _AMDXDNA_ERROR_H_
+> +#define _AMDXDNA_ERROR_H_
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +
+> +#define AMDXDNA_ERR_DRV_AIE		4
+> +#define AMDXDNA_ERR_SEV_CRITICAL	3
+> +#define AMDXDNA_ERR_CLASS_AIE		2
+> +
+> +#define AMDXDNA_ERR_NUM_MASK		GENMASK_U64(15, 0)
+> +#define AMDXDNA_ERR_DRV_MASK		GENMASK_U64(23, 16)
+> +#define AMDXDNA_ERR_SEV_MASK		GENMASK_U64(31, 24)
+> +#define AMDXDNA_ERR_MOD_MASK		GENMASK_U64(39, 32)
+> +#define AMDXDNA_ERR_CLASS_MASK		GENMASK_U64(47, 40)
+> +
+> +enum amdxdna_error_num {
+> +	AMDXDNA_ERROR_NUM_AIE_SATURATION = 3,
+> +	AMDXDNA_ERROR_NUM_AIE_FP,
+> +	AMDXDNA_ERROR_NUM_AIE_STREAM,
+> +	AMDXDNA_ERROR_NUM_AIE_ACCESS,
+> +	AMDXDNA_ERROR_NUM_AIE_BUS,
+> +	AMDXDNA_ERROR_NUM_AIE_INSTRUCTION,
+> +	AMDXDNA_ERROR_NUM_AIE_ECC,
+> +	AMDXDNA_ERROR_NUM_AIE_LOCK,
+> +	AMDXDNA_ERROR_NUM_AIE_DMA,
+> +	AMDXDNA_ERROR_NUM_AIE_MEM_PARITY,
+> +	AMDXDNA_ERROR_NUM_UNKNOWN = 15,
+> +};
+> +
+> +enum amdxdna_error_module {
+> +	AMDXDNA_ERROR_MODULE_AIE_CORE = 3,
+> +	AMDXDNA_ERROR_MODULE_AIE_MEMORY,
+> +	AMDXDNA_ERROR_MODULE_AIE_SHIM,
+> +	AMDXDNA_ERROR_MODULE_AIE_NOC,
+> +	AMDXDNA_ERROR_MODULE_AIE_PL,
+> +	AMDXDNA_ERROR_MODULE_UNKNOWN = 8,
+> +};
+> +
+> +#define AMDXDNA_ERROR_ENCODE(err_num, err_mod)				\
+> +	(FIELD_PREP(AMDXDNA_ERR_NUM_MASK, err_num) |			\
+> +	 FIELD_PREP_CONST(AMDXDNA_ERR_DRV_MASK, AMDXDNA_ERR_DRV_AIE) |	\
+> +	 FIELD_PREP_CONST(AMDXDNA_ERR_SEV_MASK, AMDXDNA_ERR_SEV_CRITICAL) | \
+> +	 FIELD_PREP(AMDXDNA_ERR_MOD_MASK, err_mod) |			\
+> +	 FIELD_PREP_CONST(AMDXDNA_ERR_CLASS_MASK, AMDXDNA_ERR_CLASS_AIE))
+> +
+> +#define AMDXDNA_EXTRA_ERR_COL_MASK	GENMASK_U64(7, 0)
+> +#define AMDXDNA_EXTRA_ERR_ROW_MASK	GENMASK_U64(15, 8)
+> +
+> +#define AMDXDNA_EXTRA_ERR_ENCODE(row, col)				\
+> +	(FIELD_PREP(AMDXDNA_EXTRA_ERR_COL_MASK, col) |			\
+> +	 FIELD_PREP(AMDXDNA_EXTRA_ERR_ROW_MASK, row))
+> +
+> +#endif /* _AMDXDNA_ERROR_H_ */
+> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+> index aa04452310e5..696fdac8ad3c 100644
+> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
+> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+> @@ -27,9 +27,10 @@ MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
+>   /*
+>    * 0.0: Initial version
+>    * 0.1: Support getting all hardware contexts by DRM_IOCTL_AMDXDNA_GET_ARRAY
+> + * 0.2: Support getting last error hardware error
+>    */
+>   #define AMDXDNA_DRIVER_MAJOR		0
+> -#define AMDXDNA_DRIVER_MINOR		1
+> +#define AMDXDNA_DRIVER_MINOR		2
+>   
+>   /*
+>    * Bind the driver base on (vendor_id, device_id) pair and later use the
+> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
+> index a1fb9785db77..c7eec9ceb2ae 100644
+> --- a/include/uapi/drm/amdxdna_accel.h
+> +++ b/include/uapi/drm/amdxdna_accel.h
+> @@ -523,7 +523,20 @@ struct amdxdna_drm_hwctx_entry {
+>   	__u32 pad;
+>   };
+>   
+> +/**
+> + * struct amdxdna_async_error - XDNA async error structure
+> + */
+> +struct amdxdna_async_error {
+> +	/** @err_code: Error code. */
+> +	__u64 err_code;
+> +	/** @ts_us: Timestamp. */
+> +	__u64 ts_us;
+> +	/** @ex_err_code: Extra error code */
+> +	__u64 ex_err_code;
+> +};
+> +
+>   #define DRM_AMDXDNA_HW_CONTEXT_ALL	0
+> +#define DRM_AMDXDNA_HW_LAST_ASYNC_ERR	2
+>   
+>   /**
+>    * struct amdxdna_drm_get_array - Get information array.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
