@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-854887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759E4BDFAEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:36:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E89BDFB00
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA05119C71C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:36:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C617F503DEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFF22D593B;
-	Wed, 15 Oct 2025 16:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A63376B9;
+	Wed, 15 Oct 2025 16:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0oNVvXQ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oC8FmeTe"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454C5337685
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFC328D8DA
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760546167; cv=none; b=snWPpT5oVUE2pF43z5K6JCJAcEKdA8oc1W/5VqjNfBmo2Pxoqdg2Rk5BATSO2GyUv1uJWSReDLWqm2bC9LSRi8MKPCYcWXlHDaf5Io3Nl8SgTFCWnizF3tTU805+z2ou0kfOktYgglc2iZZVMcfP6Lyp9BU/Pbc0m1I70zkU/0A=
+	t=1760546191; cv=none; b=rngzjGtnbEzZ2VhSIsnqKn48ywv4GVS9Iz89nUlPEwoEkNJjS2doits2Q/49P/9CMlow65EefB68Wg6nnrZ/fO+Ts+DwHnu034ARWNbmEXOValp+p8KNcKUks5u0kr1UYOWSIMzlhzWJE6sqhOFXP96c8PyO6caYSCO1zUz/eoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760546167; c=relaxed/simple;
-	bh=xH40ds73k+2XlYhTO+MkHbE0jGwPWYCtKVwxkuUpaVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LeTuwScb+RjBQw4RHLIvv9jjEzJ494eovbCBy8fqoXdvDrJbFdTlJCKWp82BPgSOcBl0xF3vT1czyU5GEH41klU23ZBo+Rx/Rrii8MyXedEJDaJlO7Gw0lTZ80rDUAR83Zx+8BkNnso0k/gmH4b6UFt+J9QUHwPM6mnzI0Ox+VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0oNVvXQ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339e71ccf48so9466989a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:36:06 -0700 (PDT)
+	s=arc-20240116; t=1760546191; c=relaxed/simple;
+	bh=xyZHNhiJS/pHhq2vsxbLXqxnAxxt00CfAgWHeW4ulKQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=uGcJKmpq5jduQsgh6fVpT6h7w7v6pMLX6sDCy8PaHvqbrbJpyA1HraWCE/9hulH7pRckNHmdB1TdzdAT2WPX+zaqourryTN+DjBKtoYFYD0LcpCNXcYsq5npnPu7lfgAhUIMBRui/DKGeANrnnBYNGfQbm+8Lw6pyzzWK6KBs8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oC8FmeTe; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f7469so47316325e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760546165; x=1761150965; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1760546187; x=1761150987; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pkn+CqkssDx8H+vXeI6R3v2XcqWE9l2NOxynVDwDTlI=;
-        b=k0oNVvXQLiHvQYjLFNQ87ElZq4C42/eyoPEuxcBR6dYuYolDFxM06MmV7EzetI92aE
-         bduTm/PHLuBaHgPlua9d3yPKLt16KuGqSWDm4nCP929mIcpdAXHPD5crAZ2/PHtEhi66
-         5AZXsaiLceqBPmWP1/oYB+yWpFGNQIZ+pTHasR+RUrWKBi/FTqF/gu/V02NBmVrRI24w
-         7a9PguXhUpV0tCtjxfCHqSj9NXD1J1U2QG19S4FPvaVDAAmBX+ahJPX5BSpNrNiZ2ShN
-         Wf0AZMy56hDiAQKR6xMbc+bTWn8MxQEBkM3Io1UiXL6Bp4nA7anwF9bGScAlf3ewLcaz
-         h/Rw==
+        bh=J/6PIHQYpxFdcD3g1Rb8LKFnlbKq4ABhAEEAfugnKj4=;
+        b=oC8FmeTeCyfVOQsBN63xBIgkfByxyiOlGP51OSIMZqCLycjDVO0Tv2ejEKLyEbyuGR
+         YoP0Wn4P+g52AEG6x1em/qhXtvtssv6DVeycUqZpQfngKgL7Uz4Is+07LiGgb5zu3tuH
+         oPDDvbF3+ipN9NUQS0ymPARy0P2HYyOcpfSlCV2IJLw1Wb1+kTdUZzNne9syb9TdEyTN
+         OJ8u5GPZioMlNa9nH2HGvgTNsPOeP9IvuOuD+O/uJ+sLe6jfFna1olKNMejsJMUqi50x
+         +qUaqmxWsbd/92MrnuTKuGpsttnJD+ZypNN3j2z602nDwV5iQN/hSXdDE+c3Pl20CaEs
+         MTpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760546165; x=1761150965;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pkn+CqkssDx8H+vXeI6R3v2XcqWE9l2NOxynVDwDTlI=;
-        b=lkNq6/DWDUs0Ek3MAjxvs+6PQkK3KL0YXxrh5PooQnquV6iK5ONco0tPe1SoGQuNMe
-         90KhiUTKWadZpBdy4CphwmPFlGsNtEPNnJS2amKdC6pzkw+MxKr6mKXcDnMv5foEKjYQ
-         3f26/JKh1GdNj+N1Ed/rL5Mugfe1NL1fLPt0Eme10z5aqQZKCGfboeWJtakxBjEBKJvP
-         qYlpfZZWhU81nFSqCv9aVNdy9MQw4eZe4PovFVTRX82QKGIhSLkcLVxls6N7gmC5P6id
-         vTzQ5AOQL4ku+/u481Li3qiDZlOkRRhsN1mRyEdSNd4kvt57w+USbSJ95OmWB0njzz5M
-         2PkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1yFkhqJ2wQ90JlWQQ0rxCzMw0v7w0ZM0All46YXJ+fi44dykJBfkwdNwScBnmwViPYFcMBJSpRxMmtW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr6Uxl0rFliD4FK4P5ZXNZ/qtnDwxLrcILeTM9sKByJteiT34E
-	rES+o9Xdmm6/eBFO6BKJua7r5pqHbVwLa/NBKr+T0HpsSxJKfXCUVphMKeHO1c93n61svmG0ACE
-	udIrT1f7CbSE5uL5YG0RhpWaND1rc6X4=
-X-Gm-Gg: ASbGncvd/XcftKMOsLVongWV39kf4QC/LFNDJMgF3hh8Zhh697OLT42SIpVkFNDcX0g
-	asLCJcVLKngvtFOh8+V9Kmp1tZZRPazaKAP2WTfu3znZWp9HQwvzCtc7i25qoGmsbA038/d8KvM
-	DTM9qlqmJ3aLfr6XVPQlxhtQrg0EcXcMebAWZtm9oXeiS/vptQYJfiGhjPsTdA6s4wExpfET11w
-	isiOMzsx0A+w7Nhy41ssZ+n5shlxoXtsQ8AdnpP1AqqQGbYgdNDlKPEh5TrjYc=
-X-Google-Smtp-Source: AGHT+IFGNrAI2dq3NSrRL0OcSYM4Z5okAFYQKhuh27ccqKymPLtZeC7L6zTwS+qJQzu1LIvsGty8JwB7F48ezlC7tv0=
-X-Received: by 2002:a17:90b:3ec6:b0:339:ec9c:b26d with SMTP id
- 98e67ed59e1d1-33b510f8488mr41389554a91.8.1760546165323; Wed, 15 Oct 2025
- 09:36:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760546187; x=1761150987;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=J/6PIHQYpxFdcD3g1Rb8LKFnlbKq4ABhAEEAfugnKj4=;
+        b=lzN5cHC6LpQLBGrewc3hLWEQkTE/P0u7GFCHZguNMEAt+W2Sc1+79HA6fCpvHERvz+
+         z50Qxsjd944Jd5mzaWVqjSXb++uwIWNAGzjWoQY4bQKbM77UkDt4T87YwL6R48DWYktp
+         AwM21HVDigHfSRyHYTGKNaCmtYgoworj+zrv+aHIRGqJ2b5Q1AYOF7VdhJDCjuDsKogO
+         1PF26gU3sudSpfPCQkJ1aZvCfboJVC20TR8bug1sSKbjoknIfOmOFruCBeKldi6wpfB/
+         tgji1nfOIXyIoa3rbXLM+FikjnVyotdJdRDh9pUeR7unr1cQSXJjeCIzxTBBiZFoYOvt
+         jXFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXl+xSWcparDTp9+ibgO0VGCuK6JK8JsQTwaa73R0WEQzU5okrKuPiUARg0TOzwB0AXx0aP1ogpf3rMAsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUP9Q49RUwMSTAQx47VJZ7bioQ8NbcK5R8s2f2foGVKIIPWmUr
+	mZJioj62cluKCF7VCL1uC5Kb0CK9AhlO746pZVB5QdYuYCYxlLbMh88KoLzhnD0P5iVxkjAr5AF
+	JzsDm
+X-Gm-Gg: ASbGncvb26tb9unc6R0+bzvJMrGCVwgtl63Mpm4ws0/Tc7NXGNyk529f63cB1pPzLzK
+	6fmmHHEHIvRMEVdRshiglylmnZUSCsDu50zmSGP5zvjw7LiRnUFw9vgpojkaxJUqB5wBglNrmhe
+	xY9msJzzwBEUZE33RgqqqU2Hdhoe2a6DbDQ5+cX2DxprQXTBslFtOznyWkIf8z6WCsE48E7lfLV
+	3a4pugA4mkfVU2kr4NPj3fhCmwlj/X4LGXOrDWRLDTOkIA+Ij9pwAf1BiXbLBDHwx/TeAQJx5E9
+	rmg9M+9cajn0uYGiRZbmk4QoFWdQGhubyt9iZ0gzx1BwR4HdLoTeFTXGE8yoDDdk1kZW98SUiXV
+	dcCNFLT+p8yCG4YRVNdO9sgOid1oa2IZZjNaLKbtrC3M0fgXL
+X-Google-Smtp-Source: AGHT+IGVsX4Z6gvhEdWFe8CVNUsZF7cB3CGnm3rlIg452iDvItLU2/Uzxwubc3knG3XtRNgXtynQjw==
+X-Received: by 2002:a05:6000:2910:b0:405:3028:1bf2 with SMTP id ffacd0b85a97d-4266e8db2abmr17050645f8f.62.1760546187091;
+        Wed, 15 Oct 2025 09:36:27 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:da1:8747:bd91:8232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce57d3b9sm30734345f8f.11.2025.10.15.09.36.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 09:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251015141716.887-1-laoar.shao@gmail.com> <20251015141716.887-7-laoar.shao@gmail.com>
-In-Reply-To: <20251015141716.887-7-laoar.shao@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 15 Oct 2025 09:35:52 -0700
-X-Gm-Features: AS18NWADyZQhCWHApHI8yY-s9dj0g7hVHDNjJ__LLzs5iWjWLcNDNGLGYWesqlU
-Message-ID: <CAEf4BzZYk+LyR0WTQ+TinEqC0Av8MuO-tKxqhEFbOw=Gu+D_gQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v10 mm-new 6/9] bpf: mark mm->owner as __safe_rcu_or_null
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, hannes@cmpxchg.org, usamaarif642@gmail.com, 
-	gutierrez.asier@huawei-partners.com, willy@infradead.org, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, ameryhung@gmail.com, 
-	rientjes@google.com, corbet@lwn.net, 21cnbao@gmail.com, 
-	shakeel.butt@linux.dev, tj@kernel.org, lance.yang@linux.dev, 
-	rdunlap@infradead.org, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 15 Oct 2025 17:36:25 +0100
+Message-Id: <DDJ1JCEPQA0S.2BS91YGW605E5@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Vinod Koul" <vkoul@kernel.org>
+Cc: "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Patrick Lai"
+ <plai@qti.qualcomm.com>, "Annemarie Porter" <annemari@quicinc.com>,
+ <srinivas.kandagatla@oss.qualcomm.com>, <linux-sound@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>, <kernel@oss.qualcomm.com>,
+ "Ekansh Gupta" <ekansh.gupta@oss.qualcomm.com>, "Pierre-Louis Bossart"
+ <pierre-louis.bossart@linux.dev>
+Subject: Re: [PATCH v3 1/3] ALSA: compress: add raw opus codec define and
+ opus decoder structs
+X-Mailer: aerc 0.20.0
+References: <20250917-opus_codec_rfc_v1-v3-0-7737ad40132e@linaro.org>
+ <20250917-opus_codec_rfc_v1-v3-1-7737ad40132e@linaro.org>
+ <aMuTyZy50IvpAEG9@vaman>
+In-Reply-To: <aMuTyZy50IvpAEG9@vaman>
 
-On Wed, Oct 15, 2025 at 7:18=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com> =
-wrote:
+On Thu Sep 18, 2025 at 6:08 AM BST, Vinod Koul wrote:
+> On 17-09-25, 08:32, Alexey Klimov wrote:
+>> Adds a raw opus codec define and raw opus decoder structs.
+>> This is for raw OPUS packets not packed in any type of container
+>> (for instance OGG container). The decoder struct fields are
+>> taken from corresponding RFC document: RFC 7845 Section 5.
+>>=20
+>> Cc: Srinivas Kandagatla <srini@kernel.org>
+>> Cc: Vinod Koul <vkoul@kernel.org>
+>> Co-developed-by: Annemarie Porter <annemari@quicinc.com>
+>> Signed-off-by: Annemarie Porter <annemari@quicinc.com>
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>> ---
+>>  include/uapi/sound/compress_params.h | 43 +++++++++++++++++++++++++++++=
+++++++-
+>>  1 file changed, 42 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/c=
+ompress_params.h
+>> index bc7648a30746f4632ecf6695868e79550a431dfa..faf4fa911f7fc2830c3ae42b=
+93650fe40d8a776b 100644
+>> --- a/include/uapi/sound/compress_params.h
+>> +++ b/include/uapi/sound/compress_params.h
+>> @@ -43,7 +43,8 @@
+>>  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
+>>  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
+>>  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
+>> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
+>> +#define SND_AUDIOCODEC_OPUS_RAW              ((__u32) 0x00000011)
+>> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_OPUS_RAW
+>> =20
+>>  /*
+>>   * Profile and modes are listed with bit masks. This allows for a
+>> @@ -324,6 +325,45 @@ struct snd_dec_ape {
+>>  	__u32 seek_table_present;
+>>  } __attribute__((packed, aligned(4)));
+>> =20
+>> +/**
+>> + * struct snd_dec_opus - Opus decoder parameters (raw opus packets)
+>> + * @version: Usually should be '1' but can be split into major (4 upper=
+ bits)
+>> + * and minor (4 lower bits) sub-fields.
 >
-> When CONFIG_MEMCG is enabled, we can access mm->owner under RCU. The
-> owner can be NULL. With this change, BPF helpers can safely access
-> mm->owner to retrieve the associated task from the mm. We can then make
-> policy decision based on the task attribute.
->
-> The typical use case is as follows,
->
->   bpf_rcu_read_lock(); // rcu lock must be held for rcu trusted field
->   @owner =3D @mm->owner; // mm_struct::owner is rcu trusted or null
->   if (!@owner)
->       goto out;
->
->   /* Do something based on the task attribute */
->
-> out:
->   bpf_rcu_read_unlock();
->
-> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  kernel/bpf/verifier.c | 3 +++
->  1 file changed, 3 insertions(+)
->
+> Please clarify, if that should be 1.0 so a value of 0x10
 
-I thought you were going to send this and next patches outside of your
-thp patch set to land them sooner, as they don't have dependency on
-the rest of the patches and are useful on their own?
+Sorry for the delay.
+So the spec says that the value must be '1' for 8-bit field for that
+version of specification which it seems it should be 0x1.
+The spliting into two 4-bit fields is for backward compatibility and
+in such case any version in minor fields will be accepted (15 or less).
+Anything starting with version 16 or 0x10 is treated as incompatible
+version for this version of spec.
 
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index c4f69a9e9af6..d400e18ee31e 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -7123,6 +7123,9 @@ BTF_TYPE_SAFE_RCU(struct cgroup_subsys_state) {
->  /* RCU trusted: these fields are trusted in RCU CS and can be NULL */
->  BTF_TYPE_SAFE_RCU_OR_NULL(struct mm_struct) {
->         struct file __rcu *exe_file;
-> +#ifdef CONFIG_MEMCG
-> +       struct task_struct __rcu *owner;
-> +#endif
->  };
->
->  /* skb->sk, req->sk are not RCU protected, but we mark them as such
-> --
-> 2.47.3
->
+Well, at least that's how I understand the spec.
+Value 0x10 in this case seems to signal incompatibility unless I am
+missing something?
+
+Thanks,
+Alexey
+
+
+
 
