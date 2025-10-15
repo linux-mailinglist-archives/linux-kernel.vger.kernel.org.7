@@ -1,56 +1,67 @@
-Return-Path: <linux-kernel+bounces-855363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3D0BE1028
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:18:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A11BE102E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44FE482CC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F261C482C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198A930BBB7;
-	Wed, 15 Oct 2025 23:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35541306495;
+	Wed, 15 Oct 2025 23:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W38opNAC"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEY318jL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7382D4B7A
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 23:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B16213E9C;
+	Wed, 15 Oct 2025 23:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760570303; cv=none; b=Ep/0oIixtidLR49y9N/+c8EmwXu3zGYHRlE2/iabYlnMbiCJAtRUny11Z7gy+lCOxZwEahFqz+fmqZRkAt6Q0B+bx24oHeCX6KMlThOrEXhegihomOsVCwWIQYxRSk0Epybk46booXO5m36LVXUnU+lL9MJkd1SIDuZVKG0rxc4=
+	t=1760570374; cv=none; b=UrvDgpbl9FcLs0CDvJQcSg9wup2u1ONfLXC/JDaIky/Kpo0kv6w9BldJZgOnn3fDnoclWSDJ/aW7mPRXjWXztgpDwz/yIIrpQdwM9EpxkV4mD2J623lc+62ylc/fYDIGS2L+A2Rvf4bOR8GRmo7CrFJEBmu8NLhBKmT86zLvXQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760570303; c=relaxed/simple;
-	bh=e/h0ndzeV7Ib47ZmHsSQOQubBr3CKZlr/pkqecfFeb0=;
+	s=arc-20240116; t=1760570374; c=relaxed/simple;
+	bh=QPlLDwRDlp/Frp+LN0ggOfuaiDdjLzUbhrCj6gffgr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulsr6QJJP7yRk8xRwrJnX5osa/TBWgKehtgO9tX7DYWa3KL0dxeH6nnjcL79UGmOrLKZwvrk1p5yNgy9Cxf/IFZ4eDkaDrP8XmhWjjTjCOlbPEaohZ9M3j7td7LmC4jLRxhA+abKmA/zZpHl1PmOJNZ0/QYhbc5QKfdZSMnh67k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W38opNAC; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 15 Oct 2025 16:17:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760570287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0uBjbFB8TPeE1gahyDYnX1z/Z4HIYIQ/tWnWdhuezaM=;
-	b=W38opNACFB8YHAPsyJLA+361VAldOqeOmEf4d1uSLMK8ck0qLB3TyQP1pkt54brWK1S5x4
-	X2FawelaGsALDLREBoxrMz8KTm1+BIle9V6op6NJYEtYyIwPj7czciZDzafnmcVBx5CaL4
-	Da+iDlZwjWZl5uPjlZCU5ZVOrkLoUYk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: JP Kobryn <inwardvessel@gmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, mkoutny@suse.com, 
-	yosryahmed@google.com, hannes@cmpxchg.org, tj@kernel.org, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org, 
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 2/2] memcg: selftests for memcg stat kfuncs
-Message-ID: <3lhd7qnv425xhj6ivbjxeecybkzid3tfjegnk77kdydmkldnzw@6r4lj7jmpupc>
-References: <20251015190813.80163-1-inwardvessel@gmail.com>
- <20251015190813.80163-3-inwardvessel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ce+DsPiJttuDgxQh8s4DlR43/C6kZWnhxlSI6gWJWKQMB27KtN7Xmzxotcu8hscxxIXl+SXHGLlXS51eNlisRmrsdu+1LCxGbpOX/72zFcHGCitj5F07354HQP1G41lsEyzWXTkUmi9SnAM4p62GBLbHgh6/gjGkTTLth6rWt2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEY318jL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EEFC4CEF8;
+	Wed, 15 Oct 2025 23:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760570374;
+	bh=QPlLDwRDlp/Frp+LN0ggOfuaiDdjLzUbhrCj6gffgr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uEY318jL3n0jXW3K6H3CazFU8ipicvSWz+sy5ONQwDkxj1OcSxrCJqzpFiG4V6+k4
+	 6NS3Ek8t+DHhEb9Ny/uF2RpjrPyooX6ML3y3bO9HnxyexYJZsxND4sjQcrl2DIvxn7
+	 m2jG7/lkiQ5LWIspKq+uYKnWSCyRyZ6DrUGF2GL5zN8qbdWBxsD79rBvakMf6EwqXn
+	 OM2CykxMcteCSmcrWdSXAIK4ylVmJEqCck72HsSPZFVC3RClUExvxfEbS125AESkDg
+	 4Dr+6T4dlvHNScHGMAEjFl66/a/A94fMVeVEauCerOisaQgKr8xCbDN31yyR/Lkgrs
+	 TPQXR1BL68+1g==
+Date: Wed, 15 Oct 2025 16:19:28 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v9 4/4] tracing: Add warnings for unused tracepoints for
+ modules
+Message-ID: <20251015231928.GC3943617@ax162>
+References: <20251015203842.618059565@kernel.org>
+ <20251015203924.731213165@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,196 +70,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015190813.80163-3-inwardvessel@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20251015203924.731213165@kernel.org>
 
-On Wed, Oct 15, 2025 at 12:08:13PM -0700, JP Kobryn wrote:
-> Add test coverage for the kfuncs that fetch memcg stats. Using some common
-> stats, test before and after scenarios ensuring that the given stat
-> increases by some arbitrary amount. The stats selected cover the three
-> categories represented by the enums: node_stat_item, memcg_stat_item,
-> vm_event_item.
-> 
-> Since only a subset of all stats are queried, use a static struct made up
-> of fields for each stat. Write to the struct with the fetched values when
-> the bpf program is invoked and read the fields in the user mode program for
-> verification.
-> 
-> Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
-> ---
->  .../testing/selftests/bpf/cgroup_iter_memcg.h |  18 ++
->  .../bpf/prog_tests/cgroup_iter_memcg.c        | 295 ++++++++++++++++++
->  .../selftests/bpf/progs/cgroup_iter_memcg.c   |  61 ++++
->  3 files changed, 374 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/cgroup_iter_memcg.h
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c
->  create mode 100644 tools/testing/selftests/bpf/progs/cgroup_iter_memcg.c
-> 
-> diff --git a/tools/testing/selftests/bpf/cgroup_iter_memcg.h b/tools/testing/selftests/bpf/cgroup_iter_memcg.h
-> new file mode 100644
-> index 000000000000..5f4c6502d9f1
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/cgroup_iter_memcg.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-> +#ifndef __CGROUP_ITER_MEMCG_H
-> +#define __CGROUP_ITER_MEMCG_H
-> +
-> +struct memcg_query {
-> +	/* some node_stat_item's */
-> +	long nr_anon_mapped;
-> +	long nr_shmem;
-> +	long nr_file_pages;
-> +	long nr_file_mapped;
-> +	/* some memcg_stat_item */
-> +	long memcg_kmem;
-> +	/* some vm_event_item */
-> +	long pgfault;
-> +};
-> +
-> +#endif /* __CGROUP_ITER_MEMCG_H */
-> diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c b/tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c
-> new file mode 100644
-> index 000000000000..264dc3c9ec30
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/prog_tests/cgroup_iter_memcg.c
-> @@ -0,0 +1,295 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-> +#include <test_progs.h>
-> +#include <bpf/libbpf.h>
-> +#include <bpf/btf.h>
-> +#include <fcntl.h>
-> +#include <sys/mman.h>
-> +#include <unistd.h>
-> +#include "cgroup_helpers.h"
-> +#include "cgroup_iter_memcg.h"
-> +#include "cgroup_iter_memcg.skel.h"
-> +
-> +int read_stats(struct bpf_link *link)
-> +{
-> +	int fd, ret = 0;
-> +	ssize_t bytes;
-> +
-> +	fd = bpf_iter_create(bpf_link__fd(link));
+Hi Steve,
 
-Do we need to create a new fd for every new stat read? Is there lseek()
-like approach possible here?
+On Wed, Oct 15, 2025 at 04:38:46PM -0400, Steven Rostedt wrote:
+> diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
+> index 542ba462ed3e..6f909979af91 100644
+> --- a/scripts/Makefile.modfinal
+> +++ b/scripts/Makefile.modfinal
+> @@ -28,6 +28,12 @@ ccflags-remove-y := $(CC_FLAGS_CFI)
+>  .module-common.o: $(srctree)/scripts/module-common.c FORCE
+>  	$(call if_changed_rule,cc_o_c)
+>  
+> +ifneq ($(WARN_ON_UNUSED_TRACEPOINTS),"")
 
-> +	if (!ASSERT_OK_FD(fd, "bpf_iter_create"))
-> +		return 1;
+Drop the "", nowhere else in Kbuild appears to do this.
+
+> +cmd_check_tracepoint = ${objtree}/scripts/tracepoint-update $<;
+
+Please use $(objtree) to be consistent with the rest of Kbuild.
+
+> +else
+> +cmd_check_tracepoint =
+> +endif
 > +
+>  quiet_cmd_ld_ko_o = LD [M]  $@
+>        cmd_ld_ko_o =							\
+>  	$(LD) -r $(KBUILD_LDFLAGS)					\
+> @@ -57,6 +63,7 @@ if_changed_except = $(if $(call newer_prereqs_except,$(2))$(cmd-check),      \
+>  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
+>  	+$(if $(newer-prereqs),$(call cmd,btf_ko))
+>  endif
+> +	+$(call cmd,check_tracepoint)
+>  
+>  targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) .module-common.o
+>  
+> diff --git a/scripts/tracepoint-update.c b/scripts/tracepoint-update.c
+> index 6ec30f39d0ad..7e068de9c7f1 100644
+> --- a/scripts/tracepoint-update.c
+> +++ b/scripts/tracepoint-update.c
+> @@ -188,6 +188,13 @@ static int process_tracepoints(void *addr, char const *const fname)
+>  		}
+>  	}
+>  
 > +	/*
-> +	 * Invoke iter program by reading from its fd. We're not expecting any
-> +	 * data to be written by the bpf program so the result should be zero.
-> +	 * Results will be read directly through the custom data section
-> +	 * accessible through skel->data_query.memcg_query.
+> +	 * Modules may not have either section. But if it has one section,
+> +	 * it should have both of them.
 > +	 */
-> +	bytes = read(fd, NULL, 0);
-> +	if (!ASSERT_EQ(bytes, 0, "read fd"))
-> +		ret = 1;
-> +
-> +	close(fd);
-> +	return ret;
-> +}
+> +	if (!check_data_sec && !tracepoint_data_sec)
+> +		return 0;
 > +
 
-[...]
+This feels like it could be its own patch but I guess it does not make
+much sense without enablement. It might be worth calling this out a bit
+more in the commit message.
 
-> +static void test_shmem(struct bpf_link *link,
-> +		struct memcg_query *memcg_query)
-> +{
-> +	size_t len;
-> +	int fd;
-> +	void *map;
-> +	long val;
-> +
-> +	len = sysconf(_SC_PAGESIZE) * 1024;
-> +
-> +	if (!ASSERT_OK(read_stats(link), "read stats"))
-> +		return;
-> +
-> +	val = memcg_query->nr_shmem;
-> +	if (!ASSERT_GE(val, 0, "init shmem val"))
-> +		return;
-> +
-> +	/*
-> +	 * Increase memcg shmem usage by creating and writing
-> +	 * to a shmem object.
-> +	 */
-> +	fd = shm_open("/tmp_shmem", O_CREAT | O_RDWR, 0644);
-> +	if (!ASSERT_OK_FD(fd, "shm_open"))
-> +		return;
-> +
-> +	if (!ASSERT_OK(ftruncate(fd, len), "ftruncate"))
-> +		goto cleanup_fd;
-> +
-> +	map = mmap(NULL, len, PROT_READ | PROT_WRITE,
-> +			MAP_SHARED, fd, 0);
-
-You don't need to mmap(), you can just fallocate() or simply write to
-increase shmem stats.
-
-> +	if (!ASSERT_NEQ(map, MAP_FAILED, "mmap shmem"))
-> +		goto cleanup_fd;
-> +
-> +	memset(map, 1, len);
-> +
-> +	if (!ASSERT_OK(read_stats(link), "read stats"))
-> +		goto cleanup_map;
-> +
-> +	ASSERT_GT(memcg_query->nr_shmem, val, "final shmem value");
-> +
-> +cleanup_map:
-> +	munmap(map, len);
-> +cleanup_fd:
-> +	close(fd);
-> +	shm_unlink("/tmp_shmem");
-> +}
-> +
-> +static void test_kmem(struct bpf_link *link,
-> +		struct memcg_query *memcg_query)
-> +{
-> +	int fds[2];
-> +	int err;
-> +	ssize_t bytes;
-> +	size_t len;
-> +	char *buf;
-> +	long val;
-> +
-> +	len = sysconf(_SC_PAGESIZE) * 1024;
-> +
-> +	if (!ASSERT_OK(read_stats(link), "read stats"))
-> +		return;
-> +
-> +	val = memcg_query->memcg_kmem;
-> +	if (!ASSERT_GE(val, 0, "initial kmem val"))
-> +		return;
-> +
-> +	err = pipe2(fds, O_NONBLOCK);
-
-You will need to create a bit more of these cause the kernel memory
-stats to be updated due to per-cpu memcg stock caching kmem stats.
-
-> +	if (!ASSERT_OK(err, "pipe"))
-> +		return;
-> +
-> +	buf = malloc(len);
-> +	memset(buf, 1, len);
-> +	bytes = write(fds[1], buf, len);
-> +	if (!ASSERT_GT(bytes, 0, "write"))
-> +		goto cleanup;
-> +
-> +	if (!ASSERT_OK(read_stats(link), "read stats"))
-> +		goto cleanup;
-> +
-> +	ASSERT_GT(memcg_query->memcg_kmem, val, "kmem value");
-> +
-> +cleanup:
-> +	free(buf);
-> +	close(fds[0]);
-> +	close(fds[1]);
-> +}
-> +
+>  	if (!check_data_sec) {
+>  		fprintf(stderr,	"no __tracepoint_check in file: %s\n", fname);
+>  		return -1;
+> -- 
+> 2.51.0
+> 
+> 
 
