@@ -1,111 +1,100 @@
-Return-Path: <linux-kernel+bounces-853861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3EDBDCC7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2418DBDCC64
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE323B26C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E213B6874
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9151A313272;
-	Wed, 15 Oct 2025 06:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB2F31280E;
+	Wed, 15 Oct 2025 06:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jk+VCaZ9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0xFHOo/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F30C2030A;
-	Wed, 15 Oct 2025 06:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3449621A447;
+	Wed, 15 Oct 2025 06:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510777; cv=none; b=iSfQ6fSg1itKTdahbyK3dgKLnhKwKMvTwfD8ZNdFxRXD6K1kpFCIlzmp9OTWsilv2reVyAsHMB8iZsa+yq9r2VLq2IVxwb+lzAEQu3fXNbusSMBU/chyf43FGS041oJBOKy9JN5N4ryQnjQFMTCvhqVFOyy3MxGaEdG0Y6cFqJU=
+	t=1760510656; cv=none; b=PAWpH3cOZZVRJn4qz21QnKMZne1a1twDPy5K5+K2UC4yeG+kjF70YWYBisAM7AJdEvL+auSthnwZt5zBATm2p74gJ9WJ7I9w3QDjBIgIBfVDfNywYWriRIgyURdp0jQi0R2eGBO9pSYeJFyVvBNct9k+J7vlC3BL+4YARsfxhPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510777; c=relaxed/simple;
-	bh=JZYS5BstaxGX52jnfSSbcNb/bUfuw6h2qY/fOzUMwXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=urnrnt7BPGZxgwO3XHWigdINJD2Lew+1KF45/aw+QmfqxH7aVttqVleucgbxDjGItDwqcneepj4mJdlx3NYcP4uB3tNJs4IKrxR75WT6DgCshAT7TViRfDvYOFrw1W8nl+tWN1irPzrtZ6bRLa6LuvWeXp9sThX+YEAUYkJ+hYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jk+VCaZ9; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760510776; x=1792046776;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JZYS5BstaxGX52jnfSSbcNb/bUfuw6h2qY/fOzUMwXQ=;
-  b=jk+VCaZ9DlkLVBKi8HeTNyyuE6j2Mp2WcWK2jmoyp0GuBK0hszvd2MW+
-   qLukij4VUJ6gU0u1FUzznQ8+hdlwL/S3O6l/kxV3uHFPYrdLxPVE2N5I1
-   S9G/mBPF9/50Rm3w3Cf76ueYy6PGDTNGuOV2/qgnpHshXvidsIgiyQPhm
-   vhnYUGK8lEygtOjOuFZttoZDIeryHfhRN1nW8LB0GHPA2znMl9EkNeBCu
-   WqOJKPzZyQrvd2hgJXGwksmmgMZ1NMDCX4W8zUDILheIsXDn/e7dPcOiJ
-   yIMlLkGh3Pj8uzHE+O9BAJf3xL3q7QKgSwdB8oeaTmiVC+VJED/vkalab
-   w==;
-X-CSE-ConnectionGUID: 1AMlWDOzSpezA+iqaMVrAg==
-X-CSE-MsgGUID: 4yBtgwJVQGaV9HiDE9uLdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="50242445"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="50242445"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 23:46:15 -0700
-X-CSE-ConnectionGUID: qmNRv9WwQ1aiMa4T2ox+nA==
-X-CSE-MsgGUID: GdfTZ8OVTcyXpY9q/8bF0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="182029876"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa006.fm.intel.com with ESMTP; 14 Oct 2025 23:46:11 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v8 01/12] perf/x86: Remove redundant is_x86_event() prototype
-Date: Wed, 15 Oct 2025 14:44:11 +0800
-Message-Id: <20251015064422.47437-2-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
-References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1760510656; c=relaxed/simple;
+	bh=Ng/TpONxqJIcYfHCXWiNhUnJ8g9KU2/KbXEEA1wmwyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jnkTRj0ufxxT511rvoefE21b9wUmpXPdn+TzJNSKZUgZ4XOFt5Cv5w6ghVodn1f9yZ2XdjrFwqmAAZIAjGogpbGmYnK5ZC5xjei5Z8JKhUmOehzLtP+SSx55sOtsMjdFQ9rtzQTows4gIICiIFg38KDTJv615iaJQyDRKlL2Q84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0xFHOo/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A47FC4CEF8;
+	Wed, 15 Oct 2025 06:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760510655;
+	bh=Ng/TpONxqJIcYfHCXWiNhUnJ8g9KU2/KbXEEA1wmwyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a0xFHOo/AodCLJYuRhRDGNzyP0paUpB7BlbhboayGDkqaPpBf2LUvibc9K3xiWAsg
+	 nZU8URiUNXMeQpHnVJ+BIygtX0nOCdJcZHhOSYHXr1vrLYkvM+/ZAF9qVHpsK/Ty7+
+	 cV331e+Xpi92a4efrSS3XoxTq5XD8shJWnm1cQRl/hyUIgQCfV4QDsZKVB36cO60U4
+	 r1GZFJjGj2E90EF36n3p+J2zO+oATDtSXGIeLCyc8Tl846NMAawQ0j1WHBzQeOoQM6
+	 zAS8LLHydG0A2Xp0dqQA9TlmBmd/ZNoj3o994bLTsx8M0Y5tNneBcJmpSgnPKMjieE
+	 OOl6e2KdPSqKg==
+Date: Wed, 15 Oct 2025 09:44:11 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	Sagi Grimberg <sagi@grimberg.me>
+Subject: Re: [PATCH 4/4] nvme-pci: unmap MMIO pages with appropriate interface
+Message-ID: <20251015064411.GA6393@unreal>
+References: <cover.1760369219.git.leon@kernel.org>
+ <6522567376d50f71425ccc4950552fca48e4f57f.1760369219.git.leon@kernel.org>
+ <20251015042053.GC7073@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015042053.GC7073@lst.de>
 
-2 is_x86_event() prototypes are defined in perf_event.h. Remove the
-redundant one.
+On Wed, Oct 15, 2025 at 06:20:53AM +0200, Christoph Hellwig wrote:
+> On Mon, Oct 13, 2025 at 06:34:12PM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Block layer maps MMIO memory through dma_map_phys() interface
+> > with help of DMA_ATTR_MMIO attribute. There is a need to unmap
+> > that memory with the appropriate unmap function, something which
+> > wasn't possible before adding new REQ attribute to block layer in
+> > previous patch.
+> 
+> This should go into the same patch that switches to dma_map_phys.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
----
- arch/x86/events/perf_event.h | 1 -
- 1 file changed, 1 deletion(-)
+I don't think so, dma_map_phys() patch [1] doesn't change any behavior
+and dma_map_page() is equal to dma_map_phys(... , attr = 0),
 
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 2b969386dcdd..285779c73479 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -1124,7 +1124,6 @@ static struct perf_pmu_format_hybrid_attr format_attr_hybrid_##_name = {\
- 	.pmu_type	= _pmu,						\
- }
- 
--int is_x86_event(struct perf_event *event);
- struct pmu *x86_get_pmu(unsigned int cpu);
- extern struct x86_pmu x86_pmu __read_mostly;
- 
--- 
-2.34.1
+> Unless I'm missing something it also misses passing the flag for
+> the metadata mapping.
 
+Yes, I didn't realize that same request can have both metadata and data
+payloads.
+
+> 
+> Btw, where is all this going?  Are you trying to remove the auto
+> detection of P2P in the low-level dma mapping routines?  If so that
+> should probably go into at very least the cover lttter, but probably also
+> the commit logs.
+
+It is an outcome of multiple things:
+1. We missed setting of IOMMU_MMIO flag in dma-iommu.c flow for p2p pages
+and for that we need some external indication as memory type is already
+known to the callers.
+2. Robin expressed concerns about overloading DMA_ATTR_SKIP_CPU_SYNC.
+
+[1] https://lore.kernel.org/all/a40705f38a9f3c757f30228b9b848ce0a87cbcdd.1760369219.git.leon@kernel.org/
+[2] https://lore.kernel.org/all/751e7ece-8640-4653-b308-96da6731b8e7@arm.com/
 
