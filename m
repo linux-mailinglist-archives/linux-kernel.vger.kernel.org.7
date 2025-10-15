@@ -1,232 +1,163 @@
-Return-Path: <linux-kernel+bounces-854157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC29BDDB93
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:19:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0AA5BDDBB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A56AA503BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45473B54DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9342631B11F;
-	Wed, 15 Oct 2025 09:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DC231A04F;
+	Wed, 15 Oct 2025 09:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Lg+xprXE"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011064.outbound.protection.outlook.com [40.93.194.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtuBcMqN"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11AD3148BB;
-	Wed, 15 Oct 2025 09:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519695; cv=fail; b=BX0jodMmbtmcyPEwN3u/p48k31K4mM5yMZGFT0z7BMBrVPpDyA41m1yDbI/QGnnB+w/YvZZA4pY9vj1ZA/etZgR2bWD/F70re9Uq5ofegqEYwjYTjPAnfSLZFOHFF5DXl4VuPwLx2xVtJZU7gmujtj1jXH8Y85FDdcWkv3zdw+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519695; c=relaxed/simple;
-	bh=UaQqIhwQBNW9rvan1o0ENanQprOfceUBQ98hij2udu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e1Me2fFSOxt2C8omLgOWR2hZBeWwxUzwf78Hbt10UA7N09wJ6+55+zyiMpeWGlNrKYYmv7zKQYgK/ZvfRaS+jHEPjeBDvIkNH6Zx1U6syNEvg7kZ+cZVvahbsFYuuSaiukNAcSewnwEdmVFpc4nOSh1wWM2Av4XkdzBoXsd1Zj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Lg+xprXE; arc=fail smtp.client-ip=40.93.194.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s+poN+mX8I5dVRRj3JhdKt9RKsenqTCZAsSdyH9sszYMIT3zBlTTUUiGJnDiM8cRPlah3NmKT0/LA8qN8lRaU68OC6mwOwgJ3QadcvxcHP8I5+K+HX6g5rIx2cmgJHwYKE1TqB/bNJ8EgbkXw+F8T92frYR6HjQAqNFgYO+Ltr3UyWvSL7dqnZS8oqNFpCgwk1/nhXopRyQ3w86J5CYWdyz7DJ8kEkDASrVVZpYvHYZ0HgMw1ieNbEnU/FZFaJJhU0QCIg1B6AMGtsZuN1qIaza3nEBcnGTZukcWH/62ui++WAcrdUraQoMMjB/utcwH6p1mhbjm3VP6/VT12jrIGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GK0SyvhVT9O6qvXrd94iSMbQgFKGbMtBQ2ztceMxvcI=;
- b=B+ncuS8LI3zKHr4bUGvqEc0kyyr81YjM/p6IKO+ZtezaZARp4prxYk2sht6kCzBKdbEgD+wgiODk3hhYrI9XpIyw7SBrepGwNI5VBhMCOPhUuBqn5FzdfcPjqYC+tkjg1ELAf9XGy1qQw4vDF0mI7BOoMxKVIIjwD33BiLxHYiTgmzLltc0F0a5/IYcQCp/Izd6dgZB86K2VGrPFCR9kzZg0Tu7D6ZaiqLB7w1+943e9bEi5uwitl8F06iMsBQsiNpGJjZjBL2K20iu7KPP6Y7cPnOkVV1JsSlKRNtG2emBgOPOfvyNOLbwYvNqfwzFFBsRWf00joCT5TzsXsNIVFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=debian.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GK0SyvhVT9O6qvXrd94iSMbQgFKGbMtBQ2ztceMxvcI=;
- b=Lg+xprXEyQejF6a3DVxrZA1zpq0YricUwJq1hbdp+YZ9dMLDri1dmanVSnBwY0tXE+2UAZllrR1xLoUbLR3sUDIbnIxCCqZYJWcQIwHPJhQlqoXC7mKJpssQDhbmHuDCJmT9ySxEhOSvz2l/lOnoZ9mLTeRUYicktiztlwd0IYNkdrk2OijyolLzAFH0bV3po0vY/RwRQUnPzpSWMCI+4czmpivIjILNSBr2I1DkF93boDGKqLRFj+yFRheEWaiqC2m+8Ewccp/U8IEkxEcyyiAyPEnNc6YUAeGe91HUfXdvxNGYIpgke0bgZKmONUnj57HB83e1JzViEMkoAluo3A==
-Received: from BN9PR03CA0251.namprd03.prod.outlook.com (2603:10b6:408:ff::16)
- by CY8PR12MB9034.namprd12.prod.outlook.com (2603:10b6:930:76::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Wed, 15 Oct
- 2025 09:14:45 +0000
-Received: from MN1PEPF0000F0DE.namprd04.prod.outlook.com
- (2603:10b6:408:ff:cafe::30) by BN9PR03CA0251.outlook.office365.com
- (2603:10b6:408:ff::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.13 via Frontend Transport; Wed,
- 15 Oct 2025 09:14:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MN1PEPF0000F0DE.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 09:14:44 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 15 Oct
- 2025 02:14:35 -0700
-Received: from [10.221.201.210] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Oct
- 2025 02:14:32 -0700
-Message-ID: <e9abc694-27f2-4064-873c-76859573a921@nvidia.com>
-Date: Wed, 15 Oct 2025 12:13:29 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F5D311C36
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760519665; cv=none; b=bqMaQoP7bTJbMlYZ7dPx5L8VKu7QElGo0Z5ZR3p2t9ddbyze2esuiqJn3EoXpVLnEqCXt5UjgXIBLc/3qUcWFCO40jIIvreamJFLMqCEs9vQ8U9x+DYnfVzRbMWTm6JXdT3xDe/pNLc78LO3neTj7a6ZuNtt0/pHVj70m0nWda0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760519665; c=relaxed/simple;
+	bh=Qo85cpAcxd1oyT2wxP7RRUqLYROiON865+d7IkM/010=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NNbaWSKDD+oUN4R2DdNdbTY5ED4U9B700cWX/jOpOuk6vH2LerjT6s8smJnGNhs+WkV4+1ZbjdPZYthFPByKQbV3xX1Qwy+L4HYjQGXIIBcQnZe8wuoyJYjavc3VjLSNWrqf3wz4gYDRFOLFKZhvYbVXDk/B4Iu6Lppjg/RfjQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AtuBcMqN; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-37645b8c09bso3919621fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:14:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760519662; x=1761124462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kNter1wl1oLLlJYevVTo4vpc2F0Z/0nnhZY0eR5fUuY=;
+        b=AtuBcMqNcUG+WI1oRnPTWDUXwPrtWwwm8lZ7pci+irdpcTj27ufgKleADvjMk3d+V8
+         IGhLFR30Ac8m5he5qZmJiaYR0EuQgbU9fkWEUYWqe9cLLWddWzVCpsIyAj327cJhZU+z
+         MDRRoNG+8y2rkSmOIDQw6w/LAs4CDwRR9lcr5912gFewG3aTcQaKUFy8Mt41HSS+FpN+
+         RhiksK1EOdjIo5ZXI0DtjTV3gxEE9Y7xbiEldxareeHl+yQqKNDytPWjKNpmccTjltBz
+         DhaT985iA3HEkXd5z5ULforaB5Wsm2tVO8G5HWr3+CM60cdItnEiIKcwyRtoWUgMi2WS
+         FflA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760519662; x=1761124462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kNter1wl1oLLlJYevVTo4vpc2F0Z/0nnhZY0eR5fUuY=;
+        b=gLSYRjJSTYjTYLxwmW0lWwm1lkf2pbR3eTyqunz6iam3FbbAtpK3+ZWw3DZwIjPQPa
+         w+7AlUsiPjnMGIYuPsUMKZ0hZh22AveuYbC8mfdt+QA44sTM/Nzfi8CAWn5eSMWFZgm0
+         Mrw2wD7q48K7Z3HFG0nmbbBbQeoJgfp2j7/KZ5ZeRcGayw3Z+nsok2cnKvL9mkEQCZr7
+         fegKtLdggxhL/2rH9MdcuIv6nKfLEd/Ha0tCtCpzOA/1PqTwXNEKMbnEq51AMbdEdt7P
+         BSjLyjkY7vqeOBWRYeInh9wNzGtFDtKuSPQsVdA1bf1xPIRaUAeheBrSdTubK+FpU/eR
+         BS3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcOufzTE9QTtR9FzDZRxDEVlqfkBaZXG56dUSc3vWsHyQRw0HQ1f+8N3uczqH6jNfCt7PfPPXTM8J6qy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzutNuQw9KzM3o+Y+VUREaSJCA0V/7gTrjrBvJ3GQWJYmQiSVJ
+	WBAEuFXWlVyhCxsoBVElzbUQPA3aVyeGc8rTPD/NzDphN/T6suNvMD0jpqvY4LfH1ofwgwzw/mF
+	RHTftkmOJ01HEJXvxatPEb1llykZF4Fo=
+X-Gm-Gg: ASbGncs0noBpV7mvt/FyjSxVyD1ghIEoX4BCYQZno25OnIdbXyuc4PBfhl4Wz+LMUDZ
+	uLUBi+ElhJDEx8gYwKuW4+MHi4Zu60X6qQlvi1ndi9bakVbAjDMhiZ9uiCDrXGz0v/uFBv8yR2f
+	+g/VxzREEEu7YJ//o4PAHj7FlLojdrJdfcniEmfU/rerT6Y5+7hIxFaCvK4wq3wqTQzc5e6XPfy
+	nbQkWqIyWEKyEZxe5Ns+RxBHNWx27D6Hd4Icg==
+X-Google-Smtp-Source: AGHT+IHIzIhf1YNCI5C8onxDXaNTHHoiFmiOUpxt66KIf78orh4sRuZHDUQFOMD42XgkZiDlsjMqDxaFdaNS5QPVDow=
+X-Received: by 2002:a05:651c:19a2:b0:371:ef15:f19e with SMTP id
+ 38308e7fff4ca-37609f1b402mr41581191fa.5.1760519661576; Wed, 15 Oct 2025
+ 02:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: mlx5: CX7: fw_tracer: crash at mlx5_tracer_print_trace()
-To: Breno Leitao <leitao@debian.org>, <saeedm@nvidia.com>,
-	<itayavr@nvidia.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dcostantino@meta.com>, <kuba@kernel.org>
-References: <hanz6rzrb2bqbplryjrakvkbmv4y5jlmtthnvi3thg5slqvelp@t3s3erottr6s>
-Content-Language: en-US
-From: Moshe Shemesh <moshe@nvidia.com>
-In-Reply-To: <hanz6rzrb2bqbplryjrakvkbmv4y5jlmtthnvi3thg5slqvelp@t3s3erottr6s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DE:EE_|CY8PR12MB9034:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f1a8443-e9ff-49e0-54ab-08de0bcb480b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R2paWVZldXdwNFFjSWpHT294YlpNSGhyVUE5N1VSVkVObXRyWXp2QkttQmMy?=
- =?utf-8?B?TDFsaUtQMnhoRERqbEFhV0xQQVAvOWF0TWRSVUU2ZWlPS3h3dTZSdlh6Q1ZE?=
- =?utf-8?B?Qk5oMGlVN0I1RG5wZ2NtSGIyMHE5YVZlbWlLNHlQUXpXWUdRM2x0TndHdll6?=
- =?utf-8?B?S3NrQnhxL255cG5NWUpqYmQ4Ri9kcjZoMllmL3NVTHNnZ2JVUU43SWpUZm9a?=
- =?utf-8?B?UGNzZFAydFdOSVJmYk5CQnRqMDZESzltNU5QcHpRR1g1WE5HNUlIT3daeFhT?=
- =?utf-8?B?VlFsd094ZXBhbU5FWFhwWlcycytFS2U0NWU4c3JYN2VNWDY0NEtmWk10NGNw?=
- =?utf-8?B?MTR5WHBhdG1wVE8wRmk1cjlOeVBWNDZpN3IyWXFGRE43WlRydmhLcHdBMk1U?=
- =?utf-8?B?L3FRdW5JN1AwdUUxMGhZUFFqai90WitIMGY5aUNaRmtPZXRzSUx5Yk9Mblhz?=
- =?utf-8?B?bXJCQndqalByenpTK01lTlppUGtGeC9TSUl3WVVWWDl1c2hpTTFuZStFd2lU?=
- =?utf-8?B?dlBKcjkzNW4rRDc0bXBYYzN3b2ROcnk1MHI1dlZvK1VPUXoxTUJQc3hacDd0?=
- =?utf-8?B?cmtmaGtHc2FoaGhxb0Z1RGNCTURpUWlBbHg3akV5Ni9QK3Z3K0JYTWh4WGJr?=
- =?utf-8?B?N2psRzhvaFlTd3NtOTl6TUZ1dVZJZmJVQkhTc1VFWUpVK3NFQ3p3WTM0RFh6?=
- =?utf-8?B?K21BL1VqYTJMQVM4NTBtbTFHQkxlcExydTY4TUpQY0pzMEVKRTF1ekM3SE9a?=
- =?utf-8?B?bHJWaFpJUUp1c25TUFBROGwrM1MxT3dtcTlVMFl4UHVrd0M0Z1N2MVVMNzY2?=
- =?utf-8?B?U01LN216dk84K215RVU2cVY4WGd0elpMT0wrUUc5VkdKaXBrMld4YmkvbzdE?=
- =?utf-8?B?c3EvV1VTK1pza29WR21rcTUzZEF4RHFIRDBscU9GcDYybFp6YXUrbnB3cEpw?=
- =?utf-8?B?R1R1azI1aWZHU3BiQm9XMnU1My9OYldUL29LQXdyWVhEc0IvakhzUldiaGcy?=
- =?utf-8?B?b2VJY1FJV3QzL0g3R3dDY2RpbjNvVDVXODNBcFh4akdxV21HVFN3QkdlRXpD?=
- =?utf-8?B?bmFZUTdzS3FZVmVOUW9TY3kyRGllMFBrMU81NFJoVDYxUktUVDRVU1haQ1Q0?=
- =?utf-8?B?Z0RCbUtVSGthOFJIL0UxSXFrZis1ck0rbFJWNmcrdjVoZkhRVXBQTk9FSmE3?=
- =?utf-8?B?Qzdxa3dqb3NGRDhQL2FpU05qeERkdWJVek5EalhFQ1hIRlcrUHRjNUgwUWRk?=
- =?utf-8?B?cTEyN0lmRmlQNzdWOEdTMGRQODdWd2ZaejB2bDdNQk9DTXNiSVVUUi8rTVg3?=
- =?utf-8?B?Rk9vajRxaVR1cWpaUXFUMXpDQStuWWxQRlZlMmtGVU1BWjRzZTRSdytyRFIw?=
- =?utf-8?B?RFkydTlxbWt5UjdoVkxGOU9iRDVQU2xCb2IxY2JqcmNsdTczcGJQK0ZIVjhn?=
- =?utf-8?B?NytaM08wVitScHh4VmFKOGowNFZTTEdjVExhRUNTV1NvNXVBN3ZNK3NtTWk1?=
- =?utf-8?B?R0xvMjhGNW5NRWJYODRWeGl2ZkpjZjNwQUtTbzJHa0tJWjVYQ3lIK25zS3pV?=
- =?utf-8?B?QVNLYWhnakx0cTYwVTk0OU9sTnZjcjZsQWVIV0JoM3NQci9qcVpFNnRlVGZF?=
- =?utf-8?B?M3lxNTZwclk1cVFEU2pqUTc3VjNlWkUxdVlpNjFjblZSWGcvams0T3dvV1dn?=
- =?utf-8?B?WnRqSkxiNFZKemdBMlRoV01CZXBwdGdSMU5GaHcwdUtOZE4rRTJ0QURrZDY0?=
- =?utf-8?B?OC9peVlJVy9XT0trV012eUZiWmJKTmhBNHV1cXhNZnpjb3M0NExwRk9uZ2Rj?=
- =?utf-8?B?R1NhUUYxWnF0TXBWL3BCRXRodVlUSGE4QTNSMWJOa29vR1Fibjg4OU5YVys0?=
- =?utf-8?B?YzFmTXhnRVNPZXJNa3ovdFJiT0ZFd2YvM0JiYWxrMGhWZDl6enB1MC9tamNC?=
- =?utf-8?B?bUJ4cGtoek4xY3dVSjBzZnkrMTdsSE1Nelpidjk1MDJaakxYcy95eVN1aUhH?=
- =?utf-8?B?d2lldnRVWFRXekJkTm5zU1h6RGM1MUtvSGE0Q29CK3RQLy9yY2psUEJXYkF0?=
- =?utf-8?B?ZU92ZFM2UnV3OWNsUzVLb3ZsSks3VzkyTnhEOHUrbXJZL3dWVHRyYTBlM1ow?=
- =?utf-8?Q?OGvw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 09:14:44.6323
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f1a8443-e9ff-49e0-54ab-08de0bcb480b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0DE.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB9034
+References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
+ <20251014083230.1181072-3-zhaoyang.huang@unisoc.com> <87953097-a105-4775-88a5-9b3a676ff139@amd.com>
+ <CAGWkznGN7W-txq_G+xpZ6DtH_1DNorYc=CxqUjebo7qfB4Sxsw@mail.gmail.com>
+ <ecba7133-699c-4f3e-927c-bad5bd4c36a3@amd.com> <20251014171003.57bbfd63@mordecai.tesarici.cz>
+ <97da9924-9489-4d30-a858-8ee5c87bc031@amd.com> <CAGWkznGnmb=8GgcrfDvY2REHdRZYVXZy=F3thXhK0FaSoiK7tw@mail.gmail.com>
+ <aO8TKQN6ifOSMRSC@casper.infradead.org> <CAGWkznFG2_WGmLRmHnjV-49iTX0mrt9jxQBzZYK=K9U7eKJD0g@mail.gmail.com>
+ <20251015104008.4bcd99e7@mordecai.tesarici.cz>
+In-Reply-To: <20251015104008.4bcd99e7@mordecai.tesarici.cz>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Wed, 15 Oct 2025 17:14:10 +0800
+X-Gm-Features: AS18NWBFNrpCd7vYazsrAzxjhFltbgGwOyCb8rBQZuWBjfGrYICxBoM7m6ifLQ8
+Message-ID: <CAGWkznEkVz8p=Gbc8JC01SLkUHdTPW126z-fsJCZhoOLDSF5vA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] driver: dma-buf: use alloc_pages_bulk_list for
+ order-0 allocation
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Suren Baghdasaryan <surenb@google.com>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Mel Gorman <mgorman@techsingularity.net>, Vlastimil Babka <vbabka@suse.cz>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 15, 2025 at 4:40=E2=80=AFPM Petr Tesarik <ptesarik@suse.com> wr=
+ote:
+>
+> On Wed, 15 Oct 2025 13:52:57 +0800
+> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+>
+> > On Wed, Oct 15, 2025 at 11:21=E2=80=AFAM Matthew Wilcox <willy@infradea=
+d.org> wrote:
+> > >
+> > > On Wed, Oct 15, 2025 at 09:12:07AM +0800, Zhaoyang Huang wrote:
+> > > > > Could be that we need to make this behavior conditional, but some=
+body would need to come up with some really good arguments to justify the c=
+omplexity.
+> > > > ok, should we use CONFIG_DMA_BUF_BULK_ALLOCATION or a variable
+> > > > controlled by sysfs interface?
+> > >
+> > > No.  Explain what you're trying to solve, because you haven't yet.
+> > Dma-buf works as a memory allocation backend could loop thousands of
+> > times alloc_pages for allocating order-0 pages to fulfill the dozens
+> > MB demand, this commit would like to replace the loop by once
+> > alloc_pages_bulk. Whereas, alloc_pages_bulk_array perhaps introduces
+> > extra memory allocation along with direct-reclaim which could be more
+> > expensive than iterating the list. so call back the API
+> > alloc_pages_bulk_list as well
+>
+> This does not quite explain it. IIRC you mentioned allocating 18M as an
+> example. The ideal outcome in that case is:
+>
+> - 16 order-8 compound pages
+> - 32 order-4 compound pages
+> -> total 48 calls to alloc_pages()
+>
+> But presumably, that's not what happens, because fragmentation makes
+> (some of) those order-8 allocations fail. Since you talk about
+> thousands of loop iterations, it looks like even order-4 allocation
+> fail in your case. Then I agree there's not much value in trying to
+> avoid further fragmentation, and after so many order-0 allocations,
+> it's probably also pointless to do memory reclaim.
 
+Thanks for the words
 
-On 10/9/2025 3:42 PM, Breno Leitao wrote:
-> Hello,
-> 
-> I am seeing a crash in some production host in function
-> mlx5_tracer_print_trace() that sprintf a string (%s) pointing to value
-> that doesn't seem to be addressable. I am seeing this on 6.13, but,
-> looking at the upstream code, the function is the same.
-> 
-> Unfortunately I am not able to reproduce this on upstream kernel easily.
-> Host is running ConnectX-7.
-> 
-> Here is the quick stack of the problem:
-> 
-> 	Unable to handle kernel paging request at virtual address 00000000213afe58
-> 
-> 	#0  string_nocheck(buf=0xffff8002a11af909[vmap stack: 1315725 (kworker/u576:1) +0xf909], end=0xffff8002a11afae0[vmap stack: 1315725 (kworker/u576:1) +0xfae0], s=0x213afe59, len=0) (lib/vsprintf.c:646:12)
-> 	#1  string(end=0xffff8002a11afae0[vmap stack: 1315725 (kworker/u576:1) +0xfae0], s=0x213afe58) (lib/vsprintf.c:728:9)
-> 	#2  vsnprintf(buf=0xffff8002a11af8e0[vmap stack: 1315725 (kworker/u576:1) +0xf8e0], fmt=0xffff10006cd4950a, end=0xffff8002a11afae0[vmap stack: 1315725 (kworker/u576:1) +0xfae0], str=0xffff8002a11af909[vmap stack: 1315725 (kworker/u576:1) +0xf909], old_fmt=0xffff10006cd49508) (lib/vsprintf.c:2848:10)
-> 	#3  snprintf (lib/vsprintf.c:2983:6)
-> 
-> Looking further, I found this code:
-> 
->          snprintf(tmp, sizeof(tmp), str_frmt->string,
->                   str_frmt->params[0],
->                   str_frmt->params[1],
->                   str_frmt->params[2],
->                   str_frmt->params[3],
->                   str_frmt->params[4],
->                   str_frmt->params[5],
->                   str_frmt->params[6]);
-> 
-> 
-> and the str_frmt has the following content:
-> 
-> 	*(struct tracer_string_format *)0xffff100026547260 = {
-> 	.string = (char *)0xffff10006cd494df = "PCA 9655E init, failed to verify command %s, failed %d",
-> 	.params = (int [7]){ 557514328, 3 },
-> 	.num_of_params = (int)2,
-> 	.last_param_num = (int)2,
-> 	.event_id = (u8)3,
-> 	.tmsn = (u32)5201,
-> 	.hlist = (struct hlist_node){
-> 		.next = (struct hlist_node *)0xffff0009f63ce078,
-> 		.pprev = (struct hlist_node **)0xffff0004123ec8d8,
-> 	},
-> 	.list = (struct list_head){
-> 		.next = (struct list_head *)0xdead000000000100,
-> 		.prev = (struct list_head *)0xdead000000000122,
-> 	},
-> 	.timestamp = (u32)22,
-> 	.lost = (bool)0,
-> 	}
-> 
-> 
-> My understanding that we are printf %s with params[0], which is 557514328 (aka
-> 0x213afe58). So, sprintf is trying to access the content of 0x213afe58, which
-> is invalid, and crash.
-> 
-> Is this a known issue?
-> 
+>
+> OTOH I can see why the opposite approach is a bad idea in situations
+> where fragmentation can be avoided. To make things even worse,
+> alloc_pages_bulk() will rather split pages in the preferred zone than
+> try allocating from the next best zone.
 
-Not a known issue, not expected, thanks for reporting.
-We will send patch to protect from such crash.
-Please send FW version it was detected on.
+but the loop of alloc_pages(order-0) could also split high-order pages
+one by one on the prefered-zone, right?
 
-Thanks,
-Moshe.
+>
+> To sum it up, Zhaoyang, can you please describe in more detail what
+> happens in your scenario and what you believe should happen instead?
 
-> Thanks
-> --breno
-> 
+My goal is as simple as eliminating the loop of alloc_pages to get
+some performance gains.
 
+>
+> Petr T
 
