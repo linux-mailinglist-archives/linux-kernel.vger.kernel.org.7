@@ -1,242 +1,159 @@
-Return-Path: <linux-kernel+bounces-855117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B58ABE0484
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:58:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB0CBE0496
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E820B543C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:58:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C9F1C357B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D563302CDB;
-	Wed, 15 Oct 2025 18:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A63302CBD;
+	Wed, 15 Oct 2025 19:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wtbiL5Wv"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1sTXEtr7"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C789630171F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE45D303A1A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 19:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760554710; cv=none; b=F3mnxxNr9TygUuAMfKF+bQV/oGrRGy4adjw6k2nPjic0L8LfePSCK0/gMcbgFjYzC5lNzG2H3qmjW8bBm+uQcEXLnhyTztNdoUtIEbx9DbN7dvksF/DNBN/NaykSdG+b16K4vsBf/0bwjkS9UWyqEc8wXzLY+kalMcGvOAKvn5Y=
+	t=1760554818; cv=none; b=coccpHUX28PMCvrLKs0uqNWgD8k5X9OgHeEpF9QrRUb1+3DyyxfR0hYBrErOiaIDfrjsZ3ttx3fUXZclWgjME0GJvag2/AOkTc0sa2CygoSX51MYVnWirewdZWd//0uMrYNv/zkhbTJRVJU/ZfnUxAZWUjRZbL7WGUFdRth/5JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760554710; c=relaxed/simple;
-	bh=ToDe4OXCz3YO+YFGk7WoPcF3nwaVNZU8zopuhi0eZdg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GzU77dHoDbIk/TtsQI7ghObUwY5oLzRUyuw/8Vjgfp83WYuwXfexrCdytHEwlflCNjXWiQrZgKQlQteAfB4nvZ4wVPwwN4BkBT7k9Aq8CnObLt1iaBBs8bvicbAzwYC/Mqb+i8+fHzLIsRx2Zv4CnnIgb4ifZYsCC/9xdBUO0Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wtbiL5Wv; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1760554818; c=relaxed/simple;
+	bh=sdq4ws5usmc98rsRoCAVeqpBx+16F1AHykhqmbfPX2w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MApzNqt4MIw6Wl+BBMF4tFhPEWpWyF5dhZoTR+HMqmHF6IcydBf2F/jQdlmVuLVGzA0fnHKFfXi1HYX4CVa/uGQNa0KQlKeR8E9e2VNFqrqOCPq+TCZRik+T+3pK13mmElubYEWdctsyDCia2QuYOkHyTmtV0VVQu0a7EgeFF+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1sTXEtr7; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2907948c1d2so33028615ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:58:28 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6fc6so234491945ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760554708; x=1761159508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fRwPKnk8qfrHFphbSwARuokxhcbVBpznEGtVMYZ7BTU=;
-        b=wtbiL5WvA5dTb8nzDeBXuJKJqGm0gP9Ac7WdumDHO1nhOBK2419K0nZDYsJnFSS9A5
-         /t9OkHDf97Ghn64cDdsNtTXau26kBPnD+nPyXN9nENoSGlPDwG32YexR6LERKdFXKHKJ
-         ARbj5cnXzlta2Jf6r1aK808eKkJjy1KoepB8vsCJ+COGh8DeoKa140GJCKc5bdb4iEzt
-         rOKFm5UNe65oriXzPPQAGVPumBoV6jKNDyhFSJU29N/e3QzZh/o8iAAXBDqZ88X6gVy7
-         r0vC1sXi1ef9JYb3+MxRYMgeHtaGRcddzj4nAnTwgHa0KgslKflBYA6x+1AXVBue6HHo
-         5Xcg==
+        d=google.com; s=20230601; t=1760554812; x=1761159612; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cqsd/vPXiuTR4hJNd2SCH3oN5KwWIK1dnn9ppreK3H0=;
+        b=1sTXEtr7vUkiMkQ0uHR08smc/iooqnEyjuY+W9wks1tsBYPA+m+6Lx3ca4hy/SZyFb
+         ATnMlJ/BVgpcUNTguAiYaD2KfbD+ZoRU7aK7GynqE2O8C4WqZMrYMbStaxnLY5qxSnW1
+         d4cf29GXLL2X/IDonSpO9lJJrONMW/YtyY7o2p93jbzit+lFQfvuSqgmvpi5TXaMcB7T
+         F7oX8KU0xjEItAtgkTT5DkGRKI2ONtD33MMGl2NqQ4EIL74n8F4SZkw6OgAA/uKVwURn
+         yUotVHDKCLff4DHp2OJ/3H5zbQIBi9bHAKBQZPU8e7fC1L1Q+ZcwDZkp3M1UIJ658puv
+         ymOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760554708; x=1761159508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fRwPKnk8qfrHFphbSwARuokxhcbVBpznEGtVMYZ7BTU=;
-        b=lYREdALbIcGIkuKKVK5g9lWRolkEU8qr1BBkiecQpZmX7ju1oQaQbU7HMaob6PFmaP
-         SyyvcbMRBNUF+bIV08TXctM1gmBv0oaeMZZP/dQ65vv8xPxypnjNc4JVYcIXU8FIM1YG
-         aV+Z4jLhYElVvZ2Q5yvDy0ucCGZ5oRk3uj6TU/IYExVD5vKzIWdeucO3cNuqAT/9K3eM
-         zavCNjJWWqlQdJ614+jMUFhbVzTi+TMZNRBxDb58FhFyP5K2vococpZw3Kq+tyzR6Qqc
-         uegZzpDZIjvEiwNy4FKF2RR1ZxObeGriZsX4C0XsSrTabMAD/53qAj4wUjAYoxb5Lhd5
-         y/YA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVCSiVN0fBQwZfONQmBR/DfsR7kuRWSZn2SXGdZVnQyvdQRQsxXVktG0O89Xhey2ybIZfJMf0gWVmHFoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLGKxZ7/hSw51GjxQkBKHwhBhEVu3hPUgHOvaSq/s0YFY2EOyB
-	wvrpzILyJH7fqOD2GxCRnDKrt1PlDEMt3aFn8z0+aTojigUnetPAgqhMFM70Jbmjk/mdxntu/31
-	WVRgcQqgROAUy33h/GtaqOb4WEMlGkigroyYxjEdv
-X-Gm-Gg: ASbGncv0eaVBaDM0HEQ+KBOEt8SG0doxKz8NiEXrX4ptmtXsUtstYHS0W9i9auPwwVa
-	oQQMbIg5T6bEK8lodWVJ+fN4kUojqIj6I3WIUt4lI13L/sy/fKRPxa4tO0+lrDFWlrDzNso7aSW
-	qgNQUvwU+fC4zffPcfcZqMdvt4bCJs69wzEGYyJMqpYFhpyQfP/dN6zsKtc2UYK5aB2L+/csPdd
-	OiOicbfb0IIyWvJkQTsEYgI1m+VtNccyUul4mkrzixA+rwjLDADIBRIr6fh7qId6AjnBGCJyRlp
-	RCLdh2VBCjqRczxBN3C43O4d
-X-Google-Smtp-Source: AGHT+IFnYsW3w1gFetllx0+5CiL7Rf74v6cd4M6iTK6ClRMgKt3X+k4ZS1SInKpJctWdDoRuk+7QXEWu/txY1MI7yL0=
-X-Received: by 2002:a17:903:37c7:b0:275:b1cf:6dd9 with SMTP id
- d9443c01a7336-290272f80dfmr360656995ad.52.1760554707274; Wed, 15 Oct 2025
- 11:58:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760554812; x=1761159612;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cqsd/vPXiuTR4hJNd2SCH3oN5KwWIK1dnn9ppreK3H0=;
+        b=T95yXEQIchTxLfQ+OoTNsM4g2VQ0iHALucO5Epce5o87abJEhJsXf+qOlpZJH1GYsy
+         TD9UOIL57yQSp1BoEmB7l4MTxf/8ElJohU6xqSvgfeyERdoNpg/64+Po3XBZ99BPpmR0
+         OSK4eurEfCWgSYje4RRbAUlsNgy0tTONaI7f6RLS9ky0J7KUlYU58/k7MytEOPinQRBp
+         Gbj6LrCnd3/GgoAdOxlWZFJQkBxwlqWH1rDjjriD9GrE1dUsSWozBUCaJV2bfeKB2X2O
+         0WfWkcQuKWkT3eGojM3iQq/JRA/u4DZ3wuOIprIFx3rCYmrQHtD8y24KFiWJRM+tbsFa
+         OeCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtQGxF/PXZgJxvo2VKWgTeqV7FbFT0F6tOcYFLO/X9WYZUrduegTwysiI0yF1gPtsvnHjf904P3MDNiUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ/MOTjrzzUem6p634CWIisEUimTIeXds4LaHAEpLWjfrYyl53
+	VzKZVFvA6ULHd4JETy9ynS3HiSPBk2pFae1nZF6IGruydxDXA0FjExqLzrTtMCNPkeO0KeFtaGN
+	NbY9ccg==
+X-Google-Smtp-Source: AGHT+IFnNgFHzdVwVBgjv1vYxeJtKWTDydfUHZWWQm4sogrJBUuU/RaThVnJNJ/l8yi1LMJs0OC3cJqUm/M=
+X-Received: from plhy4.prod.google.com ([2002:a17:902:d644:b0:290:9abe:4419])
+ (user=wyihan job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec81:b0:290:6b30:fa8
+ with SMTP id d9443c01a7336-2906b301097mr149049165ad.23.1760554811768; Wed, 15
+ Oct 2025 12:00:11 -0700 (PDT)
+Date: Wed, 15 Oct 2025 18:58:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251010201607.1190967-1-royluo@google.com> <20251010201607.1190967-4-royluo@google.com>
- <75756635-b374-4441-8526-175210e01163@kernel.org> <CA+zupgwHFpP5GEwGxOksmLJBU7+Kr_o0p50Pad1NmwNB0AxcGA@mail.gmail.com>
- <20251015130538.GA3214399-robh@kernel.org>
-In-Reply-To: <20251015130538.GA3214399-robh@kernel.org>
-From: Roy Luo <royluo@google.com>
-Date: Wed, 15 Oct 2025 11:57:50 -0700
-X-Gm-Features: AS18NWDABi6Rc7VHdjUz_InyfGjFdsf7Veklfegj5HRf0gGUj-mD1x86yUCd9pU
-Message-ID: <CA+zupgxAhErw4i0Q13hyXE2_sQSowzDgZ4Yv8o1tcZQS7G7a-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
+Message-ID: <cover.1760551864.git.wyihan@google.com>
+Subject: [RFC PATCH RESEND 0/3] mm: Fix MF_DELAYED handling on memory failure
+From: Lisa Wang <wyihan@google.com>
+To: linmiaohe@huawei.com, nao.horiguchi@gmail.com, akpm@linux-foundation.org, 
+	pbonzini@redhat.com, shuah@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Cc: david@redhat.com, rientjes@google.com, seanjc@google.com, 
+	ackerleytng@google.com, vannapurve@google.com, michael.roth@amd.com, 
+	jiaqiyan@google.com, tabba@google.com, dave.hansen@linux.intel.com, 
+	Lisa Wang <wyihan@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 6:05=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Mon, Oct 13, 2025 at 06:46:39PM -0700, Roy Luo wrote:
-> > On Fri, Oct 10, 2025 at 5:11=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> > >
-> > > On 10/10/2025 22:16, Roy Luo wrote:
-> > > > +  reg:
-> > > > +    items:
-> > > > +      - description: USB2 PHY configuration registers.
-> > > > +      - description: DisplayPort top-level registers.
-> > > > +      - description: USB top-level configuration registers.
-> > > > +
-> > > > +  reg-names:
-> > > > +    items:
-> > > > +      - const: u2phy_cfg
-> > > > +      - const: dp_top
-> > > > +      - const: usb_top_cfg
-> > > > +
-> > > > +  "#phy-cells":
-> > > > +    const: 1
-> > > > +
-> > > > +  clocks:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  resets:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  power-domains:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  orientation-switch:
-> > > > +    type: boolean
-> > > > +    description:
-> > > > +      Indicates the PHY as a handler of USB Type-C orientation cha=
-nges
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - reg-names
-> > > > +  - "#phy-cells"
-> > > > +  - clocks
-> > > > +  - resets
-> > > > +  - power-domains
-> > > > +  - orientation-switch
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    soc {
-> > > > +        #address-cells =3D <2>;
-> > > > +        #size-cells =3D <2>;
-> > > > +
-> > > > +        usb_phy: usb_phy@c410000 {
-> > > > +            compatible =3D "google,gs5-usb-phy";
-> > > > +            reg =3D <0 0x0c450014 0 0xc>,
-> > > > +                  <0 0x0c637000 0 0xa0>,
-> > >
-> > > You probably miss DP support and this does not belong here.
-> >
-> > This register space isn't solely for DP operation, a significant portio=
-n
-> > manages the custom combo PHY. Consequently, this space is essential
-> > even for USB-only operation. We can expect more registers in the space
-> > to be utilized when DP support is added.
-> >
-> > While I acknowledge the current name is confusing, it directly reflects
-> > the hardware documentation. We can either adhere to the hardware
-> > documentation's naming or propose a more descriptive alternative.
-> > What's your preference?
-> >
-> > >
-> > > > +                  <0 0x0c45002c 0 0x4>;
-> > >
-> > > That's not a separate address space. I really, really doubt that
-> > > hardware engineers came with address spaces of one word long.
-> >
-> > I initially created this space to access the usb2only mode register,
-> > which must be programmed when the controller operates in high-speed
-> > only mode without the USB3 PHY initialized. Upon review, I now
-> > believe the controller driver is the better location for this configura=
-tion,
-> > as the register logically belongs there and the controller can tell
-> > whether usb3 phy is going to be initialized.
-> >
-> > That is, I'm removing this register space in the next patch.
->
-> You are missing the point. What exists from 0x0c450020-2c and
-> 0x0c450000-0x14 for that matter? Hardware blocks don't just start on
-> unaligned boundaries like 0x14 or 0x2c. DT describes the h/w blocks, not
+[resend to correct the mailing list address]
 
-Rob,
+Hello,
 
-Thanks for chiming in. Let me elaborate the register layout here:
-The register space 0x0c450000 - 0x00450043 is supposed to
-be assigned to the USB controller. However, the USB phy has
-to access a small portion of it, i.e. 0x0c450014 - 0x0c450020,
-in order to initialize usb2 phy. This is really unfortunate and
-makes things more complicated than it should've been.
+This patch series addresses an issue in the memory failure handling path
+where MF_DELAYED is incorrectly treated as an error. This issue was
+revealed because guest_memfd=E2=80=99s .error_remove_folio() callback retur=
+ns
+MF_DELAYED.
 
-The current patch is addressing it by splitting the register space:
-- USB phy: <0 0x0c450014 0 0xc>
-- USB controller: <0 0x0c450000 0 0x14>, <0 0x0c450020 0 0x23>
+Currently, when the .error_remove_folio() callback for guest_memfd returns
+MF_DELAYED, there are a few issues.
 
-> just nodes of what a driver needs. So if the 0x2c register needs to be
-> accessed by the USB driver, that's fine, but the register doesn't go in
-> the USB controller node 'reg'. A property with a phandle to the node
-> defining all the 0x0c450000 registers and an offset (if needed) is
-> typically what we do there. Or you can just find that node by
-> compatible.
+1. truncate_error_folio() maps this to MF_FAILED. This causes
+   memory_failure() to return -EBUSY, which unconditionally triggers a
+   SIGBUS. The process=E2=80=99 configured memory corruption kill policy is=
+ ignored
+   - even if PR_MCE_KILL_LATE is set, the process will still get a SIGBUS
+   on deferred memory failures.
 
-Just to make sure we're on the same page, are you suggesting
-making the register space a syscon node [1]? something like this:
+2. =E2=80=9CFailed to punch page=E2=80=9D is printed, even though MF_DELAYE=
+D indicates that
+   it was intentionally not punched.
 
-usb_cfg_csr: usb_cfg_csr@c450000 {
-  compatible =3D "syscon";
-  reg =3D <0 0x0c450000 0x0 0x43>;
-};
+The first patch corrects this by updating truncate_error_folio() to
+propagate MF_DELAYED to its caller. This allows memory_failure() to return
+0, indicating success, and lets the delayed handling proceed as designed.
+This patch also updates me_pagecache_clean() to account for the folio's
+refcount, which remains elevated during delayed handling, aligning its
+logic with me_swapcache_dirty().
 
-usb@c400000 {
-  ...
-  usb-cfg-syscon =3D <&usb_cfg_csr>;
-  ...
-};
+The subsequent two patches add KVM selftests to validate the fix and the
+expected behavior of guest_memfd memory failure:
 
-usb_phy@c637000 {
-  ...
-  usb-cfg-syscon =3D <&usb_cfg_csr>;
-  ...
-}
+The first test patch verifies that memory_failure() now returns 0 in the
+delayed case and confirms that SIGBUS signaling logic remains correct for
+other scenarios (e.g., madvise injection or PR_MCE_KILL_EARLY).
 
-[1] Documentation/devicetree/bindings/mfd/syscon.yaml
+The second test patch confirms that after a memory failure, the poisoned
+page is correctly unmapped from the KVM guest's stage 2 page tables and
+that a subsequent access by the guest correctly notifies the userspace VMM
+with EHWPOISON.
 
-Thanks,
-Roy Luo
+This patch series is built upon kvm/next. In addition, to align with the
+change of INIT_SHARED and to use the macro wrapper in guest_memfd
+selftests, we put these patches behind Sean=E2=80=99s patches [1].
 
->
-> Rob
+For ease of testing, this series is also available, stitched together, at
+https://github.com/googleprodkernel/linux-cc/tree/memory-failure-mf-delayed=
+-fix-rfc-v1=20
+
+[1]: https://lore.kernel.org/all/20251003232606.4070510-1-seanjc@google.com=
+/T/
+
+Thank you,
+
+
+Lisa Wang (3):
+  mm: memory_failure: Fix MF_DELAYED handling on truncation during
+    failure
+  KVM: selftests: Add memory failure tests in guest_memfd_test
+  KVM: selftests: Test guest_memfd behavior with respect to stage 2 page
+    tables
+
+ mm/memory-failure.c                           |  24 +-
+ .../testing/selftests/kvm/guest_memfd_test.c  | 233 ++++++++++++++++++
+ 2 files changed, 248 insertions(+), 9 deletions(-)
+
+--=20
+2.51.0.788.g6d19910ace-goog
+
 
