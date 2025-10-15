@@ -1,98 +1,146 @@
-Return-Path: <linux-kernel+bounces-853983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8ECABDD3E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:55:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2D2BDD440
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57D351921B5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:56:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C8CAB353C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E617314B82;
-	Wed, 15 Oct 2025 07:55:44 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9313161A5;
+	Wed, 15 Oct 2025 08:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNse4HvJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xvzOw+Zz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sNse4HvJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xvzOw+Zz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40298311C13;
-	Wed, 15 Oct 2025 07:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857C7315D39
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760514944; cv=none; b=OU/H73/jvPbEJZFlMQPvTch3YRt3zUUtvVL4PRzNQ6JBsCtwcgRo+H5Plgf9YXa5zZQy+0OJk2L/5qfg8e99aP1hVk2z1QTg2nOFVNAekcLxB/7FYRSWllEqsKF9mNB1idRZdRRS1r0t+e4du2bkRpKI2XeiY7EgwQIXDKj2R+g=
+	t=1760515201; cv=none; b=vCiZuTceVXvAE6R12OSPWGz0/N/eDYWEfYL+rnIN8e1ixf0WoJ8mjdXw338sJdG05+PdGbqiAAfTfudXunBF2WlHBNaTJf/6BR0m/ISf7BTLarPyFgQtS6ODW4WGpVtSHo7daWzroUa647f/NAJoBfE6mqPV9sGEqRK7st2rPsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760514944; c=relaxed/simple;
-	bh=iE2Psiwzs2QGqdwASawlzs7KvkkzA/n/ldRp4cGHpBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p8pwK2ZR7YDtYkasGpq5O2y9N8Y405xMMjmxwZ5dodBpGpZcXsuPIG2qyK2sNfbhMt2Scom7UA84qjAA07NnosQaoC4HTmQ3ZpnNf5TT5bN27QRO05wKzhngOLm3eOpmQYvGD/YjFGSup2secCjBUETLOkvcbl+SNuBpZqKaF1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 542e6d6ea99c11f0a38c85956e01ac42-20251015
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:5d625116-8dbb-405c-942b-f37ae7a91dad,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:a9d874c,CLOUDID:0d0adf757c6bb67376f84ff0386faaea,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 542e6d6ea99c11f0a38c85956e01ac42-20251015
-X-User: liqiang01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1442507899; Wed, 15 Oct 2025 15:55:34 +0800
-From: Li Qiang <liqiang01@kylinos.cn>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Qiang <liqiang01@kylinos.cn>
-Subject: [PATCH] ASoC: amd/sdw_utils: avoid NULL deref when devm_kasprintf() fails
-Date: Wed, 15 Oct 2025 15:55:30 +0800
-Message-Id: <20251015075530.146851-1-liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1760515201; c=relaxed/simple;
+	bh=ySWBIPTKNqdzBxcuPAFf4SAyKo7DjMdWV4luwQPD5FY=;
+	h=From:Date:Subject:To:Cc:Message-Id; b=Mxi/4vrk2oZQa0m9Uv5Lps8BGowkcKuFbyuod6GJNHN4pI1jvxGG9szAZsX10aTyhIoxY0H6aPqkTKfIh6v20Sz5UtsVasza80HjhYgNwcO9dsxTG5jE6S7DW6MMa2+bpNksC5inQUJ4eumPFEivd2J++FHkZVjqDcy8F9Rd9Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNse4HvJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xvzOw+Zz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sNse4HvJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xvzOw+Zz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from lion.mk-sys.cz (unknown [10.100.200.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AF01F38D00;
+	Wed, 15 Oct 2025 07:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760515197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
+	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
+	b=sNse4HvJ0k1Vd/XtzAwPt3pQEHgfssLgpnSfX3QuX2ho0O1tbU0zdBYD2JP8A+IoLxdXKk
+	thheFxky+yCaEkhFBfCkaOm0D+xeJUwsuVpEdZD7JN0TmIZCPfBPJfAXzgP2hLgIrZ+wvr
+	5uRs0qXYeoNcve+W04BqnJIA/hVX8ck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760515197;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
+	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
+	b=xvzOw+Zz1sRCIxivhzGtX37Z9IFFqYT7D1n5d9Ao5dYU/ng4cUM4Wcu3/Xvy3AEW9nUyHY
+	sIPmi1VAoz6gE2BQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760515197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
+	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
+	b=sNse4HvJ0k1Vd/XtzAwPt3pQEHgfssLgpnSfX3QuX2ho0O1tbU0zdBYD2JP8A+IoLxdXKk
+	thheFxky+yCaEkhFBfCkaOm0D+xeJUwsuVpEdZD7JN0TmIZCPfBPJfAXzgP2hLgIrZ+wvr
+	5uRs0qXYeoNcve+W04BqnJIA/hVX8ck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760515197;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc;
+	bh=KaGaeGgggGLEPX8mQgiYIqbuaBCc76yCkZJPmhA8qRE=;
+	b=xvzOw+Zz1sRCIxivhzGtX37Z9IFFqYT7D1n5d9Ao5dYU/ng4cUM4Wcu3/Xvy3AEW9nUyHY
+	sIPmi1VAoz6gE2BQ==
+Received: by lion.mk-sys.cz (Postfix, from userid 1000)
+	id 8F40620057; Wed, 15 Oct 2025 09:59:57 +0200 (CEST)
+From: Michal Kubecek <mkubecek@suse.cz>
+Date: Wed, 15 Oct 2025 09:56:31 +0200
+Subject: [PATCH] power: supply: use ktime_divns() to avoid 64-bit division
+To: Sebastian Reichel <sre@kernel.org>,
+    linux-pm@vger.kernel.org
+Cc: Hans de Goede <hansg@kernel.org>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    linux-kernel@vger.kernel.org
+Message-Id: <20251015075957.8F40620057@lion.mk-sys.cz>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.80 / 50.00];
+	R_BAD_CTE_7BIT(3.50)[7bit];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	URIBL_BLOCKED(0.00)[lion.mk-sys.cz:mid,lion.mk-sys.cz:helo,suse.cz:email];
+	MISSING_XM_UA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.80
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-devm_kasprintf() may return NULL on memory allocation failure,
-but the debug message prints cpus->dai_name before checking it.
-Move the dev_dbg() call after the NULL check to prevent potential
-NULL pointer dereference.
+The build of intel_dc_ti_battery module on i386 (32-bit) fails with
 
-Fixes: cb8ea62e64020 ("ASoC: amd/sdw_utils: add sof based soundwire generic machine driver")
-Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+ERROR: modpost: "__udivdi3" [drivers/power/supply/intel_dc_ti_battery.ko]
+
+This is caused by 64-bit division of ktime values by NSEC_PER_USEC. Use
+ktime_divns() helper which handles the division correctly on 32-bit
+architectures.
+
+Fixes: 8c5795fe5527 ("power: supply: Add new Intel Dollar Cove TI battery driver")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- sound/soc/amd/acp/acp-sdw-sof-mach.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/intel_dc_ti_battery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/amd/acp/acp-sdw-sof-mach.c b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-index 91d72d4bb9a2..d055582a3bf1 100644
---- a/sound/soc/amd/acp/acp-sdw-sof-mach.c
-+++ b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-@@ -176,9 +176,9 @@ static int create_sdw_dailink(struct snd_soc_card *card,
- 			cpus->dai_name = devm_kasprintf(dev, GFP_KERNEL,
- 							"SDW%d Pin%d",
- 							link_num, cpu_pin_id);
--			dev_dbg(dev, "cpu->dai_name:%s\n", cpus->dai_name);
- 			if (!cpus->dai_name)
- 				return -ENOMEM;
-+			dev_dbg(dev, "cpu->dai_name:%s\n", cpus->dai_name);
+diff --git a/drivers/power/supply/intel_dc_ti_battery.c b/drivers/power/supply/intel_dc_ti_battery.c
+index 56b0c92e9d28..c26209ef9577 100644
+--- a/drivers/power/supply/intel_dc_ti_battery.c
++++ b/drivers/power/supply/intel_dc_ti_battery.c
+@@ -141,7 +141,7 @@ static int dc_ti_battery_get_voltage_and_current_now(struct power_supply *psy, i
+ 	if (ret)
+ 		goto out_err;
  
- 			codec_maps[j].cpu = 0;
- 			codec_maps[j].codec = j;
+-	cnt_start_usec = ktime_get_ns() / NSEC_PER_USEC;
++	cnt_start_usec = ktime_divns(ktime_get_ns(), NSEC_PER_USEC);
+ 
+ 	/* Read Vbat, convert IIO mV to power-supply ųV */
+ 	ret = iio_read_channel_processed_scale(chip->vbat_channel, volt, 1000);
+@@ -149,7 +149,7 @@ static int dc_ti_battery_get_voltage_and_current_now(struct power_supply *psy, i
+ 		goto out_err;
+ 
+ 	/* Sleep at least 3 sample-times + slack to get 3+ CC samples */
+-	now_usec = ktime_get_ns() / NSEC_PER_USEC;
++	now_usec = ktime_divns(ktime_get_ns(), NSEC_PER_USEC);
+ 	sleep_usec = 3 * SMPL_INTVL_US + SLEEP_SLACK_US - (now_usec - cnt_start_usec);
+ 	if (sleep_usec > 0 && sleep_usec < 1000000)
+ 		usleep_range(sleep_usec, sleep_usec + SLEEP_SLACK_US);
 -- 
-2.25.1
+2.51.0
 
 
