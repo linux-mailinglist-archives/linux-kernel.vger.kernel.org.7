@@ -1,86 +1,119 @@
-Return-Path: <linux-kernel+bounces-854239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F68FBDDE34
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD553BDDE40
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC7319A6417
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E883C377A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5DB31B812;
-	Wed, 15 Oct 2025 09:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B125F31B80D;
+	Wed, 15 Oct 2025 09:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DRXnmBu7"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="VeYXNLrz"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AA531B809
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9402270553;
+	Wed, 15 Oct 2025 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760522191; cv=none; b=thKRmc16OsPqFMyn2jrNpWXRfvVQL1eDAXez2Jm8RQrYashO3WCtrlmeCJqshE7MfTixQnpnq4r4uXOyFrb1f/YZstQsRhNe4sfBommAWqKYGfjT+ZJ5tQgNpyTVPHzXKQaue6Cj00G9WMuFQSEcNVwv+iVKV1rdjrorAp5BAEw=
+	t=1760522270; cv=none; b=RyIeoUhpkwbaHYxnNyQeilPf95STZLXdm7hiGRgr8d4i60YgO5VUKHV0w85TwAqS307Eh20pPPx5XWIRhWlvA7dleF551oh6uqpVpoPDOYlYcoOdZPP5/FSCfQa61nD4uJJHTij/4m7EzZ5cbRyNPhz7L4lxVTnTZFhFt0lFoeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760522191; c=relaxed/simple;
-	bh=aRrdpsObtX1p2rAWgFuGAL9X7vaHFsWvKJIFWRPKpRk=;
+	s=arc-20240116; t=1760522270; c=relaxed/simple;
+	bh=cc7YOA0rngoBP/s8PsVA1VBPYCZzWTZjInfpWgZyoe8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmniyuKyhmLuzsBHRI9fQavbI1ymnn02KZ3w6b6NS8m63Aod9DFkjL3NNnFqPxM7XHgWwRZh1tdxdAidpBuoax/6rm9V7L6nYFjmzfnx8oBV9Fp4TPyyRyJ5K+W07ORPPVK53b6s9YsmxUbYXClBqT4BSumQHaqJsZLwPqmebLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DRXnmBu7; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=ICGb7T24T6wc2bu3o+jjHhuAUA8selaEgQ3iff6bI9I=; b=DRXnmBu7iBcYa5g+IEgpFk+egu
-	FCrDrq/C9Cp5XchFYHRrF5tOZjrBGaZdmFYiMGbGAB065kD4/Uc1TDH/GvF1BhnJOuJ/Vy2a91qmt
-	BbW3YbUKRX8YU5EHrZCsL5JGyv4Rv8vPyqoa8c+uiRtEUkypFJrRIYAtEizafxTlVFILGOrbAgoX5
-	UR5p/9ArKcwowLWk66Bj5jOXM//O/bm4ACX5/KTsSKaSNkm4skqlDAzUWjHy2uZrz8rLEGmn340t1
-	xtb0DavSqRuT1Va1aIWztpCseVZiK0KeLK7jMJUt1lIYDQqubaD+PxTou/tRPOvGKlFH/LOqAFz13
-	t7uZuwvg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v8yF9-00000005qvP-1ZHh;
-	Wed, 15 Oct 2025 09:56:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3CC7330023C; Wed, 15 Oct 2025 11:56:26 +0200 (CEST)
-Date: Wed, 15 Oct 2025 11:56:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] objtool: Fix typo "teh" to "the"
-Message-ID: <20251015095626.GM3289052@noisy.programming.kicks-ass.net>
-References: <20251015090106.4037-1-yangtiezhu@loongson.cn>
- <20251015091758.GA3419281@noisy.programming.kicks-ass.net>
- <d489fffe-d201-6213-a59f-2e217c5ab880@loongson.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKpWNg4K/HxfDS15lXsVmIbHYkgy/UlnSckDFuX52uScxwbhP+IlbOth52pqwJ86KbMDTDVbF/GFjfgU/R89p0i7NzUM1Fih8wSpXOSPG3WSWivY2EVkaZ9KtSy70kUvgwLKDpWuggFsIPCA8iwCHuElixIN2jW1nSkcXwvho9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=VeYXNLrz; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id CA9ED20EF2;
+	Wed, 15 Oct 2025 11:57:39 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id QZ8LopMWWIaX; Wed, 15 Oct 2025 11:57:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1760522259; bh=cc7YOA0rngoBP/s8PsVA1VBPYCZzWTZjInfpWgZyoe8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VeYXNLrzNwy0w6vJ6neP6rFJA1f+Ka3YD3a3/ted7BVWlQbN1rW6VlfNNdoIyTfeC
+	 4elNeREb0Q7hDpwwton1MwOOnoiAEcPS0bBoLg1C4jPWhot3OBBwGxyKfadjFoe7bv
+	 5udbZsyBsY5tE3pxdkKxc4WYFDdyttzCtQR0iK5h6Nq2bxMHNtJzbA/gnrxM48xz33
+	 c4sm+0FdZYhOs28dO4Tc2dfADYfQuzQuGX8SM2AXtc+k7qoX0dY8xxuuvuEPrF7Kpp
+	 0sJEdbB1N99QUwuMz1C/RBOYxe8O1YqOdzsjQrEs5bdv8GX5OjkZYihc0otsHxn0c6
+	 ywiF1EQa128Sw==
+Date: Wed, 15 Oct 2025 09:57:20 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Frank <Frank.Sae@motor-comm.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] PCI: Add vendor ID for Motorcomm Electronic
+ Technology
+Message-ID: <aO9wAGs_t0XK0brx@pie>
+References: <20251014164746.50696-3-ziyao@disroot.org>
+ <20251014204306.GA906144@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d489fffe-d201-6213-a59f-2e217c5ab880@loongson.cn>
+In-Reply-To: <20251014204306.GA906144@bhelgaas>
 
-On Wed, Oct 15, 2025 at 05:47:38PM +0800, Tiezhu Yang wrote:
-> On 2025/10/15 下午5:17, Peter Zijlstra wrote:
-> > On Wed, Oct 15, 2025 at 05:01:06PM +0800, Tiezhu Yang wrote:
-> > > Obviously, it should be "the end" rather than "teh end".
+On Tue, Oct 14, 2025 at 03:43:06PM -0500, Bjorn Helgaas wrote:
+> On Tue, Oct 14, 2025 at 04:47:44PM +0000, Yao Zi wrote:
+> > This company produces Ethernet controllers and PHYs. Add their vendor
+> > ID, 0x1f0a[1], which is recorded by PCI-SIG and has been seen on their
+> > PCI Ethernet cards.
 > > 
-> > Was not in fact type but interweb slang:
+> > Link: https://pcisig.com/membership/member-companies?combine=1f0a # [1]
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  include/linux/pci_ids.h | 2 ++
+> >  1 file changed, 2 insertions(+)
 > > 
-> >    https://www.urbandictionary.com/define.php?term=teh
+> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> > index 92ffc4373f6d..0824a1a7663d 100644
+> > --- a/include/linux/pci_ids.h
+> > +++ b/include/linux/pci_ids.h
+> > @@ -2631,6 +2631,8 @@
+> >  
+> >  #define PCI_VENDOR_ID_CXL		0x1e98
+> >  
+> > +#define PCI_VENDOR_ID_MOTORCOMM		0x1f0a
 > 
-> I can not open the above link, I read the info from
-> https://www.definitions.net/definition/TEH
-> 
-> What should to do in the next step?
-> 
-> (1) Do nothing, just keep it as is.
+> If/when this is used by several drivers add it here.  Until then just
+> define PCI_VENDOR_ID_MOTORCOMM in the driver that uses it (see the
+> note at top of the file).
 
-This :-) Consider it your new word of the day.
+Oops, thanks for the hint. I didn't notice the note before, and will
+switch to define the ID in driver.
+
+Best regards,
+Yao Zi
+
+> >  #define PCI_VENDOR_ID_TEHUTI		0x1fc9
+> >  #define PCI_DEVICE_ID_TEHUTI_3009	0x3009
+> >  #define PCI_DEVICE_ID_TEHUTI_3010	0x3010
+> > -- 
+> > 2.50.1
+> > 
 
