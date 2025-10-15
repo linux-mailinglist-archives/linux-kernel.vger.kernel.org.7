@@ -1,356 +1,272 @@
-Return-Path: <linux-kernel+bounces-854800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD39BDF6B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25732BDF6D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6E2188ADD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:38:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04513421624
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0382301712;
-	Wed, 15 Oct 2025 15:38:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B99B3009D4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68723303C8D;
+	Wed, 15 Oct 2025 15:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="KVoDvSJc"
+Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC042DEA7E
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760542685; cv=none; b=izfy0uZP6URFLZGEQ+mU88MI00dAIt05Hn66Ve3Ttek9zuEnkVkZCNi+mpJWGlo/Vozw0/H8I72POcSc0bzeo1EvlHAinqOhbrUHz9NvbsJATbf6icAYI3r0fLa6OHXjICrKJZZNaPBSAi2FEevslobv8H+GGAZlcPbNZA0Gg6I=
+	t=1760542709; cv=none; b=dTACzSY7agH+7a/nZsReqQ29+9zTiy3B80o8jgN+wu/KRIb4uRcanuDYrdq2vLlMm3uAWjJTfRPh1DY7rKZZ17A0JM8TMqvViDc4EKkf04W9U2/pirw+izv2eatvezFzzo7DACPzK7aLQdpCVLSiXu6NHlrIKZ4B0vgZpZuQjVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760542685; c=relaxed/simple;
-	bh=cE69KqVdEZGc22+wvhn0p7Bjh4z6lNLU7RlDFmsFOO0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CVacDznfDSj2EjH7nnLnVzwQtSvSQinpywxaQ4Wl9SdK9z978SNL26nQ3bzduwyO9Jg7RvPnJ8yfF3Abd6jJAH+q1WGr79bELDeQrZsO1WF/dpBSL+dDqdpBZaAgH5KAJaSwXsNu88h4rJQk94LOCS+bRt5PVWkaKkjxsp5fARE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 748CE1655;
-	Wed, 15 Oct 2025 08:37:52 -0700 (PDT)
-Received: from [10.1.38.178] (XHFQ2J9959.cambridge.arm.com [10.1.38.178])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C87E3F738;
-	Wed, 15 Oct 2025 08:37:59 -0700 (PDT)
-Message-ID: <97d01dfe-df9e-4780-8069-b6dfb0e8323d@arm.com>
-Date: Wed, 15 Oct 2025 16:37:57 +0100
+	s=arc-20240116; t=1760542709; c=relaxed/simple;
+	bh=gIezYiTegFyBcP/3Fb+EbVWbtQuVMFl/3rnZU/geUsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KRpMynPdvmBbMI0ctiIzJ1lt51sFSjEbxKvvb6n2wc/z5LyEl/zjqSCEDfSL38LijYu8RggRJD85dlSVpW64YcQZBHzjxLXIyhuoSrmbqrutKvqj4YQyXpiC0h58MHzg3OpqMeqrR+Rm/R3iA9JkXsPiZepr1eGVms/sZKUxj1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=KVoDvSJc; arc=none smtp.client-ip=178.156.171.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay13 (localhost [127.0.0.1])
+	by relay13.grserver.gr (Proxmox) with ESMTP id 7C3DE5E65A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:25 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay13.grserver.gr (Proxmox) with ESMTPS id 90DF85E707
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:23 +0300 (EEST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 54EDF200762
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:38:22 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1760542702;
+	bh=mQ7/WGOdGYf6mG7n10jnlLe+eDnokaXF7eAESwWnDQA=;
+	h=Received:From:Subject:To;
+	b=KVoDvSJc9U8TqchdsVXKKoUh/Rcg+be5HelCtE00SIFmFylpfLyX4/I7YnpEpfZ66
+	 otJvKb9nW3OXFRRrX4m61Gq35wzsa05vHs8cRr7t6oZ6xyOAfZAnXlwp4uIwYAvJ/U
+	 Izg1qiCTspbz6hG4pSae27uKZaxeqLXHnTotAbUXRd/yQ5us4COh+tFfEusF12EWiy
+	 FVhjf/uhl1WexDW9ggVnerkRpKXSEd4C/JI1NhKRsVcvO6VtIkcUZ9LjZFVBno2uzs
+	 H6DTgUDak6l6ex3AYaHQsvy+2b00ltYxvEyC7lYy5milTCFLluU/F0hQHIxaYVyJMh
+	 +QnCZyE8inGVA==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.181) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f181.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f181.google.com with SMTP id
+ 38308e7fff4ca-37777912161so17633801fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Wed, 15 Oct 2025 08:38:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVfRjatw9ljs4NqEERpghhQ+6XwYRtNFLP4Foep1KZQ4JG4I6k+UDEMkQ59W+aRL6nDTSpwq3sldKFHuLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcWxX1VEnr78xZcW8P+nPjlyv9uE0FfzzRz3MCCsWQPOna+cDn
+	Ttq6HCoiF0b5ubgQ1ymxKaPZaZjqDC7M76PLS6Ba7SbzgReatKWy6IgteZfTVOH40t+dsNeQLTD
+	PrHMvo5/dxfDAL4uqf2DJmvv3mOoRzwE=
+X-Google-Smtp-Source: 
+ AGHT+IFjqcKyYvGe7pHZIYE2H4S3rda8I4BB4biO+WOCIaCVKhqZUt8ACTiws2IWJ8pMURwHRVEKmxtrfAqtqNdZfcQ=
+X-Received: by 2002:a05:651c:199e:b0:333:b6b1:a151 with SMTP id
+ 38308e7fff4ca-37609ce579cmr80632981fa.7.1760542701798; Wed, 15 Oct 2025
+ 08:38:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: show direct mapping use in /proc/meminfo
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, cl@gentwo.org,
- catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251013235118.3072941-1-yang@os.amperecomputing.com>
- <91f6da2f-1968-4c23-a534-20b463463faf@arm.com>
- <1449b3b4-2dc0-4a59-94fe-5a4a6dc69986@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <1449b3b4-2dc0-4a59-94fe-5a4a6dc69986@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251013201535.6737-1-lkml@antheas.dev>
+ <20251013201535.6737-7-lkml@antheas.dev>
+ <4e4af3e9-26d3-ad03-7868-7fd7dbd541f3@linux.intel.com>
+In-Reply-To: <4e4af3e9-26d3-ad03-7868-7fd7dbd541f3@linux.intel.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Wed, 15 Oct 2025 17:38:10 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFb9HsT4DCDvASdyxBjO6rJoODbBchXt1GXmRD7gqZ1nA@mail.gmail.com>
+X-Gm-Features: AS18NWDUdsfcgcvuMLIdgA9AW5hQrdjU8rtiJSwIpWPukhUnQInxKfrQt1LW6ig
+Message-ID: 
+ <CAGwozwFb9HsT4DCDvASdyxBjO6rJoODbBchXt1GXmRD7gqZ1nA@mail.gmail.com>
+Subject: Re: [PATCH v6 6/7] platform/x86: asus-wmi: add keyboard brightness
+ event handler
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	Denis Benato <benato.denis96@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176054270261.2565085.3283049938162023267@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On 14/10/2025 21:49, Yang Shi wrote:
-> 
-> 
-> On 10/14/25 1:43 AM, Ryan Roberts wrote:
->> On 14/10/2025 00:51, Yang Shi wrote:
->>> Since commit a166563e7ec3 ("arm64: mm: support large block mapping when
->>> rodata=full"), the direct mapping may be split on some machines instead
->>> keeping static since boot. It makes more sense to show the direct mapping
->>> use in /proc/meminfo than before.
->> It's possible to divine this information from
->> /sys/kernel/debug/kernel_page_tables. Dev even has a script to post-process that
->> to provide summary stats on how much memory is mapped by each block size.
->>
->> Admittedly, this file is in debugfs and is not usually enabled for production
->> builds, but Dev's patch Commit fa93b45fd397 ("arm64: Enable vmalloc-huge with
->> ptdump"), merged for v6.18-rc1 gives us a path to enabling by default I think?
-> 
-> First of all, it is in debugfs, not all distros actually enable debugfs. IIRC,
-> Android has debugfs disabled.
-> 
-> Secondly, dumping kernel page table is quite time consuming and costly. If the
-> users just want know the direct mapping use, it sounds too overkilling.
-> 
->>
->> But I can see the benefits of having this easily available, and I notice that
->> other arches are already doing this. So I guess it makes sense to be consistent.
-> 
-> Yeah, some other architectures show this too.
-> 
->>
->>> This patch will make /proc/meminfo show the direct mapping use like the
->>> below (4K base page size):
->>> DirectMap4K:       94792 kB
->>> DirectMap64K:      134208 kB
->>> DirectMap2M:     1173504 kB
->>> DirectMap32M:     5636096 kB
->>> DirectMap1G:    529530880 kB
->> nit: x86, s390 and powerpc use a lower case "k" for DirectMap4k; perhaps we
->> should follow suit? (despite being ugly). Although I think that's usually used
->> to denote base-10 (i.e. 1000 bytes)? That's not the case here, we want base-2.
-> 
-> We should follow the lower case "k" so that the script used on them can work on
-> arm64 too.
+On Wed, 15 Oct 2025 at 14:19, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Mon, 13 Oct 2025, Antheas Kapenekakis wrote:
+>
+> > Currenlty, the keyboard brightness control of Asus WMI keyboards is
+>
+> There's a typo here but preferrably avoid "currently" altogether where
+> possible.
+>
+> > handled in the kernel, which leads to the shortcut going from
+> > brightness 0, to 1, to 2, and 3.
+> >
+> > However, for HID keyboards it is exposed as a key and handled by the
+> > user's desktop environment. For the toggle button, this means that
+> > brightness control becomes on/off. In addition, in the absence of a
+> > DE, the keyboard brightness does not work.
+> >
+> > Therefore, expose an event handler for the keyboard brightness control
+> > which can then be used by hid-asus.
+> >
+> > Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> > Tested-by: Luke D. Jones <luke@ljones.dev>
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >  drivers/platform/x86/asus-wmi.c            | 41 +++++++++++++++++++++-
+> >  include/linux/platform_data/x86/asus-wmi.h | 13 +++++++
+> >  2 files changed, 53 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asu=
+s-wmi.c
+> > index a2a7cd61fd59..58407a3b6d41 100644
+> > --- a/drivers/platform/x86/asus-wmi.c
+> > +++ b/drivers/platform/x86/asus-wmi.c
+> > @@ -1579,6 +1579,45 @@ void asus_hid_unregister_listener(struct asus_hi=
+d_listener *bdev)
+> >  }
+> >  EXPORT_SYMBOL_GPL(asus_hid_unregister_listener);
+> >
+> > +static void do_kbd_led_set(struct led_classdev *led_cdev, int value);
+> > +
+> > +int asus_hid_event(enum asus_hid_event event)
+> > +{
+> > +     unsigned long flags;
+> > +     int brightness;
+> > +
+> > +     spin_lock_irqsave(&asus_ref.lock, flags);
+> > +     if (!asus_ref.asus || !asus_ref.asus->kbd_led_registered) {
+>
+> Please add a local variable for asus_ref.asus. Check other
+> patches/functions too if its use is repeated in some function many times,
+> the local var seems to be in order.
+>
+> > +             spin_unlock_irqrestore(&asus_ref.lock, flags);
+>
+> Use guard() instead.
+>
+> > +             return -EBUSY;
+> > +     }
+> > +     brightness =3D asus_ref.asus->kbd_led_wk;
+> > +
+> > +     switch (event) {
+> > +     case ASUS_EV_BRTUP:
+> > +             brightness +=3D 1;
+> > +             break;
+> > +     case ASUS_EV_BRTDOWN:
+> > +             brightness -=3D 1;
+> > +             break;
+> > +     case ASUS_EV_BRTTOGGLE:
+> > +             if (brightness >=3D ASUS_EV_MAX_BRIGHTNESS)
+> > +                     brightness =3D 0;
+> > +             else
+> > +                     brightness +=3D 1;
+> > +             break;
+> > +     }
+> > +
+> > +     do_kbd_led_set(&asus_ref.asus->kbd_led, brightness);
+> > +     led_classdev_notify_brightness_hw_changed(&asus_ref.asus->kbd_led=
+,
+> > +                                               asus_ref.asus->kbd_led_=
+wk);
+> > +
+> > +     spin_unlock_irqrestore(&asus_ref.lock, flags);
+> > +
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(asus_hid_event);
+> > +
+> >  /*
+> >   * These functions actually update the LED's, and are called from a
+> >   * workqueue. By doing this as separate work rather than when the LED
+> > @@ -1878,7 +1917,7 @@ static int asus_wmi_led_init(struct asus_wmi *asu=
+s)
+> >       asus->kbd_led.flags =3D LED_BRIGHT_HW_CHANGED;
+> >       asus->kbd_led.brightness_set =3D kbd_led_set;
+> >       asus->kbd_led.brightness_get =3D kbd_led_get;
+> > -     asus->kbd_led.max_brightness =3D 3;
+> > +     asus->kbd_led.max_brightness =3D ASUS_EV_MAX_BRIGHTNESS;
+> >       asus->kbd_led_avail =3D !kbd_led_read(asus, &led_val, NULL);
+> >
+> >       if (asus->kbd_led_avail)
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux=
+/platform_data/x86/asus-wmi.h
+> > index 1f85d76387a8..e78e0fbccede 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -168,6 +168,14 @@ struct asus_hid_listener {
+> >       void (*brightness_set)(struct asus_hid_listener *listener, int br=
+ightness);
+> >  };
+> >
+> > +enum asus_hid_event {
+> > +     ASUS_EV_BRTUP,
+> > +     ASUS_EV_BRTDOWN,
+> > +     ASUS_EV_BRTTOGGLE,
+>
+> Where does "BRT" come from. To me it doesn't associate with brightness
+> (might be due to me being non-native). If there's a good reason why it's
+> that way, fine but otherwise I suggest changing it so that it becomes
+> easier to understand.
+>
+> It's not a big problem as is because the context in the code above allows
+> decrypting the meaning but without the other names, I'd have been totally
+> lost what it means.
 
-Thinking about this some more, I really don't love the idea of encoding the
-page/block sizes in the label name. This is yet another source of potential
-compat issue when running SW with 4K/16K/64K page size. Could we consider using
-PTE/CONTPTE/PMD/CONTPMD/PUD instead?
+Comes from e9809c0b9670 ("asus-wmi: add keyboard backlight support")
 
-> 
-> Do you mean kB should be base-2?
+I matched it to the driver, other alternative is KBDILLUM. I will keep
+it as BRT for now to match the current driver.
 
-No I meant that kB (lower case k) often means 1000x and KiB (upper case K) often
-means 1024x. So having a lower case k here is technically wrong since we are
-talking about 4x1024 bytes, not 4x1000 bytes.
-
-But its a moot point - if we go for these label names, we should use the lower
-case k to be compatible.
-
-> 
->>
->>> Although just the machines which support BBML2_NOABORT can split the
->>> direct mapping, show it on all machines regardless of BBML2_NOABORT so
->>> that the users have consistent view in order to avoid confusion.
->>>
->>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->>> ---
->>>   arch/arm64/mm/mmu.c | 93 ++++++++++++++++++++++++++++++++++++++++++++-
->>>   1 file changed, 91 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->>> index b8d37eb037fc..e5da0f521e58 100644
->>> --- a/arch/arm64/mm/mmu.c
->>> +++ b/arch/arm64/mm/mmu.c
->>> @@ -29,6 +29,7 @@
->>>   #include <linux/mm_inline.h>
->>>   #include <linux/pagewalk.h>
->>>   #include <linux/stop_machine.h>
->>> +#include <linux/proc_fs.h>
->>>     #include <asm/barrier.h>
->>>   #include <asm/cputype.h>
->>> @@ -51,6 +52,17 @@
->>>     DEFINE_STATIC_KEY_FALSE(arm64_ptdump_lock_key);
->>>   +enum direct_map_type {
->>> +    PTE,
->>> +    CONT_PTE,
->>> +    PMD,
->>> +    CONT_PMD,
->>> +    PUD,
->>> +    NR_DIRECT_MAP_TYPE,
->>> +};
->>> +
->>> +unsigned long direct_map_cnt[NR_DIRECT_MAP_TYPE];
->> I wonder if it would be cleaner to store this in bytes rather than blocks? Then
->> in the code you can just add PAGE_SIZE, CONT_PTE_SIZE, PMD_SIZE, etc as
->> appropriate, then the reporting function becomes simpler; everything is just
->> shifted by 10 to get kB; no need for the shift array.
-> 
-> Yeah, good idea.
-> 
->>
->>> +
->>>   u64 kimage_voffset __ro_after_init;
->>>   EXPORT_SYMBOL(kimage_voffset);
->>>   @@ -171,6 +183,60 @@ static void init_clear_pgtable(void *table)
->>>       dsb(ishst);
->>>   }
->>>   +void arch_report_meminfo(struct seq_file *m)
->>> +{
->>> +    char *size[NR_DIRECT_MAP_TYPE];
->>> +    unsigned int shift[NR_DIRECT_MAP_TYPE];
->>> +
->>> +#if defined(CONFIG_ARM64_4K_PAGES)
->>> +    size[PTE] = "4K";
->>> +    size[CONT_PTE] = "64K";
->>> +    size[PMD] = "2M";
->>> +    size[CONT_PMD] = "32M";
->>> +    size[PUD] = "1G";
->>> +
->>> +    shift[PTE] = 2;
->>> +    shift[CONT_PTE] = 6;
->>> +    shift[PMD] = 11;
->>> +    shift[CONT_PMD] = 15;
->>> +    shift[PUD] = 20;
->>> +#elif defined(CONFIG_ARM64_16K_PAGES)
->>> +    size[PTE] = "16K";
->>> +    size[CONT_PTE] = "2M";
->>> +    size[PMD] = "32M";
->>> +    size[CONT_PMD] = "1G";
->>> +
->>> +    shift[PTE] = 4;
->>> +    shift[CONT_PTE] = 11;
->>> +    shift[PMD] = 15;
->>> +    shift[CONT_PMD] = 20;
->>> +#elif defined(CONFIG_ARM64_64K_PAGES)
->>> +    size[PTE] = "64K";
->>> +    size[CONT_PTE] = "2M";
->>> +    size[PMD] = "512M";
->>> +    size[CONT_PMD] = "16G";
->>> +
->>> +    shift[PTE] = 6;
->>> +    shift[CONT_PTE] = 11;
->>> +    shift[PMD] = 19;
->>> +    shift[CONT_PMD] = 24;
->>> +#endif
->> The ifdeffery is quite ugly. I think we can get rid of the shift array as per
->> above. I was hoping there might be a kernel function that we could pass
->> PAGE_SIZE, PMD_SIZE, etc to and it would give us an appropriate string but I
->> can't find anything. I guess keping the ifdef for size[] is the most pragmatic.
-> 
-> Yes, I agree this is the most pragmatic way.
-> 
->>
->>> +
->>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
->>> +            size[PTE], direct_map_cnt[PTE] << shift[PTE]);
->>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
->>> +            size[CONT_PTE],
->>> +            direct_map_cnt[CONT_PTE] << shift[CONT_PTE]);
->>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
->>> +            size[PMD], direct_map_cnt[PMD] << shift[PMD]);
->>> +    seq_printf(m, "DirectMap%s:    %8lu kB\n",
->>> +            size[CONT_PMD],
->>> +            direct_map_cnt[CONT_PMD] << shift[CONT_PMD]);
->>> +    if (pud_sect_supported())
->>> +        seq_printf(m, "DirectMap%s:    %8lu kB\n",
->>> +            size[PUD], direct_map_cnt[PUD] << shift[PUD]);
->>> +}
->>> +
->>>   static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
->>>                phys_addr_t phys, pgprot_t prot)
->>>   {
->>> @@ -183,6 +249,9 @@ static void init_pte(pte_t *ptep, unsigned long addr,
->>> unsigned long end,
->>>            */
->>>           __set_pte_nosync(ptep, pfn_pte(__phys_to_pfn(phys), prot));
->>>   +        if (!(pgprot_val(prot) & PTE_CONT))
->>> +            direct_map_cnt[PTE]++;
->> If adding size in bytes, you could just always add PAGE_SIZE here, but select
->> the bucket based on PTE_CONT?
-> 
-> You mean:
-> 
-> if (pgprot_val(prot) & PTE_CONT)
->     direct_map_cnt[PTE_CONT] += PAGE_SIZE;
-> else
->     direct_map_cnt[PTE] += PAGE_SIZE;
-> 
-> I don't think this is efficient for PTE_CONT, because I can just do
-> "direct_map_cnt[PTE_CONT] += CONT_PTE_SIZE" once in alloc_init_cont_pte()
-> instead of adding PAGE_SIZE CONT_PTES times, right?
-
-Well you could make the same argument for PTEs. you just need to calculate the
-size. Then you don't need any code per-pte at all.
-
-Thanks,
-Ryan
-
-> 
-> This applies to the below comments for PMD/CONT_PMD too.
-> 
-> Thanks,
-> Yang
-> 
->>
->>> +
->>>           /*
->>>            * After the PTE entry has been populated once, we
->>>            * only allow updates to the permission attributes.
->>> @@ -229,8 +298,10 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned
->>> long addr,
->>>             /* use a contiguous mapping if the range is suitably aligned */
->>>           if ((((addr | next | phys) & ~CONT_PTE_MASK) == 0) &&
->>> -            (flags & NO_CONT_MAPPINGS) == 0)
->>> +            (flags & NO_CONT_MAPPINGS) == 0) {
->>>               __prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->>> +            direct_map_cnt[CONT_PTE]++;
->> Then you don't need this.
->>
->>> +        }
->>>             init_pte(ptep, addr, next, phys, __prot);
->>>   @@ -262,6 +333,9 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr,
->>> unsigned long end,
->>>               (flags & NO_BLOCK_MAPPINGS) == 0) {
->>>               pmd_set_huge(pmdp, phys, prot);
->>>   +            if (!(pgprot_val(prot) & PTE_CONT))
->>> +                direct_map_cnt[PMD]++;
->> Same here...
->>
->>> +
->>>               /*
->>>                * After the PMD entry has been populated once, we
->>>                * only allow updates to the permission attributes.
->>> @@ -317,8 +391,10 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned
->>> long addr,
->>>             /* use a contiguous mapping if the range is suitably aligned */
->>>           if ((((addr | next | phys) & ~CONT_PMD_MASK) == 0) &&
->>> -            (flags & NO_CONT_MAPPINGS) == 0)
->>> +            (flags & NO_CONT_MAPPINGS) == 0) {
->>>               __prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->>> +            direct_map_cnt[CONT_PMD]++;
->> Then this can go too.
->>
->>> +        }
->>>             init_pmd(pmdp, addr, next, phys, __prot, pgtable_alloc, flags);
->>>   @@ -368,6 +444,7 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long
->>> addr, unsigned long end,
->>>               (flags & NO_BLOCK_MAPPINGS) == 0) {
->>>               pud_set_huge(pudp, phys, prot);
->>>   +            direct_map_cnt[PUD]++;
->>>               /*
->>>                * After the PUD entry has been populated once, we
->>>                * only allow updates to the permission attributes.
->>> @@ -532,9 +609,13 @@ static void split_contpte(pte_t *ptep)
->>>   {
->>>       int i;
->>>   +    direct_map_cnt[CONT_PTE]--;
->>> +
->>>       ptep = PTR_ALIGN_DOWN(ptep, sizeof(*ptep) * CONT_PTES);
->>>       for (i = 0; i < CONT_PTES; i++, ptep++)
->>>           __set_pte(ptep, pte_mknoncont(__ptep_get(ptep)));
->>> +
->>> +    direct_map_cnt[PTE] += CONT_PTES;
->>>   }
->>>     static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
->>> @@ -559,8 +640,10 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp,
->>> bool to_cont)
->>>       if (to_cont)
->>>           prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->>>   +    direct_map_cnt[PMD]--;
->>>       for (i = 0; i < PTRS_PER_PTE; i++, ptep++, pfn++)
->>>           __set_pte(ptep, pfn_pte(pfn, prot));
->>> +    direct_map_cnt[CONT_PTE] += PTRS_PER_PTE / CONT_PTES;
->>>         /*
->>>        * Ensure the pte entries are visible to the table walker by the time
->>> @@ -576,9 +659,13 @@ static void split_contpmd(pmd_t *pmdp)
->>>   {
->>>       int i;
->>>   +    direct_map_cnt[CONT_PMD]--;
->>> +
->>>       pmdp = PTR_ALIGN_DOWN(pmdp, sizeof(*pmdp) * CONT_PMDS);
->>>       for (i = 0; i < CONT_PMDS; i++, pmdp++)
->>>           set_pmd(pmdp, pmd_mknoncont(pmdp_get(pmdp)));
->>> +
->>> +    direct_map_cnt[PMD] += CONT_PMDS;
->>>   }
->>>     static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
->>> @@ -604,8 +691,10 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp,
->>> bool to_cont)
->>>       if (to_cont)
->>>           prot = __pgprot(pgprot_val(prot) | PTE_CONT);
->>>   +    direct_map_cnt[PUD]--;
->>>       for (i = 0; i < PTRS_PER_PMD; i++, pmdp++, pfn += step)
->>>           set_pmd(pmdp, pfn_pmd(pfn, prot));
->>> +    direct_map_cnt[CONT_PMD] += PTRS_PER_PMD/CONT_PMDS;
->>>         /*
->>>        * Ensure the pmd entries are visible to the table walker by the time
-> 
+> > +};
+> > +
+> > +#define ASUS_EV_MAX_BRIGHTNESS 3
+> > +
+> >  #if IS_REACHABLE(CONFIG_ASUS_WMI)
+> >  void set_ally_mcu_hack(enum asus_ally_mcu_hack status);
+> >  void set_ally_mcu_powersave(bool enabled);
+> > @@ -176,6 +184,7 @@ int asus_wmi_evaluate_method(u32 method_id, u32 arg=
+0, u32 arg1, u32 *retval);
+> >
+> >  int asus_hid_register_listener(struct asus_hid_listener *cdev);
+> >  void asus_hid_unregister_listener(struct asus_hid_listener *cdev);
+> > +int asus_hid_event(enum asus_hid_event event);
+> >  #else
+> >  static inline void set_ally_mcu_hack(enum asus_ally_mcu_hack status)
+> >  {
+> > @@ -200,6 +209,10 @@ static inline int asus_hid_register_listener(struc=
+t asus_hid_listener *bdev)
+> >  static inline void asus_hid_unregister_listener(struct asus_hid_listen=
+er *bdev)
+> >  {
+> >  }
+> > +static inline int asus_hid_event(enum asus_hid_event event)
+> > +{
+> > +     return -ENODEV;
+> > +}
+> >  #endif
+> >
+> >  #endif       /* __PLATFORM_DATA_X86_ASUS_WMI_H */
+> >
+>
+> --
+>  i.
+>
+>
 
 
