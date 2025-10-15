@@ -1,255 +1,268 @@
-Return-Path: <linux-kernel+bounces-853532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1113EBDBE8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED11BDBEA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 456324E7181
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400533E5C64
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260B21DB122;
-	Wed, 15 Oct 2025 00:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D43156230;
+	Wed, 15 Oct 2025 00:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dbLIZOYi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bvYC4VHS"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010048.outbound.protection.outlook.com [52.101.46.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18079946C;
-	Wed, 15 Oct 2025 00:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760488081; cv=none; b=nit1kc422Jr0YzvCrN403TmYwDGo14+2cgh4DrR7suI7b8Xv2MlFGoLGmFBneJWJlhbGlUN93n/aWz49agipfw8HR8gDidea9EWF83O3W2h/a2TTNMqEmXkgChP3n/2vFrNgTJ9XzO/lMUwDuMoDXAKb44pFzz//qJaHkTLJm0U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760488081; c=relaxed/simple;
-	bh=i8lmuL7zRjgBAL4GZ0qUh6hQZpVvIrs7ANXDRLszzgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TPquYdVpuKzOySLvYuVoptyzpsed6h/tSWI61pAmxTokbMRc5aGIJPhA46gT3Y9R3VY+A1BFzsUBFhEQt3NYeAdV2Tl5F+6lXMdgTKfyn2n9NF1BwaXMBCK6j2R4FDOobRq1tL1f5iKFRTeRz6dhgGGo8YTFiCmRCOZSy0oTPD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dbLIZOYi; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760488080; x=1792024080;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=i8lmuL7zRjgBAL4GZ0qUh6hQZpVvIrs7ANXDRLszzgk=;
-  b=dbLIZOYilTLzUX8zWDMRiC6pRS/OZp/ZApJF3BS2e1Sn6D+nYJUb73aV
-   wZgeSL3/XhDzcku/Aoral1VQa9Jhm151UiNWh8jGRnh4GlbJkA4R+JfqX
-   kdtVN7n2nI9ks99dzP8wCa0AhOGub9fYFvu5bAJ+x8AO2cgbFoQkyOGTA
-   z96nJkz55MTeNrqXH0za05VEkHqhp0O8SQa/axi5mV0nkjSakDuRgzQAr
-   zAFxzxzU4Ewq5l09R2HRAnnuV2H1Ir0V/Vp/ecyILH64Bqrb9v9dq4TTa
-   qNZ/VKBUnAeqBWbxE4cKJ5wLjzsDNMxOD9OnMLVo7MAdz5z0m2OBmIn53
-   g==;
-X-CSE-ConnectionGUID: xuvG4GSESDCYw6QhAnRFZQ==
-X-CSE-MsgGUID: X1AHHT9ZTM+rdilHUypt+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="74105544"
-X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
-   d="scan'208";a="74105544"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 17:27:59 -0700
-X-CSE-ConnectionGUID: idNH5SqiRHOjmg8apePswg==
-X-CSE-MsgGUID: XPWiNgPAT6Cd8GfDge6i9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,229,1754982000"; 
-   d="scan'208";a="219161715"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 17:27:57 -0700
-Message-ID: <6967ca67-61c8-48c2-bf36-815ee960a318@linux.intel.com>
-Date: Wed, 15 Oct 2025 08:27:54 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6D313AD3F;
+	Wed, 15 Oct 2025 00:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760488280; cv=fail; b=XUt8xntg3bsHSO2T4ZWQn5lQyuxvveMIOOlTUzN4aKw/4JnMecp4cPaaPPTp9RjYqQEjFgUMbrNW9NzexSa34DIIJ+cQmpaq0KDlupzuisp8WxZYyF6idmEF0+S6esBjBwZAyLVHOBx+jAr+2UOVgS0sNcFPsY08cBZZilJUVFs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760488280; c=relaxed/simple;
+	bh=j5Xt1NMOux44xKOVE4Zc+XShbUMZXLEQHCrlebijPBc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AYpd6HRluixGzV8NLBBdL5ELBhCLkZCKZ2pMLEAq/0OqgMoRdQa+eqUH/rP7mr/5LMUfnImEQRWRidXLg3FA31yaYH0sjvkQRQDDybdrTCq/MiJvDAfOYdVoFoCqNdjxB5p1BSDDTHp6uGhnU/2VwvIhuG7ltC+N0kALaVQ/Ihw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bvYC4VHS; arc=fail smtp.client-ip=52.101.46.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EPWofTQdXbltXZsblwPxqq5CXnEnMzcc0kCaE+6yck7GzO/xU6rC/sd8CTjSzlUG7r/uV7csrqX38ijo0Hks2z5NDveQnnx5HMUKrA+TIAUxP7hHHlHnaRhfRIHRWdJDeTir8FGXcsTu7HOhId023BvGslilu1qeCbU1mY0E+76V9jkXMnv9NjSIajg8YKOMdLky41rc1jjx/iJG7NNdMXBCOlHPW+fei3kJxUu5WzUg0YV/Nh0hihFeCk5f+H8okxUXhcoI6qk7a6TSWFkcj4o2DeLG72Xr2rUzM/IJPhUesNcY4fA1Ywc0q2ngpIwt+LZvxZ2EsJA25ExdGUwZFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YzpnPt3AMh38rZpw4mTldTry7eVO92T4/2oLuCuHj6k=;
+ b=iEAQ6BRLrBwBExrd9kI1P0ZaGE6HWlmHWRbxj/XWOYLiOsM6x4eExWPsgeLG/ACLumKBIYFIoKl5DPR46WaQ6PmeUQd6F0o3wL3WrvMooA7KD5jUzUPZDVAvx6Jjlt5L3aVRngYWpVMvFlaAmK1B5YNBIoIpT+dA7vrN73zFeP1W4aUcAyWctXozuOSqasgspWQAeyDaLlsqWtCd9rYcuw34ZrAs8ZTU9F5vH9bvo7eh5Dy9MGpn/KrF0TbAZwAhMyFJaSc77y5p3TuKTZlIMMPnZA5AQCS1c+XvHYKRL4cT+qvidvAFP3Lspi6YJ0HDZpAmLd4sTaDGUFDVf3agaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YzpnPt3AMh38rZpw4mTldTry7eVO92T4/2oLuCuHj6k=;
+ b=bvYC4VHSYo55e3Cwo06lJjctyb4cvXsP+Vad9xshZ0AiWrbVl/FZOzTKJKifx/5Y4+S5Kt5x/kXTMFRF6/l5nqW2PfdKKSywuDM0SzidCJplRCq1UmW2RZ9/7D5o/VsDw/ufQSzrXrmJs77a0jVUkCvTudivW0t5eKIG/TsxJsbkJjH0K1SwSRf2TogW2Cjy98BQeulMQsDIYQL0ey8MxCQc7wlwbH0vT1aDJvQ2MQwI5/rjaquCDtQFOegdygn289AM3RdK+TMVTdWaRGMEmq9M2CThA92w/++Vk3KKJyaC2moneLUHiO69p3ILGA8dwH0QuuYdefTdDJGKbGUpLQ==
+Received: from SJ0PR05CA0056.namprd05.prod.outlook.com (2603:10b6:a03:33f::31)
+ by DS2PR12MB9664.namprd12.prod.outlook.com (2603:10b6:8:27b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
+ 2025 00:31:15 +0000
+Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
+ (2603:10b6:a03:33f:cafe::b2) by SJ0PR05CA0056.outlook.office365.com
+ (2603:10b6:a03:33f::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.9 via Frontend Transport; Wed,
+ 15 Oct 2025 00:31:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 00:31:14 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Tue, 14 Oct
+ 2025 17:31:05 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Oct
+ 2025 17:31:04 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Oct 2025 17:31:04 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, <shuah@kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <shyamsaini@linux.microsoft.com>
+Subject: [PATCH v2 0/7] iommufd: Add MSI mapping support with nested SMMU (Part-2 RMR)
+Date: Tue, 14 Oct 2025 17:29:32 -0700
+Message-ID: <cover.1760487869.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] bisected: perf: hang when using async-profiler
- caused by perf: Fix the POLL_HUP delivery breakage
-To: Octavia Togami <octavia.togami@gmail.com>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
- peterz@infradead.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvceqtgTPao3Q@mail.gmail.com>
- <8aed5e69-57b1-4a01-b90c-56402eb27b37@linux.intel.com>
- <CAHPNGSTgahRhAg5eM=pnn45rw=TJzTz4AfeckcB2RcsPvxCeGg@mail.gmail.com>
- <ad3ef789-3f12-4107-abad-cf7b4775e38d@linux.intel.com>
- <CAHPNGSTmv7qxMYOs6h1uevB4Rjiy9R+-YTt0gZ2D1tVh7-cuxQ@mail.gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <CAHPNGSTmv7qxMYOs6h1uevB4Rjiy9R+-YTt0gZ2D1tVh7-cuxQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|DS2PR12MB9664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19617709-f1b3-4a72-7724-08de0b822654
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CCFb32GZJh8AmwIxmRvHxs/YuygWUMrTL+NMSrwGJ8CXDsMqq6iIUcZmFXkN?=
+ =?us-ascii?Q?/fF/H7KVQendtAAHTSTBacTTJYgR2QJsG59kGoD/mN9Gpdhb9bO97rpN2RUH?=
+ =?us-ascii?Q?q2SiVwiOBb9Ru6Z8y5p5eO7735M/dVxo/smARnAM9B5MP8hnPxVtoDxPl8Gj?=
+ =?us-ascii?Q?fK1KC5Ws3z5/Gji/0O6+3u8YdAy/w8jnSmzbwKL+SLg34dIdsKnOVzYo8o8P?=
+ =?us-ascii?Q?eHhIlETJLTf4PRZcMH/5XFWasvam1tsxTp2Yrcx6cDbRY7hEjaQrKSb+GrGP?=
+ =?us-ascii?Q?9RbcmPcD1GS1l7ci0OGTjVLpPNblSPPQTCigNR3LGY99RiKkMucKxa2QyhBx?=
+ =?us-ascii?Q?d1RdVQfFzHPlTw0wUAH+xvKZy/gEhJh2HaUqnDP3jNkWCVSZhWefHjOz1apN?=
+ =?us-ascii?Q?4TlX9JOGDiW7uKg+JKpPWojsteXA3C4xOB9ElIRWxbhIV7NnGDfGrxm/183/?=
+ =?us-ascii?Q?tr8+WykS+ZpGo+7Do2XGVspMa+25rORO+OxT0tWS4c/gibjqAgAETSyfosRm?=
+ =?us-ascii?Q?2V9k4idJIe8yA6ptp7thunkGGc3/+Mn7WfDjm+lLLRtaLX0Qo5HXrsvar/at?=
+ =?us-ascii?Q?qXxu1ZJIcUljBHDpAgYRrPqUVJXuerhKHAEnASOoMo9T8h9msufmrcNehdzA?=
+ =?us-ascii?Q?kTHoV6HDpqWxjHiRRsZj+4EOFcsjRnDniTdmQ8+uhPRhsAHT6WKUf9g8XUNC?=
+ =?us-ascii?Q?efmrEQF3lIbv2C0WggL6e8nr4l+KM6LSHQl42GXbIb2WHZDFVNtMbYGi7NGy?=
+ =?us-ascii?Q?cwbWZZn4YzIs3fe2bsOhJrEYqBU4WQwbeSPlBaoSySTyODy7C38UV2crmfvT?=
+ =?us-ascii?Q?/Bb3u49ffMqxNq2Pb6ih8/1Rc2K3FIwJevcFQ4/N0ItJ5GiJlfzGPTVBOeNF?=
+ =?us-ascii?Q?yObKE3khJ1/qORJaK2VA6IFVJA/Y7SG6V+RJpFcxRtnxlTQ2Cf5DDgT+S7hG?=
+ =?us-ascii?Q?MiWOIMs6fbuNxBajEumFESavVNYRvBi8kydY47kvmKx32VV/mQ0xCeMwhqTg?=
+ =?us-ascii?Q?Yt89I6+OJ4Hn9CZl8cbxfahIRFS8u6x8mnRF+GHHhgaClLgdeLswZPjZ4fmg?=
+ =?us-ascii?Q?xlIKP/nXuKl1UfLCOzcDM7Iz+9GvoH3ZeVvk6Eixa/4Pap/vL1YjyfBVUm/s?=
+ =?us-ascii?Q?lqeAf5BQzONDmPDj/p30hneh1bcAJPgpRnRFN6O6DlDxZLDVNvsHI2z9e726?=
+ =?us-ascii?Q?Fkuo9p5hd/VuJWxW59wQ3NHsiWEc5GXXVnOO2eyKPlKFUrBOLb5np2jd1Ywo?=
+ =?us-ascii?Q?l0sT1np3oDtlUxdCzPhfK8sg6lTHTCh3NizLiSTkAam7ppVBy91R9Pa74ToJ?=
+ =?us-ascii?Q?cOTLFp0o9Tc8lsyiyVqRziYHZRffDZviN6r0Rcpqt+v42BPnsnfanstzwGfQ?=
+ =?us-ascii?Q?+cKkLS3lr4x+ZP2PEdyKWbqrqm8d5uG76q+2kp0jl8Ez5ljJFSV33fa8n1gt?=
+ =?us-ascii?Q?vv39cFxC0l/Aa8twb/58LDOA7rD08HY/WnedZ3+ipw3wbeL9pcbKNkKiM9sr?=
+ =?us-ascii?Q?bWBAexWvhOiglwPv2YUAMxYFoW0EUT+9rtSpSJllqLHgCnk8UZvW+mcoTe0V?=
+ =?us-ascii?Q?MYq40i9Uwqb03QxH15JmxZnZQVENWdBYUIXWGq2Y?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 00:31:14.9704
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19617709-f1b3-4a72-7724-08de0b822654
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D0.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9664
 
+[ Background ]
+On ARM GIC systems and others, the target address of the MSI is translated
+by the IOMMU. For GIC, the MSI address page is called "ITS" page. When the
+IOMMU is disabled, the MSI address is programmed to the physical location
+of the GIC ITS page (e.g. 0x20200000). When the IOMMU is enabled, the ITS
+page is behind the IOMMU, so the MSI address is programmed to an allocated
+IO virtual address (a.k.a IOVA), e.g. 0xFFFF0000, which must be mapped to
+the physical ITS page: IOVA (0xFFFF0000) ===> PA (0x20200000).
+When a 2-stage translation is enabled, IOVA will be still used to program
+the MSI address, though the mappings will be in two stages:
+  IOVA (0xFFFF0000) ===> IPA (e.g. 0x80900000) ===> PA (0x20200000)
+(IPA stands for Intermediate Physical Address).
 
-On 10/15/2025 4:13 AM, Octavia Togami wrote:
-> That patch is also working fine.
+If the device that generates MSI is attached to an IOMMU_DOMAIN_DMA, the
+IOVA is dynamically allocated from the top of the IOVA space. If attached
+to an IOMMU_DOMAIN_UNMANAGED (e.g. a VFIO passthrough device), the IOVA is
+fixed to an MSI window reported by the IOMMU driver via IOMMU_RESV_SW_MSI,
+which is hardwired to MSI_IOVA_BASE (IOVA==0x8000000) for ARM IOMMUs.
 
-Thanks for testing this patch. I would post it.
+So far, this IOMMU_RESV_SW_MSI works well as kernel is entirely in charge
+of the IOMMU translation (1-stage translation), since the IOVA for the ITS
+page is fixed and known by kernel. However, with virtual machine enabling
+a nested IOMMU translation (2-stage), a guest kernel directly controls the
+stage-1 translation with an IOMMU_DOMAIN_DMA, mapping a vITS page (at an
+IPA 0x80900000) onto its own IOVA space (e.g. 0xEEEE0000). Then, the host
+kernel can't know that guest-level IOVA to program the MSI address.
 
+There have been two approaches to solve this problem:
+1. Create an identity mapping in the stage-1. VMM could insert a few RMRs
+   (Reserved Memory Regions) in guest's IORT. Then the guest kernel would
+   fetch these RMR entries from the IORT and create an IOMMU_RESV_DIRECT
+   region per iommu group for a direct mapping. Eventually, the mappings
+   would look like: IOVA (0x8000000) === IPA (0x8000000) ===> 0x20200000
+   This requires an IOMMUFD ioctl for kernel and VMM to agree on the IPA.
+2. Forward the guest-level MSI IOVA captured by VMM to the host-level GIC
+   driver, to program the correct MSI IOVA. Forward the VMM-defined vITS
+   page location (IPA) to the kernel for the stage-2 mapping. Eventually:
+   IOVA (0xFFFF0000) ===> IPA (0x80900000) ===> PA (0x20200000)
+   This requires a VFIO ioctl (for IOVA) and an IOMMUFD ioctl (for IPA).
 
->
-> On Mon, Oct 13, 2025 at 11:41 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
->>
->> On 10/13/2025 2:55 PM, Octavia Togami wrote:
->>> That change appears to fix the problem on my end. I ran my reproducer
->>> and some other tests multiple times without issue.
->> @Octavia Thanks for checking this patch. But following Peter's comments, we
->> need to update the fix. So could you please re-test the below changes? Thanks.
->>
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index 7541f6f85fcb..ed236b8bbcaa 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -11773,7 +11773,8 @@ static enum hrtimer_restart
->> perf_swevent_hrtimer(struct hrtimer *hrtimer)
->>
->>         event = container_of(hrtimer, struct perf_event, hw.hrtimer);
->>
->> -       if (event->state != PERF_EVENT_STATE_ACTIVE)
->> +       if (event->state != PERF_EVENT_STATE_ACTIVE ||
->> +           event->hw.state & PERF_HES_STOPPED)
->>                 return HRTIMER_NORESTART;
->>
->>         event->pmu->read(event);
->> @@ -11827,7 +11828,7 @@ static void perf_swevent_cancel_hrtimer(struct
->> perf_event *event)
->>                 ktime_t remaining = hrtimer_get_remaining(&hwc->hrtimer);
->>                 local64_set(&hwc->period_left, ktime_to_ns(remaining));
->>
->> -               hrtimer_cancel(&hwc->hrtimer);
->> +               hrtimer_try_to_cancel(&hwc->hrtimer);
->>         }
->>  }
->>
->> @@ -11871,12 +11872,14 @@ static void cpu_clock_event_update(struct
->> perf_event *event)
->>
->>  static void cpu_clock_event_start(struct perf_event *event, int flags)
->>  {
->> +       event->hw.state = 0;
->>         local64_set(&event->hw.prev_count, local_clock());
->>         perf_swevent_start_hrtimer(event);
->>  }
->>
->>  static void cpu_clock_event_stop(struct perf_event *event, int flags)
->>  {
->> +       event->hw.state = PERF_HES_STOPPED;
->>         perf_swevent_cancel_hrtimer(event);
->>         if (flags & PERF_EF_UPDATE)
->>                 cpu_clock_event_update(event);
->> @@ -11950,12 +11953,14 @@ static void task_clock_event_update(struct
->> perf_event *event, u64 now)
->>
->>  static void task_clock_event_start(struct perf_event *event, int flags)
->>  {
->> +       event->hw.state = 0;
->>         local64_set(&event->hw.prev_count, event->ctx->time);
->>         perf_swevent_start_hrtimer(event);
->>  }
->>
->>  static void task_clock_event_stop(struct perf_event *event, int flags)
->>  {
->> +       event->hw.state = PERF_HES_STOPPED;
->>         perf_swevent_cancel_hrtimer(event);
->>         if (flags & PERF_EF_UPDATE)
->>                 task_clock_event_update(event, event->ctx->time);
->>
->>
->>> On Sun, Oct 12, 2025 at 7:34 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
->>>> On 10/11/2025 4:31 PM, Octavia Togami wrote:
->>>>> Using async-profiler
->>>>> (https://github.com/async-profiler/async-profiler/) on Linux
->>>>> 6.17.1-arch1-1 causes a complete hang of the CPU. This has been
->>>>> reported by many people at https://github.com/lucko/spark/issues/530.
->>>>> spark is a piece of software that uses async-profiler internally.
->>>>>
->>>>> As seen in https://github.com/lucko/spark/issues/530#issuecomment-3339974827,
->>>>> this was bisected to 18dbcbfabfffc4a5d3ea10290c5ad27f22b0d240 perf:
->>>>> Fix the POLL_HUP delivery breakage. Reverting this commit on 6.17.1
->>>>> fixed the issue for me.
->>>>>
->>>>> Steps to reproduce:
->>>>> 1. Get a copy of async-profiler. I tested both v3 (affects older spark
->>>>> versions) and v4.1 (latest at time of writing). Unarchive it, this is
->>>>> <async-profiler-dir>.
->>>>> 2. Set kernel parameters kernel.perf_event_paranoid=1 and
->>>>> kernel.kptr_restrict=0 as instructed by
->>>>> https://github.com/async-profiler/async-profiler/blob/fb673227c7fb311f872ce9566769b006b357ecbe/docs/GettingStarted.md
->>>>> 3. Install a version of Java that comes with jshell, i.e. Java 9 or
->>>>> newer. Note: jshell is used for ease of reproduction. Any Java
->>>>> application that is actively running will work.
->>>>> 4. Run `printf 'int acc; while (true) { acc++; }' | jshell -`. This
->>>>> will start an infinitely running Java process.
->>>>> 5. Run `jps` and take the PID next to the text RemoteExecutionControl
->>>>> -- this is the process that was just started.
->>>>> 6. Attach async-profiler to this process by running
->>>>> `<async-profiler-dir>/bin/asprof -d 1 <PID>`. This will run for one
->>>>> second, then the system should freeze entirely shortly thereafter.
->>>>>
->>>>> I triggered a sysrq crash while the system was frozen, and the output
->>>>> I found in journalctl afterwards is at
->>>>> https://gist.github.com/octylFractal/76611ee76060051e5efc0c898dd0949e
->>>>> I'm not sure if that text is actually from the triggered crash, but it
->>>>> seems relevant. If needed, please tell me how to get the actual crash
->>>>> report, I'm not sure where it is.
->>>>>
->>>>> I'm using an AMD Ryzen 9 5900X 12-Core Processor. Given that I've seen
->>>>> no Intel reports, it may be AMD specific. I don't have an Intel CPU on
->>>>> hand to test with.
->>>>>
->>>>> /proc/version: Linux version 6.17.1-arch1-1 (linux@archlinux) (gcc
->>>>> (GCC) 15.2.1 20250813, GNU ld (GNU Binutils) 2.45.0) #1 SMP
->>>>> PREEMPT_DYNAMIC Mon, 06 Oct 2025 18:48:29 +0000
->>>>> Operating System: Arch Linux
->>>>> uname -mi: x86_64 unknown
->>>> It looks the issue described in the link
->>>> (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u)
->>>> happens again but in a different way. :(
->>>>
->>>> As the commit message above link described,  cpu-clock (and task-clock) is
->>>> a specific SW event which rely on hrtimer. The hrtimer handler calls
->>>> __perf_event_overflow() and then event_stop (cpu_clock_event_stop()) and
->>>> eventually call hrtimer_cancel() which traps into a dead loop which waits
->>>> for the calling hrtimer handler finishes.
->>>>
->>>> As the
->>>> change (https://lore.kernel.org/all/20250606192546.915765-1-kan.liang@linux.intel.com/T/#u),
->>>> it should be enough to just disable the event and don't need an extra event
->>>> stop.
->>>>
->>>> @Octavia, could you please check if the change below can fix this issue?
->>>> Thanks.
->>>>
->>>> diff --git a/kernel/events/core.c b/kernel/events/core.c
->>>> index 7541f6f85fcb..883b0e1fa5d3 100644
->>>> --- a/kernel/events/core.c
->>>> +++ b/kernel/events/core.c
->>>> @@ -10343,7 +10343,20 @@ static int __perf_event_overflow(struct perf_event
->>>> *event,
->>>>                 ret = 1;
->>>>                 event->pending_kill = POLL_HUP;
->>>>                 perf_event_disable_inatomic(event);
->>>> -               event->pmu->stop(event, 0);
->>>> +
->>>> +               /*
->>>> +                * The cpu-clock and task-clock are two special SW events,
->>>> +                * which rely on the hrtimer. The __perf_event_overflow()
->>>> +                * is invoked from the hrtimer handler for these 2 events.
->>>> +                * Avoid to call event_stop()->hrtimer_cancel() for these
->>>> +                * 2 events since hrtimer_cancel() waits for the hrtimer
->>>> +                * handler to finish, which would trigger a deadlock.
->>>> +                * Only disabling the events is enough to stop the hrtimer.
->>>> +                * See perf_swevent_cancel_hrtimer().
->>>> +                */
->>>> +               if (event->attr.config != PERF_COUNT_SW_CPU_CLOCK &&
->>>> +                   event->attr.config != PERF_COUNT_SW_TASK_CLOCK)
->>>> +                       event->pmu->stop(event, 0);
->>>>         }
->>>>
->>>>         if (event->attr.sigtrap) {
->>>>
->>>>
+Worth mentioning that when Eric Auger was working on the same topic with
+the VFIO iommu uAPI, he had the approach (2) first, and then switched to
+the approach (1), suggested by Jean-Philippe for reduction of complexity.
+
+The approach (1) basically feels like the existing VFIO passthrough that
+has a 1-stage mapping for the unmanaged domain, yet only by shifting the
+MSI mapping from stage 1 (guest-has-no-iommu case) to stage 2 (guest-has-
+iommu case). So, it could reuse the existing IOMMU_RESV_SW_MSI piece, by
+sharing the same idea of "VMM leaving everything to the kernel".
+
+The approach (2) is an ideal solution, yet it requires additional effort
+for kernel to be aware of the 1-stage gIOVA(s) and 2-stage IPAs for vITS
+page(s), which demands VMM to closely cooperate.
+ * It also brings some complicated use cases to the table where the host
+   or/and guest system(s) has/have multiple ITS pages.
+
+[ Execution ]
+The iommu core rework (part-1) for iommufd_sw_msi is merged. So, now the
+IOMMU_RESV_SW_MSI can be used as an ABI. VMM can take this hard coded MSI
+window and create a direct stage-1 mapping using RMR in the guest's IORT.
+However, a proper uAPI must be defined for kernel and VMM to agree on wrt
+this virtual MSI window.
+
+Moreover, some use cases might want to map the IOVAs in IOMMU_RESV_SW_MSI
+for something else. This requires kernel to provide an interface to shift
+the software MSI window to a different region:
+https://lore.kernel.org/all/20250909154600.910110-1-shyamsaini@linux.microsoft.com/
+
+This series, as a follow-up series, introduces a pair of iommufd options
+for user space to configure the software MSI window.
+
+[ Future Plan ]
+Part-3 and beyond will continue the effort of supporting the approach (2)
+for a complete vITS-to-pITS mapping:
+ 1) Map the phsical ITS page (potentially via IOMMUFD_CMD_IOAS_MAP_MSI)
+ 2) Convey the IOVAs per-irq (potentially via VFIO_IRQ_SET_ACTION_PREPARE)
+    Note that the set_option uAPI in this series might not fit since this
+    requires it is an array of MSI IOVAs.)
+
+This series is on github:
+https://github.com/nicolinc/iommufd/commits/iommufd_msi_p2-v2
+Pairing QEMU branch for testing (approach 1):
+https://github.com/nicolinc/qemu/commits/wip/for_iommufd_msi_p2-v2-rmr
+
+Changelog
+v2
+ * Rebase on v6.18-rc1
+ * Update commit logs and kdocs
+ * Add a patch fixing iommufd_device_is_attached()
+ * Add sanity check for overflow and cover it in the selftest
+v1 (containing part-1 that is now merged)
+ https://lore.kernel.org/all/cover.1739005085.git.nicolinc@nvidia.com/
+
+Thanks!
+Nicolin
+
+Nicolin Chen (7):
+  iommufd/device: Move sw_msi_start from igroup to idev
+  iommufd: Pass in idev to iopt_table_enforce_dev_resv_regions
+  iommufd/device: Make iommufd_device_is_attached non-static
+  iommufd: Add IOMMU_OPTION_SW_MSI_START/SIZE ioctls
+  iommufd/selftest: Add MOCK_FLAGS_DEVICE_NO_ATTACH
+  iommufd/selftest: Add a testing reserved region
+  iommufd/selftest: Add coverage for IOMMU_OPTION_SW_MSI_START/SIZE
+
+ drivers/iommu/iommufd/iommufd_private.h       |   7 +-
+ drivers/iommu/iommufd/iommufd_test.h          |   4 +
+ include/uapi/linux/iommufd.h                  |  21 +++-
+ drivers/iommu/iommufd/device.c                |  43 +++----
+ drivers/iommu/iommufd/driver.c                |   4 +-
+ drivers/iommu/iommufd/io_pagetable.c          |  18 ++-
+ drivers/iommu/iommufd/ioas.c                  | 113 ++++++++++++++++++
+ drivers/iommu/iommufd/main.c                  |   4 +
+ drivers/iommu/iommufd/selftest.c              |  35 +++++-
+ tools/testing/selftests/iommu/iommufd.c       | 105 ++++++++++++++++
+ .../selftests/iommu/iommufd_fail_nth.c        |  21 ++++
+ 11 files changed, 339 insertions(+), 36 deletions(-)
+
+-- 
+2.43.0
+
 
