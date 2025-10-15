@@ -1,178 +1,248 @@
-Return-Path: <linux-kernel+bounces-853831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5A9BDCB3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FF8BDCB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C541E4EA0FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4DD19A7314
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B873101D1;
-	Wed, 15 Oct 2025 06:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCjeq1O8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FE530FF23;
+	Wed, 15 Oct 2025 06:23:06 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6964D29D26E;
-	Wed, 15 Oct 2025 06:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D1230FF1C
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760509361; cv=none; b=lJ4U3pMujWBjYo+F2mxA1DCurJOg6h92WeMm/VOldHcSFpLI68cPET4Sn4/S9a6/d2S1mxodH9ZTUGK8E0apE4M505FdhL4eRoza8y6QCn6pS853MT3ET8y4GMKln0sTQj2cXYlxGpTr0ukZykS9gg2Vku4p8tzDcUrepoIvq+w=
+	t=1760509382; cv=none; b=qv7Vr1qjtIJ0E9AyQwsiJxZbchabv0i525TJcsPNayAKwUsX8CTnwhHxyEtXKw8zAnGXyQkGUdYfj23/DieE+gR/7d+Ui1RJ3suqmhxYSKEPcyPzHEbIqCRGcFL669bp4fbTSlSUCQxMRJplxi0k7uY+YaEFGVS+U7tSFwyNz54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760509361; c=relaxed/simple;
-	bh=GiBaNBK3/IViNyRFvWPC3WNeXPpoK/LfTYw7Mrnj5Bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVexC7ii43UEBfLpPCxCIhZEW2k1NnYWVo8kXQBD/+TV+sDKv4P6bzlFbkLwZ5TLhvO2mR6V28m8x/tNQqvBRjC9juPccRgqurgl9wCbhHoe3z81ZQhkoAkaiFxdgoGx93shEyEar6ioys1Ftg/zi97LWCHWMRYR3pwFfWDav8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCjeq1O8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E57AC4CEF8;
-	Wed, 15 Oct 2025 06:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760509360;
-	bh=GiBaNBK3/IViNyRFvWPC3WNeXPpoK/LfTYw7Mrnj5Bs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kCjeq1O8SKcnC5uwXJkMGFAUZ9N0PYCklm8+0Bb1n3G9rVunCQUf+gtkbky+uaXYR
-	 3w32PUiWGPvCOgFRW9IpLRq5HaCoXNbp2UyffHJlwR5/n1TZh3Ft1xbCq74Lt0QhbT
-	 XhfO2BHxHuKbMfAOkBBR4188Ucr22ttit/xCnc9/kND+W6Kh6D8VHKs/G7mhbruvWI
-	 VoB9OgsMdnI9kiOB08eO4bX2g9g/dpOJQQG4xuZ6s226rd1vwe9tkgN1Aalkyra9uw
-	 YuBoWXL8cvkMZ8rX8T+5j9U/+8okzV6hKGfZRCuEKEVLuQGb8/E81RPFJb012ucGOq
-	 Dmv+lTF9PlF3w==
-Date: Wed, 15 Oct 2025 11:52:25 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, FUKAUMI Naoki <naoki@radxa.com>, 
-	manivannan.sadhasivam@oss.qualcomm.com, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, 
-	Kai-Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Chia-Lin Kao <acelan.kao@canonical.com>, 
-	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <fxakjhx7lrikgs4x3nbwgnhhcwmlum3esxp2dj5d26xc5iyg22@wkbbwysh3due>
-References: <20251014184905.GA896847@bhelgaas>
- <0899e629-eaaf-1000-72b5-52ad977677a8@manjaro.org>
+	s=arc-20240116; t=1760509382; c=relaxed/simple;
+	bh=jk6V8uAWe05WcVxwCmCyOuLV3NnfCAjwrc4eKkGZJ1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Yp/yPZEikdHCF4oIdCb3nzQDMr3XNnvCWi7IQEpjQ8yfI5KujKCj/tReDqs3PismsfEWzjYHkmwUanc5+p5pcUJZ6fvG4GIBUlIYYzJPh4LtIW6YU2M0+ILlNf+9um6umNM8hFrJhqU7NZG/LfeYpab3vN9Ryfqbanvyrfty4oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org; spf=pass smtp.mailfrom=tinylab.org; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tinylab.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tinylab.org
+X-QQ-mid: esmtpsz19t1760509371td6f1d5ef
+X-QQ-Originating-IP: MUaYd5o57zoY0W6wIrPI4YBjDwhi9ENIo8kee4n+TZM=
+Received: from GPU-Server-A6000.. ( [202.201.1.132])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 15 Oct 2025 14:22:48 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6832363004775497478
+EX-QQ-RecipientCnt: 14
+From: Yuan Tan <tanyuan@tinylab.org>
+To: arnd@arndb.de,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	palmer@dabbelt.com,
+	linux-kbuild@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	i@maskray.me,
+	tanyuan@tinylab.org,
+	falcon@tinylab.org,
+	ronbogo@outlook.com,
+	z1652074432@gmail.com,
+	lx24@stu.ynu.edu.cn
+Subject: [PATCH v2 8/8] riscv: use PUSHSECTION in ex_table, jump_table, bug_table and alternatives
+Date: Wed, 15 Oct 2025 14:22:39 +0800
+Message-ID: <22B977FCB8434D8A+8905ca92f19047804ba693f7cd3b2ef1e2721bad.1760463245.git.tanyuan@tinylab.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1760463245.git.tanyuan@tinylab.org>
+References: <cover.1760463245.git.tanyuan@tinylab.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0899e629-eaaf-1000-72b5-52ad977677a8@manjaro.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:tinylab.org:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: NGX5+lQVxpC+qFWJXzXeWgsOzhZAmPuembL2fF5KoOSXQi8iukHfOy5k
+	X0MT0b+9ZrSkiHUJu84isQIPUnudT0PLb4UjvXt8pixKOKSH5HXF0XjE7N6eYbqZLDO9i1K
+	7vVrAvmJFQycuYqQ+uKPVJr2YClr+HjULZlKkVFhb5gPXbgk/A5RUADGpgEUVfehh3IbTr1
+	GNg1kPbJgTe0jNhjYKG1NEn1Ysi1OZg2MSB1xVGO3QgWhDFr7r7JVU6fADSfdv5qPAtRns5
+	s3H0t+w0lQfzkV1ehbC5qLhTQwB8LWaC6JG3OZaUDCj2utZNWm5i+totgWxDRxH029rmWq6
+	XZjub37WOyhUF+zAeOO1DhXMxZFcnrOYoWZHc1kiOL/tyT0i3pYOmSFq6d+gqTQ3PR3a8Tb
+	ghO7WXBmWDkV9qCBvnxfV6IpamYu0eNgrRY0bp6vrF3qPZuVK/Innb9SAXKHehjFYmiS84Z
+	smRhiqcwB+2QciPeMGzOaAh2Myn/OUXPXkpiBj7grdS2PM7L/c87fHLbBLS9Uwrac42TCqw
+	mkAmBvD8JYLTmXVfrSmrLIC/8Fn/eFtvzyUVeGaEw60aXoHv7HAjN6b+qDha3ri8QZWyuEZ
+	F6mX0z6q1uopQFiIEaujAUEhJDQUJHAOmJIRZmM6kNRN9ll81w5RVQ90i33/ex9MFyA4rbo
+	Kay6B1v730YN6nOY9TRjwAC92WEJWDEs2RTCToEvhg2YhQQFo6B0SOIvrSpnG17/JBZgBzW
+	H4u6A+sF7ErTDWWgNamI3FUMs1BxuvChPLGHRbWeecZHvM8y6XB8kWm55RPzhsjS8qCdPJh
+	tsOfF5pqw8euqsYNU1hMh5jcFWDQ0j0GsapCPl/XPqjCw/t1xl/JWcj9KTokgOVU6wWbtuc
+	jLJQdvZDdL4HOdrmCHNN/DKe9Mg1tCtrFBO5l/86Ky0yaKTkEwsumqHar80eMtovgQkKfUz
+	B1vohgim3jYoDZYciXS3GWMaF4vDzexNdGXDLnFEwUx/7dx1oHqnzNHz/
+X-QQ-XMRINFO: M8wFrcb6n6Ii4I6kYxweyY8=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Oct 15, 2025 at 01:33:35AM +0200, Dragan Simic wrote:
-> Hello all,
-> 
-> On Tuesday, October 14, 2025 20:49 CEST, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
-> > > I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on the
-> > > Rockchip RK3588(S) SoC.
-> > > 
-> > > When running Linux v6.18-rc1 or linux-next since 20250924, the kernel either
-> > > freezes or fails to probe M.2 Wi-Fi modules. This happens with several
-> > > different modules I've tested, including the Realtek RTL8852BE, MediaTek
-> > > MT7921E, and Intel AX210.
-> > > 
-> > > I've found that reverting the following commit (i.e., the patch I'm replying
-> > > to) resolves the problem:
-> > > commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
-> > 
-> > Thanks for the report, and sorry for the regression.
-> > 
-> > Since this affects several devices from different manufacturers and (I
-> > assume) different drivers, it seems likely that there's some issue
-> > with the Rockchip end, since ASPM probably works on these devices in
-> > other systems.  So we should figure out if there's something wrong
-> > with the way we configure ASPM, which we could potentially fix, or if
-> > there's a hardware issue and we need some king of quirk to prevent
-> > usage of ASPM on the affected platforms.
-> > 
-> > Can you collect a complete dmesg log when booting with
-> > 
-> >   ignore_loglevel pci=earlydump dyndbg="file drivers/pci/* +p"
-> > 
-> > and the output of "sudo lspci -vv"?
-> > 
-> > When the kernel freezes, can you give us any information about where,
-> > e.g., a log or screenshot?
-> > 
-> > Do you know if any platforms other than Radxa ROCK 5A/5B have this
-> > problem?
-> 
-> After thinking quite a bit about it, I think we should revert this
-> patch and replace it with another patch that allows per-SoC, or
-> maybe even per-board, opting into the forced enablement of PCIe
-> ASPM.  Let me explain, please.
-> 
+Replace plain .pushsection with the new PUSHSECTION macro for __ex_table,
+__bug_table, __jump_table, and .alternative on RISC-V.
 
-ASPM is a PCIe device specific feature, nothing related to SoC/board. Even if
-you limit it to certain platforms, there is no guarantee that it will be safe as
-the users can connect a buggy device to the slot and it could lead to the same
-issue.
+PUSHSECTION establishes proper references between the caller and the
+generated sections, allowing --gc-sections to recognize their dependencies
+correctly. This avoids the need for KEEP() and prevents dependency
+inversion where unused sections keep others alive.
 
-> When a new feature is introduced, it's expected that it may fail
-> on some hardware or with some specific setups, so quirking off such
-> instances, as time passes, is perfectly fine.  Such a new feature
-> didn't work before it was implemented, so it's acceptable that it
-> fails in some instances after the introduction, and that it gets
-> quirked off as time passes and more testing is performed.
-> 
+With this change, CONFIG_TRIM_UNUSED_SYSCALLS can correctly discard unused
+syscalls together with their exception tables.
 
-ASPM is not a new feature. It was introduced more than a decade before. But we
-somehow procastinated the enablement for so long until we realized that if we
-don't do it now, we wouldn't be able to do it anytime in the future.
+This update takes effect only when built with an assembler that supports
+BFD_RELOC_NONE, and falls back to the existing behavior otherwise.
 
-> However, when some widespread feature, such as PCIe, has already
-> been in production for quite a while, introducing high-risk changes
-> to it in a blanket fashion, while intending to have the incompatible
-> or not-yet-ready platforms quirked off over time, simply isn't the
-> way to go.  Breaking stuff intentionally to find out what actually
-> doesn't work is rarely a good option.
-> 
+Signed-off-by: Yuan Tan <tanyuan@tinylab.org>
+Signed-off-by: Zhangjin Wu <falcon@tinylab.org>
+Signed-off-by: Peihan Liu <ronbogo@outlook.com>
+---
+ arch/riscv/include/asm/alternative-macros.h |  8 +++++---
+ arch/riscv/include/asm/asm-extable.h        | 10 ++++++----
+ arch/riscv/include/asm/bug.h                |  2 +-
+ arch/riscv/include/asm/jump_label.h         |  3 ++-
+ arch/riscv/kernel/vmlinux.lds.S             |  9 ++++++++-
+ 5 files changed, 22 insertions(+), 10 deletions(-)
 
-The issue is due to devices exposing ASPM capability, but behaving erratically
-when enabled. Until, we enable ASPM on these devices, we cannot know whether
-they are working or not. To avoid mass chaos, we decided to enable it only for
-devicetree platforms as a start.
-
-> Thus, I'd suggest that this patch is replaced with nother patches,
-> which would introduce an additional ASPM opt-in switch to the PCI
-> binding, allowing SoCs or boards to have it enabled _after_ proper
-> testing is performed.  The PCIe driver may emit a warning that ASPM
-> is to be enabled at some point in the future, to "bug" people about
-> the need to perform the testing, etc.
-
-Even if we emit a "YOUR DEVICE MAY BREAK" warning, nobody would care as long as
-the device works for them. We didn't decide to enable this feature overnight to
-trouble users. The fact that ASPM saves runtime power, which will benefit users
-and ofc the environment as a whole, should not be kept disabled.
-
-But does that mean, we wanted to have breakages, NO. We expected breakages as
-not all devices will play nicely with ASPM, but there is only one way to find
-out. And we do want to disable ASPM only for those devices.
-
->  With all that in place, we
-> could expect that in a year or two PCIe ASPM could eventually be
-> enabled everywhere.  Getting everything tested is a massive endeavor,
-> but that's the only way not to break stuff.
-> 
-> Biting the bullet and hoping that it all goes well, I'd say, isn't
-> the right approach here.
-> 
-
-Your two year phased approach would never work as that's what we have hoped for
-more than a decade.
-
-- Mani
-
-
+diff --git a/arch/riscv/include/asm/alternative-macros.h b/arch/riscv/include/asm/alternative-macros.h
+index 9619bd5c8eba..dd24c3e1117b 100644
+--- a/arch/riscv/include/asm/alternative-macros.h
++++ b/arch/riscv/include/asm/alternative-macros.h
+@@ -2,9 +2,11 @@
+ #ifndef __ASM_ALTERNATIVE_MACROS_H
+ #define __ASM_ALTERNATIVE_MACROS_H
+ 
++#include <linux/compiler.h>
++
+ #ifdef CONFIG_RISCV_ALTERNATIVE
+ 
+-#ifdef __ASSEMBLER__
++#ifdef __ASSEMBLY__
+ 
+ .macro ALT_ENTRY oldptr newptr vendor_id patch_id new_len
+ 	.4byte \oldptr - .
+@@ -16,7 +18,7 @@
+ 
+ .macro ALT_NEW_CONTENT vendor_id, patch_id, enable = 1, new_c
+ 	.if \enable
+-	.pushsection .alternative, "a"
++	PUSHSECTION .alternative, "a"
+ 	ALT_ENTRY 886b, 888f, \vendor_id, \patch_id, 889f - 888f
+ 	.popsection
+ 	.subsection 1
+@@ -67,7 +69,7 @@
+ 
+ #define ALT_NEW_CONTENT(vendor_id, patch_id, enable, new_c)		\
+ 	".if " __stringify(enable) " == 1\n"				\
+-	".pushsection .alternative, \"a\"\n"				\
++	PUSHSECTION(.alternative, "a")					\
+ 	ALT_ENTRY("886b", "888f", __stringify(vendor_id), __stringify(patch_id), "889f - 888f") \
+ 	".popsection\n"							\
+ 	".subsection 1\n"						\
+diff --git a/arch/riscv/include/asm/asm-extable.h b/arch/riscv/include/asm/asm-extable.h
+index 37d425d7a762..24eb29f2ef82 100644
+--- a/arch/riscv/include/asm/asm-extable.h
++++ b/arch/riscv/include/asm/asm-extable.h
+@@ -2,6 +2,8 @@
+ #ifndef __ASM_ASM_EXTABLE_H
+ #define __ASM_ASM_EXTABLE_H
+ 
++#include <linux/compiler.h>
++
+ #define EX_TYPE_NONE			0
+ #define EX_TYPE_FIXUP			1
+ #define EX_TYPE_BPF			2
+@@ -10,10 +12,10 @@
+ 
+ #ifdef CONFIG_MMU
+ 
+-#ifdef __ASSEMBLER__
++#ifdef __ASSEMBLY__
+ 
+ #define __ASM_EXTABLE_RAW(insn, fixup, type, data)	\
+-	.pushsection	__ex_table, "a";		\
++	PUSHSECTION __ex_table, "a";			\
+ 	.balign		4;				\
+ 	.long		((insn) - .);			\
+ 	.long		((fixup) - .);			\
+@@ -31,8 +33,8 @@
+ #include <linux/stringify.h>
+ #include <asm/gpr-num.h>
+ 
+-#define __ASM_EXTABLE_RAW(insn, fixup, type, data)	\
+-	".pushsection	__ex_table, \"a\"\n"		\
++#define __ASM_EXTABLE_RAW(insn, fixup, type, data)      \
++	PUSHSECTION(__ex_table, "a")			\
+ 	".balign	4\n"				\
+ 	".long		((" insn ") - .)\n"		\
+ 	".long		((" fixup ") - .)\n"		\
+diff --git a/arch/riscv/include/asm/bug.h b/arch/riscv/include/asm/bug.h
+index 4c03e20ad11f..855860c34209 100644
+--- a/arch/riscv/include/asm/bug.h
++++ b/arch/riscv/include/asm/bug.h
+@@ -54,7 +54,7 @@ typedef u32 bug_insn_t;
+ #define ARCH_WARN_ASM(file, line, flags, size)			\
+ 		"1:\n\t"					\
+ 			"ebreak\n"				\
+-			".pushsection __bug_table,\"aw\"\n\t"	\
++			PUSHSECTION(__bug_table, "aw")          \
+ 		"2:\n\t"					\
+ 		__BUG_ENTRY(file, line, flags) "\n\t"		\
+ 			".org 2b + " size "\n\t"                \
+diff --git a/arch/riscv/include/asm/jump_label.h b/arch/riscv/include/asm/jump_label.h
+index 3ab5f2e3212b..1134a9bc95a7 100644
+--- a/arch/riscv/include/asm/jump_label.h
++++ b/arch/riscv/include/asm/jump_label.h
+@@ -11,13 +11,14 @@
+ 
+ #include <linux/types.h>
+ #include <asm/asm.h>
++#include <linux/compiler.h>
+ 
+ #define HAVE_JUMP_LABEL_BATCH
+ 
+ #define JUMP_LABEL_NOP_SIZE 4
+ 
+ #define JUMP_TABLE_ENTRY(key, label)			\
+-	".pushsection	__jump_table, \"aw\"	\n\t"	\
++	PUSHSECTION(__jump_table, "aw")	                \
+ 	".align		" RISCV_LGPTR "		\n\t"	\
+ 	".long		1b - ., " label " - .	\n\t"	\
+ 	"" RISCV_PTR "	" key " - .		\n\t"	\
+diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
+index 61bd5ba6680a..e6d117047226 100644
+--- a/arch/riscv/kernel/vmlinux.lds.S
++++ b/arch/riscv/kernel/vmlinux.lds.S
+@@ -7,6 +7,13 @@
+ #define RO_EXCEPTION_TABLE_ALIGN	4
+ #define RUNTIME_DISCARD_EXIT
+ 
++#ifdef CONFIG_PUSHSECTION_WITH_RELOC
++#define NOKEEP___jump_table 1
++#define NOKEEP___ex_table 1
++#define NOKEEP___bug_table 1
++#define NOKEEP_alternative 1
++#endif
++
+ #ifdef CONFIG_XIP_KERNEL
+ #include "vmlinux-xip.lds.S"
+ #else
+@@ -117,7 +124,7 @@ SECTIONS
+ 	. = ALIGN(8);
+ 	.alternative : {
+ 		__alt_start = .;
+-		KEEP(*(.alternative))
++		COND_KEEP(alternative, *(.alternative*))
+ 		__alt_end = .;
+ 	}
+ 	__init_end = .;
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
