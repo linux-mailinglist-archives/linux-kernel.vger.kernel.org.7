@@ -1,154 +1,226 @@
-Return-Path: <linux-kernel+bounces-855317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EB6BE0DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A1BE0E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F9614F3AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:51:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB5724E051E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90ADF3043CE;
-	Wed, 15 Oct 2025 21:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4157F3043B3;
+	Wed, 15 Oct 2025 21:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="QE+WS5VA"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVuZZ5E3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A9F3002D3
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0BE226863;
+	Wed, 15 Oct 2025 21:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760565056; cv=none; b=G16q2oRSqkEfbgO30ekCO/TqLdjOX8X9nsJZ18A9WszAt+yiujaTNaqP8Z6FwYKg8DPbCa97xTDIEqgEFPyRca9lTMfUgFJwD8b8yGkXHeX6QXJbrA8JWpc5RYaZVN7QzLiFJqj2UqtbTFcus68YCE6EKLMdZC3R+vbiw3oXml0=
+	t=1760565226; cv=none; b=nk28H2LGeqOTwiEY3PqVfrgz0I4914iz7fFUA8/hnm40LiPq0UtL7wX2WocG27BGdyBur2rjW+XrcsWMh8UxKsbJhrC0bGPfeWf7UjvkMYMlR2dLYYFIhg6wZ7lKCLZfbG/lZADoBezxnPxC3jncu37i6sdSXyKaRKoW4eP1Vg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760565056; c=relaxed/simple;
-	bh=iduM9BCUy9A1PPFJTP7NoUXJkN4FJL3UKtirvC6QjRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIwlYOdHkS9RieBsSk0Uxda91xuOoMpPRGU6JK6ZDuhzlrDlbGK6li+YyMZAFiSo6qCSQwYdWv4IP+Xh7ubqHbSXOa9wg/CYSqFi+5fIdd32XCMLWr7Jc5LtEbz5NPrz2BbyTXs4YHGnj/fOZM1V+NxWVIy2ujMPsAWSCwM5zjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=QE+WS5VA; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-796f9a8a088so101623b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1760565054; x=1761169854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iduM9BCUy9A1PPFJTP7NoUXJkN4FJL3UKtirvC6QjRM=;
-        b=QE+WS5VA0TWfN8btw/Vp76HeZs4mypDhpa/gyTXyDKRq59mTPhWVwpj9gwDtwLMNWc
-         36Ik+ISxb11fTe7AIvf92Qo24MO+sgJrXz7N/p3O5njUhOAuiVa2+mJp1Fy77dQl5zEY
-         RHtjmkBiAmXWuOrSEcfUGXO7Mw3PW7eoG0tEL4/m8nvwJDfi42IFSRV5zvzy8cWErBkU
-         623bk8sFmoF+YsWSfIVVslJf7SiNXRSTU/zcEGx97td4jr1v2ujTOpEw5GH0YgnLLk/I
-         bDQHBZFd6btSKeH2SpQ93FS5dyDYeOaCho4DtcHi3afivDgFKTRMvczRctUOFClI6dpe
-         xZkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760565054; x=1761169854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iduM9BCUy9A1PPFJTP7NoUXJkN4FJL3UKtirvC6QjRM=;
-        b=gENaG6tyGBxhRkzgWaGaZHyfN6WzFmHO3i4vRAGNrDjkLky4qhajOPMX1udVi6a/vK
-         A60hPgLZxd9m5kNq/woP9S6o7tllV4mj68hRj17l5KMfjWyeIUmk1OHWyt5xCDEuwVdX
-         SeNyrnmWQLV108a8r5ua2IhB1aJA/eTWRzDW0oWReuz2GrStQQGoHSuzpYstmpUos/YL
-         iMMoqtu/1nm7rB6qn7hQRbS5Aa9B8itVUKD8GoBBoZnQEsjv7iAY4yia9hdZ5YzpLEbY
-         fW1IP8u4Z3OP+NMMh6YTq4WKOhr+G2xAebZq8FRDYD0sLzRD0Edf6CqfEdGxwmr3sT5l
-         LFHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiBSJ3+JoN3TiKL3j3Ne3FemUkIy1J9/jK6T28OTaNVlttmmCkXtfzrZGJ8rmtt+w7BuSsEgVOSmLdB8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwozbMif8kNfz6Lxu3dkPShS8ajhIHaMJxRDA5dPEBDpJwBMSYT
-	A8JAMrILDmZJR0WB1StX7FgVGgDpvDPpSnBvyTfgrNnEHRNyANkB1+gvxDdqL9fcCFEg+J9Wx81
-	iqNWCvyxV4py2+r8uHAY/kmpH70DgjKaIWLVAFdm6
-X-Gm-Gg: ASbGnctOCh36S6s3/YgEzKHS9jGJd3z6qn6LPEQmJXEDuF5w3kncfRZ/EeqSVyNg60t
-	MW8sgrEowgBlu2rlG++cjzXs3/AJkC3nLTC9PkmmlSR2lfHUH8gZzIwaihuETAxunp5XjAQ2H4A
-	xajYYIHGg+5k8EDIl4dNbOlL2G78obxzAVELk4a9o2rgGmeduQCx1/BJy8KpPROylDcjccxKHFS
-	BpWXkS1ipdtWkkcoBpQQRfAcY6V3ao1hdwHzJX7vOQEkId97Y2IgoQxxQYw0zuzWjwARrR3TQ7c
-	NDDVwkrgY0Q1chFzUkGNKhUbROTGa3kQ9mOl
-X-Google-Smtp-Source: AGHT+IFwZrRh7ZKAhbIlR4D12tk51kY/fRatZwY2OQID0vS3YYNT414SduS1rI4gvIe3Me4Ogb4ysXIQ+xiEjdpPLrE=
-X-Received: by 2002:a05:6a20:3ca7:b0:2e5:c9ee:96fb with SMTP id
- adf61e73a8af0-32da84ed584mr41211395637.59.1760565053849; Wed, 15 Oct 2025
- 14:50:53 -0700 (PDT)
+	s=arc-20240116; t=1760565226; c=relaxed/simple;
+	bh=TUP3G+3YBjuKMU90+gsh+SHhAT+Wrly3xy+ikFDxeNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIt4Nx5jEcPL+Ohc6ba6WQ5TnDSLGNS1l/Fplxip5fOlOzi1SXUrTUYqfG8oW+CSFTDlRjpGbRiVpGKU30jQM3eaqRfKsbztKDIEw2+o4zZk9TOtNseCuT7sUG+uwOgyP7FJNJk11CXpN/OMCHYsUqVXRTRxRLzBoO8cEuDn+j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVuZZ5E3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F03C4CEF8;
+	Wed, 15 Oct 2025 21:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760565225;
+	bh=TUP3G+3YBjuKMU90+gsh+SHhAT+Wrly3xy+ikFDxeNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hVuZZ5E37mL2DdQWd0Wsg/fpBLcG2a1zeHEBf/8MjqmRSSbJrBVxYwDCdDwaxIKMK
+	 rDSvDMUH4M+/8klTwgRcZ7+r2L5wZ/5MgJGmS65oLwTCxWEY0+VL/Y0hcE67A9lRdP
+	 /FF6d5Q3bh0sWrYJmLjkOJWZpOo1YnxvWzbt33qSKtmtCBxsBBTdDHX6Al2TJOaWXf
+	 cFolv/MEhXR4BtFRovn0LqmV9KOQHVfPPIaxYeXKiEdX7dauePRK7lq8M4KtY7I2dc
+	 VkxSb1JAu3sv2YnzBR9/xNGsSysHKQAvd41YJxeZFonB7TgGawGL8QG1zoQXasIPUf
+	 q4Ct0FpE7Xhlw==
+Date: Wed, 15 Oct 2025 23:53:41 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2 5/5] man/man3/pthread_cond_init.3: Add a note
+ regarding real-time usage
+Message-ID: <e2i2tn3a7i4ehzoeglv4n52q657hn4l3vauial2xyaqyrjyvcm@vagxk3mquxfw>
+References: <20250915141305.906440-1-bigeasy@linutronix.de>
+ <20250915141305.906440-6-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <681a1770.050a0220.a19a9.000d.GAE@google.com> <68ea0a24.050a0220.91a22.01ca.GAE@google.com>
- <CANn89iLjjtXV3ZMxfQDb1bbsVJ6a_Chexu4FwqeejxGTwsR_kg@mail.gmail.com>
- <CAM0EoMnGLqKU7AnsgS00SEgU0eq71f-kiqNniCNyfiyAfNm8og@mail.gmail.com>
- <CAM0EoMmK7TJ4w_heeMuD+YmUdMyEz7VWKY+a+qMO2UN4GYZ5jQ@mail.gmail.com> <20251014201149.ckkw7okat3cv55qk@skbuf>
-In-Reply-To: <20251014201149.ckkw7okat3cv55qk@skbuf>
-From: Jamal Hadi Salim <jhs@mojatatu.com>
-Date: Wed, 15 Oct 2025 17:50:41 -0400
-X-Gm-Features: AS18NWBoDDX5v9apL36RaGrCWfEkUt2MPnhglXFLB138k75uT3ov8ARY2TM2AaI
-Message-ID: <CAM0EoM=1swUNW5F2Ha4JCf3VW309m1S0JEpSqiyR5wH7e=YyJw@mail.gmail.com>
-Subject: Re: [syzbot] [net?] [mm?] INFO: rcu detected stall in
- inet_rtm_newaddr (2)
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Eric Dumazet <edumazet@google.com>, 
-	syzbot <syzbot+51cd74c5dfeafd65e488@syzkaller.appspotmail.com>, 
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>, davem@davemloft.net, dsahern@kernel.org, 
-	hdanton@sina.com, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gsvjs2qzdyde7s4d"
+Content-Disposition: inline
+In-Reply-To: <20250915141305.906440-6-bigeasy@linutronix.de>
+
+
+--gsvjs2qzdyde7s4d
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2 5/5] man/man3/pthread_cond_init.3: Add a note
+ regarding real-time usage
+Message-ID: <e2i2tn3a7i4ehzoeglv4n52q657hn4l3vauial2xyaqyrjyvcm@vagxk3mquxfw>
+References: <20250915141305.906440-1-bigeasy@linutronix.de>
+ <20250915141305.906440-6-bigeasy@linutronix.de>
+MIME-Version: 1.0
+In-Reply-To: <20250915141305.906440-6-bigeasy@linutronix.de>
 
-On Tue, Oct 14, 2025 at 4:11=E2=80=AFPM Vladimir Oltean <vladimir.oltean@nx=
-p.com> wrote:
->
-> Hi Jamal,
->
-> On Sun, Oct 12, 2025 at 11:52:54AM -0400, Jamal Hadi Salim wrote:
-> > > > Yet another taprio report.
-> > > >
-> > > > If taprio can not be fixed, perhaps we should remove it from the
-> > > > kernel, or clearly marked as broken.
-> > > > (Then ask syzbot to no longer include it)
-> > >
-> > > Agreed on the challenge with taprio.
-> > > We need the stakeholders input: Vinicius - are you still working in
-> > > this space? Vladimir you also seem to have interest (or maybe nxp
-> > > does) in this?
-> >
-> > + Vladmir..
-> >
-> > > At a minimum, we should mark it as broken unless the stakeholders wan=
-t
-> > > to actively fix these issues.
-> > > Would syzbot still look at it if it was marked broken?
->
-> I still have interest in taprio, but at the moment I can't look at this
-> any sooner than the second half of next week (unless someone else beats
-> me to it). I've added a note not to lose track.
->
+Hi Sebastian,
 
-Thanks!
+On Mon, Sep 15, 2025 at 04:13:05PM +0200, Sebastian Andrzej Siewior wrote:
+> The "old" implementation led to priority inversion and was more or less
+> easy to trigger. It seems that after the rewrite the issue disappeared
+> especially since the old workaround does not apply anymore.
+>=20
+> Add a note mentioning the old problem and why the issue is not gone
+> since the rewrite in glibc 2.25 but harder to trigger.
+>=20
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-> What is the situation with syzbot reports? I don't actively monitor them,
-> only if somebody happens to email me.
+Thanks!  I've applied the patch, with the following amendments:
 
-These issues have been lingering forever..
-They do get posted on the list. Here are samples:
-https://lore.kernel.org/netdev/676d25b2.050a0220.2f3838.0464.GAE@google.com=
-/#r
-https://lore.kernel.org/netdev/67d2a576.050a0220.14e108.0030.GAE@google.com=
-/
-https://lore.kernel.org/netdev/67946a0c.050a0220.3ab881.0010.GAE@google.com=
-/
-https://lore.kernel.org/netdev/66e96979.050a0220.252d9a.000a.GAE@google.com=
-/
-https://lore.kernel.org/netdev/6777334a.050a0220.3a8527.0058.GAE@google.com=
-/#t
+	diff --git i/man/man3/pthread_cond_init.3 w/man/man3/pthread_cond_init.3
+	index 779f6de6d..9c151dd8c 100644
+	--- i/man/man3/pthread_cond_init.3
+	+++ w/man/man3/pthread_cond_init.3
+	@@ -115,7 +115,7 @@ .SH DESCRIPTION
+	 this guarantees that the condition cannot be signaled (and thus ignored)
+	 between the time a thread locks the mutex
+	 and the time it waits on the condition variable.
+	-See NOTES below.
+	+See CAVEATS below.
+	 .P
+	 .BR pthread_cond_timedwait ()
+	 atomically unlocks
+	@@ -241,13 +241,14 @@ .SH "SEE ALSO"
+	 .BR gettimeofday (2),
+	 .BR nanosleep (2).
+	 .
+	-.SH NOTES
+	+.SH CAVEATS
+	 The implementation of the provided functions until
+	 glibc 2.25 used an internal data lock.
+	 This lock did not support priority-inheritance and
+	 was subject to unbounded priority inversion,
+	 visible on a real-time system.
+	-After the rewrite of the implementation in 2.25
+	+.P
+	+After the rewrite of the implementation in glibc 2.25
+	 the usage of internal lock changed.
+	 The internal lock is always acquired by
+	 the signaling functions
+	@@ -256,10 +257,11 @@ .SH NOTES
+	 .BR pthread_cond_broadcast ().
+	 The waiting function acquires the lock
+	 if the waiting process was interrupted.
+	-The interruption can be caused for instance by a specified timeout
+	+The interruption can be caused for instance by a specified timeout,
+	 and denoted by the error value
+	-.B ETIMEDOUT
+	-or a received signal which is denoted by the error value
+	+.BR ETIMEDOUTA ,
+	+or by a received signal,
+	+which is denoted by the error value
+	 .BR EINTR .
+	 .
+	 .SH EXAMPLE
 
-They all point to the same bisected commit, but am not sure whether
-they are the same issue
 
-To get you on Cc from syzbot - i think we'll have to add you as a
-maintainer for taprio if you'd be okk with that..
+Cheers,
+Alex
 
-cheers,
-jamal
+> ---
+>  man/man3/pthread_cond_init.3 | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>=20
+> diff --git a/man/man3/pthread_cond_init.3 b/man/man3/pthread_cond_init.3
+> index 0045e7ecee075..779f6de6d064b 100644
+> --- a/man/man3/pthread_cond_init.3
+> +++ b/man/man3/pthread_cond_init.3
+> @@ -115,6 +115,7 @@ if all threads always acquire the mutex before signal=
+ing the condition,
+>  this guarantees that the condition cannot be signaled (and thus ignored)
+>  between the time a thread locks the mutex
+>  and the time it waits on the condition variable.
+> +See NOTES below.
+>  .P
+>  .BR pthread_cond_timedwait ()
+>  atomically unlocks
+> @@ -240,6 +241,26 @@ Some threads are currently waiting on
+>  .BR gettimeofday (2),
+>  .BR nanosleep (2).
+>  .
+> +.SH NOTES
+> +The implementation of the provided functions until
+> +glibc 2.25 used an internal data lock.
+> +This lock did not support priority-inheritance and
+> +was subject to unbounded priority inversion,
+> +visible on a real-time system.
+> +After the rewrite of the implementation in 2.25
+> +the usage of internal lock changed.
+> +The internal lock is always acquired by
+> +the signaling functions
+> +.BR pthread_cond_signal ()
+> +and
+> +.BR pthread_cond_broadcast ().
+> +The waiting function acquires the lock
+> +if the waiting process was interrupted.
+> +The interruption can be caused for instance by a specified timeout
+> +and denoted by the error value
+> +.B ETIMEDOUT
+> +or a received signal which is denoted by the error value
+> +.BR EINTR .
+>  .
+>  .SH EXAMPLE
+>  Consider two shared variables
+> --=20
+> 2.51.0
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--gsvjs2qzdyde7s4d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjwF+QACgkQ64mZXMKQ
+wqm2cw//YqWq53J159zcl52qzbL4qJlktdZYuMfFM+igA8cl5GmEOObRglXMEFt6
+4HciWEkSHQhEAR+leyKA6JJ7fQxCEeNKvKPQpsh87dQW+kNZFxDeA7iaZMqJfnw+
+Fkz4ghHO31G0hmjAfQ5qlNz9Al1gE12j+dOmHBgb3IaBr8+zLKQsawcp88LWPxdn
+TqUDlF+/y78ImVAbqCmVXUyuwvQiQjlzrUUzm5fUK9UROw0quRt8Yvv4QdhjUO+w
+djaYCMahRerp2QfyEM8Mqn8yjKGpVs4EA0tyeMOs48uNL4lGS4Ry+RUOVyB6ddFr
+sjoWKufqZPy/XpiKWaRxTJl5Wr/TX0UKy+dyVUv+tV+YZiClfI2dwURyp+c+DYME
+xW3q4drckn+W+KtAmKApd5o+Xb62c4b2OMCupkPUpb16B2Xx2axszmNbrTk9lPif
+90TM2Fts29uDqENgBd+DeAz/kszeRD/QJect+hDqmWBl7hUim1AXqMjFmk7hnkM4
+deF6sQAhKWsdKcNrX9ulkU6UKLV8UPfLtkIRCWvMknSG5WCrd2QH0tRoo8Db6Law
+j6dVMMYRyJGA/uglK1F5yXj1WYDSGFh267U/4yFXPpvbIQ3ueIK4pJtp7JZa6ou8
+sy3cn6yYmitG7muC0WwB0mz7mKyRGEMs9WRomyJTNQAEFf03IUU=
+=+mw2
+-----END PGP SIGNATURE-----
+
+--gsvjs2qzdyde7s4d--
 
