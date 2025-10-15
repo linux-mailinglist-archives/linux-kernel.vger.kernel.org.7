@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-855032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8261ABDFFF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:07:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0890EBDFFEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966F7581ECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:07:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5CAA4F8AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B367F337695;
-	Wed, 15 Oct 2025 18:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F2D338F5D;
+	Wed, 15 Oct 2025 18:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1B9298ss"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k77Pvm3u"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1B4302170
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C930147D
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 18:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760551585; cv=none; b=dd9oJkC9Fsrcs//SBXSa9SqyFSazy583iNC7uOQgnJ2zlmFOWjnwqaZnHMr1jjnD8WN2M4S3bj1vqpfdzDs0uxlSlcIXmtr33BruIhN4/57Hguvigxxls/xAsPuIS0E9gtPJKVWRq9cQT9ZvKA5CCWJ9CC3ilXKpvJDpH14bI2c=
+	t=1760551590; cv=none; b=auEEUuHt7rlRVrfBWKZbtsMW79Zjx6akeg4Ld7ysONIKKtxRcj41KdC5hg5n9jXGbuerYp6HS6urtlcBhL9Wc50ZCN3G5M7NU3RrxWB/16Sv/Hn6g9RCUPcjnoFmzgUvkkRu7AMDjh5m8TOCApN+pG6R391v/vgdUwtdwfmsTIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760551585; c=relaxed/simple;
-	bh=ZhffbM5Oy55hVAvlvcfw64L9kMLT3DbEetoPXI/qz+E=;
+	s=arc-20240116; t=1760551590; c=relaxed/simple;
+	bh=jCQT9rzR0PGk0TwlODkGp1o4DOlgrfcR726BSpIb9+A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jSC5/t4gE46uwnF3ckhZ7rOFM9K4vJnXApfKM60/ppOONm7HkQotgAdAN2lWeDF+jaVSs8Hp05s0SPv5yeTBp7LEzTnhgme9D8pcjhjBnxxx2+9bJ8mjzrPok4wxzF/MmXfHoYId1PGmCwfRE/voadYRbRzPr3emOxyygmpZXK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1B9298ss; arc=none smtp.client-ip=209.85.216.73
+	 To:Content-Type; b=U0eEyJ+afdVOVA44UwdyOcuEGrhhMaE3c7lHa88t+08kHlBPpbAJBBbRR6a/z5T5uxT3JUgFJ/qO6w13Esb6rE0vLbPMxkgEJy1O0X7ZjpRmnyFBRTQkTITwPdYnmkVVD6N8ZJYgMZhfypgGoMHqS13bk6sjzYHn5Is9kl2NYYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k77Pvm3u; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so12371687a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:06:23 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2697410e7f9so242763785ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:06:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760551583; x=1761156383; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZzKX3ldXHR+9qOICKfXvb25c+drI08eBEvsn3KTsI8=;
-        b=1B9298sssAF0c1VEdqRy5zXNw+I+CTbIC/BWyllX2tEQEMKMG5liMlAer8lZVL+74t
-         9xInzTn+Tgp62yXBSiGvZge9sVkOq1stcwlS9H82RYk/WoJcYXJfJRIyoDUcHF8I1jwq
-         DY/OQXEvWbr888anTUT/XLJ07GLd4xY29XjVHkArlDKMUgAgaoQjwFfKD0E8H9ql06oW
-         qU5ThUhzcSV30po5vqQ3HhycrfDC4bcMvQH7NOQ2tmjrng431gH0vG3ntnxLbdW0dmFZ
-         uHLmV1OmGIhAiHK+hqlMIiu6GV735k2RHSuyMIv81RxlHR1MKHJZscnobXl2AHoSazq8
-         ZvMQ==
+        d=google.com; s=20230601; t=1760551588; x=1761156388; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kfndc0ENoTTfepY9TJZDH63d6SpRDMFgibtbVYkYO9Q=;
+        b=k77Pvm3uHy7lx2jlytJ5SLv7+JRewDe16CoFZKLuUS8umrFHPZFpgNCvx5nf/cAOzS
+         sJDTw/SWR7VdqIjiWOSUCSyt2Jyo51vSPEjLzEKW2NkzUNBQFrhprTJxxRcfJO71iDf+
+         vX6jlOEXptTBk/u95OtVcju5KJ/8NrnxASw+LMgZoKMyFmJimqdxO9qNQf6T6xCCWkF9
+         OvPxlah/P1h2uev6ugLLoYfWx464q20gUKfR3VGpOGkKKvn0vRwkazShK2Eux8Z0aB0/
+         HMifCyN/y3qGl0wWzoKElOG9yUdnun654wsvbDKGJKB4IMTXvrKFLDsXXdeHz3vrEr0h
+         txYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760551583; x=1761156383;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZzKX3ldXHR+9qOICKfXvb25c+drI08eBEvsn3KTsI8=;
-        b=ZXfawDRAUNQnf49xL1eKmwwH2ogt9P0uK3U6DZtHg2wldzvIvFcV48WbjyN3y+pPYC
-         xwd02TfDjo6NTPq3CS8fdTrNvTBaktxBLwInLGlc6mxQuS+Jku0A3rmiTjnGVh4S2o+4
-         bLjOs19JT61o6Iw6AVKyQtb2SfO1uLat58EKw/Xa/9KxhurtuVakNAoVJr0OwJLrBw9T
-         7M3sVimEDof0ITQsZo8121M0m2tjXdeFET8y72i8tNTHrx2R5NjepsEnDHyYgEMlQfcg
-         EgQoaUeSKAXexvBqzc56lbnNPUkEHXj7UGFiGygaLK3P/H2bwaedD8lydkPMwCofign8
-         e1nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoCMq/eDI0cQrKhlxR6897iwHEahQr89Rbjd4nMeWG4qkmT1ND5h5PIHcOWM+QwjJeftf4g5pem6T/sjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvlJPzML9BeGFref4DJrbSLFsHyF/hXzcuDNj4yAgE/JwiDVDH
-	oDv0vDpUAXcSx2U3rKXCZ9TWQfZGFL5Og4YOcEYKYOG2cqNiK+0VQBnstpbaUhGjh0PtyVjtF6p
-	OdC8YDw==
-X-Google-Smtp-Source: AGHT+IH5rZ5w+MLh5tVlPz5WgEpSIjx21CxmXhcVo1+5O5ehAtupb+0WKrzLmNpezKDm+Zs7msfk3enYseM=
-X-Received: from pjzj22.prod.google.com ([2002:a17:90a:eb16:b0:338:3770:a496])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:33c1:b0:32e:dd8c:dd18
- with SMTP id 98e67ed59e1d1-33b51386478mr44366359a91.17.1760551583042; Wed, 15
- Oct 2025 11:06:23 -0700 (PDT)
-Date: Wed, 15 Oct 2025 11:02:50 -0700
-In-Reply-To: <20251007-b4-kvm-mmu-stresstest-1proc-v1-1-8c95aa0e30b6@google.com>
+        d=1e100.net; s=20230601; t=1760551588; x=1761156388;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfndc0ENoTTfepY9TJZDH63d6SpRDMFgibtbVYkYO9Q=;
+        b=rv1dyS6H6VlQ//Yt/7RG6cujET84H0TqjOKRuPUGfnhQdeqZfj35F5HHsuuFm6CKky
+         vcizj3afnuZ1Q08Unh+m06KDd7F09L29xAv/MohlMOcQkaaRGSRBQp3eB8NQyaFq/07e
+         n1ZJYY2KqlbcHNgXX3Wmk6YcjmuuotfEJE9UgKs+R7PthImVOLO3gONXjd4zYsi97+9l
+         TPFQj+ue4AA0hKloL26fORr2HjYdDNz7vly/sWTDN7J/r2XEki557oAMYb9wY6jsrcIQ
+         wFi+mP4aKBDwn4el/yP3u/MkG+GcmXhDq37tRwzTjBLnE3Lap5JZrxng5jiyyu64UfLC
+         xpog==
+X-Forwarded-Encrypted: i=1; AJvYcCU3pJO9EXhPhUVs6A75gyPCShEmwrokJ70b9Hi8x+G2S3WxyKaEqmfJKknOjnFQ3OwUO/Rd30d983kjaGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq06t/0fhi1WkgKJUhdtgSDaAZvmdm5dYkCMmqGtDMHnAIDaS4
+	6ZxOtGeUw+6isBH65LVV+khLQajHAQmUohUNYLmX+dD8luaDhB2KYW22lZbuufZdT3cr3cBhULH
+	m/8bsiw==
+X-Google-Smtp-Source: AGHT+IEFikS4cpk1gJ+ktd6gIEZmHmDT2uGZui1IjDGD50V9+QyIzANKYLSdF5afaqE0Z1KaLae3FikYyE0=
+X-Received: from pjbgc13.prod.google.com ([2002:a17:90b:310d:b0:330:49f5:c0b1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ccc4:b0:250:bd52:4cdb
+ with SMTP id d9443c01a7336-290272c1971mr327416285ad.32.1760551588419; Wed, 15
+ Oct 2025 11:06:28 -0700 (PDT)
+Date: Wed, 15 Oct 2025 11:02:52 -0700
+In-Reply-To: <20250922162935.621409-1-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251007-b4-kvm-mmu-stresstest-1proc-v1-1-8c95aa0e30b6@google.com>
+References: <20250922162935.621409-1-jmattson@google.com>
 X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
-Message-ID: <176055119471.1528900.16047808072294975428.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: selftests: Don't fall over when only one CPU
+Message-ID: <176055125879.1529816.3450355285833031488.b4-ty@google.com>
+Subject: Re: [PATCH 0/2] KVM: SVM: Aggressively clear vmcb02 clean bits
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Brendan Jackman <jackmanb@google.com>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 07 Oct 2025 19:12:31 +0000, Brendan Jackman wrote:
-> Running this test on a system with only one CPU is not a recipe for
-> success. However, there's no clear-cut reason why it absolutely
-> shouldn't work, so the test shouldn't completely reject such a platform.
+On Mon, 22 Sep 2025 09:29:21 -0700, Jim Mattson wrote:
+> It is unlikely that L1 will toggle the MSR intercept bit in vmcb02,
+> or that L1 will change its own IA32_PAT MSR. However, if it does,
+> the affected fields in vmcb02 should not be marked clean.
 > 
-> At present, the *3/4 calculation will return zero on these platforms and
-> the test fails. So, instead just skip that calculation.
+> An alternative approach would be to implement a set of mutators for
+> vmcb02 fields, and to clear the associated clean bit whenever a field
+> is modified.
 > 
 > [...]
 
-Applied to kvm-x86 selftests, thanks!
+Applied to kvm-x86 svm, thanks!
 
-[1/1] KVM: selftests: Don't fall over when only one CPU
-      https://github.com/kvm-x86/linux/commit/98dea1b75186
+[1/2] KVM: SVM: Mark VMCB_PERM_MAP as dirty on nested VMRUN
+      https://github.com/kvm-x86/linux/commit/93c9e107386d
+[2/2] KVM: SVM: Mark VMCB_NPT as dirty on nested VMRUN
+      https://github.com/kvm-x86/linux/commit/7c8b465a1c91
 
 --
 https://github.com/kvm-x86/linux/tree/next
