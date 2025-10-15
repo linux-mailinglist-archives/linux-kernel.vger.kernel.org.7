@@ -1,122 +1,109 @@
-Return-Path: <linux-kernel+bounces-854502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02713BDE866
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:44:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404F1BDE881
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB719401254
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:44:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FA6F4E8F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147AD1C3BE0;
-	Wed, 15 Oct 2025 12:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6B81DD525;
+	Wed, 15 Oct 2025 12:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W1w2oEvu"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uf5OI0MG"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DE31AA1F4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842933594B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760532275; cv=none; b=cuZoLBqY+fE3lP/uvnD5H/clfMvmpQyTFH2z15kUYnQ41cZNy1MFItc/wHEvd1dm9GQkhB3oOuKJZr5CBEVNuhODVRNTrk/Hb2QrutGowxasivE3nuOyXHioeonfoYZMQeioUn+yq/VfXx21U96QsXJT8BsN2h7SKLNogjvKPgs=
+	t=1760532364; cv=none; b=PbPg3eCiHZV0vLbHIs5qjWAv15De31bCIApxtyZ0ymWGMbM9J4MphVB9I+l2NCcjW9s0BnX+6dLf2xtGtHRmeg2OVTdhKUGFfPhYYSWcxJcIWDFUALASAwu1grM/0N20w4qedie79p2iEz8/helXHN53lPBT8NxA7BlCf5kz8Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760532275; c=relaxed/simple;
-	bh=kpLsOrDrUNBhGk5fqunCMyPWPwglI2qmrJl16Ox9DXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j80+Z6mKQDdxf6FoYaOOxS068rHv9LWx5GLTgPwm8q6JozFoYt3uxE2+AOOnRUYq0w/X3IF/D5SpbWrO0626ZssQuh3o3AOAX3to3L+TxH2FJ1lHeJZs0b8vVBvyWpNZhnua0zlSIX3rKbeYxeutOOW8If++DXfBKbnnp6MQgGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W1w2oEvu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=/3aQ15XZfFR1YHBXPfrlBpXsyAFL3oyFZPgvIQ/26iI=; b=W1w2oEvuhzmAX3+Ay2mCgzR5DK
-	rszpH9tyPfP3IAYfcc2U4Cq1VZP64hp7jO2srCJJqQMFj8bWw5QN35BsgNpOQWKWxnAQNlH/w7VIV
-	f9bHuQZY3GvM27viXxn9IoRgm/DH2gG29ciL9jr9+WqPmfQ58ze3Ekak1IWAVL1G3BFaYdp9p9Wpv
-	V+0FzkpU0ueeDF4IaLyhAc51wivRJBFDAIQelm1oY8jpjG57KC0hJFRhyowVIeXUgDOfo2H/4aH1n
-	IuhS6psfd6+u4wxhqnRjENnARt4ZHHrjbvJzARjR3G4yaRgWyuZWFbTMggtpeBRY/ERt1zG37DU6O
-	sORKiftQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v90rd-0000000FThH-1dZe;
-	Wed, 15 Oct 2025 12:44:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2D83E300220; Wed, 15 Oct 2025 14:44:22 +0200 (CEST)
-Date: Wed, 15 Oct 2025 14:44:22 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Peng Wang <peng_wang@linux.alibaba.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, vdavydov.dev@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Clear ->h_load_next after hierarchical load
-Message-ID: <20251015124422.GD3419281@noisy.programming.kicks-ass.net>
-References: <bc08fcd528bad11311cd25de37962eb1ce0e7879.1760530739.git.peng_wang@linux.alibaba.com>
+	s=arc-20240116; t=1760532364; c=relaxed/simple;
+	bh=oyluTmVOjpA44Vi8KdA6vKtr2fcyRpaqShI7dHAkNZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JrTQMB7bw1k9HX2y9YrGqD+jKXeE5j8gYC210qdrmuJh0n6pgsMmnJnRdEfTIUqdNJB8XtQh4a89peYmEAmPKfajObZwLv64RJKvVOl6Z43zBcF5t2YgEkxJ8vCsMqcOUYSwjZDI1bK0C79BcemupSL8z7Y+ijkuKeYjG6Zgd8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uf5OI0MG; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 55AD1C09FBF;
+	Wed, 15 Oct 2025 12:45:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4ADC3606F9;
+	Wed, 15 Oct 2025 12:45:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 88507102F2252;
+	Wed, 15 Oct 2025 14:45:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1760532352; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=oyluTmVOjpA44Vi8KdA6vKtr2fcyRpaqShI7dHAkNZ0=;
+	b=uf5OI0MGetOb0yLq/o0Hrj9if0UYaWuuRvl/XfHi7z1c/2zzDnOBk161QDUw362+f9uT3J
+	8NmyDeF5b4hVyS0bEFjYgXbtki537VbDNz9tD8WqLTK8K7lpuI4AK7+4dCC7dWCoz+XV4R
+	vi0/hrCBJsgUd3SnIEfqrFmcoh0UKLBHNxoxneuSHJCb/mNZmHeJUsKaIZ6boTu/93U6NQ
+	zRQP1Dt6jYhRCY1jYZu26T3dAb34DNrYR1gfsTKuYarTxG9CaOqp2zYU9PU6BT9lSvsf4j
+	6/kcn6hDYQ3BOd0xEDwlwYFGIjgv3SQenJi3iboJomEX65QA9lNjhfIJM7lSbA==
+Date: Wed, 15 Oct 2025 14:45:26 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
+ <alexis.lothore@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] net: ethtool: tsconfig: Re-configure
+ hwtstamp upon provider change
+Message-ID: <20251015144526.23e55ee0@kmaincent-XPS-13-7390>
+In-Reply-To: <20251015102725.1297985-4-maxime.chevallier@bootlin.com>
+References: <20251015102725.1297985-1-maxime.chevallier@bootlin.com>
+	<20251015102725.1297985-4-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bc08fcd528bad11311cd25de37962eb1ce0e7879.1760530739.git.peng_wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 15, 2025 at 08:19:50PM +0800, Peng Wang wrote:
+On Wed, 15 Oct 2025 12:27:23 +0200
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-> We found that the task_group corresponding to the problematic se
-> is not in the parent task_group’s children list, indicating that
-> h_load_next points to an invalid address. Consider the following
-> cgroup and task hierarchy:
-> 
->          A
->         / \
->        /   \
->       B     E
->      / \    |
->     /   \   t2
->    C     D
->    |     |
->    t0    t1
-> 
-> Here follows a timing sequence that may be responsible for triggering
-> the problem:
-> 
-> CPU X                   CPU Y                   CPU Z
-> wakeup t0
-> set list A->B->C
-> traverse A->B->C
-> t0 exits
-> destroy C
->                         wakeup t2
->                         set list A->E           wakeup t1
->                                                 set list A->B->D
->                         traverse A->B->C
->                         panic
-> 
-> CPU Z sets ->h_load_next list to A->B->D, but due to arm64 weaker memory
-> ordering, Y may observe A->B before it sees B->D, then in this time window,
-> it can traverse A->B->C and reach an invalid se.
+> When a hwprov timestamping source is changed, but without updating the
+> timestamping parameters, we may want to reconfigure the timestamping
+> source to enable the new provider.
+>=20
+> This is especially important if the same HW unit implements 2 providers,
+> a precise and an approx one. In this case, we need to make sure we call
+> the hwtstamp_set operation for the newly selected provider.
 
-Hmm, I rather think we should ensure update_cfs_rq_h_load() is
-serialized against unregister_fair_sched_group().
+This is a design choice.
+Do we want to preserve the hwtstamp config if only the hwtstamp source is
+changed from ethtool?
+If we want to configure the new source to the old source config we will also
+need to remove this condition:
+https://elixir.bootlin.com/linux/v6.17.1/source/net/ethtool/tsconfig.c#L339=
+=20
 
-And I'm thinking that really shouldn't be hard; note how
-sched_unregister_group() already has an RCU grace period. So all we need
-to ensure is that task_h_load() is called in a context that stops RCU
-grace periods (rcu_read_lock(), preempt_disable(), local_irq_disable(),
-local_bh_disable()).
+I do not really have a strong opinion on this, let's discuss which behavior=
+ we
+prefer.
 
-A very quick scan makes me think at the very least the usage in
-
-  task_numa_migrate()
-    task_numa_find_cpu()
-      task_h_load()
-
-fails here; probably more.
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
