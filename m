@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-854541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A68BDEAA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C45BDEAB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B1E734E85B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:09:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFA064FD0FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671CB322A2A;
-	Wed, 15 Oct 2025 13:09:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263F131354D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F519322A1D;
+	Wed, 15 Oct 2025 13:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KypksD7o"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64B62D0C7F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 13:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760533750; cv=none; b=ZNmYjO4J/j7UpGDLQguxBxCyQOqQUTuhNZyA9DkCvLmD4Bp102+80Ntuh93FDvgpzx8/Nk8UuQ6jXvg9f7RT1FEg25gHBxEuODbB9i9UQbogueZfDhgQkuEY6M2gmZ4/XYcUrPq5owGKWWFZwlvREQC/XJT3mcPN5NNKeTw4f6U=
+	t=1760533776; cv=none; b=akpVjSVp8p47ngIjzmaW5a84gbYiVId3XNCKjKBmwh5XFHnrDDF7NFviIOSjudrqmq1Dl0ichVpgtHZS1+Kd0NkEPwQodUunPBalJKijsCUIThcfq/oQQqgwS+4lMQaBLamN/RM3Kn6zAnatyPyLLShuz3Wv46ljaaLhDy82zmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760533750; c=relaxed/simple;
-	bh=8vhPaa1475rTiCTPmpDRr/hFN/p6YVRmvBRad1sLs58=;
+	s=arc-20240116; t=1760533776; c=relaxed/simple;
+	bh=QaXo/9LbVR+tBaOZHohIKGkjMYP/u3JenqZBxSXMx9g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RMOKHHZ3OtvmGSs0WCufWmmo2veYOfKED0tLn+vlnyCgWevnXAhbk9DiqNLDyHQSRzHSR1GR16cz0/+6BOVauJtjEBrpwpus+Nhwdj/B9fQR1oGTVAgNeFXEIziWJCe6/z7m/kRdOe9ISosjzqTlreg7O+9R9+pLouvdU26ne+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79CA5106F;
-	Wed, 15 Oct 2025 06:09:00 -0700 (PDT)
-Received: from [10.1.31.33] (e122027.cambridge.arm.com [10.1.31.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 022D03F6A8;
-	Wed, 15 Oct 2025 06:09:05 -0700 (PDT)
-Message-ID: <55781116-2c73-40d0-849f-4d8ba21d13f9@arm.com>
-Date: Wed, 15 Oct 2025 14:09:03 +0100
+	 In-Reply-To:Content-Type; b=PN+eGn0gkuxf7uoTZSPHpEMEcAXRrh4nILRwXzqLF61/ZRge/kc81DpR0hZ6OTCfCUGDVg+U6pzRdL+QJptWxV4+iHCb4Z6C0QKAl/4UYqAXVfK/dTV0EDIghhFio6UKO2PinLEXXw08tQ23AEbZKwcUv7++a6jxA0CQDNi24Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KypksD7o; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760533772;
+	bh=QaXo/9LbVR+tBaOZHohIKGkjMYP/u3JenqZBxSXMx9g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KypksD7oZEmujpy6XjotRWQaxryLNjUL1a+0MJUsCZx4+fVJ1efrWNYdoLTnovd33
+	 6YohNFTxHYLwUW8ZV0CgwVoT1SSoUNR17WewzGeOx+sEHOesL+fiWvjAzJiUZcoox6
+	 8bQceecvY8EPTgrKyLTMBg/jvyz2DqQEEbBkm8zm5auqG/IjGg/GAlDtM2h7fjCCW5
+	 zbbK6tEgM2NtoNxob1GoUUvbSgtZG3l6BoTzVmxVnObsjUGtIa/cXzNS01cjxIotTh
+	 2N6ilIP2gLhJexoJyMUrGPcR2ZfUYD8PCs66Npr1wBnRsTJFU6G9TjdyXw6FJ0QqEV
+	 X+gTn022pgaOw==
+Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D472F17E0125;
+	Wed, 15 Oct 2025 15:09:31 +0200 (CEST)
+Message-ID: <6f1fb1a5-5d6f-4ebf-bf12-3481d360fb7f@collabora.com>
+Date: Wed, 15 Oct 2025 15:09:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,69 +56,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/12] drm/panfrost: Check sgt to know whether pages
- are already mapped
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+Subject: Re: [PATCH v3 07/10] drm/panthor: Introduce huge tmpfs mount point
+ option
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20251015000930.356073-1-adrian.larumbe@collabora.com>
- <20251015000930.356073-6-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251015000930.356073-6-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Miko=C5=82aj_Wasiak?=
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>,
+ Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>, Christopher Healy <healych@amazon.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org, kernel@collabora.com
+References: <20251004093054.21388-1-loic.molinari@collabora.com>
+ <20251004093054.21388-8-loic.molinari@collabora.com>
+ <20251006092856.02fbfd9e@fedora>
+Content-Language: fr
+From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
+Organization: Collabora Ltd
+In-Reply-To: <20251006092856.02fbfd9e@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 15/10/2025 01:09, Adrián Larumbe wrote:
-> In the MMU's page fault ISR for a heap object, determine whether the
-> faulting address belongs to a 2MiB block that was already mapped by
-> checking its corresponding sgt in the Panfrost BO.
+On 06/10/2025 09:28, Boris Brezillon wrote:
+> On Sat,  4 Oct 2025 11:30:50 +0200
+> Loïc Molinari <loic.molinari@collabora.com> wrote:
 > 
-> This is done in preparation for a future commit in which the MMU mapping
-> helper might fail, but the page array is left populated, so this cannot
-> be used as a check for an early bail-out.
+>> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+>> index fdbe89ef7f43..a2be3b904ca2 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+>> @@ -1623,6 +1624,12 @@ static const struct drm_driver panthor_drm_driver = {
+>>   #endif
+>>   };
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +bool panthor_transparent_hugepage;
+>> +module_param_named(transparent_hugepage, panthor_transparent_hugepage, bool, 0400);
+>> +MODULE_PARM_DESC(transparent_hugepage, "Use a dedicated tmpfs mount point with Transparent Hugepage enabled (false = default)");
 > 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> nit: I'd go for a slightly shorter name, like [panthor_]enable_thp.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+For v4, in order to be consistent with the "transparent_hugepage*" 
+kernel parameters, I'd prefer to keep the "panthor.transparent_hugepage" 
+(and "panfrost.transparent_hugepage") module parameter name
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_mmu.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+I could keep the parameter name as is and change the variable name though.
+
+> The patch is
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> index cf272b167feb..ba32d99ed854 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> @@ -600,10 +600,12 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
->  		refcount_set(&bo->base.pages_use_count, 1);
->  	} else {
->  		pages = bo->base.pages;
-> -		if (pages[page_offset]) {
-> -			/* Pages are already mapped, bail out. */
-> -			goto out;
-> -		}
-> +	}
-> +
-> +	sgt = &bo->sgts[page_offset / (SZ_2M / PAGE_SIZE)];
-> +	if (sgt->sgl) {
-> +		/* Pages are already mapped, bail out. */
-> +		goto out;
->  	}
->  
->  	mapping = bo->base.base.filp->f_mapping;
-> @@ -625,7 +627,6 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
->  		}
->  	}
->  
-> -	sgt = &bo->sgts[page_offset / (SZ_2M / PAGE_SIZE)];
->  	ret = sg_alloc_table_from_pages(sgt, pages + page_offset,
->  					NUM_FAULT_PAGES, 0, SZ_2M, GFP_KERNEL);
->  	if (ret)
-
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> 
+> regardless.
+> 
 
