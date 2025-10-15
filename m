@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-854479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C03BDE7A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:32:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD814BDE7AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D643E0B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:31:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E35A6504142
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1041F139579;
-	Wed, 15 Oct 2025 12:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D891A83F7;
+	Wed, 15 Oct 2025 12:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o75juOVK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+ceJgAT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9113191D0;
-	Wed, 15 Oct 2025 12:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC6F139579
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760531483; cv=none; b=FOtlybe78W5Tm+5yDqfCyLIAIcuVdSx46SYoTc4msDu7ZbPWmNVCEAnhUCKrjKsgL6Lph+WMUpD+LDLv7MjVIHclWda6tzMIPPTNv8XMd8y9L/5hUerEJ1eaF0JRVuuSt7eqi/SIK2zllpXUEnjREZok5GR5knEoKCQ7AvN8Q0I=
+	t=1760531517; cv=none; b=sMFq8ZqI7YkE3E9MOsaeHU/tmURWnRoRWi1vD5ZkGowaW+iut5JJbPvLKEuVLIFbzGa7bJFeyT9OJlcv5OakBrbUryPhmPQ2+MOVsIYCwy7/gagDhNr74usHo9SaRElw+fuCgUGwLeNsyIRo2GRl0/LMzBo7nn0BEfpgNAuUoqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760531483; c=relaxed/simple;
-	bh=ljQ+s359Zv/axxlgqUOol2/tN3Ll1JsFrzUKQGJE4tg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JoxebRRPrEmX8sjX/mldhga8lEzZjFW/M3Cth0TXxOkRjTBTTX75CV6Mcu4vO+mcbR5YYQwiuNh+sm3YXZa9QKIk5mOvvzXwJTqVdN+rZjH8An/y1IzYctV4s2MnJSjfmmOFW5PhuzunodAoTgoSRvdkYbVIqdvLkAyLEDYb2xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o75juOVK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6323C4CEF8;
-	Wed, 15 Oct 2025 12:31:20 +0000 (UTC)
+	s=arc-20240116; t=1760531517; c=relaxed/simple;
+	bh=Ds5tN1UgYbeLuv+voBo8qmhKTyrE2Us8S1vDEEh3mRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uRX1KbIpf/spbB6S78u/V0ujcLaDhe/CKd+N0k6OgUrcHpjv0If9qfJ1XRNxwd1jrAmDFWT2sV/LKdeohqONnue9x441xKOxcfxQhtzd48Zp0p5ZtkW/IM3tdZfXpqr5ZXqRqTd5GHX4KcrHyVy7eq7dNr2DUUxo+zCWqkgLKAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+ceJgAT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE5BC19421
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760531482;
-	bh=ljQ+s359Zv/axxlgqUOol2/tN3Ll1JsFrzUKQGJE4tg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=o75juOVKDrvvBIjPDw81lV3H1WAFgTlE4t5DzJFt4OASYHHV4/5iN/nNUle3HdM4X
-	 Cvl6UP7jZ7LP2A3azmFuJA1ICZ4+aDN8mw1Oftg+MDQwUwlBaeGT83IBX/FZdagnsj
-	 ySdXRT1/irYwJGZZBV7N771qXqH8hkfjzzbxjasbtERFmwvmVySL//uBj2pc9SKMIe
-	 DNFqwZCxRy9fsds+Thrl+2UOkvwsMbz1Wx7+iBwtQoGHtqxnvE87SUGKPCcwRGZ6wD
-	 IjoKgemPWHiHZQxggFiV/FbLkN07VLFTvzIJRCspZJ43EkGvsW+x86/MxAGBpID8sx
-	 363clTVl2ndng==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 15 Oct 2025 13:30:52 +0100
-Subject: [PATCH v2 3/3] kselftest/filelock: Add a .gitignore file
+	s=k20201202; t=1760531517;
+	bh=Ds5tN1UgYbeLuv+voBo8qmhKTyrE2Us8S1vDEEh3mRc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V+ceJgATycv2dcPg8aukzupgBj6hiyF82xtx/xXHAmQ7OAzNwwhYDFw13BQRqurFn
+	 wt6KphkKf9GdzEuVA+d4Kf1bO9KprD0F8kAO34yuSfJMs7Ign18icenwKIbqIK5tZ8
+	 tvd25w1Kn2vippSsoSbcy3LgHTpW6Wmh6TMQ/6qSBsSfODj3UXLaJux5Q+2TenSOSe
+	 GDsPLheeh1X6FE/JVr2yL3G6A06lu+hWzdetbsW7/VRX+Jh8GTHB07gj0JEdk+S6PV
+	 BpZ+rp9xhwuzYtg+RwEI2BbLrdyt6MF6PzW6fO3vxGYMVjBMjRKDILxf66USTJ0gRl
+	 puQ8egtip6caw==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-43f5ec025d3so3138488b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:31:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgFR7rdTXSbRuyX/L3tnlPVbJzNRj4ReLvTpGLtvs42W+zzIP41L7kO0/j5N4ZQepYpDmx2Ra3EMSbQXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5004yw4yvxyC1hXi5W/7/UviBXbbLIRZHpyq9OUUXckjSuMDK
+	EAkSoweuHf4cVsBSxNDuy0OlSu1zDnAlW9JC65ztTo6j2rEkCatqXm2jfPC+aYtJctSKo3/c58e
+	/FD+7kWeRvdqngBr4QhGR4YKLn2tHrW0=
+X-Google-Smtp-Source: AGHT+IFCWf7w81eYbGsWsAaAixXw9VKGwbQ6gP5dTyi4DiP0nYK4d0/SXD8oIGT6DGjz8WIu8OPi7YnvTwOjD4zro7A=
+X-Received: by 2002:a05:6808:200f:b0:43c:afd4:646d with SMTP id
+ 5614622812f47-4417b36ff74mr13883499b6e.14.1760531516486; Wed, 15 Oct 2025
+ 05:31:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251015-selftest-filelock-ktap-v2-3-f5fd21b75c3a@kernel.org>
-References: <20251015-selftest-filelock-ktap-v2-0-f5fd21b75c3a@kernel.org>
-In-Reply-To: <20251015-selftest-filelock-ktap-v2-0-f5fd21b75c3a@kernel.org>
-To: Shuah Khan <shuah@kernel.org>, Jeff Layton <jlayton@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=464; i=broonie@kernel.org;
- h=from:subject:message-id; bh=ljQ+s359Zv/axxlgqUOol2/tN3Ll1JsFrzUKQGJE4tg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBo75QPpZZeKHnnOBTayy3oIgBNtlFRM5ubC/yfT
- IH+dTzgBMyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaO+UDwAKCRAk1otyXVSH
- 0O8OB/9gqMZTy8WlYrnDsWyO00sEyByOqiqwRhOlmr9cGDPIxlXVr6g7SDIiR34tgO5Pfdhx6YY
- dIN6Dps/bLEiOU49WpCzS42GwZ++8Q8w3Xo+D5EX5tNkuWHXtEhkWozp6KctPHoGQvwQHK3nJWO
- 1DrHzDMm5lUbrKkzk4hMraEZ1+ecA9vIsNNK+b61DRXag8iQpYOY4OKjbKHYhXVkQSeDaI9sK0n
- OhJdEw9bRu4UvFTnWUFQIRio1zQdee49tpg0p4af0+ncvHXhXXgSs1Kdw2nVvIr8eG3L77CYxfI
- 3eHtc+Wrg66PgIqAcucx+0zSENoOcEECuOuxzL+D7setZs//
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7>
+ <08529809-5ca1-4495-8160-15d8e85ad640@arm.com> <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq>
+ <8da42386-282e-4f97-af93-4715ae206361@arm.com> <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi>
+ <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com> <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com>
+ <7ctfmyzpcogc5qug6u3jm2o32vy2ldo3ml5gsoxdm3gyr6l3fc@jo7inkr3otua>
+In-Reply-To: <7ctfmyzpcogc5qug6u3jm2o32vy2ldo3ml5gsoxdm3gyr6l3fc@jo7inkr3otua>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 15 Oct 2025 14:31:45 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ix7zdR0hJqN9OZPGp0oZMD_mzKU48HH1coqHTm7ucTDw@mail.gmail.com>
+X-Gm-Features: AS18NWAYgH7eJ_Z6jWizwskkJNOvoxQftpz0yuYY6luTlZtoDjUyyg1fVOoplv8
+Message-ID: <CAJZ5v0ix7zdR0hJqN9OZPGp0oZMD_mzKU48HH1coqHTm7ucTDw@mail.gmail.com>
+Subject: Re: stable: commit "cpuidle: menu: Avoid discarding useful
+ information" causes regressions
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christian Loehle <christian.loehle@arm.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Sasha Levin <sashal@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tell git to ignore the generated binary for the test.
+On Wed, Oct 15, 2025 at 3:30=E2=80=AFAM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> On (25/10/14 17:54), Rafael J. Wysocki wrote:
+> > Sergey, can you please run the workload under turbostat on the base
+> > 6.1.y and on 6.1.y with the problematic commit reverted and send the
+> > turbostat output from both runs (note: turbostat needs to be run as
+> > root)?
+>
+> Please find attached the turbostat logs for both cases.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/filelock/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+Thanks!
 
-diff --git a/tools/testing/selftests/filelock/.gitignore b/tools/testing/selftests/filelock/.gitignore
-new file mode 100644
-index 000000000000..825e899a121b
---- /dev/null
-+++ b/tools/testing/selftests/filelock/.gitignore
-@@ -0,0 +1 @@
-+ofdlocks
+First off, the CPUiD information reported by turbostat indicates that
+the system is a Jasper Lake.  Is this correct?
 
--- 
-2.47.2
+Second, the overall picture I've got from the turbostat data indicates
+that there is a correlation between Bzy_MHz and CPU%c7 (the more time
+spent in C7, the higher the average "busy" frequency) which is
+generally consistent with the hypothesis that using more C1 causes the
+processor to drop the maximum frequency.
 
+Something like this may be induced by RAPL power limits, presumably PL1.
+
+Do you use thermald?
 
