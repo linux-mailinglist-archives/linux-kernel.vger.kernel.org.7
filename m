@@ -1,185 +1,213 @@
-Return-Path: <linux-kernel+bounces-853886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA6BBDCD0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB188BDCD1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B70F3A8271
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2213B9934
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC329BDBC;
-	Wed, 15 Oct 2025 07:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B16302752;
+	Wed, 15 Oct 2025 07:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IDETDVUM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Td6T4XIU"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013023.outbound.protection.outlook.com [40.93.201.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5737E25D1E6
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760511902; cv=none; b=C83trVFUUemKWaREtf1PZ4YWKyohxmi+cePGzq8drTmOMylq63iRign/zp37AnYU36+2gItHJVnjFHyargEwQVQ+lyWVMRB2lEt/sNTorH+/6gBVSCh+OdWrsvCvvn4i8rrpPELGpclEfCzozSaH9kTlizarCYjL4am1W6YCH5c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760511902; c=relaxed/simple;
-	bh=pw1kGo2ws+5OCuELJrcKLUoUBQ0/TG/z4KJ0tei3+2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IXTfa8TyUS9nCneMkOQYEwKYEz8/nLhmC1mfWpxG/QLaDQKFb+EIqJdTC0mCX9sXCsfu21DRV7vh/IGR5+wDXKPaikogic5JHKS4kbPyHgRdGj4Z7ssAkpUio9e997o7Npcszgn5TJPzCauGI4mY67lURxEmg4vetYiGoHnKHl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IDETDVUM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760511899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2jp8KDES5ks8Aac5tH2y5JeuFcW9ux+XVUfHWrIy/4U=;
-	b=IDETDVUMtQkNDTEMluMHPbJz4fQmKtVwWWzDizl3oOHuiuTDhAoCkgW1FbrR6k5qL75HQn
-	2Lw+1AT/MzvLBR0GjyYl5FVkoOaJe8JhrKQVktNWf3lebO5piexQiW9cwQC//Dr7nUKS/3
-	ljsYRAyCNqEkuOE7gaQVjzfGe1NDZtE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-ikWxStrVM9at5iLIwzyswA-1; Wed, 15 Oct 2025 03:04:57 -0400
-X-MC-Unique: ikWxStrVM9at5iLIwzyswA-1
-X-Mimecast-MFC-AGG-ID: ikWxStrVM9at5iLIwzyswA_1760511896
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso35150325e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:04:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760511896; x=1761116696;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2jp8KDES5ks8Aac5tH2y5JeuFcW9ux+XVUfHWrIy/4U=;
-        b=LqYNhxem9CgCx3TEUiNEVpBLRZlCMUXElqfVBYFpfwqp8JS9NzT4prHipwWXsodkuD
-         /Y36tTSTvzsfgiZy5x0i68Ps+qJIYL2rr72yuIKIXK1JsyjQn3t0uoL5oIvARCGLTtrl
-         IhwUe/h0acXoPMV8A0KfKVXB32yhKNmNyZtQ/YkqCfjcl/yJgoQNzByCnKadpG8chz1b
-         Ja2iFyp6e1HbKA2UJKdhm5Ns+VYvrEd9wW4nKojLtXiN8WVFF9jeNEHmrkcZUX6e04JZ
-         I8BpCMuDeYIcV2r8x4Ziq3w03cddL8G4BJhCPB+mbqkZYVI79+17uWHyQJhm1jDEkvWt
-         cyrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkn4Kg+qbzxHtq1S+xjAQvBbp8CXDvgCXyupf6ZE453lQgTg/IieC5OzRnZzkIBrCqamzcXDvhDURV+RU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLzf0bHAdATUYAWM8sFEe6L9GO5Nrrm7twbeiRCDOLqTwZT2s6
-	CWq/1XGaQY/JxAqJVMmpQUvVrvc1FByWaoEek1jO4Y1P3ZYc41M2HwLUxaE6vdF/UOmh++BBkcc
-	oy6rI+uPb/AGu3HKLy9A3LxdAUQGJ41fPE9vxkASn3xmrA4At5LLSL0q8efuzc3Sm8g==
-X-Gm-Gg: ASbGncussqD354I0RofGTviT4peoHmiqaNGoxjlaS54MGylET395DnJ+x72Vw+7ZWUJ
-	sL7QPiTSzdR82n+lBL4GkRHQXC+rdUmpkXxsxJ1mPcMSf/EIJyTLCaRIvRQeZYXq/cjaYDmF3RE
-	gl5Cla8alv86ePBIoCxztBLui8aVg3J10xhOqsUrPRSGScCjsTbbrBgOuUxy009kls017V8uW67
-	Sot/MCD2hDnOD2ro9QeLq2uNagw8HnD/X+l2GdsYqpkJ/xO87EkiJy9AHmLtJFHKmT/9tJ6kjqq
-	XfQHlaNDgcOXtK5x08VNNUyW6uHEjwCK3Q==
-X-Received: by 2002:a05:600c:502c:b0:46e:1f86:aeba with SMTP id 5b1f17b1804b1-46fa9af014cmr175468025e9.17.1760511896363;
-        Wed, 15 Oct 2025 00:04:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhAQEhpelfdmyS4qYM1C8WtBXdelqu4F1sSu1VYzwVpfHA3C49VVzKIr4iSipRy/2riecqYQ==
-X-Received: by 2002:a05:600c:502c:b0:46e:1f86:aeba with SMTP id 5b1f17b1804b1-46fa9af014cmr175467725e9.17.1760511895812;
-        Wed, 15 Oct 2025 00:04:55 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm27454506f8f.22.2025.10.15.00.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 00:04:55 -0700 (PDT)
-Date: Wed, 15 Oct 2025 03:04:52 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: Maxime Coquelin <mcoqueli@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
-Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
-Message-ID: <20251015030313-mutt-send-email-mst@kernel.org>
-References: <20251007130622.144762-1-eperezma@redhat.com>
- <20251007130622.144762-2-eperezma@redhat.com>
- <20251014042459-mutt-send-email-mst@kernel.org>
- <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
- <20251014051537-mutt-send-email-mst@kernel.org>
- <CAJaqyWe-mn4e+1egNCH+R1x4R7DB6U1SZ-mRAXYPTtA27hKCVA@mail.gmail.com>
- <20251015023020-mutt-send-email-mst@kernel.org>
- <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AEA1C862D;
+	Wed, 15 Oct 2025 07:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760511974; cv=fail; b=oI6qpW3nx3RCMGZfgnzHxRKlsPvHFTSzH8RC+E8yQs/gvPKCY2np8QQD7Qj9JTtjBajVi9d+uBIozp6iEqfED8ZbWjqvYL9YsHnBw1tmPw0xAad91VvqllBPgRZYXzXsXxuCV5DSDunEegQDu4z+6ne9mw+4rKNreF6/WUHPFT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760511974; c=relaxed/simple;
+	bh=ADr3O5XkXAmAxq3oJZM/wQyQOztgZodHphhSaiKkpZM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NBFieanDFhWeP2TdXgsE9jaK3MU5KgDEHbbAsQHCkotkACl2PjDISWQtQ5sJMNKgJmrbo2WYz/dYiXDTUmbF0KxNMb2zqJdz1m6PihRl/hmsC1UxIfWTxvbq7tyKUrp84R3cphvwAemeElewkXRWR1DVdv9ToRYiXPIRl2WNEdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Td6T4XIU; arc=fail smtp.client-ip=40.93.201.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MfCP+ij1RKWH2W7Hrh13nIughDouEEJ15btonSB8zlcRKGBpacg75tpqgMxid6v6pEYWezvXlQmVeKgu0QJvgqK9m82bgZd+1mnBrPGsYNonmmhjYMwUicHGsq1ehtobwHULU2pRdoYLqaYQU6UxFLVLtGweS+/vb1GEoMDrMADLODW2hyVSYTt1NO01tcb4oSQ3zvV/f4k6fLPaCLOy5JwUw3tWExPZVSTp5+9/63LSnIl1hw2qEzaYq9cibO004F6mhDuO69fT3gylMnjf4j6A33lWHAU1jBqqQs6MM7vl8dIl9ykHbz5rRUeZcyMv6fcDlC13tnHxMh9yUiNw5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D0Acrn+BvqXIyuCQtxwoh6iaUvjiNyCmeG9n+9pzjMI=;
+ b=jzBu+/ZxDuijkmdU1oZotBgyWe9qf8Bs84OXSlMEIfuncUDNzS6UF1MA7YL02vdzrlg49b562R3IGbrly8nAteg8M672Se6GliAVW1Tvt8iLM1ff3zsuH3RgOKU0OnJ0h1ZyU4QqpU6/CbeOgqsnAbRfOznxolfmSgzzVfAxUeF6XpbG0bgXV/g0dPc5erQ5qZg6R2kQAstLpYtyEjg+586LtPrNthskdB/1TPRDrDCps69MGrhGQVVzUUsh+FzpAfuav2HCLfz4G2hxmGZ03LhV1BAzDoLh+OCUfUxewvr6AHvBTow0nBzV9UDFqtj9ollSduW9oBLxt97B1al98w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0Acrn+BvqXIyuCQtxwoh6iaUvjiNyCmeG9n+9pzjMI=;
+ b=Td6T4XIUlzHMY5a/yyud9mFmeTyB6n6t8hrO0rTy1mVhaRKMllqegC/rm4Ak2BGIohOZh1G66AqgIG3ff37XCcBJ8CMsaj1jqVyO8eML81Bjch8qRz03/h7J/wzx/bCbWVlwJylaCh1Qet8LT9kXHfjUu+uBrderQl4mXcTyHl9fyZRv+Tc5GpzVKjS/PrcnGJZ0en/il/3UrC0AtclMTOkT0/Je/1CWAyRJSCGvzKjcriopkU8vhU4lnHGNKsbEjOb+LUMDijfhv0Gfj9HUtdR/svqm3RrKZZ3Qm3NiZCyp+Lwbw/Hqe1jHZMD9nFgR/l5gQe+m6/ks6ou/Jyn2AA==
+Received: from SJ2PR07CA0006.namprd07.prod.outlook.com (2603:10b6:a03:505::18)
+ by DS0PR12MB6461.namprd12.prod.outlook.com (2603:10b6:8:c7::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Wed, 15 Oct
+ 2025 07:06:04 +0000
+Received: from CO1PEPF000066E8.namprd05.prod.outlook.com
+ (2603:10b6:a03:505:cafe::46) by SJ2PR07CA0006.outlook.office365.com
+ (2603:10b6:a03:505::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.10 via Frontend Transport; Wed,
+ 15 Oct 2025 07:06:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000066E8.mail.protection.outlook.com (10.167.249.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.7 via Frontend Transport; Wed, 15 Oct 2025 07:06:03 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 15 Oct
+ 2025 00:05:48 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Wed, 15 Oct 2025 00:05:47 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Oct 2025 00:05:43 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	"Mark Bloch" <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Moshe Shemesh
+	<moshe@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>, Cosmin Ratiu
+	<cratiu@nvidia.com>
+Subject: [PATCH net] net/mlx5e: psp, avoid 'accel' NULL pointer dereference
+Date: Wed, 15 Oct 2025 10:05:23 +0300
+Message-ID: <1760511923-890650-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E8:EE_|DS0PR12MB6461:EE_
+X-MS-Office365-Filtering-Correlation-Id: 475a3af2-7d56-4cdc-8f97-08de0bb94de8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FYJa2WPE2Ek8WVF8OerEZPztQSAmeUnEYisk7J2mGDpjbPZI5i/sQDdjhd05?=
+ =?us-ascii?Q?w8kNPpH0YOgzri5C9Cxb6LeutEJmiXUxyfP2vAKDkYm/AvLqAaquS8Tacg5G?=
+ =?us-ascii?Q?vaHoMLzBmOFT+21Qt6ne61CXsXntnIGI65pnLs3DLn4cJOH4DPx+iTqGLpV7?=
+ =?us-ascii?Q?B3dwGPIeOlSJ/LipY3bVlsB+1OROnDWIMr+XNmQkdOHSufLKNDZq+Pyr+DQJ?=
+ =?us-ascii?Q?Ss4G9zJcDMYaKqRiwlGfSMcQ6YDTIoZE36FmwlLjRXQ8bq6DIp7WXOAFvtbR?=
+ =?us-ascii?Q?vjqe4hYsUTu1215Twtas7ftZC7sR5ewfEsB3CUxrizcHWaE3MIiQGqvJ1wYx?=
+ =?us-ascii?Q?kkVO3Bhr6Qh7UVIIu8WMWWlX2YdD6I6Lexi3bz9EDJVx434rMqGk2otyB/Cj?=
+ =?us-ascii?Q?PLUsDdpq84r+W6aEVKD5LHQvJ+PgmDvIvgqFFubvTailiptYGPIzDHKxP7Qc?=
+ =?us-ascii?Q?BpuvwnB2pErVrOh+1xh2fUlqELudWz2imRa5YcZQZcTAJtsWjqYNM6QFYPew?=
+ =?us-ascii?Q?nZoSSMDGZi3VN+Kw0EOXpnb0GtgqhGQvvMaeIFV7Ak64iVe27IW4I645bR41?=
+ =?us-ascii?Q?YjI+QWgyKwhdFfDz1QIJIZsdnbGL3TwnenOVJvzbAcl3GQYKooK65o1MA2Ms?=
+ =?us-ascii?Q?+Wf/MBcsRDfJRc7z/HownRul9KrSdY1iLDsiFoxSn0fVw/eBJ8yrfrSC2M7T?=
+ =?us-ascii?Q?3ylx/PRrGKbbIpxMRoKAEr4LEAy+hohMCFEUfR0c8AKd0HNbHs/o0mKW4ADo?=
+ =?us-ascii?Q?h8MNGfxLt1wfnH56MOgSrZ9gQDCVUg4SkIgZXFzbtw3PcEydRgFwq7rki1ys?=
+ =?us-ascii?Q?/csZrZy3Y/9RYhwAOMux+siJUgCRgwDk5DyAVeuNZG1jeAGdtvgRuwjfdaO0?=
+ =?us-ascii?Q?tcZaUsIRV4kiENh6YBKUS6Nnco5QWRzVwDgx0mcQxP0RJ6fcF/ayvcmwglJp?=
+ =?us-ascii?Q?wDm6cx0Nz+zUegvBl+IEqkepkqph22N4GFpYKPKwBBnbtvxdTsAB0r8OLjCL?=
+ =?us-ascii?Q?PYD9BLqsFIMwQTKoBrdFt7X/GUsF58wMs8c0JKPtSapIinGk123NGD7y9/6h?=
+ =?us-ascii?Q?zMEQ8z0+9tl1AWbe+N53XL2McQ8K9M/pN4fHiNbIw0Xzh8WhJYtdR0JVxuje?=
+ =?us-ascii?Q?Poq1cj3PUPDjPru2vYaYSo7dvsvPtwgGEbzK52oObpaZ8uRONxJ+pZEVPcbg?=
+ =?us-ascii?Q?nGZQ6+Vjy1sJZV1t/Vdx0x+bOkx3oRSFfjKVHdwLAVMO0jWIMImIsWGGenke?=
+ =?us-ascii?Q?2yy8WHf0/gqCAzVV93sQW02l6vCHTZMFGl4LnyYSbIgiJpYlkHZxkH9mxa4j?=
+ =?us-ascii?Q?H5mMeHLe4ya17fWeFBkanWIzxQJF/2FqagMxEsqCUjdUmnQo3sx5xhlMghSc?=
+ =?us-ascii?Q?iNsLbC57naHZH6nEypsEHKgIUK7iPT6k3xesKDBDhvADvUQa92sJ7I7HMdzc?=
+ =?us-ascii?Q?LWnxZhJJuWPJVnrMUHS7iGe0mddMkC4vDYOyJ3z05gk8wIAzMLIuGXU3JhDW?=
+ =?us-ascii?Q?tqhf25RyPr+ujN0mmrdQvlIqg4ScUOcRBB9cvWBMle+xh+zWdtsMJpE4Gjn+?=
+ =?us-ascii?Q?XAEBnJANgbu5kTGexXY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 07:06:03.6154
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 475a3af2-7d56-4cdc-8f97-08de0bb94de8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6461
 
-On Wed, Oct 15, 2025 at 08:52:50AM +0200, Eugenio Perez Martin wrote:
-> On Wed, Oct 15, 2025 at 8:33 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Wed, Oct 15, 2025 at 08:08:31AM +0200, Eugenio Perez Martin wrote:
-> > > On Tue, Oct 14, 2025 at 11:25 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
-> > > > > On Tue, Oct 14, 2025 at 10:29 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > >
-> > > > > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio Pérez wrote:
-> > > > > > > An userland device implemented through VDUSE could take rtnl forever if
-> > > > > > > the virtio-net driver is running on top of virtio_vdpa.  Let's break the
-> > > > > > > device if it does not return the buffer in a longer-than-assumible
-> > > > > > > timeout.
-> > > > > >
-> > > > > > So now I can't debug qemu with gdb because guest dies :(
-> > > > > > Let's not break valid use-cases please.
-> > > > > >
-> > > > > >
-> > > > > > Instead, solve it in vduse, probably by handling cvq within
-> > > > > > kernel.
-> > > > >
-> > > > > Would a shadow control virtqueue implementation in the VDUSE driver work?
-> > > > > It would ack systematically messages sent by the Virtio-net driver,
-> > > > > and so assume the userspace application will Ack them.
-> > > > >
-> > > > > When the userspace application handles the message, if the handling fails,
-> > > > > it somehow marks the device as broken?
-> > > > >
-> > > > > Thanks,
-> > > > > Maxime
-> > > >
-> > > > Yes but it's a bit more convoluted  than just acking them.
-> > > > Once you use the buffer you can get another one and so on
-> > > > with no limit.
-> > > > One fix is to actually maintain device state in the
-> > > > kernel, update it, and then notify userspace.
-> > > >
-> > >
-> > > I thought of implementing this approach at first, but it has two drawbacks.
-> > >
-> > > The first one: it's racy. Let's say the driver updates the MAC filter,
-> > > VDUSE timeout occurs, the guest receives the fail, and then the device
-> > > replies with an OK. There is no way for the device or VDUSE to update
-> > > the driver.
-> >
-> > There's no timeout. Kernel can guarantee executing all requests.
-> >
-> 
-> I don't follow this. How should the VDUSE kernel module act if the
-> VDUSE userland device does not use the CVQ buffer then?
+From: Cosmin Ratiu <cratiu@nvidia.com>
 
-First I am not sure a VQ is the best interface for talking to userspace.
-But assuming yes - just avoid sending more data, send it later after
-userspace used the buffer.
+The 'accel' parameter of mlx5e_txwqe_build_eseg_csum() and the similar
+'state' parameter of mlx5e_accel_tx_ids_len() were NULL when called
+from mlx5i_sq_xmit() and were causing kernel panics from that context.
 
+Fix that by passing in a local empty mlx5e_accel_tx_state variable, thus
+guaranteeing that 'accel' is never NULL. Also remove an unnecessary
+check from mlx5e_tx_wqe_inline_mode().
 
-> >
-> >
-> > >
-> > > The second one, what to do when the VDUSE cvq runs out of descriptors?
-> > > While the driver has its descriptor returned with VIRTIO_NET_ERR, the
-> > > VDUSE CVQ has the descriptor available. If this process repeats to
-> > > make available all of the VDUSE CVQ descriptors, how can we proceed?
-> >
-> > There's no reason to return VIRTIO_NET_ERR ever and cvq will not run
-> > out of descriptors. Kernel uses cvq buffers.
-> >
-> >
-> > > I think both of them can be solved with the DEVICE_NEEDS_RESET status
-> > > bit, but it is not implemented in the drivers at this moment.
-> >
-> > No need for a reset, either.
-> >
+Fixes: e5a1861a298e ("net/mlx5e: Implement PSP Tx data path")
+Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_tx.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+index b7227afcb51d..2702b3885f06 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+@@ -256,7 +256,7 @@ mlx5e_tx_wqe_inline_mode(struct mlx5e_txqsq *sq, struct sk_buff *skb,
+ 	u8 mode;
+ 
+ #ifdef CONFIG_MLX5_EN_TLS
+-	if (accel && accel->tls.tls_tisn)
++	if (accel->tls.tls_tisn)
+ 		return MLX5_INLINE_MODE_TCP_UDP;
+ #endif
+ 
+@@ -982,6 +982,7 @@ void mlx5i_sq_xmit(struct mlx5e_txqsq *sq, struct sk_buff *skb,
+ 	struct mlx5e_tx_attr attr;
+ 	struct mlx5i_tx_wqe *wqe;
+ 
++	struct mlx5e_accel_tx_state accel = {};
+ 	struct mlx5_wqe_datagram_seg *datagram;
+ 	struct mlx5_wqe_ctrl_seg *cseg;
+ 	struct mlx5_wqe_eth_seg  *eseg;
+@@ -992,7 +993,7 @@ void mlx5i_sq_xmit(struct mlx5e_txqsq *sq, struct sk_buff *skb,
+ 	int num_dma;
+ 	u16 pi;
+ 
+-	mlx5e_sq_xmit_prepare(sq, skb, NULL, &attr);
++	mlx5e_sq_xmit_prepare(sq, skb, &accel, &attr);
+ 	mlx5i_sq_calc_wqe_attr(skb, &attr, &wqe_attr);
+ 
+ 	pi = mlx5e_txqsq_get_next_pi(sq, wqe_attr.num_wqebbs);
+@@ -1009,7 +1010,7 @@ void mlx5i_sq_xmit(struct mlx5e_txqsq *sq, struct sk_buff *skb,
+ 
+ 	mlx5i_txwqe_build_datagram(av, dqpn, dqkey, datagram);
+ 
+-	mlx5e_txwqe_build_eseg_csum(sq, skb, NULL, eseg);
++	mlx5e_txwqe_build_eseg_csum(sq, skb, &accel, eseg);
+ 
+ 	eseg->mss = attr.mss;
+ 
+
+base-commit: 7f0fddd817ba6daebea1445ae9fab4b6d2294fa8
+-- 
+2.31.1
 
 
