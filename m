@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-853909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63F6BDCE84
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:21:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DEBBDCE6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E81119C0C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:20:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE83819C0357
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419D8319604;
-	Wed, 15 Oct 2025 07:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="doODz/HT"
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6BA3191CF;
+	Wed, 15 Oct 2025 07:16:20 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F0D3148BD;
-	Wed, 15 Oct 2025 07:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE79626560B;
+	Wed, 15 Oct 2025 07:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760512581; cv=none; b=jgJviRZ8pxlMYe9fqIQ2c3T8n0wUUT6Y7u/0cKV1F/bP1B/+ZjyM44gvHknCA4SGNpsK9bfcVrAaJqX8FPaiGhXkJbP8t4Ow4t7R7D+UfX5cWnFJq7v0LmpaHf6Pr3W7/h+qbQx0q1rlr/640W/h+JN3RaKpey0a7FP8czQQFcg=
+	t=1760512580; cv=none; b=rv7cf1avSXSrw+pFG2iPeSV72+0KMxzlb7SRFHuz10rkYkuL8cAqBdV8ilV54Z4eLzhi1AoZmBiO4rGWGwtvqddps3NbNLpq0j9pevE2o6/K3veASyF6r0CB85oGC06aPHfaN8HvZITvQrClDjuVF4xGei0H0PxpSBaGJYnMyO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760512581; c=relaxed/simple;
-	bh=7B4kA3fus5v+g91BOuLJNjDaHG4KoAB4DZKCoUuuCSQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LpLaWYsT0apWmpx33K+3pGUn8q6RC3zIUbuGJJIuYu5iewQLZYMxwbkYKydzhtJJhFWSVnxalTEkLUngwXU7Bl1LA0LJReEuOAuPlmyyW/xlKX+RHM2qJHBIfRfefefkrLpkDMMna3xBxUEHePZtwi34gutwjtOQObHr0ZdiC1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=doODz/HT; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=lzLXlC5xc3e41jHYIE9zMc5uq6scn3dP/PpsZGE84cM=;
-	b=doODz/HTPa5iCUomN6LhO2MlZVHaDA4f3rmfaCesWZGiFRK05pZPOwv9xggkc0AM85vG/Tcp6
-	YUGE6Y3qMFo736AEqaaeliVjhH2Ne2tNLhW+WsSXcz4QVZRBjWYSfOGTi+H9voNwjanQz3sO2yr
-	ov/0Ht0EVdNA0Dm+XG48jAo=
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4cmj6Z0dPyz1cyNt;
-	Wed, 15 Oct 2025 15:15:50 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 467EF140277;
-	Wed, 15 Oct 2025 15:16:10 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.188.120) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 15 Oct 2025 15:16:08 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Luo Yang <luoyang82@h-partners.com>, Meny Yossefi
-	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
-	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
- Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v01 9/9] hinic3: Use array_size instead of multiplying
-Date: Wed, 15 Oct 2025 15:15:35 +0800
-Message-ID: <f61d407225486962ce37d9641f89b12c008711aa.1760502478.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <cover.1760502478.git.zhuyikai1@h-partners.com>
-References: <cover.1760502478.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1760512580; c=relaxed/simple;
+	bh=WHXyXlFtTs0SB7NFWm71xtytwP0fISozo3+fE+yjRH8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JdA9iu5aC1Xf6sWf5VuUwZLdS3zIDlsBzniyJ0Ero1azRWAu3qOEuvjfKpy9UXVYS/GUgPGP0REKd4PgXpT4WO+whpjfLS5fuWnqafmEKxf346i+Kh/oSDe7HWQoRkifQbws5NLHwbQjonGzNniom6NbLnq53oRuLlRbxQ6bCuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: d4924468a99611f0a38c85956e01ac42-20251015
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:cf5af701-aa01-4452-9393-6bd62fe65be5,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:20
+X-CID-META: VersionHash:a9d874c,CLOUDID:e5e50e506e81255d17d8e4df42aaa770,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: d4924468a99611f0a38c85956e01ac42-20251015
+X-User: liqiang01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <liqiang01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 397002641; Wed, 15 Oct 2025 15:16:12 +0800
+From: Li Qiang <liqiang01@kylinos.cn>
+To: arend.vanspriel@broadcom.com,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com
+Cc: linux-kernel@vger.kernel.org,
+	Li Qiang <liqiang01@kylinos.cn>
+Subject: [PATCH] wifi: brcmfmac: Add null pointer check to brcmf_acpi_probe
+Date: Wed, 15 Oct 2025 15:16:07 +0800
+Message-Id: <20251015071607.96415-1-liqiang01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,45 +64,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemf100013.china.huawei.com (7.202.181.12)
 
-According to comment of patch 03, check codes that were merged and
-use array_size instead of multiplying.
+devm_kasprintf() returns a pointer to dynamically allocated memory
+which can be NULL upon failure.
 
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
+Fixes: 0f485805d008a ("wifi: brcmfmac: acpi: Add support for fetching Apple ACPI properties")
+Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
 ---
- drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/acpi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-index 7bfd7967967d..5ab6f3e9fe06 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-@@ -23,7 +23,8 @@ static int hinic3_feature_nego(struct hinic3_hwdev *hwdev, u8 opcode,
- 	feature_nego.func_id = hinic3_global_func_id(hwdev);
- 	feature_nego.opcode = opcode;
- 	if (opcode == MGMT_MSG_CMD_OP_SET)
--		memcpy(feature_nego.s_feature, s_feature, size * sizeof(u64));
-+		memcpy(feature_nego.s_feature, s_feature,
-+		       array_size(size, sizeof(u64)));
- 
- 	mgmt_msg_params_init_default(&msg_params, &feature_nego,
- 				     sizeof(feature_nego));
-@@ -37,7 +38,8 @@ static int hinic3_feature_nego(struct hinic3_hwdev *hwdev, u8 opcode,
- 	}
- 
- 	if (opcode == MGMT_MSG_CMD_OP_GET)
--		memcpy(s_feature, feature_nego.s_feature, size * sizeof(u64));
-+		memcpy(s_feature, feature_nego.s_feature,
-+		       array_size(size, sizeof(u64)));
- 
- 	return 0;
- }
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/acpi.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/acpi.c
+index c4a54861bfb4..f8f6433bdf69 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/acpi.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/acpi.c
+@@ -25,6 +25,8 @@ void brcmf_acpi_probe(struct device *dev, enum brcmf_bus_type bus_type,
+ 		settings->board_type = devm_kasprintf(dev, GFP_KERNEL,
+ 						      "apple,%s",
+ 						      o->string.pointer);
++		if (!settings->board_type)
++			return;
+ 	} else {
+ 		brcmf_dbg(INFO, "No ACPI module-instance\n");
+ 		return;
 -- 
-2.43.0
+2.25.1
 
 
