@@ -1,248 +1,285 @@
-Return-Path: <linux-kernel+bounces-853735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D954BDC775
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E67A8BDC77B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537533E090E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E16C3AAD53
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756822F60D5;
-	Wed, 15 Oct 2025 04:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2614B2FDC5A;
+	Wed, 15 Oct 2025 04:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P8vboY39"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A4IiFi3m"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1086635898
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF321EFF93
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760502622; cv=none; b=bRVANjV6zABBem3wxAx8uRJ1cmNwQXaAH1ylOtUBj6AOaAismuc1qf2INAREmL4yHiz6OPg/iK3dj6cy8Koaujc0AnKmIsNTpth3l9tyY4/vwY9iYCM01QBNqNWhdby3y56wOp51L+n1ZpnPb/xxL+MqwaDKMHM76rXUFf6MQ+4=
+	t=1760502624; cv=none; b=juyDzZ5gkkm3ft58emIZE6rve7goswj3Psa0fnItS4V1gYmIk8NiYSxiMhvi9m+TUA71k+BEJRIR1/Zt1I3WEPyPBQFupNvpyUsEN3pq60401b/ZLMKMC7TSDaa0JD08UXIk2CnkvOdGkfyJkg7HGQYSftsE3pZ5yvTJJ7KJlII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760502622; c=relaxed/simple;
-	bh=tI6xu8FNuNdQiwVzMsVnkzJ+aBpDpp8EFG9ToW77OBw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C4wlKzy345L2pVuMaMaDXjuEZWZEPaizGigWMlrKVKsPblLYtjteBDemSCGnI6cQU7RrEWu3QV2zNtzLmivuOXetjkdvHHGRsExvYcSQa7/ZacmN1jLZilKObD7l39kmfNVHy6PziodVjXyKUIKkqz7bt7G97VZSzm2e7VmKxWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P8vboY39; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1760502624; c=relaxed/simple;
+	bh=gEHbLD9RPEttonCCo/mmfEfjmcBJVFJ7LQpeOyHdH/8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=m2At5GnRmgUKqIUh26ODiG8uHvxN0LaSNuvwsGNgH/ya1D6QLMU0WThwixrUEYuqrQg/MKxRUnkJrr75Ezo3r89Ezom7pq10LUjF2DaMdJHYvI0jR8dn5vBCU5qd4NL1ZakmMbVFVUzte8FCmCddWZXRUmwB84iROLh/+1u7uwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A4IiFi3m; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f64c5cf62so7259821b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:30:20 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-78427dae77eso8759899b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 21:30:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760502620; x=1761107420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXIS3j5RCM6hVOr2uUyAFDWEwpmVgDpaa3qdMiGXfzc=;
-        b=P8vboY39CGR1wBuXwAUB6icKTjBN/E5CN6KuzovcTdbXQ2Uu/QLzItQfWbt7Axy9dc
-         ESGO11vCg65kttMh9MppNMuLJt0lOQzmeXDYqwu+hlitrVoNxlKVAzaia000+ZWirWgc
-         Gvd+NHNi1MSKEy9B5dbO692mXfXbqqiLLXirDEdKrVJTgS2rqwTxz0rU0nW/DFCKIQHe
-         y976MCEQqcK9UhXuFy0noNNW5fg89RKDSonawbENDUoNz8CPRBR4Z3Km7vD2c3as2hmF
-         wiEJSeEeUPI+sWcaCVj7PUHRy0mvCXZ480bGK7AvSlqN7yDsDFZcv9n3gCH0BOAtVkFZ
-         4ZFA==
+        d=google.com; s=20230601; t=1760502622; x=1761107422; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kmMvyh4fnjqHp1OFP+Q2QSeAQcQ5ugB+WtQrIGr0TMs=;
+        b=A4IiFi3mTJfm+RXnHeddo13R3xH1k94dySr06+lTpc6cdSDCHwHDqyg7q9aN0uLS4P
+         DviKAAEFxIlr7Is1CDkgM+0qeumw0MRz5a6qAGc/J+QcHO63kjFkomZYoIqEmc3OvbS+
+         xdo3IHVOmJBGuqRKz3lMJitXWXTqZ8IwezFLDKRyusyzTI0SkObkM5Xge6TwT5A4tutu
+         gofklWw05fz1ChJQv4h6yFp5ONIn8HnnezcOynzQHTQZ0FgvYjlE9MW/7wnO6lmm83UI
+         70NY/3D4OZyzf7wdyqGTD1wfGCAgvyThSAT92BER9bMUMbuB9pK2LpiSUxsQudz6aQ/w
+         L/pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760502620; x=1761107420;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yXIS3j5RCM6hVOr2uUyAFDWEwpmVgDpaa3qdMiGXfzc=;
-        b=MsdHJnIUmsFEZ7oxJcibTS/owehE3+F3DyoYEdYn+T7rn9zt6cjuVCZNa5v131DteN
-         AX1rdbZijw9UUT9MP8lrg5lwROwPTZ2P7VxOXsMW+RymPczS23D3GyhFz7SLD7fuTOa1
-         6HGSHOyW/KU6M6sPigdUlQDeTWf/CwfxfmXaClWWxH3gGOpSQUsUi3/lzpwvyGoRN7Nf
-         Eu4e5NC0OGSEWXU2XLRXJzQLWLmXXag5hoioI2i3UD23rJbdHHX7XWaK+1sDxqqCHpVz
-         6ugF13fROVNg9ZfV0XjivRHXDrR9agpEml8W61CGSkODCR37HlxvDt/TqpW9x/Ee3gwA
-         YYcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Pg+zOryuo1BVwDC40OqN0H0uRtBa0s1PERYdkqNPkoFzzerlfKrzv4OCv2IggXqseHjex/Bx/th8axs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweJDf9Abt63yYv2Pj7wxfAebnEltVlFqFyCUb0lELG4ObsEf1v
-	IoOvpJ4QKaTQLXC4+kV7mgVtLgzjirzjpzBn042ZjK3m8Xac07A826IlIRh60vfCNm/ogvd+2/m
-	j8tXr1g==
-X-Google-Smtp-Source: AGHT+IGaZTXT0vciEx7KbYADGeZKTtU68kLvCRG8tGLPmqjhQRCZK5Ay8LX5GjcyaqfAjeV5ynjINN8aGkE=
-X-Received: from pgbcs7.prod.google.com ([2002:a05:6a02:4187:b0:b62:e03a:896c])
- (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7589:b0:32d:b97f:6483
- with SMTP id adf61e73a8af0-32db97f6505mr22015042637.22.1760502620374; Tue, 14
- Oct 2025 21:30:20 -0700 (PDT)
-Date: Wed, 15 Oct 2025 04:30:13 +0000
+        d=1e100.net; s=20230601; t=1760502622; x=1761107422;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kmMvyh4fnjqHp1OFP+Q2QSeAQcQ5ugB+WtQrIGr0TMs=;
+        b=Kuj5r8C0SyEkSh7BVYJRB2zadTS6nIpPYZYoKLch5RYm4LBPWmf/xKHGV25rirGcUZ
+         WunEUq5h+W/xqUQbiFr37aO0mzIAuAIn2KAIAl4Nyj5z4B8lVCrBEzYGF90CDJ67c3zm
+         E5k5qGNYmYbQWoV+xl/Wc40W3W3PR3Ypm0kOYoYxLGqaQndHI0Gs3Srtu+2dtd6owypw
+         vlH8RfA1Gab8qE27cxi5ieG7qKa7EOupy1nEIXD3SS8dG0/SvXmITe22uabXvY9IFrOA
+         lcjPqh1vFymFRUC1sFLZCKJL4bZzkvJJN12K1e6lNG4VgygCwdFZXmdNHqSt7UuzM4zr
+         hldQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg92Jn6g5IyGmt20wvsieQ5BRyZnFK7LoFs3JMNs/dBc7HFDAodKFZ/npibGK6PEH99zw4WZ7fm61CMV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfXgNusk683NO2RzNVC4NfCLJytav4Fdt/qCFPX7GQfjjK17t/
+	u8ARru1/E4aO4uyyduXMyymhYb+nnwYk/JNmLJQ8RmqNSiSyQrrfJ9zu735d7s6cqVBwpGZowil
+	jMepDkw==
+X-Google-Smtp-Source: AGHT+IGtc+RtpcrlelQatgq+N00chyu11KcMvbeDlEMEu4MMR5+ezW9iNtj5AD52An2umJnvqFkpeD5muug=
+X-Received: from pgbcs5.prod.google.com ([2002:a05:6a02:4185:b0:b55:734:6b47])
+ (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3ca1:b0:262:9461:2e5b
+ with SMTP id adf61e73a8af0-32da8463095mr32673308637.53.1760502621897; Tue, 14
+ Oct 2025 21:30:21 -0700 (PDT)
+Date: Wed, 15 Oct 2025 04:30:14 +0000
+In-Reply-To: <20251015043017.3382908-1-badhri@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251015043017.3382908-1-badhri@google.com>
 X-Mailer: git-send-email 2.51.0.858.gf9c4a03a3a-goog
-Message-ID: <20251015043017.3382908-1-badhri@google.com>
-Subject: [PATCH v2 1/2] tcpm: Parse and log AVS APDO
+Message-ID: <20251015043017.3382908-2-badhri@google.com>
+Subject: [PATCH v2 2/2] usb: typec: pd: Register SPR AVS caps with
+ usb_power_delivery class
 From: Badhri Jagan Sridharan <badhri@google.com>
 To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
 	badhri@google.com
 Cc: amitsd@google.com, kyletso@google.com, rdbabiera@google.com, 
 	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-The USB PD specification introduced new Adjustable Voltage Supply (AVS)
-types for both Standard Power Range (SPR) and Extended Power Range (EPR)
-sources.
+usb_power_delivery class will now display AVS cap as
+`spr_adjustable_voltage_supply`. `maximum_current_9V_to_15V` and
+`maximum_current_15V_to_20V` shows the corresponding current limits
+in mA. `peak_current` follows the same convention as fixed_supply
+where the value reported in the capabilities message is displayed
+as is.
 
-Add definitions to correctly parse and handle the new AVS APDO. Use
-bitfield macros to add inline helper functions to extract voltage,
-current, power, and peak current fields to parse and log the details
-of the new EPR AVS and SPR AVS APDO.
+Sample output with an SPR AVS capable PD charger:
+$cat /sys/class/usb_power_delivery/pd1/source-capabilities/5:spr_adjustable_voltage_supply/maximum_current_9V_to_15V
+4000mA
+
+$cat /sys/class/usb_power_delivery/pd1/source-capabilities/5:spr_adjustable_voltage_supply/maximum_current_15V_to_20V
+3350mA
+
+$cat /sys/class/usb_power_delivery/pd1/source-capabilities/5:spr_adjustable_voltage_supply/peak_current
+0
 
 Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
-Reviewed-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Kyle Tso <kyletso@google.com>
-Reviewed-by: RD Babiera <rdbabiera@google.com>
 ---
-Changes since v1:
-* Fixed incorrrect squash.
+Changes since V1:
+* Fixed incorrect squash
 ---
- drivers/usb/typec/tcpm/tcpm.c | 15 +++++++-
- include/linux/usb/pd.h        | 69 ++++++++++++++++++++++++++++++++++-
- 2 files changed, 82 insertions(+), 2 deletions(-)
+ .../testing/sysfs-class-usb_power_delivery    | 28 ++++++
+ drivers/usb/typec/pd.c                        | 95 ++++++++++++++++++-
+ 2 files changed, 118 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index b2a568a5bc9b..c65aa8104950 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -823,10 +823,23 @@ static void tcpm_log_source_caps(struct tcpm_port *po=
-rt)
- 		case PDO_TYPE_APDO:
- 			if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_PPS)
- 				scnprintf(msg, sizeof(msg),
--					  "%u-%u mV, %u mA",
-+					  "PPS %u-%u mV, %u mA",
- 					  pdo_pps_apdo_min_voltage(pdo),
- 					  pdo_pps_apdo_max_voltage(pdo),
- 					  pdo_pps_apdo_max_current(pdo));
-+			else if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_EPR_AVS)
-+				scnprintf(msg, sizeof(msg),
-+					  "EPR AVS %u-%u mV %u W peak_current: %u",
-+					  pdo_epr_avs_apdo_min_voltage_mv(pdo),
-+					  pdo_epr_avs_apdo_max_voltage_mv(pdo),
-+					  pdo_epr_avs_apdo_pdp_w(pdo),
-+					  pdo_epr_avs_apdo_src_peak_current(pdo));
-+			else if (pdo_apdo_type(pdo) =3D=3D APDO_TYPE_SPR_AVS)
-+				scnprintf(msg, sizeof(msg),
-+					  "SPR AVS 9-15 V: %u mA 15-20 V: %u mA peak_current: %u",
-+					  pdo_spr_avs_apdo_9v_to_15v_max_current_ma(pdo),
-+					  pdo_spr_avs_apdo_15v_to_20v_max_current_ma(pdo),
-+					  pdo_spr_avs_apdo_src_peak_current(pdo));
- 			else
- 				strcpy(msg, "undefined APDO");
- 			break;
-diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
-index 3068c3084eb6..6ccd1b2af993 100644
---- a/include/linux/usb/pd.h
-+++ b/include/linux/usb/pd.h
-@@ -6,6 +6,7 @@
- #ifndef __LINUX_USB_PD_H
- #define __LINUX_USB_PD_H
-=20
-+#include <linux/bitfield.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <linux/usb/typec.h>
-@@ -271,9 +272,11 @@ enum pd_pdo_type {
-=20
- enum pd_apdo_type {
- 	APDO_TYPE_PPS =3D 0,
-+	APDO_TYPE_EPR_AVS =3D 1,
-+	APDO_TYPE_SPR_AVS =3D 2,
+diff --git a/Documentation/ABI/testing/sysfs-class-usb_power_delivery b/Documentation/ABI/testing/sysfs-class-usb_power_delivery
+index 61d233c320ea..c754458a527e 100644
+--- a/Documentation/ABI/testing/sysfs-class-usb_power_delivery
++++ b/Documentation/ABI/testing/sysfs-class-usb_power_delivery
+@@ -254,3 +254,31 @@ Contact:	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+ Description:
+ 		The PPS Power Limited bit indicates whether or not the source
+ 		supply will exceed the rated output power if requested.
++
++Standard Power Range (SPR) Adjustable Voltage Supplies
++
++What:		/sys/class/usb_power_delivery/.../<capability>/<position>:spr_adjustable_voltage_supply
++Date:		Oct 2025
++Contact:	Badhri Jagan Sridharan <badhri@google.com>
++Description:
++		Adjustable Voltage Supply (AVS) Augmented PDO (APDO).
++
++What:		/sys/class/usb_power_delivery/.../<capability>/<position>:spr_adjustable_voltage_supply/maximum_current_9V_to_15V
++Date:		Oct 2025
++Contact:	Badhri Jagan Sridharan <badhri@google.com>
++Description:
++		Maximum Current for 9V to 15V range in milliamperes.
++
++What:		/sys/class/usb_power_delivery/.../<capability>/<position>:spr_adjustable_voltage_supply/maximum_current_15V_to_20V
++Date:		Oct 2025
++Contact:	Badhri Jagan Sridharan <badhri@google.com>
++Description:
++		Maximum Current for greater than 15V till 20V range in
++		milliamperes.
++
++What:		/sys/class/usb_power_delivery/.../<capability>/<position>:spr_adjustable_voltage_supply/peak_current
++Date:		Oct 2025
++Contact:	Badhri Jagan Sridharan <badhri@google.com>
++Description:
++		This file shows the value of the Adjustable Voltage Supply Peak Current
++		Capability field.
+diff --git a/drivers/usb/typec/pd.c b/drivers/usb/typec/pd.c
+index d78c04a421bc..67f20b5ffdf4 100644
+--- a/drivers/usb/typec/pd.c
++++ b/drivers/usb/typec/pd.c
+@@ -359,6 +359,84 @@ static const struct device_type sink_pps_type = {
+ 	.groups = sink_pps_groups,
  };
-=20
--#define PDO_APDO_TYPE_SHIFT	28	/* Only valid value currently is 0x0 - PPS =
-*/
-+#define PDO_APDO_TYPE_SHIFT	28
- #define PDO_APDO_TYPE_MASK	0x3
-=20
- #define PDO_APDO_TYPE(t)	((t) << PDO_APDO_TYPE_SHIFT)
-@@ -297,6 +300,35 @@ enum pd_apdo_type {
- 	PDO_PPS_APDO_MIN_VOLT(min_mv) | PDO_PPS_APDO_MAX_VOLT(max_mv) |	\
- 	PDO_PPS_APDO_MAX_CURR(max_ma))
-=20
-+/*
-+ * Applicable only to EPR AVS APDO source cap as per
-+ * Table 6.15 EPR Adjustable Voltage Supply APDO =E2=80=93 Source
-+ */
-+#define PDO_EPR_AVS_APDO_PEAK_CURRENT	GENMASK(27, 26)
+ 
++/* -------------------------------------------------------------------------- */
++/* Standard Power Range (SPR) Adjustable Voltage Supply (AVS) */
 +
-+/*
-+ * Applicable to both EPR AVS APDO source and sink cap as per
-+ * Table 6.15 EPR Adjustable Voltage Supply APDO =E2=80=93 Source
-+ * Table 6.22 EPR Adjustable Voltage Supply APDO =E2=80=93 Sink
-+ */
-+#define PDO_EPR_AVS_APDO_MAX_VOLT	GENMASK(25, 17)	/* 100mV unit */
-+#define PDO_EPR_AVS_APDO_MIN_VOLT	GENMASK(15, 8)	/* 100mV unit */
-+#define PDO_EPR_AVS_APDO_PDP		GENMASK(7, 0) /* 1W unit */
-+
-+/*
-+ * Applicable only SPR AVS APDO source cap as per
-+ * Table 6.14 SPR Adjustable Voltage Supply APDO =E2=80=93 Source
-+ */
-+#define PDO_SPR_AVS_APDO_PEAK_CURRENT		GENMASK(27, 26)
-+
-+/*
-+ * Applicable to both SPR AVS APDO source and sink cap as per
-+ * Table 6.14 SPR Adjustable Voltage Supply APDO =E2=80=93 Source
-+ * Table 6.21 SPR Adjustable Voltage Supply APDO =E2=80=93 Sink
-+ */
-+#define PDO_SPR_AVS_APDO_9V_TO_15V_MAX_CURR	GENMASK(19, 10)	/* 10mA unit *=
-/
-+#define PDO_SPR_AVS_APDO_15V_TO_20V_MAX_CURR	GENMASK(9, 0)	/* 10mA unit */
-+
- static inline enum pd_pdo_type pdo_type(u32 pdo)
- {
- 	return (pdo >> PDO_TYPE_SHIFT) & PDO_TYPE_MASK;
-@@ -350,6 +382,41 @@ static inline unsigned int pdo_pps_apdo_max_current(u3=
-2 pdo)
- 		PDO_PPS_APDO_CURR_MASK) * 50;
- }
-=20
-+static inline unsigned int pdo_epr_avs_apdo_src_peak_current(u32 pdo)
++static ssize_t
++spr_avs_9v_to_15v_max_current_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
 +{
-+	return FIELD_GET(PDO_EPR_AVS_APDO_PEAK_CURRENT, pdo);
++	return sysfs_emit(buf, "%umA\n",
++			  pdo_spr_avs_apdo_9v_to_15v_max_current_ma(to_pdo(dev)->pdo));
 +}
 +
-+static inline unsigned int pdo_epr_avs_apdo_min_voltage_mv(u32 pdo)
++static ssize_t
++spr_avs_15v_to_20v_max_current_show(struct device *dev,
++				    struct device_attribute *attr, char *buf)
 +{
-+	return FIELD_GET(PDO_EPR_AVS_APDO_MIN_VOLT, pdo) * 100;
++	return sysfs_emit(buf, "%umA\n",
++			  pdo_spr_avs_apdo_15v_to_20v_max_current_ma(to_pdo(dev)->pdo));
 +}
 +
-+static inline unsigned int pdo_epr_avs_apdo_max_voltage_mv(u32 pdo)
++static ssize_t
++spr_avs_src_peak_current_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
 +{
-+	return FIELD_GET(PDO_EPR_AVS_APDO_MIN_VOLT, pdo) * 100;
++	return sysfs_emit(buf, "%u\n",
++			  pdo_spr_avs_apdo_src_peak_current(to_pdo(dev)->pdo));
 +}
 +
-+static inline unsigned int pdo_epr_avs_apdo_pdp_w(u32 pdo)
-+{
-+	return FIELD_GET(PDO_EPR_AVS_APDO_PDP, pdo);
-+}
++static struct device_attribute spr_avs_9v_to_15v_max_current_attr = {
++	.attr = {
++		.name = "maximum_current_9V_to_15V",
++		.mode = 0444,
++	},
++	.show = spr_avs_9v_to_15v_max_current_show,
++};
 +
-+static inline unsigned int pdo_spr_avs_apdo_src_peak_current(u32 pdo)
-+{
-+	return FIELD_GET(PDO_SPR_AVS_APDO_PEAK_CURRENT, pdo);
-+}
++static struct device_attribute spr_avs_15v_to_20v_max_current_attr = {
++	.attr = {
++		.name = "maximum_current_15V_to_20V",
++		.mode = 0444,
++	},
++	.show = spr_avs_15v_to_20v_max_current_show,
++};
 +
-+static inline unsigned int pdo_spr_avs_apdo_9v_to_15v_max_current_ma(u32 p=
-do)
-+{
-+	return FIELD_GET(PDO_SPR_AVS_APDO_9V_TO_15V_MAX_CURR, pdo) * 10;
-+}
++static struct device_attribute spr_avs_src_peak_current_attr = {
++	.attr = {
++		.name = "peak_current",
++		.mode = 0444,
++	},
++	.show = spr_avs_src_peak_current_show,
++};
 +
-+static inline unsigned int pdo_spr_avs_apdo_15v_to_20v_max_current_ma(u32 =
-pdo)
-+{
-+	return FIELD_GET(PDO_SPR_AVS_APDO_15V_TO_20V_MAX_CURR, pdo) * 10;
-+}
++static struct attribute *source_spr_avs_attrs[] = {
++	&spr_avs_9v_to_15v_max_current_attr.attr,
++	&spr_avs_15v_to_20v_max_current_attr.attr,
++	&spr_avs_src_peak_current_attr.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(source_spr_avs);
 +
- /* RDO: Request Data Object */
- #define RDO_OBJ_POS_SHIFT	28
- #define RDO_OBJ_POS_MASK	0x7
-
-base-commit: 877c80dfbf788e57a3338627899033b7007037ee
---=20
++static const struct device_type source_spr_avs_type = {
++	.name = "pdo",
++	.release = pdo_release,
++	.groups = source_spr_avs_groups,
++};
++
++static struct attribute *sink_spr_avs_attrs[] = {
++	&spr_avs_9v_to_15v_max_current_attr.attr,
++	&spr_avs_15v_to_20v_max_current_attr.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(sink_spr_avs);
++
++static const struct device_type sink_spr_avs_type = {
++	.name = "pdo",
++	.release = pdo_release,
++	.groups = sink_spr_avs_groups,
++};
++
+ /* -------------------------------------------------------------------------- */
+ 
+ static const char * const supply_name[] = {
+@@ -368,7 +446,8 @@ static const char * const supply_name[] = {
+ };
+ 
+ static const char * const apdo_supply_name[] = {
+-	[APDO_TYPE_PPS]  = "programmable_supply",
++	[APDO_TYPE_PPS]      = "programmable_supply",
++	[APDO_TYPE_SPR_AVS]  = "spr_adjustable_voltage_supply",
+ };
+ 
+ static const struct device_type *source_type[] = {
+@@ -378,7 +457,8 @@ static const struct device_type *source_type[] = {
+ };
+ 
+ static const struct device_type *source_apdo_type[] = {
+-	[APDO_TYPE_PPS]  = &source_pps_type,
++	[APDO_TYPE_PPS]     = &source_pps_type,
++	[APDO_TYPE_SPR_AVS] = &source_spr_avs_type,
+ };
+ 
+ static const struct device_type *sink_type[] = {
+@@ -388,7 +468,8 @@ static const struct device_type *sink_type[] = {
+ };
+ 
+ static const struct device_type *sink_apdo_type[] = {
+-	[APDO_TYPE_PPS]  = &sink_pps_type,
++	[APDO_TYPE_PPS]     = &sink_pps_type,
++	[APDO_TYPE_SPR_AVS] = &sink_spr_avs_type,
+ };
+ 
+ /* REVISIT: Export when EPR_*_Capabilities need to be supported. */
+@@ -407,8 +488,12 @@ static int add_pdo(struct usb_power_delivery_capabilities *cap, u32 pdo, int pos
+ 	p->object_position = position;
+ 
+ 	if (pdo_type(pdo) == PDO_TYPE_APDO) {
+-		/* FIXME: Only PPS supported for now! Skipping others. */
+-		if (pdo_apdo_type(pdo) > APDO_TYPE_PPS) {
++		/*
++		 * FIXME: Only PPS, SPR_AVS supported for now!
++		 * Skipping others.
++		 */
++		if (pdo_apdo_type(pdo) != APDO_TYPE_PPS &&
++		    pdo_apdo_type(pdo) != APDO_TYPE_SPR_AVS) {
+ 			dev_warn(&cap->dev, "Unknown APDO type. PDO 0x%08x\n", pdo);
+ 			kfree(p);
+ 			return 0;
+-- 
 2.51.0.858.gf9c4a03a3a-goog
 
 
