@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-854508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F32CBDE8D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:55:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC82BDE8F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E20AC501640
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D912119C340F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD2B2D480E;
-	Wed, 15 Oct 2025 12:55:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D2C18E1F;
-	Wed, 15 Oct 2025 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A6A324B28;
+	Wed, 15 Oct 2025 12:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EOAoYoAq"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91042D0C7F;
+	Wed, 15 Oct 2025 12:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760532910; cv=none; b=D1qJd2gAbhf0P3yGGswHrLXW11S/iPtUAJh85cCSI4twNJKuBYcKHjl1/7CD0VMhcHjfX5pL0Clurf/C0PZaDerhLoRqOQNjZIVvKF6TF/bq7vu+PehqBetaUdRm0pJxSYI/0vYdFuIw7X79WIyQnS91qaeHsviwntToJD2CMBY=
+	t=1760533038; cv=none; b=oP7U1b/UwcQNlZ4skS3nXlf1W9bxcF7Z/jUPLYFL/fctruSA5IrgJngUAPTkBv5BJqyFrK6w3DXDapJ00cHHIMVPtbLrAARFntS9/O2Ous7xECFOVjT6t338S6ozmXY0lc2XSKHVSyq9x6AHZotvCVAnV3dsHIGeZNGMGDa1szo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760532910; c=relaxed/simple;
-	bh=M7LZgsYmGKbke5vycr30e2TEGISa8Z8kXhYk9qYJvko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ru07dGU9HQpBoIVG4ZZMEcwKZHti/srxTFT01nZaYaUzy0ZjNp3ojd19TPLjJNt9uP/rC13V84P5dQaq8rUk4IDkgjJLdYZZrvPsBFcgQQbAQXiGjZanJROz64HAaifiS6qMxNrdhNh+s4cf/UEBmJZ8wEavufXPAHKLHwbyoAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 008CE106F;
-	Wed, 15 Oct 2025 05:54:59 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CAF43F6A8;
-	Wed, 15 Oct 2025 05:55:06 -0700 (PDT)
-Date: Wed, 15 Oct 2025 13:55:04 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: hupu <hupu.gm@gmail.com>
-Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, adrian.hunter@intel.com, nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	justinstitt@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RFC] perf build: Allow passing extra Clang flags via
- EXTRA_CLANG_FLAGS
-Message-ID: <20251015125504.GC109737@e132581.arm.com>
-References: <20251013080609.2070555-1-hupu.gm@gmail.com>
- <CADHxFxRMUhn=VdG5uzrosTUpwAMHi+zO7NTYVikWzFdnKrUJ4w@mail.gmail.com>
- <CAP-5=fXykcQ7n3rw6RX3S+dLoLUC9BZKh=BP8yx8ak+f623aEg@mail.gmail.com>
- <20251013161429.GE77665@e132581.arm.com>
- <CADHxFxQg2ZKwLEOa6wic_KP49PRBp=hF=cY16aVmR0O0pa8ZkA@mail.gmail.com>
- <20251015093037.GA109737@e132581.arm.com>
- <CADHxFxQyOBurB0LB9qRdc3DEDNU+vatqOybNdcizPnWZngiPZg@mail.gmail.com>
+	s=arc-20240116; t=1760533038; c=relaxed/simple;
+	bh=MS33kYmVbAfDBf4w0xV5HM6ziBuxUf4smxdzEYxZR0M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WVo451CJLkeclbLfiVQTfKf70nZFvJoDiFKmztcDWc8JmiW+e00zEnTRxjU+nXWBWfZVkdr+CSzfCEVJ/MYLYfpjMvzeEeI6xXDQdWui2DgzH954btUybvC83Lr8POSNfI1r/Bqq98e4mKB9+tFyk09W5yrbrN3BuYb/rAuriSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=EOAoYoAq; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7366781ea9c611f0ae1e63ff8927bad3-20251015
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=4aznyswgxbtzCDp+tK6zg0PO3+Q09TU9/s3JSyyLDKI=;
+	b=EOAoYoAqC9vXZL7u9xXlE3w0RGG1RKGXU32nKWnpzGOsNGb6eaOU/4V8QSNgtXGdotIEFV7pxKZkJWaXU3CXaLUpXA2yl8mPe/55mw2CviEzVulx1iEmLmL+cFt9TTh9kVyVx8lZIOVOTwo3qN9aRhylm6FO3uJqMCdFhcHI/WQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:f0692741-71e7-4d15-b569-ab22697226b0,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:8e2b33b9-795c-4f99-91f3-c115e0d49051,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:99|1,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI
+	:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 7366781ea9c611f0ae1e63ff8927bad3-20251015
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <zhengnan.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 85036494; Wed, 15 Oct 2025 20:57:05 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 15 Oct 2025 20:57:03 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Wed, 15 Oct 2025 20:57:02 +0800
+From: Zhengnan Chen <zhengnan.chen@mediatek.com>
+To: Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will
+ Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <iommu@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Zhengnan Chen
+	<zhengnan.chen@mediatek.com>
+Subject: [PATCH v3 0/5] MT8189 IOMMU SUPPORT
+Date: Wed, 15 Oct 2025 20:55:12 +0800
+Message-ID: <20251015125532.9041-1-zhengnan.chen@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADHxFxQyOBurB0LB9qRdc3DEDNU+vatqOybNdcizPnWZngiPZg@mail.gmail.com>
+Content-Type: text/plain
 
-Hi,
+Based on tag: next-20251014, linux-next/master
 
-On Wed, Oct 15, 2025 at 07:47:04PM +0800, hupu wrote:
+This patchset adds MT8189 iommu support.
 
-[...]
+MT8189 have 3 IOMMU HWs. 1 IOMMU HW is for multimedia,
+1 IOMMU HW is for apu(AI processer unit),
+and 2 IOMMU HW is for infra-master, like PCIe/USB.
 
-> I hadn’t installed the packages you mentioned earlier, but after
-> running the installation commands you provided, I was indeed able to
-> successfully build perf.
+About the INFRA IOMMU, it don't have larbs, the master connects the
+iommu directly. It use a independent pgtable, and these two
+INFRA IOMMU HW share a pgtable.
 
-Great!
+In mt8189, the display connect with larb1 and larb2 at the same time.
+Thus, we should add link between disp-dev with these two larbs.
 
-> In fact, I’m currently working on creating an SDK package, which
-> includes a cross-toolchain that I built myself using crosstool-NG. My
-> initial idea was to install certain third-party libraries (such as the
-> packages you mentioned) into the cross-toolchain’s sysroot directory.
-> With this approach, even when developing on different host machines,
-> we could simply specify the header search path (pointing to the
-> cross-toolchain’s sysroot directory) during compilation, and the build
-> should succeed without requiring any additional package installation
-> on the system.
-> 
-> Based on this, I think allowing users to extend some options via
-> EXTRA_CLANG_FLAGS could be a flexible way to handle such cases.
-> However, this is just my personal thought and might not be entirely
-> correct, so I’d like to hear your advice.
+The software solutions can be summarized as follows:
+1. Add iommu support for mt8189
+2. Add a flag DL_WITH_MULTI_LARB to support the HW which connect with
+   multiple larbs.
 
-In the end, it is up to your target.
+---
+Changes in v3:
+- Exclude the mediatek,larbs attribute of apu iommu in mediatek,iommu.yaml
+- Link to v2:
+  https://lore.kernel.org/all/20251015032509.5057-1-zhengnan.chen@mediatek.com/
 
-- If you just want an enviornment for cross build (no matter arm64 or
-  other archs), my preference is to rely on multi-arch packages.
+Changes in v2:
+- Split mt8189 iommu support patch into three patches, namely APU IOMMU,
+  INFRA IOMMU and MM IOMMU
+- Disable bank 4 of MM IOMMU
+- Link to v1:
+  https://lore.kernel.org/all/20250807095756.11840-1-zhengnan.chen@mediatek.com/
+---
 
-  For example, you can install arm64 version's packages on a Ubuntu
-  x86_64 system.  The benefit is you don't need to maintain any
-  toolchain/packages, all are prepared by distro. See [1] for details.
+Zhengnan Chen (5):
+  dt-bindings: mediatek: mt8189: Add bindings for MM & APU & INFRA IOMMU
+  iommu/mediatek: Add a flag DL_WITH_MULTI_LARB
+  iommu/mediatek: mt8189: Add APU IOMMUs support
+  iommu/mediatek: mt8189: Add INFRA IOMMUs support
+  iommu/mediatek: mt8189: Add MM IOMMUs support
 
-- If you are working on a build system (like buildroot or OpenEmbedded)
-  for releasing a SDK. In this case, I agree that we should include
-  headers and libs provided by the SDK.
+ .../bindings/iommu/mediatek,iommu.yaml        |   8 +
+ drivers/iommu/mtk_iommu.c                     | 132 +++++++-
+ .../memory/mediatek,mt8189-memory-port.h      | 283 ++++++++++++++++++
+ 3 files changed, 410 insertions(+), 13 deletions(-)
+ create mode 100644 include/dt-bindings/memory/mediatek,mt8189-memory-port.h
 
-Either way, I don't think EXTRA_CLANG_FLAGS is right thing to do, as
-this flag is only for Clang and it does not cover any case for lib
-linkage.  For SDK case, please check if PKG_CONFIG_SYSROOT_DIR and
-PKG_CONFIG_LIBDIR are helpful (The doc [2] records info for these
-variables, but I never verified it).
+-- 
+2.46.0
 
-Thanks,
-Leo
-
-[1] https://github.com/perfwiki/main/blob/main/docs/arm64-cross-compilation-dockerfile.md
-[2] tools/perf/Documentation/Build.txt
 
