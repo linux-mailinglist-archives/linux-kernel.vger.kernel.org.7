@@ -1,251 +1,297 @@
-Return-Path: <linux-kernel+bounces-853709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33234BDC61B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24DEBDC65F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE3A24F5476
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDA840700D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDFB251793;
-	Wed, 15 Oct 2025 03:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6FF2FBE1C;
+	Wed, 15 Oct 2025 04:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XcCHZzVr";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="Afem9eAW"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mr5lj28I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3852BD5A7;
-	Wed, 15 Oct 2025 03:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760500058; cv=fail; b=M8dPk450DRnEF/H2r3BBPLhPzqPqdedl5V32KvLNstfmvsctLZ94p9CrOZXWfy+tV1IR7oxc5/xg9PXRm2ukahd7LIC2tl890i5KkkMuVR8J0QA1jso7r3sl+uzfWtMnLR0MHWsLq4wXMC/ilq4jsQJBTxd5nuarj6Zk69p8UMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760500058; c=relaxed/simple;
-	bh=p8ShO5PX6hwM+I0INbCzHlSey/Vw32a7p7w3ZHIH6zM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Aq89J8JMe5JTfwhvq/raVorNJ6B+JaGbVNOSBlgcwouTlllxXnM8YNrx/XRFaVI/3Db5S4SomwcBR9vyzIVeHdhxF9mtE7aoiqf9+46JDnsrCj4odPfZvV5ZEgsiNMOMZCzHtgeBeYNuo0HXE76Rds127eUv49kQyXDSUcyJ/Kk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XcCHZzVr; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=Afem9eAW; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ac9b4bfca97911f0b33aeb1e7f16c2b6-20251015
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=p8ShO5PX6hwM+I0INbCzHlSey/Vw32a7p7w3ZHIH6zM=;
-	b=XcCHZzVrTqPoLXQYg6Jtwi7EKCQGyzXQBAgw2MWfLN6eafKfsXn4jHncY98sd4VMftWLJHVE63YDAjaH4iyO4KEL+DTjVgoL3crid+u1QfQ65IEdlk7RYfinJw7kZBChQYZP3ogempLW1dw76JOwfaritS3WgGhP/Apu2Lp1G8I=;
-X-CID-CACHE: Type:Local,Time:202510151147+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:ea761323-d7e0-4f50-9762-b76858156a69,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:0c803986-2e17-44e4-a09c-1e463bf6bc47,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111|836|888|898,
-	TC:-5,Content:-10|4|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:
-	nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,AR
-	C:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: ac9b4bfca97911f0b33aeb1e7f16c2b6-20251015
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 130989054; Wed, 15 Oct 2025 11:47:30 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 15 Oct 2025 11:47:28 +0800
-Received: from SI4PR04CU001.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Wed, 15 Oct 2025 11:47:28 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U6PpTLFZATrutSmtDgxUhVxnWbXYTXZW3UUYJHYci6QnVWvDpgyGRwxqhEeGcFrraFUXebacJjNNIV4hzYq9dvy3wOlStvREjfipH0CS8BRi7buKmdqaE4jASx43m8PuzmMaKhwxj5sAQZUSQ+Acb3/iY04EeJyXI96Gqp0jZUcL3C6hTxm2lbXQL/n2YmQXcvz7kTUwvoIdnhxST1mYWSVe80ZYjkFJrHN8330nLAWV9g1ElnDGp46z+bXRbV36LtEyZOJfB5U4iHD88PDdLCmN+C2cVGykg2injSkeOOmjhSa8jkjnMIy1mJKIHj0KataMVbYJb1BZbJLm0JuLqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p8ShO5PX6hwM+I0INbCzHlSey/Vw32a7p7w3ZHIH6zM=;
- b=tv9KuYVzReSt6MhV64prhov2vee54NOPXp+XtI3EBydFzfcx2+wPaDWsWYFrP8QxK2YEdbjP8GSfySR5w+YTwVjUVuEcSnrwk5OP9ICBpBcrtO3ZCdwHHypdIxoTN2gkUEaJ7LGLUkpURX/wA3yZZtaYwaM3Oj2CuZCnwbcAU2k2ISlkhijxaluatRbkKPvfWKp+f07arLxHWtl0Ppnz4BIi0+sJGbBjBzDGj7fPi2U8rnSnCXKau8KddLbufHxaFW131xdgLRejDo1LsuCmvRP/fJsWVE+l88UWcd9cwKOJ4KAhnZUnRC+u5eFp6WgByby8W4WX8ihFtzi3G4AdxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p8ShO5PX6hwM+I0INbCzHlSey/Vw32a7p7w3ZHIH6zM=;
- b=Afem9eAWGKn68JW+LLhIaA9xCihoLBYJjHANJlSrQ70S7RONacl+ai+L1I6zmUL/YYK9xldsa2bf+JAuArXxhmBP/JcYWkVUhJ2FRGkLw7y8YiRC1ERPVW5vh0xr58wz18yuu4QrEBDthqBSIS9JHkffxn95FiitbF5Mv/L1NsE=
-Received: from SEYPR03MB7682.apcprd03.prod.outlook.com (2603:1096:101:149::11)
- by SEZPR03MB7957.apcprd03.prod.outlook.com (2603:1096:101:17c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
- 2025 03:47:22 +0000
-Received: from SEYPR03MB7682.apcprd03.prod.outlook.com
- ([fe80::c6cc:cbf7:59cf:62b6]) by SEYPR03MB7682.apcprd03.prod.outlook.com
- ([fe80::c6cc:cbf7:59cf:62b6%7]) with mapi id 15.20.9203.009; Wed, 15 Oct 2025
- 03:47:21 +0000
-From: =?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-To: "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "AngeloGioacchino Del
- Regno" <angelogioacchino.delregno@collabora.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	=?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	=?utf-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
-	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
-	=?utf-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
-	<Xiandong.Wang@mediatek.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "nicolas@ndufresne.ca"
-	<nicolas@ndufresne.ca>, Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	=?utf-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?= <Paul-pl.Chen@mediatek.com>,
-	=?utf-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	=?utf-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
-	"wenst@chromium.org" <wenst@chromium.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>
-Subject: Re: [PATCH v7 10/20] soc: mediatek: mtk-cmdq: Add new APIs to replace
- cmdq_pkt_write() and cmdq_pkt_write_mask()
-Thread-Topic: [PATCH v7 10/20] soc: mediatek: mtk-cmdq: Add new APIs to
- replace cmdq_pkt_write() and cmdq_pkt_write_mask()
-Thread-Index: AQHcF0duXD4dz8Xnf0OAJQGEg7D0CLSEZA8AgDu7FYCAAa60AIABEGuA
-Date: Wed, 15 Oct 2025 03:47:21 +0000
-Message-ID: <20f251d7b6a345f607c60e703164f6baa8f8afad.camel@mediatek.com>
-References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
-	 <20250827114006.3310175-11-jason-jh.lin@mediatek.com>
-	 <b2335fd9296bc6f3511f8139870f0c34db1be62a.camel@mediatek.com>
-	 <fa46fec3f7ca25532c39e6e864ea692e19b7f5bb.camel@mediatek.com>
-	 <87489f92-7bc0-4494-8532-f8f2d220bd27@collabora.com>
-In-Reply-To: <87489f92-7bc0-4494-8532-f8f2d220bd27@collabora.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR03MB7682:EE_|SEZPR03MB7957:EE_
-x-ms-office365-filtering-correlation-id: eae7e89e-2f72-4789-cb24-08de0b9d8bd0
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?R1pGS2JuUk1LbEtWejJOMi8rTTF0RlM3VlNoZWFhaTl2SjJtR3QwVUp3OW9i?=
- =?utf-8?B?d2V4dlpNMVYzdHhzdk9wcE56V1hrZ2kyeCtxOG5STmYxWGJQdXZmNkdZSWtX?=
- =?utf-8?B?cStjemVtWUI4YU9XVE5nRmtud2FZMHJCRUVBeXI2WmhWMDg3TFBPNkkzTGxL?=
- =?utf-8?B?VCs1ajlBT09ZNGQzd0VvdytaQWFhSEgrdXB0bkxHcGoyb3hkRVQ3UjIyb3pp?=
- =?utf-8?B?cU82NzZXeWU3UVJrbnY4aFV4QWN0K2hIbkpabUxQMU1yZ1FCNTc5NHJtZ2tV?=
- =?utf-8?B?c2I3aE80U29sOHVacXN2T2hrUHM0RDBwYU9KVTRoV0tSdkgyWHpKNDBybmtB?=
- =?utf-8?B?dGNGNTAzaDl4dVdYYllKaGp2a2xDOGFqKzd2M29qRWZ5T1ZIN0pDR0Q3UzZs?=
- =?utf-8?B?U25heU9yQ2VXTlJ0Y2lsYnQ1VjBwVmxialZUSmVMMU02U2M1YmxGNG1nTnpB?=
- =?utf-8?B?b2lhL05YeWM3bVdxUTlxMmE1UUxVUmhKbUlBb1h1RW0wVUdHVk4vdVZMSGYz?=
- =?utf-8?B?MVdnZkJUMlVzZ0lPc0ZLTFJyWVc3REZmaVpkdHpkRWVmRENSYjd5UklScTEz?=
- =?utf-8?B?QmhKODAvSFhLeDJoU2czUG9aTFI3UFEzU0VzYXBuSHdvQVlzc0pzdjd2WCtL?=
- =?utf-8?B?MzQrMTZueFRYVURCZmxkQ2xmSktvODNaRVVRLy9keE1LWFh4bUMvazZEYWNJ?=
- =?utf-8?B?RFZTNmpGdnpydG04eHZGcmJGMzNtaHFRVGVTUDN2RTh5MVN4UklwRmRlbVd5?=
- =?utf-8?B?Y3JzSysrbTZNTXVjRXkxV1VkVndrM3IzUkZoMUVnUzVrQWp0VitsdWc5SjM4?=
- =?utf-8?B?UjRlMmxFOWUxc0hmY3IrZElqTVVPVnBzQ1Z2VFd6d01EOFJvMGUxc2xGWTl4?=
- =?utf-8?B?K3diYmJXRmxNVG9iZ1JlNjBrZ2d4Z3NmUVgzN0JwbmwwRjRXdHBJNDQxMWo4?=
- =?utf-8?B?MzBUSEhRR1dodWFLbzI0aTI3dkNmMS9ibjNBT2kyamV3TUpENXczR0htSnpa?=
- =?utf-8?B?Vi9lMThBNm4zMGQyZ20xTHdaRFo3VzFJZHc5YTI1cUxRNUp5OURaSXdJWWwy?=
- =?utf-8?B?TmZaZDBPcjBZT25ZazNvcjhaVWphVmxtNU1jdXFoQ1QvWVVZOEZoSmZ5dEhR?=
- =?utf-8?B?Mkh0TmpvaFZITWVRVEJBaVp4V05WWktwVkYxZ2N4TnYxTU5ZRjB0WU5zSkZi?=
- =?utf-8?B?clg5c3liNDc0ZktScU43SFBiWVBlWXlHZDhjc0RHN2tQenZEQVUvcC9QWDYx?=
- =?utf-8?B?Nlp6UXYxUkFlRlVCQktONm1lclNmVmUwRGx6dVRzQmdDMHJqUTFjWk5objJO?=
- =?utf-8?B?QmZyL3k0MVZhTUxDTGVWNFZtZ0NyZWtsaUZ0cVNsOGNBZGZybXN6VkRkTWJR?=
- =?utf-8?B?eWtlRE1mdnBxbmhHandVcXE3eWZ5WEpiYjdGZUpEeGdqS2JRQWozU0pYSFB6?=
- =?utf-8?B?NUY1MktOcnRBUlBkR3I3enBCUVF3c0paVXo5UjJ5YnhvamR6ZndYd3dLMVB0?=
- =?utf-8?B?RHdSSXplT0Zzc1QyOFFtUXhKcXowQnRjcG9XZHdXZ3lnUW5wZ2lVQmtmWEZ6?=
- =?utf-8?B?ckZKN0xScmRYUWE3RkR4cHdXUkNDM0VYR0k2ME4ybVRKOENhTnNSTkRvd1dC?=
- =?utf-8?B?cXFpb0hNd1FpNmtjN0V0K3MyaWJteGlCNGNheURNd1hWS3lYMkRVcmtabk5S?=
- =?utf-8?B?cEprYlhBa0s0dHFodnFteDZ0ZkhNVnhuaTMwdmVGamw4RFZMYnN2Yi9PNUFw?=
- =?utf-8?B?cWNXdjdSbURVQUtsZlVRSkkrM2VMUTFBNEF2aHdLZWFQNzRJempta3p2TWh3?=
- =?utf-8?B?QVg0UHQ5VGtIQWRjd3ppM05haGdEaUkrSm9WUGp4V0FXa1ViVUxJQWpwMUJP?=
- =?utf-8?B?RHBOZGFsWS9ISVpPMjk0UDZ0OTVJY1U4R0xVN0kxY1hNQUlzNFEyemxVUmFN?=
- =?utf-8?B?S1VQQkxudVhWWW44VmZiVTg3N3UvWDI4NEtHN2krZVIwQTdvVytwVHNzckh0?=
- =?utf-8?B?d0VyMWVZM3ZTcHlQUUlkMjBDOTNuOG9OZDNyWFUvTkJLUHprTkQ1cTdaOWdQ?=
- =?utf-8?Q?n5hSwz?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR03MB7682.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WlNDSnRvSmdWdEtWU3pSVGJlRFRSVmM5aHpjdmdRNjZiZjhvN0hRbUVKZFI5?=
- =?utf-8?B?L0Q4WEd1MDNnakRPOS9WTks5dXovQjF0UDNzb0J3SWVLcW1JTVJ4WUhTL3hx?=
- =?utf-8?B?YjJvMTBLQmRSbk1qYWh2dE5pWHB0dWQwaVZrUU8xY0ZhUW91dGExdmtWNlMr?=
- =?utf-8?B?VTZ6SG91MFY2d28yZjVTemtLbm5udVRiUkFTaE43cXZWVkJoeURxNnA2Qjdz?=
- =?utf-8?B?WlFsbUNqaTZrOXNsQnZOMHowTzNtWTN0YnV3MnNKaHF4NnRoTW5EUGt4U3hs?=
- =?utf-8?B?YjZBdFJYZUdUODRNek5YWlN5V3dTRFpWVkdicDQwL0gyZTBqd2RoWkZWdDNC?=
- =?utf-8?B?R3dEZmdreHk2U2hhdDQ4RWxMb3AxQ1puNG5nS0Q1aW1TUzBReFZHakxNZlQ0?=
- =?utf-8?B?VGl3R2ZLVXR1ZnhIYUcwOENnbHdaR3NrRkp0Y3NqWjJVR0FVRElDZDNUVno4?=
- =?utf-8?B?MDlRbGtOTGdBZU9UUnVNc2pJbHBINFBUTkhIRVZhTnpTcDBYOEpZQjA2ZGhz?=
- =?utf-8?B?VFVJK2hrbGdqOCs4N1Y1SUduUDJoZVdkUk5FZFUzOGkxVUlabGJ3ZFVpSUFR?=
- =?utf-8?B?TzN6b2dRZVRaeis1NHU2d2kvazdHQlJScTg1enlxL29vUlFyVWpzREhqeXBl?=
- =?utf-8?B?bE4wRWVFalJ5QmphYTdxZzN5RnNZbW82am5vOFVIT1FRS2dYZnhUMmIwK1pS?=
- =?utf-8?B?NzRuUzZBWmdLSVhzVGxiRkxTNUxFeXI3aGNxZ0V5UlptS1FYL0FKc3RpYnZX?=
- =?utf-8?B?Q3BoU1YvR3JzVFNGakNpdkRBZ1N5WW9CazN2NSs0ZDFrZmZwQkFISHVwRks4?=
- =?utf-8?B?akxDUEl5MC9CQ09SUmpSUUNmMGdNN2F3cENWbFFFdnlYZ2U0KzUvd3R0UFZ3?=
- =?utf-8?B?QVdtbkIxNHJpMjFwRTg1RjBmanovZHZLTzNWZjNiUytWdjlsK2xkQldLUHNN?=
- =?utf-8?B?eHRobWpvenBLZ2VPbEpZZWNCVWtTOW9VMFBJYkdORUVmWkx6RVZoZmdhb2Rj?=
- =?utf-8?B?djFDZkpSRHJDR1FEbFgxOWNMVmo0ekh3TjFBQUYwaVlnT1RRZVpQcEM4QjBr?=
- =?utf-8?B?V0FiWXNXWUM2NzdmWGc4dEtYc2JjNGpGT2x2LzhCbk9veTdMekppUW1oNE5D?=
- =?utf-8?B?Y3NYejc2emEvS3dZdjFBaTllMEU4NGRLa0JmOEVEak9pQ1F1dDY0dk0xSU1j?=
- =?utf-8?B?WEdud1FkaGFpN25HT3MvZmxmWXBKWk1Tdm05MnpkSGF0LzA4MVVuNkdRZTJu?=
- =?utf-8?B?NS9XWi8vNzh4a2Y5K0FQaUxkVGVYUmNJbWxHaytMei9HQk11a1RzNTZLOGFH?=
- =?utf-8?B?c29EeDk3RDlvSnpqZkIxNkVDdXRncTFVRU5rOFQ3ZUdDRGk0V2QyODJFeXR6?=
- =?utf-8?B?RGJncVhyVHlud0ZqK2trSU5pM3ZPTzhZVGw4dFpCSjBPQS81M1B3eUV1Vzgz?=
- =?utf-8?B?NzFVLzc4dGxwZmpGSmY4QnE4L21mTjFVL2UrNzkzVnloV0hRNFZOV1IzRDJC?=
- =?utf-8?B?VnNiVXBCbXdWcWd0aUhQSklkVlNuY2RQbWxjdFd6RUJHMUdkNVpLazdWWU1t?=
- =?utf-8?B?YXFlalpaMkVqazF6U1dFWmVKNXNjam80aGI2aUx2dnl1M1k2RHBURXdacXJJ?=
- =?utf-8?B?N2IwUC9xeWxST1gyOUJJUmVqamg2Zm9mY2tNL3o3T28rcXpVUGJKVUV0K2Rh?=
- =?utf-8?B?bllRSDFXWVkyb0dPV21wckV3NWt0UjNlUndSYS9wZjBlRXRKeXB2c1VQcGw4?=
- =?utf-8?B?WXdKMGgxczV6czBrVzhzd0xzYnpMdVNHK3RPL0x4c3BlOHZSTE5WQ0haemcv?=
- =?utf-8?B?RVhCcWVtd0krRXlWbzl3U0tLVWxBblpweGtoa041VitWRmFsSTJ5RWhaUXBk?=
- =?utf-8?B?QW1XNDZ1OUlOVnhMRFFjY21IMGdha0dPWW5LOWlkNTdWVm1uMHkrOFZuWnZr?=
- =?utf-8?B?QzJOVkNaL20wZzMxajJrZUlGTVViQ3F4aVV6S1Q3Rk02dDNMaTNwU0R3czNG?=
- =?utf-8?B?ampqSjBVZ0xQNitrdW5WQUJra1k2Q3pRMnB5UjNDVFFlWnNPNktYN1RPR3FN?=
- =?utf-8?B?bnZrZlJDbmtxbklpM2taVWI0TkdCWGthdVpNTjM4K1RERFNEa0R5TnU2TEJ2?=
- =?utf-8?B?RFA2OUVTdVdwb1lpUG5wWjlrRWIvVU0yN21MNEFrVzdXMmlnV1I1NWw2Rm41?=
- =?utf-8?B?YXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <21F79875444EC74BAD4FE2605A5C139F@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8F32F5A33
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 04:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760501010; cv=none; b=byG1c2orIc1JX3QZtiZu2qwPavgOjgwfBiaMxVyf43EvdtDw7ZL3SamKtDJ7P5l3ucGEIIEeLHt9hKRUnNPnfQufdwU4riflqm2z+Xm3FB6odXAbyl383Aag1Nk2ZyKhird1qC3oWWK0LllaZS/cDwLXz1thThlmXH0N877KKZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760501010; c=relaxed/simple;
+	bh=egGXa1DVkypUzbzXpr9muh+nr7JIYX1Rgjps9eQtSfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXvfbT16PhXH07Pd/W+pbXZG8zOI4iiBGOiypIX9g/67uY7mLfkksJd2/nxX54tJ5UjCpz/dUXqnXqWabExl3WBnfiW8BKv1udeRe5Ht1UigCbMY0mX8a3eT+6ry+wtPAPyz3uMALNxqDUdO9Gg31FXfKE5NYfAKYlZO6I2OUEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mr5lj28I; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760501008; x=1792037008;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=egGXa1DVkypUzbzXpr9muh+nr7JIYX1Rgjps9eQtSfU=;
+  b=Mr5lj28Ig6MkdeJeK7vy6tApONrNpCl3S56+GDjcyw/pGw4C4todES2b
+   nxB2rq1iQ6u2yOs8VPgpQ9bL+hc/EHhN3rk25C8L9ULGCUY8zbs7SrvM7
+   d/7nwXDi4AC6YzVye/AQxIDojmhxl/nGml0BnNZAnR/Nr1r7GpNjNvN5y
+   J0jgnJCexbwE7tfLYsrh6igjNaAbQTeFCqJqvacrwUCHy4AwfMyvvNp2l
+   p7iHAHWpf3QcLr11xAwQIr2zGBqcSjeD7HhJllfdisir3LrgnGkHeZp1t
+   ZZbKkIB0RPyqJUagq97292soEaSX8r0LCW2HUIijrRVqS8n8qCdmvIUbx
+   w==;
+X-CSE-ConnectionGUID: cdee0r7rQ6GyBFOVTcY7Ow==
+X-CSE-MsgGUID: ylVV8OHIRwmKWPft5vcB6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62375710"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="62375710"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 21:03:25 -0700
+X-CSE-ConnectionGUID: C7IYtpBwQSOimFTAEppubg==
+X-CSE-MsgGUID: nt0A1rC7QUexJJNIKSr7Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182489591"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Oct 2025 21:03:21 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8sii-0003QL-2j;
+	Wed, 15 Oct 2025 04:03:17 +0000
+Date: Wed, 15 Oct 2025 11:53:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: Re: [PATCH v2] ksm: use range-walk function to jump over holes in
+ scan_get_next_rmap_item
+Message-ID: <202510151108.UqsNiDSP-lkp@intel.com>
+References: <20251014151126.87589-1-pedrodemargomes@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR03MB7682.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eae7e89e-2f72-4789-cb24-08de0b9d8bd0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2025 03:47:21.6375
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WBrR8WmVi8Gw1iv0WnXKwh49LOyTFbc8Th3KQ+M15KZI/P71r+4Ebf7iTgkZo/kPyf8R17KXjPwJKhnP+inAV3vOBvBuUfQzWOPwKibCmKU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7957
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014151126.87589-1-pedrodemargomes@gmail.com>
 
-W3NuaXBdDQoNCj4gPiA+ID4gKw0KPiA+ID4gPiAraW50IGNtZHFfcGt0X3dyaXRlX21hc2tfc3Vi
-c3lzKHN0cnVjdCBjbWRxX3BrdCAqcGt0LCB1OA0KPiA+ID4gPiBzdWJzeXMsDQo+ID4gPiA+IHUz
-MiBwYV9iYXNlIC8qdW51c2VkKi8sDQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1MTYgb2Zmc2V0LCB1MzIgdmFsdWUsIHUzMiBtYXNr
-KQ0KPiA+ID4gDQo+ID4gPiBwYV9iYXNlIGlzIHVzZWxlc3MuIERyb3AgaXQuDQo+ID4gPiANCj4g
-PiA+ID4gK3sNCj4gPiA+ID4gK8KgwqAgcmV0dXJuIGNtZHFfcGt0X3dyaXRlX21hc2socGt0LCBz
-dWJzeXMsIG9mZnNldCwgdmFsdWUsDQo+ID4gPiA+IG1hc2spOw0KPiA+ID4gPiArfQ0KPiA+ID4g
-PiArRVhQT1JUX1NZTUJPTChjbWRxX3BrdF93cml0ZV9tYXNrX3N1YnN5cyk7DQo+ID4gPiA+ICsN
-Cj4gPiANCj4gPiBIaSBDSywNCj4gPiANCj4gPiBJJ2xsIGRyb3AgdGhlIHVudXNlZCBwYXJhbWV0
-ZXJzLg0KPiA+IFRoYW5rcyBmb3IgdGhlIHJldmlld3MuDQo+IA0KPiBJdCdzIHVudXNlZCwgYnV0
-IGlmIHdlIHdhbnQgdG8gdXNlIGZ1bmN0aW9uIHBvaW50ZXJzIHdlIGRvIG5lZWQNCj4gdGhvc2Uu
-DQo+IA0KPiBVbmxlc3MgeW91IHdhbnQgdG8gdXNlIG9uZSB2YXJpYWJsZSBmb3IgYm90aCB0aGlu
-Z3MsIHdoaWNoIHRoZW4NCj4gYmVjb21lcw0KPiBraW5kIG9mIGphbmt5IGFuZCB1bnJlYWRhYmxl
-Lg0KPiANCg0KWWVzLCBJIGVuY291bnRlcmVkIHRoaXMgcHJvYmxlbSB3aGVuIEkgd2FzIGVkaXRp
-bmcgaXQgeWVzdGVyZGF5Lg0KDQpJJ2xsIGtlZXAgdGhlc2UgdW51c2VkIHBhcmFtZXRlcnMgdG8g
-bWFrZSB0aGUgZnVuY3Rpb24gcG9pbnRlcg0KaW50ZXJmYWNlIGFsaWduZWQgYW5kIHNlbmQgdGhl
-IG5leHQgdmVyc2lvbiBzb29uLg0KDQpUaGFua3MsDQpKYXNvbi1KSCBMaW4NCg0KPiBDaGVlcnMs
-DQo+IEFuZ2Vsbw0KPiANCj4gPiANCj4gPiBSZWdhcmRzLA0KPiA+IEphc29uLUpIIExpbg0K
+Hi Pedro,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.18-rc1 next-20251014]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Pedro-Demarchi-Gomes/ksm-use-range-walk-function-to-jump-over-holes-in-scan_get_next_rmap_item/20251014-231721
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20251014151126.87589-1-pedrodemargomes%40gmail.com
+patch subject: [PATCH v2] ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
+config: m68k-randconfig-r071-20251015 (https://download.01.org/0day-ci/archive/20251015/202510151108.UqsNiDSP-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251015/202510151108.UqsNiDSP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510151108.UqsNiDSP-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/ksm.c: In function 'scan_get_next_rmap_item':
+>> mm/ksm.c:2604:2: error: a label can only be part of a statement and a declaration is not a statement
+     struct ksm_walk_private walk_private = {
+     ^~~~~~
+
+
+vim +2604 mm/ksm.c
+
+  2527	
+  2528	static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+  2529	{
+  2530		struct mm_struct *mm;
+  2531		struct ksm_mm_slot *mm_slot;
+  2532		struct mm_slot *slot;
+  2533		struct ksm_rmap_item *rmap_item;
+  2534		int nid;
+  2535	
+  2536		if (list_empty(&ksm_mm_head.slot.mm_node))
+  2537			return NULL;
+  2538	
+  2539		mm_slot = ksm_scan.mm_slot;
+  2540		if (mm_slot == &ksm_mm_head) {
+  2541			advisor_start_scan();
+  2542			trace_ksm_start_scan(ksm_scan.seqnr, ksm_rmap_items);
+  2543	
+  2544			/*
+  2545			 * A number of pages can hang around indefinitely in per-cpu
+  2546			 * LRU cache, raised page count preventing write_protect_page
+  2547			 * from merging them.  Though it doesn't really matter much,
+  2548			 * it is puzzling to see some stuck in pages_volatile until
+  2549			 * other activity jostles them out, and they also prevented
+  2550			 * LTP's KSM test from succeeding deterministically; so drain
+  2551			 * them here (here rather than on entry to ksm_do_scan(),
+  2552			 * so we don't IPI too often when pages_to_scan is set low).
+  2553			 */
+  2554			lru_add_drain_all();
+  2555	
+  2556			/*
+  2557			 * Whereas stale stable_nodes on the stable_tree itself
+  2558			 * get pruned in the regular course of stable_tree_search(),
+  2559			 * those moved out to the migrate_nodes list can accumulate:
+  2560			 * so prune them once before each full scan.
+  2561			 */
+  2562			if (!ksm_merge_across_nodes) {
+  2563				struct ksm_stable_node *stable_node, *next;
+  2564				struct folio *folio;
+  2565	
+  2566				list_for_each_entry_safe(stable_node, next,
+  2567							 &migrate_nodes, list) {
+  2568					folio = ksm_get_folio(stable_node,
+  2569							      KSM_GET_FOLIO_NOLOCK);
+  2570					if (folio)
+  2571						folio_put(folio);
+  2572					cond_resched();
+  2573				}
+  2574			}
+  2575	
+  2576			for (nid = 0; nid < ksm_nr_node_ids; nid++)
+  2577				root_unstable_tree[nid] = RB_ROOT;
+  2578	
+  2579			spin_lock(&ksm_mmlist_lock);
+  2580			slot = list_entry(mm_slot->slot.mm_node.next,
+  2581					  struct mm_slot, mm_node);
+  2582			mm_slot = mm_slot_entry(slot, struct ksm_mm_slot, slot);
+  2583			ksm_scan.mm_slot = mm_slot;
+  2584			spin_unlock(&ksm_mmlist_lock);
+  2585			/*
+  2586			 * Although we tested list_empty() above, a racing __ksm_exit
+  2587			 * of the last mm on the list may have removed it since then.
+  2588			 */
+  2589			if (mm_slot == &ksm_mm_head)
+  2590				return NULL;
+  2591	next_mm:
+  2592			ksm_scan.address = 0;
+  2593			ksm_scan.rmap_list = &mm_slot->rmap_list;
+  2594		}
+  2595	
+  2596		slot = &mm_slot->slot;
+  2597		mm = slot->mm;
+  2598	
+  2599		mmap_read_lock(mm);
+  2600		if (ksm_test_exit(mm))
+  2601			goto no_vmas;
+  2602	
+  2603	get_page:
+> 2604		struct ksm_walk_private walk_private = {
+  2605			.page = NULL,
+  2606			.folio = NULL,
+  2607			.vma = NULL
+  2608		};
+  2609	
+  2610		walk_page_range(mm, ksm_scan.address, -1, &walk_ops, (void *) &walk_private);
+  2611		if (walk_private.page) {
+  2612			flush_anon_page(walk_private.vma, walk_private.page, ksm_scan.address);
+  2613			flush_dcache_page(walk_private.page);
+  2614			rmap_item = get_next_rmap_item(mm_slot,
+  2615				ksm_scan.rmap_list, ksm_scan.address);
+  2616			if (rmap_item) {
+  2617				ksm_scan.rmap_list =
+  2618						&rmap_item->rmap_list;
+  2619	
+  2620				ksm_scan.address += PAGE_SIZE;
+  2621				if (should_skip_rmap_item(walk_private.folio, rmap_item)) {
+  2622					folio_put(walk_private.folio);
+  2623					goto get_page;
+  2624				}
+  2625	
+  2626				*page = walk_private.page;
+  2627			} else {
+  2628				folio_put(walk_private.folio);
+  2629			}
+  2630			mmap_read_unlock(mm);
+  2631			return rmap_item;
+  2632		}
+  2633	
+  2634		if (ksm_test_exit(mm)) {
+  2635	no_vmas:
+  2636			ksm_scan.address = 0;
+  2637			ksm_scan.rmap_list = &mm_slot->rmap_list;
+  2638		}
+  2639		/*
+  2640		 * Nuke all the rmap_items that are above this current rmap:
+  2641		 * because there were no VM_MERGEABLE vmas with such addresses.
+  2642		 */
+  2643		remove_trailing_rmap_items(ksm_scan.rmap_list);
+  2644	
+  2645		spin_lock(&ksm_mmlist_lock);
+  2646		slot = list_entry(mm_slot->slot.mm_node.next,
+  2647				  struct mm_slot, mm_node);
+  2648		ksm_scan.mm_slot = mm_slot_entry(slot, struct ksm_mm_slot, slot);
+  2649		if (ksm_scan.address == 0) {
+  2650			/*
+  2651			 * We've completed a full scan of all vmas, holding mmap_lock
+  2652			 * throughout, and found no VM_MERGEABLE: so do the same as
+  2653			 * __ksm_exit does to remove this mm from all our lists now.
+  2654			 * This applies either when cleaning up after __ksm_exit
+  2655			 * (but beware: we can reach here even before __ksm_exit),
+  2656			 * or when all VM_MERGEABLE areas have been unmapped (and
+  2657			 * mmap_lock then protects against race with MADV_MERGEABLE).
+  2658			 */
+  2659			hash_del(&mm_slot->slot.hash);
+  2660			list_del(&mm_slot->slot.mm_node);
+  2661			spin_unlock(&ksm_mmlist_lock);
+  2662	
+  2663			mm_slot_free(mm_slot_cache, mm_slot);
+  2664			/*
+  2665			 * Only clear MMF_VM_MERGEABLE. We must not clear
+  2666			 * MMF_VM_MERGE_ANY, because for those MMF_VM_MERGE_ANY process,
+  2667			 * perhaps their mm_struct has just been added to ksm_mm_slot
+  2668			 * list, and its process has not yet officially started running
+  2669			 * or has not yet performed mmap/brk to allocate anonymous VMAS.
+  2670			 */
+  2671			mm_flags_clear(MMF_VM_MERGEABLE, mm);
+  2672			mmap_read_unlock(mm);
+  2673			mmdrop(mm);
+  2674		} else {
+  2675			mmap_read_unlock(mm);
+  2676			/*
+  2677			 * mmap_read_unlock(mm) first because after
+  2678			 * spin_unlock(&ksm_mmlist_lock) run, the "mm" may
+  2679			 * already have been freed under us by __ksm_exit()
+  2680			 * because the "mm_slot" is still hashed and
+  2681			 * ksm_scan.mm_slot doesn't point to it anymore.
+  2682			 */
+  2683			spin_unlock(&ksm_mmlist_lock);
+  2684		}
+  2685	
+  2686		/* Repeat until we've completed scanning the whole list */
+  2687		mm_slot = ksm_scan.mm_slot;
+  2688		if (mm_slot != &ksm_mm_head)
+  2689			goto next_mm;
+  2690	
+  2691		advisor_stop_scan();
+  2692	
+  2693		trace_ksm_stop_scan(ksm_scan.seqnr, ksm_rmap_items);
+  2694		ksm_scan.seqnr++;
+  2695		return NULL;
+  2696	}
+  2697	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
