@@ -1,205 +1,224 @@
-Return-Path: <linux-kernel+bounces-854182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30C1BDDC6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:29:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F029BDDC7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997BA4245F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AC019C2D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DADE31A811;
-	Wed, 15 Oct 2025 09:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714DF31A540;
+	Wed, 15 Oct 2025 09:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QsvUljDs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lw+mKOcT"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A10E319611
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B0A30BB9A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760520480; cv=none; b=hLJmFEmVQ8TDqg+SVdy9xHNbjds38/LEa1cnFGb8C68Ie+aYyniBN0DbSTHqcqzDrMktUfTwImjx37994q06RMvtA3C1h/YvK810itXwo7PFFKJCCU3+O5XK/RyfCrWTAxcdW6xaudVGrnBJ93sc5yEJOSbddz3ywNesIftpnJA=
+	t=1760520535; cv=none; b=TcAwZiMsMe3uyvZdNm5OzFDz7fSP2EzBL0qmMUMVdHHbnfXLopEHiRkN3oCmZlxQxl6b2H3THaSjn2uKS1pputjaaVVg8kds4eMBRxBzIIL340F8+33dgW3o4pAmymOiA8EZmLIuZIxji3vX8UBDHZfj/49SRWpNksr9+cbPXik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760520480; c=relaxed/simple;
-	bh=sPEg7pbtP1zrTtIJbq5Abj7JdtBqRqEL/3AmT/ihs9E=;
+	s=arc-20240116; t=1760520535; c=relaxed/simple;
+	bh=w9oSLVXl1abaIXQNkcjtI8UuvOw0MoekmgA7+KAt4xE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URjwqRVefA5/oqYWy1kFkLk+Eq/7YMCSEqld9PvmaUyHwcSwuEnun9pOU3I2R/a0sBYAZ0JlOUHsItx3vGglvQM75KAb4XvMcezS1ranxWIVWUaXvho0X3gQG/WxQZqrp/RyHlxNFEKt8Vi/WIQa1B5tiQffIogblGTsJ852Yp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QsvUljDs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760520477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8FvuC0nI11pMcake8zb9ZQ7cv8pD2b0TiH26/DUH8Ho=;
-	b=QsvUljDseVEkZm+Cs1Wc42GLisee5i/MNyjA+2DO+yw4lDq/C7oWOUp/0piCbJh4UenuAw
-	8ftilas3/eA4SgQ3pidd/nTaWwUcHXa9378zLMXrDzMG2JZVnYwyjbV1nLLAs/XQQyrfCi
-	VdKlZSGAj5iygm309nOz9cOdf3NT4SA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-73-jFU6B8r8NgieqhpcBtUZ-Q-1; Wed,
- 15 Oct 2025 05:27:53 -0400
-X-MC-Unique: jFU6B8r8NgieqhpcBtUZ-Q-1
-X-Mimecast-MFC-AGG-ID: jFU6B8r8NgieqhpcBtUZ-Q_1760520471
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 154F41800245;
-	Wed, 15 Oct 2025 09:27:50 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.29])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47DA618003FC;
-	Wed, 15 Oct 2025 09:27:40 +0000 (UTC)
-Date: Wed, 15 Oct 2025 17:27:35 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: Yu Kuai <hailan@yukuai.org.cn>, Yu Kuai <yukuai3@huawei.com>,
-	tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH 0/4] blk-rq-qos: fix possible deadlock
-Message-ID: <aO9pB8DEDFYcvbz7@fedora>
-References: <20251014022149.947800-1-yukuai3@huawei.com>
- <d4fe218b-9fc5-4466-ac56-0d4c5a8ccd96@linux.ibm.com>
- <e5e7ac3f-2063-473a-aafb-4d8d43e5576e@yukuai.org.cn>
- <aO78EFfuT_o5Gcng@fedora>
- <4b8aab6f-f341-49af-9ccb-d592e1a40fe5@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s0fPUN+tXV2WySnXcSF4xRv34AolbmqIOEos/lQkJE+UNB9F25otB+zxmjLCQKoHzY8bbEdG10Jeqbekenuak4TuT7vvDeXvoHN/gOjd1jU3SGbm/OwS+X3RC8gCgYYYB/5ZFvxE4Apr4B/sM7bW75NP3p5F/s/4bYc3hh68ZC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lw+mKOcT; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46b303f755aso55785555e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:28:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760520532; x=1761125332; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hp2fYKx0k402gU8wOiSoX7ghMVY2eXtiYBiomEBCu00=;
+        b=Lw+mKOcTUuy5Ri0WVqPg7aYYFXIRFT2HViHCep+Y/g1k/kI6lQVPGKeBcyOYA9pEbi
+         bfYVOEgnlEZDmlyojbxgQa7E40UFgEfpdY06VWvOe7QnuuRwKumO/6eBTskBnsgdoSPs
+         DmNMsJdG2AHYDhK1LzeF9+/0jRZ/NajlmP7VEOHACKbH0Whe74ez6WoRP1rTqDVfXqLm
+         Sg31rLwFPJfBY1weuoQxf/ovXv9UIRd2tWgtvuMaKG0B3zrNs53A7vLtHA7/HTVbu42A
+         tx9uFH/Ho4co+j56JqfJlrWaQrSOAOIlWwUOyBeJfY/PjkvGTrlJFOyzXcbt/mArnUR1
+         MrzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760520532; x=1761125332;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hp2fYKx0k402gU8wOiSoX7ghMVY2eXtiYBiomEBCu00=;
+        b=NIQNJo39MGiHK+AdW5NZQI0qkwaKiKH29c+O5gyIBomFwpnfjwXzEKKClvta8Ur5uS
+         tg2mcqkIGpUQdaUYjdbphJx5PvKtGWyZRXtgwbtljEdPqZwD0nV3sXgsZMFpV64BW8Q/
+         qE4ggwOmfwKqM+kn3PY5fp7NwaLVEN0UuKitojsz5r0kQDBSoJ7ep03YklCnwR0tqXM5
+         6X/kD0+ZpbwyBRHvchQrJe+ojDvv+oONeBatEZPcfpFd5QxKTVOg5GidkjA5j0rr4z+a
+         uzGeU7Gs4+xFiJM7g6Rd40UeTdl9kshcTW03uL0ooaBkjVktNLAP25Yj/5tTxie8gCcH
+         mtMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFtKDjefNzHX1PWjY2B+I1AhvXX7yOWojY2Gs8qUULmYCPMwyYMwRaHZUIhk0VXnaO4s0pcHK+78feGSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLXUm9f5SFYOh4Ltms6FJA+JKkw2N1TPHT4Dw23NSM5t4esiAo
+	9KL+l2fcSswCbWL7BdMbkdB8wvWziV13dNqTOwQ6Zw9oObU9+PEzSCvi
+X-Gm-Gg: ASbGncujIsPB1GUxT66Nl9sARKnkkjqSsOfHG0FZDDe0IgwJIEsoH5PYRDdOL+PFoM5
+	yLCtLPp7Ou9qmSGkRo3tJvzoQLHAT4CJXllYkht8X31NqOk/W/f2F7UhGXRP/v00QrPEX15YPzH
+	sQtTykHsAqefMsw5yAUVztzz4jidsIhlQvi3JWgwQiJ6Ta6p/rnQ+Ky9dSBKabaEek35zGW69U+
+	+6FlhEg8WeyNCYUaF83lDZvsZ/P4Nv6JKilOVW8uJ7NOXCECq1E7Treub0TQ6QkimxWz5PUKhva
+	kQd6iwHjbv17HCb5VuRekggJpRqmqTouqACsCI38NCM7XSuM7Hgn8E114iI+4Qo5eYKN3x0ET43
+	QU/88x9VEiHykpn1Mobu+6ktrvU4fhMhT7xk=
+X-Google-Smtp-Source: AGHT+IGhErKOy64d9/b2jMz0wYrCY+Ob/EHUO0qOvgBR2Gdz3Vtc7ebOk0y6bVbTKFpbvvdrluUWvw==
+X-Received: by 2002:a05:6000:1a8f:b0:3ec:db8b:cbf1 with SMTP id ffacd0b85a97d-42666ac7279mr18043977f8f.24.1760520531741;
+        Wed, 15 Oct 2025 02:28:51 -0700 (PDT)
+Received: from fedora ([31.94.20.38])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce582a9csm28053606f8f.12.2025.10.15.02.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 02:28:51 -0700 (PDT)
+Date: Wed, 15 Oct 2025 02:28:49 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
+ allocator
+Message-ID: <aO9pUS3zLHsap81f@fedora>
+References: <20251014182754.4329-1-vishal.moola@gmail.com>
+ <aO8behuGn5jVo28K@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b8aab6f-f341-49af-9ccb-d592e1a40fe5@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <aO8behuGn5jVo28K@casper.infradead.org>
 
-On Wed, Oct 15, 2025 at 10:46:51AM +0530, Nilay Shroff wrote:
-> 
-> 
-> On 10/15/25 7:12 AM, Ming Lei wrote:
-> > On Tue, Oct 14, 2025 at 07:14:16PM +0800, Yu Kuai wrote:
-> >> Hi,
-> >>
-> >> 在 2025/10/14 18:58, Nilay Shroff 写道:
-> >>>
-> >>> On 10/14/25 7:51 AM, Yu Kuai wrote:
-> >>>> Currently rq-qos debugfs entries is created from rq_qos_add(), while
-> >>>> rq_qos_add() requires queue to be freezed. This can deadlock because
-> >>>>
-> >>>> creating new entries can trigger fs reclaim.
-> >>>>
-> >>>> Fix this problem by delaying creating rq-qos debugfs entries until
-> >>>> it's initialization is complete.
-> >>>>
-> >>>> - For wbt, it can be initialized by default of by blk-sysfs, fix it by
-> >>>>    delaying after wbt_init();
-> >>>> - For other policies, they can only be initialized by blkg configuration,
-> >>>>    fix it by delaying to blkg_conf_end();
-> >>>>
-> >>>> Noted this set is cooked on the top of my other thread:
-> >>>> https://lore.kernel.org/all/20251010091446.3048529-1-yukuai@kernel.org/
-> >>>>
-> >>>> And the deadlock can be reporduced with above thead, by running blktests
-> >>>> throtl/001 with wbt enabled by default. While the deadlock is really a
-> >>>> long term problem.
-> >>>>
-> >>> While freezing the queue we also mark GFP_NOIO scope, so doesn't that
-> >>> help avoid fs-reclaim? Or maybe if you can share the lockdep splat
-> >>> encountered running throtl/001?
-> >>
-> >> Yes, we can avoid fs-reclaim if queue is freezing, however,
-> >> because debugfs is a generic file system, and we can't avoid fs reclaim from
-> >> all context. There is still
-> >>
-> >> Following is the log with above set and wbt enabled by default, the set acquire
-> >> lock order by:
-> >>
-> >> freeze queue -> elevator lock -> rq_qos_mutex -> blkcg_mutex
-> >>
-> >> However, fs-reclaim from other context cause the deadlock report.
-> >>
-> >>
-> >> [   45.632372][  T531] ======================================================
-> >> [   45.633734][  T531] WARNING: possible circular locking dependency detected
-> >> [   45.635062][  T531] 6.17.0-gfd4a560a0864-dirty #30 Not tainted
-> >> [   45.636220][  T531] ------------------------------------------------------
-> >> [   45.637587][  T531] check/531 is trying to acquire lock:
-> >> [   45.638626][  T531] ffff9473884382b0 (&q->rq_qos_mutex){+.+.}-{4:4}, at: blkg_
-> >> conf_start+0x116/0x190
-> >> [   45.640416][  T531]
-> >> [   45.640416][  T531] but task is already holding lock:
-> >> [   45.641828][  T531] ffff9473884385d8 (&q->elevator_lock){+.+.}-{4:4}, at: blkg
-> >> _conf_start+0x108/0x190
-> >> [   45.643322][  T531]
-> >> [   45.643322][  T531] which lock already depends on the new lock.
-> >> [   45.643322][  T531]
-> >> [   45.644862][  T531]
-> >> [   45.644862][  T531] the existing dependency chain (in reverse order) is:
-> >> [   45.646046][  T531]
-> >> [   45.646046][  T531] -> #5 (&q->elevator_lock){+.+.}-{4:4}:
-> >> [   45.647052][  T531]        __mutex_lock+0xd3/0x8d0
-> >> [   45.647716][  T531]        blkg_conf_start+0x108/0x190
-> >> [   45.648395][  T531]        tg_set_limit+0x74/0x300
-> >> [   45.649046][  T531]        kernfs_fop_write_iter+0x14a/0x210
-> >> [   45.649813][  T531]        vfs_write+0x29e/0x550
-> >> [   45.650413][  T531]        ksys_write+0x74/0xf0
-> >> [   45.651032][  T531]        do_syscall_64+0xbb/0x380
-> >> [   45.651730][  T531] entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Wed, Oct 15, 2025 at 04:56:42AM +0100, Matthew Wilcox wrote:
+> On Tue, Oct 14, 2025 at 11:27:54AM -0700, Vishal Moola (Oracle) wrote:
+> > Running 1000 iterations of allocations on a small 4GB system finds:
 > > 
-> > Not sure why elevator lock is grabbed in throttle code, which looks a elevator lock
-> > misuse, what does the elevator try to protect here?
+> > 1000 2mb allocations:
+> > 	[Baseline]			[This patch]
+> > 	real    46.310s			real    34.380s
+> > 	user    0.001s			user    0.008s
+> > 	sys     46.058s			sys     34.152s
 > > 
-> > The comment log doesn't explain the usage too:
+> > 10000 200kb allocations:
+> > 	[Baseline]			[This patch]
+> > 	real    56.104s			real    43.946s
+> > 	user    0.001s			user    0.003s
+> > 	sys     55.375s			sys     43.259s
 > > 
-> Lets go back to the history:
-> The ->elevator_lock was first added in the wbt code path under this commit 
-> 245618f8e45f ("block: protect wbt_lat_usec using q->elevator_lock"). It was
-> introduced to protect the wbt latency and state updates which could be 
-> simultaneously accessed from elevator switch path and from sysfs write method
-> (queue_wb_lat_store()) as well as from cgroup (ioc_qos_write()).
+> > 10000 20kb allocations:
+> > 	[Baseline]			[This patch]
+> > 	real    0m8.438s		real    0m9.160s
+> > 	user    0m0.001s		user    0m0.002s
+> > 	sys     0m7.936s		sys     0m8.671s
 > 
-> Later above change caused a lockdep splat and then we updated the code 
-> to fix locking order between ->freeze_lock, ->elevator_lock and ->rq_qos_mutex
-> and that was implemented in this commit 9730763f4756 ("block: correct locking
-> order for protecting blk-wbt parameters"). With this change we set the 
-> locking order as follows: 
-> ->freeze_lock ->elevator_lock ->rq_qos_mutex
+> I'd be more confident in the 20kB numbers if you'd done 10x more
+> iterations.
+
+I actually ran my a number of times to mitigate the effects of possibly
+too small sample sizes, so I do have that number for you too:
+
+[Baseline]			[This patch]
+real    1m28.119s		real    1m32.630s
+user    0m0.012s		user    0m0.011s
+sys     1m23.270s		sys     1m28.529s
+
+> Also, I think 20kB is probably an _interesting_ number, but it's not
+> going to display your change to its best advantage.  A 32kB allocation
+> will look much better, for example.
+
+I provided those particular numbers to showcase the beneficial cases as
+well as the regression case.
+
+I ended up finding that allocating sizes <=20k had noticeable
+regressions, while [20k, 90k] was approximately the same, and >= 90k had
+improvements (getting more and more noticeable as size grows in
+magnitude).
+
+> Also, can you go into more detail of the test?  Based on our off-list
+> conversation, we were talking about allocating something like 100MB
+> of memory (in these various sizes) then freeing it, just to be sure
+> that we're measuring the performance of the buddy allocator and
+> not the PCP list.
+
+Yup.
+
+What I did to get the numbers above was: call vmalloc() n number of
+times on that particular size, then free all those allocations. Then,
+I did 1000 iterations of that to get a better average.
+
+So none of these allocations were freed until all the allocations were
+done, every single time.
+
+> > This is an RFC, comments and thoughts are welcomed. There is a
+> > clear benefit to be had for large allocations, but there is
+> > some regression for smaller allocations.
 > 
-> Then later on under this commit 78c271344b6f ("block: move wbt_enable_default()
-> out of queue freezing from sched ->exit()") we moved the wbt latency/stat
-> update code out of the ->freeze_lock and ->elevator_lock from elevator switch
-> path. So essentially with this commit now in theory we don't need to acquire
-> ->elevator_lock while updating wbt latency/stat values. In fact, we also removed
-> ->elevator_lock  from queue_wb_lat_store() in this commit but I think we missed
-> to remove ->elevator_lock from cgroup (ioc_qos_write()). 
-
-Nice looking back!
-
-I will cook one patch to remove it from ioc_qos_write().
-
+> Also we think that there's probably a later win to be had by
+> not splitting the page we allocated.
 > 
-> > 
-> > I think it is still order issue between queue freeze and q->rq_qos_mutex
-> > first, which need to be solved first.
-> > 
-> So yes we should first target to get rid off the use of ->elevator_lock
-> from ioc_qos_write(). Later we can decide on locking order between
-> ->freeze_lock, ->rq_qos_mutex and ->debugfs_mutex. 
+> At some point, we should also start allocating frozen pages
+> for vmalloc.  That's going to be interesting for the users which
+> map vmalloc pages to userspace.
+> 
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 97cef2cc14d3..0a25e5cf841c 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -3621,6 +3621,38 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> >  	unsigned int nr_allocated = 0;
+> >  	struct page *page;
+> >  	int i;
+> > +	gfp_t large_gfp = (gfp & ~__GFP_DIRECT_RECLAIM) | __GFP_NOWARN;
+> > +	unsigned int large_order = ilog2(nr_pages - nr_allocated);
+> > +
+> > +	/*
+> > +	 * Initially, attempt to have the page allocator give us large order
+> > +	 * pages. Do not attempt allocating smaller than order chunks since
+> > +	 * __vmap_pages_range() expects physically contigous pages of exactly
+> > +	 * order long chunks.
+> > +	 */
+> > +	while (large_order > order && nr_allocated < nr_pages) {
+> > +		/*
+> > +		 * High-order nofail allocations are really expensive and
+> > +		 * potentially dangerous (pre-mature OOM, disruptive reclaim
+> > +		 * and compaction etc.
+> > +		 */
+> > +		if (gfp & __GFP_NOFAIL)
+> > +			break;
+> 
+> sure, but we could just clear NOFAIL from the large_gfp flags instead
+> of giving up on this path so quickly?
 
-Yu Kuai is working on ordering queue freeze and ->rq_qos_mutex.
+Yeah I'll do that.
 
+> > +		if (nid == NUMA_NO_NODE)
+> > +			page = alloc_pages_noprof(large_gfp, large_order);
+> > +		else
+> > +			page = alloc_pages_node_noprof(nid, large_gfp, large_order);
+> > +
+> > +		if (unlikely(!page))
+> > +			break;
+> 
+> I'm not entirely convinced here.  We might want to fall back to the next
+> larger size.  eg if we try to allocate an order-6 page, and there's not
+> one readily available, perhaps we should try to allocate an order-5 page
+> instead of falling back to the bulk allocator?
 
-Thanks,
-Ming
+I'll try that out and see how that affects the numbers.
 
+> > @@ -3665,7 +3697,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> >  		}
+> >  	}
+> >  
+> > -	/* High-order pages or fallback path if "bulk" fails. */
+> > +	/* High-order arch pages or fallback path if "bulk" fails. */
+> 
+> I'm not quite clear what this comment change is meant to convey?
+
+Ah that was a comment I had inserted to remind myself that the passed in
+order is tied to the HAVE_ARCH_HUGE_VMALLOC config. I meant to leave
+that out.
 
