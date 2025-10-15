@@ -1,213 +1,138 @@
-Return-Path: <linux-kernel+bounces-853888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39105BDCD21
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28356BDCD2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB71188E240
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99BEE3BD4B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20342FF164;
-	Wed, 15 Oct 2025 07:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F993009EE;
+	Wed, 15 Oct 2025 07:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="V6Npg03b"
-Received: from mail-m32107.qiye.163.com (mail-m32107.qiye.163.com [220.197.32.107])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="oVKmUxp4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GS2h8t8v"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6DF3126CE;
-	Wed, 15 Oct 2025 07:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E5029BDBC;
+	Wed, 15 Oct 2025 07:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760511980; cv=none; b=EYE82C3MrqpK4Y0Yd5AG7t822cUbCwfJM1Uoh23JpmLStGXBYxJOM5ADHktcA7Z2o4d/9xGMJs5AifMReTDDcESoHuL9KWjMKOp6K7xTVjjcytnRTJ70jfbDTjMiZyRdnAgawXhKsMw/wBqWLp7IP754HUaYO9CFEMxn07WxmDs=
+	t=1760512022; cv=none; b=pn4IntvKRxIYZuq/xF4HiCveVNvlaA0aHFUIGSrGAGMdNmXAhilZWPDXqlod8zuS0iUzADheQeisAjqBouGOXeX2zxM6fa2Z1zCxz2fxNRakf/fv28cy+PX6sju5Lkai56ZD4vN3iK76LqmjN5mnCkUof9JVO+Piy7/RNRC/REM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760511980; c=relaxed/simple;
-	bh=edc1A/lLth606SbUTGSMVUX4tCnlzFbesWdc7qd8GY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uxbTAKJDjWpeZY0lzibDrPWgYExo0Bumc5infsz0LG1Cz8YQ5UpIvgt1+J71g1mqPXaKYd83ZUukjrxJaYCE4KoCEPSacrZ4wz8adnjN6iJ4JGZjdTUJUkw0AYWvTgTpfxrtk1O+3SMXPqZyu/aM/chQc0Q6cGhEP0TS+NX6QrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=V6Npg03b; arc=none smtp.client-ip=220.197.32.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 25f8c2a47;
-	Wed, 15 Oct 2025 15:06:06 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: adrian.hunter@intel.com
-Cc: yangzh0906@thundersoft.com,
-	arnd@arndb.de,
-	gordon.ge@bst.ai,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	robh@kernel.org,
-	ulf.hansson@linaro.org
-Subject: Re: [PATCH 5/9] mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
-Date: Wed, 15 Oct 2025 15:06:05 +0800
-Message-ID: <20251015070605.1471915-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <72c6b6cd-943b-465e-9281-5ad7fb195433@intel.com>
-References: <72c6b6cd-943b-465e-9281-5ad7fb195433@intel.com>
+	s=arc-20240116; t=1760512022; c=relaxed/simple;
+	bh=bK4clQRkMh97itDqxQEXotJ97EdHRTkSSeuEySEb7iM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=YE+06Hev3WSfoMowf12oU2OfOmHEQ4vhIg5nhHcWa+U8CJK4q3s39k4/XwNZXm2B9e12FCI/haaPYHWREEq0z2AaBnUXtKCz3NzGLaEe+TkRbuePdnssB+cMq3bbTUVQQ6GyJtFlt//xWv9LJYw/tOY0o7egoTheKXxWKvZyYOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=oVKmUxp4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GS2h8t8v; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 3976B7A0199;
+	Wed, 15 Oct 2025 03:06:58 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 15 Oct 2025 03:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1760512018;
+	 x=1760598418; bh=ihTX14CCnGZh2yCohCI2HJ86LjAi76UHdq/41TZfvYQ=; b=
+	oVKmUxp4m/sW/KDei9klcN0VCiSvhu+zuPESVJg+vRInkCiudaQL2mEBvZVR8xKO
+	ZC/QXJzIZNH+XImb0D1QbHxWEHOlrVEZlwDfDUePx+1ll7/Yz7Lk1LgFaQA2udAg
+	bIU9pTO2RDbYIb0deMgR+Ni61DaCLZd6gIJwR4dYxFJjCfrX5+V6oGeU2eSFL0J0
+	5zJ7ICSFoh+STgHWuHwOr1bgBAlX0SkKgbMq/f4V8ZNFRPDBeWmylvnsjN28qAyL
+	HF03NeW02zNXAryFtEFu4Kfxxbo81ov6yPKVSieCi6uGyhMa4N0Muwkzm41YmJrg
+	M6M96Wi19r+H9CHlHGRiww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760512018; x=
+	1760598418; bh=ihTX14CCnGZh2yCohCI2HJ86LjAi76UHdq/41TZfvYQ=; b=G
+	S2h8t8vhkqb0qKYX1mJA2REBNk1c+upesEOyZiLAbtuSTAsRrN8Q3jwnHa8nzxVH
+	jONvVoGdH0b4rK6Q/RoYV0xt3JaV9wI2DFoZuK0naZp3fzgvJut4yu60gvutCpvk
+	P7OMCR2cCVZEwTT/ejwOCy9qB9jUYpxJeXBFtzAy6wOhhzYw68drTMcjQByqmKP5
+	5R2aivdTkSA5RIL/pXvQhEQKQEk5nsJRan0ejaHTjJXyH+wMQ5u5FsVDB5rEeXtN
+	NHkZccpv8Ac/TupkETuPkCTuKVOQQqnfp9h8EQhJG7W9avbuhlzpCW/rfPVgVDAj
+	hb+l5BA7qytaCUbc1aPMw==
+X-ME-Sender: <xms:EUjvaLPrwtcFXyuHi8d_N4IMgFnkTvMtNBNGr7dXHWqcFRV3b1t5ag>
+    <xme:EUjvaAwBVFw1Kg8ex26yNrxNa07SNnTOgyQdPGetZLWvZZgibZXgq6tWZHs_bvaq0
+    CF_AQEfo3SaXqTuPWa_Vab2NC5aIRoesfhOs3dc1f8LHaZPjhibE6MQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddvjeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehsrhhinhhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrh
+    gvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegurhhi
+    qdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoh
+    eprghiqhhunhdrhihusehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopegv
+    khgrnhhshhdrghhuphhtrgesohhsshdrqhhurghltghomhhmrdgtohhmpdhrtghpthhtoh
+    epjhhinhhghihirdifrghnghesohhsshdrqhhurghltghomhhmrdgtohhmpdhrtghpthht
+    ohepkhhumhgrrhhirdhprghllhgrvhhisehoshhsrdhquhgrlhgtohhmmhdrtghomhdprh
+    gtphhtthhopegrmhgrhhgvshhhsehqthhirdhquhgrlhgtohhmmhdrtghomhdprhgtphht
+    thhopehkphgrlhhlrghvihesqhhtihdrqhhurghltghomhhmrdgtohhm
+X-ME-Proxy: <xmx:EUjvaMSwEu2JmVjqg3D5_DHXJHB-iCalyE1Ylmnbl7m384Y_LYELyA>
+    <xmx:EUjvaDKn23nYoPFxbonnlv61eCpxN1FCFHoKX19TjW5CKSIUz8MyUQ>
+    <xmx:EUjvaCVa1IipiWVcxJIz7jd2r_Zd4liCwEtqT1w8usbGSDDDccr0Qg>
+    <xmx:EUjvaPgdvHdWzbCZPIuJzjP-puDkersyfQ4FsnP-EU0YogI48A1c9Q>
+    <xmx:EkjvaFY0SIJ5VuagyDc2ukvZ6oW3vbhm8RGuKp04iPE7yAohf0i7vqFh>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9E045700054; Wed, 15 Oct 2025 03:06:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99e6b0bd0309cckunmca9633f0613a10
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSk1CVk9NQ0hIGkoYSUNMSlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=V6Npg03bKsOacEmFic5PhyY+UxojxYdAQDwMgrzXi42cjOcJwYb4kfQejskKcgRBlhInizB/tUvBn8QnxDrCxJbvo61hvPXs7Fk0JJk4GTaK1BTKXPNP/NySCBbqBEIg5pHd8lNFzUy4mkwSALoUXzUpSbNg0vk/wGbxC4AXCSs=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=I5DgyZhmCKycIeh0PdNQMv1WJTxiM6HDcnbURmrZWag=;
-	h=date:mime-version:subject:message-id:from;
+X-ThreadId: AVCRraWH2f2c
+Date: Wed, 15 Oct 2025 09:06:37 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kumari Pallavi" <kumari.pallavi@oss.qualcomm.com>,
+ kpallavi@qti.qualcomm.com, "Srinivas Kandagatla" <srini@kernel.org>,
+ "Amol Maheshwari" <amahesh@qti.qualcomm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: quic_bkumar@quicinc.com, ekansh.gupta@oss.qualcomm.com,
+ linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ "Jingyi Wang" <jingyi.wang@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com,
+ ktadakam@qti.qualcomm.com
+Message-Id: <4dcbf05b-1da6-417e-8d37-2756762fed94@app.fastmail.com>
+In-Reply-To: <20251015045702.3022060-4-kumari.pallavi@oss.qualcomm.com>
+References: <20251015045702.3022060-1-kumari.pallavi@oss.qualcomm.com>
+ <20251015045702.3022060-4-kumari.pallavi@oss.qualcomm.com>
+Subject: Re: [PATCH v2 3/3] misc: fastrpc: Update dma_mask for CDSP support on
+ Kaanapali SoC
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 29, 2025 at 04:25:51PM +0300, Adrian Hunter wrote:
-> On 23/09/2025 09:10, Albert Yang wrote:
+On Wed, Oct 15, 2025, at 06:57, Kumari Pallavi wrote:
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 1a5d620b23f2..f2e5e53e9067 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -267,6 +267,7 @@ struct fastrpc_session_ctx {
+> 
+>  struct fastrpc_soc_data {
+>  	u32 sid_pos;
+> +	u32 cdsp_dma_mask;
+>  };
 
+I see that you add the field here, but it is not initialized
+anywhere. Did the initialization get lost in a rebase?
 
-Thank you for the thorough review! I have addressed all your comments
-and prepared v5.
-Here are the detailed changes for each of your review comments:
+Also, this is not the mask but the address width,
+so maybe rename it to cdsp_dma_bits?
 
-> > --- a/drivers/mmc/host/Makefile
-> > +++ b/drivers/mmc/host/Makefile
-> > @@ -13,6 +13,7 @@ obj-$(CONFIG_MMC_MXS)             += mxs-mmc.o
-> >  obj-$(CONFIG_MMC_SDHCI)            += sdhci.o
-> >  obj-$(CONFIG_MMC_SDHCI_UHS2)       += sdhci-uhs2.o
-> >  obj-$(CONFIG_MMC_SDHCI_PCI)        += sdhci-pci.o
-> > +obj-$(CONFIG_MMC_SDHCI_BST)                += sdhci-of-bst.o
->
-> This would be better positioned so that it is not between
->       obj-$(CONFIG_MMC_SDHCI_PCI) and sdhci-pci-y
->
-
-Done. Moved to after the sdhci-pci-y block in drivers/mmc/host/Makefile.
-
-> >  sdhci-pci-y                        += sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
-> >                                sdhci-pci-dwc-mshc.o sdhci-pci-gli.o
-> > +#include <linux/delay.h>
-> > +#include <linux/dma-mapping.h>
-> > +#include <linux/ioport.h>
->
-> Is linux/ioport.h needed?
->
-
-Removed. This header was indeed unnecessary.
-
-
-> > +#include <linux/platform_device.h>
-> > +#include <linux/iopoll.h>
->
-> Also:
->
-> #include <linux/bits.h>
->
-> And if you use FIELD_PREP():
->
-> #include <linux/bitfield.h>
-
-Done. Added both headers and updated the clock divider code to use FIELD_PREP().
-
-> > +#define SDHCI_CLOCK_PLL_EN         0x0008
->
-> Already defined in sdhci.h
-
-Removed. The definition from sdhci.h is now used.
-
-
-> > +#define SDHCI_TUNING_COUNT         0x20
->
-> For SD cards the limit is 40.  This number seems to be
-> driver-specific so should be named accordingly e.g.
-
-Done. Renamed to SDHCI_BST_TUNING_COUNT and updated all references.
-
-> > +#define BST_EMMC_CTRL_BIT2         BIT(2)
->
-> BST_EMMC_CTRL_BIT2 is not a very descriptive name
->
-
-Done. Renamed to BST_EMMC_CTRL_RST_N (reset line control bit) with updated
-references in sdhci_bst_reset().
-
-> > +
-> > +/* Clock frequency limits */
-> > +#define BST_DEFAULT_MAX_FREQ               2000000UL
->
-> 2 MHz looks too low?
->
-
-You're right, my apologies for the confusion. The value was incorrect in v4.
-The correct maximum frequency is 200000000UL (200 MHz). I've corrected this
-in v5 and updated all references. I've also simplified the clock division
-calculation to avoid overflow warnings (removed the "* 100" operation).
-
-> > +#define BST_CLOCK_DIV_MASK         GENMASK(7, 0)
-> > +#define BST_CLOCK_DIV_SHIFT                8
->
-> Can use just:
->
-> #define BST_CLOCK_DIV_MASK            GENMASK(15, 8)
->
-> and FIELD_PREP() so that BST_CLOCK_DIV_SHIFT is not needed
->
-
-Done. Changed to GENMASK(15, 8) and updated the code to use:
-	clk &= ~BST_CLOCK_DIV_MASK;
-	clk |= FIELD_PREP(BST_CLOCK_DIV_MASK, div);
-BST_CLOCK_DIV_SHIFT has been removed.
-
-> > +   /* Turn off card/internal/PLL clocks when clock==0 to avoid idle power */
-> > +   u32 clk_reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
->
-> Could be inside the 'if (!clock) {' block e.g.
->
->       if (!clock) {
->               u32 clk_reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-
-Done. Moved the variable declaration inside the if (!clock) block to limit scope.
-
-> Kernel style is not to put kernel-doc comments on call-back function
-> implementations.
-
-Done. Removed all kernel-doc comments from:
-- sdhci_bst_reset()
-- sdhci_bst_set_timeout()
-- sdhci_bst_set_power()
-- sdhci_bst_execute_tuning()
-- sdhci_bst_voltage_switch()
-
-
-> > +   if (host->bounce_buffer) {
-> > +           dma_free_coherent(mmc_dev(host->mmc), host->bounce_buffer_size,
-> > +                             host->bounce_buffer, host->bounce_addr);
-> > +           host->bounce_buffer = NULL;
-> > +   }
->
-> Same 5 lines of code further above.  Could be a separate little helper function.
->
-
-Done. Created sdhci_bst_free_bounce_buffer() helper function which handles:
-- Freeing bounce buffer via dma_free_coherent()
-- Releasing reserved memory via of_reserved_mem_device_release()
-This helper is now used in both probe error path and remove function.
-
-All review comments have been addressed and verified.
-
-Note: Following Arnd Bergmann's feedback [1], in the next submission I plan
-to split out the MMC driver patches and submit them separately to the MMC
-subsystem maintainers. This will help streamline the review process and
-allow the platform code and driver code to progress independently.
-
-[1] https://lore.kernel.org/lkml/f64b0e00-1c30-47a1-b6b0-1bc28cc7f8ac@app.fastmail.com/
-
-Thank you again for the thorough and constructive review!
-
-Best regards,
-Albert Yang
+       Arnd
 
