@@ -1,273 +1,175 @@
-Return-Path: <linux-kernel+bounces-855267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB68BE0AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E85BBE0AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 22:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1BFD84E05C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:41:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7BE294EF455
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 20:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FF630C62B;
-	Wed, 15 Oct 2025 20:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780A430CD8D;
+	Wed, 15 Oct 2025 20:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cTEVvmOq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MuAGazgH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBECD32549B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 20:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7F33090FD;
+	Wed, 15 Oct 2025 20:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760560906; cv=none; b=eQEF85kaCeVmMpAqt4N1zKfeXFSYVP/BXBhNg3rWYAnCB9uQC3wo9J0Nf71z1fI/2sFDi67nWaX+l7F5M6Sfy+zGfdxcdaWT9kpvkNLT7beh570G/7lePfueXbIzP1ZC7E4UkW6Nc0dSG2rC1RdGP1lqcWYeytjwB+34UG5+0k0=
+	t=1760560924; cv=none; b=b80iPONF/cyLJHwx0ausaC4nVfKIiFqarQtyxiqfcLyLVySoU39Nbjd9t9ihzeMFLOHBvx691duei7DYrE6xUR0yYSt7FzjGousPQs3bZqt4boeCRK0RNlu/0hmOhPbJtrRd4SXBryAHl6J+Nbjgd8MT0LieuIl94Wbg+reGKbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760560906; c=relaxed/simple;
-	bh=qGnUlfgwdPtAtXjRLGy0QuLwRHAaDHr48qjb+wkQZcM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cN4bv2wJtDSgLiDIK5Hjoom5jUAGU0Vdnfjh4cSdbo7eonnE//vhaeZf9pqODelfrJayUWxz80oYhBtKFaH/BgCIyQDJxKZmt6dV+wtVPhOd/wI7QgUalO1/aWQs49aChdwkRYtSjFOYy8RF4yB47/IEhioZS4lD9qJFLUSdXOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cTEVvmOq; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760560905; x=1792096905;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=qGnUlfgwdPtAtXjRLGy0QuLwRHAaDHr48qjb+wkQZcM=;
-  b=cTEVvmOqGKAFdB0sIzRfVnauMxd4L6Znn0lH8cWUDwX3UIcqY95VTPw9
-   /H+sMIkWkDrCUNuPVrRA0pPk98LInUzCqXaLLzMcDdToU/q8Er3zPl180
-   /XKBfTMmJ2SrwtTqomNXuqkj0vA8gk+4hCDOCSsdDZfZrNzh5oNCjQ10A
-   rrD0eFFOZ6aX5DfIvARClTmX2lAhVRg1Js3XHwMn0K/ve2MBM6AQYcpy2
-   nglHKz6/J9tUqqtcl2sMZcEGAZ+pD9oMeGaDZ+HlY5iNPhXWV0cb85l6S
-   KYHAM3y113n4P1hJVuI7nbs+EBkSdAN0HstVZRMHUHva96+en4sZ6Sd5n
-   Q==;
-X-CSE-ConnectionGUID: 1dgKCe4zQhCfq7DN3Kl9kw==
-X-CSE-MsgGUID: yeLDShk2R6yrim0yzFjG9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="74087666"
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="74087666"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:41:44 -0700
-X-CSE-ConnectionGUID: vrS1+5BQTSSd7L3TkBZdpA==
-X-CSE-MsgGUID: 7wr2+GyDQKCkBdGwjF2MGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="182681884"
-Received: from unknown (HELO [10.241.242.248]) ([10.241.242.248])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 13:41:43 -0700
-Message-ID: <782009c48dbde2cb2912f4d5dc573ecfbd2c1087.camel@linux.intel.com>
-Subject: Re: [PATCH 08/19] sched/fair: Introduce per runqueue task LLC
- preference counter
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>,  "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
- <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
- <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
- <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
- <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
- <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Chen Yu	
- <yu.c.chen@intel.com>, Libo Chen <libo.chen@oracle.com>, Adam Li	
- <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 15 Oct 2025 13:41:42 -0700
-In-Reply-To: <20251015122125.GU3289052@noisy.programming.kicks-ass.net>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
-	 <a002ffc53c06bfa0ef0700631b0cb5413bdbf06c.1760206683.git.tim.c.chen@linux.intel.com>
-	 <20251015122125.GU3289052@noisy.programming.kicks-ass.net>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQENBE6N6zwBCADFoM9QBP6fLqfYine5oPRtaUK2xQavcYT34CBnjTlhbvEVMTPlNNzE5
- v04Kagcvg5wYcGwr3gO8PcEKieftO+XrzAmR1t3PKxlMT1bsQdTOhKeziZxh23N+kmA7sO/jnu/X2
- AnfSBBw89VGLN5fw9DpjvU4681lTCjcMgY9KuqaC/6sMbAp8uzdlue7KEl3/D3mzsSl85S9Mk8KTL
- MLb01ILVisM6z4Ns/X0BajqdD0IEQ8vLdHODHuDMwV3veAfnK5G7zPYbQUsK4+te32ruooQFWd/iq
- Rf815j6/sFXNVP/GY4EWT08UB129Kzcxgj2TEixe675Nr/hKTUVKM/NrABEBAAGJAS4EIAECABgFA
- k6ONYoRHQFLZXkgaXMgcmVwbGFjZWQACgkQHH3vaoxLv2UmbAgAsqa+EKk2yrDc1dEXbZBBGeCiVP
- XkP7iajI/FiMVZHFQpme4vpntWhg0BIKnF0OSyv0wgn3wzBWx0Zh3cve/PICIj268QvXkb0ykVcIo
- RnWwBeavO4dd304Mzhz5fBzJwjYx06oabgUmeGawVCEq7UfXy+PsdQdoTabsuD1jq0MbOL/4sB6CZ
- c4V2mQbW4+Js670/sAZSMj0SQzK9CQyQdg6Wivz8GgTBjWwWsfMt4g2u0s6rtBo8NUZG/yw6fNdao
- DaT/OCHuBopGmsmFXInigwOXsjyp15Yqs/de3S2Nu5NdjJUwmN1Qd1bXEc/ItvnrFB0RgoNt2gzf2
- 5aPifLabQlVGltIENoZW4gPHRpbS5jLmNoZW5AbGludXguaW50ZWwuY29tPokBOAQTAQIAIgUCTo3
- rPAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQHH3vaoxLv2XYdAf8DgRO4eIAtWZy4zLv
- 0EZHWiJ35GYAQ5fPFWBoNURE0+vICrvLyfCKTlUTFxFxTiAWHUO7JM+uBHQSJVsE+ERmTPsiUO1m7
- SxZakGy9U2WOEiWMZMRp7HZE8vPUY5AM1OD0b38WBeUD3FPx5WRlQ0z6izF9aIHxoQhci0/WtmGLO
- Pw3HUlCy1c4DDl6cInpy/JqUPcYlvsp+bWbdm7R5b33WW2CNVVr1eLj+1UP0Iow4jlLzNLW+jOpiv
- LDs3G/bNC1Uu/SAzTvbaDBRRO9ToX5rlg3Zi8PmOUXWzEfO6N+L1gFCAdYEB4oSOghSbk2xCC4DRl
- UTlYoTJCRsjusXEy4ZkCDQROjjboARAAtXPJWkNkK3s22BXrcK8w9L/Kzqmp4+V9Y5MkkK94Zv66l
- XAybnXH3UjL9ATQgo7dnaHxcVX0S9BvHkEeKqEoMwxg86Bb2tzY0yf9+E5SvTDKLi2O1+cd7F3Wba
- 1eM4Shr90bdqLHwEXR90A6E1B7o4UMZXD5O3MI013uKN2hyBW3CAVJsYaj2s9wDH3Qqm4Xe7lnvTA
- GV+zPb5Oj26MjuD4GUQLOZVkaA+GX0TrUlYl+PShJDuwQwpWnFbDgyE6YmlrWVQ8ZGFF/w/TsRgJM
- ZqqwsWccWRw0KLNUp0tPGig9ECE5vy1kLcMdctD+BhjF0ZSAEBOKyuvQQ780miweOaaTsADu5MPGk
- d3rv7FvKdNencd+G1BRU8GyCyRb2s6b0SJnY5mRnE3L0XfEIJoTVeSDchsLXwPLJy+Fdd2mTWQPXl
- nforgfKmX6BYsgHhzVsy1/zKIvIQey8RbhBp728WAckUvN47MYx9gXePW04lzrAGP2Mho+oJfCpI0
- myjpI9CEctvJy4rBXRgb4HkK72i2gNOlXsabZqy46dULcnrMOsyCXj6B1CJiZbYz4xb8n5LiD31SA
- fO5LpKQe/G4UkQOZgt+uS7C0Zfp61+0mrhKPG+zF9Km1vaYNH8LIsggitIqE05uCFi9sIgwez3oiU
- rFYgTkTSqMQNPdweNgVhSUAEQEAAbQ0VGltIENoZW4gKHdvcmsgcmVsYXRlZCkgPHRpbS5jLmNoZW
- 5AbGludXguaW50ZWwuY29tPokCVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQT
- RofI2lb24ozcpAhyiZ7WKota4SQUCYjOVvwUJF2fF1wAKCRCiZ7WKota4SeetD/4hztE+L/Z6oqIY
- lJJGgS9gjV7c08YH/jOsiX99yEmZC/BApyEpqCIs+RUYl12hwVUJc++sOm/p3d31iXvgddXGYxim0
- 0+DIhIu6sJaDzohXRm8vuB/+M/Hulv+hTjSTLreAZ9w9eYyqffre5AlEk/hczLIsAsYRsqyYZgjfX
- Lk5JN0L7ixsoDRQ5syZaY11zvo3LZJX9lTw0VPWlGeCxbjpoQK91CRXe9dx/xH/F/9F203ww3Ggt4
- VlV6ZNdl14YWGfhsiJU2rbeJ930sUDbMPJqV60aitI93LickNG8TOLG5QbN9FzrOkMyWcWW7FoXwT
- zxRYNcMqNVQbWjRMqUnN6PXCIvutFLjLF6FBe1jpk7ITlkS1FvA2rcDroRTU/FZRnM1k0K4GYYYPj
- 11Zt3ZBcPoI0J3Jz6P5h6fJioqlhvZiaNhYneMmfvZAWJ0yv+2c5tp2aBmKsjmnWecqvHL5r/bXez
- iKRdcWyXqrEEj6OaJr3S4C0MIgGLteARvbMH+3tNTDIqFuyqdzHLKwEHuvKxHzYFyV7I5ZEQ2HGH5
- ZRZ2lRpVjSIlnD4L1PS6Bes+ALDrWqksbEuuk+ixFKKFyIsntIM+qsjkXseuMSIG5ADYfTla9Pc5f
- VpWBKX/j0MXxdQsxT6tiwE7P+osbOMwQ6Ja5Qi57hj8jBRF1znDjDZkBDQRcCwpgAQgAl12VXmQ1X
- 9VBCMC+eTaB0EYZlzDFrW0GVmi1ii4UWLzPo0LqIMYksB23v5EHjPvLvW/su4HRqgSXgJmNwJbD4b
- m1olBeecIxXp6/S6VhD7jOfi4HACih6lnswXXwatzl13OrmK6i82bufaXFFIPmd7x7oz5Fuf9OQlL
- OnhbKXB/bBSHXRrMCzKUJKRia7XQx4gGe+AT6JxEj6YSvRT6Ik/RHpS/QpuOXcziNHhcRPD/ZfHqJ
- SEa851yA1J3Qvx1KQK6t5I4hgp7zi3IRE0eiObycHJgT7nf/lrdAEs7wrSOqIx5/mZ5eoKlcaFXiK
- J3E0Wox6bwiBQXrAQ/2yxBxVwARAQABtCVUaW0gQ2hlbiA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC
- 5jb20+iQFUBBMBCAA+FiEEEsKdz9s94XWwiuG96lQbuGeTCYsFAlwLCmACGwMFCQHhM4AFCwkIBwI
- GFQoJCAsCBBYCAwECHgECF4AACgkQ6lQbuGeTCYuQiQf9G2lkrkRdLjXehwCl+k5zBkn8MfUPi2It
- U2QDcBit/YyaZpNlSuh8h30gihp5Dlb9BnqBVKxooeIVKSKC1HFeG0AE28TvgCgEK8qP/LXaSzGvn
- udek2zxWtcsomqUftUWKvoDRi1AAWrPQmviNGZ4caMd4itKWf1sxzuH1qF5+me6eFaqhbIg4k+6C5
- fk3oDBhg0zr0gLm5GRxK/lJtTNGpwsSwIJLtTI3zEdmNjW8bb/XKszf1ufy19maGXB3h6tA9TTHOF
- nktmDoWJCq9/OgQS0s2D7W7f/Pw3sKQghazRy9NqeMbRfHrLq27+Eb3Nt5PyiQuTE8JeAima7w98q
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760560924; c=relaxed/simple;
+	bh=6NFItZksUnL4AeNLzkE9uW56mfjFXSMe3I2p1k1atTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oSHeNGqxmKYmG2ZA3qw2n+yqPHujAvscZATHUwdxFzCUqr9+yjzjleUIgmHbFjMMy1b/YTZSYxFFvAeKt3k8vrkubbfX2hxfyrqK/wl+8Lgh2OSWC1NdUyJ4noUpZwvqcBl504U1XceI73My1Gw1jqn50xCK19KPLPVBuC1D0Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MuAGazgH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760560920;
+	bh=6NFItZksUnL4AeNLzkE9uW56mfjFXSMe3I2p1k1atTk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MuAGazgHFf5NMEd+91RF7Wbfyfomf3WrSUyB9/IZolPbvVH5lTuwAPCHd7tE6/Bq7
+	 QqCVAo7pOpD5H83FsAH3RRWYz68OQPN+OeXkMVTIM6jkrZS4ylGZUoy4zi8xMfgBdW
+	 cD+AO81Ijw1bO1YB494nBepz2rX7bX43B0L+WMFhLbczgk3sm91zprnGct2I7/iP0D
+	 G38aiNIDYCkYwl/E2lkzLt7zE0PVuX3pGypRYRN5cqRJbG7stRBmvSZVJF9dedIGdW
+	 7mU087gqoePoUadp0Z94Elm1QCIxIMvrH+Uwil+z9n3QN0DEgbVvE/3cjWk9jflzhe
+	 RfSGnUk7yuuFQ==
+Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B526017E0C54;
+	Wed, 15 Oct 2025 22:41:59 +0200 (CEST)
+Message-ID: <efc1d805-1613-45a9-aa15-fcc009adf27c@collabora.com>
+Date: Wed, 15 Oct 2025 22:41:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/13] drm/v3d: Fix builds with
+ CONFIG_TRANSPARENT_HUGEPAGE=n
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Miko=C5=82aj_Wasiak?=
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>,
+ Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Christopher Healy <healych@amazon.com>, Matthew Wilcox
+ <willy@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kernel@collabora.com
+References: <20251015153018.43735-1-loic.molinari@collabora.com>
+ <20251015153018.43735-9-loic.molinari@collabora.com>
+ <20251015201737.3956f801@fedora>
+Content-Language: fr
+From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
+Organization: Collabora Ltd
+In-Reply-To: <20251015201737.3956f801@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-10-15 at 14:21 +0200, Peter Zijlstra wrote:
-> On Sat, Oct 11, 2025 at 11:24:45AM -0700, Tim Chen wrote:
-> > Each runqueue is assigned a static array where each element tracks
-> > the number of tasks preferring a given LLC, indexed from 0 to
-> > NR_LLCS.
-> >=20
-> > For example, rq->nr_pref_llc[3] =3D 2 signifies that there are 2 tasks =
-on
-> > this runqueue which prefer to run within LLC3 (indexed from 0 to NR_LLC=
-S
-> >=20
-> > The load balancer can use this information to identify busy runqueues
-> > and migrate tasks to their preferred LLC domains.
-> >=20
-> > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > ---
-> >  kernel/sched/fair.c  | 35 +++++++++++++++++++++++++++++++++++
-> >  kernel/sched/sched.h |  1 +
-> >  2 files changed, 36 insertions(+)
-> >=20
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index fd315937c0cf..b7a68fe7601b 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -1235,22 +1235,51 @@ static inline int llc_idx(int cpu)
-> >  	return per_cpu(sd_llc_idx, cpu);
-> >  }
-> > =20
-> > +static inline int pref_llc_idx(struct task_struct *p)
-> > +{
-> > +	return llc_idx(p->preferred_llc);
-> > +}
-> > +
-> >  static void account_llc_enqueue(struct rq *rq, struct task_struct *p)
-> >  {
-> > +	int pref_llc;
-> > +
-> >  	if (!sched_cache_enabled())
-> >  		return;
-> > =20
-> >  	rq->nr_llc_running +=3D (p->preferred_llc !=3D -1);
-> >  	rq->nr_pref_llc_running +=3D (p->preferred_llc =3D=3D task_llc(p));
-> > +
-> > +	if (p->preferred_llc < 0)
-> > +		return;
-> > +
-> > +	pref_llc =3D pref_llc_idx(p);
-> > +	if (pref_llc < 0)
-> > +		return;
-> > +
-> > +	++rq->nr_pref_llc[pref_llc];
-> >  }
-> > =20
-> >  static void account_llc_dequeue(struct rq *rq, struct task_struct *p)
-> >  {
-> > +	int pref_llc;
-> > +
-> >  	if (!sched_cache_enabled())
-> >  		return;
-> > =20
-> >  	rq->nr_llc_running -=3D (p->preferred_llc !=3D -1);
-> >  	rq->nr_pref_llc_running -=3D (p->preferred_llc =3D=3D task_llc(p));
-> > +
-> > +	if (p->preferred_llc < 0)
-> > +		return;
-> > +
-> > +	pref_llc =3D pref_llc_idx(p);
-> > +	if (pref_llc < 0)
-> > +		return;
-> > +
-> > +	/* avoid negative counter */
-> > +	if (rq->nr_pref_llc[pref_llc] > 0)
-> > +		--rq->nr_pref_llc[pref_llc];
->=20
-> How!? Also, please use post increment/decrement operators.
+On 15/10/2025 20:17, Boris Brezillon wrote:
+> On Wed, 15 Oct 2025 17:30:12 +0200
+> Loïc Molinari <loic.molinari@collabora.com> wrote:
+> 
+>> Don't declare "super_pages" on builds with CONFIG_TRANSPARENT_HUGEPAGE
+>> disabled to prevent build error:
+>>
+>> ERROR: modpost: "super_pages" [drivers/gpu/drm/v3d/v3d.ko] undefined!
+> 
+> I believe this is a bug introduced by the previous commit: the
+> compiler probably drops any code between the
+> IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) check and the err label
+> because IS_ENABLED() evaluates to false at compile time. So I'd squash
+> those changes in the previous commit.
 
-Will change the rq->nr_pref_llc[pref_llc] <=3D 0 to a warning instead,
-and update the decrement to post operator.
+Right, it's been introduced in previous commit.
 
->=20
-> >  }
-> > =20
-> >  void mm_init_sched(struct mm_struct *mm, struct mm_sched __percpu *_pc=
-pu_sched)
-> > @@ -1524,10 +1553,16 @@ void init_sched_mm(struct task_struct *p)
-> > =20
-> >  void reset_llc_stats(struct rq *rq)
-> >  {
-> > +	int i =3D 0;
-> > +
-> >  	if (!sched_cache_enabled())
-> >  		return;
-> > =20
-> >  	rq->nr_llc_running =3D 0;
-> > +
-> > +	for (i =3D 0; i < max_llcs; ++i)
-> > +		rq->nr_pref_llc[i] =3D 0;
-> > +
-> >  	rq->nr_pref_llc_running =3D 0;
-> >  }
->=20
-> Still don't understand why this thing exists..
+>
+>>
+>> Signed-off-by: Loïc Molinari <loic.molinari@collabora.com>
+>> ---
+>>   drivers/gpu/drm/v3d/v3d_drv.h | 2 ++
+>>   drivers/gpu/drm/v3d/v3d_gem.c | 2 ++
+>>   2 files changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+>> index 99a39329bb85..481502104391 100644
+>> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+>> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+>> @@ -564,7 +564,9 @@ extern const struct dma_fence_ops v3d_fence_ops;
+>>   struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_queue q);
+>>   
+>>   /* v3d_gem.c */
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>   extern bool super_pages;
+>> +#endif
+>>   int v3d_gem_init(struct drm_device *dev);
+>>   void v3d_gem_destroy(struct drm_device *dev);
+>>   void v3d_reset_sms(struct v3d_dev *v3d);
+>> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+>> index 635ff0fabe7e..0039063eb8b2 100644
+>> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+>> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+>> @@ -269,7 +269,9 @@ v3d_huge_mnt_init(struct v3d_dev *v3d)
+>>   	 * match our usecase.
+>>   	 */
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>   	if (super_pages)
+>> +#endif
+>>   		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> 
+> Why not
+> 
+> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>    	if (super_pages)
+>    		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> #endif
+> 
+> I guess
+> 
+> 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && super_pages)
+> 		err = drm_gem_huge_mnt_create(&v3d->drm, "within_size");
+> 
+> would also do, since it's likely to rely on the same optimization the
+> previous v3d_gemfs_init() implementation was relying on, but it's
+> fragile (not sure what happens when compiled with -O0).
 
-Will remove this or change this to a debug
-warning for the case when rq has no fair task.
+I'll remove the #ifdef/#endif around the super_pages declaration in 
+v3d_drv.h because it isn't necessary if super_pages is compiled out in 
+v3d_huge_mnt_init().
 
->=20
-> > =20
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index 3ab64067acc6..b801d32d5fba 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -1101,6 +1101,7 @@ struct rq {
-> >  #ifdef CONFIG_SCHED_CACHE
-> >  	unsigned int		nr_pref_llc_running;
-> >  	unsigned int		nr_llc_running;
-> > +	unsigned int		nr_pref_llc[NR_LLCS];
->=20
-> Gah, yeah, lets not do this. Just (re)alloc the thing on topology
-> changes or something.
+In v3d_huge_mnt_init(), I'd add the #ifdef before the ret variable 
+declaration and the #endif right after the last else so that it's clear 
+drm_notice("THP is recommended...") is called unconditionally when 
+CONFIG_TRANSPARENT_HUGEPAGE=n, whatever the optim level. What do you think?
 
-Will have to think about how to keep the tasks' preference
-consistent with nr_pref_llc with the new array.  Perhaps
-make it size of NR_CPUS so we will allocate
-once and don't have to resize and reallocate it, and
-fill it back up with the right data.
+> 
+>>   
+>>   	if (v3d->drm.huge_mnt)
+> 
 
-Tim
 
