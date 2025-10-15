@@ -1,118 +1,164 @@
-Return-Path: <linux-kernel+bounces-854857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31033BDF99A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:14:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57ACBDF9A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6D6542ADB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:12:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42BD84E73CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF20A3375B3;
-	Wed, 15 Oct 2025 16:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBD9288505;
+	Wed, 15 Oct 2025 16:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFfzR8W8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eiwxvlP3"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23978335BCB;
-	Wed, 15 Oct 2025 16:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81D48F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760544752; cv=none; b=l6DjilU8PyyxRAfLI8QktDAh6LVVyaKXelUgBC1v/bqjv5ZpooKadpv18lXkM2+Seaf+kwCqbO22vX7dxl7jkcJtUyGt0CqcrJ59ByX625OSo/p/q6x3UTFNkIrlnEVqNW6JXWhvjz57SJMf9WxABsvDw2Xg30lOnjejFsrIxX4=
+	t=1760544963; cv=none; b=QrYQuMMHbsJJwViuBQE1+Gy7NIYczUZkUUpCi0e7wD/sWnqetSShTl6ESTVZthKFHtDqIUybEfX6XlpwQyZh3VCXqUb58IhSvj+67bTfa1BDItVGeMVMbd9i2NSQp4e5AdcQtQBgdviIk1pq5/T/1x+LH28NLRTP1rDczwmT8kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760544752; c=relaxed/simple;
-	bh=u6Wkdm2r1xLEd5GhkWdDZmkppsZyOO81BxcM2sb1/a8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrcNFowe9QQduZtblz2NB08xzW8TmU77+264m4vbtJDLh8DsCFWfhMN/ckxKM6+g7zsX+pwikFo5qAebAfOY0nk7ZLiudziJOWewMBZib6Hl+WHWUIuQiUqYFkH81phNbc69kiSumziMmSRDGU2ZCx5j2+tsrnSTRZxMrdb6J9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFfzR8W8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA719C4CEF8;
-	Wed, 15 Oct 2025 16:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760544751;
-	bh=u6Wkdm2r1xLEd5GhkWdDZmkppsZyOO81BxcM2sb1/a8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VFfzR8W80gEabOYattjVBWykE/ZZNiKDxm59H7O5UW5MwH45Jd8UxxnNcLG50ADo+
-	 SxVhb3ZwJcRRcYCmhBuA68sEIYxZ5kkpE/zWZLrfHEZ33aYYi38Mv/vtcsRFIZAWb9
-	 XzM3+676ZmlTDSHAZS/EclV2MgMOg2KcPRYgv75jfwdxs0o78IJwkaO7MDAyU7FPEq
-	 eatDEmOLmYvaQM/w5exPl+tza72zUUy//DvrCDvXMFFUKFIXKOSQbxW8ImEZds+z33
-	 qOYc6O1aZ4ik/7pANt6GaXz+vK3VeuLPAUBEFVFAEbIEnMQAvNJbUpivo5a623miWV
-	 iluUJYaaQSpjw==
-Date: Wed, 15 Oct 2025 17:12:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?utf-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari@gmail.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: tag_brcm: legacy: fix untagged rx on
- unbridged ports for bcm63xx
-Message-ID: <aO_H6187Oahh24IX@horms.kernel.org>
-References: <20251015070854.36281-1-jonas.gorski@gmail.com>
+	s=arc-20240116; t=1760544963; c=relaxed/simple;
+	bh=EdQiZWW7dyqxU0xgwc+jBg+2jTFzaTPKjJl04aUEQl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s0bYnekKKRx9QC/UT6m/295+4ck4uiVqk5KJAPzDfdHxFy6u6DCRN4jRWuTGKIdBsMR/ubH1lBnw8uNQPNmK0HvvemfpWz8Q4fjBK+vgmqi7oNd1AC246+monph6LzEi3JwD0xUtqBzG/EQbEccdra9KNOjBgzF9yxSdWL8GzUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eiwxvlP3; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7827025e548so2789502a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1760544960; x=1761149760; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U0cWhyFHm39c/QhmqoFNSj40kRTWbY1xbVx+yxyK9HY=;
+        b=eiwxvlP3uwP0gVfa8oLrXd6MllFdrhI+qJFWvTLaERkqCazePpilhUIdNK10ULrFb1
+         I42KdHfJjgLFOt4pdLr+wCkKLZI/rTZwhrYS2zWmV3OM0fzIeS0T80FKUJisby4TGK/R
+         5ls1KznrDDMeqNIc44BWNIuCa3pfY6yX4KVdPo/spKptj+KPsBtA/4cB9kPu+PQfNr6u
+         yxmiY19F4WmJkQF8H/WNKUnOxHhYknNs/u25wNPlKh/++rp0Rvac8kic2M9gXsY28WVI
+         mvO2fdoUx7HfskGIcaDnhbBxFdCWsH8qiV1vCc6itq21BugPtMQU5WOkQRsyiI68F+QL
+         hFIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760544960; x=1761149760;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0cWhyFHm39c/QhmqoFNSj40kRTWbY1xbVx+yxyK9HY=;
+        b=JFR0JIEwFj+9DQlYUeYHP4O20NVtW8VCzrspmuaYzlmfU9IIgQbiEFtHn1GOU3eV2T
+         H0ZAb3Js0+CPmMvJOWUEA9WZ8+UzwvW4PX/WE8PvgGSjlf6HeZFUmj8Bb1aWym/CVUY1
+         NLitWfmmZIysUoxDnWEmg/1jjtKKSmuYJBSi1prvuyjKc2F3Gh6QF8weix7SySblkXtT
+         F2er8pQCdlphmILMzV4LU9JwEBmOogbwUuejNqJnz0mgKetoSpq6SYsxJndheuBTuPqf
+         9FpuyHBjfKEHPDhUuao0uGWwC46Ha+XYXij4qUfy7lvUzDAN7+WZvkEOH83FkNq6lDgD
+         0KUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWohibY5I7iuyHQY13XfQqSbgpPdKofF8XL3gDR5Agszf4pltdXp93hx6wna1wEpyU9/YBxxGTzCFFYm1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzoErDE4of/acR0qwmqIn5/Tk9JSIQNrlQlYyXSOwvGpeofgae
+	dBofXBoQZlK/+h758UrB2G21BHIRg1fgb8Eo3y2lHlF3e+OxqiAwzjP+vN96WwTBU0w=
+X-Gm-Gg: ASbGncvAQVLe/JQ+H5BdFHNXEB2WEq04qOXge+3zXABs81ODOLLKdXv4nhX7lrAxbWQ
+	+btKwcaB2P91uGLetA2g2K5NCbYjEQVGjzrbyFeYXOWdD04qTAZOqaghp3CzVI2nN1r0eS1e6RV
+	GetQB98eTrlcls/UQF9t617i1NGJY25HLtQTbv5EN1g5o75fln0CJe3/2zvMcSbyaZ27GRW0qkl
+	cpo1H/OUuEiQ22e1KrT7Sc121uAJWaJMD5XbE3fXoG2n3X8OcRUzddOhQETqeZYNPTN3TrrGq6X
+	OzackjTyks9QvdWyqghBm1P/BFPgzBzrazNfYMoexc/NCJlHe3cq+7ZgpoiuaxskO/AVoY+e2Cy
+	H0N4ldUVgGD0sawbeE9DpWuMYoYXd8Pzf1tWEaUaYqxntaDlbQt/IlHrf9CN0lAtFKq54dhTtPD
+	VPKp0kj4yUNlTxNWx/2ytTmKREMQ==
+X-Google-Smtp-Source: AGHT+IFFgA+tqvSvFVni6cS80/SuvU771uyh8uuWXEuBMXLiNeRlLuKT+VJpv5tOEAyKVAZjy3/I1A==
+X-Received: by 2002:a05:6830:83ad:b0:78f:d54f:321d with SMTP id 46e09a7af769-7c0df720d1emr16302134a34.1.1760544959917;
+        Wed, 15 Oct 2025 09:15:59 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:c482:1912:c2de:367e? ([2600:8803:e7e4:500:c482:1912:c2de:367e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c0f904f161sm5419419a34.6.2025.10.15.09.15.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 09:15:59 -0700 (PDT)
+Message-ID: <d9455d90-31ca-4be7-b17c-2b339e92f8a0@baylibre.com>
+Date: Wed, 15 Oct 2025 11:15:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015070854.36281-1-jonas.gorski@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
+To: Mark Brown <broonie@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <noname.nuno@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
+ <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
+ <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
+ <409ad505-8846-443e-8d71-baca3c9aef21@sirena.org.uk>
+ <12db0930458ceb596010655736b0a67a0ad0ae53.camel@gmail.com>
+ <8c7bf62a-c5dc-4e4d-8059-8abea15ba94e@sirena.org.uk>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <8c7bf62a-c5dc-4e4d-8059-8abea15ba94e@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 09:08:54AM +0200, Jonas Gorski wrote:
-> The internal switch on BCM63XX SoCs will unconditionally add 802.1Q VLAN
-> tags on egress to CPU when 802.1Q mode is enabled. We do this
-> unconditionally since commit ed409f3bbaa5 ("net: dsa: b53: Configure
-> VLANs while not filtering").
+On 10/15/25 10:18 AM, Mark Brown wrote:
+> On Wed, Oct 15, 2025 at 03:43:09PM +0100, Nuno Sá wrote:
+>> On Wed, 2025-10-15 at 13:01 +0100, Mark Brown wrote:
+>>> On Wed, Oct 15, 2025 at 11:16:01AM +0100, Nuno Sá wrote:
+>>>> On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
 > 
-> This is fine for VLAN aware bridges, but for standalone ports and vlan
-> unaware bridges this means all packets are tagged with the default VID,
-> which is 0.
+>>>>>         controller    < data bits <     peripheral
+>>>>>         ----------   ----------------   ----------
+>>>>>             SDI 0    0-0-0-1-0-0-0-1    SDO 0
+>>>>>             SDI 1    1-0-0-0-1-0-0-0    SDO 1
 > 
-> While the kernel will treat that like untagged, this can break userspace
-> applications processing raw packets, expecting untagged traffic, like
-> STP daemons.
-> 
-> This also breaks several bridge tests, where the tcpdump output then
-> does not match the expected output anymore.
-> 
-> Since 0 isn't a valid VID, just strip out the VLAN tag if we encounter
-> it, unless the priority field is set, since that would be a valid tag
-> again.
-> 
-> Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>>>> Out of curiosity, how does this work for devices like AD4030 where the same
+>>>> word
 
-...
+The AD4030 is just one channel, so doesn't do interleaving. But you probably
+meant AD4630 when it is wired up with only 1 SDO line. That line has to be shared
+by both of the simultaneous converters so it alternates between sending one bit
+from each word. This patch series doesn't address that case. But this series will
+work for the AD4630 when it has 2 SDO lines wired up.
 
-> @@ -237,8 +239,14 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
->  	if (!skb->dev)
->  		return NULL;
->  
-> -	/* VLAN tag is added by BCM63xx internal switch */
-> -	if (netdev_uses_dsa(skb->dev))
-> +	/* The internal switch in BCM63XX SoCs will add a 802.1Q VLAN tag on
-> +	 * egress to the CPU port for all packets, regardless of the untag bit
-> +	 * in the VLAN table.  VID 0 is used for untagged traffic on unbridged
-> +	 * ports and vlan unaware bridges. If we encounter a VID 0 tagged
-> +	 * packet, we know it is supposed to be untagged, so strip the VLAN
-> +	 * tag as well in that case.
+>>>> is kind of interleaved between SDO lines? I guess it works the same (in
+>>>> terms of
+>>>> SW) and is up to some IP core (typically in the FPGA) to "re-assemble" the
+>>>> word?
 
-Maybe it isn't important, but here it is a TCI 0 that is being checked:
-VID 0, PCP 0, and DEI 0.
+Right, to be able to AD4630 with SPI offloading and only a single SDO line, there
+would need to be an extra block in the offloading pipeline to deinterleave the bits.
 
-> +	 */
-> +	if (proto[0] == htons(ETH_P_8021Q) && proto[1] == 0)
->  		len += VLAN_HLEN;
->  
->  	/* Remove Broadcom tag and update checksum */
 > 
-> base-commit: 7f0fddd817ba6daebea1445ae9fab4b6d2294fa8
-> -- 
-> 2.43.0
+>>> So combined with the existing parallel SPI support?
 > 
+>> Not sure if this is meant for me :). parallel SPI is for parallel memories and
+>> the spi_device multi cs support stuff right? I tried to track it down but it's
+>> not clear if there are any users already upstream (qspi zynqmp and the nor
+>> flashes). It looks like it's not in yet but not sure.
+> 
+> There's multi-CS stuff but what I was thinking about was the stuff for
+> parallel memories, I was trying to clarify what cases you were talking
+> about with "interleaved between SDO lines".
+
+The interleaving Nuno mentioned is where one word each from the two buses
+are interleaved one bit at at time and sent over a single bus, so it is
+different from what this series is dealing with (multiple buses).
+
+> 
+>> Anyways, IIUC, it seems we could indeed see the device I mentioned as a parallel
+>> kind of thing as we have one bit per lane per sclk. However, the multi_cs
+>> concept does not apply (so I think it would be misleading to try and hack it
+>> around with tweaking cs_index_mask and related APIs).
+> 
+> OK, so either just the parallel SPI or possibly that composed with this
+> (fun!).
+
+
+
 
