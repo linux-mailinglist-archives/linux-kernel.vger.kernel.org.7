@@ -1,114 +1,163 @@
-Return-Path: <linux-kernel+bounces-855369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EAFBE107F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9FFBE108B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8B074EA1C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869B619A6CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB0831690D;
-	Wed, 15 Oct 2025 23:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34E23176EA;
+	Wed, 15 Oct 2025 23:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HS33/Hl0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KpVCN8fg"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A87F770FE;
-	Wed, 15 Oct 2025 23:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518102FFFA1
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 23:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760571056; cv=none; b=JOOK0vd3zBdBBmi7MSaaZVV/XkRoYjXVeyLAwbGcoPbdviXRHb8of4WkcCbR5r6WZAohXImPNtcmZ+jYLZ7dbv9CJj3okFQeGKEJpbAXTr3E11vE3FdVvVnny5goC4X/2a06adk1B+V7s7qnAtLTpSUxA74MQWEQNsXGN9nhB8Y=
+	t=1760571142; cv=none; b=rd5R5NRRy46kVeP95W9rk2EXSFSMh38UJibhS+XgdcK7fWhrXTekp8mABt6MtZltOwA5eL4Rs3syd8FvOPEJb8CAPikdQn8RfK3FO6Gk4WncRVvZgZ192JPcYB4ZSy1MgGduuxrscDLqUgWZ9DGvd3keXNMrN+TF8GocpTwSrNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760571056; c=relaxed/simple;
-	bh=CsaX5yV/NyN97x/Uv+a7QO8gQ+m7nJzsFw7FkgehTpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sWZCENAwNaluNUJAds9tpVuK0/W7Se1H/L/ppWXPMUBvKm6LNc0dbf9sgXXjHKXa9FTF7r3DbDyFGGenefCoQXd3G6IR1hhJVWrpgQYFTzLkAwvDr1HMZd/wepoN++yxDxiHtOGByFtLcq/1ZvernxHdxqb1iUU97dRLUZNQHis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HS33/Hl0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE2CC4CEFE;
-	Wed, 15 Oct 2025 23:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760571056;
-	bh=CsaX5yV/NyN97x/Uv+a7QO8gQ+m7nJzsFw7FkgehTpc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HS33/Hl0qqOw8/swBgeOP3dDkNTBpyNp7ObDbbRYh6tivu4eXAaBR3MzXFOmL40HI
-	 YwXqvdC6LRf5pjpygmRMT23Afg7axVv5+vF75EEY23mK1TkHyCNpUuSot1eMd1GT7B
-	 LTXA8EHpmtIsO2qao76wVCyQ6a044N5HEM9K8CBiHS+6sS4stLJgWw1nx9Fb0bWHeu
-	 EgaeVlwpFahECt54rRgTY9EGrcn0DWfE8PTTmPPp4WRonW4xEvDlcYe4gvhRMkUQz1
-	 qp0La8RrZJ/abACTTJDne396F0f9JgcKPdDHkOQcNiswTbx5yfNzqgRaF0Pwdp5pxf
-	 i2QQXaCdcYXQA==
-Date: Wed, 15 Oct 2025 18:30:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Niklas Cassel <cassel@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	manivannan.sadhasivam@oss.qualcomm.com,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev,
-	FUKAUMI Naoki <naoki@radxa.com>
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <20251015233054.GA961172@bhelgaas>
+	s=arc-20240116; t=1760571142; c=relaxed/simple;
+	bh=E+hpu09ROQFdd1Em57oWayPsfVLzQBtFlkrFf6LFmYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fOwmE84QjQL9Afk+qVF56JpjbYlM8EasehN59mxhLlEqzm3uAG8UUIFpWgAymicDvnyTmRH5uLgLqBroHLKdrVw6IrR1PN/S8IRswJuZIbKbBH7l/1lhYDHeZBH2uxMwmQPNQDH+jRkuOSsb5BLmCkVyW3h3OAY12OwhmQGuu8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KpVCN8fg; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5848a2b3c8aso20671e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760571138; x=1761175938; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bpPxh0gcuqDsiBGhGT8nfnZ05AHmMsVAlwdJ8sk5caw=;
+        b=KpVCN8fg0eKg+zdhFi9pvlUG710HlDdM9sObq1jqHgTkTO3Ygjm4sKpnY8I63B2aaI
+         QX6BGdY0/A/RfprOLYqyuaCrIfVE2N+tpQZ89WJ7BOJUuKOFqBQt3LoXpr5plqKcIk/v
+         YBZ5vpfrSOTY4V4JlM2uEqtny6WW9AKCHbxUOniJliz3Aa/4cMgkFk2DUpNuLnUwmc/G
+         l1mgpnWyH9J4UcRAy9M8POCKBihBmKBAkG4hqv3BiFYxV0VG6J5sRThHoRwuMZnqiCWF
+         j9N6eHE6pf/KM/iuFgf+5bGbCUFiOAhyafIXlYEtgmmRXOkYP7cwAEpSoeoO6jFcx0Ha
+         OVZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760571138; x=1761175938;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bpPxh0gcuqDsiBGhGT8nfnZ05AHmMsVAlwdJ8sk5caw=;
+        b=S+1FLgIWQfKdk6LqxjyFGVlZaD2mva6NawPER4A4+NWjStiY0F0CBSERJ3ZjcFODxt
+         PKw8vldEgQUgYJV1fLti6fMgQgnciie3A7O117vFmopxPDh5OqG5sQOZC7MG54OjFeLe
+         3LvHgNUhqcNHoGLBT8DMCB0ETRy03iQhkLJUXG+SNsKxmGD2EGsdTs/rJAT2IiPKOTUB
+         DXMKXAx0zcPZNJdNy27d6svZzw8/x5UmBgsnAyBR4I6s+cx1BN2ou6a3yfdMxcvBSxQr
+         AcMQhsijRtROG8PEFgFsyKek1+m+3OvQbxgcWQfupmeOZCpFUww+yxjnEajZZaPO+t6N
+         I8CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXI1IMDyy7FCplbOsPnVE9eSKOU8F1hT2TyyhXxSnvAqvwaQFPgC2+w0PhTwwKYFHPb1C1fjE2iqCWprjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxySYPd2u7SBPWpbnNuFa6fTSuw1ADbkLmaHQt3kQaVMBDN/9JW
+	p8PuakNdZNxsc8rcpPSj20/JVUap4v2VfUbeBBy2VzrbiQEQjIXgnIort50jw2ZJjeI=
+X-Gm-Gg: ASbGncs+yHusjaAcDzpFA2N4C6F9y7xOj9c2QeVq1nBe8VyIp1vf5PN7b7Vyddak8Or
+	ShpkXerc4rZyOpSzYncKAx63AXfQGdz6c0fq+HG8pDEivU/DjEduhlTw0itzJg9O9YLbyxMzu46
+	zAahzdZoQxTk97Fd/bMaow7AE0M0mAWcP8rdNCn1NXhf/TCPGJ1+ff5EHB1XrN9KuP+6/+kkXap
+	2JKPn/DLpxsPAy03BG9kE5fWk3/k1DrfWcbOADbPBNwmNmhe/bSBNSDurGUN86Z2HX3PsrNn+V/
+	0FuM8/6BhR1PZew2OyttROTEl8NagVMvFFU5pVo4OeA3+Jt+tqoSIq4GYdJrPBrX0tEOpqCc7cx
+	JzDb2jscpbOn8+qJLTBXg8U+bCxjXcrmQzShZGlu5E1CyDsf69XkzKTTXashxWhbJmR1WF2jfg7
+	sDwbufhFpUkgpSe6YkqJMN/QNz44k+eDCXiHrbBZ3HzJlacvIhwZNPvNj5ws4=
+X-Google-Smtp-Source: AGHT+IFhmCfc/iqqM/lx8OD9acToPRRAMIUni22wMDWOAc8jc/Nu4v4J+9jAJJcyPXA90FdVyjEthA==
+X-Received: by 2002:a05:6512:682:b0:57d:c562:1f78 with SMTP id 2adb3069b0e04-5906d8ed17dmr5015764e87.5.1760571138323;
+        Wed, 15 Oct 2025 16:32:18 -0700 (PDT)
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3762e77cc6asm50763801fa.2.2025.10.15.16.32.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 16:32:17 -0700 (PDT)
+Message-ID: <a0d9389b-67a5-458a-858b-ffdd95f7ccc6@linaro.org>
+Date: Thu, 16 Oct 2025 02:32:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7df0bf91-8ab1-4e76-83fa-841a4059c634@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] dt-bindings: media: camss: Add
+ qcom,kaanapali-camss binding
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251014-add-support-for-camss-on-kaanapali-v2-0-f5745ba2dff9@oss.qualcomm.com>
+ <20251014-add-support-for-camss-on-kaanapali-v2-2-f5745ba2dff9@oss.qualcomm.com>
+ <dce1018c-6165-407c-8f3d-40859cb36b11@linaro.org>
+ <0b6c157a-3d8d-4251-a704-31f8369f6a4e@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <0b6c157a-3d8d-4251-a704-31f8369f6a4e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 09:00:41PM +0800, Shawn Lin wrote:
-> ...
-
-> For now, this is a acceptable option if default ASPM policy enable
-> L1ss w/o checking if the HW could supports it... But how about
-> adding supports-clkreq stuff to upstream host driver directly? That
-> would help folks enable L1ss if the HW is ready and they just need
-> adding property to the DT.
-> ...
-
-> The L1ss support is quite strict and need several steps to check, so we
-> didn't add supports-clkreq for them unless the HW is ready to go...
+On 10/16/25 00:43, Bryan O'Donoghue wrote:
+> On 15/10/2025 20:45, Vladimir Zapolskiy wrote:
+>>> +  power-domains:
+>>> +    items:
+>>> +      - description:
+>>> +          TFE0 GDSC - Thin Front End, Global Distributed Switch
+>>> Controller.
+>>> +      - description:
+>>> +          TFE1 GDSC - Thin Front End, Global Distributed Switch
+>>> Controller.
+>>> +      - description:
+>>> +          TFE2 GDSC - Thin Front End, Global Distributed Switch
+>>> Controller.
+>>> +      - description:
+>>> +          Titan GDSC - Titan ISP Block Global Distributed Switch
+>>> Controller.
+>>> +
+>>> +  power-domain-names:
+>>> +    items:
+>>> +      - const: tfe0
+>>> +      - const: tfe1
+>>> +      - const: tfe2
+>>
+>> Please remove all 'tfeX' power domains, they are not going to be utilized
+>> any time soon.
+>>
+>> When 'power-domains' list is just a single Titan GDSC, 'power-domain-names'
+>> property is not needed.
 > 
-> For adding supports of L1ss,
-> [1] the HW should support CLKREQ#, expecially for PCIe3.0 case on Rockchip
-> SoCs , since both  CLKREQ# of RC and EP should connect to the
-> 100MHz crystal generator's enable pin, as L1.2 need to disable refclk as
-> well. If the enable pin is high active, the HW even need a invertor....
+> Each one of these TFEs powers an individually power-collapsible TFEs.
 > 
-> [2] define proper clkreq iomux to pinctrl of pcie node
-> [3] make sure the devices work fine with L1ss.(It's hard to check the slot
-> case with random devices in the wild )
-> [4] add supports-clkreq to the DT and enable
-> CONFIG_PCIEASPM_POWER_SUPERSAVE
+> This is also so with the other xFE power-domains on previous SoC
+> generations.
 
-I don't understand the details of the supports-clkreq issue.
+This is false, for instance there is no management of SFEx power domains
+in SM8550 or X1E80100 CAMSS in the upstrem, neither there is no management
+of SBI, IPE, BPS, CPP and so on GDSC power domans given by CAMCCs.
 
-If we need to add supports-clkreq to devicetree, I want to understand
-why we need it there when we don't seem to need it for ACPI systems.
+TFEx is no more special, if it's unused, then it should not be added.
 
-Generally the OS relies on what the hardware advertises, e.g., in Link
-Capabilities and the L1 PM Substates Capability, and what is available
-from firmware, e.g., the ACPI _DSM for Latency Tolerance Reporting.
+> 
+> You'll need the TFEx power-domain to process any data on TFEx with the
+> 'lite' versions being tied to the TOP GDSC.
 
-On the ACPI side, I don't think we get any specific information about
-CLKREQ#.  Can somebody explain why we do need it on the devicetree
-side?
+When it is needed, the documentation will be updated accordingly, right now
+it is unknown what a data processing on TFEx looks like, it might happen
+that there will be separate device tree nodes for TFEx.
 
-Bjorn
+TFEx power domains shall be removed right now, unti; a usecase in the upstream
+CAMSS appears to use them, I haven't seen such code at the moment.
+
+-- 
+Best wishes,
+Vladimir
 
