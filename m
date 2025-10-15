@@ -1,124 +1,186 @@
-Return-Path: <linux-kernel+bounces-853955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DF1BDD29E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:40:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57B9BDD241
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA64B5089E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F143AFF5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BE8314A8A;
-	Wed, 15 Oct 2025 07:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7443830274C;
+	Wed, 15 Oct 2025 07:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUuFuxkS"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Be5TlGWf"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE06D313E39
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EDC2727E2
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760513578; cv=none; b=n6jNeYbCUkussCThLmkBGUkwstXBhjIWB1QR+KEbQw8uc3YFwsJLbJdq/kXoWag3q1DyS4IVBm2J5ISI/uVQvNQvKfFp7ts0TVhrZk6OtYi3qEI18DvgoQ/KJkaXe18eN9Fd6r91mu6iwhWKB8Q7S7y4vqzvuMqcjvsTsIaB+VU=
+	t=1760513739; cv=none; b=BhyDs6+eQ/jTrCB/3GXw6W3p+fWFqwd/9onHl4XWHgnSiPU0JvaWsmb5tQ6LOXpDASFlvbBhbAeoGAMUB9H71MMhrY5b2i7Qi7auzXDOxT5csk6uFNSdrB/GGeWJ4VRnAEjtmdretX/GtFlcMp8pU6aynTO67lnjZsraQ88jOd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760513578; c=relaxed/simple;
-	bh=TqkvX9sJJn6FlWWWGRKJNsMYEF37qY1Fai6quimjzjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ab5rB62X3QpnvVZwtrdfTpYgOEeVvNDSd0JE5nKO1wBm0UtZVsx0bzH6QvAp9gZyZTWFfzOGRwxuk+vbSdg1iSSNOJAuR6RBijzowvFU+MePLFnwxfYKWS+59VgaVdlCK7B3SiFIJ7WJIfjCJ0WHgIbCxbWs8/EEsb3dUkDkw0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUuFuxkS; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1760513739; c=relaxed/simple;
+	bh=LnoauIs/Y5iL+KDQ/07Df1ME8X2Pl/XSucIAsssERmI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XQBaGd0dgMQskkhDOmBJsuZyVTiYAVd+FdCDWH1nJWOTmcFu0/ir4IJH7lvHiSBzMEAzmJGi2xFKNhrWRrnXdS+4PzSnLlYgpcGKHoADcXf055bKF/CvV9pS3av+98yGCDq4pZcF5kcS7V/E9A407ErRFr6lrSaB4oKEHYHAKD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Be5TlGWf; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b3c2db014easo332173266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:32:56 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so5672588b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760513575; x=1761118375; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cu/zEiC7ds7XeHZ44gt1r4dEzp1UHt8UKyKXP93tZdc=;
-        b=EUuFuxkSEA3XP3PeiWfyH8tOZu4pok3Yjv566DkVwzYzNYZjtb2+p3oO3aeZ11vPiF
-         TZK56rswic+vbQIHuOGRL9ATkYBUVunk5TJ6NXzgvr+W2LfS/QKmCPC1LWn5aKRC2ejJ
-         kd8Mu3iuIBoaeGtcpOe+8RbulygVvmEXECFCpf4oWu+SPgBJuAggeSC+H28Pp1B+wCb3
-         cRuRolyxrDXjVsxcvoKYbsZHUjs/HbZZiexGsxAnxOhG49ykzaGKGyJ2bJpbpm1FfO0c
-         m7gtPGB46DvnoTc+6DHXGztAivDlD0+oxzgf9Ag6W+oPVXao+/5BveuBgwTI4l0ldRn5
-         sbtg==
+        d=gmail.com; s=20230601; t=1760513737; x=1761118537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qy/hEtN2/NVng990dfEXmt28WC9jcrITPTpGO9f9qcc=;
+        b=Be5TlGWfnmct8iGqhZibLmBB8g3b9DVZgbFgyRhwZ8N4sVaOSiZr6xqCWUQWAubz+l
+         IFzFvHm4jCOnavDkcSC3hqZVe+8ES7ysyBHjsHQbgq5i4E0DCnsPzVjplqviam/UO+8w
+         zR6QH8P+QCL03hGThV2vdvqX579OC4o7oIIzHmAsc17xcRG27BKpBZZ9U2sI7QG8K64j
+         iBVfgZGDwvwztHe6zUhebMV3Gro5QuZjJJSMi2KLdKx3Ufx+uz0MJij6bpI3k/Zhthjj
+         6z+WzGPzxSoSJ02pNUcwq5CsLd2BOBPmFu1P7Vf7cxjaeZVQZ1FiiaZu+mCyO60ExLA0
+         5+4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760513575; x=1761118375;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cu/zEiC7ds7XeHZ44gt1r4dEzp1UHt8UKyKXP93tZdc=;
-        b=PqWLGUBREhV9uFZJ9Mrsl+d6rcW46dcaACl8icz8+WruWOc+co3k9/TLmgh5gjNCf8
-         FRf+0BO8xPhZOUSc/amALe6QdCZE8UWg/ezaRMbi2vOfpmlqtAM7N7V9rfuNFZj1uitK
-         m5zcbW6Mn4eKbH+Abyis+rVj9mFySaVyg7Uvx7eHvDhZDG+RHgWxFJttmGBhRPUTuOK1
-         PVM/tQQ+dQIXFck3Y2xCTdCNRqJI1dHHYTztiCTN2uQ1B7URGqG+/iA5hmuQeJT7uLev
-         gnFhkPbgDPnwbE8qIpjuU8MouWQ2GPy8aFScxuxX105o8w5GCMaGJJCVgt6Pt3L1cajq
-         GFGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Vqt9eYFI2fKdxr/NzHItFewb7b3qzF815F772q6L0I+eQM6+KDxT36ep1VaKp748ZLpJagzNmysNk/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf00e4LWFyPQR2ZADGsB6wiuGcmSHQuV+xS03elV/c8oKVltay
-	Em/HgE02MkjsJgxPDIlxswlWW6enwVZ+Dl1fc9HmC+WpDYyVFkXHnP8e
-X-Gm-Gg: ASbGncuyER7gxiMuvLMjBQM4ZnR1iC6+W97S4CL9P6kr62p66rC93b0OzGFHJUPoo6W
-	icCJSHJ6KpQPxIUW2CIjwZura7Vzr4o/+nILbEsP2qnjcftDpAhiiskMPdL4QwYr2lsYCCvTwQB
-	g5AV27ojKuSPZ89cF8uLO8Wdo5sYhH1AczXdDHmE3U8SgvjOz5WJ3hH7j+Of3ygs/NkCoV/4JNr
-	DSYvGKEOiWU1GHVR7UK1b5MiAjV95XRQoj6SI73+Qwzqy1Z57lR+nQrb8D10bPvPOga38+fIKAa
-	h/mEaNjtbBgPWWyEI8MvipJqlKbYjS+LrKZODSwd1AEpji3uM8DvLLLs9T5Ps2wQKiKJQ1vFMrv
-	ZhsEtWgMlmsBmlsOn1uzL7ZqKVu0AJJGuO//NFzi7
-X-Google-Smtp-Source: AGHT+IE03KE2pSI4rTJDmqhEodHZuWeu+5M1Rq7LihYajBzN/AObneWDEFvxo2MFDZhDavivsyt/kQ==
-X-Received: by 2002:a17:907:d08:b0:b3f:f822:2d9b with SMTP id a640c23a62f3a-b50a9c5b3a4mr2744828166b.9.1760513574611;
-        Wed, 15 Oct 2025 00:32:54 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63bdfd73dcbsm2176899a12.27.2025.10.15.00.32.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Oct 2025 00:32:54 -0700 (PDT)
-Date: Wed, 15 Oct 2025 07:32:53 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: wang lian <lianux.mm@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Rik van Riel <riel@redhat.com>,
-	Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/khugepaged: fix comment for default scan sleep
- duration
-Message-ID: <20251015073253.aqyz6dhgion443hl@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20251015064333.31274-1-lianux.mm@gmail.com>
+        d=1e100.net; s=20230601; t=1760513737; x=1761118537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qy/hEtN2/NVng990dfEXmt28WC9jcrITPTpGO9f9qcc=;
+        b=qHZ+yerWtdYmL788fJ/kvEU/FYxoN5zZss1xddeeFnd+rRmm15Qk3Rz0wB7AXkCUUM
+         9KghTgCIC4C/0kC2k0fW7iNhUyBbqtBdXWhp+RR6f6SvAnJyFvpxX1V7hUnn8iqeeCEH
+         T3xXKb8l3x7NL7r6w///UtMFA2q89cbRPP2L5koutxY5zO2+OLygI+2C2z/56EHc1wCe
+         fgr6JGI8zQgSMTIpcSRaQnC3d33TodIHA6n/CDjzslv5A+obwIk4/h3RIVC7NFOlFGs9
+         Xl9fD2SZbolctaNC57os3Iw3m0a0km5f+vy4MZlHBmzAS9uaYFJb1mX603i0rc+7S/ux
+         38Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgJCYWV7Tl6WxeDGLuSaf7chBN3ma9vNqsIaDzY9Z6l6tRnCcry2yHD8mxgFHRpW8m+qQ9DP4hKrlnFs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGQVSv2j7/RGnx9dbAkEskuKE9Npf2nVk7kTaPXqAVweMYDBbF
+	GaLjaA7dJPb2VssGPIUIa8mwsgHBI0R9ybvD+dNn4rwBorwWguo1wIrx
+X-Gm-Gg: ASbGncsUhIzlllDMw47TlEI4S9LcMDtTRV82Z6GyJQXPiez4yDJL305CdYKBZKDxCRl
+	7AaGchVkLRiiVVw+C7g35PFDE9xDcSbrDY6IRfkj0M5pFvX5VwRcEBazJ79qoVhAN9TpMS0ruSh
+	Ceuajbrp+xwXpF8irhsB19q5QRjefsnLtcGlkYuiQdXg3sY9oB+eQbdVHebVWVrAho5FOhpEIjz
+	qOqhhDob5oiVguf8BAuBvhn2FTLlRuke/VcRVwoLiu7hXR9RVeoUxOiOEqO0j2lCjcsABoNQ5Y8
+	K9l0CXIBXLTbD/xp7ECIiwQ9lfmEAbZpRrEAMzjdvLSsAtFyhjbh4OLDUn2tg5n8LooVKNMq9KV
+	4Ka1UZ7fe+3LNqZ1RyntAnCl6JVZlZlQ89u4Fmy2me4kkR2nFDg2wxviMihku7TRbrnIVV4TSnl
+	ymRK4=
+X-Google-Smtp-Source: AGHT+IF+RK8LeSZE9IM4y5bjGsIiBgBsDpf8u33EJSLe4TS7qsyy5ASweq3OAhEAIWPq0SLT82Tl8w==
+X-Received: by 2002:a17:903:1aa5:b0:269:96db:94f with SMTP id d9443c01a7336-290273ffec4mr367735365ad.49.1760513737488;
+        Wed, 15 Oct 2025 00:35:37 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f5840csm187216485ad.107.2025.10.15.00.35.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 00:35:37 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>
+Cc: Yuezhang Mo <yuezhang.mo@sony.com>,
+	pali@kernel.org,
+	Ethan Ferguson <ethan.ferguson@zetier.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH v4] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+Date: Wed, 15 Oct 2025 16:34:54 +0900
+Message-Id: <20251015073454.1505099-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015064333.31274-1-lianux.mm@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 15, 2025 at 02:43:33PM +0800, wang lian wrote:
->The comment for khugepaged_scan_sleep_millisecs incorrectly states
->the default scan period is 30 seconds. The actual default value in the
->code is 10000ms (10 seconds).
->
->This patch corrects the comment to match the code, preventing potential
->confusion. The incorrect comment has existed since the feature was
->first introduced.
->
->Fixes: ba76149f47d8 ("thp: khugepaged")
->Signed-off-by: wang lian <lianux.mm@gmail.com>
+Since the len argument value passed to exfat_ioctl_set_volume_label()
+from exfat_nls_to_utf16() is passed 1 too large, an out-of-bounds read
+occurs when dereferencing p_cstring in exfat_nls_to_ucs2() later.
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+And because of the NLS_NAME_OVERLEN macro, another error occurs when
+creating a file with a period at the end using utf8 and other iocharsets.
 
--- 
-Wei Yang
-Help you, Help me
+So to avoid this, you should remove the code that uses NLS_NAME_OVERLEN
+macro and make the len argument value be the length of the label string,
+but with a maximum length of FSLABEL_MAX - 1.
+
+Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=98cc76a76de46b3714d4
+Fixes: d01579d590f7 ("exfat: Add support for FS_IOC_{GET,SET}FSLABEL")
+Suggested-by: Pali Rohár <pali@kernel.org>
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ fs/exfat/exfat_fs.h | 1 -
+ fs/exfat/file.c     | 7 ++++---
+ fs/exfat/namei.c    | 2 +-
+ fs/exfat/nls.c      | 3 ---
+ 4 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 329697c89d09..38210fb6901c 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -29,7 +29,6 @@ enum exfat_error_mode {
+ enum {
+ 	NLS_NAME_NO_LOSSY =	0,	/* no lossy */
+ 	NLS_NAME_LOSSY =	1 << 0,	/* just detected incorrect filename(s) */
+-	NLS_NAME_OVERLEN =	1 << 1,	/* the length is over than its limit */
+ };
+ 
+ #define EXFAT_HASH_BITS		8
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index f246cf439588..adc37b4d7fc2 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -509,8 +509,8 @@ static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned long ar
+ static int exfat_ioctl_set_volume_label(struct super_block *sb,
+ 					unsigned long arg)
+ {
+-	int ret = 0, lossy;
+-	char label[FSLABEL_MAX];
++	int ret = 0, lossy, label_len;
++	char label[FSLABEL_MAX] = {0};
+ 	struct exfat_uni_name uniname;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -520,8 +520,9 @@ static int exfat_ioctl_set_volume_label(struct super_block *sb,
+ 		return -EFAULT;
+ 
+ 	memset(&uniname, 0, sizeof(uniname));
++	label_len = strnlen(label, FSLABEL_MAX - 1);
+ 	if (label[0]) {
+-		ret = exfat_nls_to_utf16(sb, label, FSLABEL_MAX,
++		ret = exfat_nls_to_utf16(sb, label, label_len,
+ 					 &uniname, &lossy);
+ 		if (ret < 0)
+ 			return ret;
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 7eb9c67fd35f..a6426a52fd29 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -442,7 +442,7 @@ static int __exfat_resolve_path(struct inode *inode, const unsigned char *path,
+ 		return namelen; /* return error value */
+ 
+ 	if ((lossy && !lookup) || !namelen)
+-		return (lossy & NLS_NAME_OVERLEN) ? -ENAMETOOLONG : -EINVAL;
++		return lossy ? -ENAMETOOLONG : -EINVAL;
+ 
+ 	return 0;
+ }
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index 8243d94ceaf4..57db08a5271c 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -616,9 +616,6 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
+ 		unilen++;
+ 	}
+ 
+-	if (p_cstring[i] != '\0')
+-		lossy |= NLS_NAME_OVERLEN;
+-
+ 	*uniname = '\0';
+ 	p_uniname->name_len = unilen;
+ 	p_uniname->name_hash = exfat_calc_chksum16(upname, unilen << 1, 0,
+--
 
