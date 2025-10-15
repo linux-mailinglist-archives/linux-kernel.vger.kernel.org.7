@@ -1,161 +1,99 @@
-Return-Path: <linux-kernel+bounces-853802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2457DBDCA04
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:42:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882B1BDC9C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AC694EF65F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1F919266F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904C2302CC0;
-	Wed, 15 Oct 2025 05:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4949C303A3C;
+	Wed, 15 Oct 2025 05:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nT063UBo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scO9Kl4R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3659C303A27
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4621302760
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760506942; cv=none; b=kQLkOjB0NR90ijvbYaMLaUvd3ypmBZ9wt0ebdu0ZH+lJNLU1LK3QYFGtUtkRvhkBuceF6qvq94hCg4v0oz6lxsJzIULlmOA88C00JWmnt+yBiaH+QAqZElWbe/BY0/mLCqHCs32dUcV7dHlAxrurAyMgpcvZQtlBqdFUyR7ltaQ=
+	t=1760506797; cv=none; b=ZcS8srwqLD+hFyE5xyRdTv0dnDto8NxGrGWNWfGBz3kzxhKqRM+EBe1MQE5B9uNpie0+oAkJU6FtUDlDLrE6tLEONLx/lt8HZC5OAfHglmOZbW7V58ddKEdCMpZp+Pm2rmjOYFDw8iTTUuV8C8og/TxpxPuNAYaTylBBUpMH4Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760506942; c=relaxed/simple;
-	bh=M9nLxMplSMiBhPOFPdGzBcv2AwYk5gsRtz+J0q0qQz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FCtoPMT3EkMdiwcyXqJP0lPqeq7E4KSdfVA8spYm12cccHg9Nsv334YZORqPy/Mubeo7juw2W2llcXuVaRrpzWy8JD+kJZA9KMwB1cPSd/oaSp67mC0WiuhQPjM0DupMfH0in2BJ1A2zu9ZvfAUVg35mtwGjJL6y/682scazFIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nT063UBo; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760506940; x=1792042940;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=M9nLxMplSMiBhPOFPdGzBcv2AwYk5gsRtz+J0q0qQz8=;
-  b=nT063UBoE6LK78Ze/UAzXmqQ19gOHKboKFR2XXabTEU49EMq34rJ0Yg1
-   ca+Q1+H1rIiWlYyLFP7NAndEjyROMNXydb6m7IbDbNL8qYYbSJEAqe8CT
-   jUHLB2a7PfNQ3y/119FUz/c3I6Q/+nmtpMi0V5R+DmC83ytm321NuzZ+t
-   b6vt7u5icxGQZnijSG74391Vfn3xy8Dz0dj/7Uge+MFDm2RAlFRE20RKi
-   g/p8LGWcrhHijlpgn48ay/FPAw1ige0CuJVlOZzsSdoT13FzQ5ekkTiyA
-   i0JtS4YyVsjaTUqdke/4gdrQIz/rquXfA2KK14lIBe0FFOdNUldQoXwew
-   g==;
-X-CSE-ConnectionGUID: kprbPQdmSbWIC8HdVsTprw==
-X-CSE-MsgGUID: n+UN0cP1S16V5xhTBAHolQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="73275230"
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="73275230"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:42:19 -0700
-X-CSE-ConnectionGUID: V4z70CP6R2+/0T0j+LTmrQ==
-X-CSE-MsgGUID: d6UKwrkaROSSKj4Zgv4T0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
-   d="scan'208";a="181296500"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 22:42:13 -0700
-Message-ID: <6b187b20-6017-4f85-93ac-529d5df33aa2@linux.intel.com>
-Date: Wed, 15 Oct 2025 13:38:33 +0800
+	s=arc-20240116; t=1760506797; c=relaxed/simple;
+	bh=N2YMTAv5/Erss4vrbn7vowBRWnEvN4sv8YMq6BF6G5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g0/Fayw9a1owPS0+MLAuuC3y/RTJUSCxTp4BOQYhFclKCxUGClrurqGQhMnHfUPiW6F3rw0dv/FEQOCHbBlkPCbqlwcaauVmQ9BitoiJtAP+9y8FXmCh3llogXcYSG45do4mkZKVA0tKl397wNfnFDL9EjbM06YjQpa8O6ZDBwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scO9Kl4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4802AC116D0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760506797;
+	bh=N2YMTAv5/Erss4vrbn7vowBRWnEvN4sv8YMq6BF6G5Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=scO9Kl4RafaeNniBn95u3yg7MhdlvRM+SMiQv+fVPNGqXLManr4VTeidZ2y5QsLVi
+	 KLNSVquKkWAqEpQ0QYSQel8RhFlMjTkugXrCEiCwD1nDVR+lpaE/Q6aL4QkS/RZ/Oj
+	 LtB/pzGr9EVHc1r1/lruQO+1j4GL2Ixvx1qNuu2K2olKp+NNnZtSR0sWP/t0GFkSth
+	 wmoJkR0GRqMi7mbulOLWlTF3i56eFqcHiWJU9vJpuLFICTZFmhszFFVF+uXcMrLTHy
+	 m5EHNs+ZrlzwOdt8DTR5+5XIPitx/hJ82W6+jiYSuofAmlsc05fI+ljXaDBTWDFs6b
+	 LXBHWOWFmRF8w==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1153401966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 22:39:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/JIlRP98OHhqKuvNnBa92d5z5ON8R4/NyDw5frunxzBEEgAXJsR8bOUJixFK3FkRko6HBmB9MMC1c8xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7N4/2yj6xc1YLP4Y5wMkw8FovHaZsHu54eNgd2EC0uSTQQzYp
+	GDd8JRovNzP49WhMAM/Xq9/kpxRE9EbE7EtFjD/NTHmkWEoT0Qa19/bBPfZb3XlC7TRcLvrgbkI
+	l2MWuFWqOSezOMJPqfTIwItTOiCRysJI=
+X-Google-Smtp-Source: AGHT+IH1vMU/orRGy0ZX6vYibEmnp37EGo9VhkFW5FLl7jTp9OahtUDri88B+d77LmUdc6jIEPU+Xohtq+ywr95c8Os=
+X-Received: by 2002:a17:906:ee87:b0:b3c:3c8e:189d with SMTP id
+ a640c23a62f3a-b50abfd3442mr2965512266b.32.1760506795889; Tue, 14 Oct 2025
+ 22:39:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/7] Fix stale IOTLB entries for kernel address space
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251014130437.1090448-1-baolu.lu@linux.intel.com>
- <20251014174339.c7b7d2cfb9f60d225e4fe5ec@linux-foundation.org>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20251014174339.c7b7d2cfb9f60d225e4fe5ec@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251014130146.3948175-1-p22gone@gmail.com>
+In-Reply-To: <20251014130146.3948175-1-p22gone@gmail.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 15 Oct 2025 14:39:42 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-OSYg3fVoxDKVQm6r2kQDJuR-UfL26_ijoCPMsxX=L8Q@mail.gmail.com>
+X-Gm-Features: AS18NWAp2ZUhgfa2PaM3K8dAQn-mvshE5Ir3V9wZGwh6SOrfZ_xhxjVxhKxZhKE
+Message-ID: <CAKYAXd-OSYg3fVoxDKVQm6r2kQDJuR-UfL26_ijoCPMsxX=L8Q@mail.gmail.com>
+Subject: Re: [PATCH] fs: exfat: fix improper check of dentry.stream.valid_size
+To: Jaehun Gou <p22gone@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Seunghun Han <kkamagui@gmail.com>, Jihoon Kwon <jimmyxyz010315@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/15/25 08:43, Andrew Morton wrote:
-> On Tue, 14 Oct 2025 21:04:30 +0800 Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> 
->> This proposes a fix for a security vulnerability related to IOMMU Shared
->> Virtual Addressing (SVA). In an SVA context, an IOMMU can cache kernel
->> page table entries. When a kernel page table page is freed and
->> reallocated for another purpose, the IOMMU might still hold stale,
->> incorrect entries. This can be exploited to cause a use-after-free or
->> write-after-free condition, potentially leading to privilege escalation
->> or data corruption.
-> 
-> Is only x86 affected?
-
-RISC-V is potentially another one. The RISC-V IOMMU driver doesn't
-support SVA yet, but I believe it will be there soon.
-
-> 
->> This solution introduces a deferred freeing mechanism for kernel page
->> table pages, which provides a safe window to notify the IOMMU to
->> invalidate its caches before the page is reused.
-> 
-> Thanks for working on this.
-> 
-> Can we expect any performance impact from this?  Have any measurements
-> been performed?
-
-This change only defers page table page freeing, allows for batch-
-freeing of page table pages, and notifies the IOMMU driver to invalidate
-the related caches. It doesn't impose any overhead in any critical path;
-therefore, I don't see any potential performance impact.
-
-> 
-> Only [7/7] has a cc:stable, even though that patch is not at all
-> backportable.  Please give some thought and suggestions regarding
-> whether you think we should backport this into earlier kernels.
-
-Yes. We should backport this series to stable kernels.
-
-> If "yes" then the size and scope of the series looks problematic.  Is
-> it possible to put together something simple and expedient just to plug
-> the hole in older kernels?
-
-Squashing some patches is one way. But would it be workable to backport
-this series manually? Say, could we send a pull request to the stable
-mailing list after this series has landed?
-
-> 
->>   arch/x86/Kconfig              |  1 +
->>   mm/Kconfig                    |  3 ++
->>   include/asm-generic/pgalloc.h | 18 +++++++++
->>   include/linux/iommu.h         |  4 ++
->>   include/linux/mm.h            | 71 ++++++++++++++++++++++++++++++++---
->>   arch/x86/mm/init_64.c         |  2 +-
->>   arch/x86/mm/pat/set_memory.c  |  2 +-
->>   arch/x86/mm/pgtable.c         | 12 +++---
->>   drivers/iommu/iommu-sva.c     | 29 +++++++++++++-
->>   mm/pgtable-generic.c          | 39 +++++++++++++++++++
->>   10 files changed, 167 insertions(+), 14 deletions(-)
-> 
-> It isn't obvious which tree should carry this.  Were you thinking the
-> x86 tree?
-
-It could also be through linux-mm tree?
-
-Thanks,
-baolu
+On Tue, Oct 14, 2025 at 10:02=E2=80=AFPM Jaehun Gou <p22gone@gmail.com> wro=
+te:
+>
+> We found an infinite loop bug in the exFAT file system that can lead to a
+> Denial-of-Service (DoS) condition. When a dentry in an exFAT filesystem i=
+s
+> malformed, the following system calls =E2=80=94 SYS_openat, SYS_ftruncate=
+, and
+> SYS_pwrite64 =E2=80=94 can cause the kernel to hang.
+>
+> Root cause analysis shows that the size validation code in exfat_find()
+> does not check whether dentry.stream.valid_size is negative. As a result,
+> the system calls mentioned above can succeed and eventually trigger the D=
+oS
+> issue.
+>
+> This patch adds a check for negative dentry.stream.valid_size to prevent
+> this vulnerability.
+>
+> Co-developed-by: Seunghun Han <kkamagui@gmail.com>
+> Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+> Co-developed-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
+> Signed-off-by: Jihoon Kwon <jimmyxyz010315@gmail.com>
+> Signed-off-by: Jaehun Gou <p22gone@gmail.com>
+Applied it to #dev.
+Thanks!
 
