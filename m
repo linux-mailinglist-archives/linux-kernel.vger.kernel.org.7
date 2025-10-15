@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-854943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E88FBDFCC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:02:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F828BDFCCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 566874E3F8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:02:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECD7C4EB0DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF7533CE9C;
-	Wed, 15 Oct 2025 17:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA72A33CEB6;
+	Wed, 15 Oct 2025 17:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IuaKdqJf"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vMv5tJCP"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DD0334397
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7328033CE93
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760547747; cv=none; b=oM0e4cDxx8f1WpeoRdE5V2q/YrrI4CBzO7OfRIHdxIpXu84UB49MJN+l5BsT93BZhtLRSnMUGXUtoEWY0v9rJoEn8E9sJ6EW8+ujLh9MAY1a+mXD6JMupmJOyhxxfYmfl/n5HSBjThiyKUyod4oGm/WIqdooRSloKJdar80uZjk=
+	t=1760547749; cv=none; b=oLJn1CdIehme3NmZzU6fjdmigq0ymgeLbVV8U/8rtPjnyoYivXeawioEYv3dBjagYHB89I6dv8xJRf4qC/7VVT8UJc+reJS+OTVr95nXlrQXn8X2ByMghTrLT77ZrzU2h8co1P5N/XpTlUvHL3N4IbTYxiYBNPrvPOUAHw5IL/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760547747; c=relaxed/simple;
-	bh=1jed6GmDT1FsL0aWAQrTOmSmNfkR/x9qXkLi2gdyspE=;
+	s=arc-20240116; t=1760547749; c=relaxed/simple;
+	bh=z7jbkJWCiHJzDsZp2daYSUCdawNKubcfe8rNVKzOBZE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KdDZKFjNFlQFhLGNw4+1Lajrar6rv53m/k7JO+rdNQdJX7eNqotwSGPZ4xYXNq11fa/TW6N4Zmnd3ry2nRlfUI2FMpqKPBls4SPAzZ4Y0YKCbHmCya8Vsa3BlBFIDCNnf1SoZtUEpJFZ+85c+h8R1OQZ7dZuT+vEQF+sHhOAg9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IuaKdqJf; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=QA2/snqIVRnyuvQQNg2760QTIZ5AO187FF1DAltsWY4t6zOVIXTEYL8os0LCcI+v0OuS8166vjLf+Os2iZEiKWRJqBQrJFAgYH1n2y5zn0qbcZ+WBpAvUVUYnmxieAconkAk/tYBkOM27xZWSYkpbvAhHq+cBnjR9eDzTHBXWfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vMv5tJCP; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e41c32209so41481615e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:02:25 -0700 (PDT)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-426d314d0deso3105133f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760547744; x=1761152544; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760547746; x=1761152546; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFa5MsvOEgP3p/Hez6gTFGugruhQ98Q36uD5Tr4UKtc=;
-        b=IuaKdqJfvvwjIqtkpNjIUSKpuPGx4QJ9ERpU+mojB0TGlrCD7y43s5Qqjod0AEHnJr
-         kQbxj1jTW5bGJStKkMIZLOOlQAxjMi4QCteYt8Rm6AfT8w6iMdWXQv51oLOc3naXhetU
-         hcQvdhimQmgDautnYr24mdoHxcSNtjQLtZbYfbGdOLhIjbXlpguQ7tYKuXG+xuoVX9x7
-         l4TsZLDQW96G/Ef0ERhjoN6VolYTrbwaQf6ntnwhIZsWbo9NZlx3uX3ipTPR/ouAQ0t7
-         M9vVR4MF6tvDcqqAsKc0bIOrkmida+qaEnpHTKuPM0eUjax2D6r/iIU8DfvMYdQzC8Je
-         atbg==
+        bh=qHQ/My45H6NW6pE8FY9S/15tlaPt8FNQ7uHm7Il0FNA=;
+        b=vMv5tJCPJZsFH8/dGfay0bq/aeIdA98O86DRMjgS7gHEW3NJN3ktHDgopayy5/X6qh
+         jX8fNaCSFH8Ym5AJN420JarURcpVu7P1KpnsKToC0kTxjSyIv4rONzFDrRt0mR86mRXU
+         4FQRKkp07j0Y4ZwQrwz9oxCmTQO3pb6zeDT3ZVcTGqNNIMMtONjiamps3O7Dc9OtRvZT
+         zpsxLVWfGxVfcewjBnxJ+91aHMd/7Jl/BBDR2YXQiCVnobiMCNEdK/rNBA4SZDFO4Kyw
+         5JzJNh3uD9I3NvnO92d8elLtQowXo8CdrRAfk2kLMG8z4A70P+UGlf+U4gFSPfw8aBxx
+         wzJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760547744; x=1761152544;
+        d=1e100.net; s=20230601; t=1760547746; x=1761152546;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFa5MsvOEgP3p/Hez6gTFGugruhQ98Q36uD5Tr4UKtc=;
-        b=o1g6a8T2uy8EjjcTqsgvejDENlNKAnG9eJHZywbKfGxxxlRZ3umCLubJOqCc2d63cv
-         R+T9IAPKduZkUNfLyjOMKdLMhXhAoEY2+k5QWoijcqreJHp7GrhZMsrfux0f9GGhiYD6
-         vLrcHYANmFZDsit39za6m7xdxxcMdNWoazZEKgFUyIvZyZYG+JMpbX5bR1m95cIQmQL0
-         IJmdpaSIGMwVTVM2HZZ6EPcYslJrookt5DqYXCzA9AJl59TO5a3gwiqz06vM5IrFYPlT
-         ziYYU3sOHo1YoWX4OsOMdZsmxtEIekM1FqTNerCzdwAzt+s0f/ZnSzzj3PvcvNm91uQa
-         gQGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHitVZ//CcogdOsR+jXducgDHDxpSSgnGHvi3/YZVVCdcOczzOGkjCAzm5GobI4LWaNGneIPcUznZT9SI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+YIKFeJLfzzWBzgVVpVUA9edlMzap9rNRDl//ZA3lqhzZJG6G
-	J4xykv/Houno1bdaKZaQkYvXEwkTospkeIY5oxvn+VDZlIgYqbuyGxKE+CdaTfogC+e8IuWiod1
-	XXcHrDodEulCWyA==
-X-Google-Smtp-Source: AGHT+IFvxc3sGG1SeHoxohU8Q35w8zbZLd6mM8Sf9fcI92y8FVCNPWrspXmbbM6LPsQib/+IzMUzo5jzGr5ojw==
-X-Received: from wmoo1.prod.google.com ([2002:a05:600d:101:b0:45d:e2f3:c626])
+        bh=qHQ/My45H6NW6pE8FY9S/15tlaPt8FNQ7uHm7Il0FNA=;
+        b=A+yE49yUHValpbdegl6iFMADBi8FH4UgOKoFLuOF4S2jDcDR3QQ6VeCY8crOzaRQ/A
+         V0eZqNat0+hkwG6HRxuJeotYYinY/5E6Zuoxiysdbg1FL0pYB/JgfpLPkpzkfz99H0sp
+         7jD5ZQssp9Ny8gEZm82v75zJy39lFk8LtoRCa2KtruqnelJ5C5ZU0yhhWJlFhG/7PdlZ
+         5qpuJrZuehinIjSl6eYcFE0NYcuh7LaSl4OR6W7nQmSN/1Nt+rRbWiR6UFmUIyG/jV28
+         SZ7nqbx2ok69MMMgXfwKAVB8xzQKwMfH5SqRyQe8o/fWm7AYEBrPJEMQPhn9dIIJ+lq/
+         AQvA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0X2OQu2WwrE5ELr8AHTHUJufWN1y5nfLpnpSyfiOWoiIoMceFuMh9ih+XeuUaA5LShsDsMDVysLn5UVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu88yzuaN/xQ/FTOTxbqFgdwu7eq50DjBuGTvoEVXT0TN5VGC1
+	rvfcSqwzrBPzIQIYKBOQlWd7yFdl9kympd7L2udj2MeFZE/3jc2hZvxi0NyDwrYYuPEfJSAkiW9
+	3N0wlLHn2/g36+w==
+X-Google-Smtp-Source: AGHT+IHR9hnAt3TkdZgTBDb3KtT9RID/f89jZOUFMT5Pu2QM6neA//FwvD/h9k3LegqwxIgWoIii48dZZ8xSlA==
+X-Received: from wrbgw33.prod.google.com ([2002:a05:6000:40e1:b0:3ec:de41:d5be])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:699b:b0:46e:410f:f645 with SMTP id 5b1f17b1804b1-46fa9af8fa5mr219134815e9.21.1760547743670;
- Wed, 15 Oct 2025 10:02:23 -0700 (PDT)
-Date: Wed, 15 Oct 2025 17:02:05 +0000
+ 2002:a05:6000:2082:b0:3e9:2fea:6795 with SMTP id ffacd0b85a97d-4266e8de1damr21457560f8f.53.1760547745778;
+ Wed, 15 Oct 2025 10:02:25 -0700 (PDT)
+Date: Wed, 15 Oct 2025 17:02:06 +0000
 In-Reply-To: <20251015-l1d-flush-doc-v1-0-f8cefea3f2f2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251015-l1d-flush-doc-v1-0-f8cefea3f2f2@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20251015-l1d-flush-doc-v1-1-f8cefea3f2f2@google.com>
-Subject: [PATCH 1/2] Documentation: clarify PR_SPEC_L1D_FLUSH
+Message-ID: <20251015-l1d-flush-doc-v1-2-f8cefea3f2f2@google.com>
+Subject: [PATCH 2/2] Documentation: fix reference to PR_SPEC_L1D_FLUSH
 From: Brendan Jackman <jackmanb@google.com>
 To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
@@ -83,41 +83,26 @@ Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Brendan Jackman <jackmanb@google.com>, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-For PR_SPEC_STORE_BYPASS and PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE
-means "disable the speculation bug" i.e. "enable the mitigation".
-
-For PR_SPEC_L1D_FLUSH, PR_SPEC_DISABLE means "disable the mitigation".
-This is not obvious, so document it.
+PR_SET_L1D_FLUSH does not exist.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- Documentation/userspace-api/spec_ctrl.rst | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/admin-guide/hw-vuln/l1d_flush.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
-index 5e8ed9eef9aa84f12fa255af7b15c163ff01aab8..ca89151fc0a8e7205e0a0062134d63b213b9ef11 100644
---- a/Documentation/userspace-api/spec_ctrl.rst
-+++ b/Documentation/userspace-api/spec_ctrl.rst
-@@ -26,7 +26,8 @@ PR_GET_SPECULATION_CTRL
+diff --git a/Documentation/admin-guide/hw-vuln/l1d_flush.rst b/Documentation/admin-guide/hw-vuln/l1d_flush.rst
+index 210020bc3f5684a4510792aad5d0fcec659ad7d2..35dc25159b28a280793ad147d25d582f31a77999 100644
+--- a/Documentation/admin-guide/hw-vuln/l1d_flush.rst
++++ b/Documentation/admin-guide/hw-vuln/l1d_flush.rst
+@@ -31,7 +31,7 @@ specifically opt into the feature to enable it.
+ Mitigation
+ ----------
  
- PR_GET_SPECULATION_CTRL returns the state of the speculation misfeature
- which is selected with arg2 of prctl(2). The return value uses bits 0-3 with
--the following meaning:
-+the following meaning (with the caveat that PR_SPEC_L1D_FLUSH has less obvious
-+semantics, see documentation for that specific control below):
+-When PR_SET_L1D_FLUSH is enabled for a task a flush of the L1D cache is
++When PR_SPEC_L1D_FLUSH is enabled for a task a flush of the L1D cache is
+ performed when the task is scheduled out and the incoming task belongs to a
+ different process and therefore to a different address space.
  
- ==== ====================== ==================================================
- Bit  Define                 Description
-@@ -110,6 +111,9 @@ Speculation misfeature controls
- - PR_SPEC_L1D_FLUSH: Flush L1D Cache on context switch out of the task
-                         (works only when tasks run on non SMT cores)
- 
-+For this control, PR_SPEC_ENABLE means that the **mitigation** is enabled (L1D
-+is flushed), PR_SPEC_DISABLE means it is disabled.
-+
-   Invocations:
-    * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_L1D_FLUSH, 0, 0, 0);
-    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_L1D_FLUSH, PR_SPEC_ENABLE, 0, 0);
 
 -- 
 2.50.1
