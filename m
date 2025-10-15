@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-854498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF396BDE848
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:43:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDC2BDE851
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4416504C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:42:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3DB402E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD531C3BE0;
-	Wed, 15 Oct 2025 12:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fI/btDQ+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A95B39FCE;
+	Wed, 15 Oct 2025 12:43:18 +0000 (UTC)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D688A1AA1F4
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693741AA1F4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760532171; cv=none; b=NiqUwQOrfiKtAPLHQLwmz8DG9KYKKL4J4uxDCbfVwdi88UjfZ1A0p4hZwB01RQCRNa1ppp2N0ln7PivUHHZQy2HXGdt0J4r7gB56j2eRTWh/xQNwOHKCcqDagmzcE0Y2pAq+wKFxRH8Un007ONCpYHcdVEBPawYTG7I3hm586vU=
+	t=1760532198; cv=none; b=lPk5cC+bf99xw4kz254xtY1pmjMhBSwupgU4NFl5FGH8s807lFoaPNPcvJ2NqFkzPkGsKDIsNI5608XrMpue1otubfEYfnEK+aIryPjhVxL9Gv197Y/HaaqmRWLGtMK6d6OS6XfcTfODfFTCsJaDleJQBR93VPMFX54ciZ7JceU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760532171; c=relaxed/simple;
-	bh=j7g19LkkBRNKphGE70ZdVHJG/RQkQfyoNt7/TZZy6a4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/kUNihP1jD+3HFVLA7ulVRIVL1MhQhblcgT4nITSLkbCrvujeetcWzxO5R+93c2KSAbymT0wgQ8f/GW2ZkV8bJDJUBwEl1Vv6QAA/YfEczIDozarax5HtGE3pthGxgZdpUL6D1VHVN1hmoY7kHm3zHJ53jNuWZ8ZnXGkFza2Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fI/btDQ+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YpvuTPdKEnG8kh0LAxrV4kemX2pr+zKEL9tcOV5VL8I=; b=fI/btDQ+F9gEXnHWCjEAcad140
-	urwS1uun98p1hrl8iEQruMZQDp/zBFQmQBXo4R7HSpcZhdzduMnyZliYgxf6irVaT8nlXM4iLJIzp
-	iLYcp7lv4oI5G37fONOIxl83ONG5babsrJ72ldiswk2uHDCoR9tkHaFl8IQ3k+3vk5YqEdnKKtmD3
-	HGZHqEy8IX22QrnZHwzdyL7pdAfllhIavAgcgSWaL5oGZOSSoL20Qi1UDwYBN4UXlEzrA7TJSUD+h
-	uu/dzmXvMuT50FUYCM+vXb13hamajcBDrWY56/uxMJbUCfmrUwVffupW2p9zaTkfSJCdig8ElmCC9
-	UH14x4Rw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v90q6-0000000FRPV-0xq4;
-	Wed, 15 Oct 2025 12:42:46 +0000
-Date: Wed, 15 Oct 2025 13:42:46 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] mm/vmalloc: request large order pages from buddy
- allocator
-Message-ID: <aO-Wxj7al7I-IadV@casper.infradead.org>
-References: <20251014182754.4329-1-vishal.moola@gmail.com>
- <aO9Z90vphRcyFv2n@milan>
- <aO97BjvNZNh0UV3u@fedora>
+	s=arc-20240116; t=1760532198; c=relaxed/simple;
+	bh=+Yoaw7rpYRqS6kyY0+V936fRl/rDGieCIgQeJif9Qus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VtjhK30oMb19jiQEhug0E9/+p6UBsgubh9a7Scq9TUCzF/NHYRhrBjin9CTDCL+BcTEq08Qw7Acfkmo0+uWWQ2unZE5XFUxgBtIrrJQhmM/fGw0+NrmcBPoCsGWUwwVtbCOwzpHxTOhMhX3t3H3tqNalBb+thVI+QoveXWgit2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-554a627a257so2079690e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:43:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760532195; x=1761136995;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6EImZFjleK3ggl+qc+EhSd4wqIwp2WAXLxGf2J2zAzc=;
+        b=vb/RypIxdLOW+Bqj9uBsoMB6d31qsGhwipYrlh9Sj9ONJwoHFIw7RPQV7iXuFtQmIJ
+         jvjg5Rs0isNiH7cPxHGCd45kg6DiFBGrW5Eh8/JtG45y9auCZ6gux6RZSPi3rvK8B8QM
+         f2CQ3N+/Llamq/g0C7/A/fIfzn88GtP3I49dj+3a0Y10YE4MPURRKEQjyR+CH57dC1ut
+         DfCW9/gCGa9WwXHc0S8Mpl7Azuli2RLlmy5b0gE5LIwzD8OPxQHW4Sa9LyOX4OIXx/FS
+         S0TL/RLnY5AaxJq4VPJxzPDGRPGjUYo0KWW7+cxGeOb0kVW/lULSzcVcwfoSAfMupqUE
+         MW6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUN8/cyJXHxFwYLH4IKKWdUIUbF4JzP1D9WyzDf9pa7ZEAawzsAYCKin4Uz2DdRSZZ8wlXsmWoq0upb34I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXrJ6/xW2C3yfdeaMyZsdVQZcSZLuCt9FtQ8PwnUsRcVSf80xp
+	lghik+rXOAsSypSRUbaTZaHSXyV/OC4LC3gYvffsFgBmQHLEA2SiiuLm7mHWcaKA
+X-Gm-Gg: ASbGncu8tj76Q9QVevSljZ03v1XbIHBqA7zg+gbuqMjx8fkszbhxDe2n5nkR//NGCZM
+	M6lJGn0DTD53rUVncaM/4SiJ4t0vJQjDfYXlcs/WcvrcNBsEJt9zyUXlbUuhFlFfDCzNhGOOKRa
+	ftRjYixpR26OfFO2QRs6/f5eyojeFmyHgZQSY8Vows0mPS4LAambhAz+xEu87mNtbd8OU5PsyfC
+	DlB0iU0rcLtFAyZsuvLBkx+ufZ3drN+Rp8Yfz6z2uakCIa4Wk4wA+tcZKgi4TwgweyBSlSIXOcd
+	9Dl8xmFrcLdRBkE0FO9O1zkTq5FQSCbFqCwBcOFcgkqAz7RI5CcmxiOCStptXfxGdqFZvTgCxPi
+	X32OAt8KgIaBwzMT4cnHes2LxXNe9opm5HS8v3F8dYHMlQruQzEIJRoWL7d6/z9ujQ8G3Lbtx0F
+	AM/0djGxTVm/HXXw==
+X-Google-Smtp-Source: AGHT+IGBzv6kfx/YZ+dHBFg7wmZDsb574xEYgEkNz/2BmZOdh0qUVBJyZZfSloZy9yNNU1J3oE3ctw==
+X-Received: by 2002:a05:6122:310e:b0:54a:23dd:5a9e with SMTP id 71dfb90a1353d-554b8b3e3b5mr8161854e0c.3.1760532194921;
+        Wed, 15 Oct 2025 05:43:14 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d7ecf564sm4978224e0c.2.2025.10.15.05.43.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 05:43:14 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-59dff155dc6so3158532137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:43:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU89zUrNULU3b4UQX/lkPpZhE1bQ0kL7BK2AdInjfo7eWdhdFjgmE7s0Ab7oKN8wqqAknmahpJWTr1Nr8s=@vger.kernel.org
+X-Received: by 2002:a05:6102:5086:b0:535:af8c:ba68 with SMTP id
+ ada2fe7eead31-5d5e23b904amr9889952137.33.1760532194287; Wed, 15 Oct 2025
+ 05:43:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aO97BjvNZNh0UV3u@fedora>
+References: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20251012091000.1160751-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Oct 2025 14:43:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXJfSoU-160BmD-obd7YZRdKT4z-P1YnrvvR1dq7XKaDg@mail.gmail.com>
+X-Gm-Features: AS18NWCUqZtnjb3YrOJg9WSKYkypgBOIOyBo-RtC55Gk-E59ZzxvngTKEVnZ788
+Message-ID: <CAMuHMdXJfSoU-160BmD-obd7YZRdKT4z-P1YnrvvR1dq7XKaDg@mail.gmail.com>
+Subject: Re: [RFC] clocksource/drivers/sh_cmt: Always leave device running
+ after probe
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 03:44:22AM -0700, Vishal Moola (Oracle) wrote:
-> On Wed, Oct 15, 2025 at 10:23:19AM +0200, Uladzislau Rezki wrote:
-> > >  	int i;
-> > > +	gfp_t large_gfp = (gfp & ~__GFP_DIRECT_RECLAIM) | __GFP_NOWARN;
-> > > +	unsigned int large_order = ilog2(nr_pages - nr_allocated);
-> > >
-> > If large_order is > MAX_ORDER - 1 then there is no need even try
-> > larger_order attempt.
+Hi Niklas,
 
-Oh, I meant to mention that too.  Yes, this should be min(MAX_ORDER, ilog2()).
+Thanks for your patch!
 
-> > Maybe it is worth to drop/warn if __GFP_COMP is set also?
-> 
-> split_page() has a BUG_ON(PageCompound) within, so we don't need one out
-> here for now.
+On Sun, 12 Oct 2025 at 11:10, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> The CMT device can be used as both a clocksource and a clockevent
+> provider. The driver tries to be smart and power itself on and off, as
+> well as enabling and disabling its clock when it's not in operation.
+> This behavior is slightly altered if the CMT is used as an early
+> platform device in which case the device is left powered on after probe,
+> but the clock is still enabled and disabled at runtime.
+>
+> This have worked for a long time, but recent improvements in PREEMPT_RT
 
-I don't think people actually call vmalloc() with __GFP_COMP set, but
-clearing it would do no harm here.
+has
 
-> > The concern is then if it is a waste of high-order pages. Because we can
-> > easily go with a single page allocator. Whereas someone in a system can not.
-> 
-> I feel like if we have high order pages available we'd rather allocate
-> those. Since the buddy allocator just coalesces the pages when they're
-> freed again, as soon as these allocations free up we are much more
-> likely to have large order pages ready to go again.
+> and PROVE_LOCKING have highlighted an issue. As the CMT register itself
 
-My PoV is different from either of you -- that we actually want
-to allocate the high-order pages when we can because it reduces
-fragmentation.  If we allocate five separate pages to satisfy a 20kB
-allocation, those may come from five different 2MB pages (since they're
-probably coming from the pcp lists which after a sufficiently long period
-of running will be a jumble).  Whereas if we allocate an order-2 page
-and an order-0 page, those can come from at most two 2MB pages.
+registers
 
-I understand the "allocating order-0 pages helps by using up the remnants
-of previous allocations" argument.  But I think on the whole we need to
-be doing larger allocations where possible, not smaller ones.
+> as a clockevent provided, clockevents_register_device(), it needs to use
 
+provider
+
+> raw spinlocks internally as this is the context of which the clockevent
+> framework interacts with the CMT driver. However in the context of
+> holding a raw spinlock the CMT driver can't really manage its power
+> state or clock with calls to pm_runtime_*() and clk_*() as these calls
+> end up in other platform drivers using regular spinlocks to control
+> power and clocks.
+>
+> This mix of spinlock contexts trips a lockdep warning.
+>
+>     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>     [ BUG: Invalid wait context ]
+>     6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 Not tainted
+>     -----------------------------
+>     swapper/1/0 is trying to lock:
+>     ffff00000898d180 (&dev->power.lock){-...}-{3:3}, at: __pm_runtime_res=
+ume+0x38/0x88
+>     ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version 0xAF400=
+001/0xDCC63000, Driver version 5.0
+>     other info that might help us debug this:
+>     ccree e6601000.crypto: ARM ccree device initialized
+>     context-{5:5}
+>     2 locks held by swapper/1/0:
+>      #0: ffff80008173c298 (tick_broadcast_lock){-...}-{2:2}, at: __tick_b=
+roadcast_oneshot_control+0xa4/0x3a8
+>      #1: ffff0000089a5858 (&ch->lock){....}-{2:2}
+>     usbcore: registered new interface driver usbhid
+>     , at: sh_cmt_start+0x30/0x364
+>     stack backtrace:
+>     CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc3-arm64-ren=
+esas-03071-gb3c4f4122b28-dirty #21 PREEMPT
+>     Hardware name: Renesas Salvator-X 2nd version board based on r8a77965=
+ (DT)
+>     Call trace:
+>      show_stack+0x14/0x1c (C)
+>      dump_stack_lvl+0x6c/0x90
+>      dump_stack+0x14/0x1c
+>      __lock_acquire+0x904/0x1584
+>      lock_acquire+0x220/0x34c
+>      _raw_spin_lock_irqsave+0x58/0x80
+>      __pm_runtime_resume+0x38/0x88
+>      sh_cmt_start+0x54/0x364
+>      sh_cmt_clock_event_set_oneshot+0x64/0xb8
+>      clockevents_switch_state+0xfc/0x13c
+>      tick_broadcast_set_event+0x30/0xa4
+>      __tick_broadcast_oneshot_control+0x1e0/0x3a8
+>      tick_broadcast_oneshot_control+0x30/0x40
+>      cpuidle_enter_state+0x40c/0x680
+>      cpuidle_enter+0x30/0x40
+>      do_idle+0x1f4/0x26c
+>      cpu_startup_entry+0x34/0x40
+>      secondary_start_kernel+0x11c/0x13c
+>      __secondary_switched+0x74/0x78
+>
+> For non-PREEMPT_RT builds this is not really an issue, but for
+> PREEMPT_RT builds where normal spinlocks can sleep this might be an
+> issue. Be cautious and always leave the power and clock running after
+> probe.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+
+Thanks, I gave this a try on various boards, no issues seen.
+I also force-disabled the TMU on R-Mobile A1, to make sure its known
+splat is not hiding any other locking problems.
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
