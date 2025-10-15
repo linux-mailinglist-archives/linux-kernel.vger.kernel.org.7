@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-854655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF303BDEFD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:22:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C11BBDF01A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A74A3551C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172E9424AE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79292472B1;
-	Wed, 15 Oct 2025 14:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CFC25C821;
+	Wed, 15 Oct 2025 14:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="b4guQ+FF"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Ewu4UUlH"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2B1534EC
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E692B259CB6
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760538105; cv=none; b=ujgPNCgRHyMQMbRXjFDuZNw7EUM4S/dXhnr31Rcyb+DKwQ5Ceu5IotixZk/AEaRDiTJOQgSE+t7JMaUn5VG4uICFZ8Zj6RiKX3ht+z058sN2OUHfOzcYFhlu4j94SBLCBkN4ggWdUbgkRHRxmQJ+0SO0d0AtmTUeZvA1mpfRuMc=
+	t=1760538189; cv=none; b=Iw1YovnUGh/hRHF1iFcwyc8/UVR16YNi+M4FMCopoA1elnnsJqhtXFFg1SlGRCwDq1Ita4ufG0/6Du07b/4zll7153bUXj2oseS94CPbMrcb3/M0jLRRDTbBzvOxzG5lger2y1RqZ7+bgIe/kG1bUBEi5c6CUzRMPZR5qTIUqjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760538105; c=relaxed/simple;
-	bh=rsCxuIGa07OzPA91/mcN7Lbx5abo0noYtZAvC10T47M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efTy5wJOUHU2gsL+hBoECgw6h2DjbcFNKB8eer73pFK4LzBVAagNMzTMee7eLIZqKEZz7Kxg3p/XK7A5vWtd2LHlj1ksRWSdyEdD2p1zoBZH4vSAiQmhh+f5q/vQ4TxzTPXFb5lEcot+QFOKxHLRIq9m9q5l989XHLg6BZ2W+e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=b4guQ+FF; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-88e68c0a7bfso127641485a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:21:43 -0700 (PDT)
+	s=arc-20240116; t=1760538189; c=relaxed/simple;
+	bh=PAtt6LJWXf75EYio9dz/gTvlM96/DYgKuXEluISNUPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pdiGilpeG88g0cW2hkH8TsXohTWOAcXOaH2XWDtlBdG34eX9qe1uneQYXF5+6FFpsbnuOVgwonDBzM4g0ss4Lws2j+0+I/s1JvJ3rfHjq/s0hu6tcHOihWeTiwCx+LlqwTyeASEwSJp8xibR8pNfa67+nPMOv8jEVvmHgjSSdnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Ewu4UUlH; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63163a6556bso13061703a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1760538103; x=1761142903; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lo2y1Bu1LMnaNfCd71h+uw7Uf0QO/1obDl+YiKgx8yY=;
-        b=b4guQ+FF0YzwKkzkjKzTwK10u8GI1l7bBbULvzKH893ArD9KfUKpgkmhQBt4EP1GgQ
-         j6V7dh7pk16oO1CQSVAfq3kpCC9za1dm1f0DwlHLzlNUNWwfYS32dkSG65ycwuAhNZaO
-         WypdZI1pqeOhlU1U6agqODjBleBzHeBbMQM/nffzy1F1hbJqmWS27LZM9gUDkUoDZyyh
-         aCskAxChCIFNIb/H/u5g4QG4/l6yCyROQ/vEDmd7iH21O4tAe3dfpBaN6Q5MQPlNS0fe
-         +twLch6dzUNmytBIXGfswe4PWGLdtucAOhiKCtPKZzFiQLH8BcBWI/SlZAo+riCjOSgV
-         GSYg==
+        d=soleen.com; s=google; t=1760538185; x=1761142985; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PAtt6LJWXf75EYio9dz/gTvlM96/DYgKuXEluISNUPw=;
+        b=Ewu4UUlH+4pBSo9+9WLd3Fc1lhrubptln5vECsDvqMML0lxV3mn/0IGWx5a/WvBeVo
+         4RaV4Bzuwodbclq7xpOk5uHZgse2exRR1RKJ/mtlCqitoF0r8Dczop3Zx/wtlf+xk/7S
+         xiMX04fBVZ77Z/bMd11JzGwnaQUnmvbzbemZpIOUl1vrC17f5pm+Bd44EmsllE8RzJAM
+         urnlJ83WYpPLA3vwO9r85oa70Cn7dQGT1wuEIrNV91cRRYJk/E7l6XnU8x8LPUhEFqvP
+         cNeBGytia/N9JrUtkHrN59QlRZPB1OcP2TT4PmyvkEL7K4p1MUewjIrkIURhEstTmxab
+         Ef1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760538103; x=1761142903;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lo2y1Bu1LMnaNfCd71h+uw7Uf0QO/1obDl+YiKgx8yY=;
-        b=AaXfYUwGP9bxk4UDjIXdrNGlx0029lbL6LdsMdjRVo9Ak7BYfu2ownfu5LAH9nhG5x
-         sytFAfSDGXA1KzpLn0tS2jnAWIYMpgr8yMFNeCGab8a9Fks85dsZ2QnxvR+UzYOs+mSP
-         kK22w2/jsYzwvi3u9pxP06IgV3KMWd0a1eTOtD9aMft23pHkpoedmD8q7Y5NUQkrWjtO
-         FtigvoCUQ9jnVqPaXFpq8nFEtq3qz5AaAU/QFwyY99pGYAf76O5nQlG2JPT/yh96cXGl
-         JrmC6cpraNnbOJADYwL2weAoWZZqtnkiZ6sejyb6BLpvpigXzNxenYNOCS4QZbN31ncy
-         uALA==
-X-Forwarded-Encrypted: i=1; AJvYcCWla7NGb4CQw4QODpRZrTpv/RD+6yiY1DmtczR1EPh8aAzhLRpB5q/CitXH5bIfoU1uPp/ZO99Rc5Mu4V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Vh8PnlUToCTliiPew0dyAqTgvGsqo5n9ER9rNdhYzZGJxNxN
-	6AbmrxFF9c9mdkFVChZgJmiIAgon5ErhnKEdhrsPE6SLNTFMyQWiqYsECuiz+0CHLA==
-X-Gm-Gg: ASbGncuwQRrXqjcSVd5pE79nBRODwfj3CcHaaL6+pt8I/tUMWCfE0kLOTl0+wx65/N9
-	MUoU6u96m4bLkkGb20UYihOtp+AZ+LZJm8VwVJKeKXQ353hYc5qR97gfPaDekxBehBFNFAAGRze
-	X84Iv/l8gSRl/gxTXAN+kVHO4Xw7vcDiv5LAGK2VlJVrmJyOh6N3JHyFdBAlq7E5j7APDkJGqsQ
-	vr0gnOV2Q1JNXDwc7j3tkP5Fz+QBTlBfhl822zXPrawI5YuU2grIi1SYWBMTa/V3B84IaYvL+aV
-	tSB3nbzpMoG3LdDG3r2YO5vMFmDVXq3NbpZHJ095qQoyJpYQ1iXmdwkCzTLjd1gL5b396cpbm23
-	bj2g7roAAvrmNRb/Qvslkd+h1aX8mSigB+2dcFDoaitebrUzIVK3xcRF6PA80OJ13DKF9Ixj0oF
-	80Kg==
-X-Google-Smtp-Source: AGHT+IFrJLeVOnPgxh66ucu/t9d4mmQTNB8Y0LxSmbCqtxoIGawoP6sDh9GYHFFnOFjMyeDPg8oqtw==
-X-Received: by 2002:a05:622a:1a9d:b0:4b7:a8ce:a3fc with SMTP id d75a77b69052e-4e6ead65069mr381373611cf.66.1760538102557;
-        Wed, 15 Oct 2025 07:21:42 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e881c577e6sm19687141cf.7.2025.10.15.07.21.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 07:21:41 -0700 (PDT)
-Date: Wed, 15 Oct 2025 10:21:39 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tim Guttzeit <t.guttzeit@tuxedocomputers.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb/core/quirks: Add Huawei ME906S to wakeup quirk.
-Message-ID: <8ef4550b-a958-4fa4-88df-89b3d4b1117d@rowland.harvard.edu>
-References: <20251014153049.91722-1-wse@tuxedocomputers.com>
+        d=1e100.net; s=20230601; t=1760538185; x=1761142985;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PAtt6LJWXf75EYio9dz/gTvlM96/DYgKuXEluISNUPw=;
+        b=swtRu+vie7bd0hVPI76c6JVINPfoOSMu8bcpyj8TsZY53pSoaS8b7mjz9JhcyWbFHE
+         aSPveN0NqYmlEvO0D2Lg9/bjWXbBZaWBSjBzbbX/axiTZM2g9r0d/D9HtdZWTcEj07+i
+         8YTGXs/xAb9xtM8aYSCdeqUmiv7hyvNRq0OsGHZFAu6JA/MZlEOTQqn3njMPp468fMpA
+         dLiv/47m2hFBzYsvLLTkjO3jH45APHhfC6sas4GMqhyP8Htj3bbFcVc+oaSI9CESNv6z
+         /OywHwcLYERueACC5YnDFxMqczRfxeYHvivj8L6akBGM1+7w0MEhB2+L5rLKiAKOo4Js
+         NpZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFa6VkaLSSJNcOhtvaSUxVVuOfUuUXtuyW7zvU6RZYF3oHHCqDV1l3KGEXeShInt8tQw9G1YHFjVBx4Sw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywas0R4islH11p8WEiXE8t/20v7BXLvP1CWdYWxaPFAcH/QCLFN
+	+UV4ioWNtQDPa6kNccrzXjOaCvWGeU/bbA8ZuWQVUdVNNGQxk78zLHI2Hxr8hZVcIpXkzCcwHZn
+	+qhYU7RQ2kPwmc+4GUeNpBG+FEYLxrZs6nw0nrzGA1A==
+X-Gm-Gg: ASbGnctXPhAsLotYp4KOuiSYOogg8p37itRHFniYuAm6HBCF9Ds/yECxMKlhOGLiknW
+	Wfdbl6e/I5k1SOgTZ29PAS9omUUrQcNlpPBbdk8fvr7vMNTeVFaxmetA7hC0oF7JRfNeaxiMKI2
+	y7IUQsT+ja1fXsEHKwPg+MheS9wLfruQk1zd0Ix0TzNa9CpDMmVydQwXmiJ2eF+GxgTappVXIln
+	Vkh10ZtAbpnVFXr18a8kzSyGFXNEE3dsA==
+X-Google-Smtp-Source: AGHT+IHt07hyRkueoFkR4F0w+xF9Gbyc+PiDwaAgXzfFVpNxzbBZcK46A+MFwX9oxnYBoVi3/21yDow56czseXIBw9E=
+X-Received: by 2002:a05:6402:27ca:b0:639:4e0b:2724 with SMTP id
+ 4fb4d7f45d1cf-639d5c31fbfmr28772103a12.24.1760538185250; Wed, 15 Oct 2025
+ 07:23:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014153049.91722-1-wse@tuxedocomputers.com>
+References: <20251015053121.3978358-1-pasha.tatashin@soleen.com>
+ <20251015053121.3978358-3-pasha.tatashin@soleen.com> <mafs0v7kgjoxq.fsf@kernel.org>
+In-Reply-To: <mafs0v7kgjoxq.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 15 Oct 2025 10:22:28 -0400
+X-Gm-Features: AS18NWArNFoBhagluGBh83EOX5thK2VCtA_UuHBzGdmFvoOqbuMsR--L8cHX_oM
+Message-ID: <CA+CK2bAHk2JnQwfA0fJo1qmcwoO_9eeG5_DSL_6OC+-pyT=7Jg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] liveupdate: kho: allocate metadata directly from the
+ buddy allocator
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
+	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
+	ojeda@kernel.org, rdunlap@infradead.org, rppt@kernel.org, tj@kernel.org, 
+	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com, 
+	glider@google.com, elver@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 14, 2025 at 05:30:05PM +0200, Werner Sembach wrote:
-> From: Tim Guttzeit <t.guttzeit@tuxedocomputers.com>
-> 
-> The list of Huawei LTE modules needing the quirk fixing spurious wakeups
-> was missing the IDs of the Huawei ME906S module, therefore suspend did not
-> work.
-> 
-> Signed-off-by: Tim Guttzeit <t.guttzeit@tuxedocomputers.com>
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> ---
->  drivers/usb/core/quirks.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-> index f5bc538753301..39fbbc31e9a41 100644
-> --- a/drivers/usb/core/quirks.c
-> +++ b/drivers/usb/core/quirks.c
-> @@ -469,6 +469,8 @@ static const struct usb_device_id usb_quirk_list[] = {
->  			USB_QUIRK_DISCONNECT_SUSPEND },
->  	{ USB_DEVICE(0x12d1, 0x15c3), .driver_info =
->  			USB_QUIRK_DISCONNECT_SUSPEND },
-> +	{ USB_DEVICE(0x12d1, 0x15c1), .driver_info =
-> +			USB_QUIRK_DISCONNECT_SUSPEND },
+> > As part of this change, the metadata bitmap size is increased from 512
+> > bytes to PAGE_SIZE to align with the page-based allocations from the
+> > buddy system.
+>
+> The implication of this change is that preservation metadata becomes
+> less memory-efficient when preserved pages are sparse. Mainly because if
+> only one bit is set in the bitmap, now 4k bytes of memory is used
+> instead of 512 bytes.
+>
+> It is hard to say what difference this makes in practice without
+> sampling real workloads, but perhaps still worth mentioning in the
+> commit message?
 
-Please pay attention to the comment at the start of the array's 
-definition.  Entries should be sorted by vendor ID and product ID.
+Forgot to reply to the other part:
 
-Alan Stern
+I agree, however, I suspect the implication is going to be minimal, it
+is strange to preserve fragmented state and expect a fast reboot. Most
+likely, we are going to be optimizing the preservation pools, such as
+using 1G order pages for guest memory.
+
+Also, we are moving toward preserving 4K bitmaps as part of the
+Stateless KHO patch series, so I think we will make this change
+anyway, as part of this fix or as part of transitioning to radix-tree
+stateless KHO.
+
+
+> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+Thank you.
+Pasha
 
