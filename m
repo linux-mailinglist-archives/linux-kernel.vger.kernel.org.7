@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-853610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FBDBDC174
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:00:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F41BDC1DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572ED3A9C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC1A19A2DC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C6028751D;
-	Wed, 15 Oct 2025 02:00:34 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4AD30B522;
+	Wed, 15 Oct 2025 02:09:54 +0000 (UTC)
+Received: from baidu.com (mx21.baidu.com [220.181.3.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747F91D5ACE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FE325C711;
+	Wed, 15 Oct 2025 02:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.3.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760493634; cv=none; b=hsLg4XJhQNNwhvmUC397nM96vzOhKAIJsxU/Pd46QXbasuOWXY2qJzBbFQvs/aCs840CTvRHmJr4ZvIF+7hShJwJ+DG7DOiQtHl1qh/0OzQCQypoBE01eet5Vs1xamofsiVp+fxWEA1frSrbIKEnhuYiWA8QFy8PtbPFWhVrYgM=
+	t=1760494193; cv=none; b=WWBogJKuiUVlX0Z3AM5qSDPjXEoPThOFoHUBTnIybggjvb+WzUARMdyytTlytknhNxdXNb+6b4XR7CuuQzGR1mBdBVVH8Mq4caKLcmsJUFf7WjUgqaAStQ0mZ9SOW215uwS5eE7N9OyZCOmbsZ0gSdSOlE1UFS+pralcU49XhJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760493634; c=relaxed/simple;
-	bh=A66mSnjX6N6NGNIH6jY477HC/LPTbHEtilVXJHjc/Ps=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KLIX1J0oB5WOtmTRKPDFACDvUZUPA23b0H8K4NXosmP2wvTQyQHLort/rv+OEx2nfvCyfzEqvV9eqt+GWME+mA4ie/gtR4sZEQwv8QYfLhvTbhCBVooduGQfXTMO189gcH2ZW8VMuUiUewqHY6BFSn7Dsmlac3fXxiD3QMicsNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-93e4da7a183so236296939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 19:00:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760493630; x=1761098430;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4fFPe7hyn/AwEN5Z4Q8RKAqq7yvPlsJ4hpwsLWIC0Wc=;
-        b=gxYiN7ljojuo6MQAHnzo61IxAAyxUeshg6EXzmTnFjX910YzRsK2diJflRWFj3v6gr
-         i34VokPBX9HKl44ghODjciQMR/EcltDnBuBD3Zu+Wq8289y3Bj8K8pMwJK+6h9JsAwhQ
-         oSNdueB3scWHBR6oIXRYzsFNdeE1qumjZRiKbWfNJsO46LUNGYezQ9czaTEpxuJ7abc2
-         XThpzzHCwTlkzc7OfbNlnhA6JAVw6naxwkngGhtDZQfqESQCfS8VSqBQ97heVX+UKzXX
-         qTEUatJLTnYl/GCkI0bN7LPSQes3h2IZaPHMYgwavWBgm7FeCmuvwhIQnE3WAIrma1iq
-         LRgw==
-X-Forwarded-Encrypted: i=1; AJvYcCULaqZssWGB8l8LGehJjPmyN8O2iu6Z6SdSHijewY418l4dgztEI8R4XGkS3EOWdi/Y53FWvWxEGoY9gW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYMvZQHYCXhNsl9rXEuKQ03MibFEPlCF/EbgbfD6pmgFfJrkvA
-	SSBk/IUmqS15mRdUgIqqJz4RpLD+exCo/T2h/dECwvnoHnVsF8NPWPczxeyJmJ9YnKycf/EIj9N
-	eChVTXAEB81j1ZkHT/heJii5f0GtK4UsjlHyfqWCHWR5gUjUMZZbL5Qb798c=
-X-Google-Smtp-Source: AGHT+IHghrZiAsK1jI6A++dl3I1som3DuS+rfakA7eQcIlh0JV7bE164v91Z52e3wI/sZwCjdkXLIZXNlT0bZXBf/m2zQG8Y2m/U
+	s=arc-20240116; t=1760494193; c=relaxed/simple;
+	bh=bc54xO84RzzB202e+ZMmbdyvlYyAFS2WR/CfmHyOe5o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HqaAkoj/tKwH1Edu9hEisGw9tWM576pBSFt/mC7SUB6KM+GW82pUXuTl0NI85HTKz2ki/b8Ml36wcSW09XWJO02YRZcn4k2U/wN/0g4JNDZRnS2ZArVSnW4yUuSJDVhQKsm4AfaC/00+M1qxshCwwP1Ivqa4lSg6ETaQWVbF9gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.3.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Petr Mladek <pmladek@suse.com>
+CC: Lance Yang <lance.yang@linux.dev>, "wireguard@lists.zx2c4.com"
+	<wireguard@lists.zx2c4.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Liam R . Howlett"
+	<Liam.Howlett@oracle.com>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, David Hildenbrand <david@redhat.com>, "Randy
+ Dunlap" <rdunlap@infradead.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, "Andrew
+ Jeffery" <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
+	"Russell King" <linux@armlinux.org.uk>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>, Steven Rostedt
+	<rostedt@goodmis.org>, "Jonathan Corbet" <corbet@lwn.net>, Joel Granados
+	<joel.granados@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>, Phil
+ Auld <pauld@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "Masami Hiramatsu" <mhiramat@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, "Pawan Gupta"
+	<pawan.kumar.gupta@linux.intel.com>, Simon Horman <horms@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>, Florian Westphal
+	<fw@strlen.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Kees Cook
+	<kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Paul E . McKenney"
+	<paulmck@kernel.org>, Feng Tang <feng.tang@linux.alibaba.com>, "Jason A .
+ Donenfeld" <Jason@zx2c4.com>
+Subject: RE: [????] Re: [????] Re: [PATCH][v3] hung_task: Panic after fixed
+ number of hung tasks
+Thread-Topic: [????] Re: [????] Re: [PATCH][v3] hung_task: Panic after fixed
+ number of hung tasks
+Thread-Index: AQHcPO9h0grxiWd7ak27/owdD96L07TBdJLA//+i6ACAAVy0QA==
+Date: Wed, 15 Oct 2025 02:04:21 +0000
+Message-ID: <b7937a55047b44c687e11e219a62009e@baidu.com>
+References: <20251012115035.2169-1-lirongqing@baidu.com>
+ <588c1935-835f-4cab-9679-f31c1e903a9a@linux.dev>
+ <aO4boXFaIb0_Wiif@pathway.suse.cz>
+ <e3f7ddf68c2e42d7abf8643f34d84a18@baidu.com>
+ <aO5Ldv4U8QSGgfog@pathway.suse.cz>
+In-Reply-To: <aO5Ldv4U8QSGgfog@pathway.suse.cz>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:270a:b0:42d:8b1c:5710 with SMTP id
- e9e14a558f8ab-42f872c59cdmr259625475ab.0.1760493630583; Tue, 14 Oct 2025
- 19:00:30 -0700 (PDT)
-Date: Tue, 14 Oct 2025 19:00:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ef003e.050a0220.91a22.0229.GAE@google.com>
-Subject: [syzbot] [gfs2?] kernel BUG in do_xmote
-From: syzbot <syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-FEAS-Client-IP: 172.31.50.46
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Hello,
+> I would also update the subject to something like:
+>=20
+>     hung_task: Panic when there are more than N hung tasks at the same
+> time
+>=20
 
-syzbot found the following issue on:
+Ok, I will update=20
 
-HEAD commit:    52ba76324a9d Add linux-next specific files for 20251013
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=159e25e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=353de08f32ce69361b89
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1589f304580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1492bb34580000
+>=20
+>=20
+> That said, I think that both approaches make sense.
+>=20
+> Your approach would trigger the panic when many processes are stuck.
+> Note that it still might be a transient state. But I agree that the more =
+stuck
+> processes exist the more serious the problem likely is for the heath of t=
+he
+> system.
+>=20
+> My approach would trigger panic when a single process hangs for a long
+> time. It will trigger more likely only when the problem is persistent. Th=
+e
+> seriousness depends on which particular process get stuck.
+>=20
+Yes, both are reasonable requirement, and I will leave it to you or anyone =
+else interested to implement it
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1729256319ee/disk-52ba7632.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a3152cfcba7c/vmlinux-52ba7632.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4065a3b3d959/bzImage-52ba7632.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/85dc141e7c83/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10dc5542580000)
+Thanks
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+353de08f32ce69361b89@syzkaller.appspotmail.com
-
-gfs2: fsid=syz:syz.0: G:  s:EX n:3/2090 f:lyfaqo t:EX d:EX/0 a:0 v:0 r:3 m:20 p:0
-gfs2: fsid=syz:syz.0:  H: s:EX f:nW e:0 p:6072 [syz.0.21] alloc_dinode+0x16a/0x550 fs/gfs2/inode.c:414
-gfs2: fsid=syz:syz.0:  R: n:8336 f:80000000 b:826/826 i:7 q:0 r:0 e:7811
-------------[ cut here ]------------
-kernel BUG at fs/gfs2/glock.c:674!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6064 Comm: kworker/0:2H Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: gfs2-glock/syz:syz glock_work_func
-RIP: 0010:do_xmote+0x706/0x750 fs/gfs2/glock.c:674
-Code: 38 c1 0f 8c a9 fe ff ff 48 89 df e8 64 77 29 fe e9 9c fe ff ff e8 ea cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 1b e9 fe ff 90 <0f> 0b e8 d3 cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 04 e9 fe ff
-RSP: 0018:ffffc90002ff79a0 EFLAGS: 00010246
-RAX: 89b42d9b8aee9500 RBX: ffff8880406efb60 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 00000000ffffffff
-RBP: ffffffff8bb183c0 R08: ffff888075ab0bab R09: 1ffff1100eb56175
-R10: dffffc0000000000 R11: ffffed100eb56176 R12: dffffc0000000000
-R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000015
-FS:  0000000000000000(0000) GS:ffff888125d08000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f742dc70f98 CR3: 000000007b84a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- glock_work_func+0x2a8/0x580 fs/gfs2/glock.c:1002
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:do_xmote+0x706/0x750 fs/gfs2/glock.c:674
-Code: 38 c1 0f 8c a9 fe ff ff 48 89 df e8 64 77 29 fe e9 9c fe ff ff e8 ea cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 1b e9 fe ff 90 <0f> 0b e8 d3 cd c3 fd 31 ff 48 89 de ba 01 00 00 00 e8 04 e9 fe ff
-RSP: 0018:ffffc90002ff79a0 EFLAGS: 00010246
-RAX: 89b42d9b8aee9500 RBX: ffff8880406efb60 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 00000000ffffffff
-RBP: ffffffff8bb183c0 R08: ffff888075ab0bab R09: 1ffff1100eb56175
-R10: dffffc0000000000 R11: ffffed100eb56176 R12: dffffc0000000000
-R13: 0000000000000001 R14: 0000000000000001 R15: 0000000000000015
-FS:  0000000000000000(0000) GS:ffff888125d08000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f742dc70f98 CR3: 000000007b84a000 CR4: 00000000003526f0
+-Li.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> I am fine with your approach. Just please, make more clear that the numbe=
+r
+> means the number of hung tasks at the same time.
+> And mention the problems to login, ...
+>=20
+> Best Regards,
+> Petr
 
