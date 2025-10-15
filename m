@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-854855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A867BDF95E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D026BDF943
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 18:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414223A3653
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17FFC400972
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E75335BC7;
-	Wed, 15 Oct 2025 16:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96006326D77;
+	Wed, 15 Oct 2025 16:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGSCRyC+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKOE/qaz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F46326D77;
-	Wed, 15 Oct 2025 16:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67842FE054
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760544625; cv=none; b=spks3oYwT5lIJ4V1vZCQgJJtoIeArdXIATZhxDT9CEIF5LsSk7cfOVc8yHsoFzZeQSMpHx/VUFuQhG4G2hE07exGchY447G5DAatMMnu+1Yv21H6VfveN7MiIHtV4ahSEvX1V4yv7Yozpbtjp1x9C6KMixAfvUtxiKITeEh+ElI=
+	t=1760544613; cv=none; b=knGtAym80l+vr1jWH0uO8sfKeCwoDCvPJ5Hm+LwmJKYmK3Kb3Uql5o6Py9vV0j0V2/Yb+NQSIAkbfV5FEQzog8gXbGqzHTIPmqosiah5wMbEIEsWY1PZ3ow7qvMqzGLSL3YX3AYZzBk3sIJOcK7u+ykemB+UtPeMzahuM7M5HBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760544625; c=relaxed/simple;
-	bh=dcFZNHJd7u8P5PsF+UUqJjsNe+og2T6bb+SyhmTtPE4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hperUdPmOGzhLwFOjtUxWjh8HazUSWK0VTScmVg925WKWr9mQR8oNgFuDWEWJ5Kjl3PnWgzxwvP4PGYFu2fmC774wg181ODRyMcTqTfsFIK5Wkc3JLmnxUZCegd5GETusTBiAo6FOLuBsglhrAyptB+hwj5DYEm0p/IPhFqN9T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGSCRyC+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9DCCC4CEF8;
-	Wed, 15 Oct 2025 16:10:25 +0000 (UTC)
+	s=arc-20240116; t=1760544613; c=relaxed/simple;
+	bh=hpRcZAWNMxpmQJb7XKuhBra8pZDOKnhd1MgwnC9wEzU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=suJIle6ZLPxQ8cChzMuBZFk9Bk5alWRx59uBwEEL7+N5gHxttYUVoNulzDMA5fe2KjLhWihbIhQxu3yqqIG/cl1MOAkwsb5EY1+QhHYIZILebX2qxncB5Cy8BcU64tzX6LUIFZKqlGFLM8/kQvfY0UL77ebv/b+YWvUnKqi6Sbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKOE/qaz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661B4C4CEF8;
+	Wed, 15 Oct 2025 16:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760544625;
-	bh=dcFZNHJd7u8P5PsF+UUqJjsNe+og2T6bb+SyhmTtPE4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=UGSCRyC+Wctl2ezwDbUvTrJw7KCQLsjC1eB5uGn6ETblajcg1p0rQKWqZg7Hgqta9
-	 1P35K+uKmA0KaC3QOpSVfNhQF6jFul1zCWjPNjWuHgLhrByKBGWB60o2SkLY8Hr8SB
-	 9jXq4yCkuOmxONoy0s6jcZ9vilsyPEItUPfKJolkKjNNdHdLGRfbUGFNEVvL61mh3u
-	 Wcy7kmmxJNaHz6QGWrWvDYee4en29vasNTO+UWwZdBp6X5FE1KG4MUVrr67MiYS4V+
-	 akJSChivgxRn2btqVtWWt/tLqwDUpKjwjIvNL4nKug9FGe6kxNHrn6OOFa2etinj8c
-	 k9vg/S+/tVbKw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD1B380CFFF;
-	Wed, 15 Oct 2025 16:10:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1760544613;
+	bh=hpRcZAWNMxpmQJb7XKuhBra8pZDOKnhd1MgwnC9wEzU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RKOE/qazZr4vKUSlXD9dGr4nBADRVWwzPKk/WvCIeJnlX/46DOEY0ipW4MmOjCSJB
+	 im9k49m917WEcErTpKnlVmD4MYP+DFGQaiKMhns1AQLvuEv+e2ByUYhHdE0a5cU+mF
+	 3UpVqPKiRuAGGPyqW4Qwnm7klG6O3TDu7NrTDmbAQrqnt7mSmtnOe0+WANPvZYgxVZ
+	 L7VhkoUK24Z7QO7YBNTONKtmY9+VeRM86LmGx/tfkFr57Ndd6g04JrFTmmGgEc2T+H
+	 RJgCGYUQNROvRV4ZCwWZi0kwTnZ1TcxoE16SYy7Qzqdci641vDJxxpzs2/r5nKSJvm
+	 POc7TtuVYAnkw==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org
+In-Reply-To: <20251001105650.2391477-1-o.rempel@pengutronix.de>
+References: <20251001105650.2391477-1-o.rempel@pengutronix.de>
+Subject: Re: [PATCH v2 1/1] regulator: core: forward undervoltage events
+ downstream by default
+Message-Id: <176054461213.193399.13443708649583416048.b4-ty@kernel.org>
+Date: Wed, 15 Oct 2025 17:10:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] gve: Check valid ts bit on RX descriptor before hw
- timestamping
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176054461024.940684.9782106410239743246.git-patchwork-notify@kernel.org>
-Date: Wed, 15 Oct 2025 16:10:10 +0000
-References: <20251014004740.2775957-1-hramamurthy@google.com>
-In-Reply-To: <20251014004740.2775957-1-hramamurthy@google.com>
-To: Harshitha Ramamurthy <hramamurthy@google.com>
-Cc: netdev@vger.kernel.org, joshwash@google.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- willemb@google.com, pkaligineedi@google.com, jfraker@google.com,
- ziweixiao@google.com, thostet@google.com, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-2a268
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 14 Oct 2025 00:47:39 +0000 you wrote:
-> From: Tim Hostetler <thostet@google.com>
+On Wed, 01 Oct 2025 12:56:49 +0200, Oleksij Rempel wrote:
+> Forward critical supply events downstream so consumers can react in
+> time.  An under-voltage event on an upstream rail may otherwise never
+> reach end devices (e.g. eMMC).
 > 
-> The device returns a valid bit in the LSB of the low timestamp byte in
-> the completion descriptor that the driver should check before
-> setting the SKB's hardware timestamp. If the timestamp is not valid, do not
-> hardware timestamp the SKB.
+> Register a notifier on a regulator's supply when the supply is resolved,
+> and forward only REGULATOR_EVENT_UNDER_VOLTAGE to the consumer's notifier
+> chain. Event handling is deferred to process context via a workqueue; the
+> consumer rdev is lifetime-pinned and the rdev lock is held while calling
+> the notifier chain. The notifier is unregistered on regulator teardown.
 > 
 > [...]
 
-Here is the summary with links:
-  - [net] gve: Check valid ts bit on RX descriptor before hw timestamping
-    https://git.kernel.org/netdev/net/c/bfdd74166a63
+Applied to
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
+Thanks!
+
+[1/1] regulator: core: forward undervoltage events downstream by default
+      commit: 433e294c3c5b5d2020085a0e36c1cb47b694690a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
