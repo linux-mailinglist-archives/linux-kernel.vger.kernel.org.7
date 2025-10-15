@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-853591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A2CBDC0D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26473BDC0DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C507A4F2B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5046188C94E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DFE2FF163;
-	Wed, 15 Oct 2025 01:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mzpMDwdO"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E742FCC02;
+	Wed, 15 Oct 2025 01:51:24 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E672FF174;
-	Wed, 15 Oct 2025 01:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CAD2FB998;
+	Wed, 15 Oct 2025 01:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760493029; cv=none; b=GsS0USbgER0+3rX0Y2gjMrT+uPgsnTBcuvH4HINwz+lKyS0x/kxMsES8n0TyCui4yj9pHAiVMBmjKJZsLsm6QQuFWRgkjQK8d+TfDtfY+0K4Js7q7Pyc7D8BKhwtyOWnfRXRm1OVQVHgTHo1bERk9x0CIjD7D/n1UHvPOKAGIOQ=
+	t=1760493084; cv=none; b=cy8aj6Um7qQzYTQ9eegmCdH3AEY2X3s//cM1MkaYTWTvNxHHfhCc3PJ/MnONmFYV0dRDeLildaB0wHVBhrWZ0RmCXJge5BzUWSH16OB4S19+AbxfEZa2NnYeSJ9ZZp3/+7KeWG4ELfkXVcW7jyg592uQjzrLFOpO8dNOnD/UfL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760493029; c=relaxed/simple;
-	bh=VctG1DOpvekujaJCcbS4UM3FlSZNBEgyayPZ48U4Pbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aiRi3i8eriDa7R8TVuMtmuEqwVNzhbeqrQSZ/7cZGlmGK2wPZFPXyG6Zf2iWdfhxbYmZ54elO5SZB1F+LouQSgeLRCgPsGE2bb7oPDkn+bs9xvN3G3KVjsMkljk/I6TqDSpvlutxRcr1+i97cxPxGjleSv6JfwfbBEo5JlcwnTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mzpMDwdO; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760493023; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=GBOWHzpLqdiqANdVhAP/vDnqO40E3jmyK6pHau4P2Z8=;
-	b=mzpMDwdOsvjl0jOr4/rAS8c1Wzhj6ZeM8MWXIyQQHG1jn7J8iUIacBY3JuxcZPluCIpd/b8+F9WG/iIhYtctuz75QTZa9cDTC4iLv9m6JMxmTHBuF88+udF5fvc58wvDxcXN79DQyu3LmpCSb4HuC4Gd4coCrTNobeVXuYlQ9U8=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WqEHRNj_1760493017 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 15 Oct 2025 09:50:22 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: kys@microsoft.com
-Cc: haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] arch/x86: mshyperv: Remove duplicate asm/msr.h header
-Date: Wed, 15 Oct 2025 09:50:14 +0800
-Message-ID: <20251015015014.3636204-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1760493084; c=relaxed/simple;
+	bh=VlbW2Wo/jtLRKfINMxCi2gJq/1N0aUyE8+uDSooIGFY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W2HI1BeNcRgCDvVqkPZIrfjk+ayykHz6GeSUkv7cVYJvRSi9/s7+/LbHU68iIVtLdbnkDdXrISmMyXIAoFyUh2VTRBDqjSsItWyNR+WTsYw+Jnhj29bY85vJM46KyBWjLiaSShghlmgiPze5ln50Im64XnB0S+s5wq1lM0rUnQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201615.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202510150951133084;
+        Wed, 15 Oct 2025 09:51:13 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201615.home.langchao.com (10.100.2.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 15 Oct 2025 09:51:12 +0800
+Received: from inspur.com (10.100.2.108) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 15 Oct 2025 09:51:12 +0800
+Received: from localhost.localdomain.com (unknown [10.94.16.205])
+	by app4 (Coremail) with SMTP id bAJkCsDwybQO_u5o8rwJAA--.1663S4;
+	Wed, 15 Oct 2025 09:51:11 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@fomichev.me>, <haoluo@google.com>, <jolsa@kernel.org>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH v3 0/1] Fix spelling typo in samples/bpf
+Date: Wed, 15 Oct 2025 09:50:23 +0800
+Message-ID: <20251015015024.2212-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,29 +58,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: bAJkCsDwybQO_u5o8rwJAA--.1663S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY97AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aV
+	CY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAC
+	I402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxV
+	WUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?UIvcAJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KQ3ZFDy+DjjrTwdLfzCWA+i8sDC08dxneMamGk7rui/mLMUtIcfI5+ZXyQtcyso7qjf+
+	ykGW5A+exgSBZzzGbfU=
+Content-Type: text/plain
+tUid: 20251015095113d3ee9d5a5a62b5f2be5a1f89ceb6afed
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-./arch/x86/kernel/cpu/mshyperv.c: asm/msr.h is included more than once.
+Fixes for some spelling errors in samples/bpf
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=26164
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- arch/x86/kernel/cpu/mshyperv.c | 1 -
- 1 file changed, 1 deletion(-)
+v3:
+ - The BPF module patch as a separate thread
 
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 80a641a6ac48..6802d89ca790 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -31,7 +31,6 @@
- #include <asm/msr.h>
- #include <asm/nmi.h>
- #include <clocksource/hyperv_timer.h>
--#include <asm/msr.h>
- #include <asm/numa.h>
- #include <asm/svm.h>
- 
+v2:
+ - Merge into a single commit 
+ (https://lore.kernel.org/all/20251014060849.3074-1-chuguangqing@inspur.com/
+)
+v1:
+ (https://lore.kernel.org/all/20251014023450.1023-1-chuguangqing@inspur.com/) 
+
+Chu Guangqing (1):
+  samples/bpf: Fix spelling typo in samples/bpf
+
+ samples/bpf/do_hbm_test.sh  | 2 +-
+ samples/bpf/hbm.c           | 4 ++--
+ samples/bpf/tcp_cong_kern.c | 2 +-
+ samples/bpf/tracex1.bpf.c   | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
 -- 
-2.43.5
+2.43.7
 
 
