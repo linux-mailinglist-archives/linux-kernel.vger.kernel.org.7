@@ -1,162 +1,211 @@
-Return-Path: <linux-kernel+bounces-853547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C76BDBF1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B9EBDBF31
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8EC54EDC9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35373B5062
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 01:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8761F03FB;
-	Wed, 15 Oct 2025 00:59:45 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374E2459E7;
+	Wed, 15 Oct 2025 01:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RScvWVMS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802261E376C;
-	Wed, 15 Oct 2025 00:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7811A9F90
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760489985; cv=none; b=W4YPoBec14zTOX/vT/sfUVpssVT+8QGWdmrz2K7hbGzLeud9zkKOOCAQ6GkQxYGzoFPuB19Rr9uXzc4ByKaeFslKmC6I68xUczrUxbiortwir56D7A4nY69zoQAPPqcdiGnbYl6Lnh5NyzXeZ0GdR3WyhZYrI16jNYvQ7zM3W+8=
+	t=1760490253; cv=none; b=iT6lfHhBoDXmZF+BHQzK01oXZf4agvvaRNsP29Xp9KMxGAGlwFDRuG/UcwW22S7GsfcVuZUDkhoEjSkj6DRIpL5ggMNxGnf6mVGaAQuPQmr9GndpOY62vVbOhI81uH+AqkwGcYWpquxLmk8n3fGqQXW0Lqgy97um80rZ1OOWhig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760489985; c=relaxed/simple;
-	bh=EydKLU21XFhnLZjSAD5c9MEnnu2nmRgXt7ZEigdV4zY=;
-	h=Date:Subject:From:To:CC:Message-ID:MIME-Version:In-Reply-To:
-	 References:Content-Type; b=hqw8aaN/dPLykUeSBLCVmebTNtcQ6vZzCgoN7J1l1cX8QBH1t68gMBPEntWQ/3EjhaUbiH79GRqfqqL6MNZ5gDToP/P+453AoUyCFBKcoT7p0uyCELkGCVjTq6kF+nyxWANc4PNIH3h7MRSwoyP76h2zqj7Be8LuzvTqMcL+TS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201620.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202510150859353264;
-        Wed, 15 Oct 2025 08:59:35 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 15 Oct 2025 08:59:34 +0800
-Received: from inspur.com (10.100.2.112) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 15 Oct 2025 08:59:34 +0800
-Received: from chuguangqing$inspur.com ( [120.224.42.187] ) by
- ajax-webmail-app8 (Coremail) ; Wed, 15 Oct 2025 08:59:33 +0800 (GMT+08:00)
-Date: Wed, 15 Oct 2025 08:59:33 +0800
-Subject: Re: Re: [PATCH v2 1/1] samples/bpf: Fix spelling typo in
- samples/bpf
-From: =?UTF-8?Q?Gary_Chu=28=E6=A5=9A=E5=85=89=E5=BA=86=29?=
-	<chuguangqing@inspur.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: ast <ast@kernel.org>, daniel <daniel@iogearbox.net>, andrii
-	<andrii@kernel.org>, martin.lau <martin.lau@linux.dev>, eddyz87
-	<eddyz87@gmail.com>, song <song@kernel.org>, yonghong.song
-	<yonghong.song@linux.dev>, john.fastabend <john.fastabend@gmail.com>, kpsingh
-	<kpsingh@kernel.org>, sdf <sdf@fomichev.me>, haoluo <haoluo@google.com>,
-	jolsa <jolsa@kernel.org>, kwankhede <kwankhede@nvidia.com>, bpf
-	<bpf@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kvm
-	<kvm@vger.kernel.org>
-Message-ID: <68eef1b8.1.4heY4R8JIaj5heY4@inspur.com>
-X-Mailer: Coremail Webmail Server Version 2025.1-cmXT6 build
- 20250610(aeb0f7c4) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-39078be8-44f8-459d-aa33-411e3e3b0787-inspur.com
-X-CMClient-Version: Coremail cmclient(4.2.0.1062 win64.exe)
+	s=arc-20240116; t=1760490253; c=relaxed/simple;
+	bh=hsP+f9cKGhA88vButIz4+UBSyVEnqSK6E16OcnngsCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XUiACk4ii2KRIFxTpMg8jq0b+FbjgSfHA4Q6D30uwicW0OK9Tl6yyJlatpmnpevOQQvysjI51vBvSV3/olmD29+OhC6PrwejHLDe+GrcszWQEm944YcXKzYaWvAiBnjR127TAWbrgDTOfrzguY/YFE70VGJIOkxrLbJyNObpK6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RScvWVMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDDFC113D0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760490252;
+	bh=hsP+f9cKGhA88vButIz4+UBSyVEnqSK6E16OcnngsCg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RScvWVMSY7LwI4DvLXrvKvCMUx+Pa0fQ9pfHrDJnU7cpom2caBFT6YqNg7BX0vP/r
+	 Kk9QOORPmOp6h9fRkyYMYoGh7NS5bHztTUHtsgF643UwzC/UHSJdPhyMVKcQ6xlnEv
+	 KqN2S5dkh76oSkrBZ4AtHZSjt1OmTOQkFnKTK+snQR7scNbb5VIL/oJSuOoBDZJ3UQ
+	 +grCV5TOyjRx/SfHCIh9YwvHk/46zihKgNtKkRaxve3oQ0sVA549zTEUaiCkOYoz90
+	 /kt8yz2B3Diy/LVSHMonak8PQIvAhvJpnfRP6z7laSuBKAyKz6lSqhE+woynmysvpQ
+	 8pM/Jj9x+BScQ==
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e6674caa5so2241655e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 18:04:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWbT0N88dKuicezIsr/J33akxTV11x+JlzMpdzZLwWkKBx0kXqVUV+J+XCsQWg2tQZewyr8HrqpDsbqfaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3QDdjF+youl5UyLXto0/iAUQxtrpocK03H+j6dyCfvb6AFykv
+	sDQHmMgL6tIGOVfhmmojTmBsTXN3WYul++wvI7o6JM9uvx0rillYnV3aQTNC6zj2SaaRQnXDrXJ
+	yikW6dcLfCyq4A3ZA47CaF+cpKK0KDNA=
+X-Google-Smtp-Source: AGHT+IFSO4RoH0+0MmecaoWwkdhHUj1tFSX/MI8r9stNS3G36xBF5yBb2moTJwxkgO/lNRID4MrzmosTYGharRKmJds=
+X-Received: by 2002:a7b:cc06:0:b0:46e:7dbf:6cc2 with SMTP id
+ 5b1f17b1804b1-46fa296e763mr154188005e9.8.1760490251277; Tue, 14 Oct 2025
+ 18:04:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Priority: 3
-X-Coremail-Locale: zh_CN
-X-CM-HeaderCharset: UTF-8
-In-Reply-To: <20251014140035.31bd9154@shazbot.org>
-References: <3e4b2ac992da27b6aeafed9553a7fa9d15-10-25shazbot.org@g.corp-email.com>
- <20251014140035.31bd9154@shazbot.org>
-x-cm-smime: signed,cmsm
-x-cm-smime-version: cmsm openssl OpenSSL 3.3.1 4 Jun 2024(gm:GmSSL 3.1.1) v1
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-	micalg=cmsm; boundary="----=_Part_1_2heY4R8JIaj3heY4_20251015085832=----"
-X-CM-TRANSID: cAJkCsDwPNH18e5o2lEDAA--.22230W
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/1tbiAQEQDmjucgsOtQABsb
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
-X-CM-DELIVERINFO: =?B?LZuWxJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3D1QS02c2pkXQFDIGuCv
-	ry86HMgQybAZEbGh79RY5XKDXrZQ3t98cS/hcTFz/6PABjKWMLTbK1W6MAsDVb3gEImP0o
-	Eo8H1pNhUNdG0ms/o/mxzHcdxndHU7fhfz+Rke7A
-tUid: 202510150859351e3364c12b2d111d1d2502758b732b38
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+References: <20251014131032.49616-1-ziyao@disroot.org> <20251014131032.49616-4-ziyao@disroot.org>
+In-Reply-To: <20251014131032.49616-4-ziyao@disroot.org>
+From: Guo Ren <guoren@kernel.org>
+Date: Wed, 15 Oct 2025 09:03:59 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTdY+dhCH1BVVDaeqZxotxeu6q4NrurBK6Ro4oc3LWwcw@mail.gmail.com>
+X-Gm-Features: AS18NWDLo0_MxIYOl-8Amf-z1eZpjh4scWWAn9vzIu7fB631vLox-a9ZNXNTSA0
+Message-ID: <CAJF2gTTdY+dhCH1BVVDaeqZxotxeu6q4NrurBK6Ro4oc3LWwcw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] reset: th1520: Prepare for supporting multiple controllers
+To: Yao Zi <ziyao@disroot.org>
+Cc: Drew Fustini <fustini@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Icenowy Zheng <uwu@icenowy.me>, Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------=_Part_1_2heY4R8JIaj3heY4_20251015085832=----
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+Hi Yao,
 
-PkknZCBzdWdnZXN0IHRoaXMgZ28gdGhyb3VnaCBicGYgc2luY2UgaXQgdG91Y2hlcyBtb3Jl
-IHRoZXJlLiAgRm9yIG10dHksCj4KPkFja2VkLWJ5OiBBbGV4IFdpbGxpYW1zb24gPGFsZXhA
-c2hhemJvdC5vcmc+CkNhbiBJIHVuZGVyc3RhbmQgdGhpcyBhcyBzcGxpdHRpbmcgaW50byB0
-d28gc2VwYXJhdGUgdGhyZWFkczogb25lIGZvciBCUEYgYW5kIG9uZSBmb3IgbXR0eT8KCkJl
-c3QgcmVnYXJkcwpDaHUgR3VhbmdxaW5n
+On Tue, Oct 14, 2025 at 9:12=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+>
+> TH1520 SoC is divided into several subsystems, shipping distinct reset
+> controllers with similar control logic. Let's make reset signal mapping
+> a data structure specific to one compatible to prepare for introduction
+> of more reset controllers in the future.
+Move th1520_resets to .priv data makes sense, LGTM.
+
+Acked-by: Guo Ren <guoren@kernel.org>
+
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/reset/reset-th1520.c | 42 +++++++++++++++++++++++++-----------
+>  1 file changed, 30 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
+> index 14d964a9c6b6..2b65a95ed021 100644
+> --- a/drivers/reset/reset-th1520.c
+> +++ b/drivers/reset/reset-th1520.c
+> @@ -29,14 +29,20 @@
+>  #define TH1520_HDMI_SW_MAIN_RST                BIT(0)
+>  #define TH1520_HDMI_SW_PRST            BIT(1)
+>
+> +struct th1520_reset_map {
+> +       u32 bit;
+> +       u32 reg;
+> +};
+> +
+>  struct th1520_reset_priv {
+>         struct reset_controller_dev rcdev;
+>         struct regmap *map;
+> +       const struct th1520_reset_map *resets;
+>  };
+>
+> -struct th1520_reset_map {
+> -       u32 bit;
+> -       u32 reg;
+> +struct th1520_reset_data {
+> +       const struct th1520_reset_map *resets;
+> +       size_t num;
+>  };
+>
+>  static const struct th1520_reset_map th1520_resets[] =3D {
+> @@ -90,7 +96,7 @@ static int th1520_reset_assert(struct reset_controller_=
+dev *rcdev,
+>         struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
+>         const struct th1520_reset_map *reset;
+>
+> -       reset =3D &th1520_resets[id];
+> +       reset =3D &priv->resets[id];
+>
+>         return regmap_update_bits(priv->map, reset->reg, reset->bit, 0);
+>  }
+> @@ -101,7 +107,7 @@ static int th1520_reset_deassert(struct reset_control=
+ler_dev *rcdev,
+>         struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
+>         const struct th1520_reset_map *reset;
+>
+> -       reset =3D &th1520_resets[id];
+> +       reset =3D &priv->resets[id];
+>
+>         return regmap_update_bits(priv->map, reset->reg, reset->bit,
+>                                   reset->bit);
+> @@ -120,11 +126,14 @@ static const struct regmap_config th1520_reset_regm=
+ap_config =3D {
+>
+>  static int th1520_reset_probe(struct platform_device *pdev)
+>  {
+> +       const struct th1520_reset_data *data;
+>         struct device *dev =3D &pdev->dev;
+>         struct th1520_reset_priv *priv;
+>         void __iomem *base;
+>         int ret;
+>
+> +       data =3D device_get_match_data(dev);
+> +
+>         priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+>                 return -ENOMEM;
+> @@ -138,22 +147,31 @@ static int th1520_reset_probe(struct platform_devic=
+e *pdev)
+>         if (IS_ERR(priv->map))
+>                 return PTR_ERR(priv->map);
+>
+> -       /* Initialize GPU resets to asserted state */
+> -       ret =3D regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
+> -                                TH1520_GPU_RST_CFG_MASK, 0);
+> -       if (ret)
+> -               return ret;
+> +       if (of_device_is_compatible(dev->of_node, "thead,th1520-reset")) =
+{
+> +               /* Initialize GPU resets to asserted state */
+> +               ret =3D regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
+> +                                        TH1520_GPU_RST_CFG_MASK, 0);
+> +               if (ret)
+> +                       return ret;
+> +       }
+>
+>         priv->rcdev.owner =3D THIS_MODULE;
+> -       priv->rcdev.nr_resets =3D ARRAY_SIZE(th1520_resets);
+> +       priv->rcdev.nr_resets =3D data->num;
+>         priv->rcdev.ops =3D &th1520_reset_ops;
+>         priv->rcdev.of_node =3D dev->of_node;
+>
+> +       priv->resets =3D data->resets;
+> +
+>         return devm_reset_controller_register(dev, &priv->rcdev);
+>  }
+>
+> +static const struct th1520_reset_data th1520_reset_data =3D {
+> +       .resets =3D th1520_resets,
+> +       .num =3D ARRAY_SIZE(th1520_resets),
+> +};
+> +
+>  static const struct of_device_id th1520_reset_match[] =3D {
+> -       { .compatible =3D "thead,th1520-reset" },
+> +       { .compatible =3D "thead,th1520-reset", .data =3D &th1520_reset_d=
+ata },
+>         { /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, th1520_reset_match);
+> --
+> 2.50.1
+>
 
 
-
-------=_Part_1_2heY4R8JIaj3heY4_20251015085832=----
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-
-MIIKdwYJKoZIhvcNAQcCoIIKaDCCCmQCAQExDTALBglghkgBZQMEAgEwCwYJKoZIhvcNAQcB
-oIIHvTCCB7kwggahoAMCAQICE34AAkSWdsZNK1EPE5IAAQACRJYwDQYJKoZIhvcNAQELBQAw
-WTETMBEGCgmSJomT8ixkARkWA2NvbTEYMBYGCgmSJomT8ixkARkWCGxhbmdjaGFvMRQwEgYK
-CZImiZPyLGQBGRYEaG9tZTESMBAGA1UEAxMJSU5TUFVSLUNBMB4XDTI0MDkxMjAyMzIxM1oX
-DTI5MDkxMTAyMzIxM1owgbYxEzARBgoJkiaJk/IsZAEZFgNjb20xGDAWBgoJkiaJk/IsZAEZ
-FghsYW5nY2hhbzEUMBIGCgmSJomT8ixkARkWBGhvbWUxMzAxBgNVBAsMKua1qua9rueUteWt
-kOS/oeaBr+S6p+S4muiCoeS7veaciemZkOWFrOWPuDESMBAGA1UEAwwJ5qWa5YWJ5bqGMSYw
-JAYJKoZIhvcNAQkBFhdjaHVndWFuZ3FpbmdAaW5zcHVyLmNvbTCCASIwDQYJKoZIhvcNAQEB
-BQADggEPADCCAQoCggEBAKYDFgmitHYS5YOYSpMY26zG6pgktLXqOlSHGXmq5UZxsjEpQHP1
-BY4eeUE7+pgfqN1518yfCL6nHIlkQms6pCy2CbJpFMQLSIlNNt1lDnPqOdGXylYV2F/tk33C
-bwMjcL8y8brq/HrnD38lA58kUOjuEQaV38jn0coIfbkC8QScz3uBtbuOdI4jSct+liP9tgCy
-KI662Lnt9376q+iLLXvbwmrTbCdWTjMNMJjLqBWikMYTKJhTiYe2S4HxI4zKqrEee3SxA6Qe
-Yd+Ku8thY2kWMMwXETx5DYr6jGeTSfVnqmzVGESunLualJFkAfWGLEESKXhtT9Yu1q1Y+7Hb
-OPUCAwEAAaOCBBowggQWMAsGA1UdDwQEAwIFoDA9BgkrBgEEAYI3FQcEMDAuBiYrBgEEAYI3
-FQiC8qkfhIHXeoapkT2GgPcVg9iPXIFK/YsmgZSnTQIBZAIBYTBEBgkqhkiG9w0BCQ8ENzA1
-MA4GCCqGSIb3DQMCAgIAgDAOBggqhkiG9w0DBAICAIAwBwYFKw4DAgcwCgYIKoZIhvcNAwcw
-HQYDVR0OBBYEFBEL8h6Bd8FOflxman0I5rRuiXFQMB8GA1UdIwQYMBaAFF5ZA6a0TFhgkU72
-HrWlOaYywTVqMIIBDwYDVR0fBIIBBjCCAQIwgf+ggfyggfmGgbpsZGFwOi8vL0NOPUlOU1BV
-Ui1DQSxDTj1KVENBMjAxMixDTj1DRFAsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049
-U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz1ob21lLERDPWxhbmdjaGFvLERDPWNvbT9j
-ZXJ0aWZpY2F0ZVJldm9jYXRpb25MaXN0P2Jhc2U/b2JqZWN0Q2xhc3M9Y1JMRGlzdHJpYnV0
-aW9uUG9pbnSGOmh0dHA6Ly9KVENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbS9DZXJ0RW5yb2xs
-L0lOU1BVUi1DQS5jcmwwggEsBggrBgEFBQcBAQSCAR4wggEaMIGxBggrBgEFBQcwAoaBpGxk
-YXA6Ly8vQ049SU5TUFVSLUNBLENOPUFJQSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxD
-Tj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29t
-P2NBQ2VydGlmaWNhdGU/YmFzZT9vYmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5
-MGQGCCsGAQUFBzAChlhodHRwOi8vSlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb20vQ2VydEVu
-cm9sbC9KVENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbV9JTlNQVVItQ0EoMSkuY3J0MCkGA1Ud
-JQQiMCAGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNwoDBDA1BgkrBgEEAYI3FQoEKDAm
-MAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMEMAwGCisGAQQBgjcKAwQwSwYDVR0RBEQwQqAnBgor
-BgEEAYI3FAIDoBkMF2NodWd1YW5ncWluZ0BpbnNwdXIuY29tgRdjaHVndWFuZ3FpbmdAaW5z
-cHVyLmNvbTBQBgkrBgEEAYI3GQIEQzBBoD8GCisGAQQBgjcZAgGgMQQvUy0xLTUtMjEtMTYw
-Njk4MDg0OC03MDY2OTk4MjYtMTgwMTY3NDUzMS01NjA0MDYwDQYJKoZIhvcNAQELBQADggEB
-AENGHBz0J97mfrnLF1054QNBs0hM8iO39D4x/QqrMf53ghwe3sc0DxmGs6lhAmIWCMlj146j
-j6UAEF9BNZUrcysiIFPN/UwHwxFecspHX4WFmQOP41FB0oNXovWtw75GwImsszbUwaSGoWWl
-cIfGXI+35PXxhJdIPRx4nlClDcD783an45PF7Mcvkao9IlPTnUfjeKRkLnEKlkxZp+4HQbLK
-suW+/N63gqjvpjiNYMvrUQRqR7FRH1GA9w+FgUeI1/1/fCLd9zUBbQnWyaH7eub0g0j7pfH+
-DqAQeYh4FZl84NOuE/oUYyUwwmUtChIBls8Fp2FSeywopNaDLmtPipQxggKAMIICfAIBATBw
-MFkxEzARBgoJkiaJk/IsZAEZFgNjb20xGDAWBgoJkiaJk/IsZAEZFghsYW5nY2hhbzEUMBIG
-CgmSJomT8ixkARkWBGhvbWUxEjAQBgNVBAMTCUlOU1BVUi1DQQITfgACRJZ2xk0rUQ8TkgAB
-AAJEljALBglghkgBZQMEAgGggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG
-9w0BCQUxDxcNMjUxMDE1MDA1ODMyWjAvBgkqhkiG9w0BCQQxIgQgK2+zodhE4lQ6qdYyZPjM
-2PJJouIx5rtXlt2yqyt5nisweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEALUWX
-z17XMotTqiioDiklnbLohydZ311U3bKtoB/HRATgoGE25N9pcIMLTDO27sxR9qF/Y5uvhOY/
-OaDP4ZTRJuh768OhZU484OoUZ8AMQX+do2n9qRb2FNgFEz4TqZKLHfti3pCB957Bkz79nkgH
-YRlarov8LzEMmv/w7Vv/OPQ4+SwDZ0+tNH7ehDyDLEB0X5zQaFdFuQXVGMi4apT6wZYrDQV4
-gFcz0FtHYJjSIbqFvdotmKMAcKUTSrxUWS2Ox2CkCY7l1HCzBlQwnzTCG/6BmI0zjeW7EOYw
-rbMQEuiM5V+6vFJYqOrvmp/FkTgMqaQYc/P7Zrxlj+HouEwxww==
-
-------=_Part_1_2heY4R8JIaj3heY4_20251015085832=------
+--=20
+Best Regards
+ Guo Ren
 
