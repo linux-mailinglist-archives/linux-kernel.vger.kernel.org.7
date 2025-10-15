@@ -1,179 +1,157 @@
-Return-Path: <linux-kernel+bounces-855314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE97CBE0DB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:46:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF1FBE0DBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FC93423ADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:46:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id ED04034FFD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 21:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BB3304BB8;
-	Wed, 15 Oct 2025 21:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4B7302CC9;
+	Wed, 15 Oct 2025 21:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="SO/erE3w"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVVSdh49"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE68C2E7BB6
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF333254B5;
+	Wed, 15 Oct 2025 21:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760564765; cv=none; b=gAkBvtJGUc2iaQWXXJ1/PqKfFEm15uoFxCwJPZpnbdwUEwfZXHuL7NrIhWcl3JE0Jw8WK1RgghBTVbVC/fjrLKwCi6Yxk3Yn7a7sfTwwq20l4Yz3OgKdJ6XvhKvBzLjig74F0FanaTX5TA03NmPoFT8UNWyM60Tu2APRg0htjdo=
+	t=1760564840; cv=none; b=Tr6dHCM2F6MS6x0+DQXqWNbhL9teMmTIA8dyIgUq/+xrQr58G9htdpDX3C90JFxHQB30pQ7nh+IiattxYW4YllEMQbIIgZ4cv7k8uFAPeGJfimXgYo84nV7zXph/0vU30CPFcfD4y99uQNgQ/DyumfXwCRnxl161bu6z3h3yVr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760564765; c=relaxed/simple;
-	bh=4aIc9dx+BqTIrEkxhdIkDUsdv2I7S3jqyih5WAzO4pU=;
+	s=arc-20240116; t=1760564840; c=relaxed/simple;
+	bh=xJ+vIk5KC5F1xnpnsmsN9qpeSze7SRjsKUVliuwCx1k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUooVEKFAEsbEMkN6fZobCTtDtPEy7XVavuEAOrMCh7rNr/VUGBjySP3qpLLkXE+WNhJYtJC9oQYhpqEVyWbel1NfS3CFOoqH0zAAfGqouS1dUVHC+zMzrjso7STWbLCK+mekrLBHjps/plACLV4TXgrgPyXxkdgyi4mp60haKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=SO/erE3w; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-88f27b67744so8433285a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1760564762; x=1761169562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3FMg1FEv7ZUbFziIBjfrlMH5r4d6/IdcxKlJL9nOzQ=;
-        b=SO/erE3wHFHNuhgXeAZMBhu+vRvj7I6znm+CPL4BUW4goPdcy4g1QHzQL69WLJ2s8q
-         E9XIlB5UDV6XaLXR+adHFPpFzFQAPnRiZz6c1pVa3Vsf+/ObMAds6HiemfQpTm77nYiX
-         I6v+DY9WOXM1LxV1Fv/BRfRPH1bdCqOMm+9RClKU2i2IGD4sGuWvM/C120Vfy9E5poDt
-         k+j7Bgbt+84RvIqxSqPtJtsBhEKo8Y+qfc05eLBmKC6Etw8GH5T2DQp1zPzMIAxWDB06
-         +L7Y9jibEw/rFQ+iPZIo5d0xG27yM1nM0UtT98rjkS1AB30KI0SO5nAuyvgshUiJahfv
-         QRCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760564762; x=1761169562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L3FMg1FEv7ZUbFziIBjfrlMH5r4d6/IdcxKlJL9nOzQ=;
-        b=v97/ERusiA5es0gw1R0WxOAo4BVLwUTU+1FUdniQ/bSmDgW9ev/8o3HYSeWK8oYD1j
-         4580fv0PSD3E2rL185c93kM/8MPmaJniR86+hvBg03nz/KXwIx89d92qleFS0vUy/QbZ
-         1aBBp9Hz5myUGEBcJ9ioqU4UbZz8glldDVO/1B9q3DGFtLoO+oe0OJKfC//2VEcGLzaR
-         4cNveBPAcu5leKsSY3/jTemL7jMofNlWMPoR43fx3sLwCDNrS+AvX5XlXvWWHY2Zg284
-         /tZF86pZDZI9ddj4A6b+3dZhb6VYL+RorHYtFEYzqOO0jNbJAeOSIo71RuhWKMyPB23v
-         V8xA==
-X-Forwarded-Encrypted: i=1; AJvYcCX29ac7lpDnJge0Jdx5zJcuH9pWnGFsyjqsB1pdBELrsVBK3sWlVtYVHzgCsSjB1CwhV4kMsk23F0IcpXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRzp7WVsLCBK9FbRi+OUnu4xgvFTye3sTxC72OBDQopU2fzwGv
-	1faJB0rEN4FNtzcoXY3Htm4Qkx2jlIdv9RZgguQww1NAIAUyLLGLQDwCcS4+ZxMpGxc=
-X-Gm-Gg: ASbGncvi7D9/oaJKMtfj32TkckhO6r50TVQxWI80YHFAOl28ieVaPRZd5lmr4hzti7S
-	CUMFJSPTAN/dau/iMd2+eg+Ibh7pZ1LtrnpMfk5UZjPrnCib3MtGwdTNDPM4/tg/YUgBthkVCu5
-	gRiG0ZOxZkbnHgNbnEf/xBt8Gt8blusfkT2QRZjtu/L7AoBQn5IVGSCPH/Wm3i01y35EliDqahu
-	fEeR1fuWMaCy2PWfJCD7R7p2UT2EXJR6cN9Q4eZjYjsIaU7Tbg4Xi5TXyb5X2/KIUOB5AjeTXJ4
-	b80Ik1Hl1NWeQal92bN8Xtn6F4Y5mMuUNBUVUW+jaukMpaBdEX4DlCaUz9eKOnKHxeH2C2y/3E/
-	XRAlK8CWtRWkLbQzSrn8mkueA18DThwq6NKQMoXejcgZtQ7CslOT+6GkPq6uyJiI9qcpnxk/kdm
-	SIjMOM+ueYEUDpshXClDIBjqec85RAAsGffX5MpWGwIdFkay9VJ3+K0B6t1Bj1ylYBEBgv6A==
-X-Google-Smtp-Source: AGHT+IGFaJmIXEF9qOWREfnISohaPtcOawCiX32gOo0axLN0cRb3DCKNrFn66v9UE7KAPGfO0N4wTQ==
-X-Received: by 2002:a05:620a:1a02:b0:88e:86a3:98f1 with SMTP id af79cd13be357-88e86a39b78mr380325385a.45.1760564761659;
-        Wed, 15 Oct 2025 14:46:01 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-88f37e50ebasm56360985a.31.2025.10.15.14.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 14:46:00 -0700 (PDT)
-Date: Wed, 15 Oct 2025 17:45:57 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Shivank Garg <shivankg@amd.com>, jgowans@amazon.com, mhocko@suse.com,
-	jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
-	linux-btrfs@vger.kernel.org, aik@amd.com, papaluri@amd.com,
-	kalyazin@amazon.com, peterx@redhat.com, linux-mm@kvack.org,
-	clm@fb.com, ddutile@redhat.com, linux-kselftest@vger.kernel.org,
-	shdhiman@amd.com, gshan@redhat.com, ying.huang@linux.alibaba.com,
-	shuah@kernel.org, roypat@amazon.co.uk, matthew.brost@intel.com,
-	linux-coco@lists.linux.dev, zbestahu@gmail.com,
-	lorenzo.stoakes@oracle.com, linux-bcachefs@vger.kernel.org,
-	ira.weiny@intel.com, dhavale@google.com, jmorris@namei.org,
-	willy@infradead.org, hch@infradead.org, chao.gao@intel.com,
-	tabba@google.com, ziy@nvidia.com, rientjes@google.com,
-	yuzhao@google.com, xiang@kernel.org, nikunj@amd.com,
-	serge@hallyn.com, amit@infradead.org, thomas.lendacky@amd.com,
-	ashish.kalra@amd.com, chao.p.peng@intel.com, yan.y.zhao@intel.com,
-	byungchul@sk.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com,
-	michael.roth@amd.com, bfoster@redhat.com, bharata@amd.com,
-	josef@toxicpanda.com, Liam.Howlett@oracle.com,
-	ackerleytng@google.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
-	jefflexu@linux.alibaba.com, jaegeuk@kernel.org,
-	dan.j.williams@intel.com, surenb@google.com, vbabka@suse.cz,
-	paul@paul-moore.com, joshua.hahnjy@gmail.com, apopple@nvidia.com,
-	brauner@kernel.org, quic_eberman@quicinc.com, rakie.kim@sk.com,
-	cgzones@googlemail.com, pvorel@suse.cz,
-	linux-erofs@lists.ozlabs.org, kent.overstreet@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, pankaj.gupta@amd.com,
-	linux-security-module@vger.kernel.org, lihongbo22@huawei.com,
-	linux-fsdevel@vger.kernel.org, pbonzini@redhat.com,
-	akpm@linux-foundation.org, vannapurve@google.com,
-	suzuki.poulose@arm.com, rppt@kernel.org, jgg@nvidia.com
-Subject: Re: [f2fs-dev] [PATCH kvm-next V11 6/7] KVM: guest_memfd: Enforce
- NUMA mempolicy using shared policy
-Message-ID: <aPAWFQyFLK4EKWVK@gourry-fedora-PF4VCD3F>
-References: <20250827175247.83322-2-shivankg@amd.com>
- <20250827175247.83322-9-shivankg@amd.com>
- <aNVQJqYLX17v-fsf@google.com>
- <aNbrO7A7fSjb4W84@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DIU4YT/GrFTC20emwB+etKt26PiPh2ndZXlAvcnvuYEQSZbS/YMKszjrl2xkd+QeHe/4DRSRgijoshfZ7iVLGEDbvfRinOY3AqgZjClo7o1KVZIu9WhIrR5/ZSWsaVLzUMCXlJp7hxmdqsLfyPhC24F3aezocoJo7cxdRFGGP6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVVSdh49; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5217C4CEF8;
+	Wed, 15 Oct 2025 21:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760564840;
+	bh=xJ+vIk5KC5F1xnpnsmsN9qpeSze7SRjsKUVliuwCx1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LVVSdh49R1/9O8fC5Q7o++Vr1PlEkyFpLLaueAaDUY0Q1J1InYy0RZoLxP34hjaga
+	 1ajpPkbjFrUmz1PoTHnfsdOeXGZC+LVivuocJa9EWz6w3Vw6Tn0ZspvSi213RIC4xk
+	 eBX6PyofgNfz2TFx7l3y4YiPvVb9/gHhFbzBef1o/4qjiNCo9IpyVU7CitXLmAJ+XE
+	 jNav/0+0/MoK2ZNLbdDTOVsch/orqsVpSHk3daj4LM05lF54g5pjAlF+86q3m4QoG7
+	 cBM3uIDDT3eFBCiT/TuIuoLn1QB1z7WVLE4WkdNIYDySjBII5SRXMbeTlBLCPUp5fT
+	 GUm75B1ADesjg==
+Date: Wed, 15 Oct 2025 23:47:15 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Carlos O'Donell <carlos@redhat.com>
+Subject: Re: [PATCH v2 4/5] man/man2/futex.2: Update the link reference again.
+Message-ID: <yibk3ihxkx3iqkcnuekznvmpjccfo3sq74yjwr647kbfrif2q3@ld2zazy6mh7q>
+References: <20250915141305.906440-1-bigeasy@linutronix.de>
+ <20250915141305.906440-5-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="okoiu3lx7tlykw4z"
 Content-Disposition: inline
-In-Reply-To: <aNbrO7A7fSjb4W84@google.com>
+In-Reply-To: <20250915141305.906440-5-bigeasy@linutronix.de>
 
-On Fri, Sep 26, 2025 at 12:36:27PM -0700, Sean Christopherson via Linux-f2fs-devel wrote:
-> > 
-> > static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-> > 					     unsigned long addr, pgoff_t *pgoff)
-> > {
-> > 	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> > 
-> > 	return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
-> 
-> Argh!!!!!  This breaks the selftest because do_get_mempolicy() very specifically
-> falls back to the default_policy, NOT to the current task's policy.  That is
-> *exactly* the type of subtle detail that needs to be commented, because there's
-> no way some random KVM developer is going to know that returning NULL here is
-> important with respect to get_mempolicy() ABI.
-> 
 
-Do_get_mempolicy was designed to be accessed by the syscall, not as an in-kernel ABI.
+--okoiu3lx7tlykw4z
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Carlos O'Donell <carlos@redhat.com>
+Subject: Re: [PATCH v2 4/5] man/man2/futex.2: Update the link reference again.
+Message-ID: <yibk3ihxkx3iqkcnuekznvmpjccfo3sq74yjwr647kbfrif2q3@ld2zazy6mh7q>
+References: <20250915141305.906440-1-bigeasy@linutronix.de>
+ <20250915141305.906440-5-bigeasy@linutronix.de>
+MIME-Version: 1.0
+In-Reply-To: <20250915141305.906440-5-bigeasy@linutronix.de>
 
-get_task_policy also returns the default policy if there's nothing
-there, because that's what applies.
+Hi Sebastian,
 
-I have dangerous questions:
+On Mon, Sep 15, 2025 at 04:13:04PM +0200, Sebastian Andrzej Siewior wrote:
+> Carlos O'Donell says based on the context, it should be the former link
+> from that day.
+>=20
+> Update the link accordingly.
+>=20
+> Cc: Carlos O'Donell <carlos@redhat.com>
+> Link: https://lore.kernel.org/all/710e8f05-b0b3-489a-9e89-8967cf6a9e70@re=
+dhat.com
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-why is __kvm_gmem_get_policy using
-	mpol_shared_policy_lookup()
-instead of
-	get_vma_policy()
+Thanks!  I've applied the patch.
 
-get_vma_policy does this all for you
 
-struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
-                                 unsigned long addr, int order, pgoff_t *ilx)
-{
-        struct mempolicy *pol;
+Have a lovely night!
+Alex
 
-        pol = __get_vma_policy(vma, addr, ilx);
-        if (!pol)
-                pol = get_task_policy(current);
-        if (pol->mode == MPOL_INTERLEAVE ||
-            pol->mode == MPOL_WEIGHTED_INTERLEAVE) {
-                *ilx += vma->vm_pgoff >> order;
-                *ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
-        }
-        return pol;
-}
+> ---
+>  man/man2/futex.2 | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/futex.2 b/man/man2/futex.2
+> index fe4a239c3812c..1a7cb1b5e08c4 100644
+> --- a/man/man2/futex.2
+> +++ b/man/man2/futex.2
+> @@ -6,7 +6,7 @@
+>  .\"
+>  .\" FIXME Still to integrate are some points from Torvald Riegel's mail =
+of
+>  .\" 2015-01-23:
+> -.\"       https://lore.kernel.org/lkml/1422037788.29655.0.camel@triegel.=
+csb
+> +.\"       https://lore.kernel.org/lkml/1422037145.27573.0.camel@triegel.=
+csb
+>  .\"
+>  .\" FIXME Do we need to add some text regarding Torvald Riegel's 2015-01=
+-24 mail
+>  .\"       https://lore.kernel.org/lkml/1422105142.29655.16.camel@triegel=
+=2Ecsb
+> --=20
+> 2.51.0
+>=20
 
-Of course you still have the same issue: get_task_policy will return the
-default, because that's what applies.
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
 
-do_get_mempolicy just seems like the completely incorrect interface to
-be using here.
+--okoiu3lx7tlykw4z
+Content-Type: application/pgp-signature; name="signature.asc"
 
-~Gregory
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjwFmMACgkQ64mZXMKQ
+wqnjFg/9Ht8+49V0qkleku83fSlQg58lAlT9tjUo6NlP07MGkPAaNbsM0Ix2okkf
+Kq8qLh/FeapaTzMQY6/SmyNZgfR+U3XuzHZYOtepnWG+O80qH4g2jPXlV8zKqmcx
+qLdAx9AE6EDr6LM0VPLJXl2p1+7JZUpCJIckeBWcgUhYXOCQt5p6YyeXE7tYKVQp
+WSoyac6P2fkUpj6zzep03QO4w8c6oCKDRpUZ2sz/J8BibyQXSbIazb+zpdY8a6ia
+NEFu3sS6ZzgsTF3qPbyRuTWCaw4LVncrLjaoq9rZxpYpS4PGrWWIXnaap/brdAWr
+3RC8LpJUTP9hNyC/1CsnOqE4S+1b53X/cHR3Wnc9UmrR4Tef1dvS1xT4ynEo3Q6o
+u30bVUKHcujs889g5WJ/l64s+DtoEiuIiRU4la0iBIU1cALgbvsJx5aDc9IQqj0b
+3hPLB+o5coIvmFu0LAJIDm9mQUqDHT756aoy/+u5m9zFmj6aOs7Ow+DQN7GCJQ1g
++uQ6cNRXt2qcmtH72VX71X+2ejiirlWZbYRcfE4/IZaRF1qu4nzHUOAkQW47ta0O
+pJhUrRtmoWkjP9MSmWBDqI2WEDbfAjHvQQxSy9j+cZmJggSiWUC8XSmZkqYGiMs5
+1Ez77rPkOgz239V2x83qWWB3MQAKAc7Fw8ZKqzIuDf7FBinYyno=
+=CH17
+-----END PGP SIGNATURE-----
+
+--okoiu3lx7tlykw4z--
 
