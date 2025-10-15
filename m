@@ -1,186 +1,146 @@
-Return-Path: <linux-kernel+bounces-853506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA9ABDBDC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:05:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E59BDBDD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5C2192843F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:06:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 014CB4E11A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 00:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B703347DD;
-	Wed, 15 Oct 2025 00:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A2A2AD25;
+	Wed, 15 Oct 2025 00:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVdbzEPf"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="LpTYOx6h"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08944A08
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760486732; cv=none; b=Lc7HSFbuw19SzSL6/qVL6F+S3wGN9A/4r1SSmae8KjyzUabgQmWWtu2RLegDxprkskEeEKTOBUobPTtmcdYimpZqyzddyWb0Qt+kAzlTQ6h0CMk+jE6x1NU/+W7Q/V5JcTSeFtxlDeFIzMC8RWb1KHXFrHJQR6RJqy4MP1JTY/4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760486732; c=relaxed/simple;
-	bh=bhnzTueuY9Gq7RbeymuowpcCUw7aDx4IVKdkM/S0EJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jz9+e6i+cqeSVs7ftfQdsfWmn/gy6Ul3InT1DCIKJ+o3tZWxmBrvClP7lAajs6dGMnH4VZoQJXNJQWHPVDJqk+SyojbyQTkS5Rrqxcrhd5e5QroYSJmW5LARBhTWgiEf67ER/n7hFuNiD6BOD9DjyoqQYp9L3rMLQ+5IT08kBjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVdbzEPf; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-26c209802c0so58751595ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 17:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760486730; x=1761091530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sLMiaX+vGO2HaVidLde0Mqzeld2XbAlMOu6TCSUhVYg=;
-        b=DVdbzEPfR8oPa8wp19Vt55fFpqpHac2QakEIjwKe+Q8Lh9lPo+k9e6du8vrsB5Btx+
-         Zai7dz4U+wGfjMkzXHM+HFPDv0rd4D2S4a1vX/VDfay+eXiV0mVi0sj78vRtO4PQLqdB
-         skiVzI7wwBqJ5f4CVVrI9NT2XhZM66X/cOYPXWp6R8+kzR89/eUABhZjklr3XFjvbiA9
-         521F2LdCkhdmpmuRskSbSMTlveIeVf94kiMncJOnq3lhpkkmK3twiTIj5r1sMM+4ZwZS
-         7/noZVrXEo5x6CcI69mrDqOxEOU/pxWmqIjhBF0Uf/R8XUVBObN2c2MTuYwgroFQZl53
-         yN0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760486730; x=1761091530;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLMiaX+vGO2HaVidLde0Mqzeld2XbAlMOu6TCSUhVYg=;
-        b=m0recxk4ylRpqFNK9t5tf3Ufmzzr6MA2fyRXi0Jka3EcaV5/WVmHeC6Fm1PafF1rJW
-         FWmm6c1tSs3P4I3tV5KNFooWUfwYNd0ZJDLRra3fIoszNoe7zGY72ISL7TXLwNguIHKO
-         Ztm0SlIfdClsBN3l1cADRvO/g/Z2zUD7vQhx6xv2N2evbihE5Us1vB8VS2yeBO4qXpdn
-         eWf0oAlBAVedVGDQ8FQt1baE5SUljaDKudvLigiXL7KijccrEMyFVO2r8W6Bjw1vQCmo
-         5St6q03KOOBwLvvCGpc5PuywAmIS8KTYcbDjFWcYh0fz3KPlXqz7/3DnpYbBFjds9srk
-         IrzQ==
-X-Gm-Message-State: AOJu0YxTNoFcRq8fByBPDm04Jk44Vy7fO9iz+Qw2jm0XXwsOX7PImt2X
-	eXFoh0HCwuAPj3+7ogDQSGTfpvQmykvCxU+5EuRI8u3X3XIpROcDF9GC
-X-Gm-Gg: ASbGncvKbhWijjHlDdCAi5QRZKJP/KJgJ/2JZDc3h5ND1qZspvjbIl4R7yCJvlYIyab
-	/A0ceBD9/W7+wqpIsTktNSRp+VfpL5J6HH37zhnEyB0L+LlM1sCSSZl1lPhTwFI3+M6bz38QSYZ
-	pT4C9tcuNKRtLfgugAEeoCP90Al7d+yj4fsWlhYB4k1z2EWnwBqu0haAjuFSF3syK75y4HjiA4+
-	keX/kFWIjPhcGUOsMTlyvHy8RXzLdCeB81RMxR8fNV8zVq66poS+gn16b6YMWTqZ3v156jpFuL4
-	f3pEpWuIcMXkiQKWGG49nXKfK5o+M7Woupvst9D5IDPGLhem8apVCebyBK2QO9KJp+7IvKlTSQT
-	ZNvesApraLNkB8ZPOxTDeQ/8biLGautcRA0/KZ9lIlEywGMPFxRGcSzisWWoYAhODOTkR9Q7zl6
-	kppefl7yjOltr1mU+graoTeQ==
-X-Google-Smtp-Source: AGHT+IEmH0JRxtSGkPWZTbk0rg2sw6ciOa1Kwmx4Jh+5sWSakKPuSbl1aN4xzbqjjVDaexMRPuJucg==
-X-Received: by 2002:a17:903:fa7:b0:275:f156:965c with SMTP id d9443c01a7336-2902741e441mr320016835ad.52.1760486730094;
-        Tue, 14 Oct 2025 17:05:30 -0700 (PDT)
-Received: from [10.130.1.37] ([118.200.221.61])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-290766cc2a1sm42161035ad.95.2025.10.14.17.05.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 17:05:29 -0700 (PDT)
-Message-ID: <0791edfb-6985-45d7-bb3e-08ab7a341dab@gmail.com>
-Date: Wed, 15 Oct 2025 08:05:24 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A49645
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760487020; cv=pass; b=hS+c2v3D7UxJlBBMNo+twihL2Ae0i7E6KDzvm42ImMd47MaQZt9FVPJwfQV9SqLT7km6gV0BLh9slClbU+JyNopF6pP6fJVdEis0vacGA09JiHyLulhFHOlgUTcGSneOcXjl1He83W9DMB7IUFJ+WXJzco2CB5ce1fwiXcF3iho=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760487020; c=relaxed/simple;
+	bh=oCK92j149KARlUf2E7MSt/ZCC5K9BHuQcOPdSPeoOBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MpHJ547O1ocWJN4nXq4jo2uTe6r7bY8OTYPxpmNUzSUWP/BEdQU5kxEezwwZMxMV8NoO6kiMferFK1h6hyGMG41PzpK8R0zs4yTpHOK038sLnXrevGVVTyOvsY1F+qEIBhKfoRoOasnsBFbxaDDA2Kb4/a5LOUBvMo5KzVFaTXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=LpTYOx6h; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760487009; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DFZlO2rPaafOF4HdTWM3y7XJdogQdkURTyEbDJKoSrobdiToH8eZqJ/h4PfeQAqaSOL5P0UZHHbaz+qgjxDcb21yrx9RM1ZjT5x9NoR1VzrXGViDvmi0jseEvSX7kQu1D2nwXXIy8mFbSMf39Ei+1b10eYwFkZGcAVz+AR+hDLQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760487009; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2UtsHH33vBluEeez9ViwFl9II5p9dINHfIGGIsaLZP4=; 
+	b=g/aU5thFB7+BJHAn5dEv9IUgtvIoqoP2pZXNxulayNP7Wr14FM3ByVaNFuqNlTRAm7crXi9JTikzzE5sU+8ry/Bzp3M5d4W6c6pcqUYGOglGNiSuhNkhgvOvBG+3wxsW/vgjgf6G36VT+VarXcaFLZF1JUmtpRruUlbUSZgYKCw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760487009;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=2UtsHH33vBluEeez9ViwFl9II5p9dINHfIGGIsaLZP4=;
+	b=LpTYOx6hPOxXdvF8Mjjdy1IX1V/QBZQoGmKO1QJMqH1Xq309H7bj3V4GspDB+KAW
+	rBD94T1LGs1XtAMkYJ0eBN0kaFefG4l2zVABaNvXQscj7CvJ9I1CUTuvKo62g6WyQ/H
+	Wwpk5Et/Rl8tZVQJ04DNn4MJupXtJ6rMU66VDLMU=
+Received: by mx.zohomail.com with SMTPS id 1760487007316394.625204029311;
+	Tue, 14 Oct 2025 17:10:07 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Steven Price <steven.price@arm.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+Subject: [PATCH v6 00/12] Some Panfrost fixes and improvements
+Date: Wed, 15 Oct 2025 01:09:06 +0100
+Message-ID: <20251015000930.356073-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] ovl: brtfs' temp_fsid doesn't work with ovl
- index=on
-Content-Language: en-GB
-To: Qu Wenruo <wqu@suse.com>, dsterba@suse.cz,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kernel-dev@igalia.com, Miklos Szeredi <miklos@szeredi.hu>,
- Amir Goldstein <amir73il@gmail.com>, Chris Mason <clm@fb.com>,
- David Sterba <dsterba@suse.com>, Anand Jain <anand.jain@oracle.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>
-References: <20251014015707.129013-1-andrealmeid@igalia.com>
- <20251014182414.GD13776@twin.jikos.cz>
- <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
-From: Anand Jain <anajain.sg@gmail.com>
-In-Reply-To: <6982bc0a-bb12-458a-bb8c-890c363ba807@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 15-Oct-25 5:08 AM, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/10/15 04:54, David Sterba 写道:
->> On Mon, Oct 13, 2025 at 10:57:06PM -0300, André Almeida wrote:
->>> Hi everyone,
->>>
->>> When using overlayfs with the mount option index=on, the first time a 
->>> directory is
->>> used as upper dir, overlayfs stores in a xattr "overlay.origin" the 
->>> UUID of the
->>> filesystem being used in the layers. If the upper dir is reused, 
->>> overlayfs
->>> refuses to mount for a different filesystem, by comparing the UUID 
->>> with what's
->>> stored at overlay.origin, and it fails with "failed to verify upper 
->>> root origin"
->>> on dmesg. Remounting with the very same fs is supported and works fine.
->>>
->>> However, btrfs mounts may have volatiles UUIDs. When mounting the 
->>> exact same
->>> disk image with btrfs, a random UUID is assigned for the following 
->>> disks each
->>> time they are mounted, stored at temp_fsid and used across the kernel 
->>> as the
->>> disk UUID. `btrfs filesystem show` presents that. Calling statfs() 
->>> however shows
->>> the original (and duplicated) UUID for all disks.
->>>
->>> This feature doesn't work well with overlayfs with index=on, as when 
->>> the image
->>> is mounted a second time, will get a different UUID and ovl will 
->>> refuse to
->>> mount, breaking the user expectation that using the same image should 
->>> work. A
->>> small script can be find in the end of this cover letter that 
->>> illustrates this.
->>>
->>> >From this, I can think of some options:
->>>
->>> - Use statfs() internally to always get the fsid, that is persistent. 
->>> The patch
->>> here illustrates that approach, but doesn't fully implement it.
->>> - Create a new sb op, called get_uuid() so the filesystem returns what's
->>> appropriated.
->>> - Have a workaround in ovl for btrfs.
->>> - Document this as unsupported, and userland needs to erase 
->>> overlay.origin each
->>> time it wants to remount.
->>> - If ovl detects that temp_fsid and index are being used at the same 
->>> time,
->>> refuses to mount.
->>>
->>> I'm not sure which one would be better here, so I would like to hear 
->>> some ideas
->>> on this.
->>
->> I haven't looked deeper if there's a workable solution, but the feature
->> combination should be refused. I don't think this will affect many
->> users.
->>
-> 
-> I believe the root problem is that we're not fully implementing the 
-> proper handling just like other single-device fses.
-> 
-> We do not use on-disk flags which means at least one fsid is registered 
-> into btrfs, thus we have to use different temp-fsid.
-> 
-> If fully single-device feature flag is properly implemented, we should 
-> be able to return the same uuid without extra hacks thus solve the problem.
+This is v6 of https://lore.kernel.org/dri-devel/20251007150216.254250-1-adrian.larumbe@collabora.com/
 
-I had looked into this some time ago. Some libs, like libblkid,
-don't handle multi-device filesystems or cloned devices with
-temp FSIDs very well. I'm aware of it.
+This patch series is a collection of minor fixes and improvements I came up
+with while working on driver related stuff.
 
-I've been making some progress on fixing those cases, but it's
-a bit extensive since we first need enough test coverage,
-and recent reappear-device inline with that.
+Changelog:
+ v6:
+  - Don't optimise page range walk in the event of a double MMU fault
+  - Handle some minots and minor style changes
+  - Rebase patch series onto latest drm-misc-next
+ v5:
+ - Move devfreq record keeping further down job submission function to
+ keep busy count balanced in case of an early bail-out.
+ - In MMU page fault ISR, bail out when sgt for 2MiB page is not assigned,
+ rather than when the page array is populated. Add new commit for this.
+ - Add commit with myself as a new Panfrost maintainer
 
-Let's see how we can support use cases with identical devices
-(where changing the UUID isn't an option) and keep things
-compatible with systemd and library tools.
+ v4:
+  - Rebased older patch series onto latest drm-misc-next
+  - Added patch for renaming JM functions to reflect their actual role
+  - Fixed treatment of error code in perfcnt when enabling sample buffer AS
 
+ v3:
+  - Minor convenience fixes to patches 3 and 4 in the series
+  - Move unmapping of maped range of BO to the function's error path
+  in case of BO mapping failure, also for putting BO's pages
+  - Split patch 6/8 into two: one makes sure the Job IRQ enablement mask
+  isn't recalculated at every device reset and uses the same expression
+  everywhere in the driver, and another one that breaks the enablement
+  function into two stages.
+
+ v2:
+  - Removed commit that provided an explicit fence cleanup function
+  - Added commit for removing unused Panfrost device structure member
+  - Refactored how optional job interrupt reenabling during reset is handled
+  - Make the way errors and successful return values are delivered from inside
+   panfrost_mmu_as_get more according to standard.
+  - Simplify unmapping of already mapped area when mapping the pages of a BO
+  - Fixing management of runtime-PM reference counts when failing HW job submission.
+
+Adrián Larumbe (12):
+  drm/panfrost: Replace DRM driver allocation method with newer one
+  drm/panfrost: Handle inexistent GPU during probe
+  drm/panfrost: Handle job HW submit errors
+  drm/panfrost: Handle error when allocating AS number
+  drm/panfrost: Check sgt to know whether pages are already mapped
+  drm/panfrost: Handle page mapping failure
+  drm/panfrost: Don't rework job IRQ enable mask in the enable path
+  drm/panfrost: Make re-enabling job interrupts at device reset optional
+  drm/panfrost: Add forward declaration and types header
+  drm/panfrost: Remove unused device property
+  drm/panfrost: Rename panfrost_job functions to reflect real role
+  MAINTAINERS: Panfrost: Add Steven Price and Adrian Larumbe
+
+ MAINTAINERS                                   |   3 +-
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c   |   4 +-
+ drivers/gpu/drm/panfrost/panfrost_device.c    |  68 +++++----
+ drivers/gpu/drm/panfrost/panfrost_device.h    |  13 +-
+ drivers/gpu/drm/panfrost/panfrost_drv.c       |  78 ++++------
+ drivers/gpu/drm/panfrost/panfrost_dump.c      |   8 +-
+ drivers/gpu/drm/panfrost/panfrost_gem.c       |   8 +-
+ .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |   4 +-
+ drivers/gpu/drm/panfrost/panfrost_gpu.c       |  64 ++++----
+ drivers/gpu/drm/panfrost/panfrost_job.c       | 139 +++++++++---------
+ drivers/gpu/drm/panfrost/panfrost_job.h       |  15 +-
+ drivers/gpu/drm/panfrost/panfrost_mmu.c       | 112 +++++++++-----
+ drivers/gpu/drm/panfrost/panfrost_mmu.h       |   3 +-
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c   |  26 ++--
+ 14 files changed, 301 insertions(+), 244 deletions(-)
+
+
+base-commit: 7fb19ea1ec6aa85c75905b1fd732d50801e7fb28
+--
+2.51.0
 
