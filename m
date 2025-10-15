@@ -1,145 +1,317 @@
-Return-Path: <linux-kernel+bounces-854756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0535CBDF50A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F9FBDF510
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE9A15079FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:18:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3573C507E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C1F2FB985;
-	Wed, 15 Oct 2025 15:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUxnLGGL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD7C2FABE6;
-	Wed, 15 Oct 2025 15:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6E32FB982;
+	Wed, 15 Oct 2025 15:18:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1809C2FB098;
+	Wed, 15 Oct 2025 15:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541492; cv=none; b=PBWJXppEjA5zS7yULwPL/4i6rbsq5r1nJvZHMvn/OYbnZR8RBCfu/xP4fasydZbYznXylz6EFxtCYaGXd/MFONEa2Q+HeL4NV1DeyBoyCwZenTc5GBDa0q6HvWzOBV0yTSKRyFwOlI3qCjsx3ZjVGyKqGgZypMFdHceJbxJIfmA=
+	t=1760541500; cv=none; b=ct0L+6FiB2ejv7Ba5U6vsSScwdvtMPa7+zPm726lGioQCEawVypNbPl7RzOH2h6/wfHyQLcNUxB8wENyPyiDvxazf4EYaScxiKMgs/B9WbQzfYc77ddH373Q+BypszBSkRCHrci32aydGzti7KDdzybbzARLObOIW8EGC8JNplI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541492; c=relaxed/simple;
-	bh=uHPoJ+XDxm8fGAJXTft1xVTIPKhJBvXP8Sgc89WODPA=;
+	s=arc-20240116; t=1760541500; c=relaxed/simple;
+	bh=Hrmt+Y7mWkjnLYCZVh4Gs5U5H6hIxRys96aOiCSBM6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4xp7d6apGQImFgqSVQW8KxKmHMAiViWXD3AFk2DWpZpNxmFw/yoYV/I6P8qH7ULZs0/m2ZtsiPrt6pW/P30ZnFnOxO42s1Ghtg7Y/zOW5aKTpcBzLtQG3DMtHFjiBVzu77QbgLoYsxLtxXsOh4n2/7tkyN02OOLPmmVHYjUFTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUxnLGGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E183AC4CEF8;
-	Wed, 15 Oct 2025 15:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760541492;
-	bh=uHPoJ+XDxm8fGAJXTft1xVTIPKhJBvXP8Sgc89WODPA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sUxnLGGLil/hEpoJqMgZ2OU0Oq1DxrcBFu8qHeOnFR6DywRGzVOJ0GZfueGloi6nS
-	 dPzchaDG9Ffni0l81PSeXK7ho4BLvP5c3YDqBNvRI6zXeELo4jpKDHvbP48agC/QqO
-	 7st+K+XEC1MGM/wklzp/OLZ+or+GUgVo0mEprFm2+n8ut1qwITWkP6UXxcd2AULuol
-	 /uOdGIO+zib/asGLzxNLPsAcYWUhsvxM/QpI9nI2BC+V3ZLshTEhtsLrHzJ0i5lvqj
-	 IvgoS46dqIGnF+Bcv6cbhiURtoOTuIBsS3vOifSPBcGbDk9cvSU80AHyf6926rPAcq
-	 z93MGIGHJOWkQ==
-Date: Wed, 15 Oct 2025 16:18:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 3/6] spi: add multi_bus_mode field to struct spi_transfer
-Message-ID: <8c7bf62a-c5dc-4e4d-8059-8abea15ba94e@sirena.org.uk>
-References: <20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com>
- <20251014-spi-add-multi-bus-support-v1-3-2098c12d6f5f@baylibre.com>
- <9269eadc1ea593e5bc8f5cad8061b48220f4d2b2.camel@gmail.com>
- <409ad505-8846-443e-8d71-baca3c9aef21@sirena.org.uk>
- <12db0930458ceb596010655736b0a67a0ad0ae53.camel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHpphCiF8oRvjPSnJ9HXIPytnbv6qCIdz54/IOEjEfLDvclhPL6g4N4gEEel25of/0CIx/GVrZRiqLPNDe4XdkVwtaEAgvdgsHQKPARqbHVJp3QvWi14CPEEFUQPMHrs8JeNOOJERO4pNkOXUWXoAsBWqVh68kC6YRC1NC/zD8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BAE41655;
+	Wed, 15 Oct 2025 08:18:10 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67D2C3F738;
+	Wed, 15 Oct 2025 08:18:16 -0700 (PDT)
+Date: Wed, 15 Oct 2025 16:18:09 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
+ per-arch
+Message-ID: <aO+7MeSMV29VdbQs@e133380.arm.com>
+References: <20250902162507.18520-1-Dave.Martin@arm.com>
+ <b38f0459-1373-42d3-8526-e8ef9ac4d2e7@intel.com>
+ <aNFfs43UBp6tjqPM@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VydopxqU1EZbMNWE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12db0930458ceb596010655736b0a67a0ad0ae53.camel@gmail.com>
-X-Cookie: Long life is in store for you.
+In-Reply-To: <aNFfs43UBp6tjqPM@e133380.arm.com>
+
+Hi Reinette,
+
+Just following up on the skipped L2_NONCONT_CAT test -- see below.
+
+[...]
+
+On Mon, Sep 22, 2025 at 03:39:47PM +0100, Dave Martin wrote:
+
+[...]
+
+> On Fri, Sep 12, 2025 at 03:19:04PM -0700, Reinette Chatre wrote:
+
+[...]
+
+> > On 9/2/25 9:24 AM, Dave Martin wrote:
+
+[...]
+
+> > > Testing: the resctrl MBA and MBM tests pass on a random x86 machine (+
+> > > the other tests except for the NONCONT_CAT tests, which do not seem to
+> > > be supported in my configuration -- and have nothing to do with the
+> > > code touched by this patch).
+> > 
+> > Is the NONCONT_CAT test failing (i.e printing "not ok")?
+> > 
+> > The NONCONT_CAT tests may print error messages as debug information as part of
+> > running, but these errors are expected as part of the test. The test should accurately
+> > state whether it passed or failed though. For example, below attempts to write
+> > a non-contiguous CBM to a system that does not support non-contiguous masks.
+> > This fails as expected, error messages printed as debugging and thus the test passes
+> > with an "ok".
+> > 
+> > # Write schema "L3:0=ff0ff" to resctrl FS # write() failed : Invalid argument                                      
+> > # Non-contiguous CBMs not supported and write of non-contiguous CBM failed as expected                             
+> > ok 5 L3_NONCONT_CAT: test                             
+> 
+> I don't think that this was anything to do with my changes, but I don't
+> still seem to have the test output.  (Since this test has to do with
+> bitmap schemata (?), it seemed unlikely to be affected by changes to
+> bw_validate().)
+> 
+> I'll need to re-test with and without this patch to check whether it
+> makes any difference.
+
+I finally got around to testing this on top of -rc1.
+
+Disregarding trivial differences, the patched version (+++) doesn't
+seem to introduce any regressions over the vanilla version (---)
+(below).  (The CMT test actually failed with an out-of-tolerance result
+on the vanilla kernel only.  Possibly there was some adverse system
+load interfering.)
 
 
---VydopxqU1EZbMNWE
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looking at the code, it seems that L2_NONCONT_CAT is not gated by any
+config or mount option.  I think this is just a feature that my
+hardware doesn't support (?)
 
-On Wed, Oct 15, 2025 at 03:43:09PM +0100, Nuno S=E1 wrote:
-> On Wed, 2025-10-15 at 13:01 +0100, Mark Brown wrote:
-> > On Wed, Oct 15, 2025 at 11:16:01AM +0100, Nuno S=E1 wrote:
-> > > On Tue, 2025-10-14 at 17:02 -0500, David Lechner wrote:
+arch/x86/kernel/cpu/resctrl/core.c has:
 
-> > > > =A0=A0=A0=A0=A0=A0=A0 controller=A0=A0=A0 < data bits <=A0=A0=A0=A0=
- peripheral
-> > > > =A0=A0=A0=A0=A0=A0=A0 ----------=A0=A0 ----------------=A0=A0 -----=
------
-> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 SDI 0=A0=A0=A0 0-0-0-1-0-0-0-1=A0=
-=A0=A0 SDO 0
-> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 SDI 1=A0=A0=A0 1-0-0-0-1-0-0-0=A0=
-=A0=A0 SDO 1
+ | static void rdt_get_cache_alloc_cfg(int idx, struct rdt_resource *r)
+ | {
+  
+   [...]
+  
+ | 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+ | 		r->cache.arch_has_sparse_bitmasks = ecx.split.noncont;
+  
+   [...]
+  
+ | }
 
-> > > Out of curiosity, how does this work for devices like AD4030 where th=
-e same
-> > > word
-> > > is kind of interleaved between SDO lines? I guess it works the same (=
-in
-> > > terms of
-> > > SW) and is up to some IP core (typically in the FPGA) to "re-assemble=
-" the
-> > > word?
+Cheers
+---Dave
 
-> > So combined with the existing parallel SPI support?
 
-> Not sure if this is meant for me :). parallel SPI is for parallel memorie=
-s and
-> the spi_device multi cs support stuff right? I tried to track it down but=
- it's
-> not clear if there are any users already upstream (qspi zynqmp and the nor
-> flashes). It looks like it's not in yet but not sure.
+Full diff of the test output:
 
-There's multi-CS stuff but what I was thinking about was the stuff for
-parallel memories, I was trying to clarify what cases you were talking
-about with "interleaved between SDO lines".
+--- base/resctrl_tests_6.18.0-rc1.out	2025-10-14 17:11:56.000000000 +0100
++++ test1/resctrl_tests_6.18.0-rc1-test1.out	2025-10-14 17:21:44.000000000 +0100
+@@ -1,132 +1,132 @@
+ TAP version 13
+ # Pass: Check kernel supports resctrl filesystem
+ # Pass: Check resctrl mountpoint "/sys/fs/resctrl" exists
+ # resctrl filesystem not mounted
+-# dmesg: [    1.409003] resctrl: L3 allocation detected
+-# dmesg: [    1.409040] resctrl: MB allocation detected
+-# dmesg: [    1.409072] resctrl: L3 monitoring detected
++# dmesg: [    1.411733] resctrl: L3 allocation detected
++# dmesg: [    1.411792] resctrl: MB allocation detected
++# dmesg: [    1.411831] resctrl: L3 monitoring detected
+ 1..6
+ # Starting MBM test ...
+ # Mounting resctrl to "/sys/fs/resctrl"
+ # Writing benchmark parameters to resctrl FS
+-# Benchmark PID: 5126
++# Benchmark PID: 4954
+ # Write schema "MB:0=100" to resctrl FS
+ # Checking for pass/fail
+ # Pass: Check MBM diff within 8%
+ # avg_diff_per: 0%
+ # Span (MB): 250
+-# avg_bw_imc: 6422
+-# avg_bw_resc: 6392
++# avg_bw_imc: 6886
++# avg_bw_resc: 6943
+ ok 1 MBM: test
+ # Starting MBA test ...
+ # Mounting resctrl to "/sys/fs/resctrl"
+ # Writing benchmark parameters to resctrl FS
+-# Benchmark PID: 5129
++# Benchmark PID: 4957
+ # Write schema "MB:0=10" to resctrl FS
+ # Write schema "MB:0=20" to resctrl FS
+ # Write schema "MB:0=30" to resctrl FS
+ # Write schema "MB:0=40" to resctrl FS
+ # Write schema "MB:0=50" to resctrl FS
+ # Write schema "MB:0=60" to resctrl FS
+ # Write schema "MB:0=70" to resctrl FS
+ # Write schema "MB:0=80" to resctrl FS
+ # Write schema "MB:0=90" to resctrl FS
+ # Write schema "MB:0=100" to resctrl FS
+ # Results are displayed in (MB)
+ # Pass: Check MBA diff within 8% for schemata 10
+-# avg_diff_per: 1%
+-# avg_bw_imc: 2033
+-# avg_bw_resc: 2012
++# avg_diff_per: 0%
++# avg_bw_imc: 2028
++# avg_bw_resc: 2032
+ # Pass: Check MBA diff within 8% for schemata 20
+ # avg_diff_per: 0%
+-# avg_bw_imc: 3028
+-# avg_bw_resc: 3005
++# avg_bw_imc: 3006
++# avg_bw_resc: 3011
+ # Pass: Check MBA diff within 8% for schemata 30
+ # avg_diff_per: 0%
+-# avg_bw_imc: 3982
+-# avg_bw_resc: 3958
++# avg_bw_imc: 4006
++# avg_bw_resc: 4013
+ # Pass: Check MBA diff within 8% for schemata 40
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6265
+-# avg_bw_resc: 6236
++# avg_bw_imc: 6726
++# avg_bw_resc: 6732
+ # Pass: Check MBA diff within 8% for schemata 50
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6384
+-# avg_bw_resc: 6355
++# avg_bw_imc: 6854
++# avg_bw_resc: 6856
+ # Pass: Check MBA diff within 8% for schemata 60
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6405
+-# avg_bw_resc: 6376
++# avg_bw_imc: 6882
++# avg_bw_resc: 6883
+ # Pass: Check MBA diff within 8% for schemata 70
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6417
+-# avg_bw_resc: 6387
++# avg_bw_imc: 6891
++# avg_bw_resc: 6889
+ # Pass: Check MBA diff within 8% for schemata 80
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6418
+-# avg_bw_resc: 6394
++# avg_bw_imc: 6893
++# avg_bw_resc: 6909
+ # Pass: Check MBA diff within 8% for schemata 90
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6412
+-# avg_bw_resc: 6384
++# avg_bw_imc: 6890
++# avg_bw_resc: 6888
+ # Pass: Check MBA diff within 8% for schemata 100
+ # avg_diff_per: 0%
+-# avg_bw_imc: 6425
+-# avg_bw_resc: 6399
++# avg_bw_imc: 6929
++# avg_bw_resc: 6951
+ # Pass: Check schemata change using MBA
+ ok 2 MBA: test
+ # Starting CMT test ...
+ # Mounting resctrl to "/sys/fs/resctrl"
+ # Cache size :23068672
+ # Writing benchmark parameters to resctrl FS
+-# Benchmark PID: 5135
++# Benchmark PID: 4970
+ # Checking for pass/fail
+-# Fail: Check cache miss rate within 15%
+-# Percent diff=24
++# Pass: Check cache miss rate within 15%
++# Percent diff=4
+ # Number of bits: 5
+-# Average LLC val: 7942963
++# Average LLC val: 10918297
+ # Cache span (bytes): 10485760
+-not ok 3 CMT: test
++ok 3 CMT: test
+ # Starting L3_CAT test ...
+ # Mounting resctrl to "/sys/fs/resctrl"
+ # Cache size :23068672
+ # Writing benchmark parameters to resctrl FS
+ # Write schema "L3:0=1f0" to resctrl FS
+ # Write schema "L3:0=f" to resctrl FS
+ # Write schema "L3:0=1f8" to resctrl FS
+ # Write schema "L3:0=7" to resctrl FS
+ # Write schema "L3:0=1fc" to resctrl FS
+ # Write schema "L3:0=3" to resctrl FS
+ # Write schema "L3:0=1fe" to resctrl FS
+ # Write schema "L3:0=1" to resctrl FS
+ # Checking for pass/fail
+ # Number of bits: 4
+-# Average LLC val: 71434
++# Average LLC val: 70161
+ # Cache span (lines): 131072
+ # Pass: Check cache miss rate changed more than 2.0%
+-# Percent diff=70.0
++# Percent diff=72.1
+ # Number of bits: 3
+-# Average LLC val: 121463
++# Average LLC val: 120755
+ # Cache span (lines): 98304
+ # Pass: Check cache miss rate changed more than 1.0%
+-# Percent diff=40.8
++# Percent diff=42.5
+ # Number of bits: 2
+-# Average LLC val: 170978
++# Average LLC val: 172077
+ # Cache span (lines): 65536
+ # Pass: Check cache miss rate changed more than 0.0%
+-# Percent diff=22.8
++# Percent diff=22.0
+ # Number of bits: 1
+-# Average LLC val: 209950
++# Average LLC val: 209893
+ # Cache span (lines): 32768
+ ok 4 L3_CAT: test
+ # Starting L3_NONCONT_CAT test ...
+ # Mounting resctrl to "/sys/fs/resctrl"
+ # Write schema "L3:0=3f" to resctrl FS
+ # Write schema "L3:0=787" to resctrl FS # write() failed : Invalid argument
+ # Non-contiguous CBMs not supported and write of non-contiguous CBM failed as expected
+ ok 5 L3_NONCONT_CAT: test
+ # Starting L2_NONCONT_CAT test ...
+ # Mounting resctrl to "/sys/fs/resctrl"
+ ok 6 # SKIP Hardware does not support L2_NONCONT_CAT or L2_NONCONT_CAT is disabled
+ # 1 skipped test(s) detected. Consider enabling relevant config options to improve coverage.
+-# Totals: pass:4 fail:1 xfail:0 xpass:0 skip:1 error:0
++# Totals: pass:5 fail:0 xfail:0 xpass:0 skip:1 error:0
 
-> Anyways, IIUC, it seems we could indeed see the device I mentioned as a p=
-arallel
-> kind of thing as we have one bit per lane per sclk. However, the multi_cs
-> concept does not apply (so I think it would be misleading to try and hack=
- it
-> around with tweaking cs_index_mask and related APIs).
+---
 
-OK, so either just the parallel SPI or possibly that composed with this
-(fun!).
-
---VydopxqU1EZbMNWE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjvuy0ACgkQJNaLcl1U
-h9A9fwf9HKFZXnDsRgTgE9HMei//SyHircumbi19Y5BgrFH1ZuEgJQvO+txFYloA
-+1MW1ydyFc2X3hPQJfCGPjdiOA2YBhdl83Jm5n5YODHjzD25r23QHkFx7ipDqHcq
-sEXXHF3Ti7Tw5WONXObua6+ieJg/4VlUd0dWiF9OcLBqOi8AJl43bpxvKv94aPHx
-RTh/Q/SHiHX5agKXCdlmwwfDTfvYi8oTYTxWL/M55pWol1AWb2SHi/2+eHTOr6t+
-BmWzfqNvz6LUPBYLA2uvTAJGSdSoEy0nsrKjbQsqU+kd93hozZFYyIDkc6MraVbH
-7YuuL+JhnF8YJgk14gxdsRJkNC65+Q==
-=v7SV
------END PGP SIGNATURE-----
-
---VydopxqU1EZbMNWE--
 
