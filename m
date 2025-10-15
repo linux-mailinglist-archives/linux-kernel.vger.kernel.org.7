@@ -1,197 +1,193 @@
-Return-Path: <linux-kernel+bounces-853671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EAFBDC45A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:07:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829AFBDC477
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1AC192142C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:07:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0EDB4F915F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8AD271441;
-	Wed, 15 Oct 2025 03:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A262298CBE;
+	Wed, 15 Oct 2025 03:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lineo.co.jp header.i=@lineo.co.jp header.b="o20hohZd"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11020101.outbound.protection.outlook.com [52.101.228.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="O9YSI76P"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB0F1519A6;
-	Wed, 15 Oct 2025 03:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760497635; cv=fail; b=k9CTGGb+aKTNLLDFc8JkhVHEHFS3EM8A/D7RpzWQpcxfTemn7UOPfS7gQuk4tQ0bMMfTUrfXQxAhrgFAY+bbHcRqhFLyaMlrHgarsh2wWeUDbyzUvOX1F9UxEZQobqi8O60mTTSDPpnMG9yecj3dKlrk/GHWYLf+TaEFvcyJxts=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760497635; c=relaxed/simple;
-	bh=ci0IrJh/hKflSJPVNHMzwzKn+paY1adcLiruvjr56Ug=;
-	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=RSYNMqDRVKU6RLcpowzfgYgSQqK39kxXVSFC+5jsLZE7X8KPgttTAmicaVfjhUr+2TCmmhaVlkF8zFFc+SK+QsigLYXT5iAtN+Fv3hi7nRsHCH3Yf9qcuvUVsSDVPPqekc6o02/BygZUGAq4l5bDwa3nCetkuCsbAumQkUuF5Yk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineo.co.jp; spf=pass smtp.mailfrom=lineo.co.jp; dkim=pass (2048-bit key) header.d=lineo.co.jp header.i=@lineo.co.jp header.b=o20hohZd; arc=fail smtp.client-ip=52.101.228.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineo.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lineo.co.jp
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NcSlYq02IRYFjfefeGwMeEliZBJWmY9QMLSWrk8sltpB0UxRh5YN+U48AJAFiqXPZxk2NHkDQeKUMfGZC7EfORmD3aQ+MsYn//o/Ud29tALewSBg7Tp38RNbYQ9i+BGTsJpayJKnlJjpPR6vHYwnpIHUWTdeghqsKqMEKuFp7bAFvm5mbtWeGevVOZ0XzCkJa13IizhJ4GOk47U8NZynPrmfzblqpMkPoJXFUTlxGL0frAf9Huqg4tDvX0vqlwcioE16bZRhm5QRn1Eht5l8mEaWJH2EWTXjIOcQ2L7oW51hwoBUuerJKj+2Ec2XEo8PoBcYDstdGjEUwmSPF1CQgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MVfUNxnV4En/m439Uh8EF7gVIx/lFuzWLzCeMxUA2BQ=;
- b=eePEkFhXyzZKwuLNKFfRGXuNdMcd/BHytp5B6HFBjlca6H2WG5K8Dt9xn3KLXeGsc3RAKJI0Iw8w1ahRc/pRO/2jMn9ntjAMsQ59gNPtVZhsDSFd7tJDoP1O3RArF0J/QfRyQfsJS5OfnyiySq5UUpp3WIEgaZRUfnSkm+MnxiAG/TnpP53RaMvQKGEaGzG18FZRo0m9fflB7DBRKe1JAz280stgvOPpvVqy6ka7czT/ULzTvnGfyiy3TdUfTGImTkcwCFhu0z1duZMkXHRuauATaGKznPqigg1VDqbB5pb9LezLKevGVrANUcYvkUbzr13TuJP0P6T5Qwgzom4Rwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=lineo.co.jp; dmarc=pass action=none header.from=lineo.co.jp;
- dkim=pass header.d=lineo.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineo.co.jp;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MVfUNxnV4En/m439Uh8EF7gVIx/lFuzWLzCeMxUA2BQ=;
- b=o20hohZd77+cm+c6EMHZpkQdwqgkg/ZK6mKNDKkVraSlGX9u40dCr2XMw8Pw6EkASWUZO4lypjIP8UeiUtwY/FlRGRVEHVAzVYcOTIp8ZtvI2ZNGoOCH+eAbUaBtOMcolyFxMMFYxgAmajBw3a1dd1D7SetQUc0R5PHIJpWxRA8yGCn3ct2NFcvjGr3pvevMtjLZdVqfP6VFSksegbXNmTFzHOzOJgJC3fgBBnpFMksqIPfdQIiVS3HctRdw8FQONi/A0vjEMXmZqDfv92VofJCxlmppv9f3XXJrh49XgIRPbUOhW1595saxDyKpe5DYiHc1blrKNh4RRC+H6TuFqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=lineo.co.jp;
-Received: from OSRPR01MB11490.jpnprd01.prod.outlook.com
- (2603:1096:604:22d::14) by TYCPR01MB12057.jpnprd01.prod.outlook.com
- (2603:1096:400:439::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
- 2025 03:07:07 +0000
-Received: from OSRPR01MB11490.jpnprd01.prod.outlook.com
- ([fe80::524c:52ad:4acd:1dc1]) by OSRPR01MB11490.jpnprd01.prod.outlook.com
- ([fe80::524c:52ad:4acd:1dc1%5]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 03:07:07 +0000
-Message-ID: <eae5f479-5d28-4a37-859d-d54794e7628c@lineo.co.jp>
-Date: Wed, 15 Oct 2025 12:07:05 +0900
-User-Agent: Mozilla Thunderbird
-From: Yuta Hayama <hayama@lineo.co.jp>
-Content-Language: en-US
-Subject: [PATCH] rtc: rx8025: fix incorrect register reference
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Yuta Hayama <hayama@lineo.co.jp>, Takao Miyasaka <miyasaka@lineo.co.jp>,
- Naokado OGISO <ogiso@lineo.co.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP286CA0109.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:29c::6) To OSRPR01MB11490.jpnprd01.prod.outlook.com
- (2603:1096:604:22d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A919925C816
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760497655; cv=none; b=RNRBU7jvwvdcvpPv2YK6kK0CLX5U/CDBQhyIFno9xk7igAHs26Cw4EfxyzsyEeJNSkhkHxJBYQdwaHqdXr5pjoG+YLxWxDa7oh00qSDWrHqkiFmG8gTe31SLEX2EsFW6x42LYseBZMPey2tJXCzOaj5YaKJZvXoJxCcTZlr8M1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760497655; c=relaxed/simple;
+	bh=4FztB+wmWkCqTcyqk43FQ/ijvv8lF01IQlzMj1iMpxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dyAdVjoqbQ+UDNAD1iRE0Vwol+Y8Ky1jSG9V8qtkc7Q6VlJnTtJaZbLmDO4ldkmqo2ONXGTaDMpcz+LqkRNe+F8th0p5Gxw5Ct6497OKpohJip/0kCffMjVaasYc5X6Y8bJcDBdKMuE9uvENJfjwnpA+2WHUes25G1ePaxg28Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=O9YSI76P; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-78e9f48da30so76215356d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 20:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1760497651; x=1761102451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LYOi/uzG+pxWc7qB8Kx+PDOI9ywodBDgq0X5/pl/onc=;
+        b=O9YSI76PLg8LLQyzOFgvg+LLyDtXQgW8tIIETX0va07hEiNvIfaX35zJl390Syw37a
+         /O/DfQULKVokt6wunQO1Ke5s9mQBN4sNC8iapXCW/SxirK9FTVBbiDYvgbUN27jVFXZ/
+         ZdHNhjGaMckLLMGBhYz3bzIEufzuphoseo+ZoUntujgvxOwB1K/bg7uwqXaTi2S6J/tL
+         EgdZBKr1lOIia5qwiN9OvftNoEliJlO/BYLzUTU2YiGT/8kEfN93sz0H/JsFEsHIgR4S
+         FW32L/7yvKxKEiqJck03D1R9ThgrGBf3tPAO35pYwgRBMTq3iAtzr9duanHjsnVqPlGc
+         5nMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760497651; x=1761102451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LYOi/uzG+pxWc7qB8Kx+PDOI9ywodBDgq0X5/pl/onc=;
+        b=DH5D09JDkD1CoeFCOy3kUp9KJXbkkuBM/ATP2YanpekiEYqj0lEHsRAdDl5aJK10ou
+         W0rexNiOaXHrkOQ3innhlDWvsbjGy2raVmcRRlpq6PxDxSM3iay4IxN9Ycqh6T6XCC9i
+         Vlw/HpK5oNAxez0inUQ3V4B6YttwZzyKcH9rHRSMZUSbgZOM6nUT2KfI8QC1y2+IaErJ
+         2GCqV2F8TfmLpqT0RgTYks08gN1lq09/a/Oyvjq19Nj0ymBFKUNgZgiptICHn3fLFAjA
+         2puokfVWJ5HFNSIQWJTI20sNXXB8DvqwDSsNCtPkKO4n6PvtCj88AUZWlL03KcxSg/IE
+         k/6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvseHTTL61vazOxsiJV/KLYxtSosqqIioTNC8HilHAljq5b/h7VoTaHN1608y4SFphP88/2JDPkjFjIMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoKg07FEy4YhV3xJyZwP691agYExAuYtawgo76FxdSRUqkSW00
+	1MoIjRFqV5oO5EIRHddEQ8znCPJvtqKD9Gb8/eTJI4Wkj0hq3JdnqNX6+9lAcv4JnQ==
+X-Gm-Gg: ASbGncvmAED9OR/hMfadQ/eo4LBGPTFFub3eP8IUa/BSCHmPffPm+pHwjIkW0ponS5c
+	Q1YHCnCxWyfSYIrOyUlifZmoJ+//v9fivexVvruYxSh6Q+1jRRUZPpb+gVaHJ294v32ixnBf45N
+	Zton27N0GE13OBi0J9Nt2iCpR+20fP1dGGzgJKzRrfRx/lZAf2b/AQLlutztEVdlHbV+92TRUiw
+	CCpvdXyYiTbfY1fD78Auta2zQS5lVmfnwbQGVKAM3x6naAcsFP5taIzble1iWc2GtGAmszGasAh
+	4nlEpFZsdjQ2lex4TP+ksGd5RoImE6iq2T15KYMVt3wFpRYsPWD9ohesonW6OX6SKsmjftazosL
+	AXJjihJavBiejk+g6RByqXre4iIN3mOs+bUTrp4MtvBrX+S0D
+X-Google-Smtp-Source: AGHT+IFAjPLGiMuXqey8nUwdA4Iw0xkYkiAWc5b2GEtlEYT/1lGTfUT34pPAOluVQ9gpFjwEo2ePNQ==
+X-Received: by 2002:a05:6214:2121:b0:782:3caf:668e with SMTP id 6a1803df08f44-87b2efa9a8fmr314904506d6.40.1760497651363;
+        Tue, 14 Oct 2025 20:07:31 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:d03:1700::9c4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87c012b153dsm9788976d6.57.2025.10.14.20.07.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 20:07:30 -0700 (PDT)
+Date: Tue, 14 Oct 2025 23:07:27 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] usb: uhci: Work around bogus clang shift overflow
+ warning from DMA_BIT_MASK(64)
+Message-ID: <c0d1dc65-6f55-40b9-bbfa-09e8639a28e0@rowland.harvard.edu>
+References: <20251014-usb-uhci-avoid-bogus-clang-shift-warning-v1-1-826585eed055@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSRPR01MB11490:EE_|TYCPR01MB12057:EE_
-X-MS-Office365-Filtering-Correlation-Id: b408ebb6-3cee-42d8-5697-08de0b97ec76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZXRDUDhEd1VRUjVVQUhmUHVldURtYzBSQ2tUV2Jlc21JRjBFR2o1UVBHd0Vj?=
- =?utf-8?B?dkpkTkt1am1BTUY4c1lWQ1VaNW9JZ0J0dW5YSE1aV1h4cDBtbXJGY2JnTm52?=
- =?utf-8?B?MStDL3A4UXVnSm9uSktkemdSMkF5NzhndDJ4SmtZSVRZRkZlUzFmMlhUOXh2?=
- =?utf-8?B?U21qeUFoNXJmSnBvMFl0WjZSV29Uc2ZHdEo2UVUzQ0NvSms4d0lHdmRJZGha?=
- =?utf-8?B?ZTIveVd4clNrT1h0RXllMlVreEZSekU3NjdtcktscFRVNVpXN1drS05iS2py?=
- =?utf-8?B?Z21sRnNIVXErVnV3TlI5empvU0NjNnJLUGtNUkVlOS9aZTZtbUdhbDBycVBM?=
- =?utf-8?B?bUkvUXFJbExZaE55dXQ2elljcUxNMHNCZFJxVXRqYjVMQzBhVmFzSTNvR0JJ?=
- =?utf-8?B?VG9IY3hsaExjU1J2UnloYnVjS2lWUEd5K0JpRll0YlZXd3Z6V1llMHVzcGRr?=
- =?utf-8?B?dzVIYUZ4bGdqUEp5QlVKT09pU3RyZWNaVTMvR0ZpMVdyOHRvOWlsbFk3MlRm?=
- =?utf-8?B?b0ptSDE5c3FDeWFTV05wQTc2NU5kT3YzTWFYbTRTK3VQRDZMUVh0OXBaWFA0?=
- =?utf-8?B?QWdHRHhJRXlKMExPYW4vY1UwSVpaVFhPeVUwNGRwdUtPZWF2alBpUVJGbjJp?=
- =?utf-8?B?OFExYS9MSjZjQlZJaTBvbWRpWDVGOXNFTWdZTWZlQkJqbUtsRTVHdjhHVE0x?=
- =?utf-8?B?WWdHL0k0dVRWTXFNNlRkV2xSdnBJYkdPbXVoQXFhSHBCb0xVR1FhZ1QwOXpl?=
- =?utf-8?B?NnlFZE9qK2FkaVVLS0pNWWZsdlMrOEdSTHFoZllUak84RC9GRjdobzduM2hY?=
- =?utf-8?B?aEtkR3NBS0hpUVdIU0R2a3B6SFZ3VzFMeEZkVWxob1ExenVTSTdObVg2QXA1?=
- =?utf-8?B?eUpORDVnc0d5bGlXM3NMVWZ6MHdzVTZBSE5FMTFlSlUvMytKZnlhdS9WSkxr?=
- =?utf-8?B?OVNtd2tLU2JTMk5aSFdFT2pWVDdCZTBQUElSdkowejRyVGllaU9EcVdQTUFF?=
- =?utf-8?B?M04zQkJObzdQd3lWdlUxeVR0ZnMwZ25RNE9JdUwvbW5xL3drZXF0WGt1QXRp?=
- =?utf-8?B?US84ZGVoVEJ3Z0kxNTVoY2tZSmVhT1hQSGw2S0c2TEJFSlVwR01qNEhidFhH?=
- =?utf-8?B?Nk9uNldsSzg4OEwrN3ArQmxUUnhiWElVSW1mOXpVb3g2Q1F4dUFnR2RQYnI4?=
- =?utf-8?B?NythWGFmWjJUWnM4amt3cEt5SE5JSmZGRnBsSytyc2RPZWd3VFVRSGR1MjNq?=
- =?utf-8?B?eGxSenQ0SER5RzhaeThmc1pOd3lIOHJYWit1RmNHMllwK0VaNVNPcjdBZ1JP?=
- =?utf-8?B?ZHJNWFl5RjlPN0RKcDZHRGpRbXhWUEVVbXJnQmg2dXc2Z0VCdVZzUzNYZ0Fm?=
- =?utf-8?B?cFE0RFI0NDVucDVrUzQzazBLRFF5cmhoR3NSOGIwbjBhL09mUjNnd3NOd3R4?=
- =?utf-8?B?ZFViQ2gvMTZ6VzRqVUcxVW9POTl2LzBZQ2ladmtWemovMHJuZ0lVZGxWUUdt?=
- =?utf-8?B?LzNuaEl5VlZ3SHVDSE5PSmU0dkZQY0dRZG41OEFVdTVEUVJzdW1RK3dERjlz?=
- =?utf-8?B?ZThNVjBlNVRYQzluUnFNamQxMDJoVng0OGlGSGZSTTF4TzlYUnkwdXA3MG9I?=
- =?utf-8?B?clk5M0pKSFkyelpXaEkzUGRKZlJjbzF1WDJKRHJVdmdjcExacmk2UXNWZENo?=
- =?utf-8?B?cHIvcThwZHE0NklVeGxqaXZZdkFsNEl2V2lyQ1QxMElEelhIL2QrMjFvZEd2?=
- =?utf-8?B?Z1JyalZWN25uT1pwUmRQdWZ4cTkzT0E0RGhXWko4bE9vcjZZOTFacE53SnR0?=
- =?utf-8?B?bnFsUENDek5tMTdPbFdOU1lFM1B1WllLQ2V0NW51QXluTUVER2FlQ3FzWno1?=
- =?utf-8?B?TGtoeEkzSncrNFpJbGRuRzV1V0ZybmNPSXlxdk5PTC9kRHZlVEhCSmJzQ2oz?=
- =?utf-8?Q?rpSgNHWAf7dD19sANRG2ysuR/m2eaM9r?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSRPR01MB11490.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Wnk2ZUswNnpyVnlnVEFSc0lQclNOMXFMWGlVS3JRWHl2cWFzdVJhd3ZGUWhw?=
- =?utf-8?B?WUYzM05SSGxxblpVSWcwVGxRdE5yUDgwR3pZZlA0NE5JYmhSWGd0clp2c2d5?=
- =?utf-8?B?ZTJ5YnN5RU5EejVTTk15SS9LdzFrUnZFLzFwcEpxRXhNQUNYaXhJN3cyV0FU?=
- =?utf-8?B?bGhTc081bG1zUCtmMWtkYWtDc3llU0R6REEvdzhFeWRzd3FjaVl4ZHdnak5U?=
- =?utf-8?B?bEQ3UHA1RlBmcEFzZ1ZnczYvYTFjSW5hSlpCMlFVK2pOR3ExeFY4RUtCTlZK?=
- =?utf-8?B?SU9LQzF1elRGZ3hxUGVWOGQ4bkZPNHl0VkhPU3llUEI1WDZINXhBM1pSdmpY?=
- =?utf-8?B?YVlMSUpyR0pucmI0NndPaXBWaUxYMzdBampiWVowSE1melNMc0FwMkFPZlVI?=
- =?utf-8?B?RXcrQlExaTk1aFZBRCtDN085NVROTGV4S1FwbmdRTFNyNGJkY0ZuTVFiUEds?=
- =?utf-8?B?ZVVSMlhPaXEyWjE1d09pdzgxcEFIa0Y5aEtXdDdmdytub0k3RzQ4S2NjaXgx?=
- =?utf-8?B?YkRMUWkrME52U1dKSi9NZmRkL2x0WlYvdlVpM1FVY0dxbEJVQ0RkRWJlb211?=
- =?utf-8?B?S09neUhqb3hpS0F5RkVDam81RnJLQ2pkV3RBWlpSdGRyU1FsMlJ2eUVLY2l1?=
- =?utf-8?B?Q0psV3RRR0ZxcTVuSnJWeWIweDNFbWlwNGhEMjhPQXFvMjZWNCs5Y2twYTU2?=
- =?utf-8?B?aU4vdHF5bmowQmVZUGFsWDFkVVZHRVhmYUdOZSt3S2haczJOWEhHWFMyd3lQ?=
- =?utf-8?B?d2Q0RTJvM01vb1d1SXpwT2FjaVRxTEpWdUNjUFM3Q3cwRzlyQkxKQXpMMUtK?=
- =?utf-8?B?dHVKRFd2Rjc3N1ZFc2dPdnVtakZJZUE1UjNKUlIxUS8vVTZIYzNvZUlzRmFH?=
- =?utf-8?B?R3lLQ3VQNFRiS3N4T1krSmFhTVJKaEdpRE5tMUNweExJTW0rdXBaQlYzRjRt?=
- =?utf-8?B?SDlQZHlNSmxCODRzNGR3OHIwVDRhQTlMWGwyZjd1a0JZU25DZnJvU2xhZDVF?=
- =?utf-8?B?Rm8rMzNJenRxMy8xVzBHZUw1R3Y3Y2x5QkxnZ2lYdzllTGpuUDhFdE5XeHRG?=
- =?utf-8?B?OVJjTnJ1cmdxVmVjeE5NUFRRQlc3UjR3TWRVNCtiNnY1NEhKMjBZY1NraVp4?=
- =?utf-8?B?TVR3bStvZTBHT0tDNWhVYTZyQ0RFQzMyajVveUxSaU44Zld1MmF6SlJNSTFS?=
- =?utf-8?B?cFh2bkZOMGl2YXlKR1dKcitBeFhEZTlNeUk3NnBDU2FkTkF2UExldUlzV0p4?=
- =?utf-8?B?SDhqOEk5czF2MUdYS1paOVowSUhsN1ZJNDdKK1FDWkdRbklOckc5Zi9NeFVj?=
- =?utf-8?B?RVBJSW44akR2MFRWdHF0K0p4M2xuN3JNYWo3SmUzUTI5Nk1vdDlpWUFmNHpE?=
- =?utf-8?B?SGlhMUVHdWs1SnN1c0hKT2VEcE1udW5ldEI1TFpBUEVzUlhQQ1dLZU5BaGR3?=
- =?utf-8?B?K0h5MzZ2ZkVaNDJzNWJqRERwcmYwOTNUZTE5Q1E0SURpR25tdXJiUitsT0ZR?=
- =?utf-8?B?WWh6dGNOc3JBUnZoMi9LSDB1Q0diYUFHNWFFYm9zOVZ0YTlaZE1WQnlmbkZR?=
- =?utf-8?B?a0IxSkIrdkpDQnc5dDdYNkx6bWdGWGdSMHBVc1lsNjJJbThKcnBSTTRiY2tr?=
- =?utf-8?B?blJZSnRZQ0drdTVDL2doViszMm1tSDh4akZTYkVlS3hwVEtiZHdOL3dlbTJD?=
- =?utf-8?B?ZmpmL0dlOUFOQ0lvaXowdlRZaU8xYVV2VmJvZnRLa29sZVB6LzU1eU9kd0Jm?=
- =?utf-8?B?YVJXVkFYbmRLNHRMK293c1pyTDJhWVJKTlRueDNCK2FnUU8vNHVxb0JsclJK?=
- =?utf-8?B?eGhFMnM1ZHhNcDNvM2NwbUVtcGM3SlpaWjBGTW5OMElrT3ZGYzVhdHlZZ1Za?=
- =?utf-8?B?OFpHN2kzQTE0eXBFTXRDZnB6NnlITWZERmVSSGd2WmtKMWRuT3o3a2ZXTlNR?=
- =?utf-8?B?dEwzbk11WVhHOVlTNUZjcjYvd1BlN2JxZy9NcE1MK1IrT1hnUFB2Z1dqTFJG?=
- =?utf-8?B?RUdkZ2lwUkZvNTF3bWpna2J6dHM3UjBZai9ENXpCcU90K3RZRG1xVm1vQkJr?=
- =?utf-8?B?VEJIMlZ6S0p4SEV6czVXWmJtZVV4bld4TzVNQjZEQ3BrUi9qS0FHdWZvYm8r?=
- =?utf-8?Q?oYL57ivYyQlOHKEnok0uDwOhP?=
-X-OriginatorOrg: lineo.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: b408ebb6-3cee-42d8-5697-08de0b97ec76
-X-MS-Exchange-CrossTenant-AuthSource: OSRPR01MB11490.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 03:07:07.0177
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 850e1ad4-d43d-42a8-82ab-c68675f36887
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oitUDSsXVmSRW6CtTxoGBYentnO+wa/M4wq7ectiq9P2Akj6Xe0Sn9smkSS0IC4TH6BJM0twsTLH0VjQ6NOs0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB12057
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-usb-uhci-avoid-bogus-clang-shift-warning-v1-1-826585eed055@kernel.org>
 
-This code is intended to operate on the CTRL1 register, but ctrl[1] is
-actually CTRL2. Correctly, ctrl[0] is CTRL1.
+On Tue, Oct 14, 2025 at 04:38:19PM -0700, Nathan Chancellor wrote:
+> After commit 18a9ec886d32 ("usb: uhci: Add Aspeed AST2700 support"),
+> clang incorrectly warns:
+> 
+>   In file included from drivers/usb/host/uhci-hcd.c:855:
+>   drivers/usb/host/uhci-platform.c:69:32: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+>      69 | static const u64 dma_mask_64 = DMA_BIT_MASK(64);
+>         |                                ^~~~~~~~~~~~~~~~
+>   include/linux/dma-mapping.h:93:54: note: expanded from macro 'DMA_BIT_MASK'
+>      93 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+>         |                                                      ^ ~~~
+> 
+> clang has a long outstanding and complicated problem [1] with generating
+> a proper control flow graph at global scope, resulting in it being
+> unable to understand that this shift can never happen due to the
+> 'n == 64' check.
+> 
+> Restructure the code to do the DMA_BIT_MASK() assignments within
+> uhci_hcd_platform_probe() (i.e., function scope) to avoid this global
+> scope issue.
+> 
+> Closes: https://github.com/ClangBuiltLinux/linux/issues/2136
+> Link: https://github.com/ClangBuiltLinux/linux/issues/92 [1]
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
 
-Signed-off-by: Yuta Hayama <hayama@lineo.co.jp>
-Fixes: 71af91565052 ("rtc: rx8025: fix 12/24 hour mode detection on RX-8035")
-Cc: stable@vger.kernel.org
----
- drivers/rtc/rtc-rx8025.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Do you think you could instead copy the approach used in:
 
-diff --git a/drivers/rtc/rtc-rx8025.c b/drivers/rtc/rtc-rx8025.c
-index aabe62c283a1..7e9f7cb90c28 100644
---- a/drivers/rtc/rtc-rx8025.c
-+++ b/drivers/rtc/rtc-rx8025.c
-@@ -316,7 +316,7 @@ static int rx8025_init_client(struct i2c_client *client)
- 			return hour_reg;
- 		rx8025->is_24 = (hour_reg & RX8035_BIT_HOUR_1224);
- 	} else {
--		rx8025->is_24 = (ctrl[1] & RX8025_BIT_CTRL1_1224);
-+		rx8025->is_24 = (ctrl[0] & RX8025_BIT_CTRL1_1224);
- 	}
- out:
- 	return err;
--- 
-2.43.0
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?id=274f2232a94f6ca626d60288044e13d9a58c7612
 
+IMO it is cleaner, and it also moves the DMA_BIT_MASK() computations 
+into a function scope.
+
+Alan Stern
+
+>  drivers/usb/host/uhci-platform.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
+> index 37607f985cc0..f532d3a0acbf 100644
+> --- a/drivers/usb/host/uhci-platform.c
+> +++ b/drivers/usb/host/uhci-platform.c
+> @@ -65,16 +65,16 @@ static const struct hc_driver uhci_platform_hc_driver = {
+>  	.hub_control =		uhci_hub_control,
+>  };
+>  
+> -static const u64 dma_mask_32 = DMA_BIT_MASK(32);
+> -static const u64 dma_mask_64 = DMA_BIT_MASK(64);
+> +static const bool use_dma_mask_64 = true;
+>  
+>  static int uhci_hcd_platform_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np = pdev->dev.of_node;
+> -	const u64 *dma_mask_ptr;
+> +	u64 dma_mask = DMA_BIT_MASK(32);
+>  	struct usb_hcd *hcd;
+>  	struct uhci_hcd	*uhci;
+>  	struct resource *res;
+> +	const bool *of_data;
+>  	int ret;
+>  
+>  	if (usb_disabled())
+> @@ -85,11 +85,11 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+>  	 * Since shared usb code relies on it, set it here for now.
+>  	 * Once we have dma capability bindings this can go away.
+>  	 */
+> -	dma_mask_ptr = (u64 *)of_device_get_match_data(&pdev->dev);
+> -	if (!dma_mask_ptr)
+> -		dma_mask_ptr = &dma_mask_32;
+> +	of_data = of_device_get_match_data(&pdev->dev);
+> +	if (of_data && *of_data == use_dma_mask_64)
+> +		dma_mask = DMA_BIT_MASK(64);
+>  
+> -	ret = dma_coerce_mask_and_coherent(&pdev->dev, *dma_mask_ptr);
+> +	ret = dma_coerce_mask_and_coherent(&pdev->dev, dma_mask);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -200,7 +200,7 @@ static void uhci_hcd_platform_shutdown(struct platform_device *op)
+>  static const struct of_device_id platform_uhci_ids[] = {
+>  	{ .compatible = "generic-uhci", },
+>  	{ .compatible = "platform-uhci", },
+> -	{ .compatible = "aspeed,ast2700-uhci", .data = &dma_mask_64},
+> +	{ .compatible = "aspeed,ast2700-uhci", .data = &use_dma_mask_64 },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, platform_uhci_ids);
+> 
+> ---
+> base-commit: 877c80dfbf788e57a3338627899033b7007037ee
+> change-id: 20251014-usb-uhci-avoid-bogus-clang-shift-warning-a80166a24472
+> 
+> Best regards,
+> --  
+> Nathan Chancellor <nathan@kernel.org>
+> 
 
