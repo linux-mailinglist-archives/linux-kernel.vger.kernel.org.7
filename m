@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-854651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783C7BDEFB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4A3BDEFCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51F2484D98
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89469484F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4867625A642;
-	Wed, 15 Oct 2025 14:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560C92798FD;
+	Wed, 15 Oct 2025 14:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7uD6KDN"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E2wH7hDz"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E0C259C9F
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51252741AB
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 14:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760537924; cv=none; b=QAICAjpAkAfwlRllg6pwFqFqP91eE76/ssz57MjIrw3lLHmQ8tesFoAjeyLD+7O4fLZizXn01nHxEYoNtmWo3pNFDX1jL6qP92ZBzQQrPMcN0PqkQZEPdfbKzq6SH/Hg9kpflFHdfBYPv92wqxLf6M81jVagjljkLa3ZmyS+MfU=
+	t=1760537934; cv=none; b=p5IrDL7E3zLc8NvuYPa8cAQd6AiukKuDaMpNgV5Flp5clRy9u14YzT3lFbd7c+ERoOQccPQkXMLCAckwSOobSaeirWSPBGHGV3iqpe2TKSrBsqYCAcHuis2oZroKpeVztPjEIdTb8LdTp8pQ15M47GlGRN8rUlm+2+XaGOSuq4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760537924; c=relaxed/simple;
-	bh=wwyVnKj0Z9E7rKPt4tas7UgOcWEe2+T1LdCn1Cx2TA8=;
+	s=arc-20240116; t=1760537934; c=relaxed/simple;
+	bh=M3JDOPbFjkClAC4UX2vhrNDOfN9b6bNYa0hiNAn1emM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ddcjnqXi/Cr+0hkyV2utzcxAWLZ5GpIta6cTVeCRw/G8wkYwctDRTyo1Xgb3euj6R6WgEvoLIs41OJ7cX5Blzim8yZzbmn14lWLFiSHDMkf+mkSIad9q4OinfReitvpmDYiVrnMpx43zxUD0hgH9xcFN94K9h8VPCd5cHPZJwVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7uD6KDN; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=NNxIyOvfMPuH2ZVxEQKhY1vrR2V3yxnYQPjqgCd/GqiH71CgQ4KBIdBH8QNkGQXnX/zoXxZK1F+JAIZckl4wQWTVQMPOcsyYoifQZVb/dtzyp0SRskXzCP74VyZ+ubtTEsWJXxC+LPfT+4of0WcfkRLQAoHnGrDdZ4YMsArihxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E2wH7hDz; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-269639879c3so63343675ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:18:42 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2909448641eso110085ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760537921; x=1761142721; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760537932; x=1761142732; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6t6N9HpqC1tc69VtCq5PoxDpHYOuoNpn/2bEQQRKsCU=;
-        b=h7uD6KDNjP9KoQtA9oSR5U0sqnzQvBG1GwhONmPU0kyOBpY4OtspZ/IFWlcD+u73a9
-         rU+5azTfHS2QbaRZB0ObGlu4Bq3wkKESBdDOYZaJ0M6nTzJEaX/W1bRwPlsPwY/tUCq2
-         KWoV3iTA+OzS7jZ2TpvsJKdleQPT0ZWI8hKNIEWaBIVgPlVCGuFSg5orVviyIv3k99n8
-         8u7CAX2+jYZrPiFt/+yM6JAFv5v4rRYJQALxxgOrSNExs89C2cuSejDimfyuMNETv0dG
-         eT1qm+BL4wsYp1adIh2Pt+vPQADErsTaQSwtB1AtM+xwx9Ucis9/UMPxqIHUKf93DxjL
-         FEuw==
+        bh=SHmEXjchUo7p5MNeEkw3mVcK0Ae4ArUpPhVglZardsE=;
+        b=E2wH7hDzkRL8PDMBeI58qq8pdyGWoikElGN309zi0u6ZTb1JapYfMPznTFuqZRZ2UB
+         3mZ/Qs/+Io1RctJyUUxKvqV+D7EQCmcWS/6E3fFjkEw+jQl7Rmtvs7BrmPy5evCmmiGJ
+         jxeNVba1Oa3GYxFYXVaT96nevEw5qc9H64tU0Rc4VsyExhps/G4PhgMZACV90vBxWSP4
+         VYRSw5kqiQwpy6A96SoU597khVuy13j0taQh4ZM3OoYMYYon8qfPhm27AyncFFUHZAza
+         EIheK9S9Wypf2cyAlr88lDViKiap4eAtW8mRWX0GK+1PcKH9/5yi41ZSYagXDhMBXacG
+         dt2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760537921; x=1761142721;
+        d=1e100.net; s=20230601; t=1760537932; x=1761142732;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6t6N9HpqC1tc69VtCq5PoxDpHYOuoNpn/2bEQQRKsCU=;
-        b=Pm04tbnGLn1ccatyVc4BXZizlfDhnWKO16pGGbnziR5y/PPL/tKZJ6YasQREUXKhjH
-         jP7NmlpUFJKYojnm56Ppr6lsUtektk0wSom8fhhGKnSu8hTwXVYctXwI8ydB4tyrOuFJ
-         B6K8C+wH9jnqVUk2xm/jOKKDOR3mIOWOjIwiXSIloMvO4KPL0P3wTEdMlDujUT+mvK06
-         TVntgLkwvnCcJ0uIjqzY0yYQimflWvVvZqEuaYd+mj3S1gBwwTbKmITQY0iEUzu6R+Lh
-         hDuNDlSECpwT4HwY2RxIPJv4sbAXwQ8VXGvA82zMGOEIti8JKqpBJfwcWg6/5khgrlg3
-         3aDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXs8QQ6vM6Ai/9ujGuCJCBmgLLm4tZBMUUHS8RO6X/Wmwdb5hD3P56kv6hqiBDRchRcX1gooaV1jJKvyf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYRZBC4ToIgKxDD4CSw1ylI2JGwxVuBn62y4vXBBgYBmUBYzwH
-	wel6Jl/saSlnmld7AFw0eNxM5+irdLZi0uQx/7ToMFRzKTrVxQu8jLTq
-X-Gm-Gg: ASbGncv16f3j0lNkh+RCBOHNjXjkIlhE6F6pbD2DYahGG4LF1rOhqw7v3uUOTkqYDnj
-	eGs4vcRi6FawI9VnvboQ2GLNDcOM91erJaT0xeWwrHQQSt+yqv8Kf85RB2eykYOdzdEon3tJK8H
-	06PFgOp4h2y3gaKdYYMO+S7WwApspHf9Rt9eMDadoqVOZ3P/COZt/y6Q+otndurl1uGB2yNi7jH
-	vvDrUTxRyPakwaxMoWA+JDLeLVKctIod4u9ax21K0vCnZdn2eZS3csgpXsdN8nxcmtpZJvmzXbx
-	7DLJUucYEbNZ7ddGxuhj7IWbF63fJ79Nn85kbFAvfBkl70o0rR1Q3Pw8tLWmTwT5Z9BBnz/Outk
-	uAyu+Mr02b+g2T3C5arAD/Xo2MHZRTcSqJe0u1DYjGuvI+C4UOykZGULBT4QcYMct/sbLoLr4fQ
-	fTt+XkDw==
-X-Google-Smtp-Source: AGHT+IF82bnRiuy2u2JBIprbwTFWlMO2WWuYRZy2bwtJxPH4hn0qqhx4Y3Mh3G8QrQkbXo6LCevr0w==
-X-Received: by 2002:a17:902:e806:b0:28d:18d3:46ca with SMTP id d9443c01a7336-29027402f00mr407388595ad.49.1760537921383;
-        Wed, 15 Oct 2025 07:18:41 -0700 (PDT)
+        bh=SHmEXjchUo7p5MNeEkw3mVcK0Ae4ArUpPhVglZardsE=;
+        b=YMC/9InCuyEmR9MRCjX6qymXDMvfGCZ3I1ARvVT9Ji69Wq/lv5yUucFvdipK+QCPvR
+         ueYjTr+W94WVkXVYw12IsiSgZzI463A9vddpdbIig69XXCT5nqZ0gIL1MiLn6b2OvbTN
+         DvSrvucX76/SEhrceizdE0MgwKKQ8ToBaUjme9pt2iy+2Dl//9DZu3U52BY3n+1njazV
+         lCr6auULMq1SoUzMhVSLsBhXpXvJA1rKOXT37qTJytgvRQhxKimuHpBsChCH06V0cSXt
+         nQbTGHhBh0a9GC/6FXkFM6IZg+iIbdpsscOBBB2k7VKtizI+82p2oSAhCu94zr0WNGQA
+         jdyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZz1bz68gaY5ZR/Q2kUEjBxDeGNRZbykrNNXLuZNg0itO8Zo2tFbiSBKZcc/yPeMpHGkIFexLqlV74M74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8SKzJzHAwnPVcB4JbuQKCp7M4gwk9+yx3WbUQcg/HV3doQvEV
+	jqxB7nBFN+0MYA7xbYV1TztncXTCUuNvNsDs0W4FuZLsHGiNeXDrH+QZ
+X-Gm-Gg: ASbGncsihz27teZHOxHCoMdxvQmFzL/88NXehxqs3rwMlqHjCPERIpvegRY69Z4zzMU
+	pT3w/+CDN7odGd6Ics3IkKLymLy40+8QJsTwdQB2JpD0tCCsLSdS0NoCuuY1Jandk51in6xyxKq
+	68X9b2SG0B9/EoAoyVgfWxRAMn5GXOkNn25xGNj8zpfZDZNSnTUtRAhZRZlOg5PNO9+4AjakKMQ
+	4SaCuE8mb1WtjakK6iqkURow9YwU/M5skx2vKaMepIpKapwWZgJZ7gePb7Hdzy/k5BNmw0TSr89
+	tRyvq4yyZZvjUl3GQ64FSqEgRLCIX6m/GRZ5uUjR72CRnMofPt2DBsyl7BCRS/LwCO3QTAugqew
+	eQmOtV5erHup6G3Bvxb8sbEwUZRpv8y6iEnLUWh8NmhZCqqwvcbHY5M/E958BMywKxocvhgWVFT
+	5+KHrtpA==
+X-Google-Smtp-Source: AGHT+IGPkoQEyym4vrrdjP+BNzpJr8ZiqPYTLWrM9emXz1prPZyu27GMgJiwVA1OnHpVqgCC5eI05A==
+X-Received: by 2002:a17:902:cece:b0:27d:6cb6:f7c2 with SMTP id d9443c01a7336-29091b162f4mr3433615ad.17.1760537931868;
+        Wed, 15 Oct 2025 07:18:51 -0700 (PDT)
 Received: from localhost.localdomain ([2409:891f:1b80:80c6:cd21:3ff9:2bca:36d1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f32d6fsm199561445ad.96.2025.10.15.07.18.33
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f32d6fsm199561445ad.96.2025.10.15.07.18.41
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 15 Oct 2025 07:18:39 -0700 (PDT)
+        Wed, 15 Oct 2025 07:18:50 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -103,9 +103,9 @@ Cc: bpf@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yafang Shao <laoar.shao@gmail.com>
-Subject: [RFC PATCH v10 mm-new 8/9] selftests/bpf: add a simple BPF based THP policy
-Date: Wed, 15 Oct 2025 22:17:15 +0800
-Message-Id: <20251015141716.887-9-laoar.shao@gmail.com>
+Subject: [RFC PATCH v10 mm-new 9/9] Documentation: add BPF-based THP policy management
+Date: Wed, 15 Oct 2025 22:17:16 +0800
+Message-Id: <20251015141716.887-10-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 In-Reply-To: <20251015141716.887-1-laoar.shao@gmail.com>
 References: <20251015141716.887-1-laoar.shao@gmail.com>
@@ -117,348 +117,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This test case implements a basic THP policy that sets THPeligible to 1 for
-a specific task and to 0 for all others. I selected THPeligible for
-verification because its straightforward nature makes it ideal for
-validating the BPF THP policy functionality.
-
-Below configs must be enabled for this test:
-
-  CONFIG_BPF_THP=y
-  CONFIG_MEMCG=y
-  CONFIG_TRANSPARENT_HUGEPAGE=y
+Add the documentation.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- MAINTAINERS                                   |   2 +
- tools/testing/selftests/bpf/config            |   3 +
- .../selftests/bpf/prog_tests/thp_adjust.c     | 245 ++++++++++++++++++
- .../selftests/bpf/progs/test_thp_adjust.c     |  23 ++
- 4 files changed, 273 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/thp_adjust.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_thp_adjust.c
+ Documentation/admin-guide/mm/transhuge.rst | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7be34b2a64fd..c1219bcd27c1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16260,6 +16260,8 @@ F:	mm/huge_memory.c
- F:	mm/huge_memory_bpf.c
- F:	mm/khugepaged.c
- F:	mm/mm_slot.h
-+F:	tools/testing/selftests/bpf/prog_tests/thp_adjust.c
-+F:	tools/testing/selftests/bpf/progs/test_thp_adjust*
- F:	tools/testing/selftests/mm/khugepaged.c
- F:	tools/testing/selftests/mm/split_huge_page_test.c
- F:	tools/testing/selftests/mm/transhuge-stress.c
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index 8916ab814a3e..13711f773091 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -9,6 +9,7 @@ CONFIG_BPF_LIRC_MODE2=y
- CONFIG_BPF_LSM=y
- CONFIG_BPF_STREAM_PARSER=y
- CONFIG_BPF_SYSCALL=y
-+CONFIG_BPF_THP=y
- # CONFIG_BPF_UNPRIV_DEFAULT_OFF is not set
- CONFIG_CGROUP_BPF=y
- CONFIG_CRYPTO_HMAC=y
-@@ -51,6 +52,7 @@ CONFIG_IPV6_TUNNEL=y
- CONFIG_KEYS=y
- CONFIG_LIRC=y
- CONFIG_LWTUNNEL=y
-+CONFIG_MEMCG=y
- CONFIG_MODULE_SIG=y
- CONFIG_MODULE_SRCVERSION_ALL=y
- CONFIG_MODULE_UNLOAD=y
-@@ -114,6 +116,7 @@ CONFIG_SECURITY=y
- CONFIG_SECURITYFS=y
- CONFIG_SYN_COOKIES=y
- CONFIG_TEST_BPF=m
-+CONFIG_TRANSPARENT_HUGEPAGE=y
- CONFIG_UDMABUF=y
- CONFIG_USERFAULTFD=y
- CONFIG_VSOCKETS=y
-diff --git a/tools/testing/selftests/bpf/prog_tests/thp_adjust.c b/tools/testing/selftests/bpf/prog_tests/thp_adjust.c
-new file mode 100644
-index 000000000000..b69f51948666
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/thp_adjust.c
-@@ -0,0 +1,245 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 1654211cc6cf..f6991c674329 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -738,3 +738,42 @@ support enabled just fine as always. No difference can be noted in
+ hugetlbfs other than there will be less overall fragmentation. All
+ usual features belonging to hugetlbfs are preserved and
+ unaffected. libhugetlbfs will also work fine as usual.
 +
-+#include <sys/mman.h>
-+#include <test_progs.h>
-+#include "test_thp_adjust.skel.h"
++BPF THP
++=======
 +
-+#define LEN (16 * 1024 * 1024) /* 16MB */
-+#define THP_ENABLED_FILE "/sys/kernel/mm/transparent_hugepage/enabled"
-+#define PMD_SIZE_FILE "/sys/kernel/mm/transparent_hugepage/hpage_pmd_size"
++Overview
++--------
 +
-+static struct test_thp_adjust *skel;
-+static char old_mode[32];
-+static long pagesize;
++When the system is configured with "always" or "madvise" THP mode, a BPF program
++can be used to adjust THP allocation policies dynamically. This enables
++fine-grained control over THP decisions based on various factors including
++workload identity, allocation context, and system memory pressure.
 +
-+static int thp_mode_save(void)
-+{
-+	const char *start, *end;
-+	char buf[128];
-+	int fd, err;
-+	size_t len;
++Program Interface
++-----------------
 +
-+	fd = open(THP_ENABLED_FILE, O_RDONLY);
-+	if (fd == -1)
-+		return -1;
++This feature implements a struct_ops BPF program with the following interface::
 +
-+	err = read(fd, buf, sizeof(buf) - 1);
-+	if (err == -1)
-+		goto close;
++  int thp_get_order(struct vm_area_struct *vma,
++                    enum tva_type type,
++                    unsigned long orders);
 +
-+	start = strchr(buf, '[');
-+	end = start ? strchr(start, ']') : NULL;
-+	if (!start || !end || end <= start) {
-+		err = -1;
-+		goto close;
-+	}
++Parameters::
 +
-+	len = end - start - 1;
-+	if (len >= sizeof(old_mode))
-+		len = sizeof(old_mode) - 1;
-+	strncpy(old_mode, start + 1, len);
-+	old_mode[len] = '\0';
++  @vma: vm_area_struct associated with the THP allocation
++  @type: TVA type for current @vma
++  @orders: Bitmask of available THP orders for this allocation
 +
-+close:
-+	close(fd);
-+	return err;
-+}
++Return value::
 +
-+static int thp_mode_set(const char *desired_mode)
-+{
-+	int fd, err;
++  The suggested THP order for allocation from the BPF program. Must be
++  a valid, available order.
 +
-+	fd = open(THP_ENABLED_FILE, O_RDWR);
-+	if (fd == -1)
-+		return -1;
++Implementation Notes
++--------------------
 +
-+	err = write(fd, desired_mode, strlen(desired_mode));
-+	close(fd);
-+	return err;
-+}
-+
-+static int thp_mode_reset(void)
-+{
-+	int fd, err;
-+
-+	fd = open(THP_ENABLED_FILE, O_WRONLY);
-+	if (fd == -1)
-+		return -1;
-+
-+	err = write(fd, old_mode, strlen(old_mode));
-+	close(fd);
-+	return err;
-+}
-+
-+static char *thp_alloc(void)
-+{
-+	char *addr;
-+	int err, i;
-+
-+	addr = mmap(NULL, LEN, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-+	if (addr == MAP_FAILED)
-+		return NULL;
-+
-+	err = madvise(addr, LEN, MADV_HUGEPAGE);
-+	if (err == -1)
-+		goto unmap;
-+
-+	/* Accessing a single byte within a page is sufficient to trigger a page fault. */
-+	for (i = 0; i < LEN; i += pagesize)
-+		addr[i] = 1;
-+	return addr;
-+
-+unmap:
-+	munmap(addr, LEN);
-+	return NULL;
-+}
-+
-+static void thp_free(char *ptr)
-+{
-+	munmap(ptr, LEN);
-+}
-+
-+static int get_pmd_order(void)
-+{
-+	ssize_t bytes_read, size;
-+	int fd, order, ret = -1;
-+	char buf[64], *endptr;
-+
-+	fd = open(PMD_SIZE_FILE, O_RDONLY);
-+	if (fd < 0)
-+		return -1;
-+
-+	bytes_read = read(fd, buf, sizeof(buf) - 1);
-+	if (bytes_read <= 0)
-+		goto close_fd;
-+
-+	/* Remove potential newline character */
-+	if (buf[bytes_read - 1] == '\n')
-+		buf[bytes_read - 1] = '\0';
-+
-+	size = strtoul(buf, &endptr, 10);
-+	if (endptr == buf || *endptr != '\0')
-+		goto close_fd;
-+	if (size % pagesize != 0)
-+		goto close_fd;
-+	ret = size / pagesize;
-+	if ((ret & (ret - 1)) == 0) {
-+		order = 0;
-+		while (ret > 1) {
-+			ret >>= 1;
-+			order++;
-+		}
-+		ret = order;
-+	}
-+
-+close_fd:
-+	close(fd);
-+	return ret;
-+}
-+
-+static int get_thp_eligible(pid_t pid, unsigned long addr)
-+{
-+	int this_vma = 0, eligible = -1;
-+	unsigned long start, end;
-+	char smaps_path[64];
-+	FILE *smaps_file;
-+	char line[4096];
-+
-+	snprintf(smaps_path, sizeof(smaps_path), "/proc/%d/smaps", pid);
-+	smaps_file = fopen(smaps_path, "r");
-+	if (!smaps_file)
-+		return -1;
-+
-+	while (fgets(line, sizeof(line), smaps_file)) {
-+		if (sscanf(line, "%lx-%lx", &start, &end) == 2) {
-+			/* addr is monotonic */
-+			if (addr < start)
-+				break;
-+			this_vma = (addr >= start && addr < end) ? 1 : 0;
-+			continue;
-+		}
-+
-+		if (!this_vma)
-+			continue;
-+
-+		if (strstr(line, "THPeligible:")) {
-+			sscanf(line, "THPeligible: %d", &eligible);
-+			break;
-+		}
-+	}
-+
-+	fclose(smaps_file);
-+	return eligible;
-+}
-+
-+static void subtest_thp_eligible(void)
-+{
-+	struct bpf_link *ops_link;
-+	int elighble;
-+	char *ptr;
-+
-+	ops_link = bpf_map__attach_struct_ops(skel->maps.thp_eligible_ops);
-+	if (!ASSERT_OK_PTR(ops_link, "attach struct_ops"))
-+		return;
-+
-+	ptr = thp_alloc();
-+	if (!ASSERT_OK_PTR(ptr, "THP alloc"))
-+		goto detach;
-+
-+	elighble = get_thp_eligible(getpid(), (unsigned long)ptr);
-+	ASSERT_EQ(elighble, 1, "THPeligible");
-+
-+	thp_free(ptr);
-+detach:
-+	bpf_link__destroy(ops_link);
-+}
-+
-+static int thp_adjust_setup(void)
-+{
-+	int err = -1, pmd_order;
-+
-+	pagesize = sysconf(_SC_PAGESIZE);
-+	pmd_order = get_pmd_order();
-+	if (!ASSERT_NEQ(pmd_order, -1, "get_pmd_order"))
-+		return -1;
-+
-+	if (!ASSERT_NEQ(thp_mode_save(), -1, "THP mode save"))
-+		return -1;
-+	if (!ASSERT_GE(thp_mode_set("madvise"), 0, "THP mode set"))
-+		return -1;
-+
-+	skel = test_thp_adjust__open();
-+	if (!ASSERT_OK_PTR(skel, "open"))
-+		goto thp_reset;
-+
-+	skel->bss->pmd_order = pmd_order;
-+	skel->struct_ops.thp_eligible_ops->pid = getpid();
-+
-+	err = test_thp_adjust__load(skel);
-+	if (!ASSERT_OK(err, "load"))
-+		goto destroy;
-+	return 0;
-+
-+destroy:
-+	test_thp_adjust__destroy(skel);
-+thp_reset:
-+	ASSERT_GE(thp_mode_reset(), 0, "THP mode reset");
-+	return err;
-+}
-+
-+static void thp_adjust_destroy(void)
-+{
-+	test_thp_adjust__destroy(skel);
-+	ASSERT_GE(thp_mode_reset(), 0, "THP mode reset");
-+}
-+
-+void test_thp_adjust(void)
-+{
-+	if (thp_adjust_setup() == -1)
-+		return;
-+
-+	if (test__start_subtest("thp_eligible"))
-+		subtest_thp_eligible();
-+
-+	thp_adjust_destroy();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_thp_adjust.c b/tools/testing/selftests/bpf/progs/test_thp_adjust.c
-new file mode 100644
-index 000000000000..bc062d7feed4
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_thp_adjust.c
-@@ -0,0 +1,23 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+int pmd_order;
-+
-+SEC("struct_ops/thp_get_order")
-+int BPF_PROG(thp_eligible, struct vm_area_struct *vma, enum tva_type type,
-+	     unsigned long orders)
-+{
-+	if (type != TVA_SMAPS)
-+		return 0;
-+	return pmd_order;
-+}
-+
-+SEC(".struct_ops.link")
-+struct bpf_thp_ops thp_eligible_ops = {
-+	.thp_get_order = (void *)thp_eligible,
-+};
++This is currently an experimental feature. CONFIG_BPF_THP (EXPERIMENTAL) must be
++enabled to use it. Only one BPF program can be attached at a time, but the
++program can be updated dynamically to adjust policies without requiring affected
++tasks to be restarted.
 -- 
 2.47.3
 
