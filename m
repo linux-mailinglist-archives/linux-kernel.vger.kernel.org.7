@@ -1,172 +1,85 @@
-Return-Path: <linux-kernel+bounces-854596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F201BDED0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878A3BDED73
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 342DE4F36DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB803A5D09
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C54A24E4A1;
-	Wed, 15 Oct 2025 13:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6BD24E016;
+	Wed, 15 Oct 2025 13:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="PDWA6BI6"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdqfJU7d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE62F1FE45D;
-	Wed, 15 Oct 2025 13:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC11231836;
+	Wed, 15 Oct 2025 13:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760535913; cv=none; b=J47HZOEe1+7n0utdHOhAeDCrDBD5huuzRyRAuWngiIvvlPJ34DElfcyp1Z8RvRRbYVAi31/y54g46Sp5dCQxvHEptnbDtFM2nwvZLY5ikGio14vTXiTbf5uRD4V+pcNHKHJtKL9226FTLj6FYzvCWDDxIc337ABUbOS0HDvYs1Q=
+	t=1760536188; cv=none; b=gc4KYN+gxtKgqmbyqtjg46FtViIrk8a/f7wfssv7U+N01ewo1SascgU4DX9RAwo3i2Moa6dbVD25lQL3y7/paomMA4BCav3Cn7f1o6P14kDM+Mi76dm3Iq6ochUHdSpDGLspTXvRFa1Uvh0Fow5P6mVRBKGFFn5MSjXslOXQiw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760535913; c=relaxed/simple;
-	bh=GvvKUdp4sEXuEH++q3fpXXySA7jx1qLFta8O2dpXdyA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IxmIEaeOvJ49Lnl/wwn3sAJSWgwgyLxDa88hxC7wTtbD1L+Gu2Yz1bXpM4nBKI4hxQPY3iOgnr4ctNvhNNioui4zQ+uh6f0CQGVsAho275txQ5/99wpvrZTAN2vYT2C0zjGj/8zst6ftkBqbJaHhksszejRC9W2I+xQt2tzymYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=PDWA6BI6; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 85584A02C1;
-	Wed, 15 Oct 2025 15:45:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=gbavS7FFbPM9PTK441+x
-	de2SNpZOxalPToFpGWp2E0M=; b=PDWA6BI6qWoxGxvUH4gNtBtBS54Ux1ulaL3L
-	rQsaiQQp5M4fPmwilu4MrZZWc5oCZllxB8sgpqp2ZYN3j8afkQf/aMPyVcue20o9
-	7tf39BgyFH1iXc+SfhwdIx5RjiHbQ2siy0C1gMap0IrqRi83CgIhZoCWUFAm4KNI
-	jDC+bfUVcUECrAzuaJ386dCza7RUAm9YsN1Urt14svJ5xZ8lzBxTCLijlhgyvZYX
-	LrIp5/QfcnrAxpTx9lYZ1iFF5qJawlQa6GHpHE/VmYp9vWB66sY1Ap0NRBx3iTwo
-	0lai5KCiWc3TO0+djj80CqTR1x0BKO5PUMvXgk4taGzusSBDwikegGXEZczQ8gcq
-	yCba6IqpiVbNrg0JCUCopqw1K5Zbj9V5l18B6UO4QXoBvTJ6lOLxS4noNKWRFt7v
-	a31H9GBteWxeaF2FepxIylFqosGhky5vXv7VjMjGRQvQTdrQJ9ReTOniLUlBbnZv
-	Nxy9fi5A084ptjui5/loVdFzFNoU4lptzJePqgL968H/gO04Er0kmD89TkYavYcE
-	CjiBhB+f8wn4qavjAxXFiCRR229ghEsiA81c3t8rO3M9GO2lEOjl8AJbgMMV9M2s
-	c7B951gXJVnoKGRltymRA0uA6V7KluFmRVqPSUJvO+i2rZ3LnlafV71Exy2kt0a/
-	3Sa2f8s=
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>
-Subject: [PATCH v2 4/4] net: mdio: reset PHY before attempting to access registers in fwnode_mdiobus_register_phy
-Date: Wed, 15 Oct 2025 15:45:03 +0200
-Message-ID: <20251015134503.107925-4-buday.csaba@prolan.hu>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251015134503.107925-1-buday.csaba@prolan.hu>
-References: <20251015134503.107925-1-buday.csaba@prolan.hu>
+	s=arc-20240116; t=1760536188; c=relaxed/simple;
+	bh=SHSdSGM4L947VuTmWiJYNKTD/YrVIY8PXjfmcpTLgh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GZcPgyaT2V6H3iV7tBNEmfbwlOGcHi1Mo+Aq5J9sF8NN5rzUmcb2rmTCtgWH66QMqDj6zFOGU4+wywsjiTEz26TY5PUWodQi+Aq59rwWmJic7xCtr4PuKNsy84nEQVo246UifAa2RsQv0AUwrMVlqumo9DyHs0sg45dBO+UUctM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdqfJU7d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1999C4CEFB;
+	Wed, 15 Oct 2025 13:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760536188;
+	bh=SHSdSGM4L947VuTmWiJYNKTD/YrVIY8PXjfmcpTLgh4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GdqfJU7dHN8It4JAHaMg9qnSkgMVo8FGSbBGiR/y4XcvOqmiCYsfBjoNfeflVu/FU
+	 9gavpnmLEN3lxgxKkx1b6ij2dDBcAxSsYdfoNZleHhveSBv/e9nqsq//ynZVT8aZK1
+	 ZG6kiwERTGETknidpAqyKNn/NCTYQQvEsdp0ChpRnuw63C5mRrYcw7Xynz/n56QS61
+	 ac8sfdiKTyZ+eFiWLQ/Er+kBrcr5OdzEEhKKc4sCMTN24AWzgeFkaL+gOfLudXN2QC
+	 FyA2rWToskmfDzRXmYdMfK0JyZASvRXSQmM4nexwtaISrQ4x/LoSI4VOxLuaDUkkKi
+	 cE7p5THKQqNnA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject:
+ [PATCH v2 0/3] cpufreq: intel_pstate: Adjust the energy model for hybrid
+ systems
+Date: Wed, 15 Oct 2025 15:45:28 +0200
+Message-ID: <2404176.ElGaqSPkdT@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1760535907;VERSION=8000;MC=3270925293;ID=558035;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155F64756A
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-Implement support for the `phy-id-read-needs-reset` device tree
-property.
+Hi Everyone,
 
-When the ID of an ethernet PHY is not provided by the 'compatible'
-string in the device tree, its actual ID is read via the MDIO bus.
-For some PHYs this could be unsafe, since a hard reset may be
-necessary to safely access the MDIO registers.
+This supersedes
 
-This patch performs the hard-reset before attempting to read the ID,
-when the mentioned device tree property is present.
+https://lore.kernel.org/linux-pm/5937608.DvuYhMxLoT@rafael.j.wysocki/
 
-There were previous attempts to implement such functionality, I
-tried to collect a few of these (see links).
+because the last patch in it resulted from some confusion.  Sorry about that.
 
-Link: https://lore.kernel.org/lkml/1499346330-12166-2-git-send-email-richard.leitner@skidata.com/
-Link: https://lore.kernel.org/all/20230405-net-next-topic-net-phy-reset-v1-0-7e5329f08002@pengutronix.de/
-Link: https://lore.kernel.org/netdev/20250709133222.48802-4-buday.csaba@prolan.hu/
+In this series patch [3/3] simply switches over the energy model callbacks to
+using CPU types retrieved from CPUID instead of scaling factors which is more
+robust and allows the energy model to be tuned more precisely.  In particular,
+it will now allow P-cores to be populated when E-cores are utilized above 60%
+of their capacity (and not just in the "overutilized" situation or when there
+is a task whose utilization exceeds the E-core capacity).
 
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
----
-V1 -> V2:
- - renamed DT property `reset-phy-before-probe` to
-  `phy-id-read-needs-reset`
- - renamed fwnode_reset_phy_before_probe() to
-   fwnode_reset_phy()
- - added kernel-doc for fwnode_reset_phy()
- - improved error handling in fwnode_reset_phy()
----
- drivers/net/mdio/fwnode_mdio.c | 37 +++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+The first two patches in the series are preliminary.
 
-diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdio.c
-index ba7091518..6987b1a51 100644
---- a/drivers/net/mdio/fwnode_mdio.c
-+++ b/drivers/net/mdio/fwnode_mdio.c
-@@ -114,6 +114,38 @@ int fwnode_mdiobus_phy_device_register(struct mii_bus *mdio,
- }
- EXPORT_SYMBOL(fwnode_mdiobus_phy_device_register);
- 
-+/**
-+ * fwnode_reset_phy() - Hard-reset a PHY before registration
-+ */
-+static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-+			    struct fwnode_handle *phy_node)
-+{
-+	struct mdio_device *tmpdev;
-+	int err;
-+
-+	tmpdev = mdio_device_create(bus, addr);
-+	if (IS_ERR(tmpdev))
-+		return PTR_ERR(tmpdev);
-+
-+	fwnode_handle_get(phy_node);
-+	device_set_node(&tmpdev->dev, phy_node);
-+	err = mdio_device_register_reset(tmpdev);
-+	if (err) {
-+		mdio_device_free(tmpdev);
-+		return err;
-+	}
-+
-+	mdio_device_reset(tmpdev, 1);
-+	mdio_device_reset(tmpdev, 0);
-+
-+	mdio_device_unregister_reset(tmpdev);
-+
-+	mdio_device_free(tmpdev);
-+	fwnode_handle_put(phy_node);
-+
-+	return 0;
-+}
-+
- int fwnode_mdiobus_register_phy(struct mii_bus *bus,
- 				struct fwnode_handle *child, u32 addr)
- {
-@@ -129,8 +161,11 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
- 		return PTR_ERR(mii_ts);
- 
- 	is_c45 = fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45");
--	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
-+	if (is_c45 || fwnode_get_phy_id(child, &phy_id)) {
-+		if (fwnode_property_present(child, "reset-phy-before-probe"))
-+			fwnode_reset_phy(bus, addr, child);
- 		phy = get_phy_device(bus, addr, is_c45);
-+	}
- 	else
- 		phy = phy_device_create(bus, addr, phy_id, 0, NULL);
- 	if (IS_ERR(phy)) {
--- 
-2.39.5
+Thanks!
+
 
 
 
