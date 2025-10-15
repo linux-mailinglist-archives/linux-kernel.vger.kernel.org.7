@@ -1,381 +1,311 @@
-Return-Path: <linux-kernel+bounces-854235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1784BDDE07
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:53:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB769BDDE13
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5E9A4EE570
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:53:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812CB3AC846
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673A131B801;
-	Wed, 15 Oct 2025 09:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F3831B805;
+	Wed, 15 Oct 2025 09:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BCv8TeJ2"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OS+9h61n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UmzdK07H";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OS+9h61n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UmzdK07H"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA1D31B11C
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FC931B12B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760522027; cv=none; b=Z0t04HgCgcsGpwja6UZVecvGZZjF8L2UGaeIlzitmplaY2PnMSJRNEhILiCM2ptUjQ2s14U/qIZAv89hUDpUSnxMAnOyeWK9olzqFT+K5mTaR+cU79M12LsR4/6yzVMeV6q4JZ10Z9b0Nsf/vH9PbKnFVPuyxtUZY+YOMixpnMQ=
+	t=1760522062; cv=none; b=gpEVBlU6IZwEuBfS63k0RVGf6tqztxls3my9C0jdrUDfLD3hM3c/dx09iyHAS9r/f/zh/Hx1F1qTI7KgoHWwX0XSgwS2cOivRZAlIHzyUzRpQXQlVC6GEDyt1e33ko3x1MCr8EQWfZbvMq3zhGYPGQ7PPeDaKyJjnhBrisQZQek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760522027; c=relaxed/simple;
-	bh=hIpIf/kcDm0kf0s0kJz+D/awRvsLxaY8T7qYUgQsLLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UlNq72/Sbo/SdVkAn3ytyqRxwNV5sDJtfSBJjrcZzzgbO8deCk2JTUuw4I11CR6z4C0wjQOsk3kjWnzaOG1I3gWMA5s4Z2qg5CwlJ4hRnlDcB/ChdX8YGhlp0r/kIzwzfTyNQIX6G8uN+DmcEFgm3yE1/naAd2xxbc/xFD0YgOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BCv8TeJ2; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47105bbb8d9so23135e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760522023; x=1761126823; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UC129mfOqt4svCEhsCGr7Ui4bow4e4J9G+P0XmQlpKM=;
-        b=BCv8TeJ2atdhYi+2SRK3GeZ6lX6nygLDnbY+RyQ65h4eEyephrk5aji00QauFtDQHi
-         xG8VZ50XN6dQGyU/iAYva5bXkw9uGsiAlnRr6BeoX+yDI/hSgIazB9HWSSdr9M77/tSo
-         SuNLkh5tuYSoO3iKdMpNbSR0kJIqy+9684AhMc7tk0i/yJfvz1oC3fH6AP3ur4HuoIoh
-         EqnFNAmwbeHObRIVkwhqPouRmsVqXsl4530gF/mpgsp926D/2mZYvJi1uGl0Wr9ofQmi
-         GM4BeW9AD1pbPRCil5jSqs5+T+FQ5XZXlMb/Ek6oIlH9lVlEHvz9YNRJC39cHK0b2z7u
-         wpWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760522023; x=1761126823;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UC129mfOqt4svCEhsCGr7Ui4bow4e4J9G+P0XmQlpKM=;
-        b=QdOY9y37oQmxrJdV0NA5cr69CQr2Hxvm6q30lqVaFWT2Aec9Ti0bWFkst5qtpHgZ1o
-         NfGZLR/2HoidBHYLFSMFGSehuhN+PrJJV0Un86SQzsuvgjUIeBVn03Z5xXHwOWvX1eUN
-         8p8U4To2eRVv/LDP0CINRMHhy+apX+aQo/4yU6xE+lE1DWjViL546pKXER+0inrcH5pj
-         Vt01SFfFb6MH/uZn7MqX/uM8CuqritTDoPN9/jtkpBeEnJUP9XNR0yQViUo/ZzzFeokx
-         pdp9llQehRc87ataYSPJ6ZAcfODLsKE1AlrDDfRaMjkFUPzPUUEbzSvcXom1JKXhhp5z
-         kSFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv7vrufK9HXEjOrGs6seo8gowvRp6a4WHD9xsfFggna1PH50aW7bifK2Wh/RKg5yl48TGPR0RIRDpOlu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6ku8A8ZK5a0SXHXis63YqItnd380CsXpZZZcK8vOOhbiguoYt
-	cvNKcRPDxHk6BqFO2ZDXPmRb3lQptKJtPOhcS5kMAsEfYWv1dpYw8Sx3REjB1hCQhg==
-X-Gm-Gg: ASbGncvLhIyg7laMjoVj7oamCB+fYjh0DcEh0g56AIM6xbDI4q/liouUfAKnWNrTlvm
-	2tI7wgjONuRVuLwjOMewYx3LIX4t7kh0ervAl6UAYnvGuZthIu3ZhCSqa2LQ603csit/Va1OvE9
-	VJ9QAiSC6JzdSIalUsYpRGcwgZdZzl8p4BypA2TVNr8EGRHybEvB1FtKppFGpAczh+jHEWsqGr3
-	gNUm0cElc552YIEtKMW6dVOTYxL+DX4U5XZK9lSGbTaPQxO492OxmBJPXAM9ZoaWULZgsXTZ38u
-	H+0bRj4AhWvKbWkYBEvjy83GaMvIKm5X7P46Q2+2l0k5K5497ge+twNOq4/bljG8BNHlXwXGZDv
-	EFO0VBfHK3ddrVaktBLcGRMUVhQEhsajOUY+EfWJsVKWyryAoRZyCr5PJI9lBbraiR8NY2XRh7b
-	kwP7UKKtfBOLNSvcGGWYOW
-X-Google-Smtp-Source: AGHT+IHe1E1s7HUbEkXph4hxdxNH+oQJI3gWsBL77vTsMzihUgBJOr2SIJMGce02dMVTe2csEDSXCQ==
-X-Received: by 2002:a05:600c:4706:b0:45f:2940:d194 with SMTP id 5b1f17b1804b1-470fd61e6dbmr1731065e9.2.1760522023158;
-        Wed, 15 Oct 2025 02:53:43 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb482b9absm332974755e9.2.2025.10.15.02.53.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 02:53:42 -0700 (PDT)
-Date: Wed, 15 Oct 2025 09:53:39 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, will@kernel.org, joro@8bytes.org,
-	jgg@ziepe.ca, praan@google.com, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v5 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
-Message-ID: <aO9vI1aEhnyZx1PL@google.com>
-References: <20250929155001.3287719-1-smostafa@google.com>
- <20250929155001.3287719-5-smostafa@google.com>
- <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
+	s=arc-20240116; t=1760522062; c=relaxed/simple;
+	bh=HAgJwYsYwj74Z3sOI4Y3FSgl0TcDyoqmJs81su0ANYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X3FQaZSNHg3Knf5K9SG+3J67WH6qd4FXxPV67naG7hcovkCoZO9V6kyeTNjW1mfrbmXLHzmopE1LZhYloqGWTj+s8q+RotPHs3yGi5NYlSQF2efrj/DjaaOCBWEQS+Ap0iN8TjzzrNE5vuTesPyPddOuIngPWwGnbP38nD8fQRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OS+9h61n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UmzdK07H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OS+9h61n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UmzdK07H; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2356A22A49;
+	Wed, 15 Oct 2025 09:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760522059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vt/jwQJIqk4TwKms5vsSdlLSoJHfVELSvvVKFBDVPE0=;
+	b=OS+9h61ne/3vTkJUa2tFZEPet65UCbtb3rXEvCGXJ7j/F13ARH0oRVo+4SrwIZzLCXo8Po
+	O80W8TEUyOM3ldmZEId1WEIWnhatHYY0PuRhZkBWyyIueOJKLFULG8YdQh+1O36yTc0HWl
+	BbmuYmeXsDZPWsKQEwyfUk+w8ks/Mrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760522059;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vt/jwQJIqk4TwKms5vsSdlLSoJHfVELSvvVKFBDVPE0=;
+	b=UmzdK07HNGSDMW4KYQtUa8sCM6tCxRhcJkuAnmhkF3PKpefF8oYMv3QF3k+JBbnNBq0w/P
+	j4GsjXI7qSkd47Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OS+9h61n;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UmzdK07H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1760522059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vt/jwQJIqk4TwKms5vsSdlLSoJHfVELSvvVKFBDVPE0=;
+	b=OS+9h61ne/3vTkJUa2tFZEPet65UCbtb3rXEvCGXJ7j/F13ARH0oRVo+4SrwIZzLCXo8Po
+	O80W8TEUyOM3ldmZEId1WEIWnhatHYY0PuRhZkBWyyIueOJKLFULG8YdQh+1O36yTc0HWl
+	BbmuYmeXsDZPWsKQEwyfUk+w8ks/Mrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1760522059;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Vt/jwQJIqk4TwKms5vsSdlLSoJHfVELSvvVKFBDVPE0=;
+	b=UmzdK07HNGSDMW4KYQtUa8sCM6tCxRhcJkuAnmhkF3PKpefF8oYMv3QF3k+JBbnNBq0w/P
+	j4GsjXI7qSkd47Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED79713A42;
+	Wed, 15 Oct 2025 09:54:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gwWnOUpv72g1cgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 09:54:18 +0000
+Message-ID: <c07838ca-4e6e-4837-b99f-09fd44c7801c@suse.cz>
+Date: Wed, 15 Oct 2025 11:54:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86ca3918-4992-41a2-894f-f1fd8ce4121f@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] slab: Add check for memcg_data != OBJEXTS_ALLOC_FAIL
+ in folio_memcg_kmem
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>, Suren Baghdasaryan <surenb@google.com>
+Cc: Hao Ge <hao.ge@linux.dev>, Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+References: <20251014152751.499376-1-hao.ge@linux.dev>
+ <CAJuCfpGBxUmvWoe2xv2-bsF+TY4fK-m1-Z_E3OcyTiSYz5KeAA@mail.gmail.com>
+ <aO9okBEZiA4pCNku@hyeyoo>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aO9okBEZiA4pCNku@hyeyoo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 2356A22A49
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.51
 
-On Tue, Oct 14, 2025 at 02:43:53PM +0100, Robin Murphy wrote:
-> On 2025-09-29 4:49 pm, Mostafa Saleh wrote:
-> > Integrate the selftests as part of kunit.
-> > 
-> > Now instead of the test only being run at boot, it can run:
-> > 
-> > - With CONFIG_IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST=y
-> >    It will automatically run at boot as before.
-> > 
-> > - Otherwise with CONFIG_IOMMU_IO_PGTABLE_KUNIT_TEST=m:
-> >    1) on module load:
-> >       Once the module load the self test will run
-> >       # modprobe io-pgtable-arm-selftests
-> > 
-> >    2) debugfs
-> >       With CONFIG_KUNIT_DEBUGFS=y You can run the test with
-> >       # echo 1 > /sys/kernel/debug/kunit/io-pgtable-arm-test/run
-> > 
-> >    3) Using kunit.py
-> >       You can also use the helper script which uses Qemu in the background
-> > 
-> >       # ./tools/testing/kunit/kunit.py run --build_dir build_kunit_arm64 --arch arm64 \
-> >         --make_options LLVM=1 --kunitconfig ./kunit/kunitconfig
-> >        [18:01:09] ============= io-pgtable-arm-test (1 subtest) ==============
-> >        [18:01:09] [PASSED] arm_lpae_do_selftests
-> >        [18:01:09] =============== [PASSED] io-pgtable-arm-test ===============
-> >        [18:01:09] ============================================================
-> > 
-> > Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> > ---
-> >   drivers/iommu/Kconfig                    | 11 ++--
-> >   drivers/iommu/Makefile                   |  2 +-
-> >   drivers/iommu/io-pgtable-arm-selftests.c | 82 +++++++++++++-----------
-> >   3 files changed, 51 insertions(+), 44 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> > index 553522ef3ca9..d50685433347 100644
-> > --- a/drivers/iommu/Kconfig
-> > +++ b/drivers/iommu/Kconfig
-> > @@ -40,12 +40,13 @@ config IOMMU_IO_PGTABLE_LPAE
-> >   	  sizes at both stage-1 and stage-2, as well as address spaces
-> >   	  up to 48-bits in size.
-> > -config IOMMU_IO_PGTABLE_LPAE_SELFTEST
-> > -	tristate "LPAE selftests"
-> > -	depends on IOMMU_IO_PGTABLE_LPAE
-> > +config IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST
-> > +	tristate "KUnit tests for LPAE"
-> > +	depends on IOMMU_IO_PGTABLE_LPAE && KUNIT
-> > +	default KUNIT_ALL_TESTS
-> >   	help
-> > -	  Enable self-tests for LPAE page table allocator. This performs
-> > -	  a series of page-table consistency checks during boot.
-> > +	  Enable kunit tests for LPAE page table allocator. This performs
-> > +	  a series of page-table consistency checks.
-> >   	  If unsure, say N here.
-> > diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> > index 5250a2eea13f..ac3851570303 100644
-> > --- a/drivers/iommu/Makefile
-> > +++ b/drivers/iommu/Makefile
-> > @@ -12,7 +12,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
-> >   obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
-> >   obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
-> >   obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
-> > -obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST) += io-pgtable-arm-selftests.o
-> > +obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST) += io-pgtable-arm-selftests.o
-> >   obj-$(CONFIG_IOMMU_IO_PGTABLE_DART) += io-pgtable-dart.o
-> >   obj-$(CONFIG_IOMMU_IOVA) += iova.o
-> >   obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
-> > diff --git a/drivers/iommu/io-pgtable-arm-selftests.c b/drivers/iommu/io-pgtable-arm-selftests.c
-> > index 32c6a5c7af53..b61849a8a685 100644
-> > --- a/drivers/iommu/io-pgtable-arm-selftests.c
-> > +++ b/drivers/iommu/io-pgtable-arm-selftests.c
-> > @@ -6,7 +6,8 @@
-> >    *
-> >    * Author: Will Deacon <will.deacon@arm.com>
-> >    */
-> > -#include <linux/device/faux.h>
-> > +#include <kunit/device.h>
-> > +#include <kunit/test.h>
-> >   #include <linux/io-pgtable.h>
-> >   #include <linux/kernel.h>
-> > @@ -47,13 +48,14 @@ static void arm_lpae_dump_ops(struct io_pgtable_ops *ops)
-> >   		cfg->pgsize_bitmap, cfg->ias, cfg->oas);
-> >   }
-> > -#define __FAIL(ops, i)	({						\
-> > -		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
-> > -		arm_lpae_dump_ops(ops);					\
-> > -		-EFAULT;						\
-> > +#define __FAIL(test, ops, i)	({						\
-> > +		KUNIT_FAIL(test, "");						\
-> > +		kunit_err(test, "selftest: test failed for fmt idx %d\n", (i));	\
+On 10/15/25 11:25, Harry Yoo wrote:
+> On Tue, Oct 14, 2025 at 09:12:43AM -0700, Suren Baghdasaryan wrote:
+>> On Tue, Oct 14, 2025 at 8:28 AM Hao Ge <hao.ge@linux.dev> wrote:
+>> >
+>> > From: Hao Ge <gehao@kylinos.cn>
+>> >
+>> > Since OBJEXTS_ALLOC_FAIL and MEMCG_DATA_OBJEXTS currently share
+>> > the same bit position, we cannot determine whether memcg_data still
+>> > points to the slabobj_ext vector simply by checking
+>> > folio->memcg_data & MEMCG_DATA_OBJEXTS.
+>> >
+>> > If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
+>> > and during the release of the associated folio, the BUG check is triggered
+>> > because it was mistakenly assumed that a valid folio->memcg_data
+>> > was not cleared before freeing the folio.
 > 
-> This looks suspect - AFAICS open-coded kunit_err() is intended for test
-> infrastucture errors (like the allocation in the next hunk below), while for
-> an actual test report message it seems it should just be:
+> nit: yesterday I was confused that this is sanity checks in buddy complaining
+> folio->memcg_data not being cleared, but it's actually folio_memcg_kmem()
+> complaining that MEMCG_OBJEXTS_DATA flag is set on non-slab folios (in
+> free_pages_prepare(), if PageMemcgKmem(page) -> __memcg_kmem_uncharge_page()))
+> So the paragraph above should be updated?
 > 
-> 	KUNIT_FAIL(test, "selftest: test failed for fmt idx %d\n", (i));
+> And as a side question, we clear slab->obj_exts when freeing obj_ext array,
+> but don't clear OBJEXTS_ALLOC_FAIL when freeing a slab? That's not good.
 
-I see, I used kunit_err, as KUNIT_FAIL adds extra information which was
-noisy to be printed more than once as:
-  # arm_lpae_do_selftests: EXPECTATION FAILED at drivers/iommu/io-pgtable-arm-selftests.c:91
-I will check if there is a better way to do this.
+Hm great point. We should rather make sure it's cleared always, instead of
+adjusting the debugging check, which shouldn't be then necessary, right?
 
+>> > So let's check for memcg_data != OBJEXTS_ALLOC_FAIL in folio_memcg_kmem.
+>> >
+>> > Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
+>> > Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+>> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>> 
+>> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+>>
+>> nit: I think it would be helpful if the changelog explained why we
+>> need the additional check. We can have the same bit set in two
+>> different situations:
+>> 1. object extension vector allocation failure;
+>> 2. memcg_data pointing to a valid mem_cgroup.
+>> To distinguish between them, we need to check not only the bit itself
+>> but also the rest of this field. If the rest is NULL, we have case 1,
+>> otherwise case 2.
 > 
-> > +		arm_lpae_dump_ops(ops);						\
-> > +		-EFAULT;							\
-> >   })
-> > -static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> > +static int arm_lpae_run_tests(struct kunit *test, struct io_pgtable_cfg *cfg)
-> >   {
-> >   	static const enum io_pgtable_fmt fmts[] = {
-> >   		ARM_64_LPAE_S1,
-> > @@ -69,7 +71,7 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> >   		cfg_cookie = cfg;
-> >   		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
-> >   		if (!ops) {
-> > -			pr_err("selftest: failed to allocate io pgtable ops\n");
-> > +			kunit_err(test, "selftest: failed to allocate io pgtable ops\n");
-> >   			return -ENOMEM;
-> >   		}
-> > @@ -78,13 +80,13 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> >   		 * Empty page tables shouldn't provide any translations.
-> >   		 */
-> >   		if (ops->iova_to_phys(ops, 42))
-> > -			return __FAIL(ops, i);
-> > +			return __FAIL(test, ops, i);
-> >   		if (ops->iova_to_phys(ops, SZ_1G + 42))
-> > -			return __FAIL(ops, i);
-> > +			return __FAIL(test, ops, i);
-> >   		if (ops->iova_to_phys(ops, SZ_2G + 42))
-> > -			return __FAIL(ops, i);
-> > +			return __FAIL(test, ops, i);
-> >   		/*
-> >   		 * Distinct mappings of different granule sizes.
-> > @@ -97,16 +99,16 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> >   					   IOMMU_READ | IOMMU_WRITE |
-> >   					   IOMMU_NOEXEC | IOMMU_CACHE,
-> >   					   GFP_KERNEL, &mapped))
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			/* Overlapping mappings */
-> >   			if (!ops->map_pages(ops, iova, iova + size, size, 1,
-> >   					    IOMMU_READ | IOMMU_NOEXEC,
-> >   					    GFP_KERNEL, &mapped))
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			iova += SZ_1G;
-> >   		}
-> > @@ -117,18 +119,18 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> >   			size = 1UL << j;
-> >   			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			if (ops->iova_to_phys(ops, iova + 42))
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			/* Remap full block */
-> >   			if (ops->map_pages(ops, iova, iova, size, 1,
-> >   					   IOMMU_WRITE, GFP_KERNEL, &mapped))
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
-> > -				return __FAIL(ops, i);
-> > +				return __FAIL(test, ops, i);
-> >   			iova += SZ_1G;
-> >   		}
-> > @@ -144,11 +146,11 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> >   				   IOMMU_READ | IOMMU_WRITE |
-> >   				   IOMMU_NOEXEC | IOMMU_CACHE,
-> >   				   GFP_KERNEL, &mapped))
-> > -			return __FAIL(ops, i);
-> > +			return __FAIL(test, ops, i);
-> >   		if (mapped != size)
-> > -			return __FAIL(ops, i);
-> > +			return __FAIL(test, ops, i);
-> >   		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
-> > -			return __FAIL(ops, i);
-> > +			return __FAIL(test, ops, i);
-> >   		free_io_pgtable_ops(ops);
-> >   	}
-> > @@ -156,7 +158,7 @@ static int arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> >   	return 0;
-> >   }
-> > -static int arm_lpae_do_selftests(void)
-> > +static void arm_lpae_do_selftests(struct kunit *test)
-> >   {
-> >   	static const unsigned long pgsize[] = {
-> >   		SZ_4K | SZ_2M | SZ_1G,
-> > @@ -169,18 +171,19 @@ static int arm_lpae_do_selftests(void)
-> >   	};
-> >   	int i, j, k, pass = 0, fail = 0;
-> > -	struct faux_device *dev;
-> > +	struct device *dev;
-> >   	struct io_pgtable_cfg cfg = {
-> >   		.tlb = &dummy_tlb_ops,
-> >   		.coherent_walk = true,
-> >   		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
-> >   	};
-> > -	dev = faux_device_create("io-pgtable-test", NULL, 0);
-> > -	if (!dev)
-> > -		return -ENOMEM;
-> > +	dev = kunit_device_register(test, "io-pgtable-test");
-> > +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, dev);
+> Agreed.
 > 
-> Conversely, this is infrastructure, not an actual test of expected
-> io-pgtable behaviour, so I think just:
+> In general LGTM,
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 > 
-> 	cfg.iommu_dev = kunit_device_register(test, "io-pgtable-test");
-> 	if (IS_ERR(cfg.iommu_dev))
-> 		return;
+> By the way, maybe it'd be nice to introduce a new helper function that
+> properly checks MEMCG_DATA_OBJEXTS flag.
+
+I thought so too at first...
+
+>> ~/slab (slab/for-next-fixes)> git grep -n MEMCG_DATA_OBJEXTS
+>> include/linux/memcontrol.h:337:	MEMCG_DATA_OBJEXTS = (1UL << 0),
+>> include/linux/memcontrol.h:344:#define __OBJEXTS_ALLOC_FAIL	MEMCG_DATA_OBJEXTS
+>> include/linux/memcontrol.h:358:	 * MEMCG_DATA_OBJEXTS.
 > 
-> (it doesn't return NULLs either)
+>> include/linux/memcontrol.h:400:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>> include/linux/memcontrol.h:421:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
+> 
+> these two,
+> 
+>> include/linux/memcontrol.h:492:	if (memcg_data & MEMCG_DATA_OBJEXTS)
+> 
+> this,
+> 
+>> include/linux/memcontrol.h:538:			(folio->memcg_data & MEMCG_DATA_OBJEXTS),
+>> include/linux/memcontrol.h:1491: * if MEMCG_DATA_OBJEXTS is set.
+>> mm/kfence/core.c:624:				 MEMCG_DATA_OBJEXTS;
+> 
+>> mm/page_owner.c:513:	if (memcg_data & MEMCG_DATA_OBJEXTS)
+> 
+> this,
+> 
+>> mm/slab.h:541:	 * MEMCG_DATA_OBJEXTS bit set or be equal to OBJEXTS_ALLOC_FAIL.
+>> mm/slab.h:543:	VM_BUG_ON_PAGE(obj_exts && !(obj_exts & MEMCG_DATA_OBJEXTS) &&
+>> mm/slub.c:2137:	new_exts |= MEMCG_DATA_OBJEXTS;
+>> tools/mm/show_page_info.py:55:        MEMCG_DATA_OBJEXTS = prog.constant("MEMCG_DATA_OBJEXTS").value_()
+> 
+>> tools/mm/show_page_info.py:59:        if memcg_data & MEMCG_DATA_OBJEXTS:
+> 
+> and this do not look good.
+> 
+> I mean technically they are fine since OBJEXTS_ALLOC_FAIL is set on
+> slabs only, but that's just a coincidence.
+
+And checked the the other debugging checks too. But then thought it's better
+that if these are not expected to see slabs, then they should not be
+adjusted. I don't see it as a coincidence but as intention to keep it slab
+specific. It will be also more future proof for the upcoming separation of
+struct slab from struct page.
+
+>> > ---
+>> > v3: Simplify the solution, per Harry's suggestion in the v1 comments
+>> >     Add Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+>> > ---
+>> >  include/linux/memcontrol.h | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> > index 873e510d6f8d..7ed15f858dc4 100644
+>> > --- a/include/linux/memcontrol.h
+>> > +++ b/include/linux/memcontrol.h
+>> > @@ -534,7 +534,9 @@ static inline struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *ob
+>> >  static inline bool folio_memcg_kmem(struct folio *folio)
+>> >  {
+>> >         VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
+>> > -       VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio);
+>> > +       VM_BUG_ON_FOLIO((folio->memcg_data != OBJEXTS_ALLOC_FAIL) &&
+>> > +                       (folio->memcg_data & MEMCG_DATA_OBJEXTS),
+>> > +                       folio);
+>> >         return folio->memcg_data & MEMCG_DATA_KMEM;
+>> >  }
+>> >
+>> > --
+>> > 2.25.1
 > 
 
-Yes, I was not sure about this one, when checking the code base, every test
-handles kunit_device_register() failure differently, this seemed the
-most strict one so I used it, I will update that in the next version.
-
-> Otherwise, there's clearly scope for plenty more follow-up work streamlining
-> and breaking the whole thing up into KUnit idioms, pulling the v7s test in,
-> etc... However as a first step to at least set things firmly on the right
-> KUnit-shaped path, I agree this seems enough for now.
-> 
-
-I agree, ultimately every configuration should be a test, which can be
-even broken down to smaller cases. I will look in to that next.
-
-Thanks,
-Mostafa
-
-> Thanks,
-> Robin.
-> 
-> > +	if (IS_ERR_OR_NULL(dev))
-> > +		return;
-> > -	cfg.iommu_dev = &dev->dev;
-> > +	cfg.iommu_dev = dev;
-> >   	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
-> >   		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
-> > @@ -189,9 +192,9 @@ static int arm_lpae_do_selftests(void)
-> >   				cfg.pgsize_bitmap = pgsize[i];
-> >   				cfg.ias = address_size[k];
-> >   				cfg.oas = address_size[j];
-> > -				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
-> > -					pgsize[i], cfg.ias, cfg.oas);
-> > -				if (arm_lpae_run_tests(&cfg))
-> > +				kunit_info(test, "selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
-> > +					   pgsize[i], cfg.ias, cfg.oas);
-> > +				if (arm_lpae_run_tests(test, &cfg))
-> >   					fail++;
-> >   				else
-> >   					pass++;
-> > @@ -199,17 +202,20 @@ static int arm_lpae_do_selftests(void)
-> >   		}
-> >   	}
-> > -	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
-> > -	faux_device_destroy(dev);
-> > -
-> > -	return fail ? -EFAULT : 0;
-> > +	kunit_info(test, "selftest: completed with %d PASS %d FAIL\n", pass, fail);
-> >   }
-> > -static void arm_lpae_exit_selftests(void)
-> > -{
-> > -}
-> > +static struct kunit_case io_pgtable_arm_test_cases[] = {
-> > +	KUNIT_CASE(arm_lpae_do_selftests),
-> > +	{},
-> > +};
-> > +
-> > +static struct kunit_suite io_pgtable_arm_test = {
-> > +	.name = "io-pgtable-arm-test",
-> > +	.test_cases = io_pgtable_arm_test_cases,
-> > +};
-> > +
-> > +kunit_test_suite(io_pgtable_arm_test);
-> > -subsys_initcall(arm_lpae_do_selftests);
-> > -module_exit(arm_lpae_exit_selftests);
-> >   MODULE_DESCRIPTION("io-pgtable-arm library selftest");
-> >   MODULE_LICENSE("GPL");
 
