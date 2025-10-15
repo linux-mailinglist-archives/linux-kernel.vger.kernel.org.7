@@ -1,108 +1,211 @@
-Return-Path: <linux-kernel+bounces-853626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0649BDC25B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FED3BDC282
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 04:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39DD53A727D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C885D3C3CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 02:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBD83090FD;
-	Wed, 15 Oct 2025 02:25:30 +0000 (UTC)
-Received: from mail.fintek.com.tw (mail.fintek.com.tw [59.120.186.242])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F6C2EA726;
+	Wed, 15 Oct 2025 02:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9HnZh8V"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DF8224B1F;
-	Wed, 15 Oct 2025 02:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=59.120.186.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10781FDD
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760495129; cv=none; b=WHTCVe5yDjj+d6ovO/s5ua6Tic0Qpr0kC/y8HGh0PepdhdkG01komPQD6cB726Qb/6W/FV4Zxn1ntg4kDByF3B554bRi3k9xTwm3L3dJAO/kguswNRfEyxhvAx9ZSp8DZBKsIHWHdiqTCxRyqk6wLde27+kP7tH7dWJo0adXgRM=
+	t=1760495583; cv=none; b=cLYDuhSS+/vzwXyM4XYtScohFwTDjSpWWnOq2V3vb9SWtAJVXuokxbMPKhFXfVYDoC6+m9vCZMLhNxVmHEsdJRZBVhSQjOhmr9Gh1juZi/Ii7jlRwXYqGf4UDdvm/IM2oOc5Cz3ragnkezWce8ju7x/LzduyfFqwqgp3u/HABjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760495129; c=relaxed/simple;
-	bh=4N702iAdv7cIlHSjgx/LniNVYXC82B32lyLJT6SIXnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NVxoj3gsQLnFDvvxUdwREJOmEn2nrClBgmo8usm0D6xogTbLQBVvTTzzoeBsZFsC1huBg/0gcCZMNswvvU9uKCuXk0RuVJAZqu1MtZHRiemXNZGK2G4SVAdNfY0kgMZG9mkKbLh9mHhdkrmBFrxs8ZA6ccgXapgrpP+4t7HYsiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintek.com.tw; spf=pass smtp.mailfrom=fintek.com.tw; arc=none smtp.client-ip=59.120.186.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintek.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintek.com.tw
-Received: from vmMailSRV.fintek.com.tw ([192.168.1.1])
-	by mail.fintek.com.tw with ESMTP id 59F2OuB5076593;
-	Wed, 15 Oct 2025 10:24:56 +0800 (+08)
-	(envelope-from peter_hong@fintek.com.tw)
-Received: from [192.168.1.132] (192.168.1.132) by vmMailSRV.fintek.com.tw
- (192.168.1.1) with Microsoft SMTP Server id 14.3.498.0; Wed, 15 Oct 2025
- 10:24:55 +0800
-Message-ID: <8af5eb5f-0adb-4ea5-a4d5-554a7e883570@fintek.com.tw>
-Date: Wed, 15 Oct 2025 10:24:56 +0800
+	s=arc-20240116; t=1760495583; c=relaxed/simple;
+	bh=JiRVj1A6G0kykMEMwC0DrDgzHfGpRfuYfi03Jugsi+4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=OHI8xiDlykxZfz3LvxuC2RU/ZGfzdzNhhfhmpOD9VzCZGkY0oh2sCGclNf1sX84EBFU6ueS2A1S7HZNF/4oMX3/ZeglFqHlf9snZRG5pqqeDLEEl6BcckoG7IMCy5apfLTd7e6bU8AyUDqkeB2K4YlWJ3QsxeMPjk+6udf8fpOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9HnZh8V; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760495581; x=1792031581;
+  h=date:from:to:cc:subject:message-id;
+  bh=JiRVj1A6G0kykMEMwC0DrDgzHfGpRfuYfi03Jugsi+4=;
+  b=S9HnZh8VTIg0nAPbiHMy8WkYZVTtzn7LUIzuWMcfXtjmlB95WePz4ftm
+   I7eWn5zlyYGimG1IJ3t6Bo+GH8vFSgNGR0xWfSsyu9wqN6Wb5+ljXjjjk
+   +zK10Ad6W98I5vAzdMy5n35mxeqJfrLG+FRMo7e8ARxUsOYrt4u/Ljrej
+   SFi76GhZNTXQ8shf4mx/mEapQvA+c/7AFEVnSR+Y1UAVaBXtLIjkqFqji
+   QqUyHC3XsQVXfXBTAs33UcnD2t/G400Y+22E+VGIkbgqMe0Mer6ZedLl0
+   +RT8B2T3/F8G/WmujTXzOzb7cSU16nM5v8VV8jBJeaBWeFqla0MGXzO1e
+   A==;
+X-CSE-ConnectionGUID: dkQZbSsyStKY+U/cGK7dAA==
+X-CSE-MsgGUID: 71+o7IxRTl6qhw13KtWSpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="62814605"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="62814605"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2025 19:33:00 -0700
+X-CSE-ConnectionGUID: 52s6EkQXSVupzs94n80CEA==
+X-CSE-MsgGUID: VzQsC691SsGQakVchmlTZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182823567"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 14 Oct 2025 19:32:59 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v8rJw-0003Nc-39;
+	Wed, 15 Oct 2025 02:32:57 +0000
+Date: Wed, 15 Oct 2025 10:27:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 54dcb44891b09af5318348a27717791511894c7d
+Message-ID: <202510151002.vPNmiILM-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 1/1] USB: serial: f81232: fix incomplete serial port
- generation
-To: Johan Hovold <johan@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <tom_tsai@fintek.com.tw>,
-        <yu_chen@fintek.com.tw>, <hpeter+linux_kernel@gmail.com>
-References: <20251008023858.227740-1-peter_hong@fintek.com.tw>
- <aO5uAUknTLOWdvUY@hovoldconsulting.com>
-Content-Language: en-US
-From: Peter Hong <peter_hong@fintek.com.tw>
-In-Reply-To: <aO5uAUknTLOWdvUY@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-Product-Ver: SMEX-12.5.0.2055-9.0.1002-27556.001
-X-TM-AS-Result: No-9.738500-8.000000-10
-X-TMASE-MatchedRID: zGP2F0O7j/unQM/ZDsbOZvHkpkyUphL9pPMmjQJmXyFKmuk8ocl7z7e/
-	RFw+ZyQEju4W7SRKMeJIUUJ3l9gynuhM+rnwXt6cPPov5T+l6PGUO3k9AyCPTe8n6d5wLKiXGYT
-	YuTvYrD7A+OjLG1jwgBWxTjMgqZh1iAzEt7NPEk4IoUOTWQl7EjFcf92WG8u/23s+ayc5uyBFmB
-	b8AoJ5yj7W3Cw3ke/jmyiLZetSf8kir3kOMJmHTF1j5mhaIsibwrbXMGDYqV/5N/S1zEq4ui+I+
-	AbM3aL70ri+PRVb+Sx0vmnbTp+hk2muODPbmego
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--9.738500-8.000000
-X-TMASE-Version: SMEX-12.5.0.2055-9.0.1002-27556.001
-X-TM-SNTS-SMTP:
- F4F3A7118C42B8EBCC9426BABBE10E9D6A2AE2222EAAB7E12D822586B5FF47E62000:8
-X-DKIM-Results: [192.168.1.1]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail.fintek.com.tw 59F2OuB5076593
 
-Hi Johan,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 54dcb44891b09af5318348a27717791511894c7d  Merge branch into tip/master: 'x86/entry'
 
-Johan Hovold 於 2025/10/14 下午 11:36 寫道:
-> On Wed, Oct 08, 2025 at 10:38:58AM +0800, Ji-Ze Hong (Peter Hong) wrote:
->> The Fintek F81532A/534A/535/536 family relies on the
->> F81534A_CTRL_CMD_ENABLE_PORT (116h) register during initialization to
->> both determine serial port status and control port creation. If the
->> driver experiences fast load/unload cycles, the device state may becomes
->> unstable, resulting in the incomplete generation of serial ports.
-> Do I understand correctly that you're only seeing this issue if you're
-> unloading and reloading the module (or rebinding the driver through
-> sysfs)?
+elapsed time: 1136m
 
-Yes, this issue has only been observed and reported during module unload
-and reload operations currently.
+configs tested: 119
+configs skipped: 4
 
->> Performing a dummy read operation on the register prior to the initial
->> write command resolves the issue. This clears the device's stale internal
->> state. Subsequent write operations will correctly generate all serial
->> ports.
-> Does this mean that the retry loop is no longer needed? Can it now be
-> removed in either or both accessor functions perhaps?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-OK, we'll test the loop removal in the accessor. If successful, we'll prepare
-and send V2.
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                        nsim_700_defconfig    gcc-15.1.0
+arc                   randconfig-001-20251014    gcc-15.1.0
+arc                   randconfig-002-20251014    gcc-8.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                         bcm2835_defconfig    clang-22
+arm                        multi_v7_defconfig    gcc-15.1.0
+arm                   randconfig-001-20251014    gcc-15.1.0
+arm                   randconfig-002-20251014    gcc-13.4.0
+arm                   randconfig-003-20251014    clang-16
+arm                   randconfig-004-20251014    gcc-8.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20251014    gcc-9.5.0
+arm64                 randconfig-002-20251014    gcc-10.5.0
+arm64                 randconfig-003-20251014    gcc-14.3.0
+arm64                 randconfig-004-20251014    gcc-14.3.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20251014    gcc-15.1.0
+csky                  randconfig-002-20251014    gcc-13.4.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20251014    clang-22
+hexagon               randconfig-002-20251014    clang-22
+i386                             allmodconfig    gcc-14
+i386                              allnoconfig    gcc-14
+i386                             allyesconfig    gcc-14
+i386        buildonly-randconfig-001-20251014    gcc-14
+i386        buildonly-randconfig-002-20251014    clang-20
+i386        buildonly-randconfig-003-20251014    clang-20
+i386        buildonly-randconfig-004-20251014    gcc-14
+i386        buildonly-randconfig-005-20251014    gcc-14
+i386        buildonly-randconfig-006-20251014    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20251014    clang-18
+loongarch             randconfig-002-20251014    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                           ip30_defconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20251014    gcc-11.5.0
+nios2                 randconfig-002-20251014    gcc-8.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20251014    gcc-11.5.0
+parisc                randconfig-002-20251014    gcc-9.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc               randconfig-001-20251014    gcc-9.5.0
+powerpc               randconfig-002-20251014    clang-22
+powerpc               randconfig-003-20251014    gcc-14.3.0
+powerpc64             randconfig-001-20251014    gcc-8.5.0
+powerpc64             randconfig-002-20251014    gcc-8.5.0
+powerpc64             randconfig-003-20251014    gcc-8.5.0
+riscv                            alldefconfig    gcc-15.1.0
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                    nommu_virt_defconfig    clang-22
+riscv                 randconfig-001-20251014    gcc-10.5.0
+riscv                 randconfig-002-20251014    gcc-10.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20251014    clang-22
+s390                  randconfig-002-20251014    clang-19
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                        edosk7760_defconfig    gcc-15.1.0
+sh                    randconfig-001-20251014    gcc-14.3.0
+sh                    randconfig-002-20251014    gcc-11.5.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20251014    gcc-15.1.0
+sparc                 randconfig-002-20251014    gcc-15.1.0
+sparc64               randconfig-001-20251014    clang-20
+sparc64               randconfig-002-20251014    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                    randconfig-001-20251014    gcc-14
+um                    randconfig-002-20251014    gcc-14
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20251014    gcc-14
+x86_64      buildonly-randconfig-002-20251014    clang-20
+x86_64      buildonly-randconfig-003-20251014    gcc-14
+x86_64      buildonly-randconfig-004-20251014    clang-20
+x86_64      buildonly-randconfig-005-20251014    clang-20
+x86_64      buildonly-randconfig-006-20251014    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20251014    gcc-8.5.0
+xtensa                randconfig-002-20251014    gcc-8.5.0
 
-
-Thanks,
-
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
