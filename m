@@ -1,193 +1,124 @@
-Return-Path: <linux-kernel+bounces-854750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582D3BDF4D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:17:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34710BDF4D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111A23A2CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ECCE404B1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 15:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE95224AF7;
-	Wed, 15 Oct 2025 15:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOTcC6WT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E0C2FB985;
+	Wed, 15 Oct 2025 15:17:12 +0000 (UTC)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9FD2D948D
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121402FB97B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760541426; cv=none; b=dIDXJ/CgQ8bIihXyELobMhSRM5KgapZTIAGTBvPxaAgbB1oLE7Ou60XQYQF39h7Ep4qukZVWvUM4i2F0a+jvFQpyeIy+mkZft5mawvcGWTPlbB42ijSuEpcQ9MXd2wVwaK+I/YE2Hcq0mms5LJ38vvUDJt81VceQuM9eJIWJQIU=
+	t=1760541431; cv=none; b=PjsoP7paX9pn8TO5fT3WAW3+bTiSZrtO0i6gTqQXhrJDMAvY548AkB91SP4UbB8sejf+L76AOFIgMFGKJ8FAoF1hcDKBLiTNvuKqm1ipMajfiZGDjzsB/MdPG/y4RVGkji5K2BI9NZSuelJGAclGRKMjYIBaVwCsqvGCVg5Viaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760541426; c=relaxed/simple;
-	bh=b4q/upuIqsm3HCwj0XidMAB9eaJvKCEgDcHB7OpJZyc=;
+	s=arc-20240116; t=1760541431; c=relaxed/simple;
+	bh=IV+GRifs/CZH3mBOt11ulcvrcGNrA2ckYSmyBrRV8vA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpBiylCEeA7nyQgYHTPls2PbA8AFnefFIJr82XtnvcqNlHVi3S4SHBEsU364BFwTAmMFyxWUStESg/SdTXqM4ie8VYTZU/vaKLHzc84/uYRY//YyWjEFmrTeVbhCR0Z/1wQrgDKMmt9SEBHdSMSsbfxFsItkLCBxVab3nTmQ26I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOTcC6WT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00E01C116C6
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 15:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760541426;
-	bh=b4q/upuIqsm3HCwj0XidMAB9eaJvKCEgDcHB7OpJZyc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EOTcC6WTCfuDanq+Le8A6VEazsMqpYEQQZ6AqAqVMWPguN990lRcrNKbsNTBLBRmI
-	 TZ+Ens8PQItgm+QDjs2US1NrAoscT5uaathpQct4WFPVVYUUc/nYJ14qeecYNkdgwf
-	 XL3JdX6UQzjmvKfy47z+VS5GbQX1qBZVaek8kl8M3rk9Cc7jmdd1HdDz85uVnHXlSv
-	 TqNzXPqVPe0Alw6pAE7BwjbDIJz6wtfZiYAMprsFjB0Z3CrFdSSia4NJjVqskVjS/u
-	 QEY/4K03ohrDRSm963vqFZeCzUw8SGoolGb5PyxOvsRS5GGix+zHG1lrIrPrF9LS7e
-	 LyK/BEQMLBtdw==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7b4f7a855baso4490624a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:17:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUk+G5wJE8jaOUux0lEKEEDXMTE+EqaIy84Ww1r6CXaqUaQIDbVH85IYesMXgJn3tAzeS+a6xE9hd5+oEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFElfQp02eK4/Kco8BC0oAEEJUcR+cSxoK11IQy6rOVv0MRqec
-	Tj4NxdX6OIvK9+wTb3ybZ3DfL9uIDYv7Jf59v0KlXFkHhzCEWiTN2/zEpQpGJkm+8uymGNM4w5v
-	v2MqEvnAh4XfTWe7yr+J9nJBhjGSGy9I=
-X-Google-Smtp-Source: AGHT+IFMR58Qg/JZT+0QqdxB1ZxpdHOrnh0BlxNXsfE+P1hCi0YPQH3UQJy2ha1gwNqOZynA/x8g10IhdojMBdc4vj0=
-X-Received: by 2002:a05:6808:11c6:b0:43f:afc9:b889 with SMTP id
- 5614622812f47-4417b4080edmr12381872b6e.50.1760541425227; Wed, 15 Oct 2025
- 08:17:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=Z863EFjJfCk/O5NriqOXnCV1/ief98mOYZ918QWcM6+N5IrVsK7QEkThvTbo2Ryvj7xGtOvQ9gGOXyBDUTKHbSwZdOD9Ge+p1UXXeiSSrc35iS6NXeSQsSow9tWaHlCJ8t0/FXhaDEgk1n9WyjrUf2a56m09eb8jtDpEGxMW33c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5a0d17db499so5874642137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:17:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760541427; x=1761146227;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gYlOVCW4Ai0uf6Aunon5QhuALTLV1R3/6FPdAypUrZU=;
+        b=DNS2nXszahJUls/MwXHzg8KlkgFc+Tutu2Cwg9VR5dQ4Kf6HZC+ZGbpddZ9RHMxtnb
+         N4DqhQC43IpZiE//kPvYHhg+eWx4C1fud17TCY1h1aqU+SrJOY9tDN6N5Tthc4vX9Zqx
+         5mfXCX65ZMVQAbzHt2VMu6NXku1DuK3GO2a8uxsCmYiSuf0YPM9kUK999zSC2R4RDu1C
+         n7Bl96JBC2HnD/GJLLsN/gc+3jlepBqb2ObLFAF2xc/J98HS9CJ2ruSaEuc789T5cr1U
+         pt1+suxlVmv1FN7n5AuFY5x8yAPiGiquwQc2nSTaFqI0CCwTnc3UGRmjxw6ioE3qEijV
+         wVVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyE7gdKUu/mPgKUHeYCMSwhtzzg0RCmGuf51GHyC2EgcPlmNO16G9b4NiJsRrPoqd1bkAHD4FVhRsIMyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySRgbUfQ6vb3WCcEjWIrCVAu95OwE6wz9YwqZkFnIll30k/R6x
+	azbbUKTw8Cf0knnWpB+Pt+K6pVM4OgIjwlg2ouNvTJw/wFr7I6S8s6oYAD2BFhrg
+X-Gm-Gg: ASbGncsO24QpGvTFoWsMEqlshIoUK31zqvlcXuR71fOZlVrJigmksqBWes0k3vtmdnC
+	jGfLGAYHXOVBBEodvU9DAxbdXEtrwMaHxajbzK8vhtcKrahCDKWr4g0z5R8FWX+PaCUvzm9fizX
+	ZUhhKQYcvXM8HbIWfDD3HEixxe5euSFt+QHvqbrj0e2hFH9js+E+spdHRByz6rcaH7pSdETaUUu
+	adBW6YOK3lElMfQ5LXhA8zohxQsrEZ9lUJlL1uzmvjIdC9Blmmq8dAyA/xu1PxF1xe6xfL9SHOt
+	UA8npAVs9D2oj1dSj3twBUmf2Fq8RdErOAYgf5SoX1WHyIgEwrW9wXnWQr9bUSXQXYcHBltTz30
+	anr5qvVTfH2yEl5H6CpSAvZqEDZ0f52DhoROwl+qQ/zcm60jdtBAqbWN+vfMBTnK8rSk23wuIP4
+	zWu0cw/9r6SCfDNg==
+X-Google-Smtp-Source: AGHT+IFl7UlAen0Cf/1vMbZ3nmIowT51D4BjC8E11ZEYx5wj/tBgAwxEFiGecGih9rjaUK3mULjKQw==
+X-Received: by 2002:a05:6102:3eca:b0:523:d0d7:b960 with SMTP id ada2fe7eead31-5d5e236156cmr11806216137.29.1760541427401;
+        Wed, 15 Oct 2025 08:17:07 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-930bf6cec14sm4531782241.8.2025.10.15.08.17.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 08:17:06 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-580144a31b0so3275411137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:17:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCaABY5eArjCkOZ091/E5YCaV8TcIPpGRpicNPzhZDENT+Bg1PK8BwZbMZ4WZb3fZoph2Hg7sNb+FgcUA=@vger.kernel.org
+X-Received: by 2002:a05:6102:80a9:b0:56c:eed1:276d with SMTP id
+ ada2fe7eead31-5d5e2323cfbmr10980364137.18.1760541426765; Wed, 15 Oct 2025
+ 08:17:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2404176.ElGaqSPkdT@rafael.j.wysocki> <3394529.aeNJFYEL58@rafael.j.wysocki>
- <012930da-7b24-4670-981b-f5eab98c93d7@arm.com>
-In-Reply-To: <012930da-7b24-4670-981b-f5eab98c93d7@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 15 Oct 2025 17:16:53 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gkE4i9VMfbwb9+F8KO+XecqXTis7atExbX3rfQvX2qOQ@mail.gmail.com>
-X-Gm-Features: AS18NWB5NETBaQDarEqjk0RoAbuTxJZAHi-p2TS7pm66dP0UjULs3eAXiJgQKBQ
-Message-ID: <CAJZ5v0gkE4i9VMfbwb9+F8KO+XecqXTis7atExbX3rfQvX2qOQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: hybrid: Adjust energy model rules
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Yaxiong Tian <tianyaxiong@kylinos.cn>
+References: <20251015150728.118296-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251015150728.118296-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 15 Oct 2025 17:16:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVUos1===uyOVwVTsmqpf321sX-hYJ36L6LKdR62sC23w@mail.gmail.com>
+X-Gm-Features: AS18NWCzpNv-DwB-GZVXUz-0WdBwxHutFcnJYtynPXM4j5XD-FsH8-0maASB2us
+Message-ID: <CAMuHMdVUos1===uyOVwVTsmqpf321sX-hYJ36L6LKdR62sC23w@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: defconfig: Drop duplicate CONFIG_OMAP_USB2 entry
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Eric Biggers <ebiggers@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Nishanth Menon <nm@ti.com>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 5:13=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
+On Wed, 15 Oct 2025 at 17:07, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> On 10/15/25 14:48, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Instead of using HWP-to-frequency scaling factors for computing cost
-> > coefficients in the energy model used on hybrid systems, which is
-> > fragile, rely on CPU type information that is easily accessible now and
-> > the information on whether or not L3 cache is present for this purpose.
-> >
-> > This also allows the cost coefficients for P-cores to be adjusted so
-> > that they start to be populated somewhat earlier (that is, before
-> > E-cores are loaded up to their full capacity).
-> >
-> > In addition to the above, replace an inaccurate comment regarding the
-> > reason why the freq value is added to the cost in hybrid_get_cost().
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/cpufreq/intel_pstate.c |   37 +++++++++++++++-----------------=
------
-> >  1 file changed, 15 insertions(+), 22 deletions(-)
-> >
-> > --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -933,11 +933,8 @@ static int hybrid_active_power(struct de
-> >                              unsigned long *freq)
-> >  {
-> >       /*
-> > -      * Create "utilization bins" of 0-40%, 40%-60%, 60%-80%, and 80%-=
-100%
-> > -      * of the maximum capacity such that two CPUs of the same type wi=
-ll be
-> > -      * regarded as equally attractive if the utilization of each of t=
-hem
-> > -      * falls into the same bin, which should prevent tasks from being
-> > -      * migrated between them too often.
-> > +      * Create four "states" corresponding to 40%, 60%, 80%, and 100% =
-of the
-> > +      * full capacity.
-> >        *
-> >        * For this purpose, return the "frequency" of 2 for the first
-> >        * performance level and otherwise leave the value set by the cal=
-ler.
-> > @@ -970,26 +967,22 @@ static bool hybrid_has_l3(unsigned int c
-> >  static int hybrid_get_cost(struct device *dev, unsigned long freq,
-> >                          unsigned long *cost)
-> >  {
-> > -     struct pstate_data *pstate =3D &all_cpu_data[dev->id]->pstate;
-> > -
-> > +     /* Facilitate load balancing between CPUs of the same type. */
-> > +     *cost =3D freq;
-> >       /*
-> > -      * The smaller the perf-to-frequency scaling factor, the larger t=
-he IPC
-> > -      * ratio between the given CPU and the least capable CPU in the s=
-ystem.
-> > -      * Regard that IPC ratio as the primary cost component and assume=
- that
-> > -      * the scaling factors for different CPU types will differ by at =
-least
-> > -      * 5% and they will not be above INTEL_PSTATE_CORE_SCALING.
-> > +      * Adjust the cost depending on CPU type.
-> >        *
-> > -      * Add the freq value to the cost, so that the cost of running on=
- CPUs
-> > -      * of the same type in different "utilization bins" is different.
-> > -      */
-> > -     *cost =3D div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->sca=
-ling) + freq;
-> > -     /*
-> > -      * Increase the cost slightly for CPUs able to access L3 to avoid
-> > -      * touching it in case some other CPUs of the same type can do th=
-e work
-> > -      * without it.
-> > +      * The idea is to start loading up LPE-cores before E-cores and s=
-tart
-> > +      * to populate E-cores when LPE-cores are utilized above 60% of t=
-he
-> > +      * capacity.  Similarly, P-cores start to be populated when E-cor=
-es are
-> > +      * utilized above 60% of the capacity.
-> >        */
-> > -     if (hybrid_has_l3(dev->id))
-> > -             *cost +=3D 2;
-> > +     if (hybrid_get_cpu_type(dev->id) =3D=3D INTEL_CPU_TYPE_ATOM) {
-> > +             if (hybrid_has_l3(dev->id)) /* E-core */
-> > +                     *cost +=3D 2;
-> > +     } else { /* P-core */
-> > +             *cost +=3D 4;
-> > +     }
+> CONFIG_OMAP_USB2 is already enabled as a module in the default defconfig
+> since commit 8a703a728a745 ("arm64: defconfig: Enable USB2 PHY Driver").
+> Remove the duplicate entry to fix the following warning:
 >
-> Interesting, is there any reason in particular why you're looking to chan=
-ge this?
-> Is it just performance because of the extra headroom? (I recall that your=
- E-cores
-> are always more efficient than your P-cores at comparable computing power=
-).
+>     arch/arm64/configs/defconfig:1705:warning: override: reassigning to symbol OMAP_USB2
+>
+> Fixes: 91fe3315cdf9f ("arm64: defconfig: Enable missing AMD/Xilinx drivers")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - Added "Fixes" tag.
 
-Yes, it is performance mostly.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> How long does it take to trigger overutilized for you?
+As this is not yet part of the soc tree, I guess it can still be fixed
+in the original commit?
 
-It depends, but sometimes it triggers really quickly due to LPE-core
-load spikes.
+Gr{oetje,eeting}s,
 
-> I still have the OU based on 'last idle time' observation patches lying a=
-round,
-> although I haven't found the time to do more extensive testing if it does=
-n't
-> regress some platform / workload combination. I will dust them off soon, =
-although
-> I'm not sure if they would help your case.
-> Happy to try though if you had a particular workload in mind!
+                        Geert
 
-OK, good to know, thanks!
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
