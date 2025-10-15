@@ -1,151 +1,98 @@
-Return-Path: <linux-kernel+bounces-853989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3D9BDD430
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:58:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A3DBDD43C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06C995013DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:58:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45AC950286D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC55315D31;
-	Wed, 15 Oct 2025 07:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDI7QCRP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382F03164CB;
+	Wed, 15 Oct 2025 07:58:04 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198153161A8;
-	Wed, 15 Oct 2025 07:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16A1315D27;
+	Wed, 15 Oct 2025 07:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760515039; cv=none; b=LKHffI3HoD8QJG4BGhdwvcTcNL4LIQjg5S/wdocvB/6cm0ZBpArOhFBNuF+hot+tRsqvnCqHaGP77gWGBe0kRzCvxtNOwb0sVnpIP9jO16JE4sRLc0gGApnx5cvb75ORN9ejXvqnHxYFZD53vw6RzqkxISeUtKpCkbEDCnavPoM=
+	t=1760515083; cv=none; b=CxRL9HBcd4yGe+YOIvTxgnbAMeIXVW1eRn+t0rxIl7GPDqimymv8V8x0TtQRRwz96pMxLrb5EEtEPrUL7ChkxIVspPP2s2mVwea2lYoMAMsDCW9ktZ8OlJCR4Rc3n3L+o/qZhtQ3sNgFLWKAGIxIRepYYZOOZS0HWwk3TSoIlBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760515039; c=relaxed/simple;
-	bh=A7Dwlg+ECO296ucIDgk/nm1NbjRGpPo3r40nRAzhhsI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mphl7DM7xVw4BBfdQTodIJTVkNlB95ippCzkY1EqxmmE6Cd53t71bCxt0QKTyKWoSaRQnpaPL7/MWdzQIMiYwmE2LAwaYwJYChyAboN93Xb3cgubAcbtj7soaEg+tSxvAkIIgqrpYao7g5e33bWxGMhSdkSYxuNA1at4jw8sQqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDI7QCRP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7BE8EC2BC87;
-	Wed, 15 Oct 2025 07:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760515038;
-	bh=A7Dwlg+ECO296ucIDgk/nm1NbjRGpPo3r40nRAzhhsI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=FDI7QCRPP/X4IqV67OwfKgMMGF32+60u2VtIMwo4acYQaYzgYyvzBKSYqS0mckuJ0
-	 oAzi40M+Qrn4U5yRDkUl/x09CVxoi3yYY6B7kGVCnwnoaxjAOes1mtP+ZDR5i1HVpI
-	 bJqeFhyVhx1U2+J27gwPU6QfGekp9+M6tlBuHb12toPrxtj55q24y1W/LgvCpyiVgf
-	 Y+jP9YH32hCs4qk4G9PpdQJIeY3ODgvXWbWIuoLExVzrpS5Eo/Zs5Br4CpORolglmU
-	 qos6AJj8IYv0rKjzgPsoRyTjKIPoHhdsZdLUT5I6LPNsauEGChPtoOTBSq9QCL7PPR
-	 QqbKW9tpSjI/g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744C9CCD193;
-	Wed, 15 Oct 2025 07:57:18 +0000 (UTC)
-From: Prasad Kumpatla via B4 Relay <devnull+prasad.kumpatla.oss.qualcomm.com@kernel.org>
-Date: Wed, 15 Oct 2025 13:27:19 +0530
-Subject: [PATCH v3 5/5] ASoC: dt-bindings: qcom: Add Kaanapali LPASS macro
- codecs
+	s=arc-20240116; t=1760515083; c=relaxed/simple;
+	bh=1YYw4Jn3tvdoPcbTs2nVqXtk638BBLY5zWdTwzXZZwU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=TzG3YEdjgrbvYt/ux4slSk1OoKFM8LoT9qf3X3nh5WTOKSsCy0B4V1UNdNjU3itwx5yk4BUiJH2Qf9SW10Tk2xYp/Dc5eqV8DV1eiizI5gg7ZmVYL6zTG1bcDpC9ZD/6v8qG3yJuVhXRjE9XhWQa2ii4IK9Rs3P5jcXzRUQftmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cmk2M5PrJzKHMXS;
+	Wed, 15 Oct 2025 15:57:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 1E9A21A0CFD;
+	Wed, 15 Oct 2025 15:57:53 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP2 (Coremail) with SMTP id Syh0CgBHnET_U+9o0MK8AQ--.58742S3;
+	Wed, 15 Oct 2025 15:57:52 +0800 (CST)
+Subject: Re: [PATCH] md: fix rcu protection in md_wakeup_thread
+To: "Zhou, Yun" <yun.zhou@windriver.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20251015055924.899423-1-yun.zhou@windriver.com>
+ <86705912-07a3-4a24-bacd-ad5ac2038201@molgen.mpg.de>
+ <d2574af5-9410-d296-ef74-97f3e43dc1cc@huaweicloud.com>
+ <040131e6-08f7-4f64-a317-deaa21e1a5e1@windriver.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <e60b45da-e37d-5530-1511-f6e56effebb2@huaweicloud.com>
+Date: Wed, 15 Oct 2025 15:57:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251015-knp-audio-v2-v3-5-e0e3e4167d87@oss.qualcomm.com>
-References: <20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com>
-In-Reply-To: <20251015-knp-audio-v2-v3-0-e0e3e4167d87@oss.qualcomm.com>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Rao Mandadapu <quic_srivasam@quicinc.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
- Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760515036; l=3129;
- i=prasad.kumpatla@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
- bh=NAMMaMbrKD0m9ZcUOqBECjhw9Ighe71ZgaLRDNCqEFs=;
- b=fL9FjAw64xysetYiN3fhk/9X8BjtUpj2wlyOmTJGZBjDjyma/NdUZupY5DEdVGl2RwNASVTsa
- y9s/1NFk6sTD3br6JHebz8/n7x73kt9PdT9dz83Op0oTR93HcPO3W7B
-X-Developer-Key: i=prasad.kumpatla@oss.qualcomm.com; a=ed25519;
- pk=I3mn8JNlYnnm7frqMGXms1Rm2H+0gpAfknMlnBYqCzw=
-X-Endpoint-Received: by B4 Relay for
- prasad.kumpatla@oss.qualcomm.com/20251014 with auth_id=541
-X-Original-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Reply-To: prasad.kumpatla@oss.qualcomm.com
+In-Reply-To: <040131e6-08f7-4f64-a317-deaa21e1a5e1@windriver.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBHnET_U+9o0MK8AQ--.58742S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYt7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2js
+	IEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxG
+	xcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrw
+	CF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd
+	HUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Hi,
 
-Add bindings for Qualcomm Kaanapali (LPASS) RX, TX, VA and WSA
-macro codecs, which is likely compatible with earlier SM8550.
+在 2025/10/15 15:31, Zhou, Yun 写道:
+> This method only changes a little code. But it holds the lock before the 
+> function jumps, which seems to violate the principle of minimizing the 
+> critical area.
 
-Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
----
- Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml  | 1 +
- Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml  | 1 +
- Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml  | 1 +
- Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml | 1 +
- 4 files changed, 4 insertions(+)
+use rcu to protect the function is fine, all related code is not from
+IO fast path.
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
-index 92f95eb74b19..b869469a5848 100644
---- a/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
-@@ -20,6 +20,7 @@ properties:
-           - qcom,sc8280xp-lpass-rx-macro
-       - items:
-           - enum:
-+              - qcom,kaanapali-lpass-rx-macro
-               - qcom,sm8650-lpass-rx-macro
-               - qcom,sm8750-lpass-rx-macro
-               - qcom,x1e80100-lpass-rx-macro
-diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml
-index 914798a89878..e5e65e226a02 100644
---- a/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml
-@@ -21,6 +21,7 @@ properties:
-           - qcom,sc8280xp-lpass-tx-macro
-       - items:
-           - enum:
-+              - qcom,kaanapali-lpass-tx-macro
-               - qcom,sm8650-lpass-tx-macro
-               - qcom,sm8750-lpass-tx-macro
-               - qcom,x1e80100-lpass-tx-macro
-diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
-index 1c0d78af3c05..5b450f227b70 100644
---- a/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
-@@ -21,6 +21,7 @@ properties:
-       - items:
-           - enum:
-               - qcom,glymur-lpass-va-macro
-+              - qcom,kaanapali-lpass-va-macro
-               - qcom,sm8650-lpass-va-macro
-               - qcom,sm8750-lpass-va-macro
-               - qcom,x1e80100-lpass-va-macro
-diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml
-index b6f5ba5d1320..d5f22b5cf021 100644
---- a/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml
-@@ -21,6 +21,7 @@ properties:
-       - items:
-           - enum:
-               - qcom,glymur-lpass-wsa-macro
-+              - qcom,kaanapali-lpass-wsa-macro
-               - qcom,sm8650-lpass-wsa-macro
-               - qcom,sm8750-lpass-wsa-macro
-               - qcom,x1e80100-lpass-wsa-macro
+Please also notice this patch is impossible for stable backport because
+of too much modifications.
 
--- 
-2.34.1
-
+Thanks,
+Kuai
 
 
