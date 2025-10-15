@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-854195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013E9BDDCCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:33:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E736BDDC9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F0F1349CFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:33:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F357519C2C09
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A67D306D37;
-	Wed, 15 Oct 2025 09:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB3B31AF28;
+	Wed, 15 Oct 2025 09:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="nk+YJs8d";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="FycW87iX"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fTJegPWn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E722031770B;
-	Wed, 15 Oct 2025 09:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760520778; cv=fail; b=UAUExbITSQISEZZpsgy+AcWLkzBALvxMPaPy+8PathRMYKbfot+uwBr5ecfc0Q6LMZ+kzFZkoRi5ksBop4mV8IkjNiRHvqEAVw4vgIDpvKS3DKiCiO2yaAj+/TEaeMV914AC7NRFM0vCDtWSfExlkUebnZFU/6udLi1jfeKp9QU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760520778; c=relaxed/simple;
-	bh=3bqqXSlPV4Z1Le3Gb9M2tZ2EM5qKjvtETzfHKaM1nsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X6jwXsczzHkVr0SzQjoJdHPDQawpzX1n9J0B5Mdyrpg1AgiS3rG7WFzdHr9ihFXFXMrgumjr+i62zHTPStc3MhVh+2bpuUV5OFwVMgFRd4Bm8/XYZcjkqU/GdGj2hqMOfjB/x55we8zu3PVU91hb52YIuQO28zKdUAY2/JwmIi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=nk+YJs8d; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=FycW87iX; arc=fail smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59EGZnd21728970;
-	Wed, 15 Oct 2025 04:32:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=Uc7ajakXyNroJpQi3d2N4nzqTHY1rCNRS4HAzVuUyuk=; b=
-	nk+YJs8dFxc9p5Q863k75bBgrx4PotKPVYamyunvibj50kaux1eXTDCfeQyIHXqI
-	oVVxV2jxYH0eVkLs0E685W6Pjpx3QrKWsB1j/E9M9TMsJnSH46IiycGDREHqWFNV
-	5XFQOS4voC8ukQPx5FRrjZiL89wKlwG03uyQjnd7cixcj7Uy5fGIFyMQ+9ywDKc4
-	Vu4cBXUJjRflJnNHBVjsHJyg+oeANdXwbkHYWs3njnSiVSQp7LQCoZlIjNmigsDj
-	1+SuSLgbMNwhbxVzut6wbgg0UGKQxSTiE6cgZXrqJERHLl/BHAZCVwmQQ6h4DV1l
-	3iga5VA/kizKOnFvV0sfRg==
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11020098.outbound.protection.outlook.com [52.101.85.98])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 49sdb42g34-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 15 Oct 2025 04:32:48 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QwqdnVOw2yT0B86YEujEtIOvrDuo8r6hgo4R0ZifM99Iw71WxqpETSKCQ5z8FB0htZhurmP5JzB1jqaEtrwQz/xUMQeGZckRiFyjYDqUQRYOGxV34stBWDnPk5UoeR6PXDIXD2jXbdODXThgbjinVfY2PrTa8llDt7Q+K0sI5mKg0sokTuWgVzjUr+muG5t+cuVEH11JsZdbJOuWa0DcGjwbfnCOYLgozWnJCVdvS8lJEAgXpqds7Z87ZcM4JLjJQhynHlR/+LjCazGbZs2KqaJLDha3KlT/QQO27jyeEly2hKJoXSL/GXBrvEEBEN6ngkGxXbXwgg+0HIYp619N7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uc7ajakXyNroJpQi3d2N4nzqTHY1rCNRS4HAzVuUyuk=;
- b=hUTr79Pa7fikvrt0DoEjsDMR+qs2XqaKGfPm03ttobGx9xiWGhWsf0ohMgTN5RFOIC7WCBkQq7V1COrrwbn+7Jn+1Z28iVpdBe6Ew8Q0l/9xChO9GH/VTWZnTbzqp1UzFO0RJEhi4z7Uh8WM4bHfWM2ELFyjoJCW0Ph+vr0luflfUmGeCkgDuDhrkouwTRbcwDZmLTSPitkXs0ioriEDSePqDtr6L7pNgm/h+cLcNRaTdrKI5T6XnPpZWF9E8FyIkYrqRageWTUFgmVQRBE+dYUHnv11Jev++Z3Zj3dtlxGkynVwcf7mAGu+aCtN3KYbXVcU6kgn8mmABw27GdT2ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uc7ajakXyNroJpQi3d2N4nzqTHY1rCNRS4HAzVuUyuk=;
- b=FycW87iXVh+5MkZ8wvCmzAyM6Tv57wrzD74XdOUCnt5DXL9ufhNHrCLMaszROrhy/F0DwVIJvXiCZEejvWOFIrWkwzMwDUirPd9oNDgFFElIneloooiwsWfbFUxbJfVzvXkQgEDU+OR/7+xpEhwFqPuNAahtpcuQ/y1lcdoJpOg=
-Received: from MN2PR01CA0059.prod.exchangelabs.com (2603:10b6:208:23f::28) by
- SA1PR19MB5200.namprd19.prod.outlook.com (2603:10b6:806:1a5::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.10; Wed, 15 Oct 2025 09:26:42 +0000
-Received: from BN2PEPF000055E1.namprd21.prod.outlook.com
- (2603:10b6:208:23f:cafe::7c) by MN2PR01CA0059.outlook.office365.com
- (2603:10b6:208:23f::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Wed,
- 15 Oct 2025 09:27:49 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- BN2PEPF000055E1.mail.protection.outlook.com (10.167.245.11) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.0
- via Frontend Transport; Wed, 15 Oct 2025 09:26:41 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id B7CF3406559;
-	Wed, 15 Oct 2025 09:26:40 +0000 (UTC)
-Received: from lonswws03.ad.cirrus.com (lonswws03.ad.cirrus.com [198.90.188.34])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 7440C822541;
-	Wed, 15 Oct 2025 09:26:40 +0000 (UTC)
-From: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>, linux-sound@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        Vitaly Rodionov <vitalyr@opensource.cirrus.com>
-Subject: [PATCH 8/8] ASoC: cs530x: Add DT compartible strings
-Date: Wed, 15 Oct 2025 10:26:11 +0100
-Message-ID: <20251015092619.52952-9-vitalyr@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B638930C61F
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760520645; cv=none; b=O9bL1FsQaPK8LWXxV9+NTkSEBJ0txwm9k7M/aS/7E5GbcqNe2uo2/zmCR9av0S3sPJJmDlF/BKpva2CI77/W1oNCPWTgIWoGv1xiUmHz8X9G3Ochh4ouPGpfTutsPvV4TNQNzG8EK3bYfIn8ZVOZA5n2T1x/FFIIv5fcHauHFHs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760520645; c=relaxed/simple;
+	bh=dw9IOAxXiKH06QEs7NqrxYEDucN/Ro5oz2UlCKXmf4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RebkVQOfz+MLLT/02790kFkypvVwDy+Cm9HN37xe/3+siqTErwnoMoY3XrhBP4R6+FJvn3GGlXradPwyGbBe27w8zQelIs1GFVbrj6W+0CWE7xkg85EQVhdncuPchcEA7ptL5oUV7JOZESH/h0qFl2CME0t/BLnFvLAl+TLk2o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fTJegPWn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F2s6aT003404
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:30:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=+AWRZ6RLy3xxCfI3F19y7lYWJu1FbqYUaJ9
+	EwUpZFIM=; b=fTJegPWnx+sklxzEiLhikRdD14rpA3fmsuXk6ZUnaug1FhPHNEh
+	ZHz/ATske9zhEsSsrsqSbt1/L0fFmKzGH+/TAdK6z38MNAR+EaTnTfsiyitEQv2M
+	BSg7IkZOJggDheLfrbDlI7kk4ck55MbuL6ZdJAlbqzLXA7ufb3Rvxq31FOv4JAq1
+	sDMjBbEUwlVAV46etHE47lQBQVOBhtg8FVG/DO2OVAg6Gh4ljAwhBsUn+l5T3QuI
+	nwDYWuqdvTuTyNI9lVOqa8us/IOI9jbNawNs4lzia3RLDUytzNaBUCn99ZwssouF
+	9hauaPPamSzilzA6woZDPlnSTjiz3+KNPMQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49sua8jfj2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:30:42 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2e60221fso16173238b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:30:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760520641; x=1761125441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+AWRZ6RLy3xxCfI3F19y7lYWJu1FbqYUaJ9EwUpZFIM=;
+        b=NMqA3ly+ZicnNsGHV3OdZQkuQrBzGVJ/VMEK4/anDkwp3lKOrbGsIY21pJ6nGzBlwc
+         kgnbXMP60xxwpVzPSFO5Wc2Ckj8OnTjo4R5jakAEy43akmp2wYxZyI7sa0ojaw052Jph
+         s5CkL3SLw/lC7rMtRYqnnV0B9h4VWK9v3YDhgNozELDA2SKxsB0V5RGGEYQDkQX/IewQ
+         33ez/4qsCYm67V1ZAlsRKr7n4ISAZCXo2B/u0WkXJqubY3TfJoiklLr76F3W2sgl6pxf
+         yvlNjUfOKuDRwgk+wGPDlUPUiOW0WIo5BvCNrhcEG8q3n7790hXZ/1CmB2wA7qXUzyRe
+         bDyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWz7B1yxAge68iFYGvsdciO2qSLtmvsIjNKF4YPUjoUaFKyYV1miNI+f4EJ8ymfzoECLzx49YEMRRz6x8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxZ7ixY7aFlFowqlft6DXDGpMrcTn+LbZuMjmaE0Hc0B5yd39t
+	cQJplp3auritErgG5mH0OyfKB35r9nr1Tinr4Ql3uSpRL/bqg5XeD6PYy9/FQIJEadFuP5tJueC
+	g98fjA2NP65EOkNxDZRw+nZ4vi+tAv6BXqC+TwiP8q+vUBn/m9OI4e2u9id4dFbCclPs=
+X-Gm-Gg: ASbGncuUHEVRgN7aJIxzX8PFU2RwWbArc4TDsoTkS/kHVu6ZnZlc4gbGwpHbjC2Yd0d
+	4qhh/EVTrD8MFYCKhjX0n5cFegY1n9Z46LTPSecPCsWKJMH1vMxXcUs3lvIcsBNhmt7k8+BXZqn
+	DPyQpE8fLzJt3Kupxkee0bVFuw8jde7D/buouJ6FNeURyl0OoUKm9Dn6kUIgydJLfmyGMg6hDUY
+	yNyAJVrXzcNlrK2RPtTm3OGv5vF6lBowu3cGyIS1llVk6aTyK2OJhSSSLRp4MyAWb4NN6Jc0mce
+	lx5DsOBuPKXwGk2ByZWqAzrrdZG9X8+6/u231WriF4mvpGIwB+8Hg9MO3lg9LLFCaNXqQQDh32n
+	fPIliesbzGjCGDPAaB/C5g4tCv0KQo6XM6Cg=
+X-Received: by 2002:a05:6a20:914c:b0:32d:b999:921c with SMTP id adf61e73a8af0-32db999930fmr32130297637.37.1760520641313;
+        Wed, 15 Oct 2025 02:30:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMhwB2deHN7pDz6zm5FfsvDZ8EQgexzrZZItel8sWW1KNljElO+YphSBrPetaVabec54B8Bw==
+X-Received: by 2002:a05:6a20:914c:b0:32d:b999:921c with SMTP id adf61e73a8af0-32db999930fmr32130247637.37.1760520640805;
+        Wed, 15 Oct 2025 02:30:40 -0700 (PDT)
+Received: from WANGAOW-LAB01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09aa20sm17946745b3a.39.2025.10.15.02.30.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 02:30:40 -0700 (PDT)
+From: Wangao Wang <wangao.wang@oss.qualcomm.com>
+To: vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+        abhinav.kumar@linux.dev, bod@kernel.org, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
+        quic_renjiang@quicinc.com, Wangao Wang <wangao.wang@oss.qualcomm.com>
+Subject: [PATCH v1 0/4] media: qcom: iris: encoder feature enhancements
+Date: Wed, 15 Oct 2025 17:27:04 +0800
+Message-ID: <20251015092708.3703-1-wangao.wang@oss.qualcomm.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251015092619.52952-1-vitalyr@opensource.cirrus.com>
-References: <20251015092619.52952-1-vitalyr@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,92 +95,225 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055E1:EE_|SA1PR19MB5200:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 88582409-9adb-45aa-10fd-08de0bccf364
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|61400799027;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/yDkgzDHROi8y4TxCDw5Z90SqwHxFBiLK1Hx6OhcNlLalIybDDJF3OrjRKGd?=
- =?us-ascii?Q?9lwexRLkjVR+NboExN55xmPRvwdbQ7FEDtsWYSIz5jmgRbO1GjJFtAdeJAry?=
- =?us-ascii?Q?nxNq9UPmr+k6PhO6PTWCn2g4cFlRZMkBkjiwX/NpN6iDkXU4NrPVZjrfd729?=
- =?us-ascii?Q?JXXRDfYsYAu7unaiqfTrxD1CLRZ5ZQypw8a/vsP+fwhlGvGIVk9O65Usg76r?=
- =?us-ascii?Q?gSdGAaLkobA6Ry9XLmL/SG8ysbvqGRHR9o4maSLUXFz+x3L6acNXJTWHIf7L?=
- =?us-ascii?Q?2evTNnbbgn/AbXTVsU6ZCW1xV848myzN/CiUABe+sxBuK4DD4P7EYBNczIiK?=
- =?us-ascii?Q?H1ZkrDI+uTWXOXaIsKeWCJMwLngQllsd7vzGz1QfmQXqj92Coj1b7n0KExp/?=
- =?us-ascii?Q?gpzAz/UFbZ/htvy1SfwX4AuYyfTe6m+LHZEMwNB6XtO+Kkfn7XgOSD8Q70fU?=
- =?us-ascii?Q?bwGW4Ccg2uVnjcC04PVeosBSJlwlfwzTHdNxO47XyVXldXkhW6ONX4g5z0Gn?=
- =?us-ascii?Q?LvP9hICKVga/ptbv0YOxC2Qi2X1PeF2jj1CqEnR3k7pLZnA+WnUfEFK36oPw?=
- =?us-ascii?Q?hGhBq2ICeNylvEJmDYcF7p2zFbARy4DjzfPy6yWIvDQLhDYjeqDKLDztB6W8?=
- =?us-ascii?Q?UU0XqOA9I5MD4RBANtX+25ZntacUNoqU+J/ce8Q7TxIImK4RjPYebrsN2iiV?=
- =?us-ascii?Q?ki64WlkM19dNQf1B8OoAlHK/q/J66+nIpFZDhxTIo2Gp2HXY7wI+/NmkkBLe?=
- =?us-ascii?Q?Iv05ki/CTsSuIssc0zLj9B74SMfUovyt5Xmvk1zPUyBaGomYbKy0F0xg3pcA?=
- =?us-ascii?Q?M2nGk/k9vdL0aJPksJJU9jMynn3lFAeEpJFBiwUPa4iwtqU+JWmJJyWHI0dT?=
- =?us-ascii?Q?wJ6ykueCPZ3u5P7rbvpwY6jEJPwplEamC05na73mBfZHx1HNtqA5LF/iS5mg?=
- =?us-ascii?Q?VP7Pqd1uvSva3zBFG6SLD5gn06mqHmtb7alQKdHRBm2QBipDjmFUkDzEbYpu?=
- =?us-ascii?Q?vHt7DUhV+Rhw9dApSG06chs4dF0TW5Jwgpiz2DTWQCj03BjJMfAvq9lR8F1k?=
- =?us-ascii?Q?Lw8ErALwWqgSzIBYLcrYe3JqPKYlyHVJXye3N6gaCiwu8Neu9S+JEO079b4O?=
- =?us-ascii?Q?JNG6gqJjfhiFR9GU2pdzZzU85Vcbf2pA7W4iDlL9RhWzVOzLf2yopvgWoIQv?=
- =?us-ascii?Q?G4pNL68iU0zTuS7sZNzePSqA2dWzYb6uxyjhgwjMdRXKYFJLbVo7H/3TB4zw?=
- =?us-ascii?Q?N6Tkswbkn1DWekKye9CniixDk4CemyERgq64ssNAJLh2tv/iXqauKIZyD5O6?=
- =?us-ascii?Q?OwY81PY6RlGqiJ3SQ0zoJTjBATwgY2jM28S7Y5sr9BmTYA2SysW4oGEcxtkI?=
- =?us-ascii?Q?tqeevZsi3PipGFTQEfGRZPn6IFe5DTi6S2Sbyk7HncbI1QFacC5FlPVTdTAZ?=
- =?us-ascii?Q?pkYC8asF76TSuzm8gEg0yXu9BAlIIChl6U0ENgWRNI6AHfiDOpN/+UVecl6F?=
- =?us-ascii?Q?sLy2C46FqK0E6rNEiZFWLPWwg8fX6FeCJdqfiO+VJj1aQxaHAmvP4Y1jPTOD?=
- =?us-ascii?Q?Eu8ajALSqHk9C5SWcuo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(61400799027);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 09:26:41.5707
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88582409-9adb-45aa-10fd-08de0bccf364
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN2PEPF000055E1.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR19MB5200
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE1MDA3MyBTYWx0ZWRfXyJBpWwqY+arl
- B0KHX8WQ1HoVg1+xczEn88rEb5Rf5nfa5gWD4gumT+wuVy7vLiBe0IV0+ezcpZ/uG39KB99sGUL
- GQEcLmXO75oZ66CqpofKDr8WPT/Rrdul0yZPQGHQa6x9EyZ/SqCQFPnaVxyKpu7Gc7RUiSEEcgv
- R8IzBjQvxtO0lUZz3pmbSJDKPbQYffEt+ApH/UgX4Z+RrzxmV3FVtysSn0cxRBe4AaLUZ/sTqcb
- BKr+YAIIU2Z87yh2kRNW1lK1cTbzZdrg2Ze2TbFZ43yaTZcWq07jLA5EoPlSAxAiZcv4NJspCJf
- ZGkKYZu2EouGPamW7zjSSukajB4/gas1qahfQU9YAJIGQh7LXB1mytXBmXuCn+3FwousokWb3UL
- kFErqf8mzACVY3qThBsh8fWBNnbimQ==
-X-Proofpoint-GUID: 3e-UJhRLkahHpWwwHrmsUAz5lzHfjysb
-X-Authority-Analysis: v=2.4 cv=PPICOPqC c=1 sm=1 tr=0 ts=68ef6a40 cx=c_pps
- a=5ZmoExZQM1RqZyAr9AiZEw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=w1d2syhTAAAA:8 a=EIw7sTYcH-EARjFZPrAA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 3e-UJhRLkahHpWwwHrmsUAz5lzHfjysb
-X-Proofpoint-Spam-Reason: safe
+X-Proofpoint-GUID: 9CZUz2Vz6WgGLcbxtlSGFz6b0Kv-cW4-
+X-Authority-Analysis: v=2.4 cv=e5MLiKp/ c=1 sm=1 tr=0 ts=68ef69c2 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8
+ a=KV4SbAjlYjHBkhW3RxIA:9 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE0MDEzNCBTYWx0ZWRfX1kJfMKtEeAJP
+ WAW0hZEdUB604viGbnp01rJNa9mpSCihy3lBANSl+PAstem+4mAgHeiFh1BAwyxPTsv9ndw25L2
+ OKoFXDp9OLbZnn6uriS5Y4abGZidFhV9GW0arIAm2QmWzNCtHr4SbW8j7AKB5IFixfCXeyHocpv
+ keVR6nf/eXIUtpAno8P+XBlzjeULKWZ1PXjP84ZKxW5OBoJNmPCvz+vw9DSm6TQv2dsIvqHo898
+ ka7qcCr9WtwqoT95aXFuXIQmO87SpiKMT0uzkoUKFafoWY7AIj92gUPQPDO//2dS4vP1cpKgvn1
+ K4ijZBiTdM1+EXXVyCGy/AT+dRn1jbxmmGaXmdVoOBHKzhyqOjoykBl4ZnTGDV2jEUTZAYK2Qp2
+ LjIw6rg0wRaZLFOU8iKJGC7vgpHkPA==
+X-Proofpoint-ORIG-GUID: 9CZUz2Vz6WgGLcbxtlSGFz6b0Kv-cW4-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-15_04,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510140134
 
-Signed-off-by: Vitaly Rodionov <vitalyr@opensource.cirrus.com>
----
- Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi All,
 
-diff --git a/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml b/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
-index 9582eb8eb418..90a5cea0632d 100644
---- a/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
-+++ b/Documentation/devicetree/bindings/sound/cirrus,cs530x.yaml
-@@ -22,6 +22,10 @@ properties:
-       - cirrus,cs5302
-       - cirrus,cs5304
-       - cirrus,cs5308
-+      - cirrus,cs4282
-+      - cirrus,cs4302
-+      - cirrus,cs4304
-+      - cirrus,cs4308
- 
-   reg:
-     maxItems: 1
+This patch series introduces several enhancements to the Qualcomm Iris
+encoder driver, improving support for V4L2 controls and enabling more
+ video encoding features.
+
+All patches have been tested with v4l2-compliance, v4l2-ctl and 
+on QCS8300 for encoder.
+
+Commands used for V4l2-ctl validation:
+
+Scale:
+v4l2-ctl --verbose -d /dev/video1 \
+--set-fmt-video-out=width=1920,height=1080,pixelformat=NV12 \
+--set-selection-output target=crop,width=1920,height=1080 \
+--set-fmt-video=width=1280,height=720,pixelformat=H264 \
+--stream-mmap --stream-out-mmap \
+--stream-from=input_nv12_1080p.yuv \
+--stream-to=output/scale_720p_output.h264
+
+Flip:
+v4l2-ctl --verbose -d /dev/video1 \
+--set-fmt-video-out=width=1920,height=1080,pixelformat=NV12 \
+--set-selection-output target=crop,width=1920,height=1080 \
+--set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap \
+--stream-from=input_nv12_1080p.yuv \
+--stream-to=output/vertical_flip.h264 \
+--set-ctrl vertical_flip=1
+
+v4l2-ctl --verbose -d /dev/video1 \
+--set-fmt-video-out=width=1920,height=1080,pixelformat=NV12 \
+--set-selection-output target=crop,width=1920,height=1080 \
+--set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap \
+--stream-from=input_nv12_1080p.yuv \
+--stream-to=output/horizontal_flip.h264 \
+--set-ctrl horizontal_flip=1
+
+Rotate: 
+v4l2-ctl --verbose -d /dev/video1 \
+--set-fmt-video-out=width=1920,height=1080,pixelformat=NV12 \
+--set-selection-output target=crop,width=1920,height=1080 \
+--set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap \
+--stream-from=input_nv12_1080p.yuv \
+--stream-to=output/rotate90.h264 \
+--set-ctrl rotate=90
+
+v4l2-ctl --verbose -d /dev/video1 \
+--set-fmt-video-out=width=1920,height=1080,pixelformat=NV12 \
+--set-selection-output target=crop,width=1920,height=1080 \
+--set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap \
+--stream-from=input_nv12_1080p.yuv \
+--stream-to=output/rotate180.h264 \
+--set-ctrl rotate=180
+
+v4l2-ctl --verbose -d /dev/video1 \
+--set-fmt-video-out=width=1920,height=1080,pixelformat=NV12 \
+--set-selection-output target=crop,width=1920,height=1080 \
+--set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap \
+--stream-from=input_nv12_1080p.yuv \
+--stream-to=output/rotate270.h264 \
+--set-ctrl rotate=270
+
+Intra Refresh:
+Testing of this feature requires the use of this application.
+https://github.com/quic/v4l-video-test-app
+
+The result of v4l2-compliance on QCS8300:
+v4l2-compliance 1.31.0-5378, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 2ed8da243dd1 2025-06-30 08:18:40
+
+Compliance test for iris_driver device /dev/video1:
+
+Driver Info:
+        Driver name      : iris_driver
+        Card type        : Iris Encoder
+        Bus info         : platform:aa00000.video-codec
+        Driver version   : 6.17.0
+        Capabilities     : 0x84204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+        Detected Stateful Encoder
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video1 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 43 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+        test blocking wait: OK
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        Video Capture Multiplanar: Captured 61 buffers
+        test MMAP (select, REQBUFS): OK
+        Video Capture Multiplanar: Captured 61 buffers
+        test MMAP (epoll, REQBUFS): OK
+        Video Capture Multiplanar: Captured 61 buffers
+        test MMAP (select, CREATE_BUFS): OK
+        Video Capture Multiplanar: Captured 61 buffers
+        test MMAP (epoll, CREATE_BUFS): OK
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for iris_driver device /dev/video1: 54, Succeeded: 54, Failed: 0, Warnings: 0
+
+Wangao Wang (4):
+  media: qcom: iris: Add support for scale and improve format alignment
+  media: qcom: iris: Add rotation support for encoder
+  media: qcom: iris: Add flip support for encoder
+  media: qcom: iris: Add intra refresh support for encoder
+
+ drivers/media/platform/qcom/iris/iris_ctrls.c | 94 +++++++++++++++++++
+ drivers/media/platform/qcom/iris/iris_ctrls.h |  3 +
+ .../qcom/iris/iris_hfi_gen2_command.c         | 26 +++--
+ .../qcom/iris/iris_hfi_gen2_defines.h         | 19 ++++
+ .../qcom/iris/iris_hfi_gen2_response.c        |  2 +
+ .../media/platform/qcom/iris/iris_instance.h  |  8 ++
+ .../platform/qcom/iris/iris_platform_common.h |  5 +
+ .../platform/qcom/iris/iris_platform_gen2.c   | 61 ++++++++++++
+ drivers/media/platform/qcom/iris/iris_utils.c |  6 ++
+ drivers/media/platform/qcom/iris/iris_utils.h |  1 +
+ drivers/media/platform/qcom/iris/iris_venc.c  | 28 +++++-
+ .../platform/qcom/iris/iris_vpu_buffer.c      | 52 +++++-----
+ 12 files changed, 273 insertions(+), 32 deletions(-)
+
 -- 
 2.43.0
 
