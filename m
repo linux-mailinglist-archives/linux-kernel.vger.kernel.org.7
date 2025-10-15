@@ -1,240 +1,308 @@
-Return-Path: <linux-kernel+bounces-853850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF4BBDCC28
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:37:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE5BBDCC4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6652342008C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3E023B54FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6AE313271;
-	Wed, 15 Oct 2025 06:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H7caSZfu"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6036B31327C;
+	Wed, 15 Oct 2025 06:40:36 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A26531326B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 06:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BD43126CE;
+	Wed, 15 Oct 2025 06:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760510194; cv=none; b=q1zHnrXFIGz0f0TauMIGut49vwXaMDksSVMbGDAaU9mYdsHA7JbahHGaA2tJm6CYvyz4bY/hEYxmfZdWRgs89ZmTINUjjMl6QIJfIzfZWeokP9x2NMjOR5Hk5yPJ1SBdPpZtRio57WUKp7v8AvbTXQ7w8TaaRQzZlzMLX8u0OQI=
+	t=1760510434; cv=none; b=tlHskyFuxrX4PZESdCL6dlmdE174+WIHQoHv8H8TLjQ1ud1lLPqLdnS/vIe3x1nKIz9mHA+9Iq7o9Bb44cTBmGoooxRykBYpSvBeIgaOO3jLI7wlUH9gfmcJgs8fGGevTMqatQAW3gqc0OybcemLny0V98ZaSH/JEJG7fn7EPoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760510194; c=relaxed/simple;
-	bh=2RUpoHEnTjD6v+HetSU8TuWapTHmZQKBkCkLxKVp4yY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XiN9CPB6C+aHTuek/9r6VSoduNxaRKFytfLdVkcgU5GsQEgV9qKvlqePPTEUrule3JL5rCSX9HdVJqjC1B9efZjnfWbAoJmfx4f+AN7eWtDxjEcgYejPTIKUYsVB0cV46OYJWjBl4bMoTyIX4ClwcutJkShhrY/EsnpewM8pRCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H7caSZfu; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760510190;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3BICM4/ICXf+zqUc8wiZAUMGTBpg8K3w3bGX3Sv3oBQ=;
-	b=H7caSZfu4t4c5M7yudMPuBohd2tAVxKye8T6//8DUxt095mlcwWRyGXMiJt1ydX/gSpKO8
-	a7a+eH+aLJm+jZhp/l93jFXsW0POPuVhfURihl0jKG3mLJ2p+rJ0DjcPEc6ui2roX0klU6
-	tBdp3Bor+ZznaSPJgH8PKT35RyRB4tg=
-From: Qi Zheng <qi.zheng@linux.dev>
-To: hannes@cmpxchg.org,
-	hughd@google.com,
-	mhocko@suse.com,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	ziy@nvidia.com,
-	harry.yoo@oracle.com,
-	baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	lance.yang@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v5 4/4] mm: thp: reparent the split queue during memcg offline
-Date: Wed, 15 Oct 2025 14:35:33 +0800
-Message-ID: <645f537dee489faa45e611d303bf482a06f0ece7.1760509767.git.zhengqi.arch@bytedance.com>
-In-Reply-To: <cover.1760509767.git.zhengqi.arch@bytedance.com>
-References: <cover.1760509767.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1760510434; c=relaxed/simple;
+	bh=WKmoCAdhwJeXGa3LefrmfEnCthO+1fO4s7DJYsIMQTA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S0tfa3xL5fsHoYl2XY2UiVb1jlWUq0lZzmwlCiep68kdBZLOD9DNeacLfYl3XR2RmpkewhcN37StpCwwb3vGrVoWqnzsCOCQz6Q5Z86a+x4sTRz5VZhkycsbOW2/ztYKcr7R9Czj+B51SMf1azFBJ9L2M1f0lMSCHib+5mrV+3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Lance Yang
+	<lance.yang@linux.dev>, Masami Hiramatsu <mhiramat@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux-doc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <wireguard@lists.zx2c4.com>,
+	<netdev@vger.kernel.org>, <linux-kselftest@vger.kernel.org>, Li RongQing
+	<lirongqing@baidu.com>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Anshuman Khandual <anshuman.khandual@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	David Hildenbrand <david@redhat.com>, Florian Wesphal <fw@strlen.de>, Jakub
+ Kacinski <kuba@kernel.org>, "Jason A . Donenfeld" <jason@zx2c4.com>, Joel
+ Granados <joel.granados@kernel.org>, Joel Stanley <joel@jms.id.au>, Jonathan
+ Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, Liam Howlett
+	<liam.howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>, Pawan Gupta
+	<pawan.kumar.gupta@linux.intel.com>, Petr Mladek <pmladek@suse.com>, Phil
+ Auld <pauld@redhat.com>, Randy Dunlap <rdunlap@infradead.org>, Russell King
+	<linux@armlinux.org.uk>, Shuah Khan <shuah@kernel.org>, Simon Horman
+	<horms@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Steven Rostedt
+	<rostedt@goodmis.org>
+Subject: [PATCH][v4] hung_task: Panic when there are more than N hung tasks at the same time
+Date: Wed, 15 Oct 2025 14:36:15 +0800
+Message-ID: <20251015063615.2632-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc9.internal.baidu.com (172.31.3.19) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-From: Qi Zheng <zhengqi.arch@bytedance.com>
+From: Li RongQing <lirongqing@baidu.com>
 
-Similar to list_lru, the split queue is relatively independent and does
-not need to be reparented along with objcg and LRU folios (holding
-objcg lock and lru lock). So let's apply the similar mechanism as list_lru
-to reparent the split queue separately when memcg is offine.
+Currently, when 'hung_task_panic' is enabled, the kernel panics
+immediately upon detecting the first hung task. However, some hung
+tasks are transient and allow system recovery, while persistent hangs
+should trigger a panic when accumulating beyond a threshold.
 
-This is also a preparation for reparenting LRU folios.
+Extend the 'hung_task_panic' sysctl to accept a threshold value
+specifying the number of hung tasks that must be detected before
+triggering a kernel panic. This provides finer control for environments
+where transient hangs may occur but persistent hangs should be fatal.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Acked-by: Zi Yan <ziy@nvidia.com>
-Reviewed-by: Muchun Song <muchun.song@linux.dev>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+The sysctl now accepts:
+- 0: don't panic (maintains original behavior)
+- 1: panic on first hung task (maintains original behavior)
+- N > 1: panic after N hung tasks are detected in a single scan
+
+This maintains backward compatibility while providing flexibility for
+different hang scenarios.
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Florian Wesphal <fw@strlen.de>
+Cc: Jakub Kacinski <kuba@kernel.org>
+Cc: Jason A. Donenfeld <jason@zx2c4.com>
+Cc: Joel Granados <joel.granados@kernel.org>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Lance Yang <lance.yang@linux.dev>
+Cc: Liam Howlett <liam.howlett@oracle.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Phil Auld <pauld@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Simon Horman <horms@kernel.org>
+Cc: Stanislav Fomichev <sdf@fomichev.me>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 ---
- include/linux/huge_mm.h    |  4 ++++
- include/linux/memcontrol.h | 10 +++++++++
- mm/huge_memory.c           | 44 ++++++++++++++++++++++++++++++++++++++
- mm/memcontrol.c            |  1 +
- 4 files changed, 59 insertions(+)
+diff with v3: comments modification, suggested by Lance, Masami, Randy and Petr
+diff with v2: do not add a new sysctl, extend hung_task_panic, suggested by Kees Cook
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index f327d62fc9852..0c211dcbb0ec1 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -417,6 +417,9 @@ static inline int split_huge_page(struct page *page)
- 	return split_huge_page_to_list_to_order(page, NULL, ret);
- }
- void deferred_split_folio(struct folio *folio, bool partially_mapped);
-+#ifdef CONFIG_MEMCG
-+void reparent_deferred_split_queue(struct mem_cgroup *memcg);
-+#endif
+ Documentation/admin-guide/kernel-parameters.txt      | 20 +++++++++++++-------
+ Documentation/admin-guide/sysctl/kernel.rst          |  9 +++++----
+ arch/arm/configs/aspeed_g5_defconfig                 |  2 +-
+ kernel/configs/debug.config                          |  2 +-
+ kernel/hung_task.c                                   | 15 ++++++++++-----
+ lib/Kconfig.debug                                    |  9 +++++----
+ tools/testing/selftests/wireguard/qemu/kernel.config |  2 +-
+ 7 files changed, 36 insertions(+), 23 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a51ab46..492f0bc 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1992,14 +1992,20 @@
+ 			the added memory block itself do not be affected.
  
- void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 		unsigned long address, bool freeze);
-@@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
- }
- 
- static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
-+static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
- #define split_huge_pmd(__vma, __pmd, __address)	\
- 	do { } while (0)
- 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 0b2d4ec79adfe..5ca97fece6907 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1801,6 +1801,11 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
- 
- bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid);
- 
-+static inline bool memcg_is_dying(struct mem_cgroup *memcg)
-+{
-+	return memcg ? css_is_dying(&memcg->css) : false;
-+}
+ 	hung_task_panic=
+-			[KNL] Should the hung task detector generate panics.
+-			Format: 0 | 1
++			[KNL] Number of hung tasks to trigger kernel panic.
++			Format: <int>
 +
- #else
- static inline bool mem_cgroup_kmem_disabled(void)
++			When set to a non-zero value, a kernel panic will be triggered if
++			the number of detected hung tasks reaches this value.
++
++			0: don't panic
++			1: panic immediately on first hung task
++			N: panic after N hung tasks are detected in a single scan
+ 
+-			A value of 1 instructs the kernel to panic when a
+-			hung task is detected. The default value is controlled
+-			by the CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time
+-			option. The value selected by this boot parameter can
+-			be changed later by the kernel.hung_task_panic sysctl.
++			The default value is controlled by the
++			CONFIG_BOOTPARAM_HUNG_TASK_PANIC build-time option. The value
++			selected by this boot parameter can be changed later by the
++			kernel.hung_task_panic sysctl.
+ 
+ 	hvc_iucv=	[S390]	Number of z/VM IUCV hypervisor console (HVC)
+ 				terminal devices. Valid values: 0..8
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index f3ee807..0065a55 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -397,13 +397,14 @@ a hung task is detected.
+ hung_task_panic
+ ===============
+ 
+-Controls the kernel's behavior when a hung task is detected.
++When set to a non-zero value, a kernel panic will be triggered if the
++number of hung tasks found during a single scan reaches this value.
+ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
+ 
+-= =================================================
++= =======================================================
+ 0 Continue operation. This is the default behavior.
+-1 Panic immediately.
+-= =================================================
++N Panic when N hung tasks are found during a single scan.
++= =======================================================
+ 
+ 
+ hung_task_check_count
+diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
+index 61cee1e..c3b0d5f 100644
+--- a/arch/arm/configs/aspeed_g5_defconfig
++++ b/arch/arm/configs/aspeed_g5_defconfig
+@@ -308,7 +308,7 @@ CONFIG_PANIC_ON_OOPS=y
+ CONFIG_PANIC_TIMEOUT=-1
+ CONFIG_SOFTLOCKUP_DETECTOR=y
+ CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
+-CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
++CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
+ CONFIG_WQ_WATCHDOG=y
+ # CONFIG_SCHED_DEBUG is not set
+ CONFIG_FUNCTION_TRACER=y
+diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
+index e81327d..9f6ab7d 100644
+--- a/kernel/configs/debug.config
++++ b/kernel/configs/debug.config
+@@ -83,7 +83,7 @@ CONFIG_SLUB_DEBUG_ON=y
+ #
+ # Debug Oops, Lockups and Hangs
+ #
+-# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
++CONFIG_BOOTPARAM_HUNG_TASK_PANIC=0
+ # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
+ CONFIG_DEBUG_ATOMIC_SLEEP=y
+ CONFIG_DETECT_HUNG_TASK=y
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index b2c1f14..84b4b04 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -81,7 +81,7 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
+  * hung task is detected:
+  */
+ static unsigned int __read_mostly sysctl_hung_task_panic =
+-	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
++	CONFIG_BOOTPARAM_HUNG_TASK_PANIC;
+ 
+ static int
+ hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
+@@ -218,8 +218,11 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
+ }
+ #endif
+ 
+-static void check_hung_task(struct task_struct *t, unsigned long timeout)
++static void check_hung_task(struct task_struct *t, unsigned long timeout,
++		unsigned long prev_detect_count)
  {
-@@ -1867,6 +1872,11 @@ static inline bool mem_cgroup_node_allowed(struct mem_cgroup *memcg, int nid)
- {
- 	return true;
- }
++	unsigned long total_hung_task;
 +
-+static inline bool memcg_is_dying(struct mem_cgroup *memcg)
-+{
-+	return false;
-+}
- #endif /* CONFIG_MEMCG */
+ 	if (!task_is_hung(t, timeout))
+ 		return;
  
- #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e850bc10da3e2..9323039418201 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1117,8 +1117,19 @@ static struct deferred_split *split_queue_lock(int nid, struct mem_cgroup *memcg
- {
- 	struct deferred_split *queue;
+@@ -229,9 +232,10 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	 */
+ 	sysctl_hung_task_detect_count++;
  
-+retry:
- 	queue = memcg_split_queue(nid, memcg);
- 	spin_lock(&queue->split_queue_lock);
-+	/*
-+	 * There is a period between setting memcg to dying and reparenting
-+	 * deferred split queue, and during this period the THPs in the deferred
-+	 * split queue will be hidden from the shrinker side.
-+	 */
-+	if (unlikely(memcg_is_dying(memcg))) {
-+		spin_unlock(&queue->split_queue_lock);
-+		memcg = parent_mem_cgroup(memcg);
-+		goto retry;
-+	}
++	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
+ 	trace_sched_process_hang(t);
  
- 	return queue;
- }
-@@ -1128,8 +1139,14 @@ split_queue_lock_irqsave(int nid, struct mem_cgroup *memcg, unsigned long *flags
- {
- 	struct deferred_split *queue;
+-	if (sysctl_hung_task_panic) {
++	if (sysctl_hung_task_panic && total_hung_task >= sysctl_hung_task_panic) {
+ 		console_verbose();
+ 		hung_task_show_lock = true;
+ 		hung_task_call_panic = true;
+@@ -300,6 +304,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	int max_count = sysctl_hung_task_check_count;
+ 	unsigned long last_break = jiffies;
+ 	struct task_struct *g, *t;
++	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
  
-+retry:
- 	queue = memcg_split_queue(nid, memcg);
- 	spin_lock_irqsave(&queue->split_queue_lock, *flags);
-+	if (unlikely(memcg_is_dying(memcg))) {
-+		spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
-+		memcg = parent_mem_cgroup(memcg);
-+		goto retry;
-+	}
+ 	/*
+ 	 * If the system crashed already then all bets are off,
+@@ -320,7 +325,7 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 			last_break = jiffies;
+ 		}
  
- 	return queue;
- }
-@@ -4276,6 +4293,33 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	return split;
- }
+-		check_hung_task(t, timeout);
++		check_hung_task(t, timeout, prev_detect_count);
+ 	}
+  unlock:
+ 	rcu_read_unlock();
+@@ -389,7 +394,7 @@ static const struct ctl_table hung_task_sysctls[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
++		.extra2		= SYSCTL_INT_MAX,
+ 	},
+ 	{
+ 		.procname	= "hung_task_check_count",
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 3034e294..3976c90 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1258,12 +1258,13 @@ config DEFAULT_HUNG_TASK_TIMEOUT
+ 	  Keeping the default should be fine in most cases.
  
-+#ifdef CONFIG_MEMCG
-+void reparent_deferred_split_queue(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *parent = parent_mem_cgroup(memcg);
-+	struct deferred_split *ds_queue = &memcg->deferred_split_queue;
-+	struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
-+	int nid;
-+
-+	spin_lock_irq(&ds_queue->split_queue_lock);
-+	spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
-+
-+	if (!ds_queue->split_queue_len)
-+		goto unlock;
-+
-+	list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
-+	parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
-+	ds_queue->split_queue_len = 0;
-+
-+	for_each_node(nid)
-+		set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
-+
-+unlock:
-+	spin_unlock(&parent_ds_queue->split_queue_lock);
-+	spin_unlock_irq(&ds_queue->split_queue_lock);
-+}
-+#endif
-+
- #ifdef CONFIG_DEBUG_FS
- static void split_huge_pages_all(void)
- {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4deda33625f41..2acb53fd7f71e 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3888,6 +3888,7 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
- 	zswap_memcg_offline_cleanup(memcg);
+ config BOOTPARAM_HUNG_TASK_PANIC
+-	bool "Panic (Reboot) On Hung Tasks"
++	int "Number of hung tasks to trigger kernel panic"
+ 	depends on DETECT_HUNG_TASK
++	default 0
+ 	help
+-	  Say Y here to enable the kernel to panic on "hung tasks",
+-	  which are bugs that cause the kernel to leave a task stuck
+-	  in uninterruptible "D" state.
++	  When set to a non-zero value, a kernel panic will be triggered
++	  if the number of hung tasks found during a single scan reaches
++	  this value.
  
- 	memcg_offline_kmem(memcg);
-+	reparent_deferred_split_queue(memcg);
- 	reparent_shrinker_deferred(memcg);
- 	wb_memcg_offline(memcg);
- 	lru_gen_offline_memcg(memcg);
+ 	  The panic can be used in combination with panic_timeout,
+ 	  to cause the system to reboot automatically after a
+diff --git a/tools/testing/selftests/wireguard/qemu/kernel.config b/tools/testing/selftests/wireguard/qemu/kernel.config
+index 936b18b..0504c11 100644
+--- a/tools/testing/selftests/wireguard/qemu/kernel.config
++++ b/tools/testing/selftests/wireguard/qemu/kernel.config
+@@ -81,7 +81,7 @@ CONFIG_WQ_WATCHDOG=y
+ CONFIG_DETECT_HUNG_TASK=y
+ CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
+ CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
+-CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
++CONFIG_BOOTPARAM_HUNG_TASK_PANIC=1
+ CONFIG_PANIC_TIMEOUT=-1
+ CONFIG_STACKTRACE=y
+ CONFIG_EARLY_PRINTK=y
 -- 
-2.20.1
+2.9.4
 
 
