@@ -1,197 +1,112 @@
-Return-Path: <linux-kernel+bounces-854388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3822FBDE3F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:23:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295BDBDE40C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 13:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806FD19A7559
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:24:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CCCA4F268E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C6F31A809;
-	Wed, 15 Oct 2025 11:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A69531D386;
+	Wed, 15 Oct 2025 11:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="Ns/qkxdG"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTkXRfys"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FF62D8DD1
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 11:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A5319875;
+	Wed, 15 Oct 2025 11:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760527416; cv=none; b=tNoLzDVL3F6D0VC6m2RuP6sl5YTddr7b2f8YMxeCXYd31Kn5I8fcCcKaAYt4O+8pHaSdL7lteFepccTbLyZGLrfqX6A+mTCGQRTUtsZ4SjiXSBcKPeVhrMnZCXcjpVqd+aLi+Uxj7WNW+CGmSqAd7lSmuIArBzV/35WwzevwDpE=
+	t=1760527479; cv=none; b=ZgFQlDDp3vGYdnV1pamXFA0AosDowFezVTySiCWR+ITvR0pBmMHTW1rh18i9PmTfV0a694STa4h9koqp7QD6Z4VU91OB/npJQ8GAnAW2Wv7jyp3/A8nj0DHpibdkQK3RS6IZlCVdYlsTkrKczvAdbbfwbdPhJr6RAakToi+lPcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760527416; c=relaxed/simple;
-	bh=CpGOzMU0fwoe6i5d3r5OB2Uo9e6IHzCntzlcK873gO8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=ieGZrk2yVvId3lHF2a+O5YCIgKYW/MQyq7PlzoofMmne/vHUV5wxKPPzB1+TfujJcICFW4hv6W9JCpH98DFA7u9F9RS3GfxMAiKXQF3t4b6BOD3rG3+WwZCTBv5C96n2OXZvWEdHUeg9qJ3Dwi6HPjWBzCNAmzBpR0ipZnwYkbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=Ns/qkxdG; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1760527479; c=relaxed/simple;
+	bh=HhAMs4NQpq+tdQjGxrti3jqQxp0xeLf1bYQA+I3R1WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2q36yXpNdg17MHYcacrgLWBRCH5wC+/30X2lpKjk5RfVTs05lI4DEFvg+hSiLOpLmdBeHo1D5zI1cGUxZHWKKiT84ggFla6BK+xIvlKMuuyvdzMAyZVIDXDQek1W41aCu8wV7JcCrpOtitFhsMUxivR//GfeNWO/XvPAWLAeqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTkXRfys; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE95C4CEF8;
+	Wed, 15 Oct 2025 11:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760527479;
+	bh=HhAMs4NQpq+tdQjGxrti3jqQxp0xeLf1bYQA+I3R1WA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kTkXRfysjm/blDQ4VdVw10+TUCLu0LSuTBjDYdO0dX3JoTdl32VQoiLbN7VUlR3t+
+	 1sHK9HOgUMAGm1SU9b2xmZS1zsjNPhswGory8VsbqH2Urh6Warackhhor/UMsz/Gcj
+	 Tm7XG6kLhglUYIlzY6G4DSgNM/XM1Xd0eYhmlUrGQ007hhynUjVy9hPwvLJjUtA9Nn
+	 xXh7SQITWALv+NFSkVnJuertl04Y+MWk9FSebH87DmB4MEC3HBV1H1sSMCMqB2u1Ls
+	 L6SOtx6U8CoEZX/SYao3QTDw1khaLRVapBmbJEYaEGMUKZMcmNikj5ybpW7hz4gDR0
+	 Cofemwo/Tzb5A==
+Date: Wed, 15 Oct 2025 16:54:30 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Akhil Vinod <akhil.vinod@oss.qualcomm.com>, 
+	Sumit Kumar <sumit.kumar@oss.qualcomm.com>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] drivers: mhi: make mhi_ep_bus_type const
+Message-ID: <zqhspeq37j6j2ss6qreoq4kj23mzo2zd5ttkpykayuvo6jigip@dthsh4ngicqv>
+References: <20250919074408.868220-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1760527411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u7suAm308V4lZ0hWGhrJ2JZyDcNujKQFY+XgzAQyH74=;
-	b=Ns/qkxdG4Rn4EJ6K7SljnQBvNEjMaDrTB1/ElfNZiulj3sQwibhvq0PesIrmmY9Q+1Fjyh
-	W6KEAEZMP4FHHqQXoPQkIGtpTnZTo3mGwN+zRnb9//J8E8WST3wXkpfQhVAP5YmQ4XUseb
-	2ZoztiG2+qY0MkG4AoM+KPkAjPkwwWLx8yPwhvjnfrkQ8xeOEgQoyCQRF+2yAEEanIgmyb
-	WbOxFaMqFU0rqn7Gs8QJBI21LssXjs1jwsEp9rMbsWRQkvhQo902VwYlMmEANvpyOsP3qP
-	76AQOGgWsDq0ZZrJe2F+dNLnvCGZlyTWU2VtEEQ2Uk4m/zine4e/pTswHh4E4Q==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Oct 2025 13:23:10 +0200
-Message-Id: <DDIUVHT9W10K.2SHEZ7YWCDXL3@cknow-tech.com>
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Manivannan Sadhasivam" <mani@kernel.org>, "Dragan Simic"
- <dsimic@manjaro.org>
-Cc: "Bjorn Helgaas" <helgaas@kernel.org>, "FUKAUMI Naoki" <naoki@radxa.com>,
- <manivannan.sadhasivam@oss.qualcomm.com>, "Bjorn Helgaas"
- <bhelgaas@google.com>, "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Rob
- Herring" <robh@kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "David E.
- Box" <david.e.box@linux.intel.com>, "Kai-Heng Feng"
- <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Heiner Kallweit" <hkallweit1@gmail.com>, "Chia-Lin Kao"
- <acelan.kao@canonical.com>, <linux-rockchip@lists.infradead.org>,
- <regressions@lists.linux.dev>
-References: <20251014184905.GA896847@bhelgaas>
- <0899e629-eaaf-1000-72b5-52ad977677a8@manjaro.org>
- <fxakjhx7lrikgs4x3nbwgnhhcwmlum3esxp2dj5d26xc5iyg22@wkbbwysh3due>
-In-Reply-To: <fxakjhx7lrikgs4x3nbwgnhhcwmlum3esxp2dj5d26xc5iyg22@wkbbwysh3due>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250919074408.868220-1-abarnas@google.com>
 
-On Wed Oct 15, 2025 at 8:22 AM CEST, Manivannan Sadhasivam wrote:
-> On Wed, Oct 15, 2025 at 01:33:35AM +0200, Dragan Simic wrote:
->> On Tuesday, October 14, 2025 20:49 CEST, Bjorn Helgaas <helgaas@kernel.o=
-rg> wrote:
->> > On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
->> > > I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on=
- the
->> > > Rockchip RK3588(S) SoC.
->> > >=20
->> > > When running Linux v6.18-rc1 or linux-next since 20250924, the kerne=
-l either
->> > > freezes or fails to probe M.2 Wi-Fi modules. This happens with sever=
-al
->> > > different modules I've tested, including the Realtek RTL8852BE, Medi=
-aTek
->> > > MT7921E, and Intel AX210.
->> > >=20
->> > > I've found that reverting the following commit (i.e., the patch I'm =
-replying
->> > > to) resolves the problem:
->> > > commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
->> >=20
->> > <snip>
->> >=20
->> > Do you know if any platforms other than Radxa ROCK 5A/5B have this
->> > problem?
->> >=20
->> After thinking quite a bit about it, I think we should revert this
->> patch and replace it with another patch that allows per-SoC, or
->> maybe even per-board, opting into the forced enablement of PCIe
->> ASPM.  Let me explain, please.
->
-> ASPM is a PCIe device specific feature, nothing related to SoC/board. Eve=
-n if
-> you limit it to certain platforms, there is no guarantee that it will be =
-safe as
-> the users can connect a buggy device to the slot and it could lead to the=
- same
-> issue.
->
->> When a new feature is introduced, it's expected that it may fail
->> on some hardware or with some specific setups, so quirking off such
->> instances, as time passes, is perfectly fine.  Such a new feature
->> didn't work before it was implemented, so it's acceptable that it
->> fails in some instances after the introduction, and that it gets
->> quirked off as time passes and more testing is performed.
->
-> ASPM is not a new feature. It was introduced more than a decade before. B=
-ut we
-> somehow procastinated the enablement for so long until we realized that i=
-f we
-> don't do it now, we wouldn't be able to do it anytime in the future.
+On Fri, Sep 19, 2025 at 07:44:08AM +0000, Adrian Barnaś wrote:
+> Because driver core can properly handle constant struct bus_type,
+> move the mhi_ep_bus_type to be a constant structure as well, placing it
+> into read-only memory which can not be modified at runtime.
+> 
+> Signed-off-by: Adrian Barnaś <abarnas@google.com>
 
-Do you mean literally *now* or more like "we need to do it sometime"?
+Applied to mhi-next!
 
->> However, when some widespread feature, such as PCIe, has already
->> been in production for quite a while, introducing high-risk changes
->> to it in a blanket fashion, while intending to have the incompatible
->> or not-yet-ready platforms quirked off over time, simply isn't the
->> way to go.  Breaking stuff intentionally to find out what actually
->> doesn't work is rarely a good option.
->
-> The issue is due to devices exposing ASPM capability, but behaving errati=
-cally
-> when enabled. Until, we enable ASPM on these devices, we cannot know whet=
-her
-> they are working or not. To avoid mass chaos, we decided to enable it onl=
-y for
-> devicetree platforms as a start.
->
->> Thus, I'd suggest that this patch is replaced with nother patches,
->> which would introduce an additional ASPM opt-in switch to the PCI
->> binding, allowing SoCs or boards to have it enabled _after_ proper
->> testing is performed.  The PCIe driver may emit a warning that ASPM
->> is to be enabled at some point in the future, to "bug" people about
->> the need to perform the testing, etc.
->
-> Even if we emit a "YOUR DEVICE MAY BREAK" warning, nobody would care as l=
-ong as
-> the device works for them. We didn't decide to enable this feature overni=
-ght to
-> trouble users. The fact that ASPM saves runtime power, which will benefit=
- users
-> and ofc the environment as a whole, should not be kept disabled.
->
-> But does that mean, we wanted to have breakages, NO. We expected breakage=
-s as
-> not all devices will play nicely with ASPM, but there is only one way to =
-find
-> out. And we do want to disable ASPM only for those devices.
+- Mani
 
-I understand this logic. And I'm very much in favor of changes that
-reduce power usage.
-I suspect that 6.18 will become a LTS kernel, so introducing a change
-which may break many devices, sounds less then ideal for such a kernel.
-Kernel 6.19 OTOH sounds perfect for that. Then there's plenty of time to
-encounter and fix issues which may/will come up before there is another
-LTS kernel, namely ~ a year.
+> ---
+>  drivers/bus/mhi/ep/internal.h | 2 +-
+>  drivers/bus/mhi/ep/main.c     | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bus/mhi/ep/internal.h b/drivers/bus/mhi/ep/internal.h
+> index 577965f95fda..512da7482acc 100644
+> --- a/drivers/bus/mhi/ep/internal.h
+> +++ b/drivers/bus/mhi/ep/internal.h
+> @@ -11,7 +11,7 @@
+>  
+>  #include "../common.h"
+>  
+> -extern struct bus_type mhi_ep_bus_type;
+> +extern const struct bus_type mhi_ep_bus_type;
+>  
+>  #define MHI_REG_OFFSET				0x100
+>  #define BHI_REG_OFFSET				0x200
+> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+> index cdea24e92919..86e003bc44e0 100644
+> --- a/drivers/bus/mhi/ep/main.c
+> +++ b/drivers/bus/mhi/ep/main.c
+> @@ -1703,7 +1703,7 @@ static int mhi_ep_match(struct device *dev, const struct device_driver *drv)
+>  	return 0;
+>  };
+>  
+> -struct bus_type mhi_ep_bus_type = {
+> +const struct bus_type mhi_ep_bus_type = {
+>  	.name = "mhi_ep",
+>  	.dev_name = "mhi_ep",
+>  	.match = mhi_ep_match,
+> -- 
+> 2.51.0.534.gc79095c0ca-goog
+> 
 
-My 0.02.
-
-Cheers,
-  Diederik
-
-PS: will send my bug/debug report separately
-
->> With all that in place, we could expect that in a year or two PCIe ASPM
->> could eventually be enabled everywhere. Getting everything tested is a
->> massive endeavor, but that's the only way not to break stuff.
->>=20
->> Biting the bullet and hoping that it all goes well, I'd say, isn't
->> the right approach here.
->
-> Your two year phased approach would never work as that's what we have hop=
-ed for
-> more than a decade.
->
-> - Mani
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
