@@ -1,94 +1,72 @@
-Return-Path: <linux-kernel+bounces-854302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1EABDE0AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:37:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E82BDE0C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961BC18852FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:37:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AA5C4FF92B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499A13081B0;
-	Wed, 15 Oct 2025 10:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929CD31960B;
+	Wed, 15 Oct 2025 10:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MMjwsQZ4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmWsXVhg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MMjwsQZ4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmWsXVhg"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXdNDnef";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="uXdNDnef"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7950E2E8B86
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99233081B0
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760524638; cv=none; b=rwzTQHfm/J5AHM6PWMxVPwvs7iZhjKcHPGqTz8hdpaUU+JMnMas3Ft/xI4maIHY2ZYF1RMXRl5gL9aWTfAxF9h0T1eMGEMw5bpjiBH5yVqTOopOC/wx0wOIWUn3rh9PADq4r8GA6mGc0qTJcNdcgf2llMjU8Bixrf4bVuJfCib4=
+	t=1760524713; cv=none; b=Ptg8OHiE9jYk4ZVs326snBjN0LA90IyuD5NfDU3rqIXG0/RAz8zir6bpeUdkp88JxH5G3X9v0sjSF/0PVrgovq8j0EBRAMrFI0KQsNRpyvWGrxgaY/xg8UqqAZK+QR+xsxtrXDXDUfRAsDSfvGS1DU6gwNAD+7JTvnjPJv4Lx3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760524638; c=relaxed/simple;
-	bh=r9u8zd/jXx3UDg62IxPDc1C3CJ10UatMhGkxyEXIvNI=;
+	s=arc-20240116; t=1760524713; c=relaxed/simple;
+	bh=ed1Tj5xOMkxcDdi/sTr2l56P6/ks2p7tQlRX5Ja2RL8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BGXz9t39pMrsuuB0wRuipJpSlwrGkRegkg3RHuKWjGyZyRtKbFA6YL8NZZtUcpfS92JPC6LiVx7QJjcCW3j5hLsFGPJUaeapkXvSqJ7oqBhi+YVUvFk5cFd1qj1+CRgLKEH2+ueRebfym8jZ5bj79BOnlAqxpvbkUmOL3s6MOmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MMjwsQZ4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmWsXVhg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MMjwsQZ4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmWsXVhg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 In-Reply-To:Content-Type; b=GVtmKTbxvi+l1fjzuVtavMaJSw6MkLFgnI+1K9dvTwFp3yu1w3fAdMI1Xr0phlGZRx13iDOlW1lJHDf1t8SpHL+4ja+RDAmUBdHMHBNsK7QnXe9xhfwT0Ld1650QAdeL+cnJfykTxy5KkhL/P22e3pkAuGiPdjWz/KwyPRsH+7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXdNDnef; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=uXdNDnef; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9383133856;
-	Wed, 15 Oct 2025 10:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760524634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B0AE5211D4;
+	Wed, 15 Oct 2025 10:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1760524709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
-	b=MMjwsQZ4KE/nscd/YIHEYI+aLquW+tOE/yF7EF95Kb9Q6z/ZOFJXsz/87T+jLv1XzVN1aH
-	3Vbg/o9OgsQx1hazAejb7UOyQwHlGEo8s4B3VV5R4/COWX0cJdOxw7ZffYy1tFp9BolojM
-	WJnqEeRUblRTso5I3+MkSrwMkv93R/k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760524634;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
-	b=kmWsXVhg7qvQHQQ8zL9EGCoyIcw+R5ppekmtANLqCecRU58mwBHDfvp/hnMMgZnnZFAbCQ
-	WcKelaB7ZKcjTSDA==
+	bh=ed1Tj5xOMkxcDdi/sTr2l56P6/ks2p7tQlRX5Ja2RL8=;
+	b=uXdNDnefuyL0bQUpRv/PYyvmJLod1pwchR3Y0KxziSmrB72XQJj4ltZqKcTubUio7L2QhW
+	nU1UWnllASp5VlaEp1IYUHe6y4/0a0Vb2wgLxBTQzv6OjJ3rPTEZOcrlPiz7gHHT0iK3YE
+	T5X/oz6S8EhpnZb8SRqE1vywXq7sB9w=
 Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760524634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	dkim=pass header.d=suse.com header.s=susede1 header.b=uXdNDnef
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1760524709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
-	b=MMjwsQZ4KE/nscd/YIHEYI+aLquW+tOE/yF7EF95Kb9Q6z/ZOFJXsz/87T+jLv1XzVN1aH
-	3Vbg/o9OgsQx1hazAejb7UOyQwHlGEo8s4B3VV5R4/COWX0cJdOxw7ZffYy1tFp9BolojM
-	WJnqEeRUblRTso5I3+MkSrwMkv93R/k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760524634;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ch8Txd3Go5tUrNpujwfVCPB6V90KtdNakLBwiq7WOPc=;
-	b=kmWsXVhg7qvQHQQ8zL9EGCoyIcw+R5ppekmtANLqCecRU58mwBHDfvp/hnMMgZnnZFAbCQ
-	WcKelaB7ZKcjTSDA==
+	bh=ed1Tj5xOMkxcDdi/sTr2l56P6/ks2p7tQlRX5Ja2RL8=;
+	b=uXdNDnefuyL0bQUpRv/PYyvmJLod1pwchR3Y0KxziSmrB72XQJj4ltZqKcTubUio7L2QhW
+	nU1UWnllASp5VlaEp1IYUHe6y4/0a0Vb2wgLxBTQzv6OjJ3rPTEZOcrlPiz7gHHT0iK3YE
+	T5X/oz6S8EhpnZb8SRqE1vywXq7sB9w=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7483313A29;
-	Wed, 15 Oct 2025 10:37:14 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36E0513A29;
+	Wed, 15 Oct 2025 10:38:29 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r0ogHFp572jVHgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 10:37:14 +0000
-Message-ID: <6194b6ab-6b43-468d-ba78-a95594c48798@suse.cz>
-Date: Wed, 15 Oct 2025 12:37:14 +0200
+	id b5mxC6V572jKHwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Wed, 15 Oct 2025 10:38:29 +0000
+Message-ID: <d897be07-ed59-4538-aceb-53c6512aeccf@suse.com>
+Date: Wed, 15 Oct 2025 12:38:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,224 +74,210 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] slab: Add check for memcg_data != OBJEXTS_ALLOC_FAIL
- in folio_memcg_kmem
+Subject: Re: [RFC PATCH 34/56] x86/alternative: Save old bytes for
+ alternatives
+To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Graf <graf@amazon.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-35-david.kaplan@amd.com>
 Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, Hao Ge <hao.ge@linux.dev>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-References: <20251014152751.499376-1-hao.ge@linux.dev>
- <CAJuCfpGBxUmvWoe2xv2-bsF+TY4fK-m1-Z_E3OcyTiSYz5KeAA@mail.gmail.com>
- <aO9okBEZiA4pCNku@hyeyoo> <c07838ca-4e6e-4837-b99f-09fd44c7801c@suse.cz>
- <aO93GHNR_32-Pmom@hyeyoo>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aO93GHNR_32-Pmom@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20251013143444.3999-35-david.kaplan@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------0JRY2LMFWg0KCMfMIUyRufB5"
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B0AE5211D4
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.41 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MIME_BASE64_TEXT(0.10)[];
+	MX_GOOD(-0.01)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SUBJECT_HAS_EXCLAIM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid]
+X-Spam-Score: -5.41
 
-On 10/15/25 12:27, Harry Yoo wrote:
-> On Wed, Oct 15, 2025 at 11:54:18AM +0200, Vlastimil Babka wrote:
->> On 10/15/25 11:25, Harry Yoo wrote:
->> > On Tue, Oct 14, 2025 at 09:12:43AM -0700, Suren Baghdasaryan wrote:
->> >> On Tue, Oct 14, 2025 at 8:28 AM Hao Ge <hao.ge@linux.dev> wrote:
->> >> >
->> >> > From: Hao Ge <gehao@kylinos.cn>
->> >> >
->> >> > Since OBJEXTS_ALLOC_FAIL and MEMCG_DATA_OBJEXTS currently share
->> >> > the same bit position, we cannot determine whether memcg_data still
->> >> > points to the slabobj_ext vector simply by checking
->> >> > folio->memcg_data & MEMCG_DATA_OBJEXTS.
->> >> >
->> >> > If obj_exts allocation failed, slab->obj_exts is set to OBJEXTS_ALLOC_FAIL,
->> >> > and during the release of the associated folio, the BUG check is triggered
->> >> > because it was mistakenly assumed that a valid folio->memcg_data
->> >> > was not cleared before freeing the folio.
->> > 
->> > nit: yesterday I was confused that this is sanity checks in buddy complaining
->> > folio->memcg_data not being cleared, but it's actually folio_memcg_kmem()
->> > complaining that MEMCG_OBJEXTS_DATA flag is set on non-slab folios (in
->> > free_pages_prepare(), if PageMemcgKmem(page) -> __memcg_kmem_uncharge_page()))
->> > So the paragraph above should be updated?
->> > 
->> > And as a side question, we clear slab->obj_exts when freeing obj_ext array,
->> > but don't clear OBJEXTS_ALLOC_FAIL when freeing a slab? That's not good.
->> 
->> Hm great point. We should rather make sure it's cleared always, instead of
->> adjusting the debugging check, which shouldn't be then necessary, right?
-> 
-> Yeah folio_memcg_kmem() isn't supposed to be called on slabs anyway
-> (it's not a slab at the time we free it to buddy), so we don't have to
-> adjust the debug check.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------0JRY2LMFWg0KCMfMIUyRufB5
+Content-Type: multipart/mixed; boundary="------------Buzr47q6zZZzUd3WYeBnF0UZ";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Graf <graf@amazon.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-kernel@vger.kernel.org
+Message-ID: <d897be07-ed59-4538-aceb-53c6512aeccf@suse.com>
+Subject: Re: [RFC PATCH 34/56] x86/alternative: Save old bytes for
+ alternatives
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-35-david.kaplan@amd.com>
+In-Reply-To: <20251013143444.3999-35-david.kaplan@amd.com>
 
-Great. Hao Ge, can you please send v4 that instead of adjusting the
-VM_BUG_ON modifies free_slab_obj_exts() to always clear slab->obj_exts? Thanks!
+--------------Buzr47q6zZZzUd3WYeBnF0UZ
+Content-Type: multipart/mixed; boundary="------------iY2s1Una2oR3MfhFA7S8sMm7"
 
->> >> > So let's check for memcg_data != OBJEXTS_ALLOC_FAIL in folio_memcg_kmem.
->> >> >
->> >> > Fixes: 7612833192d5 ("slab: Reuse first bit for OBJEXTS_ALLOC_FAIL")
->> >> > Suggested-by: Harry Yoo <harry.yoo@oracle.com>
->> >> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
->> >> 
->> >> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
->> >>
->> >> nit: I think it would be helpful if the changelog explained why we
->> >> need the additional check. We can have the same bit set in two
->> >> different situations:
->> >> 1. object extension vector allocation failure;
->> >> 2. memcg_data pointing to a valid mem_cgroup.
->> >> To distinguish between them, we need to check not only the bit itself
->> >> but also the rest of this field. If the rest is NULL, we have case 1,
->> >> otherwise case 2.
->> > 
->> > Agreed.
->> > 
->> > In general LGTM,
->> > Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
->> > 
->> > By the way, maybe it'd be nice to introduce a new helper function that
->> > properly checks MEMCG_DATA_OBJEXTS flag.
->> 
->> I thought so too at first...
->> 
->> >> ~/slab (slab/for-next-fixes)> git grep -n MEMCG_DATA_OBJEXTS
->> >> include/linux/memcontrol.h:337:	MEMCG_DATA_OBJEXTS = (1UL << 0),
->> >> include/linux/memcontrol.h:344:#define __OBJEXTS_ALLOC_FAIL	MEMCG_DATA_OBJEXTS
->> >> include/linux/memcontrol.h:358:	 * MEMCG_DATA_OBJEXTS.
->> > 
->> >> include/linux/memcontrol.h:400:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
->> >> include/linux/memcontrol.h:421:	VM_BUG_ON_FOLIO(memcg_data & MEMCG_DATA_OBJEXTS, folio);
->> > 
->> > these two,
->> > 
->> >> include/linux/memcontrol.h:492:	if (memcg_data & MEMCG_DATA_OBJEXTS)
->> > 
->> > this,
->> > 
->> >> include/linux/memcontrol.h:538:			(folio->memcg_data & MEMCG_DATA_OBJEXTS),
->> >> include/linux/memcontrol.h:1491: * if MEMCG_DATA_OBJEXTS is set.
->> >> mm/kfence/core.c:624:				 MEMCG_DATA_OBJEXTS;
->> > 
->> >> mm/page_owner.c:513:	if (memcg_data & MEMCG_DATA_OBJEXTS)
->> > 
->> > this,
->> > 
->> >> mm/slab.h:541:	 * MEMCG_DATA_OBJEXTS bit set or be equal to OBJEXTS_ALLOC_FAIL.
->> >> mm/slab.h:543:	VM_BUG_ON_PAGE(obj_exts && !(obj_exts & MEMCG_DATA_OBJEXTS) &&
->> >> mm/slub.c:2137:	new_exts |= MEMCG_DATA_OBJEXTS;
->> >> tools/mm/show_page_info.py:55:        MEMCG_DATA_OBJEXTS = prog.constant("MEMCG_DATA_OBJEXTS").value_()
->> > 
->> >> tools/mm/show_page_info.py:59:        if memcg_data & MEMCG_DATA_OBJEXTS:
->> > 
->> > and this do not look good.
->> > 
->> > I mean technically they are fine since OBJEXTS_ALLOC_FAIL is set on
->> > slabs only, but that's just a coincidence.
->> 
->> And checked the the other debugging checks too. But then thought it's better
->> that if these are not expected to see slabs, then they should not be
->> adjusted. I don't see it as a coincidence but as intention to keep it slab
->> specific. It will be also more future proof for the upcoming separation of
->> struct slab from struct page.
-> 
-> Then we're intentionally using (folio->memcg_data & MEMCG_DATA_OBJEXTS) check
-> as a way to determine whether the folio is a slab (either slabobj_ext array
-> allocation succeeded or failed).
-> 
-> That makes sense to me!
-> 
->> >> > ---
->> >> > v3: Simplify the solution, per Harry's suggestion in the v1 comments
->> >> >     Add Suggested-by: Harry Yoo <harry.yoo@oracle.com>
->> >> > ---
->> >> >  include/linux/memcontrol.h | 4 +++-
->> >> >  1 file changed, 3 insertions(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
->> >> > index 873e510d6f8d..7ed15f858dc4 100644
->> >> > --- a/include/linux/memcontrol.h
->> >> > +++ b/include/linux/memcontrol.h
->> >> > @@ -534,7 +534,9 @@ static inline struct mem_cgroup *get_mem_cgroup_from_objcg(struct obj_cgroup *ob
->> >> >  static inline bool folio_memcg_kmem(struct folio *folio)
->> >> >  {
->> >> >         VM_BUG_ON_PGFLAGS(PageTail(&folio->page), &folio->page);
->> >> > -       VM_BUG_ON_FOLIO(folio->memcg_data & MEMCG_DATA_OBJEXTS, folio);
->> >> > +       VM_BUG_ON_FOLIO((folio->memcg_data != OBJEXTS_ALLOC_FAIL) &&
->> >> > +                       (folio->memcg_data & MEMCG_DATA_OBJEXTS),
->> >> > +                       folio);
->> >> >         return folio->memcg_data & MEMCG_DATA_KMEM;
->> >> >  }
->> >> >
->> >> > --
->> >> > 2.25.1
->> > 
->> 
-> 
+--------------iY2s1Una2oR3MfhFA7S8sMm7
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
+T24gMTMuMTAuMjUgMTY6MzQsIERhdmlkIEthcGxhbiB3cm90ZToNCj4gU2F2ZSB0aGUgZXhp
+c3RpbmcgaW5zdHJ1Y3Rpb24gYnl0ZXMgYXQgZWFjaCBhbHRlcm5hdGl2ZSBzaXRlIHdoZW4g
+cGF0Y2hpbmcuDQo+IFRoaXMgaXMgb25seSBkb25lIHRoZSBmaXJzdCB0aW1lLCBhbmQgdGhl
+c2Ugd2lsbCBiZSB1c2VkIGxhdGVyIHRvIGhlbHANCj4gcmVzdG9yZSB0aGUgY29kZSBiYWNr
+IHRvIGl0cyBvcmlnaW5hbCBmb3JtLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRGF2aWQgS2Fw
+bGFuIDxkYXZpZC5rYXBsYW5AYW1kLmNvbT4NCg0KSW5zdGVhZCBvZiBzYXZpbmcgdGhlIG9y
+aWdpbmFsIGluc3RydWN0aW9ucyBhdCBydW50aW1lLCB3aHkgZG9uJ3QgeW91DQpleHBhbmQg
+c3RydWN0IGFsdF9pbnN0ciB0byBoYXZlIGFuIGFkZGl0aW9uYWwgb2Zmc2V0IHRvIGEgc2F2
+ZWQgY29weQ0Kb2YgdGhlIG9yaWdpbmFsIGluc3RydWN0aW9uLCBsb2NhdGVkIGluIC5hbHRp
+bnN0cl9yZXBsYWNlbWVudD8NCg0KVGhlIG5ldyBmaWVsZCBzaG91bGQgYmUgZ3VhcmRlZCB3
+aXRoICNpZmRlZiBDT05GSUdfRFlOQU1JQ19NSVRJR0FUSU9OUywNCm9mIGNvdXJzZSwgbGlr
+ZSB0aGUgYWRkZWQgaGFuZGxpbmcgaW4gdGhlIEFMVEVSTkFUSVZFKCkgbWFjcm9zLg0KDQoN
+Ckp1ZXJnZW4NCg==
+--------------iY2s1Una2oR3MfhFA7S8sMm7
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------iY2s1Una2oR3MfhFA7S8sMm7--
+
+--------------Buzr47q6zZZzUd3WYeBnF0UZ--
+
+--------------0JRY2LMFWg0KCMfMIUyRufB5
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjveaQFAwAAAAAACgkQsN6d1ii/Ey+I
+mAf/S6foeD70VVi3S9K63WW+KPsjDw2RaYMZ9NspnXtGRvJKdVhp72Hgc/JI7gSawlKFIAs/by/9
+H1zuA3dhTcTDuzRrQck1ocwDmdCsOsS7IOuyDooHBj4H5czT4emxNzz/mnDN2PeaLs/iOxX0yEsf
+P5rINv3UJCKJJVlphq8WBFfvzrsKBdx3XR5mPKm70lFLyGjjpU8+Kx4IJ2NA9b9awZQG7lT/BlAO
+bhT/JfoiVqZoErXqTaGO82W56Db7uobVfDLO1CMKA5G6iuJ4CALOrHEKVOrMqkUVDXPe9/UNtPNj
+yf9TmcvrTE/nugxjdb5YzNZw0TieLCJLUgJZ2n3lSw==
+=0N+M
+-----END PGP SIGNATURE-----
+
+--------------0JRY2LMFWg0KCMfMIUyRufB5--
 
