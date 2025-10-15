@@ -1,188 +1,194 @@
-Return-Path: <linux-kernel+bounces-854457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB1DBDE6F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:17:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11E0BDE70A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4222519C3FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B819E3B7028
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85CF326D64;
-	Wed, 15 Oct 2025 12:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B753C326D67;
+	Wed, 15 Oct 2025 12:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lh8Y5SDd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8lDNOc0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AB623A99E
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 12:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E5D23A99E;
+	Wed, 15 Oct 2025 12:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760530621; cv=none; b=C14eJZECIPLveGxasB4Foy0K/naFKS02EHnuCWwV+831pfrx1NeV6Mzn0CjChDyTQ8T5maCIL2LBPFfsIKjZWcYIMgJizeok7gHv3VRrRScgvCUoXwZ4HWq9m8a21+fJMmYfahksr9KBXvojLxa/HgvrREF8hcNDhWfnwSbeiWE=
+	t=1760530661; cv=none; b=OGZLegPJQgv7ZlcObusMJgOKFm6cWG20UbvKjjVaMr4uT4ChsgfwnLHuv05/3t5GOCHqwQ5CvxBs1bSmVm8E2SXAaVLB2h7GbWvvuqIeuFYlTfYc98OqzG8G8Bfy8QguwxG6ZCrvGDlN+f7r+T6NKE7Alzf1OMvTOoa0gbtGaDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760530621; c=relaxed/simple;
-	bh=xexL53J9fX4OtVKPoRtIJOORhhJeA0n8xbPhWx9Ni70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gmC+F2D8pd31BPWcXBFqyhmq8ipaJxixPQlURTPKJrhATM1iK0UXpj/dt9h/nLzFNBXOnte01xfIcehURCTmepmSd8bIyaiXLZqiKKrxDNrzvwB+ZHAs19Rca6RBuZg5quVbBk6yz05tVx2NomINLJONF8gMs9n3Fz9ATqyQa+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lh8Y5SDd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760530618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SmdyKylOCiMWsvGvR0pe6Xd5Vwb++Tytv/QZyA45ONk=;
-	b=Lh8Y5SDdIsDqzdZexGjtYCkhTk0+3cLT1orlvwmtTRgmtQLAwnXJ/RWtv/DZqt9H1airJL
-	Ldn7R1COYkimIEP91vJDBRMuQwX3TtDhy2Z7Bk1X6NyfN985XMxSonRYJM2KlVCABKqLcG
-	4unAbfvUNi25NMWvswP6T7p2qVd6Ors=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-530-sI5on_ZmN0yEJyDTX5qqzg-1; Wed, 15 Oct 2025 08:16:57 -0400
-X-MC-Unique: sI5on_ZmN0yEJyDTX5qqzg-1
-X-Mimecast-MFC-AGG-ID: sI5on_ZmN0yEJyDTX5qqzg_1760530616
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3efe4fcc9ccso5351385f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 05:16:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760530616; x=1761135416;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SmdyKylOCiMWsvGvR0pe6Xd5Vwb++Tytv/QZyA45ONk=;
-        b=wlHmYW+fDKl3wLflgo+Jm7cIzm5FJuo7WbWiqg7Kz1+8tANjSIRqYRUJ6POHOnOOmY
-         0EWTuC8wXCMTPsS8N3HPUTMDdGxKCrGf7lO9AmsdYi720iDzw8/HaOk8W/tLaWS1GxAf
-         7hN/7bg4EaZUR6uiTGf0XAMJ0XqADQLqcjqBWWmHYgfecYXjaQendOs5Eyg6oaUV3GQp
-         +2PYYEBLsDwMJTzMNAc9guHBhOCxpiWpMO02bD5IVj+HJCaFgVz5RlykMZe2J4T973My
-         tmxPLmPVd9ewmMNi5KmS7aUVo3kMJFC10zE/D3NfjfavJFQ8ErVaR0Mfjiy1grLD3Yjb
-         tmJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNUUytdGbyuaqp88qKrkAjrfHSHAqlH5AYRZG6+vYZD4EcYqEpaynLSD+Pc9/VNlFehaUEUEUetEfZyTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTIRo6aW0yHxLwDfPQc6RpUKLezjKyEWY2X6+IKKBz3lL6wCE1
-	F0f7Xad/H/OwDizpKgzTWKhyqa79AqXqQQRwaD04l0WDiPQy58W8y5lUnv72opEr2ovuk3182NL
-	F4yuMs0h5NfOb2L34oF2/Z5BOU6+oE0bXjGxQSb3J0kXWWTb1TzbgDJYVqrApQI6O9g==
-X-Gm-Gg: ASbGncuw66+6nK5NXmOno+ertQHFwVFxf0t4BIULFkzCMSmlRP6ZnJRMn9HVU7KKpdN
-	poeWCzonuZe3AqcblKyIVF6oH98wpRHZ8TJ9PblMIRDSkX0rkRKaW/Jn3iWeam5kxtG1ULPCTQo
-	4iEwhGup+0O9DQ2OY6hMlpITSRtTXjadOovXEY/LP2M3T+MUzG9ZDDQYMle8NIcL+tYKTDjCNzV
-	qE9Vyg5SdbBlTP5etw9NSPbt3I5ZTOK4qa7AljeqFHZzDmSaue6ga4l+dHiSPX77LFzTsfCQ0Rf
-	DXl4pzK77xfNzyH1AhtTcrHkOcAQSuN5MpR1YVjOrZdzFwRtY6Du9gL4DKHE5Bo=
-X-Received: by 2002:a05:6000:3101:b0:3ff:d5c5:6b01 with SMTP id ffacd0b85a97d-4266e7bf0c2mr19302334f8f.19.1760530615704;
-        Wed, 15 Oct 2025 05:16:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHq6JiR82m9bDrKg8Wop7vTO6rx81ModfpoM4Z+5IMKNQIQwLb7JjpU9QbP1EvGWm7Gd0fGdQ==
-X-Received: by 2002:a05:6000:3101:b0:3ff:d5c5:6b01 with SMTP id ffacd0b85a97d-4266e7bf0c2mr19302294f8f.19.1760530615229;
-        Wed, 15 Oct 2025 05:16:55 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cfe4esm27898783f8f.26.2025.10.15.05.16.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 05:16:54 -0700 (PDT)
-Message-ID: <f807f3bf-a05d-4e0f-af4c-bb0167dde51c@redhat.com>
-Date: Wed, 15 Oct 2025 14:16:53 +0200
+	s=arc-20240116; t=1760530661; c=relaxed/simple;
+	bh=4dj1pZ6/tkmCuLONgrISudEw+q6AJznQjWAEkKNElIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwOL4lCHrzysR2sLMCATXdzsaZzfF3BsAbRuW7k/paTNdjmop6u4bUUxb8FihxbPzNRs1wpgBjYo29EwwhPcg4R3sWSxv0UxkZftMVyk7NmhuDR3FJJV09WgOcZfOt6hsPW9QhWQ5eC9msQ/2LUlBa/B9Bw33gYHuIUCMfFTk9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8lDNOc0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 902FFC4CEF8;
+	Wed, 15 Oct 2025 12:17:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760530660;
+	bh=4dj1pZ6/tkmCuLONgrISudEw+q6AJznQjWAEkKNElIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f8lDNOc0OeNbG8ocnB2PZFMo+hN3z3hiUHGZJeLH+9i5EhN4BjlN8aIGqIYngwYAK
+	 on22xFQLC/JMXXiJLl/ZO4w9+oqmPCV7cNkNGsr9Pk6pG+xi89Dda/PlxPqK3G5MqJ
+	 l4EEt13MCuosPRziMtwFQjNUPJUYbWKlkoUuFqMvLPXDw88epRZbAR+HmQfDtHBfR2
+	 ThJFdtm5vXp7qB0GIiWHw9XqyVF+cqBLUeLLnz8neI7Pd/TX/kzSVaJKodYYC5sq1z
+	 0UmDGPCqzXLw/vAVozyj2/W0dSDdcSas0OR1ppDnjimXzokF+WCMyiyz9arjYpHIVG
+	 D5qcV+MxguYAg==
+Date: Wed, 15 Oct 2025 14:17:33 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	manivannan.sadhasivam@oss.qualcomm.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev,
+	FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <aO-Q3QsxPBXbFieG@ryzen>
+References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
+ <20251014184905.GA896847@bhelgaas>
+ <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
+ <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+ <7ugvxl3g5szxhc5ebxnlfllp46lhprjvcg5xp75mobsa44c6jv@h2j3dvm5a4lq>
+ <a9ca7843-b780-45aa-9f62-3f443ae06eee@rock-chips.com>
+ <aO9tWjgHnkATroNa@ryzen>
+ <ud72uxkobylkwy5q5gtgoyzf24ewm7mveszfxr3o7tortwrvw5@kc3pfjr3dtaj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: call back alloc_pages_bulk_list since it is
- useful
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>,
- Mel Gorman <mgorman@techsingularity.net>, Vlastimil Babka <vbabka@suse.cz>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T . J . Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>,
- steve.kang@unisoc.com
-References: <20251014083230.1181072-1-zhaoyang.huang@unisoc.com>
- <20251014083230.1181072-2-zhaoyang.huang@unisoc.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251014083230.1181072-2-zhaoyang.huang@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ud72uxkobylkwy5q5gtgoyzf24ewm7mveszfxr3o7tortwrvw5@kc3pfjr3dtaj>
 
-On 14.10.25 10:32, zhaoyang.huang wrote:
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-
-Probably the subject should be "mm: reintroduce alloc_pages_bulk_list()"
-
+On Wed, Oct 15, 2025 at 04:03:53PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Oct 15, 2025 at 11:46:02AM +0200, Niklas Cassel wrote:
+> > Hello Shawn,
+> > 
+> > On Wed, Oct 15, 2025 at 05:11:39PM +0800, Shawn Lin wrote:
+> > > > 
+> > > > Thanks! Could you please try the below diff with f3ac2ff14834 applied?
+> > > > 
+> > > > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > > > index 214ed060ca1b..0069d06c282d 100644
+> > > > --- a/drivers/pci/quirks.c
+> > > > +++ b/drivers/pci/quirks.c
+> > > > @@ -2525,6 +2525,15 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+> > > >    */
+> > > >   DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+> > > > 
+> > > > +
+> > > > +static void quirk_disable_aspm_all(struct pci_dev *dev)
+> > > > +{
+> > > > +       pci_info(dev, "Disabling ASPM\n");
+> > > > +       pci_disable_link_state(dev, PCIE_LINK_STATE_ALL);
+> > > > +}
+> > > > +
+> > > > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ROCKCHIP, 0x3588, quirk_disable_aspm_all);
+> > > 
+> > > That's not true from my POV. Rockchip platform supports all ASPM policy
+> > > after mass production verification. I also verified current upstream
+> > > code this morning with RK3588-EVB and can check L0s/L1/L1ss work fine.
+> > > 
+> > > The log and lspci output could be found here:
+> > > https://pastebin.com/qizeYED7
+> > > 
+> > > Moreover, I disscussed this issue with FUKAUMI today off-list and his
+> > > board seems to work when only disable L1ss by patching:
+> > > 
+> > > --- a/drivers/pci/pcie/aspm.c
+> > > +++ b/drivers/pci/pcie/aspm.c
+> > > @@ -813,7 +813,7 @@ static void pcie_aspm_override_default_link_state(struct
+> > > pcie_link_state *link)
+> > > 
+> > >         /* For devicetree platforms, enable all ASPM states by default */
+> > >         if (of_have_populated_dt()) {
+> > > -               link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> > > +               link->aspm_default = PCIE_LINK_STATE_L0S |
+> > > PCIE_LINK_STATE_L1;
+> > >                 override = link->aspm_default & ~link->aspm_enabled;
+> > >                 if (override)
+> > >                         pci_info(pdev, "ASPM: DT platform,
+> > > 
+> > > 
+> > > So, is there a proper way to just disable this feature for spec boards
+> > > instead of this Soc?
+> > 
+> > This fix seems do the trick, without needing to patch common code (aspm.c):
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > index 3e2752c7dd09..f5e1aaa97719 100644
+> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > @@ -200,6 +200,19 @@ static bool rockchip_pcie_link_up(struct dw_pcie *pci)
+> >  	return FIELD_GET(PCIE_LINKUP_MASK, val) == PCIE_LINKUP;
+> >  }
+> >  
+> > +static void rockchip_pcie_disable_l1sub(struct dw_pcie *pci)
+> > +{
+> > +	u32 cap, l1subcap;
+> > +
+> > +	cap = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_L1SS);
+> > +	if (cap) {
+> > +		l1subcap = dw_pcie_readl_dbi(pci, cap + PCI_L1SS_CAP);
+> > +		l1subcap &= ~(PCI_L1SS_CAP_ASPM_L1_1 | PCI_L1SS_CAP_ASPM_L1_2 | PCI_L1SS_CAP_L1_PM_SS);
+> > +		dw_pcie_writel_dbi(pci, cap + PCI_L1SS_CAP, l1subcap);
+> > +		l1subcap = dw_pcie_readl_dbi(pci, cap + PCI_L1SS_CAP);
+> > +	}
+> > +}
+> > +
+> >  static void rockchip_pcie_enable_l0s(struct dw_pcie *pci)
+> >  {
+> >  	u32 cap, lnkcap;
+> > @@ -264,6 +277,7 @@ static int rockchip_pcie_host_init(struct dw_pcie_rp *pp)
+> >  	irq_set_chained_handler_and_data(irq, rockchip_pcie_intx_handler,
+> >  					rockchip);
+> >  
+> > +	rockchip_pcie_disable_l1sub(pci);
+> >  	rockchip_pcie_enable_l0s(pci);
+> >  
+> >  	return 0;
+> > @@ -301,6 +315,7 @@ static void rockchip_pcie_ep_init(struct dw_pcie_ep *ep)
+> >  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> >  	enum pci_barno bar;
+> >  
+> > +	rockchip_pcie_disable_l1sub(pci);
+> >  	rockchip_pcie_enable_l0s(pci);
+> >  	rockchip_pcie_ep_hide_broken_ats_cap_rk3588(ep);
+> > 
 > 
-> commit c8b979530f27 ("mm: alloc_pages_bulk_noprof: drop page_list
-> argument") drops alloc_pages_bulk_list. This commit would like to call back
-> it since it is proved to be helpful to the drivers which allocate a bulk of
-> pages(see patch of 2 in this series ).
+> But this patch removes the L1SS CAP for all boards, isn't it?
 
-"Let's reintroduce it so we can us for bulk allocation in the context of 
-XXX next."
+Yes, all boards supported by pcie-dw-rockchip.c, which matches what their
+downstream driver does.
 
-> I do notice that Matthew's comment of the time cost of iterating a list.
-> However, I also observed in our test that the extra page_array's allocation
-> could be more expensive than cpu iteration when direct reclaiming happens
-> when ram is low[1]. IMHO, could we leave the API here to have the users
-> choose between the array or list according to their scenarios.
+(Their downstream driver disables L1 substates for all boards that have
+not defined 'supports-clkreq', and a grep through their downstream tree,
+for all their all their different branches, shows that not a since rockchip
+DTS has this property specified.)
 
-I'd prefer if we avoid reintroducing this interface.
-
-How many pages are you intending to allocate? Wouldn't a smaller array 
-on the stack be sufficient?
+So, let me submit a real patch with the above.
 
 
--- 
-Cheers
-
-David / dhildenb
-
+Kind regards,
+Niklas
 
