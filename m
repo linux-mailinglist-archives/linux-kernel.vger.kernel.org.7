@@ -1,80 +1,87 @@
-Return-Path: <linux-kernel+bounces-854682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3269BDF1AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEEDBDF1BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 16:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72C1C4EC053
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51D371896778
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 14:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB19129B8C2;
-	Wed, 15 Oct 2025 14:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeuEpObN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7048429993E;
+	Wed, 15 Oct 2025 14:38:00 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A741284674;
-	Wed, 15 Oct 2025 14:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2223E14EC73;
+	Wed, 15 Oct 2025 14:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760539014; cv=none; b=qxCbsoyM+bIXwiXA00Z+Ss9Ug3vbqPTGiZlV+N5BfDNBhCf7l0hCIDnRVZcBFt+kYoaCWS649dt8wShQsof6FIqOCB0+8P/jEXL8toQIOHRtmLxoSjRUsDXXU2MUMiwy5EouGd7BcAigF3/pU4cXxs8xJVVMIRG+Cnhl8fO6aWY=
+	t=1760539080; cv=none; b=Kq7yhQVeTPlidkxUs6VA/cSCJBnDfydgLxPPb5o/AXOYqmAk9hfVvsxLZO+yEW4gZVDoB6A8hZeX19k9U73rypadyr5VJXiUouVjb35SCSnvivy2hVznj0W14Y4zfFurkg0vw2nqjmPHh1nUXe/qHweejIJY+um0q0fFuogLzc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760539014; c=relaxed/simple;
-	bh=q3IGuHOuKYj1maeYSdpMggw3+0tCzoglIrAlJxaChrM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hWmXVlAG46uaHk1AN4+Hp3TxjvSL+kh7Rb5QPHYgqjm4reBd+QsAb0qYmb/1DOeH1rGFEA4EYs+NuasTLO/RVLg/eLB0gZpifcnoIbAq7H48cU4LJeQRA5RfAdqMEYXDy3VWgcXD5OMRq9DR3PTDVMvFIEhdt/aDi0l14YMgyig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeuEpObN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A763C4CEFB;
-	Wed, 15 Oct 2025 14:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760539013;
-	bh=q3IGuHOuKYj1maeYSdpMggw3+0tCzoglIrAlJxaChrM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UeuEpObNWodrFe4Tcd1s9U/Sm/Y5TnD+d9mC4iU5oRQWU1NrpE9yleEJA1tMc5CL6
-	 pUXElVnCMOMOlGKSzQMpNP3XatEpCUfiP2n2ZX5ww3zuPxvzkUeCrCkcPK0xHZJm4Y
-	 9pRWmSbBWsOyTGOqDnwjP0uM0xa4h9xTC3IbmXlUtc9seeayfDaeFIO7kXU3y4nv5o
-	 ow/MYtiSFUM4KeP2cqyaqBcLtUbrhqW+BqSkCo0y0D2FeKTrFLIAzUPT8iOrrhHpz6
-	 olpW5FHanTOG2gPbdEI+gtn7bwBfW3zi31TGCzTrLjNJBgU7NkiHO7y33aw/gD0uSF
-	 u7BCek6kMzuZA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org
-Subject: Re: [PATCH v5 1/7] kho: allow to drive kho from within kernel
-In-Reply-To: <20251007033100.836886-2-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Tue, 7 Oct 2025 03:30:54 +0000")
-References: <20251007033100.836886-1-pasha.tatashin@soleen.com>
-	<20251007033100.836886-2-pasha.tatashin@soleen.com>
-Date: Wed, 15 Oct 2025 16:36:50 +0200
-Message-ID: <mafs0ms5sjkot.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760539080; c=relaxed/simple;
+	bh=7+N5SWsjXq7OvvmdSpCwATxCuNTmb8GbyyWKfzzTEsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bzDrqh9vSStA3qpVDYWwk+INd+9sPsY27eTTYPrwPXbNLWwSHXaUbgZkdEGVjxWys3ZKS0Uxmbb5uagXaSxhqyHESZuZpvLZQK/e/jP2InCxyuNb7zkeqgoFdirC3KMm6dUhsbOKUH+DorvS6WzWRd1DvZc5iIVa/RYiBdPyDpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id B7E6A1A0172;
+	Wed, 15 Oct 2025 14:37:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 45CEE6000F;
+	Wed, 15 Oct 2025 14:37:49 +0000 (UTC)
+Date: Wed, 15 Oct 2025 10:37:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: lukas@wunner.de, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
+ ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
+ Jonathan.Cameron@huawei.com, bhelgaas@google.com, tony.luck@intel.com,
+ bp@alien8.de, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ oleg@redhat.com, naveen@kernel.org, davem@davemloft.net,
+ anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org,
+ tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v12 1/3] PCI: trace: Add a generic RAS tracepoint for
+ hotplug event
+Message-ID: <20251015103757.3d6f6cf7@gandalf.local.home>
+In-Reply-To: <b6353617-048a-4e12-a1d4-6d1484619927@linux.alibaba.com>
+References: <20251014123159.57764-1-xueshuai@linux.alibaba.com>
+	<20251014123159.57764-2-xueshuai@linux.alibaba.com>
+	<20251014114029.4c59bb1a@gandalf.local.home>
+	<b6353617-048a-4e12-a1d4-6d1484619927@linux.alibaba.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: fgnor9rjjpcii9s886naip5wzh8wghtr
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 45CEE6000F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/FTVt6E7UMjnFa3gZkkgvObqEHUxcIBNI=
+X-HE-Tag: 1760539069-379651
+X-HE-Meta: U2FsdGVkX18owMZos1tJOGdmmegpdG3PengPH+NiaoyOZSXWF9nvdJ9nseJ2U0CCiy5P2nJ+7GHWsBkHlDQUpV+kst3thccxO61gYx4lN9Ewvz/zCp18HxJaM6JHuNZ+6t/A/QJFd2B6Vq1LkS2jFUKmnJ3dzwI5a6s2mQJ77mKF8+RoQD07QPbuZFuIcaIjXjJgAWiJwWoXDVx4JecuJ5ffNeIsT/mDnwzs3qqfyK69Al/K/5301vqjf35FEAWgvL0P/+S9mJgyuk5FcFwJ33/KiKG+gEhTWH6T/cshRj0rpoFYOuh1d9Th4NeW/+b8+2bFYsfRK1zhJoOax0yOB+XK99utHzLf
 
-On Tue, Oct 07 2025, Pasha Tatashin wrote:
+On Wed, 15 Oct 2025 14:29:07 +0800
+Shuai Xue <xueshuai@linux.alibaba.com> wrote:
 
-> Allow to do finalize and abort from kernel modules, so LUO could
-> drive the KHO sequence via its own state machine.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Hi, Steve,
+> 
+> Thank you for your suggestion about passing the controller directly to
+> the trace event. I investigated this approach, but unfortunately we
+> cannot implement it due to structural limitations in the PCI hotplug
+> subsystem.
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+Ah, that makes sense. Perhaps add a comment about this by the TRACE_EVENT()
+so that I don't recommend this again ;-)
 
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+-- Steve
 
