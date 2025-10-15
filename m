@@ -1,206 +1,133 @@
-Return-Path: <linux-kernel+bounces-854986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBE0BDFE29
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:36:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB450BDFE05
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 19:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBFD3A9F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:33:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CEEB34BAC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 17:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DBD2F99A6;
-	Wed, 15 Oct 2025 17:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6881B2FF66A;
+	Wed, 15 Oct 2025 17:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zQ/N+zK2"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgAQLS7S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C5628BAB9
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6210271454
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760549451; cv=none; b=UDHsBYBmOdVCHY78lWrdr1JK7Tmd9ngwaDTRLGOJGYvNZbFmHnWJmyblu+f8x9J89x1hp6+2ZEHne7dgBpvsOHz/m/+qX42xezzd/F8md4e/Fl5C3afL7FiVSE4nF6l2vlFClFJczSLVN073b353K6obPPNSfhisgHJwfdZe27k=
+	t=1760549547; cv=none; b=MXCqHPgAsxCPiVKKFzY6X1H097VJVZ9HPU/YM3nQSj6J1fI8aO4MgzXEZWV6NHZhzwXGvoAqlw3jCwN2ObjPuWhIv9WlJhFKPB2Lm/05Cy0BY1Sd4HZI112XE077yhbiJ/7hsq0yFPHwh4mwEmWVG69JEa995aXodCd/QoxgUsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760549451; c=relaxed/simple;
-	bh=V0wrARj4KWv4xJSe64DNiDyHKIsl+Venk5aa5zheHW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I3KMCtaB5fut9YZGir+JnziKtCYHVPk1wuohOwjHGXzyzCid4bRvvKhxdwmglVasWfcC8XNxkOcXFqHYn8VQkj3uU7dc7yP2AbNe7SBWumtFmMisiEcr6VGogsVtbDXFwY/C8CWxz2QIfXSnZTkHV1K+dra0ryVie69gRqXNN/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zQ/N+zK2; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso5076587f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760549448; x=1761154248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NDcNZGtS8KzGIECWrjIMP0Q7h9U4tn90v5She1AYbvQ=;
-        b=zQ/N+zK2Xa39coKE3klolHn6CGjH35x+R1sX1v3N0m2J+JTlLAKM9K6TxGuBUPEZwj
-         dQpTZL/tDHtxULoDOEOjf20I3CyQ+L2N7XBViuE1USNVc13SOisIGFi+EMXrJPAHPaiz
-         O1vxvj/VGRB8ZAWEOM7lOoaMsgpc2G2C+O9ezFkLEBv92g4OmV9X8mk5BKBKTg832mvw
-         ozD/2mkfqqZ57XF2DYcgbb+o1EPRlAK3YkJMAlghG9WU4FLsxaWwtomzBmaJb7jiS5YE
-         NWcRwWEjOl2gSlrUidWKROMz4T0Z9Vow9v0An84jKyCy8aB1lWY37ej3ccv1H6d8Gjtd
-         8whA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760549448; x=1761154248;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NDcNZGtS8KzGIECWrjIMP0Q7h9U4tn90v5She1AYbvQ=;
-        b=A6KvmOPCH8NY1EnK0cnj5SHvuy5o7akm52hB1R33GYTjbAI0bXAWOGLsiGB0OYHmvQ
-         FrCk/Anh2/yW/ZRBpFAJAuXkTGX5ahiF3eHJmRVbJzBFBAiMZAxcuuB+T4hDiuZjrqDk
-         HjRcJs40FH75+KAWuIxTahYRyG+WvkfW7+1ZQuM6sU9E8Ez5Rbqi4nnieunR0dCbi8RD
-         9gaS//VPPirBICWzIaDHYYj2MCJ2zyOJqB/WzRU1+ULLWNptc3gL04UYYWzvQPXuwo9o
-         PUWUCYQQMFQGo/7ZBoH1UvHnzSUnyhD8MoWBSSBlhoqXt62Q+SY4ylchhy9bbFEdUkF0
-         k9pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYFsJMI6YDLsbLhwx13bBPUKNwDdo/rHLqoi3yo8thNxDanWQWByY/aX23POZunXi+JOvWQIfRfyI5IFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD5a6Njih6hfRsFf/wZ/GB0Gk/d13FkrsgSWVdWjpOcrlKuMU2
-	yShcaDVsmKQ30JOXyUjwZFXkQ2sZaDolBrbYSadQKg+D5vnOEyYOlJLErhThTNAa36U=
-X-Gm-Gg: ASbGncvlJiWJdgD/Aw/qzxWIO4+INGFhMmeM7CfA1SB1bWls+Y5lJXv3jnX39yNi5IM
-	lcNisXsuuCU2kVdVBfk+HG9Yx9gDCR046BFFCbXexqObfw9S3zHXbhEm7AI+3TanIn0XVrq0BGq
-	QwOHIRpFMi39shRoEYQImWIMkEwVcIfAVGGeJPZCo6XC8W46uIb+OQaPugLz3+0K1cpp/LbFPN1
-	K5WHBIE4SE6fxsALZO+MsaOwpTlkUK05/iycK8YA1aH2txg+WJn34Uh6iqGX3dqbg5hCXqa9vMF
-	HKMjJhWq8X828QiXiH+T0k+Uhgrd9Vt04v+7m1qeOOrbsa3bGtOQtqTfRzDQBtaK23/5TxAHlJo
-	qzfI7N6+lIaRwQJg55/11r0GpHmXteUvvjMMUzEwc6B+Zln9EpQPNbIVwvVK3PQ==
-X-Google-Smtp-Source: AGHT+IE15Ue4wkQtE4rhbm/mVXaDKMWSJhGFsg8zWWcs9wH28c9LW5s7l8v+up0OURuqO3XiGGFr7Q==
-X-Received: by 2002:a05:6000:4210:b0:3f2:b077:94bc with SMTP id ffacd0b85a97d-42666ac4119mr17087793f8f.4.1760549448027;
-        Wed, 15 Oct 2025 10:30:48 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce589b3dsm30716389f8f.24.2025.10.15.10.30.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 10:30:47 -0700 (PDT)
-Message-ID: <4151e2e4-b7df-4c04-b038-71ff2612ee8d@linaro.org>
-Date: Wed, 15 Oct 2025 18:30:46 +0100
+	s=arc-20240116; t=1760549547; c=relaxed/simple;
+	bh=ypA9Y1XLCJ0JaOsZ9D7arslYmfqek9jmaC0BXfAkFiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fer2SCQjmjNO9ul2spAiY8WXrO+qk0TXUdQxssbCzph2hX48I3odT7uI5dKUyt/18Q2FDb1RswKc7bm264pKeZRPPT9je2UFBCGL3ACMW+33CGzwhKZbBrFcaneHY1HSULv88a+q8y1+1VqA/ladCYQCONATEF2xqSgk13P6WFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgAQLS7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434ADC4CEF9
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 17:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760549547;
+	bh=ypA9Y1XLCJ0JaOsZ9D7arslYmfqek9jmaC0BXfAkFiE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DgAQLS7SRvSCHOQkA1y37IESNgUB5gXrAR3FEYJwcsQvroASfC4Q9zLmdk4clrFjt
+	 sOdq09PUHXECilbvbfmaD1mBzGdECa3s5cv2kFyZIhUT1QkipXZGxOcoEYcgUOsPF/
+	 X6Q4fk1f1A4spJ+uQnlLZS3p0Uekq+lujVjVWlcdssHEr5FINyx6byQP1r7ACo+Uw0
+	 ScqK3xqpS2VfBYytXmd1MJev7QD7o7C1g26P37JuYPOm4Qsj0gSrxRz6QOxUnAvn1T
+	 Ef5p2WPtI68zahFotMdeFmZpUuRH1wNIfU6lGM8ElB1cAkfL+iKQM1VvUA8UoLZ3JN
+	 1yjd8p85/GTdQ==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63994113841so12825788a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:32:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXbkTGx0j2wF6yxm69wFuGnz9Fd4x6XcX+qottNMAfSAkdTQCgtMSnfze+yRpfKyHFAsbVe7lvRXjNhkLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5qqdbtuNfbgZ1zAsNYaYT3nC+JCrokmabXE97JrsxNaERzo0a
+	zYhD4VXpDLbRtXN39o7L7ILKHughFKvX/UkBgiILWpSoft1CGe05mAx9iV7U6Ei2Bbff94yrsOk
+	fO/7dOcAJgMPR+SYjQF1Yh+ANgrKn6w==
+X-Google-Smtp-Source: AGHT+IG7cYHekwqKp7szJI/bodQqDJQE4T7Y750zy6gYe4uNSyV1ofYKb9OXZ8WAaKzn4fGvZbq+sK2JaM6OSojZBLI=
+X-Received: by 2002:a17:907:9625:b0:b2d:830a:8c01 with SMTP id
+ a640c23a62f3a-b50ac4d570emr3206476066b.61.1760549545792; Wed, 15 Oct 2025
+ 10:32:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf tools annotate: fix a crash when annotate the
- same symbol with 's' and 'T'
-To: Tianyou Li <tianyou.li@intel.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Ravi Bangoria
- <ravi.bangoria@amd.com>, wangyang.guo@intel.com, pan.deng@intel.com,
- zhiguo.zhou@intel.com, jiebin.sun@intel.com, thomas.falcon@intel.com,
- dapeng1.mi@intel.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <baea1e93-5e30-404e-8a5d-8b1d20cf8761@linaro.org>
- <20251015172017.2115213-1-tianyou.li@intel.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20251015172017.2115213-1-tianyou.li@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251010183418.2179063-1-Frank.Li@nxp.com> <20251014-flattop-limping-46220a9eda46@spud>
+ <20251014-projector-immovably-59a2a48857cc@spud> <20251014120213.002308f2@kernel.org>
+ <20251014-unclothed-outsource-d0438fbf1b23@spud> <20251014204807.GA1075103-robh@kernel.org>
+ <20251014181302.44537f00@kernel.org> <CAL_Jsq+SSiMCbGvbYcrS1mGUJOakqZF=gZOJ4iC=Y5LbcfTAUQ@mail.gmail.com>
+ <20251015072547.40c38a2f@kernel.org>
+In-Reply-To: <20251015072547.40c38a2f@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 15 Oct 2025 12:32:14 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+wHG_DW1D_=dR6Q_mwyqFAXKGx771PsqjvW+XCRKM3tw@mail.gmail.com>
+X-Gm-Features: AS18NWBcn_X0-kfGnOoFGvu-kGdwMnuyg_-qtR_oFRiq_0F3EMcRBbh-LtvesbE
+Message-ID: <CAL_Jsq+wHG_DW1D_=dR6Q_mwyqFAXKGx771PsqjvW+XCRKM3tw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] dt-bindings: net: dsa: nxp,sja1105: Add optional clock
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Frank Li <Frank.Li@nxp.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 15, 2025 at 9:25=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Wed, 15 Oct 2025 06:53:01 -0500 Rob Herring wrote:
+> > > > And the issue is that both PW projects might get updated and both d=
+on't
+> > > > necessarily want the same state (like this case). So we need to
+> > > > distinguish. Perhaps like one of the following:
+> > > >
+> > > > dt-pw-bot: <state>
+> > > >
+> > > > or
+> > > >
+> > > > pw-bot: <project> <state>
+> > >
+> > > We crossed replies, do you mind
+> > >
+> > >   pw-bot: xyz [project]
+> > >
+> > > ? I like the optional param after required, and the brackets may help
+> > > us disambiguate between optional params if there are more in the futu=
+re.
+> >
+> > That's fine. Though it will be optional for you, but not us? We have
+> > to ignore tags without the project if tags intended for netdev are
+> > continued without the project. Or does no project mean I want to
+> > update every project?
+>
+> Fair :( I imagine your workflow is that patches land in your pw, and
+> once a DT maintainer reviewed them you don't care about them any more?
 
+Not exactly. Often I don't, but for example sometimes I need to apply
+the patch (probably should setup a group tree, but it's enough of an
+exception I haven't.).
 
-On 15/10/2025 6:20 pm, Tianyou Li wrote:
-> When perf report with annotation for a symbol, press 's' and 'T', then exit
-> the annotate browser. Once annotate the same symbol, the annotate browser
-> will crash.
-> 
-> The browser.arch was required to be correctly updated when data type
-> feature was enabled by 'T'. Usually it was initialized by symbol__annotate2
-> function. If a symbol has already been correctly annotated at the first
-> time, it should not call the symbol__annotate2 function again, thus the
-> browser.arch will not get initialized. Then at the second time to show the
-> annotate browser, the data type needs to be displayed but the browser.arch
-> is empty.
-> 
-> Stack trace as below:
-> 
-> Perf: Segmentation fault
-> -------- backtrace --------
->      #0 0x55d365 in ui__signal_backtrace setup.c:0
->      #1 0x7f5ff1a3e930 in __restore_rt libc.so.6[3e930]
->      #2 0x570f08 in arch__is perf[570f08]
->      #3 0x562186 in annotate_get_insn_location perf[562186]
->      #4 0x562626 in __hist_entry__get_data_type annotate.c:0
->      #5 0x56476d in annotation_line__write perf[56476d]
->      #6 0x54e2db in annotate_browser__write annotate.c:0
->      #7 0x54d061 in ui_browser__list_head_refresh perf[54d061]
->      #8 0x54dc9e in annotate_browser__refresh annotate.c:0
->      #9 0x54c03d in __ui_browser__refresh browser.c:0
->      #10 0x54ccf8 in ui_browser__run perf[54ccf8]
->      #11 0x54eb92 in __hist_entry__tui_annotate perf[54eb92]
->      #12 0x552293 in do_annotate hists.c:0
->      #13 0x55941c in evsel__hists_browse hists.c:0
->      #14 0x55b00f in evlist__tui_browse_hists perf[55b00f]
->      #15 0x42ff02 in cmd_report perf[42ff02]
->      #16 0x494008 in run_builtin perf.c:0
->      #17 0x494305 in handle_internal_command perf.c:0
->      #18 0x410547 in main perf[410547]
->      #19 0x7f5ff1a295d0 in __libc_start_call_main libc.so.6[295d0]
->      #20 0x7f5ff1a29680 in __libc_start_main@@GLIBC_2.34 libc.so.6[29680]
->      #21 0x410b75 in _start perf[410b75]
-> 
-> Fixes: 1d4374afd000 ("perf annotate: Add 'T' hot key to toggle data type display")
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-> ---
->   tools/perf/ui/browsers/annotate.c | 3 +++
->   tools/perf/util/annotate.c        | 2 +-
->   tools/perf/util/annotate.h        | 2 ++
->   3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index 8fe699f98542..3b27ef1e8490 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -1161,6 +1161,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->   			if (!annotation__has_source(notes))
->   				ui__warning("Annotation has no source code.");
->   		}
-> +	} else if (evsel__get_arch(evsel, &browser.arch)) {
-> +		ui__error("Couldn't get architecture for event '%s'", evsel->name);
-> +		return -1;
->   	}
+> So perhaps a better bot on your end would be a bot which listens to
+> Ack/Review tags from DT maintainers. When tag is received the patch
+> gets dropped from PW as "Handled Elsewhere", and patch id (or whatever
+> that patch hash thing is called) gets recorded to automatically discard
+> pure reposts.
 
-symbol_annotate() only fails for negative return values of 
-evsel__get_arch(), but evsel__get_arch() has at least two positive error 
-return values.
+I already have that in place too. Well, kind of, it updates my
+review/ack automatically on subsequent versions, but I currently do a
+separate pass of what Conor and Krzysztof reviewed. Where the pw-bot
+tags are useful is when there are changes requested. I suppose I could
+look for replies from them without acks, but while that usually
+indicates changes are needed, not always. So the pw-bot tag is useful
+to say the other DT maintainers don't need to look at this patch at
+all.
 
-If symbol_annotate() is wrong and it should be != 0 like you have, then 
-maybe symbol_annotate() should be fixed in another commit in the same 
-patchset as this one. Otherwise you have two calls to the same thing 
-right next to each other that handle errors differently.
-
->   
->   	/* Copy necessary information when it's called from perf top */
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index a2e34f149a07..39d6594850f1 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -980,7 +980,7 @@ void symbol__calc_percent(struct symbol *sym, struct evsel *evsel)
->   	annotation__calc_percent(notes, evsel, symbol__size(sym));
->   }
->   
-> -static int evsel__get_arch(struct evsel *evsel, struct arch **parch)
-> +int evsel__get_arch(struct evsel *evsel, struct arch **parch)
->   {
->   	struct perf_env *env = evsel__env(evsel);
->   	const char *arch_name = perf_env__arch(env);
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index eaf6c8aa7f47..d4990bff29a7 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -585,4 +585,6 @@ void debuginfo_cache__delete(void);
->   int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
->   			     int num_aggr, struct evsel *evsel);
->   int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
-> +
-> +int evsel__get_arch(struct evsel *evsel, struct arch **parch);
->   #endif	/* __PERF_ANNOTATE_H */
-
+Rob
 
