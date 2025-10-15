@@ -1,227 +1,168 @@
-Return-Path: <linux-kernel+bounces-854040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FF7BDD69E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9772BBDD6CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E01400FEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934274257E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECA0302147;
-	Wed, 15 Oct 2025 08:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1E82FF144;
+	Wed, 15 Oct 2025 08:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pjlFy6pX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hK0+5+uH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pjlFy6pX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hK0+5+uH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOMkfwOq"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693411F4295
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214C53002D6
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 08:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760516912; cv=none; b=rji2dA839JIxLYjYJe0xJFucEYgVVKVllheB+6FCCz8G68Wdv23BXDU8yM5HBHGUH1aSl8jEViUX4h1VXpeCAf9IuMT2itmfP6W7G3pwVBjFcD9hYeyB4wIk50D/F6pSvsXWwr36AhQFYBIpYd9lu+59cwt/sP4i4WYcZQ6AQkc=
+	t=1760517001; cv=none; b=A3sLd+wLzVRqv881B6jAM7YxFdXkymePB3yJkyUHdwJydW5NmL6LkkglxV8z/7dD7f2PbAHSbwT3x64UsTlp5XeO/ksTxkwNf59AmbwVW3+fCXViLgIasuPJPrWYTy/6ppXL7zQdr5vQIZ9j9G+Dg/bCbBmcb29z3qTUgLnt+Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760516912; c=relaxed/simple;
-	bh=Gjfb+IfhJc7M4yBtisKJV3diOk9SmHxVJeO0O6rUyrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V7ubkuvn6lzNOR5jNnjF9ZAbNI5FcUYv0PFh/L7JQjhxBaRussgRjOu2bFWww7+E2p2xyu/6HgU0BlNndetoKWonoOlf0KSIAwGAFabB9+qdzUVDB/VugvlFs/cF9/lXntvtrECVyW+4FBs0DQv4kddUb4DOEu2xO+cL1IqOvII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pjlFy6pX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hK0+5+uH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pjlFy6pX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hK0+5+uH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EF38033853;
-	Wed, 15 Oct 2025 08:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760516900; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
-	b=pjlFy6pXzOkp3UeHPyDVqKWq9KsbuPMvTIb3bv7vOlOqeLyuV/sXYenidAZvrR4OSD8x+b
-	EPnXyqq9UM2enEebsWDHZYLdU4VHA/dKVqiUuLxuZ59xoyueaUPfiGV3h7yRvmPEhFWnWc
-	VKaGl9/NZUpyNgkUyYdEBnywiugsjH4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760516900;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
-	b=hK0+5+uHgMQWFZQ68x2XXGlC6RvBH5phfiJzz4rdXIv4uOxA1NRVSPSUG9bDcnj5YhJrXs
-	AuipeVS4RGN/izAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pjlFy6pX;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hK0+5+uH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760516900; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
-	b=pjlFy6pXzOkp3UeHPyDVqKWq9KsbuPMvTIb3bv7vOlOqeLyuV/sXYenidAZvrR4OSD8x+b
-	EPnXyqq9UM2enEebsWDHZYLdU4VHA/dKVqiUuLxuZ59xoyueaUPfiGV3h7yRvmPEhFWnWc
-	VKaGl9/NZUpyNgkUyYdEBnywiugsjH4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760516900;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qqzB9JK9+uCij0k20PiNt2gVw+L4NpHiOSzfoVgzyLg=;
-	b=hK0+5+uHgMQWFZQ68x2XXGlC6RvBH5phfiJzz4rdXIv4uOxA1NRVSPSUG9bDcnj5YhJrXs
-	AuipeVS4RGN/izAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D135D13A29;
-	Wed, 15 Oct 2025 08:28:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eSL4LiNb72j4cwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 15 Oct 2025 08:28:19 +0000
-Message-ID: <86eb8759-426f-4460-8bde-1d88e70e266f@suse.cz>
-Date: Wed, 15 Oct 2025 10:28:19 +0200
+	s=arc-20240116; t=1760517001; c=relaxed/simple;
+	bh=+yqUrodFRa2b7YQBwGpfRslfhPNG5SM2SgweyWev2Rw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=q12AqtxZVjlNYeocLud3aNhttXlf/mxKe8B+DmGkIa60Ntj89Sjd00Yod6pjjG3zvKE2N9QqNjgGBhUuphrk3Lkxq9MM7pE6rPJPaZBrQNK0HFUQUMyj8g6petVK3/hebuXRpzb7D3WMrf89nF75MyjcLVWIFvIC4YLsOgA+Upw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOMkfwOq; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781206cce18so733996b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 01:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760516998; x=1761121798; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZfoMcfD/PnjYiytAB/unpKapxhVytLhTH7sRTEu1OF4=;
+        b=QOMkfwOqxYGUpBwZ+pZ94b3F6A5WINiWqeDOuieImcf09ogS/Bzd+FjRyeLcJEzKyv
+         sRAZ79rUMWCe+dz/5d4+rfIckv8RbDVO5PCPg0WcS588LM6XZQ+zMjEZBWguxH2aDgqO
+         dqQ/Yj0l5w3a9P7TIjQ3lCTclk1Dj+4si1DWafNmMgBHSGGMb9YwUeJfDO1QOcOlyZRm
+         Xv4on4dE3Ygbom9J+o4yVVb4G82SQ6561VECkIIezH5sYhbHAxbk/Dju5risPY0aPfWS
+         DeOKue8l8T3caJaxffOX80le7bQT9sYaGupA19jq7zTOhFK6Vvii9/ypN9oKP2/LB+Jq
+         PtVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760516998; x=1761121798;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZfoMcfD/PnjYiytAB/unpKapxhVytLhTH7sRTEu1OF4=;
+        b=XbXedzeRmlEB2z/CL4rJrmZ3dSRAy1dYv/vJlRWV+NI+L4CgPOC3pR/juhy3fJC199
+         stqTVsgPahVXx15HF8bvbNvGto67fN3WgF8brWKdOBRYs86LtG3kCDzjSrjS7KgAcNML
+         hIwb3X8wIDHgkk7LhHSizatz2T7fNoBdDRmVdXG5YJ+raOWIijGXXQ4IokzHsBh03bcC
+         Uuw4jyhkcEN7d9K2qXbZgDj+gp6brDBwTBFUA1cs+oegic4FA7jdjmKYkxscLcuDBAV3
+         GuJo7yuq4Ril8PQt3gBPdDVIsmTTdM2FgJ35GmSam8GklGZgvs4KxUGzsb4f141A5IL9
+         bTdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlbylJFivIxjP/H5ulHgarpK31gCSgtOnOobCGCIpAXMU3zpWkXL0qSj8PLRMzgNNFb9A3Em852BTxCTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBeyTEPnRN9fz1RigtbjJcfpFQzVg5t8bT6+ub3bUop+XGrVVD
+	WfZEMdGRH+zUR9PudKlrZyQTw1qadJpEghp/5u2fnUVQEyiqkMibSPqi
+X-Gm-Gg: ASbGncskKUKdm/f+31PcvqjFnatm6Cjt48SJyOLy9xDk7nRxgYZqwPG4brgNPBhBRPj
+	oTQBecif9BYPVWSXfDLIIUkXZkgCqedk6i0f2tjtrtRrMnwyTgTaDpxXaF8GZ4vqSwc9v8xg7n7
+	DanBRJToILof487XnIrrVrg4BddrOXoGicUqriAXN1QAIqGuKmJ1LfuyFJu3etHi109+MfaaYqy
+	lvFA6RYRtz1B1j9uVwjQQdkaborvvSGIcWHUQLF6UuMjze2rCIUFiCStSoTNw6oRH5AADxz/B+/
+	qwR7z052S1xGNkDqHNaSb98e6Ha3a58FBLnNDANqFxXF2VB8ZMqzOxKDgsP7+AGpyeqk6Itc/Py
+	IPUOP+55LWsOc+hGXZnKJ+uFSeH1+6yOJrH0s0lGR3DXGypRjBNA=
+X-Google-Smtp-Source: AGHT+IGQ19ISwFZr70VQbxykwZJbmjViTX/pcHJHj5+1grEzkpXedUcScZHyl+DUM1XHWZHCDBY4tg==
+X-Received: by 2002:a05:6a00:3e25:b0:77f:2b7d:ee01 with SMTP id d2e1a72fcca58-79396e6902emr34412247b3a.1.1760516998287;
+        Wed, 15 Oct 2025 01:29:58 -0700 (PDT)
+Received: from localhost ([116.177.27.17])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e198bsm17797054b3a.60.2025.10.15.01.29.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Oct 2025 01:29:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mempool: clarify behavior of mempool_alloc_preallocated()
-Content-Language: en-US
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
- <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-References: <20251014-mempool-doc-v1-1-bc9ebf169700@linutronix.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251014-mempool-doc-v1-1-bc9ebf169700@linutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: EF38033853
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+Date: Wed, 15 Oct 2025 16:29:49 +0800
+Message-Id: <DDIR6RWVMIRK.2DQB98BRS180Z@gmail.com>
+Subject: Re: [PATCH v3 2/2] iio: humditiy: hdc3020: fix units for thresholds
+ and hysteresis
+Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Chris Lesiak"
+ <chris.lesiak@licorbio.com>
+To: <dimitri.fedrau@liebherr.com>, "Li peiyu" <579lpy@gmail.com>, "Jonathan
+ Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
+ <andy@kernel.org>, "Dimitri Fedrau" <dima.fedrau@gmail.com>
+From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
+X-Mailer: aerc 0.20.1-4-g02324e9d9cab
+References: <20251013-hdc3020-units-fix-v3-0-b21fab32b882@liebherr.com>
+ <20251013-hdc3020-units-fix-v3-2-b21fab32b882@liebherr.com>
+In-Reply-To: <20251013-hdc3020-units-fix-v3-2-b21fab32b882@liebherr.com>
 
-On 10/14/25 14:17, Thomas Weißschuh wrote:
-> The documentation of that function promises to never sleep.
-> However on PREEMPT_RT a spinlock_t might in fact sleep.
-> 
-> Reword the documentation so users can predict its behavior better.
-> 
-> mempool could also replace spinlock_t with raw_spinlock_t which doesn't
-> sleep even on PREEMPT_RT but that would take away the improved
-> preemptibility of sleeping locks.
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
+On Mon Oct 13, 2025 at 4:12 PM CST, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+>
+> According to the ABI the units after application of scale and offset are
+> milli degree celsius for temperature thresholds and milli percent for
+> relative humidity thresholds. Currently the resulting units are degree
+> celsius for temperature thresholds and hysteresis and percent for relativ=
+e
+> humidity thresholds and hysteresis. Change scale factor to fix this issue=
+.
+>
+> Fixes: 3ad0e7e5f0cb ("iio: humidity: hdc3020: add threshold events suppor=
+t")
+> Reported-by: Chris Lesiak <chris.lesiak@licorbio.com>
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > ---
->  mm/mempool.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/mempool.c b/mm/mempool.c
-> index 1c38e873e546fadcc594f041874eb42774e3df16..cceb09b75ebe35f263a5fb95ff6d400221ecbdd5 100644
-> --- a/mm/mempool.c
-> +++ b/mm/mempool.c
-> @@ -461,8 +461,8 @@ EXPORT_SYMBOL(mempool_alloc_noprof);
->   *             mempool_create().
->   *
->   * This function is similar to mempool_alloc, but it only attempts allocating
-> - * an element from the preallocated elements. It does not sleep and immediately
-> - * returns if no preallocated elements are available.
-> + * an element from the preallocated elements. It only takes a single spinlock_t
-> + * and immediately returns if no preallocated elements are available.
->   *
->   * Return: pointer to the allocated element or %NULL if no elements are
->   * available.
-> 
-> ---
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> change-id: 20251014-mempool-doc-625dd4996110
-> 
-> Best regards,
+>  drivers/iio/humidity/hdc3020.c | 67 ++++++++++++++++++++++++------------=
+------
+>  1 file changed, 39 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/iio/humidity/hdc3020.c b/drivers/iio/humidity/hdc302=
+0.c
+> index 8aa567d9aded9cab461f1f905b6b5ada721ba2f0..5a978801fb09ca49c449028d0=
+46a91e0e67c38ea 100644
+> --- a/drivers/iio/humidity/hdc3020.c
+> +++ b/drivers/iio/humidity/hdc3020.c
+> @@ -72,6 +72,9 @@
+>  #define HDC3020_MAX_TEMP_HYST_MICRO	164748607
+>  #define HDC3020_MAX_HUM_MICRO		99220264
+> =20
+> +/* Divide 65535 from the datasheet by 5 to avoid overflows */
+> +#define HDC3020_THRESH_FRACTION		(65535 / 5)
+> +
+>  struct hdc3020_data {
+>  	struct i2c_client *client;
+>  	struct gpio_desc *reset_gpio;
+> @@ -376,15 +379,17 @@ static int hdc3020_thresh_get_temp(u16 thresh)
+>  	int temp;
+> =20
+>  	/*
+> -	 * Get the temperature threshold from 9 LSBs, shift them to get
+> -	 * the truncated temperature threshold representation and
+> -	 * calculate the threshold according to the formula in the
+> -	 * datasheet. Result is degree celsius scaled by 65535.
+> +	 * Get the temperature threshold from 9 LSBs, shift them to get the
+> +	 * truncated temperature threshold representation and calculate the
+> +	 * threshold according to the explicit formula in the datasheet and
+> +	 * additionally scale by HDC3020_THRESH_FRACTION to avoid precision los=
+s
+> +	 * when calculating threshold and hysteresis values. Result is degree
+> +	 * celsius scaled by HDC3020_THRESH_FRACTION.
 
+I see that Andy asked you to include the formula, and you accepted that
+suggestion, but the formula is still missing. I also think it should be
+added to the comment because that would clarify where this kind of
+magic numbers in the return value come from.
+
+>  	 */
+>  	temp =3D FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
+>  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
+> =20
+> -	return -2949075 + (175 * temp);
+> +	return -589815 + (35 * temp);
+>  }
+
+With that modification,
+
+Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
