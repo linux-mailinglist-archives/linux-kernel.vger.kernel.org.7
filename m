@@ -1,140 +1,192 @@
-Return-Path: <linux-kernel+bounces-855383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7AFBE1116
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 02:04:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F639BE1344
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 03:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC4919C19C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 00:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE6C19C7D25
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059A14A00;
-	Thu, 16 Oct 2025 00:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3521DB377;
+	Thu, 16 Oct 2025 01:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eYHa8a4h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=stackframe.org header.i=@stackframe.org header.b="R0SA9QzM";
+	dkim=pass (2048-bit key) header.d=outbound.mailhop.org header.i=@outbound.mailhop.org header.b="dgT2RosG";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=stackframe.org header.i=@stackframe.org header.b="VSiTHgoC"
+Received: from cockroach.apple.relay.mailchannels.net (cockroach.apple.relay.mailchannels.net [23.83.208.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4317E125B2;
-	Thu, 16 Oct 2025 00:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760573079; cv=none; b=kpyOT06pIxHgADwmU/S56GtP+6HMk5nhccXUcOoHEFux8Y9WcDs5xwfxWcXb7V+ya0Dw31ZEYYnyRWum8BE/+kX3U5LG8RO9hP7gspXlEzPJmh86x4XitATJByt6vpWvvEPCN76eq51NwM9kxpFmNeSYa4YKFZlI9I+dsCDmMoY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760573079; c=relaxed/simple;
-	bh=+JrivgWyUgg+pmx0+52mYBdTXkR4tEzcKUO0ehqXf7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ll0WhjdSOOIWRbyi+NR15letG9q3wO+fSVd21aodkzUkzYf5lRRNnjz0nJ5xoQVyIOf6nkyU7SDcuYq9sAxmWgswMfUVVNRySqpw6vf8dBIEIEUnqY009jclmTiNzgJSjirMknXhMlBIdCqGS1G5nH9vuNMeRLFbLEgLTdpsfEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eYHa8a4h; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760573077; x=1792109077;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+JrivgWyUgg+pmx0+52mYBdTXkR4tEzcKUO0ehqXf7s=;
-  b=eYHa8a4htV2IfciglOX1GGDkSh5aNpu6St+uGz1QietzV5WXdnoVaIUS
-   Bgls4I8moOFTABQbdwfBVcFROJzoW7rrRVzw89Dga6MwVjYh7LNRgD6V5
-   2OeW0H5kJP8NyeSbMT6k2B2hl5fe1gR2tX4tCl6fvaY9yskk7Bj+UNCHB
-   LseQtlIMMwB6zJel08KclgnLqAO7JYykuJFxwWznXdccLSHhdYMx2Gsec
-   XFBIZPVTJ29bZ5Jpyl724QLErwYaBlM1K3V3QID0fVsfcn7MJSVI6sZ7T
-   yOsQDd7w/wNHaJAG0mPaiGDIMHquzrtcYIKPRp35aTW5TT7Pf3ESu9ATt
-   g==;
-X-CSE-ConnectionGUID: OXGn3SAXRJ6Oib8I33VlHw==
-X-CSE-MsgGUID: kInTMiSGREObQR01YggpgQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11583"; a="85377181"
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="85377181"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 17:04:36 -0700
-X-CSE-ConnectionGUID: R752COMtRQqyVd5oHvt9WQ==
-X-CSE-MsgGUID: 3PO6qZFiQTmjq3l7JbpGAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,232,1754982000"; 
-   d="scan'208";a="182097810"
-Received: from unknown (HELO [10.238.2.75]) ([10.238.2.75])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 17:04:29 -0700
-Message-ID: <ea123839-80fd-4555-8da2-adbd060a2082@linux.intel.com>
-Date: Thu, 16 Oct 2025 08:04:26 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7977F35977
+	for <linux-kernel@vger.kernel.org>; Thu, 16 Oct 2025 01:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.208.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760579645; cv=pass; b=NqwLrrp3dW56QK/NM11FIkdqWU/3pO1gfCfHmh8a0M+K/n/VNk3ILBiwNkcGdxARR2FMxCnCdL0ERnzFIurABgQn3hB1RKiR2/DGgThp1iDTTzkdXhE0H1na4V3qV6S0fn+wd/EIMC4OZD5r9zghjf0PjgDddapsDFwYCt/oEus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760579645; c=relaxed/simple;
+	bh=A4FSuQu01mqnGALSftiol8Wdyba6L3ZUVRFMGjKbBfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3Fk3eiCf4XjrON/bSfrin+woj8IIcRC//Ty62T955fGD+Rm3tUjtnELIP0ktck1nHqzkaBwi7NDRLU3E1OfdWSbpZm6lqYZ/lU+rutwbi8rBbq66cdKBRBiTV2CyAbkFXFCbYR59vczJ/Tv1kq0/MJs+GAojY07epK+gK87J28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stackframe.org; spf=pass smtp.mailfrom=stackframe.org; dkim=pass (1024-bit key) header.d=stackframe.org header.i=@stackframe.org header.b=R0SA9QzM; dkim=pass (2048-bit key) header.d=outbound.mailhop.org header.i=@outbound.mailhop.org header.b=dgT2RosG; dkim=pass (2048-bit key) header.d=stackframe.org header.i=@stackframe.org header.b=VSiTHgoC; arc=pass smtp.client-ip=23.83.208.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stackframe.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stackframe.org
+X-Sender-Id: _forwarded-from|130.180.31.158
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 86BF44221C4
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:21:52 +0000 (UTC)
+Received: from outbound2.eu.mailhop.org (trex-green-2.trex.outbound.svc.cluster.local [100.117.100.204])
+	(Authenticated sender: duocircle)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 3FFA9422081
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 21:21:51 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1760563311; a=rsa-sha256;
+	cv=none;
+	b=iPO5WQ0kp+ZT52WbZULDpXkK3m2/ciWWvzDhV3mw78ZFPvhN/I+BTu32lK+bPav5Q9kyuN
+	433dhRPgOddAK9btOsOVZ42hwnLDoaeH+pCgj5CGMKFqg4kyXwvR6bFU9BHL7oIQALHDo+
+	asl+YXz48FxMKCkkz6DN1zpYjRmg8+ZMEsn/8WwbZyhdV7AhUamKip2/U6396lA9RZ4qjH
+	l2I68p2aPjlLIgd8lyRyhetpoH6MKNtIIkMUscy0vhkH6tsTRwiyHFW/5P0QQt84y1djaw
+	RzhFVZvEYMdndNn2Da9Yd3ZUrUFCFVbzrSlx+K/zmVhygKu13LhCbxKI/MBuSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1760563311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
+	bh=WJ5h/bZae62hklU8U6ALTGj+0AtDIY7VGz/ya+XbYwI=;
+	b=r8POOmp8fPhaUw98BA6qJMc+KOjYyfYHl4tIc0aSPE9nxo1OkR1vIyBwNYFZXTSKq7+A/Z
+	ACdJiKmyq/yIfk1lsxAbnv/0Wd5cjd4QZ3YOcH5VUoypuy6xEVV9Qrl1inKf4grLz6lUEq
+	BteZfLD1bkV2WdnGz9yu2VXpS3MUWCN/tUTvMbDXPg+VfOpxFuuFjkQA1gHxJuUPVcsVff
+	iWzi1TsIY2sMUBhROJJ7THMUpGbsyKZv+HNozBq0OlmfCz6xZFedUU74DPaY9eTxaHogY3
+	IDEun9VdRqMSRCeXqG6jgrth3FG+SZ4KTmmgHrIq285+Y5ILHNJOMDnIqGkceA==
+ARC-Authentication-Results: i=1;
+	rspamd-57f765db6d-9lkzz;
+	auth=pass smtp.auth=duocircle smtp.mailfrom=svens@stackframe.org
+X-Sender-Id: _forwarded-from|130.180.31.158
+X-MC-Relay: Forwarding
+X-MailChannels-SenderId: _forwarded-from|130.180.31.158
+X-MailChannels-Auth-Id: duocircle
+X-Callous-Left: 612879b43ebe088a_1760563312052_2646352065
+X-MC-Loop-Signature: 1760563312052:461280091
+X-MC-Ingress-Time: 1760563312048
+Received: from outbound2.eu.mailhop.org (outbound2.eu.mailhop.org
+ [35.157.29.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.117.100.204 (trex/7.1.3);
+	Wed, 15 Oct 2025 21:21:52 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=stackframe.org; s=duo-1634547266507-560c42ae;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 cfbl-address:cfbl-feedback-id:from;
+	bh=WJ5h/bZae62hklU8U6ALTGj+0AtDIY7VGz/ya+XbYwI=;
+	b=R0SA9QzMmbktwE87Ch6y1QBK/v4pVpUAG+Ex+lcQC2HDz3HN9LferPvErh66IpopulmgOQm7oTOn/
+	 ddRrET0pkeK70iEQ1+RFIR+4m0dP3o5HpkhGgO3hzQmUa8nNgQvq4bw4rpYCdkzpFMRe/uVoh+v7Fp
+	 ujqWYOeiqKszU25s=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=outbound.mailhop.org; s=dkim-high;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 cfbl-address:cfbl-feedback-id:from;
+	bh=WJ5h/bZae62hklU8U6ALTGj+0AtDIY7VGz/ya+XbYwI=;
+	b=dgT2RosGcbIBXkdooSwMDvAUatqriMQFYtd0mm/SJrVGASZKL1yvQGM8OQmSXvbZ/xngE4v7Fg1/x
+	 NHjYDwgXrx69Gkt0EpKKbdKqRZmsNiT41T+iooTcBFOZ8GFswJfslzDQZGFOAQpfL95tvgmoqjYR4O
+	 oA1TSv+oHffukuXWt9r1pWIED/d/fjvxBEXiFh9uvBjlQk8k01CiN9LPr5XhAmrqSsyEg62TYb2AKr
+	 /3HDGB+a5tvvSVgNi9yv8Ryq1Z6ftMXWiNxVDKSEd1qehi6jkCF3iEMZa2MOwhiCGnqWy90t8YzHzt
+	 s44v3biaDubVQfVn4yauANUuywP2PCw==
+X-MHO-RoutePath: dG9ta2lzdG5lcm51
+X-MHO-User: f4601854-aa0c-11f0-9de8-eb1d40c36193
+X-Report-Abuse-To: https://support.duocircle.com/support/solutions/articles/5000540958-duocircle-standard-smtp-abuse-information
+X-Mail-Handler: DuoCircle Outbound SMTP
+CFBL-Feedback-ID: f4601854-aa0c-11f0-9de8-eb1d40c36193:7
+CFBL-Address: prvs=03833f0c0f=abuse@outbound.mailhop.org; report=arf
+Received: from mail.duncanthrax.net (mail.duncanthrax.net [130.180.31.158])
+	by outbound2.eu.mailhop.org (Halon) with ESMTPSA
+	id f4601854-aa0c-11f0-9de8-eb1d40c36193;
+	Wed, 15 Oct 2025 21:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=stackframe.org; s=dkim1; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WJ5h/bZae62hklU8U6ALTGj+0AtDIY7VGz/ya+XbYwI=; b=VSiTHgoCkEE72/csWdgkF396Lj
+	snwsJZAh2qBMMrtcvLp6y1GSH79xG0Rs1lDNbOCsimOfn2yk/1ykGVr7GdQRE6PZ2X575nlMfR/27
+	Oa7i47CX4qGhOPRRA+12vLp56yZAmEguvgQSZc1tOPAlOsk0IYHIKy/YwKF/1XGy2pIkEIZOq+nM1
+	O2SKWEI+IXWfNLhOZdoGSUmg1BwWFdDbTn125cN4B+VpJ4AyJ/r9585bN/4N5YXgG67gAvIrMXQ6U
+	zpm0VUdcekGjZOEawRhcSVgIYmzC/+/uPVeqyjZepMda1ROWXCA9zYJweQpIwjWfqhdtiFZzeOB0p
+	U7F3EnGA==;
+Received: from [134.3.94.10] (helo=debian.stackframe.org)
+	by mail.duncanthrax.net with esmtpa (Exim 4.97)
+	(envelope-from <svens@stackframe.org>)
+	id 1v98wL-00000007txx-2YCJ;
+	Wed, 15 Oct 2025 23:21:45 +0200
+From: Sven Schnelle <svens@stackframe.org>
+To: Helge Deller <deller@gmx.de>,
+	John David Anglin <dave.anglin@bell.net>
+Cc: linux-parisc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sven Schnelle <svens@stackframe.org>
+Subject: [PATCH] parisc/entry: set W bit for !compat tasks in syscall_restore_rfi()
+Date: Wed, 15 Oct 2025 23:21:41 +0200
+Message-ID: <20251015212141.289981-1-svens@stackframe.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
- MSRs for mediated vPMUs
-To: Sean Christopherson <seanjc@google.com>
-Cc: Sandipan Das <sandidas@amd.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Kan Liang <kan.liang@linux.intel.com>, Yongwei Ma <yongwei.ma@intel.com>,
- Mingwei Zhang <mizhang@google.com>,
- Xiong Zhang <xiong.y.zhang@linux.intel.com>,
- Sandipan Das <sandipan.das@amd.com>
-References: <20250806195706.1650976-1-seanjc@google.com>
- <20250806195706.1650976-33-seanjc@google.com>
- <f896966e-8925-4b4f-8f0d-f1ae8aa197f7@amd.com> <aN1vfykNs8Dmv_g0@google.com>
- <0276af52-c697-46c3-9db8-9284adb6beee@linux.intel.com>
- <aO_slNn8X1A84sI-@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <aO_slNn8X1A84sI-@google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+When the kernel leaves to userspace via syscall_restore_rfi(), the
+W bit is not set in the new PSW. This doesn't cause any problems
+because there's no 64 bit userspace for parisc. Simple static binaries
+are usually loaded at addresses way below the 32 bit limit so the W bit
+doesn't matter.
 
-On 10/16/2025 2:48 AM, Sean Christopherson wrote:
-> On Thu, Oct 09, 2025, Dapeng Mi wrote:
->> On 10/2/2025 2:14 AM, Sean Christopherson wrote:
->>> On Fri, Sep 26, 2025, Sandipan Das wrote:
->>>> On 8/7/2025 1:26 AM, Sean Christopherson wrote:
->>>>> +	return kvm_need_perf_global_ctrl_intercept(vcpu) ||
->>>>>  	       pmu->counter_bitmask[KVM_PMC_GP] != (BIT_ULL(kvm_host_pmu.bit_width_gp) - 1) ||
->>>>>  	       pmu->counter_bitmask[KVM_PMC_FIXED] != (BIT_ULL(kvm_host_pmu.bit_width_fixed) - 1);
->>>>>  }
->>>> There is a case for AMD processors where the global MSRs are absent in the guest
->>>> but the guest still uses the same number of counters as what is advertised by the
->>>> host capabilities. So RDPMC interception is not necessary for all cases where
->>>> global control is unavailable.o
->>> Hmm, I think Intel would be the same?  Ah, no, because the host will have fixed
->>> counters, but the guest will not.  However, that's not directly related to
->>> kvm_pmu_has_perf_global_ctrl(), so I think this would be correct?
->>>
->>> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
->>> index 4414d070c4f9..4c5b2712ee4c 100644
->>> --- a/arch/x86/kvm/pmu.c
->>> +++ b/arch/x86/kvm/pmu.c
->>> @@ -744,16 +744,13 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
->>>         return 0;
->>>  }
->>>  
->>> -bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu)
->>> +static bool kvm_need_pmc_intercept(struct kvm_vcpu *vcpu)
->> The function name kvm_need_pmc_intercept() seems a little bit misleading
->> and make users think this function is used to check if a certain PMC is
->> intercepted. Maybe we can rename the function to kvm_need_global_intercept().
-> Yeah, I don't love kvm_need_pmc_intercept() either.  But kvm_need_global_intercept()
-> feels too close to kvm_need_perf_global_ctrl_intercept().
->
-> Maybe something like kvm_need_any_pmc_intercept()?
+Fix this by setting the W bit when TIF_32BIT is not set.
 
-It sounds good to me. Thanks.
+Signed-off-by: Sven Schnelle <svens@stackframe.org>
+---
+ arch/parisc/kernel/asm-offsets.c | 2 ++
+ arch/parisc/kernel/entry.S       | 5 ++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/arch/parisc/kernel/asm-offsets.c b/arch/parisc/kernel/asm-offsets.c
+index 9abfe65492c65..3de4b5933b107 100644
+--- a/arch/parisc/kernel/asm-offsets.c
++++ b/arch/parisc/kernel/asm-offsets.c
+@@ -258,6 +258,8 @@ int main(void)
+ 	BLANK();
+ 	DEFINE(TIF_BLOCKSTEP_PA_BIT, 31-TIF_BLOCKSTEP);
+ 	DEFINE(TIF_SINGLESTEP_PA_BIT, 31-TIF_SINGLESTEP);
++	DEFINE(TIF_32BIT_PA_BIT, 31-TIF_32BIT);
++
+ 	BLANK();
+ 	DEFINE(ASM_PMD_SHIFT, PMD_SHIFT);
+ 	DEFINE(ASM_PGDIR_SHIFT, PGDIR_SHIFT);
+diff --git a/arch/parisc/kernel/entry.S b/arch/parisc/kernel/entry.S
+index f4bf61a34701e..36914138f5f88 100644
+--- a/arch/parisc/kernel/entry.S
++++ b/arch/parisc/kernel/entry.S
+@@ -1841,6 +1841,10 @@ syscall_restore_rfi:
+ 	extru,= %r19,TIF_BLOCKSTEP_PA_BIT,1,%r0
+ 	depi	-1,7,1,%r20			   /* T bit */
+ 
++#ifdef CONFIG_64BIT
++	extru,<> %r19,TIF_32BIT_PA_BIT,1,%r0
++	depi	-1,4,1,%r20			   /* W bit */
++#endif
+ 	STREG	%r20,TASK_PT_PSW(%r1)
+ 
+ 	/* Always store space registers, since sr3 can be changed (e.g. fork) */
+@@ -1854,7 +1858,6 @@ syscall_restore_rfi:
+ 	STREG   %r25,TASK_PT_IASQ0(%r1)
+ 	STREG   %r25,TASK_PT_IASQ1(%r1)
+ 
+-	/* XXX W bit??? */
+ 	/* Now if old D bit is clear, it means we didn't save all registers
+ 	 * on syscall entry, so do that now.  This only happens on TRACEME
+ 	 * calls, or if someone attached to us while we were on a syscall.
+-- 
+2.51.0
 
 
