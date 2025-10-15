@@ -1,191 +1,398 @@
-Return-Path: <linux-kernel+bounces-854130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42980BDD9C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:09:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44ABCBDD9DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 11:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598FD5460D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823373BECC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CFE30B525;
-	Wed, 15 Oct 2025 09:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F48630B51C;
+	Wed, 15 Oct 2025 09:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MS0g5JOc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4YHBcf0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1EA3090F7
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 09:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C6A2C235F;
+	Wed, 15 Oct 2025 09:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519311; cv=none; b=AiPldtvdSHartdTJmcjqhEJh7qHd7NAhGyxtTXqt02CAgD35vgEQtNl0SGH3HeTPljB2fJVrL5AFLazRMTXd31SWnFJp/cz0EDLKN51xd0e5ZlMGxCypCaa+ppDTfAk0GKaYsdsONq3F8ZNcF+lSkRr/3CSq5mgmmH3DtsAetvo=
+	t=1760519395; cv=none; b=GLdVwRyZE0j63U7+8i9/qSofRDc+G83w8sCPCdIfOoUrH8Jtvmu1vDVnouQjSesnSf76WLJlorTo+Zim6ztACxaa6zzP2roOBDz2W8o/YIx2QE8iiTnMdlSmWAQnS1vHZtg4nGh7kY3o7gK+KCi5NZvOpO+wfhNfLbh0C2hDgTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519311; c=relaxed/simple;
-	bh=ymYYeOdl7vG2uQXGD7Z8t0AFlMx5IwYyJAUvD80KpeU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QEa4Vnsb9hizLvOGQwRMRhSvpO1F7t3iMUujBKy4lRqcvX38CifVb6pD9sVTEPZpgY5090GAZ7Sbp3NowyLC2oQ7dECeNAY1bx7IKFNWxHiW8UF205yf/I8nt5rBF3A2YtjJRrRfm6GLbevcVt65ZFqZedQ06TZxI7daKUP9yjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MS0g5JOc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760519308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4/qnPEWEdYt8yXr6RF4YLK70UvTplvNuCrjSISCrx+k=;
-	b=MS0g5JOcvztZC3SkhpyFVZidlf8IfcZzJkXhNgjfKzX+NvKHYJ4sVVQebUqnz9VzdQ4yux
-	VFkKD1GX6CBiP+kaErpAdVR9AW02ZSFA/J9ZmVwW221U0qFx2WfItQev9SgXB+o8WwGJi0
-	D5JX5BwnsWGKT4GE9jS9N9hYfTkcSN0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-481-ex0GSh4kOeuO6tcKZrXVzw-1; Wed, 15 Oct 2025 05:08:25 -0400
-X-MC-Unique: ex0GSh4kOeuO6tcKZrXVzw-1
-X-Mimecast-MFC-AGG-ID: ex0GSh4kOeuO6tcKZrXVzw_1760519304
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e3d9bf9e1so43318625e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 02:08:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760519304; x=1761124104;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/qnPEWEdYt8yXr6RF4YLK70UvTplvNuCrjSISCrx+k=;
-        b=ie4XYhH0MbYTDf29CiZbs5cxHuQXtmFmqUTTAtFDKSsP+Z8RQAQPChWx5EOR7DIqa1
-         YvZTsFZZsAiOBcgfrPq1j4ti22s6i7m7Y/v4bb/q7DrCrs/qBIxuTgoacY5v1IIVpFIL
-         tVKDnpKHyJJshKZNd5Cp+LoltAboMXouy79dyIX0HITw31MilHjoN69jRDYHGGX+gtz6
-         b16owGjAYvRW/Y5+DtDI8i2lDo0+44lXXVF0zfZhnWf89A8Qu3qFGC1SjACU78GbDCPN
-         cw/yVBFWHetxq6W9U4AxI0U0apfP/lGnb/nBJAXVCG0XZQjCeVLY4apTGpQaWffMl+NK
-         s1bA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Dm5ek7yqCChbqLusNYIirafh6TgjOhfNqJDn2pXQrukRIj6JGBZgCfJau4dadcBeH8/qJllhNI7yr0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWQF5q+Lfu4l9BtnD0NF8xlK0g8YSbl0Va1lgnLDNtx2HMQxKk
-	fKurcRR7mfLiIDizGbJgYoHoOlJ8FyggcY1FBPaWPW2APz84YUuOP+qDLAExOe5jrEAXnIPLhf0
-	bu2em1plG7t1TAs72pOe/C4szXYBhCRx1d8rc4mfh/uAiuzwC5dKsIS60AjKE81EKiw==
-X-Gm-Gg: ASbGncuIXmEMenREvW6jg43J4/eXsqcOp9w/VDCJBXbtO++qfe/hLNpjLt7+QF9gIo1
-	vyNfrxr43Fj8Sni1xf+YsFepIgVv8lYNoO/iC4Jxqp4qGhFYBddV92i5qhXbVCgglV7HwjNlhNV
-	y0rHr4r9EAGBqTHyLW2zShMM/+lggQeQY0ba6Y1vH6kJK8z6rMfTHGcTb7kQgcDtXhcv11K1/CV
-	jc2okFubgpu8nhSJOSe0qNCkeLI1tHjg5Z/0mdW25smdk0tB3o4u8/2klFZbWD6jIm3RdgLc07G
-	/0ZwFpWqgH9VYtqDjZPIHKxdcSXlS/V5SO5wdU4EjjvSq3RpSWGV4QmbZy0XPT0=
-X-Received: by 2002:a05:600c:c083:b0:46f:b43a:aef0 with SMTP id 5b1f17b1804b1-46fb43aaf30mr104797715e9.41.1760519303754;
-        Wed, 15 Oct 2025 02:08:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHborQb2H9lSN0eaTHrwL4MBFGg6wIu0HbZh/Za6m+vHkY97y/h3fvEJDNWqng4iT1IYdIJpg==
-X-Received: by 2002:a05:600c:c083:b0:46f:b43a:aef0 with SMTP id 5b1f17b1804b1-46fb43aaf30mr104797395e9.41.1760519303343;
-        Wed, 15 Oct 2025 02:08:23 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489accbsm333754525e9.14.2025.10.15.02.08.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Oct 2025 02:08:22 -0700 (PDT)
-Message-ID: <a72ebcaa-2cea-47c1-bd57-f88c8eb417f6@redhat.com>
-Date: Wed, 15 Oct 2025 11:08:21 +0200
+	s=arc-20240116; t=1760519395; c=relaxed/simple;
+	bh=Q2imepIRxy+Aja1u+zpiCtLeIutd0XvIW3gSO3TJT9s=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GVw28lqH3Fa92MwvTO37kSBOr2TfOEFnx7JxSNGy5Rd7CkRswakZ3nTLlmWzL6jjLeBNGpqmBMKXwFw4CJ8MVGBKDiAk5/LHE1ruAESN9LxqYFkd9PU70n5X7p6MZ+syAc4QrKnZv+fih8c4j216u/Muqnk2CWw5oYMfk6TXQK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4YHBcf0; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760519393; x=1792055393;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Q2imepIRxy+Aja1u+zpiCtLeIutd0XvIW3gSO3TJT9s=;
+  b=L4YHBcf00G709QB3zX3U2d3QAQ94/FAO2zD1LYJN1vNO5Osgpj0ADdAE
+   5aqZDWSBHwvE2I20aqCiNtu9BF8+Ei3VET7Wp6jzQojXJBoOchGRc27Fg
+   cxMPJLkLR9ejcDKgvbGwS/zm0vP6WBXee0esl1AKIWSzM4QUQrKTWaxv/
+   eB9hsVsKwT2itMbgQ7PzauRAb0FpVUu+bhZxHDkYaj4y6/gi4SkUjZihV
+   26ESj1rgZ1kqP2QjFco3Y6pKHbtSnu+uwQWXrh4lxFMUuj6H0qOwniaNq
+   qx9DaVeQ1UnOh/0jUAp8oFmV0s8H8dKSRgKudRKYniySJPpWL0vE+kjwR
+   w==;
+X-CSE-ConnectionGUID: HKg1bdNRSlGYSV2Y/WvR8g==
+X-CSE-MsgGUID: /NJeQEQcT46sAAdxsqsJ2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="85307065"
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="85307065"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:09:53 -0700
+X-CSE-ConnectionGUID: 55vFJz8cQj2DJOAfWmUEaQ==
+X-CSE-MsgGUID: Px+iTmhGSH+j5jIFkmZ1pQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,230,1754982000"; 
+   d="scan'208";a="182537776"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.75])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 02:09:50 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 15 Oct 2025 12:09:45 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
+    Derek John Clark <derekjohn.clark@gmail.com>, 
+    =?ISO-8859-15?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>, 
+    Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 5/6] platform/x86: ayaneo-ec: Move Ayaneo devices from
+ oxpec to ayaneo-ec
+In-Reply-To: <20251015084414.1391595-6-lkml@antheas.dev>
+Message-ID: <d25bba2d-c48c-e687-f349-c011f5f9a2a7@linux.intel.com>
+References: <20251015084414.1391595-1-lkml@antheas.dev> <20251015084414.1391595-6-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/khugepaged: fix comment for default scan sleep
- duration
-To: wang lian <lianux.mm@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Andrea Arcangeli <aarcange@redhat.com>, Rik van Riel <riel@redhat.com>,
- Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251015064333.31274-1-lianux.mm@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251015064333.31274-1-lianux.mm@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-90264879-1760519385=:957"
 
-On 15.10.25 08:43, wang lian wrote:
-> The comment for khugepaged_scan_sleep_millisecs incorrectly states
-> the default scan period is 30 seconds. The actual default value in the
-> code is 10000ms (10 seconds).
-> 
-> This patch corrects the comment to match the code, preventing potential
-> confusion. The incorrect comment has existed since the feature was
-> first introduced.
-> 
-> Fixes: ba76149f47d8 ("thp: khugepaged")
-> Signed-off-by: wang lian <lianux.mm@gmail.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-90264879-1760519385=:957
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Wed, 15 Oct 2025, Antheas Kapenekakis wrote:
+
+> Currently, the oxpec driver contains Ayaneo devices. Move them to the
+> new ayaneo-ec driver, which is dedicated to them.
+>=20
+> As this driver supports charge inhibition for Ayaneo, add support for it
+> for the AIR, AIR 1S, AB05-Medoncino, AIR Pro, and Kun, referenced from
+> the out-of-tree ayaneo-platform driver.
+>=20
+> In addition, update the readmes of oxpec to reflect this change.
+>=20
+> Link: https://github.com/ShadowBlip/ayaneo-platform
+> Tested-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 > ---
->   mm/khugepaged.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index e947b96e1443..449f983b8891 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -67,7 +67,7 @@ enum scan_result {
->   static struct task_struct *khugepaged_thread __read_mostly;
->   static DEFINE_MUTEX(khugepaged_mutex);
->   
-> -/* default scan 8*512 pte (or vmas) every 30 second */
-> +/* default scan 8*512 pte (or vmas) every 10 second */
+>  drivers/platform/x86/Kconfig     |   4 +-
+>  drivers/platform/x86/ayaneo-ec.c |  65 +++++++++++++++++
+>  drivers/platform/x86/oxpec.c     | 115 +------------------------------
+>  3 files changed, 67 insertions(+), 117 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index f5b2edc6bc67..4d4be1634152 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1043,9 +1043,7 @@ config OXP_EC
+>  =09help
+>  =09=09Enables support for the platform EC of OneXPlayer and AOKZOE
+>  =09=09handheld devices. This includes fan speed, fan controls, and
+> -=09=09disabling the default TDP behavior of the device. Due to legacy
+> -=09=09reasons, this driver also provides hwmon functionality to Ayaneo
+> -=09=09devices and the OrangePi Neo.
+> +=09=09disabling the default TDP behavior of the device.
+> =20
+>  source "drivers/platform/x86/tuxedo/Kconfig"
+> =20
+> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayan=
+eo-ec.c
+> index 363b61fc6e12..73e9dd39c703 100644
+> --- a/drivers/platform/x86/ayaneo-ec.c
+> +++ b/drivers/platform/x86/ayaneo-ec.c
+> @@ -49,6 +49,15 @@ struct ayaneo_ec_platform_data {
+>  =09struct acpi_battery_hook battery_hook;
+>  };
+> =20
+> +static const struct ayaneo_ec_quirk quirk_fan =3D {
+> +=09.has_fan_control =3D true,
+> +};
+> +
+> +static const struct ayaneo_ec_quirk quirk_charge_limit =3D {
+> +=09.has_fan_control =3D true,
+> +=09.has_charge_control =3D true,
+> +};
+> +
+>  static const struct ayaneo_ec_quirk ayaneo3 =3D {
+>  =09.has_fan_control =3D true,
+>  =09.has_charge_control =3D true,
+> @@ -56,6 +65,62 @@ static const struct ayaneo_ec_quirk ayaneo3 =3D {
+>  };
+> =20
+>  static const struct dmi_system_id dmi_table[] =3D {
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_fan,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_fan,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_fan,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_charge_limit,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_charge_limit,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AB05-Mendocino"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_charge_limit,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR Pro"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_charge_limit,
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> +=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
+> +=09=09},
+> +=09=09.driver_data =3D (void *)&quirk_charge_limit,
+> +=09},
+>  =09{
+>  =09=09.matches =3D {
+>  =09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+> index 54377b282ff8..144a454103b9 100644
+> --- a/drivers/platform/x86/oxpec.c
+> +++ b/drivers/platform/x86/oxpec.c
+> @@ -1,8 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0+
+>  /*
+> - * Platform driver for OneXPlayer and AOKZOE devices. For the time being=
+,
+> - * it also exposes fan controls for AYANEO, and OrangePi Handhelds via
+> - * hwmon sysfs.
+> + * Platform driver for OneXPlayer and AOKZOE devices.
+>   *
+>   * Fan control is provided via pwm interface in the range [0-255].
+>   * Old AMD boards use [0-100] as range in the EC, the written value is
+> @@ -43,14 +41,6 @@ static bool unlock_global_acpi_lock(void)
+> =20
+>  enum oxp_board {
+>  =09aok_zoe_a1 =3D 1,
+> -=09aya_neo_2,
+> -=09aya_neo_air,
+> -=09aya_neo_air_1s,
+> -=09aya_neo_air_plus_mendo,
+> -=09aya_neo_air_pro,
+> -=09aya_neo_flip,
+> -=09aya_neo_geek,
+> -=09aya_neo_kun,
+>  =09orange_pi_neo,
+>  =09oxp_2,
+>  =09oxp_fly,
+> @@ -131,62 +121,6 @@ static const struct dmi_system_id dmi_table[] =3D {
+>  =09=09},
+>  =09=09.driver_data =3D (void *)oxp_fly,
+>  =09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_MATCH(DMI_BOARD_NAME, "AYANEO 2"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_2,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_air,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR 1S"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_air_1s,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AB05-Mendocino"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_air_plus_mendo,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "AIR Pro"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_air_pro,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_MATCH(DMI_BOARD_NAME, "FLIP"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_flip,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_MATCH(DMI_BOARD_NAME, "GEEK"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_geek,
+> -=09},
+> -=09{
+> -=09=09.matches =3D {
+> -=09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "AYANEO"),
+> -=09=09=09DMI_EXACT_MATCH(DMI_BOARD_NAME, "KUN"),
+> -=09=09},
+> -=09=09.driver_data =3D (void *)aya_neo_kun,
+> -=09},
+>  =09{
+>  =09=09.matches =3D {
+>  =09=09=09DMI_MATCH(DMI_BOARD_VENDOR, "OrangePi"),
+> @@ -672,13 +606,6 @@ static int oxp_pwm_enable(void)
+>  =09case orange_pi_neo:
+>  =09=09return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MODE_MANUAL=
+);
+>  =09case aok_zoe_a1:
+> -=09case aya_neo_2:
+> -=09case aya_neo_air:
+> -=09case aya_neo_air_plus_mendo:
+> -=09case aya_neo_air_pro:
+> -=09case aya_neo_flip:
+> -=09case aya_neo_geek:
+> -=09case aya_neo_kun:
+>  =09case oxp_2:
+>  =09case oxp_fly:
+>  =09case oxp_mini_amd:
+> @@ -699,14 +626,6 @@ static int oxp_pwm_disable(void)
+>  =09case orange_pi_neo:
+>  =09=09return write_to_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, PWM_MODE_AUTO);
+>  =09case aok_zoe_a1:
+> -=09case aya_neo_2:
+> -=09case aya_neo_air:
+> -=09case aya_neo_air_1s:
+> -=09case aya_neo_air_plus_mendo:
+> -=09case aya_neo_air_pro:
+> -=09case aya_neo_flip:
+> -=09case aya_neo_geek:
+> -=09case aya_neo_kun:
+>  =09case oxp_2:
+>  =09case oxp_fly:
+>  =09case oxp_mini_amd:
+> @@ -727,14 +646,6 @@ static int oxp_pwm_read(long *val)
+>  =09case orange_pi_neo:
+>  =09=09return read_from_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, 1, val);
+>  =09case aok_zoe_a1:
+> -=09case aya_neo_2:
+> -=09case aya_neo_air:
+> -=09case aya_neo_air_1s:
+> -=09case aya_neo_air_plus_mendo:
+> -=09case aya_neo_air_pro:
+> -=09case aya_neo_flip:
+> -=09case aya_neo_geek:
+> -=09case aya_neo_kun:
+>  =09case oxp_2:
+>  =09case oxp_fly:
+>  =09case oxp_mini_amd:
+> @@ -774,14 +685,6 @@ static int oxp_pwm_fan_speed(long *val)
+>  =09case oxp_g1_i:
+>  =09=09return read_from_ec(OXP_2_SENSOR_FAN_REG, 2, val);
+>  =09case aok_zoe_a1:
+> -=09case aya_neo_2:
+> -=09case aya_neo_air:
+> -=09case aya_neo_air_1s:
+> -=09case aya_neo_air_plus_mendo:
+> -=09case aya_neo_air_pro:
+> -=09case aya_neo_flip:
+> -=09case aya_neo_geek:
+> -=09case aya_neo_kun:
+>  =09case oxp_fly:
+>  =09case oxp_mini_amd:
+>  =09case oxp_mini_amd_a07:
+> @@ -810,14 +713,6 @@ static int oxp_pwm_input_write(long val)
+>  =09=09/* scale to range [0-184] */
+>  =09=09val =3D (val * 184) / 255;
+>  =09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> -=09case aya_neo_2:
+> -=09case aya_neo_air:
+> -=09case aya_neo_air_1s:
+> -=09case aya_neo_air_plus_mendo:
+> -=09case aya_neo_air_pro:
+> -=09case aya_neo_flip:
+> -=09case aya_neo_geek:
+> -=09case aya_neo_kun:
+>  =09case oxp_mini_amd:
+>  =09case oxp_mini_amd_a07:
+>  =09=09/* scale to range [0-100] */
+> @@ -854,14 +749,6 @@ static int oxp_pwm_input_read(long *val)
+>  =09=09/* scale from range [0-184] */
+>  =09=09*val =3D (*val * 255) / 184;
+>  =09=09break;
+> -=09case aya_neo_2:
+> -=09case aya_neo_air:
+> -=09case aya_neo_air_1s:
+> -=09case aya_neo_air_plus_mendo:
+> -=09case aya_neo_air_pro:
+> -=09case aya_neo_flip:
+> -=09case aya_neo_geek:
+> -=09case aya_neo_kun:
+>  =09case oxp_mini_amd:
+>  =09case oxp_mini_amd_a07:
+>  =09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+>=20
 
-We should improve the 512 part while at it (e.g., on arm64 with 64k page 
-size it's 2048, on s390x it's 256).
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-And s/pte/ptes/.
+--=20
+ i.
 
-/* default scan 8*HPAGE_PMD_NR ptes (or vmas) every 10 second */
-
--- 
-Cheers
-
-David / dhildenb
-
+--8323328-90264879-1760519385=:957--
 
