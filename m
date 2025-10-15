@@ -1,198 +1,101 @@
-Return-Path: <linux-kernel+bounces-854243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-854244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26A8BDDE6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F7EBDDE71
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 12:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6254B4E7A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:02:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64AD44F3345
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 10:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D731B801;
-	Wed, 15 Oct 2025 10:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCEE31B126;
+	Wed, 15 Oct 2025 10:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRC0hocW"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P8jstF9E"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D372010EE
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2352010EE
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 10:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760522519; cv=none; b=DucKh49sTqDnXC3AbC3O2B9T1g0A4lAuUn/dr56QpywtyI0BscDEBBftMqA9W9/YyhPCWIrMvzKfUuiyAk01uTOm5dgxp9szEM9mvFe949LhGhZk8Hr3tcoIrFunPcjF3J+n1ntpUptPmP2tmzU6mi9ciLFAU/WeiSbwDVm31Rw=
+	t=1760522592; cv=none; b=UQlUa2yf9dBxuI66UfXp9QJobJQPiFUXkFZf3Lx+i3lFQzF8V8G/fe4Bmi1x3B5mUrqKJsfUQnok70q9W8M4S3qFLIXxau/zI6BKUlVFksN7LEJvCRWlL8fEYqQcGqwzYXqxo5iD+IjWPrderKQ4ZBERiwbsRLaWYJAeEUQFLt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760522519; c=relaxed/simple;
-	bh=EjWyHXy5+AFfe6EBqUpNk7V6ovaOZaq4S3q8E8N3zug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcKgi5941pw6o+YHitMcw7v+wlgWMxTs9YnDPqq64W+MdjoGGi0kpjNyw0TSVIQd7bdPGymxaB/z2wBjScWiI2lZCe7dSHUwP8TsoK560RW1CyqFTzVxiBQH2vZSUmyV+7eso1HcM0r4CzBXjTl5+i7cDmLq7Ei6wgzY2psFbGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRC0hocW; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-269af38418aso73601535ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760522516; x=1761127316; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ji3QYXE+o6nnOYdZn4k94bGF503TJ64q3dgtQTNhCcw=;
-        b=GRC0hocW5KsRxfQotLR+++78UaJCtJhZND9lFrILGfmUTXf9Q2bbmZ5IGErBgA5eDD
-         M/yrrbXR7qdPSFNj2FduEKkdPtbzSlIkgoXaVvVf5s9p+2EQNp69yBD5czZjqe0SNnpw
-         3EPiVLfUZckw8HTmqQA++gLsxKPluGUMVN/e5y7QZeJRENPVOYYG+Y0mStSxHKqRWvkT
-         YNpurNuZyvlu7fZl2g8/znuM21+uijbvKF5CfaZI7QJ+kjf7c+e19unJIq22hnirY1ZD
-         02JEYEwGUoKcCOUdbjoCJ7aQc0A2w8zWrxf34+GToqFQc1kHxnDK6RPJIOF2E420/bNw
-         CSZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760522516; x=1761127316;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ji3QYXE+o6nnOYdZn4k94bGF503TJ64q3dgtQTNhCcw=;
-        b=jYXxojZbmGI4seLbyu7G8kM+m37h0Zc4A8TzZcu6U8LNMQ2blAnacOSBpZMsS/U26q
-         c+iKIk1ijdvJ54qByUmduJVBSZvP1WD8qcYINLV84A/EmXcnGbmHwA/PzYXQ6bYuSlWo
-         mgNfgMWSMLO2Hm/WVDxHbT2+oOlnKzKEfujr2FQLgkLSoVrmb6eEufcsb0J8/BxFAOgn
-         w3MRpITgWFdiBhs/cCM3TMnX5Att2w00dfeI4ZXslDbkn4Fl8QCjuvrprCvXp6STbvjL
-         HcTnD7NjBQl1IVWoZTqGMchIvqdQn7QOiirdRmKb7iOnxBOXO8iCaErDvFajlYNROWT4
-         1VqQ==
-X-Gm-Message-State: AOJu0YzdET6HBcRUAAP9lx4Tvgs8BeeDRRP3xK5yA8wSP6ua8WzlxNak
-	Vpb+apusYZBILXhl0L7spHV5vjX/jXh3BlUvUNgjOyPnOgbYhrpoVJb9
-X-Gm-Gg: ASbGncuXElzHTjHb8tHe4Tf6Wh0BmrA65+nibIZQ4KR375C7GRiMtjbvgd0de0BF76l
-	ijvJEHedrrc+rPeZeDMGGtZnVzYGcDyu9+rrklQoVK3pI9q+y2E/v94LtGO4fsmJPU+OxCu1VQ3
-	W6Kf4sZyi/JKBp1XtgAvNzoZwGU+3M9cd7OINrIo5mcM/hCh+ewLq6cdlFcYOi3Qf78HxrV7BcC
-	bnkwRgUFl0iRaIdLYYCeRAcRnRMRjfF1/s0bKzzapW2D4+DsjCLwcuGoXdugegEc7BmUVN6B0UT
-	Ldbkul0fF3+0Wzr+cljgrVRknOUHwQlQ03G4W2XXmupcdA5j2ijn0XabyO4/eg20Zv3tiH1EQmI
-	cgLYq588xpcSe3ZiKn3BIEaTKmQ8Ij0pRtcIcChD3S7oeak/GYJvLLh/E2uEB9Eu0
-X-Google-Smtp-Source: AGHT+IHsh+iw7Sm3pxrGuqOCIvTM24vpCcQlsq2cLRgpJFciDOO1FkJaV/AzwQlOPEsvBTYyLAn19Q==
-X-Received: by 2002:a17:902:fc86:b0:273:1516:3ed2 with SMTP id d9443c01a7336-29027403425mr330544905ad.50.1760522516192;
-        Wed, 15 Oct 2025 03:01:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f0726asm191287935ad.72.2025.10.15.03.01.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 03:01:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 15 Oct 2025 03:01:54 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Feng Chen <feng.chen@amlogic.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Tao Ren <rentao.bupt@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: Linux 6.18-rc1
-Message-ID: <68841c19-c54e-4837-80bf-d180f2c35499@roeck-us.net>
-References: <CAHk-=whPJTtX5u1m47fPUD2g2Dc=Did_6OqCVj6OQPKFgfKn9g@mail.gmail.com>
- <f594c621-f9e1-49f2-af31-23fbcb176058@roeck-us.net>
- <c45a8502-3af2-4d5c-a660-2922b4e040bb@roeck-us.net>
+	s=arc-20240116; t=1760522592; c=relaxed/simple;
+	bh=vIUSMXrHYo6IVAXXMlf2z2QqzqoJqcv9TqtH8rYDitE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZN253aIxX8JwYMV/cB0bK3cXwcmGUdBMrUyBcElez9lGLRfL4uuuDG1Si8P55RsvLP6uZ1UnfEJtdS1t9DcGT4ysY5SMAZ9+EScN9YdghquW64yT01ozbJPueVET4csVWrOt292Cq9rc7CGRK34IKRBPAnofzNla1J/togroX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P8jstF9E; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760522588;
+	bh=vIUSMXrHYo6IVAXXMlf2z2QqzqoJqcv9TqtH8rYDitE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P8jstF9EFj1pRwbRbKvsomEZszhzzmqa/emjO22fMo3rkEfP5JsJ5N1N4ZpP/NswI
+	 D17peeUodI2Qo1oJinpW1/CbABku69oUBKLoSXrnZBuiwxQ3OOvmM43QD8/UbUNVE9
+	 r5/C1Fbytwz4q2HA5fTewQdJW0bvRyHP6kjpElWDxJiDCaUQdf7291XkG1n8rFAomC
+	 bkX/PltyOWoolKBd9X2MSes74NZWXhZHwoiXVCb3HCZElbLxtyY2Xx968D9F9Z0NRP
+	 99RxlnNhhstChFTilT1r8aC/xw0JRWM2s8Lh81FJgNnZJftCM3AXfhO/rZt2taTSQF
+	 bftZTKi8vPQCw==
+Received: from [192.168.1.90] (unknown [82.79.138.145])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 93E8E17E00A3;
+	Wed, 15 Oct 2025 12:03:07 +0200 (CEST)
+Message-ID: <7291eff3-b259-4209-b150-cb220abc01ec@collabora.com>
+Date: Wed, 15 Oct 2025 13:03:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c45a8502-3af2-4d5c-a660-2922b4e040bb@roeck-us.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: dw-hdmi-qp: Fix spurious IRQ on resume
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20251014-rockchip-hdmi-suspend-fix-v1-1-983fcbf44839@collabora.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20251014-rockchip-hdmi-suspend-fix-v1-1-983fcbf44839@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 13, 2025 at 09:46:44PM -0700, Guenter Roeck wrote:
-> On Mon, Oct 13, 2025 at 10:08:26AM -0700, Guenter Roeck wrote:
-> > On Sun, Oct 12, 2025 at 02:04:32PM -0700, Linus Torvalds wrote:
-> > > Two weeks have passed, and 6.18-rc1 has been tagged and pushed out.
-> > > 
-> > > Things look fairly normal: size-wise this is pretty much right in the
-> > > middle of the pack, and nothing particular stands out in the shortlog
-> > > of merges this merge window appended below. About half the diff is
-> > > drivers, with the res being all over: vfs and filesystems, arch
-> > > updates (although much of that is actually devicetree stuff, so it's
-> > > arguably more driver-related), tooling, rust support etc etc.
-> > > 
-> > > This was one of the good merge windows where I didn't end up having to
-> > > bisect any particular problem on nay of the machines I was testing.
-> > > Let's hope that success mostly translates to the bigger picture too.
-> > > 
-> > 
-> > Test results don't look that good, unfortunately.:
-> > 
-> ...
-> > Qemu test results:
-> > 	total: 609 pass: 581 fail: 28
-> > Failed tests:
-...
-> > 	sheb:rts7751r2dplus_defconfig:initrd
-> > 	sheb:rts7751r2dplus_defconfig:ata:ext2
-> > 	sheb:rts7751r2dplus_defconfig:usb:ext2
-> > Unit test results:
-> > 	pass: 655208 fail: 0
-> > 
+On 10/14/25 7:00 PM, Sebastian Reichel wrote:
+> After resume from suspend to RAM, the following splash is generated if
+> the HDMI driver is probed (independent of a connected cable):
 > 
+> [ 1194.484052] irq 80: nobody cared (try booting with the "irqpoll" option)
+> [ 1194.484074] CPU: 0 UID: 0 PID: 627 Comm: rtcwake Not tainted 6.17.0-rc7-g96f1a11414b3 #1 PREEMPT
+> [ 1194.484082] Hardware name: Rockchip RK3576 EVB V10 Board (DT)
+> [ 1194.484085] Call trace:
+> [ 1194.484087]  ... (stripped)
+> [ 1194.484283] handlers:
+> [ 1194.484285] [<00000000bc363dcb>] dw_hdmi_qp_main_hardirq [dw_hdmi_qp]
+> [ 1194.484302] Disabling IRQ #80
+> 
+> Apparently the HDMI IP is losing part of its state while the system
+> is suspended and generates spurious interrupts during resume. The
+> bug has not yet been noticed, as system suspend does not yet work
+> properly on upstream kernel with either the Rockchip RK3588 or RK3576
+> platform.
+> 
+> Fixes: 128a9bf8ace2 ("drm/rockchip: Add basic RK3588 HDMI output support")
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Update on the sheb (SH4 big endian) failures below.
+LGTM, hence
 
-Guenter
-
----
-
-sheb
-----
-
-sheb:rts7751r2dplus_defconfig:initrd
-sheb:rts7751r2dplus_defconfig:ata:ext2
-sheb:rts7751r2dplus_defconfig:usb:ext2
-
-Bisect log:
-
-# bad: [ba9dac987319d4f3969691dcf366ef19c9ed8281] Merge tag 'libnvdimm-for-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm
-# good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
-git bisect start 'HEAD' 'v6.17'
-# good: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
-git bisect good 58809f614e0e3f4e12b489bddf680bfeb31c0a20
-# bad: [8804d970fab45726b3c7cd7f240b31122aa94219] Merge tag 'mm-stable-2025-10-01-19-00' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-git bisect bad 8804d970fab45726b3c7cd7f240b31122aa94219
-# good: [30c3055f9c0d84a67b8fd723bdec9b1b52b3c695] xsk: wrap generic metadata handling onto separate function
-git bisect good 30c3055f9c0d84a67b8fd723bdec9b1b52b3c695
-# good: [f79e772258df311c2cb21594ca0996318e720d28] Merge tag 'media/v6.18-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
-git bisect good f79e772258df311c2cb21594ca0996318e720d28
-# good: [f1455695d2d99894b65db233877acac9a0e120b9] Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-git bisect good f1455695d2d99894b65db233877acac9a0e120b9
-# good: [a16c46c2402026162111ed9fd1fc28d25223443e] dma-remap: drop nth_page() in dma_common_contiguous_remap()
-git bisect good a16c46c2402026162111ed9fd1fc28d25223443e
-# good: [a5883fa94295f1ef2473eadd84cc1e24dab9ae18] selftests/mm: gup_tests: option to GUP all pages in a single call
-git bisect good a5883fa94295f1ef2473eadd84cc1e24dab9ae18
-# good: [08498be43ee676d8a5eefb22278266322578a3e0] mm/ksm: get mm_slot by mm_slot_entry() when slot is !NULL
-git bisect good 08498be43ee676d8a5eefb22278266322578a3e0
-# good: [719a42e563bb087758500e43e67a57b27f303c4c] maple_tree: Convert forking to use the sheaf interface
-git bisect good 719a42e563bb087758500e43e67a57b27f303c4c
-# good: [b9120619246d733a27e5e93c29e86f2e0401cfc5] Merge series "SLUB percpu sheaves"
-git bisect good b9120619246d733a27e5e93c29e86f2e0401cfc5
-# bad: [24d9e8b3c9c8a6f72c8b4c196a703e144928d919] Merge tag 'slab-for-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab
-git bisect bad 24d9e8b3c9c8a6f72c8b4c196a703e144928d919
-# good: [83382af9ddc3cb0ef43f67d049b461720ad785e6] slab: Make slub local_(try)lock more precise for LOCKDEP
-git bisect good 83382af9ddc3cb0ef43f67d049b461720ad785e6
-# good: [af92793e52c3a99b828ed4bdd277fd3e11c18d08] slab: Introduce kmalloc_nolock() and kfree_nolock().
-git bisect good af92793e52c3a99b828ed4bdd277fd3e11c18d08
-# good: [ca74b8cadaad4b179f77f1f4dc3d288be9a580f1] Merge series "slab: Re-entrant kmalloc_nolock()"
-git bisect good ca74b8cadaad4b179f77f1f4dc3d288be9a580f1
-# good: [07fdad3a93756b872da7b53647715c48d0f4a2d0] Merge tag 'net-next-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
-git bisect good 07fdad3a93756b872da7b53647715c48d0f4a2d0
-# first bad commit: [24d9e8b3c9c8a6f72c8b4c196a703e144928d919] Merge tag 'slab-for-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab
-
-I had to revert commit 719a42e563bb ("maple_tree: Convert forking to use
-the sheaf interface") and commit af92793e52c3 ("slab: Introduce
-kmalloc_nolock() and kfree_nolock()") in the 'slab-for-6.18' branch to fix
-the problem. The first patch can not be reverted in mainline since other
-patches depend on it.
-
-There is no console output (earlycon does not work) and qemu exits almost
-immediately with those patches in place. I have no idea how to debug the
-problem further.
-
-Authors:
-	Alexei Starovoitov <ast@kernel.org>
-	Liam R. Howlett <Liam.Howlett@Oracle.com>
+Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
