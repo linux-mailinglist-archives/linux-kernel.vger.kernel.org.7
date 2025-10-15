@@ -1,168 +1,185 @@
-Return-Path: <linux-kernel+bounces-853885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB852BDCCFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 08:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA6BBDCD0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58EBA1928701
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 06:59:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B70F3A8271
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AEA31327C;
-	Wed, 15 Oct 2025 06:59:02 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC329BDBC;
+	Wed, 15 Oct 2025 07:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IDETDVUM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD33B30FF28;
-	Wed, 15 Oct 2025 06:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5737E25D1E6
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 07:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760511542; cv=none; b=Wf+60fYVpCupv7F/qUoL7/trcj4TfDXUNQBcFchU3eGyWUoa3lV4gDN19Ij92scpPs3EXjHRkqGLW/gd4hnqlCXSXccmXr7tp9tf9lzBjtqu3pGaDsym+7rFRth3nUVrArstp0FtxooUd8isXHihxkVeASpB1jtk0uzRmDWpvkg=
+	t=1760511902; cv=none; b=C83trVFUUemKWaREtf1PZ4YWKyohxmi+cePGzq8drTmOMylq63iRign/zp37AnYU36+2gItHJVnjFHyargEwQVQ+lyWVMRB2lEt/sNTorH+/6gBVSCh+OdWrsvCvvn4i8rrpPELGpclEfCzozSaH9kTlizarCYjL4am1W6YCH5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760511542; c=relaxed/simple;
-	bh=mB7O1p7vtPwD5hmmxf81P4UzNGnXnoQJkIFjh/Tf+zc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Nuqo7Q15FGMDXoevVkwp5xlObw5HRfZD849LZfOSeyBLSWvpIGB8ocABK1+dDWorZqcsTlVb2kYrQ2QHJygnxUXEVlT7SSO/s48IcTHvagZkoz4CmGNCKYtXeNaSxn/mvRj8d5zD2s5UgKpiqI3oKinHzEg6FqE7RA+cdCCmsAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cmhk832l0zYQv22;
-	Wed, 15 Oct 2025 14:58:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B39131A15C4;
-	Wed, 15 Oct 2025 14:58:50 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP2 (Coremail) with SMTP id Syh0CgDnPUYoRu9o3w+4AQ--.58200S3;
-	Wed, 15 Oct 2025 14:58:50 +0800 (CST)
-Subject: Re: [PATCH] md: fix rcu protection in md_wakeup_thread
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Yun Zhou <yun.zhou@windriver.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20251015055924.899423-1-yun.zhou@windriver.com>
- <86705912-07a3-4a24-bacd-ad5ac2038201@molgen.mpg.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d2574af5-9410-d296-ef74-97f3e43dc1cc@huaweicloud.com>
-Date: Wed, 15 Oct 2025 14:58:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1760511902; c=relaxed/simple;
+	bh=pw1kGo2ws+5OCuELJrcKLUoUBQ0/TG/z4KJ0tei3+2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXTfa8TyUS9nCneMkOQYEwKYEz8/nLhmC1mfWpxG/QLaDQKFb+EIqJdTC0mCX9sXCsfu21DRV7vh/IGR5+wDXKPaikogic5JHKS4kbPyHgRdGj4Z7ssAkpUio9e997o7Npcszgn5TJPzCauGI4mY67lURxEmg4vetYiGoHnKHl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IDETDVUM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760511899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2jp8KDES5ks8Aac5tH2y5JeuFcW9ux+XVUfHWrIy/4U=;
+	b=IDETDVUMtQkNDTEMluMHPbJz4fQmKtVwWWzDizl3oOHuiuTDhAoCkgW1FbrR6k5qL75HQn
+	2Lw+1AT/MzvLBR0GjyYl5FVkoOaJe8JhrKQVktNWf3lebO5piexQiW9cwQC//Dr7nUKS/3
+	ljsYRAyCNqEkuOE7gaQVjzfGe1NDZtE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-636-ikWxStrVM9at5iLIwzyswA-1; Wed, 15 Oct 2025 03:04:57 -0400
+X-MC-Unique: ikWxStrVM9at5iLIwzyswA-1
+X-Mimecast-MFC-AGG-ID: ikWxStrVM9at5iLIwzyswA_1760511896
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso35150325e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 00:04:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760511896; x=1761116696;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2jp8KDES5ks8Aac5tH2y5JeuFcW9ux+XVUfHWrIy/4U=;
+        b=LqYNhxem9CgCx3TEUiNEVpBLRZlCMUXElqfVBYFpfwqp8JS9NzT4prHipwWXsodkuD
+         /Y36tTSTvzsfgiZy5x0i68Ps+qJIYL2rr72yuIKIXK1JsyjQn3t0uoL5oIvARCGLTtrl
+         IhwUe/h0acXoPMV8A0KfKVXB32yhKNmNyZtQ/YkqCfjcl/yJgoQNzByCnKadpG8chz1b
+         Ja2iFyp6e1HbKA2UJKdhm5Ns+VYvrEd9wW4nKojLtXiN8WVFF9jeNEHmrkcZUX6e04JZ
+         I8BpCMuDeYIcV2r8x4Ziq3w03cddL8G4BJhCPB+mbqkZYVI79+17uWHyQJhm1jDEkvWt
+         cyrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkn4Kg+qbzxHtq1S+xjAQvBbp8CXDvgCXyupf6ZE453lQgTg/IieC5OzRnZzkIBrCqamzcXDvhDURV+RU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLzf0bHAdATUYAWM8sFEe6L9GO5Nrrm7twbeiRCDOLqTwZT2s6
+	CWq/1XGaQY/JxAqJVMmpQUvVrvc1FByWaoEek1jO4Y1P3ZYc41M2HwLUxaE6vdF/UOmh++BBkcc
+	oy6rI+uPb/AGu3HKLy9A3LxdAUQGJ41fPE9vxkASn3xmrA4At5LLSL0q8efuzc3Sm8g==
+X-Gm-Gg: ASbGncussqD354I0RofGTviT4peoHmiqaNGoxjlaS54MGylET395DnJ+x72Vw+7ZWUJ
+	sL7QPiTSzdR82n+lBL4GkRHQXC+rdUmpkXxsxJ1mPcMSf/EIJyTLCaRIvRQeZYXq/cjaYDmF3RE
+	gl5Cla8alv86ePBIoCxztBLui8aVg3J10xhOqsUrPRSGScCjsTbbrBgOuUxy009kls017V8uW67
+	Sot/MCD2hDnOD2ro9QeLq2uNagw8HnD/X+l2GdsYqpkJ/xO87EkiJy9AHmLtJFHKmT/9tJ6kjqq
+	XfQHlaNDgcOXtK5x08VNNUyW6uHEjwCK3Q==
+X-Received: by 2002:a05:600c:502c:b0:46e:1f86:aeba with SMTP id 5b1f17b1804b1-46fa9af014cmr175468025e9.17.1760511896363;
+        Wed, 15 Oct 2025 00:04:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhAQEhpelfdmyS4qYM1C8WtBXdelqu4F1sSu1VYzwVpfHA3C49VVzKIr4iSipRy/2riecqYQ==
+X-Received: by 2002:a05:600c:502c:b0:46e:1f86:aeba with SMTP id 5b1f17b1804b1-46fa9af014cmr175467725e9.17.1760511895812;
+        Wed, 15 Oct 2025 00:04:55 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152d:b200:2a90:8f13:7c1e:f479])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce583664sm27454506f8f.22.2025.10.15.00.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 00:04:55 -0700 (PDT)
+Date: Wed, 15 Oct 2025 03:04:52 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: Maxime Coquelin <mcoqueli@redhat.com>,
+	Yongji Xie <xieyongji@bytedance.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+Message-ID: <20251015030313-mutt-send-email-mst@kernel.org>
+References: <20251007130622.144762-1-eperezma@redhat.com>
+ <20251007130622.144762-2-eperezma@redhat.com>
+ <20251014042459-mutt-send-email-mst@kernel.org>
+ <CAO55cszGtuqL9qfs8SVB=Jjghefn=M0Rjw65f2DGPrjLQFFtqg@mail.gmail.com>
+ <20251014051537-mutt-send-email-mst@kernel.org>
+ <CAJaqyWe-mn4e+1egNCH+R1x4R7DB6U1SZ-mRAXYPTtA27hKCVA@mail.gmail.com>
+ <20251015023020-mutt-send-email-mst@kernel.org>
+ <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <86705912-07a3-4a24-bacd-ad5ac2038201@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDnPUYoRu9o3w+4AQ--.58200S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFy7try5WryDGFW8AFW8WFg_yoW5Wry5pr
-	W8try7Cw4YvrWj9w1DAa4DCa45tw10qFW2krW8C3yfZwnrK3yayFy7KFyUXws0kF15Grnx
-	Z3W5KFn3ZF4ktF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
 
-Hi,
-
-在 2025/10/15 14:35, Paul Menzel 写道:
-> Dear Yun,
+On Wed, Oct 15, 2025 at 08:52:50AM +0200, Eugenio Perez Martin wrote:
+> On Wed, Oct 15, 2025 at 8:33 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Wed, Oct 15, 2025 at 08:08:31AM +0200, Eugenio Perez Martin wrote:
+> > > On Tue, Oct 14, 2025 at 11:25 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > >
+> > > > On Tue, Oct 14, 2025 at 11:14:40AM +0200, Maxime Coquelin wrote:
+> > > > > On Tue, Oct 14, 2025 at 10:29 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > > > >
+> > > > > > On Tue, Oct 07, 2025 at 03:06:21PM +0200, Eugenio Pérez wrote:
+> > > > > > > An userland device implemented through VDUSE could take rtnl forever if
+> > > > > > > the virtio-net driver is running on top of virtio_vdpa.  Let's break the
+> > > > > > > device if it does not return the buffer in a longer-than-assumible
+> > > > > > > timeout.
+> > > > > >
+> > > > > > So now I can't debug qemu with gdb because guest dies :(
+> > > > > > Let's not break valid use-cases please.
+> > > > > >
+> > > > > >
+> > > > > > Instead, solve it in vduse, probably by handling cvq within
+> > > > > > kernel.
+> > > > >
+> > > > > Would a shadow control virtqueue implementation in the VDUSE driver work?
+> > > > > It would ack systematically messages sent by the Virtio-net driver,
+> > > > > and so assume the userspace application will Ack them.
+> > > > >
+> > > > > When the userspace application handles the message, if the handling fails,
+> > > > > it somehow marks the device as broken?
+> > > > >
+> > > > > Thanks,
+> > > > > Maxime
+> > > >
+> > > > Yes but it's a bit more convoluted  than just acking them.
+> > > > Once you use the buffer you can get another one and so on
+> > > > with no limit.
+> > > > One fix is to actually maintain device state in the
+> > > > kernel, update it, and then notify userspace.
+> > > >
+> > >
+> > > I thought of implementing this approach at first, but it has two drawbacks.
+> > >
+> > > The first one: it's racy. Let's say the driver updates the MAC filter,
+> > > VDUSE timeout occurs, the guest receives the fail, and then the device
+> > > replies with an OK. There is no way for the device or VDUSE to update
+> > > the driver.
+> >
+> > There's no timeout. Kernel can guarantee executing all requests.
+> >
 > 
-> 
-> Thank you for your patch.
-> 
-> Am 15.10.25 um 07:59 schrieb Yun Zhou:
->> We attempted to use RCU to protect the pointer 'thread', but directly
->> passed the value when calling md_wakeup_thread(). This means that the
->> RCU pointer has been acquired before rcu_read_lock(), which renders
->> rcu_read_lock() ineffective and could lead to a use-after-free.
-> 
-> Could you elaborate a little more – especially as nobody has noticed 
-> this so far since v6.5-rc1?
-> 
+> I don't follow this. How should the VDUSE kernel module act if the
+> VDUSE userland device does not use the CVQ buffer then?
 
-This looks correct, memory dereference should be protected by rcu, while
-in fact this is done before function parameter passing.
+First I am not sure a VQ is the best interface for talking to userspace.
+But assuming yes - just avoid sending more data, send it later after
+userspace used the buffer.
 
-However, in most places, a null check should be enough because the md
-thread can't be unregistered concurrently, that's probably no one ever
-meet the problem.
 
-However, for the modification, I'll prefer a new marcon like following,
-so that you don't need to update all the callers:
-
-Thanks,
-Kuai
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 1de550108756..d48ee1b50d27 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8384,11 +8384,10 @@ static void md_wakeup_thread_directly(struct 
-md_thread __rcu *thread)
-         rcu_read_unlock();
-  }
-
--void md_wakeup_thread(struct md_thread __rcu *thread)
-+void __md_wakeup_thread(struct md_thread __rcu *thread)
-  {
-         struct md_thread *t;
-
--       rcu_read_lock();
-         t = rcu_dereference(thread);
-         if (t) {
-                 pr_debug("md: waking up MD thread %s.\n", t->tsk->comm);
-@@ -8396,9 +8395,8 @@ void md_wakeup_thread(struct md_thread __rcu *thread)
-                 if (wq_has_sleeper(&t->wqueue))
-                         wake_up(&t->wqueue);
-         }
--       rcu_read_unlock();
-  }
--EXPORT_SYMBOL(md_wakeup_thread);
-+EXPORT_SYMBOL(__md_wakeup_thread);
-
-  struct md_thread *md_register_thread(void (*run) (struct md_thread *),
-                 struct mddev *mddev, const char *name)
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 1979c2d4fe89..9ec62afc2a7d 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -882,6 +882,12 @@ struct md_io_clone {
-
-  #define THREAD_WAKEUP  0
-
-+#define md_wakeup_thread(thread) do {                          \
-+       rcu_read_lock();                                        \
-+       __md_wakeup_thread(thread);                             \
-+       rcu_read_unlock();                                      \
-+} while (0)
-+
-  static inline void safe_put_page(struct page *p)
-  {
-         if (p) put_page(p);
-@@ -895,7 +901,7 @@ extern struct md_thread *md_register_thread(
-         struct mddev *mddev,
-         const char *name);
-  extern void md_unregister_thread(struct mddev *mddev, struct md_thread 
-__rcu **threadp);
--extern void md_wakeup_thread(struct md_thread __rcu *thread);
-+extern void __md_wakeup_thread(struct md_thread __rcu *thread);
-  extern void md_check_recovery(struct mddev *mddev);
-  extern void md_reap_sync_thread(struct mddev *mddev);
-  extern enum sync_action md_sync_action(struct mddev *mddev);
+> >
+> >
+> > >
+> > > The second one, what to do when the VDUSE cvq runs out of descriptors?
+> > > While the driver has its descriptor returned with VIRTIO_NET_ERR, the
+> > > VDUSE CVQ has the descriptor available. If this process repeats to
+> > > make available all of the VDUSE CVQ descriptors, how can we proceed?
+> >
+> > There's no reason to return VIRTIO_NET_ERR ever and cvq will not run
+> > out of descriptors. Kernel uses cvq buffers.
+> >
+> >
+> > > I think both of them can be solved with the DEVICE_NEEDS_RESET status
+> > > bit, but it is not implemented in the drivers at this moment.
+> >
+> > No need for a reset, either.
+> >
 
 
