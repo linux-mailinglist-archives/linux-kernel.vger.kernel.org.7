@@ -1,392 +1,136 @@
-Return-Path: <linux-kernel+bounces-853702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF19BDC5E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:41:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A657BDC5EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E16188C56C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943791898308
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72412D3A8A;
-	Wed, 15 Oct 2025 03:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39952BF3DF;
+	Wed, 15 Oct 2025 03:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ra7m50OX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="A8zFAaLO"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E702BE632
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980C02DBF4B
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760499673; cv=none; b=pfUWzr0O7dYkHnqpD89XHR3dvOCbu78kawhZvA1eG1aITGMEBoKpIej4Og0UNBChL0VrnDVKwEYvnfVw0Lgc7vfJq/JDk5hQqtpcvRahCkVtkWKsy8X12V/IoQI8hbB4sNOZ/J3eBHv3XAwBdMr6cJr+qlve0sgrjiX/ZbpCpw0=
+	t=1760499682; cv=none; b=XJKviC25ZnjA8k8O5WCNRszc2VgdbBDzdHdHUoCEYhO1MYL+krYe08mQl9KRwPD/unO0UGJw0a3iTxXjOS9U7zRUEjctOr6GzMiWiPD8q5c9AcrHG/Ib/7HB4b4BgU6lpOn5TxjzWN15veqsFbrPMN/KeuIWowQeBJBU0CaAm4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760499673; c=relaxed/simple;
-	bh=mv+NNDJq8lmEqH3M97ToKZgf7ondCsaePpng7UQJjkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YtuAV2tfXJ7oDcVy+YGW/xJ1PvLICbLJbT+zlS/Ae+caqIjsD8WWJF2w56nKIn2X+llai/42TnYnQPsWwglvxZqe5kIsJlbNQfy7hfsgnjneVIn7cse3/K0f256JJsd3fCq/A++EAyJNL5uWHZTMz8L/ZC6P3qvFiviqI3/w77Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ra7m50OX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59F2s9SO016686
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:41:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2EB7lbGy33x6kUiQ2w3K09v0kV2sk9eBoD76swGwLnk=; b=Ra7m50OXkt14rBaq
-	F6HHs6mYuOue7pw2wN9NkSEyLZFQeQGRVRzKAmWlzYc/mN/3AWh02SoyI+DQrkI4
-	MugtH7Rf/CHdp3b1PI9WkXOLIKsvkYMeFoACZIrhpFvN5oNXQCaIVxuspZLFw2Ci
-	ZFT0wz1+U6zbHQxUhYH4r9LKu70Qf1MmWHrF4bqnI7L7n04LwaIdwiDWl1owfRFe
-	1OqL2mac3czyi8+8W1jnQj0+2sJLiI22zYn2h0eORTDE8J49dy7F6TV4F4pIkf3D
-	DWFZhFHWW6LCKT/UsTg4lgUpoPoHx5QDdURRbB61qTVvSHjYWSGSshQxvgfcyeje
-	4+49zg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49rtrt7v83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:41:10 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-78038ed99d9so13963662b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 20:41:10 -0700 (PDT)
+	s=arc-20240116; t=1760499682; c=relaxed/simple;
+	bh=UvVy+BajAErhJO3H45dp4i8wuvTsyXthdxxIvUFbFIQ=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n5RlxNke2yLBifgsvFQGezCmptHqT9bp+eNwWX9Dix05OTLpsKKXIqg4nSy1hZMy6Xl783SKqZnPpjvMMXkxOAPCcOthQ3EZSSHZsKKdDf+POAEPfNyW2GoLPt6nJyq+hzP/AtRAC8twz/Vn0JK5jJWqCuU2uB+LZPs7CiFn+rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net; spf=pass smtp.mailfrom=telus.net; dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b=A8zFAaLO; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=telus.net
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b58445361e8so451600a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Oct 2025 20:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=telus.net; s=google; t=1760499680; x=1761104480; darn=vger.kernel.org;
+        h=thread-index:content-language:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UvVy+BajAErhJO3H45dp4i8wuvTsyXthdxxIvUFbFIQ=;
+        b=A8zFAaLO3xA5vgRwjswM9GqrH+/mv9UBu/ShRcEbb/6vOM/axkHavN4sfFCpY6DQvJ
+         CTUgAcvqcZdokCMH35tHo1IUM4KhohLHvNdjBw6lj1wE2Vq9N0r22QBUgyPpWTWixO9+
+         i575VEUPJc2S8OS3UyVwWYKbf1O3lpqOYSnywnvEp3dS9scBm7bczcowcIi9dF0JyNcC
+         D0yZ/1t75i820RKaItHCVE/2ZE8df1Frm6zLzZFPXZLJgLtxZ8iVmRz5RsDuEOj7QE3q
+         0PIiToJcS66EVXOyXdS2jqtq7xgVV3LZowKJXfKmyRZM+LCQRbxPrPOWPg4o9i3CymQx
+         RZKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760499669; x=1761104469;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2EB7lbGy33x6kUiQ2w3K09v0kV2sk9eBoD76swGwLnk=;
-        b=FgwMVE/iouVPrN4t0MbyzTS6qog56nLLJC8L4G7UhPvPPdZSIKq9NLt7D5+VCafN1Y
-         NMB+HcCQtHvTu9DA/sAbPPS9R5CyAOZY3LU9RA6qLDp/1hw4eIvwhifWloDg4XxSgNe/
-         Hyxo1ochIH5ljHah18IJrXkKqNzIeJtt5F1Fk05YcA5vFRYqpwFB3oPRDmuONwTE8Dux
-         N76BlzNkXnn7+uEpfvEc+JYChsMYreu8a6XaENu7pdsCi0gz594XK8yDhOSU7rBitLhj
-         zly7DXAEhZEklETA9X8CFaL04Fq02rkN898Dt7KwSLnsOiuNwDoKBAfAEuwGM2JnOxyT
-         8W3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXNf8+bTvlFBhzUM2cIESSwjwMpurBzgcqOv/Az+r5b18doMee4P3XN4FgZcL0AVXpWqVs7DXre12X0mtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqk1qN6LRsM1O2a/koI7GYqYWPNgtfE/1G6fsXxracXBVQgeky
-	XaTRnmONHRvzJt3epSKNamkGLARnJmQrFF2IdAsQcih6aT21kKSA5Q6StQrBaQCMdLgG9uapZff
-	BT9yGjuMYU3N+tWqTUrlkYMs1aCbxlFuD2c1tphF4nKJpb4r9nyhHwd37FKO/eY74bf8=
-X-Gm-Gg: ASbGnctaHKZHtLT2vs/mBqxxXfL7mg7xVh634fJrOaMu0/4wjbfOz2vxTW585beTsqZ
-	S7lqWvg4qhGRmnKk8RUyxdzg2KbEWCgjzCsRftzESLX2a69CV1aRioLDilZ6CXgQ765TFPIid8N
-	0yGDLdiRMk/SMMAi9WQ/z6X0goJ2ki2XWy7zg+xN6nzAcNRxuRpRFioe5gR9Q9B5Yaa/bi+UzIN
-	Ojm+1PVM7XjmQiH1I8jINGQKGlRpHPV2fiGHW/mRwlzEQphq7iwpKjHpVduCV26JOAKxPKB6jcC
-	ZLn4BVXYp4zVnJxk13YW1MrieE4yyvB7Kkpeq6OrdJNGV+f5DyvDDoHwOh+jRqjN4WsqvoGdV07
-	UgYqV/w9/+CFElRx4iHAu8X7Wf8Xq5nRcEpQ=
-X-Received: by 2002:a05:6a20:4303:b0:322:4b69:b6ea with SMTP id adf61e73a8af0-32da83db831mr39689793637.28.1760499668982;
-        Tue, 14 Oct 2025 20:41:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUpZSkDFoirzZEs8SDi0R53Xwx2btcDwqsTQiR0SAZnDhqU1pe/wPADgPxeW2HxCi+b4HAxQ==
-X-Received: by 2002:a05:6a20:4303:b0:322:4b69:b6ea with SMTP id adf61e73a8af0-32da83db831mr39689730637.28.1760499668314;
-        Tue, 14 Oct 2025 20:41:08 -0700 (PDT)
-Received: from [10.133.33.56] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b61aab6c1sm17809395a91.13.2025.10.14.20.41.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Oct 2025 20:41:07 -0700 (PDT)
-Message-ID: <53ae7338-e5db-40dd-9fac-f06a97584cef@oss.qualcomm.com>
-Date: Wed, 15 Oct 2025 11:41:02 +0800
+        d=1e100.net; s=20230601; t=1760499680; x=1761104480;
+        h=thread-index:content-language:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UvVy+BajAErhJO3H45dp4i8wuvTsyXthdxxIvUFbFIQ=;
+        b=s48DXxTKGaczbXhk5WJwZT0Dz4Ff5BS0MwWoP0dw6MH5t5rsg/nVGZc+Wd9vPdgvQ8
+         Vx3xQIli07bFmgL68Wi/E4wV4n3lOmnnfBEJglu9/B49q1wDvuPUQ+Nv/XN8SDe8pGL8
+         gfxHp3q5q+epCWannP7aEfyvZ5ld8KwmICZLSfwe8LOGM70cdJRiXl5t9D1FpK6TnUTg
+         ug17c0ILI3+6/uuAdg7cdTc8pO3HM7PwSbz5bS4XK8F8/HHIaQ64E0/IChKLbMJEZwXE
+         3SsrWnna2n4O871B4dKfswuO8rGYVEtz9rqNHzRu+gT9m0KCJk5aI3mJit4ZNKRF1Ure
+         s6UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGir9U/1WHkYr8jIYtdN3HF44GFxoh6fhmj+Cuz+3zza+WGb0kKbjR619sfX5OUcLjPjD19lbEZqVorD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgpP1wEhtXqAkrTQysCSSd4pz9WSYH0G//tvj036XanBJAQkny
+	mbBpKDQL2T15SlIw9topxQYUlxlFs9dYWSyBg2jHPWw/I8AK2UAEKcGWFjxRQSk3jNI=
+X-Gm-Gg: ASbGnctlDT3d+9tzdfOrxPyTyLbjvpn4abL1JbzNPEYD36Xp3INyldduOQMghcD98X6
+	tuHvzsL19sQp938qRFreMczEy8BTt2/KgiN83xyYTdZPIJRHXovemhLISzLi/81OQ5nLnWdlwCY
+	Xi7moPX10jPAef6vy2nBGElWEpzbLtU10fmqhPfmAf+174QxLwt73vxt9oq/lBmEYqBN10RnFNC
+	7jncNpkMj06ii3ShGlsq+6EXa6ZWfPJHrI2ciiXI43DQpaKYk4ZmDYl96AepNSPLWluHNutQWfq
+	Skr44kxMo+MHT8Hj88xs9tiotKRG6wumCCehFOEOcDCM0yb9br/ZLR8Y0pxE4A101OfjbSZlsyf
+	ZcpsY9wxeYv3NkRqo88cNPfUePhJvrCpJEy8cS+N3XmC1DWqt5e79HnkHpUuR7E3jOKGxOQcd+o
+	9EetQHOMzgNqf7SKJBhQnuEP8WFEU=
+X-Google-Smtp-Source: AGHT+IFk5b5m32PEcjH/JKtGeyCG8BkT/fRM0LBEsuJmc9XEjSRySY8y+FS7HN+VgONfFO05J6xNhw==
+X-Received: by 2002:a17:902:f691:b0:267:cdc1:83e with SMTP id d9443c01a7336-28ec9c975a0mr435584925ad.15.1760499679467;
+        Tue, 14 Oct 2025 20:41:19 -0700 (PDT)
+Received: from DougS18 (s66-183-142-209.bc.hsia.telus.net. [66.183.142.209])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e20f8csm180651275ad.49.2025.10.14.20.41.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Oct 2025 20:41:19 -0700 (PDT)
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Sergey Senozhatsky'" <senozhatsky@chromium.org>,
+	"'Rafael J. Wysocki'" <rafael@kernel.org>
+Cc: "'Christian Loehle'" <christian.loehle@arm.com>,
+	"'Rafael J. Wysocki'" <rafael.j.wysocki@intel.com>,
+	"'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+	"'Artem Bityutskiy'" <artem.bityutskiy@linux.intel.com>,
+	"'Sasha Levin'" <sashal@kernel.org>,
+	"'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	"'Tomasz Figa'" <tfiga@chromium.org>,
+	<stable@vger.kernel.org>,
+	"Doug Smythies" <dsmythies@telus.net>
+References: <36iykr223vmcfsoysexug6s274nq2oimcu55ybn6ww4il3g3cv@cohflgdbpnq7> <08529809-5ca1-4495-8160-15d8e85ad640@arm.com> <2zreguw4djctgcmvgticnm4dctcuja7yfnp3r6bxaqon3i2pxf@thee3p3qduoq> <8da42386-282e-4f97-af93-4715ae206361@arm.com> <nd64xabhbb53bbqoxsjkfvkmlpn5tkdlu3nb5ofwdhyauko35b@qv6in7biupgi> <49cf14a1-b96f-4413-a17e-599bc1c104cd@arm.com> <CAJZ5v0hGu-JdwR57cwKfB+a98Pv7e3y36X6xCo=PyGdD2hwkhQ@mail.gmail.com> <7ctfmyzpcogc5qug6u3jm2o32vy2ldo3ml5gsoxdm3gyr6l3fc@jo7inkr3otua>
+In-Reply-To: <7ctfmyzpcogc5qug6u3jm2o32vy2ldo3ml5gsoxdm3gyr6l3fc@jo7inkr3otua>
+Subject: RE: stable: commit "cpuidle: menu: Avoid discarding useful information" causes regressions
+Date: Tue, 14 Oct 2025 20:41:20 -0700
+Message-ID: <001601dc3d85$933dd540$b9b97fc0$@telus.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] media: qcom: camss: csiphy: Add support for v2.4.0
- two-phase CSIPHY
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Loic Poulain <loic.poulain@oss.qualcomm.com>,
-        Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com
-References: <20250924-knp-cam-v1-0-b72d6deea054@oss.qualcomm.com>
- <9cVxYzExtV_uysqXmZcP03jBKVwb9fRH7EuJPSeLUS-Juqq3JdoISB_wwBeiJUTBFr0ZuGTg2sSXn8NjSi11Pg==@protonmail.internalid>
- <20250924-knp-cam-v1-4-b72d6deea054@oss.qualcomm.com>
- <f7ec862a-d3c5-480b-91bb-e9ff1bb87d4a@linaro.org>
-Content-Language: en-US
-From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-In-Reply-To: <f7ec862a-d3c5-480b-91bb-e9ff1bb87d4a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: _ONG7qNEFyBfP8e2Fp88i3udKY87NAbV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEzMDAyMiBTYWx0ZWRfX5k8D6rohTxfq
- DCGb/D8MzCht96mMsuquy0K3uKfwdh4QnOgZmI2r4Sa7ill09C7VwF3Id6HMewalFcl/cM3Ns8A
- m27MNbo/vrQRWZGQ3UxrkoK/YMnPPMWZIQovu3R0EtB3EAEXCo4HW0hdfQSPUfb+o7PV4ASoLDx
- uuZMmX/58NpsmXXg/h0P0FpO102Qm+o86INhLEK67zRPsbKLuWCwrSSlSIKjWIN6glQuL7fr9Hn
- ODA+ZC9sRaF5VHcQoYWXoLtlI+Sz9JcnhHgIq+cE4hwqVT95LC1qlDXTUQyaIkpRXRbP1paZNL+
- bbo7sUH5fTnj/nT9xDXShxsvEDVYfRRRzOdpPAMrrpavLI6/sOWhQ/kFKfDfwRP7JgIOcFiYON0
- TTANmVfk6mNyuCupKquDpwwdvO0JrA==
-X-Authority-Analysis: v=2.4 cv=SfD6t/Ru c=1 sm=1 tr=0 ts=68ef17d6 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=9dEm_Dpkgd8kDuDKjw8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-GUID: _ONG7qNEFyBfP8e2Fp88i3udKY87NAbV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-15_01,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510130022
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-ca
+Thread-Index: AQFP8RZJEbA2uDnjQfbsE3QfwpHW3AGSQ1aYA2hH1ScDEHwS7AHjtqkUAUPNRMECUslMCgJdmtwztVwLqSA=
 
-
-On 9/25/2025 8:57 PM, Bryan O'Donoghue wrote:
-
-> On 25/09/2025 01:02, Jingyi Wang wrote:
->> From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
->>
->> Add more detailed resource information for CSIPHY devices in the camss
->> driver along with the support for v2.4.0 in the 2 phase CSIPHY driver
->> that is responsible for the PHY lane register configuration, module
->> reset and interrupt handling.
->>
->> This change adds 'cmn_status_offset' variable in 'csidphy_device_regs'
->> structure. It helps adapt the offset to the common status registers that
->> is different in v2.4.0 from others.
->>
->> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
->>   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 138 
->> ++++++++++++++++++++-
->>   drivers/media/platform/qcom/camss/camss-csiphy.h   |   1 +
->>   drivers/media/platform/qcom/camss/camss.c          | 107 
->> ++++++++++++++++
->>   3 files changed, 240 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c 
->> b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->> index a229ba04b158..ecb91d3688ca 100644
->> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->> @@ -46,7 +46,7 @@
->>   #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE    BIT(7)
->>   #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_COMMON_PWRDN_B BIT(0)
->>   #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_SHOW_REV_ID    BIT(1)
->> -#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(offset, n) ((offset) + 
->> 0xb0 + 0x4 * (n))
->> +#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(offset, bias, n) ((offset) 
->> + (bias) + 0x4 * (n))
+On 2025.10.14 18:30 Sergey Senozhatsky wrote:
+> On (25/10/14 17:54), Rafael J. Wysocki wrote:
+>> Sergey, can you please run the workload under turbostat on the base
+>> 6.1.y and on 6.1.y with the problematic commit reverted and send the
+>> turbostat output from both runs (note: turbostat needs to be run as
+>> root)?
 >
-> You need to explain this bias parameter in the commit log.
+> Please find attached the turbostat logs for both cases.
 
-Ack. Now rename the 'bias' parameter the same as 'common_status_offset' 
-to remove ambiguity.
+The turbostat data suggests that power limit throttling is involved.
+It also suggests, but I am not sure, that temperature limiting measures might be involved.
 
->>
->>   #define CSIPHY_DEFAULT_PARAMS        0
->>   #define CSIPHY_LANE_ENABLE        1
->> @@ -587,6 +587,123 @@ csiphy_lane_regs lane_regs_sm8550[] = {
->>       {0x0C64, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
->>   };
->>
->> +/* GEN2 2.4.0 2PH DPHY mode */
->
-> You need to call out the process node in this comment, per the other 
-> recent additions.
+We need to know more about the test system involved here.
+And we need to separate the variables.
+What thermal limiting methods are being used? Is idle injection being used? Or CPU frequency limiting or both.
+(I have very limited experience with thermald, and pretty much only use the TCC offset method.)
+Power and Thermal throttling is never involved when I test idle governor changes.
 
-Ack
+If it were me, I would limit the maximum CPU frequency such that power limit throttling did not engage for the test. That would
+likely also eliminate the need for any thermal limiting also.
+The suggestion is to then repeat the test.
 
->> +static const struct
->> +csiphy_lane_regs lane_regs_kaanapali[] = {
->> +    /* LN 0 */
->> +    {0x0094, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x00A0, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0090, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0098, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0094, 0x07, 0xd1, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0030, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0000, 0x8C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0038, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x002C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0034, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x001C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0014, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x003C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0004, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0020, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0008, 0x19, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
->> +    {0x0010, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0094, 0xD7, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x005C, 0x54, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0060, 0xFD, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0064, 0x7F, 0x00, CSIPHY_SKEW_CAL},
->> +
->> +    /* LN 2 */
->> +    {0x0494, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x04A0, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0490, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0498, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0494, 0x07, 0xd1, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0430, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0400, 0x8C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0438, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x042C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0434, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x041C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0414, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x043C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0404, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0420, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0408, 0x19, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
->> +    {0x0410, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0494, 0xD7, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x045C, 0x54, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0460, 0xFD, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0464, 0x7F, 0x00, CSIPHY_SKEW_CAL},
->> +
->> +    /* LN 4 */
->> +    {0x0894, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x08A0, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0890, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0898, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0894, 0x07, 0xd1, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0830, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0800, 0x8C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0838, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x082C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0834, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x081C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0814, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x083C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0804, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0820, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0808, 0x19, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
->> +    {0x0810, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0894, 0xD7, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x085C, 0x54, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0860, 0xFD, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0864, 0x7F, 0x00, CSIPHY_SKEW_CAL},
->> +
->> +    /* LN 6 */
->> +    {0x0C94, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0CA0, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C90, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C98, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C94, 0x07, 0xd1, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C30, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C00, 0x8C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C38, 0xFE, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C2C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C34, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C1C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C14, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C3C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C04, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C20, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C08, 0x19, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
->> +    {0x0C10, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0C94, 0xD7, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0C5C, 0x54, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0C60, 0xFD, 0x00, CSIPHY_SKEW_CAL},
->> +    {0x0C64, 0x7F, 0x00, CSIPHY_SKEW_CAL},
->> +
->> +    /* LN CLK */
->> +    {0x0E94, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0EA0, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E90, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E98, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E94, 0x07, 0xd1, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E30, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E28, 0x04, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E00, 0x80, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E0C, 0xFF, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E38, 0x1F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E2C, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E34, 0x0F, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E1C, 0x0A, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E14, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E3C, 0xB8, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E04, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E20, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +    {0x0E08, 0x19, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
->> +    {0x0E10, 0x52, 0x00, CSIPHY_DEFAULT_PARAMS},
->> +};
->> +
->>   /* 4nm 2PH v 2.1.2 2p5Gbps 4 lane DPHY mode */
->>   static const struct
->>   csiphy_lane_regs lane_regs_x1e80100[] = {
->> @@ -714,13 +831,13 @@ static void csiphy_hw_version_read(struct 
->> csiphy_device *csiphy,
->>              CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(regs->offset, 6));
->>
->>       hw_version = readl_relaxed(csiphy->base +
->> - CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 12));
->> +        CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 
->> regs->cmn_status_offset, 12));
->>       hw_version |= readl_relaxed(csiphy->base +
->> - CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 13)) << 8;
->> +        CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 
->> regs->cmn_status_offset, 13)) << 8;
->>       hw_version |= readl_relaxed(csiphy->base +
->> - CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 14)) << 16;
->> +        CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 
->> regs->cmn_status_offset, 14)) << 16;
->>       hw_version |= readl_relaxed(csiphy->base +
->> - CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 15)) << 24;
->> +        CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 
->> regs->cmn_status_offset, 15)) << 24;
->>
->>       dev_dbg(dev, "CSIPHY 3PH HW Version = 0x%08x\n", hw_version);
->>   }
->> @@ -749,7 +866,8 @@ static irqreturn_t csiphy_isr(int irq, void *dev)
->>       for (i = 0; i < 11; i++) {
->>           int c = i + 22;
->>           u8 val = readl_relaxed(csiphy->base +
->> - CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, i));
->> + CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset,
->> +                              regs->cmn_status_offset, i));
->>
->>           writel_relaxed(val, csiphy->base +
->> CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(regs->offset, c));
->> @@ -915,6 +1033,7 @@ static bool csiphy_is_gen2(u32 version)
->>       case CAMSS_845:
->>       case CAMSS_8550:
->>       case CAMSS_8775P:
->> +    case CAMSS_KAANAPALI:
->>       case CAMSS_X1E80100:
->>           ret = true;
->>           break;
->> @@ -989,6 +1108,7 @@ static int csiphy_init(struct csiphy_device 
->> *csiphy)
->>
->>       csiphy->regs = regs;
->>       regs->offset = 0x800;
->> +    regs->cmn_status_offset = 0xb0;
->>
->>       switch (csiphy->camss->res->version) {
->>       case CAMSS_845:
->> @@ -1023,6 +1143,12 @@ static int csiphy_init(struct csiphy_device 
->> *csiphy)
->>           regs->lane_regs = &lane_regs_sa8775p[0];
->>           regs->lane_array_size = ARRAY_SIZE(lane_regs_sa8775p);
->>           break;
->> +    case CAMSS_KAANAPALI:
->> +        regs->lane_regs = &lane_regs_kaanapali[0];
->> +        regs->lane_array_size = ARRAY_SIZE(lane_regs_kaanapali);
->> +        regs->offset = 0x1000;
->> +        regs->cmn_status_offset = 0x138;
->
-> I don't think a second offset is warranted
->
-> You could acheive the required offset with offset = 0x1138; and a 
-> comment.
->
-> Perhaps I'm not seeing it but seems like an additional - fixed - fluff 
-> variable.
-Necessary to add another variable here. The 'offset' parameter denotes 
-the address offset between base and the common register. But the 
-'common_status_offset' denotes the offset between common registers and 
-status registers.
+From the discussion on this thread, it makes some sense that the selection of shallower idle states more often might have caused
+more throttling leading to the apparent benchmark regression.
+
+... Doug
 
 
 
