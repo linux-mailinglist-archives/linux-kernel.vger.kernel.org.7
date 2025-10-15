@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-853977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0D8BDD333
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:50:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074E4BDD345
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 09:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4D221352CF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:50:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 723534F881F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 07:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D473148C5;
-	Wed, 15 Oct 2025 07:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129C33148B4;
+	Wed, 15 Oct 2025 07:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFq4PluN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="iy6tBtuD"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E9F313E2E;
-	Wed, 15 Oct 2025 07:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3764D313E06;
+	Wed, 15 Oct 2025 07:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760514634; cv=none; b=n8OcsIVp2e4fXs/QFoeQbpilD3n2+Hb0KNz3p/q61cw/2P3C45O/qjKH42MZdkNoHAuXQn62JE+P+RFett5VZ8OCz9p4mbqdEItV4LDbkCsg6la+W9zDMdmKpi9OagTpwSJTtJDxJcnXbF+MJrpIxtFviD5XhWsXdQJMrEn0AeI=
+	t=1760514689; cv=none; b=d6/XZvIEV1jI90+5skusmSxXJMn4Ii/2f+yBc5ebKQV1OC/Pu/Rop7ruNZFi+cmec5zptRTuBjI/8IwWjFuWCej8i60lCOOYt0ezd18iGOnvyst00Xt3HinuE0r2tFZ/ODyVMD1scLjF0xfLl9ihOPtcNZ0XpFMdw7uFx4+bw4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760514634; c=relaxed/simple;
-	bh=N+KdJSmTL8JhpieQRxlnbC6Rxa5LC8KfPeDrItfVC1A=;
+	s=arc-20240116; t=1760514689; c=relaxed/simple;
+	bh=CBFfHRsFYIsZiQ4tsE1nkWROuQ1xtj+GhJNGHDenFUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EQw6ioCUXX2wQeQAUPRF+waqm75zuH+/Q6zmnj+rlMilQShA6bMsjn4j8GQoj01a+0CQUZjBBW6BfWVCTkCco+PGUNFL/bn9F0KVAq/eJOXhuq/PpFgQpwU4vnoIsJHl+5NTMQbE0CFhHuzLozcZ7ZMZ1JD9AZp5yt35ia+vcss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFq4PluN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F3CDC4CEF8;
-	Wed, 15 Oct 2025 07:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760514633;
-	bh=N+KdJSmTL8JhpieQRxlnbC6Rxa5LC8KfPeDrItfVC1A=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=KvHbjZYV5EGgQ4U1jFZijhaiT1rf8CxlhhyzF9TKPHcgUTO3yDobYo7mHBitHM992tTY0tiCZmsdT1KzCeWaBIrY0grW5I1znT/ZLWMC7A5sxDJ8pzQY4PO4SMs/krT8Q9TjyVxonpV//702yAY/1Qiu4O/GPqUBVDi37EMeXS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=iy6tBtuD; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.16])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id F301E4076180;
+	Wed, 15 Oct 2025 07:51:21 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F301E4076180
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1760514682;
+	bh=LbD9Rhy15FFxgoIf78gzFlJLro5Fvl9lKWQtefRbzBA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SFq4PluNMb3ZTq1LSh3igXo6xNp00Fu9larjvGLpNnmxT0zX80tUE7p0BQc2oonmg
-	 u+7REggKqKVjKJDAecTZYIMF7Xjq8SkHUwHmSUnyTDMHI3FREcrYMtESr9l3kiJnQi
-	 y3FXKtVzboRvHpvEqKOfHN337IO+djyYCmcQ34qP67FK5J6VlEYMIXHL/kDe2jUuf0
-	 Nu5GCbaARvK3xRfsIMmweCuilsHJ/6nQ4TNeDtYFZWP9ypiFOxEpQ8brXEV9NBvlIB
-	 KJVqsWzD1PHI7QvPve9VKFGKcL/kSy2IGc3GNA0xXeXyFlb6vby6bpQ0wYpnvqk5DP
-	 2lZDyc5Em93Zw==
-Date: Wed, 15 Oct 2025 13:20:17 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: FUKAUMI Naoki <naoki@radxa.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, 
-	manivannan.sadhasivam@oss.qualcomm.com, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, 
-	Kai-Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Chia-Lin Kao <acelan.kao@canonical.com>, 
-	Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-Message-ID: <7ugvxl3g5szxhc5ebxnlfllp46lhprjvcg5xp75mobsa44c6jv@h2j3dvm5a4lq>
-References: <22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com>
- <20251014184905.GA896847@bhelgaas>
- <5ivvb3wctn65obgqvnajpxzifhndza65rsoiqgracfxl7iiimt@oym345d723o2>
- <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+	b=iy6tBtuDEUr0yJzcKPgs/rSTWcw9bQrvvzlCrRBCspZ+e/6Qej9m8aYwoI7BSXG4j
+	 PT0r1Nx5D50RIEPCt0yPX9XngK1ZLpknd2Gf1qWYqfDF+ZNsGQymdt8h5Fn500aqz7
+	 PCzrJT4DaKSqPQsz3GPPX2sdwE0zaPfK8YXi/JwE=
+Date: Wed, 15 Oct 2025 10:51:21 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Bitterblue Smith <rtl8821cerfe2@gmail.com>, 
+	Zong-Zhe Yang <kevin_yang@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH rtw-next v2 6/7] wifi: rtw89: handle
+ IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
+Message-ID: <20251015103403-08f19f981c70546d56ebd07a-pchelkin@ispras>
+References: <20251002200857.657747-1-pchelkin@ispras.ru>
+ <20251002200857.657747-7-pchelkin@ispras.ru>
+ <b1725b36caba476ba9ee4916910d8232@realtek.com>
+ <20251014234211-4f763e2dab18fe04fbe4d95c-pchelkin@ispras>
+ <bbaaabd1631d43fdaa24b818b7ac7929@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,82 +64,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <823262AB21C8D981+8c1b9d50-5897-432b-972e-b7bb25746ba5@radxa.com>
+In-Reply-To: <bbaaabd1631d43fdaa24b818b7ac7929@realtek.com>
 
-On Wed, Oct 15, 2025 at 04:13:41PM +0900, FUKAUMI Naoki wrote:
-> Hi,
-> 
-> On 10/15/25 15:26, Manivannan Sadhasivam wrote:
-> > On Tue, Oct 14, 2025 at 01:49:05PM -0500, Bjorn Helgaas wrote:
-> > > [+cc regressions]
-> > > 
-> > > On Wed, Oct 15, 2025 at 01:30:16AM +0900, FUKAUMI Naoki wrote:
-> > > > Hi Manivannan Sadhasivam,
-> > > > 
-> > > > I've noticed an issue on Radxa ROCK 5A/5B boards, which are based on the
-> > > > Rockchip RK3588(S) SoC.
-> > > > 
-> > > > When running Linux v6.18-rc1 or linux-next since 20250924, the kernel either
-> > > > freezes or fails to probe M.2 Wi-Fi modules. This happens with several
-> > > > different modules I've tested, including the Realtek RTL8852BE, MediaTek
-> > > > MT7921E, and Intel AX210.
-> > > > 
-> > > > I've found that reverting the following commit (i.e., the patch I'm replying
-> > > > to) resolves the problem:
-> > > > commit f3ac2ff14834a0aa056ee3ae0e4b8c641c579961
-> > > 
-> > > Thanks for the report, and sorry for the regression.
-> > > 
-> > > Since this affects several devices from different manufacturers and (I
-> > > assume) different drivers, it seems likely that there's some issue
-> > > with the Rockchip end, since ASPM probably works on these devices in
-> > > other systems.  So we should figure out if there's something wrong
-> > > with the way we configure ASPM, which we could potentially fix, or if
-> > > there's a hardware issue and we need some king of quirk to prevent
-> > > usage of ASPM on the affected platforms.
-> > > 
+On Wed, 15. Oct 01:43, Ping-Ke Shih wrote:
+> > > > +
+> > > > +               if (sw_define != skb_data->tx_rpt_sn)
+> > > > +                       continue;
+> > > > +               if (tx_status != RTW89_TX_DONE &&
+> > > > +                   data_txcnt != skb_data->tx_pkt_cnt_lmt)
+> > >
+> > > As commit message of previous patch, "When there is a failed
+> > > TX status reported by the firmware, the report is ignored until the limit
+> > > is reached or success status appears."
+> > >
+> > > Do you still need to check data_txcnt for failed cases?
 > > 
-> > I believe it is the latter. The Root Port is having trouble with ASPM.
+> > The question also concerns
 > > 
-> > FUKAUMI Naoki, could you please share the 'sudo lspci -vv' output so that we
-> > know what kind of Root Port we are dealing with? You can revert the offending
-> > patch and share the output.
+> >   tx_req->desc_info.tx_cnt_lmt = 8;
+> > 
+> > line in rtw89_tx_rpt_enable().  'tx_cnt_lmt' is written to TX descriptor
+> > and processed by firmware.  The value defines how many times the firmware
+> > will retry transmission attempts, it will not retry more times than that.
+> > 
+> > 'data_txcnt' C2H field determines the retry attempt counter for the frame
+> > returned by the firmware.  If it reaches the limit, this means we got
+> > the last report from the firmware and there would be no other firmware
+> > reports for the sent frame.  So a final tx_status should be taken
+> > uncondionally in this case.
+> > 
+> > E.g. if 'tx_cnt_lmt' is set to 1, the firmware will try only once,
+> > 'data_txcnt' will be 1, too.  The limit is reached and we should take
+> > tx_status immediately as is.  So there's a higher chance of getting a
+> > failed status eventually.
+> > 
+> > I set it currently to 8 as the vendor driver does.  In local testing it
+> > looks more than enough.  I've seen maximum of 5 retry attempts for the
+> > same frame (usually there are no retries at all) though my network radio
+> > environment is quite noisy.
+> > 
+> > I'll add the tx_cnt_lmt related info to commit message for clarity.
+> > 
 > 
-> Here is dmesg/lspci output on ROCK 5A(RK3588S):
->  https://gist.github.com/RadxaNaoki/1355a0b4278b6e51a61d89df7a535a5d
+> Thanks for the detail. 
 > 
+>     1 2 3 4 5 6 7 8
+> (a) x x x x x x x x  ==> retry 8 times, but all failure. Report at 8th C2H.
+> (b) x x x o          ==> retry 3 times, and 4th done. Report at 4th C2H.
+> (c) o                ==> just done at first one. Report at first C2H.
+> 
+> For every attempt, firmware reports a C2H with tx_status, right?
 
-Thanks! Could you please try the below diff with f3ac2ff14834 applied?
+Yes.
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 214ed060ca1b..0069d06c282d 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2525,6 +2525,15 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
-  */
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+> Can I say (a) case is why we should check data_txcnt? 
+> For cases (b)/(c), they rely on 'tx_status == RTW89_TX_DONE'.
 
-+
-+static void quirk_disable_aspm_all(struct pci_dev *dev)
-+{
-+       pci_info(dev, "Disabling ASPM\n");
-+       pci_disable_link_state(dev, PCIE_LINK_STATE_ALL);
-+}
-+
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ROCKCHIP, 0x3588, quirk_disable_aspm_all);
-+
- /*
-  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
-  * Link bit cleared after starting the link retrain process to allow this
+We should somehow determine in case (a) when those 8 attempts for the
+frame have passed and then promptly give the report with a failed status
+up to the wireless stack.  To my mind, without checking data_txcnt
+rtw89_mac_c2h_tx_rpt() can't determine the time when to do an actual
+report if every retry attempt has failed.
 
-
-From your previous comment, I believe the Root Port is having the issues with
-ASPM as you seem to have tried connecting different devices to the slot. So I
-disabled ASPM for the Root Port with the above diff.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Otherwise skb would remain in the queue being unreported until HCI reset
+takes place, though we already had a chance to report it as failed.
 
