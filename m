@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-853694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-853695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C80BBDC596
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:33:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E60BDC5A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 05:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C80B3351591
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:33:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E41F1928218
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 03:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011632C029C;
-	Wed, 15 Oct 2025 03:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121052E283B;
+	Wed, 15 Oct 2025 03:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bO2RUFsG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KOCXAO/h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89D7186E40
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1912BE647
+	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 03:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760499191; cv=none; b=bJw++ryA+xqpuO/PnpVDKbIpv1YU+O3TpDPb/Uw/kQHYRhKF2wVh6lxkNw/GYhA0WZZw1VQwbPaZQjNRjk/kmMJeBv8RFzUplamAJ7fUNi2QzvUZ+Jz7/amyAAjXSCc9+gVv5eHzYUUrlfvOfhq0/lVlhaftHuKft3YWjiMpXu8=
+	t=1760499193; cv=none; b=KkPqdy9LlsAErCcdIxVu7jXUgXcZdc4ou1UMeGX8VRRCpxFB/L11oeVkCbgzZo1GGtgAd8zNPVJMh7yc4o7A82N1itK1+AsX/oegr9lCG4wikLJi/NmCk4/lEA6KKCbBuVXfRoHRK+2EYAtGM3iGDzHT9W0J1wKjRrnVs0k3z5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760499191; c=relaxed/simple;
-	bh=mw7TGY0Xv8+iKkhM8M/JttJ8g/t1n5LN+OhsmZ8c5Xg=;
+	s=arc-20240116; t=1760499193; c=relaxed/simple;
+	bh=lt/Ccq3EasYpmnoIY3Dqr32J6BxUvLuUtOm/K/FJNUY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FiuicpaDGRr01BrhP5KM1iLa6mFGAbkQtD1appLEFMs/FWVyLAa7cuYog315rfIgrie7MeX474mLLLz27+fhgWQjJcvG6xEZo6iaFrnmyBQWbtxuS+D+kksw0p11AgWHY8ADmz3EMVZdzeK8uxvV8Bjg4K8SjNyn5U9DQ9DmBD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bO2RUFsG; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=e04mZZcH9dh9T9QniLPlEYtY40QSiA83jAFE4bPmbuCvPJCjNLc+L/6ez5NnoBKS9+vLhMdLpnFh1/7acO0aUCDqWk2UvKfN7UDS2e6OQytiIF0UpwIm8wAWyFxP6oX3WRZkYSogP9+3GrZG8czrSVyG2uUGCtIg9x3iayqDpzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KOCXAO/h; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760499188;
+	s=mimecast20190719; t=1760499190;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aBMe1HD5P3C7TJ6RCjcRCnllQM6K3Wm1i1grp8EBeR8=;
-	b=bO2RUFsG8n0EO4oT5r6PJNAYGYXfvvKAQQOhOBhLjm02q2Q0mJWfngGCQGdWqttjMRA7EX
-	eAGb0jaMxCgY7hAL7YapQvBlBN5JSb80HrqBctuxmn2IyM3OGD/ieO1jI/wTLnYgByaftK
-	kRfZJ8wBwx853+SV8bSx9Ey3xbga01k=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=AEnOwSVuWAWAL/347w/YmsTI1jFv0LM89DYqW+RqkiQ=;
+	b=KOCXAO/hO1/lJ9tGaCoe/I9GZAUmrq3gcRa5m5ikYIYUgBwuRtf1PaRAFvqv6oglmVgP7C
+	xcuiStah9mUKiiEQUUzOCnf1VG8Y0aTUHHSBleaei3XZblBDXaCqlyqqsEwph1cWM1+rrq
+	UpKF55cvYs49fuedMiT1obgnyt3moeo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-363-SFu7NNpAPD63VNAn-I4kKA-1; Tue,
- 14 Oct 2025 23:33:05 -0400
-X-MC-Unique: SFu7NNpAPD63VNAn-I4kKA-1
-X-Mimecast-MFC-AGG-ID: SFu7NNpAPD63VNAn-I4kKA_1760499183
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-680-RI-f0PJgOoGZv70syzfb7A-1; Tue,
+ 14 Oct 2025 23:33:07 -0400
+X-MC-Unique: RI-f0PJgOoGZv70syzfb7A-1
+X-Mimecast-MFC-AGG-ID: RI-f0PJgOoGZv70syzfb7A_1760499186
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B7C9B1800654;
-	Wed, 15 Oct 2025 03:33:03 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 94A1B19540D6;
+	Wed, 15 Oct 2025 03:33:05 +0000 (UTC)
 Received: from intellaptop.redhat.com (unknown [10.22.80.16])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ACDA61800451;
-	Wed, 15 Oct 2025 03:33:01 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F15B91800451;
+	Wed, 15 Oct 2025 03:33:03 +0000 (UTC)
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org,
@@ -68,9 +68,9 @@ Cc: x86@kernel.org,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Maxim Levitsky <mlevitsk@redhat.com>
-Subject: [PATCH v2 1/3] KVM: x86: Warn if KVM tries to deliver an #APF completion when APF is not enabled
-Date: Tue, 14 Oct 2025 23:32:56 -0400
-Message-ID: <20251015033258.50974-2-mlevitsk@redhat.com>
+Subject: [PATCH v2 2/3] KVM: x86: Fix a semi theoretical bug in kvm_arch_async_page_present_queued
+Date: Tue, 14 Oct 2025 23:32:57 -0400
+Message-ID: <20251015033258.50974-3-mlevitsk@redhat.com>
 In-Reply-To: <20251015033258.50974-1-mlevitsk@redhat.com>
 References: <20251015033258.50974-1-mlevitsk@redhat.com>
 Precedence: bulk
@@ -82,27 +82,90 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-KVM flushes the APF queue completely when the asynchronous pagefault is
-disabled, therefore this case should not occur.
+Fix a semi theoretical race condition related to a lack of memory barriers
+when dealing with vcpu->arch.apf.pageready_pending.
 
+We have the following lockless code implementing the sleep/wake pattern:
+
+kvm_arch_async_page_present_queued() running in workqueue context:
+
+    kvm_make_request(KVM_REQ_APF_READY, vcpu);
+    /* memory barrier is missing here*/
+    if (!vcpu->arch.apf.pageready_pending)
+        kvm_vcpu_kick(vcpu);
+
+And vCPU code running:
+
+kvm_set_msr_common()
+    vcpu->arch.apf.pageready_pending = false;
+    /* memory barrier is missing here*/
+
+And later, the vcpu_enter_guest():
+
+    if (kvm_check_request(KVM_REQ_APF_READY, vcpu))
+         kvm_check_async_pf_completion(vcpu)
+
+Add missing full memory barriers in both cases to avoid theoretical
+case of not kicking the vCPU thread.
+
+Note that the bug is mostly theoretical because kvm_make_request
+already uses an atomic bit operation which is already serializing on x86,
+requiring only for documentation purposes the smp_mb__after_atomic()
+after it, which is NOP.
+
+The second missing barrier, between kvm_set_msr_common and
+vcpu_enter_guest isn't strictly needed because KVM executes several
+barriers in between calling these functions, however it still makes
+sense to have an explicit barrier to be on the safe side.
+
+Finally, also use READ_ONCE/WRITE_ONCE.
+
+Thanks a lot to Paolo for the help with this patch.
+
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
 ---
- arch/x86/kvm/x86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4b8138bd4857..22024de00cbd 100644
+index 22024de00cbd..0fc7171ced26 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -13896,7 +13896,7 @@ void kvm_arch_async_page_present_queued(struct kvm_vcpu *vcpu)
+@@ -4184,7 +4184,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		if (!guest_pv_has(vcpu, KVM_FEATURE_ASYNC_PF_INT))
+ 			return 1;
+ 		if (data & 0x1) {
+-			vcpu->arch.apf.pageready_pending = false;
++
++			/* Pairs with a memory barrier in kvm_arch_async_page_present_queued */
++			smp_store_mb(vcpu->arch.apf.pageready_pending, false);
++
+ 			kvm_check_async_pf_completion(vcpu);
+ 		}
+ 		break;
+@@ -13879,7 +13882,7 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+ 	if ((work->wakeup_all || work->notpresent_injected) &&
+ 	    kvm_pv_async_pf_enabled(vcpu) &&
+ 	    !apf_put_user_ready(vcpu, work->arch.token)) {
+-		vcpu->arch.apf.pageready_pending = true;
++		WRITE_ONCE(vcpu->arch.apf.pageready_pending, true);
+ 		kvm_apic_set_irq(vcpu, &irq, NULL);
+ 	}
  
- bool kvm_arch_can_dequeue_async_page_present(struct kvm_vcpu *vcpu)
+@@ -13890,7 +13893,11 @@ void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+ void kvm_arch_async_page_present_queued(struct kvm_vcpu *vcpu)
  {
--	if (!kvm_pv_async_pf_enabled(vcpu))
-+	if (WARN_ON_ONCE(!kvm_pv_async_pf_enabled(vcpu)))
- 		return true;
- 	else
- 		return kvm_lapic_enabled(vcpu) && apf_pageready_slot_free(vcpu);
+ 	kvm_make_request(KVM_REQ_APF_READY, vcpu);
+-	if (!vcpu->arch.apf.pageready_pending)
++
++	/* Pairs with smp_store_mb in kvm_set_msr_common */
++	smp_mb__after_atomic();
++
++	if (!READ_ONCE(vcpu->arch.apf.pageready_pending))
+ 		kvm_vcpu_kick(vcpu);
+ }
+ 
 -- 
 2.49.0
 
