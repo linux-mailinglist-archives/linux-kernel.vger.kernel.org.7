@@ -1,121 +1,96 @@
-Return-Path: <linux-kernel+bounces-855359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-855360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A8CBE1003
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:12:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82578BE100C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Oct 2025 01:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6612B19C5D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4121719C5E37
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Oct 2025 23:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783F83164D0;
-	Wed, 15 Oct 2025 23:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493631691F;
+	Wed, 15 Oct 2025 23:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M37ZrIlu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r742GAJH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34E131579B
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 23:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CC531579B;
+	Wed, 15 Oct 2025 23:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760569940; cv=none; b=XIyO8I7EtwuihaNWCDOph/84Nn3qmNnZqmEwdVy2Oj47wxCwNGKGmSe8AUKok3riy75b28SBdOmmAPXcpSjgJPzDijpeCZU3ZGx9ov7rYd/i3Ame1wPdG/mG+56Jtn14jcnuymvgg5CIhIbJ+uk1J92ieTyeyVWy7fUTqwhVgoc=
+	t=1760569945; cv=none; b=bGFhxzP4CAgsbcPQ3RyGJuyOzZIC07FStncfZzG/0o2z061hM6WBhY75vYUnYmcHVl0x7sflAwNO0jbMBj0sLqNCQZvjSNwm+Y6ii8PnsuhpOHq7OWGQT8/S7Dz7B3PFrlqnadwuCld6seUat3HkzeRV26LdHic9ddkfElgZwVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760569940; c=relaxed/simple;
-	bh=r44UktmLfbn87icefxwzup3DZAKCpa44gU2sA9H0npw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bHTAIdcimeAPzuNUvYM0tp7wqw1ceIHhkC9chERX4Y6deOrVhAQNzg4E7NQnx8FBUDa/SFf0PRLnaFoqD+k3cN0ZMQrBE77ErklM02GtAnZqZNJ3l7sexeBeKZzbG8PBDbrRmO2ZF8ol1lSFodJ/OS448JD6iyKvXYb0SDp5zoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M37ZrIlu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A967C116C6
-	for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 23:12:20 +0000 (UTC)
+	s=arc-20240116; t=1760569945; c=relaxed/simple;
+	bh=S2Ya2yQzemibr6HZsTuRgiLf/45RF5wC6HtSHNrxObo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3ep5p3HnIq4u7PG1bphYKHpnLyGDaYK22QZshWxLzqd4ufZBskBgjQKnR9hgWFOALre0pWPuSxTZuVAWJqv3vkJTi2Ogi1UGHf987CLh0IUU2kX8AVDZ09LEqk8kmtOOSVC1agXPD5bGf165GVlHV2HRIspkze3npDLHtw1TBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r742GAJH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C785CC4CEFB;
+	Wed, 15 Oct 2025 23:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760569940;
-	bh=r44UktmLfbn87icefxwzup3DZAKCpa44gU2sA9H0npw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M37ZrIluwq5EeNwUaKS8VbE2fDg3ZFE1Bt8q8AASK4XuvaEBY9UHPgrR6Vo6hQTvO
-	 HwjHoag6GWY3w6vHPNSMU/2soplGUj7M/aZANKW2HEZLqT8xeoo4TJqyupgBGMoUVE
-	 NDvWoRBjbJZ9ALVMRE15YaBgrDcdI/Bf0bv4mMbNYj8uU5LCFxPKgFYMDazmdZmWeL
-	 h2oBkg2tBO1iQlyVZBtk3uTFGK4OfKV1yhNiV0cJ+5jgVr+MAIDwJbJqkWCBuWJ8yY
-	 ZVNOmyFKaGGYjWuBAq/23b3P+Kl4MqNBbwsdIL3XK6p9ghk/HLQ6rHSeEhaKHvKUTi
-	 Rb+Nf9Ho011+w==
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87c148fb575so1172576d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Oct 2025 16:12:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUU8EDtTLnrkWAbtxZhPMxZ9mJSSGoUUkykvr5a/s7UoFc2ZeqkTfg5S1P6HR5wvTKbo80FVLGoPrRFt6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf0cJrlOfqi8BjXQWJ9rpLZ7/QCMuIiBewwCczTbtHnXxiB7lU
-	/rnTvL0FYNq9X2tOpavkabUldrHtjXwf6HJehSc8bkPJ5ADeBbP220bQW/fiz0f25ywRPomCwWI
-	cEU+K0/1S08/1OU3DW3vvsmfVp2QVUh0=
-X-Google-Smtp-Source: AGHT+IFLrZdMNDEHSuM1l+l7K0Igp2TgGHURmcyfMZduSiR21b8bfTpAX6I0Lw+bgngZoJ0JLG8z/3PI1EZqoF171Qs=
-X-Received: by 2002:a05:6214:ac4:b0:802:7214:5bb with SMTP id
- 6a1803df08f44-87b21031efemr529272216d6.28.1760569939755; Wed, 15 Oct 2025
- 16:12:19 -0700 (PDT)
+	s=k20201202; t=1760569944;
+	bh=S2Ya2yQzemibr6HZsTuRgiLf/45RF5wC6HtSHNrxObo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r742GAJH0x3PFoSz2u60+EnecSdHVlG5+/hwlpXx6Z5BQ44im3nIWt9VTEQ9RrHwn
+	 7puv4r1qnWrVlFuodBmLjK7eiT2TqkUQW3lmD3p6aQ5+vlKgDXNAcurVfgXZttBqot
+	 SMPtuvJM1yHec/D+6oBfEjcFo0KzDxWf8Jl754O2vQ2ESnK5yvpe/5ZMa5dLbkh+Pw
+	 Q2om1jkn6R57ieEeI7B6xFcbvuTkaVn1Rddm8i/i9m/VAy9UK9mIIRPVR0MUaBygFZ
+	 qg5zLYHCtNMZ35FDOXTBPChiN8Vd4unTG3AdOox09mbGoqEYlWairA0RXfG+i8syQb
+	 qtAUB5O3trU/Q==
+Date: Wed, 15 Oct 2025 16:12:19 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v9 2/4] tracing: Add a tracepoint verification check at
+ build time
+Message-ID: <20251015231219.GB3943617@ax162>
+References: <20251015203842.618059565@kernel.org>
+ <20251015203924.391455037@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015190813.80163-1-inwardvessel@gmail.com> <20251015190813.80163-2-inwardvessel@gmail.com>
-In-Reply-To: <20251015190813.80163-2-inwardvessel@gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 15 Oct 2025 16:12:06 -0700
-X-Gmail-Original-Message-ID: <CAHzjS_s3L7f=Rgux_Y3NQ7tz+Jmec5T8hLyQCxseLJ9-T-9xuQ@mail.gmail.com>
-X-Gm-Features: AS18NWCRhZ0HbfQIAsuNZF3o7IVIRRvXVmXcToP6BTqFWLZSUci3-Th1d7PMPqA
-Message-ID: <CAHzjS_s3L7f=Rgux_Y3NQ7tz+Jmec5T8hLyQCxseLJ9-T-9xuQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] memcg: introduce kfuncs for fetching memcg stats
-To: JP Kobryn <inwardvessel@gmail.com>
-Cc: shakeel.butt@linux.dev, andrii@kernel.org, ast@kernel.org, 
-	mkoutny@suse.com, yosryahmed@google.com, hannes@cmpxchg.org, tj@kernel.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015203924.391455037@kernel.org>
 
-On Wed, Oct 15, 2025 at 12:08=E2=80=AFPM JP Kobryn <inwardvessel@gmail.com>=
- wrote:
->
-[...]
-> ---
->  mm/memcontrol.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 4deda33625f4..6547c27d4430 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -871,6 +871,73 @@ unsigned long memcg_events_local(struct mem_cgroup *=
-memcg, int event)
->  }
->  #endif
->
-> +static inline struct mem_cgroup *memcg_from_cgroup(struct cgroup *cgrp)
-> +{
-> +       return cgrp ? mem_cgroup_from_css(cgrp->subsys[memory_cgrp_id]) :=
- NULL;
-> +}
-> +
+Hi Steve,
 
-We should add __bpf_kfunc_start_defs() here, and __bpf_kfunc_end_defs()
-after all the kfuncs.
+The kbuild portions of this seem fine, as they mirror existing patterns.
 
-> +__bpf_kfunc static void memcg_flush_stats(struct cgroup *cgrp)
+On Wed, Oct 15, 2025 at 04:38:44PM -0400, Steven Rostedt wrote:
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index 8a9a2e732a65..08ca759fb992 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -1048,6 +1048,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+>  	*(.no_trim_symbol)						\
+>  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
+>  	*(.gnu.version*)						\
+> +	*(__tracepoint_check)
 
-We mostly do not make kfunc static, but it seems to also work.
+Please add a trailing slash like the other lines so that one does not
+need to be added when someone else needs to grow this macro (also helps
+with 'git blame').
 
-> +{
-> +       struct mem_cgroup *memcg =3D memcg_from_cgroup(cgrp);
-> +
-> +       if (!memcg)
-> +               return;
-
-Maybe we can let memcg_flush_stats return int, and return -EINVAL
-on memcg =3D=3D NULL cases?
-
-> +
-> +       mem_cgroup_flush_stats(memcg);
-> +}
-> +
-[...]
+Cheers,
+Nathan
 
